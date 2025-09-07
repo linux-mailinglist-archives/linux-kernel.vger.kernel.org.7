@@ -1,120 +1,145 @@
-Return-Path: <linux-kernel+bounces-804783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04028B47CEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:52:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337F6B47CF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C40174BE8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:52:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E94E18883DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643DF283FCB;
-	Sun,  7 Sep 2025 18:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A21427B337;
+	Sun,  7 Sep 2025 19:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="MixN8Wji"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RLFrfRf5"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D16E1DA23;
-	Sun,  7 Sep 2025 18:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757271134; cv=pass; b=C9c+rwRkFqoQ4T54C7OsNRrXH34MRcXo6YeGptyrNFuVd0vxe4B+G7n5U5vK93XNtiE6+RpQOVWQ0WCVxFZrvRXewJGBGPZPiv70wDyq4DsrV0MuZYnrIfy0m4JMIVZYNn41T1J7LwfU/DZtAQ9xf2atth7YQegseBCn6rQ63kQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757271134; c=relaxed/simple;
-	bh=xKu9bhdQLVvlLdhnrRh59Fzz3YKv6AL6WdbOJd6ryDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsKuQcl6H0hE566Z2/cEPP13zzf7dNmOBu6fsn4FB8Jteyuzu3V37z0O2uPUhjedB6yiRZYCfZd/8fgrlQHmLn1SkRZk4bTEyx2mNlvEl1elvTStJhhMzAwn959Pn+7DPCsXA69X8rGlXmPyQJ3XszoyRGhsrLqzpH6hxDq7dQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=MixN8Wji; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757271105; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LVWD3SHQtC7SoFVKBuDY1aLxv8HKkg0+CDoXD4XUC871+2/7VKD2LmFHPpaqSCIf/WyCxy1NGFdIvcoWP2+SD78RgWIp0kJ2Nd+EKYDx7bRBPBkQ7Ut9vTmURoZDfRgWDaT39IvQ5iyvJqxPqp8elP1U1J963ErE8MgFSxlG6Dw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757271105; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=72zMzp9EQsVogTu/OAl9/EdJSst3NLpKe0M5q7uE32E=; 
-	b=PuMd8rXbS8zSUtqHwxMTyAsTwByeOGoqvHa5YcSoh8/GQUqYR0wrzkYWNwF6pyfZH7gv0HKE5f9l0HhR6IjO5cKO1FwmJerR/MUxVXv9B0pdBZsrSykDKd/G6Ueodjs9e9AVJ0++ClYYwonNJ/+3T0IETObJNj7ijvQr5ZhIYJ8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757271105;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=72zMzp9EQsVogTu/OAl9/EdJSst3NLpKe0M5q7uE32E=;
-	b=MixN8WjiNrR9K4gGzWj3HwYdmrd1jvqQnRBQVeQbgDtl40BqhCv4myWoJb2rCLnQ
-	48ZoKFPQWXO49DDELuCEtRMnc4+1WMWLWPL/623dv5bP93mwyqid+sYTqJQH+fiYNx/
-	S8ta4TgRapiWvdwhI7vucEgyQJMIhRLpFZns1NNU=
-Received: by mx.zohomail.com with SMTPS id 1757271103703981.538669071521;
-	Sun, 7 Sep 2025 11:51:43 -0700 (PDT)
-Message-ID: <c9136f3e-464a-48c8-92d5-c014dd4e9958@collabora.com>
-Date: Sun, 7 Sep 2025 21:51:39 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB9315D43;
+	Sun,  7 Sep 2025 19:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757271901; cv=none; b=PClFLSMNU3GaRekWg5g+Ol6pYygP4DXmQu6CJx7iS8PztsOGclEiuCyvqan7tMiGumPqYaXU/qY4x8OkFeMAacTq6KyfsdeFj4s1q/nGM/NHq/jzv1CcI69TZnzl0scDn0rmZNzXAFW+hez4ymuWOZ19rO62RtyP8kb0aLHUWjQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757271901; c=relaxed/simple;
+	bh=gUIuOOIKWhEx1xwPgna4RrrpVzZ+3uU0xA1uFkAIhcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qf8jxgHU2g+Bg0sUV3ufm4X9NvuR0pb1zGRPyF7sppBYicA4+C94OMc0RTXyO586Wb6eryC8ACB8KdGOyRf8vzo6iDFa2Ultwj1XahjoVCPXhZVGjQxl8/kEQNpcTuOcjSAstz1caAWUQ3CPuv8JfzTIOcpYw/pUvuBRldNMlko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RLFrfRf5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1DD30156F;
+	Sun,  7 Sep 2025 20:54:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757271261;
+	bh=gUIuOOIKWhEx1xwPgna4RrrpVzZ+3uU0xA1uFkAIhcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RLFrfRf5GAyf54C/jQQZeiEpbIpjCJGS7mvRuodyMPvwh2GxXIC66Q+/TXGLZgjgI
+	 n7UUWNRcrNrbXjpdWpfIBkIepN5ncC1rYw+EJAbB16kxlVCu5xtf0L33OG8ieRTf5u
+	 M+31IxPOFevvIZmvxK8SJy5czh8tlSqBVEIDUVBg=
+Date: Sun, 7 Sep 2025 20:55:12 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 01/10] media: v4l: ctrls: add a control for
+ flash/strobe duration
+Message-ID: <20250907185512.GA4105@pendragon.ideasonboard.com>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-1-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] Enable HDMI Receiver on NanoPC-T6
-To: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250901-ov9282-flash-strobe-v7-1-d58d5a694afc@linux.dev>
 
-On 9/5/25 14:02, Marcin Juszkiewicz wrote:
-> For quite a while I had this patch in my local tree but never made it
-> work. Kernel generates the following messages all the time:
-> 
-> fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: signal not lock, tmds_clk_ratio:0
-> fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: mu_st:0x2, scdc_st:0x0, dma_st10:0x10
-> 
-> "v4l2-ctrl --all" reports that HDMI In is detected, /dev/video[0-4]
-> exist.
-> 
-> I tried two signal sources:
-> - AMD Radeon WX2100 (via passive DisplayPort -> HDMI adapter)
-> - AMD Radeon RX6700XT (HDMI port)
-> 
-> Same situation with both - kernel messages as above on RK3588 system, no
-> connected monitor on host side.
-> 
-> Usually I used MPlayer or MPV to check v4l2 devices but here it fails
-> too:
-> 
-> $ mpv av://v4l2:/dev/video3
-> [ffmpeg/demuxer] video4linux2,v4l2: Not a video capture device.
-> [lavf] avformat_open_input() failed
-> Failed to recognize file format.
-> Exiting... (Errors when loading file)
-> 
-> 
-> Checked SBC schematics again and HDMIIRX_DET_L line is GPIO1_D5 like it
-> my patch.
-> 
-> What I go wrong?
+Hi Richard,
 
-Hi, your trouble with HDMI capture sounds very similar to [1]. Make sure
-you're using opensource ATF and check whether capture works using
-v4l2-ctl tool, see replies to [1]. Post a full kernel driver log if
-problem will persist.
+Thank you for the patch.
 
-[1]
-https://lore.kernel.org/linux-media/c71a3f79-71f3-4fd2-a509-c42b24636a2f@timsurber.de/
+On Mon, Sep 01, 2025 at 05:05:06PM +0200, Richard Leitner wrote:
+> Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> control, as the timeout defines a limit after which the flash is
+> "forcefully" turned off again.
+> 
+> On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> of the flash/strobe pulse.
+
+It took me a while to understand the difference between the
+V4L2_CID_FLASH_TIMEOUT and V4L2_CID_FLASH_DURATION controls, as I
+wondered how a device could implement different duration and timeout
+values. Then I realized that the timeout control is meant for flash
+controllers, while the duration control is meant for the source of the
+flash controller's external hardware strobe signal, typically the camera
+sensor. I'd like this to be more explicit, here and in the
+documentation. Here's a proposal for an updated commit message:
+
+----
+Add a V4L2_CID_FLASH_DURATION control to set the duration of a
+flash/strobe pulse. This controls the length of the flash/strobe pulse
+output by device (typically a camera sensor) and connected to the flash
+controller. This is different to the V4L2_CID_FLASH_TIMEOUT control,
+which is implemented by the flash controller and defines a limit after
+which the flash is "forcefully" turned off again.
+----
+
+This could probably be improved, but it's good enough for me for the
+commit message.
+
+On a side note, I think we could have reused the V4L2_CID_FLASH_TIMEOUT
+control for this purpose, even if the name isn't the best match, as the
+two usages are implemented on different devices (flash controller vs.
+camera sensor). We have no shortage of control ID space, so a separate
+control ID is fine too, and probably clearer (as long as we document it
+clearly).
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
+>  include/uapi/linux/v4l2-controls.h        | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> index 1ea52011247accc51d0261f56eab1cf13c0624a0..f9ed7273a9f3eafe01c31b638e1c8d9fcf5424af 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> @@ -1135,6 +1135,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_FLASH_FAULT:		return "Faults";
+>  	case V4L2_CID_FLASH_CHARGE:		return "Charge";
+>  	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
+> +	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
+>  
+>  	/* JPEG encoder controls */
+>  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index f836512e9debbc65d62a9fe04069b056be42f7b2..a5b7c382d77118eb7966385c5b22d5a89bc2b272 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1186,6 +1186,7 @@ enum v4l2_flash_strobe_source {
+>  
+>  #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+>  #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
+> +#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
+>  
+>  
+>  /* JPEG-class control IDs */
 
 -- 
-Best regards,
-Dmitry
+Regards,
 
+Laurent Pinchart
 
