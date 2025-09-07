@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-804861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B8FB48106
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:28:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8982AB48107
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9193B76A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88949189B3C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E259F223DC0;
-	Sun,  7 Sep 2025 22:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65E2253A0;
+	Sun,  7 Sep 2025 22:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jV5cJsy1"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9DKlGfe"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601EE20F08E
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 22:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5877120F08E;
+	Sun,  7 Sep 2025 22:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757284123; cv=none; b=avFfI1U6XcysUXvlc3PwunCC3VTn2ZXDUeoBwkvLGrfcH2CgSCpzC+VZnIEKTmzI+xuXVJtH92Rko0Tr8tzkQOymTafrH/8DZDetjHg6++AcZxeFw9XDxd4jKWX1zIw7ousDPD/ZZ3AbdT5Gh2/yavXVPzQlxucflN+dqz4skGk=
+	t=1757284130; cv=none; b=Rp4YvMEsYholotQwj9kt7feB/95yX31aAoqv1GMEB1V8q4O1YDVVyTQdpCy+SCRiFbocVVdH0E7rVfu+AUxF61JrKUOs1hxLqIEhVooJjzfY4f547bZipzN8/jB4fCo8YsnrawyYMRhT68SHI8dbN3VM+2UCRf/+ijRZyB85yUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757284123; c=relaxed/simple;
-	bh=4MPBud9tVUqifZN583Fp4NLbvT6urspuOu1Pb90NyIQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e0t/SQviXjB4zU4ZL/ONw9DgTZxbFZSQspCUVjIwpsKnrREQ9F5VVG3nj57RZdND1TNXxNVY/Xv9l7PioiwCctZe7LJYXQB1xb41dIL+vBVCBuUFw5yEPxOnNO/OQ+OsWBRuW+60jtV1QejuYAAZ1yNNiYwAPVEeepggGyiPQ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jV5cJsy1; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 587MRaoJ3729158;
-	Sun, 7 Sep 2025 17:27:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757284056;
-	bh=gypNAM4Hpg7PEPlRPUtvsQ+DMkDWUbUx77nQpfzw5a0=;
-	h=From:To:CC:Subject:Date;
-	b=jV5cJsy1HYuzPZBs7cHFC2O06MHZydDrJ2CLbkPJC8Y7qYS48FNXxbKxcEHsiwFu2
-	 qnmvVzmekOkJwpb5ZwW/MSWNbNxtqzFh37hRHimmftXo+CjWOTKMugQh8oKRvVa4/1
-	 YK8iproN7SkxmU5Uyl12r1y9CdnYjM5AhYElhRRQ=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 587MRZ5H2543997
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sun, 7 Sep 2025 17:27:35 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 7
- Sep 2025 17:27:34 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 7 Sep 2025 17:27:35 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 587MRVGH4072722;
-	Sun, 7 Sep 2025 17:27:32 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <13564923607@139.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v4] ALSA: hda/tas2781: Fix the order of TAS2781 calibrated-data
-Date: Mon, 8 Sep 2025 06:27:27 +0800
-Message-ID: <20250907222728.988-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1757284130; c=relaxed/simple;
+	bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AW8JjboZf5Vu3UgpJoM9NXpkm8DLY7LZKmhrF1+THCoh2LoSD6rEhuT/kvmZsqTIuJNEcpE5Hzg1/0jl+NClpzCr7kGWTVYlARc9O0lundjy85hXqRsd6l5J8kHIYOsCMB+mC+DXcEHqzrRiuQsPZ7Jhj9yqr6+mLB6pVRAruEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9DKlGfe; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b157ba91bso9253985ad.3;
+        Sun, 07 Sep 2025 15:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757284128; x=1757888928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
+        b=X9DKlGfe6D3yfoYSrESOS2OJcxnHnE7DerGn+pxyurmuaI9FtdcqQzjBXQKdFC7/pt
+         +BO41ly7YxVMZmOe1IxUYcN00IEEf0q89yG8ty5bI9yvA2Pfh/EijMSWRgl26bnU83YB
+         yUYlXacwcG5sukJHEVHBeobtP0oZc9qQ6PfHGrFwT6QoH3B3IeOge7ax8SxnWtRtVhcq
+         2duWmBB4m8SbUtmyKvcIvt1rYp/aQkmjmt5xIQIp1FUDxnYdrv/b2qg5bOiTmQpOO2U/
+         UIhz/hc06tHPy69/f3hrf8pvEn3SuPSoHhTY1a2gLgJgtbqg22p6ZPOubbnYLlz7b5DT
+         GSew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757284128; x=1757888928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
+        b=Vul6NVF2LtLcx1MrPSh+BjtdUFfmhAwb+b8PEQbFzOkKv9A5JTI8xsbKIdkxBQtjcb
+         lDne3/WCjQ2DiMY6gW+fFpOcOJnwR6IJrQxr7oGek8t7wU4gCtE/shsQxRgM/ex5ew9a
+         s7Yw/bwsY/FGAq96CwQSfZgSW0/sCw+QYTHS/SMnv8yrnqebtvtCEJknfy/2hE7SFkGc
+         nPIfH+yKy9eN/sCXwOh6CSPmKhClnacfdnQ5resvws2ZeKNCtQyQJK3QUJBC09MdUWEM
+         2+JQSbdzpRWBqb2gG2FbAGVu+IM9pDNf6DlzuZWs2e6QtsEKBYiae7I7ZeLcaUMtLuZ3
+         BjtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWomIjEh5ejq+rRSOhc+w88pblNsLRFLX8mD2nxZqmXd0J3wwUE2n3kugvj8A9KFLJkaBwZEu+S0jHs7vU=@vger.kernel.org, AJvYcCX/gb6LtvH9m1BDTiosjeC2JcM67xPDX7Vu6vH73RvROQGZURNBnlj3w+4NB4ODmZkDTf2p1e0dypBG/fnz/DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4GvHNuCar0C7TUL5wi2LrnvLmwKctnXq/jWW8gVqJu25H+RcH
+	/oScdQcMB2TOFbhkAsyF5t/ylMrjJNnu79L8ZiWCVIPwcbrhUQXW/d6ObHgvk2FR1p9Km1Go2rh
+	eOwcz4XeGcNyWKYcF4gDOgz+irnKYFC0=
+X-Gm-Gg: ASbGncsMWNWU9wsvZNQfkj+AJD0FCidev9ABrreTCaxJSweu5yXeeTSv2rmhC7GmDW2
+	EDJ/iAFuMJYtKYMYpbPAQoFR1Aaa5pK6tqEHVLNoj3yO5RqBTiO7prEMwBmEuG9Y8ppuYkjrw5r
+	tELdedwW+gLbp6w9LLC9Twx7U1vY6fUEtJXvdAy7zIX7WEKl90WzhIXGiNKmzOsloGeLYEA3FoH
+	eQmQEzLNOW/W5et9eYO9cfG/MYwxLURJZThnaq26qaLOkiSpA6nXRCcn/mllyCAf9ehUU6ETpGn
+	orkcm2BcTfQWMQko+JX1T/1I3Vfvx1VuzxDH
+X-Google-Smtp-Source: AGHT+IHeHzk6udhwz4fney38x7L6dMwuOcobxknukdIVizR5PEcm6WA8GQDH++2EkukwFu5mAoMUqZO+VQS4BnHMC08=
+X-Received: by 2002:a17:90b:17d1:b0:32b:4c51:628a with SMTP id
+ 98e67ed59e1d1-32d43fb18dfmr4583886a91.8.1757284127629; Sun, 07 Sep 2025
+ 15:28:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <DCK76G2JH58W.1QPN6YHTEOABB@kernel.org>
+In-Reply-To: <DCK76G2JH58W.1QPN6YHTEOABB@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 8 Sep 2025 00:28:35 +0200
+X-Gm-Features: AS18NWCH5CQzhPsEphE142YdtjGl1wIs9cw6MvXKmijurS1ozoICewrpPeXHPU8
+Message-ID: <CANiq72kNpLWnzW00iHMQ4Pvk11SuktBYA3=TLGyQ7WnkDy9U2Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Rust ALLOC & DMA for v6.18
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A bug reported by one of my customers that the order of TAS2781
-calibrated-data is incorrect, the correct way is to move R0_Low
-and insert it between R0 and InvR0.
+On Thu, Sep 4, 2025 at 7:38=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> Please pull the following ALLOC & DMA changes.
 
-Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+Merged into `rust-next` -- thanks for the summary and sending it early!
 
----
-v4:
- - Add missing base into cali_cnv().
-v3:
- - Take Tiwai's advice on cali_cnv() to make it more simpler.
-v2:
- - Submit to the sound branch maintained by Tiwai instead of linux-next
-   branch
- - Drop other fix
----
- sound/hda/codecs/side-codecs/tas2781_hda.c | 25 +++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
-
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.c b/sound/hda/codecs/side-codecs/tas2781_hda.c
-index f46d2e06c64f..536940c78f00 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda.c
-@@ -33,6 +33,23 @@ const efi_guid_t tasdev_fct_efi_guid[] = {
- };
- EXPORT_SYMBOL_NS_GPL(tasdev_fct_efi_guid, "SND_HDA_SCODEC_TAS2781");
- 
-+/*
-+ * The order of calibrated-data writing function is a bit different from the
-+ * order in UEFI. Here is the conversion to match the order of calibrated-data
-+ * writing function.
-+ */
-+static void cali_cnv(unsigned char *data, unsigned int base, int offset)
-+{
-+	struct cali_reg reg_data;
-+
-+	memcpy(&reg_data, &data[base], sizeof(reg_data));
-+	/* the data order has to be swapped between r0_low_reg and inv0_reg */
-+	swap(reg_data.r0_low_reg, reg_data.invr0_reg);
-+
-+	cpu_to_be32_array((__force __be32 *)(data + offset + 1),
-+		(u32 *)&reg_data, TASDEV_CALIB_N);
-+}
-+
- static void tas2781_apply_calib(struct tasdevice_priv *p)
- {
- 	struct calidata *cali_data = &p->cali_data;
-@@ -103,8 +120,7 @@ static void tas2781_apply_calib(struct tasdevice_priv *p)
- 
- 				data[l] = k;
- 				oft++;
--				for (i = 0; i < TASDEV_CALIB_N * 4; i++)
--					data[l + i + 1] = data[4 * oft + i];
-+				cali_cnv(data, 4 * oft, l);
- 				k++;
- 			}
- 		}
-@@ -130,9 +146,8 @@ static void tas2781_apply_calib(struct tasdevice_priv *p)
- 
- 		for (j = p->ndev - 1; j >= 0; j--) {
- 			l = j * (cali_data->cali_dat_sz_per_dev + 1);
--			for (i = TASDEV_CALIB_N * 4; i > 0 ; i--)
--				data[l + i] = data[p->index * 5 + i];
--			data[l+i] = j;
-+			cali_cnv(data, cali_data->cali_dat_sz_per_dev * j, l);
-+			data[l] = j;
- 		}
- 	}
- 
--- 
-2.43.0
-
+Cheers,
+Miguel
 
