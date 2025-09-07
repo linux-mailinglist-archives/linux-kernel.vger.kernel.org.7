@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-804691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7E8B47B9F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:31:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8690BB47BAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CAA167B26
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA3C3C3879
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7199F17A310;
-	Sun,  7 Sep 2025 13:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30125D21A;
+	Sun,  7 Sep 2025 13:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOUqygOo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kc4uywrQ"
+Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5662147C9B;
-	Sun,  7 Sep 2025 13:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B979B14BFA2;
+	Sun,  7 Sep 2025 13:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757251888; cv=none; b=Y78PTX1Xe98grWTFsltfppLH6i0K3857TfwXAMe4tFefctXfmaw+uM1cxyUaGQCpsORY8UBf1SWEvwYtE38LGwBuVfayLZZWJHfINr9rF3LnkZk/sorYHA/YYidxX8jIy7N8pcurFy7L52iLrcIDL1Wjut/LB61+56OHrR8yimk=
+	t=1757252499; cv=none; b=YGev/AGOaGN0P4BktzRDveWwm7LDkNpHBeb04KDtV1X8bfvvlzuT5ScS/ytDhAQCShTVjv6BLIafD/wFpgjUjeWAn8aV06CDMEDm1Y17GohoVbmcOiyFEWpbGGLW+t7i7FZC3EvGAvbbPztFDmXn4HlzFndd6tBJhv25dyb3288=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757251888; c=relaxed/simple;
-	bh=pwO9wuGJs0EMkf7G9HGeMZB63Pi28XD1ZOIvmKiHt8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bba71UJaz+T4rsQSH/c0ktbMHK7wZDmxDO7M6yShX6aLwAFGuz7CgKupI0CM3Fa/y7lM8dmHty+sUKSolDWLaIrOm9K7kSj5h+qo+k2pf8KEMvy/UbLE4voKwWsf//JlvObMRPJcU8ReIeKqTBovD4vMAakz/AI4fV2dz1ZxAY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOUqygOo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C2D5C4CEF0;
-	Sun,  7 Sep 2025 13:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757251888;
-	bh=pwO9wuGJs0EMkf7G9HGeMZB63Pi28XD1ZOIvmKiHt8w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qOUqygOoGfkVJVGnzrPxXMYYgcqjQFYLNI57jD/8sU6Busze1F2bAxXOm5ceB0Wym
-	 NmP0VINbvGo+o5qQilG3MRSiXotP+DiNMLZJJoVSJI2HWEd/V+4CEjkqzIxH+sk62m
-	 owIlIVHJucGokpdtQzthcRuXYvLjqG2nXFRw8HO3qt2byC71Qsir8SOb5XONg02aQv
-	 DP0Y+j+ucXn7FiDpNUWeamUfvWViw1bY66kgsLBtZSctFLzzwUe+B+lIlx65YoqHIZ
-	 IN0JyFo39lyaG5R6aKpXOwhctI+jMxdb8JP/fws4DQ1gmy4Vuh1d9d0mzvnMgcKUWa
-	 x/yDI5inrze2A==
-Date: Sun, 7 Sep 2025 14:31:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Remi Buisson <Remi.Buisson@tdk.com>
-Cc: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 2/9] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <20250907143118.42612bd3@jic23-huawei>
-In-Reply-To: <FR2PPF4571F02BCED3AAC4DB4C6AB0D6FAD8C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
-	<20250820-add_newport_driver-v5-2-2fc9f13dddee@tdk.com>
-	<20250825113445.005f815b@jic23-huawei>
-	<FR2PPF4571F02BCED3AAC4DB4C6AB0D6FAD8C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757252499; c=relaxed/simple;
+	bh=fks/yErO+zPT6GaCw7NtUhIlBUtZvaL7yMeiXmezYSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q352z6wW1IhtjW98sdeHqlwRmAhBeI+6T7KPt/lssl9GWukk6zDvQfH+Vq9Z3rDACa7fX/oM5xV8IlmC0IElpcNRbWPiJg+KdK6MOYsmp/H9PngrLD+TXqU48V0XyFvQGnySFZB6OPuDRgkucKTIreQP/NifTaEyZxAvvHW6+Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kc4uywrQ; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vFVOuu4g5zvvrvFVOurnYa; Sun, 07 Sep 2025 15:32:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757251951;
+	bh=PuIjx4laPZOZU655RZR+rH1umOM75FsI08aXSYLjLjg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=kc4uywrQzv+jq0gebDyoNW5rmgdKXRUob2Rgg2CFfX3hknCerUA8QCwXafVQ9knZ+
+	 tYn9pR+tXSVsga1BTqqJW5ytdDXB3j+4QZO3t4KrjbymUI+Riu8g05rTHNBwH7PKJg
+	 m/qWxQkUu0jMOirHjUwSD8ZrtKVL9T6QI5xdfgSkqqgfiy9v9mHy0GDSGJCWg2ZniR
+	 uX2IDAtwgfOSS0XK7anki4Wwv06p8NHSYI9iF8vzzWfsOqvlxcczoqSIWx7eGQ0VCj
+	 pHNK0XPQg9lNBp4f+kdqxEKeOpWAp6VUzBoe+Vsj/OzsvGCtTOty03UDWJqS9xgntr
+	 870Tmi7QEE4DQ==
+X-ME-Helo: fedora
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Sep 2025 15:32:31 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Armin Wolf <W_Armin@gmx.de>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86: quickstart: Use devm_mutex_init()
+Date: Sun,  7 Sep 2025 15:32:26 +0200
+Message-ID: <530b930c981c436c172c0308b348d4ae4ef72800.1757251867.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 4 Sep 2025 13:04:37 +0000
-Remi Buisson <Remi.Buisson@tdk.com> wrote:
+Use devm_mutex_init() instead of hand-writing it.
 
-> >
-> >
-> >From: Jonathan Cameron <jic23@kernel.org>=20
-> >Sent: Monday, August 25, 2025 12:35 PM
-> >To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-> >Cc: Remi Buisson <Remi.Buisson@tdk.com>; David Lechner <dlechner@baylibr=
-e.com>; Nuno S=C3=A1 <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org=
->; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;=
- Conor Dooley <conor+dt@kernel.org>; linux-kernel@vger.kernel.org; linux-ii=
-o@vger.kernel.org; devicetree@vger.kernel.org
-> >Subject: Re: [PATCH v5 2/9] iio: imu: inv_icm45600: add new inv_icm45600=
- driver
-> >
-> >On Wed, 20 Aug 2025 14:24:20 +0000
-> >Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrot=
-e:
-> > =20
-> >> From: Remi Buisson <remi.buisson@tdk.com>
-> >>=20
-> >> Core component of a new driver for InvenSense ICM-45600 devices.
-> >> It includes registers definition, main probe/setup, and device
-> >> utility functions.
-> >>=20
-> >> ICM-456xx devices are latest generation of 6-axis IMU,
-> >> gyroscope+accelerometer and temperature sensor. This device
-> >> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
-> >> intelligent motion features like pedometer, tilt detection,
-> >> and tap detection.
-> >>=20
-> >> Signed-off-by: Remi Buisson <remi.buisson@tdk.com> =20
-> >Hi Remi,
-> >
-> >A few additional comments from me.  I tried to avoid duplicating
-> >anything Andy pointed out, but might have done so a few times.
-> >
-> >Main comment in here is to take a look at the inline comments
-> >and perhaps simplify or remove them if the code that follows
-> >is basically self documenting.  Sometimes the comment can be
-> >more confusing than the code!
-> >
-> >Jonathan
-> > =20
-> Warm thanks for the time you spent reviewing comments.
-> I tried to clean them following your advices.
-> I hope it will improve.
+This saves some LoC, improves readability and saves some space in the
+generated .o file.
 
-One process comment.  If you agree with a review comment and there
-is nothing else to add, just crop it out of your reply.
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   7607	   2616	     64	  10287	   282f	drivers/platform/x86/quickstart.o
 
-Focus on the places where more discussion is needed.
-If there is none of that don't reply to the review - just add the
-changes made to the changelog for the next version of the series.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   7301	   2544	     64	   9909	   26b5	drivers/platform/x86/quickstart.o
 
-Jonathan
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/platform/x86/quickstart.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
+diff --git a/drivers/platform/x86/quickstart.c b/drivers/platform/x86/quickstart.c
+index c332c7cdaff5..acb58518be37 100644
+--- a/drivers/platform/x86/quickstart.c
++++ b/drivers/platform/x86/quickstart.c
+@@ -154,13 +154,6 @@ static void quickstart_notify_remove(void *context)
+ 	acpi_remove_notify_handler(handle, ACPI_DEVICE_NOTIFY, quickstart_notify);
+ }
+ 
+-static void quickstart_mutex_destroy(void *data)
+-{
+-	struct mutex *lock = data;
+-
+-	mutex_destroy(lock);
+-}
+-
+ static int quickstart_probe(struct platform_device *pdev)
+ {
+ 	struct quickstart_data *data;
+@@ -179,8 +172,7 @@ static int quickstart_probe(struct platform_device *pdev)
+ 	data->dev = &pdev->dev;
+ 	dev_set_drvdata(&pdev->dev, data);
+ 
+-	mutex_init(&data->input_lock);
+-	ret = devm_add_action_or_reset(&pdev->dev, quickstart_mutex_destroy, &data->input_lock);
++	ret = devm_mutex_init(&pdev->dev, &data->input_lock);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-- 
+2.51.0
 
 
