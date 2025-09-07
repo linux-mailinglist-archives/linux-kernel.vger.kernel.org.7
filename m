@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-804643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77008B47AFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF6AB47AFE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9BE1B22536
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E051B3B879C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9251C263C9E;
-	Sun,  7 Sep 2025 11:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598932627F9;
+	Sun,  7 Sep 2025 11:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIYQ5x+d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3dXKfQw"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20D41DF26A;
-	Sun,  7 Sep 2025 11:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ED925CC75
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 11:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757244805; cv=none; b=Sv41M+a8jvRymYL9IXH63GEry8XsY9wd7VAzBGpsAFOFAHUGvkwIH7IZ45hvvBkmnXKo+SXxnuhJeH41Wje0wsJhLOxsYavogAzTdL+y2POdTJG+WDDIktgTxOm7yWeQWfLHipEEDtpBlFgwcakl3blJIxyBFLm4BqfRBJdJmwc=
+	t=1757244826; cv=none; b=J0RXXK5/uJnQhOdA+/x38l+4uUjw412ciH5leXlHQxNNVdS0YkNtAfofBLO9iZ6K1kPin4uhAn6uGU/QzVjWy7aT8tdKC3mk3zDDVV4UrCDGXDVTKPAm+yijzL81t7QJFhdMWK3s6zChyA9gqJpjK+lI6EH4jXY+WA9nhiiN0kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757244805; c=relaxed/simple;
-	bh=urBdq2a4lKJDO9ZZYNrOKJ8eTnycxkF3tJJ4jFvOdfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aNJ2EGXd8GjbLCyPLuAB1wIQ8VVo21Rhy2McowGos35Cd5VpqJlhDcqtXoH9bXucm2KiHstx4aJVsdMheUQFJTRQ18LhT7U3STODxD3G/p2YhnpNFFT+KI9a6jnARrumL78T9waVY5L/Q9CIsvWWFyzeLH7FxwrW3+yJ3Gz0XuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIYQ5x+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C0AC4CEF0;
-	Sun,  7 Sep 2025 11:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757244804;
-	bh=urBdq2a4lKJDO9ZZYNrOKJ8eTnycxkF3tJJ4jFvOdfo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TIYQ5x+d/DzPvcNJCm/NtOMsAzyL32HodhmT79zBmt8OTF6SXvDFym49sX59odxsq
-	 a3DwZFKp3kV5lCDWC7TSBXtouWwd/N6WpdsgwjPsQDynZ2pd0xFjo6toSDJpSee3PP
-	 efgAdpISM0uq44R0Bskd5YZC0bEAntIgwC89s+OdXyofTb6KHxvvJYuf94Fr/aqeg4
-	 Axj5swrReFGxPFIzsLm8GgyjwBiuIfM8jjKs0fR2YXfWisvh7cZPREDZJWsvc6XM+f
-	 x12iVxA7LzjBPz8TyCt+0m0lH/lcnpAJhjFHLcTy4FMR7WG0QdprIk3Z/pwqEhDc26
-	 6Zr5zZCEfjacw==
-Date: Sun, 7 Sep 2025 12:33:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Tobias Sperling
- <tobias.sperling@softing.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Esteban Blanc <eblanc@baylibre.com>, Ramona Alexandra Nechita
- <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, Herve Codina
- <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <20250907123310.2209f824@jic23-huawei>
-In-Reply-To: <2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
-References: <cover.1757053456.git.mazziesaccount@gmail.com>
-	<3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
-	<CAHp75VdaAH+1mh16KWoYtYFMV+_ec8x9YipeD3K8g6yQr-2VjA@mail.gmail.com>
-	<2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757244826; c=relaxed/simple;
+	bh=x/5am34huXepJCcawFjdn/9LhzouNu+bZlMGrTfGLs0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D/b3ul8rQs0g/2NaZuFsQj3ai/4dm0//3krRt7mjoqrzUvDOzW8+hWFhm9tiLe2XwHKnQ0pvPWxvtdDCT6sAiWifzGpe1U8P9dByNAfbOV0+B+e2dgVjj62cD7LoqML1PrwzOskKhvocBALJoyyvLAsq7BeSMcjMIeQS6b5sbsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n3dXKfQw; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so18463295e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 04:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757244823; x=1757849623; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/R8lGbzqnwIDc4eQKOATvFwf+sXQZDlB3YpeC90/y20=;
+        b=n3dXKfQwRXvhEuUeIAN9D64ZBHvu0xVkJBJ2BuH/nJ0aGQHH0Q4M1CO/XzaDMO94Sz
+         SMPw2CInhCHev8JiR9wK5lN/9y0kRrHzi4nwTg/fknIdiFN4OLPOktTHSm6n7PiLegvs
+         ntqlF2ZD/iTl/UO04fA460P9+NeB+ekwDByKOg+MeYCeMuaDMvBzLdfHQULs/Lbr5poX
+         t4luGPO3hIKZbeVlraWIJD4zdGK8rPKEjgkN2002YJ4X0O0jClgpFwV83YrstKTWI+D/
+         8i0l8ENTap2sNQIS0AJ+rqMzUkClLKpTQuyssDoS208/+32UP5IsElfIe5AreDXyk0AR
+         T1fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757244823; x=1757849623;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/R8lGbzqnwIDc4eQKOATvFwf+sXQZDlB3YpeC90/y20=;
+        b=NOqWj3izsKf7JnCRSAw7ShRSNQr8CT+lXFj1Fgo6kxByx7Bxcp3arrGoCcxvhiEOaA
+         PLncT+QZCSoSqw5h08eL6RB7L6fCBDS5C4XAR9YJzyLfUoV4SkuDyVFO+Fas9zW3tgyF
+         hIat5EYmbyO+JXCOPmYIhs/jLHFNiGRcrL0pnX9CxPjtUHna3ggdODC+V0JbgMcy/bqD
+         Qv2xJFgZreSwJkTm+Eyknx5qBau7cef1r/utej5VPIieXGxGgwQSAj75zmTcMMCuIClG
+         d7PmpYwXyg65c2W27rH6mAAgyyyxPJqH6IZDpuvuXJdY00tW3j/owV27+QGtl2mqjKXJ
+         TsCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8zzDaHYIwOCjEiKEI+LGRUV0LxYCqHqqyRaeMom6HtZgpn/MSsgTvsgIFIr103u2qWqiNIA3RE2IJneU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUwrPIm5Aa12aDaJbSyuZoGqJAjmd5nn2HqsFo5TDqNjTAxiyv
+	sSIgEg0o+ljEqhiny/p/FsXvkPi0McpRCmPvd2lJfxtAUod/rS2EEmmyi6EmOcvyzA6earBY3Nn
+	vvW4th7/q093PL9fvig==
+X-Google-Smtp-Source: AGHT+IEy+e3S3O+aoKGHPH1G+6qJeWq9D8heiivAshi+Am1uetfW+/PvRgvQ/VNB0LSOOQzthMzNa/JBPKQBz5E=
+X-Received: from wmqc10.prod.google.com ([2002:a05:600c:a4a:b0:45d:dbd2:ec9a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:35cb:b0:45d:db2a:ce37 with SMTP id 5b1f17b1804b1-45de2cf982emr18269065e9.0.1757244823652;
+ Sun, 07 Sep 2025 04:33:43 -0700 (PDT)
+Date: Sun, 7 Sep 2025 11:33:42 +0000
+In-Reply-To: <DCMJ0VFOV9L1.33BPI08N4H7WZ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250905140534.3328297-1-lossin@kernel.org> <aL1lHyhzWX0xGrmo@google.com>
+ <DCMJ0VFOV9L1.33BPI08N4H7WZ@kernel.org>
+Message-ID: <aL1tloBwmJnYFPpa@google.com>
+Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!` macros
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Fiona Behrens <me@kloenk.dev>, 
+	Christian Schrefl <chrisi.schrefl@gmail.com>, Alban Kurti <kurti@invicto.ai>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 5 Sep 2025 10:10:55 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Sun, Sep 07, 2025 at 01:20:39PM +0200, Danilo Krummrich wrote:
+> On Sun Sep 7, 2025 at 12:57 PM CEST, Alice Ryhl wrote:
+> > On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
+> >> Allow writing `_: { /* any number of statements */ }` in initializers to
+> >> run arbitrary code during initialization.
+> >> 
+> >>     try_init!(MyStruct {
+> >>         _: {
+> >>             if check_something() {
+> >>                 return Err(MyError);
+> >>             }
+> >>         },
+> >>         foo: Foo::new(val),
+> >>         _: {
+> >>             println!("successfully initialized `MyStruct`");
+> >>         },
+> >>     })
+> >> 
+> >> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880a9b898336e2d54f80715f00ce00f21f74d2f
+> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
+> >
+> > Nice! Would it be possible to include a user so I can see it work in
+> > practice? E.g., for the irq feature?
+> 
+> Devres needs this too, but the corresponding devres stuff was a fix and is in
+> the current -rc only, so that's not a candidate.
+> 
+> The IRQ stuff is in driver-core-next going to Linus for v6.18, hence, using it
+> there, this patch would have to go through the driver-core tree as well.
+> 
+> For me it is fine either way.
 
-> On 05/09/2025 09:54, Andy Shevchenko wrote:
-> > On Fri, Sep 5, 2025 at 9:42=E2=80=AFAM Matti Vaittinen <mazziesaccount@=
-gmail.com> wrote: =20
-> >>
-> >> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs c=
-an
-> >> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> >>
-> >> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate =
-I/O
-> >> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> >> daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> >>
-> >> The IC does also support CRC but it is not implemented in the driver. =
-=20
-> >=20
-> > ...
-> >  =20
-> >> +config ROHM_BD79112
-> >> +       tristate "Rohm BD79112 ADC driver"
-> >> +       depends on I2C && GPIOLIB =20
-> >=20
-> > Still I2C? =20
->=20
-> Thanks :) I didn't spot this @_@. I just switched the REGMAP_I2C to=20
-> REGMAP_SPI. Will fix.
->=20
-> >  =20
-> >> +       select REGMAP_SPI
-> >> +       select IIO_ADC_HELPER
-> >> +       help
-> >> +         Say yes here to build support for the ROHM BD79112 ADC. The
-> >> +         ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog =
-=20
-> >=20
-> > which --> where =20
->=20
-> I thought which (as a genetive case) would work here just fine?
+It doesn't have to land together. I would be happy with:
 
-If you had 'on which' I think it would be fine.
-With just 'which' it doesn't work.  I'm too lazy to figure out exactly
-why though :(
+	THIS CYCLE: Land just this patch.
+	NEXT CYCLE: Land the irq and/or devres user.
 
-I'd probably make it a separate sentence though.  Analog inputs can also
-be used for GPIO.
+But I'd like to see it work in practice before I give a Reviewed-by.
+It's hard to evaluate this kind of macro change just from the macro
+itself.
 
-
-
+Alice
 
