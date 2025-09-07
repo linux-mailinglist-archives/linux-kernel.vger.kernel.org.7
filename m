@@ -1,96 +1,324 @@
-Return-Path: <linux-kernel+bounces-804524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5770DB478C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2106FB478C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174453C6FCD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5AE1C230B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A571D5CD7;
-	Sun,  7 Sep 2025 03:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAF51D7E31;
+	Sun,  7 Sep 2025 03:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="jrWfrwVv"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9zYPG2c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E58F35950;
-	Sun,  7 Sep 2025 03:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ACE1A0728;
+	Sun,  7 Sep 2025 03:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757215062; cv=none; b=NmrfWGf+Fa202kIjXeqbSMRv2mzbdc1XnyXDy3Sh5EPBHGqCVXGps4iaFfLFp52VrzXO0l98NSp71D01ecPZte5UkNYhe5M7bzos/dxPOC1ngjAahIL0WpNW92uBnJMGWOxJ5+JbRYh/GFbPSRPQF7IzcHZ2T19mySe/txWTdC8=
+	t=1757215326; cv=none; b=dCkwbE0IRffRwbyhQNVl5WfT+knN+kkNoTKfRn8fMAVaDbi+0jgBbC9Nga6NMA5g9CjJY0Tndks5tbpS0gm9n7v+PgsPcIvUPbojQRdncr6FJYAu+q/9zFyLJprGIIJcyhgJNk5Idyx0GIRLsoTeusAcIf+pjdJF9/PoU5kcBqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757215062; c=relaxed/simple;
-	bh=LhDHTlcfR1jGlZto3p6JzzhQfbrunIuTuGNvuvqpJWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTpFUji+qbHe+WxbTpreuHRFdmi0V6BeNVsGm+oNb8Thxtdw7NFCp2QPDk6yeom+OxpJzgGHfniGJvOwVekknmI+ge/8TgKiCjF1JJXKyKgWu8UIGD8gRFbILjwDyEZrfb6QCBLhIvmLjO5oigQx6DortiBH0r/dWlgz2bYEToI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=jrWfrwVv; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 7772D20E83;
-	Sun,  7 Sep 2025 05:17:38 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 8t3ZYEGffzYV; Sun,  7 Sep 2025 05:17:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1757215057; bh=LhDHTlcfR1jGlZto3p6JzzhQfbrunIuTuGNvuvqpJWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jrWfrwVvsp5VR5ASaKQCO0jC+3CL6AoWx6zFsTPONS1ul+pILsdE6xQfe5oHrOgbg
-	 yNKw6gCy8+kBwGl9bVE+U6elHWFtNqJzjhtOrYeePFNhEK+oP2k8PgiY6ypUxAWnqL
-	 Eqbr7JmA89v3x1q0pS3inbCvfvHYKpA/jXN3nRRn7Ckmc9upfw+O5STwWo2sbLB1Ym
-	 FZ6IdAQZcCQHM/yYjLWtI12ugh2CJoLdVDsnHfXOhgVK+Vg5pVwdt9GYe3v/SiWyRw
-	 pZWZh2C+CuNlqz8Xbs4ZntgGi5S0EtHpuQsPrnrrIlA6flrLkblWWq+hfl3rlZxhT8
-	 WSKXzQqrsmMDQ==
-Date: Sun, 7 Sep 2025 03:17:26 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v8 2/3] clk: canaan: Add clock driver for Canaan K230
-Message-ID: <aLz5RsjBoi0KVGSJ@pie>
-References: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
- <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com>
- <aLz4Q7LZFEfQQGUj@pie>
+	s=arc-20240116; t=1757215326; c=relaxed/simple;
+	bh=tInP6J7NJp//z767MSb09gQ5BOw84i+fFF4Se4q9AeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U/7zzxYvhA8bFipXSpudPzglpax7FjJrVOvRaMegtkKge+qIIjpC4zzzV1a+MFclJZuEbdaXlarJddJHzH3C7PXofpXs/TU9AijTTUp167iyh4X/1MXt9sQoOz4pel8UQZSY507i4R4yup0L3DHC0bsHleVR5b+6d0yQnJ88+5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9zYPG2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B008DC4CEF4;
+	Sun,  7 Sep 2025 03:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757215326;
+	bh=tInP6J7NJp//z767MSb09gQ5BOw84i+fFF4Se4q9AeE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k9zYPG2c5Xzn7cQ8M1dCgA9gSknrXT14mFB90EnnCKxRm0YFuhf6ucVAx9cBB6qwe
+	 RpuYB1k6P//GmCHIKccZM+G1zR7CXxAih2q1VECvvnHgfs681oLLdOXPCY4rF8l31d
+	 pSLX1s9VdoJT7xIKY5FXuv+Q6RtsowFsgR54EaclSdAC8Sw2vg7WThrzJwsuOBYDcd
+	 2jRuuY0cJ+HeOCpt97Ao2ifZeu5yVSxxeC8KcJgeXUlKjE+XalfJBoOCY1rSOfD54K
+	 HnPNKwa3QeXp+i3UjfY58fcxkbjCrJeQLpw9wUleybh+jarhgj3GfjqQIq9NdHsMcR
+	 3zYPgG5ipvaew==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-cifs@vger.kernel.org,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Namjae Jeon <linkinjeon@kernel.org>
+Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
+Date: Sat,  6 Sep 2025 20:20:03 -0700
+Message-ID: <20250907032003.386794-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLz4Q7LZFEfQQGUj@pie>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 07, 2025 at 03:13:07AM +0000, Yao Zi wrote:
-> > +struct k230_clk_rate_self {
-> > +	struct clk_hw	hw;
-> > +	void __iomem	*reg;
-> > +	bool		read_only;
-> 
-> Isn't a read-only multiplier, divider or something capable of both a
-> simple fixed-factor hardware? If so please switch to the existing clock
-> hardware, instead of introducing a field in description of rate clocks.
-> 
-> It's worth noting that you've already had at least one fixed-rate clock
-> (shrm_sram_div2).
+fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
+this same code is also present in lib/crypto/arc4.c to serve the other
+users of this legacy algorithm in the kernel.  Remove the duplicate
+implementation in fs/smb/, which seems to have been added because of a
+misunderstanding, and just use the lib/crypto/ one.
 
-It should be "fixed-factor" clock instead of "fixed-rate" clock, sorry
-for the typo.
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ fs/smb/client/Kconfig       |  1 +
+ fs/smb/client/cifsencrypt.c |  8 ++--
+ fs/smb/common/Makefile      |  1 -
+ fs/smb/common/arc4.h        | 23 ------------
+ fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
+ fs/smb/server/Kconfig       |  1 +
+ fs/smb/server/auth.c        |  9 ++---
+ 7 files changed, 10 insertions(+), 108 deletions(-)
+ delete mode 100644 fs/smb/common/arc4.h
+ delete mode 100644 fs/smb/common/cifs_arc4.c
 
-Regards,
-Yao Zi
+diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
+index 9f05f94e265a6..a4c02199fef48 100644
+--- a/fs/smb/client/Kconfig
++++ b/fs/smb/client/Kconfig
+@@ -13,10 +13,11 @@ config CIFS
+ 	select CRYPTO_AEAD2
+ 	select CRYPTO_CCM
+ 	select CRYPTO_GCM
+ 	select CRYPTO_ECB
+ 	select CRYPTO_AES
++	select CRYPTO_LIB_ARC4
+ 	select KEYS
+ 	select DNS_RESOLVER
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	select NETFS_SUPPORT
+diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
+index 3cc6862469087..7b7c8c38fdd08 100644
+--- a/fs/smb/client/cifsencrypt.c
++++ b/fs/smb/client/cifsencrypt.c
+@@ -20,12 +20,12 @@
+ #include <linux/ctype.h>
+ #include <linux/random.h>
+ #include <linux/highmem.h>
+ #include <linux/fips.h>
+ #include <linux/iov_iter.h>
+-#include "../common/arc4.h"
+ #include <crypto/aead.h>
++#include <crypto/arc4.h>
+ 
+ static size_t cifs_shash_step(void *iter_base, size_t progress, size_t len,
+ 			      void *priv, void *priv2)
+ {
+ 	struct shash_desc *shash = priv;
+@@ -723,13 +723,13 @@ calc_seckey(struct cifs_ses *ses)
+ 	if (!ctx_arc4) {
+ 		cifs_dbg(VFS, "Could not allocate arc4 context\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-	cifs_arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZE);
+-	cifs_arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
+-			CIFS_CPHTXT_SIZE);
++	arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZE);
++	arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
++		   CIFS_CPHTXT_SIZE);
+ 
+ 	/* make secondary_key/nonce as session key */
+ 	memcpy(ses->auth_key.response, sec_key, CIFS_SESS_KEY_SIZE);
+ 	/* and make len as that of session key only */
+ 	ses->auth_key.len = CIFS_SESS_KEY_SIZE;
+diff --git a/fs/smb/common/Makefile b/fs/smb/common/Makefile
+index c66dbbc1469c3..9e0730a385fb1 100644
+--- a/fs/smb/common/Makefile
++++ b/fs/smb/common/Makefile
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
+ # Makefile for Linux filesystem routines that are shared by client and server.
+ #
+ 
+-obj-$(CONFIG_SMBFS) += cifs_arc4.o
+ obj-$(CONFIG_SMBFS) += cifs_md4.o
+diff --git a/fs/smb/common/arc4.h b/fs/smb/common/arc4.h
+deleted file mode 100644
+index 12e71ec033a18..0000000000000
+--- a/fs/smb/common/arc4.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
+-/*
+- * Common values for ARC4 Cipher Algorithm
+- */
+-
+-#ifndef _CRYPTO_ARC4_H
+-#define _CRYPTO_ARC4_H
+-
+-#include <linux/types.h>
+-
+-#define ARC4_MIN_KEY_SIZE	1
+-#define ARC4_MAX_KEY_SIZE	256
+-#define ARC4_BLOCK_SIZE		1
+-
+-struct arc4_ctx {
+-	u32 S[256];
+-	u32 x, y;
+-};
+-
+-int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len);
+-void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len);
+-
+-#endif /* _CRYPTO_ARC4_H */
+diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
+deleted file mode 100644
+index df360ca47826a..0000000000000
+--- a/fs/smb/common/cifs_arc4.c
++++ /dev/null
+@@ -1,75 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * Cryptographic API
+- *
+- * ARC4 Cipher Algorithm
+- *
+- * Jon Oberheide <jon@oberheide.org>
+- */
+-
+-#include <linux/module.h>
+-#include "arc4.h"
+-
+-MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
+-MODULE_LICENSE("GPL");
+-
+-int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
+-{
+-	int i, j = 0, k = 0;
+-
+-	ctx->x = 1;
+-	ctx->y = 0;
+-
+-	for (i = 0; i < 256; i++)
+-		ctx->S[i] = i;
+-
+-	for (i = 0; i < 256; i++) {
+-		u32 a = ctx->S[i];
+-
+-		j = (j + in_key[k] + a) & 0xff;
+-		ctx->S[i] = ctx->S[j];
+-		ctx->S[j] = a;
+-		if (++k >= key_len)
+-			k = 0;
+-	}
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(cifs_arc4_setkey);
+-
+-void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
+-{
+-	u32 *const S = ctx->S;
+-	u32 x, y, a, b;
+-	u32 ty, ta, tb;
+-
+-	if (len == 0)
+-		return;
+-
+-	x = ctx->x;
+-	y = ctx->y;
+-
+-	a = S[x];
+-	y = (y + a) & 0xff;
+-	b = S[y];
+-
+-	do {
+-		S[y] = a;
+-		a = (a + b) & 0xff;
+-		S[x] = b;
+-		x = (x + 1) & 0xff;
+-		ta = S[x];
+-		ty = (y + ta) & 0xff;
+-		tb = S[ty];
+-		*out++ = *in++ ^ S[a];
+-		if (--len == 0)
+-			break;
+-		y = ty;
+-		a = ta;
+-		b = tb;
+-	} while (true);
+-
+-	ctx->x = x;
+-	ctx->y = y;
+-}
+-EXPORT_SYMBOL_GPL(cifs_arc4_crypt);
+diff --git a/fs/smb/server/Kconfig b/fs/smb/server/Kconfig
+index 4a23a5e7e8fec..098cac98d31e6 100644
+--- a/fs/smb/server/Kconfig
++++ b/fs/smb/server/Kconfig
+@@ -8,10 +8,11 @@ config SMB_SERVER
+ 	select NLS_UCS2_UTILS
+ 	select CRYPTO
+ 	select CRYPTO_MD5
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_ECB
++	select CRYPTO_LIB_ARC4
+ 	select CRYPTO_LIB_DES
+ 	select CRYPTO_LIB_SHA256
+ 	select CRYPTO_SHA256
+ 	select CRYPTO_CMAC
+ 	select CRYPTO_SHA512
+diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
+index d99871c214518..b4020bb55a268 100644
+--- a/fs/smb/server/auth.c
++++ b/fs/smb/server/auth.c
+@@ -18,20 +18,20 @@
+ 
+ #include "auth.h"
+ #include "glob.h"
+ 
+ #include <linux/fips.h>
++#include <crypto/arc4.h>
+ #include <crypto/des.h>
+ 
+ #include "server.h"
+ #include "smb_common.h"
+ #include "connection.h"
+ #include "mgmt/user_session.h"
+ #include "mgmt/user_config.h"
+ #include "crypto_ctx.h"
+ #include "transport_ipc.h"
+-#include "../common/arc4.h"
+ 
+ /*
+  * Fixed format data defining GSS header and fixed string
+  * "not_defined_in_RFC4178@please_ignore".
+  * So sec blob data in neg phase could be generated statically.
+@@ -363,14 +363,13 @@ int ksmbd_decode_ntlmssp_auth_blob(struct authenticate_message *authblob,
+ 
+ 		ctx_arc4 = kmalloc(sizeof(*ctx_arc4), KSMBD_DEFAULT_GFP);
+ 		if (!ctx_arc4)
+ 			return -ENOMEM;
+ 
+-		cifs_arc4_setkey(ctx_arc4, sess->sess_key,
+-				 SMB2_NTLMV2_SESSKEY_SIZE);
+-		cifs_arc4_crypt(ctx_arc4, sess->sess_key,
+-				(char *)authblob + sess_key_off, sess_key_len);
++		arc4_setkey(ctx_arc4, sess->sess_key, SMB2_NTLMV2_SESSKEY_SIZE);
++		arc4_crypt(ctx_arc4, sess->sess_key,
++			   (char *)authblob + sess_key_off, sess_key_len);
+ 		kfree_sensitive(ctx_arc4);
+ 	}
+ 
+ 	return ret;
+ }
+
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+-- 
+2.50.1
+
 
