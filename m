@@ -1,336 +1,101 @@
-Return-Path: <linux-kernel+bounces-804629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA53B47AB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FC4B47ABB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E3C177D66
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF41C17811D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4025DB12;
-	Sun,  7 Sep 2025 11:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529DE25F780;
+	Sun,  7 Sep 2025 11:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHV/EzhV"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbblHwr7"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E8B315D43;
-	Sun,  7 Sep 2025 11:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E813315D43;
+	Sun,  7 Sep 2025 11:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757243575; cv=none; b=PnMZLHp7YfCzGlgg/qRJvVXPZePB2HpzVgYPCGnpunmnAKYxxqV6fDlNdmKPvrm0GNI+gnHd296aywbWWjE0Ud1MGX0vd+xJ1q2lU4vtCDg5EPiIEVqm1yCdK0atvZ10egUh5saJi3F3lAmiKIz40fXA9dBmF3YmQm7pqKnotmU=
+	t=1757243628; cv=none; b=EcZLCf3H1i1cQ2dsgzfe7cqX37/39J4pOgH+ftFF1uQI1DROVhhhoTJYOj0kDkqdsDUZhaKt6Qw1QSe3e6zahaKaMkhgY5wQi2IViRuGa1TuoGjTfM25jFtPcDJVT7TbNLFTViMVQ8a7tD/osne1hSwLRSlPhB7uuzcnePuwHNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757243575; c=relaxed/simple;
-	bh=JeDvWOF1XyNZlVbSRkKg62AXuM9cfneLs6TPaSfZpr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S3xNSM6flSLU7lqjuXgOpRK5x04GH6mwYqKpoDSsAq7D0Mdfp7nhsvH6OiTvH6A5WTOFekHdv8dUy3HNUmVJwdn+S7zIaXtZf/eS1QkkeQepU8T6sTOS/oHWxvlwDLHc3MawmouUSUAxpyVLrg/X8TTCvC4nN2yswLatkmwXcfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHV/EzhV; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1757243628; c=relaxed/simple;
+	bh=yBoNTmSwEkvIJox07f1hgtmJQmhXtUgFUC1mvIL8pj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzi/Dp5qxFW+aIpxQBj7yFeKWIEcWLSfvMM9KKyq59hTnAzOv5cEXTkpNGyt3dfcd0te3YCq/QVkx0Rel3ScEUodM6FGTO8hxvbwypOL5oeqILTdUfY0ODKDZHjQa26bPRTSUuMoD1YdIoXI12exit4z7hr+Od/TKk24+w1p/ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fbblHwr7; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so2107136a12.1;
-        Sun, 07 Sep 2025 04:12:53 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce5be7d0so1714235fac.0;
+        Sun, 07 Sep 2025 04:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757243573; x=1757848373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mzGMUD5FoQ+Qma22SIVK819nPdr7pYinoircpLfGQJY=;
-        b=eHV/EzhVICrbze+rMfEbd1WeMxS/zW+PUVvAJrj23s8LU9RQ5r4OrIUaQnUcIZHt3G
-         BJbbIu4436Og8dXUcvdNu2zGSvQt6bQMzVafUyD4NPrfCdON8sNnrMJ5INmo93OP4VUO
-         fd4UcSu7zniAxJX49uLzNS97p2Nt7oBiu0spN2H6uA1QMuB+/sd9CvN/tEp/oMGqILHP
-         IkT6RSmUFUEJKrB0A4papwSTaqD7pWaayLWyhnICTdv7x99rAbPhnY6rrLsgIeQwzzG3
-         6eTXg9N76o2PssnBmkPj68k4R1eT86vKLMlKROrMKBWSA+PHyOGk/wNThhozR7TE57on
-         L/HA==
+        d=gmail.com; s=20230601; t=1757243626; x=1757848426; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4xHjqlMS+DEiA8wz+/XQo2KEWTde7fbxo5bGymj5PE=;
+        b=fbblHwr745wh0tkJ3MUBzNebZfrlNrqzubajfBijttxBdytD2LJpw7WKpKNcwDZqBo
+         GNcNTIhSKVARsO1stYwKGxD5DxNVJnQRlCgYNijj3Rtv89UdmI/+3PBwkl/TAOA1aLhs
+         8uL5elFGlYp8U0gLzXxICl2POxpWMtX/BChS2dwyCh/foMkgDdC18KQC2tbCosMkDDrC
+         ajSPkbEkRq91MySOx2HhXESY53HWqfltMpVj9XyTtIxfOs7Zbwe/kJpfykLhkNHnfahA
+         dWNSLrDV6NarWAIhJRTrWAJ9MmYngj4sa+ksK0oMNac+Ox2k+dKTxICTvjEbkbQPkb+2
+         VASA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757243573; x=1757848373;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757243626; x=1757848426;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mzGMUD5FoQ+Qma22SIVK819nPdr7pYinoircpLfGQJY=;
-        b=M2uhU7rP4rhTIKUyGVMVqru1qwWWx5DFrV8AxC5QD2JxD6n58o/1DSnLekE2zyKf1J
-         GuO8UFMueg4KXJa2fzOv1ovP05IAKLnbUqStLwr5iggPgfEldrIbxqpatwlSuP8IwrKA
-         S9zSFmSqfyXpO+Rrs4r8fYUf8/3X8xrM5Gfwes9ecKqG1TZfv6N600+s8qBIDuxo8rzd
-         CYRy9XxY7+0Q7LgAltGm+JmbVleaooxuxvhjHfG5o4lgkLvQhQupA7ZljEmwXclcxlTy
-         9Af1CB8i/kCiSJNfvisEfFtr/P/PKiLjPEa4V6RwGcUQ2TRiHJlibVi8/UwIx2Rgv0WN
-         6eJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsN3+zmYrNsuaP16aGhRkdq2KJ0jf2b+ni0A8SKwxqlo5ab6wEZI93MqEgk65vjYuEZlyXu6cESXywyUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9o690HYLV3Z2XRUJR+BfbNrLGMna5HKgM7xIi7dLnL91DmJ6K
-	uUbrntuu0/FheQLnU9hCokiRn7KLXWN0Re1wTt2LGekglsPL6ndnlT0fUXPeLA==
-X-Gm-Gg: ASbGncuhy2SKxFdYxrg2PFk5MEpJYn+Kh0gySTQsaKMZ2p6TUIjAPGX5hg8xDuoSGMB
-	zO8u1RpXgXkqaWF2pIgCg1q9piIXzbQG5xgovbGrYPPcXolNbWKjrgsHcbVv7RhP5SZ1XoL8Uf/
-	VF5DtNrJCab4mghVsK6qGP48PaElHP0ekm9fHY6+kC5EkAbjmIwnz8/GeRmZIwEcI2Vmtdzhn4q
-	VmkYEvXI7szvWA3hD2Af99Css63E9WuSGVwCEhwEiXyE9XWiWFiZJ2kGVfugOSAOLLY5H6bCViB
-	Uo62EIzS70PAeiWhsE99amdclApsg3F6obAOfnyMjAju530XEyx945Uumc2G9fa1cnmwPsUOTrP
-	GURXUdno1b42oVzLeAg==
-X-Google-Smtp-Source: AGHT+IGNtpnSkf4gNDwpSxa0SIKRTbgjTsBXoMDDHRiNfN4LWzIaTn/lePlLMopE8K+QB6yfvM7TFg==
-X-Received: by 2002:a17:902:f607:b0:250:999f:31c6 with SMTP id d9443c01a7336-25170c414edmr50925805ad.32.1757243572995;
-        Sun, 07 Sep 2025 04:12:52 -0700 (PDT)
-Received: from danascape.. ([101.0.63.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b168157b6sm143580925ad.13.2025.09.07.04.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 04:12:52 -0700 (PDT)
-From: Saalim Quadri <danascape@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Saalim Quadri <danascape@gmail.com>
-Subject: [PATCH v3 RESEND] HID: Xinmeng: Add driver for Xinmeng M71 Keyboard
-Date: Sun,  7 Sep 2025 16:42:46 +0530
-Message-Id: <20250907111246.9733-1-danascape@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=D4xHjqlMS+DEiA8wz+/XQo2KEWTde7fbxo5bGymj5PE=;
+        b=fHNyZDtlzEJMdJKylS5MZcv+RBl/unTViUceD8KJTrCNGLlGDy+RSYqKEsS1r0SZ1b
+         85+QQoWp+Agh0eaVadDKge36nEYJd1oCCLmCBpolcOuetgOC1NxjlCLrVcqBQsgEXuYH
+         EKCRC9toETPIshB1F8+9LtR/KO0M3Lqctu2rPm20uhdrzDfwqnXkIzKsjolXeqGZGVVD
+         T2Ny3ohLi1cWsEhgYJ5JRQLHT/AlaXH/af6/d3/0qI4KPbsWxVdWlitFJ/9t7DVHftlG
+         XjUegjdxMKdv8pQIepYzd0gltOi0wtbu8K7KzagWz0Y9+EyDCYCicxWmyUQV/nv4SuRL
+         PTFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5JgtdLWRZ1sH1dSfFVMcIwM6X6MgdKNQe5c6Ypw+67TdNZTJY9YYw5JhA9cFi1sQZMWyCCIPwBg9Crctl@vger.kernel.org, AJvYcCVVN7EnMSG3FUQpc/7ICVN+wFv6ZvzJUAD8kDDeiG1RVKtoldXZePtWRGjMAzyguaQ/BBEyZ+7uwMFq@vger.kernel.org, AJvYcCXdkAA2eiWsHunvfNJDRjDhG4pbBkAYQawEzYtOxD6uJwwVlFk2N1mNAdZXZ56PoJ1LLvbbUxTyBlWg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIGVN5kyCdtH2Zh6mBW7m7Ys0O1Z6+2jeonWigr4pvIEn3XHGi
+	s+6yrgV+NQdqG+Cr9H5BAmQtxjnVAm74UPXwz9EtENw/ctA2a43nsuD8lHVeyPDH9cbg6hMZhxZ
+	afb6qnSUOASx0fDTG/0ddpPrDnODDiDw=
+X-Gm-Gg: ASbGnctnkm1AnR0AZ15x3fiD7SofJ9FGm3D2wYOuCDNiyiMdFx17vOnKZbXIGkWuDID
+	lvNjHzwzuTrQFF0Hw3Yu70uzJRJ6n7lqZ952WHv3OTDiNmi4Q6F26y2wAMO6tcdxT2QtzIuG8z7
+	uPFa/GLTy6pjcqg/KBltjreGzDyohhvNeqqZJU1nmxC9qNMjNnGxKemERmfQpXnbRTMEZ0FhT3f
+	d2dcar2DemoFnF+ePOBmapG/66r95qgqHs2726zDw==
+X-Google-Smtp-Source: AGHT+IGBICOnHMUscRYyMjgmEnWs/ay+hZBpXEkd0FWdcwPImYWwYupR5A1QSQyYlH4KB6rrI3rwJxgErtcEXnG/GDw=
+X-Received: by 2002:a05:6871:7382:b0:314:b6a6:6873 with SMTP id
+ 586e51a60fabf-32265a22294mr1678655fac.41.1757243626272; Sun, 07 Sep 2025
+ 04:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250906-tlv493d-sensor-v6_16-rc5-v6-0-b1a62d968353@gmail.com>
+ <20250906-tlv493d-sensor-v6_16-rc5-v6-1-b1a62d968353@gmail.com> <20250907103617.5400c1bb@jic23-huawei>
+In-Reply-To: <20250907103617.5400c1bb@jic23-huawei>
+From: Dixit Parmar <dixitparmar19@gmail.com>
+Date: Sun, 7 Sep 2025 16:43:34 +0530
+X-Gm-Features: Ac12FXweiy_J3XV4pBd5moNjn7MHCtWRLEMuCQqMqElP7HplfqY2zkgHY5Y3DwY
+Message-ID: <CAFmh=S0AP4_9H8CiSp3oAciNF=FGMGp4bFz6QEJNFGqwdvj65w@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: iio: magnetometer: Infineon TLV493D
+ 3D Magnetic sensor
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In this driver, the battery is probed, and it checks the capacity
-and charging status of the battery
-
-Signed-off-by: Saalim Quadri <danascape@gmail.com>
----
-v2 -> v3:
-	Match lore email to the driver
-	assign ret val while probing battery
-v1 -> v2: Update Kconfig paragraph :/
-
- drivers/hid/Kconfig       |  12 +++
- drivers/hid/Makefile      |   1 +
- drivers/hid/hid-ids.h     |   3 +
- drivers/hid/hid-xinmeng.c | 170 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 186 insertions(+)
- create mode 100644 drivers/hid/hid-xinmeng.c
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 43859fc75747..1cc61ca63682 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -536,6 +536,18 @@ config HID_XIAOMI
- 	  Adds support for side buttons of Xiaomi Mi Dual Mode Wireless
- 	  Mouse Silent Edition.
- 
-+config HID_XINMENG
-+	tristate "Xinmeng Keyboards"
-+	depends on USB_HID
-+	help
-+		Support for Xinmeng Keyboard.
-+
-+		Say Y here if you have a Xinmeng M71 Keyboard
-+		and want to be able to read its battery capacity.
-+
-+		To compile this driver as a module, choose M here: the
-+		module will be called hid-xinmeng.
-+
- config HID_GYRATION
- 	tristate "Gyration remote control"
- 	help
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index 10ae5dedbd84..e5c9d1276138 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_HID_UDRAW_PS3)	+= hid-udraw-ps3.o
- obj-$(CONFIG_HID_UNIVERSAL_PIDFF)	+= hid-universal-pidff.o
- obj-$(CONFIG_HID_LED)		+= hid-led.o
- obj-$(CONFIG_HID_XIAOMI)	+= hid-xiaomi.o
-+obj-$(CONFIG_HID_XINMENG)	+= hid-xinmeng.o
- obj-$(CONFIG_HID_XINMO)		+= hid-xinmo.o
- obj-$(CONFIG_HID_ZEROPLUS)	+= hid-zpff.o
- obj-$(CONFIG_HID_ZYDACRON)	+= hid-zydacron.o
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index e3fb4e2fe911..f649549bd58c 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1471,6 +1471,9 @@
- #define USB_DEVICE_ID_XIN_MO_DUAL_ARCADE	0x05e1
- #define USB_DEVICE_ID_THT_2P_ARCADE		0x75e1
- 
-+#define USB_VENDOR_ID_XINMENG   0x3554
-+#define USB_DEVICE_ID_XINMENG_M71_RECEIVER  0xfa09
-+
- #define USB_VENDOR_ID_XIROKU		0x1477
- #define USB_DEVICE_ID_XIROKU_SPX	0x1006
- #define USB_DEVICE_ID_XIROKU_MPX	0x1007
-diff --git a/drivers/hid/hid-xinmeng.c b/drivers/hid/hid-xinmeng.c
-new file mode 100644
-index 000000000000..a4f5b181bca4
---- /dev/null
-+++ b/drivers/hid/hid-xinmeng.c
-@@ -0,0 +1,170 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *  HID driver for Xinmeng M71 Keyboard.
-+ *
-+ *  Copyright (c) 2025 Saalim Quadri <danascape@gmail.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/hid.h>
-+#include <linux/module.h>
-+#include <linux/usb.h>
-+
-+#include "hid-ids.h"
-+
-+#define	BATTERY_REPORT_ID	(0x13)
-+
-+struct xinmeng_drvdata {
-+	struct hid_device *hdev;
-+	bool online;
-+
-+	struct power_supply *battery;
-+	struct power_supply_desc battery_desc;
-+	u8 battery_capacity;
-+	bool battery_charging;
-+};
-+
-+static enum power_supply_property xinmeng_battery_props[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_CAPACITY,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_ONLINE
-+};
-+
-+static int xinmeng_battery_get_property(struct power_supply *psy,
-+					enum power_supply_property psp,
-+					union power_supply_propval *val)
-+{
-+	struct xinmeng_drvdata *drv_data = power_supply_get_drvdata(psy);
-+	int ret = 0;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		val->intval = 1;
-+		break;
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		val->intval = drv_data->online;
-+		break;
-+	case POWER_SUPPLY_PROP_STATUS:
-+		if (drv_data->online)
-+			val->intval = drv_data->battery_charging ?
-+					POWER_SUPPLY_STATUS_CHARGING :
-+					POWER_SUPPLY_STATUS_DISCHARGING;
-+		else
-+			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-+		break;
-+	case POWER_SUPPLY_PROP_CAPACITY:
-+		val->intval = drv_data->battery_capacity;
-+		break;
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		val->strval = drv_data->hdev->name;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+	return ret;
-+}
-+
-+static int xinmeng_battery_probe(struct hid_device *hdev)
-+{
-+	struct xinmeng_drvdata *drv_data = hid_get_drvdata(hdev);
-+	struct power_supply_config pscfg = { .drv_data = drv_data };
-+	int ret = 0;
-+
-+	drv_data->online = false;
-+	drv_data->battery_capacity = 0;
-+
-+	drv_data->battery_desc.name = "xinmeng-m71-battery";
-+	drv_data->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
-+	drv_data->battery_desc.properties = xinmeng_battery_props;
-+	drv_data->battery_desc.num_properties = ARRAY_SIZE(xinmeng_battery_props);
-+	drv_data->battery_desc.get_property = xinmeng_battery_get_property;
-+
-+	drv_data->battery = devm_power_supply_register(&hdev->dev,
-+						       &drv_data->battery_desc, &pscfg);
-+
-+	if (IS_ERR(drv_data->battery)) {
-+		ret = PTR_ERR(drv_data->battery);
-+		drv_data->battery = NULL;
-+		hid_err(hdev, "Unable to register battery device\n");
-+		return ret;
-+	}
-+
-+	power_supply_powers(drv_data->battery, &hdev->dev);
-+
-+	return ret;
-+}
-+
-+static int xinmeng_probe(struct hid_device *hdev, const struct hid_device_id *id)
-+{
-+	int ret;
-+	struct xinmeng_drvdata *drv_data;
-+	struct usb_interface *usbif;
-+
-+	if (!hid_is_usb(hdev))
-+		return -EINVAL;
-+
-+	usbif = to_usb_interface(hdev->dev.parent);
-+
-+	drv_data = devm_kzalloc(&hdev->dev, sizeof(*drv_data), GFP_KERNEL);
-+	if (!drv_data)
-+		return -ENOMEM;
-+
-+	hid_set_drvdata(hdev, drv_data);
-+	drv_data->hdev = hdev;
-+
-+	ret = hid_parse(hdev);
-+	if (ret)
-+		return ret;
-+
-+	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-+	if (ret)
-+		return ret;
-+
-+	if (usbif->cur_altsetting->desc.bInterfaceNumber == 1) {
-+		ret = xinmeng_battery_probe(hdev);
-+		if (ret < 0) {
-+			hid_err(hdev, "Xinmeng hid battery_probe failed: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int xinmeng_raw_event(struct hid_device *hdev,
-+				 struct hid_report *report, u8 *data, int size)
-+{
-+	struct xinmeng_drvdata *drv_data = hid_get_drvdata(hdev);
-+
-+	if (drv_data->battery && data[0] == BATTERY_REPORT_ID) {
-+		u8 charging_status = data[7];
-+		bool is_charging = (charging_status == 0x11 || charging_status == 0x10);
-+
-+		drv_data->battery_capacity = data[6];
-+		drv_data->battery_charging = is_charging;
-+		drv_data->online = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct hid_device_id xinmeng_devices[] = {
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_XINMENG, USB_DEVICE_ID_XINMENG_M71_RECEIVER) },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(hid, xinmeng_devices);
-+
-+static struct hid_driver xinmeng_driver = {
-+	.name = "xinmeng",
-+	.id_table = xinmeng_devices,
-+	.probe = xinmeng_probe,
-+	.raw_event = xinmeng_raw_event
-+};
-+module_hid_driver(xinmeng_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("HID driver for Xinmeng keyboards");
-+MODULE_AUTHOR("Saalim Quadri <danascape@gmail.com>");
--- 
-2.34.1
-
+> Krzysztof gave an RB on version 3.  Please make sure to pick up such tags.
+>
+Indeed, RB was given by Krzystof on the V3 patch but this patch got
+modified for MAINTAINERS file changes which were not part of V3.
+Considering that I thought it should be removed. I have added this in
+the cover letter change logs as well. Is this correct understanding?
+> This time I'll apply it by hand if nothing else comes up.
+Thanks,
+Dixit
 
