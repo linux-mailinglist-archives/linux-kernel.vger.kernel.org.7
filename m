@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-804862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8982AB48107
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:29:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CA8B48108
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88949189B3C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:29:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D478B7A7D01
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65E2253A0;
-	Sun,  7 Sep 2025 22:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323EF223DEC;
+	Sun,  7 Sep 2025 22:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9DKlGfe"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFWfvdOm"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5877120F08E;
-	Sun,  7 Sep 2025 22:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5066420F08E;
+	Sun,  7 Sep 2025 22:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757284130; cv=none; b=Rp4YvMEsYholotQwj9kt7feB/95yX31aAoqv1GMEB1V8q4O1YDVVyTQdpCy+SCRiFbocVVdH0E7rVfu+AUxF61JrKUOs1hxLqIEhVooJjzfY4f547bZipzN8/jB4fCo8YsnrawyYMRhT68SHI8dbN3VM+2UCRf/+ijRZyB85yUo=
+	t=1757284181; cv=none; b=ucUhAgpBLLPJ9VcL41iZdoUCnDKb2+kNSPjg5x2tmAySFr+aV66gTFPwjglrX6AJeW23nomXeWYgBe04IjZfLiyk9QB/naZKPjPYDIeZVUE2nNX6ygOhvL2B57SHriytiHpQm7xdr38C5mOa2cqwlR3zi75Ljl4AzPFQLYSCTvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757284130; c=relaxed/simple;
-	bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
+	s=arc-20240116; t=1757284181; c=relaxed/simple;
+	bh=CSBO26MzWvBbOHeZQly5SGEViHpBQheuuUdPvZ2z0YU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AW8JjboZf5Vu3UgpJoM9NXpkm8DLY7LZKmhrF1+THCoh2LoSD6rEhuT/kvmZsqTIuJNEcpE5Hzg1/0jl+NClpzCr7kGWTVYlARc9O0lundjy85hXqRsd6l5J8kHIYOsCMB+mC+DXcEHqzrRiuQsPZ7Jhj9yqr6+mLB6pVRAruEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9DKlGfe; arc=none smtp.client-ip=209.85.214.172
+	 To:Cc:Content-Type; b=RSiGaBuuVNyUxJuxrIsnCXc81HyvvnHYknlAB9pgowVdKOXs52DNEWZ0o4SjYIcnPVNZAzdhGBXJ4n8TSjNyZxk4Dl0qwrl8EB6ALDrkrDskwWdAGgY/httlNDn4AHulmFJ1qr8gqeiZaNYawcj4Xs9fxZ4pHsHV5qGk2iL4fD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFWfvdOm; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b157ba91bso9253985ad.3;
-        Sun, 07 Sep 2025 15:28:48 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24cb6c57a16so6904025ad.2;
+        Sun, 07 Sep 2025 15:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757284128; x=1757888928; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757284180; x=1757888980; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
-        b=X9DKlGfe6D3yfoYSrESOS2OJcxnHnE7DerGn+pxyurmuaI9FtdcqQzjBXQKdFC7/pt
-         +BO41ly7YxVMZmOe1IxUYcN00IEEf0q89yG8ty5bI9yvA2Pfh/EijMSWRgl26bnU83YB
-         yUYlXacwcG5sukJHEVHBeobtP0oZc9qQ6PfHGrFwT6QoH3B3IeOge7ax8SxnWtRtVhcq
-         2duWmBB4m8SbUtmyKvcIvt1rYp/aQkmjmt5xIQIp1FUDxnYdrv/b2qg5bOiTmQpOO2U/
-         UIhz/hc06tHPy69/f3hrf8pvEn3SuPSoHhTY1a2gLgJgtbqg22p6ZPOubbnYLlz7b5DT
-         GSew==
+        bh=CSBO26MzWvBbOHeZQly5SGEViHpBQheuuUdPvZ2z0YU=;
+        b=BFWfvdOmkAsE7jk4oezwlPFuMXbFjyDCH5Oio0EAQbCVPv54Kr4jxbt+KzjktPsvcN
+         YxY9xLb21Bd3en/IqU7/MDSXelNgVGgk4EcwcPegtzyKS172bDd3mkQHJj2mqvXg3SV6
+         qlI5Zd9r6tlP9y1F5tybsdTnktl1s6d33xK9fuW9Po4dHADj5NH9gptQQovpb8K2iGoj
+         0FMUH2mY498WEZjmFf5HyLoksyk87w6HOSfsL4p0k9P+n12fjQcAhWyg/Fr7rOXnABn/
+         BTIBWsOB17c6/tV1nORbSUWeXz9CpSdOk7/SetvAo3jRfGFJ0Ms9kZiNb5lg2Msg8+F7
+         Y9Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757284128; x=1757888928;
+        d=1e100.net; s=20230601; t=1757284180; x=1757888980;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jdyp87VeYRanIqFmUw6vy7xC6GuBA2UsO0EJfl07arA=;
-        b=Vul6NVF2LtLcx1MrPSh+BjtdUFfmhAwb+b8PEQbFzOkKv9A5JTI8xsbKIdkxBQtjcb
-         lDne3/WCjQ2DiMY6gW+fFpOcOJnwR6IJrQxr7oGek8t7wU4gCtE/shsQxRgM/ex5ew9a
-         s7Yw/bwsY/FGAq96CwQSfZgSW0/sCw+QYTHS/SMnv8yrnqebtvtCEJknfy/2hE7SFkGc
-         nPIfH+yKy9eN/sCXwOh6CSPmKhClnacfdnQ5resvws2ZeKNCtQyQJK3QUJBC09MdUWEM
-         2+JQSbdzpRWBqb2gG2FbAGVu+IM9pDNf6DlzuZWs2e6QtsEKBYiae7I7ZeLcaUMtLuZ3
-         BjtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWomIjEh5ejq+rRSOhc+w88pblNsLRFLX8mD2nxZqmXd0J3wwUE2n3kugvj8A9KFLJkaBwZEu+S0jHs7vU=@vger.kernel.org, AJvYcCX/gb6LtvH9m1BDTiosjeC2JcM67xPDX7Vu6vH73RvROQGZURNBnlj3w+4NB4ODmZkDTf2p1e0dypBG/fnz/DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4GvHNuCar0C7TUL5wi2LrnvLmwKctnXq/jWW8gVqJu25H+RcH
-	/oScdQcMB2TOFbhkAsyF5t/ylMrjJNnu79L8ZiWCVIPwcbrhUQXW/d6ObHgvk2FR1p9Km1Go2rh
-	eOwcz4XeGcNyWKYcF4gDOgz+irnKYFC0=
-X-Gm-Gg: ASbGncsMWNWU9wsvZNQfkj+AJD0FCidev9ABrreTCaxJSweu5yXeeTSv2rmhC7GmDW2
-	EDJ/iAFuMJYtKYMYpbPAQoFR1Aaa5pK6tqEHVLNoj3yO5RqBTiO7prEMwBmEuG9Y8ppuYkjrw5r
-	tELdedwW+gLbp6w9LLC9Twx7U1vY6fUEtJXvdAy7zIX7WEKl90WzhIXGiNKmzOsloGeLYEA3FoH
-	eQmQEzLNOW/W5et9eYO9cfG/MYwxLURJZThnaq26qaLOkiSpA6nXRCcn/mllyCAf9ehUU6ETpGn
-	orkcm2BcTfQWMQko+JX1T/1I3Vfvx1VuzxDH
-X-Google-Smtp-Source: AGHT+IHeHzk6udhwz4fney38x7L6dMwuOcobxknukdIVizR5PEcm6WA8GQDH++2EkukwFu5mAoMUqZO+VQS4BnHMC08=
-X-Received: by 2002:a17:90b:17d1:b0:32b:4c51:628a with SMTP id
- 98e67ed59e1d1-32d43fb18dfmr4583886a91.8.1757284127629; Sun, 07 Sep 2025
- 15:28:47 -0700 (PDT)
+        bh=CSBO26MzWvBbOHeZQly5SGEViHpBQheuuUdPvZ2z0YU=;
+        b=PA78NJZzDNpcGq2vUxK07hIn5AUHyhjILGITK4T7JL9WaWqUYfCGwbZO6e+3FmfzNB
+         WIDCoBB3F3w0F1okbLiL42oiiHdtGYxJv8co1pIRdiO2b6YJudh5bZ4tBIYMyZ2FAYdd
+         xDtMoJzFuLMGIs6idDLFEWXXgGB/8zp/mb3MActnpujRSVwa4kd3oM9vtBUYxyHWduHV
+         1xE0gmxPCvQqcn++gFSXXb1pQ48VVznBcCkxgW71rVGYTg+lBS2v2NSjx9ubc1yn3qf5
+         aQCEsR5+Z05dTc9FTnV/RKwue6qEBV3Ja0nucsUXF1Lfpzlca5h/g3bmLp/h6bPzaTPx
+         k1Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO7+q9qG/b0Hq+xgkrTCAPYdek8l85JP/2U+CLRogL7pnRFUoj3xIx09c+o41Vsrr0JyhfLlmayFCeJwQ=@vger.kernel.org, AJvYcCXhQjapP4T0w4UzYA6r1kTHyC5GwQwfKmHA6jv7EohLSs0210UwBlz9AvKijyJzZl6mQ9sBcirEERVKgC1gA/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJqriH33SCDazcGSJGeUMc8KGQRHyPGajL8spIW2F2k5NNtQIu
+	5yjugnV83cGvceFPCsfCostiTjDaWeLZKB9o8N3cSZLBaxcuKHwSpRH4loxTw6b10airMa0tHAE
+	l+s8TCyDKg2ynS4TfesiUudbROujF7BXNJRXGUQA=
+X-Gm-Gg: ASbGncs58gzl2szYDBZn8I8mo1pkhI9bcQobhPbgYVunyev1oGJEhM7v4hLSrynPeda
+	5jWZnpurR74aFnWMK5o1bU354t70ejz9BY6yxG3E88IOfDlQk/OCIM+CQK+sV24H+UKeiink0hf
+	d2R5q9xZXqJ0C43ldVmkSUEUGIl8y6dJw4wsdBIJ4NEyoTLsHWGUlw4bjeCS7c44dtObOczmXHj
+	67nd1EUJPYQC/5ZaCved9h7+xL2iTvrOrKYH9kblJC/lK4PFrDpwjeyPViLic8n9cAgDKvPm8qi
+	dIawM5rLf1ogBcKH7o9msnCFqfpnzDOg7h53
+X-Google-Smtp-Source: AGHT+IHmaxcQHVJWKA3/eYS2zGDb5C1g+sVPs2hAm+EHVCPC76dURhszoKZ5XmqWdssWwb29K1HFjNcmnpupuDGEnmc=
+X-Received: by 2002:a17:902:ce83:b0:24c:b881:201 with SMTP id
+ d9443c01a7336-251757ba959mr44505205ad.9.1757284179564; Sun, 07 Sep 2025
+ 15:29:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <DCK76G2JH58W.1QPN6YHTEOABB@kernel.org>
-In-Reply-To: <DCK76G2JH58W.1QPN6YHTEOABB@kernel.org>
+References: <20250818191034.523381-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250818191034.523381-1-shankari.ak0208@gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 8 Sep 2025 00:28:35 +0200
-X-Gm-Features: AS18NWCH5CQzhPsEphE142YdtjGl1wIs9cw6MvXKmijurS1ozoICewrpPeXHPU8
-Message-ID: <CANiq72kNpLWnzW00iHMQ4Pvk11SuktBYA3=TLGyQ7WnkDy9U2Q@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust ALLOC & DMA for v6.18
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+Date: Mon, 8 Sep 2025 00:29:26 +0200
+X-Gm-Features: AS18NWBFRH7WDrNQsts2w13-f3ht6ZYxQWYZCeA0iSIU1_J2bW-4BINRBieZ0D8
+Message-ID: <CANiq72kswZD=2fAWhzOPAzPY_H2CMtKnZSL664Q5jy6WvwcWwA@mail.gmail.com>
+Subject: Re: [PATCH] rust: sync: Update ARef and AlwaysRefCounted imports from sync::aref
+To: Shankari Anand <shankari.ak0208@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 7:38=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
+On Mon, Aug 18, 2025 at 9:11=E2=80=AFPM Shankari Anand
+<shankari.ak0208@gmail.com> wrote:
 >
-> Please pull the following ALLOC & DMA changes.
+> Update the in-file reference of sync/aref.rs to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Fixes: 07dad44aa9a93 ("rust: kernel: move ARef and AlwaysRefCounted to sy=
+nc::aref")
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 
-Merged into `rust-next` -- thanks for the summary and sending it early!
+Applied to `rust-next` -- thanks everyone!
+
+(without the Fixes tag, as discussed)
 
 Cheers,
 Miguel
