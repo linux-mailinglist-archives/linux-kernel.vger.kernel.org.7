@@ -1,93 +1,151 @@
-Return-Path: <linux-kernel+bounces-804623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B23B47A8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4DEB47A90
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB6E77B11EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2981189A72E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCC925B1FF;
-	Sun,  7 Sep 2025 10:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E307F25B30D;
+	Sun,  7 Sep 2025 10:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEvy6vH9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE0EmkfQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7182236EE;
-	Sun,  7 Sep 2025 10:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C922C339;
+	Sun,  7 Sep 2025 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757242610; cv=none; b=jNpclLXYB/orjismA0vpHIeOubjjKKOUqDusOs2Te5W6QfWJn5YcRKuWrt9q/DYMfyU01BYaoWrmtOlFiItd5CgCjgDrWbJOVCnjh1kymOCBAWRrVltA+XJWONjMiGktyF7z52U6MJTxkjcVk1ZyRZgNX0eqKfduxOcCYHWDaNk=
+	t=1757242628; cv=none; b=QFgAasZ5Vor/YjUlBBQ0cfFaLWCGnI8RBRBxrNWdNwIOgSkBbG49AhQKH6kY/AslYlxrrOMytboin4/gn+IDGsMVg3TmwFn+mdNjWQRB6dS5w7nm4EJ7p4YSzlDom/UxF3+jJw5CH4vkdLJQc/Rcto9p+KqXoQnaCF8fF5yqVBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757242610; c=relaxed/simple;
-	bh=YEMCvkONpXNQwt8L2SY5goheIFQ2XpilgJ3VsHsKRM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rPbsY4KjG5+S1h+IUZQpdeiK0PjGW/jLtU7HoFn9NXNsHXfB4t00Xpb+2ygY9gqsbA2JGkyQ7T35Hebd9kDiAUzorviQzUBTFXXzQnYLbJGhTvol+ho2vPlJKNLtdzqOwcnxNP2NWTy6ecs3bDsk1FnDXbRXs8LHHdKyqesWPpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEvy6vH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F890C4CEF0;
-	Sun,  7 Sep 2025 10:56:44 +0000 (UTC)
+	s=arc-20240116; t=1757242628; c=relaxed/simple;
+	bh=0bTidbw5nA2a03ZH7VdTr5JoBhXdmwIUfnihBPnQy/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BUUpiCFTAV0fzmoljtIU2QY6+3Y8wWgTy3d+Jwvtsld2LuUWI1d1I+hTcqTx7IoJPv30mBHqMlymGasGDbPJR0VbuiT9kHfIeH5Tl8YofT4tnAfNK+5ntbaLpo28pxYcTV+FGKYJ1ZmZu6eXT/LqNOE+GqeCAgSxD+wJaFF+NhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE0EmkfQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529E9C4CEF0;
+	Sun,  7 Sep 2025 10:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757242609;
-	bh=YEMCvkONpXNQwt8L2SY5goheIFQ2XpilgJ3VsHsKRM4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZEvy6vH9ciHb+GAQw9K9OFuug6LaBX5yGRoz/nivSMii1yBxlrZeJ4Hss2yVDUscg
-	 YNIK9Rz4tWS3jDpY/GfOD2SCOdm3DmI0dXtvVeGmQClfk8E1De+LhHXE34VLQEHzpg
-	 U11SWWk1xEnMfyrrt3vdqmdmCSaiG6AzvuCRdKQuRKu5wSUj/5HDifDPQGN3zfwRWW
-	 Hf5ylHYnbvKBMHlZ2CVaKJ4o/j8VMQZZFaQBXhbivgUMm30LyBnqbsofA+3w3jP7YP
-	 4Uja0WvXXOvFiWGn3EXIEvKORlhzrkPR9t3mzGt8zh5mqdUehj1hGI1Juk3PduCc9e
-	 5FbBochy7p6fA==
-Date: Sun, 7 Sep 2025 11:56:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
-Subject: Re: [PATCH v3 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1
- ADC Family
-Message-ID: <20250907115638.308729ef@jic23-huawei>
-In-Reply-To: <aLsclc2WHsbR1jfa@smile.fi.intel.com>
-References: <cover.1757001160.git.Jonathan.Santos@analog.com>
-	<6228c10d731b6946a68e1c3c95643065cc81329a.1757001160.git.Jonathan.Santos@analog.com>
-	<aLsclc2WHsbR1jfa@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1757242627;
+	bh=0bTidbw5nA2a03ZH7VdTr5JoBhXdmwIUfnihBPnQy/M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IE0EmkfQrmvGWQuJ08DPdDPv9pPZ7nF9mAFH+AVMZBnD5Tv/rU7HRWBcb9JOT0Sd6
+	 bpoGAS5tureyccfRaGXd0a0C9II2eXa8011dPsI1sgteIk1sOoy7Z71y0FlsZTyktB
+	 6ygN6+59b6euPKsB22a7wQZqMrs0eI3p2/6p0z0AHcFJUt7lRPbyPZRxuXUa27IyAA
+	 B0DOTIW6NMjRlEUFNkXccID1eQgji61O8Mtb096oXeYdkZrUrz5S/eDPXf6IK4Zf6g
+	 ooDIQeZ3DR3s46GtzleaGVRo2/OCn5a6qPeQhKP27a2Kxn+xG1C0905/qzoHCwCS7T
+	 /UtilIPEpkAQw==
+Date: Sun, 7 Sep 2025 12:57:04 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.17-rc5
+Message-ID: <aL1lACUHl9td3dtH@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6Cd4VSEnCDVVGApV"
+Content-Disposition: inline
 
 
-> > +static void ad7768_fill_scale_tbl(struct iio_dev *dev)
-> > +{
-> > +	struct ad7768_state *st =3D iio_priv(dev);
-> > +	const struct iio_scan_type *scan_type;
-> > +	int val, val2, tmp0, tmp1, i;
-> > +	struct u64_fract fract;
-> > +	unsigned long n, d;
-> > +	u64 tmp2;
-> > +
-> > +	scan_type =3D iio_get_current_scan_type(dev, &dev->channels[0]); =20
->=20
-> Is it usual patter in IIO? Otherwise it can be written as
->=20
-> 	scan_type =3D iio_get_current_scan_type(dev, dev->channels);
+--6Cd4VSEnCDVVGApV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=46rom a semantic / readability point of view I'd keep it referencing
-the first element.  We are querying the scan type of one specific
-channel, rather than the array that is behind dev->channels.
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
->=20
-> > +	if (scan_type->sign =3D=3D 's')
-> > +		val2 =3D scan_type->realbits - 1;
-> > +	else
-> > +		val2 =3D scan_type->realbits; =20
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc5
+
+for you to fetch changes up to d035b4baebfc5112b128b66cafd45d2522a9c8f1:
+
+  Merge tag 'i2c-host-fixes-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-09-06 10:17:35 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.17-rc5
+
+- i801: drop superfluous WDT entry for Birch
+- rtl9300:
+  - fix channel number check in probe
+  - check data length boundaries in xfer
+  - drop broken SMBus quick operation
+
+----------------------------------------------------------------
+Chiasheng Lee (1):
+      i2c: i801: Hide Intel Birch Stream SoC TCO WDT
+
+Jonas Jelonek (3):
+      i2c: rtl9300: fix channel number bound check
+      i2c: rtl9300: ensure data length is within supported range
+      i2c: rtl9300: remove broken SMBus Quick operation support
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Chris Packham (6):
+      (Rev.) i2c: rtl9300: remove broken SMBus Quick operation support
+      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
+      (Rev.) i2c: rtl9300: ensure data length is within supported range
+      (Test) i2c: rtl9300: ensure data length is within supported range
+      (Rev.) i2c: rtl9300: fix channel number bound check
+      (Test) i2c: rtl9300: fix channel number bound check
+
+Jarkko Nikula (1):
+      (Rev.) i2c: i801: Hide Intel Birch Stream SoC TCO WDT
+
+Markus Stockhausen (3):
+      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
+      (Test) i2c: rtl9300: ensure data length is within supported range
+      (Test) i2c: rtl9300: fix channel number bound check
+
+Mika Westerberg (1):
+      (Rev.) i2c: i801: Hide Intel Birch Stream SoC TCO WDT
+
+Sven Eckelmann (3):
+      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
+      (Test) i2c: rtl9300: ensure data length is within supported range
+      (Test) i2c: rtl9300: fix channel number bound check
+
+ drivers/i2c/busses/i2c-i801.c    |  2 +-
+ drivers/i2c/busses/i2c-rtl9300.c | 22 ++++++++--------------
+ 2 files changed, 9 insertions(+), 15 deletions(-)
+
+--6Cd4VSEnCDVVGApV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi9ZP8ACgkQFA3kzBSg
+KbZ7qBAAmrpi2bptRxtJzobl22uShR5zzlRjg4qUUeaoEq+qkkudXrd8e7wxkDY9
+auM8e7QbhprNSroUKAhkQWEv/g/GCMd57kTJAylCGXKGPCmtT94Ru8z65WuhVfYb
+xz00qrMj5Gws9d9mAeSCFwGUuU0bG3rFGr9SWLuEoq6KN68o/Iq+mvyukTn4BQ5k
+k7NBF58QlbMbxaN7b7MGM8aJ0HFQNFMGH+smmQocRP9HJYiA6yOf2eOM+IZV/Jy4
+XvBcxg5POj31Wne+w8gJPq9k4yUUqHQ6jV/CdukOp+EIEc2IZ69V5gJVN3/24KrY
+pa37KP6BeUSkIOY2kD/pyFf44yUWohh5xrIabzUuUkLej/foz2hAmFa0NVacEItx
+VdlW+nXzUfnE5wM8ElPIS+Zby9NT/w7c53aZ67lCDZwueDtGOI78Do6+prvSZO6N
+OpqurDMu7q/Sk1hQzd2jIv3DKWWws9ieaGGHCcfWoQCIAmDzE+vflVU0yEkm1xk3
+NlQWyzxl48Et0F+Ly3uIBEUu5eDCw27P6tz+pcKBqJw7vxRUDdAZOIr/VrvoXbuM
+CYW8ea/Usjl+7jbU756jQLEoiX4sjwYj+sKnABxLM9T2xILE/AJR1uqLiEeng2n7
+L0xam5E5NyR/9YdZF1iQ1lp0lvUznp5sQo6+2H5gbcGyfGT7X6A=
+=xF4z
+-----END PGP SIGNATURE-----
+
+--6Cd4VSEnCDVVGApV--
 
