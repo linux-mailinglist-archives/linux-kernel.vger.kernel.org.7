@@ -1,68 +1,123 @@
-Return-Path: <linux-kernel+bounces-804802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65552B47E17
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5056B47E30
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1066189E33C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E6A189F248
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B25020E005;
-	Sun,  7 Sep 2025 20:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0CE20E005;
+	Sun,  7 Sep 2025 20:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VfiTznfO"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nxHgVkWu"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72A1D88D0
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 20:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6672A1B424F;
+	Sun,  7 Sep 2025 20:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757276399; cv=none; b=CKttfGVz9GIeot172O/6pPpfUBPCkgihOATueegFzu9efAEVsWLuYAyPzKwKytqDWZ7FkCQ8HihJweoZV+xToEJfijI9AHQsQhAw3C6cTEKezjfeMFEyD1CEVffTus8gfm0k6eU148O6wEw9XlYuW0Z04/EaXZ8/XG791n5Eb10=
+	t=1757276474; cv=none; b=BO+GJZmHlNnrzbYAiJv1689AEzTtRsYGxz8nZNA64JderKBkwi75BSYJ6IBhDOZuvD5tq+DElIX4JzhilTwX8r9oZAe3FmLk6OZrpjmEgYnbx3nMXgrhFQtr0vbVYYkRskZBahUXxI/I1a3vRxHIK5GIfz1tr8sf0KH9ypi2TIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757276399; c=relaxed/simple;
-	bh=tbNO7YgL8Ap35tuGWrY12HSrQ97vZE6MU7VTvP2cjA4=;
+	s=arc-20240116; t=1757276474; c=relaxed/simple;
+	bh=eokpR0IH5Z2KYJSiEcoNGBjnXwNir2e3O3BQrsQuL1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvvuCrIueo6evWO+Du5NLlxv/M+42GtSpik72zN/TbK6dY1l/9gl72+gP6uNvZpQJO+/4vyUYdnhJckpUAo1utZKKrHx6h1+FwNhBok2rZanMhVwCiEdCwEwSAYv0Hsgqj+ygopQOs3jmldtHT5PCy7X3GilywU9dcj7+ZD+jIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VfiTznfO; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=tbNO
-	7YgL8Ap35tuGWrY12HSrQ97vZE6MU7VTvP2cjA4=; b=VfiTznfOA1ckkoraiCXo
-	syOJbOCkqA9SV1J3qxWFhUuqFVtbrqT9FdsX4+3CyfpRrTFSw6B4RRRbUZ6KlBMl
-	hHiueYr36mW+WWq4OhKmAZQTG3aSVj8FzmLXEtUD2UvhZfMwdseAQD3yJdwGY/8z
-	Ze6ze6dG3ZMLi7UEbYLNlsrCRQJjL+mtbYoDehi34lWM3Ny2SDP+wwvcckTKyXeO
-	Z/87R8DlJthDpaCNGKXhWrcYqEj4ytqEJthl9VulzCR7X+BZ75bNeX/NR3PTT1do
-	mzrwoaxJmVvFpSQIxUmtpiHSOyXCLd9/imwXq70FWzzMmhKdcQKqlATtMUMGQoYw
-	Yw==
-Received: (qmail 575095 invoked from network); 7 Sep 2025 22:19:55 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Sep 2025 22:19:55 +0200
-X-UD-Smtp-Session: l3s3148p1@8+VQyzs+XNsujntE
-Date: Sun, 7 Sep 2025 22:19:55 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Degao Lan <landegao@sina.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: fix comment typo in i2c.h
-Message-ID: <aL3o6w9pjxhZxcnV@ninjato>
-References: <20250907140111.40925-1-landegao@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBcL/nesbjGj0yul4tgLAyPoLkj8ssR4Ss2JYMSq+WPT2aelLoORosPjzxFJCWzg7oSx0erXnVg2/wfHpZIpoaKr8KRlc6/q2AQ9DE82/CH1t8EFO3Re/dpur9CiqHuGiNk6iVxLFryiWxWsb1si4nbuJCZ2a6JNeVowZcfW+Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nxHgVkWu; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E5A4B13E2;
+	Sun,  7 Sep 2025 22:19:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757276399;
+	bh=eokpR0IH5Z2KYJSiEcoNGBjnXwNir2e3O3BQrsQuL1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nxHgVkWuhXFJ/t/wQazH7WtOBOgQRNhMZJWyu1Hhix4EgVg/PhdB7xxB8FJ71u7wV
+	 Yk71wrxLpWDw9ZuERWruYpRZz7qlSjuRx+JKm7/zdKXd+Kl/3js9HNgq32xDd5jEV9
+	 7eIXVEeW5lLuJPRhTZk3k6uS5RptP64iFSbsEvvM=
+Date: Sun, 7 Sep 2025 22:20:49 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 08/10] media: i2c: ov9282: add strobe_source v4l2
+ control
+Message-ID: <20250907202049.GD19568@pendragon.ideasonboard.com>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-8-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250907140111.40925-1-landegao@sina.com>
+In-Reply-To: <20250901-ov9282-flash-strobe-v7-8-d58d5a694afc@linux.dev>
 
-On Sun, Sep 07, 2025 at 10:01:11PM +0800, Degao Lan wrote:
-> There is a typo in comment. We should fix this.
+Hi Richard,
 
-No, 'iff' means 'if and only if'.
+Thank you for the patch.
 
+On Mon, Sep 01, 2025 at 05:05:13PM +0200, Richard Leitner wrote:
+> Add read-only V4L2_CID_FLASH_STROBE_SOURCE control. Its value is fixed
+> to V4L2_FLASH_STROBE_SOURCE_EXTERNAL as the camera sensor triggers the
+> strobe based on its register settings.
+
+I don't think you should implement this control in the sensor driver. It
+should only be implemented in the flash controller driver to select the
+source.
+
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/i2c/ov9282.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index c405e3411daf37cf98d5af3535702f8321394af5..9efc82a1929a76c6fb245e7dbfb5276a133d1c5d 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -1368,11 +1368,12 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	struct v4l2_ctrl_handler *ctrl_hdlr = &ov9282->ctrl_handler;
+>  	const struct ov9282_mode *mode = ov9282->cur_mode;
+>  	struct v4l2_fwnode_device_properties props;
+> +	struct v4l2_ctrl *ctrl;
+>  	u32 hblank_min;
+>  	u32 lpfr;
+>  	int ret;
+>  
+> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 13);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1443,6 +1444,14 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+>  			  0, 13900, 1, 8);
+>  
+> +	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
+> +				      V4L2_CID_FLASH_STROBE_SOURCE,
+> +				      V4L2_FLASH_STROBE_SOURCE_EXTERNAL,
+> +				      ~(1 << V4L2_FLASH_STROBE_SOURCE_EXTERNAL),
+> +				      V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
+> +	if (ctrl)
+> +		ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+>  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+>  	if (!ret) {
+>  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+
+-- 
+Regards,
+
+Laurent Pinchart
 
