@@ -1,102 +1,132 @@
-Return-Path: <linux-kernel+bounces-804636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FB0B47ACC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3559AB47AEC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4FE3B02D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D600A17E140
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8D726059F;
-	Sun,  7 Sep 2025 11:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91AA261586;
+	Sun,  7 Sep 2025 11:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyR2Vgy0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="gTHys59t";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="ljtiOSqf"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12FF23C4E1;
-	Sun,  7 Sep 2025 11:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDBD25FA3B;
+	Sun,  7 Sep 2025 11:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757244044; cv=none; b=CvJb6/Khqv4d20mLbnxB4l9/Xd2ylZLsdLTHofYjbVaDKtJ+HYqLZ90SRozGmgiO+QSceLS72MyqQOUdVPR90RwbgNWD8LTMF3PBS0Xil7AhkgkslK0tiEdFeWGRw8o5Wpnt37/2F0bqCleut8e1lzjEm5QKeUx+gD+HmM0DUXU=
+	t=1757244192; cv=none; b=ulaFLN4yCi8R8YRk/70sfpsqRCi5yndebbvB8040PucgCTE0vM5qhkU1YZxgAI935vPX9QXilAsspm2N5ROAgIO65bXcNMFMO//Fnlxqqb9rQB2p64xh06VeCdK0gDgDk4cBknfVG8vSp0Lr92bb+uj78t/97pmWJJu91mQ5pBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757244044; c=relaxed/simple;
-	bh=W+tZ1hHLzeFPjFSuytJSHu3noWSm4+BSVcgpYeNBgZA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=R1PCv1T6kTN7TFK3LEXxNLb0IcenIM5BsGhd6TTR7BOFivqb7M/zO9pB4wxy9F+iGfZNgzHshpdEiis0+6ckoH91zTD5j51bnJ87bS7AYHpyDkIs7gg52slKm0VSfatQQxTcqbu9ZNAYZlvI7czbj0FbvMMt9uzf69HNtZWD/Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyR2Vgy0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EA6C4CEF0;
-	Sun,  7 Sep 2025 11:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757244044;
-	bh=W+tZ1hHLzeFPjFSuytJSHu3noWSm4+BSVcgpYeNBgZA=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=CyR2Vgy04n2nbW9wpSWKcV/i+vMXKEaxJ3c+SDwmfsRL4j3sXaErtqsapHs/SM+WS
-	 J9htMLDuR8s1am7b/NGCikkS3MRopo+VpkJn8D0JN86I6kbeKJsiF9EcgA2rQpd5td
-	 ogwuaieksaPl00w6AaJPo981y5mY1+daCYliFyv6dtbqGoXbvjm1Y8zcGw7iGmAC0a
-	 LyUjMF+HOLWyG6ZSA5ML8Yw78Bdk7rxrmxeKpvHQUsJQ05G9zsXz0o62FRZGemM9Cj
-	 G8NFfw9NEgxiVtVsKfXlmHUNOD77zGWhKdsYh0ytwtJ0ud45BIFV4xGdww1+qlCFGh
-	 1m2zLUdz4RSqQ==
+	s=arc-20240116; t=1757244192; c=relaxed/simple;
+	bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMXJ7FbCUbmMhaYXTODefZN1fgiz3vVsRGwjGRvldUGY4yOceXMl4zZXsDTN7sRgRLS4Hr6Ys3IQMg++nY9z8Ukjpznhpr9Po8CKAeeOpGFXXkmsjtdSkFHcGQHN5+jEph+LgAmI1C+n1BsUh5jNBSm63xgOnyq74ezaBMC0PHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=gTHys59t; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=ljtiOSqf; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757244185; bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTHys59taCZyg7omUl4ZHsFebUuKDaN2zPpJrtChsc5wEaI5UrRD7/vXef5h3hxD2
+	 GBW6pHGsbLHws7hF5k71R3XvKAhkLaLIGgeByGP7G1mpSsHaA8/cZ7uEHI/hf+e+KW
+	 z4RaTdj6Tn9ztSk58LPGtjPXdU6LFAXyoHQQEdX63OnHzKqgWfXzdJ8Tpj2zjgK4Te
+	 XW1PYI/aWe7NEvS036upRY3jgY1R9xVoAo3PJhcf3MR/uvLCWjQqhxbHEDIEJCZ3Ur
+	 /hYPeMEVxMvqHnJWGOlV4OvV4tFPeJCA92l+TLMB2jGvkvogedfTEnBICOStCXXbli
+	 Y673alkYSN86Q==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 57932FB04;
+	Sun,  7 Sep 2025 13:23:05 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id dJfWR9cpiJyv; Sun,  7 Sep 2025 13:23:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757244183; bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ljtiOSqfHUULLDkVc0ByzsACZCM9Zm4ajIY1JgU/gmytkFQce6+ZU8hJQyepPgxSx
+	 Ie895IGzPJ1yl5+z6DT7of0XxwDAXpDO9L7niW1yxWU36vXnKrwr3fLylKiO+Et4xX
+	 0zA3zUV3rTjC0H1ltNr8OyXF/szlgAjQfvxG1guQr6CjzsY+WLdO5nYvNEbgA+X4wq
+	 NJRM1v62vIqjUeNIiPtrTDrOOtJaQIExWmR8y8lxLh0qdU9JLRRmVVzwLMzyB/Junf
+	 bZs8QLaMQF5rRjwl20QJRm+Q1i1YSv7ZmNPqr2CPpBL0eQjn2evjLPIEZqvwhAJI8c
+	 WtlXXLc7f+BLQ==
+Date: Sun, 7 Sep 2025 13:23:01 +0200
+From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] drm/panel: visionox-rm69299: Fix clock frequency
+ for SHIFT6mq
+Message-ID: <aL1rFVaVCxIVaLWm@quark2.heme.sigxcpu.org>
+References: <20250906-shift6mq-panel-v2-0-aa5e585d8717@sigxcpu.org>
+ <20250906-shift6mq-panel-v2-1-aa5e585d8717@sigxcpu.org>
+ <ba7y3qcuzkx7hinxraimuem6xnrrfxbj3giz56nq5qbmg76uno@kr6dezsumy2s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 07 Sep 2025 13:20:39 +0200
-Message-Id: <DCMJ0VFOV9L1.33BPI08N4H7WZ@kernel.org>
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>,
- "Christian Schrefl" <chrisi.schrefl@gmail.com>, "Alban Kurti"
- <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!`
- macros
-References: <20250905140534.3328297-1-lossin@kernel.org>
- <aL1lHyhzWX0xGrmo@google.com>
-In-Reply-To: <aL1lHyhzWX0xGrmo@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba7y3qcuzkx7hinxraimuem6xnrrfxbj3giz56nq5qbmg76uno@kr6dezsumy2s>
 
-On Sun Sep 7, 2025 at 12:57 PM CEST, Alice Ryhl wrote:
-> On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
->> Allow writing `_: { /* any number of statements */ }` in initializers to
->> run arbitrary code during initialization.
->>=20
->>     try_init!(MyStruct {
->>         _: {
->>             if check_something() {
->>                 return Err(MyError);
->>             }
->>         },
->>         foo: Foo::new(val),
->>         _: {
->>             println!("successfully initialized `MyStruct`");
->>         },
->>     })
->>=20
->> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880a9b=
-898336e2d54f80715f00ce00f21f74d2f
->> Signed-off-by: Benno Lossin <lossin@kernel.org>
->
-> Nice! Would it be possible to include a user so I can see it work in
-> practice? E.g., for the irq feature?
+Hi Dmitry,
+On Sat, Sep 06, 2025 at 10:08:35PM +0300, Dmitry Baryshkov wrote:
+> On Sat, Sep 06, 2025 at 05:17:25PM +0200, Guido Günther wrote:
+> > Make the clock frequency match what the sdm845 downstream kernel
+> > uses. Otherwise the panel stays black.
+> > 
+> > Fixes: 783334f366b18 ("drm/panel: visionox-rm69299: support the variant found in the SHIFT6mq")
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > ---
+> >  drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > index 909c280eab1fb408a713d84051a1afbb252c45e8..e65697ce6f51c7d64b786da18cf44b16de5d6919 100644
+> > --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > @@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
+> >  };
+> >  
+> >  static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
+> > -	.clock = 158695,
+> > +	.clock = 149360,
+> 
+> clock = (2160 + 8 + 4 + 4) * (1080 + 26 + 2 + 36) * 60 / 1000 ?
 
-Devres needs this too, but the corresponding devres stuff was a fix and is =
-in
-the current -rc only, so that's not a candidate.
+IIRC I was asked to use the resulting clock rather then the clock
+formula in another driver a while back but I like that variant better
+too, will change in v3.
 
-The IRQ stuff is in driver-core-next going to Linus for v6.18, hence, using=
- it
-there, this patch would have to go through the driver-core tree as well.
+Thanks,
+ -- Guido
 
-For me it is fine either way.
+> 
+> >  	.hdisplay = 1080,
+> >  	.hsync_start = 1080 + 26,
+> >  	.hsync_end = 1080 + 26 + 2,
+> > 
+> > -- 
+> > 2.51.0
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
+> 
 
