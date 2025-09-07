@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-804795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3536FB47D35
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:09:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05541B47D8F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7D23BEABB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:09:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9497A1905
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05B229BDAD;
-	Sun,  7 Sep 2025 20:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDF629ACC6;
+	Sun,  7 Sep 2025 20:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F2TZ0CTW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DJUl6teq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BAF27F754;
-	Sun,  7 Sep 2025 20:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9E41B424F;
+	Sun,  7 Sep 2025 20:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757275732; cv=none; b=SgHyEPGb+svcVc6L4+eD8AJTzrjO/z2dG/P0AVBisXA2WK4yMrBUc2INMSvgWZ/ogi7JuBZuqZQ5wORs3DtFnDuFvOo+lEiP6FzZ3hScXeBb73Zpnl+hQlA+3SExJuho/iOm12lqTD729QCsyA8yfwsuBhysTqhGfYcRaNlhmG0=
+	t=1757276009; cv=none; b=b2Gd5e3fJeJ4smoE97v76po4vPnyfoY76iEhSkgg55gGJT5kOs4vLfy/8hB78gfSqrgKovTlhBgn1qTOAdHYTlfhle4LFrawXpSfOx5C8RYP2DJjVHqOYjnP5lxPqpeoVb5XaygQtubOf/mGXXYFOdIy/vk7PDsKHo2XcdScqQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757275732; c=relaxed/simple;
-	bh=EviXvaDuG+/ae0gYei7/+0EGgrsnR2o3RahJnKL6aS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h3RbOKLReB3u5BBeWviyXU7zKYRquZ7UM5kyfuzbmfiSKhDp0fSJhp0edbX6FHEX0nLxXFn3Q8fMo7yH4/Z/eTosGmlI0Q+7vPyiic9rD5ufEbToN6EiAD4+QNZTFjLGlLqvWpoZQanYgrov/bKmxEWXcybID+BiqDx75V4OKpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F2TZ0CTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E05AC4CEF0;
-	Sun,  7 Sep 2025 20:08:51 +0000 (UTC)
+	s=arc-20240116; t=1757276009; c=relaxed/simple;
+	bh=qSzm4k7rwHjNkyhG2LWRfRrpSxrZ3Op5PVS08658dZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWZnUQhVq177/vlrF/eVngle1pOgl0V+Hwy9kxwzv1dYsRE/uW4bKx4rbur9+q3roo5xbadGpyO+u+pZKfklruqu5Jp/KSBUbUdSmcmFavk3BlnjpamHvKlcPg5XoFm6mhohOyXMD+Aea2RvDgP7Oee3yOiNosPzT5mJ+5OpfSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DJUl6teq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80E1C4CEF0;
+	Sun,  7 Sep 2025 20:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757275731;
-	bh=EviXvaDuG+/ae0gYei7/+0EGgrsnR2o3RahJnKL6aS8=;
+	s=korg; t=1757276009;
+	bh=qSzm4k7rwHjNkyhG2LWRfRrpSxrZ3Op5PVS08658dZk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=F2TZ0CTWX9RJcXDqU027W/2wexl1cTmAoqM2EayBqg1G89MAueq0ujL+Nkj/8cDqq
-	 QeiEmUns1su/oIHtZLWws5bma6BYA9BvsWVoAOuwWUVf0PwWnZ+Ssm6xs9qbyZi50A
-	 nGIWsxJ2C8ccVpXy4XP5bz0ZOtUx8zwg29NmFcvE=
+	b=DJUl6teq0RUMI+2VBAdJ6tQKRNCwc5lYGQYWPZVCBJYSrbGZdIJDPFJDhafe/3Ibl
+	 Fnfx4LOj1bzpThpUmzQ6ofX2u4zLVxW90JjbKMaO1Mzfnoizwgc/vUxjnyMESNpP+q
+	 QdPIWo9mrjGWaxUBNsjG65uRWR6f79UWWVGIreo0=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -57,9 +57,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	hargar@microsoft.com,
 	broonie@kernel.org,
 	achill@achill.org
-Subject: [PATCH 5.10 00/52] 5.10.243-rc1 review
-Date: Sun,  7 Sep 2025 21:57:20 +0200
-Message-ID: <20250907195601.957051083@linuxfoundation.org>
+Subject: [PATCH 5.15 00/64] 5.15.192-rc1 review
+Date: Sun,  7 Sep 2025 21:57:42 +0200
+Message-ID: <20250907195603.394640159@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,17 +70,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.243-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.10.y
+X-KernelTest-Branch: linux-5.15.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.10.243-rc1
+X-KernelTest-Version: 5.15.192-rc1
 X-KernelTest-Deadline: 2025-09-09T19:56+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 5.10.243 release.
-There are 52 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 5.15.192 release.
+There are 64 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -88,9 +88,9 @@ Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.243-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
 and the diffstat can be found below.
 
 thanks,
@@ -101,16 +101,22 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.10.243-rc1
+    Linux 5.15.192-rc1
 
 Qiu-ji Chen <chenqiuji666@gmail.com>
     dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
 
-Roman Smirnov <r.smirnov@omp.ru>
-    cifs: fix integer overflow in match_server()
+Aaron Kling <webgeek1234@gmail.com>
+    spi: tegra114: Use value to check for invalid delays
 
 Taniya Das <quic_tdas@quicinc.com>
     clk: qcom: gdsc: Set retain_ff before moving to HW CTRL
+
+Ian Rogers <irogers@google.com>
+    perf bpf-event: Fix use-after-free in synthesis
+
+Michael Walle <mwalle@kernel.org>
+    drm/bridge: ti-sn65dsi86: fix REFCLK setting
 
 Larisa Grigore <larisa.grigore@nxp.com>
     spi: spi-fsl-lpspi: Reset FIFO and disable module on transfer abort
@@ -127,14 +133,8 @@ Wentao Liang <vulab@iscas.ac.cn>
 Takashi Iwai <tiwai@suse.de>
     ALSA: hda/hdmi: Add pin fix for another HP EliteDesk 800 G4 model
 
-Fiona Klute <fiona.klute@gmx.de>
-    net: phy: microchip: force IRQ polling mode for lan88xx
-
-Ioana Ciornei <ioana.ciornei@nxp.com>
-    net: phy: microchip: remove the use of .ack_interrupt()
-
-Ioana Ciornei <ioana.ciornei@nxp.com>
-    net: phy: microchip: implement generic .handle_interrupt() callback
+Li Qiong <liqiong@nfschina.com>
+    mm/slub: avoid accessing metadata when pointer is invalid in object_err()
 
 Kees Cook <kees@kernel.org>
     randstruct: gcc-plugin: Fix attribute addition
@@ -157,8 +157,8 @@ Pieter Van Trappen <pieter.van.trappen@cern.ch>
 Qiu-ji Chen <chenqiuji666@gmail.com>
     dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()
 
-Chris Chiu <chris.chiu@canonical.com>
-    ALSA: hda/realtek - Add new HP ZBook laptop with micmute led fixup
+Hyejeong Choi <hjeong.choi@samsung.com>
+    dma-buf: insert memory barrier before updating num_fences
 
 Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
     gpio: pca953x: fix IRQ storm on system wake up
@@ -169,14 +169,17 @@ Luca Ceresoli <luca.ceresoli@bootlin.com>
 David Lechner <dlechner@baylibre.com>
     iio: chemical: pms7003: use aligned_s64 for timestamp
 
+Aaron Kling <webgeek1234@gmail.com>
+    spi: tegra114: Don't fail set_cs_timing when delays are zero
+
+Alexander Danilenko <al.b.danilenko@gmail.com>
+    spi: tegra114: Remove unnecessary NULL-pointer checks
+
 Sean Christopherson <seanjc@google.com>
     KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
 
 Rafael J. Wysocki <rafael.j.wysocki@intel.com>
     cpufreq/sched: Explicitly synchronize limits_changed flag handling
-
-Li Qiong <liqiong@nfschina.com>
-    mm/slub: avoid accessing metadata when pointer is invalid in object_err()
 
 Jann Horn <jannh@google.com>
     mm/khugepaged: fix ->anon_vma race
@@ -196,11 +199,26 @@ Alex Deucher <alexander.deucher@amd.com>
 Qianfeng Rong <rongqianfeng@vivo.com>
     wifi: mwifiex: Initialize the chan_stats array to zero
 
+Harry Yoo <harry.yoo@oracle.com>
+    mm: move page table sync declarations to linux/pgtable.h
+
+Harry Yoo <harry.yoo@oracle.com>
+    x86/mm/64: define ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings()
+
 Ma Ke <make24@iscas.ac.cn>
     pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
 
 Cryolitia PukNgae <cryolitia@uniontech.com>
     ALSA: usb-audio: Add mute TLV for playback volumes on some devices
+
+Horatiu Vultur <horatiu.vultur@microchip.com>
+    phy: mscc: Stop taking ts_lock for tx_queue and use its own lock
+
+Horatiu Vultur <horatiu.vultur@microchip.com>
+    net: phy: mscc: Fix memory leak when using one step timestamping
+
+Kurt Kanzenbach <kurt@linutronix.de>
+    ptp: Add generic PTP is_sync() function
 
 Qingfang Deng <dqfext@gmail.com>
     ppp: fix memory leak in pad_compress_skb
@@ -247,6 +265,9 @@ Kuniyuki Iwashima <kuniyu@google.com>
 Phil Sutter <phil@nwl.cc>
     netfilter: conntrack: helper: Replace -EEXIST by -EBUSY
 
+Wang Liang <wangliang74@huawei.com>
+    netfilter: br_netfilter: do not check confirmed bit in br_nf_local_in() after confirm
+
 Dmitry Antipov <dmantipov@yandex.ru>
     wifi: cfg80211: fix use-after-free in cmp_bss()
 
@@ -256,67 +277,96 @@ Peter Robinson <pbrobinson@gmail.com>
 Pei Xiao <xiaopei01@kylinos.cn>
     tee: fix NULL pointer dereference in tee_shm_put
 
+Jiufei Xue <jiufei.xue@samsung.com>
+    fs: writeback: fix use-after-free in __mark_inode_dirty()
+
 Timur Kristóf <timur.kristof@gmail.com>
     drm/amd/display: Don't warn when missing DCE encoder caps
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: Fix oob access in cgroup local storage
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: Move bpf map owner out of common struct
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: Move cgroup iterator helpers to bpf.h
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: Add cookie object to bpf maps
 
 
 -------------
 
 Diffstat:
 
- Makefile                                           |  4 +--
- arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts   |  9 +++--
- .../boot/dts/rockchip/rk3399-pinebook-pro.dts      |  1 +
- arch/x86/kvm/x86.c                                 | 18 ++++++++--
- drivers/clk/qcom/gdsc.c                            | 21 ++++++------
- drivers/dma/mediatek/mtk-cqdma.c                   | 10 +++---
- drivers/gpio/gpio-pca953x.c                        |  5 +++
- drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |  5 ---
- .../gpu/drm/amd/display/dc/dce/dce_link_encoder.c  |  8 ++---
- drivers/iio/chemical/pms7003.c                     |  5 +--
- drivers/iio/light/opt3001.c                        |  5 +--
- drivers/isdn/mISDN/dsp_hwec.c                      |  6 ++--
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c  | 20 ++++++-----
- drivers/net/ethernet/intel/e1000e/ethtool.c        | 10 ++++--
- drivers/net/ethernet/intel/i40e/i40e_client.c      |  4 +--
- drivers/net/ethernet/mediatek/mtk_eth_soc.c        | 10 +++++-
- drivers/net/ethernet/xircom/xirc2ps_cs.c           |  2 +-
- drivers/net/phy/microchip.c                        | 30 ++--------------
- drivers/net/phy/microchip_t1.c                     | 28 +++++++++++----
- drivers/net/ppp/ppp_generic.c                      |  6 ++--
- drivers/net/vmxnet3/vmxnet3_drv.c                  |  5 +--
- drivers/net/wireless/marvell/libertas/cfg.c        |  9 +++--
- drivers/net/wireless/marvell/mwifiex/cfg80211.c    |  5 +--
- drivers/net/wireless/marvell/mwifiex/main.c        |  4 +--
- drivers/net/wireless/st/cw1200/sta.c               |  2 +-
- drivers/pcmcia/rsrc_iodyn.c                        |  3 ++
- drivers/pcmcia/rsrc_nonstatic.c                    |  4 ++-
- drivers/scsi/lpfc/lpfc_nvmet.c                     | 10 +++---
- drivers/spi/spi-fsl-lpspi.c                        | 15 ++++----
- drivers/tee/tee_shm.c                              |  6 +++-
- fs/cifs/connect.c                                  |  5 +++
- kernel/sched/cpufreq_schedutil.c                   | 28 ++++++++++++---
- mm/khugepaged.c                                    | 15 +++++++-
- mm/slub.c                                          |  7 +++-
- net/atm/resources.c                                |  6 ++--
- net/ax25/ax25_in.c                                 |  4 +++
- net/batman-adv/network-coding.c                    |  7 +++-
- net/bluetooth/l2cap_sock.c                         |  3 ++
- net/dsa/tag_ksz.c                                  | 22 +++++++++---
- net/ipv4/devinet.c                                 |  7 ++--
- net/ipv4/icmp.c                                    |  6 ++--
- net/ipv6/ip6_icmp.c                                |  6 ++--
- net/netfilter/nf_conntrack_helper.c                |  4 +--
- net/wireless/scan.c                                |  3 +-
- scripts/gcc-plugins/gcc-common.h                   | 32 +++++++++++++++++
- scripts/gcc-plugins/randomize_layout_plugin.c      | 40 +++++++---------------
- sound/pci/hda/patch_hdmi.c                         |  1 +
- sound/pci/hda/patch_realtek.c                      |  1 +
- sound/usb/mixer_quirks.c                           |  2 ++
- 52 files changed, 302 insertions(+), 182 deletions(-)
+ Makefile                                           |   4 +-
+ arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts   |   9 +-
+ .../boot/dts/rockchip/rk3399-pinebook-pro.dts      |   1 +
+ arch/x86/include/asm/pgtable_64_types.h            |   3 +
+ arch/x86/kvm/x86.c                                 |  18 ++-
+ arch/x86/mm/init_64.c                              |  18 +++
+ drivers/clk/qcom/gdsc.c                            |  21 ++--
+ drivers/dma-buf/dma-resv.c                         |   5 +-
+ drivers/dma/mediatek/mtk-cqdma.c                   |  10 +-
+ drivers/gpio/gpio-pca953x.c                        |   5 +
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |   5 -
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |   5 -
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |   5 -
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |   5 -
+ .../gpu/drm/amd/display/dc/dce/dce_link_encoder.c  |   8 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c              |  11 ++
+ drivers/iio/chemical/pms7003.c                     |   5 +-
+ drivers/iio/light/opt3001.c                        |   5 +-
+ drivers/isdn/mISDN/dsp_hwec.c                      |   6 +-
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c  |  20 +--
+ drivers/net/ethernet/intel/e1000e/ethtool.c        |  10 +-
+ drivers/net/ethernet/intel/i40e/i40e_client.c      |   4 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c        |  10 +-
+ drivers/net/ethernet/xircom/xirc2ps_cs.c           |   2 +-
+ drivers/net/phy/mscc/mscc_ptp.c                    |  34 +++---
+ drivers/net/ppp/ppp_generic.c                      |   6 +-
+ drivers/net/vmxnet3/vmxnet3_drv.c                  |   5 +-
+ drivers/net/wireless/marvell/libertas/cfg.c        |   9 +-
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c    |   5 +-
+ drivers/net/wireless/marvell/mwifiex/main.c        |   4 +-
+ drivers/net/wireless/st/cw1200/sta.c               |   2 +-
+ drivers/pcmcia/rsrc_iodyn.c                        |   3 +
+ drivers/pcmcia/rsrc_nonstatic.c                    |   4 +-
+ drivers/scsi/lpfc/lpfc_nvmet.c                     |  10 +-
+ drivers/spi/spi-fsl-lpspi.c                        |  15 +--
+ drivers/spi/spi-tegra114.c                         |  18 ++-
+ drivers/tee/tee_shm.c                              |   6 +-
+ fs/fs-writeback.c                                  |   9 +-
+ include/linux/bpf-cgroup.h                         |   5 -
+ include/linux/bpf.h                                | 134 ++++++++++++++++++---
+ include/linux/pgtable.h                            |  16 +++
+ include/linux/ptp_classify.h                       |  15 +++
+ include/linux/vmalloc.h                            |  16 ---
+ kernel/bpf/arraymap.c                              |   1 -
+ kernel/bpf/core.c                                  |  83 ++++++++++---
+ kernel/bpf/syscall.c                               |  22 ++--
+ kernel/sched/cpufreq_schedutil.c                   |  28 ++++-
+ mm/khugepaged.c                                    |  15 ++-
+ mm/slub.c                                          |   7 +-
+ net/atm/resources.c                                |   6 +-
+ net/ax25/ax25_in.c                                 |   4 +
+ net/batman-adv/network-coding.c                    |   7 +-
+ net/bluetooth/l2cap_sock.c                         |   3 +
+ net/bridge/br_netfilter_hooks.c                    |   3 -
+ net/core/ptp_classifier.c                          |  12 ++
+ net/dsa/tag_ksz.c                                  |  22 +++-
+ net/ipv4/devinet.c                                 |   7 +-
+ net/ipv4/icmp.c                                    |   6 +-
+ net/ipv6/ip6_icmp.c                                |   6 +-
+ net/netfilter/nf_conntrack_helper.c                |   4 +-
+ net/wireless/scan.c                                |   3 +-
+ scripts/gcc-plugins/gcc-common.h                   |  32 +++++
+ scripts/gcc-plugins/randomize_layout_plugin.c      |  40 ++----
+ sound/pci/hda/patch_hdmi.c                         |   1 +
+ sound/usb/mixer_quirks.c                           |   2 +
+ tools/perf/util/bpf-event.c                        |  39 ++++--
+ 66 files changed, 600 insertions(+), 264 deletions(-)
 
 
 
