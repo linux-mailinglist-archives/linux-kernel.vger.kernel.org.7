@@ -1,104 +1,197 @@
-Return-Path: <linux-kernel+bounces-804558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37260B47992
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:20:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5128EB47993
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14C4A4E05EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5A22030E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B9320CCE4;
-	Sun,  7 Sep 2025 08:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA45219A89;
+	Sun,  7 Sep 2025 08:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ykGAA5n3"
-Received: from smtp153-171.sina.com.cn (smtp153-171.sina.com.cn [61.135.153.171])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="iCC6hcMA"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9403A4A06
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B314A06;
+	Sun,  7 Sep 2025 08:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757233209; cv=none; b=LVh/Op0g1A04aZo3HY6Tf0IuI0mlPbs3BJUHBAPAk95isWS18WxaEsag/WNT9RzKUwwGDdN3+d6h2PFUDtFfb2RzNwJJBiu1PuYTCnOcr58m2fVuKSMo/dVcMohNqQjwgHLOu4Y1iGcySPVw6uWLf6/TFibHRcUEqT7fG+vCO1A=
+	t=1757233219; cv=none; b=J02SLVZoM+g/E3/rraw79cJA5eXt1b0CxKMEhjJovrBkuRquvyEDy9Gepj9y9BretoQ+5diM2h7JvWsv+5vb3zfJj+n4BbtcEOYxxAkFzUP7goQEh+qbIViy48659gwUQ1/bI74o4E4fJbWi5qWqbBaB0Y8QxYR7KC24pcfZjig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757233209; c=relaxed/simple;
-	bh=V96olQLv/535ofNWAFuxNVmILjmmH4lrIWSeji5gY4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pZGmEYEedFgp1wBcFwnFT2kA1OQl4vW8Shr1fYRdSmO5C8s12l9Ezhy+XQsLHMBiJxXTbcNnbXKf+QUGBAE9BwbCZ6ZZ0k/MqcjkfRabkDW466WmxcFLH23AawZekk2+dB/fRFZ+Qdk8K09zpxfUBh8rCMgAqem3NeBe6uGVpBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ykGAA5n3; arc=none smtp.client-ip=61.135.153.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757233199;
-	bh=n8vKqjFQuknmoEO1oFEDcCTzvjF6WGIiOaE+9yTEBtE=;
-	h=From:Subject:Date:Message-ID;
-	b=ykGAA5n3oY99Zmtfqx8EAJ1cn31daZEZv3s6gEs0NkoQRy8tgPRQ1d94y3rp2RQpc
-	 cWzOwxJlzPf0haO6OBCyJFwFuddEp1fXh00fx+WGmj479uFagr0PsCafGPtChYHI/e
-	 5W1xJIkMqe4YVu8el43RtflBezC0Erx5XzlSnHpU=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68BD402300007646; Sun, 7 Sep 2025 16:19:49 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5451956292061
-X-SMAIL-UIID: 179DE4EA08734E75B9EC59BE00C9F239-20250907-161949-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+b253ade8e1751d90a7a9@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [block?] general protection fault in bio_iov_iter_get_pages
-Date: Sun,  7 Sep 2025 16:19:36 +0800
-Message-ID: <20250907081937.6583-1-hdanton@sina.com>
-In-Reply-To: <68bd3027.050a0220.192772.01cc.GAE@google.com>
-References: 
+	s=arc-20240116; t=1757233219; c=relaxed/simple;
+	bh=WS/XaX3wOHVnhHAxGuafrPoemfTd0VcjPyTOVwJa9/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iJnt2nUZ56k66f89lT4B8kv6Jbe6acEOWYXhzPU/o0qUsPdfH5m1tEMhyNVcKsJIqdnuLXTxKPMMkL7C8dmjnJCEU7+tYO9iYq2DPcXLpeVqFI6tgCaN897d5LXYkyX+gGTN41hMH84CpLJ06+N5FSgV7PobZFaTIftCFqNm5FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=iCC6hcMA; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:582e:0:640:200:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id A003D80AA3;
+	Sun, 07 Sep 2025 11:20:12 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 6Kf8EwlM7Sw0-kg7N4O4m;
+	Sun, 07 Sep 2025 11:20:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1757233211;
+	bh=P3ODHwoQxLQWBGEsy0K6883JH3EDCUD22i04tJTJsQY=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=iCC6hcMAi8K+Durc0iNlataiVZ6End/NhoDBj91SbRhk0RIW62hwwScz3Fqh2A7ny
+	 2lL9Uxe/fakPIUjlVj57fIF39OnjaZ3HlABg5nf4bWcGt1FRFmpGJbK78QorxMgbsZ
+	 j0PecHPJW/jse/l4RaWTJVpe3OfMJK5s4JGsAW6U=
+Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Sun, 7 Sep 2025 11:20:06 +0300
+From: Onur <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+ dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
+ bjorn3_gh@protonmail.com
+Subject: Re: [PATCH v6 6/7] rust: ww_mutex/exec: add high-level API
+Message-ID: <20250907112006.6bdbb478@nimda.home>
+In-Reply-To: <2B16DBF4-1F6C-4025-8373-5651867B7D49@collabora.com>
+References: <20250903131313.4365-1-work@onurozkan.dev>
+ <20250903131313.4365-7-work@onurozkan.dev>
+ <6D30FEF7-07E7-4851-A7A2-76649AD0B217@collabora.com>
+ <20250906141310.2c29aa8e@nimda.home>
+ <2B16DBF4-1F6C-4025-8373-5651867B7D49@collabora.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> Date: Sun, 07 Sep 2025 00:11:35 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    be5d4872e528 Add linux-next specific files for 20250905
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17896962580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a726684450a7d788
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b253ade8e1751d90a7a9
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10496962580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a98962580000
+On Sat, 6 Sep 2025 12:04:34 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-#syz test
+>=20
+>=20
+> > On 6 Sep 2025, at 08:13, Onur <work@onurozkan.dev> wrote:
+> >=20
+> > On Fri, 5 Sep 2025 16:42:09 -0300
+> > Daniel Almeida <daniel.almeida@collabora.com> wrote:
+> >=20
+> >> Hi Onur,
+> >>=20
+> >>> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+> >>>=20
+> >>> `ExecContext` is a helper built on top of ww_mutex
+> >>=20
+> >> Again, I wonder what people think about this particular name.
+> >>=20
+> >>> that provides a retrying interface for lock acquisition.
+> >>> When `EDEADLK` is hit, it drops all held locks, resets
+> >>> the acquire context and retries the given (by the user)
+> >>> locking algorithm until it succeeds.
+> >>>=20
+> >>> The API keeps track of acquired locks, cleans them up
+> >>> automatically and allows data access to the protected
+> >>> data through `with_locked()`. The `lock_all()` helper
+> >>> allows implementing multi-mutex algorithms in a simpler
+> >>> and less error-prone way while keeping the ww_mutex
+> >>> semantics.
+> >>>=20
+> >>=20
+> >> Great, this was exactly what I was looking for! :)
+> >>=20
+> >>> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> >>> ---
+> >>> rust/kernel/sync/lock/ww_mutex.rs      |   2 +
+> >>> rust/kernel/sync/lock/ww_mutex/exec.rs | 176
+> >>> +++++++++++++++++++++++++ 2 files changed, 178 insertions(+)
+> >>> create mode 100644 rust/kernel/sync/lock/ww_mutex/exec.rs
+> >>>=20
+> >>> diff --git a/rust/kernel/sync/lock/ww_mutex.rs
+> >>> b/rust/kernel/sync/lock/ww_mutex.rs index
+> >>> b415d6deae9b..7de6578513e5 100644 ---
+> >>> a/rust/kernel/sync/lock/ww_mutex.rs +++
+> >>> b/rust/kernel/sync/lock/ww_mutex.rs @@ -16,6 +16,8 @@
+> >>> use core::cell::UnsafeCell;
+> >>> use core::marker::PhantomData;
+> >>>=20
+> >>> +pub mod exec;
+> >>> +
+> >>> /// Create static [`WwClass`] instances.
+> >>> ///
+> >>> /// # Examples
+> >>> diff --git a/rust/kernel/sync/lock/ww_mutex/exec.rs
+> >>> b/rust/kernel/sync/lock/ww_mutex/exec.rs new file mode 100644
+> >>> index 000000000000..2f1fc540f0b8
+> >>> --- /dev/null
+> >>> +++ b/rust/kernel/sync/lock/ww_mutex/exec.rs
+> >>> @@ -0,0 +1,176 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0
+> >>> +
+> >>> +//! A high-level [`WwMutex`] execution helper.
+> >>> +//!
+> >>> +//! Provides a retrying lock mechanism on top of [`WwMutex`] and
+> >>> [`WwAcquireCtx`]. +//! It detects [`EDEADLK`] and handles it by
+> >>> rolling back and retrying the +//! user-supplied locking algorithm
+> >>> until success. +
+> >>> +use crate::prelude::*;
+> >>> +use crate::sync::lock::ww_mutex::{WwAcquireCtx, WwClass, WwMutex,
+> >>> WwMutexGuard}; +use core::ptr;
+> >>> +
+> >>> +/// High-level execution type for ww_mutex.
+> >>> +///
+> >>> +/// Tracks a series of locks acquired under a common
+> >>> [`WwAcquireCtx`]. +/// It ensures proper cleanup and retry
+> >>> mechanism on deadlocks and provides +/// type-safe access to
+> >>> locked data via [`with_locked`]. +///
+> >>> +/// Typical usage is through [`lock_all`], which retries a
+> >>> user-supplied +/// locking algorithm until it succeeds without
+> >>> deadlock. +pub struct ExecContext<'a> {
+> >>> +    class: &'a WwClass,
+> >>> +    acquire: Pin<KBox<WwAcquireCtx<'a>>>,
+> >>> +    taken: KVec<WwMutexGuard<'a, ()>>,
+> >>> +}
+> >>> +
+> >>> +impl<'a> Drop for ExecContext<'a> {
+> >>> +    fn drop(&mut self) {
+> >>> +        self.release_all_locks();
+> >>=20
+> >> If we move this to the acquire context, then we can do away with
+> >> this drop impl.
+> >>=20
+> >>> +    }
+> >>> +}
+> >>> +
+> >>> +impl<'a> ExecContext<'a> {
+> >>> +    /// Creates a new [`ExecContext`] for the given lock class.
+> >>> +    ///
+> >>> +    /// All locks taken through this context must belong to the
+> >>> same class.
+> >>> +    ///
+> >>> +    /// TODO: Add some safety mechanism to ensure classes are not
+> >>> different.
+> >>=20
+> >> core::ptr::eq()?
+> >>=20
+> >=20
+> > I was thinking more of a type-level mechanism to do ensure that.
+>=20
+> Why?
+>=20
 
---- x/mm/gup.c
-+++ y/mm/gup.c
-@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig,
- 		return 0;
- 	}
- 
-+	pages += *nr;
- 	*nr += refs;
- 	for (; refs; refs--)
- 		*(pages++) = page++;
-@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig,
- 		return 0;
- 	}
- 
-+	pages += *nr;
- 	*nr += refs;
- 	for (; refs; refs--)
- 		*(pages++) = page++;
---
+So that wait-wound and wait-die classes don't get mixed up in the
+same `ExecContext` by using type validation at compile time.
+
+Of course, `core::ptr::eq()` is still useful/required when the classes
+are of the same type but not exactly the same value. Maybe we can do
+both.
+
+
+Thanks,
+Onur
 
