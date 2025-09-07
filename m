@@ -1,197 +1,126 @@
-Return-Path: <linux-kernel+bounces-804559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5128EB47993
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63668B47996
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5A22030E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5A73C2B59
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA45219A89;
-	Sun,  7 Sep 2025 08:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="iCC6hcMA"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77A21ABC1;
+	Sun,  7 Sep 2025 08:23:39 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B314A06;
-	Sun,  7 Sep 2025 08:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CD41E1DE7;
+	Sun,  7 Sep 2025 08:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757233219; cv=none; b=J02SLVZoM+g/E3/rraw79cJA5eXt1b0CxKMEhjJovrBkuRquvyEDy9Gepj9y9BretoQ+5diM2h7JvWsv+5vb3zfJj+n4BbtcEOYxxAkFzUP7goQEh+qbIViy48659gwUQ1/bI74o4E4fJbWi5qWqbBaB0Y8QxYR7KC24pcfZjig=
+	t=1757233418; cv=none; b=pxI9sjvNbxrUbue3V+LSea8VczdgLdINFpVy0GioKSyqMG8BDUaYlz7uEbWx/B0Perhp/kzQteV2Z9RTXuLbEc/6ktRQqCu6hpmkyvpMSQv3v2zVSVsb+EE4sdYu3cugBDkYlXFNhJzx3QFevRCP7WJyQ4bWgmeYRpAN0rL5i70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757233219; c=relaxed/simple;
-	bh=WS/XaX3wOHVnhHAxGuafrPoemfTd0VcjPyTOVwJa9/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iJnt2nUZ56k66f89lT4B8kv6Jbe6acEOWYXhzPU/o0qUsPdfH5m1tEMhyNVcKsJIqdnuLXTxKPMMkL7C8dmjnJCEU7+tYO9iYq2DPcXLpeVqFI6tgCaN897d5LXYkyX+gGTN41hMH84CpLJ06+N5FSgV7PobZFaTIftCFqNm5FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=iCC6hcMA; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:582e:0:640:200:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id A003D80AA3;
-	Sun, 07 Sep 2025 11:20:12 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 6Kf8EwlM7Sw0-kg7N4O4m;
-	Sun, 07 Sep 2025 11:20:11 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1757233211;
-	bh=P3ODHwoQxLQWBGEsy0K6883JH3EDCUD22i04tJTJsQY=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=iCC6hcMAi8K+Durc0iNlataiVZ6End/NhoDBj91SbRhk0RIW62hwwScz3Fqh2A7ny
-	 2lL9Uxe/fakPIUjlVj57fIF39OnjaZ3HlABg5nf4bWcGt1FRFmpGJbK78QorxMgbsZ
-	 j0PecHPJW/jse/l4RaWTJVpe3OfMJK5s4JGsAW6U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Sun, 7 Sep 2025 11:20:06 +0300
-From: Onur <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Subject: Re: [PATCH v6 6/7] rust: ww_mutex/exec: add high-level API
-Message-ID: <20250907112006.6bdbb478@nimda.home>
-In-Reply-To: <2B16DBF4-1F6C-4025-8373-5651867B7D49@collabora.com>
-References: <20250903131313.4365-1-work@onurozkan.dev>
- <20250903131313.4365-7-work@onurozkan.dev>
- <6D30FEF7-07E7-4851-A7A2-76649AD0B217@collabora.com>
- <20250906141310.2c29aa8e@nimda.home>
- <2B16DBF4-1F6C-4025-8373-5651867B7D49@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1757233418; c=relaxed/simple;
+	bh=r0eJTebCt3MS2Xw6g6hfJ21wZgUkK/hVYw3MMLUbnxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QdtVxD332/QQglH984EFE0Y0hiDmOdWQZ+FW2cQA8ayj0WBDG+AGoVlKQGE6zazRzZAfJR+Yst9ZmEx53Hfwc/mq06A3uHcYMB70+B913PReykVZy+VKMaRu4z0EBU+/HiEp58jgOxU97aTDpcmKEO1njKsrvMrjkyHNaA7mBcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.109] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowABX+hPUQL1oMWdTAQ--.2947S2;
+	Sun, 07 Sep 2025 16:22:44 +0800 (CST)
+Message-ID: <fbcc1ec3-7ff6-4891-97e3-9763355326f7@iscas.ac.cn>
+Date: Sun, 7 Sep 2025 16:22:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+ <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+ <20250905153500.GH553991@horms.kernel.org>
+ <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
+ <20250905160158.GI553991@horms.kernel.org>
+ <45053235-3b01-42d8-98aa-042681104d11@iscas.ac.cn>
+ <20250905165908.69548ce0@kernel.org>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250905165908.69548ce0@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:zQCowABX+hPUQL1oMWdTAQ--.2947S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw47JryDGw4rtry5Kw4rKrg_yoW8Gr4rpF
+	WrKFs2kFWvqw4xt3yvv3ykX343t3ZxZ3y5Gryqga47ta45Zryfu3yxKrWIyasrGrWkZ3y0
+	vry5JFyjkFZ8JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7IUYsSdPUUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Sat, 6 Sep 2025 12:04:34 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+On 9/6/25 07:59, Jakub Kicinski wrote:
 
->=20
->=20
-> > On 6 Sep 2025, at 08:13, Onur <work@onurozkan.dev> wrote:
-> >=20
-> > On Fri, 5 Sep 2025 16:42:09 -0300
-> > Daniel Almeida <daniel.almeida@collabora.com> wrote:
-> >=20
-> >> Hi Onur,
-> >>=20
-> >>> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
-> >>>=20
-> >>> `ExecContext` is a helper built on top of ww_mutex
-> >>=20
-> >> Again, I wonder what people think about this particular name.
-> >>=20
-> >>> that provides a retrying interface for lock acquisition.
-> >>> When `EDEADLK` is hit, it drops all held locks, resets
-> >>> the acquire context and retries the given (by the user)
-> >>> locking algorithm until it succeeds.
-> >>>=20
-> >>> The API keeps track of acquired locks, cleans them up
-> >>> automatically and allows data access to the protected
-> >>> data through `with_locked()`. The `lock_all()` helper
-> >>> allows implementing multi-mutex algorithms in a simpler
-> >>> and less error-prone way while keeping the ww_mutex
-> >>> semantics.
-> >>>=20
-> >>=20
-> >> Great, this was exactly what I was looking for! :)
-> >>=20
-> >>> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> >>> ---
-> >>> rust/kernel/sync/lock/ww_mutex.rs      |   2 +
-> >>> rust/kernel/sync/lock/ww_mutex/exec.rs | 176
-> >>> +++++++++++++++++++++++++ 2 files changed, 178 insertions(+)
-> >>> create mode 100644 rust/kernel/sync/lock/ww_mutex/exec.rs
-> >>>=20
-> >>> diff --git a/rust/kernel/sync/lock/ww_mutex.rs
-> >>> b/rust/kernel/sync/lock/ww_mutex.rs index
-> >>> b415d6deae9b..7de6578513e5 100644 ---
-> >>> a/rust/kernel/sync/lock/ww_mutex.rs +++
-> >>> b/rust/kernel/sync/lock/ww_mutex.rs @@ -16,6 +16,8 @@
-> >>> use core::cell::UnsafeCell;
-> >>> use core::marker::PhantomData;
-> >>>=20
-> >>> +pub mod exec;
-> >>> +
-> >>> /// Create static [`WwClass`] instances.
-> >>> ///
-> >>> /// # Examples
-> >>> diff --git a/rust/kernel/sync/lock/ww_mutex/exec.rs
-> >>> b/rust/kernel/sync/lock/ww_mutex/exec.rs new file mode 100644
-> >>> index 000000000000..2f1fc540f0b8
-> >>> --- /dev/null
-> >>> +++ b/rust/kernel/sync/lock/ww_mutex/exec.rs
-> >>> @@ -0,0 +1,176 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0
-> >>> +
-> >>> +//! A high-level [`WwMutex`] execution helper.
-> >>> +//!
-> >>> +//! Provides a retrying lock mechanism on top of [`WwMutex`] and
-> >>> [`WwAcquireCtx`]. +//! It detects [`EDEADLK`] and handles it by
-> >>> rolling back and retrying the +//! user-supplied locking algorithm
-> >>> until success. +
-> >>> +use crate::prelude::*;
-> >>> +use crate::sync::lock::ww_mutex::{WwAcquireCtx, WwClass, WwMutex,
-> >>> WwMutexGuard}; +use core::ptr;
-> >>> +
-> >>> +/// High-level execution type for ww_mutex.
-> >>> +///
-> >>> +/// Tracks a series of locks acquired under a common
-> >>> [`WwAcquireCtx`]. +/// It ensures proper cleanup and retry
-> >>> mechanism on deadlocks and provides +/// type-safe access to
-> >>> locked data via [`with_locked`]. +///
-> >>> +/// Typical usage is through [`lock_all`], which retries a
-> >>> user-supplied +/// locking algorithm until it succeeds without
-> >>> deadlock. +pub struct ExecContext<'a> {
-> >>> +    class: &'a WwClass,
-> >>> +    acquire: Pin<KBox<WwAcquireCtx<'a>>>,
-> >>> +    taken: KVec<WwMutexGuard<'a, ()>>,
-> >>> +}
-> >>> +
-> >>> +impl<'a> Drop for ExecContext<'a> {
-> >>> +    fn drop(&mut self) {
-> >>> +        self.release_all_locks();
-> >>=20
-> >> If we move this to the acquire context, then we can do away with
-> >> this drop impl.
-> >>=20
-> >>> +    }
-> >>> +}
-> >>> +
-> >>> +impl<'a> ExecContext<'a> {
-> >>> +    /// Creates a new [`ExecContext`] for the given lock class.
-> >>> +    ///
-> >>> +    /// All locks taken through this context must belong to the
-> >>> same class.
-> >>> +    ///
-> >>> +    /// TODO: Add some safety mechanism to ensure classes are not
-> >>> different.
-> >>=20
-> >> core::ptr::eq()?
-> >>=20
-> >=20
-> > I was thinking more of a type-level mechanism to do ensure that.
->=20
-> Why?
->=20
+> On Sat, 6 Sep 2025 00:35:37 +0800 Vivian Wang wrote:
+>>>> On a closer look, these counters in ndev->stats seems to be redundan=
+t
+>>>> with the hardware-tracked statistics, so maybe I should just not bot=
+her
+>>>> with updating ndev->stats. Does that make sense? =20
+>>> For rx/tx packets/bytes I think that makes sense.
+>>> But what about rx/tx drops? =20
+>> Right... but tstats doesn't have *_dropped. It seems that tx_dropped a=
+nd
+>> rx_dropped are considered "slow path" for real devices. It makes sense=
 
-So that wait-wound and wait-die classes don't get mixed up in the
-same `ExecContext` by using type validation at compile time.
+>> to me that those should be very rare.
+> Pretty sure Simon meant the per-cpu netdev stats in general.
+> There are three types of them, if you need drops I think you
+> probably want dstats. Take a look.
 
-Of course, `core::ptr::eq()` is still useful/required when the classes
-are of the same type but not exactly the same value. Maybe we can do
-both.
+According to this comment in net/core/dev.c dev_get_stats():
 
+=C2=A0 =C2=A0 /*
+=C2=A0 =C2=A0 =C2=A0* IPv{4,6} and udp tunnels share common stat helpers =
+and use
+=C2=A0 =C2=A0 =C2=A0* different stat type (NETDEV_PCPU_STAT_TSTATS vs
+=C2=A0 =C2=A0 =C2=A0* NETDEV_PCPU_STAT_DSTATS). Ensure the accounting is =
+consistent.
+=C2=A0 =C2=A0 =C2=A0*/
 
-Thanks,
-Onur
+"dstats" is meant for tunnels. This doesn't look like the right thing to
+use, and no other pcpu_stat_type gives me tx_dropped. Do you think I
+should use dstats anyway?
+
+(And yes the only software-tracked one should be tx_dropped. Since we
+pre-allocate the RX buffers, there is no opportunity to drop on RX in
+software.)
+
 
