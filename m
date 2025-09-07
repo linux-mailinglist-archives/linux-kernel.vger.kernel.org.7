@@ -1,149 +1,108 @@
-Return-Path: <linux-kernel+bounces-804788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5303EB47CFB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:05:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9739B47CFD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E87917A524
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:05:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9186517AA18
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F406285054;
-	Sun,  7 Sep 2025 19:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD5227B337;
+	Sun,  7 Sep 2025 19:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UTP1sD1G"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8KtRb/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8A21E260A;
-	Sun,  7 Sep 2025 19:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71C5146A72;
+	Sun,  7 Sep 2025 19:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757271945; cv=none; b=TvisZfWtDV0dSxzgIMqS1ByTLXCbHQVntGalSc5uIEse/k9FmLkthaPTMg0znG6Ub+lrKDk4yA9eaBfaV0h0SysAFfIkaws54JGARyxTS5NJ4aJvuU6Hb6Xu9ugSJwzBRcsMZvN7u1MPc6w45eAT7LyXE78CqOpHE5stbLjE5l0=
+	t=1757272215; cv=none; b=gDdA0gXyjB3jAoXxtvjJVPkXNcwNjE3oXzEDiA/mYKprEd2VX1efU6qzk53cabnOBpcrnvyH8jDgIk1aLwA1pCzFLHQHCv8guyYIkfNNw1eS31RNTB2KnhE45x0BFo9356Tw/UNIo1JGoYuBjnulsfkOxH6wScCyrOfqB/Yknag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757271945; c=relaxed/simple;
-	bh=A2mvnnAdazlwguBIOmciBv77vjPEIQydyuHX434yGq8=;
+	s=arc-20240116; t=1757272215; c=relaxed/simple;
+	bh=fojLI4QPu1XEv7MN5SP9flN29H+FvXNVdo+COfODLaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INtAXGurfUPmM3LrOVC0PuWTCKBIWgyl78frNyMs9QqfIAkSDDaKxX62PhFlJmoExlnlSggKm6F9MGZjm0zE/tiPlESp1K/XMpup49/HEosxC2GXIkFoxMvfdUKjSRqAl7fK7kytQpMBemy4pNr45GlNhcg0HpnoPnUUA+3pb0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UTP1sD1G; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4E33013E2;
-	Sun,  7 Sep 2025 21:04:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757271869;
-	bh=A2mvnnAdazlwguBIOmciBv77vjPEIQydyuHX434yGq8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LvZWcgV1NObQn+A4n+1xHnwsCkhXB3RUUcpIJWyg1CmRRHMCpabWRpVnI8SzEr6QTMQ5xvmKoMGn11iJOAkv0kYoVzibQ5kieLsPmcdbWqd3ckXwrZ8gdbD+Xjp2YUEao8eiaqWi/A1yerok1D7kjSUP4DvYNDgYbp+PJeERBZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8KtRb/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951FBC4CEF0;
+	Sun,  7 Sep 2025 19:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757272214;
+	bh=fojLI4QPu1XEv7MN5SP9flN29H+FvXNVdo+COfODLaA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UTP1sD1GkOOt0zciyCfPQ48smP17sHzpOyqyI2BALNZ0obzqFYxQuUOO8aW7avvql
-	 B68HamFVdRJMFb3gR3GsEX5Ek5GdfdRQq4myrRRcM92yhAa6h3mCzNZAD1cNGqeZBk
-	 HKQxzp0o+EaXktvbe6Bvd/pRDNFnmJ7DqD9SMXEk=
-Date: Sun, 7 Sep 2025 21:05:20 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 02/10] media: v4l2-flash: add support for flash/strobe
- duration
-Message-ID: <20250907190520.GB4105@pendragon.ideasonboard.com>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-2-d58d5a694afc@linux.dev>
+	b=P8KtRb/if/MQRChc47RzA0V21ubue9mWB/cUBxeUn0cEC/dtdWvt7Osz+FDOUe9lR
+	 6ULsx2vS3echqTrVHiubl/P/Ss1G0FM7+rCbTHyjlqG2cSkbHtNDR923zahd6PgKmP
+	 SCfSPnaIU1B2j7+Dz4eyn0jtstfI18UV6zjnVbM4dCXrPW5ZPsp+dykiIN0p14KGyX
+	 z3SzH5x5qfOYuYdAWbYOx/okgL/5PeQpMeHI+VoEZzu7U8F8f5Rnewk+uTmngsX8gT
+	 veBYbcFWzNd+AhqymVHNAnh/jKOJrfFy6d9gzVlygq5d9aJIFHt9x2Ur0XQ3KFtlEQ
+	 tgBEJo4QLfE9A==
+Date: Sun, 7 Sep 2025 12:10:12 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Fidal Palamparambil <rootuserhere@gmail.com>
+Cc: linux-modules@vger.kernel.org, petr.pavlu@suse.com, da.gomez@kernel.org,
+	samitolvanen@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing : Fix multiple issues in trace_printk module
+ handling
+Message-ID: <aL3YlEZylChyTE5K@bombadil.infradead.org>
+References: <20250907135201.760-1-rootuserhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901-ov9282-flash-strobe-v7-2-d58d5a694afc@linux.dev>
+In-Reply-To: <20250907135201.760-1-rootuserhere@gmail.com>
 
-Hi Richard,
-
-Thank you for the patch.
-
-On Mon, Sep 01, 2025 at 05:05:07PM +0200, Richard Leitner wrote:
-> Add support for the new V4L2_CID_FLASH_DURATION control to the v4l2
-> flash led class.
-
-I don't think this is a good idea, based on the reasoning explained in
-the review of 01/10. If V4L2_CID_FLASH_DURATION is meant to indicate the
-duration of the external flash/strobe pulse signal, it should be
-implemented by the source of the signal, and for external strobe mode
-only. The flash controller, which receives the flash/strobe pulse,
-should implement the timeout control.
-
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> ---
->  drivers/media/v4l2-core/v4l2-flash-led-class.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+On Sun, Sep 07, 2025 at 05:52:01PM +0400, Fidal Palamparambil wrote:
+> From: Fidal palamparambil <rootuserhere@gmail.com>
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> index 355595a0fefac72c2f6941a30fa430d37dbdccfe..875d56d7190592c1e5ab7acd617b76dcec8792da 100644
-> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> @@ -29,6 +29,7 @@ enum ctrl_init_data_id {
->  	INDICATOR_INTENSITY,
->  	FLASH_TIMEOUT,
->  	STROBE_SOURCE,
-> +	FLASH_DURATION,
->  	/*
->  	 * Only above values are applicable to
->  	 * the 'ctrls' array in the struct v4l2_flash.
-> @@ -298,6 +299,12 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
->  		 * microamperes for flash intensity units.
->  		 */
->  		return led_set_flash_brightness(fled_cdev, c->val);
-> +	case V4L2_CID_FLASH_DURATION:
-> +		/*
-> +		 * No conversion is needed as LED Flash class also uses
-> +		 * microseconds for flash duration units.
-> +		 */
-> +		return led_set_flash_duration(fled_cdev, c->val);
->  	}
->  
->  	return -EINVAL;
-> @@ -424,6 +431,14 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
->  		ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
->  				  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
->  	}
-> +
-> +	/* Init FLASH_DURATION ctrl data */
-> +	if (has_flash_op(fled_cdev, duration_set)) {
-> +		ctrl_init_data[FLASH_DURATION].cid = V4L2_CID_FLASH_DURATION;
-> +		ctrl_cfg = &ctrl_init_data[FLASH_DURATION].config;
-> +		__lfs_to_v4l2_ctrl_config(&fled_cdev->duration, ctrl_cfg);
-> +		ctrl_cfg->id = V4L2_CID_FLASH_DURATION;
-> +	}
->  }
->  
->  static int v4l2_flash_init_controls(struct v4l2_flash *v4l2_flash,
-> @@ -543,6 +558,16 @@ static int __sync_device_with_v4l2_controls(struct v4l2_flash *v4l2_flash)
->  			return ret;
->  	}
->  
-> +	if (ctrls[FLASH_DURATION]) {
-> +		if (WARN_ON_ONCE(!fled_cdev))
-> +			return -EINVAL;
-> +
-> +		ret = led_set_flash_duration(fled_cdev,
-> +					     ctrls[FLASH_DURATION]->val);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	/*
->  	 * For some hardware arrangements setting strobe source may affect
->  	 * torch mode. Synchronize strobe source setting only if not in torch
+> This commit addresses several bugs and potential issues in the
+> trace_printk module format handling code:
+> 
+> 1. Memory leak fix: In hold_module_trace_bprintk_format(), ensure
+>    proper cleanup when format string allocation fails by setting
+>    tb_fmt to NULL after freeing it to prevent memory leaks.
+> 
+> 2. NULL pointer dereference prevention: Added comprehensive NULL checks
+>    in t_show() function before dereferencing format pointers to prevent
+>    kernel crashes.
+> 
+> 3. Input validation: Added NULL check in trace_is_tracepoint_string()
+>    to prevent potential NULL pointer dereference when called with
+>    invalid input.
+> 
+> 4. Type safety: Fixed type casting in t_show() to use proper
+>    unsigned long casting for pointer arithmetic, ensuring correct
+>    pointer handling across different architectures.
+> 
+> 5. Error handling: Fixed type mismatch in init_trace_printk_function_export()
+>    by properly handling struct dentry pointer return from tracing_init_dentry()
+>    and using IS_ERR_OR_NULL() for comprehensive error checking.
+> 
+> 6. Code robustness: Added additional pointer validation throughout
+>    the code to handle potential edge cases and improve overall stability.
+> 
+> 7. Memory safety: Ensured consistent handling of format pointers
+>    when memory allocation failures occur, preventing use-after-free
+>    and other memory corruption issues.
+> 
+> These fixes improve the stability and reliability of the trace_printk
+> infrastructure, particularly when dealing with module loading/unloading
+> and format string management.
+> 
+> Reported-by : kernel test robot <lkp@intel.com>
+> Closes : https://lore.kernel.org/oe-kbuild-all/202509071540.GTxwwstz-lkp@intel.com/
+> Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
 
--- 
-Regards,
+Stop, at this point after being told to stop, your intent is clear: to bug.
 
-Laurent Pinchart
+Go away. You're on my ignore list now.
+
+  Luis
 
