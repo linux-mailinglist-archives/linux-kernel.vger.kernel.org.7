@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-804681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137E3B47B84
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC86B47B86
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AEB818856CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8813AA9F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5642749E6;
-	Sun,  7 Sep 2025 13:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178E2189;
+	Sun,  7 Sep 2025 13:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="koSKU14o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GdxH4Lxi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTtkXe6M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7E72749C8;
-	Sun,  7 Sep 2025 13:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC73266EE7;
+	Sun,  7 Sep 2025 13:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757250897; cv=none; b=YsxqD1cKkDBO78xveoXKoMdFd9sN0q2ZL3wK8nD/EHpQibSTZHPhyTjBYzKpJQVdenVEKbk5VWfAQUBi4n4PcjY/CupkafIKQOeBpfe328DalZukspFVPPzcmpKoGEI44UhV1mhedNbZs12+daO10jQ/aD2tqop/XphEOln/UqQ=
+	t=1757250924; cv=none; b=d8nVE0U3OXLF3uNBI4OYzmcj4hhP7ngBwnfPkEUkIAqmE9PucrO8juOtNTgawBwTgbgjX0uU6szm/+5bkL67r7mp0mQdhIZ1M1t656EuSmb+uaSwJco/qqeiDVttUoi3IblwIMos+ficutgGjOa0zTeCyq5n/WwXthUs/W7wAQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757250897; c=relaxed/simple;
-	bh=sEUag7aRj6ST5TGK3QaxIAu92HzwQtaOFeMELjsKBog=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bBYhxYqj4MgQtjqql2hWNrL25f2ts68wyOKTLGlWkrSQo3IXxXT3Zj5ofvMqp+mL0Qv3j7TVbK7OYqBPcIAANALeIZBZ4ZGbOudLz5WLLSET7m3JI54EhlNJfgOPZjxv6pMDacKgagzUtsnsvnYpqclbEaTGl60XdwerhJsQlcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=koSKU14o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GdxH4Lxi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757250889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CO/cXUOzCVMCPtjJWHU5xKcbYixzjkhyw8cUlQxkao=;
-	b=koSKU14o3apGYInp0diYD8yvPheGXBjRasP27dDUWkKqcC5tQ7P0xK8CXJ7/1a8J2oCRgI
-	1UBFu09wU4i/QfWFYy0p6zELNEI2wdvFtNPuOpt0YgNN25wx6sJtMh2RUXLSmUgHJMlaRb
-	EwvmU6EZ3I7u4nJOAVIj2ilz2srMRQagbR2jxuHMqy3QxIeoNpPEWk+9BWdPC/466etERN
-	a+dyGn80wZ4Bn0wlmVkc4uWE871PFjp7zfLi/9M/cYnLtAH05SCelG23bhLu1bfn4vZkYZ
-	H+J3UKpyP+MYzMPMI9sT8yXmr5NbXq6TiUlTDKSmghcU1GyvNSbvFFTAkUpRLw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757250889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CO/cXUOzCVMCPtjJWHU5xKcbYixzjkhyw8cUlQxkao=;
-	b=GdxH4LxiCNBlJKHAjY1NenIZEAKng3rAnXnPfBu2KZ+vab6+r/yoCk8VgyEyd+IF8EfN/z
-	LB+Xyw7I8XGy4LAA==
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Christian Loehle
- <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-In-Reply-To: <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
- <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
- <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com>
- <87o6rowrsp.ffs@tglx>
- <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
-Date: Sun, 07 Sep 2025 15:14:47 +0200
-Message-ID: <87ldmqwgjc.ffs@tglx>
+	s=arc-20240116; t=1757250924; c=relaxed/simple;
+	bh=xCVkByE4VsK5p61XTsHdJ9rLcKon1b7VyGrbTb1e37Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fibwgwYR7SERjJ5i8EtHHg8nxOd5VjvJPZaijj3dxGgRsEACC/FpnNb9xfoOnkUSZFPa1t7/2RuP/NPjzd0q8YH28Pu3W6Eav2K+Ca6R1y7xKmF8IdQ3lqrg+FX1q/BMGzbFNJnT/6nmQYH2bvnSv49P/Dj3m0renO2a5Z08q9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTtkXe6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ADB0C4CEF0;
+	Sun,  7 Sep 2025 13:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757250923;
+	bh=xCVkByE4VsK5p61XTsHdJ9rLcKon1b7VyGrbTb1e37Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sTtkXe6MO+fxnQSRE/ekmGmjy7izpbRulY9xi6Ar839GhcrEcQPpKBmUV65pfl4Vp
+	 rTrteL4nNMRSXJGwlrL/g9/6+tndthJZ7DO3glAIWP89sLOggndqFnfZ7U88iKV33G
+	 MvS5smBT17+VgihMvzbaA+GArKi6yuWEHTc1IvRPOIo/zf2lsLIGme+KyF+pXaOn8n
+	 WlFRGWBIFPk2ssJEnTLMLKJ4cCxTpWok7SW7ODkLIsTWUig7UUH4xuWonTM/xiGsKG
+	 zO02caxeX84Hyz1NSSBsofuaiyj+AnG3OXmcd/gW1XPO2iawfV+tKfF69WRF8KFc4K
+	 FQvTj2IbMItPg==
+Date: Sun, 7 Sep 2025 14:15:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH 09/10] iio: accel: BMA220 add event attrs
+Message-ID: <20250907141515.0b49012a@jic23-huawei>
+In-Reply-To: <20250901194742.11599-10-petre.rodan@subdimension.ro>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+	<20250901194742.11599-10-petre.rodan@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05 2025 at 22:56, Rafael J. Wysocki wrote:
-> On Fri, Sep 5, 2025 at 10:47=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->>
->> On Fri, Sep 05 2025 at 15:27, Rafael J. Wysocki wrote:
->> > On Fri, Sep 5, 2025 at 3:13=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
->> >> Well, manual online can be used for onlining the secondary thread of a
->> >> core where the primary thread is offline, so this is technically
->> >> possible already.
->> >>
->> >> > Something like the completely untested below.
->> >>
->> >> So given the above, shouldn't topology_is_core_online() check if any
->> >> thread in the given core is online?
->> >
->> > Besides, this would cause the siblings of offline SMT threads to be
->> > skipped while enabling SMT via sysfs (using
->> > /sys/devices/system/cpu/smt/control), but I'm not sure if this is the
->> > expectation in the field today.  The current behavior is to online all
->> > secondary SMT threads (and more, but that part is quite arguably
->> > broken).
->>
->> It is broken, because the initial logic is to bring up primary threads
->> unconditionally and then refuse to bring up sibling threads.
->>
->> With "maxcpus=3Dxxx" this obviously limits the amount of primary threads,
->> so there is arguably no point to online any of the related secondary
->> threads of them.
->>
->> The initial implementation was naively making that assumption, but the
->> core check which was added due to PPC made this actually correct.
->>
->> It just did not snap with me back then, but it's actually the correct
->> thing to do, no?
->
-> It would at least be consistent with the existing PPC behavior. :-)
+On Mon,  1 Sep 2025 22:47:35 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-Correct.
+> Add event attributes not directly covered by the IIO API.
+
+These must be accompanied by ABI documentation in
+Documentation/ABI/testing/sysfs-bus-iio-...
+
+We need to pull out of the datasheet generic descriptions of what
+they are so we can consider if they make sense as general new ABI
+or perhaps map to something existing.  In some cases it is more
+appropriate just to set a reasonable default and not provide a
+userspace ABI at all.
+
+Key point is that custom ABI is effectively unused ABI because most
+software is written against a bunch of devices and has no idea what
+the new ABI is. 
+
+Jonathan
+
+> 
+
 
