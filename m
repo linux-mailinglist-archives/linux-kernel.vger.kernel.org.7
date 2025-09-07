@@ -1,429 +1,269 @@
-Return-Path: <linux-kernel+bounces-804670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F05EB47B68
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB1FB47B6F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F6B189D51F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DC2189E915
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0354426FD91;
-	Sun,  7 Sep 2025 12:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FD3274641;
+	Sun,  7 Sep 2025 12:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H64Ov2A3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="WavTSsXe"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22653A926;
-	Sun,  7 Sep 2025 12:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FC119CC3E
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 12:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757249114; cv=none; b=D2GCkVPf8u2IdVbwk55pQ1yW8RzVnvrm4XUamlgUE0hqLkJtoZq64mMOUw44f7i++twymTdW6ZZtuWxgZQSUqFs3wFLNLO5OOraUVHadsY9H4NWmzUh/kVkvBU/yPY+pbMo6TGVA4+hQl/H8yHOkr26h+WhR5IdV6MwW4ye/BKw=
+	t=1757249236; cv=none; b=dACxMirhBDjJNO/4Svqv/qMR2H0dIZ/u3QtkRr6Jv/7Pce+YkpemZ/QxEbsDCPu6yV7Mk7AEd5JsYMr7f/u1JO04jyq+B5ccSJijjIX4oHeBUDBaOgUEcs4tkWO4wpS5FqA7c2wZwkhMcMxEhyZYP63CxjuX42TBZea/O5adiNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757249114; c=relaxed/simple;
-	bh=F8uNtGNfOi/fhZtdHKn/ryhrWpq/lRAT/NMO3s8pGBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mBI3vQU+Oty3gqO9miQbpW1dvNgoxO77/MbV+mYCT34SkytJyj79YOwtQVxpCYTtCQGnadDg4H5D2OgcfTfAPqIFSTRN8c7UrxdJbCcA+fhtNrhbx762ru2pMYTpaQN5ENk6eVybGAIk0I7oZb5UTt27wPlW0Oh0gRPl6Y8lLCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H64Ov2A3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7272FC4CEF0;
-	Sun,  7 Sep 2025 12:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757249113;
-	bh=F8uNtGNfOi/fhZtdHKn/ryhrWpq/lRAT/NMO3s8pGBk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H64Ov2A3idHbxstsiDVDzm2VViOidutUhtdhZfBiq5h1QcdbgEoC3RN9owcPs5+8P
-	 pGzr1l3IjnWGgw0M3XQStGeeR2QsFtIwZ3k0ve7M401X+X8WT33fBXrlfq09bkRAve
-	 poz6T+Rxvkbobd+OLnnjkzNkUR4gGKLhJZmQo6nRDD2ohRcE3bTkapszNbp7f+WVHk
-	 8wULMpYVNtOAQ1ZpocRj+AvJdftJpESUaA0TY7mF9NbyG5e6Rxt0n42tVKBBpzmuRf
-	 zNRRqHpadK5SLMyk75PRqeXJjRabdYpvlP9+1q+ry4K9aF44D6l3HLgh8Mo2tiLMOB
-	 aCv1HrDMM5oEg==
-Date: Sun, 7 Sep 2025 13:45:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH 03/10] iio: accel: BMA220 migrate to regmap API
-Message-ID: <20250907134506.580de654@jic23-huawei>
-In-Reply-To: <20250901194742.11599-4-petre.rodan@subdimension.ro>
-References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
-	<20250901194742.11599-4-petre.rodan@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757249236; c=relaxed/simple;
+	bh=7Ps47joqeirQWQ3OEXRh0r2E55IIOrrjVS6yfADz1/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPJCkwUgPOtb3yFTrR7SgaVHXcWicB/4FA2/00wevJwTaWjTNgbDzk68SN//9/omfUYnEeo5Yozmxl87zJQBxW6igAgL2iKKdUwKMpntWBjyKPhIOb6PgI7iZ5hN3EIcPEaCYguU3xZase4JSyXFCOWVKqNWx01kZzyTj2Jq41g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=WavTSsXe; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Sun, 7 Sep 2025 08:46:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1757249221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NPkY5brtyZTaAJRQxj7XiLZBCqqpedM3SSB3yFRmieE=;
+	b=WavTSsXewKXW5uEGtXiSc88XDQlJREjSF28FfFHu2UjFKSfnQU3DAFfzHvp6meHBOMPRMo
+	A7UgvUsxMPTOOHgtZMvfTP0v+fNkQ1vEfk8mPyS7xKjao3BmW1VHwGnjyGDkPhznq7cFEr
+	CVkexOe1G0W2qaFYCtzhjSqLMY7OrtQfseBZD/4E45jcNL2Q2ywPe5cKZPPAID2UuE5RWo
+	9KubcjJsZvBA42jZxHpmI5R/bM45GFrWBc/7U1ciMJmhswSxO4h8VkrLjzvLv3IzDhiPy4
+	GML/aTyUmx5zI751Vo3gH8I1rHhRrnJoE7FpcNldC/0/bSQAdPpnVqn4uI/Eug==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Anne Rosenzweig <alyssa@rosenzweig.io>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 17/22] soc: apple: Add hardware tunable support
+Message-ID: <aL1-v_cRXkchDpOC@fedora>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-17-52c348623ef6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250906-atcphy-6-17-v2-17-52c348623ef6@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon,  1 Sep 2025 22:47:29 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
+Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-> Switch to regmap API.
+Le Sat, Sep 06, 2025 at 03:43:30PM +0000, Sven Peter a écrit :
+> Various hardware, like the Type-C PHY or the Thunderbolt/USB4 NHI,
+> present on Apple SoCs need machine-specific tunables passed from our
+> bootloader m1n1 to the device tree. Add generic helpers so that we
+> don't have to duplicate this across multiple drivers.
 > 
-> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-Hi Petre,
-
-Various comments inline.  Biggest one is that the addition of the stuff
-for irqs doesn't belong in the patch adding regmap.
-
-
-> diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma220_core.c
-> index 60fd35637d2d..e6dac2e1cf4d 100644
-> --- a/drivers/iio/accel/bma220_core.c
-> +++ b/drivers/iio/accel/bma220_core.c
-> @@ -3,31 +3,133 @@
->   * BMA220 Digital triaxial acceleration sensor driver
->   *
->   * Copyright (c) 2016,2020 Intel Corporation.
-> + * Copyright (c) 2025 Petre Rodan  <petre.rodan@subdimension.ro>
->   */
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  drivers/soc/apple/Kconfig         |  4 +++
+>  drivers/soc/apple/Makefile        |  3 ++
+>  drivers/soc/apple/tunable.c       | 71 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/soc/apple/tunable.h | 60 +++++++++++++++++++++++++++++++++
+>  4 files changed, 138 insertions(+)
 > 
->  #include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/cleanup.h>
+> diff --git a/drivers/soc/apple/Kconfig b/drivers/soc/apple/Kconfig
+> index 6388cbe1e56b5a9d90acad3ee2377ed6ac0d207d..f266b70fd9620cc940dc685f7eb2972c21a361df 100644
+> --- a/drivers/soc/apple/Kconfig
+> +++ b/drivers/soc/apple/Kconfig
+> @@ -41,6 +41,10 @@ config APPLE_SART
+>  
+>  	  Say 'y' here if you have an Apple SoC.
+>  
+> +config APPLE_TUNABLE
+> +	tristate
+> +	depends on ARCH_APPLE || COMPILE_TEST
+> +
+>  endmenu
+>  
+>  endif
+> diff --git a/drivers/soc/apple/Makefile b/drivers/soc/apple/Makefile
+> index 4d9ab8f3037b7159771d8817fa507ba29f99ae10..0b85ab61aefe131349a67d0aa80204edd8e89925 100644
+> --- a/drivers/soc/apple/Makefile
+> +++ b/drivers/soc/apple/Makefile
+> @@ -8,3 +8,6 @@ apple-rtkit-y = rtkit.o rtkit-crashlog.o
+>  
+>  obj-$(CONFIG_APPLE_SART) += apple-sart.o
+>  apple-sart-y = sart.o
+> +
+> +obj-$(CONFIG_APPLE_TUNABLE) += apple-tunable.o
+> +apple-tunable-y = tunable.o
+> diff --git a/drivers/soc/apple/tunable.c b/drivers/soc/apple/tunable.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c54da8ef28cef16118c518c761f95e8dd9f78002
+> --- /dev/null
+> +++ b/drivers/soc/apple/tunable.c
+> @@ -0,0 +1,71 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Apple Silicon hardware tunable support
+> + *
+> + * Each tunable is a list with each entry containing a offset into the MMIO
+> + * region, a mask of bits to be cleared and a set of bits to be set. These
+> + * tunables are passed along by the previous boot stages and vary from device
+> + * to device such that they cannot be hardcoded in the individual drivers.
+> + *
+> + * Copyright (C) The Asahi Linux Contributors
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/soc/apple/tunable.h>
+> +
+> +struct apple_tunable *devm_apple_tunable_parse(struct device *dev,
+> +					       struct device_node *np,
+> +					       const char *name)
+> +{
+> +	struct apple_tunable *tunable;
+> +	struct property *prop;
+> +	const __be32 *p;
+> +	size_t sz;
+> +	int i;
+> +
+> +	prop = of_find_property(np, name, NULL);
+> +	if (!prop)
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	if (prop->length % (3 * sizeof(u32)))
+> +		return ERR_PTR(-EINVAL);
+> +	sz = prop->length / (3 * sizeof(u32));
+> +
+> +	tunable = devm_kzalloc(dev,
+> +			       sizeof(*tunable) + sz * sizeof(*tunable->values),
+> +			       GFP_KERNEL);
+> +	if (!tunable)
+> +		return ERR_PTR(-ENOMEM);
+> +	tunable->sz = sz;
+> +
+> +	for (i = 0, p = NULL; i < tunable->sz; ++i) {
+> +		p = of_prop_next_u32(prop, p, &tunable->values[i].offset);
+> +		p = of_prop_next_u32(prop, p, &tunable->values[i].mask);
+> +		p = of_prop_next_u32(prop, p, &tunable->values[i].value);
+> +	}
+> +
+> +	return tunable;
+> +}
+> +EXPORT_SYMBOL(devm_apple_tunable_parse);
+> +
+> +void apple_tunable_apply(void __iomem *regs, struct apple_tunable *tunable)
+> +{
+> +	size_t i;
+> +
+> +	for (i = 0; i < tunable->sz; ++i) {
+> +		u32 val, old_val;
+> +
+> +		val = old_val = readl_relaxed(regs + tunable->values[i].offset);
+> +		val &= ~tunable->values[i].mask;
+> +		val |= tunable->values[i].value;
+> +		if (val != old_val)
+> +			writel_relaxed(val, regs + tunable->values[i].offset);
+> +	}
+> +}
+> +EXPORT_SYMBOL(apple_tunable_apply);
+> +
+> +MODULE_LICENSE("Dual MIT/GPL");
+> +MODULE_AUTHOR("Sven Peter <sven@kernel.org>");
+> +MODULE_DESCRIPTION("Apple Silicon hardware tunable support");
+> diff --git a/include/linux/soc/apple/tunable.h b/include/linux/soc/apple/tunable.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3785ee2c898993328356005b63682f4848fc2f22
+> --- /dev/null
+> +++ b/include/linux/soc/apple/tunable.h
+> @@ -0,0 +1,60 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> +/*
+> + * Apple Silicon hardware tunable support
+> + *
+> + * Each tunable is a list with each entry containing a offset into the MMIO
+> + * region, a mask of bits to be cleared and a set of bits to be set. These
+> + * tunables are passed along by the previous boot stages and vary from device
+> + * to device such that they cannot be hardcoded in the individual drivers.
+> + *
+> + * Copyright (C) The Asahi Linux Contributors
+> + */
+> +
+> +#ifndef _LINUX_SOC_APPLE_TUNABLE_H_
+> +#define _LINUX_SOC_APPLE_TUNABLE_H_
+> +
 > +#include <linux/device.h>
->  #include <linux/kernel.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-
-This feels like an unrelated change.
-Good to fix up the headers but for this patch I'd just
-expect to see regmap related ones.  Do a precursor patch
-just before this one to add the others.
-
->  #include <linux/types.h>
-> -#include <linux/spi/spi.h>
-
-Can't you drop that in previous patch?
-
-> 
-> -#include <linux/iio/buffer.h>
-
-Why move this?  We tend to keep these in alphabetical order.
-
->  #include <linux/iio/iio.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/events.h>
->  #include <linux/iio/sysfs.h>
-> +#include <linux/iio/trigger.h>
-
-This is related to the irq stuff that shouldn't be in this patch. 
-
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
-> 
-> +#include "bma220.h"
+> +#include <linux/types.h>
 > +
-> +/*
-> + * Read-Only Registers
-Here as well. Not seeing this as beneficial over the the look
-up in the regmap callback that already tells use which are in what
-state.
-
+> +/**
+> + * Struct to store an Apple Silicon hardware tunable.
+> + *
+> + * Each tunable is a list with each entry containing a offset into the MMIO
+> + * region, a mask of bits to be cleared and a set of bits to be set. These
+> + * tunables are passed along by the previous boot stages and vary from device
+> + * to device such that they cannot be hardcoded in the individual drivers.
+> + *
+> + * @param sz Number of [offset, mask, value] tuples stored in values.
+> + * @param values [offset, mask, value] array.
 > + */
-> +
-> +/* ID registers */
->  #define BMA220_REG_ID				0x00
-> +#define BMA220_REG_REVISION_ID			0x01
-> +
-> +/* Acceleration registers */
->  #define BMA220_REG_ACCEL_X			0x02
->  #define BMA220_REG_ACCEL_Y			0x03
->  #define BMA220_REG_ACCEL_Z			0x04
-> +
-> +/*
-> + * Read-write configuration registers
-I'm not sure we need the read-write part of these comments.
-That should be obvious once the regmap config is in place.
-
-> + */
-
-> +static bool bma220_is_volatile_reg(struct device *dev, unsigned int reg)
-> +{
-> +	/* Don't cache any registers. */
-
-I assume this changes in later patches as setting cache_type is a bit pointless
-otherwise!
-
-> +	return true;
-> +}
-> +
-> +const struct regmap_config bma220_spi_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.read_flag_mask = BIT(7),
-> +	.max_register = BMA220_REG_SOFTRESET,
-> +	.cache_type = REGCACHE_MAPLE,
-> +	.writeable_reg = bma220_is_writable_reg,
-> +	.volatile_reg = bma220_is_volatile_reg,
+> +struct apple_tunable {
+> +	size_t sz;
+> +	struct {
+> +		u32 offset;
+> +		u32 mask;
+> +		u32 value;
+> +	} values[];
 > +};
-> +EXPORT_SYMBOL_NS(bma220_spi_regmap_config, "IIO_BOSCH_BMA220");
-
-Any reason not to go NS_GPL?  I'd prefer that ideally.
-
-> @@ -199,69 +356,150 @@ static const struct iio_info bma220_info = {
->  	.read_avail		= bma220_read_avail,
->  };
+> +
+> +/**
+> + * Parse an array of hardware tunables from the device tree.
+> + *
+> + * @dev: Device node used for devm_kzalloc internally.
+> + * @np: Device node which contains the tunable array.
+> + * @name: Name of the device tree property which contains the tunables.
+> + *
+> + * @return: devres allocated struct on success or PTR_ERR on failure.
+> + */
+> +struct apple_tunable *devm_apple_tunable_parse(struct device *dev,
+> +					       struct device_node *np,
+> +					       const char *name);
+> +
+> +/**
+> + * Apply a previously loaded hardware tunable.
+> + *
+> + * @param regs: MMIO to which the tunable will be applied.
+> + * @param tunable: Pointer to the tunable.
+> + */
+> +void apple_tunable_apply(void __iomem *regs, struct apple_tunable *tunable);
+> +
+> +#endif
 > 
-> -static int bma220_init(struct spi_device *spi)
-> +static int bma220_reset(struct bma220_data *data, bool up)
->  {
-> -	int ret;
-> +	int i, ret;
-> +	unsigned int val;
+> -- 
+> 2.34.1
 > 
-> -	ret = bma220_read_reg(spi, BMA220_REG_ID);
-> -	if (ret != BMA220_CHIP_ID)
-> -		return -ENODEV;
-> +	guard(mutex)(&data->lock);
 > 
-> -	/* Make sure the chip is powered on */
-> -	ret = bma220_read_reg(spi, BMA220_REG_SUSPEND);
-> -	if (ret == BMA220_SUSPEND_WAKE)
-> -		ret = bma220_read_reg(spi, BMA220_REG_SUSPEND);
-> -	if (ret < 0)
-> -		return ret;
-> -	if (ret == BMA220_SUSPEND_WAKE)
-> -		return -EBUSY;
-> +	/**
-> +	 * The chip can be reset by a simple register read.
-> +	 * We need up to 2 register reads of the softreset register
-
-May need?  Given you return early if the first one succeeds. If you actually
-need two drop the loop and only check values on second read.
-
-> +	 * to make sure that the device is in the desired state.
-> +	 */
-> +	for (i = 0; i < 2; i++) {
-> +		ret = regmap_read(data->regmap, BMA220_REG_SOFTRESET, &val);
-> +		if (ret < 0)
-> +			return ret;
-> 
-> -	return 0;
-> +		if (up && (val == BMA220_SUSPEND_SLEEP))
-> +			return 0;
-> +
-> +		if (!up && (val == BMA220_SUSPEND_WAKE))
-> +			return 0;
-> +	}
-> +
-> +	return -EBUSY;
->  }
-
-> 
-> -static void bma220_deinit(void *spi)
-> +static int bma220_init(struct bma220_data *data)
-> +{
-> +	int ret;
-> +	unsigned int val;
-> +	static const char * const regulator_names[] = { "vddd", "vddio", "vdda" };
-> +
-> +	ret = devm_regulator_bulk_get_enable(data->dev,
-> +					     ARRAY_SIZE(regulator_names),
-> +					     regulator_names);
-> +	if (ret)
-> +		return dev_err_probe(data->dev, ret, "Failed to get regulators\n");
-I'd have a local struct device *dev = data->dev;
-just to shorten the various lines.
-> +
-> +	/* Try to read chip_id register. It must return 0xdd. */
-> +	ret = regmap_read(data->regmap, BMA220_REG_ID, &val);
-> +	if (ret) {
-> +		dev_err(data->dev, "Failed to read chip id register\n");
-
-Use return dev_err_probe().  For things that can't defer it just brings
-prettier prints and simpler code.  Still worth having!
-
-> +		return ret;
-> +	}
-> +
-> +	if (val != BMA220_CHIP_ID)
-> +		return -ENODEV;
-> +
-> +	ret = bma220_power(data, true);
-> +	if (ret) {
-> +		dev_err(data->dev, "Failed to power-on chip\n");
-> +		return ret;
-
-return dev_err_probe() here as well..
-
-> +	}
-> +
-> +	ret = bma220_reset(data, true);
-> +	if (ret) {
-> +		dev_err(data->dev, "Failed to soft reset chip\n");
-> +		return ret;
-and here.
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-> +static irqreturn_t bma220_irq_handler(int irq, void *private)
-> +{
-> +	struct iio_dev *indio_dev = private;
-> +	struct bma220_data *data = iio_priv(indio_dev);
-> +	int rv;
-> +	u8 bma220_reg_if[2];
-> +
-> +	guard(mutex)(&data->lock);
-> +	rv = regmap_bulk_read(data->regmap, BMA220_REG_IF0, bma220_reg_if,
-> +			      sizeof(bma220_reg_if));
-> +	if (rv)
-> +		return IRQ_NONE;
-> +
-> +	if (FIELD_GET(BMA220_IF_DRDY, bma220_reg_if[1])) {
-> +		iio_trigger_poll_nested(data->trig);
-> +		goto done;
-> +	}
-> +
-> +done:
-> +
-> +	return IRQ_HANDLED;
->  }
-> 
-> -int bma220_common_probe(struct spi_device *spi)
-> +int bma220_common_probe(struct device *dev, struct regmap *regmap, int irq)
->  {
->  	int ret;
->  	struct iio_dev *indio_dev;
->  	struct bma220_data *data;
-> 
-> -	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*data));
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
->  	if (!indio_dev)
->  		return -ENOMEM;
-> 
->  	data = iio_priv(indio_dev);
-> -	data->spi_device = spi;
-> -	mutex_init(&data->lock);
-> +	data->regmap = regmap;
-> +	data->dev = dev;
-> +
-> +	ret = bma220_init(data);
-> +	if (ret)
-> +		return ret;
-> 
-> +	mutex_init(&data->lock);
-#Whilst you are here perhaps switch this to 
-	ret = devm_mutex_init(dev, 7data->lock);
-	if (ret)
-		return ret;
-
-It brings only a small benefit in lock debugging but doesn't cost much either
-so I'm encouraging it's use in new code or code we are touching anyway.
-Fine to just slip that in with this patch rather than spinning another one.
-
->  	indio_dev->info = &bma220_info;
->  	indio_dev->name = BMA220_DEVICE_NAME;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> @@ -269,38 +507,59 @@ int bma220_common_probe(struct spi_device *spi)
->  	indio_dev->num_channels = ARRAY_SIZE(bma220_channels);
->  	indio_dev->available_scan_masks = bma220_accel_scan_masks;
-> 
-> -	ret = bma220_init(data->spi_device);
-> -	if (ret)
-> -		return ret;
-> +	if (irq > 0) {
-
-This next block doesn't seem to have much to do with regmap API conversion.
-Wrong patch?
-
-> +		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
-> +						    indio_dev->name,
-> +						    iio_device_id(indio_dev));
-> +		if (!data->trig)
-> +			return -ENOMEM;
-> +
-> +		data->trig->ops = &bma220_trigger_ops;
-> +		iio_trigger_set_drvdata(data->trig, indio_dev);
-> +
-> +		ret = devm_iio_trigger_register(data->dev, data->trig);
-> +		if (ret)
-> +			return dev_err_probe(data->dev, ret,
-> +					     "iio trigger register fail\n");
-> +		indio_dev->trig = iio_trigger_get(data->trig);
-> +		ret = devm_request_threaded_irq(dev, irq, NULL,
-> +						&bma220_irq_handler,
-> +						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +						indio_dev->name, indio_dev);
-> +		if (ret)
-> +			return dev_err_probe(data->dev, ret,
-> +					     "request irq %d failed\n", irq);
-> +	}
-> 
-> -	ret = devm_add_action_or_reset(&spi->dev, bma220_deinit, spi);
-> +	ret = devm_add_action_or_reset(data->dev, bma220_deinit, data);
->  	if (ret)
->  		return ret;
-> 
-> -	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-> -					      iio_pollfunc_store_time,
-> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
->  					      bma220_trigger_handler, NULL);
->  	if (ret < 0) {
-> -		dev_err(&spi->dev, "iio triggered buffer setup failed\n");
-> +		dev_err(dev, "iio triggered buffer setup failed\n");
->  		return ret;
->  	}
-> 
-> -	return devm_iio_device_register(&spi->dev, indio_dev);
-> +	return devm_iio_device_register(dev, indio_dev);
->  }
->  EXPORT_SYMBOL_NS(bma220_common_probe, "IIO_BOSCH_BMA220");
-
-> diff --git a/drivers/iio/accel/bma220_spi.c b/drivers/iio/accel/bma220_spi.c
-> index be8348ad0a93..00e3fba9436d 100644
-> --- a/drivers/iio/accel/bma220_spi.c
-> +++ b/drivers/iio/accel/bma220_spi.c
-> @@ -9,17 +9,25 @@
->  #include <linux/errno.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/regmap.h>
->  #include <linux/types.h>
->  #include <linux/spi/spi.h>
-> 
-> -#include <linux/iio/buffer.h>
->  #include <linux/iio/iio.h>
-> 
->  #include "bma220.h"
-> 
->  static int bma220_spi_probe(struct spi_device *spi)
->  {
-> -	return bma220_common_probe(spi);
-> +	struct regmap *regmap;
-> +
-> +	regmap = devm_regmap_init_spi(spi, &bma220_spi_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(&spi->dev, "failed to create regmap\n");
-
-		return dev_err_probe(&spi->dev, PTR_ERR(regmap), "failed to create regmap\n");
-
-If there are other similar cases in things only called from probe please
-switch them to this interface as well (in a separate patch if touching
-existing code)
-
-Thanks,
-
-Jonathan
-
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	return bma220_common_probe(&spi->dev, regmap, spi->irq);
->  }
 
