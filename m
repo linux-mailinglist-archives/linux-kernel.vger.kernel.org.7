@@ -1,535 +1,172 @@
-Return-Path: <linux-kernel+bounces-804705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D9AB47BD5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB85EB47C09
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61363C264E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC113B5960
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009EF27A454;
-	Sun,  7 Sep 2025 14:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9A327F728;
+	Sun,  7 Sep 2025 15:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dL9cphFK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBNKIBsQ"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9AB17B506;
-	Sun,  7 Sep 2025 14:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF111C6A3;
+	Sun,  7 Sep 2025 15:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757255449; cv=none; b=KPliBmg3jgc01LAGnQ4P1L2hb1Bw59U/lJXmnJBKzDNabVWfMWh/i/8oE+DvHOIrfIJFKBnTrpVUtvEesnWE0zIGNU36II3Kcax2iPKnt26XffSqMFCXogIT/pypzIEJw07sEQK/GNjJ7UonL5cVywByzzCzhXcTRof6sDbfD24=
+	t=1757258903; cv=none; b=JZCeXLXZFJK5nGub3IIEsdC3WdaxUeGanSDLlfJM08w3TFp7gI9SpbbnPcsemtRYQx1zm/uBlxawgBFHjhzlnX9l19ifVzV4BRZrcWTlMQplZNr8P2/LO93jk8Np0D+INtwe4qRaqdHeVDgQJwvAqIQKB4eHiG0Dd0atZXd4ygY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757255449; c=relaxed/simple;
-	bh=4Y3dpCD030sUrvek75quB5iRos+7Ydq3XgiLgrVQ0kg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j5Op/C2MfclClAHnHOPQq3PuK5JJb0JPQw0ClUcphI/6S/3c676CWSCCNzKpmrRHl244bCj5P74Q/aSiUHp+Uf0LGyJg1wuHYBSu8At7r7mEQf6d66hHFrZp43ppvTGxhK+RHnRg0ykdADGw6y+AqFiX+ixjfX/zT6wLSLAXx64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dL9cphFK; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757255446; x=1788791446;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4Y3dpCD030sUrvek75quB5iRos+7Ydq3XgiLgrVQ0kg=;
-  b=dL9cphFKE6MmVAayzgx46L0y3RMHdZavXjJ0jVIxldIliDD1l0gnkIkD
-   qnKMzOMju/NnXQdkdcX1zT/u/ife6L2O49vOoLNuaDfbN9Wly9TfB2G/e
-   nxM1yPwO86fyaIpJDK3TPvbmiMqyQ9et/TS3D185TZHMLpJ/R61aTfeXg
-   TwNRvkUwof9E+TYfK18kBS22whL4IHCS/7L4pZiEDJNtMqopkDCyaKwmd
-   2qil1xtJmfeywH0wPgJ0ju34d45d1qBVwCguE9FVVXB0EL9CZ+6EWkSMP
-   uJQdcX1lLxWqYY3oq864VmUMmlIFfCyUted0PQmsrVp3PZpqKIFjNpMYc
-   A==;
-X-CSE-ConnectionGUID: X4mxxXxATxqrwAo/JEF3Kg==
-X-CSE-MsgGUID: q5A2W7ikSg+Y7CU6pwEwoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="70907393"
-X-IronPort-AV: E=Sophos;i="6.18,246,1751266800"; 
-   d="scan'208";a="70907393"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 07:30:45 -0700
-X-CSE-ConnectionGUID: XESM3xo1R+G/sLhgAYLARQ==
-X-CSE-MsgGUID: YfqUTqpARtWjUqU8ogZ6Pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,246,1751266800"; 
-   d="scan'208";a="196232313"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Sep 2025 07:30:41 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	pan.deng@intel.com,
-	zhiguo.zhou@intel.com,
-	jiebin.sun@intel.com,
-	thomas.falcon@intel.com,
-	dapeng1.mi@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] perf tools c2c: Add annotation support to perf c2c report
-Date: Sun,  7 Sep 2025 23:25:10 +0800
-Message-ID: <20250907152510.957952-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <aLhHvWTnxGA-_6Ew@x1>
-References: <aLhHvWTnxGA-_6Ew@x1>
+	s=arc-20240116; t=1757258903; c=relaxed/simple;
+	bh=32SAFrGqPnfqUlDQMicbyrfxFbEz2J3dVLd3bF1iLyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OmvFnENBmTsUU1ijiClIijvAotsv1E7RDwmZehizIAz1tAKlpzBDwY3YIV6YwbxQmJiD264J54sxuvV1ot30/6pr2CRyw6U/xAmZL11fXWjC4DebOKU/RE/FwXVtng5bfGa2dfKEY3kdOx2+VnCVOA01yyd7hgJLJ4+7ppO26cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBNKIBsQ; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso2755025b3a.2;
+        Sun, 07 Sep 2025 08:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757258902; x=1757863702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=4t1NPXSpsgumuAbcGzE1EyiDPKl7vf9eJ/hyZgqkMpM=;
+        b=YBNKIBsQRim1mVJz+0bjl/EMIjqkMOTlruELeGMNLfqorTELnFrWV+uEfVP94fQoRM
+         JLeSPb7uDGFBYFCYV+1qrClEmKyUtgBpPvPYSAA4VQrH8opk+2AcyXWJIo9gDncaajJq
+         hQg3G82oamwxEnm8DsBV7eOxCtSxOmv3srOZ4BGbSVHulx4q/5m+A3eKAfZ//hlV/IqZ
+         ethIIZ3LkuM+8hcolvUXGMO8a3/Fhe3C/ftob1eZoOSXHazQN7oyxM97+Yrwz/01nuYv
+         Wk6pWZrb5MoBI6XpBdQVwrOVWYOKE4j39BXO96j/fmhFdhPx+DxYX7/7YSCYgBKeUKtj
+         iizQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757258902; x=1757863702;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4t1NPXSpsgumuAbcGzE1EyiDPKl7vf9eJ/hyZgqkMpM=;
+        b=GIpbeETJy40/IhzPpwPoVyrfzUti5gPJNuERoDZhkIEl/l4qO8hjFgP7gvxy36zsnz
+         65h9kIvFf0bfq4p9hDK7Qq7OQw23GijiDgz/ReXjAm/N0J36ZRR5wZLkm2gbvn5l7YH4
+         T9yC8EXAqv8kfS3rG0dA/I7hXa6AEVz3rNXyrOuHMMp7uKCKGFgRJ4knhgpRSpNHQfC0
+         6QXifzXtEuDM1v3eR7oz3FnAgkhavAy59XwI8bF6wmyQKtFlSQdvAMPKhPXMembbOkP+
+         kvbyfQ1sMEyMKpEUYfnRpcas8cMJJ4t68Mj5cxGVjEOvKHsMwUILBOTYnI353l84xypb
+         VdEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoaL6xWzKkkFcnKEIh0EoQWSngQvSyLXHN4U3ABEFVoGFIPj2A7Z7g56lk1HG854kkQTWwT7BUC4JK@vger.kernel.org, AJvYcCWBCBmUJSYmFJJ8aQ1MLQi93FyjeHOAz08L9HHPCEk8TDwzGk5xWZaILrpWt4BjZmMt/BLNPJBCauHk9asPqOQ=@vger.kernel.org, AJvYcCWJDaITdn0jawsAm2TMbFZ0SB9pOO0gBbPeaWJI5GTf7xPmNFOc42pHD91ThcgxmjkT5NOnUsZTuW8VZqCx@vger.kernel.org, AJvYcCWK6szy1EgbB8bq3znYZvXbdpqnv8vJom1eEXBPvWyOwxttAYGvSMTQ2Xq68Nj+eRDbBLKMOOSAqVFsCDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJaKMEkVIoiyDTHuQdmOYVPEm4a4wgpsDAyspKFK3CcgrqbAHV
+	wEmnS0Mc23399y/R46kaUjCoYP5Tj4ka9MUHitTBO11/GKEXnvmN8nNA
+X-Gm-Gg: ASbGncvC8by6ewxTHtOdhB4/0tobqF5dvJA25qFcSKXx7KYEOe/98hySIZ3F+c1uqO5
+	6wfJLZDsvvqtUkqfhPZNlR6tI5KRwUM458chqlR2I9jmCP8x5qPvdeMIJIuHeUiISNVWc2b/zDv
+	Jbe/cEbp87SFsU/Pg4pg217rtL3HzA+XXZfXLhxnI3OmgIP6yMgoQqpUMiFCiTrlzEj0zdFvNOS
+	Mt4R5yh31YalOrUWBaPb5gZ+Ok9yO5O+TCVoCOYVbw+FEXn7VL0F8eUJTCMcfKYfzMK9gAoV9mD
+	zmcxchIAwf87Ch7Iwdba2zgU1VbnSzEj9i/r0AIeUWt5X9olJFgygMhVcYloTX5v8LXq+ETKeX+
+	htX/xWk9qXb1BJw3W2Jqdlf/1pM+TNMzKTwj4S8hCXE+jBQlnWg2mp5ipeXHO2YuKJ+vAb24pDP
+	869FLH/A==
+X-Google-Smtp-Source: AGHT+IGE6MiuigF2nMYzx+KzSDUOLA3WaN9Jrarc3HfPkx+hCejQIAa0ADWq74RTvhd9q/v/3azFVQ==
+X-Received: by 2002:a05:6a20:9183:b0:246:9192:2789 with SMTP id adf61e73a8af0-2534441fa83mr7672424637.49.1757258901631;
+        Sun, 07 Sep 2025 08:28:21 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f8a0a2851sm15985846a12.37.2025.09.07.08.28.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 08:28:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <83189bf7-6831-4373-a352-2a3a05526e08@roeck-us.net>
+Date: Sun, 7 Sep 2025 08:28:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/7] hwmon: sl28cpld: add SMARC-sAM67 support
+To: Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-watchdog@vger.kernel.org
+References: <20250822131531.1366437-1-mwalle@kernel.org>
+ <20250822131531.1366437-7-mwalle@kernel.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250822131531.1366437-7-mwalle@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Perf c2c report currently specified the code address and source:line
-information in the cacheline browser, while it is lack of annotation
-support like perf report to directly show the disassembly code for
-the particular symbol shared that same cacheline. This patches add
-a key 'a' binding to the cacheline browser which reuse the annotation
-browser to show the disassembly view for easier analysis of cacheline
-contentions. By default, the 'TAB' key navigate to the code address
-where the contentions detected.
+On 8/22/25 06:15, Michael Walle wrote:
+> The on-board uC on the SMARC-sAM67 board is compatible with the older
+> CPLD implementation on the SMARC-sAL28 board, but has different sensors,
+> namely two voltage sensors and one temperature sensor. Add support for it.
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>   drivers/hwmon/sl28cpld-hwmon.c | 76 ++++++++++++++++++++++++++++++++--
 
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
-Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
-Reviewed-by: Pan Deng <pan.deng@intel.com>
-Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
-Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
----
- tools/perf/builtin-annotate.c     |   2 +-
- tools/perf/builtin-c2c.c          | 124 ++++++++++++++++++++++++++++--
- tools/perf/ui/browsers/annotate.c |  40 +++++++++-
- tools/perf/ui/browsers/hists.c    |   2 +-
- tools/perf/util/annotate.c        |   2 +-
- tools/perf/util/annotate.h        |   2 +
- tools/perf/util/hist.h            |   6 +-
- 7 files changed, 164 insertions(+), 14 deletions(-)
+Documentation/hwmon/sl28cpld.rst would have to be updated as well.
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 646f43b0f7c4..f977e97a9c96 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -519,7 +519,7 @@ static void hists__find_annotations(struct hists *hists,
- 			/* skip missing symbols */
- 			nd = rb_next(nd);
- 		} else if (use_browser == 1) {
--			key = hist_entry__tui_annotate(he, evsel, NULL);
-+			key = hist_entry__tui_annotate(he, evsel, NULL, NO_INITIAL_IP);
- 
- 			switch (key) {
- 			case -1:
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 9e9ff471ddd1..f5702d218490 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -45,6 +45,8 @@
- #include "pmus.h"
- #include "string2.h"
- #include "util/util.h"
-+#include "util/symbol.h"
-+#include "util/annotate.h"
- 
- struct c2c_hists {
- 	struct hists		hists;
-@@ -62,6 +64,7 @@ struct compute_stats {
- 
- struct c2c_hist_entry {
- 	struct c2c_hists	*hists;
-+	struct evsel		*evsel;
- 	struct c2c_stats	 stats;
- 	unsigned long		*cpuset;
- 	unsigned long		*nodeset;
-@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
- 	return hists;
- }
- 
-+static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
-+				struct evsel *evsel)
-+{
-+	c2c_he->evsel = evsel;
-+}
-+
- static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
- 			    struct perf_sample *sample)
- {
-@@ -334,6 +343,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
- 
- 	c2c_he__set_cpu(c2c_he, sample);
- 	c2c_he__set_node(c2c_he, sample);
-+	c2c_he__set_evsel(c2c_he, evsel);
- 
- 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
- 	ret = hist_entry__append_callchain(he, sample);
-@@ -371,6 +381,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
- 
- 		c2c_he__set_cpu(c2c_he, sample);
- 		c2c_he__set_node(c2c_he, sample);
-+		c2c_he__set_evsel(c2c_he, evsel);
- 
- 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
- 		ret = hist_entry__append_callchain(he, sample);
-@@ -2550,6 +2561,29 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
- }
- 
- #ifdef HAVE_SLANG_SUPPORT
-+
-+static int perf_c2c__toggle_annotation(struct hist_browser *browser)
-+{
-+	struct hist_entry *he = browser->he_selection;
-+	struct symbol *sym = NULL;
-+	struct c2c_hist_entry *c2c_he = NULL;
-+
-+	if (!he) {
-+		ui_browser__help_window(&browser->b, "No entry selected for annotation");
-+		return 0;
-+	}
-+	sym = (&he->ms)->sym;
-+
-+	if (sym == NULL) {
-+		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
-+		return 0;
-+	}
-+
-+	symbol__hists(sym, 0);
-+	c2c_he = container_of(he, struct c2c_hist_entry, he);
-+	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL, he->ip);
-+}
-+
- static void c2c_browser__update_nr_entries(struct hist_browser *hb)
- {
- 	u64 nr_entries = 0;
-@@ -2617,6 +2651,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 	" ENTER         Toggle callchains (if present) \n"
- 	" n             Toggle Node details info \n"
- 	" s             Toggle full length of symbol and source line columns \n"
-+	" a             Toggle annotation view \n"
- 	" q             Return back to cacheline list \n";
- 
- 	if (!he)
-@@ -2651,6 +2686,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 			c2c.node_info = (c2c.node_info + 1) % 3;
- 			setup_nodes_header();
- 			break;
-+		case 'a':
-+			perf_c2c__toggle_annotation(browser);
-+			break;
- 		case 'q':
- 			goto out;
- 		case '?':
-@@ -2989,6 +3027,11 @@ static int setup_coalesce(const char *coalesce, bool no_source)
- 	return 0;
- }
- 
-+static bool perf_c2c__has_annotation(void)
-+{
-+	return use_browser == 1;
-+}
-+
- static int perf_c2c__report(int argc, const char **argv)
- {
- 	struct itrace_synth_opts itrace_synth_opts = {
-@@ -3006,6 +3049,7 @@ static int perf_c2c__report(int argc, const char **argv)
- 	const char *display = NULL;
- 	const char *coalesce = NULL;
- 	bool no_source = false;
-+	const char *disassembler_style = NULL, *objdump_path = NULL, *addr2line_path = NULL;
- 	const struct option options[] = {
- 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
- 		   "file", "vmlinux pathname"),
-@@ -3033,6 +3077,12 @@ static int perf_c2c__report(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
- 		    "Enable LBR callgraph stitching approach"),
- 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
-+	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
-+		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
-+	OPT_STRING(0, "objdump", &objdump_path, "path",
-+		   "objdump binary to use for disassembly and annotations"),
-+	OPT_STRING(0, "addr2line", &addr2line_path, "path",
-+		   "addr2line binary to use for line numbers"),
- 	OPT_PARENT(c2c_options),
- 	OPT_END()
- 	};
-@@ -3040,6 +3090,12 @@ static int perf_c2c__report(int argc, const char **argv)
- 	const char *output_str, *sort_str = NULL;
- 	struct perf_env *env;
- 
-+	annotation_options__init();
-+
-+	err = hists__init();
-+	if (err < 0)
-+		goto out;
-+
- 	argc = parse_options(argc, argv, options, report_c2c_usage,
- 			     PARSE_OPT_STOP_AT_NON_OPTION);
- 	if (argc)
-@@ -3052,6 +3108,36 @@ static int perf_c2c__report(int argc, const char **argv)
- 	if (c2c.stats_only)
- 		c2c.use_stdio = true;
- 
-+	/**
-+	 * Annotation related options
-+	 * disassembler_style, objdump_path, addr2line_path
-+	 * are set in the c2c_options, so we can use them here.
-+	 */
-+	if (disassembler_style) {
-+		annotate_opts.disassembler_style = strdup(disassembler_style);
-+		if (!annotate_opts.disassembler_style) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+	if (objdump_path) {
-+		annotate_opts.objdump_path = strdup(objdump_path);
-+		if (!annotate_opts.objdump_path) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+	if (addr2line_path) {
-+		symbol_conf.addr2line_path = strdup(addr2line_path);
-+		if (!symbol_conf.addr2line_path) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+
- 	err = symbol__validate_sym_arguments();
- 	if (err)
- 		goto out;
-@@ -3126,6 +3212,38 @@ static int perf_c2c__report(int argc, const char **argv)
- 	if (err)
- 		goto out_mem2node;
- 
-+	if (c2c.use_stdio)
-+		use_browser = 0;
-+	else
-+		use_browser = 1;
-+
-+	/*
-+	 * Only in the TUI browser we are doing integrated annotation,
-+	 * so don't allocate extra space that won't be used in the stdio
-+	 * implementation.
-+	 */
-+	if (perf_c2c__has_annotation()) {
-+		int ret = symbol__annotation_init();
-+
-+		if (ret < 0)
-+			goto out_mem2node;
-+		/*
-+		 * For searching by name on the "Browse map details".
-+		 * providing it only in verbose mode not to bloat too
-+		 * much struct symbol.
-+		 */
-+		if (verbose > 0) {
-+			/*
-+			 * XXX: Need to provide a less kludgy way to ask for
-+			 * more space per symbol, the u32 is for the index on
-+			 * the ui browser.
-+			 * See symbol__browser_index.
-+			 */
-+			symbol_conf.priv_size += sizeof(u32);
-+		}
-+		annotation_config__init();
-+	}
-+
- 	if (symbol__init(env) < 0)
- 		goto out_mem2node;
- 
-@@ -3135,11 +3253,6 @@ static int perf_c2c__report(int argc, const char **argv)
- 		goto out_mem2node;
- 	}
- 
--	if (c2c.use_stdio)
--		use_browser = 0;
--	else
--		use_browser = 1;
--
- 	setup_browser(false);
- 
- 	err = perf_session__process_events(session);
-@@ -3210,6 +3323,7 @@ static int perf_c2c__report(int argc, const char **argv)
- out_session:
- 	perf_session__delete(session);
- out:
-+	annotation_options__exit();
- 	return err;
- }
- 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index b770a8d4623e..c2afa3624917 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -592,7 +592,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
- 	target_ms.map = ms->map;
- 	target_ms.sym = dl->ops.target.sym;
- 	annotation__unlock(notes);
--	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
-+	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt, NO_INITIAL_IP);
- 	sym_title(ms->sym, ms->map, title, sizeof(title), annotate_opts.percent_type);
- 	ui_browser__show_title(&browser->b, title);
- 	return true;
-@@ -854,6 +854,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 	const char *help = "Press 'h' for help on key bindings";
- 	int delay_secs = hbt ? hbt->refresh : 0;
- 	char *br_cntr_text = NULL;
-+	u64 init_ip = 0;
- 	char title[256];
- 	int key;
- 
-@@ -863,6 +864,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 
- 	annotate_browser__calc_percent(browser, evsel);
- 
-+	/* the selection are intentionally even not from the sample percentage */
-+	if (browser->entries.rb_node == NULL && browser->selection) {
-+		init_ip = sym->start + browser->selection->offset;
-+		disasm_rb_tree__insert(browser, browser->selection);
-+		browser->curr_hot = rb_last(&browser->entries);
-+	}
-+
- 	if (browser->curr_hot) {
- 		annotate_browser__set_rb_top(browser, browser->curr_hot);
- 		browser->b.navkeypressed = false;
-@@ -963,6 +971,17 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 				ui_helpline__puts(help);
- 			annotate__scnprintf_title(hists, title, sizeof(title));
- 			annotate_browser__show(&browser->b, title, help);
-+			/* Previous RB tree may not valid, need refresh according to new entries*/
-+			if (init_ip != 0) {
-+				struct disasm_line *dl = find_disasm_line(sym, init_ip, true);
-+				browser->curr_hot = NULL;
-+				if (dl != NULL) {
-+					browser->entries.rb_node = NULL;
-+					disasm_rb_tree__insert(browser, &dl->al);
-+					browser->curr_hot = rb_last(&browser->entries);
-+				}
-+				nd = browser->curr_hot;
-+			}
- 			continue;
- 		case 'o':
- 			annotate_opts.use_offset = !annotate_opts.use_offset;
-@@ -1096,22 +1115,23 @@ static int annotate_browser__run(struct annotate_browser *browser,
- }
- 
- int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
--			     struct hist_browser_timer *hbt)
-+			     struct hist_browser_timer *hbt, u64 init_ip)
- {
- 	/* reset abort key so that it can get Ctrl-C as a key */
- 	SLang_reset_tty();
- 	SLang_init_tty(0, 0, 0);
- 	SLtty_set_suspend_state(true);
- 
--	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
-+	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt, init_ip);
- }
- 
- int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 			       struct evsel *evsel,
--			       struct hist_browser_timer *hbt)
-+			       struct hist_browser_timer *hbt, u64 init_ip)
- {
- 	struct symbol *sym = ms->sym;
- 	struct annotation *notes = symbol__annotation(sym);
-+	struct disasm_line *dl = NULL;
- 	struct annotate_browser browser = {
- 		.b = {
- 			.refresh = annotate_browser__refresh,
-@@ -1163,6 +1183,18 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 		browser.he = &annotate_he;
- 	}
- 
-+	/*
-+	 * If init_ip is set, it means that there should be a line
-+	 * intentionally selected, not based on the percentages
-+	 * which caculated by the event sampling. In this case, we
-+	 * convey this information into the browser selection, where
-+	 * the selection in other cases should be empty.
-+	 */
-+	if (init_ip != NO_INITIAL_IP) {
-+		dl = find_disasm_line(sym, init_ip, false);
-+		browser.selection = &dl->al;
-+	}
-+
- 	ui_helpline__push("Press ESC to exit");
- 
- 	if (annotate_opts.code_with_type) {
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 487c0b08c003..3675a703de11 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2485,7 +2485,7 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
- 		evsel = hists_to_evsel(browser->hists);
- 
- 	he = hist_browser__selected_entry(browser);
--	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
-+	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt, NO_INITIAL_IP);
- 	/*
- 	 * offer option to annotate the other branch source or target
- 	 * (if they exists) when returning from annotate
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index c9b220d9f924..937effbeda69 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2622,7 +2622,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
- 	return 0;
- }
- 
--static struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
-+struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
- 					    bool allow_update)
- {
- 	struct disasm_line *dl;
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index eaf6c8aa7f47..bbe67588bbdd 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -170,6 +170,8 @@ static inline struct disasm_line *disasm_line(struct annotation_line *al)
- 	return al ? container_of(al, struct disasm_line, al) : NULL;
- }
- 
-+struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip, bool allow_update);
-+
- /*
-  * Is this offset in the same function as the line it is used?
-  * asm functions jump to other functions, for instance.
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index c64005278687..e544e1795f19 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -713,12 +713,14 @@ struct block_hist {
- #include "../ui/keysyms.h"
- void attr_to_script(char *buf, struct perf_event_attr *attr);
- 
-+#define NO_INITIAL_IP 0
-+
- int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 			       struct evsel *evsel,
--			       struct hist_browser_timer *hbt);
-+			       struct hist_browser_timer *hbt, u64 init_ip);
- 
- int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
--			     struct hist_browser_timer *hbt);
-+			     struct hist_browser_timer *hbt, u64 init_ip);
- 
- int evlist__tui_browse_hists(struct evlist *evlist, const char *help, struct hist_browser_timer *hbt,
- 			     float min_pcnt, struct perf_env *env, bool warn_lost_event);
--- 
-2.47.1
+...
+
+>   static const struct of_device_id sl28cpld_hwmon_of_match[] = {
+> -	{ .compatible = "kontron,sl28cpld-fan" },
+> +	{ .compatible = "kontron,sl28cpld-fan", .data = &sl28cpld_hwmon_chip_info },
+> +	{ .compatible = "kontron,sa67mcu-hwmon", .data = &sa67mcu_hwmon_chip_info },
+
+Effectively this means that the two chips have completely different functionality.
+One reports fan speeds, the other reports voltages and current.
+This should be a separate driver.
+
+Guenter
 
 
