@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-804642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9827DB47AF8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77008B47AFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE801B22280
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9BE1B22536
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AEA2627F9;
-	Sun,  7 Sep 2025 11:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9251C263C9E;
+	Sun,  7 Sep 2025 11:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Veerg1xZ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIYQ5x+d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF5F18A6DB;
-	Sun,  7 Sep 2025 11:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20D41DF26A;
+	Sun,  7 Sep 2025 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757244664; cv=none; b=U5hFBbItqChDY8MAuvxX1a+H30wt8TJLBN8PGdwZ/6pcdlIh7s0cUOMPSbz0WdcbqV6tRNKsD8K2Rkr/VyJ7jokVqDIwcqGzF3dbQZNmTiOX3FQWFfumcYh32gI1gZJwA3tsDofurcmIgr0MyN6Jk8oD19Wz/ck0bGDPlgsbeIc=
+	t=1757244805; cv=none; b=Sv41M+a8jvRymYL9IXH63GEry8XsY9wd7VAzBGpsAFOFAHUGvkwIH7IZ45hvvBkmnXKo+SXxnuhJeH41Wje0wsJhLOxsYavogAzTdL+y2POdTJG+WDDIktgTxOm7yWeQWfLHipEEDtpBlFgwcakl3blJIxyBFLm4BqfRBJdJmwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757244664; c=relaxed/simple;
-	bh=dw0Qr4aMJN9mFdTBVmZDatZgEgVAsfxeUG/I+PDfr+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lsayN8JPdlUeqinKCRNFON8fr7CSTPKPm1WmtUoqjcLOUMPG3tKgeqFooraZLYpLDepPgZ5naedxJ9E34Uyslwk/xcXdXTNKtJJywYalUgNgy1MS3HO1FEFKZW4fezJwOyiofS65NqM6z/ATbx89DYqn67tG93DNEEDlkP5z/VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Veerg1xZ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7722f2f2aa4so4535721b3a.1;
-        Sun, 07 Sep 2025 04:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757244662; x=1757849462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dw0Qr4aMJN9mFdTBVmZDatZgEgVAsfxeUG/I+PDfr+Q=;
-        b=Veerg1xZfER2tUulabXscf7rNOkSxP+XM6LHtE64vYoWmdKXpVZazh94BB0eBy6xVY
-         PNdjFbSPXCWAthBA3HEesQDE/QmEj1ub71wmvl1k0Yhf9EGG+BwOqNPP10NKRUASTHBf
-         t/zxgjqOZwVBrY48GeZLh0R5ahugbuMSZVUSq7JRIJhf9EmftgbtZSsuHl96Y3ZwzEE9
-         WDXyHbDLtOuNSyN1gCDeVr8dWKp3DmgnzbKxjbDDND1OGmCu2SGlxSeR/tZLE4F5YnCz
-         pbekgU3Sgq4SbJZ/hZWtuC7eS+rSDhtwM4NGqMlWBjKI/WvmxGPU4RUE9wd3bugG7bws
-         15fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757244662; x=1757849462;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dw0Qr4aMJN9mFdTBVmZDatZgEgVAsfxeUG/I+PDfr+Q=;
-        b=DT6wsX7bzMMIFL3N11cvUE30ZXAb5E/v+t3LPVMNDJqUz79gv+ykbJtbIpO/lpSbgA
-         YYc8eyT+0/cDeVE7tG3L+GLJNnlkxc71YgpWvUUNk4r3q/sr9VrYEaQz7LBgFA1QySQ2
-         +8kjRzWEQUiISX6acAH/g9sRyqM3gcBkIGVBeeX3V2bfDBxKEl7ihgGjFq/eQJxncoSA
-         jrMbDSKHu3q5h2k1ILImFVe+6lWD52LSRpkmvHHNWldk1Q2ShYPjA6cMjb9xyxFWaZhR
-         jQ4oKcobUwmzWXLBVXPIEBuBLFyW5llRP4BwAU+dzLlSmxeRyLPGwxL4i5oupXJdsrMo
-         +BeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgiVqUJqgv+clWiNEWzKFQhYmTXuK1KHqyt8uomD8CnHWaI0ITGCoXC5tXzo7Wbbz23FPgBpQxGtUoOA==@vger.kernel.org, AJvYcCX8NecOruAToXSv2yXSSnnWB3ZBH9D9EGxajC/qMIT6XtmGZdCREPX08xW4pJaciXlEoLzuikyjlGe40kl2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/LIgbuMAx14XtcCOBxDqoz9wBvJq2fbOWmhMjS6Dziw4IBLIz
-	9fRSiHwPXWJ81QFd+n1IdQhcGU5IzBmlEPQ13YuLT9ykE3FRYLm4ZoVv
-X-Gm-Gg: ASbGncuImqf8pz8DON1Kfe35TRjyywUyhtGze99xBm2rSxxnQV10ZoBp3edDUPce1ye
-	iZKIyUJ6eUBmpC+cXZS7VKm19On92uHotQGK452DOxu1tb8npsgkFndJSGAAMIFCkUaxz+kOZAs
-	oqrwgyED3D30Abjo7//G9j+mw3NJuy1LM/zIlVuGgbJv9+8bqqEof36WpbVH8IbBvgYRGHKCvJV
-	olZpfBJJFilJfyGExfjAV6aIW41XbGwbNCfUEq0vEKMjEphroU9znHIxr2N5BDpNukrheSS91Nm
-	94Y3L+bicvp02wYOl89AA5D1PfvRG98u0i5Nuxmqto2Rx4/t2eURSxZgb+6AI744xsV9/iLw8In
-	6iLlnvmQu7XRYxvwfa/AHPPF3YwEQ
-X-Google-Smtp-Source: AGHT+IF7jOtmOWwmGAJBJBc8w6e1L5vIwCiYmw7rHesLPPxK/cAl+gvHKAmjQARAwVUOMPUUfl4dyA==
-X-Received: by 2002:a05:6a20:2586:b0:252:1cd4:2cd7 with SMTP id adf61e73a8af0-2534441faf4mr7222835637.29.1757244662525;
-        Sun, 07 Sep 2025 04:31:02 -0700 (PDT)
-Received: from danascape.. ([101.0.63.17])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fa1f21415sm11284044a12.18.2025.09.07.04.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 04:31:02 -0700 (PDT)
-From: Saalim Quadri <danascape@gmail.com>
-To: danascape@gmail.com
-Cc: bentiss@kernel.org,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND] HID: Xinmeng: Add driver for Xinmeng M71 Keyboard
-Date: Sun,  7 Sep 2025 17:00:58 +0530
-Message-Id: <20250907113058.22091-1-danascape@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250907111246.9733-1-danascape@gmail.com>
-References: <20250907111246.9733-1-danascape@gmail.com>
+	s=arc-20240116; t=1757244805; c=relaxed/simple;
+	bh=urBdq2a4lKJDO9ZZYNrOKJ8eTnycxkF3tJJ4jFvOdfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aNJ2EGXd8GjbLCyPLuAB1wIQ8VVo21Rhy2McowGos35Cd5VpqJlhDcqtXoH9bXucm2KiHstx4aJVsdMheUQFJTRQ18LhT7U3STODxD3G/p2YhnpNFFT+KI9a6jnARrumL78T9waVY5L/Q9CIsvWWFyzeLH7FxwrW3+yJ3Gz0XuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIYQ5x+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C0AC4CEF0;
+	Sun,  7 Sep 2025 11:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757244804;
+	bh=urBdq2a4lKJDO9ZZYNrOKJ8eTnycxkF3tJJ4jFvOdfo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TIYQ5x+d/DzPvcNJCm/NtOMsAzyL32HodhmT79zBmt8OTF6SXvDFym49sX59odxsq
+	 a3DwZFKp3kV5lCDWC7TSBXtouWwd/N6WpdsgwjPsQDynZ2pd0xFjo6toSDJpSee3PP
+	 efgAdpISM0uq44R0Bskd5YZC0bEAntIgwC89s+OdXyofTb6KHxvvJYuf94Fr/aqeg4
+	 Axj5swrReFGxPFIzsLm8GgyjwBiuIfM8jjKs0fR2YXfWisvh7cZPREDZJWsvc6XM+f
+	 x12iVxA7LzjBPz8TyCt+0m0lH/lcnpAJhjFHLcTy4FMR7WG0QdprIk3Z/pwqEhDc26
+	 6Zr5zZCEfjacw==
+Date: Sun, 7 Sep 2025 12:33:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Tobias Sperling
+ <tobias.sperling@softing.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Esteban Blanc <eblanc@baylibre.com>, Ramona Alexandra Nechita
+ <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, Herve Codina
+ <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <20250907123310.2209f824@jic23-huawei>
+In-Reply-To: <2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
+References: <cover.1757053456.git.mazziesaccount@gmail.com>
+	<3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+	<CAHp75VdaAH+1mh16KWoYtYFMV+_ec8x9YipeD3K8g6yQr-2VjA@mail.gmail.com>
+	<2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 5 Sep 2025 10:10:55 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Sorry but I just found a few changes to do in the driver,
-I will update the driver and send a new patch. I have been using
-this driver in my system for quite a while now, and am able to read
-battery info.
+> On 05/09/2025 09:54, Andy Shevchenko wrote:
+> > On Fri, Sep 5, 2025 at 9:42=E2=80=AFAM Matti Vaittinen <mazziesaccount@=
+gmail.com> wrote: =20
+> >>
+> >> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs c=
+an
+> >> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+> >>
+> >> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate =
+I/O
+> >> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+> >> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+> >>
+> >> The IC does also support CRC but it is not implemented in the driver. =
+=20
+> >=20
+> > ...
+> >  =20
+> >> +config ROHM_BD79112
+> >> +       tristate "Rohm BD79112 ADC driver"
+> >> +       depends on I2C && GPIOLIB =20
+> >=20
+> > Still I2C? =20
+>=20
+> Thanks :) I didn't spot this @_@. I just switched the REGMAP_I2C to=20
+> REGMAP_SPI. Will fix.
+>=20
+> >  =20
+> >> +       select REGMAP_SPI
+> >> +       select IIO_ADC_HELPER
+> >> +       help
+> >> +         Say yes here to build support for the ROHM BD79112 ADC. The
+> >> +         ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog =
+=20
+> >=20
+> > which --> where =20
+>=20
+> I thought which (as a genetive case) would work here just fine?
 
-Sincerely,
-Saalim Quadri
+If you had 'on which' I think it would be fine.
+With just 'which' it doesn't work.  I'm too lazy to figure out exactly
+why though :(
+
+I'd probably make it a separate sentence though.  Analog inputs can also
+be used for GPIO.
+
+
+
 
