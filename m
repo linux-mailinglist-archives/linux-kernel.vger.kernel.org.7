@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-804781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA85B47CE8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:47:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEAAB47CEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF01177416
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318863BE34F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCDB220F2F;
-	Sun,  7 Sep 2025 18:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653D21578F;
+	Sun,  7 Sep 2025 18:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4legIqKH"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkb/pllJ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400AC1A2389
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 18:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FD9157A72
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 18:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757270821; cv=none; b=m1Y5CnPUiMN5dSvsDhM/NsdaI0ESikMzKQao4giP+SadTHr0gL9czXcsxHGnaPDcteo8lXEh7keNpM6hEhY9MfVOGm4d6ljJLluFFE7eafc70tTIsAoLxkiH9MOrkiu1sA6HQeIcepF9XmqqNs5eAT0q9jvlG/wKzQQw/Nx+b9Q=
+	t=1757270963; cv=none; b=fF+xDNv/y2ZU7mzjJhroCbhvaZF+hlNvS3ER5bsseb/Vp9ajFZrcwrdOt0uwJQBhyVv2xW8Rr1Q3+R8BTnhGSV9KlqFf8t8nGBBrobj6Mqi+0oRPLtbbbinftNbXG+MPuvAaKjPnjK0GPeJhbqbkjpUCOlG7LGAUcXKBu8GiFMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757270821; c=relaxed/simple;
-	bh=T3EwPJtzj1SpjYFQ48lBl+QcPQwCf4Y2eCpeUVXk7Yk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6iaG8UMGpZztWeYQjhHZsfcGM4OMrcIONAdLYpqWcb+mFw+gD5mHZjHA0uuP18wvmln1n5nILIFowm83QhTAfenA5Z9oEz/3i8iCgHHfUJSjbZchCNErHxQi2jJ3xNpuL3CzafNrAOxHzODZb7GATVq2tBJRy+e749ocHdr03E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4legIqKH; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-401078bfacdso12622915ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 11:46:59 -0700 (PDT)
+	s=arc-20240116; t=1757270963; c=relaxed/simple;
+	bh=B+u6XgKMyYyPWYw9hDeq1ebbo0neUq4Kx+1xh/D+aek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZbEG/YsBq+8t4zlzAN6Vv+f9raxdWh5EslMDHOsD4k0475dqQsWksAepIeiCvNXK6pCOrsUTl1cJE5dfGH0bh5/+lp0a5YNc6K9s1kxJMcK4c/Ml+OLE3Xr3MSQpYY0IR8tF+CutxkL21nXDc8KJ/ApUjnbQM8UNehvBthSEqzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkb/pllJ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b02c719a117so660820866b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 11:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757270819; x=1757875619; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEQRuei5YFvs4wxgmlDYvTephk2WPSdhzkeIUgzcfhE=;
-        b=4legIqKHn0wflrNQKfcNmOqCGUkT8yxdhMEdaqmijgMTOBH8Q3Ue215LkfnV4Ru8cr
-         0LFDxb8HDMG+ZlYh4w+JlCeCZJc4OY1HIX/oF3fYFTOE6dpWcig/yfOl5mdex/2e3QYL
-         dBZ2xYdaOFCHGRE5RVUjbyme8cU6rsY/aT6gNA671YRj1cGxy1ntiZDiZTW+io/oeXYQ
-         IM6p0AAZSRJC/7qqagR+4qKE/KDROR7J/uhW3a5hdKxOooot7aSxMvIJc9GopywxUe7L
-         dZs/f1XLxCaCUPFYeecp7j+Y4w97IOHx8KclJ8Cngq5K7zUFCJ24Wq1oYfKGZSiZqDK6
-         92qg==
+        d=gmail.com; s=20230601; t=1757270960; x=1757875760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1NAiKKbWMAZGMkQfKHixLzrdvNKYNue2EU7kkocIu3c=;
+        b=lkb/pllJaR1G4BJsnjNeLyzExJHcSPfR9O7dtWUYK/049fMhhveuGS7adP45g3DEkw
+         l4aTl3a45vhCpNdrIljFG2M0Rqy909Y9umyZTf4qbFjLTlyqNTOoiQdlHsxHdbkayRLd
+         FAovSr6c7snaq1d9/nFFkwItq6SdEnXGNy41yiEBbindmieG9Shj9hGyOvNuwYYpN/Pz
+         9grT0KTqF6jsCmPd/HDWM8D74BBcAxENrXpD/v6X1vD7t2Ogdl6e7UG9nju6levg/B8q
+         7vw8KaF+NOf4iC5QPo/nVyx3xyIobHVLQwBJVZPG6cHee+GBrpjgdbNl8Vk+2ZvpE9JO
+         lt3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757270819; x=1757875619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZEQRuei5YFvs4wxgmlDYvTephk2WPSdhzkeIUgzcfhE=;
-        b=HhdESn0uKbLuPxAFxE7hZY/XJT3N6IytqSU5tHCfgzjlAQodbtDDFHtRTD8ILyl3f1
-         s+P2r1ukQUK3lzsQtEuv1/FZQeSfRRNcIDFMoRknd7DRlD7wFJGSDAwlkrrnrmukw8Vz
-         3BCAwaxVUU+m2/dBGhv++2kUH8r4xMlexbdihy5CjwAuR1XbvBY+4nT/vLXTysw+VYOe
-         0V/+dWGywAXhJ7tx/4PLFVvDIQExEOPHRT+1n6EwWRxTyT91tgFEY3V0x9n9g9xaNFCg
-         fM7s24+6J/c2z58OSNOZA9AAjO54dvkpPBMY8u09bvK9ubA672wNTA8nRv9IEjUpUQxU
-         kk9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUATLLl/ChFqp3PbfN3QE10BRcca6xAmxozMZwshuMSsmttFEwD2J3zgKZvHtO54w8e++K9lYiOZeqR/Og=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrSAQeQjlcFpWJduWy5+0H2isnfrz8PLX4xzfPCvWaIPjGkN7p
-	6ooKHZO+LeQgHs5BmQ5UiqAQVCvIrZGO0gXPN0U3079fipID75qFAVyCevg6wk0Z7Q==
-X-Gm-Gg: ASbGnctUf/UjbvFBwCxemQgFHAZ/zryMtBw2C3P5ZfemHuc/jojS4LquUJqTyAVb3WE
-	FBhAsleZru5j6fIsJgOEsh7rD+JXHTPMTM1EI1yzhewB8ObbB8M6NCj4ZfDCcIj+vQpoMsdzNiO
-	iidHqgZsmMYInqQZGS77Fgy7TBjEtPpzvx7YXAROgy88Wa4FOmIZAVZzO8UNTZYmGAfWSaXAeYF
-	WH7hZx6XSOt+gahDZaMimusEZTsZmNX41AH3CGy+3UiT8YWT+djgIq4EIAnpSZgUgSXbSE/o8SP
-	Y7QUE2Kzdu+4JXa37LJr2JSWDWQm4IjLO7VTQaIkp6cu1Lkxo3zhriooZ17JNet7x0042MhykYp
-	/qbs23VZjkm6K20zjQ/xDgESjtq1/lY3q3c9+Of4WY+BCkfNC8A4ILrAg839OqHy6h2v7fvtRBE
-	D5gT4=
-X-Google-Smtp-Source: AGHT+IFP4TFfhBSXgMSup1FEcAD1tiIYNyc16qd4c15z9i573dYTshH/4CnU2TUvpU2Gmbm/2gjnmw==
-X-Received: by 2002:a05:6e02:1607:b0:3f3:dd9a:63d6 with SMTP id e9e14a558f8ab-3fd961f424amr86831295ab.22.1757270819059;
-        Sun, 07 Sep 2025 11:46:59 -0700 (PDT)
-Received: from google.com (222.121.121.34.bc.googleusercontent.com. [34.121.121.222])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f3e0da92a3sm98600735ab.41.2025.09.07.11.46.58
+        d=1e100.net; s=20230601; t=1757270960; x=1757875760;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1NAiKKbWMAZGMkQfKHixLzrdvNKYNue2EU7kkocIu3c=;
+        b=QqUo/nUSM5rIKkbzboyERIIudwNceCeM0HPgj3wSwmzzhZzD9wn7GRqYaE3UYCOEcm
+         QuidNV3cYB7D4XG5qeUrhk28OVNdP4JKkOGnIwGiyG8neteG3H2LUjfW1jKlFui4vETz
+         b0LJjT1P7kZz3kvkmqxEdCBU5kJal4RtW7bWvOv5xl2Hggm2URvH4iSBTeyfHnkNCHtm
+         ZToFVN6rs1JZAcqobGgJazZ1yKKjVncN74OybDx41HvaJr7qH+m5hvedZlSHdzF/m+oB
+         04dll8bqcPuPUyHGaVi4CjD5TfkCHaxCu5ANA/ESgM2oL2hcI0NUnwF26NgSw0Yg8u+t
+         KQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUctKQgSBy98C7tTpYGEY3RDKLxpPMeA5GjqVReEyHbmFUsuo1nbUi2Q2dFxaY/seb5cI11F9IoaszbwUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNiF44CyrNzx/gTBkMw1SInqXWw3tKY0rymDoXIWeJcfbTJFT+
+	MpQI4hLndGGJHnJSITdhMvLJXWrbBo3jCHWXDoZb3aXOV+8LLXp5REfU
+X-Gm-Gg: ASbGnctakyls04wyNanwUDDsDSkOCpUpVS6V6EOR6IV3thpRfsCZHIU1r40TE5m+N4/
+	pW9r6V06HTFx7EUDZZFVbo0oRxJLN0HECgVekkp94QCDWwgzD0HsE3J9055fyPJ9Y8P3/SQZgI2
+	2VNzeOiCGmDj0YV9eaqeUrJpgpatIBxzqatXcN1U8GnXvNJw0wLHk/WbYwMHTh2WhRdJMSvkufW
+	78MC/yxVWVqyTtYPES79lrdTDRPmwL1wp/8sla997fc+MeEixfod2A6lyXCqvwbQWM05PkyKDuG
+	HoyJgbC0qWKYRqN1EJUUJwFBLniQwC0Y3F+ez+MELhIIJ8nN8QFDImGgQzy9x7EUHad9g3z7kGt
+	zJJJqT6/IeNjEdH1VL+Eht8w=
+X-Google-Smtp-Source: AGHT+IFixl11lPNiGvl/IAVeCHfhyXmbkM21yRIMVZB7M4Jn6J3F1mrw7gB4lwL9OFqBQx8MLYkL4g==
+X-Received: by 2002:a17:907:c05:b0:afe:a615:39ef with SMTP id a640c23a62f3a-b04b13cfb31mr495757966b.9.1757270959635;
+        Sun, 07 Sep 2025 11:49:19 -0700 (PDT)
+Received: from fedora ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff032125e2sm2346381366b.77.2025.09.07.11.49.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 11:46:58 -0700 (PDT)
-Date: Sun, 7 Sep 2025 18:46:56 +0000
-From: Neill Kapron <nkapron@google.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com,
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selinux: fix logic issue with per-file labeling for
- functionfs
-Message-ID: <aL3TIN9UtGHKELuy@google.com>
-References: <20250905222656.3692837-1-nkapron@google.com>
- <CAHC9VhT8NrsXMM-PPZJ0EPLxFHQ1vOu+ASCd+82Xth_mJPnDiA@mail.gmail.com>
- <aLunR_0BPCrATnBP@google.com>
- <CAHC9VhSaAm3G9bnJ86Aj+DnTio19ePE1Pu3voaB3XUvBveodbw@mail.gmail.com>
+        Sun, 07 Sep 2025 11:49:19 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH RESEND -tip] x86/percpu: Use BIT_WORD() and BIT_MASK() macros
+Date: Sun,  7 Sep 2025 20:48:46 +0200
+Message-ID: <20250907184915.78041-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSaAm3G9bnJ86Aj+DnTio19ePE1Pu3voaB3XUvBveodbw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 07, 2025 at 12:58:33PM -0400, Paul Moore wrote:
-> 
-> No need for a v4, it's just a single missing '!' and the commit
-> happens to still be at the top of the patch stack.  In cases like this
-> it's easier for me to just apply the fix manually.
-> 
-> Fixed the upstream commit and pushed back up to selinux/dev; please
-> take a look and verify that it looks okay to you.
->
+Use BIT_WORD() and BIT_MASK() macros from <linux/bits.h>
+in <arch/x86/include/asm/percpu.h> instead of open-coding them.
 
-The commit with the fixup looks good to me.
+No functional change intended.
 
-Thanks,
-Neill
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/include/asm/percpu.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index 332428caaed2..725d0eff7acd 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -23,6 +23,7 @@
+ #else /* !__ASSEMBLY__: */
+ 
+ #include <linux/args.h>
++#include <linux/bits.h>
+ #include <linux/build_bug.h>
+ #include <linux/stringify.h>
+ #include <asm/asm.h>
+@@ -572,9 +573,9 @@ do {									\
+ #define x86_this_cpu_constant_test_bit(_nr, _var)			\
+ ({									\
+ 	unsigned long __percpu *addr__ =				\
+-		(unsigned long __percpu *)&(_var) + ((_nr) / BITS_PER_LONG); \
++		(unsigned long __percpu *)&(_var) + BIT_WORD(_nr);	\
+ 									\
+-	!!((1UL << ((_nr) % BITS_PER_LONG)) & raw_cpu_read(*addr__));	\
++	!!(BIT_MASK(_nr) & raw_cpu_read(*addr__));			\
+ })
+ 
+ #define x86_this_cpu_variable_test_bit(_nr, _var)			\
+-- 
+2.51.0
+
 
