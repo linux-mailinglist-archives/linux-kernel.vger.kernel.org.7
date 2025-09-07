@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-804541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CF0B4793B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A2B4793E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498AD17F8DA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F1A202FE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A4D1EE7B9;
-	Sun,  7 Sep 2025 06:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9179B1F09BF;
+	Sun,  7 Sep 2025 06:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b="knBMPIJx"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elV00ns+"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF987483
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 06:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DF1DB377;
+	Sun,  7 Sep 2025 06:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757227439; cv=none; b=ktO+iL0uXnH8Q/UlY6EjizbMl8tv0nWtu/idr0uAQeeeZMq9FCBl8Pwr6VnvN/bSim/JJ/cHjqdUnGR/rN351iLn3QLpaaslQmdGv2fneuLSb9fwPqS1dSdtlYgqyra4q+F4wpMotlz7NNYmmcTTm8/KuRulimA5esahAUg85Xw=
+	t=1757227992; cv=none; b=kVigXm7/27NbMjBwCCqFF3fiBOeE6zeuvPxTwVsh1kaj+E8BLGEIAXd4gGbR47yGYmIeeM4bixtvbZ6kgrN5egzxkY2Q/oC6GJijSuefS1BlBM5ru1Of7oEloeLRm87cHnO/lBodaa+QtC64gbVIUu8XSXWWg1nUH8AyGRB27fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757227439; c=relaxed/simple;
-	bh=9NhhGR0/6Y/pCwiJcX1MJ7z/ESU7rNop+X3V4zo/jpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=huQLReKuXOHFdI1pfq5chWkBZ1zrg8J0PaggOjXtpvKhgxFjoYBVIYxVnehsao0zr1wCAC74Jz5Cc7X0ba/MxTJZp4gXdHH3LfluXM1U3rgG1U0hkr0OUVfqve6EUUGz79+89nWMPDDq9Hs+a6CC6v1SZyRxMti/nXH+AUg5cr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b=knBMPIJx; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77250e45d36so2832864b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 23:43:56 -0700 (PDT)
+	s=arc-20240116; t=1757227992; c=relaxed/simple;
+	bh=svksw43izxx+5A2+J4leAUSiXS7AhpSutpwM9U9mSZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ybh3dLW++mFoI6o/ajkEOOD/TIvn+AlZl1ZaJMQfko7ChBA4enjrRipxZWdt5zIP+14qBJ+DO92eEdmF4v+ilFcFLpqFY3cW+3Oql1TSNmR1XgyUFzqiLFTFPtCseDd2+mWO0xr7oG62RrQhnnm9Yyaq1DYP7+L52rEOaWvcBes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elV00ns+; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cd340377dso18878275ad.1;
+        Sat, 06 Sep 2025 23:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thingy.jp; s=google; t=1757227436; x=1757832236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpiguXQuP9x2il0xGwUlgilkQSoa0hn0nGj0TEev2ag=;
-        b=knBMPIJxxJaN55XGErCTcQTIdmqCGBfs/CYkVXoHbcVOwaSBetLvTJHCsbksp8Hwfx
-         ocMZXXU+pC6n/S1/ZxdaTCmHUL3sOlyoqDfYk12+JEuF3UD8CZ4V+2XGxiLOa4YuuEQG
-         9mnFul0x8TIz7ago7CNAWfCnVnqYIRWER3JWw=
+        d=gmail.com; s=20230601; t=1757227990; x=1757832790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NOyGW3yOOAL+eege0XOWicEcKrCBOJ/yJv+n7inWSzU=;
+        b=elV00ns+YojRzt1VDqfsB8j5AnFPKKJKUHJpx0q57HeJ3WKaGJMjJWMw1bZsvsyc3l
+         HgkUj/wz2US+Fw+4UKV1Tl7rTdsjfbpmAiRCMlraEvq3wg1O+T6oQBAZxsAbLdwdAXh2
+         MbdpQ2x8msFafKMmTpAio8fvbpAg3FnJ7KDByXhtp4MzQz5gxb9Dd4IV7jUx6eeDqni6
+         ASprt04hdzgLWiaNxUPx8p5d5X0oWaonmdJ1UYCrqlXTWTE5ygolmK9sjnRJZWG6N9J4
+         womnGy8XYB6bHUizKdxQTSbmN+zwjVIcGUHLyVAgFY8193qzaEhoRc2ue7qBwi66qVKf
+         Xhzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757227436; x=1757832236;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OpiguXQuP9x2il0xGwUlgilkQSoa0hn0nGj0TEev2ag=;
-        b=AIAFpHA/RykMnMgBINaeIz8W8H8mssSNsKlLmB3y7DqLhXsFFsZBc4EvQy8rbB95Q8
-         32o1B+tZycPvEW4rcRe/YpI7mhoINPlB8cl+udPWh8yV3jV816AZ3Yid8baAubdseZEW
-         M2YDIey3FPv2jS9W8WJlqqBhvI14kDmQBxt5Lg8iQWelIirZzcnAr79eB+bENmELdjjA
-         hkqEXNcNAzNBL3Igju8YGneVlTClEugbv24w0D2xOtaxNZYzbgJd+NHppl8sPSk5di8z
-         hmoqmbXsmwc1mXsAxZCopzJGHvkvDi61jTUXtN+i0C0ajwqWOV65Nb9Vi2AhYSFM54bl
-         DZ/Q==
-X-Gm-Message-State: AOJu0Yzaq/0OyI6KgPUARiw3Ueq0z+5hEqvuBFOc8PhWxDMRl+7+6NMJ
-	cwQ/udckeddHvEx1pHRyPegIWDIHg1/0ACrEtQchto7mhzfgFha2/4YR1ZSVCEkmdr84rQLuWX9
-	8NjhCCgM=
-X-Gm-Gg: ASbGncuAyeKsNZ+tQgw8sylywpuwdQMYERhFvQnvp/+PvBWj2/MUNiXaxXt8wIi26ef
-	5eNpJKLa1tVqVY5t9kJpCV/19Snk6ioAk8K7hQ98huJSLoEIWuHPRPoWXVQKUqpI8S1kupPPy0z
-	2r2iyXp//Zx7Dk6Zn1jldDbLBVKcpNCDOFaYkpWzLmGAoojEDNqP3DDxel85STmoHrQiIua4jNk
-	PZeHDslpBnXcvLkhB8irNrH/fJ9yw8t0DrmjUSh1sys7sdfUL2APpYA7QWAFm10Z1Y8nFoQu8cK
-	nqZUxWa9efJqTTrtE46uWL9rqfmQi7PFhOXZ8j7wGpg93F8ZL/Ry6H2Q+dpo4S+2AvBYeCF2Acp
-	RB0nYuoU6iBi679TwSWnBF7PuRcd+tKaVNX2C+MAh5DhGDyN23lEpEWLtoIrQQuV/BABOEURkCx
-	7mlmk5zLfitgBI
-X-Google-Smtp-Source: AGHT+IHP5ScV4aY1LkVwEH2zOVhZNoxO1acZqniabJZLZvIYuHyObbl8YIm7jWrIDyiql/dg/ISb+g==
-X-Received: by 2002:a05:6a00:2345:b0:772:4319:e803 with SMTP id d2e1a72fcca58-7742de5c53cmr4568348b3a.30.1757227435978;
-        Sat, 06 Sep 2025 23:43:55 -0700 (PDT)
-Received: from kinako.work.home.arpa (p1553119-ipxg00c01sizuokaden.shizuoka.ocn.ne.jp. [153.226.101.119])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7722a4bd1ccsm25840740b3a.47.2025.09.06.23.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 23:43:55 -0700 (PDT)
-From: Daniel Palmer <daniel@thingy.jp>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Daniel Palmer <daniel@thingy.jp>
-Subject: [PATCH] eth: 8139too: Make 8139TOO_PIO depend on !NO_IOPORT_MAP
-Date: Sun,  7 Sep 2025 15:43:49 +0900
-Message-ID: <20250907064349.3427600-1-daniel@thingy.jp>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1757227990; x=1757832790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NOyGW3yOOAL+eege0XOWicEcKrCBOJ/yJv+n7inWSzU=;
+        b=BDY/fRfG1ZYsktDBJVmvbd/GGTRvh6oZ8QGhzz3uP86C2A6c56mBpPlDSVfPZzuYFq
+         ACrpWl0thiVCOSRRkjx7lRgrai3lrLySoD0bge2F8M2FzMKK6tGfrYD0dscW3oQ3ZRPh
+         /Z92UPo70Y/ynhEx9Lk3CEvoYaSBFgE82o5YOqGyzoYm3gd95XgRpWNziozxBg907ORM
+         Qj24CjBiyNLWeqhxs3XUROc2IlxWa+bZu1eP9OsrPs00vdERGrl9TqfCrhGrb3LC+elA
+         rjzewczQfeoUk8urV1GD0BmkVNxda/fgyoEJNsyNkc1e4LWm/l6qgjf0gMUBwagVbR6J
+         YZgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT128xZ5CAKMgC66oxvSYz5XhIk0WyPsU729YOshna8jvChnPnp1sCHGVaay2gH9drJghkeaWBu+unvZ1u@vger.kernel.org, AJvYcCWuKJ/i8wJ35y5utPoDt5CGtOIkYT5VHCfBi+CEtU5YJtOxVmkydSGN82I+mSNwE1NKQStxCLHjtA2m@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4VkcNU9sNyAtMh/iKzYbSQ/8meWjBweSi9cfjS5M+bc3HSJxi
+	jmX6mDFEAtftWiA46Q18Vtc2w0KtiVbFp22Nx70RPN2L5/UzuuINKgHY
+X-Gm-Gg: ASbGncsYTivnfvkBGEUPizOuU3/wDmeAQ6YCEMR/HNI8jRWEQJS/A5xQdM+p6thDA15
+	ARTZL1ghOlGBaR6cUsA3DzBMQQb4n+OlFaI0wOAZp+LtVa6WId41WJqHjSLOr6N9apMVqk6NrDm
+	PExUkjOWELfCC2aK3vxxFkFlCgJRjQ9IqQYPq840Abl0PuA8+M0r9jViMzonlLkqk9mxWcmzKoa
+	XRH/kCSEJN+Mm75uA7+0fwB1RKJf1cD0a+0gl1ejiigt3BfDL8tGftxggANDGJzCK5eT+q8rade
+	CU25zplW6E2LjtMPiHlhAOYXGd3GETcECLqEzV3OTinWfvI56RPYvd2m7yBostmPbIGqSni8oD6
+	8oSrBp262LMY26qsqQgaCVksydr1JKL7qIdjri4nhF1o8wxz6AfM5b4h1uBZG
+X-Google-Smtp-Source: AGHT+IH9fUTIn1sDqo1bULibKfaXKESE84JfENot24hXA+Ko+2HbzH3bbh27x03Wpn+Bm8QT9oMIaw==
+X-Received: by 2002:a17:902:ef07:b0:24e:e5c9:ed0e with SMTP id d9443c01a7336-25172099d9bmr56116775ad.43.1757227989875;
+        Sat, 06 Sep 2025 23:53:09 -0700 (PDT)
+Received: from [192.168.1.17] ([223.181.116.138])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9304b7eesm111044255ad.102.2025.09.06.23.53.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Sep 2025 23:53:09 -0700 (PDT)
+Message-ID: <048d1b86-1575-4e31-b5cf-b6f72b2843fa@gmail.com>
+Date: Sun, 7 Sep 2025 12:23:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mmc: ti,da830-mmc: convert text based
+ binding to json schema
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com>
+ <1c7e9077-c213-40a9-92f4-07e813a3d151@kernel.org>
+ <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
+ <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
+Content-Language: en-US
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When 8139too is probing and 8139TOO_PIO=y it will call pci_iomap_range()
-and from there __pci_ioport_map() for the PCI IO space.
-If HAS_IOPORT_MAP=n and NO_GENERIC_PCI_IOPORT_MAP=n, like it is on my
-m68k config, __pci_ioport_map() becomes NULL, pci_iomap_range() will
-always fail and the driver will complain it couldn't map the PIO space
-and return an error.
 
-NO_IOPORT_MAP seems to cover the case where what 8139too is trying
-to do cannot ever work so make 8139TOO_PIO depend on being it false
-and avoid creating an unusable driver.
 
-Signed-off-by: Daniel Palmer <daniel@thingy.jp>
----
- drivers/net/ethernet/realtek/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12-07-2025 13:59, Krzysztof Kozlowski wrote:
+> On 12/07/2025 10:22, Charan Pedumuru wrote:
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: mmc-controller.yaml
+>>>> +
+>>>> +maintainers:
+>>>> +  - Rob Herring <robh@kernel.org>
+>>>
+>>> No, I really doubt Rob cares about this hardware.
+>>
+>> I will remove Rob from maintainers and add Ulf under the maintainers.
+> 
+> This should be someone responsible for this hardware, not subsystem
+> maintainer.
 
-diff --git a/drivers/net/ethernet/realtek/Kconfig b/drivers/net/ethernet/realtek/Kconfig
-index fe136f61586f..272c83bfdc6c 100644
---- a/drivers/net/ethernet/realtek/Kconfig
-+++ b/drivers/net/ethernet/realtek/Kconfig
-@@ -58,7 +58,7 @@ config 8139TOO
- config 8139TOO_PIO
- 	bool "Use PIO instead of MMIO"
- 	default y
--	depends on 8139TOO
-+	depends on 8139TOO && !NO_IOPORT_MAP
- 	help
- 	  This instructs the driver to use programmed I/O ports (PIO) instead
- 	  of PCI shared memory (MMIO).  This can possibly solve some problems
+
+Sure, I will search for subsystem maintainer from get_maintainer script.
+
+> 
+>>
+>>>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - ti,da830-mmc
+>>>> +      - ti,dm355-mmc
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    maxItems: 2
+>>>> +
+>>>
+>>> This wasn't in original binding. You need to document this in the commit
+>>> msg. Also, list the items.
+>>
+>> Sure, but what list of items for interrupts?
+> 
+> List as a verb. You need to list them.
+
+
+I searched for interrupt-names for mmc node in the DTS file, but there isn't any for davinci series.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
 -- 
-2.50.1
+Best Regards,
+Charan.
 
 
