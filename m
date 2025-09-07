@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-804786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA84B47CF5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5303EB47CFB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63EC3C04FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E87917A524
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F8027A462;
-	Sun,  7 Sep 2025 19:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F406285054;
+	Sun,  7 Sep 2025 19:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPghQDwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UTP1sD1G"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23BC315D43;
-	Sun,  7 Sep 2025 19:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8A21E260A;
+	Sun,  7 Sep 2025 19:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757271761; cv=none; b=SqJL9Wwp4OLZKrjZRn66t+CSvTWcxh7n3ZcYc1+j8jQ8x5UF+i6wmjoLowoOlLkUNB47+TYQVqqlEdzevqY2dS/uC2JvrlmCAm53vmTFusb4DETTQgrF6SZ+9ZV+vcvKMiQk/9OJ1sdV82MY9t1Cw3D4dzTdYA+VdNC35hzpboA=
+	t=1757271945; cv=none; b=TvisZfWtDV0dSxzgIMqS1ByTLXCbHQVntGalSc5uIEse/k9FmLkthaPTMg0znG6Ub+lrKDk4yA9eaBfaV0h0SysAFfIkaws54JGARyxTS5NJ4aJvuU6Hb6Xu9ugSJwzBRcsMZvN7u1MPc6w45eAT7LyXE78CqOpHE5stbLjE5l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757271761; c=relaxed/simple;
-	bh=oCLELgIBeep9ZVlxy13VvPQGLOoUE9donTEF1yMVwJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbeg4b2NE+oGe7dSPIXRM/oGwOPUkk1aMl8AAFBI3WU6uuUREXRBnWScmxrPirMJuN7pXv6kg9PtSY4LPhmsJa8roscKNLE+3Fv2np/v98LVg7Edo7vY3SEM4ZIK5aLbSUnXoww07GUybgtWHEMXBbNZtyTEnDJSLlkxyd5hhPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPghQDwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79608C4CEF5;
-	Sun,  7 Sep 2025 19:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757271761;
-	bh=oCLELgIBeep9ZVlxy13VvPQGLOoUE9donTEF1yMVwJ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qPghQDwEBlowBEth9fyjp4vjY5wZh04XJFkbFxS85DYfRxVSLTclt0Tm0PbzqVlNX
-	 M935vCEYzcsbk4iD6E6BJkMIxuRPGwFpTQGJghxOJ5/zjCrGjecLpDofYagYrA8t56
-	 bh2yzv4UA53Zaj1A5kF81C23Nll8suCUaR4U/EHhmtOKptRSeLdswBtR3iqxq9vixk
-	 nkATV7LU5KAJrv4DvdjClLWYAqdXkygCO3aHjCXv4nI/fj2xamFy5LE+ghMUy0eO9r
-	 zR7TaQXYAXIpjaqiQhBi6L5ilXeIuBrvZqDXOylAv2LCZ7nBkztRas9+ZO6389TevX
-	 ep8IsixfMLrMw==
-Message-ID: <2b950163-dc2e-4753-b411-5c694d55eafd@kernel.org>
-Date: Sun, 7 Sep 2025 21:02:34 +0200
+	s=arc-20240116; t=1757271945; c=relaxed/simple;
+	bh=A2mvnnAdazlwguBIOmciBv77vjPEIQydyuHX434yGq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=INtAXGurfUPmM3LrOVC0PuWTCKBIWgyl78frNyMs9QqfIAkSDDaKxX62PhFlJmoExlnlSggKm6F9MGZjm0zE/tiPlESp1K/XMpup49/HEosxC2GXIkFoxMvfdUKjSRqAl7fK7kytQpMBemy4pNr45GlNhcg0HpnoPnUUA+3pb0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UTP1sD1G; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4E33013E2;
+	Sun,  7 Sep 2025 21:04:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757271869;
+	bh=A2mvnnAdazlwguBIOmciBv77vjPEIQydyuHX434yGq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UTP1sD1GkOOt0zciyCfPQ48smP17sHzpOyqyI2BALNZ0obzqFYxQuUOO8aW7avvql
+	 B68HamFVdRJMFb3gR3GsEX5Ek5GdfdRQq4myrRRcM92yhAa6h3mCzNZAD1cNGqeZBk
+	 HKQxzp0o+EaXktvbe6Bvd/pRDNFnmJ7DqD9SMXEk=
+Date: Sun, 7 Sep 2025 21:05:20 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 02/10] media: v4l2-flash: add support for flash/strobe
+ duration
+Message-ID: <20250907190520.GB4105@pendragon.ideasonboard.com>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-2-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/22] arm64: dts: apple: t8103: Add Apple Type-C PHY
- and dwc3 nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- Hector Martin <marcan@marcan.st>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
- <20250906-atcphy-6-17-v2-20-52c348623ef6@kernel.org>
- <20250907-zippy-auburn-koel-d6da32@kuoka>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250907-zippy-auburn-koel-d6da32@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250901-ov9282-flash-strobe-v7-2-d58d5a694afc@linux.dev>
 
-On 07.09.25 11:47, Krzysztof Kozlowski wrote:
-> On Sat, Sep 06, 2025 at 03:43:33PM +0000, Sven Peter wrote:
->> Add all nodes and connections required to make USB3 work on M1-based
->> Apple machines.
->>
->> Co-developed-by: Hector Martin <marcan@marcan.st>
->> Signed-off-by: Hector Martin <marcan@marcan.st>
->> Signed-off-by: Sven Peter <sven@kernel.org>
->> ---
->>   arch/arm64/boot/dts/apple/t8103-j274.dts  |  12 +++
->>   arch/arm64/boot/dts/apple/t8103-j293.dts  |  12 +++
->>   arch/arm64/boot/dts/apple/t8103-j313.dts  |  12 +++
->>   arch/arm64/boot/dts/apple/t8103-j456.dts  |  12 +++
->>   arch/arm64/boot/dts/apple/t8103-j457.dts  |  12 +++
->>   arch/arm64/boot/dts/apple/t8103-jxxx.dtsi | 137 ++++++++++++++++++++++++++++++
->>   arch/arm64/boot/dts/apple/t8103.dtsi      | 105 +++++++++++++++++++++++
->>   7 files changed, 302 insertions(+)
+Hi Richard,
+
+Thank you for the patch.
+
+On Mon, Sep 01, 2025 at 05:05:07PM +0200, Richard Leitner wrote:
+> Add support for the new V4L2_CID_FLASH_DURATION control to the v4l2
+> flash led class.
+
+I don't think this is a good idea, based on the reasoning explained in
+the review of 01/10. If V4L2_CID_FLASH_DURATION is meant to indicate the
+duration of the external flash/strobe pulse signal, it should be
+implemented by the source of the signal, and for external strobe mode
+only. The flash controller, which receives the flash/strobe pulse,
+should implement the timeout control.
+
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/v4l2-core/v4l2-flash-led-class.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 > 
-> Please do not combine DTS patches in patchsets for Greg (e.g. USB). Greg
-> expressed that many times, that he takes all or nothing, and DTS cannot
-> go via driver branches/trees.
+> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> index 355595a0fefac72c2f6941a30fa430d37dbdccfe..875d56d7190592c1e5ab7acd617b76dcec8792da 100644
+> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> @@ -29,6 +29,7 @@ enum ctrl_init_data_id {
+>  	INDICATOR_INTENSITY,
+>  	FLASH_TIMEOUT,
+>  	STROBE_SOURCE,
+> +	FLASH_DURATION,
+>  	/*
+>  	 * Only above values are applicable to
+>  	 * the 'ctrls' array in the struct v4l2_flash.
+> @@ -298,6 +299,12 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
+>  		 * microamperes for flash intensity units.
+>  		 */
+>  		return led_set_flash_brightness(fled_cdev, c->val);
+> +	case V4L2_CID_FLASH_DURATION:
+> +		/*
+> +		 * No conversion is needed as LED Flash class also uses
+> +		 * microseconds for flash duration units.
+> +		 */
+> +		return led_set_flash_duration(fled_cdev, c->val);
+>  	}
+>  
+>  	return -EINVAL;
+> @@ -424,6 +431,14 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+>  		ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
+>  				  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+>  	}
+> +
+> +	/* Init FLASH_DURATION ctrl data */
+> +	if (has_flash_op(fled_cdev, duration_set)) {
+> +		ctrl_init_data[FLASH_DURATION].cid = V4L2_CID_FLASH_DURATION;
+> +		ctrl_cfg = &ctrl_init_data[FLASH_DURATION].config;
+> +		__lfs_to_v4l2_ctrl_config(&fled_cdev->duration, ctrl_cfg);
+> +		ctrl_cfg->id = V4L2_CID_FLASH_DURATION;
+> +	}
+>  }
+>  
+>  static int v4l2_flash_init_controls(struct v4l2_flash *v4l2_flash,
+> @@ -543,6 +558,16 @@ static int __sync_device_with_v4l2_controls(struct v4l2_flash *v4l2_flash)
+>  			return ret;
+>  	}
+>  
+> +	if (ctrls[FLASH_DURATION]) {
+> +		if (WARN_ON_ONCE(!fled_cdev))
+> +			return -EINVAL;
+> +
+> +		ret = led_set_flash_duration(fled_cdev,
+> +					     ctrls[FLASH_DURATION]->val);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	/*
+>  	 * For some hardware arrangements setting strobe source may affect
+>  	 * torch mode. Synchronize strobe source setting only if not in torch
 
-Okay, thanks for the hint. I wasn't aware that he prefers related 
-patches that go through a different tree to be split off.
+-- 
+Regards,
 
-
-Best,
-
-Sven
-
+Laurent Pinchart
 
