@@ -1,338 +1,182 @@
-Return-Path: <linux-kernel+bounces-804727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88FFB47C1F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F8D8B47C2D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDEC03C21B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1AE3BCE80
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9843527F18B;
-	Sun,  7 Sep 2025 15:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5A728369D;
+	Sun,  7 Sep 2025 16:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ4AwXih"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8zptFWD"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4B4220F29;
-	Sun,  7 Sep 2025 15:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A6A189F20;
+	Sun,  7 Sep 2025 16:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757259532; cv=none; b=CbsAbnH4eDoM6YYbv8oq0/m8cZjTnMAnqLUIgJK/ra5ZBwZkeCxD2X1f3HP1j6Dywj0i1v7QtFybw2elR6N+HqW9o0XgvNoFc4KGIky5le0Mz9i70HNd11CF4BRUK7DT0hOeKF650T/tl+Zi0ALNqOTnwmkpQtFn/2Z6tcbacCY=
+	t=1757261190; cv=none; b=VU1p9b4NzoYLwMZW5OXQxUCBre4Kb5NLLDLlYVhZUqn6mrg58rtbBSpN0LaWXtVNQdzbVyYpPQd9ITqRCfxOOsqmzFHLxxoLStQkUcYCIQW7LonE48SxqFLb4la4DG8zV0W/il0kUEMQvNXpbSstVGlitBKRJGWZvTAQQHf517g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757259532; c=relaxed/simple;
-	bh=lDO4ZnGvvxmNagc+40WRTZnZYMHMlF+Xr8euU/H9pFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVGDHl72FSv27vV/Rjt9DgQhsF57/X6qLsdd7d4AIybB33UPXFpA1ZhaoVc6Nyl2lVVyrUbOJpsDiJDq/u+6NcfNbrjSjeig0ndz1mT1SHzfSFQyzha5o6J/cxnIOiPS2UxRqJayIPA4yGnJ9DixegNc+i7Ba79QqYQ6hwh/RQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQ4AwXih; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1757261190; c=relaxed/simple;
+	bh=Tn4SfrPNvGkARcS/vX/j5g6Pe0o1s1eQKk14XZgX0Kk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJMj1lUqaRTVPxL4O/Auwqvha7Asl1D6wLrnmLT47MCZao2FhR3OG4FGDeyN2fLXILWLAjFUEC0wF2jsl8LyjX/LBqou5ELsjugOHUNEpR2SUe+q2pRcMrnqabuU48mzlx0ZZsdTMX28nHc6vDVSoaiqKnADIoRPEWvi0RJZ1jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8zptFWD; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so565461966b.3;
-        Sun, 07 Sep 2025 08:38:50 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-251ace3e7caso13445495ad.2;
+        Sun, 07 Sep 2025 09:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757259529; x=1757864329; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ewo3lFX4AemOdbQPj/j4B6dTMNh77WYmoVI0MYm1/KU=;
-        b=cQ4AwXihBojcPeFGtxsNCOnAryGpUK9OnfMRSL1NKUbITtL2P+sdiZZt+xtPFlVpho
-         Zz49yg4Gqzy4DqwN5xMZXpBIXbKgSnwCHo+VpRWHNqzRG1VVtEraXaMGUJZjOhdc+UZC
-         qs7WOSv7x1C9SU3A3QK8iV/AKWLbq/MvtqkcWzgbSYmpGgk9nEngh2s1wrqWJkla1+p7
-         LdFrGhjainenos9W8aHchY07jteUgsHL1FCyLn+2+o3pI8u5WQOZpZTDJFWImI2EyGBv
-         R9+tg5laTjwxDvUxBdkqX/50ULjJwpUfMGzHPmKDJUlrS9Z8oq21dmA5GFuxCQd1yb1X
-         QYTw==
+        d=gmail.com; s=20230601; t=1757261187; x=1757865987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=cF6ydpI/LQamKkw+0q8FTGzAStuV08pvQoQCdR+Hn5Q=;
+        b=C8zptFWDV/Zs7j/g722W9I1ZA0PQLSX0nadaNkvPfqMq0Y6yLfOfwLxr31leJ7CXSC
+         Ma6kJF/rw16q88ZmpXHrMNJxRZn3pzjSj6xk7hYGYfm2y4DYnWac6MTapAmpc4YwnHoK
+         0Dg0RKeDMmiea5VIlUmNFtOTPBcgm0cLM++/KcPjxo0y5EKzlc23G/JsbWwqcrPy7u8C
+         A0jMUwgTIznA6AeLQpTzR6lmM0vdPRvUnpwFj29MzsYIfpkp0GjZWW54vBg5LUSAxd63
+         i6nHVwO7fca/pyVucWAEj3MljPmPwFHck2fLkXTUY1y4eyR5DO5YZF4PawxUmpHK5aqs
+         C0ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757259529; x=1757864329;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ewo3lFX4AemOdbQPj/j4B6dTMNh77WYmoVI0MYm1/KU=;
-        b=dAfYqL6s07688w+kyB+8NxPv6jab6NJJInFqUcxWR9ZCqtIJReAvMLzl9hpDReGTtl
-         /SWlGtIdMKR5y+/r1AvTF4Iun7A2SkeSElU3Csk7gXlaserEmklA5bBKu5KihuniJuhz
-         wwzOlvYZgNltaqq49W+FJlb+HISD8EZKA69jdseOIkA7BaBNf53L3XDyPKpUvAIuiV2C
-         WJo3qBdadA4cY25KCPCiWlIZctpfjWiKOn3Gv+QaTwb2Trw3ljGpLNlY9PN2Aws9on8b
-         FQWP2/bfGmfymfDitA7g2IdyY1z4hivVSH+TczkK37XvlXK/g4tpdBvXeF6ZobpWVLSv
-         CY0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP0Z/JW/itDMf907cssRaQpMO516POpsHY3FOWTOaKA/zuttvHFGEAdhxlZWECP5SBqjzn281uG2cGPLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznQKN8Qfkl4eBNDQYTZSDfsRo+k/LttPawUX4TSg1pdfrJ2liZ
-	zA0dbEeZ/dc2uv+EdEiiWHvuCEshZRnTu4FthB2rtTs2rtV2Yiw2nzkR
-X-Gm-Gg: ASbGncsMLjWqndeVt+XTWjlDYmrORQmfQ71XBpSkdqlw57R/utldtW2OccNiFQJcEvB
-	z1iqmsCmeAA5lJuEfdpJBCqRMramI6Ds6Eh2j308kHW2M8dUHV5GDMW2tZeQroCkFueeUG6rM3u
-	rZMLQQw5PPE16xUKOqXHwlMbRDFx0egavlh0yQw+D0etSuWRUTF8A5YBkOL14eLuTcFp30pcb+k
-	juYAJi6TVKPtMhZwKQAXDKYNR6wpA58cCboURakmASJaTrfRNB3Lolf/iQEUQOlMxUVjrrGbqm5
-	vfDE3DoadxhkcTidm3qX00koKOSUOr8LdhO+RYX5lnYHbdXDN33tBR0gFqDqjSxa9w7J15daDGt
-	Q7gJP0VFz/BZAsXRPJ8AjQxHY94Q=
-X-Google-Smtp-Source: AGHT+IEO34mARCatC/ctUqV8ApOE2K5yTlrg3z3v5scJEnfSEe60fotV7PrsEABK/LbCtv786mQ3LQ==
-X-Received: by 2002:a17:907:3e0a:b0:b04:3402:3940 with SMTP id a640c23a62f3a-b04b14afdc4mr550079566b.27.1757259528948;
-        Sun, 07 Sep 2025 08:38:48 -0700 (PDT)
-Received: from hangmanPC ([86.124.200.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b044703f412sm1446984966b.56.2025.09.07.08.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 08:38:48 -0700 (PDT)
-Date: Sun, 7 Sep 2025 18:38:44 +0300
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-To: Markus.Elfring@web.de, andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chiru.cezar.89@gmail.com
-Subject: Re: [PATCH v2] i2c : algos : i2c-algo-pcf.c : fixed errors shown by
- checkpatch
-Message-ID: <aL2nBBmyQ-gks8Q3@hangmanPC>
-References: <20250907120706.44114-1-chiru.cezar.89@gmail.com>
- <dcadf502-8c14-46fe-8e2f-222cdec4dae4@web.de>
+        d=1e100.net; s=20230601; t=1757261187; x=1757865987;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cF6ydpI/LQamKkw+0q8FTGzAStuV08pvQoQCdR+Hn5Q=;
+        b=ar/6s0xxowz3wWU1Y7C7wGcdnjMFBwkrH5KHgGn5vnXCRjyAsNZUEb0fQFvQ+k+STs
+         9K5p8zwwg6BFpIrIh1cf+K18wAwf0RNje26qznLLRKrKUkJ1ShitSVYvaonRGqqsuo3N
+         FscdEe1FdB0jcu1Urlw0qEk8fcu3efwZ7aVC5/PD6U3jAMQxrvPA6fO9SykVGdr+ZFoE
+         mUdaGzHw+pBgMQeT77LuEEW8iCFdIGj8bL0p3X6t6Xlyvet0wfQWhB+Fvr05ui3VEvGb
+         3AEibA9qPrwQV56pRamZuAf1Ej9YhOpYDwTG5aRPESZeEIkcaIpt/e+TdtIAlg7TFQL9
+         BFSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOz9QRhPF32oOonrg/WKrmTH1HAhNtp/OfWZ34/SF3mJq7r7iziq+8y1oguTgZboGwmHC6yqWX@vger.kernel.org, AJvYcCWZjxRRD4pjfyaEmv04L1YFEptFQnz1o2OYD1HkJ6ExIU8trarXpE+jZuFc2UiYR6cCS8vZK5AAjrJh@vger.kernel.org, AJvYcCWz5ys31tw0UL9PB7GvDgAi1B/VZUVpMHYF7ea5kUd8gmOwT7aLqRd6I0LpNgvGmxK4/sqykSTzZk83@vger.kernel.org, AJvYcCXXIdezbwZWSrOKF60dGydkmGbCeE1nLKZ5boyL8T+VfKZ2ECytAihD0hLIXktVPXIGh+nEwzEJ/HgkSUL7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdX20lhuxUiju9cHMKUP7jsRF4zMnYjAIr6+9H26h5s0RMNRCk
+	JPdJgW1RjpnKzFJdd3Wk6eLTJZdHw7OENln7fAtD/FO3bIEzSxF7CMhf
+X-Gm-Gg: ASbGncvPlfPN6ha8sjcCX3PbIOPMcklZgcB3NM1hqF3ex0UR8DGLjlUj3yx2WHaJwgz
+	2kbMOqjePossaD8rPa1La9Ljbl9/9bBmlILNBIaS2HuZIy3IJzP0vFMsbgN7kaEqQ/QxOqjgrQw
+	udpH9esuv7uwT3DizNPjhLj//s5eb5umrAHzCqgv+bVeiVRM36EIYJBHIUotv8aygcvOZQr2wsy
+	0YNE2C7K0WnyVD/puDXFnLWgOlctn2SaZSuWcJEUngn4l8H+InJyfOHgq0ExuanucpCUOenISmV
+	BekMf4Usq/sJ8LL7A1a/IKDtRGzLEOxw8blnbS8yw+1qC0S6Mscm/9Lsx/h/igmdX3aiiWvr7b0
+	aWTFCY8glMcK/mCAdDvTVgUcjWcyu0Cdy670GwfmpbhDQ/I5R/AAcnJ5C9Q5bjwQYZ6kRCo9zSj
+	diUzz91g==
+X-Google-Smtp-Source: AGHT+IHjsbItSLGLTbk4bctSoCf2cP3gRfY6Crj1D3TnpuBrHwZZEdKgevr0cSKXCqjST0G8MrJAKg==
+X-Received: by 2002:a17:902:d588:b0:24c:d322:d587 with SMTP id d9443c01a7336-2516f050176mr69598395ad.26.1757261187190;
+        Sun, 07 Sep 2025 09:06:27 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd655823sm88157995ad.114.2025.09.07.09.06.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 09:06:26 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net>
+Date: Sun, 7 Sep 2025 09:06:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MTYAFGRcgjVOzjI/"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dcadf502-8c14-46fe-8e2f-222cdec4dae4@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] hwmon: (tps23861) add class restrictions and
+ semi-auto mode support
+To: gfuchedgi@gmail.com, Robert Marko <robert.marko@sartura.hr>,
+ Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Network Development <netdev@vger.kernel.org>
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
++Cc: pse-pd maintainers and netdev mailing list
 
---MTYAFGRcgjVOzjI/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-On Sun, Sep 07, 2025 at 03:19:20PM +0200, Markus Elfring wrote:
-
-Hello Markus,
-
-> > Fixed all 18 errors revealed using checkpatch.pl on i2c-algo-pcf.c
-> …
+On 9/4/25 10:33, Gregory Fuchedgi via B4 Relay wrote:
+> This patch series introduces per-port device tree configuration with poe
+> class restrictions. Also adds optional reset/shutdown gpios.
 > 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n81
-
-Refactored the commit message to be more compact
-
-> …
-> > Motivation is to fix all errors and warnings i2c-algo-pcf kerenel
-> …
->                                                             kernel?
-
-Yes, "kernel" was intended. Fixed.
-
-> > v2:
-> >     Fixed build errors generated by missing ; after do - while.
-> >     Missed to git add latest changes to patch. Build is ok.
-> > 
-> > Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> > ---
-> >  drivers/i2c/algos/i2c-algo-pcf.c | 42 +++++++++++++++++++-------------
-> …
-
-I moved the version info and information from commit message that didn't
-needed to reach the commit message after the --- marker line of the patch.
- 
+> Tested with hw poe tester:
+>   - Auto mode tested with no per-port DT settings as well as explicit port
+>     DT ti,class=4. Tested that no IRQ is required in this case.
+>   - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ required.
+>   - Tested current cut-offs in Semi-Auto mode.
+>   - On/off by default setting tested for both Auto and Semi-Auto modes.
+>   - Tested fully disabling the ports in DT.
+>   - Tested with both reset and ti,ports-shutdown gpios defined, as well as
+>     with reset only, as well as with neither reset nor shutdown.
 > 
-> * Please move your patch version descriptions behind the marker line.
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n784
-> 
-> * Will enumerations become more helpful?
+> Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
 
-If you were talking about enumerating the type of errors fixed in the commit 
-message then I done that. If something else, could you please explain it to me?
+This entire series makes me more and more unhappy. It is not the responsibility
+of the hardware monitoring subsystem to control power. The hardware monitoring
+subsystem is for monitoring, not for control.
 
-Markus, Andi, new [PATCH v3] attached to this email.
+Please consider adding a driver for this chip to the pse-pd subsystem
+(drivers/net/pse-pd). As it turns out, that subsystem already supports
+tps23881. This is a similar chip which even has a similar register set.
 
-Thank you,
-Best regards,
-Cezar Chiru
+This driver could then be modified to be an auxiliary driver of that driver.
+Alternatively, we could drop this driver entirely since the pse-pd subsystem
+registers the chips it supports as regulator which has its own means to handle
+telemetry.
 
+Thanks,
+Guenter
 
---MTYAFGRcgjVOzjI/
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-i2c-algos-i2c-algo-pcf.c-fixed-errors-shown-by-check.patch"
-
-From a94b19cb2c689989dbe72c04864bd718f2c05307 Mon Sep 17 00:00:00 2001
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-Date: Sun, 7 Sep 2025 13:41:05 +0300
-Subject: [PATCH v3] i2c : algos : i2c-algo-pcf.c : fixed errors shown by
- checkpatch
-
-Fixed errors revealed by checkpatch.pl on i2c-algo-pcf.c file.
-Errors fixed were:
-    1)macros starting with 'if' should be enclosed by do - while
-    loop to avoid possible if/else logic defects
-    2)do not use assignment in if condition
-    3)spaces required around '=', ';', '<' and before ','.
-Motivation is to fix all errors and warnings in i2c-algo-pcf
-kernel module.
-
-Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
----
-Testing:
-  * built kernel with my changes and I2C_ALGOPCF=m enabled
-  and it built successfully.
-  * installed kernel and external modules generated by build
-  * rebooted and loaded using modprobe i2c-algo-pcf kernel
-  module with param i2c_debug=3 and no message was found
-  related to module in dmesg. But also no error was generated.
-
-Checkpatch.pl warnings  on patch: on running checkpatch.pl on this
-  patch 7 warnings were raised. Will be fixed on following warnings
-  fixes patch.
-
-V1->V2:
-  Fixed build errors generated by missing ; after do - while.
-  Missed to git add latest changes to patch. Build is ok.
-V2->V3:
-  Fixed commit message spelling as pointed by Markus Elfring and
-  by moving non-essential parts of commit message under the marker
-  line.
-
- drivers/i2c/algos/i2c-algo-pcf.c | 42 +++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-index fd563e845d4b..f5174f38d777 100644
---- a/drivers/i2c/algos/i2c-algo-pcf.c
-+++ b/drivers/i2c/algos/i2c-algo-pcf.c
-@@ -23,9 +23,10 @@
- #include "i2c-algo-pcf.h"
- 
- 
--#define DEB2(x) if (i2c_debug >= 2) x
--#define DEB3(x) if (i2c_debug >= 3) x /* print several statistical values */
--#define DEBPROTO(x) if (i2c_debug >= 9) x;
-+#define DEB2(x) do { if (i2c_debug >= 2) x; } while (0);
-+#define DEB3(x) do { if (i2c_debug >= 3) x; } while (0);
-+	/* print several statistical values */
-+#define DEBPROTO(x) do { if (i2c_debug >= 9) x; } while (0);
- 	/* debug the protocol by showing transferred bits */
- #define DEF_TIMEOUT 16
- 
-@@ -160,7 +161,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	 * check to see S1 now used as R/W ctrl -
- 	 * PCF8584 does that when ESO is zero
- 	 */
--	if (((temp = get_pcf(adap, 1)) & 0x7f) != (0)) {
-+	temp = get_pcf(adap, 1);
-+	if ((temp & 0x7f) != (0)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S0 (0x%02x).\n", temp));
- 		return -ENXIO; /* definitely not PCF8584 */
- 	}
-@@ -168,7 +170,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* load own address in S0, effective address is (own << 1) */
- 	i2c_outb(adap, get_own(adap));
- 	/* check it's really written */
--	if ((temp = i2c_inb(adap)) != get_own(adap)) {
-+	temp = i2c_inb(adap);
-+	if (temp  != get_own(adap)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S0 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -176,7 +179,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* S1=0xA0, next byte in S2 */
- 	set_pcf(adap, 1, I2C_PCF_PIN | I2C_PCF_ES1);
- 	/* check to see S2 now selected */
--	if (((temp = get_pcf(adap, 1)) & 0x7f) != I2C_PCF_ES1) {
-+	temp = get_pcf(adap, 1);
-+	if ((temp & 0x7f) != I2C_PCF_ES1) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S2 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -184,7 +188,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* load clock register S2 */
- 	i2c_outb(adap, get_clock(adap));
- 	/* check it's really written, the only 5 lowest bits does matter */
--	if (((temp = i2c_inb(adap)) & 0x1f) != get_clock(adap)) {
-+	temp = i2c_inb(adap);
-+	if ((temp & 0x1f) != get_clock(adap)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S2 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -193,7 +198,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	set_pcf(adap, 1, I2C_PCF_IDLE);
- 
- 	/* check to see PCF is really idled and we can access status register */
--	if ((temp = get_pcf(adap, 1)) != (I2C_PCF_PIN | I2C_PCF_BB)) {
-+	temp = get_pcf(adap, 1);
-+	if (temp != (I2C_PCF_PIN | I2C_PCF_BB)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S1` (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -209,7 +215,7 @@ static int pcf_sendbytes(struct i2c_adapter *i2c_adap, const char *buf,
- 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
- 	int wrcount, status, timeout;
- 
--	for (wrcount=0; wrcount<count; ++wrcount) {
-+	for (wrcount = 0; wrcount < count; ++wrcount) {
- 		DEB2(dev_dbg(&i2c_adap->dev, "i2c_write: writing %2.2X\n",
- 				buf[wrcount] & 0xff));
- 		i2c_outb(adap, buf[wrcount]);
-@@ -246,7 +252,8 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
- 	/* increment number of bytes to read by one -- read dummy byte */
- 	for (i = 0; i <= count; i++) {
- 
--		if ((wfp = wait_for_pin(adap, &status))) {
-+		wfp = wait_for_pin(adap, &status);
-+		if (wfp) {
- 			if (wfp == -EINTR)
- 				return -EINTR; /* arbitration lost */
- 
-@@ -299,7 +306,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
- 	struct i2c_msg *pmsg;
- 	int i;
--	int ret=0, timeout, status;
-+	int ret = 0, timeout, status;
- 
- 	if (adap->xfer_begin)
- 		adap->xfer_begin(adap->data);
-@@ -313,7 +320,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 		goto out;
- 	}
- 
--	for (i = 0;ret >= 0 && i < num; i++) {
-+	for (i = 0; ret >= 0 && i < num; i++) {
- 		pmsg = &msgs[i];
- 
- 		DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: Doing %s %d bytes to 0x%02x - %d of %d messages\n",
-@@ -358,9 +365,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 
- 			if (ret != pmsg->len) {
- 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
--					    "only read %d bytes.\n",ret));
-+					    "only read %d bytes.\n", ret));
- 			} else {
--				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n",ret));
-+				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n", ret));
- 			}
- 		} else {
- 			ret = pcf_sendbytes(i2c_adap, pmsg->buf, pmsg->len,
-@@ -368,9 +375,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 
- 			if (ret != pmsg->len) {
- 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
--					    "only wrote %d bytes.\n",ret));
-+					    "only wrote %d bytes.\n", ret));
- 			} else {
--				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n",ret));
-+				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n", ret));
- 			}
- 		}
- 	}
-@@ -406,7 +413,8 @@ int i2c_pcf_add_bus(struct i2c_adapter *adap)
- 	/* register new adapter to i2c module... */
- 	adap->algo = &pcf_algo;
- 
--	if ((rval = pcf_init_8584(pcf_adap)))
-+	rval = pcf_init_8584(pcf_adap);
-+	if (rval)
- 		return rval;
- 
- 	rval = i2c_add_adapter(adap);
--- 
-2.43.0
-
-
---MTYAFGRcgjVOzjI/--
 
