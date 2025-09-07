@@ -1,126 +1,555 @@
-Return-Path: <linux-kernel+bounces-804560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63668B47996
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DFEB47997
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5A73C2B59
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8831C17B101
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77A21ABC1;
-	Sun,  7 Sep 2025 08:23:39 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9783E21ABC1;
+	Sun,  7 Sep 2025 08:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDRKgybV"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CD41E1DE7;
-	Sun,  7 Sep 2025 08:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7D81E7C27
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 08:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757233418; cv=none; b=pxI9sjvNbxrUbue3V+LSea8VczdgLdINFpVy0GioKSyqMG8BDUaYlz7uEbWx/B0Perhp/kzQteV2Z9RTXuLbEc/6ktRQqCu6hpmkyvpMSQv3v2zVSVsb+EE4sdYu3cugBDkYlXFNhJzx3QFevRCP7WJyQ4bWgmeYRpAN0rL5i70=
+	t=1757233615; cv=none; b=JAzs6ZVBwB8M2it+4mnx6gttcjmGh9J/frAdjSc+WBMk4OZjV18ryHXcEhLFVlOmVU2ltjSwxM+B/9niDkpF8sjN1KkKYwaAmK0M1xZK9y1FsTs/YwTFKln8fM0cNlhwUCCGBzdB+irdV3WM/int/6tL907H/lacJZSH0DREqzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757233418; c=relaxed/simple;
-	bh=r0eJTebCt3MS2Xw6g6hfJ21wZgUkK/hVYw3MMLUbnxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QdtVxD332/QQglH984EFE0Y0hiDmOdWQZ+FW2cQA8ayj0WBDG+AGoVlKQGE6zazRzZAfJR+Yst9ZmEx53Hfwc/mq06A3uHcYMB70+B913PReykVZy+VKMaRu4z0EBU+/HiEp58jgOxU97aTDpcmKEO1njKsrvMrjkyHNaA7mBcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.109] (unknown [114.241.87.235])
-	by APP-05 (Coremail) with SMTP id zQCowABX+hPUQL1oMWdTAQ--.2947S2;
-	Sun, 07 Sep 2025 16:22:44 +0800 (CST)
-Message-ID: <fbcc1ec3-7ff6-4891-97e3-9763355326f7@iscas.ac.cn>
-Date: Sun, 7 Sep 2025 16:22:44 +0800
+	s=arc-20240116; t=1757233615; c=relaxed/simple;
+	bh=crTOAckAX5aCm4LzJLx6CwjEDyizAl+CFryL5NxLhUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=khkmxNLEQLr0NvXW8HPh874+Zo6wk93KJXplU97ibxAYm/LILtags4pL08+PRpoSXwro+utKMWKlBNhQVoP4feYmjAHeKOX3o3ySRh+J4M3JsPpdn7zSEkMdX2ITja9bIRo1suEigP7MT33+OPg2HymCkysGXdY1I8QLr3M5fVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDRKgybV; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2518cf2fa90so6063385ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 01:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757233613; x=1757838413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9mR52woDqlyWSSGeCjRqCGbguMzUoeB4aUD9U8e5AgY=;
+        b=UDRKgybVuvWVeHKHucho/PVKm2fKwuNHUpksp2qEsCgJWV+tTq7rSDkeZCxz7siS9P
+         cq3tUl2Soep0OlVzr6wC486d1zwPMqoYDxzGuMAurjuJ0yjSDK9sG4wXgFjLq9xdYq3n
+         EMX3Fl+T0LnnxOafDEaUnXWlRlkVtbQ9+ktitJ5Eamzlpe5IGrQ1+W0c+8aYnUXrBii7
+         CG/vDQur0jcIJD8Vi7iaeWzjhufVqSoONgYCnDwihS+TgVB7q9teVkbtJH/+WFPqqNRl
+         yfVldkpy8yx6cvlKTZOzmXG1iV01SS0/VWNxiYWn1VR3G0K9B/S0LIfy/ZUjeKrp79e2
+         OcKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757233613; x=1757838413;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9mR52woDqlyWSSGeCjRqCGbguMzUoeB4aUD9U8e5AgY=;
+        b=e2omt796TUeQtzzbHQ/T8yhrbkD7h2jNgmvbHlr9SRq25c137m1McZkJU1v51+205W
+         emszg0MMnByMD+GQQWlKdXg4wqOR38qjIcPEdFU44lVimUFPAJLwOl1aMqrss9uUUl4e
+         30SDZ6ydh9uHj28yFmzcCal3tOl8IBN7C+Ed9DaVeHqishZi33zIkbkfKjUoQgHS7YYX
+         J/+epD9qG/0DzuF0M3+XEwNDPcPaS4Q+PSNTUNpeytxqtAYMiGmyY5+Or/MgRLojlr8t
+         e1ZuzKbocGKFYGQ8trFhhUl62NiAJTos0frBGvaXdDpA8QPdrA7MuMF3z/cAfwsk79xX
+         zNUw==
+X-Gm-Message-State: AOJu0Yy+MfJ9bAlVxEK6BSwC84vL92Lsa5CYOrq2GipHtF+ZjI88dH6k
+	GJFKQBMt3Yh1tX+T64oL7Mn+4X5iskq7QRS2WAmbUCBg3NiGWNqNeQ29
+X-Gm-Gg: ASbGncuZbVvvaO6R77pf/tzOSjfjbi3KpXZmYXP7by4LvsipdjacVqtoknH3UT+53uC
+	k7Zk7PeZdjOTUUVACb4XAXeS6xVjeuJByV4+WtYr0IHJXEllyTlwVDv67i0kuuI6dl4lziPPBML
+	Mxxmv4pxpJ+TMX4uo4xskPHJ830xthltvG1oJLEICRpc7y7c7hazcXSFu18JwnB7sOiWKDgUOMq
+	pQywC5g/x0uyEsx5V+GoHpWokbgEGc/WU4qgzaF9pvCEaHkebYi+DJckLe/qQDEBJH7BFWIOx6b
+	04QQIwR1zxHMm+EW9RprxLOfvoEwT1GJc2QxsZwHicU2u7XXz9W88bPMgzT2mJ6v48Jjf9s2qY8
+	6e6MIZxD/Fv3gcCatX+8ljUJU2hb/fmFPolL89sGAsSMRn3My6w==
+X-Google-Smtp-Source: AGHT+IF5r2HG+KioOylATmMZ9jUTZntCwNCLrHWi1fPie8D4SRrQ4h6je1HLiFcbpJrLjV3/tsMHVw==
+X-Received: by 2002:a17:903:2ac5:b0:24e:3cf2:2450 with SMTP id d9443c01a7336-2516c895cc2mr53149615ad.2.1757233612953;
+        Sun, 07 Sep 2025 01:26:52 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24d17d6b694sm59918675ad.136.2025.09.07.01.26.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 01:26:52 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	aha310510@gmail.com
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+Date: Sun,  7 Sep 2025 17:26:49 +0900
+Message-Id: <20250907082649.263400-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
-References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
- <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
- <20250905153500.GH553991@horms.kernel.org>
- <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
- <20250905160158.GI553991@horms.kernel.org>
- <45053235-3b01-42d8-98aa-042681104d11@iscas.ac.cn>
- <20250905165908.69548ce0@kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250905165908.69548ce0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowABX+hPUQL1oMWdTAQ--.2947S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw47JryDGw4rtry5Kw4rKrg_yoW8Gr4rpF
-	WrKFs2kFWvqw4xt3yvv3ykX343t3ZxZ3y5Gryqga47ta45Zryfu3yxKrWIyasrGrWkZ3y0
-	vry5JFyjkFZ8JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-	MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IUYsSdPUUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-On 9/6/25 07:59, Jakub Kicinski wrote:
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-> On Sat, 6 Sep 2025 00:35:37 +0800 Vivian Wang wrote:
->>>> On a closer look, these counters in ndev->stats seems to be redundan=
-t
->>>> with the hardware-tracked statistics, so maybe I should just not bot=
-her
->>>> with updating ndev->stats. Does that make sense? =20
->>> For rx/tx packets/bytes I think that makes sense.
->>> But what about rx/tx drops? =20
->> Right... but tstats doesn't have *_dropped. It seems that tx_dropped a=
-nd
->> rx_dropped are considered "slow path" for real devices. It makes sense=
+---
+ drivers/media/usb/dvb-usb-v2/az6007.c | 213 +++++++++++++-------------
+ 1 file changed, 108 insertions(+), 105 deletions(-)
 
->> to me that those should be very rare.
-> Pretty sure Simon meant the per-cpu netdev stats in general.
-> There are three types of them, if you need drops I think you
-> probably want dstats. Take a look.
-
-According to this comment in net/core/dev.c dev_get_stats():
-
-=C2=A0 =C2=A0 /*
-=C2=A0 =C2=A0 =C2=A0* IPv{4,6} and udp tunnels share common stat helpers =
-and use
-=C2=A0 =C2=A0 =C2=A0* different stat type (NETDEV_PCPU_STAT_TSTATS vs
-=C2=A0 =C2=A0 =C2=A0* NETDEV_PCPU_STAT_DSTATS). Ensure the accounting is =
-consistent.
-=C2=A0 =C2=A0 =C2=A0*/
-
-"dstats" is meant for tunnels. This doesn't look like the right thing to
-use, and no other pcpu_stat_type gives me tx_dropped. Do you think I
-should use dstats anyway?
-
-(And yes the only software-tracked one should be tx_dropped. Since we
-pre-allocate the RX buffers, there is no opportunity to drop on RX in
-software.)
-
+diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+index 65ef045b74ca..8365787d8c4a 100644
+--- a/drivers/media/usb/dvb-usb-v2/az6007.c
++++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+@@ -39,10 +39,10 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ #define AZ6007_READ_IR		0xb4
+ 
+ struct az6007_device_state {
+-	struct mutex		mutex;
+ 	struct mutex		ca_mutex;
+ 	struct dvb_ca_en50221	ca;
+ 	unsigned		warm:1;
++	unsigned		ci_attached:1;
+ 	int			(*gate_ctrl) (struct dvb_frontend *, int);
+ 	unsigned char		data[4096];
+ };
+@@ -97,19 +97,30 @@ static struct mt2063_config az6007_mt2063_config = {
+ 	.refclock = 36125000,
+ };
+ 
+-static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
+-			    u16 index, u8 *b, int blen)
++static int __az6007_read(struct dvb_usb_device *d, struct az6007_device_state *st,
++			    u8 req, u16 value, u16 index, u8 *b, int blen)
+ {
+ 	int ret;
+ 
+-	ret = usb_control_msg(udev,
+-			      usb_rcvctrlpipe(udev, 0),
++	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
++		return -EAGAIN;
++
++	if (blen > sizeof(st->data)) {
++		pr_err("az6007: tried to read %d bytes, but I2C max size is %lu bytes\n",
++		       blen, sizeof(st->data));
++		ret = -EOPNOTSUPP;
++		goto end_unlock;
++	}
++
++	ret = usb_control_msg(d->udev,
++			      usb_rcvctrlpipe(d->udev, 0),
+ 			      req,
+ 			      USB_TYPE_VENDOR | USB_DIR_IN,
+ 			      value, index, b, blen, 5000);
+ 	if (ret < 0) {
+ 		pr_warn("usb read operation failed. (%d)\n", ret);
+-		return -EIO;
++		ret = -EIO;
++		goto end_unlock;
+ 	}
+ 
+ 	if (az6007_xfer_debug) {
+@@ -119,30 +130,37 @@ static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
+ 				     DUMP_PREFIX_NONE, b, blen);
+ 	}
+ 
++end_unlock:
++	mutex_unlock(&d->usb_mutex);
+ 	return ret;
+ }
+ 
+ static int az6007_read(struct dvb_usb_device *d, u8 req, u16 value,
+ 			    u16 index, u8 *b, int blen)
+ {
+-	struct az6007_device_state *st = d->priv;
++	struct az6007_device_state *st = d_to_priv(d);
+ 	int ret;
+ 
+-	if (mutex_lock_interruptible(&st->mutex) < 0)
+-		return -EAGAIN;
+-
+-	ret = __az6007_read(d->udev, req, value, index, b, blen);
+-
+-	mutex_unlock(&st->mutex);
++	ret = __az6007_read(d, st, req, value, index, b, blen);
+ 
+ 	return ret;
+ }
+ 
+-static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
+-			     u16 index, u8 *b, int blen)
++static int __az6007_write(struct dvb_usb_device *d, struct az6007_device_state *st,
++			    u8 req, u16 value, u16 index, u8 *b, int blen)
+ {
+ 	int ret;
+ 
++	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
++		return -EAGAIN;
++
++	if (blen > sizeof(st->data) - 1) {
++		pr_err("az6007: tried to write %d bytes, but I2C max size is %lu bytes\n",
++		       blen, sizeof(st->data) - 1);
++		ret = -EOPNOTSUPP;
++		goto end_unlock;
++	}
++
+ 	if (az6007_xfer_debug) {
+ 		printk(KERN_DEBUG "az6007: OUT req: %02x, value: %04x, index: %04x\n",
+ 		       req, value, index);
+@@ -150,37 +168,30 @@ static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
+ 				     DUMP_PREFIX_NONE, b, blen);
+ 	}
+ 
+-	if (blen > 64) {
+-		pr_err("az6007: tried to write %d bytes, but I2C max size is 64 bytes\n",
+-		       blen);
+-		return -EOPNOTSUPP;
+-	}
+-
+-	ret = usb_control_msg(udev,
+-			      usb_sndctrlpipe(udev, 0),
++	ret = usb_control_msg(d->udev,
++			      usb_sndctrlpipe(d->udev, 0),
+ 			      req,
+ 			      USB_TYPE_VENDOR | USB_DIR_OUT,
+ 			      value, index, b, blen, 5000);
+ 	if (ret != blen) {
+ 		pr_err("usb write operation failed. (%d)\n", ret);
+-		return -EIO;
++		ret = -EIO;
++		goto end_unlock;
+ 	}
+ 
+-	return 0;
++	ret = 0;
++end_unlock:
++	mutex_unlock(&d->usb_mutex);
++	return ret;
+ }
+ 
+ static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
+ 			    u16 index, u8 *b, int blen)
+ {
+-	struct az6007_device_state *st = d->priv;
++	struct az6007_device_state *st = d_to_priv(d);
+ 	int ret;
+ 
+-	if (mutex_lock_interruptible(&st->mutex) < 0)
+-		return -EAGAIN;
+-
+-	ret = __az6007_write(d->udev, req, value, index, b, blen);
+-
+-	mutex_unlock(&st->mutex);
++	ret = __az6007_write(d, st, req, value, index, b, blen);
+ 
+ 	return ret;
+ }
+@@ -574,10 +585,9 @@ static void az6007_ci_uninit(struct dvb_usb_device *d)
+ }
+ 
+ 
+-static int az6007_ci_init(struct dvb_usb_adapter *adap)
++static int az6007_ci_init(struct dvb_usb_device *d)
+ {
+-	struct dvb_usb_device *d = adap_to_d(adap);
+-	struct az6007_device_state *state = adap_to_priv(adap);
++	struct az6007_device_state *state = d_to_priv(d);
+ 	int ret;
+ 
+ 	pr_debug("%s()\n", __func__);
+@@ -594,7 +604,7 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
+ 	state->ca.poll_slot_status	= az6007_ci_poll_slot_status;
+ 	state->ca.data			= d;
+ 
+-	ret = dvb_ca_en50221_init(&adap->dvb_adap,
++	ret = dvb_ca_en50221_init(&d->adapter[0].dvb_adap,
+ 				  &state->ca,
+ 				  0, /* flags */
+ 				  1);/* n_slots */
+@@ -604,6 +614,8 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
+ 		return ret;
+ 	}
+ 
++	state->ci_attached = true;
++
+ 	pr_debug("CI initialized.\n");
+ 
+ 	return 0;
+@@ -640,8 +652,6 @@ static int az6007_frontend_attach(struct dvb_usb_adapter *adap)
+ 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
+ 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
+ 
+-	az6007_ci_init(adap);
+-
+ 	return 0;
+ }
+ 
+@@ -661,8 +671,6 @@ static int az6007_cablestar_hdci_frontend_attach(struct dvb_usb_adapter *adap)
+ 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
+ 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
+ 
+-	az6007_ci_init(adap);
+-
+ 	return 0;
+ }
+ 
+@@ -693,50 +701,55 @@ static int az6007_power_ctrl(struct dvb_usb_device *d, int onoff)
+ 
+ 	pr_debug("%s()\n", __func__);
+ 
+-	if (!state->warm) {
+-		mutex_init(&state->mutex);
++	mutex_lock(&d->i2c_mutex);
+ 
++	if (!state->warm) {
+ 		ret = az6007_write(d, AZ6007_POWER, 0, 2, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 		msleep(60);
+ 		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 		msleep(100);
+ 		ret = az6007_write(d, AZ6007_POWER, 1, 3, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 		msleep(20);
+ 		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 
+ 		msleep(400);
+ 		ret = az6007_write(d, FX2_SCON1, 0, 3, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 		msleep(150);
+ 		ret = az6007_write(d, FX2_SCON1, 1, 3, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 		msleep(430);
+ 		ret = az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
+ 		if (ret < 0)
+-			return ret;
++			goto end_unlock;
+ 
+ 		state->warm = true;
+ 
+-		return 0;
++		ret = 0;
++		goto end_unlock;
+ 	}
+ 
++	ret = 0;
++
+ 	if (!onoff)
+-		return 0;
++		goto end_unlock;
+ 
+ 	az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
+ 	az6007_write(d, AZ6007_TS_THROUGH, 0, 0, NULL, 0);
+ 
+-	return 0;
++end_unlock:
++	mutex_unlock(&d->i2c_mutex);
++	return ret;
+ }
+ 
+ /* I2C */
+@@ -752,7 +765,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	int length;
+ 	u8 req, addr;
+ 
+-	if (mutex_lock_interruptible(&st->mutex) < 0)
++	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
+ 		return -EAGAIN;
+ 
+ 	for (i = 0; i < num; i++) {
+@@ -775,13 +788,12 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr | (1 << 8);
+ 			length = 6 + msgs[i + 1].len;
+ 			len = msgs[i + 1].len;
+-			ret = __az6007_read(d->udev, req, value, index,
++			ret = __az6007_read(d, st, req, value, index,
+ 					    st->data, length);
+-			if (ret >= len) {
++			if (ret >= len + 5) {
+ 				for (j = 0; j < len; j++)
+ 					msgs[i + 1].buf[j] = st->data[j + 5];
+-			} else
+-				ret = -EIO;
++			}
+ 			i++;
+ 		} else if (!(msgs[i].flags & I2C_M_RD)) {
+ 			/* write bytes */
+@@ -797,10 +809,8 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr | (1 << 8);
+ 			length = msgs[i].len - 1;
+ 			len = msgs[i].len - 1;
+-			for (j = 0; j < len; j++)
+-				st->data[j] = msgs[i].buf[j + 1];
+-			ret =  __az6007_write(d->udev, req, value, index,
+-					      st->data, length);
++			ret = __az6007_write(d, st, req, value, index,
++					      &msgs[i].buf[1], length);
+ 		} else {
+ 			/* read bytes */
+ 			if (az6007_xfer_debug)
+@@ -815,16 +825,18 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr;
+ 			length = msgs[i].len + 6;
+ 			len = msgs[i].len;
+-			ret = __az6007_read(d->udev, req, value, index,
++			ret = __az6007_read(d, st, req, value, index,
+ 					    st->data, length);
+-			for (j = 0; j < len; j++)
+-				msgs[i].buf[j] = st->data[j + 5];
++			if (ret >= len + 5) {
++				for (j = 0; j < len; j++)
++					msgs[i].buf[j] = st->data[j + 5];
++			}
+ 		}
+ 		if (ret < 0)
+ 			goto err;
+ 	}
+ err:
+-	mutex_unlock(&st->mutex);
++	mutex_unlock(&d->i2c_mutex);
+ 
+ 	if (ret < 0) {
+ 		pr_info("%s ERROR: %i\n", __func__, ret);
+@@ -845,6 +857,7 @@ static const struct i2c_algorithm az6007_i2c_algo = {
+ 
+ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ {
++	struct az6007_device_state *state = d_to_priv(d);
+ 	int ret;
+ 	u8 *mac;
+ 
+@@ -855,7 +868,7 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ 		return -ENOMEM;
+ 
+ 	/* Try to read the mac address */
+-	ret = __az6007_read(d->udev, AZ6007_READ_DATA, 6, 0, mac, 6);
++	ret = __az6007_read(d, state, AZ6007_READ_DATA, 6, 0, mac, 6);
+ 	if (ret == 6)
+ 		ret = WARM;
+ 	else
+@@ -864,9 +877,9 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ 	kfree(mac);
+ 
+ 	if (ret == COLD) {
+-		__az6007_write(d->udev, 0x09, 1, 0, NULL, 0);
+-		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
+-		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
++		__az6007_write(d, state, 0x09, 1, 0, NULL, 0);
++		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
++		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
+ 	}
+ 
+ 	pr_debug("Device is on %s state\n",
+@@ -874,13 +887,6 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ 	return ret;
+ }
+ 
+-static void az6007_usb_disconnect(struct usb_interface *intf)
+-{
+-	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-	az6007_ci_uninit(d);
+-	dvb_usbv2_disconnect(intf);
+-}
+-
+ static int az6007_download_firmware(struct dvb_usb_device *d,
+ 	const struct firmware *fw)
+ {
+@@ -889,6 +895,19 @@ static int az6007_download_firmware(struct dvb_usb_device *d,
+ 	return cypress_load_firmware(d->udev, fw, CYPRESS_FX2);
+ }
+ 
++static int az6007_init(struct dvb_usb_device *d)
++{
++	return az6007_ci_init(d);
++}
++
++static void az6007_exit(struct dvb_usb_device *d)
++{
++	struct az6007_device_state *state = d_to_priv(d);
++
++	if (state->ci_attached)
++		az6007_ci_uninit(d);
++}
++
+ /* DVB USB Driver stuff */
+ static struct dvb_usb_device_properties az6007_props = {
+ 	.driver_name         = KBUILD_MODNAME,
+@@ -906,6 +925,8 @@ static struct dvb_usb_device_properties az6007_props = {
+ 	.download_firmware   = az6007_download_firmware,
+ 	.identify_state	     = az6007_identify_state,
+ 	.power_ctrl          = az6007_power_ctrl,
++	.init                = az6007_init,
++	.exit                = az6007_exit,
+ 	.num_adapters        = 1,
+ 	.adapter             = {
+ 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
+@@ -929,6 +950,8 @@ static struct dvb_usb_device_properties az6007_cablestar_hdci_props = {
+ 	.download_firmware   = az6007_download_firmware,
+ 	.identify_state	     = az6007_identify_state,
+ 	.power_ctrl          = az6007_power_ctrl,
++	.init                = az6007_init,
++	.exit                = az6007_exit,
+ 	.num_adapters        = 1,
+ 	.adapter             = {
+ 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
+@@ -949,37 +972,17 @@ static const struct usb_device_id az6007_usb_table[] = {
+ 
+ MODULE_DEVICE_TABLE(usb, az6007_usb_table);
+ 
+-static int az6007_suspend(struct usb_interface *intf, pm_message_t msg)
+-{
+-	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-
+-	az6007_ci_uninit(d);
+-	return dvb_usbv2_suspend(intf, msg);
+-}
+-
+-static int az6007_resume(struct usb_interface *intf)
+-{
+-	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-	struct dvb_usb_adapter *adap = &d->adapter[0];
+-
+-	az6007_ci_init(adap);
+-	return dvb_usbv2_resume(intf);
+-}
+-
+ /* usb specific object needed to register this driver with the usb subsystem */
+ static struct usb_driver az6007_usb_driver = {
+-	.name		= KBUILD_MODNAME,
+-	.id_table	= az6007_usb_table,
+-	.probe		= dvb_usbv2_probe,
+-	.disconnect	= az6007_usb_disconnect,
+-	.no_dynamic_id	= 1,
+-	.soft_unbind	= 1,
+-	/*
+-	 * FIXME: need to implement reset_resume, likely with
+-	 * dvb-usb-v2 core support
+-	 */
+-	.suspend	= az6007_suspend,
+-	.resume		= az6007_resume,
++	.name = KBUILD_MODNAME,
++	.id_table = az6007_usb_table,
++	.probe = dvb_usbv2_probe,
++	.disconnect = dvb_usbv2_disconnect,
++	.suspend = dvb_usbv2_suspend,
++	.resume = dvb_usbv2_resume,
++	.reset_resume = dvb_usbv2_reset_resume,
++	.no_dynamic_id = 1,
++	.soft_unbind = 1,
+ };
+ 
+ module_usb_driver(az6007_usb_driver);
+--
 
