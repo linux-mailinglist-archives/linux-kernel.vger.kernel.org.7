@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-804662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA24B47B55
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:29:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D6FB47B56
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C41017B245
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF4717B450
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D927626E143;
-	Sun,  7 Sep 2025 12:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3MmJAWF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1D310E3;
-	Sun,  7 Sep 2025 12:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A124264A60;
+	Sun,  7 Sep 2025 12:30:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE101B4223
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 12:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757248179; cv=none; b=dvsPMEsd4/rIBy2I3fZeWFDa5T5M5xUBUt3u4J5noehJXulb9a8TCpaYVMElrw0i9CD+5jgWkdzS4+am1xyRxXcEge4trlxXB0QIv/d8ww/kowO6YUtjus6erlNJMTjir6T+UtU6AqsjnbuNuYgKneBmozTlBqQUkN34mMVBkx8=
+	t=1757248221; cv=none; b=uIBzQqJXt9ftKQLl7ABds+IXw3YU7SjgRnEX8TQygAjM0wNTBs68ydA7OjJ6Bo1SyEBt6feFMaqUhJIl/klYafz3A0aeLxixaTCun4JU2oHTxiA/ix7ACaBS6E7jmtYn1DIufpNn7yBn34mLGYnpFOGuwnTAIdxQR02hHqju0wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757248179; c=relaxed/simple;
-	bh=qDpX76/Rz1kCBhaI70kE6hYmSdNLUblzUjGz0/M4d0o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=piFvKaCmb5o/FF72iHuicr2YPo86y2lrmDmUDj5meB1mKYbYJ0LDj5egPGlDa8OPZJyk07AkOX/NhuDS2NVipH0nz7kk/CkADq4BTxqEtTBHSBT9czU0ED/k23XnlQHNd1SXu2GeoHD9igo8zKhD++InMlRJlDlQxdvOZ30moIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3MmJAWF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B09EEC4CEF0;
-	Sun,  7 Sep 2025 12:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757248178;
-	bh=qDpX76/Rz1kCBhaI70kE6hYmSdNLUblzUjGz0/M4d0o=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=B3MmJAWFs+3gyy0sUGgqX+Zi3uCoR9eHU8tjULNNucAHMIDieSQ4DBAobqY5gDsi3
-	 /WV8VrFmWhiY4XIwQXbPo3bjvS+cKmMuMABOBVWbEzr42+7OQYl6OT+AJ+R59h2AcZ
-	 x73JDkJnj8mfmi8fQt8dbx/JMSXMneIhvqnccFzktChkES+tf3pyrfSqn4UdUSUFOD
-	 M9Dj93EnIiVlZ06AATosjgfAf+Mbq+3wOZjWIGCY5/RVxZnR+H8c/HFveH+2vVVNxs
-	 xJjLZKS46kzd+XdSSTTS6Xr4Rpl/1eHjg1hnkX0hDA0bXzN+maPp8ByIHqtR2L36NG
-	 IkriQ8GHzzoYg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1729CAC581;
-	Sun,  7 Sep 2025 12:29:38 +0000 (UTC)
-From: Valerio Setti via B4 Relay <devnull+vsetti.baylibre.com@kernel.org>
-Date: Sun, 07 Sep 2025 14:29:21 +0200
-Subject: [PATCH] arm64: dts: amlogic: gxbb-odroidc2: remove UHS capability
- for SD card
+	s=arc-20240116; t=1757248221; c=relaxed/simple;
+	bh=ljIw4x24PdPDNDcbk45pofGhTh9mL2bEWGlQpfO41c8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VJWSuRYvqVwR/1g8rzM9pSetiCRuEqsbeI6bGwiSPYd7bHyQdERpVhX48hlHBJMgDMNx8HDxR6SvGgsovGpiPZQrZA7HNp6xIp5jH2WHWsxHsgi0SH9kGS3rFEEu4/m9esOevOWe+5wJeq1zL2KXzYJGIjCIpZYxwkIE9DoxDoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A8E51424;
+	Sun,  7 Sep 2025 05:30:04 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B124C3F694;
+	Sun,  7 Sep 2025 05:30:07 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V4 0/2] arm64/sysreg: Clean up TCR_EL1 field macros
+Date: Sun,  7 Sep 2025 17:59:58 +0530
+Message-Id: <20250907123000.414181-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250907-fix-reboot-v1-1-7606fc91254e@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAKB6vWgC/x2MQQqAIBAAvyJ7bmGVIuwr0cFsrb1oaEQg/T3pO
- AwzFQpn4QKTqpD5liIpNtCdAn+4uDPK1hgMmYEsjRjkwcxrShdSzxS81dYxQQvOzM3+s3l53w+
- 6d6OLXAAAAA==
-X-Change-ID: 20250907-fix-reboot-04e0fc919ae0
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Valerio Setti <vsetti@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2226;
- i=vsetti@baylibre.com; h=from:subject:message-id;
- bh=8EBu8xBycRGsUBCELcsXSIlLy471WBn+C9oMzb171Ho=;
- b=owGbwMvMwCF2z3ty7kUrRgbG02pJDBl7qzZ+EotTzK5mWfxPQoD3/DQxnkX1aVs1a1Z1aVvlx
- HUkbd7ZUcrCIMbBICumyMIy/d7vglK1h8YJJwtg5rAygQxh4OIUgIkcFWD4X21T+C1i+zvvZQeO
- e5zqsmt76n9o+7IXy1Z+TO1bva5APYbhD4dH72EDe83XX45zHOD27/+wJdz7NJfMPtPW+jXLO05
- vYgIA
-X-Developer-Key: i=vsetti@baylibre.com; a=openpgp;
- fpr=0497DEFB707526E13360C970DE4B936DD13A0100
-X-Endpoint-Received: by B4 Relay for vsetti@baylibre.com/default with
- auth_id=515
-X-Original-From: Valerio Setti <vsetti@baylibre.com>
-Reply-To: vsetti@baylibre.com
+Content-Transfer-Encoding: 8bit
 
-From: Valerio Setti <vsetti@baylibre.com>
+Currently TCR_EL1 field macros are sprinkled across the arm64 platform code
+including KVM implementation. Clean these up via updating required register
+filed definitions in tools sysreg format and then subsequently doing all
+necessary replacements. All required TCR_XXX macros have been moved from
+(asm/pgtable-hwdef.h) into KVM header (asm/kvm_arm.h) for their continued
+usage in KVM.
 
-This is meant to resolve reboot not working on this board.
+The cleanup does not cause any functional change.
 
-The problem is as follows. In order to be able to switch from HS to UHS
-mode the bus voltage needs to be reduced from 3.3V down to 1.8V and this
-is achieved by the "vqmmc-supply" regulator. The ROM bootloader is only
-able to manage the card in HS mode (3.3V) and the switch HS->UHS happen
-at boottime in the kernel. The problem appears when the reboot command
-is issued or watchdog expires because in this case the "vqmmc-supply"
-voltage is not returned back at 3.3V before rebooting the board so the
-ROM bootloader will be completely stuck.
+This applies on v6.17-rc4
 
-Therefore this commit removes both "vqmmc-supply" property, which is the
-one causing the reboot problem, as well as all the UHS modes which would
-now became unreachable due to this regulator control removal.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-In terms of performance the main drawback of this commit is limiting the
-SD card bus speed to HS (25 MB/s) instead of UHS DDR50 (50 MB/s). However
-this comes with the benefit of being able to reboot the board, so it
-sounds like a reasonable compromise.
+Changes in V4:
 
-Signed-off-by: Valerio Setti <vsetti@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+- Dropped all unused TCR_XXX macros while moving into KVM header
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 959bd8d77a82ebc78c5e0592d7613e692e4ede4e..331a0a62b884389b4e0d4d157fff7f9c8738c89d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -348,17 +348,16 @@ &sd_emmc_b {
- 
- 	bus-width = <4>;
- 	cap-sd-highspeed;
--	sd-uhs-sdr12;
--	sd-uhs-sdr25;
--	sd-uhs-sdr50;
--	sd-uhs-ddr50;
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
- 	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&tflash_vdd>;
--	vqmmc-supply = <&tf_io>;
-+	/*
-+	 * Control of vqmmc-supply is intentionally omitted because it would
-+	 * prevent the board from rebooting properly.
-+	 */
- };
- 
- /* eMMC */
+Changes in V3:
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250907-fix-reboot-04e0fc919ae0
+https://lore.kernel.org/all/20250901072037.743380-1-anshuman.khandual@arm.com/
 
-Best regards,
+- KVM TCR_XXX flags are expressed via TCR_EL1_XXX flags per Marc
+
+Changes in V2:
+
+https://lore.kernel.org/all/20250829060215.1086792-1-anshuman.khandual@arm.com/
+
+- Fixed ARM ARM version from 7.B to L.B
+- Changed UnsignedEnum into Enum per Mark
+- Dropped all TCR_EL1 replacements from KVM code
+- Moved existing TCR_XXX macros from (asm/pgtable-hwdef.h) into KVM header
+  (asm/kvm_arm.h) for their continued usage
+- Dropped patches 3 and 4 which could be done subsequently
+
+Changes in V1:
+
+https://lore.kernel.org/linux-arm-kernel/20250818045759.672408-1-anshuman.khandual@arm.com/
+
+
+Anshuman Khandual (2):
+  arm64/sysreg: Update TCR_EL1 register
+  arm64/sysreg: Replace TCR_EL1 field macros
+
+ arch/arm64/include/asm/assembler.h     |  6 +-
+ arch/arm64/include/asm/cputype.h       |  2 +-
+ arch/arm64/include/asm/kvm_arm.h       | 43 +++++++++++
+ arch/arm64/include/asm/mmu_context.h   |  4 +-
+ arch/arm64/include/asm/pgtable-hwdef.h | 98 +-------------------------
+ arch/arm64/include/asm/pgtable-prot.h  |  2 +-
+ arch/arm64/include/asm/sysreg.h        |  2 -
+ arch/arm64/kernel/cpufeature.c         |  4 +-
+ arch/arm64/kernel/pi/map_kernel.c      |  8 +--
+ arch/arm64/kernel/vmcore_info.c        |  2 +-
+ arch/arm64/mm/proc.S                   | 36 ++++++----
+ arch/arm64/tools/sysreg                | 52 +++++++++++---
+ tools/arch/arm64/include/asm/cputype.h |  2 +-
+ 13 files changed, 127 insertions(+), 134 deletions(-)
+
 -- 
-Valerio Setti <vsetti@baylibre.com>
-
+2.25.1
 
 
