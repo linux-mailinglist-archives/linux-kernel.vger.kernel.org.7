@@ -1,295 +1,166 @@
-Return-Path: <linux-kernel+bounces-804796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79A5B47D4A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:10:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35532B47D30
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693697A92D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A4A17BD9F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895FD29ACC6;
-	Sun,  7 Sep 2025 20:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C094D29B8E0;
+	Sun,  7 Sep 2025 20:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DmDKFVgK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EIdUP107"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8BC1CDFAC;
-	Sun,  7 Sep 2025 20:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16451CDFAC;
+	Sun,  7 Sep 2025 20:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757275792; cv=none; b=g1Pg9rfCAewBkftnFXDq8jC5cAyD2PdCsBwE3R7n2Dpgdr2xgtoWl+Vc256b9dHOalSAwMG72XFOpC4TqNwEq6PGU+h4f6NG4MxyGro9cZE9n11Fd0GTPSbwHtNnccHuLgLxzeXry7JiZEw0Qm+lELIvzRrzo691ocTIipjCHwc=
+	t=1757275716; cv=none; b=QrutzpV3zImk3XxrvWwVGTOa7Ax4zCIExTS9IkCadU2Fs5qxlisK9V8M2HuIi/1nQJzNLEesGhwi1vHl//UvXAKWIFSnL7LrWhzAAR5os/F+qGnvbG625SHbsdcZujkz23oBFLU/WPMjBT+nvwDmY2uLkvHm4cY8e4XQndj+snQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757275792; c=relaxed/simple;
-	bh=qBEG2Bntviw/gJPn/+vDRKi/OUokla7ugr2A7z0kPUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mepMP5qZh9Q9Qt3ZONv8Ja+OrPMtG8RdcTeGxjjYvDfKf1Syw2SN0kdgLSbc/8AKw6Ttsa3Ax6EN6wF6EMVroWifAB7gKJa9y0v9Q07AaNj1Bxy4hwbuRF4kn1rE/Bm6/XZL0twF4cbIlK4tVrds6cpQy4t0Vp9x8D/lHBSZzno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DmDKFVgK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE24C4CEF0;
-	Sun,  7 Sep 2025 20:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757275792;
-	bh=qBEG2Bntviw/gJPn/+vDRKi/OUokla7ugr2A7z0kPUE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DmDKFVgK1pzTe0PSfIRpQpXGPX+3KLQAXsfbPP5UhBLEL8+B4GMprP88IsYGs13hf
-	 qgxrOlKQocrRW109I+lHS5ChC/P5DRPS9SEqZokjabm4KT5LAr0vjYolRs0avZ/MCs
-	 WQi13SlkY6LGs/w6/aNfUaxh5fNKLOk3XyybE5H0=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 5.4 00/45] 5.4.299-rc1 review
-Date: Sun,  7 Sep 2025 21:57:46 +0200
-Message-ID: <20250907195600.953058118@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757275716; c=relaxed/simple;
+	bh=aXZwZeP8hpfxh/3AkF7lqJUagLAveJEN56MEMEkzAFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5kEbbZUFfeZ/vG0fsZuCy4FxOGnzD/ygrpBfb5jBuaZ1Ym6mHcscxeM0FBI3NgXl1ETH+DLWcozQMtBoHb/qhBtcG4P5B2fSv+4859aVarT6bDwhuOsTlZji0HcpALVdlU5IjIKshrrNYf9b+gpW+RExhrj5C6iKP6XbNzuTBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EIdUP107; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2FF1810BE;
+	Sun,  7 Sep 2025 22:07:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757275640;
+	bh=aXZwZeP8hpfxh/3AkF7lqJUagLAveJEN56MEMEkzAFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EIdUP107fv1x2hMR6EkjV+HRQRrKAvVoeoo68qWucqV07+HRlpGueVkRxskQf6rSo
+	 RihvbMPQ5zfGNkZX6hODEnYnv9zxWWBTk7fWqy69xGyU6MUrKsp8a1/QMMC6Om71IQ
+	 fItNyArYRArtd4xY3lUzk/K+SPG8r8/9SGH1p2Nw=
+Date: Sun, 7 Sep 2025 22:08:11 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
+ v4l2 control
+Message-ID: <20250907200811.GB19568@pendragon.ideasonboard.com>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
+ <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
+ <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.299-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.4.299-rc1
-X-KernelTest-Deadline: 2025-09-09T19:56+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
 
-This is the start of the stable review cycle for the 5.4.299 release.
-There are 45 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
+> On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
+> > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
+> > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
+> > > "strobe output enable" feature of the sensor.
+> > > 
+> > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
+> > > tested using an ov9281 VisionComponents module.
+> > > 
+> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > ---
+> > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
+> > >  1 file changed, 24 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
+> > > --- a/drivers/media/i2c/ov9282.c
+> > > +++ b/drivers/media/i2c/ov9282.c
+> > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
+> > >  				current_val);
+> > >  }
+> > >  
+> > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
+> > > +{
+> > > +	u32 current_val;
+> > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > +				  &current_val);
+> > > +	if (ret)
+> > > +		return ret;
+> > 
+> > Please don't do assignments in variable declaration if that involves error
+> > handling.
+> 
+> Sure. Will fix that!
+> 
+> > > +
+> > > +	if (enable)
+> > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
+> > > +	else
+> > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
+> > > +
+> > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > +				current_val);
 
-Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-Anything received after that time might be too late.
+It would be nice to cache the register value instead of reading it back.
+Regmap may help (and then the driver should use the CCI helpers). This
+can be done separately.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.299-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-and the diffstat can be found below.
+> > > +}
+> > > +
+> > >  /**
+> > >   * ov9282_set_ctrl() - Set subdevice control
+> > >   * @ctrl: pointer to v4l2_ctrl structure
+> > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+> > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
+> > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
+> > >  		break;
+> > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
+> > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
+> > > +		break;
+> > >  	default:
+> > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+> > >  		ret = -EINVAL;
+> > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > >  	u32 lpfr;
+> > >  	int ret;
+> > >  
+> > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+> > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+> > >  	if (ret)
+> > >  		return ret;
+> > >  
+> > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > >  						OV9282_TIMING_HTS_MAX - mode->width,
+> > >  						1, hblank_min);
+> > >  
+> > > +	/* Flash/Strobe controls */
+> > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> > 
+> > This seems rather long.
+> 
+> It's exactly 100 chars wide, so from a policy point of view it should be
+> fine ;-). But I'm also fine with breaking it to 80 if you prefer?
 
-thanks,
+That's the usual policy in V4L2, yes. 80 columns is the preferred soft
+limit.
 
-greg k-h
+> > > +
+> > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> > >  	if (!ret) {
+> > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> > > 
 
--------------
-Pseudo-Shortlog of commits:
+-- 
+Regards,
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.4.299-rc1
-
-Qiu-ji Chen <chenqiuji666@gmail.com>
-    dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
-
-Roman Smirnov <r.smirnov@omp.ru>
-    cifs: fix integer overflow in match_server()
-
-Larisa Grigore <larisa.grigore@nxp.com>
-    spi: spi-fsl-lpspi: Reset FIFO and disable module on transfer abort
-
-Larisa Grigore <larisa.grigore@nxp.com>
-    spi: spi-fsl-lpspi: Set correct chip-select polarity bit
-
-Larisa Grigore <larisa.grigore@nxp.com>
-    spi: spi-fsl-lpspi: Fix transmissions when using CONT
-
-Wentao Liang <vulab@iscas.ac.cn>
-    pcmcia: Add error handling for add_interval() in do_validate_mem()
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: hda/hdmi: Add pin fix for another HP EliteDesk 800 G4 model
-
-Kees Cook <kees@kernel.org>
-    randstruct: gcc-plugin: Fix attribute addition
-
-Kees Cook <kees@kernel.org>
-    randstruct: gcc-plugin: Remove bogus void member
-
-Ronak Doshi <ronak.doshi@broadcom.com>
-    vmxnet3: update MTU after device quiesce
-
-Jakob Unterwurzacher <jakobunt@gmail.com>
-    net: dsa: microchip: linearize skb for tail-tagging switches
-
-Pieter Van Trappen <pieter.van.trappen@cern.ch>
-    net: dsa: microchip: update tag_ksz masks for KSZ9477 family
-
-Qiu-ji Chen <chenqiuji666@gmail.com>
-    dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()
-
-Chris Chiu <chris.chiu@canonical.com>
-    ALSA: hda/realtek - Add new HP ZBook laptop with micmute led fixup
-
-Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-    gpio: pca953x: fix IRQ storm on system wake up
-
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-    iio: light: opt3001: fix deadlock due to concurrent flag access
-
-David Lechner <dlechner@baylibre.com>
-    iio: chemical: pms7003: use aligned_s64 for timestamp
-
-Sean Christopherson <seanjc@google.com>
-    KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
-
-Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-    cpufreq/sched: Explicitly synchronize limits_changed flag handling
-
-Li Qiong <liqiong@nfschina.com>
-    mm/slub: avoid accessing metadata when pointer is invalid in object_err()
-
-John Evans <evans1210144@gmail.com>
-    scsi: lpfc: Fix buffer free/clear order in deferred receive path
-
-Jann Horn <jannh@google.com>
-    mm/khugepaged: fix ->anon_vma race
-
-Vitaly Lifshits <vitaly.lifshits@intel.com>
-    e1000e: fix heap overflow in e1000_set_eeprom
-
-Stanislav Fort <stanislav.fort@aisle.com>
-    batman-adv: fix OOB read/write in network-coding decode
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: drop hw access in non-DC audio fini
-
-Qianfeng Rong <rongqianfeng@vivo.com>
-    wifi: mwifiex: Initialize the chan_stats array to zero
-
-Ma Ke <make24@iscas.ac.cn>
-    pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
-
-Cryolitia PukNgae <cryolitia@uniontech.com>
-    ALSA: usb-audio: Add mute TLV for playback volumes on some devices
-
-Qingfang Deng <dqfext@gmail.com>
-    ppp: fix memory leak in pad_compress_skb
-
-Wang Liang <wangliang74@huawei.com>
-    net: atm: fix memory leak in atm_register_sysfs when device_register fail
-
-Eric Dumazet <edumazet@google.com>
-    ax25: properly unshare skbs in ax25_kiss_rcv()
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    ipv4: Fix NULL vs error pointer check in inet_blackhole_dev_init()
-
-Rosen Penev <rosenp@gmail.com>
-    net: thunder_bgx: decrement cleanup index before use
-
-Rosen Penev <rosenp@gmail.com>
-    net: thunder_bgx: add a missing of_node_put
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    wifi: libertas: cap SSID len in lbs_associate()
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    wifi: cw1200: cap SSID length in cw1200_do_join()
-
-Felix Fietkau <nbd@nbd.name>
-    net: ethernet: mtk_eth_soc: fix tx vlan tag for llc packets
-
-Zhen Ni <zhen.ni@easystack.cn>
-    i40e: Fix potential invalid access when MAC list is empty
-
-Fabian Bläse <fabian@blaese.de>
-    icmp: fix icmp_ndo_send address translation for reply direction
-
-Miaoqian Lin <linmq006@gmail.com>
-    mISDN: Fix memory leak in dsp_hwec_enable()
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    xirc2ps_cs: fix register access when enabling FullDuplex
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    Bluetooth: Fix use-after-free in l2cap_sock_cleanup_listen()
-
-Phil Sutter <phil@nwl.cc>
-    netfilter: conntrack: helper: Replace -EEXIST by -EBUSY
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    wifi: cfg80211: fix use-after-free in cmp_bss()
-
-Nathan Chancellor <nathan@kernel.org>
-    powerpc: boot: Remove leading zero in label in udelay()
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |  4 +--
- arch/powerpc/boot/util.S                          |  4 +--
- arch/x86/kvm/x86.c                                | 16 +++++++--
- drivers/dma/mediatek/mtk-cqdma.c                  | 10 +++---
- drivers/gpio/gpio-pca953x.c                       |  5 +++
- drivers/gpu/drm/amd/amdgpu/dce_v10_0.c            |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v11_0.c            |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c             |  5 ---
- drivers/gpu/drm/amd/amdgpu/dce_v8_0.c             |  5 ---
- drivers/iio/chemical/pms7003.c                    |  5 +--
- drivers/iio/light/opt3001.c                       |  5 +--
- drivers/isdn/mISDN/dsp_hwec.c                     |  6 ++--
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 20 +++++++-----
- drivers/net/ethernet/intel/e1000e/ethtool.c       | 10 ++++--
- drivers/net/ethernet/intel/i40e/i40e_client.c     |  4 +--
- drivers/net/ethernet/mediatek/mtk_eth_soc.c       | 10 +++++-
- drivers/net/ethernet/xircom/xirc2ps_cs.c          |  2 +-
- drivers/net/ppp/ppp_generic.c                     |  6 ++--
- drivers/net/vmxnet3/vmxnet3_drv.c                 |  5 +--
- drivers/net/wireless/marvell/libertas/cfg.c       |  9 +++--
- drivers/net/wireless/marvell/mwifiex/cfg80211.c   |  5 +--
- drivers/net/wireless/marvell/mwifiex/main.c       |  4 +--
- drivers/net/wireless/st/cw1200/sta.c              |  2 +-
- drivers/pcmcia/rsrc_iodyn.c                       |  3 ++
- drivers/pcmcia/rsrc_nonstatic.c                   |  4 ++-
- drivers/scsi/lpfc/lpfc_nvmet.c                    | 10 +++---
- drivers/spi/spi-fsl-lpspi.c                       | 15 +++++----
- fs/cifs/connect.c                                 |  5 +++
- kernel/sched/cpufreq_schedutil.c                  | 28 +++++++++++++---
- mm/khugepaged.c                                   | 14 +++++++-
- mm/slub.c                                         |  7 +++-
- net/atm/resources.c                               |  6 ++--
- net/ax25/ax25_in.c                                |  4 +++
- net/batman-adv/network-coding.c                   |  7 +++-
- net/bluetooth/l2cap_sock.c                        |  3 ++
- net/dsa/tag_ksz.c                                 | 22 ++++++++++---
- net/ipv4/devinet.c                                |  7 ++--
- net/ipv4/icmp.c                                   |  6 ++--
- net/ipv6/ip6_icmp.c                               |  6 ++--
- net/netfilter/nf_conntrack_helper.c               |  4 +--
- net/wireless/scan.c                               |  3 +-
- scripts/gcc-plugins/gcc-common.h                  | 32 ++++++++++++++++++
- scripts/gcc-plugins/randomize_layout_plugin.c     | 40 +++++++----------------
- sound/pci/hda/patch_hdmi.c                        |  1 +
- sound/pci/hda/patch_realtek.c                     |  1 +
- sound/usb/mixer_quirks.c                          |  2 ++
- 46 files changed, 250 insertions(+), 132 deletions(-)
-
-
+Laurent Pinchart
 
