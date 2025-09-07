@@ -1,374 +1,395 @@
-Return-Path: <linux-kernel+bounces-804777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68553B47CE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE029B47CE3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26BD717D0A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D873B9935
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BF92868A2;
-	Sun,  7 Sep 2025 18:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEBC29ACCD;
+	Sun,  7 Sep 2025 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="npgghXvs"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrne/gQh"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B507E552;
-	Sun,  7 Sep 2025 18:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA83B283FE4;
+	Sun,  7 Sep 2025 18:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757270001; cv=none; b=S38ShZ7Oad31KZVwwNSaBQ8ai9bmUTSNMztrPNG3uQOcmtyaJzUoDit8t9dSOV6iQL4VLxb5biuYTiC57SZl5WD5wH5FhW7DTr3oQ7VhOIXrHn8WtG7j0MBXTijE66XLVhI37dVo9+mcU4+7RNeQopcOlMVf+tTlzROBhM/q9wk=
+	t=1757270012; cv=none; b=ab3d5puf++ogiGtwBYLNLOBOunQ+igdxU6Vtm/A1aSMmIvCDkAhv1u6/28wOFgjhoU9GAL6SiAu/NktOcA9LKcLwlYONzbWqZZDxIK/j5s544tXFkVyo34h7B+m1fEftCIHuYgHhG30M8Ncpbt+84PA3iUSEQLfxGAlu2Xt2Sts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757270001; c=relaxed/simple;
-	bh=9tIlTI9O3Xa+d2w3d78TmCY1t3qK1h+cAjq4ybsegiw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZKB6twavSH2kGbzDwcqSpLHj0R7D/52SJMVwG6P4mk6kpEPnoQEPPgoO1YaJTRiC05hQkMe8YeCnJ1QN5OuZ0OEdKyS6yeN97soMa6dQ6R6Ib7WKCHPG4K3YjcPqm7fnVWL1GxdGQeoUENSK58iu9HQzrKQM84l6xXPpwl9p72g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=npgghXvs; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=vEU9EY89jo3fuUey+xc3EWIQOSTL4s9w9zivHP+tZ8A=; t=1757269998;
-	x=1757874798; b=npgghXvs8AZhO9iBEz/QgZXO94jcLscLKGJJeebu/341e9lDvcPMMB7bP6nB3
-	fvxq/LrvZ1MgM+mLWO7yaUZ2RLbdngc+3lLHicHh2pJjjsdDf7OPN9Wl7EK/dW2T/Dp4lMdmp1OBn
-	Ma154bcTQZtkNB2lJhpqumgcUR+7uD2CPot0NRay7GRG1Jf+BBVwWQL48/MLt8S3El9oGjZdJuIlt
-	WfOl6ZNME8M6bax8gDELxGdB+ov+YyYC1RWsTz9/yhHZL/qOdM8LG3XYTI7j6Vp698yZ7qQGrMYRg
-	0YBO/yIDqhGbW4Qusn6MjFV0HVBvUFsNnqmoNP+E1TeKA60a1g==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uvKCR-00000002P1w-3mk9; Sun, 07 Sep 2025 20:33:15 +0200
-Received: from dynamic-089-012-071-066.89.12.pool.telefonica.de ([89.12.71.66] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uvKCR-00000003Hm5-2mkt; Sun, 07 Sep 2025 20:33:15 +0200
-Message-ID: <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC III
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson
-	 <andreas@gaisler.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Yznaga
-	 <anthony.yznaga@oracle.com>, =?ISO-8859-1?Q?Ren=E9?= Rebe
- <rene@exactcode.com>
-Date: Sun, 07 Sep 2025 20:33:14 +0200
-In-Reply-To: <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
-References: 
-	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-			 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-		 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
-	 <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1757270012; c=relaxed/simple;
+	bh=2haumMTs1BksSWy181iFOdCCj5/UTBkAOBVDbcBWcAI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FSh27KTxjEUVH/8dmWAWsRVLx/EdQeiSiYVz8y/CZqOoY/FrDWbT3SZnlKvAHHQRIge6AACIkFV45xzMgrKqF+tMSGLC1c6t0ezNoVAZVV8gOV2660BqdSU3UznE1YuiF5beSphw0grZeTy8XZ73f9XSiEbXHCYJX6qtvj6TnL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrne/gQh; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so2507149a12.0;
+        Sun, 07 Sep 2025 11:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757270010; x=1757874810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1prghCX2j/ZdYOZtRxnhLixcEap1cTasQWjSnDFEOK4=;
+        b=jrne/gQhaoaoecHf9o+uEt/Kut7uuEDR8yxPmxbuH30yxr0WwbZvbZ6Q8lXLu6y75O
+         9QmQTPyTZOKylWrgZTB4luLbmXoP/n16XP4GwAgxwewP+mFF/CbUSN9MwkhDhwCOrdHX
+         ToDOOmS9Ccgoq6rgW5xJUTnci3hLD7Z3+y1CQfUR6RbbTLeP+5r1ztK6vaIdHKS080kE
+         KF8HF4uf+KX+M7XtH6HRe8L1lVxrOYYnxwmA3DbGsFRBMpP0dGteiSxB/KA+JRyw31w5
+         5tbXPJez7zzzlREvYP2AGuWjzVEKrbbG4JniaWlW1pmPfa035gteKEK1Kfz07zcgloFw
+         amUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757270010; x=1757874810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1prghCX2j/ZdYOZtRxnhLixcEap1cTasQWjSnDFEOK4=;
+        b=HkE/O9WnTUZ92e4Rd8yWMREvc4BTbxzlEfaDlK+VJp1mBK94recLSyKhUc581N1rSa
+         no8JSNWb11QQRS4B16avAWD88jSSRtpxXQKt0n1QpaOpYd/TDF2gBS6au3VsjSfkhcKi
+         Cvxipp53tZWSqdixe1J8amCoawgHXOgh3o/vOAhmdVdQURFndUPbqspdChZEz90Z2SEF
+         8BappoEDPu13h+jQhBnyYm0f8vXPLLMhzt6oN/mgv+Cob3/nMHpleCIIKoZXQ42nWhIz
+         n9YMsFDRVlUGWLgKEiAXKRc0Va1VcFIbuQP5kkDchbuv2s7DXTWLSUGEMz5WQJtHJG4j
+         UJqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7lKCTeKxUP61SBiq2Ysa7PTKPQMIeAu5nMbzAQqVYWSLQtb11GavhU1u9+eWgqJoSUraGjd8HuM14mpZ2@vger.kernel.org, AJvYcCUeoE7ILUUM5smLTVMQEOghJFMbnjaoWye/ZXvLb4J87ibwWUJ4Z07poZXRn1MYKDn3AMkDzW4gXS1w@vger.kernel.org, AJvYcCX/fLS5IYFbWLW6OkofMkvuhh8cgbmDi8503JI+jDyeilloPrGJf6bnC19e+CbNLMzczkDnkgflMttgI99G@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkTbRyYQL9HZvfvVOYBRCS6UOwKvhD+SNguvO0/yl9gBFf0ioW
+	U++dOTPPr8ZGX8Tjbc0z19xU8hCfpKKJWbVGduSyrJ/8AX8PQyPcYuWz+G4GFtuiOA7SmOCgsyC
+	454t0bsg1FagOYioZvn2x+Z0wqKqh1Ko=
+X-Gm-Gg: ASbGncuN93lonpRDUbggREg93bpSGfWUFaRtk3lqfJp32i8WIcInHlbPBFnFbHXx48q
+	xVbNmXH9TnFvJeFjzM2npfG5GltHW6gE9xfaBvg3kUWfZ5u2Ch84ttN3v9hDkJmD40b1fgD/FXS
+	4xPbClBafhjC8D92EoPxiyKrZfLxUHa9cU9KEblymEG3AXZ2dbqck211mMkSonD6zOzwkH8oZeM
+	ms+x9MIkmnWYCfeLj4lV2aVyO/XSpQt5kEADMos2GEMNnQ/6ltN/MyH7kwZwjcZeVP8BWodJsW9
+	qsQ=
+X-Google-Smtp-Source: AGHT+IFR/gRhNkc1YOW9Zi7R1cnc2A7iUPAIgKgthiJn5F7NTQaDezr7EVExPYq6YHZKpDdlHlFdPKtYZHtahoQRI5w=
+X-Received: by 2002:a17:903:2341:b0:24b:25f:5f7f with SMTP id
+ d9443c01a7336-2517301ce47mr64467415ad.60.1757270010091; Sun, 07 Sep 2025
+ 11:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250907032003.386794-1-ebiggers@kernel.org> <CAH2r5mutq5vZwKNyZ6nforOierKSH9si+47XoFV7PZSKxuvqHQ@mail.gmail.com>
+In-Reply-To: <CAH2r5mutq5vZwKNyZ6nforOierKSH9si+47XoFV7PZSKxuvqHQ@mail.gmail.com>
+From: ronnie sahlberg <ronniesahlberg@gmail.com>
+Date: Mon, 8 Sep 2025 04:33:18 +1000
+X-Gm-Features: AS18NWCpN9KIq6ir13rA4hDgL4YVOU6GMbSEJ81vt4fcEK9IDcVMKkK-7j9FVDM
+Message-ID: <CAN05THRE0powMS-AgXHfGT_rbkrqBA09PDA6ydzcCGzSnA-V9w@mail.gmail.com>
+Subject: Re: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
+To: Steve French <smfrench@gmail.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-cifs@vger.kernel.org, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 8 Sept 2025 at 03:59, Steve French <smfrench@gmail.com> wrote:
+>
+> Ronnie may have additional context, but it may have been forked due to
+> unrelated restrictions on the arc4 module (that had nothing to do with
+> cifs.ko very narrow usage of arc4) breaking cifs.ko.
+>
+> Ronnie,
+> Do you remember the context?
 
-On Sun, 2025-09-07 at 19:49 +0200, John Paul Adrian Glaubitz wrote:
-> Michael suggested switching to the generic copy_{to,from}_user code offli=
-st
-> to verify this:
->=20
-> diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
-> index c305486501dc..cd1a96a918b3 100644
-> --- a/arch/sparc/kernel/head_64.S
-> +++ b/arch/sparc/kernel/head_64.S
-> @@ -687,7 +687,7 @@ cheetah_tlb_fixup:
->         stw     %g2, [%g1 + %lo(tlb_type)]
-> =20
->         /* Patch copy/page operations to cheetah optimized versions. */
-> -       call    cheetah_patch_copyops
-> +       call    generic_patch_copyops
->          nop
->         call    cheetah_patch_copy_page
->          nop
->=20
-> The kernel still crashes, even when using the generic code.
->=20
-> So, this particular issue is not rooted in the U3_copy_{to,from}_user cod=
-e.
+Yepp.
+The context was that to my understanding it was suggested that the
+arc4 module would be going away
+and would be removed so cifs had to stop using it. (or create its own
+private copy)
 
-Replacing "call cheetah_patch_copy_page" with a nop doesn't help either:
+Must been a misunderstanding of what/how would happen with arc4 when
+it was retired.
 
-diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
-index c305486501dc..ed859bae5175 100644
---- a/arch/sparc/kernel/head_64.S
-+++ b/arch/sparc/kernel/head_64.S
-@@ -689,7 +689,7 @@ cheetah_tlb_fixup:
-        /* Patch copy/page operations to cheetah optimized versions. */
-        call    cheetah_patch_copyops
-         nop
--       call    cheetah_patch_copy_page
-+        nop
-         nop
-        call    cheetah_patch_cachetlbops
-         nop
 
-[  140.207051] systemd-sysv-generator[1037]: SysV service '/etc/init.d/buil=
-dd' lacks a native systemd unit file, automatically generating a unit file =
-for compatibility.
-[  140.401791] systemd-sysv-generator[1037]: Please update package to inclu=
-de a native systemd unit file.
-[  140.525028] systemd-sysv-generator[1037]: =E2=9A=A0 This compatibility l=
-ogic is deprecated, expect removal soon. =E2=9A=A0
-[  147.718747] systemd-sysv-generator[1093]: SysV service '/etc/init.d/buil=
-dd' lacks a native systemd unit file, automatically generating a unit file =
-for compatibility.
-[  147.913402] systemd-sysv-generator[1093]: Please update package to inclu=
-de a native systemd unit file.
-[  148.036530] systemd-sysv-generator[1093]: =E2=9A=A0 This compatibility l=
-ogic is deprecated, expect removal soon. =E2=9A=A0
-[  149.208409] Unable to handle kernel NULL pointer dereference
-[  149.282820] tsk->{mm,active_mm}->context =3D 00000000000000ab
-[  149.356117] tsk->{mm,active_mm}->pgd =3D fff0000008830000
-[  149.424819]               \|/ ____ \|/
-[  149.424819]               "@'/ .. \`@"
-[  149.424819]               /_| \__/ |_\
-[  149.424819]                  \__U_/
-[  149.618139] systemd(1): Oops [#1]
-[  149.661684] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.17.0-rc4+ #=
-16 NONE=20
-[  149.758917] TSTATE: 0000004411001602 TPC: 00000000006260a4 TNPC: 0000000=
-0006260a8 Y: ffffffff    Not tainted
-[  149.888258] TPC: <bpf_patch_insn_data+0x204/0x2e0>
-[  149.951255] g0: 0000000000000000 g1: 0000000000000000 g2: 00000000000000=
-36 g3: fff0000012178b28
-[  150.065638] g4: fff0000000236300 g5: fff000023e336000 g6: fff000000026c0=
-00 g7: 0000000000000001
-[  150.180010] o0: 0000000100880000 o1: 0000000000000000 o2: 00000000000000=
-01 o3: 0000000000000001
-[  150.294387] o4: fff00000046f42a0 o5: 0000000000000001 sp: fff000000026ef=
-b1 ret_pc: 0000000000626058
-[  150.413336] RPC: <bpf_patch_insn_data+0x1b8/0x2e0>
-[  150.476236] l0: fff0000012178000 l1: 0000000100874048 l2: 00000000000000=
-01 l3: 0000000100880000
-[  150.590616] l4: 0000000100874068 l5: 0000000000000005 l6: 00000000000000=
-00 l7: fff000001217e128
-[  150.704994] i0: 0000000100874000 i1: 0000000000000004 i2: 00000000000000=
-05 i3: 0000000000000002
-[  150.819434] i4: 0000000100888000 i5: fff0000012178ae8 i6: fff000000026f0=
-61 i7: 000000000064b0e8
-[  150.933878] I7: <bpf_check+0x1988/0x34a0>
-[  150.986575] Call Trace:
-[  151.018687] [<000000000064b0e8>] bpf_check+0x1988/0x34a0
-[  151.088456] [<000000000061bf2c>] bpf_prog_load+0x8ec/0xc80
-[  151.160510] [<000000000061db44>] __sys_bpf+0xd04/0x25a0
-[  151.229138] [<000000000061f9f8>] sys_bpf+0x18/0x60
-[  151.292041] [<0000000000406274>] linux_sparc_syscall+0x34/0x44
-[  151.368678] Disabling lock debugging due to kernel taint
-[  151.438440] Caller[000000000064b0e8]: bpf_check+0x1988/0x34a0
-[  151.513936] Caller[000000000061bf2c]: bpf_prog_load+0x8ec/0xc80
-[  151.591704] Caller[000000000061db44]: __sys_bpf+0xd04/0x25a0
-[  151.666051] Caller[000000000061f9f8]: sys_bpf+0x18/0x60
-[  151.734676] Caller[0000000000406274]: linux_sparc_syscall+0x34/0x44
-[  151.817025] Caller[fff000010099b80c]: 0xfff000010099b80c
-[  151.886791] Instruction DUMP:
-[  151.886795]  326ffffa=20
-[  151.925677]  c4004000=20
-[  151.956558]  c25e2038=20
-[  151.987440] <c4006118>
-[  152.018326]  80a0a000=20
-[  152.049204]  04400014=20
-[  152.080083]  c2586100=20
-[  152.110960]  8400bfff=20
-[  152.141845]  8e00606c=20
-[  152.172726]=20
-[  152.223054] Kernel panic - not syncing: Attempted to kill init! exitcode=
-=3D0x00000009
-[  152.323706] Press Stop-A (L1-A) from sun keyboard or send break
-[  152.323706] twice on console to return to the boot prom
-[  152.470098] ---[ end Kernel panic - not syncing: Attempted to kill init!=
- exitcode=3D0x00000009 ]---
-
-Replacing all calls with nops already triggers crashes during boot:
-
-diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
-index c305486501dc..1e2737649d46 100644
---- a/arch/sparc/kernel/head_64.S
-+++ b/arch/sparc/kernel/head_64.S
-@@ -687,11 +687,11 @@ cheetah_tlb_fixup:
-        stw     %g2, [%g1 + %lo(tlb_type)]
-=20
-        /* Patch copy/page operations to cheetah optimized versions. */
--       call    cheetah_patch_copyops
-         nop
--       call    cheetah_patch_copy_page
-         nop
--       call    cheetah_patch_cachetlbops
-+        nop
-+        nop
-+        nop
-         nop
-=20
-        ba,a,pt %xcc, tlb_fixup_done
-
-[   42.061355] decompression failed with status 7
-[   42.172976] SCSI subsystem initialized
-[   42.254511] decompression failed with status 7
-[   42.462903] Unable to handle kernel NULL pointer dereference
-[   42.537392] tsk->{mm,active_mm}->context =3D 000000000000004d
-[   42.610625] tsk->{mm,active_mm}->pgd =3D fff0000008954000
-[   42.679246]               \|/ ____ \|/
-[   42.679246]               "@'/ .. \`@"
-[   42.679246]               /_| \__/ |_\
-[   42.679246]                  \__U_/
-[   42.872571] (udev-worker)(96): Oops [#1]
-[   42.924111] CPU: 0 UID: 0 PID: 96 Comm: (udev-worker) Not tainted 6.17.0=
--rc4+ #14 NONE=20
-[   43.029343] TSTATE: 0000000011001601 TPC: 0000000000f6875c TNPC: 0000000=
-000f68760 Y: 00000000    Not tainted
-[   43.158584] TPC: <strcmp+0x1c/0x60>
-[   43.204430] g0: 0000000000000000 g1: 0000000000000000 g2: 00000000000000=
-6f g3: 000000001001a130
-[   43.318825] g4: fff000000873cd00 g5: fff000023e336000 g6: fff00000088c40=
-00 g7: 000000001001a058
-[   43.433291] o0: 00000009e2fc2857 o1: 0000000000000000 o2: 00000000000000=
-01 o3: 0000000000000000
-[   43.547667] o4: 0000000000000dc0 o5: 0000000000000dc0 sp: fff00000088c6f=
-21 ret_pc: 00000000005a1fe4
-[   43.666617] RPC: <trace_clock_local+0x4/0x20>
-[   43.723797] l0: fff000000004c798 l1: 0000000000000001 l2: fff000000004c5=
-10 l3: 0000000000000000
-[   43.838177] l4: 0000000000000000 l5: 00000000014da748 l6: 00000000012a7e=
-f8 l7: 0000000000000000
-[   43.952553] i0: 0000000010076e97 i1: 0000000000000000 i2: 00000000015370=
-f8 i3: 0000000000000000
-[   44.066928] i4: 0000000000000000 i5: 0000000000000dc0 i6: fff00000088c6f=
-d1 i7: 000000000053a2d0
-[   44.181303] I7: <cmp_name+0x10/0x20>
-[   44.228190] Call Trace:
-[   44.260219] [<000000000053a2d0>] cmp_name+0x10/0x20
-[   44.324268] [<0000000000a20dc0>] bsearch+0x20/0x60
-[   44.387173] [<000000000053a45c>] find_exported_symbol_in_section+0x5c/0x=
-c0
-[   44.477532] [<000000000053ba50>] find_symbol+0xd0/0x160
-[   44.546153] [<000000000053e76c>] load_module+0x1acc/0x22c0
-[   44.618211] [<000000000053f16c>] init_module_from_file+0x6c/0xc0
-[   44.697130] [<000000000053f3cc>] sys_finit_module+0x1ac/0x300
-[   44.772618] [<0000000000406274>] linux_sparc_syscall+0x34/0x44
-[   44.849248] Disabling lock debugging due to kernel taint
-[   44.919018] Caller[000000000053a2d0]: cmp_name+0x10/0x20
-[   44.988784] Caller[0000000000a20dc0]: bsearch+0x20/0x60
-[   45.057412] Caller[000000000053a45c]: find_exported_symbol_in_section+0x=
-5c/0xc0
-[   45.153487] Caller[000000000053ba50]: find_symbol+0xd0/0x160
-[   45.227831] Caller[000000000053e76c]: load_module+0x1acc/0x22c0
-[   45.305604] Caller[000000000053f16c]: init_module_from_file+0x6c/0xc0
-[   45.390244] Caller[000000000053f3cc]: sys_finit_module+0x1ac/0x300
-[   45.471447] Caller[0000000000406274]: linux_sparc_syscall+0x34/0x44
-[   45.553799] Caller[fff000010470e2fc]: 0xfff000010470e2fc
-[   45.623566] Instruction DUMP:
-[   45.623569]  2240000b=20
-[   45.662452]  b0102000=20
-[   45.693333]  c40e0001=20
-[   45.724211] <c60e4001>
-[   45.755093]  80a08003=20
-[   45.785978]  024ffffa=20
-[   45.816857]  82006001=20
-[   45.847737]  b0102001=20
-[   45.878620]  b16567ff=20
-[   45.909502]=20
-[   63.467354] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-[   63.545187] rcu:     (detected by 0, t=3D5252 jiffies, g=3D-87, q=3D21 n=
-cpus=3D1)
-[   63.630966] rcu: All QSes seen, last rcu_sched kthread activity 5252 (42=
-94906056-4294900804), jiffies_till_next_fqs=3D1, root ->qsmask 0x0
-[   63.792241] rcu: rcu_sched kthread starved for 5252 jiffies! g-87 f0x2 R=
-CU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D0
-[   63.922625] rcu:     Unless rcu_sched kthread gets sufficient CPU time, =
-OOM is now expected behavior.
-[   64.040431] rcu: RCU grace-period kthread stack dump:
-[   64.106766] task:rcu_sched       state:R  running task     stack:0     p=
-id:15    tgid:15    ppid:2      task_flags:0x208040 flags:0x07000000
-[   64.272615] Call Trace:
-[   64.304632] [<0000000000f8857c>] schedule+0x1c/0x180
-[   64.369827] [<0000000000f8f61c>] schedule_timeout+0x5c/0xe0
-[   64.443027] [<0000000000529550>] rcu_gp_fqs_loop+0x130/0x540
-[   64.517372] [<000000000052e6f4>] rcu_gp_kthread+0x174/0x200
-[   64.590571] [<00000000004aa700>] kthread+0xe0/0x280
-[   64.654620] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
-[   64.724391] [<0000000000000000>] 0x0
-[   64.771284] rcu: Stack dump where RCU GP kthread last ran:
-[   64.843343] CPU: 0 UID: 0 PID: 96 Comm: (udev-worker) Tainted: G      D =
-            6.17.0-rc4+ #14 NONE=20
-[   64.969158] Tainted: [D]=3DDIE
-[   65.006896] TSTATE: 0000008080001606 TPC: 00000000007a0fa0 TNPC: 0000000=
-0007a0fa4 Y: 00000000    Tainted: G      D           =20
-[   65.156733] TPC: <count_memcg_events+0x100/0x200>
-[   65.218489] g0: fff000023f804f78 g1: 00000000014e1f00 g2: 00000000014e63=
-40 g3: 00000000014e2100
-[   65.332869] g4: fff000000873cd00 g5: fff000023e336000 g6: fff00000088c40=
-00 g7: fff000023f81c350
-[   65.447243] o0: fff000000025a880 o1: 0000000000000000 o2: fff000000825a0=
-c8 o3: 80000002026d6fb2
-[   65.561617] o4: 0000000000000000 o5: 0000000000000000 sp: fff00000088c64=
-91 ret_pc: 00000000007a0f94
-[   65.680568] RPC: <count_memcg_events+0xf4/0x200>
-[   65.741182] l0: 0000000000100073 l1: fff000023f804f38 l2: fff000023f804f=
-78 l3: fff000023f804fb8
-[   65.855563] l4: 0000000000000000 l5: 0000000000000005 l6: 00000000000000=
-00 l7: 0000000000000008
-[   65.969937] i0: fff000000025a880 i1: 000000000000000e i2: 00000000000000=
-01 i3: fff0000008256820
-[   66.084313] i4: 0000000000000001 i5: 00000000014f9000 i6: fff00000088c65=
-41 i7: 0000000000722890
-[   66.198686] I7: <handle_mm_fault+0x190/0x2e0>
-[   66.255870] Call Trace:
-[   66.287895] [<0000000000722890>] handle_mm_fault+0x190/0x2e0
-[   66.362241] [<0000000000f92e00>] do_sparc64_fault+0x6c0/0xb20
-[   66.437727] [<0000000000407714>] sparc64_realfault_common+0x10/0x20
-[   66.520077] [<0000000000562070>] exit_robust_list+0x10/0x120
-[   66.594422] [<0000000000562710>] futex_exit_release+0x70/0xc0
-[   66.669910] [<000000000047b48c>] exit_mm_release+0xc/0x40
-[   66.740821] [<0000000000483ab8>] do_exit+0x198/0xb80
-[   66.806014] [<0000000000484528>] make_task_dead+0x88/0x160
-[   66.878070] [<0000000000428374>] die_if_kernel+0x260/0x26c
-[   66.950126] [<0000000000f9271c>] unhandled_fault+0x88/0xac
-[   67.022184] [<0000000000f92af0>] do_sparc64_fault+0x3b0/0xb20
-[   67.097670] [<0000000000407714>] sparc64_realfault_common+0x10/0x20
-[   67.180022] [<0000000000f6875c>] strcmp+0x1c/0x60
-[   67.241784] [<000000000053a2d0>] cmp_name+0x10/0x20
-[   67.305833] [<0000000000a20dc0>] bsearch+0x20/0x60
-[   67.368740] [<000000000053a45c>] find_exported_symbol_in_section+0x5c/0x=
-c0
-
-I assume that cheetah_patch_cachetlbops has to be invoked on UltraSPARC III
-since there is other code depending on it. On the other hand, the TLB code
-on UltraSPARC III was heavily overhauled in 2016 [1] which was also followe=
-d
-by a bug fix [2].
-
-Chances are there are still bugs in the code introduced in [1].
-
-Adrian
-
-> [1] https://github.com/torvalds/linux/commit/a74ad5e660a9ee1d071665e7e8ad=
-822784a2dc7f
-> [2] https://github.com/torvalds/linux/commit/d3c976c14ad8af421134c428b0a8=
-9ff8dd3bd8f8
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+>
+> On Sat, Sep 6, 2025 at 10:22=E2=80=AFPM Eric Biggers <ebiggers@kernel.org=
+> wrote:
+> >
+> > fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
+> > this same code is also present in lib/crypto/arc4.c to serve the other
+> > users of this legacy algorithm in the kernel.  Remove the duplicate
+> > implementation in fs/smb/, which seems to have been added because of a
+> > misunderstanding, and just use the lib/crypto/ one.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > ---
+> >  fs/smb/client/Kconfig       |  1 +
+> >  fs/smb/client/cifsencrypt.c |  8 ++--
+> >  fs/smb/common/Makefile      |  1 -
+> >  fs/smb/common/arc4.h        | 23 ------------
+> >  fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
+> >  fs/smb/server/Kconfig       |  1 +
+> >  fs/smb/server/auth.c        |  9 ++---
+> >  7 files changed, 10 insertions(+), 108 deletions(-)
+> >  delete mode 100644 fs/smb/common/arc4.h
+> >  delete mode 100644 fs/smb/common/cifs_arc4.c
+> >
+> > diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
+> > index 9f05f94e265a6..a4c02199fef48 100644
+> > --- a/fs/smb/client/Kconfig
+> > +++ b/fs/smb/client/Kconfig
+> > @@ -13,10 +13,11 @@ config CIFS
+> >         select CRYPTO_AEAD2
+> >         select CRYPTO_CCM
+> >         select CRYPTO_GCM
+> >         select CRYPTO_ECB
+> >         select CRYPTO_AES
+> > +       select CRYPTO_LIB_ARC4
+> >         select KEYS
+> >         select DNS_RESOLVER
+> >         select ASN1
+> >         select OID_REGISTRY
+> >         select NETFS_SUPPORT
+> > diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
+> > index 3cc6862469087..7b7c8c38fdd08 100644
+> > --- a/fs/smb/client/cifsencrypt.c
+> > +++ b/fs/smb/client/cifsencrypt.c
+> > @@ -20,12 +20,12 @@
+> >  #include <linux/ctype.h>
+> >  #include <linux/random.h>
+> >  #include <linux/highmem.h>
+> >  #include <linux/fips.h>
+> >  #include <linux/iov_iter.h>
+> > -#include "../common/arc4.h"
+> >  #include <crypto/aead.h>
+> > +#include <crypto/arc4.h>
+> >
+> >  static size_t cifs_shash_step(void *iter_base, size_t progress, size_t=
+ len,
+> >                               void *priv, void *priv2)
+> >  {
+> >         struct shash_desc *shash =3D priv;
+> > @@ -723,13 +723,13 @@ calc_seckey(struct cifs_ses *ses)
+> >         if (!ctx_arc4) {
+> >                 cifs_dbg(VFS, "Could not allocate arc4 context\n");
+> >                 return -ENOMEM;
+> >         }
+> >
+> > -       cifs_arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KE=
+Y_SIZE);
+> > -       cifs_arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
+> > -                       CIFS_CPHTXT_SIZE);
+> > +       arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZ=
+E);
+> > +       arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
+> > +                  CIFS_CPHTXT_SIZE);
+> >
+> >         /* make secondary_key/nonce as session key */
+> >         memcpy(ses->auth_key.response, sec_key, CIFS_SESS_KEY_SIZE);
+> >         /* and make len as that of session key only */
+> >         ses->auth_key.len =3D CIFS_SESS_KEY_SIZE;
+> > diff --git a/fs/smb/common/Makefile b/fs/smb/common/Makefile
+> > index c66dbbc1469c3..9e0730a385fb1 100644
+> > --- a/fs/smb/common/Makefile
+> > +++ b/fs/smb/common/Makefile
+> > @@ -1,7 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  #
+> >  # Makefile for Linux filesystem routines that are shared by client and=
+ server.
+> >  #
+> >
+> > -obj-$(CONFIG_SMBFS) +=3D cifs_arc4.o
+> >  obj-$(CONFIG_SMBFS) +=3D cifs_md4.o
+> > diff --git a/fs/smb/common/arc4.h b/fs/smb/common/arc4.h
+> > deleted file mode 100644
+> > index 12e71ec033a18..0000000000000
+> > --- a/fs/smb/common/arc4.h
+> > +++ /dev/null
+> > @@ -1,23 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0+ */
+> > -/*
+> > - * Common values for ARC4 Cipher Algorithm
+> > - */
+> > -
+> > -#ifndef _CRYPTO_ARC4_H
+> > -#define _CRYPTO_ARC4_H
+> > -
+> > -#include <linux/types.h>
+> > -
+> > -#define ARC4_MIN_KEY_SIZE      1
+> > -#define ARC4_MAX_KEY_SIZE      256
+> > -#define ARC4_BLOCK_SIZE                1
+> > -
+> > -struct arc4_ctx {
+> > -       u32 S[256];
+> > -       u32 x, y;
+> > -};
+> > -
+> > -int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned =
+int key_len);
+> > -void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsi=
+gned int len);
+> > -
+> > -#endif /* _CRYPTO_ARC4_H */
+> > diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
+> > deleted file mode 100644
+> > index df360ca47826a..0000000000000
+> > --- a/fs/smb/common/cifs_arc4.c
+> > +++ /dev/null
+> > @@ -1,75 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0-or-later
+> > -/*
+> > - * Cryptographic API
+> > - *
+> > - * ARC4 Cipher Algorithm
+> > - *
+> > - * Jon Oberheide <jon@oberheide.org>
+> > - */
+> > -
+> > -#include <linux/module.h>
+> > -#include "arc4.h"
+> > -
+> > -MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
+> > -MODULE_LICENSE("GPL");
+> > -
+> > -int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned =
+int key_len)
+> > -{
+> > -       int i, j =3D 0, k =3D 0;
+> > -
+> > -       ctx->x =3D 1;
+> > -       ctx->y =3D 0;
+> > -
+> > -       for (i =3D 0; i < 256; i++)
+> > -               ctx->S[i] =3D i;
+> > -
+> > -       for (i =3D 0; i < 256; i++) {
+> > -               u32 a =3D ctx->S[i];
+> > -
+> > -               j =3D (j + in_key[k] + a) & 0xff;
+> > -               ctx->S[i] =3D ctx->S[j];
+> > -               ctx->S[j] =3D a;
+> > -               if (++k >=3D key_len)
+> > -                       k =3D 0;
+> > -       }
+> > -
+> > -       return 0;
+> > -}
+> > -EXPORT_SYMBOL_GPL(cifs_arc4_setkey);
+> > -
+> > -void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsi=
+gned int len)
+> > -{
+> > -       u32 *const S =3D ctx->S;
+> > -       u32 x, y, a, b;
+> > -       u32 ty, ta, tb;
+> > -
+> > -       if (len =3D=3D 0)
+> > -               return;
+> > -
+> > -       x =3D ctx->x;
+> > -       y =3D ctx->y;
+> > -
+> > -       a =3D S[x];
+> > -       y =3D (y + a) & 0xff;
+> > -       b =3D S[y];
+> > -
+> > -       do {
+> > -               S[y] =3D a;
+> > -               a =3D (a + b) & 0xff;
+> > -               S[x] =3D b;
+> > -               x =3D (x + 1) & 0xff;
+> > -               ta =3D S[x];
+> > -               ty =3D (y + ta) & 0xff;
+> > -               tb =3D S[ty];
+> > -               *out++ =3D *in++ ^ S[a];
+> > -               if (--len =3D=3D 0)
+> > -                       break;
+> > -               y =3D ty;
+> > -               a =3D ta;
+> > -               b =3D tb;
+> > -       } while (true);
+> > -
+> > -       ctx->x =3D x;
+> > -       ctx->y =3D y;
+> > -}
+> > -EXPORT_SYMBOL_GPL(cifs_arc4_crypt);
+> > diff --git a/fs/smb/server/Kconfig b/fs/smb/server/Kconfig
+> > index 4a23a5e7e8fec..098cac98d31e6 100644
+> > --- a/fs/smb/server/Kconfig
+> > +++ b/fs/smb/server/Kconfig
+> > @@ -8,10 +8,11 @@ config SMB_SERVER
+> >         select NLS_UCS2_UTILS
+> >         select CRYPTO
+> >         select CRYPTO_MD5
+> >         select CRYPTO_HMAC
+> >         select CRYPTO_ECB
+> > +       select CRYPTO_LIB_ARC4
+> >         select CRYPTO_LIB_DES
+> >         select CRYPTO_LIB_SHA256
+> >         select CRYPTO_SHA256
+> >         select CRYPTO_CMAC
+> >         select CRYPTO_SHA512
+> > diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
+> > index d99871c214518..b4020bb55a268 100644
+> > --- a/fs/smb/server/auth.c
+> > +++ b/fs/smb/server/auth.c
+> > @@ -18,20 +18,20 @@
+> >
+> >  #include "auth.h"
+> >  #include "glob.h"
+> >
+> >  #include <linux/fips.h>
+> > +#include <crypto/arc4.h>
+> >  #include <crypto/des.h>
+> >
+> >  #include "server.h"
+> >  #include "smb_common.h"
+> >  #include "connection.h"
+> >  #include "mgmt/user_session.h"
+> >  #include "mgmt/user_config.h"
+> >  #include "crypto_ctx.h"
+> >  #include "transport_ipc.h"
+> > -#include "../common/arc4.h"
+> >
+> >  /*
+> >   * Fixed format data defining GSS header and fixed string
+> >   * "not_defined_in_RFC4178@please_ignore".
+> >   * So sec blob data in neg phase could be generated statically.
+> > @@ -363,14 +363,13 @@ int ksmbd_decode_ntlmssp_auth_blob(struct authent=
+icate_message *authblob,
+> >
+> >                 ctx_arc4 =3D kmalloc(sizeof(*ctx_arc4), KSMBD_DEFAULT_G=
+FP);
+> >                 if (!ctx_arc4)
+> >                         return -ENOMEM;
+> >
+> > -               cifs_arc4_setkey(ctx_arc4, sess->sess_key,
+> > -                                SMB2_NTLMV2_SESSKEY_SIZE);
+> > -               cifs_arc4_crypt(ctx_arc4, sess->sess_key,
+> > -                               (char *)authblob + sess_key_off, sess_k=
+ey_len);
+> > +               arc4_setkey(ctx_arc4, sess->sess_key, SMB2_NTLMV2_SESSK=
+EY_SIZE);
+> > +               arc4_crypt(ctx_arc4, sess->sess_key,
+> > +                          (char *)authblob + sess_key_off, sess_key_le=
+n);
+> >                 kfree_sensitive(ctx_arc4);
+> >         }
+> >
+> >         return ret;
+> >  }
+> >
+> > base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+> > --
+> > 2.50.1
+> >
+> >
+>
+>
+> --
+> Thanks,
+>
+> Steve
 
