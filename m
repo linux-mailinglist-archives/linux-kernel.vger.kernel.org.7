@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-804695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8690BB47BAA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:41:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF345B47BA2
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA3C3C3879
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8E6189C882
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30125D21A;
-	Sun,  7 Sep 2025 13:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98B1D6194;
+	Sun,  7 Sep 2025 13:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kc4uywrQ"
-Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnxQecJL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B979B14BFA2;
-	Sun,  7 Sep 2025 13:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F719156C40;
+	Sun,  7 Sep 2025 13:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757252499; cv=none; b=YGev/AGOaGN0P4BktzRDveWwm7LDkNpHBeb04KDtV1X8bfvvlzuT5ScS/ytDhAQCShTVjv6BLIafD/wFpgjUjeWAn8aV06CDMEDm1Y17GohoVbmcOiyFEWpbGGLW+t7i7FZC3EvGAvbbPztFDmXn4HlzFndd6tBJhv25dyb3288=
+	t=1757252062; cv=none; b=nUBFzoo7nrdYpLDMWjqNgeOlyKOKYR5PcyoErxBENHtmjHAshO9s2lmKIm/+v6uAzx/pnWJaVWi5Z26vxMHCamiTuxdSp8FA5b/Cp7v/9k0e2xUsE1I3e3rTM2ozsvzGudNcK3GXAHRIcu5ypZRsEAF/q2/7yo45VzYsvnuMpxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757252499; c=relaxed/simple;
-	bh=fks/yErO+zPT6GaCw7NtUhIlBUtZvaL7yMeiXmezYSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q352z6wW1IhtjW98sdeHqlwRmAhBeI+6T7KPt/lssl9GWukk6zDvQfH+Vq9Z3rDACa7fX/oM5xV8IlmC0IElpcNRbWPiJg+KdK6MOYsmp/H9PngrLD+TXqU48V0XyFvQGnySFZB6OPuDRgkucKTIreQP/NifTaEyZxAvvHW6+Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kc4uywrQ; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vFVOuu4g5zvvrvFVOurnYa; Sun, 07 Sep 2025 15:32:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757251951;
-	bh=PuIjx4laPZOZU655RZR+rH1umOM75FsI08aXSYLjLjg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kc4uywrQzv+jq0gebDyoNW5rmgdKXRUob2Rgg2CFfX3hknCerUA8QCwXafVQ9knZ+
-	 tYn9pR+tXSVsga1BTqqJW5ytdDXB3j+4QZO3t4KrjbymUI+Riu8g05rTHNBwH7PKJg
-	 m/qWxQkUu0jMOirHjUwSD8ZrtKVL9T6QI5xdfgSkqqgfiy9v9mHy0GDSGJCWg2ZniR
-	 uX2IDAtwgfOSS0XK7anki4Wwv06p8NHSYI9iF8vzzWfsOqvlxcczoqSIWx7eGQ0VCj
-	 pHNK0XPQg9lNBp4f+kdqxEKeOpWAp6VUzBoe+Vsj/OzsvGCtTOty03UDWJqS9xgntr
-	 870Tmi7QEE4DQ==
-X-ME-Helo: fedora
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 15:32:31 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Armin Wolf <W_Armin@gmx.de>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86: quickstart: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 15:32:26 +0200
-Message-ID: <530b930c981c436c172c0308b348d4ae4ef72800.1757251867.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757252062; c=relaxed/simple;
+	bh=pY4sM7731rLtwtWx7SHDocVcVir4gsRth9pnp3LRSW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WenWSUQ1Hvku4dt/5RHqO9D1VyHjdA6o/FdT9Fu/Fipqe7WT1iaqeC+DKd1AxqT6tbdJaXh6L5RG0NixIA0eJ2rDj8uVq0udG/1eX1a9a+vicxtTmXmE458Za0EilrnYxVpntTkASBcO2ZrfEv6n2wdjFWUnNHABby0BGD4MuEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnxQecJL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF7AC4CEF0;
+	Sun,  7 Sep 2025 13:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757252061;
+	bh=pY4sM7731rLtwtWx7SHDocVcVir4gsRth9pnp3LRSW0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bnxQecJLscRbDrg6MjfmWR2Jwaq2SbimZZOHTCSKAMytDpq8ue6KQn2jrDtkmm/eg
+	 Xz9GozlgksnhAeffwqh31H+tKiG9zTZfzzJj6H+TVzTC+VblcNvdJggnbUkMCSfsI0
+	 +l4BzORL30IOurvB4NzNuX9P9BxxQk/Sa0S2sBmgd2/2M7GxeB0zpUCZEMbq2sBWcC
+	 0/x2imxsfWMu+zXGYYZskFfRKG40SByaRkngPo+O9/RcEzs0gW1RsnvCXdbnVZhXbe
+	 AKaDkmRhm6vV+95fsYHautteJUNOPC9zKM8zeagwBacb09UusmSvBsMwcGEDwHL938
+	 6gTU6cyub3aew==
+Date: Sun, 7 Sep 2025 14:34:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson <Remi.Buisson@tdk.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 3/9] iio: imu: inv_icm45600: add buffer support in
+ iio devices
+Message-ID: <20250907143411.043fa23f@jic23-huawei>
+In-Reply-To: <FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
+	<20250820-add_newport_driver-v5-3-2fc9f13dddee@tdk.com>
+	<aKbk9WYtfb5L5la4@smile.fi.intel.com>
+	<FR2PPF4571F02BCCFD984FDD99C69CAE7298C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+	<aLmY2mKg_FsPOpsq@smile.fi.intel.com>
+	<FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use devm_mutex_init() instead of hand-writing it.
 
-This saves some LoC, improves readability and saves some space in the
-generated .o file.
+> >  
+> >> >> +#define INV_ICM45600_SENSOR_CONF_KEEP_VALUES {U8_MAX, U8_MAX, U8_MAX, U8_MAX, }  
+> >> >
+> >> >When one line, no need to have inner trailing comma, besides that missed
+> >> >space.  
+> >> The trailing comma was a request from Jonathan Cameron on the v2 of patchset.
+> >> Let me know, if you disagree with him and I'll fix.  
+> >
+> >I see, then let's ask him, because it's a usual pattern for
+> >the one-line arrays like this to have no inner trailing commas.  
+> Ok let's wait Jonathan Cameron's feedback.
 
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   7607	   2616	     64	  10287	   282f	drivers/platform/x86/quickstart.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   7301	   2544	     64	   9909	   26b5	drivers/platform/x86/quickstart.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/platform/x86/quickstart.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/drivers/platform/x86/quickstart.c b/drivers/platform/x86/quickstart.c
-index c332c7cdaff5..acb58518be37 100644
---- a/drivers/platform/x86/quickstart.c
-+++ b/drivers/platform/x86/quickstart.c
-@@ -154,13 +154,6 @@ static void quickstart_notify_remove(void *context)
- 	acpi_remove_notify_handler(handle, ACPI_DEVICE_NOTIFY, quickstart_notify);
- }
- 
--static void quickstart_mutex_destroy(void *data)
--{
--	struct mutex *lock = data;
--
--	mutex_destroy(lock);
--}
--
- static int quickstart_probe(struct platform_device *pdev)
- {
- 	struct quickstart_data *data;
-@@ -179,8 +172,7 @@ static int quickstart_probe(struct platform_device *pdev)
- 	data->dev = &pdev->dev;
- 	dev_set_drvdata(&pdev->dev, data);
- 
--	mutex_init(&data->input_lock);
--	ret = devm_add_action_or_reset(&pdev->dev, quickstart_mutex_destroy, &data->input_lock);
-+	ret = devm_mutex_init(&pdev->dev, &data->input_lock);
- 	if (ret < 0)
- 		return ret;
- 
--- 
-2.51.0
-
+Definitely ignore me on this.  For one line arrays any change means that
+line changes anyway so, unlike multiline arrays there is no reduction in noise
+by having the trailing comma.
 
