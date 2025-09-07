@@ -1,136 +1,120 @@
-Return-Path: <linux-kernel+bounces-804782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEAAB47CEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:49:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04028B47CEC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318863BE34F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C40174BE8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653D21578F;
-	Sun,  7 Sep 2025 18:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643DF283FCB;
+	Sun,  7 Sep 2025 18:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkb/pllJ"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="MixN8Wji"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FD9157A72
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 18:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757270963; cv=none; b=fF+xDNv/y2ZU7mzjJhroCbhvaZF+hlNvS3ER5bsseb/Vp9ajFZrcwrdOt0uwJQBhyVv2xW8Rr1Q3+R8BTnhGSV9KlqFf8t8nGBBrobj6Mqi+0oRPLtbbbinftNbXG+MPuvAaKjPnjK0GPeJhbqbkjpUCOlG7LGAUcXKBu8GiFMU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757270963; c=relaxed/simple;
-	bh=B+u6XgKMyYyPWYw9hDeq1ebbo0neUq4Kx+1xh/D+aek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZbEG/YsBq+8t4zlzAN6Vv+f9raxdWh5EslMDHOsD4k0475dqQsWksAepIeiCvNXK6pCOrsUTl1cJE5dfGH0bh5/+lp0a5YNc6K9s1kxJMcK4c/Ml+OLE3Xr3MSQpYY0IR8tF+CutxkL21nXDc8KJ/ApUjnbQM8UNehvBthSEqzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkb/pllJ; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b02c719a117so660820866b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 11:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757270960; x=1757875760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1NAiKKbWMAZGMkQfKHixLzrdvNKYNue2EU7kkocIu3c=;
-        b=lkb/pllJaR1G4BJsnjNeLyzExJHcSPfR9O7dtWUYK/049fMhhveuGS7adP45g3DEkw
-         l4aTl3a45vhCpNdrIljFG2M0Rqy909Y9umyZTf4qbFjLTlyqNTOoiQdlHsxHdbkayRLd
-         FAovSr6c7snaq1d9/nFFkwItq6SdEnXGNy41yiEBbindmieG9Shj9hGyOvNuwYYpN/Pz
-         9grT0KTqF6jsCmPd/HDWM8D74BBcAxENrXpD/v6X1vD7t2Ogdl6e7UG9nju6levg/B8q
-         7vw8KaF+NOf4iC5QPo/nVyx3xyIobHVLQwBJVZPG6cHee+GBrpjgdbNl8Vk+2ZvpE9JO
-         lt3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757270960; x=1757875760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1NAiKKbWMAZGMkQfKHixLzrdvNKYNue2EU7kkocIu3c=;
-        b=QqUo/nUSM5rIKkbzboyERIIudwNceCeM0HPgj3wSwmzzhZzD9wn7GRqYaE3UYCOEcm
-         QuidNV3cYB7D4XG5qeUrhk28OVNdP4JKkOGnIwGiyG8neteG3H2LUjfW1jKlFui4vETz
-         b0LJjT1P7kZz3kvkmqxEdCBU5kJal4RtW7bWvOv5xl2Hggm2URvH4iSBTeyfHnkNCHtm
-         ZToFVN6rs1JZAcqobGgJazZ1yKKjVncN74OybDx41HvaJr7qH+m5hvedZlSHdzF/m+oB
-         04dll8bqcPuPUyHGaVi4CjD5TfkCHaxCu5ANA/ESgM2oL2hcI0NUnwF26NgSw0Yg8u+t
-         KQvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUctKQgSBy98C7tTpYGEY3RDKLxpPMeA5GjqVReEyHbmFUsuo1nbUi2Q2dFxaY/seb5cI11F9IoaszbwUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNiF44CyrNzx/gTBkMw1SInqXWw3tKY0rymDoXIWeJcfbTJFT+
-	MpQI4hLndGGJHnJSITdhMvLJXWrbBo3jCHWXDoZb3aXOV+8LLXp5REfU
-X-Gm-Gg: ASbGnctakyls04wyNanwUDDsDSkOCpUpVS6V6EOR6IV3thpRfsCZHIU1r40TE5m+N4/
-	pW9r6V06HTFx7EUDZZFVbo0oRxJLN0HECgVekkp94QCDWwgzD0HsE3J9055fyPJ9Y8P3/SQZgI2
-	2VNzeOiCGmDj0YV9eaqeUrJpgpatIBxzqatXcN1U8GnXvNJw0wLHk/WbYwMHTh2WhRdJMSvkufW
-	78MC/yxVWVqyTtYPES79lrdTDRPmwL1wp/8sla997fc+MeEixfod2A6lyXCqvwbQWM05PkyKDuG
-	HoyJgbC0qWKYRqN1EJUUJwFBLniQwC0Y3F+ez+MELhIIJ8nN8QFDImGgQzy9x7EUHad9g3z7kGt
-	zJJJqT6/IeNjEdH1VL+Eht8w=
-X-Google-Smtp-Source: AGHT+IFixl11lPNiGvl/IAVeCHfhyXmbkM21yRIMVZB7M4Jn6J3F1mrw7gB4lwL9OFqBQx8MLYkL4g==
-X-Received: by 2002:a17:907:c05:b0:afe:a615:39ef with SMTP id a640c23a62f3a-b04b13cfb31mr495757966b.9.1757270959635;
-        Sun, 07 Sep 2025 11:49:19 -0700 (PDT)
-Received: from fedora ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff032125e2sm2346381366b.77.2025.09.07.11.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 11:49:19 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH RESEND -tip] x86/percpu: Use BIT_WORD() and BIT_MASK() macros
-Date: Sun,  7 Sep 2025 20:48:46 +0200
-Message-ID: <20250907184915.78041-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D16E1DA23;
+	Sun,  7 Sep 2025 18:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757271134; cv=pass; b=C9c+rwRkFqoQ4T54C7OsNRrXH34MRcXo6YeGptyrNFuVd0vxe4B+G7n5U5vK93XNtiE6+RpQOVWQ0WCVxFZrvRXewJGBGPZPiv70wDyq4DsrV0MuZYnrIfy0m4JMIVZYNn41T1J7LwfU/DZtAQ9xf2atth7YQegseBCn6rQ63kQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757271134; c=relaxed/simple;
+	bh=xKu9bhdQLVvlLdhnrRh59Fzz3YKv6AL6WdbOJd6ryDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EsKuQcl6H0hE566Z2/cEPP13zzf7dNmOBu6fsn4FB8Jteyuzu3V37z0O2uPUhjedB6yiRZYCfZd/8fgrlQHmLn1SkRZk4bTEyx2mNlvEl1elvTStJhhMzAwn959Pn+7DPCsXA69X8rGlXmPyQJ3XszoyRGhsrLqzpH6hxDq7dQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=MixN8Wji; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757271105; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LVWD3SHQtC7SoFVKBuDY1aLxv8HKkg0+CDoXD4XUC871+2/7VKD2LmFHPpaqSCIf/WyCxy1NGFdIvcoWP2+SD78RgWIp0kJ2Nd+EKYDx7bRBPBkQ7Ut9vTmURoZDfRgWDaT39IvQ5iyvJqxPqp8elP1U1J963ErE8MgFSxlG6Dw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757271105; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=72zMzp9EQsVogTu/OAl9/EdJSst3NLpKe0M5q7uE32E=; 
+	b=PuMd8rXbS8zSUtqHwxMTyAsTwByeOGoqvHa5YcSoh8/GQUqYR0wrzkYWNwF6pyfZH7gv0HKE5f9l0HhR6IjO5cKO1FwmJerR/MUxVXv9B0pdBZsrSykDKd/G6Ueodjs9e9AVJ0++ClYYwonNJ/+3T0IETObJNj7ijvQr5ZhIYJ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757271105;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=72zMzp9EQsVogTu/OAl9/EdJSst3NLpKe0M5q7uE32E=;
+	b=MixN8WjiNrR9K4gGzWj3HwYdmrd1jvqQnRBQVeQbgDtl40BqhCv4myWoJb2rCLnQ
+	48ZoKFPQWXO49DDELuCEtRMnc4+1WMWLWPL/623dv5bP93mwyqid+sYTqJQH+fiYNx/
+	S8ta4TgRapiWvdwhI7vucEgyQJMIhRLpFZns1NNU=
+Received: by mx.zohomail.com with SMTPS id 1757271103703981.538669071521;
+	Sun, 7 Sep 2025 11:51:43 -0700 (PDT)
+Message-ID: <c9136f3e-464a-48c8-92d5-c014dd4e9958@collabora.com>
+Date: Sun, 7 Sep 2025 21:51:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] Enable HDMI Receiver on NanoPC-T6
+To: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Use BIT_WORD() and BIT_MASK() macros from <linux/bits.h>
-in <arch/x86/include/asm/percpu.h> instead of open-coding them.
+On 9/5/25 14:02, Marcin Juszkiewicz wrote:
+> For quite a while I had this patch in my local tree but never made it
+> work. Kernel generates the following messages all the time:
+> 
+> fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: signal not lock, tmds_clk_ratio:0
+> fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: mu_st:0x2, scdc_st:0x0, dma_st10:0x10
+> 
+> "v4l2-ctrl --all" reports that HDMI In is detected, /dev/video[0-4]
+> exist.
+> 
+> I tried two signal sources:
+> - AMD Radeon WX2100 (via passive DisplayPort -> HDMI adapter)
+> - AMD Radeon RX6700XT (HDMI port)
+> 
+> Same situation with both - kernel messages as above on RK3588 system, no
+> connected monitor on host side.
+> 
+> Usually I used MPlayer or MPV to check v4l2 devices but here it fails
+> too:
+> 
+> $ mpv av://v4l2:/dev/video3
+> [ffmpeg/demuxer] video4linux2,v4l2: Not a video capture device.
+> [lavf] avformat_open_input() failed
+> Failed to recognize file format.
+> Exiting... (Errors when loading file)
+> 
+> 
+> Checked SBC schematics again and HDMIIRX_DET_L line is GPIO1_D5 like it
+> my patch.
+> 
+> What I go wrong?
 
-No functional change intended.
+Hi, your trouble with HDMI capture sounds very similar to [1]. Make sure
+you're using opensource ATF and check whether capture works using
+v4l2-ctl tool, see replies to [1]. Post a full kernel driver log if
+problem will persist.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/include/asm/percpu.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+[1]
+https://lore.kernel.org/linux-media/c71a3f79-71f3-4fd2-a509-c42b24636a2f@timsurber.de/
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 332428caaed2..725d0eff7acd 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -23,6 +23,7 @@
- #else /* !__ASSEMBLY__: */
- 
- #include <linux/args.h>
-+#include <linux/bits.h>
- #include <linux/build_bug.h>
- #include <linux/stringify.h>
- #include <asm/asm.h>
-@@ -572,9 +573,9 @@ do {									\
- #define x86_this_cpu_constant_test_bit(_nr, _var)			\
- ({									\
- 	unsigned long __percpu *addr__ =				\
--		(unsigned long __percpu *)&(_var) + ((_nr) / BITS_PER_LONG); \
-+		(unsigned long __percpu *)&(_var) + BIT_WORD(_nr);	\
- 									\
--	!!((1UL << ((_nr) % BITS_PER_LONG)) & raw_cpu_read(*addr__));	\
-+	!!(BIT_MASK(_nr) & raw_cpu_read(*addr__));			\
- })
- 
- #define x86_this_cpu_variable_test_bit(_nr, _var)			\
 -- 
-2.51.0
+Best regards,
+Dmitry
 
 
