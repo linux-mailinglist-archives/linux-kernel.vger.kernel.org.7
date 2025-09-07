@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-804816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E813B4803A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:28:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A75EB4803D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2F317B59A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B172D1777F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DE920E6E1;
-	Sun,  7 Sep 2025 21:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C7821171B;
+	Sun,  7 Sep 2025 21:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5ZX6pVi"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="antCOnEt"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520CA23741;
-	Sun,  7 Sep 2025 21:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71354315A;
+	Sun,  7 Sep 2025 21:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757280524; cv=none; b=sW6rIxAUBLJDn3nJkSft3GAjbcUNcIBJD8lXiijMPIEjet8NJY0sA2onqWfnPH6G3nhZwynOKN74SfYil4/+WlCr1jwNyaL/8yYfWvSFC1XfrHGGKhYSgXU+WSGWXORUv9yBeCwHkZkPu4xXcvVzPm9tcfcMrVDWttpYFUg9/xE=
+	t=1757280708; cv=none; b=Mo+GWUME4pV8g5gjWO0G8PofUy92qSD0feSA0fGN0T9Hu7PGaF5OFm3oWExaWixC6j37ZOoPEd97eRLHGYqF/+a61T1J6Mr2waVDtqyyyI1XNEmfjFHLTr1upf2mlOknek9SCZirlFxSzTphW61euymt+2CcqyXEQgehDdBu0V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757280524; c=relaxed/simple;
-	bh=gR74D3k+MV9PfzqWWLYbz2aBI5dOUxQmFr9qPjRQexA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DGiVegHKZnCmpOJ7TPKfx3IRFFnN1I1uuusgL4ReTV6nzDcq7cx/RECVfLHdXNREAkJzEiLn/snMsjWBHQvh1/1XEd07siQmnykc2iDSOCk/O8cJFL8AO6w3friUsRyD1TXPOW67ZbymRCeFIAci1LffggoPp4Ym22Uz0w1+2Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N5ZX6pVi; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-244582738b5so29972845ad.3;
-        Sun, 07 Sep 2025 14:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757280523; x=1757885323; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GPZE3d2vBpIHqeqE5zsVlFxsV6AcS3+kycA992Tnu8k=;
-        b=N5ZX6pVi/dfSE4GMGA8JHIqml813pOPuQ6Qj/XpZ2q1ogHiDeRXycFeQJa5ADUq0Qx
-         jc607kEU9epNNhjFI9qJFM/ku1zbwyAx6xVXmzbaD4A4I9cr2bzH982ULFyGC6F0pVnS
-         kLoZA2CwGmAkQGdT2HaR3/Ny1RBErn449WIpG7FQhi1Bphej7CoV6OYN15RD65WMMrng
-         A8Zv7ifdWk2kWjI2VdYp6o8HnVPcKVrUE1P6BYlhI7x0oHDlz2gbSttMm+coUmVYMuqI
-         ItUMUlRGlkmpu0FND77+gvvfQVC653OT6Q9yb44qh7Ui21farnmJDRbEMmXJxVHNYk2i
-         K2gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757280523; x=1757885323;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GPZE3d2vBpIHqeqE5zsVlFxsV6AcS3+kycA992Tnu8k=;
-        b=J8AMRtqAdx6B9QVC0t0C1+nR1aOFunH3QWuYNoG6DRliUvM9GDm1HPPXn5xvgOIi0Y
-         bXPIJfRtT6gCUJsPSfRSf0JzsyplDS1EuS2lDBZuXTJF3GBhEHBhH8FWfQXXWtIEr7z9
-         w0xAkxUZXpw98uyApRuquXjdDz7yK4onQPS7dmiDh9Qbft44TIKGfUTwpLCkpqWyKc37
-         H0CJraXZGQ+zjcoKguuYNZA1YgOLHIafKmmSIYX6+oNoL3nj2H7+wKshzyLxPVCmERXs
-         LiKzl7VrM/XqavMsV2nYwNgvuYav5HMTMraRd2XvEYWMFfbc2ldDnZcE0fHSG3aZTSiU
-         1WEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgQrtOaiN1+z195fG7Wqbc4BfIDsSMQsKt4Ran2lJxd0wBBtfxPBTrAoB+86ktqvQUwFzA+nVH@vger.kernel.org, AJvYcCVMsEI5q5SIl1ZD+RhSpfjtDl8jh2677ES6KR5JKQ9lkWsMOuLq3J0WGZw1NKaKc3Bt4VzbuUPdqd4oyy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0Y1S7onsfeOBYF49UB0hd0auJYPu/b8MeXTtJZ0OfHu/f4Kb7
-	5uwoPcqxS6EOZ15lVkUkkUWHzu/40cBR9ciPvcLL97/zH/bv4TlDWlKb
-X-Gm-Gg: ASbGncv4T+tGwUnoMhgZQ8Tciwu32pzvpzG3ohlMXwKu415qMKw2APKUcXJ+if/niy8
-	EMYpXlhmu302UL5iAOjXo3+6GXFFnS+o15SGIFbibE2vgZVLdV1ZxV/FFlaWvcxCHAhV864vW9j
-	+2v1gOYIBmfWG3nEk3osua360cmsVeohMaOuN7haIuwJ63fZnSEdz8ygqv4GcKzBySxz6hjENvp
-	9yS82n4S2RSLrQKZ942HQza4p5hmWQkvIY6CVQy94ccI7r66lfAjvWfAsDdVDv9QcY71sQQya/c
-	9VN7hEXdEohhJhTShjZpoJCS3pS5leTInRDUIGUFq+A5XXkZzRL5MxqM78+Ow1M2pwl8q5/Oubo
-	MDX2OovJKYDkze9JResc2qOkA9EefuNZtY4FKcCzFQo06nYvRZCLeeOQNcL3ZOFTT
-X-Google-Smtp-Source: AGHT+IFjvDoW0qqD08FuutCREqLKopUYq03wiHKmvvg+3FvOwAgDbd+bp/VSXnR/dPtUmeD6521MHw==
-X-Received: by 2002:a17:902:ec8e:b0:24c:cca1:7cfc with SMTP id d9443c01a7336-251761680f7mr84458115ad.59.1757280522623;
-        Sun, 07 Sep 2025 14:28:42 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28ad188sm24263276a12.26.2025.09.07.14.28.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 14:28:41 -0700 (PDT)
-Message-ID: <32b78edd-c8a3-45d1-92df-9facadb61d89@gmail.com>
-Date: Sun, 7 Sep 2025 14:28:40 -0700
+	s=arc-20240116; t=1757280708; c=relaxed/simple;
+	bh=e7ID+j9at7heoLiVoP6Gvy/Zu4m9t7Xr9DSTbMDwKas=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jAKT6GzZACBTTyKSwggnEhVqrjS1YEDbP1YZY2q+j3DzmfUmmF3OfDHB9Zx68+vzYYWrKDby1n7Ng8mt3XDELvFB4lQ/ZcbOkV82ADoNjnG71YQ0di0jkPthS3r4rOJXPzweIN1jYKytldMUWUsa/YrRcUDfscs6C08c+5BV+CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=antCOnEt; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=Dpvq0/dIiPcHnZ2VR0QXijoUGUgIX3GdzhJAKHK2nUU=; t=1757280705;
+	x=1757885505; b=antCOnEti/W9aNu00AxPsJq4jtf0uXnVh0JL50LNMwNrcqwaMlMC5HdiIicEw
+	TGj6VIvTj/nIU+28V+UAZl3KSzxf11ZulnQELY1I7351lXzAspjjgHWpCk4zBBUmhrDNxhETb0Ld0
+	t9DlP2iBlhcLq7qEmpxv7YRys7r9Hho8oCHdXzbZaTDrA4uEJd0/DAb/5dfj+1YV77+6IgyvAxgCr
+	fHsTPcpr6V37py4Q63a+V9tFTfIW6ginZ+Ve1Rv3+gsbQvm2GfCsueJL8QfXG45SGsaW4GZomtsY7
+	1xBi6gBMEVwbVDWT8gga32L0flePRpseqJgv71dlEY37VxL7tQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uvMz8-00000002qWw-1zt3; Sun, 07 Sep 2025 23:31:42 +0200
+Received: from dynamic-089-012-071-066.89.12.pool.telefonica.de ([89.12.71.66] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uvMz8-00000003b04-153m; Sun, 07 Sep 2025 23:31:42 +0200
+Message-ID: <c3e1173f99e6222ab09093e1a197d6366bcf2b95.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson
+	 <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Yznaga
+	 <anthony.yznaga@oracle.com>, =?ISO-8859-1?Q?Ren=E9?= Rebe
+ <rene@exactcode.com>
+Date: Sun, 07 Sep 2025 23:31:41 +0200
+In-Reply-To: <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
+References: 
+	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+				 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+			 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
+		 <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
+	 <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 00/45] 5.4.299-rc1 review
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250907195600.953058118@linuxfoundation.org>
- <82edb13f-134e-4aaf-ae5d-6b9f80b02e68@gmail.com>
-Content-Language: en-US
-In-Reply-To: <82edb13f-134e-4aaf-ae5d-6b9f80b02e68@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi,
 
+On Sun, 2025-09-07 at 20:33 +0200, John Paul Adrian Glaubitz wrote:
+> I assume that cheetah_patch_cachetlbops has to be invoked on UltraSPARC I=
+II
+> since there is other code depending on it. On the other hand, the TLB cod=
+e
+> on UltraSPARC III was heavily overhauled in 2016 [1] which was also follo=
+wed
+> by a bug fix [2].
+>=20
+> Chances are there are still bugs in the code introduced in [1].
+>=20
+> > [1] https://github.com/torvalds/linux/commit/a74ad5e660a9ee1d071665e7e8=
+ad822784a2dc7f
+> > [2] https://github.com/torvalds/linux/commit/d3c976c14ad8af421134c428b0=
+a89ff8dd3bd8f8
 
-On 9/7/2025 2:08 PM, Florian Fainelli wrote:
-> 
-> 
-> On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 5.4.299 release.
->> There are 45 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>     https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/ 
->> patch-5.4.299-rc1.gz
->> or in the git tree and branch at:
->>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable- 
->> rc.git linux-5.4.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
-> 
-> On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-> BMIPS_GENERIC:
-> 
-> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> 
-> Looks like we have a minor regression introduced in the 5.4.297 cycle 
-> that I will be solving separately:
+I have reverted both commits. The machine boots until it tries to start
+systemd when it locks up. So, I guess if there is a bug in the TLB code
+it needs to be diagnosed differently.
 
-Looks like we are missing 9bd9c8026341f75f25c53104eb7e656e357ca1a2 
-("usb: hub: Fix flushing of delayed work used for post resume purposes") 
-in the 5.4.y branch, while we do have 
-a49e1e2e785fb3621f2d748581881b23a364998a ("usb: hub: Fix flushing and 
-scheduling of delayed work that tunes runtime pm"), looks like the 
-cherry pick is not exactly clean, will work on that later today.
--- 
-Florian
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
