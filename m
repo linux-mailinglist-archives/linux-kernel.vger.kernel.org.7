@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-804702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E4EB47BBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE7EB47BC0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED06C7B17F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC33189E81C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7FD26E143;
-	Sun,  7 Sep 2025 14:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F412765C1;
+	Sun,  7 Sep 2025 14:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFWFXYx6"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kVr6mPH/"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED51EC006;
-	Sun,  7 Sep 2025 14:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7D26E143;
+	Sun,  7 Sep 2025 14:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757254087; cv=none; b=lvZLZzhJxNpryC94nzi37+lKHL0GJMyNhvtsFrAw36V0zL/cm32ydimGbH1nCioF04cCe+2iH9J6IwXA1jIvU+uT8EYRjDiF6IX8Ai1ScTzrCjSr1T9Au+1KrBuk4ktyfnsPvj8/jIfOfDwuEXryIHOTmGZ4B8sjv0r55tm5+Lg=
+	t=1757254206; cv=none; b=ZFnRnsy156ki3z8hROa3DT3UMp4bXe/logQ0douxuBH2Wno0MC4NH88onmpKGuWQB+WmvRKcG0PwuFck82Smpo5TCVKa3VrRjgsyu1I4IJOJIntp9BFnWCi7UuNYzJN11DdZMyFJ9wgX2xYLrcbGmL5JYoxbD+gzo3MJWXHKZSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757254087; c=relaxed/simple;
-	bh=CewlAPVf5rwZipLs+79xKOiJolW0afmYbnDQyItpV3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FRhrPYvAelcxYRBltGnIinaya7NcGwuDeoGbE3XMXR7WcSP8r24r8qIPvFNJv2o0uoumGpS/r6ARWNAPUvnfmQmt3e22qJXa/8e4+pJcqeLCtfZlT+X4K4VE9J86cWcxYcC83neuIql1yNcoeFEcg9HpAPw0nco0knVluJ9Og6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFWFXYx6; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3d1bf79d7acso2029127f8f.0;
-        Sun, 07 Sep 2025 07:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757254084; x=1757858884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxAmU9TqY2ttRrCopFYc9eGLYqcFkJIuRB66F7nXl3k=;
-        b=LFWFXYx6GcvtjMy5tVu9H6N1FxEaD89JcDSRdMfn7R0IjvHtH0H5Xa2ofjqwCvR/Pf
-         mxy+pRGzw7qSEIW2NvDA1a8gPDNgrcjUaidkJSG9ejjptpOHZXFpiStgW21t6zKUTDzW
-         fiSvx6RHHU+T0J5KAJ+NcDxht+jrpNqqAULDTBcHYSFrnfDmiwWH4opyenajMkrAYg0S
-         dQUOJVr8FO4WqDEJLqCoSWyWzZMz58Gkh9SYC/bmGVVG/AGLVmvTfFDs4mM8PTG7c+xU
-         Pzj41SS0F1cD8p33CbOlP/qucov3O3M9ZUBVLs9cnuzVDLF2rVSwBY5rd7vbdttdi66P
-         twrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757254084; x=1757858884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GxAmU9TqY2ttRrCopFYc9eGLYqcFkJIuRB66F7nXl3k=;
-        b=ajYdZunbcAccvJC7fNSxuqRrRsfI3fSaMlox29QHrrzYUM2D94i4Pe6/YL1BCh9h7n
-         uBnmiMAZszMV8AhRYVJuL4+X8e3y1TVLSk7rlQTGM2Xy+AzlCMJHCLBCIz2baR1o2ecC
-         kHL1rutXBP5IvDLiWy2fspmJYMUXrlJECEQyru5vl/3umvmLr/gjRzve0/RVKJ0Z12Md
-         e93nUKJCcAAF7o8/leOREMLecJEca4crw3An2wQZWQXL4BAKegA3hJIj0vtza0TDZUkO
-         O0We+x2IY421FoGce4pX9VODWOJcBkqFcedX1cdCNx1rSHH0Rs62ieKko9ZzxQi0pVc6
-         /NEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC/eWmdrPZXo5tNW/52bKB1Vd2k6976+s4j/hrVFPYDwiw/Sy3bpz/Uesq0ypitiiY+olIuekhlgwdz7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzly+4NeJ9M3XnBUrzfKyZRT3jA4pXlSfjqEzW/B4dwKqpeePs1
-	HOLshTj/2iqZmbychXtpmUTyXYo6Bn2Gsqb6IMWEyBapHy1kbA15vaLMqm4n1ZKEwAt1Ug==
-X-Gm-Gg: ASbGnctNpUFjhsrf80eqjReKLAMPjMMq3RqRD2r1jbpHhfPPNeVCWIna/nznjbI3pGL
-	VVbjsATGODQalhkx4GwUI80/56GSMew1qpu6amfVlYgOavI+aMfmAj2T9LIaYTfpITBUpDLOKre
-	dWJ6TJF7HobqiN6Ui1DCHNuC6pOcVUtdP7X8JX/UCIkMwF1+3Lpy1wDy7nwupsVWigSca+Hxkox
-	z/2AXJCC9IeYTke4Wcveu3x3q0EB53c72DaDeZfSiJJhK9iK8ZKiaKfJ8qxCLNebJo6lso8Xx1d
-	8q+O3IDOuu9aCoPZGcsvy6J2qAP/u3W4RA/jlQ8vgqx3yotm5eIL7s1mwtOFsed99ddwvmU7js4
-	DcrBMs1VTlnm0Js3jbgANk2+x/LEqtg==
-X-Google-Smtp-Source: AGHT+IFaaftWLneymBKhflFTwylgH+pvzeB3ExO1AzrQbwqkvN0CF0Fml/68bb0R5PmjwKXvBaVPwg==
-X-Received: by 2002:a05:6000:24ca:b0:3e3:5b4:dc27 with SMTP id ffacd0b85a97d-3e64c3ad7e4mr3695450f8f.47.1757254083914;
-        Sun, 07 Sep 2025 07:08:03 -0700 (PDT)
-Received: from Al-Qamar ([2a00:f29:1147:fe84:f87a:5ec2:b4ab:d537])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e748aa8104sm663215f8f.40.2025.09.07.07.08.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 07:08:03 -0700 (PDT)
-From: Fidal Palamparambil <rootuserhere@gmail.com>
-To: linux-modules@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	petr.pavlu@suse.com,
-	da.gomez@kernel.org,
-	samitolvanen@google.com,
-	linux-kernel@vger.kernel.org,
-	Fidal palamparambil <rootuserhere@gmail.com>
-Subject: [PATCH] Fixed the build warning in init_trace_printk_function_export():
-Date: Sun,  7 Sep 2025 18:07:55 +0400
-Message-ID: <20250907140755.529-1-rootuserhere@gmail.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1757254206; c=relaxed/simple;
+	bh=xHZKz28P4B9qneJGd4bihS1Kj7knNrpqY00JMu0Xh9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UnkLjUhdJFXz5ve41x9vAnwJ0fBfqSwES1ZbiorOqli166tKmBpOir6VvHxonoeIqQzt9tNCCyWkSuK7sg5MrBzudby3xPrNMflwbN7FuSA/he9Vjfy5mG1W+1Qjr7Lj3y20kcMHcUsuLBY5TzpJrg0Px4StByRbh0RXv27Ir5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kVr6mPH/; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 587E9wak3604398;
+	Sun, 7 Sep 2025 09:09:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757254198;
+	bh=nX2lcggh7Oc1Dcnq24mF2U0nUwjHXRO74W0IGIkMZ0Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=kVr6mPH/q8iuAfPlh3TYm4DW8dlKvn6Hvzr6i7t9faPl+8g1gEcN6VvxqtadvvLX4
+	 n51WMNbCoCBzAoFtNKpBv/2D/j/vkTE6K0djV0dMO6yfHQ6dfjeNlMXeIbtPXZWlWB
+	 rSMAYYBKryVXbzWxbex30vq2czMZYnGuvOCIGHhw=
+Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 587E9wI33076022
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 7 Sep 2025 09:09:58 -0500
+Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE20.ent.ti.com
+ (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Sep
+ 2025 09:09:58 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Sun, 7 Sep
+ 2025 09:09:58 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sun, 7 Sep 2025 09:09:57 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 587E9v3r3610320;
+	Sun, 7 Sep 2025 09:09:57 -0500
+Message-ID: <7dc4da15-28a4-4e1f-b0c9-9115f97edd77@ti.com>
+Date: Sun, 7 Sep 2025 09:09:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: pisosr: Use devm_mutex_init()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+References: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Fidal palamparambil <rootuserhere@gmail.com>
+On 9/7/25 8:25 AM, Christophe JAILLET wrote:
+> Use devm_mutex_init() instead of hand-writing it.
+> 
+> This saves some LoC, improves readability and saves some space in the
+> generated .o file.
+> 
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Changed int ret to struct dentry *dentry
+Acked-by: Andrew Davis <afd@ti.com>
 
-Changed if (ret) to if (IS_ERR_OR_NULL(dentry))
-
-Fixed memory leak in hold_module_trace_bprintk_format():
-
-Added proper cleanup when fmt allocation fails
-
-Set tb_fmt = NULL after freeing to prevent dangling pointers
-
-Fixed NULL pointer dereference in t_show():
-
-Added if (!fmt || !*fmt) check before dereferencing
-
-Simplified the string iteration loop
-
-Added NULL check in trace_is_tracepoint_string():
-
-Added if (!str) check to prevent NULL pointer dereference
-
-Fixed type safety in t_show():
-
-Changed *(unsigned long *)fmt to (unsigned long)fmt for correct pointer casting
-
-Fixed function signature in ftrace_formats_open():
-
-Changed struct file *file to const struct file *file for consistency
-
-Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
----
- kernel/trace/trace_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_printk.c b/kernel/trace/trace_printk.c
-index 665effbf50ae..060bd2c35a7d 100644
---- a/kernel/trace/trace_printk.c
-+++ b/kernel/trace/trace_printk.c
-@@ -363,7 +363,7 @@ static const struct seq_operations show_format_seq_ops = {
- };
- 
- static int
--ftrace_formats_open(struct inode *inode, struct file *file)
-+ftrace_formats_open(struct inode *inode, const struct file *file)
- {
- 	int ret;
- 
--- 
-2.50.1.windows.1
+>   drivers/gpio/gpio-pisosr.c | 8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+> index a69b74866a13..7ec6a46ed600 100644
+> --- a/drivers/gpio/gpio-pisosr.c
+> +++ b/drivers/gpio/gpio-pisosr.c
+> @@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
+>   	.can_sleep		= true,
+>   };
+>   
+> -static void pisosr_mutex_destroy(void *lock)
+> -{
+> -	mutex_destroy(lock);
+> -}
+> -
+>   static int pisosr_gpio_probe(struct spi_device *spi)
+>   {
+>   	struct device *dev = &spi->dev;
+> @@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+>   		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
+>   				     "Unable to allocate load GPIO\n");
+>   
+> -	mutex_init(&gpio->lock);
+> -	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
+> +	ret = devm_mutex_init(dev, &gpio->lock);
+>   	if (ret)
+>   		return ret;
+>   
 
 
