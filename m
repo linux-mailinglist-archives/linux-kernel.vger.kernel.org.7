@@ -1,137 +1,177 @@
-Return-Path: <linux-kernel+bounces-804703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE7EB47BC0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:10:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F2CB47BD1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC33189E81C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E846718987B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F412765C1;
-	Sun,  7 Sep 2025 14:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218B27B34D;
+	Sun,  7 Sep 2025 14:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kVr6mPH/"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="LxAEL1hA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gkkyoHxl"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7D26E143;
-	Sun,  7 Sep 2025 14:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6A927055D;
+	Sun,  7 Sep 2025 14:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757254206; cv=none; b=ZFnRnsy156ki3z8hROa3DT3UMp4bXe/logQ0douxuBH2Wno0MC4NH88onmpKGuWQB+WmvRKcG0PwuFck82Smpo5TCVKa3VrRjgsyu1I4IJOJIntp9BFnWCi7UuNYzJN11DdZMyFJ9wgX2xYLrcbGmL5JYoxbD+gzo3MJWXHKZSM=
+	t=1757255125; cv=none; b=EY+6AwYidXGvzaDEA7XMMp7iCjum8Av8cJCFTOzzxTBTr7hfdqnwUg7iYNCVVj15GSOmd1LlEiilHEhgCq3/hPWVYUcRPNr07bpTOnobDMhZhFBlY/4P3wq4T2+AJWHkQ85awv7w5kYsawn192SiXMNI02+uy4AOFW7ENjsO2N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757254206; c=relaxed/simple;
-	bh=xHZKz28P4B9qneJGd4bihS1Kj7knNrpqY00JMu0Xh9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UnkLjUhdJFXz5ve41x9vAnwJ0fBfqSwES1ZbiorOqli166tKmBpOir6VvHxonoeIqQzt9tNCCyWkSuK7sg5MrBzudby3xPrNMflwbN7FuSA/he9Vjfy5mG1W+1Qjr7Lj3y20kcMHcUsuLBY5TzpJrg0Px4StByRbh0RXv27Ir5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kVr6mPH/; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 587E9wak3604398;
-	Sun, 7 Sep 2025 09:09:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757254198;
-	bh=nX2lcggh7Oc1Dcnq24mF2U0nUwjHXRO74W0IGIkMZ0Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kVr6mPH/q8iuAfPlh3TYm4DW8dlKvn6Hvzr6i7t9faPl+8g1gEcN6VvxqtadvvLX4
-	 n51WMNbCoCBzAoFtNKpBv/2D/j/vkTE6K0djV0dMO6yfHQ6dfjeNlMXeIbtPXZWlWB
-	 rSMAYYBKryVXbzWxbex30vq2czMZYnGuvOCIGHhw=
-Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 587E9wI33076022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 7 Sep 2025 09:09:58 -0500
-Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE20.ent.ti.com
- (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Sep
- 2025 09:09:58 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Sun, 7 Sep
- 2025 09:09:58 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 7 Sep 2025 09:09:57 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 587E9v3r3610320;
-	Sun, 7 Sep 2025 09:09:57 -0500
-Message-ID: <7dc4da15-28a4-4e1f-b0c9-9115f97edd77@ti.com>
-Date: Sun, 7 Sep 2025 09:09:57 -0500
+	s=arc-20240116; t=1757255125; c=relaxed/simple;
+	bh=kw5QtyRnvKi/VxmgRaSRYThMkx+5yIciBkjBuGOndgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=CGO1UhFzxUjOV2Bwu5LPyWbFjTlTbGLoUY/vISkwewv4+1Peu/7Yai6yXc5OPfCILF8mwqSWUSm6sgzrhAg4nIdrkr6Bqe29LtV4ZCaNi6tek7y0DKpKhGRYz3Nsvpolf0C39OB9lmC6zDFUiARjfD88r1sjFLAKooUf6q7/Mac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=LxAEL1hA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gkkyoHxl; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C2941140003F;
+	Sun,  7 Sep 2025 10:25:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sun, 07 Sep 2025 10:25:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1757255121; x=1757341521; bh=G/
+	EPaorfj+fFyTEHaVMF0Aq5nU/5YHn8ZldlmV9nSRU=; b=LxAEL1hA32JcJEnG98
+	oeJWFJW96Ab1ZdHJgGFlspwkJEj8Aiavk+dntTuQR94KmnDxtmALl7CB+fX7pbmo
+	zvwHV9izosIpgEyayMmq4HTHRSL2iK4fMKWHMvvD41vWIEJCTnEIIqxOvjqUMPdN
+	FaaZNPb2cDEYVHxVXwipUcCnSOWtlHTWUV9b7UKVDN46YphS5bUyXSD3O2FSIvg3
+	JUD1TcNnZpGiXsQ7MCTj1TVHQ3ohhj+xY79FbL/+BRd7wIICp8XkFAHyKTyD/8lm
+	yl+rKrALxeGxgT5Cn2F0n3Vujw7PsQdn7K1EKLloRiZFtuJG1JI5PkcjOkt6ZukQ
+	tPFQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757255121; x=1757341521; bh=G/EPaorfj+fFyTEHaVMF0Aq5nU/5YHn8Zld
+	lmV9nSRU=; b=gkkyoHxlYwH2iEfC+POnjbirfwG9a7+WNBFdUULpIUfCF6QwBKD
+	CXcsXkweDWwsQzN7Gd/GbXOk1SV+QIJUgWkOe1GLc0VVeUYBy346pR/YD304mG7z
+	1ztsB7KcR9c74q1QJaQIjsplL9rOCD+fGXEZYd3b1CaBQnjtDDPbNZDWICkLf5pp
+	E+qxogYXjT9un6LXfyJoljBVnMPFxj2E3BW22x2ShtmyGXx44gZthxk9ic+CJ+5v
+	xe6lmL0VZ16DWgsUqgTs96f66G7saKooHJEnRz+Yld+xGqzw4yGMu+xPzsXFPe8w
+	GNdDDSQNNRcQqEmj5hrowrarHbImiv5H7QA==
+X-ME-Sender: <xms:zpW9aHBBt0nmuBo9smDJ2pyc66XAz51H2zLxPIL-bKuIIirEqr75FQ>
+    <xme:zpW9aP5GM0Oa9oXSpXiYSqnaKLnHMrts9xFSY3EInc6RNC_Ob2dxgDJB8d83jBdim
+    fy3XXGQESbNHiHsUNQ>
+X-ME-Received: <xmr:zpW9aNLIKTgt7t1RechOqALMeiJc4jvDTVIeA0j8Y6R9TLQOMTuGJFNVHgmJLi83Qw1w6W0IAc1sMtpcdOdKwHPv5EDXH_yn>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgrshhhihcu
+    ufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjpheqne
+    cuggftrfgrthhtvghrnhepveehudehueekveelteevkeevkeeiudfgtdeivdehjeetffdt
+    vdeukeekheeitdetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghrtghp
+    thhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjghhgsehnvhhiug
+    hirgdrtghomhdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdr
+    tghomhdprhgtphhtthhopegrsgguihgvlhdrjhgrnhhulhhguhgvsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepghhlihguvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopegr
+    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghkphhmsehlih
+    hnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehhtghhsehlshhtrdgu
+    vgdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhomh
+    hmuheslhhishhtshdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:zpW9aESQOTluGcoqM_cunEP_CQ11Qvxrpy5aGTfr1MzqwvK2MTzWog>
+    <xmx:zpW9aFHJqGCH6u0UWGJG3VtNOeC2T8wJ8cwxckTphVMd0qLeV964DA>
+    <xmx:zpW9aNpr-peDJ1nPk1kSevLyeyufAy3XpVeJTpuplknDlKhO7wcF7A>
+    <xmx:zpW9aLNxtTkNoAukVHmomnYFXm7ah-6QwcR2-dfdjXXF-bo6zSTB0A>
+    <xmx:0ZW9aEVsvUTTHZprT5gFlKyXEiCBT6fpdOnxgCny8ixcqLiQ3QkTgVqI>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 7 Sep 2025 10:25:11 -0400 (EDT)
+Date: Sun, 7 Sep 2025 23:25:09 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,	virtualization@lists.linux.dev,
+ Will Deacon <will@kernel.org>,	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 00/16] dma-mapping: migrate to physical address-based
+ API
+Message-ID: <20250907142509.GA507575@workstation.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,	virtualization@lists.linux.dev,
+ Will Deacon <will@kernel.org>,	xen-devel@lists.xenproject.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: pisosr: Use devm_mutex_init()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-References: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905174324.GI616306@nvidia.com>
 
-On 9/7/25 8:25 AM, Christophe JAILLET wrote:
-> Use devm_mutex_init() instead of hand-writing it.
-> 
-> This saves some LoC, improves readability and saves some space in the
-> generated .o file.
-> 
-> Before:
-> ======
->     text	   data	    bss	    dec	    hex	filename
->     8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
-> 
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->     8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Hi,
 
-Acked-by: Andrew Davis <afd@ti.com>
+I'm a present maintainer of Linux FireWire subsystem, and recent years
+have been working to modernize the subsystem.
 
->   drivers/gpio/gpio-pisosr.c | 8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-> index a69b74866a13..7ec6a46ed600 100644
-> --- a/drivers/gpio/gpio-pisosr.c
-> +++ b/drivers/gpio/gpio-pisosr.c
-> @@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
->   	.can_sleep		= true,
->   };
->   
-> -static void pisosr_mutex_destroy(void *lock)
-> -{
-> -	mutex_destroy(lock);
-> -}
-> -
->   static int pisosr_gpio_probe(struct spi_device *spi)
->   {
->   	struct device *dev = &spi->dev;
-> @@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
->   		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
->   				     "Unable to allocate load GPIO\n");
->   
-> -	mutex_init(&gpio->lock);
-> -	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
-> +	ret = devm_mutex_init(dev, &gpio->lock);
->   	if (ret)
->   		return ret;
->   
+On Fri, Sep 05, 2025 at 14:43:24PM -0300, Jason Gunthorpe wrote:
+> There is only one user I found of alloc_pages:
+>
+> drivers/firewire/ohci.c:                ctx->pages[i] = dma_alloc_pages(dev, PAGE_SIZE, &dma_addr,
+>
+> And it deliberately uses page->private:
+>
+>		set_page_private(ctx->pages[i], dma_addr);
+>
+> So it is correct to use the struct page API.
 
+I've already realized it, and it is in my TODO list to use modern
+alternative APIs to replace it (but not yet). If you know some
+candidates for this purpose, it is really helpful to accomplish it.
+
+
+Regards
+
+Takashi Sakamoto
 
