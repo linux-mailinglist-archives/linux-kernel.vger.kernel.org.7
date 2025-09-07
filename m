@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-804577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DF1B47A05
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A08B47A0D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC422025F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC8A17FF9C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C5822258C;
-	Sun,  7 Sep 2025 09:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6B422172D;
+	Sun,  7 Sep 2025 09:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVJ+pxA8"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFsSmOmj"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C74222172D
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 09:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FFA1BD9CE;
+	Sun,  7 Sep 2025 09:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757236451; cv=none; b=q3szMtakt16xVIcbM+QdXRVPcMvlNmsHQlKRKFrBziOwV2fz7ZtpEoaq531Y4L/ggKXa9L2kDsV+vGNA1SOfucSl1buPJbnLweB68OeYFboaqwYK73bh2eblNpN1xBuH+35hlNtEKZET+cn0cWCA8A1cuAWQVK0JzxcZ+t2jzQI=
+	t=1757237289; cv=none; b=dLZAueaPqANe3RQuEX7170qnVlqfRD+/GxTcUCtLkKxJX13or0EDAPHbHmPLepNqqHzq8ibrleJ9RmYg7V7aBzh5FIAu8fnNTPcSxTqKnFWkQClOgtBNPS9p8YouejM18IpR0erD8g48yI7+2KoWQSAp9qOwENshDJGTsljQStU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757236451; c=relaxed/simple;
-	bh=nTtz/T80B1LFaBzGfFaobq1k9YIb/4LmaRP6eS9C8A8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CdpyrzWB1QFqXk7EcerOzEDHTHNEHPlrqJ0px7Ay+UKywe5eXyltzD42SMi/6tkJYmAxe+e6qLh3Z4LrYslpO31q9d8dJ6l9X6/dfi5nDw3j8OXybLVTLMrxlLxrYktS+LDmMqoWYY1g0xpD9PNRHBSGQPuztiwR4sgo+f9Se4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVJ+pxA8; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45ddfe0b66dso1583445e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 02:14:09 -0700 (PDT)
+	s=arc-20240116; t=1757237289; c=relaxed/simple;
+	bh=9QIp8Bnkemto1WfXYcjT9DowzK2f1Hc3NM2XpeRW/3Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JsaVyuCzrceYL2gUDPwZWgVgJStPTa5i6Q8PvwhXuEuK9u6rupe027SGQgKKHZLWqH70r9nSzGs2PT7i4q48V2AGRLCI7nc6HQB0hR2C2SkBZLzt99HDYdh3INgYlmSIELYVLjLunwnsbZzUxlS5OJWzWtRPc2e5qygR0su25ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AFsSmOmj; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45de1e6d76fso5157845e9.2;
+        Sun, 07 Sep 2025 02:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757236448; x=1757841248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JCLQAsYpR6U6YXx5WXyyNz/et5qkwEIQ90qwDmcTRHU=;
-        b=lVJ+pxA8WdsapeRIjC97ax0YT6KggfLwHY9NlqpaSJbTiyPfFs2m/jbADXLXjiDza/
-         iNQD25YkPwErRPW0iQJxrSaHY24CBMNxhMzYeocADPNS/Qjk/P7ifWLB2U2KDALEMyUc
-         zzq0e7b5pdPgByPMjE/fqcp/sAjpqRv0BrO3uzJWjSdzCES1V38iCPGC/+6t5ZNLtE0z
-         tSw6cP8rEOmAlg5k2173Mn7jHJEAVCqjHQEp6UJKjcBn7fp4gkMreE2D2ThMR9lGGRVW
-         ro8IMP9Akul404Zo06eyOgBea8vYFrwAY4Zw2ZN0pPQ7KNmEBUrKcWrZCJuqeT3AU0d7
-         HgTQ==
+        d=gmail.com; s=20230601; t=1757237285; x=1757842085; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7XB3+EZyHStMbJWyfu9oUjul9eDNETGU8O8plme6nr8=;
+        b=AFsSmOmjkHTWMfaUxYGFYNTG1EspXRp0ywuXHvydNgisxw4tqtpSWslgLsgaAXdDlT
+         BgfeAcGUtXFOJW9xFKvgupGTAx4iZeyikL0FFQdNQR93tp/WIiMSIODbvRo5LnoL3cgd
+         0A8d99D9ZzUb/wnILoUfqcWJKqCaX+kpWALNbc5frodzu/+bBWofIndaqR26n1us75AQ
+         sDA7XM92OLO0/EsAeEoilGGaTUhy+ZI2KQTlOgyBd/uv5br6UUqnFs2wwTf8GABfJXJE
+         ZFX7NDE9GMs8ctZ1gLpjxoElx5WybdMBjXjK5sOgsM500QYEH34JNjP97su5cYWYmXP2
+         NMaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757236448; x=1757841248;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JCLQAsYpR6U6YXx5WXyyNz/et5qkwEIQ90qwDmcTRHU=;
-        b=BVxjqaZGE1kKO9KxvIHymN+E1yb2mA3MsdIxoBcYJw/rgGTr27H6jtwv7ys8IVgoae
-         i87cD/43RLIck2OI5LbV93t1rhXozMVi0aoBpvQGeBqjuZ48HdvWaQpjn+ZLthR1JbpX
-         WH/ueKLW4QCrWM5BI9K3okEPMlek3DvNuW3L5ffSDNOJUdA+NHyFOSu0tCEbks2ws2iR
-         aR887sm5im4s69jy4GuArgLxFbb4KlRtB2ABxq5Utguvqv5/669UdX0rYDFP3Kx4+HkE
-         zatyANV2Xbq67sPdszW81lnjOFCillDJrpP7DiK6T7ME3NoGpWH4CZzX0gw1Zno9z1Tp
-         T7nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfwEJZWV6KCfKKgITjQ/B5HtO+QSeWqS/4MZh5AsXpFs9Ge//3SQO+k3pP0kBC9HFqUNyJXbSkaj4Xzak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5FMcTCrZZQdgJ0ZDd827WfeMaQqt8vTIpolVSAfOTaxKQ2gSC
-	hRNNDXoryIQz3if30bwYeIjphGTFijiCQF1Mvbe/MWcidoMem9FJIJSIDLG6jp722jI=
-X-Gm-Gg: ASbGncsJFYap/wJ3qi3DK/8bVA4uWrLSxVnOcV7wjcP2PIrXIo8wQE1XfXoDYQpXokn
-	/Q9j7JmtgxT0rx/uhYCG6/y0aN+zbQh+xgXNqibSaUHLSRA0wP7rOI591c57QQzQAKMO+wcLlMl
-	oa/5qih8T5z9qBU8OvD66oMmeECj9uQGi4TFSiybRzhW8Hpg1nuf64fncrJT1/64mdpHp99P4fI
-	SdQKWjS7qa7lgle2Y8TgjiKKl6uNsFzCDRJCE41L+1bz/xYjptxD+H48MKVbswT6Li+320PdQl2
-	W1Lcu0RIAuMvYf56WtCK5F1l+6gNAybNUnLtoglyG9SQAvRG1lhEyDqu/DLO1DwQxIBCiS0IkjP
-	4ZXYK01IfwVF5DoD7afRuGlFMWjyHCVmDSbyh4w4=
-X-Google-Smtp-Source: AGHT+IG78HXO5H3PNHPON4QM2B7kxOdyJOW/vdjAFNFZeNRnZqCYRuJ044SQo+Ov8yokKCplK6e9pw==
-X-Received: by 2002:a05:600c:6388:b0:45c:b565:11f4 with SMTP id 5b1f17b1804b1-45ddde84ff1mr18221295e9.1.1757236447894;
-        Sun, 07 Sep 2025 02:14:07 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e21e4c0e6fsm10918962f8f.17.2025.09.07.02.14.06
+        d=1e100.net; s=20230601; t=1757237285; x=1757842085;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7XB3+EZyHStMbJWyfu9oUjul9eDNETGU8O8plme6nr8=;
+        b=RVnlbUOzwV8ygcy3zUksce8EOTD5um2EcTEEFdoqgM3KCcvDVUZy5G6wTkL3BhzktH
+         2qT0WZL8k9UhiPS6T4dhI1N+m3ScwDuFKP9FKO/t/9H6Q9xjZF1CMXLpWoXMIhFmtw+y
+         Y/yILQMVgmvdQ8gCjsStgD0KkzVhqVPHb/7FJgPqLdiKBoXQ7uGSnOUOROYi/td/6V/d
+         lFwM2NI5R3dim1JSQMdYgaiEwLLaI0BEX5aQDvZ9OCvEMncXvSN+9p8wpY5h1tHGJ7ws
+         sSMpyBJsc3RfjiHZCotgri+D/v2IOsN0XfPy7W1xVkAce3+gzvCoOzVd3P3HyIfLVZMr
+         xP/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmOImeH1NIVQQgMAlC17LYkpuiDBjqZ43cWlNvWyGEU9eBnIZxP62QDabiqbj7uZZeD/9MovREeTM+@vger.kernel.org, AJvYcCXPNI1NZ/MfFhZsznsYv2/zNXWfF5YnC3H+mlG6rCW4hzJrLt00K0Lg7+3KWdMbZ8Jj8p3MRSHxxlrbR5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxSJdDGCfe4nzIW3olBAtslak+4rZ50aKiStCbdM7Iw71NrrvL
+	x2ViM5dZBK6Fgw2+bm9L4u/chD7QYzKE1B82sRr4q+DYT+6HrJ458koN
+X-Gm-Gg: ASbGncu9apyKoLCfmbcfVlU3ipyb2NkqxivD9/V7JlKP4rTO/EmstEmV+QlpkqS21B1
+	yaYmIimhaBC4WFUXYOaewmBE9GEgOP7FrEslY+aSSRWSlEvsMlPmGsuj1MDRhM5Z4/yOaXv69gx
+	USUoNSR4hp1AisHTYPw/K8wMC90v1Oah8oWUd2flH5CLRuxdf9rR1H5zpTohPzgkxEuEUs8iFlS
+	cyy4dZkY06nL2llzELtwgxj0qqtuCyMiBfPCbpuIq0l5DsbCk8u9V7zEuxnosWL2x5SNR+rlI2k
+	6NEmn/c/pWhbhwe+POG9+QNBlD0ca39JRRAuNO4b4jGIONt4YmGv3QbJiJ75bPzDfQ5Pu+W3pG8
+	6wVSU9p4yJYXTspaUttrSOIf6he6IvRMwrTMkci9R5fmu8xmuBd0JeIwiz/q31fSf
+X-Google-Smtp-Source: AGHT+IFQqN1xdf8yX2rXwR72QToKnSI/WjPbg116r2WIKGc/6EtoIOWfniY52wX2yGeNBiMugvz2yw==
+X-Received: by 2002:a05:600c:1548:b0:45b:88d6:8ddb with SMTP id 5b1f17b1804b1-45dddf0234emr35756295e9.37.1757237285381;
+        Sun, 07 Sep 2025 02:28:05 -0700 (PDT)
+Received: from ?IPv6:2a02:168:6806:0:267e:37:6a88:3fc5? ([2a02:168:6806:0:267e:37:6a88:3fc5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e74893acecsm45931f8f.36.2025.09.07.02.28.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 02:14:07 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Denzeel Oliva <wachiturroxd150@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-In-Reply-To: <20250904-perics-usi-v3-4-3ea109705cb6@gmail.com>
-References: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
- <20250904-perics-usi-v3-4-3ea109705cb6@gmail.com>
-Subject: Re: (subset) [PATCH v3 4/4] arm64: dts: exynos990: Enable PERIC0
- and PERIC1 clock controllers
-Message-Id: <175723644648.30719.8043699953915235210.b4-ty@linaro.org>
-Date: Sun, 07 Sep 2025 11:14:06 +0200
+        Sun, 07 Sep 2025 02:28:04 -0700 (PDT)
+Message-ID: <34a23816bf125c577a03ba68f251e7a77db9805b.camel@gmail.com>
+Subject: Re: [PATCH] PCI: mvebu: Fix the use of the for_each_of_range()
+ iterator
+From: Klaus Kudielka <klaus.kudielka@gmail.com>
+To: Jan Palus <jpalus@fastmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Pali
+ =?ISO-8859-1?Q?Roh=E1r?=	 <pali@kernel.org>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
+ Herring	 <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
+Date: Sun, 07 Sep 2025 11:28:04 +0200
+In-Reply-To: <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
+References: <20250902151543.147439-1-klaus.kudielka@gmail.com>
+	 <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+
+On Wed, 2025-09-03 at 14:44 +0200, Jan Palus wrote:
+>=20
+> Thanks for the patch Klaus! While it does improve situation we're not
+> quite there yet. It appears that what used to be stored in `cpuaddr` var
+> is also very different from `range.cpu_addr` value so the results
+> in both `*tgt` and `*attr` are both wrong.
+>=20
+> Previously `cpuaddr` had a value like ie 0x8e8000000000000 or
+> 0x4d0000000000000. Now `range.cpu_addr` is always 0xffffffffffffffff.
+> Luckily what used to be stored in `cpuaddr`:
+>=20
+> u64 cpuaddr =3D of_read_number(range + na, pna)
+>=20
+> appears to be stored in range.pci_bus_addr now. I can't make any
+> informed comment about this discrepancy however I can confirm following
+> change (in addition to your patch) makes mvebu driver work again (or at
+> least like it used to work in 6.15, it still needs Pali's patches to
+> have some devices working):
+>=20
+> -			*tgt =3D DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> -			*attr =3D DT_CPUADDR_TO_ATTR(range.cpu_addr);
+> +			*tgt =3D DT_CPUADDR_TO_TARGET(range.parent_bus_addr);
+> +			*attr =3D DT_CPUADDR_TO_ATTR(range.parent_bus_addr);
 
 
-On Thu, 04 Sep 2025 14:07:14 +0000, Denzeel Oliva wrote:
-> Add clock controller nodes for PERIC0 and PERIC1 blocks for USI nodes.
-> 
-> 
+Oh well, a CPU address that is not a CPU address....
 
-Applied, thanks!
+Looking again at of_range_parser_one() - which I assume to be "correct" her=
+e:
 
-[4/4] arm64: dts: exynos990: Enable PERIC0 and PERIC1 clock controllers
-      https://git.kernel.org/krzk/linux/c/44b0a8e433aaad8aac51593a052f043aeb9a18d1
+	range->flags =3D parser->bus->get_flags(parser->range);
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+	range->bus_addr =3D of_read_number(parser->range + busflag_na, na - busfla=
+g_na);
 
+	if (parser->dma)
+		range->cpu_addr =3D of_translate_dma_address(parser->node,
+				parser->range + na);
+	else
+		range->cpu_addr =3D of_translate_address(parser->node,
+				parser->range + na);
+
+	range->parent_bus_addr =3D of_read_number(parser->range + na, parser->pna)=
+;
+
+Indeed, range.cpu_addr is a translated version of range.parent_bus_addr, an=
+d does
+not seem to be relevant to pci-mvebu.
+
+The driver previously interpreted the raw part of the "/soc/pcie/ranges" re=
+source
+(storing it in a local variable called cpuaddr).
+
+To restore the behavior completely, we thus can use range.parent_bus_addr -=
+--
+confirming your test.
+
+I'll prepare a patch version 2, including this second fix.
 
