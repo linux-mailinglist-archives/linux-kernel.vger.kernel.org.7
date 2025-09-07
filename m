@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-804687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E88B47B94
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:25:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4901FB47B97
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA406189AEAC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033DC16D1B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21F32773CE;
-	Sun,  7 Sep 2025 13:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD03217716;
+	Sun,  7 Sep 2025 13:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZS9Na2BC"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERhwafM4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0C4248F7D;
-	Sun,  7 Sep 2025 13:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D212920CCDC;
+	Sun,  7 Sep 2025 13:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757251549; cv=none; b=u3Hdw43d3LCDD8c2XcWk/4Z+KurDqgpz360XlzULm0QYfT+B5w8YePiAdORIAzNvfXGUD0zqePiU7yk2iVkAjcLcsbo9rppmQNGHyq2gz9R0v/dEocZVu2dPZBzHcDGJ9bfWs5aVWJUumJvxeAvMvntpxi1xr6t9jItwKzweRrI=
+	t=1757251608; cv=none; b=OmAny7Pc0TXSphfG590BziVU16H8ub6NusbzcjEqci671ijl4dnOfYUgN5rhW2KL9+y+vTNzPYcTfc7t/8rDs0UOJ7SKxzRtq1IlD6ZAkyc/fERkCdD6e9I7YJgouiOI+5YSK43bC2KgpnHETmVGnKIUOOFHWc4+N61nzeOjLUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757251549; c=relaxed/simple;
-	bh=a4guLoMBhzfxWOET15e5kQm0vrWnUpcSCI+d9tZ7IU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i6tmW11QA1rg5DGtEV2GIKlYbjPcriQKzqcEyqiLY7E3qTzCQ0HwQvcQxMz3CyZV+njcxddr9WWYPTvoaxtNBKePSLC5FMODaLjgofosYns8qdRUYKCGmR/Sjj2NVaJ+FCIKf386/WXCC8sbeZ+orGmSJvPYGn4K1r1QszYxUH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZS9Na2BC; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vFOous9LW0vTevFOouhc72; Sun, 07 Sep 2025 15:25:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757251543;
-	bh=swveuZJuqIP5IKsdaIkmgdwwjs028Dc0hj0b/QeseIg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ZS9Na2BCbLyho4ayNteQNCuqfLxOOkDpx4JZFfm0h9nZr7Oj+I44vksKM4dXmz0rF
-	 hq1vEJNi18xbgyL9jEyoipJfWhVweNTv7je/6NnNaunsjbwBaAPwLf7JE9b+19/4a3
-	 X6g95/cdGZY4eJLLV8sUwsHbsxGL41BXpJ6zOcB2YEg/6Idw79bHBNehY3eVCaFEhs
-	 KWltcMluaSE5jeb4pht9rxLTjKrbHr3BqCxf5YVSpGgAlC7ru74FXK4cGW54aRvvkS
-	 p4E5ewRJ8VuBSecCgeFuwkLQjVKDFcNitv9/cUo3Np/8UpdUS6tOo96tKz5P1X9p9W
-	 iEybEg+CCWqqA==
-X-ME-Helo: fedora
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 15:25:43 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] gpio: pisosr: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 15:25:38 +0200
-Message-ID: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757251608; c=relaxed/simple;
+	bh=1/F3Eu2AKxDKTyyvFww0JZOexx5tvlq9svKOw0GJ7K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BuXvmCsZt/PQ69oDZw7pxEXuxW7ZXi4MttaQIxmoOk8Smw/dqb8wimRc8izK5QO8AKOI+djkkqhFurbn0ccDjU16guXXgDD5Z3rElOj8uMhbWH9RtoRzez5fUhWCyWE5YVxbrG6LnBQ27jKdNjbG1SRORdV3Nzt0fuirpdjPrh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERhwafM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A453BC4CEF0;
+	Sun,  7 Sep 2025 13:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757251608;
+	bh=1/F3Eu2AKxDKTyyvFww0JZOexx5tvlq9svKOw0GJ7K8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ERhwafM49eWW/ihGqwo+fNGqN9lyW/YADLfF3teKaV7mREi2q1ss+3Z/9JzuELTw6
+	 17zJ/TTsKKEv7nYIt9A5TtIJhumTqIJEUd6628/6VZzynrBHm6LdbuDIjPtDcnL5nW
+	 iYRRcaJNQQfDLJWVmBwcfXnYcwSJgpMcYVL1fLtT5eUi7nty7WC0jtHaIJwy+Ka1ol
+	 c4LealXmK+1Ef2LJN5sUC1GjLAIjpxzaZYLAz05QWIHeR9zeNI0RrEhGCI8Hm8YL+R
+	 cCxP/RL9k6fazU6OOW/I6NPK0vZc/83VSv6L6wJ9jbXATVcz1C3gF3N4duEJuOMjGi
+	 AMR8niOxeY+UA==
+Date: Sun, 7 Sep 2025 14:26:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Sean Nyekjaer <sean@geanix.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol
+ <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v3 4/5] iio: imu: inv_icm42600: Use
+ devm_regulator_get_enable() for vdd regulator
+Message-ID: <20250907142639.489496d4@jic23-huawei>
+In-Reply-To: <e97130f5-9ec6-4ac4-9944-96f992eb215f@baylibre.com>
+References: <20250901-icm42pmreg-v3-0-ef1336246960@geanix.com>
+	<20250901-icm42pmreg-v3-4-ef1336246960@geanix.com>
+	<e97130f5-9ec6-4ac4-9944-96f992eb215f@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use devm_mutex_init() instead of hand-writing it.
+On Fri, 5 Sep 2025 14:49:05 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-This saves some LoC, improves readability and saves some space in the
-generated .o file.
+> On 9/1/25 2:49 AM, Sean Nyekjaer wrote:
+> > The vdd regulator is not used for runtime power management, so it does
+> > not need explicit enable/disable handling.
+> > Use devm_regulator_get_enable() to let the regulator be managed
+> > automatically by devm.
+> > 
+> > This simplifies the code by removing the manual enable and cleanup
+> > logic.
+> > 
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > ---  
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
 
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
+I've applied 1-4 to the togreg branch of iio.git targetting
+the next merge window.  I marked the first 3 for stable inclusion.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
+Given we are fairly late in the cycle, the breakage isn't recent
+and you have additional patches on top (4 and 5 here) I didn't
+rush these in via my fixes branch.  Hope that works for you,
+shout if not.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpio/gpio-pisosr.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Thanks,
 
-diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-index a69b74866a13..7ec6a46ed600 100644
---- a/drivers/gpio/gpio-pisosr.c
-+++ b/drivers/gpio/gpio-pisosr.c
-@@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
- 	.can_sleep		= true,
- };
- 
--static void pisosr_mutex_destroy(void *lock)
--{
--	mutex_destroy(lock);
--}
--
- static int pisosr_gpio_probe(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
-@@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
- 		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
- 				     "Unable to allocate load GPIO\n");
- 
--	mutex_init(&gpio->lock);
--	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
-+	ret = devm_mutex_init(dev, &gpio->lock);
- 	if (ret)
- 		return ret;
- 
--- 
-2.51.0
-
+Jonathan
 
