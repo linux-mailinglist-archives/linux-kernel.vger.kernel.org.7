@@ -1,264 +1,165 @@
-Return-Path: <linux-kernel+bounces-804651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9F9B47B16
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8ACAB47B17
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AA27B16EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7041C1B21B34
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6CB258ED4;
-	Sun,  7 Sep 2025 11:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2F5258ED4;
+	Sun,  7 Sep 2025 11:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1YT7bBH"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2YkkkLc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679CC189;
-	Sun,  7 Sep 2025 11:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764831991C9;
+	Sun,  7 Sep 2025 11:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757245632; cv=none; b=MTps3aReeFR6WY1erFiuKBXpd7oeTbTWc5R5ZIABAF6e1yJKJ/X3CdkysK8VuUyWDcbOo3hUPdWOmcA6FLpUH7lolDsILkxT+xNFh2+Q1rEIUZ1+sRW7QM7iDsHNjqIySW4SXiQMBiTTrH3u/l6ZnoF3ymj2k+VEiJ/23JKki4Y=
+	t=1757245773; cv=none; b=dzYMwk5TYKR5kfofat5f+LUuzYI/Uww5L3XNRt9V86QcqWMQBsJ5iYDFTHB4RGdzxnHxIoGtlED5tdcUmAhKHN9g3PbrIiIQD0GGYAzi/XtXkOMwZoymjbkzHGGpjeR0m9FoJJe6wt0xapZTwMdMFYgNPSrLBwZx3yf2N08Dx4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757245632; c=relaxed/simple;
-	bh=Fk0gTWMlRran9x4WVxTFRk/KhL+hgRfZMmVp1C2GC5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=djvvM1dKV+Bv1DIOn9SK7IOnHRA6lt9zl+FWj+EusBe4ywDF6oBX+oY0J7uspjqOR2BaKN37gy/drd7bH5jOcqR1KjC5MGQjL2YGi6N2QysX8TkvTYqwiiFE+Yjse3tGo+m315RDAp+7r5yj63G3EDzy2JJzRtn1IYnKbyYtFtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1YT7bBH; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so21927425e9.0;
-        Sun, 07 Sep 2025 04:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757245629; x=1757850429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NW6uX5v1JD6iEFqaLUl2PAM0nK6/Y7b2LI3Xk8odK6A=;
-        b=W1YT7bBHiI7VUQSEmCZOaar0ewOiScFse+hct4j8omQOkCAY1vzBVV1WiHGcA4hRXF
-         GbGumnkrUoEw1dubUxuugoZblXiw7m9jULJASpNz5k0VhlkIOMJskmR1dU5rafUnq2UF
-         pAxHSv5kPsuDbJf5YhTyKjEMOO+7aS4VGqT3l+rgqAjWytdy1+c+N4vTnsSoDIWztsl1
-         ei9lQgKuu7IvV5OO53H+ufUQiJMGhZ2Pk+f7+uGZinlUwt7GC1+h543xM6qTImN4QMDF
-         wYTk2YJIVr1pnPI+L5dsbPG8+LskjmEzDkXpuPjBJdp+SE18ODRcB8oyFONNVYeSFMD+
-         rueA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757245629; x=1757850429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NW6uX5v1JD6iEFqaLUl2PAM0nK6/Y7b2LI3Xk8odK6A=;
-        b=qblB9IcyPEEK1roSF8ZAugnJJvbG3JwCuNPE2JSSpcAcUjkWXKa0R6TZ5ttuMPQRUb
-         CAr3xCGvfjbrgw2bPVKLhiX5yz3auA9cqa2L9Zoww3lPxIWbXiGlRHWlsN0LYRBHrnFK
-         Y0mwQQe43VUFMCyjOiPa2sPUfL5qe0giUV3g7EYVdMGphjlrQk2XQ991XoBzrAhxQ7zb
-         aDNJA/ul91pwBMS5JnYADAWPgXEScFOSg8Ql4Yr75NTW9ORF1KK64u3wEC/3KZOJGjOK
-         bZzmMD2TRR8HWwHTkz4Xk8XlNCD3Dsq+qqLT+3D1rAb8cy51LBzRMqmG8gQLLXkh+vpL
-         9DLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSsk4/lNotoDj5RIaV8h43wJKNfuvbQfdOuvw3awdwMTz/Afv25Rf9Qv5tKYo8N6UyrZsQN6NZstbW/eY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaYEeHBxvO/NZZyRF2ctBCKdqA75BkAPLmITzQkFRJ6ghgNQhx
-	Jpu/4riqoSDDPAVxTDnMkVPOaSeskXeGBoXZA4/wG1OBi1ZkLFpvJt7Y
-X-Gm-Gg: ASbGncslDwtee052dQNzNcjuWpzVTjfVBiUQ+Ml6ZV2Op1xNfVYUU3VHQyjEtJ9iJDW
-	F42UM4N+kObG2DF8VIA2J9vFzHXVzY7u1oaXMClwR0CP0J6J/bgw9Tp8Ww73hpif27kLadRCklq
-	rhP7It930X5aoMcWvkruSQPFGGXuYbVl9EAiDeIo9Y+ZCP7Q+dS3Nqmg5nc3y71lyza4QLwWYjz
-	xp/EZdn5oyT+pO8Jzr9a0WJ3OAj4rR3FrWdtiJD+I6r7ja5JC8yD3dZ+vPR0l0y6fiYlelLHSGa
-	BfDFN2/tiDevKiYe57hp9QkRG2fggj6RHUMYlZip/QAG6CGHPndpftiFNoHkOkiCFgib5+HIU/8
-	IlNDeSCZ2F6NVHhXnWk4BeoKHO7jguVaCVxVWey70
-X-Google-Smtp-Source: AGHT+IHcr/Po+xpnFVyr+eN4rn1WhJOFlhzPrDKk4/V1Mktebo8x93Q43Svk2iyC3lkecD7T9HMgdw==
-X-Received: by 2002:a05:6000:4027:b0:3e7:4414:794b with SMTP id ffacd0b85a97d-3e744147d2fmr1072047f8f.50.1757245628412;
-        Sun, 07 Sep 2025 04:47:08 -0700 (PDT)
-Received: from hangmanPC.. ([86.124.200.102])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e74893acecsm369100f8f.36.2025.09.07.04.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 04:47:07 -0700 (PDT)
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-To: andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Cezar Chiru <chiru.cezar.89@gmail.com>
-Subject: [PATCH] i2c : algos : i2c-algo-pcf.c : fixed errors shown by checkpatch
-Date: Sun,  7 Sep 2025 14:45:57 +0300
-Message-ID: <20250907114557.15453-1-chiru.cezar.89@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757245773; c=relaxed/simple;
+	bh=aIdhlvipyo2+0PeyQWDF3eftzsmA1c2NyjjqT0eU764=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Y+TBjnuXHhm+DB5e5lo3BfvhhqNUp/wncexhSMPLEJoKvPiX0u13KuELt9ZibAzVFqeNEoVKODp3dUHq6daV2Ap2GDiNOv/zpfnDVde+QpMt4V599eK/vQxysqaWLca468RhyiTy6Kdcz7ZivavpdVkD/d2rU4n0CNnyw7p31lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2YkkkLc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B88C4CEF0;
+	Sun,  7 Sep 2025 11:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757245773;
+	bh=aIdhlvipyo2+0PeyQWDF3eftzsmA1c2NyjjqT0eU764=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=b2YkkkLc+dGfx3ZjDLU5dsOg9R4XIg0hxranpL9139I6xYZ7xJCaFK+glzyeI9+fo
+	 KEJGfXq1VGvaUGy1SaoLjk1IC9f5xFa1Au7RVhW3nztY/qhU1HCjc9JYqFwXgl6Wed
+	 YxI2OoHXEkkWj8QCQQPJSlBb2B1uRjqWhdo8pzAZgbFth2gHLlxGvpczcwudpHIXup
+	 gEJZ4PuoNGyMtFWPnYkSmB5haPTdIsg1LPIbth0stNwkRuZ/zYnKwoOaf3iA70jWa3
+	 we0eaH1e/Nlf5LdQBVAcON6HuCD5Ux2cGuzpd69c/ULfIIn9nhO6mrpfXrS+LeNJI+
+	 KUJahWylYrZWg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 07 Sep 2025 13:49:28 +0200
+Message-Id: <DCMJMXGN68E0.IZ2F31AI11JW@kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!`
+ macros
+Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>,
+ "Christian Schrefl" <chrisi.schrefl@gmail.com>, "Alban Kurti"
+ <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250905140534.3328297-1-lossin@kernel.org>
+ <aL1lHyhzWX0xGrmo@google.com> <DCMJ0VFOV9L1.33BPI08N4H7WZ@kernel.org>
+ <aL1tloBwmJnYFPpa@google.com>
+In-Reply-To: <aL1tloBwmJnYFPpa@google.com>
 
-Fixed all 18 errors revealed using checkpatch.pl on i2c-algo-pcf.c
-file. Errors fixed were: macros starting with 'if' should be
-enclosed by do - while loop to avoid possible if/else logic defects,
-do not use assignment in if condition, spaces required around '=' ,
-';', '<' and ','.
-Motivation is to fix all errors and warnings i2c-algo-pcf kerenel
-module.
+On Sun Sep 7, 2025 at 1:33 PM CEST, Alice Ryhl wrote:
+> On Sun, Sep 07, 2025 at 01:20:39PM +0200, Danilo Krummrich wrote:
+>> On Sun Sep 7, 2025 at 12:57 PM CEST, Alice Ryhl wrote:
+>> > On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
+>> >> Allow writing `_: { /* any number of statements */ }` in initializers=
+ to
+>> >> run arbitrary code during initialization.
+>> >>=20
+>> >>     try_init!(MyStruct {
+>> >>         _: {
+>> >>             if check_something() {
+>> >>                 return Err(MyError);
+>> >>             }
+>> >>         },
+>> >>         foo: Foo::new(val),
+>> >>         _: {
+>> >>             println!("successfully initialized `MyStruct`");
+>> >>         },
+>> >>     })
+>> >>=20
+>> >> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880=
+a9b898336e2d54f80715f00ce00f21f74d2f
+>> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
+>> >
+>> > Nice! Would it be possible to include a user so I can see it work in
+>> > practice? E.g., for the irq feature?
+>>=20
+>> Devres needs this too, but the corresponding devres stuff was a fix and =
+is in
+>> the current -rc only, so that's not a candidate.
+>>=20
+>> The IRQ stuff is in driver-core-next going to Linus for v6.18, hence, us=
+ing it
+>> there, this patch would have to go through the driver-core tree as well.
+>>=20
+>> For me it is fine either way.
+>
+> It doesn't have to land together. I would be happy with:
+>
+> 	THIS CYCLE: Land just this patch.
+> 	NEXT CYCLE: Land the irq and/or devres user.
+>
+> But I'd like to see it work in practice before I give a Reviewed-by.
+> It's hard to evaluate this kind of macro change just from the macro
+> itself.
 
-Testing:
-    * built kernel with my changes and I2C_ALGOPCF=m enabled
-    and it built successfully.
-    * installed kernel and external modules generated by build
-    * rebooted and loaded using modprobe i2c-algo-pcf kernel module
-    with param i2c_debug=3 and no message was found related to
-    module in dmesg. But also no error was generated.
+Here's a patch for using it in devres (we backmerged -rc3 into
+driver-core-next):
 
-Errors on patch: on running checkpatch.pl on this patch 4 warnings
-were raised. Will be fixed on following warnings fixes patch.
+From 23e48f081b7ba6bebd375c6fa929f070f7977fc5 Mon Sep 17 00:00:00 2001
+From: Danilo Krummrich <dakr@kernel.org>
+Date: Sun, 7 Sep 2025 13:44:43 +0200
+Subject: [PATCH] rust: devres: take advantage of initializer code blocks
 
-Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+Use pin-init initializer code blocks to register the devres action.
+
+This resolved the TODO introduced by commit 75a7b151e808 ("rust: devres:
+fix leaking call to devm_add_action()").
+
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- drivers/i2c/algos/i2c-algo-pcf.c | 50 +++++++++++++++++++++-----------
- 1 file changed, 33 insertions(+), 17 deletions(-)
+ rust/kernel/devres.rs | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-index fd563e845d4b..18ba21ff8992 100644
---- a/drivers/i2c/algos/i2c-algo-pcf.c
-+++ b/drivers/i2c/algos/i2c-algo-pcf.c
-@@ -23,9 +23,18 @@
- #include "i2c-algo-pcf.h"
- 
- 
--#define DEB2(x) if (i2c_debug >= 2) x
--#define DEB3(x) if (i2c_debug >= 3) x /* print several statistical values */
--#define DEBPROTO(x) if (i2c_debug >= 9) x;
-+#define DEB2(x) do { \
-+			if (i2c_debug >= 2)	\
-+				x;	\
-+		} while (0)
-+#define DEB3(x) do { \
-+			if (i2c_debug >= 3)	\
-+				x;	\ /* print several statistical values */
-+		} while (0)
-+#define DEBPROTO(x) do { \
-+			if (i2c_debug >= 9)	\
-+				x;	\
-+		} while (0)
- 	/* debug the protocol by showing transferred bits */
- #define DEF_TIMEOUT 16
- 
-@@ -160,7 +169,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	 * check to see S1 now used as R/W ctrl -
- 	 * PCF8584 does that when ESO is zero
- 	 */
--	if (((temp = get_pcf(adap, 1)) & 0x7f) != (0)) {
-+	temp = get_pcf(adap, 1);
-+	if ((temp & 0x7f) != (0)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S0 (0x%02x).\n", temp));
- 		return -ENXIO; /* definitely not PCF8584 */
- 	}
-@@ -168,7 +178,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* load own address in S0, effective address is (own << 1) */
- 	i2c_outb(adap, get_own(adap));
- 	/* check it's really written */
--	if ((temp = i2c_inb(adap)) != get_own(adap)) {
-+	temp = i2c_inb(adap);
-+	if (temp  != get_own(adap)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S0 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -176,7 +187,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* S1=0xA0, next byte in S2 */
- 	set_pcf(adap, 1, I2C_PCF_PIN | I2C_PCF_ES1);
- 	/* check to see S2 now selected */
--	if (((temp = get_pcf(adap, 1)) & 0x7f) != I2C_PCF_ES1) {
-+	temp = get_pcf(adap, 1);
-+	if ((temp & 0x7f) != I2C_PCF_ES1) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S2 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -184,7 +196,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	/* load clock register S2 */
- 	i2c_outb(adap, get_clock(adap));
- 	/* check it's really written, the only 5 lowest bits does matter */
--	if (((temp = i2c_inb(adap)) & 0x1f) != get_clock(adap)) {
-+	temp = i2c_inb(adap);
-+	if ((temp & 0x1f) != get_clock(adap)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S2 (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -193,7 +206,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
- 	set_pcf(adap, 1, I2C_PCF_IDLE);
- 
- 	/* check to see PCF is really idled and we can access status register */
--	if ((temp = get_pcf(adap, 1)) != (I2C_PCF_PIN | I2C_PCF_BB)) {
-+	temp = get_pcf(adap, 1);
-+	if (temp != (I2C_PCF_PIN | I2C_PCF_BB)) {
- 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S1` (0x%02x).\n", temp));
- 		return -ENXIO;
- 	}
-@@ -209,7 +223,7 @@ static int pcf_sendbytes(struct i2c_adapter *i2c_adap, const char *buf,
- 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
- 	int wrcount, status, timeout;
- 
--	for (wrcount=0; wrcount<count; ++wrcount) {
-+	for (wrcount = 0; wrcount < count; ++wrcount) {
- 		DEB2(dev_dbg(&i2c_adap->dev, "i2c_write: writing %2.2X\n",
- 				buf[wrcount] & 0xff));
- 		i2c_outb(adap, buf[wrcount]);
-@@ -246,7 +260,8 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
- 	/* increment number of bytes to read by one -- read dummy byte */
- 	for (i = 0; i <= count; i++) {
- 
--		if ((wfp = wait_for_pin(adap, &status))) {
-+		wfp = wait_for_pin(adap, &status);
-+		if (wfp) {
- 			if (wfp == -EINTR)
- 				return -EINTR; /* arbitration lost */
- 
-@@ -299,7 +314,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
- 	struct i2c_msg *pmsg;
- 	int i;
--	int ret=0, timeout, status;
-+	int ret = 0, timeout, status;
- 
- 	if (adap->xfer_begin)
- 		adap->xfer_begin(adap->data);
-@@ -313,7 +328,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 		goto out;
- 	}
- 
--	for (i = 0;ret >= 0 && i < num; i++) {
-+	for (i = 0; ret >= 0 && i < num; i++) {
- 		pmsg = &msgs[i];
- 
- 		DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: Doing %s %d bytes to 0x%02x - %d of %d messages\n",
-@@ -358,9 +373,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 
- 			if (ret != pmsg->len) {
- 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
--					    "only read %d bytes.\n",ret));
-+					    "only read %d bytes.\n", ret));
- 			} else {
--				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n",ret));
-+				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n", ret));
- 			}
- 		} else {
- 			ret = pcf_sendbytes(i2c_adap, pmsg->buf, pmsg->len,
-@@ -368,9 +383,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 
- 			if (ret != pmsg->len) {
- 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
--					    "only wrote %d bytes.\n",ret));
-+					    "only wrote %d bytes.\n", ret));
- 			} else {
--				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n",ret));
-+				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n", ret));
- 			}
- 		}
- 	}
-@@ -406,7 +421,8 @@ int i2c_pcf_add_bus(struct i2c_adapter *adap)
- 	/* register new adapter to i2c module... */
- 	adap->algo = &pcf_algo;
- 
--	if ((rval = pcf_init_8584(pcf_adap)))
-+	rval = pcf_init_8584(pcf_adap);
-+	if (rval)
- 		return rval;
- 
- 	rval = i2c_add_adapter(adap);
--- 
-2.43.0
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index 132545962218..430fc4880ddb 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -119,7 +119,6 @@ pub struct Devres<T: Send> {
+     // explicit `Send` and `Sync' impls can be removed.
+     #[pin]
+     inner: Opaque<Inner<T>>,
+-    _add_action: (),
+ }
+
+ impl<T: Send> Devres<T> {
+@@ -146,10 +145,7 @@ pub fn new<'a, E>(
+                     revoke <- Completion::new(),
+                     data <- Revocable::new(data),
+             })),
+-            // TODO: Replace with "initializer code blocks" [1] once avail=
+able.
+-            //
+-            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
+-            _add_action: {
++            _: {
+                 // SAFETY: `this` is a valid pointer to uninitialized memo=
+ry.
+                 let inner =3D unsafe { &raw mut (*this.as_ptr()).inner };
+
+
+base-commit: 544c94f0e155614551e0210074597a23d117830c
+--
+2.51.0
 
 
