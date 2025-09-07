@@ -1,236 +1,168 @@
-Return-Path: <linux-kernel+bounces-804599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D0BB47A4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D17B47A4E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CEF84E01AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B775D16CC4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD023ABA7;
-	Sun,  7 Sep 2025 10:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371A423BF9F;
+	Sun,  7 Sep 2025 10:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kf/mJF6g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ROsvt3gP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684A8239570;
-	Sun,  7 Sep 2025 10:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75E7238C33
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757239222; cv=none; b=icxHBAbo357IjnAGsC5mQ0kcmJyuW+u5lpe+lXiputPsnU5CAfLrxi4zirpYfL7hXcp97C8X+PEpWnHYtT/VwCKH52sZX8kaO84b/t/AbGwV77yJBihL6JKiSF5dM59ruKAytINrHvWYXOG62S5KVpK89sDupDnfHld3U23sHeM=
+	t=1757239224; cv=none; b=toGy+MA0ZLL446yxl0rCHg8RMZQB+aziT0jeV1LIYpER4zKLL3BsMKs4RAAUX3VD9uGax3W2LPobvLOD9K4nF1JSCxU6/yrn0WgTpYJZc/iV/F4k7Z1RZLGWLZKp2L5H8xebd6EsVHe5sQEFr0m6H94hDnSJIzXpJDs9nfMFt5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757239222; c=relaxed/simple;
-	bh=JfWpUEYPQW2GReQ0sxKhjJEbIWFSP22pqQB4+WmvFNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lI3P+MOn646Nb3PAuAAY6NoAkZA51fWnM+q71pjM9erCck+6iBWOAVtO3RrALNV1hS78Ge8glYYVrGPoju64cKhh8VNXUaBFsxudOaJHo7ueMJ+YaFUCRGkWGlI/eYSdTz6171/NtUa9KkoLrIrzKvkwoIvEcNEABZe60b+nTZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kf/mJF6g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B269EC4CEF0;
-	Sun,  7 Sep 2025 10:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757239221;
-	bh=JfWpUEYPQW2GReQ0sxKhjJEbIWFSP22pqQB4+WmvFNs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Kf/mJF6g0PrhJLF22iz2kYWzDCNwLvGvFL5r/OHQMmwUoVBXY6V2YOHsEh0+omK+x
-	 saV5X4yj/RoQL/YBKAJcyElFQfer5VLzMtjlpaDBt2ACuEm3AhrIsRJazT+10NlK7u
-	 lCNvszuhDonbRRdIc7x5Lzf/8ZQ+1IO8p82LopO6hmtKFOEyEogNsP13iWg/IFYUFM
-	 HS7kQBgCe//1gK66lTHOCazzoYo3uFL6XBNlKAWQXQvsaNaF5Gb13XpOse+3ij2hUF
-	 Q9RVduCVPBHWHpBYBHfPal/LSFjnoBFCwzkQGTV+WLtxvlxpQ5e5VxabXPM0oJQ9ZL
-	 6RorwOTFpeJfQ==
-Date: Sun, 7 Sep 2025 11:00:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: adc: ad7124: fix sample rate for multi-channel
- use
-Message-ID: <20250907110013.266c2da2@jic23-huawei>
-In-Reply-To: <20250905-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v3-1-702ff014ec61@baylibre.com>
-References: <20250905-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v3-1-702ff014ec61@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757239224; c=relaxed/simple;
+	bh=JdRGVx4bHeaB9hxsshS++UJcE2XQe4YXg/1/cdY5kpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtp45A7eXFDlcScz2BtESHcDi4PQzGDt2gea/OLRAv0DJVIOm0cprMO3gnXF9BG6QqH5DGxYW3AvTU3AxZp85MIuv5osStFpurzvXufem9in1RmolyBVR/DfP1RyUF/bN7uSQXzaAmNyqiAvCTzz0R/T7KmZRP9jEB1GpqTX04s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ROsvt3gP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5878w3br024585
+	for <linux-kernel@vger.kernel.org>; Sun, 7 Sep 2025 10:00:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qr3Czd9PwhhylBpPVieXHwCBf6HZ/rEjYpqLSCwU1MQ=; b=ROsvt3gPtum96m7O
+	O+9R4aaL8zNmbnZ+R/3AfPkim2F6zAIbHwZq1T5fz/KNVz4e9KfKVXQhGVbESLb6
+	m7iX3fXPgiMe59J1CbZJhtQp5nQ2hf7bdQDAWynMIqjnT+3Cq46IFcW+7f2ra7dk
+	mUo3UwG1xETfod5qzQIyZpf+WCbg4V62gOa17zkTWQCjNDQv6boB/ojppi3UM1Y/
+	/tsvSboIWkAaUBRpYUY5Tq/Sw3GyO8BTqLcQdIbgwTNWveXlCD76nMsoPc73uvVo
+	kviLF5HEdr6HLO5uxptPcTtzMhPJhQ+PchDdTvJ4enNTGUcPsOwvZ45gWPjD5QYY
+	o3K5ug==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490c9j2065-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 10:00:20 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-718c2590e94so106224416d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 03:00:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757239220; x=1757844020;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qr3Czd9PwhhylBpPVieXHwCBf6HZ/rEjYpqLSCwU1MQ=;
+        b=BywJI5mGArJ/QJd2OiQt7p6gNzpUXbea/w45iyB0yIhJU8pDaft/Rnbltfs7zBnVNy
+         DS30M2+Zu/dUA41cdcXt1IIhFRq1bg5Y4PquHTOWKFkw2/PjJkMqjxttP+HN/3Ax9asB
+         4Zu7I8YXCXGn8EUEgdTVE9w5Yay0R+2zDUqHX2p3mLliIj3d/I7+SCZh0wb8QRqKbHWw
+         wt76xDMpuiNNSrU22X56yMIgi/bLZn/XES6zekoWq7MEhasu8Vqbr7pBrXYRwyquBD3G
+         3F7+7sr/OfpKBDPtBe4NOzCWXOYb1ytl4MjEgV9yhbDIBlsHhUPbCUJP1LYai8BcVulg
+         elcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Axac70vIEh0+P9jOPGGEUBu+dHtFTnGjY/rNpfvXhRyYf6ghaVfufz9rofMZrtCOWdjel/wh4hxzTGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQsZI5SlS3jsL78m93qLp0f++StFo6crCWCOC7mmSlGfNdewGQ
+	D2dUCYqDeYeP6JAug0K5r0gDobopbJdahZLGtO2j9brE2B+7Mo7m8Y5SSknEVoP8o0w/FKflHOq
+	oiHty56lbuqxwicDwFT4ceI9pzeuvIADX3kYbJLWAPWf6CxuYe648V0/NO1IcpJ/4HOY=
+X-Gm-Gg: ASbGncuU4xvr87kYWnxWi7b5Zam5/KN4lygmamPgHPDDRwUrMbICjDCWC97SBRyfUe4
+	xt8YvJF3RlE256NtR9nz2U7nZ9VSojvYq4xaJudOtAY+ke6Sq+/dWuKUr853xybzX0uBVFDrVIg
+	h2uAajw01Pv5zuTpWtYiPAjE1C+tQEpo6nnt4VnJFoa66QFkTfPGld9Wr45zilx6GiUwZXYox9o
+	Qwq+Y5m4RJpUENTUowdQsKR3zGmB3H9X/4Ql6RfW9V4VZEFgvoMDjTwXpMPwgVNdt7o9fz3KEpx
+	2MLkdrTAH/yBxutMcELewB9qlBIh2MBeULvZo1b/ZUq24B4qs9vdFN/8fqMBJHQT/cM=
+X-Received: by 2002:a05:6214:2462:b0:70d:ae61:7ddd with SMTP id 6a1803df08f44-72bc5842ebcmr122738886d6.31.1757239219434;
+        Sun, 07 Sep 2025 03:00:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZRn6PmHHN0WVzaevPq6eNyd0NSdg9SA4KKI1yKwL5vha/Px9Z7l0N1LQNsS6IGy0U+cad0g==
+X-Received: by 2002:a05:6214:2462:b0:70d:ae61:7ddd with SMTP id 6a1803df08f44-72bc5842ebcmr122738456d6.31.1757239218799;
+        Sun, 07 Sep 2025 03:00:18 -0700 (PDT)
+Received: from [192.168.68.119] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45dd296ed51sm141015435e9.3.2025.09.07.03.00.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 03:00:18 -0700 (PDT)
+Message-ID: <899db9f0-27f5-4404-8357-4985e084ac99@oss.qualcomm.com>
+Date: Sun, 7 Sep 2025 11:00:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] ASoC: qcom: sc8280xp: Fix DAI format setting for
+ MI2S interfaces
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
+        ajay.nandam@oss.qualcomm.com
+References: <20250905150445.2596140-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250905150445.2596140-4-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20250905150445.2596140-4-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMiBTYWx0ZWRfX8SnvVX/qBM28
+ yshSor8glYtJgeuisf5MPNLkleVXwZvo0AiywnkqAOhzWirWgdFNv7taSThTHFBVjsCviFOlqCN
+ t6SqA9BvwiVCFtLzN2gNy4tMeIaHkYFQjN8KcgLwuhuQ0aTHC74HEbQ8OiHChUAtjaHYKfpwl/Y
+ 4UklA/GvQRLGPUnMAA42doBjHTPTcy+9Pvkz0EgsCrMKkCL1vBBj4J+dNNF80zEOODRFflE2sq7
+ QDXuWf/vMtHjgJbcdsSdbu9JFSwSZS79AnPEnMucMoGehDs7B56sk25pT2XiVkuRJi9LwPYl+hi
+ /7ZSq1ne0ExoqkRs73V3sW7fW2alHqw5PKcNstanqP3oFw1XK0REpfO3d73zv0h9tcd4WVXgsyt
+ DmqezU6I
+X-Proofpoint-ORIG-GUID: 9GSGiG7TiKVtPHRXVVcv4s5-LeS9CKdb
+X-Authority-Analysis: v=2.4 cv=PpOTbxM3 c=1 sm=1 tr=0 ts=68bd57b4 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=VTWOZG3uf4wZYCvkMeEA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: 9GSGiG7TiKVtPHRXVVcv4s5-LeS9CKdb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-07_03,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060022
 
-On Fri, 05 Sep 2025 12:33:34 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On 9/5/25 4:04 PM, Mohammad Rafi Shaik wrote:
+> The current implementation does not configure the CPU DAI format for
+> MI2S interfaces, resulting in -EIO errors during audio playback and
+> capture. This prevents the correct clock from being enabled for the
+> MI2S interface. Configure the required DAI format to enable proper
+> clock settings. Tested on Lemans evk platform.
+> 
+> Fixes: 295aeea6646ad ("ASoC: qcom: add machine driver for sc8280xp")
 
-> Change how the FS[10:0] field of the FILTER register is calculated to
-> get consistent sample rates when only one channel is enabled vs when
-> multiple channels are enabled in a buffered read.
-> 
-> By default, the AD7124 allows larger sampling frequencies when only one
-> channel is enabled. It assumes that you will discard the first sample or
-> so to allow for settling time and then no additional settling time is
-> needed between samples because there is no multiplexing due to only one
-> channel being enabled. The conversion formula to convert between the
-> sampling frequency and the FS[10:0] field is:
-> 
->     fADC = fCLK / (FS[10:0] x 32)
-> 
-> which is what the driver has been using.
-> 
-> On the other hand, when multiple channels are enabled, there is
-> additional settling time needed when switching between channels so the
-> calculation to convert between becomes:
-> 
->     fADC = fCLK / (FS[10:0] x 32 x N)
-> 
-> where N depends on if SINGLE_CYCLE is set, the selected filter type and,
-> in some cases, the power mode.
-> 
-> The FILTER register has a SINGLE_CYCLE bit that can be set to force the
-> single channel case to use the same timing as the multi-channel case.
-> 
-> Before this change, the first formula was always used, so if all of the
-> in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
-> a buffered read with 1 channel enabled would result in the requested
-> sampling frequency of 10 Hz. But when more than one channel was
-> enabled, the actual sampling frequency would be 2.5 Hz per channel,
-> which is 1/4 of the requested frequency.
-> 
-> After this change, the SINGLE_CYCLE flag is now always enabled and the
-> multi-channel formula is now always used. This causes the sampling
-> frequency to be consistent regardless of the number of channels enabled.
-> 
-> For now, we are hard-coding N = 4 since the driver doesn't yet support
-> other filter types other than the default sinc4 filter.
-> 
-> The AD7124_FILTER_FS define is moved while we are touching this to
-> keep the bit fields in descending order to be consistent with the rest
-> of the file.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Am really not sure if this is a fix, because sc8280xp does not have any
+Mi2S support. If you have added support for MI2S on any other platform
+that uses sc8280xp machine driver, then that is the right fixes tag.
 
-Given you replied to Andy's indentation comment on v2 and that seemed
-reasonable to me + the other change is a simplification for now I think
-this is ready to go.
-
-Given the whole ABI / fixes tag point I'm going to apply it to the
-'slow' path and taking via testing/togreg for the next merge windows.
-
-Applied to togreg and pushed out as testing for 0-day to take a look.
-
-Thank,
-
-Jonathan
-
+--srini
+> Cc: <stable@vger.kernel.org>
+> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 > ---
-> This is one of those unfortunate cases where we are fixing a bug but we
-> risk breaking userspace that may be depending on the buggy behavior.
+>  sound/soc/qcom/sc8280xp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> I intentionally didn't include a Fixes: tag for this reason.
-> 
-> Given some of the other shortcomings of this driver, like using an
-> integer IIO_CHAN_INFO_SAMP_FREQ value when it really needs to allow a
-> fractional values, it makes me hopeful that no one is caring too much
-> about the exact value of the sampling frequency. So I'm more willing
-> than I would normally be to take a risk on making this change.
-> 
-> [1] https://lore.kernel.org/linux-iio/20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com/
-> ---
-> Changes in v3:
-> - Removed the ad7124_get_avg() and harded-coded N = 4 for now.
-> - Link to v2: https://lore.kernel.org/r/20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com
-> 
-> Changes in v2:
-> - Improved comment explaining why the new factor always applies.
-> - Fixed merge conflict with iio/testing branch.
-> - Replaced avg parameter with ad7124_get_avg() function.
-> - Link to v1: https://lore.kernel.org/r/20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com
-> ---
->  drivers/iio/adc/ad7124.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index c6435327d431e5f4ba28aa3332ec6eb90da7c83d..70f458e3ccc12db884dda9003abcffdf48989e5e 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -93,10 +93,13 @@
->  #define AD7124_CONFIG_PGA		GENMASK(2, 0)
+> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
+> index 73f9f82c4e25..3067b95bcdbb 100644
+> --- a/sound/soc/qcom/sc8280xp.c
+> +++ b/sound/soc/qcom/sc8280xp.c
+> @@ -32,6 +32,10 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
+>  	int dp_pcm_id = 0;
 >  
->  /* AD7124_FILTER_X */
-> -#define AD7124_FILTER_FS		GENMASK(10, 0)
->  #define AD7124_FILTER_FILTER		GENMASK(23, 21)
->  #define AD7124_FILTER_FILTER_SINC4		0
->  #define AD7124_FILTER_FILTER_SINC3		2
-> +#define AD7124_FILTER_FILTER_SINC4_SINC1	4
-> +#define AD7124_FILTER_FILTER_SINC3_SINC1	5
-> +#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
-> +#define AD7124_FILTER_FS		GENMASK(10, 0)
->  
->  #define AD7124_MAX_CONFIGS	8
->  #define AD7124_MAX_CHANNELS	16
-> @@ -285,18 +288,20 @@ static u32 ad7124_get_fclk_hz(struct ad7124_state *st)
->  
->  static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
->  {
-> -	unsigned int fclk, odr_sel_bits;
-> +	unsigned int fclk, factor, odr_sel_bits;
->  
->  	fclk = ad7124_get_fclk_hz(st);
->  
->  	/*
-> -	 * FS[10:0] = fCLK / (fADC x 32) where:
-> +	 * FS[10:0] = fCLK / (fADC x 32 * N) where:
->  	 * fADC is the output data rate
->  	 * fCLK is the master clock frequency
-> +	 * N is number of conversions per sample (depends of filter type)
->  	 * FS[10:0] are the bits in the filter register
->  	 * FS[10:0] can have a value from 1 to 2047
->  	 */
-> -	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
-> +	factor = 32 * 4; /* N = 4 for default sinc4 filter. */
-> +	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
->  	if (odr_sel_bits < 1)
->  		odr_sel_bits = 1;
->  	else if (odr_sel_bits > 2047)
-> @@ -306,7 +311,8 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
->  		st->channels[channel].cfg.live = false;
->  
->  	/* fADC = fCLK / (FS[10:0] x 32) */
-> -	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
-> +	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
-> +								factor);
->  	st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
->  }
->  
-> @@ -439,10 +445,20 @@ static int ad7124_write_config(struct ad7124_state *st, struct ad7124_channel_co
->  	if (ret < 0)
->  		return ret;
->  
-> +	/*
-> +	 * NB: AD7124_FILTER_SINGLE_CYCLE is always set so that we get the same
-> +	 * sampling frequency even when only one channel is enabled in a
-> +	 * buffered read. If it was not set, the N in ad7124_set_channel_odr()
-> +	 * would be 1 and we would get a faster sampling frequency than what
-> +	 * was requested.
-> +	 */
->  	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
-> +		AD7124_FILTER_SINGLE_CYCLE |
->  		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
->  	return ad7124_spi_write_mask(st, AD7124_FILTER(cfg->cfg_slot),
-> -				     AD7124_FILTER_FILTER | AD7124_FILTER_FS,
-> +				     AD7124_FILTER_FILTER |
-> +				     AD7124_FILTER_SINGLE_CYCLE |
-> +				     AD7124_FILTER_FS,
->  				     tmp, 3);
->  }
->  
-> 
-> ---
-> base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
-> change-id: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
-> 
-> Best regards,
+>  	switch (cpu_dai->id) {
+> +	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
+> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
+> +		snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_BP_FP);
+> +		break;
+>  	case WSA_CODEC_DMA_RX_0:
+>  	case WSA_CODEC_DMA_RX_1:
+>  		/*
 
 
