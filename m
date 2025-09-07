@@ -1,185 +1,208 @@
-Return-Path: <linux-kernel+bounces-804549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7701B47946
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163D1B47950
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E41916386A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7547917050E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56C1F3BB5;
-	Sun,  7 Sep 2025 07:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEZKwHsm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F47E1F3BA2;
+	Sun,  7 Sep 2025 07:11:38 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78818202C2B
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 07:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45B62AE97
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 07:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757228447; cv=none; b=hCkxlu1LfDqSgkwyCfTRjZsyT4BCgCAtH6DRLP6h1ym6YMwjKq3BgEPquOSesu/Qsf1mBn/qcdPYi8EMGGmnomR1mjTgEm+ndhMFNkzQCBR1NJgDaQpYIdb8nqD3S4hL5sLkVCZ9uUVspLR46KFlI1lom57BQyHT9FGEScmuoL8=
+	t=1757229097; cv=none; b=s9UmvctC0uB6/2o0dzeaNtylQeOmsYkWUuV67xdDlSsndUjz7rUOkyLoEz8HhZX9P+3VYiqycLdKOco3+uCI832VhbwY6yx156bLX23Y2hHNBiEDq483WEgzyXe8Q6wyCujDYMIQryCiUtqohiZTKFGaB9P/PPQ7O4043oOAGwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757228447; c=relaxed/simple;
-	bh=S6cq5Fd+Tt7edEdfLD7ze+ZKtAEEGtzWPj0q1zSXPO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p7aH7QP+47AOtBi+VdxV+w59DIrWe8yBuv6C2sxBb4DRTsqp8oySU5ZgM/FaffbDgP4x8wHHuabKeSwh7k9xm3F2STeX9GumQYvYBPSWQLeEK2Ilo9dSdtMOIiTy+VldsmstU33DZZeRr2uJkgbJ7sEA1CTmsb1c1VW5QHQHCoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEZKwHsm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ADDC4CEFB;
-	Sun,  7 Sep 2025 07:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757228447;
-	bh=S6cq5Fd+Tt7edEdfLD7ze+ZKtAEEGtzWPj0q1zSXPO4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HEZKwHsmg+QtBW5UFiuYs26fucUIr6wGXLeddggrTHC9Qgqatmc8T374QZ/+Eg7eN
-	 3Cp2tnZpsbMiwBTqNfFboEAuvBqaFsEi2cwjiokLUKJf+eiR/hyZKhyERzjaRZiqKO
-	 qWcUlZigxroFfPXhC2aRs9Liyf/KGq+idNdgxbi4uUL7csesh9HXkeB1uckoUz3h3N
-	 oXUjzf1vww1oWvfB9l4KyHTe1abGjyAtQxaTXgFwnA3jM3KpdfipijBM6BFPCW5uo0
-	 Asp36UxHGNj9ZisfH32xiFhzIDbj06EjDDQfURoMxacHCdyPXEaApf5f8glSSLDeCf
-	 Lsnk/dTM0xRVg==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Graf <graf@amazon.com>,
-	Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
-Date: Sun,  7 Sep 2025 10:00:22 +0300
-Message-ID: <20250907070022.2177974-6-rppt@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250907070022.2177974-1-rppt@kernel.org>
-References: <20250907070022.2177974-1-rppt@kernel.org>
+	s=arc-20240116; t=1757229097; c=relaxed/simple;
+	bh=srrrLs+wEC07kyRpepO2/fSGE8nq9ahbv9VrAG4PnAY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TCeAsqO0Nu6nHzKAT+cpTjFZNfqJKzQunxjm63pzBUWRXSbFQG7WAOsn1C7bnh8rCICOsR/R2X39JfaICnIBYOQVVcGQhCSznoDENplaFc80r1FC02Afc4LjGUXrT6uZGBZAPRZfdz3kQpsfcYLhcYHX4NZI2aWeTxm4d8jKOVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ee1d164774so64060925ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 00:11:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757229095; x=1757833895;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ubewheY8ZTSPDA8vJSlVExU9cNAqFiFuY9Aubhjpw4s=;
+        b=qi8H/hmjPlrAREmYs2sFTMAX5l1DPgWp1ViKttJJXURtuN+TJfZOXmtRejSjNNekL9
+         ZyYv3pG2nyY4BeKp+kuuEiQBDKsQRqieDgpUXZ4HBKOuKQQma/jLVIxLqbnVYEO2vI07
+         OrblANBssLysH8Aqn/OrX6/t7006YFoz0hh23eeOe8kuNYZDkpm2W99pRi2ycUwe8Jwv
+         JBUUQkiCMN5UAwextX/a3nxrXdZ5sY/umrg4vulbJWnnNq66zi5KOnlRZtlwPcTbTTpj
+         EkPUkD73n37DJJ5my58A9CLAdsOR/5EhutbYKhYeqvbTYVvryXEzs1ZiIQhkQeOTRpjR
+         y9Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RLAfdV6ATFFRnHFMAlxiDBB3WYymPu06yQeecxMySQ45O5JFWxoHCKEVlagOcu/WH8na8MnYdIT2yXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymqAhKTd6ADN0775o0UG6TuDGbBNQVBPXNJs8bGNDBRlkacJ+I
+	q+uFC+tQTLwIKE/+0SAkfdvk0lPqTsVqf87zTdk/uyhbrDd4riiJil3RBFOhJ2buHVdR/zxf3C/
+	0YdN6EA6xHbY0N/ZTti185/NH9eW0j1b9Wr7yVY4hEV88Vrd/ogso8e1ja1U=
+X-Google-Smtp-Source: AGHT+IFhxpWMbfP/8VjiaFb7Tjmk3W3CHtWSS2RDMm5Zf5J9mhCagz2YYGMLQrpTVpALgZ+jcAzo324oJgcV6ErhnCztNRrgBxos
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a48:b0:3fb:d14c:3562 with SMTP id
+ e9e14a558f8ab-3fbd14c368amr87816915ab.2.1757229095079; Sun, 07 Sep 2025
+ 00:11:35 -0700 (PDT)
+Date: Sun, 07 Sep 2025 00:11:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bd3027.050a0220.192772.01cc.GAE@google.com>
+Subject: [syzbot] [block?] general protection fault in bio_iov_iter_get_pages
+From: syzbot <syzbot+b253ade8e1751d90a7a9@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axboe@kernel.dk, david@redhat.com, jgg@ziepe.ca, 
+	jhubbard@nvidia.com, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Hello,
 
-KHO test stores physical addresses of the preserved folios directly in
-fdt.
-Use kho_preserve_vmalloc() instead of it and kho_restore_vmalloc() to
-retrieve the addresses after kexec.
+syzbot found the following issue on:
 
-This makes the test more scalable from one side and adds tests coverage
-for kho_preserve_vmalloc() from the other.
+HEAD commit:    be5d4872e528 Add linux-next specific files for 20250905
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17896962580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a726684450a7d788
+dashboard link: https://syzkaller.appspot.com/bug?extid=b253ade8e1751d90a7a9
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10496962580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a98962580000
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f67121360b62/disk-be5d4872.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4f666ca2e57f/vmlinux-be5d4872.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e86b794b985e/bzImage-be5d4872.xz
+
+The issue was bisected to:
+
+commit db076b5db550aa34169dceee81d0974c7b2a2482
+Author: David Hildenbrand <david@redhat.com>
+Date:   Mon Sep 1 15:03:40 2025 +0000
+
+    mm/gup: remove record_subpages()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a0b312580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a0b312580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a0b312580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b253ade8e1751d90a7a9@syzkaller.appspotmail.com
+Fixes: db076b5db550 ("mm/gup: remove record_subpages()")
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 UID: 0 PID: 6063 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
+RIP: 0010:__bio_iov_iter_get_pages block/bio.c:1258 [inline]
+RIP: 0010:bio_iov_iter_get_pages+0x5b2/0x11c0 block/bio.c:1336
+Code: 9c 24 20 01 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 0c c9 7c fd 48 8b 1b 4c 8d 73 08 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 ef c8 7c fd 4d 8b 3e 4c 89 fe 48
+RSP: 0018:ffffc90002f773e0 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88807bfd0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002f77590 R08: 0000000000000000 R09: ffffffff84a7d3b5
+R10: dffffc0000000000 R11: fffff94000329b51 R12: dffffc0000000000
+R13: ffff888078cd0294 R14: 0000000000000008 R15: 00000000000000f0
+FS:  0000555567d13500(0000) GS:ffff888125af9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9a3134c000 CR3: 0000000074d2a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __blkdev_direct_IO+0x60b/0xee0 block/fops.c:215
+ blkdev_direct_IO+0x120f/0x1730 block/fops.c:434
+ blkdev_direct_write+0x7c/0x140 block/fops.c:719
+ blkdev_write_iter+0x547/0x710 block/fops.c:787
+ aio_write+0x535/0x7a0 fs/aio.c:1634
+ __io_submit_one fs/aio.c:-1 [inline]
+ io_submit_one+0x78b/0x1310 fs/aio.c:2053
+ __do_sys_io_submit fs/aio.c:2112 [inline]
+ __se_sys_io_submit+0x185/0x2f0 fs/aio.c:2082
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9a3058ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdf48caa48 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 00007f9a307c5fa0 RCX: 00007f9a3058ebe9
+RDX: 00002000000000c0 RSI: 00000000000000f3 RDI: 00007f9a3134c000
+RBP: 00007f9a30611e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f9a307c5fa0 R14: 00007f9a307c5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
+RIP: 0010:__bio_iov_iter_get_pages block/bio.c:1258 [inline]
+RIP: 0010:bio_iov_iter_get_pages+0x5b2/0x11c0 block/bio.c:1336
+Code: 9c 24 20 01 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 0c c9 7c fd 48 8b 1b 4c 8d 73 08 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 ef c8 7c fd 4d 8b 3e 4c 89 fe 48
+RSP: 0018:ffffc90002f773e0 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88807bfd0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002f77590 R08: 0000000000000000 R09: ffffffff84a7d3b5
+R10: dffffc0000000000 R11: fffff94000329b51 R12: dffffc0000000000
+R13: ffff888078cd0294 R14: 0000000000000008 R15: 00000000000000f0
+FS:  0000555567d13500(0000) GS:ffff8881259f9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe8453cfd8 CR3: 0000000074d2a000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	9c                   	pushf
+   1:	24 20                	and    $0x20,%al
+   3:	01 00                	add    %eax,(%rax)
+   5:	00 48 89             	add    %cl,-0x77(%rax)
+   8:	d8 48 c1             	fmuls  -0x3f(%rax)
+   b:	e8 03 42 80 3c       	call   0x3c804213
+  10:	20 00                	and    %al,(%rax)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 0c c9 7c fd       	call   0xfd7cc928
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	4c 8d 73 08          	lea    0x8(%rbx),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 f7             	mov    %r14,%rdi
+  34:	e8 ef c8 7c fd       	call   0xfd7cc928
+  39:	4d 8b 3e             	mov    (%r14),%r15
+  3c:	4c 89 fe             	mov    %r15,%rsi
+  3f:	48                   	rex.W
+
+
 ---
- lib/test_kho.c | 41 +++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/lib/test_kho.c b/lib/test_kho.c
-index fe8504e3407b..c46f577b6aee 100644
---- a/lib/test_kho.c
-+++ b/lib/test_kho.c
-@@ -32,6 +32,7 @@ module_param(max_mem, long, 0644);
- struct kho_test_state {
- 	unsigned int nr_folios;
- 	struct folio **folios;
-+	phys_addr_t *folios_info;
- 	struct folio *fdt;
- 	__wsum csum;
- };
-@@ -67,18 +68,15 @@ static struct notifier_block kho_test_nb = {
- 
- static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- {
--	phys_addr_t *folios_info;
-+	phys_addr_t *folios_info __free(kvfree) = NULL;
-+	phys_addr_t folios_info_phys;
- 	int err = 0;
- 
--	err |= fdt_begin_node(fdt, "data");
--	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
--			    sizeof(state->nr_folios));
--	err |= fdt_property_placeholder(fdt, "folios_info",
--					state->nr_folios * sizeof(*folios_info),
--					(void **)&folios_info);
--	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
--	err |= fdt_end_node(fdt);
-+	folios_info = vmalloc_array(state->nr_folios, sizeof(*folios_info));
-+	if (!folios_info)
-+		return -ENOMEM;
- 
-+	err = kho_preserve_vmalloc(folios_info, &folios_info_phys);
- 	if (err)
- 		return err;
- 
-@@ -93,6 +91,17 @@ static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- 			break;
- 	}
- 
-+	err |= fdt_begin_node(fdt, "data");
-+	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
-+			    sizeof(state->nr_folios));
-+	err |= fdt_property(fdt, "folios_info", &folios_info_phys,
-+			    sizeof(folios_info_phys));
-+	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
-+	err |= fdt_end_node(fdt);
-+
-+	if (!err)
-+		state->folios_info = no_free_ptr(folios_info);
-+
- 	return err;
- }
- 
-@@ -210,7 +219,8 @@ static int kho_test_save(void)
- static int kho_test_restore_data(const void *fdt, int node)
- {
- 	const unsigned int *nr_folios;
--	const phys_addr_t *folios_info;
-+	const phys_addr_t *folios_info_phys;
-+	phys_addr_t *folios_info;
- 	const __wsum *old_csum;
- 	__wsum csum = 0;
- 	int len;
-@@ -225,8 +235,12 @@ static int kho_test_restore_data(const void *fdt, int node)
- 	if (!old_csum || len != sizeof(*old_csum))
- 		return -EINVAL;
- 
--	folios_info = fdt_getprop(fdt, node, "folios_info", &len);
--	if (!folios_info || len != sizeof(*folios_info) * *nr_folios)
-+	folios_info_phys = fdt_getprop(fdt, node, "folios_info", &len);
-+	if (!folios_info_phys || len != sizeof(*folios_info_phys))
-+		return -EINVAL;
-+
-+	folios_info = kho_restore_vmalloc(*folios_info_phys);
-+	if (!folios_info)
- 		return -EINVAL;
- 
- 	for (int i = 0; i < *nr_folios; i++) {
-@@ -246,6 +260,8 @@ static int kho_test_restore_data(const void *fdt, int node)
- 		folio_put(folio);
- 	}
- 
-+	vfree(folios_info);
-+
- 	if (csum != *old_csum)
- 		return -EINVAL;
- 
-@@ -304,6 +320,7 @@ static void kho_test_cleanup(void)
- 		folio_put(kho_test_state.folios[i]);
- 
- 	kvfree(kho_test_state.folios);
-+	vfree(kho_test_state.folios_info);
- 	folio_put(kho_test_state.fdt);
- }
- 
--- 
-2.50.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
