@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6747B47BEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A76B47BED
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0888A7AB235
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A138F17C8DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C9A27CB31;
-	Sun,  7 Sep 2025 15:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A06627B341;
+	Sun,  7 Sep 2025 15:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTLKWDpL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhS44Phk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A701C28E;
-	Sun,  7 Sep 2025 15:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4EE17A2EA;
+	Sun,  7 Sep 2025 15:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757257319; cv=none; b=tp6w4KDMeFJMuK0pisClXDyDaDiXlyAoTjfnfRvYCtO+Y/PHPbvWX26Xa9hS7uVFQBnhDaMqErJjbv/q3PDgfRHLR0aT3Mui9fvpJGmoOkOuSCvUQolfsvtbbQdI82HiKDEwtKLixzVN76WyYe5L3dC1ooTcLnkQ5+MDQ0VjvRk=
+	t=1757257646; cv=none; b=DykQbjU8/MrKDunQKPLF5dy2+fMNQrRIpg54wSHYoTQ3LQ2Mb+tDAzRB+LDCGbkXDkYbxP8KXDGkfSG0v1v+WljT8iRCB2uNPgeRmFsWO9OlQzBUrmPhh2Rb5hF81Psr7RqMbV9sTvkUOI+HgBSJoZueVxexiXPbWDBHrK/adoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757257319; c=relaxed/simple;
-	bh=M1az1dqE50WLziboVn65KrGLakoDSTl5MOBCmWGuKVI=;
+	s=arc-20240116; t=1757257646; c=relaxed/simple;
+	bh=ViqUPijdU48j18QgsErT7jw2tgGcDvqP1vUDdI0wC7M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AqarYTN6E1FnFL+DmGBtxQ3KCtM69nAJHOKXcqK3GmZwzahqPaCnhx8N0eQeQlNDFM3RhpG/LFOOh5ylOsk8/4RtsAMfGuUnxXFuxc42dtqWRoKcVi7nfvB6K0zOC4uYeu86R9nAAHdUOu0cF5kijsWdVgg8UoVNCbZebDpayjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTLKWDpL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D0BC4CEF5;
-	Sun,  7 Sep 2025 15:01:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dYk0VsKNXTdcFgd652aUp3mPpaYqQadtiiwHRbkNEW3+qOLi6Ep5ovIxFEMbRbIIEnDlO0eOuuCbbGxA9ZdYaTz6Yvuoc0QQ3KQ8dkPM7yb+cCWizrvC3+HN2895qOW0148dYGTSjIEWoGh01YGzh/+WqYNxAFs3+3I2TnSsi10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhS44Phk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E9AC4CEF0;
+	Sun,  7 Sep 2025 15:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757257318;
-	bh=M1az1dqE50WLziboVn65KrGLakoDSTl5MOBCmWGuKVI=;
+	s=k20201202; t=1757257646;
+	bh=ViqUPijdU48j18QgsErT7jw2tgGcDvqP1vUDdI0wC7M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WTLKWDpLbrW8Er2ZGLun9ZD+0fKigwbUpK1OCbHs1m1srF4LE9D8nGWIjoXnFKaPC
-	 8gvRFqti7QaxIXsSN4Sm28DOEfjeoI0a40xkMQKX8o0r3Z4WLaPjjRpYnRV8hGQL99
-	 P+qnfIyax5k1MOxVqQbFp5Gi1LVkwd0K3G4R6f/B/GoCVn4IJk/wpfhCIbvebLaUx1
-	 qRbC+fLLGbSqBcpYkqqg2CEbi+syv6Gk3GDKpOk34+W00iWGDOnXqt7wocSahvGU6c
-	 Z8Poc9AQJgc42NEVR3f6a3uaYeWkLRlQ1qdMpVtBXX5klNWgvs29JydNhZEEYmW2CG
-	 jBlgk9pkjdV/g==
-Message-ID: <8e12d39a-f367-477e-97ec-069f1424fa70@kernel.org>
-Date: Sun, 7 Sep 2025 17:01:51 +0200
+	b=bhS44Phkh8+SohlZZf8iubue5u0W4Jv5kDD0dhcAZygABtrANgiSY68bsu138z5Wp
+	 sUqx1mU7ltdj+zmJUWJcuYCYLxBrYPjt39ZlmjZd/XRd6pGUlL2D3iv2gMQT59orrG
+	 IDfCb0d4vJsV10de2fpJhd/lGYqXRG3b5FzhDx4t1V9DsM8r0tJiYFx2lTQYdIKrrY
+	 dBP6zaxG47hSuDTkYw21h//YIHco9XG10i8djsSuBebNgBzAq5ht5a+lKWU3RzHzuD
+	 9YrH6u/zVPqJSH/j+/S4rbJNhMWXQdeHdm+YXsnkh/RrGf4mff4y0OdP5tSS4Y+/vT
+	 NTo2eLZKmGirw==
+Message-ID: <49db9339-b2a4-4be5-b0ba-005b3ed493a0@kernel.org>
+Date: Sun, 7 Sep 2025 17:07:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/22] arm64: dts: apple: t8103: Add Apple Type-C PHY
- and dwc3 nodes
-To: Alyssa Anne Rosenzweig <alyssa@rosenzweig.io>
-Cc: Sven Peter <sven@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- Hector Martin <marcan@marcan.st>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
- <20250906-atcphy-6-17-v2-20-52c348623ef6@kernel.org>
- <20250907-zippy-auburn-koel-d6da32@kuoka> <aL199DK3XfkaelgH@fedora>
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Nick Huang <sef1548@gmail.com>, Lee Jones <lee@kernel.org>
+Cc: Johnsodn Huang <kusogame68@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250902142749.13724-1-kusogame68@gmail.com>
+ <20250903074205.GB2163762@google.com>
+ <CABZAGRHSVY3uneK7qb2nwDrjjRsLXzsm0mwQncU1iRZac6tAkw@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,26 +104,61 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aL199DK3XfkaelgH@fedora>
+In-Reply-To: <CABZAGRHSVY3uneK7qb2nwDrjjRsLXzsm0mwQncU1iRZac6tAkw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/09/2025 14:43, Alyssa Anne Rosenzweig wrote:
->> Please do not combine DTS patches in patchsets for Greg (e.g. USB). Greg
->> expressed that many times, that he takes all or nothing, and DTS cannot
->> go via driver branches/trees.
+On 07/09/2025 15:38, Nick Huang wrote:
+> Lee Jones <lee@kernel.org> 於 2025年9月3日 週三 下午3:42寫道：
+>>
+>> Looks like you corrupted the subject line with the commit message.
+>>
+>> Please resubmit.
+>>
+>>> From: Johnson Huang <kusogame68@gmail.com>
+>>
+>> Use `git format-patch` and `git send-email` instead.
+>>
+>>> Co-developed-by: Nick Huang <sef1548@gmail.com>
+>>> Signed-off-by: Nick Huang <sef1548@gmail.com>
+>>> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
+>>
+>> It took two of you to correct the word "and"?
+>>
+>>> ---
+>>>  Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+>>> index d783cc4e4e..d16c82e398 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+>>> @@ -41,7 +41,7 @@ properties:
+>>>    clock-output-names:
+>>>      maxItems: 1
+>>>
+>>> -# The BD71847 abd BD71850 support two different HW states as reset target
+>>> +# The BD71847 and BD71850 support two different HW states as reset target
+>>>  # states. States are called as SNVS and READY. At READY state all the PMIC
+>>>  # power outputs go down and OTP is reload. At the SNVS state all other logic
+>>>  # and external devices apart from the SNVS power domain are shut off. Please
+>>> --
+>>> 2.43.0
+>>>
+>>
+>> --
+>> Lee Jones [李琼斯]
 > 
-> From the cover letter, emphasis mine:
-
-This changes nothing. Please read replies from Greg how he takes patches.
-
 > 
->> With the dwc3 glue driver this series can now also be merged independently
->> once it's ready: Patches 1-4 can go through the dwc3 tree, 5-15 through
->> tipd, 16-18 should go together through the phy tree, and I'll take the
->> DTS changes through my tree. **If everyone's happy with the overall
->> approach here I can also just send these as individual series**
+> This patch was sent by Johnson Huang on my behalf.
 
+The From is malformed then. There is no single reason to change it.
+
+> If only one person should sign off, I have already discussed with him
+> and will keep only my own Signed-off-by.
+
+For simple one letter typo? And then you sent three patches one-per-fix,
+which is way too much churn.
 
 Best regards,
 Krzysztof
