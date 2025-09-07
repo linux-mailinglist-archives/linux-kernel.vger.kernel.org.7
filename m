@@ -1,145 +1,98 @@
-Return-Path: <linux-kernel+bounces-804787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337F6B47CF7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:05:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42B3B47CEF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E94E18883DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A9D3B2D02
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A21427B337;
-	Sun,  7 Sep 2025 19:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CA229AB02;
+	Sun,  7 Sep 2025 18:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RLFrfRf5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/nhlj0z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB9315D43;
-	Sun,  7 Sep 2025 19:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D1D1DA23;
+	Sun,  7 Sep 2025 18:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757271901; cv=none; b=PClFLSMNU3GaRekWg5g+Ol6pYygP4DXmQu6CJx7iS8PztsOGclEiuCyvqan7tMiGumPqYaXU/qY4x8OkFeMAacTq6KyfsdeFj4s1q/nGM/NHq/jzv1CcI69TZnzl0scDn0rmZNzXAFW+hez4ymuWOZ19rO62RtyP8kb0aLHUWjQ=
+	t=1757271431; cv=none; b=dCUdIqSoq0+VYe9VxgdnhrEyTu44Yve17+rBvkqn0o5tjWqYMFX7tButtwjbMe4xgTeN5JmL8b1zR8RnzYYwwbGBwBcfjvuLSIrxvWLgH1hnZohh6E6To3BMQeGSTjRVOJpia2HM5ofFL2H/UiOCteUCodZ5PW6Nik68WQISkE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757271901; c=relaxed/simple;
-	bh=gUIuOOIKWhEx1xwPgna4RrrpVzZ+3uU0xA1uFkAIhcE=;
+	s=arc-20240116; t=1757271431; c=relaxed/simple;
+	bh=V79pYRFc32aO8v0d/PJmtQPaMVgFkBCgwsmjBkROgXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qf8jxgHU2g+Bg0sUV3ufm4X9NvuR0pb1zGRPyF7sppBYicA4+C94OMc0RTXyO586Wb6eryC8ACB8KdGOyRf8vzo6iDFa2Ultwj1XahjoVCPXhZVGjQxl8/kEQNpcTuOcjSAstz1caAWUQ3CPuv8JfzTIOcpYw/pUvuBRldNMlko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RLFrfRf5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1DD30156F;
-	Sun,  7 Sep 2025 20:54:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757271261;
-	bh=gUIuOOIKWhEx1xwPgna4RrrpVzZ+3uU0xA1uFkAIhcE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0F8gHvKI6kSzJ1vQVOKhIeBUD8J9cdGJoSxM46vNsoq1i6LqlguZVPSDhJEqWLKTzNuPypfo1YbUhZgcY5Tva6+gS2GGcjLknsBjxnnUKckrAUxHnRglkTDYuAt23ik2M5yFpVV/EBM+6z1yDw5d5ApEFipZh+61bg8uvwhJHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/nhlj0z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C678C4CEF0;
+	Sun,  7 Sep 2025 18:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757271430;
+	bh=V79pYRFc32aO8v0d/PJmtQPaMVgFkBCgwsmjBkROgXg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RLFrfRf5GAyf54C/jQQZeiEpbIpjCJGS7mvRuodyMPvwh2GxXIC66Q+/TXGLZgjgI
-	 n7UUWNRcrNrbXjpdWpfIBkIepN5ncC1rYw+EJAbB16kxlVCu5xtf0L33OG8ieRTf5u
-	 M+31IxPOFevvIZmvxK8SJy5czh8tlSqBVEIDUVBg=
-Date: Sun, 7 Sep 2025 20:55:12 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 01/10] media: v4l: ctrls: add a control for
- flash/strobe duration
-Message-ID: <20250907185512.GA4105@pendragon.ideasonboard.com>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-1-d58d5a694afc@linux.dev>
+	b=r/nhlj0zz9k+yL2Z0Lh5ntQwoJWOVJhe/m2O9ZMOU0R/wrIZlnSxes4DJUDVjSf4n
+	 i+CsYcq8nx/6cdQPN3zHgJBT0yxCfJB1GLsjmyjVWgXdVszO9GaNfPtQOZ52Be8f8z
+	 hcF+aA06mB6tgRet37AftfxAaP3K7tg1pyVm+xc/apP6pHacaMBUYC+btsTWwBIh0c
+	 RVcK2G08Uo1Uc1mmLv5poNkRZkKMO4sdfJxBl8nIjRyg/n6Dte+VDoagV+JoxdZpmx
+	 HAFvozhcmZlsQevLHija7Pvrm92Mkbcsz1hPLj6rYzU5kgQ7lHU5+HqRXdjoCXx9p9
+	 u2vx+Sx2darTw==
+Date: Sun, 7 Sep 2025 11:55:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: ronnie sahlberg <ronniesahlberg@gmail.com>
+Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
+Message-ID: <20250907185555.GA3530@sol>
+References: <20250907032003.386794-1-ebiggers@kernel.org>
+ <CAH2r5mutq5vZwKNyZ6nforOierKSH9si+47XoFV7PZSKxuvqHQ@mail.gmail.com>
+ <CAN05THRE0powMS-AgXHfGT_rbkrqBA09PDA6ydzcCGzSnA-V9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901-ov9282-flash-strobe-v7-1-d58d5a694afc@linux.dev>
+In-Reply-To: <CAN05THRE0powMS-AgXHfGT_rbkrqBA09PDA6ydzcCGzSnA-V9w@mail.gmail.com>
 
-Hi Richard,
-
-Thank you for the patch.
-
-On Mon, Sep 01, 2025 at 05:05:06PM +0200, Richard Leitner wrote:
-> Add a control V4L2_CID_FLASH_DURATION to set the duration of a
-> flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
-> control, as the timeout defines a limit after which the flash is
-> "forcefully" turned off again.
+On Mon, Sep 08, 2025 at 04:33:18AM +1000, ronnie sahlberg wrote:
+> On Mon, 8 Sept 2025 at 03:59, Steve French <smfrench@gmail.com> wrote:
+> >
+> > Ronnie may have additional context, but it may have been forked due to
+> > unrelated restrictions on the arc4 module (that had nothing to do with
+> > cifs.ko very narrow usage of arc4) breaking cifs.ko.
+> >
+> > Ronnie,
+> > Do you remember the context?
 > 
-> On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
-> of the flash/strobe pulse.
-
-It took me a while to understand the difference between the
-V4L2_CID_FLASH_TIMEOUT and V4L2_CID_FLASH_DURATION controls, as I
-wondered how a device could implement different duration and timeout
-values. Then I realized that the timeout control is meant for flash
-controllers, while the duration control is meant for the source of the
-flash controller's external hardware strobe signal, typically the camera
-sensor. I'd like this to be more explicit, here and in the
-documentation. Here's a proposal for an updated commit message:
-
-----
-Add a V4L2_CID_FLASH_DURATION control to set the duration of a
-flash/strobe pulse. This controls the length of the flash/strobe pulse
-output by device (typically a camera sensor) and connected to the flash
-controller. This is different to the V4L2_CID_FLASH_TIMEOUT control,
-which is implemented by the flash controller and defines a limit after
-which the flash is "forcefully" turned off again.
-----
-
-This could probably be improved, but it's good enough for me for the
-commit message.
-
-On a side note, I think we could have reused the V4L2_CID_FLASH_TIMEOUT
-control for this purpose, even if the name isn't the best match, as the
-two usages are implemented on different devices (flash controller vs.
-camera sensor). We have no shortage of control ID space, so a separate
-control ID is fine too, and probably clearer (as long as we document it
-clearly).
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
->  include/uapi/linux/v4l2-controls.h        | 1 +
->  2 files changed, 2 insertions(+)
+> Yepp.
+> The context was that to my understanding it was suggested that the
+> arc4 module would be going away
+> and would be removed so cifs had to stop using it. (or create its own
+> private copy)
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> index 1ea52011247accc51d0261f56eab1cf13c0624a0..f9ed7273a9f3eafe01c31b638e1c8d9fcf5424af 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> @@ -1135,6 +1135,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_FLASH_FAULT:		return "Faults";
->  	case V4L2_CID_FLASH_CHARGE:		return "Charge";
->  	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
-> +	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
->  
->  	/* JPEG encoder controls */
->  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index f836512e9debbc65d62a9fe04069b056be42f7b2..a5b7c382d77118eb7966385c5b22d5a89bc2b272 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -1186,6 +1186,7 @@ enum v4l2_flash_strobe_source {
->  
->  #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
->  #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
-> +#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
->  
->  
->  /* JPEG-class control IDs */
+> Must been a misunderstanding of what/how would happen with arc4 when
+> it was retired.
+> 
 
--- 
-Regards,
+Looks like it was this thread:
+https://lore.kernel.org/linux-cifs/YRXlwDBfQql36wJx@sol.localdomain/T/#u
 
-Laurent Pinchart
+Ard and I suggested that, *if* the MD4 code has no other users, it
+should be *moved* into fs/cifs/.  Unfortunately, it turned out it does
+have another user: iwd uses MD4 via AF_ALG.  But either way, we never
+suggested adding a duplicate copy of either the MD4 or ARC4 code.
+
+- Eric
 
