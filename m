@@ -1,100 +1,130 @@
-Return-Path: <linux-kernel+bounces-804746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B59EB47C7D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:53:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CEFB47C82
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45733189962F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E363B3BCD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5EF285050;
-	Sun,  7 Sep 2025 16:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BD6284B4C;
+	Sun,  7 Sep 2025 16:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="gPs9V00X"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SiRhoxjz"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831851C6A3;
-	Sun,  7 Sep 2025 16:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8321578F;
+	Sun,  7 Sep 2025 16:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757263973; cv=none; b=bmfR2nbBx3RLRNmd3cR3Yn/XcVehvhX4ILv2cH8Ik/p4PUJn0LjQ7ObDtD51bZiAS0lT4xU95uYsicWOnlyPfPBHbPj1VfypRSdfpZh6KEbp8ROq0FJzXu9YWgkYK4KFLNIm5krJh90SrhB/Eflpnox3CTTaVqsCIADbhG3OWNo=
+	t=1757264143; cv=none; b=UZcQYoiKU0ch22ZGjSBH9cXtHYC1t1OHSCIxbutoy0PiyX0ZDfQJgfhbeh7PPUrtUbSM6HIA7ExG4A3AlPIGLr8h+R7D6tQG67I2YHxMWyFr3ZpIcewGe3+t+H51MFdVeK5yzGqGF0FAZZelQZHdM1IwC/08SGuOZG0xnWO6oe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757263973; c=relaxed/simple;
-	bh=F/24ciM1j11ua/knGQhVWHQkxntL42B63VZvi0iR/Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VI4GxhOo8Y70zjAS+Y6Cp+1fmca6QUEDLtD1PLA9nahxyy/c877oK/Jjls9E1Tsr5YPDvwAxopVbV8+vvlhfS9aUNZj+ih888+l6GcVNOnwr5k+p1F6GZeacOerPK30OMC3gE9OCUs3DXRo8Mjs9NDpF4a0S0GlPlQmQWuTsACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=gPs9V00X; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cKbjs0S9dz9tHp;
-	Sun,  7 Sep 2025 18:52:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757263969;
+	s=arc-20240116; t=1757264143; c=relaxed/simple;
+	bh=hj/oyp4cEgcvL/1yElr6j76VlPObqr1h7l8aQw98mog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IKenFeps1fl2+u2H/SdtVRTiNI1zwFuQbYf011zgEbF277HBUbcE/qviiscYETYaQLFkxmwX/snwT9CzX1OFrs+iO+CpQ9kN+kPjTsxa8jqtDrvanxgtyxZy+0nAx84kRfr2WecW1mPE2/w2/Lq+4Lhfs33+HnmSuMM7daQwJUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SiRhoxjz; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <00d37c64-f584-4846-b65c-76582601c30f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757264129;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZFIcbNvPEoCpucJAgPEBDI5ghiJH/mZZqi/qt+FRAtI=;
-	b=gPs9V00X0uyp27qkyqUpw2vp2emOp9nNNpJ2k6uT6pgZAMarP9kSnE4FLdYuOYmqHL7MbG
-	fuL16htgJImg3pXpwZMO5rRTCwqapalIt2zEkPkS6cs5f1a7QVgV8w9ajcjtluIrPh+Eqm
-	Uxv9oL77Oqu8SXDHaOradOiztXJMkx+Ym93dACPKDO8lvBDuRPc+xNkxLa7gn/GO7eg+6s
-	L+aJZzTzvkLsQ4l/i9uL7c48ojTK09HTDtXJ6mmX4z/RAn2dSh6zMrJlIhtOk1J+n7PPvq
-	P5yJctAE7l1Y7V13vGhrk9te6woEGdqWG3272x65q2AkuIBCK3ZvSCAn8gAspQ==
-Date: Sun, 7 Sep 2025 18:52:44 +0200
-From: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukasz.majewski@mailbox.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-Subject: Re: [net-next v19 4/7] net: mtip: Add net_device_ops functions to
- the L2 switch driver
-Message-ID: <20250907185244.7eab9640@wsk>
-In-Reply-To: <20250827111651.022305f9@kernel.org>
-References: <20250824220736.1760482-1-lukasz.majewski@mailbox.org>
-	<20250824220736.1760482-5-lukasz.majewski@mailbox.org>
-	<20250827111651.022305f9@kernel.org>
-Organization: mailbox.org
+	bh=ELddA0f2ttvGHdC8Ifs6ZhKF0YoIStSpLQZE8s5K2Hk=;
+	b=SiRhoxjzpq/2GariF7snGksH/Pd5bDzzHTigFdy3aSAkiser8+ypa/adG+daV1Bk4oA1qh
+	SWBT2+lOQdHsHT0hRRA3vKKs6Ss9Z6Go2J1T0gffzlYtP8tc42aa+KezEjCMfhR4xSiWVY
+	57phi9DDi2EaPMzzkOi3DZ8+tOGFiYY=
+Date: Sun, 7 Sep 2025 17:55:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-MBO-RS-META: y5a5h3eezse9k4uczes6z1epofcg74go
-X-MBO-RS-ID: 4f2f62b6c2bc268ccba
+Subject: Re: [PATCH net-next v04 05/14] hinic3: Command Queue flush interfaces
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>,
+ Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>,
+ Lee Trager <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>,
+ Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Joe Damato <jdamato@fastly.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1757057860.git.zhuyikai1@h-partners.com>
+ <be5378bb148410286bb319a82fd2e2f0c9044117.1757057860.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <be5378bb148410286bb319a82fd2e2f0c9044117.1757057860.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jakub,
+On 05/09/2025 09:28, Fan Gong wrote:
 
-> On Mon, 25 Aug 2025 00:07:33 +0200 Lukasz Majewski wrote:
-> > +
-> > +	/* On some FEC implementations data must be aligned on
-> > +	 * 4-byte boundaries. Use bounce buffers to copy data
-> > +	 * and get it aligned.spin
-> > +	 */ =20
->=20
-> Almost forgot, the word "spin" appears here rather out of place.
+[...]
 
-Thanks for pointing this out.
+> +struct comm_cmd_clear_doorbell {
+> +	struct mgmt_msg_head head;
+> +	u16                  func_id;
+> +	u16                  rsvd1[3];
+> +};
+> +
+> +struct comm_cmd_clear_resource {
+> +	struct mgmt_msg_head head;
+> +	u16                  func_id;
+> +	u16                  rsvd1[3];
+> +};
 
---=20
-Best regards,
+I don't see any difference in these 2 structures. And the code
+implementation doesn't check types. Probably it's better to refactor
+things and try to implement it using common thing.
 
-=C5=81ukasz Majewski
+[...]
+
+> +void hinic3_enable_doorbell(struct hinic3_hwif *hwif)
+> +{
+> +	u32 addr, attr4;
+> +
+> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
+> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
+> +
+> +	attr4 &= ~HINIC3_AF4_DOORBELL_CTRL_MASK;
+> +	attr4 |= HINIC3_AF4_SET(ENABLE_DOORBELL, DOORBELL_CTRL);
+> +
+> +	hinic3_hwif_write_reg(hwif, addr, attr4);
+> +}
+> +
+> +void hinic3_disable_doorbell(struct hinic3_hwif *hwif)
+> +{
+> +	u32 addr, attr4;
+> +
+> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
+> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
+> +
+> +	attr4 &= ~HINIC3_AF4_DOORBELL_CTRL_MASK;
+> +	attr4 |= HINIC3_AF4_SET(DISABLE_DOORBELL, DOORBELL_CTRL);
+> +
+> +	hinic3_hwif_write_reg(hwif, addr, attr4);
+> +}
+
+These 2 functions differ only in one bit. It might be better to
+implement it once and use extra boolean parameter?
+
+
 
