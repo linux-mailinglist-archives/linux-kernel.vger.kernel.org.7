@@ -1,303 +1,336 @@
-Return-Path: <linux-kernel+bounces-804628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F5CB47AB5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA53B47AB8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BDE3A8214
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E3C177D66
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268F725B30D;
-	Sun,  7 Sep 2025 11:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4025DB12;
+	Sun,  7 Sep 2025 11:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYEvZ9ud"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHV/EzhV"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1893D214228;
-	Sun,  7 Sep 2025 11:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E8B315D43;
+	Sun,  7 Sep 2025 11:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757243111; cv=none; b=qbvM3lKNFesq5x8N6eZDS4LTX/ADEMxGQLjJUNJTDINLWixhG4/XcymmYRNaP/dxOl3Qsks3ToW0r2X6c5EhgKUnoJ1o6mmt5za8OpcquNE/nQQ7rdtFNNTkAoqmSrXTg6nvZZwDltiZTQXSjxBad1njvFOEnoKuqq24BFzfDqE=
+	t=1757243575; cv=none; b=PnMZLHp7YfCzGlgg/qRJvVXPZePB2HpzVgYPCGnpunmnAKYxxqV6fDlNdmKPvrm0GNI+gnHd296aywbWWjE0Ud1MGX0vd+xJ1q2lU4vtCDg5EPiIEVqm1yCdK0atvZ10egUh5saJi3F3lAmiKIz40fXA9dBmF3YmQm7pqKnotmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757243111; c=relaxed/simple;
-	bh=JdTNibIilDd+UfC1ULHBnf6cE5P7BiFfeZWqhObsgMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPbe4fveB23dzC6/Ljj7oE0BlEIoonladaAFSBUu4sm+Qoq3HyjFoUppxReroqoY0QfaMmMNt4D8njNaDANzP2lHQyt1Q2uCNg7brji3XnZXt1q3rlctwEKZ0MBmaL8i58UPXzGgJ1sfiSInSJiWkRn0jzXifNMRWOsv7Cdt94Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYEvZ9ud; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1D6C4CEF0;
-	Sun,  7 Sep 2025 11:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757243110;
-	bh=JdTNibIilDd+UfC1ULHBnf6cE5P7BiFfeZWqhObsgMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cYEvZ9udBXnyl52c6GpP9UJ/mNLMl4CUL2VAomhN6HlWAXWQB3McUvMazJdXYzDVd
-	 yO2oj1HDE5/8TOoTx+acsLiMkc8sgP7JrsWyEuU+ha1MsS31kTp/45gSzmn2CuTjlD
-	 5lBOZiTOPwtcEeh3Qb72ZsnHN1KV/C2i9vAQVqD+RJsHMZbpdecmLAwBfwv5vrHpfv
-	 jh3AOb0z1UfKIQu9N2eJ3W9u1e/cNPS1s4Qw7YqV3PM3wlPNjNhNJMNYPxNFgtVZgJ
-	 OV9BCWSPT7+gqiJ7nbS0N5WG8AG5w1Aygvq41aCZqYkCsFRBCGp5u23P0x+SRqkXoi
-	 LOzZPRVy2vPDg==
-Received: by pali.im (Postfix)
-	id 95653A1B; Sun,  7 Sep 2025 13:05:06 +0200 (CEST)
-Date: Sun, 7 Sep 2025 13:05:06 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Ralph =?utf-8?B?QsO2aG1l?= <slow@samba.org>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/35] cifs: Fix SMB rmdir() and unlink() against Windows
- SMB servers
-Message-ID: <20250907110506.czjh3td4qf5ieb4m@pali>
-References: <20250831123602.14037-1-pali@kernel.org>
- <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
- <20250901170253.mv63jewqkdo5yqj7@pali>
- <6660f6bd-ea74-4b25-b7dd-280833b5568c@samba.org>
- <20250902163053.zzgd5ee4qguciajj@pali>
+	s=arc-20240116; t=1757243575; c=relaxed/simple;
+	bh=JeDvWOF1XyNZlVbSRkKg62AXuM9cfneLs6TPaSfZpr4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S3xNSM6flSLU7lqjuXgOpRK5x04GH6mwYqKpoDSsAq7D0Mdfp7nhsvH6OiTvH6A5WTOFekHdv8dUy3HNUmVJwdn+S7zIaXtZf/eS1QkkeQepU8T6sTOS/oHWxvlwDLHc3MawmouUSUAxpyVLrg/X8TTCvC4nN2yswLatkmwXcfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHV/EzhV; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so2107136a12.1;
+        Sun, 07 Sep 2025 04:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757243573; x=1757848373; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mzGMUD5FoQ+Qma22SIVK819nPdr7pYinoircpLfGQJY=;
+        b=eHV/EzhVICrbze+rMfEbd1WeMxS/zW+PUVvAJrj23s8LU9RQ5r4OrIUaQnUcIZHt3G
+         BJbbIu4436Og8dXUcvdNu2zGSvQt6bQMzVafUyD4NPrfCdON8sNnrMJ5INmo93OP4VUO
+         fd4UcSu7zniAxJX49uLzNS97p2Nt7oBiu0spN2H6uA1QMuB+/sd9CvN/tEp/oMGqILHP
+         IkT6RSmUFUEJKrB0A4papwSTaqD7pWaayLWyhnICTdv7x99rAbPhnY6rrLsgIeQwzzG3
+         6eTXg9N76o2PssnBmkPj68k4R1eT86vKLMlKROrMKBWSA+PHyOGk/wNThhozR7TE57on
+         L/HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757243573; x=1757848373;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mzGMUD5FoQ+Qma22SIVK819nPdr7pYinoircpLfGQJY=;
+        b=M2uhU7rP4rhTIKUyGVMVqru1qwWWx5DFrV8AxC5QD2JxD6n58o/1DSnLekE2zyKf1J
+         GuO8UFMueg4KXJa2fzOv1ovP05IAKLnbUqStLwr5iggPgfEldrIbxqpatwlSuP8IwrKA
+         S9zSFmSqfyXpO+Rrs4r8fYUf8/3X8xrM5Gfwes9ecKqG1TZfv6N600+s8qBIDuxo8rzd
+         CYRy9XxY7+0Q7LgAltGm+JmbVleaooxuxvhjHfG5o4lgkLvQhQupA7ZljEmwXclcxlTy
+         9Af1CB8i/kCiSJNfvisEfFtr/P/PKiLjPEa4V6RwGcUQ2TRiHJlibVi8/UwIx2Rgv0WN
+         6eJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsN3+zmYrNsuaP16aGhRkdq2KJ0jf2b+ni0A8SKwxqlo5ab6wEZI93MqEgk65vjYuEZlyXu6cESXywyUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9o690HYLV3Z2XRUJR+BfbNrLGMna5HKgM7xIi7dLnL91DmJ6K
+	uUbrntuu0/FheQLnU9hCokiRn7KLXWN0Re1wTt2LGekglsPL6ndnlT0fUXPeLA==
+X-Gm-Gg: ASbGncuhy2SKxFdYxrg2PFk5MEpJYn+Kh0gySTQsaKMZ2p6TUIjAPGX5hg8xDuoSGMB
+	zO8u1RpXgXkqaWF2pIgCg1q9piIXzbQG5xgovbGrYPPcXolNbWKjrgsHcbVv7RhP5SZ1XoL8Uf/
+	VF5DtNrJCab4mghVsK6qGP48PaElHP0ekm9fHY6+kC5EkAbjmIwnz8/GeRmZIwEcI2Vmtdzhn4q
+	VmkYEvXI7szvWA3hD2Af99Css63E9WuSGVwCEhwEiXyE9XWiWFiZJ2kGVfugOSAOLLY5H6bCViB
+	Uo62EIzS70PAeiWhsE99amdclApsg3F6obAOfnyMjAju530XEyx945Uumc2G9fa1cnmwPsUOTrP
+	GURXUdno1b42oVzLeAg==
+X-Google-Smtp-Source: AGHT+IGNtpnSkf4gNDwpSxa0SIKRTbgjTsBXoMDDHRiNfN4LWzIaTn/lePlLMopE8K+QB6yfvM7TFg==
+X-Received: by 2002:a17:902:f607:b0:250:999f:31c6 with SMTP id d9443c01a7336-25170c414edmr50925805ad.32.1757243572995;
+        Sun, 07 Sep 2025 04:12:52 -0700 (PDT)
+Received: from danascape.. ([101.0.63.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b168157b6sm143580925ad.13.2025.09.07.04.12.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 04:12:52 -0700 (PDT)
+From: Saalim Quadri <danascape@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Saalim Quadri <danascape@gmail.com>
+Subject: [PATCH v3 RESEND] HID: Xinmeng: Add driver for Xinmeng M71 Keyboard
+Date: Sun,  7 Sep 2025 16:42:46 +0530
+Message-Id: <20250907111246.9733-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="nwyq3576ahj5weja"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902163053.zzgd5ee4qguciajj@pali>
-User-Agent: NeoMutt/20180716
-
-
---nwyq3576ahj5weja
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-On Tuesday 02 September 2025 18:30:53 Pali Rohár wrote:
-> On Tuesday 02 September 2025 17:17:14 Stefan Metzmacher wrote:
-> > Do you have network captures showing the old and new behavior
-> > that's often easier to understand than looking at patches alone.
-> > 
-> > metze
-> 
-> I do not have them right now, but I can run test scenario and capture
-> them, this is not problem. Test case is pretty straightforward.
+In this driver, the battery is probed, and it checks the capacity
+and charging status of the battery
 
-In attachments are network traces of both the old and new behaviors.
-In the old behavior is visible that after calling "rm object", the
-object is still in the followup "ls" output and calling "mkdir object"
-is failing, also "stat object" is failing.
-In the new behavior is visible that "rm object" is using exclusive
-removal, which fails, and then fallback to rename+deletepending which
-success. After that in the followup "ls" output the object entry is not
-there, there is only renamed ".smb<num>", and "mkdir object" pass and
-creates new directory "object".
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
+---
+v2 -> v3:
+	Match lore email to the driver
+	assign ret val while probing battery
+v1 -> v2: Update Kconfig paragraph :/
 
---nwyq3576ahj5weja
-Content-Type: application/gzip
-Content-Disposition: attachment; filename="smb_old.pcap.gz"
-Content-Transfer-Encoding: base64
+ drivers/hid/Kconfig       |  12 +++
+ drivers/hid/Makefile      |   1 +
+ drivers/hid/hid-ids.h     |   3 +
+ drivers/hid/hid-xinmeng.c | 170 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 186 insertions(+)
+ create mode 100644 drivers/hid/hid-xinmeng.c
 
-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
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 43859fc75747..1cc61ca63682 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -536,6 +536,18 @@ config HID_XIAOMI
+ 	  Adds support for side buttons of Xiaomi Mi Dual Mode Wireless
+ 	  Mouse Silent Edition.
+ 
++config HID_XINMENG
++	tristate "Xinmeng Keyboards"
++	depends on USB_HID
++	help
++		Support for Xinmeng Keyboard.
++
++		Say Y here if you have a Xinmeng M71 Keyboard
++		and want to be able to read its battery capacity.
++
++		To compile this driver as a module, choose M here: the
++		module will be called hid-xinmeng.
++
+ config HID_GYRATION
+ 	tristate "Gyration remote control"
+ 	help
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index 10ae5dedbd84..e5c9d1276138 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -145,6 +145,7 @@ obj-$(CONFIG_HID_UDRAW_PS3)	+= hid-udraw-ps3.o
+ obj-$(CONFIG_HID_UNIVERSAL_PIDFF)	+= hid-universal-pidff.o
+ obj-$(CONFIG_HID_LED)		+= hid-led.o
+ obj-$(CONFIG_HID_XIAOMI)	+= hid-xiaomi.o
++obj-$(CONFIG_HID_XINMENG)	+= hid-xinmeng.o
+ obj-$(CONFIG_HID_XINMO)		+= hid-xinmo.o
+ obj-$(CONFIG_HID_ZEROPLUS)	+= hid-zpff.o
+ obj-$(CONFIG_HID_ZYDACRON)	+= hid-zydacron.o
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index e3fb4e2fe911..f649549bd58c 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1471,6 +1471,9 @@
+ #define USB_DEVICE_ID_XIN_MO_DUAL_ARCADE	0x05e1
+ #define USB_DEVICE_ID_THT_2P_ARCADE		0x75e1
+ 
++#define USB_VENDOR_ID_XINMENG   0x3554
++#define USB_DEVICE_ID_XINMENG_M71_RECEIVER  0xfa09
++
+ #define USB_VENDOR_ID_XIROKU		0x1477
+ #define USB_DEVICE_ID_XIROKU_SPX	0x1006
+ #define USB_DEVICE_ID_XIROKU_MPX	0x1007
+diff --git a/drivers/hid/hid-xinmeng.c b/drivers/hid/hid-xinmeng.c
+new file mode 100644
+index 000000000000..a4f5b181bca4
+--- /dev/null
++++ b/drivers/hid/hid-xinmeng.c
+@@ -0,0 +1,170 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *  HID driver for Xinmeng M71 Keyboard.
++ *
++ *  Copyright (c) 2025 Saalim Quadri <danascape@gmail.com>
++ */
++
++#include <linux/device.h>
++#include <linux/hid.h>
++#include <linux/module.h>
++#include <linux/usb.h>
++
++#include "hid-ids.h"
++
++#define	BATTERY_REPORT_ID	(0x13)
++
++struct xinmeng_drvdata {
++	struct hid_device *hdev;
++	bool online;
++
++	struct power_supply *battery;
++	struct power_supply_desc battery_desc;
++	u8 battery_capacity;
++	bool battery_charging;
++};
++
++static enum power_supply_property xinmeng_battery_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_CAPACITY,
++	POWER_SUPPLY_PROP_MODEL_NAME,
++	POWER_SUPPLY_PROP_ONLINE
++};
++
++static int xinmeng_battery_get_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					union power_supply_propval *val)
++{
++	struct xinmeng_drvdata *drv_data = power_supply_get_drvdata(psy);
++	int ret = 0;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_PRESENT:
++		val->intval = 1;
++		break;
++	case POWER_SUPPLY_PROP_ONLINE:
++		val->intval = drv_data->online;
++		break;
++	case POWER_SUPPLY_PROP_STATUS:
++		if (drv_data->online)
++			val->intval = drv_data->battery_charging ?
++					POWER_SUPPLY_STATUS_CHARGING :
++					POWER_SUPPLY_STATUS_DISCHARGING;
++		else
++			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
++		break;
++	case POWER_SUPPLY_PROP_CAPACITY:
++		val->intval = drv_data->battery_capacity;
++		break;
++	case POWER_SUPPLY_PROP_MODEL_NAME:
++		val->strval = drv_data->hdev->name;
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++	return ret;
++}
++
++static int xinmeng_battery_probe(struct hid_device *hdev)
++{
++	struct xinmeng_drvdata *drv_data = hid_get_drvdata(hdev);
++	struct power_supply_config pscfg = { .drv_data = drv_data };
++	int ret = 0;
++
++	drv_data->online = false;
++	drv_data->battery_capacity = 0;
++
++	drv_data->battery_desc.name = "xinmeng-m71-battery";
++	drv_data->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++	drv_data->battery_desc.properties = xinmeng_battery_props;
++	drv_data->battery_desc.num_properties = ARRAY_SIZE(xinmeng_battery_props);
++	drv_data->battery_desc.get_property = xinmeng_battery_get_property;
++
++	drv_data->battery = devm_power_supply_register(&hdev->dev,
++						       &drv_data->battery_desc, &pscfg);
++
++	if (IS_ERR(drv_data->battery)) {
++		ret = PTR_ERR(drv_data->battery);
++		drv_data->battery = NULL;
++		hid_err(hdev, "Unable to register battery device\n");
++		return ret;
++	}
++
++	power_supply_powers(drv_data->battery, &hdev->dev);
++
++	return ret;
++}
++
++static int xinmeng_probe(struct hid_device *hdev, const struct hid_device_id *id)
++{
++	int ret;
++	struct xinmeng_drvdata *drv_data;
++	struct usb_interface *usbif;
++
++	if (!hid_is_usb(hdev))
++		return -EINVAL;
++
++	usbif = to_usb_interface(hdev->dev.parent);
++
++	drv_data = devm_kzalloc(&hdev->dev, sizeof(*drv_data), GFP_KERNEL);
++	if (!drv_data)
++		return -ENOMEM;
++
++	hid_set_drvdata(hdev, drv_data);
++	drv_data->hdev = hdev;
++
++	ret = hid_parse(hdev);
++	if (ret)
++		return ret;
++
++	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
++	if (ret)
++		return ret;
++
++	if (usbif->cur_altsetting->desc.bInterfaceNumber == 1) {
++		ret = xinmeng_battery_probe(hdev);
++		if (ret < 0) {
++			hid_err(hdev, "Xinmeng hid battery_probe failed: %d\n", ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int xinmeng_raw_event(struct hid_device *hdev,
++				 struct hid_report *report, u8 *data, int size)
++{
++	struct xinmeng_drvdata *drv_data = hid_get_drvdata(hdev);
++
++	if (drv_data->battery && data[0] == BATTERY_REPORT_ID) {
++		u8 charging_status = data[7];
++		bool is_charging = (charging_status == 0x11 || charging_status == 0x10);
++
++		drv_data->battery_capacity = data[6];
++		drv_data->battery_charging = is_charging;
++		drv_data->online = true;
++	}
++
++	return 0;
++}
++
++static const struct hid_device_id xinmeng_devices[] = {
++	{ HID_USB_DEVICE(USB_VENDOR_ID_XINMENG, USB_DEVICE_ID_XINMENG_M71_RECEIVER) },
++	{ }
++};
++MODULE_DEVICE_TABLE(hid, xinmeng_devices);
++
++static struct hid_driver xinmeng_driver = {
++	.name = "xinmeng",
++	.id_table = xinmeng_devices,
++	.probe = xinmeng_probe,
++	.raw_event = xinmeng_raw_event
++};
++module_hid_driver(xinmeng_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("HID driver for Xinmeng keyboards");
++MODULE_AUTHOR("Saalim Quadri <danascape@gmail.com>");
+-- 
+2.34.1
 
---nwyq3576ahj5weja
-Content-Type: application/gzip
-Content-Disposition: attachment; filename="smb_new.pcap.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---nwyq3576ahj5weja--
 
