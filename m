@@ -1,146 +1,234 @@
-Return-Path: <linux-kernel+bounces-804749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A16B47C86
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEFCB47C88
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE7363B9632
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D593B9698
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518E722D9E9;
-	Sun,  7 Sep 2025 17:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6169F1D63E4;
+	Sun,  7 Sep 2025 17:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PN6SL+hH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="eGPHVc8g"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958F61922FD;
-	Sun,  7 Sep 2025 17:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BF84A35;
+	Sun,  7 Sep 2025 17:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757264486; cv=none; b=BXHgxuV5Ns6HpEMWmpKtJAPRZfgplrCD7lG6XoRG/9f82irzNvvTpU9nXWk523m3w8IjjNDQqpcFNvWOXRKCL4I1w6k/dNdF7Mr+Ki8RL9BFWvym7fgZl77nlZABs7Ru4d+1taGdrM7SSAQBTu0dhdd205yXFQT6bsXy8LqGzW8=
+	t=1757264534; cv=none; b=fk+jEwN4cALTgDiw0KPZyWPpGO65wYQE008Zgltp80kjxkb8krL11bBAqNRDJO7KY+QSN/iAYqN2iM6cUsgJlf9Qjs1W4AXv+m+Yp8RaSfkjPE10pymOZme9OFYJC5oOumhvlX8YmfRl+5lDJbr8lncDsWsQMXdQrkhcIUu6thI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757264486; c=relaxed/simple;
-	bh=8Tm67jQQNXssHHVpk6mASydvBl2DcirB7AvwFZ5Cqd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QR4ZsTvWAIG45EnKdYhXEnYBwDPCnLqnoPu1AUkaESqd5aZKaP9Ut54v1xz5yDT8ejcITlPlhcKVcmfhmIb2hI/w2RaCCDK2giZ9oiv5ghl1NKVL/nwv/H+GKk54a+TYPMXSDZHVJ1DZ/gVDJtzY93o3rk5tA0UKV+4wJPVzBj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PN6SL+hH; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757264484; x=1788800484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8Tm67jQQNXssHHVpk6mASydvBl2DcirB7AvwFZ5Cqd0=;
-  b=PN6SL+hHbGKaAhE5JdpEYPNHnjrdUmpsAZR9LTkrYGwEpERyvE0Yd7ua
-   zdqoWThgraYGRKSB66+DYzl2X9tTRFBrUKdp20NK7miMbHvePPx6nD2PJ
-   0InZnPPNcVq1HE5MUwiYzxEri+kEFGFhQpZGFFx/C3RWs7ad8PRlLUy3V
-   1Ah9LjpjLKzfow3f2b+7pbtizmRoMB/Y2kgnkyicbK/GNvCt62OFoOlf/
-   3D2gLgm8hNl0rhmMilpR5uujC23oLuoNEv74AIofaUiPJBE+0gsVmVsAm
-   v9v7JErm76HKr/r0vm92Zcv04TsPddS8N7KlfmQbIXdPCib4euc8SrhHP
-   A==;
-X-CSE-ConnectionGUID: F1hhgKNqTpOOM00m5GAujA==
-X-CSE-MsgGUID: n5ZdNBI2Q+6qCzBAfSIqTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63363928"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63363928"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 10:01:23 -0700
-X-CSE-ConnectionGUID: sUfy7hRQSG2UMFOQfacacQ==
-X-CSE-MsgGUID: JO3hPCyXSDaIWCW/22Ip7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,246,1751266800"; 
-   d="scan'208";a="172523448"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Sep 2025 10:01:20 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uvIlS-0002P5-1H;
-	Sun, 07 Sep 2025 17:01:18 +0000
-Date: Mon, 8 Sep 2025 01:01:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fidal Palamparambil <rootuserhere@gmail.com>,
-	linux-modules@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mcgrof@kernel.org, petr.pavlu@suse.com,
-	da.gomez@kernel.org, samitolvanen@google.com,
-	linux-kernel@vger.kernel.org,
-	Fidal palamparambil <rootuserhere@gmail.com>
-Subject: Re: [PATCH] Fixed the build warning in
- init_trace_printk_function_export():
-Message-ID: <202509080040.8gEyq9Ef-lkp@intel.com>
-References: <20250907140755.529-1-rootuserhere@gmail.com>
+	s=arc-20240116; t=1757264534; c=relaxed/simple;
+	bh=ZG471IbRVXTVAOEaQ1ipk1oqHGYseytyGNPpCp5ezGE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Fko+RGvi86I7fg0V/9+2fGrv/IUWl3p44xs5KiloLjp7DZee5hhqX5kAMXl14Fm+NK1WoU+7Ig7uvb0gn5cbMoL1StcR3FiOgx6T1ejYadCrFw6MUTUEQDsTtREDQyojDEVpVDzELAtqZrZvPJH6GYUXZIkF40iuQPJCTUy58kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=eGPHVc8g; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=O4Exb7qFSUZ6fQgvJksy+PHBd7OyZ5PvFVCJ202sN7A=; t=1757264531;
+	x=1757869331; b=eGPHVc8g46UeOBZjusXnEjhatFwx1HF53J1FRG2bOwUsbPD7pvSBhb+KXldj7
+	p68Lvsp1pwenJ6CfMtTwBuGfv5Z95fpnpegsVEG8/MWhZm6xLCS0vAt0v7i2kcZ7BfV8fTX0AoHc+
+	TqxrhYQ8XeKZufjqSGqNGB4u6sMY435aAlIT7Xjwqp2B2fCgT7A/91MU9oMR6w8AZAIRf5xu0tWAt
+	bsk5TNX815mjC186oaTnbEFY97gPR5lNy8ojWqUBRAW6oSrB7jLRcR/2ZSfvgMYxr8XQ2w8kiGHEy
+	qQsR2Ei5nak6nuuK48LODclab3jykPxWjIlWqLjkWRkViq2R5Q==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uvImA-00000002BAO-19oo; Sun, 07 Sep 2025 19:02:02 +0200
+Received: from dynamic-089-012-071-066.89.12.pool.telefonica.de ([89.12.71.66] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uvImA-000000038Vb-0FjQ; Sun, 07 Sep 2025 19:02:02 +0200
+Message-ID: <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson
+	 <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Yznaga
+	 <anthony.yznaga@oracle.com>, =?ISO-8859-1?Q?Ren=E9?= Rebe
+ <rene@exactcode.com>
+Date: Sun, 07 Sep 2025 19:02:01 +0200
+In-Reply-To: <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+References: 
+	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+	 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250907140755.529-1-rootuserhere@gmail.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi Fidal,
+Hi Michael,
 
-kernel test robot noticed the following build warnings:
+On Fri, 2025-09-05 at 00:03 +0200, Michael Karcher wrote:
+> Anthony Yznaga tracked down that a BUG_ON in ext4 code with large folios
+> enabled resulted from copy_from_user() returning impossibly large values
+> greater than the size to be copied. This lead to __copy_from_iter()
+> returning impossible values instead of the actual number of bytes it was
+> able to copy.
+>=20
+> The BUG_ON has been reported in
+> https://lore.kernel.org/r/b14f55642207e63e907965e209f6323a0df6dcee.camel@=
+physik.fu-berlin.de
+>=20
+> The referenced commit introduced exception handlers on user-space memory
+> references in copy_from_user and copy_to_user. These handlers return from
+> the respective function and calculate the remaining bytes left to copy
+> using the current register contents. The exception handlers expect that
+> %o2 has already been masked during the bulk copy loop, but the masking wa=
+s
+> performed after that loop. This will fix the return value of copy_from_us=
+er
+> and copy_to_user in the faulting case. The behaviour of memcpy stays
+> unchanged.
+>=20
+> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accurate =
+exception reporting.")
+> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # on =
+Sun Netra 240
+> Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # on UltraSparc III+ and U=
+ltraSparc IIIi
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> ---
+>  arch/sparc/lib/U3memcpy.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
+> index 9248d59c734ce200f1f55e6d9913277f18715a87..bace3a18f836f1428ae0ed72b=
+27aa1e00374089e 100644
+> --- a/arch/sparc/lib/U3memcpy.S
+> +++ b/arch/sparc/lib/U3memcpy.S
+> @@ -267,6 +267,7 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	faligndata	%f10, %f12, %f26
+>  	EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
+> =20
+> +	and		%o2, 0x3f, %o2
+>  	subcc		GLOBAL_SPARE, 0x80, GLOBAL_SPARE
+>  	add		%o1, 0x40, %o1
+>  	bgu,pt		%XCC, 1f
+> @@ -336,7 +337,6 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	 * Also notice how this code is careful not to perform a
+>  	 * load past the end of the src buffer.
+>  	 */
+> -	and		%o2, 0x3f, %o2
+>  	andcc		%o2, 0x38, %g2
+>  	be,pn		%XCC, 2f
+>  	 subcc		%g2, 0x8, %g2
 
-[auto build test WARNING on trace/for-next]
-[also build test WARNING on linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+It looks like the fix isn't actually complete for UltraSPARC III.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fidal-Palamparambil/Fixed-the-build-warning-in-init_trace_printk_function_export/20250907-221041
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250907140755.529-1-rootuserhere%40gmail.com
-patch subject: [PATCH] Fixed the build warning in init_trace_printk_function_export():
-config: x86_64-buildonly-randconfig-001-20250907 (https://download.01.org/0day-ci/archive/20250908/202509080040.8gEyq9Ef-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250908/202509080040.8gEyq9Ef-lkp@intel.com/reproduce)
+There still seem to be edge-cases where this bug is triggered and that
+actually happens when configuring the systemd-timesyncd package and it's
+reproducible in 100% of the cases:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509080040.8gEyq9Ef-lkp@intel.com/
+[  125.301353] systemd-sysv-generator[1042]: Please update package to inclu=
+de a native systemd unit file.
+[  125.424703] systemd-sysv-generator[1042]: =E2=9A=A0 This compatibility l=
+ogic is deprecated, expect removal soon. =E2=9A=A0
+[  127.206268] get_swap_device: Bad swap offset entry 808000000
+[  127.354181] get_swap_device: Bad swap offset entry 808000000
+[  127.449735] get_swap_device: Bad swap offset entry 808000000
+[  127.553698] get_swap_device: Bad swap offset entry 808000000
+[  127.701748] get_swap_device: Bad swap offset entry 808000000
+[  127.821914] get_swap_device: Bad swap offset entry 808000000
+[  127.939392] Unable to handle kernel paging request at virtual address 00=
+000001108ca000
+[  128.043605] tsk->{mm,active_mm}->context =3D 0000000000000555
+[  128.116890] tsk->{mm,active_mm}->pgd =3D fff0000009fd0000
+[  128.185604]               \|/ ____ \|/
+[  128.185604]               "@'/ .. \`@"
+[  128.185604]               /_| \__/ |_\
+[  128.185604]                  \__U_/
+[  128.378914] systemd-tty-ask(1054): Oops [#1]
+[  128.435046] CPU: 0 UID: 0 PID: 1054 Comm: systemd-tty-ask Not tainted 6.=
+17.0-rc4+ #11 NONE=20
+[  128.544945] TSTATE: 0000000011001606 TPC: 00000000007a5800 TNPC: 0000000=
+0007a5804 Y: 00000000    Not tainted
+[  128.674196] TPC: <lookup_swap_cgroup_id+0x40/0x80>
+[  128.737194] g0: fff000023f800040 g1: 0000000010000000 g2: 00000001008ca0=
+00 g3: 000000000153a8b8
+[  128.851572] g4: fff0000008d1b700 g5: fff000023e336000 g6: fff00000140f40=
+00 g7: fff0000101934000
+[  128.965946] o0: fff0000008e6c180 o1: 0000000000000000 o2: 00000000000010=
+00 o3: 0000000000000001
+[  129.080321] o4: 00000000000001ff o5: 0000000000000555 sp: fff00000140f6c=
+81 ret_pc: 0000000000000000
+[  129.199272] RPC: <0x0>
+[  129.230149] l0: 0000000000000000 l1: fff0000008e6c180 l2: 00000000000000=
+00 l3: 03ffffffffffffff
+[  129.344528] l4: 0000000000000004 l5: 0000000000000000 l6: 00000000000000=
+01 l7: 0000000000000014
+[  129.458902] i0: 0000000080000000 i1: fff0000101900000 i2: fff00000140f75=
+d8 i3: ffffffffffffffff
+[  129.573283] i4: 0000000000001000 i5: 0000000000000000 i6: fff00000140f6d=
+31 i7: 00000000007173e0
+[  129.687653] I7: <swap_pte_batch+0x40/0x160>
+[  129.742653] Call Trace:
+[  129.774671] [<00000000007173e0>] swap_pte_batch+0x40/0x160
+[  129.846733] [<0000000000719998>] unmap_page_range+0x718/0x1200
+[  129.923366] [<000000000071a4f8>] unmap_single_vma.constprop.0+0x78/0xe0
+[  130.010289] [<000000000071a5b0>] unmap_vmas+0x50/0x160
+[  130.077767] [<00000000007288bc>] exit_mmap+0xbc/0x460
+[  130.144108] [<000000000047aec4>] mmput+0x64/0x180
+[  130.205867] [<0000000000483b38>] do_exit+0x218/0xb80
+[  130.271067] [<0000000000484664>] do_group_exit+0x24/0xa0
+[  130.340830] [<0000000000494848>] get_signal+0x948/0x9a0
+[  130.409458] [<000000000043eb68>] do_notify_resume+0xc8/0x5c0
+[  130.483802] [<0000000000404b48>] __handle_signal+0xc/0x30
+[  130.554715] Disabling lock debugging due to kernel taint
+[  130.624483] Caller[00000000007173e0]: swap_pte_batch+0x40/0x160
+[  130.702257] Caller[0000000000719998]: unmap_page_range+0x718/0x1200
+[  130.784610] Caller[000000000071a4f8]: unmap_single_vma.constprop.0+0x78/=
+0xe0
+[  130.877252] Caller[000000000071a5b0]: unmap_vmas+0x50/0x160
+[  130.950452] Caller[00000000007288bc]: exit_mmap+0xbc/0x460
+[  131.022508] Caller[000000000047aec4]: mmput+0x64/0x180
+[  131.089986] Caller[0000000000483b38]: do_exit+0x218/0xb80
+[  131.160901] Caller[0000000000484664]: do_group_exit+0x24/0xa0
+[  131.236387] Caller[0000000000494848]: get_signal+0x948/0x9a0
+[  131.310736] Caller[000000000043eb68]: do_notify_resume+0xc8/0x5c0
+[  131.390795] Caller[0000000000404b48]: __handle_signal+0xc/0x30
+[  131.467427] Caller[fff0000101600238]: 0xfff0000101600238
+[  131.537197] Instruction DUMP:
+[  131.537201]  c458c002=20
+[  131.576079]  83287002=20
+[  131.606963]  b12e2004=20
+[  131.637839] <c2008001>
+[  131.668723]  b1304018=20
+[  131.699603]  b12e3030=20
+[  131.730486]  81cfe008=20
+[  131.761364]  91323030=20
+[  131.792249]  b0102000=20
+[  131.823130]=20
+[  131.873450] Fixing recursive fault but reboot is needed!
 
-All warnings (new ones prefixed by >>):
+Adrian
 
-   kernel/trace/trace_printk.c: In function 'ftrace_formats_open':
->> kernel/trace/trace_printk.c:369:25: warning: passing argument 1 of 'seq_open' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     369 |         return seq_open(file, &show_format_seq_ops);
-         |                         ^~~~
-   In file included from kernel/trace/trace_printk.c:8:
-   include/linux/seq_file.h:108:14: note: expected 'struct file *' but argument is of type 'const struct file *'
-     108 | int seq_open(struct file *, const struct seq_operations *);
-         |              ^~~~~~~~~~~~~
-   kernel/trace/trace_printk.c: At top level:
-   kernel/trace/trace_printk.c:373:17: error: initialization of 'int (*)(struct inode *, struct file *)' from incompatible pointer type 'int (*)(struct inode *, const struct file *)' [-Werror=incompatible-pointer-types]
-     373 |         .open = ftrace_formats_open,
-         |                 ^~~~~~~~~~~~~~~~~~~
-   kernel/trace/trace_printk.c:373:17: note: (near initialization for 'ftrace_formats_fops.open')
-   cc1: some warnings being treated as errors
-
-
-vim +369 kernel/trace/trace_printk.c
-
-7975a2be16dd42 Steven Rostedt          2009-03-12  359  
-7975a2be16dd42 Steven Rostedt          2009-03-12  360  static int
-66670b02cb828c Fidal palamparambil     2025-09-07  361  ftrace_formats_open(struct inode *inode, const struct file *file)
-7975a2be16dd42 Steven Rostedt          2009-03-12  362  {
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  363) 	int ret;
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  364) 
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  365) 	ret = security_locked_down(LOCKDOWN_TRACEFS);
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  366) 	if (ret)
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  367) 		return ret;
-17911ff38aa58d Steven Rostedt (VMware  2019-10-11  368) 
-c8961ec6da22ea Li Zefan                2009-06-24 @369  	return seq_open(file, &show_format_seq_ops);
-7975a2be16dd42 Steven Rostedt          2009-03-12  370  }
-7975a2be16dd42 Steven Rostedt          2009-03-12  371  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
