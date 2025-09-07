@@ -1,117 +1,85 @@
-Return-Path: <linux-kernel+bounces-804610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952ADB47A6F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539C4B47A6C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511F93BD530
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B431189D1D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A3623C39A;
-	Sun,  7 Sep 2025 10:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156C221F12;
+	Sun,  7 Sep 2025 10:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rn8DKKPt"
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRLAtjph"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8573421CA0D;
-	Sun,  7 Sep 2025 10:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610CC1F0994
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757240247; cv=none; b=ifOcFlOm49wJ6Nz/O3ofFoukSvc8sl9d8KkrasE8seNc+qoCpyAzdecp3ksivK8yaySspjFNl6PW6s0YIN38nIv1UcJ9ZVoCLtMrFseTvUj0OSHKrYxLIqO7Eom1JyJCeuRCGffTxPZrPzcRemEV1IURyWOwZYB/9pHrWZmYmTI=
+	t=1757240212; cv=none; b=PX7SK+3kbbI5D75m8C2am7oDXWQ8Vftdzqy1dOp75X7z9vAUtJ+oFnHa+cgM0dv1WHWYByNVxg9ZP3W+EO07C9lQx2/xE6so182vaqim8ITFR4YdT3YUNCYCgPYsHoHvCwkxHQzcM8RQkvAm15cgfcON3PQQlRccYpMDkjjZ6gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757240247; c=relaxed/simple;
-	bh=VyLQINgFLxfwpG6Ab3GLfcDxtTMx9J9bYm0a0HSvfNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BL5Q80vPjMdZWQJGcFIvXheqLCKbO3X/D7Jb5Vj1sUY/aQerOLoW3eDS7pvFRthg4uQ4mzmmnHZdXVwf5O3hBYYBfCkXQ5Tvg1ldg5q6etnRBDs04Y5QUINdMvOCIa9YOthwEsBElawT989/ZSmaiVdPS8FCnf9l12YA25O01gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rn8DKKPt; arc=none smtp.client-ip=80.12.242.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vCRRuFMYKVnEZvCRRuvdfD; Sun, 07 Sep 2025 12:16:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757240173;
-	bh=/8eo79CGIBKMU4I0nlE/+knG5URcycp+FdSO1C7XFNM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rn8DKKPtX/W8hBMbom+AY6GhwsLKdpzDO4pbxD8GPEUg7CCHvVq/vW28eidYIANYe
-	 EIG9Ow+3n60Q8xeyU+bS698FBWrW28Yilp0UuvTWTJlyzbHmhD7xli5zaibMwwRn6r
-	 AXjcQUgFWCGLRh6IsGx4LjbST9ko/pMt33ICNmjcoxBMx7GXNK8xonucqxxVm3LzRW
-	 znhtLGqRbAAgMzAfngd7bSXU6J0PDpL1hjNFE5tU/V6IekvGx+72kdhSAFH7qAyhfD
-	 24eKgc9EdqcuMwKPbdGZ5tPGu13W7UfRDvj9sIKydcbuFVOWjeKYaqdzh7k//JTkOX
-	 DKiNIBD/3PKcg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 12:16:13 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: is31fl319x: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 12:16:09 +0200
-Message-ID: <267aba6eab12be67c297fcd52fcf45a0856338bb.1757240150.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757240212; c=relaxed/simple;
+	bh=ToirCarSyby33Z9r+lpDSNyHCXgfVCJ+QEwxKQqoQgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HmzND5ey26Umdq1+accrjtC/jXz/Y9hiwPVf2f9nxQ3+/kXdDXvsrkntNwU2xld51AhorMk8dlVIP8y7xBzXF42NwjfaUuQ/lRi8a/kGfcpK6g/O7/qzbRDttVt5YOUtq3K9vFG/v6NGRLkvZyMkpqVxFh6HoUEaY289ZZooux4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRLAtjph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB72C4CEF0;
+	Sun,  7 Sep 2025 10:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757240210;
+	bh=ToirCarSyby33Z9r+lpDSNyHCXgfVCJ+QEwxKQqoQgU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iRLAtjphaLbilbKrlnjGx9kDW5HCh6c2dN+CSEYxu25yAfaTrla6+j7HG29ldHj4H
+	 +2nDcu1/FthIenjc9Q95GlvIjWR1Vlf52zKxaU8KiD2XsiwrO/kxJplbMoLnJ8x7+p
+	 iao/EbivkBKwDAVDwCEJturxymYz2prT0RBtCAlsgrj8TuuOKGiMjT7Fu6F/QzHfNz
+	 8IW9e6p/UzTn8MlomxMZ3Mp4b4lSVoUmj953W/JRUU/vyPkNxAH1p87xvd/IMSmztZ
+	 jFTL3prH/1s90cwqENo67wdn0dVX6T05eLy8lgI7oLGJLDqOq4VvYMsvS8N6DTPn7u
+	 ath5ss+VyHjuw==
+Date: Sun, 7 Sep 2025 12:16:46 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	Borislav Petkov <bp@alien8.de>
+Subject: [GIT PULL] locking fix
+Message-ID: <aL1bjoRQEfRZ4-Gn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Use devm_mutex_init() instead of hand-writing it.
+Linus,
 
-This saves some LoC, improves readability and saves some space in the
-generated .o file.
+Please pull the latest locking/urgent Git tree from:
 
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  20011	   6752	    128	  26891	   690b	drivers/leds/leds-is31fl319x.o
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-2025-09-07
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  19715	   6680	    128	  26523	   679b	drivers/leds/leds-is31fl319x.o
+   # HEAD: d9b05321e21e4b218de4ce8a590bf375f58b6346 futex: Move futex_hash_free() back to __mmput()
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/leds/leds-is31fl319x.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Fix an 'allocation from atomic context' regression in the futex vmalloc
+variant.
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 27bfab3da479..e411cee06dab 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -483,11 +483,6 @@ static inline int is31fl3196_db_to_gain(u32 dezibel)
- 	return dezibel / IS31FL3196_AUDIO_GAIN_DB_STEP;
- }
- 
--static void is31f1319x_mutex_destroy(void *lock)
--{
--	mutex_destroy(lock);
--}
--
- static int is31fl319x_probe(struct i2c_client *client)
- {
- 	struct is31fl319x_chip *is31;
-@@ -503,8 +498,7 @@ static int is31fl319x_probe(struct i2c_client *client)
- 	if (!is31)
- 		return -ENOMEM;
- 
--	mutex_init(&is31->lock);
--	err = devm_add_action_or_reset(dev, is31f1319x_mutex_destroy, &is31->lock);
-+	err = devm_mutex_init(dev, &is31->lock);
- 	if (err)
- 		return err;
- 
--- 
-2.51.0
+ Thanks,
 
+	Ingo
+
+------------------>
+Sebastian Andrzej Siewior (1):
+      futex: Move futex_hash_free() back to __mmput()
+
+
+ kernel/fork.c       |  2 +-
+ kernel/futex/core.c | 16 ++++++++++++----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
