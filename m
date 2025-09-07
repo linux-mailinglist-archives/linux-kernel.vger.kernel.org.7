@@ -1,112 +1,146 @@
-Return-Path: <linux-kernel+bounces-804748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BACB47C84
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A16B47C86
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390721899815
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE7363B9632
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5914284B4C;
-	Sun,  7 Sep 2025 16:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518E722D9E9;
+	Sun,  7 Sep 2025 17:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QsRCqpT8"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PN6SL+hH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2107082F
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 16:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958F61922FD;
+	Sun,  7 Sep 2025 17:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757264327; cv=none; b=nch/VwUFWxQoeaaknyM6q2sbaAIt1ew2UZUUN5mvnY0s3VKi4L/HgPDTtuQ7qqbO0rqK6ZhO9jmD66HmTjQVZjLXsO3aTNQTdISQ5iDeUIiUuXw9z+65Ldcwcjr6Fgd1pojakWSEXd32GZw9N2JkGGjdfCvhktGGclGyf+rsSfs=
+	t=1757264486; cv=none; b=BXHgxuV5Ns6HpEMWmpKtJAPRZfgplrCD7lG6XoRG/9f82irzNvvTpU9nXWk523m3w8IjjNDQqpcFNvWOXRKCL4I1w6k/dNdF7Mr+Ki8RL9BFWvym7fgZl77nlZABs7Ru4d+1taGdrM7SSAQBTu0dhdd205yXFQT6bsXy8LqGzW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757264327; c=relaxed/simple;
-	bh=UG6aaIt/J4hlqTLrVipzyXLPRoWjC628BnP36N7T3tU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFewgakAzxtGeYoa1ebGVuZL6ufiaBGXSazawuFTTk3+AIbOkhDuy525ljyF2EG8NrnGUmNv3fknRjhs/59yCfvnmDycfqxsoA1QMbvk2guLEX+rpaCiQ4EjgPjzbSlSAIOtoWik3zZCm7ee7o2ub7EDCP9P6ziLanv2NZwERa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QsRCqpT8; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24c89867a17so34366285ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 09:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757264325; x=1757869125; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C8rxZBcVWqeQttZjBzXJXbXm94rgTwoH9ei9j3iaczA=;
-        b=QsRCqpT8mfEfDjQk9wir2rYkxZyBxKdUdVaAilyomOJ0wDXQ8sckCyP1nVibeeD7fI
-         5zCIukFyw1Ktrs3ABSvf2rGEJUUrrI8NF1QACheZoywakeAxqdlnLL4edIGrnDyJflKN
-         gZFQuzojroFnuBVyFc8rrrLTrdZ3C7JMiXYv5xZNmt8M9b2madgtQJ9S50BwAoFYOhzb
-         KATyqvucVbNudODuh4/tnUeOpKkXohZrHnGUdhP9dPnwldsdPUf7poMIgjjvQ9Q/Anpm
-         5ATc2UaxgwJlWCGHA9t+afOu97ghCPTKmNtAijd3yQYccDk5kD2JtTMKrCWgkKfRNzM7
-         ZPiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757264325; x=1757869125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C8rxZBcVWqeQttZjBzXJXbXm94rgTwoH9ei9j3iaczA=;
-        b=rSo84edP0m2l1fvgxWT7jJbucvmLJZmirrKaZZtoc0x0Ab2KBrAyUiq8VKdf1Hxg3p
-         fWKKvL9v/1VINNU6UYnIhZxq7QCYJG9svxTdSN4gGbNCBsRPU8SNI578Q8O0CnpiZ0RY
-         NT6EPX3crPiylCuml7qZJlQ2apuqp3UqgcZ/LHQKLJhaZp5zTBNTdvXAA3rp+aA56YNf
-         rYNG6j9qmCVSVvtCl0cye0c7TkguLNoexuEv4o6NNq/5Ji+LcGSVk3DTOCJPHvAN30df
-         +Z5OutYgG5aYWagQkXtPpIm8/PEqP6v4gp6acPyEZcvnaM8ndrX/vbBSrFrzGTsb/m+u
-         D+Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbx8N4m97YRYJvPGjtMIKDIY8Pl2mufLVODFOkiKITWI9C0jjswUOJ7n33JR+oRimZqMCb/QJjprHDdFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGCgD/XmojVUL251XralLDilO6zC4mJmW3x1oIgH1nmBM70WMi
-	MJ5i4+o30Wm2IYf5NTrwmmWpZmh51/3XuAkw5GXhjNxsNIp4RjD7bk238E68/H7ojEKd0v393qg
-	PYKlIiOdOnjJgrClNneMR6suo33NMqlEe7DKlgjEpk2Bij7aOvrg=
-X-Gm-Gg: ASbGnctt8WvqnB1S0PgWIe/PQS8RPp6hgkf2P8ZKQfwkVskqo9OPiilXHkUJnrifOws
-	4gMRdjUwxm9R3wsyVyvZOHk6lY8mWvZ8ymS7OdwFjGRKyWTbKTlYxjsNn9TmrIO5M8q8/SLDmIj
-	uG9y+okWp51c19FOmXjTcc9Q/nE9hjpDEHkiHm/WD7a/dhTrXiE3XViSI2tJu8R2rEDzV+aQGmi
-	XJvHN/+YSyt/qx/yg==
-X-Google-Smtp-Source: AGHT+IFaE++x7GtzCCIsBv907Sl2uWTltDpZX4herwHYVlHepL8ORXOJe8XeTw2pWIVYggy7DyLPn5X/oi9GlRRt5xk=
-X-Received: by 2002:a17:903:1b68:b0:246:b46b:1b09 with SMTP id
- d9443c01a7336-251715f3129mr65953055ad.30.1757264325209; Sun, 07 Sep 2025
- 09:58:45 -0700 (PDT)
+	s=arc-20240116; t=1757264486; c=relaxed/simple;
+	bh=8Tm67jQQNXssHHVpk6mASydvBl2DcirB7AvwFZ5Cqd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR4ZsTvWAIG45EnKdYhXEnYBwDPCnLqnoPu1AUkaESqd5aZKaP9Ut54v1xz5yDT8ejcITlPlhcKVcmfhmIb2hI/w2RaCCDK2giZ9oiv5ghl1NKVL/nwv/H+GKk54a+TYPMXSDZHVJ1DZ/gVDJtzY93o3rk5tA0UKV+4wJPVzBj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PN6SL+hH; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757264484; x=1788800484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8Tm67jQQNXssHHVpk6mASydvBl2DcirB7AvwFZ5Cqd0=;
+  b=PN6SL+hHbGKaAhE5JdpEYPNHnjrdUmpsAZR9LTkrYGwEpERyvE0Yd7ua
+   zdqoWThgraYGRKSB66+DYzl2X9tTRFBrUKdp20NK7miMbHvePPx6nD2PJ
+   0InZnPPNcVq1HE5MUwiYzxEri+kEFGFhQpZGFFx/C3RWs7ad8PRlLUy3V
+   1Ah9LjpjLKzfow3f2b+7pbtizmRoMB/Y2kgnkyicbK/GNvCt62OFoOlf/
+   3D2gLgm8hNl0rhmMilpR5uujC23oLuoNEv74AIofaUiPJBE+0gsVmVsAm
+   v9v7JErm76HKr/r0vm92Zcv04TsPddS8N7KlfmQbIXdPCib4euc8SrhHP
+   A==;
+X-CSE-ConnectionGUID: F1hhgKNqTpOOM00m5GAujA==
+X-CSE-MsgGUID: n5ZdNBI2Q+6qCzBAfSIqTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63363928"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63363928"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 10:01:23 -0700
+X-CSE-ConnectionGUID: sUfy7hRQSG2UMFOQfacacQ==
+X-CSE-MsgGUID: JO3hPCyXSDaIWCW/22Ip7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,246,1751266800"; 
+   d="scan'208";a="172523448"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 07 Sep 2025 10:01:20 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uvIlS-0002P5-1H;
+	Sun, 07 Sep 2025 17:01:18 +0000
+Date: Mon, 8 Sep 2025 01:01:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fidal Palamparambil <rootuserhere@gmail.com>,
+	linux-modules@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mcgrof@kernel.org, petr.pavlu@suse.com,
+	da.gomez@kernel.org, samitolvanen@google.com,
+	linux-kernel@vger.kernel.org,
+	Fidal palamparambil <rootuserhere@gmail.com>
+Subject: Re: [PATCH] Fixed the build warning in
+ init_trace_printk_function_export():
+Message-ID: <202509080040.8gEyq9Ef-lkp@intel.com>
+References: <20250907140755.529-1-rootuserhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905222656.3692837-1-nkapron@google.com> <CAHC9VhT8NrsXMM-PPZJ0EPLxFHQ1vOu+ASCd+82Xth_mJPnDiA@mail.gmail.com>
- <aLunR_0BPCrATnBP@google.com>
-In-Reply-To: <aLunR_0BPCrATnBP@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 7 Sep 2025 12:58:33 -0400
-X-Gm-Features: Ac12FXz4UWnBPZx5fAUVbpMVPdPjXX8qeZE7T_l2WMRkmXHmb_U-YFwEaovDvoA
-Message-ID: <CAHC9VhSaAm3G9bnJ86Aj+DnTio19ePE1Pu3voaB3XUvBveodbw@mail.gmail.com>
-Subject: Re: [PATCH] selinux: fix logic issue with per-file labeling for functionfs
-To: Neill Kapron <nkapron@google.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	kernel-team@android.com, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250907140755.529-1-rootuserhere@gmail.com>
 
-On Fri, Sep 5, 2025 at 11:15=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
-rote:
-> On Fri, Sep 05, 2025 at 10:13:01PM -0400, Paul Moore wrote:
-> >
-> > With the original patch sitting at the top of the selinux/dev branch,
-> > are you okay if I simply fixup the existing patch by adding the
-> > missing '!'?
-> >
->
-> Yes, that is fine by me. I could submit a v4 if you would prefer that.
+Hi Fidal,
 
-No need for a v4, it's just a single missing '!' and the commit
-happens to still be at the top of the patch stack.  In cases like this
-it's easier for me to just apply the fix manually.
+kernel test robot noticed the following build warnings:
 
-Fixed the upstream commit and pushed back up to selinux/dev; please
-take a look and verify that it looks okay to you.
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---=20
-paul-moore.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Fidal-Palamparambil/Fixed-the-build-warning-in-init_trace_printk_function_export/20250907-221041
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250907140755.529-1-rootuserhere%40gmail.com
+patch subject: [PATCH] Fixed the build warning in init_trace_printk_function_export():
+config: x86_64-buildonly-randconfig-001-20250907 (https://download.01.org/0day-ci/archive/20250908/202509080040.8gEyq9Ef-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250908/202509080040.8gEyq9Ef-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509080040.8gEyq9Ef-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   kernel/trace/trace_printk.c: In function 'ftrace_formats_open':
+>> kernel/trace/trace_printk.c:369:25: warning: passing argument 1 of 'seq_open' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     369 |         return seq_open(file, &show_format_seq_ops);
+         |                         ^~~~
+   In file included from kernel/trace/trace_printk.c:8:
+   include/linux/seq_file.h:108:14: note: expected 'struct file *' but argument is of type 'const struct file *'
+     108 | int seq_open(struct file *, const struct seq_operations *);
+         |              ^~~~~~~~~~~~~
+   kernel/trace/trace_printk.c: At top level:
+   kernel/trace/trace_printk.c:373:17: error: initialization of 'int (*)(struct inode *, struct file *)' from incompatible pointer type 'int (*)(struct inode *, const struct file *)' [-Werror=incompatible-pointer-types]
+     373 |         .open = ftrace_formats_open,
+         |                 ^~~~~~~~~~~~~~~~~~~
+   kernel/trace/trace_printk.c:373:17: note: (near initialization for 'ftrace_formats_fops.open')
+   cc1: some warnings being treated as errors
+
+
+vim +369 kernel/trace/trace_printk.c
+
+7975a2be16dd42 Steven Rostedt          2009-03-12  359  
+7975a2be16dd42 Steven Rostedt          2009-03-12  360  static int
+66670b02cb828c Fidal palamparambil     2025-09-07  361  ftrace_formats_open(struct inode *inode, const struct file *file)
+7975a2be16dd42 Steven Rostedt          2009-03-12  362  {
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  363) 	int ret;
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  364) 
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  365) 	ret = security_locked_down(LOCKDOWN_TRACEFS);
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  366) 	if (ret)
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  367) 		return ret;
+17911ff38aa58d Steven Rostedt (VMware  2019-10-11  368) 
+c8961ec6da22ea Li Zefan                2009-06-24 @369  	return seq_open(file, &show_format_seq_ops);
+7975a2be16dd42 Steven Rostedt          2009-03-12  370  }
+7975a2be16dd42 Steven Rostedt          2009-03-12  371  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
