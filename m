@@ -1,166 +1,132 @@
-Return-Path: <linux-kernel+bounces-804794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35532B47D30
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CF9B47DAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A4A17BD9F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A5117CDF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C094D29B8E0;
-	Sun,  7 Sep 2025 20:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303AD29B77E;
+	Sun,  7 Sep 2025 20:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EIdUP107"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CRZOsZs4"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16451CDFAC;
-	Sun,  7 Sep 2025 20:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADE01CDFAC;
+	Sun,  7 Sep 2025 20:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757275716; cv=none; b=QrutzpV3zImk3XxrvWwVGTOa7Ax4zCIExTS9IkCadU2Fs5qxlisK9V8M2HuIi/1nQJzNLEesGhwi1vHl//UvXAKWIFSnL7LrWhzAAR5os/F+qGnvbG625SHbsdcZujkz23oBFLU/WPMjBT+nvwDmY2uLkvHm4cY8e4XQndj+snQ=
+	t=1757276098; cv=none; b=onsjP+/Heof/i3BOc8nOcvi9nfXvjxhKvPBRfmBWq8Ddd/30bu+8PuSBjCVCnZ8ebwdmdqL9GeyuXylps0mp70U9+5HS+U47gh74jlsOd3UJCXke4XMgFWxb25rFhAmswC6dJBQnB9UtYpn+hG3pf+1OlaLVEumWwc46TN+rcfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757275716; c=relaxed/simple;
-	bh=aXZwZeP8hpfxh/3AkF7lqJUagLAveJEN56MEMEkzAFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5kEbbZUFfeZ/vG0fsZuCy4FxOGnzD/ygrpBfb5jBuaZ1Ym6mHcscxeM0FBI3NgXl1ETH+DLWcozQMtBoHb/qhBtcG4P5B2fSv+4859aVarT6bDwhuOsTlZji0HcpALVdlU5IjIKshrrNYf9b+gpW+RExhrj5C6iKP6XbNzuTBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EIdUP107; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2FF1810BE;
-	Sun,  7 Sep 2025 22:07:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757275640;
-	bh=aXZwZeP8hpfxh/3AkF7lqJUagLAveJEN56MEMEkzAFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EIdUP107fv1x2hMR6EkjV+HRQRrKAvVoeoo68qWucqV07+HRlpGueVkRxskQf6rSo
-	 RihvbMPQ5zfGNkZX6hODEnYnv9zxWWBTk7fWqy69xGyU6MUrKsp8a1/QMMC6Om71IQ
-	 fItNyArYRArtd4xY3lUzk/K+SPG8r8/9SGH1p2Nw=
-Date: Sun, 7 Sep 2025 22:08:11 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
- v4l2 control
-Message-ID: <20250907200811.GB19568@pendragon.ideasonboard.com>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
- <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
- <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
+	s=arc-20240116; t=1757276098; c=relaxed/simple;
+	bh=DHVsgq3EZ4dBzOun/+E5oVCv9xOjuvlbvo+5NkfxOgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pfAmc3p7BuO2G2WbuDbdTYROnS6f7TtytxdzoGg5SxgDcmbq2i3DV8BUEYpEHheA8PFWOf6JwtSXf/1NdWLhSgQYoqMZDWp/hdFuwz4Qna5/WFNas9kVftESUL5lLXQWkXM/JeXcP1ocaUWT/idpoQJU0gzfHqg+kHxcAZBt9gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CRZOsZs4; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587K9g7B011397;
+	Sun, 7 Sep 2025 20:14:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=yM0Vnuw61hBJNTZ8/foS1QpgJsoSP
+	iaVg+C7UGUfKdo=; b=CRZOsZs4Umaab65N2HvsFSoHdkfOaQ6YwDhOXPIdXOe5j
+	qptWipHdo//n6l3CVevCRK59/ulPtqqhOfDXBR9aqbDfMPN/I6ymJeUax5rm2hcn
+	Whxy1tjZ8gwWWfRsCge67y0XysHaa33jcwHFgKd3TiLMq7OYssiiQugTpIteiABN
+	/71sgU6klI3Fa3EqL3lTzz+58MsF7vbyALFPJYfIFXkUFgnCU8qV7Qvc5WptiElG
+	P7IJrTnFrAwwSf3Wc3kafONU4kPBCV13+lwbkVHAFTfEzDfiieIpJhOoCWdP9ZPV
+	Tk2jhxGwjgruskcI03GbsQOKQXar4u+1kb5jq/TxA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491gua801u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 07 Sep 2025 20:14:26 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 587EFFwd030698;
+	Sun, 7 Sep 2025 20:14:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd7cyuy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 07 Sep 2025 20:14:25 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 587KEOmf039410;
+	Sun, 7 Sep 2025 20:14:24 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bd7cyus-1;
+	Sun, 07 Sep 2025 20:14:24 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: julien.thierry@arm.com, marc.zyngier@arm.com, jintack@cs.columbia.edu,
+        christoffer.dall@arm.com, maz@kernel.org, oliver.upton@linux.dev,
+        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: arm64: vgic: fix incorrect spinlock API usage
+Date: Sun,  7 Sep 2025 13:14:13 -0700
+Message-ID: <20250907201421.3612784-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-07_08,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509070211
+X-Authority-Analysis: v=2.4 cv=UatRSLSN c=1 sm=1 tr=0 ts=68bde7a2 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=WX6EjEeCYAaawmOpSx8A:9
+X-Proofpoint-GUID: vn0JFs1aucJtM4zfA_naB14cPmViid_P
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA3MDIxMCBTYWx0ZWRfXyi7y69tKHa/g
+ OdCGom5mn8xjL4lwkli87rAIotIGbro6CPGkq69LNDmEjn5Z6d+qpjiIdE8wb83bNPFX5aX4f2K
+ 22UNd2JS2hu51WMCLPaROobhkZb/LE6E/48T6hK6UFjKmE8YWG/4fuv3q8cFsY4dYplrqwaR3Ok
+ 3fLbMUMu+JE10plW+ShEL/83BpWO2oATFbNPYAiRCtOvr3+lXmF5qTLSjRduPwPuVVM2sfyQ7fS
+ CwccXkZXhBkA11jETac59OMenO/1CnWV4prAo9XrgLx7938XzjNNgphDcgif5SeYO+0uaoU60UJ
+ FDVypMuGuBQkQVOHaPo/CjwEbatVxJwWT6HG4wh1hCmUeOFF9K1NpmE4uDInpj5ZQ11Qa8joMDZ
+ bXL8fhbz
+X-Proofpoint-ORIG-GUID: vn0JFs1aucJtM4zfA_naB14cPmViid_P
 
-On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
-> On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
-> > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
-> > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
-> > > "strobe output enable" feature of the sensor.
-> > > 
-> > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
-> > > tested using an ov9281 VisionComponents module.
-> > > 
-> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > ---
-> > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
-> > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
-> > > --- a/drivers/media/i2c/ov9282.c
-> > > +++ b/drivers/media/i2c/ov9282.c
-> > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
-> > >  				current_val);
-> > >  }
-> > >  
-> > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
-> > > +{
-> > > +	u32 current_val;
-> > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > +				  &current_val);
-> > > +	if (ret)
-> > > +		return ret;
-> > 
-> > Please don't do assignments in variable declaration if that involves error
-> > handling.
-> 
-> Sure. Will fix that!
-> 
-> > > +
-> > > +	if (enable)
-> > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
-> > > +	else
-> > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
-> > > +
-> > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > +				current_val);
+The function vgic_flush_lr_state() was calling _raw_spin_unlock()
+instead of the proper raw_spin_unlock().
 
-It would be nice to cache the register value instead of reading it back.
-Regmap may help (and then the driver should use the CCI helpers). This
-can be done separately.
+_raw_spin_unlock() is an internal low-level API and should not
+be used directly; using raw_spin_unlock() ensures proper locking
+semantics in the vgic code.
 
-> > > +}
-> > > +
-> > >  /**
-> > >   * ov9282_set_ctrl() - Set subdevice control
-> > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
-> > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
-> > >  		break;
-> > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> > > +		break;
-> > >  	default:
-> > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > >  		ret = -EINVAL;
-> > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > >  	u32 lpfr;
-> > >  	int ret;
-> > >  
-> > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > >  						OV9282_TIMING_HTS_MAX - mode->width,
-> > >  						1, hblank_min);
-> > >  
-> > > +	/* Flash/Strobe controls */
-> > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > 
-> > This seems rather long.
-> 
-> It's exactly 100 chars wide, so from a policy point of view it should be
-> fine ;-). But I'm also fine with breaking it to 80 if you prefer?
+This change replaces low-level API usage with the general kernel
+spinlock API, avoiding misuse of internal functions and aligning
+with kernel locking conventions.
 
-That's the usual policy in V4L2, yes. 80 columns is the preferred soft
-limit.
+Fixes: 8fa3adb8c6be ("KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ arch/arm64/kvm/vgic/vgic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > > +
-> > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > >  	if (!ret) {
-> > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > > 
-
+diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+index f5148b38120a..c74d6120a12c 100644
+--- a/arch/arm64/kvm/vgic/vgic.c
++++ b/arch/arm64/kvm/vgic/vgic.c
+@@ -818,7 +818,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+ 		 * the AP list has been sorted already.
+ 		 */
+ 		if (multi_sgi && irq->priority > prio) {
+-			_raw_spin_unlock(&irq->irq_lock);
++			raw_spin_unlock(&irq->irq_lock);
+ 			break;
+ 		}
+ 
 -- 
-Regards,
+2.50.1
 
-Laurent Pinchart
 
