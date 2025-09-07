@@ -1,61 +1,52 @@
-Return-Path: <linux-kernel+bounces-804525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2106FB478C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C824B478CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5AE1C230B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8CB03C24C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAF51D7E31;
-	Sun,  7 Sep 2025 03:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB43B1C860B;
+	Sun,  7 Sep 2025 03:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9zYPG2c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ACE1A0728;
-	Sun,  7 Sep 2025 03:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DFUq5Dng"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA91C14A0B5;
+	Sun,  7 Sep 2025 03:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757215326; cv=none; b=dCkwbE0IRffRwbyhQNVl5WfT+knN+kkNoTKfRn8fMAVaDbi+0jgBbC9Nga6NMA5g9CjJY0Tndks5tbpS0gm9n7v+PgsPcIvUPbojQRdncr6FJYAu+q/9zFyLJprGIIJcyhgJNk5Idyx0GIRLsoTeusAcIf+pjdJF9/PoU5kcBqc=
+	t=1757216387; cv=none; b=fu6Yk5tVNypjgu1LIi/WvGWCMePLxxjdXCC33puRrUfAStUZQnC90FrXxUP9uRjZ0forbNO5C2CCLRRHGK7agrSr2WptYbKMyBP6vWF6GxmKISmIHZ3jKSEJEWXSZd2CetFoalb4u+P2ab6Bv/8t4Bq9+K61nAMeuGA4P9hfDHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757215326; c=relaxed/simple;
-	bh=tInP6J7NJp//z767MSb09gQ5BOw84i+fFF4Se4q9AeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U/7zzxYvhA8bFipXSpudPzglpax7FjJrVOvRaMegtkKge+qIIjpC4zzzV1a+MFclJZuEbdaXlarJddJHzH3C7PXofpXs/TU9AijTTUp167iyh4X/1MXt9sQoOz4pel8UQZSY507i4R4yup0L3DHC0bsHleVR5b+6d0yQnJ88+5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9zYPG2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B008DC4CEF4;
-	Sun,  7 Sep 2025 03:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757215326;
-	bh=tInP6J7NJp//z767MSb09gQ5BOw84i+fFF4Se4q9AeE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k9zYPG2c5Xzn7cQ8M1dCgA9gSknrXT14mFB90EnnCKxRm0YFuhf6ucVAx9cBB6qwe
-	 RpuYB1k6P//GmCHIKccZM+G1zR7CXxAih2q1VECvvnHgfs681oLLdOXPCY4rF8l31d
-	 pSLX1s9VdoJT7xIKY5FXuv+Q6RtsowFsgR54EaclSdAC8Sw2vg7WThrzJwsuOBYDcd
-	 2jRuuY0cJ+HeOCpt97Ao2ifZeu5yVSxxeC8KcJgeXUlKjE+XalfJBoOCY1rSOfD54K
-	 HnPNKwa3QeXp+i3UjfY58fcxkbjCrJeQLpw9wUleybh+jarhgj3GfjqQIq9NdHsMcR
-	 3zYPgG5ipvaew==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-cifs@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Namjae Jeon <linkinjeon@kernel.org>
-Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1757216387; c=relaxed/simple;
+	bh=FtjgBkxlqi7pcdUqJq/lM2rJ3zdR6XfU4qGM0BZmf7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sN3NY8/TXIhCwaBCUhSVFThTjbseE+OD2AmIXTxlDs24ObKTsvn3K79zPfNpumicTN1KJjLpD/+69+86SAwz3MNc1cunzBr2jFB7MciJJDJV64ikJUMKaewzBZXeVBY8GhJjzWh7bjc6MGdDMKRx4Uhbq1SxOmnCCqvHcTsJjHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DFUq5Dng; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=UA
+	/GHr2DPUYc0ydI7Q4Kl3YbzgHpnAu+yoZiXnVHT0k=; b=DFUq5DngCFnUp1PapN
+	fXJsAVzMNH0ctGzjNANn4955bi7RUCapsUOoVSlhJZhF1/7ri0fTl77v2+JvlX41
+	nbiWkAknmYEwAXHbq4JziXsqzbKNwcXgAVOJNsjP4XCnn1CJuhZINGY3EQtUWEAJ
+	F8kU1dCJXmyS5QYfn2P3Rn/Ic=
+Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDXBiVu_rxoeI9OHA--.48406S2;
+	Sun, 07 Sep 2025 11:39:28 +0800 (CST)
+From: GuangFei Luo <luogf2025@163.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
-Date: Sat,  6 Sep 2025 20:20:03 -0700
-Message-ID: <20250907032003.386794-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	stable@vger.kernel.org,
+	luogf2025@163.com
+Subject: [PATCH] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
+Date: Sun,  7 Sep 2025 11:39:24 +0800
+Message-ID: <20250907033925.223849-1-luogf2025@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,262 +54,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXBiVu_rxoeI9OHA--.48406S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZr1xWrykKF1xuw4UGr4xtFb_yoW7Gr17pa
+	1rKa1UKrW8JF4kJwsI9F4UKFyxWFs0qF9rWr95Jrn2kasrGw1DAryxZFyUXF17GrykZ3yx
+	ZFn5t3Wrtw1xWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9eOAUUUUU=
+X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbizQa8mWi27eJixwAFsf
 
-fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
-this same code is also present in lib/crypto/arc4.c to serve the other
-users of this legacy algorithm in the kernel.  Remove the duplicate
-implementation in fs/smb/, which seems to have been added because of a
-misunderstanding, and just use the lib/crypto/ one.
+When removing and reinserting the laptop battery, ACPI can trigger
+two notifications in quick succession:
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+  - ACPI_BATTERY_NOTIFY_STATUS (0x80)
+  - ACPI_BATTERY_NOTIFY_INFO   (0x81)
+
+Both notifications call acpi_battery_update(). Because the events
+happen very close in time, sysfs_add_battery() can be re-entered
+before battery->bat is set, causing a duplicate sysfs entry error.
+
+This patch ensures that sysfs_add_battery() is not re-entered
+when battery->bat is already non-NULL, preventing the duplicate
+sysfs creation and stabilizing battery hotplug handling.
+
+[  476.117945] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
+[  476.118896] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
+[  476.118903] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
+[  476.118906] Workqueue: kacpi_notify acpi_os_execute_deferred
+[  476.118917] Call Trace:
+[  476.118922]  <TASK>
+[  476.118929]  dump_stack_lvl+0x5d/0x80
+[  476.118938]  sysfs_warn_dup.cold+0x17/0x23
+[  476.118943]  sysfs_create_dir_ns+0xce/0xe0
+[  476.118952]  kobject_add_internal+0xba/0x250
+[  476.118959]  kobject_add+0x96/0xc0
+[  476.118964]  ? get_device_parent+0xde/0x1e0
+[  476.118970]  device_add+0xe2/0x870
+[  476.118975]  __power_supply_register.part.0+0x20f/0x3f0
+[  476.118981]  ? wake_up_q+0x4e/0x90
+[  476.118990]  sysfs_add_battery+0xa4/0x1d0 [battery]
+[  476.118998]  acpi_battery_update+0x19e/0x290 [battery]
+[  476.119002]  acpi_battery_notify+0x50/0x120 [battery]
+[  476.119006]  acpi_ev_notify_dispatch+0x49/0x70
+[  476.119012]  acpi_os_execute_deferred+0x1a/0x30
+[  476.119015]  process_one_work+0x177/0x330
+[  476.119022]  worker_thread+0x251/0x390
+[  476.119026]  ? __pfx_worker_thread+0x10/0x10
+[  476.119030]  kthread+0xd2/0x100
+[  476.119033]  ? __pfx_kthread+0x10/0x10
+[  476.119035]  ret_from_fork+0x34/0x50
+[  476.119040]  ? __pfx_kthread+0x10/0x10
+[  476.119042]  ret_from_fork_asm+0x1a/0x30
+[  476.119049]  </TASK>
+[  476.142552] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+[  476.415022] ata1.00: unexpected _GTF length (8)
+[  476.428076] sd 0:0:0:0: [sda] Starting disk
+[  476.835035] ata1.00: unexpected _GTF length (8)
+[  476.839720] ata1.00: configured for UDMA/133
+[  491.328831] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
+[  491.329720] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
+[  491.329727] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
+[  491.329731] Workqueue: kacpi_notify acpi_os_execute_deferred
+[  491.329741] Call Trace:
+[  491.329745]  <TASK>
+[  491.329751]  dump_stack_lvl+0x5d/0x80
+[  491.329758]  sysfs_warn_dup.cold+0x17/0x23
+[  491.329762]  sysfs_create_dir_ns+0xce/0xe0
+[  491.329770]  kobject_add_internal+0xba/0x250
+[  491.329775]  kobject_add+0x96/0xc0
+[  491.329779]  ? get_device_parent+0xde/0x1e0
+[  491.329784]  device_add+0xe2/0x870
+[  491.329790]  __power_supply_register.part.0+0x20f/0x3f0
+[  491.329797]  sysfs_add_battery+0xa4/0x1d0 [battery]
+[  491.329805]  acpi_battery_update+0x19e/0x290 [battery]
+[  491.329809]  acpi_battery_notify+0x50/0x120 [battery]
+[  491.329812]  acpi_ev_notify_dispatch+0x49/0x70
+[  491.329817]  acpi_os_execute_deferred+0x1a/0x30
+[  491.329820]  process_one_work+0x177/0x330
+[  491.329826]  worker_thread+0x251/0x390
+[  491.329830]  ? __pfx_worker_thread+0x10/0x10
+[  491.329833]  kthread+0xd2/0x100
+[  491.329836]  ? __pfx_kthread+0x10/0x10
+[  491.329838]  ret_from_fork+0x34/0x50
+[  491.329842]  ? __pfx_kthread+0x10/0x10
+[  491.329844]  ret_from_fork_asm+0x1a/0x30
+[  491.329850]  </TASK>
+[  491.329855] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+
+Fixes: 508df92d1f8d ("ACPI: battery: register power_supply subdevice only when battery is present")
+Signed-off-by: GuangFei Luo <luogf2025@163.com>
 ---
- fs/smb/client/Kconfig       |  1 +
- fs/smb/client/cifsencrypt.c |  8 ++--
- fs/smb/common/Makefile      |  1 -
- fs/smb/common/arc4.h        | 23 ------------
- fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
- fs/smb/server/Kconfig       |  1 +
- fs/smb/server/auth.c        |  9 ++---
- 7 files changed, 10 insertions(+), 108 deletions(-)
- delete mode 100644 fs/smb/common/arc4.h
- delete mode 100644 fs/smb/common/cifs_arc4.c
+ drivers/acpi/battery.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
-index 9f05f94e265a6..a4c02199fef48 100644
---- a/fs/smb/client/Kconfig
-+++ b/fs/smb/client/Kconfig
-@@ -13,10 +13,11 @@ config CIFS
- 	select CRYPTO_AEAD2
- 	select CRYPTO_CCM
- 	select CRYPTO_GCM
- 	select CRYPTO_ECB
- 	select CRYPTO_AES
-+	select CRYPTO_LIB_ARC4
- 	select KEYS
- 	select DNS_RESOLVER
- 	select ASN1
- 	select OID_REGISTRY
- 	select NETFS_SUPPORT
-diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-index 3cc6862469087..7b7c8c38fdd08 100644
---- a/fs/smb/client/cifsencrypt.c
-+++ b/fs/smb/client/cifsencrypt.c
-@@ -20,12 +20,12 @@
- #include <linux/ctype.h>
- #include <linux/random.h>
- #include <linux/highmem.h>
- #include <linux/fips.h>
- #include <linux/iov_iter.h>
--#include "../common/arc4.h"
- #include <crypto/aead.h>
-+#include <crypto/arc4.h>
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index 6905b56bf3e4..3801fd34c969 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -1026,11 +1026,13 @@ static int acpi_battery_update(struct acpi_battery *battery, bool resume)
+ 		return result;
+ 	acpi_battery_quirks(battery);
  
- static size_t cifs_shash_step(void *iter_base, size_t progress, size_t len,
- 			      void *priv, void *priv2)
- {
- 	struct shash_desc *shash = priv;
-@@ -723,13 +723,13 @@ calc_seckey(struct cifs_ses *ses)
- 	if (!ctx_arc4) {
- 		cifs_dbg(VFS, "Could not allocate arc4 context\n");
- 		return -ENOMEM;
++	mutex_lock(&battery->sysfs_lock);
+ 	if (!battery->bat) {
+ 		result = sysfs_add_battery(battery);
+ 		if (result)
+ 			return result;
  	}
++	mutex_unlock(&battery->sysfs_lock);
  
--	cifs_arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZE);
--	cifs_arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
--			CIFS_CPHTXT_SIZE);
-+	arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZE);
-+	arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
-+		   CIFS_CPHTXT_SIZE);
- 
- 	/* make secondary_key/nonce as session key */
- 	memcpy(ses->auth_key.response, sec_key, CIFS_SESS_KEY_SIZE);
- 	/* and make len as that of session key only */
- 	ses->auth_key.len = CIFS_SESS_KEY_SIZE;
-diff --git a/fs/smb/common/Makefile b/fs/smb/common/Makefile
-index c66dbbc1469c3..9e0730a385fb1 100644
---- a/fs/smb/common/Makefile
-+++ b/fs/smb/common/Makefile
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- #
- # Makefile for Linux filesystem routines that are shared by client and server.
- #
- 
--obj-$(CONFIG_SMBFS) += cifs_arc4.o
- obj-$(CONFIG_SMBFS) += cifs_md4.o
-diff --git a/fs/smb/common/arc4.h b/fs/smb/common/arc4.h
-deleted file mode 100644
-index 12e71ec033a18..0000000000000
---- a/fs/smb/common/arc4.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0+ */
--/*
-- * Common values for ARC4 Cipher Algorithm
-- */
--
--#ifndef _CRYPTO_ARC4_H
--#define _CRYPTO_ARC4_H
--
--#include <linux/types.h>
--
--#define ARC4_MIN_KEY_SIZE	1
--#define ARC4_MAX_KEY_SIZE	256
--#define ARC4_BLOCK_SIZE		1
--
--struct arc4_ctx {
--	u32 S[256];
--	u32 x, y;
--};
--
--int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len);
--void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len);
--
--#endif /* _CRYPTO_ARC4_H */
-diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
-deleted file mode 100644
-index df360ca47826a..0000000000000
---- a/fs/smb/common/cifs_arc4.c
-+++ /dev/null
-@@ -1,75 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * Cryptographic API
-- *
-- * ARC4 Cipher Algorithm
-- *
-- * Jon Oberheide <jon@oberheide.org>
-- */
--
--#include <linux/module.h>
--#include "arc4.h"
--
--MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
--MODULE_LICENSE("GPL");
--
--int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
--{
--	int i, j = 0, k = 0;
--
--	ctx->x = 1;
--	ctx->y = 0;
--
--	for (i = 0; i < 256; i++)
--		ctx->S[i] = i;
--
--	for (i = 0; i < 256; i++) {
--		u32 a = ctx->S[i];
--
--		j = (j + in_key[k] + a) & 0xff;
--		ctx->S[i] = ctx->S[j];
--		ctx->S[j] = a;
--		if (++k >= key_len)
--			k = 0;
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(cifs_arc4_setkey);
--
--void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
--{
--	u32 *const S = ctx->S;
--	u32 x, y, a, b;
--	u32 ty, ta, tb;
--
--	if (len == 0)
--		return;
--
--	x = ctx->x;
--	y = ctx->y;
--
--	a = S[x];
--	y = (y + a) & 0xff;
--	b = S[y];
--
--	do {
--		S[y] = a;
--		a = (a + b) & 0xff;
--		S[x] = b;
--		x = (x + 1) & 0xff;
--		ta = S[x];
--		ty = (y + ta) & 0xff;
--		tb = S[ty];
--		*out++ = *in++ ^ S[a];
--		if (--len == 0)
--			break;
--		y = ty;
--		a = ta;
--		b = tb;
--	} while (true);
--
--	ctx->x = x;
--	ctx->y = y;
--}
--EXPORT_SYMBOL_GPL(cifs_arc4_crypt);
-diff --git a/fs/smb/server/Kconfig b/fs/smb/server/Kconfig
-index 4a23a5e7e8fec..098cac98d31e6 100644
---- a/fs/smb/server/Kconfig
-+++ b/fs/smb/server/Kconfig
-@@ -8,10 +8,11 @@ config SMB_SERVER
- 	select NLS_UCS2_UTILS
- 	select CRYPTO
- 	select CRYPTO_MD5
- 	select CRYPTO_HMAC
- 	select CRYPTO_ECB
-+	select CRYPTO_LIB_ARC4
- 	select CRYPTO_LIB_DES
- 	select CRYPTO_LIB_SHA256
- 	select CRYPTO_SHA256
- 	select CRYPTO_CMAC
- 	select CRYPTO_SHA512
-diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
-index d99871c214518..b4020bb55a268 100644
---- a/fs/smb/server/auth.c
-+++ b/fs/smb/server/auth.c
-@@ -18,20 +18,20 @@
- 
- #include "auth.h"
- #include "glob.h"
- 
- #include <linux/fips.h>
-+#include <crypto/arc4.h>
- #include <crypto/des.h>
- 
- #include "server.h"
- #include "smb_common.h"
- #include "connection.h"
- #include "mgmt/user_session.h"
- #include "mgmt/user_config.h"
- #include "crypto_ctx.h"
- #include "transport_ipc.h"
--#include "../common/arc4.h"
- 
- /*
-  * Fixed format data defining GSS header and fixed string
-  * "not_defined_in_RFC4178@please_ignore".
-  * So sec blob data in neg phase could be generated statically.
-@@ -363,14 +363,13 @@ int ksmbd_decode_ntlmssp_auth_blob(struct authenticate_message *authblob,
- 
- 		ctx_arc4 = kmalloc(sizeof(*ctx_arc4), KSMBD_DEFAULT_GFP);
- 		if (!ctx_arc4)
- 			return -ENOMEM;
- 
--		cifs_arc4_setkey(ctx_arc4, sess->sess_key,
--				 SMB2_NTLMV2_SESSKEY_SIZE);
--		cifs_arc4_crypt(ctx_arc4, sess->sess_key,
--				(char *)authblob + sess_key_off, sess_key_len);
-+		arc4_setkey(ctx_arc4, sess->sess_key, SMB2_NTLMV2_SESSKEY_SIZE);
-+		arc4_crypt(ctx_arc4, sess->sess_key,
-+			   (char *)authblob + sess_key_off, sess_key_len);
- 		kfree_sensitive(ctx_arc4);
- 	}
- 
- 	return ret;
- }
-
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+ 	/*
+ 	 * Wakeup the system if battery is critical low
 -- 
-2.50.1
+2.43.0
 
 
