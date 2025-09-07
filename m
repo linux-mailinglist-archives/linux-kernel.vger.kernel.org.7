@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-804761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B751B47CB0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:51:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E28EB47CB4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC38169C09
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B261898706
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADC1274B35;
-	Sun,  7 Sep 2025 17:51:35 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F41926E71C;
+	Sun,  7 Sep 2025 17:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Oy3+XnUn"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66A3C465
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 17:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D125414A0B5;
+	Sun,  7 Sep 2025 17:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757267495; cv=none; b=m+Mkz9KHGeBL9IO0A5rDShRo8Jp84YvCbvU8IIf8DXFvM9PIvABYmxnPB0JdXOdfnLgtlQkj3kVxvjzG7vc/0juc70Y1jPuAw5Ip68vZxreMyoCeQvhlX1rmhDov9oOMTh+XILGjuXv5+nQsVP7KTr2kQUp1bt2zXbXojHtJSms=
+	t=1757267864; cv=none; b=dYMy30fWqjyoo/ui22ILV6IyqWEn4oeBx/FsE7qfCjOm2bMuV6rDosbRVZD8buN7mdUWI3Ko6b/bTuCcDg4VaLeRelTBeLPDK8n/RNPelzEq0tiCpPfyITsSStYc49gtjwiY7ycyFDHUEJaDGX1NdnarTcwed84tn5y7Ehlsogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757267495; c=relaxed/simple;
-	bh=xngdN5sSs4YgaMwMqMgWb9r9Eyg9kbqt2cRhGJLNrw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+R4uvRHXmRNxvOSq3k4Mw/ziFwxkOfz1V+mthRqSw4t4CByfhMoxCuDyw39DzeqFePrzlopo7pDBZchvqfaY850HHAf3RBNG61Vf3TrFiu5cT4D65InGJu7EShaBwXMJL5sijAWBErligex166qyWzqmmd38fvmsLdLK5it+qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 8 Sep 2025 02:51:24 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Mon, 8 Sep 2025 02:51:24 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>, Wei Xu <weixugc@google.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aL3GHJJ6+elPD7OP@yjaykim-PowerEdge-T330>
-References: <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
- <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
- <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
- <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
- <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
- <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330>
- <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
- <CAF8kJuNW2kmxKYRE9t8WvSOad9JkLYt0WSAcFOQ9r9=2=XGc9Q@mail.gmail.com>
+	s=arc-20240116; t=1757267864; c=relaxed/simple;
+	bh=OTCzNhi4py6u0lUt39mvx7CQKbEtv8hcWJ/IXtbhC1E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m8jGNB1xAvsOKRPdeaqvApR8aPIsh+sXu4lMn8zhfdh6YRZ4vzwqVtJb+yoXNCCaBvoRc2wg+FHo5VQU7j8jVFeZ37Q2michSVFNvYEdymy9pCmmiVXgfCJRP2peAPsJM8IT/pfE81Xc+FNXAsNtS5p6mQlAIxBvORr0MSdXENk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Oy3+XnUn; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=Z0VrCIQMfbKGrs0yxee16A+wHWcE+QKfInmg7svF34Q=; t=1757267860;
+	x=1757872660; b=Oy3+XnUn/cTcsBRCjYgA1SJ6Z7FgNV7DzK3SftO56+xy/anJeJ183cRTWzuzm
+	8MbW4n6FHrOZS3iWMNBokmVjFKiH8yhQmUhVfbUtmEBeFV/XUMgyEYeFI2HZi5TAF7zhbaTkN3zZT
+	kvbnjcWfHrfPZ9y+LsZfruRywAWOlTr5rOi4fb0ftwezF0DattEn8tNqgGfvY/4sHHmPqtuRoPqnw
+	M9kWXO+WwZeOzRiRXEXPsIvT5/a8pXvFz7MDyDsV2Xdw0B5YqDwC+FOfy/VV7uwRqtLEG6VFD4KM0
+	MqmvH8S2u+Vf7BsN7hp0NzDNAwDQeWSrTa6ORopGIoAe5ZV4tw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uvJdy-00000002JVA-2rEx; Sun, 07 Sep 2025 19:57:38 +0200
+Received: from dynamic-089-012-071-066.89.12.pool.telefonica.de ([89.12.71.66] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uvJdy-00000003E7H-1x7f; Sun, 07 Sep 2025 19:57:38 +0200
+Message-ID: <35a07d38d6d59b79d28543bb4a862f14af1fa713.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: =?ISO-8859-1?Q?Ren=E9?= Rebe <rene@exactco.de>
+Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson	
+ <andreas@gaisler.com>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  Anthony Yznaga <anthony.yznaga@oracle.com>
+Date: Sun, 07 Sep 2025 19:57:37 +0200
+In-Reply-To: <E6D1F756-419D-448A-AF35-387FDA16AC00@exactco.de>
+References: 
+	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+	 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+	 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
+	 <E6D1F756-419D-448A-AF35-387FDA16AC00@exactco.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuNW2kmxKYRE9t8WvSOad9JkLYt0WSAcFOQ9r9=2=XGc9Q@mail.gmail.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-> On Fri, Sep 5, 2025 at 4:45 PM Chris Li <chrisl@kernel.org> wrote:
-> > >   - Mask computation: precompute at interface write-time vs runtime
-> > >     recomputation. (TBD; preference?)
-> >
-> > Let's start with runtime. We can have a runtime and cached with
-> > generation numbers on the toplevel. Any change will reset the top
-> > level general number then the next lookup will drop the cache value
-> > and re-evaluate.
->
-> Scratch that cache value idea. I found the run time evaluation can be
-> very simple and elegant.
-> Each memcg just needs to store the tier onoff value for the local
-> swap.tiers operation. Also a mask to indicate which of those tiers
-> present.
-> e.g. bits 0-1: default, on bit 0 and off bit 1
->        bits 2-3: zswap, on bit 2 and off bit3
->        bits 4-6: first custom tier
->        ...
->
-> The evaluation of the current tier "memcg" to the parent with the
-> default tier shortcut can be:
->
->         onoff = memcg->tiers_onoff;
->         mask = memcg->tiers_mask;
->
->         for (p = memcg->parent; p && !has_default(onoff); p = p->parent) {
->                 merge = mask | p->tiers_mask;
->                 new = merge ^ mask;
->                 onoff |= p->tiers_onoff & new;
->                 mask = merge;
->         }
->         if (onoff & DEFAULT_OFF) {
->                 // default off, look for the on tiers to turn on
->         } else {
->                 // default on, look for the off tiers to turn off
->         }
->
-> It is an all bit operation that does not need caching at all. This can
-> take advantage of the short cut of the default tier. If the default
-> tier overwrite exists, no need to search the parent further.
->
-> Chris
->
+Hi Rene,
 
-Hi Chris,
+On Sun, 2025-09-07 at 19:32 +0200, Ren=C3=A9 Rebe wrote:
+> It is probably a good time to mention that there are likely some other ma=
+jor
+> TLB (or so) bug on U3. For example, I could never boot any Linux kernel
+> (probably ever) with 8GB installed in my Sun Blade 1000 - it would NULL p=
+tr
+> deref very early:
 
-Thanks a lot for the clear code and explanation.
+Have a look at arch/sparc/kernel/head_64.S:
 
-I’ll proceed with the runtime evaluation approach you suggested.  
-I was initially leaning toward precomputing at write-time since (1) 
-cgroup depth is might be deep, and (2) swap I/O paths are far more frequent than config
-writes. Is your preference for runtime for implementation simpleness?
-(Any other reasons I don't know?)
+	/* Patch copy/page operations to cheetah optimized versions. */
+	call	cheetah_patch_copyops
+	 nop
+	call	cheetah_patch_copy_page
+	 nop
+	call	cheetah_patch_cachetlbops
+	 nop
 
-Thanks again
+These patch in UltraSPARC-III-optimized versions of copy_{to,from}_user
+and copy_page and TLB operations. Replacing these calls with "nop" might
+tell us whether any of those is broken.
 
-Best Regards
-Youngjun Park
+I have already replaced cheetah_patch_copyops with generic_patch_copyops
+and was able to verify that the recently discovered OOPS is not related
+to copy_{to,from}_user, so Michael's UltraSPARC III may still be correct
+and complete.
+
+I am testing the other two now as I think that these are good candidates.
+
+Adrian
+
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
