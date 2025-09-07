@@ -1,395 +1,583 @@
-Return-Path: <linux-kernel+bounces-804778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE029B47CE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:33:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A19B47CE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D873B9935
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F2C17DFC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEBC29ACCD;
-	Sun,  7 Sep 2025 18:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89552848BE;
+	Sun,  7 Sep 2025 18:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrne/gQh"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCv0+pnr"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA83B283FE4;
-	Sun,  7 Sep 2025 18:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A506E552
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 18:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757270012; cv=none; b=ab3d5puf++ogiGtwBYLNLOBOunQ+igdxU6Vtm/A1aSMmIvCDkAhv1u6/28wOFgjhoU9GAL6SiAu/NktOcA9LKcLwlYONzbWqZZDxIK/j5s544tXFkVyo34h7B+m1fEftCIHuYgHhG30M8Ncpbt+84PA3iUSEQLfxGAlu2Xt2Sts=
+	t=1757270068; cv=none; b=I83mYIedIwWe9KpFQKPGSe3sB8tSs3cargFlD42nJCfchR/gjqcuNkwq3hPDUFIWxyW/GqVB8hR2j28vdqPdeqh5/9vjkvLPgF0v0KqHnShmt3GBSLCBHBXFiQXo6sAxM0P7uhBRfICS8GQ8A6S+2q8QvLtBtINbOkVfIj1z+68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757270012; c=relaxed/simple;
-	bh=2haumMTs1BksSWy181iFOdCCj5/UTBkAOBVDbcBWcAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FSh27KTxjEUVH/8dmWAWsRVLx/EdQeiSiYVz8y/CZqOoY/FrDWbT3SZnlKvAHHQRIge6AACIkFV45xzMgrKqF+tMSGLC1c6t0ezNoVAZVV8gOV2660BqdSU3UznE1YuiF5beSphw0grZeTy8XZ73f9XSiEbXHCYJX6qtvj6TnL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrne/gQh; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1757270068; c=relaxed/simple;
+	bh=V/olui1zCKk/MD3zcDaBAsqW3JfMyTaMRNWIBGAy0gA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZzH+gY5tsrhhvgezeFmX7Yr8ax+7gCzO/mY/2OJeqJFC+jbdN5Bn8Rp1/U9fbC1HRMF3A6YemQQ7mnaLGfGJFWIOy98Hkkp09oaAeWH8IhyCpTR8E6mPAjTquTMyPVu5Pynj4F8Wtwai26ZdsO3uJi1VG5yOXrIeFxUkWbHa4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCv0+pnr; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so2507149a12.0;
-        Sun, 07 Sep 2025 11:33:30 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0472bd218bso592646566b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 11:34:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757270010; x=1757874810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1prghCX2j/ZdYOZtRxnhLixcEap1cTasQWjSnDFEOK4=;
-        b=jrne/gQhaoaoecHf9o+uEt/Kut7uuEDR8yxPmxbuH30yxr0WwbZvbZ6Q8lXLu6y75O
-         9QmQTPyTZOKylWrgZTB4luLbmXoP/n16XP4GwAgxwewP+mFF/CbUSN9MwkhDhwCOrdHX
-         ToDOOmS9Ccgoq6rgW5xJUTnci3hLD7Z3+y1CQfUR6RbbTLeP+5r1ztK6vaIdHKS080kE
-         KF8HF4uf+KX+M7XtH6HRe8L1lVxrOYYnxwmA3DbGsFRBMpP0dGteiSxB/KA+JRyw31w5
-         5tbXPJez7zzzlREvYP2AGuWjzVEKrbbG4JniaWlW1pmPfa035gteKEK1Kfz07zcgloFw
-         amUg==
+        d=gmail.com; s=20230601; t=1757270065; x=1757874865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tcuO7EBQB4DV8eVMLXuTBf9tOswjdlII0qkfljFwntI=;
+        b=bCv0+pnr3776y2Xy9+bJ8gJSQ8vloQZ8Jl8VbT60vy2jXiRqEAjU4FDAw/GcmK7gO6
+         UtUNXPCOrIZxYPYU2heEfPcd9IIGVlGQ7AE2aGbe9bIrKx0FQ2XcMiwV5n++twskg+1E
+         J0ly2wcCcWMBoIaXcis4VbTzP0oxN0W07aWch3/QPD+l96BuoQP67b62nhDqlNnfSnV2
+         HjZmB3I/3lRGjh0BhdKd/efJTsfqhO4lsoKNqDgeWaUAGdqTdic0Pu3m6PDaROZqCZ65
+         qS6k+LHIUQxoCjiBX55JU0P7nrML8gbqd7gvZjRKqtuTtz49/kRTSdXJN81pDQ3D1zhS
+         1ujA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757270010; x=1757874810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1prghCX2j/ZdYOZtRxnhLixcEap1cTasQWjSnDFEOK4=;
-        b=HkE/O9WnTUZ92e4Rd8yWMREvc4BTbxzlEfaDlK+VJp1mBK94recLSyKhUc581N1rSa
-         no8JSNWb11QQRS4B16avAWD88jSSRtpxXQKt0n1QpaOpYd/TDF2gBS6au3VsjSfkhcKi
-         Cvxipp53tZWSqdixe1J8amCoawgHXOgh3o/vOAhmdVdQURFndUPbqspdChZEz90Z2SEF
-         8BappoEDPu13h+jQhBnyYm0f8vXPLLMhzt6oN/mgv+Cob3/nMHpleCIIKoZXQ42nWhIz
-         n9YMsFDRVlUGWLgKEiAXKRc0Va1VcFIbuQP5kkDchbuv2s7DXTWLSUGEMz5WQJtHJG4j
-         UJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7lKCTeKxUP61SBiq2Ysa7PTKPQMIeAu5nMbzAQqVYWSLQtb11GavhU1u9+eWgqJoSUraGjd8HuM14mpZ2@vger.kernel.org, AJvYcCUeoE7ILUUM5smLTVMQEOghJFMbnjaoWye/ZXvLb4J87ibwWUJ4Z07poZXRn1MYKDn3AMkDzW4gXS1w@vger.kernel.org, AJvYcCX/fLS5IYFbWLW6OkofMkvuhh8cgbmDi8503JI+jDyeilloPrGJf6bnC19e+CbNLMzczkDnkgflMttgI99G@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkTbRyYQL9HZvfvVOYBRCS6UOwKvhD+SNguvO0/yl9gBFf0ioW
-	U++dOTPPr8ZGX8Tjbc0z19xU8hCfpKKJWbVGduSyrJ/8AX8PQyPcYuWz+G4GFtuiOA7SmOCgsyC
-	454t0bsg1FagOYioZvn2x+Z0wqKqh1Ko=
-X-Gm-Gg: ASbGncuN93lonpRDUbggREg93bpSGfWUFaRtk3lqfJp32i8WIcInHlbPBFnFbHXx48q
-	xVbNmXH9TnFvJeFjzM2npfG5GltHW6gE9xfaBvg3kUWfZ5u2Ch84ttN3v9hDkJmD40b1fgD/FXS
-	4xPbClBafhjC8D92EoPxiyKrZfLxUHa9cU9KEblymEG3AXZ2dbqck211mMkSonD6zOzwkH8oZeM
-	ms+x9MIkmnWYCfeLj4lV2aVyO/XSpQt5kEADMos2GEMNnQ/6ltN/MyH7kwZwjcZeVP8BWodJsW9
-	qsQ=
-X-Google-Smtp-Source: AGHT+IFR/gRhNkc1YOW9Zi7R1cnc2A7iUPAIgKgthiJn5F7NTQaDezr7EVExPYq6YHZKpDdlHlFdPKtYZHtahoQRI5w=
-X-Received: by 2002:a17:903:2341:b0:24b:25f:5f7f with SMTP id
- d9443c01a7336-2517301ce47mr64467415ad.60.1757270010091; Sun, 07 Sep 2025
- 11:33:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757270065; x=1757874865;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcuO7EBQB4DV8eVMLXuTBf9tOswjdlII0qkfljFwntI=;
+        b=KzjKBvtssULx4Pqzj1+6COuj6aJnKzloweR1yImqYo9iC+OQEacRxh0XQfqKWMlUAv
+         vP/lWZ8TsFNnaOuU9BHjNtX+bFa1/rvBPAlif1lL4ZNVSUPAz2UEXFjhXkHqzDoyXM1n
+         0hUgl3U92hPGWt8j822FFySSjxp0qL4Gr0kyjLvkElsDoUu6WcuJ3xO38eOPiLQ3zYOq
+         rxmXIjZAP+J3EaTjae8ulHnZuWzhHv8S5k+3CSNtDqtmFrGtYfLLUQzj3uicBMTRXgvr
+         IHaohgtUAo4h620mSPFuoIbZ9KJMkruwtJqQ4b1HIUlBBynIWh3vVCQw7hFwaV3nG/w9
+         pCeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlYYM0T4W8Ke2N2kjJZBry8x20qoJPaeiIB2CoG9ZYF+HMZgEI3KKJGrZNw6/Er8YJ2ICrTZK5IggGoCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaDggv2HZK0k7MEv5DSZ7d966FntPeW2ca1+QLAcV0o3+kRtLw
+	MMBOa27H3QfTYHSwvKV65W2iec0AHgPmBjC54Uuc3/bKsqF1hX3dmnDePQ6K7w==
+X-Gm-Gg: ASbGnctEAHg+rKU+fDjPZrLOAUTKHneXLi1ii9IW6UbH/GOQezN4yvxxnDm2u1ztqVe
+	a61Y5BS4z1ZaJRM5EV00eW2mBFvFPlXgQBpqQXt/ldF/7qKnCeqdGqVKbTZs6jd3/n/sw8N7zOO
+	1IdEsqG5s9ps2SiFLdieIZqaEmN80qxziQ3xsOd1Bv22VYMu2vXRXB97mRP6Mc2zYNZQEISpft1
+	5FCGDviIX9IOEvzkZWigkO2l2tEri/fdS3VgmB5lxUqpZCJRm01MERrpsE/L2dD1MSSpC6Z5jCp
+	tq6Wldff4S0anLFErjYgVJq/sjyQorM7udAQGv/P66sVQeg6TsFCJtPpDnBNO8ed6sFzZC4JC0X
+	mFIf8ttJx2/75Q3H2a9qpB8k=
+X-Google-Smtp-Source: AGHT+IEzlJcAQNbFCKCNJAGfyIE1M0R6JOmtvKkELsapJjB7ASpZ52sJbajMod0TuEe5I+ZCdYYWhQ==
+X-Received: by 2002:a17:906:fe46:b0:b04:5cca:9963 with SMTP id a640c23a62f3a-b04b155a032mr584177566b.41.1757270064412;
+        Sun, 07 Sep 2025 11:34:24 -0700 (PDT)
+Received: from fedora ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04b0f0cdc3sm444495166b.84.2025.09.07.11.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 11:34:23 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH -tip v2] x86: Remove code depending on __GCC_ASM_FLAG_OUTPUTS__
+Date: Sun,  7 Sep 2025 20:33:38 +0200
+Message-ID: <20250907183420.48569-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250907032003.386794-1-ebiggers@kernel.org> <CAH2r5mutq5vZwKNyZ6nforOierKSH9si+47XoFV7PZSKxuvqHQ@mail.gmail.com>
-In-Reply-To: <CAH2r5mutq5vZwKNyZ6nforOierKSH9si+47XoFV7PZSKxuvqHQ@mail.gmail.com>
-From: ronnie sahlberg <ronniesahlberg@gmail.com>
-Date: Mon, 8 Sep 2025 04:33:18 +1000
-X-Gm-Features: AS18NWCpN9KIq6ir13rA4hDgL4YVOU6GMbSEJ81vt4fcEK9IDcVMKkK-7j9FVDM
-Message-ID: <CAN05THRE0powMS-AgXHfGT_rbkrqBA09PDA6ydzcCGzSnA-V9w@mail.gmail.com>
-Subject: Re: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
-To: Steve French <smfrench@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-cifs@vger.kernel.org, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, 8 Sept 2025 at 03:59, Steve French <smfrench@gmail.com> wrote:
->
-> Ronnie may have additional context, but it may have been forked due to
-> unrelated restrictions on the arc4 module (that had nothing to do with
-> cifs.ko very narrow usage of arc4) breaking cifs.ko.
->
-> Ronnie,
-> Do you remember the context?
+The minimum supported GCC version is 8.1, which supports flag
+output operands and always defines __GCC_ASM_FLAG_OUTPUTS__ macro.
 
-Yepp.
-The context was that to my understanding it was suggested that the
-arc4 module would be going away
-and would be removed so cifs had to stop using it. (or create its own
-private copy)
+Remove code depending on __GCC_ASM_FLAG_OUTPUTS__ and use
+the "=@ccCOND" flag output operand directly.
 
-Must been a misunderstanding of what/how would happen with arc4 when
-it was retired.
+Use the equivalent "=@ccz" instad of "=@cce" flag output operand for
+CMPXCHG8B and CMPXCHG16B instructions. These instructions set
+a single flag bit, and "=@ccz" is used to distinguish the CC user
+from comparison instructions, where set ZERO flag indeed means
+that the values are equal.
 
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+v2: Mention why "=@ccz" is used instead of "=@cce" for CMPXCHG{8,16}B.
+---
+ arch/x86/boot/bitops.h               |  2 +-
+ arch/x86/boot/boot.h                 |  8 ++++----
+ arch/x86/boot/string.c               |  4 ++--
+ arch/x86/include/asm/archrandom.h    |  6 ++----
+ arch/x86/include/asm/asm.h           | 12 ------------
+ arch/x86/include/asm/bitops.h        | 18 ++++++------------
+ arch/x86/include/asm/cmpxchg.h       | 12 ++++--------
+ arch/x86/include/asm/cmpxchg_32.h    |  6 ++----
+ arch/x86/include/asm/cmpxchg_64.h    |  3 +--
+ arch/x86/include/asm/percpu.h        | 12 ++++--------
+ arch/x86/include/asm/rmwcc.h         | 26 ++------------------------
+ arch/x86/include/asm/sev.h           |  3 +--
+ arch/x86/include/asm/signal.h        |  3 +--
+ arch/x86/include/asm/special_insns.h |  3 +--
+ arch/x86/include/asm/uaccess.h       |  7 +++----
+ tools/arch/x86/include/asm/asm.h     | 12 ------------
+ tools/perf/bench/find-bit-bench.c    |  2 +-
+ 17 files changed, 35 insertions(+), 104 deletions(-)
 
->
-> On Sat, Sep 6, 2025 at 10:22=E2=80=AFPM Eric Biggers <ebiggers@kernel.org=
-> wrote:
-> >
-> > fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
-> > this same code is also present in lib/crypto/arc4.c to serve the other
-> > users of this legacy algorithm in the kernel.  Remove the duplicate
-> > implementation in fs/smb/, which seems to have been added because of a
-> > misunderstanding, and just use the lib/crypto/ one.
-> >
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > ---
-> >  fs/smb/client/Kconfig       |  1 +
-> >  fs/smb/client/cifsencrypt.c |  8 ++--
-> >  fs/smb/common/Makefile      |  1 -
-> >  fs/smb/common/arc4.h        | 23 ------------
-> >  fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
-> >  fs/smb/server/Kconfig       |  1 +
-> >  fs/smb/server/auth.c        |  9 ++---
-> >  7 files changed, 10 insertions(+), 108 deletions(-)
-> >  delete mode 100644 fs/smb/common/arc4.h
-> >  delete mode 100644 fs/smb/common/cifs_arc4.c
-> >
-> > diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
-> > index 9f05f94e265a6..a4c02199fef48 100644
-> > --- a/fs/smb/client/Kconfig
-> > +++ b/fs/smb/client/Kconfig
-> > @@ -13,10 +13,11 @@ config CIFS
-> >         select CRYPTO_AEAD2
-> >         select CRYPTO_CCM
-> >         select CRYPTO_GCM
-> >         select CRYPTO_ECB
-> >         select CRYPTO_AES
-> > +       select CRYPTO_LIB_ARC4
-> >         select KEYS
-> >         select DNS_RESOLVER
-> >         select ASN1
-> >         select OID_REGISTRY
-> >         select NETFS_SUPPORT
-> > diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-> > index 3cc6862469087..7b7c8c38fdd08 100644
-> > --- a/fs/smb/client/cifsencrypt.c
-> > +++ b/fs/smb/client/cifsencrypt.c
-> > @@ -20,12 +20,12 @@
-> >  #include <linux/ctype.h>
-> >  #include <linux/random.h>
-> >  #include <linux/highmem.h>
-> >  #include <linux/fips.h>
-> >  #include <linux/iov_iter.h>
-> > -#include "../common/arc4.h"
-> >  #include <crypto/aead.h>
-> > +#include <crypto/arc4.h>
-> >
-> >  static size_t cifs_shash_step(void *iter_base, size_t progress, size_t=
- len,
-> >                               void *priv, void *priv2)
-> >  {
-> >         struct shash_desc *shash =3D priv;
-> > @@ -723,13 +723,13 @@ calc_seckey(struct cifs_ses *ses)
-> >         if (!ctx_arc4) {
-> >                 cifs_dbg(VFS, "Could not allocate arc4 context\n");
-> >                 return -ENOMEM;
-> >         }
-> >
-> > -       cifs_arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KE=
-Y_SIZE);
-> > -       cifs_arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
-> > -                       CIFS_CPHTXT_SIZE);
-> > +       arc4_setkey(ctx_arc4, ses->auth_key.response, CIFS_SESS_KEY_SIZ=
-E);
-> > +       arc4_crypt(ctx_arc4, ses->ntlmssp->ciphertext, sec_key,
-> > +                  CIFS_CPHTXT_SIZE);
-> >
-> >         /* make secondary_key/nonce as session key */
-> >         memcpy(ses->auth_key.response, sec_key, CIFS_SESS_KEY_SIZE);
-> >         /* and make len as that of session key only */
-> >         ses->auth_key.len =3D CIFS_SESS_KEY_SIZE;
-> > diff --git a/fs/smb/common/Makefile b/fs/smb/common/Makefile
-> > index c66dbbc1469c3..9e0730a385fb1 100644
-> > --- a/fs/smb/common/Makefile
-> > +++ b/fs/smb/common/Makefile
-> > @@ -1,7 +1,6 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> >  #
-> >  # Makefile for Linux filesystem routines that are shared by client and=
- server.
-> >  #
-> >
-> > -obj-$(CONFIG_SMBFS) +=3D cifs_arc4.o
-> >  obj-$(CONFIG_SMBFS) +=3D cifs_md4.o
-> > diff --git a/fs/smb/common/arc4.h b/fs/smb/common/arc4.h
-> > deleted file mode 100644
-> > index 12e71ec033a18..0000000000000
-> > --- a/fs/smb/common/arc4.h
-> > +++ /dev/null
-> > @@ -1,23 +0,0 @@
-> > -/* SPDX-License-Identifier: GPL-2.0+ */
-> > -/*
-> > - * Common values for ARC4 Cipher Algorithm
-> > - */
-> > -
-> > -#ifndef _CRYPTO_ARC4_H
-> > -#define _CRYPTO_ARC4_H
-> > -
-> > -#include <linux/types.h>
-> > -
-> > -#define ARC4_MIN_KEY_SIZE      1
-> > -#define ARC4_MAX_KEY_SIZE      256
-> > -#define ARC4_BLOCK_SIZE                1
-> > -
-> > -struct arc4_ctx {
-> > -       u32 S[256];
-> > -       u32 x, y;
-> > -};
-> > -
-> > -int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned =
-int key_len);
-> > -void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsi=
-gned int len);
-> > -
-> > -#endif /* _CRYPTO_ARC4_H */
-> > diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
-> > deleted file mode 100644
-> > index df360ca47826a..0000000000000
-> > --- a/fs/smb/common/cifs_arc4.c
-> > +++ /dev/null
-> > @@ -1,75 +0,0 @@
-> > -// SPDX-License-Identifier: GPL-2.0-or-later
-> > -/*
-> > - * Cryptographic API
-> > - *
-> > - * ARC4 Cipher Algorithm
-> > - *
-> > - * Jon Oberheide <jon@oberheide.org>
-> > - */
-> > -
-> > -#include <linux/module.h>
-> > -#include "arc4.h"
-> > -
-> > -MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
-> > -MODULE_LICENSE("GPL");
-> > -
-> > -int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned =
-int key_len)
-> > -{
-> > -       int i, j =3D 0, k =3D 0;
-> > -
-> > -       ctx->x =3D 1;
-> > -       ctx->y =3D 0;
-> > -
-> > -       for (i =3D 0; i < 256; i++)
-> > -               ctx->S[i] =3D i;
-> > -
-> > -       for (i =3D 0; i < 256; i++) {
-> > -               u32 a =3D ctx->S[i];
-> > -
-> > -               j =3D (j + in_key[k] + a) & 0xff;
-> > -               ctx->S[i] =3D ctx->S[j];
-> > -               ctx->S[j] =3D a;
-> > -               if (++k >=3D key_len)
-> > -                       k =3D 0;
-> > -       }
-> > -
-> > -       return 0;
-> > -}
-> > -EXPORT_SYMBOL_GPL(cifs_arc4_setkey);
-> > -
-> > -void cifs_arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsi=
-gned int len)
-> > -{
-> > -       u32 *const S =3D ctx->S;
-> > -       u32 x, y, a, b;
-> > -       u32 ty, ta, tb;
-> > -
-> > -       if (len =3D=3D 0)
-> > -               return;
-> > -
-> > -       x =3D ctx->x;
-> > -       y =3D ctx->y;
-> > -
-> > -       a =3D S[x];
-> > -       y =3D (y + a) & 0xff;
-> > -       b =3D S[y];
-> > -
-> > -       do {
-> > -               S[y] =3D a;
-> > -               a =3D (a + b) & 0xff;
-> > -               S[x] =3D b;
-> > -               x =3D (x + 1) & 0xff;
-> > -               ta =3D S[x];
-> > -               ty =3D (y + ta) & 0xff;
-> > -               tb =3D S[ty];
-> > -               *out++ =3D *in++ ^ S[a];
-> > -               if (--len =3D=3D 0)
-> > -                       break;
-> > -               y =3D ty;
-> > -               a =3D ta;
-> > -               b =3D tb;
-> > -       } while (true);
-> > -
-> > -       ctx->x =3D x;
-> > -       ctx->y =3D y;
-> > -}
-> > -EXPORT_SYMBOL_GPL(cifs_arc4_crypt);
-> > diff --git a/fs/smb/server/Kconfig b/fs/smb/server/Kconfig
-> > index 4a23a5e7e8fec..098cac98d31e6 100644
-> > --- a/fs/smb/server/Kconfig
-> > +++ b/fs/smb/server/Kconfig
-> > @@ -8,10 +8,11 @@ config SMB_SERVER
-> >         select NLS_UCS2_UTILS
-> >         select CRYPTO
-> >         select CRYPTO_MD5
-> >         select CRYPTO_HMAC
-> >         select CRYPTO_ECB
-> > +       select CRYPTO_LIB_ARC4
-> >         select CRYPTO_LIB_DES
-> >         select CRYPTO_LIB_SHA256
-> >         select CRYPTO_SHA256
-> >         select CRYPTO_CMAC
-> >         select CRYPTO_SHA512
-> > diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
-> > index d99871c214518..b4020bb55a268 100644
-> > --- a/fs/smb/server/auth.c
-> > +++ b/fs/smb/server/auth.c
-> > @@ -18,20 +18,20 @@
-> >
-> >  #include "auth.h"
-> >  #include "glob.h"
-> >
-> >  #include <linux/fips.h>
-> > +#include <crypto/arc4.h>
-> >  #include <crypto/des.h>
-> >
-> >  #include "server.h"
-> >  #include "smb_common.h"
-> >  #include "connection.h"
-> >  #include "mgmt/user_session.h"
-> >  #include "mgmt/user_config.h"
-> >  #include "crypto_ctx.h"
-> >  #include "transport_ipc.h"
-> > -#include "../common/arc4.h"
-> >
-> >  /*
-> >   * Fixed format data defining GSS header and fixed string
-> >   * "not_defined_in_RFC4178@please_ignore".
-> >   * So sec blob data in neg phase could be generated statically.
-> > @@ -363,14 +363,13 @@ int ksmbd_decode_ntlmssp_auth_blob(struct authent=
-icate_message *authblob,
-> >
-> >                 ctx_arc4 =3D kmalloc(sizeof(*ctx_arc4), KSMBD_DEFAULT_G=
-FP);
-> >                 if (!ctx_arc4)
-> >                         return -ENOMEM;
-> >
-> > -               cifs_arc4_setkey(ctx_arc4, sess->sess_key,
-> > -                                SMB2_NTLMV2_SESSKEY_SIZE);
-> > -               cifs_arc4_crypt(ctx_arc4, sess->sess_key,
-> > -                               (char *)authblob + sess_key_off, sess_k=
-ey_len);
-> > +               arc4_setkey(ctx_arc4, sess->sess_key, SMB2_NTLMV2_SESSK=
-EY_SIZE);
-> > +               arc4_crypt(ctx_arc4, sess->sess_key,
-> > +                          (char *)authblob + sess_key_off, sess_key_le=
-n);
-> >                 kfree_sensitive(ctx_arc4);
-> >         }
-> >
-> >         return ret;
-> >  }
-> >
-> > base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> > --
-> > 2.50.1
-> >
-> >
->
->
-> --
-> Thanks,
->
-> Steve
+diff --git a/arch/x86/boot/bitops.h b/arch/x86/boot/bitops.h
+index 8518ae214c9b..79e15971529d 100644
+--- a/arch/x86/boot/bitops.h
++++ b/arch/x86/boot/bitops.h
+@@ -27,7 +27,7 @@ static inline bool variable_test_bit(int nr, const void *addr)
+ 	bool v;
+ 	const u32 *p = addr;
+ 
+-	asm("btl %2,%1" CC_SET(c) : CC_OUT(c) (v) : "m" (*p), "Ir" (nr));
++	asm("btl %2,%1" : "=@ccc" (v) : "m" (*p), "Ir" (nr));
+ 	return v;
+ }
+ 
+diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
+index 60580836daf7..a3c58ebe3662 100644
+--- a/arch/x86/boot/boot.h
++++ b/arch/x86/boot/boot.h
+@@ -155,15 +155,15 @@ static inline void wrgs32(u32 v, addr_t addr)
+ static inline bool memcmp_fs(const void *s1, addr_t s2, size_t len)
+ {
+ 	bool diff;
+-	asm volatile("fs repe cmpsb" CC_SET(nz)
+-		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
++	asm volatile("fs repe cmpsb"
++		     : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
+ 	return diff;
+ }
+ static inline bool memcmp_gs(const void *s1, addr_t s2, size_t len)
+ {
+ 	bool diff;
+-	asm volatile("gs repe cmpsb" CC_SET(nz)
+-		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
++	asm volatile("gs repe cmpsb"
++		     : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
+ 	return diff;
+ }
+ 
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index f35369bb14c5..b25c6a9303b7 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -32,8 +32,8 @@
+ int memcmp(const void *s1, const void *s2, size_t len)
+ {
+ 	bool diff;
+-	asm("repe cmpsb" CC_SET(nz)
+-	    : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
++	asm("repe cmpsb"
++	    : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
+ 	return diff;
+ }
+ 
+diff --git a/arch/x86/include/asm/archrandom.h b/arch/x86/include/asm/archrandom.h
+index 02bae8e0758b..4c305305871b 100644
+--- a/arch/x86/include/asm/archrandom.h
++++ b/arch/x86/include/asm/archrandom.h
+@@ -23,8 +23,7 @@ static inline bool __must_check rdrand_long(unsigned long *v)
+ 	unsigned int retry = RDRAND_RETRY_LOOPS;
+ 	do {
+ 		asm volatile("rdrand %[out]"
+-			     CC_SET(c)
+-			     : CC_OUT(c) (ok), [out] "=r" (*v));
++			     : "=@ccc" (ok), [out] "=r" (*v));
+ 		if (ok)
+ 			return true;
+ 	} while (--retry);
+@@ -35,8 +34,7 @@ static inline bool __must_check rdseed_long(unsigned long *v)
+ {
+ 	bool ok;
+ 	asm volatile("rdseed %[out]"
+-		     CC_SET(c)
+-		     : CC_OUT(c) (ok), [out] "=r" (*v));
++		     : "=@ccc" (ok), [out] "=r" (*v));
+ 	return ok;
+ }
+ 
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index f963848024a5..d5c8d3afe196 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -122,18 +122,6 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ }
+ #endif
+ 
+-/*
+- * Macros to generate condition code outputs from inline assembly,
+- * The output operand must be type "bool".
+- */
+-#ifdef __GCC_ASM_FLAG_OUTPUTS__
+-# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
+-# define CC_OUT(c) "=@cc" #c
+-#else
+-# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
+-# define CC_OUT(c) [_cc_ ## c] "=qm"
+-#endif
+-
+ #ifdef __KERNEL__
+ 
+ # include <asm/extable_fixup_types.h>
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index eebbc8889e70..33153dcd119c 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -99,8 +99,7 @@ static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
+ {
+ 	bool negative;
+ 	asm_inline volatile(LOCK_PREFIX "xorb %2,%1"
+-		CC_SET(s)
+-		: CC_OUT(s) (negative), WBYTE_ADDR(addr)
++		: "=@ccs" (negative), WBYTE_ADDR(addr)
+ 		: "iq" ((char)mask) : "memory");
+ 	return negative;
+ }
+@@ -149,8 +148,7 @@ arch___test_and_set_bit(unsigned long nr, volatile unsigned long *addr)
+ 	bool oldbit;
+ 
+ 	asm(__ASM_SIZE(bts) " %2,%1"
+-	    CC_SET(c)
+-	    : CC_OUT(c) (oldbit)
++	    : "=@ccc" (oldbit)
+ 	    : ADDR, "Ir" (nr) : "memory");
+ 	return oldbit;
+ }
+@@ -175,8 +173,7 @@ arch___test_and_clear_bit(unsigned long nr, volatile unsigned long *addr)
+ 	bool oldbit;
+ 
+ 	asm volatile(__ASM_SIZE(btr) " %2,%1"
+-		     CC_SET(c)
+-		     : CC_OUT(c) (oldbit)
++		     : "=@ccc" (oldbit)
+ 		     : ADDR, "Ir" (nr) : "memory");
+ 	return oldbit;
+ }
+@@ -187,8 +184,7 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
+ 	bool oldbit;
+ 
+ 	asm volatile(__ASM_SIZE(btc) " %2,%1"
+-		     CC_SET(c)
+-		     : CC_OUT(c) (oldbit)
++		     : "=@ccc" (oldbit)
+ 		     : ADDR, "Ir" (nr) : "memory");
+ 
+ 	return oldbit;
+@@ -211,8 +207,7 @@ static __always_inline bool constant_test_bit_acquire(long nr, const volatile un
+ 	bool oldbit;
+ 
+ 	asm volatile("testb %2,%1"
+-		     CC_SET(nz)
+-		     : CC_OUT(nz) (oldbit)
++		     : "=@ccnz" (oldbit)
+ 		     : "m" (((unsigned char *)addr)[nr >> 3]),
+ 		       "i" (1 << (nr & 7))
+ 		     :"memory");
+@@ -225,8 +220,7 @@ static __always_inline bool variable_test_bit(long nr, volatile const unsigned l
+ 	bool oldbit;
+ 
+ 	asm volatile(__ASM_SIZE(bt) " %2,%1"
+-		     CC_SET(c)
+-		     : CC_OUT(c) (oldbit)
++		     : "=@ccc" (oldbit)
+ 		     : "m" (*(unsigned long *)addr), "Ir" (nr) : "memory");
+ 
+ 	return oldbit;
+diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+index b61f32c3459f..a88b06f1c35e 100644
+--- a/arch/x86/include/asm/cmpxchg.h
++++ b/arch/x86/include/asm/cmpxchg.h
+@@ -166,8 +166,7 @@ extern void __add_wrong_size(void)
+ 	{								\
+ 		volatile u8 *__ptr = (volatile u8 *)(_ptr);		\
+ 		asm_inline volatile(lock "cmpxchgb %[new], %[ptr]"	\
+-			     CC_SET(z)					\
+-			     : CC_OUT(z) (success),			\
++			     : "=@ccz" (success),			\
+ 			       [ptr] "+m" (*__ptr),			\
+ 			       [old] "+a" (__old)			\
+ 			     : [new] "q" (__new)			\
+@@ -178,8 +177,7 @@ extern void __add_wrong_size(void)
+ 	{								\
+ 		volatile u16 *__ptr = (volatile u16 *)(_ptr);		\
+ 		asm_inline volatile(lock "cmpxchgw %[new], %[ptr]"	\
+-			     CC_SET(z)					\
+-			     : CC_OUT(z) (success),			\
++			     : "=@ccz" (success),			\
+ 			       [ptr] "+m" (*__ptr),			\
+ 			       [old] "+a" (__old)			\
+ 			     : [new] "r" (__new)			\
+@@ -190,8 +188,7 @@ extern void __add_wrong_size(void)
+ 	{								\
+ 		volatile u32 *__ptr = (volatile u32 *)(_ptr);		\
+ 		asm_inline volatile(lock "cmpxchgl %[new], %[ptr]"	\
+-			     CC_SET(z)					\
+-			     : CC_OUT(z) (success),			\
++			     : "=@ccz" (success),			\
+ 			       [ptr] "+m" (*__ptr),			\
+ 			       [old] "+a" (__old)			\
+ 			     : [new] "r" (__new)			\
+@@ -202,8 +199,7 @@ extern void __add_wrong_size(void)
+ 	{								\
+ 		volatile u64 *__ptr = (volatile u64 *)(_ptr);		\
+ 		asm_inline volatile(lock "cmpxchgq %[new], %[ptr]"	\
+-			     CC_SET(z)					\
+-			     : CC_OUT(z) (success),			\
++			     : "=@ccz" (success),			\
+ 			       [ptr] "+m" (*__ptr),			\
+ 			       [old] "+a" (__old)			\
+ 			     : [new] "r" (__new)			\
+diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
+index 371f7906019e..1f80a62be969 100644
+--- a/arch/x86/include/asm/cmpxchg_32.h
++++ b/arch/x86/include/asm/cmpxchg_32.h
+@@ -46,8 +46,7 @@ static __always_inline u64 __cmpxchg64_local(volatile u64 *ptr, u64 old, u64 new
+ 	bool ret;							\
+ 									\
+ 	asm_inline volatile(_lock "cmpxchg8b %[ptr]"			\
+-		     CC_SET(e)						\
+-		     : CC_OUT(e) (ret),					\
++		     : "=@ccz" (ret),					\
+ 		       [ptr] "+m" (*(_ptr)),				\
+ 		       "+a" (o.low), "+d" (o.high)			\
+ 		     : "b" (n.low), "c" (n.high)			\
+@@ -125,8 +124,7 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64
+ 		ALTERNATIVE(_lock_loc					\
+ 			    "call cmpxchg8b_emu",			\
+ 			    _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
+-		CC_SET(e)						\
+-		: ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
++		: ALT_OUTPUT_SP("=@ccz" (ret),				\
+ 				"+a" (o.low), "+d" (o.high))		\
+ 		: "b" (n.low), "c" (n.high),				\
+ 		  [ptr] "S" (_ptr)					\
+diff --git a/arch/x86/include/asm/cmpxchg_64.h b/arch/x86/include/asm/cmpxchg_64.h
+index 71d1e72ed879..5afea056fb20 100644
+--- a/arch/x86/include/asm/cmpxchg_64.h
++++ b/arch/x86/include/asm/cmpxchg_64.h
+@@ -66,8 +66,7 @@ static __always_inline u128 arch_cmpxchg128_local(volatile u128 *ptr, u128 old,
+ 	bool ret;							\
+ 									\
+ 	asm_inline volatile(_lock "cmpxchg16b %[ptr]"			\
+-		     CC_SET(e)						\
+-		     : CC_OUT(e) (ret),					\
++		     : "=@ccz" (ret),					\
+ 		       [ptr] "+m" (*(_ptr)),				\
+ 		       "+a" (o.low), "+d" (o.high)			\
+ 		     : "b" (n.low), "c" (n.high)			\
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index b0d03b6c279b..332428caaed2 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -309,8 +309,7 @@ do {									\
+ 									\
+ 	asm qual (__pcpu_op_##size("cmpxchg") "%[nval], "		\
+ 		  __percpu_arg([var])					\
+-		  CC_SET(z)						\
+-		  : CC_OUT(z) (success),				\
++		  : "=@ccz" (success),					\
+ 		    [oval] "+a" (pco_old__),				\
+ 		    [var] "+m" (__my_cpu_var(_var))			\
+ 		  : [nval] __pcpu_reg_##size(, pco_new__)		\
+@@ -367,8 +366,7 @@ do {									\
+ 	asm_inline qual (						\
+ 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+ 			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+-		CC_SET(z)						\
+-		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
++		: ALT_OUTPUT_SP("=@ccz" (success),			\
+ 				[var] "+m" (__my_cpu_var(_var)),	\
+ 				"+a" (old__.low), "+d" (old__.high))	\
+ 		: "b" (new__.low), "c" (new__.high),			\
+@@ -436,8 +434,7 @@ do {									\
+ 	asm_inline qual (						\
+ 		ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
+ 			    "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
+-		CC_SET(z)						\
+-		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
++		: ALT_OUTPUT_SP("=@ccz" (success),			\
+ 				[var] "+m" (__my_cpu_var(_var)),	\
+ 				"+a" (old__.low), "+d" (old__.high))	\
+ 		: "b" (new__.low), "c" (new__.high),			\
+@@ -585,8 +582,7 @@ do {									\
+ 	bool oldbit;							\
+ 									\
+ 	asm volatile("btl %[nr], " __percpu_arg([var])			\
+-		     CC_SET(c)						\
+-		     : CC_OUT(c) (oldbit)				\
++		     : "=@ccc" (oldbit)					\
+ 		     : [var] "m" (__my_cpu_var(_var)),			\
+ 		       [nr] "rI" (_nr));				\
+ 	oldbit;								\
+diff --git a/arch/x86/include/asm/rmwcc.h b/arch/x86/include/asm/rmwcc.h
+index 3821ee3fae35..54c8fc430684 100644
+--- a/arch/x86/include/asm/rmwcc.h
++++ b/arch/x86/include/asm/rmwcc.h
+@@ -6,37 +6,15 @@
+ 
+ #define __CLOBBERS_MEM(clb...)	"memory", ## clb
+ 
+-#ifndef __GCC_ASM_FLAG_OUTPUTS__
+-
+-/* Use asm goto */
+-
+-#define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
+-({									\
+-	bool c = false;							\
+-	asm goto (fullop "; j" #cc " %l[cc_label]"		\
+-			: : [var] "m" (_var), ## __VA_ARGS__		\
+-			: clobbers : cc_label);				\
+-	if (0) {							\
+-cc_label:	c = true;						\
+-	}								\
+-	c;								\
+-})
+-
+-#else /* defined(__GCC_ASM_FLAG_OUTPUTS__) */
+-
+-/* Use flags output or a set instruction */
+-
+ #define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
+ ({									\
+ 	bool c;								\
+-	asm_inline volatile (fullop CC_SET(cc)				\
+-			: [var] "+m" (_var), CC_OUT(cc) (c)		\
++	asm_inline volatile (fullop					\
++			: [var] "+m" (_var), "=@cc" #cc (c)		\
+ 			: __VA_ARGS__ : clobbers);			\
+ 	c;								\
+ })
+ 
+-#endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) */
+-
+ #define GEN_UNARY_RMWcc_4(op, var, cc, arg0)				\
+ 	__GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
+ 
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index d7be1ff3f7e0..00475b814ac4 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -491,8 +491,7 @@ static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate)
+ 
+ 	/* "pvalidate" mnemonic support in binutils 2.36 and newer */
+ 	asm volatile(".byte 0xF2, 0x0F, 0x01, 0xFF\n\t"
+-		     CC_SET(c)
+-		     : CC_OUT(c) (no_rmpupdate), "=a"(rc)
++		     : "=@ccc"(no_rmpupdate), "=a"(rc)
+ 		     : "a"(vaddr), "c"(rmp_psize), "d"(validate)
+ 		     : "memory", "cc");
+ 
+diff --git a/arch/x86/include/asm/signal.h b/arch/x86/include/asm/signal.h
+index c72d46175374..5c03aaa89014 100644
+--- a/arch/x86/include/asm/signal.h
++++ b/arch/x86/include/asm/signal.h
+@@ -83,8 +83,7 @@ static inline int __const_sigismember(sigset_t *set, int _sig)
+ static inline int __gen_sigismember(sigset_t *set, int _sig)
+ {
+ 	bool ret;
+-	asm("btl %2,%1" CC_SET(c)
+-	    : CC_OUT(c) (ret) : "m"(*set), "Ir"(_sig-1));
++	asm("btl %2,%1" : "=@ccc"(ret) : "m"(*set), "Ir"(_sig-1));
+ 	return ret;
+ }
+ 
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index c99914569352..46aa2c9c1bda 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -284,8 +284,7 @@ static inline int enqcmds(void __iomem *dst, const void *src)
+ 	 * See movdir64b()'s comment on operand specification.
+ 	 */
+ 	asm volatile(".byte 0xf3, 0x0f, 0x38, 0xf8, 0x02, 0x66, 0x90"
+-		     CC_SET(z)
+-		     : CC_OUT(z) (zf), "+m" (*__dst)
++		     : "=@ccz" (zf), "+m" (*__dst)
+ 		     : "m" (*__src), "a" (__dst), "d" (__src));
+ 
+ 	/* Submission failure is indicated via EFLAGS.ZF=1 */
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 3a7755c1a441..91a3fb8ae7ff 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -378,7 +378,7 @@ do {									\
+ 	asm_goto_output("\n"						\
+ 		     "1: " LOCK_PREFIX "cmpxchg"itype" %[new], %[ptr]\n"\
+ 		     _ASM_EXTABLE_UA(1b, %l[label])			\
+-		     : CC_OUT(z) (success),				\
++		     : "=@ccz" (success),				\
+ 		       [ptr] "+m" (*_ptr),				\
+ 		       [old] "+a" (__old)				\
+ 		     : [new] ltype (__new)				\
+@@ -397,7 +397,7 @@ do {									\
+ 	asm_goto_output("\n"						\
+ 		     "1: " LOCK_PREFIX "cmpxchg8b %[ptr]\n"		\
+ 		     _ASM_EXTABLE_UA(1b, %l[label])			\
+-		     : CC_OUT(z) (success),				\
++		     : "=@ccz" (success),				\
+ 		       "+A" (__old),					\
+ 		       [ptr] "+m" (*_ptr)				\
+ 		     : "b" ((u32)__new),				\
+@@ -417,11 +417,10 @@ do {									\
+ 	__typeof__(*(_ptr)) __new = (_new);				\
+ 	asm volatile("\n"						\
+ 		     "1: " LOCK_PREFIX "cmpxchg"itype" %[new], %[ptr]\n"\
+-		     CC_SET(z)						\
+ 		     "2:\n"						\
+ 		     _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_EFAULT_REG,	\
+ 					   %[errout])			\
+-		     : CC_OUT(z) (success),				\
++		     : "=@ccz" (success),				\
+ 		       [errout] "+r" (__err),				\
+ 		       [ptr] "+m" (*_ptr),				\
+ 		       [old] "+a" (__old)				\
+diff --git a/tools/arch/x86/include/asm/asm.h b/tools/arch/x86/include/asm/asm.h
+index dbe39b44256b..6e1b357c374b 100644
+--- a/tools/arch/x86/include/asm/asm.h
++++ b/tools/arch/x86/include/asm/asm.h
+@@ -108,18 +108,6 @@
+ 
+ #endif
+ 
+-/*
+- * Macros to generate condition code outputs from inline assembly,
+- * The output operand must be type "bool".
+- */
+-#ifdef __GCC_ASM_FLAG_OUTPUTS__
+-# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
+-# define CC_OUT(c) "=@cc" #c
+-#else
+-# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
+-# define CC_OUT(c) [_cc_ ## c] "=qm"
+-#endif
+-
+ #ifdef __KERNEL__
+ 
+ /* Exception table entry */
+diff --git a/tools/perf/bench/find-bit-bench.c b/tools/perf/bench/find-bit-bench.c
+index 7e25b0e413f6..e697c20951bc 100644
+--- a/tools/perf/bench/find-bit-bench.c
++++ b/tools/perf/bench/find-bit-bench.c
+@@ -37,7 +37,7 @@ static noinline void workload(int val)
+ 	accumulator++;
+ }
+ 
+-#if (defined(__i386__) || defined(__x86_64__)) && defined(__GCC_ASM_FLAG_OUTPUTS__)
++#if defined(__i386__) || defined(__x86_64__)
+ static bool asm_test_bit(long nr, const unsigned long *addr)
+ {
+ 	bool oldbit;
+-- 
+2.51.0
+
 
