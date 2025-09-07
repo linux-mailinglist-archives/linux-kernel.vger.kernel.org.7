@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-804647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F47B47B0D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:42:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACCDB47B0F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C648D17B2F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D587617AF25
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0530F265626;
-	Sun,  7 Sep 2025 11:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1039263F34;
+	Sun,  7 Sep 2025 11:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbkKtJIa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Kh9UFQ0Z"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E03223DF9;
-	Sun,  7 Sep 2025 11:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1678C2905;
+	Sun,  7 Sep 2025 11:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757245342; cv=none; b=BTCOALVV2Z/jccYGvrTFXO2XyMAeXmevh/eHtzecOWLv8nJ2+xGxooxCPItdNMduGLkDl9qRM2W9AD84ux0LxSO4zRc6dNQhrOk5NrkfzqQmz+czss4T5w9/QaeShPRbNEYnK42sNY9+RRjtCTVgITRgjePlQEryBz2/7xZ1sgA=
+	t=1757245417; cv=none; b=G7vwLUmTWBHHihn4cD6PE2eILuTefsuUTlGbbXWPWqJzf5WCYq8d71zXjiPE98rNG1XWWS7k0XqzzfUMS0csHkPR2WCydqAgdGA3Shk+j1oGety0TXjfPVZtwcCMnQQcAv1ak36GvhCSqcWNBcNQ86+W1lpy626dhECmClon0Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757245342; c=relaxed/simple;
-	bh=D1pphOsaMdhq2bWMXgzDFH9Cssa9L/A8eW+GFydLUsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ghnssK6MnTTMZY8XBZFmtOhT4cihYV3BCm6f9iNujTYww1JQn7YHCwm7NOaClMKfiC2NZlJEDZ+oRZMOR7OqvgPARPhXsOMYJ1QIlqUEQJwa1mlDMi+J5swRQjlDmrIDwbqMEMepfxRMQ+rfmqNADmPMw1eEiIWkjkPNGxJs3mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbkKtJIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E095C4CEF0;
-	Sun,  7 Sep 2025 11:42:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757245341;
-	bh=D1pphOsaMdhq2bWMXgzDFH9Cssa9L/A8eW+GFydLUsA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YbkKtJIaBwgZCAB/zJJ6OMsTMkKqKdde36YiaKxyZls1NTkiCtuKaVjfhpJAc6KHZ
-	 yNncNyi6NDOwiHIsYMXC+qJ3OmJ1bhdW+kr+dc+YR3plU7fiWIHah0OapKIScbYvfQ
-	 27qM+Y+c2WapzjJW5c380UuGoDzOlXXV3AOqj8HCZvv9QoIQ8xyhtxtLy2ffXbDYMB
-	 dNEg/cMEoYMGjikD5hNXBfXj0OAA0vjfAs9q6TZoHfi2n3DSHm1hPB9+Jk/RNi7bhy
-	 zRWD/0YUG/E9668WSo9werCIGGW+aOj10EY6pZJeIIhge9XByVihNdB3KDkvkGgBK5
-	 FQ1T72J+6Y6HQ==
-Date: Sun, 7 Sep 2025 12:42:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Tobias Sperling
- <tobias.sperling@softing.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Esteban Blanc <eblanc@baylibre.com>, Ramona Alexandra Nechita
- <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, Herve Codina
- <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <20250907124207.2fe64214@jic23-huawei>
-In-Reply-To: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
-References: <cover.1757053456.git.mazziesaccount@gmail.com>
-	<3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757245417; c=relaxed/simple;
+	bh=CEGW9pABftoSfMmc4wBV9NvVYkQcPw35dfFr4tknbOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K5H/m55ewFmwKBQKxFYPZVAT5a48aDKyYIXx7tw0BsVIbMV5oGCrfKA3h+haeJz9BNORIVVMQ50bH7B8qxq9XZ53xMtx8FQrotb3x/AXa/2rQpL83n17eduzmWTVAmax1ExoSNFQsxTa9BXGA55tiqEZYAg/M5/2CZD89zo+Xt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Kh9UFQ0Z; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DC32F40E0174;
+	Sun,  7 Sep 2025 11:43:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jHwm0hphiuTQ; Sun,  7 Sep 2025 11:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757245408; bh=iO0Q+99clM90GYXKvIUjDeV09/pcYXGUidOT9+19Jxk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Kh9UFQ0ZZXncboj84KPhwTNsngw1Wjv8GCGBMplrHlwhlZfKiPEgSBSUSiMsg/Vn9
+	 B7vLcBtTrVlcdARWc6LCUwC0FnCosGakCJn2kWXut1cVxxId2ais1ImUB1JG3xLasf
+	 xY88gT1arkrrzKn1lRFonxfzQscyH5Xo/xTWn2FZ9X5SSEVaaCJ3f+jtYM+tsPg8ft
+	 KjiOlzHf9dY2x5tDJg0AWCj73kSSUH0aJJv4ZRWo+FF2lZVqqBUoVLHSh5vKbF1mUu
+	 9fKvbsDIrIV0IOFnxfZNml0eqiCC7FQV+J58mbMlpm0PskK55inWnTwulP1nyRV4vE
+	 LZTDmxB6tAc5UGOr7bLUpqx6/IWNNsVJxik/sdYbhNxuEcVw8CwKcdc3qha8FywjFJ
+	 LAAx1C13DUqKyXKIyn5BSS2Byqj/hpUzc6cnP9ZJB0BgG1g15OBsplLDxc49Yqt1Yt
+	 grySM38dROvKbik/RFb3T5pk9PeKpx+N2HVu56JaVLEBDFhUL3Jy9hYz7qA2Ai3pyD
+	 tn1BAlFxVL1+AzSZH1RMulkrw6sEolsdhf5av/NJT/iFHZ02sTPcqEvENYSPcoGjSk
+	 hlN2s9MhCOG83MvqxU0ZPFjSAaR7mulXzoGOcxSMjd5CmL/hmwG0cbphSMkeabsMaN
+	 Qm3SUIwbFCvU1aICfZW6Xt+0=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7EC4040E015C;
+	Sun,  7 Sep 2025 11:43:25 +0000 (UTC)
+Date: Sun, 7 Sep 2025 13:43:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC fix for v6.17-rc5
+Message-ID: <20250907114319.GAaL1v16f5XIbbkIZY@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Fri, 5 Sep 2025 09:42:31 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Hi Linus,
 
-> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> 
-> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> 
-> The IC does also support CRC but it is not implemented in the driver.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+please pull an EDAC fix for v6.17-rc5.
 
-Hi Matti,
+Thx.
 
-Just one trivial additional comment from me.
+---
 
-Jonathan
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
 
-> diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
-> new file mode 100644
-> index 000000000000..8acd1e5f105d
-> --- /dev/null
-> +++ b/drivers/iio/adc/rohm-bd79112.c
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.17_rc5
+
+for you to fetch changes up to ff2a66d21fd2364ed9396d151115eec59612b200:
+
+  EDAC/altera: Delete an inappropriate dma_free_coherent() call (2025-08-25 13:56:16 +0200)
+
+----------------------------------------------------------------
+- Remove a misplaced dma_free_coherent() call in altera_edac
+
+----------------------------------------------------------------
+Salah Triki (1):
+      EDAC/altera: Delete an inappropriate dma_free_coherent() call
+
+ drivers/edac/altera_edac.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-
-> +
-> +/* ADC channels as named in the data-sheet */
-> +static const char * const bd79112_chan_names[] = {
-> +	"AGIO0A", "AGIO1A", "AGIO2A", "AGIO3A", "AGIO4A",	/* 0 - 4 */
-> +	"AGIO5A", "AGIO6A", "AGIO7A", "AGIO8A", "AGIO9A",	/* 5 - 9 */
-> +	"AGIO10A", "AGIO11A", "AGIO12A", "AGIO13A", "AGIO14A",	/* 10 - 14 */
-> +	"AGIO15A", "AGIO0B", "AGIO1B", "AGIO2B", "AGIO3B",	/* 15 - 19 */
-> +	"AGIO4B", "AGIO5B", "AGIO6B", "AGIO7B", "AGIO8B",	/* 20 - 24 */
-> +	"AGIO9B", "AGIO10B", "AGIO11B", "AGIO12B", "AGIO13B",	/* 25 - 29 */
-> +	"AGIO14B", "AGIO15B",					/* 30 - 31 */
-> +};
-
-> +	/* Let's assign data-sheet names to channels */
-Not seeing any value in this comment given the code that follows.
-Probably drop it
-
-> +	for (i = 0; i < iio_dev->num_channels; i++) {
-> +		unsigned int ch = cs[i].channel;
-> +
-> +		cs[i].datasheet_name = bd79112_chan_names[ch];
-> +	}
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
