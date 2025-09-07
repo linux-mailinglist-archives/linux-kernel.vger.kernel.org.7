@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-804682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC86B47B86
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470D9B47B88
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8813AA9F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189F31888A21
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178E2189;
-	Sun,  7 Sep 2025 13:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C69268C42;
+	Sun,  7 Sep 2025 13:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTtkXe6M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="mFfJk3jP"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC73266EE7;
-	Sun,  7 Sep 2025 13:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6032526B749
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 13:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757250924; cv=none; b=d8nVE0U3OXLF3uNBI4OYzmcj4hhP7ngBwnfPkEUkIAqmE9PucrO8juOtNTgawBwTgbgjX0uU6szm/+5bkL67r7mp0mQdhIZ1M1t656EuSmb+uaSwJco/qqeiDVttUoi3IblwIMos+ficutgGjOa0zTeCyq5n/WwXthUs/W7wAQo=
+	t=1757250942; cv=none; b=bY+OyY5sveO+YAQNqH7LtQhgv6ql/fq0uONdXsv8bI6PpreIc6mAkYCsjbZDUvSfb+WsqxkWcqM27tEF8A0hiSUwuK9+YGt0+KqXtYhypxvWM2eBqJ3e6fIgasi86RseF1OvPp5JJxOA7LtkpAs4VlF9MW7y0H2fS9+Gf5gCEx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757250924; c=relaxed/simple;
-	bh=xCVkByE4VsK5p61XTsHdJ9rLcKon1b7VyGrbTb1e37Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fibwgwYR7SERjJ5i8EtHHg8nxOd5VjvJPZaijj3dxGgRsEACC/FpnNb9xfoOnkUSZFPa1t7/2RuP/NPjzd0q8YH28Pu3W6Eav2K+Ca6R1y7xKmF8IdQ3lqrg+FX1q/BMGzbFNJnT/6nmQYH2bvnSv49P/Dj3m0renO2a5Z08q9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTtkXe6M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ADB0C4CEF0;
-	Sun,  7 Sep 2025 13:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757250923;
-	bh=xCVkByE4VsK5p61XTsHdJ9rLcKon1b7VyGrbTb1e37Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sTtkXe6MO+fxnQSRE/ekmGmjy7izpbRulY9xi6Ar839GhcrEcQPpKBmUV65pfl4Vp
-	 rTrteL4nNMRSXJGwlrL/g9/6+tndthJZ7DO3glAIWP89sLOggndqFnfZ7U88iKV33G
-	 MvS5smBT17+VgihMvzbaA+GArKi6yuWEHTc1IvRPOIo/zf2lsLIGme+KyF+pXaOn8n
-	 WlFRGWBIFPk2ssJEnTLMLKJ4cCxTpWok7SW7ODkLIsTWUig7UUH4xuWonTM/xiGsKG
-	 zO02caxeX84Hyz1NSSBsofuaiyj+AnG3OXmcd/gW1XPO2iawfV+tKfF69WRF8KFc4K
-	 FQvTj2IbMItPg==
-Date: Sun, 7 Sep 2025 14:15:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH 09/10] iio: accel: BMA220 add event attrs
-Message-ID: <20250907141515.0b49012a@jic23-huawei>
-In-Reply-To: <20250901194742.11599-10-petre.rodan@subdimension.ro>
-References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
-	<20250901194742.11599-10-petre.rodan@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757250942; c=relaxed/simple;
+	bh=S/KUq6pSTXq+6IeioXoPeuwVExsq2hrUKmGGJELtuVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BF1m6nXJ3Thp7GNYtDVEyQCdF/J7QtI69j+EnzpR4RWutit0u4n4xm42grDcEfFglJSpi6k3H079JAsE22Ip6H/wQMQII0eub0Dsr2IksNqQCV697SL57v0xd211NihNEPks9oIm7LsDRRxez8N49/ZJ2PXh0My9SFPdTXoeLZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=mFfJk3jP; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Sun, 7 Sep 2025 09:15:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1757250938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S/KUq6pSTXq+6IeioXoPeuwVExsq2hrUKmGGJELtuVI=;
+	b=mFfJk3jPrq2PSVa5pryxIo9DqIP/tWcI51vlOz3BNmXJL/QW5ixV3gvPtQMTqLlhfFWoAj
+	VyJs++CEOPsdCfp+Eb3m7RmwPM9ep8GBaKxBeBskm0o6AEvLj6/xNXMvXmJECEKnr12NzL
+	8pd/TRi5r2iNaHU9W74lLCd9byKepNk0KGM1lRqaHRsJ2VuutCPFTYczDxhOJYBN/Otwhc
+	HPb8MEZXCVHbh1lmNiRCvjkhMC0OvoSThpecM++4MbfBhJJcBfsGBcP0mKMbq7LojgXwfk
+	Wq2OUStSnlP7T3L7CaEGPi4CLQgmIvIGgePoxVs1LRMbiKx9dmQCKnbjg7cINA==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Anne Rosenzweig <alyssa@rosenzweig.io>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v2 18/22] phy: apple: Add Apple Type-C PHY
+Message-ID: <aL2Fdd2Ls26pksJN@fedora>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon,  1 Sep 2025 22:47:35 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
+In functions like atcphy_dp_configure_lane, I'm wondering if we want to
+pull out individual registers like `void __iomem *tx_shm_txa_ldoclk =
+tx_shm + LN_AUSPMA_TX_SHM_TXA_LDOCLK`, likewise for
+MAIN_REG0/1/IMP_REG0/etc, just to make the actual pokes below a lot less
+noisy.
 
-> Add event attributes not directly covered by the IIO API.
+Incidentally, the txa_ldoclk_bypass handling is another place where the
+cond_set32 helper would shine.
 
-These must be accompanied by ABI documentation in
-Documentation/ABI/testing/sysfs-bus-iio-...
+---
 
-We need to pull out of the datasheet generic descriptions of what
-they are so we can consider if they make sense as general new ABI
-or perhaps map to something existing.  In some cases it is more
-appropriate just to set a reasonable default and not provide a
-userspace ABI at all.
-
-Key point is that custom ABI is effectively unused ABI because most
-software is written against a bunch of devices and has no idea what
-the new ABI is. 
-
-Jonathan
-
-> 
-
+Also, do we know what _OV means?
 
