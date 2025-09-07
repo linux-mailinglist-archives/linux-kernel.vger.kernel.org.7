@@ -1,165 +1,97 @@
-Return-Path: <linux-kernel+bounces-804652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ACAB47B17
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FD4B47B1A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7041C1B21B34
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8213A72B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2F5258ED4;
-	Sun,  7 Sep 2025 11:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5521E265CC5;
+	Sun,  7 Sep 2025 11:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2YkkkLc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRjdbtrV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764831991C9;
-	Sun,  7 Sep 2025 11:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A560F1991C9;
+	Sun,  7 Sep 2025 11:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757245773; cv=none; b=dzYMwk5TYKR5kfofat5f+LUuzYI/Uww5L3XNRt9V86QcqWMQBsJ5iYDFTHB4RGdzxnHxIoGtlED5tdcUmAhKHN9g3PbrIiIQD0GGYAzi/XtXkOMwZoymjbkzHGGpjeR0m9FoJJe6wt0xapZTwMdMFYgNPSrLBwZx3yf2N08Dx4A=
+	t=1757245802; cv=none; b=U2waL5PMIeeEMgvewdREC2N/lVB/Gr7a7LvwA7mEkfyPMl1QEa/bZnk79cpsbRZkNu+doBFzjbELaYOI7MrHmpDtnp2hpJwfwqq4E2iYs0TPtLiyG7GE0U2JKE9L3U7MEOyDR7fYVL64ySzQwIbD96hGndMFT4PqQ7cL+DwnSmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757245773; c=relaxed/simple;
-	bh=aIdhlvipyo2+0PeyQWDF3eftzsmA1c2NyjjqT0eU764=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Y+TBjnuXHhm+DB5e5lo3BfvhhqNUp/wncexhSMPLEJoKvPiX0u13KuELt9ZibAzVFqeNEoVKODp3dUHq6daV2Ap2GDiNOv/zpfnDVde+QpMt4V599eK/vQxysqaWLca468RhyiTy6Kdcz7ZivavpdVkD/d2rU4n0CNnyw7p31lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2YkkkLc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B88C4CEF0;
-	Sun,  7 Sep 2025 11:49:29 +0000 (UTC)
+	s=arc-20240116; t=1757245802; c=relaxed/simple;
+	bh=37K9EA26vxYKMUmDOyg7DDd3NpY10jCWD01fK8IcmRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CnBZwft+5kHj90TUxyUcyAaMJEvhroekfbvQwOkQqB6TB/eG+LSiREgmxFsRZDuqdcGOUUybmJnWBUkkF+EdMcnrPjajTV+2qjyD0qiyLHPAGk96coODRuS+LhQhYBPClXJA9S8+b6Cq4dANYmmG1uhPGvnQetbmTLdSniowMMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRjdbtrV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 454EBC4CEF0;
+	Sun,  7 Sep 2025 11:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757245773;
-	bh=aIdhlvipyo2+0PeyQWDF3eftzsmA1c2NyjjqT0eU764=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=b2YkkkLc+dGfx3ZjDLU5dsOg9R4XIg0hxranpL9139I6xYZ7xJCaFK+glzyeI9+fo
-	 KEJGfXq1VGvaUGy1SaoLjk1IC9f5xFa1Au7RVhW3nztY/qhU1HCjc9JYqFwXgl6Wed
-	 YxI2OoHXEkkWj8QCQQPJSlBb2B1uRjqWhdo8pzAZgbFth2gHLlxGvpczcwudpHIXup
-	 gEJZ4PuoNGyMtFWPnYkSmB5haPTdIsg1LPIbth0stNwkRuZ/zYnKwoOaf3iA70jWa3
-	 we0eaH1e/Nlf5LdQBVAcON6HuCD5Ux2cGuzpd69c/ULfIIn9nhO6mrpfXrS+LeNJI+
-	 KUJahWylYrZWg==
+	s=k20201202; t=1757245801;
+	bh=37K9EA26vxYKMUmDOyg7DDd3NpY10jCWD01fK8IcmRY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NRjdbtrVyyiGCitUteqHMSdGa15CjdSNofo9Fwt5dE0MESj87l279ceGZSJHzCAgJ
+	 rG2ovsOn2w3F03XlG7ySDm8Ot94SbrTF7IAIu55lIPzfQmgzKkT9cN0Rg9V22z41nq
+	 YrgqPL+g6FhC9OYDlDCTo4ZSwt3EXpbBJDxO2LEJRqwvU1AEd2fABMdNP1xiEQiWYk
+	 bHhbdrcnjxSK1CiP11AKhK7O4TVehhUnE5eswq837EUyoUVpMKG5AmXaCZ3TAMDBev
+	 8aRmjELEaQ/t8UlXq9dj2ywIsbI49V5v8lrT8ZDkjzG9sDeIFY0xNX7EaskFLgcYxh
+	 UQ9r1YOmmFpUQ==
+Date: Sun, 7 Sep 2025 12:49:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: iio: magnetometer: Infineon TLV493D
+ 3D Magnetic sensor
+Message-ID: <20250907124952.31809adc@jic23-huawei>
+In-Reply-To: <CAFmh=S0AP4_9H8CiSp3oAciNF=FGMGp4bFz6QEJNFGqwdvj65w@mail.gmail.com>
+References: <20250906-tlv493d-sensor-v6_16-rc5-v6-0-b1a62d968353@gmail.com>
+	<20250906-tlv493d-sensor-v6_16-rc5-v6-1-b1a62d968353@gmail.com>
+	<20250907103617.5400c1bb@jic23-huawei>
+	<CAFmh=S0AP4_9H8CiSp3oAciNF=FGMGp4bFz6QEJNFGqwdvj65w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 07 Sep 2025 13:49:28 +0200
-Message-Id: <DCMJMXGN68E0.IZ2F31AI11JW@kernel.org>
-Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!`
- macros
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>,
- "Christian Schrefl" <chrisi.schrefl@gmail.com>, "Alban Kurti"
- <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250905140534.3328297-1-lossin@kernel.org>
- <aL1lHyhzWX0xGrmo@google.com> <DCMJ0VFOV9L1.33BPI08N4H7WZ@kernel.org>
- <aL1tloBwmJnYFPpa@google.com>
-In-Reply-To: <aL1tloBwmJnYFPpa@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Sep 7, 2025 at 1:33 PM CEST, Alice Ryhl wrote:
-> On Sun, Sep 07, 2025 at 01:20:39PM +0200, Danilo Krummrich wrote:
->> On Sun Sep 7, 2025 at 12:57 PM CEST, Alice Ryhl wrote:
->> > On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
->> >> Allow writing `_: { /* any number of statements */ }` in initializers=
- to
->> >> run arbitrary code during initialization.
->> >>=20
->> >>     try_init!(MyStruct {
->> >>         _: {
->> >>             if check_something() {
->> >>                 return Err(MyError);
->> >>             }
->> >>         },
->> >>         foo: Foo::new(val),
->> >>         _: {
->> >>             println!("successfully initialized `MyStruct`");
->> >>         },
->> >>     })
->> >>=20
->> >> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880=
-a9b898336e2d54f80715f00ce00f21f74d2f
->> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
->> >
->> > Nice! Would it be possible to include a user so I can see it work in
->> > practice? E.g., for the irq feature?
->>=20
->> Devres needs this too, but the corresponding devres stuff was a fix and =
-is in
->> the current -rc only, so that's not a candidate.
->>=20
->> The IRQ stuff is in driver-core-next going to Linus for v6.18, hence, us=
-ing it
->> there, this patch would have to go through the driver-core tree as well.
->>=20
->> For me it is fine either way.
->
-> It doesn't have to land together. I would be happy with:
->
-> 	THIS CYCLE: Land just this patch.
-> 	NEXT CYCLE: Land the irq and/or devres user.
->
-> But I'd like to see it work in practice before I give a Reviewed-by.
-> It's hard to evaluate this kind of macro change just from the macro
-> itself.
+On Sun, 7 Sep 2025 16:43:34 +0530
+Dixit Parmar <dixitparmar19@gmail.com> wrote:
 
-Here's a patch for using it in devres (we backmerged -rc3 into
-driver-core-next):
+> > Krzysztof gave an RB on version 3.  Please make sure to pick up such tags.
+> >  
+> Indeed, RB was given by Krzystof on the V3 patch but this patch got
+> modified for MAINTAINERS file changes which were not part of V3.
+> Considering that I thought it should be removed. I have added this in
+> the cover letter change logs as well. Is this correct understanding?
 
-From 23e48f081b7ba6bebd375c6fa929f070f7977fc5 Mon Sep 17 00:00:00 2001
-From: Danilo Krummrich <dakr@kernel.org>
-Date: Sun, 7 Sep 2025 13:44:43 +0200
-Subject: [PATCH] rust: devres: take advantage of initializer code blocks
+When making small changes like that, it's a judgement call you need to make
+on whether they are likely to affect the intent of the tag.
 
-Use pin-init initializer code blocks to register the devres action.
+To me that one wasn't something that Krzystof was going care about.
 
-This resolved the TODO introduced by commit 75a7b151e808 ("rust: devres:
-fix leaking call to devm_add_action()").
+Anyhow it's fine that you looked on it differently.  In cases like
+this I'd expect to see a comment under the --- in the patch that a tag
+was given but dropped because of xyz reasons.
 
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
- rust/kernel/devres.rs | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Keep that in future versions until the tag is given again or other
+comment invalidates it.
 
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index 132545962218..430fc4880ddb 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -119,7 +119,6 @@ pub struct Devres<T: Send> {
-     // explicit `Send` and `Sync' impls can be removed.
-     #[pin]
-     inner: Opaque<Inner<T>>,
--    _add_action: (),
- }
+Jonathan
 
- impl<T: Send> Devres<T> {
-@@ -146,10 +145,7 @@ pub fn new<'a, E>(
-                     revoke <- Completion::new(),
-                     data <- Revocable::new(data),
-             })),
--            // TODO: Replace with "initializer code blocks" [1] once avail=
-able.
--            //
--            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
--            _add_action: {
-+            _: {
-                 // SAFETY: `this` is a valid pointer to uninitialized memo=
-ry.
-                 let inner =3D unsafe { &raw mut (*this.as_ptr()).inner };
-
-
-base-commit: 544c94f0e155614551e0210074597a23d117830c
---
-2.51.0
+> > This time I'll apply it by hand if nothing else comes up.  
+> Thanks,
+> Dixit
 
 
