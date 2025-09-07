@@ -1,132 +1,84 @@
-Return-Path: <linux-kernel+bounces-804637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3559AB47AEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1909B47AF0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D600A17E140
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA4617E291
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91AA261586;
-	Sun,  7 Sep 2025 11:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9002261B96;
+	Sun,  7 Sep 2025 11:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="gTHys59t";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="ljtiOSqf"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNI3J4+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDBD25FA3B;
-	Sun,  7 Sep 2025 11:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968918FDAB;
+	Sun,  7 Sep 2025 11:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757244192; cv=none; b=ulaFLN4yCi8R8YRk/70sfpsqRCi5yndebbvB8040PucgCTE0vM5qhkU1YZxgAI935vPX9QXilAsspm2N5ROAgIO65bXcNMFMO//Fnlxqqb9rQB2p64xh06VeCdK0gDgDk4cBknfVG8vSp0Lr92bb+uj78t/97pmWJJu91mQ5pBk=
+	t=1757244311; cv=none; b=n6CfAWWZqtsGaHb5QRG9C/MFD+5zzqr/U9PAJuR6Ob8lV5ed5iisBzZ5BRicQM6RaCSNx4WBnwl0pc4DqfqEFMFHtARg4RilEM+tIThDGNv28Ll+ksjtPR3i06PxEre3fQm1OkAp+ebkdbLbe9gKz2QZNVlOzxQi6nYW+G9sy9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757244192; c=relaxed/simple;
-	bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EMXJ7FbCUbmMhaYXTODefZN1fgiz3vVsRGwjGRvldUGY4yOceXMl4zZXsDTN7sRgRLS4Hr6Ys3IQMg++nY9z8Ukjpznhpr9Po8CKAeeOpGFXXkmsjtdSkFHcGQHN5+jEph+LgAmI1C+n1BsUh5jNBSm63xgOnyq74ezaBMC0PHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=gTHys59t; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=ljtiOSqf; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1757244185; bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTHys59taCZyg7omUl4ZHsFebUuKDaN2zPpJrtChsc5wEaI5UrRD7/vXef5h3hxD2
-	 GBW6pHGsbLHws7hF5k71R3XvKAhkLaLIGgeByGP7G1mpSsHaA8/cZ7uEHI/hf+e+KW
-	 z4RaTdj6Tn9ztSk58LPGtjPXdU6LFAXyoHQQEdX63OnHzKqgWfXzdJ8Tpj2zjgK4Te
-	 XW1PYI/aWe7NEvS036upRY3jgY1R9xVoAo3PJhcf3MR/uvLCWjQqhxbHEDIEJCZ3Ur
-	 /hYPeMEVxMvqHnJWGOlV4OvV4tFPeJCA92l+TLMB2jGvkvogedfTEnBICOStCXXbli
-	 Y673alkYSN86Q==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 57932FB04;
-	Sun,  7 Sep 2025 13:23:05 +0200 (CEST)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id dJfWR9cpiJyv; Sun,  7 Sep 2025 13:23:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1757244183; bh=HigEj1cXFEUCAKS6b1IzogY9piyG2OdqelU9X709n7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ljtiOSqfHUULLDkVc0ByzsACZCM9Zm4ajIY1JgU/gmytkFQce6+ZU8hJQyepPgxSx
-	 Ie895IGzPJ1yl5+z6DT7of0XxwDAXpDO9L7niW1yxWU36vXnKrwr3fLylKiO+Et4xX
-	 0zA3zUV3rTjC0H1ltNr8OyXF/szlgAjQfvxG1guQr6CjzsY+WLdO5nYvNEbgA+X4wq
-	 NJRM1v62vIqjUeNIiPtrTDrOOtJaQIExWmR8y8lxLh0qdU9JLRRmVVzwLMzyB/Junf
-	 bZs8QLaMQF5rRjwl20QJRm+Q1i1YSv7ZmNPqr2CPpBL0eQjn2evjLPIEZqvwhAJI8c
-	 WtlXXLc7f+BLQ==
-Date: Sun, 7 Sep 2025 13:23:01 +0200
-From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] drm/panel: visionox-rm69299: Fix clock frequency
- for SHIFT6mq
-Message-ID: <aL1rFVaVCxIVaLWm@quark2.heme.sigxcpu.org>
-References: <20250906-shift6mq-panel-v2-0-aa5e585d8717@sigxcpu.org>
- <20250906-shift6mq-panel-v2-1-aa5e585d8717@sigxcpu.org>
- <ba7y3qcuzkx7hinxraimuem6xnrrfxbj3giz56nq5qbmg76uno@kr6dezsumy2s>
+	s=arc-20240116; t=1757244311; c=relaxed/simple;
+	bh=ekVDRngXVS5ba6K8MKRdMT2eQXIh+YNQ4gYcLuGteZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O3daqoGQZKkNySCyjbgjw5ZoS+DMxm3cZ2CWOUdqBOIypDNN6asYueza2Dh8/DM7Rh/hNt1vnjZ4A8E2dYpO/bSzAyPawBEHXQWe8uSK4IxgcAGHh3eu0Sjba1jXrd5l2EzDPh3a4CLQAucmpqLQfDLDSnD8ZYlxr8ypQGfTYJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNI3J4+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB819C4CEF0;
+	Sun,  7 Sep 2025 11:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757244310;
+	bh=ekVDRngXVS5ba6K8MKRdMT2eQXIh+YNQ4gYcLuGteZM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jNI3J4+e/NjKDQ5PcCUQnPjTQV693RwQto1TAaTLrSa9En0aK5m7xYnsHzrZ6y4Ft
+	 MsI8WylIFbKI225J9LLmv4zaNqcY/z7QT0EtapnoyGgCHvybKhDDRAPf8gq9jmM4uJ
+	 jq9BAtDQRHr0RlG/cTM3Q6JW8Z+rdyx2fpsNr0+jEY0JHdiJ4Myre/bEjJUauvdg70
+	 GXRFMufP/RwXzi+hca4Nfj7KmQ1AFA1OJqb5+bDL1FNE5uSREITsRWC49EJMvOyBI7
+	 vXld8GJ4s7VxFc6bg16/94EwYTsOWgJ2KvRViF7CHTdGO++EeWKg+nAhMS0SUw0lBg
+	 VrWTO52DwDEJg==
+Date: Sun, 7 Sep 2025 12:25:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Marius Cristea <marius.cristea@microchip.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: PAC1934: Use devm_mutex_init()
+Message-ID: <20250907122503.226b622a@jic23-huawei>
+In-Reply-To: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
+References: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba7y3qcuzkx7hinxraimuem6xnrrfxbj3giz56nq5qbmg76uno@kr6dezsumy2s>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
-On Sat, Sep 06, 2025 at 10:08:35PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Sep 06, 2025 at 05:17:25PM +0200, Guido Günther wrote:
-> > Make the clock frequency match what the sdm845 downstream kernel
-> > uses. Otherwise the panel stays black.
-> > 
-> > Fixes: 783334f366b18 ("drm/panel: visionox-rm69299: support the variant found in the SHIFT6mq")
-> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > ---
-> >  drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > index 909c280eab1fb408a713d84051a1afbb252c45e8..e65697ce6f51c7d64b786da18cf44b16de5d6919 100644
-> > --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > @@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
-> >  };
-> >  
-> >  static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
-> > -	.clock = 158695,
-> > +	.clock = 149360,
-> 
-> clock = (2160 + 8 + 4 + 4) * (1080 + 26 + 2 + 36) * 60 / 1000 ?
+On Sun,  7 Sep 2025 12:04:48 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-IIRC I was asked to use the resulting clock rather then the clock
-formula in another driver a while back but I like that variant better
-too, will change in v3.
-
-Thanks,
- -- Guido
-
+> Use devm_mutex_init() instead of hand-writing it.
 > 
-> >  	.hdisplay = 1080,
-> >  	.hsync_start = 1080 + 26,
-> >  	.hsync_end = 1080 + 26 + 2,
-> > 
-> > -- 
-> > 2.51.0
-> > 
+> This saves some LoC, improves readability and saves some space in the
+> generated .o file.
 > 
-> -- 
-> With best wishes
-> Dmitry
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   50985	  23992	    192	  75169	  125a1	drivers/iio/adc/pac1934.o
 > 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   50654	  23920	    192	  74766	  1240e	drivers/iio/adc/pac1934.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Applied. Thanks,
 
