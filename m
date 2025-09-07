@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-804531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E473B478E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:32:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA249B47901
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E19A3C73DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CFE20437D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011111C3BFC;
-	Sun,  7 Sep 2025 04:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71571D8A10;
+	Sun,  7 Sep 2025 04:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EwbpFKb4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ao+tn07v"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6CF29A2;
-	Sun,  7 Sep 2025 04:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79B229A2;
+	Sun,  7 Sep 2025 04:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757219536; cv=none; b=HZ9H7YdZNeSD1H0Jubz+YZaa9hRS+Nz9z1OZAnhcrhMyf2yppFxgg+z8J51wm4C1vhuARQMdvlw3WFnJuq/Ja7zMLNFMROin9PFfvjW5yj0lg2OT2LpOwFBgm0W/q2sCDEFlAVipxBjXWClbP0fA6C/JsFo4iXnEyg8GS0V9oWU=
+	t=1757219945; cv=none; b=GT2HTS6RdMbPC3Ucxv37nukF4HqxSOgJLDESxD5i5PYxOYiWauwnlGRyu2oIxv4GPPGz5ZyNWZmnxRa0yosjslhH5nSuiQ/SbWNHOj/5YeeZNgMiis3e6Ky17T/iOw8n7vXDDPWc/K/kvTq4HJYG12JOC1WWAbjZxKvinMPEqvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757219536; c=relaxed/simple;
-	bh=+8yI6fgJ5qXRBIy4nAJK63uggFckulfZtEQH+td3NO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nI7BYqVwoTKzfKv0D0RnbmgIjoYpDMhn8QbqV/3YjDYRxkzEyUHf/w8rWC5R6hsUYipehtPIq/fE9ijh0qk4ACQhrhdnmXvI4oiqNiDvCiSE638skNjc+YKzgQLi5xghpVum4FSNm2FLR05PaP3ehR13KF4WYcoWWyJ7X5/oWzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EwbpFKb4; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757219535; x=1788755535;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+8yI6fgJ5qXRBIy4nAJK63uggFckulfZtEQH+td3NO0=;
-  b=EwbpFKb4wIELtU+A746UlnzfvN45cjOSBntz48Ss1VSAH2zf+fwAxUEA
-   iaDVUgwQwZnllBC/I8XMy/1QO7Np10UPPW/2v3n8B8Ad6o8GphnkK0dXY
-   eisY0Hz45Xcg0JgZi6L1PCtAfs3xJ3WDQsBSE89Ru3gBpbOj2+iB5xCAe
-   +hRPoKYPEqt+j/aZXacc7gwPLTVi0NOOJapldceB8ARfEEe80o/3ZjgBK
-   PYcFpiMRKcHfOu7LJwwDLY5MyKDuxFf3MrDObL90tRFvXOUcjMMxENtjx
-   vdT/WC4NXLkO9NVix1+7PVYvb2Oeite5awuBzOc9TTHeLWJJZv9nWvenC
-   w==;
-X-CSE-ConnectionGUID: hWtn2WjzS32tV7fcvOIlvA==
-X-CSE-MsgGUID: 2/lZ6kvoSAiJAFOu6e1BNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="47082792"
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="47082792"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 21:32:14 -0700
-X-CSE-ConnectionGUID: UEUAutZoTamiLqUEzDzCKg==
-X-CSE-MsgGUID: eIAw2afWROWQEf3aazZtwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="172599663"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 06 Sep 2025 21:32:11 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uv74T-00021v-2A;
-	Sun, 07 Sep 2025 04:32:09 +0000
-Date: Sun, 7 Sep 2025 12:31:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hongru Zhang <zhanghongru06@gmail.com>, paul@paul-moore.com,
-	stephen.smalley.work@gmail.com, omosnace@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, Hongru Zhang <zhanghongru@xiaomi.com>
-Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during
- boot
-Message-ID: <202509071211.k5n864Gr-lkp@intel.com>
-References: <20250905100454.685866-1-zhanghongru@xiaomi.com>
+	s=arc-20240116; t=1757219945; c=relaxed/simple;
+	bh=/lX0LsSdffZULY13rRCfoDtGT3rYVlYAShatzJZ23as=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y7sSeCQVxDZS8oKxy0OPZx1xM30dzHykzjyN6aw3oqH6uJJRKOlTD7pYp2TMo82g9WsVo7slp2lC+xvr/ZocJUT+2nTob5JUzMxXAziLZGhjVLxM4b+C7P/2omUFKxbeilBX7h6Li0JBYV1/2+caPiDgP7MnUF+QYQ/OpL3Hg/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ao+tn07v; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=spgYFx1rLcbLN03vNZ6HO8Ze/s5DAhECuU9Ynm/f4ME=; b=Ao+tn07vMJSklQJqxic0Ublht0
+	weBHU+LWZBWM75vcxeHoyVZuaiLlx7YqDfvM1gNupltPBa9gSC/Cu/Dz9PQDZiOSWBvgWoyDc/8UR
+	A54m//ZRxpk3FLpL66yDczddPTKLHx7Cda3SV70pbxG7NowzWJSFMA4v+f96cBho+6YkwekAoOhRE
+	umbn2q8X7Wf21+xeFzQ7SYwc/J+YW3kx3E638KgFekifEYTV0dv8VHpolGKcpWiCX3UPXqJFdbTao
+	auqezxHHOPI/5if9IFwAtobSXwj/SjP9lZe6lg9t12x6QQtHqW4FhgS/HR9RLSpwfnp1DRF7/suuT
+	kmhutW4g==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uv7B4-00000009Ovp-3Hzc;
+	Sun, 07 Sep 2025 04:38:58 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	linux-pm@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	linux-doc@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v6] kernel.h: add comments for enum system_states
+Date: Sat,  6 Sep 2025 21:38:57 -0700
+Message-ID: <20250907043857.2941203-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905100454.685866-1-zhanghongru@xiaomi.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Hongru,
+Provide some basic comments about the system_states and what they imply.
+Also convert the comments to kernel-doc format.
 
-kernel test robot noticed the following build warnings:
+Split the enum declaration from the definition of the system_state
+variable so that kernel-doc notation works cleanly with it.
+This is picked up by Documentation/driver-api/basics.rst so it
+does not need further inclusion in the kernel docbooks.
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org> # v5
+---
+v2: add Rafael's Ack.
+v3: add Andrew
+v4: add DOC: so that this DOC: block can be used in Documentation/;
+    add Greg K-H;
+    add Jon Corbet, Mauro Chehab, & linux-doc
+v5: split enum declaration and definition (Jani Nikula);
+    drop the DOC: block since it is no longer needed
+v6: remove one of 2 asterisks on each enum comment line since dropping
+    the DOC: usage does not need them;
+    Add Mauro's Reviewed-by:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hongru-Zhang/selinux-Make-avc-cache-slot-size-configurable-during-boot/20250905-180729
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20250905100454.685866-1-zhanghongru%40xiaomi.com
-patch subject: [PATCH] selinux: Make avc cache slot size configurable during boot
-config: i386-randconfig-063-20250907 (https://download.01.org/0day-ci/archive/20250907/202509071211.k5n864Gr-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509071211.k5n864Gr-lkp@intel.com/reproduce)
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Len Brown <len.brown@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+---
+ include/linux/kernel.h |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509071211.k5n864Gr-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> security/selinux/avc.c:37:5: sparse: sparse: symbol 'avc_cache_slots' was not declared. Should it be static?
-
-vim +/avc_cache_slots +37 security/selinux/avc.c
-
-    36	
-  > 37	int avc_cache_slots __ro_after_init = 512;
-    38	#define AVC_DEF_CACHE_THRESHOLD		512
-    39	#define AVC_CACHE_RECLAIM		16
-    40	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--- linux-next-20250819.orig/include/linux/kernel.h
++++ linux-next-20250819/include/linux/kernel.h
+@@ -164,11 +164,23 @@ extern int root_mountflags;
+ 
+ extern bool early_boot_irqs_disabled;
+ 
+-/*
+- * Values used for system_state. Ordering of the states must not be changed
++/**
++ * enum system_states - Values used for system_state.
++ *
++ * @SYSTEM_BOOTING:	%0, no init needed
++ * @SYSTEM_SCHEDULING: system is ready for scheduling; OK to use RCU
++ * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
++ * @SYSTEM_RUNNING:	system is up and running
++ * @SYSTEM_HALT:	system entered clean system halt state
++ * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
++ * @SYSTEM_RESTART:	system entered emergency power off or normal restart
++ * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
++ *
++ * Note:
++ * Ordering of the states must not be changed
+  * as code checks for <, <=, >, >= STATE.
+  */
+-extern enum system_states {
++enum system_states {
+ 	SYSTEM_BOOTING,
+ 	SYSTEM_SCHEDULING,
+ 	SYSTEM_FREEING_INITMEM,
+@@ -177,7 +189,8 @@ extern enum system_states {
+ 	SYSTEM_POWER_OFF,
+ 	SYSTEM_RESTART,
+ 	SYSTEM_SUSPEND,
+-} system_state;
++};
++extern enum system_states system_state;
+ 
+ /*
+  * General tracing related utility functions - trace_printk(),
 
