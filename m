@@ -1,174 +1,101 @@
-Return-Path: <linux-kernel+bounces-804649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D857B47B11
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:44:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9938EB47B14
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 272F64E0F96
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F95D2014AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83742652A2;
-	Sun,  7 Sep 2025 11:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AE4266576;
+	Sun,  7 Sep 2025 11:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4zYbyEj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+96NWKb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF9625B1D2;
-	Sun,  7 Sep 2025 11:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33F32472B6;
+	Sun,  7 Sep 2025 11:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757245464; cv=none; b=potx9HEL6rQgREECYIiFKd5lpuhTSHEJtpJmTOLbrfuO6rmhcZAFc6DhtLZBa/mwul16WDvUz5xnhVcyuRL5nKEwdy9WRZqAXiter8ZHFYC3jZo1TnmzwKef3dtEJiV7qEVHAerJHpX/BnqYXWbym6jFD+U66ComviEOubIJGuk=
+	t=1757245481; cv=none; b=NG+vmz17v3C+BYXRk5eTmmHzna+dVnfF44lo/1ES9MJlQvHME/eRgAwk6R00HDNH9NIv5UtCcd4LluMnGoPD0FKvcCkkq5BnAdv/Rd5nJbVrl7+M8ba+kY41pzCalSXHwTKdK4ZSGz9e6WRnUNico3X3HdqtfDzI/msBUxyl4WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757245464; c=relaxed/simple;
-	bh=OvDT2Q/6yP6Dr4ss8IQJNkHW43Mx6ronKHaCUw6k19c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=KGw79omyMIsmQD64WCPErs8wdwg9ISZLTXn9hU3TYDVOpVztHPyDvFN4VqVexnmBubA4/gNbPOHP4oEDM1AFN/vuNRDlyxIIvSUe97PavGLnFCy1dvoDK0vGWmmpCO1wOhdc/QOxsgS47lXErhMpeo1TBLPgK+Tb21ZGZNsW2rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4zYbyEj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5DA2C4CEF0;
-	Sun,  7 Sep 2025 11:44:20 +0000 (UTC)
+	s=arc-20240116; t=1757245481; c=relaxed/simple;
+	bh=McQxKcQ3IgA09DQIhZhbUBr9hl4vWs7RU541oD5jjDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nsTWYOhX3IRm6hej5Vc8+kgfI9X6HCoPtvXOPvKSFzOmF+M34caqA2SW+yQ8TSnxCGZ6IUe0yAOqdOADouiRVr5t5rdobcmRSYckHwcWYemJ/q9shHRzCeZGEOHD28O8eu1vbNGJQVNwd41MGh5jtVSLH8LK500Sj4h44J1uRWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+96NWKb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A260C4CEF0;
+	Sun,  7 Sep 2025 11:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757245463;
-	bh=OvDT2Q/6yP6Dr4ss8IQJNkHW43Mx6ronKHaCUw6k19c=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=a4zYbyEjoxjWiq8i+8Z6u6XzG5ZdbrD5mL4mRfMR6gVL/aHHWWcMBRDacX66Crddp
-	 iJm6nho7ridjF/uP6udJxYYT7Ns/N8oeVm+NCYs9ODako0PT5T5KsjzdEohwkziTy8
-	 a+ATwY7B4WETEmDo4/67Cbx9fc6zul749ph9nv/LLQeB22/dQnzDT9Zy2saQI/J1yl
-	 aNC22KWgBRvxqqqtl5eLiz8h7E9Ntj2ohmcdNzET0oLT30vcorTdTqJU00d5QH6sB1
-	 E4fX6f7g1gvNyMtSltbTXubIhoOeFV7v3P9/cZJ+yYbLlvyIJU5TurAEtvBFbWGfI9
-	 bAN5YQkXyEdtQ==
+	s=k20201202; t=1757245481;
+	bh=McQxKcQ3IgA09DQIhZhbUBr9hl4vWs7RU541oD5jjDY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D+96NWKbhuU0P1mzI9gATdG0diAEJ2UX2AESQDRxNBft4tKXn1MtAIJYmXU+w1Roy
+	 A1fGsYgsvancq1wpB7z9YJVTK0GwZR+mWoqh/GUMzVhRDUUGPMc69Vwiv2+QeEtZ0a
+	 AHw/kIw1qeQBfK3Mb9SuFm1fFPz6ZEsBtOwRHFaORMpoxBJc71V4WbO5s1wUZi9lsT
+	 yqlwd8RALYwf+Md02si0js2n+GgeOMbHKhms+UNsSHdWsBHYyGRrN0EI4xdhDTo2G+
+	 d+FU6DFShwptnOL2/IgdZIKFEPxkFDYBes1F7vw1DSbJZ8Pgzx/ZIsNwXhWc8rzRvK
+	 IYZ9007bVbbIg==
+Date: Sun, 7 Sep 2025 12:44:29 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Primoz Fiser <primoz.fiser@norik.com>, Peter Rosin <peda@axentia.se>,
+ David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ upstream@lists.phytec.de
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: afe: current-sense-amplifier:
+ Add io-channel-cells
+Message-ID: <20250907124429.573edbc8@jic23-huawei>
+In-Reply-To: <20250905-dainty-liberal-monkey-ec28bb@kuoka>
+References: <20250905065503.3022107-1-primoz.fiser@norik.com>
+	<20250905-dainty-liberal-monkey-ec28bb@kuoka>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 07 Sep 2025 13:44:19 +0200
-Message-Id: <DCMJIZJKOFC0.2F9NNE8FAT4B5@kernel.org>
-Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
-Cc: "Boris Brezillon" <boris.brezillon@collabora.com>, "Matthew Brost"
- <matthew.brost@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Steven Price"
- <steven.price@arm.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
- "Liviu Dudau" <liviu.dudau@arm.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
- <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
- <20250905152505.005a610d@fedora>
- <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
- <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com>
- <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org> <aL1u_YxOkuj1kIq6@google.com>
-In-Reply-To: <aL1u_YxOkuj1kIq6@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Sep 7, 2025 at 1:39 PM CEST, Alice Ryhl wrote:
-> On Sun, Sep 07, 2025 at 01:28:05PM +0200, Danilo Krummrich wrote:
->> On Sun Sep 7, 2025 at 1:15 PM CEST, Alice Ryhl wrote:
->> > On Sat, Sep 06, 2025 at 12:47:36AM +0200, Danilo Krummrich wrote:
->> >> On Fri Sep 5, 2025 at 8:18 PM CEST, Alice Ryhl wrote:
->> >> > On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
->> >> > <boris.brezillon@collabora.com> wrote:
->> >> >> On Fri, 05 Sep 2025 12:11:28 +0000
->> >> >> Alice Ryhl <aliceryhl@google.com> wrote:
->> >> >> > +static bool
->> >> >> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
->> >> >> > +{
->> >> >> > +     return !kref_read(&vm_bo->kref);
->> >> >>
->> >> >> I'm not too sure I like the idea of [ab]using vm_bo::kref to defer=
- the
->> >> >> vm_bo release. I get why it's done like that, but I'm wondering wh=
-y we
->> >> >> don't defer the release of drm_gpuva objects instead (which is rea=
-lly
->> >> >> what's being released in va_unlink()). I can imagine drivers wanti=
-ng to
->> >> >> attach resources to the gpuva that can't be released in the
->> >> >> dma-signalling path in the future, and if we're doing that at the =
-gpuva
->> >> >> level, we also get rid of this kref dance, since the va will hold =
-a
->> >> >> vm_bo ref until it's destroyed.
->> >> >>
->> >> >> Any particular reason you went for vm_bo destruction deferral inst=
-ead
->> >> >> of gpuva?
->> >> >
->> >> > All of the things that were unsafe to release in the signalling pat=
-h
->> >> > were tied to the vm_bo, so that is why I went for vm_bo cleanup.
->> >> > Another advantage is that it lets us use the same deferred logic fo=
-r
->> >> > the vm_bo_put() call that drops the refcount from vm_bo_obtain().
->> >> >
->> >> > Of course if gpuvas might have resources that need deferred cleanup=
-,
->> >> > that might change the situation somewhat.
->> >>=20
->> >> I think we want to track PT(E) allocations, or rather reference count=
-s of page
->> >> table structures carried by the drm_gpuva, but we don't need to relea=
-se them on
->> >> drm_gpuva_unlink(), which is where we drop the reference count of the=
- vm_bo.
->> >>=20
->> >> Deferring drm_gpuva_unlink() isn't really an option I think, the GEMs=
- list of
->> >> VM_BOs and the VM_BOs list of VAs is usually used in ttm_device_funcs=
-::move to
->> >> map or unmap all VAs associated with a GEM object.
->> >>=20
->> >> I think PT(E) reference counts etc. should be rather released when th=
-e drm_gpuva
->> >> is freed, i.e. page table allocations can be bound to the lifetime of=
- a
->> >> drm_gpuva. Given that, I think that eventually we'll need a cleanup l=
-ist for
->> >> those as well, since once they're removed from the VM tree (in the fe=
-nce
->> >> signalling critical path), we loose access otherwise.
->> >
->> > Hmm. Another more conceptual issue with deferring gpuva is that
->> > "immediate mode" is defined as having the GPUVM match the GPU's actual
->> > address space at all times, which deferred gpuva cleanup would go
->> > against.
->>=20
->> Depends on what "deferred gpuva cleanup" means.
->>=20
->> What needs to happen in the run_job() is drm_gpuva_unlink() and
->> drm_gpuva_unmap(). Freeing the drm_gpuva, inluding releasing the assoici=
-ated
->> driver specific resources, can be deferred.
->
-> Yeah I guess we could have unlink remove the gpuva, but then allow the
-> end-user to attach the gpuva to a list of gpuvas to kfree deferred. That
-> way, the drm_gpuva_unlink() is not deferred but any resources it has can
-> be.
->
-> Of course, this approach also makes deferred gpuva cleanup somewhat
-> orthogonal to this patch.
+On Fri, 5 Sep 2025 10:20:37 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Yes, it is.
+> On Fri, Sep 05, 2025 at 08:55:02AM +0200, Primoz Fiser wrote:
+> > The current-sense-amplifier is an IIO provider thus can be referenced by
+> > IIO consumers (via "io-channels" property in consumer device node). Such
+> > provider is required to describe number of cells used in phandle lookup
+> > with "io-channel-cells" property.
+> > 
+> > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> > ---
+> > Changes in v2:
+> > - refactor commit msg drop warnings introduced by commit #2
+> > - drop Fixes: tag  
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied this patch to the togreg branch of iio.git.
+I'll push that out as testing now because some other stuff on there
+will benefit from 0-day taking a first look at it.
 
-> One annoying part is that we don't have an gpuvm ops operation for
-> freeing gpuva, and if we add one for this, it would *only* be used in
-> this case as most drivers explicitly kfree gpuvas, which could be
-> confusing for end-users.
+Thanks,
 
-I think the reason why I left GPUVA alloc and free to drivers was that I wa=
-s
-expecting them to use a dedicated kmemcache for that.
+Jonathan
 
-However, we can still provide drm_gpuva_alloc(), drm_gpuva_free() and va_fr=
-ee(),
-va_alloc() callbacks for drivers to implement.
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
