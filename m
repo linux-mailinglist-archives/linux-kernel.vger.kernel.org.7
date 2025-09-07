@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-804528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F7CB478DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6327AB478E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056C6160309
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E8F3BEE2F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC341D5CD7;
-	Sun,  7 Sep 2025 04:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755FB1DB12E;
+	Sun,  7 Sep 2025 04:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L40Cu04v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaYVfPm+"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED18F19F137;
-	Sun,  7 Sep 2025 04:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D43E15B135;
+	Sun,  7 Sep 2025 04:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757218274; cv=none; b=QDzzD8YIpvzk7ZyslKdj/QOIpvvvt7Pu9bpr+YAvd0Iqrdn0KY3okxFhy3lIevujeP9RV+Pqd+L+xB+eQ4Dp16dabfJSk0ZenlvepATTZmzcCMeZmZYJPB5/JpvwRkGsxLBnNJ35Btgc6rYD7tdjdHxsL2jIoXRXxJ6W0iGYkxI=
+	t=1757219093; cv=none; b=RPNJJ8n1QZvGJM/rOERY8HWAxdc4ZYLB/EwIkxpMlumZbR9Elvyu8ON1suiXFoCFCaIspS5jaavaj+2krwxPZ0AqFfxrZi6vdJG4p1x16iHIHxuiKnMjxcL5hnJ3EXY/kFMT5sASPEhwa8VWYWlLogAFWlaFylnyfRxKojQD+IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757218274; c=relaxed/simple;
-	bh=cYxBcCmTOo12YM48X4mOWGXeVa3FDhnpj3RjPyEsh6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtrxOrk0Reek+WbSob/DsSw9G0vKCwwiqqDBwnYmhQJxz+SWV53ARzS18Np3bmu9TauV4L363N9lQMmMiTL/HcLQgTfo1+uFU31Kk3ib1L38Zeosvx+VixpAJ/UsgYsXyQQS+sVQkEXSQctRMEK/eeGLe4aKQiarZxnjCFZ58lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L40Cu04v; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757218273; x=1788754273;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cYxBcCmTOo12YM48X4mOWGXeVa3FDhnpj3RjPyEsh6I=;
-  b=L40Cu04vNtVgQBPSlY7nKb+Cbt0C6pwFud1dbix3KRgH3xQDweYjPRHY
-   Qm93lPOcloj0rOqHlKhrcejeDuyB+/k/+aJeE3eXnlpRLbWesVR9G1TJ4
-   cJdc5j6dZjDTHpetNw8kscfE7GRlnX90yOt8IG4zLS8kWdPKtlyG0FV8+
-   KSs1W0u1BWoBZz344QzEINtwepQBy07emDbdXwHYHfvTcI5Fvf4GETMcE
-   Q2mTD/1twqtHV/UzlUFvx9XciMBKWtcfI84mxxOUhxXMBm937TbdOKi2n
-   3UAz7owagKH/wInO8WHP1pxXvArN8gb/o/R9aaITJSD7fYx0mPevhHiI/
-   A==;
-X-CSE-ConnectionGUID: BbLxS/SMRD2QNI123X9qiQ==
-X-CSE-MsgGUID: mGU82jZ9TFi8UVmF1AGoRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="63340709"
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="63340709"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 21:11:12 -0700
-X-CSE-ConnectionGUID: ty+8UhvVTLSJ0fsxVRy7xQ==
-X-CSE-MsgGUID: UfJzP6pHS1Sx+e6eeJinZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="171761634"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 06 Sep 2025 21:11:10 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uv6k7-00021H-1s;
-	Sun, 07 Sep 2025 04:11:07 +0000
-Date: Sun, 7 Sep 2025 12:11:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fidal Palamparambil <rootuserhere@gmail.com>,
-	linux-modules@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mcgrof@kernel.org, petr.pavlu@suse.com,
-	da.gomez@kernel.org, samitolvanen@google.com,
-	linux-kernel@vger.kernel.org,
-	Fidal palamparambil <rootuserhere@gmail.com>
-Subject: Re: [PATCH] tracing: Fix multiple issues in trace_printk module
- handling
-Message-ID: <202509071126.l4plN0Qk-lkp@intel.com>
-References: <20250906134148.55-1-rootuserhere@gmail.com>
+	s=arc-20240116; t=1757219093; c=relaxed/simple;
+	bh=0N3eVpXC/D+64gQoRgXv87xuIkiqUUOVzPZ3VCpIvuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Al6/+CctuPZirmGgo6VBhub0qgM9oQus590XDdnGE4VxoTQE2omeRdSs+uZ/A6vbyv2xcpjRbTYnfpPAh+rvkZc2r6+uyGAYh+TNiLYXuyxAprqn6VMgeDJ5hgfApKnnCYajvp1Kiog3OUfrMvspk919cjwBsI/D2nFVYGTkXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaYVfPm+; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so4186115a12.0;
+        Sat, 06 Sep 2025 21:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757219090; x=1757823890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0s9c0ZHAHeIpOChkyK+9eSA8/gCyG1mdkJBEoUW9B2w=;
+        b=DaYVfPm+D+/Q+8x43QR0bKiEOiQB47sZM9Ncy0bljmLRpjbw2QocZnJlFDnsxER24/
+         gvKoS0TYqVeT7DlIkc72cN+K2XknaoKEPmnTApHk6xvmgAJ/Aaqbs8aTYSO/vLZ88wc5
+         ttUvDFDHHnnHd2M/U7QJsUtWDhBq3FVhwiR6a4TqE/z5BUxR+F5jt3SGpVW/P9rJwWqc
+         1mXS2p4+wj3wckj62u6lw8a8ymEk05A63ONh6mvH14S6uUXut+qPumKMriZt8/Dff5E2
+         OMLynU7l4v6FQnxFGtyiWGa98NaqfcVkG/h6jUhzFdyMr7wZ83wxFK6ASgef5Jmy7V+V
+         A/yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757219090; x=1757823890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0s9c0ZHAHeIpOChkyK+9eSA8/gCyG1mdkJBEoUW9B2w=;
+        b=XxvXlhAU/RhuyaFQpqdfODTkfidxdgkMamLIJJpqVDHlgX8fXlF/KbtcmzsdPFrAxu
+         ESD0OWKhIG4yszIVJDXsRyA/se7X+RUAAqa6RYI5X/f0G4lnLfVircS3mF1WUZniW8ic
+         S7xTPe1IVpUFicPACDikK0E84OvivNII3zcbSDzxa9E1kboA++i7KIHQj1GaGyH4fNzX
+         Tw1hL7Wh6lIiLfg4wvNFwXbBf8WmMjS7GaT72y1ILb7FVd152loDHzE7UnYOKEi+tWA7
+         g7RzmhmGfqRuQnPqwH8FsDECFG8KmmeFLclXlhPnLdx5VsBlR4A7VPpxPoe4Vg7DYGrD
+         zX+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUSRHLGnNezAPhBfPI9h0QQNcpXo0lusrSc2UZvwZUAhwyot4owLK3NKn3b+w/NfZ96Ln08CZyP2174kTU=@vger.kernel.org, AJvYcCVdRYbDQYaynYB1ygZa9BoqX77rs98BUvmZgUpBsPqqqaBH1XeXBYMFYKGNhmmaYIw53mP8ImBenGPEL2wL@vger.kernel.org, AJvYcCX/jpHHao6o9QbUjXHup8mEmjTRqAeE8/y9Sk68v8g7DjEIkvst1P6A6w49uQMbETBZMWwzLBP99BUA@vger.kernel.org, AJvYcCXiP3LI7iSI0fuCNGTyLMoeJsaiBzl/kifOkS+rIJctlaM082e1Ssfz880be6YZdVUGD9GjjFFSUasz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOfLZpYRQfNgaKN2MR8bw7Trg6HyYF4Lwx/vTzURC9GTYvIYhl
+	hYI9IEFz2iR3qfZIxhDGc3tkn8lgCLbO37G1xIE19wehVQQI4PiCToq6s29YiJZ+4xoc51MJ+GE
+	ECbnTFWcvVVCyvHx9dkQhA3KRDFmYjg==
+X-Gm-Gg: ASbGnctvulmbS9QWNgUuso1TjffFhrixD/CY9qx/iPoLLYd4wxJ0lBAClcJp3G1Cjjq
+	dpralwlKOsSjBb/vgmT3XKrxj+y9YtXUe24kKELZhfFzgFcEZeQVUJj1T5nNNxO2Sa3gKcXTjAp
+	deTpncLMhuam05yQEkV0Nx0PicfLLxBM59gJObq629438JCgWHATOaT1znVp+ziumSMlbb5tp+H
+	MlDlh6AAjUcM6B86Q==
+X-Google-Smtp-Source: AGHT+IGHfzcKiP9Te6PV3++IHvHUNAnAgu1e+fJM2ndSNvGKC0p8DoYdOnCCeRjEh31MMs7uRSn5elSnp8Bv187xwik=
+X-Received: by 2002:a05:6402:5189:b0:618:afa:70f7 with SMTP id
+ 4fb4d7f45d1cf-623778cd7d6mr3269218a12.12.1757219090367; Sat, 06 Sep 2025
+ 21:24:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250906134148.55-1-rootuserhere@gmail.com>
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+ <20250904-hwmon-tps23861-add-class-restrictions-v3-1-b4e33e6d066c@gmail.com>
+ <20250905-deft-porcelain-teal-a3bdbf@kuoka> <CAAcybutsMdXmqrA6kG9L5OTP9ZPyLzYrXTGUGLAkWs5+MH9ifA@mail.gmail.com>
+ <9bd7beeb-0c11-4502-9d45-c85a0744ec82@kernel.org>
+In-Reply-To: <9bd7beeb-0c11-4502-9d45-c85a0744ec82@kernel.org>
+From: Gregory Fuchedgi <gfuchedgi@gmail.com>
+Date: Sat, 6 Sep 2025 21:24:14 -0700
+X-Gm-Features: AS18NWDyPgLCv7A7pvEren2ZJOSldFGXKh0s7fPVFLju_aNfFwxB2N-5d-Af1ro
+Message-ID: <CAAcybusLMg+jCY5esvLgwkyRCu2Ma5Ph2+QFJsuCvTqJu0UssQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: update TI TPS23861 with
+ per-port schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Robert Marko <robert.marko@sartura.hr>, Luka Perkov <luka.perkov@sartura.hr>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Fidal,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Fidal-Palamparambil/tracing-Fix-multiple-issues-in-trace_printk-module-handling/20250906-214415
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250906134148.55-1-rootuserhere%40gmail.com
-patch subject: [PATCH] tracing: Fix multiple issues in trace_printk module handling
-config: s390-randconfig-002-20250907 (https://download.01.org/0day-ci/archive/20250907/202509071126.l4plN0Qk-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509071126.l4plN0Qk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509071126.l4plN0Qk-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/trace/trace_printk.c: In function 'init_trace_printk_function_export':
->> kernel/trace/trace_printk.c:388:16: error: assignment to 'struct dentry *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     388 |         dentry = tracing_init_dentry();
-         |                ^
-
-
-vim +388 kernel/trace/trace_printk.c
-
-   383	
-   384	static __init int init_trace_printk_function_export(void)
-   385	{
-   386		struct dentry *dentry;
-   387	
- > 388		dentry = tracing_init_dentry();
-   389		if (IS_ERR(dentry))
-   390			return 0;
-   391	
-   392		trace_create_file("printk_formats", TRACE_MODE_READ, NULL,
-   393					    NULL, &ftrace_formats_fops);
-   394	
-   395		return 0;
-   396	}
-   397	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Sat, Sep 6, 2025 at 12:19=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+> On 05/09/2025 19:22, Gregory Fuchedgi wrote:
+> > On Fri, Sep 5, 2025 at 1:10=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >> On Thu, Sep 04, 2025 at 10:33:44AM -0700, Gregory Fuchedgi wrote:
+> >> What's the meaning of values? There are no other generic properties li=
+ke
+>
+> Where is context here? To which part was I replying / commenting on?
+>
+> You are not making the process easy. I receive a lot of emails and have
+> no clue what this refers to.
+You were asking about meaning of ti,class property values,
+commenting on this piece:
+> +      ti,class:
+> +        description: The maximum power class a port should accept.
 
