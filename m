@@ -1,208 +1,135 @@
-Return-Path: <linux-kernel+bounces-804550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163D1B47950
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26056B47953
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7547917050E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C81189DC72
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F47E1F3BA2;
-	Sun,  7 Sep 2025 07:11:38 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F181E991B;
+	Sun,  7 Sep 2025 07:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eKfex2JT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45B62AE97
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 07:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F09B1DFF0;
+	Sun,  7 Sep 2025 07:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757229097; cv=none; b=s9UmvctC0uB6/2o0dzeaNtylQeOmsYkWUuV67xdDlSsndUjz7rUOkyLoEz8HhZX9P+3VYiqycLdKOco3+uCI832VhbwY6yx156bLX23Y2hHNBiEDq483WEgzyXe8Q6wyCujDYMIQryCiUtqohiZTKFGaB9P/PPQ7O4043oOAGwI=
+	t=1757229450; cv=none; b=qGCE2vh3DhzMv+b5IZrOD3tHy8PnwM/o+atIyDBIWLzDCYrvISCb0kwrNtPEib8WQW5mZmqF54W1Ey/sWRMDP5M+3Y7liDgrbdRlotMU/4Yf5uQdS2hMV0ZiBmhLGGG1Ss8AZCr/NoYDS1jVDRVpMA+Nd5Lxo/JoX8N9aS4BXBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757229097; c=relaxed/simple;
-	bh=srrrLs+wEC07kyRpepO2/fSGE8nq9ahbv9VrAG4PnAY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TCeAsqO0Nu6nHzKAT+cpTjFZNfqJKzQunxjm63pzBUWRXSbFQG7WAOsn1C7bnh8rCICOsR/R2X39JfaICnIBYOQVVcGQhCSznoDENplaFc80r1FC02Afc4LjGUXrT6uZGBZAPRZfdz3kQpsfcYLhcYHX4NZI2aWeTxm4d8jKOVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ee1d164774so64060925ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 00:11:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757229095; x=1757833895;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ubewheY8ZTSPDA8vJSlVExU9cNAqFiFuY9Aubhjpw4s=;
-        b=qi8H/hmjPlrAREmYs2sFTMAX5l1DPgWp1ViKttJJXURtuN+TJfZOXmtRejSjNNekL9
-         ZyYv3pG2nyY4BeKp+kuuEiQBDKsQRqieDgpUXZ4HBKOuKQQma/jLVIxLqbnVYEO2vI07
-         OrblANBssLysH8Aqn/OrX6/t7006YFoz0hh23eeOe8kuNYZDkpm2W99pRi2ycUwe8Jwv
-         JBUUQkiCMN5UAwextX/a3nxrXdZ5sY/umrg4vulbJWnnNq66zi5KOnlRZtlwPcTbTTpj
-         EkPUkD73n37DJJ5my58A9CLAdsOR/5EhutbYKhYeqvbTYVvryXEzs1ZiIQhkQeOTRpjR
-         y9Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCU0RLAfdV6ATFFRnHFMAlxiDBB3WYymPu06yQeecxMySQ45O5JFWxoHCKEVlagOcu/WH8na8MnYdIT2yXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymqAhKTd6ADN0775o0UG6TuDGbBNQVBPXNJs8bGNDBRlkacJ+I
-	q+uFC+tQTLwIKE/+0SAkfdvk0lPqTsVqf87zTdk/uyhbrDd4riiJil3RBFOhJ2buHVdR/zxf3C/
-	0YdN6EA6xHbY0N/ZTti185/NH9eW0j1b9Wr7yVY4hEV88Vrd/ogso8e1ja1U=
-X-Google-Smtp-Source: AGHT+IFhxpWMbfP/8VjiaFb7Tjmk3W3CHtWSS2RDMm5Zf5J9mhCagz2YYGMLQrpTVpALgZ+jcAzo324oJgcV6ErhnCztNRrgBxos
+	s=arc-20240116; t=1757229450; c=relaxed/simple;
+	bh=5QnvahDDoSfVPYd0OMon3YGK0VQvDxfku7S9GknZTYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=un2NZ0rf0FM5Y58WwGkFTFHkt2BNJ96SM74zYYzt4lBUyg7ntBPSCjrfukZTxXTuyqr+pMHLd0TzkCzeEveeqvnhXYVjXqQRhiddS3ewOl9esJCRl39sFMzcuzQPtKduHPfcrhhCKpb+i2w5WkSjFtOqxRdpdmu8eUT+YrdJAIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eKfex2JT; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757229448; x=1788765448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5QnvahDDoSfVPYd0OMon3YGK0VQvDxfku7S9GknZTYI=;
+  b=eKfex2JTC8GzfgAqyzhw9/SiCUePw+if9DLphghEkjYQFDaO1d1LEYht
+   6O+byXWRAoJJzGH4QDJzkb0aSejZZw66brrN7eKHXks1WIovfV8HQwq5W
+   wEFhpG9ZYGYWbyZ+f8Fcv7+AZ4/dFd+czjuMAtVj3FYDLaWqXv6mRS+TD
+   NjYo1R0zZhr3t5IZEBEpPLncVJWadzklzFCO8/UkeEraFrH/2z8XCUWZe
+   C4b+9DbSNiuEGZXdjOaEeDsjgGTb5t1PpV/pySLWdk8yFxgPnr5v9aK4f
+   Nfgn1qQfnMuSEFH/aQ4q6kAyfTEj2kqvCv/FOmifkb41RNjOPWYQOQmT5
+   A==;
+X-CSE-ConnectionGUID: K4T6wwwjRPuQEipkXlm0sg==
+X-CSE-MsgGUID: CzNra6//Rs2xP8EB7swo1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="58728333"
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="58728333"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 00:17:28 -0700
+X-CSE-ConnectionGUID: RLrd80R8RdKAe6wmMf5B1g==
+X-CSE-MsgGUID: ziM7I9zISiKDJG6tht04Yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="176860507"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 07 Sep 2025 00:17:26 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uv9eO-00026l-00;
+	Sun, 07 Sep 2025 07:17:24 +0000
+Date: Sun, 7 Sep 2025 15:17:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fidal Palamparambil <rootuserhere@gmail.com>,
+	linux-modules@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mcgrof@kernel.org, petr.pavlu@suse.com,
+	da.gomez@kernel.org, samitolvanen@google.com,
+	linux-kernel@vger.kernel.org,
+	Fidal palamparambil <rootuserhere@gmail.com>
+Subject: Re: [PATCH] tracing: Fix multiple issues in trace_printk module
+ handling
+Message-ID: <202509071540.GTxwwstz-lkp@intel.com>
+References: <20250906134148.55-1-rootuserhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a48:b0:3fb:d14c:3562 with SMTP id
- e9e14a558f8ab-3fbd14c368amr87816915ab.2.1757229095079; Sun, 07 Sep 2025
- 00:11:35 -0700 (PDT)
-Date: Sun, 07 Sep 2025 00:11:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bd3027.050a0220.192772.01cc.GAE@google.com>
-Subject: [syzbot] [block?] general protection fault in bio_iov_iter_get_pages
-From: syzbot <syzbot+b253ade8e1751d90a7a9@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, david@redhat.com, jgg@ziepe.ca, 
-	jhubbard@nvidia.com, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906134148.55-1-rootuserhere@gmail.com>
 
-Hello,
+Hi Fidal,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    be5d4872e528 Add linux-next specific files for 20250905
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17896962580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a726684450a7d788
-dashboard link: https://syzkaller.appspot.com/bug?extid=b253ade8e1751d90a7a9
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10496962580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a98962580000
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f67121360b62/disk-be5d4872.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4f666ca2e57f/vmlinux-be5d4872.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e86b794b985e/bzImage-be5d4872.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Fidal-Palamparambil/tracing-Fix-multiple-issues-in-trace_printk-module-handling/20250906-214415
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250906134148.55-1-rootuserhere%40gmail.com
+patch subject: [PATCH] tracing: Fix multiple issues in trace_printk module handling
+config: powerpc-randconfig-r131-20250907 (https://download.01.org/0day-ci/archive/20250907/202509071540.GTxwwstz-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 13.4.0
+reproduce: (https://download.01.org/0day-ci/archive/20250907/202509071540.GTxwwstz-lkp@intel.com/reproduce)
 
-The issue was bisected to:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509071540.GTxwwstz-lkp@intel.com/
 
-commit db076b5db550aa34169dceee81d0974c7b2a2482
-Author: David Hildenbrand <david@redhat.com>
-Date:   Mon Sep 1 15:03:40 2025 +0000
+sparse warnings: (new ones prefixed by >>)
+>> kernel/trace/trace_printk.c:388:16: sparse: sparse: incorrect type in assignment (different base types) @@     expected struct dentry *dentry @@     got int @@
+   kernel/trace/trace_printk.c:388:16: sparse:     expected struct dentry *dentry
+   kernel/trace/trace_printk.c:388:16: sparse:     got int
 
-    mm/gup: remove record_subpages()
+vim +388 kernel/trace/trace_printk.c
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a0b312580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a0b312580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a0b312580000
+   383	
+   384	static __init int init_trace_printk_function_export(void)
+   385	{
+   386		struct dentry *dentry;
+   387	
+ > 388		dentry = tracing_init_dentry();
+   389		if (IS_ERR(dentry))
+   390			return 0;
+   391	
+   392		trace_create_file("printk_formats", TRACE_MODE_READ, NULL,
+   393					    NULL, &ftrace_formats_fops);
+   394	
+   395		return 0;
+   396	}
+   397	
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b253ade8e1751d90a7a9@syzkaller.appspotmail.com
-Fixes: db076b5db550 ("mm/gup: remove record_subpages()")
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 UID: 0 PID: 6063 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-RIP: 0010:__bio_iov_iter_get_pages block/bio.c:1258 [inline]
-RIP: 0010:bio_iov_iter_get_pages+0x5b2/0x11c0 block/bio.c:1336
-Code: 9c 24 20 01 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 0c c9 7c fd 48 8b 1b 4c 8d 73 08 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 ef c8 7c fd 4d 8b 3e 4c 89 fe 48
-RSP: 0018:ffffc90002f773e0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88807bfd0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002f77590 R08: 0000000000000000 R09: ffffffff84a7d3b5
-R10: dffffc0000000000 R11: fffff94000329b51 R12: dffffc0000000000
-R13: ffff888078cd0294 R14: 0000000000000008 R15: 00000000000000f0
-FS:  0000555567d13500(0000) GS:ffff888125af9000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9a3134c000 CR3: 0000000074d2a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __blkdev_direct_IO+0x60b/0xee0 block/fops.c:215
- blkdev_direct_IO+0x120f/0x1730 block/fops.c:434
- blkdev_direct_write+0x7c/0x140 block/fops.c:719
- blkdev_write_iter+0x547/0x710 block/fops.c:787
- aio_write+0x535/0x7a0 fs/aio.c:1634
- __io_submit_one fs/aio.c:-1 [inline]
- io_submit_one+0x78b/0x1310 fs/aio.c:2053
- __do_sys_io_submit fs/aio.c:2112 [inline]
- __se_sys_io_submit+0x185/0x2f0 fs/aio.c:2082
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9a3058ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdf48caa48 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007f9a307c5fa0 RCX: 00007f9a3058ebe9
-RDX: 00002000000000c0 RSI: 00000000000000f3 RDI: 00007f9a3134c000
-RBP: 00007f9a30611e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f9a307c5fa0 R14: 00007f9a307c5fa0 R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-RIP: 0010:__bio_iov_iter_get_pages block/bio.c:1258 [inline]
-RIP: 0010:bio_iov_iter_get_pages+0x5b2/0x11c0 block/bio.c:1336
-Code: 9c 24 20 01 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 0c c9 7c fd 48 8b 1b 4c 8d 73 08 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 ef c8 7c fd 4d 8b 3e 4c 89 fe 48
-RSP: 0018:ffffc90002f773e0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88807bfd0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002f77590 R08: 0000000000000000 R09: ffffffff84a7d3b5
-R10: dffffc0000000000 R11: fffff94000329b51 R12: dffffc0000000000
-R13: ffff888078cd0294 R14: 0000000000000008 R15: 00000000000000f0
-FS:  0000555567d13500(0000) GS:ffff8881259f9000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe8453cfd8 CR3: 0000000074d2a000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	9c                   	pushf
-   1:	24 20                	and    $0x20,%al
-   3:	01 00                	add    %eax,(%rax)
-   5:	00 48 89             	add    %cl,-0x77(%rax)
-   8:	d8 48 c1             	fmuls  -0x3f(%rax)
-   b:	e8 03 42 80 3c       	call   0x3c804213
-  10:	20 00                	and    %al,(%rax)
-  12:	74 08                	je     0x1c
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	e8 0c c9 7c fd       	call   0xfd7cc928
-  1c:	48 8b 1b             	mov    (%rbx),%rbx
-  1f:	4c 8d 73 08          	lea    0x8(%rbx),%r14
-  23:	4c 89 f0             	mov    %r14,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 f7             	mov    %r14,%rdi
-  34:	e8 ef c8 7c fd       	call   0xfd7cc928
-  39:	4d 8b 3e             	mov    (%r14),%r15
-  3c:	4c 89 fe             	mov    %r15,%rsi
-  3f:	48                   	rex.W
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
