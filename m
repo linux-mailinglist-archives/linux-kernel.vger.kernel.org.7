@@ -1,167 +1,118 @@
-Return-Path: <linux-kernel+bounces-804621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DD0B47A88
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:51:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0C6B47A8B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE653C28C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE09B1B229CA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A283525A343;
-	Sun,  7 Sep 2025 10:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F3259C9F;
+	Sun,  7 Sep 2025 10:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYMwViw3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2abBnTsu"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34B21C3BFC;
-	Sun,  7 Sep 2025 10:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6197A23FC54
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757242279; cv=none; b=D8w3BcSrd1fb5ws0/S8rm957AYmtu8dILZI8KtXr89MUI8uS69kBBukkRlm6NrAoZqtiweQ+IpeoOG3n9dCNLTvwOuieE4gckCe968ZF1vFjuU7JYTiLRP2a6mTPdjgh3HndsOnXDJHELBr69+XAffKQD2BoC1Li0sXLNMzPEuw=
+	t=1757242483; cv=none; b=vA9PvEz8VXUdZc2UnG09QRPAph0GS+LKytLFgL1/adz4qVrZg6ISqQgmmEuT4KGqtPPT9j5MrUqfd3HV9/6PgPaONbbXeRGox4pNYiOvzYx7N6J7jdglfO5FzOYFDwCGBfnEFzwf+9mtb+MDAzgrABMGmseeSqpO4I8JYoPkTEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757242279; c=relaxed/simple;
-	bh=o9+gEMBASfwEqE0eaUXisDtl/cNttKx6f66yZkkhXZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PCg4TsZBQ4og2bvWhRoa1f4BZcQEQIq/CNzw7spJcugb5moXJmcS6N7X00OIOfSZmuVKsiR83E3bgUQ5ouvRXk1I2sFOGZgd3EZbVP8CCl+XawZ4rTI//hlsIgfGcQtsyRuBtcW8b3yIXLn7BYvYOR+GJ2yjJt+9qxa/5Tw/g98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYMwViw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574E6C4CEF8;
-	Sun,  7 Sep 2025 10:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757242278;
-	bh=o9+gEMBASfwEqE0eaUXisDtl/cNttKx6f66yZkkhXZQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hYMwViw3t7//kFBTeGs/6vhLS0LE8CIkvXotb6fXTMCYlQkVNZdcAGU/YXbXoMCe+
-	 /WjtxAyg/ExTuqEY498RgUyq4PfxGA4NYFg8lUfdz/CGoc0WIsBAaRyRt7BRnwEwU5
-	 8/ljCWWIrB961LIe3mz/HxD4RyDgI/BI77qis34m6wORmHYfk2vI9Ewukf4UXVlLpy
-	 yJ9jB9DboegEisrnv80jmlf/GPN1t1B8DBJOmtHy7DJImaLh3Q/AGBc7AdJjPhR8n9
-	 iyLCkYuee3xhcSMFvhV+KpegYf33ZlX2e5Pwr+UN1YaOWXjSfFwQK1w2jmnLG9jbl8
-	 eng4w1WzQZMoQ==
-Date: Sun, 7 Sep 2025 11:51:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: "Erim, Salih" <Salih.Erim@amd.com>, "Simek, Michal"
- <michal.simek@amd.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "monstr@monstr.eu" <monstr@monstr.eu>, "michal.simek@xilinx.com"
- <michal.simek@xilinx.com>, "git@xilinx.com" <git@xilinx.com>, Anand Ashok
- Dumbre <anand.ashok.dumbre@xilinx.com>, "Kadamathikuttiyil Karthikeyan
- Pillai, Anish" <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>, Andy
- Shevchenko <andy@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
- DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:IIO
- SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: iio: xilinx: Add Documentation for
- Sysmon
-Message-ID: <20250907115107.03aeb8d0@jic23-huawei>
-In-Reply-To: <fec12cd9-4709-42ca-b0e5-38f67b63a41c@baylibre.com>
-References: <cover.1757061697.git.michal.simek@amd.com>
-	<610690b9cc4ab3854b56df550b688b4cc72a5653.1757061697.git.michal.simek@amd.com>
-	<20250905123006.000031a9@huawei.com>
-	<5f21169b-39b8-4fcd-b7d7-e5bcb1885549@amd.com>
-	<IA1PR12MB7736D056E505103AC246DC2E9F03A@IA1PR12MB7736.namprd12.prod.outlook.com>
-	<fec12cd9-4709-42ca-b0e5-38f67b63a41c@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757242483; c=relaxed/simple;
+	bh=ytHxbY3F47M7fJR68ZHBsTiypjUB8zZRP0Xegx525Xg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Yw2I+2n7oKq3ORIn0b2lZ3TH1ajM4YTOnCNGjgcX13ndNfHqWR+tGRiKCgWPG7s7l6Kx19Lx8O6OxJdDrZl/jqnfj00BFLkSC3XE5/s84bqKEXAAARggObIlWCxPqzdy7LBoiHBys+TMGkbSnvU8eB1IbUyuPGbyVe0+jDSnCx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2abBnTsu; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3e1260394dcso1714000f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 03:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757242478; x=1757847278; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fm92e08KH4OnBIzsiipqMiydD9ZOdg2vH6XrUgmumFg=;
+        b=2abBnTsuCsJMnlfoi+AFpXSRPZRbnWTw9IYfScIe65RbC75keerVHoKsT7ZfCCNhqu
+         uKbCgHVB7cIh7omvXz3K167hC8dZIT0mnZ6Yo8l/DLQQ0Veuo4LlqcwfYrydLbNm+RBR
+         6/rbH4h4ZBhowJGHE+moL+RXSanj4rW8Lp0fm2inGzRELsXWgPGf6iTi4HnUzXcYLB1F
+         RSaglV9jGHhj9NaQLr1be+t+pQQywu6D8jfbmMp/dmUnYBmNDEDfkgebDDfS0iLbT4SK
+         Y20tm6TgL/61KZcj5nztQj48nI29SphLIXDspRgn/yr3tjVvHWJckIXwqqyCZAJpBi5z
+         rc1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757242478; x=1757847278;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fm92e08KH4OnBIzsiipqMiydD9ZOdg2vH6XrUgmumFg=;
+        b=b0Y81l0dFoRknymS2Cq6loGTBalBmVo3bepU83HjFv1oetxeBitKmNky+rSuVW02Pu
+         jiZ6aSga6VEStAR/da0zih2FW4vN2uzF+AWpoxVONpK1AMG+U9oG8lM/U5XGuMuywjau
+         FCTIgjuPB0Df6AoqKtMZjum67YxixWMttyPdvLgz53x0CmeRJByibTbgeGRlLD7y6I/h
+         gsGVpKrhTLBRowLv81OtkaWtSKlWNSXLBzLZBXPXsif7eCe1X9UwNfvBLhMjEAPoZPYx
+         QOeQ1dVGPbDqtNXNw1gBk1K59EkONYpEx1Ha5gW1rCQ5/7vN07lSr1wOwzvliWo+1vg8
+         d5vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1wRmTYe/mBBAKjs/jtc/ZpvPnLGOw2SwTYnN5eCe3tI+aQYcDqNX4Vc6wzqMnV0okixUJEpOZwB1yTOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLKkuhi9a3TjVFyxuxGQZLKNo8rMoyeg20Q4E8QynbVOnW3hG4
+	S1KsKUhonVtiHWPDSDVFTwzC/rsa67tMGwJYcSYKHg94z1s6h3lqHl6toxVdxzKnm8l8jDURy1O
+	D52rODQLtHcdGAUr7Eg==
+X-Google-Smtp-Source: AGHT+IGwczkNJ4NDT8jycdLKjKbJyfREabPo6DFwIEEwqw+DK/OSgFh7CarHw7NidqX/vyfwf7K8GuXRp9GGNlE=
+X-Received: from wmbdq15.prod.google.com ([2002:a05:600c:64cf:b0:45b:81de:b730])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:584e:0:b0:3e5:2d1d:3a2b with SMTP id ffacd0b85a97d-3e64bde928bmr2809860f8f.39.1757242477540;
+ Sun, 07 Sep 2025 03:54:37 -0700 (PDT)
+Date: Sun, 7 Sep 2025 10:54:36 +0000
+In-Reply-To: <20250827082015.959430-5-apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250827082015.959430-1-apopple@nvidia.com> <20250827082015.959430-5-apopple@nvidia.com>
+Message-ID: <aL1kbG0YYy0FQCGM@google.com>
+Subject: Re: [PATCH 04/10] gpu: nova-core: Add a slice-buffer (sbuffer) datastructure
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 5 Sep 2025 15:44:20 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Wed, Aug 27, 2025 at 06:20:01PM +1000, Alistair Popple wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
+> 
+> A data structure that can be used to write across multiple slices which
+> may be out of order in memory. This lets SBuffer user correctly and
+> safely write out of memory order, without error-prone tracking of
+> pointers/offsets.
+> 
+>  let mut buf1 = [0u8; 3];
+>  let mut buf2 = [0u8; 5];
+>  let mut sbuffer = SBuffer::new([&mut buf1[..], &mut buf2[..]]);
+> 
+>  let data = b"hellowo";
+>  let result = sbuffer.write(data);
+> 
+> An internal conversion of gsp.rs to use this resulted in a nice -ve delta:
+> gsp.rs: 37 insertions(+), 99 deletions(-)
+> 
+> Co-developed-by: Alistair Popple <apopple@nvidia.com>
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-> On 9/5/25 9:21 AM, Erim, Salih wrote:
-> 
-> ...
-> 
-> >>>  
-> >>>> +
-> >>>> +      xlnx,bipolar:
-> >>>> +        $ref: /schemas/types.yaml#/definitions/flag
-> >>>> +        description:
-> >>>> +          If the supply has a bipolar type and the output will be signed.  
-> >>>
-> >>> This is very generic.  We have it described for ADC channels already
-> >>> in bindings/iio/adc/adc.yaml.  Why can't we use that here?  
-> >>
-> >> no issue with it.
-> >> And likely
-> >> Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml
-> >> should deprecated it and start to use new one.
-> >>
-> >>
-> >>  
-> >>> That binding does rely on matching against 'channel' for node names though.
-> >>> Where a 'type of channel' has been relevant IIRC we've always added a
-> >>> separate property rather than using the child node name.  
-> >>
-> >> Is this related to supply/temp channel name?
-> >>
-> >> I think one issue with the binding is that current schema allows to define
-> >> supply@1  and also temp@1
-> >> but both of them have reg = <1> which is not allowed (duplicate unit-address).
-> >>
-> >> Salih: What does this reg value means? Is it physical address where that sensor is
-> >> placed?  
-> > 
-> > Reg is offset index to offset base of the memory addresses for each. Supplies and temp values
-> > are located in different offsets.
-> >   
-> 
-> Sounds like the .dts should looks like:
-> 
-> 	adc@f1270000 {
-> 		compatible = "xlnx,versal-sysmon";
-> 		reg = <0xf1270000 0x4000>;
-> 		...
-> 
-> 		supply-channels {
-> 			#size-cells = <0>;
-> 			#address-cells = <1>;
-> 
-> 			channel@0 {
-> 				reg = <0>;
-> 				label = "vccint";
-> 			};
-> 
-> 			...
-> 		};
-> 
-> 		temperature-channels {
-> 			#size-cells = <0>;
-> 			#address-cells = <1>;
-> 
-> 			channel@0 {
-> 				reg = <0>;
-> 				label = "aie-temp-ch0";
-> 			};
-> 
-> 			...
-> 		};
-> 	};
+This seems like duplication of the logic in rust/kernel/iov_iter.rs [1].
 
-This works for me. Alternative would be something similar to what we did for
-dt-bindings: iio: adc: Add AD4170-4 
-Where there is an adi,sensor-type property in channels.
-There they two types of channels were the same underlying hardware, it just provided
-a way to constrain the other properties in the channel nodes.  That differs
-from here where, as I understand it (Salih?) they are different hardware blocks
-so 'reg' is an offset into a different set of registers. 
+Alice
 
-DT maintainers, I think this discussion would benefit from your guidance!
-
-Thanks,
-
-Jonathan
-
-
-
+[1]: https://lore.kernel.org/r/20250822-iov-iter-v5-0-6ce4819c2977@google.com
 
