@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-804685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94CBB47B90
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E88B47B94
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0075200D4D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA406189AEAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2114727605A;
-	Sun,  7 Sep 2025 13:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21F32773CE;
+	Sun,  7 Sep 2025 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jk4oAOgj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZS9Na2BC"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F7D2AF0A;
-	Sun,  7 Sep 2025 13:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0C4248F7D;
+	Sun,  7 Sep 2025 13:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757251244; cv=none; b=VEiHlrIbkyd9eYADbsShKOt8y90D6TJhb0K7c0WxZlVRAV1DP8PDVRXz/pI5dw1QscZoaA3HGezhuW6RtXPEnYzZDojoANRSiKez+Z7ldzKNhMsp7Vr2yPF7d5gbEBBP/V8uGZorcpLCAj6FTJqdwtihCLqDO7hlR0C8kDhSrqY=
+	t=1757251549; cv=none; b=u3Hdw43d3LCDD8c2XcWk/4Z+KurDqgpz360XlzULm0QYfT+B5w8YePiAdORIAzNvfXGUD0zqePiU7yk2iVkAjcLcsbo9rppmQNGHyq2gz9R0v/dEocZVu2dPZBzHcDGJ9bfWs5aVWJUumJvxeAvMvntpxi1xr6t9jItwKzweRrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757251244; c=relaxed/simple;
-	bh=MPOKjDQcKcN99TkwDgarp+uqWvYBP8M4xBaya72W6hU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9BYH3nwUPGGB2FTalwvUd+3Nly2PFAyC0p5L84ddJCZGjGlIfzVfTdhZmAAGOjAgiNqIknQ8UpLIgfKVCXFWzRf5rkIDxlh7eYcdldQf7Y9+mqNIhR7T1HiHOWSVsWDmIRNlA2uEFNemQrm7odCFbD6yKL+Kbb2vl3oMzoIJYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk4oAOgj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA6DC4CEF0;
-	Sun,  7 Sep 2025 13:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757251244;
-	bh=MPOKjDQcKcN99TkwDgarp+uqWvYBP8M4xBaya72W6hU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jk4oAOgjZEJCOPDwIizFQU3ll3pSfz2yqLHoLnGCMqRpL183hztvGjyhtXuJ5JnIy
-	 rc6BIyi2FX15+z8KUoCYAEmyHbhMdlif17i/k3ECPvfx64hPat78KokydWYXBMSVRT
-	 CFmZBRhnUIE2Lg493UqBGxsM84NM9d7OoFeRQ43ugDsjnwrTArm9jVbxjOoyD4m/bM
-	 /PXWyxY/OfCZ+ilX76MUlzwo4XArazqKPHh4rR3PxPbYIJSZLg0p3pEsxD9rwvMHZc
-	 qbuSLeRKfCapQS2rpJQFrORSUoV2JGvO+U+nTsPHkcQJJd7Q2/AP0cGiOgm49vZMnH
-	 DaTf1z7TiP9vA==
-Date: Sun, 7 Sep 2025 14:20:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Sean Nyekjaer <sean@geanix.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol
- <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v3 5/5] iio: imu: inv_icm42600: use guard() to release
- mutexes
-Message-ID: <20250907142034.5b000107@jic23-huawei>
-In-Reply-To: <fbea7d45-bf92-4f6b-a464-0f7a6f921bde@baylibre.com>
-References: <20250901-icm42pmreg-v3-0-ef1336246960@geanix.com>
-	<20250901-icm42pmreg-v3-5-ef1336246960@geanix.com>
-	<fbea7d45-bf92-4f6b-a464-0f7a6f921bde@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757251549; c=relaxed/simple;
+	bh=a4guLoMBhzfxWOET15e5kQm0vrWnUpcSCI+d9tZ7IU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i6tmW11QA1rg5DGtEV2GIKlYbjPcriQKzqcEyqiLY7E3qTzCQ0HwQvcQxMz3CyZV+njcxddr9WWYPTvoaxtNBKePSLC5FMODaLjgofosYns8qdRUYKCGmR/Sjj2NVaJ+FCIKf386/WXCC8sbeZ+orGmSJvPYGn4K1r1QszYxUH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZS9Na2BC; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vFOous9LW0vTevFOouhc72; Sun, 07 Sep 2025 15:25:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757251543;
+	bh=swveuZJuqIP5IKsdaIkmgdwwjs028Dc0hj0b/QeseIg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ZS9Na2BCbLyho4ayNteQNCuqfLxOOkDpx4JZFfm0h9nZr7Oj+I44vksKM4dXmz0rF
+	 hq1vEJNi18xbgyL9jEyoipJfWhVweNTv7je/6NnNaunsjbwBaAPwLf7JE9b+19/4a3
+	 X6g95/cdGZY4eJLLV8sUwsHbsxGL41BXpJ6zOcB2YEg/6Idw79bHBNehY3eVCaFEhs
+	 KWltcMluaSE5jeb4pht9rxLTjKrbHr3BqCxf5YVSpGgAlC7ru74FXK4cGW54aRvvkS
+	 p4E5ewRJ8VuBSecCgeFuwkLQjVKDFcNitv9/cUo3Np/8UpdUS6tOo96tKz5P1X9p9W
+	 iEybEg+CCWqqA==
+X-ME-Helo: fedora
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Sep 2025 15:25:43 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: pisosr: Use devm_mutex_init()
+Date: Sun,  7 Sep 2025 15:25:38 +0200
+Message-ID: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Use devm_mutex_init() instead of hand-writing it.
 
-> ...
-> 
-> > @@ -299,7 +298,7 @@ static int inv_icm42600_buffer_postenable(struct iio_dev *indio_dev)
-> >  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
-> >  	int ret;
-> >  
-> > -	mutex_lock(&st->lock);
-> > +	guard(mutex)(&st->lock);
-> >  
-> >  	/* exit if FIFO is already on */
-> >  	if (st->fifo.on) {
-> > @@ -311,30 +310,29 @@ static int inv_icm42600_buffer_postenable(struct iio_dev *indio_dev)
-> >  	ret = regmap_set_bits(st->map, INV_ICM42600_REG_INT_SOURCE0,
-> >  			      INV_ICM42600_INT_SOURCE0_FIFO_THS_INT1_EN);
-> >  	if (ret)
-> > -		goto out_unlock;
-> > +		return ret;
-> >  
-> >  	/* flush FIFO data */
-> >  	ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
-> >  			   INV_ICM42600_SIGNAL_PATH_RESET_FIFO_FLUSH);
-> >  	if (ret)
-> > -		goto out_unlock;
-> > +		return ret;
-> >  
-> >  	/* set FIFO in streaming mode */
-> >  	ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
-> >  			   INV_ICM42600_FIFO_CONFIG_STREAM);
-> >  	if (ret)
-> > -		goto out_unlock;
-> > +		return ret;
-> >  
-> >  	/* workaround: first read of FIFO count after reset is always 0 */
-> >  	ret = regmap_bulk_read(st->map, INV_ICM42600_REG_FIFO_COUNT, st->buffer, 2);
-> >  	if (ret)
-> > -		goto out_unlock;
-> > +		return ret;
-> >  
-> >  out_on:
-> >  	/* increase FIFO on counter */
-> >  	st->fifo.on++;  
-> 
-> I would be tempted to get rid of out_on as well even if we have to repeat
-> `st->fifo.on++;` in two places.
+This saves some LoC, improves readability and saves some space in the
+generated .o file.
 
-There is strong guidance in cleanup.h on basically never mixing gotos
-and cleanup (including guard).  It is probably fine here but some compilers
-(gcc) are very bad at detecting uninitialized conditions that can happen with
-gotos.  More generally Linus has expressed that if you need to mix the two
-cleanup.h magic is not appropriate. Following David's suggestion the problem
-is solved through duplication of that increment.
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
 
-> 
-> > -out_unlock:
-> > -	mutex_unlock(&st->lock);
-> > +
-> >  	return ret;  
-> 
-> Can just return 0 here and simplify if (st->fifo.on).
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpio/gpio-pisosr.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+index a69b74866a13..7ec6a46ed600 100644
+--- a/drivers/gpio/gpio-pisosr.c
++++ b/drivers/gpio/gpio-pisosr.c
+@@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
+ 	.can_sleep		= true,
+ };
+ 
+-static void pisosr_mutex_destroy(void *lock)
+-{
+-	mutex_destroy(lock);
+-}
+-
+ static int pisosr_gpio_probe(struct spi_device *spi)
+ {
+ 	struct device *dev = &spi->dev;
+@@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+ 		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
+ 				     "Unable to allocate load GPIO\n");
+ 
+-	mutex_init(&gpio->lock);
+-	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
++	ret = devm_mutex_init(dev, &gpio->lock);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.51.0
 
 
