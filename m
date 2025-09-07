@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-804542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A2B4793E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77D6B47941
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F1A202FE4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:53:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C33B2034A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9179B1F09BF;
-	Sun,  7 Sep 2025 06:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1706D1EE7DD;
+	Sun,  7 Sep 2025 06:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elV00ns+"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lhRmE/dF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DF1DB377;
-	Sun,  7 Sep 2025 06:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987DE1F94A
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 06:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757227992; cv=none; b=kVigXm7/27NbMjBwCCqFF3fiBOeE6zeuvPxTwVsh1kaj+E8BLGEIAXd4gGbR47yGYmIeeM4bixtvbZ6kgrN5egzxkY2Q/oC6GJijSuefS1BlBM5ru1Of7oEloeLRm87cHnO/lBodaa+QtC64gbVIUu8XSXWWg1nUH8AyGRB27fw=
+	t=1757228267; cv=none; b=JevdtP/ROAuuIio9LkVuiE+qX/91hEUxmgkLRh/RRRIvCvza/miiUUwedUDtGYPdeEURU1RRJ5cfxoXBOc9A18RQsNdzQn+ZnrvPF34tAUBUSymltJok6q9UZJADyuqisY/UMMCySAFeYlo+0l9/n9FsXvE8TxXbzd2dDrh3qrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757227992; c=relaxed/simple;
-	bh=svksw43izxx+5A2+J4leAUSiXS7AhpSutpwM9U9mSZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ybh3dLW++mFoI6o/ajkEOOD/TIvn+AlZl1ZaJMQfko7ChBA4enjrRipxZWdt5zIP+14qBJ+DO92eEdmF4v+ilFcFLpqFY3cW+3Oql1TSNmR1XgyUFzqiLFTFPtCseDd2+mWO0xr7oG62RrQhnnm9Yyaq1DYP7+L52rEOaWvcBes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elV00ns+; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cd340377dso18878275ad.1;
-        Sat, 06 Sep 2025 23:53:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757227990; x=1757832790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOyGW3yOOAL+eege0XOWicEcKrCBOJ/yJv+n7inWSzU=;
-        b=elV00ns+YojRzt1VDqfsB8j5AnFPKKJKUHJpx0q57HeJ3WKaGJMjJWMw1bZsvsyc3l
-         HgkUj/wz2US+Fw+4UKV1Tl7rTdsjfbpmAiRCMlraEvq3wg1O+T6oQBAZxsAbLdwdAXh2
-         MbdpQ2x8msFafKMmTpAio8fvbpAg3FnJ7KDByXhtp4MzQz5gxb9Dd4IV7jUx6eeDqni6
-         ASprt04hdzgLWiaNxUPx8p5d5X0oWaonmdJ1UYCrqlXTWTE5ygolmK9sjnRJZWG6N9J4
-         womnGy8XYB6bHUizKdxQTSbmN+zwjVIcGUHLyVAgFY8193qzaEhoRc2ue7qBwi66qVKf
-         Xhzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757227990; x=1757832790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOyGW3yOOAL+eege0XOWicEcKrCBOJ/yJv+n7inWSzU=;
-        b=BDY/fRfG1ZYsktDBJVmvbd/GGTRvh6oZ8QGhzz3uP86C2A6c56mBpPlDSVfPZzuYFq
-         ACrpWl0thiVCOSRRkjx7lRgrai3lrLySoD0bge2F8M2FzMKK6tGfrYD0dscW3oQ3ZRPh
-         /Z92UPo70Y/ynhEx9Lk3CEvoYaSBFgE82o5YOqGyzoYm3gd95XgRpWNziozxBg907ORM
-         Qj24CjBiyNLWeqhxs3XUROc2IlxWa+bZu1eP9OsrPs00vdERGrl9TqfCrhGrb3LC+elA
-         rjzewczQfeoUk8urV1GD0BmkVNxda/fgyoEJNsyNkc1e4LWm/l6qgjf0gMUBwagVbR6J
-         YZgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT128xZ5CAKMgC66oxvSYz5XhIk0WyPsU729YOshna8jvChnPnp1sCHGVaay2gH9drJghkeaWBu+unvZ1u@vger.kernel.org, AJvYcCWuKJ/i8wJ35y5utPoDt5CGtOIkYT5VHCfBi+CEtU5YJtOxVmkydSGN82I+mSNwE1NKQStxCLHjtA2m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4VkcNU9sNyAtMh/iKzYbSQ/8meWjBweSi9cfjS5M+bc3HSJxi
-	jmX6mDFEAtftWiA46Q18Vtc2w0KtiVbFp22Nx70RPN2L5/UzuuINKgHY
-X-Gm-Gg: ASbGncsYTivnfvkBGEUPizOuU3/wDmeAQ6YCEMR/HNI8jRWEQJS/A5xQdM+p6thDA15
-	ARTZL1ghOlGBaR6cUsA3DzBMQQb4n+OlFaI0wOAZp+LtVa6WId41WJqHjSLOr6N9apMVqk6NrDm
-	PExUkjOWELfCC2aK3vxxFkFlCgJRjQ9IqQYPq840Abl0PuA8+M0r9jViMzonlLkqk9mxWcmzKoa
-	XRH/kCSEJN+Mm75uA7+0fwB1RKJf1cD0a+0gl1ejiigt3BfDL8tGftxggANDGJzCK5eT+q8rade
-	CU25zplW6E2LjtMPiHlhAOYXGd3GETcECLqEzV3OTinWfvI56RPYvd2m7yBostmPbIGqSni8oD6
-	8oSrBp262LMY26qsqQgaCVksydr1JKL7qIdjri4nhF1o8wxz6AfM5b4h1uBZG
-X-Google-Smtp-Source: AGHT+IH9fUTIn1sDqo1bULibKfaXKESE84JfENot24hXA+Ko+2HbzH3bbh27x03Wpn+Bm8QT9oMIaw==
-X-Received: by 2002:a17:902:ef07:b0:24e:e5c9:ed0e with SMTP id d9443c01a7336-25172099d9bmr56116775ad.43.1757227989875;
-        Sat, 06 Sep 2025 23:53:09 -0700 (PDT)
-Received: from [192.168.1.17] ([223.181.116.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9304b7eesm111044255ad.102.2025.09.06.23.53.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 23:53:09 -0700 (PDT)
-Message-ID: <048d1b86-1575-4e31-b5cf-b6f72b2843fa@gmail.com>
-Date: Sun, 7 Sep 2025 12:23:03 +0530
+	s=arc-20240116; t=1757228267; c=relaxed/simple;
+	bh=zO95GxDQhKmEcoIp5THDDcIQLYmFYS4oNphS981AkA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=TnZp4Qnr+ExXNaoCkpRC2KUjNUIEAyU8mf4coY8s2sRMjLi6uHo1OeSguzEG72hs0ru01yoXcvnVG+Jm/Bk8aj/jbfZcvlAoiuXlDq/3GX3syDhVtPG/VAAoXwWt1olOx0rYrdAY7DCJF+t1X6p684obn0wbWf3wIcRaOav/Dd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lhRmE/dF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5875xMl0001952;
+	Sun, 7 Sep 2025 06:57:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fcOege
+	c+dWHgrE3rU2IxKqcl1x/A+LDx/msLaTJDHXg=; b=lhRmE/dFBQEmBK7arTSdV6
+	sy8GCNE9bGb9W8dhWW1VL3KGXT77CBpX4IgOYJ4K/xqJiQw+ZdAD78kZ0dPL/GYc
+	xPMIwNKjQ5TReDtAvXFPgWI46L/LmlGkFWVhttB0dgC7IJpDbebpTl1yqQNAWOJL
+	OYbDK3bWLyxVzK7FMPVst/SNicIBu4iazn2k7c+8V/yXpU7QB8C6XmLZ/E8995Dw
+	4NheSQgANT0zbhNHnyQ9OT88URU7PTLpFJFW86q+YlN7Jx95F9vYjpGHemrTkTT4
+	peFw76PxfNfKfv6vWAVc7X0wJQy2L5oHil0+FVnkW2S0gUoMEtRFJziaIm53G/zg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsbxq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Sep 2025 06:57:29 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5871rQcZ010605;
+	Sun, 7 Sep 2025 06:57:29 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910smgrap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Sep 2025 06:57:28 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5876vROx58917316
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 7 Sep 2025 06:57:27 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB11D20040;
+	Sun,  7 Sep 2025 06:57:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0EA4220043;
+	Sun,  7 Sep 2025 06:57:25 +0000 (GMT)
+Received: from [9.39.29.249] (unknown [9.39.29.249])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  7 Sep 2025 06:57:24 +0000 (GMT)
+Message-ID: <1a0bb291-c670-44c3-af7b-d2b5aac51a18@linux.ibm.com>
+Date: Sun, 7 Sep 2025 12:27:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,81 +76,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mmc: ti,da830-mmc: convert text based
- binding to json schema
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com>
- <1c7e9077-c213-40a9-92f4-07e813a3d151@kernel.org>
- <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
- <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
+Subject: Re: [PATCH] kexec: Include kernel-end even without crashkernel
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, bcollins@kernel.org
+References: <2025042122-inescapable-mandrill-8a5ff2@boujee-and-buff>
 Content-Language: en-US
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-In-Reply-To: <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <2025042122-inescapable-mandrill-8a5ff2@boujee-and-buff>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX63p0GkUMwBgE
+ OsIi9bRnsRYuTrEofDjrlPNXUSkskI/Xuf3yU3RB1qMqbeeY0sg4FtulcShIY2wDeQW6Zk3B0Fu
+ rKikxsPMWn0wKVIinOhriFXZanJwF9gZ5zOoXztmZh1ZD1BLJqEsULNaL0DFwcIx3+dtv7tdI9Q
+ 6WQhAm0Uzse+lwNPYQ2uqpRcD+S8dDGf2N0DQFAfJRAjxvP4DGAHt3Z5wPIJOCTnj5JJsPLsGIP
+ zQezkE+HaJv5vv2I5x+8JvEqOJ92J7rO9Um6FnCl+mI65bmZxvWigF629DZ6Ia6hqpClTtr06+4
+ u9j8+WCUujKxqlo45hXsu+0OmL4NEHIu8efjZXN9ji3lb7DQm+oAljHZiwk05gv7KUxgBUp4HGA
+ 7rkqXc4+
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68bd2cd9 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=voM4FWlXAAAA:8 a=HkynlMYEhPZgYFSW0akA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-GUID: SbwSOwfWaELS2w4_kT83n78LDCgdJfLb
+X-Proofpoint-ORIG-GUID: SbwSOwfWaELS2w4_kT83n78LDCgdJfLb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-07_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
 
 
-On 12-07-2025 13:59, Krzysztof Kozlowski wrote:
-> On 12/07/2025 10:22, Charan Pedumuru wrote:
->>>> +
->>>> +allOf:
->>>> +  - $ref: mmc-controller.yaml
->>>> +
->>>> +maintainers:
->>>> +  - Rob Herring <robh@kernel.org>
->>>
->>> No, I really doubt Rob cares about this hardware.
->>
->> I will remove Rob from maintainers and add Ulf under the maintainers.
-> 
-> This should be someone responsible for this hardware, not subsystem
-> maintainer.
+On 22/04/25 08:06, Ben Collins wrote:
+> Certain versions of kexec don't even work without kernel-end being
+> added to the device-tree. Add it even if crash-kernel is disabled.
+>
+> Signed-off-by: Ben Collins <bcollins@kernel.org>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>   arch/powerpc/kexec/core.c | 27 +++++++++++++++------------
+>   1 file changed, 15 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/powerpc/kexec/core.c b/arch/powerpc/kexec/core.c
+> index 00e9c267b912f..7b5958c37f702 100644
+> --- a/arch/powerpc/kexec/core.c
+> +++ b/arch/powerpc/kexec/core.c
+> @@ -22,6 +22,8 @@
+>   #include <asm/setup.h>
+>   #include <asm/firmware.h>
+>   
+> +#define cpu_to_be_ulong __PASTE(cpu_to_be, BITS_PER_LONG)
+> +
+>   #ifdef CONFIG_CRASH_DUMP
+>   void machine_crash_shutdown(struct pt_regs *regs)
+>   {
+> @@ -136,17 +138,10 @@ int __init overlaps_crashkernel(unsigned long start, unsigned long size)
+>   }
+>   
+>   /* Values we need to export to the second kernel via the device tree. */
+> -static phys_addr_t kernel_end;
+>   static phys_addr_t crashk_base;
+>   static phys_addr_t crashk_size;
+>   static unsigned long long mem_limit;
+>   
+> -static struct property kernel_end_prop = {
+> -	.name = "linux,kernel-end",
+> -	.length = sizeof(phys_addr_t),
+> -	.value = &kernel_end,
+> -};
+> -
+>   static struct property crashk_base_prop = {
+>   	.name = "linux,crashkernel-base",
+>   	.length = sizeof(phys_addr_t),
+> @@ -165,8 +160,6 @@ static struct property memory_limit_prop = {
+>   	.value = &mem_limit,
+>   };
+>   
+> -#define cpu_to_be_ulong	__PASTE(cpu_to_be, BITS_PER_LONG)
+> -
+>   static void __init export_crashk_values(struct device_node *node)
+>   {
+>   	/* There might be existing crash kernel properties, but we can't
+> @@ -190,6 +183,15 @@ static void __init export_crashk_values(struct device_node *node)
+>   	mem_limit = cpu_to_be_ulong(memory_limit);
+>   	of_update_property(node, &memory_limit_prop);
+>   }
+> +#endif /* CONFIG_CRASH_RESERVE */
+> +
+> +static phys_addr_t kernel_end;
+> +
+> +static struct property kernel_end_prop = {
+> +	.name = "linux,kernel-end",
+> +	.length = sizeof(phys_addr_t),
+> +	.value = &kernel_end,
+> +};
+>   
+>   static int __init kexec_setup(void)
+>   {
+> @@ -200,16 +202,17 @@ static int __init kexec_setup(void)
+>   		return -ENOENT;
+>   
+>   	/* remove any stale properties so ours can be found */
+> -	of_remove_property(node, of_find_property(node, kernel_end_prop.name, NULL));
+> +	of_remove_property(node, of_find_property(node, kernel_end_prop.name,
+> +						  NULL));
+>   
+>   	/* information needed by userspace when using default_machine_kexec */
+>   	kernel_end = cpu_to_be_ulong(__pa(_end));
+>   	of_add_property(node, &kernel_end_prop);
+>   
+> +#ifdef CONFIG_CRASH_RESERVE
+>   	export_crashk_values(node);
+> -
+> +#endif
+>   	of_node_put(node);
+>   	return 0;
+>   }
+>   late_initcall(kexec_setup);
+> -#endif /* CONFIG_CRASH_RESERVE */
 
+While cleaning up KEXEC and KDUMP configs, the export linux,kernel-end 
+was moved under CONFIG_CRASH_DUMP.
 
-Sure, I will search for subsystem maintainer from get_maintainer script.
+commit 5c4233cc0920cc90787aafe950b90f6c57a35b88 (HEAD, tag: powerpc-6.9-2)
+Author: Hari Bathini <hbathini@linux.ibm.com>
+Date:   Mon Feb 26 16:00:10 2024 +0530
 
-> 
->>
->>>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - ti,da830-mmc
->>>> +      - ti,dm355-mmc
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +
->>>> +  interrupts:
->>>> +    maxItems: 2
->>>> +
->>>
->>> This wasn't in original binding. You need to document this in the commit
->>> msg. Also, list the items.
->>
->> Sure, but what list of items for interrupts?
-> 
-> List as a verb. You need to list them.
+     powerpc/kdump: Split KEXEC_CORE and CRASH_DUMP dependency
 
+So, if kexec is enabled without CONFIG_CRASH_DUMP, the kexec command 
+fails to load the kexec kernel using the `kexec_load` system call.
 
-I searched for interrupt-names for mmc node in the DTS file, but there isn't any for davinci series.
+[root]# kexec --initrd=/boot/initramfs-`uname -r`.img 
+/boot/vmlinuz-`uname -r` --append="`cat /proc/cmdline`" -lcd
+Try gzip decompression.
+Try LZMA decompression.
+kernel: 0x7fffaef30010 kernel_size: 0x2ccba80
+0000000000000000-0000000030000000 : 0
+0000000030000000-0000004000000000 : 0
+get base memory ranges:2
+/proc/device-tree/chosen/linux,kernel-end: No such file or directory
+Could not get memory layout
+[root]# echo $?
+255
 
-> 
-> 
-> Best regards,
-> Krzysztof
+So, it is better to call kexec_setup/kexec/core.c even when 
+CONFIG_CRASH_DUMP is not enabled and export linux,kernel-end, because kexec
+requires this to load the kexec kernel using the kexec_file_load system 
+call.
 
--- 
-Best Regards,
-Charan.
+I suggest adding a Fixes tag to the commit I mentioned above and also 
+including the logs I shared. That might help others discover
+this fix if they run into the same issue.
 
+Rest look good to me.
+
+Reviewed-by: Sourabh Jain <sourabhjain@linux.ibm.com>
 
