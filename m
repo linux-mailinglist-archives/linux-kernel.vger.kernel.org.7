@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-804879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CC5B4814C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:19:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B5FB48155
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B03189FB4D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:19:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D1F174D50
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D673624677A;
-	Sun,  7 Sep 2025 23:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF98230BF8;
+	Sun,  7 Sep 2025 23:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="Q61wUY98"
-Received: from mail-43171.protonmail.ch (mail-43171.protonmail.ch [185.70.43.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aae61bQB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B62223C4F4;
-	Sun,  7 Sep 2025 23:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2F81922FD;
+	Sun,  7 Sep 2025 23:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757287112; cv=none; b=SKX7NONSXdVgzo+J2+LfDUaD8lH/Q8dMW/dEsuWAz/14fN7TiF01387zxWUvT1dB9T449WdbNMCDy5hBcAmDrwdWCKj4NqrCGkc5a4zq9HpevCTZ/E3gtA2sD8oq483EBOgNPflZqckzeE2rkJl3XWkDeshrkP+wFmvyGtAFOYU=
+	t=1757287518; cv=none; b=b/WLNNHfnAYdDI3brBYDbdQBfv/hvc4YylcuBXb2yrAXvfE/MVx6xlezpJtpbbli8lzVCpty1hFgP4EvF0s+lPnBHgkNmLM5rJsat2lmG8FXJsaXhAzpNQIq8S1zhPi275pexwlpPemLG3q2rsCQCMeSfv9IWKjSlWrUABziwac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757287112; c=relaxed/simple;
-	bh=FDaW+KMG0SfKYAHwpy7yJNT1x/XSMWz+beB/dGcZHo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l6tWrH1eF+/gZmcE86zPBXjD5QrRimQh2rtfy5G67aWBJ3/9hlYv4jxlbf+LObQWQ8X9at63iO+ZB2myMnY4OJGdm2H/VqY3p+O/t/AvN86Bx2e9TgVedjlg6YCtjwfXfhdwVVlC0BFFqDFrOpDokBNkK/7299H6bmjm801/+VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=Q61wUY98; arc=none smtp.client-ip=185.70.43.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757287102; x=1757546302;
-	bh=PhhYtIqKN2PYzCqhs14PuKEhGXRgdAp3KlX4hxKM0TY=;
-	h=From:Date:Subject:Message-Id:References:In-Reply-To:To:Cc:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Q61wUY98RVM/tluTfCJii2PQU//ploTQP86eib1eahsgwz0JwOMzsr7UKqiNB/EuS
-	 IQa2OuYjxTP1AltGHBufR4LGj0//vfH9bbezj8RlttH3ey6iwhqlHC8wI5YuYKba8/
-	 wDLUmAiPDC7d+BjApx3u/2VF3/QPgTIx8+mHsHDePudFeV5EOfw6FWcuNRAZy1kXJJ
-	 9LLEKycm5jbWpSJk2JDsegqF7AJdiUXDeViJU1TSbvXXngrAvqkXc/0uSOw6YnmxB0
-	 uLI76bxfK3oXskuH/7G6NWyhDDKyn8JttkyYBZgo+T91Q7Tyx9UzHMO30vizU1QOYp
-	 is4NngsO8SdJg==
-X-Pm-Submission-Id: 4cKmGj10tMz1DF4K
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Date: Mon, 08 Sep 2025 01:18:06 +0200
-Subject: [PATCH v3 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
- privacy indicator
+	s=arc-20240116; t=1757287518; c=relaxed/simple;
+	bh=2IK1HntqZit2+7T9ga7A2o5l9tYj6VYkyIJ5hFhuKIc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=mKTsgEqHussoA9fZh9RTcJnZNmD+myMCWjSiHk//UFGGehWu//mHwYgk9c0gO7oYM56lrOrV240hoex3iAjZLD7GeKhoaculG2L7LKNNtXIXH9vj/S40peplf1hguu2DM/4HoZrC94DtUgQjLq6E7XCnY61go6g5L1KMquVYObU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aae61bQB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22472C4CEF0;
+	Sun,  7 Sep 2025 23:25:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757287516;
+	bh=2IK1HntqZit2+7T9ga7A2o5l9tYj6VYkyIJ5hFhuKIc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=Aae61bQBmyoZgaEUDNSECYT3wALjb0jNytP9riTlucETh91KIjUrgenJXcsoBXpCJ
+	 m5Jr+yPszE2KN8/2GsRTdEVuD9kC/X7IzmwvgkUbf7y3gc5bDtTQ+1tqIyUIYWzei2
+	 Jm/XqoVd35xFDnaYj+fdeOiXMYfwTnKeZCE0+7YR/RLrqDApZAp6RV9lZOPyqW83T3
+	 ZdV1/NB3WrT9DNqwyhVbz18dVC8bbNLXGxJtUviKJPX/5/cP+pCbtk07HaC18a/wvh
+	 JGLxTbEst1/eNqXN+nu+kKbZfi8ptO89nMpxSX35yIJbyw7eL1VpmfptzBALZlNqrH
+	 4bFwmz0DXnNMg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-leds-v3-4-5944dc400668@vinarskis.com>
-References: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
-In-Reply-To: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
-To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Jean-Jacques Hiblot <jjhiblot@traphandler.com>, 
- Jacopo Mondi <jacopo@jmondi.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, 
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1663; i=alex@vinarskis.com;
- h=from:subject:message-id; bh=FDaW+KMG0SfKYAHwpy7yJNT1x/XSMWz+beB/dGcZHo4=;
- b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBn7hLb9+dgp7HXtqfLjRxpBKx8+mnhdyDgiQN3pZWFd3
- jQu10c6HaUsDGJcDLJiiizdf76mdS2au5bhusY3mDmsTCBDGLg4BWAiezgZ/qee3bTk0c/GRDmt
- pd+yF3qlzFl+OMGgNmr78ZqJmwWeH3Bk+O87V27ypaiFPMyfZVVTfVZvDthmZJubOEE3a3KZSNR
- 0ZWYA
-X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
- fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 01:25:11 +0200
+Message-Id: <DCMYFLXXMOHT.M34887LRPXHH@kernel.org>
+Subject: Re: [PATCH v11 5/7] samples: rust: Add debugfs sample driver
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Matthew Maurer" <mmaurer@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-5-7d12a165685a@google.com>
+ <DCKQS4126EVC.38ZJ0GOFDYCP7@kernel.org>
+ <CAGSQo01He7cNvcOQBxAqLicSjKniSp=97K6GupnxS4B=G9p4rw@mail.gmail.com>
+In-Reply-To: <CAGSQo01He7cNvcOQBxAqLicSjKniSp=97K6GupnxS4B=G9p4rw@mail.gmail.com>
 
-Leverage newly introduced 'leds' and 'led-names' properties to pass
-indicator's phandle and function to v4l2 subnode. The latter supports
-privacy led since couple of years ago under 'privacy-led' designation.
-Unlike initially proposed trigger-source based approach, this solution
-cannot be easily bypassed from userspace, thus reducing privacy
-concerns.
+On Sat Sep 6, 2025 at 5:19 AM CEST, Matthew Maurer wrote:
+> On Fri, Sep 5, 2025 at 2:00=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>>
+>> On Thu Sep 4, 2025 at 11:13 PM CEST, Matthew Maurer wrote:
+>> > +kernel::acpi_device_table!(
+>> > +    ACPI_TABLE,
+>> > +    MODULE_ACPI_TABLE,
+>> > +    <RustDebugFs as platform::Driver>::IdInfo,
+>> > +    [(acpi::DeviceId::new(c_str!("LNUXDEBF")), ())]
+>>
+>> This should use "LNUXBEEF", as we explicitly reserved it for sample and =
+test
+>> code.
+>>
+>> I think we could reserve more if we see a benefit, but so far it's only =
+used by
+>> the platform driver sample, so we should be good.
+>>
+>> Either way, no need to resend for this only, it can be fixed up on apply=
+. :)
+>
+> Ah, thanks, I was unaware that it was specially reserved and so tried
+> to pick something distinct. You fixing up this and the `OF_ID_TABLE`
+> on apply SGTM.
 
-Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
----
- arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Ok, I will wait for Greg to have a look first.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..ef5c7cbeda68c7eb4745cd2ec01eaacf9a83040a 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -83,14 +83,11 @@ leds {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&cam_indicator_en>;
- 
--		led-camera-indicator {
--			label = "white:camera-indicator";
-+		privacy_led: privacy-led {
- 			function = LED_FUNCTION_INDICATOR;
- 			color = <LED_COLOR_ID_WHITE>;
- 			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
--			linux,default-trigger = "none";
- 			default-state = "off";
--			/* Reuse as a panic indicator until we get a "camera on" trigger */
- 			panic-indicator;
- 		};
- 	};
-@@ -685,6 +682,9 @@ camera@10 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&cam_rgb_default>;
- 
-+		leds = <&privacy_led>;
-+		led-names = "privacy-led";
-+
- 		clocks = <&camcc CAMCC_MCLK3_CLK>;
- 
- 		orientation = <0>;	/* Front facing */
-
--- 
-2.48.1
-
+- Danilo
 
