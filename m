@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-804747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CEFB47C82
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BACB47C84
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 18:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E363B3BCD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390721899815
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 16:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BD6284B4C;
-	Sun,  7 Sep 2025 16:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5914284B4C;
+	Sun,  7 Sep 2025 16:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SiRhoxjz"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QsRCqpT8"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8321578F;
-	Sun,  7 Sep 2025 16:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2107082F
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 16:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757264143; cv=none; b=UZcQYoiKU0ch22ZGjSBH9cXtHYC1t1OHSCIxbutoy0PiyX0ZDfQJgfhbeh7PPUrtUbSM6HIA7ExG4A3AlPIGLr8h+R7D6tQG67I2YHxMWyFr3ZpIcewGe3+t+H51MFdVeK5yzGqGF0FAZZelQZHdM1IwC/08SGuOZG0xnWO6oe4=
+	t=1757264327; cv=none; b=nch/VwUFWxQoeaaknyM6q2sbaAIt1ew2UZUUN5mvnY0s3VKi4L/HgPDTtuQ7qqbO0rqK6ZhO9jmD66HmTjQVZjLXsO3aTNQTdISQ5iDeUIiUuXw9z+65Ldcwcjr6Fgd1pojakWSEXd32GZw9N2JkGGjdfCvhktGGclGyf+rsSfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757264143; c=relaxed/simple;
-	bh=hj/oyp4cEgcvL/1yElr6j76VlPObqr1h7l8aQw98mog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IKenFeps1fl2+u2H/SdtVRTiNI1zwFuQbYf011zgEbF277HBUbcE/qviiscYETYaQLFkxmwX/snwT9CzX1OFrs+iO+CpQ9kN+kPjTsxa8jqtDrvanxgtyxZy+0nAx84kRfr2WecW1mPE2/w2/Lq+4Lhfs33+HnmSuMM7daQwJUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SiRhoxjz; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <00d37c64-f584-4846-b65c-76582601c30f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757264129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELddA0f2ttvGHdC8Ifs6ZhKF0YoIStSpLQZE8s5K2Hk=;
-	b=SiRhoxjzpq/2GariF7snGksH/Pd5bDzzHTigFdy3aSAkiser8+ypa/adG+daV1Bk4oA1qh
-	SWBT2+lOQdHsHT0hRRA3vKKs6Ss9Z6Go2J1T0gffzlYtP8tc42aa+KezEjCMfhR4xSiWVY
-	57phi9DDi2EaPMzzkOi3DZ8+tOGFiYY=
-Date: Sun, 7 Sep 2025 17:55:24 +0100
+	s=arc-20240116; t=1757264327; c=relaxed/simple;
+	bh=UG6aaIt/J4hlqTLrVipzyXLPRoWjC628BnP36N7T3tU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFewgakAzxtGeYoa1ebGVuZL6ufiaBGXSazawuFTTk3+AIbOkhDuy525ljyF2EG8NrnGUmNv3fknRjhs/59yCfvnmDycfqxsoA1QMbvk2guLEX+rpaCiQ4EjgPjzbSlSAIOtoWik3zZCm7ee7o2ub7EDCP9P6ziLanv2NZwERa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QsRCqpT8; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24c89867a17so34366285ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 09:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1757264325; x=1757869125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C8rxZBcVWqeQttZjBzXJXbXm94rgTwoH9ei9j3iaczA=;
+        b=QsRCqpT8mfEfDjQk9wir2rYkxZyBxKdUdVaAilyomOJ0wDXQ8sckCyP1nVibeeD7fI
+         5zCIukFyw1Ktrs3ABSvf2rGEJUUrrI8NF1QACheZoywakeAxqdlnLL4edIGrnDyJflKN
+         gZFQuzojroFnuBVyFc8rrrLTrdZ3C7JMiXYv5xZNmt8M9b2madgtQJ9S50BwAoFYOhzb
+         KATyqvucVbNudODuh4/tnUeOpKkXohZrHnGUdhP9dPnwldsdPUf7poMIgjjvQ9Q/Anpm
+         5ATc2UaxgwJlWCGHA9t+afOu97ghCPTKmNtAijd3yQYccDk5kD2JtTMKrCWgkKfRNzM7
+         ZPiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757264325; x=1757869125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C8rxZBcVWqeQttZjBzXJXbXm94rgTwoH9ei9j3iaczA=;
+        b=rSo84edP0m2l1fvgxWT7jJbucvmLJZmirrKaZZtoc0x0Ab2KBrAyUiq8VKdf1Hxg3p
+         fWKKvL9v/1VINNU6UYnIhZxq7QCYJG9svxTdSN4gGbNCBsRPU8SNI578Q8O0CnpiZ0RY
+         NT6EPX3crPiylCuml7qZJlQ2apuqp3UqgcZ/LHQKLJhaZp5zTBNTdvXAA3rp+aA56YNf
+         rYNG6j9qmCVSVvtCl0cye0c7TkguLNoexuEv4o6NNq/5Ji+LcGSVk3DTOCJPHvAN30df
+         +Z5OutYgG5aYWagQkXtPpIm8/PEqP6v4gp6acPyEZcvnaM8ndrX/vbBSrFrzGTsb/m+u
+         D+Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbx8N4m97YRYJvPGjtMIKDIY8Pl2mufLVODFOkiKITWI9C0jjswUOJ7n33JR+oRimZqMCb/QJjprHDdFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGCgD/XmojVUL251XralLDilO6zC4mJmW3x1oIgH1nmBM70WMi
+	MJ5i4+o30Wm2IYf5NTrwmmWpZmh51/3XuAkw5GXhjNxsNIp4RjD7bk238E68/H7ojEKd0v393qg
+	PYKlIiOdOnjJgrClNneMR6suo33NMqlEe7DKlgjEpk2Bij7aOvrg=
+X-Gm-Gg: ASbGnctt8WvqnB1S0PgWIe/PQS8RPp6hgkf2P8ZKQfwkVskqo9OPiilXHkUJnrifOws
+	4gMRdjUwxm9R3wsyVyvZOHk6lY8mWvZ8ymS7OdwFjGRKyWTbKTlYxjsNn9TmrIO5M8q8/SLDmIj
+	uG9y+okWp51c19FOmXjTcc9Q/nE9hjpDEHkiHm/WD7a/dhTrXiE3XViSI2tJu8R2rEDzV+aQGmi
+	XJvHN/+YSyt/qx/yg==
+X-Google-Smtp-Source: AGHT+IFaE++x7GtzCCIsBv907Sl2uWTltDpZX4herwHYVlHepL8ORXOJe8XeTw2pWIVYggy7DyLPn5X/oi9GlRRt5xk=
+X-Received: by 2002:a17:903:1b68:b0:246:b46b:1b09 with SMTP id
+ d9443c01a7336-251715f3129mr65953055ad.30.1757264325209; Sun, 07 Sep 2025
+ 09:58:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v04 05/14] hinic3: Command Queue flush interfaces
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>,
- Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>,
- Lee Trager <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>,
- Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1757057860.git.zhuyikai1@h-partners.com>
- <be5378bb148410286bb319a82fd2e2f0c9044117.1757057860.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <be5378bb148410286bb319a82fd2e2f0c9044117.1757057860.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250905222656.3692837-1-nkapron@google.com> <CAHC9VhT8NrsXMM-PPZJ0EPLxFHQ1vOu+ASCd+82Xth_mJPnDiA@mail.gmail.com>
+ <aLunR_0BPCrATnBP@google.com>
+In-Reply-To: <aLunR_0BPCrATnBP@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 7 Sep 2025 12:58:33 -0400
+X-Gm-Features: Ac12FXz4UWnBPZx5fAUVbpMVPdPjXX8qeZE7T_l2WMRkmXHmb_U-YFwEaovDvoA
+Message-ID: <CAHC9VhSaAm3G9bnJ86Aj+DnTio19ePE1Pu3voaB3XUvBveodbw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: fix logic issue with per-file labeling for functionfs
+To: Neill Kapron <nkapron@google.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	kernel-team@android.com, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/09/2025 09:28, Fan Gong wrote:
+On Fri, Sep 5, 2025 at 11:15=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
+rote:
+> On Fri, Sep 05, 2025 at 10:13:01PM -0400, Paul Moore wrote:
+> >
+> > With the original patch sitting at the top of the selinux/dev branch,
+> > are you okay if I simply fixup the existing patch by adding the
+> > missing '!'?
+> >
+>
+> Yes, that is fine by me. I could submit a v4 if you would prefer that.
 
-[...]
+No need for a v4, it's just a single missing '!' and the commit
+happens to still be at the top of the patch stack.  In cases like this
+it's easier for me to just apply the fix manually.
 
-> +struct comm_cmd_clear_doorbell {
-> +	struct mgmt_msg_head head;
-> +	u16                  func_id;
-> +	u16                  rsvd1[3];
-> +};
-> +
-> +struct comm_cmd_clear_resource {
-> +	struct mgmt_msg_head head;
-> +	u16                  func_id;
-> +	u16                  rsvd1[3];
-> +};
+Fixed the upstream commit and pushed back up to selinux/dev; please
+take a look and verify that it looks okay to you.
 
-I don't see any difference in these 2 structures. And the code
-implementation doesn't check types. Probably it's better to refactor
-things and try to implement it using common thing.
-
-[...]
-
-> +void hinic3_enable_doorbell(struct hinic3_hwif *hwif)
-> +{
-> +	u32 addr, attr4;
-> +
-> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
-> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
-> +
-> +	attr4 &= ~HINIC3_AF4_DOORBELL_CTRL_MASK;
-> +	attr4 |= HINIC3_AF4_SET(ENABLE_DOORBELL, DOORBELL_CTRL);
-> +
-> +	hinic3_hwif_write_reg(hwif, addr, attr4);
-> +}
-> +
-> +void hinic3_disable_doorbell(struct hinic3_hwif *hwif)
-> +{
-> +	u32 addr, attr4;
-> +
-> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
-> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
-> +
-> +	attr4 &= ~HINIC3_AF4_DOORBELL_CTRL_MASK;
-> +	attr4 |= HINIC3_AF4_SET(DISABLE_DOORBELL, DOORBELL_CTRL);
-> +
-> +	hinic3_hwif_write_reg(hwif, addr, attr4);
-> +}
-
-These 2 functions differ only in one bit. It might be better to
-implement it once and use extra boolean parameter?
-
-
+--=20
+paul-moore.com
 
