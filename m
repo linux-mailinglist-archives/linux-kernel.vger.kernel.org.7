@@ -1,238 +1,121 @@
-Return-Path: <linux-kernel+bounces-804529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC45FB478DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E473B478E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 06:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D63B3BECA7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E19A3C73DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C65A15B135;
-	Sun,  7 Sep 2025 04:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011111C3BFC;
+	Sun,  7 Sep 2025 04:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jCg1JTCQ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EwbpFKb4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FF517E0
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 04:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6CF29A2;
+	Sun,  7 Sep 2025 04:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757219076; cv=none; b=umgqXRDfQ5UmsjB9NXS6RTHIA6EI3XRGjI0LrKwpR8Hfw5/JXznpI8Pxdi9eYCQGa+q+yz3WsT1WTz28QLDVyLbLFQkXnTKva4eMSnDuGPt+pOc3ttxSR328hnw0cnAuyzEtfb8VIXrc9VzoE42jC7r9rZwZbei+VQJtqDUMBHc=
+	t=1757219536; cv=none; b=HZ9H7YdZNeSD1H0Jubz+YZaa9hRS+Nz9z1OZAnhcrhMyf2yppFxgg+z8J51wm4C1vhuARQMdvlw3WFnJuq/Ja7zMLNFMROin9PFfvjW5yj0lg2OT2LpOwFBgm0W/q2sCDEFlAVipxBjXWClbP0fA6C/JsFo4iXnEyg8GS0V9oWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757219076; c=relaxed/simple;
-	bh=1mdn15MDwR6X4L4S4rcqdKclmdlez5vbpopUmjklvbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TMz+6Siy4UDNyN0fMYmOiOimuIqxZdzSbYjjI4uZ1Jmnu1xufW5r/4X6yUFl5eMNN0O6YsCe22O/AqtcgIIxtMFWHZFcWxebfKpDIOVPvH3HAFpwe1DlkL05ml7E0G/uuLwx36QXocoqm5HBbIwJ3vcmoPXdu4veOE3XIBg/4lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jCg1JTCQ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24cf5bcfb60so146115ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 21:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757219074; x=1757823874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTPgPzRrBAxJrCac5XmQ2yTlMqaTokhJ/jQ8/1ljY9I=;
-        b=jCg1JTCQu9xGQqnHBvaQev7Ysq3pyL4RDcEIGo3mAydvwYtQU+tV0eat3jtG0FrDZj
-         UR15BCLzEYepycWOIVFyEySs42L3ReYo3xSlRZI/E5lilJ5vRTtTstT/cVnMMcrgVBhy
-         vgOF/zFEthFJ7LlYnnmzaWMwYN+ET39p91ahMFSupXficN6DY+TguUilD4n4rdPcj6ul
-         kU18G7PGva84BB/ibMUaQVxngYWKfhhEFyOd9fmb5gcQVISWhwlj5dv4Z4UfQKa++gzX
-         l788GNauunRJA7TvVLkdhuosJeB0oL7UKpuzRWaHbnybdQExN/2o0tR2we4ybU708voi
-         cfNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757219074; x=1757823874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gTPgPzRrBAxJrCac5XmQ2yTlMqaTokhJ/jQ8/1ljY9I=;
-        b=ntqU/vZp7nJakbB9n7/u37VSRR9oHIstPmn3fiFlej5yeEYqzJ6UEpdvShRCxKQsQq
-         /QcK+IWDHGqYBmybDizeWlhVguvo6LI8GycH/5iRCMlmGP7UIG034gVuXkhlvm0nQTWr
-         ZQsfDxAw4yKeGo5Cb3tT0cEWqL23hg+D8Acx0/NCGTCer6wnt1nBbi+CCF3D06kOIgID
-         +Env9p9Hq5uVKfmkHMiQmT2nsWjB2dgLiJGt1l9BvdaZc6D5nQ+ItioIGAQf+TH1y5H+
-         0T/opzMdlO9LXejwHcJMfNKeUlKUHCXaNW55egXA2U9YTES6AIi38uldhA91dOb9Erc/
-         SNaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoKdimzNMmi7X3r1szO5saejBUy7XbAE1Rr5DPD5VnVk2n3goL4AA7bb7FAzcHBbb8TiJY9fyvcZ9aby4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZkE6yZSM5zDoLbiRoTe7vYKEwKtxo0sjTWVbbp5F410BFUNpq
-	fZPnEEhkxA5Fk7m8Xozl40CNHKXlw3xQCossjTKJtCd3AWjidQJI7d7VPS8iBjtPiqOrnl9A0cj
-	uo2ELZHjuUuEq6TLuyiIYJ+ZfwLX8ogUkfTKSKwQ3
-X-Gm-Gg: ASbGnctF1Pth2q30CWpNUEky8R16m0aCmFQeNJebNM0DIKeatpgasj6v+eZsDdptFIg
-	TMadBQ4OqpbdcPyC6VhW4dTSGayPnfOe7ocvEfIOu/KwkVgRqagjkQXz3NGidHYJz3304+ShSsr
-	pa3CoC5NWTb+7r/rq3zOmdBC90cp6QEcgnyvDeGri3S5MI7R2rFrqwCiH5Itu4TC8zE0BlcjAYc
-	F6luCV6goWo8pD7cPclU4OcDydQkAYofKOUzcCFcJhmbvNEeb6OIpfzsw==
-X-Google-Smtp-Source: AGHT+IGYa0lPcHnn6yyQH0nLs+W33hFAxTRTwUNtazygW/FTP7faT7GUxA8+33u94005mbOApW9X6E+kBz9mCu3EfpY=
-X-Received: by 2002:a17:902:e887:b0:248:d063:7511 with SMTP id
- d9443c01a7336-2517484234fmr2374415ad.9.1757219073688; Sat, 06 Sep 2025
- 21:24:33 -0700 (PDT)
+	s=arc-20240116; t=1757219536; c=relaxed/simple;
+	bh=+8yI6fgJ5qXRBIy4nAJK63uggFckulfZtEQH+td3NO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI7BYqVwoTKzfKv0D0RnbmgIjoYpDMhn8QbqV/3YjDYRxkzEyUHf/w8rWC5R6hsUYipehtPIq/fE9ijh0qk4ACQhrhdnmXvI4oiqNiDvCiSE638skNjc+YKzgQLi5xghpVum4FSNm2FLR05PaP3ehR13KF4WYcoWWyJ7X5/oWzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EwbpFKb4; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757219535; x=1788755535;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+8yI6fgJ5qXRBIy4nAJK63uggFckulfZtEQH+td3NO0=;
+  b=EwbpFKb4wIELtU+A746UlnzfvN45cjOSBntz48Ss1VSAH2zf+fwAxUEA
+   iaDVUgwQwZnllBC/I8XMy/1QO7Np10UPPW/2v3n8B8Ad6o8GphnkK0dXY
+   eisY0Hz45Xcg0JgZi6L1PCtAfs3xJ3WDQsBSE89Ru3gBpbOj2+iB5xCAe
+   +hRPoKYPEqt+j/aZXacc7gwPLTVi0NOOJapldceB8ARfEEe80o/3ZjgBK
+   PYcFpiMRKcHfOu7LJwwDLY5MyKDuxFf3MrDObL90tRFvXOUcjMMxENtjx
+   vdT/WC4NXLkO9NVix1+7PVYvb2Oeite5awuBzOc9TTHeLWJJZv9nWvenC
+   w==;
+X-CSE-ConnectionGUID: hWtn2WjzS32tV7fcvOIlvA==
+X-CSE-MsgGUID: 2/lZ6kvoSAiJAFOu6e1BNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="47082792"
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="47082792"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 21:32:14 -0700
+X-CSE-ConnectionGUID: UEUAutZoTamiLqUEzDzCKg==
+X-CSE-MsgGUID: eIAw2afWROWQEf3aazZtwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="172599663"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 06 Sep 2025 21:32:11 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uv74T-00021v-2A;
+	Sun, 07 Sep 2025 04:32:09 +0000
+Date: Sun, 7 Sep 2025 12:31:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hongru Zhang <zhanghongru06@gmail.com>, paul@paul-moore.com,
+	stephen.smalley.work@gmail.com, omosnace@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, Hongru Zhang <zhanghongru@xiaomi.com>
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during
+ boot
+Message-ID: <202509071211.k5n864Gr-lkp@intel.com>
+References: <20250905100454.685866-1-zhanghongru@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903232437.1454293-1-kaleshsingh@google.com>
- <qa7b7pvrycejnn6pjytxysu57xckhexupjrzefmk4j5hlaxka3@ayeg2vzpfe3r> <aLs9f9WjxIOrE3Sr@google.com>
-In-Reply-To: <aLs9f9WjxIOrE3Sr@google.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Sat, 6 Sep 2025 21:24:22 -0700
-X-Gm-Features: Ac12FXyluFsg8rwjLeiuUN8OqbXpgEL5Ij8nUCZC_bTtjwaiTP3umbB2xEe5lA4
-Message-ID: <CAC_TJvdXNJSqNjRQS92jAOBUJ+3qyS9+eZAGSJMokGQQHaxqoQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
-To: Minchan Kim <minchan@kernel.org>
-Cc: Pedro Falcato <pfalcato@suse.de>, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, 
-	kernel-team@android.com, android-mm@google.com, 
-	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905100454.685866-1-zhanghongru@xiaomi.com>
 
-On Fri, Sep 5, 2025 at 12:44=E2=80=AFPM Minchan Kim <minchan@kernel.org> wr=
-ote:
->
-> On Thu, Sep 04, 2025 at 12:46:34AM +0100, Pedro Falcato wrote:
-> > On Wed, Sep 03, 2025 at 04:24:35PM -0700, Kalesh Singh wrote:
-> > > The check against the max map count (sysctl_max_map_count) was
-> > > open-coded in several places. This led to inconsistent enforcement
-> > > and subtle bugs where the limit could be exceeded.
-> > >
-> > > For example, some paths would check map_count > sysctl_max_map_count
-> > > before allocating a new VMA and incrementing the count, allowing the
-> > > process to reach sysctl_max_map_count + 1:
-> > >
-> > >     int do_brk_flags(...)
-> > >     {
-> > >         if (mm->map_count > sysctl_max_map_count)
-> > >             return -ENOMEM;
-> > >
-> > >         /* We can get here with mm->map_count =3D=3D sysctl_max_map_c=
-ount */
-> > >
-> > >         vma =3D vm_area_alloc(mm);
-> > >         ...
-> > >         mm->map_count++   /* We've now exceeded the threshold. */
-> > >     }
-> >
-> > I think this should be fixed separately, and sent for stable.
-> >
-> > >
-> > > To fix this and unify the logic, introduce a new function,
-> > > exceeds_max_map_count(), to consolidate the check. All open-coded
-> > > checks are replaced with calls to this new function, ensuring the
-> > > limit is applied uniformly and correctly.
-> >
-> > Thanks! In general I like the idea.
-> >
-> > >
-> > > To improve encapsulation, sysctl_max_map_count is now static to
-> > > mm/mmap.c. The new helper also adds a rate-limited warning to make
-> > > debugging applications that exhaust their VMA limit easier.
-> > >
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Minchan Kim <minchan@kernel.org>
-> > > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > > ---
-> > >  include/linux/mm.h | 11 ++++++++++-
-> > >  mm/mmap.c          | 15 ++++++++++++++-
-> > >  mm/mremap.c        |  7 ++++---
-> > >  mm/nommu.c         |  2 +-
-> > >  mm/util.c          |  1 -
-> > >  mm/vma.c           |  6 +++---
-> > >  6 files changed, 32 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 1ae97a0b8ec7..d4e64e6a9814 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -192,7 +192,16 @@ static inline void __mm_zero_struct_page(struct =
-page *page)
-> > >  #define MAPCOUNT_ELF_CORE_MARGIN   (5)
-> > >  #define DEFAULT_MAX_MAP_COUNT      (USHRT_MAX - MAPCOUNT_ELF_CORE_MA=
-RGIN)
-> > >
-> > > -extern int sysctl_max_map_count;
-> > > +/**
-> > > + * exceeds_max_map_count - check if a VMA operation would exceed max=
-_map_count
-> > > + * @mm: The memory descriptor for the process.
-> > > + * @new_vmas: The number of new VMAs the operation will create.
-> > > + *
-> > > + * Returns true if the operation would cause the number of VMAs to e=
-xceed
-> > > + * the sysctl_max_map_count limit, false otherwise. A rate-limited w=
-arning
-> > > + * is logged if the limit is exceeded.
-> > > + */
-> > > +extern bool exceeds_max_map_count(struct mm_struct *mm, unsigned int=
- new_vmas);
-> >
-> > No new "extern" in func declarations please.
-> >
-> > >
-> > >  extern unsigned long sysctl_user_reserve_kbytes;
-> > >  extern unsigned long sysctl_admin_reserve_kbytes;
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 7306253cc3b5..693a0105e6a5 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned=
- long addr,
-> > >             return -EOVERFLOW;
-> > >
-> > >     /* Too many mappings? */
-> > > -   if (mm->map_count > sysctl_max_map_count)
-> > > +   if (exceeds_max_map_count(mm, 0))
-> > >             return -ENOMEM;
-> >
-> > If the brk example is incorrect, isn't this also wrong? /me is confused
-> > >
-> > >     /*
-> > > @@ -1504,6 +1504,19 @@ struct vm_area_struct *_install_special_mappin=
-g(
-> > >  int sysctl_legacy_va_layout;
-> > >  #endif
-> > >
-> > > +static int sysctl_max_map_count __read_mostly =3D DEFAULT_MAX_MAP_CO=
-UNT;
-> > > +
-> > > +bool exceeds_max_map_count(struct mm_struct *mm, unsigned int new_vm=
-as)
-> > > +{
-> > > +   if (unlikely(mm->map_count + new_vmas > sysctl_max_map_count)) {
-> > > +           pr_warn_ratelimited("%s (%d): Map count limit %u exceeded=
-\n",
-> > > +                               current->comm, current->pid,
-> > > +                               sysctl_max_map_count);
-> >
-> > I'm not entirely sold on the map count warn, even if it's rate limited.=
- It
-> > sounds like something you can hit in nasty edge cases and nevertheless =
-flood
-> > your dmesg (more frustrating if you can't fix the damn program).
->
-> How about dynamic_debug?
->
-> a1394bddf9b6, mm: page_alloc: dump migrate-failed pages
+Hi Hongru,
 
-Hi Minchan,
+kernel test robot noticed the following build warnings:
 
-Thanks for the suggestion to use dynamic_debug. As you may have seen
-in the discussion, it has moved to a capacity based helper
-(vma_count_remaining()) based on feedback for better readability at
-the call sites. Unfortunately, a side effect of that design is that
-we've lost the single, centralized failure point where a dynamic_debug
-message could be placed. I'm going to stick with that due to the
-readability benefits. However, you've raised a good point about
-observability. For this I am planning to add force increment/decrement
-via vma_count_* helpers and perhaps we can add trace events in the
-helpers to get similar observability.
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Kalesh
+url:    https://github.com/intel-lab-lkp/linux/commits/Hongru-Zhang/selinux-Make-avc-cache-slot-size-configurable-during-boot/20250905-180729
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250905100454.685866-1-zhanghongru%40xiaomi.com
+patch subject: [PATCH] selinux: Make avc cache slot size configurable during boot
+config: i386-randconfig-063-20250907 (https://download.01.org/0day-ci/archive/20250907/202509071211.k5n864Gr-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509071211.k5n864Gr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509071211.k5n864Gr-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> security/selinux/avc.c:37:5: sparse: sparse: symbol 'avc_cache_slots' was not declared. Should it be static?
+
+vim +/avc_cache_slots +37 security/selinux/avc.c
+
+    36	
+  > 37	int avc_cache_slots __ro_after_init = 512;
+    38	#define AVC_DEF_CACHE_THRESHOLD		512
+    39	#define AVC_CACHE_RECLAIM		16
+    40	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
