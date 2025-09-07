@@ -1,171 +1,147 @@
-Return-Path: <linux-kernel+bounces-804587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC8FB47A24
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCE3B47A36
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA781B2169D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BF0162F7E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35773221FCF;
-	Sun,  7 Sep 2025 09:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DE223324;
+	Sun,  7 Sep 2025 09:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="ErKpxftH"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai+6Qnk6"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489AD221544
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 09:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141FC18859B;
+	Sun,  7 Sep 2025 09:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757237840; cv=none; b=jJHME9Jqv7WIG0J2/toNiuNdqKiyM0S0dBfBEAFX0LojctZ02qtFigcLlk7cZR24JM4R8sTwgJql24avV00EjXS3wv4hJZDfOJCUppv/rEO1Rvf1QN8dIknBS5RVc5luI9wuQGRGNFNkz//TAOKtZeo5Nr0dT5mgXMXSieKnS/g=
+	t=1757238215; cv=none; b=jAy2UQda0TU+6X1DAeM2sA/ggjy8/UZNUTqBHLZ2eyoHLHMQI8au0FKI41wq1IXbAKIEXvC9KYnlAZYKdnnNcTQCVvnChUjcQale0QJC/As3rgfV90qpdHxLsqomMuk9J1SU7r0y4Hborv2XHwpd1gUhLKpVs9ml5e3ms3vRxnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757237840; c=relaxed/simple;
-	bh=0Xrg991TS+oaAJX9WvbcTEwohOrOg/V5EHbqh5DH5xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlUj2miXuAms2IhgtWNYEMYQXu8cPfjkVxHjiPzKBz0ysPp2lDK7g1/uB0GoiyFj+aL1uI47YGe+U69hubnDM8MonBAguvItPXLUd9yW/nPHa23a43pK1O0RbeVLhRnhvFBkVdDPtNeaeis841KfjEHQv++1v6wxmzYz2zwR6qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=ErKpxftH; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32b6108f2d5so2399940a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 02:37:16 -0700 (PDT)
+	s=arc-20240116; t=1757238215; c=relaxed/simple;
+	bh=TDwoEokmsEniRL5mzV7C3NbddClADMi8vSACqfJXWVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JfvoL7T+N5Am72/49hapkLyV8cc8ft8t+9Gm4Z2HdoTULHNrF4oz6R1lXqjx7wxc16PRXuPCMVeUYWBaCL+wu5Aj+qR/HBb7oQoQwYU4XdR1+YK52u8PdwJZsDx93V9f8EwLD2cl9Q5GYxzKyMbplkHvw6T1QSxF8VQlZ/zzqNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai+6Qnk6; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45de56a042dso781585e9.3;
+        Sun, 07 Sep 2025 02:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=csie.ntu.edu.tw; s=google; t=1757237836; x=1757842636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=70zvkE3bB7cmZPuDeaKwadOTmazE00TZ9JEFPyMgvYg=;
-        b=ErKpxftHKal8gE+zBqg91/L02OIY4ZK3FdbLKHOnaUwzk1lFAb5TLBuonPegyNEQEp
-         D8XJNzCAjXlllo8WB1eyjVqgzf5EPVCHD5hAzshTFVMZylBcgD2abvtmqckWZBP8AumJ
-         qCYH0rbI/qHEUKTVUEef6BaMOEx47TzOrFpzHc8tU/lRwtwD0NET/G623mnKVLCv6ZXs
-         fbbuW3Yk+BaILMGOzMm6z8eT6QDlHInPnmSJI7ciDQC5lr3poJ3EFAkbCqBtlIqyrVl6
-         B3TFDQ0SwM8sldo8U0YIz/M4YFMMywOPtbeIMJV6zTyRfb7inToXLMVoRxryiAQh4vMo
-         0X1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757237836; x=1757842636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757238212; x=1757843012; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=70zvkE3bB7cmZPuDeaKwadOTmazE00TZ9JEFPyMgvYg=;
-        b=KFWKX+Q2XE3Y3VwotdUumSPUyMejLj2R0iYay1EvIw1oWNIRTmTQqWjUY7bSMA9gf6
-         YKkH2dMjxHS9yutoDBNnOPE2DnZT8YZLYojkhp0rAImFHieMihDvS2gO4mOmb8it52+z
-         XNdhL6szdmNSluEODAEg9kXbbf34OhpwCYpSPJPmhOitpxmTDjcguO4AijYkRVdXqkuM
-         qV375d4SFtfxDw/uAWrUOSgeMzV9QC4NhInkj1Q8ZfvvAU0hvDSHJc7/H/d71opz9uS+
-         strKa8Z/uC+WcJb0MOIp21OUWuyhuwHwLzIDOUcOJp6gsfWfQRKIJ908ekyiZ63LXFZb
-         Hy8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUOhg6xbLm2NsMhwnR8sr4TZRX/uXISogXFCQBBic2PIFNCPgtnUK+U49wvjkL8Pzi/ezKwQclFsTWFMqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNqpqIYukcjQ9/Cxxd3CAON1YAzGlxabTnT8hsQ51TCEDgtWmX
-	9ahPgaAQmNlli1b6YCCJm3TdUrDSZqZvebbWQdaxLkFM+ndwx9PG3zJGSezhSCx6Wl2L4ztnzCn
-	Po6Cef1dodK9PLvzNQNcnbMdir76XqWqBGqcHAIiygAnQG2xW+FWxoN/eBkE=
-X-Gm-Gg: ASbGnctsUdiK/eK89bBK5CvwvzlE1ZXQscCjz3UFcp1SuxYPmPc/kFv19MeWJSSu8oO
-	aQOIInJ2DPdmZ9f2qUjioiWlCu3hZK/FBqxAV5Nncgeq+UvW+b9CREDDW4T3InPKVscQpeCTnFl
-	0Hwe7RBXLWEoOFPHSwjuG0QsPMbbd0+XchAUmCCDGpNnmR7CRLrjVL6QYnV57lyZgEzjm1clC+3
-	uqgrvGQZWBXLVcgEpDcU8FxmmwmATuYVKAE2aJwrjyoqkrN9J4XrbMlW0fS4L4k0qm3GtKORPPd
-	H5wB2EgTNkPYDWfF/JDbYZs872HeI7vuqJGIdlnic6euYA5wWliqnFAXl+RP3ue4WzM25ItqKBM
-	53xxtolEk8QkOoz9+I6DLzL9hDP5W+hZ2dAKTlNzYs6qWsvCf5o0w2B9zaXCAPLrTLJQJ
-X-Google-Smtp-Source: AGHT+IFt1zERczq0Nc2LpsPzQKax8feeqQIGI16X5GC5DFj+Af0FRNlixEjUAXqLaAAS2kFETPcSkQ==
-X-Received: by 2002:a17:90b:1802:b0:32b:6820:6509 with SMTP id 98e67ed59e1d1-32d43f070e2mr5859703a91.9.1757237836296;
-        Sun, 07 Sep 2025 02:37:16 -0700 (PDT)
-Received: from zenbook (36-228-15-28.dynamic-ip.hinet.net. [36.228.15.28])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e5ad5sm27768393a91.18.2025.09.07.02.37.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 02:37:15 -0700 (PDT)
-Date: Sun, 7 Sep 2025 17:39:53 +0800
-From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: nv: Allow shadow stage 2 read fault
-Message-ID: <hzif6tde7p5q3fyrmu5got25rwuiuea5pzbf2ubbqdfc5uof4y@7waunf3d65fo>
-References: <20250822031853.2007437-1-r09922117@csie.ntu.edu.tw>
- <87a53rk83s.wl-maz@kernel.org>
- <djypsyratk63ovzv3flzb2tmunqtcoryzserwhsaaq5nuogsrx@u3uuwynnafbj>
- <864itme8k1.wl-maz@kernel.org>
+        bh=GZ/X6GOEUsW9+IFkzRBAiysCMqpUBrDHjoEhck1HoOk=;
+        b=ai+6Qnk63Rp8rNYsCTVbWIM84CwcryJS89kXfWZwcqn2JWjTOUHCAREaNd+RUa1cua
+         IDaE/2Yki9/VbS5OGOz7nCgnRM+CGOBK33Ir3UcU//JrKNX/dklO92rZl8qlKevUV0bo
+         qVyvHB6Kmpf0EZSoxkz1WYzNmKGHJcDz6vkBcZZ/ZkyENEVEkM7JqTbVqVMbuqZKEuVU
+         KuAhm5z+gSQJTC8mjizfTw0/JwzAcSat6wShjL06XHZIf1g+MiPMsnm9dxiGENUK4NO6
+         iS98855/lL8wykV+LBkTuEBKsdDKaQjqNshuPaSD7lAaqdQYadAFO0d1gWI+/YZMcMFk
+         XJFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757238212; x=1757843012;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZ/X6GOEUsW9+IFkzRBAiysCMqpUBrDHjoEhck1HoOk=;
+        b=BTZv3L1hr+Y889XSMcaOf3GkPCvJAAAbiOKbda6LHuSuDZonAy5u0aiNPBKnzRlr4b
+         3wP2obZrlBear7xq6AppY/udqAo7Dqbpsq6v0GYYeamsaomek6EDPwN0nv3626MyPqlc
+         y2AOJqbUS2EHuJuYKjRipkRoXCBU/+Gp/BI6rZyNL35FmzbC1MRQ41xW8t9OoYlZzlWR
+         xE28i564KisnA0wXivUYFIC4dyVlDqkHmybnyFJDGzoE8a7S9PcmeQJtAq/+xw6llQQG
+         fr39CHT4ZqZtrWdmWR5KoVmW1zGYTcAfciNyk0vN3BtjxBCXVKeml9ZV9f+sdu9GfttC
+         upog==
+X-Forwarded-Encrypted: i=1; AJvYcCVo4xVxV+XzxOOjpncfK2TVmjrxN8sydiXen26Igq4fF26wawDqE+W+WH+GzGWv1cdSaEozlThtgytorr/4@vger.kernel.org, AJvYcCWAf3v6wr6WAeT3Y5jFuBlAFvZtyMSOsPQhak5NsiWCC23v5yf9r6LdpNtl3EW5PX5xSGJovNougFB6@vger.kernel.org, AJvYcCXA+U1bZai8GrBEyx+WkG/eVJbE26n9+Qv39ZateYIW/kW56K3odM9vOLwTcpGgQHgoJB/koxN2PSgM@vger.kernel.org, AJvYcCXVTFVN3IXOwy4aTrNz895U8NHQi03nhxhzfislvT9WVNVgZrXUVg+9S2WCaHJ/I3OP750sKwxnx7I6dqo=@vger.kernel.org, AJvYcCXxKw1bzQF9yD3nmsZ/iqljp7/jCysDmFtzz2HrcAXWXruzkLaO+y2ZcHkOtGC9sBvzPVL3zuvKjBtrMck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJPhBUjNoEn0IcXHZWcJs/GxxTZbVqXGlgfAT0e72iedk64Spy
+	LTDe4Uh9gv1psPhizSqaZgpga1Xvd1spouxxFypX7xg7a4d8zCsXTInoti3x0heSoPYWqEhZQbt
+	jh2Orr8Szw0079yzirLCIeDly5Z6PK90=
+X-Gm-Gg: ASbGnctVJG21w+jI9IA7rwU9PvGwvIuSmYTJrwlTvzFs421pM3xQnwUKjKKPY96K5TV
+	MilSZrLyXpk2RmfoUUL2rSOEyupcPYh4vWqK/s/CV3O240oKE1AW4PWXhuzVBCOMHt0XcwBQDze
+	aFtOwqqwkVuTSmH8cUlKv96+DAP6/gtmVSmuyu1dRiki02t4kQTNez3YQrYkjY98q6QnkQJ0lP4
+	QVO/wIi
+X-Google-Smtp-Source: AGHT+IFPqig/UhEDyt4I8/2ZJlpITCSmd+DYWg5033ITXHJTPMBD050/gyXsr+9sNyIaTUs7NwKlwoEiYgPtX0PKgHs=
+X-Received: by 2002:a05:600c:3b25:b0:45b:9a41:5d58 with SMTP id
+ 5b1f17b1804b1-45dddea60cbmr35564895e9.4.1757238212151; Sun, 07 Sep 2025
+ 02:43:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <864itme8k1.wl-maz@kernel.org>
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-3-clamor95@gmail.com>
+ <20250907-arboreal-aquatic-gopher-686643@kuoka>
+In-Reply-To: <20250907-arboreal-aquatic-gopher-686643@kuoka>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sun, 7 Sep 2025 12:43:20 +0300
+X-Gm-Features: AS18NWARBXRzhLtN6n3ce6WfDFCnzLq5yKlMbMSeV1CuL4QdfN0Ud8kVvzMMu8Y
+Message-ID: <CAPVz0n0obwSFDup2n9R9SQNsOZw1Dm0G=2ifv=D7zyw=89+uYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 12:06:22PM +0100, Marc Zyngier wrote:
-> On Tue, 26 Aug 2025 14:49:27 +0100,
-> Wei-Lin Chang <r09922117@csie.ntu.edu.tw> wrote:
-> > 
-> > Hi Marc,
-> > 
-> > On Fri, Aug 22, 2025 at 10:40:07AM +0100, Marc Zyngier wrote:
-> > >
-> > > This would imply taking the guest's S2 permission at face value, and
-> > > only drop W permission when the memslot is RO -- you'd then need to
-> > > keep track of the original W bit somewhere. And that's where things
-> > > become much harder, because KVM can decide to remap arbitrary ranges
-> > > of IPA space as RO, which implies we should track the W bit at all
-> > > times, most likely as one of the SW bits in the PTE.
-> > 
-> > But sorry, I struggle to understand this paragraph after reading it many
-> > times, probably my experience with the code isn't enough for me to make
-> > the connection. Why are we talking about the W bit suddenly?
-> > If you don't mind, can you reword what's discussed here?
-> > I only very vaguely get that there will be 2 W bits, one from what L1 set,
-> > and one from the L0 memslot, if I didn't completely miss the point..
-> 
-> Sorry, I quickly drifted into something related.
-> 
-> My take on this category of problems is that we're better off always
-> using the permissions that the guest gives us. This is the scheme that
-> we have adopted with VNCR. It means we wouldn't have to rewalk the
-> guest S2 on permission fault, since we'd be guaranteed to have the
-> latest update.
+=D0=BD=D0=B4, 7 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 12:34 Krzys=
+ztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Sat, Sep 06, 2025 at 04:53:23PM +0300, Svyatoslav Ryhel wrote:
+> > Tegra30 has CSI pad clock enable bits embedded into PLLD/PLLD2 register=
+s.
+> > Add ids for these clocks. Additionally, move TEGRA30_CLK_CLK_MAX into
+> > clk-tegra30 source.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra30.c         | 1 +
+> >  include/dt-bindings/clock/tegra30-car.h | 3 ++-
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-te=
+gra30.c
+> > index ca367184e185..ca738bc64615 100644
+> > --- a/drivers/clk/tegra/clk-tegra30.c
+> > +++ b/drivers/clk/tegra/clk-tegra30.c
+> > @@ -53,6 +53,7 @@
+> >  #define SYSTEM_CLK_RATE 0x030
+> >
+> >  #define TEGRA30_CLK_PERIPH_BANKS     5
+> > +#define TEGRA30_CLK_CLK_MAX          311
+>
+> Unused define drop.
+>
 
-Ah yes I get it now! Make the shadow S2 more TLB-like and use it to
-dictate our actions instead of looking for info in the guest S2 by
-rewalking it.
+Specify, your comment is not clear.
 
-> 
-> However, S2 management implies that a S2 mapping can be made read-only
-> at any point (dirty log, for example). Which means that on a
-> permission fault, you'd need to find out whether the page is R/O
-> because the guest said so, or because the host decided to make it so.
-> 
-> Which means that somehow you need to work out why you have taken a
-> permission fault. You can either
-> 
-> - rewalk the guest S2 as if you missed in the TLB
-> - or keep a copy of the W bit in the shadow SW
-> 
+> Also, don't mix bindings and drivers. You cannot create such
+> dependencies.
 
-Makes sense. Yes with this we'll have to distinguish the reason of the fault.
+I literally did what you told me to do! TEGRA30_CLK_CLK_MAX was
+removed from binding, but it is used by the driver, so how you propose
+to handle this without redefining TEGRA30_CLK_CLK_MAX and breaking
+build with missing TEGRA30_CLK_CLK_MAX?
 
-> > > We'll need exactly that if we ever want to implement the
-> > > Hardware-managed Dirty Bit, but I have the feeling we need an actual
-> > > design for this, and not a quick hack. Your approach is therefore the
-> > > correct one for the time being.
-> 
-> And that's why I brought this up: to support HD in the guest S2, we
-> need to mark the full shadow S2 as R/O, and update the guest S2 on the
-> back of that fault.
-
-Got it! Thanks for helping me understand this!
-
-Thanks,
-Wei-Lin Chang
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
+>
+> Best regards,
+> Krzysztof
+>
 
