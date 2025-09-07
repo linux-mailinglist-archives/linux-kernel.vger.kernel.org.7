@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-804601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50485B47A4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB0CB47A52
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125C916C866
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53087178AED
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A374239E91;
-	Sun,  7 Sep 2025 10:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9B123A98D;
+	Sun,  7 Sep 2025 10:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="leQD7IJe"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ycs5P8tI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E585238C33
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B788A315D45;
+	Sun,  7 Sep 2025 10:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757239234; cv=none; b=u7jzmlCPOrk68Ou/5Q5uK66hHwWNMwaYtq5p0ab9+OIMSQDy0Xr3Y2VU8huRrWy8iBgE3HONz9ECdOGLPPeJwS1XHePbGbEq65fpgTDIkTQN41qMnezb604DgWgUoIgeWVtQAjyVci+on058bvyRCB5o/6aiSoKj3BwzUQtjFf0=
+	t=1757239353; cv=none; b=aD9EuJd2JJL7zgWNt8xnBRQKDocY0JsvtVK7662Zmr6l3NgRcngmKvcjGFZz9REx4v/vq975zDTWJBEICh/50pzxZePYyG/9Dfyg8WCXrzWxOs5CCLY2/RCOtxGibALZzcygQcJG8CFVyFHZDr13M1UdnXOWHjtz4yq94aGm8cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757239234; c=relaxed/simple;
-	bh=ZghqaZbP6otsbrM7NnlZiFEc7J4Jwli5zVhs7n7YAXw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ED028PdbQbqStxXJXJuVGqpiQwxBMxEMrFRos2wDj4soMwWVVTkYctxgPnu5gIt8A3MmQhuP949UpJlfsQV36u7wPhf/SVmnZT1YsehVvzCXKNmcTfJvUWasKSb/jiqX7LsoEGUjV/z7iNTsjZjlr6LCLxuHY+oUhxecyeZZhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=leQD7IJe; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250907100029epoutp03335bb44808c08679d9eb5d0fb083d0ed~i98TG3NVd1609216092epoutp03f
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:00:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250907100029epoutp03335bb44808c08679d9eb5d0fb083d0ed~i98TG3NVd1609216092epoutp03f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757239229;
-	bh=SbHDtPkviZlO/LgkXzGe9eikNE8oo3x9pUKOqZtyP0k=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=leQD7IJe2VjE+EsF4S7jZpFVB8Ok5heo3mOAbvUzL1NbWzHRgZpK+pR48ccgns5S+
-	 ytw0LGXloMaBB/8LkcWrbKRsSGhV9lROS8zaqZOABD3Io5HUiq1Orqj6Sxs1Qy892L
-	 eU7Ccw/zfXDAXM1Kbp/wc/8V93jOzMgnIWJyW9Zg=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250907100028epcas5p14ee9dcee16c57c7fc61bbb6b2b5f00c7~i98SwfqVZ1432614326epcas5p1N;
-	Sun,  7 Sep 2025 10:00:28 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cKQZ35nmJz3hhT7; Sun,  7 Sep
-	2025 10:00:27 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250907100027epcas5p249d149f0d10eb6f9dea8f86b59cb34ca~i98Rf9xdi0141601416epcas5p2C;
-	Sun,  7 Sep 2025 10:00:27 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250907100025epsmtip161b00d26b7ac98bc1b1a50a891bd95e8~i98PoOEs10915609156epsmtip1w;
-	Sun,  7 Sep 2025 10:00:25 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Alok Tiwari'" <alok.a.tiwari@oracle.com>, <mani@kernel.org>,
-	<quic_cang@quicinc.com>, <quic_asutoshd@quicinc.com>,
-	<peter.wang@mediatek.com>, <martin.petersen@oracle.com>,
-	<avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <linux-scsi@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250906203636.3103586-1-alok.a.tiwari@oracle.com>
-Subject: RE: [PATCH] scsi: ufs: mcq: Fix memory allocation checks for SQE
- and CQE
-Date: Sun, 7 Sep 2025 15:30:22 +0530
-Message-ID: <473a01dc1fde$3c7df240$b579d6c0$@samsung.com>
+	s=arc-20240116; t=1757239353; c=relaxed/simple;
+	bh=0cJgnHPcWxazPyMR750YSeFZNWwbrgGaHDCd4DkwT7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahumA47NFp4ii8M+6sQOBrkvyMGrul0kvmqwYhqIP9dGLnxO9pDkoTC31T7xbNdxwGmI+FVorOieEkILMrpbhQW52NTSHfIQQRYk6SzzZRgBFtE8qaPdf3n3VIQV8Iz+t5vtK+nrqmtd0zXv2OGdVpJzShAJ0jz/01fm/9GB5cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ycs5P8tI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4F9AC4CEF0;
+	Sun,  7 Sep 2025 10:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757239353;
+	bh=0cJgnHPcWxazPyMR750YSeFZNWwbrgGaHDCd4DkwT7k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ycs5P8tId/b+g0H8i3zxLNaynePc4gOHJ7j8AAsbEDcrou0v8BXTiLi2bV9+It0Jl
+	 vXuANFVNxSr+078l6nCsLq8BhaSy/jYLxLf3eDIRG+f5fd6uitDeUzNGNnXypuZUlV
+	 h4KZV8UFee5sxRe8ccEw/JnzSk4SHJj9at7tsgUW9UonkyZrt8yEW614vYUia2W+5n
+	 W+AEOKt7O58Fso6pAHz9UyEukqaR9NbOuUMug9k0lIw7wcDF1UILk21JO4ca3Ty1Aa
+	 Kj4gzSI4N+EWcfTZuXjsW671XVlFuIjloGUA3iD5oPWIX62przVJFNMSvSeV1SYI3m
+	 0WDDILULHmvIw==
+Date: Sun, 7 Sep 2025 11:02:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] iio: adc: ad7124: use clamp()
+Message-ID: <20250907110225.01a6341e@jic23-huawei>
+In-Reply-To: <20250905-iio-adc-ad7124-add-filter-support-v1-1-aee3834be6a9@baylibre.com>
+References: <20250905-iio-adc-ad7124-add-filter-support-v1-0-aee3834be6a9@baylibre.com>
+	<20250905-iio-adc-ad7124-add-filter-support-v1-1-aee3834be6a9@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ+JsRPtJ5DiQn8XjdVTu6jdShjxwJ7OyEXsy+RRoA=
-Content-Language: en-us
-X-CMS-MailID: 20250907100027epcas5p249d149f0d10eb6f9dea8f86b59cb34ca
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250906203658epcas5p335a6395bad2fa2f9f2d629d80a3dcb38
-References: <CGME20250906203658epcas5p335a6395bad2fa2f9f2d629d80a3dcb38@epcas5p3.samsung.com>
-	<20250906203636.3103586-1-alok.a.tiwari@oracle.com>
 
-Hi Alok
+On Fri, 05 Sep 2025 13:11:56 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-> -----Original Message-----
-> From: Alok Tiwari <alok.a.tiwari@oracle.com>
-> Sent: Sunday, September 7, 2025 2:06 AM
-> To: mani@kernel.org; quic_cang@quicinc.com; quic_asutoshd@quicinc.com;
-> peter.wang@mediatek.com; martin.petersen@oracle.com;
-> alim.akhtar@samsung.com; avri.altman@wdc.com; bvanassche@acm.org;
-> James.Bottomley@HansenPartnership.com; linux-scsi@vger.kernel.org
-> Cc: alok.a.tiwari@oracle.com; linux-kernel@vger.kernel.org
-> Subject: [PATCH] scsi: ufs: mcq: Fix memory allocation checks for SQE and
-> CQE
+> Use clamp() instead of open-coding clamping.
 > 
-> The previous checks incorrectly tested the DMA addresses returned by
-> dmam_alloc_coherent instead of the returned virtual addresses.
-> This could cause allocation failures to go unnoticed.
-> 
-> dmam_alloc_coherent returns the CPU address, not the DMA address.
-> Using DMA pointer for NULL check is incorrect.
-> 
-Right, Zero/NULL can be a valid DMA address and  NULL retuned by
-dmam_alloc_coherent()
-Is allocation failure. 
-May be rephrase your commit message to be more clearer and this patch is
-good to go.
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Good tidy up on it's own so I'll pick this up now.
 
-> Change checks to verify sqe_base_addr and cqe_base_addr instead of
-> sqe_dma_addr and cqe_dma_addr
-> 
-> Fixes: 4682abfae2eb ("scsi: ufs: core: mcq: Allocate memory for MCQ mode")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+I haven't read the rest yet but I'd imagine others will need
+more review than this.
+
+Applied this patch to the togreg branch of iio.git and pushed out as testing.
 > ---
-For v2 patch, feel free to add
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  drivers/ufs/core/ufs-mcq.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/iio/adc/ad7124.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c index
-> 1e50675772fe..cc88aaa106da 100644
-> --- a/drivers/ufs/core/ufs-mcq.c
-> +++ b/drivers/ufs/core/ufs-mcq.c
-> @@ -243,7 +243,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
->  		hwq->sqe_base_addr = dmam_alloc_coherent(hba->dev,
-> utrdl_size,
->  							 &hwq-
-> >sqe_dma_addr,
->  							 GFP_KERNEL);
-> -		if (!hwq->sqe_dma_addr) {
-> +		if (!hwq->sqe_base_addr) {
->  			dev_err(hba->dev, "SQE allocation failed\n");
->  			return -ENOMEM;
->  		}
-> @@ -252,7 +252,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
->  		hwq->cqe_base_addr = dmam_alloc_coherent(hba->dev,
-> cqe_size,
->  							 &hwq-
-> >cqe_dma_addr,
->  							 GFP_KERNEL);
-> -		if (!hwq->cqe_dma_addr) {
-> +		if (!hwq->cqe_base_addr) {
->  			dev_err(hba->dev, "CQE allocation failed\n");
->  			return -ENOMEM;
->  		}
-> --
-> 2.50.1
-
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index 70f458e3ccc12db884dda9003abcffdf48989e5e..117777fc8ad05b773da09c113cf84927c75d6b7b 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/kfifo.h>
+> +#include <linux/minmax.h>
+>  #include <linux/module.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/property.h>
+> @@ -301,11 +302,7 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
+>  	 * FS[10:0] can have a value from 1 to 2047
+>  	 */
+>  	factor = 32 * 4; /* N = 4 for default sinc4 filter. */
+> -	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
+> -	if (odr_sel_bits < 1)
+> -		odr_sel_bits = 1;
+> -	else if (odr_sel_bits > 2047)
+> -		odr_sel_bits = 2047;
+> +	odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, odr * factor), 1, 2047);
+>  
+>  	if (odr_sel_bits != st->channels[channel].cfg.odr_sel_bits)
+>  		st->channels[channel].cfg.live = false;
+> 
 
 
