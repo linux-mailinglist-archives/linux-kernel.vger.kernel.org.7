@@ -1,259 +1,159 @@
-Return-Path: <linux-kernel+bounces-804758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5093DB47C9C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AB6B47CA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D74189C7F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 157373A77D5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B542853F2;
-	Sun,  7 Sep 2025 17:40:04 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2C9288C25;
+	Sun,  7 Sep 2025 17:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TfLOItid"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F363D1DE3A4
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 17:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D22625C81E;
+	Sun,  7 Sep 2025 17:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757266804; cv=none; b=YQNlgzFbnSScQbkMM5vtLtDqPiPtMN0Y4bLmHYIYXpMzMuL2FOTbSsADEfZQ9T6C50K8VSrrvM3LwxO1Pkv+DC8MCjC7F0ADfxN4HUwskXMAihn9OQAuJcDwbVxxo3XyLwca8nYwIv4j2CN5khNlsIACw9wZJ9dde+W4EIz+ioY=
+	t=1757267112; cv=none; b=cMDoNrLhiP6zb5Uv1EQzerwASyrDonk2XJyhskh76TxSW8r9sSXy542C3dpqdToUJJjTW1ZBr+lE85m4V7+v5GOLEoSDrHIWl92By3OOpPp69lIYRBzNsUorY898XHvFOxaBNeq3xj1CFkX4DmKNoW+PjZQdBMN/LPh33kvy38o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757266804; c=relaxed/simple;
-	bh=b72s3ABiLfa+a3SeCrYld+yado6koD95QRUn5Spko0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUK0dW7csh43QQSUc7i20gEXn+++UCaQmWuuYOXeH45Wz95V/NvbDGd+I65r7JbrPTjm0tHI2QDzUWqGhlL14uB/XDQf0vji1LyhhZxQyutaM9RAdPdc21szj/tfrICTjUdsYLSjWUTp1X5y1Zixc+4vMbqn8DXY/vwk2LiA7TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 8 Sep 2025 02:39:54 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Mon, 8 Sep 2025 02:39:54 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>, Wei Xu <weixugc@google.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aL3Dav4RLvtLliYC@yjaykim-PowerEdge-T330>
-References: <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
- <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
- <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
- <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
- <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
- <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
- <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330>
- <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
+	s=arc-20240116; t=1757267112; c=relaxed/simple;
+	bh=aCfplkmNEKo9ZJ+M48D5A+6Eg+CtJkaPixrZDjOAv/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TCT0rRT1nrtuHYGm2A0Vg3gt29T/INNSsW0+MpheqddY5Gyzx/7fjYrUb6B7E1ZQNZfGd0tOXgY8URBEnaanCWiqk4IBPI/N6wMp4jSTReAaFZWTj7KFQZ/tyvLnutGgXzRIk3rkcL0uvM08YEO3+LSqB2NZ7dfibgLSRXg0dbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TfLOItid; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757267103; x=1757871903; i=markus.elfring@web.de;
+	bh=aCfplkmNEKo9ZJ+M48D5A+6Eg+CtJkaPixrZDjOAv/g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TfLOItid3leDpxBhVXZMUhz5ak5FlqSZtHHAztlEGKAb494HEtzswIeapBQAhuRA
+	 oMxa39Zkb2pKgqE9xv0qX9PW4oARc6Mr11SFbm1dM4A1UKt2MIjxjpwKugPkCGVn6
+	 UR6mjLhs480kpGO+Uk1YXcQDS/srrZ+zuyDVM4RuGv5x6IQhCk4z7pBkaZ+4zh/6O
+	 Eof48ol438/MCId8afSHwAB7cj6tAmXm3/O4zyGtQSqczP0e4sHZ7uHSqFiyUgSD5
+	 9+Uvwrkty6NwpiXJpSwW3+xNOg0HHepbTO1xHTQNvJmRPf/p0hjS2FBA6q0tBXA+w
+	 Mij9zY3oCxe6VHzAkw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.176]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6HKG-1uojrj0fxg-001Bvz; Sun, 07
+ Sep 2025 19:45:03 +0200
+Message-ID: <adb7d136-eba4-4ed2-b893-4f7c43f8d678@web.de>
+Date: Sun, 7 Sep 2025 19:45:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] i2c : algos : i2c-algo-pcf.c : fixed errors shown by
+ checkpatch
+To: Cezar Chiru <chiru.cezar.89@gmail.com>, linux-i2c@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+References: <20250907120706.44114-1-chiru.cezar.89@gmail.com>
+ <dcadf502-8c14-46fe-8e2f-222cdec4dae4@web.de> <aL2nBBmyQ-gks8Q3@hangmanPC>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aL2nBBmyQ-gks8Q3@hangmanPC>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NR2IXJdX0/lLgWtOMtGHJejqQg3pG0TgXGiR9QYSV3+fG3fIWOp
+ Cpe/yHFziGsnosZmIAEeUMlU6nqF7g7EHf/7PbtHIDu0+HoK3EBqm4BhB+CToZK0TczWrGH
+ z7NxqqY5HvfptlQpxWm7W4c2Qs2GEHELOa+Aoj2mvK5QutwUrcb9j9LK8ApBrX5wzK2Xmgm
+ M/YTUZgZGk8PPtix/50eg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DnDOnimukAs=;xXVDhxlxhUUXRH6DtTFtzTxnQyl
+ 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
+ 4fHFIiVWWrlGoybzOLp
 
-Hi, Chris Li 
+>> See also:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n81
+> Refactored the commit message to be more compact
 
-Thank you for your thoughtful and quick feedback.
+Would you get into the mood to contribute another improved patch series?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n168
 
-> > If you remove the
-> > swap tier. the range of that tier merges to the neighbour tier.  That
-> > way you don't need to worry about the swap file already having an
-> > entry in this tier you swap out.
->
-> Should the configured mask simply be left as-is,
-> even if (a) the same key is later reintroduced with a different order (e.g.,
-> first → third), or (b) a merge causes the cgroup to use a lower tier it did not
 
-Let me clarify my concern with a concrete example.
-Suppose:
-1. SSD → tier "A" (31–40), HDD → "B" (21–30), HDD2 → "C" (10–20), HDD3 → "D" (0–9)
-2. A cgroup uses tier "A"
-3. SSD is swapped off → tier "A" becomes a hole
-4. Tier "D" is removed
-5. Tier "A" is reassigned to range (0–9)
-6. Then a cgroup configured with "A" cannot actually use "A" (0~9)
-7. Later a new tier "E" is added and assigned (31–40)
-8. A cgroup now configured with "E" refers to the same numeric range (31–40),
-   but the meaning has changed compared to when it used "A".
+> Markus, Andi, new [PATCH v3] attached to this email.
 
-This feels unintuitive. I would prefer invalidating the mask if the referenced
-tier is removed, so stale references don’t silently point to a different tier.
+Please take another look at the usual development message requirements.
 
-> I think my intention may not have come across clearly. I was not trying
-> to propose a new optimization, but to describe a direction that requires
-> almost no changes from the current behavior. Looking back, I realize the
-> ideas I presented may not have looked like small adjustments, even
-> though that was my intent.
->
-> I see. We don't need to jump to implementation details yet. I can help
-> you resolve the swap allocator internals as well. Let's have the
-> user's visible behavior settle down first.
-
-Ack. Let’s settle user-visible semantics first and defer allocator internals.
-We can revisit per-CPU cluster cache handling as a lower-priority topic when we
-move to patchwork.
-
-> I talked to Wei about swap tiers a bit. Add him to the CC as well. He
-> made me realize that we need two level things in the cgroup
-> "swap.tiers".
-> ...
-> For the operation, each tier will need two bits, including the
-> default. One bit select this timer off, one bit select this tier on.
-> e.g. we have 16 tiers including the default, then all 16 tiers take up 32 bits.
-
-My understanding is:
-
-Per tier (2-bit state)
-- `+` → always on (bit 10)
-- `-` → always off (bit 01)
-- missing → inherit from parent (bit 00)
-- `11` is invalid
-
-Default tier
-- `+` means inherit parent as the base
-- `-` means start from zero (ignore parent)
-- missing means (this is the part I want to confirm) nothing?
-
-So in my view “default” is an **inheritance control knob**, whereas in your
-explanation “default” is also a **special tier** with its own 2-bit state.
-Is that the right reading?
-
-If my understanding is correct, I’m also happy to adopt the interface format
-you proposed.
-
-Over the weekend I kept thinking about it, and your proposal looks like a
-more flexible interface. It also has clear similarities to how cgroup
-controllers are added, so the format seems acceptable to me.
-
-I have one remaining concern about cgroup semantics.
-The inheritance and resource model we’re discussing seems to diverge
-somewhat from existing cgroup v2 conventions. Since we’ve aligned that
-this effectively acts as QoS control, it also makes me wonder whether we
-should proactively propose a doc update to the “Resource Distribution
-Models” section so the concept is explicitly covered. This may be me
-being overcautious, so I’d appreciate your view.
-
-> Wei also raises one very important point. Because zswap is not tight
-> to a swap device. We might want a predefined tier bit to describe
-> zswap. e.g. the first tier bit is always given to zswap and the tier
-> name is always zswap, the priority range can be assigned from
-> mm/swap/tiers interface.
-
-Ack. Reserving a predefined tier bit for zswap makes sense.
-
-As a passing thought (not a strong proposal): a few common tiers (e.g., zswap,
-ssd, hdd, remote) could be predefined and non-removable, with users inserting
-custom ranges between or apart from them. For example, if an SSD tier is
-predefined, `swapon` for SSD devices could be limited to that tier—this would
-align with grouping by service speed and nudge users toward sensible configs.
-
-> > * **Tier specification**
-> >   - Priority >= 0 range is divided into intervals, each identified by a
-> >     tier name. The full 0+ range must be covered.
->
-> Not necessarily true if we allow removal of the tier and generate
-> holes removed range as we discussed above. Unless I understand the
-> previous hole idea incorrectly.
-
-Ack. I prefer allowing holes, so we don’t need to enforce covering the full
-range simply. 
-(I had considered usage making full-range coverage coexist with holes, 
-but on reflection that doesn’t seem necessary. complicated)
-
-> >   - Each tier has an order (tier1 is highest priority) and an internal
->
-> The order you mean swap device priority order or the tier internal bit order?
-
-I meant the order implied by the priority ranges. In the interface I suggested,
-the `-` operator specifies ordered ranges, so a notion of tier order matters.
-With your format this may not be needed or not that important.
-
-> >   - Until it is set, there is no default tier.
->
-> Does that mean you can't do incremental add or incremental subtract tiers?
-
-> >     (may internally conceptually used? but not exported)
->
-> My suggestion now is "swap.tiers" is an operation rather than a
-> bitmask. It can include "default", Each tier can select on or off or
-> missing so 3 operation states. "default" tier has no name, if
-> specified, must be listed as the first in "swap.tiers"
-
-When I said “default tier,” I meant a conceptual tier that covers the full
-priority range when nothing is specified. From your reply, your “default”
-sounds closer to a *default value* (inheritance control) rather than a
-standalone tier. Did I get that right?
-
-> >     Note: a space must follow "+" or "-" before the tier name.
-> >   - Edge cases:
-> >       * If not all ranges are specified: input is accepted, but cgroups
-> >         cannot use incomplete ranges. (TBD)
-> >         e.g) echo "hdd:50" > /sys/kernel/mm/swap/tiers. (0~49 not specifeid)
->
-> Because removing the tier will generate holes in the priority range
-> anyway. 0-49 is not specified in the same as if a tier is there
-> previously then gets removed.
-
-As discussed above, we’re allowing holes, so we can accept inputs that don’t
-cover the full range.
-
-> >       * Overlap with existing range: removal fails until all swap
-> >         devices in that range are swapped off.
->
-> Specifically a new tier priority landing in the middle of a tier
-> range, the new tier will split the range with the existing one.
-
-If swapoff is complete but removal has not occurred and a new tier comes in,
-we can allow splitting. If a tier reference is still held, splitting should not
-be allowed. A corner case: a tier spans 50–100 but only priorities 55 and 60
-have active swap; inserting a split at 70 (no active refs) — to keep rules
-simple, I’d still **not** accept the split while any references exist anywhere
-in the original range.
-
-> > * **Cgroup interface**
-> >   - New files (under memcg): memory.swap.tier, memory.swap.tier.effective
->
-> I don't think we need two interface files. We can live with one just
-> "memory.swap.tiers"
-> We can list the local one first then effective one on the second line
-> or separate with "#"
-
-Ack. One file is simpler; show local then effective. For now, a newline
-separator looks clearer than “#”.
-
-> >   - Syntax modeled after cpuset:
-> >       echo "ssd-hdd,net" > memory.swap.tier
->
-> Need discussion for incremental subtract. That syntax is incremental add.
-
-I think the format you suggest (+, -)
-is appropriate from a flexibility perspective.
-
-> > * **Swap allocation**
-> >   - Simple, workable implementation (TBD; to be revisited with
-> >     measurements).
-
-Ack.
-
-Best regards,
-Youngjun Park
+Regards,
+Markus
 
