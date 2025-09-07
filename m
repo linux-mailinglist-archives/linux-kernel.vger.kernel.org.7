@@ -1,175 +1,146 @@
-Return-Path: <linux-kernel+bounces-804563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9746B479D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:42:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED102B479E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA68E3BE807
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD38189F8BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B70321CA02;
-	Sun,  7 Sep 2025 08:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8666D21D3E2;
+	Sun,  7 Sep 2025 08:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYrD6NDD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLZY/c2W"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63CC2192E4;
-	Sun,  7 Sep 2025 08:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3019818EAB;
+	Sun,  7 Sep 2025 08:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757234514; cv=none; b=NzLeIMANImQLn1QtozA4oecyzkUzCj1HO8awGfYhA2ACh5n7xByuq5GsdiOJxqGzJmZhmA8H/z8//frkMUFrv/WcnCbSx9JrhklFcsOLzFqCaP5CQPGaF4Tl4UxmHk6WMQSefoa5oB4XzAd5dhx7RjMmYsOfmBJGyOYhjBLPiA4=
+	t=1757235278; cv=none; b=isYWlfR5QT4firqyk9937gQKCYbfw5UKUOn05qxzdNLgQOiY8h2qvbpxTLbGfazZcZft7TJNpPuUmhIVAJnfvx0AK/TkP0uLNgJAKl0fozL75LVr0dib5qVlePUP7vVDHpldQTGh3MvXze4C5e2C1J5IlWeha5/A4tMgJra70dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757234514; c=relaxed/simple;
-	bh=GFcsiDtMsF2n1sNgOpIvu0722nloN3cfFrtddDj549w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=KQ1fzopN+fF7KY7C/dA0dWlCYy6ZLVkd5tIaZtbcRdmH29k0wHxwz+bQ/pJqruaOSd++clIBmKWGLUmzpgS5dkVaf/eZoGS2YkRgIM+pnhnMSHS111V9X3vPW8MxAV8J04+SCibHgAzVUWhPewTm6HQikpJe7MH+S+FTGqvN3Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYrD6NDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 663B3C4CEF0;
-	Sun,  7 Sep 2025 08:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757234513;
-	bh=GFcsiDtMsF2n1sNgOpIvu0722nloN3cfFrtddDj549w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TYrD6NDDd2gXvdYEqqvm+J9X5zIv2jeUBxS28Psr/cTHEIpo//c7+HZGXfZ2wVLGV
-	 ibALarAxpTvtc6oAsHBzHUr0897xG5QZXBQSf/2j6MP72G1NdWkBToAJFM0F2k3+22
-	 QPvyva8UmtqGDXlbYkakY3v0x3uLbrFi26EuMuXJHbp/ENA07PX5dBZx3TXRDu7wG+
-	 pNNLZGPChbVFu2Y0BGlKFuOMYHj+BFGFeg8kghwH5/3Co5D0DamEqsosbTZs68Fi8d
-	 8MPUMpTnuSRIbzLHEUY96Bb5BHw0uqSkoOg3T8algz/27ut0Lt3idXC7KgVA891KTC
-	 qtWXe4sBLuoAA==
+	s=arc-20240116; t=1757235278; c=relaxed/simple;
+	bh=sI7STwx5H6Ky6Q9bvFA9/p6Gsvpg4KWheBRc3GxyDeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZTqJ5AxWSRvryjyOFsSc6ScMSC9GU95Z/bz0AkzhP2+tuCmlpLNjaaMVKXhepgf63aZjrICdHDRjFR1D8ifKXzHcNO/9EZ1jDkoSUuq3WR9LBE5LSQ+6FRrA3K1pc+WxPrrcFlSn65kUf9ISMKty8uAEQLQH+q9voXwiO9TKQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLZY/c2W; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f6017004dso3607111e87.0;
+        Sun, 07 Sep 2025 01:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757235275; x=1757840075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ta1cFo0XDUArRgBS4UrHkNCAuCKCm6jMm0yBvo/F4kU=;
+        b=mLZY/c2WkXfAl5Rmexd4az1RfwefyGAQhNI5mBMeSjUVdVW6pspXJk6n3wHbLlQkqR
+         NlMSRloH5G6Zp0TBFiHYKzQHk+e0hiqTmQbgyxHS5upQKSWm7mWyQnOtOTLbNqIjdOEx
+         Rd/h30UbEcvT6B+abhdR+AQrJGRtCWIfz2QxVlnZ0TkKB8Lz7pWO/uAwgpcMM+Stumxz
+         hXSNYTVhlLoHSssHUr1SVT7HELVhqnAs6eVCmQLuWupKsbyNqHs7KLsBms5g/GnOBNI9
+         vaRghc1fttVlsX4vsm1EjZXN/Z24rJ6hzWhkTpIy0PdkokTzcqsUzHCsR/QMvKQqqhMz
+         +x3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757235275; x=1757840075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ta1cFo0XDUArRgBS4UrHkNCAuCKCm6jMm0yBvo/F4kU=;
+        b=vKBatk30zr58bEUN8lbXEk8rX9LMn83LzxMb4bxMkSuj+h4fR3nNsUtOSkP1/vxrSq
+         9Jv2rxu5TNjV7hF4swkk/ciLELjxEHCXNaL75rEbzfjoZsI7rS4x1iWtTQiZn7HsmLoR
+         Gf6zJd5nVhJkJRGGGwcPv4LcsVxxgcRX8oAXmwfjYRKfuTiKoB1k0PKMlWG+ZTNKPjGf
+         DRCwHmxvMLsMZvB6Cvh8M2it8Q7PcI6Aju4Q0NHxMQCuVifDgjOwoujFjmrkAzWOPoOK
+         4T5kAXBJWOrszAXULyD6ZfwldoxeiOaMunIcUzcolKf9Wuw70+482MtswbcFpU9O5a3k
+         Gc3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhl0FicvO7+bbCbzoXB8/f/KKgKETCM8wZn1LEL74gufiRh6v8Qb5Pe6nbw4WLGg2G19OkPHWyM+AfHvBe@vger.kernel.org, AJvYcCWuoU6Aytll0XjOldOa63AvVPKV8vtwsJOkl7p6RQxFFXaK3FKa2mqzKZESOQKY811ghpu7McAVHbSa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ0kY0zS2EaAMY4pQnQG6kdBZlCa/FK+xP0QMbucJcusWhSCVJ
+	ollx6lJHq6kIp/l+8aUHnLftxxpc0iYnYvIEw0TpjoZ+vPlXqbxt1e3f
+X-Gm-Gg: ASbGncuAkbSuRW5keVNWzJNOZSO+YmmwsorKS1lpRiRKAGvssaTMUp93aMnYEF4ZY7v
+	4krz8Bdtuz29EDW/wPxXKlxSmGsFqfIws8vG/iDcSlvHmobgxYuUJtXKZtInCMCZdpQ/+LzWOXZ
+	FAmCIA77sE7l2FtIDkb4kRlAhBJ2uxr3WJmUiwQJ5qT82JBwl5L22ImOOfTrZLTuLRhlVvYOs49
+	6vVXWLTNR0S8WAKD6yBa+PtXIdu0k16bJLaZwDq4d/9RC6imVHgQGOaytxMIHKYLaRg9j8/PMSb
+	EYjXLM6/YRpuDaIA+RPJsZPGCIBYIqL4vOl/5x/JHMZkF1jlVmNhiKgFj3or0PflGMam482ffNS
+	/wTOWFP/zOAAyqpqHZY0lkBvS5cXx4gaUUKEz1L0rrFhmTwWBg73skKlga48qj4WyvGYa0tDFcE
+	Zs
+X-Google-Smtp-Source: AGHT+IFiJ49HQNMd/IFx7xIzrrtqMETUdaxARpaq6+DVUgUYdtERBew8emcGESiiMQvJ8usHN1vC9A==
+X-Received: by 2002:a05:6512:3e25:b0:55f:6759:a792 with SMTP id 2adb3069b0e04-562636d6328mr1074855e87.34.1757235275009;
+        Sun, 07 Sep 2025 01:54:35 -0700 (PDT)
+Received: from ?IPV6:2a00:1fa0:730:6bf5:b6a:8710:4129:8b95? ([2a00:1fa0:730:6bf5:b6a:8710:4129:8b95])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace8121sm2814508e87.84.2025.09.07.01.54.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 01:54:33 -0700 (PDT)
+Message-ID: <f09dedfc-1f1b-4416-b854-9c4059ba264a@gmail.com>
+Date: Sun, 7 Sep 2025 11:54:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/22] usb: typec: tipd: Update partner identity when
+ power status was updated
+To: Sven Peter <sven@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ Hector Martin <marcan@marcan.st>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-12-52c348623ef6@kernel.org>
+Content-Language: en-US
+From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
+In-Reply-To: <20250906-atcphy-6-17-v2-12-52c348623ef6@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 07 Sep 2025 10:41:48 +0200
-Message-Id: <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>, "Danilo Krummrich"
- <dakr@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
- Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: pin-init: add references to previously
- initialized fields
-X-Mailer: aerc 0.20.1
-References: <20250905140047.3325945-1-lossin@kernel.org>
- <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org> <aLshd0_C-1rh3FAg@tardis-2.local>
- <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org> <aLzmcK2UM53I2Tbn@tardis-2.local>
- <aLzoyWpOr6eg-3yB@tardis-2.local>
-In-Reply-To: <aLzoyWpOr6eg-3yB@tardis-2.local>
+Content-Transfer-Encoding: 7bit
 
-On Sun Sep 7, 2025 at 4:07 AM CEST, Boqun Feng wrote:
-> On Sat, Sep 06, 2025 at 06:57:04PM -0700, Boqun Feng wrote:
->> On Sat, Sep 06, 2025 at 12:52:22PM +0200, Danilo Krummrich wrote:
->> > On Fri Sep 5, 2025 at 7:44 PM CEST, Boqun Feng wrote:
->> > > On Fri, Sep 05, 2025 at 07:18:25PM +0200, Benno Lossin wrote:
->> > > [...]
->> > >> index 606946ff4d7f..1ac0b06fa3b3 100644
->> > >> --- a/samples/rust/rust_driver_pci.rs
->> > >> +++ b/samples/rust/rust_driver_pci.rs
->> > >> @@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::I=
-dInfo) -> Result<Pin<KBox<Self>
->> > >> =20
->> > >>          let drvdata =3D KBox::pin_init(
->> > >>              try_pin_init!(Self {
->> > >> -                pdev: pdev.into(),
->> > >>                  bar <- pdev.iomap_region_sized::<{ Regs::END }>(0,=
- c_str!("rust_driver_pci")),
->> > >> +                pdev: pdev.into(),
->> > >
->> > > Ok, this example is good enough for me to express the concern here: =
-the
->> > > variable shadowing behavior seems not straightforward (maybe because=
- in
->> > > normal Rust initalization expression, no binding is created for
->> > > previous variables, neither do we have a `let` here).
->> > >
->> > > Would the future inplace initialization have the similar behavior? I
->> > > asked because a natural resolution is adding a special syntax like:
->> > >
->> > >     let a =3D ..;
->> > >
->> > >     try_pin_init!(Self {
->> > >         b: a,
->> > > 	let a =3D a.into(); // create the new binding here.
->> > > 	c: a, // <- use the previous initalized `a`.
->> > >     }
->> >=20
->> > Can you please clarify the example? I'm a bit confused that this is no=
-t a field
->> > of Self, so currently this can just be written as:
->> >=20
->>=20
->> Oh, I could have been more clear: `a` is a field of `Self`, and the
->> `let` part initalizes it.
->>=20
->> > 	try_pin_init!(Self {
->> > 	   b: a,
->> > 	   c: a.into,
->> > 	})
->> >=20
->> > Of course assuming that a is Clone, as the code above does as well.
->> >=20
->> > So, if we are concerned by the variable shadowing, which I'm less conc=
-erned
->> > about, maybe we can do this:
->>=20
->> I'm not that concerned to block this, but it does look to me like we are
->> inventing a new way (and even a different syntax because normal Rust
->> initialization doesn't create new bindings) to create binding, so I
->> think I should bring it up.
->>=20
->> >=20
->> > 	// The "original" `a` and `b`.
->> > 	let a: A =3D ...;
->> > 	let b: B =3D ...;
->> >=20
->> > 	try_pin_init!(Self {
->> > 	   a,                   // Initialize the field only.
->> > 	   let b <- b,          // Initialize the field and create a `&B` nam=
-ed `b`.
->> > 	   c: a.into(),         // That's the "original" `a`.
->> > 	   d <- D::new(b),      // Not the original `b`, but the pin-init one=
-.
->> > 	})
->
-> Another idea is using `&this`:
->
->  	try_pin_init!(&this in Self {
->  	   a,                   // Initialize the field only.
->  	   b <- b,              // Initialize the field only.
->  	   c: a.into(),         // That's the "original" `a`.
->  	   d <- D::new(this->b),      // Not the original `b`, but the pin-init=
- one.
->  	})
->
-> , like a special field projection during initialization.
+On 9/6/25 6:43 PM, Sven Peter wrote:
 
-The main issue with new syntax is the difficulty of implementing it. The
-let one is fine, but it's pretty jarring & doesn't get formatted by
-rustfmt (which I want to eventually have). Using `this` does look better
-IMO, but it's near impossible to implement using declarative macros
-(even using `syn` it seems difficult to me). So either we find some way
-to express it in existing rust syntax (maybe use an attribute?), or we
-just keep it this way.
+> From: Hector Martin <marcan@marcan.st>
+> 
+> Whenever the power status is changed make sure to also update the
+> partner identity to be able to detect changes once de-bouncing and mode
+> changes are added for CD321x.
+> 
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  drivers/usb/typec/tipd/core.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index c7cf936e5a61a331271c05b68ff1b77b89c0f643..cd427eecd8a594b7e609a20de27a9722055307d8 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -635,9 +635,16 @@ static irqreturn_t cd321x_interrupt(int irq, void *data)
+>  	if (!tps6598x_read_status(tps, &status))
+>  		goto err_unlock;
+>  
+> -	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE)
+> +	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE) {
+>  		if (!tps6598x_read_power_status(tps))
+>  			goto err_unlock;
+> +		if (TPS_POWER_STATUS_PWROPMODE(tps->pwr_status) == TYPEC_PWR_MODE_PD) {
+> +			if (tps6598x_read_partner_identity(tps)) {
+> +				dev_err(tps->dev, "failed to partner identity\n");
 
-Maybe Gary has some ideas on how to implement it.
+    Perhaps "failed to read partner identity\n"?
 
----
-Cheers,
-Benno
+[...]
+
+MBR, Sergey
+
 
