@@ -1,165 +1,183 @@
-Return-Path: <linux-kernel+bounces-804885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013A6B48160
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:43:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82AEB48163
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4A63BCCC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415E23BEA94
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570BE2253E4;
-	Sun,  7 Sep 2025 23:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38038234984;
+	Sun,  7 Sep 2025 23:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXbvDrqR"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="hj3T3GVr"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011049.outbound.protection.outlook.com [40.107.74.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E29925771;
-	Sun,  7 Sep 2025 23:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757288603; cv=none; b=IVlsdP4qlJ29CefeVT9k4Nvx2JNgv4pMNsfXWBKml12F79nFT25n8HGUYznnwgzMrbUpP8sCfyMma9LcdDolrwHfbNY1/mty4EB0lisHR5KD40xsH/TTH3UDl+RsZtMn+zORiURj+NZNLaABO+ZQQxnVu9SBBH5MJ9e7uA5Lvk0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757288603; c=relaxed/simple;
-	bh=5WpCK9DWves0I2feGleCVQXP78pfs2xzAnpxxs/rNk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ln7b9u+1nIkzQDo+CHbKB5O58HgUq+Lz81thf7hClwvze4ZfsMKefxaBD7lQTud7PDbAzIyCLhprco4pybBPtXHUTN2MCA0Pi+hv2uiYLHr8iWsLclPJbdcNYdmf4vVMRc3TVcdgPESx76Zj5ZXqrAnk7HR86jFwVJXxQlj8Wx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXbvDrqR; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-32314296757so1068983fac.3;
-        Sun, 07 Sep 2025 16:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757288601; x=1757893401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F1R5m2ofcDqn5MZgtRWBTb5ZpZg0imfutMdx76rGnAA=;
-        b=hXbvDrqRl84w/BYld3S2RMruoWAZggzrEO+8mhz8akMgohP2+o4dPz/fdOSoidsnXv
-         DIk60UTisShkb+OR0Nvz5ex14j1kVEaf9cdaoDh0M/EwzCBNWpHarjUeGuzRDn/Ep3HI
-         lmYRqX3spbhWySbwDwfr6oc3i53w165Gl3gbX8xktxuAaLnGJRK5cNLZ7+5HdRBCJvuI
-         EsQedtukorcS0+/sF1/UVp7ludfpRNK5QD8DNviPvS3AtgEgN+BT/vz1JCL17yMVfgjt
-         5rACznZF916hQTe5SYpkbuUoSZKpxqNZMFrXVOAapuabpZRhles4fFunCG1BaaiwcrJY
-         aN1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757288601; x=1757893401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F1R5m2ofcDqn5MZgtRWBTb5ZpZg0imfutMdx76rGnAA=;
-        b=DFT4jPg0RKyadR7xZVDsA9BpL4uz2pYURiHHwkKr9SJaS/iDqYjocJy0O3co1vcKmz
-         CgxowW9FtOX2SXT3QvQTehAWxOlNitsYz4Int2RWViGTn3EBIC/26io28KLPkhjRm+Zb
-         IHG8+EYrRphqkwdj1BkLiVGd6HM+dvVc6qNq+owsi8WnlaWq9KFON5DzEWam6/1Atox0
-         FJZoSgGnZfdxQyTKNgDRugqcCe9sXhh486bSnu+Nfs5MLPuaVcq15i9un1xAQdU/YkHH
-         FbOqHkQsGiX21tEeegGrk6Zer+Qjn+J0TR3RAUAR3EbkMxWxhrIXAyovLjYa46QHsYVa
-         IuhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtz51fjmB/yFT28goR6+eAfh+lNBJo5D2stXSpnZxpTx0vBkaZnDdOhiW5HWH9mI9KT5VmMHSfLGN4@vger.kernel.org, AJvYcCWApyIIfNegu0iuwRrIETbks+W6JmzC7leSSEppTxfTvqUlgYRYOix+aWLLQTu9db7QvZ7X/Ru5BQhzTSWl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyRts/slhu1+cCFLATH4i0UP0OuWIy+Kpc0AXDEnFSSIcupOjw
-	UqX9sMwVTAw0Q5POrzpjhnlGscI7e2Zi0lcvuzDdLpXfeAT09wBVxF9hHdTZNc9FT3SuE2lAC1U
-	R6wwuqYABchpQtwRGSNrfKO6JawtYFaQ=
-X-Gm-Gg: ASbGncs7uTN2LufR4zXPtGv6BR5IQtGpnS11kJAWQqVKFL52UWbcIUR/0WSrdVNWEIV
-	cYpNv+MZK/hGgCc3Ts5lBnc5Nmef4LayVMMyVKYNnTcwuPVeIu9d5SIJPeVjCAwiEVxO56dtLZa
-	9fOPH+FwMvFFRtdRA9aFuR2KxTdto6BOlW0ucGUtQ6qlytyd/UMfrpuPDNdanKcvxpcPLCpWENa
-	AzNeFdD
-X-Google-Smtp-Source: AGHT+IFN0qdS59XsIqM64KAQQGMLSbZHnMsFT6y4Ksbrai8YGYOI1NaBBm779temHUzjnHl6rmKtJ84jFBX02M41Mjg=
-X-Received: by 2002:a05:6808:1b08:b0:438:2199:6874 with SMTP id
- 5614622812f47-43b29b26eb6mr3009468b6e.50.1757288601240; Sun, 07 Sep 2025
- 16:43:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965D84A06;
+	Sun,  7 Sep 2025 23:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757289047; cv=fail; b=D81yNblL/dfP9Pvim1iFczjL9MpAPa4ntNJ3iSBSQn6xTex7dao8cvFKKR1LIvAp33Rt59v0gARcvJC1et4s5OKbiTQ/BK1iKsKccpqvjwCVmdnYYxfWL/iGCVx5GqHRzpayHlmmV88HzRadjsnJ9qAgJcW0UV6zPFUozMNz9Jg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757289047; c=relaxed/simple;
+	bh=+KLhhdoVG9cbM3HpW3j7X6gcX/BlJz7ERrNMgYGzHkQ=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=egQdm/sx/qNHsxz34A45IzCXmRPnCywjCYFwhfAPmwMHnn1DQHxHwlvCd1Ks+/Cq8bPK6BnQZ9jjnin0VkHQKBgHjPssMS/WNAZ1PcM0pe3i1jxtT+HNcot4rmosVoQPfvSt3H8R9+2pwEM7DKcSFofFLIjZHcE7Ry9WK4Mzw48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=hj3T3GVr; arc=fail smtp.client-ip=40.107.74.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jeHZtG8v+/KgnN/+oH6vQdjY6f/WQpRoqzjiz2WycrvBTuuDowB950Z8o27eekmFN5T6pAQu1lk65Z4eukjKpa62MT7XVtMsD+9B8u9pGWbsHKHyMR2akRobwG4p9czT7pA0VceudYYCsqhz6+j4dK3O9SoUtoRqzy+Bk2jM00uPR5luZOpus9pbIVNPsM3vS3fQNQDfudS3guUFTlSSbbkEVO/RstfITBmKQG49R08lTz6FuRghnQHKK/ZeviejSnJeQXhMq6bz/9nvXWvRGxitiFUbtZ8/bRF+ZUD/3Sg//mAx2oYiGBHy0PK1SBgcFShjVzFxt1t6PNSKTB2ugQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wRtBcc1lhc2wV6t7yOPwUdpDH4nlRIsMdiDqZ7RjJww=;
+ b=hfNJtm1QT0I/Lv1ZleSYPhsNecctcSycr4OXf5s3UTDNkuonJoQEnzfE1EpqdDIzg+ubihpODVQkzRiu6D86c/LX9vtemaRDybH7kI1M6NKrpynzv+yu5OPcNMRGeAail8+cL7tenV4iXExfih5+nUhQeeSZrJXdZdWlPO1dTiNjyLyoQn7F1zOaaWX+ijLdHxIxHexvotTlF5DgzTIDV5TR6r7XhOEXxWZ8NBFyPsTMvTcCdQxgVrRYtcrg5QYvVjt1mxs8HptG3a7N+6g1SzahxU1oe6VtdaQpZVRfbr9rtVI93rAnbdFY9L5wKIvLCuRiaXsH+lllI9Uv09ip1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wRtBcc1lhc2wV6t7yOPwUdpDH4nlRIsMdiDqZ7RjJww=;
+ b=hj3T3GVrvdDbc1e0CK1luXBGBlZDZrtRIlzJT+cx1P3b/FD7rKBoRun5NLmrubk6yBT6yjK5aw3feorDruti3j09KBtVnuAp86eqn4ctSNzySyjIwGY0tnlrWK+h6Mbcj3V1nxiiwV3coTco46AnZiq0/T9RG8yHXgkM3caQaTc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYWPR01MB11324.jpnprd01.prod.outlook.com
+ (2603:1096:400:3f2::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Sun, 7 Sep
+ 2025 23:50:40 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.9094.018; Sun, 7 Sep 2025
+ 23:50:40 +0000
+Message-ID: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: chenyuan_fl@163.com
+Cc: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuan CHen <chenyuan@kylinos.cn>
+Subject: Re: [PATCH] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
+In-Reply-To: <20250905015735.10347-1-chenyuan_fl@163.com>
+References: <20250905015735.10347-1-chenyuan_fl@163.com>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Sun, 7 Sep 2025 23:50:40 +0000
+X-ClientProxiedBy: TYCP301CA0036.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::20) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902142749.13724-1-kusogame68@gmail.com> <20250903074205.GB2163762@google.com>
- <CABZAGRHSVY3uneK7qb2nwDrjjRsLXzsm0mwQncU1iRZac6tAkw@mail.gmail.com> <49db9339-b2a4-4be5-b0ba-005b3ed493a0@kernel.org>
-In-Reply-To: <49db9339-b2a4-4be5-b0ba-005b3ed493a0@kernel.org>
-From: Nick Huang <sef1548@gmail.com>
-Date: Mon, 8 Sep 2025 07:43:09 +0800
-X-Gm-Features: Ac12FXwWUpJPGjF6PTjmn9l5Ph1ZMVOP4982juyA7Sf5FUNNuayb8VceQ41I1yw
-Message-ID: <CABZAGRH+B98nWGga7cVniwL-ev00nA2zZkLx9OhZDA2VVgMB6A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
- the documentation by replacing "abd" with the correct word "and". This
- improves readability and avoids confusion in the description.
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Johnsodn Huang <kusogame68@gmail.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, weiyan huang <dory85109@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB11324:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81e6d025-be96-43f2-d4df-08ddee6959d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?a3N3euEBcG7ZWR39asQrRxc+vOIRRpXW6rHpnbZZw7/Az9FBhEZhE+VkraJB?=
+ =?us-ascii?Q?B0kyRNq4g6LcSlQBJJNTcx6KOUFcSm0WcMP7VATKiTwZDVuEJ619xGrokrhQ?=
+ =?us-ascii?Q?ArWBoxjWPqlks183Qm+NGuIroffh8LJKxa+VBCXDRnd//KPsoPhl+5ULKFaO?=
+ =?us-ascii?Q?CwrPudJmEUJc2l8WadBvkMgQJdaFXidnTO6sKdNBxMf4IWkPydNRj3fKtBrL?=
+ =?us-ascii?Q?+mYO6N3Hr6NWWwygz8v5gT16zebc+Bd7PmvMDIXiGYRvK/vQcDy5Q/ySSBjS?=
+ =?us-ascii?Q?/mCJLfU+p3XU9yfOLAQQrPxRnxaFXlgOmukfkpx6ErXeY4GBJX2rgy0S8iog?=
+ =?us-ascii?Q?Zv5HHajT8NLDgV2w5fldOh9U0DojYu3TosgxaFm6hQP1BIBsxfXGiijijvmu?=
+ =?us-ascii?Q?/JZTAiTYTzPT1T2PD/4Lo2ndPOZml7enbB8QmhManaQKXgjHXQMtjmnBkUQy?=
+ =?us-ascii?Q?aGfB0EeMvmiL4a+3LUzcyen92YuZQraWH1M9fbsQhvSNGHNZ+rZ1Tk4Qz328?=
+ =?us-ascii?Q?JsWU30DHhYtd/xhtv1BPbrAf2JZU+c5Wp+zQDLWKEIL5Fhl1Id99yjGFqg+9?=
+ =?us-ascii?Q?HS1SAdRY3bV0dvLjfua+AaffY3HgkNOJ/MSptNllbKOS8s0h+nM3lAWGNW5o?=
+ =?us-ascii?Q?ZkC+kB7GzW4wvxlw604cIb3xW/SceSx+5wqMkJex1PiYD+a0qCiFwHSIMou4?=
+ =?us-ascii?Q?DSBkK9I8GZV6RgZMWmDRFOCtyK6sorPmwbviZNNxe6yBjp05aVJvudtiuYto?=
+ =?us-ascii?Q?IN9iCO9h5VsAUslPeekwKS3vdZrjsWoAYP8+Sy5Ju9BD+/DeWH8XScgKC+cU?=
+ =?us-ascii?Q?FPh8uRMZUn+g66VCVXjfeuMr0RCBvGDLA0CZGGJjGlqdd0ogqYUZgkERPeUH?=
+ =?us-ascii?Q?h1pTSOJh8YJS4pzo3bafeq8pjjcM+uX3xjxMI4WHypkV/kPdNBa5HxYiPCiO?=
+ =?us-ascii?Q?ute3ZllS5fTe10G49FFX63aXD6wP11n5mLcE1z5im5TVtR/Zrjfp7nmyIpjE?=
+ =?us-ascii?Q?a3cKhji3JPzJRbx9l4OhbdIBem963FkZ4xeJ/LE1kfxdSGq2WTl5xMzg8ews?=
+ =?us-ascii?Q?9WVaSXI2oN+N8VpCCMlv0LfRHZuaXK2BPUWoZmZpSO+Y0pTb2UxpcmQgtGee?=
+ =?us-ascii?Q?ynO5RYFkDn99XLBrXPDK//VHQzweMz7WG6EHBQbVZ7yZQpzohvrcqXoUyn1l?=
+ =?us-ascii?Q?VYSOXgtrdKk5vtleTDkk4ac9BVWPZkb2+kvSiZSrO4hbN4RFGTsql/OKmj8i?=
+ =?us-ascii?Q?KHljmD6Cm4cbvjjM3cdW7GrIBLGzpvAC8E9ULa1iAVsMtx44bXjwS1a86Sfo?=
+ =?us-ascii?Q?kQx3PyQGCm8JVdhaFQWJ4gD5YBmmsJmJsVaHKKG0REtgv0mYbRP/rcdd3rAA?=
+ =?us-ascii?Q?xa0aCTiJCvQLQU+h2uoomDJmYj1JYNEaEZHctrLBL5ihsh2LEuMGkP0dfj1w?=
+ =?us-ascii?Q?KPojGD1/epJiNKfWJdcSDJc9T4SFmMDyxB2FPdPl54tvZhft2/4Xew=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6zmBlpHaBh8r5C7RrJKh4fJXgLaFVKnjjznyUhmplYv2KDRaXN/fW8tDRqaw?=
+ =?us-ascii?Q?5rv1Sq5K21VDeKoS09pE+twhFfjS5KGFzSJ/QedUI6JyDIPjbl6/XZ+dlztz?=
+ =?us-ascii?Q?/AW90EF8jtvSEnfyasXiYwzqGpbkesrXlCTaWd53HH6gA5iEgxcckNmKcDqH?=
+ =?us-ascii?Q?V3FAZTopD18WPEz4/WKx5H1VthzoNjCvhuCeh8S8VchI7kpI/LSsFw2Owrr3?=
+ =?us-ascii?Q?sDVwHC53c33n0AFzbSrkZ8DdSuYt3YDxOqvXp72O3jlsRnRAN/LkKfrqRZ4e?=
+ =?us-ascii?Q?lrNJmaMeUTXibVJK1mXMcU0B//aS5twnt26Y/MPO+9W2lvHuwUX8QnG/Hn/4?=
+ =?us-ascii?Q?chvVCC1viElcZG2HTCwC3FefmYvTBoyO3ABt41LIVbgJ0zPMtsxpwU9Mnttv?=
+ =?us-ascii?Q?gSMnBxM3iEtrgOdU197hnK+8VBVBTFuWGhJs3B130QPpWsAXuCmSsgFFd/lG?=
+ =?us-ascii?Q?uKhbus/pVgSbxotFmLgPuFcM7/ApkgSXhLfTyvnkAyh9em995XzDei5T/YSw?=
+ =?us-ascii?Q?H2F8MYE/xd4MHNqcyeok1UZS630FDu5hHcx0WGxchHMRZt9bKLqt+2YgTBfj?=
+ =?us-ascii?Q?NOKum8Olo7VDynWh5Ygz+EgnUhUGW2AmZh+TcEinOlRy87m8tqN9Puz3/o6h?=
+ =?us-ascii?Q?4epp7/MEZBbWWtCeRI5sVqzRjJpFQCHdMrKwgR7fyt6jSCo53woOWNyGMG5A?=
+ =?us-ascii?Q?VX1vzb8A4xcRHsJw147NbQzJW4j3pbeh45Y96n7FRBNk29GnL6z9qfjXjJk1?=
+ =?us-ascii?Q?s0gwmQiSi9ad+aaHwG510+yee15QmWeHmINibi4lQ2ViiRy4sf3izcE7Ugi2?=
+ =?us-ascii?Q?bFnvAmCA6tp2uFVO0UzXdHwIHIP/OmviRsD/FTrPABXW86poXpHIZ9Wkz/ox?=
+ =?us-ascii?Q?C4JahRTC5b7EMP6hekXgP5/MsR7tnPL8FwU3uDSv38B/0WrkpTShlxirTPzs?=
+ =?us-ascii?Q?YEgh7zekNLPudmvNuz6/1S0EnZGldJ+s0Ai5D2kC5G7FeisjqyYLkFZ6elsW?=
+ =?us-ascii?Q?ZvgDObp1EakD6ofntLLkFkeDA7KBPg2EJ7SP2u/xTRQRIqWEUnaz7QMivTju?=
+ =?us-ascii?Q?4nMQfDRXv0urkBQWuebWr29Hx20SO2moS52PrLBZDuq+/jszDwv1BFu0Pl17?=
+ =?us-ascii?Q?2NCSGOkFgiWW+zE+pgxhdKQBkQ67wmvlrdAOPDLY2F8xhSnWMxvRlb79nXKL?=
+ =?us-ascii?Q?xwN+Fv4QF/o2vT0ZwY4JgoSp2WNMChNuJVC+etUHX7d6DiUJEMM9f5XPs24p?=
+ =?us-ascii?Q?MAjfFz4b6dIU3tBria+H8WH/jj9Xe4z6dOq2WNwJ3NaV95vIu/3SainJckYr?=
+ =?us-ascii?Q?B3AVIiJfcI5XcXthvLGf6NIv/Wow5ZsulUmC4JlrzrIu1+Anp5va45Y92SJU?=
+ =?us-ascii?Q?ntLIOJNneMw1R/9hUR+MBC4dC0qPQNaifcnvDVTNw8aQGTdnxTPThq7TWsvL?=
+ =?us-ascii?Q?PUKH3u4zyy6msVWf/Z57qrCiOeVQD0kQWDyNf+7xehjL3HzkRGfEhnbgQeQM?=
+ =?us-ascii?Q?zsUcFRYyzi+gAfeB7LP24h3VOeGrSPcA/Y8CFKUW4TUBBEhdTNdYHHfB+D5V?=
+ =?us-ascii?Q?RqFUrMpX2j3uy01MzlTmxQ0C0Fp9EnZtwZnv7+H7hxVFE7pgNEeqbQXQqfMS?=
+ =?us-ascii?Q?V5ZFdftgCj649lJJVLKB5Bs=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81e6d025-be96-43f2-d4df-08ddee6959d2
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2025 23:50:40.4856
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LULq3Ut+ZmbMBGF6OcbbJbjMC1Z3H6pWTXRSvkIidVLrRQomqnOZ3kr8ZoWPDc7CxLZcgxjieWkLLSQFo7aq4oofcwIImAHJtNBWSTEJao1kjErwEjyMug/t10LuJr6i
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11324
 
-Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=887=E6=
-=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=8811:07=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> On 07/09/2025 15:38, Nick Huang wrote:
-> > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=883=E6=97=A5 =
-=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:42=E5=AF=AB=E9=81=93=EF=BC=9A
-> >>
-> >> Looks like you corrupted the subject line with the commit message.
-> >>
-> >> Please resubmit.
-> >>
-> >>> From: Johnson Huang <kusogame68@gmail.com>
-> >>
-> >> Use `git format-patch` and `git send-email` instead.
-> >>
-> >>> Co-developed-by: Nick Huang <sef1548@gmail.com>
-> >>> Signed-off-by: Nick Huang <sef1548@gmail.com>
-> >>> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
-> >>
-> >> It took two of you to correct the word "and"?
-> >>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.=
-yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-> >>> index d783cc4e4e..d16c82e398 100644
-> >>> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-> >>> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-> >>> @@ -41,7 +41,7 @@ properties:
-> >>>    clock-output-names:
-> >>>      maxItems: 1
-> >>>
-> >>> -# The BD71847 abd BD71850 support two different HW states as reset t=
-arget
-> >>> +# The BD71847 and BD71850 support two different HW states as reset t=
-arget
-> >>>  # states. States are called as SNVS and READY. At READY state all th=
-e PMIC
-> >>>  # power outputs go down and OTP is reload. At the SNVS state all oth=
-er logic
-> >>>  # and external devices apart from the SNVS power domain are shut off=
-. Please
-> >>> --
-> >>> 2.43.0
-> >>>
-> >>
-> >> --
-> >> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> >
-> >
-> > This patch was sent by Johnson Huang on my behalf.
->
-> The From is malformed then. There is no single reason to change it.
->
-> > If only one person should sign off, I have already discussed with him
-> > and will keep only my own Signed-off-by.
->
-> For simple one letter typo? And then you sent three patches one-per-fix,
-> which is way too much churn.
->
-> Best regards,
-> Krzysztof
-Currently, I sent one patch per file for fixing a single typo.
-In the next version, I will combine all the typo fixes into a single
-patch and resend it. Is that acceptable?
 
-Best regards,
-Nick Huang
+Hi chenyuan
+
+Thank you for your patch
+
+> In the current implementation, when krealloc_array() fails, the original memory
+> pointer is incorrectly set to NULL after kfree(), resulting in a memory leak
+> during reallocation failure.
+> 
+> Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
+> Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
+
+Basically, I can agree that current code has memory leak issue.
+
+But what does "the original memory pointer is incorrectly set to NULL after
+kfree()," mean ? I guess git-log needs update ?
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
 
