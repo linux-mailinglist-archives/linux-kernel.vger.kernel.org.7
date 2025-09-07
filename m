@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-804624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4DEB47A90
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:57:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C7AB47A91
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2981189A72E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AAF27B1F84
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E307F25B30D;
-	Sun,  7 Sep 2025 10:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D93025B2E7;
+	Sun,  7 Sep 2025 10:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE0EmkfQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fZKhdpmE"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C922C339;
-	Sun,  7 Sep 2025 10:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2812264AA
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 10:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757242628; cv=none; b=QFgAasZ5Vor/YjUlBBQ0cfFaLWCGnI8RBRBxrNWdNwIOgSkBbG49AhQKH6kY/AslYlxrrOMytboin4/gn+IDGsMVg3TmwFn+mdNjWQRB6dS5w7nm4EJ7p4YSzlDom/UxF3+jJw5CH4vkdLJQc/Rcto9p+KqXoQnaCF8fF5yqVBo=
+	t=1757242659; cv=none; b=gqixXxYVUZRtarNqschSlmllK8gFjm84y/spOAIkROuNiYaGgLAUJJuKWVEsCxVOEfiB9iqHCxYGHpo4WJkhwdEaj0y3pI1kixb8f32ZmmO97yGfzqw9JUk9pQ9b8juPyMrKsCGQCddnbgq9a8J4SEBd6x6s/5AII92VhZu+9Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757242628; c=relaxed/simple;
-	bh=0bTidbw5nA2a03ZH7VdTr5JoBhXdmwIUfnihBPnQy/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BUUpiCFTAV0fzmoljtIU2QY6+3Y8wWgTy3d+Jwvtsld2LuUWI1d1I+hTcqTx7IoJPv30mBHqMlymGasGDbPJR0VbuiT9kHfIeH5Tl8YofT4tnAfNK+5ntbaLpo28pxYcTV+FGKYJ1ZmZu6eXT/LqNOE+GqeCAgSxD+wJaFF+NhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE0EmkfQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529E9C4CEF0;
-	Sun,  7 Sep 2025 10:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757242627;
-	bh=0bTidbw5nA2a03ZH7VdTr5JoBhXdmwIUfnihBPnQy/M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IE0EmkfQrmvGWQuJ08DPdDPv9pPZ7nF9mAFH+AVMZBnD5Tv/rU7HRWBcb9JOT0Sd6
-	 bpoGAS5tureyccfRaGXd0a0C9II2eXa8011dPsI1sgteIk1sOoy7Z71y0FlsZTyktB
-	 6ygN6+59b6euPKsB22a7wQZqMrs0eI3p2/6p0z0AHcFJUt7lRPbyPZRxuXUa27IyAA
-	 B0DOTIW6NMjRlEUFNkXccID1eQgji61O8Mtb096oXeYdkZrUrz5S/eDPXf6IK4Zf6g
-	 ooDIQeZ3DR3s46GtzleaGVRo2/OCn5a6qPeQhKP27a2Kxn+xG1C0905/qzoHCwCS7T
-	 /UtilIPEpkAQw==
-Date: Sun, 7 Sep 2025 12:57:04 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.17-rc5
-Message-ID: <aL1lACUHl9td3dtH@shikoro>
+	s=arc-20240116; t=1757242659; c=relaxed/simple;
+	bh=lPpPZRm5wDdiOlnmObs6/JqmfBFAenE2Kn0SI6dg+Mw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Y/YqwaFzqo5eIUTompLHFKF/b4BEO2tz5ZkVdsKeQcjuIOrvEBujquitxH9SUR3QMB72rBeqtDoWK/DbbQKWqjrlWpJp4u9+OIyCcf66z7OWumLfIa7mXV1IaRNGm6MDy0LGuubRlldD/ZaDYY0WKZ5GKKNJ8LIwKU2/2D2yCI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fZKhdpmE; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45de07b831dso4264465e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 03:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757242656; x=1757847456; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bW5BS8l5hy9hs8XlT7fBWdVcrw/67VKhJ4W74l/W1A=;
+        b=fZKhdpmEL1BozGkK59VxXmLw5WHDt8kAw7TVU1qcnazl01tqJaRqoUCSvKPV5+RKe5
+         v8xAPyq+SUx4QLcE1Iq7zLwzkh0bfcBmli3JMuTS+NhAp+ICNOje9N+pT9iHOWXt5Ivx
+         dbsjEWBAapAsJ7aw99sS3lkr/4IxcqWECEfhdoSzHesJYAE8hALcqm6mEwCXEzw0T45g
+         j2PgWi0ZCEoK0adWztAGdfo0HlnHkVyqsbGSwtEEyInZ7rn3OAenrUSP1COCgYGupmI+
+         CJAbNawavU99x8jXgK2Bt3G1Ea3vs9AFAeOJcywoguRnG/Zxxrk+tcXKPe7/SU0n1Whk
+         lGwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757242656; x=1757847456;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bW5BS8l5hy9hs8XlT7fBWdVcrw/67VKhJ4W74l/W1A=;
+        b=aKmn5NawlVkUGX05NEpmiLdJI+1+IN8xC4X5IwXOdXhkmrzdIOiYmAqmfG86HhMLw8
+         5fZvj24CJfU66amjMb2/sQoFjga8QcZ+3d2AVGRBANDfmhLL6SoEUV8HbwWVnLmgooyW
+         k6VXc/dHrikgUjzdBh8A/5Irhc0qZsfuo42tdaQcLZWLkl39sq4SUnXIE6Z1iBuhAJIh
+         j8PiOhuT2XFoUaT9644Q4/HzjWYaJz2xaYeAJKpOo0LxWATJYKxMjQnY7n129RAIGZQz
+         vTJSc8hEj8y2ezisfpZ6fOhPARR/heKVRsBOZSAPg10ql9BHfW3pawS9VStP+gowiLus
+         NuDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6E1fHvDtkVrCs3aeAE9KRcfk5tHqJWXWo42wvdq6O3O3+a0kf69l8AgH6eONFqt/sznNUfdmeFpXJDBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySHproTnvTeXydrlFT1mO+j2lbiUHSOxgo1aEtriP9k+855v+v
+	p4VJIY8b2h9pZEhn1g+n6cBCxybszSK18vGdTRqzUHu8bv8S6nbmUvxIOg5YprJ3XuOOhKlxS4s
+	/mL4Dxe4jpRLvfCwGkQ==
+X-Google-Smtp-Source: AGHT+IFHWBdpeOOMGJf+wo6ol1QZ252iQApfx25t8bt4+q6E9lh+rGvi5+RDjvCHUYIHevj0+eJknd7d0bHkPSo=
+X-Received: from wmbep24.prod.google.com ([2002:a05:600c:8418:b0:45d:cfa4:ce0d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1386:b0:45c:b5f7:c6e4 with SMTP id 5b1f17b1804b1-45dddedf9bfmr30888125e9.35.1757242656441;
+ Sun, 07 Sep 2025 03:57:36 -0700 (PDT)
+Date: Sun, 7 Sep 2025 10:57:35 +0000
+In-Reply-To: <20250905140534.3328297-1-lossin@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6Cd4VSEnCDVVGApV"
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20250905140534.3328297-1-lossin@kernel.org>
+Message-ID: <aL1lHyhzWX0xGrmo@google.com>
+Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!` macros
+From: Alice Ryhl <aliceryhl@google.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Christian Schrefl <chrisi.schrefl@gmail.com>, Alban Kurti <kurti@invicto.ai>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
+On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
+> Allow writing `_: { /* any number of statements */ }` in initializers to
+> run arbitrary code during initialization.
+> 
+>     try_init!(MyStruct {
+>         _: {
+>             if check_something() {
+>                 return Err(MyError);
+>             }
+>         },
+>         foo: Foo::new(val),
+>         _: {
+>             println!("successfully initialized `MyStruct`");
+>         },
+>     })
+> 
+> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880a9b898336e2d54f80715f00ce00f21f74d2f
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
---6Cd4VSEnCDVVGApV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Nice! Would it be possible to include a user so I can see it work in
+practice? E.g., for the irq feature?
 
-The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
-
-  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc5
-
-for you to fetch changes up to d035b4baebfc5112b128b66cafd45d2522a9c8f1:
-
-  Merge tag 'i2c-host-fixes-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-09-06 10:17:35 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.17-rc5
-
-- i801: drop superfluous WDT entry for Birch
-- rtl9300:
-  - fix channel number check in probe
-  - check data length boundaries in xfer
-  - drop broken SMBus quick operation
-
-----------------------------------------------------------------
-Chiasheng Lee (1):
-      i2c: i801: Hide Intel Birch Stream SoC TCO WDT
-
-Jonas Jelonek (3):
-      i2c: rtl9300: fix channel number bound check
-      i2c: rtl9300: ensure data length is within supported range
-      i2c: rtl9300: remove broken SMBus Quick operation support
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Chris Packham (6):
-      (Rev.) i2c: rtl9300: remove broken SMBus Quick operation support
-      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
-      (Rev.) i2c: rtl9300: ensure data length is within supported range
-      (Test) i2c: rtl9300: ensure data length is within supported range
-      (Rev.) i2c: rtl9300: fix channel number bound check
-      (Test) i2c: rtl9300: fix channel number bound check
-
-Jarkko Nikula (1):
-      (Rev.) i2c: i801: Hide Intel Birch Stream SoC TCO WDT
-
-Markus Stockhausen (3):
-      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
-      (Test) i2c: rtl9300: ensure data length is within supported range
-      (Test) i2c: rtl9300: fix channel number bound check
-
-Mika Westerberg (1):
-      (Rev.) i2c: i801: Hide Intel Birch Stream SoC TCO WDT
-
-Sven Eckelmann (3):
-      (Test) i2c: rtl9300: remove broken SMBus Quick operation support
-      (Test) i2c: rtl9300: ensure data length is within supported range
-      (Test) i2c: rtl9300: fix channel number bound check
-
- drivers/i2c/busses/i2c-i801.c    |  2 +-
- drivers/i2c/busses/i2c-rtl9300.c | 22 ++++++++--------------
- 2 files changed, 9 insertions(+), 15 deletions(-)
-
---6Cd4VSEnCDVVGApV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi9ZP8ACgkQFA3kzBSg
-KbZ7qBAAmrpi2bptRxtJzobl22uShR5zzlRjg4qUUeaoEq+qkkudXrd8e7wxkDY9
-auM8e7QbhprNSroUKAhkQWEv/g/GCMd57kTJAylCGXKGPCmtT94Ru8z65WuhVfYb
-xz00qrMj5Gws9d9mAeSCFwGUuU0bG3rFGr9SWLuEoq6KN68o/Iq+mvyukTn4BQ5k
-k7NBF58QlbMbxaN7b7MGM8aJ0HFQNFMGH+smmQocRP9HJYiA6yOf2eOM+IZV/Jy4
-XvBcxg5POj31Wne+w8gJPq9k4yUUqHQ6jV/CdukOp+EIEc2IZ69V5gJVN3/24KrY
-pa37KP6BeUSkIOY2kD/pyFf44yUWohh5xrIabzUuUkLej/foz2hAmFa0NVacEItx
-VdlW+nXzUfnE5wM8ElPIS+Zby9NT/w7c53aZ67lCDZwueDtGOI78Do6+prvSZO6N
-OpqurDMu7q/Sk1hQzd2jIv3DKWWws9ieaGGHCcfWoQCIAmDzE+vflVU0yEkm1xk3
-NlQWyzxl48Et0F+Ly3uIBEUu5eDCw27P6tz+pcKBqJw7vxRUDdAZOIr/VrvoXbuM
-CYW8ea/Usjl+7jbU756jQLEoiX4sjwYj+sKnABxLM9T2xILE/AJR1uqLiEeng2n7
-L0xam5E5NyR/9YdZF1iQ1lp0lvUznp5sQo6+2H5gbcGyfGT7X6A=
-=xF4z
------END PGP SIGNATURE-----
-
---6Cd4VSEnCDVVGApV--
+Alice
 
