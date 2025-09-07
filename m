@@ -1,157 +1,165 @@
-Return-Path: <linux-kernel+bounces-804884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5994AB4815E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 013A6B48160
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC493BD9F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4A63BCCC3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1912253E4;
-	Sun,  7 Sep 2025 23:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570BE2253E4;
+	Sun,  7 Sep 2025 23:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="jL7sh5LD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D3g56fzT"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXbvDrqR"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE988BEC;
-	Sun,  7 Sep 2025 23:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E29925771;
+	Sun,  7 Sep 2025 23:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757288538; cv=none; b=VR7rjxi3GBrsduNJ06kvCYbjdbUFPoC7/+/P3BYWiOBEHk2xhd/5ZUy7J/gUDwlWDDI6y7XfmUiGDB/tYTQyjxBLekghR4KXaqEZTWkg0lrJ+jN33yrLbZTuZaFP30aMGuUjxUUVVNgoLfIIN5QxDobKPh9+dq+rhSkp7XPcqQo=
+	t=1757288603; cv=none; b=IVlsdP4qlJ29CefeVT9k4Nvx2JNgv4pMNsfXWBKml12F79nFT25n8HGUYznnwgzMrbUpP8sCfyMma9LcdDolrwHfbNY1/mty4EB0lisHR5KD40xsH/TTH3UDl+RsZtMn+zORiURj+NZNLaABO+ZQQxnVu9SBBH5MJ9e7uA5Lvk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757288538; c=relaxed/simple;
-	bh=Ex7/F7mpRMFYZI7W6EB9K9UlYbHimMiEy6LJYbKvHtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAZT7x2KLEzHsr2zPjee9YxPf0wEu7YvnWlu+c1F8zFKP8sOkUxozoyqnvI1pwwOLu/aTVAlNXT7xjpZbnMiFVPwAREDRNkw5tJC8jrPgo1so7mhJhbuJ2yYHGtwPYM2dXaQn2JCVpWETlBerPvdxybEWPP1+l6yriZg4aTxX0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=jL7sh5LD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D3g56fzT; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4347C7A00C1;
-	Sun,  7 Sep 2025 19:42:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 07 Sep 2025 19:42:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1757288535; x=1757374935; bh=pqxpKSfebg
-	bBa55W3rhbKU/fUlCUpBftXlmjKWLMLwo=; b=jL7sh5LDo4TPZZAt4Pu8dW1faQ
-	aCPqJ6GPQjCmRINb5YkHyasLTB9LG8lZV9CABq2ekjUIkUqwCoQLB9MKd2CYd1yJ
-	n9MoOJHY2sknClyIRfyUmddzKqQwHDGaX+3GjI1z4h1xOk+lQXjCIsaenipsW9AW
-	qZQ4f7nGa5ZcIu+Ms0V+pAhehYNv1UQuNmgU+cXwPLGgXzxtJ/HOpxrcPPcDIaJ1
-	3qvH8nb41g093dzY3eQhwMgf8PccniFAnx7xKmUakBDH7OXwPb0Ur/It2Wla4SfG
-	G9y8S10jTwgTQ7IDQ57Tq1Fiv866mD7UaGe0QAadMlDhSNt6yTH1cTQQIdsg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757288535; x=1757374935; bh=pqxpKSfebgbBa55W3rhbKU/fUlCUpBftXlm
-	jKWLMLwo=; b=D3g56fzTANzz1wRrsM6DReE69uPV+7qmMZgp7guCfgkrtkoXPcR
-	3l2xRNMA5IaCRO7Z5Q0YkRtf1oYfv5euT42jAFDZTK6+RAAOiN8JgFLI7ImcugFt
-	VP1RJW5e9fWERb4ya3lTUo6F00mlQK56gubYozdNPHOniQFOTyCsXDDpn6K/mV4r
-	Oo0JMObIQgahzvwK5OXEzVv8bM/DDDaqQQ4mnyRsE5uAWkDpNXB9KCGZ0Yh6OE4d
-	jHWuF6Kv1d5xMxPa+96dzCQPRXEtRxgIYTfw8k2aXf1/I5BUCg3gLXnVp+RV/sPw
-	IHIBqZLXHdUfv9+cWfV/SggF0EwWWaBoWmA==
-X-ME-Sender: <xms:Vhi-aHCnNPUpZTsSKzlieV08iAU7Y6TUxwtYybMfpuihX3QpxYmPpg>
-    <xme:Vhi-aH_4svpa2nZPYpoNwYZ0NjRIPIXIQgxRPYNe1iXTqyFGy_h9UOkkED1bZKA2J
-    wbIM0cwgBEwBE5U5w>
-X-ME-Received: <xmr:Vhi-aKFm9BILwKYl2Pc8xPDBauUIM7bMjfrqGSY9ao_-x7B4kglVGGPbBDY9Yr1Bmp6mfGOOouquoliffliaI7USRpJv3jQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheellecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjfgesthdtsfdttderjeenucfhrhhomheplfgrnhcurfgr
-    lhhushcuoehjphgrlhhushesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
-    hnpeevhedvhfekhfeuiedttdfggfefteejgffgteeluddvgefghfeuheeghfekkeekffen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepjhhprghluhhssehfrghsthhmrghilhdrtghomhdp
-    nhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehklh
-    gruhhsrdhkuhguihgvlhhkrgesghhmrghilhdrtghomhdprhgtphhtthhopehthhhomhgr
-    shdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehprghlih
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhpihgvrhgrlhhishhisehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehkfihilhgtiiihnhhskhhisehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehmrghniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghh
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:Vhi-aBR6oF1dLVRLKdFfxmAR1i4_LuEf-0MDSE66pt0j2qcFw3alUA>
-    <xmx:Vhi-aBSS31L_RWWIQJNWNB1jJeHU1N2bGx5YlH8DhjK9DF0bnOB1Jw>
-    <xmx:Vhi-aE01ycGRLnq1GnhI9pAQahTZ9blCWv6bwApV0HMJkrgu8zcg9Q>
-    <xmx:Vhi-aLwrNT_29rfWpxTWH4dkSrWhpTYwoLD3VY_K95hGaHv1T8vHzA>
-    <xmx:Vxi-aO8qqNu1Y_Rf-shXDxDMk7bQzVE_BFnavsZ3PwbDZLLuEIi-dm-T>
-Feedback-ID: i01894241:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 7 Sep 2025 19:42:14 -0400 (EDT)
-Date: Mon, 8 Sep 2025 01:42:12 +0200
-From: Jan Palus <jpalus@fastmail.com>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v2] PCI: mvebu: Fix use of for_each_of_range() iterator
-Message-ID: <to2mscnfphhypr3ml7hnkvedpw45fqoj4rnrmch2zfjre5i3qi@asawccwf2lgz>
-References: <20250907102303.29735-1-klaus.kudielka@gmail.com>
+	s=arc-20240116; t=1757288603; c=relaxed/simple;
+	bh=5WpCK9DWves0I2feGleCVQXP78pfs2xzAnpxxs/rNk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ln7b9u+1nIkzQDo+CHbKB5O58HgUq+Lz81thf7hClwvze4ZfsMKefxaBD7lQTud7PDbAzIyCLhprco4pybBPtXHUTN2MCA0Pi+hv2uiYLHr8iWsLclPJbdcNYdmf4vVMRc3TVcdgPESx76Zj5ZXqrAnk7HR86jFwVJXxQlj8Wx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXbvDrqR; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-32314296757so1068983fac.3;
+        Sun, 07 Sep 2025 16:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757288601; x=1757893401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F1R5m2ofcDqn5MZgtRWBTb5ZpZg0imfutMdx76rGnAA=;
+        b=hXbvDrqRl84w/BYld3S2RMruoWAZggzrEO+8mhz8akMgohP2+o4dPz/fdOSoidsnXv
+         DIk60UTisShkb+OR0Nvz5ex14j1kVEaf9cdaoDh0M/EwzCBNWpHarjUeGuzRDn/Ep3HI
+         lmYRqX3spbhWySbwDwfr6oc3i53w165Gl3gbX8xktxuAaLnGJRK5cNLZ7+5HdRBCJvuI
+         EsQedtukorcS0+/sF1/UVp7ludfpRNK5QD8DNviPvS3AtgEgN+BT/vz1JCL17yMVfgjt
+         5rACznZF916hQTe5SYpkbuUoSZKpxqNZMFrXVOAapuabpZRhles4fFunCG1BaaiwcrJY
+         aN1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757288601; x=1757893401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F1R5m2ofcDqn5MZgtRWBTb5ZpZg0imfutMdx76rGnAA=;
+        b=DFT4jPg0RKyadR7xZVDsA9BpL4uz2pYURiHHwkKr9SJaS/iDqYjocJy0O3co1vcKmz
+         CgxowW9FtOX2SXT3QvQTehAWxOlNitsYz4Int2RWViGTn3EBIC/26io28KLPkhjRm+Zb
+         IHG8+EYrRphqkwdj1BkLiVGd6HM+dvVc6qNq+owsi8WnlaWq9KFON5DzEWam6/1Atox0
+         FJZoSgGnZfdxQyTKNgDRugqcCe9sXhh486bSnu+Nfs5MLPuaVcq15i9un1xAQdU/YkHH
+         FbOqHkQsGiX21tEeegGrk6Zer+Qjn+J0TR3RAUAR3EbkMxWxhrIXAyovLjYa46QHsYVa
+         IuhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtz51fjmB/yFT28goR6+eAfh+lNBJo5D2stXSpnZxpTx0vBkaZnDdOhiW5HWH9mI9KT5VmMHSfLGN4@vger.kernel.org, AJvYcCWApyIIfNegu0iuwRrIETbks+W6JmzC7leSSEppTxfTvqUlgYRYOix+aWLLQTu9db7QvZ7X/Ru5BQhzTSWl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyRts/slhu1+cCFLATH4i0UP0OuWIy+Kpc0AXDEnFSSIcupOjw
+	UqX9sMwVTAw0Q5POrzpjhnlGscI7e2Zi0lcvuzDdLpXfeAT09wBVxF9hHdTZNc9FT3SuE2lAC1U
+	R6wwuqYABchpQtwRGSNrfKO6JawtYFaQ=
+X-Gm-Gg: ASbGncs7uTN2LufR4zXPtGv6BR5IQtGpnS11kJAWQqVKFL52UWbcIUR/0WSrdVNWEIV
+	cYpNv+MZK/hGgCc3Ts5lBnc5Nmef4LayVMMyVKYNnTcwuPVeIu9d5SIJPeVjCAwiEVxO56dtLZa
+	9fOPH+FwMvFFRtdRA9aFuR2KxTdto6BOlW0ucGUtQ6qlytyd/UMfrpuPDNdanKcvxpcPLCpWENa
+	AzNeFdD
+X-Google-Smtp-Source: AGHT+IFN0qdS59XsIqM64KAQQGMLSbZHnMsFT6y4Ksbrai8YGYOI1NaBBm779temHUzjnHl6rmKtJ84jFBX02M41Mjg=
+X-Received: by 2002:a05:6808:1b08:b0:438:2199:6874 with SMTP id
+ 5614622812f47-43b29b26eb6mr3009468b6e.50.1757288601240; Sun, 07 Sep 2025
+ 16:43:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250907102303.29735-1-klaus.kudielka@gmail.com>
-User-Agent: NeoMutt/20250905
+References: <20250902142749.13724-1-kusogame68@gmail.com> <20250903074205.GB2163762@google.com>
+ <CABZAGRHSVY3uneK7qb2nwDrjjRsLXzsm0mwQncU1iRZac6tAkw@mail.gmail.com> <49db9339-b2a4-4be5-b0ba-005b3ed493a0@kernel.org>
+In-Reply-To: <49db9339-b2a4-4be5-b0ba-005b3ed493a0@kernel.org>
+From: Nick Huang <sef1548@gmail.com>
+Date: Mon, 8 Sep 2025 07:43:09 +0800
+X-Gm-Features: Ac12FXwWUpJPGjF6PTjmn9l5Ph1ZMVOP4982juyA7Sf5FUNNuayb8VceQ41I1yw
+Message-ID: <CABZAGRH+B98nWGga7cVniwL-ev00nA2zZkLx9OhZDA2VVgMB6A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Johnsodn Huang <kusogame68@gmail.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, weiyan huang <dory85109@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07.09.2025 12:21, Klaus Kudielka wrote:
-> The blamed commit simplifies code, by using the for_each_of_range()
-> iterator. But it results in no pci devices being detected anymore on
-> Turris Omnia (and probably other mvebu targets).
-> 
-> Issue #1:
-> 
-> To determine range.flags, of_pci_range_parser_one() uses bus->get_flags(),
-> which resolves to of_bus_pci_get_flags(). That function already returns an
-> IORESOURCE bit field, and NOT the original flags from the "ranges"
-> resource.
-> 
-> Then mvebu_get_tgt_attr() attempts the very same conversion again.
-> But this is a misinterpretation of range.flags.
-> 
-> Remove the misinterpretation of range.flags in mvebu_get_tgt_attr(),
-> to restore the intended behavior.
-> 
-> Issue #2:
-> 
-> The driver needs target and attributes, which are encoded in the raw
-> address values of the "/soc/pcie/ranges" resource. According to
-> of_pci_range_parser_one(), the raw values are stored in range.bus_addr
-> and range.parent_bus_addr, respectively. range.cpu_addr is a translated
-> version of range.parent_bus_addr, and not relevant here.
-> 
-> Use the correct range structure member, to extract target and attributes.
-> This restores the intended behavior.
-> 
-> Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for parsing "ranges"")
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
-> Reported-by: Jan Palus <jpalus@fastmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220479
-> ---
-> v2: Fix issue #2, as well.
-> 
->  drivers/pci/controller/pci-mvebu.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=887=E6=
+=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=8811:07=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 07/09/2025 15:38, Nick Huang wrote:
+> > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=883=E6=97=A5 =
+=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:42=E5=AF=AB=E9=81=93=EF=BC=9A
+> >>
+> >> Looks like you corrupted the subject line with the commit message.
+> >>
+> >> Please resubmit.
+> >>
+> >>> From: Johnson Huang <kusogame68@gmail.com>
+> >>
+> >> Use `git format-patch` and `git send-email` instead.
+> >>
+> >>> Co-developed-by: Nick Huang <sef1548@gmail.com>
+> >>> Signed-off-by: Nick Huang <sef1548@gmail.com>
+> >>> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
+> >>
+> >> It took two of you to correct the word "and"?
+> >>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.=
+yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> >>> index d783cc4e4e..d16c82e398 100644
+> >>> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> >>> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> >>> @@ -41,7 +41,7 @@ properties:
+> >>>    clock-output-names:
+> >>>      maxItems: 1
+> >>>
+> >>> -# The BD71847 abd BD71850 support two different HW states as reset t=
+arget
+> >>> +# The BD71847 and BD71850 support two different HW states as reset t=
+arget
+> >>>  # states. States are called as SNVS and READY. At READY state all th=
+e PMIC
+> >>>  # power outputs go down and OTP is reload. At the SNVS state all oth=
+er logic
+> >>>  # and external devices apart from the SNVS power domain are shut off=
+. Please
+> >>> --
+> >>> 2.43.0
+> >>>
+> >>
+> >> --
+> >> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> >
+> >
+> > This patch was sent by Johnson Huang on my behalf.
+>
+> The From is malformed then. There is no single reason to change it.
+>
+> > If only one person should sign off, I have already discussed with him
+> > and will keep only my own Signed-off-by.
+>
+> For simple one letter typo? And then you sent three patches one-per-fix,
+> which is way too much churn.
+>
+> Best regards,
+> Krzysztof
+Currently, I sent one patch per file for fixing a single typo.
+In the next version, I will combine all the typo fixes into a single
+patch and resend it. Is that acceptable?
 
-Confirmed the patch applied on top of 6.16.5 fixes all the issues
-introduced with 5da3d94a23c6.
-
-Tested-by: Jan Palus <jpalus@fastmail.com>
+Best regards,
+Nick Huang
 
