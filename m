@@ -1,209 +1,155 @@
-Return-Path: <linux-kernel+bounces-804534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A227B47929
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:16:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B47B4792D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 07:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3AA1B228AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79ADA16BE68
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 05:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FCB1D6DDD;
-	Sun,  7 Sep 2025 05:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C113018EAB;
+	Sun,  7 Sep 2025 05:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0ZKWe6z"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h/ZZL9dJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267A6F4FA
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 05:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE2C1A01C6
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 05:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757222202; cv=none; b=Ic5xA7Qw9J/VpC9bf2jIG5b2g82MwLpK7uJRzAGqL28gIG++A2edzMV4LS6xg4eHU3YqcvnWdDsHHDRdXZLrDxFGBJz7V1Bx+5K43bDtTvnOW8pHgS0PzZgSw9Nkg1ochFSc7C87AtEl8begmz4CVy+uIrnq2Pthsh2v0dQw4zs=
+	t=1757222295; cv=none; b=FT07CfqbhvxmjBlJUAtlmGdCpnZ8uwyieNadgWDrdkB3kqGRWMXMG6gRbdhOZPfq03KLNXpVsjU4bKG88b39xdEaat6MndyIwevkoNDMyX+4cUgvgKJUlc9AhNjk8NdEESehlpx/3uoqSwf0q7seLxd8xouaKcbWvio36nrEc7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757222202; c=relaxed/simple;
-	bh=ShjqWXCQdzz5P/csLgvS4g4rnUjrvvtx5BIFMZzRD/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=evGyAZFx/BZ8tV3keN2axO3lxQp8+8ld5V9tkQFUE607BcM5aZiwwg1YuYFJ4px5UmNZuW/0z94h73pknYFwrzf4WIMMHC98zFUilPPLY4ffBXMB4x4N+rRFAlH8tHe86gIgNuXZU5U7zkO9Q19/fKsBdKptrq9BNFhCR0RpG3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0ZKWe6z; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b350971a2eso178221cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 22:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757222200; x=1757827000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ShjqWXCQdzz5P/csLgvS4g4rnUjrvvtx5BIFMZzRD/s=;
-        b=D0ZKWe6zJ5DBk3u49sFAXcswZI5xjCLZYkg8a0DwZFax/7MwrgfM+AjDCFdQ4d2Lo9
-         /YoN9iLAp5YpeIwo9pTIIlTniIt5haM/bv9zCkazsgJhbyvj139W0CWc+3XRChb6nwwf
-         /LIIptyBbClufqYirNxDf14yn/24tMZeQSmYlZ/Dxx/a7KTrYJLddBWG6aYrF8ssQuoR
-         8xRz1E2H+am4kSxYtyRAnXIrsBOe614BH+yZ1XensjJC4z6ib+zhlnHBZeAs399NPqHy
-         uTuRQtjvfyyNh1pOjbLwkvYS5yz+KH6fvtxnxSz3Cj1PReTaX2XfxnrE+eZ9HCrMRgJz
-         p5qw==
+	s=arc-20240116; t=1757222295; c=relaxed/simple;
+	bh=qwccVuzbUesgD3QoZMWodzkcU8xN7J0ykW7Ze0ZXgK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WWhtUMGHXZn7TfARG4g5TyTm29aL9Di8DJ76+VLxrfT0ZQPcVEqsRLLr6xT9EkPXOTVHvz33MEUnf5tWxev/8iPa061p96fOgonVKizFo3Ngp7ppkkyIl1xDF5B4lfCNr2+tPCYHaiXmK8DfO6sPNzQerbqgCgxWUU3EbEPAys0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h/ZZL9dJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757222292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OblASZcrr7kB2yJKEylAwifpAWWyy4KUP/8RCxYnVGo=;
+	b=h/ZZL9dJAkhDgqZ3KgPkro/X0Kl69eMJRT1Qx+HCFHatpZzxYjlIH7fMa7zI8wg/mCa2ZN
+	JpBK/nsO/fe6WLSKAXRd9ETScmx+fe8vHzjoUsqUMPoDScmC0lyMIJ5/CN00cty/tk3xfW
+	8s5+jru1XBFDoPywvd/PLrefsb40Su4=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-LZksDGojPuCc75JVzVPNqA-1; Sun, 07 Sep 2025 01:18:10 -0400
+X-MC-Unique: LZksDGojPuCc75JVzVPNqA-1
+X-Mimecast-MFC-AGG-ID: LZksDGojPuCc75JVzVPNqA_1757222289
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b2336e513so52181205ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 22:18:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757222200; x=1757827000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ShjqWXCQdzz5P/csLgvS4g4rnUjrvvtx5BIFMZzRD/s=;
-        b=j+L4Ray7ycmSa4Pt73V80AW2aOYChih+gYW9rRPem8rTjDuIKhX11RIWqzFMY2DK6b
-         OHwd+NKDGiV65TQyMC4p8q0kwePAAe5OHn5FvVcvOApMZNlViJHyTj5icM+Bt1AyVQoB
-         ivPu56veOY2TXqih2bMjPIi7pSzxehqakp/JMl60j6Gqx1Pk4hFl+pgNX7NQay7wrG1q
-         UM+HnJOw0snOLre8lVlUp5U4Yr7jGZT1w3l14rxhVrLG1r3hTkccQcny8lHNd0nhcMAj
-         +Y5MoV3Rghh0UGahIOX1qmmvOVF8vvyAgXy14tWhOG87I/zUkYTzHmKCex/CtNLqPjyk
-         EuSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc10qyld0TH2Gr86mq9OfQM/m01MH4TifwzYtDopWQ4cc+y3+WBDivooBO4wOm3YYrrMzYADwOIJ201a8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMy2CjpLZlayavDGJZWHDohaILOwhxb4iofr6kcdGpu86LEqCL
-	3MjtJGB4KEGKu78Q9Sxe9fxJo+5viPLtCeo2tcQqP767ka748mc4lvxACzvC5tK9YOXxQsQVTdU
-	6SKKiYeWPSxOeuGP5+Zac4QojBLoqvzezG4AT/gQv
-X-Gm-Gg: ASbGncsWk8BOha7vq2sv3YcchImM1HZ1NWzO/nIzOCMuP6LKOt4MN1duJJGoCaRX4Rj
-	Y/nG5ePD6BZ72VL9592Ga4afU0L2lffdcf37MUJ//OtGV9fbJtCz2UgcinHkybrtfmFJ1PzY/Mb
-	Im6Fym9z6nHjW0ExAVTFxf8TblzcvVnOe9mFg1B3dy/gXX4OZcU8IiVQEpasp9LRnvqLyQ8q1e8
-	alWWJdvDvEcMjFsCrnUXrqUrec+K/PBzNgsvcn2A7evMQ8e
-X-Google-Smtp-Source: AGHT+IH2UlbxM/Uzxg5uqSqTaCsgQbK9Rw3KZwBmRi8V/IgoDIQG7Ath+K7o+B3tDBsSn2aHT+JwtXNqSdoRpTn2O0c=
-X-Received: by 2002:ac8:5981:0:b0:4b3:509b:8031 with SMTP id
- d75a77b69052e-4b5f83cd080mr4076281cf.13.1757222199461; Sat, 06 Sep 2025
- 22:16:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757222289; x=1757827089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OblASZcrr7kB2yJKEylAwifpAWWyy4KUP/8RCxYnVGo=;
+        b=PHkoPkrUEpQ7kCeGpoAR90RaD6WC3PPqHLnb6AZ1UeRScMx+2EbHtgQ09afSIckLp3
+         kCRYNAwh7h2lnIkgtPLt/xZbLMijYCjieK+hCA/PQIRorEQFDz78mfqyYbQapr+QvT23
+         7j69ey8XvCdaRUCTpyHZj3aWtyPRTWn81j4TFIf9eYkUR1g8fBPsMVZn4QSjEniG9+iy
+         QwNEjDJ/Z+URBuuOyBIqlI2TC+wv3iNlBE7BdoVqd+Eaa77sy5F+t4C5mSMKD6e9ZSJC
+         VEEamTCu3VOJ/JBnQq8vApIHZGOV74Ms7E7y1ICp9QU1GbR9KuQOqH8vTX0OafWfWYHS
+         jP0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/K4KpEtHCVcBm0cP+CBa0BkLR/r1q1HTmV8hqw46TcoOL+shsAo0d2ZQapRrjJEpxubc/2eiV87oR+w4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRDasrsnRFSR/SxkCYCzjzyC3/OVE0rs1JCPq+29qfpdbnxL4V
+	CqWgHNfFHfKO8ny/ym36yDswMTU7G0h6MxSfMs81t1OmMQ6bBADZpO3ndypuFQDaYLh9CoZXWoW
+	06Dg6zhFiHDX1a2ta+cWa/e1uPUpLgROrXHBtt8bWQ3DEomCGziP0tWInrfShiBnpVw==
+X-Gm-Gg: ASbGncvUT14FTVW8eD8V35d75ICbxBi0se4PsniXUuZLGIVvS5WprSUTWS3Tz4wOcck
+	Fwfmd2ZqbVabscgjP6KVno6tOpkRrnLF/lWH0nOE/QvkXGmmqTQdAWMDgl8EmZHvTVJLIQchyPH
+	T8Blt9uhfHcsv4ZfuLuS3XDpZVEJrjZG+DFNFkjMIN+cytMcxg1hNDawUn3ZIXXWuoLets13x8L
+	L7dothq1RqAIOZHPOqVrD5m3CEoUAZpkEi5Gb72o5B+C6nXXFetphCNp2Qt2RWecyZ+rkaBMLQt
+	zzlJD4JUrliZ5fvsGBuLqGXiAy4xXD8k+FjJ/9ol0JAl5x1GhHNNx5uoGusEqs0l9Y9NTP+G5x+
+	ellkd
+X-Received: by 2002:a17:902:7c98:b0:249:33db:34b with SMTP id d9443c01a7336-25174374976mr39073055ad.42.1757222288996;
+        Sat, 06 Sep 2025 22:18:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErgKrN3nawKeRdKJYtoByqaDG+aENeILCXOZaM7UN1gFx5Yj70HtS39XlJA3mnEHXugO/6/A==
+X-Received: by 2002:a17:902:7c98:b0:249:33db:34b with SMTP id d9443c01a7336-25174374976mr39072895ad.42.1757222288607;
+        Sat, 06 Sep 2025 22:18:08 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b020a7cb5sm146860015ad.115.2025.09.06.22.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 22:18:08 -0700 (PDT)
+Date: Sun, 7 Sep 2025 13:18:03 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
+Message-ID: <20250907051803.t4av26vmf7zodzjl@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
+ <1b12c0d9-b564-4e57-b1a5-359e2e538e9c@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755190013.git.pyyjason@gmail.com> <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
- <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com> <5o52rxp4ujglel53cs6ii2royaczuywuejyn7kbij6jknuglmf@frk4omt5ak7d>
-In-Reply-To: <5o52rxp4ujglel53cs6ii2royaczuywuejyn7kbij6jknuglmf@frk4omt5ak7d>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sat, 6 Sep 2025 22:16:28 -0700
-X-Gm-Features: AS18NWBwfIS7dirB4t0GoXLCzK48DFFhzngu30-yZfZ5H5ufI_4DrJL5bIsH4mQ
-Message-ID: <CAJuCfpE3pXB5=sZLywPgCk5sU1t-=G00TG-dLaXpYheSPYz1RA@mail.gmail.com>
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Yueyang Pan <pyyjason@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Sourav Panda <souravpanda@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b12c0d9-b564-4e57-b1a5-359e2e538e9c@oracle.com>
 
-On Wed, Aug 27, 2025 at 2:15=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Tue, Aug 26, 2025 at 07:32:17PM -0700, Suren Baghdasaryan wrote:
-> > On Thu, Aug 21, 2025 at 12:53=E2=80=AFPM Shakeel Butt <shakeel.butt@lin=
-ux.dev> wrote:
-> > >
-> > > On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
-> > > > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
-> > > > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
-> > > > > > Right now in the oom_kill_process if the oom is because of the =
-cgroup
-> > > > > > limit, we won't get memory allocation infomation. In some cases=
-, we
-> > > > > > can have a large cgroup workload running which dominates the ma=
-chine.
-> > > > > > The reason using cgroup is to leave some resource for system. W=
-hen this
-> > > > > > cgroup is killed, we would also like to have some memory alloca=
-tion
-> > > > > > information for the whole server as well. This is reason behind=
- this
-> > > > > > mini change. Is it an acceptable thing to do? Will it be too mu=
-ch
-> > > > > > information for people? I am happy with any suggestions!
-> > > > >
-> > > > > For a single patch, it is better to have all the context in the p=
-atch
-> > > > > and there is no need for cover letter.
-> > > >
-> > > > Thanks for your suggestion Shakeel! I will change this in the next =
-version.
-> > > >
-> > > > >
-> > > > > What exact information you want on the memcg oom that will be hel=
-pful
-> > > > > for the users in general? You mentioned memory allocation informa=
-tion,
-> > > > > can you please elaborate a bit more.
-> > > > >
-> > > >
-> > > > As in my reply to Suren, I was thinking the system-wide memory usag=
-e info
-> > > > provided by show_free_pages and memory allocation profiling info ca=
-n help
-> > > > us debug cgoom by comparing them with historical data. What is your=
- take on
-> > > > this?
-> > > >
-> > >
-> > > I am not really sure about show_free_areas(). More specifically how t=
-he
-> > > historical data diff will be useful for a memcg oom. If you have a
-> > > concrete example, please give one. For memory allocation profiling, i=
-s
-> > > it possible to filter for the given memcg? Do we save memcg informati=
-on
-> > > in the memory allocation profiling?
-> >
-> > Actually I was thinking about making memory profiling memcg-aware but
-> > it would be quite costly both from memory and performance points of
-> > view. Currently we have a per-cpu counter for each allocation in the
-> > kernel codebase. To make it work for each memcg we would have to add
-> > memcg dimension to the counters, so each counter becomes per-cpu plus
-> > per-memcg. I'll be thinking about possible optimizations since many of
-> > these counters will stay at 0 but any such optimization would come at
-> > a performance cost, which we tried to keep at the absolute minimum.
-> >
-> > I'm CC'ing Sourav and Pasha since they were also interested in making
-> > memory allocation profiling memcg-aware. Would Meta folks (Usama,
-> > Shakeel, Johannes) be interested in such enhancement as well? Would it
-> > be preferable to have such accounting for a specific memcg which we
-> > pre-select (less memory and performance overhead) or we need that for
-> > all memcgs as a generic feature? We have some options here but I want
-> > to understand what would be sufficient and add as little overhead as
-> > possible.
->
-> Thanks Suren, yes, as already mentioned by Usama, Meta will be
-> interested in memcg aware allocation profiling. I would say start simple
-> and as little overhead as possible. More functionality can be added
-> later when the need arises. Maybe the first useful addition is just
-> adding how many allocations for a specific allocation site are memcg
-> charged.
+On Tue, Sep 02, 2025 at 03:50:10PM +0100, John Garry wrote:
+> On 22/08/2025 09:02, Ojaswin Mujoo wrote:
+> > The main motivation of adding this function on top of _require_fio is
+> > that there has been a case in fio where atomic= option was added but
+> > later it was changed to noop since kernel didn't yet have support for
+> > atomic writes. It was then again utilized to do atomic writes in a later
+> > version, once kernel got the support. Due to this there is a point in
+> > fio where _require_fio w/ atomic=1 will succeed even though it would
+> > not be doing atomic writes.
+> > 
+> > Hence, add an explicit helper to ensure tests to require specific
+> > versions of fio to work past such issues.
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >   common/rc | 32 ++++++++++++++++++++++++++++++++
+> >   1 file changed, 32 insertions(+)
+> > 
+> > diff --git a/common/rc b/common/rc
+> > index 35a1c835..f45b9a38 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -5997,6 +5997,38 @@ _max() {
+> >   	echo $ret
+> >   }
+> > +# Check the required fio version. Examples:
+> > +#   _require_fio_version 3.38 (matches 3.38 only)
+> > +#   _require_fio_version 3.38+ (matches 3.38 and above)
+> > +#   _require_fio_version 3.38- (matches 3.38 and below)
+> 
+> This requires the user to know the version which corresponds to the feature.
+> Is that how things are done for other such utilities and their versions vs
+> features?
 
-Adding back Sourav, Pasha and Johannes who got accidentally dropped in
-the replies.
+I don't like to use "version" to be the _require_ condition either. fstests always
+recommend "checking if the feature/behavior is really supported" at first, not a
+hard version limitation. Some old downstream software might backport new upstream
+commits, the version is useless for them.
 
-I looked a bit into adding memcg-awareness into memory allocation
-profiling and it's more complicated than I first thought (as usual).
-The main complication is that we need to add memcg_id or some other
-memcg identifier into codetag_ref. That's needed so that we can
-unaccount the correct memcg when we free an allocation - that's the
-usual function of the codetag_ref. Now, extending codetag_ref is not a
-problem by itself but when we use mem_profiling_compressed mode, we
-store an index of the codetag instead of codetag_ref in the unused
-page flag bits. This is useful optimization to avoid using page_ext
-and overhead associated with it. So, full blown memcg support seems
-problematic.
+Thanks,
+Zorro
 
-What I'm thinking is easily doable is a filtering interface where we
-could select a specific memcg to be profiled, IOW we profile only
-allocations from a chosen memcg. Filtering can be done using ioctl
-interface on /proc/allocinfo, which can be used for other things as
-well, like filtering non-zero allocations, returning per-NUMA node
-information, etc. I see that Damon uses similar memcg filtering (see
-damos_filter.memcg_id), so I can reuse some of that code for
-implementing this facility. From high-level, userspace will be able to
-select one memcg at a time to be profiled. At some later time
-profiling information is gathered and another memcg can be selected or
-filtering can be reset to profile all allocations from all memcgs. I
-expect overhead for this kind of memcg filtering to be quite low. WDYT
-folks, would this be helpful and cover your usecases?
+> 
+> I was going to suggest exporting something like
+> _require_fio_atomic_writes(), and _require_fio_atomic_writes() calls
+> _require_fio_version() to check the version.
+> 
+> Thanks,
+> John
+> 
+> 
 
-
->
 
