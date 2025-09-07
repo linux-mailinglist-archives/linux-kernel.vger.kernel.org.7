@@ -1,348 +1,259 @@
-Return-Path: <linux-kernel+bounces-804757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A07B47C99
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5093DB47C9C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B88B3A6BD3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D74189C7F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 17:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2019277017;
-	Sun,  7 Sep 2025 17:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="FcGqzuD+"
-Received: from exactco.de (exactco.de [176.9.10.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B542853F2;
+	Sun,  7 Sep 2025 17:40:04 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836121922FD;
-	Sun,  7 Sep 2025 17:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F363D1DE3A4
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 17:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757266378; cv=none; b=en0ER9URH7CbXPIyq+OAH6XHg9+ZoBxjZ+Ivki8yjPoIugN6RTgjiAC0TSvbpLOodn6QkLcPtrzn/1o5h/bRUw7dIM6Enu+q92JScXPdYFg6/4V3Jiee68zw/BwIrQfLsbDmVpPl2el5A1ccWh/dHWde2Bm1Uz7Dx8ONCswHpoE=
+	t=1757266804; cv=none; b=YQNlgzFbnSScQbkMM5vtLtDqPiPtMN0Y4bLmHYIYXpMzMuL2FOTbSsADEfZQ9T6C50K8VSrrvM3LwxO1Pkv+DC8MCjC7F0ADfxN4HUwskXMAihn9OQAuJcDwbVxxo3XyLwca8nYwIv4j2CN5khNlsIACw9wZJ9dde+W4EIz+ioY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757266378; c=relaxed/simple;
-	bh=lIQISI6nTxyO/HkgTWARg+NilNfgaGX3a4nT1pDxIiE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YqDGFZXJe9Iti0d860jrn4JJOZwWm1jB5P4Z2wiBQlzIB4nAa+2V8/aCgY9dm6cz5kdv/8iEtM0QV3C+AUZJqY/lp+BMuAZrtdvh6n5qtYcoYXAN8+E4LQggFnCV8Ih+4N6/MClly1O+QOmlxYyosprKAPVRsFqTeJZY6+Yiskk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactco.de; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=FcGqzuD+; arc=none smtp.client-ip=176.9.10.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactco.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
-	s=x; h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To
-	:From:Subject:Mime-Version:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=A76I4Cw/JUI8Lct9eMiRhHODRoFKwuFzpb6mJeg53+0=; b=FcGqzuD+LrE4/07WuXc3IeopF/
-	SurvbqME63M10kiEQRkm3xRulbNqzE7KJmne8el2enQmQcJvtUfUnxp+Sd0yl+PAUJWy+Zp5sKQc9
-	6FM5HrKc7T0QasRYCCYHTWsM2sof5Kmk/hUkXx3bnD4AoAwhs5bS8DOMkl1NyaaPwhMm8sXM8dr9e
-	PFU/Cr+Ic8XJTnoEjxv7xUai3xsMML/IBnZ2n/OmrKAXADRajneaRzb9wPu2jsD1FZ1GN5BBDOB/u
-	gGrF/TsecRpu8mUYde206ofv3WPY9Q6EEUGHTYPwKT0gWWvqjVxWwKE/LoGxOuyHndDWfbdZz/bSD
-	Y3Bdub3A==;
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1757266804; c=relaxed/simple;
+	bh=b72s3ABiLfa+a3SeCrYld+yado6koD95QRUn5Spko0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUK0dW7csh43QQSUc7i20gEXn+++UCaQmWuuYOXeH45Wz95V/NvbDGd+I65r7JbrPTjm0tHI2QDzUWqGhlL14uB/XDQf0vji1LyhhZxQyutaM9RAdPdc21szj/tfrICTjUdsYLSjWUTp1X5y1Zixc+4vMbqn8DXY/vwk2LiA7TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 8 Sep 2025 02:39:54 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Mon, 8 Sep 2025 02:39:54 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>, Wei Xu <weixugc@google.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aL3Dav4RLvtLliYC@yjaykim-PowerEdge-T330>
+References: <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
+ <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+ <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
+ <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
+ <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
+ <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+ <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
+ <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
+ <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330>
+ <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC III
-From: =?utf-8?Q?Ren=C3=A9_Rebe?= <rene@exactco.de>
-In-Reply-To: <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
-Date: Sun, 7 Sep 2025 19:32:44 +0200
-Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- Andreas Larsson <andreas@gaisler.com>,
- sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Anthony Yznaga <anthony.yznaga@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E6D1F756-419D-448A-AF35-387FDA16AC00@exactco.de>
-References: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
- <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
- <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
 
-Hi Adrian,
+Hi, Chris Li 
 
-> On 7. Sep 2025, at 19:02, John Paul Adrian Glaubitz =
-<glaubitz@physik.fu-berlin.de> wrote:
->=20
-> Hi Michael,
->=20
-> On Fri, 2025-09-05 at 00:03 +0200, Michael Karcher wrote:
->> Anthony Yznaga tracked down that a BUG_ON in ext4 code with large =
-folios
->> enabled resulted from copy_from_user() returning impossibly large =
-values
->> greater than the size to be copied. This lead to __copy_from_iter()
->> returning impossible values instead of the actual number of bytes it =
-was
->> able to copy.
->>=20
->> The BUG_ON has been reported in
->> =
-https://lore.kernel.org/r/b14f55642207e63e907965e209f6323a0df6dcee.camel@p=
-hysik.fu-berlin.de
->>=20
->> The referenced commit introduced exception handlers on user-space =
-memory
->> references in copy_from_user and copy_to_user. These handlers return =
-from
->> the respective function and calculate the remaining bytes left to =
-copy
->> using the current register contents. The exception handlers expect =
-that
->> %o2 has already been masked during the bulk copy loop, but the =
-masking was
->> performed after that loop. This will fix the return value of =
-copy_from_user
->> and copy_to_user in the faulting case. The behaviour of memcpy stays
->> unchanged.
->>=20
->> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to =
-accurate exception reporting.")
->> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # =
-on Sun Netra 240
->> Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
->> Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # on UltraSparc III+ =
-and UltraSparc IIIi
->> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
->> ---
->> arch/sparc/lib/U3memcpy.S | 2 +-
->> 1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
->> index =
-9248d59c734ce200f1f55e6d9913277f18715a87..bace3a18f836f1428ae0ed72b27aa1e0=
-0374089e 100644
->> --- a/arch/sparc/lib/U3memcpy.S
->> +++ b/arch/sparc/lib/U3memcpy.S
->> @@ -267,6 +267,7 @@ FUNC_NAME: /* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
->> faligndata %f10, %f12, %f26
->> EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
->>=20
->> + and %o2, 0x3f, %o2
->> subcc GLOBAL_SPARE, 0x80, GLOBAL_SPARE
->> add %o1, 0x40, %o1
->> bgu,pt %XCC, 1f
->> @@ -336,7 +337,6 @@ FUNC_NAME: /* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
->> * Also notice how this code is careful not to perform a
->> * load past the end of the src buffer.
->> */
->> - and %o2, 0x3f, %o2
->> andcc %o2, 0x38, %g2
->> be,pn %XCC, 2f
->> subcc %g2, 0x8, %g2
->=20
-> It looks like the fix isn't actually complete for UltraSPARC III.
->=20
-> There still seem to be edge-cases where this bug is triggered and that
-> actually happens when configuring the systemd-timesyncd package and =
-it's
-> reproducible in 100% of the cases:
+Thank you for your thoughtful and quick feedback.
 
-It is probably a good time to mention that there are likely some other =
-major
-TLB (or so) bug on U3. For example, I could never boot any Linux kernel
-(probably ever) with 8GB installed in my Sun Blade 1000 - it would NULL =
-ptr
-deref very early:
+> > If you remove the
+> > swap tier. the range of that tier merges to the neighbour tier.  That
+> > way you don't need to worry about the swap file already having an
+> > entry in this tier you swap out.
+>
+> Should the configured mask simply be left as-is,
+> even if (a) the same key is later reintroduced with a different order (e.g.,
+> first → third), or (b) a merge causes the cgroup to use a lower tier it did not
 
-Unable to handle kernel NULL pointer dereference
-tsk->{mm,active_mm}->context =3D 0000000000000000
-tsk->{mm,active_mm}->pgd =3D fff00001ff002000
-              \|/ ____ \|/
-              "@'/ .. \`@"
-              /_| \__/ |_\
-                 \__U_/
-swapper(0): Oops [#1]
-CPU: 0 PID: 0 Comm: swapper Not tainted 6.10.11-t2 #45
-TSTATE: 0000009980e01602 TPC: 0000000000c5ec98 TNPC: 0000000000c5ec9c Y: =
-f9e69dcb    Not tainted
-TPC: <subsection_map_init+0x50/0x98>
-g0: 0000000010d7d038 g1: 0000000000000000 g2: 0000000000000000 g3: =
-0000000000000001
-g4: 0000000000b95d80 g5: 0000000000000000 g6: 0000000000b84000 g7: =
-0000000000000000
-o0: 0000000000000000 o1: ffffffffffffffff o2: 0000000000000000 o3: =
-0000000000ae1c40
-o4: 0000000000b87ae8 o5: 0000000000000000 sp: 0000000000b871b1 ret_pc: =
-0000000000c5ec90
-RPC: <subsection_map_init+0x48/0x98>
-l0: 0000000000020000 l1: 0000000000020000 l2: 0000000000b0d730 l3: =
-0000000000000001
-l4: 0000000000000000 l5: 0000000000000001 l6: 0000000001dfefbf l7: =
-00000001ff8f3110
-i0: 0000000000000000 i1: 00000000000ff7ff i2: 0000000000000001 i3: =
-000000000001ffff
-i4: 0000000000000000 i5: 0000000000000007 i6: 0000000000b87261 i7: =
-0000000000c5a4c8
-I7: <free_area_init+0x58c/0xc78>
-Call Trace:
-[<0000000000c5a4c8>] free_area_init+0x58c/0xc78
-[<0000000000c509c8>] paging_init+0xd1c/0xdd0
-[<0000000000c4b848>] setup_arch+0x110/0x774
-[<0000000000c48664>] start_kernel+0x58/0x778
-[<0000000000c4b584>] start_early_boot+0x78/0x22c
-[<00000000009b5264>] tlb_fixup_done+0x4c/0x54
-[<00000000002f1a28>] 0x2f1a28
-Disabling lock debugging due to kernel taint
-Caller[0000000000c5a4c8]: free_area_init+0x58c/0xc78
-Caller[0000000000c509c8]: paging_init+0xd1c/0xdd0
-Caller[0000000000c4b848]: setup_arch+0x110/0x774
-Caller[0000000000c48664]: start_kernel+0x58/0x778
-Caller[0000000000c4b584]: start_early_boot+0x78/0x22c
-Caller[00000000009b5264]: tlb_fixup_done+0x4c/0x54
+Let me clarify my concern with a concrete example.
+Suppose:
+1. SSD → tier "A" (31–40), HDD → "B" (21–30), HDD2 → "C" (10–20), HDD3 → "D" (0–9)
+2. A cgroup uses tier "A"
+3. SSD is swapped off → tier "A" becomes a hole
+4. Tier "D" is removed
+5. Tier "A" is reassigned to range (0–9)
+6. Then a cgroup configured with "A" cannot actually use "A" (0~9)
+7. Later a new tier "E" is added and assigned (31–40)
+8. A cgroup now configured with "E" refers to the same numeric range (31–40),
+   but the meaning has changed compared to when it used "A".
 
-I tried to analyze this last year, but had to put it back into my TODO =
-file
-after a weekend on it. I have an very crude workaround hack for that in
-T2 see below.
+This feels unintuitive. I would prefer invalidating the mask if the referenced
+tier is removed, so stale references don’t silently point to a different tier.
 
-I=E2=80=99m not saying that this is related, I only want to optimize bug =
-hunting qith
-another heads up data point. What is strange is that IIRC this does not
-bug for a user with an Ultra 45, will double check on my Ultra 25 now
-that I got 8GB in it, too. Probably good time to finally tackle the root =
-cause,
-too:
+> I think my intention may not have come across clearly. I was not trying
+> to propose a new optimization, but to describe a direction that requires
+> almost no changes from the current behavior. Looking back, I realize the
+> ideas I presented may not have looked like small adjustments, even
+> though that was my intent.
+>
+> I see. We don't need to jump to implementation details yet. I can help
+> you resolve the swap allocator internals as well. Let's have the
+> user's visible behavior settle down first.
 
---- linux-6.10/arch/sparc/kernel/ktlb.S	2024-07-15 00:43:32.000000000 =
-+0200
-+++ b/arch/sparc/kernel/ktlb.S	2024-09-24 20:18:35.373344860 +0200
-@@ -144,7 +144,7 @@
- 	brgez,pn	%g4, kvmap_dtlb_nonlinear
- 	 nop
-=20
--#ifdef CONFIG_DEBUG_PAGEALLOC
-+#if 1 /* def CONFIG_DEBUG_PAGEALLOC */
- 	/* Index through the base page size TSB even for linear
- 	 * mappings when using page allocation debugging.
- 	 */
---- linux-6.10/arch/sparc/mm/init_64.c	2024-07-15 00:43:32.000000000 =
-+0200
-+++ b/arch/sparc/mm/init_64.c	2024-09-24 20:35:22.566682546 +0200
-@@ -1891,11 +1891,22 @@
- static void __init kernel_physical_mapping_init(void)
- {
- 	unsigned long i, mem_alloced =3D 0UL;
-+	unsigned long phys_mem =3D 0UL;
- 	bool use_huge =3D true;
-=20
- #ifdef CONFIG_DEBUG_PAGEALLOC
- 	use_huge =3D false;
- #endif
-+
-+	if (tlb_type =3D=3D cheetah_plus) {
-+		for (i =3D 0; i < pall_ents; i++)
-+			phys_mem +=3D pall[i].reg_size;
-+		printk("phys_mem: %ld\n", phys_mem);
-+
-+		if (phys_mem > 4294967296)
-+			use_huge =3D false;
-+	}
-+
- 	for (i =3D 0; i < pall_ents; i++) {
- 		unsigned long phys_start, phys_end;
-=20
+Ack. Let’s settle user-visible semantics first and defer allocator internals.
+We can revisit per-CPU cluster cache handling as a lower-priority topic when we
+move to patchwork.
 
-> [  125.301353] systemd-sysv-generator[1042]: Please update package to =
-include a native systemd unit file.
-> [  125.424703] systemd-sysv-generator[1042]: =E2=9A=A0 This =
-compatibility logic is deprecated, expect removal soon. =E2=9A=A0
-> [  127.206268] get_swap_device: Bad swap offset entry 808000000
-> [  127.354181] get_swap_device: Bad swap offset entry 808000000
-> [  127.449735] get_swap_device: Bad swap offset entry 808000000
-> [  127.553698] get_swap_device: Bad swap offset entry 808000000
-> [  127.701748] get_swap_device: Bad swap offset entry 808000000
-> [  127.821914] get_swap_device: Bad swap offset entry 808000000
-> [  127.939392] Unable to handle kernel paging request at virtual =
-address 00000001108ca000
-> [  128.043605] tsk->{mm,active_mm}->context =3D 0000000000000555
-> [  128.116890] tsk->{mm,active_mm}->pgd =3D fff0000009fd0000
-> [  128.185604]               \|/ ____ \|/
-> [  128.185604]               "@'/ .. \`@"
-> [  128.185604]               /_| \__/ |_\
-> [  128.185604]                  \__U_/
-> [  128.378914] systemd-tty-ask(1054): Oops [#1]
-> [  128.435046] CPU: 0 UID: 0 PID: 1054 Comm: systemd-tty-ask Not =
-tainted 6.17.0-rc4+ #11 NONE=20
-> [  128.544945] TSTATE: 0000000011001606 TPC: 00000000007a5800 TNPC: =
-00000000007a5804 Y: 00000000    Not tainted
-> [  128.674196] TPC: <lookup_swap_cgroup_id+0x40/0x80>
-> [  128.737194] g0: fff000023f800040 g1: 0000000010000000 g2: =
-00000001008ca000 g3: 000000000153a8b8
-> [  128.851572] g4: fff0000008d1b700 g5: fff000023e336000 g6: =
-fff00000140f4000 g7: fff0000101934000
-> [  128.965946] o0: fff0000008e6c180 o1: 0000000000000000 o2: =
-0000000000001000 o3: 0000000000000001
-> [  129.080321] o4: 00000000000001ff o5: 0000000000000555 sp: =
-fff00000140f6c81 ret_pc: 0000000000000000
-> [  129.199272] RPC: <0x0>
-> [  129.230149] l0: 0000000000000000 l1: fff0000008e6c180 l2: =
-0000000000000000 l3: 03ffffffffffffff
-> [  129.344528] l4: 0000000000000004 l5: 0000000000000000 l6: =
-0000000000000001 l7: 0000000000000014
-> [  129.458902] i0: 0000000080000000 i1: fff0000101900000 i2: =
-fff00000140f75d8 i3: ffffffffffffffff
-> [  129.573283] i4: 0000000000001000 i5: 0000000000000000 i6: =
-fff00000140f6d31 i7: 00000000007173e0
-> [  129.687653] I7: <swap_pte_batch+0x40/0x160>
-> [  129.742653] Call Trace:
-> [  129.774671] [<00000000007173e0>] swap_pte_batch+0x40/0x160
-> [  129.846733] [<0000000000719998>] unmap_page_range+0x718/0x1200
-> [  129.923366] [<000000000071a4f8>] =
-unmap_single_vma.constprop.0+0x78/0xe0
-> [  130.010289] [<000000000071a5b0>] unmap_vmas+0x50/0x160
-> [  130.077767] [<00000000007288bc>] exit_mmap+0xbc/0x460
-> [  130.144108] [<000000000047aec4>] mmput+0x64/0x180
-> [  130.205867] [<0000000000483b38>] do_exit+0x218/0xb80
-> [  130.271067] [<0000000000484664>] do_group_exit+0x24/0xa0
-> [  130.340830] [<0000000000494848>] get_signal+0x948/0x9a0
-> [  130.409458] [<000000000043eb68>] do_notify_resume+0xc8/0x5c0
-> [  130.483802] [<0000000000404b48>] __handle_signal+0xc/0x30
-> [  130.554715] Disabling lock debugging due to kernel taint
-> [  130.624483] Caller[00000000007173e0]: swap_pte_batch+0x40/0x160
-> [  130.702257] Caller[0000000000719998]: unmap_page_range+0x718/0x1200
-> [  130.784610] Caller[000000000071a4f8]: =
-unmap_single_vma.constprop.0+0x78/0xe0
-> [  130.877252] Caller[000000000071a5b0]: unmap_vmas+0x50/0x160
-> [  130.950452] Caller[00000000007288bc]: exit_mmap+0xbc/0x460
-> [  131.022508] Caller[000000000047aec4]: mmput+0x64/0x180
-> [  131.089986] Caller[0000000000483b38]: do_exit+0x218/0xb80
-> [  131.160901] Caller[0000000000484664]: do_group_exit+0x24/0xa0
-> [  131.236387] Caller[0000000000494848]: get_signal+0x948/0x9a0
-> [  131.310736] Caller[000000000043eb68]: do_notify_resume+0xc8/0x5c0
-> [  131.390795] Caller[0000000000404b48]: __handle_signal+0xc/0x30
-> [  131.467427] Caller[fff0000101600238]: 0xfff0000101600238
-> [  131.537197] Instruction DUMP:
-> [  131.537201]  c458c002=20
-> [  131.576079]  83287002=20
-> [  131.606963]  b12e2004=20
-> [  131.637839] <c2008001>
-> [  131.668723]  b1304018=20
-> [  131.699603]  b12e3030=20
-> [  131.730486]  81cfe008=20
-> [  131.761364]  91323030=20
-> [  131.792249]  b0102000=20
-> [  131.823130]=20
-> [  131.873450] Fixing recursive fault but reboot is needed!
->=20
-> Adrian
->=20
-> --=20
-> .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer
-> `. `'   Physicist
->  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> I talked to Wei about swap tiers a bit. Add him to the CC as well. He
+> made me realize that we need two level things in the cgroup
+> "swap.tiers".
+> ...
+> For the operation, each tier will need two bits, including the
+> default. One bit select this timer off, one bit select this tier on.
+> e.g. we have 16 tiers including the default, then all 16 tiers take up 32 bits.
 
---=20
-https://exactco.de - https://t2linux.com - https://rene.rebe.de
+My understanding is:
 
+Per tier (2-bit state)
+- `+` → always on (bit 10)
+- `-` → always off (bit 01)
+- missing → inherit from parent (bit 00)
+- `11` is invalid
+
+Default tier
+- `+` means inherit parent as the base
+- `-` means start from zero (ignore parent)
+- missing means (this is the part I want to confirm) nothing?
+
+So in my view “default” is an **inheritance control knob**, whereas in your
+explanation “default” is also a **special tier** with its own 2-bit state.
+Is that the right reading?
+
+If my understanding is correct, I’m also happy to adopt the interface format
+you proposed.
+
+Over the weekend I kept thinking about it, and your proposal looks like a
+more flexible interface. It also has clear similarities to how cgroup
+controllers are added, so the format seems acceptable to me.
+
+I have one remaining concern about cgroup semantics.
+The inheritance and resource model we’re discussing seems to diverge
+somewhat from existing cgroup v2 conventions. Since we’ve aligned that
+this effectively acts as QoS control, it also makes me wonder whether we
+should proactively propose a doc update to the “Resource Distribution
+Models” section so the concept is explicitly covered. This may be me
+being overcautious, so I’d appreciate your view.
+
+> Wei also raises one very important point. Because zswap is not tight
+> to a swap device. We might want a predefined tier bit to describe
+> zswap. e.g. the first tier bit is always given to zswap and the tier
+> name is always zswap, the priority range can be assigned from
+> mm/swap/tiers interface.
+
+Ack. Reserving a predefined tier bit for zswap makes sense.
+
+As a passing thought (not a strong proposal): a few common tiers (e.g., zswap,
+ssd, hdd, remote) could be predefined and non-removable, with users inserting
+custom ranges between or apart from them. For example, if an SSD tier is
+predefined, `swapon` for SSD devices could be limited to that tier—this would
+align with grouping by service speed and nudge users toward sensible configs.
+
+> > * **Tier specification**
+> >   - Priority >= 0 range is divided into intervals, each identified by a
+> >     tier name. The full 0+ range must be covered.
+>
+> Not necessarily true if we allow removal of the tier and generate
+> holes removed range as we discussed above. Unless I understand the
+> previous hole idea incorrectly.
+
+Ack. I prefer allowing holes, so we don’t need to enforce covering the full
+range simply. 
+(I had considered usage making full-range coverage coexist with holes, 
+but on reflection that doesn’t seem necessary. complicated)
+
+> >   - Each tier has an order (tier1 is highest priority) and an internal
+>
+> The order you mean swap device priority order or the tier internal bit order?
+
+I meant the order implied by the priority ranges. In the interface I suggested,
+the `-` operator specifies ordered ranges, so a notion of tier order matters.
+With your format this may not be needed or not that important.
+
+> >   - Until it is set, there is no default tier.
+>
+> Does that mean you can't do incremental add or incremental subtract tiers?
+
+> >     (may internally conceptually used? but not exported)
+>
+> My suggestion now is "swap.tiers" is an operation rather than a
+> bitmask. It can include "default", Each tier can select on or off or
+> missing so 3 operation states. "default" tier has no name, if
+> specified, must be listed as the first in "swap.tiers"
+
+When I said “default tier,” I meant a conceptual tier that covers the full
+priority range when nothing is specified. From your reply, your “default”
+sounds closer to a *default value* (inheritance control) rather than a
+standalone tier. Did I get that right?
+
+> >     Note: a space must follow "+" or "-" before the tier name.
+> >   - Edge cases:
+> >       * If not all ranges are specified: input is accepted, but cgroups
+> >         cannot use incomplete ranges. (TBD)
+> >         e.g) echo "hdd:50" > /sys/kernel/mm/swap/tiers. (0~49 not specifeid)
+>
+> Because removing the tier will generate holes in the priority range
+> anyway. 0-49 is not specified in the same as if a tier is there
+> previously then gets removed.
+
+As discussed above, we’re allowing holes, so we can accept inputs that don’t
+cover the full range.
+
+> >       * Overlap with existing range: removal fails until all swap
+> >         devices in that range are swapped off.
+>
+> Specifically a new tier priority landing in the middle of a tier
+> range, the new tier will split the range with the existing one.
+
+If swapoff is complete but removal has not occurred and a new tier comes in,
+we can allow splitting. If a tier reference is still held, splitting should not
+be allowed. A corner case: a tier spans 50–100 but only priorities 55 and 60
+have active swap; inserting a split at 70 (no active refs) — to keep rules
+simple, I’d still **not** accept the split while any references exist anywhere
+in the original range.
+
+> > * **Cgroup interface**
+> >   - New files (under memcg): memory.swap.tier, memory.swap.tier.effective
+>
+> I don't think we need two interface files. We can live with one just
+> "memory.swap.tiers"
+> We can list the local one first then effective one on the second line
+> or separate with "#"
+
+Ack. One file is simpler; show local then effective. For now, a newline
+separator looks clearer than “#”.
+
+> >   - Syntax modeled after cpuset:
+> >       echo "ssd-hdd,net" > memory.swap.tier
+>
+> Need discussion for incremental subtract. That syntax is incremental add.
+
+I think the format you suggest (+, -)
+is appropriate from a flexibility perspective.
+
+> > * **Swap allocation**
+> >   - Simple, workable implementation (TBD; to be revisited with
+> >     measurements).
+
+Ack.
+
+Best regards,
+Youngjun Park
 
