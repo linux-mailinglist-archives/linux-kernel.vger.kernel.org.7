@@ -1,211 +1,184 @@
-Return-Path: <linux-kernel+bounces-804518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEABB478A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:57:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C021FB478AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 04:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A64C204A5C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 01:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78DE53C7ADB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 02:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E321A0B0E;
-	Sun,  7 Sep 2025 01:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF1A187346;
+	Sun,  7 Sep 2025 02:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNfE7ZGW"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="G3AOX14R"
+Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AFB19CC28;
-	Sun,  7 Sep 2025 01:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDBAF4FA
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 02:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757210229; cv=none; b=IP1TNBocPxSzKKkozKJYjjIfjmLStjRyMYdLMecjPShxj7yEUEJSHFlgDKB96CgkZsrFrufDhqwtAMRp4Wr7s9YbUzqwtIcsRHqgTrDSBhQMiWatTSXyx8zXCZrTFfsjenUBxjsyBv9s54V3K3rNO5C+uEymb5QuhPC2bggWqMU=
+	t=1757210761; cv=none; b=QRPypnlAbz2xTJ5SpKbDekncp7izll1h5DnRfdQJHvzp2Mmx8E+l3R4GFN/3E93TUsOw1lLY947369p+j826jAeCYTZkrUhGXQimbTqnCGJ3nLFWRkaYvgT1GWA6x4/JyR++XlykEvQdq+czq3W+Da+R2SKk4EvVDw4za/K+1do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757210229; c=relaxed/simple;
-	bh=HIANAWEJTSk4h6jVR+naSmXE055aF+gsPiBbfQucI+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FFNEOMpQJGW4zEhHTQUVvce6NUmW4gWzG38sJ6sWH1KrgAudOYBQFY9GRTcQ5e+t6QlK1CkdHD9wIaTxVKknLQ9l9TzhXMZdZcmfXfxB58nj1lPzBkbfqqpzOSvTCt/dOaJTjqGHlY1at+QsnoMIj0D1sI3h1K0fEg9do2p4vck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNfE7ZGW; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-81076e81a23so322438585a.3;
-        Sat, 06 Sep 2025 18:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757210227; x=1757815027; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Ubqm0cemNSwa00R4M8gX2Nj2LvSr0FhtjEjZFitZIs=;
-        b=aNfE7ZGWsaaksQ7bUqg0YDez2CfbNcqTCLqk92iUgub95tew6vqqMOwJA59iufrmf+
-         skl34d0H8bW7Qnfs1tgwqu5u8aBWYjFV0J7IMS4+5IRBQb4usT3LIlKyS3bjU1gbSD7o
-         kDVRvRBMXJpkPXJDLa+k4lcWssd2hjtYHLj0zOoWhGcfRtcOW3nx9Z77nljrJPczHqAH
-         Qoax6PU9VUI2cWaDT9eLNQ1r0oCNwB0s5WQGhIMPbZyG4GWYzX5qZeurqeL7O3VHoTWw
-         29XKIEssKj6a4BeW0kVwHcjW14ZebayzrLJh9ldFfTm2MQeZWrxk35wuvKjl7DGEZe+Y
-         rrdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757210227; x=1757815027;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Ubqm0cemNSwa00R4M8gX2Nj2LvSr0FhtjEjZFitZIs=;
-        b=Uvh7/i2RTtfwarDtOwCABl5+tsMwBGf3MQa2irXkVmOLEYAfdgiJN9Bhp0yl/4DigZ
-         UK7icG80wvi/+bAIuTUyLQ3zpP4WqZ36r1ORm7tkYTY/mC4BT+z5EM47DgecymYq7f1y
-         AndfV+dXEVQRpFHWos6i02ymGV1KZDbK4XYNguJvP3dsjcATIegF9gF/ho3F6EFR3bf4
-         /lytw+45Cdeg0QnCpwZGF9Zr4cIpzKR99RSKdiEdtZX0g1YZfBLXi7t8T27/zGBMu+eg
-         NBX++6sitnm+s3SY5y8elfYzTJ+6iJJokA3Tae68Ac2D5/dsOWiKQYwuzBBeCX2dZhHd
-         eMCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC6qwcnHUdy4K2C4e3uRTO+0CpIvPzmfYt/TttBu7cZU/zl8Dra6bJRPohXyH2nhLQNfR9ogRtrWH0wO4=@vger.kernel.org, AJvYcCUsAZJcxeuIAXH8rpwEQLCIl+KyloG8cZBw02zCZoX63TWjKPYoaHE9n2zLN48yRCZ/UZMo+1zp6euZ7PV0jNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsuDegqTq2BoJuBB3wLETa4J7Jz9j7j8crXHvlOY2xmlQzdCHv
-	nrHdv0iWpHzk7OyYXIqMkxcNkiuuyMxCuxcwlThHuAa0Y1+AXXJM5xBf
-X-Gm-Gg: ASbGncu0b+VOuBnjot9AKEfhaxSybH25vzy03C9CfyRY2A9oHhJ5qrWYMNmvnEtih7p
-	EGZ7dgCDuwrAiN17W+Gu15n8u0Gcys+MtnW+Sf6/lMBGpfz2Jl5ExvnKmyaaGNS6e3npBnRu36w
-	FVZb/0O1tjmUaMoFhbJAZQkQzUKeKOXOOqYX9YMfNw4E4H9Qppbr+RV2kPZoJlI+TmSXKHi9OmG
-	owVzLPlRhNAkpYQQFRNwzVldeveF/bqfEedVIMD1Ol5VQCZmwhpXI5wbeBI8gkT2nuG0gq7EG4D
-	hCv8jSGVBM+bNZrxoo83jJQHOvAV4OLp3k62fQu2yYaktonmoD0O2fEskyh7ogm81hZ8DsZHss5
-	jZp4iXhy6gTMQNCIh78R1wWDhogT6Kt4zB+x3CJEkd0O/mxQhqcdcB20BLTjb5vXhh9Ce6eXZa4
-	IGWw5mZ85VjHwLg8tLUQrMwj5psuWqTY6dfQ==
-X-Google-Smtp-Source: AGHT+IGkfbUjiAfmJrUYTAsNW2Fmn0Z++NsMhASSx2EZdGTuDDapBTiJXZp60cXzhq31btTZ8hzpeQ==
-X-Received: by 2002:a05:620a:ab04:b0:813:de67:afff with SMTP id af79cd13be357-813de67b39cmr299305885a.46.1757210227039;
-        Sat, 06 Sep 2025 18:57:07 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f501690sm74875171cf.0.2025.09.06.18.57.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 18:57:06 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C37BFF40066;
-	Sat,  6 Sep 2025 21:57:05 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sat, 06 Sep 2025 21:57:05 -0400
-X-ME-Sender: <xms:cea8aIYZGHRMMNs45SFezA-MHEEdzl0w2HuPTDiumWNZuVdcZpxlIg>
-    <xme:cea8aE7empNwKt4XCUc8KRQCm1W3DA4It6dXh2NJHypj6LGfUkkghYK0rbpwzQHL7
-    EbyCwrwds1ojZ79MA>
-X-ME-Received: <xmr:cea8aAmUOLOwNEmteWVgAOuHf_YecFEz0JJ4h3vI72vyxlgd1fdvNouGOIcyQicytzc1AUWV2l__BnULVesEsQFK7I0kR1OM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhsshhinheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
-    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:cea8aKHQInfR5brGYOxvHvhvz7HQTKd4uiwuLaKNdhP2-2RB0oV1Uw>
-    <xmx:cea8aEEW2JBYpTbiLXHk4cgima6ctKY5xWsX1OufED3OmUPqtR9PwA>
-    <xmx:cea8aC3_ivyfYOiTyrNg339F7JgTnt7yGzeriR1RwgnWw8P2j83VEw>
-    <xmx:cea8aGerBw4c9XVnZvkYYMQPrWi_CDDhH2qEvVcDYkzF3Tza1yXzJg>
-    <xmx:cea8aEJE7c0LReqOgI_FU6EeMC6cVdkwjIcMQWZfdgxLb3PLcqrW66FE>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Sep 2025 21:57:05 -0400 (EDT)
-Date: Sat, 6 Sep 2025 18:57:04 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Fiona Behrens <me@kloenk.dev>, Alban Kurti <kurti@invicto.ai>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
- fields
-Message-ID: <aLzmcK2UM53I2Tbn@tardis-2.local>
-References: <20250905140047.3325945-1-lossin@kernel.org>
- <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org>
- <aLshd0_C-1rh3FAg@tardis-2.local>
- <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org>
+	s=arc-20240116; t=1757210761; c=relaxed/simple;
+	bh=x4ooEYo/E7futa044vbGyQTUMKHkxAzhQavhbCdXMrg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=urEAMsWnWbxoKnB/DHOso5CN/HayfOoEN1iXyBx/+igx/ixHAsnETR6Up0e9Men9/qCwx6OVhE++h99whgjih/B3UUEUb5t088PYxDGdbr1j1SKR7xl2OoFJDnsm9F/ZO6lgfLesiUENR98VgMWObVf1Q3s6vOJn0EJ+3IqcM+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=G3AOX14R; arc=none smtp.client-ip=61.135.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757210752;
+	bh=22TA40f9zATZiAYAph/4a9KRoNwLAcg3w+fJaxBRaqs=;
+	h=From:Subject:Date:Message-ID;
+	b=G3AOX14Rj/4KcCi8t7VYb+LFSxX3xmoRljH1ytQ74GvXToHwmv2zIavl3/C6Rf+p8
+	 Uu4J1QvNNFnAfwqaAhEeVznZGtn2T5g67ApKIwY59GFjGakF5o78sPafULV8VtzRsv
+	 c1lPe2hlSQQnWrD8CEIcwD8NV1c/zMY22uhlbFTk=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68BCE7E300005042; Sun, 7 Sep 2025 10:03:17 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 733136816349
+X-SMAIL-UIID: A111DB9CC409472FB07435C46B6DE1A7-20250907-100317-1
+From: Hillf Danton <hdanton@sina.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+cba6270878c89ed64a2d@syzkaller.appspotmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [hfs?] INFO: task hung in deactivate_super (3)
+Date: Sun,  7 Sep 2025 10:03:09 +0800
+Message-ID: <20250907020310.6559-1-hdanton@sina.com>
+In-Reply-To: <fa7b2e99-f91d-4126-9d0a-1b0330023394@I-love.SAKURA.ne.jp>
+References: <00000000000091e466061cee5be7@google.com> <68b55245.050a0220.3db4df.01bc.GAE@google.com> <20250902144655.5em4trxkeks7nwgx@offworld>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 06, 2025 at 12:52:22PM +0200, Danilo Krummrich wrote:
-> On Fri Sep 5, 2025 at 7:44 PM CEST, Boqun Feng wrote:
-> > On Fri, Sep 05, 2025 at 07:18:25PM +0200, Benno Lossin wrote:
-> > [...]
-> >> index 606946ff4d7f..1ac0b06fa3b3 100644
-> >> --- a/samples/rust/rust_driver_pci.rs
-> >> +++ b/samples/rust/rust_driver_pci.rs
-> >> @@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> Result<Pin<KBox<Self>
-> >>  
-> >>          let drvdata = KBox::pin_init(
-> >>              try_pin_init!(Self {
-> >> -                pdev: pdev.into(),
-> >>                  bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c_str!("rust_driver_pci")),
-> >> +                pdev: pdev.into(),
-> >
-> > Ok, this example is good enough for me to express the concern here: the
-> > variable shadowing behavior seems not straightforward (maybe because in
-> > normal Rust initalization expression, no binding is created for
-> > previous variables, neither do we have a `let` here).
-> >
-> > Would the future inplace initialization have the similar behavior? I
-> > asked because a natural resolution is adding a special syntax like:
-> >
-> >     let a = ..;
-> >
-> >     try_pin_init!(Self {
-> >         b: a,
-> > 	let a = a.into(); // create the new binding here.
-> > 	c: a, // <- use the previous initalized `a`.
-> >     }
+On Sat, 6 Sep 2025 22:30:31 +0900 Tetsuo Handa wrote:
+> On 2025/09/02 23:46, Davidlohr Bueso wrote:
+> > On Mon, 01 Sep 2025, syzbot wrote:
+> > 
+> >> syzbot has bisected this issue to:
+> >>
+> >> commit 5b67d43976828dea2394eae2556b369bb7a61f64
+> >> Author: Davidlohr Bueso <dave@stgolabs.net>
+> >> Date:   Fri Apr 18 01:59:17 2025 +0000
+> >>
+> >>    fs/buffer: use sleeping version of __find_get_block()
+> > 
+> > I don't think this bisection is right, considering this issue was first
+> > triggered last year (per the dashboard).
 > 
-> Can you please clarify the example? I'm a bit confused that this is not a field
-> of Self, so currently this can just be written as:
+> I think this bisection is not bogus; at least that commit made this problem
+> easily triggerable enough to find a reproducer...
 > 
-
-Oh, I could have been more clear: `a` is a field of `Self`, and the
-`let` part initalizes it.
-
-> 	try_pin_init!(Self {
-> 	   b: a,
-> 	   c: a.into,
-> 	})
+> What is common to this report is that deactivate_super() is blocked waiting
+> for hfs_sync_fs() to complete and release sb->s_umount lock.
 > 
-> Of course assuming that a is Clone, as the code above does as well.
+> Current sample crash report (shown below) tells us that PID = 5962 (who is trying
+> to hold for write) is blocked inside deactivate_super() waiting for PID = 6254
+> (who is already holding for read) to release sb->s_umount lock. But since PID = 6254
+> is blocked at io_schedule(), PID = 6254 can't release sb->s_umount lock.
 > 
-> So, if we are concerned by the variable shadowing, which I'm less concerned
-> about, maybe we can do this:
-
-I'm not that concerned to block this, but it does look to me like we are
-inventing a new way (and even a different syntax because normal Rust
-initialization doesn't create new bindings) to create binding, so I
-think I should bring it up.
-
+> The question is why PID = 6254 is blocked for two minutes waiting for io_schedule()
+> to complete. I suspect that commit 5b67d4397682 is relevant, for that commit has
+> changed the behavior of bdev_getblk() which PID = 6254 is blocked. Some method for
+> reporting what is happening (e.g. report details when folio_lock() is blocked for
+> more than 10 seconds) is wanted. Of course, it is possible that a corrupted hfs
+> filesystem image is leading to an infinite loop...
 > 
-> 	// The "original" `a` and `b`.
-> 	let a: A = ...;
-> 	let b: B = ...;
+Or due to something else in your case because it is legal for RT tasks to
+occupy any CPU for more than 120 seconds.
+In other word RT makes RCU stall and task hung legally acceptable. That is
+why running syzbot with RT turned on wastes minutes.
 > 
-> 	try_pin_init!(Self {
-> 	   a,                   // Initialize the field only.
-> 	   let b <- b,          // Initialize the field and create a `&B` named `b`.
-> 	   c: a.into(),         // That's the "original" `a`.
-> 	   d <- D::new(b),      // Not the original `b`, but the pin-init one.
-> 	})
-
-This looks good to me as well. But I'm curious what the syntax would be
-like in the in-place placement language feature in the future.
-
-Regards,
-Boqun
+> 
+> INFO: task syz-executor:5962 blocked for more than 143 seconds.
+>       Not tainted syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz-executor    state:D stack:21832 pid:5962  tgid:5962  ppid:1      task_flags:0x400140 flags:0x00004004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5357 [inline]
+>  __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+>  __schedule_loop kernel/sched/core.c:7043 [inline]
+>  rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+>  rwbase_write_lock+0x3dd/0x750 kernel/locking/rwbase_rt.c:272
+>  __super_lock fs/super.c:57 [inline]
+>  __super_lock_excl fs/super.c:72 [inline]
+>  deactivate_super+0xa9/0xe0 fs/super.c:506
+>  cleanup_mnt+0x425/0x4c0 fs/namespace.c:1375
+>  task_work_run+0x1d4/0x260 kernel/task_work.c:227
+>  exit_to_user_mode_loop+0[  309.321754][   T38]  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop+0[  309.321754][   T38]  exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+>  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+>  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+>  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+>  do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7ff4a4aaff17
+> RSP: 002b:00007ffe8b16a008 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 00007ff4a4b31c05 RCX: 00007ff4a4aaff17
+> RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe8b16a0c0
+> RBP: 00007ffe8b16a0c0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe8b16b150
+> R13: 00007ff4a4b31c05 R14: 00000000000257d4 R15: 00007ffe8b16b190
+>  </TASK>
+> 1 lock held by syz-executor/5962:
+>  #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:506
+> 
+> INFO: task syz.4.168:6254 blocked for more than 143 seconds.
+>       Not tainted syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.4.168       state:D stack:25800 pid:6254  tgid:6254  ppid:5967   task_flags:0x400140 flags:0x00004004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5357 [inline]
+>  __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+>  __schedule_loop kernel/sched/core.c:7043 [inline]
+>  schedule+0x165/0x360 kernel/sched/core.c:7058
+>  io_schedule+0x81/0xe0 kernel/sched/core.c:7903
+>  folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
+>  folio_lock include/linux/pagemap.h:1133 [inline]
+>  __find_get_block_slow fs/buffer.c:205 [inline]
+>  find_get_block_common+0x2e6/0xfc0 fs/buffer.c:1408
+>  bdev_getblk+0x4b/0x660 fs/buffer.c:-1
+>  __bread_gfp+0x89/0x3c0 fs/buffer.c:1515
+>  sb_bread include/linux/buffer_head.h:346 [inline]
+>  hfs_mdb_commit+0xa42/0x1160 fs/hfs/mdb.c:318
+>  hfs_sync_fs+0x15/0x20 fs/hfs/super.c:37
+>  __iterate_supers+0x13a/0x290 fs/super.c:924
+>  ksys_sync+0xa3/0x150 fs/sync.c:103
+>  __ia32_sys_sync+0xe/0x20 fs/sync.c:113
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f35c0abebe9
+> RSP: 002b:00007fff821c57b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a2
+> RAX: ffffffffffffffda RBX: 00007f35c0cf5fa0 RCX: 00007f35c0abebe9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f35c0cf5fa0 R14: 00007f35c0cf5fa0 R15: 0000000000000000
+>  </TASK>
+> 1 lock held by syz.4.168/6254:
+>  #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock fs/super.c:59 [inline]
+>  #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: super_lock+0x2a9/0x3b0 fs/super.c:121
 
