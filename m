@@ -1,143 +1,215 @@
-Return-Path: <linux-kernel+bounces-804809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC966B48023
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:56:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E398B48024
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4789D162619
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A4E3BC9E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368F227AC54;
-	Sun,  7 Sep 2025 20:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3223121FF3B;
+	Sun,  7 Sep 2025 21:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB6JSZ9e"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lar7DNU1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9D414D29B;
-	Sun,  7 Sep 2025 20:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371D315D43;
+	Sun,  7 Sep 2025 21:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757278575; cv=none; b=dDvz2tGosagUI2vk7G+pLZ9hXbR4yZXtm/if5vW4hlGsK4bQggxq45BRh4YRVFXmX6sTfo1Kk8sS+4gJkaWaoyL0G4hj1SVj0GNlhfl2hb5g7S12lLFikUhgCtPp/+eu2PJy9IuUIQfOemvFdZI2Cp20eEa58a7lUqLkMrGZWV0=
+	t=1757279190; cv=none; b=mPknG/pQIoSJgcYSudHRd4eOH8UVaenkfruOCYFbvuCMqJAb2NktquAblLLaT0Yl0nbTo91XjuIchbZFvShgviiax9OzOmbMXbCO/g+1Z6eXG5kxaApDXXcWuBI+Xdws8iv683TUvEN25X0J+8SqWFg6KlibCs7kqobw2sy9vUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757278575; c=relaxed/simple;
-	bh=6P0HgZbw4HXtenDT6y2xs8u/qk5v4ufWtF4mxqooHm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlCDlxMWsKncELd1pC7QEy615FUKjwuoXyCxR0uLR8Qk00gJV4VP4tdPT4KM3Mb47rccc1l+QFUUI+KMcBznqNYZIOr6BS/7uo5UCaFT54LJSfEV2JJTFmtiE0YGOooOK93oM9XOf659dEZ6VGdznNPo1RgFJ/caB6O8zZNhPB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB6JSZ9e; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso1875092a12.1;
-        Sun, 07 Sep 2025 13:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757278572; x=1757883372; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0zZEheeM1rUpP8ZGVFjjiK4EdwdbE8pDt0S3/UybYHU=;
-        b=VB6JSZ9eQ4t9WzvTZXBRS9rDNEJMY7IltFagPHwk7oCnHf8vekUpYJDwoJ8BRqSo/b
-         8INrWT73CFI4uoOZ13hUzNpenn86re4XIkNfkj9a4ioIKVKY7RqmWfdnJofaaggmTFzN
-         DqBWKpjDOqc1b8hE+ua0YjE0eTmJhtQGuaKX5+ZCRuBAdkhF/wQMzCNt8pt2uVvPZ5Bo
-         rgGfI9e9H8dzOMwYDV5T4oRZg3WPtOSTGS3Gb7kSi9mfyQ7/Zapt0ZnHV5RFaEAa/nnG
-         EEb0YA9IiXbAbmq+Tz3TRGV7XkI0Mljt0Sm7+hHK/0elHv5wTYAXrGhjtKU9xQ9r/Qmp
-         qt5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757278572; x=1757883372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0zZEheeM1rUpP8ZGVFjjiK4EdwdbE8pDt0S3/UybYHU=;
-        b=HHDYgIA8ywBSyndyXzo7+MyGuLhrQtEL0ESerNLlXIvSuLJ/6Ibh6kl9P3MveDTp1M
-         J16bI6XT8nR4LgFylCgABk97D88pIOYsRdRvl2U5k3zFtwGvcp+Oo9hnudYpRKBTan0B
-         ZyTN8Lil9CYH+rwDQ9DZ7/JbxtxufVP3jALaRpsfoNpVGPSVs/M3ME1asYL+LmGbgoYE
-         KN6OHGE+YGplCkDBs+394t1KUMtOPqaEk3XWt9z+WveDjmoaJ33fCV5z/XAo9393X+eU
-         YE4+F0vzrt8s4z/n1Ffxy03WvpbJVhKGsOHPFofVuxtMbvX0voEBotzppvVQV57Zy/Ez
-         g38A==
-X-Forwarded-Encrypted: i=1; AJvYcCUyXq0uU/JaV6aHLLabbU+XQtkHAsrGlH7rLGIgKRFM0/+F6nP5BiEht+19YMCKlQ4kiZQ9xE5qu9Cr@vger.kernel.org, AJvYcCVYInka3IBUvSN1ZopzeaOSp2S0ckLOXE8HeJAyUKJ803cR7MYcJAYN01IrBfm2jPyXzk0JnBLBKG+4TC+V@vger.kernel.org, AJvYcCW4Lrdhvfa/Z70vDXzeC15+WK8ebxbD/QxPgHuK097Q+QE83LaeeUe5lTNq/vzqInQ1OW0SNx+2b9Dq@vger.kernel.org, AJvYcCXcdvv/qsZQwCDJEVcbV2YyWDX89DyzCJtQUEWfQYFcvwzhtNVxowazveXy2t4+mbjbq8yJw5sI6zMP8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdrTK8ZjjoI5Igg+peEXyKqfuTNSFfaG4uoWcLHQYwJS3NsLCY
-	yFe5S/4IYYiVKeBwKO4clcND65ZsTKsQwNBoBjpmga/k1M/A7voHgK6DlwZ8WI/qVHaaFhGtN87
-	t0NBy7HEYrb1jMw45j2+WSmamgzhdNjc=
-X-Gm-Gg: ASbGncubwwC+cAFMnK06ypAiVC1LYXYUzDFeINX4m0du0liQiZ/0Zea6TT8djJ+wvpv
-	shQJGaGdoAYTXOw5MXhEvPjEesvyuCMCYFYqcwEDt5RCtzB6HuZMnSXPo8XS0Ow02KCoAYln8Ah
-	133R6ZZ0GnQ3r55N/IL2OHvbdD0TfIiuTSYBx0BztykE4gdTwYpmBb/8vC15iaAT5M/j/CTYb5y
-	jatsLE/dNMrADYL2Q==
-X-Google-Smtp-Source: AGHT+IG2cAHaNzeA2PPUEo6E90wAox3EQpXy6vAMOvdMI6HFpRD5lFQmKjzj246bI+rwMmB4f+CnhxohPl4jX9hXxGE=
-X-Received: by 2002:a17:907:d94:b0:afe:db34:d769 with SMTP id
- a640c23a62f3a-b04b140d092mr551593766b.18.1757278572085; Sun, 07 Sep 2025
- 13:56:12 -0700 (PDT)
+	s=arc-20240116; t=1757279190; c=relaxed/simple;
+	bh=w+2nIpfLxXqsHMb7WSUBV6ht/cPAkeQ31SamkAYLAvg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=ks8BO7QOhmPrS8xhdnGkiWe7/Ogc8Eq6PmhRuTKO1nwpOGuOHApMwet4Mm3js5N+Br6mxx1Gy3V5coggtF+QKx+PPo5DOJt4I0t0W7JO2t84XM8dIw0bP+zEY+aFcaemEasTh2K4shd7HmVC7IE0vahU5xJ29RjCV6pQnXSlum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lar7DNU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95849C4CEF0;
+	Sun,  7 Sep 2025 21:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757279189;
+	bh=w+2nIpfLxXqsHMb7WSUBV6ht/cPAkeQ31SamkAYLAvg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lar7DNU1gt2NU/u5XI1jYvufDKpKYBv7N5JuKrsBgaDRPo6SCI+snyuAu2Ht/Au0/
+	 fvcjMrRLkKKk9J//WwR50ZomRQHAjj07l5VKKaYuDdQdNxtllokSXqLJQI2iYjFIxC
+	 oRZTDW0P3oL7oVG/1VDsyRZ1eZVpYjEdOeTmlxurabYMu/EYbeQr7Hr+yGQl3FBYoo
+	 SlLoIzuXDLUFg+n4SKzvFnSwNWEX8QhH7kZz/qtX1KX4jTJw/PxHRTl4rkVboNuGAM
+	 zTZLYDXeizfcvH+sKUrfXAGI3mj7BoPQFyBBCHArNN+knUdDsTHZqbLWbSL/W6jMEl
+	 rBmueNgHSyDRw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1757053456.git.mazziesaccount@gmail.com>
- <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
- <20250907124207.2fe64214@jic23-huawei>
-In-Reply-To: <20250907124207.2fe64214@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 7 Sep 2025 23:55:35 +0300
-X-Gm-Features: Ac12FXxb44-QyBlIfiDXLWTvbl0eO5yLXHfNVS4oRrwPF2pu7aYj4Q6saPNfw5E
-Message-ID: <CAHp75VeaHFDDZDmc9xsbUxZbRgkipRtcSdXN=ZXL2+V2OvL=Mw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
-	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, 
-	Herve Codina <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 07 Sep 2025 23:06:21 +0200
+Message-Id: <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
+ Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+X-Mailer: aerc 0.20.1
+References: <20250905140047.3325945-1-lossin@kernel.org>
+ <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org> <aLshd0_C-1rh3FAg@tardis-2.local>
+ <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org> <aLzmcK2UM53I2Tbn@tardis-2.local>
+ <aLzoyWpOr6eg-3yB@tardis-2.local> <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
+ <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
+In-Reply-To: <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
 
-On Sun, Sep 7, 2025 at 2:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
-> On Fri, 5 Sep 2025 09:42:31 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-...
-
-> > +/* ADC channels as named in the data-sheet */
-> > +static const char * const bd79112_chan_names[] =3D {
-> > +     "AGIO0A", "AGIO1A", "AGIO2A", "AGIO3A", "AGIO4A",       /* 0 - 4 =
-*/
-> > +     "AGIO5A", "AGIO6A", "AGIO7A", "AGIO8A", "AGIO9A",       /* 5 - 9 =
-*/
-> > +     "AGIO10A", "AGIO11A", "AGIO12A", "AGIO13A", "AGIO14A",  /* 10 - 1=
-4 */
-> > +     "AGIO15A", "AGIO0B", "AGIO1B", "AGIO2B", "AGIO3B",      /* 15 - 1=
-9 */
-> > +     "AGIO4B", "AGIO5B", "AGIO6B", "AGIO7B", "AGIO8B",       /* 20 - 2=
-4 */
-> > +     "AGIO9B", "AGIO10B", "AGIO11B", "AGIO12B", "AGIO13B",   /* 25 - 2=
-9 */
-> > +     "AGIO14B", "AGIO15B",                                   /* 30 - 3=
-1 */
-> > +};
+On Sun Sep 7, 2025 at 7:29 PM CEST, Danilo Krummrich wrote:
+> On Sun Sep 7, 2025 at 10:41 AM CEST, Benno Lossin wrote:
+>> On Sun Sep 7, 2025 at 4:07 AM CEST, Boqun Feng wrote:
+>>> On Sat, Sep 06, 2025 at 06:57:04PM -0700, Boqun Feng wrote:
+>>>> On Sat, Sep 06, 2025 at 12:52:22PM +0200, Danilo Krummrich wrote:
+>>>> > On Fri Sep 5, 2025 at 7:44 PM CEST, Boqun Feng wrote:
+>>>> > > On Fri, Sep 05, 2025 at 07:18:25PM +0200, Benno Lossin wrote:
+>>>> > > [...]
+>>>> > >> index 606946ff4d7f..1ac0b06fa3b3 100644
+>>>> > >> --- a/samples/rust/rust_driver_pci.rs
+>>>> > >> +++ b/samples/rust/rust_driver_pci.rs
+>>>> > >> @@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self:=
+:IdInfo) -> Result<Pin<KBox<Self>
+>>>> > >> =20
+>>>> > >>          let drvdata =3D KBox::pin_init(
+>>>> > >>              try_pin_init!(Self {
+>>>> > >> -                pdev: pdev.into(),
+>>>> > >>                  bar <- pdev.iomap_region_sized::<{ Regs::END }>(=
+0, c_str!("rust_driver_pci")),
+>>>> > >> +                pdev: pdev.into(),
+>>>> > >
+>>>> > > Ok, this example is good enough for me to express the concern here=
+: the
+>>>> > > variable shadowing behavior seems not straightforward (maybe becau=
+se in
+>>>> > > normal Rust initalization expression, no binding is created for
+>>>> > > previous variables, neither do we have a `let` here).
+>>>> > >
+>>>> > > Would the future inplace initialization have the similar behavior?=
+ I
+>>>> > > asked because a natural resolution is adding a special syntax like=
+:
+>>>> > >
+>>>> > >     let a =3D ..;
+>>>> > >
+>>>> > >     try_pin_init!(Self {
+>>>> > >         b: a,
+>>>> > > 	let a =3D a.into(); // create the new binding here.
+>>>> > > 	c: a, // <- use the previous initalized `a`.
+>>>> > >     }
+>>>> >=20
+>>>> > Can you please clarify the example? I'm a bit confused that this is =
+not a field
+>>>> > of Self, so currently this can just be written as:
+>>>> >=20
+>>>>=20
+>>>> Oh, I could have been more clear: `a` is a field of `Self`, and the
+>>>> `let` part initalizes it.
+>>>>=20
+>>>> > 	try_pin_init!(Self {
+>>>> > 	   b: a,
+>>>> > 	   c: a.into,
+>>>> > 	})
+>>>> >=20
+>>>> > Of course assuming that a is Clone, as the code above does as well.
+>>>> >=20
+>>>> > So, if we are concerned by the variable shadowing, which I'm less co=
+ncerned
+>>>> > about, maybe we can do this:
+>>>>=20
+>>>> I'm not that concerned to block this, but it does look to me like we a=
+re
+>>>> inventing a new way (and even a different syntax because normal Rust
+>>>> initialization doesn't create new bindings) to create binding, so I
+>>>> think I should bring it up.
+>>>>=20
+>>>> >=20
+>>>> > 	// The "original" `a` and `b`.
+>>>> > 	let a: A =3D ...;
+>>>> > 	let b: B =3D ...;
+>>>> >=20
+>>>> > 	try_pin_init!(Self {
+>>>> > 	   a,                   // Initialize the field only.
+>>>> > 	   let b <- b,          // Initialize the field and create a `&B` n=
+amed `b`.
+>>>> > 	   c: a.into(),         // That's the "original" `a`.
+>>>> > 	   d <- D::new(b),      // Not the original `b`, but the pin-init o=
+ne.
+>>>> > 	})
+>>>
+>>> Another idea is using `&this`:
+>>>
+>>>  	try_pin_init!(&this in Self {
+>>>  	   a,                   // Initialize the field only.
+>>>  	   b <- b,              // Initialize the field only.
+>>>  	   c: a.into(),         // That's the "original" `a`.
+>>>  	   d <- D::new(this->b),      // Not the original `b`, but the pin-in=
+it one.
+>>>  	})
+>>>
+>>> , like a special field projection during initialization.
+>>
+>> The main issue with new syntax is the difficulty of implementing it. The
+>> let one is fine, but it's pretty jarring & doesn't get formatted by
+>> rustfmt (which I want to eventually have). Using `this` does look better
+>> IMO, but it's near impossible to implement using declarative macros
+>> (even using `syn` it seems difficult to me). So either we find some way
+>> to express it in existing rust syntax (maybe use an attribute?), or we
+>> just keep it this way.
+>>
+>> Maybe Gary has some ideas on how to implement it.
 >
-> > +     /* Let's assign data-sheet names to channels */
-> Not seeing any value in this comment given the code that follows.
-> Probably drop it
+> I also thought about reusing `this`, but I think we should not reuse it. =
+We
+> still need it to get pointers to uninitialized fields.
+>
+> Surely, we could say that we provide this.as_ptr() to get the NonNull `th=
+is`
+> is currently defined to be and otherwise make it expose only the initiali=
+zed
+> fields for a certain scope.
 
-It was my suggestion. I don't know if you noticed that the amount of
-the values is *not* power-of-two and it's harder to find a needed
-value in the list. Moreover, you can read the discussion back and find
-that actually it was a mistake in the list, which can be avoided (or
-chances of which will be minimized) in the first place if we see the
-comments.
+I have some ideas of changing the syntax to be more closure-esque:
 
---=20
-With Best Regards,
-Andy Shevchenko
+    init!(|this| -> Result<MyStruct, Error> {
+        let x =3D 42;
+        MyStruct {
+            x,
+        }
+    })
+
+There we could add another parameter, that would then serve this
+purpose. We should also probably rename `this` to `slot` & then use
+`this` for the initialized version.
+
+But as I said before, implementing the `this` thing from a macro
+perspective is rather difficult (I have two ideas on how to do it and
+both are bad...).
+
+> But as you say, that sounds tricky to implement and is probably not very
+> intuitive either. I'd rather say keep it as it is, if we don't want somet=
+hing
+> like the `let b <- b` syntax I proposed for formatting reasons.
+
+I don't feel like that's conveying the correct thing, it looks as if you
+are only declaring a local variable.
+
+---
+Cheers,
+Benno
 
