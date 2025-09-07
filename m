@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-804515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56530B47894
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D08DB478A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 03:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0321520208B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 01:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49AF43C777E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 01:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4002190477;
-	Sun,  7 Sep 2025 01:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2CC1A01C6;
+	Sun,  7 Sep 2025 01:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txGJve11"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eB5BFOVK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D861096F;
-	Sun,  7 Sep 2025 01:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C05C19CC28;
+	Sun,  7 Sep 2025 01:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757208896; cv=none; b=VY3dt5dW9bIKKZJfUBo9c8kSobkYYSWhWfe1Gg+jlDS9ltwwI9T5Jr2XrYuhl7mte3e96nRHDRedE0lWqKL81n2rvqhkwk5NBo1AUQfoBt79q7EI9MpRuq3NHxXDTDiNBflTRgjeID4PRpWvO+ZRFj9CIKMWAw0y/B62Wwb3C+0=
+	t=1757210221; cv=none; b=E7bKvcA6NtHHu3TvRL9CxlRvolcgGgihCo7RT2rq6jL1I5I13RVCzZzxZ1sXnwcmdUEN0Bx3J8kL3ztrOseLFKvn+GrWMlY1ScEGgog5uoCSUR3tiZOLb75uMR++UDa55D16eHl1CaN3aTkE9iaj04v1t9x0/1NUwwdM9AB1QX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757208896; c=relaxed/simple;
-	bh=YvrMVck9GuxvJbknpdd53Wuad3w7da3ygVsD0daNaFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHwEo+0SLVhW/hYpDgI0yV0LX+4wSacRb5iip2OipMpbyt4TI4OyU1Nrbx0c+pkpE/4i7K9i0lTBpxGx+4D0htJRyJXfrcDMHGtYYgY3XAes4M3f9sTZQD2okn6P7x+e1poG8zaj+pNUHvhV7qgVxk6g/HBLYpuN7wEi+uzHpK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txGJve11; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF0DC4CEF8;
-	Sun,  7 Sep 2025 01:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757208895;
-	bh=YvrMVck9GuxvJbknpdd53Wuad3w7da3ygVsD0daNaFU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=txGJve11Mwh7eufsDkQ6YhkkhUh94pIrBGtVPdAnzbntW7hbiIXW4e8lPUKfm/P4t
-	 Ml4xYGAuWZVSAUUylGknI1s46OjUfeZOuamp7JzzDncBM34j/kLEJiwrDI7LwNbQeJ
-	 1XBKGX0Omk9dGHrd+i92FDg/DqysEHCnGK+Qy4sqQ2wkJLLeQMmMQQOksYilVqKn2J
-	 9OCNaJvKGaFYlJh9QuLngXCZ4zI6Jmif1VNlqsSnzAB2CemiVXVfZ2aqOPR0AJ3mhI
-	 0EBxBw0U6QTOUxWywc1vfid0FLjiZ7+sHg5KwWTO36jVcUjKmrMaDQoBnSsDZixuX9
-	 sXaXf2Pipopug==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-322f0a39794so153477fac.2;
-        Sat, 06 Sep 2025 18:34:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSI7ElHoaKstW4pq+wjeMBfKE211i3cdznAf7z125bEU5I3pdyjS5RJfYkTx0srDsEguitjABVuW0wvK8=@vger.kernel.org, AJvYcCXJNNyhqb1Hqm6ShG48XS3KKnnBV8hEmFDqSHCqWOYkxrAXpu0CNPm1a5CVlrS8yKn4H7USIncYvSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqCvyLD4P71HwHqUqkfIJ5kRZdwQIyZSe6S9foDgLKpgOImvhe
-	xNISV18VsiPrmSU1I/SaLC3UgcXj/n7rFsOYhDxFeF0xMJ22l3Ge0yhhXcwp4usMb7akUcaVAK6
-	L+DeGN2xOO2TqtChZfOHsCzq/Cwc+VNg=
-X-Google-Smtp-Source: AGHT+IGVjcrk3nT2danIlz7M5YYs7s1I1c3e4MPWm1eVrv+/cRM7jUsuwRVAQ3f8OvC5Mf7Lx0jfXbVvOb81naROdro=
-X-Received: by 2002:a05:6808:3095:b0:439:af0a:dc9e with SMTP id
- 5614622812f47-43b29bed1e4mr1448155b6e.12.1757208894866; Sat, 06 Sep 2025
- 18:34:54 -0700 (PDT)
+	s=arc-20240116; t=1757210221; c=relaxed/simple;
+	bh=4wMOzIRng/aDzFuS8qbTuFQOz2xnDUlDZ4jDRlwCzBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gPqIgp0eUlCB9zh95BulOrO6HQliuhGALVR/SXLpI9FAKhKdfXHKmRK6quR19wckEEWUCVbLpifFMU2gr2yyoRruEQr/rDFgaobS7U1hSvnCgDVb2IOaVXs2P3ew+gGAAgx/rBcTZMFo3QT4o4bF/+Q88Xt6HRZ2adjOGks3/9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eB5BFOVK; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757210220; x=1788746220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4wMOzIRng/aDzFuS8qbTuFQOz2xnDUlDZ4jDRlwCzBY=;
+  b=eB5BFOVKeWxd1BzP8LCzx2yRfHqS0dMyAW4cRKhfQCrj+LEW0/MYFVw2
+   jeUMBBeiaUpT2J8hl6ns5iX3BSaF42R70DJGW2kF8JMolUH9GgfRyd1Q2
+   JKTlxGlzy9A9qtgTiP2nbBXT5FRg09qHDRfZ2Dg9z0mH3TAt4p0Sk0lr7
+   9Bi44YacbZGKwrebQMiL5FuBW2nAbSDRCehqgsjEd1jYRPkRY8JJ2rLni
+   hY9h1QmTLCtPQTT45Vdi+svaPmCXQa8Xv2WYZL7hR/mptg938Z2amzJws
+   uGHhj0VIu82944CEK5RTgQYdq/LsvkU3yKP6Jz5DontuXBu8kcYx9xhJD
+   w==;
+X-CSE-ConnectionGUID: nZAONgnWRqeSW/ZZvuAMjg==
+X-CSE-MsgGUID: 9XzHTylLS2qAm00dTdUrQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="63337376"
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="63337376"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 18:56:59 -0700
+X-CSE-ConnectionGUID: YMzh7tlUTkiNBnnCCN/FdQ==
+X-CSE-MsgGUID: TbKhXoR2RR2PiKbTPb5glQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="172398269"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 06 Sep 2025 18:56:57 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uv4eF-0001wF-0A;
+	Sun, 07 Sep 2025 01:56:55 +0000
+Date: Sun, 7 Sep 2025 09:56:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fidal Palamparambil <rootuserhere@gmail.com>,
+	linux-modules@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mcgrof@kernel.org, petr.pavlu@suse.com,
+	da.gomez@kernel.org, samitolvanen@google.com,
+	linux-kernel@vger.kernel.org,
+	Fidal palamparambil <rootuserhere@gmail.com>
+Subject: Re: [PATCH] tracing: Fix multiple issues in trace_printk module
+ handling
+Message-ID: <202509070951.9KQcO9l6-lkp@intel.com>
+References: <20250906134148.55-1-rootuserhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903121452.387023-1-liaoyuanhong@vivo.com>
-In-Reply-To: <20250903121452.387023-1-liaoyuanhong@vivo.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Sun, 7 Sep 2025 10:34:16 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH2ch56uca-x7TLTYu3Q0q-j+1nCsSOjUV0R7XQ3XLQ7CA@mail.gmail.com>
-X-Gm-Features: Ac12FXycPiT7p52rG1BVVS6XsIIvHEkvuEPHCNNS6J9fihNz-L7KMPQrOiCUex0
-Message-ID: <CAGTfZH2ch56uca-x7TLTYu3Q0q-j+1nCsSOjUV0R7XQ3XLQ7CA@mail.gmail.com>
-Subject: Re: [PATCH] PM / devfreq: mtk-cci: avoid redundant conditions
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"open list:DEVICE FREQUENCY (DEVFREQ)" <linux-pm@vger.kernel.org>, 
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906134148.55-1-rootuserhere@gmail.com>
 
-Hi,
+Hi Fidal,
 
-Applied it.
+kernel test robot noticed the following build warnings:
 
-Thanks.
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Wed, Sep 3, 2025 at 9:15=E2=80=AFPM Liao Yuanhong <liaoyuanhong@vivo.com=
-> wrote:
->
-> While 'if (i <=3D 0) ... else if (i > 0) ...' is technically equivalent t=
-o
-> 'if (i <=3D 0) ... else ...', the latter is vastly easier to read because
-> it avoids writing out a condition that is unnecessary. Let's drop such
-> unnecessary conditions.
->
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/devfreq/mtk-cci-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-=
-devfreq.c
-> index 22fe9e631f8a..693c59c8037a 100644
-> --- a/drivers/devfreq/mtk-cci-devfreq.c
-> +++ b/drivers/devfreq/mtk-cci-devfreq.c
-> @@ -86,7 +86,7 @@ static int mtk_ccifreq_set_voltage(struct mtk_ccifreq_d=
-rv *drv, int new_voltage)
->                                                       soc_data->sram_max_=
-volt);
->                                 return ret;
->                         }
-> -               } else if (pre_voltage > new_voltage) {
-> +               } else {
->                         voltage =3D max(new_voltage,
->                                       pre_vsram - soc_data->max_volt_shif=
-t);
->                         ret =3D regulator_set_voltage(drv->proc_reg, volt=
-age,
-> --
-> 2.34.1
->
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Fidal-Palamparambil/tracing-Fix-multiple-issues-in-trace_printk-module-handling/20250906-214415
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250906134148.55-1-rootuserhere%40gmail.com
+patch subject: [PATCH] tracing: Fix multiple issues in trace_printk module handling
+config: x86_64-buildonly-randconfig-001-20250907 (https://download.01.org/0day-ci/archive/20250907/202509070951.9KQcO9l6-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070951.9KQcO9l6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509070951.9KQcO9l6-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   kernel/trace/trace_printk.c: In function 'init_trace_printk_function_export':
+>> kernel/trace/trace_printk.c:388:16: warning: assignment to 'struct dentry *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     388 |         dentry = tracing_init_dentry();
+         |                ^
 
 
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+vim +388 kernel/trace/trace_printk.c
+
+   383	
+   384	static __init int init_trace_printk_function_export(void)
+   385	{
+   386		struct dentry *dentry;
+   387	
+ > 388		dentry = tracing_init_dentry();
+   389		if (IS_ERR(dentry))
+   390			return 0;
+   391	
+   392		trace_create_file("printk_formats", TRACE_MODE_READ, NULL,
+   393					    NULL, &ftrace_formats_fops);
+   394	
+   395		return 0;
+   396	}
+   397	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
