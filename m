@@ -1,377 +1,146 @@
-Return-Path: <linux-kernel+bounces-804693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059FFB47BA5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:36:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A5BB47BA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 15:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02753B7269
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260B73B5E3E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AC023C4E1;
-	Sun,  7 Sep 2025 13:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AD62494C2;
+	Sun,  7 Sep 2025 13:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3by046A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmkV3Izb"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB22C1C28E;
-	Sun,  7 Sep 2025 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7997C3C38;
+	Sun,  7 Sep 2025 13:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757252153; cv=none; b=NOd63p+5vGm34WgAr7qklSpyY4haPHw9+2SVJ1jVeXVG8Nefm172P3dZYp1KwgHdz5brquWU9/a3rlxwHXlU2vewVlgoVHj2Ca3zFLXbHt0Mc9NQ8jXepi6kVCz2Z11rZCRi3fe+3kPK7UnDFYqoRwvBRGPyouEYOm1m4vrpBXU=
+	t=1757252346; cv=none; b=oU0ZZsZzFw48MLJNwv9nycmwF5FyTTCDljnjaLcc+tEuElNUmwCBaqy5lcLiQJxhh/IBQnqKN6mKNBI2ldjUd5fgMIQrZPDxx9w1qJxRLr0JeoMud2wE5i85F/08p9r21vUJV+zssowBIRAi6gsDs6cg/wNlyr8hHZocchrTFF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757252153; c=relaxed/simple;
-	bh=rNoPmiCA0KoAx7EBFxvixnxdNCF9UXaAbsu4Ps4ESSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hlFK8d6PLafEEfgbhSGKmmo8C79iFsPEw7CgMvU/Lmur7UMA59SxF57qaxTVdskfdKMM6XwXC3tpBRF9TYRjjTYlhDX1OllUALI33WHdIbMauNmOAaRkUOfeMEw4QjgXLzXzJiKb+DiRPUO84jRa2FnEWZPKqRI1Q8uyeT9eRHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3by046A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1328CC4CEF0;
-	Sun,  7 Sep 2025 13:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757252152;
-	bh=rNoPmiCA0KoAx7EBFxvixnxdNCF9UXaAbsu4Ps4ESSg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f3by046Ai3dw8pXvF2Ofc1BkEM4yJpKZJtJFZ5WQuv26/ouDy8ulNZluqueF8c8OV
-	 BuK/2W1LBNR5b6Nv0xXhJOQxswO7JMEOQ16MOrzipAWkDUuhNz96uDmX6ums/fTo/6
-	 mptQOZs84fqcA6lt+svO/HyyJpk80rb1NYcDHsV5Ww/kRdXKVOsmRrNROPuKSZ2dyc
-	 dLQL7clxM1lbfX+XJWAeXqjeeYJDqEjM+eEq8hT8W1Ega807Cadc6VdF0zKRNdj7Rd
-	 0rkmLfucKiUqVPv8pO4w66yCgk1DndsMiQt28XnuesTzllP3wbg3k+6b0izxSDYfGi
-	 wF8VyUCtbdbrQ==
-Date: Sun, 7 Sep 2025 15:35:47 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
- <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, linux-doc@vger.kernel.org, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH v4] kernel.h: add comments for system_states
-Message-ID: <20250907153547.5d4271d9@foz.lan>
-In-Reply-To: <20250906233028.56573fd6@foz.lan>
-References: <20250904063631.2364995-1-rdunlap@infradead.org>
-	<6089e22ddfdc135040cdeb69329d817846026728@intel.com>
-	<20250905140104.42418fba@foz.lan>
-	<34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
-	<atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
-	<2aad4540-ccdd-4519-9bed-7d8c7ccd009d@infradead.org>
-	<20250906105627.2c0cd0d9@foz.lan>
-	<d815f5c3-6e15-4758-8bf4-601d5543cab9@infradead.org>
-	<20250906233028.56573fd6@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757252346; c=relaxed/simple;
+	bh=hCVSKOqNI6rT9Ic4HOwE8gr3MRYNp1aB1sdk9r43cXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=im662Zjsbg8COG4qOjrqelNHM7WzASlqcJTpCu0Ez039anKROKKs54o4XapKI4N+odGXfYHsNm+xKD3QBIJyoz2kAEpph3ry3SHKkft1iHDSTswZdJGkxkXoxU21X8uVHjvB2PYiAiMO4h4gkbezGzFwNJ2mPN9zTRHc14hBAlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmkV3Izb; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-746d5474a53so1133385a34.2;
+        Sun, 07 Sep 2025 06:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757252344; x=1757857144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jg5hYRTBuoMmJcla3ZNoXDgwIuEPXV4U0p+U6RpgXzY=;
+        b=GmkV3IzbLP4U4gMqo93uv8M0PaMarNaDj4Ml9mGUQ9bnY66bBCfD2trHya8HUM/ojA
+         gfLug/4GCGdmCS61Lo/m2Zhy1k1MiMHfVtdmqQ6XZ9SyABNIwZqBQ2m1xkpsWb/8KFpb
+         SzwEo86OFpW8RoFthO2IxnMXdlgMdVdB9BnnJzSB2VRJw6yMtPwnRJUJ8IGa1gCMTdRh
+         h+R/Tj3+BEeFBzamcSaCs4InUiZGgP4q45EU/9FcYk+lcFGzpH4K+ge2n4uYi/3obSKx
+         f62PqxRt54OEDPPhKMzd9nACXxcSlNS1RNXMNvMTOW/7Yg6Hv+EVfPwRxKE16vW6P3oF
+         0JDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757252344; x=1757857144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jg5hYRTBuoMmJcla3ZNoXDgwIuEPXV4U0p+U6RpgXzY=;
+        b=fs1ZqZ+SY/OZEXNMmdnaJMQMxGaThwAPkvrkuwdqyZzi4hqbJsuIndJCmLxy4Wi00w
+         eHd4ca7C6IQtWSdFcR9iIppHBncS//SLxENW1U0oOpP/g4eS6nYuGOH/pHlp9K/ZpbjK
+         xFCyQqr5uHlbI8lHpopNQ4yzfF6F0gDTrB+G4c9pMVR8swL/mjVaatK7zTaYtrIasB0W
+         wJ+pa71Ss3QJBgCbxbMkzyfg7628vP+2oI1TYFseZ+PqRS9CRszlfibZkpScfYKz0lGE
+         wnJKdKqobakxe6+AaGu5BkOgg3dRqhSM4lExsTzjLN6irNc3siPcBWtDeuSOYRjUnnrO
+         HCFA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9aeSHLhn0ihbnlXDDZMH9O/yKmF4Jm5rFNB4IOvRZUxCecbWxN4DFyHpEFIArdY7fMOw9MQYjB3Fx@vger.kernel.org, AJvYcCWHOuyhnNUXoQmJOWr/BEMrTqJlTAxPXu5PLgQfPFjYk5qkByPesI1Z1/4DS4p7lROuw5kfy4r26Ea/Mh7l@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmo2x2n5fhlmzE9qOusFxjBj8zhhPlCNu9WEnRG98AIi/yejBP
+	Mo6fzRb2k9sJD3oFtMioVM4Rf5ZICUxkXJJAnZ7CY3PU8J/jOLg7PqekQ93TVXAfIa8gZj0jDuc
+	DIKlVASiwBpaxQTnYxs+GdkOYtl/kzORmxQroLdw=
+X-Gm-Gg: ASbGncsv+Joh1LhUVc7k2LqM7r97Zy6DIGAtlTQd3dTDSQ2NX8pW8QRGdNKqmTJPHyA
+	SLPcqMlDVvyi4O6DR4/95gKTXPjGFTzPD04wdxwwDRDXOBYwZ3n+NTZagGQjQohnB5PYSlJH2yn
+	INNaY9MODjyWupMNTacZzDlGktBajiZMt7y3ul4Kg8w9mf4WCdKn9Onb/rjpehiRXHo+ln+xcOj
+	G7RkFv9b2nN7ZV8HviAIV6frkv+DQ==
+X-Google-Smtp-Source: AGHT+IFWowJxi0HU0HhTmdgVwg8ZHBsbT84KB18dj5+PMiQWQ9ZwGXApazxylXrgyxRrIjtTw/LMrcHR4FY2RxfFD9E=
+X-Received: by 2002:a05:6808:d48:b0:438:42d1:2071 with SMTP id
+ 5614622812f47-43b29a6cacfmr2451210b6e.14.1757252344545; Sun, 07 Sep 2025
+ 06:39:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250902142749.13724-1-kusogame68@gmail.com> <20250903074205.GB2163762@google.com>
+In-Reply-To: <20250903074205.GB2163762@google.com>
+From: Nick Huang <sef1548@gmail.com>
+Date: Sun, 7 Sep 2025 21:38:53 +0800
+X-Gm-Features: Ac12FXzwHt1wYtoKBFqFUWbaMgMC3JPZG9nUEXW-zPSi2eYb8mSiw0DdkltVXi4
+Message-ID: <CABZAGRHSVY3uneK7qb2nwDrjjRsLXzsm0mwQncU1iRZac6tAkw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Lee Jones <lee@kernel.org>
+Cc: Johnsodn Huang <kusogame68@gmail.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Sat, 6 Sep 2025 23:30:28 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=883=E6=97=A5 =E9=
+=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:42=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Looks like you corrupted the subject line with the commit message.
+>
+> Please resubmit.
+>
+> > From: Johnson Huang <kusogame68@gmail.com>
+>
+> Use `git format-patch` and `git send-email` instead.
+>
+> > Co-developed-by: Nick Huang <sef1548@gmail.com>
+> > Signed-off-by: Nick Huang <sef1548@gmail.com>
+> > Signed-off-by: Johnson Huang <kusogame68@gmail.com>
+>
+> It took two of you to correct the word "and"?
+>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.ya=
+ml b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> > index d783cc4e4e..d16c82e398 100644
+> > --- a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
+> > @@ -41,7 +41,7 @@ properties:
+> >    clock-output-names:
+> >      maxItems: 1
+> >
+> > -# The BD71847 abd BD71850 support two different HW states as reset tar=
+get
+> > +# The BD71847 and BD71850 support two different HW states as reset tar=
+get
+> >  # states. States are called as SNVS and READY. At READY state all the =
+PMIC
+> >  # power outputs go down and OTP is reload. At the SNVS state all other=
+ logic
+> >  # and external devices apart from the SNVS power domain are shut off. =
+Please
+> > --
+> > 2.43.0
+> >
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
-> Em Sat, 6 Sep 2025 10:13:23 -0700
-> Randy Dunlap <rdunlap@infradead.org> escreveu:
-> 
-> > On 9/6/25 1:56 AM, Mauro Carvalho Chehab wrote:  
-> > > Em Fri, 5 Sep 2025 15:07:31 -0700
-> > > Randy Dunlap <rdunlap@infradead.org> escreveu:
-> > >     
-> > >> Hi,
-> > >>
-> > >> On 9/5/25 6:38 AM, Mauro Carvalho Chehab wrote:    
-> > >>> On Fri, Sep 05, 2025 at 04:06:31PM +0300, Jani Nikula wrote:      
-> > >>>> On Fri, 05 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:      
-> > >>>>> Em Fri, 05 Sep 2025 12:02:37 +0300
-> > >>>>> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
-> > >>>>>      
-> > >>>>>> On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:      
-> > >>>>>>> Provide some basic comments about the system_states and what they imply.
-> > >>>>>>> Also convert the comments to kernel-doc format.
-> > >>>>>>>
-> > >>>>>>> However, kernel-doc does not support kernel-doc notation on extern
-> > >>>>>>> struct/union/typedef/enum/etc. So I made this a DOC: block so that
-> > >>>>>>> I can use (insert) it into a Documentation (.rst) file and have it
-> > >>>>>>> look decent.        
-> > >>>>>>
-> > >>>>>> The simple workaround is to separate the enum type and the variable:
-> > >>>>>>
-> > >>>>>> /**
-> > >>>>>>  * kernel-doc for the enum
-> > >>>>>>  */
-> > >>>>>> enum system_states {
-> > >>>>>> 	...
-> > >>>>>> };
-> > >>>>>>
-> > >>>>>> /**
-> > >>>>>>  * kernel-doc for the variable
-> > >>>>>>  */
-> > >>>>>> extern enum system_states system_state;
-> > >>>>>>
-> > >>>>>> BR,
-> > >>>>>> Jani.
-> > >>>>>>      
-> > >>>>>>>
-> > >>>>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > >>>>>>> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
-> > >>>>>>> ---      
-> > >>
-> > >> [snip]    
-> > >>>>> If the problem is with "extern" before enum, fixing kdoc be
-> > >>>>> fairly trivial.      
-> > >>>>
-> > >>>> The non-trivial part is deciding whether you're documenting the enum
-> > >>>> type or the variable. Both are equally valid options.      
-> > >>>
-> > >>> True.
-> > >>>
-> > >>> I'd say that, if the variable is under EXPORT_SYMBOL macros, it
-> > >>> should be documented.      
-> > >>
-> > >> Do you mean documented with kernel-doc? How do we do that?
-> > >> I was under the impression that we don't currently have a way to
-> > >> use kernel-doc for variables (definitions, only for declarations).    
-> > > 
-> > > No, but it shouldn't be hard to add something like:
-> > > 
-> > > 	/**
-> > > 	 * global system_state - stores system state
-> > > 	 * <some description>
-> > > 	 */
-> > > 	extern enum system_states system_state;  
-> > > 
-> > > and place a dump_global() function at kdoc parser. Ok, one might use
-> > > DOC:, but IMHO the best is to have a proper handler for it that would
-> > > automatically pick the type.    
-> > 
-> > Nitpick, I would s/global/var/. But I won't complain about "global".  
-> 
-> Either way works for me. Yet, I would expect it to be used only for
-> global variables, as documenting local ones using kernel-doc is
-> probably not what we expect inside Kernel documentation. So, naming it
-> "global" may help.
-> 
-> > More importantly, I have seen several patches where people try to document a
-> > variable, so it seems like something that we should support at some point.  
-> 
-> Agreed.
-> 
-> Adding a parsing rule for the variable doesn't sound hard, as they follow,
-> in principle, this regex(*):
-> 
-> 	OPTIONAL_ATTRIBS = ["
-> 	    "extern"
-> 	]
-> 
-> 	optional = "|".join(OPTIONAL_ATTRIBS)
-> 
-> 	"^(?:extern\s+)?(\w.*)\s+([\w\_]+)(?:#.*)$"
-> 
-> (*) eventually, some might have extra attributes, but we can
->     start with a simpler regex, adding a more complex parser if/when
->     needed.
-> 
-> I added at the end a one-minute hacky prototype I wrote, completely
-> untested and incomplete.
 
-Heh, it doesn't hurt spending 15 mins or so to write something that actually
-works and implement all functions.
+This patch was sent by Johnson Huang on my behalf.
+If only one person should sign off, I have already discussed with him
+and will keep only my own Signed-off-by.
 
-The example below produces:
-
-	$ ./scripts/kernel-doc include/media/tuner-types.h 
-...
-	.. c:var:: tuners
-
-	  list of tuners
-
-	extern const struct tunertype tuners[];
-
-	.. c:var:: tuner_count
-
-	  number of known tuners
-
-	$ ./scripts/kernel-doc include/media/tuner-types.h --man
-...
-	.TH "Kernel API" 9 "global tuner_count" "September 2025" "API Manual" LINUX
-	.SH NAME
-	extern unsigned const int tuner_count; \- number of known tuners
-	.SH SYNOPSIS
-	enum tuner_count {
-	.SH "SEE ALSO"
-	.PP
-
-Still not ready for kernel merge (plus I placed bogus descriptions for
-two externs from media that IMO doesn't make sense to document), but it
-has all needed steps for someone wanting to extend kernel-doc to see
-how to do it.
-
-Feel free to modify it - even renaming from "global" to "var" and
-submit upstream.
-
-Thanks,
-Mauro
-
-[PATCH] [RFC] kernel-doc: add support for handling global varaibles
-
-Add support for documenting global variables with kernel-doc.
-
-Please notice that this is mostly an example, as:
-
-1. I'm documenting just two random variables from media, that
-   doesn't make sense to actually be documented. I did it just
-   to have some example and be able to test it;
-
-2. the html output requires tweak: right now, it is just printing
-   the entire variable prototype as-is, without any formatting,
-   and witout making sense at the output
-
-Feel free to modify this patch to make it something actually
-mergeable.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-diff --git a/include/media/tuner-types.h b/include/media/tuner-types.h
-index c79b773f750c..cf074beaeccc 100644
---- a/include/media/tuner-types.h
-+++ b/include/media/tuner-types.h
-@@ -199,7 +199,18 @@ struct tunertype {
- 	u8 *sleepdata;
- };
- 
-+/**
-+ * global tuner - list of tuners
-+ *
-+ * List of all tuners defined via v4l2 API
-+ */
- extern const struct tunertype tuners[];
-+
-+/**
-+ * global tune_count - number of known tuners
-+ *
-+ * Number of tuners at @tuners list
-+ */
- extern unsigned const int tuner_count;
- 
- #endif
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index 1eca9a918558..a58562bef35a 100644
---- a/scripts/lib/kdoc/kdoc_output.py
-+++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -199,6 +199,10 @@ class OutputFormat:
-             self.out_enum(fname, name, args)
-             return self.data
- 
-+        if dtype == "global":
-+            self.out_global(fname, name, args)
-+            return self.data
-+
-         if dtype == "typedef":
-             self.out_typedef(fname, name, args)
-             return self.data
-@@ -227,6 +231,9 @@ class OutputFormat:
-     def out_enum(self, fname, name, args):
-         """Outputs an enum"""
- 
-+    def out_global(self, fname, name, args):
-+        """Outputs a global variable"""
-+
-     def out_typedef(self, fname, name, args):
-         """Outputs a typedef"""
- 
-@@ -472,6 +479,20 @@ class RestFormat(OutputFormat):
-         self.lineprefix = oldprefix
-         self.out_section(args)
- 
-+    def out_global(self, fname, name, args):
-+        oldprefix = self.lineprefix
-+        ln = args.declaration_start_line
-+
-+        self.data += f"\n\n.. c:var:: {name}\n\n"
-+
-+        self.print_lineno(ln)
-+        self.lineprefix = "  "
-+        self.output_highlight(args.get('purpose', ''))
-+        self.data += "\n"
-+
-+        # FIXME: better handle it
-+        self.data += args.other_stuff["var_type"]
-+
-     def out_typedef(self, fname, name, args):
- 
-         oldprefix = self.lineprefix
-@@ -772,6 +793,18 @@ class ManFormat(OutputFormat):
-             self.data += f'.SH "{section}"' + "\n"
-             self.output_highlight(text)
- 
-+    def out_global(self, fname, name, args):
-+        out_name = self.arg_name(args, name)
-+        prototype = args.other_stuff["var_type"]
-+
-+        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-+
-+        self.data += ".SH NAME\n"
-+        self.data += f"{prototype} \\- {args['purpose']}\n"
-+
-+        self.data += ".SH SYNOPSIS\n"
-+        self.data += f"enum {name}" + " {\n"
-+
-     def out_typedef(self, fname, name, args):
-         module = self.modulename
-         purpose = args.get('purpose')
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 574972e1f741..e2a3f4574894 100644
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -64,7 +64,7 @@ type_param = KernRe(r"@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
- # Tests for the beginning of a kerneldoc block in its various forms.
- #
- doc_block = doc_com + KernRe(r'DOC:\s*(.*)?', cache=False)
--doc_begin_data = KernRe(r"^\s*\*?\s*(struct|union|enum|typedef)\b\s*(\w*)", cache = False)
-+doc_begin_data = KernRe(r"^\s*\*?\s*(struct|union|enum|typedef|global)\b\s*(\w*)", cache = False)
- doc_begin_func = KernRe(str(doc_com) +			# initial " * '
-                         r"(?:\w+\s*\*\s*)?" + 		# type (not captured)
-                         r'(?:define\s+)?' + 		# possible "define" (not captured)
-@@ -886,6 +886,27 @@ class KernelDoc:
-         self.output_declaration('enum', declaration_name,
-                                 purpose=self.entry.declaration_purpose)
- 
-+    def dump_global(self, ln, proto):
-+        """
-+        Stores global variables that are part of kAPI.
-+        """
-+        VAR_ATTRIBS = [
-+            "extern",
-+        ]
-+        OPTIONAL_VAR_ATTR = "^(?:" + "|".join(VAR_ATTRIBS) + ")?"
-+
-+        r= KernRe(OPTIONAL_VAR_ATTR + r"(\w.*)\s+([\w_]+)[\d\]\[]*\s*;(?:#.*)?$")
-+        if not r.match(proto):
-+           self.emit_msg(ln,f"{proto}: can't parse variable")
-+           return
-+
-+        declaration_name = r.group(2)
-+        var_type = r.group(0)
-+
-+        self.output_declaration("global", declaration_name,
-+                                var_type=var_type,
-+                                purpose=self.entry.declaration_purpose)
-+
-     def dump_declaration(self, ln, prototype):
-         """
-         Stores a data declaration inside self.entries array.
-@@ -897,6 +918,8 @@ class KernelDoc:
-             self.dump_typedef(ln, prototype)
-         elif self.entry.decl_type in ["union", "struct"]:
-             self.dump_struct(ln, prototype)
-+        elif self.entry.decl_type == "global":
-+            self.dump_global(ln, prototype)
-         else:
-             # This would be a bug
-             self.emit_message(ln, f'Unknown declaration type: {self.entry.decl_type}')
-
+Best regards,
+Nick
 
