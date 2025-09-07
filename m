@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-804791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2215FB47D01
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82929B47D06
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 21:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9870175F40
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80243B59DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 19:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C0629B78F;
-	Sun,  7 Sep 2025 19:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706EA2848B4;
+	Sun,  7 Sep 2025 19:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlRDpmqg"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OhCOlstg"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F4F27FB21;
-	Sun,  7 Sep 2025 19:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B7C1E570D;
+	Sun,  7 Sep 2025 19:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757273105; cv=none; b=qesMT8S6+yv1zkD/aOsFBYV0YSwVio7Kp+Qw5tBioAdMESnyzwK41tSRi+vAKw+wFiiGZjLsfg3a+v9zvily54WGRmjUTA6K1pZyUu/ENB7h0ZQMuUlYx2ke+XOHpY7bZfQIylSQGwvmolEyJBM/1hHEJz0q3xGYHhHsdHSwJl8=
+	t=1757274044; cv=none; b=Fe3JMM5ZmhaPTf/W2BJmb0Bc6d/6j0CT/4mjZuSkRJBjTAPRjYILH71PMJoEOPVqmKSdCIopS5Ef4AXSZtC478u2pWv7DGgnEgqLBuvRH5cEMfyF/HJ0oz1Ol7w7Z5735r7zoTcUQMfXsw63Ww79rTmFB5YMhjYLVm4IZ+BLJOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757273105; c=relaxed/simple;
-	bh=h/1pZc441oFZr7fQJ9/PwQ4CeuCqxaadxa5ZrLrSIOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZUThnZISs0rdaYAoUHEN+gPPAh3q5yeRPmkvzkErdsXTIVKykAwBRg8Ds7Sy2JABlGDyW7VmwttTSKc/GvMyedbz7xSva+lBq3DLPoD40N2vJ6sDq/aHxd8vcEAJcGnthygdpyhZkssHwbUFA3lRkbJyy6HKtg4s9xZxH1hwl8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlRDpmqg; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32d89e962cdso41016a91.0;
-        Sun, 07 Sep 2025 12:25:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757273103; x=1757877903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/1pZc441oFZr7fQJ9/PwQ4CeuCqxaadxa5ZrLrSIOw=;
-        b=WlRDpmqgVvga2hqBwW1gcDb7TVHSDkBCeQq3zzo1EHSoV4bAodz0dM6fiqNaT5NPK8
-         kyM2PRobN6LxtMgtAWrAgnE5XsZWSzA2AADzRhgriJY9zw4401q9HTpHiT8fjbahf+cm
-         Tz9t3T51tS6+kYDon53rdPMFS6zG5xnVd6pmPkE6TCPB+I6JEs1kMmvyP7ZdUynRzcJM
-         +ueV2jAYbJbNlW/AcsFOo//SvkzNLZFZYE0lUTvXpEWUArvpnuhrTbUli0CH27SNuRwO
-         zFTE1IJIqRSIPyCvNMzsmZBFck8ihIoL9a4Eu56Dl1zl5+kR0x4R8+A+a8qVCsf6z/so
-         jk+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757273103; x=1757877903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h/1pZc441oFZr7fQJ9/PwQ4CeuCqxaadxa5ZrLrSIOw=;
-        b=dwHgtrMozWuJUlew6jdnKEC+ryTYXstzvKLwiV4uckfr3cvbZ6Vr7a8xyfEEKehvBV
-         zBFfxMBBb/5NivoE3x76MiCQKAS/lRMhe4MQRyKmfr0xz5ScOTjWvo0Y2iOpWVUQne2Y
-         cHYPS6FUhDXlwSZC7C9+VX+HWf0wfVA0L4tta64mMFYH5JEXn6poUEBt0+9S+AwE+n9F
-         4BANQ2uZHNz0MvHGIxWfTRbWE9+JfxF5Ceq/ZTF1GyIBWgL3ontrc7YKaNA57e0SSumX
-         LLuKfTALIIkSXxViphvrGc/j4Bu+idzSE+OfjO+7ZftS/JEsqcGjY6OgDE6GwY7QRm1l
-         2Pzw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/gaYVmbm6nXRh/k2KcEaCNyHArvNahx5V3+1quAg+1dXyBC6hpLy4zsW5IeXv/XGJyUX7SYt2U8s4avqqc6g=@vger.kernel.org, AJvYcCW6lNrMRv/jKJNPFJGkOP6aERq6grBRu0iFub3iU5jx4ZkLokjV0Iw83lIgu1zK60+5sBOWZtSDNA696j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnyDj9vnCz+vJV5DajrWbGRyv4F0xNNwH0I8U7NuXFbPObnMFG
-	KOgHDhTS98699EfVwfmfZn6nyCFKfiyh4WOdG+Zg4V9WkaUG+1atIHw8/kUiZo1NCMFOPFikuI8
-	9m99gfM3VAhCJDNzWZfODxgy0cAn4YjI=
-X-Gm-Gg: ASbGncvvPe0IsmWY/ZxI+LgJed5lj6r09kg0L3PY0CqsROsBguU5l+gy1RM2J8Bai1z
-	zhD/bf5Plu0Q33TgoeeojN1RS4IUcQ2WSDGATHtDiJRc1Lf/aLUp/oLAmz/SXGHo+8sQblm7Bcx
-	p88Ybc8m4PnisSOuwq/mRhAUz1LGryJHk5M7gEFZXhPA3IrupiqJzrBdueUOotte/YXp5z14nma
-	HhjEHUpG9m5FAQ/+yMb7iZEdhI7Rm1TvcTVg1b3QbUrhPlSBg5ma50vTAyPEUJ0774QIoWhWe6S
-	YnTkc/47KTIBbM36u5P4sVKNVg==
-X-Google-Smtp-Source: AGHT+IF+gvFF31rjWr4rNnxVWpKovGVCaH1wlCBgqOPJBdojTtNKLpKnTSgh+Aer2/Ku8UOhYBjLGtdTZm/sR9zUftc=
-X-Received: by 2002:a17:90b:4a0b:b0:329:cc8e:247c with SMTP id
- 98e67ed59e1d1-32d43fb5ca6mr4263633a91.8.1757273103541; Sun, 07 Sep 2025
- 12:25:03 -0700 (PDT)
+	s=arc-20240116; t=1757274044; c=relaxed/simple;
+	bh=foXEDvxRdYb1cqWJtE7ar5tn1II8p/JCdTJ/kw3hAZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uC/rGmPA9Azz8mL8hacKpOsEte9QBSWpOQZQLq+JheqPXZYtTO/KckC9GveKGEXvo9AGRtVmCGDcT7Dkk2G3LWtwqfuXjAmRj4jg78fWdzJZl2UXRf6Wi1JADkRIdm5wi8uksGm5UZXpAVJ1FtLcMrPzGiwu0XUS44WzVqzQHbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OhCOlstg; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587IP1dR006414;
+	Sun, 7 Sep 2025 19:40:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=BPWd/FAbs+AjycjqLSDdyR8sdpYBr
+	IgTonUOud8xsy8=; b=OhCOlstgy/Xcw7LKPZT9C2U+tyeM5AbNeO8qgqgoMVe9w
+	fykWAq+ZK72tQl6H4lOx9g8Hb0oEwU0EiXfU5VX9nyjJvkLOtEyVlNTZzJQ2Xwna
+	GKXk72PvcAUJ0Bxrpii9ijH3oLCYfCxpmrK3CzQxOZKZrJSTsuYIN+OKw4YuAkxV
+	MJwD0dcyDszY8qeVQoWnymzCPsIADQtCYJX0APcKxPdspVXov7s0aBbxMA376v0x
+	5iopHQFrqKuxNCR9UqEyrEUBs1gl0v4Q2F3wgw5prFakYsG5iQuueojHA2k1yynL
+	TPHhpMMMRLQbeiJNxC0xVSjV7LaO2QUL+6GsVzunA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491f5e81fs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 07 Sep 2025 19:40:29 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 587F5FDh030242;
+	Sun, 7 Sep 2025 19:40:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd8ctk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 07 Sep 2025 19:40:28 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 587JeRT0002865;
+	Sun, 7 Sep 2025 19:40:27 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bd8ctk1-1;
+	Sun, 07 Sep 2025 19:40:27 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: mani@kernel.org, quic_cang@quicinc.com, quic_asutoshd@quicinc.com,
+        peter.wang@mediatek.com, martin.petersen@oracle.com,
+        alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] scsi: ufs: mcq: Fix memory allocation checks for SQE and CQE
+Date: Sun,  7 Sep 2025 12:40:16 -0700
+Message-ID: <20250907194025.3611607-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818132551.133410-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250818132551.133410-1-shankari.ak0208@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 7 Sep 2025 21:24:51 +0200
-X-Gm-Features: AS18NWDDuNBNP-KbuJqZfAx1JPJZomHQdBMfK1O_6T6JpVXBy80zigS869h9baU
-Message-ID: <CANiq72nqNaJ8Qr+hUNX6wvzhVOdG=5qcCw8zur4c3V0NYpkUoQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: task: update ARef and AlwaysRefCounted imports from sync::aref
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Christian Brauner <brauner@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-07_07,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=866 malwarescore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509070204
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA3MDE4OSBTYWx0ZWRfX7eR5bETvhaMU
+ EeDy4kr+hUqTLmQzRnMjhiWzIZ6mDNGsY7S79n07MaTjJXy+0BDTePjzC550Im4WHQvB7Jq8zTe
+ Pr0CjnnohPMZ8hi53CMZksamPs8vbdXiGQHd5Oca3beslwU65+uLt3EfuP6DNCHXybXvwvsr+RA
+ L+vij5sCOn0b7onWlxh+Y4X4vBcnAmZ/6/CezQPQ4f6sSSo1XZdH5EWEgsd7bMVPOnxfPrZHh1H
+ HloWEm+H1UPWfoWfxYa3HnQymWgqCHuN3GMPIqNlkN/QKdVxdmheRPUOLYC91YLHlKSqI34ILL4
+ 2AzXSS1afXk3aRJc0tQVRj1g0Jv2u+Z7E5Soi9om6IM6ve0YS1O/+WWUsxtXuO0tUZV/tFVv8/X
+ JDw8exNi
+X-Authority-Analysis: v=2.4 cv=CqO/cm4D c=1 sm=1 tr=0 ts=68bddfad cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=hD80L64hAAAA:8 a=GesvECoXrJs119_16ZgA:9
+X-Proofpoint-ORIG-GUID: A0C0WVHy9ZvQCPwA144Q-P8sIUUTmSOg
+X-Proofpoint-GUID: A0C0WVHy9ZvQCPwA144Q-P8sIUUTmSOg
 
-On Mon, Aug 18, 2025 at 3:26=E2=80=AFPM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
->
-> Update call sites in `task.rs` to import `ARef` and
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
->
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to sync.
->
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+Previous checks incorrectly tested the DMA addresses (dma_handle)
+for NULL. Since dma_alloc_coherent() returns the CPU (virtual)
+address, the NULL check should be performed on the *_base_addr
+pointer to correctly detect allocation failures.
 
-If no one is picking this one, I will -- thanks!
+Update the checks to validate sqe_base_addr and cqe_base_addr
+instead of sqe_dma_addr and cqe_dma_addr.
 
-Cheers,
-Miguel
+Fixes: 4682abfae2eb ("scsi: ufs: core: mcq: Allocate memory for MCQ mode")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+v1 -> v2
+rephrase commit message and added Reviewed-by Alim
+---
+ drivers/ufs/core/ufs-mcq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 1e50675772fe..cc88aaa106da 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -243,7 +243,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
+ 		hwq->sqe_base_addr = dmam_alloc_coherent(hba->dev, utrdl_size,
+ 							 &hwq->sqe_dma_addr,
+ 							 GFP_KERNEL);
+-		if (!hwq->sqe_dma_addr) {
++		if (!hwq->sqe_base_addr) {
+ 			dev_err(hba->dev, "SQE allocation failed\n");
+ 			return -ENOMEM;
+ 		}
+@@ -252,7 +252,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
+ 		hwq->cqe_base_addr = dmam_alloc_coherent(hba->dev, cqe_size,
+ 							 &hwq->cqe_dma_addr,
+ 							 GFP_KERNEL);
+-		if (!hwq->cqe_dma_addr) {
++		if (!hwq->cqe_base_addr) {
+ 			dev_err(hba->dev, "CQE allocation failed\n");
+ 			return -ENOMEM;
+ 		}
+-- 
+2.50.1
+
 
