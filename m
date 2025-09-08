@@ -1,172 +1,153 @@
-Return-Path: <linux-kernel+bounces-805082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56890B483CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:51:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8EEB483D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B41B173716
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2813B9AB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD652264A3;
-	Mon,  8 Sep 2025 05:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACF022CBF1;
+	Mon,  8 Sep 2025 05:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqEyEaRu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfX939/w"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9332B45945;
-	Mon,  8 Sep 2025 05:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C6F315D4E;
+	Mon,  8 Sep 2025 05:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757310654; cv=none; b=tkSyK1UjpqWj/36teJMnv534EBXttbZf8BIDVhHZ/aelhXfcGsO4PhhX9l1j4tTa6D1H6/1oPThts7KaRgk6oaz1Vbu18g37Yvbrfzf2SQ+9Tfjjy2vYPcuIxPJRZKrjQmGfvIwGOcTQ6756xUoCQnL8K/Y1tcqP1uz7iF0vR3A=
+	t=1757311123; cv=none; b=bxaNRf/VcslmV4Kz4ICdV+HnUfICAWcorM5i0QhcuTMo/+9w59ljd6KlNiPeyoGqcq3FqxHv16A0OP3D7hjTRcF9ttEaYzvoVLss9r5CKwFJNqxG7xDN5+5SW4GCRAsANLn3EhxcghnICD68/Nunsh1QWzdQ9nhXmzSWiFjdpzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757310654; c=relaxed/simple;
-	bh=GINqdprG7It+egCrjMUFqxjobyN5ZaYR3gYB4TpViCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lb4hY7iCj7L8VH1IBzY3hfIsxrB78ofKb327/Za5grcqwtFGGCldh1OObbTau6aKfUzumNIeZ8o8KyhHYmnk3Srgp9rkiq4O5qeOnmtWcRWaXnGilg6vArTX+kGU9pzJd6IRnxs37UY01HEb8lwX4rKuU+nGzU2MwTRKfRYMxag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqEyEaRu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216CEC4CEFE;
-	Mon,  8 Sep 2025 05:50:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757310654;
-	bh=GINqdprG7It+egCrjMUFqxjobyN5ZaYR3gYB4TpViCY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eqEyEaRuhNunHE3meUU+OuoeHwAkGzIcX9usvYpVewBuHj2C3F7wHa8HZU9upo1Uz
-	 s1VkxCRZF56OvA8sxNngOPt5NZ6pnkOCEulUlriyWxUo1E4eL43H7rH7690cbD5eqZ
-	 HJaJya4gAhtb768C9GG8JjPPhvxMGBoAsAPWThKZM9HnQO4NKTYBxCL2MUulH9YBUU
-	 DeQjZUYww54kwZqauuvIoQ/6Zc2xB4ygjAntlYYqg5OmvgKAH3n2EGAI4N7ku6FiU8
-	 OpNacVHWw9Y6OuUu7HhWlzydOCTx8iWQVPVvmY5YSEPiPVQcOgH9sjep/xGJVpejzx
-	 UG+3z+4InK5qw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f7c0fb972so4325112e87.3;
-        Sun, 07 Sep 2025 22:50:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVa4/0NIPlxGoJLew/d3jjAqNWY2coBF5igvza0yPKIqT/DKRBWR6AyQpVC02YNGlga2vnKjzjjKw=@vger.kernel.org, AJvYcCX/QKZ1rjwb+g35Wpk3lHYGo4Khjc2GjUGRL5WED5M5n4WRt3t0FIgCx/8H2mNoOy1IRnzRi25CqnlKQdod@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo1xGPk3QE+n0/oAxwnG2JmtbjSktFUeNysHtBKonqhgx81btr
-	nIN4KmGnLDDrZgKiKkRTQ4IGDlNrgMVwJpvDky4MuTpsxApBcX71nCbDtVHhDSe3Top4OeYuAmW
-	LcLV4A0OaMmH0xKvBMuI+TKigryuVVPY=
-X-Google-Smtp-Source: AGHT+IHj3nVEJWnBkVlJaXrN5K6OwmGDBEDQK/Rmk6FQrn4LOuQl1f6hmY4bY5Osqcf46rysjnySFniHWM+nuYqAYng=
-X-Received: by 2002:ac2:4e0e:0:b0:55b:9796:5d5a with SMTP id
- 2adb3069b0e04-562637cbf62mr1664560e87.26.1757310652405; Sun, 07 Sep 2025
- 22:50:52 -0700 (PDT)
+	s=arc-20240116; t=1757311123; c=relaxed/simple;
+	bh=cYPDUfj5hmDkdOlj79oLbWhNXIZOY5Po+8mrPYvPJ2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttPTSq1RK4+QqNS2m5nDbe9IOZVM7MlpgfcRaiTojxiOI6vswj7t4JqlbwbHdhRCLb0/gE2wahdu6xpH9wE22PYRmgJzp4TOcC9oY+14ix7OZBi1t1kPUTId2ejVGx5us2RpSD+ug5OOOvXIqa0oGZdYPCniRY2c7KEo1FrpF8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfX939/w; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24b13313b1bso29056115ad.2;
+        Sun, 07 Sep 2025 22:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757311121; x=1757915921; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iQAO53IheHXnk98zkGI1Xh1RP2KJZB47OD8cVlZVsiE=;
+        b=SfX939/w+GxCWn2TZkXKshjKQ9Ztc7lb3lxCBs+068IFZZxx5ADj+gej5rQQp5ZF1t
+         xiPI2A1axJHp9UlCboe5YhcN4j+Uk9z/iTlfw/zsYgvl1o7EfjPs3a0aqw1BqHLVhAC0
+         TijlJBG9To7CK1koSa9HEVUe9KB51WDrgAUJSXk0LGFy+O+HSH7wP7w9V/bw0J4FErpt
+         J2fLvonh0h+rQdMHTc7yUX53d4sxIvZUY+FeRwMjjbZs8sCYx+x/5fFGIKvESKAY7YyZ
+         xJ829C7ZVX7SbMU7qJiGdfW5RuVX9uWpgucCGPQ+YP5squH0/rDBsoW6aDRTDJ0rIRrE
+         tf+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757311121; x=1757915921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iQAO53IheHXnk98zkGI1Xh1RP2KJZB47OD8cVlZVsiE=;
+        b=ZTFe2fppX/on9+NzZGrVF5bSZEJvgHjQBkO5QIlXPsvTGg9rf/BlMHXP2M+We3P7Lo
+         9/tRMKIGlPemLYtsLKuTYVq+FrUgM2iW6TDqEIDBn+wPquhv0/gwA3dnaKHxN0hcPuDt
+         bodtPiOgK9VvpbxXxnDFKGZ8P5wGtoGf3I3NB7luDnPPmHsK3KarTYllRaYHYE5yDq1t
+         a1P8t5BnnOX0ybthJDbb5HNB1jMYfXLwDFafIFMGRjd0sq7RTjAt1qIY9G1/V+6YLwWa
+         IeWk0eo/BBgt4yPi1v34untC2SdXCx++oOVL+juu+aywHC5YMYJrNkOxumzUcY8phFog
+         a1+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW91LSiWEt+f9+BvC+Muwe7hruuw0y3ygKh1oTrA1oFKU/PmVHJJ5Uxwke02Bc0TfT954VcJosDLmSzTV0=@vger.kernel.org, AJvYcCXQF5zDwYnwdkoXBJtJ3Vt39H2ERryDrqvNJDlwlVphMQluOzRgtCnH3OCtm1E5rdGtcF31kI7dmUVGZ5E6m0cFw1pF@vger.kernel.org, AJvYcCXntxWucfnbtaUDmu9HkLuXQmYNAgaYSRdokYNDiC6VJrvRuNVQVbcqcAHXArC2m/geeO8Kfm6koteeqKBQY6+Ylw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5Zs4ZJFwB/bkFKygNY9VgoAevIZOWIxs+dSD2F3Ji/1Gu1t5
+	uKvdYC/VggMBBmELHdTvXdwhdJBKCKdtu76hCGOt+RPpWoY1V8+fsIB2
+X-Gm-Gg: ASbGncvBhZ5MmwQYd2bEcfDLRufYMxN+g67tLxhk3KH9r0aBYZP1VdZyZvemg5EthQL
+	CxYmvC/gJhqleCoXUfwX6n0gVRVoG3GfdMNFzqn3PexJSkodcnKQKV65wfOCtBkITPYDCvoihy+
+	dysvpwjskOr7pq2T+qV7cXmUZSnK1bCkLaMXN4Lz18hIB/ixt9263++IAePPKjYbhooTNbQoKAl
+	42f7HgpBUp4nNGRx3MJ9kd6+vnD64Wa0uf0VY23kdY3W0n3V/uWv9xq/KUbFzgqXRrTqWgUVUVK
+	eIUwXdWNzgspjSXVvtbmsPnWk9x8Ixn44UaR09MtRQwu93Okm3dED00she0nW8VR+ujLW5guQXu
+	PFoeUQjN6OlqOKGWy1gClraM/dHSXrXsXcMSfSQ==
+X-Google-Smtp-Source: AGHT+IGaiMNB6Lomn1EdvRMYhV/HuuA9G/CRJ6puBizE2rFoQP4ulL6/ASUcZpM18sYQgH+KakQyOA==
+X-Received: by 2002:a17:902:cec1:b0:24c:ecaa:7fa with SMTP id d9443c01a7336-25174ff5d11mr93448985ad.48.1757311121081;
+        Sun, 07 Sep 2025 22:58:41 -0700 (PDT)
+Received: from localhost ([103.121.208.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24a92f89809sm236444905ad.2.2025.09.07.22.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 22:58:40 -0700 (PDT)
+Date: Mon, 8 Sep 2025 13:58:37 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/18] mm/ksw: add ksw_config struct and parser
+Message-ID: <aL5wjbUYp3_qObzt@mdev>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-3-wangjinchao600@gmail.com>
+ <aLlD-74aBdb-ZD5K@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
- <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
- <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com>
- <20250904093455.73184-1-epetron@amazon.de> <CAMj1kXHTJxBMFX6J-QwcPRojLGMQsTNOH5Bz9kHk7CFdt1JApw@mail.gmail.com>
- <20250904125917.78112-1-epetron@amazon.de>
-In-Reply-To: <20250904125917.78112-1-epetron@amazon.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 8 Sep 2025 07:50:38 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGUOFN_W_8c3a6BnsXDy4xsF+9DUV3wcPr2s7-1K_xUUQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy43MFxOfSIccwrzkLM_Cl2hPp8-URkzEi5uCzgUR5RgZV-_I5_vZSbyeQ
-Message-ID: <CAMj1kXGUOFN_W_8c3a6BnsXDy4xsF+9DUV3wcPr2s7-1K_xUUQ@mail.gmail.com>
-Subject: Re: Re: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
-To: Evangelos Petrongonas <epetron@amazon.de>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, changyuanl@google.com, 
-	graf@amazon.com, ilias.apalodimas@linaro.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	nh-open-source@amazon.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLlD-74aBdb-ZD5K@kernel.org>
 
-On Thu, 4 Sept 2025 at 14:59, Evangelos Petrongonas <epetron@amazon.de> wrote:
->
-> On Thu, 4 Sep 2025 11:39:02 +0200, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > On Thu, 4 Sept 2025 at 11:36, Evangelos Petrongonas <epetron@amazon.de> wrote:
-> > >
-> > > On Thu, 4 Sep 2025 09:19:21 +0200, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > On Sat, 23 Aug 2025 at 23:47, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > >
-> > > > > (cc Ilias)
-> > > > >
-> > > > > Note to akpm: please drop this series for now.
-> > > > >
-> > > > > On Fri, 22 Aug 2025 at 04:00, Evangelos Petrongonas <epetron@amazon.de> wrote:
-> > > > > >
-> > > > > > When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
-> > > > > > early during device tree scanning. After kexec, the new kernel
-> > > > > > exclusively uses this region for memory allocations during boot up to
-> > > > > > the initialization of the page allocator
-> > > > > >
-> > > > > > However, when booting with EFI, EFI's reserve_regions() uses
-> > > > > > memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
-> > > > > > rebuilding them from EFI data. This destroys KHO scratch regions and
-> > > > > > their flags, thus causing a kernel panic, as there are no scratch
-> > > > > > memory regions.
-> > > > > >
-> > > > > > Instead of wholesale removal, iterate through memory regions and only
-> > > > > > remove non-KHO ones. This preserves KHO scratch regions, which are
-> > > > > > good known memory, while still allowing EFI to rebuild its memory map.
-> > > > > >
-> > > > > > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > > > > > Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> > > > > > ---
-> > > > > > Changes in v3:
-> > > > > >         - Improve the code comments, by stating that the scratch regions are
-> > > > > >         good known memory
-> > > > > >
-> > > > > > Changes in v2:
-> > > > > >         - Replace the for loop with for_each_mem_region
-> > > > > >         - Fix comment indentation
-> > > > > >         - Amend commit message to specify that scratch regions
-> > > > > >         are known good regions
-> > > > > >
-> > > > > >  drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
-> > > > > >  1 file changed, 25 insertions(+), 4 deletions(-)
-> > > > > >
-> > > > >
-> > > > > I'd rather drop the memblock_remove() entirely if possible. Could we
-> > > > > get some insight into whether memblocks are generally already
-> > > > > populated at this point during the boot?
-> > > > >
-> > > > >
-> > > >
-> > > > Ping?
-> > >
-> > > Hey Ard I was AFK travelling. I am back now and will get to it.
-> > > PS: Keen to meet you later today in the KVM Forum.
-> > >
-> >
-> > Yes, let's catch up!
-> >
-> >
->
-> I did some testing on qemu with memblock and EFI debug enabled
->
-> (`memblock=debug efi=debug`) and no KHO.
-> We see that `memblock_dump_all()` in `reserve_regions()` outputs:
-> ```
-> [    0.000000] MEMBLOCK configuration:
-> [    0.000000]  memory size = 0x0000000200000000 reserved size = 0x000000000db5383e
-> [    0.000000]  memory.cnt  = 0x7
-> [    0.000000]  memory[0x0]     [0x0000000040000000-0x000000023c76ffff], 0x00000001fc770000 bytes on node 0 flags: 0x0
-> ...
-> [    0.000000]  reserved.cnt  = 0xf
-> [    0.000000]  reserved[0x0]   [0x00000000fe000000-0x00000000ffffffff], 0x0000000002000000 bytes flags: 0x20
-> ```
->
-> Moreover checking the code, the boot flow  (at least on arm64)
-> populates memblocks from DT memory nodes via
-> `early_init_dt_add_memory_arch()` before `efi_init()` is called
->
-> `setup_arch()` -> `setup_machine_fdt()` -> `early_init_dt_scan()` ->
-> `early_init_dt_scan_memory()` -> `early_init_dt_add_memory_arch()` ->
-> `memblock_add()`
->
-> As a result, it seems that memblocks ARE populated when calling the
-> `reserve_regions()`. So looks like  we still need the
-> `memblock_remove()` (?)
->
+On Thu, Sep 04, 2025 at 10:47:07AM +0300, Mike Rapoport wrote:
+> On Thu, Sep 04, 2025 at 08:20:59AM +0800, Jinchao Wang wrote:
+> > Add struct ksw_config and ksw_parse_config() to parse user string.
+> > 
+> > Update `Makefile` to pass compilation.
+> > 
+> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> > ---
+> >  mm/kstackwatch/Makefile      |  2 ++
+> >  mm/kstackwatch/kernel.c      | 70 +++++++++++++++++++++++++++++++++++-
+> >  mm/kstackwatch/kstackwatch.h | 34 ++++++++++++++++++
+> >  3 files changed, 105 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/kstackwatch/Makefile b/mm/kstackwatch/Makefile
+> > index 84a46cb9a766..d422f0e114dd 100644
+> > --- a/mm/kstackwatch/Makefile
+> > +++ b/mm/kstackwatch/Makefile
+> > @@ -1,2 +1,4 @@
+> >  obj-$(CONFIG_KSTACK_WATCH)	+= kstackwatch.o
+> >  kstackwatch-y := kernel.o stack.o watch.o
+> > +
+> > +CFLAGS_kernel.o := -Wno-error=unused-function
+> 
+> Can't you just add the function along with the code that uses it?
+Thanks for the feedback.
 
-Indeed.
+The function ksw_parse_config is called deeply in a later patch, so the
+'error: ununsed function' would persist even if I added the caller now.
 
-For the series,
+To keep this patch clean for review, I only include functions that form
+a self-contained unit.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+I will add a TODO comment to indicate that the CFLAGS addition is
+temporary for this patch only and will be removed in a follow-up patch.
+> 
+> -- 
+> Sincerely yours,
+> Mike.
 
