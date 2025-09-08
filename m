@@ -1,162 +1,173 @@
-Return-Path: <linux-kernel+bounces-806442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2A5B496D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93406B496E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B7188FE1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5693B01DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BF531283B;
-	Mon,  8 Sep 2025 17:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FE031329D;
+	Mon,  8 Sep 2025 17:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a29NeqFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMFYSnHb"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37616215F4A;
-	Mon,  8 Sep 2025 17:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E0722256F;
+	Mon,  8 Sep 2025 17:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352028; cv=none; b=KKk30V/10tUdI1luXwxJmmEBTveHOlVkATV0CwNbxaNqDAgoReiM/7/2aLnlTz+Ikj395QyqJf9C1UfopuUtOQm8GQ5YGXX4ubbNJTFz1BMU0+CphxzemUzz5yY49F3qZoyqNxOkIeefvsAVY34NovHJGPQtkiJBS8WE/U/G8F4=
+	t=1757352071; cv=none; b=TqxNweDLvsOzn2ti/YpIadxvPeNkkFmrq5OTTNsQssY7tRMWwLz6SOxQHJl+kesC5xGfylDotp+HK0vcWo6EH2MDT0t8T98coS03H/fpywbz7TRQaaRKxlTTAAXs2IhOIE2QxOBUlapf+4lHMFdsy+a2Q8Cm8BJOSnpzE9nZ2tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352028; c=relaxed/simple;
-	bh=WG6cG0RC7lf6sWYUt9oDwjKz1esgUSQzcQgi7vvimIU=;
+	s=arc-20240116; t=1757352071; c=relaxed/simple;
+	bh=aQqasewGij2DipD9dXOUbTnfRUlRgPlsl7xxR3FbsaA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OiZPjdHXTaVlhCgSNvdiRy6xDZkqydY7/RObD3+CNa3fP4u6d601CA5Ll4cpZu+8qlAlwHJ7IEm75MiSrmhCtJ93OZIH7dklqsEFs0iD8dVdOeIrBmNLcfB/YrI8C2nVRy5l1j69BaGVKAK3rJYh//enA/vIgpg+pEGqPfcIKKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a29NeqFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF679C4CEF1;
-	Mon,  8 Sep 2025 17:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757352027;
-	bh=WG6cG0RC7lf6sWYUt9oDwjKz1esgUSQzcQgi7vvimIU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a29NeqFSGpEF+96xbTO1WNJwcaERIetmb81Xgnn4IU83YBoLk8Rutt4IWOwFALEE0
-	 Alo/yrF5Txar4LbjfsLU96+5JIOUdLTBbOWWhj863dRSEotYftRw8791NUViEN37uH
-	 7vL5SDt8lxvdJgFnXs8yyk5LmDGIhAqer9EnM8XSTbl9he/b2vz7jBdIztMdZ26zOW
-	 j7J5aPbexf2saw4lZKNoquB5ePSISpTgK86xUvgoCV98gqE2ZZaswqTjzpouutGG+Z
-	 JZZF8UXIBG4kOyYZQKC8Xcwpe9a9BxIFcAWHPiQ0O9LXBnyQ3FExVITht/Di+oXYzE
-	 U7DGVsfPwYeGA==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-74526ca7d64so3982335a34.2;
-        Mon, 08 Sep 2025 10:20:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX2bTPPTYpaS8NCi/XsLcDbxS38D26LN9AKlNc6bC1HosjmhM5hW23kvnTeOeOilLYxcREZ/x5sBbny@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuxh4bBgBgEAsxRjIaoLlXC62MyvVC8ZyOArB8/OnHbmsq2PwH
-	L2yM2qMh7kkV520OH5ZcUNX3mlYRrvSes7fK4V4vX6K0nRab80t87gNBduGUB4Hu9zbyei+AxAU
-	/YbyhB/I+DrlSg7wrfAwQgKDLxBR+lQA=
-X-Google-Smtp-Source: AGHT+IGXpy+OU2UasaskUg2nePmnXAYN4fXokbNZNAf4Iw8rD1AI0zGefB9ESZkm15LcjA+jXp80pFZFT6EmdeISh+o=
-X-Received: by 2002:a05:6808:181a:b0:43a:2e17:3ba8 with SMTP id
- 5614622812f47-43b2988c314mr4081572b6e.0.1757352027077; Mon, 08 Sep 2025
- 10:20:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=vEvUeVNTeY1Y6CW4i2/VPxFuukzQZuC4erqagzNlrQAslCKT11p6fvP7f9i9Q+vz2Orj2u6LwwVWs3hWD81lBbePgT/flsHP4lEetaEoX8FkML1k2zwtdGzc/9yvXj7TL5NJs/iT5Ksm6bYkxUaQpz2ZueyRSuKiZ3BZObYBY28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMFYSnHb; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e2055ce973so2481547f8f.0;
+        Mon, 08 Sep 2025 10:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757352068; x=1757956868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xf8/kK0KX4VQm3mTeKF/yjGFhXksUE4qlFpvzV+PiEY=;
+        b=GMFYSnHbeHwg8ehnImwqOsZagyWLLN2PdtFF8b+FvAaNfO5Rpx0wGh3PH0ZeJR7USP
+         QOw11xTJ1N1u9T4E0L69Kws10yx7U+7mTK952DXIg0BHVy0Ae0pEHcSyMrMvS9vxjj5q
+         ac2oI2RnHr52oZ0klFWNNAusUocTE6INw1SoJh9SzgAMQ6n6CBQxeIQEvuqQ/aTFDtPf
+         sn+wOAqk0X4CDZ9bee8YUPvI6ioHvbYFU3v57GrfVI4yWoA8PdoRAuGIqZA7SI61dlAa
+         zEklbJwVfyBXqc+eHrCZfDDBp/kLg+KtOFefqYRfyyR8UYaa6WN0e8qBrsO1AruJPBeR
+         chMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757352068; x=1757956868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xf8/kK0KX4VQm3mTeKF/yjGFhXksUE4qlFpvzV+PiEY=;
+        b=ucwCjNY7O5QM9skO8PVexQVkXJ/7b5CU+Pb8fKFM4OstXPMkulsc2TVLAZgpW1cWf/
+         0ErDPF3qOcDYdU15huQbxYPqAPNcmGpf62rslh/KR751M7HfasqRdJLBc3wW/mfGW9kz
+         1cPVItqTbcO3KRv5Z/vzaLtaJ1iKK/ujEn6/gUU51oobLT+Ai14lO54OYQongmoz+L6w
+         JqttlezGAeqw06OTpD5IuOn4K/lthcqStZEgSCPo2Nn2kgfdfOwkjhJUzLC1cVUVMbab
+         0m9k1YzErJy7iXgKZASdPXgkU9RLP1zRFSzTvqCQA7HAHhfQgfpsnjyEOuwGBhqCBlTe
+         pUrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZKqBg1drDh7m4h0+ZoPbjNV1Q1adEeLiPCF4AvJ7K90NyHeqKFr/WKv2hOaE7vMiMZ7o=@vger.kernel.org, AJvYcCX1yEZOX/JAxEnCdCQ/trCl/ib5qXtiKeWZdq3eL+B310Eyk89Lf1qVrRK2XuBnDUrjj5iAAV+6UfkdiGcB@vger.kernel.org, AJvYcCXc9tvnSVVuEbgp/tQg0qczX7fk1jnuk58x+roA8jlfYUk2mI/J+6FYLTNpPgC/x5S+1PyLb7HL9mZRk33gcLJUqMLv@vger.kernel.org
+X-Gm-Message-State: AOJu0YywByguaKNMlFk/TIPjwaGmpeAbU5rMuPOkqkunwkUK7P9yNtfZ
+	kUdJVQGUa1ZCn+4+ich46b1axL+7u6WR4LRBUQQJ9zPajl69CV+6de8p75rTDN54R1Zzs2uKDzx
+	PML9aR8KTOweDjhyyVqrkyzZkYmWQ3Qk=
+X-Gm-Gg: ASbGnctCxIxXlHpFcCNoEwEJO2M4TmB42Tp74QbUp+p9UK4aIFjvM9NGb6io1wmNNZb
+	NY/ddloQJ66Gz6v/AL8l/WCM2zkAE3+BhEshStsYwyTVYonWRIQDm6E0Q5/vmvz39K+eu8EPJsh
+	gDUJr7Iq40Zd09gj8GyyMd0Gd5R4emqPaU0864HY15fyn/HT9hNvx7yrHXW8t9Eh9jd0ksLTnIr
+	2MB84Kx56X3WOlJ2yfmShULrqUf9jTf0qyN
+X-Google-Smtp-Source: AGHT+IE7nzcMuhcbyflAdA3MKfKZobpKkQZdHgFuiVq9VqEsOlRhnU2bkWjn0sGkuC4rTZBWKOkXNtM7uRblD3/l0r0=
+X-Received: by 2002:a05:6000:22c7:b0:3da:936b:95cf with SMTP id
+ ffacd0b85a97d-3e6429cce12mr7087277f8f.28.1757352067482; Mon, 08 Sep 2025
+ 10:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908163127.2462948-1-maz@kernel.org> <20250908163127.2462948-3-maz@kernel.org>
-In-Reply-To: <20250908163127.2462948-3-maz@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 8 Sep 2025 19:20:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hSJ6yMnfZgYDSZRqL_KMLc6f4kcY06dWGSPCFYjdcbfg@mail.gmail.com>
-X-Gm-Features: Ac12FXwlVf4kn-tU9YEBjTnrid6i7WBV3fExLJM7cADt4nyooosqwvUywi8aWZo
-Message-ID: <CAJZ5v0hSJ6yMnfZgYDSZRqL_KMLc6f4kcY06dWGSPCFYjdcbfg@mail.gmail.com>
-Subject: Re: [PATCH 02/25] ACPI: irq: Add IRQ affinity reporting interface
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>
+References: <20250908121310.46824-1-jolsa@kernel.org> <20250908121310.46824-2-jolsa@kernel.org>
+In-Reply-To: <20250908121310.46824-2-jolsa@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 8 Sep 2025 10:20:55 -0700
+X-Gm-Features: AS18NWC4lsE-p9NZJPk6PVDXniaZKrSY1PpcJkmXviaoFheT98MsxNohnkWJYyk
+Message-ID: <CAADnVQKC4tNCLrS6_1zLOtF7MUWiXUWnLXCnQBp_UDLQZj3rrg@mail.gmail.com>
+Subject: Re: [PATCHv2 perf/core 1/4] bpf: Allow uprobe program to change
+ context registers
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 6:31=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
+On Mon, Sep 8, 2025 at 5:13=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> Plug the irq_populate_fwspec_info() helper into the ACPI layer
-> to offer an IRQ affinity reporting function. This is currently
-> only supported for the CONFIG_ACPI_GENERIC_GSI configurations,
-> but could later be extended to legacy architectures if necessary.
+> Currently uprobe (BPF_PROG_TYPE_KPROBE) program can't write to the
+> context registers data. While this makes sense for kprobe attachments,
+> for uprobe attachment it might make sense to be able to change user
+> space registers to alter application execution.
 >
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Since uprobe and kprobe programs share the same type (BPF_PROG_TYPE_KPROB=
+E),
+> we can't deny write access to context during the program load. We need
+> to check on it during program attachment to see if it's going to be
+> kprobe or uprobe.
+>
+> Storing the program's write attempt to context and checking on it
+> during the attachment.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  drivers/acpi/irq.c   | 15 +++++++++++++++
->  include/linux/acpi.h |  7 +++++++
->  2 files changed, 22 insertions(+)
+>  include/linux/bpf.h      | 1 +
+>  kernel/events/core.c     | 4 ++++
+>  kernel/trace/bpf_trace.c | 3 +--
+>  3 files changed, 6 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
-> index 76a856c32c4d0..22f93fe23ddce 100644
-> --- a/drivers/acpi/irq.c
-> +++ b/drivers/acpi/irq.c
-> @@ -300,6 +300,21 @@ int acpi_irq_get(acpi_handle handle, unsigned int in=
-dex, struct resource *res)
->  }
->  EXPORT_SYMBOL_GPL(acpi_irq_get);
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index cc700925b802..404a30cde84e 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -1619,6 +1619,7 @@ struct bpf_prog_aux {
+>         bool priv_stack_requested;
+>         bool changes_pkt_data;
+>         bool might_sleep;
+> +       bool kprobe_write_ctx;
+>         u64 prog_array_member_cnt; /* counts how many times as member of =
+prog_array */
+>         struct mutex ext_mutex; /* mutex for is_extended and prog_array_m=
+ember_cnt */
+>         struct bpf_arena *arena;
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 28de3baff792..c3f37b266fc4 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11238,6 +11238,10 @@ static int __perf_event_set_bpf_prog(struct perf=
+_event *event,
+>         if (prog->kprobe_override && !is_kprobe)
+>                 return -EINVAL;
 >
-> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
-> +                                           unsigned int index)
-> +{
-> +       struct irq_fwspec_info info;
-> +       unsigned long flags;
+> +       /* Writing to context allowed only for uprobes. */
+> +       if (prog->aux->kprobe_write_ctx && !is_uprobe)
+> +               return -EINVAL;
 > +
-> +       if (!acpi_irq_parse_one(handle, index, &info.fwspec, &flags)) {
-> +               if (!irq_populate_fwspec_info(&info) &&
-> +                   info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID)
-> +                       return info.affinity;
-> +       }
-
-I would prefer fewer logical negations to be used in this, for instance:
-
-if (acpi_irq_parse_one(handle, index, &info.fwspec, &flags))
-      return NULL;
-
-if (irq_populate_fwspec_info(&info))
-       return NULL;
-
-if (info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID)
-       return info.affinity;
-
-return NULL;
-
-> +
-> +       return NULL;
-> +}
-> +
->  /**
->   * acpi_set_irq_model - Setup the GSI irqdomain information
->   * @model: the value assigned to acpi_irq_model
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1c5bb1e887cd1..c506ae4bacc86 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1509,12 +1509,19 @@ static inline int acpi_parse_spcr(bool enable_ear=
-lycon, bool enable_console)
+>         if (is_tracepoint || is_syscall_tp) {
+>                 int off =3D trace_event_get_offsets(event->tp_event);
 >
->  #if IS_ENABLED(CONFIG_ACPI_GENERIC_GSI)
->  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
- *res);
-> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
-> +                                           unsigned int index);
->  #else
->  static inline
->  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
- *res)
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 3ae52978cae6..467fd5ab4b79 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -1521,8 +1521,6 @@ static bool kprobe_prog_is_valid_access(int off, in=
+t size, enum bpf_access_type
 >  {
->         return -EINVAL;
->  }
-> +static inline const struct cpumask *acpi_irq_get_affinity(acpi_handle ha=
-ndle,
-> +                                                         unsigned int in=
-dex)
-> +{
-> +       return NULL;
-> +}
->  #endif
+>         if (off < 0 || off >=3D sizeof(struct pt_regs))
+>                 return false;
+> -       if (type !=3D BPF_READ)
+> -               return false;
+>         if (off % size !=3D 0)
+>                 return false;
+>         /*
+> @@ -1532,6 +1530,7 @@ static bool kprobe_prog_is_valid_access(int off, in=
+t size, enum bpf_access_type
+>         if (off + size > sizeof(struct pt_regs))
+>                 return false;
 >
->  #ifdef CONFIG_ACPI_LPIT
-> --
+> +       prog->aux->kprobe_write_ctx |=3D type =3D=3D BPF_WRITE;
+
+iirc the same function is used to validate [ku]probe.multi ctx access,
+but attaching is not done via __perf_event_set_bpf_prog().
+The check at attach time is missing?
 
