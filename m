@@ -1,124 +1,97 @@
-Return-Path: <linux-kernel+bounces-806868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5094B49CD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A28BB49CE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A101B23FED
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9669C3B1834
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C28C2EB85D;
-	Mon,  8 Sep 2025 22:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sccjw1ZZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FCF2E0B5C;
-	Mon,  8 Sep 2025 22:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B333E2EBDEB;
+	Mon,  8 Sep 2025 22:35:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A732E0B5C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757370796; cv=none; b=kDN1/cGiJ092TO/4uMHRfcnaSYOppH2g71ahmE17CwLs8pypNhoUwyuQnOycGdu1dHUdG9p/HLht6ThJ1h+l9Wy/i5Vf2oqLNMXUZqicoSFtHXkjQ4z8LJc7jNrfY730g9N6h0RG/CaytXBjV2CF6oYPBboGkhz+QOdraVlmHes=
+	t=1757370936; cv=none; b=WvOt0Aut8bUqE6C26oTi5oNnKISKLGPvkl/hYASztjuk2RJMwFBMqJxcwfqiOhFcwNuvAvUjywK7PX2wUP8NQkbJVB4lLWy8N8LS6I0omiovC2AbEOZqQaktxoUeXPyrRzce4uqVidSqBldnSUz71kYBPdql5cvRzU9NxeCysB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757370796; c=relaxed/simple;
-	bh=Bv9DG7NvEACmkngPR29kVONkJ+uhR6cw5LiF6tkIktc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tgmLp2Xldo6wtqM5PAXxr914bxubFjkrirlnP9t6+ueyTkKdtJ+OFrVOhdEWuGAM9orv0fTjQ8j+YFJfmQ2l8Yb9ShCy3DKYBAGTWyVS+uIC0WO+/3x9wQ78GdaXO4ZGy5GjkSlzJPPnwXDHyyBgtWNvzRsNqDfaInToCMiYE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sccjw1ZZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757370781;
-	bh=j0CjhsWMQ8bILkY81kFCeQtJHCh+PKx6p+HnmsFuj8c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sccjw1ZZxKrM+PrUHNokR4nHFXslIYa5lL4M2f61kS1OmXDjH6pUXvHi+hqflbAox
-	 frhKMGbw7WzffOzbu1gvuUVzQnuvohSPC33IZ5PHk9PPbd+epBn86RlQwHqHDf6jH+
-	 5NwbaXlfMJ7CEUTgaACSHpissrGnOXXdXiBFo79DYrKYPPcJZpsFDQWLTq921P/1To
-	 KMuytcY8jbisytq9nrZ0q4cgUHGk9EfEQmgn2X4he5ZVVutlwH7TTeqbIZ1h35CJce
-	 56+iX85NNp24v9UaEXvYayvNpcg4jU8lJhhNt2UxmzNejVR1V/5eXnV7GUZ5ECH6lk
-	 CSUPfcvuRv/AA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cLMCx1WfYz4w9W;
-	Tue,  9 Sep 2025 08:33:00 +1000 (AEST)
-Date: Tue, 9 Sep 2025 08:33:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Thomas =?UTF-8?B?SGVsbHN0csO2?=
- =?UTF-8?B?bQ==?= <thomas.hellstrom@linux.intel.com>, Michal Wajdeczko
- <michal.wajdeczko@intel.com>, David Gow <davidgow@google.com>, "Marie
- Zhussupova" <marievic@google.com>, DRM XE List
- <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the kunit-next tree with the drm-xe
- tree
-Message-ID: <20250909083300.23c7f85a@canb.auug.org.au>
-In-Reply-To: <deyhm73xdrnlau54pycgquovbdr2pcqzeumdegavukzly6d6hf@xtgrsovs6i73>
-References: <20250908172938.68a86c52@canb.auug.org.au>
-	<deyhm73xdrnlau54pycgquovbdr2pcqzeumdegavukzly6d6hf@xtgrsovs6i73>
+	s=arc-20240116; t=1757370936; c=relaxed/simple;
+	bh=teEvz3YaOLFviJV1IoQM7NLsuKMFrLU4NeVZ445UWo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qk7op+FqWkwsR7izIeIgM+RGnmHNZ0B8ZE3i+paufWlyTE6FOgKFOFXpvk3C4H3hhUt98cPzB6OV+PU16/xrsWn4jOzJzkEoRqFFabxf4iXsUzysGXWujIHJhl6xL9S4yfS3PvWLUP7P7F4wYwFH6+vY7/6z6Cgha9nS2+TdfRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AE3F1691;
+	Mon,  8 Sep 2025 15:35:24 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 84A4B3F694;
+	Mon,  8 Sep 2025 15:35:31 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	gshan@redhat.com,
+	aneesh.kumar@kernel.org,
+	sami.mujawar@arm.com,
+	sudeep.holla@arm.com,
+	steven.price@arm.com,
+	Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 0/3] arm64: realm: Add support for encrypted data from firmware
+Date: Mon,  8 Sep 2025 23:35:16 +0100
+Message-ID: <20250908223519.1759020-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fCzIml7uGaiMiE9g1lgiliu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/fCzIml7uGaiMiE9g1lgiliu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Confidential compute firmware may provide secret data via reserved memory regions
+(e.g., ACPI CCEL, EFI Coco secret area). These must be ioremap'ed() as encrypted.
+As of now, realm only maps "trusted devices" (RIPAS = RSI_RIPAS_DEV) as encrypted.
+This series adds support for mapping areas that are protected
+(i.e., RIPAS = RSI_RIPAS_RAM) as encrypted. Also, extrapolating that, we can map
+anything that is not RIPAS_EMPTY as protected, as it is guaranteed to be "protected".
 
-Hi Lucas,
+With this in place, we can naturally map any firmware provided area based on the
+RIPAS value. If the firmware provides a shared region (not trusted), it must have
+set the RIPAS accordingly, before placing the data, as the transition is always
+destructive.
 
-On Mon, 8 Sep 2025 08:26:37 -0500 Lucas De Marchi <lucas.demarchi@intel.com=
-> wrote:
->
-> >diff --git a/drivers/gpu/drm/xe/tests/xe_pci.c b/drivers/gpu/drm/xe/test=
-s/xe_pci.c
-> >index e29ec1ce7231..c789bfb8af96 100644
-> >--- a/drivers/gpu/drm/xe/tests/xe_pci.c
-> >+++ b/drivers/gpu/drm/xe/tests/xe_pci.c
-> >@@ -66,6 +66,7 @@ KUNIT_ARRAY_PARAM(platform, cases, xe_pci_fake_data_de=
-sc);
-> >
-> > /**
-> >  * xe_pci_fake_data_gen_params - Generate struct xe_pci_fake_data param=
-eters
-> >+ * @test: a test pointer =20
->=20
-> to make this the same as other functions in
-> drivers/gpu/drm/xe/tests/xe_kunit_helpers.c, I'd document this as:
->=20
-> @test: the &kunit where this fake &xe_device will be used
+Confidential Compute Event Log is exposed as EFI_ACPI_MEMORY_NVS, which is
+reserved for firmware use even after the firmware exits the boot services [0].
+Thus map the region as READ only in the kernel.
 
-Thanks, I have done that.
+[0] https://uefi.org/specs/UEFI/2.10/07_Services_Boot_Services.html#memory-type-usage-before-exitbootservices
 
---=20
-Cheers,
-Stephen Rothwell
+Changes since v1: 
+  https://lkml.kernel.org/r/20250613111153.1548928-1-suzuki.poulose@arm.com/
+ - Collect tags
+ - Map EFI_MEMORY_ACPI_NVS as READ-ONLY, update comment and commit description
 
---Sig_/fCzIml7uGaiMiE9g1lgiliu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+Suzuki K Poulose (3):
+  arm64: realm: ioremap: Allow mapping memory as encrypted
+  arm64: Enable EFI secret area Securityfs support
+  arm64: acpi: Enable ACPI CCEL support
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi/WZwACgkQAVBC80lX
-0Gw2Qgf9G5DfQ35QsjsrOwOWWGW//o4zjRNSN+zjMn379K3cGph1cZupBVcdhvar
-Vy+Dz74c9oUgMDprC2RWKh7Sv4eu4ZhgjitR9etA4OlSJ+aOewrWY0duznWhEG2R
-y2OwEAFWaT5L39XV83BcuNEBc1EOC4Dr6zVWu77yxCcG7ip6go6/3Lq27VU4UybR
-QnHKDB06zz1sCV2K/gmeRVwOYvCXrdUFkGOKuSp6e+k1GNachf8YEKHGM4ZWC61S
-syeYlIBxyXH/01WjgF83LrTUh1/lcHKi8EPDqAMg/5YjHpa83xSVTb7IezzcaBEV
-JOIqwSUDnVhFgo/Ae3pmyJN8I1ZgVw==
-=mZLu
------END PGP SIGNATURE-----
+ arch/arm64/include/asm/io.h          |  6 +++++-
+ arch/arm64/include/asm/rsi.h         |  2 +-
+ arch/arm64/kernel/acpi.c             | 11 +++++++++++
+ arch/arm64/kernel/rsi.c              | 26 ++++++++++++++++++++++----
+ drivers/virt/coco/efi_secret/Kconfig |  2 +-
+ 5 files changed, 40 insertions(+), 7 deletions(-)
 
---Sig_/fCzIml7uGaiMiE9g1lgiliu--
+-- 
+2.43.0
+
 
