@@ -1,94 +1,203 @@
-Return-Path: <linux-kernel+bounces-805263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1934B48624
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355B9B48627
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB3E3AA40B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29233B7AD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399462E7BCC;
-	Mon,  8 Sep 2025 07:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D3D2E6CC3;
+	Mon,  8 Sep 2025 07:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="N3V4OLCc"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YSlRAU6D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GHMMiDL7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YSlRAU6D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GHMMiDL7"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4293E249F9;
-	Mon,  8 Sep 2025 07:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07902E610F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318143; cv=none; b=G1hVyqrVMBTH857661VdgbfLdNnnMGT9TrsdTREiBLtBog6WMTuMDyfBV7XL8Td0GexMO86hPSaXRCUVOJqYdT6vXD5vKN31QpFcvJ6yeSWK7KDwCfpplAKFUrjeblh1UtoxFR9irs+lhY3U3YB6R/j0Exlk6fyaGG7kDHed+28=
+	t=1757318181; cv=none; b=q31Do93Z9wHL8qsat11OOqU2/qv/GxIzS9GV8BrJHVmtcteeJOCyJmbuTdRjwvUZdm7t5ZcdFzfvO5YE6yKsatnnYUWE7X75I5rYFXicY13BUAgMErU6HrUdXY04hK0zPAze+w3mkE8/WEr+hhIP/HTjrKuEWJTd9zrCPNm3gYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318143; c=relaxed/simple;
-	bh=nhqRh9PPeHATPPUMi9j7S6OlMPAIqMETQQdLoQOlCxc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fowvPQqmxnPXEikioo9nqkFM2KtlBXDCKMKiaH/0QoXQ3CoPGHa//GlDtTc4uSgveFQo/abUm6eyOMLKCIaFWKB4Et6NxnBLrR7JqC0yovMGU34b3xLJkzT5iptXahxjSUq9rWRsOqGRKCMjCq1aIGKFMfOIoKRcb/cE0zFbNc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=N3V4OLCc; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=nhqRh9PPeHATPPUMi9j7S6OlMPAIqMETQQdLoQOlCxc=;
-	t=1757318142; x=1758527742; b=N3V4OLCc0gnKZtvC1LPDscwblSh8fXXZ14tusEd/coxKbyu
-	misOGlPr0xPvw/1lTe4B58a9eZO5YihR79/Z2/VuyYbYUsBzcKaxa9zXVYgMOjsAKw04zVIcsVYvz
-	IonVbVgoijYdr+dKhoKLIlkOn8q/OSlIsAhpvll2qSKGb46v9EO+lsVAvPGj0e8+SF5kkBjirljvx
-	UYd5F9PRU3L43cZSiwAAunki3imXA9MAoNvjIsJZyNIXc+Ih57FKWxvhsW84sEqGilQcQTNATxGvp
-	9K7ffbXA8zCzxZnyMWlO4GEF/vrE34qpJEQ95wJ/PJA67kCIsIGFrAkfwAeA5hdA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uvWir-00000006ziP-1450;
-	Mon, 08 Sep 2025 09:55:33 +0200
-Message-ID: <96db85326505785727bcfe45b99ae12fdbfb548a.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next 06/11] tools: ynl-gen: don't validate nested
- array attribute types
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?Asbj=F8rn?= Sloth =?ISO-8859-1?Q?T=F8nnesen?=	
- <ast@fiberby.net>, "Keller, Jacob E" <jacob.e.keller@intel.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>,  Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>,  Andrew Lunn <andrew+netdev@lunn.ch>,
- "wireguard@lists.zx2c4.com" <wireguard@lists.zx2c4.com>, 
- "netdev@vger.kernel.org"	 <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Mon, 08 Sep 2025 09:55:31 +0200
-In-Reply-To: <d612ce20-ae4a-4f6d-9d1b-a3d56f3d10a9@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	 <20250904220156.1006541-6-ast@fiberby.net>
-	 <d2705570-7ad2-4771-af2a-4ba78393a8c4@intel.com>
-	 <d612ce20-ae4a-4f6d-9d1b-a3d56f3d10a9@fiberby.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757318181; c=relaxed/simple;
+	bh=8PduldPBG7bFwMCkawju3UX896XXxZBV9YYueykJZOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=peVqrUNK5CJF7weNQjnc8mBK9KQBDx6IVyW3dyZU+6sFKm8nvB1yO8+Sk+2RhIg6F6tUk0YjKb9AyXgyR2+gRnX39QGSzQoq9VALdRfFJirpxvim32h+t6Acdrv8nQyLzEB88iRpIRQlCss76Nlpj9glA4ttAvZ/pw1+eY2uYl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YSlRAU6D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GHMMiDL7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YSlRAU6D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GHMMiDL7; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 652C85CC39;
+	Mon,  8 Sep 2025 07:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757318177; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qM4bq6PnJkBcjlPI/Ktkkc/3++g3plbsOJZEHlsH588=;
+	b=YSlRAU6DSmqdTWajfOxYVrLJq+x5B25SpQgvijT0IYpAoN0+s71vY/QcPlbuYOb5Jf5DCO
+	gL7ho3NI4IRSHG/SKJ8toqsqGBb2nSDHNO7d6M+0IXbMs5OzrIrKCQvMFgbyXjrNIlZP1J
+	fbI0A3ffiVlWrzpguxbK4xa8S+WCNkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757318177;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qM4bq6PnJkBcjlPI/Ktkkc/3++g3plbsOJZEHlsH588=;
+	b=GHMMiDL7NKd5CTaRDxZ+PD4xUenbDQb8QpBEoHng7qjV9mZhayLPQPyHDrArWv33++fwzq
+	mscrX9m3JTEqk1BA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757318177; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qM4bq6PnJkBcjlPI/Ktkkc/3++g3plbsOJZEHlsH588=;
+	b=YSlRAU6DSmqdTWajfOxYVrLJq+x5B25SpQgvijT0IYpAoN0+s71vY/QcPlbuYOb5Jf5DCO
+	gL7ho3NI4IRSHG/SKJ8toqsqGBb2nSDHNO7d6M+0IXbMs5OzrIrKCQvMFgbyXjrNIlZP1J
+	fbI0A3ffiVlWrzpguxbK4xa8S+WCNkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757318177;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qM4bq6PnJkBcjlPI/Ktkkc/3++g3plbsOJZEHlsH588=;
+	b=GHMMiDL7NKd5CTaRDxZ+PD4xUenbDQb8QpBEoHng7qjV9mZhayLPQPyHDrArWv33++fwzq
+	mscrX9m3JTEqk1BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42FDD13A54;
+	Mon,  8 Sep 2025 07:56:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Pa8DECGMvmidSwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 08 Sep 2025 07:56:17 +0000
+Message-ID: <fbfc21ab-c947-422d-94c6-0db897ee25f3@suse.cz>
+Date: Mon, 8 Sep 2025 09:55:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/21] SLUB percpu sheaves
+To: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,kernel.org,linutronix.de,linux.ibm.com,suse.de];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Sat, 2025-09-06 at 15:10 +0000, Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
->=20
-> For the other families, I don't know how well defined it is, Johannes hav=
-e
-> stated that nl80211 doesn't care which types are used, but I have no idea
-> how consistent clients have abused that statement to send random data,
-> or do they all just send zeros?
+On 9/3/25 14:59, Vlastimil Babka wrote:
+> Hi,
+> 
+> I'm sending v7 as there were some non-trivial fixes needed since v6. I'm
+> including back the maple tree part that I sent separately the last time,
+> as some reordering between both parts was necessary to avoid
+> intermittently breaking the userspace vma tests. See the changelog at
+> the end of the cover letter for details and links.
+> The v7 will replace+extend the v6 in slab/for-next.
 
-I think most clients probably send incrementing numbers (1, 2, 3, ...),
-but maybe some start at 0, some sometimes might use band numbers and
-thus have sparse values, etc.
+Liam made further changes/cleanups to the maple tree side, mainly the commit
 
-But as I just wrote, I'm not really sure it should be used at all.
+76fcafc3894f ("maple_tree: Drop bulk insert support")
 
-joahnnes
+but it affects some later patches too due to some conflicts
+
+for now the result is here: (and in slab/for-next)
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v8r1
+
+I don't want to spam with new vX too often, so will send in 2 days but can
+can do earlier if there's interest.
 
