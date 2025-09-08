@@ -1,127 +1,264 @@
-Return-Path: <linux-kernel+bounces-806146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7FDB49267
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:04:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEE5B490B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40751BC2A42
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529A83BD067
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72DF30DED1;
-	Mon,  8 Sep 2025 15:04:04 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6629730BF59;
+	Mon,  8 Sep 2025 14:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hmtlGjzm"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075391F0E2E;
-	Mon,  8 Sep 2025 15:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AFC22FE0D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343844; cv=none; b=pc4m7vTLnk24lOV0hMrqHec3C+370CBhZcya34JMSOdqSe1ewNI6EZgALHsb6cCHv/g3GymJw7OvxjKtXCl/WB2iWmBHRF2kpRvQ1zT4DFlzpaUbtvHDhNb8qGCCPWRAvovNJj1GT4nYvryc4KP5xapbXYvNxGZ8RBfRmv3e0cE=
+	t=1757340381; cv=none; b=W/UY6cMIahuIdHUZgKoYtjJlUpAq0a4eRHduu5+UklcxspxwYEY2mhPJUoZUVdeME+MdN1u+ovVe6JEGc49esqHMIFvyi9IJ+i2lLJfmRr8W6SSH/6rEKHPnivYQbhrrxdobXmv9rlb/bhYGSIr794xTuFWH6brGrp0LcxrNjvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343844; c=relaxed/simple;
-	bh=b0AaDnnv1a33CHg2rjx0ILmXwW1goN7n31sJB4Omp+E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RbU+iAvk2uAbZYWyz8dA2RFqnO38gD9Gb6oST5ayHbjlbZ4OkT2+1euwaX8+jl9Rw2aVidmC4eWi01hN/9ODNTudJA/ADGn1X4hqifG1xWxYPPAbVuw+p2lkKVCsRqsav68u/jCHDtvFOT0zHykcp1TWRlFs4DziAWDjieYQ2uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1uvcU1-00000002U0t-22vf;
-	Mon, 08 Sep 2025 16:04:37 +0200
-Message-ID: <d378c6b6-68ba-49c0-b480-5d3dec9dc902@maciej.szmigiero.name>
-Date: Mon, 8 Sep 2025 16:04:32 +0200
+	s=arc-20240116; t=1757340381; c=relaxed/simple;
+	bh=UpWAeS+9ohByPvWTqYYKg9oIeq1Xk39/7J0w2jmCT+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X3Dq3pfcOjJwh8l2VH+w/2uYmvNGiF6B9z31YOJAXxFcZogaMyQDbFyoqitJRyaYqyYWj6CN0qBhd+XRP1TSwwv3bGTIKfJtwtCoSliOovZSa92ewOU1T/btC8zjn01RFfMxb4CZTKmS/7XupofJ/C9MQirmxMZLSHEUqt9cgTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hmtlGjzm; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757340375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VDoikzz6aWVYuIc2+JSxHrk0vkVl4ua3xQEWiywgjQ4=;
+	b=hmtlGjzmkfcppimA56uWjEYY1cnvcf7MPxwCd9vwT/tKgyuIdhuI9MtM1Iy3ovuS0YOXf4
+	UuQJgbo6L1fW9aGeUptsvj12mEN6JNArM86CWBX1Dj0ev2zl4ZTh3B9pi+Wv9dYRNaMRnZ
+	rBZI3c2C2YBuCoOY97r6hoJ6HNpCvyg=
+From: Yajun Deng <yajun.deng@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	riel@surriel.com,
+	harry.yoo@oracle.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [RFC PATCH v2] mm/rmap: make num_children and num_active_vmas update in internally
+Date: Mon,  8 Sep 2025 14:05:04 +0000
+Message-ID: <20250908140505.26237-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] KVM: SVM: Fix missing LAPIC TPR sync into
- VMCB::V_TPR with AVIC on
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>,
- Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
- Naveen N Rao <naveen@kernel.org>,
- Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1756139678.git.maciej.szmigiero@oracle.com>
-Content-Language: en-US, pl-PL
-Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
- 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
-Disposition-Notification-To: "Maciej S. Szmigiero"
- <mail@maciej.szmigiero.name>
-In-Reply-To: <cover.1756139678.git.maciej.szmigiero@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: mhej@vps-ovh.mhejs.net
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 25.08.2025 18:44, Maciej S. Szmigiero wrote:
-> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
-> 
-> This is an updated v2 patch series of the v1 series located at:
-> https://lore.kernel.org/kvm/cover.1755609446.git.maciej.szmigiero@oracle.com/
-> 
-> 
-> Changes from v1:
-> Fix this issue by doing unconditional LAPIC -> V_TPR sync at each VMRUN
-> rather than by just patching the KVM_SET_LAPIC ioctl() code path
-> (and similar ones).
-> 
-> 
-Any further comments there?
+If the anon_vma_alloc() is called, the num_children of the parent of
+the anon_vma will be updated. But this operation occurs outside of
+anon_vma_alloc(). There are two callers, one has itself as its parent,
+while another has a real parent. That means they have the same logic.
 
-The fix itself is trivial, would be nice to have it merged even
-if the reproducer/selftest is still under discussion.
+The update of num_active_vmas and vma->anon_vma are not performed
+together. These operations should be performed under a function.
 
-Thanks,
-Maciej
+Add an __anon_vma_alloc() function that implements anon_vma_alloc().
+If the caller has a real parent, called __anon_vma_alloc() and pass
+the parent to it. If it not, called anon_vma_alloc() directly. It will
+set the parent and root of the anon_vma and also updates the num_children
+of its parent anon_vma.
+
+Introduce vma_attach_anon() and vma_detach_anon() to update
+num_active_vmas with vma->anon_vma together.
+
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+---
+v2: fix a WARNING in unlink_anon_vmas and optimize the code
+v1: https://lore.kernel.org/all/20250905132019.18915-1-yajun.deng@linux.dev/
+---
+ mm/internal.h | 17 ++++++++++++++
+ mm/rmap.c     | 64 +++++++++++++++++++++++++++++----------------------
+ 2 files changed, 53 insertions(+), 28 deletions(-)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 9b0129531d00..12bc71bb2304 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -953,6 +953,23 @@ static inline bool free_area_empty(struct free_area *area, int migratetype)
+ 	return list_empty(&area->free_list[migratetype]);
+ }
+ 
++static inline void vma_attach_anon(struct vm_area_struct *vma,
++				   struct anon_vma *anon_vma)
++{
++	mmap_assert_locked(vma->vm_mm);
++	lockdep_assert_held_write(&anon_vma->root->rwsem);
++	vma->anon_vma = anon_vma;
++	vma->anon_vma->num_active_vmas++;
++}
++
++static inline void vma_detach_anon(struct vm_area_struct *vma)
++{
++	mmap_assert_locked(vma->vm_mm);
++	lockdep_assert_held_write(&vma->anon_vma->root->rwsem);
++	vma->anon_vma->num_active_vmas--;
++	vma->anon_vma = NULL;
++}
++
+ /* mm/util.c */
+ struct anon_vma *folio_anon_vma(const struct folio *folio);
+ 
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 34333ae3bd80..de557707c34a 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -86,15 +86,25 @@
+ static struct kmem_cache *anon_vma_cachep;
+ static struct kmem_cache *anon_vma_chain_cachep;
+ 
+-static inline struct anon_vma *anon_vma_alloc(void)
++static inline struct anon_vma *__anon_vma_alloc(struct anon_vma *parent)
+ {
+ 	struct anon_vma *anon_vma;
+ 
+ 	anon_vma = kmem_cache_alloc(anon_vma_cachep, GFP_KERNEL);
+-	if (anon_vma) {
+-		atomic_set(&anon_vma->refcount, 1);
+-		anon_vma->num_children = 0;
+-		anon_vma->num_active_vmas = 0;
++	if (!anon_vma)
++		return NULL;
++
++	atomic_set(&anon_vma->refcount, 1);
++	anon_vma->num_children = 0;
++	anon_vma->num_active_vmas = 0;
++	if (parent) {
++		/*
++		 * The root anon_vma's rwsem is the lock actually used when we
++		 * lock any of the anon_vmas in this anon_vma tree.
++		 */
++		anon_vma->parent = parent;
++		anon_vma->root = parent->root;
++	} else {
+ 		anon_vma->parent = anon_vma;
+ 		/*
+ 		 * Initialise the anon_vma root to point to itself. If called
+@@ -102,10 +112,18 @@ static inline struct anon_vma *anon_vma_alloc(void)
+ 		 */
+ 		anon_vma->root = anon_vma;
+ 	}
++	anon_vma_lock_write(anon_vma);
++	anon_vma->parent->num_children++;
++	anon_vma_unlock_write(anon_vma);
+ 
+ 	return anon_vma;
+ }
+ 
++static inline struct anon_vma *anon_vma_alloc(void)
++{
++	return __anon_vma_alloc(NULL);
++}
++
+ static inline void anon_vma_free(struct anon_vma *anon_vma)
+ {
+ 	VM_BUG_ON(atomic_read(&anon_vma->refcount));
+@@ -201,7 +219,6 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
+ 		anon_vma = anon_vma_alloc();
+ 		if (unlikely(!anon_vma))
+ 			goto out_enomem_free_avc;
+-		anon_vma->num_children++; /* self-parent link for new root */
+ 		allocated = anon_vma;
+ 	}
+ 
+@@ -209,9 +226,8 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
+ 	/* page_table_lock to protect against threads */
+ 	spin_lock(&mm->page_table_lock);
+ 	if (likely(!vma->anon_vma)) {
+-		vma->anon_vma = anon_vma;
++		vma_attach_anon(vma, anon_vma);
+ 		anon_vma_chain_link(vma, avc, anon_vma);
+-		anon_vma->num_active_vmas++;
+ 		allocated = NULL;
+ 		avc = NULL;
+ 	}
+@@ -355,38 +371,31 @@ int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
+ 	if (vma->anon_vma)
+ 		return 0;
+ 
+-	/* Then add our own anon_vma. */
+-	anon_vma = anon_vma_alloc();
+-	if (!anon_vma)
+-		goto out_error;
+-	anon_vma->num_active_vmas++;
+ 	avc = anon_vma_chain_alloc(GFP_KERNEL);
+ 	if (!avc)
+-		goto out_error_free_anon_vma;
++		goto out_error;
++
++	/* Then add our own anon_vma. */
++	anon_vma = __anon_vma_alloc(pvma->anon_vma);
++	if (!anon_vma)
++		goto out_error_free_avc;
+ 
+-	/*
+-	 * The root anon_vma's rwsem is the lock actually used when we
+-	 * lock any of the anon_vmas in this anon_vma tree.
+-	 */
+-	anon_vma->root = pvma->anon_vma->root;
+-	anon_vma->parent = pvma->anon_vma;
+ 	/*
+ 	 * With refcounts, an anon_vma can stay around longer than the
+ 	 * process it belongs to. The root anon_vma needs to be pinned until
+ 	 * this anon_vma is freed, because the lock lives in the root.
+ 	 */
+ 	get_anon_vma(anon_vma->root);
+-	/* Mark this anon_vma as the one where our new (COWed) pages go. */
+-	vma->anon_vma = anon_vma;
+ 	anon_vma_lock_write(anon_vma);
++	/* Mark this anon_vma as the one where our new (COWed) pages go. */
++	vma_attach_anon(vma, anon_vma);
+ 	anon_vma_chain_link(vma, avc, anon_vma);
+-	anon_vma->parent->num_children++;
+ 	anon_vma_unlock_write(anon_vma);
+ 
+ 	return 0;
+ 
+- out_error_free_anon_vma:
+-	put_anon_vma(anon_vma);
++ out_error_free_avc:
++	anon_vma_chain_free(avc);
+  out_error:
+ 	unlink_anon_vmas(vma);
+ 	return -ENOMEM;
+@@ -420,14 +429,13 @@ void unlink_anon_vmas(struct vm_area_struct *vma)
+ 		anon_vma_chain_free(avc);
+ 	}
+ 	if (vma->anon_vma) {
+-		vma->anon_vma->num_active_vmas--;
+-
+ 		/*
+ 		 * vma would still be needed after unlink, and anon_vma will be prepared
+ 		 * when handle fault.
+ 		 */
+-		vma->anon_vma = NULL;
++		vma_detach_anon(vma);
+ 	}
++
+ 	unlock_anon_vma_root(root);
+ 
+ 	/*
+-- 
+2.25.1
 
 
