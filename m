@@ -1,205 +1,158 @@
-Return-Path: <linux-kernel+bounces-805066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E72CB483A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:36:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601FCB4881B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772B31897897
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2342616A8D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D1F227BB5;
-	Mon,  8 Sep 2025 05:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AEC2ED16B;
+	Mon,  8 Sep 2025 09:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ybb1rBPo"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ADcrsOKZ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B401BC41;
-	Mon,  8 Sep 2025 05:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D391E1E19
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757309770; cv=none; b=X6/yMo7Ak+GBayzej8rT3hIyjba+RZKa5WN1dqH3J1YFlum1st+NqkYS2M727IzUAuYXuT+FjODqei6oF/0SbkoysKHsWkzWuRV62aX+J0kk9AZtgWMVxnI1ZfD1/aQfdK89qLBH81NfKISRcR3v5ZlTAxPGb/cz9t8LWcUfvgY=
+	t=1757323088; cv=none; b=TUZ1yMni3KnZGGGeyWzdDsu6LEN1NYmiuRTDQ2espdRnlg8aoCcHEPedrnbcnF2SpoVMtzAiwsnetqYNHv6Ltr+KHuT4v7jFltEujfRT017zvvuztdIc/QUb0BImkHM7vFk+omgCAwHTMmX9vLQIsEO1XjkgxN2pX4+jWZQLK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757309770; c=relaxed/simple;
-	bh=Q8bq6QR8fWoVrzIi82l8zNRUP0tiZKLaZu2mc1Q2OTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfrZEY11Tu9bTLQKs/xHsIckrsayoeLHWgTdR/ZZMyUerhsWO5yGmo3al1lodw1Mm4k9cU+Y59GG+sVMOT5hLrv96shmpYfum263e77/UMIXV2OnVhmlg7ECoyr/4UJOpPQpbj8oXK/yTYu5qJz2tpOHE+wPMz5EWS+6ZyAmDfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ybb1rBPo; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4d4881897cso2744753a12.0;
-        Sun, 07 Sep 2025 22:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757309768; x=1757914568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O//184ekENNe7/TMMlx7LZa+w+2boPr1l5+lEZSHfQY=;
-        b=Ybb1rBPoskB1zfBhedyXYEQT+jH43dV/Ge6dkNitDvgc6qzoPxXgSBhIemQ+IEfJ65
-         7v4s5NoGALCxeS9apKuS9ze6C102VffcL/f0BsdiLXyy2Ltgcy1hVWKbrdXbqYXXa0yM
-         QSNY5SAyibNSf5De7/QsMrl9OWE1p9UzydLv0aSKuwK30Dw7fz/6BGjRM61cqD4tQbkX
-         cJ7DJjVSQPBTAo9DGERAQz4Jo/6nBgneZNEI5p/H07L53AOH03L5jdA6nMgON4702/k/
-         jA5aXq4vgVu7Ae5dfKpPVM+iPuUtvS8uXskqS3TPz0bR+4aLDujZXkLyTCuBQCMEjsYd
-         sWjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757309768; x=1757914568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O//184ekENNe7/TMMlx7LZa+w+2boPr1l5+lEZSHfQY=;
-        b=YVa9lhJ/rG7eF4AVcEBNI9r4TgwgA6yvKyODW3/WC1k2dkai+L1yWlkUyqQFQnI3+H
-         KZ9cBT9QP1PT8C9ynL+pWOxGg9OSyApzS06eEvqshImRSxEzsMu4FJFvltZwI8Zy6D1J
-         i2l28QvL5OVl51pHaSCOk/+hzclbyaGujFmdr6mmzxveINzf+T5Twj20RCp2SsvyW81U
-         EVTwHiCsSxcRH3b/t/4D9mZNwMd2rE3r3p4GnFWaR68IyJecNfF1ROgaJSat1eY3+lsl
-         bK7BkYCzRRlp2joWisQiHRJR62PHnebyjDQCZSk0dINZRJeu/vHNE8V4NzNrzdV6/dqh
-         BdXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJayJBcORd768iW1ZIeZ0fNTSr4beDdUKtU7AtGeN0AYGmsr4OX0OGwkMjNeZJMPr18UlaanK+/PpTo1M=@vger.kernel.org, AJvYcCWnlAlbMhTpMQbcndeXZFBGnLOddx1Fi6LZQvOXkiaccTwkGUAn+zauR7ss19LaJDG5pg09OB6ByphjT/L3dzKYBf0l@vger.kernel.org, AJvYcCWuW1de792UhFjfbTVdTucOolbQ5ar4xBR8sKUltqbiRaPKp2VZkfuI/zmdSNubJzVfbohebwwWICdC0389b3Sd4A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEnSzyY1MLKKCy4F524+87CvwPr+rFXCGez9D0aYxbck0q5GjT
-	VBrdYEiY+jhvnbA1lXeJ2sQ0Vthk3oOB2gR/LilwV8qEjcqOjM8Byi7h
-X-Gm-Gg: ASbGncvITLzUkxgRXlpOZHSts+MAnLj5UQeitKvKAuq0tDJcALFhDZsAhs1Ue0O2Qn1
-	mWYqxaoLt3VLRJ6xuXr60PPNWQzp9qOhrL5GdtQi2hr8sqebk1LJ4ATb2DUNvRLHZPPE3Ry+FQB
-	uxMvoWLDV7UQ6cGG0Zti//jQdC1Dvbc22FEjiv/dCrvIc/G25ocG+2WRum463Wbr73PDoIVnjis
-	NAqEM02Sr5tbhlnFPprJwhuULh3pPHuIw/uD07Rb/PifeUxlDZ2+NPfDOsxNIW0H1ZgMG4aZJM9
-	4ClCpE2jkjfGFzrUTRDew2CTKr/hftMRYgRhaHOxr0AHSRT4O9hb0ttV0gy3eDIJ4rPvqZcQMTZ
-	le3ThBA/VqunHMEK9rPBfcJ2DM9D2YPr8xNiNkowxAEPFBh4=
-X-Google-Smtp-Source: AGHT+IGJU9Rvc1SQDq43MWndwlklSyYn9Rwd+n1UlZjvW/FMqOjBhAEM/Cn8qNaaRO6JuHkBkj2esg==
-X-Received: by 2002:a17:902:e881:b0:24c:ed9f:ba53 with SMTP id d9443c01a7336-251734f2f80mr92370065ad.29.1757309767705;
-        Sun, 07 Sep 2025 22:36:07 -0700 (PDT)
-Received: from localhost ([45.142.165.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd655823sm99646425ad.114.2025.09.07.22.36.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 22:36:07 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:36:04 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/18] perf/hw_breakpoint: add arch-independent
- hw_breakpoint_modify_local()
-Message-ID: <aL5rRIXYiFd8_Tz6@mdev>
-References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
- <20250904002126.1514566-7-wangjinchao600@gmail.com>
- <20250904064448.GU4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1757323088; c=relaxed/simple;
+	bh=60cR7w6WJvBWNXE45/vBoF62wgNCkwjiNGFKC3Lwy0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=QadNviCmDkNFFoPlFWm3LOSqKC53uRRAfZw8Lo3F9uDJoFqNrxXzUq/Z8PgIaCzsNr/rUswLQ4DkskVLV+ox31pEUw3nocNfZYJ8QDstT8pY+Y2dPLBrHERvWo77T+56l3kdv5TYAWmX2vayCGp5I0dcFnGO0YUD+JHovi2Cj2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ADcrsOKZ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250908091803epoutp010fc6022a7fefe9f3cefe8e4b644e6a19~jRAiqNzEx2777527775epoutp01n
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:18:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250908091803epoutp010fc6022a7fefe9f3cefe8e4b644e6a19~jRAiqNzEx2777527775epoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757323083;
+	bh=DxWOi6X/2j1jgcG8gMqvq6+p4MwwlbNq5ZFmqB5jV5Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ADcrsOKZkm8MKM2FYssm5gTQu8JgaRoUAUK0h2ayzTJIFXNt8MKPD8hFLgNwp33Kn
+	 Q/8QcJv/RyIII5TytRwnWA+vwCOCbycjFoWzoxdWr9OZIykomXJMI0qTKYIp5pAE/k
+	 4SOfuJZVsV71aIzmvPgY++B0NzOy8V0YbT+beKFU=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250908091803epcas5p1d6ddf147d92c88b7d6ba23b47ebed66c~jRAiHnzAL1532815328epcas5p1B;
+	Mon,  8 Sep 2025 09:18:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cL1Zf6R3fz3hhT3; Mon,  8 Sep
+	2025 09:18:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250908053635epcas5p46748ea95e52617e58fd31049208bc22d~jN-LflqTT1041210412epcas5p4N;
+	Mon,  8 Sep 2025 05:36:35 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250908053634epsmtip19fc36e72781bdd2c86915535c53cbe40~jN-J-hS3Q2951529515epsmtip1x;
+	Mon,  8 Sep 2025 05:36:34 +0000 (GMT)
+Date: Mon, 8 Sep 2025 11:06:28 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
+ init_labels and its region_uuid
+Message-ID: <1983025922.01757323082896.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <68bb43351ea_9916329427@iweiny-mobl.notmuch>
+X-CMS-MailID: 20250908053635epcas5p46748ea95e52617e58fd31049208bc22d
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_ed1d7_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
+	<20250730121209.303202-8-s.neeraj@samsung.com>
+	<68a4c8d971529_27db9529479@iweiny-mobl.notmuch>
+	<1690859824.141757055784098.JavaMail.epsvc@epcpadp2new>
+	<68bb43351ea_9916329427@iweiny-mobl.notmuch>
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_ed1d7_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20250904064448.GU4067720@noisy.programming.kicks-ass.net>
 
-On Thu, Sep 04, 2025 at 08:44:48AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 04, 2025 at 08:21:03AM +0800, Jinchao Wang wrote:
-> > Introduce hw_breakpoint_modify_local() as a generic helper to modify an
-> > existing hardware breakpoint. The function invokes
-> > hw_breakpoint_arch_parse() and delegates the reinstall step to the
-> > architecture via arch_reinstall_hw_breakpoint().
-> > 
-> > A weak default implementation of arch_reinstall_hw_breakpoint() is
-> > provided, returning -EOPNOTSUPP on architectures without support.
-> > 
-> > This makes the interface arch-independent while allowing x86 (and others)
-> > to provide their own implementation.
-> > 
-> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> > ---
-> >  include/linux/hw_breakpoint.h |  1 +
-> >  kernel/events/hw_breakpoint.c | 18 ++++++++++++++++++
-> >  2 files changed, 19 insertions(+)
-> > 
-> > diff --git a/include/linux/hw_breakpoint.h b/include/linux/hw_breakpoint.h
-> > index db199d653dd1..9453b5bdb443 100644
-> > --- a/include/linux/hw_breakpoint.h
-> > +++ b/include/linux/hw_breakpoint.h
-> > @@ -67,6 +67,7 @@ extern int
-> >  modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
-> >  				bool check);
-> >  
-> > +int hw_breakpoint_modify_local(struct perf_event *bp, struct perf_event_attr *attr);
-> >  /*
-> >   * Kernel breakpoints are not associated with any particular thread.
-> >   */
-> > diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-> > index 8ec2cb688903..ff428739f71e 100644
-> > --- a/kernel/events/hw_breakpoint.c
-> > +++ b/kernel/events/hw_breakpoint.c
-> > @@ -983,6 +983,24 @@ static void hw_breakpoint_del(struct perf_event *bp, int flags)
-> >  	arch_uninstall_hw_breakpoint(bp);
-> >  }
-> >  
-> > +int hw_breakpoint_modify_local(struct perf_event *bp, struct perf_event_attr *attr)
-> > +{
-> > +	int err;
-> > +
-> > +	err = hw_breakpoint_arch_parse(bp, attr, counter_arch_bp(bp));
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	return arch_reinstall_hw_breakpoint(bp);
-> > +}
-> > +EXPORT_SYMBOL(hw_breakpoint_modify_local);
-> > +
-> > +/* weak fallback for arches without support */
-> > +__weak int arch_reinstall_hw_breakpoint(struct perf_event *bp)
-> > +{
-> > +	return -EOPNOTSUPP;
-> > +}
-> 
-> Again, so much fail :/
-> 
+On 05/09/25 03:08PM, Ira Weiny wrote:
+>Neeraj Kumar wrote:
+>> On 19/08/25 01:56PM, Ira Weiny wrote:
+>> >Neeraj Kumar wrote:
+>> >> nd_mapping->labels maintains the list of labels present into LSA.
+>> >> init_labels() prepares this list while adding new label into LSA
+>> >> and updates nd_mapping->labels accordingly. During cxl region
+>> >> creation nd_mapping->labels list and LSA was updated with one
+>> >> region label. Therefore during new namespace label creation
+>> >> pre-include the previously created region label, so increase
+>> >> num_labels count by 1.
+>> >
+>> >Why does the count of the labels in the list not work?
+>> >
+>> >static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>> >{
+>> >        int i, old_num_labels = 0;
+>> >...
+>> >        mutex_lock(&nd_mapping->lock);
+>> >        list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>> >                old_num_labels++;
+>> >        mutex_unlock(&nd_mapping->lock);
+>> >...
+>> >
+>>
+>> Hi Ira,
+>>
+>> init_labels() allocates new label based on comparison with existing
+>> count of the labels in the list and passed num_labels. If num_labels
+>> is greater than count of the labels in the list then new label is
+>> allocated and stored in list for later usage
+>
+>I think I'm following better but shouldn't this hunk be included in the
+>code which creates the region label in the list?
+>
 
-> So we have:
-> 
-> {register,modify,unregister}_user_hw_breakpoint()
-> 
-> and
-> 
-> {register,unregister}_wide_hw_breakpoint()
-> 
-> And you choose to extend this latter with hw_breakpoint_modify_local()
-> instead of sticking with the naming scheme and say adding:
-> 
-> modify_wide_hw_breakpoint_local().
-> 
-> Also, again, that EXPORT is a fail, these other interfaces are all
-> EXPORT_SYMBOL_GPL().
-> 
-Thanks for your patience.
+Yes we can include this hunk in patch 5 where we are updating region
+label. I will drop this commit and include it in patch 5.
 
-I was misled by another family:
-  - hw_breakpoint_add
-  - hw_breakpoint_del
-  - hw_breakpoint_start
-  - hw_breakpoint_stop
+>I'm concerned that this '+ 1' out of the blue and will be confusing in the
+>future.  Why can't count be kept up to date when the region label was
+>created and added?
 
-Since this logic was also added in the wprobe series by Masami, I will
-adopt his version instead.
-> Also note that modify_user_hw_breakpoint() doesn't seem to need new arch
-> hooks. Yet you fail to explain why you think you do.
-Thanks for feedback, I will study existing code to better handle the arch
-dependencies.
+Yes this '+1' is hardcoded and it creating confusion. I will fix this
+with available region labels in the list.
+
+>
+>What code (patch) added this region label?
+>
+>Ira
+
+Patch 5 add this region label using nd_pmem_region_label_update()
+
+
+Regards,
+Neeraj
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_ed1d7_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_ed1d7_--
+
 
