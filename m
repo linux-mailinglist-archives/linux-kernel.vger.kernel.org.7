@@ -1,147 +1,273 @@
-Return-Path: <linux-kernel+bounces-806218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1081B493C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:39:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3984B493C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFB13B7F2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:39:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63AFE7B5DC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD59D30DD18;
-	Mon,  8 Sep 2025 15:39:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEDF30E0EB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DFC30E85C;
+	Mon,  8 Sep 2025 15:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjquEXNR"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085030E0EE;
+	Mon,  8 Sep 2025 15:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345960; cv=none; b=GyXw9tGIshrIXvwYPaxQ2Kf6vwDBc1RIkAGynTQr9Zfd6S9xejX5hUo3A8Ekn/RXkIb7YLOvk6HBgGfjmQ6XJhzyXcso8NAkKf2B4KtjY8Wkr60sQZm+8fivFPmi5TjsWKYAA3eYbzpVz0A40lBi9kmxaMHM3mbNExAfa5c3ucU=
+	t=1757345978; cv=none; b=Wu62cHWzTEbR2BrREh/7Ot87JIQBxcGvGayJ57wQUjj49lekDF+FmBq858MyzIuifiZBlW6VieRBWtQiRoVFvNYBPIIYRd4UwkkfHncC4MQAhJD7ggOTKMyc5xJqTDer6VAgNvYBqCjP/jYopnj0s8aqKHz/euJWhhNw3UDWVnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345960; c=relaxed/simple;
-	bh=bvWnm6tCvu/P7UfI+nK4JBO8Ce1IIlTtasDqStaO1SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dofSsnwnmp3FggD0Zvma7fP2a7HD3p04PQENeCFrLxbszuBqCNM//F+FAbHQHA9aJoa49XZzQsZAK2qHBt1IlTiQmX0jikJoCnprjic978rOZbcDUJJOV4b1Av4ewxvhARqSzrsCgncelfyZn1n+FHepiqwWVJSdjZi6Ky97+GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4DA21692;
-	Mon,  8 Sep 2025 08:39:09 -0700 (PDT)
-Received: from [10.57.3.191] (unknown [10.57.3.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BEEF3F63F;
-	Mon,  8 Sep 2025 08:39:15 -0700 (PDT)
-Message-ID: <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
-Date: Mon, 8 Sep 2025 16:39:13 +0100
+	s=arc-20240116; t=1757345978; c=relaxed/simple;
+	bh=mkS7Q2XXsAh/hnvFTx5Ju9PCADKOOyXqSzzlVMxjm3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JEVkUacHkpYG+UTw95D8LcCoDJ1nYyjwN/tRvjVEMWxaldFRXwiJRA998UmN4UzKw1GUBoSAR8LtdfwLkKX8lprBevC488oirHma+wG6MAtq3oXoyLkNFEFLlUAc1Z9+sBrFJ0jVVfom82YWdeaHIjRI8Ug6LIkewRrBAtQwY04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjquEXNR; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-624fdf51b44so2086090a12.1;
+        Mon, 08 Sep 2025 08:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757345975; x=1757950775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HlYi0zuf18CTjrvUd8KAUPgIego6gfmKRVz1YHq0aBY=;
+        b=fjquEXNRxQGOsY+Gdc9pL1KtQvjsCVPZE9dfX1j06dlXI+9Q/c4giz99AgQ3mZa01N
+         LuasJQvdIUT08dLo0TKsPEsjt6hmC+Cu6gmbRct6MROlD9z/sRTb1JHhncMRswzbW2hg
+         5QA/EmON6snZypSspVSn1JwNZ710x8TfgGPg+cvAWEWrldehbUPU5cUIwGdMMhjdryaR
+         zBe5Upt0ndI0owb//Z2E+cmNlaxJpdtr2k3RAZhUJtgfCrnD9v3x2VqIK3MH4Yn01EsM
+         0AgVzY+sSwZ/xBLiSobvnWhUnKd865ULQFY1MyreANmZSAPKKDJMQ6rvSQD3LgFy72NE
+         x2Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757345975; x=1757950775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HlYi0zuf18CTjrvUd8KAUPgIego6gfmKRVz1YHq0aBY=;
+        b=NXtieseQFOXkgb56KREvYzdXiH0VilYVoP3ruMT49rGcHBTcGT67wgyZHuSWzALmmO
+         VLM+RBLWim3zzLMC0S8K8c/vCMGmEu1iRKue2sX2yXFw+MFXjZtFwN0GBdUcdE06v/ZF
+         eblAJ/fv8vTM7p+Cy127kQYwFdf/0qUPSFa/wZH6MYK2z/w8zY9481zYihZcukjRSgCE
+         qoxnVPnbpdxehj6XO7JrBZdtXOvssZ77qRG9a43xxTClrgEfUJdCULtdG1p/C19iRxEW
+         dtFqaALYmdlFOZ6MAOa6dRqDIyqkdlwK8wV/Qw4bxZBAszrAG3y0+Ih3PDLQ6T2eoacD
+         S+tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKeE61znGxDXi241qN3d3oA2ndx0IxFCB7bmDbNf5by14DowGTnFGzy79rHOWKHEjZuZ4vHck4XruvcxOP@vger.kernel.org, AJvYcCWlL2g+VzSs7r2vDgRV+2mm+giWzpi3isx6DiVFlKxfr5ZxvTvWZ6tUbXTGzw5K7bLF/BDNUFIrjzSgTKeb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmc32oNIPIW1xW30HrLYhAZ3ffdCUnc40u1+KjZ8ng4gm7uMaS
+	aeQhO3saiJSjB8y/txksGdA+Xv8UyPdiiDvkbFgOba/A4mOiC0GH/OJjv5u+yiT8zX7Wu/RszPo
+	6AaeBiyWUrBpFfXWJ0fFOzlkBGdXf2do=
+X-Gm-Gg: ASbGncs/hr9GtqVmbrRVyp87YQtWGuFTNfPetYhdIAKJJjlBJy8nEZfx/jIvEeioqDS
+	+D8fX0UHQ6ZRwFzM8ckj3IKCfRd+4tlZAnZQsYfg1vMWfXCw76IdipytMfBvibu45HLTUvGaKQV
+	MM61pGY2yTIZBXYzWuH272TBEMaLv/1TDkL7Ho5IjC/gBj7+j7f2wU0XVr6i27P6HD1pnoJb+Ww
+	WkB0Us3nSdgfQjFQg==
+X-Google-Smtp-Source: AGHT+IGML91YmFHQAUDt0ahS98UGZdZ6TH072YQ585VVAQwaUmKdCU3wBiaMqQKljISwAsFDS8TgqDxeVR/5WQwPuXk=
+X-Received: by 2002:a05:6402:3549:b0:62b:2899:5b31 with SMTP id
+ 4fb4d7f45d1cf-62b28995cabmr1224668a12.5.1757345974456; Mon, 08 Sep 2025
+ 08:39:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-To: Jason Gunthorpe <jgg@ziepe.ca>, Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-coco@lists.linux.dev, will@kernel.org,
- maz@kernel.org, tglx@linutronix.de, robin.murphy@arm.com,
- akpm@linux-foundation.org
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com> <yq5aikht1e0z.fsf@kernel.org>
- <aL7AoPKKKAR8285O@arm.com> <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
- <20250908145845.GA699673@ziepe.ca>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250908145845.GA699673@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
+ <20250904154245.644875-1-mjguzik@gmail.com> <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
+ <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
+ <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com> <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
+ <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com> <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
+In-Reply-To: <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 8 Sep 2025 17:39:22 +0200
+X-Gm-Features: AS18NWCDQLs5fysu8uWSj8ezNb9KhOg04xwtuZGK4FM2mMvAO4xkNE39g6GrKLU
+Message-ID: <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com>
+Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
+ I_WILL_FREE usage
+To: Jan Kara <jack@suse.cz>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Tinguely <mark.tinguely@oracle.com>, 
+	ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	josef@toxicpanda.com, jlbec@evilplan.org, mark@fasheh.com, brauner@kernel.org, 
+	willy@infradead.org, david@fromorbit.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/09/2025 15:58, Jason Gunthorpe wrote:
-> On Mon, Sep 08, 2025 at 02:47:21PM +0100, Suzuki K Poulose wrote:
->> On 08/09/2025 12:40, Catalin Marinas wrote:
->>> On Mon, Sep 08, 2025 at 03:07:00PM +0530, Aneesh Kumar K.V wrote:
->>>> Catalin Marinas <catalin.marinas@arm.com> writes:
->>>>> On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
->>>>>> When running with private memory guests, the guest kernel must allocate
->>>>>> memory with specific constraints when sharing it with the hypervisor.
->>>>>>
->>>>>> These shared memory buffers are also accessed by the host kernel, which
->>>>>> means they must be aligned to the host kernel's page size.
->>>>>
->>>>> So this is the case where the guest page size is smaller than the host
->>>>> one. Just trying to understand what would go wrong if we don't do
->>>>> anything here. Let's say the guest uses 4K pages and the host a 64K
->>>>> pages. Within a 64K range, only a 4K is shared/decrypted. If the host
->>>>> does not explicitly access the other 60K around the shared 4K, can
->>>>> anything still go wrong? Is the hardware ok with speculative loads from
->>>>> non-shared ranges?
->>>>
->>>> With features like guest_memfd, the goal is to explicitly prevent the
->>>> host from mapping private memory, rather than relying on the host to
->>>> avoid accessing those regions.
->>>
->>> Yes, if all the memory is private. At some point the guest will start
->>> sharing memory with the host. In theory, the host could map more than it
->>> was given access to as long as it doesn't touch the area around the
->>> shared range. Not ideal and it may not match the current guest_memfd API
->>
->> The kernel may be taught not to touch the area, but it is tricky when
->> the shared page gets mapped into the usespace and what it does with it.
-> 
-> But what happes?
-> 
-> The entire reason we have this nasty hyper-restrictive memfd private
-> memory is beacuse Intel takes a machine check if anything does it
-> wrong, and that is fatal and can't be handled.
-> 
-> Is ARM like that? I thought ARM had good faults on GPT violation that
-> could be handled in the same way as a normal page fault?
+On Mon, Sep 8, 2025 at 3:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 08-09-25 20:41:21, Joseph Qi wrote:
+> >
+> >
+> > On 2025/9/8 18:23, Jan Kara wrote:
+> > > On Mon 08-09-25 09:51:36, Joseph Qi wrote:
+> > >> On 2025/9/5 00:22, Mateusz Guzik wrote:
+> > >>> On Thu, Sep 4, 2025 at 6:15=E2=80=AFPM Mark Tinguely <mark.tinguely=
+@oracle.com> wrote:
+> > >>>>
+> > >>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
+> > >>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm tol=
+d is
+> > >>>>> fine (tm).
+> > >>>>>
+> > >>>>> The intent is to retire the I_WILL_FREE flag.
+> > >>>>>
+> > >>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > >>>>> ---
+> > >>>>>
+> > >>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it=
+.
+> > >>>>>
+> > >>>>> btw grep shows comments referencing ocfs2_drop_inode() which are =
+already
+> > >>>>> stale on the stock kernel, I opted to not touch them.
+> > >>>>>
+> > >>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocki=
+ng
+> > >>>>> other work. If accepted would be probably best taken through vfs
+> > >>>>> branches with said work, see https://urldefense.com/v3/__https://=
+git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs-6.18.inode=
+.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKB=
+MEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
+> > >>>>>
+> > >>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
+> > >>>>>   fs/ocfs2/inode.h       |  1 -
+> > >>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
+> > >>>>>   fs/ocfs2/super.c       |  2 +-
+> > >>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
+> > >>>>>
+> > >>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> > >>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
+> > >>>>> --- a/fs/ocfs2/inode.c
+> > >>>>> +++ b/fs/ocfs2/inode.c
+> > >>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode =
+*inode)
+> > >>>>>
+> > >>>>>   void ocfs2_evict_inode(struct inode *inode)
+> > >>>>>   {
+> > >>>>> +     write_inode_now(inode, 1);
+> > >>>>> +
+> > >>>>>       if (!inode->i_nlink ||
+> > >>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)=
+) {
+> > >>>>>               ocfs2_delete_inode(inode);
+> > >>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode=
+)
+> > >>>>>       ocfs2_clear_inode(inode);
+> > >>>>>   }
+> > >>>>>
+> > >>>>> -/* Called under inode_lock, with no more references on the
+> > >>>>> - * struct inode, so it's safe here to check the flags field
+> > >>>>> - * and to manipulate i_nlink without any other locks. */
+> > >>>>> -int ocfs2_drop_inode(struct inode *inode)
+> > >>>>> -{
+> > >>>>> -     struct ocfs2_inode_info *oi =3D OCFS2_I(inode);
+> > >>>>> -
+> > >>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
+> > >>>>> -                             inode->i_nlink, oi->ip_flags);
+> > >>>>> -
+> > >>>>> -     assert_spin_locked(&inode->i_lock);
+> > >>>>> -     inode->i_state |=3D I_WILL_FREE;
+> > >>>>> -     spin_unlock(&inode->i_lock);
+> > >>>>> -     write_inode_now(inode, 1);
+> > >>>>> -     spin_lock(&inode->i_lock);
+> > >>>>> -     WARN_ON(inode->i_state & I_NEW);
+> > >>>>> -     inode->i_state &=3D ~I_WILL_FREE;
+> > >>>>> -
+> > >>>>> -     return 1;
+> > >>>>> -}
+> > >>>>> -
+> > >>>>>   /*
+> > >>>>>    * This is called from our getattr.
+> > >>>>>    */
+> > >>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
+> > >>>>> index accf03d4765e..07bd838e7843 100644
+> > >>>>> --- a/fs/ocfs2/inode.h
+> > >>>>> +++ b/fs/ocfs2/inode.h
+> > >>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INOD=
+E_CACHE(struct inode *inode)
+> > >>>>>   }
+> > >>>>>
+> > >>>>>   void ocfs2_evict_inode(struct inode *inode);
+> > >>>>> -int ocfs2_drop_inode(struct inode *inode);
+> > >>>>>
+> > >>>>>   /* Flags for ocfs2_iget() */
+> > >>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
+> > >>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+> > >>>>> index 54ed1495de9a..4b32fb5658ad 100644
+> > >>>>> --- a/fs/ocfs2/ocfs2_trace.h
+> > >>>>> +++ b/fs/ocfs2/ocfs2_trace.h
+> > >>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delet=
+e_inode);
+> > >>>>>
+> > >>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
+> > >>>>>
+> > >>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
+> > >>>>> -
+> > >>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
+> > >>>>>       TP_PROTO(void *inode, unsigned long long ino,
+> > >>>>>                unsigned int flags),
+> > >>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> > >>>>> index 53daa4482406..e4b0d25f4869 100644
+> > >>>>> --- a/fs/ocfs2/super.c
+> > >>>>> +++ b/fs/ocfs2/super.c
+> > >>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_so=
+ps =3D {
+> > >>>>>       .statfs         =3D ocfs2_statfs,
+> > >>>>>       .alloc_inode    =3D ocfs2_alloc_inode,
+> > >>>>>       .free_inode     =3D ocfs2_free_inode,
+> > >>>>> -     .drop_inode     =3D ocfs2_drop_inode,
+> > >>>>> +     .drop_inode     =3D generic_delete_inode,
+> > >>>>>       .evict_inode    =3D ocfs2_evict_inode,
+> > >>>>>       .sync_fs        =3D ocfs2_sync_fs,
+> > >>>>>       .put_super      =3D ocfs2_put_super,
+> > >>>>
+> > >>>>
+> > >>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
+> > >>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inod=
+e().
+> > >>>>
+> > >>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
+> > >>>>   ocfs2: flush inode data to disk and free inode when i_count beco=
+mes zero
+> > >>>> the return of 1 drops immediate to fix a memory caching issue.
+> > >>>> Shouldn't .drop_inode() still return 1?
+> > >>>
+> > >>> generic_delete_inode is a stub doing just that.
+> > >>>
+> > >> In case of "drop =3D 0", it may return directly without calling evic=
+t().
+> > >> This seems break the expectation of commit 513e2dae9422.
+> > >
+> > > generic_delete_inode() always returns 1 so evict() will be called.
+> > > ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'=
+m not
+> > > sure which case of "drop =3D 0" do you see...
+> > >
+> > I don't see a real case, just in theory.
+> > As I described before, if we make sure write_inode_now() will be called
+> > in iput_final(), it would be fine.
+>
+> I'm sorry but I still don't quite understand what you are proposing. If
+> ->drop() returns 1, the filesystem wants to remove the inode from cache
+> (perhaps because it was deleted). Hence iput_final() doesn't bother with
+> writing out such inodes. This doesn't work well with ocfs2 wanting to
+> always drop inodes hence ocfs2 needs to write the inode itself in
+> ocfs2_evice_inode(). Perhaps you have some modification to iput_final() i=
+n
+> mind but I'm not sure how that would work so can you perhaps suggest a
+> patch if you think iput_final() should work differently? Thanks!
+>
 
-Arm does indeed trigger a 'good fault' in these situations, but...
+I think generic_delete_inode is a really bad name for what the routine
+is doing and it perhaps contributes to the confusion in the thread.
 
-> If ARM has proper faulting then you don't have an issue mapping 64K
-> into a userspace and just segfaulting the VMM if it does something
-> wrong.
+Perhaps it could be renamed to inode_op_stub_always_drop or similar? I
+don't for specifics, apart from explicitly stating that the return
+value is to drop and bonus points for a prefix showing this is an
+inode thing.
 
-...the VMM can cause problems. If the VMM touches the memory itself then
-things are simple - we can detect that the fault was from user space and
-trigger a SIGBUS to kill of the VMM.
-
-But the VMM can also attempt to pass the address into the kernel and
-cause the kernel to do a get_user_pages() call (and this is something we
-want to support for shared memory). The problem is if the kernel then
-touches the parts of the page which are protected we get a fault with no
-(easy) way to relate back to the VMM.
-
-guest_memfd provided a nice way around this - a dedicated allocator
-which doesn't allow mmap(). This meant we don't need to worry about user
-space handing protected memory into the kernel. It's now getting
-extended to support mmap() but only when shared, and there was a lot of
-discussion about how to ensure that there are no mmap regions when
-converting memory back to private.
-
-> If not, then sure you need all this unmapping stuff like Intel does :\
-
-We don't strictly need it, but given the complexity of handling a GPT
-violation caused by the kernel, and since the infrastructure is needed
-for Intel, it's made sense to largely follow the same path.
-
->> True. The GPC Page Size is going to be 4K. At present the RMM S2 page
->> size is fixed to 4K.
-> 
-> A 4k S2 is a pointless thing to do if the VMM is only going to approve
-> 64k shared/private transitions :(
-
-Indeed. The intention is that longer term the RMM would use the same S2
-page size as the host's page size. But we'd like to support
-(confidential) guests running with 4k page size under a 64k host/S2.
-
-Short-term the RMM can use a smaller page size with everything still
-working, but that's obviously not as efficient.
-
-Steve
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
