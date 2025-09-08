@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-805826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5900B48DF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA230B48E02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FEC1B25C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B04B1C20E04
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9485B305043;
-	Mon,  8 Sep 2025 12:46:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D895304BC7;
+	Mon,  8 Sep 2025 12:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OblUx51x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A0A304984
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78A330499B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757335591; cv=none; b=Wbvd83w09Bt5LBJBqbZWM6HjspQ7ehd6+5VtXH7H7Y/9nZo4tvlHz8A/9zKT9Gs+wFcLK7rOMIjYJumxs+QjBftSGwdZs3fj62DOvMvRZyZHc4nRT5UR/dXWMaitulNTQfVpIdxsnfhneYS6Zn87VtsOg55GfGIzAtPGRKg7bmU=
+	t=1757335678; cv=none; b=dZ6/r/pLCM+VzH8zQ880orO5r183N4U3lo4bsKp36sMLK6PxXyyDMtfrgGZed9ej3jsOIiIjYhmoF886HYFX94SscepjVeKs+0qS1/BLAJenv2Ncu0b49KvTci0erTA7fp/MhPFFCsuGN31XFhalqRy2vnTOHva425daCHWfP/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757335591; c=relaxed/simple;
-	bh=KvPkdza+dT296uEARiCseHwuSIvLjN+tjNRKd1Gy8PY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HwNmNs5tunQEXt6QWaL6fm5QasKz2iNDLecgyg1w+k60N0iSXxLKHfd5rzlGUpl8ZRsYlywfN4LoRr0IvPK+lkd7x/qxmO94bOieo6dg/DKNAIQlz6rJ6EWjr7mY4/7/7m16CoZ3ThFoRADcNIrPv/6RtGbsym2tDHIlFBnGMxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvbG9-0003SA-F8; Mon, 08 Sep 2025 14:46:13 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvbG7-000Fiu-2r;
-	Mon, 08 Sep 2025 14:46:11 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvbG7-0000000CKJz-3AvL;
-	Mon, 08 Sep 2025 14:46:11 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1757335678; c=relaxed/simple;
+	bh=CuiJ+AC17Kj288Ih1c5D12rNdUHse5TIb+qZzvjH44s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tNsOAlFaBdiSbdSSzxR3AcdGyYmNXiU+IGKfIG+bahxnLroWN7RGofLNqrjE9MPYMV/bVX7ydcKNBjaiDmi3T1hJFJDos6UEsbuy5doPG3/x7scF9xAa6E+oAkvsgkc95k5Nn5J+3ph4lJvBSOajN0oJds6RQcbFi5frKfDzZGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OblUx51x; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757335675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aevj+k7+HSbyx1kuE19JILsk9KtpoCEGQ/zs/FNoek4=;
+	b=OblUx51xXIA2fDP40lLHFeUIrTlBGzEorHfPYeIYEXA3hor/Cx5hzE02D2O4hU3049aMPn
+	b0oQCo7OtDiJb9vpJon8KTUAy/yIkFy9Xl2AoIWd9GFVLPd4af5fk8SzhczJ4uMJFOz2xv
+	CbnhNZeyEIpzWQMgN5n+pvEHHfWeHEE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-i4kBMdJ5PL-PQnfrQkaxNg-1; Mon,
+ 08 Sep 2025 08:47:52 -0400
+X-MC-Unique: i4kBMdJ5PL-PQnfrQkaxNg-1
+X-Mimecast-MFC-AGG-ID: i4kBMdJ5PL-PQnfrQkaxNg_1757335671
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBA2B1800451;
+	Mon,  8 Sep 2025 12:47:50 +0000 (UTC)
+Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 271C6300018D;
+	Mon,  8 Sep 2025 12:47:44 +0000 (UTC)
+From: Chunyu Hu <chuhu@redhat.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	shuah@kernel.org,
+	linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v5 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Mon,  8 Sep 2025 14:46:10 +0200
-Message-ID: <20250908124610.2937939-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250908124610.2937939-1-o.rempel@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	chuhu@redhat.com
+Subject: [PATCH v2 0/3] Fix va_high_addr_switch.sh test failure
+Date: Mon,  8 Sep 2025 20:47:36 +0800
+Message-ID: <20250908124740.2946005-1-chuhu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,99 +78,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Implement get_mse_config() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
+The three patches fix the va_high_addr_switch.sh test failure on x86_64.
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+Patch 1 fixes the hugepage setup issue that nr_hugepages is reset too
+early in run_vmtests.sh and break the later va_high_addr_switch testing.
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
+Patch 2 adds hugepage setup in va_high_addr_switch test, so that it can
+still work if vm_runtests.sh changes the hugepage setup someday.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 44 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Patch 3 fixes the test failure caused by the hint addr align method change
+in hugetlb_get_unmapped_area().
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..094c070f3f96 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -249,6 +249,47 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
- 
-+static int dp83td510_get_mse_config(struct phy_device *phydev,
-+				    struct phy_mse_config *config)
-+{
-+	/* The DP83TD510E datasheet does not specify peak MSE values.
-+	 * It only provides a single MSE value which is used to derive SQI.
-+	 * Therefore, we only support the average MSE capability.
-+	 */
-+	config->supported_caps = PHY_MSE_CAP_AVG | PHY_MSE_CAP_LINK |
-+		PHY_MSE_CAP_CHANNEL_A;
-+	config->max_average_mse = 0xFFFF;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BaseT1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	config->refresh_rate_ps = 1000000000; /* 1 ms */
-+	config->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
-+		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +934,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
- 
-+	.get_mse_config	= dp83td510_get_mse_config,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
+Changes in v2:
+ - patch 1 renames nr_hugepgs_origin to orig_nr_hugepgs
+ - add a patch 2 to setup hugeapges in va_high_addr_switch test
+
+Chunyu Hu (3):
+  selftests/mm: fix hugepages cleanup too early
+  selftests/mm: alloc hugepages in va_high_addr_switch test
+  selftests/mm: fix va_high_addr_switch.sh failure on x86_64
+
+ tools/testing/selftests/mm/run_vmtests.sh     |  9 ++++-
+ .../selftests/mm/va_high_addr_switch.c        |  4 +-
+ .../selftests/mm/va_high_addr_switch.sh       | 37 +++++++++++++++++++
+ 3 files changed, 46 insertions(+), 4 deletions(-)
+
 -- 
-2.47.3
+2.49.0
 
 
