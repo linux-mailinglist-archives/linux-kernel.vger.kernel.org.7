@@ -1,143 +1,150 @@
-Return-Path: <linux-kernel+bounces-805586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E0CB48A86
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5375B48A88
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CFD3A75F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965383AA7F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12281E7C27;
-	Mon,  8 Sep 2025 10:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B19D21C9FD;
+	Mon,  8 Sep 2025 10:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="rHRRoMKi"
-Received: from mail-24422.protonmail.ch (mail-24422.protonmail.ch [109.224.244.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DZaET39O"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE8E1C84A0;
-	Mon,  8 Sep 2025 10:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CB21DB154
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757328464; cv=none; b=M03bpqh9OiEzmIDlIh5sOcNfiqjzJQVmHZ7ZHplilSNUp5wIv3nrtS9SJIeLLs+IAnTHg72lNgOJ2l24y9WRi/a1cJcu/y94+6v8CD7Q+e+LQx0D1MM1XI1Ipg5XCXaXcd+EnWCNVYjijkGPpktAjDvKRzSZhsPIWMndKjLvgac=
+	t=1757328501; cv=none; b=tcsXzkado1r92n22/P6OM5C0Kj2n2hws7hxrBeBtrRzh4lI+B1q1gnawwAxQvIFfYpoPuCNZHZ6Rpvg73u1sVMDiqG+w49bZOVtnngs96sN01Q0bc1nsMpKvaPPRqnB6i8NYdZ9ONbgNBXj5+vFjYyLyCFHjb/gCI1OjFhYLfY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757328464; c=relaxed/simple;
-	bh=GRAURU3Mqaf7KaktvQ1n9Gicg1JGR9+tA9y0iqtZSrw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ETiGMzTvkOVDmG7RPtdJnsdEchz3AYm8YKiSny03iAL4/G47ZKO0QtTYpOmxTWenYvdAt2ZZQw07tZMlVNt9D+0/hM+ZS5OXVai3h2nG0IG+M1t+CGTObh6WH+65SRuml1KUeIL2G/J9u7qdOY86pqtoDFKNv9UFzWymivQSCJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=rHRRoMKi; arc=none smtp.client-ip=109.224.244.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757328453; x=1757587653;
-	bh=GRAURU3Mqaf7KaktvQ1n9Gicg1JGR9+tA9y0iqtZSrw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=rHRRoMKiSM2IqxK/L4hzKFWIdzT4Omy5CUfdK75ZKOXkMBT44K9qh4djCHzv13vWS
-	 8y3TlB8Rr+MyqrLJlMv/Prh0+2eBS6smgYdNjK+7xjgCvb9PgeX+81cgPcPEHgp38y
-	 rajgb0ozlR2a6pNhphhRxkS2n9+6c0vGTHVCu3cZMkvIy3QdsVEb1r45mHFLvXj5ee
-	 P7vPxuBWlZIoqmaUkg+C6atj89phdhgsB8bW59T7QecoDbVoKN3HXF0m/XaM7dFfTU
-	 4/J/VZXNHFAgOZUEUFGJjvlbD+XK1cyoavMuQc6FmyNizU6VRx2SLNm/5RJ4DbY3eb
-	 QBy9qg40q+HcQ==
-Date: Mon, 08 Sep 2025 10:47:27 +0000
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: leds: commonize leds property
-Message-ID: <dMbLo1ph9fkRREvsauWvJiPeAWXSJwCHx1dgUC_1xcJvDPjOzydsGiEUipaM_KZqeiwgacNxZbAvSLndg1jo2LnFaKcnFJK72S-NFtjuHOA=@vinarskis.com>
-In-Reply-To: <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
-References: <20250908-leds-v3-0-5944dc400668@vinarskis.com> <20250908-leds-v3-2-5944dc400668@vinarskis.com> <0e030e7d-0a1a-4a00-ba18-ed26107d07fa@oss.qualcomm.com> <046b289d-b6a5-45f9-88b1-090e2ab7c95d@kernel.org> <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
-Feedback-ID: 158356072:user:proton
-X-Pm-Message-ID: bdeaa268caab16c72c28850bbc5c56704aa415ad
+	s=arc-20240116; t=1757328501; c=relaxed/simple;
+	bh=aooWlxs61oe5XmAvG5mEG9jZb11jz6KzCxSNS1Hzn4k=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=OMDx0BlTPgXrY+f2CR0HPtJDnkApTYyrRg55Stfp7xXYgp3S7ysEP/k9yx6C3RE5ivsr3eQr9V2VOZDLbckk458aUqXivuA8EndqvKMnqFyCfVeBh0Kyv1I609HM7ksaPnLIx3rciIsP8iURpUOrfWijd1/fkPp8O2HtURN47Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DZaET39O; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45cb5492350so26967125e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757328498; x=1757933298; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:cc:to:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHs01z7oM1ANWId4X0P4WXVaPJBWZpLLCmKiOd/Ff+A=;
+        b=DZaET39ON3QQRCLbqo3HcytUB1zoTavH3MAq41xiZRj4PWLwqk06hD2ecjQQpOneo5
+         h4zIR1IcQBMhssnq7xl6gyLf40YwIOE3aa4uCMiI9Ge7ze+FAiVKkteHB9vOULiH0VFC
+         fVBTHZAofKFfe3tLfzwyedNLE4MLjpvJI6yR5RS5j/MncaBAc08iCYxKYLANFj4UAm1e
+         idVewv0Pw4gVJBYtojNrR1vpBBYfuPlvspE0i5/MXQwLzuMZMZmHDQkvm+z2Th5EDix8
+         PpplO5WuVSDBcSdXILz7FW4tJjQ/l9rY0i+qXlg3fYZB6aSrkf1NuVB3n8UFpvoiT4bj
+         0gjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757328498; x=1757933298;
+        h=content-transfer-encoding:subject:cc:to:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vHs01z7oM1ANWId4X0P4WXVaPJBWZpLLCmKiOd/Ff+A=;
+        b=d+IzqXPWcWfJ7wwCIqS1SPJjfshKThjTbVZSdFdUqnXSwlhYCI4EpWJJjA33j7R6CH
+         IXJcR98Lq0fvY101OdTUWEtDYUVBp1Y8loElcrO6fziKdgLLvWdjAim6FAvlThpsgRx1
+         eoWd7JPqk1sE5F733W1lH/dk380PMki7fUUIZ9aWACzM0AXRiRU6jrNpzjdRwccCdQHz
+         W5ZQVYJVuw36ySpmwTDb6bNO/EBlviA04BHr5SzbgnMkEANMTOuRBJEibJSDW+e2pLPx
+         INrFvpAKN+kMuInw+L4ZGWQkvVjfTzOEuGBzDFqwM62EHiwhdZBfsJfKZg6NjSk9VQtV
+         2ENg==
+X-Gm-Message-State: AOJu0YxJZeTfLVi4RgIBuB2svp3kN2mBMD5jWENT0J9AhvB+HRC3X0wu
+	dX2nOnp6f1Dskh9opCQS8lOFIpbwq6kwiN1vujQfG0Fgp+NBpd50BvTNrHvFxawkO0PPZ4/BapB
+	NfJzp
+X-Gm-Gg: ASbGncvIjm7vSsqDqNahbMMi/MqOS7WZJsldzyrY4zArDwG7WMupR2PAaRAg+VfddID
+	da7gGfgEojmWg8qFKAaCSmivUjYabK6pyXZcphaovLe8jgQGUKC9+LOFN5YiVM8yO4OwW5IPlng
+	cwSj2a5Uvzyq7coAcn4/kTNo8vpNtOv1kPRvARr0AvzunBNYUuX+TiuGRMtHvEJ8oDfHsZE6Gvl
+	1EoeH9M0xYFo4MuZtJ+Lwyn+KzH4WHR/0ehGBUqOYbLfFCx/zRy9M0Pef6OthF3qnrUCEml/+eq
+	SO7euA6iwc4zu7eOJ36MMyibmGFPvz+Ro8rnaWVqTpISY1THzsuTh+17m8luVwvuciSzQg/8rvq
+	6H46TbVF5T5JTddTYhZnmaHT/Jof4T9gsmshyPaV5Y7ewfgBCoqbj6hbKpUD2luovVyj3CGzoni
+	YjrOPYDxuyMduk
+X-Google-Smtp-Source: AGHT+IHPhOXQXGFj/kIOadcgTuaRxf22+4yFciHzJcYi4juLw9HJQxPZ/k92mxlesnF3xP6w9bAziw==
+X-Received: by 2002:a05:600c:1d24:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45dea83f76bmr8038565e9.19.1757328498296;
+        Mon, 08 Sep 2025 03:48:18 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:9b6a:7b16:fb30:a294? ([2a05:6e02:1041:c10:9b6a:7b16:fb30:a294])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45dd6891d23sm140785655e9.4.2025.09.08.03.48.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 03:48:17 -0700 (PDT)
+Message-ID: <2af92349-2c84-4f1c-b035-946c3996cd9f@linaro.org>
+Date: Mon, 8 Sep 2025 12:48:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux PM mailing list <linux-pm@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Lukasz Luba <Lukasz.Luba@arm.com>, Saravana Kannan <saravanak@google.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Deepti Jaggi
+ <quic_djaggi@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>,
+ Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Amit Kucheria <amitk@kernel.org>,
+ Abel Vesa <abel.vesa@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+Subject: [CfP] LPC 2025: Power Management and Thermal Control Micro-Conference
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+Hi everyone,
+
+A Power Management and Thermal Control session will be held during this
+year’s LPC, as has been the case for the past few years, and it is now
+open for topic submissions.
+
+The Power Management and Thermal Control microconference covers all
+things related to saving energy and managing heat. Among other topics,
+we care about thermal control infrastructure, CPU and device
+power-management mechanisms, energy models, and power capping. In
+particular, we are interested in improving and extending thermal control
+support in the Linux kernel and in utilizing the energy-saving features
+of modern hardware.
+
+The overall goal is to facilitate cross-framework and cross-platform
+discussions that help improve energy awareness and thermal control in
+Linux.
+
+This year some big topics have been identified, for more details, please 
+refer to:
+
+  https://lpc.events/event/19/contributions/2003/
+
+If you have a topic connected to the big ones identified above or a new 
+one to propose for this session, please go to:
+
+  https://lpc.events/login/?next=/event/19/abstracts/%23submit-abstract
+
+and select "Power Management and Thermal Control MC" in the Track field.
+
+Please note that topics should not be about work that has already been 
+completed, as is the case for LPC in general.
+
+The deadline for submissions is October 15.
+
+Thank you!
 
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-On Monday, September 8th, 2025 at 09:36, Konrad Dybcio <konrad.dybcio@oss.q=
-ualcomm.com> wrote:
-
->=20
->=20
-> On 9/8/25 9:33 AM, Hans de Goede wrote:
->=20
-> > Hi,
-> >=20
-> > On 8-Sep-25 09:20, Konrad Dybcio wrote:
-> >=20
-> > > On 9/8/25 1:18 AM, Aleksandrs Vinarskis wrote:
-> > >=20
-> > > > A number of existing schemas use 'leds' property to provide
-> > > > phandle-array of LED(s) to the consumer. Additionally, with the
-> > > > upcoming privacy-led support in device-tree, v4l2 subnode could be =
-a
-> > > > LED consumer, meaning that all camera sensors should support 'leds'
-> > > > and 'led-names' property via common 'video-interface-devices.yaml'.
-> > > >=20
-> > > > To avoid dublication, commonize 'leds' property from existing schem=
-as
-> > > > to newly introduced 'led-consumer.yaml'.
-> > > >=20
-> > > > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
-> > > > ---
-> > >=20
-> > > [...]
-> > >=20
-> > > > + leds:
-> > > > + minItems: 1
-> > > > + maxItems: 1
-> > >=20
-> > > My brain compiler suggests this will throw a warning (minItems should
-> > > be redundant in this case)
-
-No complaints when running `dt_bindings_check` on this nor the camera senso=
-r
-that uses this binding. I thought it would be better to keep it even though
-right now only one LED is supported, so that when `led-names` are extended
-with new functions, one can just bump maxItems and not accidentally forget
-to introduce minItems. No strong opinion though, perhaps Rob can decide
-since he is the one that suggested to add minItems,maxItems that I didn't
-think of?
-
-> > >=20
-> > > > +
-> > > > + led-names:
-> > > > + enum:
-> > > > + - privacy-led
-> > >=20
-> > > Nit: "privacy" makes more sense without the suffix, as we inherently
-> > > know this is supposed to be an LED
-> >=20
-> > Note "privacy-led" as name is already used on the x86/ACPI side and
-> > the code consuming this will be shared.
-> >=20
-> > With that said if there is a strong preference for going with just
-> > "privacy" the x86 side can be adjusted since the provider-info is
-> > generated through a LED lookup table on the x86/ACPI side. So we can
-> > just modify both the lookup table generation as well as the already
-> > existing led_get(dev, "privacy-led") call to use just "privacy"
-> > without problems.
->=20
->=20
-> In that case, it may be cleaner to just go with what we have today
-> (unless the dt maintainers have stronger opinions)
-
-Sounds good, thanks both for the feedback.
-
-Alex
-
->=20
-> Konrad
 
