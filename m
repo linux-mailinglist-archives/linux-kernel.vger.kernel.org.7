@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-806096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D78B491D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF12AB491AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D0E167A24
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43811BC0EEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21D730EF94;
-	Mon,  8 Sep 2025 14:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C658B30C35B;
+	Mon,  8 Sep 2025 14:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9ikHv1F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yVK7olK2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EFE30EF63
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D62F3C28
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342185; cv=none; b=o68rXZ3+dURSAmYlwVx+klTeFpDR96gbAKzwziSHqr2o1KOYQTR3EQkMTuXuQr5zxQA9SEQUH95UWkJs32MqYi7SNbcawkzm9H6DIp2CsrH45nMjmNKQmpAXqGOlN54Fspux4mGrZNTBM8H2jAZ4C8lf8bxqmbxSfwm4BSTy6Wo=
+	t=1757342157; cv=none; b=altEc1HKSP7zvC70MINS4u5XTXfEVu8Os+Ns55yDDaqnAfpAI1QctHWJOp0uY11PWV7MSZVpXqbWS+VyZ98BJwV6oUk2iEu2P3DmYkl1SC9VcQMh9z3Z61QdhY7wlEjbikXZffNAdr1Snrw+9jj1aohtxPHIE95j+HjS+ih8lDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342185; c=relaxed/simple;
-	bh=FoWjCSXPqmUw4tXtyFyHHdkvzWrcngHUe9sCWzpWVCw=;
+	s=arc-20240116; t=1757342157; c=relaxed/simple;
+	bh=egs7205Snmd/mw+MEXwwC1Y+k8cNoU3nGHetOuR2saw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVUcMX3Ce0DYuBS+f+SnCkNh8WrMqCZCv8gHfiaelJvzpctq+s8AF9RDgxuILK2XyxYd6kgYCDicji9wiHKu6WQwzIuANWuiN1cy5UZ6dI8Oz52rJy/A11Av7TPzf5u9LtZzNpyjom0FkPQMU9KVVaaHvb6O8zMybKCMj+Qg1ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9ikHv1F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757342177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lrYPeuNTiOD7YUu2tmRr54ytzGFvKCHl5sfVYrawVLU=;
-	b=C9ikHv1FTdiZKlfOnAc3xLlcOqS0KgbNr29vTR6A2UYApXfueAI92e9vxsEGhvIiXAj/Q5
-	K76CSRiSEn01LWyMWW9xq6xkuc5U3hI6XMeXhCCuQw+QS7BZKj2K+b56XHJsVgXFMPJ402
-	Nx2Islly4jizTcfuDU1Xq/UkFxKJiyg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-179-4Pp2oB4BM3OCvTJFgsGXIA-1; Mon, 08 Sep 2025 10:35:42 -0400
-X-MC-Unique: 4Pp2oB4BM3OCvTJFgsGXIA-1
-X-Mimecast-MFC-AGG-ID: 4Pp2oB4BM3OCvTJFgsGXIA_1757342121
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e5190bcba1so2238521f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:35:27 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=nY5Q7Qc2aaCgGpXoWSEPap5zVmogO/9sc266n1MCaR+MbeBImX/tlDkNj0eahYx4IhTXgVAFXhW8EHOnyMvJT8oyuxrcvmMj//7p9WMIiMuzEw9phKgspu3RXsc34CXassb1VZCRdCPwxoXSta8Bn1HQOyta++3EQR08A7M6CMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yVK7olK2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e3aafe06a7so1969398f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757342153; x=1757946953; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jGYytEnMw+6xuEh78CWcB0+W8fGeyKd2M/PYTH6aJS0=;
+        b=yVK7olK2IsFAx9QVo8Q5bM4x+Rrf1UMS6vqBWSn54WXOAw0Jl68ASNquSb7Hxjr4Gs
+         W1aRFVIDYFOlojloHP+FciNh5Qq5JVahgIaVnHipmcXjw/BpGTKvfkixQsnug2VnwIjk
+         foEWMasaMy7SG86cAULGWKnScwFnezmI65w6XX+k6z2XozqmR/JyjywwO25g9LPHViOD
+         VZ/YOxcRfIR4VYZrArjTdUs8gegP0OSRExghJA/TZIcMJLreWuanN4eX9r2qxwodd4e3
+         3Bh64hsxQed1iEtKDjQsXEVakfvCDMnLyxg7/ZnaQ2x6PBtH55DeDeL0i3bsNx0nZBc9
+         pi8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757342120; x=1757946920;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lrYPeuNTiOD7YUu2tmRr54ytzGFvKCHl5sfVYrawVLU=;
-        b=mhfOE5ehZAagrq6dA9DT18gU58UGWSqtLYBYweRQqjW+sTg7rh/X2xmrwef5Sbz0L9
-         7MiC0kGET8KSq1BrKul8o/zyHICXeVoD56EJalV3NxqQtafrJP36ioAn+7//o7cB9NYf
-         qWtfvbdc+JMBaxzBnJVAJ5v5xMi8ZVvCpmPFBgS6XEHxCEG7qJrzVIc9rC8KE38siWU7
-         3GhidCvBcNK8wlRhMePgeYUSQvEk7RGMxkP73m34yZyAnV1gLxG+c0oUYJpWy9nbbuwJ
-         +ALoJ2pGaQxKVoZQCbDsgzRysFY4NMUX0EBRU0KsXTm7K8vTGHtWkcgMkYR2YXNeIExk
-         jB/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX53250b9LmzW9MQQd0lDw/Q/3UBfdkehmNTMH70PQfjEjWf+ljtSIBU4I/Qi6A3ayFWEqlZDG2X2mroZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA00AbJli0U6UaTueH9NHXuc+WZ2glE4XR1c5mgVm7ChrJZ0Fi
-	2dDNmUkz6g2lc68b+2HcODJo1noMVq4+Ovb0un0SEQI6frbHVJYCgChMJPbvAE1v3yK/pEYlj6p
-	Gsq7b3ahvg3TxMuUaUmEoliTYW2LF7gDKtQ4kmBxaiUL5dKGoKhi/LIvxp3d8YXE9Vw==
-X-Gm-Gg: ASbGnctX9EkWTmJYwN1aKsAnFZ5v4TETjGYb7xNchnmxxJg2UDQgVLnqNxMUUTmtjUy
-	IdjKz5+BriJtMYsAmjopxjbnxCCBpp3iLnAW5eEg7svV8/PLe1CnTqpv2+j0wCKyA2CdSCIxvgk
-	4Y+eM3DDN/wpjDFzkpokizrhn2rzTr67PpRoC0Cx5um3h0b4lduOlE6CQowB/nwD8yMwEF+ZZqo
-	DlD3t9QV1ObwpdJTVPj8HpBn+nD9WetbNCZLo8//2U2fs3ioWxj4LJiNQ3a9gD+UnUtOGJa8tst
-	aXO4S/QVE0pAUtzwpcWABUP6x+5IeAZuoYmTJikSJC+WfhNCx0HuZaM0lyYOiLWlAqARe82QIeE
-	jud5ZZtphZl99UpP67v+fUt1eNhr3+wanSf4O/H6dRmbCagHPtiiDI6C6e+Lsmrfb
-X-Received: by 2002:a05:6000:2489:b0:3e5:2082:8941 with SMTP id ffacd0b85a97d-3e642f9050amr6551060f8f.23.1757342119757;
-        Mon, 08 Sep 2025 07:35:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZLff5juSqm9neyAsOLAPZdqcSj6VvngesFbghyJRBNktZZTQa0GV4i8Hiyffrg0PBXtPEMA==
-X-Received: by 2002:a05:6000:2489:b0:3e5:2082:8941 with SMTP id ffacd0b85a97d-3e642f9050amr6551014f8f.23.1757342119247;
-        Mon, 08 Sep 2025 07:35:19 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e18537589dsm16164452f8f.54.2025.09.08.07.35.17
+        d=1e100.net; s=20230601; t=1757342153; x=1757946953;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGYytEnMw+6xuEh78CWcB0+W8fGeyKd2M/PYTH6aJS0=;
+        b=V+x7FXyesG1p4ZrbKnNPWjEn2R66fOAfciEb2ZknMxVQCRAZfGJk39nhfQHD1xIKP3
+         aPB125lQfW8QK6HBaINCCFTIjmQGHoJO9gbb5pMI/sODm0GUraCpDHQ2r8Iqc8p3qB31
+         MAWAgu1ik2yYlQd310szRmjJW9MmyfjV73cWKfcpSDZ+ZaPWNcCS1vR9fYSDzapCkyk9
+         Mo2aPM23Tk+OX0q2iUROfayoAqUWGM7ZAy75iurNnICQTpmfrXMuc6AhXRupGq2HlNnC
+         SrLL2wMdcBT2i5eVul+ywe3qwmVD+viK7G843FQnXdqTkedLqXWmqd/6Ed5+hK7FsRSY
+         j8Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvC25dKRahwvNZegpE0LyI7ZrtSsrJeTGIz7GpL0zu3QUOb54LWRxGTTvzznkQnIHGp9NZV/kMtdHlRQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIFsoRRrf6cfdwerlxZprgfaL1Dx0rofkYHJ39HGKdKACjLfJM
+	raL9lMCcCtOmWPljBMqylr132eu1JpP6avCFfe6VpPg8uoxB9Kjlo2Ek/zwq8DAveWY=
+X-Gm-Gg: ASbGncvc4rv6VR9zYu/ics6dGyP208SLD0PnEy7dw4pvfhoqLAWnqSS9ROCgVsG84wr
+	ZPScfQq3IkC6IJ3tzV14Q8J/DFllKyIKodYwoN/FjEmyqLsmm5Ilz1DBdOf6hn9ALBSBzb+Jsu+
+	ooRwg6edQ+br4ORI0fZleVc9+1lWlnyF7TVxs3YxFHt2Hxyu9ZN+3iwg86GtLiGPBHYMgx6SBfW
+	t4CYQZgL1x6n2To/gQu6crr7lAMfec8GyoaCx6+pmu+/iiajtsCrt6FSDWRZOF6Xq48PnX4Bii+
+	EXxy8ZUyGXE3paIGJ/+ZyqPuCYbDRoyv8MI61y4JpOvcW5PBRRjAu7wo+9zsDN2UQlmKioRJegX
+	PeWKs/NodEdVzutqwo3MhOAK0HVal3yXbUjvQeg==
+X-Google-Smtp-Source: AGHT+IHqTDAEvQOt+q1sz1oM/FMn4xs+DKIlODRGS8+cELpR8JABY1klHI4WNO8R4+DbWuABkVVF1g==
+X-Received: by 2002:a05:6000:2a85:b0:3e6:b06c:5b2e with SMTP id ffacd0b85a97d-3e6b06c622fmr3645332f8f.57.1757342153210;
+        Mon, 08 Sep 2025 07:35:53 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d0a1f807f9sm40948664f8f.38.2025.09.08.07.35.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 07:35:18 -0700 (PDT)
-Message-ID: <3f76748b-8f99-4e63-ba39-adadc2f58838@redhat.com>
-Date: Mon, 8 Sep 2025 16:35:16 +0200
+        Mon, 08 Sep 2025 07:35:52 -0700 (PDT)
+Message-ID: <ff94b709-2861-445d-81c4-9ed98125fe94@linaro.org>
+Date: Mon, 8 Sep 2025 15:35:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,168 +81,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] mm: folio_may_be_cached() unless folio_test_large()
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will@kernel.org>,
- Shivank Garg <shivankg@amd.com>, Matthew Wilcox <willy@infradead.org>,
- Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Alexander Krabler <Alexander.Krabler@kuka.com>, Ge Yang
- <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>,
- Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Konstantin Khlebnikov <koct9i@gmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
- <861c061c-51cd-b940-49df-9f55e1fee2c8@google.com>
- <7fe2380f-a83e-4a9e-8c5e-8459c9af0d5f@redhat.com>
- <7113d289-fb8e-4589-7eb5-1f7139965ade@google.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/3] perf: arm_spe: Add barrier before enabling profiling
+ buffer
+To: Will Deacon <will@kernel.org>, Alexandru Elisei <Alexandru.Elisei@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Anshuman Khandual <Anshuman.Khandual@arm.com>,
+ Rob Herring <Rob.Herring@arm.com>, Suzuki Poulose <Suzuki.Poulose@arm.com>,
+ Robin Murphy <Robin.Murphy@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-1-52a2cd223d00@linaro.org>
+ <aL7dFIzEgiEETcIb@willie-the-truck>
+ <b4bcb7cf-da03-4263-9101-feec6d0e0d8d@linaro.org>
+ <aL7gsXbr_-k4q-i5@willie-the-truck>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <7113d289-fb8e-4589-7eb5-1f7139965ade@google.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aL7gsXbr_-k4q-i5@willie-the-truck>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08.09.25 13:19, Hugh Dickins wrote:
-> On Mon, 1 Sep 2025, David Hildenbrand wrote:
->> On 31.08.25 11:16, Hugh Dickins wrote:
->>> mm/swap.c and mm/mlock.c agree to drain any per-CPU batch as soon as
->>> a large folio is added: so collect_longterm_unpinnable_folios() just
->>> wastes effort when calling lru_add_drain_all() on a large folio.
+
+
+On 08/09/2025 2:57 pm, Will Deacon wrote:
+> On Mon, Sep 08, 2025 at 02:54:32PM +0100, James Clark wrote:
+>>
+>>
+>> On 08/09/2025 2:41 pm, Will Deacon wrote:
+>>> On Tue, Jul 01, 2025 at 04:31:57PM +0100, James Clark wrote:
+>>>> DEN0154 states that PMBPTR_EL1 must not be modified while the profiling
+>>>> buffer is enabled. Ensure that enabling the buffer comes after setting
+>>>> PMBPTR_EL1 by inserting an isb().
+>>>>
+>>>> This only applies to guests for now, but in future versions of the
+>>>> architecture the PE will be allowed to behave in the same way.
+>>>>
+>>>> Fixes: d5d9696b0380 ("drivers/perf: Add support for ARMv8.2 Statistical Profiling Extension")
+>>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>>> ---
+>>>>    drivers/perf/arm_spe_pmu.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+>>>> index 3efed8839a4e..6235ca7ecd48 100644
+>>>> --- a/drivers/perf/arm_spe_pmu.c
+>>>> +++ b/drivers/perf/arm_spe_pmu.c
+>>>> @@ -537,6 +537,7 @@ static void arm_spe_perf_aux_output_begin(struct perf_output_handle *handle,
+>>>>    	limit += (u64)buf->base;
+>>>>    	base = (u64)buf->base + PERF_IDX2OFF(handle->head, buf);
+>>>>    	write_sysreg_s(base, SYS_PMBPTR_EL1);
+>>>> +	isb();
 >>>
->>> But although there is good reason not to batch up PMD-sized folios,
->>> we might well benefit from batching a small number of low-order mTHPs
->>> (though unclear how that "small number" limitation will be implemented).
 >>>
->>> So ask if folio_may_be_cached() rather than !folio_test_large(), to
->>> insulate those particular checks from future change.  Name preferred
->>> to "folio_is_batchable" because large folios can well be put on a batch:
->>> it's just the per-CPU LRU caches, drained much later, which need care.
+>>> Hmm.
 >>>
->>> Marked for stable, to counter the increase in lru_add_drain_all()s
->>> from "mm/gup: check ref_count instead of lru before migration".
+>>> arm_spe_perf_aux_output_begin() is only called in two places:
 >>>
->>> Suggested-by: David Hildenbrand <david@redhat.com>
->>> Signed-off-by: Hugh Dickins <hughd@google.com>
->>> Cc: <stable@vger.kernel.org>
->>> ---
->>>    include/linux/swap.h | 10 ++++++++++
->>>    mm/gup.c             |  5 +++--
->>>    mm/mlock.c           |  6 +++---
->>>    mm/swap.c            |  2 +-
->>>    4 files changed, 17 insertions(+), 6 deletions(-)
+>>> 1. From arm_spe_pmu_start()
+>>> 2. From arm_spe_pmu_irq_handler()
 >>>
->>> diff --git a/include/linux/swap.h b/include/linux/swap.h
->>> index 2fe6ed2cc3fd..b49a61c32238 100644
->>> --- a/include/linux/swap.h
->>> +++ b/include/linux/swap.h
->>> @@ -385,6 +385,16 @@ void folio_add_lru_vma(struct folio *, struct
->>> vm_area_struct *);
->>>    void mark_page_accessed(struct page *);
->>>    void folio_mark_accessed(struct folio *);
->>>    
+>>> For (1), we know that profiling is disabled by PMSCR_EL1.ExSPE.
+>>> For (2), we know that profiling is disabled by PMBSR_EL1.S.
+>>>
+>>> In both cases, we already have an isb() before enabling profiling again
+>>> so I don't understand what this additional isb() is achieving.
+>>>
 >>
->> Two smaller things:
+>> It's to prevent PMBPTR_EL1 from being written to after the PMBLIMITR_EL1
+>> write than enables the buffer again. So you're right it's already disabled
+>> up to this point, which is why we didn't need to add another isb(). This
+>> change is only for the re-enabling bit.
 >>
->> (1) We have other "folio_maybe_*" functions, so this one should likely
->>      better start with that as well.
+>> If the instructions were reordered you could get this ordering at the end of
+>> arm_spe_perf_aux_output_begin():
 >>
->> (2) With things like fscache in mind, the function can be a bit
->>      misleading.
+>>    write_sysreg_s(limit, SYS_PMBLIMITR_EL1); // Enables buffer
 >>
->> So I wonder if (a) we should just add kerneldoc to document it clearly (lru
->> cache, mlock cache?) and (b) maybe call it folio_may_be_lru_cached(). Not sure
->> if we can find a better abstraction for these two caches.
+>>    write_sysreg_s(base, SYS_PMBPTR_EL1);  // Invalid write to PMBPTR
 >>
->> Thinking again, "maybe_cached" might be a bit misleading because it implements
->> a very very very bad heuristic for small folios.
+>> Instead of the new version with the barrier where PMBPTR must come before:
 >>
->> Maybe it's more like "supports being cached".
->>
->> folio_lru_caching_supported()
+>>    write_sysreg_s(base, SYS_PMBPTR_EL1);
+>>    isb()
+>>    write_sysreg_s(limit, SYS_PMBLIMITR_EL1);
 > 
-> folio_may_be_cached() -> folio_may_be_lru_cached(), yes, that's
-> very much better, thanks.
+> ... but my point is that profiling is still disabled after writing to
+> PMBLIMITR_EL1.
 > 
-> (Settimg aside that I've never perceived those pagevecs/batches as a
-> "cache"; but lru_cache_disable() gave us that terminology, and we've
-> gone with the flow ever since.  lru_add_drain() would be better named
-> lru_cache_drain() now, I've always got hung up on "adding a drain".)
+> Will
 
-Yeah, the terminology is not that intuitive :)
+Oh I see what you mean, I misunderstood that.
 
-Not sure if using "batched" instead of "cached" might be clearer long-term?
+You might be right, but I'm looking at statement SFDXJJ and it only says 
+"...PMBLIMITR_EL1.E is 0b1, meaning the Profiling Buffer is enabled...", 
+so it's just the buffer rather than "profiling is enabled" which would 
+require both bits PMBLIMITR_EL1.E = 1 and PMBSR_EL1.S = 0:
 
-> 
-> "may be" rather than "maybe" was intentional: perhaps too subtle,
-> but to a native speaker it neatly expresses both the "we can do this"
-> and "might this have been done" cases.
+   SFDXJJ
 
-I would wish we could find something that also non-native speakers can 
-immediately understand ;)
+   When PMBLIMITR_EL1.E is 0b1, meaning the Profiling Buffer is enabled,
+   software must behave as if the PE can do all of the following:
 
-"may_get_lru_cached" / "may_get_lru_batched"?
+   * Ignore writes to the Profiling Buffer controls, other than a write
+     to PMBLIMITR_EL1.E that disables the Profiling Buffer. The
+     Statistical Profiling Unit registers affected are:
 
-/me could not even phrase it in German properly
+    - PMBPTR_EL1.
+    - PMBLIMITR_EL1.
+    - PMBSR_EL1.
+    - If FEAT_SPE_nVM is implemented, PMBMAR_EL1.
 
-> 
-> kernel-doc?  I don't think so, this is very much an mm-internal
-> matter, and I don't care for the way kernel-doc forces us towards
-> boilerplate ("@folio: The folio.") rather than helpful comment.
+I'm trying to read Alex's other reply to this patch with it in mind that 
+profiling is still disabled, and it feels like your same point might 
+apply. Even if it's incorrectly programmed according to the existing Arm 
+ARM it doesn't matter if it's disabled.
 
-So a comment that this is an internal helper might be nice. Or we just 
-move it straight to mm/internal.h ?
+We did discuss internally about the difference between just the buffer 
+being enabled or profiling altogether being enabled. Looks like I need 
+to check again.
 
--- 
-Cheers
-
-David / dhildenb
+James
 
 
