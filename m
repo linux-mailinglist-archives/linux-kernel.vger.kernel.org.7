@@ -1,227 +1,155 @@
-Return-Path: <linux-kernel+bounces-804946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D12B48244
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:46:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BB1B48246
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD3C7AA835
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:45:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBDA53AEF6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A897189F5C;
-	Mon,  8 Sep 2025 01:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52701C07C4;
+	Mon,  8 Sep 2025 01:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MyE9vVH1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="HAETxp+u"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24AC347D0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 01:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF79146593;
+	Mon,  8 Sep 2025 01:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757296002; cv=none; b=YfeqvaG7OpCX+3s5g49MoX0fAz9BGOlalWH8jfnTND9juOuBn538Thr0OcmjKSIUCyhPEgqpn2t6Su4DXHdQmBwSnhAAAd/77MTQ+VXGl9Mw2XwmXNxfpWPwIDfYtvwfl6DDdnLxypdAIz6i5APMkYpae4cSkzbMSs6RKTGEwHQ=
+	t=1757296182; cv=none; b=qcAitLOcV5ztolCrjutU3UrvgP+p2n0Rl1fwo+hc2aF5sjoFGBX4VtxHc/ahz+hKfZKx8QifqWkzxalVyDYuvBaTmpdU9q3Ltnh5ou+FQ/9t9kq5gghTRQ7QxGx83DRDmz//JS+FUyvU3ocJz4LnTZkVEdZR70wN+wgD8ZxfRlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757296002; c=relaxed/simple;
-	bh=cJrDGvijAoLMZjWuf6tdgS6PbyhyEOCuyV9ZcIcQQWk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rCDC9z6Ub3aWPdrz5I3viYpYblakPmxvlOGUVMyMGUViQbS/Z3qfspsB7Dbg26z9hEFX8sE3rcCSiJdHO1bQOVPiB4/ojVQTbaIO7/MpS9E028plN7Blnn7fmrhEGxkTj+/v719AD38KrzVcygxhpheHTsHdsns+svrExaWJZOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MyE9vVH1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587LVcFq030119;
-	Mon, 8 Sep 2025 01:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=UccKea
-	xhS+HpFDIrljo7TBOyyvOWjiyq8kuiNMMZAWw=; b=MyE9vVH1NqMsBA38TFDXwK
-	45OlmY0JG7ZdzxSHrhnn6o3/cgaIrM5mgAyce92T8OGicQWk7DdjkBcfIBl/mXOp
-	7EvJKCuqYw6aZLBJQf9aFLFivupUIAZspTs12tEtQ3+Zz4UHDFNZbcBfacDfVIRs
-	JyHStqnI3dBsfv5EOdvCcw/+IEZrYWeZhex2dqFLmgOtMhDq0kD3U8GMRbPzAbmC
-	JYdx47C7p/WJyBSEkECeYqCLaziK/GkEMBFFm5wTGNaBdJqGRQX9TFbHBg/Khuhj
-	HnDbzBgjEEpBEYSc/PFCoefuvISItc5wPmv/mPnowVxfZWhWFmQoORzl12FLDWbg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490uke40rc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 01:46:03 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5881k2sV002110;
-	Mon, 8 Sep 2025 01:46:02 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490uke40r6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 01:46:02 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 587KJ5Ol001156;
-	Mon, 8 Sep 2025 01:46:01 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912033gxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 01:46:01 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5881k0TY16122400
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 01:46:00 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 261C25804E;
-	Mon,  8 Sep 2025 01:46:00 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEAAC58054;
-	Mon,  8 Sep 2025 01:45:53 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.150.15.230])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  8 Sep 2025 01:45:53 +0000 (GMT)
-Message-ID: <c8c5778822344161acec7101fa9f19726ca99d31.camel@linux.ibm.com>
-Subject: Re: [PATCH RFC] powerpc: Panic on jump label code patching failure
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Ritesh Harjani (IBM)"
-	 <riteshh@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        maddy@linux.ibm.com, mpe@ellerman.id.au, peterz@infradead.org,
-        jpoimboe@kernel.org, jbaron@akamai.com
-Cc: npiggin@gmail.com, rostedt@goodmis.org, ardb@kernel.org,
-        Erhard Furtner
-	 <erhard_f@mailbox.org>
-Date: Mon, 08 Sep 2025 11:45:52 +1000
-In-Reply-To: <1b4cc6d5-5f5b-4b39-8fdf-ac02c94cd5e2@csgroup.eu>
-References: <20250905061135.1451362-1-ajd@linux.ibm.com>
-	 <87qzwki6fv.fsf@ritesh.list@gmail.com>
-	 <1b4cc6d5-5f5b-4b39-8fdf-ac02c94cd5e2@csgroup.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1757296182; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fSgMXBJWc1CfwZ6r5JEQwyYsgFA4YK5COf30ubHuMvI3bkEgtIwsmnjHZjalQz6Ez3FaxBVElV3wCn7i2WydnCfib4Xtb560Ov6tBQNE30ly8KfaNagyBayurk4H+RILYGZZWVCu2+GHJKa6tuJuoVdhaCXZncAyZpSwXnNJPzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=HAETxp+u; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1757296170; x=1757900970; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HAETxp+uW20B8dHWXhK2rFCuotFq1nC2Inl3iILeEQF6+AjuO0JY1Mm7YdjD8rhK
+	 5RpLCn8fX0dGj6USgqH+hR+MLN4HTAzasOEX7PM0z51G4zyovdVeyh3V5BTVVgJl0
+	 BSrVQ3ykGtDfdilNIAbh9p4T8Vq/nWXm/I/IfxWD5JEBo/uStLAeqeGXsns+YLC1Y
+	 rex6Rr50RTbZSkJrCb4pjthHiwlKjyNlz4HuIrEl96y+D2mVBQwP4mS0QDB1JAMiX
+	 yJPli7qfI7bzi/L9b770LECW1R9MjCHTPZb1w7ldlbpo2VzsBzDn7PC/TqNd+e6UP
+	 TrEg1S2orqN7/nZOeA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.34.157]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MBlxW-1ujIz018bU-003qCo; Mon, 08
+ Sep 2025 03:49:30 +0200
+Message-ID: <c84aa1b1-8492-4090-89d6-6f68cf3344c8@gmx.de>
+Date: Mon, 8 Sep 2025 03:49:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX31IU+4LQ9/fn
- usx8Uw9c80Powr+cbFK4OzEAEqQt0UGcpgPcCQoJpH2LPJfLXWNE2dzDT+erpMujpg+HiH3kNMj
- EdFkzvKO2aiaf/7J9ii8CxvkH98c1gqZalX+qBfR0TG2PQoXpxvVTf0mhCkXfgiktyhxpnHEVIt
- +/KKks/upJkSQo3oKCXrIFXKG4g2DfuQ3Odjmhvr0y6Mr+/nVX7ykXSOfVlykQ3wNMrEi6PuyIi
- uMioOVHyHXlfH3gUCeymcGMXgmLV8bRVO9YC+9Ko0sN7WOyvDHsFp/3/Pu/C8hF09F0/sJqNAUo
- jhkKwtt3UhRi9HEhcUuU1RusBOIHxdYNlgmIA+h9Joz8bJsDvuQvYBcJ5nkjilRT4ShBx9IYjGx
- xP64b1fJ
-X-Proofpoint-ORIG-GUID: nerRj6-0BR0gN8pD3HmGmni6d9Jwj5yb
-X-Proofpoint-GUID: hb_MV_qymDWLP0LPeYEwIfhE5uwg_uIa
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68be355b cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=_z8MWtvD0Tm20lTwb9kA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-07_10,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250907195615.802693401@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:tYtJ0oqFxttt3K4NUam+wgPthhBwh04J33y9p3I0XiidOPq50Z2
+ rS1927Ocbyr9eomTZOtuvqqhJx+FlFXuTl1vKmE3JLhvlcijH9Cbfb0ON6fcwQhfiMQe3WO
+ sYOHAx6i2ypv2FjoJObvJqRPHMP49+kUkHnwKbh86vg5poHwjCRFCpZf7OC74qMdAT1Nci+
+ nrRTNgHivL4HfZalTkG0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q0+aBeo38xU=;yPI+pwN/eHN6IiLShjY6lNzoo0z
+ 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
 
-On Sat, 2025-09-06 at 08:42 +0200, Christophe Leroy wrote:
-> > arch_jump_label_transform() is mainly getting called from
-> > __jump_level_update() and it's used for enabling or updating static key=
-s /
-> > branch.
-> >=20
-> > But static keys can also be used by drivers / module subsystem whose
-> > initialization happens late. Although I understand that if the above
-> > fails, it might fail much before, from the arch setup code itself, but
-> > panic() still feels like a big hammer.
->=20
-> But not being able to patch the kernel as required means that you get a=
-=20
-> kernel behaving differently from what is expected.
->=20
-> Imagine a kernel running on a board that is controlling a saw. There is=
-=20
-> a patch_instruction() to activate the safety feature which detects when=
-=20
-> your hands are too close to the blade. Do you want the kernel to=20
-> continue running seamlessly when that patch_instruction() fails ? I'm=20
-> sure you don't !
+Hi
 
-This is my thinking exactly - a failed patch leaves the kernel in an abnorm=
-al
-state, and we don't have the infrastructure to safely roll back any patches=
- that
-have already succeeded or other associated state changes, so this should be
-treated as an unrecoverable error. The resulting kernel is a different kern=
-el
-from the one you expect to have.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-The fact that drivers/modules can trigger this just means that drivers/modu=
-les
-can permanently ruin your kernel too, which makes this more important not l=
-ess,
-I think?
+Thanks
 
->=20
-> >=20
-> > Would pr_err() print with WARN_ON_ONCE(1) would suffice in case of an
-> > err?
->=20
-> No, that's not enough, you can't rely on a kernel that will no behave as=
-=20
-> expected.
->=20
-> >=20
-> > Also you said you ran into a problem at just one call site where above
-> > was silently failing. With the above change are you able to hit the
-> > panic() now? Because from what I see in patch_instruction(), it mainly
-> > will boil down to calling __patch_mem() which always returns 0.
->=20
-> As far as I can see, __patch_mem() returns -EPERM when=20
-> __put_kernel_nofault() fails:
->=20
-> static int __patch_mem(void *exec_addr, unsigned long val, void=20
-> *patch_addr, bool is_dword)
-> {
-> 	if (!IS_ENABLED(CONFIG_PPC64) || likely(!is_dword)) {
-> 		/* For big endian correctness: plain address would use the
-> wrong half */
-> 		u32 val32 =3D val;
->=20
-> 		__put_kernel_nofault(patch_addr, &val32, u32, failed);
-> 	} else {
-> 		__put_kernel_nofault(patch_addr, &val, u64, failed);
-> 	}
->=20
-> 	asm ("dcbst 0, %0; sync; icbi 0,%1; sync; isync" :: "r" (patch_addr),
-> 							=C2=A0=C2=A0=C2=A0 "r" (exec_addr));
->=20
-> 	return 0;
->=20
-> failed:
-> 	mb();=C2=A0 /* sync */
-> 	return -EPERM;
-> }
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-Yes, I can confirm that -EPERM from __patch_mem() is what I was seeing, and=
- I
-experimented with the assembly to confirm that it was triggered by the stw =
-in
-__put_kernel_nofault(). __put_kernel_nofault() uses the address of the fail=
-ed:
-label to create a handler in the exception table for when the store instruc=
-tion
-faults.
-
->=20
->=20
-> > Although there are other places where there can be an error returned,
-> > so I was wondering if that is what you were hitting or something else?
->=20
-> Andrew was hitting the -EPERM because the memory area was read-only.
->=20
-> Christophe
-
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
 
