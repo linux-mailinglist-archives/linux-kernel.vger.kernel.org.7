@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-806674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693B6B49A42
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B765AB49A44
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CB4162D14
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CDF1BC3972
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8131929BDB3;
-	Mon,  8 Sep 2025 19:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6AC2C0F69;
+	Mon,  8 Sep 2025 19:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="CbO4jud1"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBIgm7AC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493711A255C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D877E1A255C;
+	Mon,  8 Sep 2025 19:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360669; cv=none; b=buWQBOgwJXZE7BsaKWak3SIhFRGPKryfeP8kVS7xPmaQvVhlgiENv1RLOK0Eaodq92MajATmR46OzXV9YzIZxXT2LOcc51B+YKPLtKoctLu+sleH1wPzLKHTT9W84nd2CECxa6jYnXAKEZz6IDpRA9NJZ2tH2UnCtrbrHhu/yM8=
+	t=1757360676; cv=none; b=PMbLxYNFnFUj4AVLO8ruYFnpC9s6p0frWRcuyDq3HgYICiOPS/qzkJycxUudVcAXYp9pCLsqa+UbMD3LhMAXWrXtCaikkTJIfCZ4eX4jw2XgICmUGaay2rRgq41picYPaz2udqPSWlAWcRxONRCiVqGffq8cTg10cPJuweTB4m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360669; c=relaxed/simple;
-	bh=ajChlkp0sdZ8o5fTczZvnPG0l8QZ3b4kK2AhIsbkdZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkFUuUqI8CfsTBaQQBLRhtMeBjUrctRre3OCd4EHrbDn0z1y6A8lZkbk2SBKT+RuzWorV4M9d5DQL1LMaJAr7eL9/V0kcypuBQTdH9ZZ6RJWbQi6DVzkVD/5TRO8Wo+ka8FFkvIG6n6E7Ywob004F/ita4W3r5K3uMGfSFvM5eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=CbO4jud1; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-111-2.bstnma.fios.verizon.net [173.48.111.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 588JerBD031812
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Sep 2025 15:40:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1757360455; bh=TY1m+BxWrgSiz9Z5P31EmqKjFnsu1bW39FqB8fCJf5s=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=CbO4jud15i/dsL4UEbswl5VP+C45gaPo2RYKrFPuwS0aK2nyHcYn84FBwVxckuzNZ
-	 rwdlHhgA70Y5TwfhRRtU+FgseHwSztDnY/jUzxvzURg9c1gXnqOaipuapYm5M3Zrj7
-	 CUTbStK7UML1N797nO662zj04MbE7DwsIT5PRmGM5I9Pm1RJt/CIB0Yb5nfrm0d6I5
-	 NaeOyAYQFfh0IMa7KI5ZfqiPPPvVoMBVBz3sTZnaKDLyIGDfgI7zcOrQ2gkBLIxhjO
-	 Ey2NVF8ff2dhpezBMM5zkiaDti2Iovg/6GdHExVpQOxyNLFeBLY4zPwajWo2tdTBEw
-	 xdoxJtcnAY9DQ==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 428CD2E00D9; Mon, 08 Sep 2025 15:40:53 -0400 (EDT)
-Date: Mon, 8 Sep 2025 15:40:53 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Rogier Wolff <R.E.Wolff@bitwizard.nl>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Deleting a bunch of files takes long.
-Message-ID: <20250908194053.GA3620067@mit.edu>
-References: <20250905103553.utwmp6rpi5rfmvsd@BitWizard.nl>
- <20250905131130.GB3371494@mit.edu>
- <20250908161851.pnnbdqetb5oismhs@BitWizard.nl>
+	s=arc-20240116; t=1757360676; c=relaxed/simple;
+	bh=o/DTnsN33P7EIb8svR5PswkHMaTvVF4k4Q5vDtNgxPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UPRUgsU8fiUuipJiAmOR16XnRcCdhQATP/ReihJAMb8MkRoSOuW4vD7ELWvaB6PgBoaRZqt6dqNUNVtKNxiDX4cFJG+No7egxTwCl4xaOKlJLZqAvYPXUi3UB5O9tVoT5w83sUEPiZtcJtWfFk0E/tDlMNTLSOYGPDAZdHTxJEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBIgm7AC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A808C4CEF1;
+	Mon,  8 Sep 2025 19:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757360676;
+	bh=o/DTnsN33P7EIb8svR5PswkHMaTvVF4k4Q5vDtNgxPE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RBIgm7ACPdwtYByH86t0ZrIf7ELUqsMHKrWCcR4cWQo8QslgZ2EY3frdu5RHNh46M
+	 xLGb2Qpm+8GEUZSMugDPXMOzcRiETPeZ1bYHRUiMbNy+gifYsEhpvz8qFFWIMaQUCz
+	 GCZuxnIrsZZTCv6fHTr0sWvJLDayjJ1A51t4+fJc9M/MJVML53uNE7yFdPjgek5nuW
+	 26QqiwXToR5EmFiLowT/xFfnDI+Vl941ArQcDnvQdTTclwoz04d2f2Z8yxGGirWUeh
+	 KBRoGNMR8cAs8UpEP5mCauIussB0K++mPeoa1AeVN9MvBgM7u2oISWg5Q+50GiIUFb
+	 yTj89j0efGncA==
+Date: Mon, 8 Sep 2025 14:44:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Jan Palus <jpalus@fastmail.com>
+Subject: Re: [PATCH v2] PCI: mvebu: Fix use of for_each_of_range() iterator
+Message-ID: <20250908194434.GA1454201@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,50 +61,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908161851.pnnbdqetb5oismhs@BitWizard.nl>
+In-Reply-To: <20250907102303.29735-1-klaus.kudielka@gmail.com>
 
-On Mon, Sep 08, 2025 at 06:18:51PM +0200, Rogier Wolff wrote:
-> Is the "logging file system" a contributing factor? Maybe after each
-> rm or after each rmdir that something needs to be written to the log?
+On Sun, Sep 07, 2025 at 12:21:46PM +0200, Klaus Kudielka wrote:
+> The blamed commit simplifies code, by using the for_each_of_range()
+> iterator. But it results in no pci devices being detected anymore on
+> Turris Omnia (and probably other mvebu targets).
+> 
+> Issue #1:
+> 
+> To determine range.flags, of_pci_range_parser_one() uses bus->get_flags(),
+> which resolves to of_bus_pci_get_flags(). That function already returns an
+> IORESOURCE bit field, and NOT the original flags from the "ranges"
+> resource.
+> 
+> Then mvebu_get_tgt_attr() attempts the very same conversion again.
+> But this is a misinterpretation of range.flags.
+> 
+> Remove the misinterpretation of range.flags in mvebu_get_tgt_attr(),
+> to restore the intended behavior.
+> 
+> Issue #2:
+> 
+> The driver needs target and attributes, which are encoded in the raw
+> address values of the "/soc/pcie/ranges" resource. According to
+> of_pci_range_parser_one(), the raw values are stored in range.bus_addr
+> and range.parent_bus_addr, respectively. range.cpu_addr is a translated
+> version of range.parent_bus_addr, and not relevant here.
+> 
+> Use the correct range structure member, to extract target and attributes.
+> This restores the intended behavior.
+> 
+> Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
+> Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for parsing "ranges"")
+> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
+> Reported-by: Jan Palus <jpalus@fastmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220479
 
-If you want to avoid running fsck after a crash, it's not free.  So
-there is always a certain amount overhead in journalling.  Comparing
-Linux with Minix is comparing apples and oranges, since with Minix,
-you have to run fsck after a crash or power failure.
+Applied to for-linus for v6.17, thanks!
 
-You *can* run ext4 without the journal.  If the file system has been
-cleanly unmounted, or you've run fsck, you can mount the file system
-using -o noload to disable journalling.  Or you can format the file
-system without the journal.  ("mkfs.ext4 -O ^has_journal")   BTW, this is
-something that Google contributed some 15+ years ago, because Google
-uses a cluster file system (back then, GFS) because at very large
-scales, they need to make sure data isn't lost when a hard drive dies,
-or when a power supply on a particular server dies, or the entry
-router at the top of a rack gives up the ghost.  So if data gets lost
-after a crash or power failure, the cluster file system can recover
-since it has to handle much worse (e.g., when an entire rack of server
-becomes inaccessible when a router die, or the power management unit
-takes out multiple racks in a power failure domain), and so the ext4
-journal was unnecessary overhead.
-
-So if you don't care about reliable recovery after a power failure, by
-all means, you can disable the journal with ext4.  That *will* make
-certain workloads faster.  But users tend to get cranky when they lose
-data after a crash, unless you have some kind of higher-level data
-recovery (e.g., like a cluster-level file system which has erasure
-coding or replication across different servers that are in different
-failure domains).
-
-The other thing which ext4 does is it spreads the files across the
-entire file system, which reduces file fragmetnation, but it does mean
-that if you create a huge number of files, and then you want to delete
-a huge number of files, a larger number of block groups will need to
-be updated compared to minix.  But this was a deliberate design
-decision, because reducing performance degradation over the long-term
-is something that we considered far more important than optimizing for
-"rm -rf".
-
-Cheers,
-
-							- Ted
+> ---
+> v2: Fix issue #2, as well.
+> 
+>  drivers/pci/controller/pci-mvebu.c | 21 ++++-----------------
+>  1 file changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> index 755651f338..a72aa57591 100644
+> --- a/drivers/pci/controller/pci-mvebu.c
+> +++ b/drivers/pci/controller/pci-mvebu.c
+> @@ -1168,12 +1168,6 @@ static void __iomem *mvebu_pcie_map_registers(struct platform_device *pdev,
+>  	return devm_ioremap_resource(&pdev->dev, &port->regs);
+>  }
+>  
+> -#define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
+> -#define    DT_TYPE_IO                 0x1
+> -#define    DT_TYPE_MEM32              0x2
+> -#define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
+> -#define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
+> -
+>  static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
+>  			      unsigned long type,
+>  			      unsigned int *tgt,
+> @@ -1189,19 +1183,12 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
+>  		return -EINVAL;
+>  
+>  	for_each_of_range(&parser, &range) {
+> -		unsigned long rtype;
+>  		u32 slot = upper_32_bits(range.bus_addr);
+>  
+> -		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
+> -			rtype = IORESOURCE_IO;
+> -		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
+> -			rtype = IORESOURCE_MEM;
+> -		else
+> -			continue;
+> -
+> -		if (slot == PCI_SLOT(devfn) && type == rtype) {
+> -			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> -			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
+> +		if (slot == PCI_SLOT(devfn) &&
+> +		    type == (range.flags & IORESOURCE_TYPE_BITS)) {
+> +			*tgt = (range.parent_bus_addr >> 56) & 0xFF;
+> +			*attr = (range.parent_bus_addr >> 48) & 0xFF;
+>  			return 0;
+>  		}
+>  	}
+> -- 
+> 2.50.1
+> 
 
