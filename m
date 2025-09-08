@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-806501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABD6B497D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:04:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF5BB497D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A031899DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247DE172BC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E17313274;
-	Mon,  8 Sep 2025 18:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFCC313544;
+	Mon,  8 Sep 2025 18:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HmlB72x3"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21797145B16;
-	Mon,  8 Sep 2025 18:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="o1OW5aRs"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B011D312802;
+	Mon,  8 Sep 2025 18:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354680; cv=none; b=HifaYPggA6sauSirnKqiB9XcBNokfgYZP3wDNhuDhTNTN618wxJO050g9MZhNWIstYmwVx3HscNuG5q/rBSpoRAk8EFzT/tUbAWgXPp8R9I/VpprW3fUV5gaSCRi31+S7Oua/rqm5xZA5PSlY0+3zsyt/pZd5aPf5nlXeboxOnE=
+	t=1757354789; cv=none; b=XR1cVgRQ+o42e3Onaykp7CfO6N7G9auOL84YJIBZbZ3igr1L9tzkM+JgX9NMS0CiLbUVkMHDDd+Cz58G7K9/YAYl5Tab5L1Dx6XiSWh0CP2a8uIOLs+tXuns6ugntkNqkYLotPWnPboWrv/k4/U8oynkWRYUQOZjqPehFkv5b0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354680; c=relaxed/simple;
-	bh=CXyhYW8x/bV3wwNvRcSBJG3Rf+qaaGEaieFwPcKjB/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LSRWZrrkrN+0bE2dl+vp5MifeQcP3RnB4d01vvvJQXgQRrmp6KPtBuUAEP4QK6L8wDz76iP7XvXe07js4gI6QgdkDxq2xkKOMxTTvec+6MYV3T4OO2kbCSeXbqx41jrUlbhIP9CAmwqkA1fvAvm4ED2FCa4cFrWZi6wa5E11uN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HmlB72x3; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Hg5FR018214;
-	Mon, 8 Sep 2025 18:04:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=Gvfc1Iz0nE71iFyrDfLCzdho+9INv
-	h3b39JFa+yZSCg=; b=HmlB72x3mAG2OTF+mpFYTPWxWJAedUblKs0adiSA/9+FV
-	Eq032MZm7ZQHamSMLi2+11tSrTARtNIZ73cZBGGreh9CjWQajTVommebx+Ts4zyB
-	4Z2x2KtFPAkYBp6jMGux8zfFFncWMBSAvWXS90r+vovBjYPDSHg9sl5B9YSlAkIK
-	8NgY5Hmi1Eai9C/0tdHj0IXLkevpLlyoqjK8/+oR8W1w/nwqturpMeyD93ti5R3X
-	jhx3iHpmZ55ZRX3LoKuYBAckanzmNQUS//DTRLIScxcEiD2uBRpmL9gsI6jb2UUj
-	kKzM9mf5gFSrZ1u3xoAh5mfxT4vUgo++MN5Ps4J6Q==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921pe8bd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 18:04:17 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588GfmaV030651;
-	Mon, 8 Sep 2025 18:04:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd8hetg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 18:04:17 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 588I4GZh026431;
-	Mon, 8 Sep 2025 18:04:16 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bd8hesq-1;
-	Mon, 08 Sep 2025 18:04:16 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: julien.thierry@arm.com, marc.zyngier@arm.com, jintack@cs.columbia.edu,
-        christoffer.dall@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] KVM: arm64: vgic: fix incorrect spinlock API usage
-Date: Mon,  8 Sep 2025 11:04:11 -0700
-Message-ID: <20250908180413.3655546-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757354789; c=relaxed/simple;
+	bh=/BLW/H7xcZcvs+lCT7H6oiZytPrTqJktjn1TERFx7v0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6X7h6SaMXMg6sNtm96TtIY6XyqfcfiIMdbwK4NfhC9m8ml/7e9Jafvf/A2b9QfCww5BbBC4d7s55TblUuLQj7YQx5XigxGFp2dNlhM7FvFLFJL4tsUYzJZFd+ZCwHKjMATV3BJxpNE8jCWouColfjJoYtjcSDt4Gx8xLc1X2oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=o1OW5aRs; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.208.199] (unknown [20.191.74.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6DF1D2119385;
+	Mon,  8 Sep 2025 11:06:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6DF1D2119385
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757354786;
+	bh=j5gRSHscPfg6W/CSCSDrpbLSWxVgflWg4TN9tbqXdGI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o1OW5aRsvSmQnaxcy++csaR1IexNIlsAWgisLv1Ggsd0YIU8VgAatZmqNXsnMfM21
+	 AmHerQ7AnqKNPHv1z+FwUyb9OXQT9G/yg9GN2Ueeu14jdK3dwU60I8yXMKmij0rlk9
+	 agePWTg6WHLxeHcGoCF37Juew38InLmvGZt4TXOs=
+Message-ID: <23d93b71-86cc-4c01-9264-b049cfec39e0@linux.microsoft.com>
+Date: Mon, 8 Sep 2025 11:06:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509080179
-X-Proofpoint-GUID: FW9NxWmtgJYneDA1syrnrDHum9ilFNl9
-X-Proofpoint-ORIG-GUID: FW9NxWmtgJYneDA1syrnrDHum9ilFNl9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MiBTYWx0ZWRfX1vkUAsbAZHAR
- 8uD8FsEVyUc+aywSroPjXmMDYlWgwX+nmT1PWjNI9flpbQwmsYceTrUOKMbFjHBXPPe7eymXY/M
- 0ucDTo42rK3jwhpXEXy7fPq/mg/13FWT0/GM1oZiFGGuIqGG0GvL7N84moIL7MwqgrCkYnUPy6Y
- /HY2TrMFnsFhSf6kZXD5RvkS0qEO/iB1HVo2w4O4XxqBMdqz/OTmn0TSjtYykT4ZoIRyfZY8NXc
- AQSlTIlTOaM+WPRLdph7xPQbEy772cXsWat9O+yHea1mkC4DVJDKxvBZz3Bw/Gq5YmO/6M7Cf+W
- rrY0s5eAtxbzjX9Msn4+JvW6NLRPSN5SH+CxVuIucGa9E7imICW3pwUvvoIDZH6kM1U0oCtti9m
- 0OtVFDre
-X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68bf1aa1 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=gWKObWcHZHFoBn1Bvp0A:9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
+To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <efc78065-3556-410a-866f-961a7f1fc1ac@linux.microsoft.com>
+ <874a2370-84f1-4cec-bb06-a13fe11b49ca@linux.microsoft.com>
+ <7b4fafc7-cf89-45f6-ac5c-59a4c9f53f79@linux.microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <7b4fafc7-cf89-45f6-ac5c-59a4c9f53f79@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The function vgic_flush_lr_state() is calling _raw_spin_unlock()
-instead of the proper raw_spin_unlock().
+On 9/8/2025 10:22 AM, Easwar Hariharan wrote:
+> On 9/8/2025 10:04 AM, Nuno Das Neves wrote:
+>> On 9/5/2025 12:21 PM, Easwar Hariharan wrote:
+>>> On 8/28/2025 5:43 PM, Nuno Das Neves wrote:
+>>>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>>>>
+>>>> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
+>>>> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
+>>>> request.
+>>>>
+>>>> This results a failure in module init. Instead of failing, gracefully
+>>>> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
+>>>> already-mapped stats_pages[HV_STATS_AREA_SELF].
+>>>
+>>> What's the impact of this graceful fallback? It occurs to me that if a stats
+>>> accumulator, in userspace perhaps, expected to get stats from the 2 pages,
+>>> it'd get incorrect values.
+>>>
+>> This is going out of scope of this series a bit but I'll explain briefly.
+>>
+>> When we do add the code to expose these stats to userspace, the SELF and
+>> PARENT pages won't be exposed separately, there is no duplication.
+>>
+>> For each stat counter in the page, we'll expose either the SELF or PARENT
+>> value, depending on whether there is anything in that slot (whether it's zero
+>> or not).
+>>
+>> Some stats are available via the SELF page, and some via the PARENT page, but
+>> the counters in the page have the same layout. So some counters in the SELF
+>> page will all stay zero while on the PARENT page they are updated, and vice
+>> versa.
+>>
+>> I believe the hypervisor takes this strange approach for the purpose of
+>> backward compatibility. Introducing L1VH created the need for this SELF/PARENT
+>> distinction.
+>>
+>> Hope that makes some kind of sense...it will be clearer when we post the mshv
+>> debugfs code itself.
+>>
+>> To put it another way, falling back to the SELF page won't cause any impact
+>> to userspace because the distinction between the pages is all handled in the
+>> driver, and we only read each stat value from either SELF or PARENT.
+>>
+>> Nuno
+> 
+> Thank you for that explanation, it sorta makes sense.
+> 
+> I think it'd be better if this patch is part of the series that exposes the stats
+> to userspace, so that it can be reviewed in context with the rest of the code in
+> the driver that manages the pick-and-choose of a stat value from the SELF/PARENT
+> page.
+> 
+Good idea, I think I'll do that. Thanks!
 
-_raw_spin_unlock() is an internal low-level API and should not
-be used directly; using raw_spin_unlock() ensures proper locking
-semantics in the vgic code.
+> Unless there's an active problem now in the upstream kernel that this patch solves?
+> i.e. are the versions of the hypervisor that don't support the PARENT stats
+> page available in the wild?
+> 
+I thought there was, but on reflection, no it doesn't solve a problem that exists in
+the code today.
 
-Fixes: 8fa3adb8c6be ("KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
----
-v1 -> v2
-Dropped extra paragraph and added Acked-by Marc
----
- arch/arm64/kvm/vgic/vgic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nuno
 
-diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
-index f5148b38120a..c74d6120a12c 100644
---- a/arch/arm64/kvm/vgic/vgic.c
-+++ b/arch/arm64/kvm/vgic/vgic.c
-@@ -818,7 +818,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
- 		 * the AP list has been sorted already.
- 		 */
- 		if (multi_sgi && irq->priority > prio) {
--			_raw_spin_unlock(&irq->irq_lock);
-+			raw_spin_unlock(&irq->irq_lock);
- 			break;
- 		}
- 
--- 
-2.50.1
+> Thanks,
+> Easwar (he/him)
 
 
