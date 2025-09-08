@@ -1,124 +1,219 @@
-Return-Path: <linux-kernel+bounces-805726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A70B48CB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA34CB48CB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6781B27A5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:59:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939273C3459
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B612F1FED;
-	Mon,  8 Sep 2025 11:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188D8229B1F;
+	Mon,  8 Sep 2025 11:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lmeVY484"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHO03kCP"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B462DE71C;
-	Mon,  8 Sep 2025 11:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886111E1E00;
+	Mon,  8 Sep 2025 11:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757332738; cv=none; b=jknfEKUQklfATKmOPkfmWM5ILW15V4OUvE3TSHtZ3EEYQrrDpTfsu2dEN/oKoVxl/gKyaCaJRQNymPdAigRhKep9zQ9TKT/70MuH0cvYfV3wHS1aeWInowNX8r3deTlxuLaubRkkdCTtcmm35gbLS9H9YwFGM2y438OvDXcFbWY=
+	t=1757332765; cv=none; b=Jzj5BiO28bOP63prJvk3KK0vL19Bf2PAGBWcAozIMsimCePwRZzngoUsfJMDoM0/G08zcIXy375Zr6kkZp0K70ZXZwGe6UaxAJnpf68xJGsRweD13OgCya5+W3RXMnmh+2xnLXJMkbnVvhCAjwLdfMMn6mup3mYpUuuyLKkeAUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757332738; c=relaxed/simple;
-	bh=6QOPQOr+MMPkIBn3rM6zrLTI8GvkuF3KweTHN1ROwhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KYXv9pqOFazD/JNkyjh2JbCGYpQlqOlt0S1hVGMyojz0GT8HQShPCOJ1/8CzJ3tjmL5WkqZxDE4HThlswN2IRMEErSbP/QP7rnLpLunslYXc/rHuQVTyctb1criSOcMoYkY0fama2gGOlIY63fcvfg/spyjeDZgOU24WzXRpLmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lmeVY484; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45ddddbe31fso11140985e9.1;
-        Mon, 08 Sep 2025 04:58:56 -0700 (PDT)
+	s=arc-20240116; t=1757332765; c=relaxed/simple;
+	bh=6KDVunLZEQN245aj/DeSzbQcPt12yUcZjgd1fbE7BfA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sndeNS2M43F4jqZh6KvgLQ5+L24PASW4tBhOkeEklpopCiNJ/+HeU3XxuzZ2VyUCW/2OSrbq19sQLQ398+ymMYvqv/D7qlnT8bONb4gxeWQjLaYqvebADMBHGcK4oqipI1xn7CE+rLAP+v3F2SYz6ILp2JjJ4oAG6kk6ykptg1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHO03kCP; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5608d792558so4847494e87.0;
+        Mon, 08 Sep 2025 04:59:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1757332735; x=1757937535; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eRM+uyebU2Rj5lbvmGYz/DfavkBeN9Z38pQmhJrF7OY=;
-        b=lmeVY484HGXcZQ0G64EO2Z3nWZkGneRA80NdcIdEB/6h0WbEjgHFOM72b5Cb1wlK40
-         V6EA2CRscC+lhGQ+EFTbsaE0edHKpIo1R1y0S3/SIu0wRdpsNDeVXcyYSZrEAmf42DwI
-         EvieD7P6jte7ilqhbvFurCW0elvV8lCM7lIHJN5IO0d1uCwMHpduiZwSNyBnvXn+jyfc
-         OVMJ/K/92XgO/4hmD0pazBTL5pbUfEC5WTX63AkXQOJUf+AfQyomjHe2Ut6P4uUzsGA6
-         3byVje/5XlT4jlZzx74d2EYItgSDQuG0wQlHd/BvZ+CSgSoFKwJZLLCI8XICGyW84/e8
-         Vc6Q==
+        d=gmail.com; s=20230601; t=1757332761; x=1757937561; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vd0Gp91t0AdkDLXSNmOHCDstZWivpuuewHLUyrk+zgI=;
+        b=KHO03kCPZv4Jo3AX+bfEMlY5wp7tVDcPlNqXFqwnRjCRXlp3KqW7nBiPQJfHgYp/8j
+         iZCj0A7QaqOvCHNBrO4oo2v+Gq8i6d2QS7cZ/YAsHx7rf8FANZ+XKFIPKm/fSLi6/q03
+         I2NapSfL1J0SQKlq8TE3+VD7wT3HLql/55DX6MKW6YrqWRYAQrsV522D1NfOCjXc2Kd+
+         DDoTC5MfMC5LWjEMZ2NOq6/QA2lUobxLiJWMO30qu01ro1vg0b/uXPQEe42ziTIIPCRk
+         BrfFNT26imkXQZ6l/wfSIHsL6n1OONUk5jbb3hKI+gax+uDvBAcNhse9dRtPupfHGrZm
+         rqxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757332735; x=1757937535;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eRM+uyebU2Rj5lbvmGYz/DfavkBeN9Z38pQmhJrF7OY=;
-        b=kMiWqNld08kiJlwIm8fIexBuG0k03GG0JxBIz+o6eSU26FekfmbLr6etifZoK310UY
-         RfwrYkkPuP0GtrwDiG+W9LDDPR8SNANpJqUVujjCscA0QTOurylILQi+oDy2uEXe/Aju
-         Q5RXlIua4f8/rinta1kTOqsft6Pm9kFIbMgjg2At8U5eow7RiMKzUIzwkmdGnCeS2uPA
-         MEuC8YuQuXe8pVbTP0P5K0oOWyX7ITuTXmLK0uXOelnK4sURxd/7E5uuRO3UGoDfPN1B
-         KkE8dJ5Q5IJbrV9w8tMmQ4/G/gDWIneJw9zaj/pLGHzx4z6gw+0JkxkvpYdBU6wbuhQk
-         HXAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhMlMu27QGNAnMIClsXb9e5FDSN74xwQO7D/caoLxm1Yfdgg5bbI1kCxUtfAss0MLDjePN/FsQ4FwfHKg=@vger.kernel.org, AJvYcCWvAjOcQ/0YCKVnU2/xPf0JRCTlN/MO2MxTMvdFHLRBCNTzV37NnJ/HJHHBAFv5EUTywfSu+TPk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrCNUnT2EPDFpJvkfA9Uaji1aCaGTJ17HuJoSYYwzenpGNgWBA
-	cG9FTuazmZBAjRODhllA6s1mzVeUTjtxjhkYxIOuZMWoCeVWJBHQt2o=
-X-Gm-Gg: ASbGncv9yotBEhwh7Mzu3r23W/Sf4I+40DHX9Vol3E2eE5XgznpoOWtTOfbFat59qYQ
-	XoVALg00zvfKp9fEPeCerHDGXC52G+mWlCnVdDQR2WOXLvH0O38QgPdyLbcfH0ZT7bTeKK234Zh
-	hPsgWVgVEt3zKOY/mgghOpjbwaCep29iaUlCOkQJxTNy/DKM3Rm03uvDrTKR28RHXcWRGXwNPMb
-	aKWlNM/WAJVug/ZzZYiOoz11dCck3KopxWE+wIZTfzPTyrTeGMCB8RNU6Pqtrc43G2VkClMd8kQ
-	1GK8vQAjEjJlnXyu8l//c6Expg3diksuAaqvj21DGY/l+YZg5pTE2ksFiqnRJe7TrXT7KqaPKRF
-	/QML+xPCLrXCwDM38K5jLm7Ra/b/q3VhFQLd/USdIpHvUtt3J0OYoaSfF1znsSEB8u/z2AMKEdx
-	ahCwqKN9837A==
-X-Google-Smtp-Source: AGHT+IFZgWcpxr6NhhjmxZvbiZnvCl/sZZdpHsCBeK240GnMFcxyIzd1XotzPDvdvGrx0kcUWiMGQw==
-X-Received: by 2002:a05:600c:1f90:b0:45b:8f11:8e00 with SMTP id 5b1f17b1804b1-45dddee8f49mr54141185e9.37.1757332734483;
-        Mon, 08 Sep 2025 04:58:54 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac262.dip0.t-ipconnect.de. [91.42.194.98])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e12444de96sm16556416f8f.19.2025.09.08.04.58.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 04:58:54 -0700 (PDT)
-Message-ID: <09016717-6ae6-43d8-8985-54562dbbf956@googlemail.com>
-Date: Mon, 8 Sep 2025 13:58:52 +0200
+        d=1e100.net; s=20230601; t=1757332761; x=1757937561;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vd0Gp91t0AdkDLXSNmOHCDstZWivpuuewHLUyrk+zgI=;
+        b=vsJdOIP7XsI8AIwL2S1eNjNDdlGVkVI1xx+lL1OcHSI28xPCTJaNWzaGcy8+0vCOmg
+         lDhbgGTFLoQTU7qCDvCMyoshEawcn4o2lZQxxaHebZSsH7DZ5LgdXGdNwf3rvHaCAbht
+         T1HHqK1B4xMLC4VhNLax8o7RRYMINrWz7CmqlVxxPd9LT2/KcBtRPMIwWjgG4s0Wq3z0
+         kKGBEjbTpu6BXGvkwhhfQosbCX7BA5FSoVpOUXqWG2FEqFT3Ay+fAAOvF6LILuOmaBK4
+         DPsl0mThlssM3HNQM6NBYq7zm9KpdDVnom7lPfSuHp/BIBOj0pcNreGnLK+NruZs7WS5
+         iXug==
+X-Forwarded-Encrypted: i=1; AJvYcCUdzNv7mTIu5mbajczQJ8zP/K88a+OgwFPmJBqKcxp36uv1J8ZRQu6b04LLvXlGxkAG6RPK@vger.kernel.org, AJvYcCVYVbBWOcnmqsbf8tY1OIBh27EfA8VisRevQVvjy4KG+VkrVmWQ0SLQRyJIgpd3pPclddmOs0q3cQz7NQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJpbcYnJXeJjlpttn24ZrACdrZRYs8gZAC5yPCk7s/FjVbtHjF
+	n9+TL/vUqrtxUJTlapJ5jq23H5+5GTahMLSht1dAsZAxIMPzN4yxUmox
+X-Gm-Gg: ASbGncs2V/UTrPs2fHLUWr17VMiEI415LhsIRGV5jEt5lWAead377TSbVAKW/xDtBjs
+	iP7QG35QlpCEx9dojJnOwY9YkaWU3Nqj385RoRVlEpNhLY/SMrTqNvXcABfLgtcRTrhjn/43pPI
+	v8G1wvkBdSkEJbYeNOfpzfh3MfscpZpoSxY0yYgGzYui4aRaBeVMDJ7JKcMctMKn8X9KuAMpSjA
+	vHuwIdjpNcY8Hiq6R9zJNc+3vswReicY1BU+dbAjEzxwXN3IjeYOZE4RrA5nqvSVkzFkAjQRKQs
+	2bgHOr7mejCPjVBK7WAQYSsi/k1XyQU5W/iBY4F2D2M5c1yWVrqV8BphKJb1VvNAiK02dJCU/gZ
+	b5vzPizBoPWSVzGkWcWQkLvf9jG5E
+X-Google-Smtp-Source: AGHT+IFbG7GoBt4KHwMsY4mmFph5x9B/J+LW0gLY0cDeVIB+7WdkZBbrf+Q5LzBnwB9+VTjigDATyQ==
+X-Received: by 2002:a05:6512:b89:b0:55f:4e62:f0ca with SMTP id 2adb3069b0e04-56260e427bfmr2110773e87.29.1757332761024;
+        Mon, 08 Sep 2025 04:59:21 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace9c71sm3518718e87.73.2025.09.08.04.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 04:59:20 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date: Mon, 8 Sep 2025 13:59:18 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH v7 04/21] slab: add sheaf support for batching
+ kfree_rcu() operations
+Message-ID: <aL7FFpIMmXtzzSL1@pc638.lan>
+References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
+ <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250907195615.802693401@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
 
-Am 07.09.2025 um 21:57 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.16.6 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Sep 03, 2025 at 02:59:46PM +0200, Vlastimil Babka wrote:
+> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
+> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
+> addition to main and spare sheaves.
+> 
+> kfree_rcu() operations will try to put objects on this sheaf. Once full,
+> the sheaf is detached and submitted to call_rcu() with a handler that
+> will try to put it in the barn, or flush to slab pages using bulk free,
+> when the barn is full. Then a new empty sheaf must be obtained to put
+> more objects there.
+> 
+> It's possible that no free sheaves are available to use for a new
+> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
+> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
+> kfree_rcu() implementation.
+> 
+> Expected advantages:
+> - batching the kfree_rcu() operations, that could eventually replace the
+>   existing batching
+> - sheaves can be reused for allocations via barn instead of being
+>   flushed to slabs, which is more efficient
+>   - this includes cases where only some cpus are allowed to process rcu
+>     callbacks (Android)
+> 
+> Possible disadvantage:
+> - objects might be waiting for more than their grace period (it is
+>   determined by the last object freed into the sheaf), increasing memory
+>   usage - but the existing batching does that too.
+> 
+> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
+> implementation favors smaller memory footprint over performance.
+> 
+> Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
+> count how many kfree_rcu() used the rcu_free sheaf successfully and how
+> many had to fall back to the existing implementation.
+> 
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/slab.h        |   2 +
+>  mm/slab_common.c |  24 +++++++
+>  mm/slub.c        | 192 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 216 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 206987ce44a4d053ebe3b5e50784d2dd23822cd1..f1866f2d9b211bb0d7f24644b80ef4b50a7c3d24 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -435,6 +435,8 @@ static inline bool is_kmalloc_normal(struct kmem_cache *s)
+>  	return !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT));
+>  }
+>  
+> +bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj);
+> +
+>  #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+>  			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
+>  			 SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS | \
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index e2b197e47866c30acdbd1fee4159f262a751c5a7..2d806e02568532a1000fd3912db6978e945dcfa8 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1608,6 +1608,27 @@ static void kfree_rcu_work(struct work_struct *work)
+>  		kvfree_rcu_list(head);
+>  }
+>  
+> +static bool kfree_rcu_sheaf(void *obj)
+> +{
+> +	struct kmem_cache *s;
+> +	struct folio *folio;
+> +	struct slab *slab;
+> +
+> +	if (is_vmalloc_addr(obj))
+> +		return false;
+> +
+> +	folio = virt_to_folio(obj);
+> +	if (unlikely(!folio_test_slab(folio)))
+> +		return false;
+> +
+> +	slab = folio_slab(folio);
+> +	s = slab->slab_cache;
+> +	if (s->cpu_sheaves)
+> +		return __kfree_rcu_sheaf(s, obj);
+> +
+> +	return false;
+> +}
+> +
+>  static bool
+>  need_offload_krc(struct kfree_rcu_cpu *krcp)
+>  {
+> @@ -1952,6 +1973,9 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  	if (!head)
+>  		might_sleep();
+>  
+> +	if (kfree_rcu_sheaf(ptr))
+> +		return;
+> +
+Uh.. I have some concerns about this.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+This patch introduces a new path which is a collision to the
+existing kvfree_rcu() logic. It implements some batching which
+we already have.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+- kvfree_rcu_barrier() does not know about "sheaf" path. Am i missing
+  something? How do you guarantee that kvfree_rcu_barrier() flushes
+  sheafs? If it is part of kvfree_rcu() it has to care about this.
 
+- we do not allocate in kvfree_rcu() path because of PREEMMPT_RT, i.e.
+  kvfree_rcu() is supposed it can be called from the non-sleeping contexts.
+- call_rcu() can be slow, therefore we do not use it in the kvfree_rcu().
 
-Beste Grüße,
-Peter Schneider
+IMO, it is worth to reuse existing logic in the kvfree_rcu(). I can help
+with it when i have more cycles as part of my RCU work.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+--
+Uladzislau Rezki
 
