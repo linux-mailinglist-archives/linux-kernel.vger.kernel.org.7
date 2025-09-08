@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-805364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AD3B487A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:57:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B96EB487AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E061795A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A9E3C0E71
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FD82ECD30;
-	Mon,  8 Sep 2025 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cw493cZW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A015A2ECE8B;
+	Mon,  8 Sep 2025 08:57:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041952EACF3;
-	Mon,  8 Sep 2025 08:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68914AD2D;
+	Mon,  8 Sep 2025 08:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321862; cv=none; b=VZz1zZk7DfpcY4GBuCNbbJdWJGg6ySD03r6EhS1uuIUadUnKfg9VmOvuVCMaXPqsyQqubEs6NtzERnu1F/sCFMLe8t5YdCEBErSIpNPCFAEPnt0bk/0MDqm/UVq7vPWg7k5/SLjTw8dCMNrDJYkh46MKwyIWkB9E9yc3ebEpZRs=
+	t=1757321873; cv=none; b=sx/RPYtsl/mS37OlbfQmyROQ2HWDjMm3dyhioUmXGcMUs2PRrbpmrEhh/5fb9C9GJU+1iiQV52bSmYLel2aRR9eRPzIY1MRsEwvF7DO3csq/nsZuztvamIbiSU3UvGiUUt9XzK/mNkYnH5r1ilak/XA1q9PVzfUw0LRcy47W+NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321862; c=relaxed/simple;
-	bh=4bOgS1btmtPWfLB5qaRANS1bCT5ckupDs7eohbEAPE4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=CPDnJx539V3OxK5YdZtJMzAUhjvE4hCBfPYJnhwzKA745bjQDyIPLSJfhuwg1RzHTFRoCh73TyGLTe5+4GjzctV4bQp31SPa53NC3LZjF7nOeE7OIZEoMe4osV8/6tssqZ2ONGqYE9RzKKqI5DtT7xzdm2L2XBrUPJv064KXDt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cw493cZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0D3C4CEF1;
-	Mon,  8 Sep 2025 08:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757321861;
-	bh=4bOgS1btmtPWfLB5qaRANS1bCT5ckupDs7eohbEAPE4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=cw493cZWD3hukU3ePmK6x5vScn+pl6a6TqGx5iETEpEhboUonY2Ww7/4yZ9f2zeWg
-	 SmtDuhR8tWdSS0sWot2yFZdoKHQm1HcMOPyo9z4k4RJYYz5pmNzlKfJrqkyXHOIdVP
-	 VpuC0EStb5mMAf17Qhczx85gwHnN8Gy+/K4MO+8ijt3oYqTPdWfOsi6e559b1C6wpU
-	 CTvUgxHn5G83arj7weJiXiTd/PGQJyJ0qtGBe3dp6NZTTtQyWkkZndVAf55lLY1RW5
-	 dZVIBwbjZ4qUhUDrc5i1rBTmchLPbgtc4VeRAcPKps1Q0apHr2G4bqSibLAt2cts+V
-	 uSknqfRMrSWng==
+	s=arc-20240116; t=1757321873; c=relaxed/simple;
+	bh=tORqqtQGMQE+nPWwjJ1DNrtvijIxuC58V28a+mkd01A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BEMUIZ7DHYxKDjpKH/QLddWw8H1a4KbWFvRfiSZYw129Brf6GvUS8iQGOEQmRKkP5LWHoFhEvoSNWLPQH6UeDHKeSDmO+q+a8/C/L/G/L95tE1zVRYYZmEWEeEIXqlkDDznlViaDOrXJE0Yo8cboFv390XDC+mVi4ySc0wlYVAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: e0da60428c9111f0b29709d653e92f7d-20250908
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:3f6622ce-d622-45db-ae7c-b0bfb1542f52,IP:0,U
+	RL:0,TC:0,Content:29,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:29
+X-CID-META: VersionHash:6493067,CLOUDID:6b10639a48e4e42831fe6cfdab41c73c,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: e0da60428c9111f0b29709d653e92f7d-20250908
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 260334981; Mon, 08 Sep 2025 16:57:41 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id B4ED9E008FA7;
+	Mon,  8 Sep 2025 16:57:41 +0800 (CST)
+X-ns-mid: postfix-68BE9A85-48786850
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id F198DE008FA3;
+	Mon,  8 Sep 2025 16:57:40 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "Rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] cpufreq: Add defensive checks during driver registration
+Date: Mon,  8 Sep 2025 16:57:38 +0800
+Message-Id: <20250908085738.31602-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 10:57:36 +0200
-Message-Id: <DCNALVTE4DIN.1K0U4BGN35CHI@kernel.org>
-Subject: Re: [PATCH] rust: pin-init: add references to previously
- initialized fields
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
- Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <aLshd0_C-1rh3FAg@tardis-2.local>
- <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org> <aLzmcK2UM53I2Tbn@tardis-2.local>
- <aLzoyWpOr6eg-3yB@tardis-2.local> <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
- <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
- <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
- <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
- <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
- <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org> <aL46nRkYj2SlOhl8@tardis-2.local>
- <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
-In-Reply-To: <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
 
-On Mon Sep 8, 2025 at 10:27 AM CEST, Benno Lossin wrote:
-> On Mon Sep 8, 2025 at 4:08 AM CEST, Boqun Feng wrote:
->> On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
->>> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
->>> > I actually came up with a third option that looks best IMO:
->>> >
->>> >     init!(MyStruct {
->>> >         x: 42,
->>> >         #[with_binding]
->>> >         y: 24,
->>> >         z: *y,
->>> >     })
->>> >
->>> > The `#[with_binding]` attribute makes the macro generate a variable `=
-y`.
->>> > `x` & `z` don't give access to their value. (we of course should come=
- up
->>> > with a better name).
->>> >
->>> > Any thoughts?
->>>=20
->>> It may be a bit verbose is some cases, but it makes things pretty obvio=
-us, so
->>> LGTM.
->>>=20
->>> How about just #[bind] or #[access]?
->
-> I like `#[bind]`.
->
->> #[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
->> about the purpose.
->
-> Hmm in `init!` it's never pinned.
+Currently, cpufreq allows drivers to implement both has_target() and
+has_target_index(), which can lead to ambiguous or incorrect behavior.
 
-I thought about #[shadow] as well, but it is not really accurate I think, a=
-s we
-might not shadow anything. #[maybe_rebind] sounds a bit like it conditional=
-ly
-rebinds, as in "it may not do anything", but it always binds.
+This patch adds defensive checks in the driver registration path to
+prevent invalid implementations. For example, a driver is no longer
+allowed to implement both has_target() and has_target_index() at the
+same time. These checks help catch driver mistakes early and improve
+overall robustness, without affecting existing valid drivers.
 
-So, I think it should one clear instruction, i.e. #[bind], #[access], #[ref=
-],
-#[use], #[let], etc.
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ drivers/cpufreq/cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index a615c98d80ca..cead6d4fa1ad 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2922,6 +2922,7 @@ int cpufreq_register_driver(struct cpufreq_driver *=
+driver_data)
+ 		return -EPROBE_DEFER;
+=20
+ 	if (!driver_data || !driver_data->verify || !driver_data->init ||
++	     (driver_data->target_index && driver_data->target) ||
+ 	     (!!driver_data->setpolicy =3D=3D (driver_data->target_index || dri=
+ver_data->target)) ||
+ 	     (!driver_data->get_intermediate !=3D !driver_data->target_intermed=
+iate) ||
+ 	     (!driver_data->online !=3D !driver_data->offline) ||
+--=20
+2.25.1
+
 
