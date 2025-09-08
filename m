@@ -1,189 +1,249 @@
-Return-Path: <linux-kernel+bounces-806338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB3DB49546
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC30B4955A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF2F1BC4F24
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60407189109A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441E1225415;
-	Mon,  8 Sep 2025 16:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6503230FC1E;
+	Mon,  8 Sep 2025 16:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhf7wFkf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJH0y4mb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887E130BBA4;
-	Mon,  8 Sep 2025 16:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBED30F929;
+	Mon,  8 Sep 2025 16:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349016; cv=none; b=u76/sTdHjYlaFoKxmdexnpySC2EQmVNu8WE3rkUPkvcbJc6asg+KlaPikvN6lU/fLcBYODKcJ5I05HtuvZzAiXlVLdB3QgPsOrCS1N5axVRU2NXz38oVOEARST2CwKv208tVLHy9RDXUNJIW0Ssx6y3yjfcZo+5lYSZzOQpHYuk=
+	t=1757349108; cv=none; b=tu1ebLnYq0YvQ2vVXr9BscJfW4HyeNQR9wQohsY05hbkwnffHrnx4KPPFs2lmbz8/4u2q907+guLLJ6GpLhiVv3l/8H33u1mgaX+sdOM61xvg+shxXsX5xiTGtF713XIRWtpndaas3bAMpjd6zc5Ewvxa7aKG/dRL/kybDLFGG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349016; c=relaxed/simple;
-	bh=VCF2lEwmPSPH3C2rW9Ifgy6KyEHa9huhGT2daj2ohv0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=X7/Ap27vTg3Um1WRzNNFJOpF6HBPppK4ms8EW3El5Oiu24iBMErbQc9GOcEk4tfWCJzUv/Ixcz2u1+x0e4ehUBQnM8u0VDmsciSU5L6be6tNiyZj7znjZaYKxNyJ00D6lUKD6fUD3ZKV3MPe5mZmL/iBr9uE9qcUyPlpXhIAz48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhf7wFkf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1D3C4CEF1;
-	Mon,  8 Sep 2025 16:30:12 +0000 (UTC)
+	s=arc-20240116; t=1757349108; c=relaxed/simple;
+	bh=cpc5ly2o2WQkQtPbUB4Zjuk/c/FKDFEpv7UIsfK58hc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mbt+DRiMR0c1gD9thuUO6OjMmO79k9FXXn/dFqN1p1z6jqWj3bXYm0+UKNEKmnLMM1nbOasJmeyrwJgpitjjj2H3XLTs1PBT1tq8EaGrdplqgGRBOaNSYufC8yKXG6mN1J3o+i9PxpDS7FNRBh1ERCz8eOsYmG67xEQ/Ip5+vnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJH0y4mb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC17C4CEF1;
+	Mon,  8 Sep 2025 16:31:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757349016;
-	bh=VCF2lEwmPSPH3C2rW9Ifgy6KyEHa9huhGT2daj2ohv0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=bhf7wFkfsEO3Nk586gKPmrfa93HVCTlBM9rRaKUo4oH1FV/OxAZqb9ci4YIkRPDZC
-	 hcWvURFw/MwAIMm8ffR1fB7aBrGMtrjInXV7AAQeSkAJntvVZoechIw4n5hmBdIKAM
-	 8uVCTwJ7YD4ZWx6HujqKvGn5V3DtEBYf3CamBNFmZxRNq4lSsM1uxoho25cYGe5pUf
-	 Gz11qxkrAuKjB4S17u2HuK84VMtAsk9kZPCjYF9XhY9INrZdDcEeUEjOyyNqLm1c2w
-	 FcPs/OwtV6VlVEW6YcFkPpB6aROPaFQr54PgyQ46SgnQ6S0OJydvqF8LmXdGZnf8IV
-	 qqjV7xETqQIvA==
+	s=k20201202; t=1757349108;
+	bh=cpc5ly2o2WQkQtPbUB4Zjuk/c/FKDFEpv7UIsfK58hc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GJH0y4mbdzkVCZ4Wwr0lx+LuuZlWdOjKSPTIzYTYorWiKUArCpwpr47W4IgwLh65n
+	 BDM7+tj4C2eD9W1wzE4rvfMBNM8P1Y0NDo5ywrLXT/FbkFvnO82gIfMru+1z3hHhKs
+	 SdKTclX/K8ZrD/P29wwSqtuVR+CDVVyWhw+hSU2SkwbF6bkjqrw3E/r8Pte0gQNtq/
+	 lj6TTZHQcgwQ3h8geM2Gsffecal16DcsNhbtAAF0YhARBsj3JtXMpHgDC6YfarRYgW
+	 zzzzq3GW5oDTzRLSJrlLwCbF/izc74/VAv09wXwfRQtoouTiqR1BT+E/UcBjx6p9F2
+	 M3JNP2LC0SWaA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uvemP-00000004NTm-1gja;
+	Mon, 08 Sep 2025 16:31:45 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark <james.clark@linaro.org>
+Subject: [PATCH 00/25] genirq: Add support for percpu_devid IRQ affinity
+Date: Mon,  8 Sep 2025 17:31:02 +0100
+Message-Id: <20250908163127.2462948-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 18:30:10 +0200
-Message-Id: <DCNK8EHQ7OZ5.3U3VC187LUU66@kernel.org>
-Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
- <2025090807-bootleg-trophy-a031@gregkh>
- <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
- <2025090849-tweak-conductor-f642@gregkh>
- <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
- <2025090817-attendant-ungodly-78f6@gregkh>
- <DCNGJMN80Z34.1O45B1LM9PB2S@kernel.org>
- <2025090850-canon-banish-baf6@gregkh>
- <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
- <2025090808-slicer-consent-6db0@gregkh>
-In-Reply-To: <2025090808-slicer-consent-6db0@gregkh>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon Sep 8, 2025 at 6:19 PM CEST, Greg Kroah-Hartman wrote:
-> On Mon, Sep 08, 2025 at 04:59:16PM +0200, Danilo Krummrich wrote:
+The percpu_devid class of interrupts represent interrupts that are
+generally produced by CPUs or per-CPU devices (timer, PMU), and are
+more or less directly wired to that same CPU.
 
-<snip>
+The core code has a baked-in assumption that all CPUs have the same
+devices wired to the same interrupt, making the whole system
+homogeneous in that respect.
 
->> We agree on the goal here, but unfortunately it's not really possible. T=
-here are
->> two options that were already exercised:
->>=20
->> 	(1) Force that FooFiles (or FooDir) is bound to the lifetime of a
->> 	    reference of Foo with FooDir<&'a Foo>.
->>=20
->> 	    This isn't workable because we then can't store both of them into
->> 	    the same parent structure.
->>=20
->> 	(2) Reference count Foo (Arc<Foo>) and make FooDir own a referenc count
->> 	    of Foo.
->>=20
->> 	    But this is bad for the mentioned reasons. :(
->>=20
->> 	(3) The File<T> API we have now, which gives you the behavior you ask
->> 	    for with Scope<T>.
->>=20
->> 	    Where Scope<T> creates a directory and owns the data you pass to it=
-,
->> 	    e.g. a pci config descriptor.
->>=20
->> 	    The user can create an arbitrary number of files exporting any of
->> 	    the fields in date that live in the scope and don't need to be trac=
-ked
->> 	    separately, i.e. don't create separate object instances.
->>=20
->> 	    The directory (and hence all the files) is removed once the Scope<T=
->
->> 	    is dropped, including the data it owns.
+Unfortunately, this is wishful thinking, and the big-little
+contraption has proved more often than not that sanity was not
+necessarily part of the design requirements.
 
-<snip>
+The typical problem on ARM systems is that while all CPUs have a PMU,
+not all PMUs are the same and require a slightly different programing
+model. The driver therefore has to treat them differently. Another
+problem is that some devices are only present on a subset of the CPUs,
+and not others.
 
->> I can provide some working code later on (currently in a meeting). :)
->
-> Working code for the simple "foo" example will be good.  Here's my
-> horrible (and will not build) example I was trying to get to work.
+All in all, it means that these percpu_devid interrupts (which are
+represented as PPIs on the GIC class of interrupt controllers) are not
+ideally handled by the core code.
 
-Here it comes [1]. :)
+At least two interrupt controllers (GICv3 and Apple AIC) have invented
+their own schemes to paper over these problems. In the GICv3 case (the
+most over-engineered one), the low-level irqchip creates a mux irqchip
+for each PPI (up to 64 of them), and each possible affinity class
+represents an interrupt in this mux. Like this (compressed for
+readability):
 
-[1] rust_debugfs_soc_info.rs
+# grep pmu /proc/interrupts 
+ 38: 0    0    0    0    0    0  GICv3-23   0 Level     arm-pmu
+ 39: 0    0    0    0    0    0  GICv3-23   1 Level     arm-pmu
 
-// SPDX-License-Identifier: GPL-2.0
+Yes, this is nuts. But by hiding that the PPI is split between two
+affinity groups, and exposing two interrupts that are apparently
+system-wide, we trick the core code into not exploding.
 
-//! Simple `debugfs::Scope` example.
+While this solution has worked for the past 9 years, it creates its
+own class of issues. The most glaring one is that we cannot configure
+these interrupts as NMIs, as they are muxed interrupts and we don't
+allow NMIs outside of the root interrupt controller (this would imply
+taking locks that are not safe in this context). As it turns out, some
+of the heaviest users of profiling are also users of the most crazy
+systems out there (cough phones cough)...
 
-use kernel::c_str;
-use kernel::debugfs::{Dir, Scope};
-use kernel::prelude::*;
+It is also pretty bad that the core IRQ code cannot handle natively
+what has become an extremely common HW setup, for better or worse.
 
-module! {
-    type: MyModule,
-    name: "MyModule",
-    description: "Just a simple test module.",
-    license: "GPL",
-}
+Finally, I have no desire to replicate the same horror on the next
+generation of ARM interrupt controller (GICv5), and this is the
+opportunity to put things right.
 
-#[derive(Debug)]
-struct HwSocInfo {
-    name: &'static CStr,
-    ver: u32,
-    id: u32,
-}
+This series therefore aims at teaching the core code about these
+interrupts, removing all sort of irqchip-specific handling, and allow
+NMIs to be naturally handled in these setups.
 
-impl HwSocInfo {
-    fn new(name: &'static CStr, ver: u32, id: u32) -> Self {
-        Self { name, ver, id }
-    }
-}
+We want:
 
-struct MyModule {
-    // Dropped when MyModule is released (e.g. through `rmmod`).
-    //
-    // This will drop the inner `HwSocInfo`, the "foo" directory, and all f=
-iles created within this
-    // directory.
-    _scope: Pin<KBox<Scope<HwSocInfo>>>,
-}
+- a single irqdesc representing the system-wide percpu interrupt
 
-impl kernel::Module for MyModule {
-    fn init(_module: &'static kernel::ThisModule) -> Result<Self, Error> {
-        let root_dir =3D Dir::new(c_str!("my_module"));
+- the irqaction to carry the affinity the handler applies to
 
-        // Obtain some `HwSocInfo`, could from anywhere.
-        let soc_info =3D HwSocInfo::new(c_str!("foo"), 24, 42);
+For that, we have a few problems to solve:
 
-        let scope =3D KBox::pin_init(
-            // Create directory scope, that contains some data and a bunch =
-of files exporting this
-            // data.
-            root_dir.scope(soc_info, c_str!("hw_soc_info"), |soc_info, dir|=
- {
-                dir.read_only_file(c_str!("name"), &soc_info.name);
-                dir.read_only_file(c_str!("ver"), &soc_info.ver);
-                dir.read_only_file(c_str!("id"), &soc_info.id);
-            }),
-            GFP_KERNEL,
-        )?;
+- communicating the affinity of an interrupt from the firmware to the
+  device driver.
 
-        // Print the contents of `soc_info` that were moved into `scope`.
-        pr_info!("HwSocInfo: {:?}\n", &**scope);
+  This is currently done via the irq_{g,s}et_percpu_devid_partition(),
+  but this is stored on a per-irqdesc basis, which wouldn't work
+  anymore with the scheme described above.
 
-        Ok(Self { _scope: scope })
-    }
-}
+  For that, we expose a new irqdomain op, implemented by the irqchips,
+  that can retrieve FW-specific information including interrupt
+  affinity, which then gets processed by ACPI and OF helpers to report
+  the affinity to the platform layer. A new platform-level API can
+  retrieve both the interrupt and its affinity, and the three drivers
+  that make use of such affinity are updated to use this interface.
+
+- teaching the core code about affinity-specific interrupts by
+  allowing a percpu interrupt to be requested for a specific affinity.
+
+  This involves tracking the affinity at the irqaction level and
+  enforce that it isn't possible to request the interrupt twice with
+  overlapping affinities. A new flavour of request_irq() is provided
+  for that purpose, and the drivers updated to make use of it.
+
+- kill the irqchip-specific infrastructure, allowing the normal flow
+  of interrupt request to be restored.
+
+With that, we end-up with this on the same platform as above:
+
+# grep pmu /proc/interrupts
+ 27: 0   0   0   0    0    0  GICv3  23 Level     arm-pmu, arm-pmu
+
+which is much more satisfactory, and allows the use of NMIs. It
+doesn't hurt that the whole thing ends up with a negative diffstat.
+
+Patches on top of v6.17-rc5, tested on a bunch of asymmetric systems:
+
+- RK3399 (GICv3, DT)
+- O6 (GICv3, ACPI)
+- M1 (AIC, DT)
+
+as well as on a saner symmetric system (Synquacer).
+
+Marc Zyngier (24):
+  irqdomain: Add firmware info reporting interface
+  ACPI: irq: Add IRQ affinity reporting interface
+  of/irq: Add IRQ affinity reporting interface
+  platform: Add firmware-agnostic irq and affinity retrieval interface
+  irqchip/gic-v3: Add FW info retrieval support
+  irqchip/apple-aic: Add FW info retrieval support
+  coresight: trbe: Convert to new IRQ affinity retrieval API
+  perf: arm_pmu: Convert to new IRQ affinity retrieval API
+  perf: arm_spe_pmu: Convert to new IRQ affinity retrieval API
+  perf: arm_pmu: Add PMU/CPU affinity tracking
+  genirq: Merge irqaction::{dev_id,percpu_dev_id}
+  genirq: Factor-in percpu irqaction creation
+  genirq: Add affinity to percpu_devid interrupt requests
+  genirq: Update request_percpu_nmi() to take an affinity
+  genirq: Allow per-cpu interrupt sharing for non-overlapping affinities
+  genirq: Add request_percpu_irq_affinity() helper
+  perf: arm_pmu: Request specific affinities for percpu NMI/IRQ
+  perf: arm_spe_pmu: Request specific affinities for percpu IRQ
+  coresight: trbe: Request specific affinities for percpu IRQ
+  irqchip/gic-v3: Drop support for custom PPI partitions
+  irqchip/apple-aic: Drop support for custom PMU irq partitions
+  irqchip: Kill irq-partition-percpu
+  genirq: Kill irq_{g,s}et_percpu_devid_partition()
+  perf: arm_pmu: Kill last use of per-CPU cpu_armpmu pointer
+
+Will Deacon (1):
+  perf: arm_pmu: Use a backend-specific pointer for percpu interrupt
+    request
+
+ arch/arm64/kernel/smp.c                      |   2 +-
+ drivers/acpi/irq.c                           |  15 ++
+ drivers/base/platform.c                      |  60 ++++-
+ drivers/hwtracing/coresight/coresight-trbe.c |   9 +-
+ drivers/irqchip/Kconfig                      |   4 -
+ drivers/irqchip/Makefile                     |   1 -
+ drivers/irqchip/irq-apple-aic.c              |  59 +++--
+ drivers/irqchip/irq-gic-v3.c                 | 172 +++++--------
+ drivers/irqchip/irq-partition-percpu.c       | 241 -------------------
+ drivers/of/irq.c                             |  20 ++
+ drivers/perf/arm_pmu.c                       |  61 +++--
+ drivers/perf/arm_pmu_acpi.c                  |   7 +-
+ drivers/perf/arm_pmu_platform.c              |  24 +-
+ drivers/perf/arm_pmuv3.c                     |   2 +-
+ drivers/perf/arm_spe_pmu.c                   |  13 +-
+ include/linux/acpi.h                         |   7 +
+ include/linux/interrupt.h                    |  24 +-
+ include/linux/irq.h                          |   4 -
+ include/linux/irqchip/irq-partition-percpu.h |  53 ----
+ include/linux/irqdesc.h                      |   1 -
+ include/linux/irqdomain.h                    |  30 +++
+ include/linux/of_irq.h                       |   7 +
+ include/linux/perf/arm_pmu.h                 |   7 +-
+ include/linux/platform_device.h              |   2 +
+ kernel/irq/chip.c                            |   8 +-
+ kernel/irq/irqdesc.c                         |  24 +-
+ kernel/irq/irqdomain.c                       |  33 ++-
+ kernel/irq/manage.c                          | 128 +++++++---
+ 28 files changed, 449 insertions(+), 569 deletions(-)
+ delete mode 100644 drivers/irqchip/irq-partition-percpu.c
+ delete mode 100644 include/linux/irqchip/irq-partition-percpu.h
+
+-- 
+2.39.2
+
 
