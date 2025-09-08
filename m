@@ -1,148 +1,250 @@
-Return-Path: <linux-kernel+bounces-806456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B64DB49733
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:36:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA3FB49744
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4196A3A47AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:36:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C707AF90F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8047831984C;
-	Mon,  8 Sep 2025 17:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE19E3148DA;
+	Mon,  8 Sep 2025 17:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQRtpNnD"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EWyfWoCE"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C67319845;
-	Mon,  8 Sep 2025 17:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352885; cv=none; b=NNu6TejcBg3EMA8N9eVaHaPIunOiW5/m0Vl0OzEJ7q2K/NZeWO9pZ7cF07tDT6qaAqCPkazxpZkoWQBXlfz6fPRQvhMOnw99HQHjBek1tcsyBUhHIn+nLH5qsCNBbChGlLVupJa2nVlLeZtLtNbxqeddboMOg0T+GX2P5StZnTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352885; c=relaxed/simple;
-	bh=JmOsx5cBItV32FNWImzlQTBoy6p+tMlQ3/JbFRpfLZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uNdiOW/3PZTdp+pQw2wGclWo32q+1h5nVQ+DlxTIm9Aftec+vNySKy8nBgdAY4Cge3HEtzC7pxmU6N5+GSiGPwjrpNqgVyEqWZHYJLn65wYRlxHfgVCY5ZnTEK8djfiJgF5DmLybINB/yrWyAQLrygVp/LWLtYf1NzAiFcqGkRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQRtpNnD; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dec6a6554so1272245e9.3;
-        Mon, 08 Sep 2025 10:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757352882; x=1757957682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
-        b=bQRtpNnDNQBrdp0OkVL6jDMrbIeMdbuthvJLIgXDNfN7oPCLDqx9BOrwfCK/qQ0b6h
-         JY5h6KHCEUpKmTQn1kuiJX3HVbrkqpWDI8vhW04Vpd+DJZhDvyabplLRUPdzh4y5yt4g
-         xf9thiw32t7K6ml7tsxJ0klmkLuEMvUxSwImDvhCBZSJhBY3+yBfvITCVHxl2SenEqni
-         4yPpfPw/i+r1jN5/0mw1eHDsO/kro2ql4ev/HrdlU1f8GfOF0OzoXTfQe2t8/hXRC+8k
-         yC4soDBbLXYfYyZxTFUKaQ2uUYnQHrR89QRN7nEHQHJixtUw+SVZSiQRA4IB6uMzmfew
-         3xTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757352882; x=1757957682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
-        b=FDMyn4lQktdylJ1vnVzSFlPEpYS7cUXAdODG5IGQZvI5CCqr+6KCTqMz3AtKL7aUTd
-         8QzvXtch0UvzKE8adqWU6XI6+sNA0xwnzq8hTF++m+G1OsQRuNIKRmvhgmJZoj68j29P
-         wxsMLBfmYtC/XMRVpq6xs44CUUXTzKoBVXSXbHU+r5//oWe/dpnbTWMlZz4abEjbDkdg
-         sRu9KbMkqoSIzHEP0SOEowSjSV8Lc8ZlK/sGYkvq5cL7xdND00rJTiQws5t9kN9/aqto
-         JAhGyooe8ifQV+hAWJlHCFq7c4RLriRGIQWMG9afqKbw2wdAKPFc4OsjF6Bao1fSOX24
-         NifA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9YoFvtaxqO468cyRXOHB5ZLPX5Ixpo2DXbiB20+a5spRVviYGKNbxwiminjr5UhzfgFhYjOzXEa3GCbM=@vger.kernel.org, AJvYcCVLjGRgvQttiuYy2NAGhlh1HoBLk2wJHBhY4fziT9QDSwSayaT4V4/vRSj6rzt1FrE8Cp06Deikd7/4qEIYBey5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyksZTEigSiH11QmehH+Gr/NZ7TN6xX2hs3McvxpfrV03m1jMDj
-	5RX6m3vAFxJTRtvRV3l+xx0+9BL//ONQs3K2ZFVLSXt57+iVQE81ZaF/
-X-Gm-Gg: ASbGncvxRxjLal67XbxODekbowBAFJeab6o5kPHjhtxA5HVS8tDvg0jkU5NS5JBjiYT
-	1H5ncqQ0ATSvyQ/XLv4ZwmShuOF45idkT3Xilk59ejhmvc2Y6pcXg1PRW8NPKc1W9o43TIChoqD
-	cABl1m33wfFJvPFsi4JDF0JHMINWZpZj43OowcZFQzmbgwVZngjrwIM1eX/99UuHDp2YLBXieTv
-	uTQPW+ApBHuuFVJSsj0wVdfMzcSFyS3mtiYY669HYA9XifUlg5hA2IiFI+WuHFaSGwa9IaydLVF
-	0CiBtqhMvp+BL4YkNhsufcKZfbxa9WCOafeZ7n7lM3hHodPHXF/zuXSnHaBWhcucGH2udEW4PW9
-	e1/EuE9VJRVBXfebRq5Kej3TkYgmt7I1cfT2Atr1U2MzQaleuN3nxrSITNZUuMI+ibBayZkKhNW
-	79dWek7w==
-X-Google-Smtp-Source: AGHT+IEUSXORtVaUF/ufUM4qnO5DSLC8wh1auQIxRV2sQBrJfwQUJ1ChNVW52w9gfrRktlUocfHNww==
-X-Received: by 2002:a05:600c:3b1e:b0:45b:7699:f96c with SMTP id 5b1f17b1804b1-45dddec7d63mr59283075e9.21.1757352882168;
-        Mon, 08 Sep 2025 10:34:42 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de2132cd3sm86596415e9.9.2025.09.08.10.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:34:41 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: shuah@kernel.org,
-	brauner@kernel.org,
-	amir73il@gmail.com,
-	jhubbard@nvidia.com,
-	jack@suse.cz,
-	mszeredi@redhat.com
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/filesystems: Use return value of the function 'chdir()'
-Date: Mon,  8 Sep 2025 19:34:18 +0200
-Message-ID: <20250908173422.126073-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024BE3112C7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757352922; cv=fail; b=CpulFf1HDr49UlltSYeAzXRtYhXOiQ/IpqKUa5iW2xcEPwW1ZzPxKV1zeDj1dovKlSwD4CX6FRRpwvjtVTnWEIoFNMqt0thYq98GpaY45PBKENs2DTom3LOXMYu8lTsHYGPBp+WeYjPgOfTV18yo5FF84fB6mBmb/wF6Nhp11tg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757352922; c=relaxed/simple;
+	bh=DOpPl/cIAwLlyMNDRx26gx9/HxKbCEUiNP2nB53wRMk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hkCxepvCWjZxxYP6iej414IpVkdsP8WH82Nsuhlpe/UyO8FN8RsYDD97tLRHxYf7hmlt5nSGRKti+t6C7XiZ/Cx102JYMgHnnjApo/qkhdKQKlo9zLLxT1aiw7s3T/Lx/+yoyLky0Qpi+iAIHZZyrr3KsQydgXAEJDPeqkiYIZw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EWyfWoCE; arc=fail smtp.client-ip=40.107.236.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lGopTiqEoATO2lb8atnjKf1qz9TuNWutRJNZY/T/57pPcWcsQQ6oL3MTDsBIvrbzrH8MMLeUHgiwLjVOlH0qQBra2M/7iFlS/FLT0lDfdYIyLH8RChYc5u2nZ87sXll5FPTqFlA8GVUOUrJITrA1cEZp2yfY/mCHe+1uqtpGYU9rpCm7573WFHRPhyLtFMyeOmHxWu1wizoTHbI3NwIdtaexl9KY2evQj3+R+pkKxvlYgKCidL3PGjBJh/bDC/ttszMfLGudz71DjqC545BwwegSGthETh3U1H771mHovoXnlSB89ii9U/UNXp0PsYvk4K3NUbCYOwf99Cr7ykXdXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zyt7ccj4yCIJzq/ukEJyUBtIsU7dgix+0wYeUcK/xk8=;
+ b=VtdXg1TEU+vq4xAQFCSVW4qQhwssqgVmzJFYmk52153CnORvkAOl2tZxcSNPARqOoX3STkz6EReWPc1QYMNUkgbxdhzJHeIULPn//DFH9IM0zQCDBLdmtaMGTmyMEsaf1GHMgwnfeYgyTbDfBaHpi1EZ8b+C8QttTeB+dqshBvOnaThz7quiCrC8Ssjp+mjsJ8EOK41Utv6j8WiWXSTJ1E3WadlyRN0TUUTHu5vjB1NFYrvyIkbDgnyR8vuQ/wERRh6Fw0WD+4I1zhwcmz6Bv7JtGytxrTu9lnRmYxjyYk4kAnf6M6Ob/tZGkCATRmZ5tL+mjdjwNUmG3PJHcXAmQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zyt7ccj4yCIJzq/ukEJyUBtIsU7dgix+0wYeUcK/xk8=;
+ b=EWyfWoCEvxGjL9dWgXPFbNnKmazEAfpNr2Bpl3rXYA3xGMWf9CN3EylCwPZ50iwx5ejSGr+bJJz/66/Vw2nFMfijjPJXc1PkKt6V5pr6tSlz2pCyz0jFX9ZEL1mmOsBqaj3LRiCTaiprNDnBQhm6n5bo5IJwatfZiLSm80IyRFE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CH3PR12MB7571.namprd12.prod.outlook.com (2603:10b6:610:147::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 17:35:17 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.017; Mon, 8 Sep 2025
+ 17:35:17 +0000
+Message-ID: <655a009a-0b69-4e11-949e-ff0f47b424d5@amd.com>
+Date: Mon, 8 Sep 2025 19:35:08 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/amd/display: Optimize reserved time candidates
+ sorting using standard sort()
+To: Alex Hung <alex.hung@amd.com>, Kuan-Wei Chiu <visitorckw@gmail.com>,
+ austin.zheng@amd.com, jun.lei@amd.com, harry.wentland@amd.com,
+ sunpeng.li@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
+ airlied@gmail.com, simona@ffwll.ch
+Cc: zaeem.mohamed@amd.com, wenjing.liu@amd.com, chiahsuan.chung@amd.com,
+ Natanel.Roizenman@amd.com, Daniel.Sa@amd.com, jserv@ccns.ncku.edu.tw,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250824182359.142050-1-visitorckw@gmail.com>
+ <20250824182359.142050-2-visitorckw@gmail.com>
+ <c28df8a2-9ec1-41d0-afe4-4ee047290d27@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <c28df8a2-9ec1-41d0-afe4-4ee047290d27@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL0PR02CA0021.namprd02.prod.outlook.com
+ (2603:10b6:207:3c::34) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CH3PR12MB7571:EE_
+X-MS-Office365-Filtering-Correlation-Id: 657cc250-7489-43ab-a452-08ddeefe1378
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aXJtck1QeTBqcmJEVE1XRXdheXhHTUxieEl5MU9ZOTVxNHJRdVJoMnFyQnpn?=
+ =?utf-8?B?SXRUczl4U2ZRN1BtRHN2RjNFNVZqaUN4a29LRE4rMzE5bnJXLzdqQUFxc1Ex?=
+ =?utf-8?B?Z05JVHBqSGxGVlNCVWMzZkplY3lSd25ob1dLMWNEQXcvb3N1QzNLSWlvWCtT?=
+ =?utf-8?B?QUJVdytrd1k5QjBMcTMvRDAvREJmVmFBS1R4Y1hnNHV5bm1BbXE1cGd1S3hY?=
+ =?utf-8?B?ZGYyaVozY2kxQVBld05oeDF4TXJpRXg4NHNqenJRVlVSR2tzcGlyT0sxOEpM?=
+ =?utf-8?B?MG5kdFVsRXdmc1lrQ1dLNGZMdHk2Qk5veHBWNGhaMGFXK2dTMzJqOGE2a2Er?=
+ =?utf-8?B?OXRSVWloNjJFendEMDJwQXdnRm5oQU5wZ2t4OHhRMFp6d2J6SEREMmZYQ3Jr?=
+ =?utf-8?B?Vm9vL2Q2U0xXNDRlS2RtYS9MTitWMk5lWDB3SS9NTkZ1SmVKYytSaW5iYUtZ?=
+ =?utf-8?B?cEZwTEtMVUdsZlExTGJKd0pMNGtFRTd6dGVWaGUwUmF2UEwvUHhmZERPdk5C?=
+ =?utf-8?B?bkdBNmJYY3d5bmE3amc3cWJtODlrTEZLZ21valNsQlpZdmlPeU1mOEp3eTVM?=
+ =?utf-8?B?dXBLMk1TZGFoSUwwc2diYjNzTUtnRFpvSEJGUzJLVGZGM0xuM04yRkRnVWgz?=
+ =?utf-8?B?ajgxaXpSL3lrS2IySUJ6V3hVWEpSSDFyeGE5MHZ6VWFUaU5OTWNXY1B0Wnhu?=
+ =?utf-8?B?bU5EYUcvdVFiekpxRkxaQTZQVElGSjdTbVNLcmduQWlWeStnd0VuaHR4N21n?=
+ =?utf-8?B?TTB1VWVaUVhKeWd0V1pVM21tQ0prUW1KeERRSmNnSHZEZThQbHNQa0JjSUlo?=
+ =?utf-8?B?TW5wckIzV2N5OGF4cmRYQ09pOThSVlpDZW90UWkwZENvT3NCWjZNcXVJOW1Z?=
+ =?utf-8?B?S3pLNnZ3R0lDTitQQ21ZVTljRXJWeUdaVlZlL0FwWWxZdHdpdGVBU1lsV1Bn?=
+ =?utf-8?B?YWhxRlExeVpuNXpBQVBEenYyaEttLzkwTXJxaUIzVXRyOXlseU9WV2tDMHRn?=
+ =?utf-8?B?VWJYNHBSSWFPczFBWkdvdjVOOTZoK2RUREVhZXpCc1B0dFg4NEhlbkd2aXJE?=
+ =?utf-8?B?b0htZ09EYlplMVVoTUMzeXpVdUE2eHZuc0NYVXA2MlhUQTZnV3NzZXJjenNI?=
+ =?utf-8?B?aW1OL09Cd0FxQUlWdmJNSUhmdC9ldlpUK0p2WFp3ZUppNmdvVVBlZENCMlBU?=
+ =?utf-8?B?TjdDZ0J1aXJ3QUZyUndvb1h0TUd6VEpCMGZSNWpIMmdkRDdodm16OXZ1L0dz?=
+ =?utf-8?B?RDVoVGZma2UvQVgwV24vUlJKbzFyNVViUk05NWpyZVcrR0R3WGEyNTYrdWov?=
+ =?utf-8?B?U1hVYWtyOFlDZWJybHIwdmdoYXYvN3FXcnNPNkc0V3hORk90b20yTlhRM1l1?=
+ =?utf-8?B?eFpkYmtTS3c1MFMvMDQ4YTBTTVZjem1jK0JHTjlEVUlON0c0emlTME5QSWZ4?=
+ =?utf-8?B?bFFHQ0Jyc05xT1VURDh5SWI2a1JpY0trWHRma2orTS81OHpsYVZZVjE4cndX?=
+ =?utf-8?B?d1ZoWHN4OXZMT3FzYnNhaFc5Z09TeGFtdTIzcHdBOVVpdUVUd1poOVpBYldM?=
+ =?utf-8?B?aUpQN2lSN0wyaGVDcUtienozRTlCUTB5Vy9Oam9nbTUxZjdaWTEwRC83SW1L?=
+ =?utf-8?B?YkVxRzJGaEp1YUhLY2RDSHRhaGx1NGRndmlTYkc5SVRjVFBTQzZYYjI4ZnJk?=
+ =?utf-8?B?MmtCMVBaUStJMW9qK1dpTXdyWmFEM01vS3lDaVl5SjBNL0NTNVRlQ2haaE9B?=
+ =?utf-8?B?NmpEUEI3K3pMaEVOK0JSRGpwOGRiZDhSNzArT1hGd1c1SWdxcXE2R203OTli?=
+ =?utf-8?B?SHgveC9hNElQSzRmVHpMOWNRQkJpTXErc1dOTTc4UVZXTDZ3UWVNZ2pkY3Zl?=
+ =?utf-8?B?N2tLNDFJRU9qQW92a1R1ckVRekdmc1NvRXY4ckdjc2hyZmJ6K1NiSWY4SytM?=
+ =?utf-8?B?b2FRMFhZa2NtLzEwV0w5azJBRGM1Y2pvc1lIa3BWTHFueFhHOHpJNXJuRWFJ?=
+ =?utf-8?B?LzFqWEpVNHJRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YTh2c1FjMHNLSlZjNVVhamcyZ0ZZQjVxdEkzeWlLZTUxUWpueVRxTy9RN2lG?=
+ =?utf-8?B?NEFiUDZQdnVNRnJ4d0l1amtJTWNkMVNSLy9seUthT2Y3aXZucjdZcVcxNWhy?=
+ =?utf-8?B?dzBGMWF5c0lMV0NjUk1OU0V6OEtmZlRNUVppeVp2U2NEMnN3VEZzRm9RSk5S?=
+ =?utf-8?B?N2FYL0FiRHF5dk4wN0J0eU1qKzJNZFpoUndhb2JmcERQbjA1TFRmTnltYlVK?=
+ =?utf-8?B?TEpUUjhmNW5scFo3ZjVMY1FwVTRDN3hwWVdyWWF0bkJBbVBzbkhOVzAwWnFE?=
+ =?utf-8?B?NENzRWs1aVRjaUdEazdSTEZ1Y0d5ZElBRGhBNFVGbFpyR2gyZHp3b1lkNFA4?=
+ =?utf-8?B?ZjM0aitFc2FxSXR1UnN5VmxoalhyTjhFem42d0hZdno4dERKelg1Nm5Namtl?=
+ =?utf-8?B?NEo4UFZvSG4zc0tscm1MdGt0MERMaWNZL3gwcW95YzJZUmRXcHllZlNUaDUy?=
+ =?utf-8?B?bFJnb2g4VXpuZWVaWGgzR2pJZlZCY29zQW03bk9VUmE2akNtYW0wMUtiODgv?=
+ =?utf-8?B?Qm54WVlOcUVZbzdJMnJCMW8vdmFkbUJyb1JMWC9BS21SbFBzQ252S050WThl?=
+ =?utf-8?B?bDF6dzhIR2pYZHl5Y1YvSFB2ellsbnhnUHFjRmtRTzNHNVhDM0FjRVpRME5I?=
+ =?utf-8?B?MVhkcEhYSDIrMDlVbXZvdlRHdzdENy90NWpkVStDYXRwcndTVjVrQ28xa2xx?=
+ =?utf-8?B?RlVrZkNReFMxQlB2NnRjZHduS1VGN1l2MjJMTVpZSGZpNXBoazgyU1BQVFhi?=
+ =?utf-8?B?UEhvNzVmMWtEVUUzVjRnSDhzTUw1RlZtbWkvdnlQYmFQbjBseUlESjJzclBU?=
+ =?utf-8?B?VDFxMElEZVJlM0w0ZndUeDdBTlQ0alZBMkhha0xqNkhPdHBheHBiWTR2aUJP?=
+ =?utf-8?B?UUJuUXdOZENuVjdUSGx3cTVFaXp0YVIrSEkwTU8yYUxSOU1Nc0VGdHdiOTFR?=
+ =?utf-8?B?OGpRUkt0WUd2RHBKN25BaFhHeVlnS0hQOFk2OWJOa3lnSi9SbHBsTU1KcHhR?=
+ =?utf-8?B?T2pockNXYWhNc1hLS3A5OXdBY2YxN2xjNWtaU0RJNDVIK05iMlE3cnhZVFlQ?=
+ =?utf-8?B?RHhzN0JrSDVYMFVnN1o2V0ZVaW54TFZtWUxxVkUvQ2FxRHk1blN3SlZnRENH?=
+ =?utf-8?B?a240MVFhUC9FQVdhaDBSbCsrbDQrQk1jeko1bDNJbHVNNVU2bEx0YXd1Q2Y3?=
+ =?utf-8?B?U2N1S2NjckxQeExMR1gxc3ZOa01yYzkxVUFKODRtaHc4bm9YcTV2TFJVYW5a?=
+ =?utf-8?B?c3IxVytHN3pUMEVyVVcvNjI3SU1Cc1BURnUySU1YNThvbFc2aHptNmsxVjVG?=
+ =?utf-8?B?a2VWUytvYlJjUUpnSEV2WnFtSlJxMGlTZCtEc3NzOVpyWnZGelpMbngwTDBa?=
+ =?utf-8?B?WFc1ZCsvQ05ZYWlmUHdXSjlVWmZEcFpvQzZvSlBHMzUvVDNhTy9yUjExL1VS?=
+ =?utf-8?B?OEdpYVZscnJqTktxSFNlVC9DY3FrdUNYckZlUmNPd21HczIyM1VNV2JuVU1a?=
+ =?utf-8?B?eDYxMEwvVW1nSHcrRjJGZ0hVNk1GK0s1eWpJazZwK1ppSHkzc1ZvZWdkNlBq?=
+ =?utf-8?B?RFNyMHkyK2djMHdIT09pYlBwNHBuVnNkVVJpUFVYMmloQjVNenhiSFNOeld4?=
+ =?utf-8?B?aDd4QjFpZHRoSlNyV2laM2x4cDF4UjJydk5rcjRzeTN6R0wvdm0rUGdyYkVu?=
+ =?utf-8?B?em5LcGxGbWt0TFZjMTJmSEJOejZRN3pDVHJCSUJ2bjhHRzZRbmFlR3c2S0Jw?=
+ =?utf-8?B?NHlGZndOY0pnMktQNmpEL0JNM1h4dWNrczhKSHNzYVcwemJNRlZSK25nTWF0?=
+ =?utf-8?B?WU03RDVWVElRcjNweENSNGw1ajdVVnRITnB6UjR0cUtFT3hzRUxEbjZoWnht?=
+ =?utf-8?B?Mi8rVjU1K0VuOUNVektXNytKRnNjdkhBTG9XemYwTTJGWnFjZDFuNXAwSm1p?=
+ =?utf-8?B?Y2JSaC92RG1pbnFMOGRSazlyMkdWU1BkQnpjSUNRY0xRdW1Wak56SWxCc0Y0?=
+ =?utf-8?B?Rk5BU2FacnVTSE9SOXJyM0JISkIvcEY4YVdlTjRtbWd4b0RyUGhVYkhTUEpR?=
+ =?utf-8?B?UmVsTEpUTTNWQU5MclowVkxGcFVLdTNXWWRheENySE90WHBOQkxLZFp3dGdT?=
+ =?utf-8?Q?+X6ANpUACz9K3ZWMeYS/UMcNO?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 657cc250-7489-43ab-a452-08ddeefe1378
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 17:35:17.4901
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 37xITbMYkNCvtcpKhMFMhxikT7VY7WnPuobYomBWx4YJJKc/dreCitn0xM7hWQva
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7571
 
-Fix to use the return value of the function 'chdir("/")' and check if the
-return is either 0 (ok) or 1 (not ok, so the test stops).
+On 08.09.25 19:05, Alex Hung wrote:
+> 
+> 
+> On 8/24/25 12:23, Kuan-Wei Chiu wrote:
+>> Replace the custom bubble sort used for sorting reserved time
+>> candidates in with the kernel's standard sort() helper. The previous
+>> code had O(N^2) time complexity, while the generic kernel sort runs in
+>> O(N log N). This improves efficiency and removes the need for a local
+>> sorting implementation, while keeping functionality unchanged.
+>>
+>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+>> ---
+>> Compile test only.
+>>
+>>   .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c   | 23 +++++++++++--------
+>>   1 file changed, 13 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+>> index e763c8e45da8..2b13a5e88917 100644
+>> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+>> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+>> @@ -2,19 +2,21 @@
+>>   //
+>>   // Copyright 2024 Advanced Micro Devices, Inc.
+>>   +#include <linux/sort.h>
+>> +
+> 
+> Thanks for working on this, but this file is shared with another OS and it is not possible to replace sort function with Linux-only sort.
 
-The patch fies the solves the following errors:
-mount-notify_test.c:468:17: warning: ignoring return value of ‘chdir’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  468 |                 chdir("/");
+That's not a valid argument. Linux code must be solely written for Linux, you can't reject a valid patch because it breaks sharing code with other operating systems.
 
-mount-notify_test_ns.c:489:17: warning: ignoring return value of
-‘chdir’ declared with attribute ‘warn_unused_result’ [-Wunused-
-result]
-  489 |                 chdir("/");
+Regards,
+Christian.
 
-To reproduce the issue, use the command:
-make kselftest TARGET=filesystems/statmount
-
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- .../selftests/filesystems/mount-notify/mount-notify_test.c      | 2 +-
- .../selftests/filesystems/mount-notify/mount-notify_test_ns.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-index 5a3b0ace1a88..a7f899599d52 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-@@ -458,7 +458,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
- 
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-index d91946e69591..dc9eb3087a1a 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-@@ -486,7 +486,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
- 
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
--- 
-2.43.0
+> 
+>>   #include "dml2_pmo_factory.h"
+>>   #include "dml2_pmo_dcn3.h"
+>>   -static void sort(double *list_a, int list_a_size)
+>> +static int cmp_double(const void *a, const void *b)
+>>   {
+>> -    // For all elements b[i] in list_b[]
+>> -    for (int i = 0; i < list_a_size - 1; i++) {
+>> -        // Find the first element of list_a that's larger than b[i]
+>> -        for (int j = i; j < list_a_size - 1; j++) {
+>> -            if (list_a[j] > list_a[j + 1])
+>> -                swap(list_a[j], list_a[j + 1]);
+>> -        }
+>> -    }
+>> +    double da = *(const double *)a;
+>> +    double db = *(const double *)b;
+>> +
+>> +    if (da < db)
+>> +        return -1;
+>> +    if (da > db)
+>> +        return 1;
+>> +    return 0;
+>>   }
+>>     static double get_max_reserved_time_on_all_planes_with_stream_index(struct display_configuation_with_meta *config, unsigned int stream_index)
+>> @@ -634,7 +636,8 @@ bool pmo_dcn3_init_for_pstate_support(struct dml2_pmo_init_for_pstate_support_in
+>>             // Finally sort the array of candidates
+>>           sort(pmo->scratch.pmo_dcn3.reserved_time_candidates[stream_index],
+>> -            pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index]);
+>> +             pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index],
+>> +             sizeof(double), cmp_double, NULL);
+>>             remove_duplicates(pmo->scratch.pmo_dcn3.reserved_time_candidates[stream_index],
+>>               &pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index]);
+> 
 
 
