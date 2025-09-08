@@ -1,124 +1,196 @@
-Return-Path: <linux-kernel+bounces-805261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2512EB4861E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B13B48620
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D62A1899CCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0393A2474
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0522E92B7;
-	Mon,  8 Sep 2025 07:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9912E7BBB;
+	Mon,  8 Sep 2025 07:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="jiEpRuP3"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Lfqt42tW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A329D2E8DEF;
-	Mon,  8 Sep 2025 07:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE31B2E2EE5;
+	Mon,  8 Sep 2025 07:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318065; cv=none; b=i78L8ZndpVG2cLI5lNLru7ufS3/74yP8Ajrut0gEzOm8MEFO9P6QAlBTFOzNiX5f8CEHsfj7pIMj+vgDFEg+FKMqWkK+YFvRLDOBkV9NUDRf57Hb77FZ9lFKzsT8WzRiltBtXtjHHpRq1nKYQ3qmz80VW4b4EZG91fjKhkDaL8E=
+	t=1757318099; cv=none; b=Uq9ZtyspfGqh6fG2kGmA02gFC9n0RXYNvYJmBdFpV/6yfY3i20cRwEDqNeLMIrIyi2RcVNX8gtQhLDdRTtXrIfxzUsl9iOfETnFOEUx6lMu6oLNp+sBJx58VIjJduOFxxVod9nnNSj3pDliw3PZRjxPd0NVwYqmQ4euO/dznFek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318065; c=relaxed/simple;
-	bh=xRtcOqdjtsdZI6kf5ebzBEjwO+H4XBq0PeK8BgyDANI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O7wMx8xI9uYsijbI7SSn45jTBbIDaXoXNwN2JzaTPFbadMNLVTZ61WEbO+B36fpmLRjSWVkV/qGxWugAm0pbSEltxkZ0ucletlWXI5n1+XtznqFX1xu6qcxVCfRZcvDG9VT0hz4rHMLGo8fcwambTBA8MonE6IQZ/vzUe1Ylj/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=jiEpRuP3; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=xRtcOqdjtsdZI6kf5ebzBEjwO+H4XBq0PeK8BgyDANI=;
-	t=1757318063; x=1758527663; b=jiEpRuP3+MBrszoAF1ZYOtGZhnsE3NDZshlqBrPFKtyzTck
-	quDgBBFJF1mQznXN3Iz/d1/Oxq4PP8lc+xTv/6Ju6HT1sPh8a3fuU1JmLmG36lhWQqBaIQSJ3w6mW
-	uNXofnvVkUOJuC3IQvOiUKAwKDCKLQS+Ei4xUrcKyU0FPOFNe7etTTCddA9dvP5sd7lGATs2KtG6E
-	R0yl++3H7ysS+ODol2fiSIyTOwbm5Xx3jlzXnTqoG6eenV1uS+IXH41rHWqAm/1xD8S6kcxLimqAO
-	U886NQjeOgJWIqPCnaFCpUGDX+KXkYsr8TTqZXH2gifUauXk54gsUSMj4poO5ypg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uvWhQ-00000006zQ9-1xiK;
-	Mon, 08 Sep 2025 09:54:04 +0200
-Message-ID: <c1a4da4cb54c0436d5f67efacf6866b4bc057b3e.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next 02/11] tools: ynl-gen: generate nested array
- policies
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?Asbj=F8rn?= Sloth =?ISO-8859-1?Q?T=F8nnesen?=	
- <ast@fiberby.net>, "Keller, Jacob E" <jacob.e.keller@intel.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>,  Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>,  Andrew Lunn <andrew+netdev@lunn.ch>,
- "wireguard@lists.zx2c4.com" <wireguard@lists.zx2c4.com>, 
- "netdev@vger.kernel.org"	 <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Mon, 08 Sep 2025 09:54:03 +0200
-In-Reply-To: <6e31a9e0-5450-4b45-a557-2aa08d23c25a@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	 <20250904220156.1006541-2-ast@fiberby.net>
-	 <e24f5baf-7085-4db0-aaad-5318555988b3@intel.com>
-	 <6e31a9e0-5450-4b45-a557-2aa08d23c25a@fiberby.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757318099; c=relaxed/simple;
+	bh=9jyM4l+zzeSaXAh/J86ALE2gazQVCvzE2WjsQ8nc700=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FdiTeVrO7d1QVjIls4H7SltewwGFzHORIlI81HD85wozKig62ZB8wx+KBvg665x7fnWiw5etozkLbPUNomOj2E3bWxphitVucjAnGApODKampic9EhwtpzQb5XDVR/pYVXpadcfFJ1eK/0GFg8tauzDmK/+Qjk1X8q+16xW5p/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Lfqt42tW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587KU42E021524;
+	Mon, 8 Sep 2025 07:54:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=0AW79ARpv8Jhmkse2u1q1muQPzj9PtKwGuXjdd1Sj
+	cw=; b=Lfqt42tWnteqm5/kHosx6+dTAWIebwIqREj08XgPQV595uEkPZRSwj+L+
+	6e9OHI2m03DqHI9WROQtFMQkgw/MbcQRzDC0RhBm347W5TddV67orkm9GIjcIXcE
+	AdM4QWoE5HN3Jl1ZibiNaZTnASQ6Pds5y88tglSFPwLgsoU351XHcxR7pVJ0nDVD
+	aNuSOTTxnZNaq2ALM3UK5/FO2mBWb2hOhlag1wKJcx6Gm9yZcHF7f7O7j3SsQJNf
+	PWhSE4bVlekwrZU1S7TjYfP4g5JFoytaBVJvd/aFF566mWhkJ9DsomB9xj1sVTwX
+	q2HfYxT0SqGRMXuF//0q7EPVuzj+Q==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490uke5a8s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 07:54:51 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58861mHv017181;
+	Mon, 8 Sep 2025 07:54:50 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gm4ss0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 07:54:50 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5887slDO44761370
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 07:54:47 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E60B02004E;
+	Mon,  8 Sep 2025 07:54:46 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96F4320043;
+	Mon,  8 Sep 2025 07:54:44 +0000 (GMT)
+Received: from aboo.in.ibm.com (unknown [9.109.247.181])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 07:54:44 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: rafael@kernel.org, christian.loehle@arm.com, daniel.lezcano@linaro.org
+Cc: aboorvad@linux.ibm.com, gautam@linux.ibm.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] cpuidle: menu: Add residency threshold for non-polling state selection
+Date: Mon,  8 Sep 2025 13:24:43 +0530
+Message-ID: <20250908075443.208570-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX6krycO0Svlo6
+ mlsmkO4hxcgsKinrklU/4F3O/9JJLXVko4gIm5PF7uMogmkujbpLzeyI7e+QuefZZlH+7riVDWn
+ F1OyayfJKoim8/h1yJA+zofkUSGsa9a5bSERFyXgVb8ASf7gSHFnephP13l0ElZ9gve+xtHjCe/
+ G6PWco7XEODyC7f5mgIcsChECT/wAvbA42tSBwKfLA/uYsuQdCdTBHDijViNqr7HCZbJYW1yYXI
+ +jNOzYBWmYEGBTVMecIpkQaWwlUvdLRqhsDVkFd2NqASu0Jx+TAEhb5nnepL7zqR2v8SlCdyHOp
+ H4/aXkuDLB5WT1xdwXM+DIYNT45drFWwdzPOoPc/zAAroIFf+G9kFZwL6GXT7kChD57Yg2VZ5EC
+ mG1SF9Fl
+X-Proofpoint-ORIG-GUID: -DcVqTIjU7pbN8-ZD3a4Qpvi7HPbS1hU
+X-Proofpoint-GUID: -DcVqTIjU7pbN8-ZD3a4Qpvi7HPbS1hU
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68be8bcb cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=CjxhCAsD_r_--zMTXuoA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_02,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1011 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
-On Sat, 2025-09-06 at 14:13 +0000, Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
->=20
-> Johannes introduced NLA_NESTED_ARRAY and the NLA_POLICY_NESTED_ARRAY()
-> macro in commit 1501d13596b9 for use in nl80211, and it's therefore
-> used in net/wireless/nl80211.c, but outside of that the macro is
-> only sparsely adopted (only by mac80211_hwsim.c and nf_tables_api.c).
->=20
-> Wireguard adopts the macro in this RFC patch:
-> https://lore.kernel.org/netdev/20250904220255.1006675-2-ast@fiberby.net/
+On virtualized PowerPC (pseries) systems, where only one polling state
+(Snooze) and one deep state (CEDE) are available, selecting CEDE when
+the predicted idle duration exceeds the target residency of the CEDE
+state can hurt performance. In such cases, the entry/exit overhead of
+CEDE outweighs the power savings, leading to unnecessary state transitions
+and higher latency.
 
-I think the general consensus now is that preference should be towards
-arrays being expressed by giving the attribute holding the array
-multiple times, i.e. each occurrence of an attribute holds a single
-entry of the array:
+Menu governor currently contains a special-case rule that prioritizes
+the first non-polling state over polling, even when its target residency
+is much longer than the predicted idle duration. On PowerPC/pseries,
+where the gap between the polling state (Snooze) and the first non-polling
+state (CEDE) is large, this behavior causes performance regressions.
 
-[header][type1:a1][type2:b][type1:a2][type1:a3]
+This patch refines the special case by adding an extra requirement:
+the first non-polling state may only be chosen if its
+target_residency_ns is below the defined RESIDENCY_THRESHOLD_NS. If this
+condition is not met, the non-polling state is not selected, and polling
+state is retained instead.
 
-resulting in an array
+This change is limited to the single special-case condition for the first
+non-polling state. The general state selection logic in the menu governor
+remains unchanged.
 
-[a1, a2, a3] and a separate value "b",
+Performance improvement observed with pgbench on PowerPC (pseries)
+system:
++---------------------------+------------+------------+------------+
+| Metric                    | Baseline   | Patched    | Change (%) |
++---------------------------+------------+------------+------------+
+| Transactions/sec (TPS)    | 495,210    | 536,982    | +8.45%     |
+| Avg latency (ms)          | 0.163      | 0.150      | -7.98%     |
++---------------------------+------------+------------+------------+
+CPUIdle state usage:
++--------------+--------------+-------------+
+| Metric       | Baseline     | Patched     |
++--------------+--------------+-------------+
+| Total usage  | 12,735,820   | 13,918,442  |
+| Above usage  | 11,401,520   | 1,598,210   |
+| Below usage  | 20,145       | 702,395     |
++--------------+--------------+-------------+
 
-rather than a nested array:
+Above/Total and Below/Total usage percentages which indicates
+mispredictions:
++------------------------+-----------+---------+
+| Metric                 | Baseline  | Patched |
++------------------------+-----------+---------+
+| Above % (Above/Total)  | 89.56%    | 11.49%  |
+| Below % (Below/Total)  | 0.16%     | 5.05%   |
+| Total cpuidle miss (%) | 89.72%    | 16.54%  |
++------------------------+-----------+---------+
 
-[header][type1:[1:a1][2:a2][3:a3]][type2:b]
+The results show that restricting non-polling state selection to
+cases where its residency is within the threshold reduces mispredictions,
+lowers unnecessary state transitions, and improves overall throughput.
 
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+---
 
-Of course if each entry has multiple values, then you'd still need
-nesting:
+v2: https://lore.kernel.org/all/20250317060357.29451-1-aboorvad@linux.ibm.com/
 
-[header][type1:[subtype1:x1][subtype2:x2]][type1:[subtype1:y1][subtype2:y2]=
-]
+Changes in v2 -> v3:
+  - Modifed the patch following Rafael's feedback, incorporated a residency threshold check
+    (s->target_residency_ns < RESIDENCY_THRESHOLD_NS) as suggested.
+  - Updated commit message accordingly.
+---
+ drivers/cpuidle/governors/menu.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-would be an array
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index b2e3d0b0a116..d25b04539109 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -316,11 +316,13 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 
+ 		if (s->target_residency_ns > predicted_ns) {
+ 			/*
+-			 * Use a physical idle state, not busy polling, unless
+-			 * a timer is going to trigger soon enough.
++			 * Use a physical idle state instead of busy polling
++			 * if the next timer doesn't expire soon and its
++			 * target residency is below the residency threshold.
+ 			 */
+ 			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+-			    s->target_residency_ns <= data->next_timer_ns) {
++			    s->target_residency_ns <= data->next_timer_ns &&
++			    s->target_residency_ns < RESIDENCY_THRESHOLD_NS) {
+ 				predicted_ns = s->target_residency_ns;
+ 				idx = i;
+ 				break;
+-- 
+2.50.1
 
-[[x1, x2], [y1, y2]].
-
-
-I can't get rid of the nested array types in nl80211 though, of course.
-
-I'm not sure the nl80211 ynl code was ever merged, but it wasn't
-authoritative anyway, just for some limited userspace generation, so I'm
-not sure the whole ynl handling this is needed at all?
-
-
-johannes
 
