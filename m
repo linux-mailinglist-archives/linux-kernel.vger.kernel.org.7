@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-805011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9637FB482F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6C6B482F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A909189A92C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6263C12B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8A21DFE26;
-	Mon,  8 Sep 2025 03:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6oYDmKr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18931218827;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2627B21B9D9;
 	Mon,  8 Sep 2025 03:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBcoY00E"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378531DFE26;
+	Mon,  8 Sep 2025 03:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757302939; cv=none; b=Z5UJCzDaSRQCaGG0qmwIvhTYLzZj7Sbzr5Cq8MSlvCAlcERXKGn1ejfxeW0O//QXvFNFEX90Y/MRzEydnJvsUf/AQqzY+SSM6OoRcHB4huuAo9mHAp/xxuLdUu8j9FhwKT14VUhrAkjdgzGUG04a8FebcRTU8X6/UnKwKC343Vk=
+	t=1757302933; cv=none; b=JBU1ssgovuLZzGkKcykjqMBmomA7w5nd6fyTBM+yhv4Lnb9mU3JWfOCMTjyi5SVwxuMjC3izw+46pbFdGaHgfKaxStxV78LX753NvVrj5BwC0ABeu0gUV95irNuoBBVDjRo582FqDyNamGbT7OGvFaiM7r4RpvTX78QiPxzVcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757302939; c=relaxed/simple;
-	bh=MBX710NxvGm0v3LEfyFhHX7kzobujGNsorQ1LrWFIZM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i9JzkB8XWj+D8EN7IfNrvfJZ9uKb5xArOAnsAxTVAt6Kb5ynfYolApmIGH4rza92y9g6zOaCzi27s2roNV6UA06SsS2PsAZpbAk483NcYLG4SWbURIptdApUVecxJAXC9xXZ66bFVNHeSQ0omlbnErcnTvWffntLT/CXAj0zRcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6oYDmKr; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757302938; x=1788838938;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=MBX710NxvGm0v3LEfyFhHX7kzobujGNsorQ1LrWFIZM=;
-  b=a6oYDmKrinoZHvEEFr9TuIAVSf1uy2X4CgVZGlHjDXJqzyPdilYJ6H4M
-   /ddM6tKTnyWpvujEwbBDGW280Yas3FXA4iVPXLZjE05oouXt+T6qaBvNJ
-   z33KG2JwDSMbBfLnsBAyQQXuAJExawJsSiyxZ4xS5BzhwNWyDTMMSPl4K
-   gRRgIrwfdUD5yk+ycs/krSN+42FNHTJackUeo7UiSV3dUlh2f+XFalmhD
-   3UN52/+aNDkLtuPGni2W+fzfkNeYrEijWvF+d2SrHEN+Nqw53RrgD+0Xi
-   LVJJKpg9V3jPxDjx8MFYtCVmb0kS8WpROXwRJMgixqdg7iZRQjMuSGFEm
-   Q==;
-X-CSE-ConnectionGUID: y7eAGGKOTCyP/Joiw0R99w==
-X-CSE-MsgGUID: nDz3OXHTTPGjo9q5g62HCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="47126580"
-X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
-   d="scan'208";a="47126580"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 20:42:14 -0700
-X-CSE-ConnectionGUID: VeeHUBRMSyKHN74DVTYbUA==
-X-CSE-MsgGUID: 3wFllgK2Sp++NlPrwb3t7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
-   d="scan'208";a="172244680"
-Received: from shsensorbuild.sh.intel.com ([10.239.132.250])
-  by orviesa009.jf.intel.com with ESMTP; 07 Sep 2025 20:42:12 -0700
-From: Even Xu <even.xu@intel.com>
-To: xinpeng.sun@intel.com
-Cc: bentiss@kernel.org,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	srinivas.pandruvada@linux.intel.com,
-	Even Xu <even.xu@intel.com>
-Subject: Re: [PATCH v2 2/2] hid: intel-thc-hid: intel-quickspi: Add WCL Device IDs
-Date: Mon,  8 Sep 2025 11:42:05 +0800
-Message-Id: <20250908034205.1157182-1-even.xu@intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250828021000.3299377-2-xinpeng.sun@intel.com>
-References: <20250828021000.3299377-2-xinpeng.sun@intel.com>
+	s=arc-20240116; t=1757302933; c=relaxed/simple;
+	bh=5M+38OXF1flKK/pe3Rn3PNxUJNkR9P158X1yqECK7ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JL7jHwJ/o60studBDbTfhQQSFvzytxBPsVZhIoQ4djADsnGFAbm3FrL1nPHhn5fujzGxFjXJqREBjXxyxoe1vnMp9ZrM5iiJWhtrAtm/4YD4hgWqQ508eGsEcBe59hgb5K+v1COjof916ZWXcCS4tV4LY6Fse9/hrVx5bu9T24E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBcoY00E; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-772627dd50aso5324099b3a.1;
+        Sun, 07 Sep 2025 20:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757302931; x=1757907731; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U+1e+0HUdg61yWjXPaBCQjQfa2BpP6AkAEc+WzyDYgQ=;
+        b=QBcoY00EYRge0iGdZFkmDFJE7gU/wqMaEF9gu2AuPVBXJ/YjJJjw7wAGF/BB+IH96T
+         ztXPv2D7kcTRHskB/Z74QbhmYHfWC2OOTKxrDE3bTBaOlCuGLslyDsMIaBXRbf9IwMSV
+         kV+TRb5CczScNGUswtar6S+fBv6hVtd+5+TNcs83M01xw4smIv+BF4K55ekp3M9RozKJ
+         M0E34kiQ1CSHj66Fc88G/UA/t/9toDEXpohtKSK4ITYlBJCunyE94ehQKfmgykH9IKOv
+         FIReaONC5cCZwWtwG2lNW37p49YoIqdlHxRK07C924u1FPiCt3uh3Tvk5GfMOPMH4Q4C
+         L/hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757302931; x=1757907731;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+1e+0HUdg61yWjXPaBCQjQfa2BpP6AkAEc+WzyDYgQ=;
+        b=QHtCvBOc85ZRu2stOMidbS9D8YD9vvtOZEpHWHY9/Pn/7Khg2JRrfrG9Kev+zNCuLm
+         EVQ58VOIYlAMGJZaSn17IJqp9WymAWulTjbwBgoSyXNP1V78iOvku2m/7kJ/YORApjfz
+         FUyj2vWKjj8GG1extCZNQlEqMpfPOIwfh6t2BHbzW5iloCVHAgf0h4bmmBHSR6N7SH4I
+         jNylgwsGCitC/wCDKTG0XeZai6AdNF/brHpZudV4cB9nHxDn7RvZyM1kpwLE/PjzAt5f
+         iDtWPxDdaRNac0MGvDfC0C9HPkdF3vUljQvIIGLy/ldzWWKt6TrEibTexrePZq1jELSI
+         QKEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU93wMiQ138ZZCWnwqm+VJyB9hE5L8kDZ6lb9qhitRIrpSOfCkeZBHKVdwJL0AAnbkkAdmMMfVmOOcVn0g=@vger.kernel.org, AJvYcCXPLQa/DK4stanD8CD3Bcl3TOpx6eyI2E6U5FlVW4A4a7FD/nQbyHT27Dxl8hAQDzCJdL7qMLYf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxOgvijn0Aax3RA+FLjXzAuTizRTu/zwFirYQGxROhgTIuPmyN
+	1UlsKXU/WjX+UtlOqOPsI2vxQfUjblppBphcjTrReW3Iaj2eHlC8fY85
+X-Gm-Gg: ASbGnctTAApHb+jjgixghBGZfQ/zuP2IgIc/tpLRn9otV2WCYq7yCXomyP9bqI1hayb
+	tsM7QYaXEf67vYI1GVgoh7BVpwDaKUZuGf/cwAeg1JADE7iau76JtYKNRBRZillH1njZCwVzNEY
+	wG5ht61PBNl/bW9QlYjfsuzXB28TN+Lvli2D4V+btQf4OJRQL5zjm8FK4ybADUdcGQh2v+dJfF6
+	7x/7KXa3XA8WTfmr/GB8KxKgJSC1O8A5+EFrrj639i8I/1/fdOhjL7/R+JPs3axrfzXmelHdBV9
+	EgtxIYVy3JaI44c4nekn2iaoaPCUVsw4Ob6ibFwq5Fpm6fAft7u45j2NpTz7MFOHDz0V7GAK8Rj
+	/edRsnXKiCRwXior2+ZS2CnAMMOhl5Y+tdPcX+SDlg1cQDVwZ/xEdK8TYVCLSIsDS
+X-Google-Smtp-Source: AGHT+IFym9/ZyWlFSAtj45FEcnWbuZrDZ7vdDlfKQgVCfxByEEg/FOXBUbqQlwPkP1QsceSJ5oG9xg==
+X-Received: by 2002:a05:6a20:1611:b0:249:467e:ba70 with SMTP id adf61e73a8af0-2537d380c42mr9254262637.24.1757302931335;
+        Sun, 07 Sep 2025 20:42:11 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fb15f50d6sm11545588a12.0.2025.09.07.20.42.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 20:42:10 -0700 (PDT)
+Message-ID: <b807385f-91cb-4fb6-a0d4-52d240ae2757@gmail.com>
+Date: Sun, 7 Sep 2025 20:42:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/175] 6.12.46-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250907195614.892725141@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250907195614.892725141@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> From: Xinpeng Sun <xinpeng.sun@intel.com>
-> To: jikos@kernel.org, bentiss@kernel.org
-> Cc: srinivas.pandruvada@linux.intel.com, linux-input@vger.kernel.org,
-> 	linux-kernel@vger.kernel.org, Xinpeng Sun <xinpeng.sun@intel.com>
-> Subject: [PATCH v2 2/2] hid: intel-thc-hid: intel-quickspi: Add WCL Device IDs
-> Date: Thu, 28 Aug 2025 10:09:59 +0800	[thread overview]
-> Message-ID: <20250828021000.3299377-2-xinpeng.sun@intel.com> (raw)
-> In-Reply-To: <20250828021000.3299377-1-xinpeng.sun@intel.com>
+
+
+On 9/7/2025 12:56 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.46 release.
+> There are 175 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Add THC SPI WildcatLake device IDs.
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-
-LGTM, thanks for the patch!
-
-Reviewed-by: Even Xu <even.xu@intel.com>
-
-> ---
->  drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c | 2 ++
->  drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h | 2 ++
->  2 files changed, 4 insertions(+)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.46-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
 > 
-> diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-> index 5e5f179dd113..84314989dc53 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-> +++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-> @@ -976,6 +976,8 @@ static const struct pci_device_id quickspi_pci_tbl[] = {
->  	{PCI_DEVICE_DATA(INTEL, THC_PTL_H_DEVICE_ID_SPI_PORT2, &ptl), },
->  	{PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_SPI_PORT1, &ptl), },
->  	{PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_SPI_PORT2, &ptl), },
-> +	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT1, &ptl), },
-> +	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT2, &ptl), },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(pci, quickspi_pci_tbl);
-> diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-> index 6fdf674b21c5..f3532d866749 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-> +++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-> @@ -19,6 +19,8 @@
->  #define PCI_DEVICE_ID_INTEL_THC_PTL_H_DEVICE_ID_SPI_PORT2	0xE34B
->  #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_SPI_PORT1	0xE449
->  #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_SPI_PORT2	0xE44B
-> +#define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT1 	0x4D49
-> +#define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT2 	0x4D4B
->  
->  /* HIDSPI special ACPI parameters DSM methods */
->  #define ACPI_QUICKSPI_REVISION_NUM			2
-> -- 
-> 2.40.1
+> thanks,
+> 
+> greg k-h
+
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
