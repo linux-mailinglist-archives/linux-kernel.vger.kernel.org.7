@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-805524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1721FB489A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:10:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A183EB489A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626EB3A6D69
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466ED1671D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F127D2F7468;
-	Mon,  8 Sep 2025 10:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A996F2F3631;
+	Mon,  8 Sep 2025 10:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCPGrtxc"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofx8qPL1"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FBD29A32D;
-	Mon,  8 Sep 2025 10:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7702EA752
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326233; cv=none; b=YoFvSIy7s5qo+QTpcWbhEokEOoDbq0IPC44UpNuvIS9pPn5eGiyuHkBnEHKFrfisDusB/4HrtaJqlEikQujDGeD967jNE0ORwzG8Z1eMnPbe3PVCguYc27JbUqjfFdLM+iBAkuyt3bpETY+tG9CNh8meqffMEfOiuah+TkNeRQs=
+	t=1757326188; cv=none; b=U9CEtMX/uMIXQWiGhfOeX9YoLFTbDp9GVkupZkae1j2mEYEZdfe52mTArAqKxe3bRkrPgZsD6tm9VMS6l/gA2glVQE+2DFixPKZh1BUO7OAywuSeXhztA7djSc1IhQSilywnsj8OsJ7JDV4Dp5kB4WRy9j0NpJ13+lBjvpbu2JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326233; c=relaxed/simple;
-	bh=mFuFOvwPmJwAbN9qPHGvdRcN3HHHjEi7sF6DmlckDMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O+PWPRmTy7U8M9akPPp+DJMwy9ydHCVlYSin7qfHkMVBxq4tU9zElj44G1DFXNvnG4E6OECFwL4IaCqxKdShZjR8OXyKNbPd55K0u39jC6IHW64etfkZ8Tb4cK0AzX4r+69SMT/u9OxtzUGodmFTM8yQ/+OBZoVAWttZulYYOyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MCPGrtxc; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45ddcf50e95so15016795e9.0;
-        Mon, 08 Sep 2025 03:10:31 -0700 (PDT)
+	s=arc-20240116; t=1757326188; c=relaxed/simple;
+	bh=fB0j1knneymsQb6zW3oZLg20Ti2gTC3sDQkEwCRnNb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlpcstUaVTJLBsT98BC8YDVm+UsCSwe6ZL3HzGQujmFOlHlQ+0xukUMgAM443xeIdSHsxXFqIQk2323yowJisrH8FkaNNbjojXGoxZczGNaRgwM/FQ4qPhOLNiDRVj4/IR4YGo0zu82p/ZmtlEWG6fAi83a6q+1W+xP/mDxr/VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofx8qPL1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6228de281baso3653736a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757326230; x=1757931030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:list-unsubscribe
-         :list-subscribe:list-id:precedence:references:in-reply-to:message-id
-         :date:subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEz+Em4KcFOihPHl7+oJJANOhPUPqUcx/sA2JXEHLYw=;
-        b=MCPGrtxcZOuvRMCWXgmznh4n6pvVq+V3nKPUGbV26V8dpIorJOE73y9JKGZJc8M1P6
-         3PvZ+SpfB8dY3fguc2DE1jKP6Y4KQenZJBscxuhwOTtFo2aetm/Gsh3EdzASBHTPT+Dy
-         fn7EGXtOqSx7IZpOhLbXFz3Wxbc92WMP5uWKMl42uqPO/C4pt6S5T/3hma5VJqkGQeTX
-         Pj084JwWbtrFIGMKm7B6YDe38Njd5WZSIwISkrccTMYWV7YVCcwfojMjurV4LI9O9Wjn
-         JEq6WWEOlrJAY2HJFlnH8gZ+RfqRpe246LUXLlUDsQ+6AuyUA8fZyhSSMO4yj7l70Nne
-         DcCQ==
+        d=linaro.org; s=google; t=1757326184; x=1757930984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HmnKeVv8YY/fXGQA22sRQfhv2+yYeWQAe73fa2iIOM0=;
+        b=ofx8qPL1OqEDNEXZbdmvX/BAEfCQYAafCrNhcCjU/DbxHtOmkTRRWImAn2Rpr/ccOx
+         A56VpwSWiucH1+xMdV0Nj0fwexK5LQ84j9FFNVgoPV/yYru5Td7b+gV7h6xcWiQ4oajX
+         8DjoFVkeNOBr8eH5lWhFeyopgI/Gv9TkR1hXicuYdHNgxwUh5pWZ79wcOCfnKqBjgh7I
+         X5DvNJfEXJoZ+jTlIrIhxgbxPVId0dhmEbFfFaGw+UMVrdiNGHxZLoRTWLe/1NTp7wrn
+         9pjv+HR06bgx8QFzYZIx/PuEjxo4ZZdto/++av7MiHUXykthmQZcE6VycnlGD2V84gj8
+         7kiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757326230; x=1757931030;
-        h=content-transfer-encoding:mime-version:list-unsubscribe
-         :list-subscribe:list-id:precedence:references:in-reply-to:message-id
-         :date:subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1757326184; x=1757930984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nEz+Em4KcFOihPHl7+oJJANOhPUPqUcx/sA2JXEHLYw=;
-        b=ijTOQJ3rDE9BhCDgulxEyzQKKn3kaTkkGE9fZT9JN9+bYIL08M4gBriMC81RE+JDmg
-         Ykok1ssm8uqAXhxerTYTnhlF1yYedoR7OHm5EZs7UtlQqW+ZfoswsERdfSOqVbStehfc
-         e12oW0pZqILZNZ/smS83HIFaEl8CAIpOWPjr/K3lUtHErVOcrFVihi3cV4hsnFQH3hhF
-         DgNfxnIQxHLGG5Ld/2G9DWPMsAK6XC76RDllFw5nmhTxodwdj8HhoMnJtL605i7b8RDa
-         fJCT4XlWz//1oXGm7GRSAZcghBuRYfwyPrrkunfBwkQZB+230bNFy7WecSFX5jKkh7m4
-         kGRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUowJLTGcWkERYz8vKXW1UzWjRI/Q698MlltNpkcCw2kXSZyujgWSCJwaCMSvL9/o8yARXlQT+95+o=@vger.kernel.org, AJvYcCWbodMVqdL6NnOj/xPMyEMhMQEji/s3qKuxe7JL+MC0VvRhuX7atb653e4Mrbo6F/pEJ9Xb233h5hyON8M3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMxFmpX3RfmmM13/A8ALYdSc5w07qrhwb3jvD2JpQnCs4HaxqD
-	oZQ6ScbCdT10MniTN0vIraCSEI643ezUSx6HT+Jrjlq6hGjUWp3xVnzW
-X-Gm-Gg: ASbGncv3zGxPjtS5emPwpjvuFMMDe9Ks2zDlAafq7mPUh33sYadAtuxD5rvz4JBSend
-	BcSS7O+IQJujL1T4AJ4DtHzOEr9a0LxE9KJZfBRUmlCK5zsj5rNxVNpjAiRVPQGuHV3mlpUM/RN
-	VCH0NE052sn+nm9R8oLNcH+mR6wqHE5aie8b0HQ+tgRTxWAr+8nD6vgCo83BWg4jgY+kvPQFYsR
-	0xh7r3kjvY4ezwxaGLaudEPGno7vXAjwA1xBt6n2sBd0iEYCS2Lc+0gSNLoPXl/Jt9phNCmfi2r
-	AbCmUdcFLYlkwLE9bsEmAjhZrAsRBLzeRBATOS+oGlvE+CE331lQX5NrYm9mlezxNaPg4EcYSev
-	EnKDQvijo9RcSKypg6tWxwaLt
-X-Google-Smtp-Source: AGHT+IEXq7zsbLWoeBLVjjDgNCg06cJkPK+gGZDWWxQKZCTOtFGDmBRwiKg70/ycWnZxMXLglLDO8Q==
-X-Received: by 2002:a05:600c:1c0d:b0:45b:9961:9c01 with SMTP id 5b1f17b1804b1-45ddde832ebmr76690925e9.16.1757326229742;
-        Mon, 08 Sep 2025 03:10:29 -0700 (PDT)
-Received: from gmail.com ([147.161.145.84])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e50e30asm439408275e9.24.2025.09.08.03.10.25
+        bh=HmnKeVv8YY/fXGQA22sRQfhv2+yYeWQAe73fa2iIOM0=;
+        b=dYHu9ZhWP+aqsanv54acpKk3NYLQCMhRIhA8dUBUH6W59Ky/QfU1LQa7NyqltUNFuU
+         L/NMOD+9+KKsJ8GpQVzWTrpDAZNl0+8TADGRZllB4oZp2ATbgQUUSI694kn00QWbsyXC
+         4IFD1woWK04Hw3ywnSQJo4BhqN54QTMndt/nI05WBLu8ir7gI9oMVbr5yC6Ui5JloOo/
+         dHP8lqAG3M12W0AqrgwipVcRnMlsFVVQq5ci2buHTvxHZIWKKjuD9LziQpofZYZurecz
+         m9xIdhnPIy2Odfd8QPB32hRlVCv8nHnzN+fxk/8aj2X44CKXdFLhMqYDARjuYVxBle5A
+         r9kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwtOQ8KUrfKmam1Wi1IlinMmGIZIbn/OmDqjdkjuQjGaoUhAk16tgezqF2Iu4moEV+rt3Kpku8WDxmIFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWnTzqAUNuve/ElutDO4bJ7cYN9vrk97yI5itYH0aTxJOmTNqK
+	HPvrXNHlnRkWw5gQuK5Qhw37R6lEFVetH40X4YaEHzsoZQmd1vbNfrNfu5AueujNcgE=
+X-Gm-Gg: ASbGncuhGqtD0qpj60GcC9iY85ivLG/PPdv4du/r3l0EqBKsElrrar2gJFIvRSDqZpf
+	BHCPHjNWE7fxx5nA1vnI5kwAnlYa7W/yN2hO1YBjRLTpa13rOnBjh2xPz5S4pDg3O8ELJGitUgK
+	sdbg44N7cVRyO4bQEIRS2C35accWZe8eSyrpzCJhrhMLZjdjR50ba5S9O2mqtoled6SUZ6heIhq
+	8CvLbTjei9L3QeTCJoYGi8Znb1Htd4IO1k7jOCPjgTZuu0PERv/UrD3zgrYQIEfFw90OXTvcYe/
+	Fz8EmJ+04A5nCCv0/xLu5z3jJQ90kk4Di0qRzMVBBDZ+b9DD6fr7qERxL9N6quBISAKLi+R/pzG
+	kF5WrxlAn+7VxNIaEwef5B3QTCuc1aNO6
+X-Google-Smtp-Source: AGHT+IHT9tblAzVu5lhgCq0ztZJTqFIki97fYAjqSfcc3xjXv/tUZI241Ra1XOnBVaFhW1VRKrKEng==
+X-Received: by 2002:a05:6402:3550:b0:62a:c9b9:cddd with SMTP id 4fb4d7f45d1cf-62ac9b9d0e2mr609155a12.38.1757326183688;
+        Mon, 08 Sep 2025 03:09:43 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:1f60:42e1:1e1b:d240])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm4229469a12.1.2025.09.08.03.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 03:10:29 -0700 (PDT)
-From: hariconscious@gmail.com
-To: corbet@lwn.net
-Cc: catalin.marinas@arm.com,
-	hariconscious@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	will@kernel.org
-Subject: Re: [PATCH] documentation/arm64 : kdump fixed typo errors
-Date: Mon,  8 Sep 2025 15:39:01 +0530
-Message-ID: <871pp8a9ze.fsf@trenco.lwn.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250816120731.24508-1-hariconscious@gmail.com>
-References: <20250816120731.24508-1-hariconscious@gmail.com>
-Precedence: bulk
+        Mon, 08 Sep 2025 03:09:43 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:09:38 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 4/5] i2c: qcom-cci: Add OPP table support and enforce
+ FAST_PLUS requirements
+Message-ID: <aL6rYq5gmX8CdeE-@linaro.org>
+References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
+ <20250904-topic-cci_updates-v1-4-d38559692703@oss.qualcomm.com>
+ <aL6Vp-3er71AJPJd@linaro.org>
+ <f508bf92-a513-467a-a946-17c41e1d72d1@oss.qualcomm.com>
+ <aL6X-RiCyPVbHlYN@linaro.org>
+ <5178a6b1-1b5a-40d9-af40-68ee13975509@oss.qualcomm.com>
+ <aL6nZdJCKmnWcswB@linaro.org>
+ <1899862b-530b-4a75-93fa-c70c90d98016@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1899862b-530b-4a75-93fa-c70c90d98016@oss.qualcomm.com>
 
-hariconscious@gmail.com writes:
+On Mon, Sep 08, 2025 at 12:00:13PM +0200, Konrad Dybcio wrote:
+> On 9/8/25 11:57 AM, Stephan Gerhold wrote:
+> > On Mon, Sep 08, 2025 at 11:49:52AM +0200, Konrad Dybcio wrote:
+> >> On 9/8/25 10:46 AM, Stephan Gerhold wrote:
+> >>> On Mon, Sep 08, 2025 at 10:43:50AM +0200, Konrad Dybcio wrote:
+> >>>> On 9/8/25 10:36 AM, Stephan Gerhold wrote:
+> >>>>> On Thu, Sep 04, 2025 at 04:31:23PM +0200, Konrad Dybcio wrote:
+> >>>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>>>>>
+> >>>>>> The CCI clock has voltage requirements, which need to be described
+> >>>>>> through an OPP table.
+> >>>>>>
+> >>>>>> The 1 MHz FAST_PLUS mode requires the CCI core clock runs at 37,5 MHz
+> >>>>>> (which is a value common across all SoCs), since it's not possible to
+> >>>>>> reach the required timings with the default 19.2 MHz rate.
+> >>>>>>
+> >>>>>> Address both issues by introducing an OPP table and using it to vote
+> >>>>>> for the faster rate.
+> >>>>>>
+> >>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>>>>
+> >>>>> Using an OPP table for a single static rate that remains the same over
+> >>>>> the whole lifetime of the driver feels like overkill to me. Couldn't you
+> >>>>> just put the "required-opps" directly into the device node so that it is
+> >>>>> automatically applied when the device goes in/out of runtime suspend?
+> >>>>>
+> >>>>> And since you need to make DT additions anyway, couldn't you just use
+> >>>>> "assigned-clock-rates" to avoid the need for a driver patch entirely? We
+> >>>>> use that for e.g. USB clocks as well.
+> >>>>
+> >>>> This is futureproofing, in case someone invents FastMode++ with a higher
+> >>>> dvfs requirement or for when the driver adds presets for a 19.2 MHz CCI
+> >>>> clock which would (marginally) decrease power consumption
+> >>>>
+> >>>
+> >>> If 19.2 MHz CCI clock is feasible and has lower voltage requirements,
+> >>> then I would expect a separate entry for 19.2 MHz in the OPP table of
+> >>> PATCH 5/5? The DT is unrelated to what functionality you implement in
+> >>> the driver, and that would make the OPP table look less useless. :-)
+> >>
+> >> The frequency plan for 8280 does not recommend any rate != 37.5 MHz
+> >>
+> >> For x1e80100 however, the lovsvs_d1 corner is recommended to be 30
+> >> (yes, thirty) MHz, sourced from CAM_PLL8 for $reasons
+> >>
+> > 
+> > The 37.5 MHz rate still exists on X1E I presume, or are you saying we
+> > need more changes to support those odd 30 MHz?
+> 
+> Yes, any corner over lowsvs_d1 is 37.5, sourced from cam_pll0
+> 
+> > Personally, I'm not fully convinced there is ever going to be a use case
+> > of someone using a "non-standard" frequency. Even if "FastMode++" is
+> > invented most devices will probably want to use it.
+> 
+> Not really, there's no reason to make your i2c bus go fastfastfast if
+> the devices on the other end can't cope with it
+> 
+> > And the voltage
+> > requirements we're currently talking about here like "low svs" during
+> > camera use cases are kind of negligible compared to others too.
+> 
+> Again, this is an I2C controller that seems to be associated with
+> cameras.. No image data has to actually be processed for the
+> communications to take place and you can attach any odd device
+> 
 
-> From: HariKrishna <hariconscious@gmail.com>
->
-> kdump.rst documentation typos corrected
->
-> Signed-off-by: HariKrishna <hariconscious@gmail.com>
-> ---
->  Documentation/arch/arm64/kdump.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/arch/arm64/kdump.rst b/Documentation/arch/arm64/kdump.rst
-> index 56a89f45df28..d3195a93a066 100644
-> --- a/Documentation/arch/arm64/kdump.rst
-> +++ b/Documentation/arch/arm64/kdump.rst
-> @@ -5,7 +5,7 @@ crashkernel memory reservation on arm64
->  Author: Baoquan He <bhe@redhat.com>
->  
->  Kdump mechanism is used to capture a corrupted kernel vmcore so that
-> -it can be subsequently analyzed. In order to do this, a preliminarily
-> +it can be subsequently analyzed. In order to do this, a preliminary
->  reserved memory is needed to pre-load the kdump kernel and boot such
->  kernel if corruption happens.
-
-I don't think this is right.  While reserving judgment on
-"preliminarily" as a word, the intended use is adverbial, so this change
-does not make things better.  The better fix, perhaps, is to say
-"previously" instead.
-
-Should you choose to resubmit this, we'll need your real name in the
-Signed-off-by tag, please.
+My point is: In the unlikely case that support for faster I2C speeds is
+added in newer SoCs, I think you'd just get a new "standard" base clock
+frequency, add a new cci_data struct with adjusted timings and everyone
+will use that (even for the lower I2C speeds). I doubt anyone will
+bother adjusting and validating this for just one "corner"/voltage level
+less. There are much more effective targets for power optimization than
+the few bytes of I2C communication. :-)
 
 Thanks,
-
-jon
-
-Hi Jon,
-
-Good day.
-Thanks for the suggestion, will correct and send the patch again.
-And my real name is "HariKrishna" and see that it is mentioned in Signed-off-by tag.
-Do I need to add surname as well ? Please let me know.
-
-Thank you.
-HariKrishna.
-
+Stephan
 
