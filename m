@@ -1,182 +1,238 @@
-Return-Path: <linux-kernel+bounces-806944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA87B49DE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8634B49290
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01C184E0310
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEC8517150B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40831B4236;
-	Tue,  9 Sep 2025 00:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41130DEB7;
+	Mon,  8 Sep 2025 15:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5nD+AA4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WCNPORw0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB96173;
-	Tue,  9 Sep 2025 00:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9843E235BE8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757376994; cv=none; b=eFY8CyUR/MZf64cFztBpvz2p2kRiH+OKKblJfbPv9rNCo6jRfpXRl1XqvwbbyADk1p2FGBJwZkrePqGSkP4n4dIO7Chpvs/+lmKWUXDNdyscSx92vPvh6DAYZLmkTUfD8TTMYWwPIbQwZk1thjKRBZQ5BjX8kyO8sPI4wfzvpN4=
+	t=1757344087; cv=none; b=ah3uL+VfKWBPYyNBRFaQZHRMbe/PXxMDSkXC6D5f0PIBstsP/5fsJB4SvsGVVOg84PFDiK68rIiTBTNMHmqz5K9Qn7JnYCBiRCPRLDHbI7KagOyx9HfXajOuVDTA6BuxE526DpqqUHY7/ZF5jqhd8CngU8CGTJbQKjxhchPsrJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757376994; c=relaxed/simple;
-	bh=7EmNl0AiWorMC2hdJ8vEHhI6St/xXWrepBy19CUbVGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOYhBlAJS8b1/RwXBidKz7dDamD0aPBTMAd/d13LSR/Gi+eCPcSVRRlHM8e2pA55tzYiwNR/hsSQG+FkR5oXCCmNiZPxM5HuDFUSytWEhAGgIqW3znr9+CIUbi2HSH6GTbCKfOlPFpmTTv+HRG8eVq7kwRngC+ZZQTxVI4v0llo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5nD+AA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF63C4CEF1;
-	Tue,  9 Sep 2025 00:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757376993;
-	bh=7EmNl0AiWorMC2hdJ8vEHhI6St/xXWrepBy19CUbVGI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Q5nD+AA4WT6kvHkjsMLFy9Ys85te7ttCpjEHIfDX5W8na4UUvpZIxSZ0es1+LP6Uc
-	 4m1RKtU56dPei8F4OvGNd3VTuFYDV13xuI2cwYIIdd8Sb5mEYdGe7sILMS7zeRd2mo
-	 LqIrD7t0rJ4mxquNsEPlNeTZ2W9nckaCbvt7Wa/p+IYwryKbEwHh4BzHGVsXB8wbeY
-	 0VNmf9p5zf5RPHESdD7B3CCzlSDOF0QiudLIC5Lk0oe9tlAiskaQXZ0v+NRN3mI8jo
-	 nB7Mut5WvbXZO8hSRXhA0ZLk9BRSc6ST4z0whWIFIZbe86Z9pta91mLbk4NtWA1Q/N
-	 8xeKMxhbtsvQw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 83E22CE0EA2; Mon,  8 Sep 2025 08:07:48 -0700 (PDT)
-Date: Mon, 8 Sep 2025 08:07:48 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Jens Axboe <axboe@kernel.dk>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH 0/2] rcu: replace wq users and add WQ_PERCPU to
- alloc_workqueue() users
-Message-ID: <c83ad820-3380-423d-aa1f-96e3cd2c56b4@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250905090747.107232-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757344087; c=relaxed/simple;
+	bh=SErWpM2CPGCjvtF4PGxsUSQobXtOk2CdeRydRwakdIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ejCvrt/oa8k7YRqxzmxubSmScENmoYhAslOOsqR/JW5IJd62kkysL5kVSlaFTkFry9zUFiOIX6f5p9Hu2n2QBQhMJSgbtaNo/2DuNNL9x6cRxTvv5gXEmS7eXCBls2vO/WCdwfArAny9AfzqjyId+VmzS3o2AqUC+NWhMhus8j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WCNPORw0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757344084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5pKUW/icABhJPZyV0g3yxdIs8s3bqfZdt2XQu7KwBtE=;
+	b=WCNPORw0x+7hwYjVrnlL1p2excSXr+NzyJf5lFrYB1DhuQOLLGUA7gz60wGxspoLFJ3/0/
+	RxYLxknIWuaq+b+MtWA0X8ZtPD5Hd9GPmcHSH7xkWZiCyS6HymnvhrO49k60jC2x60WgRX
+	7oR9Xfcyn7e6GxWu8HSfGXGKrbheSmY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-mXTe2AC1OvC4ev1kIA2gnA-1; Mon, 08 Sep 2025 11:08:02 -0400
+X-MC-Unique: mXTe2AC1OvC4ev1kIA2gnA-1
+X-Mimecast-MFC-AGG-ID: mXTe2AC1OvC4ev1kIA2gnA_1757344081
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45dd56f0000so27339915e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:08:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757344081; x=1757948881;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5pKUW/icABhJPZyV0g3yxdIs8s3bqfZdt2XQu7KwBtE=;
+        b=Iepn34THxj+zr3LtxwQGg3dKGpRM4qZr6lPIBhNO+A8ZDxa6LFdVtEAa4HL08ugvPi
+         aaA14ewbHm9V1G8C7W3PefP+lrvmEgRerMfuQD96foCu4sA8L66z238N+rSG2ENvgHwS
+         v+plJ73yUx81nqvcWUBeNL3LEQptVAr/KoEjJzLw7YaIYKjqqRl/rAHp/WcgyFoaP4Fn
+         4ixpWBCcEvAWtHSVWtoL+7xP7tdFAuHOx9xaRjnWsBklFaNY54ZGhPuIABsuTcYLtLEe
+         asv+yaenTf8XtG1QUBS51+lx/0B3ItmQb2GXpKRTNCzmENmCqHn8lXgx2d9vOXXbJztL
+         FJdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKu89frXp5pFJwYBh6VnLmk5nLPsVijBFjU0CqRk9mG7llO2s3emPPy44Q8uQv7gKuYED/i4tUVZQjNu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBCMH9Vi0DNyHnmITVfLbOE7egIcluh0bhRIN0VUUVf9sN4cEV
+	bYpOMfUfnKq/EWZrqzMPVliHaQPSF49YLgaKvitHDYgCrGgULpzBBieq3duUvesf5FnBpTPIp/9
+	vHF5AxC505ca6wr2xWAygI8CsXYP1/JeTdwwdrC4a8GykIXf7GWU50x9XNFeY+3zGig==
+X-Gm-Gg: ASbGncsyNAy519yosTbaeGz5hF84j/ChySf6Cub8+CT7un5Gzat2gyGUgTVSojPhJqx
+	L+pr9J26OJdQ4hUZM+Oj2NdvbZZ1CRivcms/ZSe+WfqWyQdyiRXPJTGKsy16ybJ+BhbxSR7/tMU
+	GsWax500BaTkqXKQPvx5XSwD7bNXSEI8nAyToxlU/Rj8i+zsfQPxmOadeZVCXGbz7xFWM9imLhg
+	6kLohRpGJkzqKVBOh17F4J2HXIxZPVl/RQC5WkBxpfSCD3clGJmixdRmfwOyJ0oumGB9eEcYAuM
+	v8D7JSJF5zAZZBKZW6oWd7We4NRdLCC3CoRXGwBFtAZTEVL7zJrL0YVbCJ+G5egv+WD3NtT0dDH
+	FcC0lGnuwZDoaqhXcbQFm7VEpCox41cMJygM0juLyvBB2drSiCvekb61QQ2hv7deW
+X-Received: by 2002:a05:600c:5299:b0:45d:dd47:b45f with SMTP id 5b1f17b1804b1-45dddef7fdamr66712805e9.31.1757344081166;
+        Mon, 08 Sep 2025 08:08:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+Vkq5qu+3/zUjGE8hzCjU/5dhhaUv80YZQC3pknfc7Ya8cxmZvSqhgPFMqrGgKhR5fxqC4A==
+X-Received: by 2002:a05:600c:5299:b0:45d:dd47:b45f with SMTP id 5b1f17b1804b1-45dddef7fdamr66712145e9.31.1757344080658;
+        Mon, 08 Sep 2025 08:08:00 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de6e787desm19519385e9.8.2025.09.08.08.07.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 08:08:00 -0700 (PDT)
+Message-ID: <af3695c3-836a-4418-b18d-96d8ae122f25@redhat.com>
+Date: Mon, 8 Sep 2025 17:07:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905090747.107232-1-marco.crivellari@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+ Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ kexec@lists.infradead.org, kasan-dev@googlegroups.com
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+ <20250908125101.GX616306@nvidia.com>
+ <e71b7763-4a62-4709-9969-8579bdcff595@lucifer.local>
+ <20250908133224.GE616306@nvidia.com>
+ <090675bd-cb18-4148-967b-52cca452e07b@lucifer.local>
+ <20250908142011.GK616306@nvidia.com>
+ <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 11:07:45AM +0200, Marco Crivellari wrote:
-> Hi!
+On 08.09.25 16:47, Lorenzo Stoakes wrote:
+> On Mon, Sep 08, 2025 at 11:20:11AM -0300, Jason Gunthorpe wrote:
+>> On Mon, Sep 08, 2025 at 03:09:43PM +0100, Lorenzo Stoakes wrote:
+>>>> Perhaps
+>>>>
+>>>> !vma_desc_cowable()
+>>>>
+>>>> Is what many drivers are really trying to assert.
+>>>
+>>> Well no, because:
+>>>
+>>> static inline bool is_cow_mapping(vm_flags_t flags)
+>>> {
+>>> 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+>>> }
+>>>
+>>> Read-only means !CoW.
+>>
+>> What drivers want when they check SHARED is to prevent COW. It is COW
+>> that causes problems for whatever the driver is doing, so calling the
+>> helper cowable and making the test actually right for is a good thing.
+>>
+>> COW of this VMA, and no possibilty to remap/mprotect/fork/etc it into
+>> something that is COW in future.
 > 
-> Below is a summary of a discussion about the Workqueue API and cpu isolation
-> considerations. Details and more information are available here:
+> But you can't do that if !VM_MAYWRITE.
 > 
->         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
->         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> I mean probably the driver's just wrong and should use is_cow_mapping() tbh.
 > 
-> === Current situation: problems ===
+>>
+>> Drivers have commonly various things with VM_SHARED to establish !COW,
+>> but if that isn't actually right then lets fix it to be clear and
+>> correct.
 > 
-> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+> I think we need to be cautious of scope here :) I don't want to accidentally
+> break things this way.
 > 
-> This leads to different scenarios if a work item is scheduled on an isolated
-> CPU where "delay" value is 0 or greater then 0:
->         schedule_delayed_work(, 0);
-> 
-> This will be handled by __queue_work() that will queue the work item on the
-> current local (isolated) CPU, while:
-> 
->         schedule_delayed_work(, 1);
-> 
-> Will move the timer on an housekeeping CPU, and schedule the work there.
-> 
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistentcy cannot be addressed without refactoring the API.
-> 
-> === Plan and future plans ===
-> 
-> This patchset is the first stone on a refactoring needed in order to
-> address the points aforementioned; it will have a positive impact also
-> on the cpu isolation, in the long term, moving away percpu workqueue in
-> favor to an unbound model.
-> 
-> These are the main steps:
-> 1)  API refactoring (that this patch is introducing)
->     -   Make more clear and uniform the system wq names, both per-cpu and
->         unbound. This to avoid any possible confusion on what should be
->         used.
-> 
->     -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
->         introduced in this patchset and used on all the callers that are not
->         currently using WQ_UNBOUND.
-> 
->         WQ_UNBOUND will be removed in a future release cycle.
-> 
->         Most users don't need to be per-cpu, because they don't have
->         locality requirements, because of that, a next future step will be
->         make "unbound" the default behavior.
-> 
-> 2)  Check who really needs to be per-cpu
->     -   Remove the WQ_PERCPU flag when is not strictly required.
-> 
-> 3)  Add a new API (prefer local cpu)
->     -   There are users that don't require a local execution, like mentioned
->         above; despite that, local execution yeld to performance gain.
-> 
->         This new API will prefer the local execution, without requiring it.
-> 
-> === Introduced Changes by this series ===
-> 
-> 1) [P 1] Replace use of system_wq
-> 
->         system_wq is a per-CPU workqueue, but his name is not clear.
-> 
->         Because of that, system_wq has been renamed in system_percpu_wq..
-> 
-> 2) [P 2] add WQ_PERCPU to remaining alloc_workqueue() users
-> 
->         Every alloc_workqueue() caller should use one among WQ_PERCPU or
->         WQ_UNBOUND. This is actually enforced warning if both or none of them
->         are present at the same time.
-> 
->         WQ_UNBOUND will be removed in a next release cycle.
-> 
-> === For Maintainers ===
-> 
-> There are prerequisites for this series, already merged in the master branch.
-> The commits are:
-> 
-> 128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
-> system_dfl_wq")
-> 
-> 930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+> OK I think a sensible way forward - How about I add desc_is_cowable() or
+> vma_desc_cowable() and only set this if I'm confident it's correct?
 
-Queued for review and testing.  If you would prefer to route this some
-other way, please let me know.
+I'll note that the naming is bad.
 
-							Thanx, Paul
+Why?
 
-> Thanks!
-> 
-> Marco Crivellari (2):
->   rcu: replace use of system_wq with system_percpu_wq
->   rcu: WQ_PERCPU added to alloc_workqueue users
-> 
->  kernel/rcu/tasks.h | 4 ++--
->  kernel/rcu/tree.c  | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.51.0
-> 
+Because the vma_desc is not cowable. The underlying mapping maybe is.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
