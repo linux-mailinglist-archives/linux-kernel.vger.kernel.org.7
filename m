@@ -1,119 +1,85 @@
-Return-Path: <linux-kernel+bounces-806377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24878B495B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:41:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E8CB495BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB9F164C79
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8F9176466
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B433128B6;
-	Mon,  8 Sep 2025 16:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yyy4cZKc"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AA830F93F;
+	Mon,  8 Sep 2025 16:38:09 +0000 (UTC)
+Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D951D5CE8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC58A30CDA9;
+	Mon,  8 Sep 2025 16:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349430; cv=none; b=jULEfzLlg3qycqnpdI3Dau75GMONrRnp6WYALBEqwNeAyHsj0eL+02ZRCRYIviRd6oeQvRs2qoouusowPQc7Ke9Qd8jzYkoyzkZdNbApE+C2MnOr1wGThIIN06ow6aUADVqVRXQwMPPWDV1Rdz2bPHjJVRo6DFSqec+2Q1VWYls=
+	t=1757349488; cv=none; b=GZ3zHK757kpKPainQngxWlB8FKMZZbV/xjkgwr8ySDkO1WBJzCXdEI09ofn+vBG9aH96Zqitvl7p79hs8hA3eCZxkzvF7MP1Hl7WFAVYH9cej4hGTxT42W7gNLLq0WYkv+1XcLJibajysg4GbXODisquZPlAo3OYdtzuHiLcBuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349430; c=relaxed/simple;
-	bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d/7pRgWoXvu/i/9E2tVlG5x5Z0vZIEvkygmnarSmofdeLFM9FordQn++JH0FfbMmcnp5L82mxXgME97YAicxTOH63lbJ2+H5SHCnmkQB5XoTDlbMoaB7o2LpE9uUoIdRg32RrnArRAiaqnYg+DrE5QdkFwydsyckX6vbcpDe3QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yyy4cZKc; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32ba1f9c87cso311221a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757349428; x=1757954228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
-        b=Yyy4cZKc8crY90mGnCGCNfXPuTsDlQb8/rXT99TkpyadAPH8+oVvqGpEKA7uM5XHsM
-         jMdsMqM4D489/sDYmBiDyIHpASB1bnIMBxxztk3loEW+skb9JZBwMm+y0BFJlAi6WKrA
-         66s6+Ywqw7lFWwY4VP/zn7TOXsUlru9m4i7MqcVpvL8i0mDDhmzJ8rs/JqdPi4GTObHl
-         ExLD6BxY5cNeYNULUCDFLbuo5qRaVWyhMzUB15I9acKSF2cqJs3n1/cQiYDXLQN29u+U
-         xwS/Ma+WoA7La5REQb8WiDJUbjuZzwePyYkNUiMyxCqrABYDbxCj/INlX72xz/ujdVAs
-         UCCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757349428; x=1757954228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
-        b=LhiTeNHpF71eUAsUBniYaSL9HRy3aVWl/XKDlRBYvGzdsd0wlzDF91A7Q3rZiI4ks9
-         ExVr+0BP1chXW0vUlCs3WYLLQ2FEYYb7kfFMEfHZLFtOX1ojCZ3sp9qqKufTLqZeAEoe
-         0WZtT4fO9B7rGNjrLw97AR4vADJGXDoFN8Vc8hquCvjrAkyOSFXl5F5RkgNSLB5Mmrql
-         bcxE8d2EquEd1VJMbvg/cYkkc2t6NtBH+esURZ9eu8FmTx7H9nLaeT8E6wK/sVMNV5nB
-         YiqtmIxDiW1T6+dZad7PePQ8u+IQcD1VE0sxgbQLZKWRT1mOCXzkuJxfHuaLGEbKA9kS
-         vedQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLMgvozEO+LaGo2tVgGnlF+DeDI7/CLMWySfnGB85GKdFIZl/NQ/zxNa5WXFsUIm+49AlyEafJlhRV2w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuzt8YBS5LcgQpsdkeEA/hnjDv25Rfyj7jUylY7a1z0HSBH37t
-	WMuteoBlpa6dgpRNGNEQdZNIuQQ5TLJWEVCiz93PyjG4Dlb7DFU+pjdzomY+RZXo95V0EyGPgIR
-	vXDZUvAhHsI868TREStmFAZYEoJR6upE=
-X-Gm-Gg: ASbGncta19HpoR8T8dNhYJ173oEigd2r6EasPeLAAGE/qV6eHyHx2CTghLlHY26adK/
-	/7i0Gq4+AX14PZmV3ZbJBJDj3D/FKzb75duVx10etOSyemTHgHu1Rf0x3pXaHwzm9qxMgAv9xJp
-	fwOSUP2qQEtJ7ycWwIpT4dqP7+pAX4mx1eSQJrggEBdmtgdB9acBlms3IUtrmJceEU5iex6IvHk
-	yBq0nVrk8rnGqazFK+FJo8RMcQKqdCU47YuebmwV4ZU/enNuIeFQgE7atuO2elediUlzs8zlYhv
-	0fVz/HHa0R15VYsE6u75UzBcGQ==
-X-Google-Smtp-Source: AGHT+IG2myJ7vzeUyIz9b/rwozFXjQ9JQF/2Y9pLORdR5ksocCK1zUif0LUhypbVeitvwClaHWMsNtcB6ahJXXZ/3H4=
-X-Received: by 2002:a17:90b:1c89:b0:329:df65:de88 with SMTP id
- 98e67ed59e1d1-32d43f9765bmr6140000a91.7.1757349428321; Mon, 08 Sep 2025
- 09:37:08 -0700 (PDT)
+	s=arc-20240116; t=1757349488; c=relaxed/simple;
+	bh=zZHPynoOaZGptn++iz8ruNlYNX3tfi3RSMpIeMy4EyI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:References:To:
+	 In-Reply-To:Content-Type; b=As1ZwteE1KsHZLVtg69hMYeOu9mXajkZWlLrnR4BvvIbUhJd9v0da/Z4z3WbodswpB1vR1+WzdR6xIlWWfeh9s5uh4D4YPYZexIxOkE1nIc5iKnpDpZ2oIeHu9JhwlmUuUjNonN/QYq3+Ic84p0gNIIY3obDQIexW57A4iP0lEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
+Received: from [192.168.42.135] (85-193-34-16.rib.o2.cz [85.193.34.16])
+	by mx.gpxsee.org (Postfix) with ESMTPSA id 359173918D;
+	Mon, 08 Sep 2025 18:38:04 +0200 (CEST)
+Message-ID: <f4256d82-e13a-4a67-9e72-7e9454f4e879@gpxsee.org>
+Date: Mon, 8 Sep 2025 18:38:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908125339.3313777-1-vitaly.wool@konsulko.se>
-In-Reply-To: <20250908125339.3313777-1-vitaly.wool@konsulko.se>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 8 Sep 2025 18:36:56 +0200
-X-Gm-Features: AS18NWBiOfnr_oE4JYJeMuf8U4qWLrtNvA_XHCFt0ZnpsbVAE9UetqtcLRqpwkM
-Message-ID: <CANiq72mekzqaNak+KYxqzxOeKpmNDYPO2bvATw6FkOjHWO1w0w@mail.gmail.com>
-Subject: Re: [PATCH v3] rust: rbtree: add immutable cursor
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Martin_T=C5=AFma?= <tumic@gpxsee.org>
+Subject: [PATCH 2/2] media: pci: mg4b: use iio_push_to_buffers_with_ts()
+References: <f65be4fc-0ed2-4b7e-9955-7f64200a51bf@gpxsee.org>
+Content-Language: en-US
+To: jic23@kernel.org, mchehab@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+In-Reply-To: <f65be4fc-0ed2-4b7e-9955-7f64200a51bf@gpxsee.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 8, 2025 at 2:54=E2=80=AFPM Vitaly Wool <vitaly.wool@konsulko.se=
-> wrote:
->
-> Sometimes we may need to iterate over, or find an element in a read
-> only (or read mostly) red-black tree, and in that case we don't need a
-> mutable reference to the tree, which we'll however have to take to be
-> able to use the current (mutable) cursor implementation.
->
-> This patch adds a simple immutable cursor implementation to RBTree,
-> which enables us to use an immutable tree reference. The existing
-> (fully featured) cursor implementation is renamed to CursorMut,
-> while retaining its functionality.
->
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
-Could you apply the `&raw` operator suggestion from v2 so that we
-don't have to migrate those later?
+On 9/5/25 9:06 PM, David Lechner wrote:
+> Replace iio_push_to_buffers_with_timestamp() with
+> iio_push_to_buffers_with_ts(). This adds an extra argument with the
+> buffer size to ensure that we aren't writing past the end of the buffer.
+> No functional change.
+> 
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Closes: https://lore.kernel.org/linux-iio/20250724115610.011110fb@jic23-huawei/
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Thanks!
+Reviewed-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-(For some reason I am not Cc'd)
+> ---
+>   drivers/media/pci/mgb4/mgb4_trigger.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/pci/mgb4/mgb4_trigger.c b/drivers/media/pci/mgb4/mgb4_trigger.c
+> index bed8bbd4bc595d1d131b9919c6f3b705e43ba3c4..4f9a35904b4186618a554e3047d6b46ff7ed74be 100644
+> --- a/drivers/media/pci/mgb4/mgb4_trigger.c
+> +++ b/drivers/media/pci/mgb4/mgb4_trigger.c
+> @@ -97,7 +97,7 @@ static irqreturn_t trigger_handler(int irq, void *p)
+>   	scan.data = mgb4_read_reg(&st->mgbdev->video, 0xA0);
+>   	mgb4_write_reg(&st->mgbdev->video, 0xA0, scan.data);
+>   
+> -	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
+> +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan), pf->timestamp);
+>   	iio_trigger_notify_done(indio_dev->trig);
+>   
+>   	mgb4_write_reg(&st->mgbdev->video, 0xB4, 1U << 11);
+> 
 
-Cheers,
-Miguel
 
