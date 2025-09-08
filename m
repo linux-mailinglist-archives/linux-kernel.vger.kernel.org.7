@@ -1,92 +1,66 @@
-Return-Path: <linux-kernel+bounces-806644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B1BB499CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE95AB499D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077A0166C77
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:21:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F318B16EDB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367F22749E4;
-	Mon,  8 Sep 2025 19:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D559B279337;
+	Mon,  8 Sep 2025 19:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaDbZ97F"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="AEva1hBP"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CB526CE3F;
-	Mon,  8 Sep 2025 19:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201CF17A2EA;
+	Mon,  8 Sep 2025 19:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757359280; cv=none; b=cqVDTslw5sQAdPpuaybonaakKL8HLY3z9NtZV2wPS1Z32xqy4/VNPhmOf7RiUSyCfEK7RenCXnpE8CYGBTExsodWnO4S78q8W/1do0LmdNadeCsdwRldHI5sVt1VA9+vwrJ9yHOGJ/opbla/r3pB2WRVWiNiJ6cY0i2dXNTNojI=
+	t=1757359282; cv=none; b=lfpYLj0AgSBm6oOb5ET9wgFdMVemropvLqgfZKla5mwXPqTFqixbK3TaL5MexPpkKeTsiJ2XBz+10RgeKJQAS474jefay9yAEqiTVpWe+kRTbPqVJn5vSZIyYsubAMogJlgsFncdSMn33F/BCP+iq8TXqLKzuZF2XuAofPUzB30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757359280; c=relaxed/simple;
-	bh=DnsN3SiunjW30Pc7Ja1WNWuLjt0wV0mNNmfV3ffPysw=;
+	s=arc-20240116; t=1757359282; c=relaxed/simple;
+	bh=eGNGo9UmbpcgmCGZTBYS1wzSgvq07uLAlDB4ZzlkLuA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mopkfS9BIhFaGvFz8ZJaC1XDWu9mqpgW8wCfqueMj31o0QO9AsuGkrsWccvP1IZPQXAiLR2hSgvfs3WlowHloxNgnucrkaUw3X6PcpgrFiIPvw+yJlDGKV5TVAIPbELdefNB4SBBIbzLlY5mUgrm0yDDAZsakfnReanCeoT5zIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaDbZ97F; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77238cb3cbbso5022075b3a.0;
-        Mon, 08 Sep 2025 12:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757359278; x=1757964078; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wgg1at4wkwhreQI7T4ximNUyuokPLJmixYnE22ApgnE=;
-        b=WaDbZ97FTn7EwZo4h4zkEEpc212V5ozCpqxY4Gv545NQn14WU/itydcZPeljPMP72Q
-         ugE98EiYZrVPjQOtxMckB3isVQ1UANJ4QJt2gnW+nOrEc9c/4e9EoCNXFmuePis52tCH
-         VTZaBYE/2bTRxC4p1UEhwbktaJEDloFwyoMUCan9f8YUQ2FQDHzwHCxeJV1+UjimlijA
-         IMkIfdlWbKbztSWjiSSNWXng6L4GwEG4UUqIfUfOssIvMNBLZi3t+H1uLOlU0fy31Lfk
-         ADEHr6GYKSfKSdkENYcwNJjzsBVF4w5z1oWRNRq2IMaf4UQJbUVN/2ksmp9J/1m/OfhS
-         meHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757359278; x=1757964078;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wgg1at4wkwhreQI7T4ximNUyuokPLJmixYnE22ApgnE=;
-        b=B6V33VAx6kamSdbn7K6ZoEs2CBo2pT9rIj8sYsaqhniobtoe2NjdQVVoh2FDrVjR3T
-         09CSrW73pZCdh+4ykXqcV5QLlxCNNokkHKl7mx0e14ohBnNpsKYLNjD8LE/KUP+Z3OHV
-         CLF+qPIHfUEUeJxTrIo3u+tAOMT4LHCbxNe47HfcHlYCskdM9dUAzEyhjabgnStPbb8r
-         PA4sgudYd0wS7jsrVusI+IpMgpVP0R3AtwUeZz1zG/DFrLxfiucIiqVWjg8t6rzfFouq
-         DZv+g8uORrStE9w7B8li74tUQFeZcRyK0l+bNlqVXNYRgUuc6XaaLZeD7clEQnjHV81b
-         WpYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRWBBPLfgJoN+7HFxmgXTFaEaC7nOvu6ql7Dg+BkQGO25q1i8MrjDMHYcbyn5YpV71kHpT5+pPga2p@vger.kernel.org, AJvYcCVT+kHWl/ox9i8fPswuwB4s7jpvKnM7fdQLCa8fiup9hLchTR7lolZ/AaT2yCjIyqJD6JXRlKnUoADO@vger.kernel.org, AJvYcCWx1o5rHO8IJomslBnTrIxwBr6VRPpFl79+F2u6YGDlqaD8KCTq3A27Es0aVz8cXWid8+jMCq12uSOs9x8=@vger.kernel.org, AJvYcCXeLEAIhg180UD6uzyUE54BugXpWVRNvXiojwlh6Vavg4GZDMzlVAkI6LH4aude3iKRWFoXZKtN2rEQ5EG2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKoXk0fPemP86dMYbZigo4htldaOo8nL/L3wb7hHqmFikLH8jR
-	oitmuS64KewOyCJhYOu2YfI/UZXyBJI7PUvNS5DikqRuMysLHMAbCS+e
-X-Gm-Gg: ASbGncsqXTlyI8XDdjzInsbWZRuFdhug0/p5utlRB6FClTD8qB5rrFyXQ8ylGupx7GN
-	zbcroPiF9BB1E5ZVL6wuS+Cy/tidzqYX2HNtG2zNs2e0TrxHGO4PDTfPU/aov9JhCrE7jxCtijq
-	dcZ/Sc4D/5U6vHJQ28eK5S2rdrQeSKmAQlmWqmhv4Xp8U3lmUf6zoJGJdqX38KucR2B2L+BMUZP
-	q3FBTUuw757XoAdkZP1rSHtZF/anOyqloMJQRSFVsGcEC8zYp5imtlZMQ61HuSmZtjKsMVTJ1zs
-	ZyKoZSJX/1M1bfnvHPqBcz070jTdWJQDm4qrqQm+HSnwVc15c6oQkAWqM845akZsGU2Fz1aVVLk
-	vinGAZv/KN4LkxHqAbessSxv+FfD5Qit4EG8=
-X-Google-Smtp-Source: AGHT+IFlJrpMAAnyy7zodare26mRKWFXFZpuNf/04HtUbLbUJ+XjBGtLGQhhyMm8Tce/rYcmFHo6Vw==
-X-Received: by 2002:a05:6a00:1598:b0:774:52b9:b17e with SMTP id d2e1a72fcca58-77452b9b3d0mr4075187b3a.30.1757359278050;
-        Mon, 08 Sep 2025 12:21:18 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772409e1e65sm26446404b3a.101.2025.09.08.12.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 12:21:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 8 Sep 2025 12:21:16 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] hwmon: (sht21) Add support for SHT20, SHT25 chips
-Message-ID: <5be8972f-0ae3-40d6-929c-d737608d898d@roeck-us.net>
-References: <20250908-sht2x-v4-0-bc15f68af7de@gmail.com>
- <20250908-sht2x-v4-2-bc15f68af7de@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=icgDu3Tcqqr3N3vUFIK4mWhLy1HrcGw3g+DdgsObGUoBVOgdlCs1ENKq2em2giXyNm+9/L7PKsteI+XdpPfxcmOcjvIVJ6oUjawAdXQI8Avui/+E6Z8Cezv+0CcfwGn72CIY9id24w5qYcCGeuBVf7IEgHlfY1xqTY6vKk6oljg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=AEva1hBP; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (xdsl-188-155-97-38.adslplus.ch [188.155.97.38])
+	by mail11.truemail.it (Postfix) with ESMTPA id 6037A233EF;
+	Mon,  8 Sep 2025 21:21:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1757359278;
+	bh=vNiJoZ4QWly/KKvQRA2zpDh1zo/FXO7FdLLjYNaY9w0=; h=From:To:Subject;
+	b=AEva1hBP1OMIUEQmEmbb/BEeW/1N3lzEYFQ/yHSmH1NCRGcDJ61jbFBXYb9p8Qe8P
+	 pcGpKwQB7OIC5vh5Wh2NdODeFMQUjo9y8HvNQ6XqTvnO3kDinHoD25KEwtpctoviHC
+	 oO/5AgJC5Kx91lZ9EohwAOdl1OdAlgUuDOgeKUTOMMZkQvzQSTedfu0AODGaAiGBX5
+	 k6H/SPoZFyFVPnpT23pA2dXYf8vIv+B3M7CqDUf0M6QVAFCu0RB8VI/cAuw7Roq4SX
+	 JGFawAW+pTiQdOqII2v9cOFqMzwdnF1EgDe5YVq/zFurwvq1897567PewOk3CbmlZH
+	 03xTFxkjNLyaw==
+Date: Mon, 8 Sep 2025 21:21:16 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, afd@ti.com,
+	u-kumar1@ti.com, hnagalla@ti.com, jm@ti.com, d-gole@ti.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	Max Krummenacher <max.krummenacher@toradex.com>,
+	Andrejs Cainikovs <andrejs.cainikovs@toradex.com>
+Subject: Re: [PATCH v4 16/34] arm64: dts: ti: k3-am62-verdin: Add missing cfg
+ for TI IPC Firmware
+Message-ID: <20250908192116.GB4217@francesco-nb>
+References: <20250908142826.1828676-1-b-padhi@ti.com>
+ <20250908142826.1828676-17-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,14 +69,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908-sht2x-v4-2-bc15f68af7de@gmail.com>
+In-Reply-To: <20250908142826.1828676-17-b-padhi@ti.com>
 
-On Mon, Sep 08, 2025 at 10:54:50AM -0500, Kurt Borja wrote:
-> All sht2x chips share the same communication protocol so add support for
-> them.
+On Mon, Sep 08, 2025 at 07:58:08PM +0530, Beleswar Padhi wrote:
+> The wkup_r5fss0_core0_memory_region is used to store the text/data
+> sections of the Device Manager (DM) firmware itself and is necessary for
+> platform boot. Whereas the wkup_r5fss0_core0_dma_memory_region is used
+> for allocating the Virtio buffers needed for IPC with the DM core which
+> could be optional. The labels were incorrectly used in the
+> k3-am62-verdin.dtsi file. Correct the firmware memory region label.
 > 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> Currently, only mailbox node is enabled with FIFO assignment for a
+> single M4F remote core. However, there are no users of the enabled
+> mailboxes. Add the missing carveouts for WKUP R5F and MCU M4F remote
+> processors, and enable those by associating to the above carveout and
+> mailboxes. This config aligns with other AM62 boards and can be
+> refactored out later.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Verdin AM62
 
-Applied.
-Guenter
+Acked-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+
 
