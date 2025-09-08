@@ -1,118 +1,154 @@
-Return-Path: <linux-kernel+bounces-805075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF014B483BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B464AB483BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781E43A6BDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D3917512E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4167F21C9E1;
-	Mon,  8 Sep 2025 05:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8B821FF35;
+	Mon,  8 Sep 2025 05:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKOJTUdZ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HZIZUfgx"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9560745945
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 05:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3E36B;
+	Mon,  8 Sep 2025 05:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757310359; cv=none; b=Kma1WU2bccEwqfgUZ/JTWyU3vUxyWXWMgRmc60lTJ6zE5sIWAUpWgclUSflYMyL+tF49KHsbfo2GgcQRsIV+BbkxgvVrbZD4sLKzkxDnOStU1SsgS08QxdxRzVdrvOUSOktVJjWmQNU4jwEDGKK/lFfyD6OH65SKWoFxhnIqrnA=
+	t=1757310402; cv=none; b=TRk5zcAEpXZ4VEJY4H/RJRMxlb0edeGUGli/S4AJYayIIis4RUu6uvAsVaMLEPiH1aSyN9bCWee3xItcnZbHcLDGZJ6dAQ7XioFTSBP+Qmqukf7mDKihaBeJEc9Od0tIpNFFPj1/8ulDILzEeRSrQo66H8gnBpokkSZYn8QDKs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757310359; c=relaxed/simple;
-	bh=Z93EEMLZ8bdepan4BINitcyJFnBNPlN2fw5mo9Yqvos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMBm1OATf9WGVM2T0lKDvM0OM4mZ3s7MZJ9BvCYm98fv6q2qwuwkdZR+cmLwVRzXQfMTiBk9OmNAg8lee79U2bPiC4kR6k0EXkHcszXD7RDCYfCPvEwwlJu8TTwxOBee9i8CmosFrRvr+BU6nw7k8SzkDguHIw+1o+sQtiW6+C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKOJTUdZ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dde353b47so5132195e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 22:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757310355; x=1757915155; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+fMI7jrlec1AYc5iE/AykLzEwl5evDQP4qBoNzK6d4=;
-        b=OKOJTUdZK48uCdEZXPshpcq6dnuABq4T0+zoIRi4Mcasj2dQatRjPSppit/FT4rRmc
-         5ERA5fJMqX6om6iVFo6KN5an613f7HVq7vkoR1c2kcc/E4FXDWUZVQqEVevFwqZKn+ty
-         vzhTlmtfiYkbEisxeyNhGWwLXxBA5BxlmG/n1jOsPLFCk6MTnL+rzBgiGAm2GqJGMakv
-         z0kJr5h9+/+HMHg2dQbrUd8rrK8crIRosYXDOXcxyUdUUtRAj+wF0XsR6eeeKk6lo9He
-         +dNtMsHswgd1DML1dC9PGMQc1I+A8mJxbe2uLJgcGwe1A89ljhTdU0J5k0qcRPkseo4i
-         O/oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757310355; x=1757915155;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+fMI7jrlec1AYc5iE/AykLzEwl5evDQP4qBoNzK6d4=;
-        b=FeNsEs3VoWkVcpiZk8jnSjuKhbQaAmyz6z0TWSnIHRZuPodaetk/eEaEoisYdIxYdt
-         zJDGfQa3bg0AArOIZkF6mJKQzK5sEu2Gz4ztFx738C2eDdc2i4pIjkFGAb2ub6xKBBjW
-         yrMUmzf7lQIW9lqk/zMgaQ4lSrN/iuE7Y7CCulJhDv8aJNzdZW04IM66PqUs9Bgy6DJK
-         BHm27Q6rXYWDhVDF4zyOkJ6hnVEO1cIAhZobs2uKQDXE9vb1A2AmjXz7GDHBle8maHLr
-         Zs7CeZHbNVkCiITX3xrGBI1PkzuQs3bIfpqHBTQ6u9Oea/NM/tWuXhOF4EFr1jaSHU/m
-         BukA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP/gKYkNKHnElA6HJOHcSfW/rYf/VTE+WT5zTCwSrlphi2LlQARR1sxgjfZ+yh9FI2Ya3u7aD9LNjhCgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4b5eT4lKpqVl6IEi/Y5BbIsi4GoUbmcWu1jhfQ4sIGtgMn+d1
-	N8usrLgRi1NF5f38k1xS1hZYLfXXUNgeGlP/IJXNTbQGY80yoRFmjrWamt4aROEzRbI=
-X-Gm-Gg: ASbGnctux3oXtHnGSi4G/jb7JwAu2NhvyO6axIiFCljf0DDLDEIQ45gclk4oA1oZneB
-	GNJ913HYqjVH+2MQX7+AMotioJvn4UI3g/rRuTm9QOINB1W87wHL7iwPs1PkS09uMaZqZfOOayB
-	fH2xbXZC8bm1baScnMzNjL9YoOWcL/1gTEbTfA+rkRH5OQ3fZU6cafcY5boozDTgzFGka8jwXa2
-	tIL3G7Q0y7IpgWUnGj1k5vSNvTrdb4Ww1H4O9IMgTmx+jWPg1LUm3fVOKGYagjGcfKT+Pb6gjxg
-	Gp8VSTyDzOJ3bbCRRTuhblnvaHc6wt3AI1HouwUSHrgBFBaznqebvk1nVJJcLjd02QsQjqSn/by
-	Pwtk1Ah3p6wZ3vWaY78clrAJZOok=
-X-Google-Smtp-Source: AGHT+IFrY+W8Zw7FZwKYzK8IHAxbMi7aFqUaLDdeIhsBhJpxTXZZW2/teY75/VCxA00xqU8hHX5z9g==
-X-Received: by 2002:a05:600c:1f90:b0:45b:8f11:8e00 with SMTP id 5b1f17b1804b1-45dddee8f49mr43141705e9.37.1757310354706;
-        Sun, 07 Sep 2025 22:45:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e74b2e0511sm1114669f8f.62.2025.09.07.22.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 22:45:54 -0700 (PDT)
-Date: Mon, 8 Sep 2025 08:45:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yiming Qian <qianym1996@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: sm750fb: fix coding style issues in sm750.h
-Message-ID: <aL5tjv_2YkvHPs5C@stanley.mountain>
-References: <20250908052133.8888-1-qianym1996@gmail.com>
+	s=arc-20240116; t=1757310402; c=relaxed/simple;
+	bh=IhlDzU8v4sxj9kgiVqNqdxcAcjHWZWp+A0k2p7rweT4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hJVvI0u2Hqp3bknc2fpkguBRnWt/pNf3e6DtQf85nh4ZKNgbm5mJ13lbyn09SX17Ms8X1Wtfd+xCaw8TbjoZ6dcDnxWvUUOAhMO8dCEp9FuQ+DKgeoZpVJ8gM9TuXAJEggMnwQZFHMlStc3gS5TLOgy5NkJfBGYwrmN08YLQZ3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HZIZUfgx; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5885kIoT4177018;
+	Mon, 8 Sep 2025 00:46:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757310378;
+	bh=6JUrHOaCwdFcfKI+71eVuDBjCs4fIIRwLXH05PdzWro=;
+	h=From:To:CC:Subject:Date;
+	b=HZIZUfgx9/+2hXStkyI1e5YjwCa3Gs5R5Uyn2z5QugAWvNVK76VxdUpFjA12cA9Cn
+	 wUI326LFYvARVpLuJ185dmmI8GXWZWoHwCs98vqx3AjmJmrx7IQ6/PAO//kCtSd+cX
+	 AiQCOqBGt83MauU2GQ8PoowVNtDS1Gfwe756ZnkY=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5885kHCb2775068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 00:46:17 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 00:46:16 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 00:46:16 -0500
+Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5885k960075469;
+	Mon, 8 Sep 2025 00:46:10 -0500
+From: Harikrishna Shenoy <h-shenoy@ti.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <sjakhade@cadence.com>, <yamonkar@cadence.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
+        <s-jain1@ti.com>
+CC: <h-shenoy@ti.com>
+Subject: [PATCH v3] dt-bindings: drm/bridge: MHDP8546 bridge binding changes for DSC
+Date: Mon, 8 Sep 2025 11:16:09 +0530
+Message-ID: <20250908054609.1113360-1-h-shenoy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908052133.8888-1-qianym1996@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Sep 08, 2025 at 01:21:33PM +0800, Yiming Qian wrote:
-> This patch addresses several coding style warnings
-> reported by checkpatch.pl:
-> 
-> 1. Replaces CamelCase variable names with snake_case:
->    - dprBase -> dpr_base
->    - dpPortBase -> dp_port_base
-> 
-> 2. Removes unnecessary use of 'volatile' qualifier
->    from the lynx_share_struct members.
-> 
-> These changes improve code readability and maintain
-> consistency with the kernel coding style guidelines.
-> No functional changes are introduced.
-> 
-> Signed-off-by: Yiming Qian <qianym1996@gmail.com>
+From: Swapnil Jakhade <sjakhade@cadence.com>
 
-You need to split this into "one thing per patch".
-[patch 1] remove volatile
-[patch 2] rename snake case variables
+Add binding changes for DSC(Display Stream Compression) in the MHDP8546
+DPI/DP bridge.
 
-regards,
-dan carpenter
+Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
+Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+---
+Changelog v2 --> v3:
+-Update the name of dsc register block.
+-Add the reg-name list in conditional based on compatible.
+Link to v2- https://lore.kernel.org/all/20250903111357.2605199-1-h-shenoy@ti.com/
 
+ .../display/bridge/cdns,mhdp8546.yaml         | 20 +++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+index c2b369456e4e..eb51f9595da8 100644
+--- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+@@ -27,6 +27,8 @@ properties:
+           Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
+       - description:
+           Register block of mhdptx sapb registers.
++      - description:
++          Register block for mhdptx DSC encoder registers.
+ 
+   reg-names:
+     minItems: 1
+@@ -34,6 +36,7 @@ properties:
+       - const: mhdptx
+       - const: j721e-intg
+       - const: mhdptx-sapb
++      - const: dsc
+ 
+   clocks:
+     maxItems: 1
+@@ -100,18 +103,27 @@ allOf:
+       properties:
+         reg:
+           minItems: 2
+-          maxItems: 3
++          maxItems: 4
+         reg-names:
+           minItems: 2
+-          maxItems: 3
++          maxItems: 4
++          items:
++            - const: mhdptx
++            - const: j721e-intg
++            - const: mhdptx-sapb
++            - const: dsc
+     else:
+       properties:
+         reg:
+           minItems: 1
+-          maxItems: 2
++          maxItems: 3
+         reg-names:
+           minItems: 1
+-          maxItems: 2
++          maxItems: 3
++          items:
++            - const: mhdptx
++            - const: mhdptx-sapb
++            - const: dsc
+ 
+ required:
+   - compatible
+-- 
+2.34.1
 
 
