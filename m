@@ -1,44 +1,60 @@
-Return-Path: <linux-kernel+bounces-805215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8085DB48590
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:38:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118B4B4859F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4890B7A1BA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD99C17F34F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796892E8DEB;
-	Mon,  8 Sep 2025 07:36:18 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDC82EE276;
+	Mon,  8 Sep 2025 07:36:49 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B552E2EFC;
-	Mon,  8 Sep 2025 07:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548092E9741;
+	Mon,  8 Sep 2025 07:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316978; cv=none; b=FfqIG4uGR9tqjrXw4lLpffcrYOrC8Ivv+Vthuh9BE/ij2zwyGfH5wLIUMCppJ2YHiwBPvSgw1XbxN24vCyBylWyj/ax54wXdcX6kM5Mbx23XYwnCfYIkwfUBdpvOIVvMClAVYQWR35COtqwfQ6h2yWBp8YUopMlN6Idel/EATQs=
+	t=1757317009; cv=none; b=Pon51YqNsttl40oTup9XjhNikpW63SovE8lReBTYykxZspIkQvqA5/d4TPJ6Hf8BtGK1v7A2SIwUnvkQ8Q1rCl1iN93z37JwepfRSJ30gEHcaQv9aqFR44IWCiImooxRIyNFoSmPAzF/kQUM66sbAh976VZZhG+2TvTbDz6Sab0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757316978; c=relaxed/simple;
-	bh=gyazbsxG6Gq+/qGboWGhnRTaMRG1xYrWLEuvVFzuew4=;
+	s=arc-20240116; t=1757317009; c=relaxed/simple;
+	bh=rhMUG4/AcKJ0wBBqdSgZc045WqEYWJre1gSPDfVVHSc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JV+R5ySbcvPr5UDZRe9tdSv+Mg+K+yYrzGLs/EmWBXOzcmKv7fCZ4fHzUDCMFzWNtDToVm79KZh7Q7MlAB/JsBMBycwdPqF5q32VPn8Db8IriVUy5/dyX2bua71IBSB+4V44yoyq4I6SHagVu4WIExfkvlFtaxaep1zbptoq2vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cKzK56zJKzKHMXN;
-	Mon,  8 Sep 2025 15:36:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 143001A12B1;
-	Mon,  8 Sep 2025 15:36:10 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8Y1mh75oNiApBw--.63375S3;
-	Mon, 08 Sep 2025 15:36:07 +0800 (CST)
-Message-ID: <94b30154-b7c9-436e-bae8-6120bd6d1b78@huaweicloud.com>
-Date: Mon, 8 Sep 2025 15:36:06 +0800
+	 In-Reply-To:Content-Type; b=AHXdtgl0DWp1t3wlchQ/RbsD+gDaLRmWTrZ8deSmImHXWJH+6NYYW2b3pVZI3YLsgrt6sV3ZsSwffmhDAO4gjvUh/r+QHmfNMV74Ab4U0hxh+AaRogG0cME9iLi5fnCxMadEaZQah6zCQjVMKj10QMEcliagETPxKLpmMPi0dkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8cd7b37e8c8611f0b29709d653e92f7d-20250908
+X-CID-CACHE: Type:Local,Time:202509081451+08,HitQuantity:2
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5df52faf-dd0c-4de2-8e8b-19184aa7ff79,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f6a7994fb7f88b258705a5b9368f90b6,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8cd7b37e8c8611f0b29709d653e92f7d-20250908
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 909605093; Mon, 08 Sep 2025 15:36:36 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 395D5E008FA7;
+	Mon,  8 Sep 2025 15:36:36 +0800 (CST)
+X-ns-mid: postfix-68BE8784-12002628
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id A56AEE008FA3;
+	Mon,  8 Sep 2025 15:36:35 +0800 (CST)
+Message-ID: <fecd3bf1-c8a5-4514-b3be-311a09abe5a9@kylinos.cn>
+Date: Mon, 8 Sep 2025 15:36:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,89 +62,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] tty/vt: Add missing return value for VT_RESIZE in
- vt_ioctl()
-To: Jiri Slaby <jirislaby@kernel.org>, gregkh@linuxfoundation.org,
- npitre@baylibre.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- yangerkun@huawei.com
-References: <20250904023955.3892120-1-wozizhi@huaweicloud.com>
- <8b01bd0a-e8b3-4e9a-86fb-3005ff5351fd@kernel.org>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <8b01bd0a-e8b3-4e9a-86fb-3005ff5351fd@kernel.org>
+Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even without
+ frequency table
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, zhenglifeng
+ <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
+ <20250904032210.92978-3-zhangzihuan@kylinos.cn>
+ <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
+ <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
+ <20250904053700.abdkh23zwi5x65do@vireshk-i7>
+ <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+ <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
+ <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
+ <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
+ <67b55ae1-60b0-4d54-8220-59f7e3ba7c29@kylinos.cn>
+ <20250908071920.f6ppfr7shy2cb2wg@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250908071920.f6ppfr7shy2cb2wg@vireshk-i7>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8Y1mh75oNiApBw--.63375S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4DArWkKF15XFW5urWktFb_yoW8tFWkpr
-	s5G3s8CryDKFyxGr1Utw1UZa40qr18Ka17tr1UJ3W3Xrn8Ary29r15WFy2gF1DAr4xKw17
-	tr4q9r10v3WDJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: quoted-printable
 
 
-
-在 2025/9/8 14:50, Jiri Slaby 写道:
-> On 04. 09. 25, 4:39, Zizhi Wo wrote:
->> In vt_ioctl(), the handler for VT_RESIZE always returns 0, which prevents
->> users from detecting errors. Add the missing return value so that errors
->> can be properly reported to users like vt_resizex().
+=E5=9C=A8 2025/9/8 15:19, Viresh Kumar =E5=86=99=E9=81=93:
+> On 08-09-25, 15:08, Zihuan Zhang wrote:
+>> One idea we are considering is to check whether driver->verify points =
+to
+>> cpufreq_generic_frequency_table_verify and use that as a heuristic to
+>> enforce the presence of target_index():
 >>
->> Signed-off-by: Zizhi Wo <wozizhi@huaweicloud.com>
->> ---
->>   drivers/tty/vt/vt_ioctl.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>  =C2=A0((driver_data->verify =3D=3D cpufreq_generic_frequency_table_ve=
+rify) !=3D
+>> !!driver_data->target_index)
 >>
->> diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
->> index c9f11c4bd9fe..28993a3d0acb 100644
->> --- a/drivers/tty/vt/vt_ioctl.c
->> +++ b/drivers/tty/vt/vt_ioctl.c
->> @@ -908,7 +908,9 @@ int vt_ioctl(struct tty_struct *tty,
->>               if (vc) {
->>                   /* FIXME: review v tty lock */
->> -                __vc_resize(vc_cons[i].d, cc, ll, true);
->> +                ret = __vc_resize(vc_cons[i].d, cc, ll, true);
->> +                if (ret)
->> +                    return ret;
-> 
-> The change looks good per se. But I wonder if userspace users do handle 
-> or ignore errors? Have you checked any of them?
-> 
-> thanks,
+>> I haven=E2=80=99t tested this approach yet, so I=E2=80=99m not sure if=
+ it will be fully
+>> reliable.
+> I don't this is a good idea. It isn't necessary for any driver to use
+> the generic functions.
+>
+Understood, I thinks there is some reason that the two separate=20
+verification functions exist.
 
-Thanks for the question.
+By the way, Do you think it=E2=80=99s necessary to add some defensive che=
+cks=20
+during driver registration?
 
-In fact, I discovered this while reproducing a syzkaller issue[1]
-myself. When I executed ioctl(tty_fd, KDFONTOP, &op) (setting the width
-and height fields to some extremely unreasonable values), there was no
-error reported, but the expected result did not occur—that is, the size
-was not actually changed.
-
-So, I looked into the code and found that width and height must meet
-certain criteria and constraints. However, because the ioctl call here
-did not check the return value of __vc_resize(), I was unable to quickly
-identify this issue.
-
-I haven’t checked whether other userspace code would check this return
-value. However, even if some userspace programs currently ignore the
-return value, I think it's still beneficial for the kernel to return
-accurate error codes? This makes debugging easier and allows future
-tools or developers to rely on correct behavior.
-
-[1] https://lore.kernel.org/all/20250905024340.337521-1-
-wozizhi@huaweicloud.com/
-
-Thanks,
-Zizhi Wo
+For instance, we could enforce that a driver cannot implement both=20
+has_target and has_target_index at the same time.
 
 
