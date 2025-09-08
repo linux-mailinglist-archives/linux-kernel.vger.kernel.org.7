@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-805367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1C0B487AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A57BB487B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C133BB219
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30F07A6139
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2362ECE95;
-	Mon,  8 Sep 2025 08:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F122E8882;
+	Mon,  8 Sep 2025 09:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b0DkwHX2"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2qyRwC1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CAA224891
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1604F27726
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321920; cv=none; b=YRlzWT6WSmK0UdkYzG3kefaI4Rzd240FhG0hJ1hyXA7eynUlCyIFka1YMCy2KoNKirXf+XpcGKFwnOTjUBcjt9J97TkFT6GbLk9zlr5EB7LFp4Dm+Va8o59ZdvioGFxVQ9nLMHEPg9HrDhAAMuS6N1raMdBl3lZuoBCd6Dlej8o=
+	t=1757322237; cv=none; b=RWNanTnxPHNJu7gr5NRNXjJojkOR3/GrEGmiQ680zT1XQxk/khBOD5fv4IypKVq6JWzy0yv6NNXUz+XgR4ONdgYdWan/M7xYMCnv05weINIbJwFJ3n8yA5S2MNzTM4YQz1vxpGIVmh3e4kD6BOhguWCE/HqE63Pl4CG2KD0nTWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321920; c=relaxed/simple;
-	bh=hXMqYZB+dzFdO3jGjqJYJjjQZ3ufPz/qF0Ix6++QEmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJsNs+QZI8wOOxxkJBqs0dTnoucOn+6xA7jofOLhq9q/RPE3Pesjp/ZVDIGTBKvTHvyvNaAf51Mcu5yTmqijLju3hhdRRGdbrhYJTKaMkd2wGaXGI6IAo6xkNY2L5zqsFzPbY0t+aWTxMv0WSY/GgRptDAm1ol2ISauoOzxDYSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b0DkwHX2; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45cb659e858so28295535e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757321917; x=1757926717; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A0jq9k6S1X/e5F9Xchbc7rGyj3NJPtYlYz8J30jdCq0=;
-        b=b0DkwHX2psakjnW+vI0A6KQMvmeJcPq49SOBb1OaGJsX3/BDbg5Ros+CYb0eO+xIFl
-         NYF9pd5Hp+T5eKHUpqkEMjP32ooF6hxPaewF/9iz3CObhT+qObXmxgs8e2sKPmrC2Ila
-         /tcs4FZHuD0nWsS3eaZdgflfRSSMu1nduZ/lLgJk1Z1l8uXWpHdAPt8MiqzAUuHA1MnE
-         ZULSTbCSoY0h9+2rtF+L1ZgRO6OpOO5JqET5W3vvGWDUpWuWeJlLj6hDouXrk6gl66kk
-         HJNqCmxeMVqrzMOWPUl3ySrPERsXL9L/4lw83g2LR4D5Zx2O5BqXmqfgd/LWHJiQ65Mv
-         glPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757321917; x=1757926717;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A0jq9k6S1X/e5F9Xchbc7rGyj3NJPtYlYz8J30jdCq0=;
-        b=llxLYsogtBViDNe4OG639ezYtJeyOUaORtu0mIX5RA8TNHZRJA/8Pvg8Ss4rlF0/rb
-         8jHC59+Yy/wUIFiqOTHwQllTMv+SIGC3HjWymgvSIZJvzO97+DRf9PhfkItF/U306213
-         72HihmRdTMpS/SFbC58noM+VPmsWBlMMYaXoT2/1F0StLyTwKR4iHCu+CsxoP8yufMYU
-         K7GNTejDaUBgbxzkp4uDNbUeJL0WEjN3HyXmfUhyeLz9KVpGHWgy9UsnGxN+rxZmczSL
-         wYc8MylcjwUjVdQ94kIqWUIH9L+Nq9SU8XCWes7TYZ5DoCQkPbaRDRWuykFGLpXgY6FJ
-         66kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGrXucYAntM9y2C9rtVKtmtAvSKGqKC1LDV3Xrxa/RmQEjxoT0BVrSeCOUTJfA4RRriENiMJ4ERQM+z3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYYTJ8HtMOK9AH6GRwgZ/T+mps3ek7kAxFrDJNqs1YC/UZjGbg
-	Nt2evPstdDU91T1N7yz0vS1VkHyFnWibUZa6YM6iURLKL9Z/nWGREOWSmXu3uIhS+XE=
-X-Gm-Gg: ASbGncvoNEn+3Zg41+/HxoyhGmFJrwcldP1oYnTznXahKUase8y0SIWUzByITYrrjcJ
-	W/jBLIaav3NB8JyVYuKEMhuodi6n0vo9wlgnVQtkTO8Mk0GoyMiQZaMQ7AhVNCderQ/hNnbcTEH
-	cHlHvaSG9/lydasKtDVmJ4ZQzwy1d4WSKZu5VEtjwUc07voGWGwqC/iy3KG3oeSrQZDqtsT+wHn
-	Tkl47heeM0lBUeVaPV/qUCh8ThBjWmGud+9wcNc1E1qqV2PLUhLB7VVIdCQJrZ1PsXitA+1hoJw
-	qLopCYBToHxowG5nwsf2pyOhhhATfeGsXwZTwB+/SgRhWMT8kXAQt5oj5RR69YXmPBDo9qdoRGm
-	i34qYsCXm8iNvY9muFZNC+yAPSGawqRLolb4Bo+ql9bVFD5kyWZOaGIxSbTxvUNjyfW9zuku0qL
-	ul
-X-Google-Smtp-Source: AGHT+IFwnKSywr3YUucpMr3gpELSM4ZF5bkk2uEvqsnnRBInVJnpPYYORFNWuYxFNMxf8Ye8kouDJw==
-X-Received: by 2002:a05:600c:3b83:b0:45d:e326:96fb with SMTP id 5b1f17b1804b1-45de3269948mr45255075e9.30.1757321916984;
-        Mon, 08 Sep 2025 01:58:36 -0700 (PDT)
-Received: from ?IPV6:2001:a61:13ec:c301:8f4b:c388:33a0:9bc1? ([2001:a61:13ec:c301:8f4b:c388:33a0:9bc1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd05d0c43sm91396815e9.2.2025.09.08.01.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 01:58:36 -0700 (PDT)
-Message-ID: <fb8c0ad4-0626-4d03-a7f9-a03629566b99@suse.com>
-Date: Mon, 8 Sep 2025 10:58:35 +0200
+	s=arc-20240116; t=1757322237; c=relaxed/simple;
+	bh=mH80YQGsbeS0s5INvFshTuJ+HLyM3W4yi46hJz2e5AI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Zsc04bgTnI2h5/Nga7ug/3Yc2/2OhCGrTdNYW15KCcFY0nHSzeRRlekSBNCME1XNOm/WPglsXnLZKs8m95jyDL9KJ2lVCrwla/s5dQFUmOJ58fgwwQR1xj6yf2sSOZ/iatRTe9dtkQP0kW2w9DDB0rx73c+i7uWsgQLOcQBIGec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2qyRwC1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757322234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E1L27fu/GuWlv6Jzyt75q3LH9kLQjRWe7G+gC8fIBX4=;
+	b=H2qyRwC1SOSPlcA2A3q/4mrrtG/SrvMW+fKtEVn6DZCgBhie2SyTHjiCLQiLCTvrB+kdgN
+	uv0YzvRAdVJ+bBGFQvcNOA87q294q9+JDEO+W89q9brkNVcqnHQT+Jt4IYsFUeTSqBh5cs
+	1X5TfptT+DMxQ9jDMBmJAAqoCSFkdqM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-378-0v0PWv-7ODCbfY6WCWtdgw-1; Mon,
+ 08 Sep 2025 05:03:51 -0400
+X-MC-Unique: 0v0PWv-7ODCbfY6WCWtdgw-1
+X-Mimecast-MFC-AGG-ID: 0v0PWv-7ODCbfY6WCWtdgw_1757322230
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5ACA19560A7;
+	Mon,  8 Sep 2025 09:03:49 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.44.33.69])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67B851800452;
+	Mon,  8 Sep 2025 09:03:45 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/3] drm/panic: Add kunit tests for drm_panic
+Date: Mon,  8 Sep 2025 11:00:28 +0200
+Message-ID: <20250908090341.762049-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: core: notify unrecognized usb device
-To: Greg KH <gregkh@linuxfoundation.org>,
- Akshay Gujar <Akshay.Gujar@harman.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- naveen.v@harman.com, sankarkumar.krishnasamy@harman.com
-References: <2025022131-silo-impeach-3f24@gregkh>
- <20250826165244.22283-1-Akshay.Gujar@harman.com>
- <2025090610-donation-sprawl-f6f7@gregkh>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <2025090610-donation-sprawl-f6f7@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hi,
+This series adds some kunit tests to drm_panic, and a debugfs interface to easily test the panic screen rendering at different resolutions/pixel format.
 
-On 9/6/25 14:28, Greg KH wrote:
-> That's a very big difference.  Enumeration failures happen all the time
-> due to horrible cables and other hardware issues.  If you are now going
-> to flood userspace with this information, it better be ready to handle
-> it and do something with it.
-> 
-> But, for an enumeration failure, you can't do anything with it, so why
-> report it at all?
+The kunit tests draws the panic screens to different framebuffer size and format, and ensure it doesn't crash or draw outside of the buffer.
+However it doesn't check the resulting image, because it depends on other Kconfig options, like logo, fonts, or panic colors.
 
-that is probably not true. For once you can try another cable in many cases.
-Currently we'd log this information. That is a worse way to handle this kind
-of failure.
-If there is an unrecoverable IO error, user space ought to be notified.
-Syslog is not the best way to do so. There ought to be a standardized way
-of doing this. However, this makes me say that this issue is not really
-confined to USB. Other hotpluggable busses have the same issue.
+v2:
+ * Use debugfs instead of sending the framebuffer through the kunit logs. (Thomas Zimmermann).
+ * Add a few checks, and more comments in the kunit tests. (Maxime Ripard).
 
-	Regards
-		Oliver
+Jocelyn Falempe (3):
+  drm/panic: Rename draw_panic_static_* to draw_panic_screen_*
+  drm/panic: Add kunit tests for drm_panic
+  drm/panic: Add a drm_panic/draw_test in debugfs
+
+ MAINTAINERS                            |   1 +
+ drivers/gpu/drm/Kconfig                |   2 +
+ drivers/gpu/drm/drm_panic.c            | 150 +++++++++++++++++--
+ drivers/gpu/drm/tests/drm_panic_test.c | 198 +++++++++++++++++++++++++
+ 4 files changed, 336 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+
+
+base-commit: 685e8dae19df73d5400734ee5ad9e96470f9c0b4
+-- 
+2.51.0
 
 
