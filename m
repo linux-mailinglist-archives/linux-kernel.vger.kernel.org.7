@@ -1,237 +1,126 @@
-Return-Path: <linux-kernel+bounces-805612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AC0B48B0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4222B48B04
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDA43AE68B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03401886B13
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220E82FCBFD;
-	Mon,  8 Sep 2025 11:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EED2FE059;
+	Mon,  8 Sep 2025 11:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nCGPDXfR"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA3D2253F2;
-	Mon,  8 Sep 2025 11:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1c5gY4p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506FA2F9C2D;
+	Mon,  8 Sep 2025 11:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757329388; cv=none; b=EHTRzfUMhZii2ZAZsJaAOg135ZFkk/1bXKXmSxJ1pJ/QqhPzDvOdJnZCOOzxtn06aQP5kaME3MTLb9BVTaqUGlvM0hKRgJdzPKTcJtTyUSKcd7K0mons5QRAngPQaXtSIn6YAaTwEwimaWZ3Q/2p074WqEH4F8BoQ1BW5CRDz6I=
+	t=1757329357; cv=none; b=BQ5LW4wmIXwAPbMVVKrtI/sqYvXJujnNhb/KoJJ2LdQ9E+z2cxWvseWflV1BrYmobCMTHBdGR5T31Fou/Javwu+1QLHp2WKOYpvnpbKTrvc4f1RPyUbH3BEmjgHPt0lHkID/RJTfGal5TM9N26namvJVDBGvyee9yQbdiOg8qs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757329388; c=relaxed/simple;
-	bh=NoZ3V1wC9WWK8r/eq4WGq8ZzboQo8LnkDKrDOaPCXiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rOQ4WM2Q/WWhwFOZiA635gICI1ne8VpBBrRqgxAT7Cf8aBb32bwUmaOWxH1KzGh0jVv9E57DbLqPFC9jYbGoIHrrE74+kJJW66Lw/opogR3HJXflI8yZYHzGtYJfvCZgVA0iBMNY4e70jiy8TCfa0TuM0RnUOqPe12TIVHkcDeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nCGPDXfR; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=uj
-	aUCHojLKalzm1sAMuEQxIU7mUtyaFseXtSHq8sU28=; b=nCGPDXfRghE6AwmG0b
-	Bqm4LzPhZebSbJjsbh/eV3JVKQKADknF6vCA+vNjDbtUC5aw2avAUF1dhJkQtTuT
-	7gmFCetdK1pscqsBAPn26fGdO6iem7MRw/eFx96wcEjwRrysypmMpBPLjeFnjxgY
-	/4iMPA4slBXg26VmSx0BVkR70=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3f4rJt75oIeY5HQ--.1260S2;
-	Mon, 08 Sep 2025 19:02:33 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	kerneljasonxing@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v12 0/2] net: af_packet: optimize retire operation
-Date: Mon,  8 Sep 2025 19:02:31 +0800
-Message-Id: <20250908110231.215107-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757329357; c=relaxed/simple;
+	bh=4nK81TYvPdG99YY/+tikUPf7zc2e8byAQKqfO2orWEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=blQ1wSLKLo053mCKBEP+v8dvfrTgjc8Q2RGdRGqk2S31iocJ+0Psq1/vd7nnhfm2koSpZDLN5MS8eK+TSbfqzoUYJ+q/6tY/40g9mcIscaN1udXM93xxu+YVj0B5BqIry+MW87PtorEbk06NDT456/wQ510co8D8JbCZvKQFpY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1c5gY4p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19123C4CEF1;
+	Mon,  8 Sep 2025 11:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757329356;
+	bh=4nK81TYvPdG99YY/+tikUPf7zc2e8byAQKqfO2orWEs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W1c5gY4pprHH7R51xMcF2hV/8mA5FaxmvUfyeAv4RPp36cB7K3SfW3BQnZNU/St57
+	 mN65n0h9Egb9dAXWkOwBj2ATi9nX+X5/Xs6jM5WlYEgWgoroo2d028oZq+ms2eps0Y
+	 0GfTKn3NeLnONuYTt6dKT304Mpvkm9t8TUaExTaKw21yUf0ZOtZggMahzCn71Kosj0
+	 ZKS21KH2q9ZIjAbe+igpGCwb8s7aWiZ049c4C+P6cZMnx4O0dOkbGMXxADHH26ltnA
+	 TMswB6wwgazraMF4ORyuVMKFF5hSNAcjXf/RCmgCQnxzWY9BkSlfOvj+QcbVajGxss
+	 QkgD+OGXAamdA==
+Message-ID: <e3aa47fe-938b-43f1-b221-02e3e4c74243@kernel.org>
+Date: Mon, 8 Sep 2025 13:02:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f4rJt75oIeY5HQ--.1260S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtFykZF4kuF47Xw1DCry5XFb_yoWfCryrpa
-	yj9347Gw4DZw129w4xZan7ZFyrZwsxJr1UGrs3J3yFyan8CFy8AFW2934SqFZ7taykKwn7
-	Zr48XF13A3Z8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRyq2_UUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibh7CCmi+sYWoMgAAsA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] media: uvcvideo: Run uvc_ctrl_init_ctrl for all
+ controls
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
+ <20250818-uvc-iq-switch-v1-3-f7ea5e740ddd@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250818-uvc-iq-switch-v1-3-f7ea5e740ddd@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
+Hi,
 
----
-Changes in v12:
-- Add reason why delete delete_blk_timer field in the commit message
-  as suggested by Jason Xing.
-- Add reason why NOT update hrtimer in prb_open_block in the commit message
-  as suggested by Jason Xing.
+On 18-Aug-25 22:15, Ricardo Ribalda wrote:
+> The function uvc_ctrl_init_ctrl() is called for every control for every
+> entity, but it exits early if the entity is a extension unit. The comment
+> claims that this is done to avoid querying XU controls during probe.
+> 
+> We only query a control if its entity GUIDs and index matches the
+> uvc_ctrls list. There are only controls for the following GUIDs:
+> UVC_GUID_UVC_PROCESSING, UVC_GUID_UVC_CAMERA and
+> UVC_GUID_EXT_GPIO_CONTROLLER.
+> 
+> In other words, XU controls will not be queried even without this
+> condition.
+> 
+> In future patches we want to add ChromeOS XU controls that need to the
+> initialized. We will make sure that all cameras with ChromeOS XU can
+> be queried at probe time.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Changes in v11:
-- Modify the commit message of PATCH 1/2 to explain the changes clearly
-  as suggested by Jason Xing.
-- structure tpacket_kbdq_core needs a new organization
-  as suggested by Jason Xing.
-- Change the comments of prb_retire_rx_blk_timer_expired and prb_open_block
-  as suggested by Jason Xing.
-- Link to v11: https://lore.kernel.org/all/20250906173001.3656356-1-jackzxcui1989@163.com/
+Thanks, patch looks good to me:
 
-Changes in v10:
-- kactive_blk_num (K) is incremented on block close. last_kactive_blk_num (L)
-  is set to match K on block open and each timer. So the only time that they
-  differ is if a block is closed in tpacket_rcv and no new block could be
-  opened. So the origin check L==K in timer callback only skip the case 'no
-  new block to open'. If we remove L==K check, it will make prb_curr_blk_in_use
-  check earlier, which will not cause any side effect
-  as suggested by Willem de Bruijn.
-- Submit a precursor patch that removes last_kactive_blk_num
-  as suggested by Willem de Bruijn.
-- Link to v10: https://lore.kernel.org/all/20250831100822.1238795-1-jackzxcui1989@163.com/
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 
-Changes in v9:
-- Remove the function prb_setup_retire_blk_timer and move hrtimer setup and start
-  logic into function init_prb_bdqc
-  as suggested by Willem de Bruijn.
-- Always update last_kactive_blk_num before hrtimer callback return as the origin
-  logic does, as suggested by Willem de Bruijn.
-  In tpacket_rcv, it may call prb_close_block but do not call prb_open_block in
-  prb_dispatch_next_block, leading to inconsistency between last_kactive_blk_num
-  and kactive_blk_num. In hrtimer callback, we should update last_kactive_blk_num
-  in this case.
-- Remove 'refresh_timer:' label which is not needed while I change goto logic to
-  if-else implementation.
-- Link to v9: https://lore.kernel.org/all/20250828155127.3076551-1-jackzxcui1989@163.com/
+Regards,
 
-Changes in v8:
-- Delete delete_blk_timer field, as suggested by Willem de Bruijn,
-  hrtimer_cancel will check and wait until the timer callback return and ensure
-  never enter callback again;
-- Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
-  Currently timer callback just restarts itself unconditionally, so delete the
- 'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
-  directly and always return HRTIMER_RESTART. The only special case is when
-  prb_open_block is called from tpacket_rcv. That would set the timeout further
-  into the future than the already queued timer. An earlier timeout is not
-  problematic. No need to add complexity to avoid that.
-- Link to v8: https://lore.kernel.org/all/20250827150131.2193485-1-jackzxcui1989@163.com/
+Hans
 
-Changes in v7:
-- Only update the hrtimer expire time within the hrtimer callback.
-  When the callback return, without sk_buff_head lock protection, __run_hrtimer will
-  enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
-  enqueuing a timer may cause chaos in the hrtimer red-black tree.
-  The setting expire time is monotonic, so if we do not update the expire time to the
-  retire_blk_timer when it is not in callback, it will not cause problem if we skip
-  the timeout event and update it when find out that expire_ktime is bigger than the
-  expire time of retire_blk_timer.
-- Use hrtimer_set_expires instead of hrtimer_forward_now.
-  The end time for retiring each block is not fixed because when network packets are
-  received quickly, blocks are retired rapidly, and the new block retire time needs
-  to be recalculated. However, hrtimer_forward_now increments the previous timeout
-  by an interval, which is not correct.
-- The expire time is monotonic, so if we do not update the expire time to the
-  retire_blk_timer when it is not in callback, it will not cause problem if we skip
-  the timeout event and update it when find out that expire_ktime is bigger than the
-  expire time of retire_blk_timer.
-- Adding the 'bool callback' parameter back is intended to more accurately determine
-  whether we are inside the hrtimer callback when executing
-  _prb_refresh_rx_retire_blk_timer. This ensures that we only update the hrtimer's
-  timeout value within the hrtimer callback.
-- Link to v7: https://lore.kernel.org/all/20250822132051.266787-1-jackzxcui1989@163.com/
 
-Changes in v6:
-- Use hrtimer_is_queued instead to check whether it is within the callback function.
-  So do not need to add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-- Do not need local_irq_save and local_irq_restore to protect the race of the timer
-  callback running in softirq context or the open_block from tpacket_rcv in process
-  context
-  as suggested by Willem de Bruijn;
-- Link to v6: https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
 
-Changes in v5:
-- Remove the unnecessary comments at the top of the _prb_refresh_rx_retire_blk_timer,
-  branch is self-explanatory enough
-  as suggested by Willem de Bruijn;
-- Indentation of _prb_refresh_rx_retire_blk_timer, align with first argument on
-  previous line
-  as suggested by Willem de Bruijn;
-- Do not call hrtimer_start within the hrtimer callback
-  as suggested by Willem de Bruijn
-  So add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer to indicate
-  whether it is within the callback function. Use hrtimer_forward_now instead of
-  hrtimer_start when it is in the callback function and is doing prb_open_block.
-- Link to v5: https://lore.kernel.org/all/20250819091447.1199980-1-jackzxcui1989@163.com/
-
-Changes in v4:
-- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
-  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
-  (re)start the hrtimer; otherwise, use hrtimer_forward_now to set the expiration
-  time as it is more commonly used compared to hrtimer_set_expires.
-  as suggested by Willem de Bruijn;
-- Delete the comments to explain why hrtimer_set_expires(not hrtimer_forward_now)
-  is used, as we do not use hrtimer_set_expires any more;
-- Link to v4: https://lore.kernel.org/all/20250818050233.155344-1-jackzxcui1989@163.com/
-
-Changes in v3:
-- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
-  as suggested by Willem de Bruijn;
-- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
-  as suggested by Willem de Bruijn;
-- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
-  _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
-
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn;
-- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
-
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet;
-- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
-  as suggested by Eric Dumazet;
-- Add some performance details to the changelog
-  as suggested by Ferenc Fejes;
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn;
-- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
-  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-- Just return HRTIMER_RESTART directly as all cases return the same value
-  as suggested by Willem de Bruijn;
-- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
-
-Xin Zhao (2):
-  net: af_packet: remove last_kactive_blk_num field
-  net: af_packet: Use hrtimer to do the retire operation
-
- net/packet/af_packet.c | 132 ++++++++++++-----------------------------
- net/packet/diag.c      |   2 +-
- net/packet/internal.h  |  14 ++---
- 3 files changed, 44 insertions(+), 104 deletions(-)
-
--- 
-2.34.1
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index efe609d7087752cb2ef516eef0fce12acd13e747..ff975f96e1325532e2299047c07de5d1b9cf09db 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -3181,15 +3181,6 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
+>  {
+>  	unsigned int i;
+>  
+> -	/*
+> -	 * XU controls initialization requires querying the device for control
+> -	 * information. As some buggy UVC devices will crash when queried
+> -	 * repeatedly in a tight loop, delay XU controls initialization until
+> -	 * first use.
+> -	 */
+> -	if (UVC_ENTITY_TYPE(ctrl->entity) == UVC_VC_EXTENSION_UNIT)
+> -		return;
+> -
+>  	for (i = 0; i < ARRAY_SIZE(uvc_ctrls); ++i) {
+>  		const struct uvc_control_info *info = &uvc_ctrls[i];
+>  
+> 
 
 
