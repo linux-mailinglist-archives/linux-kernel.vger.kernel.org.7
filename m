@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-805333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEADAB4873D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5AFB4870F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341461B235D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4338188C814
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E55F2FC88C;
-	Mon,  8 Sep 2025 08:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987F32ECEB4;
+	Mon,  8 Sep 2025 08:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hhlPoUiC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BED/ImHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DBE2FC036
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39692EAB6D;
+	Mon,  8 Sep 2025 08:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320114; cv=none; b=tKp1sa8Dv0gm/l+hIpNIq4URT05q2L51VJjyPS4YhQtS+j2q3aOoswJGIJrezFyx6QTqfjQzbbeXw7cdzjDtodGSo+9VgrUVSYlaarC1KlpVS5mJxjQErmLAaZ9q4kvmwL4Bio/RqQVqRxeNr7GgmP42QBd55+ZfB+i02y60Rd0=
+	t=1757320065; cv=none; b=UGA3f70u/e/6bAZon/7nwR3705mTPNPvQrfagWQzXyLC7GD+wG3a+nXccEgku5wN8K0hCBqthNBYnEgceGZeFsLXUXoW70uVIBdORWJ+xb6thUz8Bnee4llWSaZDqmhrx/kHBgSSLCsL97Psw+6+N6VQC7fWPBoy9/3lrnAh54k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320114; c=relaxed/simple;
-	bh=8YnJ0ONhzBIexy/neyt6NTzPrJg4+1Ll8SHaMIGWprI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TVzP+l3d0jGXc1PtwysgXu/SGP7ipFA/FeugMCtVLYeuqcr6vC93WCZmoWyWRClhD7xIgeXAmX/ynA28NzFL4PhZuHgoSOKVRpsZ81NO7KdChnminHJKsMK8o6EXpE9zwGKCuatwBpFheO6r7eUo8hSZFqex91VPniEOaavlMYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hhlPoUiC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587NtL9A017237
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 08:28:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oxxwm+ypezCwm6BPpi+u2vyfh4HZ0FHZ1ZRXEui1g10=; b=hhlPoUiCNfS27+hK
-	W8kcydaEFIN7wbBcbZDohWadLDBGzBG+XqIIPwt7/lOJvl3HWf1IagYDkhdPuhkS
-	l5W/q4Plc2J3JswDd5LIqGGniohUIqu0o5AAmF2zjSU73/vNvqhbalP43AJL3NND
-	dMhU46/Pix6wWIY5xa7dvJUb3ZgHv6nbketj6G0VpA6Kh6mL0uqnaBGthAYw09Uj
-	//jZJ/LZEeK9kFpl8c9dDrwZDKzsisiZ3pUYGvL84o/qatAhekCZcv1YmuS/xnlp
-	CjT6VK//11XDQ24/OaGnZY/Ot/KihuSiibB0cFdnyFZFpCSRZdJPj9Qx8zIiJKPD
-	CSQqpw==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws3vcr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:28:32 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24caf28cce0so103690025ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:28:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757320112; x=1757924912;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oxxwm+ypezCwm6BPpi+u2vyfh4HZ0FHZ1ZRXEui1g10=;
-        b=d6i+i52JqZleF6UW5823Up4jWoR8Y/9Gw4RLchbTtB2SikCOvdZ9uKfzAYsZeKYBzp
-         UdtkRz2P7ieZEYnNTDGnMBk1VvdIxHYSyFcLC4dJdBMd4F2RE45UtnWFiV58aBzxzoTY
-         pEItcXQu82rLTfhxsKkuBwXSiIeSeAYhDRms21AAOjC+vfTjO2g8iHO4AAEca1p/oHan
-         8DFtLLOUsBO1SP5kcmSeWYUAAlx4tW2yWQpHV4dFNRsrfOI+AyMrVDxIs+CMjQBhr45A
-         Wov8xB5OBACKvuPZs8B/z/MUImzHSe6rsU9nBPqCkWzNe8YVhOlCmZdWoVrQV5yOuOGh
-         mEWg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/HuD8+sntrxocsG7UEwjCNXGsXuaCgtbBn8F5LTNQs+lF1GrVzHzZD+L3vPzh/1ZzU9LnUGZ2zbMZK/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypLdYmtitjogDGI1Hp+BB7D/Cfep4/fNYela17O8I3fEA9a47D
-	OFwXwwSMHzURH97u2qzm02DtTkb/KQnWapUtom6VfNyVgG2XaHAsRYEb+aSrn5XyRar1RCNJUBH
-	hDDRVjGqApNRJmZTK+XmzQhRv0A6joFKe12Ij1YPUuklCiW8ZoDcg+I7Jcy/WBymZ0ns=
-X-Gm-Gg: ASbGncsyNOtVWZazP6RmzfKf63w9iMw5aG0IhhoRMgDladwTvyl116sxH5wORDunfn/
-	/meFNbSujNbCdp7Q8N+n7ZcgqeQUiyOLScWzC8QEZsJj9eQjAie22ud442phj3vartmV6Zx4Hsh
-	EaoF9SMORFo/F19rbUrHmwG2lwXAjXgau/JzkbYi/bPkm7I/XilwSGiSfDWggJBBK7yaeg5ewkK
-	iSHwefyaVQMbafauRKRPnHgZ9MWiJHFYZzTeuQvGj4zzd+4AMigNIX+LIhsapUmxeTGLMyUhukT
-	CuzxWTv+/gm+Wzz9cnS+aMrkapSrgNUEK/TTBsBT2Yfy0fx4FIlmvWBDNyO9nFid
-X-Received: by 2002:a17:90b:1c12:b0:32b:dfdb:b276 with SMTP id 98e67ed59e1d1-32d43fc847bmr8554012a91.34.1757320111806;
-        Mon, 08 Sep 2025 01:28:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZA7JoDEnmt7AqwJdt4pyUQnNwI2XcSGTu2xDVrasXY1aPxGl9PN4uLyeJFuDudO5O+4Dzlw==
-X-Received: by 2002:a17:90b:1c12:b0:32b:dfdb:b276 with SMTP id 98e67ed59e1d1-32d43fc847bmr8553992a91.34.1757320111383;
-        Mon, 08 Sep 2025 01:28:31 -0700 (PDT)
-Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm29157523b3a.18.2025.09.08.01.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 01:28:31 -0700 (PDT)
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Mon, 08 Sep 2025 13:57:09 +0530
-Subject: [PATCH v2 16/16] drm/msm/a6xx: Enable IFPC on A750 GPU
+	s=arc-20240116; t=1757320065; c=relaxed/simple;
+	bh=PGcMOiibMBT17hb1tPtCXM68d4wcDBo2s2BOvEcSq9U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cMl+xQ+qZRGag5yWOToADGssWG/eJsmXH+jWhI8eY9OAH9JVDsdtOy/N7GzXtcxIiq/kG3Siuent6+WhrUJ3y0xg9S1i2dcQJMHBhGStftNdv+c3EeEGI5aDNRp3V0uNVDTbz6wBlklPRyhz8H53rhPPtRB4amo0XFNxxXmIObc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BED/ImHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501CEC4CEF8;
+	Mon,  8 Sep 2025 08:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757320065;
+	bh=PGcMOiibMBT17hb1tPtCXM68d4wcDBo2s2BOvEcSq9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BED/ImHnfhx2giT5/XSj+ds4qNLbCwiJVIMY56jxgFihnTyeTpzP5t5/Uf+WoKXev
+	 kff6yrmiF6j1NsjJDQrh/LXEAw8SKdVkX7p4L2AgNMzphyAWQHrtpEjkuF+d4MKFQ2
+	 LR5c52bNgoyyrdb57fxIu2WP/zWDd9dR/tPWLXHCQk17igYmAeeIxxAtvRE/CDg2mB
+	 mAH8nqOmmMbRAtZc73iWKQU2KtTfRKogIPytZZo0wUWLkDzrCM8p+g+CRkAXnpt/+D
+	 6UO3GHvqi7PcLYXXQgM901irEK5lSFg9Il+63eiet3kKo+sKfUNHM9ZdzRMcskvgwb
+	 dqL4gBUUPOW4A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-ifpc-support-v2-16-631b1080bf91@oss.qualcomm.com>
-References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
-In-Reply-To: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Antonino Maniscalco <antomani103@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757320036; l=978;
- i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=8YnJ0ONhzBIexy/neyt6NTzPrJg4+1Ll8SHaMIGWprI=;
- b=/l1IvAErG5vS1H8AZRE6E1eJuAQqOfkFg2PgpjJbxAG0YmEzCJLWURhkAddQLIvu89grMp8AN
- 7tnV9+P5wEOD63JzvVh74oiN3+mutYEfztOYd3dDeQff4WWaZUvRxaO
-X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-ORIG-GUID: dw7VUaGdN__NShQt8jDkjPNZ-KZAzwe7
-X-Proofpoint-GUID: dw7VUaGdN__NShQt8jDkjPNZ-KZAzwe7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX4aFbSZEofPQt
- wYJE7WSZzWzI9DueJoqCw0xNZ4k5dnsS9ZAfPZaXKwCPSXZivBlM0yORY2P1V3F9MNyVHXaNHDB
- R1uZC+SY9hLSDGghGkshvWIoEaPEiZmU1VP6CZrmd2lHDwzLP4vWmpHZX3Pswqsvn/vuiln7Pz6
- uLPLsVFxFCRwp2c/BzsoyUXXExOYUsuHIu2vM8FSwAGbxPB5HdfGTMb1AYFjt8vTt6Jb/tEGDJR
- SVX+azApRBikTcLKJOqSwsj3NQCpLsBwG7FFRG1NAv0nmmiyogwR+u3wCPzonQeDS7PQn/vsBXU
- eodUTkP6E6n2YL4IHf4L6NvR71Fdnb+oMyXT4+9QipnfjX4wsFQkq583Bb/tsHK8BQI3LwR05xY
- T6VXDSzX
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68be93b0 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=cz-sm3QmoJLqeNSv7C4A:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 10:27:40 +0200
+Message-Id: <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
+ Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+X-Mailer: aerc 0.20.1
+References: <aLshd0_C-1rh3FAg@tardis-2.local>
+ <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org> <aLzmcK2UM53I2Tbn@tardis-2.local>
+ <aLzoyWpOr6eg-3yB@tardis-2.local> <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
+ <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
+ <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
+ <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
+ <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
+ <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org> <aL46nRkYj2SlOhl8@tardis-2.local>
+In-Reply-To: <aL46nRkYj2SlOhl8@tardis-2.local>
 
-A750 GPU has similar IFPC related configurations like X1-85. Add
-the IFPC QUIRK to enable IFPC feature.
+On Mon Sep 8, 2025 at 4:08 AM CEST, Boqun Feng wrote:
+> On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
+>> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
+>> > I actually came up with a third option that looks best IMO:
+>> >
+>> >     init!(MyStruct {
+>> >         x: 42,
+>> >         #[with_binding]
+>> >         y: 24,
+>> >         z: *y,
+>> >     })
+>> >
+>> > The `#[with_binding]` attribute makes the macro generate a variable `y=
+`.
+>> > `x` & `z` don't give access to their value. (we of course should come =
+up
+>> > with a better name).
+>> >
+>> > Any thoughts?
+>>=20
+>> It may be a bit verbose is some cases, but it makes things pretty obviou=
+s, so
+>> LGTM.
+>>=20
+>> How about just #[bind] or #[access]?
 
-Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+I like `#[bind]`.
+
+> #[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
+> about the purpose.
+
+Hmm in `init!` it's never pinned.
+
 ---
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index 547c046730a9b50a82cc9b27f08a5b1eeb08dced..6008f8b0144456c5652dab4c6393b3abb7d709c9 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -1525,7 +1525,8 @@ static const struct adreno_info a7xx_gpus[] = {
- 		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
- 		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
- 			  ADRENO_QUIRK_HAS_HW_APRIV |
--			  ADRENO_QUIRK_PREEMPTION,
-+			  ADRENO_QUIRK_PREEMPTION |
-+			  ADRENO_QUIRK_IFPC,
- 		.init = a6xx_gpu_init,
- 		.zapfw = "gen70900_zap.mbn",
- 		.a6xx = &(const struct a6xx_info) {
-
--- 
-2.50.1
-
+Cheers,
+Benno
 
