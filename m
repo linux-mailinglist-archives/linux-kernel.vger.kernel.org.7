@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-805140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ABEB48477
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D688FB48478
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A613AB468
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7CE3AA92C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA7229D292;
-	Mon,  8 Sep 2025 06:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3682E22A3;
+	Mon,  8 Sep 2025 06:52:17 +0000 (UTC)
 Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF872DE71C;
-	Mon,  8 Sep 2025 06:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D4229D292;
+	Mon,  8 Sep 2025 06:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314310; cv=none; b=fWpM700K9KE2VOEaPh8w28TlOhD4h3wDM7ddZ7P28PBhGe445IS49tBj4nopIwMWG49ToYeLeuoTw/0RTvemp5IOYDtEBj9IxhCgdcQOtmc+j4+S7LKzhgimjGYbkcX4V961KiIRRricQExDxWPCsQ53vHtLZAeOO/mCaU1w378=
+	t=1757314337; cv=none; b=jcoO9MlxBrR4isF32ijB9u8qG4stoSca+UTQuM+7FtAANGnhy09r5Re9XA3l4Fog9+K1CvfD41LmFXafnSmObCb41x7UcXF7vQa3oLatlEjeQzhXPHCoxvXfkG15BeU2U0fagt8/ad2i+AG8Hy3D8dc3nRxqx+6PKruCi0C43Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314310; c=relaxed/simple;
-	bh=oRwcKR3Rnw7wjg+ZTVkb/70S0fOkg6QBMnIuoZHQwmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kIzRk9Q4HfHEGAM+pv83qPf2Z6EVtxkVidur6uS5TtR/6troLRpskp9CxD6uMrcv2I2XaeCdBOAOkSFuF4QLUh5vXjDMS0mQodjuE724Veg8qt1lCMZdYSxB0XUUue7+ytTllscQXqSOs379u3uDMVE92Lg2AGYjB0HROUpSmXI=
+	s=arc-20240116; t=1757314337; c=relaxed/simple;
+	bh=LKTVzd+xR/q0tfDUogMQit2CKDvdrjwv4cLxtK/jrxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K8bKBwxaYqgfI9uR9V9i0Zbp5Lz9sNo0UPQzOKuXzPAOjN3/wP9tyOzrW+Knmp99fnduxgwLGunciu9ELkUBkVK5R0iJLYSE6DEPlRfRlvSOakPscKRtdmQmiwoh04unQMHPXUfzLr6z9zoR3ICqmT+If5TT8dQnG+1Q07LtxSs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 454919548c8011f0b29709d653e92f7d-20250908
+X-UUID: 5642cfde8c8011f0b29709d653e92f7d-20250908
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:8e69cfff-4f9f-4122-a335-cb4fa4821e28,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f6a7994fb7f88b258705a5b9368f90b6,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-O-INFO: VERSION:1.1.45,REQID:a9f2cfb7-85d6-4541-8531-58d81e1ffa4b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6493067,CLOUDID:5f159c1976d34ed9306448720ed0388a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 454919548c8011f0b29709d653e92f7d-20250908
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
+X-UUID: 5642cfde8c8011f0b29709d653e92f7d-20250908
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <zhaoguohan@kylinos.cn>)
 	(Generic MTA)
-	with ESMTP id 1382312738; Mon, 08 Sep 2025 14:51:39 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 422F7E008FA4;
-	Mon,  8 Sep 2025 14:51:39 +0800 (CST)
-X-ns-mid: postfix-68BE7CFB-151394164
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 77254E008FA3;
-	Mon,  8 Sep 2025 14:51:38 +0800 (CST)
-Message-ID: <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
-Date: Mon, 8 Sep 2025 14:51:37 +0800
+	with ESMTP id 1535495310; Mon, 08 Sep 2025 14:52:07 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 8AD30B8258E7;
+	Mon,  8 Sep 2025 14:52:07 +0800 (CST)
+X-ns-mid: postfix-68BE7D17-39063937
+Received: from localhost.localdomain (unknown [10.42.12.87])
+	by node2.com.cn (NSMail) with ESMTPA id CB337B812916;
+	Mon,  8 Sep 2025 06:52:05 +0000 (UTC)
+From: zhaoguohan@kylinos.cn
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	GuoHan Zhao <zhaoguohan@kylinos.cn>,
+	Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH v3] perf drm_pmu: fix fd_dir leaks in for_each_drm_fdinfo_in_dir()
+Date: Mon,  8 Sep 2025 14:52:03 +0800
+Message-ID: <20250908065203.22187-1-zhaoguohan@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even without
- frequency table
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
- Saravana Kannan <saravanak@google.com>, zhenglifeng
- <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-3-zhangzihuan@kylinos.cn>
- <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
- <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
- <20250904053700.abdkh23zwi5x65do@vireshk-i7>
- <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
- <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
+From: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
-=E5=9C=A8 2025/9/8 14:13, Viresh Kumar =E5=86=99=E9=81=93:
-> On 04-09-25, 13:48, Zihuan Zhang wrote:
->> I understand your point about the potential duplicate call to
->> cpufreq_verify_within_cpu_limits() for drivers with a valid freq-table=
-.
->> However, in the third patch of this series, we removed the call to
->> cpufreq_generic_frequency_table_verify() from the table_verify path.
-> Yeah, I missed that.
->
+Fix file descriptor leak when callback function returns error. The
+function was directly returning without closing fdinfo_dir_fd and
+fd_dir when cb() returned non-zero value.
 
-We are currently considering moving the check that ensures a driver=20
-providing a freq_table also implements target_index() into the driver=20
-registration path.
+Fixes: 28917cb17f9d ("perf drm_pmu: Add a tool like PMU to expose DRM inf=
+ormation")
+Reviewed-by: Ian Rogers <irogers@google.com>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Reviewed-by: Markus Elfring <Markus.Elfring@web.de>
+Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+---
+v2 -> v3: replaced "cleanup" with "close_fdinfo"
+v1 -> v2: Added the Fixes tag in commit message
+---
+ tools/perf/util/drm_pmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This way, freq_table.c no longer needs to defensively check for NULL=20
-pointers.
-
-Additionally, we are thinking about merging the two related APIs into a=20
-single one. Do you think this is a good idea?
+diff --git a/tools/perf/util/drm_pmu.c b/tools/perf/util/drm_pmu.c
+index 988890f37ba7..98d4d2b556d4 100644
+--- a/tools/perf/util/drm_pmu.c
++++ b/tools/perf/util/drm_pmu.c
+@@ -458,8 +458,10 @@ static int for_each_drm_fdinfo_in_dir(int (*cb)(void=
+ *args, int fdinfo_dir_fd, c
+ 		}
+ 		ret =3D cb(args, fdinfo_dir_fd, fd_entry->d_name);
+ 		if (ret)
+-			return ret;
++			goto close_fdinfo;
+ 	}
++
++close_fdinfo:
+ 	if (fdinfo_dir_fd !=3D -1)
+ 		close(fdinfo_dir_fd);
+ 	closedir(fd_dir);
+--=20
+2.43.0
 
 
