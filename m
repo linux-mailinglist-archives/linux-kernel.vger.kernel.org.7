@@ -1,269 +1,214 @@
-Return-Path: <linux-kernel+bounces-804995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232E8B482CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:12:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E4AB482D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B4D189B76B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F16F17C5E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5967020299B;
-	Mon,  8 Sep 2025 03:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HyIWzaQp"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2071.outbound.protection.outlook.com [40.107.92.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778EB17A30A;
+	Mon,  8 Sep 2025 03:17:13 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADE17FBA2;
-	Mon,  8 Sep 2025 03:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757301153; cv=fail; b=j4qoRreJ6t8xSt1TIfAP4okq3UnHMnI0TReqaaCjzu2XB+cxHwTOYnK9iAznTRVFK+eRO7Zsvn7ksng5PWv+ph21m1IvmQDFJxd67dMgVRtadenMng8pWmt2eXqUFqX2JO/xqpJ8O5BCsZtZHdO4Jg/OEmojJIaawYzX4ALzw4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757301153; c=relaxed/simple;
-	bh=tg/Aq19npQQr5ln4tkb2DY8hHocDNd1u9/ZiPZ3q0Rk=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=Y4L0pIwNJE4+8vBsgAmNzuORFEnO38gA1gJO+vEIFoFQfc/7qPIKlhmV0vIk2WhPrJ0l+drEvJx5AD/qWQsptShkLhBIf2lDVaAT9NX3aFrveieMHHE9DXm32kVRdCvFpAFUyVnZEl6n360obnidpwwkd8eXm+ZVglQ77RM9e10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HyIWzaQp; arc=fail smtp.client-ip=40.107.92.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CnA7GBibdljm86wYjIcAhU7TMn2JyIYZrSasZPuju3hVdkz0/S9h4up+XHS4T3LqjcNYeufeG3V8dhYP4Xyv2Fvp2maOvTr5xp09EDVLiTX7ugFXFZs7NPVlq/qmh00RdO7PUQS3/hDyfAc6uGz3G9j3PxIh1S76znR0gCj8cTtKQcSYl717o3VnU4j5OSuJdPTW8/ZKVATA+GR0lCaNl00yPoyvycbn2AjLFxYlizTbfU+Y486gL/PruJhnhW1v9k2F+sm5yMPRwcbHlE9dhc8gAoJpMAGaa97CeRAXX5XLMLA+0QohWOu3j5XbBy/Dj4s7xK0gKJgFbVng6rcx7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZWg81h18GeKKj115LuFYt6rhpSFonz0k5QtZRpAn+2M=;
- b=smI9IZ8blGcExKpkR27Sm+PZlFyP2mFMy+7+I+VDnT8hdFMNWYllsSlYDJtPNUW1M28QCb8efUggOGvWCrsp8gfqiZVBbQOVFsyPmR37YWWOqCbxA2vq7QBBadQIxSbrhOQmVfUF8CPTtSNuuuwbbdqYU8rBDJbVY68906XjnyMtM9WzYcZBrHDBDy0OTv8l5VltpEtf0anIfkCLybVI6Yv7zdXp2BRNE6YHtOZAstHOdY5N+kMvJMGl5hWOQBt9xmMTyCplRHncqTssp4eqUw7zqPwTp4cRjRo74IbIe9+4nYxVuAm+TKXmu/ffwDZCOUzvkBOmKfuaM3MeE+zKPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZWg81h18GeKKj115LuFYt6rhpSFonz0k5QtZRpAn+2M=;
- b=HyIWzaQpDhBtv8R3V0U13n/3SY7KzKQo6NveBhWxVZPLhGFUYCQQcAqWLBCXIc/kTcZnzN7lPuyTu1FdvmpS792/cnoSRt7F11DTwVn9BYyd22HWA0j2fX2orumeSoM2tHcS0mfiyEi1z1G8VIlTsyvwAyTjyo2TZyhyCZ7Pz6TYId8nmcOmQrmOEiplxOEUJmsPUqwOlDHg4XOR1Nj3kiNl/nVxzchkz2xL7i9I/REdZtxKpalh8VlKlkT/mvLv+oKGFBbyO9SCoUw+9oKHns3SFa71zebgMTEuxv1gZEK4uneQRI4ceL8LYblNMpiV5pKqfKz3lP527r8skGTagQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ2PR12MB8160.namprd12.prod.outlook.com (2603:10b6:a03:4af::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 03:12:26 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 03:12:26 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 12:12:20 +0900
-Message-Id: <DCN39JCF1DIJ.3JESSN7N9WJBP@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] nova-core: bitstruct: Move bitfield-specific
- code from register! into new macro
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-2-joelagnelf@nvidia.com>
-In-Reply-To: <20250903215428.1296517-2-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCPR01CA0186.jpnprd01.prod.outlook.com
- (2603:1096:400:2b0::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B232AF0A;
+	Mon,  8 Sep 2025 03:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757301433; cv=none; b=Evt6ZPA/1cb0MmShBLw4BQK+iKHF25XzgGKfq6bMzcVSyXkbIovjuzWrBbZVQZl3LB6RaJt9wGjeVFBN9G3uCOI/FbBimKl47OsNhSZZItGEiV2dyVdMXYp/Eh7AwZIcWXg3Bx9/yRpGzZgksWR/niwv+ELbYtImpxB60mowyEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757301433; c=relaxed/simple;
+	bh=Dl/Fap/h9ht+nyHnj4KOWhTOUmWaKrKMnq3kNcTD/so=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zb9hvZfV+h/hm6m1exkqVb4kSmrd6XYGLzrGMBs2gVwtb7xUY1D6iT3JudYQ5oeWiv9A5DHAOZqQZG6HJ57Aufk8jGgl/MMOGEH10x5dEx3ryAWVgEYzW351r2TOv2t83SJQYfuwGXPBkdoBxplmSmSepFkF8XrAJmD7gyIF6us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-chip.com.cn
+X-QQ-mid: esmtpgz14t1757301392t1d5f40cd
+X-QQ-Originating-IP: ZUOPaUqj2wXqgkX85zS9BenCl9Em07B5jGELAC+KwJc=
+Received: from localhost.localdomain ( [183.51.121.90])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 08 Sep 2025 11:16:30 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6945571031618804772
+EX-QQ-RecipientCnt: 16
+From: Kaison Deng <dkx@t-chip.com.cn>
+To: Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Wayne Chou <zxf@t-chip.com.cn>,
+	Kaison Deng <dkx@t-chip.com.cn>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Peter Robinson <pbrobinson@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the ROC-RK3588-RT
+Date: Mon,  8 Sep 2025 11:16:30 +0800
+Message-Id: <20250908031630.1010407-1-dkx@t-chip.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CALWfF7+6dTqLRHYKHL1iBf9YknLQ5yTrwPur8VySmjiy3mzh0Q@mail.gmail.com>
+References: <CALWfF7+6dTqLRHYKHL1iBf9YknLQ5yTrwPur8VySmjiy3mzh0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB8160:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5dce6a2c-8433-4a28-339d-08ddee858863
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VnRDdjVNTjloeUpIdEl0ZUREbHkydEdoN2xpK2pEZGJ2TUJUZ2RJZlpBaVJT?=
- =?utf-8?B?WkVzM01jRGF4Q2M4ZUwxbUg1L0hjd3ZKYjIzcWVGRDQ0UFpnOGY1azR0K2Ex?=
- =?utf-8?B?Q01lVytpK0t2bFhhOEZNb0RJSjVtRlhCcWY5OXg1NHFuR3JuTkNnRVU2azZQ?=
- =?utf-8?B?dzNFYVBycTlINGNrVmZwUUxVL3haOGVrRkpxczZxMXAwZ28xOTNEeDdpSnY1?=
- =?utf-8?B?K1AzUVhwY0EvRFR2V2d0NzVHTHJEUThsdE8rRVZmQ3NwZVE1ckZ2amp0YlJQ?=
- =?utf-8?B?LytaVGdqZkVnZjhiT0RmVmhLTWdGbzZxMk9lY01Da3pIeUNQNDBjQ2ErN0Er?=
- =?utf-8?B?dmJ3L2hGbGdwcFRhNkkvclkzUzQ0dnhZeTZLTDhJQlQ5M3I4SjBvRSs5S3JW?=
- =?utf-8?B?a1FNUHBKS050b1hxcW92dmRvaVppNVA0OUw3d2ZWTk1sbjdVdHg3ekhZMGZW?=
- =?utf-8?B?V1Z0V0FZWlhVWDNQS0VlVHFyaWZRZG8yMHdNNHJVcC84bUJRSWxweGVzSG5j?=
- =?utf-8?B?anJuK0M3Q1ZuQ1M2akZtUWpEZTg3RUoybXJnYXI0VXZYaXpWb1NVQjhEL3N2?=
- =?utf-8?B?YlhDcENkMFJXL0ZDMUkxRHhOQjVvVVRUYlprMFJpR2tQdVRyRnRZSjdtcVgr?=
- =?utf-8?B?bFBHK2NtSTR0U1JESWIzR1JXT2tERDd0V29jeGRPbDd1bG13NFJvNVlCMTlt?=
- =?utf-8?B?S0Y2aHdVa0QrOUQ3ZUVXWG9pYzNVNm91eVFjc092b3lMUjBmbkFpVVZQVFdi?=
- =?utf-8?B?ZWF5SzJndGdNTFVhYmRQR2dxdVQ1ZVRrc0JERFZPakpFbjBHMDVBdzFDVFEy?=
- =?utf-8?B?TGNLbVRFYjNRcnFJU0pBamtLZFd1U1JodDF2M2FwNmEzSm14YmQ2b21zQnVX?=
- =?utf-8?B?enR5SGNFZ2JKN25UVjlrWnZNbXZnTk5PUE5Ea1ZwMkV5Z1hmZzRxQUFsZFR2?=
- =?utf-8?B?Zm9zVGdjbmlqK1d6bUpLc2huWXkvZ1M4UkFtOFhEeEdIWloxVHhyOTFKZ0dO?=
- =?utf-8?B?QlRuZDZwcnJBVWpGYzZ1dDJjTFMyeDBjL1R1MlBRbndMdkFtMERaSVc3bGd2?=
- =?utf-8?B?VUNXRUlkb2dwTldkMVdUL0M2NW4zR0pjY2x2OEtzRjRMczB5VVRueXNFOHlO?=
- =?utf-8?B?cWhsYmtaejdaZy9JeThaUFFLd0l6VDB2Z3Z2MHI0QTVWSVBzUnJUNjI4b0xJ?=
- =?utf-8?B?NHdFbEFRQlEvL3oySGpaNnBLN3RsaG1KekJnR3VJNHhNVWtXUjZYQUhZaHl5?=
- =?utf-8?B?S1c5djhFZWRqRERhNEdYU1oxbGYxcG1NVUNYR2JQaTAyVjUzR3ZBQUlkSEto?=
- =?utf-8?B?RFBSNFZnSDU5U1hKT2Ria1lKeVREYTQ3SkJvbURXS2R4WVNZVzNlQ1FiUFUy?=
- =?utf-8?B?bytUVXZoY0dQdnlaRTBPYUhYQXJsU0NGR0FQR1NvMnl1ODRXZ1Y2Wnp3WVp6?=
- =?utf-8?B?d2NEaWlnVkFralc0WWlsaDYxN1VCTUtQanRqaUZQQURsaUFEa2dSaHlrajJB?=
- =?utf-8?B?ZDJuWHNva2hTMjNieC85SHpBWExCSUhVT1VBWm16bktESE9ybk1WWVB3WVlp?=
- =?utf-8?B?VW1Jb0R1d2lUSlViazJvcGRyU3BpNDZvdkVuckVpalYvNkdrS1dKZmMwSUN3?=
- =?utf-8?B?dUNvK0V4Q3NZdW5UcFk3NG0yYmZrc2h1eWJhSTlXR2l2MDRhMURaWWZMcEZ5?=
- =?utf-8?B?YlJ0bGtLWnoxQWNTYkZSTEFoK0VWRXhWUm1lMUloUUtlS0FRSWx3NTd6cEpI?=
- =?utf-8?B?TDRLaWtpRlVoVHFRRXlzbDl1L1YyQXVvakkwUU45S0V1cWJYNytCYkVkWWJQ?=
- =?utf-8?B?R3pwN2FNaVl2YUFZRHpCRFgwS1dYTkdlSllaMGtmMFFOZWY1TjBHTVRZNU9i?=
- =?utf-8?B?dDIwRkNybHFYcFdYL3cxaEV5MVE0bHZJM0lWWjZQVitoaVZyR2dQMmY0VmJI?=
- =?utf-8?Q?KDaxg35RTPU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UzQ2T2hCNllKZFR1SDlWRGlSb0ZqdzBvWlM3ODdmVzFTdVhIYThkeDUyWUI4?=
- =?utf-8?B?UUlTL3ZOOS9uVmRBWC9GdUx2dDhYTEQwMW1ZUTNmU2VKTGJVZzZyOStJQW1z?=
- =?utf-8?B?QlNXTGlLT3YxT0dNTlpSazRVN0lGRGplUG1XQVZKeG5weUs5UHZOQVVQYS8y?=
- =?utf-8?B?SGlqajJzQkI5RG94Q2NqZ0ZZTXBDWm1ROGczeFFPMGNGYktZeXpVKzQ1bzkz?=
- =?utf-8?B?VDdBZ2hlU3lhdFF0QkpCeUh6VFZzYlRIVW9Vc1psV0dqUXplaXIrbEtFZ005?=
- =?utf-8?B?YThUY2xwRkJDRGIyZ0pTbXlGamRSU3lsdnlhNkxVSjhwSGM2UkFEQnFIT0Qx?=
- =?utf-8?B?M0tob0Jkb3hVenV4V3E4bTcrRXpjbkdrU0xoU1JqMjU0MXFOakphQjc5SS9W?=
- =?utf-8?B?dUtIdzRhK2IrbHdNRUpNWlQ3SEZJVm1vSk96bkhWanJiVkEwS0dzL0dlR3lV?=
- =?utf-8?B?Q1Nocll1TTZySzBlMzBVMVFOaHFVbC9RTC9SRHpwd29CZ3BCNWZyK1dkY2xL?=
- =?utf-8?B?RWlHc2hHSU1aNFhTdEgrS0dqTllDbWFGazY5NmZjUTFEZkZXVDN6YkRXUEZV?=
- =?utf-8?B?bTRJWFVlL240eTVpMTViQ2xnajgvRWVzZVR1T3V3VU1YWlU3WHpLa2lMZ3Vq?=
- =?utf-8?B?ZWFYSnNBZVVqUmo3ak1MTElEM2ZOQVBuSDcxMURNZFBCeW5WeitsVlVmYTI1?=
- =?utf-8?B?SCszRXJOT25rWGFWNElCdkZ0YXJhbzZhS1hIS2tiK2pUc2Vra3U3c1VrRlVL?=
- =?utf-8?B?K1pkaE4xbFBwQ2RRME1xNXU5TE9ncmtoRFF1elNaeWplZVUwOHVvdWQ3dzFU?=
- =?utf-8?B?YWZKZ2NiMUIwR0FEUjl1M040d3F6MjZKbGdvUkl4c3BTZTR3Y1kxeHplbjNI?=
- =?utf-8?B?RUplMUVhVi94cCtWYnhmY1FqYnc4U1BINlZpM1lya09OQ2xGL21COVRFTXFp?=
- =?utf-8?B?ZTBKazREaURtdkN0ZnpzMmc0M1hpZ3BML29HTXBhbFI4WnhKZU12ME1BYTRl?=
- =?utf-8?B?YjBiQzlmZzU5bUtKWmZ3ZFpVQ0ErMFQrSjVVVk9KRC9sdWN3elJCaE5QT25Y?=
- =?utf-8?B?Qi9ERWJSTEswcE9mNkY5aW5FWkV3dkpOZEQ1ZUhqUGtha09nY0UxemFXL2Vw?=
- =?utf-8?B?MWVjT3cyN040Zit1dTlZVVRxT3lKNGR4WWFhNEUrVTFjV2N5V0NIRGg5cnc0?=
- =?utf-8?B?bGVFT1g5M2lzdjF2VUJhVG9NVHRwcG1UWmlHR0RlWDRRUzJhRy9hSWRucElN?=
- =?utf-8?B?ZkZnbGVjT3lJL2dFY3k3NmRWVEg1bVB6Ykg2U0d0TW4xSVN2OWc4a0w2cm1K?=
- =?utf-8?B?QWlpWlErUGJWbHROVTdxK2dmUnFjeHQ0LzJKSnRnQi9pTG9weHdLbXRsYkxv?=
- =?utf-8?B?aHlBbVlQVkpjTWFUN0RnV2taNE13RXpac21hZmRpdTd1a3BCUVlJamRwVzNl?=
- =?utf-8?B?ekxGNnVjcnl2WERxZ0F5UlNoTFpDR21QQnM3QnFoeDlod1ZqSGlTY0VVdUVO?=
- =?utf-8?B?SithOFJ6VTdPM2cvSWZwb1QvSVg5bVFiTkE4dVFrblMzR0V0NC8rd0hXQWJn?=
- =?utf-8?B?RXZ4WlR1aXFWVmdxUHhqcUpUZkdzUGMrRm4wa0V2UHAyZkNMcnlUazRBZkRj?=
- =?utf-8?B?V3RzaktLT0MvWHFXamtGNzRNNzYrbmpNUno3Z1hEU1RBb0Z0N0VWNnErR0NQ?=
- =?utf-8?B?MWlDYk5SL1BjeXF5dGNMbDg2ZlU0Q09wbEFLYXVNakFhMW1iUkxyNGJTdDFm?=
- =?utf-8?B?NzlDQkhLZnlOdlZyWGs4U1R5ZjJRYTRJc1lxOXJUbGcrU080bEJiZ2NWbkZ5?=
- =?utf-8?B?T0tGOGhjVFZtWGo0a1ZjTmkvYklkeWRXTEFWd1U1WUNDa1VibTdER2FCQTVu?=
- =?utf-8?B?Q1RIR0V5SW8wdXZhOUxKd0dZVTc2NXNzUDVGQXJvd1JuTlFmMDJtUXh3dDQ1?=
- =?utf-8?B?dlJBRXBLaXpyeHI0OXVxZGtmVmJhalUrNk5sY3dVcmNjSzlucWFnUTExaWZD?=
- =?utf-8?B?emdicUhWaXBnSUZBdVNIMVV5UlNQSERmT1c5aXZKYWdELy9KUUxKWjlPR1A4?=
- =?utf-8?B?NFh4eGswQmRsUm1seWdHWHg4YnExcDNhajFNVnkyWHlrYjU5R21LRzZmaS9j?=
- =?utf-8?B?ZGtra1hYLzB0TlU4NTZkL1NFdWRia2srWlN5bXdIUExCNWtmVzBQbTRvTEFU?=
- =?utf-8?Q?x+jvUTXkXmBX2AB0a/RtQR0VmnsPOBk8b1pslpuWAiZh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5dce6a2c-8433-4a28-339d-08ddee858863
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 03:12:25.8404
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UMhpIga1antKNiiAd1MaT6Akq719qIQYTeMxQyuMh35ozSRHCRIHfBOKVG/vTaLOwPqdLPJYIYo3mJd3GgVPVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8160
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:t-chip.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: MllZbBbf79Ay+DUzg+d4zuzeoLHHQPbVlLivwkbpSj1KrdewdaEvyyxj
+	oZeMXUUZo0eBmKWXxGmzt534XYay8ZBSZ/1XexzR/8+777j8Hdkzh2t2qkTNYyFBn50f9lO
+	wEJKCd53K5UT7XtqERKA2cXdn8pzB8fRIYAVpkL1ZNr3qQYWWjnxLSJPA+Vv5+Wc6bFhDVG
+	ilidI0OdSZC4A3bvlLXaa8NTvUnuv7MEupuEZ4aVpjjUGCGi+2oEoF+DyFuXfF6EsbP567u
+	2qD4mjFnYisafR/IGLWneCDDS81bi4AAIU9klR3nTu1RNmUlsA3LsRG0Bn5qjJtltMAcr3m
+	MsHAVX4uniabBD4coejJ8XRdeM8heqra/BcEPBb6peZ0mVMHcL4Kh2/iTKrUcLoEqs2ZsRI
+	Ey6oUPlbKZyRII19Noae0zCrn0lf6o/8GRnNGns5y35Obg9o0lRYGXEgXza1ufQcvYun0y/
+	J1gGBr94D2VsJsNo3qMa+koRBSudUyMzVUgTYU1EKBCkma+Mm5gPH7H2LwfUCCtYOEK2EjL
+	cu1P+sBUu25wnPJtykM5vtXLbDdzSBAiNiWvyasSIDbPWDkS39WUfGb6Fllmycx/vy7L7d+
+	/FBfjVe/5K42vU4msuLyw3CEm28vk6e7xnlRdkq2J/Tepu/K+FmXm/A2sLS+eqIkbfnTc9Q
+	afX0Xbaewy/0veKfLTXR17m+X7h6UuLHJh7UCCJHQj6wE/ovHf91wxMzeY88TAJbw1gzx19
+	Il/TH3ugVyA96SL7z+CeNUjhlV7wkgepuQlMjqYPaa58IdhLvY4bLijPd97FfeiF7iom74k
+	VdW5PTuXKx/SaMeBopp7Rnfa6OeP/EcXqrJ++CCSntj++dOSw35i0hFKhjgrxkb4vseJq9a
+	TF1rSnIanJozZ2lxU2bMTjBraO15NMU2ALIV3a18kova2ZE1YmT7WOOJi1lzhWK1MCdHTPG
+	aoKMKVbQ0VrlxIXmlj4jd0LW/tgbMGWietprcyOqHaojbNEqMpOLnl3pjNR8/nKKmdnxx49
+	sA2BG6QefnFdOws1+uOLsh7ghtyllZJk/cNGaT+tlHifnJHb8aoeI1L51gHooOWinqqTZas
+	WtVZHJmbDdtX3r2Sz428Sk4ZFEYdgnmAgODd2z+jP/w
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
-> The bitfield-specific into new macro. This will be used to define
-> structs with bitfields, similar to C language.
+Hi,
+
+On Fri, 2025-09-05 at 20:50 -0500, Jimmy Hon wrote:
+> On Fri, Sep 5, 2025 at 9:32 AM Kaison Deng <dkx@t-chip.com.cn> wrote:
+> > The Firefly ROC-RK3588-RT is RK3588 based SBC featuring:
+> >
+> > - TF card slot
+> > - NVME 2242 socket
+> Could you update the commit description to match device tree. It
+> looks
+> like the M.2 2242 socket is configured as a SATA (i.e. "sata2")
+> instead of NVME.
 >
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  drivers/gpu/nova-core/bitstruct.rs   | 271 +++++++++++++++++++++++++++
->  drivers/gpu/nova-core/nova_core.rs   |   3 +
->  drivers/gpu/nova-core/regs/macros.rs | 247 +-----------------------
->  3 files changed, 282 insertions(+), 239 deletions(-)
->  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
+> Is the M.2 slot also wired for NVME operation? If so, will you be
+> providing a DT overlay to use it in that mode?
 >
-> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/b=
-itstruct.rs
-> new file mode 100644
-> index 000000000000..1dd9edab7d07
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/bitstruct.rs
-> @@ -0,0 +1,271 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// bitstruct.rs =E2=80=94 Bitfield library for Rust structures
-> +//
-> +// A library that provides support for defining bit fields in Rust
-> +// structures. Also used from things that need bitfields like register m=
-acro.
-> +///
-> +/// # Syntax
-> +///
-> +/// ```rust
-> +/// bitstruct! {
-> +///     struct ControlReg {
+> https://wiki.t-firefly.com/en/ROC-RK3588-RT/usage_sata.html#software-configuration
+>
+The default is sata, I will update the commit description to match the device tree.
 
-The `struct` naming here looks a bit confusing to me - as of this patch,
-this is a u32, right? And eventually these types will be limited to primiti=
-ve types,
-so why not just `ControlReg: u32 {` ?
+> > - 1x USB 3.0 Port, 1x USB 2.0 Port, 1x Typec Port
+> > - 1x HDMI 2.1 out, 1x HDMI 2.0 out
+> > - 2x Gigabit Ethernet, 1x 2.5G Ethernet
+> > - M.2 E-KEY for Extended WiFI and Bluetoolh
+> > - ES8388 on-board sound codec - jack in/out
+> > - RTC
+> > - LED: WORK, DIY
+> > - BTB connector for PCie, UART, USB, CAN, SARADC, GPIO
+> >
+> > Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+> >  .../arm64/boot/dts/rockchip/rk3588-roc-rt.dts | 1120
+> > +++++++++++++++++
+> >  2 files changed, 1121 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+> > b/arch/arm64/boot/dts/rockchip/Makefile
+> > index 9d56d4146b20..ad684e3831bc 100644
+> > --- a/arch/arm64/boot/dts/rockchip/Makefile
+> > +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> > @@ -181,6 +181,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-orangepi-
+> > 5-max.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-orangepi-5-plus.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-orangepi-5-ultra.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-quartzpro64.dtb
+> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-roc-rt.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5-itx.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+> > b/arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+> > new file mode 100644
+> > index 000000000000..1d50009d3153
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+>
+> [snip]
+>
+> > +
+> > +&hdmi0 {
+> > +       status = "okay";
+> > +};
+> > +
+> > +&hdmi0_in {
+> > +       hdmi0_in_vp0: endpoint {
+> > +               remote-endpoint = <&vp0_out_hdmi0>;
+> > +       };
+> > +};
+> > +
+> > +&hdmi0_out {
+> > +       hdmi0_out_con: endpoint {
+> > +               remote-endpoint = <&hdmi0_con_in>;
+> > +       };
+> > +};
+> Does the board support hdmi0_sound and hdmi1_sound (and the
+> corresponding i2s5_8ch and i2s6_8ch)?
+>
+Thanks to remind, the board support hdmi0_sound and hdmi1_sound, I'll add them.
 
-> +///         3:0       mode        as u8 ?=3D> Mode;
-> +///         7:4       state       as u8 =3D> State;
-> +///     }
-> +/// }
-> +/// ```
+> > +
+> > +&hdmi1 {
+> > +       status = "okay";
+> > +};
+>
+> [snip]
+>
+> > +
+> > +&sdhci {
+> > +       bus-width = <8>;
+> > +       no-sdio;
+> > +       no-sd;
+> > +       non-removable;
+> > +       max-frequency = <200000000>;
+> > +       mmc-hs400-1_8v;
+> > +       mmc-hs400-enhanced-strobe;
+> These properties should be in alphabetical order.
+>
+I will adjust the attributes to arrange them in alphabetical order.
 
-As this will move to the kernel crate, it is particularly important to
-make sure that this example can compile and run - so please provide
-simple definitions for `Mode` and `State` to make sure the kunit tests
-will pass after patch 4 (in the current state I'm pretty sure they won't).
+> > +       status = "okay";
+> > +};
+> > +
+> > +&sdmmc {
+> > +       bus-width = <4>;
+> > +       cap-sd-highspeed;
+> > +       disable-wp;
+> > +       max-frequency = <150000000>;
+> > +       no-sdio;
+> > +       no-mmc;
+> > +       sd-uhs-sdr104;
+> > +       vmmc-supply = <&vcc3v3_sd_s0>;
+> > +       vqmmc-supply = <&vccio_sd_s0>;
+> > +       status = "okay";
+> > +};
+>
+> Jimmy
+>
 
-> +///
-> +/// This generates a struct with:
-> +/// - Field accessors: `mode()`, `state()`, etc.
-> +/// - Field setters: `set_mode()`, `set_state()`, etc. (supports builder=
- pattern).
-> +/// - Debug and Default implementations
-> +///
-> +/// The field setters can be used with the builder pattern, example:
-> +/// ControlReg::default().set_mode(mode).set_state(state);
-> +///
-> +/// Fields are defined as follows:
-> +///
-> +/// - `as <type>` simply returns the field value casted to <type>, typic=
-ally `u32`, `u16`, `u8` or
-> +///   `bool`. Note that `bool` fields must have a range of 1 bit.
-> +/// - `as <type> =3D> <into_type>` calls `<into_type>`'s `From::<<type>>=
-` implementation and returns
-> +///   the result.
-> +/// - `as <type> ?=3D> <try_into_type>` calls `<try_into_type>`'s `TryFr=
-om::<<type>>` implementation
-> +///   and returns the result. This is useful with fields for which not a=
-ll values are valid.
-
-Can you remove the related documentation from `register!` and replace it
-with a sentence like "Please look at the [`bitstruct`] macro for the
-complete syntax of fields definitions"? This will ensure we don't have
-to update the documentation twice if/when the syntax gets updated.
-
-The rest of the patch is a perfect move (with a few renames) of the
-internal rules from one macro to the other, which makes it really easy
-to review. Thanks for doing this!
+Kaison
 
