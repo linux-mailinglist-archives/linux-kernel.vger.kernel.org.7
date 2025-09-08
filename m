@@ -1,265 +1,612 @@
-Return-Path: <linux-kernel+bounces-806598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E182BB4992A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:58:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542F3B49927
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24531BC76FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:58:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE84F342880
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739F031D72A;
-	Mon,  8 Sep 2025 18:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AE431C594;
+	Mon,  8 Sep 2025 18:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r6s4SDYb";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="UAXGnYk5"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Lln3G0Dr"
+Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E3B31C573;
-	Mon,  8 Sep 2025 18:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357891; cv=fail; b=IHI2q/bq5j66HBi3j41NU+JKDM0xo3xRBrksoY+FkeHThbIIUmizJ0v1HFkwGQeO+yIB2EbtdLZrPMWb+ng5/RanbNMJdiAuqDbmt+ND9Jye4/U/p90LutcaAfceA4VsNhZugxP3fNStvbrvpRB8sJnPe8PvwnDgNwIYL6nds0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757357891; c=relaxed/simple;
-	bh=IB/qMU7CYxfCVIQaqafmpTqmDclFWNwaGDBQNPOyMVo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=W02E7W+yVPgczwdZDqN4RsSF3V4sXFbEkhdJkInKad8HGV1XKIjUfXg1/kuDqhWOX41M9D6jy5KImp4K21vqsOzkMzjXxaZkSGcmKnQvSleJU5uEiJhU2Jwy7Gh7T2uzEnUwhHCC6NWfmzngS19EDUVkJbWBv6vlOzsoLc+xuUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=r6s4SDYb; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=UAXGnYk5; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588HfgcK028887;
-	Mon, 8 Sep 2025 18:57:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=+9WeEw1QoAduxYUnDhlOv/WJmpAyGvkUY4uDL3PzBgg=; b=
-	r6s4SDYbOmemwara3G0mJVgFOJv86ZVetFF9teT4mHDtzywj66EFDvspWoH4lveY
-	KLwAcytNhLpVyv1w8BXjmaGTBztZUr5TRSdwgI98ncBp3QYoB+KRQKMT3bv2nIqb
-	mdyamY7bNQ0gcHFkTm7qS4UFxwZ5Ho+h7CPiCD5TIlIZHDUNNtRLlVmJpJRHqXay
-	08pWIDaaGTGjbUKZ+HWA3hwji66GVe8cIkTSFpM00rVBj1bAoe/xVe3g2rlAQAfj
-	C/KK5hfpyFvMvu9l+cBInMx6vcK4AI9/KN+ZNZKe7F/+BpJNQPEj8NW2h3mHkmzj
-	XXgHReY0P2IdqdefCI6MPA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921m2rf9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 18:57:05 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588HtH30002966;
-	Mon, 8 Sep 2025 18:57:04 GMT
-Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010049.outbound.protection.outlook.com [40.93.198.49])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdf423h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 18:57:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R6vw3xYe56L2qBgoKuJy18ximfOMht9ZhXfbMo/j7hyXCJ3PKyBW8NNXXqXeE5yA3pOzxM0ktoIlYL9yUNKU0Se9Psq8l1eHuhzcDHmFmdaQ5gPL81gEU7KXMjc5RM5kzrzFM9oozP+nSZddNcrSnJzoDXK7QdmYxDvJ9BgAT43FNGHWgZe17OpCIXwcA6X6M18XeKZsBQanw66oiqML86SpvRTFt7ZEKCXz0EpGVk/bo0vlzcFikGKGKCq5dAqnsyXbqt+tzJ+3FB1V9RVkz1MZSytPP4ieXzuCe3GFLxlv6YCqByEPheViT9wDlTcFy6fWSOUDNWFmbdb1VgdVxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+9WeEw1QoAduxYUnDhlOv/WJmpAyGvkUY4uDL3PzBgg=;
- b=uK/OunRxQ33t+5jh3JuUaC6CIB9ttHQiEoHvh/mZ4aKh9OnR7SSQJItimewLRSK4HYk9w6IEQuAV4qaGeDncB4NNv72cYaIe1fDrq05akU/DLJhvRd4QVu0PCvEvVY31B5t4tr9gs9IEzq8S4wdVnWPnT7zM7W+ToIrO7fBi/Y0ySOfD0aOAM6qHROi2Y+/KCXNkUzr2Gz0G6iueVBUEbM5eFNnPzR3GxlRKacCFd2EM39CKzT4sGR1pT07oZftmr6lcXXrIKJZUvnqaXDfykzvRcWVx9rxt1OlQJjeHultP6D+PhsVgVOWT87B1Ge0Bk3UPfLldGEKd1fIiQ6MgbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+9WeEw1QoAduxYUnDhlOv/WJmpAyGvkUY4uDL3PzBgg=;
- b=UAXGnYk5ElPNxIIA0LgRSlzu2I2VpqahNV3YOkD7qoZLTP5kycPKISdndN9hftOc5Sa680uF0rXxDg1ArBkDDVugDV3+rTq4TVJmkXilpxgzKi7OkOmKOvAeUxSm6MTU1WCtPm4/qS+LcsUE6A2jB5D2ojEBOF3/5T3jr4DCUDM=
-Received: from MW6PR10MB7660.namprd10.prod.outlook.com (2603:10b6:303:24b::12)
- by DM3PPF59D9BB966.namprd10.prod.outlook.com (2603:10b6:f:fc00::c29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 18:57:00 +0000
-Received: from MW6PR10MB7660.namprd10.prod.outlook.com
- ([fe80::41fa:92d3:28b9:2a15]) by MW6PR10MB7660.namprd10.prod.outlook.com
- ([fe80::41fa:92d3:28b9:2a15%5]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 18:57:00 +0000
-Message-ID: <b99517e5-7b4b-494e-8ec6-918f933ddf50@oracle.com>
-Date: Mon, 8 Sep 2025 11:56:54 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/22] mm/mshare: Add a vma flag to indicate an mshare
- region
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
-        bp@alien8.de, brauner@kernel.org, bsegall@google.com, corbet@lwn.net,
-        dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
-        ebiederm@xmission.com, hpa@zytor.com, jakub.wartak@mailbox.org,
-        jannh@google.com, juri.lelli@redhat.com, khalid@kernel.org,
-        liam.howlett@oracle.com, linyongting@bytedance.com,
-        lorenzo.stoakes@oracle.com, luto@kernel.org, markhemm@googlemail.com,
-        maz@kernel.org, mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
-        mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de,
-        osalvador@suse.de, pcc@google.com, peterz@infradead.org,
-        pfalcato@suse.de, rostedt@goodmis.org, rppt@kernel.org,
-        shakeel.butt@linux.dev, surenb@google.com, tglx@linutronix.de,
-        vasily.averin@linux.dev, vbabka@suse.cz, vincent.guittot@linaro.org,
-        viro@zeniv.linux.org.uk, vschneid@redhat.com, willy@infradead.org,
-        x86@kernel.org, xhao@linux.alibaba.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
- <20250820010415.699353-7-anthony.yznaga@oracle.com>
- <5c43116f-fef9-426d-8c90-1a3a129f3d20@redhat.com>
-Content-Language: en-US
-From: Anthony Yznaga <anthony.yznaga@oracle.com>
-In-Reply-To: <5c43116f-fef9-426d-8c90-1a3a129f3d20@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR21CA0026.namprd21.prod.outlook.com
- (2603:10b6:a03:114::36) To MW6PR10MB7660.namprd10.prod.outlook.com
- (2603:10b6:303:24b::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFD42E8DEF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757357889; cv=none; b=J3HMteh4adsKSr+iIGD7cKTXzstN5LRm4xd09YwS23GOuM3qJd7cvqbVjU6vLiigTIFF+xyA8fA+VOeIKg/dmePTXsa4fgZiQ1jLiIPcvIJn3smtJo0gpEtIEFnnxXBKTrKhJqIzp5giXhE0SCaqaD6HOgxYDF+VvmPsdc0WpK8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757357889; c=relaxed/simple;
+	bh=z6xiguFRwEVZUVci1ubFJKPnmonNX61NJNbu9I5BV5s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ETOCYgy/dBm1NUz9iePmMd/WSGO9Eoo/G3Mdi0UK09RrIlBgNtUEr/hX5LA7C7qPB/SlOwP1UJirBPMa3+WGtFTk5gtB7l6H5ZwA3nY8bLGhs4bBE0q9ZN4rHt+GAu706biMVYiGkrtm12OHbXhOOsVf7g3bIjX6AyUtYlEKTlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Lln3G0Dr; arc=none smtp.client-ip=173.71.130.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id LZ0tN8LV2zDlO3DC; Mon, 08 Sep 2025 14:58:06 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=DUwVIZt9/nOUQijIXMuXJwo53fSVFD7gpbSIsIywAHc=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Lln3G0DrYU6CsWVTFtVJ
+	iX7wA8dfm/ke5BiItobprtlUyhjwfhg/VEP7DtW8tIgm3Pi9kXjOn8V3zl0aw1UE78gCqc1D1T0Qo
+	wnSqj7xCFTxGrwljfl3VmHzHoyI76CzGaumaiIz3z2WokCrKaYgAzx2SsQo1rVb0Y41iQsmP1g=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14189143; Mon, 08 Sep 2025 14:58:06 -0400
+Message-ID: <80974286-f8ac-4eff-9439-c05fe38716b1@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 8 Sep 2025 14:58:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR10MB7660:EE_|DM3PPF59D9BB966:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcbb69a7-8060-45be-1c55-08ddef097d84
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NmVBREdWM0Y5dHhBaGVGaWFkU1M4aDgyT0xISjlpZU1sYitmTUxtRmdVQVFy?=
- =?utf-8?B?R0d2RE5ROW5CUkVZOENQZ1d3dlRUMWJEaWFVMkNyRTdsVVZuUHU1NFlaZC85?=
- =?utf-8?B?MzlLZGdGUU5WckxyNmQ1d1BOa3hsSWwwaU9KVGkrZ1JoNGFkeEd3K3liVWJu?=
- =?utf-8?B?a3VJQ2N1TEJSM3R3cU9weEwwdURTclE0alRYTWREUEVHWTBhOVJNNjhuWHVK?=
- =?utf-8?B?Wkw3RkJLY1V6MVVPUEpjbTUrbjF0K2w3NUVKN3ZaMHBHNjM3eDRkRmJVV3Zz?=
- =?utf-8?B?ZE9LTlJzT1JCT0Y5ZHJsZXZFQWROa0tDTDVkRXBKbTBFM211ZjZMS1dLMitB?=
- =?utf-8?B?SGVYQ24zUGk5NkF2RHE0Y2VVeHUwcThaZEQzRHBFRDJ4dWM5OEkwUTNUWDRV?=
- =?utf-8?B?SGpld1dGQ2UwL1p2OHFRaFhkR2FYYjdKOUtEYVdRYmdxR0VZS1RockVRSFlm?=
- =?utf-8?B?ZzRyN0xKbGh4UmxJdnJ0YmtWelNhM252VERQdmlKR1JOaVVad0FVSWxVWito?=
- =?utf-8?B?Rm5YZS9xNi8zdFBZUEdrTDdhQmhBcFB6OGtpOW83YVRJbHN3Smp5bGpBOEx0?=
- =?utf-8?B?dlhwRDdRbVJ6UEkwZDRtRUhNOG1ZajdsTDNZT2o5WmEvcnZmcUExL2xtL2ND?=
- =?utf-8?B?R1lHZzZvTHU5Skd3dnIxaTVSZWxFdHZpTHJjenRuL0xMODZ6aFRack42Q0FN?=
- =?utf-8?B?SlcxY3BaTFZaeFRLVExnbnBSckx2Nk1UbjRCa3lNYktYMnpWVlpMMVRSZFVh?=
- =?utf-8?B?THNSYitkOHlvRHFJYzFwaHhXd0d6MjhxUWZMa09WbGh3MFhUNHNUdWhkaU5j?=
- =?utf-8?B?QjZ6QVZ3Ny9USnoyZFZ3VWYwekFLZytNczVXSW1ueUhTeXkzc0d1Qks4bWJz?=
- =?utf-8?B?eVVVSUc1cTRRd0YwMTIwZDJlczJWQzFKTTl0emN2VjNIMkNLZnhDQWdqcXYx?=
- =?utf-8?B?RVRwMFhicUxKZ3A2QUpyVkR2RnpNZ0Z6L0M1NEFVdnN3Q0hBTE5pY0VoeFcw?=
- =?utf-8?B?K09FSW5NNW80VTd6NUN5V0ZOdDZnRC9CcXdMWVg5QmhkdElrU1JGcWpncWYz?=
- =?utf-8?B?Z0grWmkxS2ZOODMzcTNKTTFEaTdzUWlDbVdZajRCNHpXbmszWHFWRVJTTHlC?=
- =?utf-8?B?VExoY0dHQ1Ezc1pPVUZOZkZEVml6RkhUS2dDdXo4bGpUZHcrUkpwMEE2TElV?=
- =?utf-8?B?Tkx4NlNVbUpvQ3FwL0FlcXV1TWNuWVdPQUV4YUgySEtzVExQVFBGaVd1SFF5?=
- =?utf-8?B?SnMwTmxkNG5UZmcvYnVraFNwaUY3OW5Qb3RlTGZLcGE3Y3hUNlJTNVJrdUVI?=
- =?utf-8?B?dFA2RTh4bHRmcHJZd2VIb0dJZjI5ZVoydWJ4RGhaT3hGL284TlV1WktTZ1lT?=
- =?utf-8?B?ZzNRbFVuK3R3cHBnUGxPTTJtMGhkcG9Xb2FnZnV0WEUzdGJSTzVRSVNtM1J1?=
- =?utf-8?B?ZVNhSlp3Uk1CVUEvbHR5NEdhdjB3R1JqVlNjZ282VGVjQzEzOVorNHlxVU5y?=
- =?utf-8?B?bEFxNEZhSVFmWGNiaTdOa1p3NEdocnFIQ3pXMmRmMHdoTU1Eb0tvQXJneU0w?=
- =?utf-8?B?bXljc3c1NHpabURWV05ZV1ZQa3RNNzNKeVF3Z0ZibWdzL0dtV0c3NFl5dDlM?=
- =?utf-8?B?SHZMQ3dtL3VoRnNzbEJ6Q1NyZFVXOXZ5Wk1zRlRwc0tqUlRMZVk4RDNlZ1Vu?=
- =?utf-8?B?MGw0enJ1bjhHRld6TVc3WWl5VWpxM0FJYmhkZEJYc1BKMkUzdU52LytBSGdG?=
- =?utf-8?B?eDFrK3pLaWhWOTB3TVE4Zm5yU290bmRZMklRcmk5cmM1UXAyK3VDa1BhL3Fj?=
- =?utf-8?B?L3BidzZndE40b3RQMmxtWGROR1hFSjFFQW9oME1vd0xzdjhtUWgyclBzWTF5?=
- =?utf-8?B?RjM4Qi8ybm1Sd1ZLMHdOYTZoMkhNcytBa01ic3dLMGJxSk4wUDE3YU1HRks3?=
- =?utf-8?Q?BETVMBku+l0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7660.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T2JqS3pZMnN4V2JsN2tZTUhIYXoraVVrSG9Cd21BL0Exb0hVTGgzcTRjMGRp?=
- =?utf-8?B?VVZxSGRHQUNXb2hWeEF2WWtQaUZjcHM1a3Q0bFJJcVZGYVQ3MFBqbyt6VFNr?=
- =?utf-8?B?UDhROXNtc2M0S05GenIzNURzRWh5ckE5UUVhVnU5b1c2TE9UYnFsZWV4MHJN?=
- =?utf-8?B?VDFUSitnUEZHak1sblovWi9PNHMrakJLSCtFNE5vSDlwNnBzelUxTGNLc0FR?=
- =?utf-8?B?Q2gxZWRvMTdkNnkxUWNNYTBqVXBjV1BHd1h5WkZPRDcxQ2RCM0ZiV3JNODJ6?=
- =?utf-8?B?cDRoczE0M01jK2xUN2owMEdmL24rRHBXaks1aGJZU1VHVS9yamVLbXYyaHpM?=
- =?utf-8?B?YmttTTlaZ3ZTckU0M0J6T0VoNUpmc1VZYVFpMWwyU3dUbVZlSVFJRm84OEZ6?=
- =?utf-8?B?NFJ2RkhiYmJOUzEyM2Jzd0ZDL3NodWdCanJLbmlLTTRHclcyb2Zmblhsb0VM?=
- =?utf-8?B?MnNQSkxvby82T1JGUmtDVkVlTlpQTk51OHdwTlcrS3lObGJZaFVhcXByK3dH?=
- =?utf-8?B?NzFjaU1HeVRoc3ptd0YxSEt4L01kUy9JY3IwR1BqRnJqdUJSRkdNNHBLZVE4?=
- =?utf-8?B?VWVFUXd0Rmpqc0FMSzAxZzVtbXpOakFRUThiUExiN21NNkJCUTZwWWI4eW05?=
- =?utf-8?B?dFhBSGRDMTBqb1RqaVV1RTlDUFM4d2o2UGRxT2xrbHBNWUpyY3J2YXRMc0ly?=
- =?utf-8?B?NEVwdkJxYUR1bzFlNnlSSEJSS1cwTTU2QlNKazJmb0tyR25HNE9HQXFYNW5w?=
- =?utf-8?B?MURKa0ZhWVZkZHRPT093a2JaR2w1VmcxbmlZMTlKQlRFbExKODVCSlVTZHMw?=
- =?utf-8?B?VGFzMUROT2NaeS8yWS9YOERiaERsY0dTTHBodUJCZExidk8xK1RoRE1ndXJp?=
- =?utf-8?B?NE0wc3hTeUs5RWxlQytGanYwVFhGTDB3dENZN2VjVElFektITWdONlVSUllX?=
- =?utf-8?B?OHhTMU0vTGpFODNQeVVWMERLbk93eG94eWdWTHJpZzZuOUtxVDR1ek1pSFRm?=
- =?utf-8?B?d0lRNm90MXJFWHZzU2RtRU41NlBiaEZncGhuTFU3VzF4NkJ2WXFmT092QVZM?=
- =?utf-8?B?WDN6STIxYjZTTWFFQURWb3EwOERoTFlKa2NZV3dNeWRWaEpESUZEajRUSXRL?=
- =?utf-8?B?dTJVblIvWFhrOEdZYW9lRDE4T3lQUENReWFTYlFBU1JnYnZzbllsZTVQNnFz?=
- =?utf-8?B?Ui9jQ1A0bytxdVRVd2hIeklqa0JEQ3QrbGZ5T3JrQ09TcGJjajZ3WUNRbmJR?=
- =?utf-8?B?czR4SE15ZG9PaGoram0yWVh3aC8xRTBOWlpnSzE0L0tZdW5nc0w2SU44SFNR?=
- =?utf-8?B?MlFtU0FrTDlFT1I4b1pPekhuRENSUWY4Njl1TWlnNXJLaUJWeHVYTWdHMm1Q?=
- =?utf-8?B?YXRzTzJKTGJUTHcrTEFMVU84ZDBndlZ5WHI5OXRQKzVjTkY5cmxhb3FBRjZS?=
- =?utf-8?B?ZGtzUXpDcW1sWURlVTJFaFNRKzlLNStZQStScTFqYzRpM2lIR0cra0MrTjRu?=
- =?utf-8?B?aWtUL1VJaUVONlArcnNWTFZibklBRFViaXJQbFNESjFPbmZDNGsvZWc3aFVD?=
- =?utf-8?B?L0JkQkk2RTFxZ0hENzRWaE1Ea3BsR1dHUi9Ob3Q2bUtWSFo0Y01WdkMyZVFW?=
- =?utf-8?B?YXlyaVBDbkFMUG5lTWVxQXdTOEJ3MlYxZlNVQXNWa3BhTVpRdDFIUFN0WFly?=
- =?utf-8?B?SW5GZ2NqSXhtbDN1ZFpRaFlPVEJtdC9FNVdVeDBvc2tKaVcyL3hiTTZ2d1li?=
- =?utf-8?B?ZUlsMDVJNmpBVU1tR1J6YlJ0TzFGR3M0dGlYNlpDT2psQmVSMEZxanFqcFRs?=
- =?utf-8?B?eEU3aGV0QU13SU9xUXVzSjBscFRnQmhtTklObzYzak01akdwNy9QaTBmYlVy?=
- =?utf-8?B?dEdFQTJrMmlHekRZUWYxNmJzVFJDWFdWNTM5MkpDZmtHZWdWOFB5ei8yNUtu?=
- =?utf-8?B?RTZGN3N2ZVIzN3VISWkrUVd1RjJjb3lBK3FmaHV3NUQrL0R3TTNjQ3lRQTNW?=
- =?utf-8?B?d1lsOTZMODhXYU03cWo4TXgxN1lpNFhWdmhNRHY0RmZkU3MwSkk3KzhEY3Vt?=
- =?utf-8?B?QWFiWHFsaVJ3MFU4Q2NLTktzQ2NqbTIwSEhocmMzbngzaHJSRkgvWGtVUWR3?=
- =?utf-8?B?TzJWYXB4ZzJUMC9PRGV4bHBPNGs5VUJhLzJ0MlBBVkVEenBiNTJxeXVLMkU5?=
- =?utf-8?B?Y1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kRv70ZvkEjB7otf91MgUkgIf5rmXAWe66xttVvwF75DWICoyYgilbO7LKD/eTpwVxjedSe7d/Jxai/uWUtU3LZ6E7L5HukGJKEvdLPXKy0sPuZGoEBrW/y2G+CgN8JgVPMfiBQn+jwGD2pP/15OsrU9HZEnbtPkd/1EG9dUK/5PTwNgV+L8kisgHKdBG/xJ+6H5BxcWZZgi+Xi+GFpIsBfU885JpDC5ZuyukI9CcWk0Jzuc5uyN9FuAWGkZG9V9ApWcpuJzUN15K4OVNxXBWnpiKmosBPu+p46BBxt8tQNfIFUhl9MaFYYyGmIYShU9empPLrhw21LZhGJ3LtdE5A/EYT3H2Z35b8LBobYkjxycg+rPGOhyXQ3l7UFDRzprFGrIgF9pbZY2ooKC6paYobKGtAFtx2cBDqjXLFpRR05+yeri679S7V3o3O1al+gpbi0z+VqbPpLwUHS4n/aCItuLiBmqfBDddWEv6XbH8nVuOjQitgfE5hfa2AD6JEm6bnjb/IAZ/zeIANBJVnt9UH9LlDfJP9SCSJaZtAKgyuInbbw380heVMh27PMKJ52F4vJ6jIZRYR0O9VllhvfbU0LkvBUPs3k/S3CmbDB2iQE0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcbb69a7-8060-45be-1c55-08ddef097d84
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7660.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 18:56:59.9498
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YnX1De91lgDHh+itYnZ1l0tpnC8/lVDlX9IYVS0mv/RyULiVkumKz3Kjy/oavbLots8b0SOIPe011yAKTKqwEwQ4agnnypYq+6Z8ByoNEpI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF59D9BB966
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=899 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509080187
-X-Proofpoint-GUID: s6VzyLt8P8iE6qGbW6NDa0WlR7YcS9M8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MSBTYWx0ZWRfXz5NASfdj2KaP
- N6cwvmfmWiJjbTiC2ZppFEsH9znaVTfPZ6iGjcWJKxrB9imlPVxKvPc2FOHoEvYhWaKV37VUG53
- vkA7z60LbAdOnTSJR3SqlauxknpUWcI1pI2WeuHvPZ7JeckWIxJNKmJAfQ9dTcw3N4Pklsm2t6I
- YGjeFt8CzVQt3+vlKfdni2MB2HbT6UBdj08jJj+Z1JvocJHVRL92PhmhzOoO7Q+CAITx5Qf+vGH
- amdLgpcNLcM4AIoN4Ray53LSvg6F3GrXHHxpPnWlc4nJ1I9PGMDWxV30qEabfG90EKQVYgYbYMN
- WZYd1GEjVhU4aZgj0+um4yBrIPpWBmRt/N6m0lRxGhodZioCDfNAFWHm8IEujsLvh1WgLhpG4R+
- 9jQd/zeOuLt4Ay8ddFDlmEoerCRpCA==
-X-Authority-Analysis: v=2.4 cv=Dp5W+H/+ c=1 sm=1 tr=0 ts=68bf2701 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
- a=yPCof4ZbAAAA:8 a=TzzTiGglJDmFBzg4XmsA:9 a=QEXdDO2ut3YA:10
- a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:12069
-X-Proofpoint-ORIG-GUID: s6VzyLt8P8iE6qGbW6NDa0WlR7YcS9M8
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 08/15] scsi: qla2xxx: fix oops during cmd abort
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH 08/15] scsi: qla2xxx: fix oops during cmd abort
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+In-Reply-To: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1757357886
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 19423
+X-ASG-Debug-ID: 1757357886-1cf43947df30c450001-xx1T2L
 
+(target mode)
 
+There is a race between the following:
 
-On 9/8/25 11:45 AM, David Hildenbrand wrote:
-> On 20.08.25 03:03, Anthony Yznaga wrote:
->> From: Khalid Aziz <khalid@kernel.org>
->>
->> An mshare region contains zero or more actual vmas that map objects
->> in the mshare range with shared page tables.
->>
->> Signed-off-by: Khalid Aziz <khalid@kernel.org>
->> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
->> ---
-> 
-> Why can't we query the mapping instead?
-> 
+CPU 1:
+scst_hw_pending_work_fn() ->
+sqa_on_hw_pending_cmd_timeout() ->
+qlt_abort_cmd() ->
+qlt_unmap_sg()
 
+CPU 2:
+qla_do_work() ->
+qla24xx_process_response_queue() ->
+qlt_do_ctio_completion() ->
+qlt_unmap_sg()
 
-The bit check is nice and zippy since vma_is_mshare() is called for 
-every fault, but it's not required. The check could be made to be:
+Two CPUs calling qlt_unmap_sg() on the same cmd at the same time
+results in an oops:
 
-	return vma->vm_ops == &msharefs_vm_ops;
+dma_unmap_sg_attrs()
+	BUG_ON(!valid_dma_direction(dir));
+
+This race is more likely to happen because qlt_abort_cmd() may cause the
+hardware to send a CTIO.
+
+The solution is to lock cmd->qpair->qp_lock_ptr when aborting a command.
+This makes it possible to check the cmd state and make decisions about
+what to do without racing with the CTIO handler and other code.
+
+- Lock cmd->qpair->qp_lock_ptr when aborting a cmd.
+- Eliminate cmd->cmd_lock and change cmd->aborted back to a bitfield
+  since it is now protected by qp_lock_ptr just like all the other
+  flags.
+- Add another command state QLA_TGT_STATE_DONE to avoid any possible
+  races between qlt_abort_cmd() and tgt_ops->free_cmd().
+- Add the cmd->sent_term_exchg flag to indicate if
+  qlt_send_term_exchange() has already been called.
+- For SCST (scst_hw_pending_work_fn()), export qlt_send_term_exchange()
+  and qlt_unmap_sg() so that they can be called directly instead of
+  trying to make qlt_abort_cmd() work for both HW timeout and TMR abort.
+- Add TRC_CTIO_IGNORED for scst_hw_pending_work_fn().
+
+Fixes: 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap for aborted commands")
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c  | 204 +++++++++++++----------------
+ drivers/scsi/qla2xxx/qla_target.h  |  19 ++-
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c |   2 +
+ 3 files changed, 105 insertions(+), 120 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index b700bfc642b3..1160ca4c118f 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -104,8 +104,6 @@ static void qlt_response_pkt(struct scsi_qla_host *ha, struct rsp_que *rsp,
+ 	response_t *pkt);
+ static int qlt_issue_task_mgmt(struct fc_port *sess, u64 lun,
+ 	int fn, void *iocb, int flags);
+-static void qlt_send_term_exchange(struct qla_qpair *, struct qla_tgt_cmd
+-	*cmd, struct atio_from_isp *atio, int ha_locked, int ul_abort);
+ static void qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 	struct atio_from_isp *atio, uint16_t status, int qfull);
+ static void qlt_disable_vha(struct scsi_qla_host *vha);
+@@ -136,20 +134,6 @@ static struct workqueue_struct *qla_tgt_wq;
+ static DEFINE_MUTEX(qla_tgt_mutex);
+ static LIST_HEAD(qla_tgt_glist);
+ 
+-static const char *prot_op_str(u32 prot_op)
+-{
+-	switch (prot_op) {
+-	case TARGET_PROT_NORMAL:	return "NORMAL";
+-	case TARGET_PROT_DIN_INSERT:	return "DIN_INSERT";
+-	case TARGET_PROT_DOUT_INSERT:	return "DOUT_INSERT";
+-	case TARGET_PROT_DIN_STRIP:	return "DIN_STRIP";
+-	case TARGET_PROT_DOUT_STRIP:	return "DOUT_STRIP";
+-	case TARGET_PROT_DIN_PASS:	return "DIN_PASS";
+-	case TARGET_PROT_DOUT_PASS:	return "DOUT_PASS";
+-	default:			return "UNKNOWN";
+-	}
+-}
+-
+ /* This API intentionally takes dest as a parameter, rather than returning
+  * int value to avoid caller forgetting to issue wmb() after the store */
+ void qlt_do_generation_tick(struct scsi_qla_host *vha, int *dest)
+@@ -252,7 +236,7 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
+ 	return;
+ 
+ out_term:
+-	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked, 0);
++	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked);
+ 	goto out;
+ }
+ 
+@@ -271,7 +255,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because of Abort\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 			goto abort;
+ 		}
+ 
+@@ -285,7 +269,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because tgt is being stopped\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 		} else {
+ 			ql_dbg(ql_dbg_async + ql_dbg_verbose, vha, 0x503d,
+ 			    "Reschedule u %p, vha %p, host %p\n", u, vha, host);
+@@ -2447,7 +2431,7 @@ static int qlt_pci_map_calc_cnt(struct qla_tgt_prm *prm)
+ 	return -1;
+ }
+ 
+-static void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd)
++void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd)
+ {
+ 	struct qla_hw_data *ha;
+ 	struct qla_qpair *qpair;
+@@ -2473,6 +2457,7 @@ static void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd)
+ 
+ 	dma_pool_free(ha->dl_dma_pool, cmd->ctx, cmd->ctx->crc_ctx_dma);
+ }
++EXPORT_SYMBOL(qlt_unmap_sg);
+ 
+ static int qlt_check_reserve_free_req(struct qla_qpair *qpair,
+ 	uint32_t req_cnt)
+@@ -3461,7 +3446,6 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 	uint8_t		*ep = &sts->expected_dif[0];
+ 	uint64_t	lba = cmd->se_cmd.t_task_lba;
+ 	uint8_t scsi_status, sense_key, asc, ascq;
+-	unsigned long flags;
+ 	struct scsi_qla_host *vha = cmd->vha;
+ 
+ 	cmd->trc_flags |= TRC_DIF_ERR;
+@@ -3535,13 +3519,10 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 		vha->hw->tgt.tgt_ops->handle_data(cmd);
+ 		break;
+ 	default:
+-		spin_lock_irqsave(&cmd->cmd_lock, flags);
+-		if (cmd->aborted) {
+-			spin_unlock_irqrestore(&cmd->cmd_lock, flags);
++		if (cmd->sent_term_exchg) {
+ 			vha->hw->tgt.tgt_ops->free_cmd(cmd);
+ 			break;
+ 		}
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+ 		qlt_send_resp_ctio(qpair, cmd, scsi_status, sense_key, asc,
+ 		    ascq);
+@@ -3696,9 +3677,22 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	return 0;
+ }
+ 
+-static void qlt_send_term_exchange(struct qla_qpair *qpair,
+-	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked,
+-	int ul_abort)
++/*
++ * Aborting a command that is active in the FW (i.e. cmd->cmd_sent_to_fw == 1)
++ * will usually trigger the FW to send a completion CTIO with error status,
++ * and the driver will then call the ->handle_data() or ->free_cmd() callbacks.
++ * This can be used to clear a command that is locked up in the FW unless there
++ * is something more seriously wrong.
++ *
++ * Aborting a command that is not active in the FW (i.e.
++ * cmd->cmd_sent_to_fw == 0) will not directly trigger any callbacks.  Instead,
++ * when the target mode midlevel calls qlt_rdy_to_xfer() or
++ * qlt_xmit_response(), the driver will see that the cmd has been aborted and
++ * call the appropriate callback immediately without performing the requested
++ * operation.
++ */
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked)
+ {
+ 	struct scsi_qla_host *vha;
+ 	unsigned long flags = 0;
+@@ -3722,10 +3716,14 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		qlt_alloc_qfull_cmd(vha, atio, 0, 0);
+ 
+ done:
+-	if (cmd && !ul_abort && !cmd->aborted) {
+-		if (cmd->sg_mapped)
+-			qlt_unmap_sg(vha, cmd);
+-		vha->hw->tgt.tgt_ops->free_cmd(cmd);
++	if (cmd) {
++		/*
++		 * Set this even if -ENOMEM above, since term exchange will be
++		 * sent eventually...
++		 */
++		cmd->sent_term_exchg = 1;
++		cmd->aborted = 1;
++		cmd->jiffies_at_term_exchg = jiffies;
+ 	}
+ 
+ 	if (!ha_locked)
+@@ -3733,6 +3731,7 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 
+ 	return;
+ }
++EXPORT_SYMBOL(qlt_send_term_exchange);
+ 
+ static void qlt_init_term_exchange(struct scsi_qla_host *vha)
+ {
+@@ -3783,38 +3782,35 @@ static void qlt_chk_exch_leak_thresh_hold(struct scsi_qla_host *vha)
+ 
+ int qlt_abort_cmd(struct qla_tgt_cmd *cmd)
+ {
+-	struct qla_tgt *tgt = cmd->tgt;
+-	struct scsi_qla_host *vha = tgt->vha;
+-	struct se_cmd *se_cmd = &cmd->se_cmd;
++	struct scsi_qla_host *vha = cmd->vha;
++	struct qla_qpair *qpair = cmd->qpair;
+ 	unsigned long flags;
+ 
+-	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
+-	    "qla_target(%d): terminating exchange for aborted cmd=%p "
+-	    "(se_cmd=%p, tag=%llu)", vha->vp_idx, cmd, &cmd->se_cmd,
+-	    se_cmd->tag);
+-
+-	spin_lock_irqsave(&cmd->cmd_lock, flags);
+-	if (cmd->aborted) {
+-		if (cmd->sg_mapped)
+-			qlt_unmap_sg(vha, cmd);
++	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+-		/*
+-		 * It's normal to see 2 calls in this path:
+-		 *  1) XFER Rdy completion + CMD_T_ABORT
+-		 *  2) TCM TMR - drain_state_list
+-		 */
+-		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf016,
+-		    "multiple abort. %p transport_state %x, t_state %x, "
+-		    "se_cmd_flags %x\n", cmd, cmd->se_cmd.transport_state,
+-		    cmd->se_cmd.t_state, cmd->se_cmd.se_cmd_flags);
+-		return -EIO;
++	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
++	    "qla_target(%d): tag %lld: cmd being aborted (state %d) %s; %s\n",
++	    vha->vp_idx, cmd->se_cmd.tag, cmd->state,
++	    cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
++	    cmd->aborted ? "aborted" : "not aborted");
++
++	if (cmd->state != QLA_TGT_STATE_DONE && !cmd->sent_term_exchg) {
++		if (!qpair->fw_started ||
++		    cmd->reset_count != qpair->chip_reset) {
++			/*
++			 * Chip was reset; just pretend that we sent the term
++			 * exchange.
++			 */
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		} else {
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
++		}
+ 	}
+-	cmd->aborted = 1;
+-	cmd->trc_flags |= TRC_ABORT;
+-	spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+-	qlt_send_term_exchange(cmd->qpair, cmd, &cmd->atio, 0, 1);
++	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(qlt_abort_cmd);
+@@ -3845,40 +3841,6 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
+ }
+ EXPORT_SYMBOL(qlt_free_cmd);
+ 
+-/*
+- * ha->hardware_lock supposed to be held on entry. Might drop it, then reaquire
+- */
+-static int qlt_term_ctio_exchange(struct qla_qpair *qpair, void *ctio,
+-	struct qla_tgt_cmd *cmd, uint32_t status)
+-{
+-	int term = 0;
+-	struct scsi_qla_host *vha = qpair->vha;
+-
+-	if (cmd->se_cmd.prot_op)
+-		ql_dbg(ql_dbg_tgt_dif, vha, 0xe013,
+-		    "Term DIF cmd: lba[0x%llx|%lld] len[0x%x] "
+-		    "se_cmd=%p tag[%x] op %#x/%s",
+-		     cmd->lba, cmd->lba,
+-		     cmd->num_blks, &cmd->se_cmd,
+-		     cmd->atio.u.isp24.exchange_addr,
+-		     cmd->se_cmd.prot_op,
+-		     prot_op_str(cmd->se_cmd.prot_op));
+-
+-	if (ctio != NULL) {
+-		struct ctio7_from_24xx *c = (struct ctio7_from_24xx *)ctio;
+-
+-		term = !(c->flags &
+-		    cpu_to_le16(OF_TERM_EXCH));
+-	} else
+-		term = 1;
+-
+-	if (term)
+-		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1, 0);
+-
+-	return term;
+-}
+-
+-
+ /* ha->hardware_lock supposed to be held on entry */
+ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+ 	struct rsp_que *rsp, uint32_t handle, void *ctio)
+@@ -3984,22 +3946,35 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	qlt_unmap_sg(vha, cmd);
+ 
+ 	if (unlikely(status != CTIO_SUCCESS)) {
++		bool term_exchg = false;
++
++		/*
++		 * If the hardware terminated the exchange, then we don't need
++		 * to send an explicit term exchange message.
++		 */
++		if (ctio_flags & OF_TERM_EXCH) {
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		}
++
+ 		switch (status & 0xFFFF) {
+ 		case CTIO_INVALID_RX_ID:
++			term_exchg = true;
+ 			if (printk_ratelimit())
+ 				dev_info(&vha->hw->pdev->dev,
+ 				    "qla_target(%d): CTIO with INVALID_RX_ID ATIO attr %x CTIO Flags %x|%x\n",
+ 				    vha->vp_idx, cmd->atio.u.isp24.attr,
+ 				    ((cmd->ctio_flags >> 9) & 0xf),
+ 				    cmd->ctio_flags);
+-
+ 			break;
++
+ 		case CTIO_LIP_RESET:
+ 		case CTIO_TARGET_RESET:
+ 		case CTIO_ABORTED:
+-			/* driver request abort via Terminate exchange */
++			term_exchg = true;
++			fallthrough;
+ 		case CTIO_TIMEOUT:
+-			/* They are OK */
+ 			ql_dbg(ql_dbg_tgt_mgt, vha, 0xf058,
+ 			    "qla_target(%d): CTIO with "
+ 			    "status %#x received, state %x, se_cmd %p, "
+@@ -4020,6 +3995,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			    logged_out ? "PORT LOGGED OUT" : "PORT UNAVAILABLE",
+ 			    status, cmd->state, se_cmd);
+ 
++			term_exchg = true;
+ 			if (logged_out && cmd->sess) {
+ 				/*
+ 				 * Session is already logged out, but we need
+@@ -4065,19 +4041,21 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			break;
+ 		}
+ 
++		cmd->trc_flags |= TRC_CTIO_ERR;
+ 
+-		/* "cmd->aborted" means
+-		 * cmd is already aborted/terminated, we don't
+-		 * need to terminate again.  The exchange is already
+-		 * cleaned up/freed at FW level.  Just cleanup at driver
+-		 * level.
++		/*
++		 * In state QLA_TGT_STATE_NEED_DATA the failed CTIO was for
++		 * Data-Out, so either abort the exchange or try sending check
++		 * condition with sense data depending on the severity of
++		 * the error.  In state QLA_TGT_STATE_PROCESSED the failed CTIO
++		 * was for status (and possibly Data-In), so don't try sending
++		 * an error status again in that case (if the error was for
++		 * Data-In with status, we could try sending status without
++		 * Data-In, but we don't do that currently).
+ 		 */
+-		if ((cmd->state != QLA_TGT_STATE_NEED_DATA) &&
+-		    (!cmd->aborted)) {
+-			cmd->trc_flags |= TRC_CTIO_ERR;
+-			if (qlt_term_ctio_exchange(qpair, ctio, cmd, status))
+-				return;
+-		}
++		if (!cmd->sent_term_exchg &&
++		    (term_exchg || cmd->state != QLA_TGT_STATE_NEED_DATA))
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
+ 	}
+ 
+ 	if (cmd->state == QLA_TGT_STATE_PROCESSED) {
+@@ -4167,7 +4145,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 		goto out_term;
+ 	}
+ 
+-	spin_lock_init(&cmd->cmd_lock);
+ 	cdb = &atio->u.isp24.fcp_cmnd.cdb[0];
+ 	cmd->se_cmd.tag = le32_to_cpu(atio->u.isp24.exchange_addr);
+ 
+@@ -4204,7 +4181,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 	 */
+ 	cmd->trc_flags |= TRC_DO_WORK_ERR;
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+-	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1, 0);
++	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1);
+ 
+ 	qlt_decr_num_pend_cmds(vha);
+ 	cmd->vha->hw->tgt.tgt_ops->rel_cmd(cmd);
+@@ -5363,6 +5340,7 @@ static void qlt_handle_imm_notify(struct scsi_qla_host *vha,
+ 		if (qlt_24xx_handle_els(vha, iocb) == 0)
+ 			send_notify_ack = 0;
+ 		break;
++
+ 	default:
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf06d,
+ 		    "qla_target(%d): Received unknown immediate "
+@@ -5397,7 +5375,7 @@ static int __qlt_send_busy(struct qla_qpair *qpair,
+ 	sess = qla2x00_find_fcport_by_nportid(vha, &id, 1);
+ 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+ 	if (!sess) {
+-		qlt_send_term_exchange(qpair, NULL, atio, 1, 0);
++		qlt_send_term_exchange(qpair, NULL, atio, 1);
+ 		return 0;
+ 	}
+ 	/* Sending marker isn't necessary, since we called from ISR */
+@@ -5626,7 +5604,7 @@ static void qlt_24xx_atio_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(ha->base_qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -5833,7 +5811,7 @@ static void qlt_response_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(rsp->qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -6723,7 +6701,7 @@ qlt_24xx_process_atio_queue(struct scsi_qla_host *vha, uint8_t ha_locked)
+ 
+ 			adjust_corrupted_atio(pkt);
+ 			qlt_send_term_exchange(ha->base_qpair, NULL, pkt,
+-			    ha_locked, 0);
++			    ha_locked);
+ 		} else {
+ 			qlt_24xx_atio_pkt_all_vps(vha,
+ 			    (struct atio_from_isp *)pkt, ha_locked);
+diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+index 15a59c125c53..adbc2a05b159 100644
+--- a/drivers/scsi/qla2xxx/qla_target.h
++++ b/drivers/scsi/qla2xxx/qla_target.h
+@@ -754,6 +754,7 @@ int qla2x00_wait_for_hba_online(struct scsi_qla_host *);
+ #define QLA_TGT_STATE_NEED_DATA		1 /* target needs data to continue */
+ #define QLA_TGT_STATE_DATA_IN		2 /* Data arrived + target processing */
+ #define QLA_TGT_STATE_PROCESSED		3 /* target done processing */
++#define QLA_TGT_STATE_DONE		4 /* cmd being freed */
+ 
+ /* ATIO task_codes field */
+ #define ATIO_SIMPLE_QUEUE           0
+@@ -858,6 +859,7 @@ enum trace_flags {
+ 	TRC_DATA_IN = BIT_18,
+ 	TRC_ABORT = BIT_19,
+ 	TRC_DIF_ERR = BIT_20,
++	TRC_CTIO_IGNORED = BIT_21,
+ };
+ 
+ struct qla_tgt_cmd {
+@@ -876,8 +878,6 @@ struct qla_tgt_cmd {
+ 	/* Sense buffer that will be mapped into outgoing status */
+ 	unsigned char sense_buffer[TRANSPORT_SENSE_BUFFER];
+ 
+-	spinlock_t cmd_lock;
+-	/* to save extra sess dereferences */
+ 	unsigned int conf_compl_supported:1;
+ 	unsigned int sg_mapped:1;
+ 	unsigned int write_data_transferred:1;
+@@ -887,13 +887,14 @@ struct qla_tgt_cmd {
+ 	unsigned int cmd_in_wq:1;
+ 	unsigned int edif:1;
+ 
++	/* Set if the exchange has been terminated. */
++	unsigned int sent_term_exchg:1;
++
+ 	/*
+-	 * This variable may be set from outside the LIO and I/O completion
+-	 * callback functions. Do not declare this member variable as a
+-	 * bitfield to avoid a read-modify-write operation when this variable
+-	 * is set.
++	 * Set if sent_term_exchg is set, or if the cmd was aborted by a TMR,
++	 * or if some other error prevents normal processing of the command.
+ 	 */
+-	unsigned int aborted;
++	unsigned int aborted:1;
+ 
+ 	struct scatterlist *sg;	/* cmd data buffer SG vector */
+ 	int sg_cnt;		/* SG segments count */
+@@ -932,6 +933,7 @@ struct qla_tgt_cmd {
+ #define DIF_BUNDL_DMA_VALID 1
+ 	uint16_t prot_flags;
+ 
++	unsigned long jiffies_at_term_exchg;
+ 	uint64_t jiffies_at_alloc;
+ 	uint64_t jiffies_at_free;
+ 
+@@ -1055,6 +1057,9 @@ extern void qlt_response_pkt_all_vps(struct scsi_qla_host *, struct rsp_que *,
+ extern int qlt_rdy_to_xfer(struct qla_tgt_cmd *);
+ extern int qlt_xmit_response(struct qla_tgt_cmd *, int, uint8_t);
+ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked);
++void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd);
+ extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index ceaf1c7b1d17..169219fe47a2 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -303,6 +303,8 @@ static void tcm_qla2xxx_rel_cmd(struct qla_tgt_cmd *cmd)
+  */
+ static void tcm_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
+ {
++	cmd->state = QLA_TGT_STATE_DONE;
++
+ 	cmd->qpair->tgt_counters.core_qla_free_cmd++;
+ 	cmd->cmd_in_wq = 1;
+ 
+-- 
+2.43.0
 
 
 
