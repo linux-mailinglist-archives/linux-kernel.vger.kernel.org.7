@@ -1,213 +1,123 @@
-Return-Path: <linux-kernel+bounces-806662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CFAB49A13
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0694FB49A10
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F263441923
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:35:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771A63B5649
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113402BE63D;
-	Mon,  8 Sep 2025 19:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0AF2BE629;
+	Mon,  8 Sep 2025 19:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LryKiUWU"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bByI+k/o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DAF27CCE2;
-	Mon,  8 Sep 2025 19:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDED27CCE2;
+	Mon,  8 Sep 2025 19:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360143; cv=none; b=OwvOG8sxUdYYzQsLpxVSY/KehLlxmi8v4u2zJiiHHKjtCxSE4Q9J/7zleni4y82xri/MTg11U0xlYRrsXIlJztoUIbtz1ajx/TPthDKMQALJneeCg9TEWRUALX8RhM1sQcky2rM4sj8CE3tZVByYkbu+5g+pAhxi4owzwoaNrOQ=
+	t=1757360131; cv=none; b=suko23I+tN7jVhTdzmeAUDTuYNDC5hPQ5EkbYIQA43Sr4wCQdVwp/EujSM7AkfOriYImxgPXGaYEH5oDN69bOj0ELhgV+RsdexzclY4f99WrzMmOBWww8k6QjudissRg39BdtYudv0tl4My31g3N0wvP9QL436wy1YPTZQh5oK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360143; c=relaxed/simple;
-	bh=BdBtLSAXUbhcHZCCftjD1R+XqGR7NQqzDSCCgaLUUC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KWrB1lH7CWL//OKvUn7WH2+LUle4JUTQHmZPyA7zgOHSTkqcg4Rjxb/JQG8QFqnDumlxKxXnCubJa1nfyLsNM5XtivQSRJLo+FphLYncYU9yHwv2nuBi/IggMXZC4EoqUlM98qhkNxh4sRvYMyvaBROJuUioAriBeiSiQiz97GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LryKiUWU; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vheKuw2Wg7bJuvheKuxkoM; Mon, 08 Sep 2025 21:35:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757360138;
-	bh=VmMr4DiQk13+WbxtEeLoRxU+Jze2KM7vVTaw1bCs+JM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LryKiUWUI1H5rN2k9Z6sGg9MNDPsCBWW35ITaWIBRpXAlCPlPB3HdvZrABgyfuJ27
-	 FRoy5AiJ/32gkNNeH1NP1qIpvPzYcJjX+bkJ4udFxsacZAsF0SZPMYY1fhr8d7TEeB
-	 2AposBSNxQOfuYY3mKrnHUrJ3Zc7WsvPVRn+vAU5olus/QtSAGsL6F6cd9QW0pXyDK
-	 ezSBhw45hQ60nu9lVZ9UCWNJ67a38WLR3RxV5k/E1+NdrVobM54qf4pmKAiqP7L8Vl
-	 8oG3P3R+HfdRS7M/8Mtc/cet9qLwqtuOudPSecwwNXP2cJDV170lWGd5CpQnX9AP9m
-	 q6wSI4/emrXTA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 08 Sep 2025 21:35:38 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] power: supply: Use devm_mutex_init()
-Date: Mon,  8 Sep 2025 21:35:28 +0200
-Message-ID: <2280ca741ef36fe9ed26b8079b91a8e5dfd669fc.1757360105.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757360131; c=relaxed/simple;
+	bh=TfAsCRSpW8EOD10f2rELOMrobwLS5VOMi2GmYF+/5S4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AJxdTOsSysGgxMx+2Fk+ZygcCPr9cRzPXOpQzMFf1Bo4XWFmtJw4ElDdwGG9yfutoKS5/1aAsnsYZITYnkMa5mTeFHTN8sQfnC0ztIuvHt49XmcXaU1VMWA9DW6hd3YnasRwBIV544wVpaMDOSG6dNZ2RFEMkbJwaddP/WWl32A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bByI+k/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50ABC4CEF1;
+	Mon,  8 Sep 2025 19:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757360130;
+	bh=TfAsCRSpW8EOD10f2rELOMrobwLS5VOMi2GmYF+/5S4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bByI+k/oHDUFhlceIdJGTBC/ovihppEHdbfTmAVkxDiK5krpoUjC7iNxvuUB6YY0g
+	 t3nVguveEICmcoYfEyVNRGCpiYZ6nlWHZbix1dyK66pAiYJ8qTbf3MF6ypER4++rrm
+	 DkWzw0hw1kJkntf9P57CsKdMeTvgawXGW8QSEjazrTJcftfH54KI5K+xi7ZmJOdh5G
+	 GoidFlkyaTfE+sktGb3i9TOKfVtdsKNT0T2tmG+aZjyjvBC3YtRGiROmVzYF6jzk8A
+	 Gk8tNP/LSDqx49k9Owp+tRTA/iwpBCD2i8fB7DrUWnAo90dKuDYS3MLkIay8/F38WV
+	 EUDplRfIOMy8A==
+Date: Mon, 8 Sep 2025 14:35:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v2 3/5] PCI/pwrctrl: Add support for toggling PERST#
+Message-ID: <20250908193529.GA1439341@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-pci-pwrctrl-perst-v2-3-2d461ed0e061@oss.qualcomm.com>
 
-Use devm_mutex_init() instead of hand-writing it.
+On Wed, Sep 03, 2025 at 12:43:25PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> As per PCIe spec r6.0, sec 6.6.1, PERST# is an auxiliary signal provided by
+> the system to a component as a Fundamental Reset. This signal if available,
+> should conform to the rules defined by the electromechanical form factor
+> specifications like PCIe CEM spec r4.0, sec 2.2.
+> 
+> Since pwrctrl driver is meant to control the power supplies, it should also
+> control the PERST# signal if available.
 
-This saves some LoC, improves readability and saves some space in the
-generated .o file.
+Why?  Probably obvious to hardware folks, but a sentence about the
+necessary connection between power supply and reset would help me.
 
-As an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  35803	   9352	    384	  45539	   b1e3	drivers/power/supply/rt9467-charger.o
+> But traditionally, the host bridge
+> (controller) drivers are the ones parsing and controlling the PERST#
+> signal. They also sometimes need to assert PERST# during their own hardware
+> initialization. So it is not possible to move the PERST# control away from
+> the controller drivers and it must be shared logically.
+> 
+> Hence, add a new callback 'pci_host_bridge::toggle_perst', that allows the
+> pwrctrl core to toggle PERST# with the help of the controller drivers. But
+> care must be taken care by the controller drivers to not deassert the
+> PERST# signal if this callback is populated.
+> 
+> This callback if available, will be called by the pwrctrl core during the
+> device power up and power down scenarios. Controller drivers should
+> identify the device using the 'struct device_node' passed during the
+> callback and toggle PERST# accordingly.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  34792	   9008	    384	  44184	   ac98	drivers/power/supply/rt9467-charger.o
+"Toggle" isn't my favorite description because it implies that you
+don't need to supply the new state; you're just switching from the
+current state to the other state, and you wouldn't need to pass a
+state.  Maybe something like "set_perst" or "set_perst_state" like we
+do for set_cpu_online(), *_set_power_state(), etc?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/power/supply/bq27xxx_battery.c | 11 +--------
- drivers/power/supply/mt6370-charger.c  | 11 +--------
- drivers/power/supply/rt9467-charger.c  | 33 +++-----------------------
- 3 files changed, 5 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index ad2d9ecf32a5..bc36fa9f0dd0 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -2224,13 +2224,6 @@ static void bq27xxx_external_power_changed(struct power_supply *psy)
- 	mod_delayed_work(system_wq, &di->work, HZ / 2);
- }
- 
--static void bq27xxx_battery_mutex_destroy(void *data)
--{
--	struct mutex *lock = data;
--
--	mutex_destroy(lock);
--}
--
- int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
- {
- 	struct power_supply_desc *psy_desc;
-@@ -2242,9 +2235,7 @@ int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
- 	int ret;
- 
- 	INIT_DELAYED_WORK(&di->work, bq27xxx_battery_poll);
--	mutex_init(&di->lock);
--	ret = devm_add_action_or_reset(di->dev, bq27xxx_battery_mutex_destroy,
--				       &di->lock);
-+	ret = devm_mutex_init(di->dev, &di->lock);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
-index eb3bcf81f741..e6db961d5818 100644
---- a/drivers/power/supply/mt6370-charger.c
-+++ b/drivers/power/supply/mt6370-charger.c
-@@ -761,13 +761,6 @@ static int mt6370_chg_init_psy(struct mt6370_priv *priv)
- 	return PTR_ERR_OR_ZERO(priv->psy);
- }
- 
--static void mt6370_chg_destroy_attach_lock(void *data)
--{
--	struct mutex *attach_lock = data;
--
--	mutex_destroy(attach_lock);
--}
--
- static void mt6370_chg_destroy_wq(void *data)
- {
- 	struct workqueue_struct *wq = data;
-@@ -894,9 +887,7 @@ static int mt6370_chg_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to init psy\n");
- 
--	mutex_init(&priv->attach_lock);
--	ret = devm_add_action_or_reset(dev, mt6370_chg_destroy_attach_lock,
--				       &priv->attach_lock);
-+	ret = devm_mutex_init(dev, &priv->attach_lock);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
-index 32e7c7620b91..fe773dd8b404 100644
---- a/drivers/power/supply/rt9467-charger.c
-+++ b/drivers/power/supply/rt9467-charger.c
-@@ -1147,27 +1147,6 @@ static int rt9467_reset_chip(struct rt9467_chg_data *data)
- 	return regmap_field_write(data->rm_field[F_RST], 1);
- }
- 
--static void rt9467_chg_destroy_adc_lock(void *data)
--{
--	struct mutex *adc_lock = data;
--
--	mutex_destroy(adc_lock);
--}
--
--static void rt9467_chg_destroy_attach_lock(void *data)
--{
--	struct mutex *attach_lock = data;
--
--	mutex_destroy(attach_lock);
--}
--
--static void rt9467_chg_destroy_ichg_ieoc_lock(void *data)
--{
--	struct mutex *ichg_ieoc_lock = data;
--
--	mutex_destroy(ichg_ieoc_lock);
--}
--
- static void rt9467_chg_complete_aicl_done(void *data)
- {
- 	struct completion *aicl_done = data;
-@@ -1220,21 +1199,15 @@ static int rt9467_charger_probe(struct i2c_client *i2c)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to add irq chip\n");
- 
--	mutex_init(&data->adc_lock);
--	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_adc_lock,
--				       &data->adc_lock);
-+	ret = devm_mutex_init(dev, &data->adc_lock);
- 	if (ret)
- 		return ret;
- 
--	mutex_init(&data->attach_lock);
--	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_attach_lock,
--				       &data->attach_lock);
-+	ret = devm_mutex_init(dev, &data->attach_lock);
- 	if (ret)
- 		return ret;
- 
--	mutex_init(&data->ichg_ieoc_lock);
--	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_ichg_ieoc_lock,
--				       &data->ichg_ieoc_lock);
-+	ret = devm_mutex_init(dev, &data->ichg_ieoc_lock);
- 	if (ret)
- 		return ret;
- 
--- 
-2.51.0
-
+> +static void pci_pwrctrl_perst_deassert(struct pci_pwrctrl *pwrctrl)
+> +{
+> +	struct pci_host_bridge *host_bridge = to_pci_host_bridge(pwrctrl->dev->parent);
+> +	struct device_node *np = dev_of_node(pwrctrl->dev);
+> +
+> +	if (!host_bridge->toggle_perst)
+> +		return;
+> +
+> +	host_bridge->toggle_perst(host_bridge, np, false);
+> +}
+> +
+> +static void pci_pwrctrl_perst_assert(struct pci_pwrctrl *pwrctrl)
+> +{
+> +	struct pci_host_bridge *host_bridge = to_pci_host_bridge(pwrctrl->dev->parent);
+> +	struct device_node *np = dev_of_node(pwrctrl->dev);
+> +
+> +	if (!host_bridge->toggle_perst)
+> +		return;
+> +
+> +	host_bridge->toggle_perst(host_bridge, np, true);
+> +}
 
