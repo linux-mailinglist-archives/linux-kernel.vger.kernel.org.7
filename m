@@ -1,133 +1,262 @@
-Return-Path: <linux-kernel+bounces-805044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28909B48366
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E94DB48373
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4813B51EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:51:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2493BE2EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6287B21FF23;
-	Mon,  8 Sep 2025 04:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235862222B6;
+	Mon,  8 Sep 2025 04:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B3KEIGdp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OvrR2BLO"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFD7315D3A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F16545945
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757307103; cv=none; b=C5u9orE/9iySbcZ74+TxRYzJ/9TSn+6QEQeqUdoc2TYPiXzFvdu8hVitrd2nROWOTdEscYGNaSP8AQRpkI0UPp1J8mQ5ocV8LVfOMinGhYToohp/kKIgwEDRWxdPQ2uyyHt1BqG0oaJShJFXkHAT0QtgxdyoLiInS6Ptv6FLPOE=
+	t=1757307186; cv=none; b=matmgjyH0HaTHWVLWMR0o3BM+5IKC1LUJCRNtMNcJOV8u6jpEyTOtzg3C9D+Ez55KAj0c2XHCq9Hg/2DXDOLKUe8JaZlcZo1wHB32qaGcf3DcoHX8eEU76amwPkP06bM7gasslJ5rVLDBVYTvDeqBc/fOGmsHKi5xG+3Z9QkP4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757307103; c=relaxed/simple;
-	bh=PiTMXDeB+RZXXFHBE8pp2cblxqqUufgT3jQ3N1Z0SZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCGXKCxGauKe/G/8U0YkPAkTJ+VftnIQju+NMz/nsW4EJeDbP+EAunPI8B9GxV5CQsOaR58jWTA2GG+BShWmm1wWhQntF+6nev9a0Le7HoaCkMuY60Wt+EffJL3GX7ET9I0mDUVZLCjC8ZF6KurlwAem2jBD+Zpj226OYioV5DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B3KEIGdp; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de64f89a9so3449805e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 21:51:41 -0700 (PDT)
+	s=arc-20240116; t=1757307186; c=relaxed/simple;
+	bh=bDe+oTYGKqXjGMV4wp7YuUQnt6EQO3MgnrAA2FmUPSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PxGUlQkUaVdgon0SI4hhExr+dgMh0+vGjwJWHGTwU9abnq14JKfAp5pQFTELPnDzbsDuxeubNESbPw/OhZ/uWByUXCAE8Pwb3H/SZIVBEjRWDpozPYjRsF5yQ4WerNVZN6XmriDc2Ece70XYQk9jd2FAOCUG7Sz3nXJEeai1vDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OvrR2BLO; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f7039a9fdso4112957e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 21:53:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757307100; x=1757911900; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QH42QsL0Brv8nCGOlCqNoHb4KURJ5994q00eblEx34A=;
-        b=B3KEIGdpLfpaf+LLLjOGaI5Lub25lSQiE1twEu89X9FYq784/ODGT1kQwrpB+2p1yo
-         GxcqovRrHBHmgYJ/byhfOqDwqe+1aDpBAxeasc8ZScp4I10GHJpE/2eKSHXTHwjbowzM
-         XBSeHmd/y4KRt/bu+bLn/L5t4CK/i9XtnAoOns1EPkHHOTo0BXmU7R3tE/+PmM+fknCF
-         yWcfauWP5LPDLLQh27cLLDEFXkU0c7559ZvduXPVQxsjrSnIVlFNF/u6fjUae5DUNnCE
-         AsS6h7srseG+ElmdCfZL0ZHzD9OGHegAFQ2BA3hcGPa0Y+mws5/V0l70R0OKqMXvLWoM
-         Hx/w==
+        d=suse.com; s=google; t=1757307181; x=1757911981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x0LQRdujQ1u5i3dMocHWaRijeaazzWqp3JpjpzSpfTs=;
+        b=OvrR2BLOKY3EdYdhLJe6CXTFpBVLOSEWHKUC5IFiR6z3pYS3ndrm7mbo5UVPJe+rq1
+         MKuvf0uTaB2C7Itm1zlsoy8JBr3X7+VbiWvPsgYdx8ubSTcgrOPd9yd8PmDykrkSHIX3
+         aSrlIqyiI762F8A2k4NAUZ1hfA4IJJv7/vyY/WSKZcnQNN712yGtqSbV9OjQ/Y/UQEVU
+         EdmByaVB5mKmKLksCA6eEmxK1djwknjKmoiUz1mbz9IDHfRM/8K/PmUWN8Dq9SQp8UOM
+         hHOkj99naWc76EetRuHUaLg8r5UjkjG84NL3Y7Uz5yCA3VvkVAcn1MxZM1LqCznDYTV+
+         w88Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757307100; x=1757911900;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QH42QsL0Brv8nCGOlCqNoHb4KURJ5994q00eblEx34A=;
-        b=ssPlKUlGta3pwXGMax1LkInALw8MYyPWbgFJNk18vr3KYXl7OxPnjlN1ZBiwZS4YQq
-         NV7sFF2h623/FHhC9navGoDHZLduRU4IR6QdjpozC9U6vhx7kf7++nwTJ/GClpKVOF9+
-         9EInz0P1b0VdBUa/cOIbhMHYBHG767oQy8HUpjo91PjVjS3jCZNwmJDF2FKm+jrTrMo+
-         uaYwEbKtZ5QkDgmakPocW1LjN8LQAl1pneeaeYx7A32qYeyInosqC6QWajLshWKworJ8
-         sIUQ4kepnbnJhsXfDFpExfsbA9jc7lCJiCT0J1cUPn7M/EunnNM+xm3Fr3BUSImyAoJN
-         g8Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUpe2jvQY0Hw7QuKJQ9cAqjJUIAMZvzWOxdZHuESQ4qVnPPfEEIzit7fNhJt7MSMY0bNO7Dv9q5n2ifnp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQRPoiJ6abQdXsgS6eY8J8Qe5XyWqk6KO4+IkSkZwKiIEsU7AU
-	AzFFYgrWGGyACLUmHOrkeiszprMN65FnjhS0MApe8C2On0kUIJEEWsgv6I3QjmOnmfI=
-X-Gm-Gg: ASbGnctKClN7V96pNP+VNnVSL4orwbzPD2WQ/lpbDwxvpODP+JjW4aQixLx4LFHD5ID
-	S9E1MpiykNUmPbIGuYLq0DpjImen2X2vuL5XmPqbMWoactJRHPIlnXFpkJUZDj3m7mZFk7zbhm0
-	Z8IG40jnKunAe3tPjfyJ9vC1yVUZgQUHM4fmXEy9XhkjyRinua9Y+kigwdpfbIflRQ/+6P61WGw
-	LWibGjg01whV5EYKaClKoFEntFirwhigrcDYke3oH4JUPemej6VXVvqfIGUShLgCyhXf9+eoSmY
-	isPNi3beLP8tlb2kV18h7LTY9P4N77NUUTS9lwkPawh/lAS11lGvomxD5UzI+ktiP1gKCLQiDQi
-	2gD2XpCLHFVeWs6Zu33O83Nx7+ndNyNRfWtQgLesoYx6+2kcfABXesh4TzPFd9lNc9jdc3eNA+m
-	aznJHKXGkvPQnD/LT1kWA=
-X-Google-Smtp-Source: AGHT+IHJUG3UxrigQCdKhJJdmiAwf+H3VfZ4m5MK0YKe4/GVGBasirbK5SoRbuR1aXJTIQEIhs4uiA==
-X-Received: by 2002:a05:600c:c0c5:b0:45d:e531:99df with SMTP id 5b1f17b1804b1-45de64869d9mr12553795e9.3.1757307100364;
-        Sun, 07 Sep 2025 21:51:40 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9a6ecfafsm271826825e9.21.2025.09.07.21.51.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 21:51:39 -0700 (PDT)
-Message-ID: <e0e1827f-aa8b-4337-b26c-dc2ac43e0e2a@linaro.org>
-Date: Mon, 8 Sep 2025 05:51:36 +0100
+        d=1e100.net; s=20230601; t=1757307181; x=1757911981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x0LQRdujQ1u5i3dMocHWaRijeaazzWqp3JpjpzSpfTs=;
+        b=sFF/KVQFQt4sp4Sf0DHUb+TJctXif6sr+q99aAPV0C7lFOHzU5kHB4S2mUirQ6/oNy
+         ix9tGQbrXC13gAoN+utMQpf2ODRLCXNb6cfdinOnkWAApElrNzozz5QCyQmWWt+dTLj/
+         NHVjikVqIHLfBb8YbMEEKYxGDFGi7y5ujro0kcfJ6NBIaZbN08BKsep4+EpxhucOauQk
+         pjEL4jimigX3gw2HhA2WahOW9Vu7vNicmlglxdWl1Qv5aL2GC3s9XNg1xCU+k9yq0y4c
+         XATHc9cMJxpmzvQ/SMq50DSBeJQHTS70qZSijyJuoyGBiNn+zK0bkxdXQ94GBmVkhuNq
+         wx5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUf2vEXN4KbeFyTBotTIvWBSbeMBpswetaL/lIwgqFUUSv+F43ctFY8myPFdUYIBN5nISvJcofcAPFwFKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk2dJE9BkNZcFHXx3yRdHmjHDC98moA1ER7joUaFN9KBipzhKT
+	OqlLk+zA8ZskvIeVKUkLkr6SowtPFrKzzHGSHrJGIefvJJpXkbcYTa/wEL5Zt6Ojfolr4WgvNMS
+	NrrxNE893g9MrCGBU5QBDuCOgckMyOX0NrsPxfKsF7A==
+X-Gm-Gg: ASbGnctNZhqVJtBjqMLnDUca4HiAN0o3glBCzK0TKryI+VgcK7F59EnRpDwYubASlqL
+	IBLK+fnaDSdUPERm105NU5luqOuFHfGlMn5mrb3LQu5JZ+BFF/CFAmCVGB/jSmAcrJS2eth+TeJ
+	vxusT07kca0AcX2tE8gZpna1Fynsp3AdwyF3rycqqqz+sZFFdIFRRGTUCm8D3xXdtzTfdfNoU4W
+	NQW35iTOw==
+X-Google-Smtp-Source: AGHT+IHxXLO5818IAl84YgA429XsjCrhQ6IpQWvHITxDvO0Bh1WFz8eatiEe2fDrdys1G9BvlpoubANjqZaXwesA6F0=
+X-Received: by 2002:a05:6512:3994:b0:55f:503c:d322 with SMTP id
+ 2adb3069b0e04-56262d25d4cmr1628803e87.40.1757307181253; Sun, 07 Sep 2025
+ 21:53:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add CAMSS support for MSM8939
-To: git@apitzsch.eu, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vincent Knecht <vincent.knecht@mailoo.org>
-References: <20250908-camss-8x39-vbif-v1-0-f198c9fd0d4d@apitzsch.eu>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250908-camss-8x39-vbif-v1-0-f198c9fd0d4d@apitzsch.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250905051814.291254-1-hoyeon.lee@suse.com> <20250905051814.291254-2-hoyeon.lee@suse.com>
+ <ca64e62b-740e-4e02-a386-e1016317b071@linux.dev>
+In-Reply-To: <ca64e62b-740e-4e02-a386-e1016317b071@linux.dev>
+From: Hoyeon Lee <hoyeon.lee@suse.com>
+Date: Mon, 8 Sep 2025 13:52:44 +0900
+X-Gm-Features: AS18NWA2MVgylLhC0njVFDJTRSD1Ojs9kXNWbK9lirR8SrUSG1IIQiLIrUb8d7Q
+Message-ID: <CAK7-dKZ9fP=2u+-KtwqFiA0SYP-0OUrREjESwvM_vwT4St8ZyA@mail.gmail.com>
+Subject: Re: [RFC bpf-next v2 1/1] libbpf: add compile-time OOB warning to bpf_tail_call_static
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: netdev@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	"open list:BPF [LIBRARY] (libbpf)" <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/09/2025 23:04, André Apitzsch via B4 Relay wrote:
-> (This series resumes [1].)
+On Sat, Sep 6, 2025 at 12:55=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
+dev> wrote:
+>
+>
+>
+> On 9/4/25 10:18 PM, Hoyeon Lee wrote:
+> > Add a compile-time check to bpf_tail_call_static() to warn when a
+> > constant slot(index) >=3D map->max_entries. This uses a small
+> > BPF_MAP_ENTRIES() macro together with Clang's diagnose_if attribute.
+> >
+> > Clang front-end keeps the map type with a '(*max_entries)[N]' field,
+> > so the expression
+> >
+> >      sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)
+> >
+> > is resolved to N entirely at compile time. This allows diagnose_if()
+> > to emit a warning when a constant slot index is out of range.
+> >
+> > Out-of-bounds tail calls are currently silent no-ops at runtime, so
+> > emitting a compile-time warning helps detect logic errors earlier.
+> > This is currently limited to Clang (due to diagnose_if) and only for
+> > constant indices, but should still catch the common cases.
+> >
+> > Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
+> > ---
+> > Changes in V2:
+> > - add function definition for __bpf_tail_call_warn for compile error
+> >
+> >   tools/lib/bpf/bpf_helpers.h | 21 +++++++++++++++++++++
+> >   1 file changed, 21 insertions(+)
+> >
+> > diff --git a/tools/lib/bpf/bpf_helpers.h b/tools/lib/bpf/bpf_helpers.h
+> > index 80c028540656..98bc1536c497 100644
+> > --- a/tools/lib/bpf/bpf_helpers.h
+> > +++ b/tools/lib/bpf/bpf_helpers.h
+> > @@ -173,6 +173,27 @@ bpf_tail_call_static(void *ctx, const void *map, c=
+onst __u32 slot)
+> >                    :: [ctx]"r"(ctx), [map]"r"(map), [slot]"i"(slot)
+> >                    : "r0", "r1", "r2", "r3", "r4", "r5");
+> >   }
+> > +
+> > +#if __has_attribute(diagnose_if)
+> > +static __always_inline void __bpf_tail_call_warn(int oob)
+> > +     __attribute__((diagnose_if(oob, "bpf_tail_call: slot >=3D max_ent=
+ries",
+> > +                                "warning"))) {};
+> > +
+> > +#define BPF_MAP_ENTRIES(m) \
+> > +     ((__u32)(sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)))
+> > +
+> > +#ifndef bpf_tail_call_static
+> > +#define bpf_tail_call_static(ctx, map, slot)                          =
+     \
+> > +({                                                                    =
+     \
+> > +     /* wrapped to avoid double evaluation. */                        =
+     \
+> > +     const __u32 __slot =3D (slot);                                   =
+       \
+> > +     __bpf_tail_call_warn(__slot >=3D BPF_MAP_ENTRIES(map));          =
+       \
+> > +     /* Avoid re-expand & invoke original as (bpf_tail_call_static)(..=
+) */ \
+> > +     (bpf_tail_call_static)(ctx, map, __slot);                        =
+     \
+> > +})
+> > +#endif /* bpf_tail_call_static */
+> > +#endif
+>
+> I got the following error with llvm21.
+>
+> progs/tailcall_bpf2bpf3.c:20:3: error: bpf_tail_call: slot >=3D max_entri=
+es [-Werror,-Wuser-defined-warnings]
+>     20 |                 bpf_tail_call_static(skb, &jmp_table,progs/tailc=
+all_bpf2bpf2.c:17:3 10);
+>        | :                ^
+>   /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/b=
+pf_helpers.h:190:53: note: expanded from macro
+>        'bpf_tail_call_static'
+>    190 |         __bpf_tail_call_warn(__slot >=3D BPF_MAP_ENTRIES(map)); =
+                \
+>        |                                                            ^
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf=
+_helpers.h:179:17: note: from 'diagnose_if'
+>        attribute on '__bpf_tail_call_warn':
+>    179 |         __attribute__((diagnose_if(oob, "bpf_tail_call: slot >=
+=3D max_entries",
+>        |                        ^           ~~~
+> error: bpf_tail_call: slot >=3D max_entries [-Werror,-Wuser-defined-warni=
+ngs]
+>     17 |                 bpf_tail_call_static(skb, &jmp_table, 1);
+>        |                 ^
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf=
+_helpers.h:190:53: note: expanded from macro
+>        'bpf_tail_call_static'
+>    190 |         __bpf_tail_call_warn(__slot >=3D BPF_MAP_ENTRIES(map)); =
+                \
+>        |                                                            ^
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf=
+_helpers.h:179:17: note: from 'diagnose_if'
+>        attribute on '__bpf_tail_call_warn':
+>    179 |         __attribute__((diagnose_if(oob, "bpf_tail_call: slot >=
+=3D max_entries",
+>        |                        ^           ~~~
+>    CLNG-BPF [test_progs] tailcall_poke.bpf.o
+> 1 error generated.
+> make: *** [Makefile:733: /home/yhs/work/bpf-next/tools/testing/selftests/=
+bpf/tailcall_bpf2bpf3.bpf.o] Error 1
+>
 
-Thank you for following up on this.
+Thank you for sharing build results! Checked BPF CI, and found 2 issues:
 
-Could you give a brief synopsis what changed between this series and the 
-previous series ?
+1. selftests/bpf promote warnings to errors (-Werror)
+For bpf2bpf tail-call variant progs that intentionally calls OOB trigger
+this diagnostic, relaxing just those files keeps CI green while still
+showing the warning:
 
-> [1] https://lore.kernel.org/all/20250613-camss-8x39-vbif-v5-0-a002301a7730@mailoo.org/
-Good series submission style would have something in the coverletter like.
+        # tools/testing/selftests/bpf/Makefile
+        progs/tailcall_bpf2bpf%.c-CFLAGS :=3D -Wno-error=3Duser-defined-war=
+nings
 
-"Here is my awesome series of patches which do X
+2. 'void *' maps build error  (bpf2bpf / map-in-map)
+The proposed warning is meant only for typed .maps objects. When a prog
+passes a void * map, BPF_MAP_ENTRIES() must not attempt member
+access. A _Generic gate fixes this by filtering only for typed maps and
+yielding 0U for void* families:
 
-v2:
-- Fixed everything wise and benevolent kernel community asked for
+        # from BPF-CI build error
+        # function prototype:
+        #         int subprog_tail(struct __sk_buff *skb, void *jmp_table)
+        progs/tailcall_bpf2bpf_hierarchy3.c:36:2: error: member
+reference base type 'void' is not a structure or union
+          36 | bpf_tail_call_static(skb, jmp_table, 0);
+               | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v1:
-- Enabled cool stuff
-"
+fixes:
 
-I recall we were pretty close to picking these patches up previously so 
-thank you for re-upping your effort.
+        #define BPF_MAP_ENTRIES(m) _Generic((m), \
+               void *:                 0U,      \
+               const void *:           0U,      \
+               volatile void *:        0U,      \
+               const volatile void *:  0U,      \
+               default:
+((__u32)(sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries))) \
+       )
 
-A brief bit of guidance on what if anything changed from your last 
-submission is appreciated and good practice so that we can review and 
-apply quicker.
+This avoids the compile error, but this is not a very clean solution.
 
----
-bod
+As Andrii Nakryiko noted, map->max_entries can be changed at runtime,
+which makes this compile-time approach misleading. I hadn=E2=80=99t conside=
+red
+that, so this RFC seems less practical to pursue further. Still, I=E2=80=99=
+m
+sharing the troubleshooting above in case parts of it may be useful for
+future attempts.
+
+
+> > +
+> >   #endif
+> >   #endif
+> >
+> > --
+> > 2.51.0
+>
 
