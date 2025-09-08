@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-806185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2995B4931C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A72FB49320
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38117A2F85
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6542007E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F637304BA2;
-	Mon,  8 Sep 2025 15:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9DD30E0C7;
+	Mon,  8 Sep 2025 15:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="htBqgRd/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mPbNWXMh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7430DEA5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0CE30DEA5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345072; cv=none; b=YNhQMmjRYOAy7jjEh1rSYcYuMvtoV53aQvZGZ9CEjsQQ3YkveWKlCbkzk5eguEBIifUgkIcsZyLGQRs6BsKRzrlYk66XZUrCl8yUUzhAEzeKTm5wnZAXgQeDa7TK1d0DnAP07dfbYgy4eml4Pzf76n2IRPPB+LBcKjyBWPoCfZE=
+	t=1757345084; cv=none; b=PuTF2dRUIocANm9Uml60y2OfKSGPDC/xA+qqxKr6gK5ogf03Tt2pRb3QIYs2b+W4xrx03EkafDFU0+KfryyHuNRiP92MAOprOomDoBL846I4lLeWys1CBkNxrKjOvBF3uIWDYDa+5UVXiiewEdOw/gSVbCdPG2nbYL0oyTFjeSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345072; c=relaxed/simple;
-	bh=Tm8QCJMQMgokPs/JXQEG2GlrFn6yUTqcROvvkDy7NZs=;
+	s=arc-20240116; t=1757345084; c=relaxed/simple;
+	bh=BVmhf05AnvENSu4Q2O9muu1fjrqbpmJnlrdvdpeVF4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cV6gFN2P4Za3Hy0PDuZh9mvJlI6sXH2au37rUPIuKTle3qBUhYkMpoBaTQUZHnRam0j7QOcAcxLaryZCUw6pX/5++Xk5oBWrSatamLOmSb1MC/1JVY68cra6QiaWTNiYOJPsOiwGajWNeMIvZw7EYeisTEEvs9quM8ewgFSxdYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=htBqgRd/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757345070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OFR4fsYCPzy26gT9T9kYZtLy/SzbzsJmYYmla+zsN4U=;
-	b=htBqgRd/qyFNyyTi4BFWHd6hVcEbYVVz6ntBKZt3GbW6k1td4G6tjkcFR4qz6CzYujKRix
-	XoctZf6Yk4TZcG69SM9UE0Jow0nqjHNoEXj8RPfDS0ehPu3zf5vIzEQi1zeJBtduz9VrzP
-	VTxNheMK1F6TDnek563RUKtJpR+Arlk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-5gFfw9CrMxWMtu2vzAn4Ww-1; Mon, 08 Sep 2025 11:24:29 -0400
-X-MC-Unique: 5gFfw9CrMxWMtu2vzAn4Ww-1
-X-Mimecast-MFC-AGG-ID: 5gFfw9CrMxWMtu2vzAn4Ww_1757345068
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso31251505e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:24:28 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Tyv1LSPb8CTzmTyI/xyleKJkELqtujBHU/OiMWxVHeEOpKFJiYEmQ7eE7DugOfF5IG3jHhkDz4lctP4f+VANO32CoNdlMVPCsVbw69c/VNTsnZN3RgDVyKm6c/ALjZe/rOvqCIIsAjtDQ3A0gPZOMVYe8SnsK87/H+aDKrghuGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mPbNWXMh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588939Ru006566
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 15:24:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s9XBnFXGBmeYr88ojm2wcO7hWjCnRSWfP1E0HSc5a+g=; b=mPbNWXMhJIB1bhi+
+	SKij4Hcmz4JORbUy7bwGxi3KJY/+t4JGgD6HzXlAAEHPTTssApfucuAqDPJwi2II
+	N1rDHu8CzFGOQqHKI6eF4dbDNiQT25jWJEIEwKqWU0TirDKbYSWANZs/2T2BCvI0
+	Kg9uRJgYeyk7i13NetjTPIAatSDzc22wyNHmZImgB7Df/YvYbohcidA44G5As0KV
+	m91nklRxVxSdeWzUPK0cZYAa+kOMqufPNUqhctvDtrhYnLYc4ZHCro/s7IiSFZ5y
+	Vs500sioapGS9OTfo5KdQbqtaa5tBH3KZRx8mnqmKHuipfw9ZdpkZ4Pv8UrerKC8
+	IHPvFg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490by8w3dp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:24:41 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-71f2e7244c7so5406416d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:24:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757345068; x=1757949868;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OFR4fsYCPzy26gT9T9kYZtLy/SzbzsJmYYmla+zsN4U=;
-        b=iNzaxBDRXAvz1uwSgjTAEocEAivyzEsHx2s86CJ4YJHpFwNvzlLlqGNiGh/2NYDfDB
-         YILc/JmorkMcXvbNNLUqZIjZTRIkWhJxp0wlf9wXbYWV2LIeLmkGvSy4zKC8QD4zUZQo
-         ynd1kgwDanlQVkvUd2PYDSQd7F8HSYKQ0FTOiCW9XRQVx4d6cCja/2FN4bKcbKUk4N8n
-         0lgcM0O7yUgiJSonbXFfquLSoFzaFgS9lf79k0q50OFh2sgUftfv4M2n9EzEJuh4TZtz
-         pmp+TS+BUvAX0KaiFOslkF565gVff81/149Jv3it0tcsz8Gcv35bY9TjuQgYZUe9Vunh
-         hhuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbLXyW6pOxAaskFz6tf8c2o+9VO3QjGuDPV9Bsfx0bnvOoOg/L2IiOY5Wv3vk228KmPO8/DYfavQ+whAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7V/ruk7eo6+RCUIBrXdviKl6C3gvLPqfJKluICotu6swpJaCX
-	px1WwLB9NoXio1PZDmdf4BEh3l+yXXlqWA4xu7fmIplXtweKGgpG2jo25SuVilF3+cL4er3mslL
-	gO6VxtYHpzDU7wMs6JVLYIRazo0CCDXZ8IbniFzEW44wA4+2gEfSwvrUT392NoEN2Sg==
-X-Gm-Gg: ASbGncvlYJZb7cIcMEKLBHDlkd+oJ95Ib00j8eTLNvuJe+g9IrvuF6MgDZCCNXJFlDs
-	3/Pze+1evWKwJ6KvYWysI4ReGBd6CzM7SCwxyA6WNQKPxBkW7SL58tnD0NWZD0DxR27xawfrhW6
-	iRT+Wd8XhziVzAtQ8u2xuev/YVH+2l55yDGugSNBTq74PnrKETmxy8TQS7Z8P41nPGUAirL0ae+
-	/HfSPbOXg+7QOmqLFjgQzKFI2Vr5fiOzsZCfpyhBKlIegANvmczbtfa7G30eoM7c8or+r1UwIAQ
-	VJ7IE+fYt+krfL2qmyR+i0WuN9H5TG3zmMLG30uV5hO+su/22+5yN1nvkDMdLUb4ke/lcCfn3gw
-	u4YDUDqaibyxn/2Es/t9stbjRULpSWS2mF5zucHZzTvtQ9uWKDYQUCViobBpiVbko
-X-Received: by 2002:a05:6000:2087:b0:3de:c5b3:dda3 with SMTP id ffacd0b85a97d-3e645c9d0fbmr7224228f8f.44.1757345067783;
-        Mon, 08 Sep 2025 08:24:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1+PXcaDlfYMG7l/tiEGAk9GKqnsTr1vgulen25L6LSRNlWKiBe/sZ6bAf6RuwddMzqclqxA==
-X-Received: by 2002:a05:6000:2087:b0:3de:c5b3:dda3 with SMTP id ffacd0b85a97d-3e645c9d0fbmr7224167f8f.44.1757345067184;
-        Mon, 08 Sep 2025 08:24:27 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add504sm41539994f8f.30.2025.09.08.08.24.24
+        d=1e100.net; s=20230601; t=1757345081; x=1757949881;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s9XBnFXGBmeYr88ojm2wcO7hWjCnRSWfP1E0HSc5a+g=;
+        b=JTm5oOFgKfrwURuCaWJPUr6DjjqqM9VgG8PAbY2aFrkZq5mKpj9k4u0RfyYFnrmBAc
+         G49mUHY6lyEQvbK8vs5QOKKK4HvMQnncFSwgxF7RhEIucOcBv+8niIXmpCsUOfwAWK3H
+         XpEWnUAucLMIcrWfket2yse/oEiwp9g6yojuNH+P4bhjDf8TEphuMrpTs3mMSU3Pz8u5
+         mDt5Ot5uUDTCnTTVUjj7fWaV4uft0RI70fgbJUXdKCZtTnBKhOIIYkjNh8wsqOmRTc3Z
+         UkL5ntFmxr29H45X82e+PXWZCE6TafIoAOh+8KuFi7qMHEFOwhPxLaxiBss5Z6R5u3wa
+         i0yg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5JihMojCGYZVA7GdwJT3phnReE1WqlMVWEOpCKxwtOP3mPgPmNS084EsheaJyhePdg3RIdFJQ9v3JEvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqp/jntJ3TaBgwiT+pv4g2G7JfaB6v6oI3k+xyruHbo32n/+Je
+	vYtvexwDIFI4JmqwmQ6Jf54tTFG/1P7PUaKZ545wn7pFNBM5THJ/xw/dBRky82HDUUufqkmGH91
+	z3BZPEjVOiKdyr3LUyhVhHVuJLjWU41aX7pWVGAe0mvHbGFxS5MTnglGzJlMEmAtzl1Q=
+X-Gm-Gg: ASbGncunhEpl8MQT8VlwG5cLdghp9PiQ9R9sqJRqkw9MOzHb8PjF3D4MU0IxBG7JZ7t
+	zMXDsoXgwNERq4iQ8IcgV7teH8lE3oC2E4ge5PVcoYG8aztLOGe8S85o/MXA0PPsThVQB77Tl1k
+	K3tJ7/Ny08JnOc3+LhmkO/SftamviCnjeCOI0ScUkseqRHE9yxQPF8aCxt/bXrvQPmH51jjtBu6
+	7wczb1tQsRHDFv6LR70Ib8J7w9SUrrRBHdhU2xXaSDttG/0C2HZRbosOV+lSJV1LJYQnJpgfgEG
+	+XtZD/EW1RZa+ktOOYodI5lZpZImhIc7cV+YYHxUhde1xjUu8g12LlEZd4j5EE42dpB+I5/IV32
+	O00gzbJuUt42TW/6dDatAzQ==
+X-Received: by 2002:ad4:5c62:0:b0:72a:df4a:e3 with SMTP id 6a1803df08f44-73946f70409mr55645156d6.8.1757345080626;
+        Mon, 08 Sep 2025 08:24:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/dM+YUVzCoKCgc+8cdXvnS5qCmMcy7DhBINwLAE11WFETAeMMaRl0ZDxjjD0D4fmvZpBH8A==
+X-Received: by 2002:ad4:5c62:0:b0:72a:df4a:e3 with SMTP id 6a1803df08f44-73946f70409mr55644876d6.8.1757345080079;
+        Mon, 08 Sep 2025 08:24:40 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62778a094a0sm3537550a12.31.2025.09.08.08.24.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:24:26 -0700 (PDT)
-Message-ID: <8edb13fc-e58d-4480-8c94-c321da0f4d8e@redhat.com>
-Date: Mon, 8 Sep 2025 17:24:23 +0200
+        Mon, 08 Sep 2025 08:24:39 -0700 (PDT)
+Message-ID: <8cf65d78-2790-4467-a9b3-372af53c1374@oss.qualcomm.com>
+Date: Mon, 8 Sep 2025 17:24:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,121 +89,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
-To: Jason Gunthorpe <jgg@nvidia.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
- Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
- kexec@lists.infradead.org, kasan-dev@googlegroups.com
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
- <20250908125101.GX616306@nvidia.com>
- <e71b7763-4a62-4709-9969-8579bdcff595@lucifer.local>
- <20250908133224.GE616306@nvidia.com>
- <090675bd-cb18-4148-967b-52cca452e07b@lucifer.local>
- <20250908142011.GK616306@nvidia.com>
- <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
- <20250908151637.GM616306@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 15/16] drm/msm/a6xx: Enable IFPC on Adreno X1-85
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
+ <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250908151637.GM616306@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Yv8PR5YX c=1 sm=1 tr=0 ts=68bef539 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=l1a4ANfPRBzC3aqxuR8A:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-GUID: zDO1OcMTmE2WcJMJVzJEGQzp5llYck5Z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX3I3QDaq77aoM
+ riVtzbpGSUDmvK5B7z0Clt9Uxglipy7HnXtMaCBq7O1i1F+HFn7+hxJ7+VntRVPx9qFtNcqUysu
+ F+tDZEWRSYN0Iob/LW4QTT5yq9UPjH7MEiFrtYJv9QniXuS8E16W+GunK2E0k6dc38kesc7BdqC
+ AEoIpVwr5fZzNwRRA+0QzTi3wB2bNajwfwwQ5xpHw6VuJjEl7lxDeM8nDLgOjT8Aq+eJN7nm5PB
+ omyiBLYNsvXMruM+edfrqsb9exvQuvi1r8AQfk6nja92h/BeKFHAVZiC/W0CW5awotYnsKCU+AG
+ j2/CSmUf/Fui1tAZKcoAc3Fjdvz3kQs9wr5xLf+HJ5+gVNeDDdWpw43CgiEwtUK7ujuyELVHf/R
+ VI+ubBi4
+X-Proofpoint-ORIG-GUID: zDO1OcMTmE2WcJMJVzJEGQzp5llYck5Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
+On 9/8/25 10:27 AM, Akhil P Oommen wrote:
+> Add the IFPC restore register list and enable IFPC support on Adreno
+> X1-85 gpu.
 > 
->> I think we need to be cautious of scope here :) I don't want to
->> accidentally break things this way.
-> 
-> IMHO it is worth doing when you get into more driver places it is far
-> more obvious why the VM_SHARED is being checked.
-> 
->> OK I think a sensible way forward - How about I add desc_is_cowable() or
->> vma_desc_cowable() and only set this if I'm confident it's correct?
-> 
-> I'm thinking to call it vma_desc_never_cowable() as that is much much
-> clear what the purpose is.
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-Secretmem wants no private mappings. So we should check exactly that, 
-not whether we might have a cow mapping.
+[...]
 
--- 
-Cheers
+> @@ -1432,12 +1495,14 @@ static const struct adreno_info a7xx_gpus[] = {
+>  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>  		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>  			  ADRENO_QUIRK_HAS_HW_APRIV |
+> -			  ADRENO_QUIRK_PREEMPTION,
+> +			  ADRENO_QUIRK_PREEMPTION |
+> +			  ADRENO_QUIRK_IFPC,
+>  		.init = a6xx_gpu_init,
+>  		.a6xx = &(const struct a6xx_info) {
+>  			.hwcg = a740_hwcg,
+>  			.protect = &a730_protect,
+>  			.pwrup_reglist = &a7xx_pwrup_reglist,
+> +			.ifpc_reglist = &a750_ifpc_reglist,
+>  			.gmu_chipid = 0x7050001,
+>  			.gmu_cgc_mode = 0x00020202,
+>  		},
+> @@ -1466,6 +1531,7 @@ static const struct adreno_info a7xx_gpus[] = {
+>  		.a6xx = &(const struct a6xx_info) {
+>  			.protect = &a730_protect,
+>  			.pwrup_reglist = &a7xx_pwrup_reglist,
+> +			.ifpc_reglist = &a750_ifpc_reglist,
 
-David / dhildenb
+The latter one should be part of the last patch
 
+Konrad
 
