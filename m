@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-804905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F95B481B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2623AB481B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2047117434D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA70C3BDC32
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4D2126BF7;
-	Mon,  8 Sep 2025 00:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zya+nmmb"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8061917ED;
+	Mon,  8 Sep 2025 00:41:33 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF2718AFF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 00:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215E71C68F;
+	Mon,  8 Sep 2025 00:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757291531; cv=none; b=WDuKv4THBfPkWIT1Q3SmeuIDU4gJ+INjLLbEOYHiH++wU0KMKl3aLoYvmpvRvfijNPtOopwiGTBfdOKlC4pR/9cbBy+gkfhRKV/uerdMDgSgvdin+zkDg2/6Fc6oLt+mzCVR7cv+RUdYt5HiZUl/xdFdTfJO75CiO/teSNdnaww=
+	t=1757292093; cv=none; b=rW9SZJvh+LoibebSKCB9VFzlRXIKFrvY3nhxFI7jZu1Vnu3rKaNGNtc7cdUwPMlnUJuB03XaYJC9/KqD5dT5XfgWf4ZSW2l1IUaYDaP6/tyMXRn+RSWfGp57dJnx73B6RLftlNFiTuI1vfeDr3NM9a54i7vj29twrxHoYXkWbxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757291531; c=relaxed/simple;
-	bh=5QKsspVif7bTrYaXP3FasAnwvrnmS/iu0NY6fV7OK0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gvlhvJljzC/a+zw9K0Lj7vbRCzOlU/GVZyUXmv8Nw4GuhSGreoHnkSRzyaEsGyUsfjPUsS79o6UDNbFp9FNieUFpNPTPOWCHH3BpQZs/DlPE0c2gJ0ybvwMOZJh/1x/2Czx/K3NhVaDUNAMHIvg4LUZeLj97YWcXVymGsPOCc1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zya+nmmb; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757291520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=V84IucEUJyCvbiT+ZRJpmbheHpQNezq37q7p3Eb6jMg=;
-	b=Zya+nmmb7/SLrAgIGuwQZL4zv4do2oePvoALMwGotmLIPGKS1TXo0e920NVfjCVh0jcTNK
-	NHKGhafcpslhaidvLJtiMZSyWvh2h0k1INsOl8m/oMAHQDkDYpBar4gXJAIgJYyDZQFhpZ
-	5hZNhwVfCGLUn7xAYiUfEQABfuHMJk4=
-From: Zqiang <qiang.zhang@linux.dev>
-To: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com,
-	boqun.feng@gmail.com,
-	urezki@gmail.com
-Cc: qiang.zhang@linux.dev,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] srcu/tiny: Remove preempt_disable/enable() in srcu_gp_start_if_needed()
-Date: Mon,  8 Sep 2025 08:31:55 +0800
-Message-ID: <20250908003155.557070-1-qiang.zhang@linux.dev>
+	s=arc-20240116; t=1757292093; c=relaxed/simple;
+	bh=7+TNF79jJvSYsblRzXFIJiGQ+i6MQnTG8YiZB/QvLyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7UOxPYo/xfnBmuxgLey/g/kbUg9bA+pE3lJmzKxxdwPBlopDyAtxrsZr8yt7zsgONbAWNuF4ebY9Upj9SFlJBs2S1an6AkDI1CeU2OjmIyjgJmJb1E/Gi4iFZdrEvTNmCmfWR9t++aW/+BOzytWlxYRp3fbL39W53+SpWBSyfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 855ec6da8c4c11f0b29709d653e92f7d-20250908
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:45b1f101-3491-40ef-ab6c-8642362d1aaf,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:b40aa844a40dcead21abd9529821ab80,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 855ec6da8c4c11f0b29709d653e92f7d-20250908
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2090132884; Mon, 08 Sep 2025 08:41:13 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id E0A4AE008FA3;
+	Mon,  8 Sep 2025 08:41:12 +0800 (CST)
+X-ns-mid: postfix-68BE2628-72593311
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 9173CE008FA2;
+	Mon,  8 Sep 2025 08:41:11 +0800 (CST)
+Message-ID: <f099c236-b9d5-4d73-9176-c91f54acffd0@kylinos.cn>
+Date: Mon, 8 Sep 2025 08:41:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] cpufreq: intel_pstate: Fix object lifecycle issue
+ in update_qos_request()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>
+References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+ <2255671.irdbgypaU6@rafael.j.wysocki>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <2255671.irdbgypaU6@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Currently, the srcu_gp_start_if_needed() is always be invoked in
-preempt disable's critical section, this commit therefore remove
-redundant preempt_disable/enable() in srcu_gp_start_if_needed().
 
-Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
-Signed-off-by: Zqiang <qiang.zhang@linux.dev>
----
- kernel/rcu/srcutiny.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index b52ec45698e8..417bd0e4457c 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -181,10 +181,8 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
- {
- 	unsigned long cookie;
- 
--	preempt_disable();  // Needed for PREEMPT_LAZY
- 	cookie = get_state_synchronize_srcu(ssp);
- 	if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
--		preempt_enable();
- 		return;
- 	}
- 	WRITE_ONCE(ssp->srcu_idx_max, cookie);
-@@ -194,7 +192,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
- 		else if (list_empty(&ssp->srcu_work.entry))
- 			list_add(&ssp->srcu_work.entry, &srcu_boot_list);
- 	}
--	preempt_enable();
- }
- 
- /*
--- 
-2.48.1
-
+=E5=9C=A8 2025/9/5 21:52, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The cpufreq_cpu_put() call in update_qos_request() takes place too earl=
+y
+> because the latter subsequently calls freq_qos_update_request() that
+> indirectly accesses the policy object in question through the QoS reque=
+st
+> object passed to it.
+>
+> Fortunately, update_qos_request() is called under intel_pstate_driver_l=
+ock,
+> so this issue does not matter for changing the intel_pstate operation
+> mode, but it theoretically can cause a crash to occur on CPU device hot
+> removal (which currently can only happen in virt, but it is formally
+> supported nevertheless).
+>
+> Address this issue by modifying update_qos_request() to drop the
+> reference to the policy later.
+>
+> Fixes: da5c504c7aae ("cpufreq: intel_pstate: Implement QoS supported fr=
+eq constraints")
+> Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   drivers/cpufreq/intel_pstate.c |    8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1708,10 +1708,10 @@ static void update_qos_request(enum freq
+>   			continue;
+>  =20
+>   		req =3D policy->driver_data;
+> -		cpufreq_cpu_put(policy);
+> -
+> -		if (!req)
+> +		if (!req) {
+> +			cpufreq_cpu_put(policy);
+>   			continue;
+> +		}
+>  =20
+>   		if (hwp_active)
+>   			intel_pstate_get_hwp_cap(cpu);
+> @@ -1727,6 +1727,8 @@ static void update_qos_request(enum freq
+>  =20
+>   		if (freq_qos_update_request(req, freq) < 0)
+>   			pr_warn("Failed to update freq constraint: CPU%d\n", i);
+> +
+> +		cpufreq_cpu_put(policy);
+>   	}
+>   }
+>  =20
+Reviewed-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 
