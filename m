@@ -1,206 +1,290 @@
-Return-Path: <linux-kernel+bounces-806109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C890CB491FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE29B49208
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6424417178D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404DF1BC08C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A56A30BB89;
-	Mon,  8 Sep 2025 14:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F9530CD81;
+	Mon,  8 Sep 2025 14:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hH9zHq10"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qTGF/yNt";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="E+z8GtYj"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77585235BE8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342861; cv=none; b=GOrt6nESLFxge3edar4OkPhPB+ACIoGV5aOlBOkGVWiZsPTe34zqd9q6W9OuHqH2X0qStEw4lQl6Ns6hsdGHz4A9AyRknXZnewt0gtSDeAt/xeUSyua7l5zViSpIOHLViQUNgLk8x2w5Ia/pKG5MC1bAhx00x/TGzw9uvXGJ5Pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342861; c=relaxed/simple;
-	bh=fV/k7pnGg5U1j/Ho4oLI9YHZEk//tgEhhTH30ME2tYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpfvjKRZ4OaLF4SIEgIzaZkofig0TiQQI05WLaTxqSQo9UbbdlQHTiP68bVCDz5rfjsu9V3f79fNc+rKTq8j8nFeqoieOxPuM9p6CsU+OXjYjqBa+0LoOOK2zgVXqv2ZRcUDSqIwKUp0sODktZ+nUJnC1zX0QG6s3feYMOPAzCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hH9zHq10; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 8 Sep 2025 16:47:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757342846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YRl/bpkfEMYYMiEprnX/hSTsooigf4G9r5nwDef3AE4=;
-	b=hH9zHq10zbNnlFb24ISQS+7skwtXvH/fL/9y3wfq3GY+NxVKis92wv2HmP9GIUHHN+af2S
-	HOjMgpWFhQ0wBHADKkLgineq2Lt5dgZ8oUhyL6mGOvCXVCDoQroqdHe6VQAY0FuEe8d7Ca
-	T+RPb+bmMipVgKPQ9OGfbGdj0Di6m2I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
- v4l2 control
-Message-ID: <ahhiuf4is3wnukzgaschey6yrea5qfmmggcon42brh2pp2wrzn@aq3wnluvihtl>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
- <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
- <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
- <20250907200811.GB19568@pendragon.ideasonboard.com>
- <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
- <20250908134735.GF26062@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A5A22AE5D;
+	Mon,  8 Sep 2025 14:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757342911; cv=fail; b=HxmxD45V6E+wZshfMZ5YJNAp7D7GR/myNxmKNXb1uDS3K17F74kh/P7jrxekphCBGirif/9jo2doiaAm9/A4+/kKsMdFOXKCLbx2sMrg1eXkGC7FSkf7jSgUeWPUnpPyTjBXF76V4tOif43QnODwRMNi/a+qP0cK74+LzxtXr48=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757342911; c=relaxed/simple;
+	bh=RYLU6znws5MEMjPtkJC4HATgEO6uZNNTe7Q2skWRUU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=p0xw6o+bP8VK9MtnK3oJ2er2iQMah/uwjDkNHJcfUt9X6I9xfB7l1iqzfe0mRBKB0T6iqPUL+aXxvEl2zHurNT8ms1c0SjD8Jbgz2W3KZ+y6ZQnJ83iy0tylEr4QzDBWHPx1AbtiVegDq3ulkuRPCaxHLglyGjTQ3VoACYGMPRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qTGF/yNt; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=E+z8GtYj; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588EdcOe003523;
+	Mon, 8 Sep 2025 14:47:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=sl9A9tm5ODd+z5CWzz
+	yagQFGQE1WJK61sW9fDPpxLQs=; b=qTGF/yNt42mFOxZURG9OMs8rqXoPzTq2be
+	y36SA/5cs6DuS2fNn3t9VEJvkxC+d/tMoEolCz8ipo6TJKV+AwsexGF/YKyTJ6TC
+	XY6Sf3M5hqeUAQz9bGYzQ8fa3ONolbszDD+tFBBIa4RgvMst9dXSBZ7ZpWICvE47
+	MsmKcpqLiFSL6jQUBGD5nzS3g3jc+2eJTnYs2VnhwIUmcZSS0WrGXXXjqZM6GgnH
+	y0268CG6/iMGystPj3uy+ZorYQqJHhddS0GIn3Pck7l+jo/XPXNXGMo7euPVLBA8
+	eSMrSezw4GZR8pasfPto2JeB+fWB9mt2KtTbluxqHmphSDCiJrxA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49213p00hu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 14:47:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588EadH7002867;
+	Mon, 8 Sep 2025 14:47:42 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdetby8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 14:47:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B3dDe4uSffKPrb0r/47ZUnNyD4Zgg3bhun0gxqzhQo1puoEXWcbo58rYLNJVaINqDlPPUIxlcFcpnzzSuuxW3pxb7YVaKyVB5llMgIVLktgTGIJug2/K9/BbDMhaSaabeNBB+y/oOhC/d8u7fjq4Zgl72LGYuJf7LoC0BXWIaGzQfH/GR0WgDHURQjNQj1HKJVMNk8TBQtNC99bomvSBblxOY5z2b1j4uqMeLxIR0ajicowxiRmszqJ6pRfPFpNBb4OdpQ6WBDriy/YZMZlsmPOWH5JRdQ+1bZg1tvqiUHcFyVoFJOsvBTXUyQSvuyItNEGgsTpdH1oQc1Yp5pwpJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sl9A9tm5ODd+z5CWzzyagQFGQE1WJK61sW9fDPpxLQs=;
+ b=mhTXVf3OYhunWjm8CyDeUAmf8gFlRJQG6jvidvWVZtwYC/s8fT8EK/+Xo8j9/9zeR4Nkaz+y+Uj1pzAQv+9ApZL8lE2AC1krng09HH7UUiFydljx06EuHxEy5adJqJVKPG5RgpxK6tL0hIZgwxR6y/ibmbjO3yBPPjlZMtiLmqcoDDF69KA/xhW3Zyu4/2DFnYZz7bspSZJuc0O1no6prb36sYn6diRaTIcQLJrtfkoNp0d2ihPpPsF4jnLXh81OLZqJX+GLvIYef3oy+zbx4+aKl4poLz4x83YaZVOICG00p8CpOcJ6St8YyP010YmLlnfQXQhQnvgMx6MBpDN4HA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sl9A9tm5ODd+z5CWzzyagQFGQE1WJK61sW9fDPpxLQs=;
+ b=E+z8GtYjZHGXhtB7m17FGOofhU9ElqwXHOzpqrPD40SxXBJ93Nek+qruhqzMaDO8ya1ZV+SiKrLJ0+OCX4uCczNYRqNVWgfkFzwiZpql1FcgEAxheK3PK0xP0sk99A+ITqTVXvJqPB503gChMxVCFHCpC4Kj3guBBxTHjk2cX3k=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by BN0PR10MB5110.namprd10.prod.outlook.com (2603:10b6:408:114::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
+ 2025 14:47:36 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
+ 14:47:36 +0000
+Date: Mon, 8 Sep 2025 15:47:34 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+        Guo Ren <guoren@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+        kasan-dev@googlegroups.com
+Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
+Message-ID: <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+ <20250908125101.GX616306@nvidia.com>
+ <e71b7763-4a62-4709-9969-8579bdcff595@lucifer.local>
+ <20250908133224.GE616306@nvidia.com>
+ <090675bd-cb18-4148-967b-52cca452e07b@lucifer.local>
+ <20250908142011.GK616306@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908142011.GK616306@nvidia.com>
+X-ClientProxiedBy: LO4P123CA0524.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::9) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908134735.GF26062@pendragon.ideasonboard.com>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BN0PR10MB5110:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8d39c06-98fb-43d2-14df-08ddeee6a6b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EySgw0jRAQCcKEBRLKB3Jqz018O6120cPWWRk+WYFP4KHnN04AFua3KnKxJe?=
+ =?us-ascii?Q?YSz24Ttsor71bZL6zsC5DBYMCKL6vV5fAnoGNiGGRU2Y+82nvuGq6j61T34j?=
+ =?us-ascii?Q?UA5aYbi8fnGv62MWA+pV7OCIi2947ZjWRF5SFqAYlSwaafxKFdDkHr9inGKk?=
+ =?us-ascii?Q?hTr78hPWXRRQzNWq49PlZfPBpZzf/oB/9VSog7Wnwg9zMi5a73xvg9Jlf3wC?=
+ =?us-ascii?Q?KeryIxlK3XIB8uSjlkdOzKQDO6M0yK+LeJE2MSBTr4VyKs+pNlXurknxinlS?=
+ =?us-ascii?Q?gwKYW93ZmyTcywdzz1otmP+ET8lUOAHgznDTRuf/lvnhejztUSau4DsToma0?=
+ =?us-ascii?Q?cEI2l5Ac9XqZ7QvvgFFH6dYS1fMYxHw5Ca6L1DovYMXPSl6wwv2YsN7+kEkx?=
+ =?us-ascii?Q?kdhZHlptxCWMUBKHbeUdPybp5bmmv/eNWBzdyHUxdiNAAzmgXfcU3Wk+HECs?=
+ =?us-ascii?Q?yqaHbo6fO0tfQrfTsxSKJM/HLbsX0uCwC2oDbHvNybVSUbh8a4cvYzt2/c68?=
+ =?us-ascii?Q?D7Y1oD32ivcUjZRiBAr7jHRgOfR2WGrTwYbvPPII7bbK/BDy6uxTolk5NLQA?=
+ =?us-ascii?Q?rzquBI0YFcX/Enx1m/pFSmHwB8eDN8fq/xXwgXzPikwIWD9+vT/fUhkWzIeS?=
+ =?us-ascii?Q?5PvkGPExYISxeqBkW1xpUS+H0F6rfzcwhGOdsi9ug0ngQuJTRQz3sRgoVtHv?=
+ =?us-ascii?Q?pfl42Yi1aDU3/eAAQEf7ZuXiCBxLQHEv/FHfeGNhc5czZCrBXyTc4mWLxFqI?=
+ =?us-ascii?Q?EeKeNbUY/0bY5e4ZHqdKDKhgbcCONdaLxWT1guCYyJSnlHEwDDQVodzbYe5M?=
+ =?us-ascii?Q?5FdHjQnRsex4GAgSHSgA+7lMcBtIUhvzVzBhAumpoZL2cC3bnje2C0GEl7o7?=
+ =?us-ascii?Q?CwqgnsdpPsYnuTHyAht8fYUz4enjPhTQUUcCBtsDmfcS6SGVlQz2+uAZr4do?=
+ =?us-ascii?Q?rfCrLrGzrFAB5GAnQtkDmWUlJd3RPIiAlDrACpsMC/pDm6wj8YLCrmtOKyVb?=
+ =?us-ascii?Q?1aR4NM1/L2Nps/+xwjkoLpogbYJTY1+vkxyMxkna9ckChJ0j/bWJCDlqt9U6?=
+ =?us-ascii?Q?hAwyO7OlmvnkuJNblo8GgKqY5lDndKfFbH3V2GX2/YyWE3JEHSJEV0l8IgnE?=
+ =?us-ascii?Q?6/Iyq7eOQWvvGGQlwNly3F3EStru+RZJICHKy1kK+WQUDbSLh/BlagAW9zbw?=
+ =?us-ascii?Q?ymXNsiodNiF9QKdasapWlXTWqq+jYmIxiVwPMj0aCyiBrGueGRccxw9IFaar?=
+ =?us-ascii?Q?7rUbTfRKhHH3YMaWD3sqJOOH1Bj2etsp1u8qFKEi/XwA7aJ9c8APBrbKw0a3?=
+ =?us-ascii?Q?M+22cUrA/uKnUTQ2+xjtGyAhhJgTAU3jL12Byv+/EJxy+1/X/LYManN0RJHg?=
+ =?us-ascii?Q?MuAX3MUAU6ikPHVeo3aLqw3mOa8OCd7O4tLXwPvstoeZBXZAvg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JNxi5SvGu5HcsisG7Q+nqaiFCsK8egXvk2fvNJWX0ySp+pR0785o6NnFK5KS?=
+ =?us-ascii?Q?EePptfF4Hq2Xjp7JKR/w1uuPVnD9MKFAxyrwYvn3y9wOTjQ72j5NlTZ/SjPM?=
+ =?us-ascii?Q?AuG2X0ksbDveEzx0evJeE13nhGmpusEo+f0RZhxAihBd0IfOOgaeq7ARyeYA?=
+ =?us-ascii?Q?pM4p8LVI5myWyeswlU0Tp06dKR1gfMQbPC1yd0Dfq6/A6qR6BT057aT/1P1A?=
+ =?us-ascii?Q?iFsaOkoWW1RMK+ea5fjg8kD+u3SEZKsXtql2Kq94EhHMD3zFaC3fRRz4hLEC?=
+ =?us-ascii?Q?iIPU+/v8icuNCfvl4HN5ZssypzecSmbO8rJss/hyDDWtGFqiJHmU5hwp6f6l?=
+ =?us-ascii?Q?HA2NFfRxnzjbQ0VN0uXIfiQqmRPVVS/+m1so8Q92yb2KegTnVyHY82wVz/e3?=
+ =?us-ascii?Q?oaTq1X8pOYrWiPfFPmuvUT78r+v71wP4rQxkfZzYwoK62UVmVUYSc7k4CXUU?=
+ =?us-ascii?Q?ciiTohY2l4O2RhOW+yLNMj8wIyyH83J+QcOm9OWIvO0p09PquJNkiCeA14xl?=
+ =?us-ascii?Q?SkPGxk8SVzVj/AUNlpQB3sVUTSGFFCtnbbwR/Sxxb+7wyLSB3mqBCB9/Z/Qw?=
+ =?us-ascii?Q?6jU4pivo272FxD66TkcQYMwJcH05ikeLKU8x/SyR6K3upWjgTpznEDbFGi0d?=
+ =?us-ascii?Q?QZKxPimFthhF1kPAfKpy0lfntpJH/9//vDRusZOtm81BOgvllg9GBMywAjT3?=
+ =?us-ascii?Q?S0vDyqN7lLVygjNohC+SkVejUoqx6hffKrJ68pqRnV8U4flCVPoe03lx3Kqq?=
+ =?us-ascii?Q?mHr54Y7RIgemaU8lHccCpDeepsKUxttbTNhY+PSSRnhY2j6MPgMM5zB8+R9P?=
+ =?us-ascii?Q?25ahG/ujVfszZNZQLxNBoegcF0fM1iHpg520xfm9br6absPNXHtZJS7Je75t?=
+ =?us-ascii?Q?7MltipafvlJp5LAPxTFO73tRQfvuz2LPrIYcNVkkSTAhK4x2sAgEk1zH7Ieu?=
+ =?us-ascii?Q?R9efwzYSoSACtA5d5SsAGpqUbByVjihDox0USCuUa5zKZA1Sj0i7wynZ3EaD?=
+ =?us-ascii?Q?w5ljvTEFtSfCNQea7SZBPGvBH9zMkPoFaxWc+rfvm0Z89F8uSXiUYA2s+KYw?=
+ =?us-ascii?Q?vtf9W0alXygcUqK0dyHdOVG7t5Jcr54lzUPvRSISChdPRgv377mFQnBnvOWJ?=
+ =?us-ascii?Q?M6FcsdtXVf9fdvN+0DPZetmZYGE5snGn+L0GN7Gw9Wzl51MGB8mKp6Zli6Ao?=
+ =?us-ascii?Q?25baiwZy4MY4L8X9t+CsIIL3Bhl7QeNmweJJBhVIiWGNunvEvV3c/QMnffdH?=
+ =?us-ascii?Q?Hvpa5hwzMzLk+FveAjHSVYOwMX8emzSAQQC8qTZWC0Gk7OytRpO9tdsN7hp1?=
+ =?us-ascii?Q?lB6YGEkpT+vFr8KfiP0vXv6lT5HD07qb5rRx7VeZv7Qp1y1kUvEnYYlOrrqy?=
+ =?us-ascii?Q?yUbFP/WOLsC6LJaYsu70fB1uaR60hUNo9sOcyl09Hgpu2aCEUNs16GudzEaA?=
+ =?us-ascii?Q?+nJNeqjQ+YB1J/gt4ZkcvLYEfHKAXNZ1WcAI/EXVuYB8osQaf4UM40vg2g2I?=
+ =?us-ascii?Q?W932J3QfJej1YA2QklfHTHX9QrngVlJELWczPgr8TnWuxNMDXGxiVHwKa9gX?=
+ =?us-ascii?Q?PtE7WentOQzh3/GvAqLWlTMLlcgjrxkUG8FMtIl4LpnId7HXJvGV8MDUfsTP?=
+ =?us-ascii?Q?6g=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	LCtTVFhxOstQHexVk6m3mK+9c15uQo9dI8V4I6EWz7g9gQCNpmp14oA9QmX0dMIsYw3lYQgH7DsNKwQTrN9FByymu/u6VgCkFTEqyxAHnYl8ZvKqPu6ipo78hm1oLC6EhEQtm1dZluizZ5NMn59vg2weBaAYzfVUqTVPkfWSV3x74wNUkmt9yG5mN3x3+D3ivMKe1+b9hHSjEs9P1i8D5uPLkWJu77ZvjqY0XsOaI7oMLqcSu4u4Ij0kYOaXbTCI/KoGmDDCm4YLvglvdXbj6mYNu7dl10u+EKVDZCaSLTJReewNFnWtUwwFXqZ8VDAz6t38e7Aqy+3uBi8LYGa7oWITEpUqsqA1cG5z7XDrqdCIX1JsW1us9hM0HDrwqTOkYGMRD9MzWJTuebBmZo4di61y1V/qhSKNJ0g4yZA+7eQgPXk+qmOxWMFhR99o90gR9Emi41CXGTMAJgN+IhNcs+QIOl8orgYVnVmqq90ZHeSbhzzRrt8NuxAFBi+Qdkh1R8X2wA+GDKIu3XV9CYaLWyRtC7c4cXgLh23cZM843XkpMfWbgSysq9DJFIrjHb8+n/HhZgsd4NQLvt6jD06bAxt9S17jTM/Kh9HkkWeMSKc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8d39c06-98fb-43d2-14df-08ddeee6a6b7
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 14:47:36.8444
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DoT1Y3dZDsE9ZGlYbQl8Q5oLjRyD7g2PKbymUn3VySFAx3VbljEIZgCJq8Tf+g70bV4n+BCZzTjIzEBcEpRdv7/CSt9F9qrKDaoXzsoqIh8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5110
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=839 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509080148
+X-Proofpoint-GUID: PFel3BpqTooO1zA9PYU895R71G4-RJZH
+X-Proofpoint-ORIG-GUID: PFel3BpqTooO1zA9PYU895R71G4-RJZH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE0NyBTYWx0ZWRfX6S6WCfwJL1vR
+ 5l5r72t1COyfEeeURErAhJMGd2wbS85XDmmwhdx+VMTwJXIPhohDD8D3bKn5Wny1nFU8E3zy2Hh
+ KiJm5hi4fF7vkPf6tKxpAjOqcZ2TaDV1KzuUA/xvm4tv2N0SBdiXYRfXSmDB5uNeq9NYzAMgL7y
+ xxDU9PVtGOLjDCYwW0U0q8Sf+rg1uEtV437aWg337a/kFaHb6H+DGOFofjwDK+eChUJxHShHKh1
+ XLCtCCJqQQVBz3iAw2Z5CEV5FTb+M1J1AqToCRIvxweQWSYEZgW8RSWVKWuCaErr3RLZwDagu5W
+ hVNKg3qtkVeU+08/+9ubtjv075qe31AyXubGdsZ9GFizufCVWBRidAHFi4HLnHNU8N3CwySGZq9
+ H+vA60EKvUEIthRmh7SdJ9HwNcDXdQ==
+X-Authority-Analysis: v=2.4 cv=F4xXdrhN c=1 sm=1 tr=0 ts=68beec8f b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=gYB-7KtPnNzojsEmhjwA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12069
 
-On Mon, Sep 08, 2025 at 03:47:35PM +0200, Laurent Pinchart wrote:
-> On Mon, Sep 08, 2025 at 02:09:06PM +0200, Richard Leitner wrote:
-> > On Sun, Sep 07, 2025 at 10:08:11PM +0200, Laurent Pinchart wrote:
-> > > On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
-> > > > On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
-> > > > > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
-> > > > > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
-> > > > > > "strobe output enable" feature of the sensor.
-> > > > > > 
-> > > > > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
-> > > > > > tested using an ov9281 VisionComponents module.
-> > > > > > 
-> > > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > > ---
-> > > > > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
-> > > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > > > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
-> > > > > > --- a/drivers/media/i2c/ov9282.c
-> > > > > > +++ b/drivers/media/i2c/ov9282.c
-> > > > > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
-> > > > > >  				current_val);
-> > > > > >  }
-> > > > > >  
-> > > > > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
-> > > > > > +{
-> > > > > > +	u32 current_val;
-> > > > > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > > > +				  &current_val);
-> > > > > > +	if (ret)
-> > > > > > +		return ret;
-> > > > > 
-> > > > > Please don't do assignments in variable declaration if that involves error
-> > > > > handling.
-> > > > 
-> > > > Sure. Will fix that!
-> > > > 
-> > > > > > +
-> > > > > > +	if (enable)
-> > > > > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > > > +	else
-> > > > > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > > > +
-> > > > > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > > > +				current_val);
-> > > 
-> > > It would be nice to cache the register value instead of reading it back.
-> > > Regmap may help (and then the driver should use the CCI helpers). This
-> > > can be done separately.
-> > 
-> > Currently all set_ctrl calls in the ov9282 driver have this
-> > read/modify/write pattern. As mentioned in the cover letter I'm planning
-> > to migrate to cci helpers in a future series to keep the set smaller.
-> > But if you prefer the migration in this series I can try to rebase on
-> > it?
-> 
-> No, it's fine on top. I ask for enough yak-shaving already :-)
+On Mon, Sep 08, 2025 at 11:20:11AM -0300, Jason Gunthorpe wrote:
+> On Mon, Sep 08, 2025 at 03:09:43PM +0100, Lorenzo Stoakes wrote:
+> > > Perhaps
+> > >
+> > > !vma_desc_cowable()
+> > >
+> > > Is what many drivers are really trying to assert.
+> >
+> > Well no, because:
+> >
+> > static inline bool is_cow_mapping(vm_flags_t flags)
+> > {
+> > 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+> > }
+> >
+> > Read-only means !CoW.
+>
+> What drivers want when they check SHARED is to prevent COW. It is COW
+> that causes problems for whatever the driver is doing, so calling the
+> helper cowable and making the test actually right for is a good thing.
+>
+> COW of this VMA, and no possibilty to remap/mprotect/fork/etc it into
+> something that is COW in future.
 
-:-) great. thanks :-)
+But you can't do that if !VM_MAYWRITE.
 
-> 
-> > > > > > +}
-> > > > > > +
-> > > > > >  /**
-> > > > > >   * ov9282_set_ctrl() - Set subdevice control
-> > > > > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > > > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > > > > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
-> > > > > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
-> > > > > >  		break;
-> > > > > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> > > > > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> > > > > > +		break;
-> > > > > >  	default:
-> > > > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > > > > >  		ret = -EINVAL;
-> > > > > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > > >  	u32 lpfr;
-> > > > > >  	int ret;
-> > > > > >  
-> > > > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> > > > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > > > > >  	if (ret)
-> > > > > >  		return ret;
-> > > > > >  
-> > > > > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > > >  						OV9282_TIMING_HTS_MAX - mode->width,
-> > > > > >  						1, hblank_min);
-> > > > > >  
-> > > > > > +	/* Flash/Strobe controls */
-> > > > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > > > > 
-> > > > > This seems rather long.
-> > > > 
-> > > > It's exactly 100 chars wide, so from a policy point of view it should be
-> > > > fine ;-). But I'm also fine with breaking it to 80 if you prefer?
-> > > 
-> > > That's the usual policy in V4L2, yes. 80 columns is the preferred soft
-> > > limit.
-> > 
-> > So I should break this line in this case? Tbh I'm often unsure on
-> > breaking on 80 or 100... Personally 100 is fine for me, but that's
-> > "your" subsystem/driver, so I guess it's your descision ;-)
-> 
-> Sakari is even more strict than me about line lengths :-)
-> 
-> It a line is just a couple of charaters about 80 columns and doesn't
-> have a nice split point I would avoid breaking it as I feel the result
-> would be less readable.
-> 
-> In this particular case, breaking the line would lead to
-> 
-> 	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-> 			  V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> 
-> 
-> which I think is OK. It's very subjective of course.
+I mean probably the driver's just wrong and should use is_cow_mapping() tbh.
 
-Thanks for the clarification. Sure. That's fine for me.
-I will adapt the patch accordingly.
+>
+> Drivers have commonly various things with VM_SHARED to establish !COW,
+> but if that isn't actually right then lets fix it to be clear and
+> correct.
 
-> 
-> > > > > > +
-> > > > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > > > > >  	if (!ret) {
-> > > > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > > > > > 
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+I think we need to be cautious of scope here :) I don't want to accidentally
+break things this way.
 
-thanks & regards;rl
+OK I think a sensible way forward - How about I add desc_is_cowable() or
+vma_desc_cowable() and only set this if I'm confident it's correct?
+
+That way I can achieve both aims at once.
+
+>
+> Jason
+
+Cheers, Lorenzo
 
