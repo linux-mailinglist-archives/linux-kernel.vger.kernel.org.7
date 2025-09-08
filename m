@@ -1,202 +1,174 @@
-Return-Path: <linux-kernel+bounces-806258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1C9B4944C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCA8B49446
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579B43AA7DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E58B1764A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C741E2D5929;
-	Mon,  8 Sep 2025 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2EB2E8E12;
+	Mon,  8 Sep 2025 15:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XH1nzpf6"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KPen6epC"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34B02B9A5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346673; cv=none; b=kfB/ob/Fx2DYUBuOyjb7r26qp1zxxqhkdLnTe+ukxK+hLkWxdPEPXqSx3d9mJlEXTe9j6YeuB1/MNsHsNOU/Xx0Q6ueZepzd3W15LlYRqHqTtiWRXEPLPf0EGed/2BIlzGEr4sKtLclg2usaI1+0h5InCkmuYtqq+CjXgikSft0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346673; c=relaxed/simple;
-	bh=/Nm6jYIFmzk8YLJ2/CqPL7z9rZmueM4ITfckw4f0daE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FK0gPrLLczRPYk9cOBqivRV9ZSudwKKxNDsmbtQP9ZDqifxTupzum2CeXY8cFvzG7ODt8JpX5FgJXOr1ncXPUWkN60bJW0v7xXhuhX6ZAzyZ9FF18XgRrD+hsyst+m6c0Gj02yq0u18bBKPk2L8PA6mIti6+Dfbb2pgsjIeT6Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XH1nzpf6; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61d7b2ec241so5526589a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757346669; x=1757951469; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSVWNylrScXe1y62XnvPM0BOnL0/TLepz30BeNFntlY=;
-        b=XH1nzpf6UuUXgCFYhtRStEwqAS2xtCSILXjuE/Fxts+F3kyuIDDY2VKD6VmwQ0g2ZI
-         zQ4d6GW9Sz+hRYVi1timBZIjoRNU8IoXUTnITXlwZcy8UXNBLFcEzYqAXC9Z2gi/O4id
-         XShcYUs9fyl+u9LM4BM0C3fGrZBuQBJpXT3ufOsOAjNZqYMeznUO31EQatkRmkScoagT
-         gYoJt8+aSaQTiD/oqNrQL4vJspQGgEIJgT3BN406IBQqlVECEutX9cGa4DtLoG2S0uPq
-         qBBquwx2SNyQHDovVjcDbstyY+JT7/78vOdLqrx+o4KW1CpNatCfeyFm+szSo9DpB1am
-         /uog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757346669; x=1757951469;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tSVWNylrScXe1y62XnvPM0BOnL0/TLepz30BeNFntlY=;
-        b=BcyOtuQgjMgT6xqD22NcHM7aDsMdAUry0M/76GHvbHfXTV8nRPWuIowJX+IsBwa5YN
-         8x66A6Z8o07GmrFDT++Ep+E3pQIii3Tzea/gb2DR3cRwxz4cXoD+RvuKUXVvrffhe/A5
-         wS8CIhUhPNT4Tq+J9xJbKj3y5PDgIaxnVM0ze+cSx2tLX1Wkv0OIs9o8Eb/xwTd+CaHD
-         2SFCy0RSFCLX9ZOk15TU7dzPmCmAaypxEoEoBkWNK8JNPjGRTOtLKYw6Az7RpNSuua8z
-         zzHxpBVkEHaNjQH9vkX6Wi5f1P9unAmtG4BTXViR3EmDdV8V0HBdTCC9ygG4P4YYHigX
-         FnMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyM5QRIOWofSqmEcZJyaHEz/ZLoQSzkYwT/9+JGlkZK+kuSfEhFvIKix/GXWlK7nCk3xPjbwiK0gjI/0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyerMQ9jrCGqoQuhVACyT20b+C74AOSaJ2GTOXig4hhXDDDO+ok
-	RchBXnGC4hvXul6dRSoWSbdb+GDlEA3/E6UwUlgsWAZo5QsiHzSUKrvacoTeMfwJ8PE=
-X-Gm-Gg: ASbGncuc5YwXcwhOzRrQjI1ZbSBukFHhSWylrHt3wT+i7PuX9663rmwfYhrLjYatFhP
-	iQ4XV32NmU1oIJ2S8o4I0umctw9mjOHOzP62FNjpn+KxCfAMjMhjH039lEnNFLnrVcB2KzdWNOx
-	BrO22eJVdJegjVW/O2Fdkb9H1MY9Cy6a4Wc0ep+Ce6P4k2EMvVPdV1EOHM85VFbVeP8IRR+n7Sl
-	ibW/HP6mOrERDYYNjV8dTMnnyRUBa6/dP8VJDDApyJsgNbE7S11Tnss6qsxsGpuBG0qw2uNANZ9
-	kvuPoZfnFmniavXCFKvfbvECM1Wx1qkH1GdYjCb8J3aK9iDkV4zQJzKd5hSDS7X9YtfB/QN1pRY
-	0AXOK5ElHs9fi6qhxbV+xP415dCK9Ah/r2+lM
-X-Google-Smtp-Source: AGHT+IFg7xcTkV4isSmekN5I9cnRSz/n5xTff1o3IH8hLRh212Y5ihp6hXV9C7WQZ+WEVfGayJkoMw==
-X-Received: by 2002:a05:6402:1e88:b0:628:a4fb:3b1c with SMTP id 4fb4d7f45d1cf-628a4fb3dd2mr3913781a12.13.1757346669016;
-        Mon, 08 Sep 2025 08:51:09 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm4728258a12.1.2025.09.08.08.51.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 08:51:08 -0700 (PDT)
-Date: Mon, 8 Sep 2025 17:51:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v3 4/4] kdb: Adapt kdb_msg_write to work with NBCON
- consoles
-Message-ID: <aL77aq4gZBsn4epT@pathway.suse.cz>
-References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
- <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E731FF603
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757346716; cv=fail; b=KFJE7S9kEHb3DPfVuPc8dn5Q+cBm4mwq5bYBtFYz9sHeEnNJIRnue5+xR3hk/iPSH/5A7+llWNBAmkIOIdnuFOngjhtClhVEXmPxSYaaPdrA2O021xSm2Ibkls8RANmxT78dYSiaBfnX8Gce1Vzsq4+MAp/0j7bw9Lbb/DzdW3Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757346716; c=relaxed/simple;
+	bh=/wf0KwNSJSrQmkLT5blwzYeztUIYARlLsWfse2XaamA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b68W2kc1pFarEKkNDtpdMpVSiCwxDfIAwjUBsGcZD4uIdLGL4hKw6TfsUQHEbJXS+Kv6gjANGShIxf8549fRFlSBhbDybzlDSsMKDM9WS+TbXRilTwRRHhcu+joLJhUYbRZ4+kNTiuO3wSrlcUxagf8L6Caizp9HqEUHfP4HjjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KPen6epC; arc=fail smtp.client-ip=40.107.220.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AH/jKU+DrJ+q/TpRYi9ck+O3KlzQnMdjBlzcx08uILMbyDp06o8As5taTZJU2djQuZjC1yqoAQhdgq20gzMqNjRVOg/4XlC07JnFmbmC+lHiQ7YgSm/GBqhI5Yr08+cCI78yM0PZrWpvmAmSHpHrOAzWdLjaInJXAvHVMqePdmz/s4u364+I1NkTVvifGtE1VLTsBGJUkLA3OV20vL/tHSMh3ueuDHwLCQ8WDnuAGiHVtcZ5vsvtFfNB1f713tE61LFY0hfbIW2oBRNT+6m/REbrM6ocesc/g9UMvJLN+nMH4G78ailbYQJ4xQ/X502A5alwfGSwggqOzlc00+D38Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GGjuJh7KOFlb85Z45UYRRJK6PJA76RecQwTd8qX5Jp4=;
+ b=L31OYFcfvXiQy2chTHgKTvVaEMMmDB3j+aKNGkn4rCF8J4YtFygPzk8Tz2qCiALao8EYGNWGFo3sfQ+9ui19b5t3tzDoYpq0VTcFmG4JDd6B34zVJgLIMvoLNkMG0e5cZ4hPWNavOebzPgEkaGNCblQWooOuyuSMqrLlhLX2yDXMCih0LDENKP/WZUcYWRZvqb1sqzbFOP6/0tQSftsZU8tX4XzPPRyhyhPfwkc7N85c7JVIdjyCySOvnUW0VecyWFn9psZ0TFm1wGjmhvnJm96C4gkVoCtCKNXOmokA2DKZxQh8JoM4g2N6YmZlUMo0ufjAci/pBuQZj3AQsMEkFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GGjuJh7KOFlb85Z45UYRRJK6PJA76RecQwTd8qX5Jp4=;
+ b=KPen6epCU0a5+XfKw6yfAO6E5OuQxjYYALnQX+TGkW0as3Ay2jMLbTCNE1ZzTJiVjBR7ltaMcVz3la4LTQVpFFC6eXja+mIHouCE4blITw1YgT5555V8ln5owiq4DzLfVJIU4oSto3GeKdEKeqX/Y6N3PQD5iPdMJgWsdxhaddYhFbod4gY2i7UB6TvwZjbAH0toV72DHrPVOwj+drgl6RtsZY5YNtREZpTP/TETmY3NYgD/4M27rGl+obXPSI15U/0HRDXiBsoVjexkKxlxztW5BLHjtGFWVgTh0tQaGvi0sg4N0PGYV6MOhdgBCIQxiidUatoLArQze2w8PhNFww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL1PR12MB5753.namprd12.prod.outlook.com (2603:10b6:208:390::15)
+ by DM4PR12MB7597.namprd12.prod.outlook.com (2603:10b6:8:10b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
+ 2025 15:51:50 +0000
+Received: from BL1PR12MB5753.namprd12.prod.outlook.com
+ ([fe80::81e6:908a:a59b:87e2]) by BL1PR12MB5753.namprd12.prod.outlook.com
+ ([fe80::81e6:908a:a59b:87e2%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 15:51:50 +0000
+Date: Mon, 8 Sep 2025 12:51:49 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jean-philippe@linaro.org, miko.lenczewski@arm.com,
+	balbirs@nvidia.com, peterz@infradead.org, smostafa@google.com,
+	kevin.tian@intel.com, praan@google.com, zhangzekun11@huawei.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH rfcv1 4/8] iommu/arm-smmu-v3: Introduce a per-domain
+ arm_smmu_invs array
+Message-ID: <20250908155149.GD789684@nvidia.com>
+References: <cover.1755131672.git.nicolinc@nvidia.com>
+ <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
+ <20250827200002.GD2206304@nvidia.com>
+ <aLvt7WBgvVsAD7wC@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLvt7WBgvVsAD7wC@nvidia.com>
+X-ClientProxiedBy: YT4P288CA0061.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d2::15) To BL1PR12MB5753.namprd12.prod.outlook.com
+ (2603:10b6:208:390::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5753:EE_|DM4PR12MB7597:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf86de2f-cbb8-4c15-8bbe-08ddeeef9fe1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?H9Ce+dSGMK3CB/nVBY8WrjUxGhBttdrI7pDNwC3JCs/eIEDu4eT5s90cmBhA?=
+ =?us-ascii?Q?0DRC8tF5ux2hvyeO9wWdwGnuLY6zAfyQJFNrANXnKPsPVLLubPQ5sW99+xmt?=
+ =?us-ascii?Q?tExbVdZqyMqvVSXvwfip8xuAMrdygtPEDfnGdzM8USgzS/sFWtMFFMiGDVOQ?=
+ =?us-ascii?Q?5uHlIs9wSKCiDEteZudpydzfbq/fXcmhZRsK6K7vjttr5j1Ca/ls3F17XZR4?=
+ =?us-ascii?Q?YlgTRiyYFv742GrEXgz/7IO03cyVD6JKJ8akMrU/2XL1LJgimjuWDGIBgyz3?=
+ =?us-ascii?Q?nSHdj3Xyx9VY5aU/hNiB124wAG4+g+ybimbv8z/Rg2L7Fn0Tpse6ttxNelLC?=
+ =?us-ascii?Q?UDoR36Q79QbmFkzuuXalTvEAlggov85x24tJKOtcS2/VeGyayfYa9POOFzSN?=
+ =?us-ascii?Q?gRtpHIjku9wIjoaVKglEgwclB0hyYRf6/SWfSW6YtfBoIE4CMeCzKWttKO8M?=
+ =?us-ascii?Q?T9llpLQ1zOVmASJXEFBYRVdiO0pxK3V6/I9WrxnjUvAVevBzqBJck5ToWNGX?=
+ =?us-ascii?Q?7Q30umvr9ZfsM1gUkqP6QPagyYrXg4iRXd38qrYFzEHFLP4U00uRGaqcRH0x?=
+ =?us-ascii?Q?/IWQW2FJNtV9xuzm0qXMJ/xnJVYcaf6BrIkuRhVYnHi46tVdIqALnRSUpZyg?=
+ =?us-ascii?Q?0DgzEld1+3VnaA7TtkPoeb6gfrU2gxQmAs7ZO8nx6kl4qPlzk5M/vS3d1T/U?=
+ =?us-ascii?Q?5cC7jStxBToAqg2Pc/w6mUOuZ1b+jTHhbVRyxnC2/uyECiYvE846z7NLwMsN?=
+ =?us-ascii?Q?LcZH7wvplaY8+wRgvtofBs/A5+2xddCjFkPC/L7VApLJXcAnwod0zt2EX/rY?=
+ =?us-ascii?Q?lWlvc4GmSc9orhHDDidePWBGucdjN1BOKKy3Ij+feTTPEY9MOZluZlEwBeB2?=
+ =?us-ascii?Q?bBpZAMdaHwJxdcDkzuDw7qFA14bgQwWDB9fB65kqlVzUbTRw/kKqa5wUM7Bf?=
+ =?us-ascii?Q?DzO0UoJArzz2lKIfgWOAkT6VLPlQpLeAKgtJv4vLxNggPgbluSHmTduiot6X?=
+ =?us-ascii?Q?ChQJiYb/EyhUVuGo32qq2fqU2ed2KYLhhrXDBi64tLS8itp4UMx2O1WryNVl?=
+ =?us-ascii?Q?vi98+TIppuukLw1X645jc1QNLBKQXtCn3b9dNRbZZZpdlXb9Ggmo1IKs1Z3q?=
+ =?us-ascii?Q?CzwloxH8CZmtQyP/NCLWqRGBkEGR9ngo2c6DTHuBJWYD+C4OTsZH/YjLeRx8?=
+ =?us-ascii?Q?4RTSVp2e14wtNZczLhLkbIyYEDYWrbU/xacvcDUB713HesVf44KQeF2q6xnT?=
+ =?us-ascii?Q?F0OlKC7CPKc+O1LRNIJ6Bz2DBFGZOtPMWuWpkC+Xxw0EGLHZBcE00OV2VMyn?=
+ =?us-ascii?Q?rqZ4rNhXbTH4C63QGAxRQRzsKZGsmSR7Nt2wwTVAKRIBCAbpmjOXcPnRZiKf?=
+ =?us-ascii?Q?luoGgI/VzL0N7dwEfqdXgYq9Q6o7U2WKw01BxyMtBW61ijfpNrCSpRka91dl?=
+ =?us-ascii?Q?RrtUDSt0C+U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5753.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?csQRtmRnSBSxZ042f/4xqYVHSr1E4BTjKWuCdqLBEp/iasNTxfzHymY35PMd?=
+ =?us-ascii?Q?ztNp++EZVHG5/eKf5iIOUJI5vdc8z6Hk0PK68FnyrQ0bD20zJZYSAwq8jYeW?=
+ =?us-ascii?Q?wNp2zLMXi6OfKfUgZGKxQSobCnmWcM5/7PUXZLT4I36cIdwTPJ16iaHkpxWq?=
+ =?us-ascii?Q?UndP9U/AanYrsYHW7xGS9r5GGJ752gYb9DMdfwqOEwiJIUZgaPj6etdesRTs?=
+ =?us-ascii?Q?sFz0RHM00nOKB2iCaAi6bE1DVmrZDNgEBLLsUIIUtVXcqvfTZhgUmp06V67s?=
+ =?us-ascii?Q?VpSfUkBhYX0Tfac111StMiz1t5Ek/B3gprfZqpmQT/MfpHcSe6aXRjXgP0dq?=
+ =?us-ascii?Q?N+TaU95QMujSXEa5RV9UH2+J+C0j1quQocUZiYuPMPuB5oiuZfsYVyDmW59I?=
+ =?us-ascii?Q?uXKVKU3pPdL/DQIWkNe/AYdTgaNxyZiA3InI/MbOPwjg75Pmb8NPRWGOQveE?=
+ =?us-ascii?Q?WplOBwAxvdUciEoMIXqoOZFUCEpgWdVJHG1ZuGRf7E4gvf+kKN2RJl3VTiPL?=
+ =?us-ascii?Q?ixFxLQ4HA7jPGu8g04l3U/ejdiQjk5eR+lkGTGVAktb49ASxfK/SC0AK05g/?=
+ =?us-ascii?Q?JBu1CatRnz9sDGTViJYs93nJEa8Fro6M2CWo48l2uL1taSgQhegOgme15h2n?=
+ =?us-ascii?Q?EvqwUg8bf7YGBbGyMPZqCHJqehSpNgLDT4F1ssx+nq8SbRMdGLZHv0Shsq/y?=
+ =?us-ascii?Q?WeWRBTAuP+AWg0r1O083bR8qoxoNe6A/7eOfnITW5SzVUl+gTYnNZyphUPLJ?=
+ =?us-ascii?Q?7ON8LNgu/rZ64KZI4FjqrBR24PMWMirUyPoOVkB8nHJ1q24Yr/rkSXTFBBr8?=
+ =?us-ascii?Q?0dUTG+tDRfg1+v5+pcCkGb2ubI0ptU3Ed1T7AJEMdGV5usYzYjLVxPTrWZ8J?=
+ =?us-ascii?Q?dMoR1eumwgKi5Pr/xqXTupcvytJ7kqukM7AXD85yW9yCm5gEEL29qInrsZs0?=
+ =?us-ascii?Q?bwQSuckTaPpJ62F9YDQpIfVt0x+bRAu2zXJDmhQHpfnYmTsNx2c9u4CTz5cQ?=
+ =?us-ascii?Q?MIw81eSZ8lAxLDNT3WACrOCEM0oEimyDXjQGkGaCPeqK7kpmDNUAonfr0CwD?=
+ =?us-ascii?Q?LKBYn5vXImSxWXgePchdAhL3IJMXOBzdtixFihqB9syyyVibG/XPIedo5fnu?=
+ =?us-ascii?Q?cxowWa3CQUGY4BCVzWUrlkyCwLqdwvL14l5v0Nb1DV0nMzu3sSeUAcXdGteQ?=
+ =?us-ascii?Q?Ox1IgDpnOOan7to3IMbfbrLYBFwtycAKdr6oakEeb54KbVwcxfdw79OtLoRt?=
+ =?us-ascii?Q?v84lEvFROzs5XVKxH6EjkT4+LiVkBBsD2XHJiN/3IPhsDOlJo1iLKS26ekTy?=
+ =?us-ascii?Q?928h1/A623VtHSv+lAkKGQw/Oh97N7lEX8IHTWk2LP4M9r2u4+anDXmvSypf?=
+ =?us-ascii?Q?TUGg1lW7tSgrpJFNCnKky0yflQLtDH2a7nIr3VPAmd+J5eYe47CPHM2eM5Ru?=
+ =?us-ascii?Q?sLM2QyJrpwV8bPnQuyswO/VBGoSyQYogVIeATmw+i4jEWxUbCqe2uUymghe1?=
+ =?us-ascii?Q?irpsPXxdJ64J2W+oat31hfmo70A7lwJr3rTFrHGRkYwt3c2kz45ELE94EJFv?=
+ =?us-ascii?Q?NcBUBd4dTsYUtmO7YB4=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf86de2f-cbb8-4c15-8bbe-08ddeeef9fe1
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5753.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 15:51:50.5227
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IAg1X8EJ0yngbQBOuhiVtHRd4K92cpFr7bft7BU1+PxnEHEi37mLpJ+31HQjD71g
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7597
 
-On Tue 2025-09-02 15:33:55, Marcos Paulo de Souza wrote:
-> Function kdb_msg_write was calling con->write for any found console,
-> but it won't work on NBCON ones. In this case we should acquire the
-> ownership of the console using NBCON_PRIO_EMERGENCY, since printing
-> kdb messages should only be interrupted by a panic
+On Sat, Sep 06, 2025 at 01:16:45AM -0700, Nicolin Chen wrote:
+> > 	/*
+> > 	 * A sorted array allows batching invalidations together for fewer SYNCs.
+> > 	 * Also, ATS must follow the ASID/VMID invalidation SYNC.
+> > 	 */
+> > 	sort_nonatomic(new_invs->inv, new_invs->num_invs,
+> > 		       sizeof(add_invs->inv[0]), arm_smmu_invs_cmp, NULL);
+> > 	return new_invs;
 
-I would end the paragraph here.
+This should be deleted, merge sort always makes sorted lists.
 
-> in the case it was
-> triggered by sysrq debug option.
-
-This is not important. Also there are more ways how to trigger
-panic(). For example, it might happen by an error in the kdb code.
-Or I heard rumors that some HW even had a physical "trigger NMI" button.
-
-> This is done by the
-> nbcon_kdb_{acquire,release} functions.
-
-I think that this is more or less obvious.
-
-> At this point, the console is required to use the atomic callback. The
-> console is skipped if the write_atomic callback is not set or if the
-> context could not be acquired. The validation of NBCON is done by the
-> console_is_usable helper. The context is released right after
-> write_atomic finishes.
-> 
-> The oops_in_progress handling is only needed in the legacy consoles,
-> so it was moved around the con->write callback.
-
-> --- a/kernel/debug/kdb/kdb_io.c
-> +++ b/kernel/debug/kdb/kdb_io.c
-> @@ -589,24 +589,40 @@ static void kdb_msg_write(const char *msg, int msg_len)
->  	 */
->  	cookie = console_srcu_read_lock();
->  	for_each_console_srcu(c) {
-> -		if (!(console_srcu_read_flags(c) & CON_ENABLED))
-> +		struct nbcon_write_context wctxt = { };
-> +		short flags = console_srcu_read_flags(c);
-> +
-> +		if (!console_is_usable(c, flags, true))
->  			continue;
->  		if (c == dbg_io_ops->cons)
->  			continue;
-> -		if (!c->write)
-> -			continue;
-> -		/*
-> -		 * Set oops_in_progress to encourage the console drivers to
-> -		 * disregard their internal spin locks: in the current calling
-> -		 * context the risk of deadlock is a bigger problem than risks
-> -		 * due to re-entering the console driver. We operate directly on
-> -		 * oops_in_progress rather than using bust_spinlocks() because
-> -		 * the calls bust_spinlocks() makes on exit are not appropriate
-> -		 * for this calling context.
-> -		 */
-> -		++oops_in_progress;
-> -		c->write(c, msg, msg_len);
-> -		--oops_in_progress;
-> +
-> +		if (flags & CON_NBCON) {
-> +			/*
-> +			 * Do not continue if the console is NBCON and the context
-> +			 * can't be acquired.
-> +			 */
-> +			if (!nbcon_kdb_try_acquire(c, &wctxt))
-> +				continue;
-> +
-> +			wctxt.outbuf = (char *)msg;
-> +			wctxt.len = msg_len;
-
-I double checked whether we initialized all members of the structure
-correctly. And I found that we didn't. We should call here:
-
-			nbcon_write_context_set_buf(&wctxt,
-						    &pmsg.pbufs->outbuf[0],
-						    pmsg.outbuf_len);
-
-Sigh, this is easy to miss. I remember that I was not super happy
-about this design. But the original code initialized the structure
-on a single place...
-
-> +			c->write_atomic(c, &wctxt);
-> +			nbcon_kdb_release(&wctxt);
-> +		} else {
-> +			/*
-> +			 * Set oops_in_progress to encourage the console drivers to
-> +			 * disregard their internal spin locks: in the current calling
-> +			 * context the risk of deadlock is a bigger problem than risks
-> +			 * due to re-entering the console driver. We operate directly on
-> +			 * oops_in_progress rather than using bust_spinlocks() because
-> +			 * the calls bust_spinlocks() makes on exit are not appropriate
-> +			 * for this calling context.
-> +			 */
-> +			++oops_in_progress;
-> +			c->write(c, msg, msg_len);
-> +			--oops_in_progress;
-> +		}
->  		touch_nmi_watchdog();
->  	}
->  	console_srcu_read_unlock(cookie);
-
-Best Regards,
-Petr
+Jason
 
