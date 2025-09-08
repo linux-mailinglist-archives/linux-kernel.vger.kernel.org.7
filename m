@@ -1,326 +1,206 @@
-Return-Path: <linux-kernel+bounces-806312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D91B494F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B183B494FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBC016B0DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9F81BC45BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E89730F945;
-	Mon,  8 Sep 2025 16:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0B630E84B;
+	Mon,  8 Sep 2025 16:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiEBgeAR"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BzQ4dlPl"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013068.outbound.protection.outlook.com [40.107.159.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA7D2E1C7C;
-	Mon,  8 Sep 2025 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348293; cv=none; b=GksGt5TXuIGdJiExE6jTPPLC4oIyc2D2BVJ+fxyC2xhF32XHr6bAkyke7jGS87jrJWyZfURnmyIT6gRCJepj2HOgwk99Qt9wF7J6aBFAzErmT1+Uluji6NipKT9zUb8SV6Qp0HBQ32X/VveT2ObN4z35szWQf4IXCyLunUTz8ok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348293; c=relaxed/simple;
-	bh=0NUSOA/yUnRvSka+F+erNHF8ID79XG6Md4Sp1zxz/MM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WhLkwBAYx+QimoIlXdC02Fy1r+v8P08RYHJgEXGPISnDi1mWJ9Ys21SuUbstKT2aApkyP7O0vViT65qoQIk5POqvDbD1ubTD68zEZ0ibrftYIokS90xxLhmzGayTvFf2t39Uagsbts8fxaURqf5jwwIwJ0+hU6kKNqJtYqgcyyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiEBgeAR; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso3929796b3a.1;
-        Mon, 08 Sep 2025 09:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757348291; x=1757953091; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1qtec3uyx3zEz0QpxQLk+squlnPusrmyWF7QQ2lWuOc=;
-        b=MiEBgeARcD/8rceymSdt3zPWD/fvSjj3bCEbnHVzMpNsAjD9yTW6p7ScuLPK/gwMaT
-         nTJrkjIE56VQCK0OaMa6mcuKL/AaDVJuima8O8B9Te31X9JGtoAq2zxQxoTgyJFY1Jnj
-         V14wALi+JJFj4ebjJ4zlNuE4qhZeF55i+eoMZhnDz3SzoUd6JqPsyntCANOhJM7NgNNc
-         /PxEabvyLg9dFr8uxV1u4dlvswwRCe+dOruHaSaY5//cvhAz0j36yp7cqBmS+bKLQgFw
-         aGPQmPXJSz8U6aUu0QlYZectH9LS3Hh0Eog7s+dy/NZvX3e2/CDC7ElIfRbO2PDT/FEm
-         EP0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757348291; x=1757953091;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1qtec3uyx3zEz0QpxQLk+squlnPusrmyWF7QQ2lWuOc=;
-        b=aPMOQFMHHkG6j+XuL2uq6mYtZL63eJX2KFzQlUc+vcHoFvAOYj/zmhGJYY9DWG7OBp
-         /yo6ryyH8HuI8lt4VNEMSD/F3pLmEU2sCDLjKIwbL4cX6i4VeQ6tNL6osuiitUTaz4My
-         lNS3OALM546kUVcc/p0g/nkhOZquWMKFyCzrrDeyJZaR6vn3//t3YjJ9Sxqf215FXqpx
-         sVC8brwbVRhxM47Lybt2lmXl1ZF9Of+qGrIV9dB9vMorI1uSD4y+UZpC5sIeCl9Cf9Yk
-         cHB+vhxnAY0Mh62P8kS3x8kN//EauvLZuQ50dcvrylGiA+eL8vLiWtF17WE+Q9x5LSD9
-         YbEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKa+aRgOodihgMjd7gGp3GeHTLUN02Ww4tY33IPIl9arT8KhOFfzhBA2TZWJ3xwPTido20ImCa3xLWA==@vger.kernel.org, AJvYcCV+FA8T2BfnuaYwQezHZTN7f7+9BCvWwvMW8zo7p+dsK7g1956Naj0B+z8u9uncFZjJ9UwT5slYZKQq@vger.kernel.org, AJvYcCVxBT+3/qr+DXNYt6yjGj/Etyv8ISt4PM2JKTZzvr7DCjQ4wg/Q48ZgyOLU72TjnHxA+Ih+wn+60HzxFSn9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtgm2oIvSfLFGaT4yEgMUoYS8CFc2/V7xnqcX5ZuAwz8qj1eCQ
-	PmiNSKtrN9RKqIT5RmC5rHq4WNulGPOn7guukENSOhV7D47fkCYKfY9Z
-X-Gm-Gg: ASbGncsdFZpiPbihJ7ORkW1xlzJdBdWoCtVZHoRKjN8CKZxrlct6nyQvRhRy5JrdVkY
-	XMYeNfJJC68Zv/3q3sPLLZU9lVgjxCs0J+uO3Ue3xDhqLj3OXCXVTeoPiAMZ6h+MIVGl9XnSMkA
-	6UEA19MZcnO6x8YDj1Dnd/f7U5IzjMXGdkBgBIpawE4VVjKm/z0C97kFrYaL7j322bS+48sQY+q
-	H3I7cgMMBnET1oyQJGBCHASvRdvbDIcrzGFhWDpB7QJGyE0lNPtaIsFPwAJb3WueeUR9kNGkc7R
-	lMAlRnXyZ7vM7DcjyphXZegmMQRNcgC9RivJSx1FUoBiGs5RfGRl8x1NGZbgm+vsbj0QKHXi0m3
-	g3TxnOVDhLoRVmBo9edO08o4Prl3irpbPwRUTCn5jum8iwkHE4rtkZQ==
-X-Google-Smtp-Source: AGHT+IEiQJIWMzjG8kO1ml+LQ8B0a1u6nIiZo+4kbDe84EdY9wxCBbj8j+s+Gurd/RLh4EqO7sOtow==
-X-Received: by 2002:a05:6a00:882:b0:772:4759:e433 with SMTP id d2e1a72fcca58-7742dd123eemr9937123b3a.2.1757348290796;
-        Mon, 08 Sep 2025 09:18:10 -0700 (PDT)
-Received: from Black-Pearl.localdomain ([27.7.158.204])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-772608b1b5asm21319074b3a.46.2025.09.08.09.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 09:18:10 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Mon, 08 Sep 2025 16:17:13 +0000
-Subject: [PATCH v2 2/2] dt-bindings: mmc: sdhci-omap: convert to DT schema
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A93930CD80;
+	Mon,  8 Sep 2025 16:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757348317; cv=fail; b=Vc2K7bNlbZs1YECmU88PwsmFLdSND67feH+TaNXTiZ8UoN+5cd+ygWntFKTxM1AW9vqCTNvkYkF/+lDK0Zj6/k6bVYv8Yx9O0MB76WtBwdlIVi5V7pYHlt5ZMFKgwWjsExiaR79zPCT1njHXjvorsNvuCFnB0qHz77TomTrj8dk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757348317; c=relaxed/simple;
+	bh=Rd4y8yfCu6ZGttsqbVoxiCg0CQ2PVhxhQ/yW2jIMZBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UCrvfA21S12CgBSQPCKPSI6aWQCTXeN/ABD5x9D5WtJ0fN7Zlwb68HGIh57O200C9VCIy3VCbjOWLEUST4fuK/R+puk2UQKSS95BF5kTUhxH5/4mIcdsm/cSeThi84AcGHQrbhVy3IwYR380nK8MxoNFrsjEM9F4LLaVo0+zkFw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BzQ4dlPl; arc=fail smtp.client-ip=40.107.159.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L3GkU2I+uo44ohMO7B+ABmVk23semZFhZaIcl071hOSJcQcw2p+Bbxmz1MAyWoaRYKkz0LJun77xjAo7k9bPXMlsb5S/yhnxLVDbNhu7Gf2kDN8DYcVaO03d+2hnMmapSo+ehyM12Wvn17dUjPaC06y6P2bYgnkc1GH4PInXW0IWl8Gzue8MCPyC7VWCoUl1p5gE5HukoACVxckWfjRyHYtXvDiGIHa7J452Z9IP6s8uJZet5q7ywgxSxE0YZYNvdcNYtogNrR5Xgfby+a2ufsV5NOghTLU+OSKizUtmvGgGBOcUmgFDQwow+J1SwJypx7UxWXhqFYUL0LFsmlWc2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3e96FA9SI6mCI0/NoOimFYKNu3rnlENIu+F70Kkn6EI=;
+ b=F4+4z0ManCNWiaINwnghl0hOfOJacJsGbQesTMr5Hno/9umldsJicXQvSKomUr2MpFo6EQhF6ehOLCqZ4hP8ZRAlDCS83wyY+PuggYqk6LxuYsFxmhlwD/Ny2JfOxLS0TYhpVAqvyoLFSk4PBVvxWoXwFSoeaXvqgp2vs/cE0i3AHI3DNNZdJIjq0w/L18RoX2gSaj0cCWw6vws+bbDARDoa7rZztfJaf8p7Aer5TlFgU3c3ZoTq22ymgJk6kYGjYd+NOxgtiaxl0Qz1ZJtHKK+PDeTbhlcC0/hJi3Wr/n7Ln+awDeeVZxdudx9O7rTn1/TAFYDnb4Lf7+eJCitxPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3e96FA9SI6mCI0/NoOimFYKNu3rnlENIu+F70Kkn6EI=;
+ b=BzQ4dlPlXfDiytEy6bZa3OVhL0d0AsZSYWC+6CGXUnXoAKdO+FNL1vrxm3pVTLs3jhshLJHxpzl6DOd315hLarGqIk0FMSm4KOSkCNzuGYOyg2tgRcvGAGO4MnzNxSuT1OfTyO0zh+b8fkRfUVh2ZJqLuEVOn1d4KSdfk6td2j4QC2SGtn8cqiCPTEDv6GgoHnzv1r38BeWGGiHhRSdxS9AnbgI7b0k59pyIoDB403etr+ybCz43CbMHyuWda7SM4poLrAYCpMZRrVJRtf1u4gFJYa5W4ub5J+w9mRVLG3spn+osByx0zXmlEBtnO1/zeoVOvofY0jBW9ZyAv489GQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by DU2PR04MB8501.eurprd04.prod.outlook.com (2603:10a6:10:2d0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.12; Mon, 8 Sep
+ 2025 16:18:31 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 16:18:31 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>
+Cc: Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	imx@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: [PATCH v6 net-next 0/6] net: fec: add the Jumbo frame support
+Date: Mon,  8 Sep 2025 11:17:49 -0500
+Message-ID: <20250908161755.608704-1-shenwei.wang@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY1P220CA0023.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:5c3::11) To PAXPR04MB9185.eurprd04.prod.outlook.com
+ (2603:10a6:102:231::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-ti-sdhci-omap-v2-2-72927890482f@gmail.com>
-References: <20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com>
-In-Reply-To: <20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
- Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|DU2PR04MB8501:EE_
+X-MS-Office365-Filtering-Correlation-Id: c16903d9-2588-4b76-aefd-08ddeef35a12
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|7416014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?34Gas7c9xY9m/qomgVtbHRESr4L0zPo0DLyaQTJcCQV7NrE+vd+BG0O9cAHA?=
+ =?us-ascii?Q?FdSTT+JU6az1b4ht8e57ltFfrHoUU/7ItqwEzP1x/acvyTjm62Ht3Ik4OimK?=
+ =?us-ascii?Q?jbbCcq0ePlhPysZk+L5p1bCFtbkh/y5aRFHwQiY5oT+5Jc1p9YbU6UXgHtQQ?=
+ =?us-ascii?Q?itWSkBzhc/CX7MZA9wcuYTjjuzRoOmMXpCOex+qkOJVBVuW0ldkPIqsxzS15?=
+ =?us-ascii?Q?kBufkZxD+j8aAqBx7Uu24BwFnBi9hChhH4l7GaM2U07aZew7OCx4v4YHems4?=
+ =?us-ascii?Q?smUvyYNRxK4GGTPIzyhUcoyod5q2kKIJTjNFLdjy/v/o7ZlIC3WwlNsxMY1F?=
+ =?us-ascii?Q?ZgmjI7a9NbWC5vSeh445YoS9QqIGEGGTE9HRoq/6cWn5ZXDjJjCbRhXXSRqd?=
+ =?us-ascii?Q?2OrmARcfcjm3ffy2LTBKHwoqonI5kFSW2Qu1u3OTsNecgRHfX3Hu+MTWLKeh?=
+ =?us-ascii?Q?qUCWfvoYGEiDEiLCFefp+u63tFkfe9c/hkdWCs9Yi3bKLbsVHp+JOf7wrz+L?=
+ =?us-ascii?Q?ENNpxBhtVe1rv126fOaW5wudY/2gIqrj1QibSnaAcoa+UMawYAopmqiSIcZz?=
+ =?us-ascii?Q?8a5pML6gO4f+vR0nVAkAvfgRvIDA/uCzpNsrVqSL2SWQ0QKT0DpLy7i8yaUO?=
+ =?us-ascii?Q?LgiObLLwQhhR9rzNaES0ET+Gxln24GCJB7sysBQiqYfx7RvH8XCoM84QbuHl?=
+ =?us-ascii?Q?kDiSl1CF4H/M/co2wS7gbEF7ZxUXFLkSQJrYJ4HZdo72Nw6HTpSdO6CoUfFj?=
+ =?us-ascii?Q?BmF+iR/qUMo4i/7HrnDMQoYCyPXvpQGnpicayJi5hxkO1RIYYCOnZXB3XADq?=
+ =?us-ascii?Q?JUo+TwHaYbCe5KVawJUKFxlKu3zb8JzsZJ/uWWZ7VV5d598Sxqb+hpWOSZRF?=
+ =?us-ascii?Q?IX0GlLoQfKF9HIdWYskguJI28geC9QZncyqN7Y7NXxoODgO+skxMwX9A3jNf?=
+ =?us-ascii?Q?d562LbeWzWrWwrNYodtyggZ22Zwrs6uaPtcfuVxzXtU1R8gzHm1OK90kzqYs?=
+ =?us-ascii?Q?tfW/mpnbajU0FwsExW2vBoR9mGCrRZ4C4xdGIGihUulsikMTd9siAIQKCU5Z?=
+ =?us-ascii?Q?yJcy+nQ4qE5bAXrmP1h7ZRLScqKxn0KbXDBaW/MDcDr7ODAJ2BgctU/g3K5a?=
+ =?us-ascii?Q?rmRZYUPZkNegHW9xVYUeCEjTvBgBBXxuU246r/MWwGyOAJeh4H7dZACN0yYE?=
+ =?us-ascii?Q?OUTe1/9gbM0EfQROzhBYvQlA0GmdjUS2ljQir3owrk9sDV3UTcIf7nbhZqJq?=
+ =?us-ascii?Q?Wio37cy4jXeqpywBV7Zpcfn2KkY7XflTgFeDxA1rFqXStqjWVMwqAs3027bK?=
+ =?us-ascii?Q?Q+jpsfaC+H2pxUHbVPobwAlj9YXQLGRpzXHavILBwbrabtrCkY3uKfHn0h9t?=
+ =?us-ascii?Q?3ffc0P1Gyf1gkSDBB4AlpMVcHEvTLnl8RCTmp0bn4FyTieKMNmagVzqaL5ZP?=
+ =?us-ascii?Q?olsDwpcGEVRDZkmt10mm4ypK4rDRRRBGLNSPxtpINjTiUz+DVKYmkkeQvrtf?=
+ =?us-ascii?Q?Lgot4MmGlQ7QcKc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5x2SnhVLCnTYSYhehTpBrJXgMi+I1wPP4JZG++blcCCCuynJJdNoAnd8fGt0?=
+ =?us-ascii?Q?IAxasuBDPonK5mB6NI4poWXAps8+UqbPB7ErLtAH5bJD8jodxD5CROvNaMgE?=
+ =?us-ascii?Q?12sVYZ+sWwZM3Nse/WGrqhuHTnwyk3gbhYvNjkHYwr6IQMGCwIgwV1EkVFXb?=
+ =?us-ascii?Q?auQG+kSBjeYjOB6n85zOmPnm/ViDMiwRoQdUzgruXLTnFOX12iaZJxu84WDd?=
+ =?us-ascii?Q?OCe50Y4157MfgP8a7fU5POADOSy0hKcSt30iF1qC8WHqZEhPARed3feQlRcH?=
+ =?us-ascii?Q?+XPX/wvZe1+hujKYwr7PwCyFw8Pi51l0FNG/4JT7wkM43oDNp/sBrVUfN16B?=
+ =?us-ascii?Q?Dh8RZUjO+TAyutrEzV0uLOqTZDo7Z4RWaQW30s1dUf6f0G9yZ0xCUUuV8yOx?=
+ =?us-ascii?Q?3L7Foc2AKX0ypLn4E2bf1/O6/B8Pa2smTOfzyFLfPUwH7gA3J6tlSxzG7OJ3?=
+ =?us-ascii?Q?T8J100mbW9db3QdA1jpcQ67+RMCWwh6jh5fmj41+vwy9YMv32XGRUSgCtUCu?=
+ =?us-ascii?Q?b+JxYt1Ef5hYr+RIc3OEiMnTrp8gUvZIu+hFaOOUz91Sp3D6/hAlejX0K5FD?=
+ =?us-ascii?Q?nstnpIwU/0JhLpl9P4Z/G2VvMTvdNzg7aeV//7Fu8IgQbmfcbpHLG5gtUDOi?=
+ =?us-ascii?Q?G6N9ooaxhyP8oZLLoBKGO4+Loeb4VQRs56VpUQctc0pXDkhmjUPNJl5eWBUH?=
+ =?us-ascii?Q?ymBZGMaxPjS/PqTlXdvsnJ2373jMLusROYQSYQQ1/o0GWJl9gEZtEhxyAS2s?=
+ =?us-ascii?Q?+hgadzmP1OKNWqWWdWfuebxykXWVKfdrn2NkGTWfBBamuMa6/Cf/xPrllsZh?=
+ =?us-ascii?Q?Zxkpcl0ncKKOpquYBXg9/ifywyNjeRKepXlB8tPtdQHspLnYNMksFSzBdV8d?=
+ =?us-ascii?Q?2oXEVpuYYMsb+sMwxd+CQEOvvG+tZP5BaLI35X0qq6VY+O/kjCavX/VkGkEq?=
+ =?us-ascii?Q?3K41ceMMhgqZlfRL7OwUUrG63MHtwr6LaRR0I8a7y49ljA4fKMYBo+zYoKYq?=
+ =?us-ascii?Q?fbWnU+wrDy7LP+v+tvAOZ069zdrdo7jt7CaLTIZAXFwMy5jY2mGfw8wIjLfM?=
+ =?us-ascii?Q?N70GC7W6CnLiVkMNafQSwoaLAdvXDmOtPg7TWVQ4012r3G2BDNfnVLBElZrF?=
+ =?us-ascii?Q?FAvXsnEWBsUh6LPcKpDrgOSR4kgaLXAIn4SxajPSSSpRLuf2W2hRMCXdUHMN?=
+ =?us-ascii?Q?g8uUOMXXN4CWvOmeVln4xNbSUnFATXF7jQ/l5x1hdfWsKXrYxcFJrdIZqCSF?=
+ =?us-ascii?Q?xZ+1/GltEd4dfLenNqLG9YSO8BB2z/Sm7us8+d0oPZHMJrx8woavz4aViNwz?=
+ =?us-ascii?Q?WMOANbedqcgxuuPFlqQ6v4WK6OaGA3ONKZCU33/WiWImp5gRmLMutdJYlAYH?=
+ =?us-ascii?Q?jVAt43HnOg6VvVEtEag6UmnDPKjZnzcB/4ac+Al9EImTuh4CRd1NeZOzilNV?=
+ =?us-ascii?Q?VHRuhs7KntXlP+5BdpFGIjrqQW8aDVrPvaLojex8PeFocTX5VM24XLJ/thkG?=
+ =?us-ascii?Q?mXGsjn+OJuxsx3k1xg1cMb6oiFp5WpqJBENaZATfOXRdPH2KW7uXkrd20KUg?=
+ =?us-ascii?Q?5oDyl2/SGJO4xl7rJTqRId6k24Z5Sj2GzreL1Q6V?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c16903d9-2588-4b76-aefd-08ddeef35a12
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 16:18:31.5987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /KJ4cvblteSYMb23knDFUVjfmrVef3mDB0h4Q2+SvcJ11Snlwuw0aOx432QLuPkbMsOHL/C7y0M6Eie/m9HVvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8501
 
-Convert TI OMAP SDHCI Controller binding to YAML format.
-Changes during Conversion:
-- Define new properties like "clock-frequency"
-  and "pbias-supply" to resolve errors detected by DTB_CHECK.
-- Remove "ti,hwmods", "pinctrl-names" and "pinctrl-<n>"
-  from required as they are not necessary for all DTS files and the
-  text binding is misleading.
-- Add missing strings like "default-rev11", "sdr12-rev11", "sdr25-rev11",
-  "hs-rev11", "sdr25-rev11" and "sleep" to pinctrl-names string array.
+Changes in v6:
+ - address the comments from Frank and Jakub.
+ - only allow changing mtu when the adaptor is not running, simplifying
+   the configuration logic.
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
- .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 ------
- .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 152 +++++++++++++++++++++
- 2 files changed, 152 insertions(+), 43 deletions(-)
+Changes in v5:
+ - move the macro FEC_DRV_RESERVE_SPACE to fec.h
+ - improve the comments for patch #0004
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-deleted file mode 100644
-index f91e341e6b36c410275e6f993dd08400be3fc1f8..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ /dev/null
-@@ -1,43 +0,0 @@
--* TI OMAP SDHCI Controller
--
--Refer to mmc.txt for standard MMC bindings.
--
--For UHS devices which require tuning, the device tree should have a "cpu_thermal" node which maps to the appropriate thermal zone. This is used to get the temperature of the zone during tuning.
--
--Required properties:
--- compatible: Should be "ti,omap2430-sdhci" for omap2430 controllers
--	      Should be "ti,omap3-sdhci" for omap3 controllers
--	      Should be "ti,omap4-sdhci" for omap4 and ti81 controllers
--	      Should be "ti,omap5-sdhci" for omap5 controllers
--	      Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
--	      Should be "ti,k2g-sdhci" for K2G
--	      Should be "ti,am335-sdhci" for am335x controllers
--	      Should be "ti,am437-sdhci" for am437x controllers
--- ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
--	     (Not required for K2G).
--- pinctrl-names: Should be subset of "default", "hs", "sdr12", "sdr25", "sdr50",
--		 "ddr50-rev11", "sdr104-rev11", "ddr50", "sdr104",
--		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
--		 "hs200_1_8v",
--- pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
--
--Optional properties:
--- dmas:		List of DMA specifiers with the controller specific format as described
--		in the generic DMA client binding. A tx and rx specifier is required.
--- dma-names:	List of DMA request names. These strings correspond 1:1 with the
--		DMA specifiers listed in dmas. The string naming is to be "tx"
--		and "rx" for TX and RX DMA requests, respectively.
--
--Deprecated properties:
--- ti,non-removable: Compatible with the generic non-removable property
--
--Example:
--	mmc1: mmc@4809c000 {
--		compatible = "ti,dra7-sdhci";
--		reg = <0x4809c000 0x400>;
--		ti,hwmods = "mmc1";
--		bus-width = <4>;
--		vmmc-supply = <&vmmc>; /* phandle to regulator node */
--		dmas = <&sdma 61 &sdma 62>;
--		dma-names = "tx", "rx";
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..2c8be3b0986755579e0f4d3f36554f378af914d3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-@@ -0,0 +1,152 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti,omap2430-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI OMAP SDHCI Controller
-+
-+maintainers:
-+  - Kishon Vijay Abraham I <kishon@ti.com>
-+
-+description:
-+  For UHS devices which require tuning, the device tree should have a
-+  cpu_thermal node which maps to the appropriate thermal zone. This
-+  is used to get the temperature of the zone during tuning.
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,omap2430-sdhci
-+      - ti,omap3-sdhci
-+      - ti,omap4-sdhci
-+      - ti,omap5-sdhci
-+      - ti,dra7-sdhci
-+      - ti,k2g-sdhci
-+      - ti,am335-sdhci
-+      - ti,am437-sdhci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  pinctrl-names:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    minItems: 1
-+    maxItems: 19
-+    items:
-+      enum:
-+        - default
-+        - default-rev11
-+        - hs
-+        - sdr12
-+        - sdr12-rev11
-+        - sdr25
-+        - sdr25-rev11
-+        - sdr50
-+        - ddr50-rev11
-+        - sdr104-rev11
-+        - ddr50
-+        - sdr104
-+        - ddr_1_8v-rev11
-+        - ddr_1_8v
-+        - ddr_3_3v
-+        - hs-rev11
-+        - hs200_1_8v-rev11
-+        - hs200_1_8v
-+        - sleep
-+
-+  pinctrl-0:
-+    maxItems: 1
-+
-+  pinctrl-1:
-+    maxItems: 1
-+
-+  pinctrl-2:
-+    maxItems: 1
-+
-+  pinctrl-3:
-+    maxItems: 1
-+
-+  pinctrl-4:
-+    maxItems: 1
-+
-+  pinctrl-5:
-+    maxItems: 1
-+
-+  pinctrl-6:
-+    maxItems: 1
-+
-+  pinctrl-7:
-+    maxItems: 1
-+
-+  pinctrl-8:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  ti,hwmods:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      This field is used to fetch the information such as
-+      address range, irq lines, dma lines, interconnect, PRCM register,
-+      clock domain, input clocks associated with MMC.
-+    pattern: "^mmc[0-9]+$"
-+
-+  pbias-supply:
-+    description:
-+      It is used to specify the voltage regulator that provides the bias
-+      voltage for certain analog or I/O pads.
-+
-+  ti,non-removable:
-+    description:
-+      It indicates that a component is not meant to be easily removed or
-+      replaced by the user, such as an embedded battery or a non-removable
-+      storage slot like eMMC.
-+    type: boolean
-+    deprecated: true
-+
-+  vmmmc-supply:
-+    description:
-+      It is used to specify the power supply (regulator) for the MMC/SD card's
-+      main operating voltage (VCC/VDD).
-+
-+  clock-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      It represents the speed at which a clock signal associated with a device
-+      or bus operates, measured in Hertz (Hz). This value is crucial for configuring
-+      hardware components that require a specific clock speed.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    mmc@4809c000 {
-+        compatible = "ti,omap2430-sdhci";
-+        reg = <0x4809c000 0x400>;
-+        interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+        ti,hwmods = "mmc1";
-+        bus-width = <4>;
-+        vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+        dmas = <&sdma 61>, <&sdma 62>;
-+        dma-names = "tx", "rx";
-+    };
-+...
+Changes in v4:
+ - configure the MAX_FL according to the MTU value, and correct the
+   comments for patch #3.
+ - in change_mtu function, revert to original setting when buffer
+   allocation fails in patch #4
+ - only enable the FIFO cut-through mode when mtu greater than
+   (PKT_MAXBUF_SIZE - ETH_HLEN - ETH_FCS_LEN)
 
--- 
-2.51.0
+Changes in v3:
+ - modify the OPT_FRAME_SIZE definition and drop the condition logic
+ - address the review comments from Wei Fang
+
+Changes in v2:
+ - split the v1 patch per Andrew's feedback.
+
+Shenwei Wang (6):
+  net: fec: use a member variable for maximum buffer size
+  net: fec: add pagepool_order to support variable page size
+  net: fec: update MAX_FL based on the current MTU
+  net: fec: add rx_frame_size to support configurable RX length
+  net: fec: add change_mtu to support dynamic buffer allocation
+  net: fec: enable the Jumbo frame support for i.MX8QM
+
+ drivers/net/ethernet/freescale/fec.h      | 11 +++-
+ drivers/net/ethernet/freescale/fec_main.c | 68 ++++++++++++++++++-----
+ 2 files changed, 63 insertions(+), 16 deletions(-)
+
+--
+2.43.0
 
 
