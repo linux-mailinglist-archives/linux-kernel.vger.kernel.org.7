@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-806739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4588FB49B2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A15B49B2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF24E2EE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79A41BC2991
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8E2DCF51;
-	Mon,  8 Sep 2025 20:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35242DC331;
+	Mon,  8 Sep 2025 20:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9EMn6uL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in1N8aSd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E2A1C863B;
-	Mon,  8 Sep 2025 20:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E7F1C863B;
+	Mon,  8 Sep 2025 20:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757364175; cv=none; b=bN7Qcvkzkh1pf6t49mHO97VUJxUw1Q6LoseYIHB8GUwa+sZhQmH44akJygp+MLSlFKFEhlSWwrkwMSFY6Mn97wBgORbOpGd+ek4qkH434lwTk/3hPm+SS6eilL6mUjwaRkyIhAPNNUqviBRAqkYOyroa2Jat0KzybsnNrD/Lh50=
+	t=1757364280; cv=none; b=QWZhIAk4HGoi0hmLEtk7OsEWx8Q768qVnf+aMEEGND1wPz5VyPfeZMGXfQOyXZEaP+Vcpwk4YDflFbH/kChSbpS2cxcvxJ+lB5NVnFJoHigEYAKvQ/zVYgWuOw/XyqVor/XfXAHWBDp9ZteKPkzbmIc7UcMeDjgs1KlooEdgL0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757364175; c=relaxed/simple;
-	bh=JY3EMgyH0fhIQk4c8zaI/9MVdKtSrKHC2bX7J7U9MF4=;
+	s=arc-20240116; t=1757364280; c=relaxed/simple;
+	bh=+UaQJJ9kveq5w+zMdLW3l1Tdxyl5Xf3XW3yKboz8Rwc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vabz1dE2BW7eayAiiDpiLVbliv09rujW06Gd28TUcWhq2ULNoyI9OMOjPI7SqyodF/AnXJPtfArE7K/N/6qLp3+T4WrQl4REzBdKpdosGI+v+pEvEN875CNJe76DI2kV7cGXnC6eF5ND8haUUeiVgOAMI+9P3z8SWstCXisjptU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9EMn6uL; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757364173; x=1788900173;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JY3EMgyH0fhIQk4c8zaI/9MVdKtSrKHC2bX7J7U9MF4=;
-  b=g9EMn6uL2c1UwOzh9x3qBTBh4b84088fJJxDO6AP/xJavJ9tnm/xOsv+
-   SHyGIIETybTqb6EuuMLUgbCN53D5lfIFMEfZC69s/8IE8u5IRR9Q79TXJ
-   XdnfmWPWh6/Fj/vPoZXlb868Ds/KKm0gkrRTvOHcb182xBfVZ+jTtUtDT
-   jET9O8HG7NbXA1XmBfeJOQsTBPpFE+oEhQ4BYROpKlNQMgCW1KiiitYY3
-   n8p9JjbTxSOURtm6pMraUb558csmBkxNSGjTfelnwZ+yatlrBtRbu5Ugg
-   cIctf25xspWVKUcGUCVj/hqwskOkiWf2T9m2dVyVIXZgU0k8TF3S36u3h
-   A==;
-X-CSE-ConnectionGUID: Lsp+fXT3SbO9q1dYOlekSg==
-X-CSE-MsgGUID: i1Cr0vzSSgWygaRMWVlhCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="63276546"
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="63276546"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:42:52 -0700
-X-CSE-ConnectionGUID: xDdTXpQ4TFieBaTwCROrsg==
-X-CSE-MsgGUID: AakUd3bjSx60Xl63Mxcc6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="173256764"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.113]) ([10.125.110.113])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:42:51 -0700
-Message-ID: <fee4cf88-3101-4b0d-88f0-fb5a632f83c9@intel.com>
-Date: Mon, 8 Sep 2025 13:42:49 -0700
+	 In-Reply-To:Content-Type; b=tA0k5IksIWQr4zgEBPyV/ZsiucUuSS4lSCdm1xAzW+OsLJdrpcrqB2a7uMhRReq8jxY57KhdMb2+Y2SJpdqjpup/IrtTZMRakegdI8fvyE01C0diDhQRtHDl8d7r105EQFHFgyqx0krdB+zAkJKsoglSULG43ovHOg9XKrUb2e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in1N8aSd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C765C4CEF1;
+	Mon,  8 Sep 2025 20:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757364279;
+	bh=+UaQJJ9kveq5w+zMdLW3l1Tdxyl5Xf3XW3yKboz8Rwc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=in1N8aSdMwY7UqLQ5gJ3Rv/Jg5RlH4YP0yewS6QkRacRakFWcP3v68iwP0wkZDj/E
+	 bBx0QxQZjXy6iH4XdawKN/Z66ZsfkC4eKMD+K6zh/VnZbGjXRI76HxRwAqhIyass3x
+	 BjEJb3nY17IUYXpXvmx8H3M1FGHzdoHgLXPgaZMA3MBuISEVW0vV/D3F4aZSJYQWuq
+	 b3j/70Pu6Fs+WAKd3K9NcyoYI7QGblUK14EtZMEdUESfo+j+lkRKDb2oFIs/MjYzA2
+	 tEwlHhm/w1rF7Q+hAorK7xCpef7fwI1xvaLk55WeAISxb74gESxdSeNmuJcU6F01oT
+	 1NV+euPt/NQqg==
+Message-ID: <7726e657-585c-42d3-aff2-c991eed42361@kernel.org>
+Date: Mon, 8 Sep 2025 14:44:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,155 +49,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cxl/acpi: Rename CFMW coherency restrictions
-To: Davidlohr Bueso <dave@stgolabs.net>, rafael.j.wysocki@intel.com
-Cc: dan.j.williams@intel.com, jonathan.cameron@huawei.com,
- alejandro.lucero-palau@amd.com, ira.weiny@intel.com,
- alison.schofield@intel.com, a.manzanares@samsung.com,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>
-References: <20250908160034.86471-1-dave@stgolabs.net>
+Subject: Re: [PATCH net-next] net: devmem: expose tcp_recvmsg_locked errors
+To: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, ncardwell@google.com, kuniyu@google.com,
+ horms@kernel.org, linux-kernel@vger.kernel.org,
+ Mina Almasry <almasrymina@google.com>
+References: <20250908175045.3422388-1-sdf@fomichev.me>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250908160034.86471-1-dave@stgolabs.net>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20250908175045.3422388-1-sdf@fomichev.me>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 9/8/25 9:00 AM, Davidlohr Bueso wrote:
-> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
+On 9/8/25 11:50 AM, Stanislav Fomichev wrote:
+> tcp_recvmsg_dmabuf can export the following errors:
+> - EFAULT when linear copy fails
+> - ETOOSMALL when cmsg put fails
+> - ENODEV if one of the frags is readable
+> - ENOMEM on xarray failures
 > 
-> This has been renamed in more recent CXL specs, as
-> type3 (memory expanders) can also use HDM-DB for
-> device coherent memory.
+> But they are all ignored and replaced by EFAULT in the caller
+> (tcp_recvmsg_locked). Expose real error to the userspace to
+> add more transparency on what specifically fails.
 > 
-> Link: https://github.com/acpica/acpica/commit/710745713ad3a2543dbfb70e84764f31f0e46bdc
-> Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> In non-devmem case (skb_copy_datagram_msg) doing `if (!copied)
+> copied=-EFAULT` is ok because skb_copy_datagram_msg can return only EFAULT.
+> 
+> Cc: Mina Almasry <almasrymina@google.com>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 > ---
->  drivers/cxl/acpi.c           |  4 ++--
->  include/acpi/actbl1.h        |  4 ++--
->  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
->  3 files changed, 13 insertions(+), 13 deletions(-)
+>  net/ipv4/tcp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 26c494704437..2cf75b553f26 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -128,9 +128,9 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
->  {
->  	unsigned long flags = CXL_DECODER_F_ENABLE;
->  
-> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
-> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
->  		flags |= CXL_DECODER_F_TYPE2;
-> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
-> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
->  		flags |= CXL_DECODER_F_TYPE3;
->  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
->  		flags |= CXL_DECODER_F_RAM;
-> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
-> index 99fd1588ff38..eb787dfbd2fa 100644
-> --- a/include/acpi/actbl1.h
-> +++ b/include/acpi/actbl1.h
-> @@ -560,8 +560,8 @@ struct acpi_cedt_cfmws_target_element {
->  
->  /* Values for Restrictions field above */
->  
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM      (1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM (1<<1)
->  #define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
->  #define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
->  #define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 6a25cca5636f..ba50338f8ada 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -210,7 +210,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -225,7 +225,7 @@ static struct {
->  			},
->  			.interleave_ways = 1,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -240,7 +240,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -255,7 +255,7 @@ static struct {
->  			},
->  			.interleave_ways = 1,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -270,7 +270,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -285,7 +285,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M,
-> @@ -302,7 +302,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -318,7 +318,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 1,
->  			.granularity = 0,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -334,7 +334,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 8,
->  			.granularity = 1,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_512M * 6UL,
+
+
+Reviewed-by: David Ahern <dsahern@kernel.org>
 
 
