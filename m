@@ -1,106 +1,201 @@
-Return-Path: <linux-kernel+bounces-805166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD23B484CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:10:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF4AB484D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A34177EA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E18F1895928
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E341D2E5437;
-	Mon,  8 Sep 2025 07:10:18 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39A2E5427;
+	Mon,  8 Sep 2025 07:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jh/FZUGB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360CC747F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A097747F;
+	Mon,  8 Sep 2025 07:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757315418; cv=none; b=FA/R4Zf58s7MExyvO78ou0DRXg/4dNnw8CrUDZs1DlMuel3p+AWVtzOED4nofZiWO+263InjWa/n4P3cbvP88SJmTeJLriRd7f4zKV0nwqF4NwYZJEooZ8dfq38ZrUyI9PWie2fHOxtKjSyP5/T+zR/PKg54FsSlWT9IORBoqk4=
+	t=1757315515; cv=none; b=Gd6lp7CPRR5pF7DmYfm+H6BBEAzsJvto5XFOm6gYOXPUA4bOyCO4LVvHnZkL8Rj5SUnjmxAyC3H3VmfzMsW/KR9R3pKITqpce/txVF0KZsteLilyxdL975Nae0TPI5Liq+gc5HNXY3adGSuVlEgClsAxuhh43UT4T0RVB0etLOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757315418; c=relaxed/simple;
-	bh=k9XX2yWsBgDP1A4zgn9Z+KD0lDb36jnMjgYurCpjVNg=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fEev1fkSHgnvYO0eVtFhJyYAbbcClmr0mUmOQSQjVDuXqV3YBpp/neTtcOK2S6VooF6AQTpi0YI1eOXa7T19j8n3KmjqK1jHA5qHiAFMV4fjL1q72bUrkkqxSU55Fw7CCYSBp/R0sFHJwozljR3lmynfnY7gjLdiskbcIgQX7Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cKyk42QfCztTbY;
-	Mon,  8 Sep 2025 15:09:16 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id D4C3B18006C;
-	Mon,  8 Sep 2025 15:10:11 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 15:10:11 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 15:10:10 +0800
-CC: <yangyicong@hisilicon.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>, <wangyushan12@huawei.com>,
-	<hejunhao3@h-partners.com>
-Subject: Re: [PATCH v6 0/3] drivers/perf: hisi: Add support for HiSilicon NOC
- and MN PMU driver
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250814091622.23269-1-yangyicong@huawei.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <5b727add-e48e-5857-42a4-97586e1e02e1@huawei.com>
-Date: Mon, 8 Sep 2025 15:10:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1757315515; c=relaxed/simple;
+	bh=Of78UZh64IZN2D+3zi6NAhV8bopsYtrVBUXbZLFLOuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s8lnBalU7t5lZwvYwKT/QMmmCK81Am/iOIJMwIJ5v59lHTfdbOB9mN4bYFB4gXTmh9cuAQmQHJrD5tEhjPBbhJKYble9J9qZzi4HeaXEOXF73/YLIfn/d5MXCwnCiZ7tjovhc5C4r7D1dIIi8yzXeUNXzVd1mLl9GUweq2GkNFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jh/FZUGB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757315506;
+	bh=Of78UZh64IZN2D+3zi6NAhV8bopsYtrVBUXbZLFLOuw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jh/FZUGBFSm7nf8WfKZUADT/s3C4xpz4FcYbhkkvkyB2kuBQH7o8PBPNfJvOXWW+S
+	 lhREUPWp1BucMpHD8aNW2KjUXCJi8skCE6Gu3C/hYRipR84Cjn3gMIWgMtI5oAMlfU
+	 Yh3cd5qp9Eply6j5U/6+EmMW8dVeZcqguZ9GYou1Vwt7yE687sbsSrWlvhuNF0XMAU
+	 MJgIoD8nZUfWks1mdxBFs9EUzdMnDqIeBTM6zBY57NHtaqkdGqEHXyjyyj8GWDpdhx
+	 9hu5BO96NTBSWO879cHcC282K7VmRoYwkFL/+RxEDTb1OJ50/80SCrpD6Rp4K13bx8
+	 NsLxbWVkv66rg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 92FFD17E0100;
+	Mon,  8 Sep 2025 09:11:45 +0200 (CEST)
+Date: Mon, 8 Sep 2025 09:11:40 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, "Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?="
+ <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20250908091140.44856fde@fedora>
+In-Reply-To: <aL1u_YxOkuj1kIq6@google.com>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+	<20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+	<20250905152505.005a610d@fedora>
+	<CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+	<DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org>
+	<aL1pSFB9iBsfHFM_@google.com>
+	<DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org>
+	<aL1u_YxOkuj1kIq6@google.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250814091622.23269-1-yangyicong@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-a gentle ping...
+Hi Alice,
 
-On 2025/8/14 17:16, Yicong Yang wrote:
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> 
-> Add support for two new Uncore PMUs to monitor the events of the system bus
-> (by NoC PMU) and the DVM operations (by MN PMU).
-> 
-> Change since v5:
-> - Rebase on 6.17-rc1 and update the maintainer entry
-> Link: https://lore.kernel.org/linux-arm-kernel/20250717121727.61057-1-yangyicong@huawei.com/
-> 
-> Change since v4:
-> - Rename ovflow_status to .overflow_status with Jonathan's Tag, thanks!
-> Link: https://lore.kernel.org/linux-arm-kernel/20250717074138.39903-1-yangyicong@huawei.com/
-> 
-> Change since v3:
-> - Use ACPI driver data to retrieve the hardware capabilities
-> Link: https://lore.kernel.org/linux-arm-kernel/20250619125557.57372-1-yangyicong@huawei.com/
-> 
-> Junhao He (1):
->   drivers/perf: hisi: Add support for HiSilicon MN PMU driver
-> 
-> Yicong Yang (2):
->   drivers/perf: hisi: Add support for HiSilicon NoC PMU
->   MAINTAINERS: Remove myself from HiSilicon PMU maintainers
-> 
->  Documentation/admin-guide/perf/hisi-pmu.rst  |  11 +
->  MAINTAINERS                                  |   1 -
->  drivers/perf/hisilicon/Makefile              |   3 +-
->  drivers/perf/hisilicon/hisi_uncore_mn_pmu.c  | 411 +++++++++++++++++
->  drivers/perf/hisilicon/hisi_uncore_noc_pmu.c | 443 +++++++++++++++++++
->  5 files changed, 867 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
->  create mode 100644 drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
-> 
+On Sun, 7 Sep 2025 11:39:41 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> On Sun, Sep 07, 2025 at 01:28:05PM +0200, Danilo Krummrich wrote:
+> > On Sun Sep 7, 2025 at 1:15 PM CEST, Alice Ryhl wrote: =20
+> > > On Sat, Sep 06, 2025 at 12:47:36AM +0200, Danilo Krummrich wrote: =20
+> > >> On Fri Sep 5, 2025 at 8:18 PM CEST, Alice Ryhl wrote: =20
+> > >> > On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
+> > >> > <boris.brezillon@collabora.com> wrote: =20
+> > >> >> On Fri, 05 Sep 2025 12:11:28 +0000
+> > >> >> Alice Ryhl <aliceryhl@google.com> wrote: =20
+> > >> >> > +static bool
+> > >> >> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
+> > >> >> > +{
+> > >> >> > +     return !kref_read(&vm_bo->kref); =20
+> > >> >>
+> > >> >> I'm not too sure I like the idea of [ab]using vm_bo::kref to defe=
+r the
+> > >> >> vm_bo release. I get why it's done like that, but I'm wondering w=
+hy we
+> > >> >> don't defer the release of drm_gpuva objects instead (which is re=
+ally
+> > >> >> what's being released in va_unlink()). I can imagine drivers want=
+ing to
+> > >> >> attach resources to the gpuva that can't be released in the
+> > >> >> dma-signalling path in the future, and if we're doing that at the=
+ gpuva
+> > >> >> level, we also get rid of this kref dance, since the va will hold=
+ a
+> > >> >> vm_bo ref until it's destroyed.
+> > >> >>
+> > >> >> Any particular reason you went for vm_bo destruction deferral ins=
+tead
+> > >> >> of gpuva? =20
+> > >> >
+> > >> > All of the things that were unsafe to release in the signalling pa=
+th
+> > >> > were tied to the vm_bo, so that is why I went for vm_bo cleanup.
+> > >> > Another advantage is that it lets us use the same deferred logic f=
+or
+> > >> > the vm_bo_put() call that drops the refcount from vm_bo_obtain().
+> > >> >
+> > >> > Of course if gpuvas might have resources that need deferred cleanu=
+p,
+> > >> > that might change the situation somewhat. =20
+> > >>=20
+> > >> I think we want to track PT(E) allocations, or rather reference coun=
+ts of page
+> > >> table structures carried by the drm_gpuva, but we don't need to rele=
+ase them on
+> > >> drm_gpuva_unlink(), which is where we drop the reference count of th=
+e vm_bo.
+> > >>=20
+> > >> Deferring drm_gpuva_unlink() isn't really an option I think, the GEM=
+s list of
+> > >> VM_BOs and the VM_BOs list of VAs is usually used in ttm_device_func=
+s::move to
+> > >> map or unmap all VAs associated with a GEM object.
+> > >>=20
+> > >> I think PT(E) reference counts etc. should be rather released when t=
+he drm_gpuva
+> > >> is freed, i.e. page table allocations can be bound to the lifetime o=
+f a
+> > >> drm_gpuva. Given that, I think that eventually we'll need a cleanup =
+list for
+> > >> those as well, since once they're removed from the VM tree (in the f=
+ence
+> > >> signalling critical path), we loose access otherwise. =20
+> > >
+> > > Hmm. Another more conceptual issue with deferring gpuva is that
+> > > "immediate mode" is defined as having the GPUVM match the GPU's actual
+> > > address space at all times, which deferred gpuva cleanup would go
+> > > against. =20
+> >=20
+> > Depends on what "deferred gpuva cleanup" means.
+> >=20
+> > What needs to happen in the run_job() is drm_gpuva_unlink() and
+> > drm_gpuva_unmap(). Freeing the drm_gpuva, inluding releasing the assoic=
+iated
+> > driver specific resources, can be deferred. =20
+>=20
+> Yeah I guess we could have unlink remove the gpuva, but then allow the
+> end-user to attach the gpuva to a list of gpuvas to kfree deferred. That
+> way, the drm_gpuva_unlink() is not deferred but any resources it has can
+> be.
+
+This ^.
+
+>=20
+> Of course, this approach also makes deferred gpuva cleanup somewhat
+> orthogonal to this patch.
+
+Well, yes and no, because if you go for gpuva deferred cleanup, you
+don't really need the fancy kref_put() you have in this patch, it's
+just a regular vm_bo_put() that's called in the deferred gpuva path on
+the vm_bo attached to the gpuva being released.
+
+>=20
+> One annoying part is that we don't have an gpuvm ops operation for
+> freeing gpuva, and if we add one for this, it would *only* be used in
+> this case as most drivers explicitly kfree gpuvas, which could be
+> confusing for end-users.
+
+Also not sure ::vm_bo_free() was meant to be used like that. It was for
+drivers that need to control the drm_gpuvm_bo allocation, not those
+that rely on the default implementation (kmalloc). Given how things
+are described in the the doc, it feels weird to have a ::vm_bo_free()
+without ::vm_bo_alloc(). So, if we decide to go this way (which I'm
+still not convinced we should, given ultimately we might want to defer
+gpuvas cleanup), the ::vm_bo_free() doc should be extended to cover
+this 'deferred vm_bo free' case.
+
+Regards,
+
+Boris
 
