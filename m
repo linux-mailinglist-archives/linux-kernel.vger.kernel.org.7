@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-805087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D1FB483DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFDEB483B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0913B719F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08B9189AB63
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E1A224AEF;
-	Mon,  8 Sep 2025 06:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="ZSggGL9x"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF602356C7;
+	Mon,  8 Sep 2025 05:45:06 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6476E258A;
-	Mon,  8 Sep 2025 06:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7332D22A4F8;
+	Mon,  8 Sep 2025 05:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311530; cv=none; b=H/1muxZdA6gX9C30XqsU8DXBYtU6eiFnv+c8fk4HhbiOzLlSuEyBvPrnP3SMb8Kz3OSvppfg/cmzzBpa6z+FHU6B4LjgBoy8JD6mXfcu/W6xWRSw1vm/2f9ay9ikTjEf1pC5l5KkjRjHOzmfk21JyY0e57PyiDkvMWyXN0Y/LGs=
+	t=1757310305; cv=none; b=eNRGEBMLK3cwjKfYJLh8vmly2mUFVBqv91tONJkJEh6GcrVyuRtMLr4TxPvFagRzXTKwOXCEuJ/9j5MYVZAbVBcFHoa5I9JcC1ZCJMTfdMPSX8jgccJ/tXtyW9rtMOSIcp6j2qkzJH4tZZJ3RfOG0kvz84k2zOZa0zEIGP2YA7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311530; c=relaxed/simple;
-	bh=VEj+FcIjH8vMApuTrrOGRDhfsgKnPwgJ+AclFliyyyI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kCIwhxg1PhJgNB/XnCco/KDUtf4PkDu11LOueo9ScWkhXTx1j8az5WWhhFaFUnjmpwPZd/TXCOk9R5buAVsem8YmXyZTFKi2L/Dpj9BqdHrfYZxwDV/+4qdMdtVLnyY8WZhkVVos0LldVmsqpAjCpwU8tuZc9Ob5etOSingPLps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=ZSggGL9x; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=CfsdsKfiWnNioTv736ibRPWjiInLASEhVaU5adm2kiY=; b=ZSggGL9x2fLao5yLUtulafVKEw
-	h2NETSUQYUi9xVEGccBOKY5ciDpfyeg585vJ96Dp3uDiYMvMlmKK1NJ3DaJtTEKyV8uTzKitJ4oRq
-	yCxj/32EsoD9A3Seir6AXttsrv1Gw262ZQTD0menkt1+AkZ1cPweBvFgJz2RxozcTK50Dd82b0aIV
-	jvKWKbv+a5QvpRtXCuU+ogeGTTh/oNBgULCi3U6N7Sl7Njc5nI/H97/0UQlHvhC5awKOeQhihQ95u
-	juAeP9+rBj5jEmc4SDqpmAe9q83bcYTRNco+whefTqD4OVfuk5HRN5oTJH2duaTuT6jRWPVbwTbL7
-	bwgQg0QQ==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uvUfb-000Ed4-28;
-	Mon, 08 Sep 2025 07:44:03 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uvUfa-00088z-25;
-	Mon, 08 Sep 2025 07:44:03 +0200
-Message-ID: <6d875165ae2867fb0a49c19bdf18c0d948c783d3.camel@apitzsch.eu>
-Subject: Re: [PATCH 0/4] Add CAMSS support for MSM8939
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Robert Foss	
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Vladimir Zapolskiy	
- <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Knecht
-	 <vincent.knecht@mailoo.org>
-Date: Mon, 08 Sep 2025 07:44:01 +0200
-In-Reply-To: <e0e1827f-aa8b-4337-b26c-dc2ac43e0e2a@linaro.org>
-References: <20250908-camss-8x39-vbif-v1-0-f198c9fd0d4d@apitzsch.eu>
-	 <e0e1827f-aa8b-4337-b26c-dc2ac43e0e2a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1757310305; c=relaxed/simple;
+	bh=46QfxNvcMaVLJWFUVGJoCw0SJDEAg3joG8eGL4C3XbE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RpvR4wbR24XjvwdKtPOVI8dYZ9rZRO1FeQzT8UoI3ecmZOKNoakyafLUYp1lN4/lrVbuF+c7AO56Kwk/FJCBEFKMFJcbiE0xLJAt0IKf7s4OJpS/y9rV08K98LCiDnJxgvm8L6aeBrzmfH06LChE4ciAhN9Hmnn22nHmaqyAvlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f29ec5f48c7611f0b29709d653e92f7d-20250908
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:87719e05-7388-4ee9-9957-0e9a2dbe195e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:5cf66c1cfea8ac1b3975b87ae49a54c8,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f29ec5f48c7611f0b29709d653e92f7d-20250908
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <zhaoguohan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 198666652; Mon, 08 Sep 2025 13:44:55 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 10BC9B8258E6;
+	Mon,  8 Sep 2025 13:44:55 +0800 (CST)
+X-ns-mid: postfix-68BE6D56-94635319
+Received: from localhost.localdomain (unknown [10.42.12.87])
+	by node2.com.cn (NSMail) with ESMTPA id 008F0B812916;
+	Mon,  8 Sep 2025 05:44:51 +0000 (UTC)
+From: zhaoguohan@kylinos.cn
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	thomas.falcon@intel.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	GuoHan Zhao <zhaoguohan@kylinos.cn>,
+	Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH v3] perf parse-events: Prevent null pointer dereference in __add_event()
+Date: Mon,  8 Sep 2025 13:44:49 +0800
+Message-ID: <20250908054449.18414-1-zhaoguohan@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27756/Sun Sep  7 10:26:39 2025)
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bryan,
+From: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
-Am Montag, dem 08.09.2025 um 05:51 +0100 schrieb Bryan O'Donoghue:
-> On 07/09/2025 23:04, Andr=C3=A9 Apitzsch via B4 Relay wrote:
-> > (This series resumes [1].)
->=20
-> Thank you for following up on this.
->=20
-> Could you give a brief synopsis what changed between this series and
-> the previous series ?
+In the error handling path of __add_event(), if evsel__new_idx() fails
+and returns NULL, the subsequent calls to zfree(&evsel->name) and
+zfree(&evsel->metric_id) will cause null pointer dereference.
 
-As Vincent seems currently quite busy I took over the series. Because
-of that I assumed I had to reset the revision number.
+Extend the goto chain to properly handle the case where evsel allocation
+fails, avoiding unnecessary cleanup operations on a NULL pointer.
 
-At the end of the cover letter you can find what changed since the
-previous submission (v5 by Vincent), but I will add it here again in
-more details.
+Fixes: cd63c2216825 ("perf parse-events: Minor __add_event refactoring")
+Reviewed-by: Markus Elfring <Markus.Elfring@web.de>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
-- Patch 1 (bindings) (previously patch 3):
-  - Make the order of {reg, clock, interrupt} items the same as in 8916
-    + append additional items
-  - update isp node unit address
-  - Drop R-b tag
-- Patch 2 (previously patch 1): no change
-- Patch 3 (previously patch 2): no change
-- Patch 4 (dts):
-  - Make the order of {reg, clock, interrupt} items the same as in 8916
-    + append additional items
-  - update isp node unit address
-  - Drop R-b tag
+---
+V2 -> V3:
+- Replaced `out_free_cpus` with `out_put_cpus`
+- moved the patch version descriptions behind the marker line
+V1 -> V2:
+- Extended the goto chain with separate error handling labels instead of =
+using null pointer check
+- Reordered jump targets to avoid accessing NULL evsel members
+- Added Fixes tag
+- Updated commit subject to use "Prevent" instead of "Fix"
+---
+ tools/perf/util/parse-events.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Best regards,
-Andr=C3=A9
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+index 8282ddf68b98..2ffdd0d13c45 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -277,18 +277,18 @@ __add_event(struct list_head *list, int *idx,
+=20
+ 	evsel =3D evsel__new_idx(attr, *idx);
+ 	if (!evsel)
+-		goto out_err;
++		goto out_put_cpus;
+=20
+ 	if (name) {
+ 		evsel->name =3D strdup(name);
+ 		if (!evsel->name)
+-			goto out_err;
++			goto out_free_evsel;
+ 	}
+=20
+ 	if (metric_id) {
+ 		evsel->metric_id =3D strdup(metric_id);
+ 		if (!evsel->metric_id)
+-			goto out_err;
++			goto out_free_evsel;
+ 	}
+=20
+ 	(*idx)++;
+@@ -310,12 +310,14 @@ __add_event(struct list_head *list, int *idx,
+ 		evsel__warn_user_requested_cpus(evsel, user_cpus);
+=20
+ 	return evsel;
+-out_err:
+-	perf_cpu_map__put(cpus);
+-	perf_cpu_map__put(pmu_cpus);
++out_free_evsel:
+ 	zfree(&evsel->name);
+ 	zfree(&evsel->metric_id);
+ 	free(evsel);
++out_put_cpus:
++	perf_cpu_map__put(cpus);
++	perf_cpu_map__put(pmu_cpus);
++
+ 	return NULL;
+ }
+=20
+--=20
+2.43.0
 
->=20
-> > [1]
-> > https://lore.kernel.org/all/20250613-camss-8x39-vbif-v5-0-a002301a7730@=
-mailoo.org/
-> Good series submission style would have something in the coverletter
-> like.
->=20
-> "Here is my awesome series of patches which do X
->=20
-> v2:
-> - Fixed everything wise and benevolent kernel community asked for
->=20
-> v1:
-> - Enabled cool stuff
-> "
->=20
-> I recall we were pretty close to picking these patches up previously
-> so thank you for re-upping your effort.
->=20
-> A brief bit of guidance on what if anything changed from your last=20
-> submission is appreciated and good practice so that we can review and
-> apply quicker.
->=20
-> ---
-> bod
 
