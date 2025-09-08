@@ -1,89 +1,227 @@
-Return-Path: <linux-kernel+bounces-804945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4766B48242
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D12B48244
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085783AFD51
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD3C7AA835
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47D31A4E70;
-	Mon,  8 Sep 2025 01:45:30 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A897189F5C;
+	Mon,  8 Sep 2025 01:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MyE9vVH1"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD7210FB;
-	Mon,  8 Sep 2025 01:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24AC347D0
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 01:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757295930; cv=none; b=PjDsduO4S15SP8RaBFmXKvQziRswJ5nTAZnmwWlCIq86lshiEmD5l4YKQT1RnB1o0IuReeoRQRfemGOd4XH8/d3yhZzF32n5hnaEd5RLOLTBtD7hxV1IeXGGqxUhpUfgUq2HaOxt8cGTsVRZ2kD7tHghTxzglW10I4Nh7DWREO8=
+	t=1757296002; cv=none; b=YfeqvaG7OpCX+3s5g49MoX0fAz9BGOlalWH8jfnTND9juOuBn538Thr0OcmjKSIUCyhPEgqpn2t6Su4DXHdQmBwSnhAAAd/77MTQ+VXGl9Mw2XwmXNxfpWPwIDfYtvwfl6DDdnLxypdAIz6i5APMkYpae4cSkzbMSs6RKTGEwHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757295930; c=relaxed/simple;
-	bh=+D/cuszWapYFsKduS4S62GNvgKJ4ZVtrfO4oV3gwmso=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HZpr/w6h8mi7TSl4KWQfQXj8SqoXySiiC+WDcMOBrCbDu0yjerWQOeBZZ5HTDW+in2z0Yr9IFNrMoWMuePK6bqvko1TDx2k2YQ17+4EnGanNaCsmRbWHGnfvQnKOivjgBrIkIHfm/JsdISjYMWKJwApFVU6omDxmi5ZmaXcnhQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 755c33a48c5511f0b29709d653e92f7d-20250908
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0069c780-fc42-4fbc-aecd-891d28ee24a6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:065c8e9014fa844e4fbc973e109a1575,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
-	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 755c33a48c5511f0b29709d653e92f7d-20250908
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <tanzheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1058610830; Mon, 08 Sep 2025 09:45:11 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 68E2B16004282;
-	Mon,  8 Sep 2025 09:45:11 +0800 (CST)
-X-ns-mid: postfix-68BE3527-140220412
-Received: from localhost.localdomain (unknown [10.42.20.101])
-	by node4.com.cn (NSMail) with ESMTPA id A986B160038C1;
-	Mon,  8 Sep 2025 01:45:10 +0000 (UTC)
-From: tanzheng <tanzheng@kylinos.cn>
-To: johannes@sipsolutions.net
-Cc: arend.vanspriel@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	tanzheng@kylinos.cn
-Subject: Re: [PATCH v3] wifi: cfg80211: Remove the redundant wiphy_dev
-Date: Mon,  8 Sep 2025 09:45:09 +0800
-Message-Id: <20250908014509.190317-1-tanzheng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <e02385300c075395346ccf70b46a648698a66a3d.camel@sipsolutions.net>
-References: <e02385300c075395346ccf70b46a648698a66a3d.camel@sipsolutions.net>
+	s=arc-20240116; t=1757296002; c=relaxed/simple;
+	bh=cJrDGvijAoLMZjWuf6tdgS6PbyhyEOCuyV9ZcIcQQWk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rCDC9z6Ub3aWPdrz5I3viYpYblakPmxvlOGUVMyMGUViQbS/Z3qfspsB7Dbg26z9hEFX8sE3rcCSiJdHO1bQOVPiB4/ojVQTbaIO7/MpS9E028plN7Blnn7fmrhEGxkTj+/v719AD38KrzVcygxhpheHTsHdsns+svrExaWJZOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MyE9vVH1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587LVcFq030119;
+	Mon, 8 Sep 2025 01:46:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=UccKea
+	xhS+HpFDIrljo7TBOyyvOWjiyq8kuiNMMZAWw=; b=MyE9vVH1NqMsBA38TFDXwK
+	45OlmY0JG7ZdzxSHrhnn6o3/cgaIrM5mgAyce92T8OGicQWk7DdjkBcfIBl/mXOp
+	7EvJKCuqYw6aZLBJQf9aFLFivupUIAZspTs12tEtQ3+Zz4UHDFNZbcBfacDfVIRs
+	JyHStqnI3dBsfv5EOdvCcw/+IEZrYWeZhex2dqFLmgOtMhDq0kD3U8GMRbPzAbmC
+	JYdx47C7p/WJyBSEkECeYqCLaziK/GkEMBFFm5wTGNaBdJqGRQX9TFbHBg/Khuhj
+	HnDbzBgjEEpBEYSc/PFCoefuvISItc5wPmv/mPnowVxfZWhWFmQoORzl12FLDWbg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490uke40rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 01:46:03 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5881k2sV002110;
+	Mon, 8 Sep 2025 01:46:02 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490uke40r6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 01:46:02 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 587KJ5Ol001156;
+	Mon, 8 Sep 2025 01:46:01 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912033gxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 01:46:01 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5881k0TY16122400
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 01:46:00 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 261C25804E;
+	Mon,  8 Sep 2025 01:46:00 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEAAC58054;
+	Mon,  8 Sep 2025 01:45:53 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (unknown [9.150.15.230])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 01:45:53 +0000 (GMT)
+Message-ID: <c8c5778822344161acec7101fa9f19726ca99d31.camel@linux.ibm.com>
+Subject: Re: [PATCH RFC] powerpc: Panic on jump label code patching failure
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Ritesh Harjani (IBM)"
+	 <riteshh@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        maddy@linux.ibm.com, mpe@ellerman.id.au, peterz@infradead.org,
+        jpoimboe@kernel.org, jbaron@akamai.com
+Cc: npiggin@gmail.com, rostedt@goodmis.org, ardb@kernel.org,
+        Erhard Furtner
+	 <erhard_f@mailbox.org>
+Date: Mon, 08 Sep 2025 11:45:52 +1000
+In-Reply-To: <1b4cc6d5-5f5b-4b39-8fdf-ac02c94cd5e2@csgroup.eu>
+References: <20250905061135.1451362-1-ajd@linux.ibm.com>
+	 <87qzwki6fv.fsf@ritesh.list@gmail.com>
+	 <1b4cc6d5-5f5b-4b39-8fdf-ac02c94cd5e2@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX31IU+4LQ9/fn
+ usx8Uw9c80Powr+cbFK4OzEAEqQt0UGcpgPcCQoJpH2LPJfLXWNE2dzDT+erpMujpg+HiH3kNMj
+ EdFkzvKO2aiaf/7J9ii8CxvkH98c1gqZalX+qBfR0TG2PQoXpxvVTf0mhCkXfgiktyhxpnHEVIt
+ +/KKks/upJkSQo3oKCXrIFXKG4g2DfuQ3Odjmhvr0y6Mr+/nVX7ykXSOfVlykQ3wNMrEi6PuyIi
+ uMioOVHyHXlfH3gUCeymcGMXgmLV8bRVO9YC+9Ko0sN7WOyvDHsFp/3/Pu/C8hF09F0/sJqNAUo
+ jhkKwtt3UhRi9HEhcUuU1RusBOIHxdYNlgmIA+h9Joz8bJsDvuQvYBcJ5nkjilRT4ShBx9IYjGx
+ xP64b1fJ
+X-Proofpoint-ORIG-GUID: nerRj6-0BR0gN8pD3HmGmni6d9Jwj5yb
+X-Proofpoint-GUID: hb_MV_qymDWLP0LPeYEwIfhE5uwg_uIa
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68be355b cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=_z8MWtvD0Tm20lTwb9kA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-07_10,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
->> There is no need to call wiphy_dev again.Simplifying the
->> code makes it more readable.
->>=20
->> Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
->>=20
->
->The bot complains this doesn't match your From: line, is that
->intentional?
+On Sat, 2025-09-06 at 08:42 +0200, Christophe Leroy wrote:
+> > arch_jump_label_transform() is mainly getting called from
+> > __jump_level_update() and it's used for enabling or updating static key=
+s /
+> > branch.
+> >=20
+> > But static keys can also be used by drivers / module subsystem whose
+> > initialization happens late. Although I understand that if the above
+> > fails, it might fail much before, from the arch setup code itself, but
+> > panic() still feels like a big hammer.
+>=20
+> But not being able to patch the kernel as required means that you get a=
+=20
+> kernel behaving differently from what is expected.
+>=20
+> Imagine a kernel running on a board that is controlling a saw. There is=
+=20
+> a patch_instruction() to activate the safety feature which detects when=
+=20
+> your hands are too close to the blade. Do you want the kernel to=20
+> continue running seamlessly when that patch_instruction() fails ? I'm=20
+> sure you don't !
 
-Yes, I set it up this way on purpose. Sorry, I don't know=20
-this rule. I'll modify Signed-off-by. Thank you for your comment.
+This is my thinking exactly - a failed patch leaves the kernel in an abnorm=
+al
+state, and we don't have the infrastructure to safely roll back any patches=
+ that
+have already succeeded or other associated state changes, so this should be
+treated as an unrecoverable error. The resulting kernel is a different kern=
+el
+from the one you expect to have.
 
-Best regards,
-TanZheng
+The fact that drivers/modules can trigger this just means that drivers/modu=
+les
+can permanently ruin your kernel too, which makes this more important not l=
+ess,
+I think?
+
+>=20
+> >=20
+> > Would pr_err() print with WARN_ON_ONCE(1) would suffice in case of an
+> > err?
+>=20
+> No, that's not enough, you can't rely on a kernel that will no behave as=
+=20
+> expected.
+>=20
+> >=20
+> > Also you said you ran into a problem at just one call site where above
+> > was silently failing. With the above change are you able to hit the
+> > panic() now? Because from what I see in patch_instruction(), it mainly
+> > will boil down to calling __patch_mem() which always returns 0.
+>=20
+> As far as I can see, __patch_mem() returns -EPERM when=20
+> __put_kernel_nofault() fails:
+>=20
+> static int __patch_mem(void *exec_addr, unsigned long val, void=20
+> *patch_addr, bool is_dword)
+> {
+> 	if (!IS_ENABLED(CONFIG_PPC64) || likely(!is_dword)) {
+> 		/* For big endian correctness: plain address would use the
+> wrong half */
+> 		u32 val32 =3D val;
+>=20
+> 		__put_kernel_nofault(patch_addr, &val32, u32, failed);
+> 	} else {
+> 		__put_kernel_nofault(patch_addr, &val, u64, failed);
+> 	}
+>=20
+> 	asm ("dcbst 0, %0; sync; icbi 0,%1; sync; isync" :: "r" (patch_addr),
+> 							=C2=A0=C2=A0=C2=A0 "r" (exec_addr));
+>=20
+> 	return 0;
+>=20
+> failed:
+> 	mb();=C2=A0 /* sync */
+> 	return -EPERM;
+> }
+
+Yes, I can confirm that -EPERM from __patch_mem() is what I was seeing, and=
+ I
+experimented with the assembly to confirm that it was triggered by the stw =
+in
+__put_kernel_nofault(). __put_kernel_nofault() uses the address of the fail=
+ed:
+label to create a handler in the exception table for when the store instruc=
+tion
+faults.
+
+>=20
+>=20
+> > Although there are other places where there can be an error returned,
+> > so I was wondering if that is what you were hitting or something else?
+>=20
+> Andrew was hitting the -EPERM because the memory area was read-only.
+>=20
+> Christophe
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
