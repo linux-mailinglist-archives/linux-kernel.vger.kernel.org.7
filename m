@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-806599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0F2B4992E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:58:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E289FB49914
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671DC1BC776C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:59:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B549E4E21A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0736C31CA45;
-	Mon,  8 Sep 2025 18:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E563E31E0F4;
+	Mon,  8 Sep 2025 18:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="eZg5kJIr"
-Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VmL24Nf7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA6331C576
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D068D31C58B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357918; cv=none; b=D/H/yxk88YH7Kt6r2X7rvoCc+ZSb4zJvjhnymrP+1icS2cFmnA/8BvwwSc3bJn97uF46VpWkQYx9flAGZ3r91PreY8o+Q2avddBfxkYEPGLXPHmL3PHi83mREvETX1wfoVeu42ixdF0GrJ0QHoxyI8ISPfrhKttK77hH/rrxhbg=
+	t=1757357575; cv=none; b=Jty7h9CgGceusmWyJkT8ISAdYS1/OFAz+mXkHe4dGabARLLlqbA697jVpCB0aUUNtQeCLXZIF3YX+nlZmddSYSwtr7t/SRo4Ep+sjSQ8TxogDW2OLxriitAJ8tYIq4zxDExeKq0Tmymlfc6UFsdr/1I8HlqJtr7lOuIAS9weLDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757357918; c=relaxed/simple;
-	bh=z9+41aqwA+e2oS2HurKpjpxD41hAxqO245N9vYI4mGI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=BTUQigeo2EQjTxW8mxkXgS48X86grKkHtQ/RvXi+Y31NuqVsU4uEqFNqVD4Oi4frzIipwrGLEHkaV4lHWMHRqSvOWPMauAS0H2kB6GnSoWMt9cDetW9ClAWTRwVWSZ9UrN+hDztD5T4IKxMfnibPxcLOpVCxIIkJ5t5fJ6jPNsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=eZg5kJIr reason="signature verification failed"; arc=none smtp.client-ip=173.71.130.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id SkersB4jDXbQHmmC; Mon, 08 Sep 2025 14:45:57 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=+ftaLcyqukJE07mN520eP0GkDIrw9OIG2RnCE5DtPSs=;
-	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
-	MIME-Version:Date:Message-ID; b=eZg5kJIrSXN78gn3JNABfGoD/yiMg97PxCMa0NFpQyv7T
-	30ruoNBrJwPtlGXrCsgaJOhU+WrBkFfvUT62Wo0Js7GRZ5Bj9BM0IIaIbt8G//slt3IL9a//K4+Yk
-	m0vrzV1GcQwODHjJhcM3Zc1Ra0cp9HKSryVTNzcOMidUyisnk=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14189108; Mon, 08 Sep 2025 14:45:57 -0400
-Message-ID: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 8 Sep 2025 14:45:57 -0400
+	s=arc-20240116; t=1757357575; c=relaxed/simple;
+	bh=m1ecs/SKmseVTzGSsYHUVChphJvT8mYdE+bFV4gTuEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rfe1SuJTYlkz3RzPgvwy9Yjq9jj9GNYvW/D/xop9V+WM0LhT9ppjxLsulz3CaqTs86uSYcEMjhuGl7xKoK0PyARzuhW+gCN0aspchVLaXBJmoNlDZICzPoEe8orVPBuvShL/TASJEvgPyB6SLFNgf6QNxbHCbWaGVSzArdjutPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VmL24Nf7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757357571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P/hLdH3M63boRfhp9VsdmP91lydrwcfx7/FSoo2D22s=;
+	b=VmL24Nf7RxxI2eIzVya6KIiCBXQkoz9faVVUZllL2cNXsHvIBlThmwENKJ3RSb85tfnmA0
+	T1WHyxwtAc2QVs1hSnaMEHfil6m/9heMZcYOmPjv/hFjyyqrEDe5MnKO1xkzlIwuEmg8UZ
+	8PPpsUe1Qstd40s0cfOhcTqAeoqaSeI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-U38uczxXPayT7Vgz3iEFkQ-1; Mon,
+ 08 Sep 2025 14:52:47 -0400
+X-MC-Unique: U38uczxXPayT7Vgz3iEFkQ-1
+X-Mimecast-MFC-AGG-ID: U38uczxXPayT7Vgz3iEFkQ_1757357565
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB312195609F;
+	Mon,  8 Sep 2025 18:52:44 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.64.41])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 951551800446;
+	Mon,  8 Sep 2025 18:52:41 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v4 0/3] rust/drm: Misc. gem bindings cleanup
+Date: Mon,  8 Sep 2025 14:46:35 -0400
+Message-ID: <20250908185239.135849-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Tony Battersby <tonyb@cybernetics.com>
-Subject: [PATCH 00/15] qla2xxx target mode improvements
 Content-Type: text/plain; charset=UTF-8
-X-ASG-Orig-Subj: [PATCH 00/15] qla2xxx target mode improvements
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1757357157
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 3125
-Content-Transfer-Encoding: quoted-printable
-X-ASG-Debug-ID: 1757357157-1cf43947df30c210001-xx1T2L
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-This patch series improves the qla2xxx FC driver in target mode.=C2=A0 I
-developed these patches using the out-of-tree SCST target-mode subsystem
-(https://scst.sourceforge.net/), although most of the improvements will
-also apply to the other target-mode subsystems such as the in-tree LIO.=C2=
-=A0
-Unfortunately qla2xxx+LIO does not pass all of my tests, but my patches
-do not make it any worse (results below).=C2=A0 These patches have been
-well-tested at my employer with qla2xxx+SCST in both initiator mode and
-target mode and with a variety of FC HBAs and initiators.=C2=A0 Since SCS=
-T is
-out-of-tree, some of the patches have parts that apply in-tree and other
-parts that apply out-of-tree to SCST.=C2=A0 I am going to include the
-out-of-tree SCST patches to provide additional context; feel free to
-ignore them if you are not interested.
+This is the first few patches that were originally part of the series to
+introduce gem shmem bindings for rust into the Linux kernel, which can
+be found here:
 
-All patches apply to linux 6.17-rc5 and SCST 3.10 master branch.
+https://lkml.org/lkml/2025/8/29/1533
 
-Summary of patches:
-- bugfixes
-- cleanups
-- improve handling of aborts and task management requests
-- improve log message
-- add back SLER / SRR support (removed in 2017)
+These patches don't have any dependencies besides needing to be applied
+on top of drm-rust-next.
 
-Some of these patches improve handling of aborts and task management
-requests.=C2=A0 This is some of the testing that I did:
+Lyude Paul (3):
+  rust: drm: gem: Simplify use of generics
+  rust: drm: gem: Add DriverFile type alias
+  rust: drm: gem: Drop Object::SIZE
 
-Test 1: Use /dev/sg to queue random disk I/O with short timeouts; make
-sure cmds are aborted successfully.
-Test 2: Queue lots of disk I/O, then use "sg_reset -N -d /dev/sg" on
-initiator to reset logical unit.
-Test 3: Queue lots of disk I/O, then use "sg_reset -N -t /dev/sg" on
-initiator to reset target.
-Test 4: Queue lots of disk I/O, then use "sg_reset -N -b /dev/sg" on
-initiator to reset bus.
-Test 5: Queue lots of disk I/O, then use "sg_reset -N -H /dev/sg" on
-initiator to reset host.
-Test 6: Use fiber channel attenuator to trigger SRR during
-write/read/compare test; check data integrity.
+ drivers/gpu/drm/nova/gem.rs |  8 ++--
+ rust/kernel/drm/driver.rs   |  3 ++
+ rust/kernel/drm/gem/mod.rs  | 93 ++++++++++++++++---------------------
+ 3 files changed, 47 insertions(+), 57 deletions(-)
 
-With my patches, SCST passes all of these tests.
 
-Results with in-tree LIO target-mode subsystem:
-
-Test 1: Seems to abort the same cmd multiple times (both
-qlt_24xx_retry_term_exchange() and __qlt_send_term_exchange()).=C2=A0 But
-cmds get aborted, so give it a pass?
-
-Test 2: Seems to work; cmds are aborted.
-
-Test 3: Target reset doesn't seem to abort cmds, instead, a few seconds
-later:
-qla2xxx [0000:04:00.0]-f058:9: qla_target(0): tag 1314312, op 2a: CTIO
-with TIMEOUT status 0xb received (state 1, port 51:40:2e:c0:18:1d:9f:cc,
-LUN 0)
-
-Tests 4 and 5: The initiator is unable to log back in to the target; the
-following messages are repeated over and over on the target:
-qla2xxx [0000:04:00.0]-e01c:9: Sending TERM ELS CTIO (ha=3D00000000f88113=
-90)
-qla2xxx [0000:04:00.0]-f097:9: Linking sess 000000008df5aba8 [0] wwn
-51:40:2e:c0:18:1d:9f:cc with PLOGI ACK to wwn 51:40:2e:c0:18:1d:9f:cc
-s_id 00:00:01, ref=3D2 pla 00000000835a9271 link 0
-
-Test 6: passes with my patches; SRR not supported previously.
-
-So qla2xxx+LIO seems a bit flaky when handling exceptions, but my
-patches do not make it any worse.=C2=A0 Perhaps someone who is more famil=
-iar
-with LIO can look at the difference between LIO and SCST and figure out
-how to improve it.
-
-Tony Battersby
-https://www.cybernetics.com/
+base-commit: e2580413a83680f679904ad2f2c1aa6969876469
+-- 
+2.51.0
 
 
