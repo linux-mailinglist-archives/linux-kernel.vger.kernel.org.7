@@ -1,119 +1,84 @@
-Return-Path: <linux-kernel+bounces-806475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7C5B49789
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:48:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E02B4978B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1334F20809F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:48:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBAC14E1FC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE9C313265;
-	Mon,  8 Sep 2025 17:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444E3112C8;
+	Mon,  8 Sep 2025 17:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I26kHjAg"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UuLquz8a"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B383B235BE8;
-	Mon,  8 Sep 2025 17:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6297E107
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757353705; cv=none; b=m+pFHixecV+zjJPo7ECeqR+5T7ooovH7LtzUZGDLOLNI+cA7YPFHXv5AEWe7zw5tf3lzSfJNEb/a/tLgvyw4M+DM8Rgz2O1GpIcQKx3j5t8GFYfi/xLSkCwRLYu8KRxuXBHvtExFBFhd4/PZb8IHV8Yrk7uAq06GWP+nlx2/Dio=
+	t=1757353755; cv=none; b=asaaih0Zy1WVassDOoVSQh59XxkOC905dC8+v/0X+2P05aUQZB/dgXcqLu+Zpg2IDv0ml/GgKCwel+uBYUl3UWmd4hU1XXY6PhbELE3BzLh1XBl0wTRsX6lIVuR3F39Hi8JjINo8UOKPCKHlKdiVPrpr9Z9IJYjf5bHsHL5basM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757353705; c=relaxed/simple;
-	bh=1J95CYJMj61O6AKdqpxemdltuAb3lriEHe9QY0csmrg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvlmNEjrBKzlLRkwF2/upHAyhzz7JlvdWehyAMdWE9fe/0K6flQ1+iIhi/m7NL+CimtBv58GmDSju/LURkBc9rd+C/kWA7cHWkQTiqxmTg0fWrEsxlhHyijDenxHPEfDxpKpVE/OUautBjM2QWLdlKKoZeGTcln3DuGKBUBNyqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I26kHjAg; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3d19699240dso3444955f8f.1;
-        Mon, 08 Sep 2025 10:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757353702; x=1757958502; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YcHw8P5EMslNisFsrgaPX3AJmmyXYUwkEC6T9yd5ARw=;
-        b=I26kHjAg7MfSLw3ofIUfOBGi0rQ86dfcnufMiEGM7XyvBLgPNL4fwrgM7Ly4HnOfA8
-         4QnQPgzwSzP2Rf4BNaMZ2AgGYF3Dl6za3mQuy71KAciLxWFgQ4uBHcbSxApuM+1oI840
-         KV0IrTEYpPN9HNXQZXWAop3IIVcZsH/6TxSvibm4P6057fEPaUFpRvEKRBdkKGiFV0lf
-         HdaD40NK1mXQ8WqE2rjuyR7m4kwGfo9rZZyrQmLBFBA7j2EwwL0nzdd8eSMLTRCwkXFK
-         5tvanFIga5487u6ndQl2IQBtJkH9/DoFVBkIaDuuMZ2ATZThztvcqxa03f4ryN0mh6Ux
-         sYxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757353702; x=1757958502;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YcHw8P5EMslNisFsrgaPX3AJmmyXYUwkEC6T9yd5ARw=;
-        b=WY29bpjG7LgyvYinqx/FFp2AxcsKFk1EaRjvK/6bH1aA3LdcUQi2bP2s2pCBUnjTcR
-         UED1rCrnD5y5t1v6QOEbn8W9WKtbigqW3ZEbO/Nh4WJ6LYidkv0R2fNlDZsbfusGKrq8
-         ZzBJ1ZTMC0d5M4PU1I5yHMXej9ypdnnwm1tdKa09Wfj/ZxvH6ogBexJt2Om1dkMvwjNN
-         DwYY4WA+ajI30OsfWzWnfkVHoXCkVfFuvKi6KKRYUQs/PPRl1uNRea4UH/f8CpAqTBik
-         bWDJkC0xyB3Qfsy9nvnYlkIwmMmcXv8DY62FOKeCYb0eGp+3hoonio+1xTGmXdtja4bn
-         U2Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6UWETY+2rbBJeCcrfk208iUtV/jP+nZAw5AJkdYmrz1wQdG+J8v/TpCwS6WDZ7D6RPGSiAYmrQtQA@vger.kernel.org, AJvYcCWJl77hxsJUC1lIKIXdmpg5MzDv4CdwWbaE1vRzl1ftRCIVus7HR1MborlTfPge3ouyFENAUjlc/qDXz4Y8@vger.kernel.org, AJvYcCX8esvlbE78w+w+cz4wypRtEc3KgZJaqVzzOPf2gaPfZ+L1JaFyzwgM+RkZ6/SRiR9CN4p3Hk6j@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOo3+cQheoRKldNHP9rtmUdvtERt9OfizaY4YEQwsX1lNyzWO/
-	emnikQne/szMtsrje1z2JQ7P6APo/eHK2g523NeDAaKNQCClKfmSZdet
-X-Gm-Gg: ASbGncvk7oe/8BuJR2rbpAsIFem3ph76ruKX73409SNv6yD7+pKr94V+qYOkz/9lA+q
-	tag5jmOAapgyeJ+JfkhsfQGHEEaaSpaqZPwBPmWot37b1ltwgHdrQ0i9n6ZC7ixyKdBoxIhH1Pz
-	ast8nIA0F9A6SCwkJmJGU9+V57rXGwDigMB+YnBTZoNQIfi2JO3O6tZrKzi+oASJS8y0h88izFr
-	NxWKRYS2/9Awm6YLa4N/fhvaOCl2IsgXi5hzCYH0RXe5VgGbawi6Jg8C50TxlWg27WcnI/5UDqr
-	cWs5aBNCz4c6PNF5XXPebH7l3VsXDcPHGAaZDzamqQ/8qm8aeffibIfSU7fat2aV2GgoCIIvdf5
-	fnOanyoF3ch/1hitrfwHX947sMyyJoaiPBPxImPVSiNj5YNmf3JPKAmUHZLNOHuZmtNANF3Jwes
-	blSWuP
-X-Google-Smtp-Source: AGHT+IFq6o1EpTze8lAPdy/p+9IIgpxXlJzHOvrLDm8Mz2ZpQF7/Pb8OvU3JVQI7GB8uGSBt0UZ7Lw==
-X-Received: by 2002:a05:6000:2084:b0:3e7:45d1:9d91 with SMTP id ffacd0b85a97d-3e745d1a116mr4929204f8f.28.1757353701694;
-        Mon, 08 Sep 2025 10:48:21 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e1a31c69e4sm16547400f8f.44.2025.09.08.10.48.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:48:21 -0700 (PDT)
-Message-ID: <68bf16e5.df0a0220.2e182c.b822@mx.google.com>
-X-Google-Original-Message-ID: <aL8W4dEEI22W73DF@Ansuel-XPS.>
-Date: Mon, 8 Sep 2025 19:48:17 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
-References: <20250908113723.31559-1-ansuelsmth@gmail.com>
- <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
+	s=arc-20240116; t=1757353755; c=relaxed/simple;
+	bh=7QLH4KMagjgfNO0NejHF/vT+Y9PWdvp2h3e0uW+njAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXZfOR7q7hN5eDTkh+Xrsv+S7NaHQoVsHTx9h0TlGTh2kX27CAJI4ycnW0YT6Eqi43y85Ten4U3tozSaPMFf9sfln8Ap209LQT7RigDz24PinuZbbxnialdi6QsU4mh5v+toJRGc1fX/2mXbmtIM2jrfibQCfJ/1Wf585G1Qh8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UuLquz8a; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 8 Sep 2025 13:49:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757353750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rQg8gEFZWs/W0elemBVUBKG6Hh3kGDxreEQh4an/F3A=;
+	b=UuLquz8aTIdheUlo1oy+JJbjcaPc4x0UA0/t5TkXgduokBYwTu1dZqeQH6phSKTNEop3QL
+	eHVJia0mS2WEPE8MBGFFczFzSPjwljkxlfXQsqKh9hpgZ7Ot8MfRkgGMltaganW0QJGPvO
+	sh7B4O+5owx3zgj1B+yoNYDxqrKbkLc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>, Yueyang Pan <pyyjason@gmail.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sourav Panda <souravpanda@google.com>, 
+	Pasha Tatashin <tatashin@google.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Message-ID: <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+ <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
+ <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
+ <aLFKHGe2loD657fu@tiehlicka>
+ <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
+ <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 08, 2025 at 06:54:15PM +0200, Andrew Lunn wrote:
-> On Mon, Sep 08, 2025 at 01:37:19PM +0200, Christian Marangi wrote:
-> > With further testing with an attached Aeonsemi it was discovered that
-> > the pinctrl MDIO function applied the wrong bitmask. The error was
-> > probably caused by the confusing documentation related to these bits.
-> > 
-> > Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
-> > is never actually set but instead it's set force enable to the 2 GPIO
-> > (gpio 1-2) for MDC and MDIO pin.
+On Mon, Sep 08, 2025 at 10:47:06AM -0700, Suren Baghdasaryan wrote:
+> On Mon, Sep 8, 2025 at 10:34 AM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > I think that got the memcg people looking at ways to make the accounting
+> > cheaper, but I'm not sure if anything landed from that.
 > 
-> Is the MDIO bus implemented using the GPIO bitbanging driver?
-> 
+> Yes, Roman landed a series of changes reducing the memcg accounting overhead.
 
-No it does use the MDIO bus integrated in the MT7530 Switch. It's just
-that the MDIO pin can be muxed as GPIO usage.
-
--- 
-	Ansuel
+Do you know offhand how big that was?
 
