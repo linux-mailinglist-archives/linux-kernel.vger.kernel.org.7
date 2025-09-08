@@ -1,154 +1,121 @@
-Return-Path: <linux-kernel+bounces-805365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D32B487A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:57:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AD3B487A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937223BD0BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E061795A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02262ED17B;
-	Mon,  8 Sep 2025 08:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FD82ECD30;
+	Mon,  8 Sep 2025 08:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="b0iJ5o6U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FQWa/vI9"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cw493cZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C9214AD2D;
-	Mon,  8 Sep 2025 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041952EACF3;
+	Mon,  8 Sep 2025 08:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321862; cv=none; b=fAbKPV+bstiZBVPuycnxPSQIJ/7OIKfE8M1bvGQ+MC+AOzMbpAK56k62WbzKdb8F8dPhJehNNX761NrH22AA0JXrPdExdKUE8XkQdLepZjS14CF4iSpUPq60WjrFDK1tpCWbl2Yvb2QzpcgZ2n+vr+9RuEF58Jh1rGg8WArDhVA=
+	t=1757321862; cv=none; b=VZz1zZk7DfpcY4GBuCNbbJdWJGg6ySD03r6EhS1uuIUadUnKfg9VmOvuVCMaXPqsyQqubEs6NtzERnu1F/sCFMLe8t5YdCEBErSIpNPCFAEPnt0bk/0MDqm/UVq7vPWg7k5/SLjTw8dCMNrDJYkh46MKwyIWkB9E9yc3ebEpZRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757321862; c=relaxed/simple;
-	bh=QGK/v4PygQlvVPP43NMCFMqvaQ0ghml0R3VgGlsv858=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXOUZfHcKoAwSnqK2IiCVKzOxQqaJQY/rs8PbiIp8wMBca/syCUplZGDV4LvOz0WxrX3Bh3L6iMAleE/vxcczrrQcm2Qyw/NiAm2zLki3GP5KNhyHw2Rx87CM+qvDMPhSQYqEPz0uV/v1YPxTOvdsSzUAdxsphs00pV9GfAM3wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=b0iJ5o6U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FQWa/vI9; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2C52F1400049;
-	Mon,  8 Sep 2025 04:57:39 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 08 Sep 2025 04:57:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1757321859; x=1757408259; bh=sCzLJmfkZO
-	esGcka2xCQVxJFYw2n743DJ47lQKuu0sk=; b=b0iJ5o6Ul0n0NQS1BZmMfO0hVD
-	2uxFNnjADLPxqM+4Rrt7fdAQG6h69V9PAUNGHQPQbXgWjUX+tB8ABmWrh2TxQxVk
-	nzePXryn9tRyB83evypckyViyVsZCcF8Sry48eoO9cSzW67rirkvkjVOYb2nYkQ0
-	cyduOjAwLybnO3QGkJt3Yzyb0n2qM9vAV80f0o0G42hMgLPEGOB7XPflWUh26y2m
-	RbLdqbILpjWtU4PqmLAqgI6TKGOPzPXpShE4drojoQWZiW2aPPAwjp747ZeGl1qX
-	4kzNhlNMiqDtzbPmreF8wug9ARp5V6J0j4ok+OPDZ9waxcfQTQeZkj7QA9Dw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757321859; x=1757408259; bh=sCzLJmfkZOesGcka2xCQVxJFYw2n743DJ47
-	lQKuu0sk=; b=FQWa/vI9r13Sql1I6G8aUJpxsQism1ikKaTLLgX3QJsbrH1ImNW
-	MnlKE0HdrBfMx67+CdTmoGU3ZIltsmMs4Nr6v5Bp4rv1LxLjrE6ha7cWFOJWRIQy
-	e2Fbzq25pdqmmdhSe/gGeQQ7NsY5JE5GKy2XSTpDXTwlOTCcQHip1RUYyGEgnFUN
-	7oei1NN5uWcLo7mDZ3BCxcf1ZToZbUCajxhwHl89fyoisS8Sb8umQWWw+yDxhuKw
-	dtmOhafnk8AJ8cWzkYIGX4GUmaf8a9qGiIdwg+5S2QBzuXqItURlzvH2h0tZqdWT
-	38ZsHV8QLtk+mWYY3rX8ZnAj435Buk1XSBQ==
-X-ME-Sender: <xms:gpq-aKYzZzhvLyEtWEhg1mTepULkt5HgaGrC4bjayA4QOawLo7atAg>
-    <xme:gpq-aC-BEwFNe6R_5rXShGIRtVBuH3r33LnFAXEKDvvsHDvlnXC579HNGaw0PoUmq
-    gr_kso5mOxiIg>
-X-ME-Received: <xmr:gpq-aOjCA-nhnBJ55sUVfE-9BHUE740RwZ1oSdXOiOeelNHQJit4lwqWuLnYuO7bFa5S-FbIiX18OxC816OCdADCYQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
-    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
-    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
-    homhdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopegrrhhnugesrg
-    hrnhgusgdruggvpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtoh
-    hmpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:gpq-aNiqHFVbDMQrbIA1fXeNfYk44rjKDedHU4cTBlYSRjAp9C7HhQ>
-    <xmx:gpq-aM7pzkN4GYZ2LzoJ3-QtSWY4wRc3Vqso3lbKLqGIgAhLqYzB5w>
-    <xmx:gpq-aHTsdsRdUURPoPNQspkOQnzy61Khh3t-DE0Qk6yjsiYtYUpXNA>
-    <xmx:gpq-aD8jAuJG29FSSWZlILwPed75O7j9wSCe0hTxJdCX3Y0-AVOIyA>
-    <xmx:g5q-aNjcnAUNw4Gyu-FGfJfkFt5yEtvgo7XStoH6RrQR-S29nRMVVQ8F>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 04:57:37 -0400 (EDT)
-Date: Mon, 8 Sep 2025 10:57:35 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-Message-ID: <2025090828-sushi-eternal-e09a@gregkh>
-References: <20250908162550.1a250f96@canb.auug.org.au>
+	bh=4bOgS1btmtPWfLB5qaRANS1bCT5ckupDs7eohbEAPE4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=CPDnJx539V3OxK5YdZtJMzAUhjvE4hCBfPYJnhwzKA745bjQDyIPLSJfhuwg1RzHTFRoCh73TyGLTe5+4GjzctV4bQp31SPa53NC3LZjF7nOeE7OIZEoMe4osV8/6tssqZ2ONGqYE9RzKKqI5DtT7xzdm2L2XBrUPJv064KXDt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cw493cZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0D3C4CEF1;
+	Mon,  8 Sep 2025 08:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757321861;
+	bh=4bOgS1btmtPWfLB5qaRANS1bCT5ckupDs7eohbEAPE4=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=cw493cZWD3hukU3ePmK6x5vScn+pl6a6TqGx5iETEpEhboUonY2Ww7/4yZ9f2zeWg
+	 SmtDuhR8tWdSS0sWot2yFZdoKHQm1HcMOPyo9z4k4RJYYz5pmNzlKfJrqkyXHOIdVP
+	 VpuC0EStb5mMAf17Qhczx85gwHnN8Gy+/K4MO+8ijt3oYqTPdWfOsi6e559b1C6wpU
+	 CTvUgxHn5G83arj7weJiXiTd/PGQJyJ0qtGBe3dp6NZTTtQyWkkZndVAf55lLY1RW5
+	 dZVIBwbjZ4qUhUDrc5i1rBTmchLPbgtc4VeRAcPKps1Q0apHr2G4bqSibLAt2cts+V
+	 uSknqfRMrSWng==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908162550.1a250f96@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 10:57:36 +0200
+Message-Id: <DCNALVTE4DIN.1K0U4BGN35CHI@kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
+ Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <aLshd0_C-1rh3FAg@tardis-2.local>
+ <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org> <aLzmcK2UM53I2Tbn@tardis-2.local>
+ <aLzoyWpOr6eg-3yB@tardis-2.local> <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
+ <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
+ <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
+ <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
+ <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
+ <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org> <aL46nRkYj2SlOhl8@tardis-2.local>
+ <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
+In-Reply-To: <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
 
-On Mon, Sep 08, 2025 at 04:25:50PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   rust/kernel/lib.rs
-> 
-> between commit:
-> 
->   1f54d5e5cd2a ("rust: irq: add irq module")
-> 
-> from the driver-core tree and commit:
-> 
->   06cb58b310ea ("rust: iov: add iov_iter abstractions for ITER_SOURCE")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc rust/kernel/lib.rs
-> index 5300318a5309,99dbb7b2812e..000000000000
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@@ -93,7 -92,7 +93,8 @@@ pub mod fs
->   pub mod init;
->   pub mod io;
->   pub mod ioctl;
-> + pub mod iov;
->  +pub mod irq;
->   pub mod jump_label;
->   #[cfg(CONFIG_KUNIT)]
->   pub mod kunit;
+On Mon Sep 8, 2025 at 10:27 AM CEST, Benno Lossin wrote:
+> On Mon Sep 8, 2025 at 4:08 AM CEST, Boqun Feng wrote:
+>> On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
+>>> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
+>>> > I actually came up with a third option that looks best IMO:
+>>> >
+>>> >     init!(MyStruct {
+>>> >         x: 42,
+>>> >         #[with_binding]
+>>> >         y: 24,
+>>> >         z: *y,
+>>> >     })
+>>> >
+>>> > The `#[with_binding]` attribute makes the macro generate a variable `=
+y`.
+>>> > `x` & `z` don't give access to their value. (we of course should come=
+ up
+>>> > with a better name).
+>>> >
+>>> > Any thoughts?
+>>>=20
+>>> It may be a bit verbose is some cases, but it makes things pretty obvio=
+us, so
+>>> LGTM.
+>>>=20
+>>> How about just #[bind] or #[access]?
+>
+> I like `#[bind]`.
+>
+>> #[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
+>> about the purpose.
+>
+> Hmm in `init!` it's never pinned.
 
-Looks good, thanks!
+I thought about #[shadow] as well, but it is not really accurate I think, a=
+s we
+might not shadow anything. #[maybe_rebind] sounds a bit like it conditional=
+ly
+rebinds, as in "it may not do anything", but it always binds.
 
-greg k-h
+So, I think it should one clear instruction, i.e. #[bind], #[access], #[ref=
+],
+#[use], #[let], etc.
 
