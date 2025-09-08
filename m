@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-805366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B96EB487AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:58:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1C0B487AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A9E3C0E71
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C133BB219
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A015A2ECE8B;
-	Mon,  8 Sep 2025 08:57:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2362ECE95;
+	Mon,  8 Sep 2025 08:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b0DkwHX2"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68914AD2D;
-	Mon,  8 Sep 2025 08:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CAA224891
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321873; cv=none; b=sx/RPYtsl/mS37OlbfQmyROQ2HWDjMm3dyhioUmXGcMUs2PRrbpmrEhh/5fb9C9GJU+1iiQV52bSmYLel2aRR9eRPzIY1MRsEwvF7DO3csq/nsZuztvamIbiSU3UvGiUUt9XzK/mNkYnH5r1ilak/XA1q9PVzfUw0LRcy47W+NY=
+	t=1757321920; cv=none; b=YRlzWT6WSmK0UdkYzG3kefaI4Rzd240FhG0hJ1hyXA7eynUlCyIFka1YMCy2KoNKirXf+XpcGKFwnOTjUBcjt9J97TkFT6GbLk9zlr5EB7LFp4Dm+Va8o59ZdvioGFxVQ9nLMHEPg9HrDhAAMuS6N1raMdBl3lZuoBCd6Dlej8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321873; c=relaxed/simple;
-	bh=tORqqtQGMQE+nPWwjJ1DNrtvijIxuC58V28a+mkd01A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BEMUIZ7DHYxKDjpKH/QLddWw8H1a4KbWFvRfiSZYw129Brf6GvUS8iQGOEQmRKkP5LWHoFhEvoSNWLPQH6UeDHKeSDmO+q+a8/C/L/G/L95tE1zVRYYZmEWEeEIXqlkDDznlViaDOrXJE0Yo8cboFv390XDC+mVi4ySc0wlYVAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e0da60428c9111f0b29709d653e92f7d-20250908
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:3f6622ce-d622-45db-ae7c-b0bfb1542f52,IP:0,U
-	RL:0,TC:0,Content:29,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:29
-X-CID-META: VersionHash:6493067,CLOUDID:6b10639a48e4e42831fe6cfdab41c73c,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e0da60428c9111f0b29709d653e92f7d-20250908
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 260334981; Mon, 08 Sep 2025 16:57:41 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id B4ED9E008FA7;
-	Mon,  8 Sep 2025 16:57:41 +0800 (CST)
-X-ns-mid: postfix-68BE9A85-48786850
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id F198DE008FA3;
-	Mon,  8 Sep 2025 16:57:40 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v1] cpufreq: Add defensive checks during driver registration
-Date: Mon,  8 Sep 2025 16:57:38 +0800
-Message-Id: <20250908085738.31602-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757321920; c=relaxed/simple;
+	bh=hXMqYZB+dzFdO3jGjqJYJjjQZ3ufPz/qF0Ix6++QEmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gJsNs+QZI8wOOxxkJBqs0dTnoucOn+6xA7jofOLhq9q/RPE3Pesjp/ZVDIGTBKvTHvyvNaAf51Mcu5yTmqijLju3hhdRRGdbrhYJTKaMkd2wGaXGI6IAo6xkNY2L5zqsFzPbY0t+aWTxMv0WSY/GgRptDAm1ol2ISauoOzxDYSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b0DkwHX2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45cb659e858so28295535e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757321917; x=1757926717; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A0jq9k6S1X/e5F9Xchbc7rGyj3NJPtYlYz8J30jdCq0=;
+        b=b0DkwHX2psakjnW+vI0A6KQMvmeJcPq49SOBb1OaGJsX3/BDbg5Ros+CYb0eO+xIFl
+         NYF9pd5Hp+T5eKHUpqkEMjP32ooF6hxPaewF/9iz3CObhT+qObXmxgs8e2sKPmrC2Ila
+         /tcs4FZHuD0nWsS3eaZdgflfRSSMu1nduZ/lLgJk1Z1l8uXWpHdAPt8MiqzAUuHA1MnE
+         ZULSTbCSoY0h9+2rtF+L1ZgRO6OpOO5JqET5W3vvGWDUpWuWeJlLj6hDouXrk6gl66kk
+         HJNqCmxeMVqrzMOWPUl3ySrPERsXL9L/4lw83g2LR4D5Zx2O5BqXmqfgd/LWHJiQ65Mv
+         glPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757321917; x=1757926717;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A0jq9k6S1X/e5F9Xchbc7rGyj3NJPtYlYz8J30jdCq0=;
+        b=llxLYsogtBViDNe4OG639ezYtJeyOUaORtu0mIX5RA8TNHZRJA/8Pvg8Ss4rlF0/rb
+         8jHC59+Yy/wUIFiqOTHwQllTMv+SIGC3HjWymgvSIZJvzO97+DRf9PhfkItF/U306213
+         72HihmRdTMpS/SFbC58noM+VPmsWBlMMYaXoT2/1F0StLyTwKR4iHCu+CsxoP8yufMYU
+         K7GNTejDaUBgbxzkp4uDNbUeJL0WEjN3HyXmfUhyeLz9KVpGHWgy9UsnGxN+rxZmczSL
+         wYc8MylcjwUjVdQ94kIqWUIH9L+Nq9SU8XCWes7TYZ5DoCQkPbaRDRWuykFGLpXgY6FJ
+         66kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrXucYAntM9y2C9rtVKtmtAvSKGqKC1LDV3Xrxa/RmQEjxoT0BVrSeCOUTJfA4RRriENiMJ4ERQM+z3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYYTJ8HtMOK9AH6GRwgZ/T+mps3ek7kAxFrDJNqs1YC/UZjGbg
+	Nt2evPstdDU91T1N7yz0vS1VkHyFnWibUZa6YM6iURLKL9Z/nWGREOWSmXu3uIhS+XE=
+X-Gm-Gg: ASbGncvoNEn+3Zg41+/HxoyhGmFJrwcldP1oYnTznXahKUase8y0SIWUzByITYrrjcJ
+	W/jBLIaav3NB8JyVYuKEMhuodi6n0vo9wlgnVQtkTO8Mk0GoyMiQZaMQ7AhVNCderQ/hNnbcTEH
+	cHlHvaSG9/lydasKtDVmJ4ZQzwy1d4WSKZu5VEtjwUc07voGWGwqC/iy3KG3oeSrQZDqtsT+wHn
+	Tkl47heeM0lBUeVaPV/qUCh8ThBjWmGud+9wcNc1E1qqV2PLUhLB7VVIdCQJrZ1PsXitA+1hoJw
+	qLopCYBToHxowG5nwsf2pyOhhhATfeGsXwZTwB+/SgRhWMT8kXAQt5oj5RR69YXmPBDo9qdoRGm
+	i34qYsCXm8iNvY9muFZNC+yAPSGawqRLolb4Bo+ql9bVFD5kyWZOaGIxSbTxvUNjyfW9zuku0qL
+	ul
+X-Google-Smtp-Source: AGHT+IFwnKSywr3YUucpMr3gpELSM4ZF5bkk2uEvqsnnRBInVJnpPYYORFNWuYxFNMxf8Ye8kouDJw==
+X-Received: by 2002:a05:600c:3b83:b0:45d:e326:96fb with SMTP id 5b1f17b1804b1-45de3269948mr45255075e9.30.1757321916984;
+        Mon, 08 Sep 2025 01:58:36 -0700 (PDT)
+Received: from ?IPV6:2001:a61:13ec:c301:8f4b:c388:33a0:9bc1? ([2001:a61:13ec:c301:8f4b:c388:33a0:9bc1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd05d0c43sm91396815e9.2.2025.09.08.01.58.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 01:58:36 -0700 (PDT)
+Message-ID: <fb8c0ad4-0626-4d03-a7f9-a03629566b99@suse.com>
+Date: Mon, 8 Sep 2025 10:58:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: core: notify unrecognized usb device
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Akshay Gujar <Akshay.Gujar@harman.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ naveen.v@harman.com, sankarkumar.krishnasamy@harman.com
+References: <2025022131-silo-impeach-3f24@gregkh>
+ <20250826165244.22283-1-Akshay.Gujar@harman.com>
+ <2025090610-donation-sprawl-f6f7@gregkh>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <2025090610-donation-sprawl-f6f7@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, cpufreq allows drivers to implement both has_target() and
-has_target_index(), which can lead to ambiguous or incorrect behavior.
+Hi,
 
-This patch adds defensive checks in the driver registration path to
-prevent invalid implementations. For example, a driver is no longer
-allowed to implement both has_target() and has_target_index() at the
-same time. These checks help catch driver mistakes early and improve
-overall robustness, without affecting existing valid drivers.
+On 9/6/25 14:28, Greg KH wrote:
+> That's a very big difference.  Enumeration failures happen all the time
+> due to horrible cables and other hardware issues.  If you are now going
+> to flood userspace with this information, it better be ready to handle
+> it and do something with it.
+> 
+> But, for an enumeration failure, you can't do anything with it, so why
+> report it at all?
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- drivers/cpufreq/cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+that is probably not true. For once you can try another cable in many cases.
+Currently we'd log this information. That is a worse way to handle this kind
+of failure.
+If there is an unrecoverable IO error, user space ought to be notified.
+Syslog is not the best way to do so. There ought to be a standardized way
+of doing this. However, this makes me say that this issue is not really
+confined to USB. Other hotpluggable busses have the same issue.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index a615c98d80ca..cead6d4fa1ad 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2922,6 +2922,7 @@ int cpufreq_register_driver(struct cpufreq_driver *=
-driver_data)
- 		return -EPROBE_DEFER;
-=20
- 	if (!driver_data || !driver_data->verify || !driver_data->init ||
-+	     (driver_data->target_index && driver_data->target) ||
- 	     (!!driver_data->setpolicy =3D=3D (driver_data->target_index || dri=
-ver_data->target)) ||
- 	     (!driver_data->get_intermediate !=3D !driver_data->target_intermed=
-iate) ||
- 	     (!driver_data->online !=3D !driver_data->offline) ||
---=20
-2.25.1
+	Regards
+		Oliver
 
 
