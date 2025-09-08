@@ -1,204 +1,147 @@
-Return-Path: <linux-kernel+bounces-805358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8428BB48791
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:51:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4E6B48794
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5687A855F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B832E1B20E07
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35062EC09D;
-	Mon,  8 Sep 2025 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M0iZ8/RW"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830CF2ECD06;
+	Mon,  8 Sep 2025 08:52:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A423CB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B8627F4F5;
+	Mon,  8 Sep 2025 08:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321507; cv=none; b=SBKIfNedWYD4vYw54wO2GFPn9eHOjRpxDtYLXR12aXGaKVNVbJcFvxRwdeNhl+/qOlWG+g3RM7EmoZr0NBtCL612UNFDvQ0lj7+MM+W9Srcu3sEBIfhNUU53fD7jq8m1DQE8ma5i/6KWf9kYAj+bx+dHS7ZDF0XnMa49Rqsperc=
+	t=1757321573; cv=none; b=aDngM0RpRRYrFXyq0TgG+YiQumRoq+97UizsY29XepYE/37UuQtkw3ErI7HrHttMqumyLeFwpUcc8/LT+r41yzG+F8/Pw73fAWWoKXYINqcXOxRm3G9BioWfiKSEnZRXchxGUk0zzJWoN1eqJEGUIpsGnbfHy6qjhbv6V7yB/LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321507; c=relaxed/simple;
-	bh=sDEPpnLrs6YC8VPq9zlMrytA3P+7Pj4zyO6gg0438gU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s1m7cFZZwzB4KSZijw8XIyPMOwloI2RbyuozFUvISor0xR7qz8EzlhELIk85NulooWa3F30gXaUNj7kALmeZxKZlwPGZ+SdPeaTcfd/jonb7vtzp7XQgchmM8Qmb8IIQJxeBtcyiXVIdH41+Tsd8nFi6T8SkdnoTr5CLXdNAElE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M0iZ8/RW; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5886TPKA022908;
-	Mon, 8 Sep 2025 08:51:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=SPaCzwT5euVLX4cjSm1le8FJ8d4tv3xZCmtar6nGD
-	9I=; b=M0iZ8/RWVqekHf8NGa4h1ifYuqbnnWDSfCRAAYNhfbhFOO5YN02SNaSp0
-	aJsLYQiDyO0CUDLNEQHEZjWmZzCcDSSOYzkPGWRgWHTO/kWhP3mw8n3vP48YPA1g
-	dTh1MhwIzsOBqMtmg6x52zSEpuQBJWZP6GsRZ8YxHCpghCEKevdKM0hDdIpZrnkU
-	qzfR2k2E7vzrDggwwR7pBgf8Pc3mAx11iS+B8moo9/Vq8kzZig/3tVEtrq5divm0
-	0obd7BA9MFmAMAAMy2uy+66/vlKLVag64VjBe/Sti4JgOzgdeAyugexpToXS+L4S
-	oufQkZF0EanLodYhnU0a7x/OcrK6A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff08gn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 08:51:31 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5888nGYG017220;
-	Mon, 8 Sep 2025 08:51:31 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff08g8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 08:51:30 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5886hc1c001156;
-	Mon, 8 Sep 2025 08:51:30 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912034wj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 08:51:29 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5888pQ8d7537022
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 08:51:26 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A68D2004E;
-	Mon,  8 Sep 2025 08:51:26 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 557332004B;
-	Mon,  8 Sep 2025 08:51:24 +0000 (GMT)
-Received: from aboo.in.ibm.com (unknown [9.109.247.181])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  8 Sep 2025 08:51:24 +0000 (GMT)
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
-Cc: mahesh@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/powernv: Enable cpuidle state detection for POWER11
-Date: Mon,  8 Sep 2025 14:21:23 +0530
-Message-ID: <20250908085123.216780-1-aboorvad@linux.ibm.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757321573; c=relaxed/simple;
+	bh=jBpVsRQ8QZGPbPfImZzqtkhQboLi9nW2oeuNSFlR4yg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=saU88Sl2TJXqdW7iylntcAMh0u13yAAlDjMM658r+Z2oMR54gYCQT9YJ6XJA6LInxsW7XmJvZDX0ZQG4tR+BacA3rYXYOCPesbLyZv7xecuTKCI4shLcVlIShaf4NDSGYaqub1aDYcLZe6lyfWwA6b0Y+GT0027n/9F+RxJGOIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cL11X30BZzYQvCJ;
+	Mon,  8 Sep 2025 16:52:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E0A941A16C2;
+	Mon,  8 Sep 2025 16:52:46 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3QY5cmb5oBT8vBw--.65078S3;
+	Mon, 08 Sep 2025 16:52:46 +0800 (CST)
+Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
+To: Eric Dumazet <edumazet@google.com>,
+ syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
+Cc: davem@davemloft.net, dsahern@kernel.org, horms@kernel.org,
+ kuba@kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <68bb4160.050a0220.192772.0198.GAE@google.com>
+ <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
+ <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com>
+Date: Mon, 8 Sep 2025 16:52:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _nXOU51C7D55QJBEqtCChAahAfspMhHb
-X-Proofpoint-GUID: Q3yQJ3tYt9-jXTTWceHQM7L6tWaRn9xf
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68be9913 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=88GbL-a48S0T7VR8CBkA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX2C+frJyViY82
- KOdntBRwLp5erZYWwLymNPpa2U/ahChCIzB3KRAIzkf/0TKIDpdNvO4PSFP9LYK+mPmpqmFMDX5
- Qc6MGecwuIuFaC4ykhAAatz+BwHbX0SfCdbm7gv/GGE0Ls0VDyXyO18gU7c7XGrHcrK5llj6yKY
- K+3QCvXYDYZsjccLKo+xt689ai2JB6YixCWM0txwsEhR/0v9bNNkFwYphr/6/IAeRGdoJyv89T5
- Ex6qdHrQ//xtWEn+EfX5Cq5VTmZ4BCPDq9fNGLJBOvEUfa8QGDYw+OGWgyDl4yUkcY1wHrJ0xHL
- MDwUKbOYefDkBEUr1CyCk2paG/vN8CfOdqjAoN5DwiU5+XxDl0+5+j5JOfNm5BAmnaS3bMRwdig
- BG5+PX9g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1011 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+X-CM-TRANSID:gCh0CgD3QY5cmb5oBT8vBw--.65078S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1fAr4fGw15uFyfKw15Jwb_yoW8AFW8pF
+	4UWFWjkr97KFy7XFsavw4ktFs5Awn09a4kK3yUG3sF9rZrCF1fAF1UtFs5ZryUCws3Gr42
+	va15WanakF4xuaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU1aFAJUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Extend cpuidle state detection to POWER11 by updating the PVR check.
-This ensures POWER11 correctly recognizes supported stop states,
-similar to POWER9 and POWER10.
+Hi,
 
-Without Patch: (Power11 - PowerNV systems)
+在 2025/09/06 17:16, Eric Dumazet 写道:
+> On Fri, Sep 5, 2025 at 1:03 PM Eric Dumazet <edumazet@google.com> wrote:
+>>
+>> On Fri, Sep 5, 2025 at 1:00 PM syzbot
+>> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
+> 
+> Note to NBD maintainers : I held about  20 syzbot reports all pointing
+> to NBD accepting various sockets, I  can release them if needed, if you prefer
+> to triage them.
+> 
+I'm not NBD maintainer, just trying to understand the deadlock first.
 
-CPUidle driver: powernv_idle
-CPUidle governor: menu
-analyzing CPU 927:
+Is this deadlock only possible for some sepecific socket types? Take
+a look at the report here:
 
-Number of idle states: 1
-Available idle states: snooze
-snooze:
-Flags/Description: snooze
-Latency: 0
-Usage: 251631
-Duration: 207497715900
+Usually issue IO will require the order:
 
---
-With Patch: (Power11 - PowerNV systems)
+q_usage_counter -> cmd lock -> tx lock -> sk lock
 
-CPUidle driver: powernv_idle
-CPUidle governor: menu
-analyzing CPU 959:
+Hence the condition is that if the sock_sendmsg() will hold sk lock to
+allocate new memory, and can trigger fs reclaim, and finally issue new
+IO to this nbd?
 
-Number of idle states: 4
-Available idle states: snooze stop0_lite stop0 stop3
-snooze:
-Flags/Description: snooze
-Latency: 0
-Usage: 2
-Duration: 33
-stop0_lite:
-Flags/Description: stop0_lite
-Latency: 1
-Usage: 1
-Duration: 52
-stop0:
-Flags/Description: stop0
-Latency: 10
-Usage: 13
-Duration: 1920
-stop3:
-Flags/Description: stop3
-Latency: 45
-Usage: 381
-Duration: 21638478
+Thanks,
+Kuai
 
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-
----
-
-v1: https://lore.kernel.org/all/20250421070718.162783-1-aboorvad@linux.ibm.com/
-
-v1 -> v2: Fixed overly permissive PVR version check as pointed out by
-Christophe.
-
----
- arch/powerpc/platforms/powernv/idle.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-index d98b933e4984..e4f4e907f6e3 100644
---- a/arch/powerpc/platforms/powernv/idle.c
-+++ b/arch/powerpc/platforms/powernv/idle.c
-@@ -1171,8 +1171,9 @@ static void __init pnv_arch300_idle_init(void)
- 	u64 max_residency_ns = 0;
- 	int i;
- 
--	/* stop is not really architected, we only have p9,p10 drivers */
--	if (!pvr_version_is(PVR_POWER10) && !pvr_version_is(PVR_POWER9))
-+	/* stop is not really architected, we only have p9,p10 and p11 drivers */
-+	if (!pvr_version_is(PVR_POWER9) && !pvr_version_is(PVR_POWER10) &&
-+		!pvr_version_is(PVR_POWER11))
- 		return;
- 
- 	/*
-@@ -1189,8 +1190,8 @@ static void __init pnv_arch300_idle_init(void)
- 		struct pnv_idle_states_t *state = &pnv_idle_states[i];
- 		u64 psscr_rl = state->psscr_val & PSSCR_RL_MASK;
- 
--		/* No deep loss driver implemented for POWER10 yet */
--		if (pvr_version_is(PVR_POWER10) &&
-+		/* No deep loss driver implemented for POWER10 and POWER11 yet */
-+		if ((pvr_version_is(PVR_POWER10) || pvr_version_is(PVR_POWER11)) &&
- 				state->flags & (OPAL_PM_TIMEBASE_STOP|OPAL_PM_LOSE_FULL_CONTEXT))
- 			continue;
- 
--- 
-2.47.1
+>>
+>> Question to NBD maintainers.
+>>
+>> What socket types are supposed to be supported by NBD ?
+>>
+>> I was thinking adding a list of supported ones, assuming TCP and
+>> stream unix are the only ones:
+>>
+>> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+>> index 6463d0e8d0ce..87b0b78249da 100644
+>> --- a/drivers/block/nbd.c
+>> +++ b/drivers/block/nbd.c
+>> @@ -1217,6 +1217,14 @@ static struct socket *nbd_get_socket(struct
+>> nbd_device *nbd, unsigned long fd,
+>>          if (!sock)
+>>                  return NULL;
+>>
+>> +       if (!sk_is_tcp(sock->sk) &&
+>> +           !sk_is_stream_unix(sock->sk)) {
+>> +               dev_err(disk_to_dev(nbd->disk), "Unsupported socket:
+>> should be TCP or UNIX.\n");
+>> +               *err = -EINVAL;
+>> +               sockfd_put(sock);
+>> +               return NULL;
+>> +       }
+>> +
+>>          if (sock->ops->shutdown == sock_no_shutdown) {
+>>                  dev_err(disk_to_dev(nbd->disk), "Unsupported socket:
+>> shutdown callout must be supported.\n");
+>>                  *err = -EINVAL;
+> 
+> .
+> 
 
 
