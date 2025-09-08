@@ -1,133 +1,291 @@
-Return-Path: <linux-kernel+bounces-806659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7257FB49A04
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F261B49A0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352E34E08D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C52189FAD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCD6295511;
-	Mon,  8 Sep 2025 19:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F382BE032;
+	Mon,  8 Sep 2025 19:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BsJ+hE50"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVjEiTrA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DE12CDA5;
-	Mon,  8 Sep 2025 19:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5377412CDA5;
+	Mon,  8 Sep 2025 19:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757359939; cv=none; b=RU6lYzlpVQgb5WLVLHZlO9Tp6uJ/aH55lZpxcE5LZR4bDr9oKBFeI7r7/0/e6hJ6wRiXahIx3YUXhc7UQZu80pWLb5yrlnYcEVpDoKZ4Q9pSyOiuycWekj/hAHetp3lVX6r46HN4ij09KyK7a8TMv5Be4PyPetbBfLWw0MZLjfk=
+	t=1757360070; cv=none; b=XIOvroQNZPT6pIIy7kZUpfWuokkqYdWfMDscDzeMdq6E/OQqHbGycSLbTucQuf3a1MgI+NidT5J7iv6WYIonPBqCTn8VbOUfGhllwBLUndeYj9OMxRcXJ8KBLwWfP5Af0TriXxg+rh/StfDQ39ocsLBfNBMUlRZYH51Z1EeTwhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757359939; c=relaxed/simple;
-	bh=svwIjY0odUvrkEDPsSID8kA/rnu9D+UdLxV13N8PzoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CVhcRjQgMk9VUTgF558Pb3kh2WNHCci+a+LcLgU/7deqdn2C/aRwzUeDzaQZIJ4fa8gmbJ2ahJaLNjnPfBX6P8JNERxYHgpMVPIEJF+9xGV75JKMnWDD+E+EjsXXAoUAIbixS1/qPlYoVFH9NN7KahLFnUSBEc4qjjEfEGkxIhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BsJ+hE50; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CBB2940AE2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1757359931; bh=04ulyLXE+0xvoTpvavjUlihUixTI43QBBYVfUuXOlHk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BsJ+hE50SK+OQCJtXVe1DZ7g43d2UlDERpy7TNkNBDNB+StzYZisnoQ7dZEhj5F2a
-	 rcxkX2mzKU/toNyTENKs0niFWDbDMeEOQaC7Bw44H+b57EzQ19wrBGtMSXd3ePIw9Y
-	 CFr141I/ICady/xI/7LO0ToemUHgEpl/Ioq1+4AohvavUbk9wb4PsoD16abVDHXGsq
-	 0Nea2F/q+plBk1N92AFMQXaZ4/5xqtH0OlEeQVN+pccy/vTjYWjzEAJIygWRpVpQnu
-	 o3ytQy7m10CvMU3/jRrdsRnytHMYV7GRmjGi3T5Kg3cp0yeVXk/v5D7holWjpwbNWQ
-	 c4EcKobdnE5NA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CBB2940AE2;
-	Mon,  8 Sep 2025 19:32:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linuxfoundation.org>, linus.walleij@linaro.org
-Subject: [PATCH] docs: update the guidance for Link: tags
-Date: Mon, 08 Sep 2025 13:32:10 -0600
-Message-ID: <87segwyc3p.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1757360070; c=relaxed/simple;
+	bh=N4jke7ALHYK5hCEBfpPmlp4xquH7nDpRTyLZkO94ln8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fvdRW2/09hnXjpxhl2s3XQxeafT9E/pc5d45N0rs15ahEM08IFz++VjOo+8aO4cdln9OqYCMTXEUidu1fucC5uxDs4pOBYIl8VTNpJi6HUcu16AaAo0IRspjYu37HDIWDQIy8f/pwYSN57wiLCbemRG6wIoUIyYo5H7n8NVWY2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVjEiTrA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8998C4CEF5;
+	Mon,  8 Sep 2025 19:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757360070;
+	bh=N4jke7ALHYK5hCEBfpPmlp4xquH7nDpRTyLZkO94ln8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=uVjEiTrAIss07DqBcRAJG5PaP00MCdDFRZY9hxo92UzmUTQ+LLNUZIsv3znlxu284
+	 be7JHg9k4hWFlOjYwBd/KcAjNMMT59/Ps/fvCBG81LHhrzRMij+uptIyHtcAYcWsXs
+	 7q/bZAqIoilFL4S2LK2AxgbQ5PfhL2drpsfXgNIh/j6moS1rFsy6cZZhOWZfQCQIIg
+	 QFKHJYw9jEBxYdJh4NRQzB9+FJH9gQkB0k1B7NzxsLKCIr5M/VAuelKJjULHtGMt8n
+	 IHVmHRQ0N/Yr5wHbHzsbMeVdb/33X3CAcRfcWkCkQSzma85Esg9nEfknt4zZmMXG8q
+	 oeboQbI6waENg==
+Date: Mon, 8 Sep 2025 14:34:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v2 5/5] PCI: qcom: Allow pwrctrl core to toggle PERST#
+ for new DT binding
+Message-ID: <20250908193428.GA1437972@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-pci-pwrctrl-perst-v2-5-2d461ed0e061@oss.qualcomm.com>
 
-As stated definitively by Linus, the use of Link: tags should be limited to
-situations where there is additional useful information to be found at the
-far end of the link.  Update our documentation to reflect that policy, and
-to remove the suggestion for a Git hook to add those tags automatically.
+On Wed, Sep 03, 2025 at 12:43:27PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> If the platform is using the new DT binding, let the pwrctrl core toggle
+> PERST# for the device. This is achieved by populating the
+> 'pci_host_bridge::toggle_perst' callback with qcom_pcie_toggle_perst().
 
-Link: https://lore.kernel.org/all/CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com/
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/maintainer/configure-git.rst | 28 ----------------------
- Documentation/process/5.Posting.rst        |  7 +++---
- 2 files changed, 3 insertions(+), 32 deletions(-)
+Can we say something here about how to identify a "new DT binding"?
+I assume there is a DT property or something that makes it "new"?
 
-diff --git a/Documentation/maintainer/configure-git.rst b/Documentation/maintainer/configure-git.rst
-index 0a36831814ea..0c21f203cf7a 100644
---- a/Documentation/maintainer/configure-git.rst
-+++ b/Documentation/maintainer/configure-git.rst
-@@ -28,31 +28,3 @@ You may also like to tell ``gpg`` which ``tty`` to use (add to your shell
- rc file)::
- 
- 	export GPG_TTY=$(tty)
--
--
--Creating commit links to lore.kernel.org
------------------------------------------
--
--The web site https://lore.kernel.org is meant as a grand archive of all mail
--list traffic concerning or influencing the kernel development. Storing archives
--of patches here is a recommended practice, and when a maintainer applies a
--patch to a subsystem tree, it is a good idea to provide a Link: tag with a
--reference back to the lore archive so that people that browse the commit
--history can find related discussions and rationale behind a certain change.
--The link tag will look like this::
--
--    Link: https://lore.kernel.org/r/<message-id>
--
--This can be configured to happen automatically any time you issue ``git am``
--by adding the following hook into your git::
--
--	$ git config am.messageid true
--	$ cat >.git/hooks/applypatch-msg <<'EOF'
--	#!/bin/sh
--	. git-sh-setup
--	perl -pi -e 's|^Message-I[dD]:\s*<?([^>]+)>?$|Link: https://lore.kernel.org/r/$1|g;' "$1"
--	test -x "$GIT_DIR/hooks/commit-msg" &&
--		exec "$GIT_DIR/hooks/commit-msg" ${1+"$@"}
--	:
--	EOF
--	$ chmod a+x .git/hooks/applypatch-msg
-diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-index 22fa925353cf..9999bcbdccc9 100644
---- a/Documentation/process/5.Posting.rst
-+++ b/Documentation/process/5.Posting.rst
-@@ -207,10 +207,9 @@ document with a specification implemented by the patch::
- 
- 	Link: https://example.com/somewhere.html  optional-other-stuff
- 
--Many maintainers when applying a patch also add this tag to link to the
--latest public review posting of the patch; often this is automatically done
--by tools like b4 or a git hook like the one described in
--'Documentation/maintainer/configure-git.rst'.
-+As per guidance from the Chief Penguin, a Link: tag should only be added to
-+a commit if it leads to useful information that is not found in the commit
-+itself.
- 
- If the URL points to a public bug report being fixed by the patch, use the
- "Closes:" tag instead::
--- 
-2.51.0
+> qcom_pcie_toggle_perst() will find the PERST# GPIO descriptor associated
+> with the supplied 'device_node' and toggles PERST#. If PERST# is not found
+> in the supplied node, the function will look for PERST# in the parent node
+> as a fallback. This is needed since PERST# won't be available in the
+> endpoint node as per the DT binding.
+> 
+> Note that the driver still asserts PERST# during the controller
+> initialization as it is needed as per the hardware documentation. Apart
+> from that, the driver wouldn't touch PERST# for the new binding.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++-----
+>  1 file changed, 78 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 78355d12f10d263a0bb052e24c1e2d5e8f68603d..3c5c65d7d97cac186e1b671f80ba7296ad226d68 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -276,6 +276,7 @@ struct qcom_pcie_port {
+>  struct qcom_pcie_perst {
+>  	struct list_head list;
+>  	struct gpio_desc *desc;
+> +	struct device_node *np;
+>  };
+>  
+>  struct qcom_pcie {
+> @@ -298,11 +299,50 @@ struct qcom_pcie {
+>  
+>  #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+>  
+> -static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+> +static struct gpio_desc *qcom_find_perst(struct qcom_pcie *pcie, struct device_node *np)
+> +{
+> +	struct qcom_pcie_perst *perst;
+> +
+> +	list_for_each_entry(perst, &pcie->perst, list) {
+> +		if (np == perst->np)
+> +			return perst->desc;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static void qcom_toggle_perst_per_device(struct qcom_pcie *pcie,
+> +					 struct device_node *np, bool assert)
+> +{
+> +	int val = assert ? 1 : 0;
+> +	struct gpio_desc *perst;
+> +
+> +	perst = qcom_find_perst(pcie, np);
+> +	if (perst)
+> +		goto toggle_perst;
+> +
+> +	/*
+> +	 * If PERST# is not available in the current node, try the parent. This
+> +	 * fallback is needed if the current node belongs to an endpoint or
+> +	 * switch upstream port.
+> +	 */
+> +	if (np->parent)
+> +		perst = qcom_find_perst(pcie, np->parent);
 
+Ugh.  I think we need to fix the data structures here before we go
+much farther.  We should be able to search for PERST# once at probe of
+the Qcom controller.  Hopefully we don't need lists of things.
+
+See https://lore.kernel.org/r/20250908183325.GA1450728@bhelgaas.
+
+> +toggle_perst:
+> +	/* gpiod* APIs handle NULL gpio_desc gracefully. So no need to check. */
+> +	gpiod_set_value_cansleep(perst, val);
+> +}
+> +
+> +static void qcom_perst_reset(struct qcom_pcie *pcie, struct device_node *np,
+> +			      bool assert)
+>  {
+>  	struct qcom_pcie_perst *perst;
+>  	int val = assert ? 1 : 0;
+>  
+> +	if (np)
+> +		return qcom_toggle_perst_per_device(pcie, np, assert);
+> +
+>  	if (list_empty(&pcie->perst))
+>  		gpiod_set_value_cansleep(pcie->reset, val);
+>  
+> @@ -310,22 +350,34 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+>  		gpiod_set_value_cansleep(perst->desc, val);
+>  }
+>  
+> -static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+> +static void qcom_ep_reset_assert(struct qcom_pcie *pcie, struct device_node *np)
+>  {
+> -	qcom_perst_assert(pcie, true);
+> +	qcom_perst_reset(pcie, np, true);
+>  	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
+>  }
+>  
+> -static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
+> +static void qcom_ep_reset_deassert(struct qcom_pcie *pcie,
+> +				   struct device_node *np)
+>  {
+>  	struct dw_pcie_rp *pp = &pcie->pci->pp;
+>  
+>  	msleep(PCIE_T_PVPERL_MS);
+> -	qcom_perst_assert(pcie, false);
+> +	qcom_perst_reset(pcie, np, false);
+>  	if (!pp->use_linkup_irq)
+>  		msleep(PCIE_RESET_CONFIG_WAIT_MS);
+>  }
+>  
+> +static void qcom_pcie_toggle_perst(struct pci_host_bridge *bridge,
+> +				    struct device_node *np, bool assert)
+> +{
+> +	struct qcom_pcie *pcie = dev_get_drvdata(bridge->dev.parent);
+> +
+> +	if (assert)
+> +		qcom_ep_reset_assert(pcie, np);
+> +	else
+> +		qcom_ep_reset_deassert(pcie, np);
+> +}
+> +
+>  static int qcom_pcie_start_link(struct dw_pcie *pci)
+>  {
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> @@ -1320,7 +1372,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>  	int ret;
+>  
+> -	qcom_ep_reset_assert(pcie);
+> +	qcom_ep_reset_assert(pcie, NULL);
+>  
+>  	ret = pcie->cfg->ops->init(pcie);
+>  	if (ret)
+> @@ -1336,7 +1388,13 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_disable_phy;
+>  	}
+>  
+> -	qcom_ep_reset_deassert(pcie);
+> +	/*
+> +	 * Only deassert PERST# for all devices here if legacy binding is used.
+> +	 * For the new binding, pwrctrl driver is expected to toggle PERST# for
+> +	 * individual devices.
+
+Can we replace "new binding" with something explicit?  In a few
+months, "new binding" won't mean anything.
+
+> +	 */
+> +	if (list_empty(&pcie->perst))
+> +		qcom_ep_reset_deassert(pcie, NULL);
+>  
+>  	if (pcie->cfg->ops->config_sid) {
+>  		ret = pcie->cfg->ops->config_sid(pcie);
+> @@ -1344,10 +1402,12 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_assert_reset;
+>  	}
+>  
+> +	pci->pp.bridge->toggle_perst = qcom_pcie_toggle_perst;
+> +
+>  	return 0;
+>  
+>  err_assert_reset:
+> -	qcom_ep_reset_assert(pcie);
+> +	qcom_ep_reset_assert(pcie, NULL);
+>  err_disable_phy:
+>  	qcom_pcie_phy_power_off(pcie);
+>  err_deinit:
+> @@ -1361,7 +1421,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>  
+> -	qcom_ep_reset_assert(pcie);
+> +	qcom_ep_reset_assert(pcie, NULL);
+>  	qcom_pcie_phy_power_off(pcie);
+>  	pcie->cfg->ops->deinit(pcie);
+>  }
+> @@ -1740,6 +1800,9 @@ static int qcom_pcie_parse_perst(struct qcom_pcie *pcie,
+>  		return -ENOMEM;
+>  
+>  	perst->desc = reset;
+> +	/* Increase the refcount to make sure 'np' is valid till it is stored */
+> +	of_node_get(np);
+> +	perst->np = np;
+>  	list_add_tail(&perst->list, &pcie->perst);
+>  
+>  parse_child_node:
+> @@ -1803,8 +1866,10 @@ static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
+>  		list_del(&port->list);
+>  	}
+>  
+> -	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list)
+> +	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list) {
+> +		of_node_put(perst->np);
+>  		list_del(&perst->list);
+> +	}
+>  
+>  	return ret;
+>  }
+> @@ -2044,8 +2109,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  	qcom_pcie_phy_exit(pcie);
+>  	list_for_each_entry_safe(port, tmp_port, &pcie->ports, list)
+>  		list_del(&port->list);
+> -	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list)
+> +	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list) {
+> +		of_node_put(perst->np);
+>  		list_del(&perst->list);
+> +	}
+>  err_pm_runtime_put:
+>  	pm_runtime_put(dev);
+>  	pm_runtime_disable(dev);
+> 
+> -- 
+> 2.45.2
+> 
+> 
 
