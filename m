@@ -1,116 +1,304 @@
-Return-Path: <linux-kernel+bounces-805545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A3AB48A08
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211DFB48A0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21B01B252DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2B53B2F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B5A2F744C;
-	Mon,  8 Sep 2025 10:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCFD2F7AA8;
+	Mon,  8 Sep 2025 10:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RiiAWDkJ"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntskpR69"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2E42E3391
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6295D2192E3;
+	Mon,  8 Sep 2025 10:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326966; cv=none; b=lSll1k4t3vOZxZofhxFlCByTnLXAXNxh988qg5rmQY+OXDYgjz8AOZ2ieyVipK+lc9CsDdV32Iu7D+L2T8QDv4pKHvMS4t5+PuuQ0QxYOaV+AHgiZvBvvrQ5zpISriLizsi7wuOUqCSuvUT5qO+0p2RcnMaqCGYfjyMucN/KBQM=
+	t=1757326990; cv=none; b=nfHZB70IEpE0ccmbipOK/G/sKbUcn0LAgTzRSursoS5pN3X+GzeZNcJ8vWE+cXHkEgLpYaOqdTHKQON41uA978sqzzvkhlVq8y0eLqWbdJCna+cb8uKH7auUAN9wGbcwxX8WWFPgdEiAJkKECUfSosmrkqbMz8FN+YlGc8pMP3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326966; c=relaxed/simple;
-	bh=RHFxWDCHLy5hvU8idDeLnpypbjz+dKFI/3c2JendMoY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gNLFjDDJvSF1VBVfP/P7nP3OCyV2iIlIBfpJwQ1R7piMTMRZfikps7H6lVZuapyV73JIsOohbbmWaCTdJ/yNldtQiwtLR7TO7VaWJQiiMvKPTneWeGJrm8TZTs8tVHHxQTG5TJi64BUkSBhp/wFNBvKVxHBRtqdaO88d2jVMptM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RiiAWDkJ; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2770093f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757326963; x=1757931763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZrzZTtPMBTTwhC4hDpYeCTJZty1sUGPfAIEYck4kXTs=;
-        b=RiiAWDkJgLVkF/rUWUJGTeM5S6+zrBpg1qnCf0/zDs7A7WW4l7jqM7vu39E1N4SKn3
-         P2XZYzGHAWatVK9OUlT0g+DIMVDvut7SVvtHKl/5IoEMi703d2a1bDk1aUlT9kHkOl+e
-         ticcS0I+H8o4z8rIt9xhT00UdsxPsidZp5w6C6hwZPax8Gi+cAfciMEzqiQP0qNLltPu
-         JLt4KaIWNxM6atB+RUWcz57jxDTWokfmPy4wvXcQuu5aGkZgKCmusQl5Ti+k+lI/ILtS
-         kyZ2HCpT0a1v5kSREMjknDKOiSMUvTGNy9bQp5GrgOvW0e2hEDBhZOeKfoM2hiUMmvEX
-         xhow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757326963; x=1757931763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZrzZTtPMBTTwhC4hDpYeCTJZty1sUGPfAIEYck4kXTs=;
-        b=kq0h1LFgTecEhxsOFKpY4eyJVNyB087iYf7XKG87xAiP8UKz5Ymma6l2idP/+nmomi
-         aD6L4+ZhKzFbN22yz2TCdpqlHGAJJcb+xaQhOZ7x9he1R4JaiMs9rRXeFYPMOGH+mZDg
-         9iwHY1s58BsEiO8eG13AXJ7CslfE3k+TGracCJU3Wb1gWjac47OMKhuOCQNzbxIiEMWW
-         M7ZkHHyYOloJeN5jVF+eP/g3Oa1ncp/Ym8yrWsDLTkOo3wVbKd783pNSoIYyl182tdCy
-         FeWOrFNlvFFBUKEyccUc7HbQsR0vt9LyrYQCxN9UpgBOxXrLTIoJB6cj/F9u8cCUaw8d
-         uFGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkcfZNkTKQb+wD1vc44LVmp3EKQiGugDbKO6pqnO37he/qLv3ZyjOKgEBhtYV1nA2Cql9yMNEaAJb8Afc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXeb3jKcvFPkZaRo/rdMp2cV5qyF4FRwO+VCGSzRSD9Ve9KFaf
-	ajNcJMofHI6MyTEw48YS/vhIgrSm/u3ahl5Fabw6sS+cG+uymo2BZjJFTRSp8SToXcYli4VWyqC
-	wOej3y8FvF0tWEJZtQx+1Ef4SxPS9TeUZIj+yEpby
-X-Gm-Gg: ASbGncuWzrzOY8e/gGOC+XNZ2tvs0VoutCcXoGHVz5rtS6bCVD3NKho2SpEV4+Pm21T
-	io55hzzDdniIBs7xEHloOgy3HjhaUp4orlwLQ9H33YdqolY7tLcqTUpAYvVd5F0pn+i6+v7jt8b
-	B1g1pjTvzT6fLjb3ZcMimGU4d7krWMMP/EaXpR2FfdiKwdoQVoXpi+N5ChH5uXt0vrcgtvBCZgH
-	MuQy9khsZgiCuYnRgQcH+vP+cNfYrmwdPH1BKopKMySbhMlO4XmSQAb28c8dH7bXxJidw30lbxc
-X-Google-Smtp-Source: AGHT+IFgWYJROM17+WIrfUEk3tvBLaNIow64btrV8OrhYTpagog0f41sQ1woWipkCJ+Mg8IHT5GJftLiAT4HnQvHO3M=
-X-Received: by 2002:a05:6000:26ce:b0:3d3:8711:d934 with SMTP id
- ffacd0b85a97d-3e63736edd3mr6168164f8f.14.1757326963179; Mon, 08 Sep 2025
- 03:22:43 -0700 (PDT)
+	s=arc-20240116; t=1757326990; c=relaxed/simple;
+	bh=f8m5FfX5nvzYBYadYzhg6DpSVTZtfx3kpLRtofn6+HY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUoEFlyKebMiPE+H8f4FKkARDZY2gmFCqqrwW5AUdtle2kloqZ7F6MbWm68qkwrEQVE+EeUqpYO/VTdtESEj7ki2KJkz1a/DIVfK31KEnbs2gzz1dVHQ/vTYb+rKeWRHJVcuHlSIdy8EtUbEtYV2a+6zq7Eki1kyWvgGhNhZdYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntskpR69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B00AC4CEF1;
+	Mon,  8 Sep 2025 10:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757326989;
+	bh=f8m5FfX5nvzYBYadYzhg6DpSVTZtfx3kpLRtofn6+HY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ntskpR698Lnx+sObvJo3AKoPnVViGQPUkxtQYL9ItfPqZHgB9VM9fncD1QX0MS4Hg
+	 hG/ly65UEdpLdEcFkGeWFUytkIxa7lGwm8XWuGisS4Z1m4qkQiZPBZBjqtX8dAstvo
+	 YJ2weM+/QdRDOrJRJhczp7z7Zk/g8wpTD+9Tfx0teyqnwq+W5d3bsevhV6LECWJmgZ
+	 J6nIQ7hSCEFwR+NK72QxW3v0LVxlGsOZkIZ2FhoSRCF84QhtxAbF/5i9n6pw21aaE1
+	 kqV4Hy19b6110g6qzh69wuoPnCPQKZ5d2aMJfM9Y2EXGsvtohOLgEWC2wo+C0pEOrt
+	 PWHYiyVEexi1Q==
+Date: Mon, 8 Sep 2025 15:52:59 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 03/14] PCI: cadence: Add register definitions for High
+ Perf Architecture (HPA)
+Message-ID: <ilpurwleklzj5dskokypmepizwqixycyvk52qsocgwhpmyy2hz@2wvalkxquari>
+References: <20250901092052.4051018-1-hans.zhang@cixtech.com>
+ <20250901092052.4051018-4-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906140256.3059395-1-vitaly.wool@konsulko.se>
- <aL6YHkF96ICqqbBZ@google.com> <94252007-f389-41d0-b5a0-ed948225543a@kernel.org>
- <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com>
-In-Reply-To: <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 8 Sep 2025 12:22:29 +0200
-X-Gm-Features: AS18NWA9hYdpwy_1B5DZiD19hEAKMFtTbh_pCUoACeHBYWDL0ERivZum5zi9du0
-Message-ID: <CAH5fLghyDNd1SSL5uTZpSR-5j3q9=frAa=AgUjvap45b-DuUig@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: rbtree: add immutable cursor
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901092052.4051018-4-hans.zhang@cixtech.com>
 
-On Mon, Sep 8, 2025 at 11:21=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Sep 8, 2025 at 11:06=E2=80=AFAM Danilo Krummrich <dakr@kernel.org=
-> wrote:
-> >
-> > Why not use &raw? Consistency with the rest of the file?
->
-> I guess -- it is a good thing, but since we are actively trying to
-> move to the operator, it would minimize work to avoid adding new ones:
->
->     https://github.com/Rust-for-Linux/linux/issues/1148
->
-> Cheers,
-> Miguel
+On Mon, Sep 01, 2025 at 05:20:41PM GMT, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Add the register offsets and register definitions for High Performance
+> Architecture (HPA) PCIe controllers from Cadence.
+> 
+> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> Co-developed-by: Hans Zhang <hans.zhang@cixtech.com>
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
 
-Do we already have a patch making this refactor for rbtree? I don't
-think I saw one. I can send one if not.
+No need to split this into a separate patch. Squash it with the patch that adds
+the code consuming these.
 
-Alice
+- Mani
+
+> ---
+>  .../cadence/pcie-cadence-hpa-regs.h           | 192 ++++++++++++++++++
+>  drivers/pci/controller/cadence/pcie-cadence.h |   1 +
+>  2 files changed, 193 insertions(+)
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h b/drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h
+> new file mode 100644
+> index 000000000000..7ef87cf96836
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h
+> @@ -0,0 +1,192 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Cadence PCIe controller driver.
+> + *
+> + * Copyright (c) 2019, Cadence Design Systems
+> + * Author: Manikandan K Pillai <mpillai@cadence.com>
+> + */
+> +#ifndef _PCIE_CADENCE_HPA_REGS_H
+> +#define _PCIE_CADENCE_HPA_REGS_H
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci-epf.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/bitfield.h>
+> +
+> +/* High Performance Architecture (HPA) PCIe controller registers */
+> +#define CDNS_PCIE_HPA_IP_REG_BANK		0x01000000
+> +#define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK	0x01003C00
+> +#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON	0x01020000
+> +
+> +/* Address Translation Registers */
+> +#define CDNS_PCIE_HPA_AXI_SLAVE                 0x03000000
+> +#define CDNS_PCIE_HPA_AXI_MASTER                0x03002000
+> +
+> +/* Root Port register base address */
+> +#define CDNS_PCIE_HPA_RP_BASE			0x0
+> +
+> +#define CDNS_PCIE_HPA_LM_ID			0x1420
+> +
+> +/* Endpoint Function BARs */
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG(bar, fn) \
+> +	(((bar) < BAR_3) ? CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG0(fn) : \
+> +			CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG1(fn))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG0(pfn) (0x4000 * (pfn))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG1(pfn) ((0x4000 * (pfn)) + 0x04)
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG(bar, fn) \
+> +	(((bar) < BAR_3) ? CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG0(fn) : \
+> +			CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG1(fn))
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG0(vfn) ((0x4000 * (vfn)) + 0x08)
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG1(vfn) ((0x4000 * (vfn)) + 0x0C)
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(f) \
+> +	(GENMASK(9, 4) << ((f) * 10))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE(b, a) \
+> +	(((a) << (4 + ((b) * 10))) & (CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(b)))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(f) \
+> +	(GENMASK(3, 0) << ((f) * 10))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, c) \
+> +	(((c) << ((b) * 10)) & (CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b)))
+> +
+> +/* Endpoint Function Configuration Register */
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_CFG		0x02C0
+> +
+> +/* Root Complex BAR Configuration Register */
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG                        0x14
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_APERTURE_MASK     GENMASK(9, 4)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_APERTURE(a) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_APERTURE_MASK, a)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_CTRL_MASK         GENMASK(3, 0)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_CTRL(c) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_CTRL_MASK, c)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_APERTURE_MASK     GENMASK(19, 14)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_APERTURE(a) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_APERTURE_MASK, a)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_CTRL_MASK         GENMASK(13, 10)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_CTRL(c) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_CTRL_MASK, c)
+> +
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_PREFETCH_MEM_ENABLE BIT(20)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_PREFETCH_MEM_64BITS BIT(21)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_IO_ENABLE           BIT(22)
+> +#define CDNS_PCIE_HPA_LM_RC_BAR_CFG_IO_32BITS           BIT(23)
+> +
+> +/* BAR control values applicable to both Endpoint Function and Root Complex */
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_DISABLED              0x0
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_IO_32BITS             0x3
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_32BITS            0x1
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_32BITS   0x9
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_64BITS            0x5
+> +#define CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS   0xD
+> +
+> +#define HPA_LM_RC_BAR_CFG_CTRL_DISABLED(bar)                \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_DISABLED << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_CTRL_IO_32BITS(bar)               \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_IO_32BITS << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_CTRL_MEM_32BITS(bar)              \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_32BITS << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_32BITS(bar) \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_32BITS << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_CTRL_MEM_64BITS(bar)              \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_64BITS << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_64BITS(bar) \
+> +		(CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS << ((bar) * 10))
+> +#define HPA_LM_RC_BAR_CFG_APERTURE(bar, aperture)           \
+> +		(((aperture) - 7) << ((bar) * 10))
+> +
+> +#define CDNS_PCIE_HPA_LM_PTM_CTRL		0x0520
+> +#define CDNS_PCIE_HPA_LM_TPM_CTRL_PTMRSEN	BIT(17)
+> +
+> +/* Root Port Registers PCI config space for root port function */
+> +#define CDNS_PCIE_HPA_RP_CAP_OFFSET	0xC0
+> +
+> +/* Region r Outbound AXI to PCIe Address Translation Register 0 */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(r)            (0x1010 + ((r) & 0x1F) * 0x0080)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_NBITS_MASK    GENMASK(5, 0)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_NBITS(nbits) \
+> +	(((nbits) - 1) & CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_NBITS_MASK)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_DEVFN_MASK    GENMASK(23, 16)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_DEVFN(devfn) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_DEVFN_MASK, devfn)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_BUS_MASK      GENMASK(31, 24)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_BUS(bus) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_BUS_MASK, bus)
+> +
+> +/* Region r Outbound AXI to PCIe Address Translation Register 1 */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(r)            (0x1014 + ((r) & 0x1F) * 0x0080)
+> +
+> +/* Region r Outbound PCIe Descriptor Register */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0(r)                (0x1008 + ((r) & 0x1F) * 0x0080)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK         GENMASK(28, 24)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MEM  \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK, 0x0)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_IO   \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK, 0x2)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_CONF_TYPE0  \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK, 0x4)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_CONF_TYPE1  \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK, 0x5)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_NORMAL_MSG  \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MASK, 0x10)
+> +
+> +/* Region r Outbound PCIe Descriptor Register */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC1(r)        (0x100C + ((r) & 0x1F) * 0x0080)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS_MASK  GENMASK(31, 24)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS(bus) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS_MASK, bus)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN_MASK    GENMASK(23, 16)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(devfn) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN_MASK, devfn)
+> +
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(r)         (0x1018 + ((r) & 0x1F) * 0x0080)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_BUS BIT(26)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_DEV_FN BIT(25)
+> +
+> +/* Region r AXI Region Base Address Register 0 */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(r)     (0x1000 + ((r) & 0x1F) * 0x0080)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS_MASK    GENMASK(5, 0)
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) \
+> +	(((nbits) - 1) & CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS_MASK)
+> +
+> +/* Region r AXI Region Base Address Register 1 */
+> +#define CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(r)     (0x1004 + ((r) & 0x1F) * 0x0080)
+> +
+> +/* Root Port BAR Inbound PCIe to AXI Address Translation Register */
+> +#define CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0(bar)              (((bar) * 0x0008))
+> +#define CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0_NBITS_MASK        GENMASK(5, 0)
+> +#define CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0_NBITS(nbits) \
+> +	(((nbits) - 1) & CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0_NBITS_MASK)
+> +#define CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR1(bar)              (0x04 + ((bar) * 0x0008))
+> +
+> +/* AXI link down register */
+> +#define CDNS_PCIE_HPA_AT_LINKDOWN 0x04
+> +
+> +/*
+> + * Physical Layer Configuration Register 0
+> + * This register contains the parameters required for functional setup
+> + * of Physical Layer.
+> + */
+> +#define CDNS_PCIE_HPA_PHY_LAYER_CFG0               0x0400
+> +#define CDNS_PCIE_HPA_DETECT_QUIET_MIN_DELAY_MASK  GENMASK(26, 24)
+> +#define CDNS_PCIE_HPA_DETECT_QUIET_MIN_DELAY(delay) \
+> +	FIELD_PREP(CDNS_PCIE_HPA_DETECT_QUIET_MIN_DELAY_MASK, delay)
+> +#define CDNS_PCIE_HPA_LINK_TRNG_EN_MASK  GENMASK(27, 27)
+> +
+> +#define CDNS_PCIE_HPA_PHY_DBG_STS_REG0             0x0420
+> +
+> +#define CDNS_PCIE_HPA_RP_MAX_IB     0x3
+> +#define CDNS_PCIE_HPA_MAX_OB        15
+> +
+> +/* Endpoint Function BAR Inbound PCIe to AXI Address Translation Register */
+> +#define CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR0(fn, bar) (((fn) * 0x0040) + ((bar) * 0x0008))
+> +#define CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR1(fn, bar) (0x4 + ((fn) * 0x0040) + ((bar) * 0x0008))
+> +
+> +/* Miscellaneous offsets definitions */
+> +#define CDNS_PCIE_HPA_TAG_MANAGEMENT        0x0
+> +#define CDNS_PCIE_HPA_SLAVE_RESP            0x100
+> +
+> +#define I_ROOT_PORT_REQ_ID_REG              0x141c
+> +#define LM_HAL_SBSA_CTRL                    0x1170
+> +
+> +#define I_PCIE_BUS_NUMBERS                  (CDNS_PCIE_HPA_RP_BASE + 0x18)
+> +#endif /* _PCIE_CADENCE_HPA_REGS_H */
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index 79df86117fde..ddfc44f8d3ef 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/pci-epf.h>
+>  #include <linux/phy/phy.h>
+>  #include "pcie-cadence-lga-regs.h"
+> +#include "pcie-cadence-hpa-regs.h"
+>  
+>  enum cdns_pcie_rp_bar {
+>  	RP_BAR_UNDEFINED = -1,
+> -- 
+> 2.49.0
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
