@@ -1,138 +1,220 @@
-Return-Path: <linux-kernel+bounces-806499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBC2B497C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C542B497D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B846F188D375
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2074E0F2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A6B30FC3F;
-	Mon,  8 Sep 2025 18:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923A23148D9;
+	Mon,  8 Sep 2025 18:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iA/EaYkd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfTaRY1k"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2498C1BDCF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4AD145B16;
+	Mon,  8 Sep 2025 18:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354446; cv=none; b=EpJh2lU84ADzsrlyiGEwq9twSqTDZXO8zpC2toqK9eXjXCUFsZgwZE0LJdr5sGn7Pke3BLi00tsMPIpC6tgciQOF+XrD4pJtLMMIDBB3Nwx5uaL+4XHDyB2wLn05nnAyOen2ufZ3X+QQl/aNex9mtCXEa5yV/yhNZzH/q0CZk8M=
+	t=1757354530; cv=none; b=cCOvvuriPkRvw87ce02xezzAuOjmRIZ5TH+sl/ZU3C4nMb2Kgrn+SumMVbDZKfuJz/z36SBZRkk8wc3e+lZtcO9ccExqAq94UHnVlJJSuaeA3qZPASTnNQndmkrUUMjVSdHCgMhxxOXvm0fqUApLQf8fp2c7phFXGsA9xA2bJRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354446; c=relaxed/simple;
-	bh=1AIXgyudSZHdJJs4Hlw7fXLJMCk620PyDnJu1LL95QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oav9ZirF/BtMvOY+B7DPMqOhsGnV+5TkDVXHB7+mIfE996rcqQX8Nh9Wg72iUCPBlzjVhJ0BagXF1dwVMvbVc8r5BMj0Jcz8z8Gg7fq0RvKT2kMK7MpGxmWL6UZyIQPCrPFJVlEedTVQaiEyBkWMEzwIVKW5oNMSaqR/N5UJfdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iA/EaYkd reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C20BB40E01AC;
-	Mon,  8 Sep 2025 18:00:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aIim8rGBWOt3; Mon,  8 Sep 2025 18:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757354435; bh=OCrISNUnSS2VoLZwShkAhPqzsofsopmEGS3rLcrAN4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iA/EaYkd24u/h4NMmpO3jw1MDb3TuADzZMzFUlrEA9VKz0JuAsM7d9nvRMN0yDaqd
-	 BnbPIWsEwmv/HFSRm6JO+o2sAhcFZ58kOdwSTqCyFSx+ghK+bYsOKJ+Lh+s1X6WO2m
-	 Wt0gq8jNMJgKTBJyYDmU6Qah7M5D+3mL5SCJ0WLvRG/ea1PDy1ooVYVddzQEKhVK6W
-	 KUsj/QNK/pumVeFs6y6mrWtKAGbQPp9p2L7WOEuo0UcmmPgAGe9ypTK6ilE4rWLgAD
-	 BlCTqh/3LSbNnDv+5UnFyLfyY5uIlAmrsANUq7xV2aXxjaOKVQ2QiP1AMwvdPclp3j
-	 ABWDDAPRAggfLNdxBdaBGGILoY/yDFs+DK1m8TvR9ZUWeqjlkU4ctHycgn5S4qXu+r
-	 Gxb1uyImlczThycfk6EDXqBowVCPhCC1Mva3lyA4ZEPVe3114HUSLwSNJaHRl35yKX
-	 dZo39Ugykxs3r+9BmJt7Swp14gl2FJGDmuRd+faKEo0m7I9Naezr1nXryPmM9MevzG
-	 YMpk7MlTOyzL6osIIipmm1HKcuDg/ao0V9RaDj8OQav+A1qyI06TTxfrcfAKiwFprz
-	 vRwfu7rW3UigUSVjwR/NClHWbbMuJawmtEHocN8zy5sV8uwHqbSkIdRDigvCP63SLI
-	 MdrBB6rDhc7CBXR3ZxwAuV8E=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id A215040E015D;
-	Mon,  8 Sep 2025 18:00:28 +0000 (UTC)
-Date: Mon, 8 Sep 2025 20:00:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Michel =?utf-8?Q?D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>, amd-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource
- seems too big for the bo
-Message-ID: <20250908180022.GHaL8Zto-PsVsPa0e0@fat_crate.local>
-References: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
- <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
- <20250829194044.GCaLICPKJcGJRYdSfO@fat_crate.local>
- <20250829204840.GEaLISKGTwuScnDF8Y@fat_crate.local>
- <CADnq5_MbpYmC2PSyOr0gQk7F8mVz0-LG3dZtUZS2HhV8LTgDww@mail.gmail.com>
- <20250830174810.GAaLM5WkiFc2BtQ6kW@fat_crate.local>
- <51ae551b-6708-4fcd-84f9-fc1400f02427@mailbox.org>
- <20250901101011.GAaLVxA_Ax0R-Wy2IX@fat_crate.local>
- <2764782f-d411-4142-aa56-f1af0968ecd5@mailbox.org>
+	s=arc-20240116; t=1757354530; c=relaxed/simple;
+	bh=W6Ecx1Pxm6pVnypIcRy7pTj31dzrtQMTFRBCwzDYq4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PqhO5UFPjCqJc6ifXQ9fNBTOPWIlRfWAVHAOwaDZ5tYxCZieG/IgM9UWFPu9ktJyE1R0p+Ss0BSWELqOte4hJ7QKlV4L6A+DIOcPLF7U2hEFC2Vzr54yGknFmmPw4Dgpp21+KYkF/kEUEVMEr/iQVQX/2na/NZ+Q6R1g7XNU4us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfTaRY1k; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b52196e8464so1923458a12.3;
+        Mon, 08 Sep 2025 11:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757354528; x=1757959328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oeapqvce2e/YgpDoR/iLFBVYj0LNwbuiMP+6kJLqgg4=;
+        b=FfTaRY1knl1CQIngTI8IMbnHgzrLcmGltZmThPwoxXpxW5prHoOvlLQjCJS80H7EDU
+         pdJYkqkPiq6d5LW3TgYc+SDl1EpdNcPihZoPmxECvrbf5BZMRHU2dPzjlUHpTOnodpfi
+         Oz6b0gMvesyIc5mDXWiMz5srRLhNg79JdRAxcm+N1shgAJ8ujd64lHQGjFBruciALuLS
+         SyxUcYdXqqNi8AyVvG9HgeAacwUOAiZvOMlEykGaYAbujwsT1RUVSyrtH5mpLgfui2IM
+         Ehe3T+Oa9CxcAbD4Pt2k//vldt/7rlxhS6b4m9UTb9gQu68JcaonpYLah7rH8daTrQgI
+         m7dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757354528; x=1757959328;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oeapqvce2e/YgpDoR/iLFBVYj0LNwbuiMP+6kJLqgg4=;
+        b=Yxd5LdBZPb4hkCLlRIL09MWCVjwGMjvXmxyRUPtdOuIpVn/rEFivWw01nqaLPjT23V
+         qop1IkRJUQ3yCMM5VYa+ZRY0ZfEZuFR8pRWP0Elqn+S4S1PZc8bQiR0muLVTu3wVhZRq
+         w3XRKAFBBLE16uYPxyYyqVOSfwe0wIHy6EnMvsouRp260IiFAj1rojtGlyu4+tEvcOWZ
+         UraZjWh8vGoXEQ3aUM/VJPDMs5UpmAgNwWOrD1mgwS6aZK6Iic3o80sQowvPybXRKtQh
+         LbwbBRtqDewLTQFgdO7HhP07MKd0eKZGCod/FpvUz7U9vJAxt03Mw5+5FQwxcjKbrmM7
+         OntA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIXUJK95YrVEcGoTckvGR/6A9KPYek2e4dLvjG1MsaLf90MWBGhl4lGLMekGqWc2Z0+kfgUt3c/mVH@vger.kernel.org, AJvYcCVmRBJwPwQS/j+y7tHY6qNVBLcKUshC9D7AkLCuuGeRUA++BxsU+5dOb4WDHbITG4B2Of6Fd3KOoPR0n5Q=@vger.kernel.org, AJvYcCW3itdqOrM6H3q/PjiZGbIUeIb6sANQjsnyX1lzndBd+l+U/l4NW+iJ0/KoIPFPmAke7MEGPxb4@vger.kernel.org, AJvYcCWMa+rLCM9j2X9lH/nhQoIJeb4eMIiQwa8e15SNNz2BSWZdODF0W/FL8ovxcmyG5etokjkJb6KTT/Fj1jFM@vger.kernel.org, AJvYcCXgV1pYSaIdKubKpTy//0g8CWYzjoB5CYA6+Uk7nEmVXbLls91Hq/34w2h0tJzawzvJF9u1cg1hUxk9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLVm5hM4xwgOkdD+FSDSbdtgw/m7tJasfOQ8stMr8e7Kc9NA9
+	7Mmr2xLxR80e7FUygbQg+MFDJrm5ExtxPXzJj0khzIpzANrGVP98LzO4
+X-Gm-Gg: ASbGnctNKS8TrmYC0tGvz6CY0EydtjigaKGYkIOQ0dKe2d0W9XHun4F4kOb2c6CTpfP
+	NJx2TgCb0EtIat2KwJ5P8GxmjKhwsxdjP8CXlnwgcp4yBkJ37MBYI4GlkprIL88tiyh6AZ2LFFi
+	J5F4/DF0mX4UJOQC4jq9+4RlQpvT5jHTdvFIBwiXuwA97ilJhoNpEpTVGlNW2BoZ9L79RTFIx0d
+	yyfWiKtTeqRzpDBCfLT5555R9LUxAT7Z26RrnxUHpkcJhXmtvhXA/dFuygWkveTII+bP6K+81Wz
+	QqV0UD/afFU7vsG6BoXHJk0AERmaNEKa7MZdnclm97AfGc2Lc7A4vKhI6PPO4pHXKEpC6MIVp46
+	JkxYRqJk5NBHJeAd1XYCVHcupxc7PgRIufVQkdXQxsFla3ik5yffjBgx4jylYBnipHO6YgTrNbQ
+	GElsk3C2n+DdWYensw
+X-Google-Smtp-Source: AGHT+IEeU/DB0HOb4fPagqRudZuMsg2x4PoB+G/k1VfzfmYv6JE/beBzNlrrOjMK54ZO08DaRL8UPA==
+X-Received: by 2002:a17:902:ce89:b0:24d:64bc:1495 with SMTP id d9443c01a7336-25172e32f31mr123848925ad.41.1757354527849;
+        Mon, 08 Sep 2025 11:02:07 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cb28c3110sm133495925ad.120.2025.09.08.11.02.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 11:02:07 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <9e4db8d7-c99f-46f3-9ddb-00b0a9261d86@roeck-us.net>
+Date: Mon, 8 Sep 2025 11:02:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2764782f-d411-4142-aa56-f1af0968ecd5@mailbox.org>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] hwmon: (tps23861) add class restrictions and
+ semi-auto mode support
+To: Gregory Fuchedgi <gfuchedgi@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Robert Marko <robert.marko@sartura.hr>,
+ Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>,
+ Network Development <netdev@vger.kernel.org>
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+ <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net>
+ <aL5g2JtIpupAeoDz@pengutronix.de>
+ <CAAcybuvqqKBniV+OtgfCLHJdmZ836FJ3p7ujp3is2B8bxQh4Kw@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CAAcybuvqqKBniV+OtgfCLHJdmZ836FJ3p7ujp3is2B8bxQh4Kw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 08, 2025 at 07:05:17PM +0200, Michel D=C3=A4nzer wrote:
-> These messages are primarily intended for developers, not users
+On 9/8/25 09:39, Gregory Fuchedgi wrote:
+> On Sun, Sep 7, 2025 at 9:51 PM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>>
+>> On Sun, Sep 07, 2025 at 09:06:25AM -0700, Guenter Roeck wrote:
+>>> +Cc: pse-pd maintainers and netdev mailing list
+>>>
+>>> On 9/4/25 10:33, Gregory Fuchedgi via B4 Relay wrote:
+>>>> This patch series introduces per-port device tree configuration with poe
+>>>> class restrictions. Also adds optional reset/shutdown gpios.
+>>>>
+>>>> Tested with hw poe tester:
+>>>>    - Auto mode tested with no per-port DT settings as well as explicit port
+>>>>      DT ti,class=4. Tested that no IRQ is required in this case.
+>>>>    - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ required.
+>>>>    - Tested current cut-offs in Semi-Auto mode.
+>>>>    - On/off by default setting tested for both Auto and Semi-Auto modes.
+>>>>    - Tested fully disabling the ports in DT.
+>>>>    - Tested with both reset and ti,ports-shutdown gpios defined, as well as
+>>>>      with reset only, as well as with neither reset nor shutdown.
+>>>>
+>>>> Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
+>>>
+>>> This entire series makes me more and more unhappy. It is not the responsibility
+>>> of the hardware monitoring subsystem to control power. The hardware monitoring
+>>> subsystem is for monitoring, not for control.
+>>>
+>>> Please consider adding a driver for this chip to the pse-pd subsystem
+>>> (drivers/net/pse-pd). As it turns out, that subsystem already supports
+>>> tps23881. This is a similar chip which even has a similar register set.
+>>>
+>>> This driver could then be modified to be an auxiliary driver of that driver.
+>>> Alternatively, we could drop this driver entirely since the pse-pd subsystem
+>>> registers the chips it supports as regulator which has its own means to handle
+>>> telemetry.
+>> Yes, Guenter is right. This driver belongs to the pse-pd framework.
+> No disagreement here in principle. However, the current hwmon driver
+> already implements power control and exposes it via in*_enable sysfs
+> files. I found this a bit odd, but I don't write drivers often.
+> My understanding of Guenter's suggestion is that it would require breaking
+> this userspace API?
+> 
 
-But everybody sees them! And they're flooding the console.
+If the enable attributes enable power to the ports, that code and functionality
+is simply wrong. It should only enable (or have enabled) power _monitoring_.
+As such, changing that would from my perspective be a bug fix.
 
-And most people seeing them are users, not developers.
+And, yes, that slipped my attention when reviewing the original code.
+Sorry to have to say that, but I am not perfect.
 
-And if those messages are only for developers, they better be not visible=
- by
-default but behind a CONFIG_DEBUG or a similar switch.
+>  From a quick look at the tps23881 datasheet I can see that it is
+> similar, however, it is quite different in the context of this patch.
+> tps23881 (unlike tps23861) has Port Power Allocation register that can
+> limit poe power class. This register can be set prior to
+> detection/classification. So the extra complexity of an interrupt
+> handler that decides whether to enable the power may not be required.
+> 
+> Perhaps it still makes sense to merge these drivers, but I don't have
+> time or hardware to do it at the moment.
 
-And developers don't have every hw to test on. So you need to rely on use=
-rs to
-report issues to you. Because those messages probably don't fire on your =
-hw
-but someone else would hit them. And the chances are high that someone el=
-se is
-a user.
+I didn't suggest to merge the tps23881 and tps23861 drivers; I just pointed out
+that they have a similar register set.
 
-So you want to make *all* your messages for users and have them report th=
-em
-back to you.
+The point here is that a hardware monitoring driver should limit itself
+to hardware monitoring. Actual control should, for example, be implemented
+through the regulator or thermal subsystems.
 
-> (which will notice and report the corresponding user-space issues inste=
-ad).
+Guenter
 
-The case due to which we're having this conversation didn't manifest itse=
-lf
-into anything - it was only flooding my dmesg. So users will notice nothi=
-ng.
-
-> The once variant means user-space developers need to reboot after hitti=
-ng it
-> once.
-
-/sys/kernel/debug/clear_warn_once
-
-Although when I tried it, it didn't help with dev_warn_once(). Perhaps ne=
-eds
-adding.
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
