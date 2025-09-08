@@ -1,299 +1,115 @@
-Return-Path: <linux-kernel+bounces-804919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67860B481F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D10B481F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41807AFEFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65D441899D86
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D95C1F3FED;
-	Mon,  8 Sep 2025 01:18:32 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288821B3937;
+	Mon,  8 Sep 2025 01:21:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C8F1E5B64;
-	Mon,  8 Sep 2025 01:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BA415E97;
+	Mon,  8 Sep 2025 01:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757294311; cv=none; b=cAzLtQ9wDRJvHZ2MAZNhrx5LAwG9bPUCZKq4cuarXjN6b0E0mzCdyaPbWfm/mf7sseD2p4dzClioWL4urubPD1fuMn9Goby/7rc67J9EuQkWaTB5O3yPhv7iAMX7SkClkoitIGOKm9/wtK6ApHe/x+TS+vkAEBo1zicBm0EEo4A=
+	t=1757294469; cv=none; b=RheXOyyj26bKZ2UAmlDU/+F28c+hnZgNY6fFSsDH+G3Rbw00m0dpxK4ajJwNOTK9vROurlQhojKmEV8Hfl5aSRvkEW8RibOHsWregegwjLrW0Uac8oAEZtr4GtPoS/GwreWHF0+e3OWu3/eoEQLRs3/fenDBrtzJrMGN7Jbz50o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757294311; c=relaxed/simple;
-	bh=okTZ1ivzUeJ1P3iyLdnfslBrRZct+KbYm7L29shI5eA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U6/9juMb0MaVEQ617Q9W+IYzWhCR73vg4xpVxlDfwUhYL6tAbM6pcWsVWUQrmx2O80rf3yTVNifGDWrYWPBsZP5gI+BkIJEJGBGt2daDYtfHyTE4IlfIFzp5j3scR+osNsuRemauAq/fBlUXdENIDusHHtKS60wmRzNi2htmRdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 8 Sep
- 2025 09:18:13 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 8 Sep 2025 09:18:13 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: ryan_chen <ryan_chen@aspeedtech.com>, Eddie James <eajames@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Lee Jones <lee@kernel.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v4 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU interrupt controllers
-Date: Mon, 8 Sep 2025 09:18:12 +0800
-Message-ID: <20250908011812.1033858-5-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250908011812.1033858-1-ryan_chen@aspeedtech.com>
-References: <20250908011812.1033858-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1757294469; c=relaxed/simple;
+	bh=bmH0wdfQC+ymwiNTkR+u5wQ2Di3e+Zo/OWqapnTykZQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Nqxww30ZJCQXWHorXKTqj+vEI5QwgG6h8t9Zk9krDi84WAjhisZnqKE1uyXZjdHiCs25VRevyielppUoVKF2RiWGI/d8MNpAXvUl3TN7jrucMYi8j2KBBd3vSusfDemKlyBwntKMV7zP6TPDdTTeJiiggnZfQA7v0ASEetyhPrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cKq0C1pcSzYQv12;
+	Mon,  8 Sep 2025 09:20:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B82021A0E1C;
+	Mon,  8 Sep 2025 09:20:57 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3wY13L75oZAYLBw--.55217S3;
+	Mon, 08 Sep 2025 09:20:57 +0800 (CST)
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Kenta Akagi <k@mgml.me>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
+ Mariusz Tkaczyk <mtkaczyk@kernel.org>, Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+ <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+ <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
+ <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
+ <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
+ <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
+ <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
+ <48902d38-c2a1-b74d-d5fb-3d1cdc0b05dc@huaweicloud.com>
+ <34ebcc5b-db67-49e0-a304-4882fa82e830@mgml.me>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <ae39d3a6-86a2-b90d-b5d6-887b7fc28106@huaweicloud.com>
+Date: Mon, 8 Sep 2025 09:20:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <34ebcc5b-db67-49e0-a304-4882fa82e830@mgml.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:gCh0CgB3wY13L75oZAYLBw--.55217S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF4ftr45GF1kZry7CF4DJwb_yoW3urcE93
+	Wv9w4DJwnIvFnak3yfXF1avr93CFnYgFyfJFWxt3ZxK3s3ZF9a9r1Dtr97ur10qFy2qr47
+	GFnrGw4akrnakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
+	73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The AST2700 continues the multi-instance SCU interrupt controller model
-introduced in the AST2600, with four independent interrupt domains
-(scu-ic0 to 3).
 
-Unlike earlier generations that combine interrupt enable and status bits
-into a single register, the AST2700 separates these into distinct IER and
-ISR registers. Support for this layout is implemented by using register
-offsets and separate chained IRQ handlers.
 
-The variant table is extended to cover AST2700 IC instances, enabling
-shared initialization logic while preserving support for previous SoCs.
+在 2025/09/02 0:48, Kenta Akagi 写道:
+> In the current raid1_end_write_request implementation,
+> - md_error is called only in the Failfast case.
+> - Afterwards, if the rdev is not Faulty (that is, not Failfast,
+>    or Failfast but the last rdev — which originally was not expected
+>    MD_BROKEN in RAID1), R1BIO_WriteError is set.
+> In the suggested implementation, it seems that a non-Failfast write
+> failure will immediately mark the rdev as Faulty, without retries.
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
----
- drivers/irqchip/irq-aspeed-scu-ic.c | 119 +++++++++++++++++++++++-----
- 1 file changed, 101 insertions(+), 18 deletions(-)
+I still prefer a common helper to unify the code, not sure if I still
+missing something ...
 
-diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c b/drivers/irqchip/irq-aspeed-scu-ic.c
-index 54d2f187e081..323a113652f4 100644
---- a/drivers/irqchip/irq-aspeed-scu-ic.c
-+++ b/drivers/irqchip/irq-aspeed-scu-ic.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * Aspeed AST24XX, AST25XX, and AST26XX SCU Interrupt Controller
-+ * Aspeed AST24XX, AST25XX, AST26XX, and AST27XX SCU Interrupt Controller
-  * Copyright 2019 IBM Corporation
-  *
-  * Eddie James <eajames@linux.ibm.com>
-@@ -17,26 +17,37 @@
- 
- #define ASPEED_SCU_IC_STATUS		GENMASK(28, 16)
- #define ASPEED_SCU_IC_STATUS_SHIFT	16
-+#define AST2700_SCU_IC_STATUS		GENMASK(15, 0)
- 
- struct aspeed_scu_ic_variant {
- 	const char		*compatible;
- 	unsigned long	irq_enable;
- 	unsigned long	irq_shift;
- 	unsigned int	num_irqs;
-+	bool		split_ier_isr;
-+	unsigned long	ier;
-+	unsigned long	isr;
- };
- 
--#define SCU_VARIANT(_compat, _shift, _enable, _num) { \
-+#define SCU_VARIANT(_compat, _shift, _enable, _num, _split, _ier, _isr) { \
- 	.compatible		=	_compat,	\
- 	.irq_shift		=	_shift,		\
- 	.irq_enable		=	_enable,	\
- 	.num_irqs		=	_num,		\
-+	.split_ier_isr		=	_split,		\
-+	.ier			=	_ier,		\
-+	.isr			=	_isr,		\
- }
- 
- static const struct aspeed_scu_ic_variant scu_ic_variants[]	__initconst = {
--	SCU_VARIANT("aspeed,ast2400-scu-ic",	0,	GENMASK(15, 0),	7),
--	SCU_VARIANT("aspeed,ast2500-scu-ic",	0,	GENMASK(15, 0), 7),
--	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0,	GENMASK(5, 0),	6),
--	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4,	GENMASK(5, 4),	2),
-+	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7, false,	0,	0),
-+	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7, false,	0,	0),
-+	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6, false,	0,	0),
-+	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2, false,	0,	0),
-+	SCU_VARIANT("aspeed,ast2700-scu-ic0",	0, GENMASK(3, 0),	4, true,	0x00, 0x04),
-+	SCU_VARIANT("aspeed,ast2700-scu-ic1",	0, GENMASK(3, 0),	4, true,	0x00, 0x04),
-+	SCU_VARIANT("aspeed,ast2700-scu-ic2",	0, GENMASK(3, 0),	4, true,	0x04, 0x00),
-+	SCU_VARIANT("aspeed,ast2700-scu-ic3",	0, GENMASK(1, 0),	2, true,	0x04, 0x00),
- };
- 
- struct aspeed_scu_ic {
-@@ -45,9 +56,12 @@ struct aspeed_scu_ic {
- 	unsigned int		num_irqs;
- 	void __iomem		*base;
- 	struct irq_domain	*irq_domain;
-+	bool			split_ier_isr;
-+	unsigned long		ier;
-+	unsigned long		isr;
- };
- 
--static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
-+static void aspeed_scu_ic_irq_handler_combined(struct irq_desc *desc)
- {
- 	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
-@@ -85,7 +99,33 @@ static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static void aspeed_scu_ic_irq_mask(struct irq_data *data)
-+static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc)
-+{
-+	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned long bit, enabled, max, status;
-+	unsigned int sts, mask;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	mask = scu_ic->irq_enable;
-+	sts = readl(scu_ic->base + scu_ic->isr);
-+	enabled = sts & scu_ic->irq_enable;
-+	sts = readl(scu_ic->base + scu_ic->isr);
-+	status = sts & enabled;
-+
-+	bit = scu_ic->irq_shift;
-+	max = scu_ic->num_irqs + bit;
-+
-+	for_each_set_bit_from(bit, &status, max) {
-+		generic_handle_domain_irq(scu_ic->irq_domain, bit - scu_ic->irq_shift);
-+		writel(BIT(bit), scu_ic->base + scu_ic->isr); // clear interrupt
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void aspeed_scu_ic_irq_mask_combined(struct irq_data *data)
- {
- 	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
- 	unsigned int mask = BIT(data->hwirq + scu_ic->irq_shift) |
-@@ -99,7 +139,7 @@ static void aspeed_scu_ic_irq_mask(struct irq_data *data)
- 	writel(readl(scu_ic->base) & ~mask, scu_ic->base);
- }
- 
--static void aspeed_scu_ic_irq_unmask(struct irq_data *data)
-+static void aspeed_scu_ic_irq_unmask_combined(struct irq_data *data)
- {
- 	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
- 	unsigned int bit = BIT(data->hwirq + scu_ic->irq_shift);
-@@ -114,6 +154,22 @@ static void aspeed_scu_ic_irq_unmask(struct irq_data *data)
- 	writel((readl(scu_ic->base) & ~mask) | bit, scu_ic->base);
- }
- 
-+static void aspeed_scu_ic_irq_mask_split(struct irq_data *data)
-+{
-+	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
-+
-+	writel(readl(scu_ic->base) & ~BIT(data->hwirq + scu_ic->irq_shift),
-+	       scu_ic->base + scu_ic->ier);
-+}
-+
-+static void aspeed_scu_ic_irq_unmask_split(struct irq_data *data)
-+{
-+	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
-+	unsigned int bit = BIT(data->hwirq + scu_ic->irq_shift);
-+
-+	writel(readl(scu_ic->base) | bit, scu_ic->base + scu_ic->ier);
-+}
-+
- static int aspeed_scu_ic_irq_set_affinity(struct irq_data *data,
- 					  const struct cpumask *dest,
- 					  bool force)
-@@ -121,17 +177,29 @@ static int aspeed_scu_ic_irq_set_affinity(struct irq_data *data,
- 	return -EINVAL;
- }
- 
--static struct irq_chip aspeed_scu_ic_chip = {
--	.name			= "aspeed-scu-ic",
--	.irq_mask		= aspeed_scu_ic_irq_mask,
--	.irq_unmask		= aspeed_scu_ic_irq_unmask,
--	.irq_set_affinity	= aspeed_scu_ic_irq_set_affinity,
-+static struct irq_chip aspeed_scu_ic_chip_combined = {
-+	.name                   = "aspeed-scu-ic",
-+	.irq_mask               = aspeed_scu_ic_irq_mask_combined,
-+	.irq_unmask             = aspeed_scu_ic_irq_unmask_combined,
-+	.irq_set_affinity       = aspeed_scu_ic_irq_set_affinity,
-+};
-+
-+static struct irq_chip aspeed_scu_ic_chip_split = {
-+	.name                   = "ast2700-scu-ic",
-+	.irq_mask               = aspeed_scu_ic_irq_mask_split,
-+	.irq_unmask             = aspeed_scu_ic_irq_unmask_split,
-+	.irq_set_affinity       = aspeed_scu_ic_irq_set_affinity,
- };
- 
- static int aspeed_scu_ic_map(struct irq_domain *domain, unsigned int irq,
- 			     irq_hw_number_t hwirq)
- {
--	irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip, handle_level_irq);
-+	struct aspeed_scu_ic *scu_ic = domain->host_data;
-+
-+	if (scu_ic->split_ier_isr)
-+		irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip_split, handle_level_irq);
-+	else
-+		irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip_combined, handle_level_irq);
- 	irq_set_chip_data(irq, domain->host_data);
- 
- 	return 0;
-@@ -152,8 +220,14 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_scu_ic *scu_ic,
- 		rc = PTR_ERR(scu_ic->base);
- 		goto err;
- 	}
--	writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
--	writel(0, scu_ic->base);
-+
-+	if (scu_ic->split_ier_isr) {
-+		writel(AST2700_SCU_IC_STATUS, scu_ic->base + scu_ic->isr);
-+		writel(0, scu_ic->base + scu_ic->ier);
-+	} else {
-+		writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
-+		writel(0, scu_ic->base);
-+	}
- 
- 	irq = irq_of_parse_and_map(node, 0);
- 	if (!irq) {
-@@ -168,7 +242,9 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_scu_ic *scu_ic,
- 		goto err;
- 	}
- 
--	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
-+	irq_set_chained_handler_and_data(irq, scu_ic->split_ier_isr ?
-+					 aspeed_scu_ic_irq_handler_split :
-+					 aspeed_scu_ic_irq_handler_combined,
- 					 scu_ic);
- 
- 	return 0;
-@@ -206,6 +282,9 @@ static int __init aspeed_scu_ic_of_init(struct device_node *node, struct device_
- 	scu_ic->irq_enable	= variant->irq_enable;
- 	scu_ic->irq_shift	= variant->irq_shift;
- 	scu_ic->num_irqs	= variant->num_irqs;
-+	scu_ic->split_ier_isr	= variant->split_ier_isr;
-+	scu_ic->ier	= variant->ier;
-+	scu_ic->isr	= variant->isr;
- 
- 	return aspeed_scu_ic_of_init_common(scu_ic, node);
- }
-@@ -214,3 +293,7 @@ IRQCHIP_DECLARE(ast2400_scu_ic, "aspeed,ast2400-scu-ic", aspeed_scu_ic_of_init);
- IRQCHIP_DECLARE(ast2500_scu_ic, "aspeed,ast2500-scu-ic", aspeed_scu_ic_of_init);
- IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0", aspeed_scu_ic_of_init);
- IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1", aspeed_scu_ic_of_init);
-+IRQCHIP_DECLARE(ast2700_scu_ic0, "aspeed,ast2700-scu-ic0", aspeed_scu_ic_of_init);
-+IRQCHIP_DECLARE(ast2700_scu_ic1, "aspeed,ast2700-scu-ic1", aspeed_scu_ic_of_init);
-+IRQCHIP_DECLARE(ast2700_scu_ic2, "aspeed,ast2700-scu-ic2", aspeed_scu_ic_of_init);
-+IRQCHIP_DECLARE(ast2700_scu_ic3, "aspeed,ast2700-scu-ic3", aspeed_scu_ic_of_init);
--- 
-2.34.1
+In general, if bio failed, for read/write/metadata/resync should be the
+same:
+
+1) failfast is set, and not last rdev, md_error();
+2) otherwise, we should always retry;
+
+And I do believe it's the best to unify this by a common helper.
+
+Thanks,
+Kuai
 
 
