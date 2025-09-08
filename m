@@ -1,81 +1,220 @@
-Return-Path: <linux-kernel+bounces-806738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C314B49B28
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4588FB49B2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664571BC230C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF24E2EE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D42DAFDA;
-	Mon,  8 Sep 2025 20:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8E2DCF51;
+	Mon,  8 Sep 2025 20:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jg/+o7q9"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9EMn6uL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78C41C863B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E2A1C863B;
+	Mon,  8 Sep 2025 20:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757364170; cv=none; b=YX+G0Qz7guaeadKou4ZhK2EuEj2Ed3l39qId1dC40izJd3oe0ZY+PYGkm07+XLVKREzbnZbn8lPSgzzIh2zyAJbDiPDrzKnvkGLWg/OcngyxEiw915CEVb0lMw/Msh6jqXq16x3rkskRoXOcmlZwI6XEtYIqyIUMtbA7vdQJmH4=
+	t=1757364175; cv=none; b=bN7Qcvkzkh1pf6t49mHO97VUJxUw1Q6LoseYIHB8GUwa+sZhQmH44akJygp+MLSlFKFEhlSWwrkwMSFY6Mn97wBgORbOpGd+ek4qkH434lwTk/3hPm+SS6eilL6mUjwaRkyIhAPNNUqviBRAqkYOyroa2Jat0KzybsnNrD/Lh50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757364170; c=relaxed/simple;
-	bh=ed96sy/6LOck+wUhbL7YfzNYa8GastaiVEYRq6cpaiA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lILsUQwtvNDXgDbveXN6qr49BuHrqRFm/S+3WgmDwbh99zpNRgeDrLCCdeQLp1By+x9lyVuoVdOJl8H7Fc7l/8nTPPUa2lr2fDz+r0VRaRGKwWunEPsNf9K0UZVZEOKYjmUE3o38UQLWid/Sv9huFNd2tc1Ras9rAEhBsZjvnyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jg/+o7q9; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757364166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jD6ByExhZVwQlGpLHFGQjP44ok8RQvvCqWB7DPZxKZ8=;
-	b=jg/+o7q9dj/+8g+9xTe/qdOqGgLHCUcmMv5/6CNKBrTiX2j8yuA1no+qEOhGceuPG9+1q1
-	5DMxdPdExMhbky7lRx/X07zWWx0/rSc0JA+Dr6L/RWOOG/SGrMdsnHnrl8/BCyr3/DXyPi
-	iShxSJDuQ4DEIONvkTi7Zldnc6bnUTA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	cocci@inria.fr,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Coccinelle: pm_runtime: Fix typo in report message
-Date: Mon,  8 Sep 2025 22:42:23 +0200
-Message-ID: <20250908204225.476116-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757364175; c=relaxed/simple;
+	bh=JY3EMgyH0fhIQk4c8zaI/9MVdKtSrKHC2bX7J7U9MF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vabz1dE2BW7eayAiiDpiLVbliv09rujW06Gd28TUcWhq2ULNoyI9OMOjPI7SqyodF/AnXJPtfArE7K/N/6qLp3+T4WrQl4REzBdKpdosGI+v+pEvEN875CNJe76DI2kV7cGXnC6eF5ND8haUUeiVgOAMI+9P3z8SWstCXisjptU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9EMn6uL; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757364173; x=1788900173;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JY3EMgyH0fhIQk4c8zaI/9MVdKtSrKHC2bX7J7U9MF4=;
+  b=g9EMn6uL2c1UwOzh9x3qBTBh4b84088fJJxDO6AP/xJavJ9tnm/xOsv+
+   SHyGIIETybTqb6EuuMLUgbCN53D5lfIFMEfZC69s/8IE8u5IRR9Q79TXJ
+   XdnfmWPWh6/Fj/vPoZXlb868Ds/KKm0gkrRTvOHcb182xBfVZ+jTtUtDT
+   jET9O8HG7NbXA1XmBfeJOQsTBPpFE+oEhQ4BYROpKlNQMgCW1KiiitYY3
+   n8p9JjbTxSOURtm6pMraUb558csmBkxNSGjTfelnwZ+yatlrBtRbu5Ugg
+   cIctf25xspWVKUcGUCVj/hqwskOkiWf2T9m2dVyVIXZgU0k8TF3S36u3h
+   A==;
+X-CSE-ConnectionGUID: Lsp+fXT3SbO9q1dYOlekSg==
+X-CSE-MsgGUID: i1Cr0vzSSgWygaRMWVlhCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="63276546"
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="63276546"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:42:52 -0700
+X-CSE-ConnectionGUID: xDdTXpQ4TFieBaTwCROrsg==
+X-CSE-MsgGUID: AakUd3bjSx60Xl63Mxcc6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="173256764"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.113]) ([10.125.110.113])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:42:51 -0700
+Message-ID: <fee4cf88-3101-4b0d-88f0-fb5a632f83c9@intel.com>
+Date: Mon, 8 Sep 2025 13:42:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cxl/acpi: Rename CFMW coherency restrictions
+To: Davidlohr Bueso <dave@stgolabs.net>, rafael.j.wysocki@intel.com
+Cc: dan.j.williams@intel.com, jonathan.cameron@huawei.com,
+ alejandro.lucero-palau@amd.com, ira.weiny@intel.com,
+ alison.schofield@intel.com, a.manzanares@samsung.com,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>
+References: <20250908160034.86471-1-dave@stgolabs.net>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250908160034.86471-1-dave@stgolabs.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-s/Unecessary/Unnecessary/
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- scripts/coccinelle/api/pm_runtime.cocci | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/api/pm_runtime.cocci b/scripts/coccinelle/api/pm_runtime.cocci
-index 2c931e748dda..e29ac3a87d96 100644
---- a/scripts/coccinelle/api/pm_runtime.cocci
-+++ b/scripts/coccinelle/api/pm_runtime.cocci
-@@ -110,5 +110,5 @@ p2 << r.p2;
- pm_runtime_api << r.pm_runtime_api;
- @@
- 
--msg = "%s returns < 0 as error. Unecessary IS_ERR_VALUE at line %s" % (pm_runtime_api, p2[0].line)
-+msg = "%s returns < 0 as error. Unnecessary IS_ERR_VALUE at line %s" % (pm_runtime_api, p2[0].line)
- coccilib.report.print_report(p1[0],msg)
--- 
-2.51.0
+On 9/8/25 9:00 AM, Davidlohr Bueso wrote:
+> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
+> 
+> This has been renamed in more recent CXL specs, as
+> type3 (memory expanders) can also use HDM-DB for
+> device coherent memory.
+> 
+> Link: https://github.com/acpica/acpica/commit/710745713ad3a2543dbfb70e84764f31f0e46bdc
+> Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/acpi.c           |  4 ++--
+>  include/acpi/actbl1.h        |  4 ++--
+>  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
+>  3 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 26c494704437..2cf75b553f26 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -128,9 +128,9 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
+>  {
+>  	unsigned long flags = CXL_DECODER_F_ENABLE;
+>  
+> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
+> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
+>  		flags |= CXL_DECODER_F_TYPE2;
+> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
+> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
+>  		flags |= CXL_DECODER_F_TYPE3;
+>  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
+>  		flags |= CXL_DECODER_F_RAM;
+> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+> index 99fd1588ff38..eb787dfbd2fa 100644
+> --- a/include/acpi/actbl1.h
+> +++ b/include/acpi/actbl1.h
+> @@ -560,8 +560,8 @@ struct acpi_cedt_cfmws_target_element {
+>  
+>  /* Values for Restrictions field above */
+>  
+> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
+> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
+> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM      (1)
+> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM (1<<1)
+>  #define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
+>  #define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
+>  #define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
+> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+> index 6a25cca5636f..ba50338f8ada 100644
+> --- a/tools/testing/cxl/test/cxl.c
+> +++ b/tools/testing/cxl/test/cxl.c
+> @@ -210,7 +210,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 0,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 4UL,
+> @@ -225,7 +225,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 1,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 8UL,
+> @@ -240,7 +240,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 0,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 4UL,
+> @@ -255,7 +255,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 1,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 8UL,
+> @@ -270,7 +270,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 0,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 4UL,
+> @@ -285,7 +285,7 @@ static struct {
+>  			},
+>  			.interleave_ways = 0,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M,
+> @@ -302,7 +302,7 @@ static struct {
+>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+>  			.interleave_ways = 0,
+>  			.granularity = 4,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 8UL,
+> @@ -318,7 +318,7 @@ static struct {
+>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+>  			.interleave_ways = 1,
+>  			.granularity = 0,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_256M * 8UL,
+> @@ -334,7 +334,7 @@ static struct {
+>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+>  			.interleave_ways = 8,
+>  			.granularity = 1,
+> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+>  			.qtg_id = FAKE_QTG_ID,
+>  			.window_size = SZ_512M * 6UL,
 
 
