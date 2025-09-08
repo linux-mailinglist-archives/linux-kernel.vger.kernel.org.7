@@ -1,165 +1,353 @@
-Return-Path: <linux-kernel+bounces-806931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BE9B49D92
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E6AB49D94
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907881B23B39
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07761B272D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390912FF65D;
-	Mon,  8 Sep 2025 23:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76E430C63B;
+	Mon,  8 Sep 2025 23:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="dGMNdmrd"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ODOl/lRS"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8792C2EB849
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 23:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905023AE87
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 23:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757375020; cv=none; b=Tc3+NIVi2YpCjpcF2IbST8+6NGEvKlC2Xd0eJvkr2cjDpQ5xUTgSWpuzcmW2uiWUvzVTdBRm6MkXIt7oc7bVXahaTn7i/JqnncHmSxAW4p1Bwaqb8xwbRVI+1YQxlTlBcMoVBdXH5xpezUQXSyK0UF+q3vnZNzvKDA34tY+zVFE=
+	t=1757375247; cv=none; b=niELttniR4+hzIoQnibebIizwu7tMX2VgUyu8txgOkLFj1NsmHIMY2BRmLxKyAjW0hUmtYrIT3sMOM7KNNlGveiLoHIsrGhVg6+aZZvQUH+AFDVrxcYdkkFyMCl81rR2D2jQA292LNYlKeQjEtL0IpRHGOiB5g95Y7q8dpCyfsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757375020; c=relaxed/simple;
-	bh=Xf+o5luAHatCq/dTDCApLoFgBaeG3YyqdSkFJuMacwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AsFTkE/7zOGbF87V4GPcgTTbL9d62bTlPRHStJApm0xoB9CxSlmgFJOCOpWUslDj2fvUwKqhdDebE6EOk6hEabzUJzRR18mpK/8M9UzgaEQXGBQxi0wnvnJ1eBWiGTpgwnSvUqu1Y2LAQB7kDgnG+H+0PjY0ohuN+uoSS7bFB64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=dGMNdmrd; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7459fa1ef2aso4903266a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:43:37 -0700 (PDT)
+	s=arc-20240116; t=1757375247; c=relaxed/simple;
+	bh=8aqTuRCejIpuCS8ou960e7PRXbIxItGNHFrJCuWb4l4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TDy9uTMo8pUyp3ssbTYjjmEfa0qXnaEHmvTnjDxyhmZNnYCKYWc/DNBg0EhmmcyKyZNc4MmABu/j1+/WqwvMcmg7IFTIBu5Cx86QfEmxVXoUvMN3UAHSD85TJG/VZr6fbvtAwEOOxZlAacleIQSwpaDId9j6HmuytEoUZ8cVxbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ODOl/lRS; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso68576505ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1757375016; x=1757979816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TZ31nFbpBywr5LWV7R5R4cpzaC/84WhWlclxZ1iDl8w=;
-        b=dGMNdmrdxj74AMlG0q0iDTOmERjw+ac28EpGKG+MSLspaGJQ0vEWC3wTe9Jnx96xeU
-         e2DJ1dGjxfKLQtcX1cSWlsL5p4nBPcOKlkjmBggzzhf2T954jKw5rrtrvjcGTd0ajkcD
-         H445lwk9Q07hsowbK8NGP1KZaYWX8OVULc5czaJAPnieVpXY4QNUZ5Qz5y1VrWH3WtUQ
-         iwUe0QisOlw0pXJ1Z6TI3PTp0KO+34i32oCCP8KbRi7fvcg23hQRC0stzEblh0qE7uUx
-         DWfDSiECuzmO2iJEbq15JHO/f6QbVtq3HFYDG9DKKh+EfPX3Px9mLtP8UW3rgfMPMo1P
-         A4Yg==
+        d=google.com; s=20230601; t=1757375244; x=1757980044; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1VaNxRefI7j0o+B2S9CKOufLjzCN6AGZ4LGfh0Njgc=;
+        b=ODOl/lRSGiswGkJRf512mSi4OnqRGUFTgbBbGDz43J1sgkBSVV71v3Y3/vcwVcDRmX
+         bVU88GivdDGo/tLg/oN4LRkOVnnh+WgAiY5t6SonZpRBdrvmlmRsa73WsIkug/l8BrDQ
+         A8MlvZtQxz6gynqSIQGmJXj5aQDfwwWDe5MZHQs9ncvmMfYBlM97lkOIL6iQszP12VvD
+         UsbRD4Ge+jj/wIhLviGZ1zCqTTXH3XeQ85P7IDysti6pZxJDuhPrpFoAWq3py6KdMxR2
+         vv36T8BQqJOl8RH0ZXAodsKqzGpH5KbEnRzuNY3L6YOJmj7XaN0qbpO4VA40ucKyB5Ht
+         vSLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757375016; x=1757979816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TZ31nFbpBywr5LWV7R5R4cpzaC/84WhWlclxZ1iDl8w=;
-        b=cgGoJmowHO+uEPLQdQHd4S8D6G4hqQDUCgC0rR42nOZwDGbL81lRhIpg+Rv7JkOY+g
-         UmIc6+kmYenjhsjVjGqj8mwlIR9lCY635E1f3VLm/FQXxs+9hciJpVqxTXWRsUVP8hae
-         PjPqqOZXcGo84Qpu8oyhh9WQQOKOESQKl57JC/RDyi7lCN4fiNx13nejPzFlvDQDD+ML
-         onDCvSdTwpfmpS4BJVOtKMiv23MCQbuddHGD0+0LBRGKSXgTmliZDMO2suTGHLkUwmin
-         sw0w0fiTndKDcieKV4gzD5TfO+P7P0nwDJa8ZzDk3bds+N5FjR/rvRed9c2gPiX2sggk
-         Xwqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRxgqmVI7JfeLZz4As9SRU4hEetfQhmuUq/a+hrt/Dml4vfX43t1xLnD0++S9jQFkMXsc5/IExk2a1rps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwpDJFX9v7vGP21bh81hm64tIybTwHMUe4o1JmF64ZsHdUJFr3
-	XNRNEChJfISq2virR7gFUJC+seMzhoX+HVDEO/mVXvzz9lhWCuJUAyy4GHayDOT3khpGlXwLE7D
-	5pqAHVhfdfRIdoAdtGjAh9BIBxRuTImrKon1cQh+pzg==
-X-Gm-Gg: ASbGncsML0BntVPXgltu4T1RovtwJBe2wcEgNCjavNlpIupQSS9s3uVMVryXeqCVtfd
-	3neX1CQsgeoG1MVZ7i1dM0aHaWHc6VVVoHjPidctnQpaOemdAGA38Qeq6WBsml6L/GyJ7KqSnVI
-	DhJeBwXqB1qk4n353Wtlw5qJxs+fc6fR7XhTzyWpt2945xufI83z/D0KiG5x5E757nnzh1cT5Q6
-	YxUOSP24G6NRJnvOQ==
-X-Google-Smtp-Source: AGHT+IFz9G3l1NgBkuI646j9EnzDEEYlshmM1HaRnKUWjXTHPYCEEDbgvsYhJH8t3TMOXGnJoUgXdZIdCebMwUfCQhE=
-X-Received: by 2002:a05:6830:4885:b0:745:52d3:947c with SMTP id
- 46e09a7af769-74c71eff9demr5731156a34.11.1757375016543; Mon, 08 Sep 2025
- 16:43:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757375244; x=1757980044;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1VaNxRefI7j0o+B2S9CKOufLjzCN6AGZ4LGfh0Njgc=;
+        b=b3ovfeDEnsg0QNbC2xPpyTrkViq+xtwimkRTtzvsKZAyfTgnaofpsjAwnvtHANKQey
+         e/HAPwhG0BLOHAwkgO1+lOqsGllrnq5RDdcGon/EDY+xvcuwQB8QPGuARvY6m6M2aquB
+         oMZbHCzTBvp+qV0EqlbAPm4P1dl+5iX+MppKBQZUUZQPO7Wy4zc6pAJesztm/PTTS69t
+         h/SqK122TaScjtyM/AR788Jk5a84k8X6HN87BDKnkWMtTnqG8l+jiyQ8JcFdvfFPABMT
+         yZbA0UmN4IBiMSHDLJTs0wznVAwY7UIaBlS7zEw3sPKy1ExXaJ4i6e9HWvvMczrUIvV9
+         u0Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcDMDRh4BQH/vE83cy+KBQuDvE1vB//xT7rozqqgApqfxqhiYPehNDZAorlbZV68OW7ldGFInMJdxyqrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZww4En3znGjymSbZxA1Q3XvFVElgjyqO0kWvsbMVQgahzed1F
+	MiaIXEIleA8Bw73gl8FvwfNT6OtrnjTgnVROYnluCW2GbhmgIiFNubEjV7YiqtPRiRDrTqwWG/n
+	juPAFeQ==
+X-Google-Smtp-Source: AGHT+IHc6lGnlKYr6vKweQxbxOj2RZDvfbTrxSaBL44zjiwpX9Vc5oxHqCC2rZOwq92+HG5EslwU6JXZv/Q=
+X-Received: from plbmn8.prod.google.com ([2002:a17:903:a48:b0:24a:ad96:175])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e551:b0:24d:cd5a:5e88
+ with SMTP id d9443c01a7336-2516da07750mr123229315ad.2.1757375244495; Mon, 08
+ Sep 2025 16:47:24 -0700 (PDT)
+Date: Mon, 8 Sep 2025 16:47:23 -0700
+In-Reply-To: <20250822070554.26523-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com> <20250815-imx9-dts-v1-8-e609eb4e3105@nxp.com>
-In-Reply-To: <20250815-imx9-dts-v1-8-e609eb4e3105@nxp.com>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Mon, 8 Sep 2025 16:43:25 -0700
-X-Gm-Features: Ac12FXzVP_2vJkdlY1v1O3gS6w0Yd5KqydILTTKyUiWG6S13pVl8pRj4kS7eaz0
-Message-ID: <CAJ+vNU2hro_ZoRvmQ9yowKsX25AnrgZdGMn2D-RCkyJA02CEhA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] arm64: dts: imx95-19x19-evk: Add phy supply for netc
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250822070305.26427-1-yan.y.zhao@intel.com> <20250822070554.26523-1-yan.y.zhao@intel.com>
+Message-ID: <aL9rCwZGQofDh7C3@google.com>
+Subject: Re: [PATCH v2 3/3] KVM: selftests: Test prefault memory during
+ concurrent memslot removal
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, reinette.chatre@intel.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Aug 15, 2025 at 4:50=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Add phy supply for netc emdio on board.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts | 20 +++++++++++++++++=
-+++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts b/arch/arm=
-64/boot/dts/freescale/imx95-19x19-evk.dts
-> index 39815b21d235d2f8cfa49720d3be49d056ea039a..feee6da65d37cae7413b09216=
-014d6fe2b76b032 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-> @@ -226,6 +226,25 @@ sound-wm8962 {
->                                 "IN3R", "AMIC",
->                                 "IN1R", "AMIC";
->         };
+On Fri, Aug 22, 2025, Yan Zhao wrote:
+>  .../selftests/kvm/pre_fault_memory_test.c     | 94 +++++++++++++++----
+>  1 file changed, 78 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+> index 0350a8896a2f..56e65feb4c8c 100644
+> --- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
+> +++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+> @@ -10,12 +10,16 @@
+>  #include <test_util.h>
+>  #include <kvm_util.h>
+>  #include <processor.h>
+> +#include <pthread.h>
+>  
+>  /* Arbitrarily chosen values */
+>  #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+>  #define TEST_NPAGES		(TEST_SIZE / PAGE_SIZE)
+>  #define TEST_SLOT		10
+>  
+> +static bool prefault_ready;
+> +static bool delete_thread_ready;
 > +
-> +       reg_aqr_stby: regulator-aqr-stby {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "aqr-stby";
-> +               regulator-min-microvolt =3D <3300000>;
-> +               regulator-max-microvolt =3D <3300000>;
-> +               gpio =3D <&i2c5_pcal6408 1 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +       };
+>  static void guest_code(uint64_t base_gpa)
+>  {
+>  	volatile uint64_t val __used;
+> @@ -30,17 +34,47 @@ static void guest_code(uint64_t base_gpa)
+>  	GUEST_DONE();
+>  }
+>  
+> -static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+> -			     u64 left)
+> +static void *remove_slot_worker(void *data)
+> +{
+> +	struct kvm_vcpu *vcpu = (struct kvm_vcpu *)data;
 > +
-> +       reg_aqr_en: regulator-aqr-en {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "aqr-en";
-> +               regulator-min-microvolt =3D <3300000>;
-> +               regulator-max-microvolt =3D <3300000>;
-> +               vin-supply =3D <&reg_aqr_stby>;
-> +               gpio =3D <&i2c5_pcal6408 0 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +       };
->  };
->
->  &adc1 {
-> @@ -502,6 +521,7 @@ &netc_blk_ctrl {
->  &netc_emdio {
->         pinctrl-names =3D "default";
->         pinctrl-0 =3D <&pinctrl_emdio>;
-> +       phy-supply =3D <&reg_aqr_en>;
->         status =3D "okay";
->
->         ethphy0: ethernet-phy@1 {
->
-> --
-> 2.37.1
->
->
+> +	WRITE_ONCE(delete_thread_ready, true);
+> +
+> +	while (!READ_ONCE(prefault_ready))
+> +		cpu_relax();
+> +
+> +	vm_mem_region_delete(vcpu->vm, TEST_SLOT);
+> +
+> +	WRITE_ONCE(delete_thread_ready, false);
 
-Hi Peng,
+Rather than use global variables, which necessitates these "dances" to get things
+back to the initial state, use an on-stack structure to communicate (and obviously
+make sure the structure is initialized :-D).
 
-I'm not sure where you are with regards to this patch but it indicates
-to me that you may have the enetc_port2 10G port with the AQR113 PHY
-working on the imx95-19x19-evk with upstream Linux. If so I would be
-interested in knowing what other patches you have for that. I'm seeing
-the interface fail to register with:
-nxp_enetc4 0002:00:10.0 eth2: PHY has no common interfaces
+> +	return NULL;
+> +}
+> +
+> +static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
+> +			     u64 size, u64 left, bool private, bool remove_slot)
+>  {
+>  	struct kvm_pre_fault_memory range = {
+> -		.gpa = gpa,
+> +		.gpa = base_gpa + offset,
+>  		.size = size,
+>  		.flags = 0,
+>  	};
+> -	u64 prev;
+> +	pthread_t remove_thread;
+> +	bool remove_hit = false;
+>  	int ret, save_errno;
+> +	u64 prev;
+>  
+> +	if (remove_slot) {
 
-I'm wondering if there is some support missing from enetc or the
-aquantia phy required to work with 10gbase-r.
+I don't see any reason to make the slot removal conditional.  There are three
+things we're interested in testing (so far):
 
-Best Regards,
+ 1. Success
+ 2. ENOENT due to no memslot
+ 3. EAGAIN due to INVALID memslot
 
-Tim
+#1 and #2 are mutually exclusive, or rather easier to test via separate testcases
+(because writing to non-existent memory is trivial).  But for #3, I don't see a
+reason to make it mutually exclusive with #1 _or_ #2.
+
+As written, it's always mutually exclusive with #2 because otherwise it would be
+difficult (impossible?) to determine if KVM exited on the "right" address.  But
+the only reason that's true is because the test recreates the slot *after*
+prefaulting, and _that_ makes #3 _conditionally_ mutually exclusive with #1,
+i.e. the test doesn't validate success if the INVALID memslot race is hit.
+
+Rather than make everything mutually exclusive, just restore the memslot and
+retry prefaulting.  That also gives us easy bonus coverage that doing
+KVM_PRE_FAULT_MEMORY on memory that has already been faulted in is idempotent,
+i.e. that KVM_PRE_FAULT_MEMORY succeeds if it already succeeded (and nothing
+nuked the mappings in the interim).
+
+If the memslot is restored and the loop retries, then #3 becomes a complimentary
+and orthogonal testcase to #1 and #2.
+
+This?  (with an opportunistic s/left/expected_left that confused me; I thought
+"left" meant how many bytes were left to prefault, but it actually means how many
+bytes are expected to be left when failure occurs).
+
+---
+ .../selftests/kvm/pre_fault_memory_test.c     | 122 +++++++++++++++---
+ 1 file changed, 105 insertions(+), 17 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index 0350a8896a2f..2dbabf4b0b15 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -10,6 +10,7 @@
+ #include <test_util.h>
+ #include <kvm_util.h>
+ #include <processor.h>
++#include <pthread.h>
+ 
+ /* Arbitrarily chosen values */
+ #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+@@ -30,18 +31,66 @@ static void guest_code(uint64_t base_gpa)
+ 	GUEST_DONE();
+ }
+ 
+-static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+-			     u64 left)
++struct slot_worker_data {
++	struct kvm_vm *vm;
++	u64 gpa;
++	uint32_t flags;
++	bool worker_ready;
++	bool prefault_ready;
++	bool recreate_slot;
++};
++
++static void *delete_slot_worker(void *__data)
++{
++	struct slot_worker_data *data = __data;
++	struct kvm_vm *vm = data->vm;
++
++	WRITE_ONCE(data->worker_ready, true);
++
++	while (!READ_ONCE(data->prefault_ready))
++		cpu_relax();
++
++	vm_mem_region_delete(vm, TEST_SLOT);
++
++	while (!READ_ONCE(data->recreate_slot))
++		cpu_relax();
++
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, data->gpa,
++				    TEST_SLOT, TEST_NPAGES, data->flags);
++
++	return NULL;
++}
++
++static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
++			     u64 size, u64 expected_left, bool private)
+ {
+ 	struct kvm_pre_fault_memory range = {
+-		.gpa = gpa,
++		.gpa = base_gpa + offset,
+ 		.size = size,
+ 		.flags = 0,
+ 	};
+-	u64 prev;
++	struct slot_worker_data data = {
++		.vm = vcpu->vm,
++		.gpa = base_gpa,
++		.flags = private ? KVM_MEM_GUEST_MEMFD : 0,
++	};
++	bool slot_recreated = false;
++	pthread_t slot_worker;
+ 	int ret, save_errno;
++	u64 prev;
+ 
+-	do {
++	/*
++	 * Concurrently delete (and recreate) the slot to test KVM's handling
++	 * of a racing memslot deletion with prefaulting.
++	 */
++	pthread_create(&slot_worker, NULL, delete_slot_worker, &data);
++
++	while (!READ_ONCE(data.worker_ready))
++		cpu_relax();
++
++	WRITE_ONCE(data.prefault_ready, true);
++
++	for (;;) {
+ 		prev = range.size;
+ 		ret = __vcpu_ioctl(vcpu, KVM_PRE_FAULT_MEMORY, &range);
+ 		save_errno = errno;
+@@ -49,18 +98,56 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+ 			    "%sexpecting range.size to change on %s",
+ 			    ret < 0 ? "not " : "",
+ 			    ret < 0 ? "failure" : "success");
+-	} while (ret >= 0 ? range.size : save_errno == EINTR);
+ 
+-	TEST_ASSERT(range.size == left,
+-		    "Completed with %lld bytes left, expected %" PRId64,
+-		    range.size, left);
++		/*
++		 * Immediately retry prefaulting if KVM was interrupted by an
++		 * unrelated signal/event.
++		 */
++		if (ret < 0 && save_errno == EINTR)
++			continue;
+ 
+-	if (left == 0)
+-		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++		/*
++		 * Tell the worker to recreate the slot in order to complete
++		 * prefaulting (if prefault didn't already succeed before the
++		 * slot was deleted) and/or to prepare for the next testcase.
++		 * Wait for the worker to exit so that the next invocation of
++		 * prefaulting is guaranteed to complete (assuming no KVM bugs).
++		 * Always retry prefaulting to simply the retry logic.  Either
++		 * prefaulting already succeeded, in which case retrying should
++		 * also succeed, or retry is needed to get a stable result.
++		 */
++		if (!slot_recreated) {
++			WRITE_ONCE(data.recreate_slot, true);
++			pthread_join(slot_worker, NULL);
++			slot_recreated = true;
++			continue;
++		}
++
++		/*
++		 * All done if there are no remaining bytes to prefault, or if
++		 * prefaulting failed (EINTR was handled above, and EAGAIN due
++		 * to prefaulting a memslot that's being actively deleted should
++		 * be impossible since the memslot has already been recreated).
++		 */
++		if (!range.size || ret < 0)
++			break;
++	}
++
++	TEST_ASSERT(range.size == expected_left,
++		    "Completed with %llu bytes left, expected %lu",
++		    range.size, expected_left);
++
++	/*
++	 * Assert success if prefaulting the entire range should succeed, i.e.
++	 * complete with no bytes remaining.  Otherwise prefaulting should have
++	 * failed due to ENOENT (due to RET_PF_EMULATE for emulated MMIO when
++	 * no memslot exists).
++	 */
++	if (!expected_left)
++		TEST_ASSERT_VM_VCPU_IOCTL(!ret, KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
+ 	else
+-		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
+-		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
+-					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++		TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++					  KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
+ }
+ 
+ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+@@ -97,9 +184,10 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ 
+ 	if (private)
+ 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
++
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private);
++	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE, private);
++	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE, private);
+ 
+ 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
+ 	vcpu_run(vcpu);
+
+base-commit: ecbcc2461839e848970468b44db32282e5059925
+--
 
