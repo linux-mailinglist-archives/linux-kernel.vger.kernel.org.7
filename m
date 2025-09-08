@@ -1,376 +1,194 @@
-Return-Path: <linux-kernel+bounces-805553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB55B48A24
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:26:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8A8B48A53
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CBCE7A827E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB29E166291
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9272F7ACB;
-	Mon,  8 Sep 2025 10:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5262FA0ED;
+	Mon,  8 Sep 2025 10:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="v5ZyeOd6"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I5H90PfI"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2083.outbound.protection.outlook.com [40.107.93.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE321CAA65;
-	Mon,  8 Sep 2025 10:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757327158; cv=none; b=sTk+OvAu/4CQKk2hWCH/7b9pm/BxK2rdvWKJRkc5j3FGzmCICRsCPQy3UVAwodnVv5hdo/TGVTz0teBabroLItgZ4lLf16ZtEVaz0mRt2Tojbx4wAnE23/Y/BVpqfqz4MWKrRVpMmMhqSIkdLbiXhXLuxqopBWw70ST0oIa7zBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757327158; c=relaxed/simple;
-	bh=21K8KcR1MCrMWqs8uGKEa0hkEr38n6EV34+F/YkbVgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ud/COlWPaZai4lEr7SlOxCdIfcUz/CS3xKR6p2V9NzRP3llQIlrkNnpyc6PyVB8WVqLY9cnQlqfTzvEXCnUoGKcPyRY8GWJnUWoSD0ZG+ZssTLShbXBFW5z+vciQBHUX2xHaNLEYhoWLxP2QZACTv2wQ+59ajKEnMrrcBRs6vy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=v5ZyeOd6; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5A6CBC71;
-	Mon,  8 Sep 2025 12:24:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757327081;
-	bh=21K8KcR1MCrMWqs8uGKEa0hkEr38n6EV34+F/YkbVgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v5ZyeOd647ETC8Gf8bPcBCBKrRxwoUh2pbqJM25AnaU8bJLSCBwetn6FMcH1UNmsI
-	 bjTt5HlWkyBG7oiIWiCcg1JG/vuCVgTXrB0DmLl+Ii+RDux6t1cL6HkfNYBrY78srX
-	 WwIydoHwOfoX0vxIn7P5GXCouTRjeeyEjLBnU02o=
-Date: Mon, 8 Sep 2025 12:25:32 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Fix race condition for meta buffer list
-Message-ID: <20250908102532.GC26062@pendragon.ideasonboard.com>
-References: <20250714-uvc-racemeta-v1-1-360de2e15a9a@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3032F3C28;
+	Mon,  8 Sep 2025 10:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757327867; cv=fail; b=FruDQ0F3ry+ioKzA2xT2s/Yl2ysWYRw6+1ih8mAppG3uiiPyeORxG7c6lq/ki/1qpJBiBiIJUOVwI19ee2wtmBL47TghJPytjnz3bl2H6/9YQjPRUIdYfbUXkQ5rsL/5pO0NM5AVsWhOooxFi2kNOzMS+oTDGakFL7kU81BBSDI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757327867; c=relaxed/simple;
+	bh=f/NjHyQ0Dt4TSLOysLUubxJac3LEgjGPZYgOR0jqCBY=;
+	h=References:From:To:CC:Subject:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=e2W3kGJ+OQ3oJgUW7qP05M490YOXMaMgibgPdTriGq+xbIYbUAoYA4T//RuYwa+i/eopYvbh1yDkTSNuAUFpDRyBfQ0ceuDI7kHS9g/hsGomgUzH6rNjOZ7MVHqds4KHHyErsrZq6QU5+S84YYzS3vsOh3/szkM122xgeabWjCI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I5H90PfI; arc=fail smtp.client-ip=40.107.93.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GfPqm0fkSFJgESxmQ6BXDVywGWJeBhu1n9fVTubVUg8lbnh2bOOZ/GuwvslPW7xC9GcKBTC51DgZLAeEPii08JCU2PHyv7tV73X5/C5TL0dtHMmhiyIpjSlMFiz1BFTFI8jXLwlZe184o9Fx1ot6U6RmSWLD8E2lu+qR4c0hqVODYjUitmZQAKwMGfKjVDBiEpNTCQOOVrBlAjREdUyKmAQwS8XSgwYqzjxefc5T06AtUV0cwPpOntVr+RodgZOSARcMc6IGNgXWKXsDT6UUEzyeCirnX6UYM0qKxzH8j2IIrtdhT8jTOvUQGRRGoTiBh+YjlQxjlGYncyqOl2EgQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NM6t9e8TNKgRA8qTWslAodoY6JjKW1ep3aqeGcgmUWY=;
+ b=TDNuNiZ6mRsvw82PZ1rLYojnjKlNhrhhTt8i4vWymRQFZaM80+grD6eTW66fY5Js3QHwKuEKstozbUQbREczzyrpCyrBP4BY0lbjVgeZ8mH3HrPM817pvDMdjaDUPLh7znOt3AeDd324cr2ZxY/PzG/oFMdp+N1aRH0VB4BbZYZrj0ARfnUEz59ZNtew182LuESGBkgTWyppfECoSQn6KpKek6HfYzYqqPCICFMYGco5JZQKV62Uh9LFwGp3TqZRxHLhgGkS7Odbqz3ds/UCtj5aMY77vqbwSjiX9/h287GEihMMWLhv/FSrKTh5ooEOTyhnmbGuuTT/vxgiEghDFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NM6t9e8TNKgRA8qTWslAodoY6JjKW1ep3aqeGcgmUWY=;
+ b=I5H90PfIp/Ii3cMI4F6N33ERNzRKynMTDVL31R5U0y+b5+mvO45t7N1Jym4fqkRRtfGiSRDHR98RVgfCz1pEAJGN/GsbTY6aVhmOWENXOtjeN6Mtoa3e0JBUZpKZK/yQaC1wACfoY266DAXOfOdiTxStGE6FjWjQcKCQkz2UeDt9BIniA3QCbKtFLsiybjzQRkerpZ0TIdHc0e0+cJzxBppav4Wn5sfMF7+S1hptbbHRjodWM6RTqY8o24dtWa2BF4uYL0lUZENyK4BPEBvJ3CDpcdHequ4NdalFNoi3w/dy5aH2FPmOc3js7go1k/pMSRX9JtntK6BlAlMpxLf53g==
+Received: from SJ0PR05CA0048.namprd05.prod.outlook.com (2603:10b6:a03:33f::23)
+ by MW4PR12MB6949.namprd12.prod.outlook.com (2603:10b6:303:208::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Mon, 8 Sep
+ 2025 10:37:40 +0000
+Received: from CO1PEPF000066EB.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f:cafe::8a) by SJ0PR05CA0048.outlook.office365.com
+ (2603:10b6:a03:33f::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.8 via Frontend Transport; Mon, 8
+ Sep 2025 10:37:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000066EB.mail.protection.outlook.com (10.167.249.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 10:37:39 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 03:37:17 -0700
+Received: from fedora (10.126.230.35) by rnnvmail201.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 03:36:44 -0700
+References: <20250906170440.3513399-1-mmyangfl@gmail.com>
+ <aL59Jl5p6bEtCAxo@shredder>
+User-agent: mu4e 1.8.14; emacs 30.2
+From: Petr Machata <petrm@nvidia.com>
+To: Ido Schimmel <idosch@nvidia.com>
+CC: David Yang <mmyangfl@gmail.com>, <netdev@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Nikolay Aleksandrov
+	<razor@blackwall.org>, Andy Roulin <aroulin@nvidia.com>, Yong Wang
+	<yongwang@nvidia.com>, Petr Machata <petrm@nvidia.com>, Vladimir Oltean
+	<vladimir.oltean@nxp.com>, Amit Cohen <amcohen@nvidia.com>, Li Shuang
+	<shuali@redhat.com>, Alessandro Zanni <alessandro.zanni87@gmail.com>, "Xin
+ Long" <lucien.xin@gmail.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] selftests: forwarding: Reorder arguments to
+ obey POSIX getopt
+Date: Mon, 8 Sep 2025 12:25:56 +0200
+In-Reply-To: <aL59Jl5p6bEtCAxo@shredder>
+Message-ID: <87y0qpw7t4.fsf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250714-uvc-racemeta-v1-1-360de2e15a9a@chromium.org>
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EB:EE_|MW4PR12MB6949:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86637f32-7c58-4c2a-6b85-08ddeec3bc29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yZ2qo8nAuABsaB7iwd/Y4e7tf4Y8yQe3J44aMW6BLmP4Um1vuxBh7UVp7D4o?=
+ =?us-ascii?Q?V7VwRm3pBG5KFDGIUKM11glwDRBVU+WfofaXzlndnZ9Dgd7/PhJ+w+XBN+cH?=
+ =?us-ascii?Q?XyqB4mkfsDj9O/TsL17fU3mTYTe35Et9uOrjBxJF7q1bZdJiFaZ1fsYWFSfh?=
+ =?us-ascii?Q?VH2NLNYh5p1Jh4wQV4LtcqjLc3+XCFzoHPUzFTanx3HmlJbq7ERzMo/bvfAS?=
+ =?us-ascii?Q?MDYE2z70yNiQWiYNIZhZe0GHHhJAZ1cFKEuXRXJT2SfJJXpciWNIDt1jz0p+?=
+ =?us-ascii?Q?CTuH0Bde0T67B5Qo5EEVfL6bn2bcFpGrrL18BA4gp2k36f2cNGBlWDLz75Ay?=
+ =?us-ascii?Q?zaj6mmDtQC7gLnOhx9lBrDVL8aosUOBNMTJ2dToTtiSK9OYGBiZT6fHID7B6?=
+ =?us-ascii?Q?l1Xt7yO5NWlFIS7RnSOeqO0LbRX5RAM6kulAYIG8O+p5xgvQAZHFUz5/21Gx?=
+ =?us-ascii?Q?1YRr4dUVTKKT260DHJ0WYtmjskCWJ+SYnHahADv1043HlGggnDlwecuWxvZH?=
+ =?us-ascii?Q?38UV8CZqSv4+GoTF4h87DbdcWABcZk2FOV+trsMkATpqoYC6EXw0qX2VS9o8?=
+ =?us-ascii?Q?EMG8hwg67xMDTz6jvXa+rmTDqGq5xF949Z9H1zWMIQi9DXyWjGH9ARvdp220?=
+ =?us-ascii?Q?9zoYHU7ioWhN/PGewalDasxcpajd81P+A6vnvmjcYEdt/VfYy7G6pjZIP9C1?=
+ =?us-ascii?Q?5wfJJFzYxMrvMRrmYXYXVoxnZ5+bo5w+x9z8QID08jQQsjf7ZtfE0EZWWeNE?=
+ =?us-ascii?Q?Ctdc5BdZesuXiciLi9SWOZGtKwT0bOblFDaLzlC7oTBorlClzaOyCmOPXyP2?=
+ =?us-ascii?Q?NdJffxKFFOMG2BjyujdLSJ1ti6yCDNmz2mRCbTF6nOegtzw21NSt8SIn30Q0?=
+ =?us-ascii?Q?mJE0+Nzw+5fCdqGbeLeDCfIMC8nNpakQAivtH60mGPufHIcsodYD0j9g6+ly?=
+ =?us-ascii?Q?f7ji2ie89oDndUd7el6z+vTOn/Oy9dEtcNLRx6Rwxpea46VsOv69x+yDlo+o?=
+ =?us-ascii?Q?Evt5t1aLaYUhKp6c7oW66C5fHl6hEo61Capy5Fr+PH9wiMebpdSZUfiM0CZ6?=
+ =?us-ascii?Q?cRVfb9Q7Ay0HxsI/coTgh/4aVKQNZMBunsCOA79skXxJno6ArbvKrnk67Gf6?=
+ =?us-ascii?Q?fr0wvmbCN4hTLPBybADYun8jkhKJEnepY895r73GLA91C83lpo3VKwBY8pPa?=
+ =?us-ascii?Q?873ISQUj/qBOtqRgIfA7fnOFO1MWvbEDSocSUBK86n5SzzptMK+gBYJDc8sy?=
+ =?us-ascii?Q?p+zWVFWYR7W5Su38oiX/pzxDahU6qYi3qQHxeAq804UWGm9GDxapT6MFHdU/?=
+ =?us-ascii?Q?2WKgyFBbERg/8syyx0cW8+sEUB/A1fa2FZO1G61z+nRaCoylGRPFURdx9708?=
+ =?us-ascii?Q?DtzzCwyT1PmsAKeXOHq2EmKC5TwoWMHAkRMq0oFoBJAF/A69ztR4wvN8tq/O?=
+ =?us-ascii?Q?A4mj8V1RBaRptK0ABJpwPQmQqlntXtjyYi2hYVqOXIe821SYDkw/IS7IsvuW?=
+ =?us-ascii?Q?BcriqeGhEsyOWYjwIZc5HPweTgH+8gkm3Gcbd3SzuzjGzPSd/yyBrMvkZw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 10:37:39.7815
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86637f32-7c58-4c2a-6b85-08ddeec3bc29
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066EB.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6949
 
-Hi Ricardo,
 
-Thank you for the patch.
+Ido Schimmel <idosch@nvidia.com> writes:
 
-On Mon, Jul 14, 2025 at 10:23:45AM +0000, Ricardo Ribalda wrote:
-> queue->irqueue contains a list of the buffers owned by the driver. The
-> list is protected by queue->irqlock. uvc_queue_get_current_buffer()
-> returns a pointer to the current buffer in that list, but does not
-> remove the buffer from it. This can lead to race conditions.
-> 
-> Inspecting the code, it seems that the candidate for such race is
-> uvc_queue_return_buffers(). For the capture queue, that function is
-> called with the device streamoff, so no race can occur. On the other
-> hand, the metadata queue, could trigger a race condition, because
-> stop_streaming can be called with the device in any streaming state.
-> 
-> We can solve this issue modifying the way the metadata buffer
-> lifetime works. We can keep the queue->irqlock while the use the current
-> metadata buffer.
-> 
-> The core of this change is uvc_video_decode_meta(), it now obtains the
-> buffer and holds the spinlock instead of getting the buffer as an
-> argument.
-> 
-> Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Closes: https://lore.kernel.org/linux-media/20250630141707.GG20333@pendragon.ideasonboard.com/
-> Cc: stable@vger.kernel.org
-> Fixes: 088ead255245 ("media: uvcvideo: Add a metadata device node")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_isight.c |  3 +-
->  drivers/media/usb/uvc/uvc_queue.c  |  4 +-
->  drivers/media/usb/uvc/uvc_video.c  | 92 ++++++++++++++++++++++----------------
->  drivers/media/usb/uvc/uvcvideo.h   |  8 ++--
->  4 files changed, 62 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_isight.c b/drivers/media/usb/uvc/uvc_isight.c
-> index 43cda5e760a345af56186603e2f0594b814cdbcb..f0e71744d25cab98184335b46569b31ba1346e12 100644
-> --- a/drivers/media/usb/uvc/uvc_isight.c
-> +++ b/drivers/media/usb/uvc/uvc_isight.c
-> @@ -98,8 +98,7 @@ static int isight_decode(struct uvc_video_queue *queue, struct uvc_buffer *buf,
->  	return 0;
->  }
->  
-> -void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
-> -			struct uvc_buffer *meta_buf)
-> +void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf)
->  {
->  	struct urb *urb = uvc_urb->urb;
->  	struct uvc_streaming *stream = uvc_urb->stream;
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> index 790184c9843d211d34fa7d66801631d5a07450bd..e184e3ae0f59f142a683263168724bca64509628 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -310,9 +310,11 @@ void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect)
->   * Buffers may span multiple packets, and even URBs, therefore the active buffer
->   * remains on the queue until the EOF marker.
->   */
-> -static struct uvc_buffer *
-> +struct uvc_buffer *
->  __uvc_queue_get_current_buffer(struct uvc_video_queue *queue)
->  {
-> +	lockdep_assert_held(&queue->irqlock);
-> +
->  	if (list_empty(&queue->irqqueue))
->  		return NULL;
->  
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..d6777090d0f892ffe93696c915acd4ec171ca798 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1428,9 +1428,11 @@ static int uvc_video_encode_data(struct uvc_streaming *stream,
->   * previous header.
->   */
->  static void uvc_video_decode_meta(struct uvc_streaming *stream,
-> -				  struct uvc_buffer *meta_buf,
->  				  const u8 *mem, unsigned int length)
->  {
-> +	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> +	struct uvc_video_queue *qmeta = &stream->meta.queue;
-> +	struct uvc_buffer *meta_buf;
->  	struct uvc_meta_buf *meta;
->  	size_t len_std = 2;
->  	bool has_pts, has_scr;
-> @@ -1439,7 +1441,13 @@ static void uvc_video_decode_meta(struct uvc_streaming *stream,
->  	ktime_t time;
->  	const u8 *scr;
->  
-> -	if (!meta_buf || length == 2)
-> +	if (!vb2_qmeta || length <= 2)
-> +		return;
-> +
-> +	guard(spinlock_irqsave)(&qmeta->irqlock);
+> On Sun, Sep 07, 2025 at 01:04:35AM +0800, David Yang wrote:
+>> Quoted from musl wiki:
+>> 
+>>   GNU getopt permutes argv to pull options to the front, ahead of
+>>   non-option arguments. musl and the POSIX standard getopt stop
+>>   processing options at the first non-option argument with no
+>>   permutation.
+>> 
+>> Thus these scripts stop working on musl since non-option arguments do
+>> not always come last. Fix it by reordering arguments.
+>> 
+>> Signed-off-by: David Yang <mmyangfl@gmail.com>
+>
+> 2. Did you try a newer version of mausezahn? Seems the issue was fixed
+> 2.5 years ago:
+> https://github.com/netsniff-ng/netsniff-ng/pull/237/commits/f5dce56e74b005daec72c771d27d55964aa8efd7
+>
+> I feel like this change is fragile since current usage is in accordance
+> with mausezahn man page.
 
-This keeps the spinlock held for longer than I would like. We should
-really try to minimize the amount of work performed with a spinlock
-held.
+I was OK with the change, but the fact that MZ has been fixed, and yes,
+it's a fix, because per man page the current usage should work... it
+stopped making sense to me.
 
-> +
-> +	meta_buf = __uvc_queue_get_current_buffer(qmeta);
-> +	if (!meta_buf)
->  		return;
->  
->  	has_pts = mem[1] & UVC_STREAM_PTS;
-> @@ -1512,30 +1520,48 @@ static void uvc_video_validate_buffer(const struct uvc_streaming *stream,
->   * Completion handler for video URBs.
->   */
->  
-> -static void uvc_video_next_buffers(struct uvc_streaming *stream,
-> -		struct uvc_buffer **video_buf, struct uvc_buffer **meta_buf)
-> +static void uvc_video_next_meta(struct uvc_streaming *stream,
-> +				struct uvc_buffer *video_buf)
->  {
-> -	uvc_video_validate_buffer(stream, *video_buf);
-> +	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> +	struct uvc_video_queue *qmeta = &stream->meta.queue;
-> +	struct uvc_buffer *meta_buf;
-> +	struct vb2_v4l2_buffer *vb2_meta;
-> +	const struct vb2_v4l2_buffer *vb2_video;
->  
-> -	if (*meta_buf) {
-> -		struct vb2_v4l2_buffer *vb2_meta = &(*meta_buf)->buf;
-> -		const struct vb2_v4l2_buffer *vb2_video = &(*video_buf)->buf;
-> +	if (!vb2_qmeta)
-> +		return;
->  
-> -		vb2_meta->sequence = vb2_video->sequence;
-> -		vb2_meta->field = vb2_video->field;
-> -		vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-> +	guard(spinlock_irqsave)(&qmeta->irqlock);
->  
-> -		(*meta_buf)->state = UVC_BUF_STATE_READY;
-> -		if (!(*meta_buf)->error)
-> -			(*meta_buf)->error = (*video_buf)->error;
-> -		*meta_buf = uvc_queue_next_buffer(&stream->meta.queue,
-> -						  *meta_buf);
-> -	}
-> -	*video_buf = uvc_queue_next_buffer(&stream->queue, *video_buf);
-> +	meta_buf = __uvc_queue_get_current_buffer(qmeta);
-> +	if (!meta_buf)
-> +		return;
-> +	list_del(&meta_buf->queue);
-> +
-> +	vb2_meta = &meta_buf->buf;
-> +	vb2_video = &video_buf->buf;
-> +
-> +	vb2_meta->sequence = vb2_video->sequence;
-> +	vb2_meta->field = vb2_video->field;
-> +	vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-> +	meta_buf->state = UVC_BUF_STATE_READY;
-> +	if (!meta_buf->error)
-> +		meta_buf->error = video_buf->error;
-> +
-> +	uvc_queue_buffer_release(meta_buf);
-> +}
-> +
-> +static struct uvc_buffer *uvc_video_next_buffer(struct uvc_streaming *stream,
-> +						struct uvc_buffer *video_buf)
-> +{
-> +	uvc_video_validate_buffer(stream, video_buf);
-> +	uvc_video_next_meta(stream, video_buf);
-> +	return uvc_queue_next_buffer(&stream->queue, video_buf);
->  }
->  
->  static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
-> -			struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> +				  struct uvc_buffer *buf)
->  {
->  	struct urb *urb = uvc_urb->urb;
->  	struct uvc_streaming *stream = uvc_urb->stream;
-> @@ -1559,13 +1585,13 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
->  			ret = uvc_video_decode_start(stream, buf, mem,
->  				urb->iso_frame_desc[i].actual_length);
->  			if (ret == -EAGAIN)
-> -				uvc_video_next_buffers(stream, &buf, &meta_buf);
-> +				buf = uvc_video_next_buffer(stream, buf);
->  		} while (ret == -EAGAIN);
->  
->  		if (ret < 0)
->  			continue;
->  
-> -		uvc_video_decode_meta(stream, meta_buf, mem, ret);
-> +		uvc_video_decode_meta(stream, mem, ret);
->  
->  		/* Decode the payload data. */
->  		uvc_video_decode_data(uvc_urb, buf, mem + ret,
-> @@ -1576,12 +1602,12 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
->  			urb->iso_frame_desc[i].actual_length);
->  
->  		if (buf->state == UVC_BUF_STATE_READY)
-> -			uvc_video_next_buffers(stream, &buf, &meta_buf);
-> +			buf = uvc_video_next_buffer(stream, buf);
->  	}
->  }
->  
->  static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> -			struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> +				  struct uvc_buffer *buf)
->  {
->  	struct urb *urb = uvc_urb->urb;
->  	struct uvc_streaming *stream = uvc_urb->stream;
-> @@ -1607,7 +1633,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
->  		do {
->  			ret = uvc_video_decode_start(stream, buf, mem, len);
->  			if (ret == -EAGAIN)
-> -				uvc_video_next_buffers(stream, &buf, &meta_buf);
-> +				buf = uvc_video_next_buffer(stream, buf);
->  		} while (ret == -EAGAIN);
->  
->  		/* If an error occurred skip the rest of the payload. */
-> @@ -1617,7 +1643,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
->  			memcpy(stream->bulk.header, mem, ret);
->  			stream->bulk.header_size = ret;
->  
-> -			uvc_video_decode_meta(stream, meta_buf, mem, ret);
-> +			uvc_video_decode_meta(stream, mem, ret);
->  
->  			mem += ret;
->  			len -= ret;
-> @@ -1644,7 +1670,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
->  			uvc_video_decode_end(stream, buf, stream->bulk.header,
->  				stream->bulk.payload_size);
->  			if (buf->state == UVC_BUF_STATE_READY)
-> -				uvc_video_next_buffers(stream, &buf, &meta_buf);
-> +				buf = uvc_video_next_buffer(stream, buf);
->  		}
->  
->  		stream->bulk.header_size = 0;
-> @@ -1654,7 +1680,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
->  }
->  
->  static void uvc_video_encode_bulk(struct uvc_urb *uvc_urb,
-> -	struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> +				  struct uvc_buffer *buf)
->  {
->  	struct urb *urb = uvc_urb->urb;
->  	struct uvc_streaming *stream = uvc_urb->stream;
-> @@ -1707,8 +1733,6 @@ static void uvc_video_complete(struct urb *urb)
->  	struct uvc_video_queue *qmeta = &stream->meta.queue;
->  	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
->  	struct uvc_buffer *buf = NULL;
-> -	struct uvc_buffer *buf_meta = NULL;
-> -	unsigned long flags;
->  	int ret;
->  
->  	switch (urb->status) {
-> @@ -1734,14 +1758,6 @@ static void uvc_video_complete(struct urb *urb)
->  
->  	buf = uvc_queue_get_current_buffer(queue);
->  
-> -	if (vb2_qmeta) {
-> -		spin_lock_irqsave(&qmeta->irqlock, flags);
-> -		if (!list_empty(&qmeta->irqqueue))
-> -			buf_meta = list_first_entry(&qmeta->irqqueue,
-> -						    struct uvc_buffer, queue);
-> -		spin_unlock_irqrestore(&qmeta->irqlock, flags);
-> -	}
-> -
->  	/* Re-initialise the URB async work. */
->  	uvc_urb->async_operations = 0;
->  
-> @@ -1755,7 +1771,7 @@ static void uvc_video_complete(struct urb *urb)
->  	 * Process the URB headers, and optionally queue expensive memcpy tasks
->  	 * to be deferred to a work queue.
->  	 */
-> -	stream->decode(uvc_urb, buf, buf_meta);
-> +	stream->decode(uvc_urb, buf);
->  
->  	/* If no async work is needed, resubmit the URB immediately. */
->  	if (!uvc_urb->async_operations) {
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 757254fc4fe930ae61c9d0425f04d4cd074a617e..bb41477ce4ff5cdbf27bc9d830b63a60645e3fa1 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -479,8 +479,7 @@ struct uvc_streaming {
->  	unsigned int frozen : 1;
->  	struct uvc_video_queue queue;
->  	struct workqueue_struct *async_wq;
-> -	void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
-> -		       struct uvc_buffer *meta_buf);
-> +	void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf);
->  
->  	struct {
->  		struct video_device vdev;
-> @@ -694,6 +693,8 @@ int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type);
->  void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect);
->  struct uvc_buffer *uvc_queue_next_buffer(struct uvc_video_queue *queue,
->  					 struct uvc_buffer *buf);
-> +struct uvc_buffer *
-> +__uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
->  struct uvc_buffer *uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
->  void uvc_queue_buffer_release(struct uvc_buffer *buf);
->  static inline int uvc_queue_streaming(struct uvc_video_queue *queue)
-> @@ -802,8 +803,7 @@ u16 uvc_endpoint_max_bpi(struct usb_device *dev, struct usb_host_endpoint *ep);
->  
->  /* Quirks support */
->  void uvc_video_decode_isight(struct uvc_urb *uvc_urb,
-> -			     struct uvc_buffer *buf,
-> -			     struct uvc_buffer *meta_buf);
-> +			     struct uvc_buffer *buf);
->  
->  /* debugfs and statistics */
->  void uvc_debugfs_init(void);
-> 
-> ---
-> base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-> change-id: 20250714-uvc-racemeta-fee2e69bbfcd
+I'm still fine with the ping changes for the same reason. However.
 
--- 
-Regards,
+People will introduce more ping commands in the future, and we are going
+to rely on their cut'n'pasting to keep the codebase working. I don't
+think we should require the selftests to be musl-clean. We have enough
+trouble getting people write selftests, I don't think contributors
+should spread themselves thin with stuff like posix compliance and musl
+support in selftests. IMHO if it works under bash / glibc, it's golden.
 
-Laurent Pinchart
+All of which is to say: ack, but you may have to send more patches like
+this in the future :)
 
