@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-805667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FBBB48C15
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A717DB48C17
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D06D3189F29C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6248C17315B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A8222A7F2;
-	Mon,  8 Sep 2025 11:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="BHl7nfJ2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADBD2253F2;
+	Mon,  8 Sep 2025 11:26:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CCA219A79;
-	Mon,  8 Sep 2025 11:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757330792; cv=pass; b=UDmTcB7FZFhha7uOiqCwX2RxuEnMBlXKor/WCqogva5wOJoTP1FyOZVnGePyLFkRvgeg+E+aT6DtgK+zgsYf1+0qTEclC8ddqFKHiWUpn89FCI1B1EZuFmW7o6P51hsHU6sBMjXWqKx4lpLHEbIM4oEVpUyMcS39rK2S7mM8Qqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757330792; c=relaxed/simple;
-	bh=eVbCFAA3x9bibq1+I1Mxq/CvQ5L+I6BZnkIAmHs91lM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oLRt7i4V+LBsHr6J6p3XMlrPe6F6BizqNW+6UuLrQ7yo9Qussr8Qwbkegl/awJG4qelPKla1Ltig6gKk98qQAVZNflNci41N6+QR3h/i4bWUttRxkSnYeKKBAfsRrVRuDwbOPYNLAlKRV7PelShlWFxo9+3BYzsJw4XaclBcAwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=BHl7nfJ2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757330782; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=F1rq2h03KpgOj+V7/RWl/A02tG7qtK9GYkcnLnt6npumcC9kQwGaKgkw8ZhacGyBFAPknzYtQnCO1QqEqq7afE5s5KA1T67dROBAIwbqfzVjcLEk2JY7vStpyNfvusjJVTg7QhSRZkfRUmd5crXMZvziNyhMfkflMo6n5jVlkTw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757330782; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UPVKRFnnfsp9Ohqw9fZz0rFjX14hrxM8s5ZBYf7ggUU=; 
-	b=DW/z/0mDvfQrCu419ND4MTf9BI3YmgWvkBzV0VF6JuKKE7U7yzASZy0YEcVLFLRN3ZRPygqG1Ab9kZrKLtKCBUjOtXarVWjZA3WFFD5OBGkPNvZqKRPTaNG7xs/D1qEd5w7bI2xBqVLM0rAQznVOIdeOboa48quEocY834WRLCY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757330782;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=UPVKRFnnfsp9Ohqw9fZz0rFjX14hrxM8s5ZBYf7ggUU=;
-	b=BHl7nfJ2xLrm89YCrl1JIbHlL4xoCX+ewdREZs9WS03XKHiQ+FFrP9kw2swuPqH/
-	29WdAPNJwfYCAVarYvVlsM3iiGBIZF/e8qCbcdIHn7aWr1bSGu61AFx9b4OmH1WaAT3
-	v9M7vSIY0s55K3qNPQPPzqIJ6ouZgWaeZRXbP2M4=
-Received: by mx.zohomail.com with SMTPS id 1757330781655602.410704399152;
-	Mon, 8 Sep 2025 04:26:21 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Yury Norov <yury.norov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bitmap tree with the devfreq tree
-Date: Mon, 08 Sep 2025 13:26:18 +0200
-Message-ID: <5937399.DvuYhMxLoT@workhorse>
-In-Reply-To: <20250908175135.4215c780@canb.auug.org.au>
-References: <20250908175135.4215c780@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2030433C8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757330798; cv=none; b=eTbT0UkvSZTnudMPjQjqDI8J5gD5PhLTyzA76Dh9LkX0zmusRQAOV+VHC+OEuD4xtsHtpTMO8CjAnmRqgLHGND/qGVkAXlHiYxTtql6cLd/G7YSUzoKpCvJGZtzbg+vdmQ2wU3eVwQ0mkcjvyjgSSMznmw4Tz1r6nNtlyiEQO70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757330798; c=relaxed/simple;
+	bh=c6t4cydIqpleUp8P0JIcZAYejDjGJcodaWPjnrvk1lY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O3dvtxgS0y400UIvuUxvHwFEaazq2APZCYj9Cx/hhSHAh+B5kHGnnkThFsgR613cVlk7xJIZC+CLxEKoFKQWoM5b0ILDW4XiX+ExfmSQJ6x205zc5g1xTBJdyM9S5m4pkpr2OFYKi3rSVo6iZjZEe32Z+FCRiFNrI1MVg99aisI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uva0s-000411-Fl; Mon, 08 Sep 2025 13:26:22 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uva0q-000Evp-03;
+	Mon, 08 Sep 2025 13:26:20 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uva0p-0000000CAcM-3sYj;
+	Mon, 08 Sep 2025 13:26:19 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Hubert=20Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	stable@vger.kernel.org,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Subject: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups
+Date: Mon,  8 Sep 2025 13:26:19 +0200
+Message-ID: <20250908112619.2900723-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Monday, 8 September 2025 09:51:35 Central European Summer Time Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the bitmap tree got a conflict in:
-> 
->   drivers/devfreq/event/rockchip-dfi.c
-> 
-> between commit:
-> 
->   7d9e29ed3f8e ("PM / devfreq: rockchip-dfi: add support for LPDDR5")
-> 
-> from the devfreq tree and commit:
-> 
->   414054a0bc1f ("PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 macro")
-> 
-> from the bitmap tree.
+Drop phylink_{suspend,resume}() from ax88772 PM callbacks.
 
-Yeah, basically both of these were by me and landed at the same time
-through different trees; they were developed at different times and
-the reviews just happened to conclude at the same moment. The reason
-why they go through different trees is that the bitmap changes are
-part of a large refactor across several drivers to make them use a
-shared macro instead of reinventing their own, whereas the devfreq
-side of the changes is functional changes to add LPDDR5 support and
-also fix the cycle count on RK3588.
+MDIO bus accesses have their own runtime-PM handling and will try to
+wake the device if it is suspended. Such wake attempts must not happen
+from PM callbacks while the device PM lock is held. Since phylink
+{sus|re}sume may trigger MDIO, it must not be called in PM context.
 
-> 
-> I have no idea how to fix this up, so I dropped the changes from the
-> bitmap tree for today.  Someone should supply me with the appropriate
-> resolution.
-> 
+No extra phylink PM handling is required for this driver:
+- .ndo_open/.ndo_stop control the phylink start/stop lifecycle.
+- ethtool/phylib entry points run in process context, not PM.
+- phylink MAC ops program the MAC on link changes after resume.
 
-Dropping the bitmap tree changes of this driver is fine by me. I can
-send a rebased patch of that for the next merge window to do the move
-from the driver's own macro to the shared macro. The functional
-change in the devfreq tree is more important to get in.
+Fixes: e0bffe3e6894 ("net: asix: ax88772: migrate to phylink")
+Reported-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/usb/asix_devices.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-Kind regards,
-Nicolas Frattaroli
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 792ddda1ad49..1e8f7089f5e8 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -607,15 +607,8 @@ static const struct net_device_ops ax88772_netdev_ops = {
 
+ static void ax88772_suspend(struct usbnet *dev)
+ {
+-	struct asix_common_private *priv = dev->driver_priv;
+ 	u16 medium;
+
+-	if (netif_running(dev->net)) {
+-		rtnl_lock();
+-		phylink_suspend(priv->phylink, false);
+-		rtnl_unlock();
+-	}
+-
+ 	/* Stop MAC operation */
+ 	medium = asix_read_medium_status(dev, 1);
+ 	medium &= ~AX_MEDIUM_RE;
+@@ -644,12 +637,6 @@ static void ax88772_resume(struct usbnet *dev)
+ 	for (i = 0; i < 3; i++)
+ 		if (!priv->reset(dev, 1))
+ 			break;
+-
+-	if (netif_running(dev->net)) {
+-		rtnl_lock();
+-		phylink_resume(priv->phylink);
+-		rtnl_unlock();
+-	}
+ }
+
+ static int asix_resume(struct usb_interface *intf)
+--
+2.47.3
 
 
