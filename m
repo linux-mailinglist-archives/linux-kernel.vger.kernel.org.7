@@ -1,81 +1,127 @@
-Return-Path: <linux-kernel+bounces-804984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1915FB482A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B2DB482A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F0617C67D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028323B4420
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9AD1F582A;
-	Mon,  8 Sep 2025 02:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342311F790F;
+	Mon,  8 Sep 2025 02:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="TuM+c8QN"
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9AfbPG1"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77760AD51;
-	Mon,  8 Sep 2025 02:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338FD1F151C;
+	Mon,  8 Sep 2025 02:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757298905; cv=none; b=KQ/gKNYfIzdIjguPxPIJ6+9dlWR4QfFqS3ssIHKK6uPZCW2MhJEqsFjdlIjRSaBNru8HB4G/5iJnb+SHEkv5Bhm/AW8CDweelRSFLp9nq+DbZyAsGU5w9cyAGPrxuAMfgYJg5FQtmWlviAKNV2kNjGthIA8l0BFCs8KPsRNZr8Q=
+	t=1757298926; cv=none; b=oFrYRzXM77aPnyyFXPlvP/8s+2T2xnpuVURlLnLtv2+MR1/1eLaeMVbrxFQjfcza98rCMVPrMqJPR6/bboRtTwn4jxCOmk7wGzJna7ugwhq0S4sbp6B+QsuU+bbE/K2xoTVnwtdwei4SE600Hf8+/7QjxApIUter929NSqI9hLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757298905; c=relaxed/simple;
-	bh=bcK8U7Mx2h8XnpNVxn4vD0wzqCMtNYj5lomMvEgQuEE=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=Y/6ZpwU1bAk9M7nxgMoecvHGotiC72OfTdxj2MdvjjBs6+sLZErpXVWhjmkPEwQ/p1V/G0yI2kKSeW1wztg4dLDLl3eSR5/RmAX0PO834hUJP2m3UUh1Su3aPtR5YINnAtuurrpdZUH9jhrYf/sCxB/pAXQF9jIQy7hBO7iRj4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=TuM+c8QN; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mQrKvmLDsFkxDPkRt0hUS8uNPuWkuhQY/mUi/U6X8tU=; b=TuM+c8QNf6kfGkCBPtyqbSxPPs
-	Q3e9cg//9CSUGyYOYofrtitjhajJQxhq9pkSHR3oAdwxDrAV2nFh5Fw1t4vIysuCP7eEHZDENfYyc
-	H/m2KKseGqnWtsJrXE5ZT7JK5JRVsDsMfQ6nucxd/aSg8PmwdcBwrtvmyM2JT5WhtYwuj7UOQIEtc
-	3+Hd7vD6HzKNx/+hLxslpp5PKW9sgnTwfSPaEdFtyXpeOaIsZOS1EwDUmsLHSjPd4jWbkske4KXzy
-	JyxzJEdk0CBrvrBqcoYstX0XyV7Rz/wUuDralT+fYEK6645eo/dvSd+bT7KmJjnoHChcubp2IVrp9
-	En+6D8WA==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1uvRiT-00000000zn5-2v9G;
-	Sun, 07 Sep 2025 23:34:49 -0300
-Message-ID: <032c8e1184693ecc448d104bae5ea458@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Lizhi Xu <lizhi.xu@windriver.com>,
- syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] netfs: Prevent duplicate unlocking
-In-Reply-To: <20250905015925.2269482-1-lizhi.xu@windriver.com>
-References: <68b9d0eb.050a0220.192772.000c.GAE@google.com>
- <20250905015925.2269482-1-lizhi.xu@windriver.com>
-Date: Sun, 07 Sep 2025 23:34:49 -0300
+	s=arc-20240116; t=1757298926; c=relaxed/simple;
+	bh=VSS6ir5H1rLcgyOKz27cb1Gwqh9thNcgwB96WeHqhIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oXE5jEk6au/kn4WPdqeSI+oZXgOoE8+aQGNGH75tUNaWL8epShNtp+1ZVX1LcSG51G5iwgN5Kxa8gYNJvEAlqdJHt2ZM1TN0Oh/iIEHS9qck+LiQjp6+xdpuW9KuLfC12tqwNdVGn/Ygb21Qji7Yz5YNVmA4qZzHc/6slSqx79Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9AfbPG1; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77264a94031so2699333b3a.2;
+        Sun, 07 Sep 2025 19:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757298924; x=1757903724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=id+ytg1Zw34+FuI6CdCcR1u66CDbUUTObLJkdajO1hU=;
+        b=E9AfbPG19DS/grhCJpq7eYbwj30mktX/1MLk6Bkqb3QiXOdoe7jBDVPhd/sDucjoh8
+         ClCJfGptt+7imeiT69WrLi0i3OGj9KaaE2Rvk5Rx0jV41KEwP7GiWbUJdwXo0weCMVxm
+         ZLleeVDhlcDU2yxgqO0gUNduqJnNgwD761QRXqH7K10UcCaakTlXPHRmjQbPiS5OxMRj
+         v6nUSW6qmaV39SRV/27h2YMsTJR8X9Beqe/V8CcP5P1WPttcO0VYvRRpdOiqDN8wAU/Q
+         aBmTPwNRvjiu0VasUV86jAxFAhyf1qwbdtJ8OtEVg0VXulCwzAkaJy6L4EnRDSh1Wzlx
+         dD0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757298924; x=1757903724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=id+ytg1Zw34+FuI6CdCcR1u66CDbUUTObLJkdajO1hU=;
+        b=GvyRTPVbFSrTrWF2YrJwIlMQii6NlGVmTUCSaLTIZGxfIoNlirI+r1G+BTwNw7Zq0F
+         GQb+Ym8ciaaePMf8GFzSsXaDbKBSkivEVMUdv+xZVRMsnoTQOzRR1T/wjLJitSxht1sJ
+         vejaDfclwfaTpDqaPi5yPDscQlSeWsxFJHr99NN5riXWfezckAZWo5myB7iuUK3Eppvq
+         eID8ZY4eudLwnh3lWUyEypH7f5XbCfwgW2tfgYHmciyEzFHU+RdYgQosEWaG0ULR+b57
+         BnR8magJd+Ig+5XZtJ4v2ntkceAQ4/2Q+NivQIYYgVwJTg74gfs1uxo8nV1rW77acvMV
+         4Cbw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3abbCa5YJFb+pyLts3VzixmLSga2cHD88l6ppUNRuYOtHeICymcVV/I6VK4lK4PgscbxqGuyF@vger.kernel.org, AJvYcCVynxOoTZ3B1WxXHaDNb124QeHCzLFU0/0xRraF+5odKyBfpwRnB7qQNwLiRpMz740taGXTnK316EtcTuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy5gq4VRlUDA35b8i97MVYEFE4HFBgUNDqRjsF8v7cSZB4i4Sl
+	dUxChYzLrUfV54WINLFcrS7lR4LEPoLPkiG5i/7XZ2NvUMHRmyfLAe52
+X-Gm-Gg: ASbGncs+pBRRdmJWvggLDB4WFovLhVzq4FcRoWJqwxylKVojSem5KsYx7A2KdU1xXTd
+	S2545Qf5Dpzu3ptiVZQKA/PBlxBc6QiWWABzomEv5FxWvCe0j1nmkJwCnFK4AIgQiFmrNfvYdoL
+	X+LstqLRw1CwNyl1pRRgzqcQ43QY6F+of6NTB2BKnY/f17PnYTOacnKv1ELGl51s+bOJ5cTi8Uz
+	3XeR+TxOS2ELDxOGgrrKG1yUHBm8UsNu8ig6eL5UGfL9mI+TTVB3uzk6zhuWXrjd6Y+iadJTXY5
+	W9Wr1ENa3jVLf+onGuS9WBP15cc/EHO87Q27Nti1Ou52HOlO93J48VkwidR7GLULQ3qxtVq23Ys
+	yFzKOyG7+8+myZZARwqeTVC3U7ZTAweMmGVud2PbZogC2L5P8fdsv84Y2VBeclJpN
+X-Google-Smtp-Source: AGHT+IGpdUunw0Gu8o9Wejzox61260OWqaxdo0CyYNFeV00m/Tjhkk84xkW8KDorPix6AVFyzFNvaw==
+X-Received: by 2002:a05:6a00:1a8f:b0:771:fab2:83ca with SMTP id d2e1a72fcca58-7742dc9e36fmr7998415b3a.4.1757298924379;
+        Sun, 07 Sep 2025 19:35:24 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77267a225e6sm18193577b3a.94.2025.09.07.19.35.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 19:35:23 -0700 (PDT)
+Message-ID: <ea3bafcb-ab3c-460d-9c27-b2d2171912e1@gmail.com>
+Date: Sun, 7 Sep 2025 19:35:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/64] 5.15.192-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250907195603.394640159@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250907195603.394640159@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Lizhi Xu <lizhi.xu@windriver.com> writes:
 
-> The filio lock has been released here, so there is no need to jump to
-      ^ s/filio/folio/
 
-> error_folio_unlock to release it again.
->
-> Reported-by: syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=b73c7d94a151e2ee1e9b
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  fs/netfs/buffered_write.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.192 release.
+> There are 64 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
