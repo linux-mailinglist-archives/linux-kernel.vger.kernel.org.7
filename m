@@ -1,235 +1,318 @@
-Return-Path: <linux-kernel+bounces-805084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF210B483D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:03:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BE8B483D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB0A17A514
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BBD1899BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F1A21C195;
-	Mon,  8 Sep 2025 06:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD141D5CD7;
+	Mon,  8 Sep 2025 06:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaEsJ8Ee"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qx6h/3Wt"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013030.outbound.protection.outlook.com [40.107.162.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D24258A;
-	Mon,  8 Sep 2025 06:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311396; cv=none; b=Wfk4ILweZ92ZZqmQL4yHO21gHIHubQ64DKAr2SVG2gGB/Y8dOjm5zcvXRvXxgeYxD9jcx3sqouBYSHnqyLGG8QnVXHwmKKsNKDkP87AosGPOGQobuok2kUYzooE9y1krU7Adb1/f+yEEYCPnV8IQltimjmDCGl0BDB0RGRDqfmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311396; c=relaxed/simple;
-	bh=PV29dD6DVuP426ep3uaLTMwwjY+0ljmyrjL4Mo1Uw28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQGBKaCuIrGnXcdf563cGIWf0LLHr/jn8tXDy/m3vXyjUB9Q8QV0Skf0UUNjDEj+b2LstE/inoinUJLAXDD0luQGWCSSqCvuJ4Zin6fXvlbTp8zHS1KxgbmCuork8c4aP/WqNhGnjzP3AkYZug60v9Po+2uTD/94217rTdpzeMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaEsJ8Ee; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b523af71683so106687a12.3;
-        Sun, 07 Sep 2025 23:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757311394; x=1757916194; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZNWdSFuO4znuntXPxqyseJzzxpqp1vGgxisD3Po8ZRc=;
-        b=DaEsJ8EeJO47VpixqjoWV8iYuWmqakBj2NkEI0GB1guQmlokwiqsF0Gq5HnHa2bdOQ
-         6ty2gcur47eGGFkLvdPQev91ViUoIB19GtS8bz1qZ/rxIlvHFAj7Y6Qiyv2XFh+YhFOj
-         6zDk/3Uu3DEQHvNbC1C5fTU23NMTwSsqBMncvIugNZ76XBVXERv+h+1k1rPKHAFyZWmn
-         zxa5AUD32XnQ/y2IGdxy64r1v59AMl1XNUET1Lw7MjOg/sVY0URwNCCxdLWI8zDvkKWp
-         QTd/2f/HDBrd2S8mN9y+VGWlWcp1bqIAFo6bp/JQc8CUJqSR9rLmXHCYozAkldKNmfo9
-         cUFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757311394; x=1757916194;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNWdSFuO4znuntXPxqyseJzzxpqp1vGgxisD3Po8ZRc=;
-        b=dhwuM99yyLcvtccL2G3NPZ0DLjMPFXb+APgKeJ6rTZDG7A3cmZVvKHcaOr6R9XeN1q
-         0zNN/sVCs1dJx4hL/M9hSpMtGq+K0IAjWA8qjTQhJpdZsvL7fn7KT7uMxmArD1ObvHT9
-         0MTTKscJJjV9RGY6G0lw3Pm86SckaS2wmV8vMOefck8n1Ueg/yxgqSE+z+LfHU6Cx/VM
-         Jet16wfNIl0h5FUM5STh0g7Hq8zin8fxB3cYaymMR4xOdxvtrCTV6K6VHTE+rJzOs6uT
-         tC+a18i2al0q2cqUUWLjB66tI437/N1cdVkzy665+5DoxgoubwoW74dw5RjKV3cVH3NV
-         yw4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/97b06eo598SEJJIQisg/aGTw+0i/PH9RC5WwMnh6FIYFaoJgAZ+1+ekBuwrVwcCKrLenogGjNCcswVkSxtoCxQ==@vger.kernel.org, AJvYcCVhJ3RLUZddcb5LeDJsaS8SWemsOE3mnPrdO0vBJCgqnrf8xjA4IAaXjZBH/jLl3v3vz/aY/wVphSSRjhnIvo+kvdQI@vger.kernel.org, AJvYcCWdFWGxd/II7EQOcfMU0Gi4A0Xe54Q/yXD/1SbBNd8aKagM3lwiMJxuttTJ7hVcvaeDZxajpbk9oJeZapM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysHfSt3KFg/xwzzHAvKakNgF3rEbFnnpANphjBDZOH1vSHFw18
-	fjt+nu8BqQMKEf9TKdIsgUl0dgtFjULPSx8HNy/AvcFbmH2QlWdvIti8
-X-Gm-Gg: ASbGncuPpBX/Mz4tA3f5MuXFZ0XQDFRWYXMNibCtYAMAZrhAZ4S9wuccboq6smUW8Tm
-	1k16dL9rBftT7OtyrowTewQH0qL/VDi1VxFbZboQ+PpVg5uwW8mWognFRrzWoYUGZYp1sZsBsbQ
-	FJEqCxpBP6DcUt2kecD6iEz97MpX6gRi0W9aRjmUg1kzCVWn6EHt+TVpry/FQg72Tgvs6DWiy+/
-	KT1VKkRyJ92vOHOsp1QV3QZDbJJHlp+skmSJeX5dvpzjYdcdo0dqlK5iIXynzyf/Q2XclXjr9SV
-	ArKN9XfUNbej9bGpWtmct1GJJSiWVPPjE4e+OXj2t8bThQ5cpp6xcTtqFPK3B+qysuE1gz5JvLR
-	as1HAlWYbCz+NAoYWlxKgFNE+aMwLHeelp32tdA==
-X-Google-Smtp-Source: AGHT+IGaMF5Ba8B6t4H2vzMTPALt55ZTJj/NUECpMhpJBlfxz2OnagbMjg7YIyiTxu2dTK5kF1UxJg==
-X-Received: by 2002:a17:902:e541:b0:24c:9c29:c9d1 with SMTP id d9443c01a7336-2517493a09dmr107170825ad.59.1757311393773;
-        Sun, 07 Sep 2025 23:03:13 -0700 (PDT)
-Received: from localhost ([103.121.208.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b11833ac7sm166868285ad.55.2025.09.07.23.03.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 23:03:13 -0700 (PDT)
-Date: Mon, 8 Sep 2025 14:03:11 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/18] mm/ksw: add /proc/kstackwatch interface
-Message-ID: <aL5xnxEO0NP5VlpL@mdev>
-References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
- <20250904002126.1514566-4-wangjinchao600@gmail.com>
- <aLlFDQkWBF0N7xmk@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8B6258A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757311485; cv=fail; b=NyuNllFducbmycEHv9oSPSCux4cdQ18Jdd9bDeCAHEDTsQOO5sxcWvC06xcbh1x3D9SZXxizWA/DxgljIWNX2/TOOSRgyD3Z2ZgFB50itkjeRTEFBEHkzyUKCJqbWqGeBVMNT7jzIPAAwrdC3yf7RSEtbNDLuI1qaSlKaH3u0qA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757311485; c=relaxed/simple;
+	bh=qCKykvo70QpUeVqorlZxtn79exOXw7ryP943SYqMgzc=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=V2BvVFBJ6EfL/4+ez3xVbShQL/8zM7eYycSr20Qtaat99/7VnBLtK4fC5VQlGhJmbTWPv/gGrZmUGqP40LyyH+HnG6n8ah58Zmd1VJLT13oaoQ//YkJKOGgB6Qk1FQ8ZnC+M9zST8XbGgoXhrNl8TUmZptq2zA6LRE4depJkdO0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qx6h/3Wt; arc=fail smtp.client-ip=40.107.162.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pBSDvheRNFbqvF1RHbERtDrEboupeAxlb/Sy/cDfnCWv61vdyisQOMcDN2O1hdg7hsc0Qa0c6/vo8rkJHnZMZYRkVhT96MKXvraMSRPeLbI8QZXup0eoWH21otkdeIiEpVXXvVVcEqFBtYXet7nOWhsnDyjGLKccLeRPAUHJnpKQhef90CAC7h2j/kmYqcmbIyoX6NyHO9AcDa/8algU4ju8lRnftqTqbfnRBH0xvhp7KU3JxGsLNde4v/ZT2v/joCP5QLQilRK8bhWk2IC/BTt7F4nEQaGRkUL/n0+l5XpeOeMSYLxOMaxUWmV6zJH4ugTIvVMBuxQggbb2SOF+6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1y0k2xxFlArNQz7c2qrnmFAf5Pkte3/LPVGHpfKL20k=;
+ b=PM6cnA6Tm9t17de/ecDzpBzDZENEu3pALkLLdtPvbv2dOsRYdmuo/jikyNa2fL9paRScL64YqIYk7MxNIodzFcAqQNMS0F9zMqYlTJbychMFsrMO/lSsVwVUg0SLBlcSLQZ/GEudBSx5U4/l5Y8j2tkC7amK/qLtuJivpn8L9iXWcCFWc2Qnf1plnb0v7OuIu88KrvSCuSVtAes4mt5mcAVwl915wuK7mZqhztfB+LTfFeeh65QxLS9IylsfZ5j6SPoB1rpPjUnWOdxvdFozBBjSesO5xseVlkpwK1T3KOJFdHhJOqQ7P+9OWaCrz53yJJtayLbMkNIFpDdAFOrEFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1y0k2xxFlArNQz7c2qrnmFAf5Pkte3/LPVGHpfKL20k=;
+ b=Qx6h/3Wt2DhOeqTPJUkHfU20iZ0LuybyB9BTmMtpKYz/91RIRbX5DK2jlT/bbiFv1xx6DepamLkzAEYV4g0j5HgEuCsLGxp+Mma42BjTxCMPsWG8txkn6WVWmdyk6nvCm3O2RXCDzlBhpt7KaVU/hX4TPnbOSittLo55gAutEOmmxEkULM9pdMlLXHtnVPgWhm2wP0xJsUjAHYRRwozEticnE3qRH+icFqfemu7YqBIykMJOBpPhAVdrJNsd/fC2Apn2sKmR6F/vT3c7vW2paOmQLfkHA5L4DxddaJGna1jdZW0k2zUZz/U+I/+KEfzHBEpq5eA8s3Wc1DVzoPb8JQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU4PR04MB10838.eurprd04.prod.outlook.com (2603:10a6:10:581::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 8 Sep
+ 2025 06:04:39 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%5]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 06:04:38 +0000
+From: Liu Ying <victor.liu@nxp.com>
+Date: Mon, 08 Sep 2025 14:05:48 +0800
+Subject: [PATCH v2] drm/bridge: ite-it6263: Support HDMI vendor specific
+ infoframe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
+X-B4-Tracking: v=1; b=H4sIADtyvmgC/5WNQQ6DIBAAv2L23G0AkaY9+Y/GA8Wl7kEwYIiN8
+ e+l/qDHmcPMDpkSU4ZHs0OiwpljqKAuDbjJhjchj5VBCdWJu9DIq1GmxUJhjAnzQo49O+Tgo09
+ 2JrRWCyW119LfoGaWRJ63c/EcKk+c15g+57HIn/0jXiRKNOTJdLp7mVb3YVuuLs4wHMfxBaJJ2
+ 4rOAAAA
+X-Change-ID: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Liu Ying <victor.liu@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SG3P274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::32)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLlFDQkWBF0N7xmk@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10838:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5e973f9-dabb-4d23-d1eb-08ddee9d9832
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|19092799006|366016|376014|52116014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?V0g1MUFubjJPU3hja0dEVElTeExRRG9YaFJ3ZFp5SnpwNlg2dlpmTlFCY1Vp?=
+ =?utf-8?B?b3pSeGgySW1ZUnV3VC9NUHNVMUFEVTB6RUlETUxFdjd2SGNxRGw2Y0s5UmxK?=
+ =?utf-8?B?RVgwZm5rcjFDUkZTL055dEJmTUF0Z3dJUVUydUs0RTJQenlxQjBTV093WlFE?=
+ =?utf-8?B?cXVCNXVEYUJWaGRBZ3NxMDhNZ25tSVlabVdmNTBobUpUK21kU2pUZXFNczN0?=
+ =?utf-8?B?U0JwZFIzVUV6Yk5kSkhnU2M4RkFZSGtDeGp6RE1Sdnd6eFJuSVk4QU5Lby82?=
+ =?utf-8?B?Q1FqTDBmZmZUWkdtU25rSXlGWi9HUnlTQTFhRHRFbFNYK1B2eXE0K3R3a3V4?=
+ =?utf-8?B?bzNQRzE5SGlEeStTQk9EK2h4cTdGY0lPNjhMdFdFVTF3VGk0Z1NzS0JUY1hU?=
+ =?utf-8?B?aVlTRXROdy9jQXdoYlc1Tm1QS3FNVmZaTlAxVWdvTmM2QjJVT1k4QWlZUlpr?=
+ =?utf-8?B?eFJTOER2TDZOZkM1cXo1OUNhSnh0T040bE5EN21GaWEyUnpWTVNNOG4zK2R4?=
+ =?utf-8?B?NXFXRFRxYVNHQ1RnajlCWXAvam9PVG0zZTZVZ0l1c1J4UzZUZ0RZNVlaTWow?=
+ =?utf-8?B?bWlVZFBGVk9Ob0gzRXpsNjNybDFhVHM1TmZaM20wQy96dUp2ckEzTzhuUTJY?=
+ =?utf-8?B?cHMzTTVwblJ6cW5zWGk4VDJIaHhhNUtXUGtFOXhsSXJ2QWxIQ0dsc1ZmTEsz?=
+ =?utf-8?B?SmFnb0orVXhJV1UwbGgzWUd2N3ZNc2RpRHFwN291RHJZRXJIYWxHbytXc0R0?=
+ =?utf-8?B?N00wc29uUlJpaVBwZjVibmkyN0cvVHk5RENaWDJxNWJXY1I2N2RJRnllMDNZ?=
+ =?utf-8?B?alBSWDcwUGt6L2dLaTdzSHpWY1dTbk9jN0Jmbzk1WGVJN3VuT0lBS1BwSTFq?=
+ =?utf-8?B?bWFxV3pYOGJvVUppVk5LZ2U3U0FtS043TjJOQStkKytZeEJRMHg3K0lDWXNt?=
+ =?utf-8?B?LzBCdjAxL244aEprQ2lhdXNJalhLWUd0clk1dU9lL2p1NkU2eGZ3Z2VNdUIz?=
+ =?utf-8?B?NGk2TXY4MGprOExZdkJveEZva3NIRDF1WlYxVC9QTkJreFBzdTR3cUd1VVJK?=
+ =?utf-8?B?VWtRWTUzWEJ1R2RYRm1sMmZLMFZBQno4OWhPS1lHYVYrUHltVDNMSkYyNTI3?=
+ =?utf-8?B?c2ZFUDQ1dU1ZUzJ2L2xKeGdoUGtZVmE0NWxhMy9Fa0VKUCthZktBWE9vUXZ3?=
+ =?utf-8?B?REYzUjgzSnBDNEJxTmtreFk2WFlHWDVmNERLQ1JLSzcwVmdhanFTWTVDeFJV?=
+ =?utf-8?B?dDRyd2dadzRQOW1tSVVBaXBueHJlWFhFa1NURDBUTml2ckRJNyttb0pYWUc2?=
+ =?utf-8?B?bm8xOHZTSUNjRkdSQ2NjRmhKRWpOMktyUndkMTUzdENHU2xlZ2h0WG15ZW9m?=
+ =?utf-8?B?QVJnZkFUMmtuNllPdit5dHdHOUFsQmRneFVwRWFHaEc3NktpcjJPQUk1SVlm?=
+ =?utf-8?B?UHVEZmxxZ0g0MTVvOWlqQWVRQ2NWTERVZjhVWjJabEovNzZIdGNzc2JpVzhL?=
+ =?utf-8?B?dS9sQUpkd0VWbUVhdGNLbmY4elN1K2lCVm00WjVnT1lHMjRVcjJUZXljQkc4?=
+ =?utf-8?B?cm9BRWQzZGNKdlp6QllpOGsvSDVJSkRWeC90NHpSZVVGcmZTeE5BM3VzUGlF?=
+ =?utf-8?B?Y0VKbkZHZ3diWkJFREpBWWoxL3g4bC9vdDRZMU5OTlpIWitMU1p3RUJKRGVm?=
+ =?utf-8?B?V0NpeThGM0hUMlhzbEtLUk96TnNrK0tsZjBDdnRnMUNiYmhmcjQ5SktpbDdR?=
+ =?utf-8?B?bnNtZEpzNzN0RjBVS3NKTEgrMlZDNnd4Uk5xSzBTbXZ5T0ljbVpIN0xOVUs3?=
+ =?utf-8?B?UFlwakRkNXBGQUFNbjN4ZUZBOXZwd0k0SVQwMUJTV2FJeFhlZW00NkpyUHlO?=
+ =?utf-8?B?dFpyZmNFbTU3cU5aaW9qOG5YeWNka3ZmQ3JtS0FrU1FoNXJOQkUrTHBCNUpW?=
+ =?utf-8?B?RGwrcC9hUGVwNzRaYUpmcW1GZWZzeEg2cDFmcjZMWnp5bDdwNitpT3lyNFBn?=
+ =?utf-8?B?YUNESVoxdHRVV3FmSlZVaXJ5SnZVWk9ZNEYxVi9ZdndZS2U3QnNJbjFmUjE5?=
+ =?utf-8?Q?8tWr8b?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?aHhWTVoyRnhDU2tJaE95ZWxhbUZuSjY0ZzBGZHBaSXFXSjNKY1hCRnhvNmtW?=
+ =?utf-8?B?VHZKMFFNU2V4RnJFeHUxSlRTZUF2S2phaWJyN0JPNDVzY1dPY2xFbHQrcURF?=
+ =?utf-8?B?YzJoZnFmTldXSUF3UW55VElmVllhWDROWGxsNm1STW4yaFNra3lRdHppQkNO?=
+ =?utf-8?B?V0k2VVpLOXBKNnJCMWFlZEx6RlJhMEtVZG85ZXgzZ1BnQmZFZE1uaENrcytR?=
+ =?utf-8?B?UDlFektlcVpVVUVjazN3L0NtbDd6U1dWT2xnZExIZHIvSjd6Q1QxUnd1QnpK?=
+ =?utf-8?B?bW1wY3o2bU9MRGMwSEphRkh2VUZaOVd4b1F2ZjZiNG1HSnF1OEJremZ1VzRB?=
+ =?utf-8?B?M2VsL1YzK1Bpa3RLUjBPWWJpQjRuR05CaDUwS1BSUlZ4Uk5aa2s1Yjc4RW0r?=
+ =?utf-8?B?QkhRSUpXUUh2dnJHYThhbGI5N1RZdjlZWXk1R2MxSWpWcmRWTEpjQlNCSldW?=
+ =?utf-8?B?eEJmZytRUkE1bUV4Zk9oWnQ4U3llUXhsQ0FzbjlubFBGT283c3IwS0JWR0Fu?=
+ =?utf-8?B?dUZvbkRqbXdqVk4wcW9wdnlFVWtrVGZLdU1nUzJIZGZjWFZCa3V2TytwTDhy?=
+ =?utf-8?B?WVVyUURIajZqaThHRjcwODdxZDhSNHFCaTZUZWwzU3FxcXMybTFBSjh5Um5Q?=
+ =?utf-8?B?dEwrQ0d1YitmS0FNemxoQVFOTzc4dndVaW50MFFXRmlPalVPNXhMRUNoQWZC?=
+ =?utf-8?B?UEE5cS9Oc01OZ2pWNVRyYzNCaXM0RVhmSWVhalRFRDhDVm5udkJZb2M1MU8r?=
+ =?utf-8?B?YXUzbmVycmNIbCtqSUl4MXlzQ3pEYmFjUTEwYjlLYXpTVkMxa1RXeUVJbjFM?=
+ =?utf-8?B?dEh1WGgva21KaWZOVWFJOTZWT0RMR29NVGh5ZDhKYlVseGhKYjRHNHdBNzV5?=
+ =?utf-8?B?UTFpRkxMNWM3aUFHUmhuTWU2QTloWXVaUlpORHZxakorZkFxbkE4M0tsb2Y2?=
+ =?utf-8?B?SndUY0dNYURjclFzTDJKTnZ2RjI0SXFWK1BTRkJ6aU10Y1lGZ1lTSXYrZUhn?=
+ =?utf-8?B?T0h1SVlUUy85Sk1hTkVHUngwbW9TWUxUYkxYc1lMUTlyZTdpc1J6TnhGamVj?=
+ =?utf-8?B?MmEwSVV0TkdkSVpNZGNtR241TTgxaEVjbVVxamN5cVdrUDRFQ0IxY2d4SDZY?=
+ =?utf-8?B?TmFDVzNya01JTFowVjhLR2U5RmpiUEVJN2g5U1lCRURlK0xBU1lSWTJvSXRa?=
+ =?utf-8?B?NG9ic2IvRFdkaitzR2pkcmYzaDN5QVVmeGx5VVBwZ2pWQk1aZ21LV3BYU2Zq?=
+ =?utf-8?B?bk50cjgxSlpVRXEyUDNGMjA2SHpxUmtMd2d1Y2k4M0xXR2o1aXRwMEwxM2xl?=
+ =?utf-8?B?UGVFbHhXMEFBdzdjS0hHSC8zZEhLWUNRbVY1c1ZCZzVQN2wrUlpFbExIU3pN?=
+ =?utf-8?B?RGdHd3ZidExpNVkrbnJObEUwanhkK1VrRnJEcDhUUTMrY09rWmYzV05yZlYv?=
+ =?utf-8?B?d0FGT1U5RCthcnV3V01SVlhzcmwyYWFvWHhGUmxtVGFpdUcrZG5zRjRMSjY1?=
+ =?utf-8?B?SVpFSWpKV1pndjRQbkxnY1hhZGxVdXUvejhRM0ZFVGMzcnlHdVd4cG41NlBO?=
+ =?utf-8?B?NWgvbkVqREF6ZFl0eXFWZU5mQkVuTTF3OWNYR3gwZHpoazZTd3VPc0c5OCsx?=
+ =?utf-8?B?Qk1SRE8zeE9Vb3ZGMllxUXVTay9YeCtES3JEU0QvWEVOSVBxTDNQaDYzckZV?=
+ =?utf-8?B?bFAwMmI3VHJUaXByOHZRTXdibWhyOUQ4L1ZhMnA1RjRkbElxLzFiYUtsOC9t?=
+ =?utf-8?B?b1d2WUdmVUVBT3pmT3p3OW9EVHAwNmh2c3hLOVI0ME1iaGpLbTd3TmczNkFW?=
+ =?utf-8?B?UWZZZ3BjbjA2am9lRWloVmk0L3BtVlM0TWtnbGlodUxJRTA4OUd4aGwwU0RH?=
+ =?utf-8?B?WjV1L24yVmEzYmdPVS90cGhxZ3c5cDRDQmE4M1lHbzVSNG1jVUttUDY3NnBU?=
+ =?utf-8?B?Ykw3SlNGSzRCWm4waXRzakQ3cFFsZEVvbGEvT3ZmTURQMzlITUxPemJwRHBI?=
+ =?utf-8?B?Y2dDalQ4blQ3TGtVU1IwdlVldXBOV0Q1NFdXM2JmQnI3cWtNZi9QdGRmKytE?=
+ =?utf-8?B?SFJaRjJaZEdhTHlrNlBMeEdhQjBqSVEwVy9iSVgwWG4xZUI4T0xmWVZTeTYr?=
+ =?utf-8?Q?ku3bWev4lBg33jNobq+kRxzmV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5e973f9-dabb-4d23-d1eb-08ddee9d9832
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 06:04:38.8370
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UexVS/IAP1LDInnorN07m5Rbe73E3KwWPE9v0s59+PyE2N/BRhD/Nnal/RBiD3Zsdl1czbDkHb9wYdp2FsV0Jg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10838
 
-On Thu, Sep 04, 2025 at 10:51:41AM +0300, Mike Rapoport wrote:
-> On Thu, Sep 04, 2025 at 08:21:00AM +0800, Jinchao Wang wrote:
-> > Provide the /proc/kstackwatch file to read or update the KSW configuration.
-> > Writing a valid config string starts watching; empty input stops watching.
-> > Invalid input stops watching and reports an error.
-> > 
-> > Allocate a ksw_config struct on module init and free it on exit.
-> > Manage watching state with ksw_start_watching() and ksw_stop_watching().
-> > 
-> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> > ---
-> >  mm/kstackwatch/kernel.c | 140 ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 140 insertions(+)
-> > 
-> > diff --git a/mm/kstackwatch/kernel.c b/mm/kstackwatch/kernel.c
-> > index 4a6dc49449fe..95ade95abde1 100644
-> > --- a/mm/kstackwatch/kernel.c
-> > +++ b/mm/kstackwatch/kernel.c
-> > @@ -1,7 +1,10 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  #include <linux/kstrtox.h>
-> >  #include <linux/module.h>
-> > +#include <linux/proc_fs.h>
-> > +#include <linux/seq_file.h>
-> >  #include <linux/string.h>
-> > +#include <linux/uaccess.h>
-> >  
-> >  #include "kstackwatch.h"
-> >  
-> > @@ -9,6 +12,29 @@ MODULE_AUTHOR("Jinchao Wang");
-> >  MODULE_DESCRIPTION("Kernel Stack Watch");
-> >  MODULE_LICENSE("GPL");
-> >  
-> > +struct ksw_config *ksw_config;
-> 
-> Does a global ksw_config imply that this is a singleton?
-Yes, it is.
-> What happens when there are several "echo .. > /proc/kstackwatch"?
-> And even more interesting what happens if they are parallel?
-I did not consider this deeply enough.
-I will address it properly in the next series.
-Thank you for pointing it out.
-> 
-> > +bool watching_active;
-> > +
-> > +bool panic_on_catch;
-> > +module_param(panic_on_catch, bool, 0644);
-> > +MODULE_PARM_DESC(panic_on_catch,
-> > +		 "Trigger a kernel panic immediately on corruption catch");
-> > +
-> > +static int ksw_start_watching(void)
-> > +{
-> > +	watching_active = true;
-> > +
-> > +	pr_info("KSW: start watching %s\n", ksw_config->config_str);
-> > +	return 0;
-> > +}
-> > +
-> > +static void ksw_stop_watching(void)
-> > +{
-> > +	watching_active = false;
-> > +
-> > +	pr_info("KSW: stop watching %s\n", ksw_config->config_str);
-> 
-> This module is overly verbose. Do you really need all the printks?
-You’re right — many of these printks are for early debugging and not
-needed for production. I will remove or downgrade them to pr_debug() in
-the next version.
+IT6263 supports HDMI vendor specific infoframe.  The infoframe header
+and payload are configurable via NULL packet registers.  The infoframe
+is enabled and disabled via PKT_NULL_CTRL register.  Add the HDMI vendor
+specific infoframe support.
 
-For critical paths, I’ll ensure only actionable or WARN-level messages
-remain.
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+Changes in v2:
+- Drop zeroing out all NULL packet registers.  (Dmitry)
+- Drop no longer used HDMI_PKT_HB_PB_CHUNK_SIZE macro.
+- Link to v1: https://lore.kernel.org/r/20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com
+---
+ drivers/gpu/drm/bridge/ite-it6263.c | 64 +++++++++++++++++++++++++------------
+ 1 file changed, 44 insertions(+), 20 deletions(-)
 
-Appreciate the push for cleaner logging.
-> 
-> > +}
-> 
-> ...
-> 
-> >  static int __init kstackwatch_init(void)
-> >  {
-> > +	ksw_config = kmalloc(sizeof(*ksw_config), GFP_KERNEL);
-> > +	if (!ksw_config)
-> > +		return -ENOMEM;
-> > +
-> > +	/* Create proc interface */
-> > +	if (!proc_create("kstackwatch", 0644, NULL, &kstackwatch_proc_ops)) {
-> 
-> ksw_config must be freed here
-> 
-> > +		pr_err("KSW: create proc kstackwatch fail");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> >  	pr_info("KSW: module loaded\n");
-> >  	pr_info("KSW: usage:\n");
-> >  	pr_info("KSW: echo 'function+ip_offset[+depth] [local_var_offset:local_var_len]' > /proc/kstackwatch\n");
-> > @@ -85,6 +217,14 @@ static int __init kstackwatch_init(void)
-> >  
-> >  static void __exit kstackwatch_exit(void)
-> >  {
-> > +	/* Cleanup active watching */
-> > +	if (watching_active)
-> > +		ksw_stop_watching();
-> > +
-> > +	/* Remove proc interface */
-> > +	remove_proc_entry("kstackwatch", NULL);
-> > +	kfree(ksw_config);
-> > +
-> >  	pr_info("KSW: Module unloaded\n");
-> >  }
-> >  
-> > -- 
-> > 2.43.0
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
+diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
+index cf813672b4ffb8ab5c524c6414ee7b414cebc018..2eb8fba7016cbf0dcb19aec4ca8849f1fffaa64c 100644
+--- a/drivers/gpu/drm/bridge/ite-it6263.c
++++ b/drivers/gpu/drm/bridge/ite-it6263.c
+@@ -146,6 +146,7 @@
+ #define  HDMI_COLOR_DEPTH_24		FIELD_PREP(HDMI_COLOR_DEPTH, 4)
+ 
+ #define HDMI_REG_PKT_GENERAL_CTRL	0xc6
++#define HDMI_REG_PKT_NULL_CTRL		0xc9
+ #define HDMI_REG_AVI_INFOFRM_CTRL	0xcd
+ #define  ENABLE_PKT			BIT(0)
+ #define  REPEAT_PKT			BIT(1)
+@@ -154,6 +155,12 @@
+  * 3) HDMI register bank1: 0x130 ~ 0x1ff (HDMI packet registers)
+  */
+ 
++/* NULL packet registers */
++/* Header Byte(HB): n = 0 ~ 2 */
++#define HDMI_REG_PKT_HB(n)		(0x138 + (n))
++/* Packet Byte(PB): n = 0 ~ 27(HDMI_MAX_INFOFRAME_SIZE), n = 0 for checksum */
++#define HDMI_REG_PKT_PB(n)		(0x13b + (n))
++
+ /* AVI packet registers */
+ #define HDMI_REG_AVI_DB1		0x158
+ #define HDMI_REG_AVI_DB2		0x159
+@@ -224,7 +231,9 @@ static bool it6263_hdmi_writeable_reg(struct device *dev, unsigned int reg)
+ 	case HDMI_REG_HDMI_MODE:
+ 	case HDMI_REG_GCP:
+ 	case HDMI_REG_PKT_GENERAL_CTRL:
++	case HDMI_REG_PKT_NULL_CTRL:
+ 	case HDMI_REG_AVI_INFOFRM_CTRL:
++	case HDMI_REG_PKT_HB(0) ... HDMI_REG_PKT_PB(HDMI_MAX_INFOFRAME_SIZE):
+ 	case HDMI_REG_AVI_DB1:
+ 	case HDMI_REG_AVI_DB2:
+ 	case HDMI_REG_AVI_DB3:
+@@ -755,10 +764,16 @@ static int it6263_hdmi_clear_infoframe(struct drm_bridge *bridge,
+ {
+ 	struct it6263 *it = bridge_to_it6263(bridge);
+ 
+-	if (type == HDMI_INFOFRAME_TYPE_AVI)
++	switch (type) {
++	case HDMI_INFOFRAME_TYPE_AVI:
+ 		regmap_write(it->hdmi_regmap, HDMI_REG_AVI_INFOFRM_CTRL, 0);
+-	else
++		break;
++	case HDMI_INFOFRAME_TYPE_VENDOR:
++		regmap_write(it->hdmi_regmap, HDMI_REG_PKT_NULL_CTRL, 0);
++		break;
++	default:
+ 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
++	}
+ 
+ 	return 0;
+ }
+@@ -770,27 +785,36 @@ static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
+ 	struct it6263 *it = bridge_to_it6263(bridge);
+ 	struct regmap *regmap = it->hdmi_regmap;
+ 
+-	if (type != HDMI_INFOFRAME_TYPE_AVI) {
++	switch (type) {
++	case HDMI_INFOFRAME_TYPE_AVI:
++		/* write the first AVI infoframe data byte chunk(DB1-DB5) */
++		regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
++				  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
++				  HDMI_AVI_DB_CHUNK1_SIZE);
++
++		/* write the second AVI infoframe data byte chunk(DB6-DB13) */
++		regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
++				  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
++					  HDMI_AVI_DB_CHUNK1_SIZE],
++				  HDMI_AVI_DB_CHUNK2_SIZE);
++
++		/* write checksum */
++		regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
++
++		regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL,
++			     ENABLE_PKT | REPEAT_PKT);
++		break;
++	case HDMI_INFOFRAME_TYPE_VENDOR:
++		/* write header and payload */
++		regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0), buffer, len);
++
++		regmap_write(regmap, HDMI_REG_PKT_NULL_CTRL,
++			     ENABLE_PKT | REPEAT_PKT);
++		break;
++	default:
+ 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
+-		return 0;
+ 	}
+ 
+-	/* write the first AVI infoframe data byte chunk(DB1-DB5) */
+-	regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
+-			  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
+-			  HDMI_AVI_DB_CHUNK1_SIZE);
+-
+-	/* write the second AVI infoframe data byte chunk(DB6-DB13) */
+-	regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
+-			  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
+-				  HDMI_AVI_DB_CHUNK1_SIZE],
+-			  HDMI_AVI_DB_CHUNK2_SIZE);
+-
+-	/* write checksum */
+-	regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
+-
+-	regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL, ENABLE_PKT | REPEAT_PKT);
+-
+ 	return 0;
+ }
+ 
+
+---
+base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+change-id: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
+
+Best regards,
+-- 
+Liu Ying <victor.liu@nxp.com>
+
 
