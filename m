@@ -1,180 +1,106 @@
-Return-Path: <linux-kernel+bounces-806392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D6CB49617
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:49:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83107B4961C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F83A163D7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:49:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FAB1897FE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E62305946;
-	Mon,  8 Sep 2025 16:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9144A310768;
+	Mon,  8 Sep 2025 16:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OWoo2BWm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv9fpBv6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF36A131E2D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5D22173F;
+	Mon,  8 Sep 2025 16:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757350163; cv=none; b=atDbwPWaLTnIatIeqdr1ibEgvuoWbjASeHyFu9zGH3SwFsgI1dSJkOxDpqrrl5PWUpR9i62Rsj+L9jQzHjr8wUUHL6+3+0U9QuLTlRXZ54QzBtgILbyqSskj5bStdyM29PJYTWChw3qRF9sa9oiTfN5WsP4L8qtK9003hldnxzE=
+	t=1757350180; cv=none; b=nuECgFXj1tU62RcyVCvyZCDvvusFkIJKrmMdVaUoqLJ5QTBUD9RtSovzUkvvz1pEjsGqv4QCOpLI9HG+2419Ggkb947063lPv/kM3zX6vZw98PuLK1Z8QxEeDXUwWDUh9s3Spu0koAJOxnu5QvbV/UfebZXUteZcjL+4s6Ir59w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757350163; c=relaxed/simple;
-	bh=c03Lsp9g+s3ZUQfrxI50tf7mrulwncy6J8ERz/IJdF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axcQS3YLyWDds8jDSyg96ROPE49MryANw22c061idF5hIEIp7z6VtRb9JaZirEaL774ujqCjrHe2v8wlg4s1WO9mK+Tdn1vHLelT30GCvXMN3faiHHnZmrSOaYEtfDl0slOH6Iyi8TzGo0dNA5hXfynEbBJV6X90t8FFpkE2se8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OWoo2BWm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GGONf022660
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 16:49:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TOMlKuJgvjAl2wbNgrUtIbyGV3gXkbep4YDrso3Os/g=; b=OWoo2BWmjx+yIUc3
-	MO5SzcHPNtwZdQIA8PCIKO31LNgsMDkQ1hdhc78d0xge96cYO4rpl5obdVFtZkAW
-	tkeicnfjZetwGtMsSCHOGYPADaK07E3uVm4olike16TqV6tDnmwb8Z0H29+ioEeU
-	uoWRbO20+wV2U4243ZCYAVaqgVQBvcJaQlKENVRioPNRJUD49vixeQ5ITQlLZXdv
-	F72Mq4WYV3ZIi2vMZqZV7EDF287CTKcqIWpni+jE+vzrdyFxQdi33i2tFLy+M+tC
-	b5sxGIy2Rytfr0cIVI/Sp2G6oxTlv1yeVcdX+VDYLnlMSc8dQXF/XqtKjLNA6Z0O
-	zUEeQQ==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491vc21apc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:49:20 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77278d3789cso10119093b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757350159; x=1757954959;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TOMlKuJgvjAl2wbNgrUtIbyGV3gXkbep4YDrso3Os/g=;
-        b=iiJZhhCrdfp526BbqQXYRswERg6jy60JssWh+i0Q9M0/IRXNuG7lxeIRSjFcJP6172
-         5CzCrRbljGG40y9lTPhYzZt1uR1WI8K0fchZBNavJSz2t+9B68qGTzUpNawxaBohMSt0
-         IuhVam1bkq1PGsiTreF1Wg1FcsIHLjv2qa/6FVdQtoYrcT5DcF3Wxu2K7QINupzB2Kii
-         JMVVNes7f+Xj/j17e3FWL5ObCsvCiFGMy748Bi27/P4nwrwEszKpyFFOrmvno+0IOXgS
-         wFePXXkzGP4nhgBAsfJx6PkUcLBSou5dK3WK69KkCwamsdH1+rbWf6luuYyuW7Th+aFC
-         qK2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVyNtdUgcOCrHFakqfM/jZpKjAnp3yzHRb/s56pK9UPJeVf2K0BEbIOnULFCA8ROqvPqiXVCqfKXVqfdaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyeZxdfju56O6MEDUTl4maKuzAEO0WLyDEdRFSUhyz5F/4P8ci
-	ICXnEV77HN45K1IWn1feqzeUOKwh2zfkFeHNGnGSNHkFjXf6mbbwj07SQjywCtuxmot3nXxsStk
-	XljARqmcUp6NSa9j8p6Q75hKpGZv+83qbpVDjunZU2G1Q2GJyMS5fiq1gj6CA6rHwzXA=
-X-Gm-Gg: ASbGncuqcYAS//hA7dI0KgCxDnjLCAOJb7bZyDd2gUkyFFoaWvnQLB4ATHZYAQmqBj8
-	rvduu2Ec6beW/0UgFbNjUAtWr+kZII+7jTrpRFNoAdcHX4wj7hkuEjcL05VpEWjjEdz0yoH2eXJ
-	Z1BcZKDkxf+XODckS9g8aHg47AcoGE7s0ul8f5VeuwtBgBEqfcpWtsNSRIUx/D0m2hbSDuz/DV8
-	pGNNswXFZ72ZHWmQwMqeLDqkxJTSY29I6hZGG713Wqz4vl2A8vfRtVOIG7c8KONpBcLSnIazl8l
-	q7sMZH508GJzeSOL7Zi57Lfod6ya5ZRzI6/ydNmGt33o+KahjH9cVZ9/dxWvOA==
-X-Received: by 2002:a05:6a20:72a2:b0:243:d1bd:fbbb with SMTP id adf61e73a8af0-2534775a1e6mr13236800637.59.1757350159289;
-        Mon, 08 Sep 2025 09:49:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1It0dv5BR9m68fGngu0EK/yeg+C603sZAq9ZhSJtilPcPbfpfhlLXJ7uaZ1TlMyG2wUj1rw==
-X-Received: by 2002:a05:6a20:72a2:b0:243:d1bd:fbbb with SMTP id adf61e73a8af0-2534775a1e6mr13236761637.59.1757350158859;
-        Mon, 08 Sep 2025 09:49:18 -0700 (PDT)
-Received: from [10.91.118.43] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e5b44sm29578565b3a.88.2025.09.08.09.49.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 09:49:18 -0700 (PDT)
-Message-ID: <dc2ce606-52e3-4ffa-87f3-ce4c42b055c4@oss.qualcomm.com>
-Date: Mon, 8 Sep 2025 22:19:13 +0530
+	s=arc-20240116; t=1757350180; c=relaxed/simple;
+	bh=qJ4M9NhyUUiwSrixiBqxntWQFHUQIk2D8Q+Syr+++4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bi5ACnEB9qegOTwTLfDeFotUi3dBujQ5ySOtK4xomoQR7p8ogpF7SqI1xsABMHg4uQykyXyk/Zu+PH9KbssaL9/9I4hEqWzqPuwsvIXpWWA4PQc5Mgkov1dSd9saYpZI9nJhOgbE/MJ5rAQoZSvBlA/r/KNd5EVMLiFdKbl5umE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Vv9fpBv6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D4AC4CEF5;
+	Mon,  8 Sep 2025 16:49:39 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv9fpBv6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1757350177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QpB5tNXBjyOovnphQdFXz5SaIPdBCpYHvTLfm99HsZs=;
+	b=Vv9fpBv6zOVNc2wiXzUH8hqPT6/w9QKa42prXd24TRVkuGq0vms78eRkV0/+5GmHSeQT0u
+	or/xt3dOnIUEUBJWkn/794RW0z1Z1G+xf5zTtotCA37n/G11BfLwVJH0fUxsbvr3WRq8mI
+	V16AkEUbATUXANihR8D2O9swr/NmZWw=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6dd8059c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 8 Sep 2025 16:49:37 +0000 (UTC)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61e74d0539bso890062eaf.3;
+        Mon, 08 Sep 2025 09:49:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWGSjp8q7EiQghpsDrJS7PBTZxVAqApYWNLLKxQsK3Cp95byyCQypNduCoI+L9uQRd1XvIQWsd3ahIfBwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4GssCMk1HJc2ffmS07xoUv178DjWKeZ72gKEzWtIyTAoyy4TH
+	54cf+Z4OOaYkt3nynMvQ8dnKQ9zD5lDa1XrCJtWuaoOXrGESzZIeRK6bbGK7blBoBfsN9GNNwjh
+	AmvjAj/2OI2IzFF2P4OM2HCuIqe82TqI=
+X-Google-Smtp-Source: AGHT+IG1k1MmnF81J1Vo2jmXSIx1yHc4qgVkpm2QOFlj3gX2CeXc8Y5S0Gow70vJKvxabq0LnsYZB9vjl73O/LZxUXQ=
+X-Received: by 2002:a05:6808:15a0:b0:439:1c13:4585 with SMTP id
+ 5614622812f47-43b29a8995amr3903338b6e.20.1757350176315; Mon, 08 Sep 2025
+ 09:49:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/16] drm/msm/a6xx: Poll additional DRV status
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Antonino Maniscalco <antomani103@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
- <20250908-ifpc-support-v2-3-631b1080bf91@oss.qualcomm.com>
- <77cfd9d7-c3f1-4e0b-8cf4-8567611c3a9d@oss.qualcomm.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <77cfd9d7-c3f1-4e0b-8cf4-8567611c3a9d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=FN4bx/os c=1 sm=1 tr=0 ts=68bf0910 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=MmCsC9iFmiawHEAYgzAA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-ORIG-GUID: o5YN_apS84RIQZXfPSmPsx7NZ5XRQiZb
-X-Proofpoint-GUID: o5YN_apS84RIQZXfPSmPsx7NZ5XRQiZb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA5NCBTYWx0ZWRfXzRfNAc+Tw4y1
- NICVRkz8cDBr2sSIWk8TmPkAvjMcwDyc5tyAfGzzhBgEVFzydlRt1YJTZXdR2zHuGiBjorgct8+
- 90PWm4NUnwcTeS5WzcT04XcqXXv7o3LTTUe6oZzqwBu9erMBwhQmJfWoYhPJL9uyf5YmPR1MrzC
- jMdbGluW2pdxZAw2rVcoZgSzgsaYlheMzN1Q0GcG0Pl2Bk+IouNHmi490/7OzRox2lXAa388xD7
- Ao7Cl3Oi/yQzpyLhuO+wn7Hc4ysLrMh2+dksdCGo3N3cQrdMF7Bryh7sZWn1CElqFYLrCkJUj9o
- lyc8R2wkwp6KXxgWc3+RywhHgBC7ffeLiRZ9ZGBW0EClCscUIGqGd1+xRGvMN3mH6EsVQLnoPpa
- v/bbmdTu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080094
+References: <20250906213523.84915-1-ebiggers@kernel.org> <20250906213523.84915-13-ebiggers@kernel.org>
+ <CAHmME9qyfbn539Um9xoFJu2Mm9mM0zuOxyLgeOjF-R5nktbz4w@mail.gmail.com> <20250908164706.GA1331@sol>
+In-Reply-To: <20250908164706.GA1331@sol>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Mon, 8 Sep 2025 18:49:25 +0200
+X-Gmail-Original-Message-ID: <CAHmME9q3qa2ZmPrZWAe5tkWp2xGgNd=1BBx0APa_ACb3=bo-1Q@mail.gmail.com>
+X-Gm-Features: AS18NWCGPRb7OwMUI-tVEiz_hU1uUOJpyLd0OY7Ve43ZcitTO73IQk18snpDrbA
+Message-ID: <CAHmME9q3qa2ZmPrZWAe5tkWp2xGgNd=1BBx0APa_ACb3=bo-1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 12/12] wireguard: kconfig: Simplify crypto kconfig selections
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Zhiqi Song <songzhiqi1@huawei.com>, 
+	Longfang Liu <liulongfang@huawei.com>, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/8/2025 8:48 PM, Konrad Dybcio wrote:
-> On 9/8/25 10:26 AM, Akhil P Oommen wrote:
->> A7XX_GEN2 generation has additional TCS slots. Poll the respective
->> DRV status registers before pm suspend.
->>
->> Fixes: 1f8c29e80066 ("drm/msm/a6xx: Add A740 support")
->> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->> ---
->>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> index bb30b11175737e04d4bfd6bfa5470d6365c520fa..06870f6596a7cb045deecaff3c95fba32ee84d52 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> @@ -987,6 +987,22 @@ static void a6xx_gmu_rpmh_off(struct a6xx_gmu *gmu)
->>  		val, (val & 1), 100, 10000);
->>  	gmu_poll_timeout_rscc(gmu, REG_A6XX_RSCC_TCS3_DRV0_STATUS + seqmem_off,
->>  		val, (val & 1), 100, 1000);
->> +
->> +	if (!adreno_is_a740_family(adreno_gpu))
->> +		return;
->> +
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS4_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 10000);
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS5_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 10000);
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS6_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 10000);
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS7_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 1000);
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS8_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 10000);
->> +	gmu_poll_timeout_rscc(gmu, REG_A7XX_RSCC_TCS9_DRV0_STATUS + seqmem_off,
->> +		val, (val & 1), 100, 1000);
-> 
-> https://lore.kernel.org/linux-arm-msm/002eb889-87cb-4b8c-98fb-6826c6977868@oss.qualcomm.com/
+On Mon, Sep 8, 2025 at 6:48=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> w=
+rote:
+>
+> On Mon, Sep 08, 2025 at 06:35:04PM +0200, Jason A. Donenfeld wrote:
+> > Hi Eric,
+> >
+> > Just a small nit -- would you commit this with the subject line all
+> > lower case, like the other wireguard commits?
+>
+> Done.
+>
+> > By the way, I have been reading every single one of your patches. It
+> > didn't seem like it'd be useful for me to respond endlessly with
+> > Acked-by/Reviewed-by, so I haven't. But I have quite actively been
+> > looking through these series. Thanks for doing these cleanups and
+> > reorganizations. This patch here especially is quite the relief...
+>
+> Thanks!  I think Acks/Reviews would still be helpful, as it shows that
+> someone else really read the patches.  Maybe you'd at least like to send
+> those for the cleanups for the algorithms used by WireGuard?
 
-I missed the timeout value update. It is not bad since we already have
-the same value for TCS3 above. Will fix them all separately.
+I can do it for everything I read, I suppose. I care about a lot more
+than just wg, anyhow.
 
--Akhil.
-
-> 
-> Konrad
-
+Jason
 
