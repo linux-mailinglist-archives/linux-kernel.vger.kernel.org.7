@@ -1,418 +1,243 @@
-Return-Path: <linux-kernel+bounces-806551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A91B49852
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:31:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7739FB4985D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24F13B207B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:31:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F5E87B515C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDF91ADC83;
-	Mon,  8 Sep 2025 18:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7161531AF10;
+	Mon,  8 Sep 2025 18:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="TvvE0CC6"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2126.outbound.protection.outlook.com [40.107.93.126])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="gmdHZEpj"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CAE17A31C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC204A2D;
+	Mon,  8 Sep 2025 18:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757356306; cv=fail; b=OaHQbTm+8KULqCBtUM5MrPsyQnI0rVwYh8KDE3BM0FERPoWMm1JivlVE94SHV4l5+hePiVHNHVwTz7CCa5t2s4GKy9QFuWGzoY3v+0xCDoqQRQaEtpDnayOrL/GYnehm/pp34mgKWtoUU6MLPDZTDkT0EcIej3CdtWH5VcdcmQo=
+	t=1757356391; cv=pass; b=TiaTWiL2YcGG84/WG97/s4SqaDnofO/0ZIcdAqdxCF0qwN9ZjSJFGUsMYOILCN02Jme+pJpa4K5glc0Na9S6iCGAJA9LgkvxvcO4q8pVvzAcVTTJTVKRoFpGZX6lGbyHVE4crN2WCURIDAkHPyvFq1eZVcV7K2Yrli8EMBSMuAc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757356306; c=relaxed/simple;
-	bh=RQOLOe3L6XNudCo6Xk7AZFqHuPC3Sd6zCSTr/F8vbHs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TR3OxJQkq9Rp7Gj9GXyZnSwDtiXtaA3gQHDn1T/Bv5A6PxoBTMH15YUjL71Q6Cd6qw5MqYp6z4RzP/is21FJfdnS7uA1TzwqY0uM27AU5yZekTXKf/FFXjZgYSAxwJbQJD4FkoZT6YZo2zgeKIRzaTob340uyFc5L4vS7dg24uA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=TvvE0CC6; arc=fail smtp.client-ip=40.107.93.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I/6VuiQhcK8zGmaWiYqsiBBqqve7QY5YqFrMV14ubY8/Ai474PoGST6HVOOXcE8MniL5zeMUr3wgcDuy44YzZzhXkKwF9ufyXCjz748Hi9xZHFJ+kPXX/BHPrT31je/2L4Fx7x+ZTIpH82LmqhIebyFEKiBH1a4HLZ5f/u5Yv7sP+LHh+q/fWiGOwH1PASbOzYQluLrcMCAwdYLUoXFB3zKDLCWhkzICbd/nk5QV76jCEMmM1cpGbYTLRTiGz9AjFwoIRZeycDW8rSpMK4f9MsB/J5GyjRMHfdWl7K7wxr4HI4Dq9685qUL25/pX3xGSLBuXbySjPMI7Gfpkqz0Yqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D5QKanoLrKsh2xaoqXJCcxfLzITKXthPVBxmIXcU6sI=;
- b=fJqiJtAluZLN/TTdmJMalgtSX1UaRt2tBS5yzCK/tuv+WG5gyXBmxEN+WVX/xOdFd5lPSTsFl3Je1mSzmb1Dc4zn3e0n16Wf2ThZpTKRocf0ukHQayr7D8Gq5/bT683KNk8Pz97hfvjm/oSmDelMva1L1YgiYBCAqUNSFWBHaOz+BwcFhejhsBZLTCxp/9CqT23Zp4jQnyVHH9AO7P426YiMb+NxEVJXMRqDLkb7IDmhdzWhdZ+AtW2PLFEEe9JPBMaDoL3/y7tEi4ofRdR5FU8qf4fEokU9L7i+x0Nv6FwJVKonA7K1Z9kwOQJM/qmwrlWXifE4PEFP3Hp2tnw/9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D5QKanoLrKsh2xaoqXJCcxfLzITKXthPVBxmIXcU6sI=;
- b=TvvE0CC6Ky90V/fWg6RpU36r5SfiYxqemtO3mx1fZknRHiuSwhHSKp6zrXFUF8RtyztP+bCGV1iUAH5tcRDM+4Drq8gkgWzr7Cvdnwxm3RRwdUH7XzhyfbnESdoAc/aQgGCc/bv7aRpUTWgE1wLwnAGG9++VkmKp9+y2dE0s2iM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CY1PR01MB9224.prod.exchangelabs.com (2603:10b6:930:fe::5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.22; Mon, 8 Sep 2025 18:31:41 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 18:31:40 +0000
-Message-ID: <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
-Date: Mon, 8 Sep 2025 11:31:35 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-To: Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
- <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
- <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
- <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
- <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
- <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
- <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
- <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CYXPR03CA0012.namprd03.prod.outlook.com
- (2603:10b6:930:d0::11) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	s=arc-20240116; t=1757356391; c=relaxed/simple;
+	bh=EHo9+NbhnZGG6NdApLz2AIMTAkqhCWD3bSxkZ2zHasE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NUi2zCaMbgVXA8V8CL3bTYpI3eqlL4fkGLFYR2EXxj4AHPRZ/UKec66MkRGE6Yj7V0bMbsDFyJy4V6fqh1KFM9u+Z/nhJaMJvPtmwlgOzvlF1segVUQbfW+KJmYDlxVEgH4C6CFQh8R65I+rd7JdM2XlBsFLg5T861JgPgC3osg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=gmdHZEpj; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757356371; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mP1gqjkdiUExNbEz/+ZLOQQRp/VIvy2jg6mCgwuNQvpld/C57PjRbvmWiRJhWc0OyzbbB65Ymt4tCkSYA9iTx0hgW3c/zRMmuSUC8zl97O1/jjklh4OHqQJDJoHNK0R4ACGeg0kxbnkIhx2Ma0ccXKkD73BObWmkSZFEX9n5L0g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757356371; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6ltzTi+I6kPPm3F0lLcLlkqmygrdjRSVDeW/ROJ50BY=; 
+	b=nEU6mm47QxW+KIhbYWdgDGNME8hkZ19fI0B+ngC/O/wyYyU6MvQ6q8A5rSx+wdNH7x7gCh1pnpcl9yY5tshNPPawa23W+z7SELy+UOrDk/G6efLfRRUpodfHJjrxVXAeQ06p6gXjZKl5wvWqmx6ZPos7dCZh4RPSv1mo6ah+cjE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757356371;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=6ltzTi+I6kPPm3F0lLcLlkqmygrdjRSVDeW/ROJ50BY=;
+	b=gmdHZEpjqx+Qs0N9zbN7Mgz3VYtN9gkYEaDT2OQegj86gUyG0C+igfYzxfo69760
+	P6q8Y0ULhZPp/AskthsyD20oYxulxBHfDGLyTvGcNu83D/XLEiWWVN98eEW489zYcYs
+	uLSd90pCQs2vD5VVk7y3fPyi/DeL9IgdV7qMC430=
+Received: by mx.zohomail.com with SMTPS id 1757356367793396.9789493803712;
+	Mon, 8 Sep 2025 11:32:47 -0700 (PDT)
+Message-ID: <c05ea992-b0d8-4ea4-8a11-660b9cae4820@collabora.com>
+Date: Mon, 8 Sep 2025 14:32:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CY1PR01MB9224:EE_
-X-MS-Office365-Filtering-Correlation-Id: afbd7f26-846e-498c-4aeb-08ddef05f41c
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NjA3WC9nMlNPNk5PdWc5cGM0QWN1U2NtanpQRkc2TU1Rc3Fjd0tFaFBMQUpW?=
- =?utf-8?B?SVJobDJMQ2JLNUFRREpudk1Jd2RJS1FCNERtWHBuWWttOGY1ZUVIYzZZcFJq?=
- =?utf-8?B?Y3AxUlRRamZBVWtNVUR6aE94ZGFTVzBKUS9Zc3NFaTNabU1TMEViTWo3bmJv?=
- =?utf-8?B?VEtZM1I1ZUdPMDNrS0lTdjFjVEpaU1lBRVlYeXdRaUR2K1U2M1dKaCs5eVd4?=
- =?utf-8?B?Z2F4YzhyNHpSRXBiU2tiOWxPbFFkbmlOaWs2ejJlLzN1YXZwK2tYUllTbVpj?=
- =?utf-8?B?REVHY0wrT1hiRnRlYXZvUllLcWptM1puNlFRdkdQZXVLUnVhdkNTdGpKRUJZ?=
- =?utf-8?B?enI2ejBzbU9vbGxDL3lXSFBBZDh5RzgvcEMwdXZ0UVBkeW1TZ0dTRERnTEZE?=
- =?utf-8?B?UEg1cVNEWnFrQVN2UXN5UnExalRsaGJ0RDFab0d4WCtBMTZTYU5pRGN0RTd5?=
- =?utf-8?B?MGtHTDRiMElHZjllUzFPV3R6NmljTWh1UlFHbmpXdllra000YkREUWZOR0p2?=
- =?utf-8?B?N3ovZk9xeVVGcmFIYmhvZm5LZ0hEY0tIM0dSWitQa2lSZHBYcVZwalY0cDlB?=
- =?utf-8?B?TTBQVytUWitaZWZITTZkc1ArZ0E0cmFBWmJKbXVkVVcya0JNaURyT3Y4SmRr?=
- =?utf-8?B?VlRxbVh3SjFYMDRUV0l2OG10OGZ1YWtNdVQrVWY0dDRvb0pMQzFtOEtNbFZo?=
- =?utf-8?B?Y2pFUXkzZTFpcWczc0tQVERXZkMrTHZlb0tFODJhWFhnV2ozTWg1M295WlN5?=
- =?utf-8?B?blEvckJkUERDeUphU0VYRlQxZjQ0V1pHVVkwdXFtSGVwbkJvdGdZR3pWUjRK?=
- =?utf-8?B?dmRiOW10TGl6NWpldU5yNEpNVXZXb082U0d6Z25jY2lWVHZoS0JLYmdpakYw?=
- =?utf-8?B?U3BlZnFpYkZ2T0U1Z3MvY1BvTVNvUVVndmt4N1o1NWZCem8rYnA2N0k4Ukhs?=
- =?utf-8?B?aFZmUzZlVEJEUzNuSmR6WG4zZUVPY1YxUTJjNFVOYkFPMmNFcXBaSllvcUpP?=
- =?utf-8?B?SXhMZlFpS1o1N2N3OGVnNy9WbmJBK3FNWnlrN2MrZWF1ZmJPRHBCMVp5QU5Y?=
- =?utf-8?B?ZnExTjd4aEg3ZVdyY1h3bzNUN1FJSjR3azRUQ24vcXJvUTBxY0srWDlYQWxt?=
- =?utf-8?B?dURVNTM4OWYwamxIRjVhSVlRQk9nMWROTytGdVJpaVVQZlo0cm1GLyt2Njhz?=
- =?utf-8?B?aDVDeTB2cEdvWlZlMHRxV3o1VzlubVBFWEl2YlJRVFM4ejhTVVRNbVBvNlFl?=
- =?utf-8?B?aU5jZ2ZzNlorY0VnK0c1ejJIb1BMYS8yZmgxTHFmNHBOWE00SjVEOWEvaU1k?=
- =?utf-8?B?OHVQTTdRR2cvT0pwZXltRnR6N3pDNll2NjY4MkRWU3Jxd3FrQXNPNVRrYzdo?=
- =?utf-8?B?aG5Ua3BVczAvaEkzR2dkRnlSS2U1ckhRR25sVENFOGdMeHdUdFRpUW1LVGx0?=
- =?utf-8?B?bkt3WlN5M1N3MEo0M1ArdkZKQWVCUTRHWExRekRFcm42eFVkQUlpNXRVL2hF?=
- =?utf-8?B?N1NjWDBUaldXakdWRFp6QzIweU5qcTVoTk1tQkFnOXZ0eTRPSkR5YmZ6ZmFq?=
- =?utf-8?B?T0hNa2RlNzNoZnluZW5tQjE4SlVIdUcxZ2g2clJBMC9OVUV2TENOWE5xL3lX?=
- =?utf-8?B?UkhJQlpVb1FyaTVScm9teFN0TXVjeVVyQVRQc0lJQiswY2k2U0w5WGlHajJQ?=
- =?utf-8?B?WUpGZVkyK2N0cDV6S2w1QStJUjBMUndZbjN3MGZybzcxcGRXQ0UxaGlMczFJ?=
- =?utf-8?B?K2FYZXY4dVZlNTdOL2JuMnNzL0N5OGt6T3RUNFJqVCtlTFhISGRvTjFyRVV1?=
- =?utf-8?B?dFQ1SjZ2NFVPaHFEUmNxNUx3dHBBQU4yTnAxdFlEV2dCaGNjcGlJWjBZVERK?=
- =?utf-8?B?ZFdJMG5ZbkF3clJKYnh5Q1VCdHJ6Ym9mT2V2cVNWR3RydXprUnJUcVozTzZD?=
- =?utf-8?B?MCtqRWFjOUkvVjBrV3pyVThoaHZDSDU1RW51UDV4TW5HbU9wTFZRTnJQUnpX?=
- =?utf-8?B?andzb0w2MDh3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MU9SSTc0WjRHSmRxbmFZaWtUaVdGMlhDUmxqd2JpMU5iUlcxVUQwQXhOTnU1?=
- =?utf-8?B?a0U3ZUxkTjMwVy91RHAyWmkrNElxSVRWMnM3K2JqK1Q4ZFBzTUhhTDN1d2pL?=
- =?utf-8?B?ZnpWeC9CSWM0VDgzdHdrVWRBdjFzQzZTd3FYNHdNMTMwTklzUVg3QjJhR0pM?=
- =?utf-8?B?ZzEvTlRGZm9XOVU4MEJxWm1MNkFkaGNxUk5ITkU1SkQxYmkwMGpNQWZFREM4?=
- =?utf-8?B?cmxKanFEb01aZGZIVm1jUkJ2bk9uakhNSXpGRUxacW1WWVNQTGN2VHF5M0ZK?=
- =?utf-8?B?WFpJc0NJeGpZRVZvR1lMSi96MFpzQ2VHYWlCVUJNUk5TQVdrMGMvTml0emg1?=
- =?utf-8?B?amt6VVZQV3NGTk9ZVmc4L1UzTzdDVkplT0xZbVpPY3QyZk5vaWlRR0RLRUJs?=
- =?utf-8?B?UUpmRW1sRzJvbEhsd1hYRXJydjhQZDZCZlErT056WEt5RXRvMHdJUDE3ZTJM?=
- =?utf-8?B?RE9XcXJxakp2bTBqQlNOVS9Qelh3VVc0YWN5T0ttTFBwcnNJOXJaaXhJWk12?=
- =?utf-8?B?ZTJXQzZjMDBUdm1EYXppTnZGU3huQXFiUVVaQlBWbkRTUkUydE4vczZBZXNn?=
- =?utf-8?B?d2JkdVliNGZqYkc4ZTdSUHBKMm9nejl5OStJVXZWMEh4K0xFcVBsZnJOQklZ?=
- =?utf-8?B?TXEvUEdMOEpKNEVldll6UFBoRVB2ZDdONHZwT2djWFV0LzBPRmFoQkFVcFRE?=
- =?utf-8?B?UXIvSCtnKy93eklwWWxweWc3REJHWTRRQTIxRS9HejhvbC9veXF1SXFaK1BZ?=
- =?utf-8?B?ZEhwS3lrbWlyQWUxZi9qemcvNDczaUMzdUo2OUZsaUh0NWVFZjBmRDdTYWNR?=
- =?utf-8?B?bTJnY3BQSWhwb2htejFNQkY4TjVWQzRVUlFQa3dQTFMyNThWNjhlNXh4R1A0?=
- =?utf-8?B?L245a3loYXNhQSswNHJ4YTBONm1ycTI1dkdyMnpmSFVyM0hoRXF4dlFIdW5G?=
- =?utf-8?B?YWZ2YXk2SVdJbndzZTB5ZElLMk90YlJBSEJmaFRLZHlnQVJWSnhlbWpTbjZX?=
- =?utf-8?B?R2Y1UUR0SWZIb0EvZlVXdjlkNUdQQUoxVGlXMGFHRGlGVHNrTHcvdmlQSjFD?=
- =?utf-8?B?bGhuOE0xOHFPWmM3a05qY3BzWnUxUktPdUdtRTI0VElhVUdNclcybkM4RW1I?=
- =?utf-8?B?NU5NVkRYUHBONVBKYmYwRmdnR2c2Qjhid05OWWdpOUdmTkVZeVNNWVhFZnNq?=
- =?utf-8?B?cmJYVEgzS3NwUGFLc2cvb0J0RkhmV2hVRU1TM3NoTmFVaGludUMrbTg0WG14?=
- =?utf-8?B?Q3pYRi9JVndjNExORUxUZ05Fc2ZoK1cvU1hvTHFML1RGazNVWUtVelBMWVV5?=
- =?utf-8?B?NFIveU5weDhsZEc0T0dVYnZWMDNWejhaYWJVQTlqdFA2bXBkNWdjOHo2M2Fv?=
- =?utf-8?B?ZzQyTHE2Um8rajVOMXJrcTZFWExnaTZFSWNZQ3lTbVh0NWhzeitEcC9HSHNI?=
- =?utf-8?B?OXUxRUdaRW42T0V6NFdwaVM1ZlBRV3ljSUhERlNCNFE3SS9objVCWkZvbmlS?=
- =?utf-8?B?OG9rTnFobTVrRjRLcldPMnlWQVpEZEl0U003Vm11WUdrT2E5RlE0Qm11NC96?=
- =?utf-8?B?aWRnQmZLUmlGU0tBVUd1eEhkVjZkK2NoT2NsU25taVh2UXpUc2EzRnd3QS8r?=
- =?utf-8?B?T3huSktjMmZDZjVNSC9XbTdiNkp3RnVLUnJoWnFpYjlFd3RJM0xiVG9vaDVa?=
- =?utf-8?B?MUdHZjhRNmlCQ3dDWFFVUEpTTmVxMktkMld0Q1JTZ2J2Tlp5WWJYdWtLWWdB?=
- =?utf-8?B?N3p5VVcwYzVoZkQwV1RnenBicWNZL2tDZW9ISVB2OUQ5bEp3MDVPVVVjYkU2?=
- =?utf-8?B?bTBzM3hqL2ZWc09iYW9sWllTQWwwU1ZrbHE5WXlYbS8yOWkrWEtBb2Q5S1VK?=
- =?utf-8?B?VHR1SGdlaGJuTE1BajNoZXRicWRmeVEzZVhhcGJXVEx0Wmh1a0JkRWZQUHJv?=
- =?utf-8?B?cE40WFlqcDR4eEgwZ3lKVllsYzQ3SktMSGN5Sk5EQXUvWUVlL056VlBhUExY?=
- =?utf-8?B?a2Z6Wi9mTzZEbEsvS2gvV1k1RzJZZ2hJV1FDNFhpWmpZZWlrU2xqUUNjV21k?=
- =?utf-8?B?d1RFRE9oNFY0RmhSSHovam5XcXYxQyt4bURKbmR2dVpvWHJHMm5KMGxxM0Yv?=
- =?utf-8?B?a0pENlR0d1llWmpJYjdwM1FXUS9UQ0ZnVlVzd0RpTlVjZm1lRFpiL21uWmVR?=
- =?utf-8?Q?zFqXArSf1O3eAYMu3ExsaRE=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afbd7f26-846e-498c-4aeb-08ddef05f41c
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 18:31:40.7811
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1h805VZyAqz1LqAIDuM5cLKO8f2riNikI+BKyq6lKiOmTDCcDY2eJjqIh2Ay+JYvHnk1g3Qc/SF9LuxCsc3txgGp/FvCSKEonRLvAjvG0cY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR01MB9224
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] media: rkvdec: Add variants support
+To: Jonas Karlman <jonas@kwiboo.se>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Alex Bee <knaerzche@gmail.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250905161942.3759717-1-jonas@kwiboo.se>
+ <20250905161942.3759717-3-jonas@kwiboo.se>
+Content-Language: en-US, fr-CA
+From: Detlev Casanova <detlev.casanova@collabora.com>
+In-Reply-To: <20250905161942.3759717-3-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
+Hi Jonas,
 
-
-On 9/8/25 9:34 AM, Ryan Roberts wrote:
-> On 04/09/2025 22:49, Yang Shi wrote:
->>
->> On 9/4/25 10:47 AM, Yang Shi wrote:
->>>
->>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
->>>> On 04/09/2025 14:14, Ryan Roberts wrote:
->>>>> On 03/09/2025 01:50, Yang Shi wrote:
->>>>>>>>> I am wondering whether we can just have a warn_on_once or something for the
->>>>>>>>> case
->>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
->>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
->>>>>>>>> of PTE
->>>>>>>>> tables for every PMD block mapping, which will give us
->>>>>>>>> the same memory consumption as we do today, but not sure if this is
->>>>>>>>> worth it.
->>>>>>>>> x86 can already handle splitting but due to the callchains
->>>>>>>>> I have described above, it has the same problem, and the code has been
->>>>>>>>> working
->>>>>>>>> for years :)
->>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable memory
->>>>>>>> if we
->>>>>>>> can...
->>>>>>> Yes, I agree. We simply don't know how many pages we need to cache, and it
->>>>>>> still can't guarantee 100% allocation success.
->>>>>> This is wrong... We can know how many pages will be needed for splitting
->>>>>> linear
->>>>>> mapping to PTEs for the worst case once linear mapping is finalized. But it
->>>>>> may
->>>>>> require a few hundred megabytes memory to guarantee allocation success. I
->>>>>> don't
->>>>>> think it is worth for such rare corner case.
->>>>> Indeed, we know exactly how much memory we need for pgtables to map the linear
->>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
->>>>> cache.
->>>>> We would still get the benefit of improved performance but we would lose the
->>>>> benefit of reduced memory.
->>>>>
->>>>> I think we need to solve the vm_reset_perms() problem somehow, before we can
->>>>> enable this.
->>>> Sorry I realise this was not very clear... I am saying I think we need to fix it
->>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can find a
->>>> better solution.
->>> Took a deeper look at vm_reset_perms(). It was introduced by commit
->>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions"). The
->>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
->>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
->>> vmalloc(). So the page table should be already split before reaching vfree().
->>> I think this why vm_reset_perms() doesn't not check return value.
-> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
-> output a warning if it does?
-
-It should. Anyway warning will be raised if split fails. We have somehow 
-mitigation.
-
+On 9/5/25 12:19, Jonas Karlman wrote:
+> From: Alex Bee <knaerzche@gmail.com>
 >
->>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
-> Just checking; I think you made a comment before about there only being a few
-> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
-> set_vm_flush_reset_perms(). So just making sure you also followed to the places
-> that use that helper?
-
-Yes, I did.
-
+> Different versions of the Rockchip VDEC IP exists and one way they can
+> differ is what decoding formats are supported.
 >
->>> The most
->>> of them has set_memory_ro() or set_memory_rox() followed.
-> And are all callsites calling set_memory_*() for the entire cell that was
-> allocated by vmalloc? If there are cases where it only calls that for a portion
-> of it, then it's not gurranteed that the memory is correctly split.
-
-Yes, all callsites call set_memory_*() for the entire range.
-
+> Add a variant implementation in order to support flagging different
+> capabilities.
 >
->>> But there are 3
->>> places I don't see set_memory_ro()/set_memory_rox() is called.
->>>
->>> 1. BPF trampoline allocation. The BPF trampoline calls
->>> arch_protect_bpf_trampoline(). The generic implementation does call
->>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
->>> For x86, it is because execmem cache is used and it does call
->>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
->>> so it should never fail. I think we just need to use the generic
->>> implementation (remove arm64 implementation) if this series is merged.
-> I know zero about BPF. But it looks like the allocation happens in
-> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
-> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
-> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
-> actually help at vm_reset_perms()-time?
+> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+> Changes in v3:
+> - Use a reference to rkvdec_variant
+> - Add num_regs field
 
-Took a deeper look at bpf pack allocator. The "pack" is allocated by 
-alloc_new_pack(), which does:
-bpf_jit_alloc_exec()
-set_vm_flush_reset_perms()
-set_memory_rox()
+Why are you adding this field ? I don't see it being used in a later patch.
 
-If the size is greater than the pack size, it calls:
-bpf_jit_alloc_exec()
-set_vm_flush_reset_perms()
-set_memory_rox()
+Would that be useful for writing the right amount of registers later 
+when switching to structs and memcpy ?
 
-So it looks like bpf trampoline is good, and we don't need do anything. 
-It should be removed from the list. I didn't look deep enough for bpf 
-pack allocator in the first place.
+I haven't checked how different the register maps are between those 
+different variants.
 
+> - Collect r-b tag
 >
->>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
->>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
->>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
->>>
->>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
->>> called set_memory_rox() before switching to execmem cache. The execmem cache
->>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
->>>
->>> So I think we just need to fix #1 and #3 per the above analysis. If this
->>> analysis look correct to you guys, I will prepare two patches to fix them.
-> This all seems quite fragile. I find it interesting that vm_reset_perms() is
-> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB, then
-> sets them to default. But for arm64, at least, I think break-before-make is not
-> required. We are only changing the permissions so that can be done on live
-> mappings; essentially change the sequence to; set default, flush TLB.
-
-Yeah, I agree it is a little bit fragile. I think this is the "contract" 
-for vmalloc users. You allocate ROX memory via vmalloc, you are required 
-to call set_memory_*(). But there is nothing to guarantee the "contract" 
-is followed. But I don't think this is the only case in kernel.
-
+> Changes in v2:
+> - No change
+> ---
+>   .../media/platform/rockchip/rkvdec/rkvdec.c   | 22 ++++++++++++++++++-
+>   .../media/platform/rockchip/rkvdec/rkvdec.h   | 11 ++++++++++
+>   2 files changed, 32 insertions(+), 1 deletion(-)
 >
-> If we do that, then if the memory was already default, then there is no need to
-> do anything (so no chance of allocation failure). If the memory was not default,
-> then it must have already been split to make it non-default, in which case we
-> can also gurrantee that no allocations are required.
->
-> What am I missing?
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index c15fc238d6af..daf6d9ab2d1d 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -14,6 +14,7 @@
+>   #include <linux/iommu.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+> +#include <linux/of_device.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/pm.h>
+>   #include <linux/pm_runtime.h>
+> @@ -327,6 +328,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
+>   		.ops = &rkvdec_hevc_fmt_ops,
+>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_hevc_decoded_fmts),
+>   		.decoded_fmts = rkvdec_hevc_decoded_fmts,
+> +		.capability = RKVDEC_CAPABILITY_HEVC,
+>   	},
+>   	{
+>   		.fourcc = V4L2_PIX_FMT_H264_SLICE,
+> @@ -343,6 +345,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
+>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_decoded_fmts),
+>   		.decoded_fmts = rkvdec_h264_decoded_fmts,
+>   		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
+> +		.capability = RKVDEC_CAPABILITY_H264,
+>   	},
+>   	{
+>   		.fourcc = V4L2_PIX_FMT_VP9_FRAME,
+> @@ -358,6 +361,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
+>   		.ops = &rkvdec_vp9_fmt_ops,
+>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_vp9_decoded_fmts),
+>   		.decoded_fmts = rkvdec_vp9_decoded_fmts,
+> +		.capability = RKVDEC_CAPABILITY_VP9,
+>   	}
+>   };
+>   
+> @@ -1186,8 +1190,18 @@ static void rkvdec_watchdog_func(struct work_struct *work)
+>   	}
+>   }
+>   
+> +static const struct rkvdec_variant rk3399_rkvdec_variant = {
+> +	.num_regs = 78,
+> +	.capabilities = RKVDEC_CAPABILITY_HEVC |
+> +			RKVDEC_CAPABILITY_H264 |
+> +			RKVDEC_CAPABILITY_VP9,
+> +};
+> +
+>   static const struct of_device_id of_rkvdec_match[] = {
+> -	{ .compatible = "rockchip,rk3399-vdec" },
+> +	{
+> +		.compatible = "rockchip,rk3399-vdec",
+> +		.data = &rk3399_rkvdec_variant,
+> +	},
+>   	{ /* sentinel */ }
+>   };
+>   MODULE_DEVICE_TABLE(of, of_rkvdec_match);
+> @@ -1198,16 +1212,22 @@ static const char * const rkvdec_clk_names[] = {
+>   
+>   static int rkvdec_probe(struct platform_device *pdev)
+>   {
+> +	const struct rkvdec_variant *variant;
+>   	struct rkvdec_dev *rkvdec;
+>   	unsigned int i;
+>   	int ret, irq;
+>   
+> +	variant = of_device_get_match_data(&pdev->dev);
+> +	if (!variant)
+> +		return -EINVAL;
+> +
+>   	rkvdec = devm_kzalloc(&pdev->dev, sizeof(*rkvdec), GFP_KERNEL);
+>   	if (!rkvdec)
+>   		return -ENOMEM;
+>   
+>   	platform_set_drvdata(pdev, rkvdec);
+>   	rkvdec->dev = &pdev->dev;
+> +	rkvdec->variant = variant;
+>   	mutex_init(&rkvdec->vdev_lock);
+>   	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
+>   
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> index 209dd79ce9bd..c47457c954e5 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> @@ -22,6 +22,10 @@
+>   #include <media/videobuf2-core.h>
+>   #include <media/videobuf2-dma-contig.h>
+>   
+> +#define RKVDEC_CAPABILITY_HEVC		BIT(0)
+> +#define RKVDEC_CAPABILITY_H264		BIT(1)
+> +#define RKVDEC_CAPABILITY_VP9		BIT(2)
+> +
+>   struct rkvdec_ctx;
+>   
+>   struct rkvdec_ctrl_desc {
+> @@ -63,6 +67,11 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
+>   			    base.vb.vb2_buf);
+>   }
+>   
+> +struct rkvdec_variant {
+> +	unsigned int num_regs;
+> +	unsigned int capabilities;
+> +};
+> +
+>   struct rkvdec_coded_fmt_ops {
+>   	int (*adjust_fmt)(struct rkvdec_ctx *ctx,
+>   			  struct v4l2_format *f);
+> @@ -98,6 +107,7 @@ struct rkvdec_coded_fmt_desc {
+>   	unsigned int num_decoded_fmts;
+>   	const struct rkvdec_decoded_fmt_desc *decoded_fmts;
+>   	u32 subsystem_flags;
+> +	unsigned int capability;
+>   };
+>   
+>   struct rkvdec_dev {
+> @@ -111,6 +121,7 @@ struct rkvdec_dev {
+>   	struct mutex vdev_lock; /* serializes ioctls */
+>   	struct delayed_work watchdog_work;
+>   	struct iommu_domain *empty_domain;
+> +	const struct rkvdec_variant *variant;
+>   };
+>   
+>   struct rkvdec_ctx {
 
-The comment says:
-Set direct map to something invalid so that it won't be cached if there 
-are any accesses after the TLB flush, then flush the TLB and reset the 
-direct map permissions to the default.
+Regards,
 
-IIUC, it guarantees the direct map can't be cached in TLB after TLB 
-flush from _vm_unmap_aliases() by setting them invalid because TLB never 
-cache invalid entries. Skipping set direct map to invalid seems break 
-this. Or "changing permission on live mappings" on ARM64 can achieve the 
-same goal?
-
-Thanks,
-Yang
-
-> Thanks,
-> Ryan
->
->
->> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
->> kprobes. It seems work well.
->>
->> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
->> kprobes.c
->> index 0c5d408afd95..c4f8c4750f1e 100644
->> --- a/arch/arm64/kernel/probes/kprobes.c
->> +++ b/arch/arm64/kernel/probes/kprobes.c
->> @@ -10,6 +10,7 @@
->>
->>   #define pr_fmt(fmt) "kprobes: " fmt
->>
->> +#include <linux/execmem.h>
->>   #include <linux/extable.h>
->>   #include <linux/kasan.h>
->>   #include <linux/kernel.h>
->> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->>   static void __kprobes
->>   post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
->>
->> +void *alloc_insn_page(void)
->> +{
->> +       void *page;
->> +
->> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
->> +       if (!page)
->> +               return NULL;
->> +       set_memory_rox((unsigned long)page, 1);
->> +       return page;
->> +}
->> +
->>   static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
->>   {
->>          kprobe_opcode_t *addr = p->ainsn.xol_insn;
->> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
->> index 52ffe115a8c4..3e301bc2cd66 100644
->> --- a/arch/arm64/net/bpf_jit_comp.c
->> +++ b/arch/arm64/net/bpf_jit_comp.c
->> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
->> size)
->>          bpf_prog_pack_free(image, size);
->>   }
->>
->> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
->> -{
->> -       return 0;
->> -}
->> -
->>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
->>                                  void *ro_image_end, const struct btf_func_model *m,
->>                                  u32 flags, struct bpf_tramp_links *tlinks,
->>
->>
->>> Thanks,
->>> Yang
->>>
->>>>
->>>>> Thanks,
->>>>> Ryan
->>>>>
->>>>>> Thanks,
->>>>>> Yang
->>>>>>
->>>>>>> Thanks,
->>>>>>> Yang
->>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Ryan
->>>>>>>>
->>>>>>>>
+Detlev
 
 
