@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-805419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F9DB48857
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C17B48864
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6A6188979B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243E13ACCBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAB62F3C35;
-	Mon,  8 Sep 2025 09:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BB42F0683;
+	Mon,  8 Sep 2025 09:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDuoZ167"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zx7tIAq3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BB52F3639;
-	Mon,  8 Sep 2025 09:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962A52EB5BF;
+	Mon,  8 Sep 2025 09:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757323578; cv=none; b=mOPzuLLge0/jT8iFk9QJ2iUNirr+F7FXYdrm0ORXnGou5zpNLk2MNexo2vocHuOxP9WtAcGVyl3XUVekQ4ApKt6w9nSqFGNB441/wbKdHsF1/G7vb7zJ0sxUI4SuMcYmknFlPl4iEgsvBUnWjz8ra1tmZ/K3goCN2gOC3UpO/OQ=
+	t=1757323679; cv=none; b=m+6Nk0bDLuQw1+EhWb6ozQnWsLFJnsMAgtpzuHgftK6n4Z54fCL/ieIVcj+Nw2RDZG/PPM7FNWwismoC9YeL2hTyXrkmRC042qsqfePx7bWjzG01PU12a3rsef1/E6n79UVLwxooT4fN5jII4gPzM57taCe8GQYuDokFBCVvVFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757323578; c=relaxed/simple;
-	bh=0AWaQxaQlIIqNlgSXKoasUU1wHEMugd/32PLRNlrnys=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=i5kPpP8duP/3F6jUYNpbmkqN7Y0XRWUf1vSIvTGCi+KNYrV69No2PZHCjtMBOTaltMDBaQppOa+Edim9/+kBwJjRDXEsXYadA05n4xQ0UF0bWlvNZ5s4Ym4eJ3KmfXcKVpucW7Ejh8Jg4nrWGrRVyt8CWlaMVr0QXBcBN16LDyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDuoZ167; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90701C4CEF1;
-	Mon,  8 Sep 2025 09:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757323575;
-	bh=0AWaQxaQlIIqNlgSXKoasUU1wHEMugd/32PLRNlrnys=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=IDuoZ1674J6bwXjvEP79XzyQly8WVfJbMJ8LTnhKsDg/EKueF+N4VvP+gqFOawWbw
-	 XLKPZWOJsuMmuYWoJBMpu6le4dec1FMR/P4lVTmXM2/ux+PT9v2E3mfeXrCdGJyyTP
-	 NQHTAcZNd8blghaR55gquxn9d9avRjgTENmxBGt6K31pwKGvn5ZMxhQs1ogr+kWLut
-	 lTxv9u1cVnMQJENItxdb85ISF+4NTFtlcYYXq5aHCfYx7W3Yotmv8C2/77GKalmHOU
-	 w/DvZ7ptxK55LaKjmB346TdcbJFXdyt8T7VEN/ywNQUe6OCs29jWxxnEVSF7TB8seu
-	 KOse4LhmQO9bw==
-Message-ID: <1c3a4ba0-f787-431d-a05b-865c059b8b90@kernel.org>
-Date: Mon, 8 Sep 2025 11:26:12 +0200
+	s=arc-20240116; t=1757323679; c=relaxed/simple;
+	bh=mVe3Sl1rP9VgFF2GZRiqka32lkis0qkl9gRYgeDe8Po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CP6ngPSUpC1PY6+rOpT4/+b9+1T0rzmepRk46pEyT+bl/XnwXLQbwPhGxlBwR8IUKm5gjifGHs0fDhHB1QKG8j3KVp+kgHObMDlCRtQ8uEAzLZhIqOu/Sx/iaIGK4PLwszWj2mGWdXLFBfVMC3TsEo+OZwHRUlz01P5rYRjVBeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zx7tIAq3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58890DlZ026682;
+	Mon, 8 Sep 2025 09:27:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	blPqGsDWqOkQ7scMUEI63AykP0Duimlw27M5hZ7Nj8c=; b=Zx7tIAq3tk6bR3kV
+	TQV2JBcZM2rvihO+F8dyklOQoRPpWwNUVfM27or7Lv/CS+Xi+XaBHwzgLe0chHaF
+	1qAVHRA+uJeppsRBElgBaqIQaB+mrkO6Pz2QgKSrCnYc3+jWeV5dJAtTUwfNdZvS
+	FPOiHLEZKzevPKaxMOWlRvdnXoUhfWBs84DGXzndcDOhl8a7YGH2SvkdGXy7sydN
+	Ol89/oGbQPgkfo8EdmqNOdWqooXO4rzPqwbosx+OpY8XaYuNekc2DK0DOlDBc3PB
+	DmJx4regdrzF2srKnXLKnVsTrg1tLI/xvki9lGT8sXOVJll3fOKIAsZyjnaUjDV+
+	d+ixWA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws46p9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 09:27:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5889Rql6006707
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Sep 2025 09:27:52 GMT
+Received: from [10.133.33.112] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 8 Sep
+ 2025 02:27:50 -0700
+Message-ID: <a97626c6-fcfb-4a57-9ba9-68b4f2cc67c4@quicinc.com>
+Date: Mon, 8 Sep 2025 17:26:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,368 +64,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] media: uvcvideo: Drop stream->mutex
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hansg@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
- <20250724120840.GL11202@pendragon.ideasonboard.com>
- <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
- <20250724155101.GA17890@pendragon.ideasonboard.com>
- <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
- <20250724200014.GT11202@pendragon.ideasonboard.com>
- <CANiDSCvfD_j3KhrEU9ajRxC5Wgdp=Anq_PTZkUg7G8-Nof3O4w@mail.gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <CANiDSCvfD_j3KhrEU9ajRxC5Wgdp=Anq_PTZkUg7G8-Nof3O4w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH ath-current] wifi: ath12k: Fix missing station power save
+ configuration
+To: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>, <jjohnson@kernel.org>
+CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250908015025.1301398-1-miaoqing.pan@oss.qualcomm.com>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250908015025.1301398-1-miaoqing.pan@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YcNMYz9Ox-AgdiWt5u9xfEP6SanSLUOZ
+X-Proofpoint-GUID: YcNMYz9Ox-AgdiWt5u9xfEP6SanSLUOZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX2YEzMLeyO4vw
+ BzGzwyPHXhNV5jQ9rzEsRzaSrJOgu5xz/OtaeXJ3XVb/IFHUaWOKoGYju3oDWjnvwwjjnAjmzbd
+ DL+UhjKvKzJ4IdSZeGY2Xbz35T5ZReem/K/mYD3hp+sAPPWdtytTGBt6lGNuAO18dzTkxDYZMRR
+ vHRFU09qcdxmEPgOKXUW1oWdrMi8JFSNqKSwTGz8ejuqx8XAgPDbCfhMGcGV6oFcG8qNpKo2dvT
+ 3+fFpYvRcx6nrm6n9VOJxa0O3UkLT1iJ1Uym6M+L9zcDUa5AwlUJkvCMj+oGOt/LhV2ZCwPNqwq
+ c4QsHXcTT0y/YvhrczUI1G9Mg2p45Qvy0ZBgpfH0yZ/z+WApAG6IrKvLXlEV1uaINnk3Ba6LGzI
+ ma1E3lJh
+X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68bea199 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
+ a=EecTVN4gN2f6d5QKcsUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1011
+ malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-On 25/07/2025 10:59, Ricardo Ribalda wrote:
-> On Thu, 24 Jul 2025 at 22:00, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->>
->> On Thu, Jul 24, 2025 at 08:15:48PM +0200, Ricardo Ribalda wrote:
->>> On Thu, 24 Jul 2025 at 17:51, Laurent Pinchart wrote:
->>>>
->>>> (CC'ing Hans Verkuil)
->>>>
->>>> On Thu, Jul 24, 2025 at 05:41:06PM +0200, Ricardo Ribalda wrote:
->>>>> On Thu, 24 Jul 2025 at 14:08, Laurent Pinchart wrote:
->>>>>> On Thu, Jul 17, 2025 at 07:56:45AM +0000, Ricardo Ribalda wrote:
->>>>>>> Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
->>>>>>> helpers"), the IOCTLs are serialized. Due to this there is no more need
->>>>>>> to protect ctrl, cur_format or cur_frame from concurrent access.
->>>>>>>
->>>>>>> Drop stream->mutex after thanking it for years of good service.
->>>>>>>
->>>>>>> Use this opportunity to do fix some CodeStyle.
->>>>>>
->>>>>> Is that about the following change only:
->>>>>>
->>>>>> -       if (format == NULL || frame == NULL) {
->>>>>> +       if (!format || !frame)
->>>>>>
->>>>>> or is there something else I missed ?
->>>>>
->>>>> I believe that's it.
->>>>>
->>>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>>>> ---
->>>>>>>  drivers/media/usb/uvc/uvc_driver.c   |  4 ----
->>>>>>>  drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
->>>>>>>  drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
->>>>>>>  drivers/media/usb/uvc/uvcvideo.h     |  6 ------
->>>>>>>  4 files changed, 10 insertions(+), 47 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
->>>>>>> index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
->>>>>>> --- a/drivers/media/usb/uvc/uvc_driver.c
->>>>>>> +++ b/drivers/media/usb/uvc/uvc_driver.c
->>>>>>> @@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
->>>>>>>       if (stream->async_wq)
->>>>>>>               destroy_workqueue(stream->async_wq);
->>>>>>>
->>>>>>> -     mutex_destroy(&stream->mutex);
->>>>>>> -
->>>>>>>       usb_put_intf(stream->intf);
->>>>>>>
->>>>>>>       kfree(stream->formats);
->>>>>>> @@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
->>>>>>>       if (stream == NULL)
->>>>>>>               return NULL;
->>>>>>>
->>>>>>> -     mutex_init(&stream->mutex);
->>>>>>> -
->>>>>>>       stream->dev = dev;
->>>>>>>       stream->intf = usb_get_intf(intf);
->>>>>>>       stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
->>>>>>> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
->>>>>>> index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
->>>>>>> --- a/drivers/media/usb/uvc/uvc_metadata.c
->>>>>>> +++ b/drivers/media/usb/uvc/uvc_metadata.c
->>>>>>> @@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
->>>>>>>        * Metadata buffers would still be perfectly parseable, but it's more
->>>>>>>        * consistent and cleaner to disallow that.
->>>>>>>        */
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>> -
->>>>>>>       if (vb2_is_busy(&stream->meta.queue.queue))
->>>>>>> -             ret = -EBUSY;
->>>>>>> -     else
->>>>>>> -             stream->meta.format = fmt->dataformat;
->>>>>>> +             return -EBUSY;
->>>>>>>
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>> +     stream->meta.format = fmt->dataformat;
->>>>>>>
->>>>>>>       return ret;
->>>>>>
->>>>>>         return 0;
->>>>>>
->>>>>>>  }
->>>>>>> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
->>>>>>> index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
->>>>>>> --- a/drivers/media/usb/uvc/uvc_v4l2.c
->>>>>>> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
->>>>>>> @@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
->>>>>>>        * developers test their webcams with the Linux driver as well as with
->>>>>>>        * the Windows driver).
->>>>>>>        */
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>>       if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
->>>>>>>               probe->dwMaxVideoFrameSize =
->>>>>>>                       stream->ctrl.dwMaxVideoFrameSize;
->>>>>>>
->>>>>>>       /* Probe the device. */
->>>>>>>       ret = uvc_probe_video(stream, probe);
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>>       if (ret < 0)
->>>>>>>               return ret;
->>>>>>>
->>>>>>> @@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
->>>>>>>       struct uvc_streaming *stream = handle->stream;
->>>>>>>       const struct uvc_format *format;
->>>>>>>       const struct uvc_frame *frame;
->>>>>>> -     int ret = 0;
->>>>>>>
->>>>>>>       if (fmt->type != stream->type)
->>>>>>>               return -EINVAL;
->>>>>>>
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>>       format = stream->cur_format;
->>>>>>>       frame = stream->cur_frame;
->>>>>>>
->>>>>>> -     if (format == NULL || frame == NULL) {
->>>>>>> -             ret = -EINVAL;
->>>>>>> -             goto done;
->>>>>>> -     }
->>>>>>> +     if (!format || !frame)
->>>>>>> +             return -EINVAL;
->>>>>>>
->>>>>>>       fmt->fmt.pix.pixelformat = format->fcc;
->>>>>>>       fmt->fmt.pix.width = frame->wWidth;
->>>>>>> @@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
->>>>>>>       fmt->fmt.pix.xfer_func = format->xfer_func;
->>>>>>>       fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
->>>>>>>
->>>>>>> -done:
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>> -     return ret;
->>>>>>> +     return 0;
->>>>>>>  }
->>>>>>>
->>>>>>>  static int uvc_ioctl_s_fmt(struct file *file, void *fh,
->>>>>>> @@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
->>>>>>>       if (ret < 0)
->>>>>>>               return ret;
->>>>>>>
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>> -     if (vb2_is_busy(&stream->queue.queue)) {
->>>>>>> -             ret = -EBUSY;
->>>>>>> -             goto done;
->>>>>>> -     }
->>>>>>> +     if (vb2_is_busy(&stream->queue.queue))
->>>>>>> +             return -EBUSY;
->>>>>>>
->>>>>>>       stream->ctrl = probe;
->>>>>>>       stream->cur_format = format;
->>>>>>>       stream->cur_frame = frame;
->>>>>>>
->>>>>>> -done:
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>> -     return ret;
->>>>>>> +     return 0;
->>>>>>>  }
->>>>>>>
->>>>>>>  static int uvc_ioctl_g_parm(struct file *file, void *fh,
->>>>>>> @@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
->>>>>>>       if (parm->type != stream->type)
->>>>>>>               return -EINVAL;
->>>>>>>
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>>       numerator = stream->ctrl.dwFrameInterval;
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>>
->>>>>>
->>>>>> You can drop the blank line here.
->>>>>>
->>>>>>>       denominator = 10000000;
->>>>>>>       v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
->>>>>>> @@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
->>>>>>>       uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
->>>>>>>               timeperframe.numerator, timeperframe.denominator, interval);
->>>>>>>
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>>
->>>>>>
->>>>>> Double blank line.
->>>>>>
->>>>>>> -     if (uvc_queue_streaming(&stream->queue)) {
->>>>>>> -             mutex_unlock(&stream->mutex);
->>>>>>> +     if (uvc_queue_streaming(&stream->queue))
->>>>>>>               return -EBUSY;
->>>>>>> -     }
->>>>>>>
->>>>>>>       format = stream->cur_format;
->>>>>>>       frame = stream->cur_frame;
->>>>>>> @@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
->>>>>>>
->>>>>>>       /* Probe the device with the new settings. */
->>>>>>>       ret = uvc_probe_video(stream, &probe);
->>>>>>> -     if (ret < 0) {
->>>>>>> -             mutex_unlock(&stream->mutex);
->>>>>>> +     if (ret < 0)
->>>>>>>               return ret;
->>>>>>> -     }
->>>>>>>
->>>>>>>       stream->ctrl = probe;
->>>>>>>       stream->cur_frame = frame;
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>>
->>>>>>>       /* Return the actual frame period. */
->>>>>>>       timeperframe.numerator = probe.dwFrameInterval;
->>>>>>> @@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
->>>>>>>
->>>>>>>       sel->r.left = 0;
->>>>>>>       sel->r.top = 0;
->>>>>>> -     mutex_lock(&stream->mutex);
->>>>>>>       sel->r.width = stream->cur_frame->wWidth;
->>>>>>>       sel->r.height = stream->cur_frame->wHeight;
->>>>>>> -     mutex_unlock(&stream->mutex);
->>>>>>>
->>>>>>>       return 0;
->>>>>>>  }
->>>>>>> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
->>>>>>> index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
->>>>>>> --- a/drivers/media/usb/uvc/uvcvideo.h
->>>>>>> +++ b/drivers/media/usb/uvc/uvcvideo.h
->>>>>>> @@ -469,12 +469,6 @@ struct uvc_streaming {
->>>>>>>       const struct uvc_format *cur_format;
->>>>>>>       const struct uvc_frame *cur_frame;
->>>>>>>
->>>>>>> -     /*
->>>>>>> -      * Protect access to ctrl, cur_format, cur_frame and hardware video
->>>>>>> -      * probe control.
->>>>>>> -      */
->>>>>>> -     struct mutex mutex;
->>>>>>> -
->>>>>>
->>>>>> Could you please instead keep this mutex and drop uvc_video_queue.mutex
->>>>>> ? The rationale is that the same lock is now used to protect the queue
->>>>>> operations and to serialize the ioctls. It's therefore a higher-level
->>>>>> lock, which should be stored in the higher-level object, not in the
->>>>>> queue.
->>>>>>
->>>>>> You can then also drop the lock assignment in uvc_queue.c that reads
->>>>>>
->>>>>>         queue->queue.lock = &queue->mutex;
->>>>>>
->>>>>> as videobuf2 and the V4L2 core will use the video device lock when no
->>>>>> queue lock is set. The comment at the top of uvc_queue.c may need to be
->>>>>> updated.
 
-No, you can't drop this. Once the last user (dvb) of the wait_prepare/finish callbacks
-is removed, the vb2 code will change to:
 
-https://patchwork.linuxtv.org/project/linux-media/patch/d2c5e21692652db13d55b3a8ec5c8bd04b308c3c.1749106659.git.hverkuil@xs4all.nl/
-
-So just an unconditional mutex_lock(q->lock).
-
-vb2_core_queue_init() will check that q->lock is set and WARN otherwise and return
-an error.
-
-It's up to the driver to decide which lock you set q->lock to. Usually that's the
-same mutex as vdev->lock.
-
-I think there are very few (if any) drivers that use a queue-specific lock. I once tried
-to do that for the vivid driver, but it quickly descended into locking hell. But vivid
-is quite complex in that regard, so it is not representative.
-
->>>>>
->>>>> Are we sure that it is exactly the same?
->>>>>
->>>>> There are places in videobuf2-core.c where we do not use video device lock.
->>>>>
->>>>> Eg:
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/common/videobuf2/videobuf2-core.c#n2056
->>>>>
->>>>> I'd rather keep the assignment to be in the safe side.
->>>>
->>>> There are lots of places where the vdev lock is used is the queue has no
->>>> lock. Hans, was is an oversight not to do it in __vb2_wait_for_done_vb()
->>>> ? If we don't want to support not setting the queue lock that's OK, but
->>>> we should then drop code that uses vdev->lock instead.
-
-vb2 has no knowledge of struct video_device, so it relies on vb2_queue->lock
-to know what mutex to unlock/lock. All drivers must set the vb2_queue lock.
-
-As mentioned above, this will become compulsory once the DVB core has been
-fixed (still waiting for Mauro to test it).
-
-All V4L2 drivers should set q->lock already. If you know of any that do not,
-then let me know.
-
-Regards,
-
-	Hans
-
->>>>
->>>> We can keep the assignment for the time being to be safe until that
->>>> issue gets resolved, but I'd still like to use the stream mutex instead
->>>> of the queue mutex.
->>>
->>> The problem with using the stream mutex is that the meta device and
->>> the capture device have the same uvc_streaming, but they need a
->>> different mutex.
->>>
->>> So if you do something like this:
->>>
->>> console0 # yavta -c /dev/video1 &
->>>
->>> console1# yavta -c /dev/video0 &
->>>
->>> You end in a deadlock. Where the DQBUF of video1 do not let you use video0
->>
->> Aarrghhh :-(
->>
->> I wouldn't expect a deadlock as DQBUF should release the lock when
->> waiting, but still, aarrrrgghhhhh :-(
->>
->>> We can add a second mutex to uvc_streaming.... but I think this is a
->>> bit overkill.
->>>
->>> Any ideas?
->>
->> I'm thinking it could make sense to move the video_device members of
->> uvc_streaming to uvc_video_queue and rename uvc_video_queue to
->> uvc_video_device. That's a change that should probably be done on top of
->> this patch, as it won't change the location of the mutex.
+On 9/8/2025 9:50 AM, Miaoqing Pan wrote:
+> Commit afbab6e4e88d ("wifi: ath12k: modify ath12k_mac_op_bss_info_changed()
+> for MLO") replaced the bss_info_changed() callback with vif_cfg_changed()
+> and link_info_changed() to support Multi-Link Operation (MLO). As a result,
+> the station power save configuration is no longer correctly applied in
+> ath12k_mac_bss_info_changed().
 > 
-> I have moved the video_device members.
+> Move the handling of 'BSS_CHANGED_PS' into ath12k_mac_op_vif_cfg_changed()
+> to align with the updated callback structure introduced for MLO, ensuring
+> proper power-save behavior for station interfaces.
 > 
-> But after playing a bit with renaming uvc_video_queue.... It does not
-> look like a good idea. To do it properly we also need to rename
-> variables and functions and the change will be pretty massive. Any
-> future backport to stable is going to be hell....
+> Tested-on: WCN7850 hw2.0 PCI WLAN.IOE_HMT.1.1-00011-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
 > 
->>
->>>>>>>       /* Buffers queue. */
->>>>>>>       unsigned int frozen : 1;
->>>>>>>       struct uvc_video_queue queue;
->>>>>>>
->>>>>>> ---
->>>>>>> base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
->>>>>>> change-id: 20250716-uvc-onelocksless-b66658e01f89
->>
->> --
->> Regards,
->>
->> Laurent Pinchart
+> Fixes: afbab6e4e88d ("wifi: ath12k: modify ath12k_mac_op_bss_info_changed() for MLO")
+> Signed-off-by: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+> ---
+>  drivers/net/wireless/ath/ath12k/mac.c | 122 ++++++++++++++------------
+>  1 file changed, 67 insertions(+), 55 deletions(-)
 > 
+> diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+> index bd1ec3b2c084..3a3965b79942 100644
+> --- a/drivers/net/wireless/ath/ath12k/mac.c
+> +++ b/drivers/net/wireless/ath/ath12k/mac.c
+> @@ -4078,12 +4078,68 @@ static int ath12k_mac_fils_discovery(struct ath12k_link_vif *arvif,
+>  	return ret;
+>  }
+>  
+> +static void ath12k_mac_vif_setup_ps(struct ath12k_link_vif *arvif)
+> +{
+> +	struct ath12k *ar = arvif->ar;
+> +	struct ieee80211_vif *vif = arvif->ahvif->vif;
+> +	struct ieee80211_conf *conf = &ath12k_ar_to_hw(ar)->conf;
+> +	enum wmi_sta_powersave_param param;
+> +	struct ieee80211_bss_conf *info;
+> +	enum wmi_sta_ps_mode psmode;
+> +	int ret;
+> +	int timeout;
+> +	bool enable_ps;
+> +
+> +	lockdep_assert_wiphy(ath12k_ar_to_hw(ar)->wiphy);
+> +
+> +	if (vif->type != NL80211_IFTYPE_STATION)
+> +		return;
+> +
+> +	enable_ps = arvif->ahvif->ps;
+> +	if (enable_ps) {
+> +		psmode = WMI_STA_PS_MODE_ENABLED;
+> +		param = WMI_STA_PS_PARAM_INACTIVITY_TIME;
+> +
+> +		timeout = conf->dynamic_ps_timeout;
+> +		if (timeout == 0) {
+> +			info = ath12k_mac_get_link_bss_conf(arvif);
+> +			if (!info) {
+> +				ath12k_warn(ar->ab, "unable to access bss link conf in setup ps for vif %pM link %u\n",
+> +					    vif->addr, arvif->link_id);
+> +				return;
+> +			}
+> +
+> +			/* firmware doesn't like 0 */
+> +			timeout = ieee80211_tu_to_usec(info->beacon_int) / 1000;
+> +		}
+> +
+> +		ret = ath12k_wmi_set_sta_ps_param(ar, arvif->vdev_id, param,
+> +						  timeout);
+> +		if (ret) {
+> +			ath12k_warn(ar->ab, "failed to set inactivity time for vdev %d: %i\n",
+> +				    arvif->vdev_id, ret);
+> +			return;
+> +		}
+> +	} else {
+> +		psmode = WMI_STA_PS_MODE_DISABLED;
+> +	}
+> +
+> +	ath12k_dbg(ar->ab, ATH12K_DBG_MAC, "mac vdev %d psmode %s\n",
+> +		   arvif->vdev_id, psmode ? "enable" : "disable");
+> +
+> +	ret = ath12k_wmi_pdev_set_ps_mode(ar, arvif->vdev_id, psmode);
+> +	if (ret)
+> +		ath12k_warn(ar->ab, "failed to set sta power save mode %d for vdev %d: %d\n",
+> +			    psmode, arvif->vdev_id, ret);
+> +}
+> +
+>  static void ath12k_mac_op_vif_cfg_changed(struct ieee80211_hw *hw,
+>  					  struct ieee80211_vif *vif,
+>  					  u64 changed)
+>  {
+>  	struct ath12k_vif *ahvif = ath12k_vif_to_ahvif(vif);
+>  	unsigned long links = ahvif->links_map;
+> +	struct ieee80211_vif_cfg *vif_cfg;
+>  	struct ieee80211_bss_conf *info;
+>  	struct ath12k_link_vif *arvif;
+>  	struct ieee80211_sta *sta;
+> @@ -4147,61 +4203,24 @@ static void ath12k_mac_op_vif_cfg_changed(struct ieee80211_hw *hw,
+>  			}
+>  		}
+>  	}
+> -}
+> -
+> -static void ath12k_mac_vif_setup_ps(struct ath12k_link_vif *arvif)
+> -{
+> -	struct ath12k *ar = arvif->ar;
+> -	struct ieee80211_vif *vif = arvif->ahvif->vif;
+> -	struct ieee80211_conf *conf = &ath12k_ar_to_hw(ar)->conf;
+> -	enum wmi_sta_powersave_param param;
+> -	struct ieee80211_bss_conf *info;
+> -	enum wmi_sta_ps_mode psmode;
+> -	int ret;
+> -	int timeout;
+> -	bool enable_ps;
+>  
+> -	lockdep_assert_wiphy(ath12k_ar_to_hw(ar)->wiphy);
+> +	if (changed & BSS_CHANGED_PS) {
+> +		links = ahvif->links_map;
+> +		vif_cfg = &vif->cfg;
+>  
+> -	if (vif->type != NL80211_IFTYPE_STATION)
+> -		return;
+> +		for_each_set_bit(link_id, &links, IEEE80211_MLD_MAX_NUM_LINKS) {
+> +			arvif = wiphy_dereference(hw->wiphy, ahvif->link[link_id]);
+> +			if (!arvif || !arvif->ar)
+> +				continue;
+>  
+> -	enable_ps = arvif->ahvif->ps;
+> -	if (enable_ps) {
+> -		psmode = WMI_STA_PS_MODE_ENABLED;
+> -		param = WMI_STA_PS_PARAM_INACTIVITY_TIME;
+> +			ar = arvif->ar;
+>  
+> -		timeout = conf->dynamic_ps_timeout;
+> -		if (timeout == 0) {
+> -			info = ath12k_mac_get_link_bss_conf(arvif);
+> -			if (!info) {
+> -				ath12k_warn(ar->ab, "unable to access bss link conf in setup ps for vif %pM link %u\n",
+> -					    vif->addr, arvif->link_id);
+> -				return;
+> +			if (ar->ab->hw_params->supports_sta_ps) {
+> +				ahvif->ps = vif_cfg->ps;
+> +				ath12k_mac_vif_setup_ps(arvif);
+>  			}
+> -
+> -			/* firmware doesn't like 0 */
+> -			timeout = ieee80211_tu_to_usec(info->beacon_int) / 1000;
+>  		}
+> -
+> -		ret = ath12k_wmi_set_sta_ps_param(ar, arvif->vdev_id, param,
+> -						  timeout);
+> -		if (ret) {
+> -			ath12k_warn(ar->ab, "failed to set inactivity time for vdev %d: %i\n",
+> -				    arvif->vdev_id, ret);
+> -			return;
+> -		}
+> -	} else {
+> -		psmode = WMI_STA_PS_MODE_DISABLED;
+>  	}
+> -
+> -	ath12k_dbg(ar->ab, ATH12K_DBG_MAC, "mac vdev %d psmode %s\n",
+> -		   arvif->vdev_id, psmode ? "enable" : "disable");
+> -
+> -	ret = ath12k_wmi_pdev_set_ps_mode(ar, arvif->vdev_id, psmode);
+> -	if (ret)
+> -		ath12k_warn(ar->ab, "failed to set sta power save mode %d for vdev %d: %d\n",
+> -			    psmode, arvif->vdev_id, ret);
+>  }
+>  
+>  static bool ath12k_mac_supports_tpc(struct ath12k *ar, struct ath12k_vif *ahvif,
+> @@ -4223,7 +4242,6 @@ static void ath12k_mac_bss_info_changed(struct ath12k *ar,
+>  {
+>  	struct ath12k_vif *ahvif = arvif->ahvif;
+>  	struct ieee80211_vif *vif = ath12k_ahvif_to_vif(ahvif);
+> -	struct ieee80211_vif_cfg *vif_cfg = &vif->cfg;
+>  	struct cfg80211_chan_def def;
+>  	u32 param_id, param_value;
+>  	enum nl80211_band band;
+> @@ -4510,12 +4528,6 @@ static void ath12k_mac_bss_info_changed(struct ath12k *ar,
+>  	}
+>  
+>  	ath12k_mac_fils_discovery(arvif, info);
+> -
+> -	if (changed & BSS_CHANGED_PS &&
+> -	    ar->ab->hw_params->supports_sta_ps) {
+> -		ahvif->ps = vif_cfg->ps;
+> -		ath12k_mac_vif_setup_ps(arvif);
+> -	}
+>  }
+>  
+>  static struct ath12k_vif_cache *ath12k_ahvif_get_link_cache(struct ath12k_vif *ahvif,
 > 
-> 
+> base-commit: 27893dd6341b929f87d45fc4d65c5778179319dd
+
+Reviewed-by:  Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
 
