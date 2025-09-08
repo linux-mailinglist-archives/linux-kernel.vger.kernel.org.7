@@ -1,84 +1,53 @@
-Return-Path: <linux-kernel+bounces-805105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E48DB48408
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2FDB48415
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FEA57A064C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:17:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F17A24F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5DC230BF6;
-	Mon,  8 Sep 2025 06:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdtlYgc5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C021C3C18;
-	Mon,  8 Sep 2025 06:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85FC224AF0;
+	Mon,  8 Sep 2025 06:24:08 +0000 (UTC)
+Received: from mailgw1.hygon.cn (unknown [101.204.27.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E444A21
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.204.27.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757312304; cv=none; b=Ol7jEGXlP2/KskISn6h1uzTZL48Rareec31UhD0aqmqYu7y6mUA/Zxi2xP30xLMBTH2b6MNmoiyGgOL7CLt3cj56AlgL513QlmtTNjpcRdTSoyNsGKECg2dw1+HPm85/lp8tUcCosVQA9JEI2GqvQ6VKTk+UV4uAdjk9KLiY2NQ=
+	t=1757312648; cv=none; b=jHQXP2BTkROVTqwWOTI7vLtUZtcl4L0uqBDMfjqEfb3HdzAjzWoOwDWCJukAhKxtd70sN2ZI0eORx0MtGEJKu4YMI7O+IeUTXzMao0omn3Cqn63DXq76ra3CJaPu/GFzjJiuV5aanR+h/lro6ucdx3ECQ7qP0T9ycwJwul4ThiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757312304; c=relaxed/simple;
-	bh=7Rn2AAo4+7/NCGYV/alHHPn9bqJoD2b8fTIdLRU68xE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IgEeYtRfTKI6sgBL9+EDw99QEX2mMdeN8kFTuyiuC4iibOwBbmoA1JkMEJMmJ0Sruyc7wuv1JFpgGSx8ZM0dUO3gaadCMkTsOvM9hNvPKe91HSaDKF2i2Euy67vqU5JH1auxjoLHUDVcx+iSR4BNv/eg1MoDmDh+jVABqCprjsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdtlYgc5; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757312303; x=1788848303;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7Rn2AAo4+7/NCGYV/alHHPn9bqJoD2b8fTIdLRU68xE=;
-  b=SdtlYgc5FM/2ArOejaGBXhm6vnWNNxyAGIuc07SAWHtSGoUb43vucGBU
-   cngl8Ds5frSRO6JZQGGyOVWBY/jR3KYXU/dkIub5DVMSYpozfJhm0yynB
-   ZRlDqpOLH84pWlYOPCZd2fH7Y7SOIA1QkavEIfF6kpi3Ml0fY6e+mnP2E
-   ySd8VvQDfuxnc/umfuBX1aL0NDq9XWPrEWPKXClGYwnMKGGtJ290jBehg
-   ucyloa3zvss9ZR3W3JBTCgvZxg6V++/btwHVwpvUlMUf/Fae0vwAJlfji
-   oYy0wyyRBGDuRIjSMwYOLTXnOdnsvmtxzy8wrhxW/cEzThpmgiN4mBWDM
-   g==;
-X-CSE-ConnectionGUID: 9YI2EZI9QCGUTYOuE2g0oQ==
-X-CSE-MsgGUID: WFD83iheT5CL1lHSLYiISA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="77177796"
-X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
-   d="scan'208";a="77177796"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 23:18:22 -0700
-X-CSE-ConnectionGUID: QN+CKx1rTmu329xaUGf7bg==
-X-CSE-MsgGUID: txDYaetbQGCzODzlUvC/8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
-   d="scan'208";a="172271721"
-Received: from spr.sh.intel.com ([10.112.230.239])
-  by orviesa009.jf.intel.com with ESMTP; 07 Sep 2025 23:18:18 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	dongsheng <dongsheng.x.zhang@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH 2/2] perf/x86/intel/uncore: Add uncore PMU support for Wildcat Lake
-Date: Mon,  8 Sep 2025 14:16:39 +0800
-Message-Id: <20250908061639.938105-2-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
-References: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1757312648; c=relaxed/simple;
+	bh=2CsGKd+uS1XuJkWBhCZWelSANVTQcTDnvxcj7hQzP1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U/X37hBShx3/zzDNhVpkZdSCzVc7rKElj93pUHckA2NIKzC02zNiC9bY9QmQEXS0Q93p/DCFy2HuO2XBsJ3lgJIjbObPNQGhx4Nd7YW+rEjj7K0zevc5sobxismoG+rTk06SdgljFeVZIhaboXD0kLZcvAIdiBfaoDTuZjc4Jrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn; spf=pass smtp.mailfrom=hygon.cn; arc=none smtp.client-ip=101.204.27.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+	by mailgw1.hygon.cn (Postfix) with ESMTP id 4cKxjP55m3z55pFD;
+	Mon,  8 Sep 2025 14:23:37 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+	by mailgw1.hygon.cn (Postfix) with ESMTP id 4cKxjL5vDfz55pFD;
+	Mon,  8 Sep 2025 14:23:34 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp1.hygon.cn (Postfix) with ESMTPS id 71C36597C;
+	Mon,  8 Sep 2025 14:23:32 +0800 (CST)
+Received: from jianyong.hygon.cn (172.19.22.175) by cncheex04.Hygon.cn
+ (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 8 Sep
+ 2025 14:23:34 +0800
+From: Jianyong Wu <wujianyong@hygon.cn>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<riel@surriel.com>, <vincent.guittot@linaro.org>, <jianyong.wu@outlook.com>,
+	<wujianyong@hygon.cn>
+CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sched/fair: Correct misleading comment in task_numa_migrate()
+Date: Mon, 8 Sep 2025 14:19:23 +0800
+Message-ID: <20250908061923.543081-1-wujianyong@hygon.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,32 +55,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: cncheex06.Hygon.cn (172.23.18.116) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-From: dongsheng <dongsheng.x.zhang@intel.com>
+The current comment implies that both the task and the group must get
+benefit for a node to be considered. However, the actual code allows
+a node to pass if *either* the task *or* the group meets the criteria.
 
-WildcatLake (WCL) is a variant of PantherLake (PTL) and shares the same
-uncore PMU features with PTL. Therefore, directly reuse Pantherlake's
-uncore PMU enabling code for WildcatLake.
+As established in the previous discussion [1], the code logic is correct.
+Update the comment to accurately reflect that either condition is
+sufficient.
 
-Signed-off-by: dongsheng <dongsheng.x.zhang@intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
+
+[1] Link: https://lore.kernel.org/lkml/55806A24.7030403@redhat.com/
 ---
- arch/x86/events/intel/uncore.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index a762f7f5b161..d6c945cc5d07 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1895,6 +1895,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&mtl_uncore_init),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_uncore_init),
- 	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&ptl_uncore_init),
-+	X86_MATCH_VFM(INTEL_WILDCATLAKE_L,	&ptl_uncore_init),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&spr_uncore_init),
- 	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,	&spr_uncore_init),
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	&gnr_uncore_init),
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..9069ea4c71f1 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2565,7 +2565,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 				groupweight = group_weight(p, env.src_nid, dist);
+ 			}
+ 
+-			/* Only consider nodes where both task and groups benefit */
++			/* Consider nodes where either task or groups benefit */
+ 			taskimp = task_weight(p, nid, dist) - taskweight;
+ 			groupimp = group_weight(p, nid, dist) - groupweight;
+ 			if (taskimp < 0 && groupimp < 0)
 -- 
-2.34.1
+2.43.0
+
 
 
