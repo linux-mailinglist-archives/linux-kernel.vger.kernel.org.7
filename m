@@ -1,197 +1,218 @@
-Return-Path: <linux-kernel+bounces-805677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963D8B48C35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF8BB48C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4B03B87B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADC53B8AC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2268022FE0E;
-	Mon,  8 Sep 2025 11:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD2C2F1FED;
+	Mon,  8 Sep 2025 11:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I/Invlm1"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2063.outbound.protection.outlook.com [40.107.212.63])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjkAqspg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF9419343B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757331100; cv=fail; b=UPDUoA1FXddKEh1fPY9p805/S49IWJn1yMmPDWcf0XwfF3FVAeNpTweRd/UYxM1slkAln4TFSv8+ExisyQ4yvpgGwBLBFDu/0Ukyjh0RzR5iUeGgevrpXN0TnLScPcgpb6NolYegqYwosaPfqAyhvvIrIhk/nJvve2I7yA45dSk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757331100; c=relaxed/simple;
-	bh=hZqx2xRd5AIa6nnfUBfl+WfPltcYRikXNekQ49ImnAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nIv7xj2Xj+i72sg7v7enfJ6DsRyvnusvwWA6b54ZugYPu3DgP2CHthjeKKE4/gDawA/rE18fa++jTnqz/n2O9cl+19VRfm8nw0V0CH50rX2WjnhOcfBqJoLP78NO34J5d0R4ihOU/1TSi5kzyh7caTO9E+AD3nyDgcFfoKv1gGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I/Invlm1; arc=fail smtp.client-ip=40.107.212.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BlX9UaJ+BrrLSyr0Py+RbiYuQPwsiE1AMsV31dpXzEHqwiRwnbzdkHfBPYWE1O92NHIeHa8bBkQnbPnfgVydWqA6mSKbxWn6aFbrMh1Ppt3ouTlVlU58z2Atme9ubvxCoPm1TSvSPoFZrZsVHXatveeTyoW07SfvgFKrZwL7UQVqQYrnB36lpuqGE5cX+ZDVmtCmlgnhLMC2S9F7lyhVxTj6CX1abMKrx3j3Giui2olqHYLV9X4L9tdDi1tpj02xgAfwRjtoOEv7X1puimmZW0O5RwxKUJRDgSlXZfIoPAJvLXQ4UAcSVbi38xFRVYUZU1TJ+L7NgWtVdBxtk8trRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xifO7XYmR5UtbvuTVGi5C0bgKOWyolQy6obN8jNBq+A=;
- b=MaE3LPOa6gX5wtJ4vaTG5diEPeQc/hLEKefSp3ruOP1lkwa77gU3XZ2xSw9TefeD3nhQrBiwXtJ9yZfXMpdTsZLeTuvc4dI7uT6EwZjHCWh4TXGNjyW59Wjh0SBgo/zQAY6tHKgG7mXg4fPtJEUHAb0gW1k29OTC/wdft6j8tijWRYGeQmGHyjrBP+6tDSceLotb0psYp9iENH8VNu5z2V8os/+TIESQwznIBhrTlJsnvjRJ/I9hkNspZwVn9xqcyfXw4HfZNJf7J90fFTGaJN9QXzxJ2woQtUpunsveX5iu5/7pVzuYAEPgG12g+xmGsefSnfmbXmT66sb3GfYibw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xifO7XYmR5UtbvuTVGi5C0bgKOWyolQy6obN8jNBq+A=;
- b=I/Invlm1P9+Ckicn4IqVyOhFgv712cdXSOaDeTIT0iJSTJwdWJQoCACmrTGBmChEE4x8UikWQScxpBdOxb7xoLkp2D1H9AXd3tvttnZNUP4+070aMeSdXCynjPDqrelPyzCW5eQvPBGb/e7nOiSyG1JVGTmDQkT1s4/AGj+hOabyuVDXx3g+dab7I7SbVSq5qsLbywcqvCYDAJ8b1YLJnD0vobpVDKzA7t/16L56IY+3BJsASH+kPz3zxt8GY7tch/WmkdBKHJsgKefC4UZI+zYVsTA0iYB01PDSOisjue1qss6L4IiF4KLwZ+XSvWKPpXQ7Zj/9TumgFStFRSQldA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by DS7PR12MB8323.namprd12.prod.outlook.com (2603:10b6:8:da::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.19; Mon, 8 Sep 2025 11:31:34 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6%7]) with mapi id 15.20.9094.017; Mon, 8 Sep 2025
- 11:31:34 +0000
-Date: Mon, 8 Sep 2025 21:31:23 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH 04/10] gpu: nova-core: Add a slice-buffer (sbuffer)
- datastructure
-Message-ID: <kxriy5tmcdpbop674gt55tmcfsvdy52dnw6dw6svemj4a52dtf@xhvjfrcjxbgw>
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-5-apopple@nvidia.com>
- <aL1kbG0YYy0FQCGM@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aL1kbG0YYy0FQCGM@google.com>
-X-ClientProxiedBy: ME0PR01CA0006.ausprd01.prod.outlook.com
- (2603:10c6:220:212::26) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB51522FDE8;
+	Mon,  8 Sep 2025 11:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757331107; cv=none; b=WlZuS7NAXCLg9uP/Hk18OajY+r+S017j5j5Jt97OqTZ683IIpN1JlBLSkbS3H3Z1CVzXYUD5fUAzVABlWsCmt2I3YAk1m74srUmXAtJA5KBOfT27+Ai0y69raIdPMK8+NogFuFRMvGw7iVP76uVqUPZKdUqOwLtrB79i1RPSx0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757331107; c=relaxed/simple;
+	bh=/2NMAx7CdEyJz+oFeKiwwNv2fjn4p93tWohQc2Rt3qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thD5pDP61vo4H6pim7315YJMeIHiewYBZ989ssp+7+aupYgjxpXcifJmhUXqebvEhQgHp3frfyVNeZKh2SZIF/UUUx4XrvEscg7pE4q7xIRLKxuDdwgnjY4lvit+tK3wMgime0Kcgjpas+Q/da16qOX4y3OnuU0qAYrKE5rGkxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mjkAqspg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A102C4CEF8;
+	Mon,  8 Sep 2025 11:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757331107;
+	bh=/2NMAx7CdEyJz+oFeKiwwNv2fjn4p93tWohQc2Rt3qg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mjkAqspghZDLdaGIS6dJG7QjOCNVTbhkmGhOXT5Re5HymFcK4wCRi7hD587x1HebB
+	 poX+aI3vVP4FVvvKfEflA0T7CAMbFfFl4MD8Z4v1hgKT2HkYRdcjl3fP3o6GVXpmdr
+	 SsxzGMvkxQTancm35B8yjws8XA6ZlJLCA2FzZQ5EvoPfk7BYilYAr3a/IeBlgu4ZWi
+	 /pZrij6pzAqwTcGXOqrnxoxHlUrDFNSoHpJytrOLyBQzjPhAe2QRlGWlzEpaeEulMo
+	 B+lftDXpCzQZYcTdYpaPQuNKQmKNjViLsRbzYbIZlzT9UJlYlrggnVVRwFX8KNkDk5
+	 VA9rsKVu+FQDg==
+Message-ID: <fe7bc889-9ba3-4621-8257-e81ba02db9d4@kernel.org>
+Date: Mon, 8 Sep 2025 13:31:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|DS7PR12MB8323:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1904a3e4-14ab-4666-cdd8-08ddeecb43cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007|27256017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CV6hnkeN/rww8PtNlfWKAzVreVjYxKFTpkbnu9oaJM8Of1T0cHjqyK62wrsS?=
- =?us-ascii?Q?YtrB8Bf7x4o/V1TPkdQ0okJItLncPbpeJhcG2r6TF2wmX04Jxw+g/n1ph6Ev?=
- =?us-ascii?Q?HhAoIiRv4aN46/S8cNcbsz2HMjnLINfYm7UytVQg9r1xqu5UrVPnldCeCOXq?=
- =?us-ascii?Q?ADZ8JXZoEdzdx+R5hHsta/En7Ky2e1F69ewtWQWbQDvqLtwifwGLq0LEW8UH?=
- =?us-ascii?Q?h9/VCI095es/IAkykToNx7t2WrAZpOJyvLIAFvy95ST8ZLbMYdEu7JsIRUzk?=
- =?us-ascii?Q?5uiA1ZiESBa6/YRk0y/8ETzRPWgWvbMpjWGW7i59eGuLMiBTpcL1r23zZBwd?=
- =?us-ascii?Q?oSRVJ9Rf9LikL+nQwmEqYr+/VVNkr/6x/V2n4xALrAjb+TEBwueULw8RhY7O?=
- =?us-ascii?Q?YjqpOTUKFLxt4YOroCExj7zIF0OsNNEgpYxOnhp6pmE1SFLyfHSFepxseX4W?=
- =?us-ascii?Q?M64r3CTrwYWn9No/UCvpThV/C9tUH6ZKFEq4qutbSOsZDUf+xUcZK7z56A6e?=
- =?us-ascii?Q?8P/JHsnzXax+1rbojZ0elCDmLYoySGa8opXdKCt1idvKVJPOpkLbqRTfHjGs?=
- =?us-ascii?Q?qiuc9GoMjz6xGBZq+vpxU2wCA+AGFrPSRm4WrsS2KTumgj+JWQ7zG9aFaTqk?=
- =?us-ascii?Q?eBrzVTKiIZhv6c1/fN1q5Vmh+L0bR2ZkipaLnhrEviXyTQ5IuCsKwdSKWpXn?=
- =?us-ascii?Q?gGeT74K08yazZaYMKkKAApJR5valdxkR5acQt4Krs0szsq47SyAxklMmFMGw?=
- =?us-ascii?Q?pEbwba09LeAhFWEKZUV7MGr40+JXO+6RYzlJH3Vq37sgy9J4FrmiiA4d5a2U?=
- =?us-ascii?Q?FEpEgOkP2o/U9DndHhecp6cH0LDKUdobW8B4UAsGgbTa98RUrcbbOkVLni/Q?=
- =?us-ascii?Q?wDRpXLM5DZlb/8GAVA+vONiOXGvYJ0OXspLjY4jF3E7AGB1CSD9erHlDHF9T?=
- =?us-ascii?Q?+qn34PEPcSFM52lF50BzAVP7UuaSi1M17Y6GDKt3JszfXkaJWQ3FPIVDag7q?=
- =?us-ascii?Q?5/hmgZgRtvEQC45CM1J9cm2DydeFGg7/12jS+cprCYbiO6snxLLeHIgQKHwl?=
- =?us-ascii?Q?DwsObiIklUp6nihg1YRtpRWkHNL7vbNhdhmxZ7GdDWSHL8kf08OxJRds1ESi?=
- =?us-ascii?Q?7iwcJbHzaH7i6Yp71pY4PeYGUxVrhYPclsVFTDgMdlJXMSaRV69U3cSOYsrQ?=
- =?us-ascii?Q?i2snRRobo3AXc0WEpnC7Ru5qN0bc28xXegWvmRWv6JE3f0tjkswOUDgbzd8A?=
- =?us-ascii?Q?zT5FIQedrgzJSjeMQNuu342TCj6w6EssSoVJEtfV5Axs5ThUdSrvN3mn5qeO?=
- =?us-ascii?Q?HhsXgiG/hgo4pGS/ZvyIYS+7jQ6oqGVlcxM5dCZou85QEn6yd7730VGBjdf7?=
- =?us-ascii?Q?hlurvXErFOsI8btOwzTAv58A4pbgqtnj+HtBrKHv7WDK5HTk6VHpTjMJ+joo?=
- =?us-ascii?Q?F3HfntiiIOyZQgGKS//o2CgzTGGbLsCHaBlETAnW1bQhLJsBeT2N0Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?apSPLB1lDS6C8Pe4Y07PckaTcRBNgOggUclD1U20+6368f6A1md+WBER2/3Z?=
- =?us-ascii?Q?+bOGQ49sV47JMteHaab0Gtz41spTj6wqybIQxEOGpWsT6dnaY40kCSFUYe/w?=
- =?us-ascii?Q?O0XGM7ypnftWdw/QDBeDhntu0+ThaRaxeaqdeR+hYHH1R7wNlPo3SJ10ZYoZ?=
- =?us-ascii?Q?9KtIRPJ0yJ+roIaYrwB68DEtZZ70zPHmqsIlgyZH9A5lG67mlbIQ8si9l/FX?=
- =?us-ascii?Q?QZ84e9e57ZFNQUQZjs3kPcDbBeq3Q1k4N08lhgiKnwaQtTyKsGvzsO7MOxeF?=
- =?us-ascii?Q?Ew5CQZ0ADDKN/6kK82Tm2JZVe233US01QwCOjlLwMady+fA53+ZC58fD5hli?=
- =?us-ascii?Q?/NZCcSc2W4udPfqsYMnic2mp8dALhlFTGy5AYOLCcgB+UrTNU920ATrClzIp?=
- =?us-ascii?Q?7kke1i3R0SFp/z6jMkpJaGLNDJ9Aqj4Rpk+Wl5k+yndPkxsAFYeLIiWIg8Dw?=
- =?us-ascii?Q?UfJwYEuIohwwtnHvzxc9h2qW4WgXhQdrL+wyYMgHlOf7Lcsco1BxbKySxT9Y?=
- =?us-ascii?Q?rICdjm8v/uD27R4wywejV1E/V3eaqCxLGMVhqrZ167bcw2GhnORNv2O/F/WS?=
- =?us-ascii?Q?3TryC7yjslaY76YF355blHWblmPbjs41/A2q5iLMqGlnY1Sh4XI3eC5tlFMA?=
- =?us-ascii?Q?zMRaAkWByNhgbD4ZdE1oICwens9ev21jmccvu22F1lGX4xglmWspX3MUfXWi?=
- =?us-ascii?Q?oO8ZpT8nM+um25RiTSd9P2DGQuBIE0rZnjgNOtMkIsEPVtVArdQB1DP4Su/Y?=
- =?us-ascii?Q?w+DdC9u9OJScyTNMdyyx5pAmvP/pTUKXubV8Kq8jtoHaRhxFSz8Sl3MVE13l?=
- =?us-ascii?Q?62m8S2/lrnzZ+YvGhfJA/3j67+lsqvYvzDY+ESIpt8dsth5JZjMwgkhvjXhT?=
- =?us-ascii?Q?DikZQwRH9dj1x9RmUGIMZN+GHcTp7zm+4h+fG+mMmz8OCLqu3pRScTn8JD8Y?=
- =?us-ascii?Q?ZL3QYWL3VeenhPkJ1WThAl5VSKAOAmyp5pdTKmO/xhz/KQywfuRNG5AaVobf?=
- =?us-ascii?Q?uIB0Wp9f/uBW1dlhxMk5L3AAwR+CYNiuWWpK7XPQwTkGjk4Ytqxc6/Z3fIob?=
- =?us-ascii?Q?4NLfkYjabSbsPCzf3XM9mIHrhHWBNHd1+4BKYADqiiJRPw9Mdc10JJRcJuZ7?=
- =?us-ascii?Q?BshuKxB4AwR81fuTE4OFt7WvQg5tfR1Ua6TYLiYgbHy/EDXkfViWFun16jm+?=
- =?us-ascii?Q?8qGggQ/D/1kGJ6VDGQo90p5gU1MEbjQ22RLCVPuT15YNSxvzfLnADOENPDMT?=
- =?us-ascii?Q?cIEJ2zBmI6kgD/mz0b/QG/ODS3mrrb3WiHZLBXVcIH0RaqNcte9C3a1S0nOK?=
- =?us-ascii?Q?XaY3TkL2Vghe9h1uwe439sfiYTkv70s2burhF6OwWWlYT0OrC6eJFIzyjr19?=
- =?us-ascii?Q?tkZSHYV0nlPYimvCVokZLIFZMggP1mKBEFm55OAW8w305xbEVrbVsaWN2ZOM?=
- =?us-ascii?Q?TlCRDuaz5xwB5MH8cXQB5RtNZK4LgAiomtEBToDLbZoxrYms0sZbfB937igJ?=
- =?us-ascii?Q?aEMFJgnlJg/qFAUM9a2Z1hrhx4dSNlvmdNgM0+f256rD3I9QfNhkSkvSvhLe?=
- =?us-ascii?Q?sHm5pngeD2SjdeESxWUWdpnqOic2XiF23YqIsrKG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1904a3e4-14ab-4666-cdd8-08ddeecb43cc
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 11:31:34.1868
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WU7rRkE6l44/u71GqK8MUSHiMzvS/VjzesLZI9qVSoGqPSw5L26haJn0c7wAu7K1TaIGnH3WSYgguK47Xfazag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8323
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/12] media: uvcvideo: Add get_* functions to
+ uvc_entity
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-10-5710f9d030aa@chromium.org>
+ <20250629181246.GE6260@pendragon.ideasonboard.com>
+ <CANiDSCsu0RT4dcGyBJRutP=9HTe+niUoohxTZE=qJ8O_9ez=+A@mail.gmail.com>
+ <20250714142926.GI8243@pendragon.ideasonboard.com>
+ <CANiDSCvFe23xmrJ0-qbWWa6+vKGb+QdDFV8VSLkmWdAnfsFtzw@mail.gmail.com>
+ <20250715193505.GB19299@pendragon.ideasonboard.com>
+ <CANiDSCtvt6qnROQ0_-0iG5hqkU_uHZABujZPN7xuh7pUASSGyw@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <CANiDSCtvt6qnROQ0_-0iG5hqkU_uHZABujZPN7xuh7pUASSGyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-09-07 at 20:54 +1000, Alice Ryhl <aliceryhl@google.com> wrote...
-> On Wed, Aug 27, 2025 at 06:20:01PM +1000, Alistair Popple wrote:
-> > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > 
-> > A data structure that can be used to write across multiple slices which
-> > may be out of order in memory. This lets SBuffer user correctly and
-> > safely write out of memory order, without error-prone tracking of
-> > pointers/offsets.
-> > 
-> >  let mut buf1 = [0u8; 3];
-> >  let mut buf2 = [0u8; 5];
-> >  let mut sbuffer = SBuffer::new([&mut buf1[..], &mut buf2[..]]);
-> > 
-> >  let data = b"hellowo";
-> >  let result = sbuffer.write(data);
-> > 
-> > An internal conversion of gsp.rs to use this resulted in a nice -ve delta:
-> > gsp.rs: 37 insertions(+), 99 deletions(-)
-> > 
-> > Co-developed-by: Alistair Popple <apopple@nvidia.com>
-> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+Hi,
+
+On 16-Jul-25 12:32, Ricardo Ribalda wrote:
+> On Tue, 15 Jul 2025 at 21:35, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+
+...
+
+>> As for the minimum and maximum, they are currently set to 0 if the
+>> corresponding operations are not supported. I wonder if we should set
+>> them to the current value instead for read-only controls (as in controls
+>> whose flags report support for GET_CUR only)..
 > 
-> This seems like duplication of the logic in rust/kernel/iov_iter.rs [1].
-
-Conceptually I guess there is some overlap. The thing that's different here
-is we don't have any C version of the iovec struct or iov_iter, and AFAICT [1]
-doesn't provide any way of creating one from within Rust code.
-
-> Alice
+> I am not sure that I like that approach IMO the code looks worse...
+> but if you prefer that, we can go that way
 > 
-> [1]: https://lore.kernel.org/r/20250822-iov-iter-v5-0-6ce4819c2977@google.com
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index ec472e111248..47224437018b 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -35,6 +35,8 @@
+>  /* ------------------------------------------------------------------------
+>   * Controls
+>   */
+> +static int __uvc_ctrl_load_cur(struct uvc_video_chain *chain,
+> +                              struct uvc_control *ctrl);
+> 
+>  static const struct uvc_control_info uvc_ctrls[] = {
+>         {
+> @@ -1272,6 +1274,13 @@ static int uvc_ctrl_populate_cache(struct
+> uvc_video_chain *chain,
+>                                         uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
+>                 if (ret < 0)
+>                         return ret;
+> +       } else if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR)) {
+> +               ret = __uvc_ctrl_load_cur(chain, ctrl);
+> +               if (!ret) {
+> +                       memcpy(uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF),
+> +                              uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+> +                              ctrl->info.size);
+> +               }
+>         }
+> 
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN) {
+
+Interesting change. Note you also need to check for
+(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) being true,
+__uvc_ctrl_load_cur() will return a 0 filled buffer
+and success if that is not set.
+
+I wonder why not do something like this instead though:
+
+        if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR) &&
+            (ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) &&
+            __uvc_ctrl_load_cur(chain, ctrl) == 0) {
+                /* Read-only control, set def / min / max to cur */
+                memcpy(uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF),
+                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+                       ctrl->info.size);
+                memcpy(uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN),
+                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+                       ctrl->info.size);
+                memcpy(uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX),
+                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+                       ctrl->info.size);
+        }
+
+IOW why bother to make the GET_DEF, etc. calls at all for a
+read-only control (even if they are supported) ?
+
+Generally speaking making less calls into the hw seems better?
+
+Although maybe replace the:
+
+        if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR) &&
+            (ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) &&
+
+part of the check with a flag in ctrl->info indicating to do
+this and do this for specific controls like the new
+rotation and orientation controls ?
+
+...
+
+> @@ -1541,11 +1573,8 @@ static int __uvc_queryctrl_boundaries(struct
+> uvc_video_chain *chain,
+>                         return ret;
+>         }
+> 
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF)
+>                 v4l2_ctrl->default_value = uvc_mapping_get_s32(mapping,
+>                                 UVC_GET_DEF, uvc_ctrl_data(ctrl,
+> UVC_CTRL_DATA_DEF));
+> -       else
+> -               v4l2_ctrl->default_value = 0;
+> 
+>         switch (mapping->v4l2_type) {
+>         case V4L2_CTRL_TYPE_MENU:
+> @@ -1576,23 +1605,14 @@ static int __uvc_queryctrl_boundaries(struct
+> uvc_video_chain *chain,
+>                 break;
+>         }
+> 
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
+> -               v4l2_ctrl->minimum = uvc_mapping_get_s32(mapping, UVC_GET_MIN,
+> -                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+> -       else
+> -               v4l2_ctrl->minimum = 0;
+> +       v4l2_ctrl->minimum = uvc_mapping_get_s32(mapping, UVC_GET_MIN,
+> +                                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+> 
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
+> -               v4l2_ctrl->maximum = uvc_mapping_get_s32(mapping, UVC_GET_MAX,
+> -                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+> -       else
+> -               v4l2_ctrl->maximum = 0;
+> +       v4l2_ctrl->maximum = uvc_mapping_get_s32(mapping, UVC_GET_MAX,
+> +                                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+> 
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
+> -               v4l2_ctrl->step = uvc_mapping_get_s32(mapping, UVC_GET_RES,
+> -                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+> -       else
+> -               v4l2_ctrl->step = 0;
+> +       v4l2_ctrl->step = uvc_mapping_get_s32(mapping, UVC_GET_RES,
+> +                                       uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+> 
+>         return 0;
+>  }
+
+I agree with Laurent that thee changes are nice, but please split them into
+a separate patch.
+
+Regards,
+
+Hans
+
 
