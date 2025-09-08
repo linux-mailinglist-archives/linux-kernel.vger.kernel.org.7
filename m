@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-805352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03C8B48770
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0392FB48772
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4EA27ADB7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD264179E38
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C7F2EC548;
-	Mon,  8 Sep 2025 08:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833912EC0BF;
+	Mon,  8 Sep 2025 08:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FP0eevmp"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVvjhfak"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B232EBBBC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6A32EBDCF;
+	Mon,  8 Sep 2025 08:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321218; cv=none; b=ZUJ9K3TUZvZN2sjYGi9wyxoCoob0BJUMiCguL9ajZ1aNv6O3bDFFmyuSeY0PqBnG6zI3s8dPVHyX+UqwrdFwVCqPi6qBhtv2D7xbUtvrkW948bzU6JkwAFYFgNnBXdz88htU7fO0x36Gy+saqHkbVkYmoQcam+Kw7bsYvvY+dcw=
+	t=1757321251; cv=none; b=XLsWlgW80X+nE151qVK8xMUrgA6ex7/e9yokhQ4NT6A5WNM3doE8atQ/MML1brTA9iERc6qFXs7nyqXEtEFrXf20MKPoYGaJiDZA7y0NjNnxXgCG+qtlQ9pMtkhvpamxa708qegBA/foEtmJuwY+sEsJDSu7pIoAVHoFE+3AuD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321218; c=relaxed/simple;
-	bh=Bj4f5uRY244iHB4rE4uWa8vhW6auxFTmI1aaD09pYy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELnAa/Tz7wyXDM38fJiVYmF4463AFnNdAfcvvTRxXQxGeO26HmHAzBmJKtdVlObav0IqMB92238Kf4gbpqh1Eh/QbY9qkJCKP1Kp9MNcPph50/D9qGhSSNC8vgYFXAbpofQOh+lPTyj4YNXIrYPHmafjzwsfkaewb+1T1HXLY9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FP0eevmp; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so451200a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757321214; x=1757926014; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUopr+FL50FcSWn7mytwl0gX5Rr+3JnwzdeTq9mrxQQ=;
-        b=FP0eevmpxMLL1QI9kUun0x+ZnATStLbZKIMV5RmbfA//BUKxCN46WaFPfXJklhEvWH
-         d3OqiuCPiFkCD/SmqFx1DUzBTxeSfsFhKIN7nBGjD5NiUKWgKuRT4MsLHQmjc0vtsmyE
-         iLbiIEeD3KiSfZmfCUOoE9RtkLVscQGxaG67yuRECdZrJYmeFn1o9VebwCRnaXhjFvMk
-         gHTNuzXFeFVhBoXHGYxDOI+U3ko3LRy2XWtJbsHZALcS5sWHX2MWtEEVLprBBt9F+MAJ
-         VfI1AjRxlIKZvrjhOgD8CO3gY2VGw7QMQ19oZRDnpe9G0yTMf2tsKWS65QarocXYULXR
-         /WxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757321214; x=1757926014;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUopr+FL50FcSWn7mytwl0gX5Rr+3JnwzdeTq9mrxQQ=;
-        b=cu8bqlnLbC5tv2WyPu2DdcgYgW33g0rqVN+HkTPKve9BrL3re56x4mcXrbguDK1QWm
-         jfpVL1omjNLBYEVdAh+dBLAEDgSX3rhwa5gIzyozfgoTkTKHWW/Uc9vGDiTC/Ppz3MIy
-         4ilsUngTuz5IHIkMBMNv87s5Cf8+HQGrlYQy94aP8/Tpz5uT/D8fWENQ4wSTMJMyC93l
-         aqJ53umiLEptBcoRbh53ElkIhjt+R+XeKqq6dsDqhqK/DEXO1Aez+nb/xQhn2npVq8nw
-         mnUJrFQPXibzPZwRamEQ13ObhgeIKLbd97LY1/PVgavCTAtvRgvQW9KOaZPBp9rgAL02
-         Qujg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4d3sWItYzF875zVFTaferuQhPws5XOLE2GlYHDMFt9UGagFPglExcwpkSM446IYQSRKNJhBukTGLpVDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkZG3Brosqn6M7WMP+T5W9GfFHFZZfX7dMYY13nYcTyDKx9IVr
-	9b7ZGadYxa2J44ZCQ++Uv/D4GlgaokgUregDR4She4uGQgEAS52Sm1OwWLjDPy4x8mw=
-X-Gm-Gg: ASbGnctfYDLGUOA/pG88vuqnr1LmE+DWY0IpB89gbb190LpLpofkNITSu+u7+1WCyPP
-	B+sYOdEBFpsd3PDHdM2YWSAWYQ/aYYXzS2z59QLuvd0VkeeWWqN+3Tt9KxFX6iWjTWJ6pj0vH+J
-	ZAJfLnBpmPLr1JGq9KMdBYj2EYQWZSd1HVx9s08QLKmOMd2Avtrj2ND8CbELv9V10jhlllnFV9Y
-	aayqQnnNYIo0Je/MHE8b8usEffUZFq2n6bHQA8sdKuV46/ntbHQLSiMA3nJ+0PviVhQVG7RuNJw
-	slnU9hxjQz9BLc7vnix9AKAO/fcy1tx8TwFKIzcUF9sIOBpysTnjgTb1nCjxMcVwqH6QcQwQjSv
-	eDjeYqOtjlmnmWKzOT1OYKZ/Lvjt03XcVSnIY8yMQDqdznRXHF4a7sQ==
-X-Google-Smtp-Source: AGHT+IGJq4/stKcb5/47RwYSY/9mKYvHfYIb+Y8TD1SuUTdb5c9q3HcwFqg/ndym+yPEqRaT8vxf8Q==
-X-Received: by 2002:a05:6402:52cb:b0:61a:967f:55f9 with SMTP id 4fb4d7f45d1cf-6237b972390mr6163555a12.10.1757321213876;
-        Mon, 08 Sep 2025 01:46:53 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:1f60:42e1:1e1b:d240])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62343271613sm5201516a12.23.2025.09.08.01.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 01:46:53 -0700 (PDT)
-Date: Mon, 8 Sep 2025 10:46:49 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 4/5] i2c: qcom-cci: Add OPP table support and enforce
- FAST_PLUS requirements
-Message-ID: <aL6X-RiCyPVbHlYN@linaro.org>
-References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
- <20250904-topic-cci_updates-v1-4-d38559692703@oss.qualcomm.com>
- <aL6Vp-3er71AJPJd@linaro.org>
- <f508bf92-a513-467a-a946-17c41e1d72d1@oss.qualcomm.com>
+	s=arc-20240116; t=1757321251; c=relaxed/simple;
+	bh=ueZh40oOF4fWY+NsRviR20R3sj57twEAQP9li/mb1RI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=VHcJKVDQ2sPoN3GRwzs33I5sgIKA4TAI57yxQ6O5ymcatwOFaEwa9BJeRUjMoWwoAE2azZ2PP6X8LYrwly/rTGGWwsok9AxKr331ehTeDkhCKeKR6CrOX69s5VVZvfa45QZZseIn0L+4BsAWeceCXCPrvk6EYict3keX7fKV6Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVvjhfak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F04C4CEF1;
+	Mon,  8 Sep 2025 08:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757321250;
+	bh=ueZh40oOF4fWY+NsRviR20R3sj57twEAQP9li/mb1RI=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=CVvjhfakDYIvvfgyM27x1bvTdcvvm6ORc1rZvsc1xczU2oNLEnonP/I2/pUx0O2Bt
+	 T8Mt6s9nDeXi5ouF0Bm8/25Jxw6yZmZjK31CFOvKIUtVgU5Rj8JkGkJNa1kt+yBfAD
+	 zh2u/WrQNLKFAQL20tMH5rCI95l+iw0p2gpL1uhj8zTJs8ALcM6EwhySodtf9PDLpY
+	 W42cY85Qd4EE81GrEveV3yT0RhzggShySwmVrH1YM+WeyXiWtIdqhbEVSSsZhJsJDF
+	 5l5LR0PM+pNyi04UrbRMTujk3DRRhRhZqhWYPqBiYPlhcYOwAgQBW4FjMIkYqwNUc3
+	 Poja0iLDZoBgg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f508bf92-a513-467a-a946-17c41e1d72d1@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 10:47:25 +0200
+Message-Id: <DCNAE3CJMEJ0.JH1F0MJABXQI@kernel.org>
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Cc: "Boris Brezillon" <boris.brezillon@collabora.com>, "Matthew Brost"
+ <matthew.brost@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Steven Price"
+ <steven.price@arm.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ "Liviu Dudau" <liviu.dudau@arm.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+ <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+ <20250905152505.005a610d@fedora>
+ <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+ <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com>
+ <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org> <aL1u_YxOkuj1kIq6@google.com>
+ <20250908091140.44856fde@fedora> <aL6TJYRmWIkQXujj@google.com>
+In-Reply-To: <aL6TJYRmWIkQXujj@google.com>
 
-On Mon, Sep 08, 2025 at 10:43:50AM +0200, Konrad Dybcio wrote:
-> On 9/8/25 10:36 AM, Stephan Gerhold wrote:
-> > On Thu, Sep 04, 2025 at 04:31:23PM +0200, Konrad Dybcio wrote:
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> The CCI clock has voltage requirements, which need to be described
-> >> through an OPP table.
-> >>
-> >> The 1 MHz FAST_PLUS mode requires the CCI core clock runs at 37,5 MHz
-> >> (which is a value common across all SoCs), since it's not possible to
-> >> reach the required timings with the default 19.2 MHz rate.
-> >>
-> >> Address both issues by introducing an OPP table and using it to vote
-> >> for the faster rate.
-> >>
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > 
-> > Using an OPP table for a single static rate that remains the same over
-> > the whole lifetime of the driver feels like overkill to me. Couldn't you
-> > just put the "required-opps" directly into the device node so that it is
-> > automatically applied when the device goes in/out of runtime suspend?
-> > 
-> > And since you need to make DT additions anyway, couldn't you just use
-> > "assigned-clock-rates" to avoid the need for a driver patch entirely? We
-> > use that for e.g. USB clocks as well.
-> 
-> This is futureproofing, in case someone invents FastMode++ with a higher
-> dvfs requirement or for when the driver adds presets for a 19.2 MHz CCI
-> clock which would (marginally) decrease power consumption
-> 
+On Mon Sep 8, 2025 at 10:26 AM CEST, Alice Ryhl wrote:
+> On Mon, Sep 08, 2025 at 09:11:40AM +0200, Boris Brezillon wrote:
+>> Hi Alice,
+>>=20
+>> On Sun, 7 Sep 2025 11:39:41 +0000
+>> Alice Ryhl <aliceryhl@google.com> wrote:
+>>=20
+>> > Yeah I guess we could have unlink remove the gpuva, but then allow the
+>> > end-user to attach the gpuva to a list of gpuvas to kfree deferred. Th=
+at
+>> > way, the drm_gpuva_unlink() is not deferred but any resources it has c=
+an
+>> > be.
+>>=20
+>> This ^.
+>>=20
+>> >=20
+>> > Of course, this approach also makes deferred gpuva cleanup somewhat
+>> > orthogonal to this patch.
+>>=20
+>> Well, yes and no, because if you go for gpuva deferred cleanup, you
+>> don't really need the fancy kref_put() you have in this patch, it's
+>> just a regular vm_bo_put() that's called in the deferred gpuva path on
+>> the vm_bo attached to the gpuva being released.
+>
+> Ok, so what you suggest is that on gpuva_unlink() we remove the gpuva
+> from the vm_bo's list, but then instead of putting the vm_bo's refcount,
+> we add the gpuva to a list, and in the deferred cleanup codepath we
+> iterate gpuvas and drop vm_bo refcounts *at that point*. Is that
+> understood correctly?
 
-If 19.2 MHz CCI clock is feasible and has lower voltage requirements,
-then I would expect a separate entry for 19.2 MHz in the OPP table of
-PATCH 5/5? The DT is unrelated to what functionality you implement in
-the driver, and that would make the OPP table look less useless. :-)
+It has to be a special unlink function though, since otherwise
 
-Thanks,
-Stephan
+	drm_gpuva_link();
+	drm_gpuva_unlink();
+	drm_gpuva_link();
+	drm_gpuva_unlink();
+
+leaks the VM_BO. Sounds a bit messy, but my concern is really about the bel=
+ow:
+
+> That means we don't immediately remove the vm_bo from the gem.gpuva
+> list, but the gpuva list in the vm_bo will be empty. I guess you already
+> have to handle such vm_bos anyway since you can already have an empty
+> vm_bo in between vm_bo_obtain() and the first call to gpuva_link().
+>
+> One disadvantage is that we might end up preparing or unevicting a GEM
+> object that doesn't have any VAs left, which the current approach
+> avoids.
+
+Yeah, we really want to avoid that.
 
