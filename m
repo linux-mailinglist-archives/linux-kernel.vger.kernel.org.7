@@ -1,162 +1,126 @@
-Return-Path: <linux-kernel+bounces-805021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F47CB48314
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8BCB48318
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE821742CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68600189B098
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B55D21B9D9;
-	Mon,  8 Sep 2025 04:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="tvyXn3ui"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990D621B9D9;
+	Mon,  8 Sep 2025 04:07:35 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68DD16F0FE;
-	Mon,  8 Sep 2025 04:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6B1A3167
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757304176; cv=none; b=uSPqjGSYVs01kVzaCNHb+IErCniDUb7tyf8LDPRGYZGSKqb9Z745uizTTMFutzREJAY5bV0zge5Rg3m35ABLx7KYgHzS3JPDwyRtPjScX4utGiNnKtont2G/Cbq6grtwU/q/CRUVYUSpTts3JTg61PDg74sSAif1g/tjDE8JzKQ=
+	t=1757304455; cv=none; b=XY1tOsQbYd2tooGX1OVyvOovE3gNwVxNUo5YXtXcxjO6LDDz+LP2ugBnJOyRKy4hO354kUuLH9iYdRnYYbP/U/9lEtSujLsp5vH4T12kuhNqmyItHfY9xb8nlU/zRTlfuMh6v9up+H2MdLXIMeQKAQRGl74JmWEB9jmT+B4mC38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757304176; c=relaxed/simple;
-	bh=Mw7y5CKpjj1kCLIHq49+s1B3tHAv6to+LItwIXxncn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTWCUBbVQNWKMVDA+y/UOoeqhg6HuUg8qBBZ4NzbgXABkHVWjecC/33j+tNhJLtIiRyf8ugZB8JSsd2FrqPwGc5Rd+CxIoTko3qGTnzIXLaHEW85Yb+ysssFlMvK/tx+BTMw3JD9lWlzG1xmRWhlEmInLnzY70TwkFASwEs7IJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=tvyXn3ui; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=gibson.dropbear.id.au; s=202508; t=1757304169;
-	bh=+DVku2GpjSU8Pe98enb9DbHLBpEscK8lb8VBTFVwSS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tvyXn3ui3/qGGNbGkyZvGREWFbduw3vm8b1i8Od1Yv+s+WAICJ1GktEsrGf9dbsMB
-	 X7+/vwj09HO+4z+LzInVma5oPjiu8DtvSCB5ILhAig8RZolxLCx5gtMh/KZ6x0unUA
-	 G1Cvasi/QzDqbSVVSWc5pjrqh5LslcsYDoUC35sO+9rqidXuMuzKWbseVrqwyjqgGn
-	 N2mA3MIxwd7UD49VaOnQ/yvVssNldTDLpNA0PZ2F8egist/9jGpXXEqrimveWwfooy
-	 rmB7qXXvo7Rt5Gky4dUtrZ0d+S3CD/uEl2CLB1QuU191XGUikg7Fp/JlYM2ReK4jrw
-	 +vEn5rlDSxBNw==
-Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
-	id 4cKtZx4RStz4w9y; Mon,  8 Sep 2025 14:02:49 +1000 (AEST)
-Date: Mon, 8 Sep 2025 14:02:45 +1000
-From: David Gibson <david@gibson.dropbear.id.au>
-To: Raymond Mao <raymond.mao@linaro.org>
-Cc: linux-doc@vger.kernel.org, devicetree-spec@vger.kernel.org,
-	devicetree@vger.kernel.org, ilias.apalodimas@linaro.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs: devicetree: overlay-notes: recommend top-level
- compatible in DTSO
-Message-ID: <aL5VZfOoy1g2uyAH@zatzit>
-References: <20250902174351.2457022-1-raymond.mao@linaro.org>
- <aLkAYitpWxWx131p@zatzit>
- <CAEfUkULwQxJ-EKT7bQ8+hkH+_xO8esThnL2P_Rc-32tHyMdA1A@mail.gmail.com>
+	s=arc-20240116; t=1757304455; c=relaxed/simple;
+	bh=9wx1iXdmCHer+AspEUn6XJ1H/vBQn3AwQMQOzJtnSM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kqk/7tnoy4EG9cen9paEoT3HOx4NartgYVI3ZRcOHIPU8mrIMiOMRDMhkNvElIBUI+wGbM6hbnSkTXauDmax2F6VuRNTiSNf4+06wtblakWLCXn5EmyEhu4f+egOtQMsC/x0SlApsB1/Pz8fKxV8jMnCJkLyUfnpuRJhmN3TKd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso24355275e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 21:07:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757304452; x=1757909252;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=409De3dycyXy94pFQxmNYxL/WmjZWt0b3HPL18vEbd8=;
+        b=sUaEdXpYbFi3U+1or4whEpzwdOzGgW0BCU5se05ne0VRBIfnUBElQugOBDXO8eqXe7
+         BgddRHrSBi84S75GIAVRpcmLSuHxbg8WjUsiRofSYy5Is3qTM5eybbb4whmk6yWB41O3
+         ljN+4/ENMr84bkKLAmE1Fd1zujg9V/PaXO5kjhK9APeGTkFRPrDyLWB3S5NjuBlDRfxJ
+         EFyPZdblXGM4bJ5+Sd1Zj8xlubAtOIDSCVcf5cjqRhwmXATtJUvTLL4mxeey0E+ZrjH6
+         bjAhhgLgDAjUb4EygxoDDGHgpWWO9bNW3AC3BhyTaEWzsHh7WUAGRorvICvUQj5XrXl+
+         mahQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZDgyaX0asQuS9kvb0RZu8G9hoq2v/k1xeW1blqw0rH0NS0hERBiBbbfBxYA71cvhO+FulU+W3BfWLRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydJmEBp6/ZirecZGRswJi8l47Vm/hCYI22w/QYhnEJzuaabrpY
+	IGawriKKPfFzsBmkvXgwlBoyKjlMi9kzZ6xRAxxYFEVzMjKHu6CWY+cu
+X-Gm-Gg: ASbGncsvpt7K7YjLSUxJssZ7hNbd8bqiL0AUC2jitD7CXpr4bFsny+0SUqFLFx2o+MY
+	MTv92CHuMpPgqnR1zKQ2z3ks2fYDAXZkPMZ7aLV+8Rz0SdcOMLLeSHayLyJxCb311xLEoz1qaaC
+	ZM4+BUj9RbunN0PBRv+Xd+MTMrWrJLszx7MniCt4kiL8koKZ1PmwwrqSEtBaf2KEm9KH9PRz3mR
+	cNp0xFyc1yyFF1hbhbzOKeizHxNSTJyYPp3ywikHAORI0f5EgiqfW9DOpDVRIf8ZV0KFzgLffca
+	4He1/syIS9fU19bVJv6tK9n8dBE/oTE+rKxrjkvmYiSV7APxt7dkEcC0pIXD/ybPBZFi1igYUql
+	Ro132J4VIe6r/zvebE3bsKITYUL8=
+X-Google-Smtp-Source: AGHT+IHHc0KQu4fVuvjX8fgbXi8r9B9WeHJTzec9xAQPc3wb88MrF8wCXiddTK5zZ0XCMEdTfP3iDQ==
+X-Received: by 2002:a05:600c:c8f:b0:45c:b55f:466a with SMTP id 5b1f17b1804b1-45ddde9295dmr54866415e9.15.1757304451344;
+        Sun, 07 Sep 2025 21:07:31 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([2a04:6f00:1::ee:b:1086])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm228428405e9.0.2025.09.07.21.07.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 07 Sep 2025 21:07:31 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	Liam.Howlett@oracle.com,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	dev.jain@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	usamaarif642@gmail.com,
+	ziy@nvidia.com,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split shrinker
+Date: Mon,  8 Sep 2025 12:07:13 +0800
+Message-ID: <20250908040713.42960-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XVQ/eLKMwcuqE7xj"
-Content-Disposition: inline
-In-Reply-To: <CAEfUkULwQxJ-EKT7bQ8+hkH+_xO8esThnL2P_Rc-32tHyMdA1A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+From: Lance Yang <lance.yang@linux.dev>
 
---XVQ/eLKMwcuqE7xj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When a new THP is faulted in or collapsed, it is unconditionally added to
+the deferred split queue. If this THP is subsequently mlocked, it remains
+on the queue but is removed from the LRU and marked unevictable.
 
-On Thu, Sep 04, 2025 at 10:40:31AM -0400, Raymond Mao wrote:
-> Hi David,
->=20
-> On Wed, 3 Sept 2025 at 22:58, David Gibson <david@gibson.dropbear.id.au> =
-wrote:
-> >
-> > On Tue, Sep 02, 2025 at 10:43:50AM -0700, Raymond Mao wrote:
-> > > When managing multiple base device trees and overlays in a structured
-> > > way (e.g. bundled in firmware or tools), it is helpful to identify the
-> > > intended target base DT for each overlay, which can be done via a
-> > > top-level compatible string in the overlay.
-> > >
-> > > This provides a way to identify which overlays should be applied once=
- the
-> > > DT is selected for the case when a device have a common firmware bina=
-ry
-> > > which only differs on the DT and overlays.
-> > >
-> > > This patch updates the document with a note and example for this
-> > > practice.
-> > > For more information on this firmware requirement, please see [1].
-> > >
-> > > [1] https://github.com/FirmwareHandoff/firmware_handoff/pull/74
-> >
-> > I think this idea is probably useful enough to be a good idea anyway.
-> > However, note that it leans in to an existing ugliness of the overlay f=
-ormat:
-> >
-> > Overlay dtbs kind of mix "in band" information - the actual new
-> > content for the tree - with "out of band" information - how to apply
-> > the overlay itself.  Whether a given property is data or metadata is
-> > determined by it's place in the tree in a moderately complex and not
-> > super obvious way.
-> >
-> > About the clearest divide that exists is that generally the root and
-> > first-level subnodes are information only for overlay application,
-> > everything under that is data to be applied to the tree.  This all
-> > tends to have names that would be unlikely (though not strictly
-> > impossible) in a fully applied tree.
-> >
-> > Putting 'compatible' at the root of the overlay is putting something
-> > that looks very much like a regular device tree property in a place
-> > and with a function that's purely about applying / validating the
-> > overlay itself.
-> >
->=20
-> Since all information at the root of an overlay is considered as
-> metadata (out-of-band),
-> If you think 'compatible' is confused, I can change it to
-> 'overlay-compatible' - which should be 'unlikely' to exist in a full
-> tree.
+During memory reclaim, deferred_split_scan() will still pick up this large
+folio. Because it's not partially mapped, it will proceed to call
+thp_underused() and then attempt to split_folio() to free all zero-filled
+subpages.
 
-No, as I said, I think the advantages of this proposal still outweigh
-the disadvantages.  Just pointing out that this is highlighting some
-of the ugliness in the current way overlays are designed, which is
-relevant in the context of concurrent discussions about connectors and
-the like.
+This is a pointless waste of CPU cycles. The folio is mlocked and
+unevictable, so any attempt to reclaim memory from it via splitting is
+doomed to fail.
 
---=20
-David Gibson (he or they)	| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
-				| around.
-http://www.ozlabs.org/~dgibson
+So, let's add an early folio_test_mlocked() check to skip this case.
 
---XVQ/eLKMwcuqE7xj
-Content-Type: application/pgp-signature; name=signature.asc
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+ mm/huge_memory.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 77f0c3417973..d2e84015d6b4 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -4183,6 +4183,9 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 		bool underused = false;
+ 
+ 		if (!folio_test_partially_mapped(folio)) {
++			/* An mlocked folio is not a candidate for the shrinker. */
++			if (folio_test_mlocked(folio))
++				goto next;
+ 			underused = thp_underused(folio);
+ 			if (!underused)
+ 				goto next;
+-- 
+2.49.0
 
-iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmi+VWQACgkQzQJF27ox
-2Gco/g/8C3x3D3BQ8/L44GZMTfbxKC5NPMh/+kDZ6h5bE5MOuTi6mv6VffiQ96qG
-xMS4b/H0pLEKy9RtBfV2f1EZio88mUmDpe4Nv6w/LVQdaow6+loanMOdQ1+H26XX
-SoCTDUaJfzeAaV4GJ7A4RSup5mCdCkz7uNAdaGa9BQSgnFjfQt0QHtjNywpzltpE
-9XVSB+v8t9uSx7U+HqGDSvMx4TQ2iXQ1aiiAQ/+PFFsOk4j/EM/tVJrckxDkddfF
-INEK3XPdDoi1EbjYUugCMV8bm0KpzZbVOJgPp8Wlt4U1XWno1dsUNYaY0djTFLK4
-/RehLRKXe/E3AdS0wv9CundSw+Ag9/+8k93o3Mf020m5cusDBRwo+9I+HJFo1Hhc
-3vSQuhTLZFpXdpBNJsy3xVOqZTc4vGXJbv6jLvxCpqrPRobziksGJDTcRqsQ+Ut8
-C79j8vXUOu5oK1fmNihFJu1Mve55+9MiirTVyPl3zmepLRE59BeqJ+JLdjJ20sxy
-dm+dTeX5RHHlt+GIZMsqhaKLObC3THmm7CW4sdegHv+b72BOwQdKZ4CcfmiIp60k
-YNw89/qbGqS2z3NQ9UXg71n9KWfje8wkG0sXDtFhyuZewBK8MH+S9Y/uHBjvc2Hj
-tTaxLI9r5Y7Y2/qFFXgSkmBrRkVfpNtd4QVP8c9WcQjP/AzpWS8=
-=LWzd
------END PGP SIGNATURE-----
-
---XVQ/eLKMwcuqE7xj--
 
