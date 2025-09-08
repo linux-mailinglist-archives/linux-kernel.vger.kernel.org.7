@@ -1,116 +1,175 @@
-Return-Path: <linux-kernel+bounces-805178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339D5B484F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:20:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9C0B484FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1CE17A861
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:20:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5327ADA14
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F502E8897;
-	Mon,  8 Sep 2025 07:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406592E7BB5;
+	Mon,  8 Sep 2025 07:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYzGPntm"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IZfEPaaI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344692E62C8;
-	Mon,  8 Sep 2025 07:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96762E54D7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757315981; cv=none; b=YCv7b2swAt9peJPMuMbWfroBOx9wMKB7SFob6RppnfwMct0JVtJhOONcmkquAObx6NdGJnGW+VwcLU6FT1tubkyjHpq25x/9XfEkBdcQeuz701RRBoUg/tyivVWd1DQQseEOfffWp9Ze7QNJc/wui1s2pHlAywYaPxnv9bsBbj0=
+	t=1757316009; cv=none; b=sL4bYZOrl2t+gzuVfDpIhMbSgzc6GmdLY8tNG12nKCcLRYgktFXVeb+HRWpNME1yWvvFPIZRtV4UYBWCOMgVNzbwnPo8p5UMhvvbDLLwjEhI2H44QpxbAm14YOfHtDE/TAfLKk6TpQWwn+WggcCLrPgL2rIk+NO2WPUOk9ppcwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757315981; c=relaxed/simple;
-	bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m+Wv78zxNAXWplUUTOwzbYigrw+9TphWdDL0jVK1KyN3Y670DSvfeTcHpu2m3OHSKmu0FkXaPcZJD3oiZA9QoasoINZWlkaabbaQuuZIotmXGl2QzT5SyHcdxHan5pjFv018wRUtmmMXJDPM5ZW4Go39SrNPoa7pRVMa1y7hgNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYzGPntm; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7722c8d2694so3474549b3a.3;
-        Mon, 08 Sep 2025 00:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757315978; x=1757920778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
-        b=gYzGPntml6XvaAbNFLAa302qxlIMSoyUrU5Qav1xpoNDQFP9FeRONwUiyNo2Lx195K
-         b3oNAwTh3wwGkABa09kS/UmpEz24hfHiZLGy36Xt5zU+0gqCJdL89O6t0YmWrYHQZtWn
-         nje14hxL5jNdrYNFy5iVvQnvuEkb2h9SKMtSWKriizr0eYlZ7n9vkSa935e26EUIPXKe
-         JAo8rA8gTv2PF+xfn0sNgyNu11HojQ2SflKEWjtcbNefTnCaDZLCH1lVKxU7LA4GZUsO
-         lap5qJDmfxC71PIXKc11iL6FSN/OkSuOy/UNxu0QehUvq3s8QXOcY3D4DBPcAossdOND
-         aevQ==
+	s=arc-20240116; t=1757316009; c=relaxed/simple;
+	bh=PqMyOblKEfOraVWVRyMOSW5G4N5oZyOPcmEHnteK9jU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2HEWjgkgEu5wFDoOroxuUXSeg6ODb7AMap7JvGsHq2y0kyW0HW6M6Jv6pp717KT+w8NpaesyhtmL/PXPzVwQAaPbG3EzAA8wTlhBP4CmBDbuUgfbeXR+Nf0mokomG49Bz0ODaH1+1gn2LVL6Qz4WJojrwb5W5AqAM3OEwXpEmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IZfEPaaI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587LMnaS019349
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 07:20:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VWcKtvk8mFvfLmI00zGKSgzDw0tbzl3o6sU4GJfPEyg=; b=IZfEPaaIDN1l1x7T
+	TnF1MTF+bRDRHQxbUua0ygSd0wlAkRtC3j1WrZRPaExv+OwbqMdE64KkYmn+QCQs
+	RC8rVme6YhJB1Hsy68yssndvDzHpyAbOSHNpkcueZqfCvgAp1TCD6aebERni0Vez
+	zWkLr6RkuDPBvmWRSah/ywQzw+d8Q4/IXKDBhwuyan4zzz9L38g1ImRJNbFjJP0R
+	JdXCKEHEAxF0011/Igk+GEy0NopfLO5xRLSi+2te9Gk+E5pXGakkpxQVMkYaLuf4
+	4jjhtJ4wLrzgfXVQB26W8Ftgje8vJJ3UEpFTKgPRpKudOlUI31Skz60BoDTdUcho
+	ll7Dgw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqfuhmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:20:05 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b6023952f6so6345881cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:20:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757315978; x=1757920778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
-        b=pac16HJX6dRlF1aog0pryfeUK4MqSPQbCwj8uudeM3gw3GvL/YLxHVGfRsP0BYsMbP
-         fKtoA0YikYLcrHXqynOPMkMhVZq5zcKbrCyN97N5rbnfK7DLEoJ5wT7TCNxPYWd2MKQa
-         crvY3+obgbNbVPXYMjmyfwpjd8GeNIZ4MfKH1/RxWFG4PS9XO6qW343jbTrsU4S6kkOu
-         PbSuwkALehd+ORjK67VPhr9QgJNeFO+HPQGCTxLdaqb6sjVn+h+SypVl6xzTUSwCV7LK
-         YRdFfXeYTU0iTxvbfLrXhpC9bycQ+ag69sSFkSaSp//4TAcPexbsrk/jq9DOzeINbXwr
-         DgJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZIhSJNAEctUk5xGYyjoJCMoOGe3pbV+4N7Tk93DYaLgoT+K7OpCeuGlMMcHBRdyu7tTg4K0+/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK6gpR1vmnqslv9QOedWEglaAqfvdwzqvjSVQS4334pIukyzpa
-	XTHP0UZKEw1gNalGtmL64hEHeNDThmO/9Ml3qXT2U18o6vPzSjVN9bVO
-X-Gm-Gg: ASbGncvGcQVeFBaSrhcYAvfzjqeU2Jcx0WdkLVEfR+4k+tE+bZpX1P2n7x5nAcHuXZ8
-	maOkogDHjNwdZwuGTw8ulCl1tLR67uF4dpgE7aKxY1f5Dz7Ealeq8ilx0R3A1HCCXem7qH+gCNI
-	sgYp9hZZSRCZZc3RsTIPBaonwKeLmb1/6BjhWwlGG5qSgZ/Lv7jj+4/SkRrQuvbof6IV1Y7m3Wo
-	94nfZgMKKItEWvPG7lllHya8dju1QCWjr079Y7vyunrGZMPfIxBuzEt1GEUNZigEW7CUrilDuqM
-	tcIXGyvlof9B9ia8tDHawR87i5jXc/8Bh2hiCpQOqhXqOUONNN0lj1PHxuRI1EmVH2tqSbl3Di1
-	ekqKQ49diBcz1c02SNKGxJSZvwhQEfcBpJPRCHzeu6r7wh4yDT8WAzPE=
-X-Google-Smtp-Source: AGHT+IE/LhwcY3G2UrWPSLBxBEy/834kFowCIFQddipKGcG/qLZGkfRNUXLRizohVB+NEmAxc9jpkg==
-X-Received: by 2002:a05:6a20:4320:b0:24c:cb06:f0db with SMTP id adf61e73a8af0-253430ae888mr9895534637.35.1757315978448;
-        Mon, 08 Sep 2025 00:19:38 -0700 (PDT)
-Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0e1cfbbsm25587173a12.23.2025.09.08.00.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 00:19:38 -0700 (PDT)
-From: Hongru Zhang <zhanghongru06@gmail.com>
-X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
-To: paul@paul-moore.com
-Cc: linux-kernel@vger.kernel.org,
-	omosnace@redhat.com,
-	selinux@vger.kernel.org,
-	stephen.smalley.work@gmail.com,
-	zhanghongru06@gmail.com,
-	zhanghongru@xiaomi.com
-Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
-Date: Mon,  8 Sep 2025 15:19:22 +0800
-Message-ID: <20250908071925.294803-1-zhanghongru@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAHC9VhSW69hmvduJK1cKt_XffiDwEeHUKAtJ3YLbohKWff0+bQ@mail.gmail.com>
-References: <CAHC9VhSW69hmvduJK1cKt_XffiDwEeHUKAtJ3YLbohKWff0+bQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1757316004; x=1757920804;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VWcKtvk8mFvfLmI00zGKSgzDw0tbzl3o6sU4GJfPEyg=;
+        b=N7LoO5ixne1yKFWG2LsB5J33Uowvn0neYJOlyC1aYAsQfWghfYgFXhBpFGJmevTsOO
+         twUAXWUCz3lLTWSkKxDGpkZCKmnaK2f1x6Oc8Ip4KcvFW7vxrOi+ft+4nS3wO50zYoWz
+         BmXgmPA2Qx2f49CFls8JwmcwHmpyNUxsq/fY7EuRoX4Ky3hL/UaodJcTTdXaILZqGx98
+         n53I1JrJ9m7mrU2kjijOn1bLQFvo88OjDkFDcBbt1VxqKRkSUeYG/kw3r38ZqBi3fQmC
+         frO5R8WLkSYmnAKfGpeNqSedk1fQZXQ6xFiZQa5RMEmyNrHRT88M9rpF5ZNA01KE5Ne6
+         zbIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyBw6g00TQ8KNQzQE5zDr6ulZ6dtZFexbAuHNrFbwUe6m7I4W6+qPzil0ivUZwnI/YajJabt8sCfyqR8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6ncZ6I56012VTB6o7C5VeHoVmNz/3OVTrZR7knpKOYjCK7iEx
+	hEHHs3UVrN5yyEoG2xhOILlvWT6k3UdS5m8/SP16F4Gtuq5/XNL3YUvZTPNQfouc3KLQ7T+Rh8X
+	ZtSL4KPmZaoRNVH4mZ3FJtf3qxsDz5GfVykkl0rMDJFs/jJc8FYiqzt+ptDX6NXmMPG0=
+X-Gm-Gg: ASbGncupu8K3FrY99/3r8dBNNDc+o0UWhZrALC8xEf2EMUgbud0piamUxYQ2VoNAPDs
+	RipJgW65DUx/sYTtTrqVbgBdUAQasHnmYFgxKWaQjO+uja4KbFOZJfwU/7NNLhnudCfWAsLUsOg
+	xgPLM4MkG86mOO3mc/4Y+DWIQw2vQB9VwGzmZVol8/ZlIRXnWNk+HX+/QBe+VPHSBV+OFplMt04
+	5k5BxfZpkvu/fkp9yhUFJ7UKTxvnX/Jj/J/GQhJVqwM5L8ghXuruQYwEMFRBY7za8LMPyuWz0VO
+	TnTShRKOweBMBg3PDyDKHDhOwFkjnu3k/RPI6ZEHufgN9XuTG4kdH4JcB2to3y0CfVW4msMfVsk
+	Wg9ZwQ7yjb/KUDH9f9aDD1Q==
+X-Received: by 2002:ac8:5dd1:0:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b5f8445af1mr48142281cf.1.1757316004499;
+        Mon, 08 Sep 2025 00:20:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4+QiJyueOpHGD01U7ZGb5pGulY2uWYz7NY7jH/9d6NejQbnMKqPQkDJBKht2O5pECh1Hjng==
+X-Received: by 2002:ac8:5dd1:0:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b5f8445af1mr48141961cf.1.1757316003978;
+        Mon, 08 Sep 2025 00:20:03 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0409bf055esm2172292466b.85.2025.09.08.00.20.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 00:20:03 -0700 (PDT)
+Message-ID: <0e030e7d-0a1a-4a00-ba18-ed26107d07fa@oss.qualcomm.com>
+Date: Mon, 8 Sep 2025 09:20:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: leds: commonize leds property
+To: Aleksandrs Vinarskis <alex@vinarskis.com>,
+        Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Daniel Thompson <danielt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Sakari Ailus
+ <sakari.ailus@linux.intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
+ <20250908-leds-v3-2-5944dc400668@vinarskis.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250908-leds-v3-2-5944dc400668@vinarskis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: IzoURZ6pHRrFGOjdaTPYdnCxHEDsOmk_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfX3MdOD21YdlUf
+ vgvq/UkwlnnMjwnxZYM+BDmoDGi+d5yFMT9DR+tPGPuiasbfUFDJBCQowQtaPd0J0NxuSBTaqgg
+ DqJCuDYkms6lDXKi99PloHUldNGoHT2C57bylnXJ4qSnCeHkbAd0Dql3M0nx3etyqeFUqN13flW
+ p/8MnfgquhdJhDtCVRnIA69Nzdr1Kr5vT41QHQMsL8mdQhGiOLLorbNh87+4N+XfS/TTjQxwzEi
+ hShGErgL8oUQxULpY/DRzbIT5+RJuvlhJcm3JEAI6tPeFjeUVwZleWD1RIsZe+JAaf/SC86SImv
+ Bsa+CQ0Zlk13+4Fu7upUduFfQR4Gzm4ar5rk5ghfsVx2lkbSSpBOLQgccPoDPM4uDRI5wD+QTf+
+ x9tQE6n2
+X-Proofpoint-GUID: IzoURZ6pHRrFGOjdaTPYdnCxHEDsOmk_
+X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68be83a5 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=I76Qk8w-AAAA:8 a=zDPauhyOtcwAXlC7rdQA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=dawVfQjAaf238kedN5IG:22
+ a=vUPM0Wvl0xcrLs4nqPIT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
 
-Apologies for the late reply, I sent the patch before leaving work on
-Friday, and didn't check email all weekend.
+On 9/8/25 1:18 AM, Aleksandrs Vinarskis wrote:
+> A number of existing schemas use 'leds' property to provide
+> phandle-array of LED(s) to the consumer. Additionally, with the
+> upcoming privacy-led support in device-tree, v4l2 subnode could be a
+> LED consumer, meaning that all camera sensors should support 'leds'
+> and 'led-names' property via common 'video-interface-devices.yaml'.
+> 
+> To avoid dublication, commonize 'leds' property from existing schemas
+> to newly introduced 'led-consumer.yaml'.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> ---
 
-> On Fri, Sep 5, 2025 at 6:05 AM Hongru Zhang <zhanghongru06@gmail.com> wrote:
-> >
-> > From: Hongru Zhang <zhanghongru@xiaomi.com>
-> >
-> > On mobile device high-load situations ...
->
-> What are you using for a SELinux policy?
+[...]
 
-Android app smoothness test, testing metrics can quantify app smoothness
-from the user's perspective. The problem is also reproducible in
-cold-start test scenarios. These two are widely used testing model.
+>  
+> +  leds:
+> +    minItems: 1
+> +    maxItems: 1
 
-I generate a flamegraph to record the sources of permission check:
-url: https://gist.github.com/zhr250/9f4415bfdefc8ff0d64e78d96351fffb
+My brain compiler suggests this will throw a warning (minItems should
+be redundant in this case)
+> +
+> +  led-names:
+> +    enum:
+> +      - privacy-led
+
+Nit: "privacy" makes more sense without the suffix, as we inherently
+know this is supposed to be an LED
+
+Konrad
 
