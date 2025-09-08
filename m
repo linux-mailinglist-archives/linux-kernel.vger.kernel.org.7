@@ -1,186 +1,285 @@
-Return-Path: <linux-kernel+bounces-806539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345B6B49832
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4177DB4981E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FB73B5A2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E860B207704
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68F931B109;
-	Mon,  8 Sep 2025 18:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D0613C8E8;
+	Mon,  8 Sep 2025 18:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="k61XfHHb"
-Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="b+tgAoy8"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F233318139
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355802; cv=pass; b=Z+fZplU1CawfTOSfeBwA9g+KJTBQDO4un+dtiFjJX6/MhZY0g22N/S7QncCDhX+i8kmFXbrUzNfa/nKlQSzk/hDOHCVdyLX93QqV0l9lgNY2pchvgz9Azr6gAmFSoDGAdNM+yBmakJpMc8InshvNdAAXhWS2rqBhgGUJqI+l7To=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355802; c=relaxed/simple;
-	bh=tJn8wU/FAdYgLMxJPvZZUYUbKifLg26ClGFsuY4bZ6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JJ023E50mBmGWH9bDn/O5s6JRcVtQop9bZWGeitxee/8ePf+GyTSbchyClMg1gFYMfW+fFBN7Q7AmIwYx+ReIGVn8Of8W/cl7fXqWdPoOcmJF5PAoUSbL6nwpHudaHY+aIvlnQystnPgvKEMiea1aAHQp+P8aIDJRdF4THHsYfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com; spf=pass smtp.mailfrom=templeofstupid.com; dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b=k61XfHHb; arc=pass smtp.client-ip=23.83.223.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 2A573904AA4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:16:04 +0000 (UTC)
-Received: from pdx1-sub0-mail-a204.dreamhost.com (100-107-16-138.trex-nlb.outbound.svc.cluster.local [100.107.16.138])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id C33E3905160
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:16:03 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757355363; a=rsa-sha256;
-	cv=none;
-	b=LUfYBuzT/vr1g3h8a7KHnK3XL0dGQPnwVmKjZBAh8Eb2/jsxx6YkQTnBqjzgezGKuksFB6
-	PKiLO8daIsrnKL7iY0DPMtkXE/vxtKm2m2WviWvX/mk78wNMiZsPtyacHb4+YBgC+rgXzf
-	LhwrV7cicb6J8CoQ/5K3OQfnNr9aPgzPNTVGgG3uSwZ4kTvKwZFUbcAnrNH+DPv0aEMHHt
-	X83tTnDskNQHnWLlrxjeFZwQNy5hN9fQ/QE1LItaFv+8fejpTghEZKnSPwXnV300FVum8b
-	MBz4SkJqGwVtQKdZBPQ3Hev3XjsGM6+B1Iw6pLASjeHp6cV/RswW+XkZdHnFqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757355363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 dkim-signature; bh=bx4e0pgGb2y8U+QGf21qX2SdVP0uMrcYvKMqsJ4Puj8=;
-	b=5eLy4RnUkjQqBkn4aPZYoU/WQJWywWHbfbhniDlDE92l1FnkWQGktlm9G6HlOzKJHt0Fem
-	TsAeewiEfUctB3xS6YSpHzzceAjJqutjZQHHfuSU8vgufif1Nk+1xwFMZY8xxl9GM35gTQ
-	giKCxJ+xIiIRolEIKaPoCjP2Xxl/M/5jQHfVR2Dv4vWsZR825nDuwEb6QeKBicosvl7qaO
-	kLHyWDEiwBK4BjVcx0Tj+N1Jb8jCRPH38F+w/IR6DwoUYL8/6fhBOTeVh75zuR7FGWETgF
-	QR5GqpEIiXC7N/u4RGRWrHQ0mRHTePKdQLtx87qBOhTFxiwbQLkNXDG6l4170Q==
-ARC-Authentication-Results: i=1;
-	rspamd-9968f48fc-22hz2;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MailChannels-Auth-Id: dreamhost
-X-Cure-Cooing: 46846d3879a3260c_1757355364026_1867169200
-X-MC-Loop-Signature: 1757355364026:467374492
-X-MC-Ingress-Time: 1757355364026
-Received: from pdx1-sub0-mail-a204.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.107.16.138 (trex/7.1.3);
-	Mon, 08 Sep 2025 18:16:04 +0000
-Received: from kmjvbox.templeofstupid.com (c-73-70-109-47.hsd1.ca.comcast.net [73.70.109.47])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kjlx@templeofstupid.com)
-	by pdx1-sub0-mail-a204.dreamhost.com (Postfix) with ESMTPSA id 4cLFWR1TLBzhq
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
-	s=dreamhost; t=1757355363;
-	bh=bx4e0pgGb2y8U+QGf21qX2SdVP0uMrcYvKMqsJ4Puj8=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=k61XfHHbtdSc/foF8kmzjrn6KgCH4ZwrjupvX9vwYRJu+Af5y3C92EK6opnGlV7n2
-	 olkWmC4w3ClK0f+Ar7N6jvHOUYjOC4Vdmf0AoFwNaWeJ+eFsPRqnmoFEaAG6IXUiPa
-	 zouHtw532WU3+J1+r9rB0a5TlPd5BpieB19QKBySU/zIO8OgcVaMy7QU6GFS07nVa6
-	 UF55OuyRnS7qcznnACxexXF8Jzx+EYwrZf/PkKsBlOHSpoKzu+LByZetR2WZwuG8lK
-	 xwXmzOLONc/GjtFC2iKKYu8FUALUb67rV2ik0POwr9fR6zeGko3ILVwX35qOlxfD+f
-	 MgVfcxYkHlTHA==
-Received: from johansen (uid 1000)
-	(envelope-from kjlx@templeofstupid.com)
-	id e0263
-	by kmjvbox.templeofstupid.com (DragonFly Mail Agent v0.13);
-	Mon, 08 Sep 2025 11:16:01 -0700
-Date: Mon, 8 Sep 2025 11:16:01 -0700
-From: Krister Johansen <kjlx@templeofstupid.com>
-To: Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Reaver <me@davidreaver.com>
-Subject: [PATCH net v2] mptcp: sockopt: make sync_socket_options propagate
- SOCK_KEEPOPEN
-Message-ID: <aL8dYfPZrwedCIh9@templeofstupid.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B4030DD2D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757355546; cv=none; b=eyKLwfMsfD2MeDyjoLRX5khBtwLBXHIJ0f4NZOzcyYeTJiU3PNxMe7dcS6YW7VdqnFoEJo2c5F0ky3rE+GBBnMU+zpMUZ8MumdN8LJ89REHc+drlOZArNyriv2ndy3sq+DxE69jHHMSLVyQx4bWjgMOH/nSr53dCPEXlu5nXoAk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757355546; c=relaxed/simple;
+	bh=v5PyhRh/6O3NJBzdDH3C8VAeUqgpDMg5/t+bjfxiWVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t3OUDVci5TdKcQ/jAYC2aNhu3DxIqMBVW3ZxkrMptmxo6kQ0Ekl190W/uVYQ+hnLWqW2SEOep8+wYx/h9V4CA7phBco8Vnl8IF/xPq3RrUcB7zE2HamnBv2Xj8n7zrlNuXTf2pyqJKEEexNV5LDQZofER+ZRY0vNNH6/V3bQs/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=b+tgAoy8; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7728a8862ccso4081213b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1757355543; x=1757960343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2c2wQQodFjkEZTZlM+O9ycbeTny9/E1x0SNuW3SVXwE=;
+        b=b+tgAoy8xjIY0U7IPE8KTl3Fd3irt15iO7Pk8xf9NSuxc+nhn1cshq85xCHUi7/5Pt
+         phXuv9b8o4xAQxX17Oxygz6gd2diedxPh19tChb4kTqep9YpiNSjwnhuw84Xct/PZzry
+         Pai5Z6qIZS+SCdJ/VVDP4xfPWB3RsFaVurDfORoL7SI5+2EIajbAFU8QDY2JkY8jIqln
+         MmeXwIjq/6Z0tRs0JtDUD3yT8anlAkQ6Gv9ol3YwNHahQ8diE2N8uY/99gzJQXS0wYmn
+         6Fb7RajotPOjXPWi9cMSZfX4/g4zZBLHLUkhVcMKcut/9eBxERDz+jwPxnpaLTl6VmGE
+         TGgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757355543; x=1757960343;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2c2wQQodFjkEZTZlM+O9ycbeTny9/E1x0SNuW3SVXwE=;
+        b=EGahiQNf1jBnqJ3PAkAaB/OANPOpfZOSHUYUxYQQY0eQlVuUEiw1WOYWzZJ2x1ta1y
+         zQwa0PlYijyj2eKqkuUbFUxRqngMmEJVFfIHOTAXiZNyMbhIuDHX6pw7BzHKAABJUrzi
+         FMxI1y/KZai+YDRJwm7Zd6rALyj19IaxjKCnpasxe2WBnaY2zQCZnxg4Ck4yoASda5m/
+         CDq+LyFdYysBnxyJF9/fW9KW5weckVX9xYGpI1kPbJq0TGPo0qGnm2NwewoBaZWjX9x5
+         zbDUrLi3DaeuWIkAnM5tZS8jam5fgnaBtZ7pBpI4CLWbvyLExxhtaX8xJFmw4seaKDeF
+         +fiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTnwApCOJ9jB3vNKZyZhym4kCA6fmksOWUHN+yM8/oVdqPrXzZ2lNsLSDPemeTRC/auvgf3i4ti2DipUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYUeXcxKSt4ReZnfITTYvweem1+xlha4c3lOs9JRq+tQyCGKue
+	ArIgY4MWywAs6hsEItW6zgCTbO2ZbmKNDuivWtoZoO3xxQoK99SAOUQbk4iG4vb2tJ8Xfe9hLsU
+	dI6Xo
+X-Gm-Gg: ASbGncsLdjK6IKDK5EsCOHNygMXLsi2lGspwLzkyBGgpvrAmZ9WV2HYhcu9Dxh3qaNh
+	rpmnUHf+QGJ9aYHOWx/4+F56GQGPU2FyVcLoNr3vCxmi4u/c5tSEKMbomyEyb77dVbDp9+FxTCr
+	DrKysoyoC/8wfGMGVH6Klo4S1ears2Eccdp63WSIwrOr4X3CyVXakDDnlojZrtI5YWrh+P5A8ln
+	euLogsIoB5W0v/G98Oaw10hY/o050+N1E3nDuVYL8GCZbUMBLunGsxtzEw2iXOA0+qEkqT4fDev
+	RlhvVj3d1+FhoP49jzzIHpEI0Fw68HR1ZCZnsNv8E8sFN8G4j+tzA5sKdpj7l8d4YWbIdvweopo
+	hqL88oqlv8+7y1w==
+X-Google-Smtp-Source: AGHT+IGeK8xnjQMEsDvBnAQGCOTwp+zKHdddcPAw/zKXSbuv0/vgrl31tYylhn6Vgl90aigMwMS2Pg==
+X-Received: by 2002:a17:902:fc4f:b0:248:aa0d:bb22 with SMTP id d9443c01a7336-2516e1be7a9mr112628205ad.0.1757355543225;
+        Mon, 08 Sep 2025 11:19:03 -0700 (PDT)
+Received: from cleger.eu.int ([2001:41d0:420:f300::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd763948sm117012755ad.118.2025.09.08.11.18.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 11:19:02 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Himanshu Chauhan <hchauhan@ventanamicro.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Xu Lu <luxu.kernel@bytedance.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH v7 0/5] riscv: add support for SBI Supervisor Software Events
+Date: Mon,  8 Sep 2025 18:17:02 +0000
+Message-ID: <20250908181717.1997461-1-cleger@rivosinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Users reported a scenario where MPTCP connections that were configured
-with SO_KEEPALIVE prior to connect would fail to enable their keepalives
-if MTPCP fell back to TCP mode.
+The SBI Supervisor Software Events (SSE) extensions provides a mechanism
+to inject software events from an SBI implementation to supervisor
+software such that it preempts all other supervisor level traps and
+interrupts. This extension is introduced by the SBI v3.0 specification[1].
 
-After investigating, this affects keepalives for any connection where
-sync_socket_options is called on a socket that is in the closed or
-listening state.  Joins are handled properly. For connects,
-sync_socket_options is called when the socket is still in the closed
-state.  The tcp_set_keepalive() function does not act on sockets that
-are closed or listening, hence keepalive is not immediately enabled.
-Since the SO_KEEPOPEN flag is absent, it is not enabled later in the
-connect sequence via tcp_finish_connect.  Setting the keepalive via
-sockopt after connect does work, but would not address any subsequently
-created flows.
+Various events are defined and can be send asynchronously to supervisor
+software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
+as platform specific events. Events can be either local (per-hart) or
+global. Events can be nested on top of each other based on priority and
+can interrupt the kernel at any time.
 
-Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on the
-subflow when calling sync_socket_options.
+First patch adds the SSE definitions. Second one adds support for SSE
+at arch level (entry code and stack allocations) and third one at driver
+level. Finally, the last patch add support for SSE events in the SBI PMU
+driver. Additional testing for that part is highly welcomed since there
+are a lot of possible path that needs to be exercised.
 
-The fix was valdidated both by using tcpdump to observe keepalive
-packets not being sent before the fix, and being sent after the fix.  It
-was also possible to observe via ss that the keepalive timer was not
-enabled on these sockets before the fix, but was enabled afterwards.
+Amongst the specific points that needs to be handle is the interruption
+at any point of the kernel execution and more specifically at the
+beginning of exception handling. Due to the fact that the exception entry
+implementation uses the SCRATCH CSR as both the current task struct and
+as the temporary register to switch the stack and save register, it is
+difficult to reliably get the current task struct if we get interrupted
+at this specific moment (ie, it might contain 0, the task pointer or tp).
+A fixup-like mechanism is not possible due to the nested nature of SSE
+which makes it really hard to obtain the original interruption site. In
+order to retrieve the task in a reliable manner, add an additional
+__sse_entry_task per_cpu array which stores the current task. Ideally,
+we would need to modify the way we retrieve/store the current task in
+exception handling so that it does not depend on the place where it's
+interrupted.
 
-Fixes: 1b3e7ede1365 ("mptcp: setsockopt: handle SO_KEEPALIVE and SO_PRIORITY")
-Cc: stable@vger.kernel.org
-Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
-Reviewed-by: Geliang Tang <geliang@kernel.org>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Contrary to pseudo NMI [2], SSE does not modifies the way interrupts are
+handled and does not adds any overhead to existing code. Moreover, it
+provides "true" NMI-like interrupts which can interrupt the kernel at
+any time (even in exception handling). This is particularly crucial for
+RAS errors which needs to be handled as fast as possible to avoid any
+fault propagation.
+
+A test suite is available as a separate kselftest module. In order to
+build it, you can use the following command:
+
+$ KDIR=<build_dir> make O=build TARGETS="riscv/sse"-j $(($(nproc)-1)) -C tools/testing/selftests
+
+Then load the module using:
+
+$ sh run_sse_test.sh
+
+A KVM SBI SSE extension implementation is available at [2].
+
+Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf [1]
+Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
+
 ---
-v2:
-  - Ensure local variable declarations are in reverse-Christmas-tree
-    style.  (Feedback from Geliang Tang)
-  - Use keep_open instead of kaval; make type bool instead of int.
-    (Feedback from Matthieu Baerts)
----
 
- net/mptcp/sockopt.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Changes in v7:
+ - Check return values of sse_on_each_cpu()
+ - Fix typos in commit
+ - Rename SBI_SSE_EVENT_SIGNAL to SBI_SSE_EVENT_INJECT
+ - Rename SBI_SSE_EVENT_HART_UNMASK/MASK to SBI_SSE_HART_UNMASK/MASK
+ - Add tlb flush for vmap stack to avoid taking exception during sse
+   handler upon stack access. (Alex)
+ - Move some assembly instruction to slow path
+ - Renamed sse.c to sbi_sse.c, ditto for other files
+ - Renamed RISCV_SSE to RISCV_SBI_SSE
+ - Renamed sse_event_handler to sse_event_handler_fn
+ - Put ifdef around sse_evt in PMU SBI driver
 
-diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
-index 2c267aff95be..2abe6f1e9940 100644
---- a/net/mptcp/sockopt.c
-+++ b/net/mptcp/sockopt.c
-@@ -1532,13 +1532,12 @@ static void sync_socket_options(struct mptcp_sock *msk, struct sock *ssk)
- {
- 	static const unsigned int tx_rx_locks = SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
- 	struct sock *sk = (struct sock *)msk;
-+	bool keep_open;
- 
--	if (ssk->sk_prot->keepalive) {
--		if (sock_flag(sk, SOCK_KEEPOPEN))
--			ssk->sk_prot->keepalive(ssk, 1);
--		else
--			ssk->sk_prot->keepalive(ssk, 0);
--	}
-+	keep_open = sock_flag(sk, SOCK_KEEPOPEN);
-+	if (ssk->sk_prot->keepalive)
-+		ssk->sk_prot->keepalive(ssk, keep_open);
-+	sock_valbool_flag(ssk, SOCK_KEEPOPEN, keep_open);
- 
- 	ssk->sk_priority = sk->sk_priority;
- 	ssk->sk_bound_dev_if = sk->sk_bound_dev_if;
+Changes in v6:
+ - Fix comment in assembly argument
+ - Check hart id to be the expected one in order to skip CPU id
+   matching in sse assembly.
 
-base-commit: 319f7385f22c85618235ab0169b80092fa3c7696
+Changes in v5:
+ - Added a SSE test module in kselftests
+ - Removed an unused variable
+ - Applied checkpatch.pl --strict and fix all errors
+ - Use scope_guard(cpus_read_lock) instead of manual cpus_read_lock()
+ - Fix wrong variable returned in sse_get_event
+ - Remove useless init of events list
+ - Remove useless empty for loop on cpus
+ - Set sse_available as  __ro_after_init
+ - Changed a few pr_debug to pr_warn
+ - Fix event enabled stated updated in case of failure
+ - Change no_lock to nolock
+ - Rename attr_buf to attr
+ - renamed sse_get_event_phys() to sse_event_get_attr_phys() and removed
+   the second argument
+ - Simplify return value in sse_event_attr_set_nolock()
+ - Remove while loop(-EINVAL) for event cpu set call
+ - Renamed interrupted_state_phys to interrupted_phys
+ - Use scoped_guards/guard for sse_mutex
+ - Remove useless struct forward declaration in sse.h
+ - Add more explanations as to why we set SIE bit in IP
+ - Unconditionnally set SIE in SIP
+ - Move SSE_STACK_SIZE adjustement in sse_stack_alloc/free()
+ - Replace move instructions with mv
+ - Rename NR_CPUS asm symbol to ASM_NR_CPUS
+ - Restore SSTATUS first in sse_entry return path so that it works for
+   double trap without any modification later.
+ - Implement proper per cpu revert if enable/register fails
+
+Changes in v4:
+ - Fix a bug when using per_cpu ptr for local event (Andrew)
+ - Add sse_event_disable/enable_local()
+ - Add pmu_disable/pmu_enable() to disable/enable SSE event
+ - Update event ID description according to the latest spec
+ - Fix comment about arguments in handle_sse()
+ - Added Himanchu as a SSE reviewer
+ - Used SYM_DATA_*() macros instead of hardcoded labels
+ - Invoke softirqs only if not returning to kernel with irqs disabled
+ - Remove invalid state check for write attribute function.
+ - Remove useless bneq statement in sse_entry.S
+
+Changes in v3:
+ - Split arch/driver support
+ - Fix potential register failure reporting
+ - Set a few pr_err as pr_debug
+ - Allow CONFIG_RISCV_SSE to be disabled
+ - Fix build without CONFIG_RISCV_SSE
+ - Remove fixup-like mechanism and use a per-cpu array
+ - Fixed SSCRATCH being corrupted when interrupting the kernel in early
+   exception path.
+ - Split SSE assembly from entry.S
+ - Add Himanchu SSE mask/unmask and runtime PM support.
+ - Disable user memory access/floating point/vector in SSE handler
+ - Rebased on master
+
+v2: https://lore.kernel.org/linux-riscv/20240112111720.2975069-1-cleger@rivosinc.com/
+
+Changes in v2:
+ - Implemented specification v2
+ - Fix various error handling cases
+ - Added shadow stack support
+
+v1: https://lore.kernel.org/linux-riscv/20231026143122.279437-1-cleger@rivosinc.com/
+
+Clément Léger (5):
+  riscv: add SBI SSE extension definitions
+  riscv: add support for SBI Supervisor Software Events extension
+  drivers: firmware: add riscv SSE support
+  perf: RISC-V: add support for SSE event
+  selftests/riscv: add SSE test module
+
+ MAINTAINERS                                   |  15 +
+ arch/riscv/include/asm/asm.h                  |  14 +-
+ arch/riscv/include/asm/sbi.h                  |  61 ++
+ arch/riscv/include/asm/scs.h                  |   7 +
+ arch/riscv/include/asm/sse.h                  |  47 ++
+ arch/riscv/include/asm/switch_to.h            |  14 +
+ arch/riscv/include/asm/thread_info.h          |   1 +
+ arch/riscv/kernel/Makefile                    |   1 +
+ arch/riscv/kernel/asm-offsets.c               |  14 +
+ arch/riscv/kernel/sbi_sse.c                   | 174 +++++
+ arch/riscv/kernel/sbi_sse_entry.S             | 178 +++++
+ drivers/firmware/Kconfig                      |   1 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/riscv/Kconfig                |  15 +
+ drivers/firmware/riscv/Makefile               |   3 +
+ drivers/firmware/riscv/riscv_sbi_sse.c        | 701 ++++++++++++++++++
+ drivers/perf/Kconfig                          |  10 +
+ drivers/perf/riscv_pmu.c                      |  23 +
+ drivers/perf/riscv_pmu_sbi.c                  |  71 +-
+ include/linux/perf/riscv_pmu.h                |   5 +
+ include/linux/riscv_sbi_sse.h                 |  57 ++
+ tools/testing/selftests/riscv/Makefile        |   2 +-
+ tools/testing/selftests/riscv/sse/Makefile    |   5 +
+ .../selftests/riscv/sse/module/Makefile       |  16 +
+ .../riscv/sse/module/riscv_sse_test.c         | 513 +++++++++++++
+ .../selftests/riscv/sse/run_sse_test.sh       |  44 ++
+ 26 files changed, 1979 insertions(+), 14 deletions(-)
+ create mode 100644 arch/riscv/include/asm/sse.h
+ create mode 100644 arch/riscv/kernel/sbi_sse.c
+ create mode 100644 arch/riscv/kernel/sbi_sse_entry.S
+ create mode 100644 drivers/firmware/riscv/Kconfig
+ create mode 100644 drivers/firmware/riscv/Makefile
+ create mode 100644 drivers/firmware/riscv/riscv_sbi_sse.c
+ create mode 100644 include/linux/riscv_sbi_sse.h
+ create mode 100644 tools/testing/selftests/riscv/sse/Makefile
+ create mode 100644 tools/testing/selftests/riscv/sse/module/Makefile
+ create mode 100644 tools/testing/selftests/riscv/sse/module/riscv_sse_test.c
+ create mode 100644 tools/testing/selftests/riscv/sse/run_sse_test.sh
+
 -- 
 2.43.0
 
