@@ -1,178 +1,123 @@
-Return-Path: <linux-kernel+bounces-805271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E1B48647
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:02:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C25B48645
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB05D7AB086
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A2F3A7E7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2E02E9EC1;
-	Mon,  8 Sep 2025 08:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0571D2E7621;
+	Mon,  8 Sep 2025 08:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vVcIdIbN"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIPbsx4l"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304292E7BD9;
-	Mon,  8 Sep 2025 08:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A533AD23;
+	Mon,  8 Sep 2025 08:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318550; cv=none; b=ct7vaPqWHWVCf2JpZvViVHX3F/w7DBq1NMmd9tbuiBkcmW+0eGeW/8AJuNnU9kvPbAzNg8gzu6LZ2LHozchDqthWEG1EmWiU6yr0Nh/oM4Fro+7KBa1y2IZZpXSZi80lE9XvDxMsMKkqgV2PwepXHT/NHrJaBeDVLGvMamEBPi0=
+	t=1757318547; cv=none; b=RipNaAdaBZm6+8cwKtOLjyvGss009a9gHDgJZi9uHUYWoUkBTwcv7ACKxpKCR4va6DkV63h8cjlEwIjn+DDaTio6R214b/RtkojOaafO2AjIscKPNmzevIN/jp0zFBebZoYexSZbtNnwPamzQTNui0MJyZ4hNfxaxZUwVxPBl38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318550; c=relaxed/simple;
-	bh=3hwACGIQH0jr1hEcbsqm2Ue6O4U2SxH+oQssuZ4Wgow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYnNS0J5AfmYiAFLISUO5xNe31+Ukl5btYnqj1qCOovM7rBN9HYg4b5jgcSAsxlFDUdm4YSn80NC6ymLjSM3D03cDAFa8pAyVdiZpseZrJ/IhQMfgjVAiSA+GqOXiX6fiLBUlncWX1o8hRum/GqjcADlUwKmkPRQyo6fv52d4Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vVcIdIbN; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1757318541; x=1757923341; i=markus.elfring@web.de;
-	bh=gwm4KSP1GCFHCX3lYP5GOXMNZy60bOd15PsB83Zk2vQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=vVcIdIbNhApAc/+ecZs1vUTHSovqLDvXWdy27dBF+hAFobIS2JADHZQYUEJ5R9Gv
-	 6SeIUA30wfZoqwUlpp2ropyFj74haQHxf2LA4jcrzUsdLrPzlY/oz4ltQHfecm9lZ
-	 zBm5wnL8y2CIhcx4kH181mxtRxQszT+dCQf8KcvZyvi9Zj6YbPTJTU53V21LkRUwH
-	 IjLQKKDb8nk+gAzMBsSJ5pyhiNLbiaunrE9JvzmHoN2tRRPo+EfMwhbyCaS1xg0Jf
-	 F5Hy3PUFAg1WJaOZHdI3UsxwpOfM0mIM7VOKIEL6u7K3l7NRMFXMQNXrncHeUp6t5
-	 Klxzh612AJWqpuAYnA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.229]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1ujizo0g29-00DZvn; Mon, 08
- Sep 2025 10:02:21 +0200
-Message-ID: <947f8359-6380-4285-a593-55b3414ea86d@web.de>
-Date: Mon, 8 Sep 2025 10:02:00 +0200
+	s=arc-20240116; t=1757318547; c=relaxed/simple;
+	bh=qP4jzX/zYUAju3m1CNLRymmZ6661Elv/SLU8GIOqrow=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=PTVZI2UgMg5ph+9kCK0iRvr8QJ2VqXbv+Hc2Zy1KR3MoYaJfGhPjAHgNk5lVgsU13Z/h99XeVl8evMSzwisy9CDNoPwheJNyhXSEAG4RoQwE3Y5lPWo1k9hJt91Al+aXuJgWDE4kT5ytu8yN2EbO2h4lvmBy3YfF/mccUEj969g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIPbsx4l; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b522fbe3088so510389a12.1;
+        Mon, 08 Sep 2025 01:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757318545; x=1757923345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GK9tSWxCSwHclhCGlVejFXBQ2aFQkr+nMXMBqRXK58=;
+        b=bIPbsx4l9w3nfZqmbzXlJANJPEx2bIIAWv9DWqcGoeNfkTCqkynYoqIeEWChlQN57j
+         YsTCMrhMkyp6hvhHLfb8/aA28cDPI8RqH6H6FYAn3cVRiZN1wiWqwyQjEFPBlewtGFUp
+         qv83fnyAc50VJXZ0/ecPJqFQ4K5TEOIg40xl/QsVsFaak8M6wD8XzuHMJ7lw6DRA3HRx
+         oMy2071MsF2Z3tpCtoPMofFGzMdOES6CI29wlHr1jk8gLK9N5zmWfr1zcdz1snXqAxzY
+         QLWh9H4LrU+ArCtg2L9Xj7AYXEuxWcW3hQLDcLT0vR2+gpJT1+S92i5AczwxZa4C24NF
+         8lJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757318545; x=1757923345;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GK9tSWxCSwHclhCGlVejFXBQ2aFQkr+nMXMBqRXK58=;
+        b=IaTYQkr+XYdOLJxJuGBvlnKr9u2GJCg8OzkzPIhH1Qex7ivJkLQdMOOt92Uaa+mgD/
+         Br8aQ/C8toAkcwmXgWMD0UzLuLYzbthDh67Dw+xsth6TvXFfytJj1SyIs1nAVHGHap7A
+         epZw+R3gpzcb4R0XqPubZlgKSzUM9bZhAGL52GlEg6u9bsmRMdEHJKxBN36qMvdIAKQl
+         DetAqqrBgQpBFi2DcNMSkI12ySzIf5GQTB0w8MGuK59EFurYa3Q8rxazdsBtj6Nb74ei
+         ZlSOzduMkD7BaLNaG8T2Z34eLbsEeCncIUUcBB8uBibjItWgJ2v1fGyFgjL3BOEre4D6
+         Y8xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgcLTy+bTVC7fP+aRfjMVD6KxutBaI0HXnB6+s103md8R9BahBzIKAbZhjOXb7J6ojoHB0sTTt7jFdQ6Gv@vger.kernel.org, AJvYcCWEhhsWuz27wOpnl2029jHYEs7RikaSyY+BPqgWErF6q6bOfS1IGqZ9LKCi+A2tvAe9n7npIRNTUNF8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwhRU01Bvl63CYu22Wm21vzoTz6vyGbymnXPjD1rUBtMxVqv8/
+	+tNPytNAppXrsG0+f+S05m4U74wEZ7dH58Gqnvh5oY8q++kYv/h0E55e
+X-Gm-Gg: ASbGnctIYbQFMCo68ykkKKA7NSJlQW7E/hdz/cUqYshju2MkzFFUdE58FfWIpOUDDOK
+	HLYyL+XlXk0pqFPY8RjIjha26dQcQRe40a7SYaFnYp7HaQ3gIemE+QrDQQijEa+8LMp4nNyhShs
+	CmZjG0I6CVMWdko31ej6pp/IH80+4OqzdW6lDanOa43T0qoeZlRyxANT94SQBio9/hacHJtIfMd
+	vzc4kcNZUKcWOiAGCdoUyx1Bw+iK7PXUX9Y8lrTLgttJ/i2ObSzb5P2CO9dlDdngUNQ5NxLfwbu
+	/O98gcpj0i2qPcYy5aU6COa/zRi+cQJSCKCgZf3KubTQ397jnUigeu18U/TYxnQmAi9R5FrORBJ
+	WC1Bm3AcdFptwLqp2Qpysl5JDTHl6/V83F9QEwlGRQ30vdRyUOSvHaBTn9AyGItswJocxdoR5uW
+	9tsG8Tvl33FYtnn1rb1BBXtnVNY6N1Dje2dKUCr4SNUqspFpUczuHjlH69PwEWJIcKJB4xERo7c
+	YJvSg==
+X-Google-Smtp-Source: AGHT+IHllvq11IvDLajj8xHW5uT3UeRGLK1mFDGxqYTfZLrLjLfh/epSzbZCpYMmk4Nyq0zjxJyr+g==
+X-Received: by 2002:a17:90b:3c44:b0:32b:6223:262 with SMTP id 98e67ed59e1d1-32bbcb945aemr14341441a91.3.1757318545276;
+        Mon, 08 Sep 2025 01:02:25 -0700 (PDT)
+Received: from fred-System-Product-Name.. (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7727bce1b58sm15186600b3a.9.2025.09.08.01.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 01:02:24 -0700 (PDT)
+From: Fred Chen <fredchen.openbmc@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] Revise Meta Santabarbara devicetree
+Date: Mon,  8 Sep 2025 16:02:11 +0800
+Message-ID: <20250908080220.698158-1-fredchen.openbmc@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] perf drm_pmu: fix fd_dir leaks in
- for_each_drm_fdinfo_in_dir()
-To: GuoHan Zhao <zhaoguohan@kylinos.cn>, linux-perf-users@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-References: <20250908065203.22187-1-zhaoguohan@kylinos.cn>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250908065203.22187-1-zhaoguohan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4yT+11/jY+tECS1FfFAxf74SDbmXDjSXlieb/EZaJ4D6n+XxO8H
- k+xvBG3SILybnudo8LOuoV9LR/r1n8T6wh80Xg38EkmsHG/bhr+f+RFyvUB7sX1vIl+DBEh
- IpTYGrjE38cZsPEVqJtrSxLpMuovjoeNTgH42MysZohzTcmW8FrXSuZsqiVbpSHAu/IGM/C
- 09leOWt3xFjMtB8Vy52oQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:phc/N4RCZjI=;LkpWrPMbmb4z/r0/Oz8RHhEhpyZ
- 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
+Content-Transfer-Encoding: 8bit
 
-> Fix file descriptor leak when callback function returns error. The
-=E2=80=A6
+Summary:
+Revise linux device tree entry related to Meta (Facebook) Santabarbara.
 
-Would it be nicer to move the last word into the next text line?
+Change log
+v2 -> v3:
+  - remove mctp node label
+v1 -> v2:
+  - add 'bmc_ready_noled' LED and update commit message
+  - add sgpio line name for leak detection
+v1:
+  - add sensor nodes for extension board
+  - add mctp node for NIC
+  - adjust LED configuration
 
+Fred Chen (4):
+  ARM: dts: aspeed: santabarbara: add sensor support for extension
+    boards
+  ARM: dts: aspeed: santabarbara: Enable MCTP for frontend NIC
+  ARM: dts: aspeed: santabarbara: Adjust LED configuration
+  ARM: dts: aspeed: santabarbara: add sgpio line name for leak detection
 
-=E2=80=A6> +++ b/tools/perf/util/drm_pmu.c
-> @@ -458,8 +458,10 @@ static int for_each_drm_fdinfo_in_dir(int (*cb)(voi=
-d *args, int fdinfo_dir_fd, c
->  		}
->  		ret =3D cb(args, fdinfo_dir_fd, fd_entry->d_name);
-=E2=80=A6> +close_fdinfo:
->  	if (fdinfo_dir_fd !=3D -1)
+ .../aspeed-bmc-facebook-santabarbara.dts      | 856 +++++++++++++++++-
+ 1 file changed, 852 insertions(+), 4 deletions(-)
 
-May a repeated check be avoided here?
+-- 
+2.49.0
 
-
->  		close(fdinfo_dir_fd);
-
-How do you think about to use such a label directly before
-the function call?
-
-
->  	closedir(fd_dir);
-
-
-Regards,
-Markus
 
