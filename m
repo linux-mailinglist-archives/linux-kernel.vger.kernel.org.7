@@ -1,406 +1,194 @@
-Return-Path: <linux-kernel+bounces-806130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F57CB49237
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:00:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89495B49239
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DBF188F6C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DC340D20
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7B530C62E;
-	Mon,  8 Sep 2025 14:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D087830C616;
+	Mon,  8 Sep 2025 14:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M/YgQrJ4"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010002.outbound.protection.outlook.com [52.101.84.2])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g0azDLjH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC4130CD80;
-	Mon,  8 Sep 2025 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343572; cv=fail; b=FaEFNPLS4xDye4HgFm853LutljkARxTUChynrVCRdWNObd42AEmRt/UtpQ8ReUD/vSGws+tQfO0E1yojOBwBEnj1ZJng7cy6ds4yCmPecFCC20LAxUnQuqj33tQETHrKQGo2CUu9ApKS/Jb0dSGnzgJFPPFW6109fZBPJalMOiE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343572; c=relaxed/simple;
-	bh=8KLmt6zIYTqGQUVQw+MliASMXeF9cUJrnH7X3jQjgq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aLjhnMuzAQ4jfDCQ4bn8C2ya88EfKR7WeNaSHhi7Dnint8iLZclAMD69/hcsXHo7tvs9nMwJjLm0d3pKi+NT5NNXzXlvphyM/hqrMQZ/u+AYXWsCYEwimoetXrCH59tvVfqri3dWFm+mQTlt2Dpae1271t9qp/sxNCPoLJ+H3eA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M/YgQrJ4; arc=fail smtp.client-ip=52.101.84.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FhP4uKGjlxXeCmNPZu5lXEOKARFah6ylNS9DWXTpD8gI8/KusokhPjojw5VHa5aYCGVjgeXy0+gKcQk/DafbaG8sDUbAECyOZ1Jull6VrGThx8og9DdZ6qLoCmsdqxp14BQS4DNv8gU+6tzqv8/Jt2xT2bBsP/ZpmxAriEWrKby720V1Kp6RUF3KyaqwvKrrKvEzgV/uUvdXgzase+1LIdw68HDYF1uQi34J4qNmVg6CSPXO/9MszQP8U26Tjc8CiSiB9GXiJNyYZ2/zkRtPIHDS2P35YCuYZBJALIXX9IsMoKJjDF5VESISCvH5Uhn1q6zSjWNw4u1RCW9KR8wbBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GP5sdrcHd0U17e98GAyy4IL3wpjZTuEAJguN215taho=;
- b=eyz58TS0oXsAAfAS47zzI2bd4l9ABLIiiySmfHvemreuLqrPv851TLt7yO7JrAYse6U8Yr2c/cO8I9yp4FiPr1/kJGHoEQm9ZEzP1Z7OL50SSZOsAxyC/oog0Bqm3ECoSXgW2Bv/kQnqyCxCbcmYDqu+BCgvWnwCtmCP1hQJZiWLSwq9loW8LBXMdrIewEL5HztnPBqUEXsRk8hcCbrndxgtdjdpADfjhzbtm5Ug6IGcdg1YmBDdXXlJkG3hRlv75IfLONle8lgucRhMggg9vkXZUK4fnsgYytdUIfV78agBLHbnoz8R2Cgz35mX1oy3jptPED2h3yhVNkpgk3902Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GP5sdrcHd0U17e98GAyy4IL3wpjZTuEAJguN215taho=;
- b=M/YgQrJ4KUm92k3qpd/YdTS6Vupn82IeDcuTeWYCmgUFs3ucemBVUhTeqVlVKom0nO7AgXOIW4FF9QMH3kkLDNj31anYo49gtDJXLMYtoKS7kX6XQvy2gikCo4tRbvVdw5lI0awGG0UEGlKAScIZjWwpe1Dj82PJv+c34POKogNN3Zi6P0FAQ2Cdqxsto/IfMKxKwA1vEzem4ldvppjQEnDMtpTgBtfcZ54UmRmIBrBPU/4nfhZpl4NSyxZQUKs0rijPo8z+pfeeOTpST4DwRVdALzyBpzznjh8moSy0gWA9BS9R1lbFqFrvidhgjTvFeqwz5EMkFn6h5RtR82LHtA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by PAXPR04MB8141.eurprd04.prod.outlook.com (2603:10a6:102:1bf::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.14; Mon, 8 Sep
- 2025 14:59:26 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
- 14:59:26 +0000
-Date: Mon, 8 Sep 2025 10:59:19 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] remoteproc: imx_rproc: Simplify IMX_RPROC_SCU_API
- switch case
-Message-ID: <aL7vR190pYBlnujg@lizhi-Precision-Tower-5810>
-References: <20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com>
- <20250908-imx-rproc-cleanup-v1-4-e838cb14436c@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908-imx-rproc-cleanup-v1-4-e838cb14436c@nxp.com>
-X-ClientProxiedBy: PH8PR02CA0005.namprd02.prod.outlook.com
- (2603:10b6:510:2d0::13) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD363054D0
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757343595; cv=none; b=b0JuZTVP2MIujcCgDvytvCt3mFfGJUyhUUab3eWSH1cwycdosPurDeK7qowGoaRc9DGw5rQX6DFfjBuVM9nKeSXR1rwiPmDDo5am/T+wbL2OlVDChkMweypZ7QfbotoUQFwsASqoebhlGfV31qx8+Dl7BOR/agGGug7XiDcGCcs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757343595; c=relaxed/simple;
+	bh=xmvrKh04vv8VwSqcxidQ9l7jswlHHBjPeSY+T4u8JEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aACEHQ8E/aSKbQ7PFbVgnDtndCJtQriI12ylGiN0CKpYU0RhWq0CZSAjjpGuhOgJ9S974gUSHjtMWuugGQImyz2C7S/xgCw/djkdAuvDwD0cGh/G4CfZIBkXXJzvpKxiClOq8JblYuFWRzqRXd6OTMLxkLHljJ6oL8pFsNH8Xc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g0azDLjH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757343592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zj/W2A1w620z3uj4NM/KYzIZPfPCpjNHUO9sqnkbSZI=;
+	b=g0azDLjH2FGswG2EkIm7gDE9ga15Rezl2FR4a2MZUO1iV4FbT08oQ4W0B/MtjDF3b6aqR0
+	xvj8f0AZZwV+bRgx6SmMSyn0sh54mO6mDVE2EIHTo2CQakl8fvZn9bbE1Cy58+5j6UqKxg
+	J3ZbY0ezupWWsXGlPb26pwm98kcoz5E=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-606-Bm6vPvVlMem46SIwdVqjag-1; Mon, 08 Sep 2025 10:59:51 -0400
+X-MC-Unique: Bm6vPvVlMem46SIwdVqjag-1
+X-Mimecast-MFC-AGG-ID: Bm6vPvVlMem46SIwdVqjag_1757343591
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b467f5173so31570785e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:59:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757343590; x=1757948390;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zj/W2A1w620z3uj4NM/KYzIZPfPCpjNHUO9sqnkbSZI=;
+        b=VPPmvgt9KZruLX3HHrdlv2TklbVAAkvdy1QLslpYQzuSRcQM/OoDG1hot+z4vXHL4x
+         r3Wtt7dBvgEyjOHol57BN32oVvXS3fRWso6GvwP1iciczFPyisPkTJIeTwPeVRRs6Ofm
+         oRRoMnWPkcY3yHKNoGFZpSzj00vfNGlmDJLFHC+sftL0gG90lw/HOP8US/F1nerHkT10
+         4hqFdyr/tBp9QV7jI4zp1f4kn2dgHjcRtFVt+UJfXeiFVEYN6DFc9jqHTmaz3F0NUIvq
+         iLbiRt8Y4WYK6zIUxXyruoJ6x94pO4cHrvBfLeDLUVh7TvbMQrE+vZ37p5dkGl/0EC1V
+         otiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs3PYpVsiNRElSJASj/96O2/nANmKw7pStjZ4nkiLeIdHejGQEC8gDhkUK1bvQUKmGsCOdC2IPQ4uUcuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOscLdH2e5mlOniLG5b2XTZFbd/KaL6yQGvPBC2Exwlv0qU5kv
+	B6ipV0iMgQBON1/4MsMvrCSieSSQiUBfZTv4hCGd/Zej7dhTfdbxls7U3yzdMDRJBxGyRTdCCr/
+	wcWsvqenn/SWAthbTccN+4JsL4Z7tLLJzQdvt4zsmEWhi9bfcmBKcGp6Rhz5wcWI7fA==
+X-Gm-Gg: ASbGncucj0ejE//bG3zQ887luiENXnT5CTJS9z9277HsmQMGOdBWhLChXH99lFyQqCA
+	eHQyCuz6Lj43Q2hKttgC4fnWfVo5fSzNJ1rCZrCDK/fI0UsOUb9vrSBg8TkvMSSJE72JW/crjyT
+	1bH32yUQBVmWwHV17IbaLaNfyPleIjMGT0zMLkt8cangBH0Zcxp8a7G6DZd3Rk8qiTex9956GoX
+	vgcUtGedsXfgXu+1/liN5SBpi7MtmNIFu6A7ZAZLvmdKiSctYUliTsVF8Tj8Plr82BMhJIeT+Ah
+	mUV3ZW2ChSLCkXt2JxcHc2uqb8eEtbLpQ05w2lQgKJ5GkY3dqsumeCXJN2/tf9VniIBrrkRXNcX
+	j61tzdhbPejv6TGx0oqeEj3HiClCgLFirwnm5DGogD6i3jN82vYfH4LXYMW9wQa0p
+X-Received: by 2002:a05:6000:18a9:b0:3cb:5e64:ae8 with SMTP id ffacd0b85a97d-3e636d8fceamr8124646f8f.11.1757343590403;
+        Mon, 08 Sep 2025 07:59:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9Sl+7I843zNJKDyb1TeCWtEYDDRjw0tVeJKWAZDqQ44OZCVI4FghBC+qHaOA5/2UP0jatjQ==
+X-Received: by 2002:a05:6000:18a9:b0:3cb:5e64:ae8 with SMTP id ffacd0b85a97d-3e636d8fceamr8124577f8f.11.1757343589898;
+        Mon, 08 Sep 2025 07:59:49 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3da13041bcasm25975587f8f.35.2025.09.08.07.59.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 07:59:49 -0700 (PDT)
+Message-ID: <cc59a58c-266c-4424-9df1-d1cec8d740c5@redhat.com>
+Date: Mon, 8 Sep 2025 16:59:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PAXPR04MB8141:EE_
-X-MS-Office365-Filtering-Correlation-Id: 790a2cc4-20a6-4197-c802-08ddeee84df8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0me9xYwGAtR27u1HYu53+JuxcZLsRyqcYsO+EfOSY9O9C9VymwZ06HFAttNf?=
- =?us-ascii?Q?wtY3fa3VI9FbchIBI/+nE6IkACIBv5tY/MTNJNj8c5x1n3clWRdzgselB6pm?=
- =?us-ascii?Q?O75ICUraA8iWVuv29ZmbIDqJjIiIoBQhnnONRGO8JDk67GQnaLN8zTzLs8Zb?=
- =?us-ascii?Q?isg/17ohHoUfqGOYM6JHnIX4sZQxhTgUtfKNslYlAzDZDs2XtMsevHlv9Uxs?=
- =?us-ascii?Q?g4AixEmhaCdbHhuehSSi4x+Eb2r4hegT4o9iIo5LbRKW9dJOL2OtIfnCPvcu?=
- =?us-ascii?Q?vRpnq4V35i97TLQkygPzops89YvBd5XM5Z49MxAFwiBNKIpoxcyXoS8GFYs6?=
- =?us-ascii?Q?Pa/JZv1CQ71h07YtyKN8+SrIO0KUhcB94HpscmLu8z+4RbGSE6KMDtqREzpM?=
- =?us-ascii?Q?FB3Sf3VyBbp47C4aY74Wxar98XgGCn4FVIFzv+3JzXGyDbhgDispmv0vr9/B?=
- =?us-ascii?Q?LNWQjuZdYt0o7isLDIZwU5SzSrAaKh6N+9xhdNdP8MRvryOYRoYGtobwMbX3?=
- =?us-ascii?Q?FqAYv/yV4i0PeeCf8QrojeGXcMesQkCov8mNS1DCfdGpPXVlVuwgOahyn0rz?=
- =?us-ascii?Q?/G4zTn8uQOV/Je0yZOFd6rWPK5+B0texql8KsQPq1+/mnTV/REIv1jEQhv+a?=
- =?us-ascii?Q?auil/yvAXcnPdY//qfiJaITuO2W4++FmguemKrlwlO/6I304oeXVTYoazLOu?=
- =?us-ascii?Q?kRm2fc4p8M/BUrMsKiAqrdTsuPkUkLEVsB6Lg4TFaVySpbdz0YDp6/L8UVW9?=
- =?us-ascii?Q?hUqzU2xj6LPnOKepKZS7TqvJ7jM5d4xQAvkIJcSGlcIbp4fgG5Wdk30AWkY3?=
- =?us-ascii?Q?ETure9ouhvO+O/WbaUwWqkI4GKz2YkufwTGtxCOZdv0kpgHPMr7J/ip76EOB?=
- =?us-ascii?Q?ymWoIX8V9io+p9iTuZLpRAKUlqs5vGT3f5MPC6f2egfyEEF3KxLlgRpxDjg/?=
- =?us-ascii?Q?YWIH4Pt5c/8avk4Bozcb88Xe70x0s8oudVEJ59u6TAcBWagNrYM1ocUjB6B2?=
- =?us-ascii?Q?cFSYgALHOFAK9oOoWR+LpDXiF0IUVqdT1WesckLtrmUHmJyZNDlOajDNHruk?=
- =?us-ascii?Q?9KMTddRWu5EHHr1jrQf9kJcW37UItZeOqx+pisIidIhIz0utImXEPK6KsmnZ?=
- =?us-ascii?Q?bI6bgfyQ3pYVd8BDg7afwjYoFrS44lXsU8J+N/2cHd5PZN8DEzGnNJZ5aorx?=
- =?us-ascii?Q?sKt9BH9c+1R0GzHcFehjMNGa/JdeHkgYgYX7Yiw/rSIvPJUzu9T3B9wxPZBp?=
- =?us-ascii?Q?yFQzQOAkZmIOI/6yUOiNMumbc0k+WuxnXYMmtNpeVYQWC234FU4xwXw/5hdV?=
- =?us-ascii?Q?naUlg38JXLPDmiD5+shlFZxgnkoCQ9b8uttkEw+/js4r77RD1G1SKhDKc1eI?=
- =?us-ascii?Q?5dAc6b0tRZrm3NAhA2b18rD74Jt7F+ZDcPJaxjHoHNpcIHpjCP4u9eLgMU9K?=
- =?us-ascii?Q?kYUCEwrmLMeogdncFeXG7M6DZg7724XNIiQWAZid2/kKazpf7OiGYA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/FPjKK+1BI3k0be3SMu//yqURvxcbqCV7YIvIuD56veMBmQKS5mch9A2k9ek?=
- =?us-ascii?Q?R/N4GHjnlX/Y4/eu0GHpwPfrnxh7dM25lwTYwQCUsYWYhUbEcjjcvCvVlAQ4?=
- =?us-ascii?Q?YW2CgTkbAfX59ZFSpej3IhPpM0sV4Q6s2d9wSRSWTYcaVyckcrhWlRkKi/1C?=
- =?us-ascii?Q?ot+rDOxnDEKVHW3oeUQjBv/QmT2WkCSbM71gkTzd/N9xkqDv7qqrl6JZxOgq?=
- =?us-ascii?Q?U8DOc394WXW2CfN+YOJXnF/zfSyh9+Q0UsxvyiXxByWJFyWo+2ahN1GD5sMI?=
- =?us-ascii?Q?klxZ47+3H8Q40XTIp45QsA5UHN+TDllDduZv+j0cq9JR3me14UYRsktR5TJA?=
- =?us-ascii?Q?KLHCAx5Vk0XE/IahoHegKkKzePH2N4BDVap2AZL07Usd6d0QfNGIWIZxcDMe?=
- =?us-ascii?Q?yOTrHhUXPM+1HrzGasdvbfUXxmVT/rkmVBkeMqAd3HR3SxHY8FXwCnUlfXXE?=
- =?us-ascii?Q?9wxHSpvg6bOo8/hcuvsb4XTyRrC49SHy8lzxvy5XQwaAmHdWnD/mdmEx8sLb?=
- =?us-ascii?Q?atzu5eNNG1IZg2YuHV3Y6XAuM6aUpTqGH0KbG7A03P+ioPB7b/3N59qI0JmH?=
- =?us-ascii?Q?NDElhS4vyzZwlb7ih3TPZU9UaTWKsCn+L/JCxJcZYVk3Cipv4QzQl12tlcGq?=
- =?us-ascii?Q?eNl9IlhhZSouZYNWDVG8O94r7TfO+hjb68emK+/KEL8HSTZPe4e/bRIiZHgA?=
- =?us-ascii?Q?O8AkOtH12etjvOC+4sQ9mR1uLjdKhVT/GD8ixMP/tZ0QAGLimR4zJMZ9lNLb?=
- =?us-ascii?Q?drZYnsP3mJR1Lht9ToxK8zxEzXxkePgu1qcRdgu/M2chH8za9stKZi9UrS9d?=
- =?us-ascii?Q?9AgkhJLgHqUoxu4gk9C5wr+4054aFZ1cf3gQ+ZsSCfY1BFymwtJbQvycjYtw?=
- =?us-ascii?Q?Br5+Yj8yRXk7Zw1FzxII3/E4yuv7XWErrpSBSjqPSYKaB7hm0O1TCcvvk3pN?=
- =?us-ascii?Q?/olBh50hqbTp5LGWABNq0jkh6ymBo9RVwmCw5qS+PgLrZl03YuCYrzYd7JW2?=
- =?us-ascii?Q?H2FjVHC+hsrw4fOashziGqe+QY99Mu8aLIC/BOJoQJizRyJYHmBx/RIl9193?=
- =?us-ascii?Q?MyrP6b8DTeA6l8hm83Ikvqy9Z+c0JGbL3R2vEDXZN/CqkwmGz7nJOD0OBCQ9?=
- =?us-ascii?Q?yVsPMALyKHSack5EJnbEISC6AMmWIgqHBfUjarLYkv2ru4+Ip7kQMj8H/5Rs?=
- =?us-ascii?Q?6/LGlFWeaHaqe+qHUczRopeCwgqXfalQRw6ddM2jFWOSYqyux/DkSmoU3w22?=
- =?us-ascii?Q?e3ptRsDPj1MLm//vtQ7gM2lmhOb2hPpUv5sijBfOxWPPZGyRWPu1YfghjtNN?=
- =?us-ascii?Q?HcdITJFJMsuS9n1iJ9kUCNzZwqseF9z316qzZm+BSao+XEEQcRS26rQLclCT?=
- =?us-ascii?Q?xhzW2qf4HOJlPv9DJCZQuLuHpqZ9txfs/BSI1d58RYVqwv1VmYoCEx+0IY3C?=
- =?us-ascii?Q?/wBkzxirQyICOW1/gE2FtIMhOUP4WFoLxIC/Qx2gVVN3WY7ECscCsBY4KcoL?=
- =?us-ascii?Q?4xOA+ug0iaI+VVtbq5GreA96QGZrwk82NIMPc6jY5j6omr+u6P5tWZsOPM3D?=
- =?us-ascii?Q?0+nrQKQG2OGEC23SwSw=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 790a2cc4-20a6-4197-c802-08ddeee84df8
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 14:59:26.6003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +QkDFz/xiL6dzoG2VdVtRnPSY4fQtvCc7zHgplVSBXgACvoIlp9qNnx5zfDGXklVh+SQ7oEkh/mkZdCufiNTag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8141
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/16] mm/shmem: update shmem to use mmap_prepare
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+ Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ kexec@lists.infradead.org, kasan-dev@googlegroups.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <2f84230f9087db1c62860c1a03a90416b8d7742e.1757329751.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <2f84230f9087db1c62860c1a03a90416b8d7742e.1757329751.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025 at 09:07:37PM +0800, Peng Fan wrote:
-> Introduce imx_rproc_scu_api_{start, stop, detect_mode}() helper functions
-> for all i.MX variants using IMX_RPROC_SCU_API to manage remote processors.
->
-> This allows the removal of the IMX_RPROC_SCU_API switch-case blocks from
-> imx_rproc_start(), imx_rproc_stop(), and imx_rproc_detect_mode(), resulting
-> in cleaner and more maintainable code.
->
-> No functional changes.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On 08.09.25 13:10, Lorenzo Stoakes wrote:
+> This simply assigns the vm_ops so is easily updated - do so.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
->  drivers/remoteproc/imx_rproc.c | 149 +++++++++++++++++++++++------------------
->  1 file changed, 85 insertions(+), 64 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index c37dd67595960f08fd85c0b516d0d03855cec9fc..ea34080970c6a5a9b035ef0d389014b8268660a9 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -296,6 +296,13 @@ static int imx_rproc_mmio_start(struct rproc *rproc)
->  	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_start);
->  }
->
-> +static int imx_rproc_scu_api_start(struct rproc *rproc)
-> +{
-> +	struct imx_rproc *priv = rproc->priv;
-> +
-> +	return imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
-> +}
-> +
->  static int imx_rproc_start(struct rproc *rproc)
->  {
->  	struct imx_rproc *priv = rproc->priv;
-> @@ -318,9 +325,6 @@ static int imx_rproc_start(struct rproc *rproc)
->  		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START, 0, 0, 0, 0, 0, 0, &res);
->  		ret = res.a0;
->  		break;
-> -	case IMX_RPROC_SCU_API:
-> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
-> -		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -349,6 +353,13 @@ static int imx_rproc_mmio_stop(struct rproc *rproc)
->  	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_stop);
->  }
->
-> +static int imx_rproc_scu_api_stop(struct rproc *rproc)
-> +{
-> +	struct imx_rproc *priv = rproc->priv;
-> +
-> +	return imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
-> +}
-> +
->  static int imx_rproc_stop(struct rproc *rproc)
->  {
->  	struct imx_rproc *priv = rproc->priv;
-> @@ -369,9 +380,6 @@ static int imx_rproc_stop(struct rproc *rproc)
->  		if (res.a1)
->  			dev_info(dev, "Not in wfi, force stopped\n");
->  		break;
-> -	case IMX_RPROC_SCU_API:
-> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
-> -		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -907,14 +915,74 @@ static int imx_rproc_mmio_detect_mode(struct rproc *rproc)
->  	return 0;
->  }
->
-> -static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> +static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
->  {
-> -	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> +	struct imx_rproc *priv = rproc->priv;
->  	struct device *dev = priv->dev;
-> -	struct arm_smccc_res res;
->  	int ret;
->  	u8 pt;
->
-> +	ret = imx_scu_get_handle(&priv->ipc_handle);
-> +	if (ret)
-> +		return ret;
-> +	ret = of_property_read_u32(dev->of_node, "fsl,resource-id", &priv->rsrc_id);
-> +	if (ret) {
-> +		dev_err(dev, "No fsl,resource-id property\n");
-> +		return ret;
-> +	}
-> +
-> +	if (priv->rsrc_id == IMX_SC_R_M4_1_PID0)
-> +		priv->core_index = 1;
-> +	else
-> +		priv->core_index = 0;
-> +
-> +	/*
-> +	 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
-> +	 * and Linux could only do IPC with Mcore and nothing else.
-> +	 */
-> +	if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
-> +		if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
-> +			return -EINVAL;
-> +
-> +		return imx_rproc_attach_pd(priv);
-> +	}
-> +
-> +	priv->rproc->state = RPROC_DETACHED;
-> +	priv->rproc->recovery_disabled = false;
-> +	rproc_set_feature(priv->rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
-> +
-> +	/* Get partition id and enable irq in SCFW */
-> +	ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc_id, &pt);
-> +	if (ret) {
-> +		dev_err(dev, "not able to get resource owner\n");
-> +		return ret;
-> +	}
-> +
-> +	priv->rproc_pt = pt;
-> +	priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
-> +
-> +	ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
-> +	if (ret) {
-> +		dev_err(dev, "register scu notifier failed, %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt),
-> +				       true);
-> +	if (ret) {
-> +		imx_scu_irq_unregister_notifier(&priv->rproc_nb);
-> +		dev_err(dev, "Enable irq failed, %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> +{
-> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> +	struct arm_smccc_res res;
-> +
->  	if (dcfg->ops && dcfg->ops->detect_mode)
->  		return dcfg->ops->detect_mode(priv->rproc);
->
-> @@ -927,61 +995,6 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  		if (res.a0)
->  			priv->rproc->state = RPROC_DETACHED;
->  		return 0;
-> -	case IMX_RPROC_SCU_API:
-> -		ret = imx_scu_get_handle(&priv->ipc_handle);
-> -		if (ret)
-> -			return ret;
-> -		ret = of_property_read_u32(dev->of_node, "fsl,resource-id", &priv->rsrc_id);
-> -		if (ret) {
-> -			dev_err(dev, "No fsl,resource-id property\n");
-> -			return ret;
-> -		}
-> -
-> -		if (priv->rsrc_id == IMX_SC_R_M4_1_PID0)
-> -			priv->core_index = 1;
-> -		else
-> -			priv->core_index = 0;
-> -
-> -		/*
-> -		 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
-> -		 * and Linux could only do IPC with Mcore and nothing else.
-> -		 */
-> -		if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
-> -			if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
-> -				return -EINVAL;
-> -
-> -			return imx_rproc_attach_pd(priv);
-> -		}
-> -
-> -		priv->rproc->state = RPROC_DETACHED;
-> -		priv->rproc->recovery_disabled = false;
-> -		rproc_set_feature(priv->rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
-> -
-> -		/* Get partition id and enable irq in SCFW */
-> -		ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc_id, &pt);
-> -		if (ret) {
-> -			dev_err(dev, "not able to get resource owner\n");
-> -			return ret;
-> -		}
-> -
-> -		priv->rproc_pt = pt;
-> -		priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
-> -
-> -		ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
-> -		if (ret) {
-> -			dev_err(dev, "register scu notifier failed, %d\n", ret);
-> -			return ret;
-> -		}
-> -
-> -		ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt),
-> -					       true);
-> -		if (ret) {
-> -			imx_scu_irq_unregister_notifier(&priv->rproc_nb);
-> -			dev_err(dev, "Enable irq failed, %d\n", ret);
-> -			return ret;
-> -		}
-> -
-> -		return 0;
->  	default:
->  		break;
->  	}
-> @@ -1163,6 +1176,12 @@ static const struct imx_rproc_plat_ops imx_rproc_ops_mmio = {
->  	.detect_mode	= imx_rproc_mmio_detect_mode,
->  };
->
-> +static const struct imx_rproc_plat_ops imx_rproc_ops_scu_api = {
-> +	.start		= imx_rproc_scu_api_start,
-> +	.stop		= imx_rproc_scu_api_stop,
-> +	.detect_mode	= imx_rproc_scu_api_detect_mode,
-> +};
-> +
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn_mmio = {
->  	.src_reg	= IMX7D_SRC_SCR,
->  	.src_mask	= IMX7D_M4_RST_MASK,
-> @@ -1197,12 +1216,14 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qm = {
->  	.att            = imx_rproc_att_imx8qm,
->  	.att_size       = ARRAY_SIZE(imx_rproc_att_imx8qm),
->  	.method         = IMX_RPROC_SCU_API,
-> +	.ops		= &imx_rproc_ops_scu_api,
->  };
->
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
->  	.att		= imx_rproc_att_imx8qxp,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8qxp),
->  	.method		= IMX_RPROC_SCU_API,
-> +	.ops		= &imx_rproc_ops_scu_api,
->  };
->
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
->
-> --
-> 2.37.1
->
+-- 
+Cheers
+
+David / dhildenb
+
 
