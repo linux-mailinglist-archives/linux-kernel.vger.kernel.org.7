@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-806046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF672B49148
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:23:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B631B49153
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1951891A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:24:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E75A37AFBA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3C0309F1E;
-	Mon,  8 Sep 2025 14:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEF730BBA8;
+	Mon,  8 Sep 2025 14:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkkZp8lD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiS6owAm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41B71CAA7B;
-	Mon,  8 Sep 2025 14:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A941D63E4;
+	Mon,  8 Sep 2025 14:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757341414; cv=none; b=a9/QYBA6rnbJ5T2jj1J4nMpgXkjDzmM3NDucmWozA3/iMiIBABDMKtMBYiDP1FJh0Uo2j+9jJqcwlVC4Ot5OyxxpOc4bj2YvNLHuJeNWbsDyz5IN2F5VetRJoyt+146EYY8mhMDvrIDlNZbsY0kNVam4goSoGW6ykJ0gi4tca0c=
+	t=1757341474; cv=none; b=OgQLQ7XVc+3+QVy5gYvyxoiCOEY6670ESKj1u64oMxm6D7Edb1i31rrIB0917xcFtLMwDpQYwrFFf8AhpVLfz5Uuan+hr9mJAqcfmmunU9dNdCVhvHlvbz8EtnzvYJ3ihRYaOyvchqwRlYM5nY85gpdyR30Y1/h3c25OJWxikjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757341414; c=relaxed/simple;
-	bh=MI8JwKVlgjxwoZ/OWhAJGNuMAzlXq6fYq3NQWnUSRO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OwDBj/KEBuNyZ3NJw4GlJf4338O1Oh4upbyG4hu1wHOhEJSaedAVMZ591DzMOz7lCp05zEfZELHJlULDWA4kTKdQ92upECHypcZgOXvqcZEcAYXSROPTQ2HyLXjHyqcdt0JgN9A4xubF1MHYNvog2hqmWPAZRhWOsIl87Ryy0CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkkZp8lD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DB3C4CEFB;
-	Mon,  8 Sep 2025 14:23:33 +0000 (UTC)
+	s=arc-20240116; t=1757341474; c=relaxed/simple;
+	bh=zJKMmymOijhO5qliCp19GY2Zo7Wn5ntF/74NHogADmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxBaTOsEIiyf9mGnQP2FX4DWsxf8UVbsFq5sDa0SPhftIZ9cp2aJXQv6XzZ8emLh3tPC9/ogHBLKG1LeRxYA1Mp/rWGlIn5hlurxt4gIEcn1U9+E+VPPH0GXDgisTihm31fzGCDD4asRWqTO4gsfyaSeElzPIzt9wI0qLRhG8v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiS6owAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D96C4CEF1;
+	Mon,  8 Sep 2025 14:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757341413;
-	bh=MI8JwKVlgjxwoZ/OWhAJGNuMAzlXq6fYq3NQWnUSRO8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TkkZp8lDzyy1zdShAEfnMZoaE8tZ2VPmLUS5cxtYhJttmMkxJop4bQyvOrP2LzgTw
-	 HSfYlV0q6GAX93CJ1N06HVHirRHuEQTcPaU5J4AH2grrQzpas+2fw9TEqs0Nv4/zQY
-	 QceoRKvTIgnvG4puYUK0zIoEDiWkwEdPPrNtdZjifpwzPgor6277KP8KhF/6OPcFQ1
-	 TOeC/Rf4KqJuVvEdMCLq3avrZtPefg6BFMvSE0K3FZNfla2odL01Ft61Ed57AwqL1r
-	 7HL4OOWegr73zR2p7voSvrg7kou1s6VGxQcqvq5wJZVGMJ8ipg8W8LALZJZH9wFxn9
-	 C8Mt2lHQ/wsPw==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-743814bcca2so3416293a34.0;
-        Mon, 08 Sep 2025 07:23:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+Fho6YPOFMOFpzGbsqBRDfffwFcLu5cNbpiHEShdO2wH8FU4GTu5IHZFB3vEbNcf2A6gCfylTa7E/l3M=@vger.kernel.org, AJvYcCW0zmXq602hJ3Em48jXTdN3LNeU5LkRCXXIrfpthZt4O6nLX4B5DwA3YbANgK2bfpUBqlK4qUd++bShKA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+gmN0OIrq5P1uMY8ujYeAovkfKs92It58y1QFHQhnegu4Zi98
-	z3JqwT0DjCJ75Flr5mVy+sH0uoYtGWbthynnfR5yWtmY04zIshwTArzVGY29okFcE7v/lQq+Q5B
-	NFzehXGrRlN2mmMC+iEvuHbBvVbrBEmk=
-X-Google-Smtp-Source: AGHT+IF9bYyMEPg+K2eZ8ZPR1Gz5tCt7YFEQ4qRFBQGht9gAyG3y1TIrVCSRxeUxusZioQelr4hA7sAtWsdd5CjXyeg=
-X-Received: by 2002:a05:6830:34a6:b0:745:4de7:f425 with SMTP id
- 46e09a7af769-746d91e7a2cmr5968388a34.3.1757341412826; Mon, 08 Sep 2025
- 07:23:32 -0700 (PDT)
+	s=k20201202; t=1757341474;
+	bh=zJKMmymOijhO5qliCp19GY2Zo7Wn5ntF/74NHogADmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XiS6owAmBaC/l5kzh921QiPRgHCSpKmN8M2Ulf/biUkpJ42TfsYbARiDkMzWay9NC
+	 MnkPuNoSCNdr4G3ZdrTQWiYqaGpaQ/IwQq9pbH6T1Goc728dXne69jtsXadTKJFUxH
+	 wjZemKrJZwCiUDwoJtkwsJG1GZt1ZQQwPz6z14YzQCUKKqwR7fwCtpOQ6+bmqU6tyE
+	 /x8Wm8a+5g5LsV+xw10ylzMOkgP8boS+BISjJ2R6bWGjp2oJf6famXyUgkmdkynIof
+	 e8dramR4/KJQAs+NpDfjVYSs9zowtn1TIbt6wkrwuNAUesDboEeM8Hl6+87nUY6yFg
+	 aNycwCaRB5O1Q==
+Date: Mon, 8 Sep 2025 15:24:29 +0100
+From: Lee Jones <lee@kernel.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	gregkh@linuxfoundation.org
+Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
+ southbridges
+Message-ID: <20250908142429.GC9224@google.com>
+References: <20250822135816.739582-1-marcos@orca.pet>
+ <20250822135816.739582-4-marcos@orca.pet>
+ <20250902151828.GU2163762@google.com>
+ <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+ <20250903072117.GY2163762@google.com>
+ <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
+ <20250903140115.GC2764654@google.com>
+ <b11dcd50-a87e-47ff-b406-776e432f07bd@orca.pet>
+ <20250904101705.GH2764654@google.com>
+ <75920526-64f4-4eda-8552-58de165f6597@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908175135.4215c780@canb.auug.org.au> <5937399.DvuYhMxLoT@workhorse>
-In-Reply-To: <5937399.DvuYhMxLoT@workhorse>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Mon, 8 Sep 2025 23:22:55 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH3JyMGvjWni1Ge+a1=4nRPL30a84DCamj1AtXRLRMgzeQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyu7PKtdUcolHGypS1g5A9zFkMN3MyJqkWdBV12ZmUN1WzZdBv9xAv0Hnk
-Message-ID: <CAGTfZH3JyMGvjWni1Ge+a1=4nRPL30a84DCamj1AtXRLRMgzeQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the bitmap tree with the devfreq tree
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <75920526-64f4-4eda-8552-58de165f6597@orca.pet>
 
-Hi Nicolas,
+On Thu, 04 Sep 2025, Marcos Del Sol Vives wrote:
 
-On Mon, Sep 8, 2025 at 8:26=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On Monday, 8 September 2025 09:51:35 Central European Summer Time Stephen=
- Rothwell wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the bitmap tree got a conflict in:
-> >
-> >   drivers/devfreq/event/rockchip-dfi.c
-> >
-> > between commit:
-> >
-> >   7d9e29ed3f8e ("PM / devfreq: rockchip-dfi: add support for LPDDR5")
-> >
-> > from the devfreq tree and commit:
-> >
-> >   414054a0bc1f ("PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 =
-macro")
-> >
-> > from the bitmap tree.
->
-> Yeah, basically both of these were by me and landed at the same time
-> through different trees; they were developed at different times and
-> the reviews just happened to conclude at the same moment. The reason
-> why they go through different trees is that the bitmap changes are
-> part of a large refactor across several drivers to make them use a
-> shared macro instead of reinventing their own, whereas the devfreq
-> side of the changes is functional changes to add LPDDR5 support and
-> also fix the cycle count on RK3588.
->
-> >
-> > I have no idea how to fix this up, so I dropped the changes from the
-> > bitmap tree for today.  Someone should supply me with the appropriate
-> > resolution.
-> >
->
-> Dropping the bitmap tree changes of this driver is fine by me. I can
-> send a rebased patch of that for the next merge window to do the move
-> from the driver's own macro to the shared macro. The functional
-> change in the devfreq tree is more important to get in.
+> El 04/09/2025 a las 12:17, Lee Jones escribió:
+> >> That GPIO is something required to perform the poweroff sequence, a must
+> >> for any machine, while WDT is just a "nice to have".
+> >>
+> >> Implementing now the WDT just because of a linguistic preference means
+> >> delaying something more important in favour of a "nice to have".
+> > 
+> > You use the word "delaying" here.  What's the rush?
+> > 
+> > If you only need a GPIO driver, then you don't need the MFD part.
+> > 
+> 
+> I would honestly like that my machines can turn off properly and pretty
+> sure others using these platforms would agree on that, as having to yank
+> out the power cable is far from ideal.
+> 
+> Adding WDT would lengthen even further the review process. That ignoring
+> I am doing this as a hobby on my spare time and I'd rather spend my
+> scarce free time implementing the power off driver than the WDT
+> (something I'd do out of completion, I have absolutely no use for a WDT
+> in this machine).
 
-I think that you need to ask to drop your patch[1] on bitmap tree.
-[1] 414054a0bc1f ("PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 ma=
-cro")
+Then don't implement it.  Just have the GPIO driver probe on PCI match.
 
-Before fixing this merge conflict, I'll drop the patches related to patch[2=
-].
-[2] 7d9e29ed3f8e ("PM / devfreq: rockchip-dfi: add support for LPDDR5")
+> The reason I am using an MFD is that I was asked to back in v2
+> (https://lore.kernel.org/all/aHElavFTptu0q4Kj@smile.fi.intel.com/).
+> I'll be CC'ing him.
 
-After resolving the merge conflict, I'll apply them again.
+Andy knows the rules.
 
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> I was told to create a southbridge driver that would match on PCI
+> and registered other devices exposed by it as platform drivers.
+
+PCI => Platform is generally decried by Greg and others.
+
+a) With only one device to register, are you sure you need this?
+b) If you have more devices, either add them here or use Aux Bus.
+
+> GPIO was the only functionality implemented at the time, and is
+> the only functionality implemented right now. So I simply delivered was
+> I was asked for.
+
+-- 
+Lee Jones [李琼斯]
 
