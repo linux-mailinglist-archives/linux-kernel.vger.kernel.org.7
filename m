@@ -1,217 +1,219 @@
-Return-Path: <linux-kernel+bounces-806308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF74DB494E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:16:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67540B494EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CDEF7AAA0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1001885355
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6924018BC3B;
-	Mon,  8 Sep 2025 16:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9063630C616;
+	Mon,  8 Sep 2025 16:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YGR+v37m"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZTVY4mo"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619E1DC994
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38450205ABA;
+	Mon,  8 Sep 2025 16:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348144; cv=none; b=nLC1D4DtDjioYpa/QeOXTTgCTD+U4hBkv8meddi2iOvw4QTw5CXjwINdNDcEYN2KBQtrbJSAR96aCXxOwBPrGTvLuu/AEUWbbe6TseEX7AZ6TPzQmFpHo1ddqgwDumjGukzTFRBuxzLUKkDdObRRV2Xk957+BsUHlVePku9AqMQ=
+	t=1757348175; cv=none; b=tQFQGQYr+7JAP2Se33FMMdNyWe9E/seTrR3yM+MVAEjusO1AkH/NleSFkk7Q+7CX2NhCRLoLd3CdhuYPkUkvQEaJbWjI4izAUeI03v6LXUchm+ogTmOFDTwq7LIlE1uuWdjs5YnvUr6IweAwj3pfatKOAmGP36rsFWlKTzORXb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348144; c=relaxed/simple;
-	bh=xaBTExoLEEC3Z0CeEI/YNIxNhKmmVGkaAy8PfnXaN+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AmFpSs+ZGfLf2OaXO/rOcG+XtBbbaFAhxiiefAgVtGKHHyeTXv1BEEbByUbacaE+ccVXpo9ZmL75aprQJ3TUl+VsukOI4YtizxfAQoadAz9aaVh2X36evA3xSlACZeWVvCtPKrFkmoHgbFbDEqHaESNX/rMy5ZLe6nUWBkRRQTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YGR+v37m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5889OSBA004353
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 16:15:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W+lj6aPfl5dZoF2x7IkapYfFT13SWsFtQnlB9wrJWSQ=; b=YGR+v37mAwfyFLEH
-	Q83puvX9IsZF23SzkmHh9E+TQPhJU0gl1gbDB8JchzRVG19xB1z2u9kEBwbhBqdP
-	DiKdmftSYEPBSdwiMtFdv4WduYNk/KNwqdZRqns3oqAr49I2maswNVw3HXKYtuJc
-	3A7A50ZUpoVni/CqgeutrJ7RLj0J48pHKlJVLKzk8a4OiqXKcQUfmrZDkhtUPH+J
-	yeOlFB8k5UGhOw7XmbpTM43WChS/ESBav/5YEa+PbVQvDDiR9yA+CbSPMfFxKHkI
-	tzU6NIDmTFSPuG731azwV5UDqGAyesSyn3v7M98pUcJeJ7Ikj4udPOX9dIa0xbJn
-	vvRXUw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4kw2jf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:15:42 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32b698861d8so4344100a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:15:42 -0700 (PDT)
+	s=arc-20240116; t=1757348175; c=relaxed/simple;
+	bh=py2SL4Lcp1ebRiKpS+febe1mg26X4LV9Gvpzr3MfcFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlRnChtmXpMyPTb1lVvducmXTskdC02ZGL17RGGJamoR8K9AScoJjB43Us0o9NXq1WZ1Lwec0G7qbud+hL+SS3UE3DPdu0cMWtmCjdOryYC1oUjBgXw3VHlp57+MkF3j2pF+l+vrTdvcZbWrjgEF/mXhtLjB7aITBDj1a293Dxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZTVY4mo; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96e1c82b01so3369074276.1;
+        Mon, 08 Sep 2025 09:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757348173; x=1757952973; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0DapaqdkpsmqG8gstJ5wzlYQM9cf+yi+nsrLvokSaDA=;
+        b=bZTVY4moU8RgPWpJMlKq5tJZPzQVDm9MD8pftbou4ha3UQokUonbs+feBbC2I0K49E
+         HocI/Oq+fS6/A9wUYl/3gWS1YZbIdyNaKCT3wn0ULjUKhgEtxZQa+HbzswdBiAhTuyyA
+         PKtJOsir7H/kFgsVn8RFoHiCI48JpJ9xKXubuemHcXpUwWvZbdYegvPEj6kOMIGRXzK3
+         yLlYcXi4RHedo7M2B5HUegY0EnAS+ecuTso8w7BWy3LXSgns/RIZ3uaGihKhni6QbMM4
+         Ip9qjpMguX1/ogulP7SvnbCvUkO8euEGFzrFmGeZL3wpdU+pyeuIQnBFRXw40ny0f9qj
+         qKbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757348142; x=1757952942;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757348173; x=1757952973;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W+lj6aPfl5dZoF2x7IkapYfFT13SWsFtQnlB9wrJWSQ=;
-        b=CTbi2mxXY+r9st1zonZEpGdb4f9O4xCPkpUcJQpi78mUB9rXoGVyeuGztbWztp9tfx
-         eFtZJUXcpQecWghyhgrqXUEk/lUOpBbTRKM6fiv6atuTAz5b36uZ+/F2yUN7RXCs6crW
-         l+nxcPK2Q2yyxChHbw2AnfOjLoITNZNxwdOEQJFwc3ugXEs5YStzjPRGP1qbCF2LpIuG
-         BugCW05X+H6AnplyllHsr4P7YsajpAYx0tKv0TVCX9WqRHJ9ynWixsqAXfwR9nhrDFLh
-         6uJb8G2Dc7NwWe5+Vt52+GduybSChKHTtAITigRFYYCZtZLW6Vk91coy7a/PhWLOH+hZ
-         z1vw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/B6gEAZiIe6ZL/OdSI+FP7e5Wp9oR8yaRHb4MTDVxq4ZZ/TlfWqLTN892cXrZWNGb3Sz33zGHWJi+8nI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgxnxWSdwmMcm75IcyASMs7rmhSaIsrV+sDHvre/HWz7Aqrlig
-	NivmUaKaVgnJUGH8YZNUox1SWgH9Gq5Rg0pQ0ktVXC/UFAIQuYblbllAcQ+cOM7e6tmEHsERolH
-	3+7s3dMHJuvEFgBQlULGc0b7IuOgxjBfLd2wsIhNkcJJFXZlnuM7X+c/9QWhQYlG22BI=
-X-Gm-Gg: ASbGnctP/W1+lAk97MdBm3bHC8yFjRZ6n/iG3bBhcpVuWQqIBI5tJOoabqVLQ9PtZYq
-	r2/uIhhlnX0Z4znIhM4DTcvBX+mFzeFcZhKlHlGmDCLYq5vAL37i7EfIsH6m1Sian8TrmI0GUa4
-	ORDU/oKrJRT4+NVBpMPakot/mbSUvKlvhXAAdH7eKcz8tSI6gfybnwYPfnyKmz11iQbaqf9tbBI
-	ZG1G+XQm9RPr9WgNaIC/jMdjZpq7S9fz1jA6rtDP6a67WQLvAvOOz3+Bk7SsXT+5MrZOFp3u6wf
-	pFWaTTwI3JTzaHKzVG4Xvh8237n3QQfJeZtOsawsDCuupie8JiD+Wu3+eRmOzQ==
-X-Received: by 2002:a17:90b:48d2:b0:32b:cba3:6361 with SMTP id 98e67ed59e1d1-32d43f76b78mr10340172a91.26.1757348141354;
-        Mon, 08 Sep 2025 09:15:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZF1OPxZnSURBZkaB/X4pj0b/Fs/TUocy/fiORRAwfDENjJPxq3DAYNP2im4uK6ps4zcHOGQ==
-X-Received: by 2002:a17:90b:48d2:b0:32b:cba3:6361 with SMTP id 98e67ed59e1d1-32d43f76b78mr10340134a91.26.1757348140791;
-        Mon, 08 Sep 2025 09:15:40 -0700 (PDT)
-Received: from [10.91.118.43] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b948d5471sm6213558a91.3.2025.09.08.09.15.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 09:15:40 -0700 (PDT)
-Message-ID: <ae32a704-025d-443f-bc03-fd8c6e5d3acd@oss.qualcomm.com>
-Date: Mon, 8 Sep 2025 21:45:33 +0530
+        bh=0DapaqdkpsmqG8gstJ5wzlYQM9cf+yi+nsrLvokSaDA=;
+        b=lrhkmkSV+H4PKD0Lz44TWTK1JKCYLJxvI88dPo7/lzujTlNOImgMG0EMvC0xqzy04h
+         X6bxI/rCyf3M7wKwA7s/ys8xr2d6u63ZWt0eWE4FUYQk1QVfiJb80uRa+ErWW3sL0KiI
+         K3wLBKyir7R0bvzzx3Q2pKON1QHj7VEYSEoSWeagKF3vay4AuV4KMof8P4mW8Y5kzLN6
+         nWyrp8HvsFlQjQ8o0XFUOH4+Q2/mAjp9W5wzH3gvAURJhNK0t1rt2M6A1XAxaDJUMVAe
+         6tGzqXCGYDmQEz7GCXawFdM8fXw/hl5LL00T+6WGaG0DlCIsTthmptpPLVHV1cTu5aeC
+         t0rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz0XvB+kb67jSPlGxhbL737G7xkxUDr6zB8eT4Ro9EeePv9rcEBEY2R9sob8vaT07C2CGiQ69IOR8gArM=@vger.kernel.org, AJvYcCVSMrdLTWa1nJNDFqEaip6vVVYcQS9AIHiuwBxYVu0JxhMb8qGV08iDJ/RpEEE7KH7aUpWCIDQQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE0Q23UxJzkf5gACSPS5OdSVwua2cCW5gkmlnm2+Rin4eR3DpH
+	E0bCNlQindZxyzPnHI2Va+K2XLbboaHTElZpnSAVvcsai6MGBHoxt0ev
+X-Gm-Gg: ASbGncvXViD500qrEjMgIeQDOAp7EQUBUarGFTR2f8IxaGqJ4HAG3KzdQlQsUA+tBkD
+	pHoYEzsPWYxJmx9r20Ob2OTu87I3wB9RHIKyKgY9eSH/RFKGyyCJLwRPNpAvQb9US1UwJgPqf9n
+	IEapgNh7lJOL0a7xFvQ10XmRaNOgAL7d28xXe6/RVWvTi2roOdlmiXVi8KK5LTNYxHoGbrWAx4P
+	RN4ax+jJOKgmIiLaTX1XzPVEC5M2+A9SsBYF6UTcvnrj0/lhB6t4Q0dasg+DSG4IKBN6P0iXT3+
+	spglWEfJgw5hFw62BbRo5/iypNj/Vcip6qnGeUWSiKqE0XxoDQ/u3qNp9bNJQZcsYBuHV+Npfq0
+	3+b6KqUy0jhn8RmaL13Pda4cIxhhG/tKaR8ZBv6cok9CoZLsLfQOrx9pkXGwsv2VeLLJh
+X-Google-Smtp-Source: AGHT+IE9SzII0RV3oLBhYO8bMjK3ds9EdIM9E+T0eXQi9+L2j3In0oZA7qlVRxPT7WVC3/ENpvQvVA==
+X-Received: by 2002:a05:6902:18d1:b0:e9f:bf6a:3108 with SMTP id 3f1490d57ef6-e9fbf6a3734mr7091066276.45.1757348172938;
+        Mon, 08 Sep 2025 09:16:12 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:74::])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9fa95fac8esm2265528276.3.2025.09.08.09.16.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 09:16:11 -0700 (PDT)
+Date: Mon, 8 Sep 2025 09:16:10 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Samiullah Khawaja <skhawaja@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 2/2] net: devmem: use niov array for token
+ management
+Message-ID: <aL8BSjUbxYvvvZyD@devvm11784.nha0.facebook.com>
+References: <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com>
+ <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-2-d946169b5550@meta.com>
+ <CAHS8izPrf1b_H_FNu2JtnMVpaD6SwHGvg6bC=Fjd4zfp=-pd6w@mail.gmail.com>
+ <aLjaIwkpO64rJtui@devvm11784.nha0.facebook.com>
+ <CAHS8izMe+u1pFzX5U_Mvifn3VNY2WGqi_uDvqWdG7RwPKW3z6A@mail.gmail.com>
+ <aLtKTwBmogXa48Rj@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/16] drm/msm/adreno: Add fenced regwrite support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Antonino Maniscalco <antomani103@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
- <20250908-ifpc-support-v2-7-631b1080bf91@oss.qualcomm.com>
- <59ac7827-6258-4268-8b71-4cbcbad859db@oss.qualcomm.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <59ac7827-6258-4268-8b71-4cbcbad859db@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfXxkiNaNfIGqRl
- MyMP1RlwK321M2vF1sz0DyIx/5qkcx32SSvl1efwzLex7oKj2XyVd5I10m4De+U8cbaR1njcMtL
- 1eZRxhSsZI3wmBplpYRiXgzbFLNuF3dk7ryXxEziMBEp0TiJ+vpXsmiiJgS7e2vMzRR+0Ya8yiM
- LQd8DAuVK/W0a5G3NWzoVH7CTkxJ+j74xJYKWClcUXUFZF+RiukEmft+TUdph8Q4v7NXJURqR4x
- VMzQxCanWxpmKs2zVsl2/j14weAjMyrMyYy+4oWgec3nNCq00AqS6m9p6nYdyL96Xz8GQ9Bkgmg
- XLgMHNQ2yBhJIMk3ekA+puhuYxA5GF8v5w5dEnZdEtrWclSxsTriGqZcGFxTmUKvQhiUuYejOAi
- eIVkvw3O
-X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68bf012e cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Npwa9MXoYRiG9O3kBDcA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: mO2rynJYHY2km7DYCSSC157CXrelUyQa
-X-Proofpoint-ORIG-GUID: mO2rynJYHY2km7DYCSSC157CXrelUyQa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
- adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLtKTwBmogXa48Rj@mini-arch>
 
-On 9/8/2025 9:07 PM, Konrad Dybcio wrote:
-> On 9/8/25 10:27 AM, Akhil P Oommen wrote:
->> There are some special registers which are accessible even when GX power
->> domain is collapsed during an IFPC sleep. Accessing these registers
->> wakes up GPU from power collapse and allow programming these registers
->> without additional handshake with GMU. This patch adds support for this
->> special register write sequence.
->>
->> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->> ---
->>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 80 ++++++++++++++++++++++++++++++-
->>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
->>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 ++++----
->>  3 files changed, 90 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> index 45dd5fd1c2bfcb0a01b71a326c7d95b0f9496d99..a63dad80ef461da45d5c41a042ed4f19d8282ef5 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> @@ -16,6 +16,84 @@
->>  
->>  #define GPU_PAS_ID 13
->>  
->> +static bool fence_status_check(struct msm_gpu *gpu, u32 offset, u32 value, u32 status, u32 mask)
->> +{
->> +	/* Success if !writedropped0/1 */
->> +	if (!(status & mask))
->> +		return true;
->> +
->> +	udelay(10);
->> +
->> +	/* Try to update fenced register again */
->> +	gpu_write(gpu, offset, value);
->> +
->> +	/* We can't do a posted write here because the power domain could be
->> +	 * in collapse state. So use the heaviest barrier instead
->> +	 */
->> +	mb();
->> +	return false;
->> +}
->> +
->> +static int fenced_write(struct a6xx_gpu *a6xx_gpu, u32 offset, u32 value, u32 mask)
->> +{
->> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
->> +	struct msm_gpu *gpu = &adreno_gpu->base;
->> +	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->> +	u32 status;
->> +
->> +	gpu_write(gpu, offset, value);
->> +
->> +	/* Nothing else to be done in the case of no-GMU */
->> +	if (adreno_has_gmu_wrapper(adreno_gpu))
->> +		return 0;
->> +
->> +	/* We can't do a posted write here because the power domain could be
->> +	 * in collapse state. So use the heaviest barrier instead
->> +	 */
+On Fri, Sep 05, 2025 at 01:38:39PM -0700, Stanislav Fomichev wrote:
+> On 09/05, Mina Almasry wrote:
+> > On Wed, Sep 3, 2025 at 5:15 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
+> > >
+> > > On Wed, Sep 03, 2025 at 01:20:57PM -0700, Mina Almasry wrote:
+> > > > On Tue, Sep 2, 2025 at 2:36 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
+
+[...]
+
+> > > >
+> > > > AFAIU, if you made sk_user_frags an array of (unref, binding) tuples
+> > > > instead of just an array of urefs then you can remove the
+> > > > single-binding restriction.
+> > > >
+> > > > Although, I wonder what happens if the socket receives the netmem at
+> > > > the same index on 2 different dmabufs. At that point I assume the
+> > > > wrong uref gets incremented? :(
+> > > >
+> > >
+> > > Right. We need some bits to differentiate bindings. Here are some ideas
+> > > I've had about this, I wonder what your thoughts are on them:
+> > >
+> > > 1) Encode a subset of bindings and wait for availability if the encoding
+> > > space becomes exhausted. For example, we could encode the binding in 5
+> > > bits for outstanding references across 32 bindings and 27 bits (512 GB)
+> > > of dmabuf. If recvmsg wants to return a reference to a 33rd binding, it
+> > > waits until the user returns enough tokens to release one of the binding
+> > > encoding bits (at which point it could be reused for the new reference).
+> > >
+> > 
+> > This, I think, sounds reasonable. supporting up to 2^5 rx dmabuf
+> > bindings at once and 2^27 max dmabuf size should be fine for us I
+> > think. Although you have to be patient with me, I have to make sure
+> > via tests and code inspection that these new limits will be OK. Also
+> > please understand the risk that even if the changes don't break us,
+> > they may break someone and have to be reverted anyway, although I
+> > think the risk is small.
+> > 
+> > Another suggestion I got from the team is to use a bitmap instead of
+> > an array of atomics. I initially thought this could work, but thinking
+> > about it more, I think that would not work, no? Because it's not 100%
+> > guaranteed that the socket will only get 1 ref on a net_iov. In the
+> > case where the driver fragments the net_iov, multiple difference frags
+> > could point to the same net_iov which means multiple refs. So it seems
+> > we're stuck with an array of atomic_t.
+> > 
+
+Yes that is correct, multiple references can occur so the bitmap
+will lose all > 1 references.
+
+> > > 2) opt into an extended token (dmabuf_token_v2) via sockopts, and add
+> > > the binding ID or other needed information there.
+> > >
+> > 
+> > Eh, I would say this is an overkill? Today the limit of dma-bufs
+> > supported is 2^27 and I think the dmabuf size is technically 2^32 or
+> > something, but I don't know that we need all this flexibility for
+> > devmem tcp. I think adding a breakdown like above may be fine.
+> > 
+
+That's my inclination too.
+
+> > > > One way or another the single-binding restriction needs to be removed
+> > > > I think. It's regressing a UAPI that currently works.
+> > > >
+> > 
+> > Thinking about this more, if we can't figure out a different way and
+> > have to have a strict 1 socket to 1 dma-buf mapping, that may be
+> > acceptable...
+> > 
+> > ...the best way to do it is actually to do this, I think, would be to
+> > actually make sure the user can't break the mapping via `ethtool -N`.
+> > I.e. when the user tells us to update or delete a flow steering rule
+> > that belongs to a devmem socket, reject the request altogether. At
+> > that point we could we can be sure that the mapping would not change
+> > anyway. Although I don't know how feasible to implement this is.
+> > 
+
+I will look at this and see if it is possible, I do think that would be
+nicer for the user.
+
+> > AFAICT as well AF_XDP is in a similar boat to devmem in this regard.
+> > The AF_XDP docs require flow steering to be configured for the data to
+> > be available in the umem (and I assume, if flow steering is
+> > reconfigured then the data disappears from the umem?). Stan do you
+> > know how this works? If AF_XDP allows the user to break it by
+> > reconfiguring flow steering it may also be reasonable to allow the
+> > user to break a devmem socket as well (although maybe with
+> > clarification in the docs.
 > 
-> I'm not sure I follow - what's the relationship between the write being
-> posted and the power domain being collapsed (i.e. the hw not being
-> powered on)?
+> For af_xdp, there is a check in xsk_rcv_check (that runs _after_ bpf
+> program that does the redirect exits) and it drops the packet if
+> the packet is redirected to the unxpected queue (not the one that
+> the socket was bound to). And the only way to observe it after the fact
+> is a drop counter on the nic (or, rather, depends on the nic wrt how it
+> accounts it). I remember Willem wanted to remove that restriction,
+> but looks like he never got to it?
 > 
-> Are you trying to get rid of the delay that could happen between this
-> write leaving the CPU and arriving at the GPU (which would then be
-> woken up), so that the 1ms poll below has greater chance to succeed
-> because of how these "special registers" work?
+> tl;dr we don't error out explicitly when the user misconfigures the steering
+> after the fact (or initially) and drop the packet in the data path.
 
-We should strictly ensure that the GX register write is posted first (it
-could be posted to the hw or dropped by the fence hw). Otherwise the
-fence status register (in CX domain) might incorrectly report that the
-register write went through. Ideally, we should do a posted write here,
-but we can't do that due to IFPC. A full barrier (DSB SY) will ensure
-this ordering requirement.
+Sounds like a reasonable default if the explicit ethtool rejection isn't
+feasible.
 
-Another motivation here is to align closely with the downstream sequence
-which uses a similar barrier. It will be a super painful debug if this
-sequence miss a register write.
+Thanks for the review and comments!
 
--Akhil.
-
-> 
-> Konrad
-
+Best,
+Bobby
 
