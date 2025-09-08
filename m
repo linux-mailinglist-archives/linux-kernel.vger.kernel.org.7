@@ -1,171 +1,213 @@
-Return-Path: <linux-kernel+bounces-805511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21289B4897E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:05:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47151B4894B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1533409D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 563E17A2B02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFB0303A32;
-	Mon,  8 Sep 2025 10:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571342F3631;
+	Mon,  8 Sep 2025 10:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVjvDSrF"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eG4sBqPT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F77303A1F;
-	Mon,  8 Sep 2025 10:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242E71B424F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757325743; cv=none; b=n12Npj1MkwXkNynXZfdojVke9dEBnNcoYameIoUjFQJ1AOlh6Rexsu/Y4XBiXtgZuP7zSnarAW2lCD0zgfFN1Kxt/it4cHxvm8UngLrDFXnCeLUvamTNGlggW0LF49ID7F/f4mfYG3VBtDIeQ92zGhUIQBxfZdSn1nxQqNmHLyk=
+	t=1757325620; cv=none; b=bf2op45vw5+e2poXpgvV8dpi0GLFXXqTtawhg0e77zMx0DAgL/jAt6jCIKYYp61/P/lmsfnS0l2bkRisE1znhi5HLvVxQ+IH6IlzTy5556OKcL3hEglPsY7eM5t9fYHD8P6wD1Jwoa3YZYMoe2p67WKKJHQJcY3pkJE0toOFBzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757325743; c=relaxed/simple;
-	bh=NgiaadnBWzmQWHLVGXTkghr12q4e2Z2pGwu46CpKaLI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mfeddLp6cedU+eWyfyW/MOGsp055erqq0IPZxxZNVYkDXSgoqLMbK7nDpinrTVNBNziHIgR6NJI4rzqScr3EdqJ6Sl5AUAQ0/4so68V9A6hcwEGqKMuiujbjIu0Fy1B33QBdCtbYFQ1t4BQXf7z4aBbGT5yuur4UAn+rQVygWME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVjvDSrF; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso2629591a12.2;
-        Mon, 08 Sep 2025 03:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757325741; x=1757930541; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kj7fG7XAER68na8hgLjfPolxfyD9eQkGEiz9N4R6m0U=;
-        b=HVjvDSrFdL/X+lxzvOqmuXGns3mSoQrH3PtVrxFWToE6QCh/gVKqOu8XHWkOuzWj1S
-         f4DalBwZyjyLJZYwgFys+7B7qjvfoGFpxPDwnLSbFYx+LMEuKeZClyJrrYWGI2WGDrCe
-         LzAIW75amZSacwRYNsrjLU9s6Bk+ec9v9dmTZkKaUWaLyw6IlAFqtx3Q311R2gUcQR17
-         Jou47pTiOP39kyUb2RWdPXoDYpeT20vmrFR9EFRxvXn9hmamjz+lc76oK0lppqtmRGn6
-         rt+HaEG+r3nWuGktv9BkoluIYy3PXKxeCavnqzWf6BYhf3mbCgahsKrCiQyxI+phatuB
-         ZMPw==
+	s=arc-20240116; t=1757325620; c=relaxed/simple;
+	bh=r/waWgH8iFc4NM8oyhtNDxdNdtdlFuFW9vf2HRoSosM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+Ii9OO0q2q6CPeVOO0/r3HpfMS0xp/iWFDvmZEIyDKhGuYEY0yN7iGiUcpNe2p364iqXA0YkpC2ocQnG1+z7Kcy1vHMOQdVfxDZ8e94c2/QsomXiBbjgPGAlJ85dls4r/OMWiHP/dYLyz/myWs2WarlnV6h2/OGMs4dmV0jmmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eG4sBqPT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5883lWwf013595
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 10:00:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RtUukMnNWAAQi+BBVchgSoNXaZOrt4o1HkYE4SHkE2I=; b=eG4sBqPTWzYBRCbA
+	dDNrzwa9pRYTxloO5rahsbNAwP660TgzsnSZaZLET4gW7JQPwMUEqtVV+4w38AEq
+	EN4TgJdoh7QL7cBvX/mp15qeQUbhO8QT2FxCbe9CArGaKEJqQbvZ9W+zvSBlPZjW
+	XpJyzgGJn2fQ+CB1HLkiI1lNKZ0cCp6EFdSD+rLN2owA00pc7LEQIm5UH1akDbEP
+	fTxnrw6ikvhZD8YSUrx1FbgmJg/J0Ji7gbXYqZ+HjbzILgaCcKGaU0rLVacH+l/q
+	sobvTLDsEvii8hf8z4jnf5q80o8gJGssdB/4CURXlUkOrlfhA0OIAcI/3svA8BX3
+	NSlXLA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491qhds0mn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:00:18 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a9f5a43b6so12005066d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:00:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757325741; x=1757930541;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kj7fG7XAER68na8hgLjfPolxfyD9eQkGEiz9N4R6m0U=;
-        b=oUUz0lWxh4JWRYfbWZq8ZPRr5M169R40G0xW7VSQT58YagFJuyppuS8MbvDvAd+0wZ
-         YgspIvNAmUANynkCgfx+mHMOMoHw8DkWZnlEGsJUUsWyItVJNqbWfRcYF9AHvMW7Krx9
-         qXp7xdDYIt4b1r1LqHuxY6hLKTztUFrC47KZ/XYsPx2c2VO4SHL2SKOIDpIxvcYxCc7h
-         DuaYfkcZ0XsYi4Tl+9PV5fHu+lNsmzPNyORT4xK4RmvbVzhAdhxFe4EcqiiHyx/cqQIp
-         VgqrVvNdAvDnc/xiLbSISkp7kyg8JMlBHkgneN0rtvswA/dShf7n6poSBF/qcfFZoNVy
-         1YUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyQMb9/0oxZLgym0aUyC4IBqxo/BcDqoJpeKM4EOAb+DrpCd8mKXpK+xKO2cdJcPbotMsIzUAbRp6oPlWpTKTaFQ==@vger.kernel.org, AJvYcCWYl+r7q6Rbn5oE0/chrFZcayhbGpjBhWml6N/tKUc3DFWhT5qr9W2pKZolZ6aifNr4y41gbL3DYpHF@vger.kernel.org, AJvYcCXN0b5ELcbrPdzb/RuD0jWZnkINnsAP+lX1B/Co1yZl6G0zVTYwmvwOd0CVB841N2quvtqAtJobrBGfxkGH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW3j1RQXzMCVbBCMJgSKm6qRBxoKzIiMs0U6NtPujet6uX8LdV
-	dbll9/q2luT7TrWEOSzYsuZvnB8SoCbuAytE4ihz27/c8ufyt2oXEkvM
-X-Gm-Gg: ASbGncvWKe+hMZEbCpviaZ70OH16N3KnWG0ZpVVYtF3Xybd9/Wu05TsFn66VEXQtIf8
-	I/Ol7GpXEADHQsO07HLwZhaH6ASsSiJo3cNHLUfcd0aQjzQbk1qAS43WHNg/mPNG8VQ01UY/Q3v
-	4CTINqd6OW4ed9q1ElRbj2vQ2IfwyMG84wBoZHNlf2w+p8Z1rk7r2EmfbHqZ4oX6VbCI6PANClN
-	8dwvs8G6YyGCqqvWbgEZgYXM4/FHRG5MLQ+x0V3c/d3VlQXqYa1BlVVMQsSiMTlGByMvIhqwVbp
-	LQPZEmhqqtIMxvd90dYnxVyXah5f4g14kyupY+PnmETsxGawbc+UW9PjSWUCD3I74Kro5U+IKYj
-	Sp1sXqrjzHzPzXrA+cnhzV1LklD9bqXdYuZRrqd8EtYA3KO1v
-X-Google-Smtp-Source: AGHT+IFzBnyCeoSUT4/jKqak6Ru0Kvj/hbUWjk5gn0379Y2ihPn96fH4hCkaATJ2yH9Os2NuxascEQ==
-X-Received: by 2002:a17:903:1a26:b0:24d:4a96:7b30 with SMTP id d9443c01a7336-25170e41046mr103171265ad.35.1757325740700;
-        Mon, 08 Sep 2025 03:02:20 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.98])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24ccfc7f993sm107826545ad.63.2025.09.08.03.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 03:02:20 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Mon, 08 Sep 2025 17:58:45 +0800
-Subject: [PATCH RESEND v8 21/21] arm64: dts: apple: t8015: Add CPU PMU
- nodes
+        d=1e100.net; s=20230601; t=1757325617; x=1757930417;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RtUukMnNWAAQi+BBVchgSoNXaZOrt4o1HkYE4SHkE2I=;
+        b=GjWdgjFS6AKPjOhjtx48EYwNG2cfcNdCwx5gW5aOwEgKELKUw+1yGz49yEGemb3CyO
+         Espb5tokp2HeP4TYuNql7YJRrOcLDtgl4D1xdB5PmFaRdAOYMScUuvOD29+Q0A69Ffkf
+         gQ6Dm+KhY5iDOZfwxW9PpCb/e+375MQyr/fYyBXfimvZEh8RTJMFqWEbnxVdvXu2XDGS
+         1XwqcedwXh5YmYH3L/0zB87qDz9zmtT4toeTx4rRXIyyN9hbDE/JiuQDCi0ZHA6ObCko
+         O5Sr4xvoum8TH108vrxtRMMXqN026rfbFS9jnajEdBrgPEtYGgGN2ULw0xBP/0smdAIx
+         Rbmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnr/4SvU3uzd9W92JxgrQ7pGeCW/y1iBBgYYqernJuso5+Cxef91wUS2UWkP/WczpFnE6WEErP+MG73ZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3aoOHk4YbK24eiVXBB4VMy1RZxdu6OsKKYiLaEV/43RL6u4uY
+	nWCqEOgMEvc9Dv+lJDWTtENzlimtH+6MwiQAYQJbG1SAjQiAxiO12kBJiJ/DUq8jDkhQTxeCWt0
+	l2/862LCW/2GCiiKCSqXUTjlbciNFUM6pYh0eFfqtcEzEBOVhPj8mynkK83GVTTsVYN4=
+X-Gm-Gg: ASbGncvK7jHYp3VXr/Juncm0Cpls6OrphWqsjVqmQMKIZUSwYdZ1zASkgcO8+r7pdEg
+	aru7mq189NEzIP78f7oJtkimpda7fNe5MIbjwtqJVXDxtU6jbLy+XYWjhFRHHi5uD0W0YwTlh4n
+	waxpDF5ANkviMD4P8xKCF4niIVsoeFSFh8zLXp5Glr3eSOhTuRDXdMakLt39v81+ccwbJ4euzVv
+	X0ZYFFEdMIhz02DS2VALD5V2JHloFW+9O4VFhCHbvYDTJKGno8oXCt2wjUpQ7kKY6ArQSAVOp78
+	cPsX7e2ESlqjc+Pmn7z6c1/Z3/XT1NNtM/47T2OpNnZkM9hKwIOgoAPkmCgq5JLPqOiEkXmdRsN
+	NeDFw2xv2ySiG3iKdF6MS3w==
+X-Received: by 2002:a05:6214:2627:b0:70d:bcbe:4e79 with SMTP id 6a1803df08f44-739464ee140mr51773726d6.6.1757325616687;
+        Mon, 08 Sep 2025 03:00:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE47Hk/U9dhX2DbPG1Fqipq+98Vftq1E+WXGEt5z7yn0rJYJRaa3YNN05gx4rx6HhQF6gkiSQ==
+X-Received: by 2002:a05:6214:2627:b0:70d:bcbe:4e79 with SMTP id 6a1803df08f44-739464ee140mr51773366d6.6.1757325616007;
+        Mon, 08 Sep 2025 03:00:16 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01af44a01fsm2168466866b.23.2025.09.08.03.00.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 03:00:15 -0700 (PDT)
+Message-ID: <1899862b-530b-4a75-93fa-c70c90d98016@oss.qualcomm.com>
+Date: Mon, 8 Sep 2025 12:00:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] i2c: qcom-cci: Add OPP table support and enforce
+ FAST_PLUS requirements
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
+ <20250904-topic-cci_updates-v1-4-d38559692703@oss.qualcomm.com>
+ <aL6Vp-3er71AJPJd@linaro.org>
+ <f508bf92-a513-467a-a946-17c41e1d72d1@oss.qualcomm.com>
+ <aL6X-RiCyPVbHlYN@linaro.org>
+ <5178a6b1-1b5a-40d9-af40-68ee13975509@oss.qualcomm.com>
+ <aL6nZdJCKmnWcswB@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <aL6nZdJCKmnWcswB@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-apple-cpmu-v8-21-d83b4544dc14@gmail.com>
-References: <20250908-apple-cpmu-v8-0-d83b4544dc14@gmail.com>
-In-Reply-To: <20250908-apple-cpmu-v8-0-d83b4544dc14@gmail.com>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Sven Peter <sven@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=NgiaadnBWzmQWHLVGXTkghr12q4e2Z2pGwu46CpKaLI=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBovqlFI+V4GoFFzmg6iekYjO3wUQsQ2NoToVu02
- /eVS2sSy3OJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaL6pRQAKCRABygi3psUI
- JAaID/9rrnrkkgZNvzI0FIXkGSX4gBtvI+S+ZUhZpHoHLNx5mYa6SzSgxgGtFVh/RB3Ws6QCf2v
- QGDci6rsLtSmWAjeQ+uCoaMJcuSXbGTSiTxM2apn/N3Qa4oRhy96wHLRUCOq+zCdg9ST0POvKGD
- MU2QrOVTS/xAzulU2W6Veml9cV05aLbPnSgAdmlom+gXmZqWsicFUuun1bQzeP4YNj3tYfN85gL
- Kofv7w0kuwRAr6gePgu0je9RzyJZGzY8PhjJho1XYqKM2sboHNKtJOwjHQaOu9zKp1YysVomMA7
- a7x3EwE1STEqEZK3KFwIHFQvYNzVPSSbZJX2thGtvHTmjmdfgEJN3RoO+6YFRclhBoR3YY5l+Ez
- 10S/GLNWdQ7MVEbO4C8mBHFrrc370ZfIoqyP3UgvZZFP5itHr/ByW8ENdblvZRvHL1WeCQKZGQE
- 3UdpaW3pj2RP417YZdpur7CQmv8YdTxdj0v6EXOxqE+e+IZMp3Jda2PHs2jWOpFfT2QCRfFeQ/7
- RajECtYAJvCdQpNmkemfRYw+APevsJeyXEQhKifsPYISo2NkHZXg/lBZB7UQDBY5v2KPjf54Jk5
- a6R8wk8dredST8Wb+UBF5e028+i6SkVwrsnKOjn/zcu/fu42nEfKXCQJ4bEBlHwf6eIcMY4iqzH
- DF9ti+Uugiot7DA==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+X-Proofpoint-GUID: KKLEXjdVg7zs0En3IfL6VIRIj9Pj1URK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDAzNCBTYWx0ZWRfX9V5YOIfFhDuY
+ Jqo5M5NXaOZDZJU/JiSNcdqO/Bf8YcHNwbyaHszUZufPedtR3NfmLsXGCxCsgVB8gSyq5+oIuhG
+ rgoUUwwkykPTXGvRSOlmJIl6P/E7PKxXN7ZPLLayVVV1bpQ0p7vJGpJ0f2kX8l24eDoXqR8f1Vh
+ KZD/XW5mimuyi4GWnZFLxWSPBBTbc/TJd5kH3M21ao3swNgNV83xlRiNTr+ESmE2Ldn5kWvhvto
+ 6QP/4P8Uho8r/RnFxraRkAsPRO4Fdtd/ME1cAIaFc1TmalX4ZnIQmmdPLj7UDIpbJESJOYYZjtm
+ ooZt7uhBKDQref8e6+taH4KlC8rU4nkuCI73kI5hIxC9ETwyUcC7YYTsovLXSaIO/g1lfVUsAk2
+ SyfjRthv
+X-Authority-Analysis: v=2.4 cv=YOCfyQGx c=1 sm=1 tr=0 ts=68bea932 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=dID3koFHavZth2WqiVAA:9
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: KKLEXjdVg7zs0En3IfL6VIRIj9Pj1URK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080034
 
-Add CPU PMU nodes for Apple A11 SoC.
+On 9/8/25 11:57 AM, Stephan Gerhold wrote:
+> On Mon, Sep 08, 2025 at 11:49:52AM +0200, Konrad Dybcio wrote:
+>> On 9/8/25 10:46 AM, Stephan Gerhold wrote:
+>>> On Mon, Sep 08, 2025 at 10:43:50AM +0200, Konrad Dybcio wrote:
+>>>> On 9/8/25 10:36 AM, Stephan Gerhold wrote:
+>>>>> On Thu, Sep 04, 2025 at 04:31:23PM +0200, Konrad Dybcio wrote:
+>>>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>>>>
+>>>>>> The CCI clock has voltage requirements, which need to be described
+>>>>>> through an OPP table.
+>>>>>>
+>>>>>> The 1 MHz FAST_PLUS mode requires the CCI core clock runs at 37,5 MHz
+>>>>>> (which is a value common across all SoCs), since it's not possible to
+>>>>>> reach the required timings with the default 19.2 MHz rate.
+>>>>>>
+>>>>>> Address both issues by introducing an OPP table and using it to vote
+>>>>>> for the faster rate.
+>>>>>>
+>>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>>>
+>>>>> Using an OPP table for a single static rate that remains the same over
+>>>>> the whole lifetime of the driver feels like overkill to me. Couldn't you
+>>>>> just put the "required-opps" directly into the device node so that it is
+>>>>> automatically applied when the device goes in/out of runtime suspend?
+>>>>>
+>>>>> And since you need to make DT additions anyway, couldn't you just use
+>>>>> "assigned-clock-rates" to avoid the need for a driver patch entirely? We
+>>>>> use that for e.g. USB clocks as well.
+>>>>
+>>>> This is futureproofing, in case someone invents FastMode++ with a higher
+>>>> dvfs requirement or for when the driver adds presets for a 19.2 MHz CCI
+>>>> clock which would (marginally) decrease power consumption
+>>>>
+>>>
+>>> If 19.2 MHz CCI clock is feasible and has lower voltage requirements,
+>>> then I would expect a separate entry for 19.2 MHz in the OPP table of
+>>> PATCH 5/5? The DT is unrelated to what functionality you implement in
+>>> the driver, and that would make the OPP table look less useless. :-)
+>>
+>> The frequency plan for 8280 does not recommend any rate != 37.5 MHz
+>>
+>> For x1e80100 however, the lovsvs_d1 corner is recommended to be 30
+>> (yes, thirty) MHz, sourced from CAM_PLL8 for $reasons
+>>
+> 
+> The 37.5 MHz rate still exists on X1E I presume, or are you saying we
+> need more changes to support those odd 30 MHz?
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/boot/dts/apple/t8015.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Yes, any corner over lowsvs_d1 is 37.5, sourced from cam_pll0
 
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index 12acf8fc8bc6bcde6b11773cadd97e9ee115f510..9bf5157f0e504b7394ef5354411d3d37e8d5760a 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -284,6 +284,18 @@ aic: interrupt-controller@232100000 {
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
- 			power-domains = <&ps_aic>;
-+
-+			affinities {
-+				e-core-pmu-affinity {
-+					apple,fiq-index = <AIC_CPU_PMU_E>;
-+					cpus = <&cpu_e0 &cpu_e1 &cpu_e2 &cpu_e3>;
-+				};
-+
-+				p-core-pmu-affinity {
-+					apple,fiq-index = <AIC_CPU_PMU_P>;
-+					cpus = <&cpu_p0 &cpu_p1>;
-+				};
-+			};
- 		};
- 
- 		pmgr: power-management@232000000 {
-@@ -412,6 +424,18 @@ timer {
- 		interrupts = <AIC_FIQ AIC_TMR_GUEST_PHYS IRQ_TYPE_LEVEL_HIGH>,
- 			     <AIC_FIQ AIC_TMR_GUEST_VIRT IRQ_TYPE_LEVEL_HIGH>;
- 	};
-+
-+	pmu-e {
-+		compatible = "apple,mistral-pmu";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_FIQ AIC_CPU_PMU_E IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	pmu-p {
-+		compatible = "apple,monsoon-pmu";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_FIQ AIC_CPU_PMU_P IRQ_TYPE_LEVEL_HIGH>;
-+	};
- };
- 
- #include "t8015-pmgr.dtsi"
+> Personally, I'm not fully convinced there is ever going to be a use case
+> of someone using a "non-standard" frequency. Even if "FastMode++" is
+> invented most devices will probably want to use it.
 
--- 
-2.51.0
+Not really, there's no reason to make your i2c bus go fastfastfast if
+the devices on the other end can't cope with it
 
+> And the voltage
+> requirements we're currently talking about here like "low svs" during
+> camera use cases are kind of negligible compared to others too.
+
+Again, this is an I2C controller that seems to be associated with
+cameras.. No image data has to actually be processed for the
+communications to take place and you can attach any odd device
+
+Konrad
+
+> 
+> But I'm fine with either solution, just wanted to mention it. :D
+> 
+> Thanks,
+> Stephan
 
