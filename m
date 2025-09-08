@@ -1,438 +1,206 @@
-Return-Path: <linux-kernel+bounces-806110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD84CB491FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C890CB491FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949901BC1783
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6424417178D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773651C07C4;
-	Mon,  8 Sep 2025 14:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A56A30BB89;
+	Mon,  8 Sep 2025 14:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I49nTKwD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="l9l8d+46"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hH9zHq10"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623B2235BE8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342871; cv=fail; b=R0h1H3YLlsJKFsIvyQsJVzHw2kHliJ8x+NdM1GGI5/0QTDx/fT3LsrnTyZUya3/FvmN5WzutnxPwDnNkc8+julOXjxlo2YE2MzAIxMnzTveYHaZ3xuXoSfRT0QxEJ0xyWGVBaxPInx7l7uHufwZGnGpNhJni1NTuMqTmMfghCJc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342871; c=relaxed/simple;
-	bh=ZnD9auCVdGGKgW2D8aN9dfmy3kRdO2QxxCa8oUb0IXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Cf1ISMPIZmtyylBAS0HmN/sk2M0404hCXx8wl7HRTtfdy0qIRyie+5O0SQSFEFIVyU+xQ8KMCpr5YEhD0dD5qMEd21Ew9Kh2EpaF+tpeCnU07ihSfK+y1gQkm8GQxOq9X9IFi3W42IAnTxjlXv/Ov1sTMMw6CC5Quj/dBMpMqoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=I49nTKwD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=l9l8d+46; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588E1ucC005787;
-	Mon, 8 Sep 2025 14:47:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=XweWgPQTT1QT8FQpVj
-	PvoqjBRP52ykOAWzAUmw5RybI=; b=I49nTKwDbVs81ZVTxzxVlmCvBEjj9Q9CUw
-	bF71ZdPjAwEP/vlSVJXB1NkAXZtBOKs+hFAnosttyV9UQXTq7qZLb8QZ/8+kr3aE
-	pXt3+SvfpSJGvMAGOpKTkQdHYc23XNzKMgrp3eSDwNqEp+2EXh6yQxlmWNIXGYq2
-	hGg8wAIRi8peyFYcZ+4qwTwgF2lIANIfRvhb70Dgat0KjuQ47e9Fp7IdEs6KBCvX
-	yByrISc5w8GcfDymCo0eV6+kaiCQ/4aAF9LiiNCbifPPe76X+bdXUqhCeOYbVpQ5
-	ga+2OMDRSJJ8hRXmxpT7PTg8i4oV3a4RDnrPuYmqPf2zsIGOmqqw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491y4bra9m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 14:47:26 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588DcsuC032847;
-	Mon, 8 Sep 2025 14:47:26 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd9a1ab-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 14:47:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yL5rEnFQgzjGonMjP2ySTDOEAjvJy5cZWgLXE+WcjwhJiw0nKCO5wi24Rqpc1nel5tL9eBz9MFvHpYtnD5pxlZr5qIuq/odL0n7Vp7QQxUWOWWjw6U5U/WkzqJuPReAI7FXUBQbxQ3hhYM2i6cmNrhiUvGbliUByUkQYt4FIMhAZChi6QnHAMdzv1vzE3vxEhiXI67sx7nN+vdm5srhfHXUd0L+PrCTOEgdSCGzlyA0dYXLdUFirybxorc9+kYU8v4AvfLXV8S0fiNeKI9/rzW2feq6eLc5annyV+ys2WL23tMQixcjCfJ1zxF+W84HoKGYQlvjtzJzzC9Vw5l4CCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XweWgPQTT1QT8FQpVjPvoqjBRP52ykOAWzAUmw5RybI=;
- b=JA+f3pxdIJ4a8dfj9Sl5bJ59pddFW1EpH4dILCrADYA5yKTyVPEYu5gqWoE6j5zOYwWORsa/34AQAhcyYOvCQiRKfYmcwQULVLTwyQeiEAf5n0AO3I3Sp4Xfq95ewKp8cQAVvL1rLIff20R1CTvbWkySu4MwliQQkz6fx01Sngky/i/keCwCHC2OP/WvZ4JZFVhSfJML3qlDcPDkLjLy6+zv9gT/3w5iA6kQZnLYRLdnabARlAc05fepe7kKIpajZ5A2gejRg+ADxu9wVvXLtVBo4x4uSHidlzMN63Zcips5ncn4lHMzFJZeHHgD2LJw5se18K3a3G3sFmXx074cdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XweWgPQTT1QT8FQpVjPvoqjBRP52ykOAWzAUmw5RybI=;
- b=l9l8d+469OvOpredEa3WCfBYuc/TQ0y3B7oKTnypEeDjmWJmVXiv1JL9s+sbKc4zyfX+3Gl4grB00NRkDsnLpq0CupgvvRvI1Ej6S/FMo4Zg++9OHl338CRYjaztW3s4RofcJcZDUbplpqsKItYjFjbv8zFlDG9DdFRBKapB6Ao=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by CY8PR10MB7124.namprd10.prod.outlook.com (2603:10b6:930:75::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 14:47:23 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 14:47:23 +0000
-Date: Mon, 8 Sep 2025 10:47:19 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Yajun Deng <yajun.deng@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-        vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-        riel@surriel.com, harry.yoo@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] mm/rmap: make num_children and num_active_vmas
- update in internally
-Message-ID: <xoj5ndzlm3ovvw5kkawnmcnhbqur6c3nmqldhmhzt5vnxodad3@e34ocizuiywc>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Yajun Deng <yajun.deng@linux.dev>, akpm@linux-foundation.org, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, riel@surriel.com, harry.yoo@oracle.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-References: <20250908140505.26237-1-yajun.deng@linux.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908140505.26237-1-yajun.deng@linux.dev>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT3PR01CA0017.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:86::9) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77585235BE8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757342861; cv=none; b=GOrt6nESLFxge3edar4OkPhPB+ACIoGV5aOlBOkGVWiZsPTe34zqd9q6W9OuHqH2X0qStEw4lQl6Ns6hsdGHz4A9AyRknXZnewt0gtSDeAt/xeUSyua7l5zViSpIOHLViQUNgLk8x2w5Ia/pKG5MC1bAhx00x/TGzw9uvXGJ5Pg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757342861; c=relaxed/simple;
+	bh=fV/k7pnGg5U1j/Ho4oLI9YHZEk//tgEhhTH30ME2tYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpfvjKRZ4OaLF4SIEgIzaZkofig0TiQQI05WLaTxqSQo9UbbdlQHTiP68bVCDz5rfjsu9V3f79fNc+rKTq8j8nFeqoieOxPuM9p6CsU+OXjYjqBa+0LoOOK2zgVXqv2ZRcUDSqIwKUp0sODktZ+nUJnC1zX0QG6s3feYMOPAzCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hH9zHq10; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 8 Sep 2025 16:47:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757342846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YRl/bpkfEMYYMiEprnX/hSTsooigf4G9r5nwDef3AE4=;
+	b=hH9zHq10zbNnlFb24ISQS+7skwtXvH/fL/9y3wfq3GY+NxVKis92wv2HmP9GIUHHN+af2S
+	HOjMgpWFhQ0wBHADKkLgineq2Lt5dgZ8oUhyL6mGOvCXVCDoQroqdHe6VQAY0FuEe8d7Ca
+	T+RPb+bmMipVgKPQ9OGfbGdj0Di6m2I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
+ v4l2 control
+Message-ID: <ahhiuf4is3wnukzgaschey6yrea5qfmmggcon42brh2pp2wrzn@aq3wnluvihtl>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
+ <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
+ <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
+ <20250907200811.GB19568@pendragon.ideasonboard.com>
+ <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
+ <20250908134735.GF26062@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CY8PR10MB7124:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7c5202a-0aec-4995-3596-08ddeee69eb8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UD5ZS3neGj2nTOQWo8ZaDfvR083y0zZL4aVTEm5HjkFUWQ4PQtp5eBS7EfBz?=
- =?us-ascii?Q?7zr+PDJSQUs5dTsO3gYAOWy6xdQ6E78fgqsfj3VjhrAJJw1phjwOH6y+/lCW?=
- =?us-ascii?Q?F+i3qR3V3yPuHtXuKmWfTiZdRWOJsB0zoF2gXMQ/sKsy5CuvjnGPgltHDHIQ?=
- =?us-ascii?Q?2m/8LJEjJ/Nb+0zGO+y8KDe/iTxG5OmVFEHCwYZjzudSutecwIJtAEhUOqlJ?=
- =?us-ascii?Q?xK0QECcm8K5KWpWEmSj5zf4yo2rM4Nn8RCIxhPAJp8V+fEyLHzlgxpdWSvqQ?=
- =?us-ascii?Q?83E/QZMp3/Qw/JgpBUmIBuEpsFwmjdrqc8R4sWCYDaG4uNVM0Inzp3HCRVrm?=
- =?us-ascii?Q?UzK5Z8cNb3k758Xz0E2fenihRPmAwdsLrDvxTUc64qDFIVKNyTzYrlRD3aSL?=
- =?us-ascii?Q?+QJSxvjtspnq2sF6/NVPWpi8MFpt0wUQaa8/MLdWBqS6VQVlyzQnD4xKcSLK?=
- =?us-ascii?Q?SDfuV1NZj6DxRZ5z8vbF2jyV6HuACm3HN+ceuso6PDCxNlw+dwggUmg2zd78?=
- =?us-ascii?Q?x3hCo14Z4CkQYIIIB+0HUX9NH1cMjjnHJAckGyCH3A5HwYdVa6TmMDKN1Zth?=
- =?us-ascii?Q?l3E1ORdozCO6tcGzFkbQMUfLbhn2sfH4vJbhwQJAVn/tLgwxGUD2fW+U+6qT?=
- =?us-ascii?Q?FXKYDiICtJXgP5JpBJaMbBu+kVfXydsa6qqcofxwCQYZggh1LbyrsTPAKE93?=
- =?us-ascii?Q?JNAbO4hHlZIzLBJiOkoWrLNjsTTeDtznQxGStsa3W9497JrJuKPjkVPRjmMS?=
- =?us-ascii?Q?TCwDq057Mo5h5Sh9xQ9hFv+5jNfOfvehfqAFO9hd2zuxmbfE9vcrs5dNpeMD?=
- =?us-ascii?Q?re8VcOFweYzTvRejbA1+X1uulcXNXzQPRBCUOw3aX58F1GumgV8yZRO9SJ3o?=
- =?us-ascii?Q?bM/zOijNIVyZj3a90NUxanIWoaIPYsRbiADHM1dgi96nA4ODIHA48Qj2afuG?=
- =?us-ascii?Q?cJniQQ8Eoc69G33dIAQfGYYPQ8FzHo3LYZiJfCRtmjYG/A1n+TY5hMzScmC8?=
- =?us-ascii?Q?Pl1MqdMasMRHApWgJtKAVZzodsLzNoCd9JXrAMBvntjnz5xQoUIQsWjFp/KJ?=
- =?us-ascii?Q?6+zv1x4XvIp2HVdkdgmcwBS5YBGsoTGesnqV9mH90EysAV4UeWQCw42HlvgO?=
- =?us-ascii?Q?242rLG2ufQMGg3Hs7ENHuMm40D32eNuIxThnEOJYa6cqyhQ/4Ki5N9zWkqmX?=
- =?us-ascii?Q?MmOHy4km4psbdQlXUXNkjQaqOfbesAQOA+iP7NRmFvOh1cg4RFnbMMmaNJlz?=
- =?us-ascii?Q?aNNsM0uWd00EtEm7Ir0muE96ClzOyBzY6oYJ4i2RrlW8qI4R2ZM06xRWm1QC?=
- =?us-ascii?Q?aMZiu0rQL/pH0H/XCiExZs0U4oaxin996GpTQJvFMzNXLoU8n4Oy59P2CI9N?=
- =?us-ascii?Q?JMUuYQdZ8g40F/fDYxIK/fSsEa76ITqd3Lolkcp69bIrL65ykvq2J66IYC5m?=
- =?us-ascii?Q?PMsntZRprlk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4LXhsIpTD5pgO+PmqFGx3laXKWisEX2KE8hGy7VyRn3xZ3lKHsSgH1qbMElo?=
- =?us-ascii?Q?+haESlNl9kerssXUewx2i7DPyYc26AuK/8MAZqCLG4790TCrfnJDg/fXrJ8v?=
- =?us-ascii?Q?eMuY4lMZobwM41u6MyjYVm1/l3nJ5ltetCFEebL2h+HWAIC5nMQeet7xS2L4?=
- =?us-ascii?Q?7fqHOg4R0XwUKWj2RGcMa4ch+O5a6Ing7mEzecUpQhskUzVwolQpfHP9cwlc?=
- =?us-ascii?Q?rd40ZNbmMkQ7Lol75oC01guGXfCF4IwCmEJ4lvdZyMQ/dBkTV3/MSk/ksVY5?=
- =?us-ascii?Q?q+OdWnYTLiwU8JDCF8huBGnBLQsD7nsquQhHLM310jLm+kEwjvX4qhaTI8vf?=
- =?us-ascii?Q?bbhi/earM2TJN171t1k5naqqdzfOT3lXrZZSqqda/n4Rtry6/aCvHeU5YGAH?=
- =?us-ascii?Q?44nBDCK6dnBBZ41T8oGVUXHnM9eiYHlCVPV5WyDYfAfawKBgSF2UxBYYX17U?=
- =?us-ascii?Q?McdnxUTYxNk8pRNH8Zryb85DiDBCDLtnaq4zNyD3vT5JfmM2BtjQ1K5AsDXr?=
- =?us-ascii?Q?P9Wro1sNiKg+ld8myWLFBCA2wbFcJDTINrQiep035CMREnKRmMqOdcXlnVYF?=
- =?us-ascii?Q?NlIyde+QojIPtRVeBm0q9daK/Yj3wzvPevdQVJ8DOprOfXvuNJbumz7syqHn?=
- =?us-ascii?Q?sxuYgZyfqDEF7gt5I8M0kGUf+kNnCxyl3Gmyad4DIE8dilOkuoioLDqAu0xS?=
- =?us-ascii?Q?Q2bG1Y/AVNOhwzir2ZokAT2PnXuLWTfI8LlIxFHvZh50F5EPlpxOFbWgoAOh?=
- =?us-ascii?Q?5eVZL6g0Cudxosd4Rm4ka/xF+6cHdgymNTwpiZbcYrUqLYxmeVU91+MRp1DQ?=
- =?us-ascii?Q?rEBaLJTiMExacT5vYViwetxV/ONMrAJrtt9cVRqOpqoJVOCwGYyo1ZLrSnDJ?=
- =?us-ascii?Q?brEVeI3PZ33Rir50MmDFPC4phWzOQ78eLE6QOyeBNG0XIQqPk1/ycS4MO3Km?=
- =?us-ascii?Q?WgR0hIDGH7Tifc8dR7afZpcdDr7DS2otkPF1PEWCNkgGABP28YTv31QH+ro7?=
- =?us-ascii?Q?nvNTEWVhDXqPRI6voRRnGof5IrKdDNRRvTXfiNFf+5lHm0gDJpAnd8gGQEAw?=
- =?us-ascii?Q?exbn8MRCWvJEvLJxCfKDZbMl1NJHpuGqlzp8DNoYs1XPlJweCPwDxJfMp4mX?=
- =?us-ascii?Q?RyVoFKJaJbFDZUyFO2g7D4jvCM9ZYbbHq1FjO+l6sog1fJdgxgqDva6IIqB2?=
- =?us-ascii?Q?PyJfz59QP7LLdz7GVKUsA7qmtmGBSoWS60xUUrw28/SX868xdlZC6sHQjEG2?=
- =?us-ascii?Q?Ar5qwVF9m0OSaSLsioEHvGdcHrJCH86lVmBRnxxBBvkSamOaziHxK9u+42c0?=
- =?us-ascii?Q?Z67z4QzHVA4ndw5f4N7jFHUPlw5mNj6BLEL5xk0sj+wRy3RuI5fS0GHYji7H?=
- =?us-ascii?Q?HIWj9aE4G26hHmqyVp0IobAxA34G7rB5wrgL9/f0LSYE5GRwNNC2+f3qFBSN?=
- =?us-ascii?Q?rjU1uTPSvWzHZ3C/KfDBJtGp1ov/mBVgYGkmb4yKtszF/pnHUzYV2atElmBD?=
- =?us-ascii?Q?AMkxj5hTPW5fKu4GYB1DfF+g3aBV23LrKlqExOqwelPMTsqlDSAvK3jLN8sY?=
- =?us-ascii?Q?jL3su2+6uZ3CJATfkwPvnT3ocAo+SY7xfghmyNVI?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	cpjq9peTF3lfs07lKx0tjTjBKqfOQxa4gQdiQ+AGaWg0eMCqeo6fYucAJCvc95cGXHyNT5RDOLoSdOYXy8zwmaRDon9qz5YqnybUCI2FmmSWxG6TQn1CU9mJdLoDnkeB21nCFkcn5+1vfukh6x+iAWdd6YgEm17HTq4cRmgdpeSqToZHPCtDEc1tqJr6uk7OnMW0OOPBdNQA/RGLdv6bzDIBCfqQzqg19nHFlocFdO992YQ2JR4TYsi0jQSizPCouLOtNIPMqNdCwxfY3cm2FDp3K+hkoRIjxvUIWUK6z57RDAsIE8BAh4rdpjVIWzWK7Ii6kOnHdWhQJErCVGAs120OAANZAvGrlo3UHuC5Nao2wC0awuNgoTi8ij6/Lf5B68+bGhENQl5+ar+OoClWPyGyrMDhkLdYqp7OudJLJL9D1LyRwQtvTyEJAgj9+I7WguNSfYcerTkPgNb1MSoF7jR/9A9LmVtPt7dvZbnQkQ/HHJxgQpY2SfCkHxVsgq8lImlAifpEh0M4jtfdJrb3AWjdZ2UNnYj1fFgpBSx54RNl7CX8OJHE8DNn4eHmqL2VTvFogLVGrDu6Wvyh1Gbk+VB+BVVvkwVxfuYg0K4amt8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7c5202a-0aec-4995-3596-08ddeee69eb8
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 14:47:23.1545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: njFIleSu5i+m7qpnas+227UIotViKA8GgrqiY7lA1hMg6bbgWamzKZUXzHItQDC2+2r8AcCXFAAFYSwNnx8e/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB7124
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- bulkscore=0 mlxlogscore=905 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509080148
-X-Proofpoint-ORIG-GUID: 2WC82P-SqBHKbG6t-xZppjATVRx0FcXE
-X-Authority-Analysis: v=2.4 cv=ILACChvG c=1 sm=1 tr=0 ts=68beec7e cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=Hrko_yQyW2PJZ5I6pXoA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDEyNCBTYWx0ZWRfX8Iy6nQiNAiSv
- NIFl7KH4NE5iLEn3lj/TGM8LhxFr3ZUGGTHnfAgj26j81vjS0H5dnxf8uwyJfy0Q/AaXl6tgVti
- gGPYWQOELtwV5JATBofCBVCWA7DvqvrDM+ao14ktDI8jSTLgrKYx63Ar40FlIroMfdFzzNevyHs
- bOvgFft5fczneqTIPXoQUXQVYxIK82EwmXyaLXXE3bnGGXYMZgZyZ4yoXWZN+I0T/9j3qFb2wrm
- 9rxJLqssZ4uGFextJgkx2tsXXh6Z3nrXL8/K3YupFGG21enClhqEoH3uzj7DmGBnkeVAwLh1QVm
- /nZlN/ueW8AA56PJEygRM+Yi4qCjCqSQWpkTXtLzDoNkvHHI7Qz59ew2C7HKRpn2Kd7wDw0bbqE
- 89PiVJsv
-X-Proofpoint-GUID: 2WC82P-SqBHKbG6t-xZppjATVRx0FcXE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908134735.GF26062@pendragon.ideasonboard.com>
+X-Migadu-Flow: FLOW_OUT
 
-* Yajun Deng <yajun.deng@linux.dev> [250908 10:06]:
-> If the anon_vma_alloc() is called, the num_children of the parent of
-> the anon_vma will be updated. But this operation occurs outside of
-> anon_vma_alloc(). There are two callers, one has itself as its parent,
-> while another has a real parent. That means they have the same logic.
+On Mon, Sep 08, 2025 at 03:47:35PM +0200, Laurent Pinchart wrote:
+> On Mon, Sep 08, 2025 at 02:09:06PM +0200, Richard Leitner wrote:
+> > On Sun, Sep 07, 2025 at 10:08:11PM +0200, Laurent Pinchart wrote:
+> > > On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
+> > > > On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
+> > > > > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
+> > > > > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
+> > > > > > "strobe output enable" feature of the sensor.
+> > > > > > 
+> > > > > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
+> > > > > > tested using an ov9281 VisionComponents module.
+> > > > > > 
+> > > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > > > > ---
+> > > > > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
+> > > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > > > > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
+> > > > > > --- a/drivers/media/i2c/ov9282.c
+> > > > > > +++ b/drivers/media/i2c/ov9282.c
+> > > > > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
+> > > > > >  				current_val);
+> > > > > >  }
+> > > > > >  
+> > > > > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
+> > > > > > +{
+> > > > > > +	u32 current_val;
+> > > > > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > > > > +				  &current_val);
+> > > > > > +	if (ret)
+> > > > > > +		return ret;
+> > > > > 
+> > > > > Please don't do assignments in variable declaration if that involves error
+> > > > > handling.
+> > > > 
+> > > > Sure. Will fix that!
+> > > > 
+> > > > > > +
+> > > > > > +	if (enable)
+> > > > > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
+> > > > > > +	else
+> > > > > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
+> > > > > > +
+> > > > > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > > > > +				current_val);
+> > > 
+> > > It would be nice to cache the register value instead of reading it back.
+> > > Regmap may help (and then the driver should use the CCI helpers). This
+> > > can be done separately.
+> > 
+> > Currently all set_ctrl calls in the ov9282 driver have this
+> > read/modify/write pattern. As mentioned in the cover letter I'm planning
+> > to migrate to cci helpers in a future series to keep the set smaller.
+> > But if you prefer the migration in this series I can try to rebase on
+> > it?
 > 
-> The update of num_active_vmas and vma->anon_vma are not performed
-> together. These operations should be performed under a function.
+> No, it's fine on top. I ask for enough yak-shaving already :-)
+
+:-) great. thanks :-)
+
 > 
-> Add an __anon_vma_alloc() function that implements anon_vma_alloc().
-> If the caller has a real parent, called __anon_vma_alloc() and pass
-> the parent to it. If it not, called anon_vma_alloc() directly. It will
-> set the parent and root of the anon_vma and also updates the num_children
-> of its parent anon_vma.
+> > > > > > +}
+> > > > > > +
+> > > > > >  /**
+> > > > > >   * ov9282_set_ctrl() - Set subdevice control
+> > > > > >   * @ctrl: pointer to v4l2_ctrl structure
+> > > > > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > > > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
+> > > > > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
+> > > > > >  		break;
+> > > > > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
+> > > > > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
+> > > > > > +		break;
+> > > > > >  	default:
+> > > > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+> > > > > >  		ret = -EINVAL;
+> > > > > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > > > > >  	u32 lpfr;
+> > > > > >  	int ret;
+> > > > > >  
+> > > > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+> > > > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+> > > > > >  	if (ret)
+> > > > > >  		return ret;
+> > > > > >  
+> > > > > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > > > > >  						OV9282_TIMING_HTS_MAX - mode->width,
+> > > > > >  						1, hblank_min);
+> > > > > >  
+> > > > > > +	/* Flash/Strobe controls */
+> > > > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> > > > > 
+> > > > > This seems rather long.
+> > > > 
+> > > > It's exactly 100 chars wide, so from a policy point of view it should be
+> > > > fine ;-). But I'm also fine with breaking it to 80 if you prefer?
+> > > 
+> > > That's the usual policy in V4L2, yes. 80 columns is the preferred soft
+> > > limit.
+> > 
+> > So I should break this line in this case? Tbh I'm often unsure on
+> > breaking on 80 or 100... Personally 100 is fine for me, but that's
+> > "your" subsystem/driver, so I guess it's your descision ;-)
 > 
-> Introduce vma_attach_anon() and vma_detach_anon() to update
-> num_active_vmas with vma->anon_vma together.
+> Sakari is even more strict than me about line lengths :-)
 > 
-> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> ---
-> v2: fix a WARNING in unlink_anon_vmas and optimize the code
-
-Fixed all the bugs I found in v1?
-Tested this patch this time?
-
-What about the parent fields without the lock?
-
-> v1: https://lore.kernel.org/all/20250905132019.18915-1-yajun.deng@linux.dev/
-> ---
->  mm/internal.h | 17 ++++++++++++++
->  mm/rmap.c     | 64 +++++++++++++++++++++++++++++----------------------
->  2 files changed, 53 insertions(+), 28 deletions(-)
+> It a line is just a couple of charaters about 80 columns and doesn't
+> have a nice split point I would avoid breaking it as I feel the result
+> would be less readable.
 > 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 9b0129531d00..12bc71bb2304 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -953,6 +953,23 @@ static inline bool free_area_empty(struct free_area *area, int migratetype)
->  	return list_empty(&area->free_list[migratetype]);
->  }
->  
-> +static inline void vma_attach_anon(struct vm_area_struct *vma,
-> +				   struct anon_vma *anon_vma)
+> In this particular case, breaking the line would lead to
+> 
+> 	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+> 			  V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> 
+> 
+> which I think is OK. It's very subjective of course.
 
-Function names are still confusing.
+Thanks for the clarification. Sure. That's fine for me.
+I will adapt the patch accordingly.
 
-> +{
-> +	mmap_assert_locked(vma->vm_mm);
-> +	lockdep_assert_held_write(&anon_vma->root->rwsem);
-> +	vma->anon_vma = anon_vma;
-> +	vma->anon_vma->num_active_vmas++;
-> +}
-> +
-> +static inline void vma_detach_anon(struct vm_area_struct *vma)
-> +{
-> +	mmap_assert_locked(vma->vm_mm);
-> +	lockdep_assert_held_write(&vma->anon_vma->root->rwsem);
-> +	vma->anon_vma->num_active_vmas--;
-> +	vma->anon_vma = NULL;
-> +}
-> +
->  /* mm/util.c */
->  struct anon_vma *folio_anon_vma(const struct folio *folio);
->  
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 34333ae3bd80..de557707c34a 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -86,15 +86,25 @@
->  static struct kmem_cache *anon_vma_cachep;
->  static struct kmem_cache *anon_vma_chain_cachep;
->  
-> -static inline struct anon_vma *anon_vma_alloc(void)
-> +static inline struct anon_vma *__anon_vma_alloc(struct anon_vma *parent)
->  {
->  	struct anon_vma *anon_vma;
->  
->  	anon_vma = kmem_cache_alloc(anon_vma_cachep, GFP_KERNEL);
-> -	if (anon_vma) {
-> -		atomic_set(&anon_vma->refcount, 1);
-> -		anon_vma->num_children = 0;
-> -		anon_vma->num_active_vmas = 0;
-> +	if (!anon_vma)
-> +		return NULL;
-> +
-> +	atomic_set(&anon_vma->refcount, 1);
-> +	anon_vma->num_children = 0;
-> +	anon_vma->num_active_vmas = 0;
-> +	if (parent) {
-> +		/*
-> +		 * The root anon_vma's rwsem is the lock actually used when we
-> +		 * lock any of the anon_vmas in this anon_vma tree.
-> +		 */
-> +		anon_vma->parent = parent;
-> +		anon_vma->root = parent->root;
-> +	} else {
-
-None of this is worth doing in this function.  A wrapper only makes the
-code harder to follow.
-
->  		anon_vma->parent = anon_vma;
->  		/*
->  		 * Initialise the anon_vma root to point to itself. If called
-> @@ -102,10 +112,18 @@ static inline struct anon_vma *anon_vma_alloc(void)
->  		 */
->  		anon_vma->root = anon_vma;
->  	}
-> +	anon_vma_lock_write(anon_vma);
-> +	anon_vma->parent->num_children++;
-> +	anon_vma_unlock_write(anon_vma);
->  
->  	return anon_vma;
->  }
->  
-> +static inline struct anon_vma *anon_vma_alloc(void)
-> +{
-> +	return __anon_vma_alloc(NULL);
-> +}
-> +
->  static inline void anon_vma_free(struct anon_vma *anon_vma)
->  {
->  	VM_BUG_ON(atomic_read(&anon_vma->refcount));
-> @@ -201,7 +219,6 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
->  		anon_vma = anon_vma_alloc();
->  		if (unlikely(!anon_vma))
->  			goto out_enomem_free_avc;
-> -		anon_vma->num_children++; /* self-parent link for new root */
->  		allocated = anon_vma;
->  	}
->  
-> @@ -209,9 +226,8 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
->  	/* page_table_lock to protect against threads */
->  	spin_lock(&mm->page_table_lock);
->  	if (likely(!vma->anon_vma)) {
-> -		vma->anon_vma = anon_vma;
-> +		vma_attach_anon(vma, anon_vma);
->  		anon_vma_chain_link(vma, avc, anon_vma);
-> -		anon_vma->num_active_vmas++;
->  		allocated = NULL;
->  		avc = NULL;
->  	}
-> @@ -355,38 +371,31 @@ int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
->  	if (vma->anon_vma)
->  		return 0;
->  
-> -	/* Then add our own anon_vma. */
-> -	anon_vma = anon_vma_alloc();
-> -	if (!anon_vma)
-> -		goto out_error;
-> -	anon_vma->num_active_vmas++;
->  	avc = anon_vma_chain_alloc(GFP_KERNEL);
->  	if (!avc)
-> -		goto out_error_free_anon_vma;
-> +		goto out_error;
-> +
-> +	/* Then add our own anon_vma. */
-> +	anon_vma = __anon_vma_alloc(pvma->anon_vma);
-> +	if (!anon_vma)
-> +		goto out_error_free_avc;
->  
-> -	/*
-> -	 * The root anon_vma's rwsem is the lock actually used when we
-> -	 * lock any of the anon_vmas in this anon_vma tree.
-> -	 */
-> -	anon_vma->root = pvma->anon_vma->root;
-> -	anon_vma->parent = pvma->anon_vma;
->  	/*
->  	 * With refcounts, an anon_vma can stay around longer than the
->  	 * process it belongs to. The root anon_vma needs to be pinned until
->  	 * this anon_vma is freed, because the lock lives in the root.
->  	 */
->  	get_anon_vma(anon_vma->root);
-> -	/* Mark this anon_vma as the one where our new (COWed) pages go. */
-> -	vma->anon_vma = anon_vma;
->  	anon_vma_lock_write(anon_vma);
-> +	/* Mark this anon_vma as the one where our new (COWed) pages go. */
-> +	vma_attach_anon(vma, anon_vma);
->  	anon_vma_chain_link(vma, avc, anon_vma);
-> -	anon_vma->parent->num_children++;
->  	anon_vma_unlock_write(anon_vma);
->  
->  	return 0;
->  
-> - out_error_free_anon_vma:
-> -	put_anon_vma(anon_vma);
-> + out_error_free_avc:
-> +	anon_vma_chain_free(avc);
->   out_error:
->  	unlink_anon_vmas(vma);
->  	return -ENOMEM;
-
-Your plan was to reduce the complexity of the code by isolating
-duplicate code in a function.  This hasn't panned out in this case as
-the code is much harder to follow.  For instance, the parent logic was
-spelled out before while now it's in __anon_vma_alloc(), which seems
-unexpected.  It is being initialized in the alloc function..
-
-You had to add two functions for the two call sites, which is a hint
-things are not going to work out here.
-
-Reversing the logic above resulted in a different but similar undo steps
-while hiding what has happened with the anon_vma->parent.
-
-This isn't simplifying anything so I think you should move on.
-
-> @@ -420,14 +429,13 @@ void unlink_anon_vmas(struct vm_area_struct *vma)
->  		anon_vma_chain_free(avc);
->  	}
->  	if (vma->anon_vma) {
-> -		vma->anon_vma->num_active_vmas--;
-> -
->  		/*
->  		 * vma would still be needed after unlink, and anon_vma will be prepared
->  		 * when handle fault.
->  		 */
-> -		vma->anon_vma = NULL;
-> +		vma_detach_anon(vma);
->  	}
-> +
->  	unlock_anon_vma_root(root);
->  
->  	/*
+> 
+> > > > > > +
+> > > > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> > > > > >  	if (!ret) {
+> > > > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> > > > > > 
+> 
 > -- 
-> 2.25.1
+> Regards,
 > 
-> 
+> Laurent Pinchart
+
+thanks & regards;rl
 
