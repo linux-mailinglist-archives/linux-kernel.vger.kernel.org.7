@@ -1,55 +1,63 @@
-Return-Path: <linux-kernel+bounces-805767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747A4B48D29
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 797E0B48D09
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3038E164F73
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4FE7168F72
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671C62FE05B;
-	Mon,  8 Sep 2025 12:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECF2FC01B;
+	Mon,  8 Sep 2025 12:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kBmgcFhJ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fW6cjW2L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB0F2248B4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C89315D57;
+	Mon,  8 Sep 2025 12:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333765; cv=none; b=Od4woKv4+xIWqLsCe5FExnTy38i0WK83cSEJ1GTHXeFF/MqFQ2xHMSz3OZl8gb15x7pYvbNo271SP3DHmY1V3h0eSdWYkM8Ms3IYqi+gmQXxsACgSH+xuY4c8cBto1RZu531juzZdl1Hw8p6hz5tkD5HA4IjQH14m7aKLXzcd08=
+	t=1757333601; cv=none; b=pLa/IBZMNWx1UFExP2Kdzds7qXg7HamBTd+rDBLepkgiHgOsHs5mE3Viii/4tLBo1Kl1jlw1NaujLC3ZoQ3mY9EHKY8TMHd3f/GD6jh5TiIenw8zQUtP4ScSTA72c+uFbV0SSkPI30/2aNOPL3Siwxwe1y0G6mGHibOeeWK0DIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333765; c=relaxed/simple;
-	bh=Yzki8UK5ivqU+xZSbkykGPPBdjgGpNIeynzagZ7/ITg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IDWRppPYHzl3y8iEjMobSisviJihmj+3NuXZWExDWFEOfEO97C1vYcf8i++/falxsBtd26kjC9sTEzgRkHSmhfU3P76QRS635uqXZZfuzoYwa/Jz5BZrKwkGUX7wA1xw3gWgEbaHTfs3Eu70oX9Am9vCqTzwBmYY2R2tBhGO9LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kBmgcFhJ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757333751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OI+lrpmwu6GMZxyp0oEbI2hfIoT0pSRjcFrJLPV8SDA=;
-	b=kBmgcFhJF/0Bvc4I++B+oTSQb+1XkD90qSxBoHYPtw4ApxYKm1TRI9v+tkBDGQPaTNH6EI
-	r7QV2LNXGRS4jtG0yZfS0/krjXEx2WdNhfn2dOKo+woY6gCOQBTptwvgpqTzT5f8SDh/rl
-	/zhpUon9FVE8fm41SsOOXiCcGX5FEr4=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-s390@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] initrd: Fix unused variable warning in rd_load_image() on s390
-Date: Mon,  8 Sep 2025 14:13:04 +0200
-Message-ID: <20250908121303.180886-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757333601; c=relaxed/simple;
+	bh=epcr8vXWo27xn1G3na7S3kMbX58DE6xb7OS8s4HtZkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N20P/KxbD8VaxRkeXVpQhsTNCg0xNRb39XG/Qoo/Od98Wo4b77w8LsI61Bhc7pFxZE8xzVwuDq6ZxzDpiBAdEbvoVrfUDtgS078YG6txcopc2+yzV/IUVIqw7bB0yWijsNzfmKJOm345NQ7QDRLDXZeXYtE84Ee9BiWaJIAo1Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fW6cjW2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA4BC4CEF1;
+	Mon,  8 Sep 2025 12:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757333601;
+	bh=epcr8vXWo27xn1G3na7S3kMbX58DE6xb7OS8s4HtZkg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fW6cjW2LH6VyalH3xc3j6nP9GGtXgHxBjGEKuOD5F29nRREhq+2Xs/2G6mzc3W+/x
+	 EWTpJoQEBbAROr9YYccc7wRap/ovIsPfBub4xeOpnnZYwQxdcEtXykw9n+rqErpZPH
+	 0NFJ8bfeOic2JKgXKQcYUBOqfTkX3dYTS1ERSNEVC/GHmmn0oQKR+Fl1JyPJdKxuO5
+	 JdHqjfd6cCRj2j+UYCJ4xgLqlzMy9riW90v8QKc+zT8B6KvfN57Evh027wWA4LgI5Y
+	 q+zy5tj3tHfKLaJawImUbsMEgaNl7AtECbcx1tPrswXSccHyipsC0DOGxTxIH1emYd
+	 bTf/m36i0GUtw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCHv2 perf/core 0/4] uprobe,bpf: Allow to change app registers from uprobe registers
+Date: Mon,  8 Sep 2025 14:13:06 +0200
+Message-ID: <20250908121310.46824-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,50 +65,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The local variable 'rotate' is not used on s390, and building the kernel
-with W=1 generates the following warning:
+hi,
+we recently had several requests for tetragon to be able to change
+user application function return value or divert its execution through
+instruction pointer change.
 
-init/do_mounts_rd.c:192:17: warning: variable 'rotate' set but not used [-Wunused-but-set-variable]
-  192 |         unsigned short rotate = 0;
-      |                        ^
-1 warning generated.
+This patchset adds support for uprobe program to change app's registers
+including instruction pointer.
 
-Fix this by declaring and using 'rotate' only when CONFIG_S390 is not
-defined.
+v2 changes:
+- moving back to original change without the uniqeu/exclusive flag
+  as discussed in here [1]
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+thanks,
+jirka
+
+
+[1] https://lore.kernel.org/bpf/CAEf4BzbxjRwxhJTLUgJNwR-vEbDybBpawNsRb+y+PiDsxzT=eA@mail.gmail.com/
 ---
- init/do_mounts_rd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Jiri Olsa (4):
+      bpf: Allow uprobe program to change context registers
+      uprobe: Do not emulate/sstep original instruction when ip is changed
+      selftests/bpf: Add uprobe context registers changes test
+      selftests/bpf: Add uprobe context ip register change test
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa..cbc4c496cb5f 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -189,9 +189,9 @@ int __init rd_load_image(char *from)
- 	unsigned long rd_blocks, devblocks;
- 	int nblocks, i;
- 	char *buf = NULL;
--	unsigned short rotate = 0;
- 	decompress_fn decompressor = NULL;
- #if !defined(CONFIG_S390)
-+	unsigned short rotate = 0;
- 	char rotator[4] = { '|' , '/' , '-' , '\\' };
- #endif
- 
-@@ -249,7 +249,9 @@ int __init rd_load_image(char *from)
- 	for (i = 0; i < nblocks; i++) {
- 		if (i && (i % devblocks == 0)) {
- 			pr_cont("done disk #1.\n");
-+#if !defined(CONFIG_S390)
- 			rotate = 0;
-+#endif
- 			fput(in_file);
- 			break;
- 		}
--- 
-2.51.0
-
+ include/linux/bpf.h                             |   1 +
+ kernel/events/core.c                            |   4 +++
+ kernel/events/uprobes.c                         |   7 +++++
+ kernel/trace/bpf_trace.c                        |   3 +-
+ tools/testing/selftests/bpf/prog_tests/uprobe.c | 156 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ tools/testing/selftests/bpf/progs/test_uprobe.c |  38 +++++++++++++++++++++++++
+ 6 files changed, 206 insertions(+), 3 deletions(-)
 
