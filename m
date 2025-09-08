@@ -1,106 +1,91 @@
-Return-Path: <linux-kernel+bounces-805699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2B8B48C72
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:44:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD07B48C74
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E65734E143A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2557B4E143A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E4A2EAD0D;
-	Mon,  8 Sep 2025 11:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83A02EBDE6;
+	Mon,  8 Sep 2025 11:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="m9zkb6VF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PCN0wBrb"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y7pAgs1A"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB91C4A13
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A403E226D1D;
+	Mon,  8 Sep 2025 11:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757331877; cv=none; b=DnA/Yw1+tadnQTcIfp5lzuRhzlAHT9wHEKY7GZNft33/dt1alQcH3r+Bw3weA+Ut4W6LM+TtKL0aFQ9e4jn3BSYbZHSUFbSb/YcUH6OtOwcEjteq/5tiWP8ehGkKOTEhEGHUjCjIPto5tk6WH6wxWgUvnzx45yP1GpXNzM4OIbo=
+	t=1757331886; cv=none; b=EDVkxaYszlaKK7DrT79qfetRLdj1fGhR28Dw6MqVK/e/Roz50yd+8f9aGa9Xj72YfP4javXl/QCl9lelIgqNWQShd0w2eLg0jqvjTEDFSbpuiPl1bfUZxlmSBFU4LkixnQKi3rTEwgnlcvHMSAC+dh/FCqp7OQkSxCnQ+x2z/f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757331877; c=relaxed/simple;
-	bh=ztnAIztCBmv69HlVuR8tyu4Z+36QEqwTR6s9pJWf2Xw=;
+	s=arc-20240116; t=1757331886; c=relaxed/simple;
+	bh=FV1Jx3UNOeEL+L5Nadv/6Gyn+nvsh38hfa6Cnati12g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+ja1tLILwIjIT3S9JdWP9PX9eS6Wb338kvV+C6f6I/taL+OqIM01r93qwHXrTcl6DPsHqF+6/2Oqr+AGMWiDF3EJlvrg60MqBADsC5i/gfcayYNFob5IU31CXCva8lxgO3OuBnZyuOjVRiF0pGbd1Z4qWkkrqssejHteFJEsBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=m9zkb6VF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PCN0wBrb; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id B79C71D00123;
-	Mon,  8 Sep 2025 07:44:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 08 Sep 2025 07:44:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1757331873; x=
-	1757418273; bh=1M6/UFGInIle7I4iejjoxiDU7Sww+aQnTkk7qcbEtU8=; b=m
-	9zkb6VFOIq0HW4QIkQ1OJ3y/juJMppAKqe5MkfooPayKfZcHFlc+Sa2ojxMqlvaI
-	fVAPWGDV8prgjieBmETpp+XB6QnzQUJVQfXeMTUo3UDrtdWDhGiicBdO9brB7ku0
-	YiDQUnZAlgN5uB5CaPGHyNff57Zn14/XkSLDcm9qlDy2y6qJBaOjlZXL8329eCuF
-	tTButgPMktWt/C6qN17SM3FltWsPwq8J9yIPATGOmQvsTd+1YsBLi41g32RFAnKR
-	wlOTFWUyZWE+UioAoFg30dludY319KeltPBj8egoLw7ROtShuxFmLh2Hktf+e9F5
-	zeAa1/8i3OfkqXu0aeckg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757331873; x=1757418273; bh=1M6/UFGInIle7I4iejjoxiDU7Sww+aQnTkk
-	7qcbEtU8=; b=PCN0wBrbABxYccXGJZDikdONsTsC03ptoTDtm5uNHBlen0tfl1x
-	ok73M03gjgP7uij9dXp9X1jN3x8UmGDf0okFVFXzKP0qZZZFRlqathoe+zIDOzL6
-	yNwkF5u7b49jfWCbYBnhqfEwIfUEtEAk4lq9GKvq80RBWZi3+Xr6KKS1F0w3rkVg
-	S26kmJOVL6KzyE54UqODJ6Ayyeh+G4XjKbN804v5gMCf7qb74eqQXTnvsaTCpnj5
-	lkio0umhOUs/1+QyzrHBxrtzWwdxcnqXPRRX8e1QyWlsUZoJ6jp2L0A5yIanAQxO
-	DL2BcO5TY2E2PBQ9aKpstx96xOOKz064stQ==
-X-ME-Sender: <xms:oMG-aNR5aaou8QNKPZKjicpBepZMxlJYbNo0TS9-GkmleqWlHpchNg>
-    <xme:oMG-aL5tcQMR9gRjS8zwH_AV9Mgko7E-ltq8HIDbiPLb0AHU4kAJVTvex-dCYQto0
-    EVDMSgeEUSkroeQGuw>
-X-ME-Received: <xmr:oMG-aKF3vZ7KEOaVbHzp25HLt5z-wkkMNXtd43p4Aa4fu4J549nL66re02jjlA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtg
-    homhdprhgtphhtthhopehlrghntggvrdihrghngheslhhinhhugidruggvvhdprhgtphht
-    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    eplhhirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopegsrgho
-    hhhurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrohhlihhnrdifrghngheslh
-    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguvghvrdhjrghinhesrghr
-    mhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrgh
-X-ME-Proxy: <xmx:oMG-aMl2QLRT8ZCKU--qj0-QdPEwj103k9SI3BILRZJIVroYLPJvzw>
-    <xmx:oMG-aNB8mrbAiLCv0uauz2C7hv8A5FS3JI_Wc9gns-YkR_B4h3R3Ig>
-    <xmx:oMG-aLHuZODXafUej9Lqit4xCQpVYNStpthQ1prIXYzNwWWfkDYtDg>
-    <xmx:oMG-aB8r5D4-6Rv8z1wzddUhfkKG6iyzOHMu_HeOBqV9_ZmTsfErxA>
-    <xmx:ocG-aChYG45PeyLgXn5kT18rcrMPTTFisFnct8kCUi8mtMqhztdB1vci>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 07:44:31 -0400 (EDT)
-Date: Mon, 8 Sep 2025 12:44:29 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org, 
-	Liam.Howlett@oracle.com, baohua@kernel.org, baolin.wang@linux.alibaba.com, 
-	dev.jain@arm.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com, usamaarif642@gmail.com, 
-	ziy@nvidia.com
-Subject: Re: [PATCH v2 1/1] mm: skip mlocked THPs that are underused early in
- deferred_split_scan()
-Message-ID: <5j6i2o6umqwxabdfncbrdytmvdma4yrraxe6hu4csckcniduya@sm3mlablwbad>
-References: <20250908090741.61519-1-lance.yang@linux.dev>
- <niywtremc5kfhs3lenmfxvbiiizyexnaw3m25twedmzovfoeno@lk2o46tfdklk>
- <9a0c07b9-5bf0-4251-8609-fbaf0ca75bf9@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaXdc11oXkyUo1wmDA0gDLLgDaPUHBVKSkvMErkjcw6zUO8Uwb5xQFV5RFsSih3AsKOJE+4L6j9jpkkt20WiEWkAXg2c3NvHokTW7JKwEKbmo8HmwmPCgO0ukJ3jHD4M5IjtjnRjucpdOnxcBVWadVyxdhyhrVmMcA7thFtlMQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y7pAgs1A; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Bg3kB011739;
+	Mon, 8 Sep 2025 11:44:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=qG/xnkIWK4PuLPbvFIRXIRHxq2k2EO
+	2GObCsaIP6WSM=; b=Y7pAgs1A41MTIdx4808aIXhO9ICG8HSOOpbH9xAuKbvpby
+	/mgYPVXVi1u02Pnf/DkX/p6cnRlnTwGW5DXci0T3c+MslxUdrnXCena2lLddILmB
+	PJJFcKQa035/jMS7GfHvybzEZ54n2C4HQ68hzY3tvMbjl5dtzvvM4giIoKG7BUJ7
+	YoQkQ9DQz/To6VzSDR6Qy60AUdeolZCpJ3tZUfKGSWkQY1do9CuljWwHzamaZWe4
+	YvSkZOlg22yfGrXK7QhA8aRgQ4v9ZcDN20nbrEn5TkadEK1WW6aXai8SOLe3P2d1
+	mKJ1Qu/JzM1i8RJH60u8HhitsEnaXbw9rGwwYtsw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycp0ru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:44:37 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588BgrQd016424;
+	Mon, 8 Sep 2025 11:44:37 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycp0rt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:44:36 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5889oEij017227;
+	Mon, 8 Sep 2025 11:44:36 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gm5p43-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:44:35 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588BiW7t48300348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 11:44:32 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65BCA2004D;
+	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 135412004B;
+	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
+Date: Mon, 8 Sep 2025 13:44:30 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+Subject: Re: [PATCH 2/2] s390: replace use of system_wq with system_percpu_wq
+Message-ID: <912c038e-b03d-432d-be24-54c0f90193fd-agordeev@linux.ibm.com>
+References: <20250905090857.108240-1-marco.crivellari@suse.com>
+ <20250905090857.108240-3-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,38 +94,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a0c07b9-5bf0-4251-8609-fbaf0ca75bf9@redhat.com>
+In-Reply-To: <20250905090857.108240-3-marco.crivellari@suse.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xd6P9vjBWpEvTMRhGj_a7wVvwWzpEyrC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfXyVuFxx0gGQke
+ 1zslHwRri0qblw4OXkpXP62wi5j8ur7tGK60TuzvEtzbox67E3buhWBsSVAai3FK/1ma6Wboj+k
+ P6VtYVB3edifzhgx++XXT+5NdPOHYDvPEVb7vNa2dFwNBjiuTAh0xwBc1YvJsI2H9vVcGb7M+2w
+ ZioNBSnQN5pdKTdwicNFY9NFfarPnYobI9EEA6Tm+ew/MwlsXmhwXBZjYZ79hjVGFk1zcFX7Q3E
+ TxCEe9FyE3i8DxpLYsD05dCeWL/g9TCKPZO9FXc44ZFB8IIyUt0BEfwYtDuDZK4+8bD/KGcBGhl
+ 70nAu1mI60NWIz4SUnWXHi+g78qln5uuwURydMFcwDlMgAGdg8OlhpovHbdbzf0i9OJni0BcIy5
+ cX5meiYc
+X-Proofpoint-GUID: kO6jCdgbmeu7TjSZrGsDOXkLXNUMrzf6
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bec1a5 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+ a=Qu0Jw8_RmZsxXOKw89sA:9 a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_04,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-On Mon, Sep 08, 2025 at 01:32:05PM +0200, David Hildenbrand wrote:
-> On 08.09.25 12:38, Kiryl Shutsemau wrote:
-> > On Mon, Sep 08, 2025 at 05:07:41PM +0800, Lance Yang wrote:
-> > > From: Lance Yang <lance.yang@linux.dev>
-> > > 
-> > > When we stumble over a fully-mapped mlocked THP in the deferred shrinker,
-> > > it does not make sense to try to detect whether it is underused, because
-> > > try_to_map_unused_to_zeropage(), called while splitting the folio, will not
-> > > actually replace any zeroed pages by the shared zeropage.
-> > 
-> > It makes me think, does KSM follows the same logic as
-> > try_to_map_unused_to_zeropage()?
-> > 
-> > I cannot immediately find what prevents KSM from replacing zeroed mlocked
-> > folio with ZERO_PAGE().
-> > 
-> > Hm?
+On Fri, Sep 05, 2025 at 11:08:57AM +0200, Marco Crivellari wrote:
+
+Hi Marco,
+
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> I assume if you're using mlock and at the same time enable KSM for a
-> process/VMA, you're doing something wrong.
+> This lack of consistentcy cannot be addressed without refactoring the API.
 > 
-> In contrast, THP is supposed to be transparent (yeah, I know ...).
+> system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+> CPU affinity constraint, which is very often not required by users. Make
+> it clear by adding a system_percpu_wq.
 
-Yeah, I guess it is user error.
+This paragraph is not exactly correct. You switch from system_wq to
+system_percpu_wq - which are two different queues with the same
+characteristics:
 
-Maybe we should make ksm_compatible() return false for VM_LOCKED?
-KSM breaks mlock() contract.
+	system_wq = alloc_workqueue("events", 0, 0);                            
+	system_percpu_wq = alloc_workqueue("events", 0, 0);                     
 
-But it can be risky if someone already relies on this broken behaviour.
+> queue_work() / queue_delayed_work() mod_delayed_work() will now use the
+> new per-cpu wq: whether the user still stick on the old name a warn will
+> be printed along a wq redirect to the new one.
+> 
+> This patch add the new system_percpu_wq except for mm, fs and net
+> subsystem, whom are handled in separated patches.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I do not see this patch does anything like that.
+
+> The old wq will be kept for a few release cylces.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  arch/s390/kernel/diag/diag324.c  | 4 ++--
+>  arch/s390/kernel/hiperdispatch.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/diag/diag324.c b/arch/s390/kernel/diag/diag324.c
+> index 7fa4c0b7eb6c..f0a8b4841fb9 100644
+> --- a/arch/s390/kernel/diag/diag324.c
+> +++ b/arch/s390/kernel/diag/diag324.c
+> @@ -116,7 +116,7 @@ static void pibwork_handler(struct work_struct *work)
+>  	mutex_lock(&pibmutex);
+>  	timedout = ktime_add_ns(data->expire, PIBWORK_DELAY);
+>  	if (ktime_before(ktime_get(), timedout)) {
+> -		mod_delayed_work(system_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
+> +		mod_delayed_work(system_percpu_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
+>  		goto out;
+>  	}
+>  	vfree(data->pib);
+> @@ -174,7 +174,7 @@ long diag324_pibbuf(unsigned long arg)
+>  		pib_update(data);
+>  		data->sequence++;
+>  		data->expire = ktime_add_ns(ktime_get(), tod_to_ns(data->pib->intv));
+> -		mod_delayed_work(system_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
+> +		mod_delayed_work(system_percpu_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
+>  		first = false;
+>  	}
+>  	rc = data->rc;
+> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+> index e7b66d046e8d..85b5508ab62c 100644
+> --- a/arch/s390/kernel/hiperdispatch.c
+> +++ b/arch/s390/kernel/hiperdispatch.c
+> @@ -191,7 +191,7 @@ int hd_enable_hiperdispatch(void)
+>  		return 0;
+>  	if (hd_online_cores <= hd_entitled_cores)
+>  		return 0;
+> -	mod_delayed_work(system_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+> +	mod_delayed_work(system_percpu_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+>  	hd_update_capacities();
+>  	return 1;
+>  }
+> -- 
+> 2.51.0
+> 
 
