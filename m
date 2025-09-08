@@ -1,174 +1,174 @@
-Return-Path: <linux-kernel+bounces-804970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5C6B4827D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D57AB4827F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3727AA189
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395823B0257
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197651F78E6;
-	Mon,  8 Sep 2025 02:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42B1DFE12;
+	Mon,  8 Sep 2025 02:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRnZS0lD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBSM70Ax"
 Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C3E1F30A4;
-	Mon,  8 Sep 2025 02:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C8BE56A;
+	Mon,  8 Sep 2025 02:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757297181; cv=none; b=peAXsDiW8J05rps9gFjAupeqt70cjlVhJfDQsMjHv/lmDxaFtD2ujvET68yef5CJgBpE6BMtBSGXnT3B1bNOh/ais2g3eo4YkeESotWuwrdAeBkKivoO3EPjyyy0zGiz0um4vcQj4NGNdHGjNHHw6DBQn6LwTXpUxi/7RpN9Fsk=
+	t=1757297315; cv=none; b=TKfBhoBJ1r+Wf4slphl+yhT6+aX+c1tN9yzJ6c2yy0Ga1iIGmL2YsPDFIZ4YFi2cQWfIjjupnP0LZgHDjiRGNGycn41x4o9TK31Wse4g4dZM87yIJ1M9K98b6VENLWvf0epqaHVtLDJrMNfb1NNHs1reZ8CHc0sOQ8TTUiNDtZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757297181; c=relaxed/simple;
-	bh=us1QFzHM3F3Tx5gbB5Xm3+iG8ZcTVYz+MmsqUabv0Ek=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R8ANH/Cg0mYGZolRLv4RC4B0usu0sPrTIpfTdJAiJlOtt5L+TXZZZ8dsJvwkkb7H9dNlJmDP8eD3gkDL7KxO1YO3T/Ls7jNkje0SM49BupWmVgGLQF0w/kRZM5+IENoMWjjgMtX2WbDneMPDdrfmGNu05cYMOMoeI9RPdUHVvS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRnZS0lD; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1757297315; c=relaxed/simple;
+	bh=+6vge6D5Rmxr8sGWIAM2plq0WDBQ7eYtTTfWmyKyGMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eD4hu0D1RZqMFMS9fJWQN3FVL8CkLY5CGbbTC2krSabr8T/tVmLHWf4mHRYcxQZEJYv+NY1lLuJ7SPpS7hXsfKu61fMLXRCQsg4oZqAwYBtkb3ZYpb2NauHT3wjh8qUO6lG8A9A5ZbdISn56GYQkNhWLmzO68VcDEabjAP7YZ50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBSM70Ax; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70ba7aa131fso45198106d6.2;
-        Sun, 07 Sep 2025 19:06:19 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70ddadde2e9so30994576d6.0;
+        Sun, 07 Sep 2025 19:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757297179; x=1757901979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757297312; x=1757902112; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oaBAcVJZNA9ab0l53ugbMEso8fa/CwAwMsudSNPp4o4=;
-        b=cRnZS0lD9FtO77RKFu/PT8A5VmIw7ZZbuL+etD0QxF0dg9Q81SCl4gd9TYHr/8+Ntf
-         sqPlng/SkarW2Lib3T2rnuoPT9J0reAIQGic+Kp2PojRhC8lS5RkTc4SOpv4w9g1yx1W
-         Ps8qB4t7SdpEZmEL9XJ22YVkVQIT1hClkmXsrPSAggjRtTucjc3Kqwth7JGb7NymKYwH
-         CPwKTocWv3l0gZudEGycsXejWzeqqujBUbkFEg6e8lwP2s49GLvxTM9b6EASKmlWwFJu
-         zzlkWwhBN+sGEARgW969lkMJJtWunvk48PA/6bjkBmbaZoKotoajiWgDjGMVRfpySTuI
-         QPVQ==
+        bh=n5wvK9N0FAN5WWE/5m873xnm5UeYdKcL81Y7rv8hpKI=;
+        b=ZBSM70AxDJaChSAH9d6rTkGXMM2j7CLBT+WDeH1qnyC2FMZohUy04AjYhXFsvCZ0A1
+         UjkTNN/doE4j7mz8S3IK8EyNquijZ29/rh4g239Hrzu7ZBh7JJpevzgGoNllA8Dy/pPC
+         nj7sx4bRYmTjBaTv72p+Lh/JGBp7veWISEA8MN1iOW3eA3xzixuiBZhuNAlsyfJfbbZ0
+         tT83+yynBzkOaP7u+UU4MI2jhlgNWdkIfgRdgy2N5purjCISxtu8o6SSK2rjoUWhj8hk
+         WkucKYeIFLztFARVOtqE1HXCXaY6mX2C7JWFAhsn7Amm5LrK/73FJtoFzdIGA6lPlCxs
+         WifA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757297179; x=1757901979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757297312; x=1757902112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oaBAcVJZNA9ab0l53ugbMEso8fa/CwAwMsudSNPp4o4=;
-        b=hOGGJBrf7x065D1AuAawFYKOejDbanO2Zla0In4RXFSHm9DD/sSTAu9HrGTvjClkL9
-         I2GUVY3/Qzj6pgWdEdEAkbkUJVfcD7L/b77fZVRxuWZcQ62k9qR0mooE9G6qsC5mE93l
-         1DJveN3nLV8Ds4FcbZfgmIUoZb89jyKOoWg92Zab/Tf/eDENskvxL/tvhAsSrpsm/25T
-         Z6Smzz1BVCXNalYfAH97B7eBPo0sEc+swUFw2RsFXUgAa0NUm+cr9n0Y2iGzI5Npnj1P
-         LTn5Z750Lvd2xXy49mHviVsuvuEOYgOXpJUtPqUu2xtdYZ4hTEFB4ls0RLih1Q+dZ4xH
-         WIng==
-X-Forwarded-Encrypted: i=1; AJvYcCU0x6BEJS5qloxirIl+QELOQlTqC3/KrJ02sqQSd9cNDfYPTfgHq8OZdc92yHvC+EMNzolaIs4cm8WxQRM=@vger.kernel.org, AJvYcCV2PEeQxQPnrdIqLJtiKXQ0jeFheMLs6UD5YdOJKYFd2PZCdv7UgQlQBZbYBPIAVSUzSz3R94bNEHHYf5MQnx7yDD69@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTPUvoUPjaCIxJzBjGhRO6GSEmVdyosQO+q8G6O7fQCzp94O/h
-	0VcUfEM6m55Qwj638iYDe+s4atS0xPzRc19BL0/E0xJgDavmmTyAaTHL
-X-Gm-Gg: ASbGncvcm76rovw8GiAjZgXL2wfwfl2nix30v79JBPvFcR9VligAd73VEM3soKOnpCr
-	wNs+3x+FKjIriDhYER+z7sWKFqrvIfb4UyRxW56GZLl7H2WcaFB+7K/OXMc/hg9PLQYiQxnfzss
-	VVoQNXYNPAPErIYFcJF84M2v+FaUgILT0Ys2rJwFgGIiXQhIEMFXeMlE7IWhCF6/ST8xm6O6z9x
-	rYPO1INtsEvVDK25w8csOXd/Fi3NEG+pup5aqb8/K87wtI3lr51qOlhH0EsGcUNc5BaREHwx+vp
-	QEgcqhMtboSMDa1kt+BcogyFjt78tX7rGtHzVgQqkytEhBZDKfuf31CQL5YHf4qMZtzz5TWV504
-	S4xXYtucZQpp3Nb9QLH3S+wc0oBeaQUM2sRJXlnqu31SoJtTjzJTNMk5e2FviyrULMR0DTNV5aS
-	eDSh9Ihs7s+vFjOBFIlw==
-X-Google-Smtp-Source: AGHT+IHZ/hD01zVbSdcsMLdVqx/W+/+CcThF2p0btDBB01OxOdC6PVomOpWDgdx2a2KJFxUAqssFWQ==
-X-Received: by 2002:a0c:f119:0:b0:739:f004:a176 with SMTP id 6a1803df08f44-739f004a468mr57212566d6.39.1757297178592;
-        Sun, 07 Sep 2025 19:06:18 -0700 (PDT)
-Received: from ideapad.solutionip.com (wsip-184-179-113-83.ri.ri.cox.net. [184.179.113.83])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72925b87571sm79638846d6.6.2025.09.07.19.06.17
+        bh=n5wvK9N0FAN5WWE/5m873xnm5UeYdKcL81Y7rv8hpKI=;
+        b=HS8qchaM0cw9OQ4f4/9Mtt1ozadhG6tYZzFT+hmcB9+LzJPE1SMxKT9VexYY7oZFmA
+         yoL0iWddLhWVPRl9QZx38WObxxVQ+q3+aVh+vQy0s+4Mxun90CkisnYNvyJD+ZNeh7f3
+         nzBHQuCfsZDu5KTxdvSIURPLLsf66b7F1pgzV5GMDHFbVvGF5zQUupRFEiqyF2yh8WT1
+         6mGgqHQkgop4CuX844ZL29WvUXwsj/2quephv/hRg/DtmiogydplNbeXdj4M4MzEa9TK
+         GO1I7lKEvlr3B0/x/ylwh6foyq951FWSu0qy7XISKaTXAvnWZGVdbOuuFvdRr7rVqge5
+         bgQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxqUvqOZHeOFPpzwnSrUo3aRGMwxlkdS2EhxvVdkG7MKuJJhqGGu8rBhKJHklqoS/oFwyQKoJGX44wOHJfsgU=@vger.kernel.org, AJvYcCX+zFh/XWWlOvXM9et8rVrFePdYEI3dgQbiCCgSPvH6TKno9lX5cA70BA4CV6+tWzndlFGWInzalzGyd44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjjvmojnxU2FzlE11gmqBfM+dmEM76Xbi6ZFr0om1cQsiNb43Z
+	recGQHgSKe8lWDFhT8DVmJEuVhp0P1jpmrBfMS7IFl1vTB8e6PB0HmeC
+X-Gm-Gg: ASbGncuI7mknPMp7qhYG2F9JUIvsTXFtjOM+6OE0SQv+8jfqj4UD67dH8eDc7uX0Hg1
+	Y054U59EZfVJZIlIAlK/8VzGO/4LXeCawsUMac1xllyCZX+8H5zyQfGhqNGS+vmgvtg96KUxaE4
+	v9ftN1xaoqGMEDeAMSpDvWnOhfS0IYMMzbYfyY6r5iKy/6LCQDE/yWWMcSY2oaSXGWgqAe0l8Yi
+	hOvObp+QfLwFILQgEsqCq3ReUnkxmn1K7MxBjhGOXlomrKfIxaXRf8Kgp5kuo3BvRZ6O/5oFM1U
+	P2w7m/uL8rQR8zaakZtVdS8OBwp2AlGDM6o+MI0zLc0gfVxaAXX3wA9FPZATTj2ugVA0GKLinGx
+	dVbhgCjGt7QekMrswUD1MIOtAMQiVoPpA2s3a4U2LJ1wH1eAnPUliX14qqkPX1RVGLj7sLn4lRw
+	WQGhZId3mQ5Fl8J6Da0iTgaog=
+X-Google-Smtp-Source: AGHT+IFFn+9Wl1V9GGuDnYnwGJmjleHmmxMFlIz9m1PHuiCzLvMoC23SgnPGHqbpVUGstOgLkQRAUg==
+X-Received: by 2002:ad4:5e87:0:b0:72b:37ff:b877 with SMTP id 6a1803df08f44-7393950ed3fmr64869776d6.42.1757297312434;
+        Sun, 07 Sep 2025 19:08:32 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720add660desm113280016d6.30.2025.09.07.19.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 19:06:18 -0700 (PDT)
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: rostedt@goodmis.org,
-	tglozar@redhat.com,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>
-Subject: [PATCH v3 3/3] rtla: fix -a overriding -t argument
-Date: Sun,  7 Sep 2025 22:05:59 -0400
-Message-ID: <e4a61cf3416c9b2a2c4952cbc93b4b05a7c3a37e.1757034919.git.ipravdin.official@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1757034919.git.ipravdin.official@gmail.com>
-References: <cover.1757034919.git.ipravdin.official@gmail.com>
+        Sun, 07 Sep 2025 19:08:32 -0700 (PDT)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6C0B0F40066;
+	Sun,  7 Sep 2025 22:08:31 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Sun, 07 Sep 2025 22:08:31 -0400
+X-ME-Sender: <xms:nzq-aPQuKw2s68kWLVDtIC3GHcqYkpKAA1CzsgUsdL4LfdHqoynK7g>
+    <xme:nzq-aCTSYwu-g2B9zQPwohz5aMQ4JdlsKWrTkiA64pJLI98TG0GGiQExM784libKP
+    y2Hgja8p9SIZ3Btsw>
+X-ME-Received: <xmr:nzq-aCeqIpy4VAD5D7BKWG3duzGmhBztCVtV7Nwjm16w0DB4QprpPJidehZEChEml4CJvPARwqK3RicPh9VfFfzBeBbg0ISJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduiedvkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhsshhinheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
+    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
+    pdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
+X-ME-Proxy: <xmx:nzq-aGcvVVpCxSmuqkh-9kgNAt6tQeJbq4eNEgMTg0W4Tx9SAQlrHg>
+    <xmx:nzq-aI9U-KDW2lH0lwoVAy9ooH_h8eauBuPDaAdRKMeEa3DitNvy0w>
+    <xmx:nzq-aGOaJ-bHC0Tu5unGBG1sdHxhf0xS77imWTqCxAgq_83hdWa5Gg>
+    <xmx:nzq-aGVF8CJiu-41RspGcaZoMKkBrnNWK9CsRrpD0ZzCEPoRd2r38A>
+    <xmx:nzq-aGgJeekwSp2ifU4SmNnNbeOfqelcE5ss6jgpeE3es5BH5mhgltS3>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 7 Sep 2025 22:08:30 -0400 (EDT)
+Date: Sun, 7 Sep 2025 19:08:29 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Fiona Behrens <me@kloenk.dev>, Alban Kurti <kurti@invicto.ai>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
+ fields
+Message-ID: <aL46nRkYj2SlOhl8@tardis-2.local>
+References: <aLshd0_C-1rh3FAg@tardis-2.local>
+ <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org>
+ <aLzmcK2UM53I2Tbn@tardis-2.local>
+ <aLzoyWpOr6eg-3yB@tardis-2.local>
+ <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
+ <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
+ <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
+ <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
+ <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
+ <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org>
 
-When running rtla as
+On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
+> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
+> > I actually came up with a third option that looks best IMO:
+> >
+> >     init!(MyStruct {
+> >         x: 42,
+> >         #[with_binding]
+> >         y: 24,
+> >         z: *y,
+> >     })
+> >
+> > The `#[with_binding]` attribute makes the macro generate a variable `y`.
+> > `x` & `z` don't give access to their value. (we of course should come up
+> > with a better name).
+> >
+> > Any thoughts?
+> 
+> It may be a bit verbose is some cases, but it makes things pretty obvious, so
+> LGTM.
+> 
+> How about just #[bind] or #[access]?
 
-    `rtla <timerlat|osnoise> <top|hist> -t custom_file.txt -a 100`
+#[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
+about the purpose.
 
--a options override trace output filename specified by -t option.
-Running the command above will create <timerlat|osnoise>_trace.txt file
-instead of custom_file.txt. Fix this by making sure that -a option does
-not override trace output filename even if it's passed after trace
-output filename is specified.
-
-Fixes: 173a3b014827 ("rtla/timerlat: Add the automatic trace option")
-Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
----
- tools/tracing/rtla/src/osnoise_hist.c  | 3 ++-
- tools/tracing/rtla/src/osnoise_top.c   | 3 ++-
- tools/tracing/rtla/src/timerlat_hist.c | 3 ++-
- tools/tracing/rtla/src/timerlat_top.c  | 3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-index 1dc39de79d78..3aa74affac26 100644
---- a/tools/tracing/rtla/src/osnoise_hist.c
-+++ b/tools/tracing/rtla/src/osnoise_hist.c
-@@ -543,7 +543,8 @@ static struct osnoise_params
- 			params->threshold = 1;
- 
- 			/* set trace */
--			params->trace_output = "osnoise_trace.txt";
-+			if (!params->trace_output)
-+				params->trace_output = "osnoise_trace.txt";
- 
- 			break;
- 		case 'b':
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index b3e161536ed8..6bcb8d10c342 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -383,7 +383,8 @@ struct osnoise_params *osnoise_top_parse_args(int argc, char **argv)
- 			params->threshold = 1;
- 
- 			/* set trace */
--			params->trace_output = "osnoise_trace.txt";
-+			if (!params->trace_output)
-+				params->trace_output = "osnoise_trace.txt";
- 
- 			break;
- 		case 'c':
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index ad713dafa3c3..f845d5fa8141 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -874,7 +874,8 @@ static struct timerlat_params
- 			params->print_stack = auto_thresh;
- 
- 			/* set trace */
--			trace_output = "timerlat_trace.txt";
-+			if (!trace_output)
-+				trace_output = "timerlat_trace.txt";
- 
- 			break;
- 		case 'c':
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 7f1885018624..42d85ea2e996 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -625,7 +625,8 @@ static struct timerlat_params
- 			params->print_stack = auto_thresh;
- 
- 			/* set trace */
--			trace_output = "timerlat_trace.txt";
-+			if (!trace_output)
-+				trace_output = "timerlat_trace.txt";
- 
- 			break;
- 		case '5':
--- 
-2.48.1
-
+Regards,
+Boqun
 
