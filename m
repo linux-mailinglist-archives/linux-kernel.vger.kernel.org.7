@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-806745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2A4B49B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18BBB49B45
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54437A1A1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D87C4E4535
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE82DCBFC;
-	Mon,  8 Sep 2025 20:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7142DCBE2;
+	Mon,  8 Sep 2025 20:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwA2dgov"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjdyFi7g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E1B21FF39;
-	Mon,  8 Sep 2025 20:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A551721FF39;
+	Mon,  8 Sep 2025 20:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757364831; cv=none; b=k1CHiiWppVZ7beruOrXBa30qV7jL6wjpY3y4JDWJ6h6gs/asXkcfOuSijgLYC0rVgKVFLDbUZPEG9G25+eKaZu0sQeoajy4dkgVu6zXLFD6LCuJZKJfAvAB4VlqPSXcjCBmnrdac7Q7LamHAcx9nplMEJIFKMKZauL92LCvNTwA=
+	t=1757364874; cv=none; b=FnSX2A5sh671cGFMNZ3ZZhT7MH9XRAwpqPRBbOcE4/UxmY/F7QfjMZLR9qZzGBMyWx96nrdXi6KfwPQSaPNQOCXH7kSa7B7DO7qHKZPOB5bbzglbh4On/5p5zgqXVppve0gdod6+oLf360PSGnCQC+Ik+7qPIKWLXHgvrAuEXRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757364831; c=relaxed/simple;
-	bh=POcz+JpYGpHubzD14Eku3ZQzqXppkJMBMmqMowj0z/E=;
+	s=arc-20240116; t=1757364874; c=relaxed/simple;
+	bh=U3K50tXK+wACLTvtmTJZSIqUvpPt9aIhT02/EuzFOl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kUTpaUtrh/bH/1Sa3kfgbYDu43k0Om6BspAmteJ8Y0FQUpD5Io0KqZi2Yj2G123QmibPEeAI3QMaaC6oJBfzQ5DktXW411DDXLsUwlbbpvEeqth4hhxF5PhPk8EGxv/5XV/xQO/q037jtiErpOfQIK5aypTRPz9KKeoi2GZIWbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwA2dgov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB6DC4CEF1;
-	Mon,  8 Sep 2025 20:53:50 +0000 (UTC)
+	 Content-Disposition; b=IM3BszaCAOVdg1OsLmvhreGvEnmnVu9ILCdUgUqc0BHHh19sylmxkCjTFLCLnJGjtf1uceDVduCrUFAcW9dcSN+KwULz5fqZqoA7MpIPoLzl5KxeCvXHZ3fWkzNTKj+ANlkt3iV8oBVdJIstsRlVboWygMoBvFicoaJZgPjqrtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjdyFi7g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFE4C4CEF1;
+	Mon,  8 Sep 2025 20:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757364830;
-	bh=POcz+JpYGpHubzD14Eku3ZQzqXppkJMBMmqMowj0z/E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HwA2dgovXhqbZKDE4CyF6jfjUOnL7dEWbzZKFuoiTgQM0/8RbmKtDJPAN9M5U7NdR
-	 332e8aBZX3AbPbB6EpAt9HNVbvClc42ykkVZoJjNbULcacR8h0B5EXEYiKZkgZ0oop
-	 MOztEVj9EyVglVVIKVAZMxdg6OGkWy3zLxbY/8rXxuKdTmHbBJJ416YTwQcjKpBtKY
-	 fK6GtR6tE/0qkbhp5QxKjzmH6c551WY5tmeIrJaR+WyTrg1e0UOJG7niYxUXTfUBiu
-	 qiXTd7ug2j69De7tF7VnvVqeCJga5fsCbsa8lXBVxnN8uEDltBUZshWZ3PB/PvJJG6
-	 9aMOKYX/9U7dQ==
-Date: Mon, 8 Sep 2025 15:53:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
-Message-ID: <20250908205349.GA1463686@bhelgaas>
+	s=k20201202; t=1757364874;
+	bh=U3K50tXK+wACLTvtmTJZSIqUvpPt9aIhT02/EuzFOl8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sjdyFi7gLY9eb6hARVmhiBIqYckA4mFUbcqaf6abcWWpCTfUB1uc7RWVtVjaDJ6J9
+	 TuEN/9efh09Ko06dKsjf/J9gHsdKfj/IMsaEKNhJAhOnjW4WO09FFgO25LQhj/pkI7
+	 ZdgQEh9rqbpryAFH42skoAqpC0I5R6u3lUoiMsb9KJWj4RO6041D57+Aef3LJC8kr6
+	 cxrfhcIbn369v9iXvgRqvVkV2+7PuSGXN9VhJwp1drtLhbs4g+TdnbnIxPBRNzVaC4
+	 rGqv4UrRF3N8vsBhL/ocMeMJBM2ar0Y3EbR7oJqlbE9v76bljj6325/V9+sTNoZMRl
+	 Qc5LwEWUFKWOQ==
+Date: Mon, 8 Sep 2025 17:54:31 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH next 1/1] perf symbols: Handle 'N' symbols in /proc/kallsyms
+Message-ID: <aL9Ch_XaYTxMzFXK@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,82 +59,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905052836.work.425-kees@kernel.org>
 
-On Thu, Sep 04, 2025 at 10:28:41PM -0700, Kees Cook wrote:
-> After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
-> ffs()-family implementations"), which allows GCC's value range tracker
-> to see past ffs(), GCC 8 on ARM thinks that it might be possible that
-> "ffs(rq) - 8" used here:
-> 
-> 	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
-> 
-> could wrap below 0, leading to a very large value, which would be out of
-> range for the FIELD_PREP() usage:
-> 
-> drivers/pci/pci.c: In function 'pcie_set_readrq':
-> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
-> ...
-> drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
->   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
->       ^~~~~~~~~~
-> 
-> If the result of the ffs() is bounds checked before being used in
-> FIELD_PREP(), the value tracker seems happy again. :)
-> 
-> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
+I started seeing this in recent Fedora 42 kernels:
 
-What's your plan for merging cbc654d18d37?  I suppose it's intended
-for v6.18?  If it will appear in v6.17, let me know so I can merge
-this for it as well.
+  # uname -a
+  Linux number 6.16.3-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Sat Aug 23 17:02:17 UTC 2025 x86_64 GNU/Linux
+  #
+  # perf test vmlinux
+    1: vmlinux symtab matches kallsyms                  : FAILED!
+  #
 
-Maybe this should go in v6.17 regardless, to avoid a warning
-regression between this patch and cbc654d18d37?
+Rust is enabled and these were the symbols causing the above failure,
+i.e. found in vmlinux but not in /proc/kallsyms:
 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: lkft-triage@lists.linaro.org
-> Cc: Linux Regressions <regressions@lists.linux.dev>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dan Carpenter <dan.carpenter@linaro.org>
-> Cc: Ben Copeland <benjamin.copeland@linaro.org>
-> Cc: <lkft-triage@lists.linaro.org>
-> Cc: <linux-pci@vger.kernel.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> ---
->  drivers/pci/pci.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b0f4d98036cd..005b92e6585e 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  {
->  	u16 v;
->  	int ret;
-> +	unsigned int firstbit;
->  	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
->  
->  	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
-> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  			rq = mps;
->  	}
->  
-> -	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
-> +	firstbit = ffs(rq);
-> +	if (firstbit < 8)
-> +		return -EINVAL;
-> +	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
->  
->  	if (bridge->no_inc_mrrs) {
->  		int max_mrrs = pcie_get_readrq(dev);
-> -- 
-> 2.34.1
-> 
+  $ grep -w N /proc/kallsyms
+  0000000000000000 N __pfx__RNCINvNtNtNtCsbDUBuN8AbD4_4core4iter8adapters3map12map_try_foldjNtCs6vVzKs5jPr6_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+  0000000000000000 N _RNCINvNtNtNtCsbDUBuN8AbD4_4core4iter8adapters3map12map_try_foldjNtCs6vVzKs5jPr6_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+  $
+
+So accept those 'N' symbols as well.
+
+About them, from 'man nm':
+
+           "N" The symbol is a debugging symbol.
+
+           "n" The symbol is in a non-data, non-code, non-debug read-only section.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/symbol.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 3fed54de54016227..3d04382687d17d22 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -107,9 +107,14 @@ static enum dso_binary_type binary_type_symtab[] = {
+ static bool symbol_type__filter(char __symbol_type)
+ {
+ 	// Since 'U' == undefined and 'u' == unique global symbol, we can't use toupper there
++	// 'N' is for debugging symbols, 'n' is a non-data, non-code, non-debug read-only section.
++	// According to 'man nm'.
++	// 'N' first seen in:
++	// ffffffff9b35d130 N __pfx__RNCINvNtNtNtCsbDUBuN8AbD4_4core4iter8adapters3map12map_try_foldjNtCs6vVzKs5jPr6_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
++	// a seemingly Rust mangled name
+ 	char symbol_type = toupper(__symbol_type);
+ 	return symbol_type == 'T' || symbol_type == 'W' || symbol_type == 'D' || symbol_type == 'B' ||
+-	       __symbol_type == 'u' || __symbol_type == 'l';
++	       __symbol_type == 'u' || __symbol_type == 'l' || __symbol_type == 'N';
+ }
+ 
+ static int prefix_underscores_count(const char *str)
+-- 
+2.51.0
+
 
