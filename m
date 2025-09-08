@@ -1,122 +1,212 @@
-Return-Path: <linux-kernel+bounces-805134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C29DB48466
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:47:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE40B48468
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D33607A788D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341513BB187
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFB12E267D;
-	Mon,  8 Sep 2025 06:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B1422B8B6;
+	Mon,  8 Sep 2025 06:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HaMv7fDV"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="PmTkqOdA"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6651D2E1C7C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B4E299920;
+	Mon,  8 Sep 2025 06:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314014; cv=none; b=AV/p4I6IUjZcmMWZVPTAVi08256z2slUZN+JZFE07zR3AlCmKIyTP8rF6MFc9ach5IUPB4oE3A6IF8+w5Vc+IuEQi8eN0RV9XoU0WpaWwagw6ed3fFVQwjLx9Po6X29WgrAmSYbSKVHiEgJMlX/SUTSxY+6CQonKZhVvW7RGfBo=
+	t=1757314034; cv=none; b=Oi8AbHIwbGeyeORkgfusZHXZdioFb/Mw7mk4i0K3ZbFXBQHJvOPePph3q4XKdZUgm0OXl5yvYOp69Kg0FxrBwgmcnI7IrgxQkxzztO7R/HCWoNnwn/x6s9WJeoznh62XKBjWT5AqJtQ7W4SmLuHSAbC729co6AdimGuVqm+Vh3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314014; c=relaxed/simple;
-	bh=CP+/lHUyOhzacsa5A544WPCWdSbkurijzlD2Tul0wzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CouZIO/Z9obBA4K4x/DGDK8juQQkGPL8BXZs9yVyVA5LOWaTzEw44RkBhH1d1dHOFIYNqtM6RbUtWLoY7mgYZ9edV/RVsxzoUP2dw+tRPm5lHoevYxAs6ngqVd+QsW1orGdaY59YxqGerwErjAYVuA8TWf+o/JMIuQLNyqknCLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HaMv7fDV; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4d118e13a1so2614250a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 23:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757314013; x=1757918813; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tqKjKM+4UJsj2XqpsktSnw3L/nKXUi786mbz4PmkzFc=;
-        b=HaMv7fDVXzAsPqtH1IlvApBSLvQvGOfTGyLLHAWHO2s9fXb6Iv2ipnbb9RogfIJ3yT
-         bfw0gmriXPv2HefsdvhdEriZC8ZvrmPfD+j9Eg8TSd/rFTu/xL3A3OTbB4CGWqCL9NfZ
-         LDQwE9fG39WVjXy8MdFmc8mi/E1pZDxHC4R5gGfeC7SwMhmOcunOJjFztS8BQZLuE+HC
-         eVjMaAH6WY3JF0b2az9pkC+uJQI+pzUx4hTFPDpEZY098BpIhChS9V50FW14uQidOgL3
-         0l98PNypmnVy/U7NO3ZpjVhoMkY77R/F+qhi/pp8GVYTMuE8D8a9gGeUIb0XZr2FiBIp
-         i19w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757314013; x=1757918813;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqKjKM+4UJsj2XqpsktSnw3L/nKXUi786mbz4PmkzFc=;
-        b=DMLlQR1NcPlp0IRgdA85DHfmOr863wakPLPDqE8xA07t8jr/vGAHehS70xCb3rnrWI
-         rHuueK4jurrn/iqtzN+lwjq5PoJukfzS5TpaEokbBl3MKVWGXq7SIhdHhqXZubg7tprz
-         ow5sNZEy5kHCnicsMqb72ASBgbX2GxveUwAD7JjicLT7KunH2A6FCkG5foIZN8W3/dxR
-         556ZF0Oe64waJvlKYeKM9H82gpOJIgUZcRe880SmCPpPnw8daNy3vcWPpppDyXphnIY0
-         tKVqeWyB2ZZFa9/O8NUkAGS+iMG9B/BscELwoBMWcVjOPKI2DoHPTppLdDrHR6wx9Ktg
-         mbFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm/7E+iFw3VI6GQk/4gqfi0VXTVNLwX6eL0iHIXP33p+O+8IM3IgGxb+4wakRwy4kx2OfSPTtGO0EjwGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEv3SLDAqH6q2/XPB5clGyPl5TNHjz6QF9LUNTKscGWOBiJcqZ
-	8WNJT/PnvrqfXXIO278XhIdCvEWJJhgTLzOYkmI8osohdTVgznbS+t/98LKSXDAjzFs=
-X-Gm-Gg: ASbGnct+56M3T3r0uxSpxZWtS6aYDhLUHsZ5eIbo8GtXa0IKqqLELmuKrgVUkd49DID
-	6nX5+3mvE7JtOlIJuBtGpCkc5KMu7dYpwreWN9L4dxxE5tdaHbVn8msl39C0siqKO9LwCdT/baJ
-	S9XybmTwt/v2gmAdOBLmYcI6nmWdhZSSGTc2/hwZ0+6b494P9C1lsFZJfNBUbJZny3Tg8y9UbCK
-	cOSsh46YwoRzcsh425/rtOBW14ccY7lzNO6wRKsGWKNfKX31iz0mbqRAHWNh4zpJwHCQgN5XUr5
-	v+x6LJdQgkdcYMUBLtei2rmIMMH9PD7ZPOPBgbkHigOjAbmdjlcyGdnq5CQfmtxTQLgb9khk1bR
-	qDKK5AIx9USr8vK0g01NmY0M0
-X-Google-Smtp-Source: AGHT+IGnLi/7AQXGknu49zTuLAwa3+GWl9/KYrdHWk9gv2snN+aXOGF0bL7+PQn094hEzNARFFZkBg==
-X-Received: by 2002:a17:90b:2790:b0:32b:95b9:3eb0 with SMTP id 98e67ed59e1d1-32d43dfeba4mr10034880a91.0.1757314012692;
-        Sun, 07 Sep 2025 23:46:52 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28ae414sm25109366a12.33.2025.09.07.23.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 23:46:52 -0700 (PDT)
-Date: Mon, 8 Sep 2025 12:16:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] cpufreq: Make cpufreq_frequency_table_verify()
- internal
-Message-ID: <20250908064649.5kk44m5ihdspyair@vireshk-i7>
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-4-zhangzihuan@kylinos.cn>
- <20250904044557.tde36hekoeuhnsci@vireshk-i7>
- <cec3bcea-4c75-4869-b9b8-efd3412a1e17@kylinos.cn>
+	s=arc-20240116; t=1757314034; c=relaxed/simple;
+	bh=AHX4JvBxOclCRtR2cGDlwApflXk0bGqVjv+ki2s8M+o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Go+oP7eGT/Vrw0xshckPu5RyYyw40299EMbs16wxSU/IoMK/aSzWraBdd3crSh5tLmYPiNTQNRGTwJk+awVVumccnxK7XI9IllcpsvISvOOZXy5R67N57LvFfR0/T7TB9ZdUc+xFDxIDcbGZPMI4BOIG4tYBW0dnrJ3xORX/u5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=PmTkqOdA; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=uHHWBWsv+nXOQH4tEusLxma0yAImbUwiTHiaNll5LEQ=; t=1757314031;
+	x=1757918831; b=PmTkqOdAPRotHlRoM8xbdu3EztV9iyykUJZ7uccFKtEpCfBWtWNT96gh7QtL7
+	Blw7SEf5wVNpv4/OyAJYAfRxewBwAXT4Mc4dVJwwJgKWPNW5SW7GXI6p5iB5ORQMQljZ8vbR6M20G
+	uwpDxwDrVAz/5xcV5JIM6GWOFgP9q4aB089EvdszFIacffrvwW3MU5mSULk9KWP38fUYkqCnuANzw
+	dp11sT824wSZ7dul/8b20UwjQUxO7pUtLpSEMd2UC3xwpJs10Pe7d2faSvVerVM/NUVE8Fg0JqgzB
+	4NT4Rg/DM1ywajf+Eic9HK6DuIswLaXSuJeuUFl6yxfvlUokeA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uvVef-00000000AOQ-0QJN; Mon, 08 Sep 2025 08:47:09 +0200
+Received: from dynamic-077-183-099-053.77.183.pool.telefonica.de ([77.183.99.53] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uvVee-00000000OOJ-3iXr; Mon, 08 Sep 2025 08:47:09 +0200
+Message-ID: <603f6661d99fc6c936f5a75e29f30d50650b9da8.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson
+	 <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Yznaga
+	 <anthony.yznaga@oracle.com>, =?ISO-8859-1?Q?Ren=E9?= Rebe
+ <rene@exactcode.com>
+Date: Mon, 08 Sep 2025 08:47:08 +0200
+In-Reply-To: <03957ee5ee562b70f7e3278d0ce95b2f52cbc721.camel@physik.fu-berlin.de>
+References: 
+	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+						 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+					 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
+				 <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
+			 <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
+		 <c3e1173f99e6222ab09093e1a197d6366bcf2b95.camel@physik.fu-berlin.de>
+	 <03957ee5ee562b70f7e3278d0ce95b2f52cbc721.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cec3bcea-4c75-4869-b9b8-efd3412a1e17@kylinos.cn>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 04-09-25, 13:34, Zihuan Zhang wrote:
-> Thanks for pointing this out, Viresh.
-> 
-> You are correct — with the current changes, if
-> cpufreq_generic_frequency_table_verify() fails, we no longer return
-> an error in these drivers. For drivers that lack a frequency table,
-> they can still operate, which is why I wasn’t sure whether returning
-> an error is strictly necessary.
-> 
-> I would appreciate your advice here: should we preserve the old
-> behavior and return an error on failure, or is it acceptable for
-> drivers without a table to continue without it?
+Hi,
 
-I looked at the code again, and it feels like the current code is
-doing the right thing right now and making the suggested changes will
-only make it less readable. The two function have different purpose
-and it looks better if the callers call them explicitly.
+On Mon, 2025-09-08 at 08:30 +0200, John Paul Adrian Glaubitz wrote:
+> Hi,
+>=20
+> On Sun, 2025-09-07 at 23:31 +0200, John Paul Adrian Glaubitz wrote:
+> > Hi,
+> >=20
+> > On Sun, 2025-09-07 at 20:33 +0200, John Paul Adrian Glaubitz wrote:
+> > > I assume that cheetah_patch_cachetlbops has to be invoked on UltraSPA=
+RC III
+> > > since there is other code depending on it. On the other hand, the TLB=
+ code
+> > > on UltraSPARC III was heavily overhauled in 2016 [1] which was also f=
+ollowed
+> > > by a bug fix [2].
+> > >=20
+> > > Chances are there are still bugs in the code introduced in [1].
+> > >=20
+> > > > [1] https://github.com/torvalds/linux/commit/a74ad5e660a9ee1d071665=
+e7e8ad822784a2dc7f
+> > > > [2] https://github.com/torvalds/linux/commit/d3c976c14ad8af421134c4=
+28b0a89ff8dd3bd8f8
+> >=20
+> > I have reverted both commits. The machine boots until it tries to start
+> > systemd when it locks up. So, I guess if there is a bug in the TLB code
+> > it needs to be diagnosed differently.
+>=20
+> Another test with a kernel source rebased to 6.17-rc5+, with the followin=
+g patch applied
+> by Anthony Yznaga and CONFIG_SMP disabled:
+>=20
+> diff --git a/arch/sparc/mm/ultra.S b/arch/sparc/mm/ultra.S
+> index 70e658d107e0..b323db303de1 100644
+> --- a/arch/sparc/mm/ultra.S
+> +++ b/arch/sparc/mm/ultra.S
+> @@ -347,6 +347,7 @@ __cheetah_flush_tlb_kernel_range:	/* 31 insns */
+>   	membar		#Sync
+>   	stxa		%g0, [%o4] ASI_IMMU_DEMAP
+>   	membar		#Sync
+> +	flush
+>   	retl
+>   	 nop
+>   	nop
+> @@ -355,7 +356,6 @@ __cheetah_flush_tlb_kernel_range:	/* 31 insns */
+>   	nop
+>   	nop
+>   	nop
+> -	nop
+>=20
+>   #ifdef DCACHE_ALIASING_POSSIBLE
+>   __cheetah_flush_dcache_page: /* 11 insns */
+>=20
+> Still crashes:
+>=20
+> [  139.236744] tsk->{mm,active_mm}->context =3D 00000000000000ab
+> [  139.310042] tsk->{mm,active_mm}->pgd =3D fff0000007db8000
+> [  139.378747]               \|/ ____ \|/
+> [  139.378747]               "@'/ .. \`@"
+> [  139.378747]               /_| \__/ |_\
+> [  139.378747]                  \__U_/
+> [  139.572059] systemd(1): Oops [#1]
+> [  139.615613] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.17.0-rc5+=
+ #19 NONE=20
+> [  139.712832] TSTATE: 0000004411001602 TPC: 00000000005e29e4 TNPC: 00000=
+000005e29e8 Y: 00000000    Not tainted
+> [  139.842076] TPC: <bpf_patch_insn_data+0x204/0x2e0>
+> [  139.905077] g0: ffffffffffffffff g1: 0000000000000000 g2: 000000000000=
+0065 g3: fff0000009618b28
+> [  140.019460] g4: fff00000001f9500 g5: 0000000000657300 g6: fff000000022=
+c000 g7: 0000000000000001
+> [  140.133837] o0: 0000000100058000 o1: 0000000000000000 o2: 000000000000=
+0001 o3: 0000000000000002
+> [  140.248208] o4: fff00000045ec900 o5: 0000000000000002 sp: fff000000022=
+f031 ret_pc: 00000000005e2998
+> [  140.367158] RPC: <bpf_patch_insn_data+0x1b8/0x2e0>
+> [  140.430057] l0: fff0000009618000 l1: 0000000100046048 l2: 000000000000=
+0001 l3: 0000000100058000
+> [  140.544437] l4: 0000000100046068 l5: 0000000000000005 l6: 000000000000=
+0000 l7: fff000000961e128
+> [  140.658810] i0: 0000000100046000 i1: 0000000000000004 i2: 000000000000=
+0005 i3: 0000000000000002
+> [  140.773189] i4: 0000000100066000 i5: fff0000009618ae8 i6: fff000000022=
+f0e1 i7: 0000000000607a08
+> [  140.887561] I7: <bpf_check+0x1988/0x34a0>
+> [  140.940171] Call Trace:
+> [  140.972191] [<0000000000607a08>] bpf_check+0x1988/0x34a0
+> [  141.041963] [<00000000005d862c>] bpf_prog_load+0x8ec/0xc80
+> [  141.114021] [<00000000005d9be4>] __sys_bpf+0x724/0x28a0
+> [  141.182646] [<00000000005dc338>] sys_bpf+0x18/0x60
+> [  141.245551] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
+> [  141.322185] Disabling lock debugging due to kernel taint
+> [  141.391952] Caller[0000000000607a08]: bpf_check+0x1988/0x34a0
+> [  141.467440] Caller[00000000005d862c]: bpf_prog_load+0x8ec/0xc80
+> [  141.545212] Caller[00000000005d9be4]: __sys_bpf+0x724/0x28a0
+> [  141.619558] Caller[00000000005dc338]: sys_bpf+0x18/0x60
+> [  141.688179] Caller[0000000000406174]: linux_sparc_syscall+0x34/0x44
+> [  141.770535] Caller[fff000010089b80c]: 0xfff000010089b80c
+> [  141.840301] Instruction DUMP:
+> [  141.840305]  326ffffa=20
+> [  141.879185]  c4004000=20
+> [  141.910065]  c25e2038=20
+> [  141.940945] <c4006108>
+> [  141.971827]  80a0a000=20
+> [  142.002709]  04400014=20
+> [  142.033589]  c25860f0=20
+> [  142.064474]  8400bfff=20
+> [  142.095354]  8e00606c=20
+> [  142.126234]=20
+> [  142.176560] Kernel panic - not syncing: Attempted to kill init! exitco=
+de=3D0x00000009
+> [  142.277218] Press Stop-A (L1-A) from sun keyboard or send break
+> [  142.277218] twice on console to return to the boot prom
+> [  142.423608] ---[ end Kernel panic - not syncing: Attempted to kill ini=
+t! exitcode=3D0x00000009 ]---
 
-So, I would suggest dropping patches 2 and 3.
+Disabling support for Transparent Huge Pages (CONFIG_THP) avoids the crash.
 
--- 
-viresh
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
