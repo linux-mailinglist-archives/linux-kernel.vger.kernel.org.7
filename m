@@ -1,232 +1,176 @@
-Return-Path: <linux-kernel+bounces-806165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EF6B492AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89619B492AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D734F3A95C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5483A207C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9533330C626;
-	Mon,  8 Sep 2025 15:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145F30DED1;
+	Mon,  8 Sep 2025 15:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkC9hNME"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wd0+horH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1681C30CD92
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1E13081A1;
+	Mon,  8 Sep 2025 15:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757344513; cv=none; b=ZZkWe76VCtRU7ebQqJPlsP0Og5Ogy8+Hp/lkUUuUZlyNLVO8z+XetykSxm5+wClxeN0OFAyDlmzZkc8+p7hRR5Nz/JERqkTpLbtootr+yvy/Q6eEVAYfXL1QLTLsg52C4GLvl2oEAVIfDtJCHuZaARJlE369SLntgHwJDoldtjk=
+	t=1757344480; cv=none; b=D0rVh2DVLGViqfhxTPny5RaHb8OR92/sutxuFh9xCCJ9a+mpNWfhRUuVXWlTdo1qXP8NEyOGecu49QaVihlfqqYHq4lFyV7yJP2e86Zh9alEO8p5jIF7GA01MhCm7GMGBnMCm/fXL5lQHb7vMZbmzfNuhXZIQ1gX1cn2mIvOgz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757344513; c=relaxed/simple;
-	bh=FBvWTtV6ZRQH5ZQxtAJCYllYJw2QDNVpTLvipTQ3TNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DSgrwWO4s2VzXxel4GYEwv5KUIBlPvIpO9kcqcc7wuUhV1N+NPKnqmfc53HEoxEmt9OV72Q3OGQmg8BDb6qdExmFHUs3ThyPd8d+DaJMSxCfPvgvqWO8hqfQhLSQVm3LpolKmQaIlSrZjVJqobeCi0Beku+DTaHpInhU7CQDdBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkC9hNME; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso7238748a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757344510; x=1757949310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXA2Jum3C80Q1Y4JkqkK6rtU/2eiC3aTbCjeS9iNmzA=;
-        b=lkC9hNMEIQdrBzMuYx8PqJsFJozCf0GJW8l4ApV0oEo+t2G8ATIop5yjJIPQKs1uI2
-         8S/QXrAz0QRI9CMG57vPXE9UNKaG/j6gIt8QWeg+lQN55TojbNkeYpanrpYWOUQ/rIDv
-         iODhsIfNfteO/s7IF+v5J7tpfmzCUgUQEpEp1Wuw7V4G304H4y1Qq4fX3SCuxbKyodXk
-         zQ7njDyZ6/XNw9uAO3IPfeE+V/i2OJ/g0v8Qlzyp7h1MY+UnbcxhxF1qwF0SLV02cm0T
-         9VEmsfyOk1rD5fxlizMESz+eRJpWAGBz3YcTmLDCmp0Oo9RGkn8DkZWVQlD35g2nb3H0
-         90nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757344510; x=1757949310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cXA2Jum3C80Q1Y4JkqkK6rtU/2eiC3aTbCjeS9iNmzA=;
-        b=E56SD+yw5h6sTClgx0OWZEK8BSj4FJc7m9I8pJFwxDsYQdswZ+gdT1WyKLFjWN2WcP
-         qbf916g+qwZB25sRt++ksTJjEZ3ruEozqGCHohLr5pwTcATuo9yota//KHC/R1i5Y7W4
-         E6AQEmg9MaDe/s5fwy2OIVSEEbg6ONdCHcTaoPO9wGeEv6uR08dRQov56oiwl30UjRJh
-         CyT+UhOARrKqIiB2QXpOg01fmnFLA+is+GMYSFqXBxMeEp6nGBAW3A/jHClDC1rpjY/7
-         +wtOLJfThb8/JoFfwcXF8Pro7LdAjhBAVnWbaHRQGc6W/ilzmBEZz2M8YJYIgXwVpejK
-         WuVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtFwhHZEtGb4/cg4us5VRioX0OJJ2ysgSCqF1B41cjpclD4Sgmrm5F/CGqKLnb6DkOebwWyTw1uzbSDLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJTtCbKjZC8dFtXXF6AprNimlrkYLu/+AGjhVHDxzGPRLwAGxR
-	FRKHUmY30H7raGi7luxxkdtIUggL8TMbZZNqRVdCX6lWTI/wmjYeJ7I3BAHe4f+6GeoaCnOd4Sn
-	PxDEvbzrgBaD3vtXKwg6WEIyn4GmbuhQ=
-X-Gm-Gg: ASbGncsawExZAg9t3JAF2Ozuu5ZB8iVtRXvPpsFPXNNnUWax6yPGs7QCi6m0YQQ0zEY
-	8ghkefsEhY0FmLMOfjLYOvEAhXoPPB8WKYrXBSVZpZotm7qTNy2XKCQrnCTe+8snjZj4bJZuvT2
-	9o/uREB78y4TEHeQAz0m7jLsLvUE4hYgjZ86ffupg+vIvIGnsMZUvrFd47Xo4KXslV9wEhpTl4b
-	7nLrpzAYKm4PBwV75HtCQ==
-X-Google-Smtp-Source: AGHT+IFfzgh7slkI9APLqBFcPALe6N6LfPwpqVZHZal2suURwJH/Q0oQbDMfDqtIwsdF4Gq5DaUCBzS9zexyL7jPqeM=
-X-Received: by 2002:a05:6402:4415:b0:61e:a5c8:e830 with SMTP id
- 4fb4d7f45d1cf-6237aec0166mr7232307a12.1.1757344510250; Mon, 08 Sep 2025
- 08:15:10 -0700 (PDT)
+	s=arc-20240116; t=1757344480; c=relaxed/simple;
+	bh=79P+uiW/3Rx2XvqTOgtNabeggJ9RJOW52VgPPXBiopY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1CqSuve18Criii481QuSaWAvQ7wTU3/IwzgsLY6h6UU58+g3FItpECS3Zyqc1FRuKO0C08PL4wBCNYU2KW2aBEUt9x2t6fO+9u07rgmJi4SFOlu1bAz38Fjk3tXxxffWWz+XVUmLpZMI3UG+vQqBQrRCp+Cn5bfyc+CZgJb950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wd0+horH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15EAC4CEF7;
+	Mon,  8 Sep 2025 15:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757344478;
+	bh=79P+uiW/3Rx2XvqTOgtNabeggJ9RJOW52VgPPXBiopY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wd0+horHyogQWpsC6Bw6EBOn9REsFgN2iyt3WQqsGWQ06OW/abB6va5XzvrZcA1K6
+	 j9aywViLIc8N9zZ3wG2/J9INgQXhgR8iuf4RQ388thD0oe/IiHxLy/n3dDWvNosJwb
+	 e+vcCywDdZimLHRIeK5ebSwU+BeD23PdlFw4Hb5E=
+Date: Mon, 8 Sep 2025 17:14:35 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, linux-tegra@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 6.1 000/104] 6.1.151-rc1 review
+Message-ID: <2025090808-distill-amulet-ef73@gregkh>
+References: <20250907195607.664912704@linuxfoundation.org>
+ <cb958521-10f7-4301-b1b8-54784e3d88e6@rnnvmail202.nvidia.com>
+ <62ac3da6-25f6-4432-8b92-8e9ae60aacec@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-12-ryncsn@gmail.com>
- <4e0847db-0503-406b-95b4-02ee7e8f9604@redhat.com>
-In-Reply-To: <4e0847db-0503-406b-95b4-02ee7e8f9604@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 8 Sep 2025 23:14:33 +0800
-X-Gm-Features: AS18NWD12hxIhTxyJKTGDZ2indGJ3CbXeECCYM7JzuKXWB8xNJgaDKDEKpvdK3M
-Message-ID: <CAMgjq7DwOe_OJ4qyfY-2=kmaY4tfvQGaedie+6NvPPX7YD0YGA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/15] mm, swap: use the swap table for the swap cache
- and switch API
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62ac3da6-25f6-4432-8b92-8e9ae60aacec@nvidia.com>
 
-On Mon, Sep 8, 2025 at 11:09=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
-> > +static inline struct swap_cluster_info *swap_cluster_lock(
-> > +     struct swap_info_struct *si, pgoff_t offset, bool irq)
-> > +{
-> > +     return NULL;
-> > +}
-> > +
-> > +static inline struct swap_cluster_info *swap_cluster_lock_by_folio(
-> > +             struct folio *folio)
->
-> I would probably call that "swap_cluster_get_and_lock" or sth like that .=
-..
->
-> > +{
-> > +     return NULL;
-> > +}
-> > +
-> > +static inline struct swap_cluster_info *swap_cluster_lock_by_folio_irq=
-(
-> > +             struct folio *folio)
-> > +{
->
-> ... then this would become "swap_cluster_get_and_lock_irq"
->
->
-> Alterantively, separate the lookup from the locking of the cluster.
->
-> swap_cluster_from_folio() / folio_get_swap_cluster()
-> swap_cluster_lock()
-> swap_cluster_lock_irq()
->
-> Which might look cleaner in the end.
+On Mon, Sep 08, 2025 at 04:04:49PM +0100, Jon Hunter wrote:
+> Hi Greg,
+> 
+> On 08/09/2025 16:01, Jon Hunter wrote:
+> > On Sun, 07 Sep 2025 21:57:17 +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.1.151 release.
+> > > There are 104 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.151-rc1.gz
+> > > or in the git tree and branch at:
+> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > Failures detected for Tegra ...
+> > 
+> > Test results for stable-v6.1:
+> >      10 builds:	10 pass, 0 fail
+> >      28 boots:	28 pass, 0 fail
+> >      119 tests:	111 pass, 8 fail
+> > 
+> > Linux version:	6.1.151-rc1-g590deae50e08
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+> >                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+> >                  tegra210-p2371-2180, tegra210-p3450-0000,
+> >                  tegra30-cardhu-a04
+> > 
+> > Test failures:	tegra186-p2771-0000: cpu-hotplug
+> >                  tegra194-p2972-0000: pm-system-suspend.sh
+> >                  tegra210-p2371-2180: cpu-hotplug
+> >                  tegra210-p2371-2180: pm-system-suspend.sh
+> >                  tegra210-p3450-0000: cpu-hotplug
+> 
+> 
+> I am seeing crashes such as the following with this update ...
+> 
+> [  194.854833] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> [  194.863956] Mem abort info:
+> [  194.866939]   ESR = 0x0000000096000004
+> [  194.870869]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [  194.876385]   SET = 0, FnV = 0
+> [  194.879609]   EA = 0, S1PTW = 0
+> [  194.882919]   FSC = 0x04: level 0 translation fault
+> [  194.887972] Data abort info:
+> [  194.891007]   ISV = 0, ISS = 0x00000004
+> [  194.895004]   CM = 0, WnR = 0
+> [  194.898136] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000109eff000
+> [  194.904774] [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+> [  194.911948] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> [  194.918345] Modules linked in: panel_simple snd_soc_tegra210_mixer snd_soc_tegra210_ope snd_soc_tegra210_adx snd_soc_tegra210_amx snd_soc_tegra210_admaif snd_soc_tegra210_mvc tegra_video(C) snd_soc_tegra210_sfc snd_soc_tegra210_dmic snd_soc_tegra_pcm v4l2_dv_timings snd_soc_tegra210_i2s videobuf2_dma_contig videobuf2_memops tegra_drm videobuf2_v4l2 videobuf2_common drm_dp_aux_bus videodev cec drm_display_helper mc drm_kms_helper tegra210_adma snd_soc_tegra210_ahub drm snd_soc_tegra_audio_graph_card snd_soc_audio_graph_card snd_soc_simple_card_utils crct10dif_ce snd_hda_codec_hdmi snd_hda_tegra snd_hda_codec snd_hda_core lp855x_bl tegra_aconnect tegra_soctherm tegra_xudc host1x pwm_tegra at24 ip_tables x_tables ipv6
+> [  194.983279] CPU: 3 PID: 13107 Comm: rtcwake Tainted: G         C         6.1.150-00926-gd2622bc051fa #6
+> [  194.992848] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+> [  194.998870] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  195.005977] pc : percpu_ref_put_many.constprop.0+0x18/0xf0
+> [  195.011654] lr : percpu_ref_put_many.constprop.0+0x18/0xf0
+> [  195.017296] sp : ffff80000b1bba50
+> [  195.020698] x29: ffff80000b1bba50 x28: ffff800009ba3770 x27: 0000000000000000
+> [  195.028045] x26: 0000000000000001 x25: 0000000000000000 x24: ffff80000829c300
+> [  195.035376] x23: ffff8000f4d85000 x22: ffff80000a19c898 x21: 0000000000000000
+> [  195.042699] x20: 0000000000000000 x19: 0000000000000000 x18: ffffffffffffffff
+> [  195.050016] x17: 000000000000000e x16: 0000000000000001 x15: 0000000000000000
+> [  195.057331] x14: 00000000fffffffc x13: dead000000000122 x12: 00000000f0000000
+> [  195.064650] x11: dead000000000100 x10: 00000000f0000080 x9 : 0000000000000001
+> [  195.071968] x8 : ffff80000b1bba40 x7 : 00000000ffffffff x6 : ffff80000a19c410
+> [  195.079289] x5 : ffff0000fe928770 x4 : 0000000000000000 x3 : 0000000000000000
+> [  195.086600] x2 : ffff8000f4d85000 x1 : ffff000081e9e740 x0 : 0000000000000001
+> [  195.093916] Call trace:
+> [  195.096449]  percpu_ref_put_many.constprop.0+0x18/0xf0
+> [  195.101747]  memcg_hotplug_cpu_dead+0x60/0x90
+> [  195.106259]  cpuhp_invoke_callback+0x100/0x200
+> [  195.110843]  _cpu_down+0x17c/0x3b0
+> [  195.114398]  freeze_secondary_cpus+0x124/0x200
+> [  195.118980]  suspend_devices_and_enter+0x270/0x590
+> [  195.123926]  pm_suspend+0x1f0/0x260
+> [  195.127556]  state_store+0x80/0xf0
+> [  195.131096]  kobj_attr_store+0x18/0x30
+> [  195.134962]  sysfs_kf_write+0x44/0x60
+> [  195.138766]  kernfs_fop_write_iter+0x120/0x1d0
+> [  195.143353]  vfs_write+0x1b4/0x2f0
+> [  195.146905]  ksys_write+0x70/0x110
+> [  195.150454]  __arm64_sys_write+0x1c/0x30
+> [  195.154525]  invoke_syscall+0x48/0x120
+> [  195.158419]  el0_svc_common.constprop.0+0x44/0xf0
+> [  195.163270]  do_el0_svc+0x24/0xa0
+> [  195.166719]  el0_svc+0x2c/0x90
+> [  195.169905]  el0t_64_sync_handler+0x114/0x120
+> [  195.174401]  el0t_64_sync+0x18c/0x190
+> [  195.178211] Code: 910003fd f9000bf3 aa0003f3 97f9caa7 (f9400260)
+> [  195.184414] ---[ end trace 0000000000000000 ]---
+> 
+> I have bisected the above failures and it is pointing to the following commit ...
+> 
+> # first bad commit: [d2622bc051fa9f17af1ac06d4169567e8bf8fa2c] memcg: drain obj stock on cpu hotplug teardown
 
-That's a very good suggestion.
+Odd.  Ok, let me drop this from this tree and 6.1.y and push out some
+new -rcs with it removed to see if that makes things better.
 
->
-> [...]
->
-> > -struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
-> > -static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
-> > +struct address_space swap_space __read_mostly =3D {
-> > +     .a_ops =3D &swap_aops,
-> > +};
-> > +
-> >   static bool enable_vma_readahead __read_mostly =3D true;
-> >
-> >   #define SWAP_RA_ORDER_CEILING       5
-> > @@ -83,11 +86,21 @@ void show_swap_cache_info(void)
-> >    */
-> >   struct folio *swap_cache_get_folio(swp_entry_t entry)
-> >   {
-> > -     struct folio *folio =3D filemap_get_folio(swap_address_space(entr=
-y),
-> > -                                             swap_cache_index(entry));
-> > -     if (IS_ERR(folio))
-> > -             return NULL;
-> > -     return folio;
-> > +
->
-> ^ superfluous empty line.
->
-> [...]
->
-> >
-> > @@ -420,6 +421,34 @@ static inline unsigned int cluster_offset(struct s=
-wap_info_struct *si,
-> >       return cluster_index(si, ci) * SWAPFILE_CLUSTER;
-> >   }
-> >
-> > +static int swap_table_alloc_table(struct swap_cluster_info *ci)
->
-> swap_cluster_alloc_table ?
+Thanks for the report!
 
-Good idea.
-
->
-> > +{
-> > +     WARN_ON(ci->table);
-> > +     ci->table =3D kzalloc(sizeof(unsigned long) * SWAPFILE_CLUSTER, G=
-FP_KERNEL);
-> > +     if (!ci->table)
-> > +             return -ENOMEM;
-> > +     return 0;
-> > +}
-> > +
-> > +static void swap_cluster_free_table(struct swap_cluster_info *ci)
-> > +{
-> > +     unsigned int ci_off;
-> > +     unsigned long swp_tb;
-> > +
-> > +     if (!ci->table)
-> > +             return;
-> > +
-> > +     for (ci_off =3D 0; ci_off < SWAPFILE_CLUSTER; ci_off++) {
-> > +             swp_tb =3D __swap_table_get(ci, ci_off);
-> > +             if (!swp_tb_is_null(swp_tb))
-> > +                     pr_err_once("swap: unclean swap space on swapoff:=
- 0x%lx",
-> > +                                 swp_tb);
-> > +     }
-> > +
-> > +     kfree(ci->table);
-> > +     ci->table =3D NULL;
-> > +}
-> > +
-> >   static void move_cluster(struct swap_info_struct *si,
-> >                        struct swap_cluster_info *ci, struct list_head *=
-list,
-> >                        enum swap_cluster_flags new_flags)
-> > @@ -702,6 +731,26 @@ static bool cluster_scan_range(struct swap_info_st=
-ruct *si,
-> >       return true;
-> >   }
-> >
-> > +/*
-> > + * Currently, the swap table is not used for count tracking, just
-> > + * do a sanity check here to ensure nothing leaked, so the swap
-> > + * table should be empty upon freeing.
-> > + */
-> > +static void cluster_table_check(struct swap_cluster_info *ci,
-> > +                             unsigned int start, unsigned int nr)
->
-> "swap_cluster_assert_table_empty()"
->
-> or sth like that that makes it clearer what you are checking for.
-
-Agree.
-
->
-> --
-> Cheers
->
-
-Thanks!
+greg k-h
 
