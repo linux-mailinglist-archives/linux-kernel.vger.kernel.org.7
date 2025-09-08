@@ -1,256 +1,169 @@
-Return-Path: <linux-kernel+bounces-806717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE53B49AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC14B49AEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C06208724
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:20:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26B302087A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442AF2DFA3A;
-	Mon,  8 Sep 2025 20:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0A12DECCC;
+	Mon,  8 Sep 2025 20:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tQUgFWE7"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYxnvFh+"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7852DECCC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362736; cv=fail; b=DJXnB5EigNexCSUymZlKP7dOCYf6OJrjqtwmURG3v7tnAZ4l0r8r7mB4w7ESrSPzEe5hv8XDzsvkmBY51ZIxvYqZinO4/SUSdcxzMbjta2DWP8OmwnQWtJIqY/7hWeL6+3JHRLMQKdQOpEPmz+WaztFEMjocpnXreIlNPDM67bo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362736; c=relaxed/simple;
-	bh=jaf/mlDyrng0txF/hBEbX5a9EkUimthMrEpxqKjFas4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UkMOYdpl4JskPdpD4/NyoiHZVbVF8ifgAMFd4D8p8MuIFG/WNtCungBMVJgBDkeo0GFa76o8hq7JMmqt7ytUh3bXI12cBvQqWKwMXHEMvewL38DP0QscnK/UDxKIgEaC1Y2RbdegxsOlsBFzGMxtQ19tp/ox0Kp84jzLz6TYsYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tQUgFWE7; arc=fail smtp.client-ip=40.107.237.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V2/4y3SOkn2dJV9o19TP6P6YPDPMCFya806IbGgFTcR6oapRBGbmeH9SjbP8Kv6p2kEfKpfZVbhkTijeNw+us+0ZCgoFk6WW3mpbmNNThx9M6lHK4WMdNdNwzc1oVG9VXsd5VjEuaV2PrB1G8LLo/WsWanmY+52jtwDmEsMatPQdAcRlXwSDt/vdf8BAuRUi+zxSvyMDSKimuU6zmRMP4YP/AjoyEWUhgmAnjWuBq8FMg/zo5jQv8cD6qrwo2FMWkTa868FOouD/MtgRWxP77glhe6ify/mriu10H2Alda17tJRR2R6XMKmhUScQAopBVbKzTSGnSD3m21vTY5G3Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gGFX+tYqiAf9QqOGSy2IRxvDua8eXFMUnr1LBv+YCak=;
- b=bOMmOehuuV28M/BwWGBw4Q3NyyfL8ci19iXdqaxPyoeaf6aCeMnBc5KrV2uGYE0jYuN3PQj2zUAmfPmn1zMM//6XUgEHP9WcTVtoAGVCkSGN60Zz4fwX2anXd095yHk7M8LIppLAR//ekRZ4bl3U8NmobnoBP7bxnoIbiNt2m+NnPuaibhIS5Vkd9cKXcRuM3s0CI9MtA1RFhsVrMe5M9wAyr2hqimxiPS9/V/rJDFqDNIMleb8NqHhOIUaa5NTkGZxVXa1Bx5pjotd8E1z1ff+ol9wS7dTDwIywozhNNsp57WGJxoQOSBG6M/SdIrwqFdUTzp77JqjeSik1GgfOYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gGFX+tYqiAf9QqOGSy2IRxvDua8eXFMUnr1LBv+YCak=;
- b=tQUgFWE7Jc43b1rtBK+m+vscTQUUrp7CkcBOgpzCm0u8f81d0j28Rc1ybpkpScTaIh+YkcwMotAbzVKFOqmADGedY+vvM3PCvMdxlgqnT2lql2K4ZwIHpFc5Prk3rHNF+/P//lW0h3leeACdt8u1mt0fY8XY88U8KwIGLZHC4sg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by LV3PR12MB9403.namprd12.prod.outlook.com (2603:10b6:408:217::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 20:18:50 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%6]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 20:18:50 +0000
-Message-ID: <0f6b54fa-720f-43b7-ad74-91c2c5700dad@amd.com>
-Date: Mon, 8 Sep 2025 14:18:46 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display/dml2: Guard
- dml21_map_dc_state_into_dml_display_cfg with DC_FP_START
-To: Xi Ruoyao <xry111@xry111.site>, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Mingcong Bai <jeffbai@aosc.io>,
- dri-devel@lists.freedesktop.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Asiacn <710187964@qq.com>,
- Austin Zheng <Austin.Zheng@amd.com>, Harry Wentland
- <Harry.Wentland@amd.com>, Wenjing Liu <wenjing.liu@amd.com>
-References: <20250825085211.34396-1-xry111@xry111.site>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250825085211.34396-1-xry111@xry111.site>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0310.namprd03.prod.outlook.com
- (2603:10b6:303:dd::15) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BD72D9EFA;
+	Mon,  8 Sep 2025 20:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362760; cv=none; b=alkdFYsJi732ZT5e/RIXbdjkcWeapzmqmumX5wnle32ysvqthC69c0AfNBor2HxdleBZS3Zv255f5hP5PrznLKyrtfRzorhrKRB3iBp5C53o2lBVdxo5Gp6PLExMIzpggozwqS2dlDZ/IHDyThrcCOzzVsTH2ag/4GnBi8sRHV4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362760; c=relaxed/simple;
+	bh=vT09vTia8SgQBO+FiegSxuy3xNGmzzHUSLwcepL1OEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jPZPpr2oaicrmDuZPrVQNaIzp8yptb3EKDvWE/UjmKRcb+btCylDVyEMN+TodC/3xSVO6W50rpUxv3h4whLkdk7gXevsRdELv3cGuV/kVuGW43pX9rC5PZWBdevOspG0erRb6L5ed7L8/qx6QXXz6owgBB4/dSzJzdctFNdHNP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYxnvFh+; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3da9ad0c1f4so3377758f8f.3;
+        Mon, 08 Sep 2025 13:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757362757; x=1757967557; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vT09vTia8SgQBO+FiegSxuy3xNGmzzHUSLwcepL1OEI=;
+        b=lYxnvFh+lgX6kjFJblJbboRDYB85v+Bbxu0D7wL4zCD2Rxwq5u181sJN/C/qeGWEPZ
+         489kqVPhKCbrXQjv17k/K0jPdGvSVRRVKyUlZEIx7f+YHAWpA9N1g36xpRNxUleKYgjv
+         98X2SNDXWbJEJEbmjoyDNXFNiqxKrcGuYSVzJ2+eWt1mswEfGE3Y6RYOA+/X0z9Tfl4I
+         sB8somHVG5VdhkYJ95THTWNoxq14vP/tIbQHshZDTKP1crzwQEkh7IWi0Jy8iyN/G/0O
+         WgnyKngTLaHyCj5sK/fsZ5cuPduvNS1iCnIKWJ1r8toQdxjOi49gLSrA5N3zd/FJIH0d
+         72XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757362757; x=1757967557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vT09vTia8SgQBO+FiegSxuy3xNGmzzHUSLwcepL1OEI=;
+        b=U6zBUfeRmlyLMCeTGpy6lNYdWw/gtgChR3r2Kd/z3lHDThblr/GQIXo4hpq6XS7rEc
+         9S2Z22MMB8DqwqmD1gpqgETllrRlpsYvQsi3cLHos/Jxd8lxosDOtHjPVb7VAAQMjPYV
+         zhsQLi4qqYVHAWfpdWd1oxjNhCYp6ExVlntRDZWXtNDK54DzGSY1FI0EY+hPPL2cZ4qK
+         gIwVh1aZm120SO8g4s7TzWUloXUaj9/LJEzWWGqwCLvAjZGfgzTlKRuOXqAvXRiBwP/5
+         fpAO0NTvYqyx723/IXL/c4h0fyc+/gKNrQI8F6m9Kt+M720h3jG6pgaD/yYETF8YxN/0
+         vNRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKI6yOFCKuZtNZRHV/eNazmja716sVHz/ogB/a0Gc7tbARUG9dRwAQ1jjH7+4UvzSIi2s6JL+oanv/YHN@vger.kernel.org, AJvYcCVDXJc5gzWqkhETKDk8rnpsKNLEC5PwFP1/2ZL6wQo7pxf+OVEGo5YN4/CqJTErZLAac3MYA9bB8b0=@vger.kernel.org, AJvYcCWD3N0tZ57CG1YqOAL8q33mKKRSPDK62SsR7VJxC+gatfc6rS0in1f1VDvc6xLSCDWAsSPPPNzNejG6EJWl@vger.kernel.org
+X-Gm-Message-State: AOJu0YylzJr9yd6agm4aa+q0zVt9hMkId++7R4Bjbn9mDhkmXkB7kKHz
+	ynfaJlhContWJx2LukLlU2X+/rN0cVKmQv7UEnfLa3gePC8hrkvsbggJMHtpFvZwU5o5EQAUb18
+	0lgiki1AiYod/1YudfbBNfcfwa7OL18o=
+X-Gm-Gg: ASbGncsgpOsMammc4LG1P+6Tvm4w7k9SmcYSNk+uljpuENxhIKsIJtHZcdM9Qdrdzo5
+	+gX27bKypY5ayouJtrqBTr60oG8uDCi2ekhxUsgItX53SxITvXpWWEsLLfk6OH5HRVlc6BODXtq
+	yTTeTJxPbO0l2ajcLwhvebGYeOJ4TOb1HAJ9li+vfEmmPS8zfnpz2p2ZMjO4Bxz+DhX3Jwk3yt6
+	IouM2ge
+X-Google-Smtp-Source: AGHT+IGh6YqUFpx+JIdu/8YkqL5G1rRgnTznoIse4KvphEDHD6OBcCQt7Euav83er+DtfxdiEo+7p+GtKQrhaaETdWA=
+X-Received: by 2002:a05:6000:2f86:b0:3d2:6129:5505 with SMTP id
+ ffacd0b85a97d-3e64bde66c0mr9404161f8f.36.1757362756927; Mon, 08 Sep 2025
+ 13:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|LV3PR12MB9403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81228ff6-5787-423d-a9be-08ddef14ec43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bmgvanpOdVhnRWFMc3k0TUh2Wk90K1ZsOHFQMy9lVFFKcFhQUzR0YitQam5m?=
- =?utf-8?B?dHNhYjgrSllpR21lWXc2N3N4dmsxajhvL0w5c1hMcnpNQWJtZHBrZ3dSNHps?=
- =?utf-8?B?WFNuNll2NHhnSzJmU1QrbDJWWGdleU5iQkRackFBUXpMS0dCNTNaeFhmaVBs?=
- =?utf-8?B?a0VoZlovaWR0YjFBNnVtOGZxM3VDRDY1VUVMWStMRUJSR2U4TkdGRVZZVXZJ?=
- =?utf-8?B?U3FMdk9OOStGYlZDQnd6dFJnZ2I0UDR1Q0k0bzhHSkpQS0N0WTBHYUgzQ095?=
- =?utf-8?B?UzN4VGlxR1Qzd1JENzkrOFBkN3ZJalVJU21lbG5mK0lHazQ4R292VWRwZm1h?=
- =?utf-8?B?L2lXRCsxd1B1Y0tEbFhkd0tmQWhtR2cwelN2MThOSW9pR293SytZY0VHdkRm?=
- =?utf-8?B?YXlwZzZaOEM3d2hMYjQ0dXBvTTVaa0YwK013b2VqeE5XTWxGVXhRWFJEb0ho?=
- =?utf-8?B?NncydmtFL2Vsc3RRdTRnSEtoU2tGQmF1a0M3TjM1dXNkT2FaRnExUnNQRnRY?=
- =?utf-8?B?bkVyYUVJdFVWVnNIYjdvWTNsZGFMeWRBZnRJR05tU0ZJWDV6TTBPV0lxUCs1?=
- =?utf-8?B?eTd1S3dYYjZraHdodUphTDVObitLeFlRZGRndjZCWTlwK0NTU0Z4dkd5VmFx?=
- =?utf-8?B?cHVwM1BwTGF0azFtMjhFeVJkZHBSWVk1Y2lGNXRPemlkRll1NnJtQUVOUlpD?=
- =?utf-8?B?N2NZMFNzNVlPT3ZUcDhjOXJJMWRvdUJGTEJ5eit0V0JFK3NDRDVwWEFYY3Ay?=
- =?utf-8?B?RjBjZG5sUkgwM0l4RkhacjZOOCtqNk5Fdy9WcmFRV2VveGhiZkUxRnA3Tm1p?=
- =?utf-8?B?K0ZIRVZnZDNubkpwNjNLcWFMYUdVQTNrOVVMcFo5Vk1JVTgxMjdTUFFGVkxu?=
- =?utf-8?B?WGFMSnR2bndDSDF3THlLNk9XNGc4WU5yOHBYaU9mVGZscEVRY1VFVE9scEV2?=
- =?utf-8?B?ZXVJTzl0UjdJY0ZkejBHYlBjWVI3d0V0MW03L1JwcDd5ZVptTXVGUGdDSEFD?=
- =?utf-8?B?TEc1Z0owN0FMdEpyeXIvTitoYkl2Yjg5cDdib01JWlV3ajFaQ1RBRUVpemRE?=
- =?utf-8?B?WXp4NTNvenJSM2psU0tzTWRMTm5GWFpUTU5mY1pDMXRPanUyQjl3MkRPUk54?=
- =?utf-8?B?R3FzQzZGdDMrbVdFRTdpY3o1cnF6Um9RckkvaG02R3U0azhoM0Z2bDE2MGxk?=
- =?utf-8?B?V3g1QStYODJqL2Y4cFJuZlA4UWVOaFVFQkQwTmtObFAxSjYxWTVvOUdKM1NU?=
- =?utf-8?B?MVRsMmM5Yk0vRWVEWVh6cGdGY1QzQTUxajg0MmhyR0FQeW14RlJCMFI1NUQr?=
- =?utf-8?B?TnFBMHNRcDQ3OWxKZXJpVGN0SkFRdzJ5TWQxVjAvS1lpSkpleGtoUEdpUFVo?=
- =?utf-8?B?RUl3MkxqSkRyUUNoYis1amNjb0wvTDUvbHEyRDB5Z3dyS1RDaE1heFdIeTcz?=
- =?utf-8?B?MGk5UXhPbkZ4RWpYSVI5YXYvNlB2L0ovSThBbUY5bjdJS0ptSE00U25BdFJT?=
- =?utf-8?B?ckU1OGhDSkI4M0sxeHcyL2ZrakdqQjhFKzVlNTNCZnYrQjROOGtteVJHZHIw?=
- =?utf-8?B?VEROdSt1ajFESG9HeW4wY3JYb0ZEdk8yaHFzV3dMc05maUZvQ05tejA0YnQx?=
- =?utf-8?B?WGRiVkpOWEh6NXhibEM2NXBNd2o1a1ByTTgyVEJyWnNZNTRINXNKOXNPMHdL?=
- =?utf-8?B?UGJJcHZ3a2l2bTEwaS9PSjRPNzdlWFhBVndGSUxXZU1kUHpEcHN3V29XMCtt?=
- =?utf-8?B?citMdEszUEV1Z0VHUnNWdXlVS3hXcXg2SVFaM2licndKSjJxQUVxYldQK0V4?=
- =?utf-8?B?cmJIV0RmUWZtc2R0ZnZPUTUxV3A1THNoN2pKcFNwY1RudzR5R0RKQnU3TFFU?=
- =?utf-8?B?WG5tZ3ZycXR3SHR5OWdkMWlOS29IM0tFUngwbWtPODdSNHlienUwR29wYnY2?=
- =?utf-8?Q?m19U8yUzyIc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bGN6aGJ1R2t6MEdRaE95cC9jdGJpeVE2RmU1dkRiYkVtYzkvbXlKT3cyUU5l?=
- =?utf-8?B?d1M0RUJXNmh6dWduTmtnMXFETnNiSHRKcy91NUYzbjhmemxUYWtKWDVKemI0?=
- =?utf-8?B?ZzhTSjEyL2YyNXNVK1FESW1SVTBPRWRZQlRUNDBoOXVaZ1dINWd2K214dXlO?=
- =?utf-8?B?SW1NQ3ovdGtnWHoreFA1RGoyK1NjNXJDT3RTMzVDTms5NHIxQ2pqaHdOUGl3?=
- =?utf-8?B?RE84djZNY0hHTE53V3M4cWs5MXFmTnVTZTkzREo3WDZMcDI5VDBhaGFIdDNN?=
- =?utf-8?B?ODB4V0dEWUQwWDJqeGE3SWxIbGh1ZThhc0plc3dGbnAvMzdsZ3lQRWd5TWI4?=
- =?utf-8?B?YUM1M3hUb2FaYVBNZzVWU2hnUFJiclJmRGU4bnlpSlAwK3V0L3NoTm1ZOXZt?=
- =?utf-8?B?bGozTkJkbG5PYUlUY3ZKcTV3SEdLdDdPaGVWOGNoNDlJSWVyZHBrOVJsSXJJ?=
- =?utf-8?B?UHJFMjlKd3E1V1k4d0RiZ2Zyak95dW9jbmgvdU1oU3N2VDlBYVlKREpQMGI3?=
- =?utf-8?B?YmpBODZXYXRJdDAwcUdqSmZtMTZEbmkwTG12VGxsUE9Ya1NSc2U5NWxDREpM?=
- =?utf-8?B?aFp6T3NNTG4vb0l0QVVIN0FRV1haYjdoUUFSUG9lYjhHWHptT2FwczZobEs1?=
- =?utf-8?B?N1ZGS09rK2d1bFJCend4aDUvSVV6WHk0c25HbmVVcUZrTmgzUG1PVEhMZ1lw?=
- =?utf-8?B?dm9sRElTSm1ETVFUUDhLcHA0R1g2U3U1b0c2MXpFK2JOM2tNYjljMUlKc3V6?=
- =?utf-8?B?UGZmSFc2ZnBTL2RpMGdldVR2V1haSlJVY0NMNDVJRVVwTmxlcWNqM1hLQjdM?=
- =?utf-8?B?SEVUclhxMXV6M3RtVURyM2lCcSttQWExa1JIbGxXaE42RnMwdEIxZ3IyV1A3?=
- =?utf-8?B?cFB6YldIaWF2R21hZEpOMjZaQllhcmlIb2tlWGVnc3U3THBOL09PY0lLM1ho?=
- =?utf-8?B?ZHdDUTJDSzFYUloyTXVuR0JvNE1nVWdJY3l3bmVYZk5oVjBtUzJJaGxabDBT?=
- =?utf-8?B?UWlXTnd3bFFtUWYrL2pEb3JXRjUxVzhSTGMwSFZOanB6U1Z4Y21DSTdMbWtr?=
- =?utf-8?B?dlowenRzNlh1N1ZmY2lQU3VFZk1aTDM0QkZGWnVkMjNZZHE0R2oxTmQ2TTcy?=
- =?utf-8?B?WXgvY0k0RnZ1d3BrckVwdGIzMjc5MG9zcGdYQ1JzcTBHSWs5YXloN2dIeE45?=
- =?utf-8?B?Zk1nY1hsTzhTeS9jYnB2cEdLQ0dDUnRNcGI5bVR1b0tKWHJTQXpiT2oySjFo?=
- =?utf-8?B?alBMaVh0MSs5K1NYQ2FMVndKUzBEclAwd09NUlpnUDNGUVBnWHkxMEFDREV1?=
- =?utf-8?B?OG94N2pCNmw5WTJobHRwTitPRDF3Q2lFSGF2NGhid25JSlFVd0UyVkpTWlpy?=
- =?utf-8?B?VmdCRitmd0ZwQWRDTmNnNjMrelBaeFp5djBBYkg4S3lKdTVTZHYyVFpHQ0Zl?=
- =?utf-8?B?bGNlWlNhZ1VLUEozUVRmT1ROS3ZYMHc4RUdJbng0cll5Slh4ZVE5cXZLb24y?=
- =?utf-8?B?T0psMm4yVmp0UDJSQ0dyc1lEZFhJRTF3SXB4ak1aZVdpRjJvbzdjRENrSW9W?=
- =?utf-8?B?NzNHWitoN0wxWHMwZFFWNXZzK0R1RGRoNUdJZTlPd1hJRlZBbDdhTkl5QjVY?=
- =?utf-8?B?TWh2YS9ZZ0k3Q01mT0pzOXhYd3JBN3FVc1FZWFE4N3h1TTdMcnRiZ3pQclNj?=
- =?utf-8?B?eXFjN3orbmNFNVl1L1Y0dTRUT2RLNkNwZTY2bUpwRnJ5L2xXVzVUWnZXd2Q3?=
- =?utf-8?B?ZTFDMjA2Q1Y3cy9kTDFiMEVrc050VFAvdUV6c2JpcWxlWGVJbGhpNmFtL0pu?=
- =?utf-8?B?aWxRaWp1NFpiTC9xWDYyUWFLWWlNZDhVT3EwMktFZGlZa3hmWVdnRXpCWTJR?=
- =?utf-8?B?M050NWNjY2NyZjRzU1pCVmR2ZVpiN0VGSm9qUmtkcDR2UnduaXorWi8vbW9Y?=
- =?utf-8?B?UWczQjFQUk9BQVdHaHAzWWx6MUJLVGVraTRhZ2s4Y3hzTU9zTlRiRjBOWDZS?=
- =?utf-8?B?RDVZYXRIbFVJTjE4QStDZnR5TVNJOFJXODN6ZjluaWFUVlNCVzRPUjVjb0Qr?=
- =?utf-8?B?RzFidW9mL1c0TzNTSW9Tdi9kbGkyUEx1Um10ajgyTjVTcXNDeHpVWVhZaWlm?=
- =?utf-8?Q?Zggr4obj/pfEFiF635l7DvgCn?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81228ff6-5787-423d-a9be-08ddef14ec43
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:18:50.0760
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BomZYYpcwhdvAMVGoyn+FevGikirnl4PnMrxXfGgMPHid1gRptoyR0gdsoA3oV03h9NrF2TtfcR9rzP5BDbEIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9403
+References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
+ <36c0e5e9d875addc42a73168b8090144c327ec9f.1756151769.git.maciej.wieczor-retman@intel.com>
+ <CA+fCnZcMV0BOJyvx2nciCK2jvht-Hx0HnFtRzcc=zu+pQSOdVw@mail.gmail.com>
+ <couuy2aawztipvnlmaloadkbceewcekur5qbtzktr7ovneduvf@l47rxycy65aa>
+ <hw7xa2ooqeyjo5ypc5jluuyjlgyzimxtylj5sh6igyffsxtyaf@qajqp37h6v2n> <epbqhjyfdt3daudp2wx54jsw6d7jf6ifbr3yknlfuqptz7b4uq@73n5k6b2jrrl>
+In-Reply-To: <epbqhjyfdt3daudp2wx54jsw6d7jf6ifbr3yknlfuqptz7b4uq@73n5k6b2jrrl>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Mon, 8 Sep 2025 22:19:05 +0200
+X-Gm-Features: AS18NWBlgrNec5HQDqXuFdTg0l1auT_Opy5K148gspXva4oeYyeCVxabENuTdwg
+Message-ID: <CA+fCnZdJckDC4AKYxLS1MLBXir4wWqNddrD0o+mY4MXt0CYhcQ@mail.gmail.com>
+Subject: Re: [PATCH v5 13/19] kasan: x86: Handle int3 for inline KASAN reports
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: sohil.mehta@intel.com, baohua@kernel.org, david@redhat.com, 
+	kbingham@kernel.org, weixugc@google.com, Liam.Howlett@oracle.com, 
+	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com, 
+	trintaeoitogc@gmail.com, axelrasmussen@google.com, yuanchu@google.com, 
+	joey.gouly@arm.com, samitolvanen@google.com, joel.granados@kernel.org, 
+	graf@amazon.com, vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org, 
+	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com, 
+	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com, 
+	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz, kaleshsingh@google.com, 
+	justinstitt@google.com, catalin.marinas@arm.com, 
+	alexander.shishkin@linux.intel.com, samuel.holland@sifive.com, 
+	dave.hansen@linux.intel.com, corbet@lwn.net, xin@zytor.com, 
+	dvyukov@google.com, tglx@linutronix.de, scott@os.amperecomputing.com, 
+	jason.andryuk@amd.com, morbo@google.com, nathan@kernel.org, 
+	lorenzo.stoakes@oracle.com, mingo@redhat.com, brgerst@gmail.com, 
+	kristina.martsenko@arm.com, bigeasy@linutronix.de, luto@kernel.org, 
+	jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com, mhocko@suse.com, 
+	ada.coupriediaz@arm.com, hpa@zytor.com, leitao@debian.org, 
+	peterz@infradead.org, wangkefeng.wang@huawei.com, surenb@google.com, 
+	ziy@nvidia.com, smostafa@google.com, ryabinin.a.a@gmail.com, 
+	ubizjak@gmail.com, jbohac@suse.cz, broonie@kernel.org, 
+	akpm@linux-foundation.org, guoweikang.kernel@gmail.com, rppt@kernel.org, 
+	pcc@google.com, jan.kiszka@siemens.com, nicolas.schier@linux.dev, 
+	will@kernel.org, jhubbard@nvidia.com, bp@alien8.de, x86@kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, 
+	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 8, 2025 at 3:09=E2=80=AFPM Maciej Wieczor-Retman
+<maciej.wieczor-retman@intel.com> wrote:
+>
+> >>I recall there were some corner cases where this code path got called i=
+n outline
+> >>mode, didn't have a mismatch but still died due to the die() below. But=
+ I'll
+> >>recheck and either apply what you wrote above or get add a better expla=
+nation
+> >>to the patch message.
+> >
+> >Okay, so the int3_selftest_ip() is causing a problem in outline mode.
+> >
+> >I tried disabling kasan with kasan_disable_current() but thinking of it =
+now it
+> >won't work because int3 handler will still be called and die() will happ=
+en.
+>
+> Sorry, I meant to write that kasan_disable_current() works together with
+> if(!kasan_report()). Because without checking kasan_report()' return
+> value, if kasan is disabled through kasan_disable_current() it will have =
+no
+> effect in both inline mode, and if int3 is called in outline mode - the
+> kasan_inline_handler will lead to die().
 
+So do I understand correctly, that we have no way to distinguish
+whether the int3 was inserted by the KASAN instrumentation or natively
+called (like in int3_selftest_ip())?
 
-On 8/25/25 02:52, Xi Ruoyao wrote:
-> dml21_map_dc_state_into_dml_display_cfg calls (the call is usually
-> inlined by the compiler) populate_dml21_surface_config_from_plane_state
-> and populate_dml21_plane_config_from_plane_state which may use FPU.  In
-> a x86-64 build:
-> 
->      $ objdump --disassemble=dml21_map_dc_state_into_dml_display_cfg \
->      > drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.o |
->      > grep %xmm -c
->      63
-> 
-> Thus it needs to be guarded with DC_FP_START.  But we must note that the
-> current code quality of the in-kernel FPU use in AMD dml2 is very much
-> problematic: we are actually calling DC_FP_START in dml21_wrapper.c
-> here, and this translation unit is built with CC_FLAGS_FPU.  Strictly
-> speaking this does not make any sense: with CC_FLAGS_FPU the compiler is
-> allowed to generate FPU uses anywhere in the translated code, perhaps
-> out of the DC_FP_START guard.  This problematic pattern also occurs in
-> at least dml2_wrapper.c, dcn35_fpu.c, and dcn351_fpu.c.  Thus we really
+If so, I think that we need to fix/change the compiler first so that
+we can distinguish these cases. And only then introduce
+kasan_inline_handler(). (Without kasan_inline_handler(), the outline
+instrumentation would then just work, right?)
 
-Let me share Austin's comments below:
+If we can distinguish them, then we should only call
+kasan_inline_handler() for the KASAN-inserted int3's. This is what we
+do on arm64 (via brk and KASAN_BRK_IMM). And then int3_selftest_ip()
+should not be affected.
 
-"
-Both CC_FLAGS_FPU and DC_FP_START are required for FPU usage.
+> >
+> >What did you mean by "return the same value regardless of kasan_report()=
+"? Then
+> >it will never reach the kasan_inline_recover() which I assume is needed =
+for
+> >inline mode (once recover will work).
 
-CC_FLAGS_FPU allows the compiler to generate FPU code whereas 
-DC_FP_START ensures that the FPU registers don't get tainted during runtime.
-
-The change itself looks fine to me.
-"
-
-> need a careful audit and refactor for the in-kernel FPU uses, and this
-> patch is simply whacking a mole.  However per the reporter, whacking
-> this mole is enough to make a 9060XT "just work."
-> 
-> Reported-by: Asiacn <710187964@qq.com>
-> Link: https://github.com/loongson-community/discussions/issues/102
-
-"Link" to "BugLink"?
-
-The link is in Chinese and it would be helpful if you can spell out the 
-problem in commit messages to something like like "this fixes 9060XT 
-fails to output to HDMI on xa61200" or other meaningful descriptions.
-
-> Tested-by: Asiacn <710187964@qq.com>
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->   drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> index 03de3cf06ae5..059ede6ff256 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> @@ -224,7 +224,9 @@ static bool dml21_mode_check_and_programming(const struct dc *in_dc, struct dc_s
->   	dml_ctx->config.svp_pstate.callbacks.release_phantom_streams_and_planes(in_dc, context);
->   
->   	/* Populate stream, plane mappings and other fields in display config. */
-> +	DC_FP_START();
->   	result = dml21_map_dc_state_into_dml_display_cfg(in_dc, context, dml_ctx);
-> +	DC_FP_END();
->   	if (!result)
->   		return false;
->   
-> @@ -279,7 +281,9 @@ static bool dml21_check_mode_support(const struct dc *in_dc, struct dc_state *co
->   	dml_ctx->config.svp_pstate.callbacks.release_phantom_streams_and_planes(in_dc, context);
->   
->   	mode_support->dml2_instance = dml_init->dml2_instance;
-> +	DC_FP_START();
->   	dml21_map_dc_state_into_dml_display_cfg(in_dc, context, dml_ctx);
-> +	DC_FP_END();
->   	dml_ctx->v21.mode_programming.dml2_instance->scratch.build_mode_programming_locals.mode_programming_params.programming = dml_ctx->v21.mode_programming.programming;
->   	DC_FP_START();
->   	is_supported = dml2_check_mode_supported(mode_support);
-
-I will send this patch to promotion test.
+I meant that with the recovery always enabled, it should not matter
+whether the report is suppressed (kasan_report() returns false) or
+printed (returns true). We should always skip over the int3
+instruction and continue the execution.
 
