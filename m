@@ -1,140 +1,240 @@
-Return-Path: <linux-kernel+bounces-806222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD79B493CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9FB493E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8CA3BB7E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4AF3B2EAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E644E30E82E;
-	Mon,  8 Sep 2025 15:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECDF3101AD;
+	Mon,  8 Sep 2025 15:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjOanSVC"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g4TsfL1L"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B465A1C3BFC;
-	Mon,  8 Sep 2025 15:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346037; cv=none; b=pOLI1DZb6mI0PVa5rOQI7IV/aAyq1347p/EXvOQLowRWZd9Vd+dGeDYDio5g2QsijrwnB5PqgmHJAOf5Go8K/9bJhihNRh2Ute/LP1ENcy0fp4A22d7uElGHhdPcFRpRuBW5v9SdJYf4dsNEev6/7zc4P0jENb3r3vXOq25dYLI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346037; c=relaxed/simple;
-	bh=qwriLjbmcAGst/zCmLUrZmks1+AuUfZH39KvUOcOH0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RFQVd9M2eaSnVbjweXbNdcyXx61wjQbTiaEhQbvXuHBANfqc2+zM3dGYLf1Q2bumoAsXhIbekMkJ6gpEujHBc0vAG3iVfQrdeeKISKaoaCYVVrV8aMNmAKWcqXkqfnolAucum10caK8imLEsINXfEVDA/DL+2IvM09luTdLFoNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjOanSVC; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b5d5b1bfa3so43206091cf.1;
-        Mon, 08 Sep 2025 08:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757346034; x=1757950834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mmlBlDpl+4/RqcC9nUmRT5mg0GKEaeGb1rCCM8xHueA=;
-        b=cjOanSVCQmSsQ+LhkaIc8PG0AetM8KahhpKaq0v4uZPUOf/DJSDdTi5k3Znu/n78+i
-         6hxnx6t7pkUnXpKPIUn18MY1gUalAJgjOuJdHVqbN0hih74EF9Bt6byDhwV5NddSG6z6
-         CDGVMTpqZb6KPp/hWb/C7Gi9AFIEaDn0FijpfeGziJa481mRYNTg5zoRjJSl+37GezKF
-         N2EbWuzVsRzxOQKstJrpY/gsAhCm3g8NfOBvW+95BTgY9DlkzM9ADHtfgCU433izM/yN
-         39WQ+jvhAyPOP24MyGEnEBSUnlp2CK29qxzUuMuXF18w8xWjuOE+nrqxrZU9BuwEl3yG
-         Z6XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757346034; x=1757950834;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mmlBlDpl+4/RqcC9nUmRT5mg0GKEaeGb1rCCM8xHueA=;
-        b=bbQFEefL2hp5DeDe+6ahDG7HCPrQ/H64zOI00Pjqk2WplpA6qfUTDdZGK89HU5elzP
-         TuZ4mGwuWDv5t4b1k3ofHHMFeqrwCzrh1OPi5ZRUI7pCXLqy2hnl6ryjNXKqnTW1jVe2
-         wgwXc4xrWeZqxQnSrdR2+uP8EhxYGiuQFL9wRFXt6bbQ9eVD9u74pW+TgVWRzVD36SLM
-         7au5kOhJnQjm3INHSTGej20fBiHaNXYNbNP17dV0VEKjkVKaWdfVXz1JyryXrc5nKzXP
-         AeCHI9D5AMYzQMyqa8py6h06EOi1aJ4qd42pubN7Ms3Q7lbSEKbfvsOhNdKz4bqTPO+b
-         2fvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0cqPRnCq8kqOwNlDP13fqv6OvokQp9GYY5nw6vzfcyWNe5MFbQpdQN+nlCob3kMmCno30AnDKB4ivae3j@vger.kernel.org, AJvYcCXJ3GIBsqgx/AxmrWJDXQ7IuPSnNTDdzVftE+JRemalsHZsW5E7Moy2fr+XLctJYRFAv+WAhPchjerOZzmwMA==@vger.kernel.org, AJvYcCXuajJMU2pxJvUQwIIPRk96shn1J60gycJ9ituECNwZgFw3ZEoaqLci00jpmVNX9p6TbqhrQ2XT3jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvhJD8ysZayR42W0NJkbU/qjD/wo6oRr8walDa6kUvbEe9q1c8
-	ed/WfT+SZkp5jIRQtT9IKwbJnoBxXfk0B8qNi0naAP2zJ5u4Mxl8fS7B
-X-Gm-Gg: ASbGnct8hs47PuOprxwapvpfkCoIew7M5H2cC8hvIT1A2yIvIKAE4Hfs7A1IiOJ32W9
-	8nC/9NIjMfOLEce0WIAXMBx2gmxgMR4lkck0VyBpmJSa6yWlx14OV2tUmtV8sF8i7erExoESsxZ
-	VnfoWh6wtCrMhspnUB4Jl6FW6K5cTbk+mTsj4pM+hlTWXnsxdtdmLhFRf02cY7PHjYHY/kkWcI1
-	DB/si0xgwANOifqTd7he857TMgjaEGfPBfzB8hk7+56FQ0qs00IfkTmpSzGpxlif5xxKzmfDE9K
-	WuTGsQ91DacJm7zruX/8MxADk7LG2AjZTYqT/SU6vfHoh1xsejqq2eOuesd0jEIgHWpkdfa044q
-	5DSbj24SYYjVr97BBhze8am8zx8W2Nwzu0n9cxe4J6LJLGzWcJfBbJizSP588FNubqaJNqM5wtO
-	QLsILFk2v6+Io=
-X-Google-Smtp-Source: AGHT+IFU1PZ+J2iW9oBqGqqd64Y3TTikMQfv+fShqzgZXQJgjFCltE/gj+GjX+w0jAHOPjKr8vx3MA==
-X-Received: by 2002:a05:622a:19a5:b0:4b3:15d4:1c1d with SMTP id d75a77b69052e-4b5f84bdc33mr88981991cf.84.1757346034372;
-        Mon, 08 Sep 2025 08:40:34 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1145:4:1456:e851:ddd5:be9f? ([2620:10d:c091:500::3:4e10])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f7ac9f8sm106132511cf.52.2025.09.08.08.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:40:33 -0700 (PDT)
-Message-ID: <1d7a945c-70db-4446-85ab-19f5af88e204@gmail.com>
-Date: Mon, 8 Sep 2025 11:40:30 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59EC30F94A;
+	Mon,  8 Sep 2025 15:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757346066; cv=fail; b=kEAvWqe7bUa4ny2gHX3J843+8isRwsfCoMhmvg7/osFcxgkRfN+Grw5ei09isoG4kvbCs/VeuNVAm3L/QS09FM/qDUu5obFREE2Y9MYw6iPoxMo1RIb0U/kFTognqHWJlgw5ykkItYiwhUJfapV/FL6I8dGshHTE+dmvfBTeneM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757346066; c=relaxed/simple;
+	bh=77x9LotGz4q1pWU2rEqeRGQ0FKblUCqSUPOyv3VrGF8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=ti6Ol/dJyoobHaX/ze/wLNcI9yRio5WCLZiZiuYxZ5Y0QNktqWT0ROZIGgT7bvgh3PrtDrsuYShQvT/9dAS9bh+HyNu5oXYee72ey43JYwUIfUibdwgHf/XcK6YQCf2x5Mh9NNGcC+Ar4m2ecBdWriGwxNq0RlZIyQupLJg+Bh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g4TsfL1L; arc=fail smtp.client-ip=40.107.237.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sI3ivR90m7Fe+i4P3kzM5oMNKE8qKnFfmjBcAXDI+sfuQfgR9lapU2wRr1XUeSctArTkIf1pqLjLvYMdNY65hIk+7rvswZufqGDoHedk+nzjyE57vhKtea9RtBmxuhK6lD3dO+IMbSMDCQ1Y0oVfsgvZ6yWCcaThDMhrewa58yzP8sVtKGqJxMR8F1jaNnwG5vPXdtt4BsBuYdUBui/kBvj1qO/V763FeXGOLo67aOtQPzRqF2Yc376m3ZUs51lIxvLLvvli2mIWXg7vm5BGD0iwMBnA64gxkrSlWYwLr2Psm0s+dYO6dvpMtmm6++7r1VjKnZY7aK/uMC0e+sPBMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+3NQlZIGdz4iiviHwrtrXxCt/lgwIdNySNMmHRIDE2s=;
+ b=gKu+sNJrj8AzYsc6ZUhK6+J6ckKWZ4Fnr5EZOphW9hQ/McAFkxw8JB2MHbWffJ2YijAuTR+w/FrauyQr0N7NpjweNVPcNrcMOW7w5b4pF+GkBsH1enh8tl0zggqOftfnlHqAbE8cxaJSfECAjoacGGK6hRUjVQzZ7vGrNNYly4v3n36vOB+7Huw2ye9RgirAriKJ070aN5i/lZzy3PWyqVXd2LPATAlNv3oXeN5UGSAYaxnVgSuAY2NxwNZjWg3ktJCNUQU/iXme4IMKBJO8cPkR3Giwbvy4hiT3n56G1IFut6hq7X81eRVHQQqWBGW2Jjs0TV0RJpKuGCAPtajgCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+3NQlZIGdz4iiviHwrtrXxCt/lgwIdNySNMmHRIDE2s=;
+ b=g4TsfL1LcFCtH/FRE4o8iNScc6FjQWu+LgqDV63DPLWt8Tsa6cdDEZ2U5Pe/6EYsrhbq6Fj6DJj7etMNo+oRbiqo+y1MvVwf9L8LrBI4eAYhdsNf4aeTmBXYMd6bNfuB0tlGHXYi24IenXi+J/6JRixL7RcJn7E1wE9FwaZNhuA=
+Received: from CH2PR17CA0001.namprd17.prod.outlook.com (2603:10b6:610:53::11)
+ by PH7PR12MB5760.namprd12.prod.outlook.com (2603:10b6:510:1d3::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 15:40:55 +0000
+Received: from CH3PEPF0000000E.namprd04.prod.outlook.com
+ (2603:10b6:610:53:cafe::80) by CH2PR17CA0001.outlook.office365.com
+ (2603:10b6:610:53::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Mon,
+ 8 Sep 2025 15:40:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH3PEPF0000000E.mail.protection.outlook.com (10.167.244.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 15:40:55 +0000
+Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 08:40:54 -0700
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+Date: Mon, 8 Sep 2025 15:40:30 +0000
+Subject: [PATCH v6 01/15] x86/mce: Set CR4.MCE last during init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
- THPs completely
-Content-Language: en-GB
-To: Mark Brown <broonie@kernel.org>
-Cc: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
- david@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- corbet@lwn.net, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
- riel@surriel.com, laoar.shao@gmail.com, dev.jain@arm.com,
- baolin.wang@linux.alibaba.com, npache@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com, Aishwarya.TCV@arm.com
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-7-usamaarif642@gmail.com>
- <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
- <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
- <620a27cc-7a5f-473f-8937-5221d257c066@sirena.org.uk>
- <abe39fc3-37a3-416d-b868-345f4e577427@gmail.com>
- <771871a1-9ee7-472d-b8fd-449565c5ae80@sirena.org.uk>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <771871a1-9ee7-472d-b8fd-449565c5ae80@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20250908-wip-mca-updates-v6-1-eef5d6c74b9c@amd.com>
+References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
+In-Reply-To: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
+To: <x86@kernel.org>, Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+	<Smita.KoralahalliChannabasappa@amd.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, <linux-acpi@vger.kernel.org>, "Yazen
+ Ghannam" <yazen.ghannam@amd.com>
+X-Mailer: b4 0.15-dev-9b767
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000E:EE_|PH7PR12MB5760:EE_
+X-MS-Office365-Filtering-Correlation-Id: f591b2e2-9ead-4cb1-6b18-08ddeeee19c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MWtQNHFkYW8xY1NjOGFpNnBncnFJemhIemJiSHZoZDNLZEk3Q3lVdGQ5T3FD?=
+ =?utf-8?B?NWIxSmFzNXU2V3pkZDFVNkplcTNmMzdER2FDcm53TUovTTgwZ3d0VFluOUd3?=
+ =?utf-8?B?UHVaWVRwamI0ekpVZXZPcEtBTGxEV3dENUJnZjlkOWxHcjJCSktvMHMzYUpq?=
+ =?utf-8?B?cFJDYjdHMW1rM3A3L2Q1eWNLRUFPaEtxR0kwcEdhKzBnOFJvVHhvZXd3U0xs?=
+ =?utf-8?B?Y084dGEveWN1NG1Zc0dxMEpka2tyWVhnSFplTnh4akdDbHkyMGE2Q0Rhc01j?=
+ =?utf-8?B?SHArb09CQWhUNnBZWVJkNU5LTEduNTQxT2xSZUNhemFGQitlU3JPWnVtVnFu?=
+ =?utf-8?B?MWVyYnlZN2lkK0hRajNGOUJzNG5na2l0Zy9HRiszQ1RNNm83ZkdVemRqUmZE?=
+ =?utf-8?B?UFVqaSszdithSzU2TFQyYmprMHRBSzR1ck5meGVwQlhlUzY5Z3JsOU5pTWIr?=
+ =?utf-8?B?VEYyemZSblA1Uk9KdFpHNWpvTElhZmU4bnJ1Z0EwWWIxbEZFUHR5c1BEeXRk?=
+ =?utf-8?B?R1AxYW1Ub0R4b0Z2NEYvSERhZkJ6NDJ0TVFWak1vQXp3MFlaVHRsalcrNTEw?=
+ =?utf-8?B?TnRjeDF0Tk41WlhaNXR0TlY0NG5reEhMQnVYYTVWNjlML0Z6VTBZTktLV1BJ?=
+ =?utf-8?B?bG5RRTZSaTAzcXpDNGxlS2ptam42d2ZQWmh1ZjFuMk9sNURSTjQ3QUhGL2dr?=
+ =?utf-8?B?dmtLOTFsdmlVeUlRRktUdlVzNDRSU0JNV3FmUU8zT2lya1BxYmEvOWhBbkxD?=
+ =?utf-8?B?ME81dlRtMDdlVW9BejFtbGlOVXp4eWVPa2dDdFFuQXNwMDRLb3ZnVUtlUm4v?=
+ =?utf-8?B?R0I1V0t5S0tXVklCQTREK21Ja1cyMFBtY0JDY0h6T2VBTlhhc1lzSC9ncHJ6?=
+ =?utf-8?B?dytGWm9uZ2oxQlFZRkNMcFI4M09IM1lkV214UzlhNWVrb1dlM2lyT21HcGU2?=
+ =?utf-8?B?dXJ0YU50YW9FVjdtR2tMV2EwUWFDWHRPUzhKV0dWRzRnWWNENTUydEtNSlZx?=
+ =?utf-8?B?Nzl1RGl1ZDhxMm1GU2dtYVVVREpUdFJKSzFNOGZsZ1BZWDkxNmsxYXJsMVh0?=
+ =?utf-8?B?ZGN2UkE5bkJwZ0tGdE5pbDZxanZDTzJuN1dNcGlGN1lLQUt6RkdQczFrL1Qx?=
+ =?utf-8?B?R2RSbGNVazVWUjlhZXoyNS9HTEx4RlZxTVV5NXI1NE12Q1NCOG1DcE4yaGFi?=
+ =?utf-8?B?MlFzRm0xKzlrTW03dk92THRoK1lWbTNkK01jRzVBVHdGQXAyMDlVS0lHMVd2?=
+ =?utf-8?B?am5hUWZYa1MyQ1dySCtxanQ4dlUxL1VJTEtxTXVKNjFOdjN0MXd0cXk1a1pX?=
+ =?utf-8?B?SHdmL2c0VDlhVjhwcDlaWFFQV2ZzL1JnVjNUNXB0M0hmVnFaakY5NDFvVEIv?=
+ =?utf-8?B?SGxPODRMSnhLMjFCVHpPN3JYUTY5UFNXUVJ1V2REWmRNYWFkZWRFODBkSlpn?=
+ =?utf-8?B?R3Y0Kyt4cm9PUkd1ZlJTWWV0Wk1wKzVKYThTTVNRdGxRVERJS201YkZZajRU?=
+ =?utf-8?B?TjcxZnI1L2Z2dzNJcHljUGV6RTdZTDcwbSs0blRsTnlxb2ZYRkw3S043YjV5?=
+ =?utf-8?B?dnRYSmM1blVGV004SnBIakVZMzNVVlB0Sk1razRIbjBVcGcycElnTjh2WEZz?=
+ =?utf-8?B?MXd6NWR1OVAyQnNWZmtST0VTSWpFdFVWbmtPdmNUYzdJN1BOc0Vmc3o4ZUhr?=
+ =?utf-8?B?VEM2b0h6L3RSQURqYU55RnBrdXQ0a1VTbkZZVEs1Q0Fad0plaUczeWRLTE9o?=
+ =?utf-8?B?eDlJYnEwajJzQnhnd0RIYW5GUEZOdXRFNTRIYmdZZlZoSitxNExhQUFjMU9W?=
+ =?utf-8?B?NTVEd1hRaEsxUVVXVDI4M0gwRmVKMHQzM3ltS2VyZWdZVG9FbXJrMFVyVDY3?=
+ =?utf-8?B?QmpXYjkwSDdhczJlaUJLNE1RVlQxTjlrSUh3ei9yYlBSRHpUVHd0ZmcvYXZO?=
+ =?utf-8?B?T2RYYXcyaFk2RFpTQzYwNEtueHpBdFhVVkEyK1Y3dXdVMVZ4ZFNlbG85Zk1S?=
+ =?utf-8?B?WmlGVnlLb2xEOWZqSGdsKzErelFvV2g5NUhWNW1EemI0aS9sc3Y1c1NXb2J3?=
+ =?utf-8?B?Q2dVUXd4YjRnQmxhMWVNajJXL1B5MWg4K0JMZz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 15:40:55.7670
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f591b2e2-9ead-4cb1-6b18-08ddeeee19c1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5760
 
+Set the CR4.MCE bit as the last step during init. This brings the MCA
+init flow closer to what is described in the x86 docs.
 
+x86 docs:
+	AMD		Intel
+			MCG_CTL
+	MCA_CONFIG	MCG_EXT_CTL
+	MCi_CTL		MCi_CTL
+	MCG_CTL
+	CR4.MCE		CR4.MCE
 
-On 08/09/2025 16:38, Mark Brown wrote:
-> On Fri, Sep 05, 2025 at 08:40:25PM +0100, Usama Arif wrote:
-> 
->> diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
->> index 89ed0d7db1c16..0afcdbad94f3d 100644
->> --- a/tools/testing/selftests/mm/prctl_thp_disable.c
->> +++ b/tools/testing/selftests/mm/prctl_thp_disable.c
->> @@ -9,6 +9,7 @@
->>  #include <string.h>
->>  #include <unistd.h>
->>  #include <sys/mman.h>
->> +#include <linux/mman.h>
->>  #include <sys/prctl.h>
->>  #include <sys/wait.h>
-> 
->> should fix this issue?
-> 
-> That seems to do the right thing for me, I'm slightly nervous about
-> collisions with glibc in future (it's been an issue in the past when
-> they're not using our headers) but I guess we can deal with that if it
-> actually comes up.
+Current Linux:
+	AMD		Intel
+	CR4.MCE		CR4.MCE
+	MCG_CTL		MCG_CTL
+	MCA_CONFIG	MCG_EXT_CTL
+	MCi_CTL		MCi_CTL
 
-I have seen this included in another selftest as well with MADV_COLLAPSE.
+Updated Linux:
+	AMD		Intel
+	MCG_CTL		MCG_CTL
+	MCA_CONFIG	MCG_EXT_CTL
+	MCi_CTL		MCi_CTL
+	CR4.MCE		CR4.MCE
 
-I think best to have it. I will send a patch with it.
+The new init flow will match Intel's docs, but there will still be a
+mismatch for AMD regarding MCG_CTL. However, there is no known issue
+with this ordering, so leave it for now.
 
-Thanks for confirming!
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+---
+
+Notes:
+    Link:
+    https://lore.kernel.org/r/20250825-wip-mca-updates-v5-7-865768a2eef8@amd.com
+    
+    v5->v6:
+    * Only move CR4.MCE programming.
+    * Update commit message to match the new change.
+    
+    v4->v5:
+    * New in v5.
+
+ arch/x86/kernel/cpu/mce/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 0326fbb83adc..9e31834b3542 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1850,8 +1850,6 @@ static void __mcheck_cpu_init_generic(void)
+ {
+ 	u64 cap;
+ 
+-	cr4_set_bits(X86_CR4_MCE);
+-
+ 	rdmsrq(MSR_IA32_MCG_CAP, cap);
+ 	if (cap & MCG_CTL_P)
+ 		wrmsr(MSR_IA32_MCG_CTL, 0xffffffff, 0xffffffff);
+@@ -2276,6 +2274,7 @@ void mcheck_cpu_init(struct cpuinfo_x86 *c)
+ 	__mcheck_cpu_init_vendor(c);
+ 	__mcheck_cpu_init_prepare_banks();
+ 	__mcheck_cpu_setup_timer();
++	cr4_set_bits(X86_CR4_MCE);
+ }
+ 
+ /*
+@@ -2443,6 +2442,7 @@ static void mce_syscore_resume(void)
+ 	__mcheck_cpu_init_generic();
+ 	__mcheck_cpu_init_vendor(raw_cpu_ptr(&cpu_info));
+ 	__mcheck_cpu_init_prepare_banks();
++	cr4_set_bits(X86_CR4_MCE);
+ }
+ 
+ static struct syscore_ops mce_syscore_ops = {
+@@ -2462,6 +2462,7 @@ static void mce_cpu_restart(void *data)
+ 	__mcheck_cpu_init_generic();
+ 	__mcheck_cpu_init_prepare_banks();
+ 	__mcheck_cpu_init_timer();
++	cr4_set_bits(X86_CR4_MCE);
+ }
+ 
+ /* Reinit MCEs after user configuration changes */
+
+-- 
+2.51.0
+
 
