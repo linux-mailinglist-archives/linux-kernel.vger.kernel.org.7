@@ -1,171 +1,137 @@
-Return-Path: <linux-kernel+bounces-806689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA9FB49A6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:57:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACA8B49A91
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FEA1BC512A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:57:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25A2167428
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDE02D5930;
-	Mon,  8 Sep 2025 19:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9EE2D7DC4;
+	Mon,  8 Sep 2025 20:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cLxVOvV6"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lmoG4NDV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA56A2698A2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE55219A86;
+	Mon,  8 Sep 2025 20:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361428; cv=none; b=pW513zflCqlxuNcNGCtJa51csGtoWkZ8NJ9F5Xh66jnqty/RjdX5Vm6qyXRWLDMfCDSiydkug6vkaZR/it3sofzw6ykntp80aXP13+PEd6u4kq+1Iaxl4+/RhrxD5AiLV8uTGTZeSUgBr3jkrH2OX3UJvsAY31INT4sgvJQUrwQ=
+	t=1757361771; cv=none; b=DGk6+rtB2tnNTUptQgqVqv/iCinvakaD/gFM7Ip3kaATA4DdrjvkEXjLMtoaFGTJDu8zp3P88t1JLd7kgVe6c2HzxCxTL7EXxefGw5TxTLQqhNeDxSqd3oJyxCvxu0XqxXcP5ia9UzsLilwGUulqDQK6S/WxLEF1IFaiEVmUQtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361428; c=relaxed/simple;
-	bh=j6HnEXSAtqCKeWJJLJ+uKJUb/6XN8Wu+ma3pNqzPIuE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ggD7fh42xBtKCREZILlsvX5QvhBJrCa3UZMQk91hw5+ZM9c2VFyqFjMlWejG/F5hnmICsuCyWZ6pJsmeUp4aDkz3VrJxhxJ//pH5WDRP0tpQH+2o/bGqTuZNVS+XbIjKR3N/1cOdwPTjYpjYm01ZUbL0GNPjZdql5ZlKdR0+kNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cLxVOvV6; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603b60cbso44042647b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757361426; x=1757966226; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IoLXbGMjxLNA/suFUGEkTpr9rzpTqZI/pHyN/Th1x4w=;
-        b=cLxVOvV6PEuQzFQo6p0U2q6rG4SGoC7YC/Hw3/I2ccK/dwR7yuojW2zguNi9WSAtHS
-         e9YJWdWxs3airLFRI3xURDKD/ByeIEtxT3zPhbEU+xgAWYF3979fxckxIibfegxUy5PX
-         hdc11jiOBKlqhzWzGRVsmusCxfHwGfUQQP9YPYwd28k2k5OawEgfwPcPXl4giSXKa6cQ
-         Ky+HcNQDznn3vy2MWfLds5N7dCmVb5CghvCBAbfRS9+ckAzZMuf1DYrTvFhxkmhhxDGZ
-         qn1XrxJ8CKKHIGbNQDJ6u56HVk77Tv9F6VofJySnDKqJo//mtULKDA4FqxcXI9vT7fOB
-         Vs+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757361426; x=1757966226;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IoLXbGMjxLNA/suFUGEkTpr9rzpTqZI/pHyN/Th1x4w=;
-        b=OW+pU4cOlmaN1L910yWRZPlseHqRDr9tVuw5rFOHyIgwH+O/K62uiqUs75rU32wvkn
-         xzs1jWrUyAtoGU+M6ST1paJxl6BriMrt3GzfdmSPr5SARir3wfhz8FpIp0F3zbfU3qpa
-         j8ZZ0pA9wPaXKUANpE84Y+mSX2LBr87oM23qtGioMET6YamsKj38vNTiPjfSTV9OFDji
-         4Vr//gYHCfPbcTVvZV8jQb43SW4cFtnlrOMnjxecGilV1v2Hv3g61meCmpBGNICK2O0/
-         4cZoLkwO0y7kLwWUxBa+L7GX+0AuEhrHDKVMQALMmo2w+2fM+gdPljBshZmiMKa64Mhu
-         EqVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1hAU2F/o0T8ln0LkqtUNz9BRVdUbyH2QKLRtyeHQckLEndtOPXR/8jxSzG22hY7N/G0+ZeIes3VBgki0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpDPACOkWvHNczRHA1lo/3K1BwhjlDcdvTDEGYG481hlY0JAtq
-	z0YDAupSgaiPsKAjR1wfaC0WVgPUGkj/FgC6S8RjBgF2WaQewr+fFxT5I9yAb0MmPQ==
-X-Gm-Gg: ASbGncu79LtmAWoLt73vXx88QJAYUmFY6U3gryqoYVyLuLSdzCIO27t6jiCsujrk4PC
-	pNiL0Mjw4+7E5Hh+HjZPK+Sio2WhmAJpe37140nFURLYMvjL9grGcd2tmCNJMmtEQKCEwFEu0pE
-	Jmp7WxFMl1OedxRou+wKyBhMUM+ryeqfi9vIRlD/RzDZGUcIYtvUCdH7nkhS3x94jCPDxEbFyPt
-	BTGNEl14OIUUddy9bqxmkj34DL2f1oO+l5BdRFcM2+F1e8r7w3LquNWcC3aAZekqeV4aIYO8RbY
-	BlKSfkcEr2cgGnpYVRvVpREao0hUMM0+rFnkZfZANv/Pt+/PXVvRwInYOxyarEweONROHP1t2BL
-	0gpL64ZMHV+rADmCGjbG0B3ml8L/VFkaSQao1X/C8kEEd0lRBUx7jAjaHRfJL2m2+xQoQhoq2me
-	MN9BLjFuRnHJB+RlmRYg==
-X-Google-Smtp-Source: AGHT+IEp/mRnH+3Dncw0ZHtHoBb2u3crhoWQ36w+MTA76D0QR6yb+nxhPQtfdxvv7OvzOG6eN8DgOQ==
-X-Received: by 2002:a05:690c:968f:b0:71f:d459:788c with SMTP id 00721157ae682-727f368e699mr88931137b3.2.1757361425548;
-        Mon, 08 Sep 2025 12:57:05 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5ff8ed34211sm5953906d50.6.2025.09.08.12.57.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 12:57:04 -0700 (PDT)
-Date: Mon, 8 Sep 2025 12:57:01 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: David Hildenbrand <david@redhat.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    Will Deacon <will@kernel.org>, Shivank Garg <shivankg@amd.com>, 
-    Matthew Wilcox <willy@infradead.org>, 
-    Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-    Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>, 
-    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
-    Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    Alexander Krabler <Alexander.Krabler@kuka.com>, 
-    Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>, 
-    Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-    Axel Rasmussen <axelrasmussen@google.com>, 
-    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
-    Konstantin Khlebnikov <koct9i@gmail.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH 2/7] mm/gup: check ref_count instead of lru before
- migration
-In-Reply-To: <1f714ba0-cdda-4122-b6a1-e1e0ea44b1f2@redhat.com>
-Message-ID: <d5333648-7b88-9293-dc1f-e080dff65d1a@google.com>
-References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com> <47c51c9a-140f-1ea1-b692-c4bae5d1fa58@google.com> <e54b1d8c-ad63-4c7a-8b1b-b7c3d76446f2@redhat.com> <b008aef2-f69f-e2fb-d4d7-71a42d308529@google.com>
- <1f714ba0-cdda-4122-b6a1-e1e0ea44b1f2@redhat.com>
+	s=arc-20240116; t=1757361771; c=relaxed/simple;
+	bh=7DOP+7F2mn8xBOqn8zohU2fZyfjzOo/Gx5CGf4Zo840=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtCdMbpa1WXufa36w+xGaDI1CsTRp3gd0clmci+/GYHzWgDw6twXS6HD+6syyAgUQ95GrrZAi+We8ou9NNHi5V04AFxywagouCnphAS6UczWQK6mUbJTevLJo+oMcnZWcJmN2C8uVuJ3ZpNc+f4YjqO7lCmOqDWLvu8FYOD9GOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lmoG4NDV; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757361770; x=1788897770;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7DOP+7F2mn8xBOqn8zohU2fZyfjzOo/Gx5CGf4Zo840=;
+  b=lmoG4NDVMASl9qE8zxnFNv6a1IJOwXy5NCznU6Z27oiu7b+jEoTsu9yj
+   uHMF9yV+ph+7eg6gvKUPxy6RBKrx2Mf4XVa/pC4N3DWCy98l8ZiL/Pd67
+   3ZJlSZfeL67ROiBTvFSoOjX2BAOnTohhnsnWLRXFg0w/rMsVn6/Uluo6I
+   3+XwgOUiOSyvVRylBMmtFv/yuI+IvnPa4rojfOFdnSjZE8UA/hQRuERGw
+   pE1ciglhqrkxO+/DNa566K5V/vlpXlTn8SuQgqBdsmAwBXntVd4T6vVSf
+   xcw+rqU8+7ti2Y7/2O1ugjVrBCi+VJPFe1GZLg25ZgIQFlnY+uYBWMSDW
+   w==;
+X-CSE-ConnectionGUID: R7Jl1lYcR4ueYfDElaDt8Q==
+X-CSE-MsgGUID: K6NgrqwTQWWj0XoDma5RFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70732129"
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="70732129"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:02:46 -0700
+X-CSE-ConnectionGUID: /Sl2FUhRQ4KOZTq0Jxxl6w==
+X-CSE-MsgGUID: gTr/fpAHT8e/neTJAB80kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="172759587"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 08 Sep 2025 13:02:41 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uvi4U-00047f-0u;
+	Mon, 08 Sep 2025 20:02:38 +0000
+Date: Tue, 9 Sep 2025 04:01:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <202509090302.DzgxdNbE-lkp@intel.com>
+References: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
 
-On Mon, 8 Sep 2025, David Hildenbrand wrote:
-> On 08.09.25 12:40, Hugh Dickins wrote:
-> > On Mon, 1 Sep 2025, David Hildenbrand wrote:
-> >> On 31.08.25 11:05, Hugh Dickins wrote:
-> >>> diff --git a/mm/gup.c b/mm/gup.c
-> >>> index adffe663594d..82aec6443c0a 100644
-> >>> --- a/mm/gup.c
-> >>> +++ b/mm/gup.c
-> >>> @@ -2307,7 +2307,8 @@ static unsigned long
-> >>> collect_longterm_unpinnable_folios(
-> >>>      	continue;
-> >>>      }
-> >>>    -		if (!folio_test_lru(folio) && drain_allow) {
-> >>> +		if (drain_allow && folio_ref_count(folio) !=
-> >>> +				   folio_expected_ref_count(folio) + 1) {
-> >>>       lru_add_drain_all();
-> >>>       drain_allow = false;
-> >>>      }
-> >>
-> >> In general, to the fix idea
-> >>
-> >>  Acked-by: David Hildenbrand <david@redhat.com>
-> > 
-> > Thanks, but I'd better not assume that in v2, even though code the same.
-> > Will depend on how you feel about added paragraph in v2 commit message.
-> > 
-> >>
-> >> But as raised in reply to patch #1, we have to be a bit careful about
-> >> including private_2 in folio_expected_ref_count() at this point.
-> >>
-> >> If we cannot include it in folio_expected_ref_count(), it's all going to be
-> >> a
-> >> mess until PG_private_2 is removed for good.
-> >>
-> >> So that part still needs to be figured out.
-> > 
-> > Here's that added paragraph:
-> > 
-> > Note on PG_private_2: ceph and nfs are still using the deprecated
-> > PG_private_2 flag, with the aid of netfs and filemap support functions.
-> > Although it is consistently matched by an increment of folio ref_count,
-> > folio_expected_ref_count() intentionally does not recognize it, and ceph
-> > folio migration currently depends on that for PG_private_2 folios to be
-> > rejected.  New references to the deprecated flag are discouraged, so do
-> > not add it into the collect_longterm_unpinnable_folios() calculation:
-> > but longterm pinning of transiently PG_private_2 ceph and nfs folios
-> > (an uncommon case) may invoke a redundant lru_add_drain_all(). 
-> 
-> Would we also loop forever trying to migrate these folios if they reside on
-> ZONE_MOVABLE? I would assume that is already the case, that migration will
-> always fail due to the raised reference.
+Hi Matti,
 
-Loop around forever?  That would be unfortunate (but I presume killable).
-But when I looked, it appeared that any failure of migrate_pages() there
-gets reported as -ENOMEM, which would end up as an OOM?  But you know
-mm/gup.c very much better than I do.
+kernel test robot noticed the following build errors:
 
-If it does loop around, it's not so bad in the PG_private_2 case, because
-that's (nowadays always) a transient flag, much more like PG_writeback
-than PG_private.
+[auto build test ERROR on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
 
-But whatever, yes, the move from testing lru to checking ref_count
-makes no difference to that: the failure occurs in migration either way.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO/20250905-144454
+base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+patch link:    https://lore.kernel.org/r/3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount%40gmail.com
+patch subject: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+config: i386-randconfig-r133-20250908 (https://download.01.org/0day-ci/archive/20250909/202509090302.DzgxdNbE-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090302.DzgxdNbE-lkp@intel.com/reproduce)
 
-Hugh
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509090302.DzgxdNbE-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "spi_sync" [drivers/base/regmap/regmap-spi.ko] undefined!
+>> ERROR: modpost: "spi_async" [drivers/base/regmap/regmap-spi.ko] undefined!
+>> ERROR: modpost: "spi_write_then_read" [drivers/base/regmap/regmap-spi.ko] undefined!
+>> ERROR: modpost: "__spi_register_driver" [drivers/iio/adc/rohm-bd79112.ko] undefined!
+>> ERROR: modpost: "spi_sync" [drivers/iio/adc/rohm-bd79112.ko] undefined!
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for REGMAP_SPI
+   Depends on [n]: SPI [=n]
+   Selected by [m]:
+   - ROHM_BD79112 [=m] && IIO [=m] && I2C [=y] && GPIOLIB [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
