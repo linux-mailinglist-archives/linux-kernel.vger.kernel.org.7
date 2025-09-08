@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-804985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B2DB482A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07305B482A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028323B4420
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F28F3AB562
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342311F790F;
-	Mon,  8 Sep 2025 02:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30871F78E6;
+	Mon,  8 Sep 2025 02:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9AfbPG1"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="hzH2/1c5"
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338FD1F151C;
-	Mon,  8 Sep 2025 02:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A287AD51;
+	Mon,  8 Sep 2025 02:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757298926; cv=none; b=oFrYRzXM77aPnyyFXPlvP/8s+2T2xnpuVURlLnLtv2+MR1/1eLaeMVbrxFQjfcza98rCMVPrMqJPR6/bboRtTwn4jxCOmk7wGzJna7ugwhq0S4sbp6B+QsuU+bbE/K2xoTVnwtdwei4SE600Hf8+/7QjxApIUter929NSqI9hLI=
+	t=1757299158; cv=none; b=j0ynPlZpg7VVl0SS3/srUGOUSEyti+L3z3juuwlt9x6vpiOcdguaJeqmBRtnTBApb7dzIG2O2sjSZrMIHNKTdbIIiyKlBKarp+oTxeyCpNZePyb5chT7VSS05L3Z9WCNfnKkMTT5/oHtkVctjF6wesCmJEO+FVsanm8dPgMwzeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757298926; c=relaxed/simple;
-	bh=VSS6ir5H1rLcgyOKz27cb1Gwqh9thNcgwB96WeHqhIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXE5jEk6au/kn4WPdqeSI+oZXgOoE8+aQGNGH75tUNaWL8epShNtp+1ZVX1LcSG51G5iwgN5Kxa8gYNJvEAlqdJHt2ZM1TN0Oh/iIEHS9qck+LiQjp6+xdpuW9KuLfC12tqwNdVGn/Ygb21Qji7Yz5YNVmA4qZzHc/6slSqx79Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9AfbPG1; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77264a94031so2699333b3a.2;
-        Sun, 07 Sep 2025 19:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757298924; x=1757903724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=id+ytg1Zw34+FuI6CdCcR1u66CDbUUTObLJkdajO1hU=;
-        b=E9AfbPG19DS/grhCJpq7eYbwj30mktX/1MLk6Bkqb3QiXOdoe7jBDVPhd/sDucjoh8
-         ClCJfGptt+7imeiT69WrLi0i3OGj9KaaE2Rvk5Rx0jV41KEwP7GiWbUJdwXo0weCMVxm
-         ZLleeVDhlcDU2yxgqO0gUNduqJnNgwD761QRXqH7K10UcCaakTlXPHRmjQbPiS5OxMRj
-         v6nUSW6qmaV39SRV/27h2YMsTJR8X9Beqe/V8CcP5P1WPttcO0VYvRRpdOiqDN8wAU/Q
-         aBmTPwNRvjiu0VasUV86jAxFAhyf1qwbdtJ8OtEVg0VXulCwzAkaJy6L4EnRDSh1Wzlx
-         dD0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757298924; x=1757903724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=id+ytg1Zw34+FuI6CdCcR1u66CDbUUTObLJkdajO1hU=;
-        b=GvyRTPVbFSrTrWF2YrJwIlMQii6NlGVmTUCSaLTIZGxfIoNlirI+r1G+BTwNw7Zq0F
-         GQb+Ym8ciaaePMf8GFzSsXaDbKBSkivEVMUdv+xZVRMsnoTQOzRR1T/wjLJitSxht1sJ
-         vejaDfclwfaTpDqaPi5yPDscQlSeWsxFJHr99NN5riXWfezckAZWo5myB7iuUK3Eppvq
-         eID8ZY4eudLwnh3lWUyEypH7f5XbCfwgW2tfgYHmciyEzFHU+RdYgQosEWaG0ULR+b57
-         BnR8magJd+Ig+5XZtJ4v2ntkceAQ4/2Q+NivQIYYgVwJTg74gfs1uxo8nV1rW77acvMV
-         4Cbw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3abbCa5YJFb+pyLts3VzixmLSga2cHD88l6ppUNRuYOtHeICymcVV/I6VK4lK4PgscbxqGuyF@vger.kernel.org, AJvYcCVynxOoTZ3B1WxXHaDNb124QeHCzLFU0/0xRraF+5odKyBfpwRnB7qQNwLiRpMz740taGXTnK316EtcTuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy5gq4VRlUDA35b8i97MVYEFE4HFBgUNDqRjsF8v7cSZB4i4Sl
-	dUxChYzLrUfV54WINLFcrS7lR4LEPoLPkiG5i/7XZ2NvUMHRmyfLAe52
-X-Gm-Gg: ASbGncs+pBRRdmJWvggLDB4WFovLhVzq4FcRoWJqwxylKVojSem5KsYx7A2KdU1xXTd
-	S2545Qf5Dpzu3ptiVZQKA/PBlxBc6QiWWABzomEv5FxWvCe0j1nmkJwCnFK4AIgQiFmrNfvYdoL
-	X+LstqLRw1CwNyl1pRRgzqcQ43QY6F+of6NTB2BKnY/f17PnYTOacnKv1ELGl51s+bOJ5cTi8Uz
-	3XeR+TxOS2ELDxOGgrrKG1yUHBm8UsNu8ig6eL5UGfL9mI+TTVB3uzk6zhuWXrjd6Y+iadJTXY5
-	W9Wr1ENa3jVLf+onGuS9WBP15cc/EHO87Q27Nti1Ou52HOlO93J48VkwidR7GLULQ3qxtVq23Ys
-	yFzKOyG7+8+myZZARwqeTVC3U7ZTAweMmGVud2PbZogC2L5P8fdsv84Y2VBeclJpN
-X-Google-Smtp-Source: AGHT+IGpdUunw0Gu8o9Wejzox61260OWqaxdo0CyYNFeV00m/Tjhkk84xkW8KDorPix6AVFyzFNvaw==
-X-Received: by 2002:a05:6a00:1a8f:b0:771:fab2:83ca with SMTP id d2e1a72fcca58-7742dc9e36fmr7998415b3a.4.1757298924379;
-        Sun, 07 Sep 2025 19:35:24 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77267a225e6sm18193577b3a.94.2025.09.07.19.35.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 19:35:23 -0700 (PDT)
-Message-ID: <ea3bafcb-ab3c-460d-9c27-b2d2171912e1@gmail.com>
-Date: Sun, 7 Sep 2025 19:35:22 -0700
+	s=arc-20240116; t=1757299158; c=relaxed/simple;
+	bh=erPSr5E2ysuBf+hRtvm3+7BYon2Byrj8kZ0jl3Lwk4M=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=H72J74hAylTYljSmf8keGJxYgG8irhao6wMLQVElpBrnWQrmx+kAyXM0w7RnHgYehfxgAnwLy4wPZt80i38Bb8Ok1mV6lUjFTqYdsijE/ltJxv1MQqe2Hu5Oef0bgflSYAvb89GzchdwDG4eif8mj8FDPtDXzpCk58l389TxSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=hzH2/1c5; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=U66no8ixnDA1zqx5KQeVdw+6wSdnGjQ29/zGvuWRNKo=; b=hzH2/1c52HawTk1SDQdAO5c3YQ
+	jF6Ox10CL85aDXkRgjxNxf+g6dUM/8NLe0rrx65HwSmS4FGCMG/C5LB7PY7Fo9dcpnYG9TG2///LX
+	NEPr+6r5ohjzflARdRQKrTa72Y2BDO9wdGIu9eZeMHXH/MH74GVYfNTT/jFA4l5Rw6FPEKjwaWPd2
+	M5z7MGMShmq+B7ZSJLfsiVNwAeMc6xqkWUmx5LtRRqb0134HROauufAZ11HB34P5U6AmgtZF4pfPk
+	0dnkdhIJL3FBIlmk8mscNf8vQAFVyu/YO+sMWRrduyKNXR14ir4fBfv4ggDImsnVBGxEQij0gsQ+8
+	LyUTaU2A==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1uvRmg-00000000zol-1kB3;
+	Sun, 07 Sep 2025 23:39:10 -0300
+Message-ID: <5ad540512e8527bddcb474bd7c1f9f6b@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: Eric Biggers <ebiggers@kernel.org>, linux-cifs@vger.kernel.org, Steve
+ French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>
+Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N
+ <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
+ <bharathsm@microsoft.com>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Biggers
+ <ebiggers@kernel.org>
+Subject: Re: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
+In-Reply-To: <20250907032003.386794-1-ebiggers@kernel.org>
+References: <20250907032003.386794-1-ebiggers@kernel.org>
+Date: Sun, 07 Sep 2025 23:39:10 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/64] 5.15.192-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250907195603.394640159@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20250907195603.394640159@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Eric Biggers <ebiggers@kernel.org> writes:
 
+> fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
+> this same code is also present in lib/crypto/arc4.c to serve the other
+> users of this legacy algorithm in the kernel.  Remove the duplicate
+> implementation in fs/smb/, which seems to have been added because of a
+> misunderstanding, and just use the lib/crypto/ one.
+>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  fs/smb/client/Kconfig       |  1 +
+>  fs/smb/client/cifsencrypt.c |  8 ++--
+>  fs/smb/common/Makefile      |  1 -
+>  fs/smb/common/arc4.h        | 23 ------------
+>  fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
+>  fs/smb/server/Kconfig       |  1 +
+>  fs/smb/server/auth.c        |  9 ++---
+>  7 files changed, 10 insertions(+), 108 deletions(-)
+>  delete mode 100644 fs/smb/common/arc4.h
+>  delete mode 100644 fs/smb/common/cifs_arc4.c
 
-On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.192 release.
-> There are 64 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
-
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
