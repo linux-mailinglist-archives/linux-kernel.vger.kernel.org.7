@@ -1,51 +1,55 @@
-Return-Path: <linux-kernel+bounces-806602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5BBB49938
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:01:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E75B4997C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D274440476
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33FC7B024E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9063A1F09B6;
-	Mon,  8 Sep 2025 19:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D2923ABA7;
+	Mon,  8 Sep 2025 19:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="lURwNsVG"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IW2jLAAo"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3F80B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7610238145;
+	Mon,  8 Sep 2025 19:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358067; cv=none; b=MC8Qj/gYQZdauzp0iKTa+ouoOkfP2v1sN3xscVPl4jhWpMf9BTPbw16lzySf67KKWulPUE1gjzaR3NQ2owKTr38cYg7WYPJ1lH+vLcQ+nJpbk5I+WfxRdNHBVflPnllX9sGr27Bnsbnt+BsyeT5JRtbmY/8BLt47SgD5LcYrbHo=
+	t=1757358662; cv=none; b=P15OPTPrA7XoC/RGLgMdFEupw38W3ygn0niaIG9QNTQS/RuRnO/jpgkWQdWKNyAWcew+eFGoR6HAHFArltGdDDZpPlfUohzi5lxhKi6e1t3LmUrpYdkz7pw1jPdL2ZT9ce0BTcxW10q1rL+8r+TQgurEZnY5JcHo8bjfEwtxjgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358067; c=relaxed/simple;
-	bh=v5605DrgHXYgGUTIdSKUVT8UPJmtSDjfC6fjfhBimzU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DUAKXQP/LvTnDE7EwC0p9cR73GDYncXMu2hZVFHhEJd+OERLKRc/zojPa04r0gwXv+1OE3yubfp1asotcF1FTXaLi9hzzr9CE307e6dHRpT93wJo2HLF6OR/b1mScxJiTgRNIx9xg6rhKYK3d+ojyUQxzmSI1HyQ8b0Fg4J8PHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=lURwNsVG; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id flbENCVvvM0ThneH; Mon, 08 Sep 2025 15:01:05 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=wLZyR4Gp4v+ggLzVtImTsVNMAUlLsEeuvD/tSV7JM4o=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=lURwNsVGJlJe2GnSrppf
-	i916qNPwKA0hiy0xmZM+MaCOtQbIWBAqvGdjD4NFwqOdx2z/9dK5SXGPUY7kC0FfUBfnPZaL1jvGi
-	b+KNJtolcbX27K1SagA9yu/PykUfYVbX1bbW7bn177KAm3hcp4SAKY7KED33WWmm7ZYnXDPQnY=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14189145; Mon, 08 Sep 2025 15:01:05 -0400
-Message-ID: <1d78cff6-d94d-43b9-a15c-6de3889d6066@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 8 Sep 2025 15:01:04 -0400
+	s=arc-20240116; t=1757358662; c=relaxed/simple;
+	bh=tTBO3ID1sSLMqsaIgfCHRdhJIAbh9CxxbXuceyAkEeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDcKRdXg7Ck3geVUP5CDb6SdW1oo48wHPPPC2YDix0vss+/7DSeFnQ2aIhJe6AcP5KJfmg8h/DDacjAXBczbgXCSHZvMPpQM10W/HAWi/l2qo9jG7f7P7HeWw0KocAXFLcrRK6Zbswj4NUq0P4OQkxR2JgwFiB6fi4nE+bmUvcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IW2jLAAo; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vh7euvs8y7bJuvh7euwvlT; Mon, 08 Sep 2025 21:01:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757358112;
+	bh=SbDQh+dq477IG9GnwF+qupUP95OW5dWCgqdgVseqW7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=IW2jLAAojlH8bcSUDIauQOCw9WZ5y1bfEoM7tzkd8h/ViBbPnBCmc/2SalNsr/vuU
+	 c6Xp2sHgFmPoN4CZue4uwI9laSf5AsmISLr8gguJwpIL0U1pdLHBuj9nFYs5nZZ58v
+	 McVOqwlubSypGuM1d0AP1PnLFDt3y0F84/8rtbmER4nfs9D05JnwRR1OsTRy4KzKxt
+	 z9uviNaAtnM1A9UMRuvIa0rdDgZVACBtDqo2lNIIpUQNJqbJth7GqASeHbYaSJWNJ9
+	 eAhwYohlA+BdnSI8WuSghSldt3pLSnleEc8V8oWiKumbomI+kf+u0rKcnlFMuiiiKY
+	 YNfjKsASSfxUA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 08 Sep 2025 21:01:52 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <762f7869-3c8b-44c3-a4f9-bf0d443673de@wanadoo.fr>
+Date: Mon, 8 Sep 2025 21:01:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,192 +57,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 09/15] scsi: qla2xxx: improve checks in qlt_xmit_response /
- qlt_rdy_to_xfer
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH 09/15] scsi: qla2xxx: improve checks in qlt_xmit_response /
- qlt_rdy_to_xfer
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
-In-Reply-To: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1757358065
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 5659
-X-ASG-Debug-ID: 1757358065-1cf43947df30c540001-xx1T2L
+Subject: Re: [PATCHv2] dmaengine: ti: edma: Fix memory allocation size for
+ queue_priority_map
+To: Anders Roxell <anders.roxell@linaro.org>, peter.ujfalusi@gmail.com,
+ vkoul@kernel.org, nathan@kernel.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, dan.carpenter@linaro.org, arnd@arndb.de,
+ benjamin.copeland@linaro.org
+References: <20250829232132.GA1983886@ax162>
+ <20250830094953.3038012-1-anders.roxell@linaro.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20250830094953.3038012-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-(target mode)
+Le 30/08/2025 à 11:49, Anders Roxell a écrit :
+> Fix a critical memory allocation bug in edma_setup_from_hw() where
+> queue_priority_map was allocated with insufficient memory. The code
+> declared queue_priority_map as s8 (*)[2] (pointer to array of 2 s8),
+> but allocated memory using sizeof(s8) instead of the correct size.
+> 
+> This caused out-of-bounds memory writes when accessing:
+>    queue_priority_map[i][0] = i;
+>    queue_priority_map[i][1] = i;
+> 
+> The bug manifested as kernel crashes with "Oops - undefined instruction"
+> on ARM platforms (BeagleBoard-X15) during EDMA driver probe, as the
+> memory corruption triggered kernel hardening features on Clang.
+> 
+> Change the allocation to use sizeof(*queue_priority_map) which
+> automatically gets the correct size for the 2D array structure.
+> 
+> Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>   drivers/dma/ti/edma.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+> index 3ed406f08c44..552be71db6c4 100644
+> --- a/drivers/dma/ti/edma.c
+> +++ b/drivers/dma/ti/edma.c
+> @@ -2064,8 +2064,8 @@ static int edma_setup_from_hw(struct device *dev, struct edma_soc_info *pdata,
+>   	 * priority. So Q0 is the highest priority queue and the last queue has
+>   	 * the lowest priority.
+>   	 */
+> -	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8),
+> -					  GFP_KERNEL);
+> +	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1,
+> +					  sizeof(*queue_priority_map), GFP_KERNEL);
+>   	if (!queue_priority_map)
+>   		return -ENOMEM;
+>   
 
-Similar fixes to both functions:
+Hi,
 
-qlt_xmit_response:
-- If the cmd cannot be processed, remember to call ->free_cmd() to
-  prevent the target-mode midlevel from seeing a cmd lockup.
-- Do not try to send the response if the exchange has been terminated.
-- Check for chip reset once after lock instead of both before and after
-  lock.
-- Give errors from qlt_pre_xmit_response() a lower priority to
-  compensate for removing the first check for chip reset.
+for what it worth:
+Acked-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-qlt_rdy_to_xfer:
-- Check for chip reset after lock instead of before lock to avoid races.
-- Do not try to receive data if the exchange has been terminated.
-- Give errors from qlt_pci_map_calc_cnt() a lower priority to compensate
-  for moving the check for chip reset.
+and for the records:
+  
+https://lore.kernel.org/all/8c95c485be294e64457606089a2a56e68e2ebd1a.1653153959.git.christophe.jaillet@wanadoo.fr/
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
- drivers/scsi/qla2xxx/qla_target.c | 86 +++++++++++++++++--------------
- 1 file changed, 48 insertions(+), 38 deletions(-)
+;-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 1160ca4c118f..da010de9ba8a 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -3207,12 +3207,7 @@ int qlt_xmit_response(struct qla_tgt_cmd *cmd, int xmit_type,
- 	uint32_t full_req_cnt = 0;
- 	unsigned long flags = 0;
- 	int res;
--
--	if (!qpair->fw_started || (cmd->reset_count != qpair->chip_reset) ||
--	    (cmd->sess && cmd->sess->deleted)) {
--		cmd->state = QLA_TGT_STATE_PROCESSED;
--		return 0;
--	}
-+	int pre_xmit_res;
- 
- 	ql_dbg_qp(ql_dbg_tgt, qpair, 0xe018,
- 	    "is_send_status=%d, cmd->bufflen=%d, cmd->sg_cnt=%d, cmd->dma_data_direction=%d se_cmd[%p] qp %d\n",
-@@ -3220,33 +3215,39 @@ int qlt_xmit_response(struct qla_tgt_cmd *cmd, int xmit_type,
- 	    1 : 0, cmd->bufflen, cmd->sg_cnt, cmd->dma_data_direction,
- 	    &cmd->se_cmd, qpair->id);
- 
--	res = qlt_pre_xmit_response(cmd, &prm, xmit_type, scsi_status,
-+	pre_xmit_res = qlt_pre_xmit_response(cmd, &prm, xmit_type, scsi_status,
- 	    &full_req_cnt);
--	if (unlikely(res != 0)) {
--		return res;
--	}
-+	/*
-+	 * Check pre_xmit_res later because we want to check other errors
-+	 * first.
-+	 */
- 
- 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
- 
-+	if (unlikely(cmd->sent_term_exchg ||
-+		     cmd->sess->deleted ||
-+		     !qpair->fw_started ||
-+		     cmd->reset_count != qpair->chip_reset)) {
-+		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe101,
-+		    "qla_target(%d): tag %lld: skipping send response for aborted cmd\n",
-+		    vha->vp_idx, cmd->se_cmd.tag);
-+		qlt_unmap_sg(vha, cmd);
-+		cmd->state = QLA_TGT_STATE_PROCESSED;
-+		vha->hw->tgt.tgt_ops->free_cmd(cmd);
-+		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
-+		return 0;
-+	}
-+
-+	/* Check for errors from qlt_pre_xmit_response(). */
-+	res = pre_xmit_res;
-+	if (unlikely(res))
-+		goto out_unmap_unlock;
-+
- 	if (xmit_type == QLA_TGT_XMIT_STATUS)
- 		qpair->tgt_counters.core_qla_snd_status++;
- 	else
- 		qpair->tgt_counters.core_qla_que_buf++;
- 
--	if (!qpair->fw_started || cmd->reset_count != qpair->chip_reset) {
--		/*
--		 * Either the port is not online or this request was from
--		 * previous life, just abort the processing.
--		 */
--		cmd->state = QLA_TGT_STATE_PROCESSED;
--		ql_dbg_qp(ql_dbg_async, qpair, 0xe101,
--			"RESET-RSP online/active/old-count/new-count = %d/%d/%d/%d.\n",
--			vha->flags.online, qla2x00_reset_active(vha),
--			cmd->reset_count, qpair->chip_reset);
--		res = 0;
--		goto out_unmap_unlock;
--	}
--
- 	/* Does F/W have an IOCBs for this request */
- 	res = qlt_check_reserve_free_req(qpair, full_req_cnt);
- 	if (unlikely(res))
-@@ -3361,6 +3362,7 @@ int qlt_rdy_to_xfer(struct qla_tgt_cmd *cmd)
- 	struct qla_tgt_prm prm;
- 	unsigned long flags = 0;
- 	int res = 0;
-+	int pci_map_res;
- 	struct qla_qpair *qpair = cmd->qpair;
- 
- 	memset(&prm, 0, sizeof(prm));
-@@ -3369,28 +3371,36 @@ int qlt_rdy_to_xfer(struct qla_tgt_cmd *cmd)
- 	prm.sg = NULL;
- 	prm.req_cnt = 1;
- 
--	if (!qpair->fw_started || (cmd->reset_count != qpair->chip_reset) ||
--	    (cmd->sess && cmd->sess->deleted)) {
--		/*
--		 * Either the port is not online or this request was from
--		 * previous life, just abort the processing.
--		 */
-+	/* Calculate number of entries and segments required */
-+	pci_map_res = qlt_pci_map_calc_cnt(&prm);
-+	/*
-+	 * Check pci_map_res later because we want to check other errors first.
-+	 */
-+
-+	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
-+
-+	if (unlikely(cmd->sent_term_exchg ||
-+		     cmd->sess->deleted ||
-+		     !qpair->fw_started ||
-+		     cmd->reset_count != qpair->chip_reset)) {
-+		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe102,
-+		    "qla_target(%d): tag %lld: skipping data-out for aborted cmd\n",
-+		    vha->vp_idx, cmd->se_cmd.tag);
-+		qlt_unmap_sg(vha, cmd);
- 		cmd->aborted = 1;
- 		cmd->write_data_transferred = 0;
- 		cmd->state = QLA_TGT_STATE_DATA_IN;
- 		vha->hw->tgt.tgt_ops->handle_data(cmd);
--		ql_dbg_qp(ql_dbg_async, qpair, 0xe102,
--			"RESET-XFR online/active/old-count/new-count = %d/%d/%d/%d.\n",
--			vha->flags.online, qla2x00_reset_active(vha),
--			cmd->reset_count, qpair->chip_reset);
-+		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- 		return 0;
- 	}
- 
--	/* Calculate number of entries and segments required */
--	if (qlt_pci_map_calc_cnt(&prm) != 0)
--		return -EAGAIN;
-+	/* Check for errors from qlt_pci_map_calc_cnt(). */
-+	if (unlikely(pci_map_res != 0)) {
-+		res = -EAGAIN;
-+		goto out_unlock_free_unmap;
-+	}
- 
--	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
- 	/* Does F/W have an IOCBs for this request */
- 	res = qlt_check_reserve_free_req(qpair, prm.req_cnt);
- 	if (res != 0)
--- 
-2.43.0
+IMHO, the applied solution is cleaner than mine.
 
+Only the Fixes tag could be more relevant (because, the issue is older 
+than 2b6b3b742019), but I don't think it will make any difference.
+
+CJ
 
 
