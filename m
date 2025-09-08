@@ -1,375 +1,255 @@
-Return-Path: <linux-kernel+bounces-805187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71905B48506
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:23:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B940B48509
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F404171F2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:23:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8A9D7A3DD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631852EAB7A;
-	Mon,  8 Sep 2025 07:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AED72E54AA;
+	Mon,  8 Sep 2025 07:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1lCsDpyq"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BnjigNer"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113E2E8B9A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0512CD96;
+	Mon,  8 Sep 2025 07:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316129; cv=none; b=imNZ8Jrkv2fo+0llzW0GR8AInVykXp08UnaRCaZvOy8RA3NzGmr1J/b/1tSxjK3ie9SgcbKW6TqFBtXHZ2Ofb1N3B/R9n5jyA3+Ri8NNPFZmvFS6Ixy4Dm8QBhXtxUtD6lLpB83mLiBh9LPhzZxmG0TlFBU2yj/lZZLo3TrNyqM=
+	t=1757316185; cv=none; b=X00Ups4T7HpIEwfKbSZ7N+dB4nFWSYOG2NJ2Ke2kp5i1mU3Yp502dip0AMOO7OC0iQUIdbF+cyHiuOWKlbqaYQlyCvdKe+2GZlEbSluE6JthS+oYHMCjdxLIIvHrR+TdfcYJQDXsrRvMsh1TFq7qf9DRPtogCItGsXklVllMtpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757316129; c=relaxed/simple;
-	bh=pmqS3evNc5oxoiYApVyvCuJZfNi/fP6gQHZHJm2XXkc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BgMlC9xw6ySy2Xjd/CXekmqMVsk7A9KK8Q7RopDsIO2MB2cHSGEIykXqxOgpwlfrWnN07mRWT6AR9YqF/IVjeuaJnIU2aSPPjLxKOkMWiNjOHqF+cmZ/bar614IQrZLtGxJY6vkCucHW85N5F72uU2b5OuwohSSZ75B1A8ZWyKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1lCsDpyq; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3dc0f2fd4acso2649867f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757316125; x=1757920925; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PwOBttLcfP3y909J4CXHqY+uMaR7wzzUE7W3TRjyS/Q=;
-        b=1lCsDpyqtDOudhn07Zp3mYaQBNP531gP2tb2cVwO46VJFB+KfHP3xdw/bNvfN00ydP
-         iWaFj6z1UQnf7aaFjYFkkAJpO6bul+34kRw/M2BL24sjVBy1RC54ki1eccccIXoooInq
-         G22T513+TbDegh6YuR253hSwhrvCEk6K7TbKARFIzf6ICaDGJovgp/UACipGi6/olCqr
-         8uV5aq9kSBWiHnFnVW5fT1/JxHDgfLTr9bU2dQf6/Lk1Ynywv324k2BlbA2RFOLZuE+a
-         LHb/y0CwlZx19//RIDep80MLXb/lnk+7XNNoiqpmZDNyckxqVSyVWPBysuk5Wyc3Nt1X
-         o5cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757316125; x=1757920925;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PwOBttLcfP3y909J4CXHqY+uMaR7wzzUE7W3TRjyS/Q=;
-        b=iOnD/QqHU3IoZGQOCcNe5+WuaDS8DXYmQ2CxAiiHkrc/G4HbWu0G/iydmWyXH6tVoT
-         WvmMrNNimjECaLsoS0mfsmyrUd5WpIZma3H83SfIIVOKtJJuWmEpgHPTFhpJGuxXOaXt
-         IwnFaTVrAUAZF58yC6/suaqXX3PgXwdihsE2T3byt/jIS+0LyKY+H4glgnvT8TSqunx7
-         MgOrXdBnNYX9oFTtne46KABm/tSIZJPtTG4ShmfroY94PQ3IAROJBUSFfc7C2QLJ1FLa
-         a8paCsci8PzdXr0ubPT6YplBImwZdoH990ahxQuqqQMauMj9ZEnW09++CVtkZxBp6ic0
-         X7ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUksNGh11PDFCATuobotiDCCmO0Sl89x15GaekC8zemDo5VB2Z1yrKkF46XycnsTlj3tIPYon9F7PrBVDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAbv+t36fMLnAouaqzaS3PENSPdJ2Hj+0mqGCVL/MrXlTD7+SG
-	JXfXgCEAkQkxMbKYHkzsBfSXLnefu26s4mFj1vdjuPbwh3B2tlgETN//be989t/Chjc8Uw==
-X-Google-Smtp-Source: AGHT+IH7qGezYAQxCu5HJIfGQ38GlEMYOXtx+3BqAEho8c7/diV+LhX1oBeAhCEjb2YLeNyh32GKXw8=
-X-Received: from wrpk18.prod.google.com ([2002:adf:f5d2:0:b0:3d6:801b:c728])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:64e3:0:b0:3e5:955d:a81b
- with SMTP id ffacd0b85a97d-3e64392d35bmr4582712f8f.34.1757316124583; Mon, 08
- Sep 2025 00:22:04 -0700 (PDT)
-Date: Mon,  8 Sep 2025 07:21:55 +0000
-In-Reply-To: <20250908072158.1041611-1-bqe@google.com>
+	s=arc-20240116; t=1757316185; c=relaxed/simple;
+	bh=ugfEoFNVZ3M9cpY/KPFcs/OdZTpdktA2anS+m2lC/eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GItvxSZkT3vu/1ML4ScjfsnsXO0MwlPsxUFipEEoPV4qqEHBPEUvcEivXlyy7xLj3o97IqfQio9SRaW3F/8Bzoxniz7nG7yOhmZBl+Iihbal3mJ683mbaljxKA+cLWbeF4qGruAQjxC87cq34bmlrYTT7LghugzOSUa+TIpoeww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BnjigNer; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757316180;
+	bh=ugfEoFNVZ3M9cpY/KPFcs/OdZTpdktA2anS+m2lC/eE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BnjigNerhf825KePWSmw4ZrB1RUwwXRhPhXLFpasUGLRKSfFQ8YztAHL8ZtXODqCU
+	 Hc6XejPetq/PIh2e+phUxABmrwboV0RV4DRJYqhrkrj8rdy2SNj4Q22b5akl7hNsEy
+	 KJAasrn222OOussuMeuTr4GGnxlVwzFb97rejCs3qoPtYpwcsi4VD5ymPvmd9AXHPK
+	 9XMjhR+ZUsXJifxCgzdIKiVxl5NYF0CjbDceDCkHYJMQ5TeT7cJc20PjjoXPJNqxp+
+	 dG/MAO/SV/DGjIvdNbyIOaisbfWjiXGKxX1Un4CyB2EGfXxa6v3E7hxYH9Il7y3Ob7
+	 mebiwGlHHvR1w==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9847717E0A2B;
+	Mon,  8 Sep 2025 09:22:59 +0200 (CEST)
+Date: Mon, 8 Sep 2025 09:22:53 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, "Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?="
+ <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20250908092253.52cd4df0@fedora>
+In-Reply-To: <aL1pSFB9iBsfHFM_@google.com>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+	<20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+	<20250905152505.005a610d@fedora>
+	<CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+	<DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org>
+	<aL1pSFB9iBsfHFM_@google.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908072158.1041611-1-bqe@google.com>
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250908072158.1041611-6-bqe@google.com>
-Subject: [PATCH v16 5/5] rust: add dynamic ID pool abstraction for bitmap
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This is a port of the Binder data structure introduced in commit
-15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-Rust.
+On Sun, 7 Sep 2025 11:15:20 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Like drivers/android/dbitmap.h, the ID pool abstraction lets
-clients acquire and release IDs. The implementation uses a bitmap to
-know what IDs are in use, and gives clients fine-grained control over
-the time of allocation. This fine-grained control is needed in the
-Android Binder. We provide an example that release a spinlock for
-allocation and unit tests (rustdoc examples).
+> On Sat, Sep 06, 2025 at 12:47:36AM +0200, Danilo Krummrich wrote:
+> > On Fri Sep 5, 2025 at 8:18 PM CEST, Alice Ryhl wrote: =20
+> > > On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
+> > > <boris.brezillon@collabora.com> wrote: =20
+> > >> On Fri, 05 Sep 2025 12:11:28 +0000
+> > >> Alice Ryhl <aliceryhl@google.com> wrote: =20
+> > >> > +static bool
+> > >> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
+> > >> > +{
+> > >> > +     return !kref_read(&vm_bo->kref); =20
+> > >>
+> > >> I'm not too sure I like the idea of [ab]using vm_bo::kref to defer t=
+he
+> > >> vm_bo release. I get why it's done like that, but I'm wondering why =
+we
+> > >> don't defer the release of drm_gpuva objects instead (which is really
+> > >> what's being released in va_unlink()). I can imagine drivers wanting=
+ to
+> > >> attach resources to the gpuva that can't be released in the
+> > >> dma-signalling path in the future, and if we're doing that at the gp=
+uva
+> > >> level, we also get rid of this kref dance, since the va will hold a
+> > >> vm_bo ref until it's destroyed.
+> > >>
+> > >> Any particular reason you went for vm_bo destruction deferral instead
+> > >> of gpuva? =20
+> > >
+> > > All of the things that were unsafe to release in the signalling path
+> > > were tied to the vm_bo, so that is why I went for vm_bo cleanup.
+> > > Another advantage is that it lets us use the same deferred logic for
+> > > the vm_bo_put() call that drops the refcount from vm_bo_obtain().
+> > >
+> > > Of course if gpuvas might have resources that need deferred cleanup,
+> > > that might change the situation somewhat. =20
+> >=20
+> > I think we want to track PT(E) allocations, or rather reference counts =
+of page
+> > table structures carried by the drm_gpuva, but we don't need to release=
+ them on
+> > drm_gpuva_unlink(), which is where we drop the reference count of the v=
+m_bo.
+> >=20
+> > Deferring drm_gpuva_unlink() isn't really an option I think, the GEMs l=
+ist of
+> > VM_BOs and the VM_BOs list of VAs is usually used in ttm_device_funcs::=
+move to
+> > map or unmap all VAs associated with a GEM object.
+> >=20
+> > I think PT(E) reference counts etc. should be rather released when the =
+drm_gpuva
+> > is freed, i.e. page table allocations can be bound to the lifetime of a
+> > drm_gpuva. Given that, I think that eventually we'll need a cleanup lis=
+t for
+> > those as well, since once they're removed from the VM tree (in the fence
+> > signalling critical path), we loose access otherwise. =20
+>=20
+> Hmm. Another more conceptual issue with deferring gpuva is that
+> "immediate mode" is defined as having the GPUVM match the GPU's actual
+> address space at all times, which deferred gpuva cleanup would go
+> against.
+>=20
+> Deferring vm_bo cleanup doesn't have this issue because even though the
+> vm_bo isn't kfreed immediately, all GPUVM apis still treat it as-if it
+> isn't there anymore.
+>=20
+> > >> > +static void
+> > >> > +drm_gpuvm_bo_defer_locked(struct kref *kref)
+> > >> > +{
+> > >> > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm=
+_gpuvm_bo,
+> > >> > +                                               kref);
+> > >> > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
+> > >> > +
+> > >> > +     if (!drm_gpuvm_resv_protected(gpuvm)) {
+> > >> > +             drm_gpuvm_bo_list_del(vm_bo, extobj, true);
+> > >> > +             drm_gpuvm_bo_list_del(vm_bo, evict, true);
+> > >> > +     }
+> > >> > +
+> > >> > +     list_del(&vm_bo->list.entry.gem);
+> > >> > +     mutex_unlock(&vm_bo->obj->gpuva.lock); =20
+> > >>
+> > >> I got tricked by this implicit unlock, and the conditional unlocks it
+> > >> creates in drm_gpuva_unlink_defer(). Honestly, I'd rather see this
+> > >> unlocked moved to drm_gpuva_unlink_defer() and a conditional unlock
+> > >> added to drm_gpuvm_bo_put_deferred(), because it's easier to reason
+> > >> about when the lock/unlock calls are in the same function
+> > >> (kref_put_mutex() being the equivalent of a conditional lock). =20
+> > >
+> > > Ok. I followed the docs of kref_put_mutex() that say to unlock it from
+> > > the function. =20
+> >=20
+> > Yes, please keep it the way it is, I don't want to deviate from what is
+> > documented and everyone else does. Besides that, I also think it's a li=
+ttle
+> > less error prone. =20
+>=20
+> I gave it a try:
+>=20
+> bool
+> drm_gpuvm_bo_put_deferred(struct drm_gpuvm_bo *vm_bo)
+> {
+> 	drm_WARN_ON(vm_bo->vm->drm, !drm_gpuvm_immediate_mode(vm_bo->vm));
+>=20
+> 	if (!vm_bo)
+> 		return false;
+>=20
+> 	if (kref_put_mutex(&vm_bo->kref, drm_gpuvm_bo_defer_locked,
+> 			   &vm_bo->obj->gpuva.lock)) {
+> 		/*
+> 		 * It's important that the GEM stays alive for the duration in which
+> 		 * drm_gpuvm_bo_defer_locked() holds the mutex, but the instant we add
+> 		 * the vm_bo to bo_defer, another thread might call
+> 		 * drm_gpuvm_bo_deferred_cleanup() and put the GEM. For this reason, we
+> 		 * add the vm_bo to bo_defer *after* releasing the GEM's mutex.
+> 		 */
+> 		mutex_unlock(&vm_bo->obj->gpuva.lock);
+> 		drm_gpuvm_bo_list_add(vm_bo, bo_defer, true);
+> 		return true;
+> 	}
+>=20
+> 	return false;
+> }
+>=20
+> void
+> drm_gpuva_unlink_defer(struct drm_gpuva *va)
+> {
+> 	struct drm_gem_object *obj =3D va->gem.obj;
+> 	struct drm_gpuvm_bo *vm_bo =3D va->vm_bo;
+> 	bool should_defer_bo;
+>=20
+> 	if (unlikely(!obj))
+> 		return;
+>=20
+> 	drm_WARN_ON(vm_bo->vm->drm, !drm_gpuvm_immediate_mode(vm_bo->vm));
+>=20
+> 	mutex_lock(&obj->gpuva.lock);
+> 	list_del_init(&va->gem.entry);
+>=20
+> 	/*
+> 	 * This is drm_gpuvm_bo_put_deferred() slightly modified since we
+> 	 * already hold the mutex. It's important that we add the vm_bo to
+> 	 * bo_defer after releasing the mutex for the same reason as in
+> 	 * drm_gpuvm_bo_put_deferred().
+> 	 */
+> 	should_defer_bo =3D kref_put(&vm_bo->kref, drm_gpuvm_bo_defer_locked);
+> 	mutex_unlock(&obj->gpuva.lock);
+> 	if (should_defer_bo)
+> 		drm_gpuvm_bo_list_add(vm_bo, bo_defer, true);
+>=20
+> 	va->vm_bo =3D NULL;
+> }
+>=20
+> I do think it looks relatively nice like this, particularly
+> drm_gpuva_unlink_defer().
 
-The implementation does not permit shrinking below capacity below
-BITS_PER_LONG.
+I agree.
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Burak Emir <bqe@google.com>
----
- MAINTAINERS            |   1 +
- rust/kernel/id_pool.rs | 226 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 3 files changed, 228 insertions(+)
- create mode 100644 rust/kernel/id_pool.rs
+> But that's also the one not using
+> kref_put_mutex().
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a720ebab334c..6fb79d990e4b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4309,6 +4309,7 @@ R:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	lib/find_bit_benchmark_rust.rs
- F:	rust/kernel/bitmap.rs
-+F:	rust/kernel/id_pool.rs
- 
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-new file mode 100644
-index 000000000000..a41a3404213c
---- /dev/null
-+++ b/rust/kernel/id_pool.rs
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Rust API for an ID pool backed by a [`BitmapVec`].
-+
-+use crate::alloc::{AllocError, Flags};
-+use crate::bitmap::BitmapVec;
-+
-+const BITS_PER_LONG: usize = bindings::BITS_PER_LONG as usize;
-+
-+/// Represents a dynamic ID pool backed by a [`BitmapVec`].
-+///
-+/// Clients acquire and release IDs from unset bits in a bitmap.
-+///
-+/// The capacity of the ID pool may be adjusted by users as
-+/// needed. The API supports the scenario where users need precise control
-+/// over the time of allocation of a new backing bitmap, which may require
-+/// release of spinlock.
-+/// Due to concurrent updates, all operations are re-verified to determine
-+/// if the grow or shrink is sill valid.
-+///
-+/// # Examples
-+///
-+/// Basic usage
-+///
-+/// ```
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
-+/// for i in 0..64 {
-+///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-+/// }
-+///
-+/// pool.release_id(23);
-+/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+///
-+/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
-+/// pool.grow(resizer);
-+///
-+/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// # Ok::<(), Error>(())
-+/// ```
-+///
-+/// Releasing spinlock to grow the pool
-+///
-+/// ```no_run
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::sync::{new_spinlock, SpinLock};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
-+///     let mut pool = guarded_pool.lock();
-+///     loop {
-+///         match pool.acquire_next_id(0) {
-+///             Some(index) => return Ok(index),
-+///             None => {
-+///                 let alloc_request = pool.grow_request();
-+///                 drop(pool);
-+///                 let resizer = alloc_request.ok_or(AllocError)?.realloc(GFP_KERNEL)?;
-+///                 pool = guarded_pool.lock();
-+///                 pool.grow(resizer)
-+///             }
-+///         }
-+///     }
-+/// }
-+/// ```
-+pub struct IdPool {
-+    map: BitmapVec,
-+}
-+
-+/// Indicates that an [`IdPool`] should change to a new target size.
-+pub struct ReallocRequest {
-+    num_ids: usize,
-+}
-+
-+/// Contains a [`BitmapVec`] of a size suitable for reallocating [`IdPool`].
-+pub struct PoolResizer {
-+    new: BitmapVec,
-+}
-+
-+impl ReallocRequest {
-+    /// Allocates a new backing [`BitmapVec`] for [`IdPool`].
-+    ///
-+    /// This method only prepares reallocation and does not complete it.
-+    /// Reallocation will complete after passing the [`PoolResizer`] to the
-+    /// [`IdPool::grow`] or [`IdPool::shrink`] operation, which will check
-+    /// that reallocation still makes sense.
-+    pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
-+        let new = BitmapVec::new(self.num_ids, flags)?;
-+        Ok(PoolResizer { new })
-+    }
-+}
-+
-+impl IdPool {
-+    /// Constructs a new [`IdPool`].
-+    ///
-+    /// A capacity below [`BITS_PER_LONG`] is adjusted to
-+    /// [`BITS_PER_LONG`].
-+    ///
-+    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
-+    #[inline]
-+    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
-+        let num_ids = core::cmp::max(num_ids, BITS_PER_LONG);
-+        let map = BitmapVec::new(num_ids, flags)?;
-+        Ok(Self { map })
-+    }
-+
-+    /// Returns how many IDs this pool can currently have.
-+    #[inline]
-+    pub fn capacity(&self) -> usize {
-+        self.map.len()
-+    }
-+
-+    /// Returns a [`ReallocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be shrunk below [`BITS_PER_LONG`].
-+    ///
-+    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+    /// use kernel::id_pool::{ReallocRequest, IdPool};
-+    ///
-+    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
-+    /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
-+    /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
-+    /// pool.shrink(resizer);
-+    /// assert_eq!(pool.capacity(), kernel::bindings::BITS_PER_LONG as usize);
-+    /// # Ok::<(), AllocError>(())
-+    /// ```
-+    #[inline]
-+    pub fn shrink_request(&self) -> Option<ReallocRequest> {
-+        let cap = self.capacity();
-+        // Shrinking below [`BITS_PER_LONG`] is never possible.
-+        if cap <= BITS_PER_LONG {
-+            return None;
-+        }
-+        // Determine if the bitmap can shrink based on the position of
-+        // its last set bit. If the bit is within the first quarter of
-+        // the bitmap then shrinking is possible. In this case, the
-+        // bitmap should shrink to half its current size.
-+        let Some(bit) = self.map.last_bit() else {
-+            return Some(ReallocRequest {
-+                num_ids: BITS_PER_LONG,
-+            });
-+        };
-+        if bit >= (cap / 4) {
-+            return None;
-+        }
-+        let num_ids = usize::max(BITS_PER_LONG, cap / 2);
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Shrinks pool by using a new [`BitmapVec`], if still possible.
-+    #[inline]
-+    pub fn shrink(&mut self, mut resizer: PoolResizer) {
-+        // Between request to shrink that led to allocation of `resizer` and now,
-+        // bits may have changed.
-+        // Verify that shrinking is still possible. In case shrinking to
-+        // the size of `resizer` is no longer possible, do nothing,
-+        // drop `resizer` and move on.
-+        let Some(updated) = self.shrink_request() else {
-+            return;
-+        };
-+        if updated.num_ids > resizer.new.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Returns a [`ReallocRequest`] for growing this [`IdPool`], if possible.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be grown above [`i32::MAX`].
-+    #[inline]
-+    pub fn grow_request(&self) -> Option<ReallocRequest> {
-+        let num_ids = self.capacity() * 2;
-+        if num_ids > i32::MAX.try_into().unwrap() {
-+            return None;
-+        }
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Grows pool by using a new [`BitmapVec`], if still necessary.
-+    ///
-+    /// The `resizer` arguments has to be obtained by calling [`Self::grow_request`]
-+    /// on this object and performing a [`ReallocRequest::realloc`].
-+    #[inline]
-+    pub fn grow(&mut self, mut resizer: PoolResizer) {
-+        // Between request to grow that led to allocation of `resizer` and now,
-+        // another thread may have already grown the capacity.
-+        // In this case, do nothing, drop `resizer` and move on.
-+        if resizer.new.len() <= self.capacity() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Acquires a new ID by finding and setting the next zero bit in the
-+    /// bitmap.
-+    ///
-+    /// Upon success, returns its index. Otherwise, returns [`None`]
-+    /// to indicate that a [`Self::grow_request`] is needed.
-+    #[inline]
-+    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-+        let next_zero_bit = self.map.next_zero_bit(offset);
-+        if let Some(nr) = next_zero_bit {
-+            self.map.set_bit(nr);
-+        }
-+        next_zero_bit
-+    }
-+
-+    /// Releases an ID.
-+    #[inline]
-+    pub fn release_id(&mut self, id: usize) {
-+        self.map.clear_bit(id);
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 03eb6b34ddd2..b47442a01002 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -90,6 +90,7 @@
- pub mod firmware;
- pub mod fmt;
- pub mod fs;
-+pub mod id_pool;
- pub mod init;
- pub mod io;
- pub mod ioctl;
--- 
-2.51.0.355.g5224444f11-goog
-
+Yeah, but that's the thing. I guess if drm_gpuvm_bo_defer_locked() was
+only called from kref_put_mutex() this would be okay (though I still
+have a hard time with those functions taking locks that have to be
+released by the caller, but at least that's a well-known/documented
+pattern). But it's also currently called from drm_gpuva_unlink_defer()
+where the lock is taken but not released. I guess if the function name
+was reflecting that (drm_gpuvm_bo_defer_locked_and_unlock()?), and with
+a comment explaining why the lock is conditionally released in the
+caller that would be acceptable, but I still find this locking scheme
+quite confusing...
 
