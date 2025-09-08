@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-806245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240CEB4940E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:46:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761A7B4940F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59F31BC0F00
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAEE188F7DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFBD30F955;
-	Mon,  8 Sep 2025 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1479130FC2B;
+	Mon,  8 Sep 2025 15:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMv5a8y0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aivIXE1H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A741EB5CE
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7344F30FC19
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346151; cv=none; b=miYIoX5nYnpVdJX/iB0Wu1Tlxul9bo0CkpYwF90efQrGStsJ47mOxQtnFFMj5In852wfyZXzQuC6KlBnNUWxPhJorL1tNcRlTMlvjVRvvkH9MCi7TwHyXScDWHmW8Jy3qfzkcxQmjx5IgLMiNcHOWFUpDM3FRumPGpe2hs85A34=
+	t=1757346153; cv=none; b=EwigQOTviIZFK0OUA9voHr+Tr3CaaRmy4BFK3YZMFJSitY9AQIdJvpSgUxiJj1p/luYUyplJJA1UzsPOwNlouALxLwV5Kv1/GdzI3gXKoD6jetCaeRt5eQAVoLHETOooFJ3BkGLoHj24IHNeV5qrr1loxn8QAija8Tq9YilFHXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346151; c=relaxed/simple;
-	bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ieuMP4VVJK8khOOMtbPygwB3fyFTICA59Wi/eI1OiqsUyt8b83viL7ngNj4QMkvHr7Rbt4zzQYtIyN3gydgkMuRVLOytsNDIM59h0reehTX/FUZoDMmWoOq7E8lYIXR98JEGw4nz4LNjqXoW0eORm4jCyiijp3TtYoqixfjYI2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMv5a8y0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC83C4CEF1;
-	Mon,  8 Sep 2025 15:42:29 +0000 (UTC)
+	s=arc-20240116; t=1757346153; c=relaxed/simple;
+	bh=HUX79U9sbM5RM/b7aDn1DdwQrXQY0K+KyM3Zg8wGFQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BFICUYI2woTSsMwdgqQ+pNoiStwngDqgT7cOSkZjJrmPY2EHLvRAgllS6//cenxHZs4zENEh/HWVMFqUYD/Sb9mOsKgFtYyUK4wJlUkn5WC481zMzDFSG/vJ5gfnEX7gC4Jcx0JZk6WcyCUSH5pw8uQJJVBMhnLr7zKydxpFvnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aivIXE1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FEBC4CEF5;
+	Mon,  8 Sep 2025 15:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757346151;
-	bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
-	h=From:Subject:Date:To:Cc:From;
-	b=iMv5a8y0dm693P+Yctu9KOnCXryKiqubMy2tZOU4TJIHtxlHYx0FT3xCoZdKXmpib
-	 iQTA6zSqFS60ZkQa7xZhq4lZMi+e3nb86OVVYO9QxdA8jj0qAmEA4KVj+o3VmZdR99
-	 bgDBDx2wVqWlcJ/MpMIBRVwcNJSqv2bxJPaSjc8QWEDpYCo7JH1QmntdttomyvkaFc
-	 /rCgzxq7mVGDr8uOwacdjLd3dcc9YPnIaqgfOimJZVF4djt1+5gQ/Tjh6Q5CeKhdpS
-	 Zn3YqydDFnMB5k1l6rznLzE0JhsofpxvtLBAamvMf8ivXjUngsEkdkQUHol+5aIv4U
-	 0QTEmkBdxnmeQ==
+	s=k20201202; t=1757346153;
+	bh=HUX79U9sbM5RM/b7aDn1DdwQrXQY0K+KyM3Zg8wGFQE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=aivIXE1HmxcYU0GvuBGa6Y9bOpbaKqsQUN5YkewYObJl20spT3KUtijPxbok3TUIX
+	 3ElF62QfLuisXjqu7NWOMOLNpJaJXu+vt0mQyuGVaa+cgTB/OY0XJoY744QGReBw6g
+	 A/r0n7kymHsqVe/8SBZ0GGWviSPwHmVlnOFLsy4yC0xMlLJLce0ykiWuJMNABxxCcw
+	 vewACWQaqfWuBP+yorjDZSUFzb2hhpAXmLbcEHGKzkusWGAjsojcQvzLS3+MQb5mSZ
+	 gb61Ckvqkuydjic2cOTxwvFziUW9hW3xnHe0XwN866VZ2yYe43USfAEhhjhI3cC1vG
+	 kcwLEFaTLRJ9Q==
 From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Subject: [PATCH 0/3] scripts/decode_stacktrace.sh: preserve alignment
-Date: Mon, 08 Sep 2025 17:41:56 +0200
-Message-Id: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
+Date: Mon, 08 Sep 2025 17:41:57 +0200
+Subject: [PATCH 1/3] scripts/decode_stacktrace.sh: symbol: avoid trailing
+ whitespaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,10 +52,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAET5vmgC/x2MQQqAIBQFrxJ/naBhUV0lIkqf9TcaGhFId09az
- GIWM5kSIiPRWGWKuDlx8EVUXZE5Vr9DsC1OjWxaOcheWJhgsaQrrgYLewt/CaldN2zKFTSV9Ix
- w/PzbaX7fD5rDK0pmAAAA
-X-Change-ID: 20250908-decode_strace_indent-04f69b1f9b14
+Message-Id: <20250908-decode_strace_indent-v1-1-28e5e4758080@kernel.org>
+References: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
+In-Reply-To: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Carlos Llamas <cmllamas@google.com>, 
  Elliot Berman <quic_eberman@quicinc.com>, 
@@ -62,39 +62,50 @@ Cc: Carlos Llamas <cmllamas@google.com>,
  Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-kernel@vger.kernel.org, 
  "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=872; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDL2/UyUOzUxzoK3hf24QYj/RuU5nsunrHP25exvnlkwX
- 3z9mbd3OkpYGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACbyWobhr4jx+S+nw+9V23qq
- MLedTjx5d3+fPdOt+yExuqqJmoxcFgw/jp+UTOzkyH0TU33o4M8NXdz7RCsfHuZvdHk9b7/ag0/
- 8AA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1275; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=HUX79U9sbM5RM/b7aDn1DdwQrXQY0K+KyM3Zg8wGFQE=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDL2/Uz6u8552az8zoWlH1azrNxmzTXjdHOkkrb63D8TG
+ ndMvWW0v6OUhUGMi0FWTJFFui0yf+bzKt4SLz8LmDmsTCBDGLg4BWAiu2IZfjE/n1j3r+Wfd9dO
+ 9S0l/7Suvut49/ZgU+NMl4DwdTevB3szMhwVaLVOtHI13GKhffDoBh1fb1nBfVfDtWwWB2xWMJ7
+ wnxsA
 X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
  fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Here are a few patches slightly improving the output generated by
-decode_stacktrace.sh script.
+Lines having a symbol to decode might not always have info after this
+symbol. It means ${info_str} might not be set, but it will always be
+printed after a space, causing trailing whitespaces.
 
-- Patch 1: avoid trailing whitespaces when printing symbols.
+That's a detail, but when the output is opened with an editor marking
+these trailing whitespaces, that's a bit disturbing. It is easy to
+remove them by printing this variable with a space only if it is set.
 
-- Patch 2: preserve alignment when printing symbols.
-
-- Patch 3: preserve alignment when printing code.
+While at it, do the same with ${module} and print everything in one line.
 
 Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
-Matthieu Baerts (NGI0) (3):
-      scripts/decode_stacktrace.sh: symbol: avoid trailing whitespaces
-      scripts/decode_stacktrace.sh: symbol: preserve alignment
-      scripts/decode_stacktrace.sh: code: preserve alignment
+ scripts/decode_stacktrace.sh | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
- scripts/decode_stacktrace.sh | 35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
----
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250908-decode_strace_indent-04f69b1f9b14
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 17abc4e7a9855b10e76acfdb92847e1671d6c2bd..c6b5c14412f0f6f78fb60b0b042d6e22bbb46b79 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -323,12 +323,7 @@ handle_line() {
+ 	parse_symbol # modifies $symbol
+ 
+ 	# Add up the line number to the symbol
+-	if [[ -z ${module} ]]
+-	then
+-		echo "${words[@]}" "$symbol ${info_str}"
+-	else
+-		echo "${words[@]}" "$symbol $module ${info_str}"
+-	fi
++	echo "${words[@]}" "${symbol}${module:+ ${module}}${info_str:+ ${info_str}}"
+ }
+ 
+ while read line; do
 
-Best regards,
 -- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
+2.51.0
 
 
