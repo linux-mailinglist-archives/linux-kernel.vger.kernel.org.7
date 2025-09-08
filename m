@@ -1,280 +1,287 @@
-Return-Path: <linux-kernel+bounces-806440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C507B496CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F451B496D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EF04C1A56
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:16:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259441886CC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9DC311580;
-	Mon,  8 Sep 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hCyWJ//D"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DCC312832;
+	Mon,  8 Sep 2025 17:19:36 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D48C8E6;
-	Mon,  8 Sep 2025 17:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351771; cv=fail; b=SECm/WoXIufuTcspIcjY3mob6C3Y9RYM7VWgEeEdfS6xi0GL7TJzl5MjXD3k1Xufn2MLCKkq4HN4ron4UIFbDhe3FOffMJCbQVm4y/czP98KR+HsG6XVWlYk9i0ytKZnpQf/9EG4/tYLqc+e8F0f1RG+H13BnBQw/QNFZdvxj94=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351771; c=relaxed/simple;
-	bh=Cni9QK3cW7EGLsbCLPS1+VqEIs+bqv4LKUYZVWiPMfI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iuJpYnT6I1LyVtEUK80Qzt+BYlL5gjFUoozKbWyhj/+ruW6aEqx7+wcp17/f5RGqR37Fa1YS7tYmmyxCwG5eyyqnl+/PgBtIh+1rl7x7IBQQcivTyqsbXQfda9SWZIv7W2eBJPqzxJbZe/bGkJJiY32mvb/NEe15T81K1F7CFiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hCyWJ//D; arc=fail smtp.client-ip=40.107.236.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g5ZHo1O9nUdVy/R55EoVEW4qae4FJKkanKzdI6dCGJxNn9y2lNZJbZI0dX5PEkPU0TqamTrxgsdtzhVQGGlXMJdsuKHQHNC0/1kniT352PFjPPHRC7VDByXNMoBR7xUqmqU2qd+JEaglZmDW7gqY5TwRL0kLPS1hO++JVrEUpwbcZN2Ckq6gSdpzqrPg7Kk+PbF0IvLv1bIMgF8ue9ZnsQFjSLb/6HdNhkD+mOItBsWiNVSZHmZYdxwIAIRxWfpM261cWOR6bSh7y2FKSHHiKi4XBu8+tNlj4H+KodNlIG2KLYksZIM+cSdF6T/wrc37mqYkwE738l3MQOvH4qgrvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=abKRamqklDYS6Wz82fwA/rb8c8L58gFO0Kda8D/1pF8=;
- b=Go8TL+WOzNw1x45vBLNE5z3N2oPi2aSA6IGX6CihNYUiTi42++9D2atYjUXBf6llGlgSXf9AVtW5hIDCVnsh4YonuUQIpEzwaeLI0cJs5yS/D2Cfkj2TMOE4bvamJV62sy5/vS+w2B7n1De3mDny4TygbiMnPAM4hdEF4Y90XLGZnPDDBepSuquYRvtvOSRFn0p3AFZIDYDVZRzmyRt0IGCjVsK6SE7raFcLYZASqTTrxBNO9hLe2J9OOJl9IE8ilh/bW4hnXl0k+vB9VU93KoAjTuilxwvBHk4pXizXv07gKNxPrMNfmPUJYA4VMZqHd2rOVHcueu9Pp7MzGfgW+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=abKRamqklDYS6Wz82fwA/rb8c8L58gFO0Kda8D/1pF8=;
- b=hCyWJ//DZFhfHdaAo0bW8ZAB4gPgkRjgSmJaOj6FWD6+h+PbEmt/+zsvdMoESfM98mYT8toq0jvuoKVd4JbIUzMdW1pU4BRD4j4/6tZ8KcdgPepr4C7oFYKh0tuDzu21Ecr3WvUfh5xnczm/1ISSAv80shqp38/HtAPLyujvs4WqvLLZ0CAv/hm+nD5et02z2TLMqX/pghzXNKFhinP8IeZODLzIiVdOgdZIaF+Voye/oI0l3Cfrg1ioiEnYaPUvxzm+GJOMM8CHbG4ojlmo6LJJMrcn/GPj0LSKsgKPWFbnO8v/TI8EqOxOnrdkxGWf24ZToAw3t4hafnHnFYgegQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SN7PR12MB8790.namprd12.prod.outlook.com (2603:10b6:806:34b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 17:16:05 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 17:16:05 +0000
-Message-ID: <3ef9e2c2-560e-4b58-96f8-a6db4236fe0e@nvidia.com>
-Date: Mon, 8 Sep 2025 13:16:01 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] nova-core: bitstruct: Move bitfield-specific code
- from register! into new macro
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, dakr@kernel.org
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-2-joelagnelf@nvidia.com>
- <DCN39JCF1DIJ.3JESSN7N9WJBP@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DCN39JCF1DIJ.3JESSN7N9WJBP@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1P221CA0043.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:5b5::13) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03D5C8E6
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757351975; cv=none; b=oIqLXg6fGD8oEi1UW0GmgTqBQESMa4W6ga3rAwKxmAixduSCXhJc0sjdG4hCvipdncUS16izKpwweMJS/q1Awqls/MGxxiw6xOaouv+k73BlpTFYFeOCurBUdJOs/OmB3mR1aMBr0CzRhf2GEcwqoiAhNDFysWTxeYsy1gSs47U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757351975; c=relaxed/simple;
+	bh=xgPpdpRS5YeqJM2vSt6bfnP09qMLw1kkYAKZN+6WBeo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WYKjy/7gSZhG4Vab6dJhsY5dwtsyjjN1lQZupCLRrdFFQHDvI9crEHK5Oix31V5dfn2zZfOmsUKXEGOD5yGJoqJHcHp17mCKqD0QOFKUTcU+lpF+oCAzrQrRypyXPadll6wjhpnTj+UVC0hqHbjRi5SK7E61Q0aUzxnN78BrEZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-40e59fba0cfso8173335ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:19:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757351973; x=1757956773;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3Leg9cAeI1Aa4vz9zGTp/K9ybu4DKv+4gSxkOFVAjtQ=;
+        b=q0mrruqbjmPV3yIBsUALrcnVeI+573gb+0XCCRsxhTrHhi1Tx2i1c+to9rJCaMIoqF
+         Bb6e2KIAA5NUQ3AIPLVOs1nDzLL+rt/MpktTOfgC6yGwYU+AqnuXT5FEB9CcUoO0I3Xv
+         61m8klDp6VDpukVbEraFUXi1hzRLH4HcdCWbbJY1F3k5ZmZG4RN5ONe5y0vZbcjDIpUU
+         ftbA3eBXYLBG3UrlCuMIhAQZ0lgfyYjRJ1J0ju2tSB8pdUXMOrxrCnZsb7Dn/aPIT0s+
+         KLneJp6RZCWtG/QldmK+ou2jReg4MhN/2VXceDUQGylZib8/c4FIHCaxNqPkP7ZDPfpe
+         InAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrv6p+l+EO8NLq7GKc6/WjzLHU5S5dErnf41JQqgYiEnWKT+xeQ+OJ94TalY/9cs6NsAEI0t1LaVWfNak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNwQE0+V/psYRHwTbfcssAX2LCfwL6WWHa52YtRiLUi+Ct8yHN
+	aIsqWGHrRR+lYFY6iVITpFDknabK3OdcWQ5nLxaT88fyXS1aQog7nZ7MhF7r2FE7miksaqEWVzT
+	e19CrdpAlVGGi2Vrboavb/X/fpm3e1a2F7qFL6QBtg6hp0+46XNaKKe2qD1I=
+X-Google-Smtp-Source: AGHT+IHTkIIBanqFC2H6WTUrou5t48+ZFeoSZMY4CSI3hByunRoE2qEKI8hFqQ+6dXkUNEz04jnsUekHe92LnKSS8Qnb09c8/5nG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB8790:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75845a3d-07df-49b6-aaf7-08ddeefb6510
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0lGK1FZa0djNjhqb2xDd2xJY3EwTTQyNGdCbUpwTExZQ1F0UHpGQTRMb0pS?=
- =?utf-8?B?TnVjOGhicS91U2QrZm5MY1c3ZlYyMWRraWNUaC9vTnFnYXZsbWMwQ1NrQmh1?=
- =?utf-8?B?QXpZYzhiYXJ1UjQxdzl0dHZxdEc4QW5XSC9uRXduUEFqWmg5WTRRUTQ3dk9u?=
- =?utf-8?B?S3BVUEdjbHY4NTdkRzR0b3dZbmtNdWp5Ly9xRGpyaVU0MUluM0NrR3NlZXJE?=
- =?utf-8?B?WjNoN1F2M1h5MjdWTEs1aXV4elZWQUNKak9pd2VvcFI3UDQ2NzZOOFNZa0s4?=
- =?utf-8?B?MlJTckIvSFJMSDA3MXhvZmRxckh5QjRFaDhnNGVkTVZ4VUYxTnVzeFN2NXFk?=
- =?utf-8?B?OGRjVVFHZWdGOSs5bitDTlR0UFpBbUdaU1VtT3dFYURnckhnR0RtelNmMDll?=
- =?utf-8?B?Nmd1d05pemJ3RUlUenp6MFBIT3dUek1yMU1kVzBwY2xhQU5oZ0NzS24ySzRX?=
- =?utf-8?B?ZTVLUUw3Yy9rVGZSb3lTY3FMTFRjR1BWRjFLdllLbDlqZTZHVVRUVzFkbTlq?=
- =?utf-8?B?OW0wYVBidmRHMk9HQzlFa3ExZUFPa01XZ3NVYXpTeWhIczB4M0x5UTNEU3Vv?=
- =?utf-8?B?clR5MmNZUHU2Z21OdjlHei85R2Vaa21YSmZJT1JjbWhyN1I5QitqV2pxeFJ1?=
- =?utf-8?B?ait5WFQ5NGE2ZExQVnRrYW5iZXJHOUczUzdZblZpZC9zaHN1UTRDeWd2Um1W?=
- =?utf-8?B?ZFZKMkZad2g1L0E4d2VCRDNUcDVSdkkyLzFGcDFoZCs2NWRKRHVWbml6MFFh?=
- =?utf-8?B?M0dSaWs1YXhNMnJTYis4Y01Bb3hzdnd1UHF3Z1RscTlFb2RKODYvTkcvdkxK?=
- =?utf-8?B?MVdhekh1WVcxdG54VVJ3ajBieFVrS09FUHNLM0V3RDRZUzlFRWxqNlllSHgr?=
- =?utf-8?B?OUNnS05UWDJRWHNPN3UwZjlmQkdaeWxuZ2NDY3R4bE15SU9MNG42VVB6MFVD?=
- =?utf-8?B?bnNySVV5WnpqbzFTQTYxdmdxcFNWYzhMaWYzRHdhWGM3c2VONVhaa2JQbVZk?=
- =?utf-8?B?dzdzYVE2UjhOY0VnNE9CTTBEenhrc0dCOEZJSlVvQ0NzQTlzc2locWd5MVpQ?=
- =?utf-8?B?cWtEU0ZhbVpnbi83ZGswdzdCNGFwNXIxd01GTnlVM1Qvd080SnhDMitIRVVJ?=
- =?utf-8?B?cS9DUmNDK2VIU1JGOEdPeFlXU3daZmJmM2R0VFhMam1DeEFIOUR2dDlmMnVR?=
- =?utf-8?B?QjgwUXdNVWVnblFZaWZJRlV2RmdlUmNNNFY2NnF2eXQ0RDUxZ2VKNWFjZEtT?=
- =?utf-8?B?Y3l1VGtRUWJwLzhyRi9UMFdrMERWNm9rTURXemZYejAvcUtLdzV1NnU3VVUw?=
- =?utf-8?B?c1R1OXhHcVBqNENFdzFNbDlqemkrNDQ5Nm83RlVocW1HeEI5bFhhSVNBdlNz?=
- =?utf-8?B?MDB4amRtdzlYYmNtbUVkeEtvaXJ5Y3Q1aGZOQVNubGp0UFIxd1Exd2FwaENq?=
- =?utf-8?B?NVdSU01WNG84T3hhSC9KK3JOb0lXRkpURjVFNStzSFcvbDFWM0VFRDJGT2pz?=
- =?utf-8?B?ZXg4c0VWbG15QVFYcDEzbVMrVnIzSEE1MVVONFJJSTVjbEpKcFBsQzI0UEJu?=
- =?utf-8?B?U0JHUjQ1MTBiUEVlbGkzODJXWWRvVFRXVnFoNFZXd2VMaXJmWWg3eGFSanhU?=
- =?utf-8?B?SlFlaFluY1Bldnc1SGZONjdFdmhtN2Q1d3ZPeE5PVlBWRE1VV1VBY296OWxD?=
- =?utf-8?B?YjNuZFdnQStZVVVianRNQ3NlcGxqN21peFloVFpLOVphRHNrRzJSWFFBTm4r?=
- =?utf-8?B?STZzQ3libzgxVk1oRTUzSUdUYzloRDI5R3R1c25iTUwwaW5JMmQ5cFh6elY5?=
- =?utf-8?B?ai9mLzRyRG85U3gycm1PSFdFVTNpM0haL0I0cGtZN1ZBUm93dzAyb3d2RklG?=
- =?utf-8?B?VzZ2Tlc0QkFpU1RmQXFuamhBd2xVc3l6ZWVmZ2cyQzFXaStoVis4dytiWVBw?=
- =?utf-8?Q?dw9pdmKyrkY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UkxDMnpjd2E0elVDRmxlTXRzNGFCK0dBSGx3YnpkcWc2SGluY2lqTnZBaW55?=
- =?utf-8?B?dkkrbUcxLytHQkxlYTdyRm5BazIzUmpaajdCcGZRb3g4SWFhZFI2RHRSQno5?=
- =?utf-8?B?VkVsb0pqVFc5aEhsN3JoMDBDMnBFT0VhY3ZFRUsySFJ5OEszS3kxN3ltVVQv?=
- =?utf-8?B?cHFlV2ViVDdnWE1JRjV2bS9ZbXdPWUlsYzl1NTdqYmphQmhneS9LcWpGc1JU?=
- =?utf-8?B?WnZNNFZzdUlSeWpPWTdieEdRcnFGMFB2RnV5VXlBWHk0eFhSdjJEVWdxSmIy?=
- =?utf-8?B?ZERhT3NZOVZYQmRJbWVJaHRwczBKZnRvZUZIbDJFOXdkM3VLY1RCNlhESDRz?=
- =?utf-8?B?WmY3K0dzYVJXL0haclc2R2ExUnMyWVBtaTVYTVgrRGpxV0ZSR3FETVZSWEt6?=
- =?utf-8?B?Ny90U1FMd2ZyVm9LZUYzZnJuYmpPdEVvbWZ2ZWdMVU84SjZudGk2VWxFRU1N?=
- =?utf-8?B?WjY1MnZRb3lWYk9leUFKTFBhbEtNay9OeitERmdNWGt0b20xeTlHODM0bnR3?=
- =?utf-8?B?cnBIdDFzNU0vTjhvODNJUThLaG1BUDhKMG1sdkptNHp2MitoTEZBbktRWXNi?=
- =?utf-8?B?Yis3M2drajk0MVh2TlI5a2ZmNG4vNzdNbVNJSWN5RVRGMHEvOXd4OWQ5UVh6?=
- =?utf-8?B?b0JrajJtbjJIdjBkOG1IeFdzNng4UGo5OXpYZGttQktBWWx3dHRtOEZGdzd3?=
- =?utf-8?B?YjdHSmhFZHh6Z0JRYk1VQTBJWmYwZHVYRUJsK0Uvdk9hQjBYQUJ6UzhZb2w2?=
- =?utf-8?B?WW5sK2NqMmhQVUpDc0RUZ2FCMzRoRllFYWNreGVZK2wwM2x0SGtCektXWXk1?=
- =?utf-8?B?U3ZJaGdNc3FTVDF3V2pkQi9LSlZ2MThwNndJNjBDK21IVmlaUDZ4UHJBejVj?=
- =?utf-8?B?ZHRjY2prc3Z1dWJWWktISzd1VnZnWWh2R3hqTUN1ckgxSndzb0pLVm05RzJM?=
- =?utf-8?B?RjdjSTlVK1poSjJqVTh5U3FWU29tM0pSaUx1NUhBRVlOQnpUdk41Q1hmNU55?=
- =?utf-8?B?RElEelhxYUVKcVhucUlnZ29HV1dxeFBYVEVRdHN1NlA0YXRlN0wxTDBCNG9y?=
- =?utf-8?B?andPcTdQT0RQbHMrU1NJQk5qUnZ2dGpLTlBzUmVrSnBSbGtSSmUxQXM5b3Jx?=
- =?utf-8?B?bld0aDVvMUZiS2NvdjVJNVM3QUtlQTFQNU5RUUxuRG9CN1c0VFFDM1NDZG5B?=
- =?utf-8?B?cVVwbUFDVGlheXRBVzFnazVrWUpVV3c3bExlUTlTN3NOQnBPb1VWRHA3VTk3?=
- =?utf-8?B?ZzdpZU8xai9YV1BYZC9qVEhBMzNLUlh5WktPdDQxdVIvVFhWZDRza0RxVjNT?=
- =?utf-8?B?bG42WkRnY09uUHkyam02VVBEUWF0TjNDdzVnZzlpWkgyQmtPTDIvWHlJc0V2?=
- =?utf-8?B?cnNiOVhmdzF6aWhBdStRS1NlUVFJWDBlTUxKTFAxbEY4TGduN29wVm9wY0NV?=
- =?utf-8?B?cWw0ZzRLMzd4QXBjZlVYdWxwUlYxVU5qWFlZaVcwMkkxbkU2aDF5Vm1XR2xx?=
- =?utf-8?B?WWd4WU1OeUFLUllnVlc4L3hBRkNqejkvbUhQY1RpUjFrNVJlbm5hak9wTE5B?=
- =?utf-8?B?czNIUUFHVVFxVE1jQmxscDU1Qk5qVFBrclZqcWNjQXppWTM3Vk82UEcxeW9m?=
- =?utf-8?B?WnUreW04YUJiaWhQMzc1Tm10Mm1LZjVSSTR2V095QkZ0aDQ3c082YVZwVHBQ?=
- =?utf-8?B?UjZ4ckRHb1RhbExHVG9pQ2gya3k4bmhwdE4yaGowRTErb2tFQ3llL2RKV3ky?=
- =?utf-8?B?dGI0WHlyd0dPT1lxVkRmaTE1UVowUUJwOWx5YlMzemc5SkxEVHdSWnV0N2Yy?=
- =?utf-8?B?N0FqcGJEUzhINlFvbUtmQkNhRjVzTW9ia1ZWMFlaRCtKaGNaVkxENUp6N3h1?=
- =?utf-8?B?Q0tRQU1GT3FpbjhZbGZ0TWdFRDE0cG4rb3Jyb3ZqZmVsVkErVEZWcm5vN3pF?=
- =?utf-8?B?Wlhxa0NtR3lJdVI0a0JCV0owMXdNKzZqY0JPWjdYSm9EdFcyK0hkeUVvcklK?=
- =?utf-8?B?QVZKcWFXZ3haMXprVjkyL0NZSnZNNUk5dUdtTXY5ODF6RlJnMXhQcTFPSWd0?=
- =?utf-8?B?dXM0UllQdm9mc3FBOWlMZDVXNjdsRkdlRzJHTWtoeDE1S2g0ZEtBeGJRenBt?=
- =?utf-8?Q?Dt98j92v7BuCsa+IVbamAbrP1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75845a3d-07df-49b6-aaf7-08ddeefb6510
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 17:16:05.7700
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6H2oQkxxxNfIKh/FEiCQkPmTTytXWQinR9V7VV/i3eco0+TFilROnJc7RcWpZbbWfqQJ/jvxNTHuaD9ib2GK5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8790
+X-Received: by 2002:a05:6e02:1a69:b0:3ed:eab:439a with SMTP id
+ e9e14a558f8ab-3fd82164022mr123234325ab.12.1757351973009; Mon, 08 Sep 2025
+ 10:19:33 -0700 (PDT)
+Date: Mon, 08 Sep 2025 10:19:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bf1024.a70a0220.7a912.02c2.GAE@google.com>
+Subject: [syzbot] [net?] KASAN: slab-use-after-free Read in xfrm_state_find
+From: syzbot <syzbot+e136d86d34b42399a8b1@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alex,
+Hello,
 
-On 9/7/2025 11:12 PM, Alexandre Courbot wrote:
-> On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
->> The bitfield-specific into new macro. This will be used to define
->> structs with bitfields, similar to C language.
->>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->>  drivers/gpu/nova-core/bitstruct.rs   | 271 +++++++++++++++++++++++++++
->>  drivers/gpu/nova-core/nova_core.rs   |   3 +
->>  drivers/gpu/nova-core/regs/macros.rs | 247 +-----------------------
->>  3 files changed, 282 insertions(+), 239 deletions(-)
->>  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
->>
->> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
->> new file mode 100644
->> index 000000000000..1dd9edab7d07
->> --- /dev/null
->> +++ b/drivers/gpu/nova-core/bitstruct.rs
->> @@ -0,0 +1,271 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +//
->> +// bitstruct.rs — Bitfield library for Rust structures
->> +//
->> +// A library that provides support for defining bit fields in Rust
->> +// structures. Also used from things that need bitfields like register macro.
->> +///
->> +/// # Syntax
->> +///
->> +/// ```rust
->> +/// bitstruct! {
->> +///     struct ControlReg {
-> 
-> The `struct` naming here looks a bit confusing to me - as of this patch,
-> this is a u32, right? And eventually these types will be limited to primitive types,
-> so why not just `ControlReg: u32 {` ?
+syzbot found the following issue on:
 
-This is done in a later patch. This patch is only code movement, in later patch
-we add precisely the syntax you're describing when we add storage types, and
-update the register! macro. In this patch bitstruct is only u32.
+HEAD commit:    6ab41fca2e80 Merge tag 'timers-urgent-2025-09-07' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142f0642580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d7c422a5f41c669
+dashboard link: https://syzkaller.appspot.com/bug?extid=e136d86d34b42399a8b1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-> 
->> +///         3:0       mode        as u8 ?=> Mode;
->> +///         7:4       state       as u8 => State;
->> +///     }
->> +/// }
->> +/// ```
-> 
-> As this will move to the kernel crate, it is particularly important to
-> make sure that this example can compile and run - so please provide
-> simple definitions for `Mode` and `State` to make sure the kunit tests
-> will pass after patch 4 (in the current state I'm pretty sure they won't).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Good catch. This will blow up the example though. I will change it to no_run
-like the register! macro did if that's Ok.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ab9812c379f/disk-6ab41fca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5d3df1acc5a7/vmlinux-6ab41fca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/12541033d833/bzImage-6ab41fca.xz
 
-> 
->> +///
->> +/// This generates a struct with:
->> +/// - Field accessors: `mode()`, `state()`, etc.
->> +/// - Field setters: `set_mode()`, `set_state()`, etc. (supports builder pattern).
->> +/// - Debug and Default implementations
->> +///
->> +/// The field setters can be used with the builder pattern, example:
->> +/// ControlReg::default().set_mode(mode).set_state(state);
->> +///
->> +/// Fields are defined as follows:
->> +///
->> +/// - `as <type>` simply returns the field value casted to <type>, typically `u32`, `u16`, `u8` or
->> +///   `bool`. Note that `bool` fields must have a range of 1 bit.
->> +/// - `as <type> => <into_type>` calls `<into_type>`'s `From::<<type>>` implementation and returns
->> +///   the result.
->> +/// - `as <type> ?=> <try_into_type>` calls `<try_into_type>`'s `TryFrom::<<type>>` implementation
->> +///   and returns the result. This is useful with fields for which not all values are valid.
-> 
-> Can you remove the related documentation from `register!` and replace it
-> with a sentence like "Please look at the [`bitstruct`] macro for the
-> complete syntax of fields definitions"? This will ensure we don't have
-> to update the documentation twice if/when the syntax gets updated.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e136d86d34b42399a8b1@syzkaller.appspotmail.com
 
-Sure!
+==================================================================
+BUG: KASAN: slab-use-after-free in xfrm_state_find+0x44cd/0x5400 net/xfrm/xfrm_state.c:1574
+Read of size 1 at addr ffff88806ad62970 by task syz.5.2024/14900
 
-> 
-> The rest of the patch is a perfect move (with a few renames) of the
-> internal rules from one macro to the other, which makes it really easy
-> to review. Thanks for doing this!
+CPU: 1 UID: 0 PID: 14900 Comm: syz.5.2024 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ xfrm_state_find+0x44cd/0x5400 net/xfrm/xfrm_state.c:1574
+ xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2522 [inline]
+ xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2573 [inline]
+ xfrm_resolve_and_create_bundle+0x768/0x2f80 net/xfrm/xfrm_policy.c:2871
+ xfrm_lookup_with_ifid+0x2a7/0x1a70 net/xfrm/xfrm_policy.c:3205
+ xfrm_lookup net/xfrm/xfrm_policy.c:3336 [inline]
+ xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3347
+ ip_route_connect include/net/route.h:355 [inline]
+ __ip4_datagram_connect+0x9a5/0x1270 net/ipv4/datagram.c:49
+ __ip6_datagram_connect+0x9f0/0x1150 net/ipv6/datagram.c:196
+ ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
+ ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
+ __sys_connect_file net/socket.c:2086 [inline]
+ __sys_connect+0x316/0x440 net/socket.c:2105
+ __do_sys_connect net/socket.c:2111 [inline]
+ __se_sys_connect net/socket.c:2108 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2108
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd80af8ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd80be3f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007fd80b1c6090 RCX: 00007fd80af8ebe9
+RDX: 000000000000001c RSI: 0000200000000040 RDI: 000000000000000d
+RBP: 00007fd80b011e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fd80b1c6128 R14: 00007fd80b1c6090 R15: 00007fd80b2efa28
+ </TASK>
 
-My pleasure, thanks for the suggestion!
+Allocated by task 12709:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:330 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4191 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4247
+ xfrm_state_alloc+0x24/0x2f0 net/xfrm/xfrm_state.c:733
+ xfrm_state_construct net/xfrm/xfrm_user.c:889 [inline]
+ xfrm_add_sa+0x17d1/0x4070 net/xfrm/xfrm_user.c:1019
+ xfrm_user_rcv_msg+0x7a0/0xab0 net/xfrm/xfrm_user.c:3501
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+ xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2614
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
- - Joel
+Freed by task 12093:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2422 [inline]
+ slab_free mm/slub.c:4695 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4797
+ xfrm_state_free net/xfrm/xfrm_state.c:591 [inline]
+ xfrm_state_gc_destroy net/xfrm/xfrm_state.c:618 [inline]
+ xfrm_state_gc_task+0x52d/0x6b0 net/xfrm/xfrm_state.c:634
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+The buggy address belongs to the object at ffff88806ad62640
+ which belongs to the cache xfrm_state of size 928
+The buggy address is located 816 bytes inside of
+ freed 928-byte region [ffff88806ad62640, ffff88806ad629e0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806ad62640 pfn:0x6ad60
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801afdf280 dead000000000122 0000000000000000
+raw: ffff88806ad62640 00000000800f000c 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801afdf280 dead000000000122 0000000000000000
+head: ffff88806ad62640 00000000800f000c 00000000f5000000 0000000000000000
+head: 00fff00000000002 ffffea0001ab5801 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 7519, tgid 7518 (syz.8.350), ts 330117177647, free_ts 330086232405
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4247
+ xfrm_state_alloc+0x24/0x2f0 net/xfrm/xfrm_state.c:733
+ xfrm_state_find+0x37d4/0x5400 net/xfrm/xfrm_state.c:1513
+ xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2522 [inline]
+ xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2573 [inline]
+ xfrm_resolve_and_create_bundle+0x768/0x2f80 net/xfrm/xfrm_policy.c:2871
+ xfrm_bundle_lookup net/xfrm/xfrm_policy.c:3106 [inline]
+ xfrm_lookup_with_ifid+0x58a/0x1a70 net/xfrm/xfrm_policy.c:3237
+ xfrm_lookup net/xfrm/xfrm_policy.c:3336 [inline]
+ xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3347
+ udp_sendmsg+0x142e/0x2170 net/ipv4/udp.c:1450
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x19c/0x270 net/socket.c:729
+ ____sys_sendmsg+0x52d/0x830 net/socket.c:2614
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+page last free pid 7493 tgid 7486 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ stack_depot_save_flags+0x436/0x860 lib/stackdepot.c:727
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_save_track+0x4f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:330 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4191 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_node_noprof+0x1bb/0x3c0 mm/slub.c:4292
+ kmalloc_reserve+0xbd/0x290 net/core/skbuff.c:578
+ __alloc_skb+0x142/0x2d0 net/core/skbuff.c:669
+ alloc_skb include/linux/skbuff.h:1336 [inline]
+ alloc_uevent_skb+0x7d/0x230 lib/kobject_uevent.c:289
+ uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
+ kobject_uevent_net_broadcast+0x2fa/0x560 lib/kobject_uevent.c:410
+ kobject_uevent_env+0x55b/0x8c0 lib/kobject_uevent.c:608
+ device_del+0x73a/0x8e0 drivers/base/core.c:3896
+ device_unregister+0x20/0xc0 drivers/base/core.c:3919
+ hci_conn_cleanup net/bluetooth/hci_conn.c:173 [inline]
+ hci_conn_del+0xc33/0x11b0 net/bluetooth/hci_conn.c:1211
+ hci_abort_conn_sync+0x658/0xe30 net/bluetooth/hci_sync.c:5689
+ hci_disconnect_all_sync+0x1b5/0x350 net/bluetooth/hci_sync.c:5712
+ hci_suspend_sync+0x3fc/0xc60 net/bluetooth/hci_sync.c:6188
+
+Memory state around the buggy address:
+ ffff88806ad62800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88806ad62880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88806ad62900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88806ad62980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff88806ad62a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
