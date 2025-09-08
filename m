@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-805324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F43B48722
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:30:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5069EB48A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2C247ABEEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57448169573
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4D22F657F;
-	Mon,  8 Sep 2025 08:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF9B2FB08D;
+	Mon,  8 Sep 2025 10:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnXTGIP3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvxBQkPC"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBDF2F60D6
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F172F90CE;
+	Mon,  8 Sep 2025 10:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320076; cv=none; b=OBieDMfx/cQvcUK3q8ar5g5usKhQybMBn31BtlS131PsYlF1t78XDH7u9aOujjY9k3maoBbSSGN8Q1LZE7xbm8UHmSRcOCQVxMaY+gX14Z9OOEdwHTW/lzJrbGe2bbm3EvhMIG7RqLRzbPgECNfskQpeRWFPMEnzRsetnx+EWvU=
+	t=1757327707; cv=none; b=JDb8oZJC4LMBRODCdt0NZgyg6vmkGoW8cVDecs1SBDwSbw3Ck/irV2W8DkQ2yjKxj5FVVAT35FasU4eHLiHi9D5pKVv7+qwGYUc4d/Hvjtlm45o5Cj6f1NF7hlfB58wO/T60cU3uZxr3c6VGZN/+W0EwsDPk+bmSv8D6NULhBZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320076; c=relaxed/simple;
-	bh=CFvvTrfa1t92F7NxctUBMm3QJnsOF0WWxyPhVXxwhCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AtV07iXgyqSTyjS5oaM+KsbS0pXCLFhiBgn56c1MFaPxEgcDgiUom2XNLGeP1FlkYvdvxs1UP5hOSjaolf71aSkKY29uRfp/CVI4wtits2ioEAn0iUOdSG1+wt9xsno65xd/R9ZT8nSZcLXtkVB1cK1vXx4esTA34Q/W9TTIlWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnXTGIP3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D98C4CEF5;
-	Mon,  8 Sep 2025 08:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757320076;
-	bh=CFvvTrfa1t92F7NxctUBMm3QJnsOF0WWxyPhVXxwhCc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LnXTGIP3pULjVEAepJ6qCrd3NuT65KHO7JLgPYCK6GiyxGGYrjnWF6Ox2dxar9Lca
-	 i4z/sEg/UtTUZoC9gi488+kRJ3j8liXpyILqPJo69l08TFMSlcZFeVAkWB2lvIZkU6
-	 tvLP5ljWIokQmgVfkhfcieOQg0Y0Mc7U/lAgAPOGskryGwdef+naU19kHGFnLf3nFd
-	 9W8SIQ26Fa9FeabH022g5Nyq5oftskXyMo4qzCjMfZ2mBIB4B1pHkcagYiAzZIpee2
-	 T/cG27wqP1z/4003cPjWGsyJ9Baw3KXaKsFLBAgVdChIdU8B3pOpV9LG+fyaEHtrs2
-	 xJe+nThBVRFYg==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Marc Zyngier <maz@kernel.org>
-Subject: [PATCH v2 RESEND 3/3] irqchip/gic-v5: Fix error handling in gicv5_its_irq_domain_alloc()
-Date: Mon,  8 Sep 2025 10:27:45 +0200
-Message-ID: <20250908082745.113718-4-lpieralisi@kernel.org>
-X-Mailer: git-send-email 2.48.0
-In-Reply-To: <20250908082745.113718-1-lpieralisi@kernel.org>
-References: <20250908082745.113718-1-lpieralisi@kernel.org>
+	s=arc-20240116; t=1757327707; c=relaxed/simple;
+	bh=P8+azPFD3IlzvZwU774Lp97SpbVybyxPP1U+m1uWN0M=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=UmtkZoy2/NnFfEKxpaVczPtRhgRBoY+kmZ79qH0x9+j/kXPjh8NxgwE4leYSCr4p8qQhvLSaS7e3lmfrODhDxxz/GJBva9VnnvE5z7Ya9GFPz//ksEck1fYJzKg2M6FV0RqKP4ClmbO5hKM/TCA/qEbAVqhSLv4krpgFK+twnLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvxBQkPC; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45de1084868so6608705e9.2;
+        Mon, 08 Sep 2025 03:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757327703; x=1757932503; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5iDY+Vi0EdOqRjdG+5WCOpNIgHMMJTkV6QF3KBvr3ao=;
+        b=IvxBQkPC8fAht8lk3ep+UCv3XIJhHwHavPQAMqkwcEzcqEXa3kjIGBuosXo1+alo5w
+         +EhsZRVayzGDXPSKuhrU58dWH6zEKZgpSjzzTmf50s4xRc1dSq04ZHi3l75YWDYPTWaW
+         KHPHz/OutCGF27d9asVfH6Ev3//USZtMrMmyNwDgY4Mwstl8UXkU5pmBDJHo+ziYqa14
+         wWkEcWtvKzw9k2eg2ag3Y+e8Vl04OywTwFChvT0+4JIxvmR/zlqvN9TtrXD04EIdGjNK
+         B6iHpCP8+X7NRb/mqNFNvCw3zWRSNZK09Nqii0tyjiy0B0L309RTr4tlquXxuU/8+00P
+         zQJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757327703; x=1757932503;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5iDY+Vi0EdOqRjdG+5WCOpNIgHMMJTkV6QF3KBvr3ao=;
+        b=BCdPf6w7hMXbDMnDOUV1D85cUuV58v3INuWEti1TGpfoTfsqcPl+UPqcZLC6rXFOON
+         IqLpujzmJ7/un2NPOv8sDXkx7YlhiO7ko0SJ7NsLEcZ1mfSxOjzCuKRGqR46/832VXAL
+         a5nXvineqJz9QkgH+veq/o6PpYMz80lpLhnHuo4CZdUnZ6Ke4ydt5fC5NuyT53g0KYOc
+         pC1QuIvIPQco9kTvfcpmV2mkqmqNGWzuzbcDtRtIRMllayuAyrtlYc4KiJQPjggCquX9
+         I08St2jVfMchTKj8Bp0lR44LxiF0M2Gu0rzAt1mvriLl1oGKQTFqCAFocX3RZbpuz45D
+         5JVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq+COoM6+coxeQpgcL737GynBOoVU3Ve1P0HALg6od8FC7gbEYYrLu33jIBCeGThhiCu+Z/7byDyowF2M=@vger.kernel.org, AJvYcCVtXxCdKAES0rqiVExXQ4Gkb+rdECTEapZpuW8Tqpl4wPzn+83wI+Ib1+yrWbck1wHyObVO+SjV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOJbPKrsLBK1bPbFsasK5R4jadusGJTC1znTnccRDbewdndlYl
+	hSJSNniDcF3ThhRMttxbVuYB7xrF9HJB+FFq/7g3rcy84yQeBxSomUxvxoz8R5lU
+X-Gm-Gg: ASbGncvH7J47S3QUbAx1z34LHpbm73KrnaEDlzZk13etxpEcR9waqe0R39BBQk0CKHk
+	8Vgwef9Euux7OsnPe3bjDn2ihK7EunOtL47LrBk0xvwwawN5hi5bCCja72XCUML3Wz6pdiJv3KQ
+	7HbOmzOcHAcrGcCUWsZmA0nZ2Tvmn0t3n2VfmOwE7oI/+q6Hle7hu8PjO0A/lBHvlwXDc3x/tIJ
+	O3iFtIa/wDg2cp7tjx5Ne5W/xy6AktG9ieV8n67i8Xd5cMfQCZ0z/ZjhbItRMAR1N4WScgfukl8
+	jbiBKejkcSCDZ10MAK9HEFhbUM78b30uJG2uzxDyr++0xUWiYjk1LJn5DBk9LAzgdLsUC9osUtA
+	JusXhaTLKj/I7tjRPFjLfC6DiLCTTS32rHLYpaK/6yMV2Lw==
+X-Google-Smtp-Source: AGHT+IFA1bYE54JJaTFNePXQZmaaRtj5UDlgcqlwzpgBxMXl9p8+4+og96mcgEoXG8/un61iG2AtxQ==
+X-Received: by 2002:a05:600c:1f16:b0:45d:d5c6:482 with SMTP id 5b1f17b1804b1-45dddec845bmr63293325e9.18.1757327703349;
+        Mon, 08 Sep 2025 03:35:03 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:4171:ec50:b666:2385])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm242509545e9.0.2025.09.08.03.35.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 03:35:02 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
+ <ast@fiberby.net>
+Cc: Jacob Keller <jacob.e.keller@intel.com>,  "Jason A. Donenfeld"
+ <Jason@zx2c4.com>,  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,  Andrew Lunn
+ <andrew+netdev@lunn.ch>,  wireguard@lists.zx2c4.com,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 10/11] tools: ynl: decode hex input
+In-Reply-To: <bf530a9a-dca8-4df7-b9f2-9f2b3a1d2ce1@fiberby.net>
+Date: Mon, 08 Sep 2025 09:28:26 +0100
+Message-ID: <m21pohwdp1.fsf@gmail.com>
+References: <20250904-wg-ynl-prep@fiberby.net>
+	<20250904220156.1006541-10-ast@fiberby.net> <m2h5xhxjd5.fsf@gmail.com>
+	<410d69e5-d1f8-40e0-84b1-b5d56e0d9366@intel.com>
+	<bf530a9a-dca8-4df7-b9f2-9f2b3a1d2ce1@fiberby.net>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Dan Carpenter <dan.carpenter@linaro.org>
+Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
 
-Code in gicv5_its_irq_domain_alloc() has two issues:
+> On 9/6/25 12:27 AM, Jacob Keller wrote:
+>> On 9/5/2025 3:51 AM, Donald Hunter wrote:
+>>> Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
+>>>
+>>>> This patch add support for decoding hex input, so
+>>>> that binary attributes can be read through --json.
+>>>>
+>>>> Example (using future wireguard.yaml):
+>>>>   $ sudo ./tools/net/ynl/pyynl/cli.py --family wireguard \
+>>>>     --do set-device --json '{"ifindex":3,
+>>>>       "private-key":"2a ae 6c 35 c9 4f cf <... to 32 bytes>"}'
+>>>>
+>>>> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+>>>
+>>> Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+>>>
+>>> FWIW, the hex can include spaces or not when using bytes.fromhex(). When
+>>> formatting hex for output, I chose to include spaces, but I don't really
+>>> know if that was a good choice or not.
+>> I also prefer the spaces for readability.
+> I formatted it with spaces for clarity, even without spaces it was a bit
+> long for one line. Spaces also has the advantage that you don't have to
+> think about endianness.
+>
+> Should we define the display hints a bit more in a .rst, or is it OK that
+> they end up being implementation specific for each language library? Do we
+> want them to behave the same in a Rust YNL library, as they do in Python?
 
-- it checks the wrong return value/variable when calling gicv5_alloc_lpi()
-- The cleanup code does not take previous loop iterations into account
+Yes we should probably extend the existing doc to at least describe some
+of the defacto behaviour.
 
-Fix both issues at once by adding the right gicv5_alloc_lpi() variable
-check and by reworking the function cleanup code to take into account
-current and previous iterations.
+https://docs.kernel.org/userspace-api/netlink/specs.html#display-hint
 
-[lpieralisi: reworded commit log]
-
-Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v5-its.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-index 4701ef62b8b2..2fb58d76f521 100644
---- a/drivers/irqchip/irq-gic-v5-its.c
-+++ b/drivers/irqchip/irq-gic-v5-its.c
-@@ -949,15 +949,18 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int vi
- 	device_id = its_dev->device_id;
- 
- 	for (i = 0; i < nr_irqs; i++) {
--		lpi = gicv5_alloc_lpi();
-+		ret = gicv5_alloc_lpi();
- 		if (ret < 0) {
- 			pr_debug("Failed to find free LPI!\n");
--			goto out_eventid;
-+			goto out_free_irqs;
- 		}
-+		lpi = ret;
- 
- 		ret = irq_domain_alloc_irqs_parent(domain, virq + i, 1, &lpi);
--		if (ret)
--			goto out_free_lpi;
-+		if (ret) {
-+			gicv5_free_lpi(lpi);
-+			goto out_free_irqs;
-+		}
- 
- 		/*
- 		 * Store eventid and deviceid into the hwirq for later use.
-@@ -977,8 +980,13 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int vi
- 
- 	return 0;
- 
--out_free_lpi:
--	gicv5_free_lpi(lpi);
-+out_free_irqs:
-+	while (--i >= 0) {
-+		irqd = irq_domain_get_irq_data(domain, virq + i);
-+		gicv5_free_lpi(irqd->parent_data->hwirq);
-+		irq_domain_reset_irq_data(irqd);
-+		irq_domain_free_irqs_parent(domain, virq + i, 1);
-+	}
- out_eventid:
- 	gicv5_its_free_eventid(its_dev, event_id_base, nr_irqs);
- 	return ret;
--- 
-2.48.0
-
+> BTW: The rest of the key used in the example can be found with this key-g=
+en:
+> $ printf "hello world" | sha1sum
+> [redacted key material]
 
