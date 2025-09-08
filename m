@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-805906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EFBB48F1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7D7B48F0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75CB164D8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEA41C223A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4414430C605;
-	Mon,  8 Sep 2025 13:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B47730ACF0;
+	Mon,  8 Sep 2025 13:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfYgd4/m"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="WMRZQabd"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D7B30BB86
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757337187; cv=none; b=pZ94dyX2zFcKwM/eBhzjTrc4uoXwhdf87OwctuScHK2Cv+KlvYRvV6V1Sx2Ihf3wryFfdtb+nhiwkh5O7brcGkxdOVNbin05k43Xtaaizcb4u5suiX9yoVXV6ic6ra80r4pIwZ6jmKgS+PWH6ENBeA9kHLFWNDXaY2zS26RDa0k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757337187; c=relaxed/simple;
-	bh=r9B8eJrWR/g38PUeQ9J2wFXWREa48OIMpTY6cZptlBw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OflqBowCghQVX9JNLHyRMBRFybZHEwsu9JJ7vR/krXJxmZoNE1e9AMcKZeBvTnWRjHzz+HTcHMxMHbtj7+jy9wsiAyqxQhSfWWxvroiirfVUi3nTL+EKgt5OcbM//GkrWSLvPsV3vjAS9l5e9jYs32R9yT6jfNnIDST81tC6YAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfYgd4/m; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45de64f89a9so7602905e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757337184; x=1757941984; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HX1P98lL0ntVTFobuHZJG04rSny4tquvD0IzM102LdE=;
-        b=gfYgd4/mMQtSOhMVWToxxh3TVJ5Ttd4tiKfBFq3/plCL4xqF4FqEtMRXWDmASYsZNv
-         1W5WdCcLPvjtpdqg+hL/24jZa2tKC/jEfopUTgEpFQZDXygZbev/2HYFMVjvv+VFcQfB
-         k8wHoFAnN8mXzChyZHGYGJH3TdfaJf9XqnFfvgtioine3k/ouSD6aLqpaQvFWiVPrAl5
-         8fZTS9+kCEYX9JQWxBgrxyAn6deGUAyGMflM1C+BRiYsE2EBexxJDIwOpPc1O0IsljI+
-         I+04QdD8Hl7XpjGrDEBq/3/EnVPuyhqY6BhzNMQhLHJgB82NAawPeXcK/XJhlnE1cjZ8
-         UwuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757337184; x=1757941984;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HX1P98lL0ntVTFobuHZJG04rSny4tquvD0IzM102LdE=;
-        b=LHnBCMDGSp6LACCyQFBCFOqO3Ryo/Sp3jUuZbvDssqwUgAFxnlegD6a/h53zXUSXk0
-         kST+4jUPoY4qP/nY3VO5zWnHGFynXZTI/BYv67koiSxo4rghZcKyK6H5nuvQlmDN7uj+
-         k9vSyQJMObQPNdq7qBzmR1UvgaUnavrRbLEQNT9GwmfnFnu350al4/Tj/fRvhiw5C1/j
-         ReHxWu3rkSc0l3uA0dW86OKrPJQMhxzbXMx5cqNQoC5U8mrdY4ylhbkND0un9EbM42ve
-         V0bI5mSpJC3nwGtC0Y43hDONzaI0ULjGvewENVNkXkJRrjf3DdNprH7lhOg2XpdatiAu
-         S9tg==
-X-Gm-Message-State: AOJu0Yzp8xAq/8euZ+jXMjwsqTDZR0u5NG4H5jOQLLmZIIK4UwhQqcj1
-	mH+nw6h9oV1KcEauI1PfM+FWACCLoSdUu2sVNsy30tRT2694wfDQliRS8AnUJ204BME=
-X-Gm-Gg: ASbGncuaEyPfWdMg968d9EpEJPTLrJKV+DKLOIKS5doECgkWFeVJA4ORnnef1qVP0zu
-	nGhZMVY3jnZFk4miRY/CL9iYP+xHh5y2n9Ur4R0JJhDqzSjfsrTKY2V5/1WuVMo5YGvS10GlpGL
-	BGXrwHhdSsnZbmFSRrfJRrfCPo8/TmwHWI2qAk8HXFT4fZQlHfwwUlTJlBzQ5REVlKcTkieurc5
-	EwPgTd2qNlo34cNKe/zQvURz1sIQeI1wbRLE8S4sIWxqgTUgCVim2t3f/fgf8bHvToCC1kVxrA1
-	2qz5unzGCr4yjjgaq6+zDlpiwe6QPOKDGu7KAGxW8L/AAd9sx+bSrsE8ncz57F8UQuztFX29jpJ
-	XuvL4F/3UhgnM9ma7O36HwfApvzQ7cvecf/y2r/Dn8AMFhL3KzAa96HXtGMCCSZzgxYwx+fNyDB
-	6ry/hf+w1f2BFF
-X-Google-Smtp-Source: AGHT+IHrei69SE3S2Wo3PhQL3nGzDL0r6xFLtoIiPAj8bXHlYe0awD9SWK429eaX/ZmPsA2F6T6ySQ==
-X-Received: by 2002:a05:600c:354f:b0:45c:b61a:b1bd with SMTP id 5b1f17b1804b1-45dde220a2emr74636385e9.18.1757337183601;
-        Mon, 08 Sep 2025 06:13:03 -0700 (PDT)
-Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm41650181f8f.43.2025.09.08.06.13.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 06:13:03 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Mon, 08 Sep 2025 13:12:46 +0000
-Subject: [PATCH v4 5/5] arm64: defconfig: enable Exynos ACPM clocks
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232962E92D9;
+	Mon,  8 Sep 2025 13:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757337204; cv=pass; b=rfL3OKIldQ4Znfq91J9VCTrgGNHCmFDUPvHAx5usXAxTHJroSNxxwdnyt02DPDZhW0yrS1meKWZMwKOGOo9JoH5DveGCQ/gRBCC0Im+ssmRJN25A6HPazqYUlNfrT7qi61g4PmPDEaVi4MY3NxMiCEX0k5Tw0xBOoldoZqbiZyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757337204; c=relaxed/simple;
+	bh=jZdcpw5nwcKubQJyFjk30zbbrfimNOb1S8HG5D2I9Zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBoNEVjoEq/P4msy/vdh/GfSWKggCMefxI1GxeGcvjnwX6VIStk0Sbc5iYMMx8wK1fpFVtRppdqvkIMcYLgyn2CLSoOFgdqmI9KLNRkxMd4Y5Or4QmweJFYRCWK/qgHQCX3r8vnA3vSgZ6czfTlopu8/cJeC+iVd51ub9CWc4dY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=WMRZQabd; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757337196; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BjqigCDh8q8zmedFYaqNSpyFjzTVjF7wFZFCnI4Am0mEiq+h9911BcKii5hbCdJNZW7fgcE32/K1xhWr8N0ETZUfCTLwUSdublejmjv1EdZjlK2lrK0kAoVxNE21JrFKfN3Hx6rs7a+Q+0ubnTiNbZr57piXYK0T/FrCXohMBNw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757337196; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3kaZfiY/f1MQhsfCNbEtRvEPc3aQHd3j1LIaIhu8/Ho=; 
+	b=DR292OKN5TH3m7u/pCW97nIoHf90cutTbkTZbuLQ+3BaS/GZzl4bV65XC/rVLToEW8JR1LlVmfM/PJhPDizxzmr9Ph+mWZSXf8PwLbCA8WajOKGc81qyYUsz21ld7mO/QiEvkBMQgnY2Q+nEWpCT2hqp6XWq8N8FsWPyXKXvKf4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757337195;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=3kaZfiY/f1MQhsfCNbEtRvEPc3aQHd3j1LIaIhu8/Ho=;
+	b=WMRZQabdYRmcqz/m3I/b95D5+pkkdCBaGLj3niY/6XcLxiv0IR7t+jud0mPrZT0U
+	Zelof05M0ZJ26+HohrydsOu85JUFx4NMDvv6Df1DECQdZO8lxdeqzvPI3As8L5Nm61V
+	lXlSprbAyR039ANI7C+uXNdg9YOFu9Uob/glRnho=
+Received: by mx.zohomail.com with SMTPS id 1757337192790113.93888448090684;
+	Mon, 8 Sep 2025 06:13:12 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 9BA3818081B; Mon, 08 Sep 2025 15:13:09 +0200 (CEST)
+Date: Mon, 8 Sep 2025 15:13:09 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Fabien Proriol <fabien.proriol@viavisolutions.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, fabien.proriol@kazoe.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
+Message-ID: <3zg7kxnpnqcovgfdqwjmkpqyq4t7cxupmjqhsstx7fie2t2cu3@4b5d22kg7sfn>
+References: <20250908080739.5f33c79f@canb.auug.org.au>
+ <cc37b088-696f-4f91-9159-30e839b7ffb9@viavisolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-acpm-clk-v4-5-633350c0c0b1@linaro.org>
-References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
-In-Reply-To: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757337178; l=820;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=r9B8eJrWR/g38PUeQ9J2wFXWREa48OIMpTY6cZptlBw=;
- b=9ggP3KUVS2zT7FryKyHNIZtbBh3Rqan9vA/aNkZzb27KJvR7ycYAxiFo0bkteyhSCJ1SQvT4Z
- n+0HD5LlcvUD4LkTHTo1imFXIzH7ED6AZ4JOBehLysGJoPG0239vgL0
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mi65rnaaaqpd6qli"
+Content-Disposition: inline
+In-Reply-To: <cc37b088-696f-4f91-9159-30e839b7ffb9@viavisolutions.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/257.291.27
+X-ZohoMailClient: External
 
-Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
-implement ACPM to provide support for clock configuration, PMIC
-and temperature sensors.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+--mi65rnaaaqpd6qli
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
+MIME-Version: 1.0
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 58f87d09366cd12ae212a1d107660afe8be6c5ef..4255bc885545fb3bb7e9cf02760cac35bf2872fa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1445,6 +1445,7 @@ CONFIG_CLK_GFM_LPASS_SM8250=m
- CONFIG_SM_VIDEOCC_8450=m
- CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
- CONFIG_CLK_RENESAS_VBATTB=m
-+CONFIG_EXYNOS_ACPM_CLK=m
- CONFIG_CLK_SOPHGO_CV1800=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_OMAP=m
+Hello Fabien,
 
--- 
-2.51.0.355.g5224444f11-goog
+Please do not top-top :)
 
+>Le 08/09/2025 =E0 00:07, Stephen Rothwell a =E9crit=A0:
+>> Commit
+>>    8543d1c462e2 ("power: supply: sbs-charger: Support multiple devices")
+>> is missing a Signed-off-by from its author.
+>
+> In fact, <fabien.proriol@viavisolutions.com> is the email of my companies,
+> unfortunately, the email server broke the indentation of my patch.
+> This why I used my own personal address to re-send the same commit
+> (<fabien.proriol@kazoe.org>).
+
+Actually your second patch was also broken and I had to fix it up
+while applying. You should have a look at 'b4', which helps you a
+lot with these kind of issues:
+
+https://b4.docs.kernel.org/en/latest/
+
+> For me, we can use either one without any problem, so, if you can change =
+to
+> use the same in the signed-off and the commit, it's OK for me.
+>=20
+> How to process ? can you change it or, should I re-transmit the message
+> again ?
+
+The first patch was send by your work mail and signed off by it.
+I've used that to fix things up.
+
+Please have a look at fixing your mail setup before sending more
+patches - be it with b4 or via some other setup :)
+
+Greetings,
+
+-- Sebastian
+
+--mi65rnaaaqpd6qli
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi+1l0ACgkQ2O7X88g7
++prV9w//bhjnW1GYtZBIL8dEb5AN0y1bcAel+aYbMLVUtYH1hq2ar0H29jZ7O4Yd
+qDCgGlvYdWWkwa0TixkuK1o3GiM1z3hkTiX63REec1hmzwol+ul9pGl9oZHNiGRS
+tBOQ0P1OaNgD8uUsWJbX9zrv8DJ8I7d+aAWVY9EsV4Ib2UH5c/uHrRMd6+2gEcvK
++0Z0itj/63NdZIymB2Frwf7NFEgtJg12DIgQxDemPBCXelaHyCUlnorL1E0hPh5A
+Eg0WGnLJn+aBECk4GtNqs59xWHV3aKVIAo0vsmVQOaw64ZUI/DAkonrAf60HrqST
++evFpOUWfOrJJWMBHyRKOe1/Vnsb3nyVNPeh32DyiZRFX0n1OvL0ibPAaEKiVS0u
+7xarRSp/9HE9EvZ1X0Cr2rdTzSm3ii8HRid0pqr57hRoM1UlwuNrK4zGD4r6HdGr
+D3/KzQgUMKfYX1FEgM1eaxwRsMoEpHBUWmwvUTq/Y7n4cjg16sbBAa5FiGUq1G05
+1lLuyGWhtj0OGbQHbQimgCzh0xc9DZ5HAGbsEP5DF4cSpU0i4nVi4C05ZXViqvoq
+HmFW/gy3cWF9oR0F/qs5J3es0Q0IPAHpKuIandj3LC9lnp00ZDvABkRTgf60vUc1
+cOpR2GETCrpnLJAv1662VUkQXhHq81Y0iKFx7JgjsMZ/zkdA+V4=
+=vlIy
+-----END PGP SIGNATURE-----
+
+--mi65rnaaaqpd6qli--
 
