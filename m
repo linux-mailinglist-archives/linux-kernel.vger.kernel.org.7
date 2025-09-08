@@ -1,196 +1,383 @@
-Return-Path: <linux-kernel+bounces-806521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0560EB49807
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D438B49805
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 470B57AE120
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E824E18A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3E317717;
-	Mon,  8 Sep 2025 18:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093E03164CB;
+	Mon,  8 Sep 2025 18:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="W92hAt8z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MIyhvqRj"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNEXm+fB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D093164CD;
-	Mon,  8 Sep 2025 18:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163763A8F7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355186; cv=none; b=QBYS8YyuPxF09xCFHPo1jJ7H973ScJ+SzA+mHUatFfRfwIdFK9ztjXLzTga3h5uuvzkQr4htqLm3tui6lILhwfykZ/y4fcTipoa/b340stzM9PuIFVh41/9BBshavyLQKU3yijqsSfmkNsf4ACwmcaNyBUqSC4iJ4BX+j8aJRgo=
+	t=1757355183; cv=none; b=nuKHVYX8mAHk2rVI3pyWRzHB5aK1XtacFS7h+cDB52nTjn8gg6jZvmlplIush0zW+T0D2Ifx65BQnzdNax8HICAMFOjNB6SiXWfJgFq1tlxsT+QLSmRTPTsWYCbt5xyJX+6j3yTh1f3oaJzwDTPzwKbT/nPOzyw0aDQijtOrTv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355186; c=relaxed/simple;
-	bh=S/qIFkbE6NWMThaebjnBbzrG7hfvN4q9LxfI84fWnS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DPpZFDIoowuiqY6RCqWslTgvvcC7B/JxlJWnAw+5kcxrMmK0bFhBKL3o471kcvoqt2Z09dxZbymf0l4VyWNCBbGvZHTjHmaVdSBXreSPUqROZSmrskeGdpoo5OcViM2ffknuj/AgbslhtHBBkMJuLq8GsIEQnaywVYSzIlLjKMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=W92hAt8z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MIyhvqRj; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 952921400182;
-	Mon,  8 Sep 2025 14:13:03 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 08 Sep 2025 14:13:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1757355183; x=1757441583; bh=2cuatXLabl
-	uJ3CkaEx442uHgntV1NQobYjc7F765Bzw=; b=W92hAt8zipaNUv9cn+SrTvTrzC
-	NJOgJzI0vFRPYjQC0AqqzSRUc5/lpz4lxaiMxA/lEUcwhlPM9GoPMWa6BSpysJbn
-	APX/lZB6GECks6Rvn+XTrq6ScDnqxa2tGkch66numKlCfbnJ4bLyMOM7IC+QvcCW
-	VNTbIeN7dHqbH/IS6L4zH6/bAI4FeMtzGGXapbDK8lzVFKGWz0vK70CtXNfomwaS
-	cd/IVW8nrJKxVV/fhaM1VcuWSPQQMWONR39/FJxOFVCEYL8sDdH2VYWSQSelV4xf
-	2/JxFf+NoFOq5Cgsci2Z01ulcAzSi0mI0HgfAIfnsriF3xOfmkP3+s1QC7Tg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757355183; x=1757441583; bh=2cuatXLabluJ3CkaEx442uHgntV1NQobYjc
-	7F765Bzw=; b=MIyhvqRjBUNSOm4wZlJKcDOjSu8kP13qHkI8HYpMx7iV24aUAkb
-	zMwQzv5dRQ7Pe5djmfH5doAFTRotxOKsbgDKYG7/MqU53yqb3E7rwhdlF25qNltE
-	cgMhiR+RZW6JlUfKDUOIwdcJmIeDVFObVxCd80nM2e3i6D0v5QB53i3U5SkytbOg
-	jzcyo+ngdUWAdaOxQiL2lzT7yosc8vd6M2HZJrksfnhNgY97+ViR630Pz9VLQMan
-	nnIGpLBmzob7B+dGiTpPZYiQ3RxtDSOUGhCt/xhBqxjMN5TknkTgH0FFLU+KYRS0
-	ML4f1Dv+l0mTQf+z3RI5E0GSDo6nbUbVvdg==
-X-ME-Sender: <xms:rRy_aCckTFKGj3UqR-_A4nAshhxmeBvKRrsXOKpXRzciK99eU_gihg>
-    <xme:rRy_aIGul-HuK25gId0D9zFT3dU6eJNh5MjwY6PkjdYV8_jgSnRq8WK4Qte5Dm5qn
-    5TA83p6nDA6afu0iu8>
-X-ME-Received: <xmr:rRy_aMVDJYMCXZ7F7u3T1dvxz20yYbiCdpGkr_GBmUKUU7JK3mOmqJGPPzJDFMWtEzF-AsdnrIpNX7nIvhGwthTB-t7JkqjhrJ0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
-    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvff
-    evleegudejfeefheehkeehleehfefgjefffeetudegtefhuedufeehfeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
-    hnvghtpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepshhvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinh
-    hugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrghlsghi
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvih
-    hgrdhiohdprhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehv
-    khhouhhlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:rRy_aIwrJXCWtJE7suPMpRh1ic3XAezkLHTPqNk5dVvUumuVHPHmog>
-    <xmx:rRy_aHtkTLHmEb9hd72tiUpEswVJ4suy93U5PZkJR-P98ZPkfM6B1Q>
-    <xmx:rRy_aJBwIruCU49cyHDLKYgdLGTOQwQAkxFBHX7_SEII8mCAbQf7dw>
-    <xmx:rRy_aDp8LZwOolKR9BCGZ5aeyU9LY80VikcIZTMyymJyBvXGLNdylA>
-    <xmx:rxy_aLzHpswtNQp2E782Qjvm7pd021tNXj-BRacdJ6CrKoRTtr8UsX05>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 14:13:01 -0400 (EDT)
-Date: Mon, 8 Sep 2025 20:12:59 +0200
-From: Janne Grunau <j@jannau.net>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH v2 18/22] phy: apple: Add Apple Type-C PHY
-Message-ID: <20250908181259.GC89417@robin.jannau.net>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
- <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
+	s=arc-20240116; t=1757355183; c=relaxed/simple;
+	bh=Hy+hhrBDBPrCziBe+GY3JOr6m0xt0ZTDGce2ocsMKfw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cA+x7wY/hAO1SNZx0WV6Eho57LjoTKAOQN3DCBz7tSxNoszpJLLF3I3mK9+ldp7lPyJbCVIPYrnv/Jq0kqmHmFPc+3CAr8+re5BSNKuyP7msZRPdJei3Skd+KJXQT2bCFBPAJtLfBYsFTu9RWsVDGD8jXDOkTmcxE44nuIIoa5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNEXm+fB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2586CC4CEF1;
+	Mon,  8 Sep 2025 18:13:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757355183;
+	bh=Hy+hhrBDBPrCziBe+GY3JOr6m0xt0ZTDGce2ocsMKfw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sNEXm+fBi2+ESVu1qlLq6abGE5Ht9Wro8TnOUmP85VFgxg/rr7FEKbZzzhLtor88b
+	 NNBitv24/lCYUn/N04i5ep2sOClM7n4K5Sy/xffoeIwdhtjmTSWupQY7wfFFiUL3Ev
+	 UZPXqtGruBMTDfJTaYudxWnqfbOM3WGIL7JCw0H2mPUnNvEbkGmWqOwTwiJ7YlQR/o
+	 tcEwRZ9EDpMdq0MMp5k3gwT1oJwtOF6I902OvNxRRGNCqh/Oiaagf/sV1NSteIMT0v
+	 MjuNOEto/fQmeoKmDCuOS4lkXYaplZ3cFYSnezVx9OqpnetD55zlrLiK0268kZci03
+	 SnFSKPUiT8osw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
+ <graf@amazon.com>,  Baoquan He <bhe@redhat.com>,  Changyuan Lyu
+ <changyuanl@google.com>,  Chris Li <chrisl@kernel.org>,  Jason Gunthorpe
+ <jgg@nvidia.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush
+ Yadav <pratyush@kernel.org>,  kexec@lists.infradead.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] kho: add support for preserving vmalloc allocations
+In-Reply-To: <20250908103528.2179934-2-rppt@kernel.org>
+References: <20250908103528.2179934-1-rppt@kernel.org>
+	<20250908103528.2179934-2-rppt@kernel.org>
+Date: Mon, 08 Sep 2025 20:12:59 +0200
+Message-ID: <mafs0ldmon784.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
+Content-Type: text/plain
 
-On Sat, Sep 06, 2025 at 03:43:31PM +0000, Sven Peter wrote:
-> The Apple Type-C PHY (ATCPHY) is a PHY for USB 2.0, USB 3.x,
-> USB4/Thunderbolt, and DisplayPort connectivity found in Apple Silicon SoCs.
-> The PHY handles muxing between these different protocols and also provides
-> the reset controller for the attached dwc3 USB controller.
-> 
-> There is no documentation available for this PHY and the entire sequence
-> of MMIO pokes has been figured out by tracing all MMIO access of Apple's
-> driver under a thin hypervisor and correlating the register reads/writes
-> to their kernel's debug output to find their names. Deviations from this
-> sequence generally results in the port not working or, especially when
-> the mode is switched to USB4 or Thunderbolt, to some watchdog resetting
-> the entire SoC.
-> 
-> This initial commit already introduces support for Display Port and
-> USB4/Thunderbolt but the drivers for these are not ready. We cannot
-> control the alternate mode negotiation and are stuck with whatever Apple's
-> firmware decides such that any DisplayPort or USB4/Thunderbolt device will
-> result in a correctly setup PHY but not be usable until the other drivers
-> are upstreamed as well.
-> 
-> Co-developed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Co-developed-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Sven Peter <sven@kernel.org>
+On Mon, Sep 08 2025, Mike Rapoport wrote:
+
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> A vmalloc allocation is preserved using binary structure similar to
+> global KHO memory tracker. It's a linked list of pages where each page
+> is an array of physical address of pages in vmalloc area.
+>
+> kho_preserve_vmalloc() hands out the physical address of the head page
+> to the caller. This address is used as the argument to
+> kho_vmalloc_restore() to restore the mapping in the vmalloc address
+> space and populate it with the preserved pages.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > ---
->  MAINTAINERS                |    1 +
->  drivers/phy/Kconfig        |    1 +
->  drivers/phy/Makefile       |    1 +
->  drivers/phy/apple/Kconfig  |   14 +
->  drivers/phy/apple/Makefile |    4 +
->  drivers/phy/apple/atc.c    | 2214 ++++++++++++++++++++++++++++++++++++++++++++
->  6 files changed, 2235 insertions(+)
-
-[...]
-
-> diff --git a/drivers/phy/apple/atc.c b/drivers/phy/apple/atc.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9213485234873fcaafeb1d1d9de3ddf07767d552
-> --- /dev/null
-> +++ b/drivers/phy/apple/atc.c
-> @@ -0,0 +1,2214 @@
-
-[...]
-
-> +static int atcphy_load_tunables(struct apple_atcphy *atcphy)
+>  include/linux/kexec_handover.h |  12 ++
+>  kernel/kexec_handover.c        | 200 +++++++++++++++++++++++++++++++++
+>  2 files changed, 212 insertions(+)
+>
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+> index 348844cffb13..b7bf3bf11019 100644
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -42,8 +42,10 @@ struct kho_serialization;
+>  bool kho_is_enabled(void);
+>  
+>  int kho_preserve_folio(struct folio *folio);
+> +int kho_preserve_vmalloc(void *ptr, phys_addr_t *preservation);
+>  int kho_preserve_phys(phys_addr_t phys, size_t size);
+>  struct folio *kho_restore_folio(phys_addr_t phys);
+> +void *kho_restore_vmalloc(phys_addr_t preservation);
+>  int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
+>  int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
+>  
+> @@ -70,11 +72,21 @@ static inline int kho_preserve_phys(phys_addr_t phys, size_t size)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> +static inline int kho_preserve_vmalloc(void *ptr, phys_addr_t *preservation)
 > +{
-> +	int ret;
-> +	struct {
-> +		const char *dt_name;
-> +		struct apple_tunable **tunable;
-> +	} tunables[] = {
-> +		{ "apple,tunable-fuses", &atcphy->tunables.fuses },
-> +		{ "apple,tunable-axi2af", &atcphy->tunables.axi2af },
-> +		{ "apple,tunable-common", &atcphy->tunables.common },
-> +		{ "apple,tunable-lane0-usb", &atcphy->tunables.lane_usb3[0] },
-> +		{ "apple,tunable-lane1-usb", &atcphy->tunables.lane_usb3[1] },
-> +		{ "apple,tunable-lane0-cio", &atcphy->tunables.lane_usb4[0] },
-> +		{ "apple,tunable-lane1-cio", &atcphy->tunables.lane_usb4[1] },
-> +		{ "apple,tunable-lane0-dp", &atcphy->tunables.lane_displayport[0] },
-> +		{ "apple,tunable-lane1-dp", &atcphy->tunables.lane_displayport[1] },
-> +	};
+> +	return -EOPNOTSUPP;
+> +}
 > +
-> +	for (int i = 0; i < ARRAY_SIZE(tunables); i++) {
-> +		*tunables[i].tunable =
-> +			devm_apple_tunable_parse(atcphy->dev, atcphy->np, tunables[i].dt_name);
-> +		if (IS_ERR(tunables[i].tunable)) {
-> +			dev_err(atcphy->dev, "Failed to read tunable %s: %ld\n",
-> +				tunables[i].dt_name, PTR_ERR(tunables[i].tunable));
-> +			return ret;
+>  static inline struct folio *kho_restore_folio(phys_addr_t phys)
+>  {
+>  	return NULL;
+>  }
+>  
+> +static inline void *kho_restore_vmalloc(phys_addr_t preservation)
+> +{
+> +	return NULL;
+> +}
+> +
+>  static inline int kho_add_subtree(struct kho_serialization *ser,
+>  				  const char *name, void *fdt)
+>  {
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index 8079fc4b9189..1177cc5ffa1a 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/notifier.h>
+>  #include <linux/page-isolation.h>
+> +#include <linux/vmalloc.h>
+>  
+>  #include <asm/early_ioremap.h>
+>  
+> @@ -742,6 +743,205 @@ int kho_preserve_phys(phys_addr_t phys, size_t size)
+>  }
+>  EXPORT_SYMBOL_GPL(kho_preserve_phys);
+>  
+> +struct kho_vmalloc_chunk;
+> +
+> +struct kho_vmalloc_hdr {
+> +	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
+> +	unsigned int total_pages;	/* only valid in the first chunk */
+> +	unsigned int flags;		/* only valid in the first chunk */
+> +	unsigned short order;		/* only valid in the first chunk */
+> +	unsigned short num_elms;
 
-ret is unitialized here, could be `return PTR_ERR(tunables[i].tunable);`
-instead
+I think it the serialization format would be cleaner if these were
+defined in a separate structure that holds the metadata instead of being
+defined in each page and then ignored in most of them.
 
-Janne
+If the caller can save 8 bytes (phys addr of first page), it might as
+well save 16 instead. Something like the below perhaps?
+
+struct kho_vmalloc {
+	DECLARE_KHOSER_PTR(first, struct kho_vmalloc_chunk *);
+	unsigned int total_pages;
+	unsigned short flags;
+	unsigned short order;
+};
+
+And then kho_vmalloc_hdr becomes simply:
+
+struct kho_vmalloc_hdr {
+	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
+};
+
+You don't even need num_elms since you have the list be zero-terminated.
+
+> +};
+> +
+> +#define KHO_VMALLOC_SIZE				\
+> +	((PAGE_SIZE - sizeof(struct kho_vmalloc_hdr)) / \
+> +	 sizeof(phys_addr_t))
+> +
+> +struct kho_vmalloc_chunk {
+> +	struct kho_vmalloc_hdr hdr;
+> +	phys_addr_t phys[KHO_VMALLOC_SIZE];
+> +};
+> +
+> +static_assert(sizeof(struct kho_vmalloc_chunk) == PAGE_SIZE);
+> +
+> +#define KHO_VMALLOC_FLAGS_MASK	(VM_ALLOC | VM_ALLOW_HUGE_VMAP)
+
+I don't think it is a good idea to re-use VM flags. This can make adding
+more flags later down the line ugly. I think it would be better to
+define KHO_VMALLOC_FL* instead.
+
+> +
+> +static struct kho_vmalloc_chunk *new_vmalloc_chunk(struct kho_vmalloc_chunk *cur)
+> +{
+> +	struct kho_vmalloc_chunk *chunk;
+> +	int err;
+> +
+> +	chunk = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> +	if (!chunk)
+> +		return NULL;
+> +
+> +	err = kho_preserve_phys(virt_to_phys(chunk), PAGE_SIZE);
+> +	if (err)
+> +		goto err_free;
+> +	if (cur)
+> +		KHOSER_STORE_PTR(cur->hdr.next, chunk);
+> +	return chunk;
+> +
+> +err_free:
+> +	kfree(chunk);
+> +	return NULL;
+> +}
+> +
+> +static void kho_vmalloc_free_chunks(struct kho_vmalloc_chunk *first_chunk)
+> +{
+> +	struct kho_mem_track *track = &kho_out.ser.track;
+> +	struct kho_vmalloc_chunk *chunk = first_chunk;
+> +
+> +	while (chunk) {
+> +		unsigned long pfn = PHYS_PFN(virt_to_phys(chunk));
+> +		struct kho_vmalloc_chunk *tmp = chunk;
+> +
+> +		__kho_unpreserve(track, pfn, pfn + 1);
+
+This doesn't unpreserve the pages contained in the chunk, which
+kho_preserve_vmalloc() preserved.
+
+> +
+> +		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
+> +		kfree(tmp);
+> +	}
+> +}
+> +
+> +/**
+> + * kho_preserve_vmalloc - preserve memory allocated with vmalloc() across kexec
+> + * @ptr: pointer to the area in vmalloc address space
+> + * @preservation: returned physical address of preservation metadata
+> + *
+> + * Instructs KHO to preserve the area in vmalloc address space at @ptr. The
+> + * physical pages mapped at @ptr will be preserved and on successful return
+> + * @preservation will hold the physical address of a structure that describes
+> + * the preservation.
+> + *
+> + * NOTE: The memory allocated with vmalloc_node() variants cannot be reliably
+> + * restored on the same node
+> + *
+> + * Return: 0 on success, error code on failure
+> + */
+> +int kho_preserve_vmalloc(void *ptr, phys_addr_t *preservation)
+> +{
+> +	struct kho_mem_track *track = &kho_out.ser.track;
+> +	struct kho_vmalloc_chunk *chunk, *first_chunk;
+> +	struct vm_struct *vm = find_vm_area(ptr);
+> +	unsigned int order, flags;
+> +	int err;
+> +
+> +	if (!vm)
+> +		return -EINVAL;
+> +
+> +	if (vm->flags & ~KHO_VMALLOC_FLAGS_MASK)
+> +		return -EOPNOTSUPP;
+> +
+> +	flags = vm->flags & KHO_VMALLOC_FLAGS_MASK;
+> +	order = get_vm_area_page_order(vm);
+> +
+> +	chunk = new_vmalloc_chunk(NULL);
+> +	if (!chunk)
+> +		return -ENOMEM;
+> +	first_chunk = chunk;
+> +	first_chunk->hdr.total_pages = vm->nr_pages;
+> +	first_chunk->hdr.flags = flags;
+> +	first_chunk->hdr.order = order;
+> +
+> +	for (int i = 0; i < vm->nr_pages; i += (1 << order)) {
+> +		phys_addr_t phys = page_to_phys(vm->pages[i]);
+> +
+> +		err = __kho_preserve_order(track, PHYS_PFN(phys), order);
+> +		if (err)
+> +			goto err_free;
+> +
+> +		chunk->phys[chunk->hdr.num_elms] = phys;
+> +		chunk->hdr.num_elms++;
+> +		if (chunk->hdr.num_elms == ARRAY_SIZE(chunk->phys)) {
+> +			chunk = new_vmalloc_chunk(chunk);
+> +			if (!chunk)
+> +				goto err_free;
+> +		}
+> +	}
+> +
+> +	*preservation = virt_to_phys(first_chunk);
+> +	return 0;
+> +
+> +err_free:
+> +	kho_vmalloc_free_chunks(first_chunk);
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_GPL(kho_preserve_vmalloc);
+> +
+> +/**
+> + * kho_restore_vmalloc - recreates and populates an area in vmalloc address
+> + * space from the preserved memory.
+> + * @preservation: physical address of the preservation metadata.
+> + *
+> + * Recreates an area in vmalloc address space and populates it with memory that
+> + * was preserved using kho_preserve_vmalloc().
+> + *
+> + * Return: pointer to the area in the vmalloc address space, NULL on failure.
+> + */
+> +void *kho_restore_vmalloc(phys_addr_t preservation)
+> +{
+> +	struct kho_vmalloc_chunk *chunk = phys_to_virt(preservation);
+> +	unsigned int align, order, shift, flags;
+> +	unsigned int idx = 0, nr;
+> +	unsigned long addr, size;
+> +	struct vm_struct *area;
+> +	struct page **pages;
+> +	int err;
+> +
+> +	flags = chunk->hdr.flags;
+> +	if (flags & ~KHO_VMALLOC_FLAGS_MASK)
+> +		return NULL;
+> +
+> +	nr = chunk->hdr.total_pages;
+> +	pages = kvmalloc_array(nr, sizeof(*pages), GFP_KERNEL);
+> +	if (!pages)
+> +		return NULL;
+> +	order = chunk->hdr.order;
+> +	shift = PAGE_SHIFT + order;
+> +	align = 1 << shift;
+> +
+> +	while (chunk) {
+> +		struct page *page;
+> +
+> +		for (int i = 0; i < chunk->hdr.num_elms; i++) {
+> +			phys_addr_t phys = chunk->phys[i];
+> +
+> +			for (int j = 0; j < (1 << order); j++) {
+> +				page = phys_to_page(phys);
+> +				kho_restore_page(page, 0);
+> +				pages[idx++] = page;
+
+This can buffer-overflow if the previous kernel was buggy and added too
+many pages. Perhaps keep check for this?
+
+> +				phys += PAGE_SIZE;
+> +			}
+> +		}
+> +
+> +		page = virt_to_page(chunk);
+> +		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
+> +		kho_restore_page(page, 0);
+> +		__free_page(page);
+> +	}
+> +
+> +	area = __get_vm_area_node(nr * PAGE_SIZE, align, shift, flags,
+> +				  VMALLOC_START, VMALLOC_END, NUMA_NO_NODE,
+> +				  GFP_KERNEL, __builtin_return_address(0));
+> +	if (!area)
+> +		goto err_free_pages_array;
+> +
+> +	addr = (unsigned long)area->addr;
+> +	size = get_vm_area_size(area);
+> +	err = vmap_pages_range(addr, addr + size, PAGE_KERNEL, pages, shift);
+> +	if (err)
+> +		goto err_free_vm_area;
+> +
+> +	return area->addr;
+
+You should free the pages array before returning here.
+
+> +
+> +err_free_vm_area:
+> +	free_vm_area(area);
+> +err_free_pages_array:
+> +	kvfree(pages);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(kho_restore_vmalloc);
+> +
+>  /* Handling for debug/kho/out */
+>  
+>  static struct dentry *debugfs_root;
+
+-- 
+Regards,
+Pratyush Yadav
 
