@@ -1,145 +1,202 @@
-Return-Path: <linux-kernel+bounces-805908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7D7B48F0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE9AB48F1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEA41C223A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A5F18869DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B47730ACF0;
-	Mon,  8 Sep 2025 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5123E30ACE7;
+	Mon,  8 Sep 2025 13:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="WMRZQabd"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="FQHB5ZAO"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232962E92D9;
-	Mon,  8 Sep 2025 13:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4E309F1E;
+	Mon,  8 Sep 2025 13:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757337204; cv=pass; b=rfL3OKIldQ4Znfq91J9VCTrgGNHCmFDUPvHAx5usXAxTHJroSNxxwdnyt02DPDZhW0yrS1meKWZMwKOGOo9JoH5DveGCQ/gRBCC0Im+ssmRJN25A6HPazqYUlNfrT7qi61g4PmPDEaVi4MY3NxMiCEX0k5Tw0xBOoldoZqbiZyo=
+	t=1757337295; cv=pass; b=HHpC8M4blXEKaqzSks1rFXQbaRWYDx8zFW1lpv2Ze3agmV9suwW32O03MrTHtojKzqek1IvZQTdYr0qh/VvS6i+o3rt6PosIQW4J3sABaay+Gg88UtiakLQ43xnPoGvzzCNopVOJbI1ZfeI5sSWGzWcyIgdl0En+876MSVi5Ncw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757337204; c=relaxed/simple;
-	bh=jZdcpw5nwcKubQJyFjk30zbbrfimNOb1S8HG5D2I9Zw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBoNEVjoEq/P4msy/vdh/GfSWKggCMefxI1GxeGcvjnwX6VIStk0Sbc5iYMMx8wK1fpFVtRppdqvkIMcYLgyn2CLSoOFgdqmI9KLNRkxMd4Y5Or4QmweJFYRCWK/qgHQCX3r8vnA3vSgZ6czfTlopu8/cJeC+iVd51ub9CWc4dY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=WMRZQabd; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1757337295; c=relaxed/simple;
+	bh=+6pyxVAkDoyE8Cyu0p5N+L0faFzxQ9qlRST8FYxtxoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DCv+jR+sgPl9YN5hGvC726e8P7pLM7kn45SfBfEJosHkvgO4Tf4ceLcUSXAGJxwYid6fKK/D1UcZHbykcXh85tApYD24jr0jTfgkjfm3ibiktVLIifif3Xux3BuAyWDL2K2pFRDzHSrXe+GhtTMmlsxcuiMORhPeVHDU6fvrtbM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=FQHB5ZAO; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757337196; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1757337274; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=BjqigCDh8q8zmedFYaqNSpyFjzTVjF7wFZFCnI4Am0mEiq+h9911BcKii5hbCdJNZW7fgcE32/K1xhWr8N0ETZUfCTLwUSdublejmjv1EdZjlK2lrK0kAoVxNE21JrFKfN3Hx6rs7a+Q+0ubnTiNbZr57piXYK0T/FrCXohMBNw=
+	b=DNh13hbFAmkcsVoMBOYEI2azWoZts5Tloe+7VNBo6Kal0Rt8Ft0HNkSbk+CD6RugngB3pmFnR/A3s5jP8Ff/8QZS9GBzd/PSIb41LOFGp0AKolLTuT825FL9ELSftJivQtC+sNxkCGij9Vc2GaoiuteOJxyiwS2w2EP3S+adB7Y=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757337196; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=3kaZfiY/f1MQhsfCNbEtRvEPc3aQHd3j1LIaIhu8/Ho=; 
-	b=DR292OKN5TH3m7u/pCW97nIoHf90cutTbkTZbuLQ+3BaS/GZzl4bV65XC/rVLToEW8JR1LlVmfM/PJhPDizxzmr9Ph+mWZSXf8PwLbCA8WajOKGc81qyYUsz21ld7mO/QiEvkBMQgnY2Q+nEWpCT2hqp6XWq8N8FsWPyXKXvKf4=
+	t=1757337274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pk0pPbbGzqsDwAb5KOUGSpgEXegsNBH0oucyp1ouJvs=; 
+	b=bnADyuBiUpkfLxyDVSannBNIBHWRhcNPBgAaPrZgquGkCJfXdgJijdGOrVsQ8UamL8oWb1SKPa8HuQ5qmC5EzvIft/w6aMgLWZs2nfHJId3DH7lLZKFoRuPlhuCpnwt0sModYCw7v8aa9ymnkHSzUrU78+lhUiEMExIhwf7aIcU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757337195;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=3kaZfiY/f1MQhsfCNbEtRvEPc3aQHd3j1LIaIhu8/Ho=;
-	b=WMRZQabdYRmcqz/m3I/b95D5+pkkdCBaGLj3niY/6XcLxiv0IR7t+jud0mPrZT0U
-	Zelof05M0ZJ26+HohrydsOu85JUFx4NMDvv6Df1DECQdZO8lxdeqzvPI3As8L5Nm61V
-	lXlSprbAyR039ANI7C+uXNdg9YOFu9Uob/glRnho=
-Received: by mx.zohomail.com with SMTPS id 1757337192790113.93888448090684;
-	Mon, 8 Sep 2025 06:13:12 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 9BA3818081B; Mon, 08 Sep 2025 15:13:09 +0200 (CEST)
-Date: Mon, 8 Sep 2025 15:13:09 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Fabien Proriol <fabien.proriol@viavisolutions.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, fabien.proriol@kazoe.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
-Message-ID: <3zg7kxnpnqcovgfdqwjmkpqyq4t7cxupmjqhsstx7fie2t2cu3@4b5d22kg7sfn>
-References: <20250908080739.5f33c79f@canb.auug.org.au>
- <cc37b088-696f-4f91-9159-30e839b7ffb9@viavisolutions.com>
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757337274;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=pk0pPbbGzqsDwAb5KOUGSpgEXegsNBH0oucyp1ouJvs=;
+	b=FQHB5ZAO3t8mFRAWbT4PhhvTQL8TZAZVnBRS5+l6VHAcG2epE5UTsZTH6Q0rHEE+
+	7DXx+udKmcgHmrx1ExjnEJB4aVF4pFktKBdYHTgw87gYZzXJMMfIi2bZs2QQZ6YGXhZ
+	gVgyeJR2nMC4d8y6mDUlaYCauRsNl39VXnVbqEi8=
+Received: by mx.zohomail.com with SMTPS id 1757337272979795.5615319676068;
+	Mon, 8 Sep 2025 06:14:32 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com, linux-rockchip@lists.infradead.org,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+Date: Mon, 08 Sep 2025 15:14:28 +0200
+Message-ID: <1953725.CQOukoFCf9@workhorse>
+In-Reply-To:
+ <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
+References:
+ <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+ <3556261.BddDVKsqQX@workhorse>
+ <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mi65rnaaaqpd6qli"
-Content-Disposition: inline
-In-Reply-To: <cc37b088-696f-4f91-9159-30e839b7ffb9@viavisolutions.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/257.291.27
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+
+On Friday, 5 September 2025 16:27:27 Central European Summer Time Ulf Hansson wrote:
+> [...]
+> 
+> >
+> > Okay so I believe I have found the root cause of the regression. UFS is
+> > innocent, disabling UFS just happens to avoid it due to how the timing of
+> > things works out.
+> >
+> > The real issue is that the NPU power domains on the RK3576, which are
+> > currently unused, have an undeclared dependency on vdd_npu_s0.
+> >
+> > Declaring this dependency with a `domain-supply` and adding the
+> > necessary flag in the rockchip PD controller to use it does not solve
+> > he problem. This is because the rockchip PD controller cannot acquire
+> > those supplies during probe, as they're not available yet and their
+> > availability depends on the PD controller finishing probe.
+> >
+> > That's why it acquires them in the PD enable callback, but the NPU
+> > PDs are never enabled because they're unused.
+> >
+> > This worked fine when unused PDs were still turned off quite early, as
+> > this meant they were turned off before regulators. Now the unused
+> > regulators are turned off before turning off the unused PDs happens.
+> 
+> I see, thanks for sharing these details. What a mess.
+> 
+
+Agreed :(
+
+> >
+> > I don't really see an easy way to fix this with a patch that's fit for
+> > an rc cycle. We can't request the regulator early or even just add a
+> > device link, as the regulator is not around yet.
+> 
+> Right, I will work on a patch or two that allows rockchip
+> power-domains to opt-out from genpds new behavior and to keep using
+> the old one.
+> 
+> I think we prefer to do it like this (should be quite a limited amount
+> of code and okay for an rc), rather than reverting for everyone.
+
+That sounds good to me.
+
+> 
+> >
+> > Marking vdd_npu_s0 as always-on would be abusing DT to work around a
+> > Linux kernel shortcoming, which is a no-no.
+> >
+> > What we need is either a way to register with pmdomain core that
+> > certain PDs need a late init for additional supplies, which is then
+> > called before any of the unused regulator power off functionality is
+> > invoked by the regulator core.
+> >
+> > Any ideas?
+> 
+> Yes :-)
+> 
+> I would suggest implementing an auxiliary driver, along with the
+> rockchip_pm_domain_driver. The main job for the auxiliary driver would
+> be to get the regulator in its ->probe() - and if it fails because the
+> regulator isn't available yet, it should keep trying by returning
+> -EPROBE_DEFER. See more about the auxiliary bus/device/driver in
+> include/linux/auxiliary_bus.h and module_auxiliary_driver().
+> 
+> Moreover, when the rockchip_pm_domain_driver probes, it becomes
+> responsible for pre-parsing the OF nodes for the domain-supply DT
+> property, for each of the specified power-domains. If it finds a
+> domain-supply, it should register an auxiliary device that corresponds
+> to that particular power-domain. This can be done by using
+> platform-data that is shared with the auxiliary device/driver. See
+> devm_auxiliary_device_create().
+> 
+> Furthermore we would need some kind of synchronization mechanism
+> between the rockchip_pm_domain_driver and the auxiliary driver, to
+> manage the regulator get/enable/disable. I think that should be rather
+> easy to work out.
+> 
+> Do you think this can work?
+
+This sounds similar to something Heiko suggested to me, and I agree
+it could work. It does seem like a pretty painful solution though,
+in terms of needed additional code and complexity to basically just
+tell Linux "hey you can't get this regulator yet but please try
+again later without our involvement".
+
+To that end, I've tried working out a regulator-based solution to
+it, where the rockchip_pm_domain driver registers a "proxy"
+regulator for each power domain that wants a regulator, with its
+supply set to the name of the real `domain-supply` regulator.
+
+The logic behind this was that the regulator core runs a check
+for whether every supply is resolved before it turns off unused
+regulators. The hope was that if we register a proxy regulator
+and enable it immediately in the pm_domain probe, then regulator
+core will handle the actual dependency at precisely the right
+time, namely before it checks to see whether any are unused and
+can be turned off.
+
+As I discovered though, this can't really work. The regulator
+core will in this case just set the supply regulator to a dummy
+regulator when it's enabled in our probe function, and later
+supply resolving passes are then content that this supply is
+resolved even though it is a dummy supply. There does not appear
+to be any way to opt out of getting this dummy supply.
+
+So knowing that this doesn't work, I have another idea, but I
+feel like both the regulator subsystem and the pm-domains
+subsystem will hate this: explicitly create an order between
+the pmdomain idle check and the regulator idle check to make
+sure that the pmdomains idle check runs first.
+
+This would set in stone how the kernel worked previously for
+kernel users that relied on this, but is a conceptually
+unpleasant cross-subsystem dependency.
+
+> 
+> Kind regards
+> Uffe
+> 
+
+Kind regards,
+Nicolas Frattaroli
 
 
---mi65rnaaaqpd6qli
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
-MIME-Version: 1.0
-
-Hello Fabien,
-
-Please do not top-top :)
-
->Le 08/09/2025 =E0 00:07, Stephen Rothwell a =E9crit=A0:
->> Commit
->>    8543d1c462e2 ("power: supply: sbs-charger: Support multiple devices")
->> is missing a Signed-off-by from its author.
->
-> In fact, <fabien.proriol@viavisolutions.com> is the email of my companies,
-> unfortunately, the email server broke the indentation of my patch.
-> This why I used my own personal address to re-send the same commit
-> (<fabien.proriol@kazoe.org>).
-
-Actually your second patch was also broken and I had to fix it up
-while applying. You should have a look at 'b4', which helps you a
-lot with these kind of issues:
-
-https://b4.docs.kernel.org/en/latest/
-
-> For me, we can use either one without any problem, so, if you can change =
-to
-> use the same in the signed-off and the commit, it's OK for me.
->=20
-> How to process ? can you change it or, should I re-transmit the message
-> again ?
-
-The first patch was send by your work mail and signed off by it.
-I've used that to fix things up.
-
-Please have a look at fixing your mail setup before sending more
-patches - be it with b4 or via some other setup :)
-
-Greetings,
-
--- Sebastian
-
---mi65rnaaaqpd6qli
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi+1l0ACgkQ2O7X88g7
-+prV9w//bhjnW1GYtZBIL8dEb5AN0y1bcAel+aYbMLVUtYH1hq2ar0H29jZ7O4Yd
-qDCgGlvYdWWkwa0TixkuK1o3GiM1z3hkTiX63REec1hmzwol+ul9pGl9oZHNiGRS
-tBOQ0P1OaNgD8uUsWJbX9zrv8DJ8I7d+aAWVY9EsV4Ib2UH5c/uHrRMd6+2gEcvK
-+0Z0itj/63NdZIymB2Frwf7NFEgtJg12DIgQxDemPBCXelaHyCUlnorL1E0hPh5A
-Eg0WGnLJn+aBECk4GtNqs59xWHV3aKVIAo0vsmVQOaw64ZUI/DAkonrAf60HrqST
-+evFpOUWfOrJJWMBHyRKOe1/Vnsb3nyVNPeh32DyiZRFX0n1OvL0ibPAaEKiVS0u
-7xarRSp/9HE9EvZ1X0Cr2rdTzSm3ii8HRid0pqr57hRoM1UlwuNrK4zGD4r6HdGr
-D3/KzQgUMKfYX1FEgM1eaxwRsMoEpHBUWmwvUTq/Y7n4cjg16sbBAa5FiGUq1G05
-1lLuyGWhtj0OGbQHbQimgCzh0xc9DZ5HAGbsEP5DF4cSpU0i4nVi4C05ZXViqvoq
-HmFW/gy3cWF9oR0F/qs5J3es0Q0IPAHpKuIandj3LC9lnp00ZDvABkRTgf60vUc1
-cOpR2GETCrpnLJAv1662VUkQXhHq81Y0iKFx7JgjsMZ/zkdA+V4=
-=vlIy
------END PGP SIGNATURE-----
-
---mi65rnaaaqpd6qli--
 
