@@ -1,174 +1,134 @@
-Return-Path: <linux-kernel+bounces-804971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D57AB4827F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:08:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04363B4828C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395823B0257
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:08:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9E677AD2E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42B1DFE12;
-	Mon,  8 Sep 2025 02:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBSM70Ax"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FD61D5CDE;
+	Mon,  8 Sep 2025 02:20:10 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C8BE56A;
-	Mon,  8 Sep 2025 02:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F72EACD;
+	Mon,  8 Sep 2025 02:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757297315; cv=none; b=TKfBhoBJ1r+Wf4slphl+yhT6+aX+c1tN9yzJ6c2yy0Ga1iIGmL2YsPDFIZ4YFi2cQWfIjjupnP0LZgHDjiRGNGycn41x4o9TK31Wse4g4dZM87yIJ1M9K98b6VENLWvf0epqaHVtLDJrMNfb1NNHs1reZ8CHc0sOQ8TTUiNDtZs=
+	t=1757298010; cv=none; b=flUzA1jdfPUs4u6n24q4Slq9v4end/IpVzCRZzQfJI/TTejmIlnuK/zBwp3mxYVfBmeMEScxqEzous0J0rq9/RoZps1xAPMS/nYyvMfP8wXfifCwub5uW8njO7QiU/8x7jmttkomQvj/HxRMW1cOIn34yG3sbST8UU9XEK/7y8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757297315; c=relaxed/simple;
-	bh=+6vge6D5Rmxr8sGWIAM2plq0WDBQ7eYtTTfWmyKyGMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eD4hu0D1RZqMFMS9fJWQN3FVL8CkLY5CGbbTC2krSabr8T/tVmLHWf4mHRYcxQZEJYv+NY1lLuJ7SPpS7hXsfKu61fMLXRCQsg4oZqAwYBtkb3ZYpb2NauHT3wjh8qUO6lG8A9A5ZbdISn56GYQkNhWLmzO68VcDEabjAP7YZ50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBSM70Ax; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70ddadde2e9so30994576d6.0;
-        Sun, 07 Sep 2025 19:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757297312; x=1757902112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n5wvK9N0FAN5WWE/5m873xnm5UeYdKcL81Y7rv8hpKI=;
-        b=ZBSM70AxDJaChSAH9d6rTkGXMM2j7CLBT+WDeH1qnyC2FMZohUy04AjYhXFsvCZ0A1
-         UjkTNN/doE4j7mz8S3IK8EyNquijZ29/rh4g239Hrzu7ZBh7JJpevzgGoNllA8Dy/pPC
-         nj7sx4bRYmTjBaTv72p+Lh/JGBp7veWISEA8MN1iOW3eA3xzixuiBZhuNAlsyfJfbbZ0
-         tT83+yynBzkOaP7u+UU4MI2jhlgNWdkIfgRdgy2N5purjCISxtu8o6SSK2rjoUWhj8hk
-         WkucKYeIFLztFARVOtqE1HXCXaY6mX2C7JWFAhsn7Amm5LrK/73FJtoFzdIGA6lPlCxs
-         WifA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757297312; x=1757902112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n5wvK9N0FAN5WWE/5m873xnm5UeYdKcL81Y7rv8hpKI=;
-        b=HS8qchaM0cw9OQ4f4/9Mtt1ozadhG6tYZzFT+hmcB9+LzJPE1SMxKT9VexYY7oZFmA
-         yoL0iWddLhWVPRl9QZx38WObxxVQ+q3+aVh+vQy0s+4Mxun90CkisnYNvyJD+ZNeh7f3
-         nzBHQuCfsZDu5KTxdvSIURPLLsf66b7F1pgzV5GMDHFbVvGF5zQUupRFEiqyF2yh8WT1
-         6mGgqHQkgop4CuX844ZL29WvUXwsj/2quephv/hRg/DtmiogydplNbeXdj4M4MzEa9TK
-         GO1I7lKEvlr3B0/x/ylwh6foyq951FWSu0qy7XISKaTXAvnWZGVdbOuuFvdRr7rVqge5
-         bgQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxqUvqOZHeOFPpzwnSrUo3aRGMwxlkdS2EhxvVdkG7MKuJJhqGGu8rBhKJHklqoS/oFwyQKoJGX44wOHJfsgU=@vger.kernel.org, AJvYcCX+zFh/XWWlOvXM9et8rVrFePdYEI3dgQbiCCgSPvH6TKno9lX5cA70BA4CV6+tWzndlFGWInzalzGyd44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjjvmojnxU2FzlE11gmqBfM+dmEM76Xbi6ZFr0om1cQsiNb43Z
-	recGQHgSKe8lWDFhT8DVmJEuVhp0P1jpmrBfMS7IFl1vTB8e6PB0HmeC
-X-Gm-Gg: ASbGncuI7mknPMp7qhYG2F9JUIvsTXFtjOM+6OE0SQv+8jfqj4UD67dH8eDc7uX0Hg1
-	Y054U59EZfVJZIlIAlK/8VzGO/4LXeCawsUMac1xllyCZX+8H5zyQfGhqNGS+vmgvtg96KUxaE4
-	v9ftN1xaoqGMEDeAMSpDvWnOhfS0IYMMzbYfyY6r5iKy/6LCQDE/yWWMcSY2oaSXGWgqAe0l8Yi
-	hOvObp+QfLwFILQgEsqCq3ReUnkxmn1K7MxBjhGOXlomrKfIxaXRf8Kgp5kuo3BvRZ6O/5oFM1U
-	P2w7m/uL8rQR8zaakZtVdS8OBwp2AlGDM6o+MI0zLc0gfVxaAXX3wA9FPZATTj2ugVA0GKLinGx
-	dVbhgCjGt7QekMrswUD1MIOtAMQiVoPpA2s3a4U2LJ1wH1eAnPUliX14qqkPX1RVGLj7sLn4lRw
-	WQGhZId3mQ5Fl8J6Da0iTgaog=
-X-Google-Smtp-Source: AGHT+IFFn+9Wl1V9GGuDnYnwGJmjleHmmxMFlIz9m1PHuiCzLvMoC23SgnPGHqbpVUGstOgLkQRAUg==
-X-Received: by 2002:ad4:5e87:0:b0:72b:37ff:b877 with SMTP id 6a1803df08f44-7393950ed3fmr64869776d6.42.1757297312434;
-        Sun, 07 Sep 2025 19:08:32 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720add660desm113280016d6.30.2025.09.07.19.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 19:08:32 -0700 (PDT)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6C0B0F40066;
-	Sun,  7 Sep 2025 22:08:31 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 07 Sep 2025 22:08:31 -0400
-X-ME-Sender: <xms:nzq-aPQuKw2s68kWLVDtIC3GHcqYkpKAA1CzsgUsdL4LfdHqoynK7g>
-    <xme:nzq-aCTSYwu-g2B9zQPwohz5aMQ4JdlsKWrTkiA64pJLI98TG0GGiQExM784libKP
-    y2Hgja8p9SIZ3Btsw>
-X-ME-Received: <xmr:nzq-aCeqIpy4VAD5D7BKWG3duzGmhBztCVtV7Nwjm16w0DB4QprpPJidehZEChEml4CJvPARwqK3RicPh9VfFfzBeBbg0ISJ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduiedvkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhsshhinheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
-    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:nzq-aGcvVVpCxSmuqkh-9kgNAt6tQeJbq4eNEgMTg0W4Tx9SAQlrHg>
-    <xmx:nzq-aI9U-KDW2lH0lwoVAy9ooH_h8eauBuPDaAdRKMeEa3DitNvy0w>
-    <xmx:nzq-aGOaJ-bHC0Tu5unGBG1sdHxhf0xS77imWTqCxAgq_83hdWa5Gg>
-    <xmx:nzq-aGVF8CJiu-41RspGcaZoMKkBrnNWK9CsRrpD0ZzCEPoRd2r38A>
-    <xmx:nzq-aGgJeekwSp2ifU4SmNnNbeOfqelcE5ss6jgpeE3es5BH5mhgltS3>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 7 Sep 2025 22:08:30 -0400 (EDT)
-Date: Sun, 7 Sep 2025 19:08:29 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Fiona Behrens <me@kloenk.dev>, Alban Kurti <kurti@invicto.ai>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
- fields
-Message-ID: <aL46nRkYj2SlOhl8@tardis-2.local>
-References: <aLshd0_C-1rh3FAg@tardis-2.local>
- <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org>
- <aLzmcK2UM53I2Tbn@tardis-2.local>
- <aLzoyWpOr6eg-3yB@tardis-2.local>
- <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
- <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
- <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
- <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
- <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
- <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org>
+	s=arc-20240116; t=1757298010; c=relaxed/simple;
+	bh=KRSfORJrFl0gP3PLxItagIn9DLD7WCyexIdVlQZwDww=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qYHq4AlPgUB2xBcrSIbjNWainUiBE3TE75wjA/+EMCZOAehTPmN2j6d6/xLdCjqrNSgsHe57TE5IybSEr1sqLInD1YiSeNI/gPzCy2RFgxURXNLSZj36scmkFQhNt2h/s5kKYG+ntPnKMjrmcU2imGcLmZ2PZ/tH8SR4Bxy5yb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cKrDY4Rl4z2TT3C;
+	Mon,  8 Sep 2025 10:16:45 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 96C401A016C;
+	Mon,  8 Sep 2025 10:19:58 +0800 (CST)
+Received: from kwepemn200010.china.huawei.com (7.202.194.133) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 8 Sep 2025 10:19:58 +0800
+Received: from huawei.com (10.44.142.84) by kwepemn200010.china.huawei.com
+ (7.202.194.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Sep
+ 2025 10:19:57 +0800
+From: Qi Xi <xiqi2@huawei.com>
+To: <bobo.shaobowang@huawei.com>, <xiqi2@huawei.com>, <xiexiuqi@huawei.com>,
+	<arnd@arndb.de>, <masahiroy@kernel.org>, <kuba@kernel.org>,
+	<edumazet@google.com>, <linux-arch@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] once: fix race by moving DO_ONCE to separate section
+Date: Mon, 8 Sep 2025 10:10:36 +0800
+Message-ID: <20250908021036.1971956-1-xiqi2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemn200010.china.huawei.com (7.202.194.133)
 
-On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
-> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
-> > I actually came up with a third option that looks best IMO:
-> >
-> >     init!(MyStruct {
-> >         x: 42,
-> >         #[with_binding]
-> >         y: 24,
-> >         z: *y,
-> >     })
-> >
-> > The `#[with_binding]` attribute makes the macro generate a variable `y`.
-> > `x` & `z` don't give access to their value. (we of course should come up
-> > with a better name).
-> >
-> > Any thoughts?
-> 
-> It may be a bit verbose is some cases, but it makes things pretty obvious, so
-> LGTM.
-> 
-> How about just #[bind] or #[access]?
+The commit c2c60ea37e5b ("once: use __section(".data.once")") moved
+DO_ONCE's ___done variable to .data.once section, which conflicts with
+DO_ONCE_LITE() that also uses the same section.
 
-#[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
-about the purpose.
+This creates a race condition when clear_warn_once is used:
 
-Regards,
-Boqun
+Thread 1 (DO_ONCE)             Thread 2 (DO_ONCE)
+__do_once_start
+    read ___done (false)
+    acquire once_lock
+execute func
+__do_once_done
+    write ___done (true)      __do_once_start
+    release once_lock             // Thread 3 clear_warn_once reset ___done
+                                  read ___done (false)
+                                  acquire once_lock
+                              execute func
+schedule once_work            __do_once_done
+once_deferred: OK             write ___done (true)
+static_branch_disable         release once_lock
+                              schedule once_work
+                              once_deferred:
+                                  BUG_ON(!static_key_enabled)
+
+DO_ONCE_LITE() in once_lite.h is used by WARN_ON_ONCE() and other warning
+macros. Keep its ___done flag in the .data..once section and allow resetting
+by clear_warn_once, as originally intended.
+
+In contrast, DO_ONCE() is used for functions like get_random_once() and
+relies on its ___done flag for internal synchronization. We should not reset
+DO_ONCE() by clear_warn_once.
+
+Fix it by isolating DO_ONCE's ___done into a separate .data..do_once section,
+shielding it from clear_warn_once.
+
+Fixes: c2c60ea37e5b ("once: use __section(".data.once")")
+Signed-off-by: Qi Xi <xiqi2@huawei.com>
+---
+ include/asm-generic/vmlinux.lds.h | 1 +
+ include/linux/once.h              | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index ae2d2359b79e..8efbe8c4874e 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -361,6 +361,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	__start_once = .;						\
+ 	*(.data..once)							\
+ 	__end_once = .;							\
++	*(.data..do_once)						\
+ 	STRUCT_ALIGN();							\
+ 	*(__tracepoints)						\
+ 	/* implement dynamic printk debug */				\
+diff --git a/include/linux/once.h b/include/linux/once.h
+index 30346fcdc799..261a7a4977dd 100644
+--- a/include/linux/once.h
++++ b/include/linux/once.h
+@@ -46,7 +46,7 @@ void __do_once_sleepable_done(bool *done, struct static_key_true *once_key,
+ #define DO_ONCE(func, ...)						     \
+ 	({								     \
+ 		bool ___ret = false;					     \
+-		static bool __section(".data..once") ___done = false;	     \
++		static bool __section(".data..do_once") ___done = false;	     \
+ 		static DEFINE_STATIC_KEY_TRUE(___once_key);		     \
+ 		if (static_branch_unlikely(&___once_key)) {		     \
+ 			unsigned long ___flags;				     \
+-- 
+2.33.0
+
 
