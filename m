@@ -1,143 +1,166 @@
-Return-Path: <linux-kernel+bounces-805253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C451EB4860A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A9AB4860B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38948164768
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4AC3B43CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F253F299920;
-	Mon,  8 Sep 2025 07:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qSbXvvIn"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0024E26E71C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2232E54D3;
+	Mon,  8 Sep 2025 07:51:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12361925BC
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317692; cv=none; b=GRMLghXEU4NdT5Abf3/17zcR73kFWkKk0aZOLnng/xywGdQBre0cebvttZ4D2Xn4hnys8vHo8Kx3o2VKchwmIGu9v2Vh5PNOKYyqPvZzsXI4RRZF88uKxKnd2cJ1BItagbsmRjb62OD2xWnqlnPqIOHPl9Jik3Oo8fTm+8xW/Vc=
+	t=1757317873; cv=none; b=RtBmdk2VTQnL2sqPTEP2eeOWlXtxj25TslB4wGhEm9zHyVS/KOShtZDPEzkNbCrrzIWzTYVbWDoZ3X1krahsez2TDF1H1zHuGHuxCOx9vmoHk3rvqj0/dp0GxYShHvRxdPrE8TC0i6cs3wkXttY8pd0EIN7XNZIvRh4GwXpa+AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317692; c=relaxed/simple;
-	bh=fw0GZaENDtUEAvtFVzh5du3HYpg4W4U4Cujgei/Jc5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=YhtkG3dCg2GN1OOMfupQqlpHcpWXLgStxTycpFFLV1rf6OJc3ILs7wvg0KxbEBcZVJq+gG8s6dba+yvJ6amqMjyD4/6QnhRYInluVQToENNPK0nIhTh52L5MwzmtOoduRaiHdmbLVHsrstOsIDcUWmQY2VQjPJWr+25k71TX5pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qSbXvvIn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E18DC10BE;
-	Mon,  8 Sep 2025 09:46:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757317616;
-	bh=fw0GZaENDtUEAvtFVzh5du3HYpg4W4U4Cujgei/Jc5Y=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=qSbXvvInGWVRXv+ftlHRAGuPlnNjGK1U8INatc+WxhmuuzdVD1EWYouDdmK9WGvrb
-	 3dQ5DvzZFaG3NeTBgAlthvMykhpkfS+2H0ZR6ZcMp1IrB3l+G86Yuz0RQnFodl/tT4
-	 RJJvahPC8DRLR+RcDH2EllSnc662G/1q99lTlSx4=
-Message-ID: <038e14c4-7d13-4b43-aeb0-ef4c463cec0a@ideasonboard.com>
-Date: Mon, 8 Sep 2025 10:48:04 +0300
+	s=arc-20240116; t=1757317873; c=relaxed/simple;
+	bh=AMr9tSIiW0pm9GEQStKfofummy2PPI2G3G24bIrwHgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FYj4QrkKgg+j9vST+qhlNo81E3N4VbTj6IQ2X6LQxSBnLzGk1Lgesrml+EIzQqxqk7znidDfNaMXXslbR5E/oDL/CA3OCIaaUyhr45dS57lnTYGK8aSqVRSndlW7J3PH1BkQXJVhEQa8usTma/tDHRRBehjH6R42KcXRLWomTKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C6E11692;
+	Mon,  8 Sep 2025 00:51:02 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A843E3F63F;
+	Mon,  8 Sep 2025 00:51:06 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	kas@kernel.org,
+	willy@infradead.org,
+	hughd@google.com
+Cc: ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	baohua@kernel.org,
+	richard.weiyang@gmail.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v2 0/2] Expand scope of khugepaged anonymous collapse
+Date: Mon,  8 Sep 2025 13:20:26 +0530
+Message-Id: <20250908075028.38431-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tidss: Update Videoport SYNC LOST IRQ bit
-To: Harikrishna Shenoy <h-shenoy@ti.com>
-References: <20250903100929.2598626-1-h-shenoy@ti.com>
-Content-Language: en-US
-Cc: jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, bparrot@ti.com,
- sam@ravnborg.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250903100929.2598626-1-h-shenoy@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Currently khugepaged does not collapse an anonymous region which does not
+have a single writable pte. This is wasteful since a region mapped with
+non-writable ptes, for example, non-writable VMAs mapped by the
+application, won't benefit from THP collapse.
 
-On 03/09/2025 13:09, Harikrishna Shenoy wrote:
-> Update VP SYNC LOST Bit as per register description for
-> DSS0_COMMON_VP_IRQENABLE_0 give in TRM.
+An additional consequence of this constraint is that MADV_COLLAPSE does not
+perform a collapse on a non-writable VMA, and this restriction is nowhere
+to be found on the manpage - the restriction itself sounds wrong to me
+since the user knows the protection of the memory it has mapped, so
+collapsing read-only memory via madvise() should be a choice of the
+user which shouldn't be overridden by the kernel.
 
-You need to explain what issue is this bug causing, and how does the
-behavior change here.
+Therefore, remove this constraint.
 
- Tomi
+On an arm64 bare metal machine, comparing with vanilla 6.17-rc2, an
+average of 5% improvement is seen on some mmtests benchmarks,
+particularly hackbench, with a maximum improvement of 12%. In the
+following table, (I) denotes statistically significant improvement,
+(R) denotes statistically significant regression.
 
-> Link:https://www.ti.com/lit/zip/spruil1/SPRUIL_DRA829_TDA4VM
-> Table 12-597. DSS0_COMMON_VP_IRQENABLE_0
-> 
-> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
-> 
-> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_irq.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_irq.h b/drivers/gpu/drm/tidss/tidss_irq.h
-> index dd61f645f662..0194010a7fff 100644
-> --- a/drivers/gpu/drm/tidss/tidss_irq.h
-> +++ b/drivers/gpu/drm/tidss/tidss_irq.h
-> @@ -53,7 +53,7 @@ static inline dispc_irq_t DSS_IRQ_PLANE_MASK(u32 plane)
->  #define DSS_IRQ_VP_FRAME_DONE(ch)	DSS_IRQ_VP_BIT((ch), 0)
->  #define DSS_IRQ_VP_VSYNC_EVEN(ch)	DSS_IRQ_VP_BIT((ch), 1)
->  #define DSS_IRQ_VP_VSYNC_ODD(ch)	DSS_IRQ_VP_BIT((ch), 2)
-> -#define DSS_IRQ_VP_SYNC_LOST(ch)	DSS_IRQ_VP_BIT((ch), 3)
-> +#define DSS_IRQ_VP_SYNC_LOST(ch)	DSS_IRQ_VP_BIT((ch), 4)
->  
->  #define DSS_IRQ_PLANE_FIFO_UNDERFLOW(plane)	DSS_IRQ_PLANE_BIT((plane), 0)
->  
++-------------------------+--------------------------------+---------------+
+| mmtests/hackbench       | process-pipes-1 (seconds)      |        -0.06% |
+|                         | process-pipes-4 (seconds)      |        -0.27% |
+|                         | process-pipes-7 (seconds)      |   (I) -12.13% |
+|                         | process-pipes-12 (seconds)     |    (I) -5.32% |
+|                         | process-pipes-21 (seconds)     |    (I) -2.87% |
+|                         | process-pipes-30 (seconds)     |    (I) -3.39% |
+|                         | process-pipes-48 (seconds)     |    (I) -5.65% |
+|                         | process-pipes-79 (seconds)     |    (I) -6.74% |
+|                         | process-pipes-110 (seconds)    |    (I) -6.26% |
+|                         | process-pipes-141 (seconds)    |    (I) -4.99% |
+|                         | process-pipes-172 (seconds)    |    (I) -4.45% |
+|                         | process-pipes-203 (seconds)    |    (I) -3.65% |
+|                         | process-pipes-234 (seconds)    |    (I) -3.45% |
+|                         | process-pipes-256 (seconds)    |    (I) -3.47% |
+|                         | process-sockets-1 (seconds)    |         2.13% |
+|                         | process-sockets-4 (seconds)    |         1.02% |
+|                         | process-sockets-7 (seconds)    |        -0.26% |
+|                         | process-sockets-12 (seconds)   |        -1.24% |
+|                         | process-sockets-21 (seconds)   |         0.01% |
+|                         | process-sockets-30 (seconds)   |        -0.15% |
+|                         | process-sockets-48 (seconds)   |         0.15% |
+|                         | process-sockets-79 (seconds)   |         1.45% |
+|                         | process-sockets-110 (seconds)  |        -1.64% |
+|                         | process-sockets-141 (seconds)  |    (I) -4.27% |
+|                         | process-sockets-172 (seconds)  |         0.30% |
+|                         | process-sockets-203 (seconds)  |        -1.71% |
+|                         | process-sockets-234 (seconds)  |        -1.94% |
+|                         | process-sockets-256 (seconds)  |        -0.71% |
+|                         | thread-pipes-1 (seconds)       |         0.66% |
+|                         | thread-pipes-4 (seconds)       |         1.66% |
+|                         | thread-pipes-7 (seconds)       |        -0.17% |
+|                         | thread-pipes-12 (seconds)      |    (I) -4.12% |
+|                         | thread-pipes-21 (seconds)      |    (I) -2.13% |
+|                         | thread-pipes-30 (seconds)      |    (I) -3.78% |
+|                         | thread-pipes-48 (seconds)      |    (I) -5.77% |
+|                         | thread-pipes-79 (seconds)      |    (I) -5.31% |
+|                         | thread-pipes-110 (seconds)     |    (I) -6.12% |
+|                         | thread-pipes-141 (seconds)     |    (I) -4.00% |
+|                         | thread-pipes-172 (seconds)     |    (I) -3.01% |
+|                         | thread-pipes-203 (seconds)     |    (I) -2.62% |
+|                         | thread-pipes-234 (seconds)     |    (I) -2.00% |
+|                         | thread-pipes-256 (seconds)     |    (I) -2.30% |
+|                         | thread-sockets-1 (seconds)     |     (R) 2.39% |
++-------------------------+--------------------------------+---------------+
+
++-------------------------+------------------------------------------------+
+| mmtests/sysbench-mutex  | sysbenchmutex-1 (usec)         |        -0.02% |
+|                         | sysbenchmutex-4 (usec)         |        -0.02% |
+|                         | sysbenchmutex-7 (usec)         |         0.00% |
+|                         | sysbenchmutex-12 (usec)        |         0.12% |
+|                         | sysbenchmutex-21 (usec)        |        -0.40% |
+|                         | sysbenchmutex-30 (usec)        |         0.08% |
+|                         | sysbenchmutex-48 (usec)        |         2.59% |
+|                         | sysbenchmutex-79 (usec)        |        -0.80% |
+|                         | sysbenchmutex-110 (usec)       |        -3.87% |
+|                         | sysbenchmutex-128 (usec)       |    (I) -4.46% |
++-------------------------+--------------------------------+---------------+
+
+---
+Based on today's mm-new.
+
+v1->v2:
+- Replace non-writable VMAs with non-writable PTEs to be more specific
+- Add cover letter
+
+RFC->v1:
+- Drop writable references from tracepoints
+
+RFC:
+- https://lore.kernel.org/all/20250901074817.73012-1-dev.jain@arm.com/
+
+Dev Jain (2):
+  mm: Enable khugepaged anonymous collapse on non-writable regions
+  mm: Drop all references of writable and SCAN_PAGE_RO
+
+ include/trace/events/huge_memory.h | 19 ++++++-------------
+ mm/khugepaged.c                    | 23 +++++------------------
+ 2 files changed, 11 insertions(+), 31 deletions(-)
+
+-- 
+2.30.2
 
 
