@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-805045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4786DB48369
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0BFB4836B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1AD3AAD7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903533B73D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D131221264;
-	Mon,  8 Sep 2025 04:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="naUTLXkZ"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C9222129B;
+	Mon,  8 Sep 2025 04:52:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAE621FF35;
-	Mon,  8 Sep 2025 04:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2502022068F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757307113; cv=none; b=o5XPsVlXvw6PbJazvvYE4ezgB8pGOdgcuVjsO38vSjrLroEheLoO8WKzaI1P5lVk8TyxSuDVLFl25eY+NCKFfrazrMq7ntnVie6gbjpbRqGjZidScHlRwWqAacBxPdC3/Gsv2TgqcTZGpL3FGRe45Ra5MAKUb6vf29VUbv4ELjg=
+	t=1757307135; cv=none; b=qz06WcKWeKz2/NxtaOGFL3wnPqnUd9Fs6XMypKN18uV8Rjf8eL1hdW/Xa7aDOa65yczHeN36nAdOgd+8LaF3Bt/bZfdqy4FkMjfHbvgSVyY/INB7noIb65+s1GdLPprRYPUwxF95B2pmoQVQz8kd3D9wyca40lggQB92oU24Ee8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757307113; c=relaxed/simple;
-	bh=EOOstQ/bAdx4SF5Hkxh44HMUg/WO72LadiYAkK0ZlYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=G5cPubyCEHHXvmVawtUI89t6P6ZlSROSQApSgb1wEwwE85Fm+tMO9xTp/1YShfUVnPBRCcrk2ENNt8GTNxDNjupUKQ1iPmpctoG+w4/iutvauam6rQaZWbiQAIS6xZcRBukwGSFNkr7reNCDErEHL9mlIzSQqTKzOxPc4cXXtWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=naUTLXkZ; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5884pT5N3710709;
-	Sun, 7 Sep 2025 23:51:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757307089;
-	bh=5a/tGsO7tFJN56qqkawWAWzxQN/3WsgosHJOsz5q2PM=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=naUTLXkZe/CZdVUridvOapJu4TpntdbrzUzH/XFYKLMHE6jyJwpnPkgICNskXnjwJ
-	 7woVuoLBtauHi82duCpihCFMiesygGVypuxdP+jOoEVeu/2q/frE07QczCSc/F4yI7
-	 r9e3MDcCXRqkpBhgEVQXue7hoWGpOwIvlMrYG8Rk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5884pT302702270
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sun, 7 Sep 2025 23:51:29 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 7
- Sep 2025 23:51:28 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 7 Sep 2025 23:51:28 -0500
-Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5884pNxr283181;
-	Sun, 7 Sep 2025 23:51:24 -0500
-Message-ID: <a562a287-20ed-4bc7-a6f1-fca60eae0713@ti.com>
-Date: Mon, 8 Sep 2025 10:21:22 +0530
+	s=arc-20240116; t=1757307135; c=relaxed/simple;
+	bh=vSKC/kmQeqND3A2rQlChRNGe1FptQNXba+tF78DaMzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZ/OET3FcbHSSzy6xhkc5DGu8J+QPi0l4JHS857KPaHeM1LGKmUpYyDYeQIRnyVf2bUontpadSM7IS0LgYdpR2TLfp33EBATlHWxYC8HwBSxJh6z0CDRbgkyK6XFKV17EObPvc7icZb/PGp2AGZ7afaj/+5IB357KMmOa9SlbYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvTqu-0006ng-7X; Mon, 08 Sep 2025 06:51:40 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvTqq-000Bt9-2g;
+	Mon, 08 Sep 2025 06:51:36 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvTqq-00Bi0F-2A;
+	Mon, 08 Sep 2025 06:51:36 +0200
+Date: Mon, 8 Sep 2025 06:51:36 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: gfuchedgi@gmail.com, Robert Marko <robert.marko@sartura.hr>,
+	Luka Perkov <luka.perkov@sartura.hr>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Network Development <netdev@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] hwmon: (tps23861) add class restrictions and
+ semi-auto mode support
+Message-ID: <aL5g2JtIpupAeoDz@pengutronix.de>
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+ <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-j721e-main: Update DSS EDP
- integration configuration register
-To: Beleswar Prasad Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <r-ravikumar@ti.com>, <m-chawdhry@ti.com>,
-        <u-kumar1@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tomi.valkeinen@ideasonboard.com>, <aradhya.bhatia@linux.dev>,
-        <devarsht@ti.com>, <s-jain1@ti.com>
-References: <20250907182806.1031544-1-h-shenoy@ti.com>
- <20250907182806.1031544-2-h-shenoy@ti.com>
- <9769c59d-dd5e-495e-8056-0f513a78e1b3@ti.com>
-Content-Language: en-US
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-In-Reply-To: <9769c59d-dd5e-495e-8056-0f513a78e1b3@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-On 9/8/25 10:04, Beleswar Prasad Padhi wrote:
-> On 07/09/25 23:58, Harikrishna Shenoy wrote:
->> Fix size of DSS_EDP0_INT_CFG_VP to 256B as stated in
->> TRM Table 2-1 MAIN Domain Memory Map.
->> Link: https://www.ti.com/lit/zip/spruil1/SPRUIL_DRA829_TDA4VM
->
-> Gives a 404 on the above link?
-
-https://www.ti.com/lit/zip/spruil1 this downalods the zip, refer SPRUIL_DRA829_TDA4VM file.
-
->
+On Sun, Sep 07, 2025 at 09:06:25AM -0700, Guenter Roeck wrote:
+> +Cc: pse-pd maintainers and netdev mailing list
+> 
+> On 9/4/25 10:33, Gregory Fuchedgi via B4 Relay wrote:
+> > This patch series introduces per-port device tree configuration with poe
+> > class restrictions. Also adds optional reset/shutdown gpios.
+> > 
+> > Tested with hw poe tester:
+> >   - Auto mode tested with no per-port DT settings as well as explicit port
+> >     DT ti,class=4. Tested that no IRQ is required in this case.
+> >   - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ required.
+> >   - Tested current cut-offs in Semi-Auto mode.
+> >   - On/off by default setting tested for both Auto and Semi-Auto modes.
+> >   - Tested fully disabling the ports in DT.
+> >   - Tested with both reset and ti,ports-shutdown gpios defined, as well as
+> >     with reset only, as well as with neither reset nor shutdown.
+> > 
+> > Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
+> 
+> This entire series makes me more and more unhappy. It is not the responsibility
+> of the hardware monitoring subsystem to control power. The hardware monitoring
+> subsystem is for monitoring, not for control.
+> 
+> Please consider adding a driver for this chip to the pse-pd subsystem
+> (drivers/net/pse-pd). As it turns out, that subsystem already supports
+> tps23881. This is a similar chip which even has a similar register set.
+> 
+> This driver could then be modified to be an auxiliary driver of that driver.
+> Alternatively, we could drop this driver entirely since the pse-pd subsystem
+> registers the chips it supports as regulator which has its own means to handle
+> telemetry.
+> 
 > Thanks,
-> Beleswar
->
->> Fixes: 92c996f4ceab ("arm64: dts: ti: k3-j721e-*: add DP & DP PHY")
->> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
->> ---
->>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> index ab3666ff4297..3fa7537d5414 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> @@ -1863,7 +1863,7 @@ mhdp: dp-bridge@a000000 {
->>   		 * the PHY driver.
->>   		 */
->>   		reg = <0x00 0x0a000000 0x00 0x030a00>, /* DSS_EDP0_V2A_CORE_VP_REGS_APB */
->> -		      <0x00 0x04f40000 0x00 0x20>;    /* DSS_EDP0_INTG_CFG_VP */
->> +		      <0x00 0x04f40000 0x00 0x100>;    /* DSS_EDP0_INTG_CFG_VP */
->>   		reg-names = "mhdptx", "j721e-intg";
->>   
->>   		clocks = <&k3_clks 151 36>;
+> Guenter
+
+Yes, Guenter is right. This driver belongs to the pse-pd framework.
+
+Best Regards,
+Oleksik
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
