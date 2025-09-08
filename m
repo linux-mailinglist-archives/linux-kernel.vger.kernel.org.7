@@ -1,339 +1,492 @@
-Return-Path: <linux-kernel+bounces-806098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8EBB491C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:38:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2C3B492FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE89A4E1C45
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE39A1B208BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BAD1EB5CE;
-	Mon,  8 Sep 2025 14:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rZWo/xG7"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EE230DD14;
+	Mon,  8 Sep 2025 15:22:32 +0000 (UTC)
+Received: from leontynka.twibright.com (leontynka.twibright.com [109.81.181.203])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931421E5B64
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712C91A2387;
+	Mon,  8 Sep 2025 15:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.81.181.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342321; cv=none; b=b2MycWvDRKd0efG/rcVGWc8yC/Fzy2fwJupV0aYLuMe4UUM/c/fTlSLeFiUa731qnpaDNa7MMgCtbaujnEL5qJW1q9aDv/m93LntSk2zPDRyI97beHXpgRkx57VUzg6qD7xvjtAKjAWhW3lV5n2sS5MB74IHaSQoM4kjIST++sw=
+	t=1757344951; cv=none; b=AI9RKg1uNWLNZ8k04yVwRVWFgM3VNRG3KWM+ClfIVG29nGKnk5xEcHJ0FkNM1GFZcQ+etPWPvLvzYAFyaE6YBTRDvo2p7xjd9PClR2REHRnrnlqwnG7qYq9Y71+3+P6OUZwN87ksWreCwSsZ0bfkNNHqkUOhaGNLT8m2HfqX/WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342321; c=relaxed/simple;
-	bh=qUlRg/BVEm7t071O21mHN6WvnwLctBlLdCaBYMGsDMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TKfcGJPEeyqHAO/QmzILxi8Yy0bX49OYusuS2lg8M6V5fMUaPwWHviEJvGuXKSYQXEAXL+JjUIuwcBAVYZPDU9japGqMS1QjpQhgDEwJ0lFoZzSl+XoFe4n57/FCOb2jTcucyFL6CB83+dXc/IKsYJBC5XsAx/vKqVSZ7E24bvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rZWo/xG7; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 6634A4E40BFA;
-	Mon,  8 Sep 2025 14:38:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 392C96061A;
-	Mon,  8 Sep 2025 14:38:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5CAE5102F270F;
-	Mon,  8 Sep 2025 16:38:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757342314; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=3+kRf5MNNIFuKMtF8DkuLBor42xHpAuXkRT1mWr6b70=;
-	b=rZWo/xG7tjPxZfgwuZ77qZWGPSIzH1ri8Gu+k61WptQZAk+tGtEfw3a7Lrsp2qHX38sxgT
-	k0nRLvzO87UJ3/IxKiEIzRSBpVyJlLciF74aDMTjJSzwRYWw1q3d0nsVJLuNBgv5Y9emQi
-	BBB+K0uW3h+lgZsbj9WqCi0c2lgwo2FnHd3K+ymd8+S656hww87hm9IyUoTnmxACAlsxI2
-	QojWGWLLHxJkY8GyOt7HBf0Y36j1x9p4iGxlzNu3rjSsv56EC3t5lj0le+59JnIVoF3F7e
-	kzs3ukLc5MMsMY72T6r4LOU38HVbXURYoqWphwZn2qrvIfS73QrGXuQ5CcaX6g==
-Message-ID: <ea069c8f-b724-409c-9dc6-345b3f9d6d85@bootlin.com>
-Date: Mon, 8 Sep 2025 16:38:09 +0200
+	s=arc-20240116; t=1757344951; c=relaxed/simple;
+	bh=MgsRTG+t4Kj3xSpnI65GEsv/QtEGsMgrOeZ/tmMGNp0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NSHpAviKbdR9XHbwYF/tWxK5WzzGweoi4HWKe7oTS8a0y4DdEf1BJ7L8J8B6HKmFsoiQQk9b9587SIbH0M9VfwdfoK6l2ZHP4pH87gPgHyGOjaMKNTBDuBzjsLl2q/NsBMurZ4jLig7jsriWifHsthYF1LzePczxtf6twUftc14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com; spf=pass smtp.mailfrom=twibright.com; arc=none smtp.client-ip=109.81.181.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=twibright.com
+Received: from mikulas (helo=localhost)
+	by leontynka.twibright.com with local-esmtp (Exim 4.96)
+	(envelope-from <mikulas@twibright.com>)
+	id 1uvd0f-00A86K-0E;
+	Mon, 08 Sep 2025 16:38:21 +0200
+Date: Mon, 8 Sep 2025 16:38:21 +0200 (CEST)
+From: Mikulas Patocka <mikulas@twibright.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+    Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, 
+    Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
+    linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] fs: hpfs: Avoid multiple -Wflex-array-member-not-at-end
+ warnings
+In-Reply-To: <8007649f-324a-4dfb-ae33-9bed8c8d6eec@embeddedor.com>
+Message-ID: <d7f2fee4-1832-b47d-f33f-79b9d4b79645@twibright.com>
+References: <aJnpXOndcEAF6_NW@kspp> <8007649f-324a-4dfb-ae33-9bed8c8d6eec@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 29/58] docs/dyndbg: add classmap info to howto
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org,
- robdclark@gmail.com, groeck@google.com, yanivt@google.com,
- bleung@google.com, quic_saipraka@quicinc.com, will@kernel.org,
- catalin.marinas@arm.com, quic_psodagud@quicinc.com, maz@kernel.org,
- arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, mingo@redhat.com, linux-doc@vger.kernel.org
-References: <20250803035816.603405-1-jim.cromie@gmail.com>
- <20250803035816.603405-30-jim.cromie@gmail.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250803035816.603405-30-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 
 
 
-Le 03/08/2025 à 05:57, Jim Cromie a écrit :
-> Describe the 3 API macros providing dynamic_debug's classmaps
-> 
-> DYNDBG_CLASSMAP_DEFINE - create & export a classmap
-> DYNDBG_CLASSMAP_USE    - refer to exported map
-> DYNDBG_CLASSMAP_PARAM  - bind control param to the classmap
-> DYNDBG_CLASSMAP_PARAM_REF + use module's storage - __drm_debug
-> 
-> TBD: some of this might be over-specification, or just over-talked.
-> 
-> NB: The _DEFINE & _USE model makes the user dependent on the definer,
-> just like EXPORT_SYMBOL(__drm_debug) already does.
-> 
-> cc: linux-doc@vger.kernel.org
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+On Wed, 27 Aug 2025, Gustavo A. R. Silva wrote:
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-> ---
-> v3- rework protection around PARAM
+> Hi all,
 > 
-> v0.5 adjustments per Randy Dunlap
-> v0.7 checkpatch fixes
-> v0.8 more
-> v0.9 rewords
+> Friendly ping: who can take/review this, please?
 > 
-> fixup-howto
-> ---
->   .../admin-guide/dynamic-debug-howto.rst       | 137 ++++++++++++++++--
->   1 file changed, 126 insertions(+), 11 deletions(-)
+> Any comments or feedback is greatly appreciated. :)
 > 
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 1ceadf4f28f9f..556e00299ed35 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -146,7 +146,9 @@ keywords are:::
->     "1-30" is valid range but "1 - 30" is not.
->   
->   
-> -The meanings of each keyword are:
-> +Keywords:::
-> +
-> +The meanings of each keyword are::
->   
->   func
->       The given string is compared against the function name
-> @@ -194,16 +196,6 @@ format
->   	format "nfsd: SETATTR"  // a neater way to match a format with whitespace
->   	format 'nfsd: SETATTR'  // yet another way to match a format with whitespace
->   
-> -class
-> -    The given class_name is validated against each module, which may
-> -    have declared a list of known class_names.  If the class_name is
-> -    found for a module, callsite & class matching and adjustment
-> -    proceeds.  Examples::
-> -
-> -	class DRM_UT_KMS	# a DRM.debug category
-> -	class JUNK		# silent non-match
-> -	// class TLD_*		# NOTICE: no wildcard in class names
-> -
->   line
->       The given line number or range of line numbers is compared
->       against the line number of each ``pr_debug()`` callsite.  A single
-> @@ -218,6 +210,24 @@ line
->   	line -1605          // the 1605 lines from line 1 to line 1605
->   	line 1600-          // all lines from line 1600 to the end of the file
->   
-> +class
-> +
-> +    The given class_name is validated against each module, which may
-> +    have declared a list of class_names it accepts.  If the class_name
-> +    accepted by a module, callsite & class matching and adjustment
-> +    proceeds.  Examples::
-> +
-> +	class DRM_UT_KMS	# a DRM.debug category
-> +	class JUNK		# silent non-match
-> +	// class TLD_*		# NOTICE: no wildcard in class names
-> +
-> +.. note ::
-> +
-> +    Unlike other keywords, classes are "name-to-change", not
-> +    "omitting-constraint-allows-change".  See Dynamic Debug Classmaps
-> +
-> +Flags:::
-> +
->   The flags specification comprises a change operation followed
->   by one or more flag characters.  The change operation is one
->   of the characters::
-> @@ -394,3 +404,108 @@ just a shortcut for ``print_hex_dump(KERN_DEBUG)``.
->   For ``print_hex_dump_debug()``/``print_hex_dump_bytes()``, format string is
->   its ``prefix_str`` argument, if it is constant string; or ``hexdump``
->   in case ``prefix_str`` is built dynamically.
-> +
-> +Dynamic Debug Classmaps
-> +=======================
-> +
-> +The "class" keyword selects prdbgs based on author supplied,
-> +domain-oriented names.  This complements the nested-scope keywords:
-> +module, file, function, line.
-> +
-> +The main difference from the others: classes must be named to be
-> +changed.  This protects them from generic overwrite:
-> +
-> +  # IOW this cannot undo any DRM.debug settings
-> +  :#> ddcmd -p
-> +
-> +This protection is needed; /sys/module/drm/parameters/debug is ABI.
-> +DRM.debug is authoritative when dyndbg is not used, dyndbg's PARAM
-> +cannot undermine that guarantee just because its optional for DRM to
-> +use it.
-> +
-> +  :#> echo 0x1ff > /sys/module/drm/parameters/debug
-> +
-> +So each class must be enabled individually (no wildcards):
-> +
-> +  :#> ddcmd class DRM_UT_CORE +p
-> +  :#> ddcmd class DRM_UT_KMS +p
-> +  # or more selectively
-> +  :#> ddcmd class DRM_UT_CORE module drm +p
-> +
-> +That makes direct >control wordy and annoying, but it is a secondary
-> +interface; it is not intended to replace the ABI, just slide in
-> +underneath and reimplement it.
-> +
-> +However, since the sysfs/kparam is the ABI, if a classmap DEFINEr
-> +doesn't also add a _CLASSMAP_PARAM, there is no ABI, and no protection
-> +is needed.  In that case, class'd prdbgs would be enabled/disabled by
-> +legacy (class-less) queries, as a convenience, and because there's no
-> +need to enforce irrelevant rules.
-> +
-> +
-> +Dynamic Debug Classmap API
-> +==========================
-> +
-> +DRM.debug is built upon:
-> +
-> +- enum drm_debug_category: DRM_UT_<*> - <T> for short
-> +- 23 categorized api macros: drm_dbg_<T>(), DRM_DEBUG_<T>()
-> +- 5000 calls to them
-> +- all calling to __pr_debug_cls(<T>, ...)
-> +
-> +Those compile-time const short ints are good for optimizing compilers;
-> +a primary classmaps design goal was to keep that property.
-> +So basically .class_id === category.
-> +
-> +Then we use the drm_categories DRM_UT_* enum for both the classnames
-> +(stringified enum symbols) and their numeric values.
-> +
-> +Its expected that future users will also use categorized macros and an
-> +enum-defined categorization scheme like DRM's, with dyndbg inserted in
-> +similarly.
-> +
-> +DYNAMIC_DEBUG_CLASSMAP_DEFINE(var,type,_base,classnames) - this maps
-> +classnames (a list of strings) onto class-ids consecutively, starting
-> +at _base, it also maps the names onto CLASSMAP_PARAM bits 0..N.
-> +
-> +DYNAMIC_DEBUG_CLASSMAP_USE(var) - modules call this to refer to the
-> +var _DEFINEd elsewhere (and exported).
-> +
-> +Classmaps are opt-in: modules invoke _DEFINE or _USE to authorize
-> +dyndbg to update those classes.  "class FOO" queries are validated
-> +against the classes, this finds the classid to alter; classes are not
-> +directly selectable by their classid.
-> +
-> +NB: It is an inherent API limitation that the following are possible:
-> +
-> +  // these would be caught in review
-> +  __pr_debug_cls(0, "fake DRM_UT_CORE msg");  // this works
-> +  __pr_debug_cls(62, "un-known classid msg"); // this compiles, does nothing
-> +
-> +There are 2 types of classmaps:
-> +
-> + DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, like DRM.debug
-> + DD_CLASS_TYPE_LEVEL_NUM: classes are relative, ordered (V3 > V2)
-> +
-> +DYNAMIC_DEBUG_CLASSMAP_PARAM - modelled after module_param_cb, it
-> +refers to a DEFINEd classmap, and associates it to the param's
-> +data-store.  This state is then applied to DEFINEr and USEr modules
-> +when they're modprobed.
-> +
-> +The PARAM interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
-> +amongst the contained classnames; all classes are independent in the
-> +control parser itself; there is no implied meaning in names like "V4".
-> +
-> +Modules or module-groups (drm & drivers) can define multiple
-> +classmaps, as long as they (all the classmaps) share the limited 0..62
-> +per-module-group _class_id range, without overlap.
-> +
-> +If a module encounters a conflict between 2 classmaps its USEing, we
-> +can extend the _USE macro with an offset to allow de-conflicting the
-> +respective ranges.  Or they use the DEFINErs macro-api, but with new
-> +enum symbols.
-> +
-> +``#define DEBUG`` will enable all pr_debugs in scope, including any
-> +class'd ones.  This won't be reflected in the PARAM readback value,
-> +but the class'd pr_debug callsites can be forced off by toggling the
-> +classmap-kparam all-on then all-off.
+> Thanks!
+> -Gustavo
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Hi
 
+I comitted the patch here, thanks.
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=hpfs
+
+Mikulas
+
+> On 11/08/25 15:00, Gustavo A. R. Silva wrote:
+> > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> > getting ready to enable it, globally.
+> > 
+> > So, in order to avoid ending up with a flexible-array member in the
+> > middle of other structs, we use the `struct_group_tagged()` helper
+> > to create a new tagged `struct bplus_header_fixed`. This structure
+> > groups together all the members of the flexible `struct bplus_header`
+> > except the flexible array.
+> > 
+> > As a result, the array is effectively separated from the rest of the
+> > members without modifying the memory layout of the flexible structure.
+> > We then change the type of the middle struct member currently causing
+> > trouble from `struct bplus_header` to `struct bplus_header_fixed`.
+> > 
+> > We also want to ensure that when new members need to be added to the
+> > flexible structure, they are always included within the newly created
+> > tagged struct. For this, we use `static_assert()`. This ensures that the
+> > memory layout for both the flexible structure and the new tagged struct
+> > is the same after any changes.
+> > 
+> > This approach avoids having to implement `struct bplus_header_fixed`
+> > as a completely separate structure, thus preventing having to maintain
+> > two independent but basically identical structures, closing the door
+> > to potential bugs in the future.
+> > 
+> > We also use `container_of()` (via a wrapper) whenever we need to retrieve
+> > a pointer to the flexible structure, through which we can access the
+> > flexible-array member, if necessary.
+> > 
+> > So, with these changes, fix 26 of the following type of warnings:
+> > fs/hpfs/hpfs.h:456:23: warning: structure containing a flexible array member
+> > is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > fs/hpfs/hpfs.h:498:23: warning: structure containing a flexible array member
+> > is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > 
+> > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> > ---
+> > Changes in v2:
+> >   - Add GET_BTREE_PTR() wrapper for container_of().
+> > 
+> >   fs/hpfs/anode.c | 43 ++++++++++++++++++++++---------------------
+> >   fs/hpfs/ea.c    |  2 +-
+> >   fs/hpfs/file.c  |  4 +++-
+> >   fs/hpfs/hpfs.h  | 44 +++++++++++++++++++++++++++++++-------------
+> >   fs/hpfs/map.c   |  8 ++++----
+> >   5 files changed, 61 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/fs/hpfs/anode.c b/fs/hpfs/anode.c
+> > index c14c9a035ee0..a4f5321eafae 100644
+> > --- a/fs/hpfs/anode.c
+> > +++ b/fs/hpfs/anode.c
+> > @@ -27,7 +27,7 @@ secno hpfs_bplus_lookup(struct super_block *s, struct
+> > inode *inode,
+> >   				a = le32_to_cpu(btree->u.internal[i].down);
+> >   				brelse(bh);
+> >   				if (!(anode = hpfs_map_anode(s, a, &bh)))
+> > return -1;
+> > -				btree = &anode->btree;
+> > +				btree = GET_BTREE_PTR(&anode->btree);
+> >   				goto go_down;
+> >   			}
+> >   		hpfs_error(s, "sector %08x not found in internal anode %08x",
+> > sec, a);
+> > @@ -69,12 +69,13 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   	int n;
+> >   	unsigned fs;
+> >   	int c1, c2 = 0;
+> > +
+> >   	if (fnod) {
+> >   		if (!(fnode = hpfs_map_fnode(s, node, &bh))) return -1;
+> > -		btree = &fnode->btree;
+> > +		btree = GET_BTREE_PTR(&fnode->btree);
+> >   	} else {
+> >   		if (!(anode = hpfs_map_anode(s, node, &bh))) return -1;
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   	}
+> >   	a = node;
+> >   	go_down:
+> > @@ -91,7 +92,7 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   		if (hpfs_sb(s)->sb_chk)
+> >   			if (hpfs_stop_cycles(s, a, &c1, &c2,
+> > "hpfs_add_sector_to_btree #1")) return -1;
+> >   		if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   		goto go_down;
+> >   	}
+> >   	if (n >= 0) {
+> > @@ -151,7 +152,7 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   		}
+> >   		brelse(bh);
+> >   		bh = bh1;
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   	}
+> >   	btree->n_free_nodes--; n = btree->n_used_nodes++;
+> >   	le16_add_cpu(&btree->first_free, 12);
+> > @@ -168,10 +169,10 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   			if (hpfs_stop_cycles(s, up, &c1, &c2,
+> > "hpfs_add_sector_to_btree #2")) return -1;
+> >   		if (up != node || !fnod) {
+> >   			if (!(anode = hpfs_map_anode(s, up, &bh))) return -1;
+> > -			btree = &anode->btree;
+> > +			btree = GET_BTREE_PTR(&anode->btree);
+> >   		} else {
+> >   			if (!(fnode = hpfs_map_fnode(s, up, &bh))) return -1;
+> > -			btree = &fnode->btree;
+> > +			btree = GET_BTREE_PTR(&fnode->btree);
+> >   		}
+> >   		if (btree->n_free_nodes) {
+> >   			btree->n_free_nodes--; n = btree->n_used_nodes++;
+> > @@ -206,8 +207,8 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   			anode->btree.n_used_nodes = 1;
+> >   			anode->btree.n_free_nodes = 59;
+> >   			anode->btree.first_free = cpu_to_le16(16);
+> > -			anode->btree.u.internal[0].down = cpu_to_le32(a);
+> > -			anode->btree.u.internal[0].file_secno =
+> > cpu_to_le32(-1);
+> > +			GET_BTREE_PTR(&anode->btree)->u.internal[0].down =
+> > cpu_to_le32(a);
+> > +			GET_BTREE_PTR(&anode->btree)->u.internal[0].file_secno
+> > = cpu_to_le32(-1);
+> >   			mark_buffer_dirty(bh);
+> >   			brelse(bh);
+> >   			if ((anode = hpfs_map_anode(s, a, &bh))) {
+> > @@ -229,20 +230,20 @@ secno hpfs_add_sector_to_btree(struct super_block *s,
+> > secno node, int fnod, unsi
+> >   			brelse(bh2);
+> >   			return -1;
+> >   		}
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   	} else {
+> >   		if (!(fnode = hpfs_map_fnode(s, node, &bh))) {
+> >   			brelse(bh2);
+> >   			return -1;
+> >   		}
+> > -		btree = &fnode->btree;
+> > +		btree = GET_BTREE_PTR(&fnode->btree);
+> >   	}
+> >   	ranode->up = cpu_to_le32(node);
+> >   	memcpy(&ranode->btree, btree, le16_to_cpu(btree->first_free));
+> >   	if (fnod)
+> >   		ranode->btree.flags |= BP_fnode_parent;
+> > -	ranode->btree.n_free_nodes = (bp_internal(&ranode->btree) ? 60 : 40) -
+> > ranode->btree.n_used_nodes;
+> > -	if (bp_internal(&ranode->btree)) for (n = 0; n <
+> > ranode->btree.n_used_nodes; n++) {
+> > +	GET_BTREE_PTR(&ranode->btree)->n_free_nodes =
+> > (bp_internal(GET_BTREE_PTR(&ranode->btree)) ? 60 : 40) -
+> > GET_BTREE_PTR(&ranode->btree)->n_used_nodes;
+> > +	if (bp_internal(GET_BTREE_PTR(&ranode->btree))) for (n = 0; n <
+> > GET_BTREE_PTR(&ranode->btree)->n_used_nodes; n++) {
+> >   		struct anode *unode;
+> >   		if ((unode = hpfs_map_anode(s,
+> > le32_to_cpu(ranode->u.internal[n].down), &bh1))) {
+> >   			unode->up = cpu_to_le32(ra);
+> > @@ -291,7 +292,7 @@ void hpfs_remove_btree(struct super_block *s, struct
+> > bplus_header *btree)
+> >   			if (hpfs_stop_cycles(s, ano, &d1, &d2,
+> > "hpfs_remove_btree #1"))
+> >   				return;
+> >   		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+> > -		btree1 = &anode->btree;
+> > +		btree1 = GET_BTREE_PTR(&anode->btree);
+> >   		level++;
+> >   		pos = 0;
+> >   	}
+> > @@ -307,7 +308,7 @@ void hpfs_remove_btree(struct super_block *s, struct
+> > bplus_header *btree)
+> >   	ano = le32_to_cpu(anode->up);
+> >   	if (--level) {
+> >   		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+> > -		btree1 = &anode->btree;
+> > +		btree1 = GET_BTREE_PTR(&anode->btree);
+> >   	} else btree1 = btree;
+> >   	for (i = 0; i < btree1->n_used_nodes; i++) {
+> >   		if (le32_to_cpu(btree1->u.internal[i].down) == oano) {
+> > @@ -332,7 +333,7 @@ static secno anode_lookup(struct super_block *s,
+> > anode_secno a, unsigned sec)
+> >   	struct anode *anode;
+> >   	struct buffer_head *bh;
+> >   	if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+> > -	return hpfs_bplus_lookup(s, NULL, &anode->btree, sec, bh);
+> > +	return hpfs_bplus_lookup(s, NULL, GET_BTREE_PTR(&anode->btree), sec,
+> > bh);
+> >   }
+> >     int hpfs_ea_read(struct super_block *s, secno a, int ano, unsigned pos,
+> > @@ -388,7 +389,7 @@ void hpfs_ea_remove(struct super_block *s, secno a, int
+> > ano, unsigned len)
+> >   	struct buffer_head *bh;
+> >   	if (ano) {
+> >   		if (!(anode = hpfs_map_anode(s, a, &bh))) return;
+> > -		hpfs_remove_btree(s, &anode->btree);
+> > +		hpfs_remove_btree(s, GET_BTREE_PTR(&anode->btree));
+> >   		brelse(bh);
+> >   		hpfs_free_sectors(s, a, 1);
+> >   	} else hpfs_free_sectors(s, a, (len + 511) >> 9);
+> > @@ -407,10 +408,10 @@ void hpfs_truncate_btree(struct super_block *s, secno
+> > f, int fno, unsigned secs)
+> >   	int c1, c2 = 0;
+> >   	if (fno) {
+> >   		if (!(fnode = hpfs_map_fnode(s, f, &bh))) return;
+> > -		btree = &fnode->btree;
+> > +		btree = GET_BTREE_PTR(&fnode->btree);
+> >   	} else {
+> >   		if (!(anode = hpfs_map_anode(s, f, &bh))) return;
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   	}
+> >   	if (!secs) {
+> >   		hpfs_remove_btree(s, btree);
+> > @@ -448,7 +449,7 @@ void hpfs_truncate_btree(struct super_block *s, secno f,
+> > int fno, unsigned secs)
+> >   			if (hpfs_stop_cycles(s, node, &c1, &c2,
+> > "hpfs_truncate_btree"))
+> >   				return;
+> >   		if (!(anode = hpfs_map_anode(s, node, &bh))) return;
+> > -		btree = &anode->btree;
+> > +		btree = GET_BTREE_PTR(&anode->btree);
+> >   	}	
+> >   	nodes = btree->n_used_nodes + btree->n_free_nodes;
+> >   	for (i = 0; i < btree->n_used_nodes; i++)
+> > @@ -485,7 +486,7 @@ void hpfs_remove_fnode(struct super_block *s,
+> > fnode_secno fno)
+> >   	struct extended_attribute *ea;
+> >   	struct extended_attribute *ea_end;
+> >   	if (!(fnode = hpfs_map_fnode(s, fno, &bh))) return;
+> > -	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, &fnode->btree);
+> > +	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s,
+> > GET_BTREE_PTR(&fnode->btree));
+> >   	else hpfs_remove_dtree(s,
+> > le32_to_cpu(fnode->u.external[0].disk_secno));
+> >   	ea_end = fnode_end_ea(fnode);
+> >   	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> > diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
+> > index 102ba18e561f..2149d3ca530b 100644
+> > --- a/fs/hpfs/ea.c
+> > +++ b/fs/hpfs/ea.c
+> > @@ -41,7 +41,7 @@ void hpfs_ea_ext_remove(struct super_block *s, secno a,
+> > int ano, unsigned len)
+> >   		struct buffer_head *bh;
+> >   		struct anode *anode;
+> >   		if ((anode = hpfs_map_anode(s, a, &bh))) {
+> > -			hpfs_remove_btree(s, &anode->btree);
+> > +			hpfs_remove_btree(s, GET_BTREE_PTR(&anode->btree));
+> >   			brelse(bh);
+> >   			hpfs_free_sectors(s, a, 1);
+> >   		}
+> > diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+> > index 263b5bbe1849..29e876705369 100644
+> > --- a/fs/hpfs/file.c
+> > +++ b/fs/hpfs/file.c
+> > @@ -51,7 +51,9 @@ static secno hpfs_bmap(struct inode *inode, unsigned
+> > file_secno, unsigned *n_sec
+> >   		return hpfs_inode->i_disk_sec + n;
+> >   	}
+> >   	if (!(fnode = hpfs_map_fnode(inode->i_sb, inode->i_ino, &bh))) return
+> > 0;
+> > -	disk_secno = hpfs_bplus_lookup(inode->i_sb, inode, &fnode->btree,
+> > file_secno, bh);
+> > +	disk_secno = hpfs_bplus_lookup(inode->i_sb, inode,
+> > +				       GET_BTREE_PTR(&fnode->btree),
+> > +				       file_secno, bh);
+> >   	if (disk_secno == -1) return 0;
+> >   	if (hpfs_chk_sectors(inode->i_sb, disk_secno, 1, "bmap")) return 0;
+> >   	n = file_secno - hpfs_inode->i_file_sec;
+> > diff --git a/fs/hpfs/hpfs.h b/fs/hpfs/hpfs.h
+> > index 281dec8f636b..353f73c914d9 100644
+> > --- a/fs/hpfs/hpfs.h
+> > +++ b/fs/hpfs/hpfs.h
+> > @@ -394,27 +394,45 @@ enum {
+> >   	BP_binary_search = 0x40,
+> >   	BP_internal = 0x80
+> >   };
+> > +
+> > +/**
+> > + * GET_BTREE_PTR() - Get a pointer to struct bplus_header
+> > + *
+> > + * Wrapper around container_of() to retrieve a pointer to struct
+> > + * bplus_header from a pointer to struct bplus_header_fixed.
+> > + *
+> > + * @ptr: Pointer to struct bplus_header_fixed.
+> > + *
+> > + */
+> > +#define GET_BTREE_PTR(ptr) \
+> > +	container_of(ptr, struct bplus_header, __hdr)
+> > +
+> >   struct bplus_header
+> >   {
+> > -  u8 flags;				/* bit 0 - high bit of first free
+> > entry offset
+> > +	/* New members MUST be added within the struct_group() macro below. */
+> > +	struct_group_tagged(bplus_header_fixed, __hdr,
+> > +		u8 flags;		/* bit 0 - high bit of first free
+> > entry offset
+> >   					   bit 5 - we're pointed to by an
+> > fnode,
+> >   					   the data btree or some ea or the
+> >   					   main ea bootage pointer ea_secno
+> >   					   bit 6 - suggest binary search
+> > (unused)
+> >   					   bit 7 - 1 -> (internal) tree of
+> > anodes
+> >   						   0 -> (leaf) list of extents
+> > */
+> > -  u8 fill[3];
+> > -  u8 n_free_nodes;			/* free nodes in following array */
+> > -  u8 n_used_nodes;			/* used nodes in following array */
+> > -  __le16 first_free;			/* offset from start of header to
+> > +		u8 fill[3];
+> > +		u8 n_free_nodes;	/* free nodes in following array */
+> > +		u8 n_used_nodes;	/* used nodes in following array */
+> > +		__le16 first_free;	/* offset from start of header to
+> >   					   first free node in array */
+> > -  union {
+> > -	/* (internal) 2-word entries giving subtree pointers */
+> > -	DECLARE_FLEX_ARRAY(struct bplus_internal_node, internal);
+> > -	/* (external) 3-word entries giving sector runs */
+> > -	DECLARE_FLEX_ARRAY(struct bplus_leaf_node, external);
+> > -  } u;
+> > +	);
+> > +	union {
+> > +		/* (internal) 2-word entries giving subtree pointers */
+> > +		DECLARE_FLEX_ARRAY(struct bplus_internal_node, internal);
+> > +		/* (external) 3-word entries giving sector runs */
+> > +		DECLARE_FLEX_ARRAY(struct bplus_leaf_node, external);
+> > +	} u;
+> >   };
+> > +static_assert(offsetof(struct bplus_header, u.internal) == sizeof(struct
+> > bplus_header_fixed),
+> > +	      "struct member likely outside of struct_group_tagged()");
+> >     static inline bool bp_internal(struct bplus_header *bp)
+> >   {
+> > @@ -453,7 +471,7 @@ struct fnode
+> >     __le16 flags;				/* bit 1 set -> ea_secno is an
+> > anode */
+> >   					/* bit 8 set -> directory.  first &
+> > only extent
+> >   					   points to dnode. */
+> > -  struct bplus_header btree;		/* b+ tree, 8 extents or 12 subtrees
+> > */
+> > +  struct bplus_header_fixed btree;	/* b+ tree, 8 extents or 12 subtrees
+> > */
+> >     union {
+> >       struct bplus_leaf_node external[8];
+> >       struct bplus_internal_node internal[12];
+> > @@ -495,7 +513,7 @@ struct anode
+> >     __le32 self;				/* pointer to this anode */
+> >     __le32 up;				/* parent anode or fnode */
+> >   -  struct bplus_header btree;		/* b+tree, 40 extents or 60
+> > subtrees */
+> > +  struct bplus_header_fixed btree;	/* b+tree, 40 extents or 60 subtrees
+> > */
+> >     union {
+> >       struct bplus_leaf_node external[40];
+> >       struct bplus_internal_node internal[60];
+> > diff --git a/fs/hpfs/map.c b/fs/hpfs/map.c
+> > index ecd9fccd1663..be73233502f8 100644
+> > --- a/fs/hpfs/map.c
+> > +++ b/fs/hpfs/map.c
+> > @@ -178,14 +178,14 @@ struct fnode *hpfs_map_fnode(struct super_block *s,
+> > ino_t ino, struct buffer_hea
+> >   			}
+> >   			if (!fnode_is_dir(fnode)) {
+> >   				if ((unsigned)fnode->btree.n_used_nodes +
+> > (unsigned)fnode->btree.n_free_nodes !=
+> > -				    (bp_internal(&fnode->btree) ? 12 : 8)) {
+> > +				    (bp_internal(GET_BTREE_PTR(&fnode->btree))
+> > ? 12 : 8)) {
+> >   					hpfs_error(s,
+> >   					   "bad number of nodes in fnode
+> > %08lx",
+> >   					    (unsigned long)ino);
+> >   					goto bail;
+> >   				}
+> >   				if (le16_to_cpu(fnode->btree.first_free) !=
+> > -				    8 + fnode->btree.n_used_nodes *
+> > (bp_internal(&fnode->btree) ? 8 : 12)) {
+> > +				    8 + fnode->btree.n_used_nodes *
+> > (bp_internal(GET_BTREE_PTR(&fnode->btree)) ? 8 : 12)) {
+> >   					hpfs_error(s,
+> >   					    "bad first_free pointer in fnode
+> > %08lx",
+> >   					    (unsigned long)ino);
+> > @@ -233,12 +233,12 @@ struct anode *hpfs_map_anode(struct super_block *s,
+> > anode_secno ano, struct buff
+> >   				goto bail;
+> >   			}
+> >   			if ((unsigned)anode->btree.n_used_nodes +
+> > (unsigned)anode->btree.n_free_nodes !=
+> > -			    (bp_internal(&anode->btree) ? 60 : 40)) {
+> > +			    (bp_internal(GET_BTREE_PTR(&anode->btree)) ? 60 :
+> > 40)) {
+> >   				hpfs_error(s, "bad number of nodes in anode
+> > %08x", ano);
+> >   				goto bail;
+> >   			}
+> >   			if (le16_to_cpu(anode->btree.first_free) !=
+> > -			    8 + anode->btree.n_used_nodes *
+> > (bp_internal(&anode->btree) ? 8 : 12)) {
+> > +			    8 + anode->btree.n_used_nodes *
+> > (bp_internal(GET_BTREE_PTR(&anode->btree)) ? 8 : 12)) {
+> >   				hpfs_error(s, "bad first_free pointer in anode
+> > %08x", ano);
+> >   				goto bail;
+> >   			}
+> 
+> 
 
