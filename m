@@ -1,98 +1,62 @@
-Return-Path: <linux-kernel+bounces-806744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B14B49B41
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2A4B49B44
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23DD4E44B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54437A1A1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286572DCBFC;
-	Mon,  8 Sep 2025 20:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE82DCBFC;
+	Mon,  8 Sep 2025 20:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e3WAj8hx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwA2dgov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7FC2D24BA
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E1B21FF39;
+	Mon,  8 Sep 2025 20:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757364786; cv=none; b=jlyevGxEyGluzhT2qeE8jNEufCXc/H0vki+AXUcT7XGesHsLkWbHOaY9J4cf1KA+/X0f5VuDbB5iFNJhOrSpGBkzImRj3M2FYufApaLF0sNZ/2gxs5da/dq+aSxtEUcR0kVGaaXSBwM1WCgCiET1KyFUrBG2Cfe8lEZBpG1CZ+Q=
+	t=1757364831; cv=none; b=k1CHiiWppVZ7beruOrXBa30qV7jL6wjpY3y4JDWJ6h6gs/asXkcfOuSijgLYC0rVgKVFLDbUZPEG9G25+eKaZu0sQeoajy4dkgVu6zXLFD6LCuJZKJfAvAB4VlqPSXcjCBmnrdac7Q7LamHAcx9nplMEJIFKMKZauL92LCvNTwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757364786; c=relaxed/simple;
-	bh=LEPVDJM5KJBRhq5C3sgsbrdDWUsFbSlaXmV6QC8esSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpQcMYT7604DBxssPcw5lb7HDBmyhnBJv3XIW+2XUqkssnuBuzQEMsfuHFiGXrRJrijx/fvN1bDOIZXDR7Q9o/i/pEd8xFVDuyUvGm0babLMN3Hl14KRzTiiaXBAzq9h53Gymcj+zDt3Yxk6CmvqcEvgxR/Niqw0UDbsJjU9DEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e3WAj8hx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588DAteB004031
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 20:53:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2cwBnJZmqQBEZM73zk8hQa/m
-	ZMI37HHNaj/5XDzx4Kk=; b=e3WAj8hxbQLWGuEpn6EP2MS45wz6U/HtBBCgJeR+
-	TEsLeWpp9R1O7BPEX9HdSMDwrY9J5qmh/YVNGulPoFHdYE5695FDV7ivU25y+lX1
-	9s5qpcGUeKir5n7SVSIIAT7KGP9LR95hJBV8jKwjTA1ic2chaoLWfHx0fv3vRN8t
-	tgj6H3Ilz1jEVzDKO0wiOH8XnffhXZo4XM11sMLsUAZWXHweyFCYJVVVfU9NBNTT
-	KBz9Yfhse0E4FLYs+iGS/zTnEkhn78EZy+JeM9YQbRN3LgPotYrwRJ0C67qwJi8M
-	XX7i7OjSkql2xvVIEAQWBPKh0ROJSBsf7U2PQBcpXdBg6g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491t37tdbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:53:04 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5d5cc0f25so104794811cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:53:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757364783; x=1757969583;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2cwBnJZmqQBEZM73zk8hQa/mZMI37HHNaj/5XDzx4Kk=;
-        b=i4MHlMZvbyqWWdORUogmQvHmgS/6Z37VXLPDAIs74toa1CJbCPL7r8j4EBvWb8QD+t
-         IX3GplncW4itmUbQ1WkaBihepMHQCnMh/JY2gOXSBenNJNmzbv7Bi/bKjv3srWvtHooA
-         0x/dVRBoBRXKbNICuMV1MJe7wLXGYqPMa/E8apBb7/g+3VtWY1L/uEl1UpzLsHxRp7x3
-         ycXtSz4nTM/UT1cVTvkPjXSNKQn+5K0GsVmgzMLciLobqpT/bCRLySpkr6R0biaAtmVt
-         JrJQ21A6Xy6xbYe3E+oSIvS73owP5KWE4s06m2GTe29QBsVsJf2nOt2LEUXJGi6Js0Dn
-         zCRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZXUkN5HjnNNnBPl4Jl/aeOgYtdKzrKdyobW+roQrXPYnnLwRqr+wx+fimPKqPR/WRqAgtMMxa4I/taZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhm4LJ4NALipJi0hjB6/Gt3OMbJsDYeCx5Zei/61QVZ7Mwrx18
-	hZJhJp2ZansFsEXfjRKD0M6qpTo05Gzl6qVb9OnD993SPYgko9QKJpwlYu0ZemK1NjLYkQDHoYA
-	isz7P4oDFGEGPxlmQLzu5ZkqceuxJMkVcSukipXBAgniwhhrj1/jkh6LfyUbY275wnLE=
-X-Gm-Gg: ASbGnctsVS7QrNX5lKsirelBlXozysrKITs1t+Ch/VfbZRNwF48sYjxgNj32Fq5hXFA
-	wI0l2/8HwJANbgsdwWXsbuKF02+MDXpDrO8oup7B7C/cY6+bSlT4ujT4/y5etrIp8Avf2+SesHH
-	Y47M3vM9MCjUuXspaR3Uawqmafpw4hb07I4VrxPqUM0xBlNvUi1NKuNPU/yYyaWikTLeiTqXDxD
-	D0teTgsLok6iBT5N/5xGp69g7WlcTCLhnh1domHC68sSLhCaRHZGiaOK4KkXqhwBCKLY5iQufJv
-	Q5OVouSdUvctFYB4+iRE3EcoVXwZYOYXa2Ew0bXlFeoPMY/uAMXf/1G2sVEFp6BkXqy+hIQ3IC3
-	XzDFKo/QOUP2eEDRgX6R1L+hUAYpxcKqrHueDFMl75QO2sXFLzSrh
-X-Received: by 2002:a05:622a:104:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b5f844db47mr118280351cf.52.1757364782716;
-        Mon, 08 Sep 2025 13:53:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbgttt18cresQ+Ad/zQLdvrRN/v/9ChJ+Ozvktu88IRLlutb625Zv06Rrpn/u1jzrCVt+Q8Q==
-X-Received: by 2002:a05:622a:104:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b5f844db47mr118280001cf.52.1757364782156;
-        Mon, 08 Sep 2025 13:53:02 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680cce9f3csm19629e87.52.2025.09.08.13.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 13:53:01 -0700 (PDT)
-Date: Mon, 8 Sep 2025 23:52:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Umang Chheda <umang.chheda@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Introduce support for Monaco Evaluation Kit
-Message-ID: <sftju3vzmxu26yeldakj7ksih7x53d7jdmw7ninjhmfmjc2bci@hizerlnne64q>
-References: <20250905192350.1223812-1-umang.chheda@oss.qualcomm.com>
- <175735727830.2621347.7880458499216772171.b4-ty@kernel.org>
+	s=arc-20240116; t=1757364831; c=relaxed/simple;
+	bh=POcz+JpYGpHubzD14Eku3ZQzqXppkJMBMmqMowj0z/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kUTpaUtrh/bH/1Sa3kfgbYDu43k0Om6BspAmteJ8Y0FQUpD5Io0KqZi2Yj2G123QmibPEeAI3QMaaC6oJBfzQ5DktXW411DDXLsUwlbbpvEeqth4hhxF5PhPk8EGxv/5XV/xQO/q037jtiErpOfQIK5aypTRPz9KKeoi2GZIWbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwA2dgov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB6DC4CEF1;
+	Mon,  8 Sep 2025 20:53:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757364830;
+	bh=POcz+JpYGpHubzD14Eku3ZQzqXppkJMBMmqMowj0z/E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HwA2dgovXhqbZKDE4CyF6jfjUOnL7dEWbzZKFuoiTgQM0/8RbmKtDJPAN9M5U7NdR
+	 332e8aBZX3AbPbB6EpAt9HNVbvClc42ykkVZoJjNbULcacR8h0B5EXEYiKZkgZ0oop
+	 MOztEVj9EyVglVVIKVAZMxdg6OGkWy3zLxbY/8rXxuKdTmHbBJJ416YTwQcjKpBtKY
+	 fK6GtR6tE/0qkbhp5QxKjzmH6c551WY5tmeIrJaR+WyTrg1e0UOJG7niYxUXTfUBiu
+	 qiXTd7ug2j69De7tF7VnvVqeCJga5fsCbsa8lXBVxnN8uEDltBUZshWZ3PB/PvJJG6
+	 9aMOKYX/9U7dQ==
+Date: Mon, 8 Sep 2025 15:53:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
+Message-ID: <20250908205349.GA1463686@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,62 +65,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <175735727830.2621347.7880458499216772171.b4-ty@kernel.org>
-X-Proofpoint-ORIG-GUID: PzmFohpKKqQ1awj4FAa1RwqpvhW4prJp
-X-Proofpoint-GUID: PzmFohpKKqQ1awj4FAa1RwqpvhW4prJp
-X-Authority-Analysis: v=2.4 cv=NdLm13D4 c=1 sm=1 tr=0 ts=68bf4230 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=yfUVIRKG-kQQsbwJQfoA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA2NiBTYWx0ZWRfX7d5Tot/Wea/f
- bAXhtewN38d51s7aoxWVL0yqhgaDY/Q50oY/kRyYLceWNCQPq80M2UJjKp9EOgjHEQJNriSL11k
- ZZVU+o+mnF2hMh22YdmEK6i/gvVsuz8m1ACPUmdMXd6RHesRsV8IsCTKvbuTFsezoxOUZahICp3
- poBycvHCHV3xDIruAPBrZP2yWef2Cr4r1MYeaFmxd9n5SCLIOvJfBBoGuKLPQCT8RLJqVJf2Q3w
- n42PGSO0gYtap1ESbGX1D2tyuQ0ntsuOUEv1L2EzK7TOAQTF7yM0cAneNTutuMXZtCgOOUOPUSV
- NYIKB+zNP+xA5D++wSMcKIcY/zEy6U2NGuHU5teGW3TnNhmWsM4vv0zLqH3i8ofAqW7XWXCpljH
- yM+XK4sR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0 phishscore=0
- clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080066
+In-Reply-To: <20250905052836.work.425-kees@kernel.org>
 
-On Mon, Sep 08, 2025 at 01:48:00PM -0500, Bjorn Andersson wrote:
+On Thu, Sep 04, 2025 at 10:28:41PM -0700, Kees Cook wrote:
+> After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
+> ffs()-family implementations"), which allows GCC's value range tracker
+> to see past ffs(), GCC 8 on ARM thinks that it might be possible that
+> "ffs(rq) - 8" used here:
 > 
-> On Sat, 06 Sep 2025 00:53:46 +0530, Umang Chheda wrote:
-> > Add support for Qualcomm's Monaco Evaluation Kit (EVK) without
-> > safety monitoring feature of Safety Island(SAIL) subsystem.
-> > This board is based on Qualcomm's QCS8300 SoC.
-> > 
-> > Monaco EVK board is a single board computer (SBC) that supports various
-> > industrial applications, including factory automation, industrial
-> > robots, drones, edge AI boxes, machine vision, autonomous mobile
-> > robots (AMRs), and industrial gateways.
-> > 
-> > [...]
+> 	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
 > 
-> Applied, thanks!
+> could wrap below 0, leading to a very large value, which would be out of
+> range for the FIELD_PREP() usage:
 > 
-> [1/4] dt-bindings: arm: qcom: Add Monaco EVK support
->       commit: 49e55bdbcbe0abf04d7c8c882d69755ecf43d878
-> [2/4] arm64: dts: qcom: qcs8300: Add Monaco EVK board
->       commit: 117d6bc9326b1ff38591289f9677e273a9a467ae
-> [3/4] arm64: dts: qcom: qcs8300: Add gpr node
->       commit: 89c85214735b633e846d8f6473fa57ba4cc11b81
-> [4/4] arm64: dts: qcom: monaco-evk: Add sound card
->       commit: bb12da95a183253b619ca1691d6fd320b7e445e9
+> drivers/pci/pci.c: In function 'pcie_set_readrq':
+> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
+> ...
+> drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
+>   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+>       ^~~~~~~~~~
+> 
+> If the result of the ffs() is bounds checked before being used in
+> FIELD_PREP(), the value tracker seems happy again. :)
+> 
+> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
 
-Just to check: did you adjust it to be qcs8300-sndcard?
+What's your plan for merging cbc654d18d37?  I suppose it's intended
+for v6.18?  If it will appear in v6.17, let me know so I can merge
+this for it as well.
 
+Maybe this should go in v6.17 regardless, to avoid a warning
+regression between this patch and cbc654d18d37?
+
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: lkft-triage@lists.linaro.org
+> Cc: Linux Regressions <regressions@lists.linux.dev>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+> Cc: Ben Copeland <benjamin.copeland@linaro.org>
+> Cc: <lkft-triage@lists.linaro.org>
+> Cc: <linux-pci@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> ---
+>  drivers/pci/pci.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> Best regards,
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b0f4d98036cd..005b92e6585e 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>  {
+>  	u16 v;
+>  	int ret;
+> +	unsigned int firstbit;
+>  	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+>  
+>  	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
+> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>  			rq = mps;
+>  	}
+>  
+> -	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+> +	firstbit = ffs(rq);
+> +	if (firstbit < 8)
+> +		return -EINVAL;
+> +	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
+>  
+>  	if (bridge->no_inc_mrrs) {
+>  		int max_mrrs = pcie_get_readrq(dev);
 > -- 
-> Bjorn Andersson <andersson@kernel.org>
-
--- 
-With best wishes
-Dmitry
+> 2.34.1
+> 
 
