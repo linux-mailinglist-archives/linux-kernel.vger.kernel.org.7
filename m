@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-806690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACA8B49A91
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:02:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5214CB49A9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25A2167428
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A094E19FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9EE2D7DC4;
-	Mon,  8 Sep 2025 20:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3223E2D7D59;
+	Mon,  8 Sep 2025 20:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lmoG4NDV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HG6RzaS+"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE55219A86;
-	Mon,  8 Sep 2025 20:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27E421B8F7;
+	Mon,  8 Sep 2025 20:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361771; cv=none; b=DGk6+rtB2tnNTUptQgqVqv/iCinvakaD/gFM7Ip3kaATA4DdrjvkEXjLMtoaFGTJDu8zp3P88t1JLd7kgVe6c2HzxCxTL7EXxefGw5TxTLQqhNeDxSqd3oJyxCvxu0XqxXcP5ia9UzsLilwGUulqDQK6S/WxLEF1IFaiEVmUQtQ=
+	t=1757361823; cv=none; b=XsS4g3qFpmG1c6zm8347RPs/mpY742Qw13yw+AzEZqbvn9s9LA+toMSVO3wOi8+SjM9940P+ksAiO7SVUG3wVgxQEV4XpHWiR7LTVLCX5N83ZaTsIK2CaCg1igpLvV2uiZIEXMK8jZFzvYIdni+4yArPJKbN38xxP3P9497cutY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361771; c=relaxed/simple;
-	bh=7DOP+7F2mn8xBOqn8zohU2fZyfjzOo/Gx5CGf4Zo840=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtCdMbpa1WXufa36w+xGaDI1CsTRp3gd0clmci+/GYHzWgDw6twXS6HD+6syyAgUQ95GrrZAi+We8ou9NNHi5V04AFxywagouCnphAS6UczWQK6mUbJTevLJo+oMcnZWcJmN2C8uVuJ3ZpNc+f4YjqO7lCmOqDWLvu8FYOD9GOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lmoG4NDV; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757361770; x=1788897770;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7DOP+7F2mn8xBOqn8zohU2fZyfjzOo/Gx5CGf4Zo840=;
-  b=lmoG4NDVMASl9qE8zxnFNv6a1IJOwXy5NCznU6Z27oiu7b+jEoTsu9yj
-   uHMF9yV+ph+7eg6gvKUPxy6RBKrx2Mf4XVa/pC4N3DWCy98l8ZiL/Pd67
-   3ZJlSZfeL67ROiBTvFSoOjX2BAOnTohhnsnWLRXFg0w/rMsVn6/Uluo6I
-   3+XwgOUiOSyvVRylBMmtFv/yuI+IvnPa4rojfOFdnSjZE8UA/hQRuERGw
-   pE1ciglhqrkxO+/DNa566K5V/vlpXlTn8SuQgqBdsmAwBXntVd4T6vVSf
-   xcw+rqU8+7ti2Y7/2O1ugjVrBCi+VJPFe1GZLg25ZgIQFlnY+uYBWMSDW
-   w==;
-X-CSE-ConnectionGUID: R7Jl1lYcR4ueYfDElaDt8Q==
-X-CSE-MsgGUID: K6NgrqwTQWWj0XoDma5RFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70732129"
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="70732129"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:02:46 -0700
-X-CSE-ConnectionGUID: /Sl2FUhRQ4KOZTq0Jxxl6w==
-X-CSE-MsgGUID: gTr/fpAHT8e/neTJAB80kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="172759587"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 08 Sep 2025 13:02:41 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uvi4U-00047f-0u;
-	Mon, 08 Sep 2025 20:02:38 +0000
-Date: Tue, 9 Sep 2025 04:01:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	s=arc-20240116; t=1757361823; c=relaxed/simple;
+	bh=ZAfY4nHqfgM8AK0O863nf5QpKC7p+HQ/dzofmqi7a2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cbpvv1CEx9+ewhgBWmhcmrUO+Rwy+hubEB7PzyAGgfju3lhuA7NpD2yPOhmeFUR4HdxGap+XICWiWmg6sqhlJJfSQlugZauo74BwHxHrZScma3O7FgCSHI+s0uQCHbfjhP5RGrWYw2UZ/d8xVaIHmqjDDj556YD3Xf6Scuu7oRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HG6RzaS+; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b042eb09948so934509166b.3;
+        Mon, 08 Sep 2025 13:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757361820; x=1757966620; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ida/lmq2CvCaVRtbfZQogEzqIEvpKI5nNSXM2BB/1b8=;
+        b=HG6RzaS+MWOzFBd8mu5lR2chilSQRVhQVzFMVhDf41LYzS9IbZsRtZZpn0P6X/ZH34
+         tI3yemQX3fw6Y+payFjyyDMLZXIsJLn55FM+SVJ35D+UVqS+ZWPTZLSBkaS11JmaQdsR
+         oOqa7c0RfinVXakZVVtYDonTTU+KsrN4ceoWuowswRDsa/lKQMcuQz0QSQW4zPdZTpMs
+         XjyEAPaDQ7LACL4Zo/EJQZ4IUe6qinpxFlmcHUjr9qqD9i1TZr/IwOM+JCjooTH1NP4s
+         vhkx81Vv0Sz+GjK+kyfDPfg44GuT/wFvJzFEswkfNxXv0R5TrSYbumeQG26itIdgOJUs
+         3QPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757361820; x=1757966620;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ida/lmq2CvCaVRtbfZQogEzqIEvpKI5nNSXM2BB/1b8=;
+        b=vBlUtbojPi7pSy3sF198cTjaeMg0MQKhmaEYivUBjlhY7ZoEyweP70gKgjc3apLgYm
+         V54is81fER61FdlaY4nPvat75ltCpZ8LP/IUblYCtHScLOmu8kmc0CBYF/R9wtZpt1Dm
+         J0p5l9bb/huTydITeNIw56FCqu/o9k5V2YKFfBgM0iDQ62r4o/7JAxvtZ4wkhltSJ/kE
+         ABeF2jgJLUz6M2NoYA1uNLqsbr8OxjteNv84CwKCjph+Mbc2TtkHiBLN9YwHRzwmfTz3
+         DCyXL2Hze1lhnhnGTXJDxMhbTngIyi084Ia6cwmvxIpZrYP5g57t6sMwb5W35O9/pVeo
+         SrSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmmCqDgBjrumVSCzuvWoJ/F9/5EPQBSpWFxJh1lG7A6axAZf8tdoNUtDfbFVm/IBMg6X/cMNSVNZub3E88@vger.kernel.org, AJvYcCWqTgMyK3J0GwMniIEVC09FWwsk9cU13rbMya78VPVC5FSjGPlqffXqy/PDTXMCwpSYF7Cjjul3U13hrzk=@vger.kernel.org, AJvYcCXTLKwgiA7FTP88+iR+AbMcR/LUFqxMQ2U8fDW7DBf7y/HXYdcap75sCMg1dlFaOZ4NImV6LBe+7MNU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcUC67mcSkM4myWgnB7Iem94DEKxCCxKYwLi0akHmkYsgokuqi
+	5m9RMV9G9oFf7KGdQPmPzDQSB1b+hU7kusemnbJkRUET5qjHX+G883+lLkUbWLQq
+X-Gm-Gg: ASbGncvykFCoy8PagZTpMNqtUrVnULEpmvj98KZ/x/fESsDl1QsRtXQLC/vnl11XqdA
+	8o3PjEbyzR6Zqj8q22X18sz63DP3dC0RqKq77fZjOoZiI4i6uFE0ceO+WgUCJdC9qkTj1OWcNNZ
+	m+demssBYq02VCq8lywYg2SMIvRR6VzzCDCHIqWKGz3mYFEFSnUrFHzK69k2wOvDgophMer6Xrb
+	ol99cWPFAi2WESKNO4z3gw19lM+xr2kZSY49JP3qHlT5cvNLE907ZmFKzDWpNMxoOh4MQCIcRZQ
+	CAn3g9VLRZ+oeC1tqRuWkfqwnIkQKRLPmhVTKTzThrdg3HJ3Jp/krQdQTXSbr+6nY5SKPrVi64X
+	lxpNduQA9d6kguMqEUastBtrl3qzBR6J7YKz3Mx5/tJ++NQ+2wW3UYK1VBouT3q9eielAzwlvxw
+	==
+X-Google-Smtp-Source: AGHT+IFqGWzlEZtQOk/UnWNlOkrNxSCMaLPJApJMoATfCsdd8Y1r8qxaW7hfuJYJTHH4C3WtzjR3aA==
+X-Received: by 2002:a17:907:3d90:b0:af9:eace:8a52 with SMTP id a640c23a62f3a-b04b1712177mr802551966b.50.1757361819694;
+        Mon, 08 Sep 2025 13:03:39 -0700 (PDT)
+Received: from localhost (93-140-134-186.adsl.net.t-com.hr. [93.140.134.186])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0466a962c4sm1440182366b.71.2025.09.08.13.03.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 13:03:38 -0700 (PDT)
+From: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
+To: linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <202509090302.DzgxdNbE-lkp@intel.com>
-References: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karel Balej <balejk@matfyz.cz>
+Cc: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+	~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] samsung,coreprimevelte enhancements
+Date: Mon,  8 Sep 2025 22:03:20 +0200
+Message-ID: <175735302650.4660.10666700905284639683.b4-ty@dujemihanovic.xyz>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250828095028.24503-1-balejk@matfyz.cz>
+References: <20250828095028.24503-1-balejk@matfyz.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Matti,
+From: Duje Mihanović <duje@dujemihanovic.xyz>
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
+On Thu, 28 Aug 2025 11:49:01 +0200, Karel Balej wrote:
+> here are a few patches adding some of the stuff that have accumulated
+> since the support for the samsung,coreprimevelte smartphone was first
+> introduced and before it made it into the mainline tree.
+> 
+> The patches are based on mmc/next because it contains the new support
+> for state_uhs in the sdhci-pxav3 driver.
+> 
+> [...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO/20250905-144454
-base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
-patch link:    https://lore.kernel.org/r/3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount%40gmail.com
-patch subject: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-config: i386-randconfig-r133-20250908 (https://download.01.org/0day-ci/archive/20250909/202509090302.DzgxdNbE-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090302.DzgxdNbE-lkp@intel.com/reproduce)
+Applied, thanks!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509090302.DzgxdNbE-lkp@intel.com/
+[1/3] arm64: dts: samsung,coreprimevelte: add PMIC
+      commit: 9d5f358e797c87c304a8b0af5cd43f08218dfa2f
+[2/3] arm64: dts: samsung,coreprimevelte: add touchscreen
+      commit: 081ff07146ba5fc752843a389cf68a10c8047a73
+[3/3] arm64: dts: samsung,coreprimevelte: add SDIO
+      commit: 51d00644986b750d54e58aa3dd5eb5fb0e6040e8
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "spi_sync" [drivers/base/regmap/regmap-spi.ko] undefined!
->> ERROR: modpost: "spi_async" [drivers/base/regmap/regmap-spi.ko] undefined!
->> ERROR: modpost: "spi_write_then_read" [drivers/base/regmap/regmap-spi.ko] undefined!
->> ERROR: modpost: "__spi_register_driver" [drivers/iio/adc/rohm-bd79112.ko] undefined!
->> ERROR: modpost: "spi_sync" [drivers/iio/adc/rohm-bd79112.ko] undefined!
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for REGMAP_SPI
-   Depends on [n]: SPI [=n]
-   Selected by [m]:
-   - ROHM_BD79112 [=m] && IIO [=m] && I2C [=y] && GPIOLIB [=y]
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Duje Mihanović <duje@dujemihanovic.xyz>
 
