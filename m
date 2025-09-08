@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-806864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7309CB49CD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F845B49CD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762383A361A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:25:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AFB93AB9BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EB52EAB7F;
-	Mon,  8 Sep 2025 22:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED9F2E0408;
+	Mon,  8 Sep 2025 22:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FZlhya5d"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="frWswSRZ"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23572D9EFE
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F357C2E5D17
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757370301; cv=none; b=OTxnJ7JbyKmpU6IFyWf7uwytFz9FFze1SMUdMRDVhQt1h7RbMq85igxNov2pza4jgSwXk0k2gBEST/kA9hugJESkc8YUWbaIDwWd1Glr7QSKW1IS8dRVw5QtwsRUJ4aO3Xthltl4bTkRN6nAQQbt8DEhCxnzcCKyeq/a1EVQdys=
+	t=1757370384; cv=none; b=RmEBZ9VxGzNDG0NjXp/iG9b5UVapOXsyEaezIFAtw9ZYkVD0wxmco6kRK4oHaiC82uw76+Usey6Nz1jybrnoIMRsxyG3ijuwt+Cmie8awB4ffhuKpBcVnodY7+2mXd47VALXEqbniDq7nUpVXnPtUq9cBVbMlvMW6uhrpzzfKJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757370301; c=relaxed/simple;
-	bh=BdczHDV3B3ZeupLMxai1XjM4O/IqMSbhh9GDyX4NZaY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HayFgIP/clFA3ZUDOHLykcgahlM8b/RbdDOGECyQ0pS4rcPJRCbm7ndT8Bw1ynG55vWkgcdTIysHJl6WmpAG4LDpsxx40tsjT8NSV7mtf/XE6+5FwPbv7Z3QGO5RdHRLXxiDrjnzSvgFJWHXhYLRhCpOemHF8KKA95Vms22atfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FZlhya5d; arc=none smtp.client-ip=209.85.219.177
+	s=arc-20240116; t=1757370384; c=relaxed/simple;
+	bh=VgFni55X8qG9vgeSaLx0ybECt7pgaskgCCNnoOtbqI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=npxK/3C8/sYjVf33JjsZfkrJhJVZMK2YP9iBfx0BvUNRM6HBJK/C7pzvSSJFZ8gZDy8SRCFYSGgaerQ4UVIOChvtortqyn8Fm6lZaMRi/eG6sbIA16We0sSZb8RZ+SJj7KNVwET7jtJAGZnwFhzCmw5d7n4oFkGqs5cBKnQc74I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=frWswSRZ; arc=none smtp.client-ip=209.85.222.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e96e987fc92so4071765276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:24:59 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8b7bcc8a291so904241241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757370299; x=1757975099; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rv8hMh0LMqevWYFZ+srlns+vtAjMl4A4z3f9Z1Buf8k=;
-        b=FZlhya5da51rJMcBjRhOeBD/8Lqz872VYUGB6HA6JsoItDmsjTgPzZvCBpcZ6t0Mo+
-         GvPbg1fwoR9vNO7y6/Yp2q490W1JXm4Gb69r0PG6GMLRccqqUtF/m6if2yQ1+j97kVlE
-         SlfnJokC1GviymKcOlquFtLX/o2RVFa6I8s+XOu0BvlAfgfpfgw7MePZCSr20WySbdIa
-         Obz4qaYuNOD3K3cO15pzm1h4BP0rZMHy4dgIOuBfklJItbn5/eBRzk6/NBpIBBuIwyCm
-         tT2hGWQXRh45vzv2q7iWghwU0TkfAJqju+/E7I2/4w6ZWVS5Zd1lRiLq9sQe2K+AKYXJ
-         3tug==
+        d=google.com; s=20230601; t=1757370382; x=1757975182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VgFni55X8qG9vgeSaLx0ybECt7pgaskgCCNnoOtbqI4=;
+        b=frWswSRZku9wpOexc9YdrzKLk2ZYOyO2LK/5bkPeLq3UdOMN7XPPb554vRlliiofDy
+         e7im6nYI4/FmIrAylZ2D6Leics+TMvGc0jQG3ea4Zy3pmOCLXl95PPZugeEnlL+w/LsL
+         RUQi0zhCuFRIp7Zw/LoUJtDlT25Zry7aM4PbMWL70pZUzqv46i4gQd45wr0iqAiMxYeS
+         jMhE5i1XXDibJCC12yr2VENgOvZ6ppgvH/yNuKQaNreFTlM4dk30+HDXWbGSbvhezoNm
+         ti6/OyOQ6MTVDPmLoE9r7CzGvDzhk5dKF6CY8vz79W/2Ka8b5HFjhleQYQz6EqWdeBa2
+         7Ajw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757370299; x=1757975099;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rv8hMh0LMqevWYFZ+srlns+vtAjMl4A4z3f9Z1Buf8k=;
-        b=JGjNTc6r26vABv8Vt2//U0q2l3QwIs9uMcfjL9UdtdTulPn78GbtQS8L2aqvKjihZZ
-         bdFTTAyBVOSIeyZUEOdgCLzbAux5QblskaIN8tozqt0oxrgNFjPVzS8gRfrOs311r7WM
-         NYqFoPCYIXTg2H1zsetqwyejK2Z8hQAmTiWFvpuNUf3Qrjb/vlReGhxOd6cafThrcLPl
-         Lyfj10wZu1g8c7mKXrFMhE9mosYIbt/be0Wl0OfIq/B2NAog9BT5obZ7JxwNv961z/m0
-         EWL368Bg1ILmB1dKzM6trg++wIdZJN2aAfqSJR2DNsTcSmEwYhy8JogpJdGSjgHHqHps
-         vM5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVpQogv68yJFpJ5nSFulgYlngN9YIlK+A2G+k/Xh6XOARgxsOq19E+tVPi4iwysv7ekueih4EBM2xKtV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyDA7OnMv8AOYAs12whINnbyCP7bq34l6Lo3BrKHfK15VVqfAF
-	gOd6rrBDvpR99eA7/YB7wG8NbILd4Zr313lJ9EMVePglNkd4J3/tsxOa+SORa2adHw==
-X-Gm-Gg: ASbGnct+K/NzsCiztYHFGrGxon4F/9HaxjAEzGSJ65ckqLpn9hoDJOFKUPATHfVrv9f
-	7x5GN4/hv40uE1N13wm/a18e4rJpYNftNZZv4JbkxUqD7q0ay26GKX3t+4OYHUMEGo7pomRHqAJ
-	Ryv1wzBr9ZfDPDFjXKFBCrm281WzgzMicm804cLmf6aBeEU4c9b+Kc98yCtWbLhL9jAGM30GN9A
-	C6J/TB+SuflC6MEgp5hpEdGC2sRvcAbP7MSQWcdb7DNMTumSJAeJrorjx0jn0+B0WNVvyB5mPeE
-	ZbgtYowPTbjnXnDnRSp6+nkVoI9usyFDr6igTWH9ENK4EwFrh97sk1ICl+v+dAinCypiGEEg8fK
-	BDmDNbY6D6Z53T1kbQyJ4goKmVV3dVf2BYOnwo/J1DWTrc78GKQ35uw5Ps1QrZbibicTDMpESK/
-	ISEbjL+gaiqq+aKXTu8sgssMO6
-X-Google-Smtp-Source: AGHT+IHz12RLu2qSx6kJKbJC54vlA6AVMAsAUr7Wd4XmRnv8FjgUsgD4d7k9E9m4cnAD0yWlnXIlxA==
-X-Received: by 2002:a05:6902:27c8:b0:e95:1dc3:8838 with SMTP id 3f1490d57ef6-e9f66fca8a0mr9322667276.21.1757370298464;
-        Mon, 08 Sep 2025 15:24:58 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea14b2e7ac4sm1647569276.35.2025.09.08.15.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 15:24:57 -0700 (PDT)
-Date: Mon, 8 Sep 2025 15:24:54 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Alexander Krabler <Alexander.Krabler@kuka.com>, 
-    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
-    Axel Rasmussen <axelrasmussen@google.com>, Chris Li <chrisl@kernel.org>, 
-    Christoph Hellwig <hch@infradead.org>, 
-    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, Johannes Weiner <hannes@cmpxchg.org>, 
-    John Hubbard <jhubbard@nvidia.com>, Keir Fraser <keirf@google.com>, 
-    Konstantin Khlebnikov <koct9i@gmail.com>, Li Zhe <lizhe.67@bytedance.com>, 
-    Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
-    Rik van Riel <riel@surriel.com>, Shivank Garg <shivankg@amd.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, Wei Xu <weixugc@google.com>, 
-    Will Deacon <will@kernel.org>, yangge <yangge1116@126.com>, 
-    Yuanchu Xie <yuanchu@google.com>, Yu Zhao <yuzhao@google.com>, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v2 6/6] mm: lru_add_drain_all() do local lru_add_drain()
- first
-In-Reply-To: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
-Message-ID: <33389bf8-f79d-d4dd-b7a4-680c4aa21b23@google.com>
-References: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
+        d=1e100.net; s=20230601; t=1757370382; x=1757975182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VgFni55X8qG9vgeSaLx0ybECt7pgaskgCCNnoOtbqI4=;
+        b=thsUOtPhHxQcU9UgRE72Gj467v0FuPFT76ihbraXycma6IHhZiRygqtIKjC2rF/C2u
+         hCWPVwHJ37k54ETaxqzv4lnwUdzY9H86Jiqx5u3zP/K9Z099iyhmJ8pjjOPEsDEVgXWz
+         sDyl6PoOTuS7L3fTbqyt1MxDgBs1mhSzvuYrxqqz++Y8VUsucmhHp4zUvwT1JGUqNbQc
+         GltmfSIQeyOmpAsC5GNwlt2GmYXt+89kxjlBYWy1ctNZ/m6bZo+UFqrb+ugjNgLlM6lA
+         BIeIwaNwQOfE71xZGBm7c8L4E2D+cDFvr5FixzjROLdLxE9YjgbJUo6R52NnG5uOhXT2
+         Ommg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX1vmFlIsPMdHwNmeipsxJW+KxTtaNjCYK2xggDrlR/Peyj18Eb4Hy43qqU07+akfm/iIzVkR5vapWt6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhi/5tD87Cumdfy/rPxbvVD0t2WFpAVLoHnH7eVoO8xglRhUK0
+	np1R8q07ctfzSxSz+/n0+GKU39b9OIR3x4wZNxnBECZpyM2Pht0ldgxavPVyMekj844dE99uyEa
+	VKi9887Emo7yL3SyDSu9MVyMe+FbDqMbUcFEWmJBu
+X-Gm-Gg: ASbGncvwon0rCLxgH3iD1ZPo3Epg35/prTX3d1xqSR4450ejFpejC6tMHhuikHrlnvN
+	t6UR0pFG00WXF3qCV78eX7jBiP+GqqpOi/fe8LO+N2YFOlDFa9wUAJEYeJLwSgdoIGFSpdzZwFM
+	zJZaGe6QVSNNZB/gHAOMqOuu96fvMtE7xcJIE+UQLvjYzC3FXwFbX8JNmlOt+MpZq36JA+/Arqr
+	lDOPW1k
+X-Google-Smtp-Source: AGHT+IF56V7CsaPSr4pf4Q6ngWeVWL4IRE6beiu0oOUFCAdWy5JF5KhGnfbRj0TKXiUivw+5HPXYBfSja/1eOKTzPJg=
+X-Received: by 2002:a05:6102:5086:b0:522:551b:de8a with SMTP id
+ ada2fe7eead31-53d0f4eba34mr3083386137.15.1757370381522; Mon, 08 Sep 2025
+ 15:26:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250730205644.2595052-1-blakejones@google.com> <CABk29Ns_YttEU29AhREcNv-vqxDC2jEvFL-5MyhZh1RReecYsg@mail.gmail.com>
+In-Reply-To: <CABk29Ns_YttEU29AhREcNv-vqxDC2jEvFL-5MyhZh1RReecYsg@mail.gmail.com>
+From: Blake Jones <blakejones@google.com>
+Date: Mon, 8 Sep 2025 15:26:10 -0700
+X-Gm-Features: AS18NWAnC4PARnhd5I-17uaXrcAbgGhvLFEQUZgSz-TjExsBjxO_dVxPbRE661g
+Message-ID: <CAP_z_Ci=E3Bbb3sncDfktugNrzUK74nESEM-qLBPubyx+W4HeA@mail.gmail.com>
+Subject: [Ping] Re: [PATCH v2] Reorder some fields in struct rq.
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Josh Don <joshdon@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-No numbers to back this up, but it seemed obvious to me, that if there
-are competing lru_add_drain_all()ers, the work will be minimized if each
-flushes its own local queues before locking and doing cross-CPU drains.
+Hi Josh,
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: David Hildenbrand <david@redhat.com>
----
- mm/swap.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Wed, Aug 20, 2025 at 5:11=E2=80=AFPM Josh Don <joshdon@google.com> wrote=
+:
+> On Wed, Jul 30, 2025 at 1:56=E2=80=AFPM Blake Jones <blakejones@google.co=
+m> wrote:
+> > This colocates some hot fields in "struct rq" to be on the same cache l=
+ine
+> > as others that are often accessed at the same time or in similar ways.
+>
+> Thanks for the analysis and this patch.
+>
+> I was going to suggest ____cacheline_aligned_in_smp, but it'll behave
+> nearly identical in practice so it doesn't matter (would save 64 bytes
+> on a 128 byte cacheline UP system).
 
-diff --git a/mm/swap.c b/mm/swap.c
-index b74ebe865dd9..881e53b2877e 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -834,6 +834,9 @@ static inline void __lru_add_drain_all(bool force_all_cpus)
- 	 */
- 	this_gen = smp_load_acquire(&lru_drain_gen);
- 
-+	/* It helps everyone if we do our own local drain immediately. */
-+	lru_add_drain();
-+
- 	mutex_lock(&lock);
- 
- 	/*
--- 
-2.51.0
+Thanks for your comments. I suspect there aren't a lot of
+128-byte-cacheline UP systems out there, so I'm not going to worry
+about this.
 
+> Peter, any thoughts on this patch?
+
+Echoing this - any thoughts from the maintainers?
+
+Blake
 
