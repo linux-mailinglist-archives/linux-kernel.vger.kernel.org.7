@@ -1,210 +1,93 @@
-Return-Path: <linux-kernel+bounces-805542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C17B489FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDFCB489F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B741B25AFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:21:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE11B1B25878
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703692F90DB;
-	Mon,  8 Sep 2025 10:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42442EA752;
+	Mon,  8 Sep 2025 10:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z28M9q4I"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E067wYk+"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C99C2F90D3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E8D2EB848;
+	Mon,  8 Sep 2025 10:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326843; cv=none; b=ScPmRiYSTGbJzb7C/RKKLnRcVg8jXwUfrtG9nRlPBePPMEJPJwWqYTvOo5s/OEjPlwsbNPlq96Er0hufmxBgZ/CSEBQpcOVq47172AvjCITOHSrYQV4CAlZYm8KcVczisTnydwy2QjOINalzaGvdNA5kAIJrgBfyqOMxzd2Rp/s=
+	t=1757326836; cv=none; b=H60JAq6WBGPIjm3Ws98P7UQgzR7mrPl/yVUbSoriQUssfj1GjQxby4SlgpPNjnkQm+ILVZRCzDHP3eb4m0Ln9UzzToI/l007Wzo2KVaRfd53ImEBx/0Dn9kjeW3FuBp2Lwvn950T+YGUBG/iYLQyGGfNH2LQBOE+kPYBdYLN2xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326843; c=relaxed/simple;
-	bh=mmrFnlrlZg23toLhH4FjNYlyymGTVvfvL1JEfWjAk1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H87vrypjjy5R2rUcP5pSAqFCsxwkBWB73L/lZ4AB7Mi0Ar1hjELqc3uTxln8Th9/dYY70kkCbSWsejrRN/3qoJeOfUe3ZpzDD05VoEg6F5x7eEvLJp7ZAeCo0hX4hzpcIlgpZ6USxCt7zEdTbY4NnFw9J6Dfyt/13+rrCI1DPPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z28M9q4I; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757326838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SseJoaUDdBfvoOklSFVqKeMYqIDjjvt5BTO9EfAgX/0=;
-	b=Z28M9q4IMnze6GhdzEnUBWiJX4+G7pSEWots1x9JTbfIIzt5Mn6+1wDT2bMgBRQxX14lbn
-	/u+SIm2NqYnY+NyOIOmonYZlH1PzaMOYidqFZRUDc4PjtRBk7gVsQIWyQF25+wDYUb3AEj
-	lRhO93nPIXxggJhDxeQzpYeQWM1Vd/g=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	kgdb-bugreport@lists.sourceforge.net,
+	s=arc-20240116; t=1757326836; c=relaxed/simple;
+	bh=bJRuXWHsHLC8sMQ9vy8yQKCmIRVyjpUGhUWJCTifiyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbjZhsesM50nWlLv/xUHBavEcc6Zilsg9g5xfnqbhcYe8gomAjZw0sw4lZgvE87Dl1My3HrjPTX4QvyfLGgo2w/+Oeti81XethzcdwB4MebRk5RPTDmZhCqhJBclQjLBFVHKNoEkST1riNS/Ug7gjzQFFf4TQC8ncp87EGrW510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E067wYk+; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757326829; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=G6qOydr5ilLKHgbw25Nfkyyz6dUk4uUkblGDd3vS5bo=;
+	b=E067wYk+meUVZBflvA0dv4wwmspTKQvh7NHKhdKn2FosuZ+lFI8YUYGgl5B9GoXvgZehnYJiHjJg38bLh+HZkM4XRYhmbP2cbXTl18Kn14yNI/AxgJpZyIo8QATlV5Zv66IMCBo3u70qMrwdMYBhy6+XekmV8hukAn/Zc7zsnYI=
+Received: from localhost(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0WnVUpR3_1757326828 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 08 Sep 2025 18:20:29 +0800
+From: Yi Tao <escape@linux.alibaba.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] kernel: debug: gdbstub: Replace deprecated strcpy() with strscpy()
-Date: Mon,  8 Sep 2025 12:20:10 +0200
-Message-ID: <20250908102010.3456-2-thorsten.blum@linux.dev>
+Subject: [PATCH v3 0/1] cgroup: replace global percpu_rwsem with per threadgroup resem when writing to cgroup.procs
+Date: Mon,  8 Sep 2025 18:20:26 +0800
+Message-Id: <cover.1757326641.git.escape@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+In-Reply-To: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
+References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-strcpy() is deprecated; use strscpy() instead.
+Changes in v3:
+- Expend commit log and comments.
+- Put argument @tsk at end in cgroup_attach_lock/unlock.
+- down_write global cgroup_thread_rwsem when flipping favordynmods to
+synchronize with task between cgroup_threadgroup_change_begin and end.
+- Rename group_rwsem to cgroup_threadgroup_rwsem.
+- Fix bug causing abnormal cgroup migration due to threadgroup leader changes。
 
-Link: https://github.com/KSPP/linux/issues/88
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- kernel/debug/gdbstub.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Changes in v2:
+- Use favordynmods as the enabling switch.
+- Determine whether to use the per-thread-group rwsem based on whether
+the task is NULL.
+- Fix system hang caused by acquiring cgroup_threadgroup_rwsem inside
+rcu_read_lock.
 
-diff --git a/kernel/debug/gdbstub.c b/kernel/debug/gdbstub.c
-index f625172d4b67..22fe969c5d2e 100644
---- a/kernel/debug/gdbstub.c
-+++ b/kernel/debug/gdbstub.c
-@@ -30,6 +30,7 @@
- #include <linux/kgdb.h>
- #include <linux/kdb.h>
- #include <linux/serial_core.h>
-+#include <linux/string.h>
- #include <linux/reboot.h>
- #include <linux/uaccess.h>
- #include <asm/cacheflush.h>
-@@ -547,7 +548,7 @@ static void gdb_cmd_setregs(struct kgdb_state *ks)
- 		error_packet(remcom_out_buffer, -EINVAL);
- 	} else {
- 		gdb_regs_to_pt_regs(gdb_regs, ks->linux_regs);
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 	}
- }
- 
-@@ -577,7 +578,7 @@ static void gdb_cmd_memwrite(struct kgdb_state *ks)
- 	if (err)
- 		error_packet(remcom_out_buffer, err);
- 	else
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- }
- 
- #if DBG_MAX_REG_NUM > 0
-@@ -630,7 +631,7 @@ static void gdb_cmd_reg_set(struct kgdb_state *ks)
- 	i = i / 2;
- 	kgdb_hex2mem(ptr, (char *)gdb_regs, i);
- 	dbg_set_reg(regnum, gdb_regs, ks->linux_regs);
--	strcpy(remcom_out_buffer, "OK");
-+	strscpy(remcom_out_buffer, "OK");
- }
- #endif /* DBG_MAX_REG_NUM > 0 */
- 
-@@ -642,7 +643,7 @@ static void gdb_cmd_binwrite(struct kgdb_state *ks)
- 	if (err)
- 		error_packet(remcom_out_buffer, err);
- 	else
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- }
- 
- /* Handle the 'D' or 'k', detach or kill packets */
-@@ -656,7 +657,7 @@ static void gdb_cmd_detachkill(struct kgdb_state *ks)
- 		if (error < 0) {
- 			error_packet(remcom_out_buffer, error);
- 		} else {
--			strcpy(remcom_out_buffer, "OK");
-+			strscpy(remcom_out_buffer, "OK");
- 			kgdb_connected = 0;
- 		}
- 		put_packet(remcom_out_buffer);
-@@ -676,7 +677,7 @@ static int gdb_cmd_reboot(struct kgdb_state *ks)
- 	/* For now, only honor R0 */
- 	if (strcmp(remcom_in_buffer, "R0") == 0) {
- 		printk(KERN_CRIT "Executing emergency reboot\n");
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 		put_packet(remcom_out_buffer);
- 
- 		/*
-@@ -739,7 +740,7 @@ static void gdb_cmd_query(struct kgdb_state *ks)
- 
- 	case 'C':
- 		/* Current thread id */
--		strcpy(remcom_out_buffer, "QC");
-+		strscpy(remcom_out_buffer, "QC");
- 		ks->threadid = shadow_pid(current->pid);
- 		int_to_threadref(thref, ks->threadid);
- 		pack_threadid(remcom_out_buffer + 2, thref);
-@@ -773,7 +774,7 @@ static void gdb_cmd_query(struct kgdb_state *ks)
- 			int len = strlen(remcom_in_buffer + 6);
- 
- 			if ((len % 2) != 0) {
--				strcpy(remcom_out_buffer, "E01");
-+				strscpy(remcom_out_buffer, "E01");
- 				break;
- 			}
- 			kgdb_hex2mem(remcom_in_buffer + 6,
-@@ -785,14 +786,14 @@ static void gdb_cmd_query(struct kgdb_state *ks)
- 			kdb_parse(remcom_out_buffer);
- 			kdb_common_deinit_state();
- 
--			strcpy(remcom_out_buffer, "OK");
-+			strscpy(remcom_out_buffer, "OK");
- 		}
- 		break;
- #endif
- #ifdef CONFIG_HAVE_ARCH_KGDB_QXFER_PKT
- 	case 'S':
- 		if (!strncmp(remcom_in_buffer, "qSupported:", 11))
--			strcpy(remcom_out_buffer, kgdb_arch_gdb_stub_feature);
-+			strscpy(remcom_out_buffer, kgdb_arch_gdb_stub_feature);
- 		break;
- 	case 'X':
- 		if (!strncmp(remcom_in_buffer, "qXfer:", 6))
-@@ -822,7 +823,7 @@ static void gdb_cmd_task(struct kgdb_state *ks)
- 		}
- 		kgdb_usethread = thread;
- 		ks->kgdb_usethreadid = ks->threadid;
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 		break;
- 	case 'c':
- 		ptr = &remcom_in_buffer[2];
-@@ -837,7 +838,7 @@ static void gdb_cmd_task(struct kgdb_state *ks)
- 			}
- 			kgdb_contthread = thread;
- 		}
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 		break;
- 	}
- }
-@@ -851,7 +852,7 @@ static void gdb_cmd_thread(struct kgdb_state *ks)
- 	kgdb_hex2long(&ptr, &ks->threadid);
- 	thread = getthread(ks->linux_regs, ks->threadid);
- 	if (thread)
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 	else
- 		error_packet(remcom_out_buffer, -EINVAL);
- }
-@@ -913,7 +914,7 @@ static void gdb_cmd_break(struct kgdb_state *ks)
- 			(int) length, *bpt_type - '0');
- 
- 	if (error == 0)
--		strcpy(remcom_out_buffer, "OK");
-+		strscpy(remcom_out_buffer, "OK");
- 	else
- 		error_packet(remcom_out_buffer, error);
- }
+Yi Tao (1):
+  cgroup: replace global percpu_rwsem with per threadgroup resem when
+    writing to cgroup.procs
+
+ include/linux/cgroup-defs.h     |  12 +++-
+ include/linux/sched/signal.h    |   4 ++
+ init/init_task.c                |   3 +
+ kernel/cgroup/cgroup-internal.h |   4 +-
+ kernel/cgroup/cgroup-v1.c       |   8 +--
+ kernel/cgroup/cgroup.c          | 105 ++++++++++++++++++++++----------
+ kernel/fork.c                   |   4 ++
+ 7 files changed, 101 insertions(+), 39 deletions(-)
+
 -- 
-2.51.0
+2.32.0.3.g01195cf9f
 
 
