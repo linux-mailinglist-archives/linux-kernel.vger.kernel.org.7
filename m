@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-805277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952F0B48655
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D83B4865D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9603917DF45
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C53A189A75F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFBD2E9EA3;
-	Mon,  8 Sep 2025 08:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4860A2EA163;
+	Mon,  8 Sep 2025 08:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lcd1NydD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qCVR9Clp"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA2B1DA4E;
-	Mon,  8 Sep 2025 08:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5AD1D63EF;
+	Mon,  8 Sep 2025 08:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318650; cv=none; b=t8zLH2EF6dBmjDWTWqCi287Zkb1KX1us9fv0AL3DCH6XjPbTnl2gzijxygDWawNvfHaT8G+C+w73BVsqZ6dp7lIryitwDzljmmKAI8gccjJ+NpaMN1/htl6FdXm3Z0kFpRt+N6xOV4HOHebCnl+MgHLtm8AsoXbVzv0CEpNImEs=
+	t=1757318785; cv=none; b=TdKpZeCNEaPzaC1P6X1EOJ28TnLcKW/tAkF+gkySYbL21O1bATiDxkf9Q4e27keWoby2FMAgCFPE7avYS/l4360fd9kuT0bL4w21zYeNQGEnUnsdgs3xTdp3E2cCE4285hh9+ZLffETvy5QXSLlbT3UU7i9xU0Il9PXzhYEtOOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318650; c=relaxed/simple;
-	bh=8I8BEQe22FQhmPZwjcLEncsTKcA07/HbEAELpGAikv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=l05ek3uD5feRFwOLi/7oCqAgMcuGYVEpi/7z4/W2MzhEQY4IYqt5BEYVNmpEa0lLwEbGry8p1QBvPAuiI29/f8wnw4RSanFusvgb/0nOTBQs16J7UXyWZT9Rviuiat84lBzfVt6XiKH9EQkge8gJJ8l9iJgUY8drmDp5BxxJ7iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Lcd1NydD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757318647;
-	bh=gilcZW3LQ5UHWEK7e4mcAIbr3gAjNGWqMMZJyVdnPcc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Lcd1NydDOV4V8x2Se9LLSLdn7zTNYvywCHqEH8TLRxgIUulVJ2FaRe3lKiS8v01F2
-	 OelbXlqEWcpIoGqGXHuw61nhktxBaZCPq8aYvUt/KvsL29ZEhjSLmZ+MQnzy3sgiXa
-	 8YbwBb0tH9BA06S8+P3IrkxmBA2dyiZNBCHTBYVxcJtCV6LGp/HDKq4CKRyCAyRzng
-	 HojYA0K6Ysvw0X+bzCC8nY7jLxnwoqoqb6fJ36Q8Rls+8GVSM+a0TOjWjJa9Z66EEZ
-	 wLVR766rsUGwOgwyAd4cqC4U8+TWgYMPgIkmxa9u+Fa+S0d68OXtaCpr1GOIqLo5Ca
-	 xuKsM0K34DZzQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cKzxM1h1kz4wBC;
-	Mon,  8 Sep 2025 18:04:07 +1000 (AEST)
-Date: Mon, 8 Sep 2025 18:04:06 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>,
- <linux-xfs@vger.kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the xfs tree
-Message-ID: <20250908180406.32124fb7@canb.auug.org.au>
+	s=arc-20240116; t=1757318785; c=relaxed/simple;
+	bh=AADTfuXK3QYcRRdYSB8hq9lZrJCS1ZTo9xHteQZpwig=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObwekjLn7rzvrJ0fpnkU1gcbGd64AWkOb99Gba9s5x06HJyj/lii1JqEkWbC7ojrFc9nFziBt+ZA9Lqi2yXAsfsB9tEZNEimUzmlovABm3nVW4RM/I7OQ46mmiZxpzQJ/4kSTqn46QbOiOA9a08JXVS6l4vWKFFc4lvbTFa7fZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qCVR9Clp; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58886BF8009467;
+	Mon, 8 Sep 2025 03:06:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757318771;
+	bh=5100fgc6dG24IM2sWni8imeShu+6586F+2SnyRoG2QM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=qCVR9ClpjJQu9QVcDplCWEXMZM6+VSGyNZRyzZ9Tfx9I3VLcDobIhc117PBYWVPMz
+	 VUZFOqc8U2vqfgHV0fxKRM86qLVnMMEx/jjtXtA+91lUptuRcSTn0b3jTljOQ+/kk2
+	 wtRtEyoU0+B7jjVmOxgWNZQ6qje5RrsQ/lzYHCi8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58886BHa3621244
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 03:06:11 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 03:06:11 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 03:06:11 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58886AW6553673;
+	Mon, 8 Sep 2025 03:06:10 -0500
+Date: Mon, 8 Sep 2025 13:36:09 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <helgaas@kernel.org>, <kishon@kernel.org>, <vigneshr@ti.com>,
+        <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v3] PCI: j721e: Fix programming sequence of "strap"
+ settings
+Message-ID: <578e5125-21d8-40c8-aaeb-389599cdd32b@ti.com>
+References: <b2fb9252-6bfc-45da-973a-31cdfcc86b3d@ti.com>
+ <z3ubracmtlq23yicbrhqjgnzrfoqheffm6cvhfnawlvbu4cmmp@ddu2o7xhw5tz>
+ <48e9d897-2cd3-48ef-b46a-635ae75f5ac6@ti.com>
+ <3wc3t6y5gzzspgfeklsqo3bupfp6gsfy6mls6t66hflcqlqsfk@cu26wv3sow4y>
+ <9d2bba15-52e4-432a-8f7f-a0f5d7c2e4ad@ti.com>
+ <7hxdcjm7evlphkldct7seytno4is7rjkx5vquvtfhpdkzxdhu6@yocrjgzciwu3>
+ <08b87b5f-838b-4f40-ae90-10ded134356e@ti.com>
+ <whinfqhjgqbbvlnuzgbukklqi6gocjji4gakqyycovrse4qq6s@6xq5imqbzvux>
+ <a0e1d273-239b-44e5-8ccc-0ba83b2b5839@ti.com>
+ <wvrouqouhrpoexmggwbc6vjz4xflnylzxrb2ffw3ai7656ehrt@keb53gb2tm2o>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/y/fgxec43_fxxxkFyJV6tTB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <wvrouqouhrpoexmggwbc6vjz4xflnylzxrb2ffw3ai7656ehrt@keb53gb2tm2o>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---Sig_/y/fgxec43_fxxxkFyJV6tTB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 08, 2025 at 12:58:51PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Sep 04, 2025 at 11:33:00AM GMT, Siddharth Vadapalli wrote:
+> > On Wed, Sep 03, 2025 at 06:51:14PM +0530, Manivannan Sadhasivam wrote:
+> > 
+> > [...]
+> > 
+> > > 
+> > > I thought put_noidle() will just reduce the refcount and not invoke the
+> > > idle/suspend callbacks, but I seem to be wrong here.
+> > > 
+> > > Anyway, I guess we have no option here other than to drop the
+> > > pm_runtime_put_noidle() call. This will keep refcount as 1 and will prevent the
+> > > parent (genpd) to not enter runtime suspend, but we have to live with it (this
+> > > was also the previous beahvior as well).
+> > > 
+> > > Btw, pm_runtime_set_active/enable change belongs to a separate patch.
+> > 
+> > I will work on and post the v4 patch with the following change:
+> > - The commit message and the comment in the code will be updated to
+> >   indicate that the runtime PM APIs are used to cause 'genpd' to power off
+> >   and power on the controller.
+> > 
+> > I assume that the driver changes can remain as they are in this patch given
+> > that the existing behavior has to be preserved. As j721e_pcie_ctrl_init()
+> > programs the strap settings, powering off the controller via
+> > pm_runtime_put_sync() and powering it on via pm_runtime_get_sync() shall
+> > be implemented within j721e_pcie_ctrl_init() itself leaving the rest of the
+> > probe function as-is. To summarize, the driver changes will be:
+> > 
+> > 	j721e_pcie_ctrl_init()
+> > 		...Existing code...
+> > 	+	Add pm_runtime_put_sync() here to power off controller
+> > 		...Existing code to program strap settings...
+> > 	+	Add pm_runtime_get_sync() here to power on controller
+> > 		...Existing code...
+> > 
+> > Please let me know what you think.
+> 
+> I would've preferred changing the runtime PM calls as I suggested initially, but
+> still we would keep it incremented which brings the net effect to the same.
+> 
+> So you can drop my initial comment and post just this patch with improved patch
+> description.
 
-Hi all,
+Thank you for the clarification. I will implement the above in the v4
+patch.
 
-After merging the xfs tree, today's linux-next build (htmldocs) produced
-this warning:
-
-Documentation/admin-guide/xfs.rst:365: ERROR: Malformed table.
-Text in column margin in table line 8.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D
-  Name                          Removed
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D
-  fs.xfs.xfsbufd_centisec       v4.0
-  fs.xfs.age_buffer_centisecs   v4.0
-  fs.xfs.irix_symlink_mode      v6.18
-  fs.xfs.irix_sgid_inherit      v6.18
-  fs.xfs.speculative_cow_prealloc_lifetime      v6.18
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D [docutils]
-
-Introduced by commit
-
-  21d59d00221e ("xfs: remove deprecated sysctl knobs")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/y/fgxec43_fxxxkFyJV6tTB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi+jfYACgkQAVBC80lX
-0GzlHggAmHts8c7Mcip8lDbsxhfapjyWMqBpxaQWuvUgZJViW5iZ24pi1A0excyv
-oxB9Kin2ga9Dk8VJQ18q4kbFk269rZytpO9nN5/uL1AcFslAJJZXE/NpR+o9viEt
-/7pKP4lZvO5wrS2HwgVU7zuGyRqX3fAyJKSJrr4BHC2IGfVM/uk1b8hR+jcYYmv9
-zlEipAWUna1g4uXUIwelN6agmJcZzWHjuH4Gn/KEbek0xmLfKZjktd2ymHgSmmI3
-wTZOKo15dsOomQA9BrwWj201bIWqRGS1Kz3TGvvyiuXXSBYyUCB9CTTpau1gbPtt
-/moEcYPpudmYgvHc1SfAyJ/qqodjRw==
-=wpKr
------END PGP SIGNATURE-----
-
---Sig_/y/fgxec43_fxxxkFyJV6tTB--
+Regards,
+Siddharth.
 
