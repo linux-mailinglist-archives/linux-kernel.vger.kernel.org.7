@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-806734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF25AB49B20
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40D1B49B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 637017B454E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6295E170B13
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E302D94BC;
-	Mon,  8 Sep 2025 20:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297442DA77D;
+	Mon,  8 Sep 2025 20:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R9KGOyzH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AbAtJhy5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70842D948D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F682277CA1
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757363551; cv=none; b=b4nK+bWZpsG44phZbeOKUtV1CwfEnHyAUM9zJoNKyIzutb25bGF+wMMC+8fLPa3jUXkBX8RzSYH2kUzIOo3l2JpFVYupaGXdiyasJNtIgUYPwQjRiYpB+xtm+aeHGN+Fckm0MFdHlkx0yHj9Qs3V2apGpXbqaVqlBUduZauZtOA=
+	t=1757363624; cv=none; b=PzbbkLJ+tDK9zTen1GFQJbBHo9twAu6CtZ0iygKMgU/PsPG+m2Dc+iRsFEjoTIwGJTOH2eSn3pKBJI7kmijdbUGxYCWJCXMPIrsjZbANpMAZbTlsAhuLQLjQ72MVdotshBPAAbuTJMkXzyeMpERscvH7RzTWnwp343y2hUXW94o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757363551; c=relaxed/simple;
-	bh=ISzBikuO5/AQUfbX6TaDawBdF3DKRyP9ExusajZudB0=;
+	s=arc-20240116; t=1757363624; c=relaxed/simple;
+	bh=3sTc+qXaLOHGeLgl27T1DhIBpeJuOmTKIGmpv8cu4tI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jhVT4uT1AzHTSs6bdQYWvJqqoIOpkEeevwR+5S+AknRhUjr7Q1k8L23Nvl0T/zYxRwZfWBqkYpbVrT9xkyiRZgXE+txIHxn/Uv2BQ6vFEb9yG43BWuqegwpsbB7FF315gm0Nnqf7PtlM4aI9WTI1UaDnny2+dlxthQk6p9h0ixU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R9KGOyzH; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=hByfhpYydUxKVZiBxKaGinlhdOQOwPukozOtZTOdXTTLJzI3rFh8arircGlZostSisADJeJILH5I6GuSzN51I6KqZo/ux73/q1f84C+fhBf6waFI/Neo0USgkdLle/20Jgjs/fQSkLOsKLJFHQDqfu9EHlKGvlK4MeioXiYMXZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AbAtJhy5; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757363548;
+	s=mimecast20190719; t=1757363622;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1ybgcdEsM9ns8A+Pl8rfnblzohG3wZoz4Ud/GugpTAQ=;
-	b=R9KGOyzHsCXnA2VpBwktUe/s56br26ht6g54iKVzZ1ow/nMu+SQIGhazTA2UyfaqCjC3K/
-	pv3lLegT6AqJ9JDSAnlB6Z5D8F/X0Ed5vMLG6D9F5yUDga8kk6zD8eNibLTIS+3V2LHdvN
-	+wg/xJIwAKs7g8EEfQOqqKC2RYOX/us=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cHPqwmnHSstA5stVCqP66sCY4AX/amrBThkXwUSdq4A=;
+	b=AbAtJhy5uVYtqmz7l+sBEmhDoAJq0r490W3oGrXP+PhzkLbOh+ar2hwpP8M6EJu0FFwWN3
+	4Bi/lD9dcAjm9yax4L4kTBqzFcDzWVfrRmqugiN9k1TTFYs6wFtBgZP0Wlwpb5Xtb0/J+G
+	wXfw9aNk7drciHnVYEX8qSXSJtUOn0A=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-kWqBH14fOfGPzKiBBmUp5Q-1; Mon, 08 Sep 2025 16:32:27 -0400
-X-MC-Unique: kWqBH14fOfGPzKiBBmUp5Q-1
-X-Mimecast-MFC-AGG-ID: kWqBH14fOfGPzKiBBmUp5Q_1757363546
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3e61deaf253so1710187f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:32:27 -0700 (PDT)
+ us-mta-527-sM6YB0XAOFuWMe28WwsK-A-1; Mon, 08 Sep 2025 16:33:40 -0400
+X-MC-Unique: sM6YB0XAOFuWMe28WwsK-A-1
+X-Mimecast-MFC-AGG-ID: sM6YB0XAOFuWMe28WwsK-A_1757363619
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b98de0e34so37938405e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:33:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757363546; x=1757968346;
+        d=1e100.net; s=20230601; t=1757363619; x=1757968419;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1ybgcdEsM9ns8A+Pl8rfnblzohG3wZoz4Ud/GugpTAQ=;
-        b=SVDKNWm/ND+PJ9hooQWo3wcECcjfHy21iJKmTU00oMUPHWrDrrRD1hZ991iu5dCgPf
-         JXSAidj9y0rbVkbmIXqK+/Y0RegJMggfQjYO3hBLboI3x2nn9nBpxTdegr1EFuBdtP8s
-         sFlE922QxqkvBH5golAm5GksaAMqfs9BCjQ5zQVXlPndRluDLtbRyluGIYBU1sJlf0i8
-         38SZ1RG2ERD9d0pmoMKPHZ6KQkC8ImiTvUL6fjDh5atuYo1IKCuo9ArlfFzXjZ8PgVVs
-         Jhwb9buWNBlxlSzWZ8IOnWRWvfaTrRT+Gc7d0sePOd1Yer/INjozNT4zcuKIDYXWj3Ed
-         hMEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGlzeH7XDjSQjrkDmjLwJit8BUWlm+EsP/pF8rrqfX9Q1rvEiXbcsYTnQFeqDuArcMSHMYF51DYhqKWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQmuyVux9vK6Il+vfvuuvBz5pUPqxFDnZavH37x6HoylfCjBSI
-	+ncW7UaGIpgR0b/OR5yNIlogxg3vG6ZbZo5CxCJgGqRwguxOKX10lK2XDo9xi6ODEeGop4X7RBc
-	Ga1rr5a2FB+RGRIEo8XiairhuT6MJZ3+UdlJS9adpQik1vSHrSdtYPo8K74BAi4Ym4A==
-X-Gm-Gg: ASbGncuw7+5B0rdUFJWLpaU116crtmAa6xbwnv0K/B59ts/BYddyIubJLP4BbAb1T1U
-	NatZwHvbymXFwmeimD42go2gQo1lOYf3dptX3+OUgkiFTUL3c5HN5ELkvjsS8afp8OdOu5mju8Q
-	kN9m09eNuzSEz+0zoyP+6r6Ing/dfSSeJkwBGixRxDGu6g7GyHob7BtFHBZdF6K/K4kJEFsHWNB
-	k1ExP09zsseIzp4vBIXoRNrx/pCicFZove5WU0uiCnLMfhLDsOitvpB0GDzaG/5dM5T8xL/hYLd
-	mxv4Fm+RkIxeYQhJa3dNVnzHah2HQtlrf39GudUj8zQzvcaCls7asgAX/Tx13KH1vym3Lxw=
-X-Received: by 2002:a05:6000:40da:b0:3e2:b2f0:6e57 with SMTP id ffacd0b85a97d-3e642f91589mr8254852f8f.36.1757363546312;
-        Mon, 08 Sep 2025 13:32:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuDegDqgJ6N0gGE/Lb3UGdgK1piEs+PdHsr5oQcTDbsibAuF1ZyiUHJADT2Pc11YvmZEdCvw==
-X-Received: by 2002:a05:6000:40da:b0:3e2:b2f0:6e57 with SMTP id ffacd0b85a97d-3e642f91589mr8254820f8f.36.1757363545827;
-        Mon, 08 Sep 2025 13:32:25 -0700 (PDT)
+        bh=cHPqwmnHSstA5stVCqP66sCY4AX/amrBThkXwUSdq4A=;
+        b=hXdR4IJchF74na7dTCGtjR07Ctv9vAOPxNnjTVn2LjLIYySd8u90SEZ3vlJXIVxvyd
+         xiJGegnkZdoc+L+UhNGYHVFreLO8sOBxWvek0YRgATDfm7rf912RNwTdwHvh/mBBE8re
+         VvW8/2Xylb5rX7HSqtqMraSMh0qyIX1l4YJHqnGV7CIrkNm+OxoNwmeoQ0cbd5fce+Tt
+         VHmWz9jHCM2PI0VB8Nj7MB+TUotKgkuXmVERj5o5NoCv5X41Hqm1Cwid8dq1nTD3Pobw
+         BOCR1bfo/JHVrPYxTKJOhffQX111TofY6ZoCrCNFii6GGYwdHN2+fTDrTroKe5fZCnjX
+         NShg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrwOq0TrDo6ZJyxKAci/FUcfpa8WNGkmh9KFciwSsS/uIvU6JP5HK4UcVVMCxaX9m3Ki++P8XDHD9JNV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7urZgyl54eaObbvlKdK5/ehm9hTrcCGl3haYCXqmvO/oG7++X
+	pRgKgz2syzB9ws/4BlD5FpC9IK/0B48FVikqzW81Gvsyyg9oV8J/UQgeWxHMPIY5pfctiKrZh32
+	+uJqVIB2xP3mY4pF5F0f6T4k/SkhtVKEcXxTB5NrYyBIQtaOs1NFW/PMfvbYF2TVczA==
+X-Gm-Gg: ASbGncu/ot5H/Jh/89pTnQ2THghnpZqXLK1CMJAThmPqfVMCgf0cnIWGuNq49HOCTLL
+	vHeSd5Er8QqHv/e11RppeZya+AmyJia/Qcm73erzvglOsOcP+S5iJJdtf1lcAwbJCQ0fTW7Thxa
+	fOvBKqf6T5z8v1vTdkXTHO2UZrnA0Ltz9KhtkWibXC2o019ZGIq8JcaIibLGm59767DKbK1AHIZ
+	anhMr3DVYm13DBCpLBhX9qm+FA9jG3jul5R8cv3zk3QZMRh5S9uH2WilxPsEC7l7DVoO9TPzAGS
+	AzDTDapgEmPgC6qyz4IdEqlTiJdSmXk9fYaEwdlq8fl1Bfj7VFk5LqfxgX2WHxICwYtKAZw=
+X-Received: by 2002:a05:600c:1d16:b0:45c:b56c:4194 with SMTP id 5b1f17b1804b1-45ddde8984amr78758645e9.2.1757363619483;
+        Mon, 08 Sep 2025 13:33:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHojw/7zMS8q1nBZVWmxulh/3tuG5nzWGKxu9Rz7LjIUliDj5x4LVgR4QAaf7xyXOYsL8WMnw==
+X-Received: by 2002:a05:600c:1d16:b0:45c:b56c:4194 with SMTP id 5b1f17b1804b1-45ddde8984amr78758485e9.2.1757363619114;
+        Mon, 08 Sep 2025 13:33:39 -0700 (PDT)
 Received: from [192.168.3.141] (p57a1ae98.dip0.t-ipconnect.de. [87.161.174.152])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm31349052f8f.58.2025.09.08.13.32.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfcc2f54sm96042895e9.2.2025.09.08.13.33.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 13:32:25 -0700 (PDT)
-Message-ID: <5b7e71e8-4e31-4699-b656-c35dce678a80@redhat.com>
-Date: Mon, 8 Sep 2025 22:32:22 +0200
+        Mon, 08 Sep 2025 13:33:38 -0700 (PDT)
+Message-ID: <57a2bd9f-cc05-442a-93ab-0b1e4eb5c6e7@redhat.com>
+Date: Mon, 8 Sep 2025 22:33:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,25 +88,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/22] Add support for shared PTEs across processes
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
- bp@alien8.de, brauner@kernel.org, bsegall@google.com, corbet@lwn.net,
- dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
- ebiederm@xmission.com, hpa@zytor.com, jakub.wartak@mailbox.org,
- jannh@google.com, juri.lelli@redhat.com, khalid@kernel.org,
- liam.howlett@oracle.com, linyongting@bytedance.com,
- lorenzo.stoakes@oracle.com, luto@kernel.org, markhemm@googlemail.com,
- maz@kernel.org, mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
- mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de, osalvador@suse.de,
- pcc@google.com, peterz@infradead.org, pfalcato@suse.de, rostedt@goodmis.org,
- rppt@kernel.org, shakeel.butt@linux.dev, surenb@google.com,
- tglx@linutronix.de, vasily.averin@linux.dev, vbabka@suse.cz,
- vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com,
- willy@infradead.org, x86@kernel.org, xhao@linux.alibaba.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+Subject: Re: [PATCH] MAINTAINERS: add Jann Horn as rmap reviewer
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@surriel.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250908194959.820913-1-lorenzo.stoakes@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -153,64 +142,23 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+In-Reply-To: <20250908194959.820913-1-lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20.08.25 03:03, Anthony Yznaga wrote:
-> Memory pages shared between processes require page table entries
-> (PTEs) for each process. Each of these PTEs consume some of
-> the memory and as long as the number of mappings being maintained
-> is small enough, this space consumed by page tables is not
-> objectionable. When very few memory pages are shared between
-> processes, the number of PTEs to maintain is mostly constrained by
-> the number of pages of memory on the system. As the number of shared
-> pages and the number of times pages are shared goes up, amount of
-> memory consumed by page tables starts to become significant. This
-> issue does not apply to threads. Any number of threads can share the
-> same pages inside a process while sharing the same PTEs. Extending
-> this same model to sharing pages across processes can eliminate this
-> issue for sharing across processes as well.
+On 08.09.25 21:49, Lorenzo Stoakes wrote:
+> Jann has been an excellent contributor in all areas of memory management,
+> and has demonstrated great expertise in the reverse mapping.
 > 
-> Some of the field deployments commonly see memory pages shared
-> across 1000s of processes. On x86_64, each page requires a PTE that
-> is 8 bytes long which is very small compared to the 4K page
-> size. When 2000 processes map the same page in their address space,
-> each one of them requires 8 bytes for its PTE and together that adds
-> up to 8K of memory just to hold the PTEs for one 4K page. On a
-> database server with 300GB SGA, a system crash was seen with
-> out-of-memory condition when 1500+ clients tried to share this SGA
-> even though the system had 512GB of memory. On this server, in the
-> worst case scenario of all 1500 processes mapping every page from
-> SGA would have required 878GB+ for just the PTEs. If these PTEs
-> could be shared, the a substantial amount of memory saved.
+> It's therefore appropriate for him to become a reviewer.
 > 
-> This patch series implements a mechanism that allows userspace
-> processes to opt into sharing PTEs. It adds a new in-memory
-> filesystem - msharefs. A file created on msharefs represents a
-> shared region where all processes mapping that region will map
-> objects within it with shared PTEs. When the file is created,
-> a new host mm struct is created to hold the shared page tables
-> and vmas for objects later mapped into the shared region. This
-> host mm struct is associated with the file and not with a task.
-> When a process mmap's the shared region, a vm flag VM_MSHARE
-> is added to the vma. On page fault the vma is checked for the
-> presence of the VM_MSHARE flag. If found, the host mm is
-> searched for a vma that covers the fault address. Fault handling
-> then continues using that host vma which establishes PTEs in the
-> host mm. Fault handling in a shared region also links the shared
-> page table to the process page table if the shared page table
-> already exists.
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+> I spoke to Jann off-list and he kindly agreed to become rmap reviewer :)
 
-Regarding the overall design, two important questions:
+Nice!
 
-In the context of this series, how do we handle VMA-modifying functions 
-like mprotect/some madvise/mlock/mempolicy/...? Are they currently 
-blocked when applied to a mshare VMA?
-
-And how are we handling other page table walkers that don't modify VMAs 
-like MADV_DONTNEED, smaps, migrate_pages, ... etc?
-
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers
