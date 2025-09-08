@@ -1,259 +1,301 @@
-Return-Path: <linux-kernel+bounces-806749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653ABB49B50
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:58:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519C0B49B53
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 911D27A2AD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35094E4806
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3272DCF41;
-	Mon,  8 Sep 2025 20:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD0C2DCF52;
+	Mon,  8 Sep 2025 20:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fwsAPDy5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mE7LVxrw"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2059.outbound.protection.outlook.com [40.107.236.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D41C3C11
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365111; cv=none; b=UOMM5UPyNEwsQoBkp/Ytwh9lq1lFzIJ1LCjPbiqsV9v+/tVMjtGaUyv9gl81wV4SOjSKFKszxdxNUrgcNe3Ta5pcPUKQJxAkqIuQqLyTABaIRM1eADngX1zzOWpuBoCon2AYhd0X9XiHOGkA6+BJQbb5OxDGMrOoFyIeqMyVdJE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757365111; c=relaxed/simple;
-	bh=NcjVrFQ/EeFSpDSdolgFk6WEv6hRfjhGaFe8s7KW78w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqhmH/zxQFldQ45SOGnHxE7ruWboPZ4wQLE7atImov+kaU0x0YpnSsw6+Yu04dxzmCr/ilwl0H20MZZu29XMBKgG/VQGfB49wPnnNxIvmWbsytZB58jJuEEtU0gWUEniXo1TgxxjQQMF23lR5VQ91qpkIl3SN8e3Khm1EqG5jRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fwsAPDy5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GI1WC014458
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 20:58:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XT4D6Rl6xH7fkqut4jVRGRITzuU+VSPL2bAYsUG2sK8=; b=fwsAPDy5ELsm5PqX
-	Fro65gKobXPjGVoAHUBkPxR0EE9A7aLm7onUviGKb37+JaUjjsWiBlZepLTJRWii
-	2gShlA3u8TTcS56DxxoS/AkQS55kqxTu+Eb1FfXJ4taHz+m5d51VfizsvrANYptr
-	LL2BOw2Y8lMqH3ykncbGTt1l9paupuF43t//RGdTL755WhZykTmjT6KGyKalOt3b
-	KDe79Ugy1RP3iSdXSymD/+Tt9AxWsWxHUPTw8nXUoQ8sMBDh29genLN1OO2Od06X
-	9r81FgOvnQ1SLSxPiWpD2x5soj78B8rl1XyFTjcGgzIzD2UvkfBMjzS4IAXqw0Na
-	J4+nUQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490aape6jy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:58:22 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5ee6cd9a3so89206911cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:58:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757365101; x=1757969901;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XT4D6Rl6xH7fkqut4jVRGRITzuU+VSPL2bAYsUG2sK8=;
-        b=opemC/Kt4PXY74byZUsMh6uucdJn6qtvslszd00vOtWl2/dZ9YQajA0ULD2e0DTkfi
-         hppSudjWfdGEjzsnyEf0/3viUZoZiIM6dYne/79gUvXdlqnz6dXJmqD0WwP4s7REUGpf
-         uITLAGgG0yFYI0FzOnB9BS6E5INrXw8W2xYKaAWB4G7qafcemMWbVTEknlIHLDVN3bw+
-         4gcQgGItvvKcf2kCs2amqRHIkkqVXLNfhRDB0SUXNGg9ui+zGsorm2Hz7vRaee9jBDLx
-         pLJ57cpgSpTkHnz8sWzClfLQZgZ5f53RvEqEMUUwVCZTnOH8cRNwyqqu2ZM05QDQbGbC
-         a/bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQErOlgibBxLe8L7gSp3g0nYvH1oA7esyqTbb0PUd7zlcrzMaAalubE26VSxvd55ANtjdfVBkhZmD9XOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF4f5VMEZpCogt+lrCk8gjncNFNm2e0AsmbgPVmVkTuyvi3YlY
-	j4ImtY7CR28/QU8DZaliww3An/THXyB0QISyzozp1IC/VCAY4THY9uwqocxo7FQV6kBDDMwR3yw
-	tC6i/ImjDCBdEzCN1bi1cxaPktu6+GZO4AmB1glXh1iqPZg5GSwhe1wU+E0CMdZtd7mk=
-X-Gm-Gg: ASbGnctdjbKD1gMqXWJOUkGR3TUQJ/mljUBRkSkHFw3trsZbMiEMEh828a/plrb2gjA
-	D2GhMxQnZ3kf9GvYHHNLXuU/uX0HYpFrtj+0+D4pE72gIuDoNthY4+qbKQjKDnCAjW6NsE+tqog
-	XB2aRPuwKdA+buJdPRyxpWM0Sch+j4GqW4Whcuxt4pnDk1IccKQj5pDEXmCVY0w9ZP9GEdT9YsR
-	dHfnrW2qh4rBQT1cZHTAtvXLpH2z0Op36EmH3XwYpE3QSbxpS9lXJjczNoHlz7ldSEVhMlwaO7M
-	SpxfsGKBFVBhzqRQELCJ57Whgr3+jdt3F556bra899O1hvmF7hFhdw2tyCyizPmj4IS3MIFfsOM
-	LtIIv11Nk22/WnRyJg2V2391XWUQWGO9fJr+HXL2GD56M51n83R+e
-X-Received: by 2002:a05:622a:164a:b0:4b4:8f35:c902 with SMTP id d75a77b69052e-4b5f8386268mr101015461cf.4.1757365100923;
-        Mon, 08 Sep 2025 13:58:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgGo4AskYYA97bXQw5ZnjKY3trY7Q/2Y1T6Qh64u6FXmuTPBJyX/pqKAgqBTyfCqSsjgeyRA==
-X-Received: by 2002:a05:622a:164a:b0:4b4:8f35:c902 with SMTP id d75a77b69052e-4b5f8386268mr101015111cf.4.1757365100187;
-        Mon, 08 Sep 2025 13:58:20 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f50bfda3sm36656851fa.62.2025.09.08.13.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 13:58:19 -0700 (PDT)
-Date: Mon, 8 Sep 2025 23:58:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ryan Eatmon <reatmon@ti.com>
-Cc: rob.clark@oss.qualcomm.com, Rob Clark <robdclark@gmail.com>,
-        Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-Subject: Re: [PATCH v2] drivers: gpu: drm: msm: registers: improve
- reproducibility
-Message-ID: <dm22fmz6yuxrn7cwsviwg6djnbbwr2lq7aamatz3rjeeqf7r2q@mdmnolrb3ytq>
-References: <20250524-binrep-v2-1-09040177218e@oss.qualcomm.com>
- <6mgmrqmixjdftpjz2hvwjnsyh3wwylxuaih7yez2mdgjpcp3l2@zjr4ai6kkjxn>
- <CAF6AEGvJnSiyUJvBPusBZ+mriiP_vRiAgZnTyLSseu8Sdf9PXA@mail.gmail.com>
- <51cdf832-95a2-47bf-bc27-d43097883701@ti.com>
- <CACSVV02YrpYrvbFxKc808a=GjdxVjO=FjRG9gs_6qe5W-v=a9g@mail.gmail.com>
- <858dea80-1bd6-4bbc-9b98-9f959c00b304@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D41B1C3C11;
+	Mon,  8 Sep 2025 20:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757365172; cv=fail; b=T0pgmuG1XMEvXuCH0xwjTakpH+kia8xVAYyjSJ30OJdf/OZAmQ8wsGXCV36UWJ0EAhqnP7lqUSoDbb5lP+uMLAQESWD1Ae45m8kNORvYVkC+Id0l8vFnJqXgcXOHRXOqjon+7MqLcMYtALvZHdKwAFZ4vimoHpXj4lE6mPJO9EI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757365172; c=relaxed/simple;
+	bh=O4HMgLxEsieIREdsTNI3985uPVl2uYYEydJfIEHIbb0=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=WBC3y7zlaeOsBnWnhKOlnTg7MGiCcRgXkCZ9vDyxOh2lIUuTsZA5f9xZAw1W1ziiYEHNLQEoL0sJMO0HPhcVUqtVbEY0mLzdtA5cVBYm0mQHTGpzGIV3kzUrHHN/yzwG56rRCUVEdE+aDOzS+38oLmgwPTEhcfhPmDE+LhZCFXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mE7LVxrw; arc=fail smtp.client-ip=40.107.236.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b24Qr9l1+riCFl+3AGSxRFsYM8zW3s4vz5N9Bb6VBwAIVLPVB62VaD7KP+c1mg037IwKgvPg3Ad37O2jwmYQm1Hw5ekcCga46tN7EeVylA0Hgc3pGWUzs3lMjP00CrltJCX6eP/kjdTq33vZV25J5gxBNGjjqJwVhv7GCbk+YHmgvQ1jUTr32aKo7TWPoy+6ujlSHfM6CNfeq9s6Sns8hNpDut4kAAbhYVdDGrTuPQRKq9Oy0X01N/9AoAuqkAxJWLrJJ6jrBff+QdESWabw8QRNJgsEpGM52OoJG9pasnwu1fkDpcHJ/1owzGfdU8m2cmzbGthEmNtFcKBN/smr+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oD8ReJlQCK7ZmEhrd3Ay2LkNcaYwMWkrebDPWHd0ilI=;
+ b=uEmlaP8spdnwJP5bd6AJs5L7ilE/nZz0/wId2jSftMmAZugYPGQ1CQCGc8xbjABfPpx4TXppFr59NwJ7FfNVAukM29eNkx4gRcj20bHuUKlQbbBhcGozFZaCU0APdJsq3A1fbC/zBgY4CwGLI9P33g2/0euz5w0Zaf1ybBvs54mxFTeNVm8Hr8YeyQJza7nbBa+e3NW5YbvhTVysJ8SiHAVTQySrtTk+LMak5BpA44gGv7y9E0aUD3EOQoLhZVhasGw/TQNFMhPxcRD6H5rLVEmjLerMmTs6bUAft/DwRzH1rXaOV/gBjrF4nJ4QcjcImAo91hPNCdGcM94zjOz4jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oD8ReJlQCK7ZmEhrd3Ay2LkNcaYwMWkrebDPWHd0ilI=;
+ b=mE7LVxrwolh+VTvuUxsMQQUmFzJTnSdccs0bLtueRwYM3C/xRz12DczsGS3l+WvxR62cWZwZy+WudSg8wkGRjVzENm/HZP35Ulo0CtgOAngtklxZOcUH/X6BNxQpN7tu75FRRBjdbQ9qa9kEbaKh0+0bXyHToiZOkaTRa39qpN0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by CH2PR12MB4199.namprd12.prod.outlook.com (2603:10b6:610:a7::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 20:59:27 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%3]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
+ 20:59:27 +0000
+Message-ID: <486a17b0-94d9-779c-941a-848ffc7dfaec@amd.com>
+Date: Mon, 8 Sep 2025 15:59:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
+ herbert@gondor.apana.org.au
+Cc: nikunj@amd.com, davem@davemloft.net, aik@amd.com, ardb@kernel.org,
+ john.allen@amd.com, michael.roth@amd.com, Neeraj.Upadhyay@amd.com,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <cover.1755727173.git.ashish.kalra@amd.com>
+ <52ae3debd194536afcc0173e562cebb60eaef13f.1755727173.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 2/3] crypto: ccp - Add new HV-Fixed page
+ allocation/free API.
+In-Reply-To: <52ae3debd194536afcc0173e562cebb60eaef13f.1755727173.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR04CA0108.namprd04.prod.outlook.com
+ (2603:10b6:805:f2::49) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <858dea80-1bd6-4bbc-9b98-9f959c00b304@ti.com>
-X-Authority-Analysis: v=2.4 cv=eMETjGp1 c=1 sm=1 tr=0 ts=68bf436e cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=iGHA9ds3AAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=sozttTNsAAAA:8 a=pGLkceISAAAA:8 a=7zjSVlYyKO-sLu-dpfcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=nM-MV4yxpKKO9kiQg6Ot:22
-X-Proofpoint-GUID: Bym5zntJZjlTpyAabrElvv0YPZB7wIew
-X-Proofpoint-ORIG-GUID: Bym5zntJZjlTpyAabrElvv0YPZB7wIew
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX4RT6CnzLvdbY
- t0iZJI+FhXBm8G7eC/bGjXv4YbjYxVBO/5pUttYCNQ5oAgtpAPqwa7akZo2r0fVGgcE+wqbSrMO
- GQjvAgjRQ6dmqQmjAfcClglqmkLyR4iNA4L9MJdSNDXrKMQfasAaCGwM6griAwBtLtlUkxnqvRe
- 25TWkSWRL9I4lv7Boiqx9vgsOLrUchzMUObvhwWxZfcUDzpOd+qWoHHbD3mmIchqUuleT2quMcr
- jrZnnM0O7Wv9epBaYhVPm+xHnI3SxPLJQkGjf28ZFBwcW13OeX4wUFPCUXhO2qtlfrPxx053AK9
- EUmglScOng8lGPEETZ4s9jPbIryGZdSN4M+81xi/pMquP5oRZ0uPQ2hXZsXp2RPePZ41zHf5ruP
- zKrDq3N2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 adultscore=0
- bulkscore=0 phishscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060000
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CH2PR12MB4199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04a1e317-3d0d-4d85-7f40-08ddef1a98f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1lhZGJqNmJWOTlsaUNGUHJJZ055UFhFRDFDRllmeWZmTFppOW1mQXZDOVhK?=
+ =?utf-8?B?bHp3ZC9xcU5kNGNpM0FJdjJZV1BrNTBCZ0RUSXBSeWhoZmRxVEJ2eExoTnNH?=
+ =?utf-8?B?dUg0aHlsUTBLT2pTdXMxd3hPVHVucG9yVFdiWkxuOHdlMEhuay9CNDhKaC9y?=
+ =?utf-8?B?bC91MzNpMEQxQnNYL05tSU9veVd3anNvZzUrdWw0cmRkSUl5ek5KaWpwb2x6?=
+ =?utf-8?B?WHFFVHBFa2dlMUdBNWtBbXlRTXhvcUt2ZmNLR3QwekFhczErQU56dW1vak0w?=
+ =?utf-8?B?cVR4cGhOVUdHVzZXMW0xcUpPQTUzbU5SMVhwaTB6RFZCZGNjN3lQY3BUQ1Ey?=
+ =?utf-8?B?WHNCWnl1N0xUTUZkN2VRcFBIVUlDVWpqTm5LY0E3aDNRemNCZUVjbTFBbFZp?=
+ =?utf-8?B?UVFPSHdvNGxObWI3aHpzR1BOMldxWkd6UGJLSE56VVRKeXZXckd0ZlRpcklY?=
+ =?utf-8?B?OUsrQkVBaFdMTmhPUDRwT21NejREaTY4RldnTlhJczE1T0RpRjBSNXYyQTk1?=
+ =?utf-8?B?amk3eDJlTE9yZEhOZFdMNmJpV2F2U2k5RUEraWhQRSs3WnVhWFpadVN6eXhz?=
+ =?utf-8?B?TTNVK1RkKzZPTWRyeXNMazR2UW0rSnVnWFBrWEUwcGlZaWl6ZWhiOGM3U1Jj?=
+ =?utf-8?B?dEpXbkFuVWRPaitKR3Y3elBSQ1BRVGRpN3RpekExcjVjT3VzZUpsL1plcTNY?=
+ =?utf-8?B?eUcvbHlveDd0Z3ltY2NnY3BZcGFOQVJLK2IyS2tZZkh5ZTdQTExNU0JBTTUx?=
+ =?utf-8?B?RVRHbWtiWjJQTlcvaDhFZTFEK1pBa3NPUTlyWlVDbVpORTZORTEwR2NDNzk0?=
+ =?utf-8?B?Z0ZId04wS3JPVzhZOU1FalZFdE9ud2ZyeTd3UUQxdkZRb2ttTE53TUZaOE1o?=
+ =?utf-8?B?bWVSRHhlRWpGMGNEOFdCdlY1VE83NWRBdUJ0aWNlVmZkQi9UQmVsSDhNSFBr?=
+ =?utf-8?B?TVdKa2xYaE5MN2p2SFZ0M0NoMVJNdVh5UFdWQlZta002RHMvblJyalBrVUdX?=
+ =?utf-8?B?dUcvQzROQXNzc0tWRUVUTlBIRWhTN2FPVSs2TitSOFR6UXloVEJaYkN5T2lj?=
+ =?utf-8?B?SjVHL3JjRHkwZkxyT2VaUWZLS0NXdHNXZkZjOXFzVFFpSUhBOHRjRmRDWmMw?=
+ =?utf-8?B?b0dwZlJRTERRUlJNTlgzUHBEWk1hS3ZLYnhCNzgxSHY2eUMyVHVCY0IyWGFI?=
+ =?utf-8?B?K3g1WnZwbUtROEp1dDRoL1ZXQlU2WHRoVldVa3paaHZBa0pNMzVLc0xZUmwv?=
+ =?utf-8?B?VmZjNWU1Qmh5aElENGE0MFYwVGV3bUhLS09ySE40d09zMWRwZXJLMjZWYVRI?=
+ =?utf-8?B?RVZWODVqeTVBbmRwT25IbTM4MnU2aDhFbnhxVnJNanA1ZnphL0hPSHhzblNq?=
+ =?utf-8?B?UENQaEpTUGVHTGNQYkhWN3ZCR3gzUk0vZUNYRmNzRXQrWFpEeVRRQi9NTjBt?=
+ =?utf-8?B?bXdkajRYN0VnZnRvV2hvbit1TUMwOXJlbUJtVlp3MnZnRTdMWXdRWGRpMFNP?=
+ =?utf-8?B?anV4SktwQ2xZa0ZsdG9PTHRtYjlMcFFzc2s3dTZQNzNEWU9QTTBNakwzNDg3?=
+ =?utf-8?B?ZVd6aGtHZ1JmYkZYL3hRS2Q4dnRQaHhDZkl0VHh3dktRM3RXSmdyTStvNkhC?=
+ =?utf-8?B?U1NybFhhWTROZlhnL21ZbE5PaG54TkN1SzNnN2VzQUJFbXd2NHI0RDZiUkcw?=
+ =?utf-8?B?dkF0SzNKQWlhNkcyVVZEaXROSEJnazNJSjRKY05kWkxFTE9JdWkrZzdmUEdm?=
+ =?utf-8?B?Rk5tVGxEMzVhZEphc0FQTXdaaWR4bS9ZUXpjR2t4RWVpbDczMXF5STRIWkFj?=
+ =?utf-8?B?aE5malJ5WFRZNTN4RFZtTE9ITWY3Y0NRQ0dUeGh6S05hVEVGcVlHZHdZR0dM?=
+ =?utf-8?B?cDZTTGx1V3p2WlZnRFdxcVp2bnFEblFpT2plaitLanVtVDlRNnpBOUsxWEdC?=
+ =?utf-8?B?VmVGRS95NzczM0JIQW5CUHhRSG1aUFFSTlNyaXVsN1dxdE1nbVRaeUV0ek1n?=
+ =?utf-8?B?KzFydkJLeE93PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eVdaVXk4SjlsN2Z6a3BpajVqVnp3b2xPemV2SWoxSHFONnlWRXlOOHk0WFBE?=
+ =?utf-8?B?aHNHRTZYb1ZsbGcrWEhBbks2akNiVTJpNWFFaVJxSDhTNTdKTjZ4bkhNVit0?=
+ =?utf-8?B?Y0Q4akZ6Mld4OE5mM2xMR3hOSnA3R2dVemRtY2VHTHVYTVc5Sm9zZmZlU1JI?=
+ =?utf-8?B?SE05ODllL2RhQUd6THorQkNUajZySlhPekFGd1FmTmNzemYzSnJGRGplc2Rz?=
+ =?utf-8?B?ZDhMSmV0SDZXSmVIdk4xS2tXaVVXd1R1d3lNaWdxTmxWVXVvZm1pbkYrNWgx?=
+ =?utf-8?B?MEVscjA0SFQ4S0U4bU9oN1VLYm94eGd4cGRCTWJRRUhEQk5ybnFLT09aWXJ5?=
+ =?utf-8?B?RFVZSEpIK1YvTnZUajFXMG45Z1FSM0I3RUNJbjhQWlMxenlsZ1gwb1g2N3ZY?=
+ =?utf-8?B?V0NUL3ltQnFHRDVGL2ltMU13UTM3T2dWYmsxSlBIMllRR0MwejJwOXd4V2xC?=
+ =?utf-8?B?NjhteFp2M2VoOFRIQnVDTWRIWG5nYW9oZ1RSWVFOWURXOHFTOUFydFRMZGps?=
+ =?utf-8?B?VFlKeGV1bmg2RVRZNFRKOUtQYlNKTy9HKzVYQjMyOHZVQlp4eWR4Z1hSSGZz?=
+ =?utf-8?B?UmlvTFM1c0libnJRRHVRSFF0ejhhUjNCQVpMbnVLZjM0aXlIK0NqSG1kVnlQ?=
+ =?utf-8?B?akx1VlBNeXlxcVdRNU5WSENIa2o0RzYrcWxqeEZmTUpzWjc5TERHK0VmQUNw?=
+ =?utf-8?B?cjlPSUZmd1EzWUZoR2VTMFI3Wmg2b3BDR2lGVE1MWndENndPcDF6NnF4dVIz?=
+ =?utf-8?B?U3d1a0ZVbE5CRmRLQ3E1SXhjdTY4Vm1oNHUvK0dLV0xDcE9EcXVtSkVhV3FJ?=
+ =?utf-8?B?T0Z3OHdXUk40eHBiMGljSEsrdG1jUzR6bVlQM0RqMkxGczN0ZjNsc2ZsY29v?=
+ =?utf-8?B?bDVWZlIrcTJZZ3hiMzMvOXE0UGhCWXhYNmNoSkk4UENFcGZySGtNVlUzVGtr?=
+ =?utf-8?B?d1RXRTR1Vy9RMUp2YzNDU0F5K0VSZC8wQ2p3NDhpY082VFZSMU1kQUExTFpX?=
+ =?utf-8?B?M004aXdVOTZTVEpJZ3IxVGtuM0FFVUJ1d1ZRaHhHSHp5R2V6Z3Z5aXl1N0xk?=
+ =?utf-8?B?d21Cd29GbEZkNjk2S1JXSmFmTUx4UWtwaThPTVdSMFlkN3VhUTI0dmJMWS95?=
+ =?utf-8?B?OFJiV1VSYWUzYnhIV2tQRVZpdElreFRqdzk1V1ppdXpSNUEwU2RLOE9PYWZ2?=
+ =?utf-8?B?Q3dPM3ZjMmdzalBjUllpVVM4ZFl4YUZrdisrWVVPQnMrL0NtMVFzcW9VaU9h?=
+ =?utf-8?B?aGhGQjNrdkRyZUY3TmFnQnFla0VVM2FRazNyVzhHNnMwa2I5M05TelZvZ0xC?=
+ =?utf-8?B?ZUp4VExsMEVMVElNaXRYNXliYUp3S242Ykp2QkFyZXRscVhicVZ5VTk4ZVY0?=
+ =?utf-8?B?OXc4em1iZnNESE1UWGIzSE5tb0hYRkNSNXM1aGZHL25yVGJDN0FaMTlUR3B2?=
+ =?utf-8?B?SThQRzAvL3JwK1FjVkMyWklPZGlIWGgzd0FYQmdEMExSWlRualFsY0trcGxF?=
+ =?utf-8?B?TzFiNUV3UVVlZEp1dUxCWGhTMVZVMFpxaWd5azJETGJrU2JtVkxXd2RBeWVi?=
+ =?utf-8?B?TnJZWG9MbUFVR1ZHNkdtVEhSOUxIcmhKQ0ZwNDhXYVhDa1krd2VEaC8vQitZ?=
+ =?utf-8?B?dDZzdG1mUmlJRFhKQi9oNFVkZHdZMHNVMjlPc0VuRThnWkdHbExjZ0V4c2lq?=
+ =?utf-8?B?d1Vtd0xVWWo3Ny9iN3J6QjNNbGxDbGoxdnZDVG15K0IwdEhzL29WNE14Q3hC?=
+ =?utf-8?B?WE9uZFZTWEFYYjhtdWMxeVIrUGJQZGNEQlNybUc5eXlRV0xQWERzaThUUHV2?=
+ =?utf-8?B?dTFRUG15NHdxTzFEZWUyQ2ZXWlBBclMzMVlRUktUVEFhcmJQNXRKMmRKeWd5?=
+ =?utf-8?B?cUtSNG00UkhwZ0ZJd0RKalliNWxyYmd4dXpBQStHa0pxUDFaNk9UdUc3OXZY?=
+ =?utf-8?B?ZlNJeVpQWjRCaC8xbEJvejhsSnE3MC95MTVHZ0UvYUh4djY1a0ZHYlkzdzBj?=
+ =?utf-8?B?QWRYUTBaOGJhT053OEVnYXFTVE83YnovdHozNy9KaFJtVThtU3RKUzNGWDdM?=
+ =?utf-8?B?eXl5TEl6bzRoOEZ4Sk84L1FxdEVEZDdkZjN4MFlYb2p0SGI0ZUFZRWd5YlJU?=
+ =?utf-8?Q?hPjpO1thAvuIZbIqnsE7dW7sH?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04a1e317-3d0d-4d85-7f40-08ddef1a98f7
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:59:27.2866
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0e/B5bTG2wj5t1jLK1IZ+T6tf0S9YzpLzLXpeaGhKePH8yRtOmDtC/fPcBrKhhQzipCv1+KvS5OZ0taCvfQndg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4199
 
-On Mon, Sep 08, 2025 at 12:59:37PM -0500, Ryan Eatmon wrote:
+On 8/20/25 17:19, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
+> When SEV-SNP is active, the TEE extended command header page and
+> all output buffers for TEE extended commands (such as used by Seamless
+> Firmware servicing support) must be in hypervisor-fixed state,
+> assigned to the hypervisor and marked immutable in the RMP entrie(s).
 > 
-> On 9/8/2025 9:19 AM, Rob Clark wrote:
-> > On Mon, Sep 8, 2025 at 6:39 AM Ryan Eatmon <reatmon@ti.com> wrote:
-> > > 
-> > > 
-> > > 
-> > > On 9/6/2025 6:24 PM, Rob Clark wrote:
-> > > > On Sat, May 24, 2025 at 10:15 AM Dmitry Baryshkov
-> > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > > > > 
-> > > > > On Sat, May 24, 2025 at 09:25:37PM +0530, Viswanath Kraleti wrote:
-> > > > > > From: Ryan Eatmon <reatmon@ti.com>
-> > > > > > 
-> > > > > > The files generated by gen_header.py capture the source path to the
-> > > > > > input files and the date.  While that can be informative, it varies
-> > > > > > based on where and when the kernel was built as the full path is
-> > > > > > captured.
-> > > > > > 
-> > > > > > Since all of the files that this tool is run on is under the drivers
-> > > > > > directory, this modifies the application to strip all of the path before
-> > > > > > drivers.  Additionally it prints <stripped> instead of the date.
-> > > > > > 
-> > > > > > Signed-off-by: Ryan Eatmon <reatmon@ti.com>
-> > > > > > Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-> > > > > > Signed-off-by: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>
-> > > > > > ---
-> > > > > > The files generated by gen_header.py include the source path to the
-> > > > > > input files and the build date. While this information can be useful,
-> > > > > > it inadvertently exposes build system configuration details in the
-> > > > > > binaries. This hinders binary reproducibility, as the output will
-> > > > > > vary if the build environment changes.
-> > > > > > 
-> > > > > > This change was originally submitted to the linux-yocto-dev kernel [1]
-> > > > > > to address binary reproducibility QA errors. However, the fix is generic
-> > > > > > enough to be applicable to the mainline kernel and would benefit other
-> > > > > > distributions as well. So proposing it here for broader inclusion.
-> > > > > > 
-> > > > > > [1] https://git.yoctoproject.org/linux-yocto-dev/commit/?id=f36faf0f9f8d8f5b4c43a68e5c6bd83a62253140
-> > > > > > ---
-> > > > > > Changes in v2:
-> > > > > > - Corrected author id
-> > > > > > - Link to v1: https://lore.kernel.org/r/20250523-binrep-v1-1-c3a446518847@oss.qualcomm.com
-> > > > > > ---
-> > > > > >    drivers/gpu/drm/msm/registers/gen_header.py | 8 +++++---
-> > > > > >    1 file changed, 5 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > 
-> > > > > Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > > > 
-> > > > > Rob, WDYT?
-> > > > 
-> > > > I'm revisiting this one, in the context of trying to re-sync
-> > > > gen_header.py with mesa.. but it is only changing the contents of
-> > > > comments, so it's not quite clear to me how this ends up mattering for
-> > > > binary reproducibility.
-> > > 
-> > > The reason it matters is that for Yocto, the generated header file is
-> > > identified as a file that needs to be installed into the sysroot.  All
-> > > files going into the sysroot are checked to make sure they do not
-> > > contain dates and/or paths to the build directory contained within.
-> > > Since this is a generated header file that is included in the sysroot we
-> > > needed to strip out the path and date.
-> > > 
-> > > The idea for the reproducible builds are that the same files on a
-> > > different a machine at a different time should produce 100% identical
-> > > files.  Including paths and dates violates that tenet.
-> > > 
-> > > Hope that helps explain why we needed this.  So long as the
-> > > gen_header.py is being called to generate header files then we need to
-> > > maintain the reproducible aspect.
-> > > 
-> > 
-> > My plan is (was?) to just replace the entire comment header with simply:
-> > 
-> >    /* Autogenerated file, DO NOT EDIT manually! */
-> > 
-> > That said, I'm not entirely sure why these files should get installed
-> > into the sysroot?  I'm not super hands-on familiar with Yocto, so
-> > maybe there is a good reason.. but if there is, maybe the plan to
-> > remove the license/etc from the comment header isn't such a good idea
-> > after all?
+> Add a new generic SEV API interface to allocate/free hypervisor fixed
+> pages which abstracts hypervisor fixed page allocation/free for PSP
+> sub devices. The API internally uses SNP_INIT_EX to transition pages
+> to HV-Fixed page state.
 > 
-> The generated header files would be part of a linux-headers package that
-> would be needed to build other packages as part of the distro.  And so the
-> header files are all checked against the rules.  A linux-headers type
-> package is common for distros to have available.
+> If SNP is not enabled then the allocator is simply a wrapper over
+> alloc_pages() and __free_pages().
+> 
+> When the sub device free the pages, they are put on a free list
+> and future allocation requests will try to re-use the freed pages from
+> this list. But this list is not preserved across PSP driver load/unload
+> hence this free/reuse support is only supported while PSP driver is
+> loaded. As HV_FIXED page state is only changed at reboot, these pages
+> are leaked as they cannot be returned back to the page allocator and
+> then potentially allocated to guests, which will cause SEV-SNP guests
+> to fail to start or terminate when accessing the HV_FIXED page.
+> 
+> Suggested-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 182 +++++++++++++++++++++++++++++++++++
+>  drivers/crypto/ccp/sev-dev.h |   3 +
+>  2 files changed, 185 insertions(+)
+> 
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 4f000dc2e639..1560009c2f18 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -82,6 +82,21 @@ MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
+>  static bool psp_dead;
+>  static int psp_timeout;
+>  
+> +enum snp_hv_fixed_pages_state {
+> +	ALLOCATED,
+> +	HV_FIXED,
+> +};
+> +
+> +struct snp_hv_fixed_pages_entry {
+> +	struct list_head list;
+> +	struct page *page;
+> +	unsigned int order;
+> +	bool free;
+> +	enum snp_hv_fixed_pages_state page_state;
+> +};
+> +
+> +static LIST_HEAD(snp_hv_fixed_pages);
+> +
+>  /* Trusted Memory Region (TMR):
+>   *   The TMR is a 1MB area that must be 1MB aligned.  Use the page allocator
+>   *   to allocate the memory, which will return aligned memory for the specified
+> @@ -1157,6 +1172,165 @@ static int snp_get_platform_data(struct sev_device *sev, int *error)
+>  	return rc;
+>  }
+>  
+> +/* Hypervisor Fixed pages API interface */
+> +static void snp_hv_fixed_pages_state_update(struct sev_device *sev,
+> +					    enum snp_hv_fixed_pages_state page_state)
+> +{
+> +	struct snp_hv_fixed_pages_entry *entry;
+> +
+> +	/* List is protected by sev_cmd_mutex */
+> +	lockdep_assert_held(&sev_cmd_mutex);
+> +
+> +	if (list_empty(&snp_hv_fixed_pages))
+> +		return;
+> +
+> +	list_for_each_entry(entry, &snp_hv_fixed_pages, list)
+> +		entry->page_state = page_state;
+> +}
+> +
+> +/*
+> + * Allocate HV_FIXED pages in 2MB aligned sizes to ensure the whole
+> + * 2MB pages are marked as HV_FIXED.
+> + */
+> +struct page *snp_alloc_hv_fixed_pages(unsigned int num_2mb_pages)
+> +{
+> +	struct psp_device *psp_master = psp_get_master_device();
+> +	struct snp_hv_fixed_pages_entry *entry;
+> +	struct sev_device *sev;
+> +	unsigned int order;
+> +	struct page *page;
+> +
+> +	if (!psp_master || !psp_master->sev_data)
+> +		return NULL;
+> +
+> +	sev = psp_master->sev_data;
+> +
+> +	/*
+> +	 * This API uses SNP_INIT_EX to transition allocated pages to HV_Fixed
+> +	 * page state, fail if SNP is already initialized.
+> +	 */
+> +	if (sev->snp_initialized)
+> +		return NULL;
+> +
+> +	order = get_order(PMD_SIZE * num_2mb_pages);
+> +
+> +	/*
+> +	 * SNP_INIT_EX is protected by sev_cmd_mutex, therefore this list
+> +	 * also needs to be protected using the same mutex.
+> +	 */
+> +	guard(mutex)(&sev_cmd_mutex);
 
-I think you mean linux-libc-headers here. No, as Rob wrote, it is not
-(these headers are not even under include/ subdir.
+Does the guard() need to come before the snp_initialized check (or the
+snp_initialized check after taking the mutex)? An SNP_INIT_EX (which
+would grab the mutex and make this call wait) can occur between the
+check and obtaining the mutex.
 
-Do we check the work-shared/kernel-source and kernel-build-artifacts for
-sysroot paths?
+Thanks,
+Tom
 
-> 
-> 
-> > BR,
-> > -R
-> > 
-> > > 
-> > > > That said, since the generated files are no longer checked in to mesa
-> > > > or the kernel, we could probably just drop all of this if it mattered.
-> > > > 
-> > > > BR,
-> > > > -R
-> > > 
-> > > --
-> > > Ryan Eatmon                reatmon@ti.com
-> > > -----------------------------------------
-> > > Texas Instruments, Inc.  -  LCPD  -  MGTS
-> > > 
-> > > 
-> 
-> -- 
-> Ryan Eatmon                reatmon@ti.com
-> -----------------------------------------
-> Texas Instruments, Inc.  -  LCPD  -  MGTS
-> 
-
--- 
-With best wishes
-Dmitry
+> +
 
