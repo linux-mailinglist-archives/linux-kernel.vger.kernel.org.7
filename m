@@ -1,132 +1,89 @@
-Return-Path: <linux-kernel+bounces-806705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C751B49ACB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:15:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D297FB49ACC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179A61BC08AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF544406C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7412DA75A;
-	Mon,  8 Sep 2025 20:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723F22D77F5;
+	Mon,  8 Sep 2025 20:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tjo6IIur"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSLrMLEQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9842D97AF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97051E6DC5;
+	Mon,  8 Sep 2025 20:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362513; cv=none; b=Yha0dVzpWA8+vwja6X37ANWPy1OJYECPgKdvpJP2oGf/DyYxdViQ3tL6GY9nj4L0WbkRj8WDPTkNEkfnHLepGc2AGDecKsjc7SkKBrC5dcOZduGGqHhZbNbZKmPc23yadg8ss5PbP0B5hIsxYCMkJNPjubpz0RQGIuiH0vrJB9w=
+	t=1757362522; cv=none; b=SHAxUY2vnPuA227JdsVos7l6lmeaSkOZ8H4kYVWob5wdBnnD+jQjJzqA5PQbjrOg4Je7KTfL02ka3Ie2sKEPcX+wtqpyx+0In9MLlo4FSULZB87weGYhzhSFAHl2VM7+JdYD2h4OZftJ0NdeuqqdihGdM3AdHZO6sgLpRCF4bok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362513; c=relaxed/simple;
-	bh=wh/dd7Jdte+PbRR35ECUmzuAI6uCWTfbMFdZ01umIwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bhu4hPJKPZIuJGEf0DDLqKsTafwyAJPfTVGPK2Je0/0f0xSkc8TkNxpvMYgx/yR9P6Hqa6mqSJCR0JoZ8T4cRgHouVg6SveG6N6vSewjfq/Tn8yoXry1oncZGb2ahsS1nUwMyUbEvepy2fC9CVsrz3B2izWnn3DzCyDy73yVNhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tjo6IIur; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3dce6eed889so3885690f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757362510; x=1757967310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jjQ5+oMfNA1z8X7OxHRV6oMq0vnVY8/Ms0Vhwhb2pfo=;
-        b=tjo6IIurFIbys5VsS5hON1eX7rorrj7wDmCV2UaXXk6vc8T/sv7L+ma8KBW5vLj3gH
-         llFKg7kXpF85QMtMObnRqoL44kIgck6ZLihe8nHd5rnByuoZ2yCpZxFaRbGgwl4UTG7t
-         jzRw08YdAOoIsXbFxtFnh7F6/oPM3mN6TbFrO1gNES29UOb03xrkNQz3csIf843WO3yR
-         Bg+TxUpaS1wQqc5XHsvvSnCARcre0M3UYqZ1YLaFfak4HVkIHRIdzq12NCK4IQn5RiuD
-         Fh/7EE3s9guLh4mOja12ptg9fISyzAeN/nGYRqXbOolq80OHeib/X4OFvwcXPN9R+2mR
-         Wztw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757362510; x=1757967310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jjQ5+oMfNA1z8X7OxHRV6oMq0vnVY8/Ms0Vhwhb2pfo=;
-        b=cNXuExJvUmOdm0q2h3S0rhlzZOg2lMIR2UEd/aQYRpl1xT31djyjzLdHPlO+UhiLDu
-         I14thqZ8R4wCtk/7VsolX0gkL77A9CCAkFNu3q7rVQzGOeHJG/0y9+ITQpJIzFFrVqAw
-         CTsT24//xil+G8uFGKKabMg3/Ltfs0aE07gIG/QHZ9/t6r0LfnkquIjmdQUieDH/gifJ
-         c8gPJqWhJjVceYW+oWfU3ceHqKoKVwiDGr6UN1U+uRZVYhtF5AVK4UbsoJvk+SR9+aX0
-         9KeLKZJFdMDcL50e2F6Xz9T7POTBoxbi48C48zPCmGPbuwPK1ompSoAppydbKAMDeMYg
-         tr1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYPOuLDdT3dW4R6W2pbqdUyIVs3EWXHn7AGaEOMRy2W4y4xPT6ZuENidB5TKGvsrXMBFCxdzEwV8t3/bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBeK+Bvj3n/TcNurrr3tJZBQQeTmWhILYSZFOuPDDYcKfxzbCu
-	Zdu/+y8BgXgUHp8Szsl60lBGHmbkxyAQrGq5s0kYf8MijU/8GdYIyINaNbFoKfhCAqVPZNtRJy7
-	i0LEYNO8=
-X-Gm-Gg: ASbGncsOJKUSyv1VS1uLC2zdJxrvd4e87EwQUUYayMriJxO8Ii1ePumxbRmImuWJo9s
-	CgxS4gUHMgAmfi8licO8ctVoC14U/T36j3PViK2t9vb3LW4USDjxY5tLNlBqHuvGi4mad3Mzm3p
-	qFLhnC95qVSuv8VVikAXtM7EzfUpYH/lL57RNxb8IteuVDx2dmkj8XOwOsb8iAqEbK1pnRw4cJv
-	1TBE40GYKHi8Ko9zzBPH2qoOCu4edi0Yt/fJ4it9pSL/v7C/joL9ZSbkljvLfCFTS1lUdko/TTX
-	nejuunOYbstvyisdU1CCJr4azIaK26vo+P3b9yxfZPjRbIh9m51QWDqsTaFX0k6fBcgYD+ZFSqQ
-	wLvepoqRFnoZ2wdVNp/GUXnfkJg==
-X-Google-Smtp-Source: AGHT+IEUXK+5uzEYEeWM2C4ugYvoTxY9jWpw3+DQwWpEwD7U8BI+a4nggbRKv+GtES+a6PSycdGhyA==
-X-Received: by 2002:a5d:5f87:0:b0:3e2:804b:bfed with SMTP id ffacd0b85a97d-3e64c1c2183mr8374205f8f.42.1757362509754;
-        Mon, 08 Sep 2025 13:15:09 -0700 (PDT)
-Received: from [192.168.3.100] ([151.42.66.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e411219ddfsm13631814f8f.57.2025.09.08.13.15.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 13:15:09 -0700 (PDT)
-Message-ID: <29a776da-cd28-46e4-8b64-400f462d8670@baylibre.com>
-Date: Mon, 8 Sep 2025 22:15:08 +0200
+	s=arc-20240116; t=1757362522; c=relaxed/simple;
+	bh=PsGl1+WwcckdRHMNuQl2e0MNEvzJOQisrq1GlKGfaCU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E+jWlnOKN2ePpw1QBoWmqnZfsBy5/r3tUMCZOYISwMiBerDr7aPJGUCmqybQw3kXMK3pc9zd+K+EwPf6XXIUW0tm9JAd0cyTGysZPI+09zr6eQrBl7uMcnsL5pT1wYIrcAP7k3oQtTlxIoLkBfjhJ5KvP68lGuSVVFoNO0Qg+Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSLrMLEQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37191C4CEF1;
+	Mon,  8 Sep 2025 20:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757362522;
+	bh=PsGl1+WwcckdRHMNuQl2e0MNEvzJOQisrq1GlKGfaCU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QSLrMLEQ+Sff9ZhkGd2/EQvdi4s6SFcpSXumSej2vOAWR4wGofHWXVfKjPWm0DWkj
+	 Y47b/kaJFKDsF2ckhjPrk7E7wSB0cEji1HsZnochJqgUgC2umdAPfq4rEOmQ/OZ1dL
+	 RswLUl+4sUjnEpGVcKW4OSdGQgOwe2F170vR1t4LXzXXW99NnLhY+3hzL2mDP+AIWJ
+	 gk4pi+38Cz0IUNoxVlwqGJZvm+0g+/xA28+Otx9BB1TdqIs/iMC9yf/iUsciInh803
+	 jqfFeTn46g1xAs+1MQruh7x37TZqu3N903t2XoT8IxSCRK43A2Yrdf5S5GQ47C8iTm
+	 EDCJ8POwRf/lQ==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Yunjeong Mun <yunjeong.mun@sk.com>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/2] mm/damon/sysfs: fix refresh_ms control overwriting on multi-kdamonds usages
+Date: Mon,  8 Sep 2025 13:15:11 -0700
+Message-Id: <20250908201513.60802-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: amlogic: gxbb-odroidc2: remove UHS capability
- for SD card
-Content-Language: en-US
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250907-fix-reboot-v1-1-7606fc91254e@baylibre.com>
- <1jecsi3ywb.fsf@starbuckisacylon.baylibre.com>
-From: Valerio Setti <vsetti@baylibre.com>
-In-Reply-To: <1jecsi3ywb.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Thanks a lot for the review!
+Automatic esssential DAMON/DAMOS status update feature of DAMON sysfs
+interface (refresh_ms) is broken [1] for multiple DAMON contexts
+(kdamonds) use case, since it uses a global single damon_call_control
+object for all created DAMON contexts.  The fields of the object,
+particularly the list field is over-written for the contexts and it
+makes unexpected results including user-space hangup and kernel crashes
+[2].  Fix it by extending damon_call_control for the use case and
+updating the usage on DAMON sysfs interface to use per-context
+dynamically allocated damon_call_control object.
 
-> The above should be enough.
-> 
->>   	max-frequency = <100000000>;
->>   	disable-wp;
->>   
->>   	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->>   
->>   	vmmc-supply = <&tflash_vdd>;
->> -	vqmmc-supply = <&tf_io>;
-> 
-> ... but do not remove that.
-> 
-> That way the description is complete and the kernel is able to verify
-> the regulator is properly configured.
+[1] https://lore.kernel.org/20250904011738.930-1-yunjeong.mun@sk.com
+[2] https://lore.kernel.org/20250905035411.39501-1-sj@kernel.org
 
-Thanks for the hint! I didn't thought about this while working on it, 
-but I tried it today and it worked perfectly.
+SeongJae Park (2):
+  mm/damon/core: introduce damon_call_control->dealloc_on_cancel
+  mm/damon/sysfs: use dynamically allocated repeat mode
+    damon_call_control
 
-> It is also easier for a bootloader to alter DT to add the UHS modes back
-> (it is safe to do so if booting from another device that SD, such as
-> eMMC)
+ include/linux/damon.h |  2 ++
+ mm/damon/core.c       |  8 ++++++--
+ mm/damon/sysfs.c      | 23 +++++++++++++++--------
+ 3 files changed, 23 insertions(+), 10 deletions(-)
 
-This sounds like a nice improvement as well.
 
+base-commit: c6680f5947fa5ff95bc881f2c4e36443478c8829
 -- 
-Valerio
-
+2.39.5
 
