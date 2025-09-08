@@ -1,291 +1,213 @@
-Return-Path: <linux-kernel+bounces-806660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F261B49A0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:34:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CFAB49A13
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C52189FAD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F263441923
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F382BE032;
-	Mon,  8 Sep 2025 19:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113402BE63D;
+	Mon,  8 Sep 2025 19:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVjEiTrA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LryKiUWU"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5377412CDA5;
-	Mon,  8 Sep 2025 19:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DAF27CCE2;
+	Mon,  8 Sep 2025 19:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360070; cv=none; b=XIOvroQNZPT6pIIy7kZUpfWuokkqYdWfMDscDzeMdq6E/OQqHbGycSLbTucQuf3a1MgI+NidT5J7iv6WYIonPBqCTn8VbOUfGhllwBLUndeYj9OMxRcXJ8KBLwWfP5Af0TriXxg+rh/StfDQ39ocsLBfNBMUlRZYH51Z1EeTwhw=
+	t=1757360143; cv=none; b=OwvOG8sxUdYYzQsLpxVSY/KehLlxmi8v4u2zJiiHHKjtCxSE4Q9J/7zleni4y82xri/MTg11U0xlYRrsXIlJztoUIbtz1ajx/TPthDKMQALJneeCg9TEWRUALX8RhM1sQcky2rM4sj8CE3tZVByYkbu+5g+pAhxi4owzwoaNrOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360070; c=relaxed/simple;
-	bh=N4jke7ALHYK5hCEBfpPmlp4xquH7nDpRTyLZkO94ln8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fvdRW2/09hnXjpxhl2s3XQxeafT9E/pc5d45N0rs15ahEM08IFz++VjOo+8aO4cdln9OqYCMTXEUidu1fucC5uxDs4pOBYIl8VTNpJi6HUcu16AaAo0IRspjYu37HDIWDQIy8f/pwYSN57wiLCbemRG6wIoUIyYo5H7n8NVWY2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVjEiTrA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8998C4CEF5;
-	Mon,  8 Sep 2025 19:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757360070;
-	bh=N4jke7ALHYK5hCEBfpPmlp4xquH7nDpRTyLZkO94ln8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=uVjEiTrAIss07DqBcRAJG5PaP00MCdDFRZY9hxo92UzmUTQ+LLNUZIsv3znlxu284
-	 be7JHg9k4hWFlOjYwBd/KcAjNMMT59/Ps/fvCBG81LHhrzRMij+uptIyHtcAYcWsXs
-	 7q/bZAqIoilFL4S2LK2AxgbQ5PfhL2drpsfXgNIh/j6moS1rFsy6cZZhOWZfQCQIIg
-	 QFKHJYw9jEBxYdJh4NRQzB9+FJH9gQkB0k1B7NzxsLKCIr5M/VAuelKJjULHtGMt8n
-	 IHVmHRQ0N/Yr5wHbHzsbMeVdb/33X3CAcRfcWkCkQSzma85Esg9nEfknt4zZmMXG8q
-	 oeboQbI6waENg==
-Date: Mon, 8 Sep 2025 14:34:28 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2 5/5] PCI: qcom: Allow pwrctrl core to toggle PERST#
- for new DT binding
-Message-ID: <20250908193428.GA1437972@bhelgaas>
+	s=arc-20240116; t=1757360143; c=relaxed/simple;
+	bh=BdBtLSAXUbhcHZCCftjD1R+XqGR7NQqzDSCCgaLUUC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KWrB1lH7CWL//OKvUn7WH2+LUle4JUTQHmZPyA7zgOHSTkqcg4Rjxb/JQG8QFqnDumlxKxXnCubJa1nfyLsNM5XtivQSRJLo+FphLYncYU9yHwv2nuBi/IggMXZC4EoqUlM98qhkNxh4sRvYMyvaBROJuUioAriBeiSiQiz97GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LryKiUWU; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vheKuw2Wg7bJuvheKuxkoM; Mon, 08 Sep 2025 21:35:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757360138;
+	bh=VmMr4DiQk13+WbxtEeLoRxU+Jze2KM7vVTaw1bCs+JM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=LryKiUWUI1H5rN2k9Z6sGg9MNDPsCBWW35ITaWIBRpXAlCPlPB3HdvZrABgyfuJ27
+	 FRoy5AiJ/32gkNNeH1NP1qIpvPzYcJjX+bkJ4udFxsacZAsF0SZPMYY1fhr8d7TEeB
+	 2AposBSNxQOfuYY3mKrnHUrJ3Zc7WsvPVRn+vAU5olus/QtSAGsL6F6cd9QW0pXyDK
+	 ezSBhw45hQ60nu9lVZ9UCWNJ67a38WLR3RxV5k/E1+NdrVobM54qf4pmKAiqP7L8Vl
+	 8oG3P3R+HfdRS7M/8Mtc/cet9qLwqtuOudPSecwwNXP2cJDV170lWGd5CpQnX9AP9m
+	 q6wSI4/emrXTA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 08 Sep 2025 21:35:38 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] power: supply: Use devm_mutex_init()
+Date: Mon,  8 Sep 2025 21:35:28 +0200
+Message-ID: <2280ca741ef36fe9ed26b8079b91a8e5dfd669fc.1757360105.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903-pci-pwrctrl-perst-v2-5-2d461ed0e061@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 03, 2025 at 12:43:27PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> If the platform is using the new DT binding, let the pwrctrl core toggle
-> PERST# for the device. This is achieved by populating the
-> 'pci_host_bridge::toggle_perst' callback with qcom_pcie_toggle_perst().
+Use devm_mutex_init() instead of hand-writing it.
 
-Can we say something here about how to identify a "new DT binding"?
-I assume there is a DT property or something that makes it "new"?
+This saves some LoC, improves readability and saves some space in the
+generated .o file.
 
-> qcom_pcie_toggle_perst() will find the PERST# GPIO descriptor associated
-> with the supplied 'device_node' and toggles PERST#. If PERST# is not found
-> in the supplied node, the function will look for PERST# in the parent node
-> as a fallback. This is needed since PERST# won't be available in the
-> endpoint node as per the DT binding.
-> 
-> Note that the driver still asserts PERST# during the controller
-> initialization as it is needed as per the hardware documentation. Apart
-> from that, the driver wouldn't touch PERST# for the new binding.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++-----
->  1 file changed, 78 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 78355d12f10d263a0bb052e24c1e2d5e8f68603d..3c5c65d7d97cac186e1b671f80ba7296ad226d68 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -276,6 +276,7 @@ struct qcom_pcie_port {
->  struct qcom_pcie_perst {
->  	struct list_head list;
->  	struct gpio_desc *desc;
-> +	struct device_node *np;
->  };
->  
->  struct qcom_pcie {
-> @@ -298,11 +299,50 @@ struct qcom_pcie {
->  
->  #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
->  
-> -static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
-> +static struct gpio_desc *qcom_find_perst(struct qcom_pcie *pcie, struct device_node *np)
-> +{
-> +	struct qcom_pcie_perst *perst;
-> +
-> +	list_for_each_entry(perst, &pcie->perst, list) {
-> +		if (np == perst->np)
-> +			return perst->desc;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static void qcom_toggle_perst_per_device(struct qcom_pcie *pcie,
-> +					 struct device_node *np, bool assert)
-> +{
-> +	int val = assert ? 1 : 0;
-> +	struct gpio_desc *perst;
-> +
-> +	perst = qcom_find_perst(pcie, np);
-> +	if (perst)
-> +		goto toggle_perst;
-> +
-> +	/*
-> +	 * If PERST# is not available in the current node, try the parent. This
-> +	 * fallback is needed if the current node belongs to an endpoint or
-> +	 * switch upstream port.
-> +	 */
-> +	if (np->parent)
-> +		perst = qcom_find_perst(pcie, np->parent);
+As an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  35803	   9352	    384	  45539	   b1e3	drivers/power/supply/rt9467-charger.o
 
-Ugh.  I think we need to fix the data structures here before we go
-much farther.  We should be able to search for PERST# once at probe of
-the Qcom controller.  Hopefully we don't need lists of things.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  34792	   9008	    384	  44184	   ac98	drivers/power/supply/rt9467-charger.o
 
-See https://lore.kernel.org/r/20250908183325.GA1450728@bhelgaas.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/power/supply/bq27xxx_battery.c | 11 +--------
+ drivers/power/supply/mt6370-charger.c  | 11 +--------
+ drivers/power/supply/rt9467-charger.c  | 33 +++-----------------------
+ 3 files changed, 5 insertions(+), 50 deletions(-)
 
-> +toggle_perst:
-> +	/* gpiod* APIs handle NULL gpio_desc gracefully. So no need to check. */
-> +	gpiod_set_value_cansleep(perst, val);
-> +}
-> +
-> +static void qcom_perst_reset(struct qcom_pcie *pcie, struct device_node *np,
-> +			      bool assert)
->  {
->  	struct qcom_pcie_perst *perst;
->  	int val = assert ? 1 : 0;
->  
-> +	if (np)
-> +		return qcom_toggle_perst_per_device(pcie, np, assert);
-> +
->  	if (list_empty(&pcie->perst))
->  		gpiod_set_value_cansleep(pcie->reset, val);
->  
-> @@ -310,22 +350,34 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
->  		gpiod_set_value_cansleep(perst->desc, val);
->  }
->  
-> -static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
-> +static void qcom_ep_reset_assert(struct qcom_pcie *pcie, struct device_node *np)
->  {
-> -	qcom_perst_assert(pcie, true);
-> +	qcom_perst_reset(pcie, np, true);
->  	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
->  }
->  
-> -static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
-> +static void qcom_ep_reset_deassert(struct qcom_pcie *pcie,
-> +				   struct device_node *np)
->  {
->  	struct dw_pcie_rp *pp = &pcie->pci->pp;
->  
->  	msleep(PCIE_T_PVPERL_MS);
-> -	qcom_perst_assert(pcie, false);
-> +	qcom_perst_reset(pcie, np, false);
->  	if (!pp->use_linkup_irq)
->  		msleep(PCIE_RESET_CONFIG_WAIT_MS);
->  }
->  
-> +static void qcom_pcie_toggle_perst(struct pci_host_bridge *bridge,
-> +				    struct device_node *np, bool assert)
-> +{
-> +	struct qcom_pcie *pcie = dev_get_drvdata(bridge->dev.parent);
-> +
-> +	if (assert)
-> +		qcom_ep_reset_assert(pcie, np);
-> +	else
-> +		qcom_ep_reset_deassert(pcie, np);
-> +}
-> +
->  static int qcom_pcie_start_link(struct dw_pcie *pci)
->  {
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> @@ -1320,7 +1372,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->  	int ret;
->  
-> -	qcom_ep_reset_assert(pcie);
-> +	qcom_ep_reset_assert(pcie, NULL);
->  
->  	ret = pcie->cfg->ops->init(pcie);
->  	if (ret)
-> @@ -1336,7 +1388,13 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->  			goto err_disable_phy;
->  	}
->  
-> -	qcom_ep_reset_deassert(pcie);
-> +	/*
-> +	 * Only deassert PERST# for all devices here if legacy binding is used.
-> +	 * For the new binding, pwrctrl driver is expected to toggle PERST# for
-> +	 * individual devices.
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index ad2d9ecf32a5..bc36fa9f0dd0 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -2224,13 +2224,6 @@ static void bq27xxx_external_power_changed(struct power_supply *psy)
+ 	mod_delayed_work(system_wq, &di->work, HZ / 2);
+ }
+ 
+-static void bq27xxx_battery_mutex_destroy(void *data)
+-{
+-	struct mutex *lock = data;
+-
+-	mutex_destroy(lock);
+-}
+-
+ int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
+ {
+ 	struct power_supply_desc *psy_desc;
+@@ -2242,9 +2235,7 @@ int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
+ 	int ret;
+ 
+ 	INIT_DELAYED_WORK(&di->work, bq27xxx_battery_poll);
+-	mutex_init(&di->lock);
+-	ret = devm_add_action_or_reset(di->dev, bq27xxx_battery_mutex_destroy,
+-				       &di->lock);
++	ret = devm_mutex_init(di->dev, &di->lock);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+index eb3bcf81f741..e6db961d5818 100644
+--- a/drivers/power/supply/mt6370-charger.c
++++ b/drivers/power/supply/mt6370-charger.c
+@@ -761,13 +761,6 @@ static int mt6370_chg_init_psy(struct mt6370_priv *priv)
+ 	return PTR_ERR_OR_ZERO(priv->psy);
+ }
+ 
+-static void mt6370_chg_destroy_attach_lock(void *data)
+-{
+-	struct mutex *attach_lock = data;
+-
+-	mutex_destroy(attach_lock);
+-}
+-
+ static void mt6370_chg_destroy_wq(void *data)
+ {
+ 	struct workqueue_struct *wq = data;
+@@ -894,9 +887,7 @@ static int mt6370_chg_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to init psy\n");
+ 
+-	mutex_init(&priv->attach_lock);
+-	ret = devm_add_action_or_reset(dev, mt6370_chg_destroy_attach_lock,
+-				       &priv->attach_lock);
++	ret = devm_mutex_init(dev, &priv->attach_lock);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index 32e7c7620b91..fe773dd8b404 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -1147,27 +1147,6 @@ static int rt9467_reset_chip(struct rt9467_chg_data *data)
+ 	return regmap_field_write(data->rm_field[F_RST], 1);
+ }
+ 
+-static void rt9467_chg_destroy_adc_lock(void *data)
+-{
+-	struct mutex *adc_lock = data;
+-
+-	mutex_destroy(adc_lock);
+-}
+-
+-static void rt9467_chg_destroy_attach_lock(void *data)
+-{
+-	struct mutex *attach_lock = data;
+-
+-	mutex_destroy(attach_lock);
+-}
+-
+-static void rt9467_chg_destroy_ichg_ieoc_lock(void *data)
+-{
+-	struct mutex *ichg_ieoc_lock = data;
+-
+-	mutex_destroy(ichg_ieoc_lock);
+-}
+-
+ static void rt9467_chg_complete_aicl_done(void *data)
+ {
+ 	struct completion *aicl_done = data;
+@@ -1220,21 +1199,15 @@ static int rt9467_charger_probe(struct i2c_client *i2c)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to add irq chip\n");
+ 
+-	mutex_init(&data->adc_lock);
+-	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_adc_lock,
+-				       &data->adc_lock);
++	ret = devm_mutex_init(dev, &data->adc_lock);
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_init(&data->attach_lock);
+-	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_attach_lock,
+-				       &data->attach_lock);
++	ret = devm_mutex_init(dev, &data->attach_lock);
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_init(&data->ichg_ieoc_lock);
+-	ret = devm_add_action_or_reset(dev, rt9467_chg_destroy_ichg_ieoc_lock,
+-				       &data->ichg_ieoc_lock);
++	ret = devm_mutex_init(dev, &data->ichg_ieoc_lock);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.51.0
 
-Can we replace "new binding" with something explicit?  In a few
-months, "new binding" won't mean anything.
-
-> +	 */
-> +	if (list_empty(&pcie->perst))
-> +		qcom_ep_reset_deassert(pcie, NULL);
->  
->  	if (pcie->cfg->ops->config_sid) {
->  		ret = pcie->cfg->ops->config_sid(pcie);
-> @@ -1344,10 +1402,12 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->  			goto err_assert_reset;
->  	}
->  
-> +	pci->pp.bridge->toggle_perst = qcom_pcie_toggle_perst;
-> +
->  	return 0;
->  
->  err_assert_reset:
-> -	qcom_ep_reset_assert(pcie);
-> +	qcom_ep_reset_assert(pcie, NULL);
->  err_disable_phy:
->  	qcom_pcie_phy_power_off(pcie);
->  err_deinit:
-> @@ -1361,7 +1421,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->  
-> -	qcom_ep_reset_assert(pcie);
-> +	qcom_ep_reset_assert(pcie, NULL);
->  	qcom_pcie_phy_power_off(pcie);
->  	pcie->cfg->ops->deinit(pcie);
->  }
-> @@ -1740,6 +1800,9 @@ static int qcom_pcie_parse_perst(struct qcom_pcie *pcie,
->  		return -ENOMEM;
->  
->  	perst->desc = reset;
-> +	/* Increase the refcount to make sure 'np' is valid till it is stored */
-> +	of_node_get(np);
-> +	perst->np = np;
->  	list_add_tail(&perst->list, &pcie->perst);
->  
->  parse_child_node:
-> @@ -1803,8 +1866,10 @@ static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
->  		list_del(&port->list);
->  	}
->  
-> -	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list)
-> +	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list) {
-> +		of_node_put(perst->np);
->  		list_del(&perst->list);
-> +	}
->  
->  	return ret;
->  }
-> @@ -2044,8 +2109,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  	qcom_pcie_phy_exit(pcie);
->  	list_for_each_entry_safe(port, tmp_port, &pcie->ports, list)
->  		list_del(&port->list);
-> -	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list)
-> +	list_for_each_entry_safe(perst, tmp_perst, &pcie->perst, list) {
-> +		of_node_put(perst->np);
->  		list_del(&perst->list);
-> +	}
->  err_pm_runtime_put:
->  	pm_runtime_put(dev);
->  	pm_runtime_disable(dev);
-> 
-> -- 
-> 2.45.2
-> 
-> 
 
