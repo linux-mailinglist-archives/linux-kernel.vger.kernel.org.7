@@ -1,166 +1,172 @@
-Return-Path: <linux-kernel+bounces-805284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59782B4866D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:08:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB139B48670
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA35D189EEA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:08:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 734CD7A2D02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D92E8E11;
-	Mon,  8 Sep 2025 08:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC1B2E92D2;
+	Mon,  8 Sep 2025 08:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GSc58UFV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kNG/Qagk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GSc58UFV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kNG/Qagk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PMZ3gWn5"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A37C2E7F1D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932F229A309
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318907; cv=none; b=nyChn8CpaKpWXoy2PcH9lE9fqzL1FztXyED/eRNBMoFpMzg+ODx4ueeRI+A4hqYOQV0Zd9YAtli9QfKQA0S8WAlzX0M/v2tt6WMjV+TmNGJdIVquvz/Xa8kLLU5tHblXGq60tR5vKCX8g7+C2LYpupY/vDPSMzkvpCGHwxZ38JQ=
+	t=1757319222; cv=none; b=LUeL22YibFNLhXbCCncfaXRzq2F3V00XtHOLKrhTfsQheETh9NelkmQwG4FSelTAB27PFRZFi/rtYRvqdXMFCoHGwOdGnOAV0wGqDp6AHYQbVziRbMiKMGGs64CyjE0Fg5kZ1tmRoVuFRGGfG3OzfmMFQE4vXyB/RCtpUNDdULg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318907; c=relaxed/simple;
-	bh=KlHyUYEthoEgZlA0iprUby6nKsW0V9HUhNrJBRjYfQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7uwh1IigwvwiUA6P8r/zHoVoad3j43tsjmVMiSjVRoe0X1recQdQf4qUTdfbhQg1wPOCkTniyOyxfN1fWIN8CI6Pno7u1TXpwh/hozNT2ujCgsclF2fAMfvid2CTWAq+w1CtjhhihCRaAIQsssB2aQaW+QfNb28fKFm9vzTc7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GSc58UFV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kNG/Qagk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GSc58UFV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kNG/Qagk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 957BF2469A;
-	Mon,  8 Sep 2025 08:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757318903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1757319222; c=relaxed/simple;
+	bh=xNCph5gCMPZUC6IM3MiLEhO6Tc/nSgFQKzDXZDROOng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fey+DzXVlFfTPT1e7XCUC/Q0kF71qoQd3fvI+2fUSQSJx3MmVOy6zw6/0VkA8l6Uk1Wn2F4mguZlHVoMT6jKHguachWEhSx0g2mejrTwRujtYc+sUBYnzWYPIOohjyoDv7cwmAnXzRKLkX8Y+feWEAFtNCOzsoYtjyUIyUxX620=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PMZ3gWn5; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757319218;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=P5pBTmM/PWEIVyWVzMdHvPVxxzNBx2FFCHDJuwaqU5A=;
-	b=GSc58UFVTBVemNfSv3K5RRd2PbzAN1t15CH2bb7KVWiEeeiENr6cRFcCAQqbn5o565xSml
-	LwGcz1HXhk1H8PK2as9YUrEruyMEeIbUJ9pKVQdXGfvGQVE+hhv3ZWUPPriicLER27R+bf
-	aG76KqGkXc6sjkAC8ztLmVGJcAyDq+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757318903;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P5pBTmM/PWEIVyWVzMdHvPVxxzNBx2FFCHDJuwaqU5A=;
-	b=kNG/Qagkulgsx/JdfRBRA8EW5Q2Nvo4I/vaaSU+/Din8rY4KuLeDH+TrlFeI5l090nAv2d
-	ZRyL8bhtpnWEl/BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GSc58UFV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="kNG/Qagk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757318903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P5pBTmM/PWEIVyWVzMdHvPVxxzNBx2FFCHDJuwaqU5A=;
-	b=GSc58UFVTBVemNfSv3K5RRd2PbzAN1t15CH2bb7KVWiEeeiENr6cRFcCAQqbn5o565xSml
-	LwGcz1HXhk1H8PK2as9YUrEruyMEeIbUJ9pKVQdXGfvGQVE+hhv3ZWUPPriicLER27R+bf
-	aG76KqGkXc6sjkAC8ztLmVGJcAyDq+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757318903;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P5pBTmM/PWEIVyWVzMdHvPVxxzNBx2FFCHDJuwaqU5A=;
-	b=kNG/Qagkulgsx/JdfRBRA8EW5Q2Nvo4I/vaaSU+/Din8rY4KuLeDH+TrlFeI5l090nAv2d
-	ZRyL8bhtpnWEl/BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7692913946;
-	Mon,  8 Sep 2025 08:08:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9fvsHPeOvmhXTwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 08 Sep 2025 08:08:23 +0000
-Date: Mon, 8 Sep 2025 10:08:23 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <6ba78d1d-19e9-41dc-bc91-3c9da537cabe@flourine.local>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
- <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
- <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
- <321277a3-7dcc-414b-a329-71acfb504e91@suse.de>
+	bh=w104asye4dQPBM14xEIAY+w47JIy6lcQtIGWUqDYksg=;
+	b=PMZ3gWn5RLox4cEF7MNlYLQlI+O8S+N7tB5ZArAXTLyA9mD6jXXEnLu72tLpOyswDB+6CK
+	w7WV09Rk7nLSg+AbYPq9jAVYIMUz40W1PoqbwmR6SV/FU06dVoEHcXh+jObj0oDylC4Zra
+	P0Wssmz6tZvL/bgGwXQUpugaIqAIC2Q=
+Date: Mon, 8 Sep 2025 16:13:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <321277a3-7dcc-414b-a329-71acfb504e91@suse.de>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 957BF2469A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL71uuc3g3e76oxfn4mu5aogan)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,flourine.local:mid,suse.de:dkim];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,flourine.local:mid];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+Subject: Re: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split
+ shrinker
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ usamaarif642@gmail.com, ziy@nvidia.com, akpm@linux-foundation.org
+References: <20250908040713.42960-1-lance.yang@linux.dev>
+ <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 08, 2025 at 09:51:34AM +0200, Hannes Reinecke wrote:
-> Wouldn't it be better to call 'cpumask_zero' before 'cpumask_and'?
 
-I don't think this is necessary, from the docs :
 
-  cpumask_and - *dstp = *src1p & *src2p
+On 2025/9/8 15:38, David Hildenbrand wrote:
+> On 08.09.25 06:07, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+> 
+> Subject should likely be more specific:
+> 
+> mm: skip mlocked THPs that are underused early in deferred_split_scan()
 
-cpumask_and call bitmap_and which is:
+Right, that's a much better and more precise subject. Thanks!
 
-static __always_inline
-bool bitmap_and(unsigned long *dst, const unsigned long *src1,
-		const unsigned long *src2, unsigned int nbits)
-{
-	if (small_const_nbits(nbits))
-		return (*dst = *src1 & *src2 & BITMAP_LAST_WORD_MASK(nbits)) != 0;
-	return __bitmap_and(dst, src1, src2, nbits);
-}
+> 
+>>
+>> When a new THP is faulted in or collapsed, it is unconditionally added to
+>> the deferred split queue. If this THP is subsequently mlocked, it remains
+>> on the queue but is removed from the LRU and marked unevictable.
+>>
+>> During memory reclaim, deferred_split_scan() will still pick up this 
+>> large
+>> folio. Because it's not partially mapped, it will proceed to call
+>> thp_underused() and then attempt to split_folio() to free all zero-filled
+>> subpages.
+>>
+>> This is a pointless waste of CPU cycles. The folio is mlocked and
+>> unevictable, so any attempt to reclaim memory from it via splitting is
+>> doomed to fail.
+> 
+> I think the whole description is a bit misleading: we're not reclaiming
+> memory from fully-mapped THPs even when they are underused, because it
+> could violate mlock() semantics where we don't want a page fault+memory 
+> allocation on next access.
+> 
+> So something like the following might be clearer.
+> 
+> "When we stumble over a fully-mapped THP in the deferred shrinker, it 
+> does not make sense trying to detect whether it is underused, because 
+> try_to_map_unused_to_zeropage(), called while splitting the folio, will 
+> not actually replace any zero-ed pages by the shared zeropage.
+> 
+> Splitting the folio in that case does not make any sense, so let's not 
+> even scan if the folio is underused.
+> "
+
+Nice, that makes it much clearer. My understanding was indeed imprecise.
+
+> 
+> 
+> 
+> If I run my reproducer from [1] and mlock() the pages just after 
+> allocating them, then I essentially get
+> 
+> AnonHugePages:   1048576 kB
+> 
+> converted to
+> 
+> Anonymous:       1048580 kB
+> 
+> Which makes sense (no memory optimized out) as discussed above.
+
+Yes, my reproducer also shows exactly that. It's clear a lot of work is
+done but no memory is actually optimized out ;)
+
+> 
+> 
+> [1] https://lkml.kernel.org/r/20250905141137.3529867-1-david@redhat.com
+> 
+>>
+>> So, let's add an early folio_test_mlocked() check to skip this case.
+>>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>>   mm/huge_memory.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 77f0c3417973..d2e84015d6b4 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -4183,6 +4183,9 @@ static unsigned long deferred_split_scan(struct 
+>> shrinker *shrink,
+>>           bool underused = false;
+>>           if (!folio_test_partially_mapped(folio)) {
+>> +            /* An mlocked folio is not a candidate for the shrinker. */
+> 
+> /*
+>   * See try_to_map_unused_to_zeropage(): we cannot optimize zero-filled
+>   * pages after splitting an mlocked folio.
+>   */
+
+Got it. I'll update the changelog and this comment as suggested.
+
+> 
+>> +            if (folio_test_mlocked(folio))
+>> +                goto next;
+>>               underused = thp_underused(folio);
+>>               if (!underused)
+>>                   goto next;
+> 
+>
+
+Cheers,
+Lance
 
