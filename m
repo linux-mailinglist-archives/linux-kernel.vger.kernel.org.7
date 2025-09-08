@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-806606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C0AB49942
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:03:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6970DB4993D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BE8E7A5D7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD191B25B43
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435152309B0;
-	Mon,  8 Sep 2025 19:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="LmH6QYGZ"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1077A2376F2;
+	Mon,  8 Sep 2025 19:02:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0241F09B6
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6E51E8324;
+	Mon,  8 Sep 2025 19:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358172; cv=none; b=H9oWfGZ+NBOOvvO0UGDa6zmYzR2pXRKLT0SG3g068arIjnukigRH+AL5M6vzmxzCYtRCxr1wk2+yTdjcekBBXuo2McUXJelAxryjIRNQ6aXxiQ00HX+2vlfeRm/DhNfN+BvoIe0cISy27wbhyqmRwN109amaUAlQFFXLWUuuEwc=
+	t=1757358142; cv=none; b=AGVBNURe05eJE1fZW9mHCSZ7jzBEsPtStoqW23rTH7mVKtKSVBtAtFDQcpMQzknfKBAuDQze0jNaAwzhOSJutgs+5WYWIuavsNoQajFNULui3ak3RTH7ytZHMWfPBHEuQTstCVyEnUz8gXMlfP0+g1/mj8QsVWWNW/d9wgushWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358172; c=relaxed/simple;
-	bh=RFHo8YfgvHGQHVv4bNsSc49nUKjMyszsYY0LnWJshlg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SuQkU9ehiUt0EK/vEHwMXyqobqQGKUfM210QxBeRUWv6WOV4owzFHaveh0cGsg4ubva4U2lZMd7iT58Q5CW8Q9xB6YMplZDHLlkaM7IkPZRkvH8Pm+6FVqFsaXFAbDwCFdrxJFrtJnNfHcKoHkEOMsJ4S+mBddQx94WiWZhwgNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=LmH6QYGZ; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id A7D5S2UZxmI9pypi; Mon, 08 Sep 2025 15:02:49 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=dXHWfaQY+7UKSGl6VoUqEdWo4sqvq0kQ+TbdxxZkXwE=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=LmH6QYGZ4whez3nIyE/z
-	RCDHlmC/J7qkVc5cAJERTv30VZC2/BYmiuXI7FATQqm1WI6NrQWG7b2xd/H/SFEwF7LSrZ3hFyRv/
-	v0BGEBnLsJIiUV7WRUjl7MKGQSOh+IKQpJDjhThJ4ijLLwusGCAxHU+pSvkL9DxZJzdFODBGLc=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14189092; Mon, 08 Sep 2025 15:02:49 -0400
-Message-ID: <f7f93110-bd53-4ebc-9aed-abe5de82028d@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 8 Sep 2025 15:02:49 -0400
+	s=arc-20240116; t=1757358142; c=relaxed/simple;
+	bh=qoERetJrl9ZYiLDZetUpY4DFOm8TL+eKJyVCXAF76co=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ec7FIrVuFn9PUOVk+lTFQjf4ISHZR2fFqKHjmFUBXbvjfSVPgN28S8MJXcz7jffujACHer/MuSHPMdpU/L/bYPzKOJDvdFDLpQ2XC/PODRipo11leXfJidmjB4mGBRubuKmu3Bn/clEYQ7xKc0oRXxxAon5m/zo8WuwMzRM4u/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 3F5A7852D1;
+	Mon,  8 Sep 2025 19:02:13 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 7430732;
+	Mon,  8 Sep 2025 19:02:11 +0000 (UTC)
+Date: Mon, 8 Sep 2025 15:02:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Pu Lehui <pulehui@huaweicloud.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: Silence warning when chunk allocation fails
+ in trace_pid_write
+Message-ID: <20250908150257.23731d24@gandalf.local.home>
+In-Reply-To: <20250908024658.2390398-1-pulehui@huaweicloud.com>
+References: <20250908024658.2390398-1-pulehui@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 10/15] scsi: qla2xxx: fix TMR failure handling
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH 10/15] scsi: qla2xxx: fix TMR failure handling
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
-In-Reply-To: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1757358169
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 0
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 2397
-X-ASG-Debug-ID: 1757358169-1cf43947df30c5a0001-xx1T2L
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 7430732
+X-Stat-Signature: 9o6fbypd84tghfzo9oky94emdq8h835p
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19/ajdtOhUTRX7eRkFJLyCJmCS6YjLx718=
+X-HE-Tag: 1757358131-741100
+X-HE-Meta: U2FsdGVkX18eEM841sijLg+FwXIK0YyLsclUV6i9fU5rvYnlHW2uLAg3OuBlz+dd8GmJXbF0S7QK0gIgHrvFaxifAOHi6mHPD15atXcI5zYRqkATrn+LryfZKXiZlPyROnGdTICFxwlEzFi1Lk6qBYH59tjMskb9pqro78WXjZkkc7bcB/XH1wZISGogfk4a56FwecBbR0BRl00qHZ9ZLVd5vguO8UD9/NfvKiqYHqG1M6cYbPIe9TPJE455l/2MRSnyOPSMm+8I0aTtmgAqrG/fKZc/jmjLELUXG7gJwqWX8tSUsYm7sjcHdV8wj5qUrgou4QvPL/ZuJ+bGnjV4NZ5DK8hhlu66O9TRnjCYt3w0qnBHu9OxdO2oI2KqwKLiWLD6FfY6HVv25gsmYEO7iIJkU66aZPavxfCqAmBItfK96TVTMV0OMURVVjr86dgax2obWN7UTPYcmk8bC68zzj/v1CqCRYDx
 
-(target mode)
+On Mon,  8 Sep 2025 02:46:58 +0000
+Pu Lehui <pulehui@huaweicloud.com> wrote:
 
-If handle_tmr() fails (e.g. -ENOMEM):
-- qlt_send_busy() makes no sense because it sends a SCSI command
-  response instead of a TMR response.
-- Calling mempool_free() directly can lead to memory-use-after-free.
+> From: Pu Lehui <pulehui@huawei.com>
+> 
+> Syzkaller trigger a fault injection warning:
+> 
+> WARNING: CPU: 1 PID: 12326 at tracepoint_add_func+0xbfc/0xeb0
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 12326 Comm: syz.6.10325 Tainted: G U 6.14.0-rc5-syzkaller #0
+> Tainted: [U]=USER
+> Hardware name: Google Compute Engine/Google Compute Engine
+> RIP: 0010:tracepoint_add_func+0xbfc/0xeb0 kernel/tracepoint.c:294
+> Code: 09 fe ff 90 0f 0b 90 0f b6 74 24 43 31 ff 41 bc ea ff ff ff
+> RSP: 0018:ffffc9000414fb48 EFLAGS: 00010283
+> RAX: 00000000000012a1 RBX: ffffffff8e240ae0 RCX: ffffc90014b78000
+> RDX: 0000000000080000 RSI: ffffffff81bbd78b RDI: 0000000000000001
+> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000001 R11: 0000000000000001 R12: ffffffffffffffef
+> R13: 0000000000000000 R14: dffffc0000000000 R15: ffffffff81c264f0
+> FS:  00007f27217f66c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b2e80dff8 CR3: 00000000268f8000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  tracepoint_probe_register_prio+0xc0/0x110 kernel/tracepoint.c:464
+>  register_trace_prio_sched_switch include/trace/events/sched.h:222 [inline]
+>  register_pid_events kernel/trace/trace_events.c:2354 [inline]
+>  event_pid_write.isra.0+0x439/0x7a0 kernel/trace/trace_events.c:2425
+>  vfs_write+0x24c/0x1150 fs/read_write.c:677
+>  ksys_write+0x12b/0x250 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> We can reproduce the warning by following the steps below:
+> 1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+>    and register sched_switch tracepoint.
+> 2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+>    allocation of trace_pid_list_alloc. Let pid_list with no pid and
+> assign to tr->filtered_pids.
+> 3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+>    tr->filtered_pids.
+> 4. echo 9 >> set_event_pid, will trigger the double register
+>    sched_switch tracepoint warning.
+> 
+> The reason is that syzkaller injects a fault into the chunk allocation
+> in trace_pid_list_alloc, causing a failure in trace_pid_list_set, which
+> may trigger double register of the same tracepoint. This only occurs
+> when the system is about to crash, but to suppress this warning, let's
+> add failure handling logic to trace_pid_list_set.
+> 
+> Fixes: 8d6e90983ade ("tracing: Create a sparse bitmask for pid filtering")
+> Reported-by: syzbot+161412ccaeff20ce4dde@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com
+> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+> ---
 
-Instead just reject the TMR and send the TMR response since that code
-path is well-tested.  But be sure to set SCF_SCSI_TMR_CDB in case
-core_tmr_alloc_req() returns -ENOMEM; otherwise the wrong function will
-be called to free the mcmd.
+FYI, when sending a v2, please state below the three dashes what was
+changed since v1. Something like:
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
- drivers/scsi/qla2xxx/qla_target.c | 33 +++++++------------------------
- 1 file changed, 7 insertions(+), 26 deletions(-)
+Changes since v1: https://lore.kernel.org/all/20250821071721.3609109-1-pulehui@huaweicloud.com/
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index da010de9ba8a..7c278f92ff3b 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -2005,7 +2005,6 @@ static void qlt_do_tmr_work(struct work_struct *work)
- 	struct qla_hw_data *ha = mcmd->vha->hw;
- 	int rc;
- 	uint32_t tag;
--	unsigned long flags;
- 
- 	switch (mcmd->tmr_func) {
- 	case QLA_TGT_ABTS:
-@@ -2020,34 +2019,16 @@ static void qlt_do_tmr_work(struct work_struct *work)
- 	    mcmd->tmr_func, tag);
- 
- 	if (rc != 0) {
--		spin_lock_irqsave(mcmd->qpair->qp_lock_ptr, flags);
--		switch (mcmd->tmr_func) {
--		case QLA_TGT_ABTS:
--			mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
--			qlt_build_abts_resp_iocb(mcmd);
--			break;
--		case QLA_TGT_LUN_RESET:
--		case QLA_TGT_CLEAR_TS:
--		case QLA_TGT_ABORT_TS:
--		case QLA_TGT_CLEAR_ACA:
--		case QLA_TGT_TARGET_RESET:
--			qlt_send_busy(mcmd->qpair, &mcmd->orig_iocb.atio,
--			    qla_sam_status);
--			break;
--
--		case QLA_TGT_ABORT_ALL:
--		case QLA_TGT_NEXUS_LOSS_SESS:
--		case QLA_TGT_NEXUS_LOSS:
--			qlt_send_notify_ack(mcmd->qpair,
--			    &mcmd->orig_iocb.imm_ntfy, 0, 0, 0, 0, 0, 0);
--			break;
--		}
--		spin_unlock_irqrestore(mcmd->qpair->qp_lock_ptr, flags);
--
- 		ql_dbg(ql_dbg_tgt_mgt, mcmd->vha, 0xf052,
- 		    "qla_target(%d):  tgt_ops->handle_tmr() failed: %d\n",
- 		    mcmd->vha->vp_idx, rc);
--		mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool);
-+		/*
-+		 * SCF_SCSI_TMR_CDB might not have been set on error, but it
-+		 * must be set for the mcmd to be freed properly.
-+		 */
-+		mcmd->se_cmd.se_cmd_flags |= SCF_SCSI_TMR_CDB;
-+		mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
-+		qlt_xmit_tm_rsp(mcmd);
- 	}
- }
- 
--- 
-2.43.0
+- Instead of returning -EINVAL before trace_parser_load() have
+  trace_pid_write() return error when trace_pid_list_set() returns an error.
 
+
+I have a Link tag to this email that is added by my scripts, with the idea
+that this email will have a link to the previous version and so on. It will
+create a chain of the email discussions that lead to what lands in mainline.
+
+-- Steve
+
+
+>  kernel/trace/trace.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 1b7db732c0b1..f2a84d1ce4b7 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -834,7 +834,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>  		/* copy the current bits to the new max */
+>  		ret = trace_pid_list_first(filtered_pids, &pid);
+>  		while (!ret) {
+> -			trace_pid_list_set(pid_list, pid);
+> +			ret = trace_pid_list_set(pid_list, pid);
+> +			if (ret < 0)
+> +				goto out;
+> +
+>  			ret = trace_pid_list_next(filtered_pids, pid + 1, &pid);
+>  			nr_pids++;
+>  		}
+> @@ -871,6 +874,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>  		trace_parser_clear(&parser);
+>  		ret = 0;
+>  	}
+> + out:
+>  	trace_parser_put(&parser);
+>  
+>  	if (ret < 0) {
 
 
