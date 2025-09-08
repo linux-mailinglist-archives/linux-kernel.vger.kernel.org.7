@@ -1,129 +1,267 @@
-Return-Path: <linux-kernel+bounces-806559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D016B49878
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE65B49877
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08877A293E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:38:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C114A203538
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1C031C57E;
-	Mon,  8 Sep 2025 18:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA6E31B81F;
+	Mon,  8 Sep 2025 18:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHSGFz45"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xqi2SowV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA3F31C569
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34CC238C03;
+	Mon,  8 Sep 2025 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757356775; cv=none; b=YOjAcFgyElWyeVbjZnUwU8AyHw+rKWB31nYoyANEBG5v/PR5KOL+4HEL2LykhBWDMs29jef/HSJQgBh/ohq2v3Rt7FQy+MRzBgKcJKsipOvYcVJQrPMyFNw1T1Z84Oaj6pyttDGJVJSmPp8RLqu4LJO9xHtHAkF+EW+a4Lbs4PM=
+	t=1757356771; cv=none; b=Reicoe3+c2Ayo+P9GE5Zj4YIqU0uO+yTooWabG/OhGDoJYrHWYN1HU1hftc0UDV7ZN3kVgrSvdeJtfOKvyFTCEBwoThDHeGHxn/dreqkfS6hFRwDYwIjvAZmgipioGJfog1UdeVdTC0pcU9u4zGrjsjW4v35V/i6kaMLksBfjF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757356775; c=relaxed/simple;
-	bh=kmxJQoJMSmOg9mfzaXyB6hIps6CTnIky8axu/rkLStg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J7hzHE24emC2AREUvEc+bSMr2t++TBTbTeJLdnu7bxKM5+Czw1HWWLZAUVCQjy4TLPU9l6s1cm9XUqV9R1nnRj+2lt0At4RbYJP4oWq/WvlnzdKMMDTWUI2EXQ7aM2z1iUgDYkQYzZQz52pAp8L+cgLZKLe2yIgWOdgOzLfkkY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHSGFz45; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24ca270d700so11893545ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757356773; x=1757961573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KlDl0GYAKs0fuixMm4wXNiDo8gjd2eKeGozda9fduYU=;
-        b=mHSGFz45KThlPHEHpnMLMAcL1LLmAsCz4T7eiyJa+TgNXzzVJYLiVIh1bSlLkaZSms
-         gY5I6U49k/IJqx6rt1REJWnK+axUd3dvSZpbQkVfIhYNdqNi+57kIg2QF2xRoTPU9Xuw
-         zRzkuZN6xBiF2aYRbiViyKGkoiyS2gslRE3pJwJZGtjhv5dnCJ8tAQ1ZlrmL6R5Q/CeH
-         d58+mDK8Oy3uSPGDJ9zondqKNkVit6N21RKtZUDxS5asaGQcvun6VAGPUt2BK5iPwz7J
-         rzmvLTQJ0eB/vMaZN2FObWg5x3ABPZ4Wm49Z9fpfZkQPC/FwtK82rD8kAOXflxT2FaZi
-         Adcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757356773; x=1757961573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KlDl0GYAKs0fuixMm4wXNiDo8gjd2eKeGozda9fduYU=;
-        b=ILEG4GmGpgEMeODasgKMs8mijcxFMO4HKAW85WQ9XMxyXu5pf7u0wAmmeN32aigIra
-         cWI9xDEN7zjvNaO6EENQQb7dzi6hpRAvucLVXseXPWeKKc/H7Co4zToH+hSf6fZ82V0N
-         J/aKM7DkrYiWn5EvsVjX4Tj5CfMVUYigGBIf2Ss72BmcbF10/YssfMz56tlUaJqM8RIt
-         9PCCciuRCeP7szlMhsN7oBb9+jXmjUmSIXkAEqC2ObkYYtbBPO2lb59SgfpIwl/7amNi
-         EgVIvf/ADQ0I3+/o9MDoJAsV/lZ3xG77Zs/cNEXhVApEJt4pJU3wAbFNAQ+pNWOHipDr
-         X42w==
-X-Gm-Message-State: AOJu0Yyaw4PhsdrlL+RlPklJOMIXSkXZwQjw9PW2QHOiBwZE9LBzgwK/
-	qo4+oTAW4Mi6bocmGmDX0tx48r1mbR4XyVwmBZRSUHprIilqVOjjLkPvfnPVIDVIpeoMAmi5zG6
-	YatWr3wS5ofb3qQsreTVp5thUdI/Iq/Q=
-X-Gm-Gg: ASbGnctJmDSoY2GA9UwULmtHWhdLXRO5zhzy2dOboCEDIGEZM1AHVVmMNEJ+pLaOY6X
-	i6jdirjrpJVzYCKqRN0YBdqBJ2ESrxuDgOgmloe+JuAEhm8pLXSXG1M10iwIXnZ1gsrvTi3xUPT
-	2FDlIas1A78VeOgWEPzalaMlX6H/pva0lP6R0L9xDluNaGgB+B6O05yl/FiAbAwWQUVocf7AOM3
-	eqtVALhQXS7NvvCsJS26drjPQFWg4dAHvv+gRYxc3dqnUAkagtpycivirLAfQiRWoVMFI/ETZUZ
-	k2CI6G/+kRx4nl2KSMZRebl9kiMXKi4oJvf1
-X-Google-Smtp-Source: AGHT+IH29cFvlel6V8ScTGbGDxPZ7K0P7UvZ0rL/JFEyC2Ho11m+AZ7lO/QBBk0RySgAp1Ke1kTHpxcO0Uo0l31ICC0=
-X-Received: by 2002:a17:902:cec3:b0:24c:7bc8:a51c with SMTP id
- d9443c01a7336-25172e31d9cmr69938435ad.9.1757356773568; Mon, 08 Sep 2025
- 11:39:33 -0700 (PDT)
+	s=arc-20240116; t=1757356771; c=relaxed/simple;
+	bh=hQRVCMxFIlMjgfrjQrjZjKXH5Qw6jPXzLcXthqrIXeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9FqPiGplCAATQXIa3YR1C5fmIR3cDSWenw0KM5Ban/tDaDRQ6milGpXV3CyHlEY4x09GuMe1MRFJ4wiWycwkEZh3SJ47KSaxDMEP+n+Tzyx9OoBZc08Ht+52apcp9VQxoKjQrX+YsHNxF0L8XL+8tWoZcHc8IcgBVfYs0lAztE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xqi2SowV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B59C4CEF1;
+	Mon,  8 Sep 2025 18:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757356771;
+	bh=hQRVCMxFIlMjgfrjQrjZjKXH5Qw6jPXzLcXthqrIXeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xqi2SowVYENOd6lGzG66LHoPHU9vjioz8qj1zAyw3rNwNmDryenubp0UMdBt/N+eI
+	 ZDKrhkqwQhCy/4WMXrAUy69IkI11j/UopIbgm9sLEFs7S407glXYbuzB0ohYuzJtQH
+	 isk2nSxVFLObSCKKFWiwnduu+xb2JYS/rlzI1KYXo6WxBmkUNSPqNjZPoDJPtVmnuZ
+	 w27WIQv6hxPlun0gZ0l3Ru4RGKVBSZVz2ODs2tiGtSdqhCXPmmG5vaXjquS5p/B+Bb
+	 J4jzZ66+uoXUJb3o8s5R+XXtmJF0Ia9vt2Y6Mhe14mYaWlDzFCEmzCcV6PGLNlt1KC
+	 sctJUH4ClXaYw==
+Date: Mon, 8 Sep 2025 19:39:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH phy 13/14] dt-bindings: phy: lynx-28g: add compatible
+ strings per SerDes and instantiation
+Message-ID: <20250908-turbulent-unhappy-378144402000@spud>
+References: <20250904154402.300032-1-vladimir.oltean@nxp.com>
+ <20250904154402.300032-14-vladimir.oltean@nxp.com>
+ <20250905-bulky-umber-jaguarundi-1bf81c@kuoka>
+ <20250905154150.4tocaiqyumbiyxbh@skbuf>
+ <20250905-pamperer-segment-ab89f0e9cdf8@spud>
+ <20250908093709.owcha6ypm5lqqdwz@skbuf>
+ <2b1f112e-d533-46ae-a9a0-e5874c35c1fc@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-5-joelagnelf@nvidia.com> <CANiq72mx7NA1KD5fw98kba+3oENHW44QXVGO1VmvPPUKin2LPg@mail.gmail.com>
- <a2c990ff-e05c-4d09-aaeb-5a2fc16ecb77@nvidia.com>
-In-Reply-To: <a2c990ff-e05c-4d09-aaeb-5a2fc16ecb77@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 8 Sep 2025 20:39:19 +0200
-X-Gm-Features: AS18NWA9wdmUAfNEz9N39DTUDKozBSdy8jPLQYkAjRGgYpyBnhyvWqsDm-DJFzA
-Message-ID: <CANiq72=S-HnREWAK+8kcJkPabPHSzuKD4k7251+Zw-b9==0-zA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] rust: Move register and bitstruct macros out of Nova
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="l1qAzSyQB+CvJSLr"
+Content-Disposition: inline
+In-Reply-To: <2b1f112e-d533-46ae-a9a0-e5874c35c1fc@solid-run.com>
+
+
+--l1qAzSyQB+CvJSLr
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 7:06=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.co=
-m> wrote:
->
-> The issue I ran into is, without adding it to prelude, the users of regis=
-ter!
-> macro will have to import both bitfield! and register! macros explictly, =
-even
-> though they're only using register!. I tried to make it work without addi=
-ng to
-> prelude, but couldn't:
->
->   use kernel::{bitfield, register};
->
-> Also not adding it to prelude, means register! macro has to invoke bitfie=
-ld with
-> $crate prefixed  ($crate::bitfield).
+On Mon, Sep 08, 2025 at 02:02:35PM +0000, Josua Mayer wrote:
+>=20
+> Am 08.09.25 um 11:37 schrieb Vladimir Oltean:
+> > On Fri, Sep 05, 2025 at 08:02:59PM +0100, Conor Dooley wrote:
+> >> On Fri, Sep 05, 2025 at 06:41:50PM +0300, Vladimir Oltean wrote:
+> >>> On Fri, Sep 05, 2025 at 10:29:33AM +0200, Krzysztof Kozlowski wrote:
+> >>>>>  properties:
+> >>>>>    compatible:
+> >>>>> -    enum:
+> >>>>> -      - fsl,lynx-28g
+> >>>>> +    oneOf:
+> >>>>> +      - items:
+> >>>>> +          - const: fsl,lynx-28g
+> >>>> Don't change that part. Previous enum was correct. You want oneOf and
+> >>>> enum.
+> >>> Combining the feedback from Conor and Josua, I should only be permitt=
+ing
+> >>> the use of "fsl,lynx-28g" as a fallback to "fsl,lx216{0,2}a-serdes{1,=
+2}",
+> >>> or standalone. The description below achieves just that. Does it look=
+ ok
+> >>> to you?
+> >>>
+> >>> properties:
+> >>>   compatible:
+> >>>     oneOf:
+> >>>       - enum:
+> >>>           - fsl,lx2160a-serdes1
+> >>>           - fsl,lx2160a-serdes2
+> >>>           - fsl,lx2160a-serdes3
+> >>>           - fsl,lx2162a-serdes1
+> >>>           - fsl,lx2162a-serdes2
+> >>>       - const: fsl,lynx-28g
+> >>>         deprecated: true
+> >>>       - items:
+> >>>           - const: fsl,lx2160a-serdes1
+> >>>           - const: fsl,lynx-28g
+> >>>         deprecated: true
+> >>>       - items:
+> >>>           - const: fsl,lx2160a-serdes2
+> >>>           - const: fsl,lynx-28g
+> >>>         deprecated: true
+> >>>       - items:
+> >>>           - const: fsl,lx2162a-serdes1
+> >>>           - const: fsl,lynx-28g
+> >>>         deprecated: true
+> >>>       - items:
+> >>>           - const: fsl,lx2162a-serdes2
+> >>>           - const: fsl,lynx-28g
+> >>>         deprecated: true
+> >> This doesn't really make sense, none of these are currently in use
+> >> right? Everything is just using fsl,lynx-28g right?
+> >> Adding new stuff and immediately marking it deprecated is a
+> >> contradiction, just don't add it at all if you don't want people using
+> >> it. Any users of it would be something you're going to retrofit in now,
+> >> so you may as well just retrofit to use what you want people to use
+> >> going forward, which has no fallbacks.
+> > You're right that it doesn't make sense to deprecate a newly introduced
+> > compatible string pair - my mistake for misunderstanding "deprecated".
+> >
+> >> I didn't read the back and forth with Josua (sorry!) but is the fallba=
+ck
+> >> even valid? Do those devices have a common minimum set of features that
+> >> they share?
+> > I'll try to make an argument based on the facts presented below.
+> >
+> > The current Linux driver, which recognizes only "fsl,lynx-28g", supports
+> > only 1GbE and 10GbE. There are other SerDes protocols supported by the
+> > SerDes, but they are irrelevant for the purpose of discussing
+> > compatibility. Also, LX2160A SerDes #3 is also irrelevant, because it is
+> > not currently described in the device tree.
+> >
+> > 1GbE compatibility table
+> >
+> > SerDes              Lane 0  Lane 1  Lane 2  Lane 3  Lane 4  Lane 5  Lan=
+e 6  Lane 7   Comments
+> > LX2160A SerDes #1   y       y       y       y       y       y       y  =
+     y
+> > LX2160A SerDes #2   y       y       y       y       y       y       y  =
+     y
+> > LX2162A SerDes #1   n/a     n/a     n/a     n/a     y       y       y  =
+     y        LX2162A currently uses lx2160a.dtsi
+> > LX2162A SerDes #2   y       y       y       y       y       y       y  =
+     y        LX2162A currently uses lx2160a.dtsi
+> >
+> > 10GbE compatibility table
+> >
+> > SerDes              Lane 0  Lane 1  Lane 2  Lane 3  Lane 4  Lane 5  Lan=
+e 6  Lane 7   Comments
+> > LX2160A SerDes #1   y       y       y       y       y       y       y  =
+     y
+> > LX2160A SerDes #2   n       n       n       n       n       n       y  =
+     y
+> > LX2162A SerDes #1   n/a     n/a     n/a     n/a     y       y       y  =
+     y        LX2162A currently uses lx2160a.dtsi
+> > LX2162A SerDes #2   n       n       n       n       n       n       y  =
+     y        LX2162A currently uses lx2160a.dtsi
+> >
+> > As LX2160A SerDes #2 is treated like #1, the device tree is telling the
+> > driver that all lanes support 10GbE (which is false for lanes 0-5).
+> >
+> > If one of the SerDes PLLs happens to be provisioned for the 10GbE clock
+> > net frequency, as for example with the RCW[SRDS_PRTCL_S2]=3D6 setting,
+> > this will make the driver think that it can reconfigure lanes 0-5 as
+> > 10GbE.
+> >
+> > This will directly affect upper layers (phylink), which will advertise
+> > 10GbE modes to its link partner on ports which support only 1GbE, and
+> > the non-functional link mode might be resolved through negotiation, when
+> > a lower speed but functional link could have been established.
+> >
+> > You mention a common minimum feature set. That would be supporting 10GbE
+> > only on lanes 6-7, which would be disadvantageous to existing uses of
+> > 10GbE on lanes 0-5 of SerDes #1. In some cases, the change might also be
+> > breaking - there might be a PHY attached to these lanes whose firmware
+> > is hardcoded to expect 10GbE, so there won't be a graceful degradation
+> > to 1GbE in all cases.
+> >
+> > With Josua's permission, I would consider commit 2f2900176b44 ("arm64:
+> > dts: lx2160a: describe the SerDes block #2") as broken, for being an
+> > incorrect description of hardware - it is presented as identical to
+> > another device, which has a different supported feature set. I will not
+> > try to keep SerDes #2 compatible with "fsl,lynx-28g". This will remain
+> > synonymous only with SerDes #1. The users of the fsl-lx2162a-clearfog.d=
+ts
+> > will need updating if the "undetected lack of support for 10GbE" becomes
+> > an issue.
+> >
+> > My updated plan is to describe the schema rules for the compatible as
+> > follows. Is that ok with everyone?
+> >
+> > properties:
+> >   compatible:
+> >     oneOf:
+> >       - const: fsl,lynx-28g
+> >         deprecated: true
+> >       - items:
+> >           - const: fsl,lx2160a-serdes1
+> >           - const: fsl,lynx-28g
+> >       - enum:
+> >           - fsl,lx2160a-serdes2
+> >           - fsl,lx2160a-serdes3
+> >           - fsl,lx2162a-serdes1
+> >           - fsl,lx2162a-serdes2
+> Weak objection, I think this is more complex than it should be.
+> Perhaps it was discussed before to keep two compatible strings ...:
+>=20
+> properties:
+> =A0 compatible:
+> =A0 =A0 items:
+> =A0 =A0 =A0 - enum:
+> =A0 =A0 =A0 =A0 =A0 - fsl,lx2160a-serdes2
+> =A0 =A0 =A0 =A0 =A0 - fsl,lx2160a-serdes3
+> =A0 =A0 =A0 =A0 =A0 - fsl,lx2162a-serdes1
+> =A0 =A0 =A0 =A0 =A0 - fsl,lx2162a-serdes2
+> =A0 =A0 =A0 - const: fsl,lynx-28g
+>=20
+> This will cause the dtbs_check to complain about anyone in the future
+> using it wrong.
+>=20
+> The driver can still probe on fsl,lynx-28g alone for backwards compatibil=
+ity,
+> and you can limit the feature-set as you see fit in such case.
+>=20
+> Main argument for always specifying lynx-28g is that the serdes blocks
+> do share a common programming model and register definitions.
 
-I am not sure I follow -- macros should use qualified paths in general
-so that they assume as little as possible from the calling
-environment.
 
-It should work without the prelude -- what didn't work?
+FWIW, I'd accept both of what's been proposed here with the
+justifications being provided. Up to you guys that understand the
+hardware to decide what's more suitable.
 
-Thanks!
+--l1qAzSyQB+CvJSLr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Miguel
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaL8i3gAKCRB4tDGHoIJi
+0vhvAQDZEyf8x51YmLVbLOm2csNWa1TBsE5ET2r/9ORCvGz8QAD9HTuODOrXK55X
+L1xXNkzQrGqOZt8X9Md/Ih/UdXYNIAQ=
+=nVrk
+-----END PGP SIGNATURE-----
+
+--l1qAzSyQB+CvJSLr--
 
