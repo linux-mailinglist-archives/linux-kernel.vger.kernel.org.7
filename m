@@ -1,282 +1,228 @@
-Return-Path: <linux-kernel+bounces-806008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417DDB490AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D1DB48FEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96303B8AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315203C4B06
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CF530E0C8;
-	Mon,  8 Sep 2025 14:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84AF30B511;
+	Mon,  8 Sep 2025 13:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J0HH0w7B";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rkzqUBF/"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AAmNuxA4"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00E430CD94;
-	Mon,  8 Sep 2025 14:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757340187; cv=fail; b=mDUEJ8TbFcDpiiFsfwI51uAZ5i5Bphwh4boLVH40vhvOvgv4isBzV+tYvwhMIPe5k/avByDXuLTtka71hbZF26KySQVV8OIYcSiyqD6NFyeYbCHHhiQ6jeozCpW0DqRkn6yHRRRDtTACBNvmFJPEKlb+FcUv88wEL84RtL25UG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757340187; c=relaxed/simple;
-	bh=rlby7aD63S0caPP4V4d46x+MTq1HBtzdrijinvJS2cQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WoBglAoU488Mp46CxeEJyN6VK5sKPTcCQZQ8I76ts3gMq+o3Mhe+9AbmRRQXbW8gWVaILqayT2tqUaG91zoTPyw6qypg75Ij/kbeti3yHuwosp0A7dYHRvQAMPha0s84yM5h4CXUGyfdJo69GSdzKnThUNag0jszi+remKGKiuM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J0HH0w7B; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rkzqUBF/; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588E1tQe031637;
-	Mon, 8 Sep 2025 14:02:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=hEwpjCk8X+M4hg1ihX
-	gCYpBWZbmwMzJfPUOG0ULc7Sg=; b=J0HH0w7BfkCH5PM1Bww512QeGxmvcwaBVW
-	HTGj1imIPUdo9uTKM5+vdbwZjC2w3/o5M/ayTvPIVEtotqqaqaZubwevRb1COt3a
-	A/bm6wFw/S/5FX4elyWuUC6gupqozHYVL9bQyKaOmCAdf8Cx5Pwz3ftI94qBJQaO
-	UGrms82ejQQ+khpLJj2UdEbSezALxJkisyiC4x632U29IAkHw1yzVu85lpadjbD5
-	HYJT53GWtyB9+Mf4E950qWn/9P3b+3ZDTn+6Ltd2Muv7hn9pfQ4pNqHIEiBCUxyO
-	ozR20SyJStmqMhmgh7VZfDTqfmZDvtR1zOJKmsF8r2/dbrFbNnUQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491y92r5ju-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 14:01:59 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588DZELx012872;
-	Mon, 8 Sep 2025 13:40:27 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd8ejvm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 08 Sep 2025 13:40:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vgeBfdg4p1l+SGVvVYVI7qC3CUkHpZLU2M36RzW07D8sno8ej6JXndoM5C3ZLb1F3rZ+AiLY2krp6i+faNYIckdxfGVi7DFjoIeRYGMyxqlbiN8mlIzjIcJO8xBmRTxV5WLruMfxT1G6OYAQ1do0Mcgj+AInPE6TNsiJsVz0I7ZjgCgMlRppYTTVvbfwhamP1//efe8HfSnJJhDo4NZhIBvKZC/rqExHLINORgxyoA1azWeHsuXx1dQLdLMt/d70b+RgRZWQUNeSOnz/r4eFZ4OvlEIu1B43eoFA22PSg59pm5ZN8yBmGWEyNTcDj7S8np3QuY2aAb3N1dJl+Dllww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hEwpjCk8X+M4hg1ihXgCYpBWZbmwMzJfPUOG0ULc7Sg=;
- b=kjI+IDdhlNfaIYG39s5O2uOJwI01Bw/vl/Vqp/Xy36k8bRQr0gT2plBwV5cWEevNZmSUb/N0ZP2lwyX3RF8nDGKu90rLmn3cAsCzOvcFCjVV5Dc4DvkFvImmv8kozVUNK+L7aeg6yjbpVwRNHFUV/Nsrffjh1S3tqLbqqpYhVC0sMRvyb8dai+Ic3GpkbRwKaKldLzQ/TYOfNCZxjoNp3hGpNRYRqDUtILJnZxt6qUXuVmjqI/H2oap5iYtnvyqniSYIDDNLjJzS9NjMTT8tPglunXtVc+iowVGk8jb39472DrDZn6YrAq6kwZ/n6KUc5afZeVrmUz0Nz5/YdOgQ4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987FD221546
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757338864; cv=none; b=ggbFhl1Ajn/9vlzI/Eq7gz+ol01WhVhXLYo7i8+M/5qqQln75WlUDEiUMnxMB8QYja6khLspyWSCDLhjwEJAQ7qIS0aDGYJ+MVxHkhWiRmW154ogrGpDta23Joke5HEzVGWK/+ASUux6ThMIU9BjVh95+widcVocpR0bSl/lwxk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757338864; c=relaxed/simple;
+	bh=2V6Vwf7sjtvRs7wKxbRndIQxMlyKr4SMXFcsQopTXQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qMIs54dZ8NlcoBAax5TR1n/agPkgYCvX8zTnp59lRUC58cSN85HVxJVzyCcmQ3wnSel9plTm88sfbNc1uY85ixyX38/x22DRYuQWHrtCRSk85FgEvl7NXHoLreE0MiVk2+nUdgsnA5cDM7KxxdloIzzRql8uuyp9Pmdcz/rKWOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AAmNuxA4; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d601859f5so36774927b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hEwpjCk8X+M4hg1ihXgCYpBWZbmwMzJfPUOG0ULc7Sg=;
- b=rkzqUBF/HfzZ18olMGa3EcqSDlWE9L3JFNfhbSS6d94FR1EDnwHqx6seJ4blj9H9xoYRHhDt60DHv32zN2H7eAhRRTwtb3xJt873MIPSglaSyzp8Swoyd7y6bdB16LbYD/HaixwUsbePXw7eNz3PrBWaGxiVj5SYqw28HTptZ5s=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by SA2PR10MB4426.namprd10.prod.outlook.com (2603:10b6:806:117::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 13:40:23 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%3]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 13:40:23 +0000
-Date: Mon, 8 Sep 2025 14:40:21 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
-        Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com
-Subject: Re: [PATCH 12/16] mm: update resctl to use mmap_prepare,
- mmap_complete, mmap_abort
-Message-ID: <fb9ce6c6-913e-491a-99c6-0bb38f0d1d37@lucifer.local>
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <d9e9407d2ee4119c83a704a80763e5344afb42f5.1757329751.git.lorenzo.stoakes@oracle.com>
- <20250908132447.GB616306@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908132447.GB616306@nvidia.com>
-X-ClientProxiedBy: LO4P123CA0224.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a6::13) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+        d=linaro.org; s=google; t=1757338860; x=1757943660; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2V6Vwf7sjtvRs7wKxbRndIQxMlyKr4SMXFcsQopTXQo=;
+        b=AAmNuxA4yO8Xt02cx35nUOfwaL40zNcgcRICxSG85VyMzW4Kyk0580Sna/vqY1h9h8
+         TXPTsUyxgow2oVa7CbO87nnJgGMpo6PE0lrBKtoRfdGIMneSVqDNjQDOtlP/7vZtkh8I
+         yDoaLM3yDsRAfjpExa04uDoeautG7OkzFeodmG1nDYIdpkbv9JBZzepE/aNDkFGguVD2
+         Neln61VCng6REhZpMb2T52O9ACDpkyV/9fSaq6QIIVRux9xQbxC7kymlqrxn8z1tR0Ud
+         Kx3WideSQqNoidlPaGuXXa7LFj3ck0trubCdrN+CcZq02yYgkJ83mIUiPl4xGr3h8ACr
+         WLDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757338860; x=1757943660;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2V6Vwf7sjtvRs7wKxbRndIQxMlyKr4SMXFcsQopTXQo=;
+        b=PzqAWIfYam0Xg4QfCwzpCpTITMwX0dypCupMHu4Cr7pfXrzuBZFIKyLvukxS+l2G/y
+         vUdZ9zxS7IygEh9ppuDXQ74qXmfia2CABaw1qg/3moJmcexrnFbs/qC+x7aFNtRD00IN
+         SgZGmZ5TZknMmyrbQ8CrBo5U6/YkEo6W75h1lPzuw4nQwpM58KSglmdJE4G72EwDSWWz
+         dLcwZB1KUN89TQ/F0EKIMxNABdN3/lPpPEHWB7wcPpG0ugtHxM2SwAhns7jD24B6EfSv
+         4t5D3DmR7lQvAHQ3plYxDQ4N26H1W7rfBr3Jce6cCJXEKZGLq+Xl4Waxr66YN5oDN+b9
+         3G3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0lsa4bk1xtJOpbecIaFTogMW/xppxME7BAzngCnwzrRiszBO8/qUq9kvUJNWnhYGMsRMWJx2SCOfXIpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfKKKI7AaXgs8Iy4kLQ7qt5gbV+lLB3BJHNv9m7wvz/ix2iqgy
+	o6wlcIQGwkItC0LIAndllBxP4f3JZdgsaW+OqXPeK0zNuRm61HVqlCuWARFRzX2zyVVeh33S7Gy
+	pFHnXJVPVDT3i83DdI2+Gw0ARQZ4G7gW+m/OtMmOeXQ==
+X-Gm-Gg: ASbGncvcBMlnP3wc5b/I0DpudmSIRa2aGpjREXPpq/H4T1R3nopFfFJwmJGdTLdoKNa
+	JbYYvbY7O4rF02m79hDzU1NuIEJc74KHED1wzFkdMiNuPzxCkg74el2xxF6Mmf46dNY5x7Nv0Pw
+	rRgtGsSocRNiFCyqOAXA4PlmyIjxol1fw9GUhM3SpPU52aWT2jUuStRuuHQUfd96z9/k5VhXA5C
+	cPg18xcHgfbQNNZuCM=
+X-Google-Smtp-Source: AGHT+IHmVwzJRbbk8lJqzSugvWpjEX8h6lt6E0HqLrB/JptJ9QEOE6Fe9GxsA7Ca2V1UWceelOk9kemT86vksConx38=
+X-Received: by 2002:a05:690c:6e04:b0:722:6a27:4346 with SMTP id
+ 00721157ae682-727f2fb6a07mr77617367b3.13.1757338860259; Mon, 08 Sep 2025
+ 06:41:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|SA2PR10MB4426:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaffc3d2-9606-4648-2427-08ddeedd42a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hAk5M8kzEl825tahAmnfzLzOzl/ENMo/4UXxyGO1H8N5xwKN9kD7wHq2YCq1?=
- =?us-ascii?Q?xswJddZb5rtg5ymElD0+ioWQbtOK8DPT1vjaYHLROTnPvlJ5BoRHzNHZ4Mqa?=
- =?us-ascii?Q?5U0uhjJ0gwc038fGXFSx1FymK9U2rIu8TvGmTQ8Di2BWtYaG4HRWzg7w5pAd?=
- =?us-ascii?Q?HI6ME/SIfEJuzBNw5IozmDjGs+FIK/BPXAl51dh9w2nqeHf2KfYuIpTdfzCQ?=
- =?us-ascii?Q?b4xr9ASWwrD0vfE+mCRdG6R8tNTqciJzVOzyq0skgMsPnFnQo5kTPhHNy1yA?=
- =?us-ascii?Q?R44JM9dyzJ+UvwETPSfntcCX0U83EdWZBuOX3WQu3Pw58C5m1TP6IKK9vtvW?=
- =?us-ascii?Q?EjT0K2tUlM5RtdZ1nbAtc+xF/PRNsPIsd6ZgCmApQXoubDbT+P0fSVa/DdoS?=
- =?us-ascii?Q?IHjQ4jFVtgjDSgeYakCKuYW70z8A+H2nQHUjS8ZMkCH7AYShKmQJY55tv+nW?=
- =?us-ascii?Q?IE03p1lApvyzLXSUMr26dFiqpkTFvZzfnxEvlAcvZa4shlQjDi4x2+KJz18b?=
- =?us-ascii?Q?gAhNlKyXkiPHVCNcsLiHOlC1BDnVpILaloA6PymXdLrPICitDouYiWTeenUV?=
- =?us-ascii?Q?s3OBUMwTjUKItpRlflT1sxXo9bP3nghVEJ5nDKiPSNhD5HHsO1z5KI0ycI6Z?=
- =?us-ascii?Q?bKCo0Jj3Hul6zTk9yzA6JbJujrvBklxOdB2OlsHXh2VzrSgU7/1MBlhGWxna?=
- =?us-ascii?Q?tFpqG7dmRKMrzXT64XZRxExQ7EtTm56moYg/Qr40wu+gH6zs6UkRIewhIrTz?=
- =?us-ascii?Q?i+/Yxoq10ATqdP9+J8blJliqbxtrVbux0yGnlfZXhODkm7mVMTAk74IuES5p?=
- =?us-ascii?Q?vp+svf5JXYEtJBRC5bTP8tfdpRqFnJb/1BkWqfHQ15Uu7U4J6wpM/5NrOdct?=
- =?us-ascii?Q?eCgbTewwA43dubTreISJCUPwdiTMrQbbbEkOUniRLzW5EvPJqZUP3f+mzpBG?=
- =?us-ascii?Q?AlZR0Ck/zDNW2i9rRH6YXAl+5TU1mZ2znfJuiG4G08mzKKM5pPS9IsaMLn0E?=
- =?us-ascii?Q?cQf7xa0mj4UgtYduitasDSaF1IGxZ62Kj5hsGFw5QEr076jroiIxUj4z6GkO?=
- =?us-ascii?Q?Xp5uljVhqYpD+9Ixrw/RmnSRluDRkITwdFGz5naCQUGJaGScML4no1+CmTON?=
- =?us-ascii?Q?/q6BGnO9J5RQr8Wx4sYECbTrgFA8/K99iVU7Za+L/yYb47GHzOdxEQzv4UUx?=
- =?us-ascii?Q?CmTrb66vzloyBIXDzSDuBpgkN/RhMMMmJokVqTuumrZMypitVHGL+sj0E9ye?=
- =?us-ascii?Q?ji4AlMeyXTVHrIy9SDMZp1Dwj0f4TNVcSzd73xTnPpBGQ9CyKqCjqVmJYoDy?=
- =?us-ascii?Q?iQRxfopC88tuGgEn1lHEdaxoafHrlc42o4+B+jUAj0dF8MNA6SZ6gyUD9m2j?=
- =?us-ascii?Q?j5lL/nl2DGySzlMpuIpDpAapDGmhJcjjFjMPBF1q2oDllwa5XOsD6lUAw++g?=
- =?us-ascii?Q?I0zBlQZ46ac=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NPVEs0bs79yxZVQkzGQ9Grwsd3F3qhUoRONHOPvCUNndsZHzyS/mwy8j3cxF?=
- =?us-ascii?Q?n2PffKfQLOC9DVgvJF3W36kQT2voihDl/AnDi7BsGKUGAgopRDAScWnkjCjH?=
- =?us-ascii?Q?d/98S5AAi5w8ysjqd+dBQhXj0alihjGalm5POyd4rdNxR5PAy4gur76ovvvX?=
- =?us-ascii?Q?IGisORAKGF0153e56V8iOIfEojkLNU1Kdh6snvIEbT4y8BxUtG9GGeHosXvr?=
- =?us-ascii?Q?gPuDsrz9ytVpkrAsNuCxhOFsiHEBwrXNyC2ELyUZYCNEju27zNe4AiewFmkZ?=
- =?us-ascii?Q?eEJt1YzpKW9XjPIQ/qDOf0/d/IurZR3M9eF6Dx5r/4BN/w/4qq1vthUqEGgQ?=
- =?us-ascii?Q?NQ+xGnJoucycrA/cZEhfQOFqrKydBjkRXf47/RFEkW23C/SoqTUXrOl8OqAf?=
- =?us-ascii?Q?rLbdjLb9srDFtCpjZYb+ieYL3GNa9lSv5NCHJMpWKVSZ8v2DqPTBQ5QRJ7Mw?=
- =?us-ascii?Q?tkZqpg4QPEv7lFj4g6jGusT5GTzw67XqVG1pa6T1gKRVxQvmq3TRvqttPaST?=
- =?us-ascii?Q?KHPJhItiIiv2tF3f9NvrcR/scbxCg6+65W8H9rszDyDqZqm/9BNW5ew4OJRP?=
- =?us-ascii?Q?hguaUo580aN4DxIsAD4EFyhBE96f43RUTY0KB7M5ApY/pcO54xDwsnz2UK2G?=
- =?us-ascii?Q?o5Z2KgpvNx/tAx8BlehscwKOV50hfA+IdI/U7XST+9ICVZMgcw+lPGdmVZYG?=
- =?us-ascii?Q?aig9DCfu0vyOKRJ1G2kZlH+QvB1sZTTKyRwlG5fenopTjt309N+3t4m9AFcv?=
- =?us-ascii?Q?qtY3rQTJeC8NiN2EmYrdE5OCsLTl7W3e8rIHq+GrPLoEoyRrwbCki0yLYpO2?=
- =?us-ascii?Q?Fn+4kT846hDVRzvSp+lEgtUqsBUh37pptjN3qFxztBWOv2ggckcAHQ4hrDYG?=
- =?us-ascii?Q?nGChLSqNo6168vxxQBwngZwc5fcoSf5D10op5iqQkAEu7zSovFln7pp2+arP?=
- =?us-ascii?Q?xep3dWDbnDtTO01dBFo67KSjSZ6D63m0CzPas0ULtcP8+EKFszpY8TiPgkkD?=
- =?us-ascii?Q?QPLqQSnXRLg1YgpeBvMGRA59BJR1agphUItH8ak24MLNrYb5chrtyKYpOcLM?=
- =?us-ascii?Q?tDLS/8sKbMNitgqe8G3BiKAlJgH0RDvYO35Ea1b3fU1OzBh6AaGVx+1lcePi?=
- =?us-ascii?Q?dq9GH9i4kow1WrhZs2PDe1dKhaU54SjZ79V0CHLNNIX3iZOdMLYaVOurS8//?=
- =?us-ascii?Q?eb7Qqb5O8i0Za1obo+H+3HySUL+bqJQ+o1NI4uO/4nQLko51POcZYPEO/yy4?=
- =?us-ascii?Q?1FhhL/wO2WurMjcwtr6OqlaZE4b8BRCKNLM+euSXv3LrO+GuNjqwxqpLlyEf?=
- =?us-ascii?Q?k427WHTOk2ve6AgVexnQaY26Jsr55iSNMbjz0t4c5LVK5d8VkPxCoz15qU+s?=
- =?us-ascii?Q?OkaTcqSC7kNyxw73xn9NrxniRuWNnIi8D7l891X4h494kHRmDeLokpAaLxtq?=
- =?us-ascii?Q?nHqT3NRVZ2woQisRuSye7gRZzGeMPKL9Gjeesg5cHqwTFbpWJTKl32cYhU8a?=
- =?us-ascii?Q?S8+UOMwnfcTsuWG/b7sgdTh/W5OkSrxwE3EeyDUgGg9WhTph3BjzJNMw4XvH?=
- =?us-ascii?Q?qRuBj8T1orwZa+hM/ZIvNKWq2Ei0hnajcqbVXV7EKYdsHDl26m6mgsDy/jTQ?=
- =?us-ascii?Q?FQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	oy49ATi7D+qTd4C1J7BNRHMvbIZT85rYpStjs5/S7nnz0/pYl7AciOfeP69JHUCYUIRrCXp5I3qeZP+u+sF44uqE+fVi7CqRn0ClUfucg2gRimslKNN0XuVnEAzpdYJuxolKXk2rGFKcmG7zX02Lc7zReh3GdbIijPKG/ZE8nk7nOEWGipwArsifg0b6UnaMSTBDKEQBmKz10mIjxRpF0+u5SJxpLqkFXWgRSp65LPweh9clmHL4p8xvqcHQJdnF+pBgy8dSjDnprZiSPucziq6a5ADf4I5mhWdQlaCAQQr8+h4OnXx19CuFZcbgaeCJ67hMZRDNS9Q4bFTMf387NOdujH/7xDsUaxJ5KtR5eGodzSYSOpySIqOg2AG+AFHhlitmwOzIMN9hVjR3lcAifszdY02Nt3T8oss0IG21iG6A1yhloBE+jFpk2NHSNoZ9qTZ7vWXDjrVwhcFdDz058MHbDMAaYroO333wpvo3W9zkW0T7yx1CSKRzMGSQ66kcDWW0qrLzd43TBuheTY08p2aLGYS+GRjlURmtNkh6qFCzBkxNOhGQ+q0qfmJpHlCYdoeHuqTYk5dAL6IsLzon4VjSfHiaGy+UG7aVDgaNEtI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaffc3d2-9606-4648-2427-08ddeedd42a9
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 13:40:23.0763
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kx4ZrZ+e3vGt14NeACSoF/gv/EkbwGBVRfGy11hFRC3JmHGEnAh2f0WLWpMdwKJaM0Nv9mZaZAnnZp6g1oSSlVkHKqLLhbCKYlPNcnmudTw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4426
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_04,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=745 adultscore=0 phishscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509080137
-X-Proofpoint-ORIG-GUID: DdHEZiwxkkxgpqUOcTHqxv5B3QliQdM_
-X-Proofpoint-GUID: DdHEZiwxkkxgpqUOcTHqxv5B3QliQdM_
-X-Authority-Analysis: v=2.4 cv=K7MiHzWI c=1 sm=1 tr=0 ts=68bee1d7 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=ICP7pnYWALyfmkZL0EoA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDEyNCBTYWx0ZWRfX4VKHrJ/5AfrN
- QareNcCnyNYIGXarVG7G2TB+nAODbWPNOFvCn7GRifBvNhS2aG75M3ubmerokDgGmicsf71Ixe8
- 78a7/8KAHzKGs5slsZt7o5SHovdCM45CgldVufvjcA9IkuUaTfHSXeY4rNeZ2HHZ5hBt7m+3zG/
- 2yN5fYSrqu/MlonxpYBYfHNM7/tFUKxMijwkmYlPe+yNEtVUTjOfREBWz/R4AlGF+UM0R+YhJgj
- Cwvu0q3co0SUcEgwIMeWMdZ4WH9Zp4cnerrjtMoLtO8YVPtbv+MiLhnHXvM328wcD2i9AHOI/yC
- Y2Yx29duD83oyfW4U/e9df7Mn1GOMeqE0bwnxQ6v7UQyinDzAR6we/rj66DqiJtvyWegZ7Or9qH
- 1zgiuHOw
+References: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+ <3556261.BddDVKsqQX@workhorse> <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
+ <1953725.CQOukoFCf9@workhorse>
+In-Reply-To: <1953725.CQOukoFCf9@workhorse>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 8 Sep 2025 15:40:24 +0200
+X-Gm-Features: Ac12FXyAG1t2CYpmPKTCcMgEyVYOTn_3NnzPw6TDBeDE4KlE2WO8yjwKgz822rM
+Message-ID: <CAPDyKFofhy5wiNsHUgdtzFwGtO3QPqhVuu1KsPLBWHF08JzqyA@mail.gmail.com>
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com, linux-rockchip@lists.infradead.org, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 08, 2025 at 10:24:47AM -0300, Jason Gunthorpe wrote:
-> On Mon, Sep 08, 2025 at 12:10:43PM +0100, Lorenzo Stoakes wrote:
-> > resctl uses remap_pfn_range(), but holds a mutex over the
-> > operation. Therefore, establish the mutex in mmap_prepare(), release it in
-> > mmap_complete() and release it in mmap_abort() should the operation fail.
+On Mon, 8 Sept 2025 at 15:14, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
 >
-> The mutex can't do anything relative to remap_pfn, no reason to hold it.
->
-> > @@ -1053,15 +1087,11 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
-> >  		return -ENOSPC;
-> >  	}
+> On Friday, 5 September 2025 16:27:27 Central European Summer Time Ulf Hansson wrote:
+> > [...]
 > >
-> > -	memset(plr->kmem + off, 0, vsize);
-> > +	/* No CoW allowed so don't need to specify pfn. */
-> > +	remap_pfn_range_prepare(desc, 0);
+> > >
+> > > Okay so I believe I have found the root cause of the regression. UFS is
+> > > innocent, disabling UFS just happens to avoid it due to how the timing of
+> > > things works out.
+> > >
+> > > The real issue is that the NPU power domains on the RK3576, which are
+> > > currently unused, have an undeclared dependency on vdd_npu_s0.
+> > >
+> > > Declaring this dependency with a `domain-supply` and adding the
+> > > necessary flag in the rockchip PD controller to use it does not solve
+> > > he problem. This is because the rockchip PD controller cannot acquire
+> > > those supplies during probe, as they're not available yet and their
+> > > availability depends on the PD controller finishing probe.
+> > >
+> > > That's why it acquires them in the PD enable callback, but the NPU
+> > > PDs are never enabled because they're unused.
+> > >
+> > > This worked fine when unused PDs were still turned off quite early, as
+> > > this meant they were turned off before regulators. Now the unused
+> > > regulators are turned off before turning off the unused PDs happens.
+> >
+> > I see, thanks for sharing these details. What a mess.
+> >
 >
-> This would be a good place to make a more generic helper..
+> Agreed :(
 >
->  ret = remap_pfn_no_cow(desc, phys);
+> > >
+> > > I don't really see an easy way to fix this with a patch that's fit for
+> > > an rc cycle. We can't request the regulator early or even just add a
+> > > device link, as the regulator is not around yet.
+> >
+> > Right, I will work on a patch or two that allows rockchip
+> > power-domains to opt-out from genpds new behavior and to keep using
+> > the old one.
+> >
+> > I think we prefer to do it like this (should be quite a limited amount
+> > of code and okay for an rc), rather than reverting for everyone.
+>
+> That sounds good to me.
+>
+> >
+> > >
+> > > Marking vdd_npu_s0 as always-on would be abusing DT to work around a
+> > > Linux kernel shortcoming, which is a no-no.
+> > >
+> > > What we need is either a way to register with pmdomain core that
+> > > certain PDs need a late init for additional supplies, which is then
+> > > called before any of the unused regulator power off functionality is
+> > > invoked by the regulator core.
+> > >
+> > > Any ideas?
+> >
+> > Yes :-)
+> >
+> > I would suggest implementing an auxiliary driver, along with the
+> > rockchip_pm_domain_driver. The main job for the auxiliary driver would
+> > be to get the regulator in its ->probe() - and if it fails because the
+> > regulator isn't available yet, it should keep trying by returning
+> > -EPROBE_DEFER. See more about the auxiliary bus/device/driver in
+> > include/linux/auxiliary_bus.h and module_auxiliary_driver().
+> >
+> > Moreover, when the rockchip_pm_domain_driver probes, it becomes
+> > responsible for pre-parsing the OF nodes for the domain-supply DT
+> > property, for each of the specified power-domains. If it finds a
+> > domain-supply, it should register an auxiliary device that corresponds
+> > to that particular power-domain. This can be done by using
+> > platform-data that is shared with the auxiliary device/driver. See
+> > devm_auxiliary_device_create().
+> >
+> > Furthermore we would need some kind of synchronization mechanism
+> > between the rockchip_pm_domain_driver and the auxiliary driver, to
+> > manage the regulator get/enable/disable. I think that should be rather
+> > easy to work out.
+> >
+> > Do you think this can work?
+>
+> This sounds similar to something Heiko suggested to me, and I agree
+> it could work. It does seem like a pretty painful solution though,
+> in terms of needed additional code and complexity to basically just
+> tell Linux "hey you can't get this regulator yet but please try
+> again later without our involvement".
 
-Ha, funny I suggested a _no_cow() thing earlier :) seems we are agreed on that
-then!
+Well, I would give this a go and see what you end up with. The nice
+thing with this approach, I think, is that we get a driver and can use
+the -EPROBE_DEFER mechanism.
 
-Presumably you mean remap_pfn_no_cow_prepare()?
+Another option would be to explore using fw_devlink/device_links, to
+somehow get a notification as soon as the regulator gets registered.
 
 >
-> And it can consistently check for !shared internally.
+> To that end, I've tried working out a regulator-based solution to
+> it, where the rockchip_pm_domain driver registers a "proxy"
+> regulator for each power domain that wants a regulator, with its
+> supply set to the name of the real `domain-supply` regulator.
 >
-> Store phys in the desc and use common code to trigger the PTE population
-> during complete.
+> The logic behind this was that the regulator core runs a check
+> for whether every supply is resolved before it turns off unused
+> regulators. The hope was that if we register a proxy regulator
+> and enable it immediately in the pm_domain probe, then regulator
+> core will handle the actual dependency at precisely the right
+> time, namely before it checks to see whether any are unused and
+> can be turned off.
+>
+> As I discovered though, this can't really work. The regulator
+> core will in this case just set the supply regulator to a dummy
+> regulator when it's enabled in our probe function, and later
+> supply resolving passes are then content that this supply is
+> resolved even though it is a dummy supply. There does not appear
+> to be any way to opt out of getting this dummy supply.
+>
+> So knowing that this doesn't work, I have another idea, but I
+> feel like both the regulator subsystem and the pm-domains
+> subsystem will hate this: explicitly create an order between
+> the pmdomain idle check and the regulator idle check to make
+> sure that the pmdomains idle check runs first.
 
-We can use mmap_context for this, I guess it's not a terrible idea to set .pfn
-but I just don't want to add any confusion as to what doing that means in
-the non-generic mmap_complete case.
+I think those kinds of dependencies are better solved by using
+fw_devlink/device_links.
 
 >
-> Jason
+> This would set in stone how the kernel worked previously for
+> kernel users that relied on this, but is a conceptually
+> unpleasant cross-subsystem dependency.
 
-Cheers, Lorenzo
+Then there are other resources cropping up that we need support,
+extending to more subsystems. So, no, this does not seem like a
+scalable solution to me. :-)
+
+Kind regards
+Uffe
 
