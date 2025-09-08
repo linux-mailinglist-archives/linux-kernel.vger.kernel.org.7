@@ -1,215 +1,188 @@
-Return-Path: <linux-kernel+bounces-805057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D2BB48392
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:21:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD05B48394
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A12A176BEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481833BBDA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8226B2253A0;
-	Mon,  8 Sep 2025 05:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF222253E4;
+	Mon,  8 Sep 2025 05:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXixhhsa"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMd8jLgG"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5192D1C84DE;
-	Mon,  8 Sep 2025 05:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA901EB1AA;
+	Mon,  8 Sep 2025 05:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757308864; cv=none; b=iMVtXQsOJKPuGEhBAAeZCPZLQ5K3GdrgSTwfydu8XUzGcOj3HQqJwEep106wrayJTd8NRhb8mRZgIedS6QH+x2bD9tJewpPAH5+FAqIX+ucy+T32l85/o7R55YPbeLdgFuLJtCs+O1gcW0dUTIsUcIcXEN6LiBpVtdsxY25hJ84=
+	t=1757308968; cv=none; b=IblUY3mMJXZE+L+cTVyN/S29MW3RiBNrp0CUGpYzMSI+wsO+jqIif3CS5j0pM+7TPURDeTl1SwIPZ+PcFqX2quct2rLhlAB4TIDI9DqbQwrMhF4o/EJuuba3Tt6a5ISFPRZbFBiJAYvjoUaMe4h3yKzOuBtOSFEN6w274BH9hDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757308864; c=relaxed/simple;
-	bh=iAwstC8y2DiefUo51/NJsLn5S7J4lrCrJIGQIENgdA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsij24KUL5vBeEbQhp0g1S9PpqewANM4zn/8lUCMinhoDTpyjq50A9WqAHJYPBVSpy0nMTDpyDjL72r60jt0U0NenEEiUKnXttbOWWcO/+Cw2g+91tcgvrf06PCvfLbS0Y95ymGTsctzUKdwmjylDhsa/GJ3aKddweHl5cOFdeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXixhhsa; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1757308968; c=relaxed/simple;
+	bh=Q8fpKLoaCLJRBLF0hQCnVeq7R37c/PR9mcxFpHuubWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pnU65u4pKY+9WOz0UYynJ2aFy6g6migVTHASFGUN71+b3iaT2WclJEa9tcS2ck/QddAYEU4aHiM0mVxCijqox6mlk+ZbCqDTbQuMZrxUN2UmaxNrA5f20BylRcrlkLgY66tJLuql+/oiJKgyCbE1fNjy9ChbgKjLFbthz+oHcGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMd8jLgG; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32b60a9aa4cso2497870a91.0;
-        Sun, 07 Sep 2025 22:21:03 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77269d19280so3486340b3a.3;
+        Sun, 07 Sep 2025 22:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757308862; x=1757913662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Z309ZEqczozAMKKKB/xzAoGf/4FE4TavsEKgcsqpes=;
-        b=VXixhhsaZS4caeIwhkfvYM3royubm8KKVZFFzoduCa6z2bTca9eRHfyHT7fqnv9pJA
-         OrDwdQDL+1o1aPcTvzIuxUNNVwLqvCSoqRiLxUnDZKtzhlqiSgb41ctZHoZ9YzptBk2B
-         vxjrv/tSVDwTfw6nPEYzkO7ibfJ9oPeBroBuDfYyOQWLQoNH7bzv4MTq9nWXsTUP98iB
-         31RcpkF1x5cBJkS0Sk/FAj2QJRoXAjW7Fzhlw0JHsj5HXeOzfCxZ1etwPUkejgss4Y78
-         oflDEARVZdZFIUYRzJio4tEeptaDcDM6tBdQheHFCeH2tOvve5KqeTnf2Crs3Ajpv31I
-         D4UQ==
+        d=gmail.com; s=20230601; t=1757308967; x=1757913767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6em99myf6OEai2igjeP0O8GalT30GBXa7U7AblBA4yY=;
+        b=PMd8jLgGpCqFA7L+4pw1cIzB8p4WrLpdPDfBtkPIj9CsdHqV5JHXssVBCjPJdcQDle
+         SDAZjBU+f2gZXTfAVcIWXz8HZPA1TZIDPad2O5m5bkPJKqmn1oSUFbKUvXaFLziNxsG5
+         LlNLh4Gr/ZzFhDjnIHLJQJbPLOArIwtxdmDKIHgRohGCsgkxFc1RojF0YhvWhv5snjkP
+         r/o41avLu9vLXt9GJxuhkHBibFt7bAhy65ISTIWYR3C+qpGV1ZdSMXzOrOjV7zkEwvVX
+         K32biM3yO/JFImWswDCupxqTbZ6K60vp+L38z7MiWlIR7hnfL89EbUZkQtJxCjDX9Vpc
+         MOgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757308862; x=1757913662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Z309ZEqczozAMKKKB/xzAoGf/4FE4TavsEKgcsqpes=;
-        b=PGa2aNobPYUmGP2w1W8/cJVbmUqDdyf8l12DWEIqsb293gU06T7kYRZ7Sje/OCHsLd
-         e3h+ezMT2XCDToQam4i4YtjAmGMw62Y5z+GekoLfsbaKdpcLU834hN0uk3dRczk3zbiS
-         F8Y4JOnl2dMP2eSgVWXq4UicRbKJAQenk5/bWCulaZK389bQcGy9SlicNWvWDHwn/A6T
-         FM7oLXqReyUdEqS25DKO/BcZ+glQiFD1GljLeTiSXdSTPe1cnHBAzWxYpnmRktM48Jku
-         zKSzXHwN3kbIOAeL4CbEfgNWAzRtmO4T4h3D8jHxkcDCKso2X6tI3vbWtu5fyPFCH1Bp
-         o/5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcE9IgZfnD2sVK7vbh5/RKe8YudUMjC86smr4JNSSngaVX0hKZKltsC5Ao+Mkn5H0mIqUv+EPgdDYPQRBZkQrVEFW+@vger.kernel.org, AJvYcCV139fWcbx19KyZHavPAAV6KprZdjuTWyzKVaPv5mvfac4pM7eW8esGCw4qh3s+mHCrFqRRXS9g9MmFcKG3jdOTjA==@vger.kernel.org, AJvYcCW6Z3jYWyMXJqQqnKJ4+LPuwfcEKurlfQXDUE6JUCGFMUEc2cEOFpGxBhtuOMoejn/P5IMb7R3q4FRfIqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP7VGlatPYvpLa9p5EGLJRXqN/oig/38HbNJX3dFRhi+V8zHYK
-	8nMnTDyW1PwMezZdsvKdxYD8zLy111wBWiAcw7JneRt5ElF8SIwxEYp6
-X-Gm-Gg: ASbGncvIL1RduxS8O4gJsfA1Hr2u+bkaYqU6OS3YAQSZ97S5d/2ZS2KrSqj8ceBo7MY
-	av0eqw1wwB/mvgriiPgQ6a9GL+KEydx9NB5jZ5YSTji063OmWua7P3hZU21USOsJlq2UJgehz8i
-	7euND8Fbg8hphtiUDU4RR3H8V1Nxb98uAWNslc0L5HvfKuZ0C+KQyyaN7PMf53GW3Jh5ccYgXJ5
-	A/OCvNpST+3FSJ7Bp+sdai8YWy/bQD3MfsLjtbNYdzoTXNGuRVyZB0hb+Ik/GwRZtAxc4DcgDR0
-	dlCw6pN74jTNTWEN74AIKsYe1wcYSgkPevEg3pleW2ikcgy5yCP5qU7sgtzlYxhzPE0R7vx2aSf
-	JT7Jy21RN0eHxnZ8opHuKjb5yz19E/7KyQxNAMHRBalq8
-X-Google-Smtp-Source: AGHT+IGPcXqmogWZILkA0EiWDB3UUSk4oq5HV5nWmW/FIF6iyzxQCslm6c7L4gk90ECEmg86Ndwr/A==
-X-Received: by 2002:a17:90b:4ac9:b0:32b:dfd5:3527 with SMTP id 98e67ed59e1d1-32d43f2e436mr8617642a91.9.1757308862448;
-        Sun, 07 Sep 2025 22:21:02 -0700 (PDT)
-Received: from localhost ([45.8.220.62])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fb15f50d6sm11758299a12.0.2025.09.07.22.21.01
+        d=1e100.net; s=20230601; t=1757308967; x=1757913767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6em99myf6OEai2igjeP0O8GalT30GBXa7U7AblBA4yY=;
+        b=RkpaxZFaz0G2AZl8s5gDXweAZO52tNw9hC6BTU08enStq7vcVTtkPZkF5bL/dvmg8h
+         mfxBqnDTZUDeELWEbt7nzTWOvSaywD+kkadOK7ZFDCfiK3P86i2hrwjmsps09GzQdvu5
+         f6s1MVxFzDJ0OfPUEnIDrJhdYReqUjXyopTIuOpA9I4vYbxCC6uBidi8ptU5J32Wd5HA
+         BxswFTkbybbCh7atOkvVnPKYRBeYsFXx5zR81DOuUj6ufzOM+FoWI1NrMQ3j/3cLKFV1
+         R2Hx61IGBE0WEO8c4CmQeKxfRIB4d2CHmpIPLwxCtjQmThzCUS9uFbW5z+N/S4W57Fab
+         M4CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvKsLWbWIQjcpKft4OcvUoP65Qlt96PV4uIQMdQS0eNy4uxNuBGE/QHLDJmdfC33jAwNmHBF9d+HAZW2nn@vger.kernel.org, AJvYcCWgYsgCVt7zpqXV13e7bneB6n//926JdFBsFMJ+hjIyUQOGM3qidlutXRPGjpIJZVfx54MZpPf4KrCWtg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCz8/LWBoFGCeMm3VebrvAHIT5Icm2EYq3svXD39+/WZLP8E3R
+	jDQn//zeXWRjlslwYi571Fsgbw8uiz2Nur/aQJIDk+t0ulpHu8Ttl5pWorU3ZppbFTM=
+X-Gm-Gg: ASbGncs9vyR1A4W0HP0dRauMmZjHMy8wnsP8HrD8qDyV3Lep59DjPVuNbjgI83bCzbO
+	YdnfSN1mr2pTsZHr9m7z9OEFt1PhD7jznp/JodgHCxdQg9RA09BaHzOSQpev2vvlvRbnFBWMf/y
+	7bVz9b/TIlTyHuvEj5koAlbIW+u7PjRs8sunRJMCDvSkSBal/diRgOME43+CsK9QK+cd6TS6nE1
+	Kj6EMYOxHrMoMl2WTFBRp4BRBfVAbeR2epmKYSQjPkbbGtmmFD0TY3+V4F9yAm214ZDApsnEYIj
+	9IOAsgK+XKUPytP1YL+ApilK73hqR5378c9hd4nc9vKOFfwvbO7GcyKUKLkj/M/mBzG+TXU5hI0
+	8W3cLPbFLvvL7KMyizAHgKl44NDo2T3xaCUVTwh8YhW4nHosKo20sfqUMQyXnf0nYHH8lvz2DMf
+	RJwFO/FyqUTMnh
+X-Google-Smtp-Source: AGHT+IFrTsmPSdUiPcaM2RVIukPGO/87uamBKynsgb9AJLgE624HPMFK/q1miJkzcxQACG9phsofkg==
+X-Received: by 2002:a05:6a00:2d83:b0:771:ec42:1c1e with SMTP id d2e1a72fcca58-7742ddeddb5mr7074610b3a.16.1757308966588;
+        Sun, 07 Sep 2025 22:22:46 -0700 (PDT)
+Received: from klmny09 (n058152022194.netvigator.com. [58.152.22.194])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e27d1sm28076608b3a.81.2025.09.07.22.22.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 22:21:01 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:20:51 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] x86/hw_breakpoint: introduce
- arch_reinstall_hw_breakpoint() for atomic context
-Message-ID: <aL5ns7h1NaoD9LPg@mdev>
-References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
- <20250904002126.1514566-6-wangjinchao600@gmail.com>
- <20250904063832.GT4067720@noisy.programming.kicks-ass.net>
+        Sun, 07 Sep 2025 22:22:46 -0700 (PDT)
+From: Yiming Qian <qianym1996@gmail.com>
+To: sudipm.mukherjee@gmail.com,
+	teddy.wang@siliconmotion.com
+Cc: gregkh@linuxfoundation.org,
+	linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yiming Qian <qianym1996@gmail.com>
+Subject: [PATCH] staging: sm750fb: fix coding style issues in sm750.h
+Date: Mon,  8 Sep 2025 13:21:33 +0800
+Message-ID: <20250908052133.8888-1-qianym1996@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904063832.GT4067720@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 08:38:32AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 04, 2025 at 08:21:02AM +0800, Jinchao Wang wrote:
-> > Introduce arch_reinstall_hw_breakpoint() to update hardware breakpoint
-> > parameters (address, length, type) without freeing and reallocating the
-> > debug register slot.
-> > 
-> > This allows atomic updates in contexts where memory allocation is not
-> > permitted, such as kprobe handlers.
-> > 
-> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> > ---
-> >  arch/x86/include/asm/hw_breakpoint.h |  1 +
-> >  arch/x86/kernel/hw_breakpoint.c      | 50 ++++++++++++++++++++++++++++
-> >  2 files changed, 51 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-> > index 0bc931cd0698..bb7c70ad22fe 100644
-> > --- a/arch/x86/include/asm/hw_breakpoint.h
-> > +++ b/arch/x86/include/asm/hw_breakpoint.h
-> > @@ -59,6 +59,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
-> >  
-> >  
-> >  int arch_install_hw_breakpoint(struct perf_event *bp);
-> > +int arch_reinstall_hw_breakpoint(struct perf_event *bp);
-> >  void arch_uninstall_hw_breakpoint(struct perf_event *bp);
-> >  void hw_breakpoint_pmu_read(struct perf_event *bp);
-> >  void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
-> > diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-> > index b01644c949b2..89135229ed21 100644
-> > --- a/arch/x86/kernel/hw_breakpoint.c
-> > +++ b/arch/x86/kernel/hw_breakpoint.c
-> > @@ -132,6 +132,56 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
-> >  	return 0;
-> >  }
-> >  
-> > +/*
-> > + * Reinstall a hardware breakpoint on the current CPU.
-> > + *
-> > + * This function is used to re-establish a perf counter hardware breakpoint.
-> > + * It finds the debug address register slot previously allocated for the
-> > + * breakpoint and re-enables it by writing the address to the debug register
-> > + * and setting the corresponding bits in the debug control register (DR7).
-> > + *
-> > + * It is expected that the breakpoint's event context lock is already held
-> > + * and interrupts are disabled, ensuring atomicity and safety from other
-> > + * event handlers.
-> > + */
-> > +int arch_reinstall_hw_breakpoint(struct perf_event *bp)
-> > +{
-> > +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
-> > +	unsigned long *dr7;
-> > +	int i;
-> > +
-> > +	lockdep_assert_irqs_disabled();
-> > +
-> > +	for (i = 0; i < HBP_NUM; i++) {
-> > +		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
-> > +
-> > +		if (*slot == bp)
-> > +			break;
-> > +	}
-> > +
-> > +	if (WARN_ONCE(i == HBP_NUM, "Can't find a matching breakpoint slot"))
-> > +		return -EINVAL;
-> > +
-> > +	set_debugreg(info->address, i);
-> > +	__this_cpu_write(cpu_debugreg[i], info->address);
-> > +
-> > +	dr7 = this_cpu_ptr(&cpu_dr7);
-> > +	*dr7 |= encode_dr7(i, info->len, info->type);
-> > +
-> > +	/*
-> > +	 * Ensure we first write cpu_dr7 before we set the DR7 register.
-> > +	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
-> > +	 */
-> > +	barrier();
-> > +
-> > +	set_debugreg(*dr7, 7);
-> > +	if (info->mask)
-> > +		amd_set_dr_addr_mask(info->mask, i);
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(arch_reinstall_hw_breakpoint);
-> 
-> Yeah, I think not. For one this is an almost verbatim copy of
-> arch_install_hw_breakpoint() with zero re-use. Surely you've been taught
-> better?
-I introduced this to modify bp_addr in atomic context in my RFC series.
-I thought it was clearer to split the introduction and refactor.
-And then It was used in the wprobe series, so I left it as introduced
-in the RFC series.
+This patch addresses several coding style warnings
+reported by checkpatch.pl:
 
-I agree your suggestion is right. I am willing to refactor after wprobe.
+1. Replaces CamelCase variable names with snake_case:
+   - dprBase -> dpr_base
+   - dpPortBase -> dp_port_base
 
-> 
-> And why would we want to export guts like this?
-I wanted to introduce a real-time stack corruption debugging tool,
-which needs a helper to change bp_addr in atomic context (kprobe handler).
-And wprobe needs it also.
+2. Removes unnecessary use of 'volatile' qualifier
+   from the lynx_share_struct members.
+
+These changes improve code readability and maintain
+consistency with the kernel coding style guidelines.
+No functional changes are introduced.
+
+Signed-off-by: Yiming Qian <qianym1996@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.h       | 6 +++---
+ drivers/staging/sm750fb/sm750_accel.c | 7 +++----
+ drivers/staging/sm750fb/sm750_hw.c    | 4 ++--
+ 3 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
+index d7f40efe3..fcb7d586e 100644
+--- a/drivers/staging/sm750fb/sm750.h
++++ b/drivers/staging/sm750fb/sm750.h
+@@ -50,9 +50,9 @@ struct init_status {
+ 
+ struct lynx_accel {
+ 	/* base virtual address of DPR registers */
+-	volatile unsigned char __iomem *dprBase;
++	unsigned char __iomem *dpr_base;
+ 	/* base virtual address of de data port */
+-	volatile unsigned char __iomem *dpPortBase;
++	unsigned char __iomem *dp_port_base;
+ 
+ 	/* function pointers */
+ 	void (*de_init)(struct lynx_accel *accel);
+@@ -128,7 +128,7 @@ struct lynx_cursor {
+ 	char __iomem *vstart;
+ 	int offset;
+ 	/* mmio addr of hw cursor */
+-	volatile char __iomem *mmio;
++	char __iomem *mmio;
+ };
+ 
+ struct lynxfb_crtc {
+diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
+index 44b9e3fe3..6bee37bf5 100644
+--- a/drivers/staging/sm750fb/sm750_accel.c
++++ b/drivers/staging/sm750fb/sm750_accel.c
+@@ -19,17 +19,17 @@
+ #include "sm750_accel.h"
+ static inline void write_dpr(struct lynx_accel *accel, int offset, u32 regValue)
+ {
+-	writel(regValue, accel->dprBase + offset);
++	writel(regValue, accel->dpr_base + offset);
+ }
+ 
+ static inline u32 read_dpr(struct lynx_accel *accel, int offset)
+ {
+-	return readl(accel->dprBase + offset);
++	return readl(accel->dpr_base + offset);
+ }
+ 
+ static inline void write_dpPort(struct lynx_accel *accel, u32 data)
+ {
+-	writel(data, accel->dpPortBase);
++	writel(data, accel->dp_port_base);
+ }
+ 
+ void sm750_hw_de_init(struct lynx_accel *accel)
+@@ -410,4 +410,3 @@ int sm750_hw_imageblit(struct lynx_accel *accel, const char *pSrcbuf,
+ 
+ 	return 0;
+ }
+-
+diff --git a/drivers/staging/sm750fb/sm750_hw.c b/drivers/staging/sm750fb/sm750_hw.c
+index 7119b67ef..ce46f240c 100644
+--- a/drivers/staging/sm750fb/sm750_hw.c
++++ b/drivers/staging/sm750fb/sm750_hw.c
+@@ -58,8 +58,8 @@ int hw_sm750_map(struct sm750_dev *sm750_dev, struct pci_dev *pdev)
+ 	}
+ 	pr_info("mmio virtual addr = %p\n", sm750_dev->pvReg);
+ 
+-	sm750_dev->accel.dprBase = sm750_dev->pvReg + DE_BASE_ADDR_TYPE1;
+-	sm750_dev->accel.dpPortBase = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
++	sm750_dev->accel.dpr_base = sm750_dev->pvReg + DE_BASE_ADDR_TYPE1;
++	sm750_dev->accel.dp_port_base = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
+ 
+ 	mmio750 = sm750_dev->pvReg;
+ 	sm750_set_chip_type(sm750_dev->devid, sm750_dev->revid);
+-- 
+2.51.0
+
 
