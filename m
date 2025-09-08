@@ -1,226 +1,174 @@
-Return-Path: <linux-kernel+bounces-806697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4688EB49AB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D5EB49AB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE16D206E5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBC24E1CA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723162D7DEE;
-	Mon,  8 Sep 2025 20:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFCB2D7DE9;
+	Mon,  8 Sep 2025 20:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jwULAKDm"
-Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020095.outbound.protection.outlook.com [52.101.189.95])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="bzhLdmNe"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4542D7DC4;
-	Mon,  8 Sep 2025 20:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72726E711;
+	Mon,  8 Sep 2025 20:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362084; cv=fail; b=rSXv/macwf8rxmK4BI+AVOYCW2OL7Z2/QsMzMNcsUo2qLycSIqXbG8lBzt4yHnlt9l4zSegI1mwDMco0hZUil7WoBS++RP6vXeAw4xFe1EfS8Oqtp5XNIFuzJxkv0weSAWHtrq2KK2P8lkkORjXZmGEs+8VeCDN7tCGqH6P6ytE=
+	t=1757362149; cv=pass; b=rFUh/GkESTeAGwXEGFIfGRLmHRE9LMxBddNduaSo+Vjs1Pe7DIjdn1lj9UbQ5CVievq/k6jhXG0GtgzHZ+R4gJxlmHpSL116dVU9OQzuHtswQY8gpUuUMg882u5BqwdkkFeBXPyqyVTKWJZ5xPxw2gdx/irGcYz7nWIdhMcY8+E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362084; c=relaxed/simple;
-	bh=e9Vq4nWjJ90wvU5Q6BZNHOlf9CY1XZ+HFMm+E02EVyA=;
-	h=Message-ID:Date:From:To:Subject:Content-Type:MIME-Version; b=QM8cG+XMOO5HMwpHhMdrKvKsGkO5mDvwXcLltqYv6VUAJAtOLEcUq00rVePMEn79Bb1FWi1uhhgHQd7IcgTiiJWSgVy2ZhX9IhbleJOJrkdS4OvX27HcNZbdVXbp8EA0BVDZ31fjSZtS5+i/pi+dAcS79gEi8IafO9p/2U0SPvE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=jwULAKDm; arc=fail smtp.client-ip=52.101.189.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hWnN8dcH1UYw3K0P7wMkKKBrR83tkxqsf3S4Kon4Z9k+RO1cUEdwEFWwWHAxxsUAgEnFJebw4f8A3JX+P8sNTlpScl99z37XYmbmApllM0+KrN1vHl8XFHjEcyRsqLBhNjdY0W+FPazvVJjP8c5L6fEZd7HwhrsnI/mWuuo81BsmNSCQLhrIFBd1do8RJ41T/n2utkbP0Bz/yAeXHMla+GMWB6pBfFDjrW3J99QemBMEiyxgpWch1A45ls9mx/uBOSas4w+CaPqx10/bw9p5MRs97GnS+N2vuhIFYl6BluufQqvPSoBeeI0QJprh/pGLfDOvrG42r0UMf18A7vrsoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JQ1RxfqUyr4nxrQ7d1UHaK81U/LnW0wItp9Qh7w9xdU=;
- b=cVwl3gquzIagrGDUlnB1WwnhbrWCOHUEvMzZ2nTlVCk/FhLHSucU849mLr9Bbfw2lRuMBn5sFi0aGIXRk5BP7U7cWnbpjUJSNbM5ZW07vRmyBH4O+IlIowdToNJXWPGN6ZhCO4yMpRJaMW8Tob1W67CnA0lMn7kOI3kt2bvqZW+439tgS53zEygm0QXj/oh18IxG20HNP+HH69INUlwtbIQ6DiMwmVLS8JBF7+yooKPRwGKe/RhqOzydRv08oB0uU+OhyGouyHCSZAsDeCHZGMqlZ7+EJtsNmeT4lrr6kVZi6yApTagJmB3GkT3HDt8K+SilIHi3D2IGByhKgp0ZMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JQ1RxfqUyr4nxrQ7d1UHaK81U/LnW0wItp9Qh7w9xdU=;
- b=jwULAKDm7SJ/drSbcI2p7vZRvLejj2+j0DnHYr+lRiKHU9EyaIaCa5LOMNDo74R/9tKGJmYrclejcj26PD2GBKxx/uYDwCZceSVAwjxKrm4CLHq/q2mzyyeKT3+Webga7xCeA+4LgJssQoI7zIGY9Om3p07bRcfYZgl8rPMyiQOKEDDdVLNvSo/YudsELLD3r25L90CqK9d3XFkK4W3fc8NNp4odnhO6r0FoPTEaX3Jzre0VgPaJwz1hV7/rIHJCPeUdBR4NpgUtIoPO9NoE2AtKrb1x3tHMucMa9x+D42yJNcYSgShinGJWz2fEFYFgRVwa0amxS9pFKHDH8/maSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB10356.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:de::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 20:07:57 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 20:07:57 +0000
-Message-ID: <eecc93ef-8d3c-4b2a-857c-471295ee6ec3@efficios.com>
-Date: Mon, 8 Sep 2025 16:07:55 -0400
-User-Agent: Mozilla Thunderbird
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-To: lttng-dev@lists.lttng.org, diamon-discuss@lists.linuxfoundation.org,
- linux-trace-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RELEASE] LTTng-modules 2.13.20 and 2.14.1 (Linux kernel tracer)
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0346.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:6b::16) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	s=arc-20240116; t=1757362149; c=relaxed/simple;
+	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkz3sZPsWLX3OHOsnvacMjYX2ziUf6tS1boI6ohzfHKEh48vMwyHx832TzmH3s6AcVZBTR4H/LhxGD5aAmq63UAPqTF1bHQtc32JaMFwQkyPJr0yGm7cN83mEwZ1jnHmU8mZvJ9XGNfO4MXdqWa7dk5Vp1h2ED3u/oT8RAkPn7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=bzhLdmNe; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757362128; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E1mI5O+BDwsYYpSLAByTqShmsSFPlSYjA0QQG11arz0JIb3l0hXMKZswHsKy6q6pZ0xJqFQs9ZiKcFFaZvUulJqUav1h5cnAXEhRucURC+3xI7XurBiTddAVdJ14lzIUuvQW/8yjGHVr2iJrwbaUHIy6iOiowe6sZzgOOytlhHc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757362128; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=; 
+	b=Ri6vHzbBorDOsfQYgge4VSpSZQaD0JucXQjQnv5bzhkwCuW3WQdaBhJjVWEUpETh3cy0+xpYhSaFNwKg4lVtlHm8zXSUPrrQGTRialWdBOQuRQV5/lruGlwQWXOut0pLTnehEZ0uREXKpnWYuGV0Zo2D9kTjNJt8s6rX7c9YhkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757362128;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=;
+	b=bzhLdmNeSoKiUCCs+h3HRUTeksAj05YUsr2VX04toyCYMTy/TbaoVB+S5OklYhvS
+	QGKRfqt8MuXyrFuhLiICxnLP56psSav6qle5AARsAZ8jZwdFNfPzAwsSKX8rKK2imua
+	Ixcw1adB75NrB4EP8gE1xT8u3ikXDLeSJhCy5RCM=
+Received: by mx.zohomail.com with SMTPS id 17573621245361.8411634081112425;
+	Mon, 8 Sep 2025 13:08:44 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 2E84F180B26; Mon, 08 Sep 2025 22:08:41 +0200 (CEST)
+Date: Mon, 8 Sep 2025 22:08:41 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, 
+	linux-rockchip@lists.infradead.org, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+Message-ID: <dr5qspjhwxaxutiilgx4rvfbrho4bijoll6lciv2bc7c7e7r7m@pgmxztqje5ux>
+References: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+ <3556261.BddDVKsqQX@workhorse>
+ <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
+ <1953725.CQOukoFCf9@workhorse>
+ <CAPDyKFofhy5wiNsHUgdtzFwGtO3QPqhVuu1KsPLBWHF08JzqyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB10356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9428475b-9f92-4b1d-8cae-08ddef13670a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TDlGQmhjZXJzYlJPbzdwS2cwTGdxWUJnTTRENklnU1hQQVVkaDh0VjNjYXJS?=
- =?utf-8?B?TTBEQXFzZVRtQUI4VkYyaE95L2pMYTN4N3Q5SmY4bHhkRDhJNzVCNG5sdFE3?=
- =?utf-8?B?bm4yOWJITDA4TEtVa2FZeWpPNytwQkMyRlhMQjZLeTFzK2NhdW9XNWN3UjNI?=
- =?utf-8?B?S3pkdjFXeDVzb1VaSkRndDdReFlONXNaZjFJYXRWa3N5K05WQ0ZkVFl4eWRl?=
- =?utf-8?B?RDBPR3FJa3V6TGxES1orUzBSMm90ZTZhenVUT3BtVFNRQUVVOFA3bzZwQWpH?=
- =?utf-8?B?UUxXYjMrNjg2RUV4QnA5SVo0SWZhT1RMY290T3JDc0lBQ3RFMHJjR0lFU0Z4?=
- =?utf-8?B?K3E3MmNYeGp5VnZobDlUZ0xMeXpUUDl5M0dCUkxHc3AzcE5wOUlRd2NYU0Rv?=
- =?utf-8?B?a2Q4Nk50WDJ2TVM1T3IwdHZvbGk1ajhBR0NQUmV1bzlNYml4NzdVb2IwQlZG?=
- =?utf-8?B?ekVLVXcrNG1YU1laNkVZMkYrSWFOY1JMVWc1RHZuRWh5d1RUczA4UTNGUlpo?=
- =?utf-8?B?Q3RZclRNZXFJSTVKQ0NPU3M0VjVVSzg3cEJyeStRZHVCdlk3aFYrZ01wMUFi?=
- =?utf-8?B?MC9lUjV3Y3dkWU1Ha3RBVS9ia1daaExSdzBtd0R6NDNlcUxZbWxrMG14cDYx?=
- =?utf-8?B?bTh6UGJoa09EZkJFbHhPckRKTDd0eVVQYWgwNGJzQnJKK1czdkt5Q1Urbjgz?=
- =?utf-8?B?TlExNXdZZTE1eEJ6MysrM0VvMWdRbExmN2FjMVBFL2hZdExaQVdJNUZ1MW9l?=
- =?utf-8?B?RTJzY0REM0wrbTlOc1BKMXd6RE9RMkJWazBmYkxhaS9zR0VwVFY0TkhHU0lv?=
- =?utf-8?B?UjlCSHNvdmJ0RUN4ZUI5ejMwR3pWMnY4ZzJxWWk4eEN5dkdzN3Z5Ymtrc2g0?=
- =?utf-8?B?QUtuKzdmN1AzeHFKWXQ3WUg4bEhweDZLTjhqTENVNENwN1R4RjRTcFAvVkdx?=
- =?utf-8?B?UXJza1hZVE1QYW5PanUrRHNDcDBzQkJnSzlnaG82OG52WlBUM2VoN2pwSko1?=
- =?utf-8?B?RkxwaG9IK3VNSVRHOUMrc28rQ2dYZHVnWWZuc3pJdXlWMzdYQ2VQK3RQdkkz?=
- =?utf-8?B?YWhIWEZmaFgzOUFEWUYwS0o0alZPSzJRZm8zMXlqNS9maVh4ZGpUdmpJWEZi?=
- =?utf-8?B?NTdLSzJpeW9MNUhWRjRLY3libFNsT0dYNUt0U2pCVWFYTVMrT3FFR1FCY0NP?=
- =?utf-8?B?MEFlYnZwMkJEUFd3d1Vld0VocTRxY3BHdnVEd0doc1VreG5GOHVvcUJjeXRD?=
- =?utf-8?B?bVZsWENhalBjcklxUm9FL2dpSllFYkxWak9pMlFTRG1iNCt3Z3pLNmFxMStJ?=
- =?utf-8?B?ZkoyNTMzb3Q3TENXZ0Jtbmpqa0hVTWI3TEtjcHFLbG5rVW9OM3dqendIUnQz?=
- =?utf-8?B?MDlNVFV6N1B6d3B4eFRQK2htd3pCWDhnazVNMFcvSisva212dXlpYTl2Z0po?=
- =?utf-8?B?UjlhOUIwSUtWRzZFb1V6SXhOaWdOYnFLY1hkVDNYSzlacjlrL1JjKzY5NXBP?=
- =?utf-8?B?TVpQdkwwWU9hb0ZhbHdQeTlrdHJvT0llbENKOE1ENnM4ckRVbUZHcEZMVmYv?=
- =?utf-8?B?NVdTMStTNE1iazNPZzV4YXdsb3V0VTFjcElyZk1LK1hyQXJNaVhBdFozak1z?=
- =?utf-8?B?cnQ3QVRkUlg1RmdXQXAyVStwV3VqdVprWStWWDFJcWVGVysxdDIrRWd6UUJw?=
- =?utf-8?B?RERvaUJWdEJKUmZ3YUx4cndMemZ4SFM4UUtRWWRoYVpYbThtWEVlWkU3U1gy?=
- =?utf-8?B?TXNza05neUcyQlNtanV6Ri96clM5M3ZpQXQwSmJuRTVZYTZ3WHpUbk9BRmMv?=
- =?utf-8?Q?I9JWEEKbr/tnEHE4Aazsq1pGSa7PciLVm5H9M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWpKT2JaVUhYejNjVlhEa0paaEtDOFZZd050SnJJMW1veXpCNzJkTFpJa3pE?=
- =?utf-8?B?OGRuYlhYMlh1N3d0Rmh6cS8xay9tc0VrTjFRV1dkbytESWtBeUJERmZYcFNQ?=
- =?utf-8?B?VVNIcGk3WTF5L004WC9DZWQ3akhzeHVveXpiSWRMZVN1SzJObi9veEp5R0w4?=
- =?utf-8?B?VXhjNzBQK0dWRUl4VkJ2L204VUlsQVpQWVNYRHEvdTFZdlFDVmVMQjVpWHAy?=
- =?utf-8?B?K0M2ZGk4NEpXbnZmRFUvNFN1dTUreGs2VDlXbTZyeEtsTmFJdzViek80RlV3?=
- =?utf-8?B?NjZTZjl4TkhmK0hDcEdNeDhrV290MUxpZExVb2F2bmdPMHNtVTFyYTlINjFo?=
- =?utf-8?B?RWpQbndLNVV5eW5IckkyMHlQb1RjemNnb0NqUGpaNHgrMHR6M3RDVm8wak9U?=
- =?utf-8?B?ei8wVytBWXh4THVWUGxHeEhublNqK0VsZVhqR1ZPQS8yYXNLZk5BaXZKMCtw?=
- =?utf-8?B?ZFB5dWdiMVFTUjA5ZkowYlFXVm1Za3ZJenNVbHVaSzZLdGV5eHZERlFGVDdx?=
- =?utf-8?B?SFFSMU5sVG9NRWtiN1VUUDhmczU3djYyeEpTQ1lBQzNoa084dktkS0tRaFRH?=
- =?utf-8?B?YzhQNUdieGtLSGtjWFlFN3BSZ3N4NmxGY21oeXYxcm5Qd3QxL1RwM1hkZDRP?=
- =?utf-8?B?R010N2laR1hBUHc5QlB2ZWJqQ0lmT1RUemQ2V0tnU1AxdlN0Zllja080cW9D?=
- =?utf-8?B?VW1BaU9DbklPS1JyUDRObFhMTStkY1ZUdFF2aHR3QzdCY21ZanZPMkQzaDRF?=
- =?utf-8?B?WWtadmxMYjZOY25ENGs3bXRzTURySTh0d2RycXN0djJFc2diZGFQOXZHQTB4?=
- =?utf-8?B?WEtzMUV3YVJpVkdDUDBjN3FtTWtPcXhyNThGeWNIcXRjRDNnam5hTm5uQlhI?=
- =?utf-8?B?V3VXTnZYdTRjVHVGQW9leGx6c05hQVh3c3hhelJCVm1DM0JtRzV4TXJaQ3Bj?=
- =?utf-8?B?SlVmUSt4emExU3FTMXVVeEtvdWVEaUhORFk2UUZkVGJTUWFHMm81SFVkS2Zn?=
- =?utf-8?B?aFJWU0dVSGFMalJ0eUYwOUdnazZNN0dvU2NMaWZ0NzRaL3ZrZDhTb3c1TDN5?=
- =?utf-8?B?eFdQa2xKMmdqcjdCMTJkVXVmZkRyZEsrM2ZhVVpDNkJWbDlVNTVJUUc3VEJG?=
- =?utf-8?B?bG9sRUl3Q3dzaEVIUWIyS2RSQWhNNmVWdk5MK2Z2YzA5T0FKa0FrZjA5NmFo?=
- =?utf-8?B?WWlQajVkUVVyMTQwUVMzaWJ2MVV3T01BZkQxYit1bVM3eU9HajlocFd1K1da?=
- =?utf-8?B?YTdvOUE0c1lRa1JXbkxLdlhBUlE4d1B6MWZtR2hKeElOb2k4cGsxbG9FOGRn?=
- =?utf-8?B?YzBRUkVaSTE1MVdOQXhPZVVLYlRBMWV5a2R2TW9jMms3bmx0MHovb3JxUG9R?=
- =?utf-8?B?bWhTSDd5UFc3bDhJMytQTHoweCsvSFJlaUtydVZzelRMUitFU0kxemhiZkg3?=
- =?utf-8?B?QTV1ZkVOdG1iVTFBeUNUNlpZWm1CK01nOWp5ZUhBYW5ZZ2Izc1J2ZFJXQ3Rj?=
- =?utf-8?B?ckVyZ0UxZVppYlRXOUV4dnkyZ1BwUTBSdjNLbUE4MUpMRDdlSXE4bGJSVzFl?=
- =?utf-8?B?R3NLN0pDZnZCRXVnZmZUcXNpUjM4dERpSlQyeUVablhqWkIveE83NGZ3VTFQ?=
- =?utf-8?B?Vk00TXloYUdsUlVrRzhqa0hjVzUwMTl2Z21mUWxjTFk0dTBNSEtDd0tGVEhF?=
- =?utf-8?B?Q3VoVzBabVhGNUd3R0o2VG02dWdsUDFSTlNZa0gxY2lZTTN4SmE0dDl6Qmtx?=
- =?utf-8?B?UVlJVjZZL25yUStZa2pQZytHUUZzbzRad3d3dGJWMENFbmtKRkVGNVdQOUNp?=
- =?utf-8?B?ZXFyU2xGVWlGdVcvUU9ic1M1ejNzbVVjdG5iNC80eEgxTjBlODlmbVBJTXo2?=
- =?utf-8?B?UFBsOXE4elNreHdiUDY1bzVkbzVsNVJ6LzlvN09iN0VtYUFSS3BCSStCc2po?=
- =?utf-8?B?c0EyYjRxdkcwRlpRN01Ubnd0UXMwY0FFVS9VcWZVQml1ZnhFSUJVRmZLdWNN?=
- =?utf-8?B?NDltbmNjc2owUVVwMnc5UVNjU0FSOXZ6aDZEUkthRDdmN09SWXVrcC9tODdj?=
- =?utf-8?B?QmNEd1duRjB5YWJIRm9rN21IQ0Q1Q0RCT1RsczJQbHNkeDVnanRabE9WZXBS?=
- =?utf-8?B?MWtWR2M5QnJwYUNGNDRRZEZmOVdqdkQwUDNhdWtmUHlHSVkreGVLVXkwd1Ba?=
- =?utf-8?Q?3UdmY0vKH2on98D0bAKMlcY=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9428475b-9f92-4b1d-8cae-08ddef13670a
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:07:57.2145
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B/1uAy5yBM2764Kz64NlMeSBZGXJ8n133PW0ET8DOOz7N3ba8ekwu7yUJMowtKBzOQzTwgtn0la7f2HT2X9Wd9TJIM3V/HlTkhvUzWWVhNw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB10356
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pjwce7oem4hc2zyx"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFofhy5wiNsHUgdtzFwGtO3QPqhVuu1KsPLBWHF08JzqyA@mail.gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/257.348.87
+X-ZohoMailClient: External
+
+
+--pjwce7oem4hc2zyx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+MIME-Version: 1.0
 
 Hi,
 
-This is a stable release announcement for the LTTng kernel tracer,
-an out-of-tree kernel tracer for the Linux kernel.
+On Mon, Sep 08, 2025 at 03:40:24PM +0200, Ulf Hansson wrote:
+> On Mon, 8 Sept 2025 at 15:14, Nicolas Frattaroli wrote:
+> > On Friday, 5 September 2025 16:27:27 CEST Ulf Hansson wrote:
+> > > I would suggest implementing an auxiliary driver, along with the
+> > > rockchip_pm_domain_driver. The main job for the auxiliary driver would
+> > > be to get the regulator in its ->probe() - and if it fails because the
+> > > regulator isn't available yet, it should keep trying by returning
+> > > -EPROBE_DEFER. See more about the auxiliary bus/device/driver in
+> > > include/linux/auxiliary_bus.h and module_auxiliary_driver().
+> > >
+> > > Moreover, when the rockchip_pm_domain_driver probes, it becomes
+> > > responsible for pre-parsing the OF nodes for the domain-supply DT
+> > > property, for each of the specified power-domains. If it finds a
+> > > domain-supply, it should register an auxiliary device that corresponds
+> > > to that particular power-domain. This can be done by using
+> > > platform-data that is shared with the auxiliary device/driver. See
+> > > devm_auxiliary_device_create().
+> > >
+> > > Furthermore we would need some kind of synchronization mechanism
+> > > between the rockchip_pm_domain_driver and the auxiliary driver, to
+> > > manage the regulator get/enable/disable. I think that should be rather
+> > > easy to work out.
+> > >
+> > > Do you think this can work?
+> >
+> > This sounds similar to something Heiko suggested to me, and I agree
+> > it could work. It does seem like a pretty painful solution though,
+> > in terms of needed additional code and complexity to basically just
+> > tell Linux "hey you can't get this regulator yet but please try
+> > again later without our involvement".
+>=20
+> Well, I would give this a go and see what you end up with. The nice
+> thing with this approach, I think, is that we get a driver and can use
+> the -EPROBE_DEFER mechanism.
+>=20
+> Another option would be to explore using fw_devlink/device_links, to
+> somehow get a notification as soon as the regulator gets registered.
 
-The LTTng project provides low-overhead, correlated userspace and
-kernel tracing on Linux. Its use of the Common Trace Format and a
-flexible control interface allows it to fulfill various workloads.
+I think the main pain issue with this is fw_devlink actually. The
+power domain consumers are all referencing the main DT node. So once
+it has been marked as initialized (of_genpd_add_provider_onecell()
+calls fwnode_dev_initialized() at some point), fw_devlink allows the
+consumers to be probed. As the DT node must be usable for processing
+after the normal pmdomains are registered, this means the consumers
+for pmdomains with "domain-supply" will potentially be probed too
+early resulting in some extra -EPROBE_DEFER. OTOH that should be the
+status quo, so probably it does not matter.
 
-* New in this release:
+> I think those kinds of dependencies are better solved by using
+> fw_devlink/device_links.
 
-The changes in those releases are mainly kernel enablement updates
-to allow compiling against recent kernels and building against the
-full kernel source, which allows building additional instrumentation
-such as ext4 and btrfs.
+I think the regulator dependency tracking would happen automatically
+when the auxillary sub-device uses the power-domain sub-node as its
+device fwnode.
 
-* Detailed change log
+Greetings,
 
-2025-09-08 LTTng modules 2.13.20
-         * Add missing prototype for wrapper_get_pfnblock_flags_mask()
-         * fix: mm: remove the for_reclaim field from struct writeback_control (v6.17)
-         * fix: btrfs: use refcount_t type for the extent buffer reference counter (v6.17)
-         * fix: percpu: repurpose __percpu tag as a named address space qualifier (v6.15)
-         * tracepoint: Have tracepoints created with DECLARE_TRACE() have _tp suffix (v6.16)
-         * fix: treewide, timers: Rename from_timer() to timer_container_of() (v6.16)
-         * fix: mm/writeback: Convert tracing writeback_page_template to folios (v5.16)
-         * fix: mm/page-writeback: introduce tracepoint for wait_on_page_writeback() (v5.2)
-         * fix: btrfs: use the flags of an extent map to identify the compression type (v6.8)
-         * fix: btrfs: update the writepage tracepoint to take a folio (v6.12)
-         * fix: btrfs: tracepoints: add btrfs prefix to names where it's missing (v6.16)
-         * fix: ext4: Change remaining tracepoints to use folio (v6.5)
-         * fix: ext4: Convert invalidatepage to invalidate_folio (v5.18)
-         * fix: sched/tracepoints: Move and extend the sched_process_exit() tracepoint (v6.16)
-         * Fix: `fast_page_fault` changed in RHEL 8.7
-         * Fix: `kvm_exit` changed in RHEL 8.7
+-- Sebastian
 
-2025-09-08 LTTng modules 2.14.1
-         * Add missing prototype for wrapper_get_pfnblock_flags_mask()
-         * fix: mm: remove the for_reclaim field from struct writeback_control (v6.17)
-         * fix: btrfs: use refcount_t type for the extent buffer reference counter (v6.17)
-         * Fix: `fast_page_fault` changed in RHEL 8.7
-         * Fix: `kvm_exit` changed in RHEL 8.7
-         * fix: percpu: repurpose __percpu tag as a named address space qualifier (v6.15)
-         * writeback instrumentation: Add missing provider name prefix
+--pjwce7oem4hc2zyx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Enjoy!
+-----BEGIN PGP SIGNATURE-----
 
-Mathieu
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi/N8UACgkQ2O7X88g7
++ppCahAAqkRqtVsC2durQTJGemBzq0yjG7dqCWIVfUIy4528VeNzKUM68rhTEM3Q
+DDCirmiWqQAa0loyj8c1BClUDHE1GYlLPZlFhJYT5X3riH0O9tvS9vqk89BlCqUw
+vV3iXxgnaB3Lf5otlZzGW7cIdh5NfOEDtl4uAB+oTdDhPtGSOIqVTyK2lez/qgyi
+J0ECOTVmc0XbvI6/nWgyj6WMVqpq8rJxsd/TBS2PmAfW0V4dFhr9BTOoeYOZowNB
+PPm4y0UOzS6YaprDF2F9jpPqY9yb/cSQJwZpteZaeNGdqlBucS22AvnmBTGQpmH3
+gCDj+ThQfm3kvTASarp/i4kv7KXBZFsecdbw8MnFu8rzryVC9SKRPIaKzKVqNdgk
+/ddMfYkWdoGp31DXc9EowBSNXBipYYpz7R/OInML/c1Q6/OAFeeys2qUy1iI/3zz
+IjOpu795St7XHwIYyLMNAzjP0AckJRm55+lUnxS7CpOTJGPYDELz55dM6YT9e+0Q
+xX8jmJwa79pffiCVV6BcMscMwxji7OMhoS0pbJ4S+BHuvdrEN+MmgJUNBDOeDG7a
+vvOpc8/6+y4LjZhV/zxRMGTKdTVQDnHuchg3uKaImghIplGEDkXsghrST5cAT4Aa
+zJpy1DDzDeUG/XWypyoRrnW+UlQ8SgIBPKv8shYELogchijmi7w=
+=o5Sb
+-----END PGP SIGNATURE-----
 
-Project website: https://lttng.org
-Documentation: https://lttng.org/docs
-Download link: https://lttng.org/download
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+--pjwce7oem4hc2zyx--
 
