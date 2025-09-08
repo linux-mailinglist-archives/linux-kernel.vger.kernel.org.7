@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-805526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94549B489AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9357B489B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAD03A452B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375323B3C5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4061A5BBE;
-	Mon,  8 Sep 2025 10:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6322EA163;
+	Mon,  8 Sep 2025 10:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMyNksgN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWTv+UBG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D02192E3;
-	Mon,  8 Sep 2025 10:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C372F7AA1;
+	Mon,  8 Sep 2025 10:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326383; cv=none; b=YnCJo79yKOgbV5514tpEquSYpkrNZnouI2QqmaV9XPH7G8rVSNWiKTk6fPuOS0X4wWGCecFMtvQZkql7qwcGLIMhMVXugaEBQ0pdFg/y+MA7rBhMDjNmmXSH5ivb93NCOmOYYTXZHtJh+d2oS8RtTEnFc0MAmxJZngi+Wa++CM8=
+	t=1757326404; cv=none; b=ds8gpqJjdwJCr6JnialI6GoE91nMHl0K85i0eWwixVNucSA3hbWbEGIOuVu55cfPe8ZU+f94BndcvHzEkSmZXfJd1R34vBTWSSDU91oxeIvVh6x3nb0GP9iytjL6Zl7+PLXALpm4h7Qicpk8HvnpTx9xpj/JQYPBXc4W4ZGKV7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326383; c=relaxed/simple;
-	bh=P7Gdx6jHyS2mhrerthEgKNkM8QnFvFV6K6JPItqOAl8=;
+	s=arc-20240116; t=1757326404; c=relaxed/simple;
+	bh=Htdb7MbFsiO8xnlQadTDB0KA0YJ0enYxaWavM53erns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYHOjjskQxBO/hLlPX5QlxbcPy+O5cOkjJrdrB373NQdc2bFTYylsSO39RCDjgmqHn0VwssRDxBMpTHxYWcD1355BZR08pskqMmbYT3uYeO7+gZ8CdOA4aDd2OHmCwmI/Fr46ZwnTedx5N7wIvLeORWfq4Q8DWmk11sNSXR4ZVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMyNksgN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C337CC4CEF1;
-	Mon,  8 Sep 2025 10:12:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPwE3FYJgzl+8KGTdOkB2R9dgSh2cXtde/kp1DWVo4YVU6b0StpBk3eVsfroB5oGIAQpBwPQzHlPFX8dfnhsD1rczc5ONO3eM+6VybalwtFu8v3zpKXzLY+8oEEMdlBCk1QaHdub1JtFkyC3CLHSxOrGBwhGcgvi9+aRBl08VaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWTv+UBG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C867C4CEF1;
+	Mon,  8 Sep 2025 10:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757326381;
-	bh=P7Gdx6jHyS2mhrerthEgKNkM8QnFvFV6K6JPItqOAl8=;
+	s=k20201202; t=1757326404;
+	bh=Htdb7MbFsiO8xnlQadTDB0KA0YJ0enYxaWavM53erns=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMyNksgNqwSaz0M8/qJ7RUcdg2+SEgAlXLw9tD5aE2Yektd3dshrDvUpm/ptL3pg9
-	 nGLYOcjGlKPlH5hru8EJ0nezbjomR74/hWQiVeja5fu1KIudPAO3Z5mgv02jd4XK8B
-	 +tAI3eX+weLj18dlWAKsH1U4phxE1ojIZiD+iWNv8baMGcVgdeNAbsHpENNzlztqXR
-	 zgRelmHQ4nIdb7LnoGugUQ93aa6MjoimFEJ40J9L2C2xfe8abBDbe9pjG1cFlCV1fW
-	 rQJLHivQA6b8BcLnAvGKRMR10uQVwB/o84T4oe6mEzoFN6734OJmAx59NYe4POXmE/
-	 aC35kKBsy5gLw==
-Date: Mon, 8 Sep 2025 11:12:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, david decotigny <decot@googlers.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de,
-	calvin@wbinvd.org, kernel-team@meta.com, stable@vger.kernel.org,
-	jv@jvosburgh.net
-Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
- causing incorrect cleanup
-Message-ID: <20250908101256.GA2015@horms.kernel.org>
-References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
- <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+	b=WWTv+UBGM52s4y5vBHoezulr1h2TBqaKEZo49ujN0Gx/0An4VRR4jgyL4zOO6t31/
+	 SogUrQUUujfQ3Pil59yQEGyfNxEd9M9rwz1MXMud9+fVnEyvgoYbD//TeuV7aeRGPs
+	 NwBm0pMOpy0BFzYC+885TzZzVutiS8Vfvf2vfmEpL/15+YACGyQswx69onE4wzRw7h
+	 QyWl+rlmFLFb/B9MnoJ+cOq2YTUHiQvK6TN0MchPuj9WUKFOZi7PcrPr8DnrLuuk9F
+	 27yqi1yOeeHkaD2+GwU6RFkYs48BZVLclCqaIT9AW9PWlwXzrpjWnv5UShdA5ACnEv
+	 UFZJf9PYdJfiQ==
+Date: Mon, 8 Sep 2025 15:43:17 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: daire.mcnamara@microchip.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, bhelgaas@google.com, robh@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: plda: Remove the use of dev_err_probe()
+Message-ID: <cl52jts26ulfcanbzz42w35g3bcjlwfhteph2oze4drveajzg3@a4kq3cxfzn2l>
+References: <20250820085200.395578-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820085200.395578-1-zhao.xichao@vivo.com>
 
-On Fri, Sep 05, 2025 at 10:25:07AM -0700, Breno Leitao wrote:
-> commit efa95b01da18 ("netpoll: fix use after free") incorrectly
-> ignored the refcount and prematurely set dev->npinfo to NULL during
-> netpoll cleanup, leading to improper behavior and memory leaks.
+On Wed, Aug 20, 2025 at 04:52:00PM GMT, Xichao Zhao wrote:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
 > 
-> Scenario causing lack of proper cleanup:
-> 
-> 1) A netpoll is associated with a NIC (e.g., eth0) and netdev->npinfo is
->    allocated, and refcnt = 1
->    - Keep in mind that npinfo is shared among all netpoll instances. In
->      this case, there is just one.
-> 
-> 2) Another netpoll is also associated with the same NIC and
->    npinfo->refcnt += 1.
->    - Now dev->npinfo->refcnt = 2;
->    - There is just one npinfo associated to the netdev.
-> 
-> 3) When the first netpolls goes to clean up:
->    - The first cleanup succeeds and clears np->dev->npinfo, ignoring
->      refcnt.
->      - It basically calls `RCU_INIT_POINTER(np->dev->npinfo, NULL);`
->    - Set dev->npinfo = NULL, without proper cleanup
->    - No ->ndo_netpoll_cleanup() is either called
-> 
-> 4) Now the second target tries to clean up
->    - The second cleanup fails because np->dev->npinfo is already NULL.
->      * In this case, ops->ndo_netpoll_cleanup() was never called, and
->        the skb pool is not cleaned as well (for the second netpoll
->        instance)
->   - This leaks npinfo and skbpool skbs, which is clearly reported by
->     kmemleak.
-> 
-> Revert commit efa95b01da18 ("netpoll: fix use after free") and adds
-> clarifying comments emphasizing that npinfo cleanup should only happen
-> once the refcount reaches zero, ensuring stable and correct netpoll
-> behavior.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: jv@jvosburgh.net
-> Fixes: efa95b01da18 ("netpoll: fix use after free")
-> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Change is fine as it is. But I think devm_pci_alloc_host_bridge() should return
+the actual error pointer instead of NULL and let the callers guess the errno.
 
+Callers are using both -ENOMEM and -ENODEV, both of then will mask the actual
+errno that caused the failure.
+
+Cleanup task for someone interested :)
+
+- Mani
+
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/pci/controller/plda/pcie-plda-host.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
+> index 8e2db2e5b64b..3c2f68383010 100644
+> --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> @@ -599,8 +599,7 @@ int plda_pcie_host_init(struct plda_pcie_rp *port, struct pci_ops *ops,
+>  
+>  	bridge = devm_pci_alloc_host_bridge(dev, 0);
+>  	if (!bridge)
+> -		return dev_err_probe(dev, -ENOMEM,
+> -				     "failed to alloc bridge\n");
+> +		return -ENOMEM;
+>  
+>  	if (port->host_ops && port->host_ops->host_init) {
+>  		ret = port->host_ops->host_init(port);
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
