@@ -1,98 +1,343 @@
-Return-Path: <linux-kernel+bounces-805864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E844EB48E92
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:04:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C48B48EAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA911341791
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EBC3C3214
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1930ACF5;
-	Mon,  8 Sep 2025 13:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E8930C636;
+	Mon,  8 Sep 2025 13:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2wIxDK0W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="CARTHGcf"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2F53081A6;
-	Mon,  8 Sep 2025 13:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F09130BB99
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757336669; cv=none; b=guKlzKh9+R3EXM5dqxoG8WyOdPNN013Cc88E/J5D0/vJBT3qW6vO0MhjVzGYBcJN8bQLP05sRWfZqCuZOh/V/jv+JWrnLSsrDUJQG4p9UfIchPpR8mv/WDLtfd6Fz1q37SUjOqNLRoaAXZpLQE3hKPpxfBEu+cUpCg28SXgEwag=
+	t=1757336675; cv=none; b=C5N96l0TI/8PGojBwXAkMXlcPa6TBDselCgdpr8/ZlbO1zAgQk9lds1QrQGhqkhl+IGAwuKe8LXftfFpkQSbxKaR/wVKHwGcVBHyQ0Yr4HHu+c0nrAHGHWYQjUEt7vztzfnFukZxbkOnbPzxcvljWV3HJmUasJzlq6f7gK7+32Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757336669; c=relaxed/simple;
-	bh=0O5hcKIVpFSNb8EgN1a/zqavVOx3Xsq/vYvcIbaTbUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDEVH92UnznAX9XlynBhoLonJozXIWp1sDnz8Ny7/F0qyYX1vK9oVV2Uj/YzXPZ0XSK/MFGVhs7KanXjgW7iS86nV8n3dACwFA/ur8ZOFbC0CgWRZENd1XmAbglCkWe9Ai5DI5Vo5Lht7GPgnVxs7Pu99zQSYpvzKCTIVoVBWoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2wIxDK0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C528C16AAE;
-	Mon,  8 Sep 2025 13:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757336668;
-	bh=0O5hcKIVpFSNb8EgN1a/zqavVOx3Xsq/vYvcIbaTbUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2wIxDK0Wz1HYMffQ6rkSkBR6MG1ZZ3ppTn+mxBxtNfkUNS2OuOPAAhLIK7sErUMiU
-	 akpEpV6/34nMmiASjSspcNm76vRNnRHIw2Aem0iELo+baRZAO+5zoYRIM7D79DRoQn
-	 I0ozCDNIq91ARPs/MESDMWHibDW0+wgYQQeYlVOM=
-Date: Mon, 8 Sep 2025 15:04:25 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
-	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v11 7/7] samples: rust: Add scoped debugfs sample driver
-Message-ID: <2025090821-saturate-phoney-3f53@gregkh>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-7-7d12a165685a@google.com>
+	s=arc-20240116; t=1757336675; c=relaxed/simple;
+	bh=9eSNNMYWl6Ezk00Y7GbdoLIlm1gW9gBEiyXh++DBIfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HSUZtpcXz40qIIn3S+FOEYzQXJ1jfV/9nEkQwbv1XQN9XW54FuBv+I+CitMr0Ru6vsqprBbjRfzN4meo5JNp9jKOkmWUMW0FvY/+HcGQZkNeJDdQtJggiv7BVyl6v51ZgjJPJbm49KaKcbRzjNW9DOIRSVOEMnOH4zXaOeWjypU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=CARTHGcf; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cb4374d2fso6690357a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1757336671; x=1757941471; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yd7mLJQDkHllxwujkPQ/7Z9ByYCiL7cm7yP3I7t4tTI=;
+        b=CARTHGcfpuGQRiCFTvZM4NXt95YK/DQTgVoX3DMJTajOq6Oj7RTiw5vh7z503RGPgF
+         TaV7XiFZ834FIBdWLYDSF8+AFd3EvqsSnkmfz17PXDBSvAk0T75ghFtq1xTiDuOpG9+q
+         WX0IbyGkLYJYqrrbg7Fox8TcKqbwOA1cmR7Tbem/HCm7vi8fHp7DP/LdD6JgI7NSAMoR
+         HQSgGPPOb6VOtCwoS5VCXDbB7ypfBS1zn+9I1S2pKDWLdDZYfOzsmW+KN0mqsxJuGeL5
+         BhsJ+Igv4tLs1XqCgjVxIXffGsBAVGpMBGYUpeY+w6Yv4L5/IDDRvB2+lrKA0pvMsFpw
+         RLYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757336671; x=1757941471;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yd7mLJQDkHllxwujkPQ/7Z9ByYCiL7cm7yP3I7t4tTI=;
+        b=bfYVDA7R8J/2jfohNzdIahy6Lsok33PV5BwLAl86HOzCVPYqQS14+rwXvQ/PNZs73l
+         GYuxU0p6FXmyFtyHzrlYVWWPb+FFmRDmyB7vMTt+goiu073ZhEK0uMsVVtRGAtV3/yOc
+         tPxckcbce89t9gY74FKi53kOeAmbxphoVDCZ8OtH03dpaXE936JHWFN+VmJsvwb/ut6z
+         EgZ8mMQnhhEP4Nj12+K26LwH5SBLuSBa36O27sUT7gXTyJcipwFexsdeTHKrVwyyrN5H
+         f3d/tKas7iNz7yF9u9fIPW4h/Q66C5HxujLOaUSlvX39/ozLOQEuaWzNmfAe05pfGP5M
+         OPmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpxDt2Nc7VuFKD3XLJSvGWvd6cuzxLiTD55h4NNpQI6A77sdxIldEI6Mc4yBzKqTMd/00peM0U5/FccoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydSsT+DnrmzXMI2FwBRc143Vr63Zt44aQqjoS6RuDg2o0iUepB
+	5hc7lF+K96JGaD/2xoNH/CBVpMNzGCbmApQrY+jVcv77S/8PFfWy8hNoneLmyuJYFo0=
+X-Gm-Gg: ASbGncv4d48aTcknaOLjzrlFB1dNU4A0wpmynoX/BzVOk9+sd85rlpvWol7geV2vKRh
+	91tM1/da5DyXkdx4xbQbAlUGHMb/jr9iMtaZxxZBp5EW93Y1LZX3Jf431XzWSI1/kjyrS623KM3
+	uO2YvgSR1ZMl6/v7aJNeF+mx6NOwLKQkxGLESdrayUB2Zppr4RVu4YKqpGGdyJhTBzooDfrMDd9
+	BPHTm3VxcZBi8HhFgq/beFtjXc10CINDTQPB+tmabSMthYGOFaBvSOqOvRmUSmp8nw2U1PYfXmD
+	4C39ILUtrwtsp2JvvX6D/8H0JeAwltM2T6POob9W0+OEgGwpI9DlO0A5dmHWLZhtYwBTwA29E4e
+	HzKsswCZktKMun5W1GUPZTzojW54pxMk=
+X-Google-Smtp-Source: AGHT+IEmhgCH3sUPlRQKMy5XutR0hjOQQ3uuBSZbxPWNovm+H+RQwCI0Zz7MCSmSQKcPnEjwUEs0SA==
+X-Received: by 2002:a05:6402:2348:b0:61c:8fe9:9423 with SMTP id 4fb4d7f45d1cf-6237edb2f15mr8247367a12.17.1757336670479;
+        Mon, 08 Sep 2025 06:04:30 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc575b94sm21301716a12.53.2025.09.08.06.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 06:04:29 -0700 (PDT)
+Message-ID: <83301c1e-9e6d-4bbe-ac76-db6ce7ec670e@tuxon.dev>
+Date: Mon, 8 Sep 2025 16:04:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-debugfs-rust-v11-7-7d12a165685a@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+ <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 09:13:58PM +0000, Matthew Maurer wrote:
-> Adds a new sample driver `rust_scoped_debugfs` that demonstrates the
-> use of the scoped debugfs APIs.
-> 
-> The driver creates a `control` directory with two write-only files,
-> `create` and `remove`. Writing a name and a series of numbers to
-> `create` will create a new subdirectory under a `dynamic` directory.
-> This new subdirectory will contain files that expose the numbers as
-> atomic values.
-> 
-> Writing a name to `remove` will remove the corresponding subdirectory
-> from the `dynamic` directory.
-> 
-> This sample serves as an example of how to use the `debugfs::Scope`
-> and `debugfs::ScopedDir` APIs to create and manage debugfs entries
-> that are tied to the lifetime of a data structure.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  MAINTAINERS                         |   1 +
->  samples/rust/Kconfig                |  11 +++
->  samples/rust/Makefile               |   1 +
->  samples/rust/rust_scoped_debugfs.rs | 134 ++++++++++++++++++++++++++++++++++++
+Hi, Manivannan,
 
-Nit, should be called "rust_debugfs_scoped.rs" to make it more obvious
-this is a debugfs thing (noun-verb).
+Apologies for the late reply, I've been off for a while.
 
-thanks,
+On 8/31/25 07:07, Manivannan Sadhasivam wrote:
+> On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+>>
+>>
+>> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+>>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>>> only as a root complex, with a single-lane (x1) configuration. The
+>>>> controller includes Type 1 configuration registers, as well as IP
+>>>> specific registers (called AXI registers) required for various adjustments.
+>>>>
+>>>> Hardware manual can be downloaded from the address in the "Link" section.
+>>>> The following steps should be followed to access the manual:
+>>>> 1/ Click the "User Manual" button
+>>>> 2/ Click "Confirm"; this will start downloading an archive
+>>>> 3/ Open the downloaded archive
+>>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+>>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+>>>>
+>>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>
+>>> [...]
+>>>
+>>>> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
+>>>> +{
+>>>> +	u32 val;
+>>>> +	int ret;
+>>>> +
+>>>> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
+>>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
+>>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
+>>>> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
+>>>> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
+>>>> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
+>>>> +
+>>>> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
+>>>
+>>> You don't need to do !!ret as the C11 standard guarantees that any scalar type
+>>> stored as bool will have the value of 0 or 1.
+>>
+>> OK, will drop it anyway as suggested in another thread.
+>>
+>>>
+>>>> +}
+>>>> +
+>>>
+>>> [...]
+>>>
+>>>> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+>>>> +					     unsigned int devfn,
+>>>> +					     int where)
+>>>> +{
+>>>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>>>> +
+>>>> +	if (devfn)
+>>>> +		return NULL;
+>>>
+>>> Is it really possible to have devfn as non-zero for a root bus?
+>>
+>> I will drop it.
+>>
+>>>
+>>>> +
+>>>> +	return host->pcie + where;
+>>>> +}
+>>>> +
+>>>
+>>> [...]
+>>>
+>>>> +static int rzg3s_pcie_msi_setup(struct rzg3s_pcie_host *host)
+>>>> +{
+>>>> +	size_t size = RZG3S_PCI_MSI_INT_NR * sizeof(u32);
+>>>> +	struct rzg3s_pcie_msi *msi = &host->msi;
+>>>> +	struct device *dev = host->dev;
+>>>> +	int id, ret;
+>>>> +
+>>>> +	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
+>>>> +	if (!msi->pages)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	msi->dma_addr = dma_map_single(dev, (void *)msi->pages, size * 2,
+>>>> +				       DMA_BIDIRECTIONAL);
+>>>> +	if (dma_mapping_error(dev, msi->dma_addr)) {
+>>>> +		ret = -ENOMEM;
+>>>> +		goto free_pages;
+>>>> +	}
+>>>> +
+>>>> +	/*
+>>>> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.4.5.2 Setting
+>>>> +	 * the MSI Window) the MSI window need to be within any AXI window. Find
+>>>> +	 * an AXI window to setup the MSI window.
+>>>
+>>> Are you really finding the AXI window or just making sure that the MSI window
+>>> falls into one of the AXI window?
+>>
+>> I'm making sure the MSI windows falls into one of the enabled AXI windows.
+>>
+> 
+> Then you need to reword the comment as such. Currently, it is not clear.
 
-greg k-h
+OK
+
+> 
+>>>
+>>> And I believe it is OK to have more than one MSI window within an AXI window.
+>>
+>> This IP supports a single MSI window that need to fit into one of the
+>> enabled AXI windows.
+>>
+> 
+> [...]
+> 
+>>>> +
+>>>> +	/* Update vendor ID and device ID */
+>>>
+>>> Are you really updating it or setting it? If you are updating it, are the
+>>> default IDs invalid?
+>>
+>> Default IDs are valid (at least on RZ/G3S) but Renesas specific. Renesas
+>> wants to let individual users to set their own IDs.
+>>
+> 
+> So they are optional then? But the binding treats them as required, which should
+> be changed if the default IDs are valid.
+
+On RZ/G3S the default IDs are valid. On other SoCs that will be using this
+driver (e.g. RZ/G3E) the default IDs are not valid.
+
+These were marked as required as Renesas wants them to be set by the
+company that manufactures the end product itself.
+
+
+> 
+>>>
+>>>> +	writew(host->vendor_id, host->pcie + PCI_VENDOR_ID);
+>>>> +	writew(host->device_id, host->pcie + PCI_DEVICE_ID);
+>>>> +
+>>>> +	/* HW manual recommends to write 0xffffffff on initialization */
+>>>> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00L);
+>>>> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00U);
+>>>> +
+>>>> +	/* Update bus info. */
+>>>> +	writeb(primary_bus, host->pcie + PCI_PRIMARY_BUS);
+>>>> +	writeb(secondary_bus, host->pcie + PCI_SECONDARY_BUS);
+>>>> +	writeb(subordinate_bus, host->pcie + PCI_SUBORDINATE_BUS);
+>>>> +
+>>>> +	/* Disable access control to the CFGU */
+>>>> +	writel(0, host->axi + RZG3S_PCI_PERM);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>
+>>> [...]
+>>>
+>>>> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
+>>>> +{
+>>>> +	u32 val;
+>>>> +	int ret;
+>>>> +
+>>>> +	/* Initialize the PCIe related registers */
+>>>> +	ret = rzg3s_pcie_config_init(host);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Initialize the interrupts */
+>>>> +	rzg3s_pcie_irq_init(host);
+>>>> +
+>>>> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
+>>>> +					  host->cfg_resets);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Wait for link up */
+>>>> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
+>>>> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS),
+>>>> +				 PCIE_LINK_WAIT_SLEEP_MS,
+>>>> +				 PCIE_LINK_WAIT_SLEEP_MS *
+>>>> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
+>>>> +	if (ret) {
+>>>> +		reset_control_bulk_assert(host->data->num_cfg_resets,
+>>>> +					  host->cfg_resets);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
+>>>> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+>>>> +
+>>>> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
+>>>> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
+>>>> +
+>>>> +	if (probe) {
+>>>> +		ret = devm_add_action_or_reset(host->dev,
+>>>> +					       rzg3s_pcie_cfg_resets_action,
+>>>> +					       host);
+>>>
+>>> Oh well, this gets ugly. Now the devm_add_action_or_reset() is sprinkled
+>>> throughout the driver :/
+>>>
+>>> As I said earlier, there are concerns in unloading the driver if it implements
+>>> an irqchip. So if you change the module_platform_driver() to
+>>> builtin_platform_driver() for this driver, these devm_add_action_or_reset()
+>>> calls become unused.
+>>
+>> They can still be useful in case the probe fails. As the initialization
+>> path is complicated, having actions or resets looks to me that makes the
+>> code cleaner as the rest of devm_* helpers.
+>>
+>> I can drop it and replace with gotos and dedicated functions but this will
+>> complicate the code, AFAICT.
+>>
+>> Please let me know how would you like me to proceed.
+>>
+> 
+> It is generally preferred to cleanup the resources in err path using goto
+> labels.
+
+Just to be sure I'll prepare the next version with something that was
+requested: would you like to have goto lables on this driver?
+
+I kept it like this as I considered the code is simpler.
+
+Thank you,
+Claudiu
 
