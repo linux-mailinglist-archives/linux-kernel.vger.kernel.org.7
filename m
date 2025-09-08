@@ -1,191 +1,95 @@
-Return-Path: <linux-kernel+bounces-806686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52A9B49A5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4827AB49A58
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639B9205BDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578F81B23F2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150A2D543D;
-	Mon,  8 Sep 2025 19:52:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9472D4B7C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325BA2D3EC2;
+	Mon,  8 Sep 2025 19:52:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602CF239E60
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361151; cv=none; b=Fvj3b51hekPhUq7zFVYgBHo3G00M4symP9ba5+JQvFZSaE+KFmzStk+1dSqTq96ce0dJwHjDjH3Ri1loT58Wz9F1Hf6YOctelNgYNIkZ6VgP3JNKrh/GoendVw9TWoUw4898ApfLjkM31vL2o8MVlJt5ytF1k310/mvCZe7J1y8=
+	t=1757361125; cv=none; b=n8aey94fz7V2GPFrCESGRrsncnNRQp9RcU95yGS0GIOGbCruJrvcWzVb3wfdQIjuX0hJ8Th1bQlFhA8USu1M63aV0jRFn2aquHUr82icWT8iEe0j+K3pO0t65biNcEFCo+CP4WCfuSUvS3HPxx3cmbRJXYccPqRu4G3s5ltoIAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361151; c=relaxed/simple;
-	bh=KG/wZiINb4q+y6OBOElz2J9sgATSOMqPoUnV+iOCiIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxz6lmSxYquX9Wk73lw35NvoTHW8N3rh3pdzXD32098O7R8WxDOtLs3OH85Pbpg/wj9bzZf8l8eTrWXX6myl7W5+Jszmi7omYHVmB7Pg8rXEX+lkgLUZ1KAI52u/VdwNX5idWOVED5yqhrOw785LZMIFvlekHbUVv+TskvC+2iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD84319F0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:52:18 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 02D993F694
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:52:26 -0700 (PDT)
-Date: Mon, 8 Sep 2025 20:51:58 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
-	kernel@collabora.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH RFC 01/10] dt-bindings: gpu: mali-valhall-csf: add
- mediatek,mt8196-mali variant
-Message-ID: <aL8z3go1ece81LQj@e110455-lin.cambridge.arm.com>
-References: <20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com>
- <20250905-mt8196-gpufreq-v1-1-7b6c2d6be221@collabora.com>
+	s=arc-20240116; t=1757361125; c=relaxed/simple;
+	bh=Xw3fA3hYo91wcLGD0HNrTR+08mGg9P6FC4LeHeM9EQA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YzDXmoI2bZg6PRD/A74QktaK2zeSm6lLwI/HJcJelZy1+ux+SQL/0fiIMPFqjYWiaatH0Qf6901JNN4fl1UeJ2YUCp6DhNBXDFbY/jm3gvDQQTz3b1+zx6zZvZyOHEvuNg6vxgnq4cvRxcxpg1cboY4jZYixM9ufbRZ0GPhkKNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4020e59b735so67983745ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:52:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757361123; x=1757965923;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6E6CGk2tmAlq5+OVCzHjqNr7fmm4smeKYiarZdZ2kMw=;
+        b=andpXvjxaEnoRMivfD2GpxrtWTi0f6fR6j6icBsCMP3a5S4xfsymG8Vybr43GIL8hr
+         cu0X83avypQ0Jnd+qJN0w36R3nPHY9KeVPxzATcKDDTwutesmcihcHKjsnaSurc8EQ0B
+         wqVhy3rjsSS7G9KUrtEOHB9deiPKv0KcaCb2NfKIItPabp8+rL5cG88fQ9+PZEixp7jJ
+         n6A0UdW7Bwxsx68J+txxuq5Dn8g2SGyEbz7RJDvsxCWHyIzL4lywZ6twBVxy832YzhVd
+         m7paZfj+5ThwRh6bg0fgd32A/txlbUe14Te0tfclVfnlOSzfCTE22z3FGLqCHtYLqFK3
+         eCDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfERaSmVlZKeahrQ0NmDtWm0ZA1sjRxncLsVNeFgzGRwSLmhrpGyf+TDnQkosvCxPZjxubSg1URQ8HnPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxP5uwYvfe7MgV+Sb5/feKWMZ8OgN2OT0B+cijSE8HFmu6D4hv
+	BJo9whKjRhS++esv77ZrIMfvPF4Jlcd9zgZL9MYeZ5hicgKHyTASdSftyt0Lx5nRSrqYQZWHfw2
+	lRfixNU2HU6pdMYv2aYSoGu5rT0//4Cz5k8S6P9QzPncWr8rYqOngdB4vdh4=
+X-Google-Smtp-Source: AGHT+IGXg7L5kD0uoY5KYmviwfxTBneLi5Cm1Bw2Zj7cRXNgGfxtx4v4PIo7McUtRBfK4wibi8nrfPuz44FeC2vNCprnp34kScX8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250905-mt8196-gpufreq-v1-1-7b6c2d6be221@collabora.com>
+X-Received: by 2002:a05:6e02:1985:b0:407:51a8:6b5c with SMTP id
+ e9e14a558f8ab-40751a86cfemr66244445ab.32.1757361123448; Mon, 08 Sep 2025
+ 12:52:03 -0700 (PDT)
+Date: Mon, 08 Sep 2025 12:52:03 -0700
+In-Reply-To: <68bf244a.050a0220.192772.0883.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bf33e3.a70a0220.7a912.02c3.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [ext4?] WARNING in ext4_init_orphan_info
+From: syzbot <syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, akpm@linux-foundation.org, apopple@nvidia.com, 
+	byungchul@sk.com, david@redhat.com, gourry@gourry.net, jack@suse.cz, 
+	joshua.hahnjy@gmail.com, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com, 
+	rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
+	ying.huang@linux.alibaba.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 12:22:57PM +0200, Nicolas Frattaroli wrote:
-> The Mali-based GPU on the MediaTek MT8196 SoC is shackled to its concept
-> of "MFlexGraphics", which in this iteration includes an embedded MCU
-> that needs to be poked to power on the GPU, and is in charge of
-> controlling all the clocks and regulators.
-> 
-> In return, it lets us omit the OPP tables from the device tree, as those
-> can now be enumerated at runtime from the MCU.
-> 
-> Add the mediatek,mt8196-mali compatible, and a performance-controller
-> property which points to a node representing such setups. It's required
-> on mt8196 devices.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 36 +++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> index a5b4e00217587c5d1f889094e2fff7b76e6148eb..6df802e900b744d226395c29f8d87fb6d3282d26 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> @@ -19,6 +19,7 @@ properties:
->        - items:
->            - enum:
->                - rockchip,rk3588-mali
-> +              - mediatek,mt8196-mali
->            - const: arm,mali-valhall-csf   # Mali Valhall GPU model/revision is fully discoverable
->  
->    reg:
-> @@ -53,6 +54,13 @@ properties:
->    opp-table:
->      type: object
->  
-> +  performance-controller:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      A phandle of a device that controls this GPU's power and frequency,
-> +      if any. If present, this is usually in the form of some specialised
-> +      embedded MCU.
-> +
->    power-domains:
->      minItems: 1
->      maxItems: 5
-> @@ -91,7 +99,6 @@ required:
->    - interrupts
->    - interrupt-names
->    - clocks
-> -  - mali-supply
->  
->  additionalProperties: false
->  
-> @@ -105,9 +112,24 @@ allOf:
->        properties:
->          clocks:
->            minItems: 3
-> +        performance-controller: false
->          power-domains:
->            maxItems: 1
->          power-domain-names: false
-> +      required:
-> +        - mali-supply
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,mt8196-mali
+syzbot has bisected this issue to:
 
-s/rockchip/mediatek/
+commit 02f310fcf47fa9311d6ba2946a8d19e7d7d11f37
+Author: Jan Kara <jack@suse.cz>
+Date:   Mon Aug 16 09:57:06 2021 +0000
 
-Best regards,
-Liviu
+    ext4: Speedup ext4 orphan inode handling
 
-> +    then:
-> +      properties:
-> +        mali-supply: false
-> +        sram-supply: false
-> +        operating-points-v2: false
-> +      required:
-> +        - performance-controller
->  
->  examples:
->    - |
-> @@ -143,5 +165,17 @@ examples:
->              };
->          };
->      };
-> +  - |
-> +    gpu2: gpu@48000000 {
-> +        compatible = "mediatek,mt8196-mali", "arm,mali-valhall-csf";
-> +        reg = <0x48000000 0x480000>;
-> +        clocks = <&mfgpll 0>;
-> +        clock-names = "core";
-> +        interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        interrupt-names = "job", "mmu", "gpu";
-> +        performance-controller = <&gpufreq>;
-> +    };
->  
->  ...
-> 
-> -- 
-> 2.51.0
-> 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16645562580000
+start commit:   76eeb9b8de98 Linux 6.17-rc5
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15645562580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11645562580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b92850d68d9b12934f5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168d2562580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15869562580000
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Reported-by: syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com
+Fixes: 02f310fcf47f ("ext4: Speedup ext4 orphan inode handling")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
