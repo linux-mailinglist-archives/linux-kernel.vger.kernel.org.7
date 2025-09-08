@@ -1,176 +1,81 @@
-Return-Path: <linux-kernel+bounces-805953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BE3B48FDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1614CB48FDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324CA344C6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD9C345246
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55772ECEAC;
-	Mon,  8 Sep 2025 13:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03830BBBA;
+	Mon,  8 Sep 2025 13:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DKXGzQ4J"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYC8cec+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E433B30B516;
-	Mon,  8 Sep 2025 13:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA06F30ACF0;
+	Mon,  8 Sep 2025 13:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757338701; cv=none; b=hc0/V7ojZRZ4h7/WJEiO5cbA0QxxAXlII5ior8ABLw7zW0UOM2WemZXl4ylRlEngaNnT9gwXTGH0Y+RTh0ZlWvxHsiDJHtBAAn0XpuHBz2Q+fKLCYOfU3tPYzLgnmxWBJ7iplNfhHW9om42wD4yk7gM7ZUR0+VX60RuQhJpu1/s=
+	t=1757338694; cv=none; b=qUuBNW9Ze1nn0KJdwPlBlgXXLh+fmSzOo3HFSX3yAuDN3y2o0MgMXhd+wN+MlQMYEMRHsZ2cmiQQDdVmkTKcKKxzFCyqa/lmKhOtcskGGYSDO9D6amgO/8BpV2LqKkJZFQxnABxzroQYvyrTCGbItK2fMg13O1WkO1YmMT8NhJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757338701; c=relaxed/simple;
-	bh=Njcv7gHM3V9OCqG5pc6g7OHK3U+MJbP/tiUHrVN20s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GDKbovTbYnJzAk8jLBXCB/zVD3X90QXj9UsSq/IZfy+l2GU4XzyLgo2dLlNeNoO7X0aoFuNAE12vi7+Z4p55Ux2RwAjo/h9zjWXitOtQbZzQKyarPBRcRKZzRHks/Q8YUY5m3su3B5RL9OXpD63XKpdwbByz8AGiDmzbl9CJYQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DKXGzQ4J; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588Dc8Qw3874616;
-	Mon, 8 Sep 2025 08:38:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757338688;
-	bh=awQQu3rGBPmoT6Z/hGfapL01e4DEGu0HstmwbMkPvLU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=DKXGzQ4JZXj5nh9aw1efczKmxuluwqOTnBdNNu1xswTJAuf+9OdClDg6tBuz6yiuP
-	 ipsnzqWWCdbPDcHiEqX9hSKo7jNzc5uFA3ghINlV3d+5/58NXWd5D5jKVQ9FoI2e3L
-	 037rlkYGHHWE4lyXMzCAIL3CHQz56skk9ZQdXtic=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588Dc7r93806024
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 08:38:07 -0500
-Received: from DLEE211.ent.ti.com (157.170.170.113) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 08:38:07 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE211.ent.ti.com
- (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Mon, 8 Sep
- 2025 08:38:07 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 08:38:07 -0500
-Received: from [128.247.81.40] (dtmz023nlv.dhcp.ti.com [128.247.81.40])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588Dc7Ch973710;
-	Mon, 8 Sep 2025 08:38:07 -0500
-Message-ID: <51cdf832-95a2-47bf-bc27-d43097883701@ti.com>
-Date: Mon, 8 Sep 2025 08:38:07 -0500
+	s=arc-20240116; t=1757338694; c=relaxed/simple;
+	bh=c88FQ0i5OL/97YDEXu34QlMCovtvSIcJwKO1Me4FgnE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ccrfMKGbA/OCPh95Q9G9lnveA/Q4fliDwMUEHzpBjSzZJ+yuVa9lmOC1YRsTjJtb/lJgo0B6lFdTKRDXULjaQ7cJ5//Nbs+mbRSC+GNLglacx4Q6dayzPvaqaBo3Umg7wY2zrXtXGfaPGB3rAOGFD5pjJ6+Yo0vs4dunnAzmdg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYC8cec+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132BAC4CEF1;
+	Mon,  8 Sep 2025 13:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757338693;
+	bh=c88FQ0i5OL/97YDEXu34QlMCovtvSIcJwKO1Me4FgnE=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=AYC8cec+otm76elhRixcIwpAWzZzbvjDO3dOWcB/sm3xicSiwYK3oK9XET0K9cIqW
+	 39eChRgPS0ruhGe5TWSwML/cjW3BicLTy0V9soAl7gxWiKcDp6kNJYuUvVKQloFY/k
+	 46UF7KEzOPfQ1sv7s2RCB39/Vg1Gn+OjCjnd6EjRpRtJJNOqVzIFX+K59YzB6rReuW
+	 DKCJUaIqUHxLwRDwg0On3rgMTLxBYjp6zC74H1RAtFKN2GwPhTD71SToqf+T94NqH9
+	 +uv2UJ8GMxVEnOiwTdcPSF1g4zgS6Mlqntzr1Lkm6eFOZ9wi8bbIm/j3OcmFiYdlPN
+	 LQ3OlwgFcESiQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers: gpu: drm: msm: registers: improve
- reproducibility
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-References: <20250524-binrep-v2-1-09040177218e@oss.qualcomm.com>
- <6mgmrqmixjdftpjz2hvwjnsyh3wwylxuaih7yez2mdgjpcp3l2@zjr4ai6kkjxn>
- <CAF6AEGvJnSiyUJvBPusBZ+mriiP_vRiAgZnTyLSseu8Sdf9PXA@mail.gmail.com>
-Content-Language: en-US
-From: Ryan Eatmon <reatmon@ti.com>
-In-Reply-To: <CAF6AEGvJnSiyUJvBPusBZ+mriiP_vRiAgZnTyLSseu8Sdf9PXA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 15:38:08 +0200
+Message-Id: <DCNGKO9TN2MI.1VQBWAO7A6U2X@kernel.org>
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Matthew Maurer"
+ <mmaurer@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <2025090807-bootleg-trophy-a031@gregkh>
+ <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
+ <2025090849-tweak-conductor-f642@gregkh>
+ <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
+ <2025090817-attendant-ungodly-78f6@gregkh>
+ <CAH5fLggZ_ELrcLekF5GD5JQAkSz_Ycg7T+fZc7crjFA5jk1y3Q@mail.gmail.com>
+In-Reply-To: <CAH5fLggZ_ELrcLekF5GD5JQAkSz_Ycg7T+fZc7crjFA5jk1y3Q@mail.gmail.com>
 
+On Mon Sep 8, 2025 at 3:34 PM CEST, Alice Ryhl wrote:
+> All of these things is why I recommended to Matthew that he should add
+> back the scoped API, since it doesn't have all these drawbacks.
 
-
-On 9/6/2025 6:24 PM, Rob Clark wrote:
-> On Sat, May 24, 2025 at 10:15 AM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>
->> On Sat, May 24, 2025 at 09:25:37PM +0530, Viswanath Kraleti wrote:
->>> From: Ryan Eatmon <reatmon@ti.com>
->>>
->>> The files generated by gen_header.py capture the source path to the
->>> input files and the date.  While that can be informative, it varies
->>> based on where and when the kernel was built as the full path is
->>> captured.
->>>
->>> Since all of the files that this tool is run on is under the drivers
->>> directory, this modifies the application to strip all of the path before
->>> drivers.  Additionally it prints <stripped> instead of the date.
->>>
->>> Signed-off-by: Ryan Eatmon <reatmon@ti.com>
->>> Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
->>> Signed-off-by: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>
->>> ---
->>> The files generated by gen_header.py include the source path to the
->>> input files and the build date. While this information can be useful,
->>> it inadvertently exposes build system configuration details in the
->>> binaries. This hinders binary reproducibility, as the output will
->>> vary if the build environment changes.
->>>
->>> This change was originally submitted to the linux-yocto-dev kernel [1]
->>> to address binary reproducibility QA errors. However, the fix is generic
->>> enough to be applicable to the mainline kernel and would benefit other
->>> distributions as well. So proposing it here for broader inclusion.
->>>
->>> [1] https://git.yoctoproject.org/linux-yocto-dev/commit/?id=f36faf0f9f8d8f5b4c43a68e5c6bd83a62253140
->>> ---
->>> Changes in v2:
->>> - Corrected author id
->>> - Link to v1: https://lore.kernel.org/r/20250523-binrep-v1-1-c3a446518847@oss.qualcomm.com
->>> ---
->>>   drivers/gpu/drm/msm/registers/gen_header.py | 8 +++++---
->>>   1 file changed, 5 insertions(+), 3 deletions(-)
->>>
->>
->> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>
->> Rob, WDYT?
-> 
-> I'm revisiting this one, in the context of trying to re-sync
-> gen_header.py with mesa.. but it is only changing the contents of
-> comments, so it's not quite clear to me how this ends up mattering for
-> binary reproducibility.
-
-The reason it matters is that for Yocto, the generated header file is 
-identified as a file that needs to be installed into the sysroot.  All 
-files going into the sysroot are checked to make sure they do not 
-contain dates and/or paths to the build directory contained within. 
-Since this is a generated header file that is included in the sysroot we 
-needed to strip out the path and date.
-
-The idea for the reproducible builds are that the same files on a 
-different a machine at a different time should produce 100% identical 
-files.  Including paths and dates violates that tenet.
-
-Hope that helps explain why we needed this.  So long as the 
-gen_header.py is being called to generate header files then we need to 
-maintain the reproducible aspect.
-
-
-> That said, since the generated files are no longer checked in to mesa
-> or the kernel, we could probably just drop all of this if it mattered.
-> 
-> BR,
-> -R
-
--- 
-Ryan Eatmon                reatmon@ti.com
------------------------------------------
-Texas Instruments, Inc.  -  LCPD  -  MGTS
-
+Yeah, I think it's the correct solution to make those cases nicer.
 
