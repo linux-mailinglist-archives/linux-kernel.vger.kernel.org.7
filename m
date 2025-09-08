@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-805252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBA5B48609
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C451EB4860A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B146716400D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38948164768
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2389526E71C;
-	Mon,  8 Sep 2025 07:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F253F299920;
+	Mon,  8 Sep 2025 07:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FOGG8cOO"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qSbXvvIn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B1123371B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0024E26E71C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317610; cv=none; b=lLWrVcKX7FTmwv/DXH1JVXRhq1Ck+u1sa0E2Cpm3vMyYK/DeVqdnkB1O1BjgrZW0RR0/actUi10zjonj9B3uD8/w+MidKSflCTiomHqODRZH4obGDii7NTJzfkoXr6U4C/L1Awbg1kfIf6Plr7rqGNT7E43v9hGPDVU9acGd4fU=
+	t=1757317692; cv=none; b=GRMLghXEU4NdT5Abf3/17zcR73kFWkKk0aZOLnng/xywGdQBre0cebvttZ4D2Xn4hnys8vHo8Kx3o2VKchwmIGu9v2Vh5PNOKYyqPvZzsXI4RRZF88uKxKnd2cJ1BItagbsmRjb62OD2xWnqlnPqIOHPl9Jik3Oo8fTm+8xW/Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317610; c=relaxed/simple;
-	bh=ZcFAyaemeAk8JLn7DChgM2B0OJSSjzqszGRTvZ5/O6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FQpmO6rqVTq2I0qHsaIviHRo24xvOF/3D5rzwSPCegeAD5SK2w+LLIxMNrEcEUbRc2F7fJqcetqcYUyZJmsI9tth0yr0zmvrx2bgSHuim9khk7ZrhYZ0/L+6JVBlQiVbleNlEHTsVOc5KQ31cYidMpFcSeMi74PUtu/Fpsw0URc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FOGG8cOO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45cb5e5e71eso19553285e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757317606; x=1757922406; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VNAsSRzsosPIy3ZkgGv5CY0H+l21flmMwlSKUZ7UsXk=;
-        b=FOGG8cOOVsCah8WwvN9CDfBgQcnbfhJgdW+kEDW8Rvl5uZA1y+Z4nnbsruvLUwZean
-         50pskndfX7jyFWWskMhYJkgDrdvEHXMOiUJxas0+iKhFpG4waElycPoX71lUQRI2uNFE
-         7fuvzk3n1Y4DlolGRMS7N9hgM/gKu4pWZI6elgjYkX+Chw3d3vDoUluN9vD0C3l4qeUT
-         uQcPymnKRTg5qzwRFTb90EkPpndNCFNKLiKVh+E2yNmDfDgdd0RJZvSpT3EFJ7uAFV+A
-         gYhPhqzNyoSA1KscsD5e46VlyxqRK7MTnXiOZUFE3FwBLrTReReOX4hEognVrw5zaS4i
-         vRCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757317606; x=1757922406;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VNAsSRzsosPIy3ZkgGv5CY0H+l21flmMwlSKUZ7UsXk=;
-        b=Pz3LG2REylv+WAbLvkwu8Kfol+Dl7wDDkUcUp6mKe57hJ4qxgybyi+zEhxZtuuyh5s
-         wWzjtv6Z3fX/p58bkw1qvMaNIfTHTOAGnz+hV0s/G+Kqs/eCSEBSU5sRXFxOcqoFPNYl
-         cVWU3aBOKXxhTr0yB6jpX75xxU9tY4VjZilO7FXsMkBnmhVyFh1wIFfVzu4ZzQP5vf8P
-         0NwgMiSFnYxZxajAh/2IfQBBHMhG+s7xdvOJxjyRZ5Yn4cgS9swGOHdWJ4e8bjLrKByU
-         +YrdwGbWvcWUOehG7R2UwO3PkQ9Mvo+bY9XcgORh6KK0Wq5+u6dLYqcfIGQhIvWikwUD
-         QB8Q==
-X-Gm-Message-State: AOJu0Ywy5W1VpYViQX7OlSEK6uoucY3atgo4DA2WE/b7RRWlm+Wj1eZ0
-	oe5w73yHnIoc5p1LbdDLa8c4IPVZt8t1RAWkPgcgA/uqRkSf3jQIhdAYFBDFPemrdzM=
-X-Gm-Gg: ASbGncu/esfNtW+0/c3cw54MQSv73GUQwkMAFqU0O2/0QVoz0tyVMHgHc++gizHRQ7X
-	LQdtZg7DSs73+n2ZhBJGrMxbT6zR6MzFtVGGbbsdvFnFN6IU+OQvjowhUxqcC+85GMcgEXGx/x6
-	TqHXQpR3GFBB9P1YUex/8JpklsrXLXf8K9CaqLXcT5rVRxOJge0JlI4s6/1NfI2fbOBgFUFwvDR
-	YCuAfPgGXzgaGl9TF5yxAwWqmMWp6zI4+WPENHrnPKRYo+OT29KPLZF2h6NjjDnxU87zfQYeLRh
-	RWLDKgydvApt4T3PKcFHeuk3eBUXT25I6P8UjKatVVtJKDHFY1ZMtDk3uWis50US7SZK25O0gmO
-	sIaO4QdYjNslY1NqvyrQCXk9y8mf0Tml2
-X-Google-Smtp-Source: AGHT+IHn3jMawLrugAhLgtdrDjKbbgNOsVBJuZ/1bwRiJ8MlERu9wdEB+XckTY2iI9k7tkZoET5gag==
-X-Received: by 2002:a05:600c:4744:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-45dddebfae0mr61565605e9.20.1757317606013;
-        Mon, 08 Sep 2025 00:46:46 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcff67787sm181785435e9.16.2025.09.08.00.46.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 00:46:45 -0700 (PDT)
-Message-ID: <33e80e92-d68f-4919-b535-e76836fbabd1@linaro.org>
-Date: Mon, 8 Sep 2025 08:46:42 +0100
+	s=arc-20240116; t=1757317692; c=relaxed/simple;
+	bh=fw0GZaENDtUEAvtFVzh5du3HYpg4W4U4Cujgei/Jc5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=YhtkG3dCg2GN1OOMfupQqlpHcpWXLgStxTycpFFLV1rf6OJc3ILs7wvg0KxbEBcZVJq+gG8s6dba+yvJ6amqMjyD4/6QnhRYInluVQToENNPK0nIhTh52L5MwzmtOoduRaiHdmbLVHsrstOsIDcUWmQY2VQjPJWr+25k71TX5pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qSbXvvIn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E18DC10BE;
+	Mon,  8 Sep 2025 09:46:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757317616;
+	bh=fw0GZaENDtUEAvtFVzh5du3HYpg4W4U4Cujgei/Jc5Y=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=qSbXvvInGWVRXv+ftlHRAGuPlnNjGK1U8INatc+WxhmuuzdVD1EWYouDdmK9WGvrb
+	 3dQ5DvzZFaG3NeTBgAlthvMykhpkfS+2H0ZR6ZcMp1IrB3l+G86Yuz0RQnFodl/tT4
+	 RJJvahPC8DRLR+RcDH2EllSnc662G/1q99lTlSx4=
+Message-ID: <038e14c4-7d13-4b43-aeb0-ef4c463cec0a@ideasonboard.com>
+Date: Mon, 8 Sep 2025 10:48:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,48 +49,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] firmware: exynos-acpm: register ACPM clocks pdev
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
- <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
- <700967d0-ad8b-471b-b2cf-6544727db26d@kernel.org>
+Subject: Re: [PATCH] drm/tidss: Update Videoport SYNC LOST IRQ bit
+To: Harikrishna Shenoy <h-shenoy@ti.com>
+References: <20250903100929.2598626-1-h-shenoy@ti.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <700967d0-ad8b-471b-b2cf-6544727db26d@kernel.org>
+Cc: jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, bparrot@ti.com,
+ sam@ravnborg.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250903100929.2598626-1-h-shenoy@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi,
 
+On 03/09/2025 13:09, Harikrishna Shenoy wrote:
+> Update VP SYNC LOST Bit as per register description for
+> DSS0_COMMON_VP_IRQENABLE_0 give in TRM.
 
-On 9/6/25 1:20 PM, Krzysztof Kozlowski wrote:
-> On 03/09/2025 15:56, Tudor Ambarus wrote:
->> Register by hand a platform device for the ACPM clocks.
->> The ACPM clocks are not modeled as a DT child of ACPM because:
->> 1/ they don't have their own resources.
->> 2/ they are not a block that can be reused. The clock identifying
->>    data is reduced (clock ID, clock name and mailbox channel ID)
->>    and may differ from a SoC to another.
+You need to explain what issue is this bug causing, and how does the
+behavior change here.
+
+ Tomi
+
+> Link:https://www.ti.com/lit/zip/spruil1/SPRUIL_DRA829_TDA4VM
+> Table 12-597. DSS0_COMMON_VP_IRQENABLE_0
 > 
-> If I understand patchset correctly (and your cover letter supports
-> that), this does not depend on patch #3, so please move it before that
-> one, so both firmware patches are one after another.
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> 
+> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_irq.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.h b/drivers/gpu/drm/tidss/tidss_irq.h
+> index dd61f645f662..0194010a7fff 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.h
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.h
+> @@ -53,7 +53,7 @@ static inline dispc_irq_t DSS_IRQ_PLANE_MASK(u32 plane)
+>  #define DSS_IRQ_VP_FRAME_DONE(ch)	DSS_IRQ_VP_BIT((ch), 0)
+>  #define DSS_IRQ_VP_VSYNC_EVEN(ch)	DSS_IRQ_VP_BIT((ch), 1)
+>  #define DSS_IRQ_VP_VSYNC_ODD(ch)	DSS_IRQ_VP_BIT((ch), 2)
+> -#define DSS_IRQ_VP_SYNC_LOST(ch)	DSS_IRQ_VP_BIT((ch), 3)
+> +#define DSS_IRQ_VP_SYNC_LOST(ch)	DSS_IRQ_VP_BIT((ch), 4)
+>  
+>  #define DSS_IRQ_PLANE_FIFO_UNDERFLOW(plane)	DSS_IRQ_PLANE_BIT((plane), 0)
+>  
 
-You're correct.
-
-#3 depends on #2 and I thought you wanted the minimum dependencies listed
-somehow, so that the clock subsystem doesn't pull extra patches (that would
-be #4). I will move #4 in between current #2 and #3.
-
-Thanks!
 
