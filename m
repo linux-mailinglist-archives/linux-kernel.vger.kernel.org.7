@@ -1,101 +1,121 @@
-Return-Path: <linux-kernel+bounces-806751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26256B49B58
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:00:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D505B49B5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A14B17ACAF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093244E491A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EADC274B35;
-	Mon,  8 Sep 2025 21:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6E22DCF58;
+	Mon,  8 Sep 2025 21:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z+xd2Nic"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRghxTVD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4EB38F80;
-	Mon,  8 Sep 2025 21:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CC3274B35;
+	Mon,  8 Sep 2025 21:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365224; cv=none; b=cy3GuLftpkjisxEdTh+VHkqdYokdxEFE4C4DhmxQGuQS0MGutYkL9W9GlVulzpJ88w4ANbegh1NArKV0Dc8paZ/1q4SXolE4q6Kupnhvp99Wx7cUqFZUwIw99FeWxWcjBlL9UuNAYmDcNqovkkUbFdnb7mAo1hYbrxmI0FDZQN4=
+	t=1757365244; cv=none; b=OCFuT3eRYY4m5tiYIKxpQNGzWAKT4vLSE0vlPPkmq16wyM8C7kzP94JIuuYIxh6fWYL3Y9HKl7fi1OGG+98Ti3dmck06z8sYFAgLjnDWUTbkt/eGoxYFWgAlilF8jEjWR4DqlWfvhZm2j+P0dHbrkeGqUaJTj4JQPJtVW3y01TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757365224; c=relaxed/simple;
-	bh=ON8NUitiZVbCBSQ2lSjpU9xOwZIfOyaINwjZ5vrHO9Y=;
+	s=arc-20240116; t=1757365244; c=relaxed/simple;
+	bh=jjf+aHsPpbrLWSDIt9QKsf5MQvphLbS4gLwD5a1BFes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewKVFj3/Ed+IKltE9Fq/zdywrkionhVkvnAlFtuzicndYRgzfTgNPqbEwu03l1EyZBLG26Wwp05mP2FUprEw+BYCAwwlvAF6t7AXOlvrblUFfjrWkZ3hnOP1LGbey3eBd/hVh2KVVxAn3zD3kn26GeEHWy5bTL7cGzDuG2DjINE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z+xd2Nic; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8W7OV22si8PaHmNjeiI92VUYfmd2gxuh+1FV7aVnSGk=; b=Z+xd2NicQ2DByD7bGMjprgGPMX
-	SKT2BJDH/LasgqPAOPXPqwPpYDmgPDz0eSB7nN/nKHhP+QH+uH3zWsG3PK4s+RWMFPr2OTUSIRuEm
-	zCqEzsWGaYPi5Rm+rKou+Jh5MkQ4Ho3NWZ6xY5e9iDI36U0UmdJy984A/oQXMN4WL9iMkNRNpJPIv
-	xAicaKFMDQD9saIZpslJaMtrc6QlDwPyxZmnMzdYJ5+3CwenizlADAySpEff6iW0tId6T+Ow7pJcd
-	ltrpwoNZU4Qoqs4i+XtHIkUIqseck3yVgCm6PkV0Kj7/qxFrBVgKHfFekOytv5KytQYDVNIZaRJBh
-	VDkcu66g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvixU-0000000Cyxf-2WaL;
-	Mon, 08 Sep 2025 20:59:29 +0000
-Date: Mon, 8 Sep 2025 21:59:28 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
-	akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
-	bp@alien8.de, brauner@kernel.org, bsegall@google.com,
-	corbet@lwn.net, dave.hansen@linux.intel.com,
-	dietmar.eggemann@arm.com, ebiederm@xmission.com, hpa@zytor.com,
-	jakub.wartak@mailbox.org, jannh@google.com, juri.lelli@redhat.com,
-	khalid@kernel.org, liam.howlett@oracle.com,
-	linyongting@bytedance.com, lorenzo.stoakes@oracle.com,
-	luto@kernel.org, markhemm@googlemail.com, maz@kernel.org,
-	mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
-	mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de,
-	osalvador@suse.de, pcc@google.com, peterz@infradead.org,
-	pfalcato@suse.de, rostedt@goodmis.org, rppt@kernel.org,
-	shakeel.butt@linux.dev, surenb@google.com, tglx@linutronix.de,
-	vasily.averin@linux.dev, vbabka@suse.cz, vincent.guittot@linaro.org,
-	viro@zeniv.linux.org.uk, vschneid@redhat.com, x86@kernel.org,
-	xhao@linux.alibaba.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 00/22] Add support for shared PTEs across processes
-Message-ID: <aL9DsGR8KimEQ44H@casper.infradead.org>
-References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
- <5b7e71e8-4e31-4699-b656-c35dce678a80@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKCwRQU6Guabt//apOHUBRo0mLmLTzOD/MR5vDsFFDxt2joi3V8ZLnWHtkBlDcvuvktPoMnMzsVzD9SjR0JtcHnORp0PFZvx3UC3DoWAwfwNz7xsw8Z9ces5a4runwKe/7T9DZ7hfhfhBIFtVLbZ42RrULdugfhAixDWIJ2RIHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRghxTVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C32BC4CEF1;
+	Mon,  8 Sep 2025 21:00:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757365243;
+	bh=jjf+aHsPpbrLWSDIt9QKsf5MQvphLbS4gLwD5a1BFes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CRghxTVDtXnkHUprmyWWSLe/gyt5uG8/I8SN4ih8EZeMb7Bxgr9/Q+ognLI0EiW4t
+	 HcuT2KFU+1M+Oc8fJmxcKZl54p7nFWAs9Cxi/KLN5YJrxKyd7P9pP6XWdaY63gmU/n
+	 8kZt1JsIO+ZF3Zq+rrWbYkgRmURZq93dnh7f5hbqNx0mzoO7e1autXoW/QEQ+FE6V1
+	 KI7tr9tRAFWwbjkDtMZ7aCbkK6w7Od3iIe35gVepG/lyb//uEEiuJou1HWFcbUnxWP
+	 nmZaQFk/+wEFJWmKIhNFpxin+r9zszGmdTigV29UE7tcPzdpZDo+3Mxswq5AHMu5KK
+	 1nD3icjzd8qYA==
+Date: Mon, 8 Sep 2025 14:00:41 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	Song Liu <song@kernel.org>, Howard Chu <howardchu95@gmail.com>,
+	Jakub Brnak <jbrnak@redhat.com>
+Subject: Re: [PATCH 1/5] perf trace: use standard syscall tracepoint structs
+ for augmentation
+Message-ID: <aL9D-ZzdNFxD8hkn@google.com>
+References: <20250814071754.193265-1-namhyung@kernel.org>
+ <20250814071754.193265-2-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5b7e71e8-4e31-4699-b656-c35dce678a80@redhat.com>
+In-Reply-To: <20250814071754.193265-2-namhyung@kernel.org>
 
-On Mon, Sep 08, 2025 at 10:32:22PM +0200, David Hildenbrand wrote:
-> In the context of this series, how do we handle VMA-modifying functions like
-> mprotect/some madvise/mlock/mempolicy/...? Are they currently blocked when
-> applied to a mshare VMA?
+On Thu, Aug 14, 2025 at 12:17:50AM -0700, Namhyung Kim wrote:
+> From: Jakub Brnak <jbrnak@redhat.com>
+> 
+> Replace custom syscall structs with the standard trace_event_raw_sys_enter
+> and trace_event_raw_sys_exit from vmlinux.h.
+> This fixes a data structure misalignment issue discovered on RHEL-9, which
+> prevented BPF programs from correctly accessing syscall arguments.
+> This change also aims to improve compatibility between different version
+> of the perf tool and kernel by using CO-RE so BPF code can correclty
+> adjust field offsets.
+> 
+> Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
+> [ coding style updates and fix a BPF verifier issue ]
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+[SNIP]
+> @@ -489,9 +477,11 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+>  			index = -(size + 1);
+>  			barrier_var(index); // Prevent clang (noticed with v18) from removing the &= 7 trick.
+>  			index &= 7;	    // Satisfy the bounds checking with the verifier in some kernels.
+> -			aug_size = args->args[index] > TRACE_AUG_MAX_BUF ? TRACE_AUG_MAX_BUF : args->args[index];
+> +			aug_size = args->args[index];
+>  
+>  			if (aug_size > 0) {
+> +				if (aug_size > TRACE_AUG_MAX_BUF)
+> +					aug_size = TRACE_AUG_MAX_BUF;
+>  				if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, aug_size, arg))
+>  					augmented = true;
+>  			}
 
-I haven't been following this series recently, so I'm not sure what
-Anthony will say.  My expectation is that the shared VMA is somewhat
-transparent to these operations; that is they are faulty if they span
-the boundary of the mshare VMA, but otherwise they pass through and
-affect the shared VMAs.
+Does it help if you just revert this hunk?
+(But actually my kernel doesn't like this...)
 
-That does raise the interesting question of how mlockall() affects
-an mshare VMA.  I'm tempted to say that it should affect the shared
-VMA, but reasonable people might well disagree with me and have
-excellent arguments.
 
-> And how are we handling other page table walkers that don't modify VMAs like
-> MADV_DONTNEED, smaps, migrate_pages, ... etc?
+diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+index 979d60d7dce6565b..c4088bdd4916b0e6 100644
+--- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
++++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+@@ -493,11 +493,9 @@ static int augment_sys_enter(void *ctx, struct trace_event_raw_sys_enter *args)
+                        index = -(size + 1);
+                        barrier_var(index); // Prevent clang (noticed with v18) from removing the &= 7 trick.
+                        index &= 7;         // Satisfy the bounds checking with the verifier in some kernels.
+-                       aug_size = args->args[index];
++                       aug_size = args->args[index] > TRACE_AUG_MAX_BUF ? TRACE_AUG_MAX_BUF : args->args[index];
+ 
+                        if (aug_size > 0) {
+-                               if (aug_size > TRACE_AUG_MAX_BUF)
+-                                       aug_size = TRACE_AUG_MAX_BUF;
+                                if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, aug_size, arg))
+                                        augmented = true;
+                        }
 
-I'd expect those to walk into the shared region too.
 
