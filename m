@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-806274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A88B49479
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97266B4947F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DBE1BC0F32
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:57:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C757416F0CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C6B31062D;
-	Mon,  8 Sep 2025 15:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE2E310771;
+	Mon,  8 Sep 2025 15:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuYrAMMW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbCh87f7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A4B3101C5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4087931077A;
+	Mon,  8 Sep 2025 15:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346953; cv=none; b=UDZX45YS+ksu1LD0I4ukrhxGFN3nP5oSzQuQkOvtcQ+sMF4kdn/eMLqdcInfof/VOS4/t80410GIYeAib6uF2G/zDPSIFRPycKLjoW3LMgPFAxb6hsPCqr7rGe8l1Y5IXkMeSaRSU2VweeBnWL91dWY/yJQwc51GYaMnS+r2UYQ=
+	t=1757346956; cv=none; b=ogMbV41qlCuExW4BbIe/5vNvZo395RqbkTnhbwbY75MtbSxVpLRioO02kOgD8E2avCINkhN1MOAhSaryUiIC0GfH0IzBH7IhUQofeOEWP8LwZzT7NAJ/55yoc/o8GdPpjcvudbcbVET9V/vNjFkvr4yABPYQ2WKHR6JdsZRoLU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346953; c=relaxed/simple;
-	bh=lLhbPcuccrh2iWdqlw6avv6jjc/4//fhsw+RixeJ94U=;
+	s=arc-20240116; t=1757346956; c=relaxed/simple;
+	bh=NZDJnhY8lU/HjSsPA1w4OkvvxgfbZxmjWKy8iU7vN7o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q5DSf7Ya369hjAxiH/UkjxGjZohg31A4zEtT1+o+eFSbWPi0XFkd7uThrLryNamlRqvfbQpY+bSbDNecrqMVMXvfyd+4lcpaW+CU1fcftcCcv/FgRJFyv7mJBUiOZxR968t+9crOKNt6ruo+tto3B39Z2jlNxvYA8Mju7YjMCu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuYrAMMW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C017C4CEF7;
-	Mon,  8 Sep 2025 15:55:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=C3qowg8J2u0+C9oWjz10j2uiGtKOqSO/uyT/YwzS4rAp0w1+QSXnnnSNnJ2vJr4E3lo4I3F/+n9yclQFO/BjpcsJAlOD+AWbCB9rThdrtPyECDX7258CjW35oPyYfCu/9Ltn0azciP3yGpIl+2kBPzMY7rjYTraMIk/wOKryHqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbCh87f7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0420AC4CEF7;
+	Mon,  8 Sep 2025 15:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757346953;
-	bh=lLhbPcuccrh2iWdqlw6avv6jjc/4//fhsw+RixeJ94U=;
+	s=k20201202; t=1757346956;
+	bh=NZDJnhY8lU/HjSsPA1w4OkvvxgfbZxmjWKy8iU7vN7o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NuYrAMMWtM7HuqBx808w83itr50EZcctk4Z/E20AFT532ebIk+lM3pt3v2BLIX97h
-	 nGkjP55Np3GxsQFYZuo+tzXv9PPcTAg0AnK5pWBpSk9PY9JbJ7VMvF/fzTMq4UI8MX
-	 cg7+x9gVmMIx9r26sDTGcZXsu19HbNLkaDharc81foxF0Hq3+2OFSgDIL/bMhHuYpU
-	 a23RpTdGvgohZIueqDgVqZMcQbz0QHfo8QW7lUgnjpHZDL1EWcLyvzZpz6ai7ll1SX
-	 /5/0u0/Q/lT8pQ0UW7fUbG3BYQSUB8/RUhnsNOvJqL5d3xHBzuTVitCHyB7kHuJ4/r
-	 A/AtuSdVXWUVA==
+	b=jbCh87f7vZk9K2GzwhXiVS7enXUJ0h9BzgE324mzIUxBmMaeuAJj8ITrdBVjX9C22
+	 YrQ59pIc5R+OIpU9/I+G2HM7PvBK2Pe7T+u3ljZ6m8lB3r3reG+4vAuh/cBwjXe35R
+	 5K+vLMZWeCaklHR59LtDwS9qd/CXLK5LvIhv5zziT7yS4HuJVpI8+osxZWo+j5kNSc
+	 HkIOjfglBmUNxiTvg7OrAAVaNoTHN+n5X2Xjc8sQQtyUHNpc5OBrYZbnQsxgYIHGRq
+	 rspukF8hzq4CY4pbbGUMIykMK4oHLNbrnQ11XEFPKkX6DiVJZ6YvUlfg8pxleNr7bY
+	 FNbI3UZhVKK4Q==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: catalin.marinas@arm.com,
+	shuah@kernel.org,
+	corbet@lwn.net,
+	vivekyadav1207731111@gmail.com
 Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	John Stultz <jstultz@google.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm64: uapi: Provide correct __BITS_PER_LONG for the compat vDSO
-Date: Mon,  8 Sep 2025 16:55:32 +0100
-Message-Id: <175734490190.158300.1463560749148120421.b4-ty@kernel.org>
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/3] kselftest/arm64: Cleanups and readability fixes
+Date: Mon,  8 Sep 2025 16:55:33 +0100
+Message-Id: <175734370604.150805.8413945497648461480.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
-References: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
+In-Reply-To: <20250824061402.13432-1-vivekyadav1207731111@gmail.com>
+References: <20250824061402.13432-1-vivekyadav1207731111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,22 +67,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Aug 2025 09:56:43 +0200, Thomas Weißschuh wrote:
-> The generic vDSO library uses the UAPI headers. On arm64 __BITS_PER_LONG is
-> always '64' even when used from the compat vDSO. In that case __GENMASK()
-> does an illegal bitshift, invoking undefined behaviour.
+On Sat, 23 Aug 2025 23:13:59 -0700, vivekyadav1207731111@gmail.com wrote:
+> This small series makes cosmetic style cleanups in the arm64 kselftests
+> to improve readability and suppress checkpatch warnings. These changes
+> are purely cosmetic and do not affect functionality.
 > 
-> The first patch should go into the 6.17 tree.
-> 
+> Changes in this series:
+>   * Suppress unnecessary checkpatch warning in a comment
+>   * Add parentheses around sizeof for clarity
+>   * Remove redundant blank line
 > 
 > [...]
 
-Applied to arm64 (for-next/vdso), thanks!
+Applied to arm64 (for-next/selftests), thanks!
 
-[2/3] arm64: vdso32: Stop suppressing warnings
-      https://git.kernel.org/arm64/c/80c4e1948908
-[3/3] arm64: vdso32: Respect -Werror from kbuild
-      https://git.kernel.org/arm64/c/281817dffe28
+[1/3] kselftest/arm64: Remove extra blank line
+      https://git.kernel.org/arm64/c/3198780eaf37
+[2/3] kselftest/arm64: Supress warning and improve readability
+      https://git.kernel.org/arm64/c/a940568ccde4
+[3/3] kselftest/arm64: Add parentheses around sizeof for clarity
+      https://git.kernel.org/arm64/c/62e8a9fbaad1
 
 Cheers,
 -- 
