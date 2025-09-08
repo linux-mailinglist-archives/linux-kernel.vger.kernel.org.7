@@ -1,300 +1,343 @@
-Return-Path: <linux-kernel+bounces-806777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC13BB49BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F08B49BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99F8F4E17EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1AE447D07
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87F12DCF58;
-	Mon,  8 Sep 2025 21:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F9E2D978A;
+	Mon,  8 Sep 2025 21:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="qmZ97XLJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d4uCOw7Y"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tc5b5iEx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF9220C001;
-	Mon,  8 Sep 2025 21:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B721020C001
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757366616; cv=none; b=Yti1ix4YmIkx4ik5KmJrJzPtT2sUBBWU8Kwu+1Y9VzMOFCyWgp4s2l+FnDOVrU0lUVT/bJuAaizpOx/7lagbImmYFAJ4jnmUnyu4mcW6WSnIRgnTuSwOIJ+YtCRnLh9IfcSyjkMp2Crrq+jm6iXzThNOFJopZnxZE7O09MmZ2e8=
+	t=1757366690; cv=none; b=RwUeE85hzXW3LJNp5gNpx0FwZLWFPbtSOyevHP/ZQiieXyFZgTS/4ErfsRRbwKIrWwC79o4iTuZ7vRDNoctiuTRyeM4aJek0muazvIBd7lplFs4ZtBlnPvqNt9vuJUSLVYwKPiJSeAj7OpmxYlFblX27q1OaEgAuYEzVH+/wDZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757366616; c=relaxed/simple;
-	bh=D4fTDyKt7m0DoPEY7fyNBQ/mWmRv3ZrJQMo02fP1EYA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KKcFnWH1cwyi1f6wEf5AHj2Q8VyTeGYxr7fCSYCEp5sDM/v5bj3c5nZAhvjM6vwy+PRpgnSZAsBiegSLsQD1OUS//aqlEGOqHe3nyW6JpUuEpdYGZ5WubBUs3S9AGWe6BfgavG3chedtXV6LDdd+lxyrMZxepCVdryfKolTrcvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=qmZ97XLJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d4uCOw7Y; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 75F41EC023B;
-	Mon,  8 Sep 2025 17:23:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Mon, 08 Sep 2025 17:23:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1757366613; x=1757453013; bh=5/
-	TBrTrTItocQ3nnjkaRH6zdwedtJCQEVNvNg9qx5Q4=; b=qmZ97XLJdloRyumrIw
-	Oxt+m34ISc7FHdPXrgmOcXRHhVglLtZSsXwB7e0WYLo8hyGoX0X8lczADoGPHZW4
-	rnaBCikBdgpJ+lqC5FLFBBRU2QQLY2gyIwbdB+cN8FhZanRpO3yNpn8oM/C9OJlv
-	A6WP5u5P4laczDTmlIDkQP7X5ce43Z640e0aFFQJaBo7Et7gx3xwHSXWkr0NbKec
-	ctiCDyHzQ1R3AeTD8ITOTF8YUhZr8QgFp5kDraBeCXmTzSbeKz9Dp+1d9EgPO0kU
-	6MNOOgHydUvJ/VPCTpxHDa8eoewQN/9JC1UD89ZfEFCQjHTCOwJVLyL9CGCU5amC
-	TzwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1757366613; x=1757453013; bh=5/TBrTrTItocQ3nnjkaRH6zdwedt
-	JCQEVNvNg9qx5Q4=; b=d4uCOw7YzHNyv8UPAZoKxElX694g2rnRsTdH92+w4XkD
-	BfCG+EitL54pFz1ql4tyP6/F8dudihZJSmPKy71EHKQPbF5KidSE7Ze6pof8Rg/p
-	TMQXTZxVvN+ajukcE/6fO6KrpthidZDk+g+DXZcfQyE2ZWu1lhZpAJG1JOeaP27z
-	Y4XeYESJSj3SbjUEhB8yvN8BoZZZq9fsFECg9WmtkPENQABJk/jxtfwdmMjxmxf7
-	qmiiNTqh+1eyFBrPtUhiDVazSmsANsdWYgwxJ+y7wPzp1XRlqqUu9JOmKL9ewK4W
-	VOfRTPChi6bNHYVgKibo9bJA26FbaebSmvJttPFewQ==
-X-ME-Sender: <xms:VEm_aLi-ZkujrJ6Wy2A_sy9lUkIt8JXQ3FUAeu1Xp5hwGIT1voTkYw>
-    <xme:VEm_aLGFLfxNWbCiI36tLbKxaStbfsdubBCCk6PmNuS6aMS46neqU4Z92Pbcz4f3X
-    hMcTTwA2DLSillcWk8>
-X-ME-Received: <xmr:VEm_aFvKyF75JxPiQ5jivAjN9MWXpIS1x-7vT5w1HdD7oS176Ngwc-I1FFvwmleKahgTKdTO38vg6I3ecM_ryaLIEhsjEannYvV6EA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpeefheeltd
-    ehfeetjeefvdehteeutddtteelgeduueetjeevteeifeeuvdefffdvieenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopeelpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpdhrtg
-    hpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhgsuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtvggthhesthhoohhtrg
-    hirdhnvghtpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggv
-    shhkthhophdrohhrghdprhgtphhtthhopehtrhgvughinhhgsehnvhhiughirgdrtghomh
-    dprhgtphhtthhopehjsehjrghnnhgruhdrnhgvth
-X-ME-Proxy: <xmx:VEm_aEdiMhAf4m9hPbzH4KvAf3lI0H4JSYvSGGbYKkf80ufRgKlsuQ>
-    <xmx:VEm_aDkL9Og7D86exAuH0p0SEjpgp9ksgr0bA8A_jFWOo_hugpRtvA>
-    <xmx:VEm_aPAN_Pq2T-rdHTzxwb0gqegkJpYYWx7TzHqEWpXkJMbB3ihbRg>
-    <xmx:VEm_aFNRktRRcsXutrasiaxH4DIObpYuquWnVrDbXKylX2mbocDgOA>
-    <xmx:VUm_aNTdIbhYWKLMBCMflulYoBDsy1LWveIaEbFpQH4QzSpBHiwqiQJq>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 17:23:32 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Mon, 08 Sep 2025 23:23:28 +0200
-Subject: [PATCH v2] fbdev/simplefb: Fix use after free in
- simplefb_detach_genpds()
+	s=arc-20240116; t=1757366690; c=relaxed/simple;
+	bh=GrhFo2xxSW0RZwQnGTIAcXGZnUBnPSqYurMfcGY7EEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9Y2siEI6VL0BRmvCoIgdCP06YkqF8sKLO5jJNqQnZCzVikwln7zyeGHSJK82xoKPM3Hi1E3KjgWIZmVGW2fL1NbkSvSNXrh0ufCWuk4hX6fXIHQSsXshwon4H5tMFnOB39TkplAKQU3lSoLG2iIi21hinsQ3kkRkK7kbO72d88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tc5b5iEx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588HYUYo012376
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 21:24:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Ho1b7eZtsIeWGcXrm1h2k9Iv
+	wHibecXwGDuG/9qhAHQ=; b=Tc5b5iExEKbkAuWZ4q8AdY9qYBS1FP/drxF0UoVD
+	H6fwJOkLBnR3yuUNgZecFdht/kpP35P6hQniI0vI9pmhsmv3WKo2d9qioVDj8TMd
+	yclT+HuM6eIaTGXQx/dFAm/mYs7yLLer0eSY57cuA0nWUicGExDtr04LH7ym3WRe
+	IJgz5dMhU1Fx1sY3HsLp3+yMbMuf2IyLbqm1E1TXv89TjP+Gy9hlsmTsBt+VsavQ
+	kglAfOjQhpISYs2ucWXpXdvKNcAiQ3IUOVdJLlFVFColP0ZI9B+yMQJwH+ttvqr9
+	lKSppt5vktUojfp+Z9Ymiqqv3lf214AE4PE+6lbiXNySNA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj0nyrp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:24:47 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5eb7b2c05so106064261cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 14:24:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757366687; x=1757971487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ho1b7eZtsIeWGcXrm1h2k9IvwHibecXwGDuG/9qhAHQ=;
+        b=X+9J2xqZL61faUJaS/lzzt4fhcO3yGAhimoKiC74ecoSVANTm7IkgMK7HK2ALo4CV8
+         Qz+uN60HumparsuDem8pm5Tb2igGs0j+phmD3b0Px9MpiyYvlQ7P2tC/DrWw+62u07Ly
+         s7zrTGJyLiy77Nae6eICc4tK2nH/zsgkJWKmpwBh2r7XII1r+02ptXp1XlALWIUzt7Jh
+         TFD9dA+TUU3nHXal/Vyt7+zZLJfwJAOrSkJpwpdF2i4sRsSQ4nZ55qDR2yGg2M8UVn6N
+         b0QMeSIbFiPvCGyeSTwasorIn//v3AXYDcmBpCVSbHO/WzAjsHNhmlFtmFKWY4OR4lT4
+         LHaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHTirdZE6yqJTD/gx94qI4/W70i0AHE0EmsdG5FU016f8VYD5W4SziGP12HK9JtkarVNlu9yjnpaQm/Do=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4XIkOtf4JztAIuTJBRwuzEmVxa35rM9FtZUa8oBmrt4oRPe4F
+	MsOwBq8tgTJqr1UGvCOTWsRB72eMPUjbOPbFYjQD36fg/Gu2i3cm0LzhLMmspY6eChRwDN16vbj
+	FI6GLOz2tsAJ7t84wRlBnVK7fATXBSan/ImnGwRrCBvwzqt9v6hjqvGkif3UJL4DE3gQ=
+X-Gm-Gg: ASbGncuGhh5NqtXoNEMxK0PgdSZeeo1EnGk3zPXRuJoYrJSIGkvGx5fHUygTK6mMPqM
+	9Bg9Phzmsojs+ELoxjnuL2p0cJ/UAGsiRaSVca1u5RVP74nHV86ctUBRoZweyeRgfoHtBB3eR6o
+	QVVlIuL5YtDG8XP2fxc/1xy+FAxLIGHAKzCUs6rT+/ST+DoIFdOavYrXraw6smd1lZn2aDlqYgP
+	e+LiWlY4jr2arsbVw6YqbsnQg5Scb4ENoMvGVOqmMWsPIGyV+v0UlA1M2r3uMSgoL4o3FgPa4F0
+	2SxdFv5bX+eGACVQIsPyqd/mBck0BsAgOvWmQGtVhzGjyJd9BRBIhjwXbXF0cmVDXmIur4NGB0t
+	JIlyH1ZjMEMhOMEIGBrHVJR3zVqdvG5SKgzrZ55F6PN8Ymn6ZGj0K
+X-Received: by 2002:a05:622a:4c83:b0:4b6:1abb:79f5 with SMTP id d75a77b69052e-4b61abb7a44mr7384921cf.28.1757366686688;
+        Mon, 08 Sep 2025 14:24:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9mHK3xIysct+OJsOitEaI0FFJVfD8DwRlzV1DglA6ed+m8l9nen/ZfTvHn0M3YqIVLtYHdw==
+X-Received: by 2002:a05:622a:4c83:b0:4b6:1abb:79f5 with SMTP id d75a77b69052e-4b61abb7a44mr7384521cf.28.1757366686023;
+        Mon, 08 Sep 2025 14:24:46 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c424fc9sm36306e87.9.2025.09.08.14.24.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 14:24:45 -0700 (PDT)
+Date: Tue, 9 Sep 2025 00:24:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 4/5] phy: qcom: qmp-combo: get the USB3 & DisplayPort
+ lanes mapping from DT
+Message-ID: <dfhvmeo3pnjubgiwvakpzhzgl6uwlopyrkwuqyhfqw6jfh4mty@t4lhuh4jh6af>
+References: <20250908-topic-x1e80100-hdmi-v3-0-c53b0f2bc2fb@linaro.org>
+ <20250908-topic-x1e80100-hdmi-v3-4-c53b0f2bc2fb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-simplefb-genpd-uaf-v2-1-f88a0d9d880f@jannau.net>
-X-B4-Tracking: v=1; b=H4sIAE9Jv2gC/32NQQ6CMBBFr0Jm7Zi2FEldcQ/DotIpjNFCWiAaw
- t2tHMDle8l/f4NEkSnBtdgg0sqJx5BBnQroBht6QnaZQQlVCSMkJn5NT/J37ClMDhfrsaxULXR
- 9kVYZyMMpkuf3Eb21mQdO8xg/x8cqf/ZvbpUoUTjjS1vqTruuedgQ7HIONEO77/sXlNKqD7UAA
- AA=
-X-Change-ID: 20250901-simplefb-genpd-uaf-352704761a29
-To: Hans de Goede <hansg@kernel.org>, Helge Deller <deller@gmx.de>, 
- Thierry Reding <treding@nvidia.com>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Daniel Huhardeaux <tech@tootai.net>, 
- stable@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6883; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=D4fTDyKt7m0DoPEY7fyNBQ/mWmRv3ZrJQMo02fP1EYA=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoz9nkEuCXVfUh2O/YlsNjCsNXz3tvCydKo2l+2ktmtf1
- r7h61/cUcrCIMbFICumyJKk/bKDYXWNYkztgzCYOaxMIEMYuDgFYCLxPxkZTnpw8UbfCjq+Jfa5
- XfnS7+9TI/bJS2WHXPb56fJpe8/s74wMs3+5bjq7z1L0ydVzofWsFowOfU/llvXu5z27/mmM5vQ
- d/AA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-topic-x1e80100-hdmi-v3-4-c53b0f2bc2fb@linaro.org>
+X-Proofpoint-ORIG-GUID: AgLWroq_BnCQafGJXUbRgFF954XdLV5n
+X-Proofpoint-GUID: AgLWroq_BnCQafGJXUbRgFF954XdLV5n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfXxnfS6XJTxUOP
+ +Eb5UwGAMM8ce5VnC2LcK5TC0iSr3pVO036xvGNYupchValIs/t7x1hFLgzOvIQKo1jvybqtD0d
+ BGsqV2k0+diEgKkCqHHqSu5S1pYjPLZ0KsufHfvTkm7i0YhI+3mDVYyrllf6IB0gHFU397gJ7Ow
+ 73HGgS3rQC1lk7E53FPYiuX61h3mURM6qD46/g0Y9neQRpaUggZmfEl5jS/CNRysby2wsGXLQcn
+ uQoR2kqwA7lBxizSHKJq2fpPhs5dxDN9OV3VTWVSvCaplFuvKdHQTaIOpnvu1Zk8Y0PpEboE16J
+ dLVFT3CPhpZSjgTwsTaFN6VlDyphdzsZywSyS6C7FxpSpQlAUVYYSnsfEqa6GBPnn8wRFKKAhYD
+ Meo8NS56
+X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68bf499f cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=V-D1fa0CeKMiCSXBIY0A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060024
 
-The pm_domain cleanup can not be devres managed as it uses struct
-simplefb_par which is allocated within struct fb_info by
-framebuffer_alloc(). This allocation is explicitly freed by
-unregister_framebuffer() in simplefb_remove().
-Devres managed cleanup runs after the device remove call and thus can no
-longer access struct simplefb_par.
-Call simplefb_detach_genpds() explicitly from simplefb_destroy() like
-the cleanup functions for clocks and regulators.
+On Mon, Sep 08, 2025 at 03:04:21PM +0200, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> of a combo glue to route either lanes to the 4 shared physical lanes.
+> 
+> The routing of the lanes can be:
+> - 2 DP + 2 USB3
+> - 4 DP
+> - 2 USB3
+> 
+> Get the lanes mapping from DT and stop registering the USB-C
+> muxes in favor of a static mode and orientation detemined
+> by the lanes mapping.
+> 
+> This allows supporting boards with direct connection of USB3 and
+> DisplayPort lanes to the QMP Combo PHY lanes, not using the
+> USB-C Altmode feature.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 132 ++++++++++++++++++++++++++++--
+>  1 file changed, 124 insertions(+), 8 deletions(-)
 
-Fixes an use after free on M2 Mac mini during
-aperture_remove_conflicting_devices() using the downstream asahi kernel
-with Debian's kernel config. For unknown reasons this started to
-consistently dereference an invalid pointer in v6.16.3 based kernels.
+Looking at the patch... Would it be possible to make it more generic? I
+think some of the RockChips also have similar combo USB+DP PHY (and
+similar issues). I believe, Mediatek might also have the same issue.
 
-[    6.736134] BUG: KASAN: slab-use-after-free in simplefb_detach_genpds+0x58/0x220
-[    6.743545] Read of size 4 at addr ffff8000304743f0 by task (udev-worker)/227
-[    6.750697]
-[    6.752182] CPU: 6 UID: 0 PID: 227 Comm: (udev-worker) Tainted: G S                  6.16.3-asahi+ #16 PREEMPTLAZY
-[    6.752186] Tainted: [S]=CPU_OUT_OF_SPEC
-[    6.752187] Hardware name: Apple Mac mini (M2, 2023) (DT)
-[    6.752189] Call trace:
-[    6.752190]  show_stack+0x34/0x98 (C)
-[    6.752194]  dump_stack_lvl+0x60/0x80
-[    6.752197]  print_report+0x17c/0x4d8
-[    6.752201]  kasan_report+0xb4/0x100
-[    6.752206]  __asan_report_load4_noabort+0x20/0x30
-[    6.752209]  simplefb_detach_genpds+0x58/0x220
-[    6.752213]  devm_action_release+0x50/0x98
-[    6.752216]  release_nodes+0xd0/0x2c8
-[    6.752219]  devres_release_all+0xfc/0x178
-[    6.752221]  device_unbind_cleanup+0x28/0x168
-[    6.752224]  device_release_driver_internal+0x34c/0x470
-[    6.752228]  device_release_driver+0x20/0x38
-[    6.752231]  bus_remove_device+0x1b0/0x380
-[    6.752234]  device_del+0x314/0x820
-[    6.752238]  platform_device_del+0x3c/0x1e8
-[    6.752242]  platform_device_unregister+0x20/0x50
-[    6.752246]  aperture_detach_platform_device+0x1c/0x30
-[    6.752250]  aperture_detach_devices+0x16c/0x290
-[    6.752253]  aperture_remove_conflicting_devices+0x34/0x50
-...
-[    6.752343]
-[    6.967409] Allocated by task 62:
-[    6.970724]  kasan_save_stack+0x3c/0x70
-[    6.974560]  kasan_save_track+0x20/0x40
-[    6.978397]  kasan_save_alloc_info+0x40/0x58
-[    6.982670]  __kasan_kmalloc+0xd4/0xd8
-[    6.986420]  __kmalloc_noprof+0x194/0x540
-[    6.990432]  framebuffer_alloc+0xc8/0x130
-[    6.994444]  simplefb_probe+0x258/0x2378
-...
-[    7.054356]
-[    7.055838] Freed by task 227:
-[    7.058891]  kasan_save_stack+0x3c/0x70
-[    7.062727]  kasan_save_track+0x20/0x40
-[    7.066565]  kasan_save_free_info+0x4c/0x80
-[    7.070751]  __kasan_slab_free+0x6c/0xa0
-[    7.074675]  kfree+0x10c/0x380
-[    7.077727]  framebuffer_release+0x5c/0x90
-[    7.081826]  simplefb_destroy+0x1b4/0x2c0
-[    7.085837]  put_fb_info+0x98/0x100
-[    7.089326]  unregister_framebuffer+0x178/0x320
-[    7.093861]  simplefb_remove+0x3c/0x60
-[    7.097611]  platform_remove+0x60/0x98
-[    7.101361]  device_remove+0xb8/0x160
-[    7.105024]  device_release_driver_internal+0x2fc/0x470
-[    7.110256]  device_release_driver+0x20/0x38
-[    7.114529]  bus_remove_device+0x1b0/0x380
-[    7.118628]  device_del+0x314/0x820
-[    7.122116]  platform_device_del+0x3c/0x1e8
-[    7.126302]  platform_device_unregister+0x20/0x50
-[    7.131012]  aperture_detach_platform_device+0x1c/0x30
-[    7.136157]  aperture_detach_devices+0x16c/0x290
-[    7.140779]  aperture_remove_conflicting_devices+0x34/0x50
-...
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> index 7b5af30f1d028c592500e723ecd27b54ed554709..f3f91a69dc8b81e049cd06f7ab4f04baf57776cd 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_graph.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> @@ -1744,6 +1745,21 @@ static const u8 qmp_dp_v6_pre_emphasis_hbr_rbr[4][4] = {
+>  	{ 0x22, 0xff, 0xff, 0xff }
+>  };
+>  
+> +static const u32 usb3_data_lane_mapping[][2] = {
+> +	[TYPEC_ORIENTATION_NORMAL] = { 1, 0 },
+> +	[TYPEC_ORIENTATION_REVERSE] = { 2, 3 },
+> +};
+> +
+> +static const u32 dp_2_data_lanes_mapping[][2] = {
+> +	[TYPEC_ORIENTATION_NORMAL] = { 0, 1 },
+> +	[TYPEC_ORIENTATION_REVERSE] = { 3, 2 },
+> +};
+> +
+> +static const u32 dp_4_data_lanes_mapping[][4] = {
+> +	[TYPEC_ORIENTATION_NORMAL] = { 0, 1, 2, 3 },
+> +	[TYPEC_ORIENTATION_REVERSE] = { 3, 2, 1, 0 },
+> +};
+> +
+>  struct qmp_combo;
+>  
+>  struct qmp_combo_offsets {
+> @@ -4167,9 +4183,114 @@ static int qmp_combo_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_node_put;
+>  
+> -	ret = qmp_combo_typec_register(qmp);
+> -	if (ret)
+> -		goto err_node_put;
+> +	qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
+> +
+> +	if (of_find_property(dev->of_node, "mode-switch", NULL) ||
+> +	    of_find_property(dev->of_node, "orientation-switch", NULL)) {
+> +		ret = qmp_combo_typec_register(qmp);
+> +		if (ret)
+> +			goto err_node_put;
+> +	} else {
 
-Reported-by: Daniel Huhardeaux <tech@tootai.net>
-Cc: stable@vger.kernel.org
-Fixes: 92a511a568e44 ("fbdev/simplefb: Add support for generic power-domains")
-Signed-off-by: Janne Grunau <j@jannau.net>
----
-Changes in v2:
-- reworked change due to missed use of `par->num_genpds` before setting
-  it. Missed in testing due to FB_SIMPLE vs. SYSFB_SIMPLEFB.
-- Link to v1: https://lore.kernel.org/r/20250901-simplefb-genpd-uaf-v1-1-0d9f3a34c4dc@jannau.net
----
- drivers/video/fbdev/simplefb.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+At least this needs to be extracted to a function (or set of functions).
 
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index 1893815dc67f4c1403eea42c0e10a7ead4d96ba9..2f3e5449509d1824a3d26f73e103af82d56d558a 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -93,6 +93,7 @@ struct simplefb_par {
- 
- static void simplefb_clocks_destroy(struct simplefb_par *par);
- static void simplefb_regulators_destroy(struct simplefb_par *par);
-+static void simplefb_detach_genpds(void *res);
- 
- /*
-  * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
-@@ -105,6 +106,7 @@ static void simplefb_destroy(struct fb_info *info)
- 
- 	simplefb_regulators_destroy(info->par);
- 	simplefb_clocks_destroy(info->par);
-+	simplefb_detach_genpds(info->par);
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
- 
-@@ -451,7 +453,7 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- 				  struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	unsigned int i;
-+	unsigned int i, num_genpds;
- 	int err;
- 
- 	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-@@ -465,26 +467,33 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- 		return err;
- 	}
- 
--	par->num_genpds = err;
-+	num_genpds = err;
- 
- 	/*
- 	 * Single power-domain devices are handled by the driver core, so
- 	 * nothing to do here.
- 	 */
--	if (par->num_genpds <= 1)
-+	if (num_genpds <= 1)
- 		return 0;
- 
--	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
-+	par->genpds = devm_kcalloc(dev, num_genpds, sizeof(*par->genpds),
- 				   GFP_KERNEL);
- 	if (!par->genpds)
- 		return -ENOMEM;
- 
--	par->genpd_links = devm_kcalloc(dev, par->num_genpds,
-+	par->genpd_links = devm_kcalloc(dev, num_genpds,
- 					sizeof(*par->genpd_links),
- 					GFP_KERNEL);
- 	if (!par->genpd_links)
- 		return -ENOMEM;
- 
-+	/*
-+	 * Set par->num_genpds only after genpds and genpd_links are allocated
-+	 * to exit early from simplefb_detach_genpds() without full
-+	 * initialisation.
-+	 */
-+	par->num_genpds = num_genpds;
-+
- 	for (i = 0; i < par->num_genpds; i++) {
- 		par->genpds[i] = dev_pm_domain_attach_by_id(dev, i);
- 		if (IS_ERR(par->genpds[i])) {
-@@ -506,9 +515,10 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- 			dev_warn(dev, "failed to link power-domain %u\n", i);
- 	}
- 
--	return devm_add_action_or_reset(dev, simplefb_detach_genpds, par);
-+	return 0;
- }
- #else
-+static void simplefb_detach_genpds(void *res) { }
- static int simplefb_attach_genpds(struct simplefb_par *par,
- 				  struct platform_device *pdev)
- {
+> +		enum typec_orientation usb3_orientation = TYPEC_ORIENTATION_NONE;
+> +		enum typec_orientation dp_orientation = TYPEC_ORIENTATION_NONE;
+> +		struct device_node *usb3_ep, *dp_ep;
+> +		u32 data_lanes[4];
+> +		int count, i;
+> +
+> +		usb3_ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, 0);
+> +		dp_ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, 1);
+> +
+> +		if (usb3_ep) {
+> +			ret = of_property_count_u32_elems(usb3_ep, "data-lanes");
+> +			if (ret == -EINVAL)
+> +				/* Property isn't here, ignore property */
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250901-simplefb-genpd-uaf-352704761a29
+In all thsese error cases we are leaking a ref count on usb3_ep and
+dp_ep.
 
-Best regards,
+> +				goto usb3_mapping_done;
+> +			if (ret < 0)
+> +				goto err_node_put;
+> +
+> +			count = ret;
+> +			if (count != 2)
+> +				/* Property size is invalid, ignore property */
+> +				goto usb3_mapping_done;
+> +
+> +			ret = of_property_read_u32_array(usb3_ep, "data-lanes", data_lanes, count);
+> +			if (ret)
+> +				goto err_node_put;
+> +
+> +			for (i = TYPEC_ORIENTATION_NORMAL; i <= TYPEC_ORIENTATION_REVERSE; i++)
+> +				if (!memcmp(data_lanes, usb3_data_lane_mapping[i], sizeof(u32) * 2))
+> +					break;
+> +
+> +			if (i >= TYPEC_ORIENTATION_REVERSE)
+> +				/* Property value is invalid, ignore property */
+> +				goto usb3_mapping_done;
+> +
+> +			usb3_orientation = i;
+> +		}
+> +
+> +usb3_mapping_done:
+> +		of_node_put(usb3_ep);
+> +
+> +		if (dp_ep) {
+> +			ret = of_property_count_u32_elems(dp_ep, "data-lanes");
+> +			if (ret == -EINVAL)
+> +				/* Property isn't here, ignore property */
+> +				goto dp_mapping_done;
+> +			if (ret < 0)
+> +				goto err_node_put;
+> +
+> +			count = ret;
+> +			if (count != 2 && count != 4)
+> +				/* Property size is invalid, ignore property */
+> +				goto dp_mapping_done;
+> +
+> +			ret = of_property_read_u32_array(dp_ep, "data-lanes", data_lanes, count);
+> +
+> +			if (ret)
+> +				goto err_node_put;
+> +
+> +			for (i = TYPEC_ORIENTATION_NORMAL; i <= TYPEC_ORIENTATION_REVERSE; i++) {
+> +				switch (count) {
+> +				case 2:
+> +					ret = memcmp(data_lanes, dp_2_data_lanes_mapping[i],
+> +						      sizeof(u32) * count);
+> +					break;
+> +				case 4:
+> +					ret = memcmp(data_lanes, dp_4_data_lanes_mapping[i],
+> +						     sizeof(u32) * count);
+> +					break;
+> +				}
+> +
+> +				if (!ret)
+> +					break;
+> +			}
+> +
+> +			if (i >= TYPEC_ORIENTATION_REVERSE)
+> +				/* Property value is invalid, ignore property */
+> +				goto dp_mapping_done;
+> +
+> +			dp_orientation = i;
+> +		}
+> +
+> +dp_mapping_done:
+> +		of_node_put(dp_ep);
+> +
+> +		if (dp_orientation == TYPEC_ORIENTATION_NONE &&
+> +		    usb3_orientation != TYPEC_ORIENTATION_NONE) {
+> +			qmp->qmpphy_mode = QMPPHY_MODE_USB3_ONLY;
+> +			qmp->orientation = usb3_orientation;
+> +		} else if (usb3_orientation == TYPEC_ORIENTATION_NONE &&
+> +			 dp_orientation != TYPEC_ORIENTATION_NONE) {
+> +			qmp->qmpphy_mode = QMPPHY_MODE_DP_ONLY;
+> +			qmp->orientation = dp_orientation;
+> +		} else if (dp_orientation != TYPEC_ORIENTATION_NONE &&
+> +			 dp_orientation == usb3_orientation) {
+> +			qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
+> +			qmp->orientation = dp_orientation;
+> +		} else {
+> +			dev_warn(dev, "unable to determine orientation & mode from data-lanes");
+> +		}
+> +	}
+>  
+>  	ret = drm_aux_bridge_register(dev);
+>  	if (ret)
+> @@ -4189,11 +4310,6 @@ static int qmp_combo_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_node_put;
+>  
+> -	/*
+> -	 * The hw default is USB3_ONLY, but USB3+DP mode lets us more easily
+> -	 * check both sub-blocks' init tables for blunders at probe time.
+> -	 */
+> -	qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
+>  
+>  	qmp->usb_phy = devm_phy_create(dev, usb_np, &qmp_combo_usb_phy_ops);
+>  	if (IS_ERR(qmp->usb_phy)) {
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-Janne Grunau <j@jannau.net>
-
+With best wishes
+Dmitry
 
