@@ -1,210 +1,169 @@
-Return-Path: <linux-kernel+bounces-806722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0B9B49AF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88E7B49AF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017A94E10C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0675F1BC5591
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE11E2DD5EF;
-	Mon,  8 Sep 2025 20:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5C02DAFBE;
+	Mon,  8 Sep 2025 20:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g2t1wIju"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4gsqnHNn"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2083.outbound.protection.outlook.com [40.107.96.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694302DCF63
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362779; cv=none; b=uD5VMzNHorwK9Pv2nEOVDM+3Y2Vv9FznHdTDEWRiGKeLS2UUfJg5ZdabbPD+/ar3kt2yP5UevAaB068wfNCdXm6dQIito26pdySyBgam8tzlj8XXjqyH/XYIh9bK6nvtZ3IwbVdj27A40uUIueey1Xkg+SCRxIm8LA5YHQalZf0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362779; c=relaxed/simple;
-	bh=sunc1sBZHjtxiFsevsskggwKFDeZ5rB1V5mXDaDKnN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rf2dhlAOY5D6viA9o89/MoTe5KgBrTQGURikCi0ZzFhP1f0gRyFDypdg9pE/H8dNWh3Oehl1LzZ0Gz3JP1UH1YdjCUAkYhDjaZfT3L+RLpBnPLlNFfP+xDcMlVr/rpvbggintotDQ5zpvYi/ERLhyGDpZHbu8umTmXIsfhAY+fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g2t1wIju; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588KJQSI128506;
-	Mon, 8 Sep 2025 15:19:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757362766;
-	bh=VY5vW/TBFhiKiObWKD3QATMgCx/mPhcn8MxelvsDWwI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=g2t1wIjuysolhs1oTACUr4ABdO8JNL4Ls3LkXTVH6pAQfFJd8GouZrCDpJZfdTNKh
-	 ZiBhoo9b0aUXHR5JN2S48VpEkQLcwKCUqRChzz9hiK+DKCLaBFhdXoSHEG4B6un+i+
-	 HdcsVjuRjVmDUZNRNs+njbtaVtctvpGj0sLSURu0=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588KJQqO4016603
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 15:19:26 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 15:19:26 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 15:19:26 -0500
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588KJQlq1163717;
-	Mon, 8 Sep 2025 15:19:26 -0500
-Message-ID: <48ad21a2-6562-4568-aace-68d163116ddd@ti.com>
-Date: Mon, 8 Sep 2025 15:19:26 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FF22D9EFA;
+	Mon,  8 Sep 2025 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362858; cv=fail; b=qNPVSnyPFbmNv12DABI9i0JNhlaKjcoROgzEgXGq+h3/2VVuojsnpn461UNdP7qIRfOawvFVEn8bCkoMvfcJbVrWSYiMGOi2dBq2emEn4rTsyT4yqHu0K08LbXEDhfAn71d5R+SpXO04AiQjvz5hlo0WD8NSOp3wnDwd5gEPAv0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362858; c=relaxed/simple;
+	bh=r3cQxjW1od6ObDaQPJ0gCEj8MDxGbwoRJv35KJwGMNk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nrjpCjssyY5uq7dGIVRTjX8e8M8IOHvIYuTqFOA4CbBPcGg3eI+9K57C/Q+YFxCKALC56sJ327V/UWsA0ORw17w95ggI6ToWLprwmcdoRQDTrrIrZLlEdJwhudXnEGweCy7hThpsRA8ghd8xe5TnQsNMF93uc4ZhZ2YPpHjKxSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4gsqnHNn; arc=fail smtp.client-ip=40.107.96.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HSCDbzwcUheNOGA3CqeG/p6z+QL9PCf5Umi6txKsBdtDYCgjyYdN1qDy7j9MM9sDMC5lW3wAhBQrcb+0G8N8YE4lh+n9PHmhKvizCHcV+jpVaDjD1TUbeZfl9gs8BT07eqYipRV1oikR3UFy0KlfRa8Vgv4VJywWtwjMbBYUGFMJsAjLaz4lYWa5tIivIo2T+w+eP7bkATclPhXBzE1U1YvcSY9eBDEyRzWv1X3um0H3cb4zXck9pONFLvKpUNjn/sd3Ndl21Eh4FKwCSOjNfe1IBA0sB1vrBaC7BwipksWvTlYX4AHwPDPLglGgHmyhG++eXdelffNrc7CdSQfNfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NOQCUeDWG8d0ZBsyNlLCdxrCgSzWlsObDOoHI3LwepU=;
+ b=j0BE1ytFWebsGj2D+t1niuHwaq9DYkcEWMOFKP9zbkaOcVYE9meFf+VPsTs3ogqkk2E32O/U6Nj7uz/8bMuy2MQcSL9WGSIswKb6qRWqrOQSSwiTbBwYoxc1zXfm8lqKEifNSJf+oRhocwak3Dnkrbyb5ig4lFyvrcz/FeVc01znyHPtw0vq4L4xCK17/mCQu1/5DmmUy12WGMyw4sup5U38XmWkNli5TDiKiJ3tD6jIVbACpJjdoSXX7494PfaDrH7VlNVRyoWeQIvsPLMMNM19XGFf0bh1TfzQlOPzaPniI23Qza1kzhZbPOF8ataCfCfAgOFnCAS/P/iPoIiByg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NOQCUeDWG8d0ZBsyNlLCdxrCgSzWlsObDOoHI3LwepU=;
+ b=4gsqnHNn6k/5UzjCwJzK2y0tkDSFHK1yzHxNfR1rWitBoGVitSy8Q9D2Vbf1gP8+NuDmbNhfbXQaOAqVrjGUZcDaGzvxvnvCYxm57sJqFzJ4HWWjjHbJNk2dfmYqUl03x3LQ6ri5ixKISZHI7/9DjHEx60OrkfgZpToHQIDeTqw=
+Received: from SN4PR0501CA0108.namprd05.prod.outlook.com
+ (2603:10b6:803:42::25) by IA1PR12MB8468.namprd12.prod.outlook.com
+ (2603:10b6:208:445::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 20:20:51 +0000
+Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
+ (2603:10b6:803:42:cafe::a1) by SN4PR0501CA0108.outlook.office365.com
+ (2603:10b6:803:42::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.11 via Frontend Transport; Mon,
+ 8 Sep 2025 20:20:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 20:20:50 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 13:20:49 -0700
+From: John Allen <john.allen@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>
+CC: <rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
+	<weijiang.yang@intel.com>, <chao.gao@intel.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <mingo@redhat.com>,
+	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, John Allen
+	<john.allen@amd.com>
+Subject: [PATCH v2 0/2] Support for SEV-ES guest shadow stack
+Date: Mon, 8 Sep 2025 20:20:32 +0000
+Message-ID: <20250908202034.98854-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pmdomain: ti_sci: Handle wakeup constraint if device has
- pinctrl wakeup state
-To: Dhruva Gole <d-gole@ti.com>
-CC: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
-        <ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <vishalm@ti.com>,
-        <sebin.francis@ti.com>, <msp@baylibre.com>, <khilman@baylibre.com>,
-        <a-kaur@ti.com>
-References: <20250904211607.3725897-1-k-willis@ti.com>
- <20250905183931.qfqnnvmwqqvo3emy@lcpd911>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250905183931.qfqnnvmwqqvo3emy@lcpd911>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|IA1PR12MB8468:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7144f7ed-9300-4228-2eb1-08ddef15343b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iK4yBQzgknnDU7lpIxO7iFMQvZ0MgH824LwY6/BmlPKl7jyQhtjUb9raCljd?=
+ =?us-ascii?Q?57I+7iYVXDF7Fb8c22oQj5v3JTYhcX8Mp5Ik+Il2EvrV1HsT6aoJ/mZSEfpM?=
+ =?us-ascii?Q?4WeTFxTZise6n7ZJXsoKdD1YSqZc3zgY5B3qxGv+/B1+v5Wr245qT63aWIk5?=
+ =?us-ascii?Q?qHFdeMqlnKTaKdFKFbofpaCfT7WAXbkk+6Wmu7SXbs8M0nUmtnlqbt10tBFi?=
+ =?us-ascii?Q?FP+o46SoYSJ1mYQg5LHQ4x+ToO9vvDt4wtXM+2yE5Jl5qC2Dza11ILXnjCuw?=
+ =?us-ascii?Q?iYEl0G83rvFp+1dHU1hTGp3RdkiAXZtJ/cDJnf4NLPlyDQIAsSsFZXqHeZr4?=
+ =?us-ascii?Q?jU5c3EYax+wVMgxHeUo/9AXDMfcXCXWOTsFo/kVnPLj4ecraXu0C7ZybsJ42?=
+ =?us-ascii?Q?lcC0Xttote4fsY2FYgzcKD5AD8TI2bJHziaNWunwf2G66k19dDfQuko7FBCI?=
+ =?us-ascii?Q?bBAqtuLDQK7Nsqq+s1XFshr81QR6i5zkLF1ljW4Jf3xMjrGhV9YW+Twl79+H?=
+ =?us-ascii?Q?GNq30Y6XNXgFe2tYwcuzdfv12JZLTlP1hd0YXs75gUCih+I4Mtd6ETMZxE+9?=
+ =?us-ascii?Q?E1hvCpghZJpRnZM8wRQgIsgdAs0C8oKQsx6Lbkb3LJ3AknrFyTG0TkJH1fOz?=
+ =?us-ascii?Q?r6YFCdM2LlnfMqgrjihaIggvgXLE0vgoIHQIECOz1oqWZJFe95ZxcocywoQb?=
+ =?us-ascii?Q?4clRjlLyrCgupskqYmsfE4mfjzvpLhaUelnm8vcFXKBalS+9B/OAp/T0Q2jO?=
+ =?us-ascii?Q?r66bZw2sW9XFOwp0HxBn/x4QwU6bStW/FXEOUrWd1JaXoutbNSqe8IPIO94Q?=
+ =?us-ascii?Q?ZE56EcDv5hS/nGwxJi+LwHQJKTq5O9AxNq0K0jjgtj+b63xYcAuFreQs19e2?=
+ =?us-ascii?Q?/gDioEKQC2kTm9cMRb41WTggLMcxlCpGVJ8qUcH9pbU8zT+C2jOxxZtEEHi0?=
+ =?us-ascii?Q?pfOsX54R2JequORu3og0O7MoS19D2bmWrJU5iZnW0gj7MwRpK0DzJ0IMKbmu?=
+ =?us-ascii?Q?6zW/hJpxIzcD5ZiLxdVMBLvrzVudwn2edREvTzI8kOFTihWI+9fwYXBtIuIc?=
+ =?us-ascii?Q?Pje4WEVYLC44iINTFlKQLb1BDcRF+8Tsyz3HFTC7FaXbX362lQk21QMUtmni?=
+ =?us-ascii?Q?26TFlMNkohlx3fnqDzo8APa0S7wnDi+BLQmHfYIgXxa9BL6uUE5j+rSOE50i?=
+ =?us-ascii?Q?XlkCYUrv7TraWK9Bhp5QpziNGzd/OFc3AdDd9mmN37L6YaA0r5OYFu/LXA5z?=
+ =?us-ascii?Q?StymRsFITMgPgPQ6p00Yh+XzBi1F+NvomCc/jJgaafTqwnbcwFe2y5vHu45Z?=
+ =?us-ascii?Q?tnYLdjO5ojcWojd7ZDISTEji1CQ5TVmRA4HVC3y1Y0F7s+wrevB/1y+OdsbM?=
+ =?us-ascii?Q?2pU1wA+rgpia1zYYqYFOIW/DimGJyIGyONvfKqtyWn6NFCSoJAqEkV4avS54?=
+ =?us-ascii?Q?XYWATkVVa7tJP6RB1FCz3yo/+NAKzSdHndhDqHdW/lcgGxWZAtmkVtP0uC38?=
+ =?us-ascii?Q?cd8fluIRIWbGSXakvuZ0JlV/JVeiyOzZu9g0?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:20:50.5523
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7144f7ed-9300-4228-2eb1-08ddef15343b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8468
 
-Hi Dhruva,
+For shadow stack support in SVM when using SEV-ES, the guest kernel
+needs to save XSS to the GHCB in order for the hypervisor to determine
+the XSAVES save area size.
 
-On 9/5/25 13:39, Dhruva Gole wrote:
-> On Sep 04, 2025 at 16:16:07 -0500, Kendall Willis wrote:
->> In TI K3 SoCs the PM co-processor (device manager or DM) will decide
->> which low power state to suspend into based off of constraints given by
->> Linux. If a device is marked as a wakeup source in Linux, Linux will add
->> a constraint that the wakeup source has to be on. The DM will enter the
->> deepest low power state based off of the constraint.
->>
->> In cases like UARTs, IO daisy-chaining can be used to wakeup the system,
->> however if the UART is marked as a wakeup source, the system is not able
->> to enter any low power mode.
->>
->> IO daisy-chain wakeup can use the pinctrl wakeup state instead of using
->> wake IRQs. For example, the serial driver on K3 platforms uses a wakeup
-> 
-> I think this statement will only make sense to someone who's worked on
-> io daisychain and wake IRQs on our SoCs.
-> I don't think it's coming out very clearly why wake IRQs are needed for
-> IO Daisychain in the first place.
-> 
-> You could probably just reference commit b06bc47279919 ("pmdomain:
-> ti_sci: handle wake IRQs for IO daisy chain wakeups") from Kevin where
-> we explain whats io daisychain and need for wake IRQ. Talk in this patch
-> with relation to that patch - what you're doing that the other one
-> missed.
-> 
->> pinctrl state to be able to resume from suspend.
-> 
-> Perhaps I am missing the order in which the patches are being applied.
-> But if it's like the 1 -> 2 -> 3 order you mentioned below then this
-> reference to serial drv won't really make sense right?
-> 
-> If we're going in the order of applying the series that you
-> specified, there's no guarantee that the UART patch makes it in
-> along with this patch, so I'd say let's skip mentioning the serial
-> driver to avoid sending people in search for how the serial driver is
-> doing this atall.
-> 
-> In Kevin's earlier commit it made sense, because he was talking about
-> daisychaining, here we're not. So the 8250 driver doesn't actually have
-> the changes we're talking about in this patch.
+This series can be applied independently of the hypervisor series in
+order to support non-KVM hypervisors.
+---
+v2:
+  - Update changelog for patch 2/2
 
-In v2, I will add references to commit b06bc47279919 ("pmdomain: ti_sci: 
-handle wake IRQs for IO daisy chain wakeups") and I will remove the 
-reference to the UART driver.
+John Allen (2):
+  x86/boot: Move boot_*msr helpers to asm/shared/msr.h
+  x86/sev-es: Include XSS value in GHCB CPUID request
 
-Thanks,
-Kendall
+ arch/x86/boot/compressed/sev.c    |  7 ++++---
+ arch/x86/boot/compressed/sev.h    |  6 +++---
+ arch/x86/boot/cpucheck.c          | 16 ++++++++--------
+ arch/x86/boot/msr.h               | 26 --------------------------
+ arch/x86/coco/sev/vc-shared.c     | 11 +++++++++++
+ arch/x86/include/asm/shared/msr.h | 15 +++++++++++++++
+ arch/x86/include/asm/svm.h        |  1 +
+ 7 files changed, 42 insertions(+), 40 deletions(-)
+ delete mode 100644 arch/x86/boot/msr.h
 
-> 
->>
->> Devices that are marked as a wakeup source and use pinctrl wakeup state
->> should not set wakeup constraints since these can happen even from deepest
->> low power state, so the DM should not be prevented from picking deep power
->> states.
->>
->> Detect the pinctrl wakeup state in the suspend path, and if it exists,
->> skip sending the constraint.
->>
->> Signed-off-by: Kendall Willis <k-willis@ti.com>
->> ---
->> This series is intended to be implemented along with the following
->> series:
->>
->> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
->>     wakeup state": (this patch) skips setting constraints for wakeup
->>     sources that use pinctrl state 'wakeup'.
->>
->> 2. "serial: 8250: omap: Add wakeup support": Implements wakeup from
->>     the UARTs for TI K3 SoCs
->>
->> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": Implements the
->>     functionality to wakeup the system from the Main UART
->>
->> Testing
->> -------
->> Tested on a SK-AM62B-P1 board with all series and dependencies
->> implemented. Suspend/resume verified with the Main UART wakeup source
->> by entering a keypress on the console.
->>
->> ---
->>   drivers/pmdomain/ti/ti_sci_pm_domains.c | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>
->> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> index 82df7e44250bb..884905fd0686c 100644
->> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/err.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/pm_domain.h>
->>   #include <linux/pm_qos.h>
->> @@ -84,9 +85,24 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
->>   	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->>   	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
->>   	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
->> +	struct pinctrl *pinctrl = devm_pinctrl_get(dev);
->> +	struct pinctrl_state *pinctrl_state_wakeup;
->>   	int ret;
->>   
->>   	if (device_may_wakeup(dev)) {
->> +		/*
->> +		 * If device can wakeup using pinctrl wakeup state,
->> +		 * we do not want to set a constraint
->> +		 */
->> +		if (!IS_ERR_OR_NULL(pinctrl)) {
->> +			pinctrl_state_wakeup = pinctrl_lookup_state(pinctrl, "wakeup");
->> +			if (!IS_ERR_OR_NULL(pinctrl_state_wakeup)) {
->> +				dev_dbg(dev, "%s: has wake pinctrl wakeup state, not setting " \
->> +						"constraints\n", __func__);
->> +				return;
->> +			}
->> +		}
->> +
-> 
-> Not much objections to the code itself, as it makes sense that we want
-> to ignore the constraint for wakeup pinctrl similar to how we did for the
-> wake IRQ one.
-> 
+-- 
+2.47.3
 
 
