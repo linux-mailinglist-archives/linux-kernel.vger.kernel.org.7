@@ -1,200 +1,158 @@
-Return-Path: <linux-kernel+bounces-806847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35056B49C9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:00:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E69B49CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C084E39B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CDC4E5833
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D892DFF04;
-	Mon,  8 Sep 2025 22:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925772D94A7;
+	Mon,  8 Sep 2025 22:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JnENuwqM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IRHDSvBR"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C337221F15
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2C1DFF7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757368833; cv=none; b=ENy9A2UwFArpNPG5ssbNyZ6fksuwfJLGgpzQ8Ar7xeqkydqAoupeplzhnbZl9Hz3CRRGuJovCepK5AsxwuPZDnX2HAy6jiKgHsmtlLCuhD/+KyvrLeLmJbLxEWA6jIlIhHBvDCXDSs6yu6lGAvBsdl1rh4qDsJN589Zm+7yIezM=
+	t=1757369820; cv=none; b=S3ggx3yLOeVtdnrdTA78fhI8uzDtBIo/LoMZPA+YZBloiGHUW/cdsYZZePk/Rhw0L9fn7f9ctnrQ75gYg7HwHU1W1A0nIDEo/bhFRChzUQQs6SAor1hb4nkfwPVgPjH0atw9t4PPmSZx2pZ1LuJacEz3z3hxQRQKFjjIkXmNlD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757368833; c=relaxed/simple;
-	bh=RPrfcCoCldrbAE6gBsixpuRnRnSRk6iX7jPBvUCFPaY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E2hsqh/iXNyKnLIj/gp/F8oUHXDweXLg1OWaKdVXJ6+PqObeuYYPxlBN9MXtIJV45c2eD98TLxga/aQZAbuK5sG+0Kcd2Rzy3Q9gncb7P9P5dd1tJPJdBlBs1w6eSZnE0Qp7EqBxVVUEaGwy/5qbzyQ/1EwZyFlEd/ew90u474U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JnENuwqM; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757368830; x=1788904830;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RPrfcCoCldrbAE6gBsixpuRnRnSRk6iX7jPBvUCFPaY=;
-  b=JnENuwqMeSJmJOxgMtFG8geTIGFKvd7Ogoowc/XfY1m20dI6fKXk0oHi
-   EKCP5HcpZW4pgx9XnHuEP0y3T+X6fICYOc4ETKdFZ19qDwd4gVL2uuJyU
-   mH/GWTGeuwhcqJbjkJUFkf2rwNCCxI3iihMG/bufXQ1th14PQ0yWeTznP
-   Aw7sizUnijfsr7FXqkUiXAEEU8b4cjeW1Jcc1UQDWDLBH0CL+fqMciASm
-   rAL3Xz/l5rOXJHdVcrl4HatiLfOW3HsCVCt+Y/uam+Dj40/rcW+nlided
-   bkcLlKSxOj4l4cEUkjJM06MQyz0/8Ra24unKn9YxJHWW0pAtlU9ErYusC
-   A==;
-X-CSE-ConnectionGUID: wOuFkGJ5R46vznLCjETZ2Q==
-X-CSE-MsgGUID: RIUjZFZnTdGiVoIDcKqJSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62269895"
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="62269895"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 15:00:29 -0700
-X-CSE-ConnectionGUID: SNnYNmWRRDOJOx5aobceSQ==
-X-CSE-MsgGUID: I8ML/hIlRKKPSGhWcrcDDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="172088103"
-Received: from rchatre-desk1.jf.intel.com ([10.165.154.99])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 15:00:29 -0700
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: qinyuntan@linux.alibaba.com,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	Dave.Martin@arm.com,
-	babu.moger@amd.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	dave.hansen@linux.intel.com
-Cc: x86@kernel.org,
-	hpa@zytor.com,
-	peternewman@google.com,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	reinette.chatre@intel.com
-Subject: [PATCH] fs/resctrl: Eliminate false positive lockdep warning when reading SNC counters
-Date: Mon,  8 Sep 2025 15:15:51 -0700
-Message-ID: <0819ce534d0cb919f728e940d9412c3bab1a27c7.1757369564.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757369820; c=relaxed/simple;
+	bh=H42CHv/0ozdq1Ls2/9Wm26l9P0ywjQmPNMk/fPUfx3A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=e5dSz34x7c/uVFuWMLADR+1SDs7a7ezqp+QHTWQU64YSCTJRzTQareAyZDeHBaRb+ybHDpay3AS9Wy3rRegYkhUY78GdGP/LB0MCyBwaKSA31Hc//ieiU306sEp/qcbhPTPQ/dsGEw2GjrPzjzUn3bhwELWDvM1QvwBKIP1sI+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IRHDSvBR; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-724b9ba6e65so39316357b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757369817; x=1757974617; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVYLSetMwrX/VynVtA83hBzGTxxW5OBc+rZUcVQE0NA=;
+        b=IRHDSvBRZ3z0hjkZyZTJtNj2OshQ8Z4uM0wIzui3vNc624IOBNYUHFNQSUmjhJFmW8
+         Yds8MevmmwVpuyNm+8y64No2X76dNKfIu/z6ytPs6Krx/ctSro7N1wNBs84vLT0MmmIt
+         SHoO/VlfMLJ+evs8fao1KgT/znW8UNpYp3KifgioJIVgiA5M6xTHWOTHSWiKH/wfB9xz
+         OP7m4K+R/pIDzjvG75lhzjMSoiB0ydQZDKIOo2F/14E3l2+uSS1ZayHbSb+byI0nPQUG
+         hmneh9tymyc9m6bkLsEWEmjteNw9SKWrwgIQgo2mYu+x92DRqI/gZe2qpa/VpW3yXp0o
+         Lodg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757369817; x=1757974617;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVYLSetMwrX/VynVtA83hBzGTxxW5OBc+rZUcVQE0NA=;
+        b=WxKFK7E/YidjSuLL21J0N050CSXV7x2atewGFvs0/xRSI1d/4/SncY2KT9l7DGoCLZ
+         ybLqGs956zXNp0yfnfiMvWOUC98enidV6bPdkR4JLLBF5jsKX4jPiRgmTSmvDyA7ca7M
+         v/uY/PQZcRRKVxa6cmOR0ieBjoEjGgrSIwCRzRdR6jTvlS1bVY7vav4CCfzFRxPMVJ+o
+         Fgct7/Bm0clnwAbHrhqMt20/3xm6w/3mzxkRis9Hu4Lm3ONWD3NjSxZS+iVtKL/Grs4t
+         gW7ocx10PxOKevvIQgdmVcn2+BqUMN6XUNC55aEv8jKCeWrlDMN20ZKxS62G8Xr/cKU2
+         NdPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXM+dXXIwHA0IFZhHStRwu2unP95Ccf/cWhD7szu/llRXW8MZGM7IBurVSwG10rRW78yaVzFwKXxb5+bRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj5Zb2iameanP+hjns7xoa5WQ+pHHzSfvYzBDjaDGHplmMSWB7
+	b6LL8jIvLgqOd5a9YGZ47qw66ORZT5LxlbyUqbWaDRHDe23068+cEsUVhs080c/l5w==
+X-Gm-Gg: ASbGnct2U/v0rQ2gJj4LqVASjfbyRcS0e4fw5ppbTvUNswuWObZ3d41UF1spcy/J1tM
+	dTC4B0TCmKDfcy8aI2rUhGDoZxVBcIiMICr341pF33eIjGoRyMR7qp2X1+iJWnoqBDwAWIpYAhj
+	FZZ9fjK2mmKKxzc+0gssP3j7DGdeSnqvu2J76UWf6HB/GK6rFkEcs6StbAK6SmhxiS/raj5oGKS
+	4ca6BfkLiFRGYWuJF1Lm1ABGO29DUC+oRfhToj2t8jMIloCBYQOIYC6QUS5gs6BnUNvoGxnma/T
+	wsY9DaYggLsbEqgXusl5vSE5xFSv6p8D+747naMBS5wghcyQEvzZHSnbk/MhHfatS8rKurywfh/
+	1GpTdn1CFqtBAh4KYx/Jjr0qlU+ICJ3KL+TAzViTQQu6Zfkk9ZGtOQXYfG9ogLWJubjYS71+Rpn
+	stNO50Nzovo8ez2gxEEoeFeKbH7RCT
+X-Google-Smtp-Source: AGHT+IEFGtIXAPyyGQ3/HR/zcX4Kvh/xfXBtsgo7O+saKjkOvxNMfjk5bY+RsPrpYJS0IY8LbDuMMQ==
+X-Received: by 2002:a05:690c:4d88:b0:724:2cad:8df6 with SMTP id 00721157ae682-727f2ebd695mr84968267b3.16.1757369817188;
+        Mon, 08 Sep 2025 15:16:57 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-608110cabd6sm5167388d50.8.2025.09.08.15.16.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 15:16:56 -0700 (PDT)
+Date: Mon, 8 Sep 2025 15:16:53 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Axel Rasmussen <axelrasmussen@google.com>, Chris Li <chrisl@kernel.org>, 
+    Christoph Hellwig <hch@infradead.org>, 
+    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, Johannes Weiner <hannes@cmpxchg.org>, 
+    John Hubbard <jhubbard@nvidia.com>, Keir Fraser <keirf@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Shivank Garg <shivankg@amd.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Wei Xu <weixugc@google.com>, 
+    Will Deacon <will@kernel.org>, yangge <yangge1116@126.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Yu Zhao <yuzhao@google.com>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 2/6] mm/gup: local lru_add_drain() to avoid
+ lru_add_drain_all()
+In-Reply-To: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
+Message-ID: <66f2751f-283e-816d-9530-765db7edc465@google.com>
+References: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Running resctrl_tests on an SNC-2 system with lockdep debugging enabled
-triggers several warnings with following trace:
-	WARNING: CPU: 0 PID: 1914 at kernel/cpu.c:528 lockdep_assert_cpus_held+0x8a/0xc0
-	...
-	Call Trace:
-	__mon_event_count
-	? __lock_acquire
-	? __pfx___mon_event_count
-	mon_event_count
-	? __pfx_smp_mon_event_count
-	smp_mon_event_count
-	smp_call_on_cpu_callback
-	<snip>
+In many cases, if collect_longterm_unpinnable_folios() does need to
+drain the LRU cache to release a reference, the cache in question is
+on this same CPU, and much more efficiently drained by a preliminary
+local lru_add_drain(), than the later cross-CPU lru_add_drain_all().
 
-get_cpu_cacheinfo_level() called from __mon_event_count() requires CPU
-hotplug lock to be held. The hotplug lock is indeed held during this time,
-as confirmed by the lockdep_assert_cpus_held() within mon_event_read()
-that calls mon_event_count() via IPI, but the lockdep tracking is not able
-to follow the IPI.
+Marked for stable, to counter the increase in lru_add_drain_all()s
+from "mm/gup: check ref_count instead of lru before migration".
+Note for clean backports: can take 6.16 commit a03db236aebf ("gup:
+optimize longterm pin_user_pages() for large folio") first.
 
-Fresh CPU cache information via get_cpu_cacheinfo_level() from
-__mon_event_count() was added to support the fix for the issue where
-resctrl inappropriately maintained links to L3 cache information that will
-be stale in the case when the associated CPU goes offline.
-
-Keep the cacheinfo ID in struct rdt_mon_domain to ensure that
-resctrl does not maintain stale cache information while CPUs can go
-offline. Return to using a pointer to the L3 cache information (struct
-cacheinfo) in struct rmid_read, rmid_read::ci. Initialize rmid_read::ci
-before the IPI where it is used. CPU hotplug lock is held across
-rmid_read::ci initialization and use to ensure that it points to accurate
-cache information.
-
-Fixes: 594902c986e2 ("x86,fs/resctrl: Remove inappropriate references to cacheinfo in the resctrl subsystem")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
 ---
- fs/resctrl/ctrlmondata.c | 2 +-
- fs/resctrl/internal.h    | 4 ++--
- fs/resctrl/monitor.c     | 6 ++----
- 3 files changed, 5 insertions(+), 7 deletions(-)
+ mm/gup.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index d98e0d2de09f..3c39cfacb251 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -625,11 +625,11 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 		 */
- 		list_for_each_entry(d, &r->mon_domains, hdr.list) {
- 			if (d->ci_id == domid) {
--				rr.ci_id = d->ci_id;
- 				cpu = cpumask_any(&d->hdr.cpu_mask);
- 				ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
- 				if (!ci)
- 					continue;
-+				rr.ci = ci;
- 				mon_event_read(&rr, r, NULL, rdtgrp,
- 					       &ci->shared_cpu_map, evtid, false);
- 				goto checkresult;
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 0a1eedba2b03..9a8cf6f11151 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -98,7 +98,7 @@ struct mon_data {
-  *	   domains in @r sharing L3 @ci.id
-  * @evtid: Which monitor event to read.
-  * @first: Initialize MBM counter when true.
-- * @ci_id: Cacheinfo id for L3. Only set when @d is NULL. Used when summing domains.
-+ * @ci:    Cacheinfo for L3. Only set when @d is NULL. Used when summing domains.
-  * @err:   Error encountered when reading counter.
-  * @val:   Returned value of event counter. If @rgrp is a parent resource group,
-  *	   @val includes the sum of event counts from its child resource groups.
-@@ -112,7 +112,7 @@ struct rmid_read {
- 	struct rdt_mon_domain	*d;
- 	enum resctrl_event_id	evtid;
- 	bool			first;
--	unsigned int		ci_id;
-+	struct cacheinfo	*ci;
- 	int			err;
- 	u64			val;
- 	void			*arch_mon_ctx;
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index f5637855c3ac..7326c28a7908 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -361,7 +361,6 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+diff --git a/mm/gup.c b/mm/gup.c
+index 82aec6443c0a..b47066a54f52 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2287,8 +2287,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+ 		struct pages_or_folios *pofs)
  {
- 	int cpu = smp_processor_id();
- 	struct rdt_mon_domain *d;
--	struct cacheinfo *ci;
- 	struct mbm_state *m;
- 	int err, ret;
- 	u64 tval = 0;
-@@ -389,8 +388,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	}
+ 	unsigned long collected = 0;
+-	bool drain_allow = true;
+ 	struct folio *folio;
++	int drained = 0;
+ 	long i = 0;
  
- 	/* Summing domains that share a cache, must be on a CPU for that cache. */
--	ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
--	if (!ci || ci->id != rr->ci_id)
-+	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
- 		return -EINVAL;
- 
- 	/*
-@@ -402,7 +400,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	 */
- 	ret = -EINVAL;
- 	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
--		if (d->ci_id != rr->ci_id)
-+		if (d->ci_id != rr->ci->id)
+ 	for (folio = pofs_get_folio(pofs, i); folio;
+@@ -2307,10 +2307,17 @@ static unsigned long collect_longterm_unpinnable_folios(
  			continue;
- 		err = resctrl_arch_rmid_read(rr->r, d, closid, rmid,
- 					     rr->evtid, &tval, rr->arch_mon_ctx);
+ 		}
+ 
+-		if (drain_allow && folio_ref_count(folio) !=
+-				   folio_expected_ref_count(folio) + 1) {
++		if (drained == 0 &&
++				folio_ref_count(folio) !=
++				folio_expected_ref_count(folio) + 1) {
++			lru_add_drain();
++			drained = 1;
++		}
++		if (drained == 1 &&
++				folio_ref_count(folio) !=
++				folio_expected_ref_count(folio) + 1) {
+ 			lru_add_drain_all();
+-			drain_allow = false;
++			drained = 2;
+ 		}
+ 
+ 		if (!folio_isolate_lru(folio))
 -- 
-2.50.1
+2.51.0
 
 
