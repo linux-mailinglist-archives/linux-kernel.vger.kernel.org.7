@@ -1,122 +1,216 @@
-Return-Path: <linux-kernel+bounces-805471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3D4B488ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E044B488F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F38A1684F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CFA189B3AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53E22F616E;
-	Mon,  8 Sep 2025 09:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE6E2EDD41;
+	Mon,  8 Sep 2025 09:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuTNOxnC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F2D2F60B6;
-	Mon,  8 Sep 2025 09:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9AE2EC54E;
+	Mon,  8 Sep 2025 09:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324755; cv=none; b=lmHesgqaQboB/E6MZysKvh3vEjyWAat+pN4vBdcjFVWUcFIkZfvPaMUsoBdKp5Bqdok4CaLYIUrRE64RSrgAy6+GvkTtObui7hvtljb4JATlQJKk0qpuc4yUZkdY71HscOT7ZwSoLcGiQ9plAHkxkpraiQsYk3T3KM5t9V6/AU8=
+	t=1757324772; cv=none; b=fKQNftEPdBEhdLdG9Ud02PtgeCoFF7+CxquuAlJbAkfVzDp7FTECBwj6yKMwza/zob5dxeNBYka6TyEgscEPfFV0aoUzrjF5JY59X4eWmMegodQNoSgPSfmcl1pnOtflajirgBFASNxU9Nb98+fu5SXw3uiJpR395HJGk90J0+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324755; c=relaxed/simple;
-	bh=TZUhvHSGGcLtIxh0HnB+s/u5WaFKlmsEZiZnhX4sdrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ap6w1KjDpUePPyLcW4+ngT70u2vDhFYlG6doIEXO11Q/mPQgTRSzA2kC4Aq/uGHf8lNX0YPiy/gZAIIYg3Snqrld24e6zLBpBVOL0yfj3950MYLGlKblqnc9uCaYNYLg42IMRAF8F3WqcVqrBF2wjwQp4GQQHw1zh7dcrDAl2Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A2FC4CEFA;
-	Mon,  8 Sep 2025 09:45:53 +0000 (UTC)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Philip Blundell <philb@gnu.org>,
-	Kars de Jong <jongk@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/2] tty: serial: 8250: Rework HP300 serial Kconfig logic
-Date: Mon,  8 Sep 2025 11:45:42 +0200
-Message-ID: <f69570963ce01fe83bf11675c47415530e8d950e.1757323858.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1757323858.git.geert@linux-m68k.org>
-References: <cover.1757323858.git.geert@linux-m68k.org>
+	s=arc-20240116; t=1757324772; c=relaxed/simple;
+	bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XwgasrPtUzS42Fn6EAasXaWSXnpIQDCPeOHUx8DMCtJYCb812WcGA3Un+tL0Ar9+ck/vQt3HCoIo07elKSZPr9m+rr804rhaDP3dW/Se5G3VxbbM9QR8zrwsmLd0iAGVBsmK+jgphs6ggR6AWp5r9U+hT16RULDVo67wOCAMnm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuTNOxnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6D7C4CEF9;
+	Mon,  8 Sep 2025 09:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757324771;
+	bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PuTNOxnCyow54A7XEWGStCET9VmAWuzQG9lw9+nyWBVlWfAHpywgHq93JNwWjDIBJ
+	 LR5YC8MKM4Y+jQjnxXdjr+7p5geXgtauUPpGPeKoZDJMfph1C7RK+Wp2GATQJk/vqJ
+	 /fC+MHK0duutgIllR0UQc9hBnZpABOMwPnpbjcjypn+xuRolidHeLxzedsW3sMq5rv
+	 Iec4QlJlNux1hen/QRl6H3k25tlLQ9oWetOCx9g+wjJg26sGvHRhe1bXuExYQ8bzyX
+	 g931wKB9LWna368Zm0ghXJhjd+xUlRuBzgvpvOSj/Anaw8QSS9Eto+j/X+rE1hfxU/
+	 n1unGsSSXe5NA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon,  8 Sep 2025 11:45:58 +0200
+Message-ID: <20250908-vfs-fixes-0096f8ec89ff@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5589; i=brauner@kernel.org; h=from:subject:message-id; bh=VLrpnyvJPUnUuHxgJ/fJtXwAK+nZcoeURy5sVJG4cls=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTsW3rL8myXrZH3muBlwQJK168+Ea9RbdW6kTXPZcEcx eksDxRvd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAFyEnZFh0n/bKTfV1UNt+E/G xuoWPSgtlWOc9bjgkrjg/ahFmTKNDP8r4/Zt+BzEIMf3I2z2Iu6FInJ3rvWqfd388avx/GNrpof yAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-When SERIAL_8250 and HP300 are enabled, but none of SERIAL_8250_HPDCA
-and SERIAL_8250_HPAPCI is built-in:
+Hey Linus,
 
-    drivers/tty/serial/8250/8250_hp300.c:24:2: warning: #warning CONFIG_SERIAL_8250 defined but neither CONFIG_SERIAL_8250_HPDCA nor CONFIG_SERIAL_8250_HPAPCI defined, are you sure? [-Wcpp]
-       24 | #warning CONFIG_SERIAL_8250 defined but neither CONFIG_SERIAL_8250_HPDCA nor CONFIG_SERIAL_8250_HPAPCI defined, are you sure?
-	  |  ^~~~~~~
+the fixes tree was filled before Link: tags were ousted. Only one of
+the patches in the series carries a Link: tag and that one actually has
+a useful discussion attached to it.
 
-Fix this by reworking the Kconfig logic to make such combinations
-impossible:
-  - Stop enabling SERIAL_8250_HP300 by default when both SERIAL_8250 and
-    HP300 are enabled,
-  - Instead, let SERIAL_8250_HPDCA and SERIAL_8250_HPAPCI select
-    SERIAL_8250_HP300.
+Please also be aware that patches in the various branches for the v6.18
+merge window will have Link: tags applied and I don't want to rebase
+them all just to drop them. I'll mention that during the merge window
+once more as a reminder.
 
-Note that since commit 0cff260a42c051ee ("[SERIAL] Allow 8250 PCI, PNP,
-GSC and HP300 support to be disabled"), the warning message is wrong,
-and should have been s/CONFIG_SERIAL_8250/CONFIG_SERIAL_8250_HP300/.
+Going forward no tags are applied to individual commits. But I will
+continue adding tags to the cover letter in the merge message for patch
+series as I often modify the merge message so they point back to the
+original cover letter.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/tty/serial/8250/8250_hp300.c | 4 ----
- drivers/tty/serial/8250/Kconfig      | 4 ++--
- 2 files changed, 2 insertions(+), 6 deletions(-)
+/* Summary */
 
-diff --git a/drivers/tty/serial/8250/8250_hp300.c b/drivers/tty/serial/8250/8250_hp300.c
-index 583a86d87b559ec4..30e7d09eed8ae5bf 100644
---- a/drivers/tty/serial/8250/8250_hp300.c
-+++ b/drivers/tty/serial/8250/8250_hp300.c
-@@ -20,10 +20,6 @@
- 
- #include "8250.h"
- 
--#if !defined(CONFIG_SERIAL_8250_HPDCA) && !defined(CONFIG_SERIAL_8250_HPAPCI) && !defined(CONFIG_COMPILE_TEST)
--#warning CONFIG_SERIAL_8250 defined but neither CONFIG_SERIAL_8250_HPDCA nor CONFIG_SERIAL_8250_HPAPCI defined, are you sure?
--#endif
--
- #ifdef CONFIG_SERIAL_8250_HPAPCI
- struct hp300_port {
- 	struct hp300_port *next;	/* next port */
-diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-index 2696c236917afddd..9b5df423606bfb80 100644
---- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@ -159,12 +159,11 @@ config SERIAL_8250_EXAR
- 
- config SERIAL_8250_HP300
- 	tristate
--	depends on SERIAL_8250 && HP300
--	default SERIAL_8250
- 
- config SERIAL_8250_HPDCA
- 	tristate "8250 HP DCA serial support"
- 	depends on SERIAL_8250 && DIO
-+	select SERIAL_8250_HP300
- 	help
- 	  If you want to use the internal "DCA" serial ports on an HP300
- 	  machine, say Y here.
-@@ -172,6 +171,7 @@ config SERIAL_8250_HPDCA
- config SERIAL_8250_HPAPCI
- 	tristate "8250 HP APCI serial support"
- 	depends on SERIAL_8250 && HP300
-+	select SERIAL_8250_HP300
- 	help
- 	  If you want to use the internal "APCI" serial ports on an HP400
- 	  machine, say Y here.
--- 
-2.43.0
+This contains a few fixes for this cycle:
 
+# fuse
+
+- Prevent opening of non-regular backing files.
+  Fuse doesn't support non-regular files anyway.
+
+- Check whether copy_file_range() returns a larger size than requested.
+
+- Prevent overflow in copy_file_range() as fuse currently only supports
+  32-bit sized copies.
+
+- Cache the blocksize value if the server returned a new value as
+  inode->i_blkbits isn't modified directly anymore.
+
+- Fix i_blkbits handling for iomap partial writes.
+  By default i_blkbits is set to PAGE_SIZE which causes iomap to mark
+  the whole folio as uptodate even on a partial write. But fuseblk
+  filesystems support choosing a blocksize smaller than PAGE_SIZE
+  risking data corruption. Simply enforce PAGE_SIZE as blocksize for
+  fuseblk's internal inode for now.
+
+- Prevent out-of-bounds acces in fuse_dev_write() when the number of
+  bytes to be retrieved is truncated to the fc->max_pages limit.
+
+# virtiofs
+
+- Fix page faults for DAX page addresses.
+
+# Misc
+
+- Tighten file handle decoding from userns.
+  Check that the decoded dentry itself has a valid idmapping in the user
+  namespace.
+
+- Fix mount-notify selftests.
+
+- Fix some indentation errors.
+
+- Add an FMODE_ flag to indicate IOCB_HAS_METADATA availability.
+  This will be moved to an FOP_* flag with a bit more rework needed for
+  that to happen not suitable for a fix.
+
+- Don't silently ignore metadata for sync read/write.
+
+- Don't pointlessly log warning when reading coredump sysctls.
+
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc6.fixes
+
+for you to fetch changes up to e1bf212d0604d2cbb5514e47ccec252b656071fb:
+
+  fuse: virtio_fs: fix page fault for DAX page address (2025-09-05 15:56:30 +0200)
+
+Please consider pulling these changes from the signed vfs-6.17-rc6.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.17-rc6.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (2):
+      fuse: do not allow mapping a non-regular backing file
+      fhandle: use more consistent rules for decoding file handle from userns
+
+Christian Brauner (3):
+      Merge patch series "io_uring / dio metadata fixes"
+      coredump: don't pointlessly check and spew warnings
+      Merge tag 'fuse-fixes-6.17-rc5' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse into vfs.fixes
+
+Christoph Hellwig (2):
+      fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA availability
+      block: don't silently ignore metadata for sync read/write
+
+Edward Adam Davis (1):
+      fuse: Block access to folio overlimit
+
+Guopeng Zhang (1):
+      fs: fix indentation style
+
+Haiyue Wang (1):
+      fuse: virtio_fs: fix page fault for DAX page address
+
+Joanne Koong (2):
+      fuse: reflect cached blocksize if blocksize was changed
+      fuse: fix fuseblk i_blkbits for iomap partial writes
+
+Miklos Szeredi (2):
+      fuse: check if copy_file_range() returns larger than requested size
+      fuse: prevent overflow in copy_file_range return value
+
+Xing Guo (1):
+      selftests/fs/mount-notify: Fix compilation failure.
+
+ block/fops.c                                           | 13 ++++++++-----
+ fs/coredump.c                                          |  4 ++++
+ fs/exec.c                                              |  2 +-
+ fs/fhandle.c                                           |  8 ++++++++
+ fs/fuse/dev.c                                          |  2 +-
+ fs/fuse/dir.c                                          |  3 ++-
+ fs/fuse/file.c                                         |  5 ++++-
+ fs/fuse/fuse_i.h                                       | 14 ++++++++++++++
+ fs/fuse/inode.c                                        | 16 ++++++++++++++++
+ fs/fuse/passthrough.c                                  |  5 +++++
+ fs/fuse/virtio_fs.c                                    |  2 +-
+ fs/namespace.c                                         |  2 +-
+ include/linux/fs.h                                     |  3 ++-
+ io_uring/rw.c                                          |  3 +++
+ .../filesystems/mount-notify/mount-notify_test.c       | 17 ++++++++---------
+ .../filesystems/mount-notify/mount-notify_test_ns.c    | 18 ++++++++----------
+ 16 files changed, 86 insertions(+), 31 deletions(-)
 
