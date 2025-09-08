@@ -1,210 +1,173 @@
-Return-Path: <linux-kernel+bounces-806677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FED9B49A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 681E0B49A4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061EC1B24D5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545E61B26EAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118F12D323E;
-	Mon,  8 Sep 2025 19:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5632D3A60;
+	Mon,  8 Sep 2025 19:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Iyhhjxru"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="HYJqCiqo"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3842D3220
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360774; cv=none; b=lVPGKRIPYqOLB725+72OrBFC9qDV8H9WG+JikX/EjhpYVrkZrIdk0EkBl3pM51VOFOOBVsrmZQ0sG6DOLZlk8Mha2Hl0K+TENZd2ulSB5Q/dvoinp7ixeuD9Wz51p2D5nwz6AtOvQWuBNq606MKrsddqOxo7eKydDkjh8MRRvFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360774; c=relaxed/simple;
-	bh=N69wDxrbi+fA5VqgbL8Sr7yDr1PhsL3cbCP913A1f0o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EiYLkfv5/Pyqm+d1ufdmwyoHMm5AutwI734lqVQu9cSO6MP1dtl9Jmuq/W4KE6S+PEBTUcRMuOpbFggk+QGTYdq3rdKnLcteoqd2sPTUbGsqFSKCfkGCGdCqlg8hwkO2wJT0MmP/xvHSg/y/nrrYhF1p46V6pVsxAml8SZdoyZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Iyhhjxru; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24498e93b8fso9515135ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757360772; x=1757965572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
-        b=IyhhjxruxKzJWbDDF1uPQYyOYpyBbRogMc7Xmaq/yzTx/IYvzwP10Fztit3G92ei6O
-         dMSBh6IUFlNR6giw8b46vpPvHP2V4DCr1UabeIECOSlYTxGoc4gFp0aFfwNjKDWY60EM
-         v+idKqwvOGVoSldGmyXUC2TTLl6/Soh4G/9bE4gJkfl6J3doYVmHjWxdVR0XuiDnk9N+
-         PXynUHPlkMhOmMSdsosunN35cDI63PtlrrFnJaFHSPgOQlMqL3vKyU/XZNd0bJYsFGrJ
-         LqpK72SZN60+wByjeYDn3tO7hhpD+kNBpD1uEX6WdqcY8ZfRUxXQqdgEGRpPWfGu6mFc
-         LOuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757360772; x=1757965572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
-        b=CKMZLJxUXRKK9OmZ6t2S70RsLwZHiFTs2J0gK4dSv+Sndh8blCnce3edxIOMksIJR0
-         Vj4wgvT2Rp7+j+gsLb730S8Ljfd1fC7WoDLkJlVqrLEUQaKdStK77Sg3aoow2/WVAJSS
-         sWyiJ8kq2GETViO4ofURjnx6sc/pGeCEqvG6XVYAgCy9avvR+hma1j4KIPYlPIIoG8kb
-         lX3hVelodeWaGbniXjBHbuZ9la5LcBnqyQ3uCPdLAEEU5gM0MVXyH0il/WU5a+7NwFfV
-         jePYiL/CPkTMeu3CAWQbZ34xZvnVHcqGWqoOQKa6zQcIGG5pJ0h9DiUhlvFKIRHWXLPI
-         cnFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCI8fx0gMRsjmp78NaHBAXgr00WO6x1k28VqvHMsoXUaXhK92jc1XlYVyTux/yA04NFozGwQ8e26W/eGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRNnstR5PwLP/eJq7c2EpmqObw/PTNbb42uUuN9/lPupa0ct8/
-	fXQEOXb3wspffmznKZOpkDT5D4BRr3NC176OCbbtj2itHC6u2OTkCQfwOgKGIzm86LYBSf+Dz9o
-	hiFs4bIwHkzfJ1xiQhjn/bmQ8wqPJr+8LinX1GQsGYw==
-X-Gm-Gg: ASbGncuw1goLkigNDnx9VEUuxpRqzjtNjV6A0V2pD6sK+eWxhNR7A4XmXXNZTdpK8Vb
-	YUOMcDBMNf4LC0owxJJGp6G77ND0RSJYUIvt+dwtvJu+V5Lfg3UzjHQ4GXzM0dPsBj4UiXBKjOT
-	9eUYQTM1QIDlN0rzdbE3u8K73IbT4Dbag2pDKYUKyJ01xy0bhNQIgHXudzwVpeagHxY6TEWOxRO
-	Nmv3Sw8
-X-Google-Smtp-Source: AGHT+IGThrKgpaZ2Jb+IxUr+u2cOUabVPTBAwo+RY7tux4h/Zk1WncO4NjXraMuphAlOZPqbrt4I+GCL5BfG+ELw2mM=
-X-Received: by 2002:a17:902:f54d:b0:24c:e213:ca4a with SMTP id
- d9443c01a7336-2516ed66d7amr73266655ad.2.1757360771804; Mon, 08 Sep 2025
- 12:46:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2782D323E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757360818; cv=pass; b=ed5JkwKcSwFdFHoaFbylDcLZegtbiwvm3Y4fL7LFwKvrBI06HyJYW3fia7DKk0D2Fa3bjzGayTWtXCoum/xMO9L1jR3zrd0gLhc1IpjEGTd6Xup+qjJjjCninllbdyI6/1ajAN76R47doVYND1dqnF22KK1M0t88Dighd2nsLCQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757360818; c=relaxed/simple;
+	bh=W9F7m8rGcdRK2gGMJyUv+NUcGQilTOReURM1XdP5ZIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etXTTKhdO3o4tYrfQHAsyGbboNeNOJtX04Kv5p1TIaW3gH4raSA+38zMrTXeLkdNtKy5Pylu7oGiEl8mos8JRHzkE3nJnnZur1Fca+PZ8v37M2pg5TnIWqK/gt1UaUDTr6FTcLDhxJkhAQ4NrddnB47mV2Kt/7CJSGa5eX0XZWw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=HYJqCiqo; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757360796; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CIMaMPcqAzGvqqpp9qV3N/MpdOjD8jO596dNzZ4sZOd5PsLNeAr6a596kUGz1+JKCFTAl3MGFJh+uURCrOlkwtyKh3oaofJfC/DoKTovbFL3ypl+rM4sAodZvB2k8LsqWae/WSl323I8IHAQ5n422foDRJptBDNvhbZvKFNn6Fg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757360796; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tvnX0pwgboGzYzngTMnFujAd3cPB1knbYtj822oCRiU=; 
+	b=UAZwluC0hAZqZaqYtmRT01goIowLaz+ML+MTK+S42N5iywIEFJt5WAQkvZ0znHQx6X1BGGCpcKxUtwsjBvLl962yHuvOmCQM7wRH5gZO3gpeuAd+lCEqlvLlojfvC9NSadh6rDtNJ86gv/tuXt8AQw67yUVEuD4FdIXO2yrsnd8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757360796;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=tvnX0pwgboGzYzngTMnFujAd3cPB1knbYtj822oCRiU=;
+	b=HYJqCiqocbK4lMIG8WWA1jhcsNuDHEhaVa8y142unlRaX+DPByhMgNealSE1R8Yw
+	gdTfR1zBiiRLsTgZSDHiD82V2mcPnKFr8mQO68YYvKB5dF13h67F1rVA6m31sTUksyE
+	6q/Ok2Rm4n/sc/XeCaJIrFDS/oCAbbbiZA0MyCp4=
+Received: by mx.zohomail.com with SMTPS id 1757360793998652.0464633293959;
+	Mon, 8 Sep 2025 12:46:33 -0700 (PDT)
+Date: Mon, 8 Sep 2025 20:46:29 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, Rob Herring <robh@kernel.org>, 
+	Steven Price <steven.price@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH 3/5] drm/panfrost: Introduce JM context for manging job
+ resources
+Message-ID: <duhc4uddygpsiccipe5ftv7mi4fz4khermst6jeqlkbigh6zmn@2btsx2yltsye>
+References: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
+ <20250828023422.2404784-4-adrian.larumbe@collabora.com>
+ <CAPj87rMRkmkG2MJVnh-zMiNXJ-=fW2jzS_mX7WWWQi3hZmHUyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
-In-Reply-To: <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 8 Sep 2025 12:45:58 -0700
-X-Gm-Features: Ac12FXwNfDS_Qqj870v2sNtiyiKyRUxgf6ydh_1JzHPqlof9837yRmLCR8lKXvE
-Message-ID: <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPj87rMRkmkG2MJVnh-zMiNXJ-=fW2jzS_mX7WWWQi3hZmHUyg@mail.gmail.com>
 
-On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
+Hi Daniel,
+
+On 30.08.2025 10:12, Daniel Stone wrote:
+> Hi Adrian,
 >
-> On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa=
-.ai> wrote:
-> > >
-> > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@fu=
-riosa.ai> wrote:
-> > > > >
-> > > > > The pdu field in io_uring_cmd may contain stale data when a reque=
-st
-> > > > > object is recycled from the slab cache. Accessing uninitialized o=
-r
-> > > > > garbage memory can lead to undefined behavior in users of the pdu=
-.
-> > > > >
-> > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so th=
-at
-> > > > > each command starts from a well-defined state. This avoids exposi=
-ng
-> > > > > uninitialized memory and prevents potential misinterpretation of =
-data
-> > > > > from previous requests.
-> > > > >
-> > > > > No functional change is intended other than guaranteeing that pdu=
- is
-> > > > > always zero-initialized before use.
-> > > > >
-> > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > ---
-> > > > >  io_uring/uring_cmd.c | 1 +
-> > > > >  1 file changed, 1 insertion(+)
-> > > > >
-> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > --- a/io_uring/uring_cmd.c
-> > > > > +++ b/io_uring/uring_cmd.c
-> > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, c=
-onst struct io_uring_sqe *sqe)
-> > > > >         if (!ac)
-> > > > >                 return -ENOMEM;
-> > > > >         ioucmd->sqe =3D sqe;
-> > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > >
-> > > > Adding this overhead to every existing uring_cmd() implementation i=
-s
-> > > > unfortunate. Could we instead track the initialized/uninitialized
-> > > > state by using different types on the Rust side? The io_uring_cmd
-> > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees =
-the
-> > > > PDU has been initialized.
-> > >
-> > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> > > the pdu. In uring_cmd callback, we can fill zero when it's not reissu=
-ed.
-> > > But I don't know that we could call T::default() in miscdevice. If we
-> > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> > >
-> > > How about assign a byte in pdu for checking initialized? In uring_cmd=
-(),
-> > > We could set a byte flag that it's not initialized. And we could retu=
-rn
-> > > error that it's not initialized in read_pdu().
+> On Thu, 28 Aug 2025 at 04:35, Adrián Larumbe
+> <adrian.larumbe@collabora.com> wrote:
+> > -void panfrost_job_close(struct panfrost_file_priv *panfrost_priv)
+> > +int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle)
+> >  {
+> > -       struct panfrost_device *pfdev = panfrost_priv->pfdev;
+> > -       int i;
+> > +       struct panfrost_file_priv *priv = file->driver_priv;
+> > +       struct panfrost_device *pfdev = priv->pfdev;
+> > +       struct panfrost_jm_ctx *jm_ctx;
 > >
-> > Could we do the zero-initialization (or T::default()) in
-> > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > performance penalty for the existing C uring_cmd() implementations.
-> > I'm not quite sure what you mean by "assign a byte in pdu for checking
-> > initialized".
+> > -       for (i = 0; i < NUM_JOB_SLOTS; i++)
+> > -               drm_sched_entity_destroy(&panfrost_priv->sched_entity[i]);
+> > +       jm_ctx = xa_erase(&priv->jm_ctxs, handle);
+> > +       if (!jm_ctx)
+> > +               return -EINVAL;
+> > +
+> > +       for (u32 i = 0; i < ARRAY_SIZE(jm_ctx->slots); i++) {
+> > +               if (jm_ctx->slots[i].enabled)
+> > +                       drm_sched_entity_destroy(&jm_ctx->slots[i].sched_entity);
+> > +       }
+> >
+> >         /* Kill in-flight jobs */
+> >         spin_lock(&pfdev->js->job_lock);
+> > -       for (i = 0; i < NUM_JOB_SLOTS; i++) {
+> > -               struct drm_sched_entity *entity = &panfrost_priv->sched_entity[i];
+> > -               int j;
+> > +       for (u32 i = 0; i < ARRAY_SIZE(jm_ctx->slots); i++) {
+> > +               struct drm_sched_entity *entity = &jm_ctx->slots[i].sched_entity;
+> > +
+> > +               if (!jm_ctx->slots[i].enabled)
+> > +                       continue;
+> >
+> > -               for (j = ARRAY_SIZE(pfdev->jobs[0]) - 1; j >= 0; j--) {
+> > +               for (int j = ARRAY_SIZE(pfdev->jobs[0]) - 1; j >= 0; j--) {
+> >                         struct panfrost_job *job = pfdev->jobs[i][j];
+> >                         u32 cmd;
+> >
+> > @@ -980,18 +1161,7 @@ void panfrost_job_close(struct panfrost_file_priv *panfrost_priv)
+> >                 }
+> >         }
+> >         spin_unlock(&pfdev->js->job_lock);
+> > -}
+> > -
+> > -int panfrost_job_is_idle(struct panfrost_device *pfdev)
+> > -{
+> > -       struct panfrost_job_slot *js = pfdev->js;
+> > -       int i;
+> > -
+> > -       for (i = 0; i < NUM_JOB_SLOTS; i++) {
+> > -               /* If there are any jobs in the HW queue, we're not idle */
+> > -               if (atomic_read(&js->queue[i].sched.credit_count))
+> > -                       return false;
+> > -       }
+> >
+> > -       return true;
+> > +       panfrost_jm_ctx_put(jm_ctx);
+> > +       return 0;
+> >  }
 >
-> Sure, we could fill zero when it's the first time uring_cmd called with
-> checking the flag. I would remove this commit for next version. I also
-> suggests that we would provide the method that read_pdu() and write_pdu()=
-.
-> In read_pdu() I want to check write_pdu() is called before. So along the
-> 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-> initialized?
-
-Not sure what you mean about "20 bytes for pdu".
-It seems like it would be preferable to enforce that write_pdu() has
-been called before read_pdu() using the Rust type system instead of a
-runtime check. I was thinking a signature like fn write_pdu(cmd:
-IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-reason that wouldn't work and a runtime check would be necessary?
-
+> It seems odd that both panfrost_jm_ctx_destroy() and
+> panfrost_jm_ctx_release() share lifetime responsibilities. I'd expect
+> calling panfrost_jm_ctx_destroy() to just release the xarray handle
+> and drop the refcount.
 >
-> But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> an=
-d
-> issue_flags. How about some additional field for pdu is initialized like =
-below?
+> I can see why calling panfrost_jm_ctx_destroy() is the one to go try
+> to cancel the jobs - because the jobs keep a refcount on the context,
+> so we need to break that cycle somehow. But having both the
+> handle-release and object-release function drop a ref on the sched
+> entity seems odd?
 >
-> struct IoUringCmdArgs {
->   ioucmd: Pin<&mut IoUringCmd>,
->   issue_flags: u32,
->   pdu_initialized: bool,
-> }
+> It doesn't help much that panfrost_job is used both for actual jobs
+> (as the type) and the capability for a device to have multiple
+> job-manager contexts (as a function prefix). Would be great to clean
+> that up, so you don't have to think about whether e.g.
+> panfrost_job_close() is actually operating on a panfrost_job, or
+> operating on multiple panfrost_jm_ctx which operate on multiple
+> panfrost_job.
 
-One other thing I realized is that issue_flags should come from the
-*current* context rather than the context the uring_cmd() callback was
-called in. For example, if io_uring_cmd_done() is called from task
-work context, issue_flags should match the issue_flags passed to the
-io_uring_cmd_tw_t callback, not the issue_flags originally passed to
-the uring_cmd() callback. So it probably makes more sense to decouple
-issue_flags from the (owned) IoUringCmd. I think you could pass it by
-reference (&IssueFlags) or with a phantom reference lifetime
-(IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-ensure it can't be used after those callbacks have returned.
+I've submitted a v2 of this patch series. In the newer one, drm_sched_entity_destroy()
+is only called in panfrost_jm_ctx_destroy(), whereas panfrost_jm_ctx_release() will just
+free the memory associated with the context when the refcnt reaches 0.
 
-Best,
-Caleb
+As for the JS-and-panfrost_job function naming confusion, I'll deal with it in a
+patch series I hope to submit before the end of this week.
+
+> Cheers,
+> Daniel
+
+Adrian Larumbe
 
