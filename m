@@ -1,177 +1,141 @@
-Return-Path: <linux-kernel+bounces-806024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6196EB490EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:13:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8545B490F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B666189692E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F0D3BB031
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E523081AC;
-	Mon,  8 Sep 2025 14:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072A530C621;
+	Mon,  8 Sep 2025 14:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xlMHOIKW"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="irSR+pZr"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5B430C62B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284730BB9D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757340789; cv=none; b=d/XOmumEq8+lQ+JqXoYSXQNxddq9b6MpFHR++Kh99qDuLM3ZzPBOgOTvSKJeedO4xaMSwYvKK+rvpx/BZfKoQsscswXHJSr3Pl/URcNFEkuNc1FLUNUbLkfikTZ/YSmBbbfk8+9pVdwK9b1AKQ2n13h3aKRNYY1s94iFiBBurb0=
+	t=1757340799; cv=none; b=RTg2WJm3rLYeMivdqFli8/qiWpPgZfwgQ/YMpPmrwwyEuLEBUjpfLdO+YsckXkCXOO5BtD3pI6q7WsJNWbKi+Wg5M3kkdddEZmovy99KSP7TPcXp2914xZmak6lH+by+ThIOQqrci+3yYfk7FP0+s/JtGoe+Fii37B8H0LYROZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757340789; c=relaxed/simple;
-	bh=2fgRlL6oi2NJYIr3taFUqWRo08czRzxQd00ThPrISyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iu4ANY93VLt1RmdpWeyuzB48hBiI4fVoonlB7gucrYMvcWdQu5GiubZoPMyKrieL9ea7K7tuHiGFg3q1VyabTHCJMat0KVNX7TJvbpZ0b+51dTKvLodYonio/KRYPN8n/Vl8oY9sMSZr4lhHdSISsg0c7yPR/trfSfp6ZlK5qo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xlMHOIKW; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-244582738b5so36800135ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:13:06 -0700 (PDT)
+	s=arc-20240116; t=1757340799; c=relaxed/simple;
+	bh=h0D0SEqPji3fHwIoVrp0jHPUatei55dk0QRkQqv/duw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKbxRz2/ZMM/pNEZnKWY8kQYmxm9JZLC5rCX3JqWiPo1XyQUiatRejqDxHaIrjQ143Qlg+Ty2xybIX5MHM26xVbBzxB+iujsJynD2+8142jbaPGDZ3VrcjpRPs2ntMp6QBHzowssjivc3RH+brCD3HTtnhWextp7guNjsBytY2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=irSR+pZr; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so3830063b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757340786; x=1757945586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRlboR1j/sYEZ4y8841eR/apYQLD4WGaeuEbSq15i7s=;
-        b=xlMHOIKW1s0WHPYXDCO56wNWuZnSpEMjPC5zg/mHAGFv4MeWwMQpW3xfj/wxjaqTS/
-         ev0rFoHBwGiPrJLykBb5ZZOg6g/FgWU93d6UofhBks3uDP3qu9bIbHMjFgMoE36CLXPs
-         HuUWCGRTtCKIbQcALx6GsaTgLaRQwNSDedJeYTGTeQPPEPjLG/8f6Y6bp10JI40Kp4dE
-         ownT4YokmdrjwCs8pN1NXF7hH/fCp1PN3OXXk4Olduf79tEA6yOiT22sxkh2CcwuIsqM
-         kqnB8zmQezvFtrI05w8zq6RKkl93JwFbvsY4K+88Z/V01ONg7nucc1gFpMJUS7nZKshe
-         qdxA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757340796; x=1757945596; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UZF66cJNg0DGdhDsxeGBFMCJxYCrZerYg7Gnl/nvd78=;
+        b=irSR+pZrOh6cTWRO+LIl2EooH4nGGi0dQwOOZha+0ZoTMFwTfA2G3ocqrH4P3+j5Mg
+         rtp86fWI9r0pZj8j1ODng7l76NkaK9Pi9mTZibj+qZWa3WrMXF6Rq9Slz9p/E2VtzBcl
+         OSFxKNNKoA4klxs2PLfWn9sQXcCzpHQQ/DjqI4LBKYZJHu/ktqazNRUEnQ123+i1NQMA
+         hjMko+p+YJd9XYhRnwAFF/TJCb2wVuFAzKkYLQ/BQdtwpPYUn5mBK+0J+nRnLMDqCjMx
+         GEQ1vBSZqbSj9J8Jqx3+y5hZD2DKKOMiEcwTASUoeVxPOY+PRH2K8wFj3Rsu3TkYJghk
+         p7xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757340786; x=1757945586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hRlboR1j/sYEZ4y8841eR/apYQLD4WGaeuEbSq15i7s=;
-        b=pOhtsKhw8LWxMTlLSVqBRvUo0oijaY471nS7dBfi1EQRC5+PX0Qi6NT03xyVQ1uaRJ
-         IiOuJZ2AlfZexmw2yRhxlSQRvluMCL0qfUQXAJ3MmyKMg193JbyPg1F3PhdEzC84ZXlh
-         XbN3k5MsIcZ0OJDOIKZKpP/vsf7j2PAyyWHnmBlmOSdFYyv6iZBNNv8zkL5n9nYREenq
-         ww1B8TfmtZUCYKaABj3nCicI57HC8X66K4cn47b5Imsca/qIwP005LQXH36c+Wq6FDsz
-         oojRjlcmRTwLOlPwhHPx7VaIH8HymF7RAcgRlSpx7PsOHGvLZRj+ewfZb5Iphkujt10h
-         T35Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXB+bKrtYgSXVz49dDmq667dKJrYtP74lvDzxMeqzIoC9d3RVE+Zjk7HCsePsoyKqAXzYRhIrA/Y1VSWjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySfzoh5Z2Ty7Kqigk+x6lOQ8Ssen+3g6z57SKNbNVTeLsO4YZK
-	6BSNljQPMnQhqXd1nXeXDRrM44NrbQ33Mu79N3h5eGr2duJr1l6io0gGymsI7c9muEMbaFeQC1U
-	eTK1w2v+9gfireV8eZE3sKEevDPUwzFRVg4xEQ3rbkQ==
-X-Gm-Gg: ASbGncsSuNeOMlIgbWLKPnOScmgVqKqOXRzXhdMsS0nH54drRUbZjAJSOpVuwuSlJF3
-	FomDXDn3slFJ4BTfKs5Bm6YCQYg1QXVuKQjNS54SgN6BJ2/4Iv2GHPk4uCuOP5hNbURgrOkNMjh
-	B60tWB/Al4QbiqSwJtfR54RzwFHI9VdbXbn8mMSqXacW6IYC/XbKiihFcn+6UsLCdJjRJ+FkLCK
-	cWwB//8Hty/abJd
-X-Google-Smtp-Source: AGHT+IEd8DdkxHgdaG5plUgmcm8Xuep198UNJ25N/qeyATAB8uk4bXjSIchDB/WbiLdPYyk6tQDnOBhph3KDrfflqKY=
-X-Received: by 2002:a17:902:e94e:b0:249:2317:e811 with SMTP id
- d9443c01a7336-251756beeb0mr90842655ad.50.1757340785596; Mon, 08 Sep 2025
- 07:13:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757340796; x=1757945596;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZF66cJNg0DGdhDsxeGBFMCJxYCrZerYg7Gnl/nvd78=;
+        b=fn+M8aRW/RE8KHGgOmvePoB8etlx4eCbwcAlw3z2UWViIvYNtUhA8WZNNNE5HTB5Ba
+         EHwBeO3CCYaVE3c8Xee6hLND/suiHBhTr8yq0OrNoR43nDuUxCxHfoR+n1KIBUVOEmFj
+         YLc1ew+LzQnDXcAWjl47vtFKm4CBO4f+Xn4svVM1SbwbgbwU8vCpb06KScLE0vt8ssmh
+         UbxDKlCvIvRBtfxVggfClDPxBNHNarfAtrgJCyjDuDym7pBnP+CZV4FQ/wD0ImRZnyFc
+         qJDP/Xp7ZtDr3fkLn42qZ6UVebNqAuwMmfOyrH3zM5/bGLESGeDI1GSTA4TX1cr7peWj
+         Dz1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpwfkpbXcH7YFg9OBn5X5L34syy9aqiyxnOy9SaQR1UdDdpXtXaczjLRDS9OLqT267A+uG0gHbPIah7ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvhMQzccNQZbU1Qlj2ve1+yy6as+oC/yJBtDpLhJDsLkaoVIDk
+	VAB27jTvxlIAl4Wcwp+emkG6SdY+qhEqrkv5TzY6iR475p/h4QJqX+yYe04m6YBYx/QRofNKKFO
+	OrIvO
+X-Gm-Gg: ASbGncsQ6aGPBl47KTQVFegQKkkfEtlTAIZQldptHhrKGCUX3QveSa9SRy/hPN2aF2B
+	OKZ/T5OdmDOTrKOZJKEHn7m8ZqLWqXxgq4excmj/6YYERgMsLRwBe1FYxtEldgF4jXmY7vWhDCP
+	r4/UdcslTUP4MfwlWfYIbwYr5Z4GfC4xo445PBzqJm3FQPVeVfJbKdbMVkV4OfWttUOgh7XnKkG
+	cTn94HIeCeZb1F5nPnPQSXYMQkfhJRqlk6TfQi2l/LSeWpa5LmD24nHmFMNkh8ZxIqs3y2VNgsf
+	vItX731vg25y/K4JeBJ5KmPm9B50yU3IJRbkWBWydhlRCrH2Bn0PEeJKdyGtga8pE9mcWjNTzKB
+	bAU0GdCnwYkb15NRM8zKrtFSEmOY42r4=
+X-Google-Smtp-Source: AGHT+IEsiSNhHutwk0RCJsT9JHAXZkKZX+8NOR4PeGFuw6oURb33W4QXf2+JENghOU4mdcLKN0AzOQ==
+X-Received: by 2002:a05:6a21:6d99:b0:246:5be:ca90 with SMTP id adf61e73a8af0-253777539b7mr10169857637.10.1757340796130;
+        Mon, 08 Sep 2025 07:13:16 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7724b62922dsm23941487b3a.27.2025.09.08.07.13.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 07:13:15 -0700 (PDT)
+Message-ID: <07806298-f9d3-4ca6-8ce5-4088c9f0ea2c@kernel.dk>
+Date: Mon, 8 Sep 2025 08:13:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902174351.2457022-1-raymond.mao@linaro.org>
- <aLkAYitpWxWx131p@zatzit> <CAEfUkULwQxJ-EKT7bQ8+hkH+_xO8esThnL2P_Rc-32tHyMdA1A@mail.gmail.com>
- <aL5VZfOoy1g2uyAH@zatzit>
-In-Reply-To: <aL5VZfOoy1g2uyAH@zatzit>
-From: Raymond Mao <raymond.mao@linaro.org>
-Date: Mon, 8 Sep 2025 10:12:53 -0400
-X-Gm-Features: Ac12FXw5u9129IUOnarwDAGAPCUwyAKhMBzRBf8Hu3dSinGoA8aJlhBDSSH3Di8
-Message-ID: <CAEfUkUKtXZnGsyJAqGaBHE1CpRFOfA26FVuSRjXc+f=UAeK=-w@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: devicetree: overlay-notes: recommend top-level
- compatible in DTSO
-To: David Gibson <david@gibson.dropbear.id.au>
-Cc: linux-doc@vger.kernel.org, devicetree-spec@vger.kernel.org, 
-	devicetree@vger.kernel.org, ilias.apalodimas@linaro.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for
+ IORING_SETUP_SQPOLL
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904170902.2624135-1-csander@purestorage.com>
+ <20250904170902.2624135-4-csander@purestorage.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250904170902.2624135-4-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On 9/4/25 11:09 AM, Caleb Sander Mateos wrote:
+> IORING_SETUP_SINGLE_ISSUER doesn't currently enable any optimizations,
+> but it will soon be used to avoid taking io_ring_ctx's uring_lock when
+> submitting from the single issuer task. If the IORING_SETUP_SQPOLL flag
+> is set, the SQ thread is the sole task issuing SQEs. However, other
+> tasks may make io_uring_register() syscalls, which must be synchronized
+> with SQE submission. So it wouldn't be safe to skip the uring_lock
+> around the SQ thread's submission even if IORING_SETUP_SINGLE_ISSUER is
+> set. Therefore, clear IORING_SETUP_SINGLE_ISSUER from the io_ring_ctx
+> flags if IORING_SETUP_SQPOLL is set.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  io_uring/io_uring.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 42f6bfbb99d3..c7af9dc3d95a 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3724,10 +3724,19 @@ static int io_uring_sanitise_params(struct io_uring_params *p)
+>  	 */
+>  	if ((flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)) ==
+>  	    (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED))
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * If IORING_SETUP_SQPOLL is set, only the SQ thread issues SQEs,
+> +	 * but other threads may call io_uring_register() concurrently.
+> +	 * We still need uring_lock to synchronize these io_ring_ctx accesses,
+> +	 * so disable the single issuer optimizations.
+> +	 */
+> +	if (flags & IORING_SETUP_SQPOLL)
+> +		p->flags &= ~IORING_SETUP_SINGLE_ISSUER;
+> +
 
-On Mon, 8 Sept 2025 at 00:02, David Gibson <david@gibson.dropbear.id.au> wr=
-ote:
->
-> On Thu, Sep 04, 2025 at 10:40:31AM -0400, Raymond Mao wrote:
-> > Hi David,
-> >
-> > On Wed, 3 Sept 2025 at 22:58, David Gibson <david@gibson.dropbear.id.au=
-> wrote:
-> > >
-> > > On Tue, Sep 02, 2025 at 10:43:50AM -0700, Raymond Mao wrote:
-> > > > When managing multiple base device trees and overlays in a structur=
-ed
-> > > > way (e.g. bundled in firmware or tools), it is helpful to identify =
-the
-> > > > intended target base DT for each overlay, which can be done via a
-> > > > top-level compatible string in the overlay.
-> > > >
-> > > > This provides a way to identify which overlays should be applied on=
-ce the
-> > > > DT is selected for the case when a device have a common firmware bi=
-nary
-> > > > which only differs on the DT and overlays.
-> > > >
-> > > > This patch updates the document with a note and example for this
-> > > > practice.
-> > > > For more information on this firmware requirement, please see [1].
-> > > >
-> > > > [1] https://github.com/FirmwareHandoff/firmware_handoff/pull/74
-> > >
-> > > I think this idea is probably useful enough to be a good idea anyway.
-> > > However, note that it leans in to an existing ugliness of the overlay=
- format:
-> > >
-> > > Overlay dtbs kind of mix "in band" information - the actual new
-> > > content for the tree - with "out of band" information - how to apply
-> > > the overlay itself.  Whether a given property is data or metadata is
-> > > determined by it's place in the tree in a moderately complex and not
-> > > super obvious way.
-> > >
-> > > About the clearest divide that exists is that generally the root and
-> > > first-level subnodes are information only for overlay application,
-> > > everything under that is data to be applied to the tree.  This all
-> > > tends to have names that would be unlikely (though not strictly
-> > > impossible) in a fully applied tree.
-> > >
-> > > Putting 'compatible' at the root of the overlay is putting something
-> > > that looks very much like a regular device tree property in a place
-> > > and with a function that's purely about applying / validating the
-> > > overlay itself.
-> > >
-> >
-> > Since all information at the root of an overlay is considered as
-> > metadata (out-of-band),
-> > If you think 'compatible' is confused, I can change it to
-> > 'overlay-compatible' - which should be 'unlikely' to exist in a full
-> > tree.
->
-> No, as I said, I think the advantages of this proposal still outweigh
-> the disadvantages.  Just pointing out that this is highlighting some
-> of the ugliness in the current way overlays are designed, which is
-> relevant in the context of concurrent discussions about connectors and
-> the like.
->
+As mentioned I think this is fine. Just for posterity, one solution
+here would be to require that the task doing eg io_uring_register() on a
+setup with SINGLE_ISSUER|SQPOLL would be required to park and unpark the
+SQ thread before doing what it needs to do. That should get us most/all
+of the way there to enabling it with SQPOLL as well.
 
-Thanks for the clarification. Yes, I agree - the overlay format does
-blur the line between metadata and payload.
-I appreciate you highlighting the broader context here. I=E2=80=99ll update
-this patch with 'overlay-compatible' as a clearer, loader-facing key.
-If future connector proposals address this more cleanly, I'd be happy
-to revisit the structure then.
-
-Regards,
-Raymond
-
-> --
-> David Gibson (he or they)       | I'll have my music baroque, and my code
-> david AT gibson.dropbear.id.au  | minimalist, thank you, not the other wa=
-y
->                                 | around.
-> http://www.ozlabs.org/~dgibson
+-- 
+Jens Axboe
 
