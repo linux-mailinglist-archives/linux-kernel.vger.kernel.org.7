@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-806687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE3FB49A62
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA9FB49A6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFA920617E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FEA1BC512A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D261FF603;
-	Mon,  8 Sep 2025 19:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDE02D5930;
+	Mon,  8 Sep 2025 19:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cQHk0MmP"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cLxVOvV6"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCF123536B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA56A2698A2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361338; cv=none; b=ELp4kHqbL/EuDQr4tJI6DDf7jixUgbU5SsZPbpKbVmFa4SjdJLqz9p3kKmmF6YV+AsaWUpWdPDViDoKMBWlj5anroy7Pz+CYLAPtTFft9FUFiBBfih1dj4qSoVQvOUfsF1Ea70zMG7MqVFYX8FJNfvk4oBOWuZkF/XXcDIfJ3vk=
+	t=1757361428; cv=none; b=pW513zflCqlxuNcNGCtJa51csGtoWkZ8NJ9F5Xh66jnqty/RjdX5Vm6qyXRWLDMfCDSiydkug6vkaZR/it3sofzw6ykntp80aXP13+PEd6u4kq+1Iaxl4+/RhrxD5AiLV8uTGTZeSUgBr3jkrH2OX3UJvsAY31INT4sgvJQUrwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361338; c=relaxed/simple;
-	bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ix3Iup+LtipJTJHdDHmyCRaTKgKYg/wHBUG61qhWNIYYX6M0+Eopg2wSM+83M7B59+c+x9rdygCDbufRXf914+4xglywQbzJBlwRcMbACXV6K/hsyzC96hnglrESHQq/Y6MNhVV0OLnLADSiD/EHdd+Yxvb7fX2sDFGcgg5bKwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cQHk0MmP; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1757361428; c=relaxed/simple;
+	bh=j6HnEXSAtqCKeWJJLJ+uKJUb/6XN8Wu+ma3pNqzPIuE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ggD7fh42xBtKCREZILlsvX5QvhBJrCa3UZMQk91hw5+ZM9c2VFyqFjMlWejG/F5hnmICsuCyWZ6pJsmeUp4aDkz3VrJxhxJ//pH5WDRP0tpQH+2o/bGqTuZNVS+XbIjKR3N/1cOdwPTjYpjYm01ZUbL0GNPjZdql5ZlKdR0+kNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cLxVOvV6; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b48fc1d998so606021cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:55:37 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603b60cbso44042647b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:57:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757361336; x=1757966136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
-        b=cQHk0MmP+0v0faUSSnrU0NkpEFJ2dNGTjloMv5xgX67UB1jlSHyxgQwQF8oTOWbTcc
-         L0IpkWQoYCjQ+WHwumtseebtmmNEeS1k5Fk4WoLVmxNywrpl3vWwGgmVE18SqmEuWUmA
-         iDdhQDFrLnexwZEtBJyF4SWcMsnCrdalZeVMlr/6XtkMJEUxzcaSPPVQWuhGr/q3exSa
-         7Eaov9uX1keLURs3GVDao2cY9AXz4LkZhQaHUUJ9ooIPzsyCpRX54n8u76dpEr7Fwbyn
-         HFYlF2k8VHEzh/sQQPxQIkGm14L5Hd1aJwHRom62rG8m0fWlouPmsgS6zSnzSIXXO6be
-         +v9g==
+        d=google.com; s=20230601; t=1757361426; x=1757966226; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoLXbGMjxLNA/suFUGEkTpr9rzpTqZI/pHyN/Th1x4w=;
+        b=cLxVOvV6PEuQzFQo6p0U2q6rG4SGoC7YC/Hw3/I2ccK/dwR7yuojW2zguNi9WSAtHS
+         e9YJWdWxs3airLFRI3xURDKD/ByeIEtxT3zPhbEU+xgAWYF3979fxckxIibfegxUy5PX
+         hdc11jiOBKlqhzWzGRVsmusCxfHwGfUQQP9YPYwd28k2k5OawEgfwPcPXl4giSXKa6cQ
+         Ky+HcNQDznn3vy2MWfLds5N7dCmVb5CghvCBAbfRS9+ckAzZMuf1DYrTvFhxkmhhxDGZ
+         qn1XrxJ8CKKHIGbNQDJ6u56HVk77Tv9F6VofJySnDKqJo//mtULKDA4FqxcXI9vT7fOB
+         Vs+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757361336; x=1757966136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
-        b=FP4/KG/B0m8wdTLjTAguFDCcRJtcf9iEbCTEwfoydFjb94J7DNx9B6eNdb3vDB3O0a
-         n0hhTQr1lDUI9BSCDJwQgFszjrdIGloJIn1l0Qm5vvcH8RDLZkOLAT4hkik12MeTGKx3
-         jmOXwzWnXWD1qEcydHXQiLoZj452zXqSstaVGlJYZwS3DVfmtyM3mkzi4qPA4OFsKBmx
-         UXrE6z3GEb8kDxw+4ZG/kSopoTaULnCLn96lTeMyZyVMsVrOFLUPrxyF6yWqozg2n4lR
-         K0BDVP98sIovEyns7Pw42/sSwG1aQRXTup8zMlW+ohCsqJPKIo7qO476UHlWNm5dJlMc
-         Y0yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVx5dj7KcjH7vAOWnlqn/2VGDNwU/4HGY3z5n5s5nVbE8JQ0IHel74VbgvMakitTpNYr8dW/idopQuy3K0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcI4evuXZ+p6B+zBAzNqg4xhfw0fmwkxKdllTcrLu4UFJEn8E+
-	zOO6MIX15m23PW+mffu2O3X1jhcxQCvNIdrrRHifG0MIpAq2XGzlPMTKUk/EqUTwVO3YudISxz9
-	+2u5FheWhgq/v75y8QCWqSdKk5v+CKt1KB+kjL5nC
-X-Gm-Gg: ASbGncsgF/GyACcsgwwrADQPKDo7o0xGN5/Uj1BepR2odIDbI8KjL9TogimKTsABhfn
-	cZwDb1plalCirH0J2toFGPILtJcJnSnnV+j7KRi27IcYJBvAWllrdjUN67AjqCpPed1jptwAK/D
-	23uSfiBiHZ3zqUj26Wfd7NT48I7/wc6Jgq0STXtcgwveao0WpJPlphQuquI3M6GS0KIoSNF89Vm
-	UAN5A==
-X-Google-Smtp-Source: AGHT+IFht5pppNMMGMtPH/agZlekP76+Bq9kz9lTs1Z+7HZ8Zxgz+fKXs2YuHK6UPaXwGsTfuhgnxU+LcWW0vB3VTXg=
-X-Received: by 2002:a05:622a:3d3:b0:4b3:4ed0:c6f6 with SMTP id
- d75a77b69052e-4b5f6f80a58mr13347131cf.16.1757361335849; Mon, 08 Sep 2025
- 12:55:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757361426; x=1757966226;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoLXbGMjxLNA/suFUGEkTpr9rzpTqZI/pHyN/Th1x4w=;
+        b=OW+pU4cOlmaN1L910yWRZPlseHqRDr9tVuw5rFOHyIgwH+O/K62uiqUs75rU32wvkn
+         xzs1jWrUyAtoGU+M6ST1paJxl6BriMrt3GzfdmSPr5SARir3wfhz8FpIp0F3zbfU3qpa
+         j8ZZ0pA9wPaXKUANpE84Y+mSX2LBr87oM23qtGioMET6YamsKj38vNTiPjfSTV9OFDji
+         4Vr//gYHCfPbcTVvZV8jQb43SW4cFtnlrOMnjxecGilV1v2Hv3g61meCmpBGNICK2O0/
+         4cZoLkwO0y7kLwWUxBa+L7GX+0AuEhrHDKVMQALMmo2w+2fM+gdPljBshZmiMKa64Mhu
+         EqVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1hAU2F/o0T8ln0LkqtUNz9BRVdUbyH2QKLRtyeHQckLEndtOPXR/8jxSzG22hY7N/G0+ZeIes3VBgki0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpDPACOkWvHNczRHA1lo/3K1BwhjlDcdvTDEGYG481hlY0JAtq
+	z0YDAupSgaiPsKAjR1wfaC0WVgPUGkj/FgC6S8RjBgF2WaQewr+fFxT5I9yAb0MmPQ==
+X-Gm-Gg: ASbGncu79LtmAWoLt73vXx88QJAYUmFY6U3gryqoYVyLuLSdzCIO27t6jiCsujrk4PC
+	pNiL0Mjw4+7E5Hh+HjZPK+Sio2WhmAJpe37140nFURLYMvjL9grGcd2tmCNJMmtEQKCEwFEu0pE
+	Jmp7WxFMl1OedxRou+wKyBhMUM+ryeqfi9vIRlD/RzDZGUcIYtvUCdH7nkhS3x94jCPDxEbFyPt
+	BTGNEl14OIUUddy9bqxmkj34DL2f1oO+l5BdRFcM2+F1e8r7w3LquNWcC3aAZekqeV4aIYO8RbY
+	BlKSfkcEr2cgGnpYVRvVpREao0hUMM0+rFnkZfZANv/Pt+/PXVvRwInYOxyarEweONROHP1t2BL
+	0gpL64ZMHV+rADmCGjbG0B3ml8L/VFkaSQao1X/C8kEEd0lRBUx7jAjaHRfJL2m2+xQoQhoq2me
+	MN9BLjFuRnHJB+RlmRYg==
+X-Google-Smtp-Source: AGHT+IEp/mRnH+3Dncw0ZHtHoBb2u3crhoWQ36w+MTA76D0QR6yb+nxhPQtfdxvv7OvzOG6eN8DgOQ==
+X-Received: by 2002:a05:690c:968f:b0:71f:d459:788c with SMTP id 00721157ae682-727f368e699mr88931137b3.2.1757361425548;
+        Mon, 08 Sep 2025 12:57:05 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5ff8ed34211sm5953906d50.6.2025.09.08.12.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 12:57:04 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:57:01 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: David Hildenbrand <david@redhat.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Will Deacon <will@kernel.org>, Shivank Garg <shivankg@amd.com>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+    Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>, 
+    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
+    Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>, 
+    Axel Rasmussen <axelrasmussen@google.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH 2/7] mm/gup: check ref_count instead of lru before
+ migration
+In-Reply-To: <1f714ba0-cdda-4122-b6a1-e1e0ea44b1f2@redhat.com>
+Message-ID: <d5333648-7b88-9293-dc1f-e080dff65d1a@google.com>
+References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com> <47c51c9a-140f-1ea1-b692-c4bae5d1fa58@google.com> <e54b1d8c-ad63-4c7a-8b1b-b7c3d76446f2@redhat.com> <b008aef2-f69f-e2fb-d4d7-71a42d308529@google.com>
+ <1f714ba0-cdda-4122-b6a1-e1e0ea44b1f2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
- <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com> <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
- <aLFKHGe2loD657fu@tiehlicka> <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
- <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
- <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
- <CAJuCfpG17E_yoZeqEDrN0PFn8UBKqiGT28KDwEDmBm6byFje-Q@mail.gmail.com> <cca3gvk5gco6i2vbjvtarmi77imgj5y64kqb7bebcrbjagdwca@4p6zq4iaiqr6>
-In-Reply-To: <cca3gvk5gco6i2vbjvtarmi77imgj5y64kqb7bebcrbjagdwca@4p6zq4iaiqr6>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 8 Sep 2025 12:55:24 -0700
-X-Gm-Features: AS18NWA5R6z4os11O0uAZbscD0giAOrKc3pAZnMY5I0U-VPDOAWS3MM6jGMGM2E
-Message-ID: <CAJuCfpE-dTF_TRJkSffTxtD_P8A10MJUOHd83xBg4B7ATknGGA@mail.gmail.com>
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
-	Yueyang Pan <pyyjason@gmail.com>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Sourav Panda <souravpanda@google.com>, 
-	Pasha Tatashin <tatashin@google.com>, Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Sep 8, 2025 at 12:08=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Mon, Sep 08, 2025 at 10:51:30AM -0700, Suren Baghdasaryan wrote:
-> > On Mon, Sep 8, 2025 at 10:49=E2=80=AFAM Kent Overstreet
-> > <kent.overstreet@linux.dev> wrote:
-> > >
-> > > On Mon, Sep 08, 2025 at 10:47:06AM -0700, Suren Baghdasaryan wrote:
-> > > > On Mon, Sep 8, 2025 at 10:34=E2=80=AFAM Kent Overstreet
-> > > > <kent.overstreet@linux.dev> wrote:
-> > > > >
-> > > > > I think that got the memcg people looking at ways to make the acc=
-ounting
-> > > > > cheaper, but I'm not sure if anything landed from that.
-> > > >
-> > > > Yes, Roman landed a series of changes reducing the memcg accounting=
- overhead.
-> > >
-> > > Do you know offhand how big that was?
-> >
-> > I'll need to dig it up but it was still much higher than memory profili=
-ng.
->
-> What benchmark/workload was used to compare memcg accounting and memory
-> profiling?
+On Mon, 8 Sep 2025, David Hildenbrand wrote:
+> On 08.09.25 12:40, Hugh Dickins wrote:
+> > On Mon, 1 Sep 2025, David Hildenbrand wrote:
+> >> On 31.08.25 11:05, Hugh Dickins wrote:
+> >>> diff --git a/mm/gup.c b/mm/gup.c
+> >>> index adffe663594d..82aec6443c0a 100644
+> >>> --- a/mm/gup.c
+> >>> +++ b/mm/gup.c
+> >>> @@ -2307,7 +2307,8 @@ static unsigned long
+> >>> collect_longterm_unpinnable_folios(
+> >>>      	continue;
+> >>>      }
+> >>>    -		if (!folio_test_lru(folio) && drain_allow) {
+> >>> +		if (drain_allow && folio_ref_count(folio) !=
+> >>> +				   folio_expected_ref_count(folio) + 1) {
+> >>>       lru_add_drain_all();
+> >>>       drain_allow = false;
+> >>>      }
+> >>
+> >> In general, to the fix idea
+> >>
+> >>  Acked-by: David Hildenbrand <david@redhat.com>
+> > 
+> > Thanks, but I'd better not assume that in v2, even though code the same.
+> > Will depend on how you feel about added paragraph in v2 commit message.
+> > 
+> >>
+> >> But as raised in reply to patch #1, we have to be a bit careful about
+> >> including private_2 in folio_expected_ref_count() at this point.
+> >>
+> >> If we cannot include it in folio_expected_ref_count(), it's all going to be
+> >> a
+> >> mess until PG_private_2 is removed for good.
+> >>
+> >> So that part still needs to be figured out.
+> > 
+> > Here's that added paragraph:
+> > 
+> > Note on PG_private_2: ceph and nfs are still using the deprecated
+> > PG_private_2 flag, with the aid of netfs and filemap support functions.
+> > Although it is consistently matched by an increment of folio ref_count,
+> > folio_expected_ref_count() intentionally does not recognize it, and ceph
+> > folio migration currently depends on that for PG_private_2 folios to be
+> > rejected.  New references to the deprecated flag are discouraged, so do
+> > not add it into the collect_longterm_unpinnable_folios() calculation:
+> > but longterm pinning of transiently PG_private_2 ceph and nfs folios
+> > (an uncommon case) may invoke a redundant lru_add_drain_all(). 
+> 
+> Would we also loop forever trying to migrate these folios if they reside on
+> ZONE_MOVABLE? I would assume that is already the case, that migration will
+> always fail due to the raised reference.
 
-It was an in-kernel allocation stress test. Not very realistic but
-good for comparing the overhead.
+Loop around forever?  That would be unfortunate (but I presume killable).
+But when I looked, it appeared that any failure of migrate_pages() there
+gets reported as -ENOMEM, which would end up as an OOM?  But you know
+mm/gup.c very much better than I do.
+
+If it does loop around, it's not so bad in the PG_private_2 case, because
+that's (nowadays always) a transient flag, much more like PG_writeback
+than PG_private.
+
+But whatever, yes, the move from testing lru to checking ref_count
+makes no difference to that: the failure occurs in migration either way.
+
+Hugh
 
