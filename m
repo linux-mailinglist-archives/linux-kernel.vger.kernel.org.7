@@ -1,350 +1,212 @@
-Return-Path: <linux-kernel+bounces-806730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607E6B49B0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:27:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFECAB49B14
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C853ACADC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23BB77A2405
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E282DAFBB;
-	Mon,  8 Sep 2025 20:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6EA2DA76D;
+	Mon,  8 Sep 2025 20:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="Qk+qHOz0"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QV5qeeFb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D0926CE07
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176A72D97BF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757363232; cv=none; b=QjO7JwlXwF8yRRbmdbxPoEcas0zuiVEnFd9z0KtkvvenH1O/78uOaCvVEjPKIXODjVPp/AYZIInA+v5GCVps79/g7/qeJnmYuhHVrHDwo/0VTO3bGMsChSxtD/gDkVnShN6n7cjjF7TFxxS+E8R168IKloARFfWJXScssY+FkIc=
+	t=1757363317; cv=none; b=INTbJ2lSkRRZApne8+iLWNDureP7K7d3gkYWwttT6KXUTeqV1BytuG2iEU7DP1/1SlPrvFVJ/SVWB4Uxdm0Z34vWEuUkAaApwxNP3bj0qmzPKgPRcg7NFllIXH+ucriegtX/MmjBD+i/1hn19oc5pc2/ct+mAcuuQjuBPQ6YWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757363232; c=relaxed/simple;
-	bh=R+RPFUaQ4mejsHing0JSmdO1/cH8Syy4hOFC8sFGHH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CM8fzxV8cRJK/++ZyLv+NHGiooOjKr50kKEhqBPmwLs9cQFLzKvSL3q3mp5YFHonOSHkGzKkHmPh5TT5BI37ArmCUJHbD73obmCwwk4Rvedlczt/2TyPZ1zbCtkTt6PBqtuFA8x/DZK1e2fGXNCtyJegPRtIY4xAeQtK9Lo2jZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=Qk+qHOz0; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77460a64848so394806b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1757363228; x=1757968028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hV02bLAKFBFkOOZ9eD4/UG2hKvc6GSc1iWXYygfABnA=;
-        b=Qk+qHOz0HDaMigHC8Jp5tqbGnErL6Rp2+D/l+0azUach3+eOlRnzM2/icS8AVO88kr
-         6gEPVji4qZOdPYrZdhE1+/eoXuWwFokfFOhqqLQGphGcidtZGkKep8QFEmggN8shzpW2
-         GouUBrKDNZUAUDkpCKDHuiJPEZS4IaK62xEAcLjShJb+iVh8U6iDaXyoi62p9trb28+B
-         1gR7spCbUhNJ22g+5jRT7T1102XR6rN4nnVZo6H44G/OPr/B0ixbesSuE4GnqUIdSFsH
-         588hzHgZ2YyUNlg1XVgqJwdvq8gGv6KtWW/9lYF6e/v5tId2KmNWuuSbiX4ANxzoM2MD
-         b/Qw==
+	s=arc-20240116; t=1757363317; c=relaxed/simple;
+	bh=r8LseYBMJGPeDTkEIlmQA8hA/xOfBFZAF3b8Q4xzECg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tDCnxLkWDV9bsb8axpZS5xr04/vD7IJsNg7831Q57GARJpzWZW5ULl7gLUO080MfM6BcdjkNMpE7z7ElTlMTP1gEEFC3/eNsAr3hNlzRRvb0nuUlPmq/C/Te9bSu1CgQ5ksYcDdFyjNiaNCcv2U6AAFU/VpDi747Dr3PCeBHoXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QV5qeeFb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757363315;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Bxb19G3442DgWyJiqqUjcRLQKcfJrjyTTRUmwA5uVFs=;
+	b=QV5qeeFbItD0syAGwVMk08sffHwjdsE8/0Aa8qzoClkysUruHONUL3uvRRQwg9NcrggeAK
+	r49PZPhzCjBDJzQZuGASRVGHCTsDzAJ8NeZ0jwBT2r8UR4+/Z/c+iy5ZjxyXbhd+QshwfU
+	u7OrfQF2Y0w2vdrtUMA2HDV+10lBOxU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-XqHTRWVgP2WTec9TObvhJg-1; Mon, 08 Sep 2025 16:28:33 -0400
+X-MC-Unique: XqHTRWVgP2WTec9TObvhJg-1
+X-Mimecast-MFC-AGG-ID: XqHTRWVgP2WTec9TObvhJg_1757363313
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45d6c770066so25252115e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:28:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757363228; x=1757968028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hV02bLAKFBFkOOZ9eD4/UG2hKvc6GSc1iWXYygfABnA=;
-        b=mikh+00QICBCplatmB+Y4VYe2JJINJf15cVCx7lvAafWVp563PVE7S+/YO7JFe0+4V
-         osSMZ4gtXZq/uVUz47N1pLGwsPvcHv5r4EuKxiWvG2M7uUT9jRyZSTX2oWXFBDIj9SBE
-         AJQdtp03R93+jl7zqELuJ90SSkHgIT0+ff2a+PQCngy+UHUpnvHnfzgKRigoJeot4imU
-         2zlG4Zm045kF4LElUgnNjuFEaWhhp+vGW76oXa6Hf2LN/z9XBIexsNn/98F10lRH5PQV
-         Aho17zpNncHkgVo7vETh7FCCMBAddUr0DgLfEtYz3mVKIny3IGqvTGMy9orV+UvJczhL
-         hrXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU00222qlhZX8l84bMxxUSuO6IkpguHfO6xKfu8AeNh0lHOR5cOTwQWMu4b7dzUxdLqG9c4ya2PCV39YgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweKGsVQlfXehbO34Zuz62bR0n6mQRPgbiPfQbiaP5R6IiLB0HG
-	GjbLX+syOl7y2083LpGufVSKk98m7uhpE1zj0g+PP5/I67lmLoiEeJ8P+y+wnL13FX0=
-X-Gm-Gg: ASbGncs4WbbPEfFzraLlC1QNUlpbQ/willUtQxcdTj8BDzWRL+Teds1D+SJAoXEK9yF
-	7vb3DgPLHYyEplEvGilG7S4W/ZxlDzBxCupyY5tubMQHbNXjZdj972mn42Lq7nuKBOiOrNQ6s+z
-	cHDWy7QeN4ERf8DwpGVuu8GM2mh+SIc9wG0+mGG84nyXZEr7ChEqhu0xuDiHA7EZkZrewhhUN86
-	OKHLGr1etHIHatRirhgZtwZUUpMxCCFsnRFwcWsOT4cpIujuCbeSZHY6Wa79pAbpTIF+nghS8Ub
-	lA8jygi3U8twPu1JqK6YvjuwepGMfkNfpgbYRn0jOsB2H+lR7qI8+Vy2aTPwELmh4W4lFqK+z4K
-	XWZx47CnrChhsDMYbtOvCNpvtyKti1hlIu/s=
-X-Google-Smtp-Source: AGHT+IFplMZW/dMedCK7FU7LCKvxFX/4CXky7giYFTQYl0fKfaDs9ntsMf8Dnd2XJ7Px+krXV3eJPg==
-X-Received: by 2002:a05:6a00:188b:b0:774:20f9:63cd with SMTP id d2e1a72fcca58-7742dd1174fmr11757332b3a.1.1757363228239;
-        Mon, 08 Sep 2025 13:27:08 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7726c1ed65bsm20050671b3a.45.2025.09.08.13.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 13:27:07 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:27:05 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: John Ogness <john.ogness@linutronix.de>,
-	Breno Leitao <leitao@debian.org>
-Cc: Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>,
-	kuba@kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <aL88Gb6R5M3zhMTb@mozart.vkv.me>
-References: <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
- <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
- <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
+        d=1e100.net; s=20230601; t=1757363312; x=1757968112;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bxb19G3442DgWyJiqqUjcRLQKcfJrjyTTRUmwA5uVFs=;
+        b=KvaCnghigDWKvik40C50sU9bENCxk9TRZ8bjER3p91Er0M4s7AR/3VPm9/DUPD2KzR
+         35Gpkg9pr6d2XXQNB88wufxO8jEytgRBqdrrwm+rpoStKvdAd1dAplFK4vpLu9tAH3OA
+         FL1iTujpQ3d5g4+aMPfxtOVyQwwW216DCGIrHKQ7c/4u66oBcO4vlUlEHFiN+Z5QiHx1
+         VtFTxR5sMxcyfpHV3diVE7LRADfDvcoCtTf43qR6eRih523f+745uW4DMr4dZcc1F25z
+         j39bce9gHEp7bOxDi0E62E5txQaGIWU/khyYylus7xZDtvnll2dtmfYn9WrzwHX52Ay8
+         HxgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCuHpSYki7/P7uQGYYgbpucQeGL3PmuQgepSe9vHjnDZ4N6A87vYMd9CoUuOXW7x+RWPpf5LO77eFT21U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8F3mhdjj5Dt8+7DKdaGmq57/jw0UKYE2M+3Ie9/vdHfMNgfF1
+	k/xVYuxAbCaiBtmmeCUIsoPU9iNxfi86/46ovNvj6ZAsZoa0bKRhDhD/gBL/TMF2G1jyRJDweFo
+	jx7SrT1mNDMfF2SOv1uYs4Gk0gEWdb3pZlpoMPDRhet2HHYpkMus0p0QEcZLMXLd6VQ==
+X-Gm-Gg: ASbGncu9oRJlp+3pEZgJUcWE/50KtyjmeYhYKkpV4Gq8rN/oGfSHtoU+/8Wd9bU/Zek
+	/XSvlFb/snkF6z1uMzmEzsVvUxfnMfDhvzeMGZKGt0IoOXhAUvb2EjtuQXhvnQ5VZwgUjaVRo9b
+	zq6FXD8j37EaIA/eQrLsWEcXiLaZ4oUtq02Di5lU/TncyAYLorBM9NN1Pb5Q2K1eRyFRAc/Yzdu
+	+VsVUVI+y8XiIHt14fAohLxKSoy2Xr4HXwoACSB05xUS5v6AocLI61jLjtWeR3x5ZSDgBsWvFuM
+	xO0HVH65hbwZ8FJZKKcfagkQ+we468zF8jHipMKmADmANdv1EgCIZCYvjy50uN5IMZ1h4V4=
+X-Received: by 2002:a05:600c:c4ac:b0:45b:8a6f:c6de with SMTP id 5b1f17b1804b1-45ddded4e96mr73981955e9.29.1757363312538;
+        Mon, 08 Sep 2025 13:28:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJXsjpdhZEn7w8fFB+LV9zG6ThVcnhw68syW4sBBZ2cyLQUhMVhLuFxV2Kr3/2gkuGtxeFNQ==
+X-Received: by 2002:a05:600c:c4ac:b0:45b:8a6f:c6de with SMTP id 5b1f17b1804b1-45ddded4e96mr73981545e9.29.1757363312024;
+        Mon, 08 Sep 2025 13:28:32 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1ae98.dip0.t-ipconnect.de. [87.161.174.152])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb61377a7sm252991295e9.13.2025.09.08.13.28.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 13:28:31 -0700 (PDT)
+Message-ID: <fbbd4b7d-1614-4d6f-9f7c-2821f35404ae@redhat.com>
+Date: Mon, 8 Sep 2025 22:28:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <84a539f4kf.fsf@jogness.linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 22/22] mm/mshare: charge fault handling allocations to
+ the mshare owner
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
+ bp@alien8.de, brauner@kernel.org, bsegall@google.com, corbet@lwn.net,
+ dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
+ ebiederm@xmission.com, hpa@zytor.com, jakub.wartak@mailbox.org,
+ jannh@google.com, juri.lelli@redhat.com, khalid@kernel.org,
+ liam.howlett@oracle.com, linyongting@bytedance.com,
+ lorenzo.stoakes@oracle.com, luto@kernel.org, markhemm@googlemail.com,
+ maz@kernel.org, mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
+ mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de, osalvador@suse.de,
+ pcc@google.com, peterz@infradead.org, pfalcato@suse.de, rostedt@goodmis.org,
+ rppt@kernel.org, shakeel.butt@linux.dev, surenb@google.com,
+ tglx@linutronix.de, vasily.averin@linux.dev, vbabka@suse.cz,
+ vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com,
+ willy@infradead.org, x86@kernel.org, xhao@linux.alibaba.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+ <20250820010415.699353-23-anthony.yznaga@oracle.com>
+ <a0238ff1-3ca2-4f0b-8452-26584b531724@redhat.com>
+ <3752d094-e754-4453-b404-75d92de3e364@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3752d094-e754-4453-b404-75d92de3e364@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Friday 09/05 at 14:54 +0206, John Ogness wrote:
-> <snip>
->
-> NBCON is meant to deprecate @oops_in_progress. However, it is true that
-> consoles not implementing ->write_atomic() will never print panic
-> output.
+On 08.09.25 21:21, Anthony Yznaga wrote:
+> 
+> 
+> On 9/8/25 11:50 AM, David Hildenbrand wrote:
+>> On 20.08.25 03:04, Anthony Yznaga wrote:
+>>> When handling a fault in an mshare range, redirect charges for page
+>>> tables and other allocations to the mshare owner rather than the
+>>> current task.
+>>>
+>>
+>> That looks rather weird. I would have thought there would be an easy way
+>> to query the mshare owner for a given mshare mapping, and if the current
+>> MM corresponds to that owner you know that you are running in the owner
+>> context.
+>>
+>> Of course, we could have a helper like is_mshare_owner(mapping, current)
+>> or sth like that.
+>>
+> 
+> I'm not quite following you. Charges for newly faulted pages will be
+> automatically directed to the mshare owner because the mshare mm will
+> have its mm_owner field pointing to the owner. On the other hand,
+> allocations for page table pages are handled differently.
+> GFP_PGTABLE_USER causes the accounting to go through
+> __memcg_kmem_charge_page() which will charge them to the memcg for the
+> current task unless unless current->active_memcg is set to point to
+> another memcg.
 
-Below is a silly little testcase that makes it more convenient to test
-if crashes are getting out in a few canned cases, in case anyone else
-finds it useful.
+As a note, I think at some point we discussed re-routing page faults to 
+the owner, so the owner can take care of all of that naturally. Is that 
+what's happening here?
 
-Testing this on 6.17-rc5 on a Pi 4b, I don't get any netconsole output
-at all for any crash case over wifi, so that already doesn't work. All
-the cases currently work over ethernet.
 
-----8<----
-From: Calvin Owens <calvin@wbinvd.org>
-Subject: [PATCH] Quick and dirty testcase for netconsole (and other consoles)
+So, are we running into that code that we have current be another MM 
+than vma->vm_mm?
 
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
----
- drivers/tty/Kconfig     |   9 ++
- drivers/tty/Makefile    |   1 +
- drivers/tty/crashtest.c | 178 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 188 insertions(+)
- create mode 100644 drivers/tty/crashtest.c
+Reminds me of: FOLL_REMOTE->FAULT_FLAG_REMOTE. But I guess, we don't 
+take care of different accounting in that case.
 
-diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-index 149f3d53b760..c0f58943202c 100644
---- a/drivers/tty/Kconfig
-+++ b/drivers/tty/Kconfig
-@@ -424,6 +424,15 @@ config RPMSG_TTY
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called rpmsg_tty.
- 
-+config CRASHTEST
-+	tristate "Empirical testcase for console crash output"
-+	help
-+	  Say Y to expose a file at /sys/kernel/debug/crashtest which allows
-+	  the kernel to be deliberately crashed in various execution contexts to
-+	  prove crash traces can be successfully emitted on the console.
-+
-+	  To compile this driver as a module, choose M here. If unsure, say N.
-+
- endif # TTY
- 
- source "drivers/tty/serdev/Kconfig"
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 07aca5184a55..0448b8285079 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -27,5 +27,6 @@ obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
- obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
- obj-$(CONFIG_VCC)		+= vcc.o
- obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
-+obj-$(CONFIG_CRASHTEST)		+= crashtest.o
- 
- obj-y += ipwireless/
-diff --git a/drivers/tty/crashtest.c b/drivers/tty/crashtest.c
-new file mode 100644
-index 000000000000..a7b90300d906
---- /dev/null
-+++ b/drivers/tty/crashtest.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * # cat /sys/kernel/debug/crashtest
-+ * crash_user
-+ * crash_user_nobh
-+ * crash_user_noirq
-+ * crash_user_conlock
-+ * crash_user_rtnllock
-+ * crash_bh
-+ * crash_irq
-+ * # echo "crash_user" > /sys/kernel/debug/crashtest
-+ */
-+
-+#include <linux/console.h>
-+#include <linux/debugfs.h>
-+#include <linux/irq_work.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/rtnetlink.h>
-+#include <linux/string.h>
-+
-+static ssize_t __crash(void)
-+{
-+	pr_emerg("BANG!\n");
-+	*(volatile unsigned char *)NULL = '!';
-+	return -ENOSYS;
-+}
-+
-+static void __crash_irq_work(struct irq_work *work)
-+{
-+	__crash();
-+}
-+
-+static struct irq_work irq_crash_work;
-+
-+static ssize_t crash_irq(void)
-+{
-+	if (!irq_work_queue(&irq_crash_work))
-+		return -EBUSY;
-+
-+	irq_work_sync(&irq_crash_work);
-+	return -ENOSYS;
-+}
-+
-+static void __crash_bh_work(struct work_struct *work)
-+{
-+	__crash();
-+}
-+
-+static struct work_struct bh_crash_work;
-+
-+static ssize_t crash_bh(void)
-+{
-+	if (!queue_work(system_bh_wq, &bh_crash_work))
-+		return -EBUSY;
-+
-+	flush_work(&bh_crash_work);
-+	return -ENOSYS;
-+}
-+
-+static ssize_t crash_user(void)
-+{
-+	return __crash();
-+}
-+
-+static ssize_t crash_user_nobh(void)
-+{
-+	local_bh_disable();
-+	return crash_user();
-+}
-+
-+static ssize_t crash_user_noirq(void)
-+{
-+	local_irq_disable();
-+	return crash_user();
-+}
-+
-+static ssize_t crash_user_conlock(void)
-+{
-+	console_lock();
-+	return crash_user();
-+}
-+
-+static ssize_t crash_user_rtnllock(void)
-+{
-+	rtnl_lock();
-+	return crash_user();
-+}
-+
-+struct crashtest_case {
-+	ssize_t (*fn)(void);
-+	const char *str;
-+};
-+
-+#define CRASHTEST_CASE(fn_) \
-+	(struct crashtest_case){.fn = fn_, .str = #fn_ "\n"}
-+
-+static const struct crashtest_case tests[] = {
-+	CRASHTEST_CASE(crash_user),
-+	CRASHTEST_CASE(crash_user_nobh),
-+	CRASHTEST_CASE(crash_user_noirq),
-+	CRASHTEST_CASE(crash_user_conlock),
-+	CRASHTEST_CASE(crash_user_rtnllock),
-+	CRASHTEST_CASE(crash_bh),
-+	CRASHTEST_CASE(crash_irq),
-+};
-+
-+static ssize_t crashtest_write(struct file *file, const char __user *u_buf,
-+			       size_t u_len, loff_t *u_off)
-+{
-+	char buf[32] = {0};
-+	unsigned i;
-+
-+	if (copy_from_user(buf, u_buf, min(u_len, sizeof(buf) - 1)) != 0)
-+		return -EFAULT;
-+
-+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
-+		if (!strcmp(tests[i].str, buf))
-+			return tests[i].fn();
-+
-+	return -EEXIST;
-+}
-+
-+static ssize_t crashtest_read(struct file *file, char __user *u_buf,
-+			      size_t u_len, loff_t *u_off)
-+{
-+	ssize_t ret = 0;
-+	unsigned i;
-+
-+	if (*u_off > 0)
-+		return 0;
-+
-+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-+		unsigned long len, done;
-+
-+		len = strlen(tests[i].str);
-+		done = len - copy_to_user(u_buf, tests[i].str, min(u_len, len));
-+		u_len -= done;
-+		u_buf += done;
-+		ret += done;
-+		if (done != len)
-+			break;
-+	}
-+
-+	*u_off += ret;
-+	return ret;
-+}
-+
-+static const struct file_operations crashtest_fops = {
-+	.write = crashtest_write,
-+	.read = crashtest_read,
-+};
-+
-+static struct dentry *crashtest_dentry;
-+
-+static int __init setup_crashtest(void)
-+{
-+	INIT_WORK(&bh_crash_work, __crash_bh_work);
-+	init_irq_work(&irq_crash_work, __crash_irq_work);
-+	crashtest_dentry = debugfs_create_file("crashtest", 0600, NULL, NULL,
-+					       &crashtest_fops);
-+	if (IS_ERR(crashtest_dentry))
-+		return PTR_ERR(crashtest_dentry);
-+
-+	return 0;
-+}
-+
-+static void __exit cleanup_crashtest(void)
-+{
-+	debugfs_remove(crashtest_dentry);
-+}
-+
-+late_initcall(setup_crashtest);
-+module_exit(cleanup_crashtest);
-+
-+MODULE_AUTHOR("Calvin Owens <calvin@wbinvd.org>");
-+MODULE_DESCRIPTION("Empirical testcase for console crash output");
-+MODULE_LICENSE("GPL");
+Anyhow, what I meant is that you could just check whether you have a 
+mshare VMA, and if so check if current is different to the mshare MM 
+owner. So I don't immediately see why MMF_MSHARE is required.
+
 -- 
-2.47.2
+Cheers
+
+David / dhildenb
 
 
