@@ -1,100 +1,166 @@
-Return-Path: <linux-kernel+bounces-806523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42A3B4980D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:16:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D008B49809
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A01C1BC4086
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2E67AAC8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71EB31578E;
-	Mon,  8 Sep 2025 18:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6F431354C;
+	Mon,  8 Sep 2025 18:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uev2jrWe"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KulParVi"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662F0314A9C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9CB310783
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355282; cv=none; b=XxahQzK+1q/+AM0U8A0i5I2mRuTWD/hHfoTjFb+VCKQu+z0meSr6cqpTf2xInRcp00X4GwCfCxYJlPsbfxn6Q/nbMrkGK/Uq4Dw/mv6TnaLSg3b/3tLa60u6YW9RZ9lGoc8OKOcz94wtqFhI0uc5S9eqXHZUlQz9vtSdbnls/tk=
+	t=1757355279; cv=none; b=igzdzm5tUFn1Y6BibEW4EVWJxz4KnfMwsd/2bHg4eTYtqnfS57mRRuez/wNVis0ppDY2ko62ipwQTwgJhfV9KNMHJq+pZJffD3Iqmqc40Nh7ixNjn135ONtU8ywluxH9f2LGtW9jtjdAr/CviGbtMxZD9hxWZirccIr+t4dcYKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355282; c=relaxed/simple;
-	bh=wvb9kExJlVTJopDzlR14wlmHKK39VVW4GDPK4XfQE5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LP1Gf+leUQ5O6pUgSUf3IXQ6QTk0WtffQ9Wo9WI7g9hL0to0KKUH6OdffaP94SZLKfg2NtjRsj/0Ke3FDeBaK+bPIhaGmLMjW1Nji18E+ig6IrgY16h/vmPrvZTbGJX4clXqILRDCUohVrqfsSfS87YEl5q16Ehvg4SO3oVhYaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uev2jrWe; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757355277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hkWHmbRxIQF8liHGFYlvZpkYRA2BPJc4g/PktgKTmvg=;
-	b=uev2jrWeDsaTz8cfd0bVPcSK57yxDc4zR0uJWsTpWhkQK6FA1ychCh/+u23UYEAk5a0g43
-	EnAMk9QgO5IQhUthY492bTier3nHFz3m2WiIYN85xB5RPzwpmtfik32h2Gi00mA/lXFF1c
-	G0hgeKCZk767juMHacdgbawu10E1Mnk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] char/adi: Use min_t(size_t,,) in adi_read() + adi_write()
-Date: Mon,  8 Sep 2025 20:13:54 +0200
-Message-ID: <20250908181354.436680-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757355279; c=relaxed/simple;
+	bh=Dd+pgApASQAzgj9X3zonS77Lm1GUV+22MQ9r9kA15iE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ft6QpqF6LA1XkfNfvsxlwredmVdj6X+poRcyKkIYmBwJkU35ElO+Tw4LvVoRHxMOAx4Sd/HkxrAxGyi3MEUWpVAXKdSBr0Rg1Xo2GpQyCxUAeXaHFZsCcVLL4ZhgtFP6NiWOWykqXPYJo3dBBlczjPkdXMICW9HjKv40s3W6UhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KulParVi; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso2988109a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757355277; x=1757960077; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aa8ggLlyMVJh/eLNB7/vORTWXIRxgODsZo7MWhmnGSU=;
+        b=KulParViFVt05a2wk3gGZhfcS3CXTQZ3E75p2wuhDJxuOZrKXGjCg+ZbJw07NoqnJY
+         YxM2vkpiO0Cb7BcqPB7AEApIqaEPnwwZZMQczSChnKdv08nC+E8OT1YNF2U+rX2wzffe
+         mXLRqYYe4akc0bFoUNelA3SaTxhqyPAMeiKyzvQuJRqBQH3hM1EN3f3o6JVzTgHjyKwn
+         KIMqj/dZdr/tzG2MufEmnkeBjszB0cdcrtRYBa5SJwJYsJgUI6YTS52zqxIf7Rx4Pbo2
+         SPgD4UJk/1xxtHtw2eot+LpALr5Aq+9HIS8CMEB2kUfKrxz+P1QQkQnf52kW9ztcL4Po
+         hdgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757355277; x=1757960077;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Aa8ggLlyMVJh/eLNB7/vORTWXIRxgODsZo7MWhmnGSU=;
+        b=tRYnSnBdcbEMfgD1f0vTSBHYfl6z7BIpQwW3sOvFCJHFeFOddhvr+b8CEWzMda00pd
+         dJrTAUzU5EPSQxJh523fsLoiAchY0/IGfV7iMMXpCXpnV37Rt1Ml9y8pOXNpaidKCiSk
+         mUn/4XA8nSVEms4N2CQAVNkIF4i5ef9YWtKPTEipyyXMj6vlUXZVnl7Fw1EfEOZspumF
+         ft5gdM9RyxSVadzqcSbXokuiflm1y70Uv1SRtbwyKzqV6ku/TiaXSoVxrQJmB9vY1sK8
+         YPIfP+jjaxTjCSRXKd11ch/VZObHhvIwIIbjL9C6HjEzVezRmVFdywwaym+ShMYu4p10
+         YQ3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXieEZ5MP9T8xRf/LxgweX5NBl1L4KkgUY4aiwEh5L36tzCQ24kXJbVcJHkyxIDaDmCaTcakXCoxE77trY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEVITr8tN3xfrRssf3Zk0QURSJaGaVrM3zDRZxRnGZFfhWgTme
+	/OoKPsbTRueH/RUsosE9/fCqiBLBvyOB6XhcUNmCNwyVvBr0kjIWq4uRnkX0y7cahCmYYs5fRCS
+	oxw7w7xprAGT8Pp/YYD2o72vP4TP/kT/mtXBxWG1nJw==
+X-Gm-Gg: ASbGncuWd77Ebo6kOluxKFwwdBWhtTY3x3rN82Y5TW46BE+N2b5MGMyX+BNkRbEoj22
+	GAFZGLo6Gehgj1XSV7hWPjeH+MtlBbTG9/usWYY3bVAe1KtJ5bZGtbfTITfW/twgp+GfAeKTqA2
+	CO+lXt7LuxFlT+DrztOCiy22vhIeqsunim9X4nJZ+McZUXxTcRLeaXcQS49UiumPPFHhduzjVt3
+	HOdmybT8SAr5LRRMUh/yH0hEGzLZmgDdbGLTc5ojGB5Lm6mjT6unUsbF9FsSOA1A0UKGWi6AcjG
+	MlZ/1iI=
+X-Google-Smtp-Source: AGHT+IErypQRC4wzGQeAuOgUtnwtBi2ya2m51s0FvrrM40iFGJDv512kzAJrOm36DfnNRSDLy6uFdTKbm3aJAXKiWZI=
+X-Received: by 2002:a17:903:19c6:b0:24c:e3d0:c802 with SMTP id
+ d9443c01a7336-2516c896521mr127705465ad.1.1757355276936; Mon, 08 Sep 2025
+ 11:14:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250907195601.957051083@linuxfoundation.org>
+In-Reply-To: <20250907195601.957051083@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 8 Sep 2025 23:44:25 +0530
+X-Gm-Features: AS18NWCueKZLivBwekubKSawy9W-Z7KRPjuA564ID06uBm9Hh6QXYlMBZZtS8_g
+Message-ID: <CA+G9fYsX_CrcywkDJDYBqHijE1d5gBNV=3RF=cUVdVj9BKuFzw@mail.gmail.com>
+Subject: Re: [PATCH 5.10 00/52] 5.10.243-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, Netdev <netdev@vger.kernel.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Replace min() and manual casting of MAX_BUF_SZ with min_t(size_t,,) in
-both adi_read() and adi_write().
+On Mon, 8 Sept 2025 at 01:38, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.243 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.243-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This matches the initial buffer size calculation:
 
-	ver_buf_sz = min_t(size_t, count, MAX_BUF_SZ);
+While building Linux stable-rc 5.10.243-rc1 the arm64 allyesconfig
+builds failed.
 
-and makes the code more consistent. No functional changes intended.
+* arm64, build
+  - gcc-12-allyesconfig
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/char/adi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-diff --git a/drivers/char/adi.c b/drivers/char/adi.c
-index f9bec10a6064..ca3a202dc2b2 100644
---- a/drivers/char/adi.c
-+++ b/drivers/char/adi.c
-@@ -80,8 +80,8 @@ static ssize_t adi_read(struct file *file, char __user *buf,
- 			bytes_read += ver_buf_sz;
- 			ver_buf_idx = 0;
- 
--			ver_buf_sz = min(count - bytes_read,
--					 (size_t)MAX_BUF_SZ);
-+			ver_buf_sz = min_t(size_t, count - bytes_read,
-+					   MAX_BUF_SZ);
- 		}
- 	}
- 
-@@ -157,7 +157,7 @@ static ssize_t adi_write(struct file *file, const char __user *buf,
- 		}
- 
- 		bytes_written += ver_buf_sz;
--		ver_buf_sz = min(count - bytes_written, (size_t)MAX_BUF_SZ);
-+		ver_buf_sz = min_t(size_t, count - bytes_written, MAX_BUF_SZ);
- 	} while (bytes_written < count);
- 
- 	(*offp) += bytes_written;
--- 
-2.51.0
 
+Build regression: stable-rc 5.10.243-rc1 arm64 allyesconfig
+qede_main.c:204:17: error: field name not in record or union
+initializer
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+### build log
+drivers/net/ethernet/qlogic/qede/qede_main.c:204:17: error: field name
+not in record or union initializer
+  204 |                 .arfs_filter_op = qede_arfs_filter_op,
+      |                 ^
+
+This was reported on the Linux next-20250428 tag,
+https://lore.kernel.org/all/CA+G9fYs+7-Jut2PM1Z8fXOkBaBuGt0WwTUvU=4cu2O8iQdwUYw@mail.gmail.com/
+
+## Build
+* kernel: 5.10.243-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: 910e092353351549f4857c48c68cc154c84305e8
+* git describe: v5.10.241-89-g910e09235335
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.241-89-g910e09235335
+
+## Test Regressions (compared to v5.10.241-35-g4576ee67df7a)
+* arm64, build
+  - gcc-12-allyesconfig
+
+Build log: https://qa-reports.linaro.org/api/testruns/29791464/log_file/
+Build details: https://regressions.linaro.org/lkft/linux-stable-rc-linux-5.10.y/v5.10.241-89-g910e09235335/build/gcc-12-allyesconfig/
+Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32O3Hlq8fZQUSOfU5gyju24xQit/
+Build config: https://storage.tuxsuite.com/public/linaro/lkft/builds/32O3Hlq8fZQUSOfU5gyju24xQit/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
