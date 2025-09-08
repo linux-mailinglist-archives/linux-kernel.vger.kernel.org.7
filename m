@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-805015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A65DB48301
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6FAB48303
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC09517BC79
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4B3417D9BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B872192E3;
-	Mon,  8 Sep 2025 03:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38462192EA;
+	Mon,  8 Sep 2025 03:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gKZ/c9x4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/6gJXPD"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2D453A7;
-	Mon,  8 Sep 2025 03:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09ED4964E;
+	Mon,  8 Sep 2025 03:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757303361; cv=none; b=Q0JUjw5urgdUU9KFqy7sUgUvZkhSwenRvpwaOjpt9cDcq0hRtQeZvrfEDA1SxViOzJ+uGudVEL4FvV+3CW1qsRxGle8Jjxegq6NK/sN8IMwgWv2PRU2iakpkjOVpTTBxfBn9TWm2qx0lxMP642Av+irHT8/h7UXwqMsL2uwlsfQ=
+	t=1757303427; cv=none; b=idTgfGe0nTN7Qg6IlMBCU9aiLvTpczHQA+BmGhTKExwbJYivQuonQJZtLD/6HTH0tCC58t6KavrbDz0QYvoGpnCke6E0iD2mBxKLiqexQh9i6tWDErL4W9MPDPG8vpM5s/zL+yrvb2USHojRg3giag+vLZFF0iFeFtHnXbR2n9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757303361; c=relaxed/simple;
-	bh=o6yubI9o8aQSb1ZmwwN/UUkGxPQtv1/ashNFOWuq/wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iigvkmRORr3YxJuvfPnnBZneL7STcO5vPtTs95180itmD56wC96f7mcPc3/1/KgEac8ak64Gt4jp6IjdLLCrDUj1ZatHg2cqRgsATNiuN17L9Txwf6Y3CiXA/+/DC1uQ/sEAkP7b+yHjeNFtO75ULm/0MyAhONBkPBlUzEJuAeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gKZ/c9x4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757303354;
-	bh=vaew1mC3B+NoBNmlS8eQeiWBtsJew4atsMEh6lHY5JA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gKZ/c9x4RFtwQoXDXT3GkMCBwHvR9Sy61za2HokSiKhGdX+DsEeY7yJyhlOIkNjhv
-	 67r1NJEM68CneGugnlHroi6ZFIzmM+MuXpYhhHb7mEk/zqhsV9Wb3d4FrABtnq7lHu
-	 s/vR63LKnch01509miPacp2LHnI22vWSAyCIxnV281tKjTYIk8UECwJeNIr4TeI2it
-	 tlV1WjEMEjEHmKX9z0z7hs+2V6nxz3lXAKh4LWhSd7YP/ZmiFBDhC42FybxhvonaTg
-	 4vExAjHnyk5wfJSRIw6gsx1u2z9JeS7xLp85/O7CJ5E3iluduQ0tFCFL8KJwdTXf5G
-	 m/uTEoip3gGFQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cKtHG5lHrz4w9v;
-	Mon,  8 Sep 2025 13:49:14 +1000 (AEST)
-Date: Mon, 8 Sep 2025 13:49:13 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
- KBuild Mailing List <linux-kbuild@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Paul Walmsley <pjw@kernel.org>
-Subject: linux-next: manual merge of the kbuild tree with Lnus' tree
-Message-ID: <20250908134913.68778b7b@canb.auug.org.au>
+	s=arc-20240116; t=1757303427; c=relaxed/simple;
+	bh=hUOJUjN7uZ56WvyOp34yQKa4syixecTF4g5kMWnFvG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WvEvpNtldXGvPzVVakzNh4WJHwAuT/8p8i1T6/aii1VcWiynL9NGWk/Ky/FvRCvQEjzJTde/UYmTjwe2jfhIdAwCslU7+enOTZY/3ZEFjJMCfBwUGCcqZllWU8r/wBM4+DUvPJF0zw1qY6Iuv1XBwAaw1w/6g2pXLjrJlXJ4LKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/6gJXPD; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4d118e13a1so2557810a12.3;
+        Sun, 07 Sep 2025 20:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757303425; x=1757908225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JcU7raKB0xaPr1u3hysKEvXRC7PvlwZV/t+nAxbL6oA=;
+        b=C/6gJXPDbI5OhEWxaPpQYxFW+7vSVWNb7OPN+uWhl/tdICbi7LpmxKLbfEpA4NakUW
+         Xdkubnkz9GH+982+sBKOSowN+Yzt0Jc7WJKpy7XKD+hU3CzES7jJaNbJDwISjMaO1vCJ
+         qiZktj1iGW4U0zpMq6vUhYIhUhZYVTf+YAprYTQFsdrRs0JRyPWEFcXfkX+pkj+vlaeY
+         Opu9f62jibcrqt1FpKSqSQD3TZr8RmBQ/CSOpgwhmRjci0YnjPvOSJSjw/ZtD6pFbbxV
+         0IgEq2bLM1akVj3UE70HwM233MATFak5pLWTdIknVuncvasyHqW6wl6wmjPBuEAZ7ngT
+         RAbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757303425; x=1757908225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JcU7raKB0xaPr1u3hysKEvXRC7PvlwZV/t+nAxbL6oA=;
+        b=P9uhDPWRThiuI0tbweXCKgB2OdnqnzlVMnJCkcpNdhwURj4bUhvllI8lpgdcoTSGWh
+         NZifvUap22Xw/0wphmmz+X6QTrPlt04/IqlZkoQJ57jFpIiLtfGG+4bMlFDiCxWip6f2
+         4+cWRa/AAt4mMvyFEnwNN7C3/U6e9q9Z2CrfGWhbgQTEtc/qOKgOb3xuwHwStVV+F324
+         ivWOnneYDWXGRMRs+RxBnJdvfdGHi0zWhmf2STrmNnVQ8GC53mYg4x24Y/7Au9QUK1Ni
+         uwPL76t+w1gamXwI50ebP7EIKIRSXssZonr/t/anmKzZKyTTis0jeNzAHolcItaaKc+3
+         bOig==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Zlgh6J7K7BepeVNJ6imuvPdM7RLLx6gVsSOJeIizq1321SRgzaf06EyWrMAOaMaS35WyyVbu@vger.kernel.org, AJvYcCVkmC8oA60TKwrRkVKjC2hsnoI/+snWsshQmSf286jehnXxBGKN68d7Rn+gzVTvR0bkS4+ezoU35iyqtTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/+fEB9m+nLszvCtSHitU51uEP23yatW69VsaYgrPLtKZhuL3w
+	hv2TtfLTAqE98lgNqwc1Vs2X8xYENmgwpOktADEK+Cmp2E/BxB6OV+2D
+X-Gm-Gg: ASbGnctoQObJtg+XRBSgnQELH6nyZzC6GGnt5GTXPFDeuOLLGnWGcB8BX1UPmHD71S/
+	tQAWkEWqpwmOTmhVNWdrbdTRbNFIPX2+Y3assCSovv6dGqeVVAQw5Pz8jmUlhgzJkVYjKst18iQ
+	15/0VRBlokA3wi/UW7byJPDPU0Mis9ao+YWrsEW0oQSaNDVQ0lOUukwQT99oaECz0K4gtUrxfSh
+	O0AmGOsrdENEdjLNgoo7HIKGCWHj2oPaP+Qr6E7zga6J6wyNVQsX8DI8uZaHh0leboh02AQ+ud6
+	ozU73KB5VbRZdA44nf4fUwbb0x0HCMvteSYrld0dz4v5F9AeuhbFK87sv/JoJfT8Rcu/n7NFK7p
+	vVgxSthGq0LfCkV68dFz4WnR+eWKTm1YZsmoGo6YleOntQiWIcPeUlcc96J0eRgy6zeopkWxUfn
+	A=
+X-Google-Smtp-Source: AGHT+IE7aI8NDiO3dLx8ia+TD+Op2GcTZb4D3WGE/zuPERgoRDXMR/mu8A35BvvWsNINZhsClG1D/g==
+X-Received: by 2002:a17:903:b0e:b0:24c:bc02:78a1 with SMTP id d9443c01a7336-2516ce602e1mr82931435ad.2.1757303424837;
+        Sun, 07 Sep 2025 20:50:24 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cb34e9783sm111548785ad.50.2025.09.07.20.50.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 20:50:24 -0700 (PDT)
+Message-ID: <2a8e98fd-2904-4cd8-9571-d73484618cb4@gmail.com>
+Date: Sun, 7 Sep 2025 20:50:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Fw2=JFUgtBQWYDmbqI7ullH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250907195615.802693401@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/Fw2=JFUgtBQWYDmbqI7ullH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the kbuild tree got a conflict in:
+On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.6-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-  arch/riscv/Kconfig
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-between commit:
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-  41f9049cff32 ("riscv: Only allow LTO with CMODEL_MEDANY")
-
-from Lnus' tree and commit:
-
-  6578a1ff6aa4 ("riscv: Remove version check for LTO_CLANG selects")
-
-from the kbuild tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/riscv/Kconfig
-index 51dcd8eaa243,850ba4b4b534..000000000000
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@@ -64,9 -64,8 +64,8 @@@ config RISC
-  	select ARCH_SUPPORTS_DEBUG_PAGEALLOC if MMU
-  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-  	select ARCH_SUPPORTS_HUGETLBFS if MMU
-- 	# LLD >=3D 14: https://github.com/llvm/llvm-project/issues/50505
-- 	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >=3D 140000 && CMODEL_MEDA=
-NY
-- 	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >=3D 140000
- -	select ARCH_SUPPORTS_LTO_CLANG
-++	select ARCH_SUPPORTS_LTO_CLANG if CMODEL_MEDANY
-+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
-  	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if 64BIT && MMU
-  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
-  	select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
-
---Sig_/Fw2=JFUgtBQWYDmbqI7ullH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi+UjkACgkQAVBC80lX
-0Gyh6wf/W4PirpeQLG/DIUC+aO9J8jIOEEBHrxmvVIEaHw60/JkhBD3cr4G2TPf2
-ee2Gcc12keswNPkDmBdByS1RU4GfpiCKkdBgucg+OedQ4/nsuL+MjQWT/e9b/bCh
-1sFq8aWqOVg8jqlKVfb2+1tOr8jSeaiBiYjgt6Zx9Pg9/uwfCCK4i/GgjSD/Yf5Z
-cq0B29lUDKJAHu8yGZEkhhmRPtNt7w37OiOInjJzG0ORLhlmuicIT4nc+JVi1qWL
-+gomb1C34oRZDd1pLUc30wRiwf80md2qmJ2OsChho+WFuiiv+bvBjWSo+WaPaDe0
-mNFul8+eav84U0JXKVUdMCopb7YEAg==
-=w1EF
------END PGP SIGNATURE-----
-
---Sig_/Fw2=JFUgtBQWYDmbqI7ullH--
 
