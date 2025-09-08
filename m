@@ -1,45 +1,80 @@
-Return-Path: <linux-kernel+bounces-805816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E56DB48DD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A989B48DD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80B5B16B809
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F0E169C34
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1682FF643;
-	Mon,  8 Sep 2025 12:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEF72F3C28;
+	Mon,  8 Sep 2025 12:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xwvir4Aw"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7z2GRsi"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04A12FB0BB;
-	Mon,  8 Sep 2025 12:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57462147C9B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757335291; cv=none; b=ra8Z0Smn2xmboF1cslsXnxF/LhtFvvYLLYr6MAhPe2ECwrYomjuHXTcNiZhyq2zz7wBinmJ1TxBo609hRni4KmSp2NCZkoyizqhQ/RNu8fdc6YgQGod5XpddTbsq3S7RKLNC73vpWvEv9PgAXFvB4hcw+teiShbh+MrelFEnpWg=
+	t=1757335399; cv=none; b=mJ1nd4e7MEAp7C15Uza0/RszXdDekb43MjryENxP5NNRUCZ1oGNsl7R21rDciDXd2c/E3GiGyAwolU8FXEbkIcHHC1XR4E3gVlpBkVvVKHl6Yod/li+DeNxUejfiUO8Z9VICdIRglgMu0AUhWFNA47vzy/2iklg7YO2fXcV9Myw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757335291; c=relaxed/simple;
-	bh=Pmp5JrLg8mtpRyC2RKLWsO/j99h/qFYHbMcV8dz9Rkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4l3RwQqmXOxgvnE+rvmrr+uUndmVgSfiTwR5FCG/28TuHlB89qL9XGDPrWEx1+etylwq7SOImtqsBJ75FjQyXIOj33kGlz3tKkjNwh+FrqfRAMqk/LhZLvKQc6I7JtH3EbtEsbHfuWpbpsXWDYyGFUEJXXu0HuiFlYk9CZRuxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xwvir4Aw; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757335284; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rbjZivxQKDk010WgZR1Fbg7yaHLxPQcJtZuUjyqrHp4=;
-	b=Xwvir4AwPpxRzX/liBguQyRLCjl5L/HGTrQbNVhhI6ck6MyxDX4tflpxOWWCMkgkrFg4otlxBEFHjucsS5vLaF+6xedLG1llBLgwCkEDqzoc0yO/N3LfIZCO9dsUvqkMyi8ItkSyxsPcg9PU9F1YATtFM42qDv5G6zjhR+8aoXc=
-Received: from 30.221.128.217(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WnXSFXb_1757335281 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 08 Sep 2025 20:41:22 +0800
-Message-ID: <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com>
-Date: Mon, 8 Sep 2025 20:41:21 +0800
+	s=arc-20240116; t=1757335399; c=relaxed/simple;
+	bh=7wzXkqWaTtpbDbG1cb7HMetJwODd6HHjob4mHwKlVNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iZMpezLZN5ZmenB1+0uvQ3fEyLFPu3oW2xPQmohk5ohyOjswQxbDHYEWGEKOJLWv08Bgyex/wz0NfTfFAZ084h8nnEVahkHAQNt0Wu/gCj3Q9+slJie7/YVfBhBAAsoDgc8MPtXjNgJsozncWSGSH82/RQJH2AK8QJYdQMlsznk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K7z2GRsi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de1e6d76fso13910915e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 05:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757335395; x=1757940195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Bv7N0nEEMIW8vc39iETSzqLknphU+YZnN2De3mvFq6o=;
+        b=K7z2GRsikpUzZyhGRUpKHkplH3LTqOzovePeMVfdewQaPeKeKPT1iOrmnE5q9N40fQ
+         K3CehL4U7cF3Nvv+E4Dd2EEz/Q1DSq8FArrnEUylkidUqOsTbEQfGBs44VCfliEf/vLI
+         qhbF9b3JZZkA2LAp94TSTBMFuMZqPYDCq0x7pTsKd2fdjE90v7TdarR+WdhAjGyqwX2N
+         7JJjfNS7jJuuSF/JaWbiVvZSfk5eXCQYlOoLjjuNlrOFj5WoVME6IgvzPMF0bHv2mrMY
+         Tn2095Kn7tM9ialUvEhGn6CUAK1GOQJQWG7/oHPzqq1SZHkj8Lnd2ZqPrMwZ9OBQtUt/
+         Y9Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757335395; x=1757940195;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bv7N0nEEMIW8vc39iETSzqLknphU+YZnN2De3mvFq6o=;
+        b=LXRqUAKfUCUyIUgHpUmGKhdUG3YsVL+VG/0uNftgqjnWb1JH0o6txhiokm+m5MxvNB
+         C0U7ZOJonelwU4zucjOCCKONuZHgoK9mUlK2kME+R9P6jlJO7TDNex1AmJ9j6w2A2gh9
+         7RZjk138i2vHvZcFm03eUTjHKMzDboVh94ZjjLhEIMMvA37LLOHcAC/eXkRNlRBPIwLJ
+         zLTbySqcSs5ju3RiH1XVt9eeHuMhxR3M/vRXb+kid+yCzg6thJ4qifZpmkDJaRso2s32
+         oDDDtTg6e0nzZb3adGN7utDAnrHMZxqWroG49BGOpb/loPnHb7Sve3OFSBy2qnRYucCY
+         fPDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKklhVwO9AS1Pys/IVWmUKuVILpciRHUhdZpxt3fBOUKW+EqeBkUuBAVXODwZHpOXYcXEl5ewUw97ea4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb9UPzKNbWaSU10oipQidNmNk3IQG22h2FO41ZS7Qu0964637G
+	uvwBY9SGGxgVPll2K6dyc0Za1ILdiBohkPUSfNEPzMIcjUs9Yu8wdFz2dYbNRfTvxxc=
+X-Gm-Gg: ASbGnctQeQztGX0rMC3834FiWVm7h+tVcXsB9Qa+VL3iz62jg3lQ4AmkBSZPqejzmP1
+	8uNjVQPnHfUQlfDIaZn5S+IEAhTqs92LUT8YkZkPvuxh2B2+66qFbWDRL8Iv1Vr9NUmobAymi39
+	IMW3r5/+LEhGcIAjlnoq9CDn6VRH5oIrKWslbhDiblZjGDInf3A/WwJOWXF95XLQO1BIF1kcWvF
+	dkzu0+M5n4V29y5cA2aYwfkj9L8C30CzfbvIToJ5ryVX54rCwdkECZMvdotqjqv3v8T0am7lZg6
+	Q9S7UUCyYLQbNKahr9nufx1PFp6IqijSPPn5KHZ/4XrjdgJ2+/vpm+mLjQxPTjQhdWKf/SJ8ZCf
+	vG/iVh0XbHTbxcwX1VeOO+AHu66oj3Mn6L31adZGmoBsXONdTLhvg9BfPdCPAMIlwSO/r/o14H3
+	oYOjP+y4n3aqYp
+X-Google-Smtp-Source: AGHT+IEJWmUPrNny8/8KXYUnfyYJBB9DnJE5RKBe2s1VGrnXN7x8ilawMOISnApGgurJ/wJqGcwbVA==
+X-Received: by 2002:a05:600c:5299:b0:45d:dd47:b45f with SMTP id 5b1f17b1804b1-45dddef7fdamr61319805e9.31.1757335394504;
+        Mon, 08 Sep 2025 05:43:14 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:9b6a:7b16:fb30:a294? ([2a05:6e02:1041:c10:9b6a:7b16:fb30:a294])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab832sm438407955e9.23.2025.09.08.05.43.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 05:43:13 -0700 (PDT)
+Message-ID: <f0d72eac-f842-4060-b197-ced20048b34b@linaro.org>
+Date: Mon, 8 Sep 2025 14:43:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,159 +82,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
- I_WILL_FREE usage
-To: Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
- Mark Tinguely <mark.tinguely@oracle.com>, ocfs2-devel@lists.linux.dev,
- viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, jlbec@evilplan.org,
- mark@fasheh.com, brauner@kernel.org, willy@infradead.org, david@fromorbit.com
-References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
- <20250904154245.644875-1-mjguzik@gmail.com>
- <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
- <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
- <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com>
- <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] clocksource: timer-ti-dm : Capture functionality for
+ OMAP DM timer
+To: Gokul Praveen <g-praveen@ti.com>, linux-kernel@vger.kernel.org,
+ u-kumar1@ti.com, n-francis@ti.com
+References: <20250812105346.203541-1-g-praveen@ti.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250812105346.203541-1-g-praveen@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 2025/9/8 18:23, Jan Kara wrote:
-> On Mon 08-09-25 09:51:36, Joseph Qi wrote:
->> On 2025/9/5 00:22, Mateusz Guzik wrote:
->>> On Thu, Sep 4, 2025 at 6:15 PM Mark Tinguely <mark.tinguely@oracle.com> wrote:
->>>>
->>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
->>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
->>>>> fine (tm).
->>>>>
->>>>> The intent is to retire the I_WILL_FREE flag.
->>>>>
->>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->>>>> ---
->>>>>
->>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
->>>>>
->>>>> btw grep shows comments referencing ocfs2_drop_inode() which are already
->>>>> stale on the stock kernel, I opted to not touch them.
->>>>>
->>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocking
->>>>> other work. If accepted would be probably best taken through vfs
->>>>> branches with said work, see https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.18.inode.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKBMEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
->>>>>
->>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
->>>>>   fs/ocfs2/inode.h       |  1 -
->>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
->>>>>   fs/ocfs2/super.c       |  2 +-
->>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
->>>>>
->>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
->>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
->>>>> --- a/fs/ocfs2/inode.c
->>>>> +++ b/fs/ocfs2/inode.c
->>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
->>>>>
->>>>>   void ocfs2_evict_inode(struct inode *inode)
->>>>>   {
->>>>> +     write_inode_now(inode, 1);
->>>>> +
->>>>>       if (!inode->i_nlink ||
->>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
->>>>>               ocfs2_delete_inode(inode);
->>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
->>>>>       ocfs2_clear_inode(inode);
->>>>>   }
->>>>>
->>>>> -/* Called under inode_lock, with no more references on the
->>>>> - * struct inode, so it's safe here to check the flags field
->>>>> - * and to manipulate i_nlink without any other locks. */
->>>>> -int ocfs2_drop_inode(struct inode *inode)
->>>>> -{
->>>>> -     struct ocfs2_inode_info *oi = OCFS2_I(inode);
->>>>> -
->>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
->>>>> -                             inode->i_nlink, oi->ip_flags);
->>>>> -
->>>>> -     assert_spin_locked(&inode->i_lock);
->>>>> -     inode->i_state |= I_WILL_FREE;
->>>>> -     spin_unlock(&inode->i_lock);
->>>>> -     write_inode_now(inode, 1);
->>>>> -     spin_lock(&inode->i_lock);
->>>>> -     WARN_ON(inode->i_state & I_NEW);
->>>>> -     inode->i_state &= ~I_WILL_FREE;
->>>>> -
->>>>> -     return 1;
->>>>> -}
->>>>> -
->>>>>   /*
->>>>>    * This is called from our getattr.
->>>>>    */
->>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
->>>>> index accf03d4765e..07bd838e7843 100644
->>>>> --- a/fs/ocfs2/inode.h
->>>>> +++ b/fs/ocfs2/inode.h
->>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
->>>>>   }
->>>>>
->>>>>   void ocfs2_evict_inode(struct inode *inode);
->>>>> -int ocfs2_drop_inode(struct inode *inode);
->>>>>
->>>>>   /* Flags for ocfs2_iget() */
->>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
->>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
->>>>> index 54ed1495de9a..4b32fb5658ad 100644
->>>>> --- a/fs/ocfs2/ocfs2_trace.h
->>>>> +++ b/fs/ocfs2/ocfs2_trace.h
->>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
->>>>>
->>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
->>>>>
->>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
->>>>> -
->>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
->>>>>       TP_PROTO(void *inode, unsigned long long ino,
->>>>>                unsigned int flags),
->>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
->>>>> index 53daa4482406..e4b0d25f4869 100644
->>>>> --- a/fs/ocfs2/super.c
->>>>> +++ b/fs/ocfs2/super.c
->>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
->>>>>       .statfs         = ocfs2_statfs,
->>>>>       .alloc_inode    = ocfs2_alloc_inode,
->>>>>       .free_inode     = ocfs2_free_inode,
->>>>> -     .drop_inode     = ocfs2_drop_inode,
->>>>> +     .drop_inode     = generic_delete_inode,
->>>>>       .evict_inode    = ocfs2_evict_inode,
->>>>>       .sync_fs        = ocfs2_sync_fs,
->>>>>       .put_super      = ocfs2_put_super,
->>>>
->>>>
->>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
->>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inode().
->>>>
->>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
->>>>   ocfs2: flush inode data to disk and free inode when i_count becomes zero
->>>> the return of 1 drops immediate to fix a memory caching issue.
->>>> Shouldn't .drop_inode() still return 1?
->>>
->>> generic_delete_inode is a stub doing just that.
->>>
->> In case of "drop = 0", it may return directly without calling evict().
->> This seems break the expectation of commit 513e2dae9422.
+On 12/08/2025 12:53, Gokul Praveen wrote:
+> Add PWM capture function in DM timer driver.
 > 
-> generic_delete_inode() always returns 1 so evict() will be called.
-> ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'm not
-> sure which case of "drop = 0" do you see...
+> OMAP DM timer hardware supports capture feature.It can be used to
+> timestamp events (falling/rising edges) detected on input signal.
 > 
-I don't see a real case, just in theory.
-As I described before, if we make sure write_inode_now() will be called
-in iput_final(), it would be fine.
+> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
 
-Thanks,
-Joseph
+Applied, thanks
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
