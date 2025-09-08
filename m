@@ -1,117 +1,181 @@
-Return-Path: <linux-kernel+bounces-805689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E656CB48C54
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686DEB48C59
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A22973B68FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10282177460
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE8A2EC55F;
-	Mon,  8 Sep 2025 11:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E786A2E22BF;
+	Mon,  8 Sep 2025 11:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVLuMqej"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kXnDF+Pt"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE759281375
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F3D1C8605;
+	Mon,  8 Sep 2025 11:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757331447; cv=none; b=E+pwc7uIwOMC/HXwmAuAkX7+0OIHcjaNWHfdM0Us6wtsqZXzp+xotupOMwlKdrhFbk6IXhwJ5aWJOG1HyGw6fv/SHh5jXsTiyIw9oR7jKYyWY6L11gbBL+IpfCrhKAwZ0crgzxnH9QCzZPRmURbxo3QywvyuDmnyJjhnosaf0GM=
+	t=1757331499; cv=none; b=jSbOllQ/EB1UW0EBJ++msdqrtK4ZL4Z8IBugbpbCt6jv3Yi3z/b8Gmo954yjVlSmHbeI0XCy9nkc0cRiv4Y/OhylEu4ZPaCNaz/PpLYOTRy6R9vMEFPpNng8WlRn3sNpcsUijpravI7sogm8fQoKIrdnzGu2YJd2zvnwZuwz6ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757331447; c=relaxed/simple;
-	bh=Z0lQ6NnUvMGncmPaQWFx/tsnc+zIIpvP5hzKvREAakk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R6Qd35Xch/wh117CGUQUhR/gmeePV3d6AkW4FjSdJrqavV7Y8/9J/bkaG7bE1iPsikZeA4OyZCo0KWUzx+Ir89wFWkoV80Hno8VNvCX8k8um0tVijNvabpvyFIzSuK5vbU6QIFCQJ3kQi07veoW7ep8R9EVrRWfVFnBPPVk/gU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fVLuMqej; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b4c72281674so3269789a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 04:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757331445; x=1757936245; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qTe8Cug9ZkN6A0v6ou02v4J9C6gYARogp0/zKK1tnj8=;
-        b=fVLuMqejlJUAynd/SIjV3KV4LGQct8xTUUs9lpB4Q5QPX4vFzLJ2tN9/7F9PbyHa2l
-         rBDDD1q0ZzMaE2/KrQomxEw/81se7WdfeZP8zC6KjHQZmj3gtnnyP2EQVfTfcxoL3sSr
-         cJK1Z5QYG2mnZS25nnPXqNcoQYr6jFbkVQ/ck0/5wDdeR92c3/xo0P48K8t/Gbuibz+7
-         GYZFXtNZeNdNCbODVmhqi7eKEezV34geffAmdipJ5S6LCI0eFj/dtVILhqBtEjS1pOk4
-         fLgr5hdwZYvo15Uuu+HgtP2cPry94U1xaHddwrH0AGnfN6vVw2TWFz2G/MjxlTHlWSwe
-         jOdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757331445; x=1757936245;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qTe8Cug9ZkN6A0v6ou02v4J9C6gYARogp0/zKK1tnj8=;
-        b=YIjMG3rcFTI1p2CR5fjcq+Zz1Lk3O39br/NNcMdldMNDC4sgx6N5w+ziwTFx/NH0mh
-         KZmFYoSB3OAQQjNm3WHA+kuDHLYShFzugZ7FNyGR0pnRkk+pFqPwakxCv0XSUmOig6c5
-         Q8lvWDbWRfYVGnHpEQhHebR1QfDHySJEI9XRb8063djepBpfo2d0ZD0VlYJrT+riYIoj
-         SXXbG9pLEUaIqosnMxMbe70O4n/LPGalLsPjmN/YMzmB3LF5mXxPqcUJZG+2hTXBBOEa
-         DtCoSoXwM3/8pTy/nIh0kzXaXpYfSjyXhujBzjrwi/uRtQvYab1ovVGYLJFlnIgTy3an
-         W3Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBfU/Oz8K0JLsBM2UEXWenpBF9548/2YdQN1qQ8PlU0fRnrXvWu8P8roCR/Jmbs1Y4Q2kaEkPUuCO7tRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwptHuTq9NlfJJpYvqgE9me0tfc/fCTKFQTgjWAitEYkVy0cqJx
-	5GnFiKfBq0l9SrTe+6uq/EGmdDzflEX3fe80zTZ57ECaqWMt0jYWDJwTuUf0CVpKPa5ouPem3q+
-	9PA==
-X-Google-Smtp-Source: AGHT+IGBKCGzB6MxHOjzvaLePBq6tlh3PsUacYIKdu3RehAtLyoXe31cr6aD+Kx7YqouHT+NJ8dqf/a6sA==
-X-Received: from pjbsi6.prod.google.com ([2002:a17:90b:5286:b0:327:e172:e96])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:68e:b0:252:9bf:ad7f
- with SMTP id adf61e73a8af0-25344130937mr10349305637.53.1757331445092; Mon, 08
- Sep 2025 04:37:25 -0700 (PDT)
-Date: Mon,  8 Sep 2025 19:37:20 +0800
+	s=arc-20240116; t=1757331499; c=relaxed/simple;
+	bh=YD8QuYEYa0gfqlHQvWoPb9fVL+58WmU/vl6PJkfuLIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4UWTwJkoM5ec3b9ARFdszISzeymySpeu6tmg4EWkZ+6YrFrq1pzQQ/wUZ3BjpT6Fv1OgR0NBifkHfCWj6O6uGZBsuhwLKLk8+LQmhBEr8no2gzT7w1uP87DHrcW2X3xjseCblg5/cTQ3+r7rZY7haedO16QxMSNj3c6Yn/DVWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kXnDF+Pt; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5886dlQd021177;
+	Mon, 8 Sep 2025 11:37:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=4cLpuk
+	a8roRch9qOL0C/WjTJByijAs5sa6IyY3BemgQ=; b=kXnDF+PtROCklDcKXHl1L3
+	iGmuRdrMErFjr83ya2qGfPyzToOtNe31swMBQAvdZDW2uZZxOyXwb0qenuxfNZQS
+	yK1gGpMKoOPSCxnNo1gWsfkR8DHsFkHoN75xvE//3ZDN/WVd/KpDUwFcBQ4Nwyl3
+	lZGe8LEpSH67yZxtrydzN5oTyB1M+EPWc2NFHxY0jPlQBGmlzHYZfgVC3XxbIyl9
+	rExSh9BbPY7uNVjDLVZYiZRSLXD0pV6hD1I9Wq4rJVzzFyx1q6L1Xwl2RXjmNrWx
+	Y1mFNDGPcZ5o3vd4ylUBDSTOj1DHOueX0Ke6wHQ8tB0NLThjvqq9Ge1csJVDeiQw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsh04h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:37:57 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588BYiZG031328;
+	Mon, 8 Sep 2025 11:37:57 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsh04e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:37:57 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5889iiRb017172;
+	Mon, 8 Sep 2025 11:37:56 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gm5nm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 11:37:56 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588BbqO744499454
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 11:37:52 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B27AF20043;
+	Mon,  8 Sep 2025 11:37:52 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6655320040;
+	Mon,  8 Sep 2025 11:37:52 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  8 Sep 2025 11:37:52 +0000 (GMT)
+Date: Mon, 8 Sep 2025 13:37:51 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+Subject: Re: [PATCH 1/2] drivers/s390: WQ_PERCPU added to alloc_workqueue
+ users
+Message-ID: <1f2a16a0-9c14-4403-9c39-35f8b8138188-agordeev@linux.ibm.com>
+References: <20250905090857.108240-1-marco.crivellari@suse.com>
+ <20250905090857.108240-2-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250908113721.4031242-1-wakel@google.com>
-Subject: [PATCH] selftests/futex: Conditionally run futex_numa_mpol test
-From: Wake Liu <wakel@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Wake Liu <wakel@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250905090857.108240-2-marco.crivellari@suse.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX4fF0ialbnnbs
+ CFAtlwu17iQpMh/loDEAS7bIFepY0AHPQwl+6n3rpkvWb4lP3CKZYxpcFdfm8iCjC/X3lI2nKjo
+ 0suW2Wx/A51Kaj920CYKfs7pwVNPn7B5ubCq5/CvoVDk3+dlNQY9K9zBtPM6MxqDgQBPPK7GwSu
+ mA8E7XiRwxj/fFHes8OZ4kyL7RGIcaAIrUD9UDJRchHBl4QaKY6hHhFl+JZH32d01aoM/a9VoBx
+ 72iXPaCc9Qcy0fEwBN4oOfdspKBXFFC4bnDlgPcejA1fINDzJyPyGo6wcoTw729l5uUjlhXwko5
+ FYlHdyI1KuOlkoQaO4AclT/Kiqs+AJ7/o0Fs1Vjt3E12sJmsrPJBCBBxWFcmhyfnwfIXzAyXg3p
+ q3h609lW
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68bec015 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+ a=VnNF1IyMAAAA:8 a=usnAHYiZvopSxf_OJaYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-GUID: w9UsgZlT_jS4cHztfgMNw96us2kheu-z
+X-Proofpoint-ORIG-GUID: eQEN6vg2x-Ncwy5N2dLECV1Ih6NcGmiS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_04,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-The futex_numa_mpol test requires libnuma, which is not available on
-all platforms. When the test is not built, the run.sh script fails
-because it unconditionally tries to execute the test binary.
+On Fri, Sep 05, 2025 at 11:08:56AM +0200, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistentcy cannot be addressed without refactoring the API.
+> 
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
+> 
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they’re needed and
+> reducing noise when CPUs are isolated.
+> 
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they’re needed and
+> reducing noise when CPUs are isolated.
 
-Check for the futex_numa_mpol executable before running it. If the
-binary is not present, print a skip message and continue.
+A duplicate paragraph.
 
-This allows the test suite to run successfully on platforms that do
-not have libnuma and therefore do not build the futex_numa_mpol
-test.
+> This patch adds a new WQ_PERCPU flag to explicitly request the use of
+> the per-CPU behavior. Both flags coexist for one release cycle to allow
+> callers to transition their calls.
+> 
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+> 
+> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+> must now use WQ_PERCPU.
+> 
+> All existing users have been updated accordingly.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/s390/char/tape_3590.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/s390/char/tape_3590.c b/drivers/s390/char/tape_3590.c
+> index 0d484fe43d7e..aee11fece701 100644
+> --- a/drivers/s390/char/tape_3590.c
+> +++ b/drivers/s390/char/tape_3590.c
+> @@ -1670,7 +1670,7 @@ tape_3590_init(void)
+>  
+>  	DBF_EVENT(3, "3590 init\n");
+>  
+> -	tape_3590_wq = alloc_workqueue("tape_3590", 0, 0);
+> +	tape_3590_wq = alloc_workqueue("tape_3590", WQ_PERCPU, 0);
+>  	if (!tape_3590_wq)
+>  		return -ENOMEM;
 
-Signed-off-by: Wake Liu <wakel@google.com>
----
- tools/testing/selftests/futex/functional/run.sh | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-diff --git a/tools/testing/selftests/futex/functional/run.sh b/tools/testing/selftests/futex/functional/run.sh
-index 81739849f299..f3e43eb806bf 100755
---- a/tools/testing/selftests/futex/functional/run.sh
-+++ b/tools/testing/selftests/futex/functional/run.sh
-@@ -88,4 +88,8 @@ echo
- ./futex_priv_hash -g $COLOR
- 
- echo
--./futex_numa_mpol $COLOR
-+if [ -x ./futex_numa_mpol ]; then
-+    ./futex_numa_mpol $COLOR
-+else
-+    echo "SKIP: futex_numa_mpol (not built)"
-+fi
--- 
-2.51.0.355.g5224444f11-goog
-
+Thanks!
 
