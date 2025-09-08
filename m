@@ -1,64 +1,71 @@
-Return-Path: <linux-kernel+bounces-806851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA28EB49CB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:07:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C6FB49CB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B8644217A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:07:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966777AD7F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885842E8B91;
-	Mon,  8 Sep 2025 22:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010E2EAB83;
+	Mon,  8 Sep 2025 22:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FRz9PwYK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYa6ViDL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97A02DAFBF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11892EA166
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757369235; cv=none; b=BEm640b3fwMUCbqMxpyZPXg5d2E1m/JPv+thvv8kQIS/m11vePUrrjDmMmDoygS+yBsXHo2o7FQKSbu0RBlKDpci4+2LrXgo3XfpZJKcELk0Rc+YnSiOvuv9JK546aMkztuNuJZKp93Ll6bdyOEZLCb09T9lDiKlsqXmotofLH8=
+	t=1757369238; cv=none; b=GN/e3YCp1xoRdUTyfwnPJO6gjn2IG3LErRRuVlVIhFdgf6o07LuGAGUEN2o/iYDAYurpdh3CmMW3DSCA+3RI8c8wYxVb0/iCKC3dx7rTLaWvXq27vAMp38ipLopfoaqzWVOjprAwpBbeP1swnO7WSbgjyQLwddBnbMyX16mQMUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757369235; c=relaxed/simple;
-	bh=p/Ims0Ypd3d/7zo9k2sG0p3wrCwhThGPL1JeFbGHwn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhZ3WZsM+6bWuOc4sYd5JaJQwJVnNeRyNeQxWhYeSDS8Anm7/JLSFNXkXwe09+4WhXK1HkAXlAor68/V4FexL+UK3jLC+687AFpBmKEF335GcUFfWItIlsy/Ha57JLcYL6n35PCegPThRTVF1f6V1wOl5l/SLLHVGp5jG/0A/To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FRz9PwYK; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1757369238; c=relaxed/simple;
+	bh=VTyyObHR88FDo90+g9Ql1CNb2rsAg3EyIbgbO6VqvY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ChuDHG2bgg1k3x4A+JiPoT9P7Axf8U6kGwe3sbpzP2nnfq1rZzldse5OAB449O+N1+EyBlvDE3HOJqSLQ6amLU/5Jo5ZzTOharCXZHCh2zDtp/YaDpQupQ99+ef2d/Anhsr2pDubAMUv5B+z2a0858mr5MaHse7yZlzRepQGyzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYa6ViDL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757369230;
+	s=mimecast20190719; t=1757369235;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JkoTyeNf/GPBdyB+JgS1FXgnD5G8Br7KbPR2/Egwx+w=;
-	b=FRz9PwYKTVuYM1O1LZXEecJw90bZB+Z9g6Gla+6hXHzO/52uGbh4Yt19roWTci59J+ynF8
-	t/+ARbmjupR8hiwBWp6z7Us9F2/1arbB9zeTNeky6sdiURG5QTyxg6/Fz9PDSwkIuEF0J/
-	8PFvTwXQRRxCRyGr+KCJHWasJT3HrHI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dKR3M+u2UbhgI9ZzLhPjRhOHXsTKC9RJaF9aymRCG+M=;
+	b=UYa6ViDLN9opQoETBZUPeiohX5HbkXUDAPqoywOOnhU1Ji6Rh0U7KbIsOrDqocmWFWTsBX
+	uUltcWFFDuZSo5XQqh37bWb94xrQb8QVoSghU1zY+/lA6e3W5UWb2ro6R2h3b0/or1UUgS
+	9BT0q4jNW8+x+KhpZEYEZgWlXvSLK+o=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-195-Mvf5fWX7O8KXB7tTI2FKdQ-1; Mon,
- 08 Sep 2025 18:07:05 -0400
-X-MC-Unique: Mvf5fWX7O8KXB7tTI2FKdQ-1
-X-Mimecast-MFC-AGG-ID: Mvf5fWX7O8KXB7tTI2FKdQ_1757369223
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-144-3ydI1IEgPEucyGfw7RBkRQ-1; Mon,
+ 08 Sep 2025 18:07:13 -0400
+X-MC-Unique: 3ydI1IEgPEucyGfw7RBkRQ-1
+X-Mimecast-MFC-AGG-ID: 3ydI1IEgPEucyGfw7RBkRQ_1757369230
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8702195608C;
-	Mon,  8 Sep 2025 22:07:02 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E507C1800365;
+	Mon,  8 Sep 2025 22:07:09 +0000 (UTC)
 Received: from chopper.redhat.com (unknown [10.22.64.41])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 80E871800452;
-	Mon,  8 Sep 2025 22:06:59 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BBBC41800452;
+	Mon,  8 Sep 2025 22:07:05 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>,
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
 	Gary Guo <gary@garyguo.net>,
@@ -67,10 +74,14 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 0/2] rust/drm: Remove blanket AlwaysRefCounted impl for gem
-Date: Mon,  8 Sep 2025 18:04:43 -0400
-Message-ID: <20250908220657.165715-1-lyude@redhat.com>
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Asahi Lina <lina+kernel@asahilina.net>
+Subject: [PATCH 1/2] Partially revert "rust: drm: gem: Implement AlwaysRefCounted for all gem objects automatically"
+Date: Mon,  8 Sep 2025 18:04:44 -0400
+Message-ID: <20250908220657.165715-2-lyude@redhat.com>
+In-Reply-To: <20250908220657.165715-1-lyude@redhat.com>
+References: <20250908220657.165715-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,22 +91,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-This patch series simply drops an blanket implementation of
-AlwaysRefCounted for gem objects, which would cause issues if any other
-additional blanket implementations of AlwaysRefCounted were present
-within the same rust crate. While we're at it, we also introduce a macro
-in lieu of being able to use a blanket implementation.
+I made a very silly mistake with this commit that managed to slip by
+because I forgot to mzke sure rvkms was rebased before testing my work last
+- we can't do blanket implementations like this due to rust's orphan rule.
 
-Lyude Paul (2):
-  Partially revert "rust: drm: gem: Implement AlwaysRefCounted for all
-    gem objects automatically"
-  rust/drm: Add gem::impl_aref_for_gem_obj!
+The code -does- build just fine right now, but it doesn't with the ongoing
+bindings for gem shmem. So, just revert this and we'll introduce a macro
+for implementing AlwaysRefCounted individually for each type of gem
+implementation.
 
- rust/kernel/drm/gem/mod.rs | 59 +++++++++++++++++++++++++-------------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+Note that we leave the IntoGEMObject since it is true that all gem objects
+are refcounted, so any implementations that are added should be
+implementing AlwaysRefCounted anyhow.
 
+This reverts commit 38cb08c3fcd3f3b1d0225dcec8ae50fab5751549.
 
-base-commit: 6b35936f058d0cb9171c7be1424b62017b874913
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ rust/kernel/drm/gem/mod.rs | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
+
+diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+index fd872de3b6695..af92f2d46d8d8 100644
+--- a/rust/kernel/drm/gem/mod.rs
++++ b/rust/kernel/drm/gem/mod.rs
+@@ -54,26 +54,6 @@ pub trait IntoGEMObject: Sized + super::private::Sealed + AlwaysRefCounted {
+     unsafe fn from_raw<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
+ }
+ 
+-// SAFETY: All gem objects are refcounted.
+-unsafe impl<T: IntoGEMObject> AlwaysRefCounted for T {
+-    fn inc_ref(&self) {
+-        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+-        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
+-    }
+-
+-    unsafe fn dec_ref(obj: NonNull<Self>) {
+-        // SAFETY: We either hold the only refcount on `obj`, or one of many - meaning that no one
+-        // else could possibly hold a mutable reference to `obj` and thus this immutable reference
+-        // is safe.
+-        let obj = unsafe { obj.as_ref() }.as_raw();
+-
+-        // SAFETY:
+-        // - The safety requirements guarantee that the refcount is non-zero.
+-        // - We hold no references to `obj` now, making it safe for us to potentially deallocate it.
+-        unsafe { bindings::drm_gem_object_put(obj) };
+-    }
+-}
+-
+ extern "C" fn open_callback<T: DriverObject>(
+     raw_obj: *mut bindings::drm_gem_object,
+     raw_file: *mut bindings::drm_file,
+@@ -272,6 +252,22 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
+     }
+ }
+ 
++// SAFETY: Instances of `Object<T>` are always reference-counted.
++unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
++    }
++
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
++        let obj = unsafe { obj.as_ref() };
++
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
++    }
++}
++
+ impl<T: DriverObject> super::private::Sealed for Object<T> {}
+ 
+ impl<T: DriverObject> Deref for Object<T> {
 -- 
 2.51.0
 
