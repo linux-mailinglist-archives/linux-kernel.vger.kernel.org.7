@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-806116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C83BB49217
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87043B4921B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E953AD22F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364143B1758
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56B22EFD86;
-	Mon,  8 Sep 2025 14:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1CD30B518;
+	Mon,  8 Sep 2025 14:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vg42yqlX"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H0sZgex0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353D7F4F1
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C115AF4F1;
+	Mon,  8 Sep 2025 14:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343189; cv=none; b=hciJJK2YB8DAY6fxQ+H1Lf5D2Ysc7Mh/dpko3psdlVuNhuasdPFFqcPb75S4GumJIoW9txJRPyf54YSZG8HwH+Oz5kvDO+8mNQLZ9flfpWYQw70TuKjV4dec8OGnHvcxyDILGXObaiewOBbQ9EFkHRXJ3w9e10+mqU5Sgqi8Wq4=
+	t=1757343220; cv=none; b=VZVZ3Gp2l2kwccgpU4+K0rAWVoqhEymnMD0KwgBvbR51IbvxAi0MX/xMi+y7fv28qGouFc6C6m3t1MTMbpS2nDdc8lTPMSabIyExCWVMbRSCW1Y8epT0PHW1TCg1Ure3W6Xk5JpZP1zQqgTH2Cih2xbS/wIKm+P+KRkNb0qNxkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343189; c=relaxed/simple;
-	bh=w908XqzITzwjbcbAyDCDAnUAsclxmaNblnj33zPUwdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GcPXWf2iXmK7Q0eav2YA8XZqZIFIibP2A1uxJS7ohMj1VKTK/0gqkXduZ3jwPT9iYKPB4/VAWiig5+XJyU4++F5kyc7cvnpsClyDj9dzIQ2E1AcgfNWYeCqrWXCylWnhTKWnXw0UREGIUEZ6Gu9Hgzp/Xy90QW/pUsxo5fCFmNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vg42yqlX; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f7039a9fdso4664756e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:53:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757343185; x=1757947985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mZgxsRyjTNfqBSFfm5OF0LiPwRAdn1CSfCB3geckfQc=;
-        b=Vg42yqlX9QIN64GqvUqiBLRnqwEoAfSlyCjlZqqJHSLfaLLpoLy1BKDspS/gv/qpSS
-         vWAG+lwBNrRFJ8NXkz02WTABjzY0795H+FgM4PI/nBmkuksOp+JZCmzNv+CEZDHfpPG6
-         gE1AyQzY/6DWPar308zHxiq8CsVFYjEmhVO3AhMqn10sctNug/HAAO8sCc1bPzdnDtdQ
-         b2MhZxC+cLN1pSaEK2qRnI4thScQl0pr6++/LbGP9JIMmf0W1hQdpyJxcA0DU5uYr9Zj
-         sshSO9vjK/u5pNWPGGhdXc0PIwE2p56DJvzvD3yLnp83QMA3dqD1s8LKkOVhxRIGZmhG
-         /cmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757343185; x=1757947985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mZgxsRyjTNfqBSFfm5OF0LiPwRAdn1CSfCB3geckfQc=;
-        b=lxSKt7/IIqVdNZlgU0+IMRUtfhf1V/tTHCYIrLzhoWclLvuQz447jYhNsArlCHKvfP
-         QofZf2V6W7zmi62EeUmooC4n2myFgUIgoPczumu4f0AvxqXSWOZnQuhuGC7TUZe+WHq2
-         kZLiieAfGu8RvQx2Z546WnuhhFAcGKfI/c6YAfJ5oRMlqmUv4GtHTTE8julrk9Wl5DuA
-         3y4kM9tAyktwD/1owIYBLwq/Tn1ZSgNi0dGDO/K9c47ILe27VKZgPClM7eQKaz35sCvC
-         /JClQCfMFAXlIZ6TtTafOzsrKcbRxYpufMMBBJfEnt0h/48OW7OQDCVPHzAKJwY9u3Ks
-         Xfjg==
-X-Gm-Message-State: AOJu0YxpL86qtCS2TXsqvQbbTw3ARyyhirosUC1V4UpOXLji0xuIpH8x
-	H/OzJVTki9OkS9DUnOfhYhcdlLzwUasOWWdlHKDQOuqJRrFsId3CTPUcHTXlZ3zUFk4/CKo4j3S
-	oK0gc09+DVzNcSkAPu9uxDzXOs9MEI0fnPeShMkFeug==
-X-Gm-Gg: ASbGncti7jWdV5t49YvuyvNvDIcFKUMUCk8l21dM6BKGSxESbmDZnpsT4ZWIhA6ebEa
-	KhMoaMy2vWqwgFhjIFJzcCk2x3y9TGcU8V29Bw9qdhzB6r4kZ6aTlenpoUF8mlNGRJEnNGOgvlC
-	gIcv5txdIgsXQh4hvv//8bPcxnJe4nOxGqLBsVTfoIJs8Pf4MMcD6FIl8U+gNYDA7+hQ9kyJw46
-	+QcQsIbmPgGNtuLHxwNNxmpTYfisFfQmR21aSDwyjXXLI4zSgw=
-X-Google-Smtp-Source: AGHT+IExEfPbhw040Ax9lWYW/00RYCi5NPaxixND3pSwMj6GHZiYvxD5N07cD0pPsVKbbPShd9omKE3rVgQGsIM5504=
-X-Received: by 2002:a05:6512:128a:b0:561:9635:5b1a with SMTP id
- 2adb3069b0e04-5626275d86emr2242787e87.36.1757343185301; Mon, 08 Sep 2025
- 07:53:05 -0700 (PDT)
+	s=arc-20240116; t=1757343220; c=relaxed/simple;
+	bh=4ejeLhZ6tG5k/CAQk8S8fF5V4jQskUGzKNkhFGcv3xo=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=UZI8y4u6tcwBXe+L7KP6/TsTRv7bXJu58laZdNQkxT8fjfnsEvfld26rGgU5ea/+hImHnUYAPimWpcGJwTRUyp6bGWR0UcZyqgtQSx79dtGYGPFCcjOlMdJzod1dfaSaxsAj0Lhll7X/mk+zKab3qj/SOhmTpuzMmp9078xaO8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H0sZgex0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588BXErN009608;
+	Mon, 8 Sep 2025 14:53:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Jvlbpr
+	Waq3FVs5LaKh8dQji8AHiVaMt9q3PcZwfUrLk=; b=H0sZgex0NzlHbcsy8InDsX
+	dTEdcs+9/NhS56zKI3C+aUN9xADydlxM6T+6Qb8BMg+Fm0jsfygFTxzbLfe5q1AB
+	cxZy9Cvtp5Wm5nASHxsHiFxyu9/Js/E/3NdVz3CbEvhG0M6lpUGMB3DlJd/Y7GhR
+	nEUrQnlehlUlV8y3G2OQ4JAEYMxLk87g2ghODxN9nhdo12FWooRbiEARqTk2CHLl
+	EFd8LFvDtkqIYqVfDjXJ5HqzTCAhP1ihqERYwLCQSRBHjdnh84MB1fLL2IakYgxS
+	RgVF0erfNv+1GSOkpipo907J4cRadrb6k0ao0ON1a6rvxZVJerq1Be2JyHAfMQJQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff26cf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 14:53:07 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588EmH3v007957;
+	Mon, 8 Sep 2025 14:53:07 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff26c8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 14:53:06 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588CgNhV007895;
+	Mon, 8 Sep 2025 14:53:05 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pem43-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 14:53:05 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588Er5tb15925792
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 14:53:05 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0157F5805A;
+	Mon,  8 Sep 2025 14:53:05 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E6ED58051;
+	Mon,  8 Sep 2025 14:53:04 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.92.24])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 14:53:04 +0000 (GMT)
+Message-ID: <13d7fcfecb06423294ae0553c9a561f4cc8faf67.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA
+ xattr
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore	
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	
+ <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <53wb5tzech2k4k25xy2heq7ohmp2elw2a7l4x3nfk6fajfydur@5thsinydau5x>
+References: <20250902042515.759750-1-coxu@redhat.com>
+	 <d252b04934908e7e65a3299bfeffc282c7b0b12f.camel@linux.ibm.com>
+	 <53wb5tzech2k4k25xy2heq7ohmp2elw2a7l4x3nfk6fajfydur@5thsinydau5x>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 08 Sep 2025 10:53:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905091016.109428-1-marco.crivellari@suse.com>
- <20250905091016.109428-3-marco.crivellari@suse.com> <54446af3-9ca5-4932-a3fd-e44185751dda@sirena.org.uk>
- <CAAofZF4XEFXWQEqeKJ3aTjPRuu5RgOEYRLX4Aeq=RGh7gnLGTQ@mail.gmail.com> <863db036-c077-4b2e-a65e-af80ea3c2d24@sirena.org.uk>
-In-Reply-To: <863db036-c077-4b2e-a65e-af80ea3c2d24@sirena.org.uk>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Mon, 8 Sep 2025 16:52:53 +0200
-X-Gm-Features: Ac12FXz-x46Jv77tsnZjCak9n0-W3djTFw1DDQgyBPHKQcYYQKtSTpBFVrLvLDQ
-Message-ID: <CAAofZF7kqQmPAHedq4F-7T5fYH45WbOF=fWwSRbMcc7ZcSNxbg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ASoC: replace use of system_wq with system_percpu_wq
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nCth1x5t4Ggujz5ZK94I6HudKIYhfAv8
+X-Proofpoint-GUID: S2B6xdoBFwUWmzAOdF2f1yTmkOYzfUm6
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68beedd3 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=iol2u-jmQgTjznvq4PsA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX0USws6mBdETW
+ DPf4UiNAqPLj+yGOXQeXrfQqkviTrOlDazWiSygyB7CoXOoRH0dX3J5+R905oMa4KAserwdnkQx
+ fb+8Jiowb+US7SHk6BgfMGxqAVsMAlyRRBx+/diy1fONCNgz82PbXtflja0/6pAlAjqMQcAUiuo
+ m0YI5KtFmLDgQtil0NCvOkUxTCbau4nDrmceq+wIbQwhMR9juNN8rBhn1LTPHW52WiyStLkSKXf
+ UihzgRezxRCPMY47OgMHQTOmoUboypHZKv4pJevKbjbNAmUPOkrfzWS1nVBaNdAR+m/o78Ih//K
+ /k4wigAhyZ5gK7MbuBQUN71mBtFzLzm0y3xCl0nlhAutOD3FjQxYfdj2WDkgdAABgGUifQh1dMX
+ MjbcuscL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-On Fri, Sep 5, 2025 at 6:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Fri, Sep 05, 2025 at 06:00:04PM +0200, Marco Crivellari wrote:
->
-> > Hello Mark,
->
-> Please don't top post, reply in line with needed context.  This allows
-> readers to readily follow the flow of conversation and understand what
-> you are talking about and also helps ensure that everything in the
-> discussion is being addressed.
+Hi Coiby,
 
-Hello Mark,
+On Mon, 2025-09-08 at 19:12 +0800, Coiby Xu wrote:
+> >=20
+> > Even without an IMA appraise policy, the security xattrs are written ou=
+t to the
+> > filesystem, but the IMA_DIGSIG flag is not cached.
+>=20
+> It seems I miss some context for the above sentence. If no IMA policy is
+> configured, no ima_iint_cache will be created. If you mean non-appraisal
+> policy, will not caching IMA_DIGSIG flag cause any problem?
 
-Noted, sorry for that.
+Sorry.  What I was trying to say is that your test program illustrates the
+problem both with or without any of the boot command line options as you
+suggested - "ima_appraise=3Dfix evm=3Dfix ima_policy=3Dappraise_tcb".  Writ=
+ing some
+other security xattr is a generic problem, whether the file is in policy or=
+ not,
+whether IMA or EVM are in fix mode or not.  The rpm-plugin-ima should insta=
+ll
+the IMA signature regardless.
 
-> If we're going to convert everything I'd rather we do a sensible
-> conversion now than have multiple rounds of conversions.  I strongly
-> suspect that most if not all of the current users don't know or care
-> that system_wq is percpu.
+SELinux doesn't usually re-write the security.selinux xattr, so the problem=
+ is
+hard to reproduce after installing the rpm-plugin-ima with "dnf reinstall
+<package>".
 
-Sure, we can do so. I will send the v2 hopefully with 1 patch only
-(meaning that every system_wq can be converted to system_dfl_wq).
+thanks,
 
-Thank you!
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-marco.crivellari@suse.com
+Mimi
 
