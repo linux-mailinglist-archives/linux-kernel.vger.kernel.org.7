@@ -1,233 +1,228 @@
-Return-Path: <linux-kernel+bounces-806127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE652B49231
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:59:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F246FB49233
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E176017F434
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:59:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71C8417FDAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00A530CD90;
-	Mon,  8 Sep 2025 14:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B9B30CDA9;
+	Mon,  8 Sep 2025 14:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="5PrR3yY5"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2118.outbound.protection.outlook.com [40.107.93.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6P7kvb0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155A1221DB1;
-	Mon,  8 Sep 2025 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343549; cv=fail; b=ILRPRrL1Ah0j8Nl+LlJS5TBSDgoN90DGeF+WMPnX8WvabIfwzcDHum51lYUhqb6V1KYzQJANzMnzCf+mifN0tXxtDXBahsUm0+dYX6n0/KVsYettlH1J3mqsYHL/DAg7GoanhX5ih5RZeK5va45NZVqi6CNMKhcTP93NmRreZ/E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343549; c=relaxed/simple;
-	bh=rf/fzuBgV9o7Ar99e6EcMUiEcXdU99ofxdYBTSKhkNc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UiJqR3uUxJULNhf7eYwj6njs+XxKcKSo29kbzMhBjnP6wQmUFxk67aa5/L7ESAJNcQmTM8k+eT90ylZPySk4V1cmt/nbO/9ElrueEdJhDahXbX5a4eGxO8jXik1n4gYQdvQFmGn44aSNrEFzwT5UNc415IqZLTJmQsIfpxuRo6I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=5PrR3yY5 reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.93.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vvxjDLmsl0pOpIaJiSxrI4kc0sw/m3I6CyxI4APp6WcYx23odJHu6VHdpEcd3dQSffsiP3d16NOCj65SVpasS2GJIF+/ppBIMSlqxsDV+uQxba3Xx0Drzoi1ISTNvGMTgYtpMPax1wfXRGfbq/J6oux/5aDSGypwwRZjFm90axt6I4tx1P7OvNLFgwX5P5/7WBGRyUQX6OJMPF0e2QDvLd/Vh4ZkeXQTtbFSaAMZPDXON4KoGN/tlBpOfgXFIa0GfkBwO0H0aWodQ0JiIiluidtXHCAfidqpuMWXTelqf4bDgM9W7v6sNkckwGsr38/v5OlMnxH6nUvZD9uMDgTb2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Zg+H0aVEsm+t8rJVzude0IuXSgq6ug3VHjk5W29r84=;
- b=UTuRyd0YWqUq3neuQoNl4AeJo8SyUCydUVJ+HpMvlWN5ZmYgk+g4sgx2u4Q2IHpKLD8+jizdUDAt8G1cZ5rKlfV9+ZOPVxYbKqxD8ktYpRfAcJ7v6tg4UgXFzSMyqwZdqbAGS/zxlzmfozzPjc+CW5Q0M5SEd8LYp09J68JsU1L9AQMawdZxTqY+r2Tsw3UMeeJ0NATCTItay2/+94EFdDKNZEJDAODzY+gP1S5xHDnbi+ZKh5q3XFqeVUUOdCvRJlzkTS3UmJJXLn0E6NrU3U5Tx4DOCH9byF2EovqpWBWRn9ioo89Kd7mYWmpq1n+QhHzgh+aEP84BGlonV0uM4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Zg+H0aVEsm+t8rJVzude0IuXSgq6ug3VHjk5W29r84=;
- b=5PrR3yY5Tvi3bHWenNXhCtw4Jmzl+hSIRYbCi2FIYjmTpD4OpMKa/7jcBjczF+bMO++5JN/rxj1OV4pOjavfhYghsKBtutG/c9GDYZ2SjWkKnE8bR0ZCUZkRCt9jlf7jWe6sp2gTrZbjONV6n3tlY/6xjb9MEXpsW0mmtFuGF2U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- SJ2PR01MB8206.prod.exchangelabs.com (2603:10b6:a03:545::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.19; Mon, 8 Sep 2025 14:58:58 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.9073.026; Mon, 8 Sep 2025
- 14:58:58 +0000
-Message-ID: <1ec0cb87-463c-4321-a1c7-05f120c607aa@amperemail.onmicrosoft.com>
-Date: Mon, 8 Sep 2025 10:58:55 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 1/2] mailbox/pcc: support mailbox management of the
- shared buffer
-To: Sudeep Holla <sudeep.holla@arm.com>, admiyo@os.amperecomputing.com
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Robert Moore <robert.moore@intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
- <20250715001011.90534-2-admiyo@os.amperecomputing.com>
- <20250904-expert-invaluable-moose-eb5b7b@sudeepholla>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20250904-expert-invaluable-moose-eb5b7b@sudeepholla>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1PR13CA0081.namprd13.prod.outlook.com
- (2603:10b6:208:2b8::26) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9985730BB9A;
+	Mon,  8 Sep 2025 14:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757343563; cv=none; b=BWGzs9VUCymmbXG/tAyThwGnfc1WJLng/iFcATZq73a1KfAzIp6RD6vdYY5ho4oC+kSIeuLoRRRYqbkOkBbawUnwofHtNelpiTHbqsZ20yskquHsrOvGHergvDtM0VR9rOBk328qdr4JnyZMStwlPoL1Rr7I2vx5f2Nl812GYBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757343563; c=relaxed/simple;
+	bh=otgqWTIuVTslI+DJ2LPpoUIdkOI9OhIMBK8AkSETJBY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=FPvsduXhMrUUt3LcJRJBvWxkdHz7/XARi1o43YwC8yTU3+jCkz0w+MT3S3kK3S5JnBORa/iFvpqeH9lyYN01+v1KOUHfxGYQh9WLZZFd6QfTSlCe/M7JrRvuOBGQQ7kN0f0x2z61GlX9qlORqpVk41lE3/zf6GOWPC+67QoNgBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6P7kvb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B48C4CEF1;
+	Mon,  8 Sep 2025 14:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757343561;
+	bh=otgqWTIuVTslI+DJ2LPpoUIdkOI9OhIMBK8AkSETJBY=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=S6P7kvb0tjREX8O3l15m4nh+9Sx7jA99s3DsXMQuJ2wRSBmOdxBKZyDKj7dgbUu0m
+	 dZKHtS6rlEL5lGJ7R8fwxgMCefwwzXqJWBEYrrPxZpLEasm9jE+610PkfBU4P2Wtil
+	 5TjKygA7SbOUy+9X0UW5iMNVk4emSoowHtJXHBfwUaZMmUeNEfMIpx6Wc9PlN0chWS
+	 kc5esLQjkVe1LBOSN0P86EjbgObKOQXdLprfNABWX6SGXWzWe7J+winuTO7kTuFNbA
+	 M2NkgvV+fdqIkkMX6e5rAuu7D4qsTftJMmHoqjSl4+RgtrQ3VamHszIrrwDAi0YEo+
+	 ITs+PI5krSUjA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SJ2PR01MB8206:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca322507-4bb7-489c-54ec-08ddeee83d22
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVkzVzhucUtFNnVqWkg4dzI4bkpXYm9nU0dQT2tacE1sRy9OSFc1c0pBbVhY?=
- =?utf-8?B?V2VzNEVCcXpJQ2RBVDFmZlhMa3NtMW5zTzFVN3ZRZWw2WERCV3lnZlRjMDZX?=
- =?utf-8?B?c2Q2L3BtYzZwanNCWVNCTExndXJKTm52RXdySWZlZ3B0ei9makFPREIzZW9M?=
- =?utf-8?B?QnAwZFpmOE84NGRvOC9RQ2ErblcxL2phdERZTkFCc0hjUk9neVNaM0VyZmdV?=
- =?utf-8?B?TDZQY1JYZDF3ZzgrNFhpbFhqZTNjeGIwTi9lVGROMDlrZnpZNUxXcXlVdTlr?=
- =?utf-8?B?MmhSK250ckM5RlZpK240aE1hcTN4SlZreUdlVTJJdjF2UGx1YzVFS3Rhd1ly?=
- =?utf-8?B?MWVMSmNFZmladW1GS2RYV1BxckJEbFhyQVBkRkFIVG9sVE9TNDZkMUEvcnEw?=
- =?utf-8?B?d3k2d0VmT0thVUpOSmx2NHFHcjl0VkFIQ3RRMElmbEJ0OHZBYkM0Q0R0dzNp?=
- =?utf-8?B?TkNZcjdNVHZBeFgyT1dTbDUyemZzMFIzd1RVTFh2RGkrZFkxdDNJeHNMTUk2?=
- =?utf-8?B?dHYzNTRqb3JrU2x3d0FWUjJ2RERlMUFoYUR4L0ZzVG5ZYlFscENCcTFRbWI3?=
- =?utf-8?B?M2tGelNJNnFSS0t1WkRPYjR5S2NPeEZ2Ull3NTBiZjhrR3ZORnRlZHBTUTRx?=
- =?utf-8?B?UkJIRHVkSGEzd3lKb0VGUUZpMGNldlJQRS9sNkdDR3RtREp4ZzhPSVFLVFo4?=
- =?utf-8?B?cjlqaTBIdFZ6Wm9xaUtlVS9aZGlpRlZjOU9MTHA5Ui9TRU5nTG5QL1FZV1pO?=
- =?utf-8?B?ZGFPYTlzNGlhcllzVDh5MlF2bTVtTGFvL0V3U3pVL3U1UXFFKzlCZEdKN3Nt?=
- =?utf-8?B?RXdhZVhLVzVhZmV2RXNwU3dwbndTdG9ITjdqMDVMaVhDcWhaT2MvSTJjZGRy?=
- =?utf-8?B?WEI0NXU3ODFNTU5DMUtmWENxNkduaUJHdE0yRWg1UTJZcUVLSVlucXFBNFIz?=
- =?utf-8?B?RlBLOE5RRHZmaDkwaEtTMElnRXhXVUFQT0ZmaG9GSDE0RXh5ME1udnZXbTAy?=
- =?utf-8?B?WXg3TXRNdzltMmJVNTc0NUtFMkpvY3NjT2lPLzhnZnU2MVNIam1EQ2JZelli?=
- =?utf-8?B?QWhweFRpdHU5Z2lMTXdhajJjMzZqdGtieThXNWFKSWZzL3VLMGJFTXdUdUFR?=
- =?utf-8?B?STd4ems4NUtCL2luZEM0RllVL24weDdHMVNPK1VFTFNvVW1MZnVMcHZYbVFK?=
- =?utf-8?B?anY2ZjliVFVUcExEUGdkM3NDeTQ5SlVOWkJITTA2YzZsTWJDM2lzWXUxZDBk?=
- =?utf-8?B?RWEzU01lT3RwQU94SGlNK01rSHBEbHdDYmVnSnNDSnBCV1Z0ZExhUVNSSmgr?=
- =?utf-8?B?QmdZclNpK2NjMkFERitvcFBibzJZZm83QjhtbE41NEYrUGs0eW14SEVCRGZt?=
- =?utf-8?B?OE9WZjF2MFJIQitRNEMzUHZiajhsSHhBeVZiTDVBWkpMWWQwdWN3bzJ1Y0w5?=
- =?utf-8?B?eUZXblUvRmd4TUwxeEh5OFlBNDY4ay9hWVQvWDY4UU1wMlM2bWpNeEcvSVU4?=
- =?utf-8?B?Y3ljbG1TZVRUU3BjOE51ZHlseHRzMGxCWlJsTjlUQ2R3MitBUXc4a1EwMzFQ?=
- =?utf-8?B?Y3dnVE52ZkV3MTlQc2VlcE1kMFR5V0pXSWtFWmdZbXR5NWR3SCtwendTb0Vk?=
- =?utf-8?B?MCswSnFrVlRacWR6eGM1dHVGWlA4U1VKYTlyN1lwNFY5S0V5V2FMT0hyN2h4?=
- =?utf-8?B?T1NyZUZMdjU3SzkwVjJaS21rc1lOcE1SejBhTXVaVHBicWdISnc2VHY3Y0I1?=
- =?utf-8?B?ODQ2UitVekZPWHBXQmRoMGlyS1hTWHAxTDFEY01iSnNoOGNBZzNmcnAzeTJ2?=
- =?utf-8?B?NHEydjNYL0RvdUJqWTJoRkNHeHB0ZXN6UE9TMStsU0liWUNsWS9qT1Rsa2lV?=
- =?utf-8?B?c3IyNHp5RzkydU0rQkJzME5ncEdtREdIYThrdjRldVZoQU54dDlsb0dtWnpT?=
- =?utf-8?Q?Uf13jD4EPyw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGNLbHkvaXN3RWMvaUZXRXVyNy9TdFdQRzRwcXVZMDJ4S1N3bkQrTEVpcm1P?=
- =?utf-8?B?alhCbTc1MEd6YXhTRzBDdnpJdWhBLzZpcWIzcXZpWG1jL2ZmUmNQSkRuRVZy?=
- =?utf-8?B?cE1PVnRRK2Q3RERTbVV2NXpTWklQV3N4NVJBZ1NaRnNaSmJHZGpQeWFMY0du?=
- =?utf-8?B?U2cwTFRibyttUUdoRU1CVmJDM2I2QTVvZG1UYTV6ZDRSNnk1ekN0QlNNOXIy?=
- =?utf-8?B?ajA5b0VXeDZpS1kzcHc0MnludzlEOWdhZTJYYmpTWVRYOXZmVEtobFhGZjdz?=
- =?utf-8?B?ckJ6aXNmTHRLbUFXbVBrUkR4TVd0Wi9oTmNIaWhOZzdxUHpXaEJ5dlRGeUJJ?=
- =?utf-8?B?Tm5GOFhiS2ZzeFBTdnZWcW5oeG1vRi9oWUNXT2NLTGQydDZjSTJhYnJMNlho?=
- =?utf-8?B?NUNGVms3dU9PRng1eE12dHNSeUFUWEF2ZFN3NGdQbnRBN00vZ2dpZnkwbHU4?=
- =?utf-8?B?VmJMU21kc3pTbTIwZWxZUGpnL2pTY1dHcTF2ZTVXb0FWd054ZitTTm9ZQW9k?=
- =?utf-8?B?azRuTUZncngxYU5HTzFPQnFtTFBROG1RSEFwb0ZUWVpKelM3ZUQyUDFXNlR0?=
- =?utf-8?B?ZnBSZkUzQW4yNlpLNjlwR3JPVlFzQ2JUUHJXS1RnaDlPMVV1bElYc3lwYkRi?=
- =?utf-8?B?ZkN6c2x0eVlad2VyM3Q4UnZoWWtDVmVvV0VsVGFkV3RESGViRXhyU2tSYjBI?=
- =?utf-8?B?VWIzVE5ZUjdBQ1NURkorWndzRHhrcjNkZDlsenNnTmxpSm9uSjVtQkNSZ2dn?=
- =?utf-8?B?RG9ZVjhYRnBrOVAzOWZtNFRoSXNYa2FSRUdUK0RqZkpkZGpjTlZEUjdGM2Zy?=
- =?utf-8?B?eWdoVDJFQUxPejdCcDJ6ek10OU5jTmpIT0E0QitzZUtkL092dnBJbnFtRnZD?=
- =?utf-8?B?eG1IQVd6M1ROZFdRVlNwMjdqWlprTkdHZnN3alBLU0JPaFV3YU55SnFUNmhT?=
- =?utf-8?B?T2cxeFV5bW80WklYRmxQZGVvY3ZMU2I1dHZKNGl4NXRWWVgrN05JTTNvazNF?=
- =?utf-8?B?OVlGRTIweGppRkZEVGt3ekI1V05jbzRzdTUyVFNpMEdOS2JWNVF2ajBuSStv?=
- =?utf-8?B?Mmc4RCtjcnE4RUpoWjhmMkFRQ0xGaG1lWFYwRGlJeFBtNmQzUk5XVFRyRVIz?=
- =?utf-8?B?b1dQVUFzQXA1VGVFQ29yNmVmZEZXVTdzcm81YXhkQnpIMmNwQUxoOE0ybS92?=
- =?utf-8?B?TWF6dW80VzYxM2RJYWF3bUpuMW5qMXJjT3hWTFVKLzN0SmRtK1JsV2pmQ3FK?=
- =?utf-8?B?eXZuclhqV0lVYUpjQjh1TGpGaWNOZkZmNlA2Q05sdGMzcCtaLzVjbDJWYWta?=
- =?utf-8?B?bVpIcXJ0eFhzUU5CTFJaMkRCc3VsN3prNUd4MDY3OHpFTWQwdDNIblBjZG9s?=
- =?utf-8?B?SDd1d1NmZVZPZDNRMzFRamozYjZsbjFHUEQ2SkhSajNBTVJEcXdPNVh0N1Y2?=
- =?utf-8?B?c1c0M1NwQVQyMGwxOW81TVVORUZwMTZiZU9Gc2FjVy9GTENQam5LalMxcWxw?=
- =?utf-8?B?OTJWQlRXSzU4RTBOKzZQMkpzYVErNytuWE9Id2I1VjV2cTlpU2RqUWlPMEcv?=
- =?utf-8?B?WHhEY1hQKzJBM1g5Z2RXQTlxWUs5MTRRTm11OEExL202WEtxL1RHeWxTUzJP?=
- =?utf-8?B?V0FUY0JNeFVTN0p5K3A1OFNZMzExN096YkJGbUFGREJPeVdpUVdaUHVRRDBw?=
- =?utf-8?B?bG52dEExOE1lVm5mZzA1TG1wb2d0SjJYYWNzRmN4a2VWcGdHb2lNRUQwcTlk?=
- =?utf-8?B?SVZ5eWVFdi9IWWkwNndMTzBzTkFzZWYvWnEzWnduUU1hOWN3eGp3ajRJNThh?=
- =?utf-8?B?Mk5JR3pFNE8xZUNTZVlUYWdUYitEM25HdXB3VlVuNVN0RStPRUpEUHVmT3kw?=
- =?utf-8?B?Q1RXQmZwOW9iYXBDT2hqUE1XWUVwY1dBRkNncTQ3Q2tld01mNVhkbjUwV0lt?=
- =?utf-8?B?RlozSWR6TlhvaXlpeHl3OWQyZGIzRStadktHN2NPMUxybEc1ZWw5U25TN2hQ?=
- =?utf-8?B?d20wSW1yUkR6dDhSNm5OQlZrZndlMjQxZ2dmbXgvalh4bEZHZlVsTVVsMVF2?=
- =?utf-8?B?R1BRWVh2b1gxOFJoOUowV3dBSld0VEdIYkJpSVZRSHRqajl1S0ZrK1c1NmlI?=
- =?utf-8?B?ZjR4M3ZIUWdxV1RudXY2VDNqeGlIYjc3TzB0SmlWTy9ERllSQWhLZDJmYTYz?=
- =?utf-8?B?VmRZOG8rakpCcWVDSGpWMGJwRTN3WTF3d1RkMkxmT094QS9oQXVqM09EUDJW?=
- =?utf-8?Q?W6MyTLDyahePgKYqOtiKLeewzHsLWHrFeCMtjwvNZk=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca322507-4bb7-489c-54ec-08ddeee83d22
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 14:58:58.4985
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 62LqlAnx27KvaZPIFmYLHMrcsOYoFkKLmxkLu4uJghJ7BKwh+A/HVX2z08DHgnb7xKA2oZDC+GbhJumOzTRC/a10n+5vlnqW9jLAxwtOjaoq3Vz5biZjt9NUcoYhc/eq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR01MB8206
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 16:59:16 +0200
+Message-Id: <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <2025090807-bootleg-trophy-a031@gregkh>
+ <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
+ <2025090849-tweak-conductor-f642@gregkh>
+ <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
+ <2025090817-attendant-ungodly-78f6@gregkh>
+ <DCNGJMN80Z34.1O45B1LM9PB2S@kernel.org>
+ <2025090850-canon-banish-baf6@gregkh>
+In-Reply-To: <2025090850-canon-banish-baf6@gregkh>
 
+On Mon Sep 8, 2025 at 4:16 PM CEST, Greg Kroah-Hartman wrote:
+> On Mon, Sep 08, 2025 at 03:36:46PM +0200, Danilo Krummrich wrote:
+>> On Mon Sep 8, 2025 at 3:30 PM CEST, Greg Kroah-Hartman wrote:
+>> > On Mon, Sep 08, 2025 at 03:22:41PM +0200, Danilo Krummrich wrote:
+>> >> On Mon Sep 8, 2025 at 2:48 PM CEST, Greg Kroah-Hartman wrote:
+>> >> > On Mon, Sep 08, 2025 at 12:54:46PM +0200, Danilo Krummrich wrote:
+>> >> >> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debu=
+gfs.rs
+>> >> >> index b26eea3ee723..475502f30b1a 100644
+>> >> >> --- a/samples/rust/rust_debugfs.rs
+>> >> >> +++ b/samples/rust/rust_debugfs.rs
+>> >> >> @@ -59,6 +59,8 @@ struct RustDebugFs {
+>> >> >>      #[pin]
+>> >> >>      _compatible: File<CString>,
+>> >> >>      #[pin]
+>> >> >> +    _test: File<&'static CStr>,
+>> >> >> +    #[pin]
+>> >> >>      counter: File<AtomicUsize>,
+>> >> >>      #[pin]
+>> >> >>      inner: File<Mutex<Inner>>,
+>> >> >> @@ -140,6 +142,7 @@ fn new(pdev: &platform::Device<Core>) -> impl =
+PinInit<Self, Error> + '_ {
+>> >> >>                          .property_read::<CString>(c_str!("compati=
+ble"))
+>> >> >>                          .required_by(dev)?,
+>> >> >>                  ),
+>> >> >> +                _test <- debugfs.read_only_file(c_str!("test"), c=
+_str!("some_value")),
+>> >> >
+>> >> > Cool, but again, we do not want to ever be storing individual debug=
+fs
+>> >> > files.  Well, we can, but for 90% of the cases, we do not, we only =
+want
+>> >> > to remove the whole directory when that goes out of scope, which wi=
+ll
+>> >> > clean up the files then.
+>> >>=20
+>> >> This API does not work in the way that you have a struct storing the =
+data you
+>> >> want to expose *and* another one for the files with the data attached=
+.
+>> >>=20
+>> >> The File type contains the actual data. For instance, if you have a s=
+truct Foo,
+>> >> where you want to expose the members through debugfs you would *not* =
+do:
+>> >>=20
+>> >> 	struct Foo {
+>> >> 	   a: u32,
+>> >> 	   b: u32,
+>> >> 	}
+>> >>=20
+>> >> 	struct FooFiles {
+>> >> 	   a: File<&u32>,
+>> >> 	   b: File<&u32>
+>> >> 	}
+>> >>=20
+>> >> and then create an instance of Foo *and* another instance of FooFiles=
+ to export
+>> >> them via debugfs.
+>> >
+>> > Ah, that's exactly what I was trying to do.
+>>=20
+>> But that's bad, then we're back at the lifetime problem from the beginni=
+ng,
+>> because the File<&Foo> then somehow needs to ensure that the instance Fo=
+o
+>> remains alive as long as File<&Foo> or the backing directory exists.
+>>=20
+>> So, you eventually end of with Foo needing to be reference counted with =
+its own
+>> memory allocation, which horribly messes with your lifetimes in the driv=
+er.
+>
+> Once I want to drop Foo, FooFiles should "go out of scope" and be gone.
 
-On 9/4/25 07:00, Sudeep Holla wrote:
-> On Mon, Jul 14, 2025 at 08:10:07PM -0400,admiyo@os.amperecomputing.com wrote:
->> From: Adam Young<admiyo@os.amperecomputing.com>
->>
->> Define a new, optional, callback that allows the driver to
->> specify how the return data buffer is allocated.  If that callback
->> is set,  mailbox/pcc.c is now responsible for reading from and
->> writing to the PCC shared buffer.
->>
->> This also allows for proper checks of the Commnand complete flag
->> between the PCC sender and receiver.
->>
->> For Type 4 channels, initialize the command complete flag prior
->> to accepting messages.
->>
->> Since the mailbox does not know what memory allocation scheme
->> to use for response messages, the client now has an optional
->> callback that allows it to allocate the buffer for a response
->> message.
->>
->> When an outbound message is written to the buffer, the mailbox
->> checks for the flag indicating the client wants an tx complete
->> notification via IRQ.  Upon receipt of the interrupt It will
->> pair it with the outgoing message. The expected use is to
->> free the kernel memory buffer for the previous outgoing message.
->>
-> I know this is merged. Based on the discussions here, I may send a revert
-> to this as I don't think it is correct.
+We agree on the goal here, but unfortunately it's not really possible. Ther=
+e are
+two options that were already exercised:
 
-Have you decided what to do?  The MCTP over PCC driver depends on the 
-behavior in this patch. If you do revert, I will need a path forward.
+	(1) Force that FooFiles (or FooDir) is bound to the lifetime of a
+	    reference of Foo with FooDir<&'a Foo>.
 
-Based on other code review feed back, I need to make an additional 
-change:  the rx_alloc callback function needs to be atomically set, and 
-thus needs to move to the mailbox API.  There it will pair with the 
-prepare transaction function.  It is a small change, but I expect some 
-feedback from the mailbox maintainers.
+	    This isn't workable because we then can't store both of them into
+	    the same parent structure.
 
-I know all of the other drivers that use the PCC mailbox currently do 
-direct management of the shared buffer.  I suspect that is the biggest 
-change that is causing you concern.  Are you OK with maintaining a 
-mailbox-managed path to buffer management as well?  I think it will be 
-beneficial to other drivers in the long run.
+	(2) Reference count Foo (Arc<Foo>) and make FooDir own a referenc count
+	    of Foo.
 
+	    But this is bad for the mentioned reasons. :(
+
+	(3) The File<T> API we have now, which gives you the behavior you ask
+	    for with Scope<T>.
+
+	    Where Scope<T> creates a directory and owns the data you pass to it,
+	    e.g. a pci config descriptor.
+
+	    The user can create an arbitrary number of files exporting any of
+	    the fields in date that live in the scope and don't need to be tracked
+	    separately, i.e. don't create separate object instances.
+
+	    The directory (and hence all the files) is removed once the Scope<T>
+	    is dropped, including the data it owns.
+
+> If a backing file descriptor is still held open, it will then become
+> "stale" and not work.  Much like the revokable stuff works.
+>
+> Note, none of this is in the C code today, and debugfs is bound to root
+> permissions, so it's not really an issue, but I can understand the goal
+> of correctness...
+
+The lifetime guarantee we talk about is about the debugfs file still having=
+ a
+pointer to data that has already been dropped / freed.
+
+In C you have to remove the debugfs file or directly (and hence the file) b=
+efore
+the data exposed through it is freed. In C this is on the driver to take ca=
+re
+of.
+
+(If in C a driver has multiple structures exported in the same debugfs dire=
+ctory
+it has to manually take care of keeping all structures alive as long as the
+directory (and hence all files) exist.)
+
+In Rust we need the abstraction to guarantee this.
+
+> Anyway, I looked at the scoped example here, and I don't see how that
+> works any differently.  How can I use it to have a single Dir "handle"
+> that when goes out of scope, can drop the files attached to it that were
+> created to reference Foo.a and Foo.b in your example above?
+
+In the example above you would move Foo into the Scope<Foo>. For instance:
+
+	let dir =3D root_dir.scope(foo, cstr!("subdir"), |foo, dir| {
+		dir.read_only_file(c_str!("a"), foo.a);
+		dir.read_only_file(c_str!("b"), foo.b);
+	});
+
+Note that those methods don't return anything, they're automatically bound =
+to
+the Scope in lifetime.
+
+So, Foo could be your pci config descriptor.
+
+If `dir` is dropped, everything dies, the Scope, the "subdir" directory, al=
+l the
+files and also Foo.
+
+I can provide some working code later on (currently in a meeting). :)
 
