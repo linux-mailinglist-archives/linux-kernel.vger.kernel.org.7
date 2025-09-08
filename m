@@ -1,155 +1,401 @@
-Return-Path: <linux-kernel+bounces-804887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C57AB48166
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:53:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E96B4816E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16AD17B16D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 23:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE9E18947B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 00:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4B0234984;
-	Sun,  7 Sep 2025 23:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598F78C0B;
+	Mon,  8 Sep 2025 00:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyFikpMj"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gaKfDwIg"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C874A06;
-	Sun,  7 Sep 2025 23:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757289219; cv=none; b=Q4IIYcGlR+7RbdyoEUoorcKT1GAH4HYTdit0PxWsu4Ohy5AFHjv/tcAjaLFMjChCy8lVUM/qfwHME0xvk2VxIOYYIn2aEh1S1RmJy0BedtQggyPXPNfQ43Mc7hvtdK0NPO91zW+06Blph2xMYy8VQEgG+H04hlFjFV3F2i1LJhk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757289219; c=relaxed/simple;
-	bh=QdG+IhjF51xyq+3NpOpz1LeVBa0bkyTZQqopt66bZd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QyKxAD3M3zJq4aMeDDJ0kMZ1+8NGKKRlTqQ5+Rry4IjZ9hDku57q73zfofRgPaM2045+tSyNMl0TyHlOzseoI+r4e350si4qtI8V8rJgzhl97+4YSuXuXSk4PTuu8VjwiCEdwg9EbINFxuVBcQtUPZF9y0bhJlcBcB6oD7JRaKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyFikpMj; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0449b1b56eso555130466b.1;
-        Sun, 07 Sep 2025 16:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757289216; x=1757894016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eo0jWMvenzTcylQbtlD+TZFDQvY9IieO+xccEfDQfKU=;
-        b=QyFikpMjtD1woqTYpPkQ97m+wBEnTvKMQDpvhh1PYc5hvOHVBPPlpn5tr6efmHujt5
-         eaP2b5PT1qnTwBgQKF1oht2yf91nPMR0Le7D/+HWdqsOTzFS9O9a1BvnKPjBoTDVv6Xp
-         bL9Z6NHo0P/MLHWOCH9yUXltLZv9kkmPm/vZIiYwywHyXDpgcfDqt2JROZ4sn9gYXWYK
-         JVGZihf3Wc1Pef+4ljS/RCNYpNeAhWC6utF4RnW5O1ZwMcqJjKjUE2iRZG5S+SIpX/4K
-         sVeFdh4+10Y9HEEM+fVHiYG/ODuHHnzUSocbBWAaEO/d2fXhablYjmzUNCLjDk51T+61
-         E6tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757289216; x=1757894016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eo0jWMvenzTcylQbtlD+TZFDQvY9IieO+xccEfDQfKU=;
-        b=dXGPmpOPa2K0ndXHHyqp4mOXuF43Ejlag/E+xdroecgQ3VJ1M7MeaH/B78++98gXaO
-         oDl68U7CI6ZZ/kVEehhKg+51ap9HdUTxKSOfuEsIme4l+CS/CjPwD4xvoogHtBfNGXgk
-         zuxLJHpf+g6M6/ouKYnynEHxaBMUJxSNgg39U9hHN1f0ovDFhbzC18Je3okBc0yt1zN4
-         oLviEsnRT7NsfIWeXd2SfIYrYARWmGYzu9xCQ0vbS9TwJ/+cHyX51ctXlZLxJkO1ag7p
-         05JphOg0mW5Y6ORVKOhN+nhqK8GcvDcjs2o+HIWy3Dyky8aHDqhephURemUfXdM5nDNm
-         gFtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbCHZuQYrnuLUUEm9u/scp4bJMUn+Hx/EUcw8UoGqqghMS8Hnk69u7wLYzp0j2e0WdqxRtTkKXbO3z@vger.kernel.org, AJvYcCX4PaHaMQSv+IHD3CdV7QaBBN+oO70L7fGZkc4yvbp2LoFrK+4NOVtzVBclzWrwfoVibj3zYjTIQriRZ1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh82OugAIXkbUgyisPmLVCMtrnS/2QIkGtG7BroHFQ4ILVS0M2
-	V3JQwKgCHyMNk0Dt1F2Z5SG8+LYXjtpli+GJ4WPdmVQSsTBQW5Mfcn1TTCkwRFm2HJshUPk4hs7
-	b9mvWJgG/DZyRVOXmNn9HAZLUMhapgvn9yg==
-X-Gm-Gg: ASbGncs8diprl3+aiHz3P45dDWwPX8PBwQCl4pmkgkuQeLvwPDIS/qrJMaU5V0HdjWv
-	jRp6WuWdlEdMMu1bxiojfyEB3UujX5E+302wvFfIcE1idon6h/Mrr4g9p0LbBnJs9RsJCT8Omlq
-	4Cj/wdw3YW8miuGf3t6xN/5TxpWqlAO17PS93CI2lmkqJDBlagoc1LNFfVyWFTVtjNFI1cFRF/m
-	o8hfURI
-X-Google-Smtp-Source: AGHT+IFt+a9QpR4i38miW/0BfGqA0U2+iw8J9V2j5KOHtmH84Q/NYOsmq7iQFaAc9EGDka3m0a2cVbFdrj5qMnsEfOA=
-X-Received: by 2002:a17:907:7202:b0:afe:23e9:2b4d with SMTP id
- a640c23a62f3a-b04b16f07camr535958666b.43.1757289215546; Sun, 07 Sep 2025
- 16:53:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF0DDC3
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 00:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757289903; cv=fail; b=aD5QYzjq6ARalI4WQ6ySRTevpf8v6/876VnKMUSMkv4zbj77GrQ0cRtDD2E/uv11yc6VXNJrijqBFVyf6I6xubtp+MxUEAA+86237kJVWJx7Dl3FZMCGQ7eV1pL56vREcb2sGcB66qUoX/zG+lx0YXELh+/olNhrAf/Jw4Jk5jg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757289903; c=relaxed/simple;
+	bh=WCnv6s1zCa6xLtnGNa7FWhoEDniCAGQ/BGoThXwX/PQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ObFzyUaqWCfQ0yJayAxssk7N43GKZTjSRcR+xYIvkwmSW974S1TtmDnsDlu847gL1nVvVr3KtWVXqEEeWip1r+WKMFmbRWQQg9477mT1PKCdc6tgQvr2U0+17Z7kvo7Y+jObLt5qKBFMDIPXVpzTVwB9LbmcG90HR+Kkvec+bCg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gaKfDwIg; arc=fail smtp.client-ip=40.107.220.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MVb9SActhRBlZ2pAcenZr54n6Dy9zgrApa0Xx7zeGniVPXCZ4U+4mhzb00O4QEa4uVy58liTyGxn9vpOrYEwBEPVgs7tZyFaYXiFDpS6nbWoLWTRfkFeXQOJx3lRB+mPIJzDw8Y/iDLRISBw1VSRkgfpxGYr0g9/2uoEw+vPlPj6qDAlmoCqVnH7uhWrHKYrDQ5w81rl7u4jzwSTOpj56xHtO0JzORKQMWhPdt8Diz1+yMTGndH6Lh1oxoz9OgVsKJCLrbZAXM8BzGnfyBA29Z40L656/0oxEHTHzHqulC/L+x58YghzrhsVKZ/oYC8u3W8QLWhVF9Ql3Ic5wzbVZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DZhtv+NG4nDcRI2RWhA4E+/O8BFtMZn0P1RhDvy1P7c=;
+ b=v28LiissdgRPVmf6OTkWLbXjAKf5L3ZArwpSdD9DPPYbjXVqNIcaQDKh0Qir2LX4DGgK0Q6SgFuxidorwA0X1wPwDLP9pQC1KZe4OgaIUsrQy1xcqQp8X0/iPpuoiG8HRQoAa7rQ+rllno45GiAiyX7rNdWczBQESJa7Y8pM3TtVkq/5nIAD9m79bTs8r66Nkt3hQbrMzxkVsnNVivSEdx5VbIh+/MCX6XeXKhoXjeWKZgg/aqYtTRHZBr3sUn5fhrAp1P85Z8eEwlYp1owfBFCMHwOKRzyiJyHvBfVo+9TnE3OyyZOSSBPstDu5zTF5r87mWC0li4JA995edClE0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZhtv+NG4nDcRI2RWhA4E+/O8BFtMZn0P1RhDvy1P7c=;
+ b=gaKfDwIgPO2q5BhUBrWYz8SkkmJpMOAA2apj/AQvovQwVlfBKmCiZfCyU2xKji8Ld+bLW6tIwz658o8C+/5T2GTJfW+4jo/MC/msoDJ8OfVNNDXLLiGj6mSG2Fh9Q5VwVhEayWEgFFSw3YXu77usO7jyyIs++uKjtX1S+vmqT3pnfRufgS7T5PMdpublMAbpbMdNEyvMd3Gfh2IDT/qN8pwQZBkxyluJyb7TBHXSFy2EXaa6S9aq0AtxrVw+TdtgnV4zmF6DHxq6cfmLTtPkMY4S8KjBuCbwr6u7DXIrQRnCP1wrxN+cZWG+j+RcwepYth9KN2kEgrxnrgoAAGaMLg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by DS7PR12MB5887.namprd12.prod.outlook.com (2603:10b6:8:7a::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.19; Mon, 8 Sep 2025 00:04:56 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 00:04:56 +0000
+From: Balbir Singh <balbirs@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: damon@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	Balbir Singh <balbirs@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Ralph Campbell <rcampbell@nvidia.com>,
+	=?UTF-8?q?Mika=20Penttil=C3=A4?= <mpenttil@redhat.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Francois Dugast <francois.dugast@intel.com>
+Subject: [v5 00/15] mm: support device-private THP
+Date: Mon,  8 Sep 2025 10:04:33 +1000
+Message-ID: <20250908000448.180088-1-balbirs@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SYAPR01CA0016.ausprd01.prod.outlook.com (2603:10c6:1::28)
+ To PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250907102303.29735-1-klaus.kudielka@gmail.com> <to2mscnfphhypr3ml7hnkvedpw45fqoj4rnrmch2zfjre5i3qi@asawccwf2lgz>
-In-Reply-To: <to2mscnfphhypr3ml7hnkvedpw45fqoj4rnrmch2zfjre5i3qi@asawccwf2lgz>
-From: Tony Dinh <mibodhi@gmail.com>
-Date: Sun, 7 Sep 2025 16:53:24 -0700
-X-Gm-Features: AS18NWAc6vMudz21FKTD0SJAvjorxRi6NFkDGf4DA4tbyg0jkso42yHG7rMZMhs
-Message-ID: <CAJaLiFwwTaok1JLTz=JCEhVacvL=ZB4X8TBDwR0NfhHrBp3YKg@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI: mvebu: Fix use of for_each_of_range() iterator
-To: Jan Palus <jpalus@fastmail.com>
-Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|DS7PR12MB5887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1fa8bca4-f9f9-4c03-c04e-08ddee6b5809
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WVVka04vYVV2eTA0emVUenZpdmtjbFRuMThxai9zVGFxL2RneVZoa0RUeHJH?=
+ =?utf-8?B?bE8yTlQ4MDNEemovNXFsU0lBZnBzM2RKejRPSzlMamFpanBhVExzNUVpWWlJ?=
+ =?utf-8?B?WDlxbFE5cWRuKzhNdm1LZm9mVWZNbDQvMFpST2tmZjZyU3k4ODh4MnpNSHk3?=
+ =?utf-8?B?Ni9jVnliQzgwK041eC90OVZMOHY3UDFybzJUNVR4TDhZR3VBdG1ERDdxNUtR?=
+ =?utf-8?B?NXVqakkyUkVBVnJEbTFFU0o5VjkvVEtIdjdFYWlpd0V0UXIzWE1kSmhkeS9H?=
+ =?utf-8?B?WUFKazF0WlVEZitaUkZpRkZheUNBbTRaYlBGUEtHWjdsK3BwRzZjRjMyQmJw?=
+ =?utf-8?B?VDFEVHRYcDRoWkNsR0E3SzhpRHZYVGVNc0ZqMzJvZmtmaWIxeDZzWG52Q1hJ?=
+ =?utf-8?B?TlVucHdwM0J1a3ZqN1ZETys0RlpzQmR1ZTgxN1dFemF5YnBTRXI4VFFqemRS?=
+ =?utf-8?B?d1pIaHl1QWI5NDhubXM2bHFxTUtNQklYVTNOWGZ0eXQ4RitWRHJtZjRGTFpK?=
+ =?utf-8?B?Y1M2SnU5My9POHNQZVZXSkRVWVN3S1NjY0FsdzBZTmVsbFhaWnhjNkwzKy9k?=
+ =?utf-8?B?dGhhVVlqdnRCbzdOc2xYNXZ3K3VCbC9Ra2dYMzJocHlaVXRWTVlxaWQyUkM0?=
+ =?utf-8?B?VGV1WkdXSEJ2U0JPOVJhUlM4ZDFvSlFXMkpNYVRrMGFmMTNVMlJHcFlmOTZZ?=
+ =?utf-8?B?VkRtVDRRZ0UydS95aE00RUI0WXEvZU0vSUQwNHc2R1dNV3NrZmhPNnArTmJ5?=
+ =?utf-8?B?VUZ6bVBZbEdpVi9FaHFQSjNFR3FoOWt2R1VtMVdsMEQvSkQwMGhVc3ZGK1Vt?=
+ =?utf-8?B?OGFqRUlxeHA1cFUvS01RUGpTdHRrT2dTdDBpVmdlLzR0ZmVrRWVPNUFlK015?=
+ =?utf-8?B?Q2VENzN6R1Bxd2tyTHZZVnQwdlkvN3gvc3N3R0JuUjRjVi9IS0dOUE1ROElK?=
+ =?utf-8?B?aDBSN2IxaDlEd1lhb0EyV0ZUMzBIZkFBb0plYUJERjA3elphbWVWZ01GUVNV?=
+ =?utf-8?B?OHV6MysxV1cxZTdxQmRGK0pTWE1YRkdYQm16VnYzYXpWWmZEbFpRS3pNWXRL?=
+ =?utf-8?B?UldGenpYZHJ1Q2RFMldtVFdPS09EZ3lJM05VcnV1WHhzL1BJMEhpckx3dVN4?=
+ =?utf-8?B?RDVXSWNsRERUUDVwZ3l6WEdnOFZSd3ZlV2VnV3NYckxPQ0VZOUlqMmFZRUs3?=
+ =?utf-8?B?YlVNQjRHbEJvc1N0ek04K1J6QWlOTkcyVjlxeXdKbnMwYS9qU3JMcUluVFY2?=
+ =?utf-8?B?ZlUvdDFzdG5LQlIvVTh3a3Ewc0xxTUFxYzhZVlU4VitRTFZhMnVmQVpBcUZF?=
+ =?utf-8?B?bkUxN0d4K2hhZWJwK2dYdGtlRG42VVRjL0ZENW5OMmxxcS8xNXE5WHhjRGVz?=
+ =?utf-8?B?MDRMNGVpb1ovOVNKYTF0bkxtQ2NHK1dHejQxZVV2Sk91bTZ3S296RFVYRHJX?=
+ =?utf-8?B?MmlIa2NxYnBSdmdmWS85Nkk0aTRSZFBCTzlHS2ZHRFpJUnNEaHNSSVlRQUkz?=
+ =?utf-8?B?dW1RR3FEcUpmTXgwQldzdk9LbkFGbVA0VFRJeTFmUTdqUnBzWThnNUQ0TEJR?=
+ =?utf-8?B?eFh3VDFVNU4xOGlJMVRvVlhMTWVzUDNnZjlmZG43WW9PU1pmNFErZVB1aFZt?=
+ =?utf-8?B?NmNPc2F3aGExS2dabnVJdHpMSE4vaGdsUkZSWjhKSzNRRVoreDdGdkxrK2pI?=
+ =?utf-8?B?bEdGODFSd2ZnalNsdHZFcWRRVmRJV1RiRTB5bjY0MlFhNWtISU9QdWZwVzI4?=
+ =?utf-8?B?QlRpU2xwRktpdWlVb0Zhdm5USENnNEN1Z0YvcFVtSExOK0srTFBidXd5NlVJ?=
+ =?utf-8?B?bFllOVlEd01pTHBINi9XWFVqMWVlR1d2cHFLSWhqeDdCa2ZZaEwzRjJQS1pC?=
+ =?utf-8?B?NFBRS014a1Naa3JRbURwV01GNDd2QmhkaDdLZVAzSFNHMkdFaCtYZEtGcXRO?=
+ =?utf-8?Q?9LYhrXhNF6w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c0JTSVBrOGdwaHZsWm5xSzRvVW5qbGhEOC9jTTBJdUQxT0ZKdDd5N1h0M2FG?=
+ =?utf-8?B?US9aTmRSR09WN0hPa2QwdGZCcStzakhwVkgwR2d2RCtHNGxwQUxMeUlPZm10?=
+ =?utf-8?B?ZzY4bjdvV3lKOVRMbVNBNCsvOVlPZkEreWtoWGhPd3ZGOXBRR1lWQjVLYW4z?=
+ =?utf-8?B?OFhzWXh4RmVrd3haT2xZWVYxTWxMMWRnVlVyMmlxS2lFNERrclVKdWdGZW5a?=
+ =?utf-8?B?bE9EbWxnUU1lcFN6SmtaQ3FqdXk4MzR1L0pIL2Fza2toOW4wTGFLZWdpNXFo?=
+ =?utf-8?B?SW44WmlvZnVENHgzU3I2dnAwQXdQVzJ3bTMvZmpmR1h6NUJvR1Nab2lPdWE5?=
+ =?utf-8?B?ejFGanBUVDBaenRMc2tscU9raEZyZXJqT28rdXdaQlVGeVJ0N3A0emFvVFJl?=
+ =?utf-8?B?ZlBPbnhpa041MVlveU1XdmJQbVBrZFlKM2FFMDZxUHJ2elAwamtBem9GTzJT?=
+ =?utf-8?B?ajFSb3BIT2hrTmVsNkpoL3NLOUIrWGd2S0Z4RVJzeEhvdFk0VHNURml2VzRU?=
+ =?utf-8?B?YnpDRmxZL0hoRnFBQ3lrbGNIbG5zZ1hhazJRSkI3eW81VGRYbW9LZUlaeFZP?=
+ =?utf-8?B?S25TbzJTd0ZsZlpTeFpHbkxScnhvaXhiU1dtMXMwQklnTDZZVFpldURSR0hR?=
+ =?utf-8?B?TXQwV0R1NFZLVTduYzdsMkJDR1lvM3lTQm9kbFZJVERHSzFEcDY3dnVuWWYx?=
+ =?utf-8?B?UGFiTVREVkdGbUhHK1FQMjkySVhXN21wNnNBRmtjN2h5RlUwd2VQelN6N1hM?=
+ =?utf-8?B?cDdJQm9nS3lRNUtEeVVZajdWdEJ2ZGI4RWJTUXMyL202TWJwZWNCVklmSWUr?=
+ =?utf-8?B?eHRiOC9kQmRWVEdHckdYejBnOHowcS9qNW55b21IWXpzV1QzS1NhejlwNm1x?=
+ =?utf-8?B?bTE5RVI5My9UdzJlOXFVSlZoSUpKUHVqNkY0M0JJMXhTSnd5MUxoMjUrOE5P?=
+ =?utf-8?B?UjgwTnc4OVA5R1g1KzhtQzJSUU53OGNtK3l6c2pONjBobGNhMmM3VGFMaFlj?=
+ =?utf-8?B?a2piOWt2WU1vaDVHNnZaZGJKS1NWWW4xdndjTFFGQTM2MlV4b2J0SU56YXpt?=
+ =?utf-8?B?K3BvaDN0Y3ZwSGVFc1AyV0FtUUZiQk0vbVZWNzFJbG9kakZKWUEvVkttaC92?=
+ =?utf-8?B?RVgxd3JBTUFpNXhYZWdObzBoY0tCbyt1bTgwemM5VHppZG1kT1JMdnJwZ3VB?=
+ =?utf-8?B?dWhMQTBOWTBycFNoUGp5SGlEOS9JK0lTdk5IcE9IbkhUU0RFUWFYUUNsYzZm?=
+ =?utf-8?B?SzhveCtTamlmaVFYazNNTWJ4K25FN2RXSG44eUxFNUxUcS84Zk1XZGdET1dY?=
+ =?utf-8?B?MUxaOS9MTGJjeHBYQm9ad1JyN1pOVGhnTHBybXN2V01rNzhsdzlob3B0Y0xr?=
+ =?utf-8?B?YjZXMHkrVWkwQ3RLS0FTQ0grWlBnckpEVk9JM3VPVkhCZHVDWGVWbUsvdlY2?=
+ =?utf-8?B?cldWR0MrQllRU1pXbFJMczMyaDhNMnZIZ0Y1WFByZmN4N1dyR0VPWkhRMVNV?=
+ =?utf-8?B?VWRHQmMycE5jb1dHMDNlaXhmbGZhMWJSUjRzRlUwT083bDlVTkJMcXdMMUVO?=
+ =?utf-8?B?YzFOTkhueVdZRVZtbTkwNnFaZWFCNk1wQTJIS0JTRkdwdjhuai9udmpFelND?=
+ =?utf-8?B?TC8rVVVOQ3dISjNndWNVWHNJdW1kVW1WZ0NzWkp5WHM1WEM5OG5UZWpSVUlB?=
+ =?utf-8?B?cWxzOTkyQmZwTUpXZGRSa3NJSUJ4OUs3OWFmYXozUkY1REFpQTdBZnV2bGVk?=
+ =?utf-8?B?cjJ0VWlWVFpFalBucms0Rk80SW1odTkwZU1vbVRyWm1KOG1RbnBjZWgyOTcz?=
+ =?utf-8?B?YzAremI3V2pOclJ4ZVoxblRtd0ZkQ3dTS2J4dkRYUzliMGlUN3lPZTlxR3Nu?=
+ =?utf-8?B?dlZjRTI3UkxMZmIzU00yWDhWN0pKMm04VEZzYmtIQVZTV3lRSlE4OGkrNkhv?=
+ =?utf-8?B?NUhObEY2Wk42WUowNk1KTFlOSXZ3UVFMa2JMZDRMNWY2WDdRdFFrZ2hYdFIy?=
+ =?utf-8?B?Mkd6ZGJmdkU2YUxMRitEcklPaFl4R1lYM3dYbjJ4aHJuUTA4SVZWTnRnalBD?=
+ =?utf-8?B?TElXRG8rMzdLeDRzVmhwS3llNlk2U2o3VEtyVUF3SWVWY0ZtWGNqOU5zbXVD?=
+ =?utf-8?Q?m0A4ANcl63Y2LX07mZ+oqKPL4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fa8bca4-f9f9-4c03-c04e-08ddee6b5809
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 00:04:56.5632
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cA8x4BfyzXOWo7Wr5y6QXKsfSAowKR9fVNwRnjewHwee58I0tMnCv3zebBicSdCaTnX8pdABanl0aQ1hJSUlhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5887
 
-On Sun, Sep 7, 2025 at 4:42=E2=80=AFPM Jan Palus <jpalus@fastmail.com> wrot=
-e:
->
-> On 07.09.2025 12:21, Klaus Kudielka wrote:
-> > The blamed commit simplifies code, by using the for_each_of_range()
-> > iterator. But it results in no pci devices being detected anymore on
-> > Turris Omnia (and probably other mvebu targets).
-> >
-> > Issue #1:
-> >
-> > To determine range.flags, of_pci_range_parser_one() uses bus->get_flags=
-(),
-> > which resolves to of_bus_pci_get_flags(). That function already returns=
- an
-> > IORESOURCE bit field, and NOT the original flags from the "ranges"
-> > resource.
-> >
-> > Then mvebu_get_tgt_attr() attempts the very same conversion again.
-> > But this is a misinterpretation of range.flags.
-> >
-> > Remove the misinterpretation of range.flags in mvebu_get_tgt_attr(),
-> > to restore the intended behavior.
-> >
-> > Issue #2:
-> >
-> > The driver needs target and attributes, which are encoded in the raw
-> > address values of the "/soc/pcie/ranges" resource. According to
-> > of_pci_range_parser_one(), the raw values are stored in range.bus_addr
-> > and range.parent_bus_addr, respectively. range.cpu_addr is a translated
-> > version of range.parent_bus_addr, and not relevant here.
-> >
-> > Use the correct range structure member, to extract target and attribute=
-s.
-> > This restores the intended behavior.
-> >
-> > Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> > Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for =
-parsing "ranges"")
-> > Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> > Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
-> > Reported-by: Jan Palus <jpalus@fastmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220479
-> > ---
-> > v2: Fix issue #2, as well.
-> >
-> >  drivers/pci/controller/pci-mvebu.c | 21 ++++-----------------
-> >  1 file changed, 4 insertions(+), 17 deletions(-)
->
-> Confirmed the patch applied on top of 6.16.5 fixes all the issues
-> introduced with 5da3d94a23c6.
->
-> Tested-by: Jan Palus <jpalus@fastmail.com>
->
-Sorry, should have said:
+This patch series introduces support for Transparent Huge Page
+(THP) migration in zone device-private memory. The implementation enables
+efficient migration of large folios between system memory and
+device-private memory
 
-Tested on these Marvell Kirkwood SoC boards: Cloudengine Pogoplug
-Series 4 (88F6192), ZyXEL NAS325 (88F6282), and Synology DS112
-(88F6282) running kernel 6.16.5.
+Background
 
-All the best,
-Tony
+Current zone device-private memory implementation only supports PAGE_SIZE
+granularity, leading to:
+- Increased TLB pressure
+- Inefficient migration between CPU and GPU memory
+
+This series extends the existing zone device-private infrastructure to
+support THP, leading to:
+- Reduced page table overhead
+- Improved memory bandwidth utilization
+- Seamless fallback to base pages when needed
+
+In my local testing (using lib/test_hmm) and a throughput test, the
+series shows a 350% improvement in data transfer throughput and a
+80% improvement in latency
+
+These patches build on the earlier posts by Ralph Campbell [1]
+
+Two new flags are added in vma_migration to select and mark compound pages.
+migrate_vma_setup(), migrate_vma_pages() and migrate_vma_finalize()
+support migration of these pages when MIGRATE_VMA_SELECT_COMPOUND
+is passed in as arguments.
+
+The series also adds zone device awareness to (m)THP pages along
+with fault handling of large zone device private pages. page vma walk
+and the rmap code is also zone device aware. Support has also been
+added for folios that might need to be split in the middle
+of migration (when the src and dst do not agree on
+MIGRATE_PFN_COMPOUND), that occurs when src side of the migration can
+migrate large pages, but the destination has not been able to allocate
+large pages. The code supported and used folio_split() when migrating
+THP pages, this is used when MIGRATE_VMA_SELECT_COMPOUND is not passed
+as an argument to migrate_vma_setup().
+
+The test infrastructure lib/test_hmm.c has been enhanced to support THP
+migration. A new ioctl to emulate failure of large page allocations has
+been added to test the folio split code path. hmm-tests.c has new test
+cases for huge page migration and to test the folio split path. A new
+throughput test has been added as well.
+
+The nouveau dmem code has been enhanced to use the new THP migration
+capability. 
+
+mTHP support:
+
+The patches hard code, HPAGE_PMD_NR in a few places, but the code has
+been kept generic to support various order sizes. With additional
+refactoring of the code support of different order sizes should be
+possible.
+
+The future plan is to post enhancements to support mTHP with a rough
+design as follows:
+
+1. Add the notion of allowable thp orders to the HMM based test driver
+2. For non PMD based THP paths in migrate_device.c, check to see if
+   a suitable order is found and supported by the driver
+3. Iterate across orders to check the highest supported order for migration
+4. Migrate and finalize
+
+The mTHP patches can be built on top of this series, the key design
+elements that need to be worked out are infrastructure and driver support
+for multiple ordered pages and their migration.
+
+HMM support for large folios:
+Currently in mm-unstable [4]
+
+Cc: Andrew Morton <akpm@linux-foundation.org> 
+Cc: David Hildenbrand <david@redhat.com> 
+Cc: Zi Yan <ziy@nvidia.com>  
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com> 
+Cc: Rakie Kim <rakie.kim@sk.com> 
+Cc: Byungchul Park <byungchul@sk.com> 
+Cc: Gregory Price <gourry@gourry.net> 
+Cc: Ying Huang <ying.huang@linux.alibaba.com> 
+Cc: Alistair Popple <apopple@nvidia.com> 
+Cc: Oscar Salvador <osalvador@suse.de> 
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> 
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com> 
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com> 
+Cc: Nico Pache <npache@redhat.com> 
+Cc: Ryan Roberts <ryan.roberts@arm.com> 
+Cc: Dev Jain <dev.jain@arm.com> 
+Cc: Barry Song <baohua@kernel.org> 
+Cc: Lyude Paul <lyude@redhat.com> 
+Cc: Danilo Krummrich <dakr@kernel.org> 
+Cc: David Airlie <airlied@gmail.com> 
+Cc: Simona Vetter <simona@ffwll.ch> 
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mika Penttilä <mpenttil@redhat.com>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Cc: Francois Dugast <francois.dugast@intel.com>
+
+References:
+[1] https://lore.kernel.org/linux-mm/20201106005147.20113-1-rcampbell@nvidia.com/
+[2] https://lore.kernel.org/linux-mm/20250306044239.3874247-3-balbirs@nvidia.com/T/
+[3] https://lore.kernel.org/lkml/20250703233511.2028395-1-balbirs@nvidia.com/
+[4] https://lkml.kernel.org/r/20250902130713.1644661-1-francois.dugast@intel.com
+[5] https://lore.kernel.org/lkml/20250730092139.3890844-1-balbirs@nvidia.com/
+[6] https://lore.kernel.org/lkml/20250812024036.690064-1-balbirs@nvidia.com/
+[7] https://lore.kernel.org/lkml/20250903011900.3657435-1-balbirs@nvidia.com/
+
+These patches are built on top of mm/mm-new
+
+Changelog v5 [7] :
+- Rebased against mm/mm-new (resolved conflict caused by
+  MIGRATEPAGE_SUCCESS removal)
+- Fixed a kernel-doc warning reported by kernel test robot
+
+Changelog v4 [6] :
+- Addressed review comments
+  - Split patch 2 into a smaller set of patches
+  - PVMW_THP_DEVICE_PRIVATE flag is no longer present
+  - damon/page_idle and other page_vma_mapped_walk paths are aware of
+    device-private folios
+  - No more flush for non-present entries in set_pmd_migration_entry
+  - Implemented a helper function for migrate_vma_split_folio() which
+    splits large folios if seen during a pte walk
+  - Removed the controversial change for folio_ref_freeze using
+    folio_expected_ref_count()
+  - Removed functions invoked from with VM_WARN_ON
+  - New test cases and fixes from Matthew Brost
+  - Fixed bugs reported by kernel test robot (Thanks!)
+  - Several fixes for THP support in nouveau driver
+
+Changelog v3 [5] :
+- Addressed review comments
+  - No more split_device_private_folio() helper
+  - Device private large folios do not end up on deferred scan lists
+  - Removed THP size order checks when initializing zone device folio
+  - Fixed bugs reported by kernel test robot (Thanks!)
+
+Changelog v2 [3] :
+- Several review comments from David Hildenbrand were addressed, Mika,
+  Zi, Matthew also provided helpful review comments
+  - In paths where it makes sense a new helper
+    is_pmd_device_private_entry() is used
+  - anon_exclusive handling of zone device private pages in
+    split_huge_pmd_locked() has been fixed
+  - Patches that introduced helpers have been folded into where they
+    are used
+- Zone device handling in mm/huge_memory.c has benefited from the code
+  and testing of Matthew Brost, he helped find bugs related to
+  copy_huge_pmd() and partial unmapping of folios.
+- Zone device THP PMD support via page_vma_mapped_walk() is restricted
+  to try_to_migrate_one()
+- There is a new dedicated helper to split large zone device folios
+
+Changelog v1 [2]:
+- Support for handling fault_folio and using trylock in the fault path
+- A new test case has been added to measure the throughput improvement
+- General refactoring of code to keep up with the changes in mm
+- New split folio callback when the entire split is complete/done. The
+  callback is used to know when the head order needs to be reset.
+
+Testing:
+- Testing was done with ZONE_DEVICE private pages on an x86 VM
+
+Balbir Singh (14):
+  mm/zone_device: support large zone device private folios
+  mm/huge_memory: add device-private THP support to PMD operations
+  mm/rmap: extend rmap and migration support device-private entries
+  mm/huge_memory: implement device-private THP splitting
+  mm/migrate_device: handle partially mapped folios during collection
+  mm/migrate_device: implement THP migration of zone device pages
+  mm/memory/fault: add THP fault handling for zone device private pages
+  lib/test_hmm: add zone device private THP test infrastructure
+  mm/memremap: add driver callback support for folio splitting
+  mm/migrate_device: add THP splitting during migration
+  lib/test_hmm: add large page allocation failure testing
+  selftests/mm/hmm-tests: new tests for zone device THP migration
+  selftests/mm/hmm-tests: new throughput tests including THP
+  gpu/drm/nouveau: enable THP support for GPU memory migration
+
+Matthew Brost (1):
+  selftests/mm/hmm-tests: partial unmap, mremap and anon_write tests
+
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 306 +++++---
+ drivers/gpu/drm/nouveau/nouveau_svm.c  |   6 +-
+ drivers/gpu/drm/nouveau/nouveau_svm.h  |   3 +-
+ include/linux/huge_mm.h                |  18 +-
+ include/linux/memremap.h               |  51 +-
+ include/linux/migrate.h                |   2 +
+ include/linux/mm.h                     |   1 +
+ include/linux/swapops.h                |  27 +
+ lib/test_hmm.c                         | 443 +++++++++---
+ lib/test_hmm_uapi.h                    |   3 +
+ mm/damon/ops-common.c                  |  20 +-
+ mm/huge_memory.c                       | 288 ++++++--
+ mm/memory.c                            |   6 +-
+ mm/memremap.c                          |  38 +-
+ mm/migrate_device.c                    | 611 ++++++++++++++--
+ mm/page_idle.c                         |   5 +-
+ mm/page_vma_mapped.c                   |  12 +-
+ mm/pgtable-generic.c                   |   6 +
+ mm/rmap.c                              |  25 +-
+ tools/testing/selftests/mm/hmm-tests.c | 919 +++++++++++++++++++++++--
+ 20 files changed, 2397 insertions(+), 393 deletions(-)
+
+-- 
+2.50.1
+
 
