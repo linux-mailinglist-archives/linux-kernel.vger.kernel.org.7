@@ -1,236 +1,154 @@
-Return-Path: <linux-kernel+bounces-806835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A03B49C38
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:41:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65607B49C46
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 479A47B3630
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:39:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928351C22314
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B68126AC3;
-	Mon,  8 Sep 2025 21:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7C12E6CD4;
+	Mon,  8 Sep 2025 21:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Vh0pxMpP"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EuL3nvZl"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6649B2DAFB4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E474A06;
+	Mon,  8 Sep 2025 21:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757367488; cv=none; b=UYv2Kk789T3supd4sMqdu/ABUxYsrqjcEtYRQZvXv/xLB2hyuvzHyU4WczRo5yVUHNE6mSmOVnEc3v819Ls9vj9cHQ6/sKzd9AtPoLBnjTiytXCBN2Hc8osKSWOqcEwIcGAlGhU0l4ZRu5BT9UWqfDK72axYS3Uue+rT0poqBHg=
+	t=1757367534; cv=none; b=SN37bw6afrJWyVWetrQDX7w8q3YuXRRYlfbk6BjHCdH3qTl+wy4AhM4RMv8mV9rJ5f8wfwd3U5g0kjVo4Xl2H98NQf/sixPWy5MORcGuW5IvgxRMa/gu/P8CDyiLBo24AmmdVebhnTr5GW6Lr0lA5c+wRFmXnWcz8yIX+xNtmyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757367488; c=relaxed/simple;
-	bh=sGKAUSPWt72301AlV1XawXJ3CDU4bmDDcpLUoU+28l4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIUT/RaN5KaBcV4vxPJdZ9hu8NA5IhzDdkfsabonbdCaaLjTKMJ7tu50Ykjmmu3fyOSypXtDmWMdPGFzWoJJxqZ50oR3vaInnJoNRGOyhCD8YgtEyzI062WayZVYN7RsRDqOXfK9xx3kg9R9VRhyRMSBi/zSeEkOL7d/KN296iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Vh0pxMpP; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-811b06efefdso395157485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 14:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1757367485; x=1757972285; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NtWqIRzbFovdcSLeep8mjuBoNwQeZf18KQ3SwdIPUDE=;
-        b=Vh0pxMpP9cid/A5EtkxHj+Iii/llPJEjGsr7LVeNKO3UCU3jJB835m0RWCAVqDKFIM
-         wd6oP2aWsKSuC8Y9ZyKjeVRxLlc4MSbW45zUtP3fQ0Jx+83JIBACtqLIYb7oC84w1poc
-         Km6B7BbjJyEzoc+54ancWEoAeg8tfucaGsJb8vpbEBo4ye4qwjsbf336ocbhO2QQRqR3
-         0lmfOS/+ERPmaShUEVapWj/epoxALYa7qtMNguaObmsupDTLrSuvTEaSM6FZxmy7FabJ
-         crloxkg5SgUr41wl72O6XztRgzewNSOeiaWMQl0uEIns4gePL9+EpLpc1CHk4zc0dqPI
-         +5/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757367485; x=1757972285;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NtWqIRzbFovdcSLeep8mjuBoNwQeZf18KQ3SwdIPUDE=;
-        b=e3hc20qVmq3qzzbZyP/yYbYgVVl0BltuvK+mxcyYxb2hDSQDMG4+AXg9KKu4h/W2RI
-         x3op+62lmO6teWV2ynnkiW1TyX3rPZwsT2LWhplajz0aQbXygHX75ouaea7/WkJ/q0V1
-         o4XV9g3KJybBKWDInhzU74nHc/bZAr9LY8K2tl2me5XgfHO6UY9JKnz20CDc5/FNhbRk
-         ZMBwg4NptublWnEqvOdzF00f2EGOfKfKpEE6waN8AZouIsPWoLEIJQ+1TJ+1O+hgcP8F
-         92a1W9dh7Fk0eLRCPQYKJdhQr0L7U3ygkAcESynTJnIz25NXetidmh3nSK/SE/vGIQ84
-         cGPA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/gf1jqb6Of/Sy0tiY7ryQJCx667MMdyFRqL+B9Z9GW1+g2bBBXghUu40wY3eS/TMBSOXEr+8U+G38QeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVLxrCtIdrpdYMXbUvmIz+T14MPkjN/3FoheHIPVGDnlRa7F4K
-	gJK2Xa6P8bYy+5bSo+wF4HyfGA+xsdaU/76l6PkHtUtC8maxLuvcXjBRaKynL9xxWjs=
-X-Gm-Gg: ASbGnctYn3codSOEOlC/K/I8WvVUuYaVvKCTqouNexHoBuuZvN8sus2dZgUcDA43dCs
-	UT+/L/K4cCk31Ld9G2fZStE5ZBg4l1d7qtnoUlX9JSClO47EUBexn27YqDdi6niTZb48aKe1p/F
-	UWyi8itJ4qFjo+dh3fMZIs1yfjNkC4qwFjj4IyA1Gl8Z6sKDY4VX1VHKVetDH0u7Jf9z9ZOdZpI
-	qXQ5ieugz3GNvGhfUeL3rsxqqyOBjE+DsEq31GPjvl13Ui8sqfmedwBSCfi7dxBLWgclMqbgB1W
-	r7XuH6ONpdgI7gBx+iVg5xjwauT3qOt/MQG2Kr3e/+N3Cs/fLHc1n+a9DNjuzb+lUggF4gjmpxr
-	iv59IahKPdqq1kH2lBvOJH1RY9aQMH+TePH4hHZu6lJBVaRxTcNNzDaxwUkI+UVEwSpkDFNjGd4
-	J3KOJw
-X-Google-Smtp-Source: AGHT+IGlwkMwHqETiA01AKALwBe420gp98TAGKqwCprXx942usJ9cIL4QaLvUEMs6r4ETu/CxJ4FOw==
-X-Received: by 2002:a05:620a:d81:b0:804:6af0:277a with SMTP id af79cd13be357-813c30f0e45mr946958585a.70.1757367484981;
-        Mon, 08 Sep 2025 14:38:04 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (ip-185-104-139-70.ptr.icomera.net. [185.104.139.70])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ee69108sm9067585a.56.2025.09.08.14.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 14:38:04 -0700 (PDT)
-Date: Mon, 8 Sep 2025 17:38:01 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: rafael.j.wysocki@intel.com, dave.jiang@intel.com,
-	dan.j.williams@intel.com, jonathan.cameron@huawei.com,
-	alejandro.lucero-palau@amd.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, a.manzanares@samsung.com,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2] cxl/acpi: Rename CFMW coherency restrictions
-Message-ID: <aL9MuRca9SfRAINy@gourry-fedora-PF4VCD3F>
-References: <20250908160034.86471-1-dave@stgolabs.net>
+	s=arc-20240116; t=1757367534; c=relaxed/simple;
+	bh=5wip6Wi608nkTbbnCuqYOKj0JUxtkUxkkDDxAmnQ8co=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=VgPZQ+cxnCkOclYKSXuFFpoFv3NFVBrUT41IfpaUWxVi82MkxvCnSOjLD04pubBa1DeWv3SGtyycOSoMZJBIG3r7z+aeq87rvmJK28ONBOa5bsCdABv9+G1eH3ULTuCtYVFXm6EekLn5PaJw3Nou82DTRSFfU2xYbBPVMPtZSzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EuL3nvZl; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vjZUuwZo77bJuvjZUu09ve; Mon, 08 Sep 2025 23:38:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757367529;
+	bh=h4av4AkOPefvQ42cLPAkL558uLSME7KZfPP2jR/Ms9E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=EuL3nvZlaeqSg2q9WrMm2feJpqBtN5wnQ4ut3G1WTfP8xuTbHUfUUz1DCbQ2onYLy
+	 tHo+ItPYPAR73AILXsmWUEWoJNO2Wz9qfNeIlkthINnx6oZuj2Gnj3Mf+gcz7pK/ka
+	 NEgqYYA4UDwVEaijFi4hZeYmLDBGmTRElWyJ734Q8sgdSFaoszzFvRTcdSuOM0J6/g
+	 YndS6bPdiNCgD8Yo8YOrWNlwtveZswrVdjouwNcUvRvjeZxnabaliwbrjbEIafThZq
+	 BXqZE7PzvizKqCq6mfoKbzkm/A6Ufd5rBXDdFuN6I7woneXcDpmQpkAwuts+8ik4l9
+	 Jad78FPQRzjng==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 08 Sep 2025 23:38:49 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <654e04e3-d80e-4d34-a1a0-21f66d43875b@wanadoo.fr>
+Date: Mon, 8 Sep 2025 23:38:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908160034.86471-1-dave@stgolabs.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] drm/msm/dpu: use drmm_writeback_connector_init()
+References: <20250819-wb-drop-encoder-v3-0-b48a6af7903b@oss.qualcomm.com>
+ <20250819-wb-drop-encoder-v3-4-b48a6af7903b@oss.qualcomm.com>
+ <78c764b8-44cf-4db5-88e7-807a85954518@wanadoo.fr>
+ <zw23hgjduxgijown52jyiomungxx4cjyv63qixtnx5nbm3w7xb@2yy65777ydnj>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: abhinav.kumar@linux.dev, airlied@gmail.com, alexander.deucher@amd.com,
+ amd-gfx@lists.freedesktop.org, christian.koenig@amd.com,
+ dave.stevenson@raspberrypi.com, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, geert+renesas@glider.be,
+ harry.wentland@amd.com, jani.nikula@linux.intel.com,
+ jessica.zhang@oss.qualcomm.com, kernel-list@raspberrypi.com,
+ kieran.bingham+renesas@ideasonboard.com,
+ laurent.pinchart+renesas@ideasonboard.com, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ liviu.dudau@arm.com, louis.chauvet@bootlin.com, lumag@kernel.org,
+ maarten.lankhorst@linux.intel.com, magnus.damm@gmail.com,
+ marijn.suijten@somainline.org, mcanal@igalia.com, mripard@kernel.org,
+ robin.clark@oss.qualcomm.com, sean@poorly.run, simona@ffwll.ch,
+ siqueira@igalia.com, sunpeng.li@amd.com, suraj.kandpal@intel.com,
+ tomi.valkeinen+renesas@ideasonboard.com, tzimmermann@suse.de
+In-Reply-To: <zw23hgjduxgijown52jyiomungxx4cjyv63qixtnx5nbm3w7xb@2yy65777ydnj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 08, 2025 at 09:00:34AM -0700, Davidlohr Bueso wrote:
-> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
+Le 08/09/2025 à 23:26, Dmitry Baryshkov a écrit :
+> On Mon, Sep 08, 2025 at 11:09:07PM +0200, Christophe JAILLET wrote:
+>> Le 19/08/2025 à 22:32, Dmitry Baryshkov a écrit :
+>>> Use drmm_plain_encoder_alloc() to allocate simple encoder and
+>>> drmm_writeback_connector_init() in order to initialize writeback
+>>> connector instance.
+>>>
+>>> Reviewed-by: Louis Chauvet <louis.chauvet-LDxbnhwyfcJBDgjK7y7TUQ-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>> Reviewed-by: Suraj Kandpal <suraj.kandpal-ral2JQCrhuEAvxtiuMwx3w-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>> Reviewed-by: Jessica Zhang <jessica.zhang-5oFBVzJwu8Ry9aJCnZT0Uw-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov-5oFBVzJwu8Ry9aJCnZT0Uw-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c | 10 +++-------
+>>>    1 file changed, 3 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> index 8ff496082902b1ee713e806140f39b4730ed256a..cd73468e369a93c50303db2a7d4499bcb17be5d1 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> @@ -80,7 +80,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connector *connector,
+>>>    static const struct drm_connector_funcs dpu_wb_conn_funcs = {
+>>>    	.reset = drm_atomic_helper_connector_reset,
+>>>    	.fill_modes = drm_helper_probe_single_connector_modes,
+>>> -	.destroy = drm_connector_cleanup,
+>>>    	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>>>    	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>>>    };
+>>> @@ -131,12 +130,9 @@ int dpu_writeback_init(struct drm_device *dev, struct drm_encoder *enc,
+>>>    	drm_connector_helper_add(&dpu_wb_conn->base.base, &dpu_wb_conn_helper_funcs);
+>>> -	/* DPU initializes the encoder and sets it up completely for writeback
+>>> -	 * cases and hence should use the new API drm_writeback_connector_init_with_encoder
+>>> -	 * to initialize the writeback connector
+>>> -	 */
+>>> -	rc = drm_writeback_connector_init_with_encoder(dev, &dpu_wb_conn->base, enc,
+>>> -			&dpu_wb_conn_funcs, format_list, num_formats);
+>>> +	rc = drmm_writeback_connector_init(dev, &dpu_wb_conn->base,
+>>> +					   &dpu_wb_conn_funcs, enc,
+>>> +					   format_list, num_formats);
+>>>    	if (!rc)
+>>>    		dpu_wb_conn->wb_enc = enc;
+>>>
+>>
+>> dpu_wb_conn is allocated a few lines above using devm_kzalloc().
 > 
-> This has been renamed in more recent CXL specs, as
-> type3 (memory expanders) can also use HDM-DB for
-> device coherent memory.
-> 
-> Link: https://github.com/acpica/acpica/commit/710745713ad3a2543dbfb70e84764f31f0e46bdc
-> Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+> That's a valid point, thanks!
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+I've not analyzed in details all the patches of the serie, but at least 
+patch 2/8 and 6/8 seems to have the same pattern.
 
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
-> ---
->  drivers/cxl/acpi.c           |  4 ++--
->  include/acpi/actbl1.h        |  4 ++--
->  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
->  3 files changed, 13 insertions(+), 13 deletions(-)
+CJ
+
 > 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 26c494704437..2cf75b553f26 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -128,9 +128,9 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
->  {
->  	unsigned long flags = CXL_DECODER_F_ENABLE;
->  
-> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
-> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
->  		flags |= CXL_DECODER_F_TYPE2;
-> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
-> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
->  		flags |= CXL_DECODER_F_TYPE3;
->  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
->  		flags |= CXL_DECODER_F_RAM;
-> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
-> index 99fd1588ff38..eb787dfbd2fa 100644
-> --- a/include/acpi/actbl1.h
-> +++ b/include/acpi/actbl1.h
-> @@ -560,8 +560,8 @@ struct acpi_cedt_cfmws_target_element {
->  
->  /* Values for Restrictions field above */
->  
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM      (1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM (1<<1)
->  #define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
->  #define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
->  #define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 6a25cca5636f..ba50338f8ada 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -210,7 +210,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -225,7 +225,7 @@ static struct {
->  			},
->  			.interleave_ways = 1,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -240,7 +240,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -255,7 +255,7 @@ static struct {
->  			},
->  			.interleave_ways = 1,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -270,7 +270,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 4UL,
-> @@ -285,7 +285,7 @@ static struct {
->  			},
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M,
-> @@ -302,7 +302,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 0,
->  			.granularity = 4,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -318,7 +318,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 1,
->  			.granularity = 0,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_256M * 8UL,
-> @@ -334,7 +334,7 @@ static struct {
->  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->  			.interleave_ways = 8,
->  			.granularity = 1,
-> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
-> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->  			.qtg_id = FAKE_QTG_ID,
->  			.window_size = SZ_512M * 6UL,
-> -- 
-> 2.39.5
+>>
+>> Based on [1], mixing devm_ and drmm_ is not safe and can lead to a uaf.
+>>
+>> Is it correct here?
+>> If the explanation at [1] is correct, then &dpu_wb_conn->base would point to
+>> some released memory, IIUC.
+>>
+>>
+>> just my 2c.
+>>
+>> CJ
+>>
+>> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/xe/xe_hwmon.c?id=3a13c2de442d6bfaef9c102cd1092e6cae22b753
 > 
+
 
