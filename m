@@ -1,99 +1,100 @@
-Return-Path: <linux-kernel+bounces-805732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8568BB48CC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF70B48CDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925261899634
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEEFD161FA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1520B21B9FD;
-	Mon,  8 Sep 2025 12:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF8C2F8BF7;
+	Mon,  8 Sep 2025 12:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puHaqcH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="j9tMMyx+"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E027235BE8;
-	Mon,  8 Sep 2025 12:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F2C1EE033
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757332963; cv=none; b=EiFS7dgrM2OJizw/DGFY9krms5Dw7CeRGBJioE5Zn04Wej6tpoygOa1bhueG0UsOmTIj6OyaJzoLQr2Y7Goa7SO7Vb3gL5qBAQMcPO8FTgjL0hR9OZV3WOo3NxnchQg82HFQ7npRrrmVChFId0IpJB4mXp/rgUEWZ9ifUKEJ+bU=
+	t=1757333293; cv=none; b=gR0b1+SC9j0ohImmVt+HAEXDjgXeqEUnJBUQkQRl3A22myX2yRBVCBh2JSxV7xlj1nRXSXUL6SF+VGQ2B4I8SQwqCv4jEsCOBlA4p1tIBbf2l6NQJIED16WhZAlKRKowCyPSB8O6K6xtpkdzD4oFj3RFQv6NCSvJlrLcxWctTGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757332963; c=relaxed/simple;
-	bh=t11HIASYESpCmn8VJ3JPqOjRu5Sy8u7S1Z5peCBguj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1YsYjA6XywnArOdVwVcYr922CEaW/Ny7RIr0Yxgwnbk4hxSPto60poGT6qz52uULQRQgbcKu75eLtnYEfptjI8ouWOMW2G2x1+GUp0C5Z9w1SoixEdURm66au+ub7GVtzYrqMo/l4zTk9Wowo2kCfL3/csFub2pdYvsRzgKyzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puHaqcH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C712C4CEF1;
-	Mon,  8 Sep 2025 12:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757332963;
-	bh=t11HIASYESpCmn8VJ3JPqOjRu5Sy8u7S1Z5peCBguj4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=puHaqcH0d6MVZCTWRU3QsJC6pmfMfMFLXdD+GCFwT/jPOm3+AN2voetfv+SiTRsOA
-	 1aBv0AqH1mDkJi8UcsxbAEk3j+bIkR+N1hy86Yw3h+sEOzWgICvutIpwkUDCw5IPIa
-	 77etmOXjQz0KEY3/18az6ZVkDdpVVoodinj9KUr7bGy8z9xU9xTKu5+xiTHe1s6hKs
-	 9tivJvDpCRTruX+UjE7Uq66WeasApBOQ0CF6rePFeESFrkKk1Eto3a6sNKLCUiNnas
-	 8WcvdBaMxHZSSQF7+Ut67rxPMdmJamPZfQYdFzJ+UW66Mupwx+hqKFDYOXe6JwkgZg
-	 22dd4CLDc1fag==
-Message-ID: <c3e8e0fc-5582-49ce-99fe-6dea37c39ddb@kernel.org>
-Date: Mon, 8 Sep 2025 14:02:38 +0200
+	s=arc-20240116; t=1757333293; c=relaxed/simple;
+	bh=ZVQJPTOouxLZ/v8x1+fqmZZfqpYvheKDxIpsjXeK0Xc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=gkp9bK1yPQgH2u+Azd/noUAmb9LoQantmXTcy0RDYa1A6NXcbsh4FTBqp8FO0MQkTRM7HA6WpSwwQK5Kewh01+Rko3j5L732AKYvZ1wOl3kMTChHuIBxVjw/UxqOhrRyrNSl0r/PH2JrkNG3Dn/MzsjvCjuuoClaTYMikm5CcJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=j9tMMyx+; arc=none smtp.client-ip=43.163.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757332981; bh=mBOgZthAeNIrrKWBuszWkTFx1OdgxTih3JeIU2LJqIQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=j9tMMyx+p1pXyA+tb0RW3DQulQIXVzfx/hsINyhHGGVC7a5pRm11vXGnRHKLDO7Lm
+	 We5ZvsgK2vzc5r6V2D8omPGY6cHNSdAUnNIkACsfUA+ZtpYDRc9bqFx/29JVF6FyZr
+	 ocFUKQ6/iXhD+FMa4Xy1pONlEu5lzGRaUoxKlr+s=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id BB20456; Mon, 08 Sep 2025 20:02:59 +0800
+X-QQ-mid: xmsmtpt1757332979t1ijyonm5
+Message-ID: <tencent_A10DB8A5C88DC712765D8D5D85191DCFBD07@qq.com>
+X-QQ-XMAILINFO: NRYSeI3Ux+UPXG0Qepx2Tp4CQ2mkPyx3h7BSg+tbmC9McMETTlBq12RtwEBQnq
+	 5FoqTnJQCBJE2IkIhHXC5gLQlMK9RbYjOteam0j57IOkDH1dx33L4479gYXa1wVneUl6nUm0vVaU
+	 /bhLjxj/b4Wl5gvB68CzXQyYpdoAWDqdQf3b4ZTR3GmgSLpt+vhxMctWtuhFsOTaCLszA+iVaZdy
+	 IYe1zrwtoRA0GQidUbjXGCFE8zxK0JQM7k1ASFf1jby/5RmKjwlWXaR+pfX748869T5EiVrNJVgc
+	 jPA4gKQf9Tx3OO2+hzcmic5FysBY5P+AYceVBEzMWEoLWFIvGeK7Qj+3zfmbNeJK332mEqLGngvN
+	 kkfQN2NAtx8Ol4tM63FHzNeHwb9Yxq3bV1VMIbyUznegAsvWHJPBctvePNHx6gymbJMwrrfWXnuc
+	 EwJSqyH24HOnqJ/Geyuz9CupX0MBU/YeCVNoVMnIuoIRb8lmf9h39zVlVaPmCLiDX7Lxe54EHILp
+	 HvIPXpmXlWIEo76R+HSrLe+xF4QDCbfI1GxhtKEO93QIsJLVdZkl7z6W+5gfMHt0IqUJ5K+K6SYZ
+	 I7nMkYYBDsgbg310Pm1Xqz4UgCEwaXnC5rvLWpmuJOHvyf58/3bx8H1a1JGewPcnRbDS0rWY0tUX
+	 duLl/xo4fFWjaNkOEIJLy5JxIQ2YL6WD/cif103HtJBl4R+wGvAhwqPhXJVNGOhfb0TLrJAV4FcY
+	 NB3I/FfVv6H9KCLpQfj5KSCKIi54gAT3zMPmmAFn8f3AuQe/+FGORWNAhOiYpyN/fwH5yfdAkfIh
+	 zBoi2FezpcDmLxgOrAs+lM+xG0cVF7TXnuSNDHYZiCGp1KkYQ1AkeUaN4swf6rq9jpPxKhwqv/dN
+	 iexH1Yw17sJYTrFVSQ77lKQGZ62kRniHgcDCaH2Ccix8GuBhPA0gFO+7bPltRvbD0Y0Jj/x+NGUv
+	 IYbDQel8Cj2h91IIz/Cg==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e37eedd918576774ec80@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [crypto?] KASAN: wild-memory-access Read in __sha512_update
+Date: Mon,  8 Sep 2025 20:02:59 +0800
+X-OQ-MSGID: <20250908120258.2568601-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68beb07f.050a0220.192772.086a.GAE@google.com>
+References: <68beb07f.050a0220.192772.086a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] rust: add `Alignment` type
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- nouveau@lists.freedesktop.org
-References: <20250821-num-v4-0-1f3a425d7244@nvidia.com>
- <20250821-num-v4-1-1f3a425d7244@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250821-num-v4-1-1f3a425d7244@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/21/25 2:42 PM, Alexandre Courbot wrote:
-> +    /// Validates that `align` is a power of two at build-time, and returns an [`Alignment`] of the
-> +    /// same value.
-> +    ///
-> +    /// A build error is triggered if `align` cannot be asserted to be a power of two.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::ptr::Alignment;
-> +    ///
-> +    /// let v = Alignment::new(16);
-> +    /// assert_eq!(v.as_usize(), 16);
-> +    /// ```
-> +    #[inline(always)]
-> +    pub const fn new(align: usize) -> Self {
-> +        build_assert!(align.is_power_of_two());
-> +
-> +        // INVARIANT: `align` is a power of two.
-> +        // SAFETY: `align` is a power of two, and thus non-zero.
-> +        Self(unsafe { NonZero::new_unchecked(align) })
-> +    }
+#syz test
 
-For DmaMask::new() we used a const generic instead, which makes it more obvious
-to the caller that the argument must be known at compile time. So, I'd prefer
-this here as well.
+diff --git a/mm/gup.c b/mm/gup.c
+index 010fe56f6e13..22420f2069ee 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 		return 0;
+ 	}
+ 
++	pages += *nr;
+ 	*nr += refs;
+ 	for (; refs; refs--)
+ 		*(pages++) = page++;
+@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+ 		return 0;
+ 	}
+ 
++	pages += *nr;
+ 	*nr += refs;
+ 	for (; refs; refs--)
+ 		*(pages++) = page++;
 
-Either way,
-
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
