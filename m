@@ -1,63 +1,51 @@
-Return-Path: <linux-kernel+bounces-804989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66076B482B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A047B482AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A51A17B221
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5A9189D369
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7A41F09B3;
-	Mon,  8 Sep 2025 02:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NzM8OPT4"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D5D1FF7C8;
+	Mon,  8 Sep 2025 02:44:21 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956CC171CD;
-	Mon,  8 Sep 2025 02:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2859A1EF36C;
+	Mon,  8 Sep 2025 02:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757299673; cv=none; b=OlDZTsCOtMg1sh6hKusqad+XOAll8bWwk1TUTiw5iZudFXYvbPRfpKWhb2GsZ3exFwcVkXYEi9cgHu9EhcyI+Nda8zCR3mW/SQz7A84CSjh+eUF/0BaRi+iLDpQNqIxZRRvfW7pJxEWGTuu15efVjeSJDXiv/Ckhkc2OfaKVzIw=
+	t=1757299461; cv=none; b=DJcacGkALnGN3DmzP5D7OtQnMbWaKmO48G0sKQc9/QrUJc/Hrn6ag/c/3w5G+1g+hhsqvHcaTgVkLycimXb0svtevscqkP1kH74J6ea7cY9m0e8E9nUMMTF3ZzV4WVZevFyjXpbptlpWyKjLB0u7NhyUsk1itN6yAt+jbWii0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757299673; c=relaxed/simple;
-	bh=6PGniREo8iRRFGqf6SO/b73DgB7O+ZEKcoaMpvkIT28=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K7TtlpUvCf2HHOkbGYD+rxVfQ61EeNOr6a/auxOv/xjFESW7pEsqwwjS8HgjwvAGYEbSSRSIOEpSXpfldW7gEKXh5NwU5mc9Y7/Drqj/4bmCGyOSdHBg+uuxc3Lp+pWe4qg0SbZ8i19dCoGZSYcqouV6DD8DP3QZk1Csq+jzEF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NzM8OPT4; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1757299637;
-	bh=Kq5+ie83WAWG3dfLGgHu/YamvwscaWTECpHTn+2Mb8k=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=NzM8OPT4cHTA3kwdEWbe1vkloBMBhH6jaQIAn/W0Riu1IEP0N3BBl5qS4xQkSOBjX
-	 CjBYFBmVF8OnPJOCla3cpe/vmMH3REHMeoW+4RlLlxwktY/EF4MSC2XZG2KmUnZVMx
-	 +wyn+OUeQNO33CqQfnsrx6jk2z48iSSBVqonLR0o=
-X-QQ-mid: zesmtpip4t1757299617t525c1d29
-X-QQ-Originating-IP: sTFAx9BjWx3E+pTv9b41bJNlMLIKiEhtlvUot1PuhSE=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 08 Sep 2025 10:46:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4028751903999020214
-EX-QQ-RecipientCnt: 8
-From: tuhaowen <tuhaowen@uniontech.com>
-To: wusamuel@google.com,
-	saravanak@google.com
-Cc: rafael@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	huangbibo@uniontech.com
-Subject: Sync timeout mechanisms - Request for coordination
-Date: Mon,  8 Sep 2025 10:46:55 +0800
-Message-Id: <20250908024655.14636-1-tuhaowen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1757299461; c=relaxed/simple;
+	bh=EI1whyu/GvMcQIxl+6qxm12pxHkQFNMZ57xYopKAUUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=clo04aGP24Tuul5psPkSwJycW6i0woVCumUValf8DPj83sfWBbaDfI2+XjGY1t6fxOwgp1WjtSGP/XImecqCNWIZew9WXBdvEIvLp41E7jMxETTeqCDDrdwdpFs0x6UIa+nsISjcFBmSrI+qcnH4P8yYgczq1Xt9WX2AE7Qw4bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cKrrG5kFnzYQv89;
+	Mon,  8 Sep 2025 10:44:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4BADB1A0B4C;
+	Mon,  8 Sep 2025 10:44:13 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgAHnor3Qr5o97YRBw--.44507S2;
+	Mon, 08 Sep 2025 10:44:09 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2] tracing: Silence warning when chunk allocation fails in trace_pid_write
+Date: Mon,  8 Sep 2025 02:46:58 +0000
+Message-Id: <20250908024658.2390398-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,74 +53,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N7JihbTpIyPv5hIB4CbsVYZYi2dZXHpVnqKgFL4WvyXGDDGCxXVtQhow
-	nUk2dfSHx1YOWKkvqjTOxxDUPd8OMkYFzi07NDU0wXt860gUv1POVZQsoY1UJ+eAf14/So8
-	jj5kT2anL83dKX9GScv8OH0lK7AgoLBDAVnfMuM3EpkR3IjmgS5yAl9MtaMPCyszIA5jUuC
-	GdIqsc+df5B33AME0NXXwHomCcD89PIE27HURyHtWwCsoXw29xeffuSGxJIPO0hMjm2j6SO
-	wvgJ36wIUhqBTyuchgW+YMhZz4rPG4YrjSg5KKKjKAIKYKlFrOMPD6z9LBEe+yvCZ7GLah1
-	4ZQ6SVoY7YnizRU9jun5m4Ngn9vJsyJzkwFzvB/ANPwFIydDy0I0vufVHLwHEJ+BoPByl54
-	7JKM2RRDogPFEqtoE1BfuUFP7ZjeQ6XmoNaLst1dMVxLKaCPfqh+nEIgtRoTEl+wrskbMlf
-	4xNymRXpOh6hp5YxAkgyaPbD8f+xi7iPVHTztPP4v0OESH/AfYVhVGYz5vDGxClAo5IVLmP
-	6Unf1T4dPuT6IGPO996V8uwdfMYySs/kOjge+er1fZkD9MhonxBf72CkNdwTDEiHu+qTBLM
-	YmNHeRmsIIqqoc+BRy5GJO2zBO1Uz3++nhEarh0CPOUxmRbTzXwCuveJK8/z6wo9FxZOdYY
-	/MOio0LbvUPaDs4qM5Ui+Owo7L6jJqariUM1xk6nZPXf9b1oN/GuJnusYSc/1s2hNzsTf4r
-	nUf9uGwRyUiwvOQta81drN0ru4cmJ9IXj6jl09fof6bfQ6jpzsO0DxwpNleudOe1Gwcl8SR
-	dLdTt602Ag8sno4Bex2sKJPwPiHtj5KcAWeywATin1vLWQkg2cokB/L4effCMyjO+EtBWjB
-	TXarzvSiOeffreyaUr86+G7phOXchZufCRjxdv6HAy0ylRjxRmSStB7gw07wzgEd2k8IjcA
-	dNbLwCUE52+VCuPPdDMHbfflmazloDOIfRttiaLNIxJpoClDXXatx9WTlkdkgScCQaLIAIw
-	O7AZfvNQMHl0jEiLUZMxVCDw0UFkFw90iwf+SjTA==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:gCh0CgAHnor3Qr5o97YRBw--.44507S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr1UtF4rtw45CF4ktFWfGrg_yoWrGFy5pF
+	y5Crn3Kr4rJF1jyF48XF18Gry8Jas5AFy7JF17ur1rAF12kr1jgF47XryUXw15Jw4UJFy3
+	tw1qyw4rKr4UXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUUUUU
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-Hi Samuel and Saravana,
+From: Pu Lehui <pulehui@huawei.com>
 
-I hope this email finds you well. I'm reaching out regarding the sync
-timeout mechanisms for suspend/hibernation that we've both been working on.
+Syzkaller trigger a fault injection warning:
 
-Rafael from the upstream kernel has indicated that he would prefer us to
-coordinate our approaches rather than having two separate implementations.
-He mentioned your patch series "PM: Support aborting suspend during
-filesystem sync" and suggested we work together on a unified solution.
+WARNING: CPU: 1 PID: 12326 at tracepoint_add_func+0xbfc/0xeb0
+Modules linked in:
+CPU: 1 UID: 0 PID: 12326 Comm: syz.6.10325 Tainted: G U 6.14.0-rc5-syzkaller #0
+Tainted: [U]=USER
+Hardware name: Google Compute Engine/Google Compute Engine
+RIP: 0010:tracepoint_add_func+0xbfc/0xeb0 kernel/tracepoint.c:294
+Code: 09 fe ff 90 0f 0b 90 0f b6 74 24 43 31 ff 41 bc ea ff ff ff
+RSP: 0018:ffffc9000414fb48 EFLAGS: 00010283
+RAX: 00000000000012a1 RBX: ffffffff8e240ae0 RCX: ffffc90014b78000
+RDX: 0000000000080000 RSI: ffffffff81bbd78b RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffffffffffffffef
+R13: 0000000000000000 R14: dffffc0000000000 R15: ffffffff81c264f0
+FS:  00007f27217f66c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e80dff8 CR3: 00000000268f8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ tracepoint_probe_register_prio+0xc0/0x110 kernel/tracepoint.c:464
+ register_trace_prio_sched_switch include/trace/events/sched.h:222 [inline]
+ register_pid_events kernel/trace/trace_events.c:2354 [inline]
+ event_pid_write.isra.0+0x439/0x7a0 kernel/trace/trace_events.c:2425
+ vfs_write+0x24c/0x1150 fs/read_write.c:677
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I would like to discuss how we can merge our approaches. Below is a
-summary of my current implementation:
+We can reproduce the warning by following the steps below:
+1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+   and register sched_switch tracepoint.
+2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+   allocation of trace_pid_list_alloc. Let pid_list with no pid and
+assign to tr->filtered_pids.
+3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+   tr->filtered_pids.
+4. echo 9 >> set_event_pid, will trigger the double register
+   sched_switch tracepoint warning.
 
-**My approach - Time-based timeout mechanism:**
-- Introduces a configurable timeout for sync operations during both
-  suspend and hibernation
-- Uses kthread with wait_for_completion_timeout() to implement timeout
-- Provides sysfs interface /sys/power/sleep_sync_timeout for runtime
-  configuration  
-- Default behavior unchanged (timeout disabled by default)
-- Addresses scenarios where sync is excessively slow without wakeup events
+The reason is that syzkaller injects a fault into the chunk allocation
+in trace_pid_list_alloc, causing a failure in trace_pid_list_set, which
+may trigger double register of the same tracepoint. This only occurs
+when the system is about to crash, but to suppress this warning, let's
+add failure handling logic to trace_pid_list_set.
 
-You can see the detailed implementation and Rafael's feedback at:
-https://lore.kernel.org/linux-pm/CAJZ5v0jBRy=CvZiWQQaorvc-zT+kkaB6+S2TErGmkaPAGmHLOQ@mail.gmail.com/
+Fixes: 8d6e90983ade ("tracing: Create a sparse bitmask for pid filtering")
+Reported-by: syzbot+161412ccaeff20ce4dde@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
+ kernel/trace/trace.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-**Key differences I see between our approaches:**
-1. Your solution focuses on aborting sync when wakeup events occur
-2. My solution addresses cases where there are no wakeup events but sync
-   is excessively slow (e.g., slow/faulty storage)
-3. Your approach uses workqueue + completion, mine uses kthread + timeout
-4. Both aim to prevent indefinite hangs but cover different scenarios
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 1b7db732c0b1..f2a84d1ce4b7 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -834,7 +834,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+ 		/* copy the current bits to the new max */
+ 		ret = trace_pid_list_first(filtered_pids, &pid);
+ 		while (!ret) {
+-			trace_pid_list_set(pid_list, pid);
++			ret = trace_pid_list_set(pid_list, pid);
++			if (ret < 0)
++				goto out;
++
+ 			ret = trace_pid_list_next(filtered_pids, pid + 1, &pid);
+ 			nr_pids++;
+ 		}
+@@ -871,6 +874,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+ 		trace_parser_clear(&parser);
+ 		ret = 0;
+ 	}
++ out:
+ 	trace_parser_put(&parser);
+ 
+ 	if (ret < 0) {
+-- 
+2.34.1
 
-**Potential unified approach:**
-I believe both mechanisms could complement each other:
-- Event-driven abort (your approach) for responsive wakeup handling
-- Time-based timeout (my approach) for proactive protection against
-  slow storage
-- Single, unified implementation in kernel/power/main.c
-
-Would you be interested in discussing how we can combine these approaches?
-I'm open to:
-1. Merging the implementations into a single solution
-2. Adopting your workqueue approach with added timeout functionality
-3. Any other technical approach you think would work better
-
-Looking forward to your thoughts and collaboration.
-
-Best regards,
-Haowen Tu
 
