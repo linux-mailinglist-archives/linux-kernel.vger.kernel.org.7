@@ -1,89 +1,75 @@
-Return-Path: <linux-kernel+bounces-806106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E384B491F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:45:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303E5B491F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E086162B92
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF2F3AA9E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA31FBCA1;
-	Mon,  8 Sep 2025 14:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D365730B500;
+	Mon,  8 Sep 2025 14:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZ8YA2Ik"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="Za5epwye"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0FA30BB9D;
-	Mon,  8 Sep 2025 14:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342713; cv=none; b=HAx4Fg8r3jO9JX6PaNbMqZ+4Bo17o07G1NE7Q2ZShX80DuViyfllYZHxgKkhTaG6vMeizSq8RL940MGnm6dfJ3Vvawh6fkaYiUBKxPjlxtN6LtdEKUbcirM7SSCwl1dBUvveaP7XV6gOZj6Q/AFuulBS6Zx41+mazkOF2Si9mbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342713; c=relaxed/simple;
-	bh=wI6SpAffNdI2VJI2r6W6mIMJ6ctpCyKFmqkR9gg+2vE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rUjays6jTREqnutoN6MpVSuSTXHln9zYpI41t4JKgUuB7EfCKDuWQgKmhqYmVRlJ++NkkuaydIMivKp2AnUvFhywIUVshw5PXHHmw7rzP5tFmn+hXU5DsonlIrZoHP9AhYXLxz5HhHRN5Uwhc0yL5Ttbm3CasPOwNU+ssCkng7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZ8YA2Ik; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so27313405e9.0;
-        Mon, 08 Sep 2025 07:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757342710; x=1757947510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NBXXUhb2BmggesthHwWGiC3WVEvKONX11k5/N5kirYY=;
-        b=bZ8YA2Ika+MnXYrOCH4aZlRQg+EpYm6P2bvr8QP6uz0GFI63HYNS14UJsGhDRnKVQ/
-         OuEWv9d34SbSIVhaD5dPuz03mylfJQIFwiWrColJQepimqie1/jiCZ0AONrA0vePg3dG
-         LwUwlOgYgEmgSHLeJHUVAKBA0Y4E+XxzP2MW3iVgJSEuODWRNZeoNGfXieWhLUJfOB9y
-         HXvjbBP3IDjbRf1Z3N3fvIjCsmb7gztc+z8SBonFQdSS4d11VQk/yjdXIwTVhJpaONFL
-         Hj9shD2S8HeFXFsjXbPBzmW0rig6juLbOBNLtCArnnu6koRp1gUShuH6+tOZxQlFth9w
-         He1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757342710; x=1757947510;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NBXXUhb2BmggesthHwWGiC3WVEvKONX11k5/N5kirYY=;
-        b=Gp0UXOpSxsfZ4X4RLYJDHK8QzJdHxWvOD3M9YpyFzo8UFRmosVpZ61RRkQnKlz/qIg
-         o2DMuseouvxnoAVQXaz5JgOzSwyqmoDPYKcgn5tLRLNMVLGCP/W0e9PnhZqArqlbmAtV
-         Q2Zd1RE/2ifgBkKhJaM2/PwY+GndrPTBiCKaeGYs6RzuuMkKi0uUTkX+t5fZB1WoVX0Y
-         9L9VJkg2UHdirBV8DjwEwyvnMOq5tePb2innigLU8LWVJQ9WBft2cswLZpLcpRNYIkDL
-         uCQ9IVWVhSmiJtgIbahKJMXBGI1qF99kVEaRHEgWUMTpFY563RKDyQVLvirsSZONYlyn
-         K14w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQgPyYO9J6rtYiAGLd7B2JNhCIJhMGVCtvmt9QoJ+JC4lb20Ax3W6CGTtw3bCH+ijufiJIgSfwA9Yt/gHo@vger.kernel.org, AJvYcCUyzlRHbuKe9sVOse97A37vo+db6mrGihcA1sBv8w7IpXoThbEjxM15TiCv7Vh/s45WhMZBK5u9gHMo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBWuNMAbFb5BWXap+MPhgxOiTiFuTkoAyQkjbsfhqOVvFZuvsT
-	AGdurklQVDBFmHHjIWAeU+25hKxBi3JfxzpEDsW3LkYkDNaOxnZsAUGB
-X-Gm-Gg: ASbGncsdYS5dpeyaTK2xSeo+ztaluuO9GCLN7WJTAi1UOvJKUV8L0bgImX5wExgjfVE
-	mQCH9sSqNrbC4qx4LjgonWvAbpifkrpVj8F6F/p/aXyNWwhOvyBfuxh8yUAfpDdJab4zUeCHeI1
-	6ZBhWG+yCy5BexXSSVZ+mcMWtRvqZI7rrO7jH4tAdFv9juju3TEsU0y93R47V+92o4LvK3fkVD1
-	c6XKZ+q0GipMUaL6fjLh/jwfAL14MGNh96YzRmsFfryQUtwErFjXLgXnsxllvFgkZYVaKh1YmoG
-	DHrbznNTEi4LDL7F69qcDZzbIyZUxBzvm7L8ajpyIU81s6I9i1+p9NxMDM3MiQ/lFBIJjN8tY2Z
-	QdQQowgx9Pz8uMD6wOsGNlLfVcksCBkb4iCCaqySGO08sLMZiHZzm95Hdx0uqlrS7Wzs2j7HyAm
-	o=
-X-Google-Smtp-Source: AGHT+IHoH/kzU+cENxZgae4niFxHNIBgU2yBvIXmO8kprk/rkDniF9PtdgAaS1TlIlleNmcUNrw0ug==
-X-Received: by 2002:a05:600c:5249:b0:45d:d68c:2a43 with SMTP id 5b1f17b1804b1-45de3c66dd3mr52823045e9.33.1757342709588;
-        Mon, 08 Sep 2025 07:45:09 -0700 (PDT)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45ddb779eb6sm130993655e9.8.2025.09.08.07.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 07:45:09 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, wens@csie.org,
- samuel@sholland.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: Aleksander Jan Bajkowski <olek2@wp.pl>
-Subject: Re: [PATCH] arm64: dts: allwiner: h5: OrangePi PC2: add ethernet LEDs
-Date: Mon, 08 Sep 2025 16:45:07 +0200
-Message-ID: <2012341.PYKUYFuaPT@jernej-laptop>
-In-Reply-To: <20250818163520.1004528-1-olek2@wp.pl>
-References: <20250818163520.1004528-1-olek2@wp.pl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6962215853B;
+	Mon,  8 Sep 2025 14:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757342825; cv=pass; b=WxajCA2zVh8u4V2LrczMo91UZr7vP3VMRowet2J3HtdLtjP+IkVMbPt4U7/HrPCURxIPegw+NtwKZD1LCQ4saLKCiURG7q+QjEhwQrq9uOvLYLIJWFQ/WjCpNwax35Hd/RzLmb8/GVZ9JgtsKZLIXikVLWHfd6FKLQgekVBneSk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757342825; c=relaxed/simple;
+	bh=x7crhV08VPBnsufEovoxAY4NKlFOuXVLkS5Eme/gQ/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GcxTN/+1jeK1nogHRK+5lLClBzclYZyEhvWaTe7nKJbJOE/2IPfmi9rFz0YQN1LSZd+/dLFxNr0s6ouJmw+ObFpmyaolJxyl1+i4afbYCr4jhysP3SWDdNIybHysXbUJS50UmhNW8g4tfsejDgntgywbQOwFlr0xt61iL1qrMiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=Za5epwye; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 588EknhB011754
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 8 Sep 2025 23:46:49 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id E28D010A2494C;
+	Mon,  8 Sep 2025 23:46:48 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ILztLWlsm_1U; Mon,  8 Sep 2025 23:46:45 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id D7C1B109C12BC; Mon,  8 Sep 2025 23:46:44 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757342804;
+	cv=none; b=Yb9mTTu88UZWXCuHIlyiwA3tdVkIFgWZLQ/YzTiETPh6rfVMWh58taLLENPzHhZYRPQlvalCl9zQlww9Xhw+tKDZHxGo+GzElpGmFpj9i0ut8v8OlMyMmS0MzYpnCNcP385yzJeZ3aPaIdmXgK8E8C5QCE1zT4cdmSYSErgXEy8=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757342804; c=relaxed/relaxed;
+	bh=FB9DSy76R+KkspwmLdy7aTmCl+PBGT6k/7lmJ25wzDA=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=je1Y28R+zXs6SPTTPvaL9BgUu912JZNxjG3h8XglfKzKLxJpTmU75hktrqRRwQ+NMcjowUhE3sYwwlK60dqoyPGL7o0h6Y+o5VMLPIJqdMX0ppTZ2dK+S/hPKwqv0BczvY5Km7afXhDJCtbat5yjeVNJUXHfHLNCwC2RxhVtc70=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org D7C1B109C12BC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757342804;
+	bh=FB9DSy76R+KkspwmLdy7aTmCl+PBGT6k/7lmJ25wzDA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Za5epwyegoMrSgbwNd00vRQaDHhvn0a7o1yxicxzP78N2WtArhHoyPl3WVHGxpozr
+	 Va0ykpVdssLVdvL5G4Yv3HXIsqpC0CqVxa7e99jGsicliUZTkX92fxZCCG/LSkK0a7
+	 yCDSmKbJw92HtuRkBJvHxMrFI3rVV0FGAUzCyMvI=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] staging: rtl8723bs: fix coding style in hal_com_phycfg.c
+Date: Mon,  8 Sep 2025 23:46:41 +0900
+Message-ID: <20250908144641.39518-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,73 +77,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne ponedeljek, 18. avgust 2025 ob 18:35:13 Srednjeevropski poletni =C4=8Da=
-s je Aleksander Jan Bajkowski napisal(a):
-> This patch adds support for Ethernet LEDs.
+The function definition for phy_StoreTxPowerByRateBase() did not
+follow the kernel coding style.
 
-How did you tested this? According to linux-sunxi wiki, this board has
-RTL8211E, while LED control is supported only with RTL8211F driver.
+Move the closing parenthesis to the same line as the argument to fix
+the style issue reported by checkpatch.pl.
 
->=20
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-> ---
->  .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/a=
-rch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-> index 0f29da7d51e6..7688f565ec9b 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-> @@ -7,6 +7,7 @@
-> =20
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
->  #include <dt-bindings/pinctrl/sun4i-a10.h>
-> =20
->  / {
-> @@ -132,6 +133,25 @@ &external_mdio {
->  	ext_rgmii_phy: ethernet-phy@1 {
->  		compatible =3D "ethernet-phy-ieee802.3-c22";
->  		reg =3D <1>;
-> +
-> +		leds {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			led@0 {
-> +				reg =3D <0>;
-> +				color =3D <LED_COLOR_ID_GREEN>;
-> +				function =3D LED_FUNCTION_LAN;
-> +				linux,default-trigger =3D "netdev";
-> +			};
-> +
-> +			led@1 {
-> +				reg =3D <1>;
-> +				color =3D <LED_COLOR_ID_AMBER>;
-> +				function =3D LED_FUNCTION_LAN;
-> +				linux,default-trigger =3D "netdev";
-> +			};
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Schematic says LED0 is "Yellow" or Amber in this DT. So LED1 should be gree=
-n.
-
-Also, I'm not sure if trigger really needs to be added, since PHY network
-will set it as such.
-
-Best regards,
-Jernej
-
-> +		};
->  	};
->  };
-> =20
->=20
-
-
-
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/stagi=
+ng/rtl8723bs/hal/hal_com_phycfg.c
+index d5649e7d8f99..f137ec747ab3 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
+@@ -60,9 +60,7 @@ phy_SetTxPowerByRateBase(struct adapter *Adapter, u8 RfPa=
+th,
+ }
+=20
+ static void
+-phy_StoreTxPowerByRateBase(
+-struct adapter *padapter
+-	)
++phy_StoreTxPowerByRateBase(struct adapter *padapter)
+ {
+ 	u8 path, base;
+=20
+--=20
+2.47.3
 
 
