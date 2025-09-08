@@ -1,98 +1,102 @@
-Return-Path: <linux-kernel+bounces-806702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E7DB49AC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6C9B49AC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FF43B5FE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99153B7EEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DC32D8396;
-	Mon,  8 Sep 2025 20:12:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1542D978A;
+	Mon,  8 Sep 2025 20:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TH/zpbdl"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8571E231E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A5827E1D5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362326; cv=none; b=eoBzuDlq/78ic78YBunK8i8l3ZcBMpZeoKiCHaFrSoivitC8s/KDzDgtiw0iAPbpMsB1DFInFoFzzIwdVmL0y48i1f5xL8KOg9aSivFZ2i17XO5jkVTWXG28MOsEwNYGzyo0Q46mvIKGWRLbZJ+0SjB0CjkNFaOE83n7yKyH1Ck=
+	t=1757362419; cv=none; b=eccG4lKeTRq1RRiJ2fwdevb+chlgdnVkhp8Leh9w/VqfHYQot8KQVqH6A3Z3HFjOEd8LmmnXaOI0zrWxPDVuGtTNt7+WfUVRad7DjPvBeoWKasBu6nnuFoYaskQsTbnEmWRjAgu5CBWrxrFmrOW3+6NU9f9hXAlTU+dWJtEJqkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362326; c=relaxed/simple;
-	bh=WSIoRV+4dq+La932BdB3eUBY+0kr7L5QrWYY7oF+82w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=D27eIKVmo8qF63ZBM2MB8JA7w6wOV8Ca/5oY4D6c2uwE9hovzny/Ijd28WtQlqTTzvid1K0i1P+xhZsrK5S9bbKS7lgBvYFJpoLdcjWapjnBvm1tdkTynFfvz4OI2jxDQ7WXhANBXYHdr858qvY5XJ0HxRZEA2VciJidZvj0nxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-40b48e4a0deso22514065ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:12:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757362324; x=1757967124;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUVU0Ff8fQ+u+hL7Q5pC0b/mSJVhOT9pIEPHC3xJKiA=;
-        b=mYZtK9K3pkDVvNcklY0IJrU094ICuvjl+4Csb678QmQJ25KSSEFVhfkYLqGPPxfaOh
-         Mk3H2Ql0cNHKz1nRYR02mKhDox1aOV9W3zFcKnZzTVLP0iDpwBy3gdbarWEMHeAOsUqF
-         3Ic7a3ur6vOH+rytQSPgurfxLNBOyX7IRekltPRnNEMr8CRzlNvxsyPQ2B83G3DO+HGU
-         rkgiamEY4fIvM6C/aYjLj89yYzZAityXttrN4DNh2fq74Wci3i7Hb5xaKiR5KRDrJkh0
-         puspvFA+wXPUZPYNi8SysWRjsVzHX9v+4Zs8T9RmOyE/jjn8qw31DaYKzWM6aGpOF21w
-         /dYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeyF6os4XTKMz+F93r+dHfCicWWheO3RJiq9zLvzfdHV57Tm7xlENuVmJatAn6SO5ZaMSvF7DiWx86nCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHBaXsVF8Xi9e9D+RqrgJmDYblHWrp2GTUdlQdy2CNuBlM49O9
-	Up6LU1IrP+aGhcHl5xsgleQvzgLaCN3fYKQyUBva3uxqMWqIoKEq4LANvYn2Xv6fpj07EOlS8gx
-	s5sSNDYg1NXO4y3Xy1wRslLxafNC731vItEL/kjX08YmAMuqCq+lt/8xwQiw=
-X-Google-Smtp-Source: AGHT+IGVhC7g/XMpsLDsz/IZxR5D5A09ltN1f439U0eM0rM9IOQ0kdLoc8NU3w/85NGnunzKaEklMRswAVaqru7LxbNnoA0qcBEA
+	s=arc-20240116; t=1757362419; c=relaxed/simple;
+	bh=ixBNCkTq2ID52WZRqpl1jDAEqUp8UaXL8U9Yw7g44uU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYWlE7DlBu+SpW540FZe1zejCE9vEZvHKkLUqpoSMLqIhvvt4J9yiU2kbDQMPMQDrc6ySWW6Z9P7tFwwo5OYe6utQ+nVgDqiBOStf8QqahMueOT+UhNFpmR/Yam5CvRivfvnAqYlJuusX6xj8yWQ7jEE61cAuBVGIhB0JjXuNE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TH/zpbdl; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757362414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jVx5Hx0di7rnpcJRTZ0XoFVVYLKUYgjeddNGKkMgkvM=;
+	b=TH/zpbdlQS8Xhc0v4xl9pej9K/4GVK6gQRDPUeDApfbtwtYYtK4IbGDVRnAPCjox7hMs0t
+	oZau/W3G8fBDxl3qI7DMalt+NM2pFcC3G3HDDGIhnOHoO85uuhKzvS1Ylf+gUe3CYUqDOZ
+	Uraj2CVGNyryMyuxRgCXMzRhxCWjJyE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() with memdup_user()
+Date: Mon,  8 Sep 2025 22:12:29 +0200
+Message-ID: <20250908201229.440105-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a61:b0:3ec:248b:8760 with SMTP id
- e9e14a558f8ab-3fd94a13fc3mr140050635ab.18.1757362323770; Mon, 08 Sep 2025
- 13:12:03 -0700 (PDT)
-Date: Mon, 08 Sep 2025 13:12:03 -0700
-In-Reply-To: <683428c8.a70a0220.29d4a0.0802.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bf3893.050a0220.192772.0885.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING: suspicious RCU usage in corrupted (3)
-From: syzbot <syzbot+9767c7ed68b95cfa69e6@syzkaller.appspotmail.com>
-To: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org, 
-	bpf@vger.kernel.org, charmitro@posteo.net, daniel@iogearbox.net, 
-	davem@davemloft.net, eddyz87@gmail.com, edumazet@google.com, 
-	haoluo@google.com, horms@kernel.org, jiayuan.chen@linux.dev, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, martin.lau@linux.dev, mykolal@fb.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me, shuah@kernel.org, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
-	yangfeng@kylinos.cn, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+Replace kmalloc() followed by copy_from_user() with memdup_user() to
+improve and simplify sgx_ioc_enclave_create().
 
-commit 7f12c33850482521c961c5c15a50ebe9b9a88d1e
-Author: Charalampos Mitrodimas <charmitro@posteo.net>
-Date:   Wed Jun 11 17:20:43 2025 +0000
+No functional changes intended.
 
-    net, bpf: Fix RCU usage in task_cls_state() for BPF programs
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13745562580000
-start commit:   079e5c56a5c4 bpf: Fix error return value in bpf_copy_from_..
-git tree:       bpf-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c6c517d2f439239
-dashboard link: https://syzkaller.appspot.com/bug?extid=9767c7ed68b95cfa69e6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114915f4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15566170580000
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 66f1efa16fbb..e99fc38f1273 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -164,15 +164,11 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+ 	if (copy_from_user(&create_arg, arg, sizeof(create_arg)))
+ 		return -EFAULT;
+ 
+-	secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
+-	if (!secs)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE))
+-		ret = -EFAULT;
+-	else
+-		ret = sgx_encl_create(encl, secs);
++	secs = memdup_user((void __user *)create_arg.src, PAGE_SIZE);
++	if (IS_ERR(secs))
++		return PTR_ERR(secs);
+ 
++	ret = sgx_encl_create(encl, secs);
+ 	kfree(secs);
+ 	return ret;
+ }
+-- 
+2.51.0
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: net, bpf: Fix RCU usage in task_cls_state() for BPF programs
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
