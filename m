@@ -1,182 +1,192 @@
-Return-Path: <linux-kernel+bounces-806664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F46AB49A16
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8BFB49A17
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2879A168D65
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:36:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 316491637DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62AE2BE65C;
-	Mon,  8 Sep 2025 19:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6898F2BE62B;
+	Mon,  8 Sep 2025 19:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkZJDNKk"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImOx2ESX"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C27045945;
-	Mon,  8 Sep 2025 19:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3219945945;
+	Mon,  8 Sep 2025 19:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360182; cv=none; b=RgXwYJTqud28+DvfFlulMeTOXoWtzWL5DxnIMrnLJ2zA2hg0lAiuOtvRU7jGkb2W5NyAE++fB8y1WMyGChnqGkKrGsk7UxJbaDyCoKnrlQfGPk3r/iUcLwu5vAkn4mr64fCbSzESDOiuAFOjhzKpSQKQSR1lpvw3A4DBFGIkoao=
+	t=1757360289; cv=none; b=pxRsgS4ohpxmA6Ry+AlzNtvQxGfXwULFd68wADANHolfYFIGN/gZcimuyd32yfV7q5bakWE4rD8MNrpbjzGENgwWe+qFT/FUskroTzU076cmZ5+FZWC/10XPCZl8SXvHo4mNxx8MAbRHcbt/q0TS6IRYHiQtojxwWx8+d5kTybY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360182; c=relaxed/simple;
-	bh=Bo0hCDM48l6MeV5W+uWlFYBVKoa36PqCvcURT03ayKc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1gz7dzTB/C5mWxl8WyAygglPpqVyiRPbMfCHMe+JAVCCKLIinXhkNdbRyXmBy//4bWuWHKStuyA9T4RC3jbS42Z49rrsDVDmS3Z+RRb6AQgJpfncQvhYiC19l/elFrQkVHxcMaaTIVpED+ovGxLDJSVBQhpbqSJy0zFcH1r1wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkZJDNKk; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1757360289; c=relaxed/simple;
+	bh=9zrTiGY3vGZMxk3+Zve/YTWV4HePUtAgTaI9V41iObU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn4n8Nsnmwwy1VJzj9qtzo6rdmAy/dIn7JUdmJKU0o/lhwSjdim3g+vCe8WAQ0Te6D8WG6NgwM4BkpTRKn6jJDua9gwqFe89mEBwXKv6Qd3v/dAIOFBeU9zBu0mVs0wYUYvAfRcyViHJtcesR2o/mzveX46/Dp/4NYxjzar/Pfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImOx2ESX; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-628f29d68ecso2390994a12.3;
-        Mon, 08 Sep 2025 12:36:20 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-729c1074875so34111866d6.0;
+        Mon, 08 Sep 2025 12:38:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757360179; x=1757964979; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7PxCoAvR6l4gW5lG5Yd8jKDUVRJOCjR4r1nXG3daz4I=;
-        b=YkZJDNKkolGstj4Lt459QRGPAFbM5IVCRQ9D+Yl5TbvzoJYCWClHJp9EIenMzzVYGC
-         WonTkOTTveWJ/1t9NgdmvVHwZtdJ0xKLPWi06+5TnrXE3ibNOM8GGPQxvUOtzp1WTLvZ
-         jNJhODipLUTkpC8UXaXllzd4ejhVoqadc9L7RKMgu8nqGnSUu1E6stOvFxB3AX65bLR/
-         l2iZHJQxcQu0Vt7cipC/BNaygWehayjalrKfOiAbpeclMj7SxtcHHeCqYKHHmqGbLQ+i
-         56UVbRcqRIR2Ra7jfPLqg1odH2Z2nDLbRytpMlwJtTR7U8A4wg+o68WeQ50gbDXbaokj
-         kyaw==
+        d=gmail.com; s=20230601; t=1757360287; x=1757965087; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mz439NWTNaZ4G1pBZKrSBs21o1PeCh6E1eqZGLA8wkg=;
+        b=ImOx2ESXpofuSz8GndGaPyw6B13jBfKsIKJVzpYyNrsfx2TrRzwPlgn8puyZQ3r0ht
+         MhETpz+Pf8j7FCj3+Qs+kFAg97Z1IiQocFODDlckTqyNaHrDYVx01cblsoP7UWI15rbE
+         4ZnPxm0Fm/gnKxlY94Bj186s8sq73NPRTT8TY1dYNC88HQF8bNHLqwYPrV6hGm9SNJ35
+         lzmyQ2d9GoAUYp7M6Z2kETozcF/v4npkyKaDFdPJcRRqMhD6y4SzIZNE5AE6SZVKbaNV
+         gWzebRC0AOclp4gyTlQjO715VqQ3DM+mKEsTnMFhCmbDcHQ5/k2xgeos2Yg2TGDeL5G8
+         jt3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757360179; x=1757964979;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7PxCoAvR6l4gW5lG5Yd8jKDUVRJOCjR4r1nXG3daz4I=;
-        b=jeis8k6sXv/Q1UORW/+8SunlgUwnzEP0MXvUf6hQdMeTHBP/ggiQXpu5i0MbHBCiPG
-         +h/CZM8btY0dIJFfdar3IGGmsEDBCSoxrXJthGQl7AOriopTXJf3p4YFUI5wXBdY6JSE
-         1d6KOcCeUUGVdHicsJ8lINpmpEVxcp/hnY/v8I1fWK1l1dZHQyjftaHojE16nn68Op4O
-         kIybrr3nIAKr1tu7vzbs7kk92VGfnO09Eg6q5mKVIYgaNhpiUZcIxUfJzM/W9JNzEVWS
-         gdhWVOvNZnwwzD+sBiteNq48AV7m1uA6uDlL6OmzxSqbKehZemQTVYXOucEag0/XoCdv
-         hIxA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5jLqdS4gWYFu1GkcltB2SQEssHgGJ+olpyfTQeXkluPxR9TgvnzTaIeD+2+QalFth1IfG3NC5Lgif6hDoZgIetjuS@vger.kernel.org, AJvYcCUqYMxew0woNw22fgHdvvCEnE3qZc+daTRnxW1ghamT2M648fsnzD8rWqXpKuHBhu9MnBdiysNxpEM2lLO/@vger.kernel.org, AJvYcCXG5OQZWS2lrzv0plakv2hZ8DgMdTsqvNJ3UEtJqHaU6KF/fCTvs/O6EfvtM6sGIWQAt5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIroCKiUjpOPAaIfbpx3TGu86IsozAarkamNETgDPW2UoGydwK
-	8Ba0NJi4v/LWOUyiFPnAXg0oY/MegRNsgjc2XgipevZmfqeXftxz55fN
-X-Gm-Gg: ASbGncvjiwTv+YqRGroIOIoeINBeh929F1/rrVRllu8R6SzkZzp8HiWCatmZeu2ADoZ
-	bwXUoNaoGggKVEbLxdR1VIw8L65ExhIdg6raycqDfmcfMEwoBW4ChavvQezfUCISm7AxE2BX3B5
-	/3boDVPoer3mpiCyuQviGfbm1H5lu0lUhYALbyDRQJ5GBCS5reNALOGA0oo0QYHRohDHif1jvxR
-	Vs82BSAZavnoYSv+MQsVT017TmHttps4JvWS3teag/QVAscdDgMi/di3ByJ1F/+Zp/QYz6VFfUC
-	buM4oxEAzKUIDjYLm7PhLkhJF5+ZQfo0Za0rZSnL4Cu/4Ifdrt0kKJJxHNkTRmAfiEk65G+xawf
-	yQU05ZTG/Af0=
-X-Google-Smtp-Source: AGHT+IFLfG/96PmNOOS1sDG/gwN3q65g5ZhGzfd6k4qr91vqyjSbl27rWiEXu2Mn02q2AVdYFmGt0Q==
-X-Received: by 2002:a05:6402:1ecf:b0:62a:82e8:e1f6 with SMTP id 4fb4d7f45d1cf-62a82e8e4afmr2476554a12.36.1757360178263;
-        Mon, 08 Sep 2025 12:36:18 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61d3174074bsm19440249a12.35.2025.09.08.12.36.17
+        d=1e100.net; s=20230601; t=1757360287; x=1757965087;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mz439NWTNaZ4G1pBZKrSBs21o1PeCh6E1eqZGLA8wkg=;
+        b=lQgEhFclCOXqYkDORXOYzLZmFA9dGphpu76ty1gqAM2ZDmcJEtXGDox1DGqvzRjCbf
+         4xuj9S75dgXtI0Bm4fbkc0efM3ZPx4VVUkqXbWkHXsaNkBh/D6CUpAUTiWR4GXIFUN7Z
+         5YdziziY2bgJGivkVj3KZVTOLHQQdXSOexE/ciPBpy0nN/0XuSrwItN7VeofUunHoFyO
+         /b2bVBo1V8gxjahGxnsvsAcJwigQV6Oh21IQJOE8v3EQ5eU+htgeUIZspzpzlXpEtfM9
+         qPW3GmAZATYun7YWKJZ2yfoquAhddGhMJZ7hg84jVT9/olY6t1XApg98BHQ6U4mGCSqE
+         fIbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5rexoikTa7ACPgbwRQ1j5BIUDRe46Xgmimr9wjqXeEWbxYFLRV1UE7RXydnrF1YXSMj1M/hDpl2jXum4=@vger.kernel.org, AJvYcCVglp+jx8u+sSJzM8/eFbKzpGKaGV/ViAePsZfJRM896heHU9LWXWikB5BYOOoHFepE08iK8M5KIdoYnsOyIKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOC+kllCtbS3KejjT4rLdIT80TR8N/pL6/m1YqeLkX26zA+2K9
+	0yfJX4EbRWgCbp7/oGh50Gr7OwsBpBE0kN9S2lZmRi66cDrJVS8mpZ5mg/jSqQ==
+X-Gm-Gg: ASbGncvTqtZefvnYbN6iITDuDvdEaYj39ziivxjz7+m80ykAeqgLSVlcHYhGNnYvvqY
+	EpJy2h+40u/GLY8BxYk66urLqhAb3cyKROmAWlXVV5iSOd41p9/4fTa2B7RKFaYZFD6T5xIonaQ
+	ePLJCRtte8htiCxTAFyp78ysxWVzC3xVTpQcViFu0OaTVgsYacPCETd4P1C+jda67nc44vr9wru
+	qo1nDCP/ZYfnYJGM8Lfhv2VfVLG0+NhyoJOpzaKmKnpLJJMlVqMyMOrzJdCYhmNQ2SYtQAJt0D+
+	mmKn5Pdg0bL8CcJ3cSPxbNv944IcIJ4o7pmA8aFSiEnvsJy50ozqr1RzkPXfW1OsodWrpQW52qm
+	eTWUUJj6yNWsZheihJRJ7/BjNOVltcOfr2OPpDjCOyPd7DF2JQ18jSOfRegDWhkPMKPGlh2BCoQ
+	j54477K2u2PRDkNHZxWVgSGgqsB4E+yt93aQ==
+X-Google-Smtp-Source: AGHT+IEfmwoguzXcsUAse8UFcvcD2HVF/pjPcHVcl0GquUR6WY2BLygLU7VZVb1IDhnPEgtR+spafg==
+X-Received: by 2002:ad4:5c8b:0:b0:70d:ff3a:f981 with SMTP id 6a1803df08f44-7393d42bc35mr76447596d6.37.1757360286977;
+        Mon, 08 Sep 2025 12:38:06 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72aea5d8d61sm88883306d6.56.2025.09.08.12.38.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 12:36:17 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 8 Sep 2025 21:36:15 +0200
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv2 perf/core 1/4] bpf: Allow uprobe program to change
- context registers
-Message-ID: <aL8wL1rJRpWp_qHs@krava>
-References: <20250908121310.46824-1-jolsa@kernel.org>
- <20250908121310.46824-2-jolsa@kernel.org>
- <CAADnVQKC4tNCLrS6_1zLOtF7MUWiXUWnLXCnQBp_UDLQZj3rrg@mail.gmail.com>
+        Mon, 08 Sep 2025 12:38:06 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id ED170F4006A;
+	Mon,  8 Sep 2025 15:38:05 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Mon, 08 Sep 2025 15:38:05 -0400
+X-ME-Sender: <xms:nTC_aNam9pyP3e64g8aLu08bGEsAYf_Ch7kZpj9BL6dXjkYwHYq9aA>
+    <xme:nTC_aF7pEpOhXRhbcZrJdzR4p0HuKWC_70tBN99eitLbaIEaC0muqlzAwsL-nfgOV
+    zHJzbQ7xPDNC5lsBQ>
+X-ME-Received: <xmr:nTC_aNmpBWYrVD_0B9D1V-0YGCuJjGHLEHv_n6otK1k-A20eOOuq6MqWZ0NkLb-u5T57ey9_8pLRtSjtxpIKN_1JOioQ4yJl>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeflecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhsshhinheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
+    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
+    pdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
+X-ME-Proxy: <xmx:nTC_aDH6zVXEjRgWDVRvlHkvwT92SsHXbAg2pBoCzii0fBIzu1u4_w>
+    <xmx:nTC_aJEo0Fc-NfjwCbRTboXCgs4zezpULGxcCBkX51709JwE8KY1Ew>
+    <xmx:nTC_aD2rXtYy96aR-gSI9QXyyEd1auS27ZBby4J0zuqKYV4gPdTsJA>
+    <xmx:nTC_aDdOfnih61EptiuyWY86vtZrHpqIuO4KvoC2JxSsUtbjSTsysg>
+    <xmx:nTC_aNJ2dzCzoyKGk89Sfyua3AMcwGG_BMZzDwaVxIkqA7qTgljWvHyP>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 15:38:05 -0400 (EDT)
+Date: Mon, 8 Sep 2025 12:38:04 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Fiona Behrens <me@kloenk.dev>, Alban Kurti <kurti@invicto.ai>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
+ fields
+Message-ID: <aL8wnJcro6uXiD74@tardis-2.local>
+References: <aLzoyWpOr6eg-3yB@tardis-2.local>
+ <DCMFN8UGD7QN.27HTYEXL87Z8@kernel.org>
+ <DCMQVH09L1Y5.3A842FC1NGG5H@kernel.org>
+ <DCMVHB8P7Z2G.PCOWPQXBSBT6@kernel.org>
+ <DCMW6H0VJ9AP.1XWI1RI9YWO9H@kernel.org>
+ <DCMXPGXDXHYT.D9VJ5QBMAVPN@kernel.org>
+ <DCMYLXICOGM7.2G4JBQAE7805B@kernel.org>
+ <aL46nRkYj2SlOhl8@tardis-2.local>
+ <DCN9YYV750Q4.3K9X2EAA3RKJ8@kernel.org>
+ <DCNALVTE4DIN.1K0U4BGN35CHI@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKC4tNCLrS6_1zLOtF7MUWiXUWnLXCnQBp_UDLQZj3rrg@mail.gmail.com>
+In-Reply-To: <DCNALVTE4DIN.1K0U4BGN35CHI@kernel.org>
 
-On Mon, Sep 08, 2025 at 10:20:55AM -0700, Alexei Starovoitov wrote:
-> On Mon, Sep 8, 2025 at 5:13 AM Jiri Olsa <jolsa@kernel.org> wrote:
+On Mon, Sep 08, 2025 at 10:57:36AM +0200, Danilo Krummrich wrote:
+> On Mon Sep 8, 2025 at 10:27 AM CEST, Benno Lossin wrote:
+> > On Mon Sep 8, 2025 at 4:08 AM CEST, Boqun Feng wrote:
+> >> On Mon, Sep 08, 2025 at 01:33:26AM +0200, Danilo Krummrich wrote:
+> >>> On Mon Sep 8, 2025 at 12:51 AM CEST, Benno Lossin wrote:
+> >>> > I actually came up with a third option that looks best IMO:
+> >>> >
+> >>> >     init!(MyStruct {
+> >>> >         x: 42,
+> >>> >         #[with_binding]
+> >>> >         y: 24,
+> >>> >         z: *y,
+> >>> >     })
+> >>> >
+> >>> > The `#[with_binding]` attribute makes the macro generate a variable `y`.
+> >>> > `x` & `z` don't give access to their value. (we of course should come up
+> >>> > with a better name).
+> >>> >
+> >>> > Any thoughts?
+> >>> 
+> >>> It may be a bit verbose is some cases, but it makes things pretty obvious, so
+> >>> LGTM.
+> >>> 
+> >>> How about just #[bind] or #[access]?
 > >
-> > Currently uprobe (BPF_PROG_TYPE_KPROBE) program can't write to the
-> > context registers data. While this makes sense for kprobe attachments,
-> > for uprobe attachment it might make sense to be able to change user
-> > space registers to alter application execution.
+> > I like `#[bind]`.
 > >
-> > Since uprobe and kprobe programs share the same type (BPF_PROG_TYPE_KPROBE),
-> > we can't deny write access to context during the program load. We need
-> > to check on it during program attachment to see if it's going to be
-> > kprobe or uprobe.
+> >> #[shadow] or #[maybe_rebind] ? Or #[pin_ref], the last one is clear
+> >> about the purpose.
 > >
-> > Storing the program's write attempt to context and checking on it
-> > during the attachment.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  include/linux/bpf.h      | 1 +
-> >  kernel/events/core.c     | 4 ++++
-> >  kernel/trace/bpf_trace.c | 3 +--
-> >  3 files changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index cc700925b802..404a30cde84e 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -1619,6 +1619,7 @@ struct bpf_prog_aux {
-> >         bool priv_stack_requested;
-> >         bool changes_pkt_data;
-> >         bool might_sleep;
-> > +       bool kprobe_write_ctx;
-> >         u64 prog_array_member_cnt; /* counts how many times as member of prog_array */
-> >         struct mutex ext_mutex; /* mutex for is_extended and prog_array_member_cnt */
-> >         struct bpf_arena *arena;
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 28de3baff792..c3f37b266fc4 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -11238,6 +11238,10 @@ static int __perf_event_set_bpf_prog(struct perf_event *event,
-> >         if (prog->kprobe_override && !is_kprobe)
-> >                 return -EINVAL;
-> >
-> > +       /* Writing to context allowed only for uprobes. */
-> > +       if (prog->aux->kprobe_write_ctx && !is_uprobe)
-> > +               return -EINVAL;
-> > +
-> >         if (is_tracepoint || is_syscall_tp) {
-> >                 int off = trace_event_get_offsets(event->tp_event);
-> >
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 3ae52978cae6..467fd5ab4b79 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -1521,8 +1521,6 @@ static bool kprobe_prog_is_valid_access(int off, int size, enum bpf_access_type
-> >  {
-> >         if (off < 0 || off >= sizeof(struct pt_regs))
-> >                 return false;
-> > -       if (type != BPF_READ)
-> > -               return false;
-> >         if (off % size != 0)
-> >                 return false;
-> >         /*
-> > @@ -1532,6 +1530,7 @@ static bool kprobe_prog_is_valid_access(int off, int size, enum bpf_access_type
-> >         if (off + size > sizeof(struct pt_regs))
-> >                 return false;
-> >
-> > +       prog->aux->kprobe_write_ctx |= type == BPF_WRITE;
+> > Hmm in `init!` it's never pinned.
 > 
-> iirc the same function is used to validate [ku]probe.multi ctx access,
-> but attaching is not done via __perf_event_set_bpf_prog().
-> The check at attach time is missing?
+> I thought about #[shadow] as well, but it is not really accurate I think, as we
+> might not shadow anything. #[maybe_rebind] sounds a bit like it conditionally
+> rebinds, as in "it may not do anything", but it always binds.
+> 
+> So, I think it should one clear instruction, i.e. #[bind], #[access], #[ref],
+> #[use], #[let], etc.
 
-argh, yes, missed that.. good catch, thanks
+In that sense I think `#[let]` is best? Because it indicates this field
+initialization works as a `let`-statement (in term of creating a new
+binding), of course I don't have strong ojections against other options.
 
-jirka
+Regards,
+Boqun
 
