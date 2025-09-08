@@ -1,256 +1,222 @@
-Return-Path: <linux-kernel+bounces-806425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D654B49697
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:11:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB006B4969C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BB21C22314
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175353ACC3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99103126AF;
-	Mon,  8 Sep 2025 17:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9395D3126D2;
+	Mon,  8 Sep 2025 17:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wRlDT2tv"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IsTeU0Pm"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429313126BB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351440; cv=fail; b=YrJ0Y1sxSufkAS0tXVmruwFsEh9cnXkp1HN+xGRdOegzmn876kAzVYeZMkKb9l834OH1/ZtXEHYPEr7DPCeiRhP4no9gpJDV8yGjPjIT3XFg1p08uzk9YR2Kn4BkF3a1aDer8O/JhKStjFl9IFgvUde5i/LKOtZG7vVf5Xm4h0k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351440; c=relaxed/simple;
-	bh=CjqtqHFCZtsb2cmNL2QnBadTaD6NGZ/cQIpnDv98Wso=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cxgCNkClR63KQ1bk7ux4ja6129OFZyRtZ7tOrKtnKWMxYqUDno+2r26FoaMkVcbVWR87J4KhBPa7XiupL5HxMpSz11RwiO1WBT2lShpChgs70ydWJwuAWIKxmxfH9XP7tHcT24cPi3M21Uu0/gJTO+mUUkIsWn3xCE2eyjKDDLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wRlDT2tv; arc=fail smtp.client-ip=40.107.223.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZZxT9Dv/JuU/tFUiiYudKrz7wH6t0b6/6QuPaO4WOUDUdF19JRiJtKY7IwR734wSBxp/pxB3BIU3ViM9QP+jlD6dZPsAGwRAkW7Yp6WE5N0n98J4Ki5GF0CG3CZWUybX4lAtIWJIoOONYvOe1yBu7i5sWqu6Im68qkMPcLdLkL6vCkVzwvcdZiEPSvDkUUNRewSikYPT78mKkRhV++c0pOb1OwzCJDAY9G/4h8uNPc/p7w829qfib0/a+JKSxlafCZRA/4iOnKhNhEhayiZzNd80aI9HMO7VC/7vniO8rbTlCl1yL/R9wd86bSdu3/qu7C5DlXVugSdblVjBK1WiZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZoE+ztEfJOCUipTW2PsD+usM/3x9Is0Ft/lAt+VcD1g=;
- b=zFwNkrmSbWZsSDGaJkfNbajaMTeGlLDScZC33g1aqWWYWxy2fs55UJK4EIsCZfw9Yytts7ZpOks2Lk1kvFbTxTs5kJsARhwJAXGiYf57SRpDGOaI+anI7ofWpsZXR0V5SLvnoKyXJ+cfaj4JkcsCKfZtVo8tcT90xvy6hj0RJDmRSLqg0yj1+NwH44foAZoWdU7auMWVX5LLijuIoTj5M3W6O5iHfIKr1bzBbhR3E0zv4aW1nFZvYWGKC1PVhGMawAirv1lAEkuVfDZL/IIdVsHeJzThe2yDrQVlfWJ++Luuaubv55KBiXET/SNBoP6eJTT4K0vza9f5e4oGq+6vtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZoE+ztEfJOCUipTW2PsD+usM/3x9Is0Ft/lAt+VcD1g=;
- b=wRlDT2tvSeD+1uawUHBbCB80h4QmO8C3fIJetS2/HUSvQCJcZi2EUDL2Ez33ky0awKmmV6r+bFfBrymsvRjCvcorgCnnfkUhPOGFV+5p84TqGyFuOOgfwAsTM8i6wzYQciR5aAbprP70KO/7ND0OG6SU7p/aBczjV9th1XHSVDY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by CY5PR12MB6600.namprd12.prod.outlook.com (2603:10b6:930:40::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 17:10:34 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%6]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
- 17:10:34 +0000
-Message-ID: <0ed3fa16-9e0d-4f8d-ac22-c9f6b541ae8b@amd.com>
-Date: Mon, 8 Sep 2025 11:10:30 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/amd/display: Optimize remove_duplicates() from
- O(N^2) to O(N)
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, austin.zheng@amd.com,
- jun.lei@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
- siqueira@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com,
- airlied@gmail.com, simona@ffwll.ch,
- Aurabindo Pillai <Aurabindo.Pillai@amd.com>
-Cc: zaeem.mohamed@amd.com, wenjing.liu@amd.com, chiahsuan.chung@amd.com,
- Natanel.Roizenman@amd.com, Daniel.Sa@amd.com, jserv@ccns.ncku.edu.tw,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250824182359.142050-1-visitorckw@gmail.com>
- <20250824182359.142050-3-visitorckw@gmail.com>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250824182359.142050-3-visitorckw@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0105.namprd04.prod.outlook.com
- (2603:10b6:303:83::20) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68073054D2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757351485; cv=none; b=ANLaYJwX66qYxAEWOJrdsawamS2s6PBnRmzASgUZ6lnZeqKZZ34/BJXRNuve1OlZVo5BDosAadcEGERLzWfAXXG6Q7F18HeD1IurVV7852akFbW0WkNhAD9f5F+tN5GaZe2aEcvB9DKVUfxwcNaBtMPN7UtcQOJ4nGn/tY7nSHo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757351485; c=relaxed/simple;
+	bh=DavoxOhjLPcLDMahL3Y9U/VbM03JitHAgDMsWBFVdO0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tZB2iFzWAYFmtMPMv2ygO8Yi/ZYo7sfW4O116O9uccybMWcNu49cMID5wK1IKvOchcxt3e+/ITzMInfDb55vF/laY0MZSVueuU5mbE8UfkC8a1V/j+BHnYIVpfMcuGi6OVgj2u9A1C7hAbGl5mPIfSYipzPMMMPoGljyTMKyQtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IsTeU0Pm; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso4102478f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757351482; x=1757956282; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JXRt87N5KcbZYpVffvCLbSJic16B7wGhz6E/yGN+Uxg=;
+        b=IsTeU0PmzwSYDbg3EIr3zQLnnf0NAyu84FP2kNyCbJvnuGT0pWQN0tYhfZesdCK+jJ
+         owCDBZ5MrzTyU7GtP65hf7XsbgZD5bzLZAJTDl4OYpCAWyPHy027Uo9hEL644atQMG46
+         JjOYuYgVBhvBh86fcyS80xnKbQsAdr5K+hLiZQr7Uw4rdVBXiLdnHlo2KAINc14viD60
+         1gAxsy15XxGLJy4HB5apgJR/CpJU6DG5ss4to+aPE/YZFeMEURMJvQAWbTBYLX9ACk0J
+         JqLHOv3a7G0WRBYJrHPgaQYwYoAkEzBItr5H+MZ+Th6AodrwBBq47TsZhFg7LnJ4G3Pj
+         FaCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757351482; x=1757956282;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JXRt87N5KcbZYpVffvCLbSJic16B7wGhz6E/yGN+Uxg=;
+        b=l0jeGlXR/PAeHAVXc3Fhlo/PiZOXttBbz5+5ShlKiaQKdfoqQAYI3A0V7gTMMf42rf
+         S1rA77FGF9IMaDqIBIuPHrPuB5iQcC9VUtu4+hQeqUXR9nimUQjlvueDR6sxnVsuctjZ
+         G82eoiBenZ/8crDut+YmIvGA0pXLHpTFH7s+af3K5rAWS7RwMyUWWn7qOo+KLSGgjXy9
+         f8xG+Dl4VJWgbZwhxomD57lYKeEHbqAr5liVFOxodqGLz5vJNpzXmzqsojhsRh9sCpIJ
+         kzveHkfQ6FnDXkQKyZjyOJPkEQM6drUkIYQ06pjC3mGEt3sAafhmmovvSJr+tIPGykNR
+         7DPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrP/dWr1M8eRR1KG/sNweLS+fdRCgcn3Uy01yS7JE+yOZzMZL/70kARRAdoQWj66uCEbYP8S6qOpMyivY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZfDhvXnAGTm/t8IaQ/Ke7ZAz2Pk5clm/QdT3FEzdugaLQTC15
+	CyTEu9TNKRvRtRR9aGymd4cqObQWrcPLu/o07tJVaXTVvIp4w4eq3UkcdE1fgj9ZVM0=
+X-Gm-Gg: ASbGncsSJ4RQeIaWBWGbjiq9abGTRdHxdZ6r+7UpRPpgBWPHxuB8IfPIYlq/BG3wJe7
+	qqCD88eyd8/yn79BBALy+kpD31hjHSei6BO8rkztC/rsHjFjPgGq7k/sD1/J8d5A7bXT8dxfGV5
+	g8pJpv2JFQXazHYTyqkIs4bfPnzAbNQQhemrItzy5hJVOn1UaAdOK6Ayz/EU3WC436nkw8t1dQn
+	FHqohD/kWk0ezRq/JaY6VTZF9B2CoEvN2YLR/g+aWDBufZBbAz5n1ix+HJotGImHZkVGtnhWKiF
+	bSvCUpqQZIVM3mSudDrRh5SVqOYTmGOQj2PMya8st5LGk5ux7SpWB2vkCm9+tVMpsH3YzXhg7md
+	EolgdSMAH/PfHoANzXPZ/OnTpmOkJzF6bw4Ef0PGm0iiPKeh1VFQGFKX7BGmpJW1Z+sbC3k5lq6
+	s=
+X-Google-Smtp-Source: AGHT+IEg/f9S1DLAfQQk3JRLZENFZPwKbjav2YVjwZU30nhH+LDJfuSBQA045+uH1/8zST8dM70ckw==
+X-Received: by 2002:a05:6000:230e:b0:3ca:3206:29f with SMTP id ffacd0b85a97d-3e642f91891mr7571829f8f.40.1757351482100;
+        Mon, 08 Sep 2025 10:11:22 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:61c1:5d31:4427:381b? ([2a01:e0a:3d9:2080:61c1:5d31:4427:381b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add504sm41829503f8f.30.2025.09.08.10.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 10:11:21 -0700 (PDT)
+Message-ID: <6fe68880-44a4-4b7e-a978-2c65d50f018c@linaro.org>
+Date: Mon, 8 Sep 2025 19:11:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|CY5PR12MB6600:EE_
-X-MS-Office365-Filtering-Correlation-Id: b99abcf4-679d-49b1-b644-08ddeefa9f9a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEJrKzhIK01vZTN6QmlDcFVmR2VGdXVkM3l3RTR5MmRaTkJIMTdwbGNTV1VP?=
- =?utf-8?B?ZW5uTEphdUpMTVF5UWZrY1lnOHI3YUZpRlg1eEtEUnhlNEJlbks4a2dhT3p2?=
- =?utf-8?B?ZXNuckZ6ZFg0QmpyUEVmMVpObU5iQk5QTCsvYTRaa3hWb2hhNmNtUExJMlEv?=
- =?utf-8?B?UjNINVBRZmwyYVI1aXQrSHY3UGlhN3AyNEhZRnM2bE9aVXp5Nk80YUpRbWIx?=
- =?utf-8?B?dFI5RWtRbWF2WTJOZTljd3dtajRsQ3dQVkQ2UVVVaWY2Z0hjbWduT1lCMVpk?=
- =?utf-8?B?Y2o3VnU4QUs5Skd2VGFoYi9xQkdJUTAzanhSSDlDSkh3UWFJbzdGUzdOVFls?=
- =?utf-8?B?UVlOZTNBeEZqK3RXSzhQTlNncmhyTHJXYXBBeW1nWTQya1RxZWpNSkRPR3NB?=
- =?utf-8?B?MkNCOGU4QXRKZndSLzhzQ3RIRFg1TjFxSXZoOG5Lc0Uzak1vUEJNN1pZaU00?=
- =?utf-8?B?aEJneVh3TW1JZ2NXaGVReTFtNFQyUXBxYm9OSk95ZDNLMFFWcXNWdDFpUEo1?=
- =?utf-8?B?LytFZG9RMmdOVDcwU2YrNHQxVHAxUDFXMmFiSlpjK29xekZHbk5sY1YyTExX?=
- =?utf-8?B?eVM3b1VsYmRkQlArNVBIMXN4L2ZiWXk4SWpHR3Z5azBTVnJZUE1NaHRIQ0Fr?=
- =?utf-8?B?cmg2VU9mTU4xTzc4L0c0eGlSVjRjMThXUDVQU3NiRmQzRXZnWWhMVW90YkU2?=
- =?utf-8?B?V3BlMG5SM0dNR2dFNmJXU2JzMG5pem5TdUZ4cThkU0t0d09uNmw5U2lDcEVB?=
- =?utf-8?B?Ui9KV3RHdEdGOHh1WlZ6ZkZydG01aG5MK0ZnZE9YR1k5Z3JBY0N1OHJvWVJS?=
- =?utf-8?B?M010WTNKa0prVkw1bHExQnV4enlQVUxHVWZYWTFLTG1xdWsrRFU4aEFCbC82?=
- =?utf-8?B?SFZUd0NNbzR0NHNxUHpaMzJRL3ZzYmRaMkh6cDU5eG4vUXdWM25lZDAzNHJq?=
- =?utf-8?B?VFoxaDNZOXFlTmoyZUhXY2d1aVhtV20vcERyOC9Wc2xGMitiNmlxSVNHdVFW?=
- =?utf-8?B?TnVPWjhBajZqZUFOWlZCMVFOZWlVQS9rS0JubnJNdzJIL1NHc1VaaG4yY2NQ?=
- =?utf-8?B?dkg0ZjFTQ3VaQm9scmM4by92NXlyNXlqRnJZNUVHYzR4dy8wYjFGczduRGFF?=
- =?utf-8?B?TjlGRWhYVDJuWGc2Q3l0NDJSYkxPR1VCaWlTOGVVdUx5dUdkRnZhSWJXZktJ?=
- =?utf-8?B?d2hZUW9LMU5wSThJKzViT1AvT29xWWJtU0Fyak0ybFh6ZDRjM3F1VDhETFpr?=
- =?utf-8?B?WWRaMmtBaEFHd3piaTFXdFVqUzhyMFhBTVAzV2s1cy90ck9XakphSm9nQjRi?=
- =?utf-8?B?Yjl6NjgrVStKeHIwdXBoTVJmQWlvTjRHUjhhYkpOMHNiNlhvSUVubTBFWGJP?=
- =?utf-8?B?QVpkVkgwS3pKU3J0R3ZZMjMwbjlwMkZadE41YmdXb0JVTUwycm9iaWdUSDd2?=
- =?utf-8?B?bVV4R0lVZ21pT3djeDc3UWFObWsrSHJPUzVVMnRiR3E5aVdyQ2JzSTFoYytD?=
- =?utf-8?B?emhYRFVtYk02TG9jTHNWVkk0OG9jMUc1ajFrOStCNnMyRjQ1ZmJIYklIYjRH?=
- =?utf-8?B?bFY5aWdSaklGdVRoNDcyZXBON3F5RUdSenNmNzVZMnJPbFpQYjh2blRyMHNX?=
- =?utf-8?B?TUYwUkdhWURUZ0NXaWJWdGVmWjJoR1oxMXJVbkxaYVhPUEZCQmlaL3hscDZW?=
- =?utf-8?B?dyt0NmRlc3dEZEJXWW9uZUdhdElQU256MXJ5MnRjOEZkWmV4T05RTzJpekY3?=
- =?utf-8?B?UllkYXZ6c2NSU0VYMWRxc3RNZWxpYStkU1Y5ZERDVm9tbm9oWElYMUlsMUwv?=
- =?utf-8?B?TksyVy9BT2xJY3ZiMEVoMzFkc2x0WjdISVFLMVB5VjlxY0xCVjRUWGR0enYy?=
- =?utf-8?B?R2lIbitleExWUWhNamhBSTExVVhEdVJNYjFxRGRhWk5nMGVQK213Y2JIaUlV?=
- =?utf-8?B?S2pzQ0RLRmtjRWdKRXlFdkJJUjM2Z0x6ZzVEaGNoc1pBakdyNVJaVEoyNk5W?=
- =?utf-8?B?WlZlMllHVURRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VE1Vd25XT3BTOVh0S01LaHVKMWk2Q2IvQzA0MjFFcm0xY3pQYmpRN2I0anB0?=
- =?utf-8?B?Vit1VWVrZXFSamJJWWdFOXNTMVlORTZIbTcrNmJhVVZ5eXpUOW1oYnVQd25D?=
- =?utf-8?B?WjZsUEt0am9wR0JOUmhSNUFWSVRHaGVPZnpuYTZIMnQyUTh3azl2Q3BVcHpm?=
- =?utf-8?B?a1VCUSt1TUQxS3doMlUrSVMwUUVMSktwUHVMVHZzc0Y1QzVkUXF2ait0M3hT?=
- =?utf-8?B?dnJ1b0dFWGROSGpFRlExT2JPL0d0cmZkekZHNGM1a20vWHluVG4xUHRyNGMz?=
- =?utf-8?B?V2tXY0Y2dnlJQWJWaVRHNmQvdzlsOEl3UUEvMzVHcll1WlZDckZ1RC9YMkJP?=
- =?utf-8?B?NXY2dkJPNk1SUk9mdFBFaTZFMGZmQmd1KzZQUGt0ZjNnYlhnRmFtclcyemZU?=
- =?utf-8?B?aU55VklBVCtKZlk3SitQZlVxcU1uM0hHTnUrMGwrOWdSVGs2b3NjTXZxUENL?=
- =?utf-8?B?QXIvcTFHT002VjVMM0RyK25STmxZb09IZ3Fkck5abzFwbWRZMGJENW50S3cw?=
- =?utf-8?B?US9MNVRUVytsNzNEYkhONXVOUk9sMjRxL29HUkdjd1dkZnFhQnRPaXB2cjZY?=
- =?utf-8?B?QVZvQVJQaGovcmp0UmVwRFFZeDhzcHFpVExnT29nZDlydk1MdGVhK0xkTk1u?=
- =?utf-8?B?WEJLR2tLLzBLei9BZXg3SjlJeHVodU1CaUlTbXdjYkxTb0Z5VEQzaUxrR3Zs?=
- =?utf-8?B?QmF0bGpHSm1CUkZkb1lvcmlGTVQ2UmZCNG1xc2NEN1NEUUhBMlIxU0gvVW1r?=
- =?utf-8?B?RE91OWdBTFZpc0RFeTVLRk5LR2xLVkZJOUlHT2labzZ6ZFVWMFNYR1Fmc0pq?=
- =?utf-8?B?TEh4RHc5NTZMbkdJdlh3Z1UwSExJeW5wNW5IT1hCZXdVbk5zUVV2K3hlVkpy?=
- =?utf-8?B?cU9aQ01Dc00yQW1xM0lrR3d1RGlVVmx5LzN0OVN3L20vcFo3ZkRSL2FQV3hh?=
- =?utf-8?B?TjRGNnVsU0EvOFEvWEpkUTg2QmVUWjk1UGd6QjFjQjVzejllUzl0QjhMZS9Q?=
- =?utf-8?B?Z29adHZ2b1c4V1ZwWHJKWStrTFNLSEUzV1FKVFpXVE93S2RQdzl5VS9TZFNh?=
- =?utf-8?B?bEY2WCs5dUhiL1hqOWVSbEVVSVNEcWJEMS82NVgySTlhL2podUgwVkowUUxm?=
- =?utf-8?B?TTlKdWdwNlkwVDIzOVZtT2Z6ditHckdWdmV3UStxS1NtbDdBMEhtamFOeDZC?=
- =?utf-8?B?ak52VHBEbGhRTXdHTzdGR2pBNkdoSHQ1elBOeW5McmtpdklRTmlCaVpaNnJq?=
- =?utf-8?B?R290bEl2eXNVdGhzRzRsclpMa1NBV2Rha21oMUNWQXV6alpONEQ3MFkxS2VE?=
- =?utf-8?B?UDhhaysxOVdsN0JJTG5uYXpmK3lzTk5JWEh2NFdJVmxhMFM5bVNVb251cUk1?=
- =?utf-8?B?NHV2WGU5cGd0V3VCaHRYeG5DUlQwaVFEeWY4Q1M4VXgrKzA2c2lqM2MwZ0VY?=
- =?utf-8?B?bDdTOGFZaVUrcW41NWl0OFBkZGs3UEkzS1krYWo3am1xZlh0WHJ0QmVjQzQ4?=
- =?utf-8?B?TUd2YlZJVUJkWWFtOFo4SDNaOElVaTZzeWpTczZFZjRTZXBlZUZVaWwzVlJr?=
- =?utf-8?B?M2Ixcmx3b2lsTnM2RzRZRmdGR085WXBRQXhQSW9vUVhtclBCemt0c3h1Wjgy?=
- =?utf-8?B?Uys1SC8xRjhpWjV2cXFidzZpblhoSmFMbUZPZ3NvdjNwT3Nvb3NYaGRYOUdx?=
- =?utf-8?B?aEJ1ZUpiNUFDUVhBMWxvN1VlRjJoY0tYRGwwTG90V3Exd3BrYVdjN3o4TVVH?=
- =?utf-8?B?eks0Y2NIK3BVTjQ2RzRyNHNSV0M3S2ZYejVJMVNHQ0dyOXFYNW9QT3dVR0Vp?=
- =?utf-8?B?Z3o3UjgxbU90cWFRZUtYdWl0cTNtU0JyTWxIS3RuNXJZSE1HdzJKTTNwK05n?=
- =?utf-8?B?Qy83QUk3Q0l5clNKM2J2ZGV2dW9yMXpnRytnUTYyaGJ2S2I3SStYZGJzc1Bz?=
- =?utf-8?B?amFneSthcEx4R2VJQjJXRXlNTXpaVlRkSnpBb0tJSDkxeS9xQzMzK2V1VE82?=
- =?utf-8?B?RHAwYUd4b2lQUDFiZkVHMTFhcTYxUHE3L1p4WkhJNHdyU3UxZjVmakFKSFA1?=
- =?utf-8?B?bkgwSDFqNkhoSlZCVU8rS2ZCdm4zcU4xTy9Ra3J4cWw3QlAxVVFKNjhCUGRh?=
- =?utf-8?Q?HuFZQplIG8FanykK/Wzxoniw/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b99abcf4-679d-49b1-b644-08ddeefa9f9a
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 17:10:34.5978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ribQ7XJXHX/LDC/zTel994s0dYA9jsZfSEUrItkdlsCaTIcZq1BPvPtcoi3Tb+DEF2sd1SNtayCyV7AaL/y2Zg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6600
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 00/16] drm/msm: Support for Inter Frame Power Collapse
+ (IFPC) feature
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Antonino Maniscalco <antomani103@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, stable@vger.kernel.org
+References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 8/24/25 12:23, Kuan-Wei Chiu wrote:
-> Replace the previous O(N^2) implementation of remove_duplicates() in
-> with a O(N) version using a fast/slow pointer approach. The new version
-> keeps only the first occurrence of each element and compacts the array
-> in place, improving efficiency without changing functionality.
+On 08/09/2025 10:26, Akhil P Oommen wrote:
+> This patch series introduces the IFPC feature to the DRM-MSM driver for
+> Adreno GPUs. IFPC enables GMU to quickly transition GPU into a low power
+> state when idle and quickly resume gpu to active state upon workload
+> submission, hence the name 'Inter Frame Power Collapse'. Since the KMD is
+> unaware of these transitions, it must perform a handshake with the
+> hardware (eg: fenced_write, OOB signaling etc) before accessing registers
+> in the GX power domain.
 > 
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Initial patches address a few existing issues that were not exposed in the
+> absence of IFPC. Rest of the patches are additional changes required for
+> IFPC. This series adds the necessary restore register list for X1-85/A750
+> GPUs and enables IFPC support for them.
+> 
+> To: Rob Clark <robin.clark@oss.qualcomm.com>
+> To: Sean Paul <sean@poorly.run>
+> To: Konrad Dybcio <konradybcio@kernel.org>
+> To: Dmitry Baryshkov <lumag@kernel.org>
+> To: Abhinav Kumar <abhinav.kumar@linux.dev>
+> To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> To: Antonino Maniscalco <antomani103@gmail.com>
+> To: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Antonino Maniscalco <antomani103@gmail.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 > ---
-> Verified correctness using the following simple unit test:
+> Changes in v2:
+> - Elaborate commit text and add Fixes tags (Dmitry/Konrad)
+> - Document GMU_IDLE_STATE_RESERVED (Konrad)
+> - Add a memory barrier in fenced_write
+> - Move an error print in fenced_write to after polling
+> - %s/set_keepalive_vote/a6xx[gpu|preempt]_keepalive_vote (Dmitry)
+> - Add an "unlikely()" to read_gmu_ao_counter() (Konrad/Rob)
+> - Define IFPC_LONG_HYST to document a magic number
+> - Add a new patch to enable IFPC on A750 GPU (Neil/Antonino)
+> - Drop patch 12 & 17 from v1 revision
+> - Link to v1: https://lore.kernel.org/r/20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com
 > 
-> double arr1[] = {1,1,2,2,3}; int size1=5;
-> remove_duplicates(arr1,&size1);
-> assert(size1==3 && arr1[0]==1 && arr1[1]==2 && arr1[2]==3);
+> ---
+> Akhil P Oommen (16):
+>        drm/msm: Update GMU register xml
+>        drm/msm: a6xx: Fix gx_is_on check for a7x family
+>        drm/msm/a6xx: Poll additional DRV status
+>        drm/msm/a6xx: Fix PDC sleep sequence
+>        drm/msm: a6xx: Refactor a6xx_sptprac_enable()
+>        drm/msm: Add an ftrace for gpu register access
+>        drm/msm/adreno: Add fenced regwrite support
+>        drm/msm/a6xx: Set Keep-alive votes to block IFPC
+>        drm/msm/a6xx: Switch to GMU AO counter
+>        drm/msm/a6xx: Poll AHB fence status in GPU IRQ handler
+>        drm/msm: Add support for IFPC
+>        drm/msm/a6xx: Fix hangcheck for IFPC
+>        drm/msm/adreno: Disable IFPC when sysprof is active
+>        drm/msm/a6xx: Make crashstate capture IFPC safe
+>        drm/msm/a6xx: Enable IFPC on Adreno X1-85
+>        drm/msm/a6xx: Enable IFPC on A750 GPU
 > 
-> double arr2[] = {1,2,3}; int size2=3;
-> remove_duplicates(arr2,&size2);
-> assert(size2==3 && arr2[0]==1 && arr2[1]==2 && arr2[2]==3);
+>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c         |  71 ++++++-
+>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 105 ++++++++--
+>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |  14 ++
+>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c             | 221 ++++++++++++++++++----
+>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h             |   3 +
+>   drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c       |  10 +-
+>   drivers/gpu/drm/msm/adreno/a6xx_hfi.c             |  34 +++-
+>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c         |  40 +++-
+>   drivers/gpu/drm/msm/adreno/adreno_gpu.h           |   1 +
+>   drivers/gpu/drm/msm/msm_gpu.h                     |   9 +
+>   drivers/gpu/drm/msm/msm_gpu_trace.h               |  12 ++
+>   drivers/gpu/drm/msm/msm_submitqueue.c             |   4 +
+>   drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |  11 ++
+>   13 files changed, 459 insertions(+), 76 deletions(-)
+> ---
+> base-commit: 5cc61f86dff464a63b6a6e4758f26557fda4d494
+> change-id: 20241216-ifpc-support-3b80167b3532
 > 
-> double arr3[] = {5,5,5,5}; int size3=4;
-> remove_duplicates(arr3,&size3);
-> assert(size3==1 && arr3[0]==5);
-> 
-> double arr4[] = {}; int size4=0;
-> remove_duplicates(arr4,&size4);
-> assert(size4==0);
-> 
->   .../dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c | 18 ++++++++----------
->   1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> index 2b13a5e88917..5100e0e7af42 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> @@ -50,18 +50,16 @@ static void set_reserved_time_on_all_planes_with_stream_index(struct display_con
->   
->   static void remove_duplicates(double *list_a, int *list_a_size)
->   {
-> -	int cur_element = 0;
-> -	// For all elements b[i] in list_b[]
-> -	while (cur_element < *list_a_size - 1) {
-> -		if (list_a[cur_element] == list_a[cur_element + 1]) {
-> -			for (int j = cur_element + 1; j < *list_a_size - 1; j++) {
-> -				list_a[j] = list_a[j + 1];
-> -			}
-> -			*list_a_size = *list_a_size - 1;
-> -		} else {
-> -			cur_element++;
-> +	int j = 0;
-> +
-> +	for (int i = 1; i < *list_a_size; i++) {
-> +		if (list_a[j] != list_a[i]) {
-> +			j++;
-> +			list_a[j] = list_a[i];
->   		}
->   	}
-> +
-> +	*list_a_size = j + 1;
+> Best regards,
 
-A corner case needs fixing:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 
-When input *list_a_size is zero, it will be updated to 1, unlike the 
-original code. Maybe a early return when *list_a_size is zero?
-
-Hi Aurabindo,
-
-Do you have other comments or other concerns?
-
-
->   }
->   
->   static bool increase_mpc_combine_factor(unsigned int *mpc_combine_factor, unsigned int limit)
-
+Thanks,
+Neil
 
