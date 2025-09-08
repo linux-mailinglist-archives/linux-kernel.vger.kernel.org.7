@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-805192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34758B4851E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746DAB4852D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7207B0669
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA743B791D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA822E7186;
-	Mon,  8 Sep 2025 07:26:10 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230662E7BAB;
+	Mon,  8 Sep 2025 07:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="X0Q6oZKq"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE28137932
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A2D2E62A4
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316370; cv=none; b=G3ygl0mPpG0UaOKBdcsKGa91j4WMlVHzuTNvWlUMywCosKfJBd5epHXonrWC74H7HFV+lPZmrv8qsfr0lw7E5myGHUJKLsN7+zl5IFFSg9UP6V8FGMThSUHy/qdqbU0ZTex4qCCcgxHW78Sc7qEgSdUGxYGOA1nUtgtfUEDaE+I=
+	t=1757316471; cv=none; b=G20DNcOduzrbAojSiifG6KQd9A5hKyXQPcVWLmNAlB7fvRxw1X88x5jCUssEJ7kInxxzoIam1ClKXntvyaYw5RusGAj2kLsW2apGsXeianMrXxJRQK4Em0A45iiHBsx1LsFyyU3aLRGYgaw/oUWgKFxXh6aywdt9Sa45GehHuBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757316370; c=relaxed/simple;
-	bh=cr8Y+j1Bw7kjEWcO3gXESae1Joncig4F/jhAK10OxY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nq+LQHRIDMxchO1pF2zZNIu23K1R4MMbp6le6QqrPIxCWS0atWwarnTK9g8Jv5E2MyStcEhYhln7C8o267MWfwpuRbBVAdQ5cYfnIoBUPSxwAbv8nAn+KZPkmGGkF80P/B19LfK8EQmaoT1dkvbvGFU13JPkYnXu/mx1K0ng4U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DABA1266D1;
-	Mon,  8 Sep 2025 07:26:05 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C891B13869;
-	Mon,  8 Sep 2025 07:26:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MUfxMA2FvmjiQQAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 08 Sep 2025 07:26:05 +0000
-Date: Mon, 8 Sep 2025 09:26:05 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
- <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
+	s=arc-20240116; t=1757316471; c=relaxed/simple;
+	bh=m6P2ifyb2S9aL4S799UQEuuQspOh/8y6FFDeBdDh+ZA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uFBX5F9qZZKYaWQERKXcLkvopj27qWOzpt0L3WeiUilSQkhz0gV8vaklYG2TAPhfDpZofNYpmlH3yRf6S5tJaFoj/xcvv5PntySFXUK12P2c88vjqnFrGIoOU+Doge3v7Vdjp7j2r7ze46F4exXdySrBKzooGW1/d7jc9wrdJO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=X0Q6oZKq; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1757316457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=s6dihIf8dRj48AF5jPOhCRWjZ7JWA05I9MIiVmOPVtw=;
+	b=X0Q6oZKqzJr+JTOYipYoyZoI04xQnZRkJ/ggYeJXe0d3TZolCHT5M5mpiBqRGj4m6wY+tS
+	ShE5D36ZOd1cxRonket/mri5wWtLYX157va0J62dksPWsHCNYMAAzaufzZkaWP+md5nZuT
+	XKCUzH6UomkCbYTJkIGoOO7CGEH2/o4=
+From: Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v2 0/3] exynos5250-smdk5250: describe SROM controller and
+ ethernet port
+Date: Mon, 08 Sep 2025 09:26:54 +0200
+Message-Id: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: DABA1266D1
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Score: -4.00
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD6FvmgC/13MTQ6CQAyG4auQrh1TBgeCK+9hWMwMFRrlJ60hG
+ sLdHXHnrm+T71lBSZgUztkKQgsrT2MKe8gg9n7syHCbGixah5W1Rof27tJtVKYhGvIu1M4VSKG
+ CNJqFbvzawWuTumd9TvLe/SX/fn9Ujad/askNmlCUGEsfMI/lpRMeHiRHJWi2bfsAzoijF60AA
+ AA=
+X-Change-ID: 20250722-smdk5250-sromc-ea5b95530eb7
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1506; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=m6P2ifyb2S9aL4S799UQEuuQspOh/8y6FFDeBdDh+ZA=;
+ b=owEBiQF2/pANAwAIAbAHbkkLcWFrAcsmYgBovoVYKGkaXfYWHIIoUROmHqmzQeWHVBTPFVcfF
+ b537vzfq/OJAU8EAAEIADkWIQQsfymul4kfZBmp4s2wB25JC3FhawUCaL6FWBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwzLDIACgkQsAduSQtxYWsYtQgAgF4PHPETcK6t3eCeZlF0EPy3GjYIrQH
+ qnxESTAzF/51M+p4KKxslzW6+UYQE4fRlRIkVgKcCKeZhvwpZ9GW8c3qpUFK0JMEErjKFDH4s3E
+ 5SXeLSfM95i98GKBjOD89eqGYQ12kpddUYgdnJXMXaDqCdBBxUQhhE7xDIy63pZz3CZDabIAVeC
+ aA+8ZJkOOHtsAeWx6LtG48EN/5lifqS/oRrQs7tgbqWs+2Zu9By0HtQySyWIFuVMh4qxyJpwlZa
+ jTyccjPtAq0O88McodoD6qG5zDqh+/o12q+GLFwBeT1tCIq14vjnCuME4WGkNKo35Z13/xHIyYr
+ Rty5nEqbbsA==
+X-Developer-Key: i=henrik@grimler.se; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 08, 2025 at 08:13:31AM +0200, Hannes Reinecke wrote:
-> >   const struct cpumask *blk_mq_online_queue_affinity(void)
-> >   {
-> > +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
-> > +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
-> > +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
-> > +		return &blk_hk_online_mask;
-> 
-> Can you explain the use of 'blk_hk_online_mask'?
-> Why is a static variable?
+Based on smdk5250 description in Samsung's vendor kernel [1] and the
+u-boot dts [2], the smdk5250 board seems to have a ethernet port
+connected to bank 1 of the SROM controller.
 
-The blk_mq_*_queue_affinity helpers return a const struct cpumask *, the
-caller doesn't need to free the return value. Because cpumask_and needs
-store its result somewhere, I opted for the global static variable.
+Unfortunately I do not have access to the board, so this is not tested
+on an actual device, and based solely on the linked sources.
 
-> To my untrained eye it's being recalculated every time one calls
-> this function. And only the first invocation run on an empty mask,
-> all subsequent ones see a populated mask.
+[1] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-note-tab-lte-10.1-2012-gt-n8020-p4note-exynos4412-dump/arch/arm/mach-exynos/mach-smdk5250.c#L982
+[2] https://gitlab.com/u-boot/u-boot/-/blob/master/arch/arm/dts/exynos5250-smdk5250.dts
 
-The cpu_online_mask might change over time, it's not a static bitmap.
-Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
-caching is certainly possible. Given that we have plenty of cpumask
-logic operation in the cpu_group_evenly code path later, I am not so
-sure this really makes a huge difference.
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
+---
+Changes in v2:
+- Use comma separated tuples in ranges (@krzk)
+- Add patch to update ranges format in exynos5410.dtsi as well
+- Link to v1: https://lore.kernel.org/r/20250904-smdk5250-sromc-v1-0-b360c6ab01c6@grimler.se
+
+---
+Henrik Grimler (3):
+      ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
+      ARM: dts: samsung: exynos5250: describe sromc bank memory map
+      ARM: dts: samsung: smdk5250: add sromc node
+
+ arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts | 37 +++++++++++++++++++++++
+ arch/arm/boot/dts/samsung/exynos5250.dtsi         |  9 ++++++
+ arch/arm/boot/dts/samsung/exynos5410.dtsi         |  8 ++---
+ 3 files changed, 50 insertions(+), 4 deletions(-)
+---
+base-commit: 1557c2eb023d9cdf97b4686fd206048c070d4e70
+change-id: 20250722-smdk5250-sromc-ea5b95530eb7
+
+Best regards,
+-- 
+Henrik Grimler <henrik@grimler.se>
+
 
