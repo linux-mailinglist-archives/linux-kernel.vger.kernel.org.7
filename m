@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-805191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC584B48519
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:26:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34758B4851E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3449189E52D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:26:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7207B0669
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676F72E7BC2;
-	Mon,  8 Sep 2025 07:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ+v4RB3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA822E7186;
+	Mon,  8 Sep 2025 07:26:10 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48062E718B;
-	Mon,  8 Sep 2025 07:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE28137932
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316343; cv=none; b=KecgfNErD+Mtnff63YIHrj9cPcilrUIDYihW6cFNGxXIl5IHHp/p2mvSiy8VwKz5Hz4oLhO9gxpTPev96jVBhX2UmEO8zJ5833z5IiKr2YPLr/iDRej9tSxbOtc3XB/96+dzHgKcmho9HsGn5Du13FDvz8NvQzIu4cLYoP4ai1E=
+	t=1757316370; cv=none; b=G3ygl0mPpG0UaOKBdcsKGa91j4WMlVHzuTNvWlUMywCosKfJBd5epHXonrWC74H7HFV+lPZmrv8qsfr0lw7E5myGHUJKLsN7+zl5IFFSg9UP6V8FGMThSUHy/qdqbU0ZTex4qCCcgxHW78Sc7qEgSdUGxYGOA1nUtgtfUEDaE+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757316343; c=relaxed/simple;
-	bh=0OrpL/DbISgvaSntm7MwE6vZ7KTvLFFuzrfYfkuRJhQ=;
+	s=arc-20240116; t=1757316370; c=relaxed/simple;
+	bh=cr8Y+j1Bw7kjEWcO3gXESae1Joncig4F/jhAK10OxY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EzYHxIHzOnLWImv9/Zej1KGJSkZMYexB1hnufSmbBgYsxFjQChpzZ/Uz71GpVGRIHctQ/IKeWGRtMRpG70U0oH1efdyX+GEPVyA+z/EeYoxCXrGlQBygeXtsxMjkKEAOG+fzO8DEmztGzia6RpExUlDhzubjkoT5R1+RsHWK02U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ+v4RB3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD628C4CEF5;
-	Mon,  8 Sep 2025 07:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757316343;
-	bh=0OrpL/DbISgvaSntm7MwE6vZ7KTvLFFuzrfYfkuRJhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EZ+v4RB3ujPkq4MZzpZj/xl+anJvRnWAyAmyBgubgwghU/s+EuciURemUbW9ZdM4o
-	 QEWAmzE1mwM/5MsmrB3R0jf33mkyHH8JD3/YJiBp5NUab9gVK6EA278CiwONTgNKRz
-	 pfwebdFq9IaYD1glCJukRv6xkAmKhCtEoHaVZ4j54gpm3XyofkN8pn/HrSc5MGc2gn
-	 R4jigh9qx7NsNkLqyyb737FCFJAUZIZ6iIMp2fIBAG7iEJBg8nU8KN7+iaRtnpo+ex
-	 MjH3kl/UeRBl1bf6tWmnnO05i4ACcNk4cn6vvhLxrp7qfzLXN/fW1sRPwxYIMDD/9M
-	 6IVlAzfmjkvMA==
-Date: Mon, 8 Sep 2025 12:55:34 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: zhangsenchuan <zhangsenchuan@eswincomputing.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	p.zabel@pengutronix.de, johan+linaro@kernel.org, quic_schintav@quicinc.com, 
-	shradha.t@samsung.com, cassel@kernel.org, thippeswamy.havalige@amd.com, 
-	mayank.rana@oss.qualcomm.com, inochiama@gmail.com, ningyu@eswincomputing.com, 
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v2 2/2] PCI: eic7700: Add Eswin eic7700 PCIe host
- controller driver
-Message-ID: <ktpiiszfmtnvyh3yxchfqnpkfv43uxbke47vptexeg4tli2hmh@keifchvj44yj>
-References: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
- <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
- <jghozurjqyhmtunivotitgs67h6xo4sb46qcycnbbwyvjcm4ek@vgq75olazmoi>
- <4fa48331.ce3.19913f1cc89.Coremail.zhangsenchuan@eswincomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nq+LQHRIDMxchO1pF2zZNIu23K1R4MMbp6le6QqrPIxCWS0atWwarnTK9g8Jv5E2MyStcEhYhln7C8o267MWfwpuRbBVAdQ5cYfnIoBUPSxwAbv8nAn+KZPkmGGkF80P/B19LfK8EQmaoT1dkvbvGFU13JPkYnXu/mx1K0ng4U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DABA1266D1;
+	Mon,  8 Sep 2025 07:26:05 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C891B13869;
+	Mon,  8 Sep 2025 07:26:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MUfxMA2FvmjiQQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 08 Sep 2025 07:26:05 +0000
+Date: Mon, 8 Sep 2025 09:26:05 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
+	storagedev@microchip.com, virtualization@lists.linux.dev, 
+	GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+Message-ID: <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
+ <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4fa48331.ce3.19913f1cc89.Coremail.zhangsenchuan@eswincomputing.com>
+In-Reply-To: <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: DABA1266D1
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Score: -4.00
 
-On Thu, Sep 04, 2025 at 04:57:17PM GMT, zhangsenchuan wrote:
-> Dear Manivannan
+On Mon, Sep 08, 2025 at 08:13:31AM +0200, Hannes Reinecke wrote:
+> >   const struct cpumask *blk_mq_online_queue_affinity(void)
+> >   {
+> > +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
+> > +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
+> > +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
+> > +		return &blk_hk_online_mask;
 > 
-> Thank you for your thorough review.Here are some of my clarifications and questions.
-> Looking forward to your answer, Thank you very much.
-> 
-> > -----Original Messages-----
-> > From: "Manivannan Sadhasivam" <mani@kernel.org>
-> > Send time:Monday, 01/09/2025 14:40:41
-> > To: zhangsenchuan@eswincomputing.com
-> > Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, p.zabel@pengutronix.de, johan+linaro@kernel.org, quic_schintav@quicinc.com, shradha.t@samsung.com, cassel@kernel.org, thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com, inochiama@gmail.com, ningyu@eswincomputing.com, linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-> > Subject: Re: [PATCH v2 2/2] PCI: eic7700: Add Eswin eic7700 PCIe host controller driver
-> 
-> 
-> > > +	/* config eswin vendor id and eic7700 device id */
-> > > +	dw_pcie_writel_dbi(pci, PCIE_TYPE_DEV_VEND_ID, 0x20301fe1);
-> > 
-> > Does it need to be configured all the time?
-> 
-> Clarification：
-> Our hardware initialization did not configure the device Id and vendor Id.
-> Now, we can only rewrite the device Id and vendor Id in the code.
-> 
+> Can you explain the use of 'blk_hk_online_mask'?
+> Why is a static variable?
 
-Ok. Then mention it in the comment itself. Like,
+The blk_mq_*_queue_affinity helpers return a const struct cpumask *, the
+caller doesn't need to free the return value. Because cpumask_and needs
+store its result somewhere, I opted for the global static variable.
 
-	/*
-	 * Configure ESWIN VID:DID for Root Port as the default values are
-	 * invalid.
-	 */
+> To my untrained eye it's being recalculated every time one calls
+> this function. And only the first invocation run on an empty mask,
+> all subsequent ones see a populated mask.
 
-> > 
-> > > +
-> > > +	/* lane fix config, real driver NOT need, default x4 */
-> > 
-> > What do you mean by 'readl driver NOT need'?
-> > 
-> 
-> Clarification：
-> Sorry, this was added during the compatibility platform test. It is not needed for real devices. 
-> I will remove it later.
-> 
-> > > +	val = dw_pcie_readl_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL);
-> > > +	val &= 0xffffff80;
-> > > +	val |= 0x44;
-> > > +	dw_pcie_writel_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL, val);
-> > > +
-> > > +	val = dw_pcie_readl_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS);
-> > > +	val &= ~(0x7 << 5);
-> > > +	val |= (0x2 << 5);
-> > > +	dw_pcie_writel_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS, val);
-> > > +
-> > > +	/*  config support 32 msi vectors */
-> > > +	val = dw_pcie_readl_dbi(pci, PCIE_DSP_PF0_MSI_CAP);
-> > > +	val &= ~PCIE_MSI_MULTIPLE_MSG_MASK;
-> > > +	val |= PCIE_MSI_MULTIPLE_MSG_32;
-> > > +	dw_pcie_writel_dbi(pci, PCIE_DSP_PF0_MSI_CAP, val);
-> > > +
-> > > +	/* disable msix cap */
-> > 
-> > Why? Hw doesn't support MSI-X but it advertises MSI-X capability?
-> > 
-> 
-> I'm not quite sure what this comment means? Indeed, our hardware doesn't support MSI-X.
-
-So it advertises MSI-X in capability by mistake then. If so, do you think it is
-going to be applicable for future revisions of the controller also? I believe
-this is a kind of hw bug.
-
-Usually, these kind of issues are fixed in future revisions of the SoC. So I was
-checking if you intend to clear it for all SoCs in the future or not. Otherwise,
-you may set a flag and clear it conditionally.
-
-> We can't disable the MSI-X capability using the PCIE_NEXT_CAP_PTR register? Then which 
-> register is needed to disable the MSI-X capability?
-> 
-
-No, my question was not about *how to clear MSI cap*.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+The cpu_online_mask might change over time, it's not a static bitmap.
+Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
+caching is certainly possible. Given that we have plenty of cpumask
+logic operation in the cpu_group_evenly code path later, I am not so
+sure this really makes a huge difference.
 
