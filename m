@@ -1,158 +1,246 @@
-Return-Path: <linux-kernel+bounces-805074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFDEB483B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9D6B483B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08B9189AB63
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81AC41897F88
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF602356C7;
-	Mon,  8 Sep 2025 05:45:06 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CB022CBF1;
+	Mon,  8 Sep 2025 05:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S/PMQ6EI"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7332D22A4F8;
-	Mon,  8 Sep 2025 05:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757310305; cv=none; b=eNRGEBMLK3cwjKfYJLh8vmly2mUFVBqv91tONJkJEh6GcrVyuRtMLr4TxPvFagRzXTKwOXCEuJ/9j5MYVZAbVBcFHoa5I9JcC1ZCJMTfdMPSX8jgccJ/tXtyW9rtMOSIcp6j2qkzJH4tZZJ3RfOG0kvz84k2zOZa0zEIGP2YA7A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757310305; c=relaxed/simple;
-	bh=46QfxNvcMaVLJWFUVGJoCw0SJDEAg3joG8eGL4C3XbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RpvR4wbR24XjvwdKtPOVI8dYZ9rZRO1FeQzT8UoI3ecmZOKNoakyafLUYp1lN4/lrVbuF+c7AO56Kwk/FJCBEFKMFJcbiE0xLJAt0IKf7s4OJpS/y9rV08K98LCiDnJxgvm8L6aeBrzmfH06LChE4ciAhN9Hmnn22nHmaqyAvlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f29ec5f48c7611f0b29709d653e92f7d-20250908
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:87719e05-7388-4ee9-9957-0e9a2dbe195e,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:5cf66c1cfea8ac1b3975b87ae49a54c8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f29ec5f48c7611f0b29709d653e92f7d-20250908
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zhaoguohan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 198666652; Mon, 08 Sep 2025 13:44:55 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 10BC9B8258E6;
-	Mon,  8 Sep 2025 13:44:55 +0800 (CST)
-X-ns-mid: postfix-68BE6D56-94635319
-Received: from localhost.localdomain (unknown [10.42.12.87])
-	by node2.com.cn (NSMail) with ESMTPA id 008F0B812916;
-	Mon,  8 Sep 2025 05:44:51 +0000 (UTC)
-From: zhaoguohan@kylinos.cn
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	thomas.falcon@intel.com,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	GuoHan Zhao <zhaoguohan@kylinos.cn>,
-	Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH v3] perf parse-events: Prevent null pointer dereference in __add_event()
-Date: Mon,  8 Sep 2025 13:44:49 +0800
-Message-ID: <20250908054449.18414-1-zhaoguohan@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B872845945
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 05:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757310301; cv=fail; b=UnyUk7INgNdLbFp+eH0yL6lqI/utDq+CZS/GQmPEJpYu984IGLQe4RPvCRs/mqmkIL0cOE9xeVw5j2xM7x+wCvaauRsU09/eRNlQwZ0cQXXWbbYMqeHDtXNSK5Q86TvUS4VtxFRYaj1mhZNx+s0S+D8iuNq057ucxZWFnMBZTyQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757310301; c=relaxed/simple;
+	bh=We+UAaVUTERVXa0h8tUSptSo5vVG/wDpoZONMgq2810=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=CI6+r+M75LFVs3hZR7ODrcXZRp9K0nmN3np0SiSGfIFA2YGnsXCTRKrTqY+Z0HyOFU42+LDIGHjhHN+UxzeBtoj7EXGg7ysBr9lDHuCyYCSxEbbRHwLhvEwHLzYS9jqnRI4XTkHHgCvlxV31FXvt21iNlgXhuLSm1G2NVagiGC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S/PMQ6EI; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ft+yT5BPpr8kVnP8hcr2uZ/vXreu60kZvYzZW5zQb7cPjqNK8VUXJckxhKAoOxYSYpVlhUL1LSE6Gp+bnGwneIITR8W6M5VeDtGS1IWgCDUCHwSWnB6O1vlp13dceYRi/uhAYBx6Q699g4VD9nArxq01nnEQ0pwO4/cxh+Sbj2lcugFeFa8IM9Ar3EZmlYKggmnGKQFK8bAl+F06zfoa7c0h328H+CS1j74JOtAm2QJPox8mpptyKgArHHjxqNwkDw/ZGoK/ocgdNwPlJpblqgCucUUy9cw6wyzrdzKZ4oQmROPpIDvHl0uDKjHaDBNVUWVXVlWxSpWRXr8FNwK0xQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1oXlh8aKe8UOPIontawLbcRbt/aYxs28oLQsmjmaumI=;
+ b=BOGD8wGYemNSpcGi5RlYoAjvlEx0vfiS/BcFAlYm6zj/TeF3x2wd3UQXmhLTiKwsGdcX2cd8Zn9+56od9yHtIV3NGFV3boG/eFoNQ0l8apOYohuGw7a/0OnEmC8595+l6reygOdc/1FZ4y+5zsh6pf/IQZi2IrRPsWclCpcuPj6eVnZZVMNsMveBLuPxwvFIYFnm6YI4a4HXzJHekwOI18/gQbwp1VTmoUIz8xBYYgqeW3jzFgGQ6pqHgmbfTU0G0UfOH/3BC3ePIJ7KUI+M0dY1cW/Yuj8aSr8hlj9C3exjKDnndBURs6yEFNIvQkwEoYV11hXmoAAma6O7+wAKqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1oXlh8aKe8UOPIontawLbcRbt/aYxs28oLQsmjmaumI=;
+ b=S/PMQ6EIL+QobOn4ifb56OQ5U/TFd/I6q0m6+JcD3y7VmXrJwdPUA1jWpZf83aN9JFmycSKbBVjWhLAMBni5ujnIs485U1GNqfhbI731cfbCYzm3KfcSwJQ0ODEz/YFjIo4sZqTVLUNQVAEG9cWLpipmYMad4mAuIdfjQeHiE8v2derqHnV2ZaPGYRQiDmdq8xDjCnvLfPHkderG2ZOjmrR+yNtQhxTcJj1qmJ3NfmLBRilV3jdNy03U5neGAyM9TPSPqlOkdacfR/DK/lXaSFLO8oongba02cTejTtmZBwmq1ymz4VHTL5VUcIv3nTKM+cLTW+Fos7gaGFw2a5DDQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.17; Mon, 8 Sep 2025 05:44:56 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 05:44:56 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 14:44:53 +0900
+Message-Id: <DCN6IC0DP3J4.3KR3OJEM0YCCF@nvidia.com>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 05/10] gpu: nova-core: gsp: Add GSP command queue
+ handling
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250827082015.959430-6-apopple@nvidia.com>
+ <DCKUEPRW2VR8.26NJRPDYG2DFK@nvidia.com>
+In-Reply-To: <DCKUEPRW2VR8.26NJRPDYG2DFK@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0129.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::17) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB6048:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb38dc9d-41aa-4a0e-fb6d-08ddee9ad75d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eks1NGJ3UktmTHV1aVVPK2NTdk05cE50YzQ5aFNzNUNQaVYxMm9FbUEyYzlH?=
+ =?utf-8?B?ZHJqTHpoQUpZdkN0VUF4bElkTkh4b1pNLzBTaGxRQVU2d3ZWVVQzWHE3TVY1?=
+ =?utf-8?B?TlU2REs0bENzN2F5aWpGcDlzMk54VWVCblJyVXpvTmNBSTFMSkdycnBYYlFB?=
+ =?utf-8?B?QlJMbGJISEczQ1ZBNEN1WUpnd0t5K2NSa1FKSGY2T3FiV1IySGVGdEowQ1ZV?=
+ =?utf-8?B?OFg3WXBRRTJvOU9mMUZ0S2cyZFdOKzVLVklCZTFxUkVhMTVpZUdIblBVWjFI?=
+ =?utf-8?B?RGI2dy9UOFY5S2dtaktRRmczVnN1aFhiNUJwa0tyU2JGM1VmbUVEUmRWeEZ0?=
+ =?utf-8?B?OUZpVVVnV2hhOGVJd2tKdEg2bEY2MjhTOCtNNzZLeGJjM2MyTzYzNVR3K0NE?=
+ =?utf-8?B?YWU5Y2RPa0xrcWFTR1ZyRUpYdHZ6RFA1cWEvajRJR3RsYXJwM0REcTA4OWlB?=
+ =?utf-8?B?em1xWFV4ajVJOEROQXJUVnpjTVJzQmtLSGxOMHQvWjlRNnRlOHByWmMvbnpG?=
+ =?utf-8?B?RE1EVzFnYTh3Z1I3N0d1WjhEalBtZ1NMYm1Lb2M1MVFIdmFqelIrNVE5aUIy?=
+ =?utf-8?B?bXh2MGliMFlkUFY4bjFDNTREUlFmcVhRMlh3amlFcnN5bEFVZU1KN0JPS2Yz?=
+ =?utf-8?B?TjR1aWJjYmFaZjYxcDhWektsR2N4RzFuSXB4K3dQeFBGNm9ZdmJvQWdIK3RP?=
+ =?utf-8?B?RTZoRnhtVmhtWDFJelF4TWpOdUMzL1BwOFRLSFlPSkd2bThQd1pkM2lBN1B4?=
+ =?utf-8?B?cTk4aHkyZzloT3dvVkIvd0FXdis3RXpjbTNzeVN6VXU2djI1ZGNSZ3VxREFq?=
+ =?utf-8?B?QjdmMlQwaFV2OG5Hcm5Zd1NrTXJVVE5sWmNEZDZJRjFSSU9NTnZ1Wk44MnY3?=
+ =?utf-8?B?NHc0NWpBK1BrVy9CZmxQYi96eEZNSE16eW5wYituNWVZcGZzSGJvc0hRWEUz?=
+ =?utf-8?B?ZUZPcTNqckI0a2lDcXF4anRZM1F1NDlFZjlKbkd2SVgybWMwdTBMSHh5Wmt4?=
+ =?utf-8?B?WkhWYkgvb3cwREorV1cyRW9rYkxlTkt0WWtMYzV6eWlOU2tIaUVpenkydmRS?=
+ =?utf-8?B?eDh4cURpaXVWZ2h4T3MwQjhwZ2dSMDgyVmVFcHNUQldTbVNkZi9wbVJBTStW?=
+ =?utf-8?B?czhxUDRJOHUvNlRBY3hOZndpdHUycjBUcTgrUWp1a3BTcDJVVTBET1U2WEE1?=
+ =?utf-8?B?OU9jQ1M0SXgrVWQ4RVF5aXhLbWJRZG9ZWnAvU041YklZazdJYWFWdVdrZXJ2?=
+ =?utf-8?B?UElrTURTRUNzQmxmV3ovWlZTUmdoUDdJZkkyNERudlFpc0dKcmF3ZTlFc1ZE?=
+ =?utf-8?B?U0gxWHpqMUVoc2VqdHBHQzBDRW51UytKTjhGd1VHeE02OVY4cjdOcUhtNnEv?=
+ =?utf-8?B?cnVwU3RjbWN1aEVnOFZ1LytpRVZONFdYdjJQRW9XSGN5ZmJsQTFYemxJNG1u?=
+ =?utf-8?B?S3NFdzhEeUEvQWRBa2IzQlRqYlFuUTNGUUFVNktFY0pCS1JpKzdlTGM4a28y?=
+ =?utf-8?B?YW9VUGxTWlJ4eVk2SEJZeDA2K2dZc3RzaXNweENJQlJjbU5raGJkbjdPdXBI?=
+ =?utf-8?B?K2VqQkFSaHFzVUtSOFpBbmlrejZTaDFSN3pSM3NlTUtGMHREQ2cvTnhaTUxs?=
+ =?utf-8?B?eDdSWEdXV3QwWWhtOEJFNnNPaFlLVkw2ZS92c2hTUExYUEFoQksxeWZReVcx?=
+ =?utf-8?B?WDkwT3VpWVZWNmRZUUhvdnhPY1NiWjlkM3dpNXNJeEdXdDk1VVZlRG1aemtR?=
+ =?utf-8?B?Z09vOERVYXRmS2l3cE1qUGd6VlBMK2FoWlNoaGV1eWtDMFRsSEpqc2FUYXVn?=
+ =?utf-8?B?VXhDcnhqWWM2TStqSXRtUUFKdFhjQWN2dXVLbUhWRTFLUE02WHlPYkNhaWFy?=
+ =?utf-8?B?a3RlK3BCMzFOYkxpNWxOWGdVWlZtV2pzdW1qNHhQVkRFdWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MzYrdmdaUktaZS8yUzhxRFRNM3FxZWFPMDJwZEtHYVQ5RkErczQxWXN3c1V6?=
+ =?utf-8?B?Uzh5UUdrSW5tZGNuSHZyTXV5TWdoNWM3NzVoVmU3a2xQWEVzM2R0dnpYUyts?=
+ =?utf-8?B?eXZwclVjV0RUN3FVTUlyRXIxcERUbElTRlFZT01DYjk0bXhKZFFPTmlRU1dy?=
+ =?utf-8?B?K1ZMT1NhYmU5REhXNi91aDM4RURYWHorU3BFQmdoSXFJcmNmY1BUWGxBMWU0?=
+ =?utf-8?B?azNBSkI5b3RueUxtTEJCQ1lqWThEZmZHQUlLUTQrTG1MRmIwemtEZ0lXNHlS?=
+ =?utf-8?B?Sk5tWWhBeHBJUlB3elQ1RTFFNG1hT2hsZ212WFd2N1JDRGc2SFBWYmFKUHUv?=
+ =?utf-8?B?TVFyMTdPMThrdnpkeU1TSGx5eG9zczFlUjkwUjltT2JRbUQraC9aMlZ6UXJR?=
+ =?utf-8?B?OUFDUFpJcEpaRU1FNGs5TDB4RWpyaVVjNzE2YTdwY0M3TUtBT0IzbjZOeHJr?=
+ =?utf-8?B?ZXZvbzR3WUttdEpRN3FmQVgrMHd0Wm9mdUhhK2lFMmJvVzlRYlMvZ0xKaU9O?=
+ =?utf-8?B?cEJqRUxkVzBnS1psYk1Pb3NacDJwVDdmK1p4eG4xSUZDSm55OGVlQWtvZVZK?=
+ =?utf-8?B?aFVteE1HQlVrT3RBb0pKMmRQUkxTbzY3dlZNUmk5VVh1M2NpZnlJZEc5Zmxu?=
+ =?utf-8?B?Mzg2YWZiNWVyNnhzcUJXRkI4bFlzSTFodENmOVkxM2UyMkVEYWRHY2ZlbE9q?=
+ =?utf-8?B?STUvUkZGS2JXOVVyeXFwOHpWVUU4NE9RU25abDEwTFNTY2lneVo1ejgvQXJZ?=
+ =?utf-8?B?OWxyWThSWi95eWFMUVNyZHl1c0g2Y29pSlpvcG5vdUMzQkZlNVA2Q1NqSEY5?=
+ =?utf-8?B?bEFTWGt4SHMzMExCa1BVcmNkVkVCUHBqQW13UUNHVmlVYmRoMjFzUG1TVDJD?=
+ =?utf-8?B?dmNCZGhnSTFGbnFtY3pMT1J4dEw3eUUzZHNTZEFxNytMTDRyblVUdmt5UzR6?=
+ =?utf-8?B?MU9HQUpDUjhUVjdIM25RV1ZaZXc3Q1BhVjhxejVCRjM4b0E1VC9WMEpBS1pW?=
+ =?utf-8?B?aU5PUkc1MHB6M21jWHhDdlQ2UWkyWDV3U3VPQzNpZ2gwZWpreUhET3FhZnh3?=
+ =?utf-8?B?ZlRQZktwWE9hdjhXL3ZUR2lKTThpR0xsUExicFplN01DbUczWkZ2V0Z1eHh2?=
+ =?utf-8?B?ZnpodEhKNy9NVmRJVVlqY1ZQeTZOWG1rVmkwL0lzdEZFUU1qdnFGRDExSDJM?=
+ =?utf-8?B?ZERKNmNWZm5mSlBtNHpEVlFCOEFrd290V1h1WEZoWWtWL3Q5Z3FJOUhmUFZ2?=
+ =?utf-8?B?OVQ2d3paYk9HWXdsUTAwS3p0cGl6dGEzMWZKaFVmZHpKRFhXZkY1ODRnTjRz?=
+ =?utf-8?B?TlZWVkxYTWg3b2VlcU1QQk5DbUlDSGxGdVBQV2pxQ3Z4ei9NeEMvdDRGTEov?=
+ =?utf-8?B?MmhyRUIvWUFZNVFhMlN1Y1RDZStlTk94RTA0REhLVENucHVPYzE5dytNSE1a?=
+ =?utf-8?B?SzFZRzh2OGxHWHdwZXZrdHcxd1diK3NxZVJWdnpkLzdiTHhDZ3lKQ050TmpD?=
+ =?utf-8?B?TnplbCtBZU5tUnYxMTAzQm9SN2JtYy9LTjk2Z040d3NEcHl4WmdBemxaSlZa?=
+ =?utf-8?B?STZjcTNmT1VWNzdPUHVidEozek52NUo1VDZJT2dPa0FlM1lIZCszQ3NRaDUy?=
+ =?utf-8?B?TGZvUlVxZHBNa1MvSUtmT1dHeGljSTIrZVhOTER1Mjh6SGRVeFRoS09WZnpU?=
+ =?utf-8?B?SStaYm1PaWFBam53MnNEdStOdmIwbXpSWklpekFPQnVsRWdlSnRxWFZoemVz?=
+ =?utf-8?B?Z1poNWdNMmcxeTJRcTlONWRscnZvNGR5amw5dlJrWE43M01Ha3Z3ZUw1Vm9B?=
+ =?utf-8?B?OXBnRkVNY0JkRTkwaWFOZitxeTBYZXI3TFY4U0ZDaU5pb3loMnRGNW1rakl4?=
+ =?utf-8?B?SjFEb1dwaVBadnc4Zm10ZDJ0SmxRZlpiQkgzbkVnZEQ3SXB0aXl5dmpkM1BL?=
+ =?utf-8?B?aC9jZjcvdiszQWtlYVhraWdtVlRYUDlYKzVoQlEzcGRRNlJUWml0ZkNtb2Rq?=
+ =?utf-8?B?TkxUM2VKcHVGMC8rdkhVSVZLMXRFZ1lnbGNiRDMyZ09oMURsVmZBZ1F2K2dH?=
+ =?utf-8?B?b0pnNWM3UG9lb1dkdGx1eFdhRWVkeVkvTnJxOTJxMjFhUXB6U053SE53eUp4?=
+ =?utf-8?B?VkYrSk10S3ZyY2tpT3E5TGxXZXNITjRYKzJOb2c3dm1vb2s4YTJjUFNpM05L?=
+ =?utf-8?Q?fVTMPkFxHGb1/yMFRApCwIUCCOacdfbV4cxcyRnA9Jh1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb38dc9d-41aa-4a0e-fb6d-08ddee9ad75d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 05:44:56.6574
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6LG7bVnD/sM6Ufn+F0XuW4sgE9sot+4gbCBxjLCVm4YnPLZJpQndvn1rvNxDGO1UJrnKetoJAGJjpWMaY1rDaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6048
 
-From: GuoHan Zhao <zhaoguohan@kylinos.cn>
+On Fri Sep 5, 2025 at 8:50 PM JST, Alexandre Courbot wrote:
+>> +
+>> +        Ok(GspCmdq {
+>> +            dev: dev.into(),
+>> +            msg_count: MSG_COUNT,
+>> +            seq: 0,
+>> +            gsp_mem,
+>> +            _nr_ptes: nr_ptes as u32,
+>> +        })
+>> +    }
+>> +
+>> +    fn cpu_wptr(&self) -> u32 {
+>> +        // SAFETY: index `0` is valid as `gsp_mem` has been allocated a=
+ccordingly, thus the access
+>> +        // cannot fail.
+>> +        unsafe { dma_read!(self.gsp_mem[0].cpuq.tx.write_ptr).unwrap_un=
+checked() }
+>> +    }
+>> +
+>> +    fn gsp_rptr(&self) -> u32 {
+>> +        // SAFETY: index `0` is valid as `gsp_mem` has been allocated a=
+ccordingly, thus the access
+>> +        // cannot fail.
+>> +        unsafe { dma_read!(self.gsp_mem[0].gspq.rx.read_ptr).unwrap_unc=
+hecked() }
+>> +    }
+>> +
+>> +    fn cpu_rptr(&self) -> u32 {
+>> +        // SAFETY: index `0` is valid as `gsp_mem` has been allocated a=
+ccordingly, thus the access
+>> +        // cannot fail.
+>> +        unsafe { dma_read!(self.gsp_mem[0].cpuq.rx.read_ptr).unwrap_unc=
+hecked() }
+>> +    }
+>> +
+>> +    fn gsp_wptr(&self) -> u32 {
+>> +        // SAFETY: index `0` is valid as `gsp_mem` has been allocated a=
+ccordingly, thus the access
+>> +        // cannot fail.
+>> +        unsafe { dma_read!(self.gsp_mem[0].gspq.tx.write_ptr).unwrap_un=
+checked() }
+>> +    }
+>
+> Here is an easy trick to reduce the number of unsafe statements: have a
+> method that returns a reference to the `gsp_mem` (which contains the
+> unsafe part), and have these 4 methods call into it. And voil=C3=A0, 3
+> unsafes gone. :)
 
-In the error handling path of __add_event(), if evsel__new_idx() fails
-and returns NULL, the subsequent calls to zfree(&evsel->name) and
-zfree(&evsel->metric_id) will cause null pointer dereference.
+That sentence of mine is so wrong that I feel obligated to come back and
+fix it before someone thinks this is an acceptable pattern. >_<
 
-Extend the goto chain to properly handle the case where evsel allocation
-fails, avoiding unnecessary cleanup operations on a NULL pointer.
+A method returning a reference to `gsp_mem` would still need to be
+unsafe itself. Some areas of `gsp_mem` can be modified by the GSP at any
+time, so it would be the responsibility of the caller to make sure that
+it doesn't access any area that is currently under GSP ownership.
 
-Fixes: cd63c2216825 ("perf parse-events: Minor __add_event refactoring")
-Reviewed-by: Markus Elfring <Markus.Elfring@web.de>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
-
----
-V2 -> V3:
-- Replaced `out_free_cpus` with `out_put_cpus`
-- moved the patch version descriptions behind the marker line
-V1 -> V2:
-- Extended the goto chain with separate error handling labels instead of =
-using null pointer check
-- Reordered jump targets to avoid accessing NULL evsel members
-- Added Fixes tag
-- Updated commit subject to use "Prevent" instead of "Fix"
----
- tools/perf/util/parse-events.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-index 8282ddf68b98..2ffdd0d13c45 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -277,18 +277,18 @@ __add_event(struct list_head *list, int *idx,
-=20
- 	evsel =3D evsel__new_idx(attr, *idx);
- 	if (!evsel)
--		goto out_err;
-+		goto out_put_cpus;
-=20
- 	if (name) {
- 		evsel->name =3D strdup(name);
- 		if (!evsel->name)
--			goto out_err;
-+			goto out_free_evsel;
- 	}
-=20
- 	if (metric_id) {
- 		evsel->metric_id =3D strdup(metric_id);
- 		if (!evsel->metric_id)
--			goto out_err;
-+			goto out_free_evsel;
- 	}
-=20
- 	(*idx)++;
-@@ -310,12 +310,14 @@ __add_event(struct list_head *list, int *idx,
- 		evsel__warn_user_requested_cpus(evsel, user_cpus);
-=20
- 	return evsel;
--out_err:
--	perf_cpu_map__put(cpus);
--	perf_cpu_map__put(pmu_cpus);
-+out_free_evsel:
- 	zfree(&evsel->name);
- 	zfree(&evsel->metric_id);
- 	free(evsel);
-+out_put_cpus:
-+	perf_cpu_map__put(cpus);
-+	perf_cpu_map__put(pmu_cpus);
-+
- 	return NULL;
- }
-=20
---=20
-2.43.0
-
+A better way to do this would be a have methods (safe, this time) that
+provide references to the areas that are owned by the driver at the time
+of calling.
 
