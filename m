@@ -1,71 +1,66 @@
-Return-Path: <linux-kernel+bounces-805739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9699B48CDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A269B48CE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3FCE165C6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:08:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2696D1B2638F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9543B2FB965;
-	Mon,  8 Sep 2025 12:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C62FABE0;
+	Mon,  8 Sep 2025 12:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cH41MGOT"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="q3o8vem0"
+Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DE12253F2;
-	Mon,  8 Sep 2025 12:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB82253F2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333324; cv=none; b=m92oxmjapak81KBKECXAI4R8zGIjhm5hyqQRuwyEH/9bmaME4B7ZcCkvsgBs8O9g3b86YUpiugBdOO0VU4+wkub7Di0pzBqP1vmdP3oRnavy4S3DSAqRkVu0F+DQFdo5AO+PdUnqN6BS8zIurZg6yaSGRn1s0122eIZqL/JzRWE=
+	t=1757333338; cv=none; b=pnw9xfguVLWRGlyemuFq8rSq8i3rPuG1NHZUUPT6lg3rF1/gY3PWaZM/PyXrKSWpY+fvzZFfBKKOV3QryOKl2zDHI4bjs4dBTt0yoYDgBTdyu4SWiFBQtNXkpIf7IL9G+LYID5DWhmMqZhQHFQlAOoZgI+BtnSaKoP0VQQj+jZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333324; c=relaxed/simple;
-	bh=I89Hv3yeVpwjbp1lraO7l/J2a32/rDCCCIMK44RbBjE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IaDAl4a00OR5oC30YYwPCK9DfFLFc+XydEdHaU/mJ40SfIUiwxgWVKmMY4Khi4rucX2Y4S+DiqgQTqwDfBl4mBiZ+bpu+KTCkTnZrNmLv+HDUNH50lPV58RI5TshCjDOiVjrwWXTNgpXdr+poOYpNTHL800O4QGZouGThYEVtQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cH41MGOT; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588C8YIe3786822;
-	Mon, 8 Sep 2025 07:08:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757333314;
-	bh=iUiA6fxcXUKSJaWYaaDgfDZskuzN62xZP78qNVsUopI=;
-	h=From:To:CC:Subject:Date;
-	b=cH41MGOTqPOq8g4rFFlUK6slXVV+xVPMk7aqdvjodB0h2LGYeSc6jJK7ifqNsC6SV
-	 X07uwSp9mqzo+8e8/Tsh1ekquN80Sv/vZgAHuj2hi05qFq1+AlfJnwYMamdt5VOCqa
-	 eEDAuc887IR1s7MNb7CAb9407GyTvg/efucW4hoo=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588C8Yxq2390582
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 07:08:34 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 07:08:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 07:08:33 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588C8S0P867319;
-	Mon, 8 Sep 2025 07:08:29 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <helgaas@kernel.org>,
-        <kishon@kernel.org>, <vigneshr@ti.com>
-CC: <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v4] PCI: j721e: Fix programming sequence of "strap" settings
-Date: Mon, 8 Sep 2025 17:38:27 +0530
-Message-ID: <20250908120828.1471776-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757333338; c=relaxed/simple;
+	bh=nVUvUQdiCXtG5ibnmAC/vLTjS1jrut8OfsMJ4tfoKYs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k3oUTmlR6tNu9z/El38Qo+b6U8nAwKPWhmoVGSqMC2jONdkaA2+kSQukACilb2BwI/Y6F0NoPFPPgg/IK/y0gt1DPoEvEZvW+guKac6ZpX7V94M4ArwoElsJt54VG1W4dEkpumP/Zx5G7fQQOMvd1dwyoGB/OR8eWcGSDzXHYhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=q3o8vem0; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id D31B3C005F;
+	Mon,  8 Sep 2025 15:08:46 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru D31B3C005F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1757333326; bh=8SmJvAYmvvbrFch8QBFs7KIWv71UMCJ8kcu7j7DFLXo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=q3o8vem0yxrJ7BGLT2zY8a3Cey+hGguoM2um3+Edvv/eFymwliJgx8ZL6vuv62S8P
+	 3Hi/bNySfSfujvSJOPqY5O12PSHXful5jtf82IrIHBj7ASqrZP/W1OkZf2rClmfZ41
+	 iIw7alwOZ9t9IkPjDfUFu9nPF6LHlnBeDWILd5Te74Sp374vfDCmB2L0QMIMJm/qGw
+	 TvUngDrignnsMnWwhViGPkY6C7gQKflvXBfjBTBnFkVgsumcZ0NYEe/Jxak52Cetia
+	 K76CEHOLQR1R8+DsN7wbnrZltAHTPNT1zjKIpG6eL+dlExIXgif29gOIO6udJ7qUGK
+	 LglDQB0Il74Xw==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Mon,  8 Sep 2025 15:08:46 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 8 Sep 2025 15:08:45 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Alasdair Kergon <agk@redhat.com>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Mike Snitzer
+	<snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+	<dm-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH 1/1] dm-integrity: Remove unreachable code in dm_integrity_ctr()
+Date: Mon, 8 Sep 2025 15:08:31 +0300
+Message-ID: <20250908120831.135419-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,106 +69,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196094 [Sep 08 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/08 08:44:00 #27799356
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-The Cadence PCIe Controller integrated in the TI K3 SoCs supports both
-Root-Complex and Endpoint modes of operation. The Glue Layer allows
-"strapping" the Mode of operation of the Controller, the Link Speed
-and the Link Width. This is enabled by programming the "PCIEn_CTRL"
-register (n corresponds to the PCIe instance) within the CTRL_MMR
-memory-mapped register space. The "reset-values" of the registers are
-also different depending on the mode of operation.
+Since bi->metadata_size is an unsigned char, it's not practically
+possible for it to be > PAGE_SIZE / 2.
 
-Since the PCIe Controller latches onto the "reset-values" immediately
-after being powered on, if the Glue Layer configuration is not done while
-the PCIe Controller is off, it will result in the PCIe Controller latching
-onto the wrong "reset-values". In practice, this will show up as a wrong
-representation of the PCIe Controller's capability structures in the PCIe
-Configuration Space. Some such capabilities which are supported by the PCIe
-Controller in the Root-Complex mode but are incorrectly latched onto as
-being unsupported are:
-- Link Bandwidth Notification
-- Alternate Routing ID (ARI) Forwarding Support
-- Next capability offset within Advanced Error Reporting (AER) capability
+Thus, remove the corresponding if statement.
 
-Fix this by powering off the PCIe Controller before programming the "strap"
-settings and powering it on after that. The runtime PM APIs namely
-pm_runtime_put_sync() and pm_runtime_get_sync() will decrement and
-increment the usage counter respectively, causing GENPD to power off and
-power on the PCIe Controller.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
 ---
+ drivers/md/dm-integrity.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Hello,
-
-This patch is based on commit
-76eeb9b8de98 Linux 6.17-rc5
-of Mainline Linux.
-
-v3 of this patch is at:
-https://lore.kernel.org/r/20250829091707.2990211-1-s-vadapalli@ti.com/
-Changes since v3:
-- The commit message and the comment have been updated to state that the
-  runtime PM APIs being added by the patch change the usage counter for the
-  PCIe Controller causing GENPD to power it off and power it on.
-
-This patch has been tested on the J7200-EVM since the issue being fixed
-by the patch is seen on the J7200 SoC. Test Logs:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/38b403f4bb974c51ebf3d0d2ad0fa7b8
-
-Regards,
-Siddharth.
-
- drivers/pci/controller/cadence/pci-j721e.c | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 6c93f39d0288..29ffaf2bae10 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -284,6 +284,25 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- 	if (!ret)
- 		offset = args.args[0];
- 
-+	/*
-+	 * The PCIe Controller's registers have different "reset-values"
-+	 * depending on the "strap" settings programmed into the PCIEn_CTRL
-+	 * register within the CTRL_MMR memory-mapped register space.
-+	 * The registers latch onto a "reset-value" based on the "strap"
-+	 * settings sampled after the PCIe Controller is powered on.
-+	 * To ensure that the "reset-values" are sampled accurately, power
-+	 * off the PCIe Controller before programming the "strap" settings
-+	 * and power it on after that. The runtime PM APIs namely
-+	 * pm_runtime_put_sync() and pm_runtime_get_sync() will decrement and
-+	 * increment the usage counter respectively, causing GENPD to power off
-+	 * and power on the PCIe Controller.
-+	 */
-+	ret = pm_runtime_put_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to power off PCIe Controller\n");
-+		return ret;
-+	}
-+
- 	ret = j721e_pcie_set_mode(pcie, syscon, offset);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to set pci mode\n");
-@@ -302,6 +321,12 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- 		return ret;
- 	}
- 
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to power on PCIe Controller\n");
-+		return ret;
-+	}
-+
- 	/* Enable ACSPCIE refclk output if the optional property exists */
- 	syscon = syscon_regmap_lookup_by_phandle_optional(node,
- 						"ti,syscon-acspcie-proxy-ctrl");
+diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
+index efeee0a873c0..b7ad7a5adb56 100644
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -4752,11 +4752,6 @@ static int dm_integrity_ctr(struct dm_target *ti, unsigned int argc, char **argv
+ 			ti->error = "The integrity profile is smaller than tag size";
+ 			goto bad;
+ 		}
+-		if ((unsigned long)bi->metadata_size > PAGE_SIZE / 2) {
+-			r = -EINVAL;
+-			ti->error = "Too big tuple size";
+-			goto bad;
+-		}
+ 		ic->tuple_size = bi->metadata_size;
+ 		if (1 << bi->interval_exp != ic->sectors_per_block << SECTOR_SHIFT) {
+ 			r = -EINVAL;
 -- 
-2.43.0
+2.39.5
 
 
