@@ -1,172 +1,259 @@
-Return-Path: <linux-kernel+bounces-806748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AAAB49B4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:58:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 653ABB49B50
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB541BC445C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:59:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 911D27A2AD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37FC2DCF51;
-	Mon,  8 Sep 2025 20:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3272DCF41;
+	Mon,  8 Sep 2025 20:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pv2X6O+3"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fwsAPDy5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5B2DC338;
-	Mon,  8 Sep 2025 20:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D41C3C11
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365111; cv=none; b=aw5OhPNwPBn3oiKqcLzxhpxpBgY5dHXCuX1mOmO2Hm7WTWpH6Abjr2o8Wa2FBtO67MkM0vMs54Yg5PskCskUClTYYSKrdvhnzs+cqoASNNuXsYYY9HpWTmewknjadrpGeyA/NDYFXi5a7ypYeFKLeoYn4PZNkXFNgIpll+0KRO4=
+	t=1757365111; cv=none; b=UOMM5UPyNEwsQoBkp/Ytwh9lq1lFzIJ1LCjPbiqsV9v+/tVMjtGaUyv9gl81wV4SOjSKFKszxdxNUrgcNe3Ta5pcPUKQJxAkqIuQqLyTABaIRM1eADngX1zzOWpuBoCon2AYhd0X9XiHOGkA6+BJQbb5OxDGMrOoFyIeqMyVdJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757365111; c=relaxed/simple;
-	bh=4thkF1YwBFEYK4kLOlebSDWiMStEwrhTHQm9+zku5J8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=gMrKdxvvnSZ7f8TEnhe65oj7CjMOM9Nv5ylxqmyDrPupeSpe6ek7QkBgkucxpwlQ2Hs4AcC2WnXw9Il8drOadtiu4UkIKOOVsdz7RBqhIAtMdI50ICs6sEx83kM4WPkXUA+xZv309ZbyZu3+xpr6O5XcK9avrDOocCwLj0EKA+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pv2X6O+3; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588JcNih009190;
-	Mon, 8 Sep 2025 20:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=lifV1g
-	Hgbyl3UY5fdAgu6jOph8ep32IeJsccMuOyjpg=; b=pv2X6O+34W0TebnU86aZdE
-	9az+CVSSb+2p7Ef+4HIJoB2PLx97fd44S4qkva4YYQuI2R6ZZaaVPrdU6Q1RifJE
-	2uTyv3AgWtQqShQwzZfwMBOsL2boJVpfCd/Mxx3qK104Avlj9EsAIkEUB+jGLFQY
-	c94yaAFmt9OaAv7Ix0mdzwjw5XXpLQDyKUh+2WKdOKs/W+PWBbyeNZ2ZeAutVZCE
-	847RgfZPHBJlQJdJA9cHADTn1ugojWu+bohw+QshITFs1ETfF53L5SI/ZgRHUzYz
-	T7wRT4j6b1NRzlpSjYRCcHCJ9AR9WGPArwbwMZtyq1/r0FE484djNlenhunRcPsw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acquwd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 20:58:08 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588Kw7rL011292;
-	Mon, 8 Sep 2025 20:58:07 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acquwd0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 20:58:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588K0DOZ020499;
-	Mon, 8 Sep 2025 20:58:07 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp0r24a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 20:58:07 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588Kw6dn28574076
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 20:58:06 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 63A8258051;
-	Mon,  8 Sep 2025 20:58:06 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BAA1E5805A;
-	Mon,  8 Sep 2025 20:58:05 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.151.244])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  8 Sep 2025 20:58:05 +0000 (GMT)
-Message-ID: <9fb8781bfb9c9ae9dd0a1413e23cae20dcd7356a.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA
- xattr
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore	
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	
- <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <13d7fcfecb06423294ae0553c9a561f4cc8faf67.camel@linux.ibm.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
-		 <d252b04934908e7e65a3299bfeffc282c7b0b12f.camel@linux.ibm.com>
-		 <53wb5tzech2k4k25xy2heq7ohmp2elw2a7l4x3nfk6fajfydur@5thsinydau5x>
-	 <13d7fcfecb06423294ae0553c9a561f4cc8faf67.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 08 Sep 2025 16:58:05 -0400
+	bh=NcjVrFQ/EeFSpDSdolgFk6WEv6hRfjhGaFe8s7KW78w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqhmH/zxQFldQ45SOGnHxE7ruWboPZ4wQLE7atImov+kaU0x0YpnSsw6+Yu04dxzmCr/ilwl0H20MZZu29XMBKgG/VQGfB49wPnnNxIvmWbsytZB58jJuEEtU0gWUEniXo1TgxxjQQMF23lR5VQ91qpkIl3SN8e3Khm1EqG5jRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fwsAPDy5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GI1WC014458
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 20:58:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XT4D6Rl6xH7fkqut4jVRGRITzuU+VSPL2bAYsUG2sK8=; b=fwsAPDy5ELsm5PqX
+	Fro65gKobXPjGVoAHUBkPxR0EE9A7aLm7onUviGKb37+JaUjjsWiBlZepLTJRWii
+	2gShlA3u8TTcS56DxxoS/AkQS55kqxTu+Eb1FfXJ4taHz+m5d51VfizsvrANYptr
+	LL2BOw2Y8lMqH3ykncbGTt1l9paupuF43t//RGdTL755WhZykTmjT6KGyKalOt3b
+	KDe79Ugy1RP3iSdXSymD/+Tt9AxWsWxHUPTw8nXUoQ8sMBDh29genLN1OO2Od06X
+	9r81FgOvnQ1SLSxPiWpD2x5soj78B8rl1XyFTjcGgzIzD2UvkfBMjzS4IAXqw0Na
+	J4+nUQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490aape6jy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:58:22 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5ee6cd9a3so89206911cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:58:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757365101; x=1757969901;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XT4D6Rl6xH7fkqut4jVRGRITzuU+VSPL2bAYsUG2sK8=;
+        b=opemC/Kt4PXY74byZUsMh6uucdJn6qtvslszd00vOtWl2/dZ9YQajA0ULD2e0DTkfi
+         hppSudjWfdGEjzsnyEf0/3viUZoZiIM6dYne/79gUvXdlqnz6dXJmqD0WwP4s7REUGpf
+         uITLAGgG0yFYI0FzOnB9BS6E5INrXw8W2xYKaAWB4G7qafcemMWbVTEknlIHLDVN3bw+
+         4gcQgGItvvKcf2kCs2amqRHIkkqVXLNfhRDB0SUXNGg9ui+zGsorm2Hz7vRaee9jBDLx
+         pLJ57cpgSpTkHnz8sWzClfLQZgZ5f53RvEqEMUUwVCZTnOH8cRNwyqqu2ZM05QDQbGbC
+         a/bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQErOlgibBxLe8L7gSp3g0nYvH1oA7esyqTbb0PUd7zlcrzMaAalubE26VSxvd55ANtjdfVBkhZmD9XOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF4f5VMEZpCogt+lrCk8gjncNFNm2e0AsmbgPVmVkTuyvi3YlY
+	j4ImtY7CR28/QU8DZaliww3An/THXyB0QISyzozp1IC/VCAY4THY9uwqocxo7FQV6kBDDMwR3yw
+	tC6i/ImjDCBdEzCN1bi1cxaPktu6+GZO4AmB1glXh1iqPZg5GSwhe1wU+E0CMdZtd7mk=
+X-Gm-Gg: ASbGnctdjbKD1gMqXWJOUkGR3TUQJ/mljUBRkSkHFw3trsZbMiEMEh828a/plrb2gjA
+	D2GhMxQnZ3kf9GvYHHNLXuU/uX0HYpFrtj+0+D4pE72gIuDoNthY4+qbKQjKDnCAjW6NsE+tqog
+	XB2aRPuwKdA+buJdPRyxpWM0Sch+j4GqW4Whcuxt4pnDk1IccKQj5pDEXmCVY0w9ZP9GEdT9YsR
+	dHfnrW2qh4rBQT1cZHTAtvXLpH2z0Op36EmH3XwYpE3QSbxpS9lXJjczNoHlz7ldSEVhMlwaO7M
+	SpxfsGKBFVBhzqRQELCJ57Whgr3+jdt3F556bra899O1hvmF7hFhdw2tyCyizPmj4IS3MIFfsOM
+	LtIIv11Nk22/WnRyJg2V2391XWUQWGO9fJr+HXL2GD56M51n83R+e
+X-Received: by 2002:a05:622a:164a:b0:4b4:8f35:c902 with SMTP id d75a77b69052e-4b5f8386268mr101015461cf.4.1757365100923;
+        Mon, 08 Sep 2025 13:58:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgGo4AskYYA97bXQw5ZnjKY3trY7Q/2Y1T6Qh64u6FXmuTPBJyX/pqKAgqBTyfCqSsjgeyRA==
+X-Received: by 2002:a05:622a:164a:b0:4b4:8f35:c902 with SMTP id d75a77b69052e-4b5f8386268mr101015111cf.4.1757365100187;
+        Mon, 08 Sep 2025 13:58:20 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f50bfda3sm36656851fa.62.2025.09.08.13.58.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 13:58:19 -0700 (PDT)
+Date: Mon, 8 Sep 2025 23:58:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ryan Eatmon <reatmon@ti.com>
+Cc: rob.clark@oss.qualcomm.com, Rob Clark <robdclark@gmail.com>,
+        Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Bruce Ashfield <bruce.ashfield@gmail.com>
+Subject: Re: [PATCH v2] drivers: gpu: drm: msm: registers: improve
+ reproducibility
+Message-ID: <dm22fmz6yuxrn7cwsviwg6djnbbwr2lq7aamatz3rjeeqf7r2q@mdmnolrb3ytq>
+References: <20250524-binrep-v2-1-09040177218e@oss.qualcomm.com>
+ <6mgmrqmixjdftpjz2hvwjnsyh3wwylxuaih7yez2mdgjpcp3l2@zjr4ai6kkjxn>
+ <CAF6AEGvJnSiyUJvBPusBZ+mriiP_vRiAgZnTyLSseu8Sdf9PXA@mail.gmail.com>
+ <51cdf832-95a2-47bf-bc27-d43097883701@ti.com>
+ <CACSVV02YrpYrvbFxKc808a=GjdxVjO=FjRG9gs_6qe5W-v=a9g@mail.gmail.com>
+ <858dea80-1bd6-4bbc-9b98-9f959c00b304@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wm2LA_VY51gnsVuUZzmL5V_zMTUcOQih
-X-Authority-Analysis: v=2.4 cv=Mp1S63ae c=1 sm=1 tr=0 ts=68bf4360 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=l0XoPeyDebXZSsvv9nAA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: QawslZNTIAq1j2t7XwWPxB1569r3NAhA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfXztNDf731NSlP
- gRqwkRV4rCsnRDiZh+Ombu+CX8cEhEI9aXbanfn+l3vDKfcAPyaA4JiSCum+EWV0AuPXChTIH2W
- TNqwOV7BAskqmnJSTL7VGwUBA+xMLO6RhP3bIJMM33i8PR1Dsd501HjD+0z7ILo1OXlIE9F/ZwJ
- PPaDawQ8mSEF+HpqWAE6ZXtZZlkZSY8BaQLbPGEO37B+PXHhLi4U7UzYxa62YnOX10gKeFuJlRg
- oebH6UuMPiLFal0CrEEhHuE7qSEQdeyRpTLa7jjmDipbIEAcT/J0nB5WvPAz8cR+bfMO2MR/EYk
- 5BfIRvuQ7lJScjHNdYfyRJ8+w9CHZCi7PrBR/K08DOCJn0RaRgJahaAzLzbSJjQtyV+XUOpzlzd
- FC2ZxLyL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <858dea80-1bd6-4bbc-9b98-9f959c00b304@ti.com>
+X-Authority-Analysis: v=2.4 cv=eMETjGp1 c=1 sm=1 tr=0 ts=68bf436e cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=iGHA9ds3AAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=sozttTNsAAAA:8 a=pGLkceISAAAA:8 a=7zjSVlYyKO-sLu-dpfcA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=nM-MV4yxpKKO9kiQg6Ot:22
+X-Proofpoint-GUID: Bym5zntJZjlTpyAabrElvv0YPZB7wIew
+X-Proofpoint-ORIG-GUID: Bym5zntJZjlTpyAabrElvv0YPZB7wIew
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX4RT6CnzLvdbY
+ t0iZJI+FhXBm8G7eC/bGjXv4YbjYxVBO/5pUttYCNQ5oAgtpAPqwa7akZo2r0fVGgcE+wqbSrMO
+ GQjvAgjRQ6dmqQmjAfcClglqmkLyR4iNA4L9MJdSNDXrKMQfasAaCGwM6griAwBtLtlUkxnqvRe
+ 25TWkSWRL9I4lv7Boiqx9vgsOLrUchzMUObvhwWxZfcUDzpOd+qWoHHbD3mmIchqUuleT2quMcr
+ jrZnnM0O7Wv9epBaYhVPm+xHnI3SxPLJQkGjf28ZFBwcW13OeX4wUFPCUXhO2qtlfrPxx053AK9
+ EUmglScOng8lGPEETZ4s9jPbIryGZdSN4M+81xi/pMquP5oRZ0uPQ2hXZsXp2RPePZ41zHf5ruP
+ zKrDq3N2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 phishscore=0 spamscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060000
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 adultscore=0
+ bulkscore=0 phishscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060000
 
-On Mon, 2025-09-08 at 10:53 -0400, Mimi Zohar wrote:
-> Hi Coiby,
->=20
-> On Mon, 2025-09-08 at 19:12 +0800, Coiby Xu wrote:
-> > >=20
-> > > Even without an IMA appraise policy, the security xattrs are written =
-out to the
-> > > filesystem, but the IMA_DIGSIG flag is not cached.
-> >=20
-> > It seems I miss some context for the above sentence. If no IMA policy i=
-s
-> > configured, no ima_iint_cache will be created. If you mean non-appraisa=
-l
-> > policy, will not caching IMA_DIGSIG flag cause any problem?
->=20
-> Sorry.  What I was trying to say is that your test program illustrates th=
-e
-> problem both with or without any of the boot command line options as you
-> suggested - "ima_appraise=3Dfix evm=3Dfix ima_policy=3Dappraise_tcb".  Wr=
-iting some
-> other security xattr is a generic problem, whether the file is in policy =
-or not,
-> whether IMA or EVM are in fix mode or not.  The rpm-plugin-ima should ins=
-tall
-> the IMA signature regardless.
+On Mon, Sep 08, 2025 at 12:59:37PM -0500, Ryan Eatmon wrote:
+> 
+> 
+> On 9/8/2025 9:19 AM, Rob Clark wrote:
+> > On Mon, Sep 8, 2025 at 6:39 AM Ryan Eatmon <reatmon@ti.com> wrote:
+> > > 
+> > > 
+> > > 
+> > > On 9/6/2025 6:24 PM, Rob Clark wrote:
+> > > > On Sat, May 24, 2025 at 10:15 AM Dmitry Baryshkov
+> > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> > > > > 
+> > > > > On Sat, May 24, 2025 at 09:25:37PM +0530, Viswanath Kraleti wrote:
+> > > > > > From: Ryan Eatmon <reatmon@ti.com>
+> > > > > > 
+> > > > > > The files generated by gen_header.py capture the source path to the
+> > > > > > input files and the date.  While that can be informative, it varies
+> > > > > > based on where and when the kernel was built as the full path is
+> > > > > > captured.
+> > > > > > 
+> > > > > > Since all of the files that this tool is run on is under the drivers
+> > > > > > directory, this modifies the application to strip all of the path before
+> > > > > > drivers.  Additionally it prints <stripped> instead of the date.
+> > > > > > 
+> > > > > > Signed-off-by: Ryan Eatmon <reatmon@ti.com>
+> > > > > > Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+> > > > > > Signed-off-by: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>
+> > > > > > ---
+> > > > > > The files generated by gen_header.py include the source path to the
+> > > > > > input files and the build date. While this information can be useful,
+> > > > > > it inadvertently exposes build system configuration details in the
+> > > > > > binaries. This hinders binary reproducibility, as the output will
+> > > > > > vary if the build environment changes.
+> > > > > > 
+> > > > > > This change was originally submitted to the linux-yocto-dev kernel [1]
+> > > > > > to address binary reproducibility QA errors. However, the fix is generic
+> > > > > > enough to be applicable to the mainline kernel and would benefit other
+> > > > > > distributions as well. So proposing it here for broader inclusion.
+> > > > > > 
+> > > > > > [1] https://git.yoctoproject.org/linux-yocto-dev/commit/?id=f36faf0f9f8d8f5b4c43a68e5c6bd83a62253140
+> > > > > > ---
+> > > > > > Changes in v2:
+> > > > > > - Corrected author id
+> > > > > > - Link to v1: https://lore.kernel.org/r/20250523-binrep-v1-1-c3a446518847@oss.qualcomm.com
+> > > > > > ---
+> > > > > >    drivers/gpu/drm/msm/registers/gen_header.py | 8 +++++---
+> > > > > >    1 file changed, 5 insertions(+), 3 deletions(-)
+> > > > > > 
+> > > > > 
+> > > > > Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > > > > 
+> > > > > Rob, WDYT?
+> > > > 
+> > > > I'm revisiting this one, in the context of trying to re-sync
+> > > > gen_header.py with mesa.. but it is only changing the contents of
+> > > > comments, so it's not quite clear to me how this ends up mattering for
+> > > > binary reproducibility.
+> > > 
+> > > The reason it matters is that for Yocto, the generated header file is
+> > > identified as a file that needs to be installed into the sysroot.  All
+> > > files going into the sysroot are checked to make sure they do not
+> > > contain dates and/or paths to the build directory contained within.
+> > > Since this is a generated header file that is included in the sysroot we
+> > > needed to strip out the path and date.
+> > > 
+> > > The idea for the reproducible builds are that the same files on a
+> > > different a machine at a different time should produce 100% identical
+> > > files.  Including paths and dates violates that tenet.
+> > > 
+> > > Hope that helps explain why we needed this.  So long as the
+> > > gen_header.py is being called to generate header files then we need to
+> > > maintain the reproducible aspect.
+> > > 
+> > 
+> > My plan is (was?) to just replace the entire comment header with simply:
+> > 
+> >    /* Autogenerated file, DO NOT EDIT manually! */
+> > 
+> > That said, I'm not entirely sure why these files should get installed
+> > into the sysroot?  I'm not super hands-on familiar with Yocto, so
+> > maybe there is a good reason.. but if there is, maybe the plan to
+> > remove the license/etc from the comment header isn't such a good idea
+> > after all?
+> 
+> The generated header files would be part of a linux-headers package that
+> would be needed to build other packages as part of the distro.  And so the
+> header files are all checked against the rules.  A linux-headers type
+> package is common for distros to have available.
 
-My mistake.  An appraise policy indeed needs to be defined for the file
-signature to be replaced with a file hash.
+I think you mean linux-libc-headers here. No, as Rob wrote, it is not
+(these headers are not even under include/ subdir.
 
->=20
-> SELinux doesn't usually re-write the security.selinux xattr, so the probl=
-em is
-> hard to reproduce after installing the rpm-plugin-ima with "dnf reinstall
-> <package>".
->=20
-> thanks,
->=20
-> Mimi
->=20
+Do we check the work-shared/kernel-source and kernel-build-artifacts for
+sysroot paths?
 
+> 
+> 
+> > BR,
+> > -R
+> > 
+> > > 
+> > > > That said, since the generated files are no longer checked in to mesa
+> > > > or the kernel, we could probably just drop all of this if it mattered.
+> > > > 
+> > > > BR,
+> > > > -R
+> > > 
+> > > --
+> > > Ryan Eatmon                reatmon@ti.com
+> > > -----------------------------------------
+> > > Texas Instruments, Inc.  -  LCPD  -  MGTS
+> > > 
+> > > 
+> 
+> -- 
+> Ryan Eatmon                reatmon@ti.com
+> -----------------------------------------
+> Texas Instruments, Inc.  -  LCPD  -  MGTS
+> 
+
+-- 
+With best wishes
+Dmitry
 
