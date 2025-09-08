@@ -1,121 +1,186 @@
-Return-Path: <linux-kernel+bounces-805740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A269B48CE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A61B48CE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2696D1B2638F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 592167A4B18
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C62FABE0;
-	Mon,  8 Sep 2025 12:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CEC2FC019;
+	Mon,  8 Sep 2025 12:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="q3o8vem0"
-Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZMw1QOIR"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB82253F2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C32F3C1A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333338; cv=none; b=pnw9xfguVLWRGlyemuFq8rSq8i3rPuG1NHZUUPT6lg3rF1/gY3PWaZM/PyXrKSWpY+fvzZFfBKKOV3QryOKl2zDHI4bjs4dBTt0yoYDgBTdyu4SWiFBQtNXkpIf7IL9G+LYID5DWhmMqZhQHFQlAOoZgI+BtnSaKoP0VQQj+jZI=
+	t=1757333365; cv=none; b=dLKgj+Hg1BBu0gwfoozwuZQGxEg7V5Rqv0KX7KphDwWk6egmzCcc76Z/Jzq9kwzrzTt/dGWTy+sHsQsbSM83oDEaE/8bIIxfvj0T7TdD+THrUe6sY+LK2HU7oeDuh8jKtc2cqONTZDRDJa60CX09qhazQlTI29ogzspuz7l/pjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333338; c=relaxed/simple;
-	bh=nVUvUQdiCXtG5ibnmAC/vLTjS1jrut8OfsMJ4tfoKYs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k3oUTmlR6tNu9z/El38Qo+b6U8nAwKPWhmoVGSqMC2jONdkaA2+kSQukACilb2BwI/Y6F0NoPFPPgg/IK/y0gt1DPoEvEZvW+guKac6ZpX7V94M4ArwoElsJt54VG1W4dEkpumP/Zx5G7fQQOMvd1dwyoGB/OR8eWcGSDzXHYhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=q3o8vem0; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id D31B3C005F;
-	Mon,  8 Sep 2025 15:08:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru D31B3C005F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1757333326; bh=8SmJvAYmvvbrFch8QBFs7KIWv71UMCJ8kcu7j7DFLXo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=q3o8vem0yxrJ7BGLT2zY8a3Cey+hGguoM2um3+Edvv/eFymwliJgx8ZL6vuv62S8P
-	 3Hi/bNySfSfujvSJOPqY5O12PSHXful5jtf82IrIHBj7ASqrZP/W1OkZf2rClmfZ41
-	 iIw7alwOZ9t9IkPjDfUFu9nPF6LHlnBeDWILd5Te74Sp374vfDCmB2L0QMIMJm/qGw
-	 TvUngDrignnsMnWwhViGPkY6C7gQKflvXBfjBTBnFkVgsumcZ0NYEe/Jxak52Cetia
-	 K76CEHOLQR1R8+DsN7wbnrZltAHTPNT1zjKIpG6eL+dlExIXgif29gOIO6udJ7qUGK
-	 LglDQB0Il74Xw==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client did not present a certificate)
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Mon,  8 Sep 2025 15:08:46 +0300 (MSK)
-Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 8 Sep 2025 15:08:45 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Alasdair Kergon <agk@redhat.com>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Mike Snitzer
-	<snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
-	<dm-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 1/1] dm-integrity: Remove unreachable code in dm_integrity_ctr()
-Date: Mon, 8 Sep 2025 15:08:31 +0300
-Message-ID: <20250908120831.135419-1-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1757333365; c=relaxed/simple;
+	bh=/Qpjfk3Zzpp2K0NY0PG3dpCanwrNcWp1BaRzJ/zTs4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VP/DDBYsB0HORNeHwMhmvyA4wQ5/0a4mX9lcjk8RzBJKiOqDfQNY9i46awpRPt+mXMxaXyd4sOlJpv9yoRifhD3FUgWebFbgGu36qOCPRy6jiM2aU3fuzTDhtmClReoa3OLNe3OGwIU675VyMt+UrADBDvsrArEWYaJi2lZcoLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZMw1QOIR; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 8 Sep 2025 14:09:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757333351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DpuQJm/MJb4S/aE7sX19hUx0Grj/9swMnMFmkKYUViU=;
+	b=ZMw1QOIRzyzltBncVNh5ibeWMU70HOEHmU5SJhEEh2hxSoDwDRjDmSd/QkqbuXV50dPeHA
+	te7vT6qhVVZBGmMUtGkqb/xHzopKN5Y7jGQKm1YgfYQ3W5ygfdlFvfGbb+MqfiUXhW+PkD
+	fJ9fmtkcNTz2JRLr4l+MW/G9niQh+xA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
+ v4l2 control
+Message-ID: <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
+ <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
+ <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
+ <20250907200811.GB19568@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 196094 [Sep 08 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/08 08:44:00 #27799356
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250907200811.GB19568@pendragon.ideasonboard.com>
+X-Migadu-Flow: FLOW_OUT
 
-Since bi->metadata_size is an unsigned char, it's not practically
-possible for it to be > PAGE_SIZE / 2.
 
-Thus, remove the corresponding if statement.
+Hi Laurent,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+thanks for your review!
 
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
- drivers/md/dm-integrity.c | 5 -----
- 1 file changed, 5 deletions(-)
+On Sun, Sep 07, 2025 at 10:08:11PM +0200, Laurent Pinchart wrote:
+> On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
+> > On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
+> > > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
+> > > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
+> > > > "strobe output enable" feature of the sensor.
+> > > > 
+> > > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
+> > > > tested using an ov9281 VisionComponents module.
+> > > > 
+> > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > > ---
+> > > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
+> > > >  1 file changed, 24 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
+> > > > --- a/drivers/media/i2c/ov9282.c
+> > > > +++ b/drivers/media/i2c/ov9282.c
+> > > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
+> > > >  				current_val);
+> > > >  }
+> > > >  
+> > > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
+> > > > +{
+> > > > +	u32 current_val;
+> > > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > > +				  &current_val);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > 
+> > > Please don't do assignments in variable declaration if that involves error
+> > > handling.
+> > 
+> > Sure. Will fix that!
+> > 
+> > > > +
+> > > > +	if (enable)
+> > > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
+> > > > +	else
+> > > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
+> > > > +
+> > > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> > > > +				current_val);
+> 
+> It would be nice to cache the register value instead of reading it back.
+> Regmap may help (and then the driver should use the CCI helpers). This
+> can be done separately.
+> 
 
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index efeee0a873c0..b7ad7a5adb56 100644
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -4752,11 +4752,6 @@ static int dm_integrity_ctr(struct dm_target *ti, unsigned int argc, char **argv
- 			ti->error = "The integrity profile is smaller than tag size";
- 			goto bad;
- 		}
--		if ((unsigned long)bi->metadata_size > PAGE_SIZE / 2) {
--			r = -EINVAL;
--			ti->error = "Too big tuple size";
--			goto bad;
--		}
- 		ic->tuple_size = bi->metadata_size;
- 		if (1 << bi->interval_exp != ic->sectors_per_block << SECTOR_SHIFT) {
- 			r = -EINVAL;
--- 
-2.39.5
+Currently all set_ctrl calls in the ov9282 driver have this
+read/modify/write pattern. As mentioned in the cover letter I'm planning
+to migrate to cci helpers in a future series to keep the set smaller.
+But if you prefer the migration in this series I can try to rebase on
+it?
 
+> > > > +}
+> > > > +
+> > > >  /**
+> > > >   * ov9282_set_ctrl() - Set subdevice control
+> > > >   * @ctrl: pointer to v4l2_ctrl structure
+> > > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
+> > > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
+> > > >  		break;
+> > > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
+> > > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
+> > > > +		break;
+> > > >  	default:
+> > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+> > > >  		ret = -EINVAL;
+> > > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > > >  	u32 lpfr;
+> > > >  	int ret;
+> > > >  
+> > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+> > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+> > > >  	if (ret)
+> > > >  		return ret;
+> > > >  
+> > > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > > >  						OV9282_TIMING_HTS_MAX - mode->width,
+> > > >  						1, hblank_min);
+> > > >  
+> > > > +	/* Flash/Strobe controls */
+> > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> > > 
+> > > This seems rather long.
+> > 
+> > It's exactly 100 chars wide, so from a policy point of view it should be
+> > fine ;-). But I'm also fine with breaking it to 80 if you prefer?
+> 
+> That's the usual policy in V4L2, yes. 80 columns is the preferred soft
+> limit.
+
+So I should break this line in this case? Tbh I'm often unsure on
+breaking on 80 or 100... Personally 100 is fine for me, but that's
+"your" subsystem/driver, so I guess it's your descision ;-)
+
+> 
+> > > > +
+> > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> > > >  	if (!ret) {
+> > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> > > > 
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+regards;rl
 
