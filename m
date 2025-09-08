@@ -1,249 +1,220 @@
-Return-Path: <linux-kernel+bounces-806452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD22B496F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8ABB496F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65241203A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40CE57AB903
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9453431354E;
-	Mon,  8 Sep 2025 17:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7AD313520;
+	Mon,  8 Sep 2025 17:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dn7M4n/u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKb0Vaa6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415AC31283B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1F128399;
+	Mon,  8 Sep 2025 17:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352645; cv=none; b=he195zg80nNkujaWC1o9iWqpNCnNyWjMvcoPzDv+CCGZaosXw4PAGx3f3UkDmybTfgCF8DWaUGSCZAkOyD6ainvwQG21GHE+NYGn91qwnIW3ZqEf1C38QKFXuX70qsjhxMWYAHj9N3y2gvDMoWvvaCYZVoOcZ0Q75Mwl49gH4wc=
+	t=1757352709; cv=none; b=RXt+8fPeLht4hOLPaWnvZEJ3AJMhXdO8G6xRQIZOtRHJBzNAwljQivOnKaPDlQoLb6qivPmPoAkI1z8tlZKltvJMMxPut/BbXC0ifkclRLRB+gcpuBCUif0t/laeb4u+g7yU3NPgcy4IHaH7GeqBivpO+pkeo2ZW9CIfvzqZ7cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352645; c=relaxed/simple;
-	bh=JyPkBfczRRzXpM98VuI8SgsMu1wrAKH/fI6gRLdmGRQ=;
+	s=arc-20240116; t=1757352709; c=relaxed/simple;
+	bh=+GJvdWbYdEkO2iexLk7YraWW+Q1K7c80iEct8a7Ig08=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrroMgUszjQT3RLo2rwII2eWy/31fRGq6xQaus5Jd1Nw7tgzrKo21kw6Q07afV0iI8yeU+LyeknDX8sK+Mf4Da/1/iaxVNPQqpBHa2xSgPSHtIh4yXZSwxRB6aRXAYazranZVo7oabHX9j+JCSZ2ryY9lscl3tDP8c5yqGifSj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dn7M4n/u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757352643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RAwcm1nPLLX4X92euXLnYeRyvAbGSoqBmBe5SHTlwFM=;
-	b=Dn7M4n/uL18CMRQz3835/ibmNp3mKtqdrGsHyDuHwXrWSd9n9XwKPXPuebjYRvyvLn0AEK
-	90OcofXxFVLc1JTLQL2xH1fgU72W8KZ181QtsHksJXYHhQHQyIJIlixtNEW0L3b0rvmddA
-	a1dlOnc5fk0SIdtPn+HoxEBvYbp0ePc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-0Hl_JFjXMsGl4kM9_fdlmQ-1; Mon, 08 Sep 2025 13:30:41 -0400
-X-MC-Unique: 0Hl_JFjXMsGl4kM9_fdlmQ-1
-X-Mimecast-MFC-AGG-ID: 0Hl_JFjXMsGl4kM9_fdlmQ_1757352639
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3df3e935ec8so2193137f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:30:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757352639; x=1757957439;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RAwcm1nPLLX4X92euXLnYeRyvAbGSoqBmBe5SHTlwFM=;
-        b=M/fmg6JaCypp6LR6Ce34iN7XlGyBpYda6qpLfo5YmGfUPjyrdzGuLqyXwt3TzQr7U3
-         FLhdaDjzdnlkln+dpsX5CcOnwoIO2FYnhYFjWRCm5SliOS5gqRCSkSTiKqj/NB41N790
-         qX4DBbfm5hjek2gW0h0fgLNIRfwqwFuYwrWJ9SYTZgNJEIzM3qzN9vg8FRm7wiQSsiGv
-         elilwHuIkndQ0R8hF8frR1C+jewPHHdUFDV04FnSzKRydiDBha4pcR7jEdOBBKmt7+3R
-         zdxcqde5OAPi+hh0rrJO5wkj+2w7PRtNdY+mzarJRWZLAL7EQo0yQbI3CMfByJ4nFFih
-         iUjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgjtm5EMJgmNcih5gCUrSMVfFQJnlSNNj73dfawmAUOmWL8hMKKxuNkIUmIdXKZmqsIWZv3u3nPX3660I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN39Nliot9Mzi46BYqjyCkCHNe+bG9s+tXiqW1EAgK5Tmdp7wV
-	AY5bAlC6H8sYK1IHIA3BqZXNhjROt5YA2eg2x8BiXzgOJOdWjWgtQiv10J+nNn92JT6G0Q3edMm
-	7lP8miLT5+DQVuleMgFUG7Ro+Z7nfFS4zWXAsRsZv+DqThiIWPCVbfCdSlJAnDwOYgA==
-X-Gm-Gg: ASbGnctyQ8P+HWH7YFFZkS5Cb1vtNoGaXRCGwi03ZZBswdNRKYoOfU//X+GMnNl+MGA
-	62FmuSPAa4pusFIdfVuWzsKyE5nbAwOtBjp/CGisGL4LxPXgkSCpi88stxx2sSP5ZCy8eTsp+FE
-	0mUNtwDZdhlY7B/yS93goiH9C+dg42Asw73a8IeGRopodtXI/k0VvHQwAMpJRFXbjlZCmECvB5J
-	qVU9gMhURDNYlwDv2pWsPONMQx3cYdWP9vGZB0qD5khiJ6Vku75MlvRYzEbrUmfaVFeUI6aJSxT
-	Ub8lQPjtg8QCOdjFXHaO0PWQXX47vKj6fhyC0kdKlJXMmBiV97fOCxzt91bmhtrhXhA8PxOunP8
-	Qc3kfhNKUC70ZhxeaFyDZorg/J9YUI8/qg4cfulyTpfe5rXhMFh2rRYaCADKhZ/WD
-X-Received: by 2002:a5d:5d05:0:b0:3ce:f0a5:d581 with SMTP id ffacd0b85a97d-3e636d8ff6dmr7012202f8f.7.1757352639355;
-        Mon, 08 Sep 2025 10:30:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGj6Fx/oJ/i3mGb5tdhsyoUu3a7TRpHUY03SW3dQRjVAjsi0xq639ZH0YB5uZksW3RpOLFefg==
-X-Received: by 2002:a5d:5d05:0:b0:3ce:f0a5:d581 with SMTP id ffacd0b85a97d-3e636d8ff6dmr7012120f8f.7.1757352638837;
-        Mon, 08 Sep 2025 10:30:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd296ed51sm197762845e9.3.2025.09.08.10.30.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 10:30:38 -0700 (PDT)
-Message-ID: <92def589-a76f-4360-8861-6bc9f94c1987@redhat.com>
-Date: Mon, 8 Sep 2025 19:30:34 +0200
+	 In-Reply-To:Content-Type; b=myFgTMlijUpivlObkhpf9SM+gz/89mPcn1pnyCqQIs0INvVmEk64ufNcAb1Pqx2BAII23TTy3jgGE74BgI9AsNKHwaH4bbLYxFeaKDE7aU9HRF0mA5/nZeYUx45aFGiIarY6u3WKBvrZzTFmmOWwpGt25uO9c5FTH6UxCTb3/7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKb0Vaa6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2627C4CEF1;
+	Mon,  8 Sep 2025 17:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757352708;
+	bh=+GJvdWbYdEkO2iexLk7YraWW+Q1K7c80iEct8a7Ig08=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nKb0Vaa6R6NYNEhMOdCuSCZp+oUbllfgqCTq09Di+mi3HR05l7lLTtqUXO2QiPh5D
+	 2TkhXqVhsnCGDCILeuJ3Th5CZnGG/+Qy0vxAG1rQ7kOTmpDbwoxX0SpIlmc6yizT2u
+	 PBjtsWe4axam2aOM6I6nsko6txOuJ921r9tItcjIzmsK4kpJs9uFkg+dnjPocJxG6E
+	 i08+j0L54EyL4hquPoVsrO70xn22r89elZosE1O65Jzv/BIyWhEOE9/iwQNlQFw4EX
+	 gEEuvbp2hHx3njq3vEXg+8sgwjfCPgqFs8D8t63V0nQP0r8cronoUzyfFtmzjAPQDa
+	 lV0LtmAheILWg==
+Message-ID: <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org>
+Date: Mon, 8 Sep 2025 19:31:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
- kexec@lists.infradead.org, kasan-dev@googlegroups.com
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
- <20250908125101.GX616306@nvidia.com>
- <e71b7763-4a62-4709-9969-8579bdcff595@lucifer.local>
- <20250908133224.GE616306@nvidia.com>
- <090675bd-cb18-4148-967b-52cca452e07b@lucifer.local>
- <20250908142011.GK616306@nvidia.com>
- <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
- <af3695c3-836a-4418-b18d-96d8ae122f25@redhat.com>
- <d47b68a2-9376-425c-86ce-0a3746819f38@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d47b68a2-9376-425c-86ce-0a3746819f38@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
+ SOCK_KEEPOPEN
+Content-Language: en-GB, fr-BE
+To: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+ David Reaver <me@davidreaver.com>
+References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
+ <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
+ <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
+ <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
+ <aL8RoSniweGJgm3h@templeofstupid.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <aL8RoSniweGJgm3h@templeofstupid.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 08.09.25 17:35, Lorenzo Stoakes wrote:
-> On Mon, Sep 08, 2025 at 05:07:57PM +0200, David Hildenbrand wrote:
->> On 08.09.25 16:47, Lorenzo Stoakes wrote:
->>> On Mon, Sep 08, 2025 at 11:20:11AM -0300, Jason Gunthorpe wrote:
->>>> On Mon, Sep 08, 2025 at 03:09:43PM +0100, Lorenzo Stoakes wrote:
->>>>>> Perhaps
->>>>>>
->>>>>> !vma_desc_cowable()
->>>>>>
->>>>>> Is what many drivers are really trying to assert.
->>>>>
->>>>> Well no, because:
->>>>>
->>>>> static inline bool is_cow_mapping(vm_flags_t flags)
->>>>> {
->>>>> 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
->>>>> }
->>>>>
->>>>> Read-only means !CoW.
->>>>
->>>> What drivers want when they check SHARED is to prevent COW. It is COW
->>>> that causes problems for whatever the driver is doing, so calling the
->>>> helper cowable and making the test actually right for is a good thing.
->>>>
->>>> COW of this VMA, and no possibilty to remap/mprotect/fork/etc it into
->>>> something that is COW in future.
->>>
->>> But you can't do that if !VM_MAYWRITE.
->>>
->>> I mean probably the driver's just wrong and should use is_cow_mapping() tbh.
->>>
->>>>
->>>> Drivers have commonly various things with VM_SHARED to establish !COW,
->>>> but if that isn't actually right then lets fix it to be clear and
->>>> correct.
->>>
->>> I think we need to be cautious of scope here :) I don't want to accidentally
->>> break things this way.
->>>
->>> OK I think a sensible way forward - How about I add desc_is_cowable() or
->>> vma_desc_cowable() and only set this if I'm confident it's correct?
+Hi Krister,
+
+On 08/09/2025 19:25, Krister Johansen wrote:
+> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
+>> Hi Geliang,
 >>
->> I'll note that the naming is bad.
+>> On 07/09/2025 02:51, Geliang Tang wrote:
+>>> Hi Matt,
+>>>
+>>> On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
+>>>> Hi Krister,
+>>>>
+>>>> On 06/09/2025 02:43, Krister Johansen wrote:
+>>>>> Users reported a scenario where MPTCP connections that were
+>>>>> configured
+>>>>> with SO_KEEPALIVE prior to connect would fail to enable their
+>>>>> keepalives
+>>>>> if MTPCP fell back to TCP mode.
+>>>>>
+>>>>> After investigating, this affects keepalives for any connection
+>>>>> where
+>>>>> sync_socket_options is called on a socket that is in the closed or
+>>>>> listening state.  Joins are handled properly. For connects,
+>>>>> sync_socket_options is called when the socket is still in the
+>>>>> closed
+>>>>> state.  The tcp_set_keepalive() function does not act on sockets
+>>>>> that
+>>>>> are closed or listening, hence keepalive is not immediately
+>>>>> enabled.
+>>>>> Since the SO_KEEPOPEN flag is absent, it is not enabled later in
+>>>>> the
+>>>>> connect sequence via tcp_finish_connect.  Setting the keepalive via
+>>>>> sockopt after connect does work, but would not address any
+>>>>> subsequently
+>>>>> created flows.
+>>>>>
+>>>>> Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on
+>>>>> the
+>>>>> subflow when calling sync_socket_options.
+>>>>>
+>>>>> The fix was valdidated both by using tcpdump to observe keeplaive
+>>>>> packets not being sent before the fix, and being sent after the
+>>>>> fix.  It
+>>>>> was also possible to observe via ss that the keepalive timer was
+>>>>> not
+>>>>> enabled on these sockets before the fix, but was enabled
+>>>>> afterwards.
+>>>>
+>>>>
+>>>> Thank you for the fix! Indeed, the SOCK_KEEPOPEN flag was missing!
+>>>> This
+>>>> patch looks good to me as well:
+>>>>
+>>>> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>>>>
+>>>>
+>>>> @Netdev Maintainers: please apply this patch in 'net' directly. But I
+>>>> can always re-send it later if preferred.
+>>>
+>>> nit:
+>>>
+>>> I just noticed his patch breaks 'Reverse X-Mas Tree' order in
+>>> sync_socket_options(). If you think any changes are needed, please
+>>> update this when you re-send it.
 >>
->> Why?
->>
->> Because the vma_desc is not cowable. The underlying mapping maybe is.
+>> Sure, I can do the modification and send it with other fixes we have.
 > 
-> Right, but the vma_desc desribes a VMA being set up.
-> 
-> I mean is_cow_mapping(desc->vm_flags) isn't too egregious anyway, so maybe
-> just use that for that case?
+> Thanks for the reviews, Geliang and Matt.  If you'd like me to fix the
+> formatting up and send a v2, I'm happy to do that as well.  Just let me
+> know.
 
-Yes, I don't think we would need another wrapper.
+I was going to apply this diff:
 
+> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
+> index 13108e9f982b..2abe6f1e9940 100644
+> --- a/net/mptcp/sockopt.c
+> +++ b/net/mptcp/sockopt.c
+> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_sock *msk, struct sock *ssk)
+>  {
+>         static const unsigned int tx_rx_locks = SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
+>         struct sock *sk = (struct sock *)msk;
+> -       int kaval = !!sock_flag(sk, SOCK_KEEPOPEN);
+> +       bool keep_open;
+>  
+> +       keep_open = sock_flag(sk, SOCK_KEEPOPEN);
+>         if (ssk->sk_prot->keepalive)
+> -               ssk->sk_prot->keepalive(ssk, kaval);
+> -       sock_valbool_flag(ssk, SOCK_KEEPOPEN, kaval);
+> +               ssk->sk_prot->keepalive(ssk, keep_open);
+> +       sock_valbool_flag(ssk, SOCK_KEEPOPEN, keep_open);
+>  
+>         ssk->sk_priority = sk->sk_priority;
+>         ssk->sk_bound_dev_if = sk->sk_bound_dev_if;
+
+(sock_flag() returns a bool, and 'keep_open' is maybe clearer)
+
+But up to you, I really don't mind if you prefer to send the v2 by
+yourself, just let me know.
+
+Cheers,
+Matt
 -- 
-Cheers
-
-David / dhildenb
+Sponsored by the NGI0 Core fund.
 
 
