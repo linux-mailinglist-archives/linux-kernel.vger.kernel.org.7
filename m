@@ -1,160 +1,187 @@
-Return-Path: <linux-kernel+bounces-805549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88201B48A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73062B48A1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414293425F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295283BA101
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCC62F7AA8;
-	Mon,  8 Sep 2025 10:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFDC2F83AE;
+	Mon,  8 Sep 2025 10:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y/5QVI7n"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LHz1ADtk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C32192E3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4C7136358;
+	Mon,  8 Sep 2025 10:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757327072; cv=none; b=b91giicVK8HhTJkWNpmLfnL+vYt9xKJyczM0nAQ3fpLhSZDoWOIquMkVWIqD6jfbVadxmLPvGcKXGTRmLYys5Rij5TaTVSHP64vuceyAk1oOAm5u3WZXvvzx0X2UhmNu1y+gD4XNAl1Kc0usgX35xRRSYW8+CKD3hfzvrVbdbj8=
+	t=1757327088; cv=none; b=g6nk/L7da9ONahI+RUYqhh4zyjk0bTIW+3JzO13ak8xw3KsBq2GDaxCyzlgitkdAl0Q/YvOlFkG3TjXWNztRHZ9P5YHotbRHN31A+TR5TTm//mH+5qPh1El/BnIHooaFL7MffM6gptckg8o1JSBfc4+V0VPRXjZyb8oLpM65C7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757327072; c=relaxed/simple;
-	bh=XnWf6lKHXJUHU3vhe1YUuEdjO9a2CX2ypi/RZq+5EDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nd4P52jZrKOT4XxZ1+glCfXDDpIp5WzadlH4GwgMoksY/MT4xZqBUKcKT8Wjh4ZM9RNardvZreA5Y9PM6Y6HcmnN7s6Sp1J4/u1zAiQTOJDVn68/JNPvs04SKJU1aaoSVwr50NSKhT17bh8Sh33+1u71cP1BqWgUZ/zpowH2FF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y/5QVI7n; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so4334861e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757327068; x=1757931868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwjChtfYMEeGuB/wdk7FN7umIHbSaximMcCkeQ4PR3g=;
-        b=Y/5QVI7nhI6iFA+QCwmSQAWL5DYgynJTHqID7hupV7NjgLydvj/1xiLYreY5L8xnm1
-         I7gHAJ0WlUOouVccC3XKhqIsp4DZXu3nAt8urrYRIKZsrsZZIEezh6kIECBlHl8fgCde
-         H34IKB3QW5WbS/m92a9qqg3l1xFTZy1En+syOSZxI9NujszwVgzoiow8yoNCwSikhkLn
-         zHKbI1qRPnoWplh2iXa86AFtVEDGNpBBQWk9qbrSfEb7rzhi98b+M1wVftsv/6Spep+9
-         hE/hjQcRSAri15PHdhtXtx1Sb8uWb2/gQLaEE5HYy9f6sA1roYvxtNZPzvoQbcqeowx9
-         do5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757327068; x=1757931868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hwjChtfYMEeGuB/wdk7FN7umIHbSaximMcCkeQ4PR3g=;
-        b=bhjbpEi3yXeJruok1VFeff4Zn8AlftOzGQErQquZ484EWJoVQfvqI20jbQ82sWcMtU
-         +RDQ3LiDbWBAt1MU/MIeTAiiDMW/81U/WSNEaaFxsnV4Bh5aJM90/mEbsIjehYzLjSLS
-         FXdtGXcxEAE20orM76uweupzYTeFWFPtg9zK+dubIt4tcQ6bsfWvY1KZD5XQOhM8ZbDd
-         A1DLv6C9ZU2nSoitcsuerUIhshCmmvnIq6H27Xx9uk0QFPHsoPuwPe/sQHlaIcH3lG0J
-         LDg6wRJqVPnc+oqgdanKIS3i2FfLR4C6kYlBOcIRRJSUzXgCBIVzUNMwkDUKAnEWEfxE
-         +VPQ==
-X-Gm-Message-State: AOJu0YwcD/hcadiDZ5deN6i9d0XWVyM+NqKYZ+QacrqHVaopQBjaUyF1
-	rhL4sskztlcUShehVw0H1tvGEyU3WWix4bS+pVkYN+fXGI7xGssGgk4+Tc9s+Q+flTbF2YsOG+R
-	ZpKothDueqQFPhL8wewWLNjHyBxz6SbS0mEqbEwpGIA==
-X-Gm-Gg: ASbGnctagIiuQavhG3BOrDa2BsQnJ5nwhhhN9jQB3rEK4i/+LOwHRgm1Y4k7wBSpvYh
-	U5kM+QelZ/E24Tpu1g1VO7XdGiwZE8NBI48I42b1h3ZspiFe0xDJKxcwnY4ucIseyfMQhwFPvqF
-	1tte/jCa4Mm+oN2Kss1nXhZquiq4OE9mwMa/QyKVFzo3+5IH2Q/OR2SWYn3DyMKBCh4WUztAH/v
-	FSFbzQasffAECwk3Jt7DMniLecuvs3v+x2gADseX/JnpQ+fdxY=
-X-Google-Smtp-Source: AGHT+IEU92SWFcqL2QLe01sPUZQ53vA4dSF+LeC1eGi9vzhaBBHpAD5T0LpNw8VkFQ7aMMrmY4T/VkWVtAdVP7ScVQ0=
-X-Received: by 2002:a05:6512:3984:b0:55f:4e8a:19b9 with SMTP id
- 2adb3069b0e04-56260873705mr1755433e87.25.1757327068230; Mon, 08 Sep 2025
- 03:24:28 -0700 (PDT)
+	s=arc-20240116; t=1757327088; c=relaxed/simple;
+	bh=3c4d46dbwYhFkAIji9CnButKaWApe47Fg8Mn2cBmfHg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UMvkLUy3Eg9sbJLEMp/shZyhOO2ejNs3crBbDNQ1z0mInqbEYhiJMI1a7qG8d3GqnfeqjI27ek/1aNzJJq4FSkHpIbUta9QXxi9Z5M21YblMEdrZGrEHUHGgy0FDcZ6RT/MjKO0coprbir9LKo4TzU2eVxl7drL0VZH4vv3Ovns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LHz1ADtk; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757327087; x=1788863087;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=3c4d46dbwYhFkAIji9CnButKaWApe47Fg8Mn2cBmfHg=;
+  b=LHz1ADtkFSQu+lucmUA3HCQo1eo6Ic71+5h7B4LJwTB2CF8yM/KqL2kB
+   KS70hCtzBb4TFGRqC67flVKbnU9+ewrXkzNW5KhNvK7ArivurHSrQWPZ1
+   B3rpoLASCvC1SMoCjCg9+3lGsH1enCwx1/lkVIS8GySzEYg0+UE7fFRoP
+   QfPdb4vha8r5FlVGE9ZijOUvNII8InTI/k+/1+05Nq/EQVwzkcsEOjiRY
+   lRY9Wp0qHGeimhUXbY4cccuOIY/EZShAtmAlpStN8KaG0qSq3fKS5USQ9
+   yagOmWc1lSb0snymmZgL2gcbfZPRuVmoBvbtw4joiRpQ9far7qfWyTi5x
+   Q==;
+X-CSE-ConnectionGUID: LFYvIZzwRoaJ0WV6dyV7aw==
+X-CSE-MsgGUID: qJ6cFAkTQ/G7bCex7kiDHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="69832941"
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="69832941"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 03:24:46 -0700
+X-CSE-ConnectionGUID: whEKi/v8TFudb7tIU+AjHA==
+X-CSE-MsgGUID: U/YpIi0KRGSt2P0AfeFMvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="172875576"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.11])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 03:24:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 8 Sep 2025 13:24:35 +0300 (EEST)
+To: Manivannan Sadhasivam <mani@kernel.org>
+cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+    David Box <david.e.box@linux.intel.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    Rob Herring <robh@kernel.org>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, 
+    Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, 
+    linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
+    ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
+    Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 2/8] PCI/ASPM: Fix the behavior of pci_enable_link_state*()
+ APIs
+In-Reply-To: <67274gnjp4qy4h3bcawey2edmjiuufdbm262q2qxgcc76dwlic@hdjxqczr54nt>
+Message-ID: <df354ae2-03bd-d17c-4e3a-9e62b248cc2a@linux.intel.com>
+References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com> <20250825-ath-aspm-fix-v2-2-61b2f2db7d89@oss.qualcomm.com> <f644fc83-31cc-1f0e-58cf-7c007e6173e4@linux.intel.com> <67274gnjp4qy4h3bcawey2edmjiuufdbm262q2qxgcc76dwlic@hdjxqczr54nt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090819.107694-1-marco.crivellari@suse.com>
- <CAH5fLgiZnCbNLpuphv4Kgsu48kRkhf6wJiSLrrgsqyEDvU3X3Q@mail.gmail.com>
- <CAAofZF4a6ARXOS0rmK5zY1Kd3xdODqdkj_keZmEYx8Z-JRvhng@mail.gmail.com> <aL1lkN5WcWkwiq3S@google.com>
-In-Reply-To: <aL1lkN5WcWkwiq3S@google.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Mon, 8 Sep 2025 12:24:17 +0200
-X-Gm-Features: Ac12FXwzRONvDWlYnRSSfpeI4s-lFdpCX_TWM6Wio52dNFtybcl11454WB4Q3Oo
-Message-ID: <CAAofZF77saPdGYXt-oYkfV=2pRCRtso5eJuw+FqmS8b8WERgOA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] rust: replace wq users and add WQ_PERCPU to
- alloc_workqueue() users
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-1505528149-1757327075=:938"
 
-On Sun, Sep 7, 2025 at 12:59=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> I mean that instead of:
->
-> +/// Returns the system unbound work queue (`system_dfl_wq`).
->  ///
->  /// Workers are not bound to any specific CPU, not concurrency managed, =
-and all queued work items
->  /// are executed immediately as long as `max_active` limit is not reache=
-d and resources are
->  /// available.
->  pub fn system_unbound() -> &'static Queue {
-> -    // SAFETY: `system_unbound_wq` is a C global, always available.
-> -    unsafe { Queue::from_raw(bindings::system_unbound_wq) }
-> +    // SAFETY: `system_dfl_wq` is a C global, always available.
-> +    unsafe { Queue::from_raw(bindings::system_dfl_wq) }
->  }
->
-> you add a new function:
->
->         pub fn system_dfl() -> &'static Queue {
->             // SAFETY: `system_dfl_wq` is a C global, always available.
->             unsafe { Queue::from_raw(bindings::system_dfl_wq) }
->         }
->
-> and do *not* modify system_unbound().
->
-> Alice
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hello Alice,
+--8323328-1505528149-1757327075=:938
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Ah, perfect. Yes it makes sense this change, you're right.
-I will send the v2 introducing the new functions for both the patches
-in this series.
+On Sat, 6 Sep 2025, Manivannan Sadhasivam wrote:
 
-It would also make sense to also change the above comment, mentioning that
-system_unbound() uses a wq that will be removed in the future, and so
-it is better to
-use system_dfl() instead?
+> On Tue, Aug 26, 2025 at 03:55:42PM GMT, Ilpo J=C3=A4rvinen wrote:
+> > +David
+> >=20
+> > On Mon, 25 Aug 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> >=20
+> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > >=20
+> > > pci_enable_link_state() and pci_enable_link_state_locked() APIs are
+> > > supposed to be symmectric with pci_disable_link_state() and
+> > > pci_disable_link_state_locked() APIs.
+> > >=20
+> > > But unfortunately, they are not symmetric. This behavior was mentione=
+d in
+> > > the kernel-doc of these APIs:
+> > >=20
+> > > " Clear and set the default device link state..."
+> > >=20
+> > > and
+> > >=20
+> > > "Also note that this does not enable states disabled by
+> > > pci_disable_link_state()"
+> > >=20
+> > > These APIs won't enable all the states specified by the 'state' param=
+eter,
+> > > but only enable the ones not previously disabled by the
+> > > pci_disable_link_state*() APIs. But this behavior doesn't align with =
+the
+> > > naming of these APIs, as they give the impression that these APIs wil=
+l
+> > > enable all the specified states.
+> > >=20
+> > > To resolve this ambiguity, allow these APIs to enable the specified s=
+tates,
+> > > regardeless of whether they were previously disabled or not. This is
+> > > accomplished by clearing the previously disabled states from the
+> > > 'link::aspm_disable' parameter in __pci_enable_link_state() helper. A=
+lso,
+> > > reword the kernel-doc to reflect this behavior.
+> > >=20
+> > > The current callers of pci_enable_link_state_locked() APIs (vmd and
+> > > pcie-qcom) did not disable the ASPM states before calling this API. S=
+o it
+> > > is evident that they do not depend on the previous behavior of this A=
+PI and
+> > > intend to enable all the specified states.
+> >=20
+> > While it might be "safe" in the sense that ->aspm_disable is not set by=
+=20
+> > anything, I'm still not sure if overloading this function for two=20
+> > different use cases is a good idea.
+> >=20
+>=20
+> Why? I thought your concern was with the callers of this API. Since that =
+is
+> taken care, do you have any other concerns?
 
-I'm thinking to something like:
+I don't think it really matters anymore as it looks the vmd one is going=20
+to be removed by the David's patch and the qcom one is removed by your patc=
+h
+so no users remain.
 
-+///
-+/// Note: system_unbound_wq will be removed in a future release
-cycle. Use system_dfl_wq instead.
-pub fn system_unbound() -> &'static Queue {
-    // SAFETY: `system_unbound_wq` is a C global, always available.
-    unsafe { Queue::from_raw(bindings::system_unbound_wq) }
-}
-
-+pub fn system_dfl() -> &'static Queue {
-+    // SAFETY: `system_dfl_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_dfl_wq) }
-+}
-
-Sounds good?
-
-Thanks!
+> > I'd like to hear David's opinion on this as he grasps the ->aspm_defaul=
+t=20
+> > vs ->aspm_disable thing much better than I do.
+> >=20
+> > > And the other API, pci_enable_link_state() doesn't have a caller for =
+now,
+> > > but will be used by the 'atheros' WLAN drivers in the subsequent comm=
+its.
+> > >=20
+> > > Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> >=20
+> > This tag sound like I'm endorsing this approach which is not the case. =
+I'd=20
+> > prefer separate functions for each use case, setting aspm_default and=
+=20
+> > another for the enable state.
+> >=20
+>=20
+> Sorry, I misunderstood then. I'll drop this tag.
+>=20
+> - Mani
+>=20
+>=20
 
 --=20
+ i.
 
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-marco.crivellari@suse.com
+--8323328-1505528149-1757327075=:938--
 
