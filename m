@@ -1,172 +1,133 @@
-Return-Path: <linux-kernel+bounces-805285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB139B48670
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:13:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D27B48671
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 734CD7A2D02
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 274B017924C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC1B2E92D2;
-	Mon,  8 Sep 2025 08:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BED12E974A;
+	Mon,  8 Sep 2025 08:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PMZ3gWn5"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i32vRR3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932F229A309
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819542E7186;
+	Mon,  8 Sep 2025 08:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757319222; cv=none; b=LUeL22YibFNLhXbCCncfaXRzq2F3V00XtHOLKrhTfsQheETh9NelkmQwG4FSelTAB27PFRZFi/rtYRvqdXMFCoHGwOdGnOAV0wGqDp6AHYQbVziRbMiKMGGs64CyjE0Fg5kZ1tmRoVuFRGGfG3OzfmMFQE4vXyB/RCtpUNDdULg=
+	t=1757319373; cv=none; b=OiUzh3Zrt1hvFAjV0h4CZy66ovD7nQylucNiLWwddD5B1xU43OM357g/FTJkE0m9pKfac1u9hrwZt6fJH0FHDf+XVJPKPIjYa7VNqQY+DXJtc5BzeviOu2L/OIPAtr8lKCysSxLgT+cGf4dgBumBhfiAbNVivPsme0fFvi5Yg1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757319222; c=relaxed/simple;
-	bh=xNCph5gCMPZUC6IM3MiLEhO6Tc/nSgFQKzDXZDROOng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fey+DzXVlFfTPT1e7XCUC/Q0kF71qoQd3fvI+2fUSQSJx3MmVOy6zw6/0VkA8l6Uk1Wn2F4mguZlHVoMT6jKHguachWEhSx0g2mejrTwRujtYc+sUBYnzWYPIOohjyoDv7cwmAnXzRKLkX8Y+feWEAFtNCOzsoYtjyUIyUxX620=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PMZ3gWn5; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757319218;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w104asye4dQPBM14xEIAY+w47JIy6lcQtIGWUqDYksg=;
-	b=PMZ3gWn5RLox4cEF7MNlYLQlI+O8S+N7tB5ZArAXTLyA9mD6jXXEnLu72tLpOyswDB+6CK
-	w7WV09Rk7nLSg+AbYPq9jAVYIMUz40W1PoqbwmR6SV/FU06dVoEHcXh+jObj0oDylC4Zra
-	P0Wssmz6tZvL/bgGwXQUpugaIqAIC2Q=
-Date: Mon, 8 Sep 2025 16:13:22 +0800
+	s=arc-20240116; t=1757319373; c=relaxed/simple;
+	bh=DLZHF/rUNU9ns+9DDMmo9PmSHU3/mYamUscTiLTEGLQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cHc+Pp4VwK768TE4LtMcZq6+4Pp74b3CBhm9K3ElEKkd4KzLrZ10SxS2W2BtNGYHZv8iuaP0re3zjw+MN2nj5y/ij0FITE6MCbQVXmsNwXIDngYHZAWkPbdYqpWdZ0UfhJWiQsm3Bu0KgVi1DmmyKSNw0f/NVxqDEuXKiYYELmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i32vRR3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032B8C4CEF5;
+	Mon,  8 Sep 2025 08:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757319373;
+	bh=DLZHF/rUNU9ns+9DDMmo9PmSHU3/mYamUscTiLTEGLQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i32vRR3ABJq188+BNWhx97TYzeALeiwRSr6DLIZvIPSi/ATlECtYWCMhYeRpQ4XGD
+	 AukMSYoeu6qw/uMsoxdQGC8ceHp8RpkV7oQKKZ79Y3z1IcM06H5+D+OebHibC8w08n
+	 oBqj469Wwkjje1jHnqzTozQJXF9OGGg+BJWFt91LzjN9vAHaDgaTuEMsEtF1bBZw9r
+	 n03ij3PuGY6HyEYabUE2bZVDu3MD7USL5Wk3VbTUmUZQl3UN/t2Hv8XF6mcALO/4ZJ
+	 YMtaTjrUxiHrxcQWNBVC7spalkcY5dQlMokq1XUhFwOVTVe6lmNe9swL6w/p9IJoQg
+	 H36f0YLgApwIw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uvX2o-00000004E7Q-2Uk6;
+	Mon, 08 Sep 2025 08:16:10 +0000
+Date: Mon, 08 Sep 2025 09:16:10 +0100
+Message-ID: <86v7ltcqb9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: 	jintack@cs.columbia.edu,
+	christoffer.dall@arm.com,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: vgic: fix incorrect spinlock API usage
+In-Reply-To: <20250907201421.3612784-1-alok.a.tiwari@oracle.com>
+References: <20250907201421.3612784-1-alok.a.tiwari@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split
- shrinker
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- usamaarif642@gmail.com, ziy@nvidia.com, akpm@linux-foundation.org
-References: <20250908040713.42960-1-lance.yang@linux.dev>
- <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: alok.a.tiwari@oracle.com, jintack@cs.columbia.edu, christoffer.dall@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+[removing @arm.com addresses that haven't been in use for a very long
+time]
 
+On Sun, 07 Sep 2025 21:14:13 +0100,
+Alok Tiwari <alok.a.tiwari@oracle.com> wrote:
+> 
+> The function vgic_flush_lr_state() was calling _raw_spin_unlock()
 
-On 2025/9/8 15:38, David Hildenbrand wrote:
-> On 08.09.25 06:07, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
-> 
-> Subject should likely be more specific:
-> 
-> mm: skip mlocked THPs that are underused early in deferred_split_scan()
+s/was/is/
 
-Right, that's a much better and more precise subject. Thanks!
-
-> 
->>
->> When a new THP is faulted in or collapsed, it is unconditionally added to
->> the deferred split queue. If this THP is subsequently mlocked, it remains
->> on the queue but is removed from the LRU and marked unevictable.
->>
->> During memory reclaim, deferred_split_scan() will still pick up this 
->> large
->> folio. Because it's not partially mapped, it will proceed to call
->> thp_underused() and then attempt to split_folio() to free all zero-filled
->> subpages.
->>
->> This is a pointless waste of CPU cycles. The folio is mlocked and
->> unevictable, so any attempt to reclaim memory from it via splitting is
->> doomed to fail.
-> 
-> I think the whole description is a bit misleading: we're not reclaiming
-> memory from fully-mapped THPs even when they are underused, because it
-> could violate mlock() semantics where we don't want a page fault+memory 
-> allocation on next access.
-> 
-> So something like the following might be clearer.
-> 
-> "When we stumble over a fully-mapped THP in the deferred shrinker, it 
-> does not make sense trying to detect whether it is underused, because 
-> try_to_map_unused_to_zeropage(), called while splitting the folio, will 
-> not actually replace any zero-ed pages by the shared zeropage.
-> 
-> Splitting the folio in that case does not make any sense, so let's not 
-> even scan if the folio is underused.
-> "
-
-Nice, that makes it much clearer. My understanding was indeed imprecise.
-
-> 
-> 
-> 
-> If I run my reproducer from [1] and mlock() the pages just after 
-> allocating them, then I essentially get
-> 
-> AnonHugePages:   1048576 kB
-> 
-> converted to
-> 
-> Anonymous:       1048580 kB
-> 
-> Which makes sense (no memory optimized out) as discussed above.
-
-Yes, my reproducer also shows exactly that. It's clear a lot of work is
-done but no memory is actually optimized out ;)
-
-> 
-> 
-> [1] https://lkml.kernel.org/r/20250905141137.3529867-1-david@redhat.com
-> 
->>
->> So, let's add an early folio_test_mlocked() check to skip this case.
->>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/huge_memory.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 77f0c3417973..d2e84015d6b4 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -4183,6 +4183,9 @@ static unsigned long deferred_split_scan(struct 
->> shrinker *shrink,
->>           bool underused = false;
->>           if (!folio_test_partially_mapped(folio)) {
->> +            /* An mlocked folio is not a candidate for the shrinker. */
-> 
-> /*
->   * See try_to_map_unused_to_zeropage(): we cannot optimize zero-filled
->   * pages after splitting an mlocked folio.
->   */
-
-Got it. I'll update the changelog and this comment as suggested.
-
-> 
->> +            if (folio_test_mlocked(folio))
->> +                goto next;
->>               underused = thp_underused(folio);
->>               if (!underused)
->>                   goto next;
-> 
+> instead of the proper raw_spin_unlock().
 >
+> _raw_spin_unlock() is an internal low-level API and should not
+> be used directly; using raw_spin_unlock() ensures proper locking
+> semantics in the vgic code.
+> 
+> This change replaces low-level API usage with the general kernel
+> spinlock API, avoiding misuse of internal functions and aligning
+> with kernel locking conventions.
 
-Cheers,
-Lance
+This paragraph doesn't add much, please drop it.
+
+> 
+> Fixes: 8fa3adb8c6be ("KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock")
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+>  arch/arm64/kvm/vgic/vgic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+> index f5148b38120a..c74d6120a12c 100644
+> --- a/arch/arm64/kvm/vgic/vgic.c
+> +++ b/arch/arm64/kvm/vgic/vgic.c
+> @@ -818,7 +818,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+>  		 * the AP list has been sorted already.
+>  		 */
+>  		if (multi_sgi && irq->priority > prio) {
+> -			_raw_spin_unlock(&irq->irq_lock);
+> +			raw_spin_unlock(&irq->irq_lock);
+>  			break;
+>  		}
+>  
+
+With the above fixed:
+
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
