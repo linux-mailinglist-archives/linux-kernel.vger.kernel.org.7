@@ -1,91 +1,210 @@
-Return-Path: <linux-kernel+bounces-806718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84AA8B49AEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:20:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0B9B49AF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4E01B22B2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017A94E10C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5622DAFC1;
-	Mon,  8 Sep 2025 20:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE11E2DD5EF;
+	Mon,  8 Sep 2025 20:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTXHqS7h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g2t1wIju"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEE62D9ECD;
-	Mon,  8 Sep 2025 20:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694302DCF63
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362759; cv=none; b=QVqDITd+JdtcFsAn2BqDf1qZYn+K2HKwYGQ+Tdd8DxrQmvfQDkvGzhbWaQjZBtom+qoMtCS1sb1oyzW92qidL5JJVCesJwAbUPhdD5b3TYdgq0LFkTTtfXjbjrwnjq7idRGTEZfE9asraTo7/5vEHk9u0Iy2ZKM+1v86oDSW0Jg=
+	t=1757362779; cv=none; b=uD5VMzNHorwK9Pv2nEOVDM+3Y2Vv9FznHdTDEWRiGKeLS2UUfJg5ZdabbPD+/ar3kt2yP5UevAaB068wfNCdXm6dQIito26pdySyBgam8tzlj8XXjqyH/XYIh9bK6nvtZ3IwbVdj27A40uUIueey1Xkg+SCRxIm8LA5YHQalZf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362759; c=relaxed/simple;
-	bh=bmj7baRZNqvumNY5NHpR2oWGL0EJxE8zmdop29BhMQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JU24loyHGqu2aOoOpMH97P9iVdi9skxtAomJ1lb5FRG/5NgAeA4OJeUD3tsreC4ouSII2b2Z/ymo0Wg4gBKuofhE5TOmRq+EUxoRi9YuZuwsHc3GcW8mRjr9rN2A8vkCDzmOX1LfxFNtK/plJrpeHoRXjIGP6pw7o1P9erQq2QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTXHqS7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897E3C4CEF1;
-	Mon,  8 Sep 2025 20:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757362759;
-	bh=bmj7baRZNqvumNY5NHpR2oWGL0EJxE8zmdop29BhMQQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DTXHqS7h+yz+vFVX545ZtDbe4ETk0KETGFu3KDxUMr/ylXeFqu54hmZCNuiVzX8Hc
-	 Xewcg9CZc2iHreLP8EpD+KZVL8m/UzzYywZDISFiSpfdcrtgCCVY3BA3jUWZpK7ZFu
-	 1YDPlG+afsx73hM0Mp+FoYOFw1qvw/BWHFxwjF+Brk6JLEkJ8n2K4qJKyWjcneUYlk
-	 75tv4J0ILR6GI25uvK3Vu/kC35y1Ne0lR8NpduPGAXFEnq1qi48QP8O4oV013OrnXb
-	 4FIszjqRdSbXY7N3bnV65Eb+/jBTptn1+zvKIYlXfVHwom2mcq8lFkuj3Kxu7pKnoz
-	 HwbWze95MSo0w==
-Date: Mon, 8 Sep 2025 13:19:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Carolina Jubran <cjubran@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Gal Pressman
- <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu
- <cratiu@nvidia.com>, Nimrod Oren <noren@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: drv-net: Relax total BW check in
- devlink_rate_tc_bw.py
-Message-ID: <20250908131917.10785ce0@kernel.org>
-In-Reply-To: <0cd98e25-b387-452b-b1a6-414ab20a4cf3@nvidia.com>
-References: <20250831080641.1828455-1-cjubran@nvidia.com>
-	<20250831080641.1828455-4-cjubran@nvidia.com>
-	<20250902162101.5c78cc88@kernel.org>
-	<20250905153243.6c03e257@kernel.org>
-	<0cd98e25-b387-452b-b1a6-414ab20a4cf3@nvidia.com>
+	s=arc-20240116; t=1757362779; c=relaxed/simple;
+	bh=sunc1sBZHjtxiFsevsskggwKFDeZ5rB1V5mXDaDKnN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rf2dhlAOY5D6viA9o89/MoTe5KgBrTQGURikCi0ZzFhP1f0gRyFDypdg9pE/H8dNWh3Oehl1LzZ0Gz3JP1UH1YdjCUAkYhDjaZfT3L+RLpBnPLlNFfP+xDcMlVr/rpvbggintotDQ5zpvYi/ERLhyGDpZHbu8umTmXIsfhAY+fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g2t1wIju; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588KJQSI128506;
+	Mon, 8 Sep 2025 15:19:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757362766;
+	bh=VY5vW/TBFhiKiObWKD3QATMgCx/mPhcn8MxelvsDWwI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=g2t1wIjuysolhs1oTACUr4ABdO8JNL4Ls3LkXTVH6pAQfFJd8GouZrCDpJZfdTNKh
+	 ZiBhoo9b0aUXHR5JN2S48VpEkQLcwKCUqRChzz9hiK+DKCLaBFhdXoSHEG4B6un+i+
+	 HdcsVjuRjVmDUZNRNs+njbtaVtctvpGj0sLSURu0=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588KJQqO4016603
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 15:19:26 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 15:19:26 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 15:19:26 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588KJQlq1163717;
+	Mon, 8 Sep 2025 15:19:26 -0500
+Message-ID: <48ad21a2-6562-4568-aace-68d163116ddd@ti.com>
+Date: Mon, 8 Sep 2025 15:19:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pmdomain: ti_sci: Handle wakeup constraint if device has
+ pinctrl wakeup state
+To: Dhruva Gole <d-gole@ti.com>
+CC: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
+        <ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <vishalm@ti.com>,
+        <sebin.francis@ti.com>, <msp@baylibre.com>, <khilman@baylibre.com>,
+        <a-kaur@ti.com>
+References: <20250904211607.3725897-1-k-willis@ti.com>
+ <20250905183931.qfqnnvmwqqvo3emy@lcpd911>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250905183931.qfqnnvmwqqvo3emy@lcpd911>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 8 Sep 2025 22:16:29 +0300 Carolina Jubran wrote:
-> However, I=E2=80=99ll also need to extend load.py:
->=20
-> 1. Binding support to ensure traffic flows through the specific VLAN
->  =C2=A0 =C2=A0 interface.
-> 2. Interval-based measurement for iperf3 --json to analyze only the
->  =C2=A0 =C2=A0 stable period.
->=20
-> So my plan is:
->=20
-> 1. Send v2 for net to fix the current test with interval-based
->  =C2=A0 =C2=A0 measurement.
-> 2. Follow up with a patch to extend load.py with reverse/binding/interval
->  =C2=A0 =C2=A0 support and then migrate the test to use it.
->=20
-> Does that sound good to you?
+Hi Dhruva,
 
-Sounds too complicated, this is just a stability improvement for a test
-which works on single device, and is not exercised / reported upstream.
-Let's jump straight to step 2.
+On 9/5/25 13:39, Dhruva Gole wrote:
+> On Sep 04, 2025 at 16:16:07 -0500, Kendall Willis wrote:
+>> In TI K3 SoCs the PM co-processor (device manager or DM) will decide
+>> which low power state to suspend into based off of constraints given by
+>> Linux. If a device is marked as a wakeup source in Linux, Linux will add
+>> a constraint that the wakeup source has to be on. The DM will enter the
+>> deepest low power state based off of the constraint.
+>>
+>> In cases like UARTs, IO daisy-chaining can be used to wakeup the system,
+>> however if the UART is marked as a wakeup source, the system is not able
+>> to enter any low power mode.
+>>
+>> IO daisy-chain wakeup can use the pinctrl wakeup state instead of using
+>> wake IRQs. For example, the serial driver on K3 platforms uses a wakeup
+> 
+> I think this statement will only make sense to someone who's worked on
+> io daisychain and wake IRQs on our SoCs.
+> I don't think it's coming out very clearly why wake IRQs are needed for
+> IO Daisychain in the first place.
+> 
+> You could probably just reference commit b06bc47279919 ("pmdomain:
+> ti_sci: handle wake IRQs for IO daisy chain wakeups") from Kevin where
+> we explain whats io daisychain and need for wake IRQ. Talk in this patch
+> with relation to that patch - what you're doing that the other one
+> missed.
+> 
+>> pinctrl state to be able to resume from suspend.
+> 
+> Perhaps I am missing the order in which the patches are being applied.
+> But if it's like the 1 -> 2 -> 3 order you mentioned below then this
+> reference to serial drv won't really make sense right?
+> 
+> If we're going in the order of applying the series that you
+> specified, there's no guarantee that the UART patch makes it in
+> along with this patch, so I'd say let's skip mentioning the serial
+> driver to avoid sending people in search for how the serial driver is
+> doing this atall.
+> 
+> In Kevin's earlier commit it made sense, because he was talking about
+> daisychaining, here we're not. So the 8250 driver doesn't actually have
+> the changes we're talking about in this patch.
+
+In v2, I will add references to commit b06bc47279919 ("pmdomain: ti_sci: 
+handle wake IRQs for IO daisy chain wakeups") and I will remove the 
+reference to the UART driver.
+
+Thanks,
+Kendall
+
+> 
+>>
+>> Devices that are marked as a wakeup source and use pinctrl wakeup state
+>> should not set wakeup constraints since these can happen even from deepest
+>> low power state, so the DM should not be prevented from picking deep power
+>> states.
+>>
+>> Detect the pinctrl wakeup state in the suspend path, and if it exists,
+>> skip sending the constraint.
+>>
+>> Signed-off-by: Kendall Willis <k-willis@ti.com>
+>> ---
+>> This series is intended to be implemented along with the following
+>> series:
+>>
+>> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
+>>     wakeup state": (this patch) skips setting constraints for wakeup
+>>     sources that use pinctrl state 'wakeup'.
+>>
+>> 2. "serial: 8250: omap: Add wakeup support": Implements wakeup from
+>>     the UARTs for TI K3 SoCs
+>>
+>> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": Implements the
+>>     functionality to wakeup the system from the Main UART
+>>
+>> Testing
+>> -------
+>> Tested on a SK-AM62B-P1 board with all series and dependencies
+>> implemented. Suspend/resume verified with the Main UART wakeup source
+>> by entering a keypress on the console.
+>>
+>> ---
+>>   drivers/pmdomain/ti/ti_sci_pm_domains.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> index 82df7e44250bb..884905fd0686c 100644
+>> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> @@ -10,6 +10,7 @@
+>>   #include <linux/err.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>> +#include <linux/pinctrl/consumer.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_domain.h>
+>>   #include <linux/pm_qos.h>
+>> @@ -84,9 +85,24 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
+>>   	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+>>   	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+>>   	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+>> +	struct pinctrl *pinctrl = devm_pinctrl_get(dev);
+>> +	struct pinctrl_state *pinctrl_state_wakeup;
+>>   	int ret;
+>>   
+>>   	if (device_may_wakeup(dev)) {
+>> +		/*
+>> +		 * If device can wakeup using pinctrl wakeup state,
+>> +		 * we do not want to set a constraint
+>> +		 */
+>> +		if (!IS_ERR_OR_NULL(pinctrl)) {
+>> +			pinctrl_state_wakeup = pinctrl_lookup_state(pinctrl, "wakeup");
+>> +			if (!IS_ERR_OR_NULL(pinctrl_state_wakeup)) {
+>> +				dev_dbg(dev, "%s: has wake pinctrl wakeup state, not setting " \
+>> +						"constraints\n", __func__);
+>> +				return;
+>> +			}
+>> +		}
+>> +
+> 
+> Not much objections to the code itself, as it makes sense that we want
+> to ignore the constraint for wakeup pinctrl similar to how we did for the
+> wake IRQ one.
+> 
+
 
