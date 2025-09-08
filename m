@@ -1,159 +1,126 @@
-Return-Path: <linux-kernel+bounces-806151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDD1B49281
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:07:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA574B4927C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B419446772
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:06:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769907A4BBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317830CD88;
-	Mon,  8 Sep 2025 15:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4253730DEB7;
+	Mon,  8 Sep 2025 15:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KJMZiDJg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eAsFCECm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F901F0E2E;
-	Mon,  8 Sep 2025 15:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946841F0E2E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343990; cv=none; b=YGMvQA7QABtt+SN5kyHB/kCvwarOMNH+CcdZZPDqKUfjPhk79Ad3KrywkEchltl2qUqCmViRXa8DayVa+KrFem7kcM8+WuvBYgqPpf/dn30i8r/Nq+OASVkoNHHKZtcQROjlzirEdwEMEZ2/7oUPz+5SbHKZENYGkQe43Tq+3G8=
+	t=1757343996; cv=none; b=Sbhg+NHiuzuwP7jOv0vp4cYxplbghKbmFNDoskS03HbcDs/DwIZTLa0xTvuXH4OUYiU1AVLLeN9V9v+WvnrSrw76w7Kin5VboVgZb7JfUEm06ntoPp/G5iv1yUv71uYKP/RjtErB612M23YSxZ7rFQbsIdOYtXKPkYLlrUQVb+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343990; c=relaxed/simple;
-	bh=lt+DeUdtdNPuhYg1kY8OE6fJy91fRM6JkDhgek3BnXg=;
+	s=arc-20240116; t=1757343996; c=relaxed/simple;
+	bh=Cygn0MzfQ4/mz/3chKiGWsztlEEYq4yMNLW6hLBekQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTZBVd9o2YI63zs+5cYJ0iM45lGjHUvDEIeC5LXS9BGcQCtOop+qUyr5o1Nk2Bo4F4Ot2FxPKOtYAkVG0fixOPJSrVWFsBzYH0fjCxkC6WVxsZYxy7Z6YNYkFJK0UscIEk0Xx+Z7nRP6Jm+0FHtHDJvp/6jvJitYBAEIrVXVNnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KJMZiDJg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XRKdWPBqgxOOD4haFDefsclhOM8qE/foLVBPNAM3ND4=; b=KJMZiDJgZSjSvrkiLoBzlDQ3fY
-	oaIifBFepzZkP/eDQFau5WyJdZTeWYTG+aCWbu3GSzU59ERFD24hJKAuZqGFcBPX7LtKSP/WNqCYn
-	wNnWkMojKtUKCns7ttt6tjKGhNUSTH5i74HLkMha4GJVppiDNTcq2XsrkzjHet4Lj7I6oi0nrdRYK
-	BBflvfGs3g+E6KUN8RIjnM8+jNk5o7WOFNLOQbgLVSBHrmz0ccf09+/U1Qwv9CyOtkijC3iZbqS30
-	rDfTvSk//9KB6TGNt42V6Cjzx91BA91DRJCf0QdCJh9gnwDeb2GxG2ECWM4n2bSSRzxg0NmBIKZVn
-	WIvZFaSQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvdRb-00000008eVw-15VO;
-	Mon, 08 Sep 2025 15:06:11 +0000
-Date: Mon, 8 Sep 2025 16:06:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Will Deacon <will@kernel.org>, Shivank Garg <shivankg@amd.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=utRnZ9EDGdM5KPK1CPcTyPPyCHU9zZuh/Qq+2jZMeNn0RzNpMFDSA0+XOTEjmaRFUJDyYUW1WX+jZR+vaEGnMUJ1ZLQ1OBqXq+4zClnNrbMsFB79dfK4uK38gIWZLzZbWBWg9Be7mNVeDROj5Jj1sNycwlvMTCSRoGiLZHxC8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eAsFCECm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757343993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=45n0EoG+NugLPzExOpw0q6NkAjxX0oJ2+U+kNdZODK8=;
+	b=eAsFCECmdI5Kwk4sQCD+HS84wxC73tQnUt71al/3ufDUqWFRU8LKPPpK0oU9cTeNJGzcdt
+	FRfY+nBrRYQD3qsjw2XRp53HJN4aU6hIt6b1VxItwoIiLmhCy7S12shflWiWbefXckVg7l
+	qeGr8p7nhM8E4DhXzahRs7DMW4qssHE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-331-Xf-DtVLQPnimMlKeA0rGIw-1; Mon,
+ 08 Sep 2025 11:06:31 -0400
+X-MC-Unique: Xf-DtVLQPnimMlKeA0rGIw-1
+X-Mimecast-MFC-AGG-ID: Xf-DtVLQPnimMlKeA0rGIw_1757343982
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1E37195608B;
+	Mon,  8 Sep 2025 15:06:21 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.11])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 046491800446;
+	Mon,  8 Sep 2025 15:06:19 +0000 (UTC)
+Date: Mon, 8 Sep 2025 23:06:15 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
+	Barry Song <baohua@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Alexander Krabler <Alexander.Krabler@kuka.com>,
-	Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>,
-	Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Konstantin Khlebnikov <koct9i@gmail.com>,
-	David Howells <dhowells@redhat.com>, ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/7] mm: fix folio_expected_ref_count() when PG_private_2
-Message-ID: <aL7w4qrJtvKE1cu5@casper.infradead.org>
-References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
- <f91ee36e-a8cb-e3a4-c23b-524ff3848da7@google.com>
- <aLTcsPd4SUAAy5Xb@casper.infradead.org>
- <52da6c6a-e568-38bd-775b-eff74f87215b@google.com>
- <92def216-ca9c-402d-8643-226592ca1a85@redhat.com>
- <2e069441-0bc6-4799-9176-c7a76c51158f@redhat.com>
- <3973ecd7-d99c-6d38-7b53-2f3fca57b48d@google.com>
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] docs/mm: add document for swap table
+Message-ID: <aL7w57kF3CCDGd9e@MiWiFi-R3L-srv>
+References: <20250905191357.78298-1-ryncsn@gmail.com>
+ <20250905191357.78298-2-ryncsn@gmail.com>
+ <aL7NrhGw5ftOXUZs@MiWiFi-R3L-srv>
+ <CAMgjq7Bp-buJfH8TPCxBiV80rn=zrvucwHgSCMFuS2BkUWkrJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3973ecd7-d99c-6d38-7b53-2f3fca57b48d@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7Bp-buJfH8TPCxBiV80rn=zrvucwHgSCMFuS2BkUWkrJA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Sep 08, 2025 at 03:27:47AM -0700, Hugh Dickins wrote:
-> On Mon, 1 Sep 2025, David Hildenbrand wrote:
-> > On 01.09.25 09:52, David Hildenbrand wrote:
-> > > On 01.09.25 03:17, Hugh Dickins wrote:
-> > >> On Mon, 1 Sep 2025, Matthew Wilcox wrote:
-> > >>> On Sun, Aug 31, 2025 at 02:01:16AM -0700, Hugh Dickins wrote:
-> > >>>> 6.16's folio_expected_ref_count() is forgetting the PG_private_2 flag,
-> > >>>> which (like PG_private, but not in addition to PG_private) counts for
-> > >>>> 1 more reference: it needs to be using folio_has_private() in place of
-> > >>>> folio_test_private().
-> > >>>
-> > >>> No, it doesn't.  I know it used to, but no filesystem was actually doing
-> > >>> that.  So I changed mm to match how filesystems actually worked.
+On 09/08/25 at 10:27pm, Kairui Song wrote:
+> On Mon, Sep 8, 2025 at 8:54 PM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 09/06/25 at 03:13am, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > From: Chris Li <chrisl@kernel.org>
+> >
+> > 'From author <authorkernel.org>' can only be one person, and the co-author
+> > should be specified by "Co-developed-by:" and "Signed-off-by:"?
+> >
 > 
-> I think Matthew may be remembering how he wanted it to behave (? but he
-> wanted it to go away completely) rather than how it ended up behaving:
-> we've both found that PG_private_2 always goes with refcount increment.
-
-Let me explain that better.  No filesystem followed the documented rule
-that the refcount must be incremented by one if either PG_private or
-PG_private_2 was set.  And no surprise; that's a very complicated rule
-for filesystems to follow.  Many of them weren't even following the rule
-to increment the refcount by one when PG_private was set.
-
-So some were incrementing the refcount by one if PG_private were set, but
-not bumping the refcount by one if PG_private_2 were set (I think this is
-how btrfs worked, and you seem to believe the same thing).  Others were
-bumping the refcount by two if both PG_private and PG_private_2 were set
-(I think this is how netfs works today).
-
-> > > Now, one problem would be if migration / splitting / ... code where we
-> > > use folio_expected_ref_count() cannot deal with that additional
-> > > reference properly, in which case this patch would indeed cause harm.
+> Hmm, that's interesting, I'm using git send mail with below setup:
 > 
-> Yes, that appears to be why Matthew said NAK and "dangerously wrong".
+> [sendemail]
+> from = Kairui Song <ryncsn@gmail.com>
+> confirm = auto
+> smtpServer = smtp.gmail.com
+> smtpServerPort = 587
+> smtpEncryption = tls
+> smtpUser = ryncsn@gmail.com
 > 
-> So far as I could tell, there is no problem with nfs, it has, and has
-> all along had, the appropriate release_folio and migrate_folio methods.
+> So it will add a "From:" automatically when I'm using gmail's SMTP but
+> the patch author doesn't match the sender. It seems git somehow got
+> confused by this commit, maybe I used some sending parameters wrongly.
+
+Then you may need to remove the 'from' field of your git [sendemail]
+section. If I git am your patch, then the your first 'from' will be the
+patch author.
+
 > 
-> ceph used to have what's needed, but 6.0's changes from page_has_private()
-> to folio_test_private() (the change from "has" either bit to "test" just
-> the one bit really should have been highlighted) broke the migration of
-> ceph's PG_private_2 folios.
+> The author of the doc really should be Chris.
 > 
-> (I think it may have got re-enabled in intervening releases: David
-> Howells reinstated folio_has_private() inside fallback_migrate_folio()'s
-> filemap_release_folio(), which may have been enough to get ceph's
-> PG_private_2s migratable again; but then 6.15's ceph .migrate_folio =
-> filemap_migrate_folio will have broken it again.)
-> 
-> Folio migration does not and never has copied over PG_private_2 from
-> src to dst; so my 1/7 patch would have permitted migration of a ceph
-> PG_private_2 src folio to a dst folio left with refcount 1 more than
-> it should be (plus whatever the consequences of migrating such a
-> folio which should have waited for the flag to be cleared first).
 
-But that's another problem.  The current meaning of PG_fscache (and also
-that has changed over the years!) is that the data in the folio is being
-written to the fscache.  So we _shouldn't_ migrate the folio as some
-piece of storage hardware is busy reading from the old folio.  And if
-somebody else starts writing to the old folio, we'll have a corrupted
-fscache.
-
-So the current behaviour where we set private_2 and bump the refcount,
-but don't take the private_2 status into account is the safe one,
-because the elevated refcount means we'll skip the PG_fscache folio.
-Maybe it'd be better to wait for it to clear.  But since Dave Howells
-is busy killing it off, I'm just inclined to wait for that to happen.
-
-> I'm just going to drop this 1/7, and add a (briefer than this!)
-> paragraph to 2/7 == 1/6's commit message in v2 later today.
-
-Thank you!
 
