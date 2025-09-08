@@ -1,276 +1,175 @@
-Return-Path: <linux-kernel+bounces-805684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0BDB48C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72CEB48C4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADD711890352
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D2BC17658B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3702F0C44;
-	Mon,  8 Sep 2025 11:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57863299920;
+	Mon,  8 Sep 2025 11:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sq3mAC2B"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1ZZpm+j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE862264B6;
-	Mon,  8 Sep 2025 11:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC37D1E1E19;
+	Mon,  8 Sep 2025 11:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757331283; cv=none; b=oSfHW+iwDe3iQ55QDW1NMYcv86Te4bJLWJeDcjpayjWMfz5UvqxPZtX0cbMrNXmPjYJdCcN5o6fBDPmwsLoxXB1Po0SDlIWvtZDuGbzCdIFspBCw4wEmDRVhRGfXHPZWAPOVQYjBNuLeSe5Xx/3WVvwJQuID0b6D84kRJgHXx8s=
+	t=1757331336; cv=none; b=Umly6ELCVi4eDlj0pgg95oOz4iteY8Ol5+qPAarBinvQzZICNnjhOALG6nqvB9fkdfGHL7PEQw1/WtWWkhxmJ59jRl0Dvxd0uZzTCIDjFa/w2yN2MPspIHgmflAD8tzl96uGDDUAy/64MuLshAG+4IxTOtQho/780vbzPjXwez4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757331283; c=relaxed/simple;
-	bh=bae2yJAoJUZwsQhZu3ctgAz3xSbW3IZQfKgVOG3WOlw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o1cbgnW9CaiQ27ZwaDC/YNFLnSQBQZuIePtmoAYdjV2Exve0XM11IwI28+c/nOarGiBnBubIRPwWKTgYzBzqx8UapmysmfOumHHutwFqmo40cFidTJGYOTVYKEWfy25QG2YV781uUAJguG5Zxv3cjypryF30IapfmU6icIOkqE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sq3mAC2B; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32b02d88d80so3760652a91.0;
-        Mon, 08 Sep 2025 04:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757331281; x=1757936081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3O7b+Ie3WcS7enJKSh15gQjXu22HlM6cl/P5ojxOGO0=;
-        b=Sq3mAC2Bplt0amBBcCqHQHU+QwrBNa/H8PlW+ITfFJXx2XD4CKC7e+97HmHhLVyfnW
-         xHLSDLTo7YkC8H7df0CBz552T2z7UlsYoxP+fDc1wJYjU2ImSOzE7om1OFq4r0Hkvn4h
-         EP/lvn8lR2TjQvaesmtGbd33xyEFwxxktsMgrSYVUX6tOJr8hq2xeaZO0kaf79x6G67Z
-         tTtdINm5xd98/cFb5IJslFsZithJNv5ATAlMcg/tMGT74VLaXYA5Z/3yJ/HNVmjJ/GOm
-         PkMT0D5YEZjPfiQrZaDFvKT2Y0wAsXxkpwZdVB/6vsvIe4AUy3c4tV0+e6zJEc7P5ATb
-         00Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757331281; x=1757936081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3O7b+Ie3WcS7enJKSh15gQjXu22HlM6cl/P5ojxOGO0=;
-        b=SbuMgXmO1/WigpiF68c3zdCxCkuBFaLg40wH3DMoS8NOo/AGYeelK7iR4TaXbRVRZI
-         l8B5fsqlWCg8ptDlzLk+0CDh9o6GM5Y30FlieiFRX2KYNQjGxlqb8xLEoWRWEDaa4lVp
-         bZmZhjUniY4AQA0I7+9rpp/zrWSlBqB159jjOC45SA6P8kvkFUOKoLdqVEX9Sh21ObjF
-         cUTOcfetT7Q2CHZV8jj/NYFMwUxLz9nHQJaCtUrhvIFgqutU4D96K/dY9pFwUIFyBm2s
-         GvTAZbIJ9xtMfDkMbBE+/v0AnvCL15EfGlN1K/t62W0EmD58LKZ4YrTX/InXSCcIxkKu
-         uLZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiM30jMKH+S5OYwMmyeGfethrmB/GH/ITnxmApqOI04NAAJ/uG6hzFX4Dplpx3D9lYg2A1hCs+umYEK8pw@vger.kernel.org, AJvYcCX8eJj2rvuMA/sYTGidD1DX7Y/BcCitU0yhdjmujAdvIse/AUBZSlMm04cjY15v2jCDbHIj1bY9pMub@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbDi/NFcpqt8DIpzMHjtokGNjv8xUl3IcAM3UWUkaoVW/tYwPq
-	AI9rhA68M5hrxwsqtFy8F0+kpcBVnCfPK9sXTBJ4TFpi3w7HMbZLYBNIPJ7yKJ/Jf456x902z2q
-	GnP8JLhq9dEK4Yjd1wUmnZjCKLdEOt3o=
-X-Gm-Gg: ASbGncu+lnG2ammAq3vPHf+wYG3n/ZaBGkgl+JYWtAcBpD/jz6xlSF9tCS8YkYNgyF/
-	eBXgwwUmnHyYpxIslaSp0xtopaAfiZI6IJEpcsZqcsWGcIODhRYS/DBvG+fJEbmkR9OgFjxJpKf
-	nm3lX5gsIkur/zz1IsRxqTK7rG6Ps6nhA37Mf6ap0gH2U0iIbfrgNEVaisUsz966lStqPriyXmL
-	gjqhJ8=
-X-Google-Smtp-Source: AGHT+IHuqROHuHzkq/zNKzDa1o0e+HI0tH5uNT+rQa4dNc/8Oxkhd9CjR59CyUgdjkWyuywaadjRVuYgIO45+plmQDI=
-X-Received: by 2002:a17:90b:5284:b0:329:cb75:feec with SMTP id
- 98e67ed59e1d1-32d43ef579fmr11654345a91.7.1757331281046; Mon, 08 Sep 2025
- 04:34:41 -0700 (PDT)
+	s=arc-20240116; t=1757331336; c=relaxed/simple;
+	bh=FqvTpKoAL4sbdB9E3kCKVZwWGdTsIkbto1wVMKUNI30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EV+ixeiZflQ0B1j1rbN8bL/xsnuz3MgBYeqQZs603WetSg949mz1m90U4CStfDQspnc1aiiOyG0E7i8vUfztLJZ0XCB4t47dnFgYyygLufs02fKgd8bdvhxo3leP8ZHpZWvI/sIR6n6zzCFXBWMrgXHZQ3MLYtaeZRCq/OaxTYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1ZZpm+j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1002C4CEF1;
+	Mon,  8 Sep 2025 11:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757331336;
+	bh=FqvTpKoAL4sbdB9E3kCKVZwWGdTsIkbto1wVMKUNI30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H1ZZpm+jY44sJchL9i8k82WM+dUfGroOmG68PnFpdeKf9Zzsz4+yPlv4EHp2idD9o
+	 l5mFE87BTM3P4VNmJJsZit2hlzEdmLLz20esv9AhZdUk0KsfLvnl7vnWkOnQkMEbmN
+	 VfQGa2j46E3KzKrEleaDEJm6nQ44GPnM8OtwYoJdl0aNwOa3sogs7zI20qQpypEMQ9
+	 hxlI7/USQQ2eeG5DP4e5EM0Lo4cdtz+yv8NJrxvNkVyIKQLFgBlZkgG0/PS2Wu7NRD
+	 WT4dVRe98DalzpCUDje/nz6JypAjwum8FmYnEZPDhuHE83EEfyOMHDz3EtI4WdvpMj
+	 MrTm2cdDFOJ/A==
+Date: Mon, 8 Sep 2025 12:35:29 +0100
+From: Will Deacon <will@kernel.org>
+To: Huang Shijie <shijie@os.amperecomputing.com>
+Cc: catalin.marinas@arm.com, corbet@lwn.net, patches@amperecomputing.com,
+	cl@linux.com, yang@os.amperecomputing.com,
+	akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+	Neeraj.Upadhyay@amd.com, bp@alien8.de, ardb@kernel.org,
+	anshuman.khandual@arm.com, suzuki.poulose@arm.com, gshan@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rdunlap@infradead.org,
+	Christoph Lameter <cl@gentwo.org>
+Subject: Re: [PATCH V6 1/2] arm64: refactor the rodata=xxx
+Message-ID: <aL6_gZWeqAGZjda2@willie-the-truck>
+References: <20250703094212.20294-1-shijie@os.amperecomputing.com>
+ <20250703094212.20294-2-shijie@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904101234.1258643-1-amarkuze@redhat.com> <ecdf72c0856f79142af5d951c7cb479cba6c8fb3.camel@ibm.com>
-In-Reply-To: <ecdf72c0856f79142af5d951c7cb479cba6c8fb3.camel@ibm.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 8 Sep 2025 13:34:28 +0200
-X-Gm-Features: Ac12FXyYlAF3vtXQ6PXqcXmF9IeVgmr_oI1Z3uB7L6vfR3zFDRa6JEeE3a1-C64
-Message-ID: <CAOi1vP-jYSiFuTrA7qO0=Cy4qL24q8RpeV2Fk7K+4POfOGvHaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ceph/inode: drop extra reference from
- ceph_get_reply_dir() in ceph_fill_trace()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: Alex Markuze <amarkuze@redhat.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703094212.20294-2-shijie@os.amperecomputing.com>
 
-On Thu, Sep 4, 2025 at 8:32=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
-m.com> wrote:
->
-> On Thu, 2025-09-04 at 10:12 +0000, Alex Markuze wrote:
-> > ceph_get_reply_dir() may return a different, referenced inode when r_pa=
-rent is stale and the parent directory lock is not held.
-> > ceph_fill_trace() used that inode but failed to drop the reference when=
- it differed from req->r_parent, leaking an inode reference.
-> >
-> > Keep the directory inode in a local and iput() it at function end if it=
- does not match req->r_parent.
->
-> I assume that you mean "in a local variable"?
->
-> >
-> > Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-> > ---
-> >  fs/ceph/inode.c | 30 +++++++++++++++++++-----------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index 470ee595ecf2..cffa2cd7b530 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -1584,6 +1584,7 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >       struct ceph_vino tvino, dvino;
-> >       struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
-> >       struct ceph_client *cl =3D fsc->client;
-> > +     struct inode *parent_dir =3D NULL;
-> >       int err =3D 0;
-> >
-> >       doutc(cl, "%p is_dentry %d is_target %d\n", req,
-> > @@ -1601,9 +1602,13 @@ int ceph_fill_trace(struct super_block *sb, stru=
-ct ceph_mds_request *req)
-> >                * r_parent may be stale, in cases when R_PARENT_LOCKED i=
-s not set,
-> >                * so we need to get the correct inode
-> >                */
-> > -             struct inode *dir =3D ceph_get_reply_dir(sb, req->r_paren=
-t, rinfo);
-> > -             if (dir) {
-> > -                     err =3D ceph_fill_inode(dir, NULL, &rinfo->diri,
-> > +             parent_dir =3D ceph_get_reply_dir(sb, req->r_parent, rinf=
-o);
-> > +             if (unlikely(IS_ERR(parent_dir))) {
-> > +                     err =3D PTR_ERR(parent_dir);
-> > +                     goto done;
-> > +             }
-> > +             if (parent_dir) {
-> > +                     err =3D ceph_fill_inode(parent_dir, NULL, &rinfo-=
->diri,
-> >                                             rinfo->dirfrag, session, -1=
-,
-> >                                             &req->r_caps_reservation);
-> >                       if (err < 0)
-> > @@ -1612,14 +1617,14 @@ int ceph_fill_trace(struct super_block *sb, str=
-uct ceph_mds_request *req)
-> >                       WARN_ON_ONCE(1);
-> >               }
-> >
-> > -             if (dir && req->r_op =3D=3D CEPH_MDS_OP_LOOKUPNAME &&
-> > +             if (parent_dir && req->r_op =3D=3D CEPH_MDS_OP_LOOKUPNAME=
- &&
-> >                   test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags)=
- &&
-> >                   !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
-> >                       bool is_nokey =3D false;
-> >                       struct qstr dname;
-> >                       struct dentry *dn, *parent;
-> >                       struct fscrypt_str oname =3D FSTR_INIT(NULL, 0);
-> > -                     struct ceph_fname fname =3D { .dir        =3D dir=
-,
-> > +                     struct ceph_fname fname =3D { .dir        =3D par=
-ent_dir,
-> >                                                   .name       =3D rinfo=
-->dname,
-> >                                                   .ctext      =3D rinfo=
-->altname,
-> >                                                   .name_len   =3D rinfo=
-->dname_len,
-> > @@ -1628,10 +1633,10 @@ int ceph_fill_trace(struct super_block *sb, str=
-uct ceph_mds_request *req)
-> >                       BUG_ON(!rinfo->head->is_target);
-> >                       BUG_ON(req->r_dentry);
-> >
-> > -                     parent =3D d_find_any_alias(dir);
-> > +                     parent =3D d_find_any_alias(parent_dir);
-> >                       BUG_ON(!parent);
-> >
-> > -                     err =3D ceph_fname_alloc_buffer(dir, &oname);
-> > +                     err =3D ceph_fname_alloc_buffer(parent_dir, &onam=
-e);
-> >                       if (err < 0) {
-> >                               dput(parent);
-> >                               goto done;
-> > @@ -1640,7 +1645,7 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >                       err =3D ceph_fname_to_usr(&fname, NULL, &oname, &=
-is_nokey);
-> >                       if (err < 0) {
-> >                               dput(parent);
-> > -                             ceph_fname_free_buffer(dir, &oname);
-> > +                             ceph_fname_free_buffer(parent_dir, &oname=
-);
-> >                               goto done;
-> >                       }
-> >                       dname.name =3D oname.name;
-> > @@ -1659,7 +1664,7 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >                                     dname.len, dname.name, dn);
-> >                               if (!dn) {
-> >                                       dput(parent);
-> > -                                     ceph_fname_free_buffer(dir, &onam=
-e);
-> > +                                     ceph_fname_free_buffer(parent_dir=
-, &oname);
-> >                                       err =3D -ENOMEM;
-> >                                       goto done;
-> >                               }
-> > @@ -1674,12 +1679,12 @@ int ceph_fill_trace(struct super_block *sb, str=
-uct ceph_mds_request *req)
-> >                                   ceph_snap(d_inode(dn)) !=3D tvino.sna=
-p)) {
-> >                               doutc(cl, " dn %p points to wrong inode %=
-p\n",
-> >                                     dn, d_inode(dn));
-> > -                             ceph_dir_clear_ordered(dir);
-> > +                             ceph_dir_clear_ordered(parent_dir);
-> >                               d_delete(dn);
-> >                               dput(dn);
-> >                               goto retry_lookup;
-> >                       }
-> > -                     ceph_fname_free_buffer(dir, &oname);
-> > +                     ceph_fname_free_buffer(parent_dir, &oname);
-> >
-> >                       req->r_dentry =3D dn;
-> >                       dput(parent);
-> > @@ -1869,6 +1874,9 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >                                           &dvino, ptvino);
-> >       }
-> >  done:
-> > +     /* Drop extra ref from ceph_get_reply_dir() if it returned a new =
-inode */
-> > +     if (unlikely(!IS_ERR_OR_NULL(parent_dir) && parent_dir !=3D req->=
-r_parent))
->
-> The '&&' implies to check both conditions. However, if we have parent_dir=
- equal
-> to NULL or some error code, then it doesn't make sense to check the secon=
-d
-> condition. I don't  think that it could introduce some issue here. But,
-> potentially, it could be the reason of rarely triggered and non-trivial i=
-ssue.
-> What do you think? Do I have point here?
+On Thu, Jul 03, 2025 at 05:42:11PM +0800, Huang Shijie wrote:
+> As per admin guide documentation, "rodata=on" should be the default on
+> platforms. Documentation/admin-guide/kernel-parameters.txt describes
+> these options as
+> 
+>    rodata=         [KNL,EARLY]
+>            on      Mark read-only kernel memory as read-only (default).
+>            off     Leave read-only kernel memory writable for debugging.
+>            full    Mark read-only kernel memory and aliases as read-only
+>                    [arm64]
+> 
+> But on arm64 platform, "rodata=full" is the default instead.
 
-Hi Slava,
+Please mention RODATA_FULL_DEFAULT_ENABLED here.
 
-&& indeed implies checking both conditions, but the second condition is
-checked only of the first one is true (short-circuit evaluation).  In
-the case that parent_dir is NULL or IS_ERR pointer, req->r_parent check
-wouldn't be performed.
+> This patch implements the following changes.
+> 
+>  - Make "rodata=on" behaviour same as the original "rodata=full"
 
-So far I'm failing to see the potential for some rarely triggered issue
-here: parent_dir is fed to iput() only if a) the pointer is valid in the
-first place and b) the pointer represents an extra reference.  If the
-pointer is invalid, iput() is guaranteed to not be called.
+You should mention that this gives us parity with x86.
 
->
-> What if we can do like this:
->
-> parent_dir =3D parent_dir !=3D req->r_parent ? parent_dir : NULL;
-> if (parent_dir)
->     iput(parent_dir);
+>  - Make "rodata=noalias" (new) behaviour same as the original "rodata=on"
+>  - Drop the original "rodata=full"
 
-With a single "done" label and jumping to it on ceph_get_reply_dir()
-failures, this could result in iput() getting called on an invalid
-pointer.  While iput() can handle a NULL pointer, it would choke on
-any IS_ERR pointer.
+>  - Add comment for arch_parse_debug_rodata()
+>  - Update kernel-parameters.txt as required
 
-Thanks,
+These last two are self-evident from the code and don't need to be listed
+here.
 
-                Ilya
+> After this patch, the "rodata=on" will be the default on arm64 platform
+> as well.
+> 
+> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  2 +-
+>  arch/arm64/include/asm/setup.h                | 28 +++++++++++++++++--
+>  2 files changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index ee0735c6b8e2..3590bdc8d9a5 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6354,7 +6354,7 @@
+>  	rodata=		[KNL,EARLY]
+>  		on	Mark read-only kernel memory as read-only (default).
+>  		off	Leave read-only kernel memory writable for debugging.
+> -		full	Mark read-only kernel memory and aliases as read-only
+> +		noalias	Use more block mappings, may have better performance.
+>  		        [arm64]
+
+This isn't particularly helpful documentation and I think we need to mention
+the linear alias rather than talk about the page-table structure.
+
+How about:
+
+	noalias	Mark read-only kernel memory as read-only but retain
+		writable aliases in the direct map for regions outside
+		of the kernel image. [arm64]
+
+?
+
+> diff --git a/arch/arm64/include/asm/setup.h b/arch/arm64/include/asm/setup.h
+> index ba269a7a3201..6b994d0881d1 100644
+> --- a/arch/arm64/include/asm/setup.h
+> +++ b/arch/arm64/include/asm/setup.h
+> @@ -13,6 +13,30 @@
+>  extern phys_addr_t __fdt_pointer __initdata;
+>  extern u64 __cacheline_aligned boot_args[4];
+>  
+> +/*
+> + * rodata=on (default)
+> + *
+> + *    This applies read-only attributes to VM areas and to the linear
+> + *    alias of the backing pages as well. This prevents code or read-
+> + *    only data from being modified (inadvertently or intentionally),
+> + *    via another mapping for the same memory page.
+> + *
+> + *    But this might cause linear map region to be mapped down to base
+> + *    pages, which may adversely affect performance in some cases.
+> + *
+> + * rodata=off
+> + *
+> + *    This provides more block mappings and contiguous hints for linear
+> + *    map region which would minimize TLB footprint. This also leaves
+> + *    read-only kernel memory writable for debugging.
+> + *
+> + * rodata=noalias
+> + *
+> + *    This provides more block mappings and contiguous hints for linear
+> + *    map region which would minimize TLB footprint. This leaves the linear
+> + *    alias of read-only mappings in the vmalloc space writeable, making
+> + *    them susceptible to inadvertent modification by software.
+> + */
+
+Please remove this comment. If you want to keep it, this information
+belongs either in the commit message (to justify the performance impact)
+or the Documentation (to describe the functional impact) but there's
+little point having it hidden away here.
+
+With those changes, this looks good and I can pick it up for 6.18 if
+you respin.
+
+Cheers,
+
+Will
 
