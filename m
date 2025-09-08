@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-805147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069EDB4848A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB83B4848D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1638175836
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326FC175925
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0702E2EE5;
-	Mon,  8 Sep 2025 06:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149342E2DD4;
+	Mon,  8 Sep 2025 06:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRwrAnOE"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+QNeCkJ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318E22333B;
-	Mon,  8 Sep 2025 06:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54F62E06EF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314539; cv=none; b=E/kyejSR/6FPHY2rz93ewt7sC/XyWhNHB6+nF4Es+L3MjnyGZAE+hAXyRYawlOiSqQkt+arYnVgHyr3x2CCpAEG0SpxqEqy1AY7adzB9Eaf6zhaOvMOV1gjDcV1ipckiei6YOOZuposdj7flmH48oSTBCX8P8xZH2gdvpuYmMxE=
+	t=1757314556; cv=none; b=lzOVwxW2uF1m9LigvH6rIImH+Y5134zIhP++KqeH318Vc/gkG22WAjwXYspCB71R2tdj/tORsFkhI08p/2aOI++NpOcDFyOgdfD/wMbhuVGbXrKCG6cHzOc+W/2017nWalVq0wkoX1XXVewTAaq3XEffSKwp4/YLRtNCmF/Fv/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314539; c=relaxed/simple;
-	bh=7bTeksVHgoD9R6xdLvzwlbYp8OJAiXj4vQhWz3mJ+D8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AoNHnmhDgOBPCgryQNNxCI5lnXaCmD9VyVz3eng/9GM/XVdqCSQI3JfP/RLlllhnJa6Cw4rm1nsXCERegwj84lSEIcobChpZnXqOXNoAc1ehJpgW8U31mH6QyOgKu1RDMyPwJD9XaA2c3HtfP8BASHZrzrwxYyK531Zyt8Zcnlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRwrAnOE; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-24cbd9d9f09so54436085ad.2;
-        Sun, 07 Sep 2025 23:55:37 -0700 (PDT)
+	s=arc-20240116; t=1757314556; c=relaxed/simple;
+	bh=CpGKAIjx9opYm+HfzeDAQ0MJW1WE+sPDSShf9nh5CuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=syUc6a/DqLuzm/Ri0ptJPF1uzws7OS+Hh4Bvb9H5/Gp+CUwA3AE+3gjvshyY3QyxSyHXdGol7gj5McvdiL21hP74d52svnLcLJ4hU2DTwCM+v3lEB/gESDe1M1eKFZW6DqfQpMhqCBxt/D6ZOwCNMJxyBn1BnITG2KJLap+WEeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S+QNeCkJ; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77256e75eacso3546638b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 23:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757314537; x=1757919337; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m+4an8/Jt/b4JIGzziEWzfZAC//LsinPWKCYsKZxOsU=;
-        b=LRwrAnOEvZ/oo3c0wpBTqevb3ifpqUBYAY4w38Bdeg2Sv1XpKCjnO/BrLFRSqJdGjG
-         L5IBwpwiV0gHfT6OIzglAGq9uDBZT5nywzbS92G8EOehFwlKmD/by/fbELDScnlRakZg
-         TCfYvrOVZgQPOZnj0N1kH4PWCnb7TdkYMraJhIgerAY9nPt4Q0ZW9U/d2QN2oG/35rSE
-         jwy5kguS+bR4qW4bIdrqhd041dFNnY3Wls+G/ewyRHQ97zmAUQCgWCWsEWYrwNLOJIy/
-         USA8wJ6OmJ9/a+pEzBss/9nETto6qUgKUZkvhJxK8Wg1Z25Sm5LL3A7h3mz/j8k1v48n
-         Wayg==
+        d=linaro.org; s=google; t=1757314554; x=1757919354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjDemfu2IvLbw+qXa34kZRvjbWxOCBrNvY9zl55RAps=;
+        b=S+QNeCkJo5vY6/myyb7Q/teXNz6Er8X+ArNhFihobADj5DF7hO2I1+SGcptkb3NkI8
+         Kodq9ENIZSOX8UJ/2EYtW4LNlMT700Q79IpRI5Zr/gt34VCodxvOFZnW1Xn2BgqtxkYb
+         tn0oObkMX9XNcosl1PXfGzTRFmMDURbOZY687YrVFxg04eIUi4kHRI23I1KCTslL/WCR
+         ZeISeY8zoxnaCzlrfBb6xCYQSxtdzMCMKVFTolDzhloziHJ49Mk47SopbLVDL92pnCxa
+         I+OCZ8lCOk+nDLhzlat7ETyl7h6KZVT0qkkHm5jxzfRxIuo+j6q8H2NkV238+tnWEmd4
+         CTlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757314537; x=1757919337;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m+4an8/Jt/b4JIGzziEWzfZAC//LsinPWKCYsKZxOsU=;
-        b=vmM9ufqe40ovPMPcE+coh8QMqJS3K7vrYh/zUYU3gUtKQa4pDyDqqUgj7jJbycGYmo
-         w5VksW3R3/eh1u+7Et1rvOm4m9qIqE/9pHTwrO9dVTXOZPFeRPhd4DVSb/LtZbPFxaje
-         bTxs7RoXbVEIg/vrBYRNfk8FJlkz7ls1Ms9Si84KjEBZuqI1S2UN5oKI56Ia0xGap23s
-         jJ2Tvj9jsahVrj7ZP9gFA/bD0OSdqIgTMLkSgYIIhoblzNPNSCUmIakdjtB3bP1ujaPB
-         nvrs17kNdwlGqozfaLrkM6TPsIxmmAf34oviV7sSMG4ircbECeRc1O5Da/bU+dz4Ztrd
-         tG0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDbdrIGuu6w6YuhGAdQ5JUBVG/7RHBrZrzNEZ7KcB+BXxIDAqtuzwHK/K7PS11nG53AV6oaWvvZC9OxNER/PQz@vger.kernel.org, AJvYcCUG0Kq5nNB86umSZHp3cBHNMh4aY6AhgExUiICpW40aHdnAagpLSnAsap3mzVHfyss9UucDAtyQ@vger.kernel.org, AJvYcCUZI0Uintcsw/GF/usTPZ9PNsClLpFIcgjdZYLnSprYWRHe+XorgHnUEOHKIifaNKJWnbjgyD997UXLmnQ=@vger.kernel.org, AJvYcCXtvTlynpZeWIC8WaY0wgZmwkmuL4G1NRU7ypKK+Ujw9VE7H8XZsrHiQE2mgJ0EeJ0RBBkMcVQXVifK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB/5iNfXqS5kSboAxjMMzWpGMMWwKrZq/Ffpja+rnnV/d/YpMw
-	H51rdqXYuAhRJ2rBDr9vEbC01a/iddLjg0XR2QpOJXo5kPpyoY0N8OuL
-X-Gm-Gg: ASbGncvp2NQdyNZ8cjUu09fWOAK7s9dZER8Ux4kmOjX2vbHBsQRD/auOqZ/13EK42ha
-	+20SIjRUoGLUVBf9Dh6nCEyftNfoRBZ/vi+MTT0AgJD4rOsqoXLjRNILw0coLEF2E/LIVMSIQHL
-	3VGAq307c+trFeDXd9jzIe8DwSGg5FcgnKwfzh5N44zngfoDBspwqcU9tygI/xWUQzk7XbGZm/t
-	+t2b7B9NO1VMRGRxBC1RWNitmdjMyLWlWPm+5aQ5QNHmtjhVo3AGjlk0JuC87eZ/I5XX0R1PR9V
-	yflE6KCN6GAIe2GXKm3BoeXfh2hJWYc5HGxvzp2Ccmn0acZw3cyrMs1vs1uNjottIZhKgnE84A4
-	U/mc4Vv9iAxZMUQ3LO8xx1ZekJV+OWtkJNX7guzerv/zK8SYvgRKDMg==
-X-Google-Smtp-Source: AGHT+IERpqLRWZZggZfXidF0BIQUzIIQrruf3eLug6WWMnit4W8FJL2qnWiuLeQslKVuS6tNgq261A==
-X-Received: by 2002:a17:902:e2c4:b0:24a:f7dc:cad4 with SMTP id d9443c01a7336-2516ef54e11mr65328835ad.11.1757314537095;
-        Sun, 07 Sep 2025 23:55:37 -0700 (PDT)
-Received: from LAPTOP-PN4ROLEJ.localdomain ([221.228.238.82])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b94a2feacsm4566083a91.8.2025.09.07.23.55.31
+        d=1e100.net; s=20230601; t=1757314554; x=1757919354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjDemfu2IvLbw+qXa34kZRvjbWxOCBrNvY9zl55RAps=;
+        b=PTbGVAHggV7NTV4VrWnO+i+pmMAQPRPVqzFUV5C3rM1g2IT7LTakPtlj7KniXh1IIY
+         2+JfW809VUl9smuh9YhsTRScLuwv8gwD2ugvoZ9F99bB89oq/mRxf3bXlet2N4jEPbIB
+         XfmjftbBs6GpoAB/lCquorRPdgGfBAEV983DLvfNpkjSrzILqlqs4d234mvxhygUkUuS
+         qo68RiFrEgLoUztGn1aDuu6XlA3t1HaSaIxhZze+qHQ5JA9hdeKw0UnSeaOP0Z/NvJ24
+         WuGDXuhgOGgTFpkkqbXJHKWpXFT20+nm7bH9d4VQWsFLDSvbB8Srb4WSn0r73q3zmB2V
+         J/aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWz4Vp9Pz0nDbb2JQLiZaLWSdMTA33hMEpDFp5KMHdrwn4brXuvRGYo5v8GNJSxuK9W9rrfvfx/c1gTDuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4oYBrIwNFI5K5mF5N4cE+GjH7V/oMp3gHvseoXNmfdCEPRPW3
+	SEoOQLvhnGDPO5KYOqRoy3i+/pafPoEhvFlc9FjHRGGBwNV8Fq0PmI2MiAY7pYE6euBfTE4JErm
+	FrwTP
+X-Gm-Gg: ASbGncsBstmKaWyon6dipoyx//lS8ZXQX+YdbCJnHDjeY1rHfxp04Vv+CfZmLem04IM
+	VUUZQL10enFyrN4IDy+2NLbJEEZViiIu4l00atYvGS5FwbN7D8sigsz1OMWN/DsYnHQmf18qWtC
+	aFlAPtYeEu9kKfbQ2Af/omJNsL9U74szQWtWiytwp3bHGocths7yIeyiD+JvZgPgxExaoj3VYCL
+	K7iiVyp5mcvNfvG0SL0abKm32rvnWPkRw9ZjI2eAdVzExR+yvon5rE61bGak6G2cpUsv/KLuGRf
+	s5PgkA/CFaJ9AxiuI4JSJqokWveQhD4+TekszBvW9OzDp8YjRePiutVHIGZACJillMR10PvlvJC
+	1WXztXvVmyJXkcjL37Jb0qGEORTdHL0V0cJFBV25LWkOrKQ==
+X-Google-Smtp-Source: AGHT+IFUii7IFPGF/GfdssWSzTteSva2Jd9iVfJQLLidaUj532ste3VwU6C9KZtFqK7PJto/9xnrdw==
+X-Received: by 2002:a05:6a00:1823:b0:772:1fa1:be4a with SMTP id d2e1a72fcca58-7742de60f4amr7353357b3a.16.1757314554209;
+        Sun, 07 Sep 2025 23:55:54 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2d97acsm28535953b3a.41.2025.09.07.23.55.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 23:55:36 -0700 (PDT)
-From: Slavin Liu <slavin452@gmail.com>
-To: Simon Horman <horms@verge.net.au>,
-	Julian Anastasov <ja@ssi.bg>
-Cc: Slavin Liu <slavin452@gmail.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	lvs-devel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
+        Sun, 07 Sep 2025 23:55:53 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:25:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] IPVS: Fix use-after-free issue in ip_vs_unbind_app()
-Date: Mon,  8 Sep 2025 14:54:58 +0800
-Message-Id: <20250908065458.536-1-slavin452@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even
+ without frequency table
+Message-ID: <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
+References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
+ <20250904032210.92978-3-zhangzihuan@kylinos.cn>
+ <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
+ <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
+ <20250904053700.abdkh23zwi5x65do@vireshk-i7>
+ <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+ <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
+ <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
 
-When exiting a network namespace, in cleanup_net()->ops_undo_list(),
-ip_vs_ftp_ops->exit() is called before ip_vs_core_ops->exit_batch().
-The ip_vs_app ip_vs_ftp and its incarnations will be freed by unregister_ip_vs_app().
-However, there could still be connections bound to ip_vs_ftp's incarnation.
-cp->app points to the free'd incarnation, which will be accessed later by
-__ip_vs_cleanup_batch()->ip_vs_conn_net_cleanup()->ip_vs_conn_flush()->ip_vs_conn_del()->
-ip_vs_conn_expire()->ip_vs_unbind_app(), causing a uaf. This vulnarability can
-lead to a local privilege escalation.
+On 08-09-25, 14:51, Zihuan Zhang wrote:
+> We are currently considering moving the check that ensures a driver
+> providing a freq_table also implements target_index() into the driver
+> registration path.
 
-Reproduction steps:
-1. create a ipvs service on (127.0.0.1:21)
-2. create a ipvs destination on the service, to (127.0.0.1:<any>)
-3. send a tcp packet to (127.0.0.1:21)
-4. exit the network namespace
+That won't work AFAIU. The freq table is initialized during
+policy->init and that's not done at the time of registration.
 
-I think the fix should flush all connection to ftp before unregistration.
-The simpler fix is to delete ip_vs_ftp_ops->exit, and defer the unregistration
-of ip_vs_ftp to ip_vs_app_net_cleanup(), which will unregister all ip_vs_app.
-It's after ip_vs_conn_net_cleanup() so there is no uaf issue. This patch
-seems to solve the issue but has't been fully tested yet, and is also not graceful.
+> This way, freq_table.c no longer needs to defensively check for NULL
+> pointers.
+> 
+> Additionally, we are thinking about merging the two related APIs into a
+> single one. Do you think this is a good idea?
 
-Signed-off-by: Slavin Liu <slavin452@gmail.com>
----
- net/netfilter/ipvs/ip_vs_ftp.c | 13 -------------
- 1 file changed, 13 deletions(-)
+Which ones ? target/target_index ? I am not sure if that can be done.
 
-diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
-index d8a284999544..68def1106681 100644
---- a/net/netfilter/ipvs/ip_vs_ftp.c
-+++ b/net/netfilter/ipvs/ip_vs_ftp.c
-@@ -598,22 +598,9 @@ static int __net_init __ip_vs_ftp_init(struct net *net)
- 	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
- 	return ret;
- }
--/*
-- *	netns exit
-- */
--static void __ip_vs_ftp_exit(struct net *net)
--{
--	struct netns_ipvs *ipvs = net_ipvs(net);
--
--	if (!ipvs)
--		return;
--
--	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
--}
- 
- static struct pernet_operations ip_vs_ftp_ops = {
- 	.init = __ip_vs_ftp_init,
--	.exit = __ip_vs_ftp_exit,
- };
- 
- static int __init ip_vs_ftp_init(void)
+We are fine with improvements generally, but please make sure whatever
+you send doesn't break existing users. That will help saving some of
+our review time.
+
 -- 
-2.34.1
-
+viresh
 
