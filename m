@@ -1,700 +1,113 @@
-Return-Path: <linux-kernel+bounces-806763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E458CB49B82
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:06:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF23B49B66
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A9118979E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7BD116DD1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1852DCF61;
-	Mon,  8 Sep 2025 21:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1979B2DCF5D;
+	Mon,  8 Sep 2025 21:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XwPzNk2W"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BlQEe33R"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49601210FB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FFF1798F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365581; cv=none; b=CJM+BAcVYi3HrkTQI3hTKqmP4MbKSkBb4E4bzw+bTb64zCPmmhmYueCnftUXtDUMsopBHP57F2kZ9IBOcBeQZnXzQui+IY6w6a+6L8Oicuw3HvGxo93GCvRytJs43TG7ZnXDgz07iPEdiQOvgTO/96iLqOeg78AZ5fDfR2+0CFw=
+	t=1757365426; cv=none; b=IiMVo4jwwODb/tVTf2HL+WwSXGqAWScPyUAHOu1WLjQ70vwpUpbwgEy/qT3CIrdg72zJdvfbnYPpf0z/Shdy91KGp9MzMtKEfCKp8lWxXANK9k+2Nwhdg6ir3Lo1kNZXAZG/uTtI/QWFNRNPm02Zd3XiHUppMz5TutyB5fmbSOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757365581; c=relaxed/simple;
-	bh=mG4fSje4GvRQ33S0eHNHqFy96SDdGBASMWJ6SF8fpSY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c8dfZGA1tjPLZk9S487BSgTFnGWv1tKxJy1ouNVcIUzBgzdChNMiuTevWZ9Nq+jrE4uI3vdsiZccweVFni6H1WHvLzHd5y2oZM9DmJcJEFluDd0fkWCaRroNNPnDNeLerFyHl62luAYesvP+pzq9cZauZU8FJtlrZ9X/n0MnO18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XwPzNk2W; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588DhDH1025033;
-	Mon, 8 Sep 2025 21:05:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=lix0xgmEh1GK5Rgtq
-	gdK8bzot40/hXYU6/UDTrcxiQo=; b=XwPzNk2WD91ijEteLbxNfPmg+etGBIGqt
-	mvRuBJnLC+pTE3IAkd0MHzGIb4+Q2oO+5vPyz3AvOhjMMVq0iAfbYTCs2CQMctz5
-	cf63rAPT9Z09a2BegDB3rUxxfnQd6KhFvfNlHFP6lHI2YX/Ig0R8g9/5GzW7HLdD
-	i6J1vE2rcYtbWBfoWdF7Lan/R1KKzMK7cvRDrR+CP/EFZVFhxkSNpWQM9BncHCDz
-	cGRnxCjTayQUpha0Ez8b5aRErCuuzQRNRX+evEMJpBbSiWcyz6iXlw+ppy+v20pm
-	RadyT0qVyJAWYvQWp17+f0mKctsJFCTkT31xx1gFG5+jfwROPFvzg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycrv6x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:05:36 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588L0lmF012118;
-	Mon, 8 Sep 2025 21:05:35 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycrv6t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:05:35 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588IJJ6R001156;
-	Mon, 8 Sep 2025 21:05:34 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912037nat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:05:34 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588L5UsV15729016
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 21:05:30 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 437DA2004B;
-	Mon,  8 Sep 2025 21:05:30 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6156C20040;
-	Mon,  8 Sep 2025 21:05:22 +0000 (GMT)
-Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com.com (unknown [9.39.29.251])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  8 Sep 2025 21:05:22 +0000 (GMT)
-From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-To: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, oleg@redhat.com, kees@kernel.org,
-        luto@amacapital.net, wad@chromium.org, mchauras@linux.ibm.com,
-        deller@gmx.de, ldv@strace.io, macro@orcam.me.uk, charlie@rivosinc.com,
-        akpm@linux-foundation.org, bigeasy@linutronix.de,
-        ankur.a.arora@oracle.com, sshegde@linux.ibm.com, naveen@kernel.org,
-        thomas.weissschuh@linutronix.de, Jason@zx2c4.com, peterz@infradead.org,
-        tglx@linutronix.de, namcao@linutronix.de, kan.liang@linux.intel.com,
-        mingo@kernel.org, oliver.upton@linux.dev, mark.barnett@arm.com,
-        atrajeev@linux.vnet.ibm.com, rppt@kernel.org, coltonlewis@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [RFC V2 8/8] powerpc: Enable Generic Entry/Exit for syscalls.
-Date: Tue,  9 Sep 2025 02:32:37 +0530
-Message-ID: <20250908210235.137300-11-mchauras@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250908210235.137300-2-mchauras@linux.ibm.com>
-References: <20250908210235.137300-2-mchauras@linux.ibm.com>
+	s=arc-20240116; t=1757365426; c=relaxed/simple;
+	bh=qy3RayiwfBU1/zuQfXQ+IdwaYW5zap/grmBI6ndAc0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IEiM8z0orOYdK/ein2aBue/LplDibsAaSYx1LY8K4MTknb5Lb3kRncmu5TmB5THgxgbM+NjhXWYM8kt7bRB7lwAxG2ksI2nQUz3E/tXTaIw+88GAUb+RA3etYy2N1Uz7cNUWYsfFOrv9XEr2Cwami9L83n7VOD3BJVMqo/SDIb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BlQEe33R; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336dc57f3f2so46188791fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 14:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757365423; x=1757970223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qy3RayiwfBU1/zuQfXQ+IdwaYW5zap/grmBI6ndAc0k=;
+        b=BlQEe33RIgCtJiDnzcPdrQWY1FWMn+GP6czPsmG4gyF/MCbHQ4mtN4YtkMVYBxu3dj
+         gZmCC57E0tCwmnJKd5r3e8OMgv0NlSj/ONlAN84qhYWErssml+bpykluv3lj0F6xYWOe
+         QLCZmutQgbm2OQ4/SA0ULt9BwtV2f5YEu7ab+9fPNRcxwW5tU98WAwm1LDZcRBeCjI9U
+         wa2Mx1H/jKUuMNdOAQODc0TJO/SGg5FOe7mc7hn9SO2L0ydnR2cZKvVR2yIKIUY2YUQy
+         ZnLiwkVGyj4qJtuS2B54clhWbAE6BlB031FLanbXHzajwF/lcYE/TsxdB0wbaQ1HwxWK
+         haxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757365423; x=1757970223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qy3RayiwfBU1/zuQfXQ+IdwaYW5zap/grmBI6ndAc0k=;
+        b=YUCY4Bgh8vTEYgTZLTk8SCBekt67YlEnq4qs7bJpUQfE+UlvLkKVNBfNChKPNjtXEY
+         3bqk7wJUjjfnm2Oj7rBq7syhAkBmfaZlP/E7avIeowHDAROOthwkzGVEI+4waGZpZ3Ee
+         Sm74goHZelZdKsx6FgEBCBKbdJ2u5m0v8vGg9mHXRyzPIvT2eaa60bppiBLn3xQL+wYs
+         YGVUeVpqLQhhCDM3Eg4G+YJ+NF5OdolGRai3HJxaL9oa9q7PNmmUuuAne4b2MvLf2KLy
+         5ajlMlo90mrjNkuCsaLri2GYs3t0G8R8AXC/QzwPWwvGdZz6pLPGX+Cq08kfEdUyITIP
+         f+lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoz3nyx3/AeFIReGmnr4hQNDMy1KZ1fhpM4+lGO60xml9sHiX7w76/ScXU1EUxNR3Wqqp0ukofg4Dm2uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWuXrqd3nkeAm3Wzt7hzNBJdUY9oES7CfLDiGu38wvXkjB5HAa
+	hTDUEOHXMFrPIHBLm7vQVBlH41L6HCFSPR8rZ0LkTMptQhgbi9X3R0RtCdH8obULwYVJPufLmdC
+	xaEUxteq7FhjobleobfceURP8sF+KsyBYZ0MPKF1cEg==
+X-Gm-Gg: ASbGncsER9WVddjBh1Xq5fnbU9VWvEzM07W3QWXqurn6QIT9geM6fgZjpvLw+tc3RFd
+	BcAy8hKU0JMMvCk3g7mYNq0ytdbe2mXOWgfxS5JQn0J0mDaSRf/ZtH9X06g6kkIAX1vqi/B5Q57
+	Mq/FvuNoAmWbI/xfhYQDI5WkctyLryaoIiEi4oPRtzlGeDb5x2oWHm0qnT5klMhTyxBgeAFDsar
+	6SrMTEP5eR/1gJZyQ==
+X-Google-Smtp-Source: AGHT+IH8+J/vFeWhw9eoYEb1/3GvltvNA5l3205lsYcHvwWXC67kAnznt4uB6zdL3+zg2WYqt7lJoZenJW0OZDDgeRI=
+X-Received: by 2002:a05:651c:4358:20b0:336:d915:cc5c with SMTP id
+ 38308e7fff4ca-33b4fe4da4bmr23851571fa.3.1757365422821; Mon, 08 Sep 2025
+ 14:03:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: G0ElInjIF89fNGzVnaRJ8cJJ-euWYPPW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX0vhu7gRDNgYp
- PJ9ENisOyRAXzbpEWWH76V/tS77GX87oDCqx6SeuEEKH3HaVrZCQ02KdNdDIU3lOaqBnpswoM9p
- bj0kHPnyCxapCa0h0bQmJ91e61qHCj7OFcXIywtd7n1ov0KLLsh+5C5YT2RAh1S5/WDMs60gmFc
- w5rOvdk7Sg64GzKL/eplA+YduDMC5yWLTUJtt1XBtoI22pd7e86+S9HEJNuu2crlb/mD+cTkrjO
- S6viw/LNRHspnlwSaXdjCxLnRe9b7pXZ8BNZ3rZkuS8u2XtfFhfWSGcu1OxDmYq1pL6fPZsLjRq
- lqsEiCbPCXvzj98G1Hjn8+We5lr89In+lHhP4IExcZeo2+v9lvIFuBF7ujDqWHEzwVI1iMxfCcX
- ZYuTBk8v
-X-Proofpoint-GUID: vDuNYkURlWaFj7iFWr1pqjvUWTGjPBVh
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bf4520 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=TVope2VSOmiRRkq04hEA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+References: <20250908113723.31559-1-ansuelsmth@gmail.com> <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
+ <68bf16e5.df0a0220.2e182c.b822@mx.google.com> <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+ <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
+In-Reply-To: <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Sep 2025 23:03:31 +0200
+X-Gm-Features: Ac12FXzsPzr9I2HjnC5t_HYUtDe_Oo71i-LHOVM3Q5owLY6JPkPWVDiLSF9uLf4
+Message-ID: <CACRpkdYuT0x3JSFWHMF5thH0UyNF1Cse+W9joE12yQ0iAAXjuw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Larsson <benjamin.larsson@genexis.eu>, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable the syscall entry and exit path from generic framework.
+On Mon, Sep 8, 2025 at 9:14=E2=80=AFPM Christian Marangi <ansuelsmth@gmail.=
+com> wrote:
 
-Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
----
- arch/powerpc/Kconfig                    |   1 +
- arch/powerpc/include/asm/entry-common.h |   2 +-
- arch/powerpc/kernel/interrupt.c         | 135 +++++++----------------
- arch/powerpc/kernel/ptrace/ptrace.c     | 141 ------------------------
- arch/powerpc/kernel/signal.c            |  10 +-
- arch/powerpc/kernel/syscall.c           | 119 +-------------------
- 6 files changed, 49 insertions(+), 359 deletions(-)
+> The usage of GPIO might be confusing but this is just to instruct the
+> SoC to not mess with those 2 PIN and as Benjamin reported it's also an
+> Errata of 7581. The FORCE_GPIO_EN doesn't set them as GPIO function
+> (that is configured by a different register) but it's really to actually
+> ""enable"" those lines.
+>
+> Normally the SoC should autodetect this by HW but it seems AN7581 have
+> problem with this and require this workaround to force enable the 2 pin.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index e0c51d7b5638d..e67294a72e4d4 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -199,6 +199,7 @@ config PPC
- 	select GENERIC_CPU_AUTOPROBE
- 	select GENERIC_CPU_VULNERABILITIES	if PPC_BARRIER_NOSPEC
- 	select GENERIC_EARLY_IOREMAP
-+	select GENERIC_ENTRY
- 	select GENERIC_GETTIMEOFDAY
- 	select GENERIC_IDLE_POLL_SETUP
- 	select GENERIC_IOREMAP
-diff --git a/arch/powerpc/include/asm/entry-common.h b/arch/powerpc/include/asm/entry-common.h
-index d3f4a12aeafca..8fb74e6aa9560 100644
---- a/arch/powerpc/include/asm/entry-common.h
-+++ b/arch/powerpc/include/asm/entry-common.h
-@@ -3,7 +3,7 @@
- #ifndef _ASM_PPC_ENTRY_COMMON_H
- #define _ASM_PPC_ENTRY_COMMON_H
- 
--#ifdef CONFIG_GENERIC_IRQ_ENTRY
-+#ifdef CONFIG_GENERIC_ENTRY
- 
- #include <asm/cputime.h>
- #include <asm/interrupt.h>
-diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index 7bb8a31b24ea7..642e22527f9dd 100644
---- a/arch/powerpc/kernel/interrupt.c
-+++ b/arch/powerpc/kernel/interrupt.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- 
- #include <linux/context_tracking.h>
-+#include <linux/entry-common.h>
- #include <linux/err.h>
- #include <linux/compat.h>
- #include <linux/rseq.h>
-@@ -77,79 +78,6 @@ static notrace __always_inline bool prep_irq_for_enabled_exit(bool restartable)
- 	return true;
- }
- 
--static notrace unsigned long
--interrupt_exit_user_prepare_main(unsigned long ret, struct pt_regs *regs)
--{
--	unsigned long ti_flags;
--
--again:
--	ti_flags = read_thread_flags();
--	while (unlikely(ti_flags & (_TIF_USER_WORK_MASK & ~_TIF_RESTORE_TM))) {
--		local_irq_enable();
--		if (ti_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY)) {
--			schedule();
--		} else {
--			/*
--			 * SIGPENDING must restore signal handler function
--			 * argument GPRs, and some non-volatiles (e.g., r1).
--			 * Restore all for now. This could be made lighter.
--			 */
--			if (ti_flags & _TIF_SIGPENDING)
--				ret |= _TIF_RESTOREALL;
--			do_notify_resume(regs, ti_flags);
--		}
--		local_irq_disable();
--		ti_flags = read_thread_flags();
--	}
--
--	if (IS_ENABLED(CONFIG_PPC_BOOK3S_64) && IS_ENABLED(CONFIG_PPC_FPU)) {
--		if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
--				unlikely((ti_flags & _TIF_RESTORE_TM))) {
--			restore_tm_state(regs);
--		} else {
--			unsigned long mathflags = MSR_FP;
--
--			if (cpu_has_feature(CPU_FTR_VSX))
--				mathflags |= MSR_VEC | MSR_VSX;
--			else if (cpu_has_feature(CPU_FTR_ALTIVEC))
--				mathflags |= MSR_VEC;
--
--			/*
--			 * If userspace MSR has all available FP bits set,
--			 * then they are live and no need to restore. If not,
--			 * it means the regs were given up and restore_math
--			 * may decide to restore them (to avoid taking an FP
--			 * fault).
--			 */
--			if ((regs->msr & mathflags) != mathflags)
--				restore_math(regs);
--		}
--	}
--
--	check_return_regs_valid(regs);
--
--	user_enter_irqoff();
--	if (!prep_irq_for_enabled_exit(true)) {
--		user_exit_irqoff();
--		local_irq_enable();
--		local_irq_disable();
--		goto again;
--	}
--
--#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
--	local_paca->tm_scratch = regs->msr;
--#endif
--
--	booke_load_dbcr0();
--
--	account_cpu_user_exit();
--
--	/* Restore user access locks last */
--	kuap_user_restore(regs);
--
--	return ret;
--}
--
- /*
-  * This should be called after a syscall returns, with r3 the return value
-  * from the syscall. If this function returns non-zero, the system call
-@@ -164,17 +92,12 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
- 					   long scv)
- {
- 	unsigned long ti_flags;
--	unsigned long ret = 0;
- 	bool is_not_scv = !IS_ENABLED(CONFIG_PPC_BOOK3S_64) || !scv;
- 
--	CT_WARN_ON(ct_state() == CT_STATE_USER);
--
- 	kuap_assert_locked();
- 
- 	regs->result = r3;
--
--	/* Check whether the syscall is issued inside a restartable sequence */
--	rseq_syscall(regs);
-+	regs->exit_flags = 0;
- 
- 	ti_flags = read_thread_flags();
- 
-@@ -187,7 +110,7 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
- 
- 	if (unlikely(ti_flags & _TIF_PERSYSCALL_MASK)) {
- 		if (ti_flags & _TIF_RESTOREALL)
--			ret = _TIF_RESTOREALL;
-+			regs->exit_flags = _TIF_RESTOREALL;
- 		else
- 			regs->gpr[3] = r3;
- 		clear_bits(_TIF_PERSYSCALL_MASK, &current_thread_info()->flags);
-@@ -196,18 +119,28 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
- 	}
- 
- 	if (unlikely(ti_flags & _TIF_SYSCALL_DOTRACE)) {
--		do_syscall_trace_leave(regs);
--		ret |= _TIF_RESTOREALL;
-+		regs->exit_flags |= _TIF_RESTOREALL;
- 	}
- 
--	local_irq_disable();
--	ret = interrupt_exit_user_prepare_main(ret, regs);
-+again:
-+	syscall_exit_to_user_mode(regs);
-+
-+	user_enter_irqoff();
-+	if (!prep_irq_for_enabled_exit(true)) {
-+		user_exit_irqoff();
-+		local_irq_enable();
-+		local_irq_disable();
-+		goto again;
-+	}
-+
-+	/* Restore user access locks last */
-+	kuap_user_restore(regs);
- 
- #ifdef CONFIG_PPC64
--	regs->exit_result = ret;
-+	regs->exit_result = regs->exit_flags;
- #endif
- 
--	return ret;
-+	return regs->exit_flags;
- }
- 
- #ifdef CONFIG_PPC64
-@@ -226,14 +159,18 @@ notrace unsigned long syscall_exit_restart(unsigned long r3, struct pt_regs *reg
- #ifdef CONFIG_PPC_BOOK3S_64
- 	set_kuap(AMR_KUAP_BLOCKED);
- #endif
-+again:
-+	syscall_exit_to_user_mode(regs);
- 
--	trace_hardirqs_off();
--	user_exit_irqoff();
--	account_cpu_user_entry();
--
--	BUG_ON(!user_mode(regs));
-+	user_enter_irqoff();
-+	if (!prep_irq_for_enabled_exit(true)) {
-+		user_exit_irqoff();
-+		local_irq_enable();
-+		local_irq_disable();
-+		goto again;
-+	}
- 
--	regs->exit_result = interrupt_exit_user_prepare_main(regs->exit_result, regs);
-+	regs->exit_result |= regs->exit_flags;
- 
- 	return regs->exit_result;
- }
-@@ -254,8 +191,20 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
- 	kuap_assert_locked();
- 
- 	local_irq_disable();
-+	regs->exit_flags = 0;
-+again:
-+	irqentry_exit_to_user_mode(regs);
-+	check_return_regs_valid(regs);
-+
-+	user_enter_irqoff();
-+	if (!prep_irq_for_enabled_exit(true)) {
-+		user_exit_irqoff();
-+		local_irq_enable();
-+		local_irq_disable();
-+		goto again;
-+	}
- 
--	ret = interrupt_exit_user_prepare_main(0, regs);
-+	ret = regs->exit_flags;
- 
- #ifdef CONFIG_PPC64
- 	regs->exit_result = ret;
-diff --git a/arch/powerpc/kernel/ptrace/ptrace.c b/arch/powerpc/kernel/ptrace/ptrace.c
-index 2134b6d155ff6..316d4f5ead8ed 100644
---- a/arch/powerpc/kernel/ptrace/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace/ptrace.c
-@@ -21,9 +21,6 @@
- #include <asm/switch_to.h>
- #include <asm/debug.h>
- 
--#define CREATE_TRACE_POINTS
--#include <trace/events/syscalls.h>
--
- #include "ptrace-decl.h"
- 
- /*
-@@ -195,144 +192,6 @@ long arch_ptrace(struct task_struct *child, long request,
- 	return ret;
- }
- 
--#ifdef CONFIG_SECCOMP
--static int do_seccomp(struct pt_regs *regs)
--{
--	if (!test_thread_flag(TIF_SECCOMP))
--		return 0;
--
--	/*
--	 * The ABI we present to seccomp tracers is that r3 contains
--	 * the syscall return value and orig_gpr3 contains the first
--	 * syscall parameter. This is different to the ptrace ABI where
--	 * both r3 and orig_gpr3 contain the first syscall parameter.
--	 */
--	regs->gpr[3] = -ENOSYS;
--
--	/*
--	 * We use the __ version here because we have already checked
--	 * TIF_SECCOMP. If this fails, there is nothing left to do, we
--	 * have already loaded -ENOSYS into r3, or seccomp has put
--	 * something else in r3 (via SECCOMP_RET_ERRNO/TRACE).
--	 */
--	if (__secure_computing())
--		return -1;
--
--	/*
--	 * The syscall was allowed by seccomp, restore the register
--	 * state to what audit expects.
--	 * Note that we use orig_gpr3, which means a seccomp tracer can
--	 * modify the first syscall parameter (in orig_gpr3) and also
--	 * allow the syscall to proceed.
--	 */
--	regs->gpr[3] = regs->orig_gpr3;
--
--	return 0;
--}
--#else
--static inline int do_seccomp(struct pt_regs *regs) { return 0; }
--#endif /* CONFIG_SECCOMP */
--
--/**
-- * do_syscall_trace_enter() - Do syscall tracing on kernel entry.
-- * @regs: the pt_regs of the task to trace (current)
-- *
-- * Performs various types of tracing on syscall entry. This includes seccomp,
-- * ptrace, syscall tracepoints and audit.
-- *
-- * The pt_regs are potentially visible to userspace via ptrace, so their
-- * contents is ABI.
-- *
-- * One or more of the tracers may modify the contents of pt_regs, in particular
-- * to modify arguments or even the syscall number itself.
-- *
-- * It's also possible that a tracer can choose to reject the system call. In
-- * that case this function will return an illegal syscall number, and will put
-- * an appropriate return value in regs->r3.
-- *
-- * Return: the (possibly changed) syscall number.
-- */
--long do_syscall_trace_enter(struct pt_regs *regs)
--{
--	u32 flags;
--
--	flags = read_thread_flags() & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE);
--
--	if (flags) {
--		int rc = ptrace_report_syscall_entry(regs);
--
--		if (unlikely(flags & _TIF_SYSCALL_EMU)) {
--			/*
--			 * A nonzero return code from
--			 * ptrace_report_syscall_entry() tells us to prevent
--			 * the syscall execution, but we are not going to
--			 * execute it anyway.
--			 *
--			 * Returning -1 will skip the syscall execution. We want
--			 * to avoid clobbering any registers, so we don't goto
--			 * the skip label below.
--			 */
--			return -1;
--		}
--
--		if (rc) {
--			/*
--			 * The tracer decided to abort the syscall. Note that
--			 * the tracer may also just change regs->gpr[0] to an
--			 * invalid syscall number, that is handled below on the
--			 * exit path.
--			 */
--			goto skip;
--		}
--	}
--
--	/* Run seccomp after ptrace; allow it to set gpr[3]. */
--	if (do_seccomp(regs))
--		return -1;
--
--	/* Avoid trace and audit when syscall is invalid. */
--	if (regs->gpr[0] >= NR_syscalls)
--		goto skip;
--
--	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
--		trace_sys_enter(regs, regs->gpr[0]);
--
--	if (!is_32bit_task())
--		audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
--				    regs->gpr[5], regs->gpr[6]);
--	else
--		audit_syscall_entry(regs->gpr[0],
--				    regs->gpr[3] & 0xffffffff,
--				    regs->gpr[4] & 0xffffffff,
--				    regs->gpr[5] & 0xffffffff,
--				    regs->gpr[6] & 0xffffffff);
--
--	/* Return the possibly modified but valid syscall number */
--	return regs->gpr[0];
--
--skip:
--	/*
--	 * If we are aborting explicitly, or if the syscall number is
--	 * now invalid, set the return value to -ENOSYS.
--	 */
--	regs->gpr[3] = -ENOSYS;
--	return -1;
--}
--
--void do_syscall_trace_leave(struct pt_regs *regs)
--{
--	int step;
--
--	audit_syscall_exit(regs);
--
--	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
--		trace_sys_exit(regs, regs->result);
--
--	step = test_thread_flag(TIF_SINGLESTEP);
--	if (step || test_thread_flag(TIF_SYSCALL_TRACE))
--		ptrace_report_syscall_exit(regs, step);
--}
--
- void __init pt_regs_check(void);
- 
- /*
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index 719930cf4ae1f..9f1847b4742e6 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -6,6 +6,7 @@
-  *    Extracted from signal_32.c and signal_64.c
-  */
- 
-+#include <linux/entry-common.h>
- #include <linux/resume_user_mode.h>
- #include <linux/signal.h>
- #include <linux/uprobes.h>
-@@ -22,11 +23,6 @@
- 
- #include "signal.h"
- 
--/* This will be removed */
--#ifdef CONFIG_GENERIC_ENTRY
--#include <linux/entry-common.h>
--#endif /* CONFIG_GENERIC_ENTRY */
--
- #ifdef CONFIG_VSX
- unsigned long copy_fpr_to_user(void __user *to,
- 			       struct task_struct *task)
-@@ -374,11 +370,9 @@ void signal_fault(struct task_struct *tsk, struct pt_regs *regs,
- 				   task_pid_nr(tsk), where, ptr, regs->nip, regs->link);
- }
- 
--#ifdef CONFIG_GENERIC_ENTRY
- void arch_do_signal_or_restart(struct pt_regs *regs)
- {
- 	BUG_ON(regs != current->thread.regs);
--	local_paca->generic_fw_flags |= GFW_RESTORE_ALL;
-+	regs->exit_flags |= _TIF_RESTOREALL;
- 	do_signal(current);
- }
--#endif /* CONFIG_GENERIC_ENTRY */
-diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
-index 9f03a6263fb41..df1c9a8d62bc6 100644
---- a/arch/powerpc/kernel/syscall.c
-+++ b/arch/powerpc/kernel/syscall.c
-@@ -3,6 +3,7 @@
- #include <linux/compat.h>
- #include <linux/context_tracking.h>
- #include <linux/randomize_kstack.h>
-+#include <linux/entry-common.h>
- 
- #include <asm/interrupt.h>
- #include <asm/kup.h>
-@@ -18,124 +19,10 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
- 	long ret;
- 	syscall_fn f;
- 
--	kuap_lock();
--
- 	add_random_kstack_offset();
-+	r0 = syscall_enter_from_user_mode(regs, r0);
- 
--	if (IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG))
--		BUG_ON(irq_soft_mask_return() != IRQS_ALL_DISABLED);
--
--	trace_hardirqs_off(); /* finish reconciling */
--
--	CT_WARN_ON(ct_state() == CT_STATE_KERNEL);
--	user_exit_irqoff();
--
--	BUG_ON(regs_is_unrecoverable(regs));
--	BUG_ON(!user_mode(regs));
--	BUG_ON(regs_irqs_disabled(regs));
--
--#ifdef CONFIG_PPC_PKEY
--	if (mmu_has_feature(MMU_FTR_PKEY)) {
--		unsigned long amr, iamr;
--		bool flush_needed = false;
--		/*
--		 * When entering from userspace we mostly have the AMR/IAMR
--		 * different from kernel default values. Hence don't compare.
--		 */
--		amr = mfspr(SPRN_AMR);
--		iamr = mfspr(SPRN_IAMR);
--		regs->amr  = amr;
--		regs->iamr = iamr;
--		if (mmu_has_feature(MMU_FTR_KUAP)) {
--			mtspr(SPRN_AMR, AMR_KUAP_BLOCKED);
--			flush_needed = true;
--		}
--		if (mmu_has_feature(MMU_FTR_BOOK3S_KUEP)) {
--			mtspr(SPRN_IAMR, AMR_KUEP_BLOCKED);
--			flush_needed = true;
--		}
--		if (flush_needed)
--			isync();
--	} else
--#endif
--		kuap_assert_locked();
--
--	booke_restore_dbcr0();
--
--	account_cpu_user_entry();
--
--	account_stolen_time();
--
--	/*
--	 * This is not required for the syscall exit path, but makes the
--	 * stack frame look nicer. If this was initialised in the first stack
--	 * frame, or if the unwinder was taught the first stack frame always
--	 * returns to user with IRQS_ENABLED, this store could be avoided!
--	 */
--	irq_soft_mask_regs_set_state(regs, IRQS_ENABLED);
--
--	/*
--	 * If system call is called with TM active, set _TIF_RESTOREALL to
--	 * prevent RFSCV being used to return to userspace, because POWER9
--	 * TM implementation has problems with this instruction returning to
--	 * transactional state. Final register values are not relevant because
--	 * the transaction will be aborted upon return anyway. Or in the case
--	 * of unsupported_scv SIGILL fault, the return state does not much
--	 * matter because it's an edge case.
--	 */
--	if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
--			unlikely(MSR_TM_TRANSACTIONAL(regs->msr)))
--		set_bits(_TIF_RESTOREALL, &current_thread_info()->flags);
--
--	/*
--	 * If the system call was made with a transaction active, doom it and
--	 * return without performing the system call. Unless it was an
--	 * unsupported scv vector, in which case it's treated like an illegal
--	 * instruction.
--	 */
--#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
--	if (unlikely(MSR_TM_TRANSACTIONAL(regs->msr)) &&
--	    !trap_is_unsupported_scv(regs)) {
--		/* Enable TM in the kernel, and disable EE (for scv) */
--		hard_irq_disable();
--		mtmsr(mfmsr() | MSR_TM);
--
--		/* tabort, this dooms the transaction, nothing else */
--		asm volatile(".long 0x7c00071d | ((%0) << 16)"
--				:: "r"(TM_CAUSE_SYSCALL|TM_CAUSE_PERSISTENT));
--
--		/*
--		 * Userspace will never see the return value. Execution will
--		 * resume after the tbegin. of the aborted transaction with the
--		 * checkpointed register state. A context switch could occur
--		 * or signal delivered to the process before resuming the
--		 * doomed transaction context, but that should all be handled
--		 * as expected.
--		 */
--		return -ENOSYS;
--	}
--#endif // CONFIG_PPC_TRANSACTIONAL_MEM
--
--	local_irq_enable();
--
--	if (unlikely(read_thread_flags() & _TIF_SYSCALL_DOTRACE)) {
--		if (unlikely(trap_is_unsupported_scv(regs))) {
--			/* Unsupported scv vector */
--			_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
--			return regs->gpr[3];
--		}
--		/*
--		 * We use the return value of do_syscall_trace_enter() as the
--		 * syscall number. If the syscall was rejected for any reason
--		 * do_syscall_trace_enter() returns an invalid syscall number
--		 * and the test against NR_syscalls will fail and the return
--		 * value to be used is in regs->gpr[3].
--		 */
--		r0 = do_syscall_trace_enter(regs);
--		if (unlikely(r0 >= NR_syscalls))
--			return regs->gpr[3];
--
--	} else if (unlikely(r0 >= NR_syscalls)) {
-+	if (unlikely(r0 >= NR_syscalls)) {
- 		if (unlikely(trap_is_unsupported_scv(regs))) {
- 			/* Unsupported scv vector */
- 			_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
--- 
-2.51.0
+In reply to Andrews comment I copied the two above paragraphs into the
+commit message in the applied patch.
 
+Yours,
+Linus Walleij
 
