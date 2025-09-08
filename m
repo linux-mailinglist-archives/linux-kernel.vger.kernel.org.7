@@ -1,421 +1,449 @@
-Return-Path: <linux-kernel+bounces-805607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C64FB48AF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90513B48B02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C8E3A9BCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B4118909CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74832FB606;
-	Mon,  8 Sep 2025 11:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBF82EB84C;
+	Mon,  8 Sep 2025 11:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="o1MNrhai"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01BE2EAB60;
-	Mon,  8 Sep 2025 11:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757329344; cv=none; b=fW8gFggcntEoC73DE+lPazI5Zl3Fvl8oFQE9EM4Jw0xswla7uCFUZGA1ECeOJFzcvDVUAUwcFDouareT0zPBoLLmsAlCAUoSkbON40Vr6FDLvaeMj6RIlPNjdjXmEINR1OoypAMbchNwWRiP1Y0nMeiUO8AmB2b15n++sjwg/Qo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757329344; c=relaxed/simple;
-	bh=fZqFTPG6CUlhtmvjqcvjm50M1ZGWHUi5eeV9jdi5gXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YQlBkYPdGGDpQIQ/9yLo0QVIaKMxZSCPLwO1gip1LqgQndi4yG4VAoot8KcE0XqwTBygWQSJq7kRisyn3H6EuDH+AVg8KOJwIDxT5vVUlYJDScKSFjc6LgMLD8fL3f8ZviwVpBn6/L8RYljCG0psZqYOexzh8IqW8BU4QI8Ty2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=o1MNrhai; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=TW
-	LZemOGq5QEnnAEqQzmvX/rwUuoGqFLalDFRcVQT6s=; b=o1MNrhaiaCBEePfbiR
-	m5OZ/xGAObHblQw3buoCfUVh64bWtCZP7R+pC7o0PdDNrNIXcMR7tyIA+z1y9qzX
-	6tCGLmb6qGvnJE4A472mdy/q6O/+r4nBssND7y6KkTGild9+Q1lgVMBi/ZVN2Anl
-	3niZwKZafm4X1IQ4x3fIe5fw8=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD334Wft75oyQIqHg--.1312S2;
-	Mon, 08 Sep 2025 19:01:52 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	kerneljasonxing@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v12 2/2] net: af_packet: Use hrtimer to do the retire operation
-Date: Mon,  8 Sep 2025 19:01:50 +0800
-Message-Id: <20250908110150.214500-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="DmssuoMV";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="3e1viLCb"
+Received: from mx0a-0014ca01.pphosted.com (mx0a-0014ca01.pphosted.com [208.84.65.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F092EC55F;
+	Mon,  8 Sep 2025 11:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=208.84.65.235
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757329355; cv=fail; b=gc2wxPVP+MVvuQyn6LyJC/2jl0qYZqRFhAlBEyAFAtnFORruy491BjU82yfKwGJLlwvfnbv/9rfluj+5CeARvZikQMAWe9iWlZDw+ulJAnF08JZpMnfMryr8Qk8j8HezCBBgZ275Jz4q2e9N6C1Fpyco1EwrBr0+vF5hQKGxx+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757329355; c=relaxed/simple;
+	bh=qfaz95n2kDGSbqsPHz/LbfGnQ1sD64JomK4BqGFCdBE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RLTUMpw8+hHaIo34qD+TVmqY5IeTZyIlmTidHmRFh/ZvHqj55xwAXHaiSJOyfaZGg6bX1+5r3FTc4NpZPNhMFfR8imUTQMD0mWpSQGLYYIb0VimtB5Yh2Jb3DUFhh7VtCpB+Q3A/7IMe9MpKVwvLm9H/AoMpewE9XmfEssq+xXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cadence.com; spf=pass smtp.mailfrom=cadence.com; dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b=DmssuoMV; dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b=3e1viLCb; arc=fail smtp.client-ip=208.84.65.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cadence.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cadence.com
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+	by mx0a-0014ca01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5887iMhD021811;
+	Mon, 8 Sep 2025 04:02:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=proofpoint;
+	 bh=qfaz95n2kDGSbqsPHz/LbfGnQ1sD64JomK4BqGFCdBE=; b=DmssuoMVDzI2
+	tTyTU2ZhwYIK8+7oJ75ZihYArNgLZnF8WtEV4R7ggpUcquN9UkeUPMGgYlvDEQlK
+	1tmgSMVb+8/V1qWaRaWhiO/cdrAk6VGGUXsJMew8iBXwZ85RJsRfYCqQEGjp4h8w
+	gtXEmP/KOO+K/9eFJrpYNqrkb6Uu26UIB02sXLx11iVEwViejw/YpQ/ORKz4exgW
+	NRMFYMlWM5VDYpEGQsx8XPTAB1QJPoH5cl6G/ssyv3ClruOQgYAoSU7RedNNhRWu
+	XMH2y8Ou/UvTX1iFKNUsaVTVGbWySTEkX0QSNThwSUFInt673Yt0moToyo9DG1hX
+	5OsfZAkDUQ==
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
+	by mx0a-0014ca01.pphosted.com (PPS) with ESMTPS id 490hguxfsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 04:02:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r0WI2kpbLkP2jUSxiol7q530pBKuI+ZnU4RaAQa2QKa7Lv5sb3VMBDXkRZQYtDS3AJfFYoG3OKCwa+vpaJ3GyeiFIgr/xIwLOu6x62PAcVrI4KaszbFIaqGx5zX9JOx2GNxwDkOZb5xtxyJuOKawFi4HF9XFrF/FWJuzxz5BXtQXVVL80iAWuN99qk8YtMXoM20j4ijTFoYcWILbSTSsD1rzBXXKxySEUYeRzqFlwyPF32iTF4mvsGLoXn3u1TUYqI5r2oqFutDcV8p+lev8n1GiWCcTBQyyFrETdK7o4zN9Q1oe98RHDIcH+eH2oEQXzuK7FSesOirNuNcmr3Xwqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qfaz95n2kDGSbqsPHz/LbfGnQ1sD64JomK4BqGFCdBE=;
+ b=XFpMrKRezT0soEZakVFn6OqubfxAZdzbWNiL37T/ramDlCpQ5ILy435pllqfMT3zbrF5CZcwFotjbHdLHjlBGovT1ulaZvg2W7FrxAWB0Sv9+4nhJAZn87DqVdwbEuM59/qt7ruSrpsQ5IqqKg1PqF4WD+5iMyHQwkcGY5FArG3IZV+LrpbnGcGVGuGfVD4FgZNM2Cla8762IFdCrB6lZEXtqrtiJk5Ii3Cy13xzmHoOz7BnMXItQzZsFV/jrVISlkkSpbamzmr7KbVbsnpYSg8ZBIR9VfD+TeFlagJqKITJw00uVjd+ykocDcwbHAsvOcJgH4FTUUnlefWC8xgkzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qfaz95n2kDGSbqsPHz/LbfGnQ1sD64JomK4BqGFCdBE=;
+ b=3e1viLCbM98i/OuTPNSRZVNIqdlDtvkcy3O8cebgGLh5WYKdcrJDh4e41HA6kY20eLn4MNR8gj8/Ny7DST2BPchUJH6XbwvWu37fYn5DzaqNN0XmzR7Dr3Z/wR/ZzEuuwGxFozKc1MYFZ0xRaeVCVzoN/Wdt651fQvFEQv+lQwU=
+Received: from CH2PPF4D26F8E1C.namprd07.prod.outlook.com
+ (2603:10b6:61f:fc00::278) by SA1PR07MB8465.namprd07.prod.outlook.com
+ (2603:10b6:806:1ac::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.12; Mon, 8 Sep
+ 2025 11:02:04 +0000
+Received: from CH2PPF4D26F8E1C.namprd07.prod.outlook.com
+ ([fe80::7cef:10c6:11b0:cb05]) by CH2PPF4D26F8E1C.namprd07.prod.outlook.com
+ ([fe80::7cef:10c6:11b0:cb05%8]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 11:02:04 +0000
+From: Manikandan Karunakaran Pillai <mpillai@cadence.com>
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        "hans.zhang@cixtech.com"
+	<hans.zhang@cixtech.com>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>,
+        "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
+	<robh@kernel.org>,
+        "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "conor+dt@kernel.org"
+	<conor+dt@kernel.org>,
+        "fugang.duan@cixtech.com" <fugang.duan@cixtech.com>,
+        "guoyin.chen@cixtech.com" <guoyin.chen@cixtech.com>,
+        "peter.chen@cixtech.com"
+	<peter.chen@cixtech.com>,
+        "cix-kernel-upstream@cixtech.com"
+	<cix-kernel-upstream@cixtech.com>,
+        "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v9 03/14] PCI: cadence: Add register definitions for High
+ Perf Architecture (HPA)
+Thread-Topic: [PATCH v9 03/14] PCI: cadence: Add register definitions for High
+ Perf Architecture (HPA)
+Thread-Index: AQHcGyHF21Wj7acNR0+WPRm5cOUseLSJHtWAgAAKGYA=
+Date: Mon, 8 Sep 2025 11:02:04 +0000
+Message-ID:
+ <CH2PPF4D26F8E1C0A1FADD4357EBF526BAAA20CA@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+References: <20250901092052.4051018-1-hans.zhang@cixtech.com>
+ <20250901092052.4051018-4-hans.zhang@cixtech.com>
+ <ilpurwleklzj5dskokypmepizwqixycyvk52qsocgwhpmyy2hz@2wvalkxquari>
+In-Reply-To: <ilpurwleklzj5dskokypmepizwqixycyvk52qsocgwhpmyy2hz@2wvalkxquari>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH2PPF4D26F8E1C:EE_|SA1PR07MB8465:EE_
+x-ms-office365-filtering-correlation-id: 16b47868-8266-4c4f-f55e-08ddeec72533
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dEJXMU84QTNRZG1Ua3BabmZMRnc5SlZGN1J4T3E3S2hEWmRmd2hUcXc2d21j?=
+ =?utf-8?B?eVNKdVBNcE9OazdtbmR3cDc2V3N3bm90ZFBVd3pyQWdSWXJGVjZHRnhacXBE?=
+ =?utf-8?B?eXRaUUdFTU9WNTlWY1JTOHNLeGpHU1k4cEZJaDFuQ0dGME1QM0l4UTYyejdx?=
+ =?utf-8?B?cHBLUDYvTThXQ056bU1ybnI0SHlCNjh2cHRVUGo2OG9YSXdhK1VNR3hOR29w?=
+ =?utf-8?B?dXRiMUgxNWhiVUxtOFoxcEdzVGk0SE1yVXJsZzdtb0tyU294cmNEUW4xR2JZ?=
+ =?utf-8?B?SzVGYmhrd1dBZFRLM3VLNTdKNldCRkhWeXFvVnRxYU1aNUdEOE1yR2RxYktC?=
+ =?utf-8?B?cjEzd2ticWRXM0ExVWpQeUh5bEZxbHVKZnFwc0NXTVMxc2xUR1haM2NYVGhM?=
+ =?utf-8?B?U1hiQXlFaWVlSjN4WUxzcUtEM01QUlBNZm9VdTlLeXNjTDRYMUhVOG14R3d6?=
+ =?utf-8?B?aGRlaER5VnVUYmNsOWFhbU85UzZtdlVaREk1RWd0MWt6VG1CdW5aTWlWMUFJ?=
+ =?utf-8?B?TnI0RXFmck9GNXZSQjZkVE9zZHU0eXlrY1hpemlFMlZlU3JkSmd3NlNwOE5n?=
+ =?utf-8?B?SkNQVXltLzAvK2dYdldTSU1QOWlwcXd6aGhYMmkwaVVjaWFXQWxUbGVtZngw?=
+ =?utf-8?B?WVpMTGlPbjdhUXVpZXkwaTNLRGpTWTRtbFJuOG9WRVpZQVpEUnZCOTlnY3By?=
+ =?utf-8?B?Z3VWY0tQTnNFNXgvbXc3bVV5ZU9WbFRNNUh0dmJWekdZKzZCeWVTc1JoRE5l?=
+ =?utf-8?B?VTd6REhkMitHamhIRE92dVVRVXBZeHdkbVlDZFRxT285QldPdDFjWWlWckRK?=
+ =?utf-8?B?K29jK3RnVTNpNU1Bcyt0bzBkaHJjNTVaV0JDNHRVNlVpRG85YUFqV0F2Rlpj?=
+ =?utf-8?B?azFacTNKSzNQa1RCZjZ4YmZ3KzUzZGJFQVlMb1k3NGFWN0xRL3h0dkljbWds?=
+ =?utf-8?B?dmRjbzU2Um5lWTJFdWdIb3ZZL1lub1Jkb0pEOVVObzI4bWJKL21IUWxDVFln?=
+ =?utf-8?B?aTB1ak5PVW8zRVNSVlFhNkU5SG5xZTZpa1JCTFJ1ZmRFeEZscFhIaU0zSk4z?=
+ =?utf-8?B?b2NsRTZabHRBclNueXZVUXc4RUJzdnczUk9YTWplVjY4c0l6ODdmVWVmc1hF?=
+ =?utf-8?B?VzQ3N1ZEUGZFSUhJdzRCTGpEdFdjMlRJYTk0eXR3Njk2U1BQUkZJRlBSZVpW?=
+ =?utf-8?B?VFpwUWhCanpJZ0ZYd29JZWplZWlFNHM0NEovRWpWZGplT2JtN3dKb3grQU10?=
+ =?utf-8?B?WjFxa3c4dll3V054OEp2T0JWcTY3WFpHTncrb1U5U0Z5dm05L2pNeUZIR3h3?=
+ =?utf-8?B?NHk3MzBwMzhGT2NvNG1kb3d1dmVydE8zYTVrTXdxL3lOTlFDaEl5OVBqWk12?=
+ =?utf-8?B?VVZVcHJ1a05OL3Iyc2R0NmlEK29OWkxhbk9WZjVHb2NTSDdiZnZPdEtVdXpM?=
+ =?utf-8?B?bXNkUDhhWkZ0RVBlV2Z4ZlNDajNrWHBsVlI3T3gwWFMzOFg2eTlCa0FRS1FG?=
+ =?utf-8?B?SC9McmFjRHg5NGVmNU55REdxNHBYZWplT2ZlemJ2NlBxbG1ZdWpYWlJMVzdh?=
+ =?utf-8?B?eXNrL0hMeFVUZ2xuM2xXVTBuSjJJMEdFSk1QTmFZaEVnTmxxNFVYdjBoajN2?=
+ =?utf-8?B?Vm9EUFlyWTU0YStpamZuMlkyM3FGMC84L3JhcFFyNlZqaGhKbG95dkJJTndJ?=
+ =?utf-8?B?cnZBZE9IMkFxdzdJbDFPYWZSUXlQRU9KRTFCZTF3QUdTUTZiWWpYRjQ3Z2hx?=
+ =?utf-8?B?VXFBemlDdzRUV3cva1laTVRxRUpTQXFoVzR3NEJXOVNGQWc2cG9oenl5T1VC?=
+ =?utf-8?B?U0FEb0xuU3E3TzgyWWY1NVlleGVJbzRLUk5OUmtzTkFROXJxMTNRajNCcTgr?=
+ =?utf-8?B?cnpqa1R6K0JxVnUvN3JkeU5TRFNLaGY1c3VheHR0dkRJb0xzRE80a0FzQlVn?=
+ =?utf-8?B?RytEUnZoZFZSZ2FkRFFBMU9UNy81Y0MzdG5rTVo0Rk1HNWw0dGROYnovaHRs?=
+ =?utf-8?B?TVR0bXVLWjFBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PPF4D26F8E1C.namprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eUwyMStzUTZiM2hEc1FFcXFidnZEcnNYZXU0WUtWMUkyMmN5MlpoS0NOajM4?=
+ =?utf-8?B?dmptRk9ZU20xeXNEMitOQlFJcElLTzdDOHR3NFNEMVN3UWNjMWx2MmhaOXJO?=
+ =?utf-8?B?MUxSZkNVS3RXNnE1S3crak9DaDgwNzVxbTVDdHBtTzFDbFJJbmlMNlhtbjE4?=
+ =?utf-8?B?bEd1SVRjNDN1QXNYdVFRZndZcU5LMklsVXkyQWNXeGxaNTNXb1RoSm0ySmJX?=
+ =?utf-8?B?TlFyZFVXcFRmVGZzVFZiTGRrWUhpWW1BbUV5VEo2M3Eram9qS0FhSzhWMWpr?=
+ =?utf-8?B?Wk1nL2lyMHg4Rm9EZTJQa20vMmxZWDI2bXdVNDRJdEtCYkhNY2NSc1JYTVZo?=
+ =?utf-8?B?Nmo0N01PSWVsYW16UkRwdXd2dno0WkhmYmRES1VpVjZLcXZVRkFiUFdPcnli?=
+ =?utf-8?B?bUx0MzB1b1h2d0dhREwwU3lndGdNU2xiMHVzZzVyLzBaNmY5NVRHL2pZUDBQ?=
+ =?utf-8?B?OFUrdmZSNXQ0dzZQNjZld3EyZndNRDJHZE9BRGlJOUJTYllMbkJzWURTM2h3?=
+ =?utf-8?B?ODZDSE82NDBKd1UzYzZTWjJSdEdVU1NXYWIrMTdhditwTUlFZ0o2YUZCNkYr?=
+ =?utf-8?B?ekhNSkpyR1dadGJSWHJxL0NycFQwdHI4TzVPQmg4cVFubVluT3NobCtkbGFr?=
+ =?utf-8?B?TDkrUnNCQkpMWFpPL0llcUdkaHU1V2tkTnZkWFNTS1plQmVWSWh4NmovZVFi?=
+ =?utf-8?B?eVJSL29OVkRHcExYWkNNQ2dMQ0p5ZHg4U3FjeFBhK2E1am5LZmJ4ZFNaNzFu?=
+ =?utf-8?B?aWxrTStwTGdOams5UkJvYUhpQlgzRnJmVG95MFRVQ0Q5bkdUOVlvWk1qTy9L?=
+ =?utf-8?B?Vm1rVTlOVG5uWWh5WjRrSzhQNFRBajUzK1lnZGdEUVBxaDV6NEtwYUJDanJI?=
+ =?utf-8?B?NmJCWmdieG5BRnpLMVduNURDR1pVTXRKWEN6K2I1cTA4M2taUlZJYm44TDhD?=
+ =?utf-8?B?cllYaTB4S3hCZy9ibGNMNXdoWTZsT09UeW1zenN5bnpnbXJ5UVAvWDM3SEs5?=
+ =?utf-8?B?N215cllERW8yV2J0UGhrUm4yNEg3WVhUNkYySFVEMGNrT3Ntay83UmJZUFhn?=
+ =?utf-8?B?ZC95ZWE2ZUpGMVhLdTB0VC9Ud2xCNWxFbkR2dlBaQVNMWHZmMW01LzEvTm1W?=
+ =?utf-8?B?VG02K3loaUdOQmNKNEp0dCtsM1ExNWVpSnNJOFkwemdEeGJmZGd3cFBzbXlU?=
+ =?utf-8?B?MXZWcnROcktWNnlVUzArUHRwV0locFdpMDY3aTNud2lCK1FxL2xZakcwTExW?=
+ =?utf-8?B?R3M2ZThGZnhIcDQxdVdoMTVhME5nYVRzRnhrWmdQeXl2Mk1ZWmRhOGdtdWYx?=
+ =?utf-8?B?M3VlbTlOZWFPUCtscUUrdWx5Y2JpSmpCVk9ZbWtYSWtNUWFCb3o1TEVkTTVk?=
+ =?utf-8?B?VVlSaFN5Qm5JdFpsTlRTeFhSQUhqY3I3Sm1BL09wRmdjaVMzVTU0OWhGbjls?=
+ =?utf-8?B?OEM2V2RRZkJSNFRCdDEzdlpGOC8vWGUrUU9qS1VWMHBNNDFtS0dvaW9MM1pp?=
+ =?utf-8?B?cytXVkd5K3BVdVJjeFJvR3pNWFd6dm9hOWlXR3FkSDRTOC9IY0V4Znc0STlB?=
+ =?utf-8?B?L2hhdTl0amd0MWJ0dWxXbmFBUlBMUzZ3MmVuQkN3cjRGZUpLdU9yMlFyeTEw?=
+ =?utf-8?B?N2R0VS9MS3pXYXJYL3o2dWo2VVhQU3B6bityUXgxcjVBM0pKaVYrTk45U05w?=
+ =?utf-8?B?THBWL1BHV04rNjBmVDRQSW9BanZ3OVFtMVhWcHZBaU1SQmxOVEo3MzdWaVJX?=
+ =?utf-8?B?cGQzYzdmMWNaLzY4aGROWHZjYys2bjdpeWY0ZHNhdEpnL1E0bDVIY0IzdkNW?=
+ =?utf-8?B?Q1psL0tsaGQvc0VNUmpOVmZMZFdQTzJESEV4dUtHb0dEVHhjekN6aVJVUFdy?=
+ =?utf-8?B?YmRnLzZjdHFyU0hEVjEyKzYxOStYdUM4WjJYbE1HeG1PMkxiTU83QVM5Mm9l?=
+ =?utf-8?B?S0lPU1NZaCtxWWRYVmRUcU9Kb3dXbVIrdE5VeDI3UndiSUplTnVhWHFwemF5?=
+ =?utf-8?B?eDJaa3MvbmxXRHNJbWJwTjlIYUFLczRwbm1HVjlzUVBtWnpDYzd6eC9aUTNE?=
+ =?utf-8?B?WjgxY2NvS3hyZVJjZi9OV0hYUGUwV0QvN1F0U0QxYks0aHA0aTBYaHl3dWVi?=
+ =?utf-8?Q?Hb057a7V8KzvkQ75IWfpcSMSO?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD334Wft75oyQIqHg--.1312S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Zw48ur1kAFyDArWUuF4xtFb_yoW8GryxGo
-	Z3XrZ8Cr4ktry7A397Cry2kFy7W3yDtr15Jr4F9rWkW3Z0vr15uw1fJay3u3yfuw1Skw1k
-	AFy8Ww1rXF1Dtr1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRa0PDUUUUU
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibhvCCmi+sYWjcAAAsM
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PPF4D26F8E1C.namprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16b47868-8266-4c4f-f55e-08ddeec72533
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2025 11:02:04.6360
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I+wuDxgBVuqdh99d6KXSHlkreAEJ2qhc+INR2vaTarfV/U/CeTuL23pt/JluUjbqIF2ATfQuhUAFiw7Nn4djL6lj60Z++ZGY49tLvg+hHuM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR07MB8465
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDA3OSBTYWx0ZWRfXycsJn9ctlcsM k8WAMglnfrp75r3uBdx2QdCei2oJrx0lTNGuERz+xMVC02xEo0MavB8+MNIDVbCJObHQTQlbB7n R+8mVruE3hj8NibJgsUGheQeCmBAVIqjAR2amOq4o0DT7REi2/4WUOhJASpG8RYViazEiNR62Ei
+ GtJ6d0bSt8eAtBi/tgVhwlmh7JWuMPIbAdUEJCYyCSrH2tANX8Bx1J9kTjiGcS++K5YBbtP9TsZ +IvNvGMMS/5vuNQnG/CbTtbziNXWLyvDEPZJRzMkXuu1y+jShix7k/8RfTJVygdqyNLblwAutQi 2RWWxVJz+zRghLF+BZa1Acfkveq+QXajfZCDBpu2lJxNZtiY+aUTM3nO69Eo6TZNs2ghvUudVg4 lxOR92wy
+X-Proofpoint-ORIG-GUID: HDA3ePfZaqPrm_oHhNZUn6KjHso3U1YG
+X-Proofpoint-GUID: HDA3ePfZaqPrm_oHhNZUn6KjHso3U1YG
+X-Authority-Analysis: v=2.4 cv=Ndjm13D4 c=1 sm=1 tr=0 ts=68beb7b0 cx=c_pps a=kOHF8erZG/eWunecuJI6IQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Zpq2whiEiuAA:10 a=TAThrSAKAAAA:8 a=Br2UW1UjAAAA:8 a=rr0eMgHzuN3VnIXlj-8A:9 a=QEXdDO2ut3YA:10 a=8BaDVV8zVhUtoWX9exhy:22 a=WmXOPjafLNExVIMTj843:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_04,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 bulkscore=0
+ clxscore=1015 phishscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060079
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
-
-Delete delete_blk_timer field, because hrtimer_cancel will check and wait
-until the timer callback return and ensure never enter callback again.
-
-Simplify the logic related to setting timeout, only update the hrtimer
-expire time within the hrtimer callback, no longer update the expire time
-in prb_open_block which is called by tpacket_rcv or timer callback.
-Reasons why NOT update hrtimer in prb_open_block:
-1) It will increase complexity to distinguish the two caller scenario.
-2) hrtimer_cancel and hrtimer_start need to be called if you want to update
-TMO of an already enqueued hrtimer, leading to complex shutdown logic.
-
-One side effect of NOT update hrtimer when called by tpacket_rcv is that
-a newly opened block triggered by tpacket_rcv may be retired earlier than
-expected. On the other hand, if timeout is updated in prb_open_block, the
-frequent reception of network packets that leads to prb_open_block being
-called may cause hrtimer to be removed and enqueued repeatedly.
-
-The retire hrtimer expiration is unconditional and periodic. If there are
-numerous packet sockets on the system, please set an appropriate timeout
-to avoid frequent enqueueing of hrtimers.
-
-
-Reviewed-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
-Link: https://lore.kernel.org/all/20250831100822.1238795-1-jackzxcui1989@163.com/
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
-Changes in v12:
-- Add reason why delete delete_blk_timer field in the commit message
-  as suggested by Jason Xing.
-- Add reason why NOT update hrtimer in prb_open_block in the commit message
-  as suggested by Jason Xing.
-
-Changes in v11:
-- structure tpacket_kbdq_core needs a new organization
-  as suggested by Jason Xing.
-- Change the comments of prb_retire_rx_blk_timer_expired and prb_open_block
-  as suggested by Jason Xing.
-
-Changes in v9:
-- Remove the function prb_setup_retire_blk_timer and move hrtimer setup and start
-  logic into function init_prb_bdqc
-  as suggested by Willem de Bruijn.
-- Remove 'refresh_timer:' label which is not needed while I change goto logic to
-  if-else implementation.
-
-Changes in v8:
-- Delete delete_blk_timer field, as suggested by Willem de Bruijn,
-  hrtimer_cancel will check and wait until the timer callback return and ensure
-  never enter callback again.
-- Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
-  Currently timer callback just restarts itself unconditionally, so delete the
-  'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
-  directly and always return HRTIMER_RESTART.
-  The only special case is when prb_open_block is called from tpacket_rcv. That
-  would set the timeout further into the future than the already queued timer.
-  An earlier timeout is not problematic. No need to add complexity to avoid that.
-
-Changes in v7:
-- Only update the hrtimer expire time within the hrtimer callback.
-  When the callback return, without sk_buff_head lock protection, __run_hrtimer will
-  enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
-  enqueuing a timer may cause chaos in the hrtimer red-black tree.
-
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn.
-
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet.
-- Mention the beneficial cases 'HZ=100 or HZ=250' and performance details
-  in the changelog
-  as suggested by Eric Dumazet and Ferenc Fejes.
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn.
-
----
- net/packet/af_packet.c | 104 +++++++++++------------------------------
- net/packet/diag.c      |   2 +-
- net/packet/internal.h  |  10 ++--
- 3 files changed, 33 insertions(+), 83 deletions(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index d4eb4a4fe..f0f8955c0 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -203,8 +203,7 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
- static int prb_queue_frozen(struct tpacket_kbdq_core *);
- static void prb_open_block(struct tpacket_kbdq_core *,
- 		struct tpacket_block_desc *);
--static void prb_retire_rx_blk_timer_expired(struct timer_list *);
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
- static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
- static void prb_clear_rxhash(struct tpacket_kbdq_core *,
- 		struct tpacket3_hdr *);
-@@ -579,33 +578,13 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
- 	return proto;
- }
- 
--static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
--{
--	timer_delete_sync(&pkc->retire_blk_timer);
--}
--
- static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
- 		struct sk_buff_head *rb_queue)
- {
- 	struct tpacket_kbdq_core *pkc;
- 
- 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--
--	spin_lock_bh(&rb_queue->lock);
--	pkc->delete_blk_timer = 1;
--	spin_unlock_bh(&rb_queue->lock);
--
--	prb_del_retire_blk_timer(pkc);
--}
--
--static void prb_setup_retire_blk_timer(struct packet_sock *po)
--{
--	struct tpacket_kbdq_core *pkc;
--
--	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
--		    0);
--	pkc->retire_blk_timer.expires = jiffies;
-+	hrtimer_cancel(&pkc->retire_blk_timer);
- }
- 
- static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-@@ -671,53 +650,34 @@ static void init_prb_bdqc(struct packet_sock *po,
- 	p1->version = po->tp_version;
- 	po->stats.stats3.tp_freeze_q_cnt = 0;
- 	if (req_u->req3.tp_retire_blk_tov)
--		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-+		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
- 	else
--		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
--						req_u->req3.tp_block_size);
--	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-+		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-+						 req_u->req3.tp_block_size));
- 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
- 	rwlock_init(&p1->blk_fill_in_prog_lock);
- 
- 	p1->max_frame_len = p1->kblk_size - BLK_PLUS_PRIV(p1->blk_sizeof_priv);
- 	prb_init_ft_ops(p1, req_u);
--	prb_setup_retire_blk_timer(po);
-+	hrtimer_setup(&p1->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-+	hrtimer_start(&p1->retire_blk_timer, p1->interval_ktime,
-+		      HRTIMER_MODE_REL_SOFT);
- 	prb_open_block(p1, pbd);
- }
- 
--/*  Do NOT update the last_blk_num first.
-- *  Assumes sk_buff_head lock is held.
-- */
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
--{
--	mod_timer(&pkc->retire_blk_timer,
--			jiffies + pkc->tov_in_jiffies);
--}
--
- /*
-- * Timer logic:
-- * 1) We refresh the timer only when we open a block.
-- *    By doing this we don't waste cycles refreshing the timer
-- *	  on packet-by-packet basis.
-- *
-  * With a 1MB block-size, on a 1Gbps line, it will take
-  * i) ~8 ms to fill a block + ii) memcpy etc.
-  * In this cut we are not accounting for the memcpy time.
-  *
-- * So, if the user sets the 'tmo' to 10ms then the timer
-- * will never fire while the block is still getting filled
-- * (which is what we want). However, the user could choose
-- * to close a block early and that's fine.
-- *
-- * But when the timer does fire, we check whether or not to refresh it.
-  * Since the tmo granularity is in msecs, it is not too expensive
-  * to refresh the timer, lets say every '8' msecs.
-  * Either the user can set the 'tmo' or we can derive it based on
-  * a) line-speed and b) block-size.
-  * prb_calc_retire_blk_tmo() calculates the tmo.
-- *
-  */
--static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
- {
- 	struct packet_sock *po =
- 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
-@@ -730,9 +690,6 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	frozen = prb_queue_frozen(pkc);
- 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 
--	if (unlikely(pkc->delete_blk_timer))
--		goto out;
--
- 	/* We only need to plug the race when the block is partially filled.
- 	 * tpacket_rcv:
- 	 *		lock(); increment BLOCK_NUM_PKTS; unlock()
-@@ -749,26 +706,16 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	}
- 
- 	if (!frozen) {
--		if (!BLOCK_NUM_PKTS(pbd)) {
--			/* An empty block. Just refresh the timer. */
--			goto refresh_timer;
-+		if (BLOCK_NUM_PKTS(pbd)) {
-+			/* Not an empty block. Need retire the block. */
-+			prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
-+			prb_dispatch_next_block(pkc, po);
- 		}
--		prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
--		if (!prb_dispatch_next_block(pkc, po))
--			goto refresh_timer;
--		else
--			goto out;
- 	} else {
- 		/* Case 1. Queue was frozen because user-space was
- 		 * lagging behind.
- 		 */
--		if (prb_curr_blk_in_use(pbd)) {
--			/*
--			 * Ok, user-space is still behind.
--			 * So just refresh the timer.
--			 */
--			goto refresh_timer;
--		} else {
-+		if (!prb_curr_blk_in_use(pbd)) {
- 			/* Case 2. queue was frozen,user-space caught up,
- 			 * now the link went idle && the timer fired.
- 			 * We don't have a block to close.So we open this
-@@ -777,15 +724,12 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 			 * Thawing/timer-refresh is a side effect.
- 			 */
- 			prb_open_block(pkc, pbd);
--			goto out;
- 		}
- 	}
- 
--refresh_timer:
--	_prb_refresh_rx_retire_blk_timer(pkc);
--
--out:
-+	hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
- 	spin_unlock(&po->sk.sk_receive_queue.lock);
-+	return HRTIMER_RESTART;
- }
- 
- static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-@@ -879,11 +823,18 @@ static void prb_thaw_queue(struct tpacket_kbdq_core *pkc)
- }
- 
- /*
-- * Side effect of opening a block:
-+ * prb_open_block is called by tpacket_rcv or timer callback.
-  *
-- * 1) prb_queue is thawed.
-- * 2) retire_blk_timer is refreshed.
-+ * Reasons why NOT update hrtimer in prb_open_block:
-+ * 1) It will increase complexity to distinguish the two caller scenario.
-+ * 2) hrtimer_cancel and hrtimer_start need to be called if you want to update
-+ * TMO of an already enqueued hrtimer, leading to complex shutdown logic.
-  *
-+ * One side effect of NOT update hrtimer when called by tpacket_rcv is that
-+ * a newly opened block triggered by tpacket_rcv may be retired earlier than
-+ * expected. On the other hand, if timeout is updated in prb_open_block, the
-+ * frequent reception of network packets that leads to prb_open_block being
-+ * called may cause hrtimer to be removed and enqueued repeatedly.
-  */
- static void prb_open_block(struct tpacket_kbdq_core *pkc1,
- 	struct tpacket_block_desc *pbd1)
-@@ -917,7 +868,6 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
- 	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
- 
- 	prb_thaw_queue(pkc1);
--	_prb_refresh_rx_retire_blk_timer(pkc1);
- 
- 	smp_wmb();
- }
-diff --git a/net/packet/diag.c b/net/packet/diag.c
-index 6ce1dcc28..c8f43e0c1 100644
---- a/net/packet/diag.c
-+++ b/net/packet/diag.c
-@@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
- 	pdr.pdr_frame_nr = ring->frame_max + 1;
- 
- 	if (ver > TPACKET_V2) {
--		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
-+		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
- 		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
- 		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
- 	} else {
-diff --git a/net/packet/internal.h b/net/packet/internal.h
-index d367b9f93..b76e645cd 100644
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -20,10 +20,11 @@ struct tpacket_kbdq_core {
- 	unsigned int	feature_req_word;
- 	unsigned int	hdrlen;
- 	unsigned char	reset_pending_on_curr_blk;
--	unsigned char   delete_blk_timer;
- 	unsigned short	kactive_blk_num;
- 	unsigned short	blk_sizeof_priv;
- 
-+	unsigned short  version;
-+
- 	char		*pkblk_start;
- 	char		*pkblk_end;
- 	int		kblk_size;
-@@ -32,6 +33,7 @@ struct tpacket_kbdq_core {
- 	uint64_t	knxt_seq_num;
- 	char		*prev;
- 	char		*nxt_offset;
-+
- 	struct sk_buff	*skb;
- 
- 	rwlock_t	blk_fill_in_prog_lock;
-@@ -39,12 +41,10 @@ struct tpacket_kbdq_core {
- 	/* Default is set to 8ms */
- #define DEFAULT_PRB_RETIRE_TOV	(8)
- 
--	unsigned short  retire_blk_tov;
--	unsigned short  version;
--	unsigned long	tov_in_jiffies;
-+	ktime_t		interval_ktime;
- 
- 	/* timer to retire an outstanding block */
--	struct timer_list retire_blk_timer;
-+	struct hrtimer  retire_blk_timer;
- };
- 
- struct pgv {
--- 
-2.34.1
-
+DQoNCj4NCj5FWFRFUk5BTCBNQUlMDQo+DQo+DQo+T24gTW9uLCBTZXAgMDEsIDIwMjUgYXQgMDU6
+MjA6NDFQTSBHTVQsIGhhbnMuemhhbmdAY2l4dGVjaC5jb20gd3JvdGU6DQo+PiBGcm9tOiBNYW5p
+a2FuZGFuIEsgUGlsbGFpIDxtcGlsbGFpQGNhZGVuY2UuY29tPg0KPj4NCj4+IEFkZCB0aGUgcmVn
+aXN0ZXIgb2Zmc2V0cyBhbmQgcmVnaXN0ZXIgZGVmaW5pdGlvbnMgZm9yIEhpZ2ggUGVyZm9ybWFu
+Y2UNCj4+IEFyY2hpdGVjdHVyZSAoSFBBKSBQQ0llIGNvbnRyb2xsZXJzIGZyb20gQ2FkZW5jZS4N
+Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBNYW5pa2FuZGFuIEsgUGlsbGFpIDxtcGlsbGFpQGNhZGVu
+Y2UuY29tPg0KPj4gQ28tZGV2ZWxvcGVkLWJ5OiBIYW5zIFpoYW5nIDxoYW5zLnpoYW5nQGNpeHRl
+Y2guY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogSGFucyBaaGFuZyA8aGFucy56aGFuZ0BjaXh0ZWNo
+LmNvbT4NCj4NCj5ObyBuZWVkIHRvIHNwbGl0IHRoaXMgaW50byBhIHNlcGFyYXRlIHBhdGNoLiBT
+cXVhc2ggaXQgd2l0aCB0aGUgcGF0Y2ggdGhhdCBhZGRzDQo+dGhlIGNvZGUgY29uc3VtaW5nIHRo
+ZXNlLg0KPg0KPi0gTWFuaQ0KDQpTb21lIG9mIHRoZSBlYXJsaWVyIGNvbW1lbnRzIG9uIHRoZSBz
+YW1lIHBhdGNoIHNldCByZXF1aXJlZCB0aGF0IG1vdmVzL3NwbGl0dGluZyBvZiBhIGZpbGUgYmUg
+aW4gYSBzZXBhcmF0ZSBwYXRjaCBhbmQgYWxzbyB0aGUgc2l6ZSBvZiB0aGUgcGF0Y2ggYmUga2Vw
+dCB0byBhIG1hbmFnZWFibGUgc2l6ZS4gIFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3Ugd291bGQg
+c3RpbGwgbGlrZSB0aGlzIHBhdGNoIHRvIGJlIGNsdWJiZWQgaW50byBhIGJpZ2dlciBwYXRjaC4N
+Cg0KTWFuaWthbmRhbiBQaWxsYWkNCj4NCj4+IC0tLQ0KPj4gIC4uLi9jYWRlbmNlL3BjaWUtY2Fk
+ZW5jZS1ocGEtcmVncy5oICAgICAgICAgICB8IDE5MiArKysrKysrKysrKysrKysrKysNCj4+ICBk
+cml2ZXJzL3BjaS9jb250cm9sbGVyL2NhZGVuY2UvcGNpZS1jYWRlbmNlLmggfCAgIDEgKw0KPj4g
+IDIgZmlsZXMgY2hhbmdlZCwgMTkzIGluc2VydGlvbnMoKykNCj4+ICBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9wY2kvY29udHJvbGxlci9jYWRlbmNlL3BjaWUtY2FkZW5jZS1ocGEtcmVncy5o
+DQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvY2FkZW5jZS9wY2ll
+LWNhZGVuY2UtaHBhLXJlZ3MuaA0KPmIvZHJpdmVycy9wY2kvY29udHJvbGxlci9jYWRlbmNlL3Bj
+aWUtY2FkZW5jZS1ocGEtcmVncy5oDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXgg
+MDAwMDAwMDAwMDAwLi43ZWY4N2NmOTY4MzYNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2Ry
+aXZlcnMvcGNpL2NvbnRyb2xsZXIvY2FkZW5jZS9wY2llLWNhZGVuY2UtaHBhLXJlZ3MuaA0KPj4g
+QEAgLTAsMCArMSwxOTIgQEANCj4+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIu
+MCAqLw0KPj4gKy8qDQo+PiArICogQ2FkZW5jZSBQQ0llIGNvbnRyb2xsZXIgZHJpdmVyLg0KPj4g
+KyAqDQo+PiArICogQ29weXJpZ2h0IChjKSAyMDE5LCBDYWRlbmNlIERlc2lnbiBTeXN0ZW1zDQo+
+PiArICogQXV0aG9yOiBNYW5pa2FuZGFuIEsgUGlsbGFpIDxtcGlsbGFpQGNhZGVuY2UuY29tPg0K
+Pj4gKyAqLw0KPj4gKyNpZm5kZWYgX1BDSUVfQ0FERU5DRV9IUEFfUkVHU19IDQo+PiArI2RlZmlu
+ZSBfUENJRV9DQURFTkNFX0hQQV9SRUdTX0gNCj4+ICsNCj4+ICsjaW5jbHVkZSA8bGludXgva2Vy
+bmVsLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L3BjaS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9w
+Y2ktZXBmLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L3BoeS9waHkuaD4NCj4+ICsjaW5jbHVkZSA8
+bGludXgvYml0ZmllbGQuaD4NCj4+ICsNCj4+ICsvKiBIaWdoIFBlcmZvcm1hbmNlIEFyY2hpdGVj
+dHVyZSAoSFBBKSBQQ0llIGNvbnRyb2xsZXIgcmVnaXN0ZXJzICovDQo+PiArI2RlZmluZSBDRE5T
+X1BDSUVfSFBBX0lQX1JFR19CQU5LCQkweDAxMDAwMDAwDQo+PiArI2RlZmluZSBDRE5TX1BDSUVf
+SFBBX0lQX0NGR19DVFJMX1JFR19CQU5LCTB4MDEwMDNDMDANCj4+ICsjZGVmaW5lIENETlNfUENJ
+RV9IUEFfSVBfQVhJX01BU1RFUl9DT01NT04JMHgwMTAyMDAwMA0KPj4gKw0KPj4gKy8qIEFkZHJl
+c3MgVHJhbnNsYXRpb24gUmVnaXN0ZXJzICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FY
+SV9TTEFWRSAgICAgICAgICAgICAgICAgMHgwMzAwMDAwMA0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lF
+X0hQQV9BWElfTUFTVEVSICAgICAgICAgICAgICAgIDB4MDMwMDIwMDANCj4+ICsNCj4+ICsvKiBS
+b290IFBvcnQgcmVnaXN0ZXIgYmFzZSBhZGRyZXNzICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVf
+SFBBX1JQX0JBU0UJCQkweDANCj4+ICsNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fSUQJ
+CQkweDE0MjANCj4+ICsNCj4+ICsvKiBFbmRwb2ludCBGdW5jdGlvbiBCQVJzICovDQo+PiArI2Rl
+ZmluZSBDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGRyhiYXIsIGZuKSBcDQo+PiArCSgo
+KGJhcikgPCBCQVJfMykgPyBDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGRzAoZm4pIDog
+XA0KPj4gKwkJCUNETlNfUENJRV9IUEFfTE1fRVBfRlVOQ19CQVJfQ0ZHMShmbikpDQo+PiArI2Rl
+ZmluZSBDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGRzAocGZuKSAoMHg0MDAwICogKHBm
+bikpDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGRzEocGZuKSAo
+KDB4NDAwMCAqIChwZm4pKSArDQo+MHgwNCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1f
+RVBfVkZVTkNfQkFSX0NGRyhiYXIsIGZuKSBcDQo+PiArCSgoKGJhcikgPCBCQVJfMykgPyBDRE5T
+X1BDSUVfSFBBX0xNX0VQX1ZGVU5DX0JBUl9DRkcwKGZuKSA6IFwNCj4+ICsJCQlDRE5TX1BDSUVf
+SFBBX0xNX0VQX1ZGVU5DX0JBUl9DRkcxKGZuKSkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFf
+TE1fRVBfVkZVTkNfQkFSX0NGRzAodmZuKSAoKDB4NDAwMCAqICh2Zm4pKSArDQo+MHgwOCkNCj4+
+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fRVBfVkZVTkNfQkFSX0NGRzEodmZuKSAoKDB4NDAw
+MCAqICh2Zm4pKSArDQo+MHgwQykNCj4+ICsjZGVmaW5lDQo+Q0ROU19QQ0lFX0hQQV9MTV9FUF9G
+VU5DX0JBUl9DRkdfQkFSX0FQRVJUVVJFX01BU0soZikgXA0KPj4gKwkoR0VOTUFTSyg5LCA0KSA8
+PCAoKGYpICogMTApKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9MTV9FUF9GVU5DX0JBUl9D
+RkdfQkFSX0FQRVJUVVJFKGIsIGEpIFwNCj4+ICsJKCgoYSkgPDwgKDQgKyAoKGIpICogMTApKSkg
+Jg0KPihDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGR19CQVJfQVBFUlRVUkVfTUFTSyhi
+KSkpDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFSX0NGR19CQVJfQ1RS
+TF9NQVNLKGYpIFwNCj4+ICsJKEdFTk1BU0soMywgMCkgPDwgKChmKSAqIDEwKSkNCj4+ICsjZGVm
+aW5lIENETlNfUENJRV9IUEFfTE1fRVBfRlVOQ19CQVJfQ0ZHX0JBUl9DVFJMKGIsIGMpIFwNCj4+
+ICsJKCgoYykgPDwgKChiKSAqIDEwKSkgJg0KPihDRE5TX1BDSUVfSFBBX0xNX0VQX0ZVTkNfQkFS
+X0NGR19CQVJfQ1RSTF9NQVNLKGIpKSkNCj4+ICsNCj4+ICsvKiBFbmRwb2ludCBGdW5jdGlvbiBD
+b25maWd1cmF0aW9uIFJlZ2lzdGVyICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0VQ
+X0ZVTkNfQ0ZHCQkweDAyQzANCj4+ICsNCj4+ICsvKiBSb290IENvbXBsZXggQkFSIENvbmZpZ3Vy
+YXRpb24gUmVnaXN0ZXIgKi8NCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fUkNfQkFSX0NG
+RyAgICAgICAgICAgICAgICAgICAgICAgIDB4MTQNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFf
+TE1fUkNfQkFSX0NGR19CQVIwX0FQRVJUVVJFX01BU0sNCj5HRU5NQVNLKDksIDQpDQo+PiArI2Rl
+ZmluZSBDRE5TX1BDSUVfSFBBX0xNX1JDX0JBUl9DRkdfQkFSMF9BUEVSVFVSRShhKSBcDQo+PiAr
+DQo+CUZJRUxEX1BSRVAoQ0ROU19QQ0lFX0hQQV9MTV9SQ19CQVJfQ0ZHX0JBUjBfQVBFUlRVUkVf
+TUENCj5TSywgYSkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fUkNfQkFSX0NGR19CQVIw
+X0NUUkxfTUFTSw0KPkdFTk1BU0soMywgMCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1f
+UkNfQkFSX0NGR19CQVIwX0NUUkwoYykgXA0KPj4gKwlGSUVMRF9QUkVQKENETlNfUENJRV9IUEFf
+TE1fUkNfQkFSX0NGR19CQVIwX0NUUkxfTUFTSywgYykNCj4+ICsjZGVmaW5lIENETlNfUENJRV9I
+UEFfTE1fUkNfQkFSX0NGR19CQVIxX0FQRVJUVVJFX01BU0sNCj5HRU5NQVNLKDE5LCAxNCkNCj4+
+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fUkNfQkFSX0NGR19CQVIxX0FQRVJUVVJFKGEpIFwN
+Cj4+ICsNCj4JRklFTERfUFJFUChDRE5TX1BDSUVfSFBBX0xNX1JDX0JBUl9DRkdfQkFSMV9BUEVS
+VFVSRV9NQQ0KPlNLLCBhKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9MTV9SQ19CQVJfQ0ZH
+X0JBUjFfQ1RSTF9NQVNLDQo+R0VOTUFTSygxMywgMTApDQo+PiArI2RlZmluZSBDRE5TX1BDSUVf
+SFBBX0xNX1JDX0JBUl9DRkdfQkFSMV9DVFJMKGMpIFwNCj4+ICsJRklFTERfUFJFUChDRE5TX1BD
+SUVfSFBBX0xNX1JDX0JBUl9DRkdfQkFSMV9DVFJMX01BU0ssIGMpDQo+PiArDQo+PiArI2RlZmlu
+ZSBDRE5TX1BDSUVfSFBBX0xNX1JDX0JBUl9DRkdfUFJFRkVUQ0hfTUVNX0VOQUJMRQ0KPkJJVCgy
+MCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTE1fUkNfQkFSX0NGR19QUkVGRVRDSF9NRU1f
+NjRCSVRTDQo+QklUKDIxKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9MTV9SQ19CQVJfQ0ZH
+X0lPX0VOQUJMRSAgICAgICAgICAgQklUKDIyKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9M
+TV9SQ19CQVJfQ0ZHX0lPXzMyQklUUyAgICAgICAgICAgQklUKDIzKQ0KPj4gKw0KPj4gKy8qIEJB
+UiBjb250cm9sIHZhbHVlcyBhcHBsaWNhYmxlIHRvIGJvdGggRW5kcG9pbnQgRnVuY3Rpb24gYW5k
+IFJvb3QNCj5Db21wbGV4ICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0JBUl9DRkdf
+Q1RSTF9ESVNBQkxFRCAgICAgICAgICAgICAgMHgwDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBB
+X0xNX0JBUl9DRkdfQ1RSTF9JT18zMkJJVFMgICAgICAgICAgICAgMHgzDQo+PiArI2RlZmluZSBD
+RE5TX1BDSUVfSFBBX0xNX0JBUl9DRkdfQ1RSTF9NRU1fMzJCSVRTICAgICAgICAgICAgMHgxDQo+
+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0JBUl9DRkdfQ1RSTF9QUkVGRVRDSF9NRU1fMzJC
+SVRTDQo+MHg5DQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0JBUl9DRkdfQ1RSTF9NRU1f
+NjRCSVRTICAgICAgICAgICAgMHg1DQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xNX0JBUl9D
+RkdfQ1RSTF9QUkVGRVRDSF9NRU1fNjRCSVRTDQo+MHhEDQo+PiArDQo+PiArI2RlZmluZSBIUEFf
+TE1fUkNfQkFSX0NGR19DVFJMX0RJU0FCTEVEKGJhcikgICAgICAgICAgICAgICAgXA0KPj4gKwkJ
+KENETlNfUENJRV9IUEFfTE1fQkFSX0NGR19DVFJMX0RJU0FCTEVEIDw8ICgoYmFyKSAqDQo+MTAp
+KQ0KPj4gKyNkZWZpbmUgSFBBX0xNX1JDX0JBUl9DRkdfQ1RSTF9JT18zMkJJVFMoYmFyKSAgICAg
+ICAgICAgICAgIFwNCj4+ICsJCShDRE5TX1BDSUVfSFBBX0xNX0JBUl9DRkdfQ1RSTF9JT18zMkJJ
+VFMgPDwgKChiYXIpICoNCj4xMCkpDQo+PiArI2RlZmluZSBIUEFfTE1fUkNfQkFSX0NGR19DVFJM
+X01FTV8zMkJJVFMoYmFyKSAgICAgICAgICAgICAgXA0KPj4gKwkJKENETlNfUENJRV9IUEFfTE1f
+QkFSX0NGR19DVFJMX01FTV8zMkJJVFMgPDwgKChiYXIpDQo+KiAxMCkpDQo+PiArI2RlZmluZSBI
+UEFfTE1fUkNfQkFSX0NGR19DVFJMX1BSRUZfTUVNXzMyQklUUyhiYXIpIFwNCj4+ICsNCj4JKENE
+TlNfUENJRV9IUEFfTE1fQkFSX0NGR19DVFJMX1BSRUZFVENIX01FTV8zMkJJVFMgPDwNCj4oKGJh
+cikgKiAxMCkpDQo+PiArI2RlZmluZSBIUEFfTE1fUkNfQkFSX0NGR19DVFJMX01FTV82NEJJVFMo
+YmFyKSAgICAgICAgICAgICAgXA0KPj4gKwkJKENETlNfUENJRV9IUEFfTE1fQkFSX0NGR19DVFJM
+X01FTV82NEJJVFMgPDwgKChiYXIpDQo+KiAxMCkpDQo+PiArI2RlZmluZSBIUEFfTE1fUkNfQkFS
+X0NGR19DVFJMX1BSRUZfTUVNXzY0QklUUyhiYXIpIFwNCj4+ICsNCj4JKENETlNfUENJRV9IUEFf
+TE1fQkFSX0NGR19DVFJMX1BSRUZFVENIX01FTV82NEJJVFMgPDwNCj4oKGJhcikgKiAxMCkpDQo+
+PiArI2RlZmluZSBIUEFfTE1fUkNfQkFSX0NGR19BUEVSVFVSRShiYXIsIGFwZXJ0dXJlKSAgICAg
+ICAgICAgXA0KPj4gKwkJKCgoYXBlcnR1cmUpIC0gNykgPDwgKChiYXIpICogMTApKQ0KPj4gKw0K
+Pj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9MTV9QVE1fQ1RSTAkJMHgwNTIwDQo+PiArI2RlZmlu
+ZSBDRE5TX1BDSUVfSFBBX0xNX1RQTV9DVFJMX1BUTVJTRU4JQklUKDE3KQ0KPj4gKw0KPj4gKy8q
+IFJvb3QgUG9ydCBSZWdpc3RlcnMgUENJIGNvbmZpZyBzcGFjZSBmb3Igcm9vdCBwb3J0IGZ1bmN0
+aW9uICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX1JQX0NBUF9PRkZTRVQJMHhDMA0KPj4g
+Kw0KPj4gKy8qIFJlZ2lvbiByIE91dGJvdW5kIEFYSSB0byBQQ0llIEFkZHJlc3MgVHJhbnNsYXRp
+b24gUmVnaXN0ZXIgMCAqLw0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05f
+UENJX0FERFIwKHIpICAgICAgICAgICAgKDB4MTAxMCArDQo+KChyKSAmIDB4MUYpICogMHgwMDgw
+KQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fUENJX0FERFIwX05CSVRT
+X01BU0sNCj5HRU5NQVNLKDUsIDApDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FUX09CX1JF
+R0lPTl9QQ0lfQUREUjBfTkJJVFMobmJpdHMpIFwNCj4+ICsJKCgobmJpdHMpIC0gMSkgJg0KPkNE
+TlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX1BDSV9BRERSMF9OQklUU19NQVNLKQ0KPj4gKyNkZWZp
+bmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fUENJX0FERFIwX0RFVkZOX01BU0sNCj5HRU5N
+QVNLKDIzLCAxNikNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX1BDSV9B
+RERSMF9ERVZGTihkZXZmbikgXA0KPj4gKw0KPglGSUVMRF9QUkVQKENETlNfUENJRV9IUEFfQVRf
+T0JfUkVHSU9OX1BDSV9BRERSMF9ERVZGTl9NDQo+QVNLLCBkZXZmbikNCj4+ICsjZGVmaW5lIENE
+TlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX1BDSV9BRERSMF9CVVNfTUFTSw0KPkdFTk1BU0soMzEs
+IDI0KQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fUENJX0FERFIwX0JV
+UyhidXMpIFwNCj4+ICsNCj4JRklFTERfUFJFUChDRE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9Q
+Q0lfQUREUjBfQlVTX01BU0sNCj4sIGJ1cykNCj4+ICsNCj4+ICsvKiBSZWdpb24gciBPdXRib3Vu
+ZCBBWEkgdG8gUENJZSBBZGRyZXNzIFRyYW5zbGF0aW9uIFJlZ2lzdGVyIDEgKi8NCj4+ICsjZGVm
+aW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX1BDSV9BRERSMShyKSAgICAgICAgICAgICgw
+eDEwMTQgKw0KPigocikgJiAweDFGKSAqIDB4MDA4MCkNCj4+ICsNCj4+ICsvKiBSZWdpb24gciBP
+dXRib3VuZCBQQ0llIERlc2NyaXB0b3IgUmVnaXN0ZXIgKi8NCj4+ICsjZGVmaW5lIENETlNfUENJ
+RV9IUEFfQVRfT0JfUkVHSU9OX0RFU0MwKHIpICAgICAgICAgICAgICAgICgweDEwMDggKyAoKHIp
+DQo+JiAweDFGKSAqIDB4MDA4MCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVH
+SU9OX0RFU0MwX1RZUEVfTUFTSw0KPkdFTk1BU0soMjgsIDI0KQ0KPj4gKyNkZWZpbmUgQ0ROU19Q
+Q0lFX0hQQV9BVF9PQl9SRUdJT05fREVTQzBfVFlQRV9NRU0gIFwNCj4+ICsJRklFTERfUFJFUChD
+RE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9ERVNDMF9UWVBFX01BU0ssDQo+MHgwKQ0KPj4gKyNk
+ZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fREVTQzBfVFlQRV9JTyAgIFwNCj4+ICsJ
+RklFTERfUFJFUChDRE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9ERVNDMF9UWVBFX01BU0ssDQo+
+MHgyKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fREVTQzBfVFlQRV9D
+T05GX1RZUEUwICBcDQo+PiArCUZJRUxEX1BSRVAoQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05f
+REVTQzBfVFlQRV9NQVNLLA0KPjB4NCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0Jf
+UkVHSU9OX0RFU0MwX1RZUEVfQ09ORl9UWVBFMSAgXA0KPj4gKwlGSUVMRF9QUkVQKENETlNfUENJ
+RV9IUEFfQVRfT0JfUkVHSU9OX0RFU0MwX1RZUEVfTUFTSywNCj4weDUpDQo+PiArI2RlZmluZSBD
+RE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9ERVNDMF9UWVBFX05PUk1BTF9NU0cgIFwNCj4+ICsJ
+RklFTERfUFJFUChDRE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9ERVNDMF9UWVBFX01BU0ssDQo+
+MHgxMCkNCj4+ICsNCj4+ICsvKiBSZWdpb24gciBPdXRib3VuZCBQQ0llIERlc2NyaXB0b3IgUmVn
+aXN0ZXIgKi8NCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX0RFU0MxKHIp
+ICAgICAgICAoMHgxMDBDICsgKChyKSAmDQo+MHgxRikgKiAweDAwODApDQo+PiArI2RlZmluZSBD
+RE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9ERVNDMV9CVVNfTUFTSw0KPkdFTk1BU0soMzEsIDI0
+KQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fREVTQzFfQlVTKGJ1cykg
+XA0KPj4gKwlGSUVMRF9QUkVQKENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX0RFU0MxX0JVU19N
+QVNLLA0KPmJ1cykNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX0RFU0Mx
+X0RFVkZOX01BU0sNCj5HRU5NQVNLKDIzLCAxNikNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFf
+QVRfT0JfUkVHSU9OX0RFU0MxX0RFVkZOKGRldmZuKSBcDQo+PiArCUZJRUxEX1BSRVAoQ0ROU19Q
+Q0lFX0hQQV9BVF9PQl9SRUdJT05fREVTQzFfREVWRk5fTUFTSywNCj5kZXZmbikNCj4+ICsNCj4+
+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfT0JfUkVHSU9OX0NUUkwwKHIpICAgICAgICAgKDB4
+MTAxOCArICgocikgJg0KPjB4MUYpICogMHgwMDgwKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQ
+QV9BVF9PQl9SRUdJT05fQ1RSTDBfU1VQUExZX0JVUyBCSVQoMjYpDQo+PiArI2RlZmluZSBDRE5T
+X1BDSUVfSFBBX0FUX09CX1JFR0lPTl9DVFJMMF9TVVBQTFlfREVWX0ZOIEJJVCgyNSkNCj4+ICsN
+Cj4+ICsvKiBSZWdpb24gciBBWEkgUmVnaW9uIEJhc2UgQWRkcmVzcyBSZWdpc3RlciAwICovDQo+
+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9DUFVfQUREUjAocikgICAgICgw
+eDEwMDAgKyAoKHIpICYNCj4weDFGKSAqIDB4MDA4MCkNCj4+ICsjZGVmaW5lIENETlNfUENJRV9I
+UEFfQVRfT0JfUkVHSU9OX0NQVV9BRERSMF9OQklUU19NQVNLDQo+R0VOTUFTSyg1LCAwKQ0KPj4g
+KyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9PQl9SRUdJT05fQ1BVX0FERFIwX05CSVRTKG5iaXRz
+KSBcDQo+PiArCSgoKG5iaXRzKSAtIDEpICYNCj5DRE5TX1BDSUVfSFBBX0FUX09CX1JFR0lPTl9D
+UFVfQUREUjBfTkJJVFNfTUFTSykNCj4+ICsNCj4+ICsvKiBSZWdpb24gciBBWEkgUmVnaW9uIEJh
+c2UgQWRkcmVzcyBSZWdpc3RlciAxICovDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FUX09C
+X1JFR0lPTl9DUFVfQUREUjEocikgICAgICgweDEwMDQgKyAoKHIpICYNCj4weDFGKSAqIDB4MDA4
+MCkNCj4+ICsNCj4+ICsvKiBSb290IFBvcnQgQkFSIEluYm91bmQgUENJZSB0byBBWEkgQWRkcmVz
+cyBUcmFuc2xhdGlvbiBSZWdpc3RlciAqLw0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9BVF9J
+Ql9SUF9CQVJfQUREUjAoYmFyKSAgICAgICAgICAgICAgKCgoYmFyKSAqDQo+MHgwMDA4KSkNCj4+
+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfQVRfSUJfUlBfQkFSX0FERFIwX05CSVRTX01BU0sNCj5H
+RU5NQVNLKDUsIDApDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FUX0lCX1JQX0JBUl9BRERS
+MF9OQklUUyhuYml0cykgXA0KPj4gKwkoKChuYml0cykgLSAxKSAmIENETlNfUENJRV9IUEFfQVRf
+SUJfUlBfQkFSX0FERFIwX05CSVRTX01BU0spDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0FU
+X0lCX1JQX0JBUl9BRERSMShiYXIpICAgICAgICAgICAgICAoMHgwNCArICgoYmFyKQ0KPiogMHgw
+MDA4KSkNCj4+ICsNCj4+ICsvKiBBWEkgbGluayBkb3duIHJlZ2lzdGVyICovDQo+PiArI2RlZmlu
+ZSBDRE5TX1BDSUVfSFBBX0FUX0xJTktET1dOIDB4MDQNCj4+ICsNCj4+ICsvKg0KPj4gKyAqIFBo
+eXNpY2FsIExheWVyIENvbmZpZ3VyYXRpb24gUmVnaXN0ZXIgMA0KPj4gKyAqIFRoaXMgcmVnaXN0
+ZXIgY29udGFpbnMgdGhlIHBhcmFtZXRlcnMgcmVxdWlyZWQgZm9yIGZ1bmN0aW9uYWwgc2V0dXAN
+Cj4+ICsgKiBvZiBQaHlzaWNhbCBMYXllci4NCj4+ICsgKi8NCj4+ICsjZGVmaW5lIENETlNfUENJ
+RV9IUEFfUEhZX0xBWUVSX0NGRzAgICAgICAgICAgICAgICAweDA0MDANCj4+ICsjZGVmaW5lIENE
+TlNfUENJRV9IUEFfREVURUNUX1FVSUVUX01JTl9ERUxBWV9NQVNLICBHRU5NQVNLKDI2LA0KPjI0
+KQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9ERVRFQ1RfUVVJRVRfTUlOX0RFTEFZKGRlbGF5
+KSBcDQo+PiArCUZJRUxEX1BSRVAoQ0ROU19QQ0lFX0hQQV9ERVRFQ1RfUVVJRVRfTUlOX0RFTEFZ
+X01BU0ssDQo+ZGVsYXkpDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX0xJTktfVFJOR19FTl9N
+QVNLICBHRU5NQVNLKDI3LCAyNykNCj4+ICsNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfUEhZ
+X0RCR19TVFNfUkVHMCAgICAgICAgICAgICAweDA0MjANCj4+ICsNCj4+ICsjZGVmaW5lIENETlNf
+UENJRV9IUEFfUlBfTUFYX0lCICAgICAweDMNCj4+ICsjZGVmaW5lIENETlNfUENJRV9IUEFfTUFY
+X09CICAgICAgICAxNQ0KPj4gKw0KPj4gKy8qIEVuZHBvaW50IEZ1bmN0aW9uIEJBUiBJbmJvdW5k
+IFBDSWUgdG8gQVhJIEFkZHJlc3MgVHJhbnNsYXRpb24gUmVnaXN0ZXINCj4qLw0KPj4gKyNkZWZp
+bmUgQ0ROU19QQ0lFX0hQQV9BVF9JQl9FUF9GVU5DX0JBUl9BRERSMChmbiwgYmFyKSAoKChmbikg
+Kg0KPjB4MDA0MCkgKyAoKGJhcikgKiAweDAwMDgpKQ0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQ
+QV9BVF9JQl9FUF9GVU5DX0JBUl9BRERSMShmbiwgYmFyKSAoMHg0ICsgKChmbikNCj4qIDB4MDA0
+MCkgKyAoKGJhcikgKiAweDAwMDgpKQ0KPj4gKw0KPj4gKy8qIE1pc2NlbGxhbmVvdXMgb2Zmc2V0
+cyBkZWZpbml0aW9ucyAqLw0KPj4gKyNkZWZpbmUgQ0ROU19QQ0lFX0hQQV9UQUdfTUFOQUdFTUVO
+VCAgICAgICAgMHgwDQo+PiArI2RlZmluZSBDRE5TX1BDSUVfSFBBX1NMQVZFX1JFU1AgICAgICAg
+ICAgICAweDEwMA0KPj4gKw0KPj4gKyNkZWZpbmUgSV9ST09UX1BPUlRfUkVRX0lEX1JFRyAgICAg
+ICAgICAgICAgMHgxNDFjDQo+PiArI2RlZmluZSBMTV9IQUxfU0JTQV9DVFJMICAgICAgICAgICAg
+ICAgICAgICAweDExNzANCj4+ICsNCj4+ICsjZGVmaW5lIElfUENJRV9CVVNfTlVNQkVSUyAgICAg
+ICAgICAgICAgICAgIChDRE5TX1BDSUVfSFBBX1JQX0JBU0UgKw0KPjB4MTgpDQo+PiArI2VuZGlm
+IC8qIF9QQ0lFX0NBREVOQ0VfSFBBX1JFR1NfSCAqLw0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+cGNpL2NvbnRyb2xsZXIvY2FkZW5jZS9wY2llLWNhZGVuY2UuaA0KPmIvZHJpdmVycy9wY2kvY29u
+dHJvbGxlci9jYWRlbmNlL3BjaWUtY2FkZW5jZS5oDQo+PiBpbmRleCA3OWRmODYxMTdmZGUuLmRk
+ZmM0NGY4ZDNlZiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvY2FkZW5j
+ZS9wY2llLWNhZGVuY2UuaA0KPj4gKysrIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9jYWRlbmNl
+L3BjaWUtY2FkZW5jZS5oDQo+PiBAQCAtMTEsNiArMTEsNyBAQA0KPj4gICNpbmNsdWRlIDxsaW51
+eC9wY2ktZXBmLmg+DQo+PiAgI2luY2x1ZGUgPGxpbnV4L3BoeS9waHkuaD4NCj4+ICAjaW5jbHVk
+ZSAicGNpZS1jYWRlbmNlLWxnYS1yZWdzLmgiDQo+PiArI2luY2x1ZGUgInBjaWUtY2FkZW5jZS1o
+cGEtcmVncy5oIg0KPj4NCj4+ICBlbnVtIGNkbnNfcGNpZV9ycF9iYXIgew0KPj4gIAlSUF9CQVJf
+VU5ERUZJTkVEID0gLTEsDQo+PiAtLQ0KPj4gMi40OS4wDQo+Pg0KPg0KPi0tDQo+4K6u4K6j4K6/
+4K614K6j4K+N4K6j4K6p4K+NIOCumuCupOCuvuCumuCuv+CuteCuruCvjQ0K
 
