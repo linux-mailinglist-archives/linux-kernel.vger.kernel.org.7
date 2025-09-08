@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-805131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B79B4845A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:43:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8FFB48464
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1048B189ED45
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676223B7E66
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E88229C351;
-	Mon,  8 Sep 2025 06:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2C42DCF4D;
+	Mon,  8 Sep 2025 06:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKGNfL4N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnWFyM9Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D327296BC1;
-	Mon,  8 Sep 2025 06:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A0B2DCF61;
+	Mon,  8 Sep 2025 06:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757313737; cv=none; b=ewXa4h2Jm3MK6D3lkQBPXrvKaucwVY+2S3N0BRFlNAiMkaVAypSl+I0d+XVsrq3k+D7sEnTL8QIm8wmDxkeyj59cIn1iXP0TTgEIGjz8KpcU64lpapykaNqxDXkdsqZXVKQUnmsC0MAVpJLV1N4XCdo19vWU/1YSeVIHxPSO5Ec=
+	t=1757314000; cv=none; b=VnQ9KGV+jhRMcfEmaoEerm63L+N6SSa//YKcXN7bwADOcRfdZf0yiMa9XJs8ho0j4N15R/dBZWHaUYeIpG2UvoPW0HIMTg0Oadt3W6/Xsqv/apv+zI0X5A/6jrei81fv7GuJHBIqG4I38di+1KXBd4HrIfc8QiUYVsePAb9fM8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757313737; c=relaxed/simple;
-	bh=waxwksXGGRw+oNuAuE7zdOaAHM5Z9luVPrK2hbjGgjo=;
+	s=arc-20240116; t=1757314000; c=relaxed/simple;
+	bh=fAmV77mb1VoxyeST3l6OxnHQ4ZInPXDlz0o+ONab5TM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SG9I3XK2THfay4AvMS5+mW1P7foLiaFs8kVdVlnfyameRo9aEGmksnxH4u5YgbM70WAjlvusr0iLc8c4FnQ1VAI0wGAIXSxdrHb1uERTSIXdLJ70O0nVRVABeShauuAkCqxWiBrNWAY5r0VqjYpxLlyvsfDyZoUh7a0nfOjuiCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKGNfL4N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E90C4CEF5;
-	Mon,  8 Sep 2025 06:42:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=YpsjhmFQiyhxHNGMHJ4epULfpVK6vtA9R5ifpxt9o1gTYag6YHr84AKTj8P1ExGlcL3xA+apBoZM5Y2I6EF3LnY+riXpBkqDfJbFvp5M53rT5yHZNaojpkstmZLkPM9ZW9AptKcFYMOPTT1CHAVSjOU/S3LpMgrk3r/Tis/+TzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnWFyM9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E2FC4CEF5;
+	Mon,  8 Sep 2025 06:46:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757313735;
-	bh=waxwksXGGRw+oNuAuE7zdOaAHM5Z9luVPrK2hbjGgjo=;
+	s=k20201202; t=1757313999;
+	bh=fAmV77mb1VoxyeST3l6OxnHQ4ZInPXDlz0o+ONab5TM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PKGNfL4NovGzRl6U1v0PjmJ99OLkjWkk2Gy4Gg3xUuwxf18Rs6AoVHNq8Q5QzTrSW
-	 n/yVz/D8jYkq18UWg4tJT96WFfGYzWN3zxUSuV5Q0C1u+jAUF19fF+CTyBXw7+sIR8
-	 K4dq86vyQBhhqh0pc069cqOT+s/WXTsAg+ziveB9w6il8ymj4YLcQ8KiTVqRTyR9Gp
-	 l4QNMNxZ8EVqhK+hNgKMnk1FSoYuujPGpqUoJhCq+ymH3Ms/GjVgkoIZQIisaxMUlI
-	 YljXV/lNW9R23YPysiMInnm8pFGWQ72DofDwVgXsU+U6BNSNg96HirLBLE0Mta/ufi
-	 3yy9xspZxUQgw==
-Message-ID: <c380ffd0-17ec-4162-8d41-37c438c23f8e@kernel.org>
-Date: Mon, 8 Sep 2025 08:42:10 +0200
+	b=LnWFyM9QO49hYb/Ue61T50WDBnUZRvUOH+vCsSaMZmYs7ZoeBR92wIFjebxPtVIrG
+	 jLxWe4Pq4Z9SHPFYuF5rLRyjJOAT0VEBUv8Io9A0PXP45Ek2+QVEqBD2v2tTHC6cDZ
+	 065AIrlMa1+SwowbBbW60F8u7xKYM9lQEHn6PqRMXl6USmSL4Zv7qyHZjpqpanRXIw
+	 KOSD65zDVRnlFZk/ZaW761jypsmAzy1bxCuXFS7/fHkTyDk6f4OmPEt2d9mpqe5AUe
+	 wFTUssNlND6Mk527mLHLnOmQB+BtiVfNJxrUXDFLkuvJtIHb7QGLeb40VgrgMrD7Hp
+	 Eb/8PyyKANnnw==
+Message-ID: <3e815b1f-57dc-4c6a-aa73-fb5ab77e7cd7@kernel.org>
+Date: Mon, 8 Sep 2025 08:46:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] spi: atmel,quadspi: Document sam9x7 QSPI
-To: Dharma.B@microchip.com
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- tudor.ambarus@linaro.org, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250902-microchip-qspi-v1-0-37af59a0406a@microchip.com>
- <20250902-microchip-qspi-v1-1-37af59a0406a@microchip.com>
- <20250902-macho-violet-orangutan-faac78@kuoka>
- <7099b01b-2071-4561-b27b-0f1443f5856e@microchip.com>
+Subject: Re: [PATCH v2 0/8] arm64: dts: exynos990: Add PERIC0/1 USI, UART and
+ HSI2C support
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-i2c@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250907-perics-add-usinodes-v2-0-58f41796d2d3@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,31 +107,48 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <7099b01b-2071-4561-b27b-0f1443f5856e@microchip.com>
+In-Reply-To: <20250907-perics-add-usinodes-v2-0-58f41796d2d3@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/09/2025 05:45, Dharma.B@microchip.com wrote:
->>> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
->>> ---
->>>   Documentation/devicetree/bindings/spi/atmel,quadspi.yaml | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml b/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
->>> index b0d99bc10535..c17114123034 100644
->>> --- a/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
->>> +++ b/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
->>> @@ -17,6 +17,7 @@ properties:
->>>       enum:
->>>         - atmel,sama5d2-qspi
->>>         - microchip,sam9x60-qspi
->>> +      - microchip,sam9x7-ospi
->>
->> ... but 9x7 here. Confusing.
+On 08/09/2025 00:13, Denzeel Oliva wrote:
+> Hi,
 > 
-> It should be 9x7 only (qspi is common for sam9x7x), I will change it.
+> This series adds device tree support for PERIC0/1 blocks:
 > 
-Hm? That's wildcard then. See writing bindings.
+> - Add sysreg nodes required for peripheral configuration
+> - Add USI, UART and HSI2C controller nodes
+> - Update bindings with Exynos990 compatibles
+> 
+> These changes enable serial communication interfaces
+> (I2C, UART) for Exynos990 SoC.
+> 
+> Changes in v2:
+> - Remove unnecessary blank lines in HSI2C nodes.
+
+One patchset per 24h, allow people to actually review your code.
+
+> 
+> Denzeel Oliva
+> 
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+> Denzeel Oliva (8):
+>       dt-bindings: soc: samsung: exynos-sysreg: Add Exynos990 PERIC0/1 compatibles
+>       arm64: dts: exynos990: Add sysreg nodes for PERIC0 and PERIC1
+>       dt-bindings: soc: samsung: Add Exynos990 USI compatible
+>       arm64: dts: exynos990: Add USI nodes for PERIC0 and PERIC1
+>       dt-bindings: serial: samsung: Add Exynos990 UART compatible
+>       arm64: dts: exynos990: Add UART nodes for PERIC0/1
+>       dt-bindings: i2c: exynos5: Add exynos990-hsi2c compatible
+
+I don't get why you keep sending this in multiple patchsets now. It was
+on the list prviously, but now no versioning and it starts from v1. How
+maintainers can understand this?
+
+Anyway, I went through my queue this weekend and this was probably last
+time I will apply something, maybe except next revision of GS101 ACPM
+clocks. This means this patchset will wait for next merge window.
 
 Best regards,
 Krzysztof
