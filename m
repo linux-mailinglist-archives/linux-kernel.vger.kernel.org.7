@@ -1,126 +1,258 @@
-Return-Path: <linux-kernel+bounces-806685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63DAB49A5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2CCB49A69
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6883B0FBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361483B74D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5352D46C0;
-	Mon,  8 Sep 2025 19:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ED42D5C6A;
+	Mon,  8 Sep 2025 19:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2YH7Uvw"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="WuspcEjl"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE32D3EDE
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361146; cv=none; b=kmrHIcqTqtaOjgzXvu77/fGYFN2sfxBjCnpWMZejJ2mj+dQEUsS+1wRWIAJUjLmcyhaiVwYE+VJnbGG13Gyx2x5Q6wuRDBHClKrKBeeMBMHjKOVdxgGJLoCMfyTZ0qMEcxA5T/62QZ7OhX+ITK6VofKIFmbL7fyzm5KJUAR9Zyk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361146; c=relaxed/simple;
-	bh=ni41cp1kJj0k2/vDWCHyxCjBN8Adfrh4nUQNG0JAfr0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ghYy8AgXmDzlhJAMJ4GUSjOS0zQW8F15B1IMcCajxZUYEvy5FG8gJ4dponfY+UuUlpzsEQ+nmp3EvsKXaI3fqFC03M5h/KwkU3PXpRmj0GTx+I0ymbMwNBA6H6lL/tly3R3miO6xKymku7ZjA6YONI2xcKg5gqCQsp9K/t1MLYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2YH7Uvw; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329ee88fb47so9074052a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757361144; x=1757965944; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WmHxV7Lreaj5eVFu8hF6qzhJomNY/sSV63hQxdrkJQ=;
-        b=z2YH7UvwPHG7hOnsoUEJAbW5/zfEZUnPeGWx1nBphACZjKch98yX1KPeI9m/K6QCEa
-         YQuox+R4y1dSujCmUX3Z+Lf+7PgiI30juQCWKwUxHQnrB0/YN8c3v5i7iwj7iTcQsfs0
-         wzZ4fDMnYo36fsgEPhAZN7O/mkHLgN0d8f8J5harw8RbG78HCXvuAsvte2vQk9vmLcA3
-         Cbd16EISVJwjqUjXVKan6fUJdN+Y2WQpzUEx63Jx59EP7vC5KzUaZQ4GMo+FL/MxMplA
-         8yIYDMh9cZrpwtzzdwXobLE3atlkqgSFn0al5IAo03NyZukluiWjCxGDt5riekzMnaU7
-         vYYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757361144; x=1757965944;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WmHxV7Lreaj5eVFu8hF6qzhJomNY/sSV63hQxdrkJQ=;
-        b=vpObDi9MyddFCSi3KKtfwUispLsUkDP4CDAPfLchfki8lCKXXZs64sodg8R+X5S95Z
-         XKRz8/J9jX9MY8mNrvT0z354EOC9zcCtpVcttrqw0Ix56AfOPalwH5E1brRl5gq+hQp5
-         cby/wKdxrbGBXz08Mn2nOuvWC4eqi1VWrzJ6eWjxqcJMKHglLeqhxJW42fPTLyct5Tzy
-         Yd524Dg8s6go2dQjqk8/jKtkimHgNHrRJrx/VRPENTvLts3Km3MRuj8onn2wJwbeZiOf
-         tIeq9hF1ypbmQYZk5N364VKHtZ6U3UAE6l57circNp6DpYIgLb6Au5/grnlDNucsUouK
-         Of4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXsZ0KXHhbuhd4JA0/vVWQesCdBvIvnNUzOpVxAxASS1AuwBcpFQQZ6WruCR2gnBv31nMJK11Jh8Szl9Wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc4/Qt9OSw1vmxI9+xAN0j+fBvl5wYDnpZZ8S/EILVT7DGxbFt
-	sGifL940EmicRHnyXqpiiGTJOoSc+uE9XAn1kYySYerI0EAELdWlCpB4ALxdAoU3xfU18VPzNlU
-	0JIxUCg==
-X-Google-Smtp-Source: AGHT+IExCPRBqVtXN8qVa8YjvqbzwvBpn9IxtzEsHXQ/2kgRMpC8TgSSgM/sP14o8i1EVRy2DO9MXQPJ5wU=
-X-Received: from pjbsj13.prod.google.com ([2002:a17:90b:2d8d:b0:328:116e:273])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5185:b0:32b:d851:be44
- with SMTP id 98e67ed59e1d1-32d43f0b8e9mr11203024a91.11.1757361144105; Mon, 08
- Sep 2025 12:52:24 -0700 (PDT)
-Date: Mon, 8 Sep 2025 12:52:22 -0700
-In-Reply-To: <20250819090853.3988626-1-keirf@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21D1E231E;
+	Mon,  8 Sep 2025 19:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757361364; cv=pass; b=HiW8rPVPUhv3jc8h7fHLTG3RNp82HmE8E/A9VlS9nwydj7vi3c1qHk6jyKAbcByqf0vCo6yzIxZW1MxBQ9mckQNvee5TLHL9MIH+tcaNPq1c2EZVjocQZOsSoJf+H7wGyggwpUh9CocZqPuubtHC5GVnczP2h+AV/mIwif/2RPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757361364; c=relaxed/simple;
+	bh=MWpV4A2WRkUfqblRPidOKOMyFxPO/XuuQrBHbl8uMQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oUxeZUZLouoAhqIhaVJAaz7Pb0Gw1Dslw9ChUD7T+y+XI0WEgU7fRF1IRFSHg4aCRLVLBNkisnIGTh3HcJL1DjnNL6vm+YErA2a8xnASXxcmUJmNy4I4xOd0el2ejuFIVEUdRq2e4RjGebPsTQnGAv00jnzOn+AnU5Z4tFb6Amk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=WuspcEjl; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757361303; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mUzmnkI7ls4AvpKk9PkLBBYeCu+pH9kCHwMoKRU9mS8Va3Rk3P1EnjIukFHIQ1sAgt4nQPlbPOXlK83kFmYc2xVS75KjHCPk94ELyPusE++ff8czzuFzys66QYc4l6TbNekfLo+fBNe1sVSwmyurSAX0CZXICiNB/U581LhcNrU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757361303; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=M/VFSbxaoCdLjJSeyTwHsH+gRgpx/aAWpUtZlGe7uGk=; 
+	b=BaZlsaht09RzyFGIw897Zk6xphgJqy43DTSQKT9TkRm0X5MkO3meBCJ4cTbsHdUbbD2SEdI/5kc03gzpBrHIl+mADS6abfJXQtNg+5HPGSQoyur59mlSQ7Ia3ZhxJAtvYUVT99Q1iWwbwHsF4hvHTz/xFr1r9Snnsvu9tXKFPY0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757361303;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=M/VFSbxaoCdLjJSeyTwHsH+gRgpx/aAWpUtZlGe7uGk=;
+	b=WuspcEjlUBylmJh1B0BghZqg5B6vUEjxtdYtMYSmMk6RsbTPP0bLHXw0NlWAcceJ
+	xsO8L1flgUuEeUGRtXTkjsV0T9f76hnyQvEhLCzhzUA5H4Yt1V6Miux3sq5qAOgM9B+
+	4LA1qn9GmOhsgJZge5/qJBesfNjPEAzNODbFUE/w=
+Received: by mx.zohomail.com with SMTPS id 1757361302113105.67245372545813;
+	Mon, 8 Sep 2025 12:55:02 -0700 (PDT)
+Message-ID: <0b1d77ab-7b39-4764-9f0c-4b4a15aa0e56@collabora.com>
+Date: Mon, 8 Sep 2025 16:54:46 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819090853.3988626-1-keirf@google.com>
-Message-ID: <aL8z9vZOAeQvTBKF@google.com>
-Subject: Re: [PATCH v3 0/4] KVM: Speed up MMIO registrations
-From: Sean Christopherson <seanjc@google.com>
-To: Keir Fraser <keirf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 04/14] net: dt-bindings: Convert Marvell 8897/8997
+ bindings to YAML
+To: Rob Herring <robh@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
+ simona@ffwll.ch, support.opensource@diasemi.com, tiffany.lin@mediatek.com,
+ tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-5-ariel.dalessandro@collabora.com>
+ <CAL_Jsq+K72Kof-Z3q2DSh3FKO64npLF6hDJnqnTzNBUoOoVQFA@mail.gmail.com>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <CAL_Jsq+K72Kof-Z3q2DSh3FKO64npLF6hDJnqnTzNBUoOoVQFA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Aug 19, 2025, Keir Fraser wrote:
-> This is version 3 of the patches I previously posted here:
+Hi Rob,
+
+On 8/21/25 11:28 AM, Rob Herring wrote:
+> On Wed, Aug 20, 2025 at 12:15 PM Ariel D'Alessandro
+> <ariel.dalessandro@collabora.com> wrote:
+>>
+>> Convert the existing text-based DT bindings for Marvell 8897/8997
+>> (sd8897/sd8997) bluetooth devices controller to a YAML schema.
+>>
+>> While here, bindings for "usb1286,204e" (USB interface) are dropped from
+>> the YAML definition as these are currently documented in file:
+>>
+>> - Documentation/devicetree/bindings/net/btusb.txt
+>>
+>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>> ---
+>>   .../bindings/net/marvell,sd8897-bt.yaml       | 91 +++++++++++++++++++
 > 
->  https://lore.kernel.org/all/20250716110737.2513665-1-keirf@google.com/
+> This needs to move to net/bluetooth/
+
+Ack.
+
 > 
-> Changes since v2:
+>>   .../bindings/net/marvell-bt-8xxx.txt          | 83 -----------------
+>>   2 files changed, 91 insertions(+), 83 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
+>>   delete mode 100644 Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml b/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
+>> new file mode 100644
+>> index 0000000000000..6539868c08b8a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
+>> @@ -0,0 +1,91 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/net/marvell,sd8897-bt.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Marvell 8897/8997 (sd8897/sd8997) bluetooth devices (SDIO)
+>> +
+>> +maintainers:
+>> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>> +
 > 
->  * Rebased to v6.17-rc2
+> Needs a $ref to bluetooth-controller.yaml
 
-Note, looks like you missed a tested tag from Li on patch 4:
+Ack.
 
-https://lkml.kernel.org/r/b778c98abb4b425186bfeb1f9bed0c7a%40baidu.com
-
-Nits aside, this looks good to my eyes (though I haven't tested yet).
-
-Marc/Oliver,
-
-Can you weigh in on the vgic changes when you get a chance?  And a more expert
-set of eyeballs on the memory ordering side of things would be nice to have, too :-)
-
-As for landing this, I'd be happy to take this through a dedicated kvm-x86 topic
-branch, or I can provide an ack on patches 3 and 4 (there's basically zero chance
-of this causing a conflict in x86).
-
-> Keir Fraser (4):
->   KVM: arm64: vgic-init: Remove vgic_ready() macro
->   KVM: arm64: vgic: Explicitly implement vgic_dist::ready ordering
->   KVM: Implement barriers before accessing kvm->buses[] on SRCU read
->     paths
->   KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
 > 
->  arch/arm64/kvm/vgic/vgic-init.c | 14 +++--------
->  arch/x86/kvm/vmx/vmx.c          |  7 ++++++
->  include/kvm/arm_vgic.h          |  1 -
->  include/linux/kvm_host.h        | 11 ++++++---
->  virt/kvm/kvm_main.c             | 43 +++++++++++++++++++++++++++------
->  5 files changed, 53 insertions(+), 23 deletions(-)
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - marvell,sd8897-bt
+>> +      - marvell,sd8997-bt
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  marvell,cal-data:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    description:
+>> +      Calibration data downloaded to the device during initialization.
+>> +    minItems: 28
 > 
-> -- 
-> 2.51.0.rc1.193.gad69d77794-goog
+> Just: maxItems: 28
+
+Ack.
+
 > 
+>> +
+>> +  marvell,wakeup-pin:
+>> +    $ref: /schemas/types.yaml#/definitions/uint16
+>> +    description:
+>> +      Wakeup pin number of the bluetooth chip. Used by firmware to wakeup host
+>> +      system.
+>> +
+>> +  marvell,wakeup-gap-ms:
+> 
+> This unfortunately needs a uint16 type. That will cause a warning
+> which has to be fixed on the dtschema side.
+
+Yeah, that's what I thought but wasn't sure on the proper solution. Will 
+fix in v2.
+
+> 
+>> +    description:
+>> +      Wakeup latency of the host platform. Required by the chip sleep feature.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    #include <dt-bindings/pinctrl/rockchip.h>
+> 
+> Please drop this and just use a number below.
+
+Ack.
+
+> 
+>> +
+>> +    sdio0 {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        btmrvl: btmrvl@2 {
+>> +            compatible = "marvell,sd8897-bt";
+>> +            reg = <2>;
+>> +            interrupt-parent = <&gpio4>;
+>> +            interrupts = <RK_PD7 IRQ_TYPE_LEVEL_LOW>;
+>> +            marvell,wakeup-pin = /bits/ 16 <13>;
+>> +            pinctrl-names = "default";
+>> +            pinctrl-0 = <&bt_host_wake_l>;
+>> +        };
+>> +    };
+> 
+> I would drop this example.
+
+Agreed.
+
+> 
+>> +
+>> +    mmc3 {
+> 
+> mmc {
+
+Ack.
+
+> 
+>> +        vmmc-supply = <&wlan_en_reg>;
+>> +        bus-width = <4>;
+>> +        cap-power-off-card;
+>> +        keep-power-in-suspend;
+>> +
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        bluetooth: bluetooth@2 {
+> 
+> Drop the label.
+
+Ack.
+
+Thanks a lot for your feedback and help!
+Regards,
+
+-- 
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
