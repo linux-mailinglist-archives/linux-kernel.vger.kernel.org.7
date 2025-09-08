@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-805164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99378B484C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:04:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EFCB484CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061C93BB31D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9AA5189B66E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2FB2E7F0D;
-	Mon,  8 Sep 2025 07:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qo5ioNbD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592922E3B07;
+	Mon,  8 Sep 2025 07:09:10 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101C62E5437;
-	Mon,  8 Sep 2025 07:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5533B7A8;
+	Mon,  8 Sep 2025 07:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757315045; cv=none; b=u8YCOef5e/zVv1IgfI2b32YotMjm71iPf5ARmNPLzY3bUMNWj7QFnzTKBupzLteud/TSongrZOCf+AYq3A54ZPXdL9cw2tt077FsXTSCkCIYMbXSdeXpSSzPwSy9BZUpY00DE424AJjO7oVU5/q7vplR4JDOIMMrUpgmC/Jp2Qg=
+	t=1757315350; cv=none; b=HUWp/2HhCTH7ci2jBqRTBijJaKnkpoclSc6uGm5wVUPjT5KBx7PjpOlj56puLcaU8fWeOiHV7w7rxKtXLsAjZy+rWdzf/HTOkGNBjrikB/UCaL3hCoA1rpyHFAsTxzkBANXO2G3Vl5+sOeBJvT2quDHRa39dR1OqpLblLEFs/0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757315045; c=relaxed/simple;
-	bh=AeCZC4Xp7UU/zbofHlE39ClcIKd0OAOo2hV/opiz/HI=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=pBi0J85CtEBtr/R18G3JlIfTGzytk4GG8KJYBcaO3ObXdw3D72Jim8SSjr8YQ9lexczjvZ8Eb+yyElmyh8/xeHz7FYNYmIeTjNmviT0hPAFPM4MuOVMo5ajnP77VdV5x8Mmbbv6RYi9g8K/iGJIKaK6T9iJ6x6TKI/vyXZ/HrpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qo5ioNbD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A62FC4CEF5;
-	Mon,  8 Sep 2025 07:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757315044;
-	bh=AeCZC4Xp7UU/zbofHlE39ClcIKd0OAOo2hV/opiz/HI=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=Qo5ioNbDYXLZBOcfB57TuPhIDmEBPVgxU0Nt4F4XuDcuG7MJXGTsh3G5SkwVktuS2
-	 ClFLPN5pRdpmQJtbA+htpWImcAwVWKnbc08VdnDfmIBVO1pn6m6YemHavpRauO/t6R
-	 ojCTOSumLfYsGxSJrJyvrSBvvDEyRH9NMSEeSapbX+UnWOlqrJcUK1im5M2IecVL4V
-	 9nL24j1BMPdFjFRTbuWpqXkeLagxUfs+8QBR1mTP0UJSrE6obyuQuP9EEcAFpkq/RW
-	 txZ4NWhKDg3mx6fJA0QGdnbEq5qPKel3nBgWK428IM15JDP948dw/c2F9FmV3in2Rd
-	 cfjNdTE3+lYlw==
-Content-Type: multipart/signed;
- boundary=6c29f15d4f86f34b14080c43bd193c1b897e82398560c3d529c55b51afa7;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 08 Sep 2025 09:04:00 +0200
-Message-Id: <DCN86WR0CPF1.38V3X1O08VYJG@kernel.org>
-To: "Guenter Roeck" <linux@roeck-us.net>, "Nishanth Menon" <nm@ti.com>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jean Delvare"
- <jdelvare@suse.com>, "Lee Jones" <lee@kernel.org>, "Srinivas Kandagatla"
- <srini@kernel.org>, "Wim Van Sebroeck" <wim@linux-watchdog.org>
-Subject: Re: [PATCH v1 6/7] hwmon: sl28cpld: add SMARC-sAM67 support
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
- <linux-watchdog@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250822131531.1366437-1-mwalle@kernel.org>
- <20250822131531.1366437-7-mwalle@kernel.org>
- <83189bf7-6831-4373-a352-2a3a05526e08@roeck-us.net>
-In-Reply-To: <83189bf7-6831-4373-a352-2a3a05526e08@roeck-us.net>
+	s=arc-20240116; t=1757315350; c=relaxed/simple;
+	bh=ILeYBopdnA00d/cPRukls2d6V0ls3WcQ7uIMlRk2eEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BqPczxB1sgM5mRJgafy7CsWgFtrPtTILd1hwysVbP0nsQWoIARcsKIH8uOHI5ZcsPtn4RcFglX9tOw1hPGLsmQv4AgwMVXznbUm6k/2rWKJ2LprJ5EjvrEOCH1pbAiRIDv26fUQSQjXUg0rzNyK0QBMHoh7uHMCL7/rBweLbe7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ac9e8fec8c8211f0b29709d653e92f7d-20250908
+X-CID-CACHE: Type:Local,Time:202509081451+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:741e69a4-7eac-423f-af7f-03fd36c51edc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f6a7994fb7f88b258705a5b9368f90b6,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ac9e8fec8c8211f0b29709d653e92f7d-20250908
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 930198300; Mon, 08 Sep 2025 15:08:51 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 69711E008FA4;
+	Mon,  8 Sep 2025 15:08:51 +0800 (CST)
+X-ns-mid: postfix-68BE8103-330781192
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id CAB86E008FA3;
+	Mon,  8 Sep 2025 15:08:50 +0800 (CST)
+Message-ID: <67b55ae1-60b0-4d54-8220-59f7e3ba7c29@kylinos.cn>
+Date: Mon, 8 Sep 2025 15:08:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---6c29f15d4f86f34b14080c43bd193c1b897e82398560c3d529c55b51afa7
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even without
+ frequency table
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, zhenglifeng
+ <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
+ <20250904032210.92978-3-zhangzihuan@kylinos.cn>
+ <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
+ <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
+ <20250904053700.abdkh23zwi5x65do@vireshk-i7>
+ <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+ <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
+ <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
+ <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Guenter,
 
-> >   static const struct of_device_id sl28cpld_hwmon_of_match[] =3D {
-> > -	{ .compatible =3D "kontron,sl28cpld-fan" },
-> > +	{ .compatible =3D "kontron,sl28cpld-fan", .data =3D &sl28cpld_hwmon_c=
-hip_info },
-> > +	{ .compatible =3D "kontron,sa67mcu-hwmon", .data =3D &sa67mcu_hwmon_c=
-hip_info },
->
-> Effectively this means that the two chips have completely different funct=
-ionality.
-> One reports fan speeds, the other reports voltages and current.
-> This should be a separate driver.
+=E5=9C=A8 2025/9/8 14:55, Viresh Kumar =E5=86=99=E9=81=93:
+> On 08-09-25, 14:51, Zihuan Zhang wrote:
+>> We are currently considering moving the check that ensures a driver
+>> providing a freq_table also implements target_index() into the driver
+>> registration path.
+> That won't work AFAIU. The freq table is initialized during
+> policy->init and that's not done at the time of registration.
 
-Fair enough. I wasn't sure, the reason why I've chosen to add it to
-the sl28cpld driver was that I don't want to clutter the directory
-with many small board specific drivers. They all have the simple-mfd
-parent driver in common. In the end it's up to you of course, so
-separate driver?
+One idea we are considering is to check whether driver->verify points to=20
+cpufreq_generic_frequency_table_verify and use that as a heuristic to=20
+enforce the presence of target_index():
 
--michael
+ =C2=A0((driver_data->verify =3D=3D cpufreq_generic_frequency_table_verif=
+y) !=3D=20
+!!driver_data->target_index)
 
---6c29f15d4f86f34b14080c43bd193c1b897e82398560c3d529c55b51afa7
-Content-Type: application/pgp-signature; name="signature.asc"
+I haven=E2=80=99t tested this approach yet, so I=E2=80=99m not sure if it=
+ will be fully=20
+reliable.
 
------BEGIN PGP SIGNATURE-----
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaL5/4RIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iHHAF/SN8mk4/c9/7qoNU/dYaz4jj027g2vf2/
-pv7+yMMwRPbtPffTZM2Eh0NvFRSzQidQAYC/Bh8oKn1Xd+dtXLuRsnqvhWFxlUV5
-u8IrsKk3DiMbCQ283oy2lbs60sRh1CNZlTI=
-=W+tq
------END PGP SIGNATURE-----
+>> This way, freq_table.c no longer needs to defensively check for NULL
+>> pointers.
+>>
+>> Additionally, we are thinking about merging the two related APIs into =
+a
+>> single one. Do you think this is a good idea?
+> Which ones ? target/target_index ? I am not sure if that can be done.
 
---6c29f15d4f86f34b14080c43bd193c1b897e82398560c3d529c55b51afa7--
+If this approach=20
+works,=C2=A0=C2=A0cpufreq_generic_frequency_table_verify=C2=A0and=C2=A0cp=
+ufreq_frequency_table_verify=20
+should be the same because we dont't need to check pointer is NULL=C2=A0 =
+in=20
+freq_table.c.
+
+> We are fine with improvements generally, but please make sure whatever
+> you send doesn't break existing users. That will help saving some of
+> our review time.
+
+
+
 
