@@ -1,295 +1,310 @@
-Return-Path: <linux-kernel+bounces-805096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3805FB483F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:13:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C44DB483F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E343AD005
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BFE17CF28
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C04E224247;
-	Mon,  8 Sep 2025 06:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32DC224247;
+	Mon,  8 Sep 2025 06:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNCk/Ta/"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XD0y1DwT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r+nGIYqq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XD0y1DwT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r+nGIYqq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD773FF1
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641C5231A3B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311987; cv=none; b=V3JpcPdlCOXED6r4w4098wsJDRNTSQEe0rQzbUiGyBh91QcFxU7bPme7janu4QxGB5uVyPaUFhDxXgc8Ru7Migd0nrAcIKGV2YTJRWKGAMxUVFG/nPTsk08aNe6UhNKUDscrenTgSkfuXAF7VAq3sIMCW+HFJJdk/tSH5CFSWGk=
+	t=1757312024; cv=none; b=kpB98sJa4enxArUwnGH25IAVepLAwhcu9YbodAl+llQg6URLRKi9lTYs9ek0NQ5joAz9flb+LIbrtwPFdHEGGZoA5ytgjOBwvyXBReCttwiYLfMeZL1fliBOSpqRTmKpWiOB3Z2JVHYnfa2NGEQzHh/X8MNYMykwhJMSTufACoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311987; c=relaxed/simple;
-	bh=Qc4bsHVtegZZcT4Q9MAJ2Xhzn/hgV95X7DWU0v6B3Cc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VpKQ+GrCgSRoeDUUphsO0nsnh24Y5BK5ywqvdIIAO0ut3uqqESRejd4+ERuO+UA67L2lrHMfGAWOmT3QdB4QXDgaQZdvqQ3kP289tfKZRsshWpje4QX4rKZEDX2Icd6yYJ3CVC6kDH1Ig2M+iw4bFb5pRY/PtHkX6KCkA9mo/sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNCk/Ta/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so6326358a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 23:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757311984; x=1757916784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZC8L7gwN/P+xK7g9ZrzjI62mr0TB4jFjFMHOdIX7NnE=;
-        b=LNCk/Ta/QvNxhG6Ma2iI9qD2e02XlWHr8VTRq2cL+rVpoRcUdIwViMl6bGEaELxCDx
-         Qz/m31uEs8MI5tkGxCsTKirr3pEP2S75HZlt/UFdrPiEDPcwNQCVL18BNCdXepvqxxcS
-         4KIiS4RRqX0byNAn7oM6nmA2KHgpm53U1dZeEPmsSH27sqxnwsU6sjd8BGvyI4nUOhAO
-         3qrm/lThTfsq6yh38lnRihZWsg7tyDffWWAtT2L2+8sm1REbcb/w5VmUNANlaCl6CndN
-         3Ic9HvRMIcMTC3EapXiMaUdOlk4cCtZo/S5621xSm00qonPlC+zB07ytm+ykVjKEtGVG
-         AkFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757311984; x=1757916784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZC8L7gwN/P+xK7g9ZrzjI62mr0TB4jFjFMHOdIX7NnE=;
-        b=hrJCeBk1Fn/ioIYL3JYrTSzy48G0FGehOTficHySMBUppWu7ifv90bTh5Rtn/cv6tp
-         R3y23EVKYyOgql0nDujMpTyU5sTD+neRkoFctYu263P3IVfC1AGNPFpcyQksjKf6Hn3o
-         mv3MCF1EzgLTMcguBs2sGMa+QUF2jo+y8A7C1/MUYZ/ch2C5uh9icdIs8TB5Sbvxgo+2
-         r6WaZabU6amczpHI5wBYV32DuT78fENuNkUBJFkjJ9+peJlpq6Gt+Opl8skw8sRlRzFg
-         aqrMS5DRdNM3dMkBqg7GS0+RcBKT9/CeLOWYXZ6s65yPXuGP0iLOHytzt3J+hLZs1S7+
-         lNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2fFqurZax7YEIk+rVuEjRVIPZwKABJ3tTsDv9himgWwvth2kEI6nBP4OxjdiDvDzm79L1RNhVhZZIqBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCr7G+cIA8FjzQ7HPtrQJjNxZdrbWUIGqCg4jAPGjUs/UH5Fpw
-	v5x8W4DtGE1Y5QROWShjCx1l9R5pIVbW8HhsPlf1c8EH+gnio6Rq6E1V
-X-Gm-Gg: ASbGnctY63wtY/lotfZDt9K9OD902icwnzX9WX+sAKf/wojYCsYeEYCFTtnzXAVW2+O
-	gv5x7iVcYg6MFIIYyBiWH2m3svEqof/9g4ZdFcjD7kuyNLh5AmbGH3fj/QW9lRwCQZlyWlesvvX
-	IyPIdKytCPisgpHSBl/qVj+4K20yY73Dxp/Th/zmEJn/qUIQLJCyP+WpIxg28PQdyRTD8TXA5gA
-	G3SIpZTRx+EmPExm6oqIXH5EmSral+9mjyXEuNLFwiF0Z7S0BXH6j1++9bDnoDHxqbBD+gjgak2
-	haqmdbeIi2lSrgpuQMJyZNihOWgv4qJI9fRPlfc74kFwCCiri4FBfmPHbGq2vY+Ec0Lf1vXypqh
-	L1qq7zwqGY4xbs2XGz5diQY+D3j46leBLZz8mRJuR5eJzW68lYS9KmlI=
-X-Google-Smtp-Source: AGHT+IGjyv2g0Hoy+GpwpNntbrskFyIXfjwG34HMBREFvxg8rJ4IkZOlj/srXH4ccqbTT/+w7h/eiA==
-X-Received: by 2002:a17:907:c14:b0:b04:3513:5138 with SMTP id a640c23a62f3a-b04b154786bmr714144466b.41.1757311983317;
-        Sun, 07 Sep 2025 23:13:03 -0700 (PDT)
-Received: from tumbleweed (ip-77-25-33-28.web.vodafone.de. [77.25.33.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6234c677dbdsm4870248a12.50.2025.09.07.23.13.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 23:13:02 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: remove unused tables
-Date: Mon,  8 Sep 2025 08:12:43 +0200
-Message-ID: <20250908061243.62692-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757312024; c=relaxed/simple;
+	bh=dAVByW/7B0JlmJlVR8C4qKZfWLB55rzoeK2/yrc6z+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ttuwTwOL1aBh7ehPdY5UKgAdj/FlqMziVxPauLyJRDxokWw1KB5LW4/ix2zK7wcs415GY4YY3um66FQDzJDqNt9vGKEyfv0HHnc8uGpzJHsm6nmemmIufukvtcenPRHLG8+d5lm17x4yO3ony4Hu138QP4GnTIssrKEVgB0Sd34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XD0y1DwT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r+nGIYqq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XD0y1DwT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r+nGIYqq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 49F3324C9D;
+	Mon,  8 Sep 2025 06:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757312013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEoMtcQvGwhax729Zongu1IhTIqdJOoWWIiF043lEJc=;
+	b=XD0y1DwTvQdlkbP6CBPvsgqvG3tA9pdQMRXgMqGCl88Maot127fL/mCX36iTLMgg5nPgLE
+	ls8ux61yD3RE/RAbGVF26x0lRx+lBk8qT+8bCU1GuhjF5tJ0pI9w5Ng/bY1F/nLYQI2R+C
+	GakdlNkGSsi3/+ELI9U/pPY5skol2ZA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757312013;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEoMtcQvGwhax729Zongu1IhTIqdJOoWWIiF043lEJc=;
+	b=r+nGIYqqOBjJ9ZiNx3I3VPPtkumZmf6KyehMHr3GUFVaA6ddkHQO97Jo0XsyGT8Um1r5TQ
+	nwYVOI26lU009IDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757312013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEoMtcQvGwhax729Zongu1IhTIqdJOoWWIiF043lEJc=;
+	b=XD0y1DwTvQdlkbP6CBPvsgqvG3tA9pdQMRXgMqGCl88Maot127fL/mCX36iTLMgg5nPgLE
+	ls8ux61yD3RE/RAbGVF26x0lRx+lBk8qT+8bCU1GuhjF5tJ0pI9w5Ng/bY1F/nLYQI2R+C
+	GakdlNkGSsi3/+ELI9U/pPY5skol2ZA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757312013;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEoMtcQvGwhax729Zongu1IhTIqdJOoWWIiF043lEJc=;
+	b=r+nGIYqqOBjJ9ZiNx3I3VPPtkumZmf6KyehMHr3GUFVaA6ddkHQO97Jo0XsyGT8Um1r5TQ
+	nwYVOI26lU009IDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7098113946;
+	Mon,  8 Sep 2025 06:13:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vC5jGQx0vmgULgAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 08 Sep 2025 06:13:32 +0000
+Message-ID: <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
+Date: Mon, 8 Sep 2025 08:13:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
+ <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
+ Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Mel Gorman <mgorman@suse.de>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, storagedev@microchip.com,
+ virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Remove some unused tabels to get rid of dead code and thereby reduce the
-object file size by more than 1400 bytes.
+On 9/5/25 16:59, Daniel Wagner wrote:
+> Extend the capabilities of the generic CPU to hardware queue (hctx)
+> mapping code, so it maps houskeeping CPUs and isolated CPUs to the
+> hardware queues evenly.
+> 
+> A hctx is only operational when there is at least one online
+> housekeeping CPU assigned (aka active_hctx). Thus, check the final
+> mapping that there is no hctx which has only offline housekeeing CPU and
+> online isolated CPUs.
+> 
+> Example mapping result:
+> 
+>    16 online CPUs
+> 
+>    isolcpus=io_queue,2-3,6-7,12-13
+> 
+> Queue mapping:
+>          hctx0: default 0 2
+>          hctx1: default 1 3
+>          hctx2: default 4 6
+>          hctx3: default 5 7
+>          hctx4: default 8 12
+>          hctx5: default 9 13
+>          hctx6: default 10
+>          hctx7: default 11
+>          hctx8: default 14
+>          hctx9: default 15
+> 
+> IRQ mapping:
+>          irq 42 affinity 0 effective 0  nvme0q0
+>          irq 43 affinity 0 effective 0  nvme0q1
+>          irq 44 affinity 1 effective 1  nvme0q2
+>          irq 45 affinity 4 effective 4  nvme0q3
+>          irq 46 affinity 5 effective 5  nvme0q4
+>          irq 47 affinity 8 effective 8  nvme0q5
+>          irq 48 affinity 9 effective 9  nvme0q6
+>          irq 49 affinity 10 effective 10  nvme0q7
+>          irq 50 affinity 11 effective 11  nvme0q8
+>          irq 51 affinity 14 effective 14  nvme0q9
+>          irq 52 affinity 15 effective 15  nvme0q10
+> 
+> A corner case is when the number of online CPUs and present CPUs
+> differ and the driver asks for less queues than online CPUs, e.g.
+> 
+>    8 online CPUs, 16 possible CPUs
+> 
+>    isolcpus=io_queue,2-3,6-7,12-13
+>    virtio_blk.num_request_queues=2
+> 
+> Queue mapping:
+>          hctx0: default 0 1 2 3 4 5 6 7 8 12 13
+>          hctx1: default 9 10 11 14 15
+> 
+> IRQ mapping
+>          irq 27 affinity 0 effective 0 virtio0-config
+>          irq 28 affinity 0-1,4-5,8 effective 5 virtio0-req.0
+>          irq 29 affinity 9-11,14-15 effective 0 virtio0-req.1
+> 
+> Noteworthy is that for the normal/default configuration (!isoclpus) the
+> mapping will change for systems which have non hyperthreading CPUs. The
+> main assignment loop will completely rely that group_mask_cpus_evenly to
+> do the right thing. The old code would distribute the CPUs linearly over
+> the hardware context:
+> 
+> queue mapping for /dev/nvme0n1
+>          hctx0: default 0 8
+>          hctx1: default 1 9
+>          hctx2: default 2 10
+>          hctx3: default 3 11
+>          hctx4: default 4 12
+>          hctx5: default 5 13
+>          hctx6: default 6 14
+>          hctx7: default 7 15
+> 
+> The assign each hardware context the map generated by the
+> group_mask_cpus_evenly function:
+> 
+> queue mapping for /dev/nvme0n1
+>          hctx0: default 0 1
+>          hctx1: default 2 3
+>          hctx2: default 4 5
+>          hctx3: default 6 7
+>          hctx4: default 8 9
+>          hctx5: default 10 11
+>          hctx6: default 12 13
+>          hctx7: default 14 15
+> 
+> In case of hyperthreading CPUs, the resulting map stays the same.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   block/blk-mq-cpumap.c | 177 ++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 158 insertions(+), 19 deletions(-)
+> 
+> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
+> index 8244ecf878358c0b8de84458dcd5100c2f360213..1e66882e4d5bd9f78d132f3a229a1577853f7a9f 100644
+> --- a/block/blk-mq-cpumap.c
+> +++ b/block/blk-mq-cpumap.c
+> @@ -17,12 +17,25 @@
+>   #include "blk.h"
+>   #include "blk-mq.h"
+>   
+> +static struct cpumask blk_hk_online_mask;
+> +
+>   static unsigned int blk_mq_num_queues(const struct cpumask *mask,
+>   				      unsigned int max_queues)
+>   {
+>   	unsigned int num;
+>   
+> -	num = cpumask_weight(mask);
+> +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
+> +		const struct cpumask *hk_mask;
+> +		struct cpumask avail_mask;
+> +
+> +		hk_mask = housekeeping_cpumask(HK_TYPE_IO_QUEUE);
+> +		cpumask_and(&avail_mask, mask, hk_mask);
+> +
+> +		num = cpumask_weight(&avail_mask);
+> +	} else {
+> +		num = cpumask_weight(mask);
+> +	}
+> +
+>   	return min_not_zero(num, max_queues);
+>   }
+>   
+> @@ -31,9 +44,13 @@ static unsigned int blk_mq_num_queues(const struct cpumask *mask,
+>    *
+>    * Returns an affinity mask that represents the queue-to-CPU mapping
+>    * requested by the block layer based on possible CPUs.
+> + * This helper takes isolcpus settings into account.
+>    */
+>   const struct cpumask *blk_mq_possible_queue_affinity(void)
+>   {
+> +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE))
+> +		return housekeeping_cpumask(HK_TYPE_IO_QUEUE);
+> +
+>   	return cpu_possible_mask;
+>   }
+>   EXPORT_SYMBOL_GPL(blk_mq_possible_queue_affinity);
+> @@ -46,6 +63,12 @@ EXPORT_SYMBOL_GPL(blk_mq_possible_queue_affinity);
+>    */
+>   const struct cpumask *blk_mq_online_queue_affinity(void)
+>   {
+> +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
+> +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
+> +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
+> +		return &blk_hk_online_mask;
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8723bs/hal/odm.c | 152 ----------------------------
- drivers/staging/rtl8723bs/hal/odm.h |   6 --
- 2 files changed, 158 deletions(-)
+Can you explain the use of 'blk_hk_online_mask'?
+Why is a static variable?
+To my untrained eye it's being recalculated every time one calls
+this function. And only the first invocation run on an empty mask,
+all subsequent ones see a populated mask.
 
-diff --git a/drivers/staging/rtl8723bs/hal/odm.c b/drivers/staging/rtl8723bs/hal/odm.c
-index ba85efb30db2..4b36af47f680 100644
---- a/drivers/staging/rtl8723bs/hal/odm.c
-+++ b/drivers/staging/rtl8723bs/hal/odm.c
-@@ -9,118 +9,6 @@
- 
- /*  Global var */
- 
--u32 OFDMSwingTable[OFDM_TABLE_SIZE] = {
--	0x7f8001fe, /*  0, +6.0dB */
--	0x788001e2, /*  1, +5.5dB */
--	0x71c001c7, /*  2, +5.0dB */
--	0x6b8001ae, /*  3, +4.5dB */
--	0x65400195, /*  4, +4.0dB */
--	0x5fc0017f, /*  5, +3.5dB */
--	0x5a400169, /*  6, +3.0dB */
--	0x55400155, /*  7, +2.5dB */
--	0x50800142, /*  8, +2.0dB */
--	0x4c000130, /*  9, +1.5dB */
--	0x47c0011f, /*  10, +1.0dB */
--	0x43c0010f, /*  11, +0.5dB */
--	0x40000100, /*  12, +0dB */
--	0x3c8000f2, /*  13, -0.5dB */
--	0x390000e4, /*  14, -1.0dB */
--	0x35c000d7, /*  15, -1.5dB */
--	0x32c000cb, /*  16, -2.0dB */
--	0x300000c0, /*  17, -2.5dB */
--	0x2d4000b5, /*  18, -3.0dB */
--	0x2ac000ab, /*  19, -3.5dB */
--	0x288000a2, /*  20, -4.0dB */
--	0x26000098, /*  21, -4.5dB */
--	0x24000090, /*  22, -5.0dB */
--	0x22000088, /*  23, -5.5dB */
--	0x20000080, /*  24, -6.0dB */
--	0x1e400079, /*  25, -6.5dB */
--	0x1c800072, /*  26, -7.0dB */
--	0x1b00006c, /*  27. -7.5dB */
--	0x19800066, /*  28, -8.0dB */
--	0x18000060, /*  29, -8.5dB */
--	0x16c0005b, /*  30, -9.0dB */
--	0x15800056, /*  31, -9.5dB */
--	0x14400051, /*  32, -10.0dB */
--	0x1300004c, /*  33, -10.5dB */
--	0x12000048, /*  34, -11.0dB */
--	0x11000044, /*  35, -11.5dB */
--	0x10000040, /*  36, -12.0dB */
--};
--
--u8 CCKSwingTable_Ch1_Ch13[CCK_TABLE_SIZE][8] = {
--	{0x36, 0x35, 0x2e, 0x25, 0x1c, 0x12, 0x09, 0x04}, /*  0, +0dB */
--	{0x33, 0x32, 0x2b, 0x23, 0x1a, 0x11, 0x08, 0x04}, /*  1, -0.5dB */
--	{0x30, 0x2f, 0x29, 0x21, 0x19, 0x10, 0x08, 0x03}, /*  2, -1.0dB */
--	{0x2d, 0x2d, 0x27, 0x1f, 0x18, 0x0f, 0x08, 0x03}, /*  3, -1.5dB */
--	{0x2b, 0x2a, 0x25, 0x1e, 0x16, 0x0e, 0x07, 0x03}, /*  4, -2.0dB */
--	{0x28, 0x28, 0x22, 0x1c, 0x15, 0x0d, 0x07, 0x03}, /*  5, -2.5dB */
--	{0x26, 0x25, 0x21, 0x1b, 0x14, 0x0d, 0x06, 0x03}, /*  6, -3.0dB */
--	{0x24, 0x23, 0x1f, 0x19, 0x13, 0x0c, 0x06, 0x03}, /*  7, -3.5dB */
--	{0x22, 0x21, 0x1d, 0x18, 0x11, 0x0b, 0x06, 0x02}, /*  8, -4.0dB */
--	{0x20, 0x20, 0x1b, 0x16, 0x11, 0x08, 0x05, 0x02}, /*  9, -4.5dB */
--	{0x1f, 0x1e, 0x1a, 0x15, 0x10, 0x0a, 0x05, 0x02}, /*  10, -5.0dB */
--	{0x1d, 0x1c, 0x18, 0x14, 0x0f, 0x0a, 0x05, 0x02}, /*  11, -5.5dB */
--	{0x1b, 0x1a, 0x17, 0x13, 0x0e, 0x09, 0x04, 0x02}, /*  12, -6.0dB <== default */
--	{0x1a, 0x19, 0x16, 0x12, 0x0d, 0x09, 0x04, 0x02}, /*  13, -6.5dB */
--	{0x18, 0x17, 0x15, 0x11, 0x0c, 0x08, 0x04, 0x02}, /*  14, -7.0dB */
--	{0x17, 0x16, 0x13, 0x10, 0x0c, 0x08, 0x04, 0x02}, /*  15, -7.5dB */
--	{0x16, 0x15, 0x12, 0x0f, 0x0b, 0x07, 0x04, 0x01}, /*  16, -8.0dB */
--	{0x14, 0x14, 0x11, 0x0e, 0x0b, 0x07, 0x03, 0x02}, /*  17, -8.5dB */
--	{0x13, 0x13, 0x10, 0x0d, 0x0a, 0x06, 0x03, 0x01}, /*  18, -9.0dB */
--	{0x12, 0x12, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01}, /*  19, -9.5dB */
--	{0x11, 0x11, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01}, /*  20, -10.0dB */
--	{0x10, 0x10, 0x0e, 0x0b, 0x08, 0x05, 0x03, 0x01}, /*  21, -10.5dB */
--	{0x0f, 0x0f, 0x0d, 0x0b, 0x08, 0x05, 0x03, 0x01}, /*  22, -11.0dB */
--	{0x0e, 0x0e, 0x0c, 0x0a, 0x08, 0x05, 0x02, 0x01}, /*  23, -11.5dB */
--	{0x0d, 0x0d, 0x0c, 0x0a, 0x07, 0x05, 0x02, 0x01}, /*  24, -12.0dB */
--	{0x0d, 0x0c, 0x0b, 0x09, 0x07, 0x04, 0x02, 0x01}, /*  25, -12.5dB */
--	{0x0c, 0x0c, 0x0a, 0x09, 0x06, 0x04, 0x02, 0x01}, /*  26, -13.0dB */
--	{0x0b, 0x0b, 0x0a, 0x08, 0x06, 0x04, 0x02, 0x01}, /*  27, -13.5dB */
--	{0x0b, 0x0a, 0x09, 0x08, 0x06, 0x04, 0x02, 0x01}, /*  28, -14.0dB */
--	{0x0a, 0x0a, 0x09, 0x07, 0x05, 0x03, 0x02, 0x01}, /*  29, -14.5dB */
--	{0x0a, 0x09, 0x08, 0x07, 0x05, 0x03, 0x02, 0x01}, /*  30, -15.0dB */
--	{0x09, 0x09, 0x08, 0x06, 0x05, 0x03, 0x01, 0x01}, /*  31, -15.5dB */
--	{0x09, 0x08, 0x07, 0x06, 0x04, 0x03, 0x01, 0x01}	/*  32, -16.0dB */
--};
--
--u8 CCKSwingTable_Ch14[CCK_TABLE_SIZE][8] = {
--	{0x36, 0x35, 0x2e, 0x1b, 0x00, 0x00, 0x00, 0x00}, /*  0, +0dB */
--	{0x33, 0x32, 0x2b, 0x19, 0x00, 0x00, 0x00, 0x00}, /*  1, -0.5dB */
--	{0x30, 0x2f, 0x29, 0x18, 0x00, 0x00, 0x00, 0x00}, /*  2, -1.0dB */
--	{0x2d, 0x2d, 0x17, 0x17, 0x00, 0x00, 0x00, 0x00}, /*  3, -1.5dB */
--	{0x2b, 0x2a, 0x25, 0x15, 0x00, 0x00, 0x00, 0x00}, /*  4, -2.0dB */
--	{0x28, 0x28, 0x24, 0x14, 0x00, 0x00, 0x00, 0x00}, /*  5, -2.5dB */
--	{0x26, 0x25, 0x21, 0x13, 0x00, 0x00, 0x00, 0x00}, /*  6, -3.0dB */
--	{0x24, 0x23, 0x1f, 0x12, 0x00, 0x00, 0x00, 0x00}, /*  7, -3.5dB */
--	{0x22, 0x21, 0x1d, 0x11, 0x00, 0x00, 0x00, 0x00}, /*  8, -4.0dB */
--	{0x20, 0x20, 0x1b, 0x10, 0x00, 0x00, 0x00, 0x00}, /*  9, -4.5dB */
--	{0x1f, 0x1e, 0x1a, 0x0f, 0x00, 0x00, 0x00, 0x00}, /*  10, -5.0dB */
--	{0x1d, 0x1c, 0x18, 0x0e, 0x00, 0x00, 0x00, 0x00}, /*  11, -5.5dB */
--	{0x1b, 0x1a, 0x17, 0x0e, 0x00, 0x00, 0x00, 0x00}, /*  12, -6.0dB  <== default */
--	{0x1a, 0x19, 0x16, 0x0d, 0x00, 0x00, 0x00, 0x00}, /*  13, -6.5dB */
--	{0x18, 0x17, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00}, /*  14, -7.0dB */
--	{0x17, 0x16, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x00}, /*  15, -7.5dB */
--	{0x16, 0x15, 0x12, 0x0b, 0x00, 0x00, 0x00, 0x00}, /*  16, -8.0dB */
--	{0x14, 0x14, 0x11, 0x0a, 0x00, 0x00, 0x00, 0x00}, /*  17, -8.5dB */
--	{0x13, 0x13, 0x10, 0x0a, 0x00, 0x00, 0x00, 0x00}, /*  18, -9.0dB */
--	{0x12, 0x12, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00}, /*  19, -9.5dB */
--	{0x11, 0x11, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00}, /*  20, -10.0dB */
--	{0x10, 0x10, 0x0e, 0x08, 0x00, 0x00, 0x00, 0x00}, /*  21, -10.5dB */
--	{0x0f, 0x0f, 0x0d, 0x08, 0x00, 0x00, 0x00, 0x00}, /*  22, -11.0dB */
--	{0x0e, 0x0e, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00}, /*  23, -11.5dB */
--	{0x0d, 0x0d, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00}, /*  24, -12.0dB */
--	{0x0d, 0x0c, 0x0b, 0x06, 0x00, 0x00, 0x00, 0x00}, /*  25, -12.5dB */
--	{0x0c, 0x0c, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00}, /*  26, -13.0dB */
--	{0x0b, 0x0b, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00}, /*  27, -13.5dB */
--	{0x0b, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00}, /*  28, -14.0dB */
--	{0x0a, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00}, /*  29, -14.5dB */
--	{0x0a, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00}, /*  30, -15.0dB */
--	{0x09, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00}, /*  31, -15.5dB */
--	{0x09, 0x08, 0x07, 0x04, 0x00, 0x00, 0x00, 0x00}	/*  32, -16.0dB */
--};
--
- u32 OFDMSwingTable_New[OFDM_TABLE_SIZE] = {
- 	0x0b40002d, /*  0,  -15.0dB */
- 	0x0c000030, /*  1,  -14.5dB */
-@@ -239,46 +127,6 @@ u8 CCKSwingTable_Ch14_New[CCK_TABLE_SIZE][8] = {
- 	{0x36, 0x35, 0x2e, 0x1b, 0x00, 0x00, 0x00, 0x00}	/*  32, +0dB */
- };
- 
--u32 TxScalingTable_Jaguar[TXSCALE_TABLE_SIZE] = {
--	0x081, /*  0,  -12.0dB */
--	0x088, /*  1,  -11.5dB */
--	0x090, /*  2,  -11.0dB */
--	0x099, /*  3,  -10.5dB */
--	0x0A2, /*  4,  -10.0dB */
--	0x0AC, /*  5,  -9.5dB */
--	0x0B6, /*  6,  -9.0dB */
--	0x0C0, /*  7,  -8.5dB */
--	0x0CC, /*  8,  -8.0dB */
--	0x0D8, /*  9,  -7.5dB */
--	0x0E5, /*  10, -7.0dB */
--	0x0F2, /*  11, -6.5dB */
--	0x101, /*  12, -6.0dB */
--	0x110, /*  13, -5.5dB */
--	0x120, /*  14, -5.0dB */
--	0x131, /*  15, -4.5dB */
--	0x143, /*  16, -4.0dB */
--	0x156, /*  17, -3.5dB */
--	0x16A, /*  18, -3.0dB */
--	0x180, /*  19, -2.5dB */
--	0x197, /*  20, -2.0dB */
--	0x1AF, /*  21, -1.5dB */
--	0x1C8, /*  22, -1.0dB */
--	0x1E3, /*  23, -0.5dB */
--	0x200, /*  24, +0  dB */
--	0x21E, /*  25, +0.5dB */
--	0x23E, /*  26, +1.0dB */
--	0x261, /*  27, +1.5dB */
--	0x285, /*  28, +2.0dB */
--	0x2AB, /*  29, +2.5dB */
--	0x2D3, /*  30, +3.0dB */
--	0x2FE, /*  31, +3.5dB */
--	0x32B, /*  32, +4.0dB */
--	0x35C, /*  33, +4.5dB */
--	0x38E, /*  34, +5.0dB */
--	0x3C4, /*  35, +5.5dB */
--	0x3FE  /*  36, +6.0dB */
--};
--
- /* Remove Edca by Yu Chen */
- 
- static void odm_CommonInfoSelfInit(struct dm_odm_t *pDM_Odm)
-diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
-index 010274ba8079..1c929d88e596 100644
---- a/drivers/staging/rtl8723bs/hal/odm.h
-+++ b/drivers/staging/rtl8723bs/hal/odm.h
-@@ -1080,16 +1080,10 @@ enum { /* tag_RF_Type_Definition */
- /*  */
- /*  Extern Global Variables. */
- /*  */
--extern	u32 OFDMSwingTable[OFDM_TABLE_SIZE];
--extern	u8 CCKSwingTable_Ch1_Ch13[CCK_TABLE_SIZE][8];
--extern	u8 CCKSwingTable_Ch14[CCK_TABLE_SIZE][8];
--
- extern	u32 OFDMSwingTable_New[OFDM_TABLE_SIZE];
- extern	u8 CCKSwingTable_Ch1_Ch13_New[CCK_TABLE_SIZE][8];
- extern	u8 CCKSwingTable_Ch14_New[CCK_TABLE_SIZE][8];
- 
--extern  u32 TxScalingTable_Jaguar[TXSCALE_TABLE_SIZE];
--
- /*  */
- /*  check Sta pointer valid or not */
- /*  */
+Is that the intention?
+
+Cheers,
+
+Hannes
 -- 
-2.51.0
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
