@@ -1,93 +1,56 @@
-Return-Path: <linux-kernel+bounces-805382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EEFB487D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5861CB487F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C29877A172E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE98C171555
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20B32EE5F4;
-	Mon,  8 Sep 2025 09:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7DD2F069E;
+	Mon,  8 Sep 2025 09:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HgOXjDJw"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DIAuUmi+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8739443
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED652EFDAD;
+	Mon,  8 Sep 2025 09:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757322508; cv=none; b=Kj+f2oU1W7RUxWQX8bDC8FY2rZDgW6eVSurEt60Rb1eYPeRGKyK1o/Ec/GQl3irmit+dKS2p1q8RnGE2TGLVJuj7oPGvXVwIAj/Yrseb2yxD53n4TR62A5EvgA78aiLJCcFrSntk+Ajz4cgdz1GMyC8wSCfJ82Fy4SdwfSlVBYw=
+	t=1757322550; cv=none; b=dVEM+RfExPKJ6tAC69qqRqqrw8rAK2gG6BiYlqz54T9IiPFe7XN63x6DajxzbXTRqzjffZu0N2nwF9ria9f/FwBSieBVULelHIP+4gE2kcv5gEdWScRWh5SiRZIBayxKE+3w6mEhPKvMxb4KDRQyL3DN3WugN0LY/2wlVQKN4Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757322508; c=relaxed/simple;
-	bh=p3axqcSjIgpt/G/0E6xuXsP7YLEdi6L+lrwMOhDGpls=;
+	s=arc-20240116; t=1757322550; c=relaxed/simple;
+	bh=d4EWkqTmWTK+QVtfkDOawxf1iVy4btAiduZLlzXIOxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKDDi/UPOqmBRfnpWEzdTWPwOP5NYwCnktoWBaRrQi4PN+REIrXS42gprrO50/HQ7TvCNrGwhEd9ls5qu4IprV54TeTO1ZTIcS5WoopgN22HLdFpuUGueFi3FJDjWztuOK6FtxIED2Y4dKpvTbkCyyZ/hguI17hFWXXkZtypr7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HgOXjDJw; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45cb5e5e71eso20092845e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757322504; x=1757927304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CXAkEc+0hbVrwg0zBjiBl7uCpRmywegXjmBSprSMPqA=;
-        b=HgOXjDJwmTc0jGXmEcPxlfACKwwcKHGqBNKQcdISagRZLy/X/SjzHwNekqKKT5puOb
-         JEQ+bqGQgdECfbckkg5ZAmX623kd5u8dGbH9wcRa92e17O+OSXS6WjAgJxjxaY0TpmSc
-         4ateAliliTpTZdV2QjiB+Mh2AvXVpMOVgTx1AE7V0dCIeSwGUww4cwro/EXOLD00s9C0
-         D04EsAq97/z9L7C+KA3v9ZnhzAWg2K3D0CSCZOhLsJguABWVEBhyBSP+zoNAH3tVvmXn
-         3HUguXB1XL2IVqJ81BDuYLXdr4/Da7UkCyRFOI5UWHHDA+IzzFGxlA1YOobSHItVTjWl
-         XXHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757322504; x=1757927304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CXAkEc+0hbVrwg0zBjiBl7uCpRmywegXjmBSprSMPqA=;
-        b=chF5xxCQQZDEvPfK2weC1aqX00acfifUgWggoFo7mOUscPk/RmRZD0DcAFvLLQL2Yc
-         1pZjPGscSpRPRH6rJo0gQ/k83CSfEPoLpX6KCRawaY1TkAiCVIujyFPumOoXAw2C7cXn
-         EG66tFODUwAIB440D1fqztWCzG4Il0ZMEbSJa5PS+YFFdunNiBQ19FI4azqN0Hpp/wGt
-         QIecAZKxLN0Aw5GA2pMIG6Qr1jwpn3EI5u+gGSfrOzyCNHwXK8O8hbYCcydPebOAWhde
-         K5zRuOQQOLrYhpkSEEjb9iqxwBRuKVtWgMOuO4rtcn3RmuL0xn+lcV23QdzRVKQomHcZ
-         c2YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9IB6dHBjFaSt+TTYdzozLi84dPCd92X6KA9gBRxl4E9Jcel893xAcxwxg1+UWwldFJOBEI3VSLO4pNeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMJyrVf9PZSKdrS1HsaWVMkxPItCd5NNLGh8hduR30OKvniQUa
-	TcgB/K2igYvZ3iQ2FDX5p9vaoDkGt1a2SSi/lN/fVa5weuvwjVI2IUILPpoajZDoLos=
-X-Gm-Gg: ASbGnctTVV579obytEqyBMPqvA6aFF6eRAgEflK87BokyJrZ1/WIFKajR7PiWnFOkeP
-	Z/2Qfd60h9UNDl8TEnzjZnxWIiRJKEmkR6JD0vdbOj4/k6sBjmjqxQS72jdecNQPYbqP1TIZgJA
-	W9Sp7dqaMcn9c0So8e9us58uzY+p3aj7dEfu0k9CiZeRh0OUhKtIxIbe8imeeR7xlAcE3/B/TqM
-	r68RzZD7nHsng0PCrCw0+/fAQyTtDezNGKKK36DiE7kh++hmIKzzoh4RYtac0JR7YnvNhw4YrcP
-	IPEYCFkOuHTDYafA7nmvEuhymM84zd++BwHlHmfFl76q/mvStbw+5me/jpepuU1teV0Y7DEzusx
-	YsbaQDoFJLe9WuQaReweIwOXnGmX55A==
-X-Google-Smtp-Source: AGHT+IGjCdAP8Med5Uz3zM88YDI+0dw+kFhTAhqv2XIHSPraXCW8PtiZpKcSe5HEkCIs8k4Yh+M7Rg==
-X-Received: by 2002:a05:600c:3586:b0:45d:d13f:6061 with SMTP id 5b1f17b1804b1-45dddec89e6mr70135545e9.30.1757322504380;
-        Mon, 08 Sep 2025 02:08:24 -0700 (PDT)
-Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b8f2d3c88sm300994075e9.19.2025.09.08.02.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 02:08:23 -0700 (PDT)
-Date: Mon, 8 Sep 2025 11:08:22 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Peilin Ye <yepeilin@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org,
-	linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-Message-ID: <aL6dBivokIeBApj8@tiehlicka>
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
- <aLtMrlSDP7M5GZ27@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=En2bmV7wVasqn+3Y6g9/pKDoKZt3Cp9yVWwnKiVoMQasrUEy9LZbAwfhmZyKMQrKuyaN6j6+3bbffWQhyKudBz3TTwgaKvv2oVm7qWLpT752U7s1+hcFgQTs6ZTZS1nWDaDjf1g4fZm5Gu2hZUU0XCX++qDTxSESfbUdhNotAg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DIAuUmi+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66050C4CEF9;
+	Mon,  8 Sep 2025 09:09:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757322550;
+	bh=d4EWkqTmWTK+QVtfkDOawxf1iVy4btAiduZLlzXIOxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DIAuUmi+iBCXjvtZXZZDoaSq9EEbQBZmjbGMoPrvATgdhaHft0PFjZc+plS2pOiUk
+	 XJx/Q51AwHDUe1kU4XxIp1nwa38AmLaGNqOGkwsPlY8lkokPY7GfjiXiamHOhTDFs+
+	 O0e2gjx1aKyMUMNfKUOpg0oTOtf5wW0b6mJvFuvo=
+Date: Mon, 8 Sep 2025 11:09:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+Subject: Re: [PATCH 6.1 000/104] 6.1.151-rc1 review
+Message-ID: <2025090811-pendant-calm-09c5@gregkh>
+References: <20250907195607.664912704@linuxfoundation.org>
+ <6a53318e-13f1-4c38-a9cb-88955247b666@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,52 +59,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLtMrlSDP7M5GZ27@google.com>
+In-Reply-To: <6a53318e-13f1-4c38-a9cb-88955247b666@gmail.com>
 
-On Fri 05-09-25 20:48:46, Peilin Ye wrote:
-> On Fri, Sep 05, 2025 at 01:16:06PM -0700, Shakeel Butt wrote:
-> > Generally memcg charging is allowed from all the contexts including NMI
-> > where even spinning on spinlock can cause locking issues. However one
-> > call chain was missed during the addition of memcg charging from any
-> > context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> > cgroup_file_notify().
+On Sun, Sep 07, 2025 at 08:00:39PM -0700, Florian Fainelli wrote:
+> 
+> 
+> On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.151 release.
+> > There are 104 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > The possible function call tree under cgroup_file_notify() can acquire
-> > many different spin locks in spinning mode. Some of them are
-> > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> > just skip cgroup_file_notify() from memcg charging if the context does
-> > not allow spinning.
+> > Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> > Anything received after that time might be too late.
 > > 
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.151-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Tested-by: Peilin Ye <yepeilin@google.com>
+> perf fails to build with:
 > 
-> The repro described in [1] no longer triggers locking issues after
-> applying this patch and making __bpf_async_init() use __GFP_HIGH
-> instead of GFP_ATOMIC:
+> util/bpf-utils.c: In function 'get_bpf_prog_info_linear':
+> util/bpf-utils.c:129:26: error: '__MAX_BPF_PROG_TYPE' undeclared (first use
+> in this function); did you mean 'MAX_BPF_LINK_TYPE'?
+>   129 |         if (info.type >= __MAX_BPF_PROG_TYPE)
+>       |                          ^~~~~~~~~~~~~~~~~~~
+>       |                          MAX_BPF_LINK_TYPE
+> util/bpf-utils.c:129:26: note: each undeclared identifier is reported only
+> once for each function it appears in
 > 
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -1275,7 +1275,7 @@ static int __bpf_async_init(struct bpf_async_kern *async, struct bpf_map *map, u
->         }
+> which is due to  05c6ce9491f1851d63c40e918ed5cf7902fd43d3 ("perf bpf-utils:
+> Harden get_bpf_prog_info_linear")
 > 
->         /* allocate hrtimer via map_kmalloc to use memcg accounting */
-> -       cb = bpf_map_kmalloc_node(map, size, GFP_ATOMIC, map->numa_node);
-> +       cb = bpf_map_kmalloc_node(map, size, __GFP_HIGH, map->numa_node);
+> Looks like we need caf8f28e036c4ba1e823355da6c0c01c39e70ab9 ("bpf: Add BPF
+> token support to BPF_PROG_LOAD command") which adds the definition for
+> __MAX_BPF_PROG_TYPE, unfortunately there is a lot going on there that this
+> won't apply cleanly.
 
-Why do you need to consume memory reserves? Shouldn't kmalloc_nolock be
-used instead here?
+Ick.  I'll just drop the perf patch, thanks for noticing this.  And I'll
+drop the patch after this one for both 6.1.y and 6.6.y.
 
->         if (!cb) {
->                 ret = -ENOMEM;
->                 goto out;
-> 
-> [1] https://lore.kernel.org/bpf/20250905061919.439648-1-yepeilin@google.com/#t
-> 
-> Thanks,
-> Peilin Ye
+thanks,
 
--- 
-Michal Hocko
-SUSE Labs
+greg k-h
 
