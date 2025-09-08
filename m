@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-805965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA766B49011
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:47:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E675BB49045
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A64B7AF129
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC40C1C233C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC36330ACE9;
-	Mon,  8 Sep 2025 13:47:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41A0182D0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A164330F945;
+	Mon,  8 Sep 2025 13:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZZPZpJQy"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8FD30C61F;
+	Mon,  8 Sep 2025 13:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757339247; cv=none; b=pNyJwt599u75HLiqea1SqW3mHh1ryvtSXKNzsvVKN6tYuKa4WMLzUg/jt72qUW4Z/EvZBFLL31dSq+Bnbl3WgRbiDet9DIFyBy1jZbUldFSHMc4+anesCJNAWwFTm9b7RlgsSMnc3QrStGv+Jeie7uYZGmhiVzr2PHOuVlPtXCI=
+	t=1757339329; cv=none; b=RrizK2WZTbND8ogr7Nzu8HQsZkfSmnj4BOrcTx6bVKWiG4pbxkZA7oSnqERWHHTv1oPXpCU5hwJynyvZQ/RKl45Yv78WkpeLrJ6UKkHy5KowZPmPdmHZiOpCUdDPF97aOMAL2urnNtIs8hUAxbJLjYFajM2xp/5cisx9m/nwejI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757339247; c=relaxed/simple;
-	bh=at18kgT/BeIp9qGsKxERWyzMfX1nvcNt1wBgQmAuGr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ot5QHKj6OpkuhWl1oLSno/u5okjabCT2v9aqYYtv/eKujrfmqXzxtUbbv/lEjg6MpWUyGsjWS19U+IEGYHgVHLph4M8rjBxrQJNDqu7HWOP7aOpbvP/o2nj2QXwttqtetZTtGNQ5aXpJvB3h1RkKL062RCHCMaro3YJOIt9HDm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA8F61692;
-	Mon,  8 Sep 2025 06:47:16 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 259FB3F63F;
-	Mon,  8 Sep 2025 06:47:23 -0700 (PDT)
-Message-ID: <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
-Date: Mon, 8 Sep 2025 14:47:21 +0100
+	s=arc-20240116; t=1757339329; c=relaxed/simple;
+	bh=+ATgwERUjCMk+mbyg0rUpYLOyGZJJnUWX/wmnPZ9hlY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CxFFfsySDgiXUWkitOVyvzFueEkbOPRjk/n/wq+6195lf0aw5MBvGmJPI7ekgJ9p7XxfufQBau6qQ5o7jw2JF/zYX+U9Qetfb+ZiStwFarzsxKtK7IhgUBqgt0vs24ae+YKPJzIHyeEarOTeJGeH84SjA5E6Z8kiGzWt/mG3eqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZZPZpJQy; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588DmY8P062815;
+	Mon, 8 Sep 2025 08:48:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757339314;
+	bh=H+ovSwcuIBBodDc5Y/doW/VxN5p2BDHHt12bqipJ0o8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ZZPZpJQyF8pQKdZNPLJ989cxHP7WsWX3yU5/x7iPJlnebEtVPPWCIvdMQrU4otsR2
+	 pxLKW3kkZvPn4Z08RzxQ/rjHvWGP6To1SQTdfPkWmFZ3x0znh52X4Ov+5AsHxIklgL
+	 pKiz39EAqRNnM0xiJ/yYm9g17k4LoZUd53lSt+RA=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588DmXRZ2997610
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 08:48:33 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 08:48:33 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 08:48:33 -0500
+Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588DlU91689321;
+	Mon, 8 Sep 2025 08:48:27 -0500
+From: Rishikesh Donadkar <r-donadkar@ti.com>
+To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
+        <mripard@kernel.org>
+CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
+        <s-jain1@ti.com>, <vigneshr@ti.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <conor+dt@kernel.org>, <sakari.ailus@linux.intel.com>,
+        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
+        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
+        <jack.zhu@starfivetech.com>, <sjoerd@collabora.com>,
+        <hverkuil+cisco@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v6 08/16] media: cadence: csi2rx: add get_frame_desc wrapper
+Date: Mon, 8 Sep 2025 19:17:21 +0530
+Message-ID: <20250908134729.3940366-9-r-donadkar@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250908134729.3940366-1-r-donadkar@ti.com>
+References: <20250908134729.3940366-1-r-donadkar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-To: Catalin Marinas <catalin.marinas@arm.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
- tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org,
- jgg@ziepe.ca, steven.price@arm.com
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com> <yq5aikht1e0z.fsf@kernel.org>
- <aL7AoPKKKAR8285O@arm.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <aL7AoPKKKAR8285O@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 08/09/2025 12:40, Catalin Marinas wrote:
-> On Mon, Sep 08, 2025 at 03:07:00PM +0530, Aneesh Kumar K.V wrote:
->> Catalin Marinas <catalin.marinas@arm.com> writes:
->>> On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
->>>> When running with private memory guests, the guest kernel must allocate
->>>> memory with specific constraints when sharing it with the hypervisor.
->>>>
->>>> These shared memory buffers are also accessed by the host kernel, which
->>>> means they must be aligned to the host kernel's page size.
->>>
->>> So this is the case where the guest page size is smaller than the host
->>> one. Just trying to understand what would go wrong if we don't do
->>> anything here. Let's say the guest uses 4K pages and the host a 64K
->>> pages. Within a 64K range, only a 4K is shared/decrypted. If the host
->>> does not explicitly access the other 60K around the shared 4K, can
->>> anything still go wrong? Is the hardware ok with speculative loads from
->>> non-shared ranges?
->>
->> With features like guest_memfd, the goal is to explicitly prevent the
->> host from mapping private memory, rather than relying on the host to
->> avoid accessing those regions.
-> 
-> Yes, if all the memory is private. At some point the guest will start
-> sharing memory with the host. In theory, the host could map more than it
-> was given access to as long as it doesn't touch the area around the
-> shared range. Not ideal and it may not match the current guest_memfd API
+From: Pratyush Yadav <p.yadav@ti.com>
 
-The kernel may be taught not to touch the area, but it is tricky when
-the shared page gets mapped into the usespace and what it does with it.
+J721E wrapper CSI2RX driver needs to get the frame descriptor from the
+source to find out info about virtual channel. This driver itself does
+not touch the routing or virtual channels in any way. So simply pass the
+descriptor through from the source.
 
-> but I'd like to understand all the options we have.
-> 
->> As per Arm ARM:
->> RVJLXG: Accesses are checked against the GPC configuration for the
->> physical granule being accessed, regardless of the stage 1 and stage 2
->> translation configuration.
-> 
-> OK, so this rule doesn't say anything about the granule size at stage 1
-> or stage 2. The check is purely done based on the PGS field
-> configuration. The need for the host granule size to match PGS is just a
-> software construct.
-> 
->> For example, if GPCCR_EL3.PGS is configured to a smaller granule size
->> than the configured stage 1 and stage 2 translation granule size,
->> accesses are checked at the GPCCR_EL3.PGS granule size.
-> 
-> I assume GPCCR_EL3.PGS is pre-configured on the system as 4K and part of
-> the RMM spec.
+Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+Signed-off-by: Jai Luthra <j-luthra@ti.com>
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+---
+ drivers/media/platform/cadence/cdns-csi2rx.c | 24 ++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-True. The GPC Page Size is going to be 4K. At present the RMM S2 page
-size is fixed to 4K. Please note that the future RMM versions may allow
-the Host to change the S2 for Realm (Globally) to something other than
-4K. (e.g., a 64K host could change it to 64K S2), which allows the host
-to manage the Realm S2 better (and efficient).
-
-Irrespective of that, the patch is trying to deal with Host pagesize
-(which affects sharing) vs the Realm alignment for sharing pages.
-
-Suzuki
-
-
-
-Suzuki
-
-
+diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
+index 828b4ba4301d..3c99de56c095 100644
+--- a/drivers/media/platform/cadence/cdns-csi2rx.c
++++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+@@ -235,6 +235,21 @@ static const struct csi2rx_fmt *csi2rx_get_fmt_by_code(u32 code)
+ 	return NULL;
+ }
+ 
++static int csi2rx_get_frame_desc_from_source(struct csi2rx_priv *csi2rx,
++					     struct v4l2_mbus_frame_desc *fd)
++{
++	struct media_pad *remote_pad;
++
++	remote_pad = media_entity_remote_source_pad_unique(&csi2rx->subdev.entity);
++	if (!remote_pad) {
++		dev_err(csi2rx->dev, "No remote pad found for sink\n");
++		return -ENODEV;
++	}
++
++	return v4l2_subdev_call(csi2rx->source_subdev, pad, get_frame_desc,
++				remote_pad->index, fd);
++}
++
+ static inline
+ struct csi2rx_priv *v4l2_subdev_to_csi2rx(struct v4l2_subdev *subdev)
+ {
+@@ -607,10 +622,19 @@ int cdns_csi2rx_negotiate_ppc(struct v4l2_subdev *subdev, unsigned int pad,
+ }
+ EXPORT_SYMBOL_GPL_FOR_MODULES(cdns_csi2rx_negotiate_ppc, "j721e-csi2rx");
+ 
++static int csi2rx_get_frame_desc(struct v4l2_subdev *subdev, unsigned int pad,
++				 struct v4l2_mbus_frame_desc *fd)
++{
++	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
++
++	return csi2rx_get_frame_desc_from_source(csi2rx, fd);
++}
++
+ static const struct v4l2_subdev_pad_ops csi2rx_pad_ops = {
+ 	.enum_mbus_code	= csi2rx_enum_mbus_code,
+ 	.get_fmt	= v4l2_subdev_get_fmt,
+ 	.set_fmt	= csi2rx_set_fmt,
++	.get_frame_desc	= csi2rx_get_frame_desc,
+ };
+ 
+ static const struct v4l2_subdev_video_ops csi2rx_video_ops = {
+-- 
+2.34.1
 
 
