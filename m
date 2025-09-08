@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-805097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8028BB483F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5597B4841B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF80172C35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBA3A84B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F4F22A4D6;
-	Mon,  8 Sep 2025 06:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XE1EdX49"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA143235072;
+	Mon,  8 Sep 2025 06:24:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5E33FF1
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14765224AF0;
+	Mon,  8 Sep 2025 06:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757312018; cv=none; b=WZtFeE3WSJ7bSk1ijtPiXwIgrvalkShDzKqrqrgq071W9SOUXlnQ78M57m+bughQcMwlIwcT7dqYO4vCeRnUCzaSbQdiC6v86uHf+81CwR3h9SaL+2+1EA2wcLFO+ZnoyQxKfrgoGGkr5f3s2WCTMQmvDsQPmqb5A7cFRVXXPrw=
+	t=1757312697; cv=none; b=Pz5OThfzGfAIx0LK6P3uQukSWHX+CCHOTCGDJFiLSFDy05hblmst/YXzbAdZN/nWUWCVlCm7Fr4g7YSLNDfJLW3z3XqLnTkbnlbJkSkY/7h5AY6n34VL3gaXxVncy40tJ8K5tQLF2wejRJEA4UpVxOVa/ScX6SqGx4F/KBSNt80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757312018; c=relaxed/simple;
-	bh=bzc4qQuEEvgrgwrE2R9mbQf6DBRnuUtN62w99zNOguw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMjx1mmM/ZUmIW+jgLLiriiWAO2+y9e+CH+GWIYsZAU2ll944eRVPX2JDRziIofZFyC4//rY7QTvcMQ6YSQwzhtMxLIIgLBa+JONvnb3AYntumk5Th6Dy448HNaVB1EeDcdhonLvXq9rHkhsWAk+KuZOG2UwLGWHm19qoBPvwno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XE1EdX49; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-25221fa3c9bso9490015ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 23:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757312017; x=1757916817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XSpWzyyEZu+Bxd21h2rvWlPTRVpUiAP49N8nWNLhFfU=;
-        b=XE1EdX49wqiDC3s+fRpfBhAWMKP/7n6EH8/tAvCx0UcqpmP1RL7mROAIK4G2ZAv70S
-         UxG6Vn8sZeWyZ+LWtESy+4f3/aUCqHUvxD9luMUvt9dZVxinZSQzYl4Oy8r0/Wa3vRtI
-         fdupl2Kps5Tl54vL5xfRQn4Xk34BIAdSSeAO88Zpcx76E7FJ0bZzMyMkHJugyJ5+0OCL
-         e7ZDN3jVNeMPf+HkR5PsEZq9xdBWsyuuEKmCXamaTTdaxpC4KEyr3zhKm+wC9KrfZtYY
-         jZt7fr1tcxF27p6baRY8flZRUoWlvyj+L9f0485BIG7e/9ztgnl2qyOFHDzfsUf7hhjv
-         tZWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757312017; x=1757916817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XSpWzyyEZu+Bxd21h2rvWlPTRVpUiAP49N8nWNLhFfU=;
-        b=T54zm0GuC7pTVP35meTjwGBOdmEBXkw30aFS7NmpHlkbQb9rZ5vwAWaocW0G0qOYif
-         nz+DVv4+sbn0d/6Vz/26lGuAMGqF1DljZUYs6rr2j6oSxf/1GpQ20OP1/OrBw/x4UQ4f
-         9k93SHUqd39D9+GleGdH6cu4mi1k0ikt5Qf7h0BKUVnA0lK2V0dVD/OnopgK9XclOwmh
-         Td/Oz81wwz5b1rkq4xw9o2AEFygb1NqEiX1VwyHTB5Sqaj8byR01RVfX8AB3O60Rt7ph
-         IVPbK/YrA1n4Cv1NuX0Vns4n3EARnCeNP0azIP3HMCUMUmgj0MRrWixrf2BTn1TgpMGt
-         htdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU62qhGw6ITDvZ/nRs+kNPZfh9qBcGOr7pPiXrCoTceG27i+GtA59mEgCZXgYfNwSscFJsT/1EjH5Voar8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxN3w4k55YkhjQ73bJwumCCA698qJPHUyFiwn4kuuTog9YkIKB
-	zhZxLowVGDtgFHwml59ZBm7vFA51obOXZN3Wkk7PaMKsWsu2LH4WBorjcRwArHJCQZA=
-X-Gm-Gg: ASbGncv+yYhkxMq+QF/4nFfPaNV9yu/FjEZVgdZnmni8hA6LOra3H0SJPS9KlsBCbBL
-	mF+lSJp75f0HMbm4bAM6+JoVZdoXxkMfBoSS9XlalLFXgeUAeTK7mtYIqFqsfEqlXreh9LwRrMa
-	8m99DKqNlHs2nfVFgF2/VRU14JW74uL7Y4tzQPgRJ3AGA9uyyoDdnKcLING1U7B30lUNzxDhpNi
-	UDZCDRHNJcXyVk3RSqBOD5vuv4GUgDo/+81W6OWPbSmuYsDgRcTf6tyqL5RV4WnY5fXIBJFzvNd
-	OYcCHRTekuKkteDsRJXKXY9WirIXkrr08EHu3iWrPYGEjIiw8aNlhtMW7UX54YGoJjcyfDrNVic
-	qXuB3xJvJXtYZKlFctpjhK38h
-X-Google-Smtp-Source: AGHT+IHdBfGAMTNAQaghtyqFNtIGW5Wx0vAdVoZp4XMlTkw8tyPs8PqBh9LaIqQl5x4IILpeatDJQg==
-X-Received: by 2002:a17:902:fc4f:b0:248:aa0d:bb22 with SMTP id d9443c01a7336-2516e1be7a9mr86223805ad.0.1757312016597;
-        Sun, 07 Sep 2025 23:13:36 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b14206426sm164265075ad.17.2025.09.07.23.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 23:13:35 -0700 (PDT)
-Date: Mon, 8 Sep 2025 11:43:33 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even
- without frequency table
-Message-ID: <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-3-zhangzihuan@kylinos.cn>
- <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
- <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
- <20250904053700.abdkh23zwi5x65do@vireshk-i7>
- <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+	s=arc-20240116; t=1757312697; c=relaxed/simple;
+	bh=WUoCSRNyXygxBg40G1rimhKm2q8h8PwfgC+2wqmpPqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X1S1I+CzfPj2OqDvxCW2zSM/hs13UjDtPcNI/4DmNgYXLdFXAJWRQt/POxBC1JYb2dRYZxLv3j3ZsEIf1bS0hetsgmYPiaJnMF68gItJ4Ya2YVq4WGpAIfbnWflEjs9pKnBuN2wlwYXJQ6p++OSZR2oQHC+aYDluvQ1vaweGvcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cKxks2F4JzYQv07;
+	Mon,  8 Sep 2025 14:24:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C5BF11A0B82;
+	Mon,  8 Sep 2025 14:24:51 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgD3QY6xdr5oCGEjBw--.62066S4;
+	Mon, 08 Sep 2025 14:24:51 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: nilay@linux.ibm.com,
+	ming.lei@redhat.com,
+	axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH for-6.18/block 00/10] cleanup and fixes for updating nr_requests
+Date: Mon,  8 Sep 2025 14:15:23 +0800
+Message-Id: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3QY6xdr5oCGEjBw--.62066S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr17Xr48GF1DCr43Ww15urg_yoWkJwbEkF
+	yUCFyftFZ0qF45AFZFkF1UJ34DKan3CF1UKa4DArW8Jws7ta15Cr45KrWrZFsxua12k3Wk
+	tw1UXr1rJan5ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 04-09-25, 13:48, Zihuan Zhang wrote:
-> I understand your point about the potential duplicate call to
-> cpufreq_verify_within_cpu_limits() for drivers with a valid freq-table.
-> However, in the third patch of this series, we removed the call to
-> cpufreq_generic_frequency_table_verify() from the table_verify path.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Yeah, I missed that.
+Yu Kuai (10):
+  blk-mq: remove useless checking in queue_requests_store()
+  blk-mq: remove useless checkings in blk_mq_update_nr_requests()
+  blk-mq: check invalid nr_requests in queue_requests_store()
+  blk-mq: convert to serialize updating nr_requests with
+    update_nr_hwq_lock
+  blk-mq: cleanup shared tags case in blk_mq_update_nr_requests()
+  blk-mq: split bitmap grow and resize case in
+    blk_mq_update_nr_requests()
+  blk-mq-sched: add new parameter nr_requests in
+    blk_mq_alloc_sched_tags()
+  blk-mq: fix potential deadlock while nr_requests grown
+  blk-mq: remove blk_mq_tag_update_depth()
+  blk-mq: fix stale nr_requests documentation
+
+ Documentation/ABI/stable/sysfs-block | 14 ++----
+ block/blk-mq-sched.c                 | 14 +++---
+ block/blk-mq-sched.h                 |  2 +-
+ block/blk-mq-tag.c                   | 53 ----------------------
+ block/blk-mq.c                       | 66 ++++++++++++----------------
+ block/blk-mq.h                       | 18 ++++++--
+ block/blk-sysfs.c                    | 47 +++++++++++++++-----
+ block/elevator.c                     |  3 +-
+ 8 files changed, 92 insertions(+), 125 deletions(-)
 
 -- 
-viresh
+2.39.2
+
 
