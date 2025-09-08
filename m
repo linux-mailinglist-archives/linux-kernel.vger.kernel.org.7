@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-806420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98B6B4968A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE15B4968C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D9F166561
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:09:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797D43B30CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434EE31197B;
-	Mon,  8 Sep 2025 17:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF89A30E0DC;
+	Mon,  8 Sep 2025 17:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UPmZWq+M"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XYdKwNNO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4293101DC;
-	Mon,  8 Sep 2025 17:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDED63101B2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351332; cv=none; b=VKjM93xnZqC8zKNwOajZ7pmJ/6gUDyHDpD/oak3g/NNocvd92Q14WkdYLwMPkLbqDUlliUNlTZoqk/TWMdwa/tK0bQdvS56jCm6ft5+HwvStJJHvh1voXH+LX1i6H/Z+njnCE0Gxa+1oB0erYIzZBiTjpl/Vf+ZlcCxSuKI2Flo=
+	t=1757351369; cv=none; b=GBUpQEIxcW4ZOS4tEEgKqALKVJf4RuGY5rVL7y2nAefxVbtLnTUav7J/1sl5lkpD0cQill6jWC7KBa7WG3SDxseGdGBkXd45t4ljOn99kBaJrH4kuKQSK0N+uboeAnIWWlkc1x6A5uyj78IkAO5K1c4/4QkmXxpeHF+LxB5bx84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351332; c=relaxed/simple;
-	bh=aSHJOGuAmbu4jRG6nN6m9ehXoLMuRO6BKf+oUMsgf0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OgjiArV3a4F0CbzoLbfOdNUvpO58TqoQMPMaenUlBc4j8lg+uebg/57GrmOKYhqA6SXSqYDQNzLV0998JYBi2foQ1oWTIaQE8fJ/+7SQKXudvYG+zakFu+t8u1cl5Yaaie72tmumM8neSNM+0emnlNtPlpz/VM6b6umRmaRGC38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UPmZWq+M; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1757351322; x=1757956122; i=markus.elfring@web.de;
-	bh=aSHJOGuAmbu4jRG6nN6m9ehXoLMuRO6BKf+oUMsgf0U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UPmZWq+M3SzHi3Fdu70tZu1oySmjMZ+MDMCWRx2S0YW6KoQTw+py5U5JnODoRHPL
-	 LFKmWX460LhzLBCoUqPP41Sl5+pOgBvwl6+pUkYRKts/zxTUrLEshO1yv/R2nkPJJ
-	 Lw+XmkvHjaWpGTSnpp7vry6rsXcReOUIvD9CcV9jRt+19u+qYWX54XpxiDRve0SCU
-	 m022F/2J4KkNyo24Zg69uEDvALUf/6bEyOffoqADyK5amnpgU+8wai6bYUZhpXJ4Z
-	 M7DLgZSXyWqyweGorMye+ouh1NhrFfKHuNle+MsCCaweoyEJ3IRYXkHOZwKw4nJm4
-	 uY6jU2rHgBB8fVqMUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.229]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1d7s-1uTIe20CNc-015H1Q; Mon, 08
- Sep 2025 19:08:42 +0200
-Message-ID: <207f485f-df06-43a6-b91d-8153b8922089@web.de>
-Date: Mon, 8 Sep 2025 19:08:41 +0200
+	s=arc-20240116; t=1757351369; c=relaxed/simple;
+	bh=nEnJefsPnqX5TFlOhSjy/aCZuFSg/cMMij5f+DaISJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7GB5dT7fmHmtrCD21zJhuyMz5dJdWlBoymKne7j/6SCjfA9dOdZ4/YyVZYTCHBV+0h6qPuXWOtlbMRKQtuMiWhGbhx/qEnzYpSU+u3PyVUE0uLhnVJsVRAu6c1bcg54jAIa9rwuo3PXHTsCOthTNgLEOGGjoxz1UycIfUo4bvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XYdKwNNO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757351366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BjGSfoNLufNCcnOWJhIHlOPvlvWzDfGM2mQB9ETv4Jw=;
+	b=XYdKwNNOTZmhph5kKeA7YcYjO5wM6KjONPcmh6XUiwwWJNEUU0oe0YGt7caAE4gGadt/Bq
+	8D3iW6cLcfaIgARu+GXQ3ogK5ylZssfqC0sphFRiB8LNnczBUYaQhmqTsb022M8qv4NNNl
+	mg6JctMbOq5Lmbl1uQEWMuPY+idQbOc=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-470-gLB0TlkNMImmhLz9z9smoA-1; Mon, 08 Sep 2025 13:09:24 -0400
+X-MC-Unique: gLB0TlkNMImmhLz9z9smoA-1
+X-Mimecast-MFC-AGG-ID: gLB0TlkNMImmhLz9z9smoA_1757351364
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-72108a28f05so188452946d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:09:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757351364; x=1757956164;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BjGSfoNLufNCcnOWJhIHlOPvlvWzDfGM2mQB9ETv4Jw=;
+        b=BuXEo1uok2vggCM1OV0X/dp5lWx5gaCHU9ThJdmuRqV49dWsy1rsrWi/wrvx0AqWIF
+         qhqmd6dL7iLVZ48kq6dcFn326t9wgGZ5cUz6NoHCoWXoFgy+4s7xEO0M7KW02DXSwcK8
+         QprrbcqY6/5t7LGLZ04gn+2IZmK5jxtiUqqP4HQHxNtv5qpMRcRQsAW01CIqGJZSXQZD
+         29e86vgUl4H+WhuSm8HBG9a0jPeppAy73AebVS5VspCDTw2audTea/4Gv9lS9NTcp7ar
+         Vo7W7c5tTCFYdvNy48pNdHqgqlpwH33Z3ZapGDZCco6t9mqc47cjBEJLDDZjTGUPXbvz
+         WzvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhKFShCecPAEL68RH0C9ALasJqK3W5bivbqCZ0dZuCKiBonp0hNX0gwp33V1/zfD1Li/e4w6C/1jZv67w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMjXq3w0XdTIwmStCxbbjUccXiV6jYpPLWZVnlo/o/xjh/cDJ1
+	se8ZdyqIQVqc4CvDE5Va/fQ9jlb0uw0zetSkqRREMyQ5niuFUuqdhrPzItKnyxplqOtljcnLC+q
+	n375uwnWDMnZej7d9XZizzfLSIioWcSPK65wjfNVFSFjIQNVdnxU84P4wWKmBil7T1g==
+X-Gm-Gg: ASbGncsAhZzx0jx7iQEom4wGODDWpJH5vhh3XV1xlLKbSjud25IqiTG13oR4C1S01AK
+	7c3mELow/6EqhaP54ipnqZxL23tR+6dsuGFvszvFBPLCXH8qom1k1E2Hiu6QfJObHc7AuHLUIuh
+	ULdP/N34DbEomjScK7nFGb1amwq6z95Qi+FOxdd1nWO827/aq5uPwUPrSez7HCY8ipWqAknOIAz
+	Gw8VpVIYh3mg7Odzm8h+/KyJpwaZbI+6+lSOotnsHkDF2X4zZ45hA/E7X7sM9R8qKPVAnx19l9M
+	70Fd7Q7Gy5rufsjFINVt2ontgSpAe9Ax4DrLh51AOXWRXJf/Mj48IMbhHRM=
+X-Received: by 2002:a05:6214:460b:b0:742:1ea2:b5fa with SMTP id 6a1803df08f44-7421ea2bfc1mr87069466d6.27.1757351363901;
+        Mon, 08 Sep 2025 10:09:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IED5LQ1C1kD2cQaTdi6CchCpZ13f6Gj4BgYLX1Z0AMPVgl9HbDNtaLifWHhEKfT7Yq0Zl0NpQ==
+X-Received: by 2002:a05:6214:460b:b0:742:1ea2:b5fa with SMTP id 6a1803df08f44-7421ea2bfc1mr87069046d6.27.1757351363366;
+        Mon, 08 Sep 2025 10:09:23 -0700 (PDT)
+Received: from x1 ([2600:382:8507:870e:b6f8:ee72:4f09:a16a])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-721cf6d6cffsm119097426d6.54.2025.09.08.10.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 10:09:22 -0700 (PDT)
+Date: Mon, 8 Sep 2025 13:09:20 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Tero Kristo <kristo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] clk: ti: convert from clk round_rate() to
+ determine_rate()
+Message-ID: <aL8NwHe00OeVuAuW@x1>
+References: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 1/3] i2c: PCF8584: Fix debug macros defines of if statements
-To: Cezar Chiru <chiru.cezar.89@gmail.com>, linux-i2c@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-References: <7e155481-b1b7-48db-af64-6a313ade1bbf@web.de>
- <20250908133608.45773-1-chiru.cezar.89@gmail.com>
- <20250908133608.45773-2-chiru.cezar.89@gmail.com>
- <8c23242e-348f-467b-adc1-deae06e7ea09@web.de> <aL75U7i7lyMfaupK@hangmanPC>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aL75U7i7lyMfaupK@hangmanPC>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:S1MwUj1RJSKbdj2Yd8sZHNZOjq3Q42lZQu5WjmkcKTWVlWgBMS4
- 38p6xjhiNscFOTc8OdCXXLduM1AddVFFIYrhTgawVod3uwOC16Do2uaVsGgCN369KGj5vdD
- QUJT/4NyMmHTuXjCAWNk6L22+0gzrHu3JbEd+AO9WBCXkxTmD5Pl/JMs6blFtbGkD4cDwnM
- FQNt3SqGXkg3JHymewNCA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HJfEeRCjBAg=;Kt5cRwtYBJnZ1+JwrTjG9ITxFsO
- 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
- jG+g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-> Sorry, I didn't understood the first time. I will try my best.
+On Mon, Aug 11, 2025 at 08:48:05AM -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops. The first two patches in this series
+> drops the round_rate() function since a determine_rate() function is
+> already implemented. The remaining patches convert the drivers using
+> the Coccinelle semantic patch posted below. I did a few minor cosmetic
+> cleanups of the code in a few cases.
+> 
+> I want to call out the changes to the dpll driver since a fair number
+> of changes had to be done outside of Coccinelle. I unfortunately don't
+> have this particular hardware on hand, so I was not able to test it.
+> I broke the changes to this driver up into smaller chunks to make it
+> easier to review.
 
-Would you get further development inspirations from previously published information?
+I included this patch series in this PULL request to Stephen:
+https://lore.kernel.org/linux-clk/aL8MXYrR5uoBa4cB@x1/T/#u
 
-Regards,
-Markus
+Brian
+
 
