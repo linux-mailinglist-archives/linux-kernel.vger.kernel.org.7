@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-805221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118B4B4859F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:39:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9559B4858F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD99C17F34F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D7E1B20653
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDC82EE276;
-	Mon,  8 Sep 2025 07:36:49 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3B02E8B77;
+	Mon,  8 Sep 2025 07:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j12DB15x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1STPvFql";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j12DB15x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1STPvFql"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548092E9741;
-	Mon,  8 Sep 2025 07:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CA32E8B62
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317009; cv=none; b=Pon51YqNsttl40oTup9XjhNikpW63SovE8lReBTYykxZspIkQvqA5/d4TPJ6Hf8BtGK1v7A2SIwUnvkQ8Q1rCl1iN93z37JwepfRSJ30gEHcaQv9aqFR44IWCiImooxRIyNFoSmPAzF/kQUM66sbAh976VZZhG+2TvTbDz6Sab0=
+	t=1757317000; cv=none; b=hzjTzHrVLXNKGJqKU9B1fT7UFpfczgWgkWIWZ0NzDjzWRZzZWqSFjs+IaCrhVrF1BRMXzGLQ1GrCPDbWQCeWqWyeU5ajKyiatruACUrXU5EfEDAQuSbLnVHvMX0kHLFgKM2fLW/Z+VSVd7K1jqoBFTBxWq7+7cwrTqcpulwplQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317009; c=relaxed/simple;
-	bh=rhMUG4/AcKJ0wBBqdSgZc045WqEYWJre1gSPDfVVHSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AHXdtgl0DWp1t3wlchQ/RbsD+gDaLRmWTrZ8deSmImHXWJH+6NYYW2b3pVZI3YLsgrt6sV3ZsSwffmhDAO4gjvUh/r+QHmfNMV74Ab4U0hxh+AaRogG0cME9iLi5fnCxMadEaZQah6zCQjVMKj10QMEcliagETPxKLpmMPi0dkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8cd7b37e8c8611f0b29709d653e92f7d-20250908
-X-CID-CACHE: Type:Local,Time:202509081451+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:5df52faf-dd0c-4de2-8e8b-19184aa7ff79,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f6a7994fb7f88b258705a5b9368f90b6,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8cd7b37e8c8611f0b29709d653e92f7d-20250908
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 909605093; Mon, 08 Sep 2025 15:36:36 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 395D5E008FA7;
-	Mon,  8 Sep 2025 15:36:36 +0800 (CST)
-X-ns-mid: postfix-68BE8784-12002628
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id A56AEE008FA3;
-	Mon,  8 Sep 2025 15:36:35 +0800 (CST)
-Message-ID: <fecd3bf1-c8a5-4514-b3be-311a09abe5a9@kylinos.cn>
-Date: Mon, 8 Sep 2025 15:36:34 +0800
+	s=arc-20240116; t=1757317000; c=relaxed/simple;
+	bh=d9ozopaFz+jFj0+KSjr9ERSECP5lEosJxYjuWQQk36k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRoNMdw4GBqw45bvf6TNmNbzC8TVqEd9OzmmtG2aYG1QEKmuqtgnSjfw3dKZmg6LMCf3NZokV95ec291e2iN1GsBnCOYPAT4YDCqSDomG4ZAvhUhj65Y7sED6UlamcariEE0dmFp+l7/ZzHm7osXUKK0wifqmydSXP6l9obIPrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j12DB15x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1STPvFql; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j12DB15x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1STPvFql; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2887F24215;
+	Mon,  8 Sep 2025 07:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757316995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3iORdkyQPwCpPLP7o4laiR1F+rqzx3WvY73dnkVN5c=;
+	b=j12DB15xycT1y2h8zkiOsuAbNDHxZ34VelYF/VA7yd3A0HRjXv4sY0GVQonjUyMkEaSnTR
+	x6RMcS5Kg5NYSrTQN9pNah/gnkV2wFFeUN59/T6Jdn5+KLSvneVrTwbwomHj5/KzQpQGYx
+	2YFF6GkK7SAPf79oJA4j7HDoHL8NoLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757316995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3iORdkyQPwCpPLP7o4laiR1F+rqzx3WvY73dnkVN5c=;
+	b=1STPvFqlIsD2EnCafT0BPj3XeX2imFQnh/uV+dg0VWNUEChSZv6AHBBJ13EFv50fQPZEvX
+	JfVqwg7LOKfelNDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757316995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3iORdkyQPwCpPLP7o4laiR1F+rqzx3WvY73dnkVN5c=;
+	b=j12DB15xycT1y2h8zkiOsuAbNDHxZ34VelYF/VA7yd3A0HRjXv4sY0GVQonjUyMkEaSnTR
+	x6RMcS5Kg5NYSrTQN9pNah/gnkV2wFFeUN59/T6Jdn5+KLSvneVrTwbwomHj5/KzQpQGYx
+	2YFF6GkK7SAPf79oJA4j7HDoHL8NoLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757316995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3iORdkyQPwCpPLP7o4laiR1F+rqzx3WvY73dnkVN5c=;
+	b=1STPvFqlIsD2EnCafT0BPj3XeX2imFQnh/uV+dg0VWNUEChSZv6AHBBJ13EFv50fQPZEvX
+	JfVqwg7LOKfelNDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1587213869;
+	Mon,  8 Sep 2025 07:36:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iptWBIOHvmjwRAAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 08 Sep 2025 07:36:35 +0000
+Date: Mon, 8 Sep 2025 09:36:34 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: linux-nvme@lists.infradead.org
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, storagedev@microchip.com, 
+	virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+Message-ID: <c9ef4fa6-99a4-46fd-8623-b8979556566e@flourine.local>
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even without
- frequency table
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
- Saravana Kannan <saravanak@google.com>, zhenglifeng
- <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-3-zhangzihuan@kylinos.cn>
- <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
- <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
- <20250904053700.abdkh23zwi5x65do@vireshk-i7>
- <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
- <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
- <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
- <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
- <67b55ae1-60b0-4d54-8220-59f7e3ba7c29@kylinos.cn>
- <20250908071920.f6ppfr7shy2cb2wg@vireshk-i7>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250908071920.f6ppfr7shy2cb2wg@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
+On Fri, Sep 05, 2025 at 04:59:56PM +0200, Daniel Wagner wrote:
+>  void blk_mq_map_queues(struct blk_mq_queue_map *qmap)
+>  {
+> -	const struct cpumask *masks;
+> +	struct cpumask *masks __free(kfree) = NULL;
+> +	const struct cpumask *constraint;
+>  	unsigned int queue, cpu, nr_masks;
+> +	cpumask_var_t active_hctx;
+>  
+> +	if (!zalloc_cpumask_var(&active_hctx, GFP_KERNEL))
+> +		goto fallback;
+> +
 
-=E5=9C=A8 2025/9/8 15:19, Viresh Kumar =E5=86=99=E9=81=93:
-> On 08-09-25, 15:08, Zihuan Zhang wrote:
->> One idea we are considering is to check whether driver->verify points =
-to
->> cpufreq_generic_frequency_table_verify and use that as a heuristic to
->> enforce the presence of target_index():
->>
->>  =C2=A0((driver_data->verify =3D=3D cpufreq_generic_frequency_table_ve=
-rify) !=3D
->> !!driver_data->target_index)
->>
->> I haven=E2=80=99t tested this approach yet, so I=E2=80=99m not sure if=
- it will be fully
->> reliable.
-> I don't this is a good idea. It isn't necessary for any driver to use
-> the generic functions.
->
-Understood, I thinks there is some reason that the two separate=20
-verification functions exist.
+> +	free_cpumask_var(active_hctx);
+> +
+> +	return;
+> +
+> +free_fallback:
+> +	free_cpumask_var(active_hctx);
+> +
+> +fallback:
+> +	blk_mq_map_fallback(qmap);
 
-By the way, Do you think it=E2=80=99s necessary to add some defensive che=
-cks=20
-during driver registration?
+I am not so happy that the cpumask_var_t and __free doesn't work to
+together at this point due to the 'evil way' how cpumask_var_t is defined:
 
-For instance, we could enforce that a driver cannot implement both=20
-has_target and has_target_index at the same time.
+	ifdef CONFIG_CPUMASK_OFFSTACK
+	typedef struct cpumask *cpumask_var_t;
+	#else
+	typedef struct cpumask cpumask_var_t[1];
+	#endif /* CONFIG_CPUMASK_OFFSTACK */
 
+In the previous version I used
+
+	cpumask_var_t active_hctx __free(free_cpumask_var) = NULL;
+
+which resulted in a way cleaner code. Though the kernel test robot
+complained with
+
+      >> block/blk-mq-cpumap.c:155:16: error: array initializer must be an initializer list
+           155 |         cpumask_var_t active_hctx __free(free_cpumask_var) = NULL;
+
+I try to figure out if it's possible to get this somehow working with
+some witchcraft (aka pre compiler magic).
 
