@@ -1,82 +1,48 @@
-Return-Path: <linux-kernel+bounces-806491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE716B497B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:58:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01910B497BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96033B520C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1CB7AFF8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AD3313E38;
-	Mon,  8 Sep 2025 17:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CC7314B69;
+	Mon,  8 Sep 2025 17:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C/tPt9zg"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2047.outbound.protection.outlook.com [40.107.96.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNsYZtrc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8C31327F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354309; cv=fail; b=OuTx34inVz0DrKuOQGQ8Xyl/Y8SRT4S3Ty3u13LbLwSO/XbYgr0eGO8PvRnsAZPsL+t2uARPk/jqvf2qcESFTfnnjSE705tLhuPDTy/sKmpeFjnjbAQw6roy8otqKpHTuSuro9RbTVpNuHEhQYzaxZ73/9vHtwPopoof6BxBc1E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354309; c=relaxed/simple;
-	bh=28y/YLOmusiPZhURZgIhKyXNSnIscmnN7fF/87uIdrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I1fLyjp2cLcLi+33jy0Rnnir+gpGgU8Fv0f9q6ZNcJ8xz9G+WZDC3eZL0kXXBF8bhcGeLtmb1n8UrJqNJtyAtCA/LUUMyGJSdIj064EtKkU/N0P6Qf/U+7SjPIG4uq0AVp/Z7IGT4I0ziMykpvEyXUPJXhZQFyuSHohosxKoGvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C/tPt9zg; arc=fail smtp.client-ip=40.107.96.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mc3djZWLDb0ikiVaHQk+8FPBnafkt5Xf7BevvaF/KlFrfQa3ZLR54ASzd7AYcTfUAdbCyrAQq4qxJWxk6up1hlhBY8B8DVu1mEW3WQxU/T7PJvkEqM7XrcIzA0jJWJnbKMduSZqBbqo0wY1sNdhZULDkJmw+ZiIRCcxGP6WdnTk74pT4ykfAXtz9Oj63Uk/OpoPQRO827z4zA80+WuvCuePd+IxDd/Ec7rtqhEPsRfpov/mcM78wAiR2rSIF/dntOVTsSGQvFfK3uwHj+AW+rb6sE4Xq/JWL7m2HybSLSsyLDzHxtND1HCiJgQdW0O4MPQxdFFoVlbXPBWbM6CldQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=egsXGoE4lphwB71vQYdz/fOS3e2CSraZDMShSFBJDnA=;
- b=BWoor+xplEA5izJkTqfgeo6TxqvqeZWr6UsWHVwjcr0fnJf7BsTl4pUauXOqAEvkBEbfWBW5Zp8GokIUNmkait9Xo/W6S9ExscoRrGEbZW5Ecj3EH0pUFgP9gFT2JBZNxIn9EOKiRrDcWXM0e1AxJBZoQaiwEUZKYBGBf/yvSWS+VhhWS5//Y4YShBvYxiwIHRsULJ4V/Vpn+dUGy7XOEMdSC42qAIo7Nl86qrQmqt/uVYkuxmPWwf0HaNJa3P5qU9g7Ab0KG2Acwc4qwXZEnpfkEQi7E2ETCOcvp4gahriuSSsIM9lJH/5ucl+Bv0MdD9ixAVXPXeaSA3FaErgUTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=egsXGoE4lphwB71vQYdz/fOS3e2CSraZDMShSFBJDnA=;
- b=C/tPt9zgoYrvueLxLToSwP6CYHsj8ci+6YKCQNsa4ael1CXcHu7fziezt0OjX8aHaKLe3OeU0fhL/F+59vEfrQRFzi6sJulibURGg9+b/sQqapRa+ekqBDN08CUAggFKcHERVkXrBtULFHxd4h7pAma9MUUwM16vWzTy2A0DDoA=
-Received: from CH0PR03CA0049.namprd03.prod.outlook.com (2603:10b6:610:b3::24)
- by DS7PR12MB6262.namprd12.prod.outlook.com (2603:10b6:8:96::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.19; Mon, 8 Sep 2025 17:58:23 +0000
-Received: from CH1PEPF0000AD79.namprd04.prod.outlook.com
- (2603:10b6:610:b3:cafe::ff) by CH0PR03CA0049.outlook.office365.com
- (2603:10b6:610:b3::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Mon,
- 8 Sep 2025 17:58:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CH1PEPF0000AD79.mail.protection.outlook.com (10.167.244.57) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 17:58:23 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 8 Sep
- 2025 10:58:23 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 8 Sep
- 2025 12:58:22 -0500
-Received: from [10.4.12.116] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 8 Sep 2025 10:58:22 -0700
-Message-ID: <0480a12c-7b4f-4d53-adf4-25f39d59e14b@amd.com>
-Date: Mon, 8 Sep 2025 13:58:22 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C4E31327F;
+	Mon,  8 Sep 2025 17:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757354316; cv=none; b=I2Kh9zHiKqQZTFpxO3LEzsg5du71BbIoysfOkqaBvHccw2ipZYrNxZM06JEu9WFuTu9IW6rgjZK09gJ/1iWbqyHgsL3Ot2kEDGaG23ltNFi8xplt0wcFR8IDzUc3A0ycjwoFBwRuO18rdVumksX/PmRtKkIidvEkUeem0hiRnM8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757354316; c=relaxed/simple;
+	bh=gt0EpPEAyoApJr09LrsCXlMB+0xjP2bmwcOFF+Pv5Sw=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=YgSZ4Idh1k4NWZcGdw/kUvk0t28yOT+buKHc2U8AryU/iycfRDPKMX4Ou+d4k8ItRdXtJJsXLrJ9rUPe8y+UPNq/8kC/p4YrGy500zjQzxSxX4iucxESMyVCwgqTHS4aMQyDO7VFEebYXRsJetEyF+8NlqdgFFBEMCPQXYy6lSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNsYZtrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC3EC4CEF5;
+	Mon,  8 Sep 2025 17:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757354315;
+	bh=gt0EpPEAyoApJr09LrsCXlMB+0xjP2bmwcOFF+Pv5Sw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MNsYZtrcdT+iWGtZ2zWmzMIStr5RyYgtdbBlMm7gPfJqXZ40FhR1kOjXOowgn5uMq
+	 Umikt3vwRgYlwXbbjvagqhwS6Kh+kfY/vp3Wj4tdYWkMUjB10vu7eWbLwOvI1ES25g
+	 GSIfuu/mkmE0tam8dphlXs8bEqxTis+zBUayiuJ62V0Eepu9DG2KLKllYbxHZkIEu8
+	 Cbkw/Kx7rKdc0bKJJ10fMi2J1b6in/SkNs9Dk1442fZO0n7fDL7YVLrVffWTGVI7gt
+	 /A5W7mt7madDGHoI3k79o5gdKDAloAze1KbxdcBF07o+c4J9UJDmDM7UhO+oh863gJ
+	 gQy0NQSWmyjLw==
+Content-Type: multipart/mixed; boundary="------------eNldNmG8FKXO6slpRWvrzn9e"
+Message-ID: <197e6b98-e390-4080-a3e8-a42e0b2cd674@kernel.org>
+Date: Mon, 8 Sep 2025 19:58:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,166 +50,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/amd/display: Optimize remove_duplicates() from
- O(N^2) to O(N)
-To: Alex Hung <alex.hung@amd.com>, Kuan-Wei Chiu <visitorckw@gmail.com>,
-	<austin.zheng@amd.com>, <jun.lei@amd.com>, <harry.wentland@amd.com>,
-	<sunpeng.li@amd.com>, <siqueira@igalia.com>, <alexander.deucher@amd.com>,
-	<christian.koenig@amd.com>, <airlied@gmail.com>, <simona@ffwll.ch>
-CC: <zaeem.mohamed@amd.com>, <wenjing.liu@amd.com>, <chiahsuan.chung@amd.com>,
-	<Natanel.Roizenman@amd.com>, <Daniel.Sa@amd.com>, <jserv@ccns.ncku.edu.tw>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250824182359.142050-1-visitorckw@gmail.com>
- <20250824182359.142050-3-visitorckw@gmail.com>
- <0ed3fa16-9e0d-4f8d-ac22-c9f6b541ae8b@amd.com>
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>,
+ Benno Lossin <lossin@kernel.org>, Dirk Beheme <dirk.behme@de.bosch.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <2025090807-bootleg-trophy-a031@gregkh>
+ <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
+ <2025090849-tweak-conductor-f642@gregkh>
+ <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
+ <2025090817-attendant-ungodly-78f6@gregkh>
+ <DCNGJMN80Z34.1O45B1LM9PB2S@kernel.org> <2025090850-canon-banish-baf6@gregkh>
+ <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
+ <2025090808-slicer-consent-6db0@gregkh>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-From: Aurabindo Pillai <aurabindo.pillai@amd.com>
-In-Reply-To: <0ed3fa16-9e0d-4f8d-ac22-c9f6b541ae8b@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: aurabindo.pillai@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD79:EE_|DS7PR12MB6262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15e872e7-3a2c-4ced-7385-08ddef014dc7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZnRsdGZ4djByNWNrSFl3L25TQkRreDlRVWxjUTA5cHVWWERxbElGRHk1OWx1?=
- =?utf-8?B?YW5sdmZBTzJ2M3RSeFRQWVl1anl2V2t1QWExYkFCZ0lZcWdKOUp2MnVneDNy?=
- =?utf-8?B?T0pabEJyZEkyUzJ5SURhVW4yOVkvdURJM3RmZkxlV0xVSTNIR29Wb3BuMTNM?=
- =?utf-8?B?UnlEdjM3eldwUlprN0ZpQWxSNm1CZ2Z6VjZzbDMzOVpPcCtaVStJSm9UTTFu?=
- =?utf-8?B?L25aUUJFWjdyOUtKdC94RmdiTGdNd1l1QTd6UE1DZ2lsbWFOSmF0WHhSL0li?=
- =?utf-8?B?Wi9oSjZGZGhnMWh4MVR6Zjc5NGVEOXlnMms2akt1Szh5RDg1QzdpVkNUN29Q?=
- =?utf-8?B?Yml0VzA5UWFvL3FybTh6UVpDUEdaN1ZFc1k3cU5oU2dWc2w0NC90ZTQ2Q1k1?=
- =?utf-8?B?K2llNDVjTEtHRG1Zc1J2RDd5K1d5TTlMT3VuT1ZEZE0xVWU0WGxJZU1lSmQz?=
- =?utf-8?B?OHdmSGw1YUtpallkMXBNako4TXVFa2oyRUJFL3pDRmowbkhsTURMUVJPRWYz?=
- =?utf-8?B?UFJsaHZ5NkpHT3hFaFRLTklxNCs1b3RVd1l2ejU1M1F1NWZneGl6b1kvM1dJ?=
- =?utf-8?B?UmRZUFd4TlZlbkVsMjlndDRQYy9LN3Q2Smc4NFN1UUU1MnB0b1ZlSEFGckpN?=
- =?utf-8?B?My9wVlRTajFTQXJrN1NGU2VMOVQ3MDBYS0o5MUxCaXV3TEtOdFJFSjZmUEE0?=
- =?utf-8?B?bmp5bWN1SCtweUFFZC9FbnB0SFlHdVNtQ2pzWjcrZE00a3NEOHk1WjNmNER1?=
- =?utf-8?B?czJRbTRWTkVXNlZMeDc4TGFEY1hnZmR6enkwc3ZmbUQwdjduUU9oQk4wc0Fx?=
- =?utf-8?B?QVZNVzBVQ1ZLYVd2c3Y2em9HbGU0VlFYcFR1S1lpSjJmNGcyR0dQKzhvaitv?=
- =?utf-8?B?RGthWmxnWVlZZWtvUjdYRnRjTEQwRU00K1NWVlFCbzQwcE5TR3RFK0VmWXkw?=
- =?utf-8?B?WXE0dXlTYzVFNlhLMzM4bzJhbmd5WVBUUndlUGRxZ2pJS3JKNW9DeVJsL3B6?=
- =?utf-8?B?cWN4UjlJUGowV1V3UjhGYkxoME12cW9VdFJBQUhkSmN1U0RQZzlrazV6Smpv?=
- =?utf-8?B?Uk9mWElUTGlIM256c0FPZERaV3ArK1hsMHBqL0FuMmNLUXQvNnVVMzlodDVw?=
- =?utf-8?B?K2FOcXBLN2NyeWJFc0xwZ1o2YytyN0RoNkJ4NmpDdlBXcGtJZ2tWbWR6bnIr?=
- =?utf-8?B?djlLSHUvbG9CU2RyOVUzb2xTR1hjeTZueDExbXpucTgxZC92ZHY2WXVac045?=
- =?utf-8?B?Nkh4bXp2ZjF5alIwMXJJUFlMR1BGTnpVU002b1VnVWRPYkNyWmN1V0ovdml0?=
- =?utf-8?B?RmNQRzFKS0lQb3grVFdNNC9UQmRqU1NYT01OUGxpYzY4aGFJM21HcVlQcjda?=
- =?utf-8?B?YURmZWc3NUhuZjJWTkZtcnh3NDJleFhZQjNnNXBCZUhTVUR6M1JpVzE0eVZV?=
- =?utf-8?B?bUNmTk5qdzBBRWcyS09YWWVPaExLZnJlOWFiYmFUay9RNXlqTmxKcnFpMlFQ?=
- =?utf-8?B?b3hRRGZPRWhmOU9UUDl6RVRsVERkMjlYSUJCR2xQS1RQWmpWVSt1NkZYVnRK?=
- =?utf-8?B?cnFqS2xLMUU2cXpJMTJOUVlyRFJJeWhCNXVHRmZCZW04cXc2YjhsRXVGcnVV?=
- =?utf-8?B?TEc3cjgwVkN3RFI1MnNzTWlDblFNRU54UUtKNXdETERyekZaanZNa3dCQnVo?=
- =?utf-8?B?aHExNmQrT1pwM1IzdEZoZ2pDbDZFd3FSazJGTlgvU28weStiTzRQdHVZaUh6?=
- =?utf-8?B?WmZRRk0yNUpHM0E5cC85d21KT1gyYUNnaWJNMWpEVUw5ckpxcUFickZ5VXVu?=
- =?utf-8?B?S0x2VkRzWU1SeUZ1UDUyaTJhUW1GNWRvRTB3TXEvREpSZFExTGFkUjVycWh3?=
- =?utf-8?B?enVISEhnOURuL09oeVhPTzUzQnd2ZEdmbTcxeUhCMzVRWk03QlB3RVFDbUx5?=
- =?utf-8?B?UVNWZEk2SDQyYTNMU0xiTHhCVkN4U3NVbXRQOTNhcmJkYlRnRlBqNUxzc1l5?=
- =?utf-8?B?VFV4OUNxSU9DbFhoTURQWUJWZm9OdFV6dDRDR0pwcEFjQ0lPcGo3VlRZMVV4?=
- =?utf-8?B?MHltallnd1UwNGhJaE55Y0NhQXpUcHcwWE5SUT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 17:58:23.4831
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15e872e7-3a2c-4ced-7385-08ddef014dc7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD79.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6262
+In-Reply-To: <2025090808-slicer-consent-6db0@gregkh>
 
+This is a multi-part message in MIME format.
+--------------eNldNmG8FKXO6slpRWvrzn9e
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 9/8/25 6:19 PM, Greg Kroah-Hartman wrote:
+> Working code for the simple "foo" example will be good.  Here's my
+> horrible (and will not build) example I was trying to get to work.
 
-On 9/8/25 1:10 PM, Alex Hung wrote:
-> 
-> 
-> On 8/24/25 12:23, Kuan-Wei Chiu wrote:
->> Replace the previous O(N^2) implementation of remove_duplicates() in
->> with a O(N) version using a fast/slow pointer approach. The new version
->> keeps only the first occurrence of each element and compacts the array
->> in place, improving efficiency without changing functionality.
->>
->> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
->> ---
->> Verified correctness using the following simple unit test:
->>
->> double arr1[] = {1,1,2,2,3}; int size1=5;
->> remove_duplicates(arr1,&size1);
->> assert(size1==3 && arr1[0]==1 && arr1[1]==2 && arr1[2]==3);
->>
->> double arr2[] = {1,2,3}; int size2=3;
->> remove_duplicates(arr2,&size2);
->> assert(size2==3 && arr2[0]==1 && arr2[1]==2 && arr2[2]==3);
->>
->> double arr3[] = {5,5,5,5}; int size3=4;
->> remove_duplicates(arr3,&size3);
->> assert(size3==1 && arr3[0]==5);
->>
->> double arr4[] = {}; int size4=0;
->> remove_duplicates(arr4,&size4);
->> assert(size4==0);
->>
->>   .../dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c | 18 ++++++++----------
->>   1 file changed, 8 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/ 
->> dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/ 
->> dml2_pmo/dml2_pmo_dcn3.c
->> index 2b13a5e88917..5100e0e7af42 100644
->> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/ 
->> dml2_pmo_dcn3.c
->> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/ 
->> dml2_pmo_dcn3.c
->> @@ -50,18 +50,16 @@ static void 
->> set_reserved_time_on_all_planes_with_stream_index(struct display_con
->>   static void remove_duplicates(double *list_a, int *list_a_size)
->>   {
->> -    int cur_element = 0;
->> -    // For all elements b[i] in list_b[]
->> -    while (cur_element < *list_a_size - 1) {
->> -        if (list_a[cur_element] == list_a[cur_element + 1]) {
->> -            for (int j = cur_element + 1; j < *list_a_size - 1; j++) {
->> -                list_a[j] = list_a[j + 1];
->> -            }
->> -            *list_a_size = *list_a_size - 1;
->> -        } else {
->> -            cur_element++;
->> +    int j = 0;
->> +
->> +    for (int i = 1; i < *list_a_size; i++) {
->> +        if (list_a[j] != list_a[i]) {
->> +            j++;
->> +            list_a[j] = list_a[i];
->>           }
->>       }
->> +
->> +    *list_a_size = j + 1;
-> 
-> A corner case needs fixing:
-> 
-> When input *list_a_size is zero, it will be updated to 1, unlike the 
-> original code. Maybe a early return when *list_a_size is zero?
-> 
-> Hi Aurabindo,
-> 
-> Do you have other comments or other concerns?
+I think our examples were pretty close already, but here's also your file. :)
+--------------eNldNmG8FKXO6slpRWvrzn9e
+Content-Type: text/rust; charset=UTF-8; name="rust_debugfs2.rs"
+Content-Disposition: attachment; filename="rust_debugfs2.rs"
+Content-Transfer-Encoding: base64
 
-Patch looks good with the early return added. Only nit is the 
-description wording - an extraneous 'in' is present.
+Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAKCi8vIENvcHlyaWdodCAoQykg
+MjAyNSBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPgov
+LyBDb3B5cmlnaHQgKEMpIDIwMjUgVGhlIExpbnV4IEZvdW5kYXRpb24KCi8vISBTYW1wbGUg
+ZGVidWdmcyBydXN0IG1vZHVsZSB0aGF0IGVtdWxhdGVzIHNvY19pbmZvIHRvIHRyeSB0byBz
+ZWUganVzdCBob3cgd2VsbCB0aGUgYXBpIGNhbgovLyEgd29yay4uLgoKdXNlIGNvcmU6OmZt
+dDsKdXNlIGtlcm5lbDo6Y19zdHI7CnVzZSBrZXJuZWw6OmRlYnVnZnM6OntEaXIsIFNjb3Bl
+fTsKdXNlIGtlcm5lbDo6cHJlbHVkZTo6KjsKCm1vZHVsZSEgewogICAgdHlwZTogU29jSW5m
+bywKICAgIG5hbWU6ICJydXN0X3NvY19pbmZvIiwKICAgIGF1dGhvcnM6IFsiR3JlZyBLcm9h
+aC1IYXJ0bWFuIl0sCiAgICBkZXNjcmlwdGlvbjogIlJ1c3Qgc29jX2luZm8gc2FtcGxlIGRy
+aXZlciIsCiAgICBsaWNlbnNlOiAiR1BMIiwKfQoKZm4gZm91bmRyeV9wcmludChmb3VuZHJ5
+OiAmdTMyLCBmOiAmbXV0IGZtdDo6Rm9ybWF0dGVyPCdfPikgLT4gZm10OjpSZXN1bHQgewog
+ICAgd3JpdGVsbiEoZiwgIkZvdW5kcnk6IHt9IiwgZm91bmRyeSkKfQoKLy8gRmFrZSAiaGFy
+ZHdhcmUgU09DIGluZm8gb2JqZWN0IHRoYXQgaWRlYWxseSB3b3VsZCByZWFkIGZyb20gdGhl
+IGhhcmR3YXJlIHRvIGdldCB0aGUgaW5mby4KLy8gRm9yIG5vdyBqdXN0IHVzZSBzb21lIGZh
+a2UgZGF0YQojW2Rlcml2ZShEZWJ1ZyldCnN0cnVjdCBId1NvY0luZm8gewogICAgaWQ6IHUz
+MiwKICAgIHZlcjogdTMyLAogICAgcmF3X2lkOiB1MzIsCiAgICBmb3VuZHJ5OiB1MzIsCiAg
+ICBuYW1lOiAmJ3N0YXRpYyBDU3RyLAp9CgppbXBsIEh3U29jSW5mbyB7CiAgICBmbiBuZXco
+KSAtPiBTZWxmIHsKICAgICAgICBTZWxmIHsKICAgICAgICAgICAgaWQ6IDEyMywKICAgICAg
+ICAgICAgdmVyOiA0NTYsCiAgICAgICAgICAgIHJhd19pZDogNzg5LAogICAgICAgICAgICBm
+b3VuZHJ5OiAwLAogICAgICAgICAgICBuYW1lOiBjX3N0ciEoImh3X3NvYyBuYW1lIiksCiAg
+ICAgICAgfQogICAgfQp9CgpzdHJ1Y3QgU29jSW5mbyB7CiAgICBfZGVidWdfZGlyOiBEaXIs
+CiAgICBfaHdfc29jX2luZm86IFBpbjxLQm94PFNjb3BlPEh3U29jSW5mbz4+PiwKfQoKaW1w
+bCBrZXJuZWw6Ok1vZHVsZSBmb3IgU29jSW5mbyB7CiAgICBmbiBpbml0KF90aGlzOiAmJ3N0
+YXRpYyBUaGlzTW9kdWxlKSAtPiBSZXN1bHQ8U2VsZj4gewogICAgICAgIC8vIFJlYWQgZnJv
+bSB0aGUgaGFyZHdhcmUgYW5kIGdldCBvdXIgc3RydWN0dXJlIGluZm9ybWF0aW9uCiAgICAg
+ICAgbGV0IGh3X3NvY19pbmZvID0gSHdTb2NJbmZvOjpuZXcoKTsKCiAgICAgICAgLy8gQ3Jl
+YXRlIHRoZSByb290IGRpcmVjdG9yeQogICAgICAgIGxldCByb290ID0gRGlyOjpuZXcoY19z
+dHIhKCJydXN0X3NvY19pbmZvIikpOwoKICAgICAgICBsZXQgc2NvcGUgPSBLQm94OjpwaW5f
+aW5pdCgKICAgICAgICAgICAgLy8gQ3JlYXRlIGRpcmVjdG9yeSBzY29wZSwgdGhhdCBjb250
+YWlucyBzb21lIGRhdGEgYW5kIGEgYnVuY2ggb2YgZmlsZXMgZXhwb3J0aW5nIHRoaXMKICAg
+ICAgICAgICAgLy8gZGF0YS4KICAgICAgICAgICAgcm9vdC5zY29wZShod19zb2NfaW5mbywg
+Y19zdHIhKCJod19zb2NfaW5mbyIpLCB8aHdfc29jX2luZm8sIGRpcnwgewogICAgICAgICAg
+ICAgICAgZGlyLnJlYWRfb25seV9maWxlKGNfc3RyISgiaWQiKSwgJmh3X3NvY19pbmZvLmlk
+KTsKICAgICAgICAgICAgICAgIGRpci5yZWFkX29ubHlfZmlsZShjX3N0ciEoInZlciIpLCAm
+aHdfc29jX2luZm8udmVyKTsKICAgICAgICAgICAgICAgIGRpci5yZWFkX29ubHlfZmlsZShj
+X3N0ciEoInJhd19pZCIpLCAmaHdfc29jX2luZm8ucmF3X2lkKTsKICAgICAgICAgICAgICAg
+IGRpci5yZWFkX29ubHlfZmlsZShjX3N0ciEoIm5hbWUiKSwgJmh3X3NvY19pbmZvLm5hbWUp
+OwogICAgICAgICAgICAgICAgZGlyLnJlYWRfY2FsbGJhY2tfZmlsZShjX3N0ciEoImZvdW5k
+cnkiKSwgJmh3X3NvY19pbmZvLmZvdW5kcnksICZmb3VuZHJ5X3ByaW50KTsKICAgICAgICAg
+ICAgfSksCiAgICAgICAgICAgIEdGUF9LRVJORUwsCiAgICAgICAgKT87CgogICAgICAgIGxl
+dCBzb2NfaW5mbzogJkh3U29jSW5mbyA9ICZzY29wZTsKCiAgICAgICAgLy8gUHJpbnQgdGhl
+IGNvbnRlbnRzIG9mIGBzb2NfaW5mb2AgdGhhdCB3ZXJlIG1vdmVkIGludG8gYHNjb3BlYC4K
+ICAgICAgICBwcl9pbmZvISgiSHdTb2NJbmZvOiB7Oj99XG4iLCBzb2NfaW5mbyk7CgogICAg
+ICAgIE9rKFNlbGYgewogICAgICAgICAgICBfZGVidWdfZGlyOiByb290LAogICAgICAgICAg
+ICBfaHdfc29jX2luZm86IHNjb3BlLAogICAgICAgIH0pCiAgICB9Cn0K
 
-
---
-
-Thanks & Regards,
-Aurabindo Pillai
+--------------eNldNmG8FKXO6slpRWvrzn9e--
 
