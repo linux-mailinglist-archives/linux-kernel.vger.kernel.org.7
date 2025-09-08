@@ -1,218 +1,322 @@
-Return-Path: <linux-kernel+bounces-805514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25218B48986
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:06:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC87BB4898A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D727341DEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F16373C266C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C35A2F99A6;
-	Mon,  8 Sep 2025 10:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75F82FD7B9;
+	Mon,  8 Sep 2025 10:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jti3dHSM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaxMWrVE"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBFE2F83C4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4A22FC024
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757325855; cv=none; b=hh7Tj+zsFVuINQ4Sb1Ib6hx77Uw1V9J5YYLrf10EHc7YIB/gSQyyUY7ybLJfotj3UnI2OnKDgsVW/WQ5T2dRL65y54lkd1tS49pwhkxnk5SMrGLRLkD+sSU5UBBOOCKL1jKmpctjEdT7q0BvnxtvoNTogIxy2k2Km0u6uPHz1PU=
+	t=1757325858; cv=none; b=f4JSK+bYPKGJAkddjVSyyBd0N6QiukwMxA686ypHkiSJJ005gYVErunHzzYBHlSZMyNBL1N0j5mrJWcDYYA5vXEiu9SWegbdtz3ls7RLsTP2DBDewfmDVaatNa08IB7fqUib0c7HRAKPjAC2shB5FZd+cuvd26S6Ag/r/VCIBHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757325855; c=relaxed/simple;
-	bh=UvI5DUAlT0z8CKf3kn52UY+6vAHjxKfjlmUOkBZnsCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhBB5RDMCDv59yTSbWba59tQetX4GxxE5BokpJwRI4yqACpR1RXLq8cpkeVXvGSnr0bLXAgzpPvsU2Q/ChdNG+aQs/7WezyJZJlEo1INtMSesUfOxTHs+8Fje2JitakookAY+jp4qAJkNwEtL64a0TKY+4C4cuzhLSAhHfFlIHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jti3dHSM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58890DrT026682
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 10:04:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TUCQQaCIPPEbbTPsTsrcgsfo9TDR5bbHwDO1+w8BQ9A=; b=jti3dHSMhzULG8Nj
-	wCZiRdihhFxxIy1SsTTyx3LzZWw6KjQuj3M3tFnG8aDGyKq3AHH+NgAOANyq02fR
-	UfdzzQ1TRTMpkmBRr4bZN49OgiZGjiR02V4fZdFV1DjwlGgJ1PCSgNjJQc7PUhFI
-	mVLIfyLvBdNzamnMEdjBeyNrK9lLW72r4mYaSptG53R3QQ60V2FnMQZI8RpYjZ1l
-	BLpLrIY1oUN2SnS0NpOrcGX2kbk+N2ptO3YW9E/5ppy0hhdaJJ3rwfbH+c7IEuJq
-	nKG6q+R3BRfAgP3YE4dJtmpRq63HxzG9exP+3c8Y3TJK0PiyBzxI+17Lce6ndUrB
-	PzZacg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws4an5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:04:12 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-72023d1be83so149841026d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:04:12 -0700 (PDT)
+	s=arc-20240116; t=1757325858; c=relaxed/simple;
+	bh=DtR8SDDCly6r1G6ayYYEPEjUZxb3ilDJJeU/YL6BMsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OtuFb3qAQFhOLqLzPgWvNKcV1lUQph+R58DYCvRWTY9ynx6hNpg5Yiz5jCsvTubq4JKTTro7Ia9hihvUTY7+uuZFVEByz7D/COfla7vjqn3WMSHhy/R6UZjUD56j/x9kZ1XYNLL9+hDvwOIU2aeoOHyvLRl0Q0YnhxmqSYuSgOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaxMWrVE; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2ea21430so273791b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757325855; x=1757930655; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JspKwq6xlMOVT2wn/868+r3JLwxN6lzk7a1hKsFzoaU=;
+        b=kaxMWrVEh8NEcxPSWJudCZLP6n/XQ/uNgwHcLhciUutku+yb4LuI7dQdtVVDI/7k11
+         dozcKoEHY4zWbSnqz6WJmkZ6L7RD+Fo3U2PJp9FMkekSqcJtKdrS4ZZ33TR1XZoo3sTb
+         t6+wyIPJWbq0O9VXoS5Is/5AJjpCRu5KXOfYTbYHbQEfxyT9aDbNfpD//9kiPGmKfE+F
+         5UNzmAC30VZ1VmS0nxm2/itOznqOsQ8phAomcYFuWvhel2qBMIbDnwhwHRTb8oxeAJVg
+         gLRHk70IuDsjTI+jwNDOdcbFihtPtCqHnM9vPClwPY/gNxP0mzQSp50fyZxUpnrxWytn
+         VAAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757325851; x=1757930651;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1757325855; x=1757930655;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUCQQaCIPPEbbTPsTsrcgsfo9TDR5bbHwDO1+w8BQ9A=;
-        b=lBWxsM2bnHxBEJZL+5vXIwNvXg2OJMWLwLfsadnQPsp/ORDjhyk0jQ/9AY6rT4yU41
-         qDMAY9BWMwMyD8C0x1jpzM1gry1aPPlQOLZ6B7QhI6T/XPL6t+TlQCYI4+Ji5Uatryz0
-         c7gTXp6WPratJKg7nMz+E4tMomgN5ybG5NKXWLy2JMFHyzYdVobK5VLxMGdKLlMYyaSc
-         C0+JDjdCeJugDySryAoRHbdj31ay4oM1nOIcQpvNvwQSSeK/jKoRBZ2jYEs7HxUPPaxl
-         gqNohudlXrt6uXwxKgTr2UQK3Fzzp/JmMoDAielvnCpCbUHXo684N1UErwpU6RBmU5KR
-         IUrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAdkRWvGF4f7mmwnCcM9WzvjU/1xLWnP0j6beFgVqmcLc/Ml4rb/jn0z7cW6KpZb7yKgwemLC6jH8Jjjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaJp1+Ozv5APDwFrdqPpjJt+Ecfx3W699ydOpFC/UxzX5ny5xF
-	RctQiDwk5orXLKripm+AIM5HkBkFOc6eGN7ETF2KKR5lXrmwsSNhiO5EYH03wTkBHbCeuVoTx2r
-	PA1IftbyaSWvjXijk7Jq0n6Oc0Ywp7oCQj4gLsmLumN5WTgqYB3Rv+dXQBCvK1NkR8qQ=
-X-Gm-Gg: ASbGncuO2azz9m15rgwjoA7DdFSP+vuS0oom/yYbVjF6zSXLE+X33NEjFGeY8Uohehp
-	SyExFcfgB9X7s7uZQ2hVYVeQ1sf5UQtiwW6UjpJogxBbOG4O+OoRDhO4ZO/B7qzYlXaXrviUVhU
-	1JPoysHGjQpfKqpLFDkpejklDj/VaYvmCh4zGYEcCxtt7vhnN8rO6HuF97UgUhM3WmTod3JM8Sk
-	ylUhBYWZxXoId2Afmrrja1mjvKZwhF4xl861/9QQxHTUNuUdPSlE7dGkD6v0Ze/K4Q3btxZ1YL4
-	BUhTINM3M8JfAVbXwGxr3Hdzo+yKIjWLdCWHirxoWcQWunZoeVpBHQW3kSqa/2kufULZnDEGSu0
-	eRiZxoDRozNOss1Q2lkrp1QAPj9IbQR8VS4O8qo88ChwG41TV71tw
-X-Received: by 2002:a05:6214:c2e:b0:70f:a8e4:9de with SMTP id 6a1803df08f44-739322f8babmr88180216d6.27.1757325851106;
-        Mon, 08 Sep 2025 03:04:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTM2Aa+Miz0K6s7xyeRR6TpR0YSRPsezwYwrqqCf24cX0g/PXlLkfxbUOlt6qGOF4asGVuOg==
-X-Received: by 2002:a05:6214:c2e:b0:70f:a8e4:9de with SMTP id 6a1803df08f44-739322f8babmr88179646d6.27.1757325850389;
-        Mon, 08 Sep 2025 03:04:10 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace9cb5sm3498239e87.95.2025.09.08.03.04.09
+        bh=JspKwq6xlMOVT2wn/868+r3JLwxN6lzk7a1hKsFzoaU=;
+        b=YGiavAbw3MZL63bxbVEz+gU8OQSdcnbOnaWVUG8Vyh97I2cAI4jLR61nt+HtVY6V4q
+         WIHk1iQ87siDfNv7NHEcn0t8OGUe68F0eAi0V1Yqqc7iiueHhKKtXEYWSm4YshqIGE1M
+         vu/0Gnw/VqG6J10MT3O74AwVXzzVvYNyNXXPDkbj5jnP3eV+28CoFBvRgZj6/UhlBAdn
+         ZteI/vKN93tr0JKWGxsCfjE4FQh1wXSrtXwwhNeuQFGBqsUYyiY3ik/yR3Sj51ADo+BR
+         RvOP0WmBDzH8el85EYXSmmfbZmroSae/PtWyklf3MTTvCGrDtZ2xaVtdE+vpfBQ3Qbs5
+         gCnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/B9fzWhURULCiTk15bOK38ki0JLhZfLBDU9SoBAx5u9EmKWlv+wUin2O2dWATqClidFPvWGj8k1RCRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz88/l3cpXzt+O2AqaZj37RAOxkglANNSt/b9DPo4Bf/qKHE73w
+	oRt2gakNBn3pmg2Y89KxCi/w16FDOVuvqvpiuFdsqQDo+4qcNeSYIg2T
+X-Gm-Gg: ASbGnctXqUFjncKH6Gv0YwenrisG9ml2Coa5OQvL+36vdKb2YWwDfTDMnlXysHl7Gk1
+	F+UzHIp6ZFSZbReE/JQNz2AgmBeB46essBMLri7BHfOfFq1jTf4FKhDYjIdDMrbX1TsKrUeqgU6
+	nid+uTyLtQBFWBPqj/0NTOBXDClgzySooLAUKKU4kh6DRIUelfOtWI5Kedjgvvs8foQVtvTNAmk
+	e7mxpov1yg4pkfo/TLhjf2V4bhhxIb7A8OTsaz6loN9UBjiLsum2SVaeEuDJWAGLxUd/61bY4ho
+	K9mpBmjjNaUMDyn+sE9KFYiK+lYhncwyvepaXrm6YFwqUax7NQPXeHIqLCupTPZXOtt38mI6Y32
+	uDerQyZWI7Zq+L25+a1RNJsi1Z6DT1Q==
+X-Google-Smtp-Source: AGHT+IGpbsRm4gpTKuncaeM+adwFbGp9mwK+cNXTZVo6TmiguOksGzlU/8b3HMiz0iYEBD4vLPbV1w==
+X-Received: by 2002:a05:6a00:17a7:b0:771:f892:719d with SMTP id d2e1a72fcca58-7742deaeaaamr5109046b3a.7.1757325855349;
+        Mon, 08 Sep 2025 03:04:15 -0700 (PDT)
+Received: from pcw-MS-7D22 ([115.145.175.37])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772517906a8sm23110454b3a.96.2025.09.08.03.04.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 03:04:09 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:04:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 2/6] dt-bindings: display/msm: dp-controller:
- document QCS8300 compatible
-Message-ID: <pwbmqjspoyj2n7gchyaycxfp7ge46pyvm5dntkk7awkr6pblmi@wun2jdt5iehq>
-References: <20250904-qcs8300_mdss-v11-0-bc8761964d76@oss.qualcomm.com>
- <20250904-qcs8300_mdss-v11-2-bc8761964d76@oss.qualcomm.com>
- <p2okyfwfl23bip65koaqezlvhyo3z47bnugojcieuspr37xc7b@s3qwgbqmts4l>
- <d8aaff46-9e3b-4b53-a690-351253753edd@oss.qualcomm.com>
- <jdbwncstextusng5boqg4v5r7krbnjts6f3zgd65cu4rrst7ay@kkod7ihbgfrp>
- <69219cdd-bcca-4673-9a81-084184fda6db@oss.qualcomm.com>
+        Mon, 08 Sep 2025 03:04:15 -0700 (PDT)
+Date: Mon, 8 Sep 2025 19:04:10 +0900
+From: Chanwon Park <flyinrm@gmail.com>
+To: akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
+	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, david@redhat.com, zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, flyinrm@gmail.com
+Subject: [PATCH] mm: re-enable kswapd when memory pressure subsides or
+ demotion is toggled
+Message-ID: <aL6qGi69jWXfPc4D@pcw-MS-7D22>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <69219cdd-bcca-4673-9a81-084184fda6db@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: sSbSXbKOPXYW2qcYKz0tJ6ap3dKhLKpC
-X-Proofpoint-GUID: sSbSXbKOPXYW2qcYKz0tJ6ap3dKhLKpC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX6UuppAzGGsTf
- Rv0rmXPxRAVgQLSWZ1F7rA4Dk8+zFognttaVutPbTo3XQUkeTlHaA4E6581Q3fuT/jkl8GpIy3e
- AWxG+RNoCJppUjfN5lEdwfkYrX2MMU7HZySzkYQsqMrjkYit40uYSfBaYVM6nm2r/GGSY7mK5Xc
- ayo2eqBzN7A20cEhTmgprg78k/WQxbcGT1JDyo/qDHhc4PwLCR/vIjfq7a5vkVxkp/uxghbTySg
- 8GTF6y6RfO63y9O97XQacyfMeRn5Z+eAcZbqNLluSY1FEv9YD42Xj4Lmni2vJ2GZNIAuRl3vhJm
- 5lmWmcdx919xIMPgOIv7Wnklk0LBpWVJpWMWzpTHs5CYVX3jPeEj7SOZS0HdvR8wPSMatzwggtE
- PHtLBm2K
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68beaa1c cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KvANTHea1ihHQiRrGRIA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-On Mon, Sep 08, 2025 at 05:46:30PM +0800, Yongxing Mou wrote:
-> 
-> 
-> On 9/5/2025 9:48 PM, Dmitry Baryshkov wrote:
-> > On Fri, Sep 05, 2025 at 10:50:33AM +0800, Yongxing Mou wrote:
-> > > 
-> > > 
-> > > On 9/4/2025 9:43 PM, Dmitry Baryshkov wrote:
-> > > > On Thu, Sep 04, 2025 at 03:22:37PM +0800, Yongxing Mou wrote:
-> > > > > Add compatible string for the DisplayPort controller found on the
-> > > > > Qualcomm QCS8300 SoC.
-> > > > > 
-> > > > > The Qualcomm QCS8300 platform comes with one DisplayPort controller
-> > > > > that supports 4 MST streams.
-> > > > > 
-> > > > > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > > > > ---
-> > > > >    .../bindings/display/msm/dp-controller.yaml        | 22 ++++++++++++++++++++++
-> > > > >    1 file changed, 22 insertions(+)
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > > > index aeb4e4f36044a0ff1e78ad47b867e232b21df509..ad08fd11588c45698f7e63ecc3218a749fc8ca67 100644
-> > > > > --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > > > @@ -18,6 +18,7 @@ properties:
-> > > > >      compatible:
-> > > > >        oneOf:
-> > > > >          - enum:
-> > > > > +          - qcom,qcs8300-dp
-> > > > 
-> > > > Can we use fallback to qcom,sa8775p-dp instead of declaring a completely
-> > > > new one?
-> > > > 
-> > > I think we can not use fallback to sa8775p, since we don't have DP1
-> > > controller for QCS8300. SA8775P actually have 4 DP controllers (now only 2
-> > > really used). So in the hardware, i think it is different with SA8775P and
-> > > we need a new one.>>             - qcom,sa8775p-dp
-> > 
-> > The DP controller is the same as the one present on SA8775P.
-> > 
-> Yes, it is same.. I just want to confirm again—even if we only need DP0 for
-> QCS8300, we can also use sa8775p as fallback, right?
+If kswapd fails to reclaim pages from a node MAX_RECLAIM_RETRIES in a
+row, kswapd on that node gets disabled. That is, the system won't wakeup
+kswapd for that node until page reclamation is observed at least once.
+That reclamation is mostly done by direct reclaim, which in turn enables
+kswapd back.
 
-What makes you think that we can't? Let me repharse the question: which
-part of DP controller (single one) on QCS8300 is incompatible with the
-DP controller on SA8775P?
+However, on systems with CXL memory nodes, workloads with high anon page
+usage can disable kswapd indefinitely, without triggering direct
+reclaim. This can be reproduced with following steps:
 
-> 
-> static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
->     { .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported
-> = true },
->     { .io_start = 0x0af5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported
-> = true },
->     { .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported
-> = true },
->     { .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported
-> = true },
->     {}
-> };
-> .mst_streams = 4 is suitable for both QCS8300 and SA8775P DP 0 here.
-> 
-> Previously, my understanding here was that we might need a new compatible
-> for QCS8300.
-> 
-> Thanks~~>>>>              - qcom,sc7180-dp
-> > > > >              - qcom,sc7280-dp
-> > 
-> 
+   numa node 0   (32GB memory, 48 CPUs)
+   numa node 2~5 (512GB CXL memory, 128GB each)
+   (numa node 1 is disabled)
+   swap space 8GB
 
+   1) Set /sys/kernel/mm/demotion_enabled to 0.
+   2) Set /proc/sys/kernel/numa_balancing to 0.
+   3) Run a process that allocates and random accesses 500GB of anon
+      pages.
+   4) Let the process exit normally.
+
+During 3), free memory on node 0 gets lower than low watermark, and
+kswapd runs and depletes swap space. Then, kswapd fails consecutively
+and gets disabled. Allocation afterwards happens on CXL memory, so node
+0 never gains more memory pressure to trigger direct reclaim.
+
+After 4), kswapd on node 0 remains disabled, and tasks running on that
+node are unable to swap. If you turn on NUMA_BALANCING_MEMORY_TIERING
+and demotion now, it won't work properly since kswapd is disabled.
+
+To mitigate this problem, reset kswapd_failures to 0 on following
+conditions:
+
+   a) ZONE_BELOW_HIGH bit of a zone in hopeless node with a fallback
+      memory node gets cleared.
+   b) demotion_enabled is changed from false to true.
+
+Rationale for a):
+   ZONE_BELOW_HIGH bit being cleared might be a sign that the node may
+   be reclaimable afterwards. This won't help much if the memory-hungry
+   process keeps running without freeing anything, but at least the node
+   will go back to reclaimable state when the process exits.
+
+Rationale for b):
+   When demotion_enabled is false, kswapd can only reclaim anon pages by
+   swapping them out to swap space. If demotion_enabled is turned on,
+   kswapd can demote anon pages to another node for reclaiming. So, the
+   original failure count for determining reclaimability is no longer
+   valid.
+
+Since kswapd_failures resets may be missed by ++ operation, it is
+changed from int to atomic_t.
+
+Signed-off-by: Chanwon Park <flyinrm@gmail.com>
+---
+ include/linux/mmzone.h |  2 +-
+ mm/memory-tiers.c      | 12 ++++++++++++
+ mm/page_alloc.c        | 17 ++++++++++++++++-
+ mm/show_mem.c          |  3 ++-
+ mm/vmscan.c            | 14 +++++++-------
+ mm/vmstat.c            |  2 +-
+ 6 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 283913d42d7b..68db1dbf375d 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1411,7 +1411,7 @@ typedef struct pglist_data {
+ 	int kswapd_order;
+ 	enum zone_type kswapd_highest_zoneidx;
+ 
+-	int kswapd_failures;		/* Number of 'reclaimed == 0' runs */
++	atomic_t kswapd_failures;	/* Number of 'reclaimed == 0' runs */
+ 
+ #ifdef CONFIG_COMPACTION
+ 	int kcompactd_max_order;
+diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
+index fc14fe53e9b7..f8f8f66fc4c0 100644
+--- a/mm/memory-tiers.c
++++ b/mm/memory-tiers.c
+@@ -949,11 +949,23 @@ static ssize_t demotion_enabled_store(struct kobject *kobj,
+ 				      const char *buf, size_t count)
+ {
+ 	ssize_t ret;
++	bool before = numa_demotion_enabled;
+ 
+ 	ret = kstrtobool(buf, &numa_demotion_enabled);
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * Reset kswapd_failures statistics. They may no longer be
++	 * valid since the policy for kswapd has changed.
++	 */
++	if (before == false && numa_demotion_enabled == true) {
++		struct pglist_data *pgdat;
++
++		for_each_online_pgdat(pgdat)
++			atomic_set(&pgdat->kswapd_failures, 0);
++	}
++
+ 	return count;
+ }
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2ef3c07266b3..827c9a949987 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2681,8 +2681,23 @@ static void free_frozen_page_commit(struct zone *zone,
+ 				   pcp, pindex);
+ 		if (test_bit(ZONE_BELOW_HIGH, &zone->flags) &&
+ 		    zone_watermark_ok(zone, 0, high_wmark_pages(zone),
+-				      ZONE_MOVABLE, 0))
++				      ZONE_MOVABLE, 0)) {
++			struct pglist_data *pgdat = zone->zone_pgdat;
+ 			clear_bit(ZONE_BELOW_HIGH, &zone->flags);
++
++			/*
++			 * Assume that memory pressure on this node is gone
++			 * and may be in a reclaimable state. If a memory
++			 * fallback node exists, direct reclaim may not have
++			 * been triggered, leaving 'hopeless node' stay in
++			 * that state for a while. Let kswapd work again by
++			 * resetting kswapd_failures.
++			 */
++			if (atomic_read(&pgdat->kswapd_failures)
++			    >= MAX_RECLAIM_RETRIES &&
++			    next_memory_node(pgdat->node_id) < MAX_NUMNODES)
++				atomic_set(&pgdat->kswapd_failures, 0);
++		}
+ 	}
+ }
+ 
+diff --git a/mm/show_mem.c b/mm/show_mem.c
+index 0cf8bf5d832d..18b3b32a9ccf 100644
+--- a/mm/show_mem.c
++++ b/mm/show_mem.c
+@@ -280,7 +280,8 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+ #endif
+ 			K(node_page_state(pgdat, NR_PAGETABLE)),
+ 			K(node_page_state(pgdat, NR_SECONDARY_PAGETABLE)),
+-			str_yes_no(pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES),
++			str_yes_no(atomic_read(&pgdat->kswapd_failures)
++				   >= MAX_RECLAIM_RETRIES),
+ 			K(node_page_state(pgdat, NR_BALLOON_PAGES)));
+ 	}
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 424412680cfc..e09d69b1f873 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -526,7 +526,7 @@ static bool skip_throttle_noprogress(pg_data_t *pgdat)
+ 	 * If kswapd is disabled, reschedule if necessary but do not
+ 	 * throttle as the system is likely near OOM.
+ 	 */
+-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
++	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
+ 		return true;
+ 
+ 	/*
+@@ -5093,7 +5093,7 @@ static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *
+ 	blk_finish_plug(&plug);
+ done:
+ 	if (sc->nr_reclaimed > reclaimed)
+-		pgdat->kswapd_failures = 0;
++		atomic_set(&pgdat->kswapd_failures, 0);
+ }
+ 
+ /******************************************************************************
+@@ -6167,7 +6167,7 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 	 * successful direct reclaim run will revive a dormant kswapd.
+ 	 */
+ 	if (reclaimable)
+-		pgdat->kswapd_failures = 0;
++		atomic_set(&pgdat->kswapd_failures, 0);
+ 	else if (sc->cache_trim_mode)
+ 		sc->cache_trim_mode_failed = 1;
+ }
+@@ -6479,7 +6479,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+ 	int i;
+ 	bool wmark_ok;
+ 
+-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
++	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
+ 		return true;
+ 
+ 	for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {
+@@ -6880,7 +6880,7 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order,
+ 		wake_up_all(&pgdat->pfmemalloc_wait);
+ 
+ 	/* Hopeless node, leave it to direct reclaim */
+-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
++	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
+ 		return true;
+ 
+ 	if (pgdat_balanced(pgdat, order, highest_zoneidx)) {
+@@ -7148,7 +7148,7 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+ 	}
+ 
+ 	if (!sc.nr_reclaimed)
+-		pgdat->kswapd_failures++;
++		atomic_inc(&pgdat->kswapd_failures);
+ 
+ out:
+ 	clear_reclaim_active(pgdat, highest_zoneidx);
+@@ -7407,7 +7407,7 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
+ 		return;
+ 
+ 	/* Hopeless node, leave it to direct reclaim if possible */
+-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
++	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES ||
+ 	    (pgdat_balanced(pgdat, order, highest_zoneidx) &&
+ 	     !pgdat_watermark_boosted(pgdat, highest_zoneidx))) {
+ 		/*
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index a78d70ddeacd..3c0ea637ed85 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1826,7 +1826,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 	seq_printf(m,
+ 		   "\n  node_unreclaimable:  %u"
+ 		   "\n  start_pfn:           %lu",
+-		   pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES,
++		   atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES,
+ 		   zone->zone_start_pfn);
+ 	seq_putc(m, '\n');
+ }
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
