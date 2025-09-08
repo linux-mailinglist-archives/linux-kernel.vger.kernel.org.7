@@ -1,186 +1,141 @@
-Return-Path: <linux-kernel+bounces-805742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A61B48CE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDA4B48CE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 592167A4B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C143C4BC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CEC2FC019;
-	Mon,  8 Sep 2025 12:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C8A2FB097;
+	Mon,  8 Sep 2025 12:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZMw1QOIR"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aXIxN90A";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jh7b8Llc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C32F3C1A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453F2F7AD7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333365; cv=none; b=dLKgj+Hg1BBu0gwfoozwuZQGxEg7V5Rqv0KX7KphDwWk6egmzCcc76Z/Jzq9kwzrzTt/dGWTy+sHsQsbSM83oDEaE/8bIIxfvj0T7TdD+THrUe6sY+LK2HU7oeDuh8jKtc2cqONTZDRDJa60CX09qhazQlTI29ogzspuz7l/pjs=
+	t=1757333352; cv=none; b=Q0a65iQuQwt8EnTErdEOfSIDrXFXjOFs2PH5JYIBjCCFPgmVsnHJ4U5DdPDsSu2NAA2Ln1+0aiyBqfGPXyt4HFTKKXasFjibGCYFjSjZy3N3C1q3TNqAog1lZdVMxqzDSipyp7wUV9A0leJvN0GItAtgQbJ2Ba/yhrrRf1bIMJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333365; c=relaxed/simple;
-	bh=/Qpjfk3Zzpp2K0NY0PG3dpCanwrNcWp1BaRzJ/zTs4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VP/DDBYsB0HORNeHwMhmvyA4wQ5/0a4mX9lcjk8RzBJKiOqDfQNY9i46awpRPt+mXMxaXyd4sOlJpv9yoRifhD3FUgWebFbgGu36qOCPRy6jiM2aU3fuzTDhtmClReoa3OLNe3OGwIU675VyMt+UrADBDvsrArEWYaJi2lZcoLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZMw1QOIR; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 8 Sep 2025 14:09:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757333351;
+	s=arc-20240116; t=1757333352; c=relaxed/simple;
+	bh=/t8BPTl4IpiRuzHRuKxJiZZJy0ABbfg4ll9mzhCdJaU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eJIEV5AqUi9FCp0c9QJoN6qR5WSrg6s/S3s3n59MD2I+VQtqkcH6idBT624iWDxtemmabNU0AqMzRyEJjxwWIWTekKrTvKgoo1VzlZKGeM2dUNPH0PhoDgT6/YT342SIDNL2iqkiw+USeY5se9MHfyiJG0rdL0x6XhPKaPBWK1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aXIxN90A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jh7b8Llc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757333349;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DpuQJm/MJb4S/aE7sX19hUx0Grj/9swMnMFmkKYUViU=;
-	b=ZMw1QOIRzyzltBncVNh5ibeWMU70HOEHmU5SJhEEh2hxSoDwDRjDmSd/QkqbuXV50dPeHA
-	te7vT6qhVVZBGmMUtGkqb/xHzopKN5Y7jGQKm1YgfYQ3W5ygfdlFvfGbb+MqfiUXhW+PkD
-	fJ9fmtkcNTz2JRLr4l+MW/G9niQh+xA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
- v4l2 control
-Message-ID: <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
- <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
- <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
- <20250907200811.GB19568@pendragon.ideasonboard.com>
+	bh=Bj4RYa63yog+buQ1zCGr7JNawWTRp4botS1M7B2K2Vs=;
+	b=aXIxN90AEh5CSoRHW5KSGj/MG67dqWG4pntFi+Z/cF2plG6ESffCsxgnu02x8qoAIwyFkn
+	dkkffTGABDdPJCI8h/jwCcVfny5wD4Z627ivZG77g31eYQAQrDlk4cAX17WweBh/CwD0GL
+	MBExR0oduVPOvCRaXg384PojFLfg/KSQAIn3dPq+pi2OiqU8c+beULBwKVhxKX547g8GMM
+	50PSPtSYhTFppZB8aI98s/+VYUCqdKSLKIdPPeHBKEFADSQ+h9ZkBexpVbz2qLuPbWBuZW
+	tFSqV5NexVIHeUqNrASk0waxyuDID/ap1bg7RyuawVs2mH+ooURhxg3UJ/84Ng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757333349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bj4RYa63yog+buQ1zCGr7JNawWTRp4botS1M7B2K2Vs=;
+	b=jh7b8LlcPKO6AYUugZ+dkgQ+L4SdirJvM1JbuW2a+8IZhjr0K1aZ8undcW7tlcfnID+1tI
+	BQ/AMS3J1RJD21DQ==
+To: Petr Mladek <pmladek@suse.com>, Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson
+ <danielt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
+ linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v3 2/4] printk: nbcon: Introduce KDB helpers
+In-Reply-To: <aLsOBwV6CVBwG9JV@pathway.suse.cz>
+References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
+ <20250902-nbcon-kgdboc-v3-2-cd30a8106f1c@suse.com>
+ <aLsOBwV6CVBwG9JV@pathway.suse.cz>
+Date: Mon, 08 Sep 2025 14:15:08 +0206
+Message-ID: <84ikht87tn.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250907200811.GB19568@pendragon.ideasonboard.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
+On 2025-09-05, Petr Mladek <pmladek@suse.com> wrote:
+> On Tue 2025-09-02 15:33:53, Marcos Paulo de Souza wrote:
+>> These helpers will be used when calling console->write_atomic on
+>> KDB code in the next patch. It's basically the same implementaion
+>> as nbcon_device_try_acquire, but using NBCON_PORIO_EMERGENCY when
+>> acquiring the context.
+>> 
+>> For release we need to flush the console, since some messages could be
+>> added before the context was acquired, as KDB emits the messages using
+>> con->{write,write_atomic} instead of storing them on the ring buffer.
+>
+> I am a bit confused by the last paragraph. It is a very long sentence.
+>
+> Sigh, I wanted to propose a simple and clear alternative. But I ended
+> in a rabbit hole and with a rather complex text:
+>
+> <proposal>
+> The atomic flush in the release function is questionable. vkdb_printf()
+> is primary called only when other CPUs are quiescent in kdb_main_loop()
+> and do not call the classic printk(). But, for example, the
+> write_atomic() callback might print debug messages. Or there is
+> one kdb_printf() called in kgdb_panic() before other CPUs are
+> quiescent. So the flush might be useful. Especially, when
+> the kdb code fails to quiescent the CPUs and returns early.
+>
+> Let's keep it simple and just call __nbcon_atomic_flush_pending_con().
+> It uses write_atomic() callback which is used by the locked kdb code
+> anyway.
+>
+> The legacy loop (console_trylock()/console_unlock()) is not
+> usable in kdb context.
+>
+> It might make sense to trigger the flush via the printk kthread.
+> But it would not work in panic() where is the only known kdb_printf()
+> called when other CPUs are not quiescent. So, it does not look
+> worth it.
+> </proposal>
+>
+> What do you think?
+>
+> My opinion:
+>
+> Honestly, I think that the flush is not much important because
+> it will most offten have nothing to do.
+>
+> I am just not sure whether it is better to have it there
+> or avoid it. It might be better to remove it after all.
+> And just document the decision.
 
-Hi Laurent,
+IMHO keeping the flush is fine. There are cases where there might be
+something to print. And since a printing kthread will get no chance to
+print as long as kdb is alive, we should have kdb flushing that
+console.
 
-thanks for your review!
+Note that this is the only console that will actually see the new
+messages immediately as all the other CPUs and quiesced. For this reason
+we probably want to use __nbcon_atomic_flush_pending() to try to flush
+_all_ the consoles.
 
-On Sun, Sep 07, 2025 at 10:08:11PM +0200, Laurent Pinchart wrote:
-> On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
-> > On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
-> > > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
-> > > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
-> > > > "strobe output enable" feature of the sensor.
-> > > > 
-> > > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
-> > > > tested using an ov9281 VisionComponents module.
-> > > > 
-> > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > ---
-> > > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
-> > > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
-> > > > --- a/drivers/media/i2c/ov9282.c
-> > > > +++ b/drivers/media/i2c/ov9282.c
-> > > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
-> > > >  				current_val);
-> > > >  }
-> > > >  
-> > > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
-> > > > +{
-> > > > +	u32 current_val;
-> > > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > +				  &current_val);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > 
-> > > Please don't do assignments in variable declaration if that involves error
-> > > handling.
-> > 
-> > Sure. Will fix that!
-> > 
-> > > > +
-> > > > +	if (enable)
-> > > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > +	else
-> > > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > +
-> > > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > +				current_val);
-> 
-> It would be nice to cache the register value instead of reading it back.
-> Regmap may help (and then the driver should use the CCI helpers). This
-> can be done separately.
-> 
+As to the last paragraph of the commit message, I would keep it simple:
 
-Currently all set_ctrl calls in the ov9282 driver have this
-read/modify/write pattern. As mentioned in the cover letter I'm planning
-to migrate to cci helpers in a future series to keep the set smaller.
-But if you prefer the migration in this series I can try to rebase on
-it?
+After release try to flush all consoles since there may be a backlog of
+messages in the ringbuffer. The kthread console printers do not get a
+chance to run while kdb is active.
 
-> > > > +}
-> > > > +
-> > > >  /**
-> > > >   * ov9282_set_ctrl() - Set subdevice control
-> > > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
-> > > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
-> > > >  		break;
-> > > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> > > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> > > > +		break;
-> > > >  	default:
-> > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > > >  		ret = -EINVAL;
-> > > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > >  	u32 lpfr;
-> > > >  	int ret;
-> > > >  
-> > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > > >  	if (ret)
-> > > >  		return ret;
-> > > >  
-> > > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > >  						OV9282_TIMING_HTS_MAX - mode->width,
-> > > >  						1, hblank_min);
-> > > >  
-> > > > +	/* Flash/Strobe controls */
-> > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > > 
-> > > This seems rather long.
-> > 
-> > It's exactly 100 chars wide, so from a policy point of view it should be
-> > fine ;-). But I'm also fine with breaking it to 80 if you prefer?
-> 
-> That's the usual policy in V4L2, yes. 80 columns is the preferred soft
-> limit.
-
-So I should break this line in this case? Tbh I'm often unsure on
-breaking on 80 or 100... Personally 100 is fine for me, but that's
-"your" subsystem/driver, so I guess it's your descision ;-)
-
-> 
-> > > > +
-> > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > > >  	if (!ret) {
-> > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > > > 
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-
-regards;rl
+John
 
