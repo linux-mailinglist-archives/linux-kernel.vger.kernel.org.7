@@ -1,154 +1,86 @@
-Return-Path: <linux-kernel+bounces-805621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F50B48B24
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:08:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F7DB48B26
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334473A38E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC9E188FD6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DE2FAC09;
-	Mon,  8 Sep 2025 11:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxgzLJaw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E551C4A10;
-	Mon,  8 Sep 2025 11:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4642FAC09;
+	Mon,  8 Sep 2025 11:09:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806262F90DC;
+	Mon,  8 Sep 2025 11:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757329710; cv=none; b=O6kxOx+edg/DotuTXQ3NKeCc7knHBJ2ZKIodXHcR/8ex80G+gNuSlVDElww2EJ1As/E39EKWRgp0ACtsgpo0Lg+ytuEt6/9USTaHy2XIwbFgx9dPR+Btz3LhR/R6B7TR0Oprqd2dHuE2fFljne6n0r253zF4dfQ/LNxeMs+JK/c=
+	t=1757329793; cv=none; b=JiTvRfuaEexjWWjg0SeVJisqQzkPWt4tWYEbc8wLzylzJdtsMEY3PNZGgOmJ/88FsUzHzLlyRNkOXVhOjG+Ehopo9NfTx85EMwY6Tq3LtOk04JiI6qclMgrtU1k5+w1FtZoicSQ0eLbrwsf68M0tr7DzummGUG5rjHmd7zYHrHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757329710; c=relaxed/simple;
-	bh=+Q43JtoguPcKuo4Q1eJ/Poz52uueYi6hh+5pzKswldA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D/m1lzpx6FwFHCHtrUbQc4HjqNEV95lElzXdYq/EeLoZ1A9gV7nmLzkYvlaKnmclyel+6Q0OnrcR9ojAXf6gS72i6L9IR/i5htqZtcUPGlrsqqZLniPN2XFIbix/IP/u5wsZtsCfiyTTvQDOojFVtRyx4Gl+2P7bj3zN0y9tBAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxgzLJaw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B0BC4CEF1;
-	Mon,  8 Sep 2025 11:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757329709;
-	bh=+Q43JtoguPcKuo4Q1eJ/Poz52uueYi6hh+5pzKswldA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PxgzLJawFXejmbGNwpkM2ZvxsiaMFNyFYD/mUNZtq0696MwrW1wGMLsOyASAiQ96P
-	 1hlbEAmgWodQj08SqXlDsvKKtD0ZRWgbzVqQ33TEsPpRY8tRnXAo1SCkn2vwRkyFVo
-	 WxptTEtOB0kks3ZKYCA3NhUaQpW0s8+yOYQitIW80B1hi98B138Jsh94pxI4JHtxC5
-	 bwuag3CE/Xjod2DV27WSPxvxTf8sG/tCVoM8jNvSLjbNL1R8WNKuxdOg8e3QKhi8/x
-	 kBnPRPbCop4ij9+Gwdn54H2JeW39F275dmdlwxA1NZsGXX7xoiD05Yhsva/5/j5WEg
-	 7OrRoU/BrMxIQ==
-Date: Mon, 8 Sep 2025 13:08:24 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
- <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, linux-doc@vger.kernel.org, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH v4] kernel.h: add comments for system_states
-Message-ID: <20250908130824.7510ffda@foz.lan>
-In-Reply-To: <f6e0f7409df67e0554885cacb74023a8aad9a717@intel.com>
-References: <20250904063631.2364995-1-rdunlap@infradead.org>
-	<6089e22ddfdc135040cdeb69329d817846026728@intel.com>
-	<20250905140104.42418fba@foz.lan>
-	<34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
-	<atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
-	<2aad4540-ccdd-4519-9bed-7d8c7ccd009d@infradead.org>
-	<20250906105627.2c0cd0d9@foz.lan>
-	<d815f5c3-6e15-4758-8bf4-601d5543cab9@infradead.org>
-	<20250906233028.56573fd6@foz.lan>
-	<20250907153547.5d4271d9@foz.lan>
-	<20250907181719.0138c054@foz.lan>
-	<f6e0f7409df67e0554885cacb74023a8aad9a717@intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757329793; c=relaxed/simple;
+	bh=AvMdB2dcYGMV2EyNRqCtb0+TAFiqbu2iLNFeL01Lrxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gUuiFs/LyT4ydkvF09pJUD0OKZYbJSeOCwRxDwzY79nXidmEJi682/qQQezD0gUYHtcdTsbMMlU/TJdK9AOrmP7zigs5aozK1k9NscGhvVaZ7i7eYkrcxJy0a7K5+MHLlzRp14SrpQIbhLFAAqw1pPZ9vTCmf4dhkB3oD4xqa2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C02B01692;
+	Mon,  8 Sep 2025 04:09:43 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37BA43F63F;
+	Mon,  8 Sep 2025 04:09:50 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:09:47 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/6] firmware: arm_scmi: imx: Dump syslog and
+ system_info
+Message-ID: <20250908-brave-umber-spider-eb68bd@sudeepholla>
+References: <20250904-sm-misc-api-v1-v4-0-0bf10eaabdf1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-sm-misc-api-v1-v4-0-0bf10eaabdf1@nxp.com>
 
-Em Mon, 08 Sep 2025 12:22:06 +0300
-Jani Nikula <jani.nikula@linux.intel.com> escreveu:
-
-> On Sun, 07 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > Heh, looking at Sphinx doc at:
-> > https://www.sphinx-doc.org/en/master/usage/domains/c.html:
-> >
-> > 	.. c:member:: declaration
-> > 	.. c:var:: declaration
-> >
-> > 	    Describes a C struct member or variable. Example signature:
-> >
-> > 	    .. c:member:: PyObject *PyTypeObject.tp_bases
-> >
-> > 	    The difference between the two directives is only cosmetic.
-> >
-> > I guess the best is to encode it as:
-> >
-> > 	prototype = args.other_stuff["var_type"]
-> > 	self.data += f"\n\n.. c:var:: {prototype}\n\n"
-> >
-> > And let Sphinx format it for us.  
+On Thu, Sep 04, 2025 at 06:40:41PM +0800, Peng Fan wrote:
+> System Manager firmware provides API to dump board, silicon, firmware
+> information. It also provides API to dump system sleep, wakeup
+> information. So add the interface for Linux to retrieve the information:
 > 
-> In the same vein, I believe we should let Sphinx format everything else
-> for us as well. Function parameters should use ":param foo: desc" and
-> struct/union members should be indented within the enclosing
-> struct/union.
+> patch 1 is to add doc for board information which was missed before.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v4:
+> - Patch 1: Typo in commit log, state the attribute is set to 0 by firmware
+>            add NOT SUPPORTED return value for syslog
+> - Patch 2: rename to scmi_imx_misc_build_info_discover, add -EOPNOTSUPP check
+> - Patch 3: rename to scmi_imx_misc_cfg_info_get, correct command order,
+>            add -EOPNOTSUPP check.
+> - Patch 4: correct command order, add -EOPNOTSUPP check.
 
-Good idea. We need to verify first if :param: and :returns: are available 
-since 3.4.3. Docs imply so:
+I will queue 1-4/6 from this series as it is ready. So repost 5-6/6 when
+ready. Also I notices some inconsistency with CONTROL vs CTRL in the code
+and document. Please choose either CONTROL or CTRL and use the same
+in both document and code for the command names and send a patch to fix
+the inconsistency.
 
-	https://www.sphinx-doc.org/en/master/usage/domains/c.html
-
-> I also think we're going way overboard with including e.g. struct
-> definition in the output. I'd just chuck those away and maybe add links
-> to kernel git source for the definition instead.
-
-We still need to parse all parameters, as we need them for man pages, as this
-is the standard practice (see "man 2 read", for instance).
-
-We may do something else for html, but:
-
-- on functions, the full prototype is required by Sphinx:
-
-	.. c:function:: void media_set_bus_info (char *bus_info, size_t bus_info_size, struct device *dev)
-
-- for struct/union/enum, a data type is not supported, but the documentation
-  has an example about how Sphinx actually expects it:
-
-	.. c:struct:: Data
-
-	   .. c:union:: @data
-
-	      .. c:var:: int a
-
-	      .. c:var:: double b
-
-  If we're willing to use the Sphinx way, tests are required.
-  Implementing it would add more complexity, though. Not sure
-  about the benefits if any.
-
-In summary, for html/pdf/epub, there are three possible outcomings:
-
-- keep as-is;
-- replace them by links;
-- implement Sphinx way.
-
-In any case, changing it won't cleanup the code, as we still need
-parameters parsing for man pages.
-
-Also, as a documentation user, when read I documentation, I do 
-expect to see the function prototypes just before parameter
-descriptions. If possible, untouched. This is specially important, 
-IMHO, where there are macros to help generating functions and structs.
-
-Thanks,
-Mauro
+-- 
+Regards,
+Sudeep
 
