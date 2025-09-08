@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-805156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEEAB484A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B0FB484B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3453C189F76F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD4CA16C502
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C70156C40;
-	Mon,  8 Sep 2025 07:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB372E4247;
+	Mon,  8 Sep 2025 07:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rhe+YAZL"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iheKU/Em"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E4E1DF73C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE0B156C40;
+	Mon,  8 Sep 2025 07:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314899; cv=none; b=Zxt3w90umPj2om5L2qDCeZX5/rbLgvD9gdqVdpKpwO8VCGVECodgCtMWUUI9BOlqxM1X8/Zs+pOOpIKE4UCnoTaoZI+qiSCFPj3cWHCj8JkTx4VU3lQf0QfbxD6yQVx4FKXNCcyI0Hk044XoVduTIzMlrYziyu+UW3bHtPVYunw=
+	t=1757314969; cv=none; b=W+yr86HdVvgcto1Ea3o9o7LT1uePUHtm1chNQ/mU6kAtUEddM6b5WCIk8Fjz3N5XLnDF3YmlYNHaZyOiaEWiEITVRKiRbaiJUrbJnvgeAdvsqMPl7iWNUHJrrkhxW7BNno0yY5DDpgYkpmXt8aiE6rYKzL+XAudLyRuXnuV3bCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314899; c=relaxed/simple;
-	bh=D4Ay7cjqW/QNpararKO4Lw+hA5bmuFK11O8/2Rv/vhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZFafQ6oK9J3K5mw+eITJ+R+7jhey7y4YZu8Ggw6bnjo4kllf9wvL43uXwlJr0hviLoAJsg3nEYQlDrHV3MEPYYT/Ov62weA1GLM/qbHh/7CMZYhcZpVJfaFE+ge+MlyLM7lDFKgRPTcDDHN7cdkUtDC7o7kJmEaGysRhURZs/BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rhe+YAZL; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-324e6daaa39so4004663a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757314897; x=1757919697; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbaEmYlV3AOzGtE83K4L4+Dz35fmJjUox3DLoNP1Lvk=;
-        b=Rhe+YAZLuwqZhdgqgIPZ+NWfIWTO206A/Kdu162F42j0uTJkm/Xdsr10YgLEulkyzN
-         1+4ugNCf89XuSYMjz3EOe9Qa4LkB4FtRTDRhKCPzWLIsxB/IvGg8I1x2AgF55zpk0635
-         uKOpDRnLAQnLbLDJe3GZ0020QczYbyARlk/mXHdGxlfl93DRfHpfd5Xc7jAFJmHbcmhz
-         t9A6Fi5bgV/Ysembgf8XbHDwuLnF9uihOx+f1c4cAm/Boc0R4ZlUP+Pw4CN57kvZ4U1k
-         F4FAWEiXE3V6FMReJ0CKNu7lVOKtWP+v1tciaIUDdGaB34rm0KajvziIyVjOaPKxeDIH
-         fiBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757314897; x=1757919697;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DbaEmYlV3AOzGtE83K4L4+Dz35fmJjUox3DLoNP1Lvk=;
-        b=N7xcGvAr+SjoadROKnvxRqa6QetkEKZcQC8O5m8Y+yYy60zU83+5j4sAG5uUUaRNmm
-         tlI7WkvInbPxA/cCOR6DGKbeKu1NCQDNMTmztLhUCYDGNxaliPKBSTiCRnen1kJQh1gO
-         gB4+eUjCIUTvID+9FX5YLhAquT+L9kG4MAPGOio/0C76pV91FA0UOEwNZKifOTCmsidp
-         v5Dz843bnqf6opSsxPto3ZeP9NhR/jGmFHXUh/W3OaEWfwafwCVkbDrUVEaM+n6ITbG0
-         GezrjvFvqE5hpttCIeEI1Yxl853cc7jvv5JXYAfHL/mmCNrTuZOTmfQq+BjGTPnkSUe3
-         Hyzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDWKsGIHSbuOhmEjK+pLB/b9UMbeJAu6hNk1KNaAgDxESrthlfC9eUjcnjuz+fPPK3olk0LXOHWpy8iOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmKy3ZALMBHiVGDBX39ay0lnqEMkwhFsYckfahJ1QkDDHu+y1N
-	zhkmLC1CGKEHbtyhrjRpfcWviucDSdeej8BVAnLAuFF78Nspa8pc49Q8
-X-Gm-Gg: ASbGncuctVzWEolLCZDx3bkc/FKkt2f4FgzUE3kjia2AZdfLFvLSlMN0Q7INCovTSPR
-	VQpgHmxPaV38pzrfycgnY/fpavtmu8BbKpV8bRvd3BkI/YPG2Gi4lbfNkHiODVUvq5sPVywKBCk
-	rJFcFVBNCZfTrObEL+JvkUBCN4BGEFHra4alIuMWY03lZAoEZcIUX8093xiuIptog4uAw8P88IU
-	I6Gx2G7ZvXX5fgcGzvl6QBy8yZj0qggqVyRb48b2B5nG/gXpZjdSQ7I+N08HgxqG2eBrCdcjGCB
-	3qcDPrwpMNtTg2XWhFiYcimY7EQoJQ/3RcNYtwIUN2o/VaVl3R70pIgdzkhZI5F1X7B/lSC1cv2
-	r7pWw5w8zy2yGer6J4TSF1OF5d9rRP0kHges1/eH5y8buKQqNw3F69exElA==
-X-Google-Smtp-Source: AGHT+IGc7TXpRM7rIBs/KpzQNu08oMaqlYYUm4E8f4HgHjSp2FZ4vFD+byutu6dJUmsCyMjNMiob/Q==
-X-Received: by 2002:a17:90b:2d81:b0:32c:7693:1155 with SMTP id 98e67ed59e1d1-32d43f2f29amr8015933a91.1.1757314896992;
-        Mon, 08 Sep 2025 00:01:36 -0700 (PDT)
-Received: from localhost.localdomain ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32d89f32ebfsm1705683a91.0.2025.09.08.00.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 00:01:36 -0700 (PDT)
-From: Rahul Kumar <rk0006818@gmail.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	rk0006818@gmail.com,
-	Pratyush Yadav <pratyush@kernel.org>
-Subject: [PATCH v2] mtd: sm_ftl: replace strncpy with memcpy
-Date: Mon,  8 Sep 2025 12:31:24 +0530
-Message-ID: <20250908070124.2647038-1-rk0006818@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757314969; c=relaxed/simple;
+	bh=tJ3tW3rPouUnWRUNVy/3YiPSCc20vhp++5etn/Azlrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nvjgx7FckpK+uB2cCWClMa3HXOrXx3ZwLL/qwnqYdV1LceB2gOaC7LwJcYAcuBJDVG8ljSgRjGq7axOdGxon6EhXV2U4wV118/lIY1GJfZweliQkBqcGoy6IlFg2FsEEZG6d1ZV0lhufTaGt64hc8OA7X0gm1tJHZ11DiTGNR94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iheKU/Em; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB66C4CEF5;
+	Mon,  8 Sep 2025 07:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757314969;
+	bh=tJ3tW3rPouUnWRUNVy/3YiPSCc20vhp++5etn/Azlrs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iheKU/Em9p3OpQAI2r7Q//GKkgKlNO4dqfwfbgVSPIwB/SORPtUbxA/0dPI7MAA0p
+	 1P/Yst8R+C081lZE5lwfFaB0Apr8QGwDFw4yvZBLM7PkAqe8Pva2E9ylSqLgfzXxQl
+	 xxd0pyo+RbZfsgi7+TTdpNKne5yz+eBiGTVYadrC5yeYPjOU1m8GkWQsyS3UOF7K7r
+	 Jl81o4m7w9HyaGGZgeNTtcQV6jKWcA2ibkbxgZ/hk8w31IAsCFE28da3L9NkpzcviU
+	 zahRf93ET9A5+Ixx0QMmCHiQ+MPyRVKCX3NP2hsR1/BwTPKtKGhKfKJSLhGezVqv/Q
+	 /Dd7nFBOSP6iQ==
+Message-ID: <edc840e1-44ed-4397-8e5f-2f5e468ec030@kernel.org>
+Date: Mon, 8 Sep 2025 09:02:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] dt-bindings: trivial-devices: Add sht2x sensors
+To: Kurt Borja <kuurtb@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250907-sht2x-v3-0-bf846bd1534b@gmail.com>
+ <20250907-sht2x-v3-4-bf846bd1534b@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250907-sht2x-v3-4-bf846bd1534b@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace strncpy with memcpy in sm_attr_show and explicitly add a NUL
-terminator after the copy. Also update the return value to reflect the
-extra byte written for the terminator. This aligns with current kernel
-best practices as strncpy is deprecated for such use, as explained in
-Documentation/process/deprecated.rst.
+On 08/09/2025 03:33, Kurt Borja wrote:
+> Add sensirion,sht2x trivial sensors.
+> 
+> Cc: stable@vger.kernel.org
 
-No functional change, only cleanup for consistency.
+No, drop. No bug to fix here.
 
-Suggested-by: Pratyush Yadav <pratyush@kernel.org>
-Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
----
-Changes in v1:
-- Update return value to match the extra NUL written.
-Link to v1: https://lore.kernel.org/all/mafs0ms7bvcd2.fsf@kernel.org/T/#t
----
- drivers/mtd/sm_ftl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Please organize the patch documenting compatible (DT bindings) before
+their user.
+See also:
+https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
+> 
 
-diff --git a/drivers/mtd/sm_ftl.c b/drivers/mtd/sm_ftl.c
-index d28d4f1790f5..3c5d6d0c728f 100644
---- a/drivers/mtd/sm_ftl.c
-+++ b/drivers/mtd/sm_ftl.c
-@@ -44,8 +44,9 @@ static ssize_t sm_attr_show(struct device *dev, struct device_attribute *attr,
- 	struct sm_sysfs_attribute *sm_attr =
- 		container_of(attr, struct sm_sysfs_attribute, dev_attr);
- 
--	strncpy(buf, sm_attr->data, sm_attr->len);
--	return sm_attr->len;
-+	memcpy(buf, sm_attr->data, sm_attr->len);
-+	buf[sm_attr->len] = '\0';
-+	return sm_attr->len + 1;
- }
- 
- 
--- 
-2.43.0
 
+Best regards,
+Krzysztof
 
