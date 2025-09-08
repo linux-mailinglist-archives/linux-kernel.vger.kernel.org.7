@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-805249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CE7B48600
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:47:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159CCB485EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4B23C635D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:44:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7F87A55FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE792EACF1;
-	Mon,  8 Sep 2025 07:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B02E8B8F;
+	Mon,  8 Sep 2025 07:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BtyDee5d"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjlM0ocH"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C02F2E92B0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A8F2E1C7C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317437; cv=none; b=LStB9lS9j2pT7XR8wj+0eAcrciGhZ9YSpWxq7lpqcuDEjsOQ8fsKE0fiZj84dd6OaaRjbLYf0yu14UIAy+VS24FFlrDNHClrD4AxYEo4wYrBMXXhjtSOQSGwgOrPFALSQJp5XUeHmWOH+eHVbJU48VI94V5WPtPfEK4jw+fGBBw=
+	t=1757317473; cv=none; b=BZu8NrCsPLNy5plqk1JQQ3pRzI+HencRXv1Cs+o+2VYEowYgG26W7kVfHS6zjTnzzs4IU0uaiuh10cJaZsksK9CMyUICgXi2RyjnEeQkMmoR2QmruoroX0vNBIufGOGgnmSDiI64WR7ZeAs6Ng8175FCS3kHt96FCYKwtdf+9QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317437; c=relaxed/simple;
-	bh=wpueAdzFOsR+CPJDx/2e8jBSy3XC1zxVf5fsbWUrbso=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Wh0F22wroHQvG08Oja1N/l+eBRpWch5IxKsOJVWPW8gl9qMdUXkrKVztsRjahj6moyYW4Rc8hE8mrVBhaUaLmkaJ7AUDZgpp4iBfzTtagOoCHlkdAKiAjwaL1dVA5OCVkFFVtJFHyIDyLOM9xfUOu8KxRvwawE2Wo3LYsL/qcgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BtyDee5d; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250908074353epoutp04e519c79fcaa1ef08bb30efb95284fbd9~jPuUUA13j0968409684epoutp04R
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:43:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250908074353epoutp04e519c79fcaa1ef08bb30efb95284fbd9~jPuUUA13j0968409684epoutp04R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757317433;
-	bh=fMu6m4Myk6rvvwL0qen9upyk1beh6Sb+VgXqEvbruYo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=BtyDee5doGflxun6TXx2AkPXdKsk+ewiQQOrGfIRWT/rmO+JGuW4ODbzKrEE/F3rc
-	 aXJJEP7FbrMjcSiY65PN76+XBO7X781pD9PQuU+f2njhT2dRdUmH95hfJVJT3s5Xxm
-	 rVW3QCu2ypbNusa93ER4iyD/cmmoWe1LJjdrgIMI=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250908074352epcas1p299b9387b7f14b9e9c25fd129987bcee4~jPuTpJENu0257602576epcas1p2V;
-	Mon,  8 Sep 2025 07:43:52 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cKzV00mKBz6B9mG; Mon,  8 Sep
-	2025 07:43:52 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250908074351epcas1p22e354de3ace0e8e1a74f3991e6221ddd~jPuSfDzo70257602576epcas1p2L;
-	Mon,  8 Sep 2025 07:43:51 +0000 (GMT)
-Received: from dh0421hwang02 (unknown [10.253.101.58]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250908074351epsmtip1d6bf1c2323c1ed4bfc4f33b12622a331~jPuSYmobE1120011200epsmtip1o;
-	Mon,  8 Sep 2025 07:43:51 +0000 (GMT)
-From: "DooHyun Hwang" <dh0421.hwang@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <James.Bottomley@HansenPartnership.com>,
-	<martin.petersen@oracle.com>, <peter.wang@mediatek.com>,
-	<manivannan.sadhasivam@linaro.org>, <quic_mnaresh@quicinc.com>
-Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
-	<junwoo80.lee@samsung.com>, <jangsub.yi@samsung.com>,
-	<sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
-	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
-In-Reply-To: <854fad23-e7f8-42c8-b0e2-03460f481366@acm.org>
-Subject: RE: [PATCH 1/2] scsi: ufs: Add an enum for ufs_trace to check ufs
- cmd error
-Date: Mon, 8 Sep 2025 16:43:51 +0900
-Message-ID: <561a01dc2094$51b24b00$f516e100$@samsung.com>
+	s=arc-20240116; t=1757317473; c=relaxed/simple;
+	bh=kL9UTFTOwTwX7nZq68SlUX6QKXEKpUN3PiqwtgfOUMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKhm9+VX8y1RHH8xZq2PgeTnPaVxYtPR0bGSMnjHFKWPaN3euN3emE6mmd7ohqC0lZV9UxlYtCL5zhC6HtQD+RwpW8R46yVENSlHByTrD9bTe3wR9BW+IZal7ipElGV6GK1EDEP/Ehz4IlGW0S4QD/y4NxiGe0vXwWp6bqGD0Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PjlM0ocH; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24c89867a17so38859265ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757317471; x=1757922271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=toUuFoyYxtz3IY7Dj5fLibZ/IZI1MSArfETrATESfNs=;
+        b=PjlM0ocHddk63KZJkHF2qkBkHMt4paRFXVv2/rJEgyvmroC7mZdi02D+SNhvGKS0GV
+         k9qoquLZNvDJYpk7LqjBQv0ZGIbxwQKnLpQlMqv5ML6QFol6I07trUjTBPvFld6SzzJ8
+         WlaFxVEAcc1kCtNsCe4i2MBp9qYDMAd9YBZWl5KYVg0bwz7/KXRKR2f9dbBwtgY0Sfv1
+         d+J7NHBYkPxm7IJzizpsBDbgH9fus+rO0g8cZd6o/TYXWh56wetblw79z8g+FeHliBMa
+         CYz+RHqns7gTs3QnPdOGzcEp6C7reS/eDIOg10huQqpNcierYFsAWAMdMSaEXm1eCxI6
+         AdWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757317471; x=1757922271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=toUuFoyYxtz3IY7Dj5fLibZ/IZI1MSArfETrATESfNs=;
+        b=XkEW5Y/wGcJUJqogbSXPgIjyzH/oE2DpRT3Xi0lfvZ21tZ85xtOpECbhmNmPo1I48I
+         xHbTLWXxAsTKKDiinxhRbGEtxVh8Zv03SFLUQyJtb+fli6WLGUzS3OBmYGKk7PVZWfEx
+         zKT/ortDOIYa6aQzNgraIKDu2VW5VLidQAb1YwJ4P8rZUQfrI4d17IGBKcyCAoD+PEIk
+         +GWJlNwkmEX+KtyaMIUdydNm5ZZB2wljsEUn3S5/09qVPGkav4+IPTHLsJ6mASdUDzd2
+         T9tDcMVnwFH/71pX8BwIGAYBSuTpq1h/PR80x8q1v21JECWvvZX7XaVjc3DcC5A/HJpy
+         bIIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+L4NyqY/aBTm59LfsFtrJ8+NaLYZ26nnH7oBLUCMHx9Msw9Df0eyLLde61Tj+ZyBFDxL/fbbjpA80EE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKbBQ15s3Gitzwj+GNfx5YvqWCBeNrBqexvTldRvJPHt3hQJ78
+	QKOnLFbfxSmFRhpaOiAx7OVKZ+IYFGwT5LffEgLq86TAUMrD3oWid/BhSRfR0w5HYnw=
+X-Gm-Gg: ASbGncuSPqXecoif3dHuykhKTX/9aHNsMXHbO/AuCAQwhiwWb1Jz7+MqVu8EHJS+uU/
+	MpK2XGVfFqTzJhPaaFuKgB1c67yMUGraVj12MUbgiE03wchufTQJms27Gc1O3omOxmmtEtIqPeb
+	aaPHvLUvzfv9wJKwJViXOL7xQezKBSrzQqNy4y2DTPkdC9QsqftwRG1XUCnLAWfWwlJRg/hyDug
+	7giaZj4gQfDksDcnc19EayAlwcqNN3CH8z1xFSclapOh3AOF706HQmhBXb1P91bIuubz1KF0Qmk
+	2iwyPr+JxE4CYV1zcu1Nrk+ryJfyPfhpvnpQPUPdhSHP8amkAiJoQsFNm5G59cU2tnsFG/wUkVX
+	wkHu19htCZkA3ZpDusBD6un8w
+X-Google-Smtp-Source: AGHT+IGIUDY6HrGYjiBungp/6EW1xfUx0j7BBxotRNf1vw4rmkBz5kB6JcC1rC02ZIp6g3hIMeuaDA==
+X-Received: by 2002:a17:902:ea09:b0:246:7a43:3f84 with SMTP id d9443c01a7336-2516d33d4ebmr104112085ad.5.1757317471368;
+        Mon, 08 Sep 2025 00:44:31 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9e39094dsm131335155ad.84.2025.09.08.00.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 00:44:30 -0700 (PDT)
+Date: Mon, 8 Sep 2025 13:14:28 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even
+ without frequency table
+Message-ID: <20250908074428.tphy4u7vjhkehwxk@vireshk-i7>
+References: <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
+ <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
+ <20250904053700.abdkh23zwi5x65do@vireshk-i7>
+ <e91bd1e9-8db4-4923-92fe-52893623487e@kylinos.cn>
+ <20250908061333.rwzq5dj4nxlav6x5@vireshk-i7>
+ <cbe36377-6f92-4913-8cd7-087e718af368@kylinos.cn>
+ <20250908065551.d5jhp5ejix4fzgd2@vireshk-i7>
+ <67b55ae1-60b0-4d54-8220-59f7e3ba7c29@kylinos.cn>
+ <20250908071920.f6ppfr7shy2cb2wg@vireshk-i7>
+ <fecd3bf1-c8a5-4514-b3be-311a09abe5a9@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQEmYeTjtFjYRI1QNWxgWL0Y7ybfIwITLn2gAaoUPAICiJScSgGs7ud4AZvu8PIB4FCAbgHlrZjyAhv1i+YCmdARLrVkDxOg
-Content-Language: ko
-X-CMS-MailID: 20250908074351epcas1p22e354de3ace0e8e1a74f3991e6221ddd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d
-References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
-	<CGME20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d@epcas1p3.samsung.com>
-	<20250417023405.6954-2-dh0421.hwang@samsung.com>
-	<239ea120-841f-478d-b6b4-9627aa453795@acm.org>
-	<093601dc1ae0$2389c460$6a9d4d20$@samsung.com>
-	<27882582-58b8-4ac2-9596-3602098e7c1d@acm.org>
-	<17db01dc1ba6$41d37350$c57a59f0$@samsung.com>
-	<6e854090-a071-416a-b7a5-cc8ee0122a90@acm.org>
-	<2add01dc1c9d$7b5cba30$72162e90$@samsung.com>
-	<854fad23-e7f8-42c8-b0e2-03460f481366@acm.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fecd3bf1-c8a5-4514-b3be-311a09abe5a9@kylinos.cn>
 
-On 9/3/25 8:57 AM, Bart Van Assche wrote:
-> On 9/2/25 11:39 PM, DooHyun Hwang wrote:
-> > Could you please provide some guidance or suggestions?
-> 
-> How about this approach?
-> * In a separate patch, remove UFS_DEV_COMP because it is not used.
-> * Call the new enumeration label UFS_UIC_ERR (UFS UIC command error)
->    since "UIC" is how the UFS standard refers to UIC commands (these are
->    called "device commands" in the UFS driver).
-> 
-> If anyone else has a different opinion, please speak up.
-> 
-> Thanks,
-> 
-> Bart.
+On 08-09-25, 15:36, Zihuan Zhang wrote:
+> For instance, we could enforce that a driver cannot implement both
+> has_target and has_target_index at the same time.
 
-Thank you for your review. Your opinion is truly valuable to me.
+Can be added.
 
-Based on your suggestion, I understand that the change involves
-renaming UFS_DEV_COMP to UFS_UIC_ERR.
-Would it be acceptable to add UFS_UIC_SEND, UFS_UIC_COMP,
-and UFS_UIC_ERR at the end of the enum?
-
-I am aware that UFS_DEV_COMP is currently not used in the code,
-but I am concerned about whether it is appropriate to modify
-or remove existing enum labels.
-Therefore, I thought it would be better to discuss the removal
-of UFS_DEV_COMP in a separate commit.
-Additionally, I considered adding new enums as needed.
-
-I decided to name the new enum UFS_CMD_ERR and add it
-in the same type's position, which led to a change in the enum order.
-I realized this could also potentially alter existing enum values,
-creating room for controversy.
-Furthermore, I acknowledged that the label UFS_CMD_ERR may not accurately
-represent the purpose of tracing UIC errors.
-
-Thank you.
-DooHyun Hwang.
-
+-- 
+viresh
 
