@@ -1,262 +1,226 @@
-Return-Path: <linux-kernel+bounces-806386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF0EB495EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:46:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E54B495E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B3620470C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8AE1883F0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120A33115B1;
-	Mon,  8 Sep 2025 16:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A880D310779;
+	Mon,  8 Sep 2025 16:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="51WN6ABh"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2128.outbound.protection.outlook.com [40.107.244.128])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cF9r0N20"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B1C2F7AA9;
-	Mon,  8 Sep 2025 16:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.128
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349880; cv=fail; b=bsd+MUZcgHs21aK5MuPNGCqiIOPg+s1bYrFAAyRYiY05CL/d+VmPKTFIbE5TG0ljYIou0JPgFux1wf6rdsSe3ZK1muDGadGSq5cg6vF1dA5AG/UxoG6NiXIcKrpmgMODGS2/BcvEsaHlO9ZAeTKwRTd5B25wwKD4FZoTOlGaajg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349880; c=relaxed/simple;
-	bh=jD1uGHi9PQrNHO1/okfLNLJCFXVvmnW/jqryxBHBQ+U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=D6X/j0H6UVyHnjGB2xmuUd4PJF4voNlIpX5glKquC1s9XOqvjx+zzSpCmCCMHaS8nFjCe7owerfUW8nCAI1HphEzXx7uMUQl+XNAaC0fPuI30N6hXfD0wT66WznGf18L1lF8/waP85OWCjUA3C1Gu4NkvWYWTyLy9gV72lAdw7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=51WN6ABh reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.244.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I7yOVIZL2EqwZ3ca3bREtxHwcz4ED/s35uOLQa7Ffhj3B+oW7hifJ+LGbzmxnE3m4slVBI2+2+I4rdvTdsdQXjXNh7ZrRC6NO2ynVtCFR2Tz9koPRlt5hHo4UzVcRytC4+dZMpqLBLPmrzJGYylsLWCPHvg31I0KcO4oH7FNLdlZ+kiwIn2C0JKMvJJVezV3MvTyrvU8SzqwBrJ13awG6kUQd2ldzGylPTz9Hb2nuENGbGJlTa9JcF1yj58Hrea0sgGQtq9gVWP3lzGdxTFZDFFwe4apKkarlXix03btdAg2AosY2vyoj0EZhyVkclc+hMMJnUrnMKfnbKdeTv6dVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wffdnzptUVmWED3au0MmN/Bj3bP6STsdy42HjE7r46I=;
- b=RuEd8dnFWGyTHXSZUl+uo1YJnKGQqnvBO8w5xy+/wJf/ZDaVXRYMcvHH7yioc48B2qMsT89M89pLE5HlwcJW1c+saRO3vvpCUdOO7J8Tfv8e0TN5aGKqoKgL+wWIqqfDIuUrEs0SLI4WGSVJ5ZTVW8U8eAVJ50lQfQJ3KkYg6/VXtwOBZYZ2FWFT6KBdA+ATZbzbeac3OSKZAuDOLxHzwnXAxWV4Khr9BV97fsPfkPNPEZ9K7n3Z1MaCePAw6o8FE6CvyOq3aRIEzlOIlLHqlNszaWwdQQFF4iO45KbbIWYTK7WtJQD/hRFRPY1oa/FzaDvNvJvDgVviv705pVqdJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wffdnzptUVmWED3au0MmN/Bj3bP6STsdy42HjE7r46I=;
- b=51WN6ABh/cqvnFySba+XyTMNEeN04z/z0MATCbjDK7YLtYxL2wALGoRPqnCZW83yAbdSD42vkh2N8OerI4djole2xF7GTaxgbf5hKNNfHbA5T5jY67eC+9QkaDufMe5hJBQQn66gqZyuf/SPzbMPFYSrycgEFAsbiWFTd+tbkuU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- DM8PR01MB7045.prod.exchangelabs.com (2603:10b6:8:1a::5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.17; Mon, 8 Sep 2025 16:44:35 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.9073.026; Mon, 8 Sep 2025
- 16:44:35 +0000
-Message-ID: <bbe0a7fa-7c7e-4d59-839c-23e8fa55a750@amperemail.onmicrosoft.com>
-Date: Mon, 8 Sep 2025 12:44:28 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 1/2] mailbox/pcc: support mailbox management of the
- shared buffer
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: admiyo@os.amperecomputing.com, Jassi Brar <jassisinghbrar@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Robert Moore <robert.moore@intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
- <20250715001011.90534-2-admiyo@os.amperecomputing.com>
- <20250904-expert-invaluable-moose-eb5b7b@sudeepholla>
- <1ec0cb87-463c-4321-a1c7-05f120c607aa@amperemail.onmicrosoft.com>
- <aL70PVhM-UVi5UrS@bogus>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <aL70PVhM-UVi5UrS@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CY8PR12CA0056.namprd12.prod.outlook.com
- (2603:10b6:930:4c::16) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6538A2E2DCD
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757349944; cv=none; b=jXx8a+tEtU1YUG4fhGNZYkScPVpp/iq47AI2j9KrWzj7Wq3Vdng8mcpaP6f0yGL1Q/mGmQz4brTyfqyHem967mxH5mBz0GymZBdcgWcNdC4fdb85sjnA6Dlknta7sYkP8u8il7CEeOQ8ZIXfXLLMSDEDNiZ3MWMMY+g36j7+6aM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757349944; c=relaxed/simple;
+	bh=6PqMLWKDJtKfVT+GHF4Y1k5/ea+AFwqdR62kduV2yF4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V1j7sriuc4a7QzSazY6WY0MsstKbgvDruss7bluMn2WsesyDFXaFkGcO2OSNbXSGRtfHgcWUzduqK9nOfx4EopqjlVjMa0udarNwDI2uqWNBj3M0hDvXUhEIuDyyvQdl6NQIwqu4bMPv/vM8gW1+ISyYfpS72HFHL42F9Vk6olI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cF9r0N20; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588FtICS023525
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 16:45:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=34Aw1JEvLQX8Jf7s5ppgnDzivC2hh4Fc7ZC
+	M6ufDdzA=; b=cF9r0N20D8+R7qV0LuaJPtmTWTyirlUMuLt4CWP0DDtbTECV4Ni
+	6a8S4DqTNuh2niaw4gb7riMZlFcZdMy0HRj5iJakGDXT+fucFYKswdgyBgpRX6fC
+	m+/WX/N4clA10mffWpvAoPdzN7fHCDILpp1U0jk9Uu0cApIc50B2tHkjGMfG8jAj
+	HLNytukr8EM3VcjqDNkE+kYMIs1AVXJSnIKmaFxO021wnx0X5XYEYfCV5V59nNlV
+	ByE/75TvK8Hj3mRR8qOmdhBIUco5AbiueOOsjmOp3rCpt2Epmf96i7z9LkTYNHwL
+	ca+zz+VdADBY3tabIxfjIBHYPSH0cHShaEA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8dbbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:45:42 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24ce3e62946so66502205ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:45:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757349941; x=1757954741;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=34Aw1JEvLQX8Jf7s5ppgnDzivC2hh4Fc7ZCM6ufDdzA=;
+        b=WoBct9Wz5iI0ygRtZa314attdJ3oZuPjZQHLDeIfiGF6t15EXvSa5FOQfvbW3gumTm
+         EU+vBKi0wCjcCmM7ke8uZuwKodTgnqKVrDQ8aFWRFBE26HCnFeuwBDJj1/bpwhOlYQI6
+         HuZjiqbq4E4mJP4PdxSU1Q3TVTPCL6mnaYszyHGTmss8X3CgHLnU38grcWnlqRx5CII+
+         UyxJzxiO+7gmgKKeTKw0tg3K/TD1mFDEA1mXyz1z2qZgQGxscdWDaqFK7zcvZHNs4BOO
+         WI6rKC5aRipgGt75lXBYtZUyci3n5Y8PuYSUZPl0LU9/I+3dwlVHFfBLLYdk5q09BwMF
+         3T/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7WIWgLhXnfZyGL7q/B0LH2EYLrHwVzkx6EfYHVKE4JKC0BjgDrseoEm99uq6TvuF7sj5ryGESxuP5b+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9mQhk2RzVJuQ1WIdAeQR9Y6qih9cUGKdau+Y206XFu/R8lpGj
+	567fRh7G+nH8DX7HPZBhom09TDsafbr3QxNGl88ORNl+1tFfd7EEYaCh2Xfxp/H/JO2Bf4z1HRc
+	Q0bUIFsTYWO7G0mZUTPp+r9eNfG7BFg14hjNlDqtbkpl2/nvr0kT2GJBH6+Vv/ylITEo=
+X-Gm-Gg: ASbGncvDZpjxMfDuLDygpPFKERjYwTYf7MlKwAgc3u9a1O9bugUDlSaPw/rz8T4CY+p
+	tV+KQ19eS5EojyfO8jKfZiWy0AK8aMCTVS2/GyiLG4AASRd3X75zrwu+QJdw0YM1uIIBq7PJGlk
+	l3ua7LptkXjmB42Si5gtWP1pJZtRPZp9jR0m0D9hP970jWW+2nJg9kt1ned8aPuTlNTmOceS42R
+	JYui37ZhofVSYMYvH8rnaUio90egzDqDnm0zFz4KgZv+FcwiKaVEqKubGFQOqoHJK1qsAw7JjE9
+	TxbHdR5uW1gBbs+CZztQUGmzlZmwo1JkFF9dsrokyabathMX1RZ+Yf0NXe5nobU6yI05UzhBxA=
+	=
+X-Received: by 2002:a17:902:db03:b0:248:fbec:7ca0 with SMTP id d9443c01a7336-251753ddc6bmr114524845ad.52.1757349940875;
+        Mon, 08 Sep 2025 09:45:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4KvQs9Tv5MscTkp53nskEqyMUOykepAr5xV7PIPByLyoDaC48YY8vt2347cxTMkjP8lyWfQ==
+X-Received: by 2002:a17:902:db03:b0:248:fbec:7ca0 with SMTP id d9443c01a7336-251753ddc6bmr114524405ad.52.1757349940303;
+        Mon, 08 Sep 2025 09:45:40 -0700 (PDT)
+Received: from hu-ptalari-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24df9e881casm91508045ad.62.2025.09.08.09.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 09:45:39 -0700 (PDT)
+From: Praveen Talari <praveen.talari@oss.qualcomm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Praveen Talari <quic_ptalari@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, alexey.klimov@linaro.org
+Cc: psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
+        quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
+        quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com,
+        Praveen Talari <praveen.talari@oss.qualcomm.com>
+Subject: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime resume
+Date: Mon,  8 Sep 2025 22:15:32 +0530
+Message-Id: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|DM8PR01MB7045:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9264f25b-823c-43a4-4478-08ddeef6fe22
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QnVmSEQ2NTJNbnNPTC9aZmJBTUs4NWhFcEI1N21DM2haYXEvcjM4R1ZsTWtt?=
- =?utf-8?B?dHJFb25uU2xDRzMyTHdsdTBPMnhUR0RBcTVwQnJYVzVZcU1nNXI3UVBZckZG?=
- =?utf-8?B?enh4aHFtNDhSbUhDYlBOR0hmZkFRMWRyNDJydTIrcDU0ZEdsWjE1M0NPd1Jv?=
- =?utf-8?B?YlFGcU1GUXhlNGRqUlFGS1pYUnQvTHlBTTUwdDBzTTJTM2hxb0t5YVhSVFEy?=
- =?utf-8?B?eTRFRnpFMUxlY3FCczdkZ3p3SHBBQitCQjY1STBldUs1QlFrR2lxUzlleGhL?=
- =?utf-8?B?TllXeXdGdXhGQWYrV0ozRzEydmVhNVpHK1F2aEM5MUhHVXpQM1c1ZDdjYURN?=
- =?utf-8?B?MTZFU3pwSjV3cUgzbldhRGE4bkdKQ0Q4bm51QnBqVGp6eFZteXhSc0NuVzM0?=
- =?utf-8?B?anZYQUE1QVhiL2ZYS0tyUE9SYy83U05Qc0Y4WkhiWTR1M3FZN2xZQUZSa0lw?=
- =?utf-8?B?N1VWMjdnb2ZkeUM5YW5pWGpLamgwQjlJRTVHVXNEWkNFbGhQa25teVQvc2NB?=
- =?utf-8?B?ZERFMXB5TFNxb0dtb1BNVEZhRWJ0RVA4d01lNTJ6cWs3NkMrb3RFS1lFdzNp?=
- =?utf-8?B?N21MVm1IUGRaV2Zjdy9hMGY0Q0l5cG5xeXRiQWZYQ0VFSTUxQTFVMThtQ21S?=
- =?utf-8?B?YldHaUJQQVppNlFNMll1RDJuMldHUWtieEJ5Nmp0ck80cjRURit1U09WTytx?=
- =?utf-8?B?Uk10NG1kT084MFA3bDVvOXUrZ1E5OWQvQ0srOVJ6ZVMwSTRvVDgyMWxZeVJH?=
- =?utf-8?B?Q2Y1U2M4ZjdaMmNIcVpPL1NPeFZTOTJpU1NCbjB0K1pjREI1QzhhOWVmLzJC?=
- =?utf-8?B?a0VhN2ZPUlB0WVpxWWtqamRkVUkxRWhrZll6R2VTbk1XQ1o4VW5pQVFVenBk?=
- =?utf-8?B?ZUxqZTlNSDJxL0FMTlBXaVBTT0ltZlQvNHZjZVB1N2JlbHRIV01FSWZoN1FQ?=
- =?utf-8?B?MldQVkZaUjVWc3BHUUNob1FPODhYekZUUzA0T3U5UXJRcEhzdGc0WGo2LzJI?=
- =?utf-8?B?amR0Z21aMVZtSURiSWF1QzZwYWRPR1gxVkJLNlNQZDlkS3hxUDlDckVya29R?=
- =?utf-8?B?SFZhU1FZNzFvYlZmMVhPK2tiSmRlakQzOHlBZUhnWkszYjNQSkUyQy9GY1M0?=
- =?utf-8?B?TmsrbjRkbWlCN3Y5enlQNVFrUCsyM3o1SnkyejBMdldvb0dNd0F2WGdpeEFO?=
- =?utf-8?B?Q3o3bitVbWwyQllGTHllRi9YSVZCajVSSnVaSEhCeE94azhjUDBGc2prbEdn?=
- =?utf-8?B?NWZMUXhCNkdBSG5TMWttVGwrSDNHZ1hWNW1zSU8yTGk3Z3hUWnZHTUExVnlE?=
- =?utf-8?B?YVVMVVhML29yT3J6SVBIZy9pMFpOclJQbUoxWlhvMFVGRk1RUndCcnkxS2ZF?=
- =?utf-8?B?U1Z1UWF1NmVQWnZwdkwyK3lYazRxSi9xV2g4cDNJVE1CUFllM2VDbEFSSlJC?=
- =?utf-8?B?Rm5Gd3NJTFlweldqMjVYRVV6NmNhYWpZOW9ieWMzbW4zbUFVSVFpM2FSVTRC?=
- =?utf-8?B?dUFWb1VhUThGeEtEWHJ6TjdERVErZ2ZSN3lsc0pCZjhQc2x2bEpoZ0gvS0Jh?=
- =?utf-8?B?dlNvQklsSXpqbTNJZW1aM29TSG4rclhkMEt4R1RGWEY2V2Iya0xaWlhzeTlm?=
- =?utf-8?B?bWFHcGpKNUtlTHJhYWlETE5wY2U2bXUzcHNwQjhoaHlEa1R1a09GRFplVE1o?=
- =?utf-8?B?TEZlaUl2alFBbnVjK3ZzSVhuQlQ0QVNPL1F0aUgyM0FsQ3lOTDRGa0tJaVlK?=
- =?utf-8?B?UmxwMnNPZnBSdytrUWFWdUtCbGlEOGl0QmVvcE94dUNkVGhibUlhRmRoRm82?=
- =?utf-8?B?ZU5XbjhnY0V2NUtSM2lFdHBYbVRNbTlvY1B0MFl0TDhQZGNuM2c0b1I1NjNq?=
- =?utf-8?B?NGhSQUQxTlFrYXpVNDljY2FDbkoxQTUydlg4SXl6M3NJMkdtUGZCWFZVWHR6?=
- =?utf-8?Q?MN0jjdh80iI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LzhzS3pzSnc5ZVZDekI3T3NNenhKUkZOSFZ0SVFIQnBpNEZ3cnBPV21CMER2?=
- =?utf-8?B?cDFUVXVvWkFZUTNTRU13clhZOXcwc1NBNWtENTFWTzFwdlFzTWZ2MDRYWi93?=
- =?utf-8?B?YmluNGEvNjN5V1pZcTlkdlNkRXlzT3QxWldMV0ZzNjN6eUhNYXRDMDdBR3Q4?=
- =?utf-8?B?cm1LVUY5WllXQlBXTFI4RDBOaUdycVd2b2p6SXFkbWUwK2RpWHRkSE1UL3Ax?=
- =?utf-8?B?MVlnRjVyZWRObm1xZE1RYk5yVENJNTJONHBKSWhKYlBQdDh4TEtDWjVYOVJy?=
- =?utf-8?B?V3lDTjVMTHRiRUY3U3FEQVFEU09wK0RTam9KZXJzbFBUSGdsR2YrN2JSbTN4?=
- =?utf-8?B?b1RyTmJISnVWVXMvNldOcXZoak44QXNQeU9YYkdRM2FKdy9XcmtwZ0JMODBH?=
- =?utf-8?B?enNtQ05FalArZnBBZU1zVFh6RU8xWUlRYk1XanZvU3JDSVE5S0F0Qmw5dGtK?=
- =?utf-8?B?eTJTWVN0UVBCNS9ob2VUaFlVYnpncnA1NFhlNHoydk94aDZ5aWUrR1JwdkU5?=
- =?utf-8?B?MVdWcTlDWk4xdXVzaGtNVzF5ZXN1UlF4UGpCbTA1Q01yMnhUWnQvODFYOHEr?=
- =?utf-8?B?VERWTVdxVThORWFCdXhRb3lmNWlOdHhRejhsSlZmUW5yUlEzcGJBckNWVVh0?=
- =?utf-8?B?U0RZWkJQa2s5eWw0MjIzaEY1c1loUDlyTVNsSExLL283d2NMeitieVY2QldC?=
- =?utf-8?B?eUdYSndVY2JjbEpwRU9DazZlZjE1ZG9FQ2x1b21VdmVHYWhWNXN1SGJkMjZr?=
- =?utf-8?B?RENoV2dMOHdKWE1ucSs5cUFpVmxWem9OeFovWldldTNiYVlXaGVxNDVPRVVL?=
- =?utf-8?B?K2RSVDJORmNqVHpCSkFkeDBCZzRXQzdwNTJWbjZHUUZlSjBUQTE4WkdFUHV2?=
- =?utf-8?B?aVdZam03N1VFVDNwUTF6MjNGaUpmSTJrZFdScXQrTUlHMFdEOExDSEx2Mmt0?=
- =?utf-8?B?SUI5d01IK3p5bStwKzRaZzEwMzFqbnl4RGIrUXV0emR4eW5PamJZK0RJQ1J2?=
- =?utf-8?B?b2FSdjdaV1FVYlU3N3Z3bmVKWFRPRlowZHdzWThLY2pCWktwemNhZkxqTEU3?=
- =?utf-8?B?WDRISEhKcEkvUVVNZmU4UmRVRlVoMnc0TndEcGRYeVZTYkdkdU1EM2lYeDdy?=
- =?utf-8?B?T1Fqc2xLWENYc0w5V2ZXdWtIZzdZWlE1RmFwWGMxTUl5anZQOGJrV28zQ3Nt?=
- =?utf-8?B?aE81dEVyNitEUVNaT3JjNUw3eEg3aUVvcTVSajZYNU04WmIrNTdhYXNzK2hM?=
- =?utf-8?B?dHZibEl3aEVPNHd6UzloVnFWcHNBWFUzVW12c2pWS0ttK1duSGZqVE81TCta?=
- =?utf-8?B?U1dYL0hyU2dUN2JkQjcrZUdwV3ozVVhZaExUOFRwNmZuMEVhOVdWVU9KTmQz?=
- =?utf-8?B?T1h5bktaVDYyOXp3Tkx4QkpEYVVrdS9UdUxBSlNNbXNmclZ2N2FwdkEyb0di?=
- =?utf-8?B?a0JEOHJvMGdxNmxyUktyU0ludVVndkx5SU5Fa0VVd2h0Z1MrYzFOMzlTd3BI?=
- =?utf-8?B?VGZQNTJONjVpbm5iTGxDMG5MK283eVhjVXJ1eDgrR1NCVnV3cjFtbVltbEp6?=
- =?utf-8?B?Vkl1OTBsSUpzZE84OW9qQTNudkhtOFV1Y3ZwcEhQY05QSTV4RXdEY1greWdC?=
- =?utf-8?B?bGdHVkJMS1A2MDB4Y241emxHQ0pjUmdFS0dQZjR0RmtwcmFTc2EyZWpOdE96?=
- =?utf-8?B?N05DcHFiSzRCTVpRY1oxQlExdm1RR3ZGbldxTWlOMGFPUW9yRjNmeTRha2NH?=
- =?utf-8?B?eVcwM2Z0YU9pUmRUUVZTK0Q1cG5PVlp3ZGZkcWVGdFZ1bmh4NHJKMlFxVGFx?=
- =?utf-8?B?UXRLc0M0QThQM0Z0Snd5U1pvYlZ5NmFDbEt5MHdYeWRoeENNTXJ4M3pJbTRo?=
- =?utf-8?B?eWRLMGtuQmNYOVZXMGM5OGZOMW1qUmltc1ZFOTJyU0NTeE91bFliSFhab1Za?=
- =?utf-8?B?V0UvdDM5MHdzU3NpWVZKcnNEZi9OSDFGMnRsZWRDNmJ2c21YeU5HRE1YaDM3?=
- =?utf-8?B?OVc5azY5MXYxbWJaTGVmR2lWVjNtYUpTaU4xMjcza2tUUlpJQzNMTUdrSGNV?=
- =?utf-8?B?MnRRZlJnWnFwVklGamFjcWIwVUVjKzk4aTNuMitDNDEwS2YwNkpaUU8yOHU4?=
- =?utf-8?B?M1ordVp3VFRMQStHUUFPY1VqOEdjWTBscDh4SGpMMFMxaVh2TzE1QnI5cEg2?=
- =?utf-8?B?bHlTc3kwY0FZTG5MNitBc2NtMUhBVzVSTXVveTVVbnIyRUtLZTkrUUF6dzc4?=
- =?utf-8?Q?rbndZFznGLKjxCvHxFDQbqgFBwWCMPXltKIjFWNQ+w=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9264f25b-823c-43a4-4478-08ddeef6fe22
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 16:44:35.2216
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 76JzdfM/F1ouySiP1NrvhXZv4/2IzTt6nQmrHyrHlibpscXeWFhJw7hxJxv0Wd0Ai9I1XzIJ4G0jcH7TWCtL6Eh7zv5LFFmXZK3mZWuTdRNSj9UoaJHC++Ae2+6n9Hu8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR01MB7045
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX5H6gbFBh9D0S
+ jmz6vzg89rhUwYU5cjQAwwIfhNW7asJszz+M7RIt6fytRY2+YAXqSAN9dRbt/f8jA1dU3Kzv5N6
+ d4zzhQCIffxYu2Gz1Ky7qRY3NKHggkGOFJ2atiuHQ5Oxx97kBzDnkyrxPhoMFSguvJAK3LcLuoL
+ JVuqPOp3mc5Jcr8cB8XhY56uQzRAzq9aOAPG2CKeFpcJGLh0/l8mm8Bw4tZSRgKjWYVzhQ/SAyd
+ dgAnTtj8xqwSWQ+SFPrGuUqOMbaLPN8v3GHDzxDPET02tcWfSFdjnHcWZlkrcN8MRTYyd6zy6AD
+ 3gW1kZ/bq0xvsOSqyUts92Fa7oUJWvke4u3uet4pk+UfWSCj1dyfWFumo54DitSmfo4PfRqoS4H
+ ylruz6Mm
+X-Proofpoint-ORIG-GUID: HbhEdzYTfMzXbxLugHJCTLyjlHqDoFH-
+X-Proofpoint-GUID: HbhEdzYTfMzXbxLugHJCTLyjlHqDoFH-
+X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68bf0836 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=wCWT4eE_qC1rGXKMDvQA:9
+ a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
 
+A deadlock is observed in the qcom_geni_serial driver during runtime
+resume. This occurs when the pinctrl subsystem reconfigures device pins
+via msm_pinmux_set_mux() while the serial device's interrupt is an
+active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
+__synchronize_irq(), conflicting with the active wakeup state and
+causing the IRQ thread to enter an uninterruptible (D-state) sleep,
+leading to system instability.
 
-On 9/8/25 11:20, Sudeep Holla wrote:
-> If you are really interesting to consolidating, then move all the buffer
-> management into the core. Just don't introduce things that just work on
-> your platform and for your use case. You need move all the drivers to this
-> new model of accessing the buffers. Otherwise I see no point as it is just
-> another churn but in core mailbox PCC driver instead of a client driver
-> using PCC. So, I am not OK with the change as is and needs to be reworked
-> or reverted. I need sometime to understand your email and requirements.
+The critical call trace leading to the deadlock is:
 
-This is kindof a large request.  I can start working on getting the 
-other drivers to use the common mechanisms, but I do not have a way to 
-test most of them, and there are numerous drivers.  I don't like making 
-changes that I cannot test myself, but if we can get the other driver 
-maintainers to test and review, I am happy to participate.
+    Call trace:
+    __switch_to+0xe0/0x120
+    __schedule+0x39c/0x978
+    schedule+0x5c/0xf8
+    __synchronize_irq+0x88/0xb4
+    disable_irq+0x3c/0x4c
+    msm_pinmux_set_mux+0x508/0x644
+    pinmux_enable_setting+0x190/0x2dc
+    pinctrl_commit_state+0x13c/0x208
+    pinctrl_pm_select_default_state+0x4c/0xa4
+    geni_se_resources_on+0xe8/0x154
+    qcom_geni_serial_runtime_resume+0x4c/0x88
+    pm_generic_runtime_resume+0x2c/0x44
+    __genpd_runtime_resume+0x30/0x80
+    genpd_runtime_resume+0x114/0x29c
+    __rpm_callback+0x48/0x1d8
+    rpm_callback+0x6c/0x78
+    rpm_resume+0x530/0x750
+    __pm_runtime_resume+0x50/0x94
+    handle_threaded_wake_irq+0x30/0x94
+    irq_thread_fn+0x2c/xa8
+    irq_thread+0x160/x248
+    kthread+0x110/x114
+    ret_from_fork+0x10/x20
 
-I know we use the CPPC driver, and I can show how that one would be 
-consolidated.
+To resolve this, explicitly manage the wakeup IRQ state within the
+runtime suspend/resume callbacks. In the runtime resume callback, call
+disable_irq_wake() before enabling resources. This preemptively
+removes the "wakeup" capability from the IRQ, allowing subsequent
+interrupt management calls to proceed without conflict. An error path
+re-enables the wakeup IRQ if resource enablement fails.
 
-Here is a potential path forward:
+Conversely, in runtime suspend, call enable_irq_wake() after resources
+are disabled. This ensures the interrupt is configured as a wakeup
+source only once the device has fully entered its low-power state. An
+error path handles disabling the wakeup IRQ if the suspend operation
+fails.
 
-1. Revert the current patch, specifically to remove the callback function.
+Fixes: 1afa70632c39 ("serial: qcom-geni: Enable PM runtime for serial driver")
+Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
+---
+ drivers/tty/serial/qcom_geni_serial.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-2.  I will post a minimal patch for the change to the mailbox api
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 0fdda3a1e70b..4f5ea28dfe8f 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -1926,8 +1926,17 @@ static int __maybe_unused qcom_geni_serial_runtime_suspend(struct device *dev)
+ 	struct uart_port *uport = &port->uport;
+ 	int ret = 0;
+ 
+-	if (port->dev_data->power_state)
++	if (port->dev_data->power_state) {
+ 		ret = port->dev_data->power_state(uport, false);
++		if (ret) {
++			if (device_can_wakeup(dev))
++				disable_irq_wake(port->wakeup_irq);
++			return ret;
++		}
++	}
++
++	if (device_can_wakeup(dev))
++		enable_irq_wake(port->wakeup_irq);
+ 
+ 	return ret;
+ }
+@@ -1938,8 +1947,17 @@ static int __maybe_unused qcom_geni_serial_runtime_resume(struct device *dev)
+ 	struct uart_port *uport = &port->uport;
+ 	int ret = 0;
+ 
+-	if (port->dev_data->power_state)
++	if (device_can_wakeup(dev))
++		disable_irq_wake(port->wakeup_irq);
++
++	if (port->dev_data->power_state) {
+ 		ret = port->dev_data->power_state(uport, true);
++		if (ret) {
++			if (device_can_wakeup(dev))
++				enable_irq_wake(port->wakeup_irq);
++			return ret;
++		}
++	}
+ 
+ 	return ret;
+ }
 
-3.  I will post patches that modify the other drivers to pass NULL in to 
-the send_message path.  These will need to be reviewed and tested by the 
-other driver maintainers
-
-4. I will post a revised patch that only performs the buffer management 
-for the send path.  This is essential for the MCTP over PCC driver, and 
-for anything that wants to follow the PCC spec correctly.  This will 
-remove pcc_mchan->manage_writes = false; This path will be triggered by 
-passing a non-NULL pointer into the send data path. This is roughly half 
-to the current patch.
-
-5.  I will post a revised patch that makes use of the mailbox API 
-callback defined in step 2 to allocate the memory used for the read stage.
-
-6.I will repost my MCTP over PCC driver  that makes  use  of the updated 
-patches.
-
-Any point after step 3, we can start migrating the drivers to use the 
-send mechanism.  After step 5 we can migrate the drivers to use the 
-receive mechanism.
-
-
-A shorter path forward would be:
-
-1.   I will post a minimal patch for the change to the mailbox api
-
-2. I will post a revised PCC Mailbox patch that makes use of the 
-callback function, as well as an updated MCTP-PCC driver that makes use 
-of that callback.  We deprecate the existing rx_alloc callback in the 
-PCC Mailbox driver and ignore it in the PCC Mailbox.
-
-3. Convert the other drivers to use the managed send/receive mechanism.
-
-4.  Remove the flag pcc_mchan->manage_writes
-
-I will stay engaged through the entire process, to include providing 
-patches for the updated drivers, testing whatever I have access to, and 
-reviewing all code that comes along these paths. I obviously prefer the 
-shorter path, as it will allow me to get the MCTP-PCC driver merged. My 
-team is going to be writing another, similar Mailbox implementation to 
-the PCC mailbox. The more common behavior between the two 
-implementations, the less code we will have to vary between drivers that 
-make use of the mailboxes.
-
-
-
+base-commit: 3e8e5822146bc396d2a7e5fbb7be13271665522a
+-- 
+2.34.1
 
 
