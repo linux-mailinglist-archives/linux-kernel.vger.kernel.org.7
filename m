@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-805076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B464AB483BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:46:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA835B483C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D3917512E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664D83A56AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8B821FF35;
-	Mon,  8 Sep 2025 05:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759482264D9;
+	Mon,  8 Sep 2025 05:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HZIZUfgx"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwPmLzhw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3E36B;
-	Mon,  8 Sep 2025 05:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35E036B;
+	Mon,  8 Sep 2025 05:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757310402; cv=none; b=TRk5zcAEpXZ4VEJY4H/RJRMxlb0edeGUGli/S4AJYayIIis4RUu6uvAsVaMLEPiH1aSyN9bCWee3xItcnZbHcLDGZJ6dAQ7XioFTSBP+Qmqukf7mDKihaBeJEc9Od0tIpNFFPj1/8ulDILzEeRSrQo66H8gnBpokkSZYn8QDKs0=
+	t=1757310437; cv=none; b=ZpOyCkH0Yvk1IUDcQeqRZA5BEhloAtj6cw3TsfOSK+Ety0c3JeC8xZmDP4w4Na4dUMhe5XEkqVBIbP4xl3kkO/3I1b2AAS/8QkuzQK14zT3/Wb4BCLz86pIYkvCixzMXF373+27smahzUVV2mIdBhgnYygPjvLq2Cl415xMUGO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757310402; c=relaxed/simple;
-	bh=IhlDzU8v4sxj9kgiVqNqdxcAcjHWZWp+A0k2p7rweT4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hJVvI0u2Hqp3bknc2fpkguBRnWt/pNf3e6DtQf85nh4ZKNgbm5mJ13lbyn09SX17Ms8X1Wtfd+xCaw8TbjoZ6dcDnxWvUUOAhMO8dCEp9FuQ+DKgeoZpVJ8gM9TuXAJEggMnwQZFHMlStc3gS5TLOgy5NkJfBGYwrmN08YLQZ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HZIZUfgx; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5885kIoT4177018;
-	Mon, 8 Sep 2025 00:46:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757310378;
-	bh=6JUrHOaCwdFcfKI+71eVuDBjCs4fIIRwLXH05PdzWro=;
-	h=From:To:CC:Subject:Date;
-	b=HZIZUfgx9/+2hXStkyI1e5YjwCa3Gs5R5Uyn2z5QugAWvNVK76VxdUpFjA12cA9Cn
-	 wUI326LFYvARVpLuJ185dmmI8GXWZWoHwCs98vqx3AjmJmrx7IQ6/PAO//kCtSd+cX
-	 AiQCOqBGt83MauU2GQ8PoowVNtDS1Gfwe756ZnkY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5885kHCb2775068
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 00:46:17 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 00:46:16 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 00:46:16 -0500
-Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5885k960075469;
-	Mon, 8 Sep 2025 00:46:10 -0500
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <sjakhade@cadence.com>, <yamonkar@cadence.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
-        <s-jain1@ti.com>
-CC: <h-shenoy@ti.com>
-Subject: [PATCH v3] dt-bindings: drm/bridge: MHDP8546 bridge binding changes for DSC
-Date: Mon, 8 Sep 2025 11:16:09 +0530
-Message-ID: <20250908054609.1113360-1-h-shenoy@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757310437; c=relaxed/simple;
+	bh=+DHv5K7x5Zki24ku10wUAB+lb3qUxD+Z6s1puPCmfY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bU8gUVtPmfatUb064t0TWfQMfhWyNOxBIpRXFmUrwHO1P0SnxYVZDX71Ht5jB0+aZCWHoDnBx3YQ/0O/KoYlY3VEdPyDIm8nt1IUoLC9mIGQV4QJblBK9wFqZUUe6d87HRVFisCM/vr6KjJR/tyGIWwwVTmT1kjYTNxmkfXfg/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwPmLzhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681CAC4CEF5;
+	Mon,  8 Sep 2025 05:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757310436;
+	bh=+DHv5K7x5Zki24ku10wUAB+lb3qUxD+Z6s1puPCmfY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bwPmLzhwd1dzRc6PwRyjdCCDbb225leQScVwdBe702q/6RYoAkLXW3g9ZA+8ZXJaH
+	 HL6u6rZJwtonfy4K5YPBpK2MBANo4YKJN39xR82lLhStYUtdtgSiAUgEhygmdSqPJo
+	 4D9Iynm+o279EbEXJwdslmSRGJrEwfb8mKm6vucWF3YTbPG/cSrmEfGfKCuT53LNOU
+	 vl8Rl2pD7jItxhYWqiPjfbhWDXOsf27du7tzOe+I0gs5WII4E9vXbFTC+NMHZFpE+6
+	 6Y91c5g6IhHZDyKyIWKpTRVcL4XPM1ZQlfdJv4LhCMorOkcntLoNM2DY8ArJ0VqIZ1
+	 7LRlL4OC1L69A==
+Date: Mon, 8 Sep 2025 11:17:11 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Joris Verhaegen <verhaegen@google.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 0/3] ALSA: compress_offload: Add 64-bit safe timestamp
+ API
+Message-ID: <aL5t33Ztwse6HoQP@vaman>
+References: <20250905091301.2711705-1-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905091301.2711705-1-verhaegen@google.com>
 
-From: Swapnil Jakhade <sjakhade@cadence.com>
+On 05-09-25, 10:12, Joris Verhaegen wrote:
+> The current compress offload timestamping API relies on struct
+> snd_compr_tstamp, whose cumulative counters like copied_total are
+> defined as __u32. On long-running high-resolution audio streams, these
+> 32-bit counters can overflow, causing incorrect availability
+> calculations.
+> 
+> This patch series transitions to a 64-bit safe API to solve the problem
+> while maintaining perfect backward compatibility with the existing UAPI.
+> The pointer operation is reworked to use a new timestamp struct with
+> 64-bit fields for the cumulative counters, named snd_compr_tstamp64.
+> ASoC drivers are updated to use the 64-bit structures. Corresponding
+> ioctls are added to expose them to user-space.
+> 
+> The series is structured as follows:
+> 
+> Patch 1: Updates the pointer op, refactors the core logic and ASoC
+> drivers to use it, and defines the new UAPI structs.
+> 
+> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
+> 
+> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
+> 
+> This series has been tested on a Pixel 9 device. All compress offload
+> use cases, including long-running playback, were verified to work
+> correctly with the new 64-bit API.
 
-Add binding changes for DSC(Display Stream Compression) in the MHDP8546
-DPI/DP bridge.
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
-Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
----
-Changelog v2 --> v3:
--Update the name of dsc register block.
--Add the reg-name list in conditional based on compatible.
-Link to v2- https://lore.kernel.org/all/20250903111357.2605199-1-h-shenoy@ti.com/
+Please updated tinycompress changes with this once this is picked up by
+Takashi-san
 
- .../display/bridge/cdns,mhdp8546.yaml         | 20 +++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-index c2b369456e4e..eb51f9595da8 100644
---- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-@@ -27,6 +27,8 @@ properties:
-           Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
-       - description:
-           Register block of mhdptx sapb registers.
-+      - description:
-+          Register block for mhdptx DSC encoder registers.
- 
-   reg-names:
-     minItems: 1
-@@ -34,6 +36,7 @@ properties:
-       - const: mhdptx
-       - const: j721e-intg
-       - const: mhdptx-sapb
-+      - const: dsc
- 
-   clocks:
-     maxItems: 1
-@@ -100,18 +103,27 @@ allOf:
-       properties:
-         reg:
-           minItems: 2
--          maxItems: 3
-+          maxItems: 4
-         reg-names:
-           minItems: 2
--          maxItems: 3
-+          maxItems: 4
-+          items:
-+            - const: mhdptx
-+            - const: j721e-intg
-+            - const: mhdptx-sapb
-+            - const: dsc
-     else:
-       properties:
-         reg:
-           minItems: 1
--          maxItems: 2
-+          maxItems: 3
-         reg-names:
-           minItems: 1
--          maxItems: 2
-+          maxItems: 3
-+          items:
-+            - const: mhdptx
-+            - const: mhdptx-sapb
-+            - const: dsc
- 
- required:
-   - compatible
 -- 
-2.34.1
-
+~Vinod
 
