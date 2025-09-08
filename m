@@ -1,258 +1,126 @@
-Return-Path: <linux-kernel+bounces-806688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2CCB49A69
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:56:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE3FB49A62
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361483B74D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:56:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFA920617E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ED42D5C6A;
-	Mon,  8 Sep 2025 19:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D261FF603;
+	Mon,  8 Sep 2025 19:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="WuspcEjl"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cQHk0MmP"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21D1E231E;
-	Mon,  8 Sep 2025 19:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361364; cv=pass; b=HiW8rPVPUhv3jc8h7fHLTG3RNp82HmE8E/A9VlS9nwydj7vi3c1qHk6jyKAbcByqf0vCo6yzIxZW1MxBQ9mckQNvee5TLHL9MIH+tcaNPq1c2EZVjocQZOsSoJf+H7wGyggwpUh9CocZqPuubtHC5GVnczP2h+AV/mIwif/2RPA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361364; c=relaxed/simple;
-	bh=MWpV4A2WRkUfqblRPidOKOMyFxPO/XuuQrBHbl8uMQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUxeZUZLouoAhqIhaVJAaz7Pb0Gw1Dslw9ChUD7T+y+XI0WEgU7fRF1IRFSHg4aCRLVLBNkisnIGTh3HcJL1DjnNL6vm+YErA2a8xnASXxcmUJmNy4I4xOd0el2ejuFIVEUdRq2e4RjGebPsTQnGAv00jnzOn+AnU5Z4tFb6Amk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=WuspcEjl; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757361303; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mUzmnkI7ls4AvpKk9PkLBBYeCu+pH9kCHwMoKRU9mS8Va3Rk3P1EnjIukFHIQ1sAgt4nQPlbPOXlK83kFmYc2xVS75KjHCPk94ELyPusE++ff8czzuFzys66QYc4l6TbNekfLo+fBNe1sVSwmyurSAX0CZXICiNB/U581LhcNrU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757361303; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M/VFSbxaoCdLjJSeyTwHsH+gRgpx/aAWpUtZlGe7uGk=; 
-	b=BaZlsaht09RzyFGIw897Zk6xphgJqy43DTSQKT9TkRm0X5MkO3meBCJ4cTbsHdUbbD2SEdI/5kc03gzpBrHIl+mADS6abfJXQtNg+5HPGSQoyur59mlSQ7Ia3ZhxJAtvYUVT99Q1iWwbwHsF4hvHTz/xFr1r9Snnsvu9tXKFPY0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757361303;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=M/VFSbxaoCdLjJSeyTwHsH+gRgpx/aAWpUtZlGe7uGk=;
-	b=WuspcEjlUBylmJh1B0BghZqg5B6vUEjxtdYtMYSmMk6RsbTPP0bLHXw0NlWAcceJ
-	xsO8L1flgUuEeUGRtXTkjsV0T9f76hnyQvEhLCzhzUA5H4Yt1V6Miux3sq5qAOgM9B+
-	4LA1qn9GmOhsgJZge5/qJBesfNjPEAzNODbFUE/w=
-Received: by mx.zohomail.com with SMTPS id 1757361302113105.67245372545813;
-	Mon, 8 Sep 2025 12:55:02 -0700 (PDT)
-Message-ID: <0b1d77ab-7b39-4764-9f0c-4b4a15aa0e56@collabora.com>
-Date: Mon, 8 Sep 2025 16:54:46 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCF123536B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757361338; cv=none; b=ELp4kHqbL/EuDQr4tJI6DDf7jixUgbU5SsZPbpKbVmFa4SjdJLqz9p3kKmmF6YV+AsaWUpWdPDViDoKMBWlj5anroy7Pz+CYLAPtTFft9FUFiBBfih1dj4qSoVQvOUfsF1Ea70zMG7MqVFYX8FJNfvk4oBOWuZkF/XXcDIfJ3vk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757361338; c=relaxed/simple;
+	bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ix3Iup+LtipJTJHdDHmyCRaTKgKYg/wHBUG61qhWNIYYX6M0+Eopg2wSM+83M7B59+c+x9rdygCDbufRXf914+4xglywQbzJBlwRcMbACXV6K/hsyzC96hnglrESHQq/Y6MNhVV0OLnLADSiD/EHdd+Yxvb7fX2sDFGcgg5bKwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cQHk0MmP; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b48fc1d998so606021cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757361336; x=1757966136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
+        b=cQHk0MmP+0v0faUSSnrU0NkpEFJ2dNGTjloMv5xgX67UB1jlSHyxgQwQF8oTOWbTcc
+         L0IpkWQoYCjQ+WHwumtseebtmmNEeS1k5Fk4WoLVmxNywrpl3vWwGgmVE18SqmEuWUmA
+         iDdhQDFrLnexwZEtBJyF4SWcMsnCrdalZeVMlr/6XtkMJEUxzcaSPPVQWuhGr/q3exSa
+         7Eaov9uX1keLURs3GVDao2cY9AXz4LkZhQaHUUJ9ooIPzsyCpRX54n8u76dpEr7Fwbyn
+         HFYlF2k8VHEzh/sQQPxQIkGm14L5Hd1aJwHRom62rG8m0fWlouPmsgS6zSnzSIXXO6be
+         +v9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757361336; x=1757966136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tmr9R0O7RWkWQ6LWG3LXCf5yq/w4BQPFAFSdkpU6lPU=;
+        b=FP4/KG/B0m8wdTLjTAguFDCcRJtcf9iEbCTEwfoydFjb94J7DNx9B6eNdb3vDB3O0a
+         n0hhTQr1lDUI9BSCDJwQgFszjrdIGloJIn1l0Qm5vvcH8RDLZkOLAT4hkik12MeTGKx3
+         jmOXwzWnXWD1qEcydHXQiLoZj452zXqSstaVGlJYZwS3DVfmtyM3mkzi4qPA4OFsKBmx
+         UXrE6z3GEb8kDxw+4ZG/kSopoTaULnCLn96lTeMyZyVMsVrOFLUPrxyF6yWqozg2n4lR
+         K0BDVP98sIovEyns7Pw42/sSwG1aQRXTup8zMlW+ohCsqJPKIo7qO476UHlWNm5dJlMc
+         Y0yA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5dj7KcjH7vAOWnlqn/2VGDNwU/4HGY3z5n5s5nVbE8JQ0IHel74VbgvMakitTpNYr8dW/idopQuy3K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcI4evuXZ+p6B+zBAzNqg4xhfw0fmwkxKdllTcrLu4UFJEn8E+
+	zOO6MIX15m23PW+mffu2O3X1jhcxQCvNIdrrRHifG0MIpAq2XGzlPMTKUk/EqUTwVO3YudISxz9
+	+2u5FheWhgq/v75y8QCWqSdKk5v+CKt1KB+kjL5nC
+X-Gm-Gg: ASbGncsgF/GyACcsgwwrADQPKDo7o0xGN5/Uj1BepR2odIDbI8KjL9TogimKTsABhfn
+	cZwDb1plalCirH0J2toFGPILtJcJnSnnV+j7KRi27IcYJBvAWllrdjUN67AjqCpPed1jptwAK/D
+	23uSfiBiHZ3zqUj26Wfd7NT48I7/wc6Jgq0STXtcgwveao0WpJPlphQuquI3M6GS0KIoSNF89Vm
+	UAN5A==
+X-Google-Smtp-Source: AGHT+IFht5pppNMMGMtPH/agZlekP76+Bq9kz9lTs1Z+7HZ8Zxgz+fKXs2YuHK6UPaXwGsTfuhgnxU+LcWW0vB3VTXg=
+X-Received: by 2002:a05:622a:3d3:b0:4b3:4ed0:c6f6 with SMTP id
+ d75a77b69052e-4b5f6f80a58mr13347131cf.16.1757361335849; Mon, 08 Sep 2025
+ 12:55:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/14] net: dt-bindings: Convert Marvell 8897/8997
- bindings to YAML
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
- simona@ffwll.ch, support.opensource@diasemi.com, tiffany.lin@mediatek.com,
- tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-5-ariel.dalessandro@collabora.com>
- <CAL_Jsq+K72Kof-Z3q2DSh3FKO64npLF6hDJnqnTzNBUoOoVQFA@mail.gmail.com>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <CAL_Jsq+K72Kof-Z3q2DSh3FKO64npLF6hDJnqnTzNBUoOoVQFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com> <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
+ <aLFKHGe2loD657fu@tiehlicka> <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
+ <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
+ <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
+ <CAJuCfpG17E_yoZeqEDrN0PFn8UBKqiGT28KDwEDmBm6byFje-Q@mail.gmail.com> <cca3gvk5gco6i2vbjvtarmi77imgj5y64kqb7bebcrbjagdwca@4p6zq4iaiqr6>
+In-Reply-To: <cca3gvk5gco6i2vbjvtarmi77imgj5y64kqb7bebcrbjagdwca@4p6zq4iaiqr6>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 8 Sep 2025 12:55:24 -0700
+X-Gm-Features: AS18NWA5R6z4os11O0uAZbscD0giAOrKc3pAZnMY5I0U-VPDOAWS3MM6jGMGM2E
+Message-ID: <CAJuCfpE-dTF_TRJkSffTxtD_P8A10MJUOHd83xBg4B7ATknGGA@mail.gmail.com>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
+	Yueyang Pan <pyyjason@gmail.com>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sourav Panda <souravpanda@google.com>, 
+	Pasha Tatashin <tatashin@google.com>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Mon, Sep 8, 2025 at 12:08=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Mon, Sep 08, 2025 at 10:51:30AM -0700, Suren Baghdasaryan wrote:
+> > On Mon, Sep 8, 2025 at 10:49=E2=80=AFAM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > On Mon, Sep 08, 2025 at 10:47:06AM -0700, Suren Baghdasaryan wrote:
+> > > > On Mon, Sep 8, 2025 at 10:34=E2=80=AFAM Kent Overstreet
+> > > > <kent.overstreet@linux.dev> wrote:
+> > > > >
+> > > > > I think that got the memcg people looking at ways to make the acc=
+ounting
+> > > > > cheaper, but I'm not sure if anything landed from that.
+> > > >
+> > > > Yes, Roman landed a series of changes reducing the memcg accounting=
+ overhead.
+> > >
+> > > Do you know offhand how big that was?
+> >
+> > I'll need to dig it up but it was still much higher than memory profili=
+ng.
+>
+> What benchmark/workload was used to compare memcg accounting and memory
+> profiling?
 
-On 8/21/25 11:28 AM, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 12:15 PM Ariel D'Alessandro
-> <ariel.dalessandro@collabora.com> wrote:
->>
->> Convert the existing text-based DT bindings for Marvell 8897/8997
->> (sd8897/sd8997) bluetooth devices controller to a YAML schema.
->>
->> While here, bindings for "usb1286,204e" (USB interface) are dropped from
->> the YAML definition as these are currently documented in file:
->>
->> - Documentation/devicetree/bindings/net/btusb.txt
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../bindings/net/marvell,sd8897-bt.yaml       | 91 +++++++++++++++++++
-> 
-> This needs to move to net/bluetooth/
-
-Ack.
-
-> 
->>   .../bindings/net/marvell-bt-8xxx.txt          | 83 -----------------
->>   2 files changed, 91 insertions(+), 83 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
->>   delete mode 100644 Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml b/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
->> new file mode 100644
->> index 0000000000000..6539868c08b8a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
->> @@ -0,0 +1,91 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/marvell,sd8897-bt.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Marvell 8897/8997 (sd8897/sd8997) bluetooth devices (SDIO)
->> +
->> +maintainers:
->> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> +
-> 
-> Needs a $ref to bluetooth-controller.yaml
-
-Ack.
-
-> 
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - marvell,sd8897-bt
->> +      - marvell,sd8997-bt
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  marvell,cal-data:
->> +    $ref: /schemas/types.yaml#/definitions/uint8-array
->> +    description:
->> +      Calibration data downloaded to the device during initialization.
->> +    minItems: 28
-> 
-> Just: maxItems: 28
-
-Ack.
-
-> 
->> +
->> +  marvell,wakeup-pin:
->> +    $ref: /schemas/types.yaml#/definitions/uint16
->> +    description:
->> +      Wakeup pin number of the bluetooth chip. Used by firmware to wakeup host
->> +      system.
->> +
->> +  marvell,wakeup-gap-ms:
-> 
-> This unfortunately needs a uint16 type. That will cause a warning
-> which has to be fixed on the dtschema side.
-
-Yeah, that's what I thought but wasn't sure on the proper solution. Will 
-fix in v2.
-
-> 
->> +    description:
->> +      Wakeup latency of the host platform. Required by the chip sleep feature.
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +    #include <dt-bindings/pinctrl/rockchip.h>
-> 
-> Please drop this and just use a number below.
-
-Ack.
-
-> 
->> +
->> +    sdio0 {
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        btmrvl: btmrvl@2 {
->> +            compatible = "marvell,sd8897-bt";
->> +            reg = <2>;
->> +            interrupt-parent = <&gpio4>;
->> +            interrupts = <RK_PD7 IRQ_TYPE_LEVEL_LOW>;
->> +            marvell,wakeup-pin = /bits/ 16 <13>;
->> +            pinctrl-names = "default";
->> +            pinctrl-0 = <&bt_host_wake_l>;
->> +        };
->> +    };
-> 
-> I would drop this example.
-
-Agreed.
-
-> 
->> +
->> +    mmc3 {
-> 
-> mmc {
-
-Ack.
-
-> 
->> +        vmmc-supply = <&wlan_en_reg>;
->> +        bus-width = <4>;
->> +        cap-power-off-card;
->> +        keep-power-in-suspend;
->> +
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        bluetooth: bluetooth@2 {
-> 
-> Drop the label.
-
-Ack.
-
-Thanks a lot for your feedback and help!
-Regards,
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+It was an in-kernel allocation stress test. Not very realistic but
+good for comparing the overhead.
 
