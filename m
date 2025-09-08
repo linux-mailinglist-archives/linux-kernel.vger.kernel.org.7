@@ -1,127 +1,175 @@
-Return-Path: <linux-kernel+bounces-805380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5074EB487D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CB2B487DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22507AEDB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:06:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85151B2290D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105132F0C6E;
-	Mon,  8 Sep 2025 09:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97252F39AD;
+	Mon,  8 Sep 2025 09:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sHpLbmEB"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QX6HnDSF"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A722EFD9E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AF32ECD13;
+	Mon,  8 Sep 2025 09:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757322439; cv=none; b=FpP8uR1NPeZA0A966wxzL/zzuGgL239VKnA82TiygDBg/Unn1A4IvBnkRge+GUPUu383YTPrZu9EBbTq9bOJMoFXF6sTIWm/FuADn9L0C4CxL5sW4JkcNvX+TW0fgnFGtcGjkx6FHMlJRZX6OmBVy7zko9stVbXyUVqQ3aIymDM=
+	t=1757322525; cv=none; b=Wxn7Nx9BPtq0nK1KdhtlCDX8M7YiKA40LKrQnm60U39T/wkAMEj51yNjtcY1Bb0XSis1VVGwvYYzadfr9vwhSJUYD9kgLiiQQgm7LrythLGj2apfgtC/QbiMESqw6ycb4Omn5FA6GgkCWDbHn2cIVpKgXAQTkj+tKuzcusI6kHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757322439; c=relaxed/simple;
-	bh=TfjlXGG0z5FLjNjKAlAUtHBt3K275PETyHD7xxP0JqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OnSLKd/eaqdM+wc9EBm1MKxhsBd164LqX1NyEAURgph1AVE4NMtsUs6BqFEDWis5FrDVyY4TUjSWZ/FppYGkrmMGTXK3gmlR0P2obBFFURL4eoq44AqiKqrBOePRCPXGHvjOqQwQTi6uinRvocGOrK1u5ypdwA/KxZgJPUuXIR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sHpLbmEB; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b60144fc74so15900741cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757322437; x=1757927237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nc6d2xJT+7rO5xhcGtQLI+Y4wTR3jsomRWKDey59PKc=;
-        b=sHpLbmEBh3ETXnUVqHM4b5EqndUC6MI+vEjgHSpe2vSet7bb6IcWhA34xzBIuFfpLC
-         P3VvGij3z0my/AyqUy7mTKOP2NdyiZKjjFEtGvdD1UWuEY5fjvOxUmLd+TKCqIMBY+QQ
-         EvFDGeY9pUjXItt4Uealn6KI5sEZGcp5Tfk1LykKMiih59+Se+r+B0VtEm4PU5tEZ/ay
-         QyYP7FRH1FI0eetI3yBbuRa5i6Y2lYtr0tMA9QoK4pMmiQXslSXURw7Ej3Ipo1ghJo3J
-         UY79I4qRDMudNFPZWULTaQT0SFz2u/8nff+HknGG3RpyFJnKsjbeEPnMYd2yvGub+nmL
-         nw+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757322437; x=1757927237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nc6d2xJT+7rO5xhcGtQLI+Y4wTR3jsomRWKDey59PKc=;
-        b=rMJdjAK6Qtz9u1618d7472L59J4+TInQv+qzFDrnq0hkaB0NAfN2oD6RswtmYCLPKT
-         XQzC9mcXkDKAXYhFAMvOaJtfjuuQfWvt5nDYBt/wCfViUepdoOhGGPLhgbKOAtevLuHe
-         CSLpiwuoW8CTjB2rD+60d0E9lK7UHovHDI2UKVYKK9wjhmjl/1EKHDj2UQhGghDHIwWg
-         MlV86NfAgB+P8uRPxNgkoePGQe62L7SgoiqCmNEIunPGr+8bLp1MxtYEFuIzjNjq2T2t
-         TlieCW2IFXkipwK4zateMYgs2/hp8zYVbLA6V8HG/VHWa/IjL2xGfFuwny41FCGJAA3R
-         wNZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4q+MgDGLNJhUqAVsGKwNb1ebQtOkzKpI3Yr5ZVDRC8mtbCNQLXCF+wr//Iei1uGGvs2FN7pVGAoyNimc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3rrP2BOgDZNX56g+mfkoTynnbiREde8Clrgz/Oi8bvNcQ1R2v
-	AJbABg6JCow8Q+gK78HZP1bUmqXlTFrNusQ1vANHal47PpzFuF0LTf+doAnrgjTxnTRnok8zWBy
-	nqAFBIOiu5u5Q6B/+wjGjC/23f8uwRBHGAO6lhkD0
-X-Gm-Gg: ASbGncswisLIxrwKxgFO9XGOzElCSxRnGxWq9knwGwQi00d8CLlpyYCsc+/mQoRi6rF
-	RUyDunRFbjuhQ7kmxb9jpSKKhUU+iTgeUHDjSLcYstCvqfo9nPy3dWqB1Dpnxzn2HBU6Mc/sMr+
-	Lc7pcaw4uj/W2B2+0BALUioMH0NbY+ckSxVjcwX+dOzAmh/sgRWzl7l46e0XNGxPN2M0a9t2npH
-	+jkOJNvupccKQ==
-X-Google-Smtp-Source: AGHT+IH70yEY2mD+Da9VfBC/BGhMy1BSMWeXgwdvkJRstrAo8GGMJXYIVhFKhXW0wz/7Iipcm/G3lGVXveb52DY4HcE=
-X-Received: by 2002:a05:622a:180a:b0:4b5:f59b:2e7 with SMTP id
- d75a77b69052e-4b5f844811emr81065361cf.9.1757322436444; Mon, 08 Sep 2025
- 02:07:16 -0700 (PDT)
+	s=arc-20240116; t=1757322525; c=relaxed/simple;
+	bh=7JoeAhQFH8pNxURdTGSe/k8G1U9yl25jn2lVYW/PbXs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KJBleoIRRNvmmpMIvTA7j3VyE74CTi1QcAqaU+mtS/Ww/DHd3D3glJUUMJRAiFDL7PN6ET8/VTPkj1PCmi87smwZLjkyyOLM1A20R2YQkYFk9LLq1mk1Pl8t+/DTH64Ug+YicKEu8Nqgx7XKH0HxOGy9LgI/vIFBKDGm+NYOSJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QX6HnDSF; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58897qN5071816;
+	Mon, 8 Sep 2025 04:07:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757322472;
+	bh=I+OEYV3P6RAdn9e+dnjp6V6LTEnzQUTTg6OwU4gAIao=;
+	h=From:To:CC:Subject:Date;
+	b=QX6HnDSFstWjhl3Na2VLK5e1msp0nT0IBOdbNL8iAp8VW5uZV6DmBaoiriOzjmoKo
+	 /PKypUrv28UApFjGZ7N5lP1yiKcwc4uqjbhq0GHCIORj5Fz+/T6tnWcuKiSr8KpPVf
+	 Sclh8z15/11XDoOhtS3JPoNZeM4H9qD4ZAd3GE6U=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58897q372856541
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 04:07:52 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 04:07:51 -0500
+Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 04:07:51 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58897p2J2355770;
+	Mon, 8 Sep 2025 04:07:51 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 58897o8E023014;
+	Mon, 8 Sep 2025 04:07:50 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet
+	<corbet@lwn.net>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        MD Danish Anwar
+	<danishanwar@ti.com>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Luo Jie
+	<quic_luoj@quicinc.com>, Fan Gong <gongfan1@huawei.com>,
+        Lei Wei
+	<quic_leiwei@quicinc.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Lee Trager
+	<lee@trager.us>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH net-next v3 0/7] Add RPMSG Ethernet Driver
+Date: Mon, 8 Sep 2025 14:37:39 +0530
+Message-ID: <20250908090746.862407-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68bb4160.050a0220.192772.0198.GAE@google.com> <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
- <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com> <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com>
-In-Reply-To: <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 8 Sep 2025 02:07:05 -0700
-X-Gm-Features: Ac12FXxIur2KzUGuY-o3zxu5ad5O4y1neb-cgZgcxAKaEuWlDfe2OI8kd7LHND8
-Message-ID: <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
-Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, davem@davemloft.net, 
-	dsahern@kernel.org, horms@kernel.org, kuba@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com, 
-	"yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Sep 8, 2025 at 1:52=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
-ote:
->
-> Hi,
->
-> =E5=9C=A8 2025/09/06 17:16, Eric Dumazet =E5=86=99=E9=81=93:
-> > On Fri, Sep 5, 2025 at 1:03=E2=80=AFPM Eric Dumazet <edumazet@google.co=
-m> wrote:
-> >>
-> >> On Fri, Sep 5, 2025 at 1:00=E2=80=AFPM syzbot
-> >> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
-> >
-> > Note to NBD maintainers : I held about  20 syzbot reports all pointing
-> > to NBD accepting various sockets, I  can release them if needed, if you=
- prefer
-> > to triage them.
-> >
-> I'm not NBD maintainer, just trying to understand the deadlock first.
->
-> Is this deadlock only possible for some sepecific socket types? Take
-> a look at the report here:
->
-> Usually issue IO will require the order:
->
-> q_usage_counter -> cmd lock -> tx lock -> sk lock
->
+This patch series introduces the RPMSG Ethernet driver, which provides a
+virtual Ethernet interface for communication between a host processor and
+a remote processor using the RPMSG framework. The driver enables
+Ethernet-like packet transmission and reception over shared memory,
+facilitating inter-core communication in systems with heterogeneous
+processors.
 
-I have not seen the deadlock being reported with normal TCP sockets.
+Key features of this driver:
 
-NBD sets sk->sk_allocation to  GFP_NOIO | __GFP_MEMALLOC;
-from __sock_xmit(), and TCP seems to respect this.
+1. Virtual Ethernet interface using RPMSG framework
+2. Shared memory-based packet transmission and reception
+3. Support for multicast address filtering
+4. Dynamic MAC address assignment
+5. NAPI support for efficient packet processing
+6. State machine for managing interface states
+
+This driver is designed to be generic and vendor-agnostic. Vendors can
+develop firmware for the remote processor to make it compatible with this
+driver by adhering to the shared memory layout and communication protocol
+described in the documentation.
+
+This patch series has been tested on a TI AM64xx platform with a
+compatible remote processor firmware. Feedback and suggestions for
+improvement are welcome.
+
+Changes from v2 to v3:
+- Removed the binding patches as suggested by Krzysztof Kozlowski <krzk@kernel.org>
+- Dropped the rpmsg-eth node. The shared memory region is directly added to the
+  "memory-region" in rproc device.
+- Added #include <linux/io.h> header for memory mapping operations
+- Added vendor-specific configuration through rpmsg_eth_data structure
+- Added shared memory region index support with shm_region_index parameter
+- Changed RPMSG channel name from generic "shm-eth" to vendor-specific "ti.shm-eth"
+- Fixed format string warning using %zu instead of %lu for size_t type
+- Updated Documentation to include shm_region_index
+- Added MAINTAINERS entry for the driver
+
+v2 https://lore.kernel.org/all/20250902090746.3221225-1-danishanwar@ti.com/
+v1 https://lore.kernel.org/all/20250723080322.3047826-1-danishanwar@ti.com/
+
+MD Danish Anwar (7):
+  net: rpmsg-eth: Add Documentation for RPMSG-ETH Driver
+  net: rpmsg-eth: Add basic rpmsg skeleton
+  net: rpmsg-eth: Register device as netdev
+  net: rpmsg-eth: Add netdev ops
+  net: rpmsg-eth: Add support for multicast filtering
+  MAINTAINERS: Add entry for RPMSG Ethernet driver
+  arch: arm64: dts: k3-am64*: Add rpmsg-eth node
+
+ .../device_drivers/ethernet/index.rst         |   1 +
+ .../device_drivers/ethernet/rpmsg_eth.rst     | 424 ++++++++++++
+ MAINTAINERS                                   |   6 +
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  11 +-
+ drivers/net/ethernet/Kconfig                  |  10 +
+ drivers/net/ethernet/Makefile                 |   1 +
+ drivers/net/ethernet/rpmsg_eth.c              | 639 ++++++++++++++++++
+ drivers/net/ethernet/rpmsg_eth.h              | 293 ++++++++
+ 8 files changed, 1383 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
+ create mode 100644 drivers/net/ethernet/rpmsg_eth.c
+ create mode 100644 drivers/net/ethernet/rpmsg_eth.h
+
+
+base-commit: 16c610162d1f1c332209de1c91ffb09b659bb65d
+-- 
+2.34.1
+
 
