@@ -1,207 +1,231 @@
-Return-Path: <linux-kernel+bounces-805235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14552B485D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:43:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B03B485D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7221B22AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:42:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E45D7A8B89
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0B2EACF7;
-	Mon,  8 Sep 2025 07:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLE8PUSP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39862EAB60;
-	Mon,  8 Sep 2025 07:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A982EB87F;
+	Mon,  8 Sep 2025 07:40:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7662E9EC3;
+	Mon,  8 Sep 2025 07:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317159; cv=none; b=BhNCUdW0LLsniZDU1Q4bMG2b4jyl6Zr42Fc17t2FtbEp+PC9KTb9UcySWuyVA7yNgqAlLxUE4qOzMkaTtuznLedLfLNt4wq2VmWSFoctvMFHtAUNajreq1GgrQK8yRlY44JMPgKV9ukNMl8CE5+pG93QsLR59ya9bc1r/xpZ178=
+	t=1757317236; cv=none; b=XExxMvl4dxa7UZpeGn0HgJ4z5KKQLK5qq+exR08v2VLnVy3ct+5xkwF5aJEp2OIWAtncuBDsKd9r0cQEvQ5jGygHs7vGpsYosKNuxxKYvoqjB6ZxwntfDLG1A6eQPjAgTPc6GpiN6dkvk0Tgw7OAw5HIE32VngmJFVt/aHh/TMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317159; c=relaxed/simple;
-	bh=vvDisUrzXniDZ2UuL2xPxozwkB5ElxDwixP1w5ErZq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNrGo5e0HuVO1Q3vxPLu2cJsSWOA/4QbPiILdn4z6Eg1xBpFKSN7I3Btc847tIrW6PrX4VGiZlqJ8H7gVRA6twcCO0sih/jzg5iobgDtzk5lLauwUGWXKbZoAB60o+jTrWCo7gMfuOEPJQvWmPQXlq1940nO+HR/8nu0SRmiHaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLE8PUSP; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757317158; x=1788853158;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vvDisUrzXniDZ2UuL2xPxozwkB5ElxDwixP1w5ErZq4=;
-  b=CLE8PUSPNh12WqbOGBjq3MXVYIrGQ3hiLuo7J7O6vgpfuFj8mi52uGkW
-   Jmpp8Pn2hFVzAfWgSr4IFftKjrXr1zqsDwkqZdfjWJans1DTRQ8cvDgf8
-   m6MOI/SGwo3hSoYrm+p0sMbWxPNnxtAlqVMB4weNr77aSehJwCSJGKJxD
-   PGvlXsBp3yHriH4pXqbawackV295XBUkluqy4i58O60o2KVTCBZUq8Wuy
-   DWVIpzpU0fU9muhM1xfE6Kf++e9LRf8Pr4WmTt+AuZ8CA1ClPP11+Vhuz
-   9IdbExEaoTBIwppeGb16MZwu7Nl/g5lhxh03z/8o88iaHDBYjpLx5wqqn
-   g==;
-X-CSE-ConnectionGUID: JX6rcWBISLONsMHSxkD/2A==
-X-CSE-MsgGUID: iQmETyLEQnCuNfjZFnSHnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63396031"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63396031"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 00:39:15 -0700
-X-CSE-ConnectionGUID: JW2M+b+3T1imC2mICNTArw==
-X-CSE-MsgGUID: DIB4J4uWSXigkWJrWgocQw==
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 00:39:10 -0700
-Message-ID: <abbf92ae-3d43-4297-a4be-6f383e10bfa0@linux.intel.com>
-Date: Mon, 8 Sep 2025 15:39:08 +0800
+	s=arc-20240116; t=1757317236; c=relaxed/simple;
+	bh=QpExDB1xpjliJqmqex27qhfnaGeNNTR0RKNC3DHhOHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sb/pUJGS38aw1uyp7QmEG1Fhg+NCCTAYmsGMBpDPocx/xTJdyA83WwiEEkSOW0nSzskiKZa3ZESUBI4yHnFWEVlp3wGizBALBUnHQBs1o+9vd58JbUT/jd4ax+nIz+QAHN87exZItsMhY+cZIlBoCYp20qvsbl+9KDCW7aAaoZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E6E91692;
+	Mon,  8 Sep 2025 00:40:25 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23BFF3F63F;
+	Mon,  8 Sep 2025 00:40:29 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Juergen Gross <jgross@suse.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Will Deacon <will@kernel.org>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v2 0/7] Nesting support for lazy MMU mode
+Date: Mon,  8 Sep 2025 08:39:24 +0100
+Message-ID: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 09/21] KVM: selftests: Set up TDX boot code region
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250904065453.639610-1-sagis@google.com>
- <20250904065453.639610-10-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250904065453.639610-10-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+When the lazy MMU mode was introduced eons ago, it wasn't made clear
+whether such a sequence was legal:
+
+	arch_enter_lazy_mmu_mode()
+	...
+		arch_enter_lazy_mmu_mode()
+		...
+		arch_leave_lazy_mmu_mode()
+	...
+	arch_leave_lazy_mmu_mode()
+
+It seems fair to say that nested calls to
+arch_{enter,leave}_lazy_mmu_mode() were not expected, and most
+architectures never explicitly supported it.
+
+Ryan Roberts' series from March [1] attempted to prevent nesting from
+ever occurring, and mostly succeeded. Unfortunately, a corner case
+(DEBUG_PAGEALLOC) may still cause nesting to occur on arm64. Ryan
+proposed [2] to address that corner case at the generic level but this
+approach received pushback; [3] then attempted to solve the issue on
+arm64 only, but it was deemed too fragile.
+
+It feels generally fragile to rely on lazy_mmu sections not to nest,
+because callers of various standard mm functions do not know if the
+function uses lazy_mmu itself. This series therefore performs a U-turn
+and adds support for nested lazy_mmu sections, on all architectures.
+
+The main change enabling nesting is patch 2, following the approach
+suggested by Catalin Marinas [4]: have enter() return some state and
+the matching leave() take that state. In this series, the state is only
+used to handle nesting, but it could be used for other purposes such as
+restoring context modified by enter(); the proposed kpkeys framework
+would be an immediate user [5].
+
+Patch overview:
+
+* Patch 1: general cleanup - not directly related, but avoids any doubt
+  regarding the expected behaviour of arch_flush_lazy_mmu_mode() outside
+  x86
+
+* Patch 2: main API change, no functional change
+
+* Patch 3-6: nesting support for all architectures that support lazy_mmu
+
+* Patch 7: clarification that nesting is supported in the documentation
+
+Patch 4-6 are technically not required at this stage since nesting is
+only observed on arm64, but they ensure future correctness in case
+nesting is (re)introduced in generic paths. For instance, it could be
+beneficial in some configurations to enter lazy_mmu set_ptes() once
+again.
+
+This series has been tested by running the mm kselfetsts on arm64 with
+DEBUG_PAGEALLOC and KFENCE. It was also build-tested on other
+architectures (with and without XEN_PV on x86).
+
+- Kevin
+
+[1] https://lore.kernel.org/all/20250303141542.3371656-1-ryan.roberts@arm.com/
+[2] https://lore.kernel.org/all/20250530140446.2387131-1-ryan.roberts@arm.com/
+[3] https://lore.kernel.org/all/20250606135654.178300-1-ryan.roberts@arm.com/
+[4] https://lore.kernel.org/all/aEhKSq0zVaUJkomX@arm.com/
+[5] https://lore.kernel.org/linux-hardening/20250815085512.2182322-19-kevin.brodsky@arm.com/
+---
+Changelog
+
+v1..v2:
+- Rebased on mm-unstable.
+- Patch 2: handled new calls to enter()/leave(), clarified how the "flush"
+  pattern (leave() followed by enter()) is handled.
+- Patch 5,6: removed unnecessary local variable [Alexander Gordeev's
+  suggestion].
+- Added Mike Rapoport's Acked-by.
+
+v1: https://lore.kernel.org/all/20250904125736.3918646-1-kevin.brodsky@arm.com/
+---
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: sparclinux@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+---
+Kevin Brodsky (7):
+  mm: remove arch_flush_lazy_mmu_mode()
+  mm: introduce local state for lazy_mmu sections
+  arm64: mm: fully support nested lazy_mmu sections
+  x86/xen: support nested lazy_mmu sections (again)
+  powerpc/mm: support nested lazy_mmu sections
+  sparc/mm: support nested lazy_mmu sections
+  mm: update lazy_mmu documentation
+
+ arch/arm64/include/asm/pgtable.h              | 34 ++++++-------------
+ .../include/asm/book3s/64/tlbflush-hash.h     | 22 ++++++++----
+ arch/powerpc/mm/book3s64/hash_tlb.c           | 10 +++---
+ arch/powerpc/mm/book3s64/subpage_prot.c       |  5 +--
+ arch/sparc/include/asm/tlbflush_64.h          |  6 ++--
+ arch/sparc/mm/tlb.c                           | 17 +++++++---
+ arch/x86/include/asm/paravirt.h               |  8 ++---
+ arch/x86/include/asm/paravirt_types.h         |  6 ++--
+ arch/x86/include/asm/pgtable.h                |  3 +-
+ arch/x86/xen/enlighten_pv.c                   |  2 +-
+ arch/x86/xen/mmu_pv.c                         | 13 ++++---
+ fs/proc/task_mmu.c                            |  5 +--
+ include/linux/mm_types.h                      |  3 ++
+ include/linux/pgtable.h                       | 21 +++++++++---
+ mm/kasan/shadow.c                             |  4 +--
+ mm/madvise.c                                  | 20 ++++++-----
+ mm/memory.c                                   | 20 ++++++-----
+ mm/migrate_device.c                           |  5 +--
+ mm/mprotect.c                                 |  5 +--
+ mm/mremap.c                                   |  5 +--
+ mm/userfaultfd.c                              |  5 +--
+ mm/vmalloc.c                                  | 15 ++++----
+ mm/vmscan.c                                   | 15 ++++----
+ 23 files changed, 148 insertions(+), 101 deletions(-)
 
 
-
-On 9/4/2025 2:54 PM, Sagi Shahar wrote:
-> Add memory for TDX boot code in a separate memslot.
->
-> Use virt_map() to get identity map in this memory region to allow for
-> seamless transition from paging disabled to paging enabled code.
->
-> Copy the boot code into the memory region and set up the reset vectors
-
-vectors -> vector?
-
-> at this point. While it's possible to separate the memory allocation and
-> boot code initialization into separate functions, having all the
-> calculations for memory size and offsets in one place simplifies the
-> code and avoids duplications.
->
-> Handcode the reset vector as suggested by Sean Christopherson.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Erdem Aktas <erdemaktas@google.com>
-> Signed-off-by: Erdem Aktas <erdemaktas@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   tools/testing/selftests/kvm/Makefile.kvm      |  1 +
->   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  2 +
->   .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 54 +++++++++++++++++++
->   3 files changed, 57 insertions(+)
->   create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
->
-> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-> index d11d02e17cc5..52c90f1c0484 100644
-> --- a/tools/testing/selftests/kvm/Makefile.kvm
-> +++ b/tools/testing/selftests/kvm/Makefile.kvm
-> @@ -31,6 +31,7 @@ LIBKVM_x86 += lib/x86/sev.c
->   LIBKVM_x86 += lib/x86/svm.c
->   LIBKVM_x86 += lib/x86/ucall.c
->   LIBKVM_x86 += lib/x86/vmx.c
-> +LIBKVM_x86 += lib/x86/tdx/tdx_util.c
->   LIBKVM_x86 += lib/x86/tdx/td_boot.S
->   
->   LIBKVM_arm64 += lib/arm64/gic.c
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> index 286d5e3c24b1..ec05bcd59145 100644
-> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> @@ -11,4 +11,6 @@ static inline bool is_tdx_vm(struct kvm_vm *vm)
->   	return vm->type == KVM_X86_TDX_VM;
->   }
->   
-> +void vm_tdx_setup_boot_code_region(struct kvm_vm *vm);
-> +
->   #endif // SELFTESTS_TDX_TDX_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> new file mode 100644
-> index 000000000000..a1cf12de9d56
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> @@ -0,0 +1,54 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <stdint.h>
-> +
-> +#include "kvm_util.h"
-> +#include "processor.h"
-> +#include "tdx/td_boot.h"
-> +#include "tdx/tdx_util.h"
-> +
-> +/* Arbitrarily selected to avoid overlaps with anything else */
-> +#define TD_BOOT_CODE_SLOT	20
-> +
-> +#define X86_RESET_VECTOR	0xfffffff0ul
-> +#define X86_RESET_VECTOR_SIZE	16
-> +
-> +void vm_tdx_setup_boot_code_region(struct kvm_vm *vm)
-> +{
-> +	size_t total_code_size = TD_BOOT_CODE_SIZE + X86_RESET_VECTOR_SIZE;
-> +	vm_paddr_t boot_code_gpa = X86_RESET_VECTOR - TD_BOOT_CODE_SIZE;
-> +	vm_paddr_t alloc_gpa = round_down(boot_code_gpa, PAGE_SIZE);
-> +	size_t nr_pages = DIV_ROUND_UP(total_code_size, PAGE_SIZE);
-> +	vm_paddr_t gpa;
-> +	uint8_t *hva;
-> +
-> +	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
-> +				    alloc_gpa,
-> +				    TD_BOOT_CODE_SLOT, nr_pages,
-> +				    KVM_MEM_GUEST_MEMFD);
-> +
-> +	gpa = vm_phy_pages_alloc(vm, nr_pages, alloc_gpa, TD_BOOT_CODE_SLOT);
-> +	TEST_ASSERT(gpa == alloc_gpa, "Failed vm_phy_pages_alloc\n");
-> +
-> +	virt_map(vm, alloc_gpa, alloc_gpa, nr_pages);
-> +	hva = addr_gpa2hva(vm, boot_code_gpa);
-> +	memcpy(hva, td_boot, TD_BOOT_CODE_SIZE);
-> +
-> +	hva += TD_BOOT_CODE_SIZE;
-> +	TEST_ASSERT(hva == addr_gpa2hva(vm, X86_RESET_VECTOR),
-> +		    "Expected RESET vector at hva 0x%lx, got %lx",
-> +		    (unsigned long)addr_gpa2hva(vm, X86_RESET_VECTOR), (unsigned long)hva);
-> +
-> +	/*
-> +	 * Handcode "JMP rel8" at the RESET vector to jump back to the TD boot
-> +	 * code, as there are only 16 bytes at the RESET vector before RIP will
-> +	 * wrap back to zero.  Insert a trailing int3 so that the vCPU crashes
-> +	 * in case the JMP somehow falls through.  Note!  The target address is
-> +	 * relative to the end of the instruction!
-> +	 */
-> +	TEST_ASSERT(TD_BOOT_CODE_SIZE + 2 <= 128,
-> +		    "TD boot code not addressable by 'JMP rel8'");
-> +	hva[0] = 0xeb;
-> +	hva[1] = 256 - 2 - TD_BOOT_CODE_SIZE;
-> +	hva[2] = 0xcc;
-> +}
+base-commit: b024763926d2726978dff6588b81877d000159c1
+-- 
+2.47.0
 
 
