@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-805023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8BCB48318
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D285B4833C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68600189B098
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B19718990DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990D621B9D9;
-	Mon,  8 Sep 2025 04:07:35 +0000 (UTC)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4E221C195;
+	Mon,  8 Sep 2025 04:18:07 +0000 (UTC)
+Received: from cosmicgizmosystems.com (cosgizsys.com [63.249.102.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6B1A3167
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFCC20B22;
+	Mon,  8 Sep 2025 04:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.249.102.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757304455; cv=none; b=XY1tOsQbYd2tooGX1OVyvOovE3gNwVxNUo5YXtXcxjO6LDDz+LP2ugBnJOyRKy4hO354kUuLH9iYdRnYYbP/U/9lEtSujLsp5vH4T12kuhNqmyItHfY9xb8nlU/zRTlfuMh6v9up+H2MdLXIMeQKAQRGl74JmWEB9jmT+B4mC38=
+	t=1757305087; cv=none; b=nQVlKLYh8srHa0nUi1+F4nFsDM+PuaeSC1QXZhBFvQkql78ZEgYU7hASuC1G+6bIuqWlGIwGUZmA5SS1q2qk+DDobmcv6jAL3iL687K8IIWqJQRyIQCInv42QOrTR1DI6FEFJoEEntVG+M+JtueJ6bGIwym1wSDpAYVLCF+rhS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757304455; c=relaxed/simple;
-	bh=9wx1iXdmCHer+AspEUn6XJ1H/vBQn3AwQMQOzJtnSM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kqk/7tnoy4EG9cen9paEoT3HOx4NartgYVI3ZRcOHIPU8mrIMiOMRDMhkNvElIBUI+wGbM6hbnSkTXauDmax2F6VuRNTiSNf4+06wtblakWLCXn5EmyEhu4f+egOtQMsC/x0SlApsB1/Pz8fKxV8jMnCJkLyUfnpuRJhmN3TKd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso24355275e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 21:07:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757304452; x=1757909252;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=409De3dycyXy94pFQxmNYxL/WmjZWt0b3HPL18vEbd8=;
-        b=sUaEdXpYbFi3U+1or4whEpzwdOzGgW0BCU5se05ne0VRBIfnUBElQugOBDXO8eqXe7
-         BgddRHrSBi84S75GIAVRpcmLSuHxbg8WjUsiRofSYy5Is3qTM5eybbb4whmk6yWB41O3
-         ljN+4/ENMr84bkKLAmE1Fd1zujg9V/PaXO5kjhK9APeGTkFRPrDyLWB3S5NjuBlDRfxJ
-         EFyPZdblXGM4bJ5+Sd1Zj8xlubAtOIDSCVcf5cjqRhwmXATtJUvTLL4mxeey0E+ZrjH6
-         bjAhhgLgDAjUb4EygxoDDGHgpWWO9bNW3AC3BhyTaEWzsHh7WUAGRorvICvUQj5XrXl+
-         mahQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLZDgyaX0asQuS9kvb0RZu8G9hoq2v/k1xeW1blqw0rH0NS0hERBiBbbfBxYA71cvhO+FulU+W3BfWLRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJmEBp6/ZirecZGRswJi8l47Vm/hCYI22w/QYhnEJzuaabrpY
-	IGawriKKPfFzsBmkvXgwlBoyKjlMi9kzZ6xRAxxYFEVzMjKHu6CWY+cu
-X-Gm-Gg: ASbGncsvpt7K7YjLSUxJssZ7hNbd8bqiL0AUC2jitD7CXpr4bFsny+0SUqFLFx2o+MY
-	MTv92CHuMpPgqnR1zKQ2z3ks2fYDAXZkPMZ7aLV+8Rz0SdcOMLLeSHayLyJxCb311xLEoz1qaaC
-	ZM4+BUj9RbunN0PBRv+Xd+MTMrWrJLszx7MniCt4kiL8koKZ1PmwwrqSEtBaf2KEm9KH9PRz3mR
-	cNp0xFyc1yyFF1hbhbzOKeizHxNSTJyYPp3ywikHAORI0f5EgiqfW9DOpDVRIf8ZV0KFzgLffca
-	4He1/syIS9fU19bVJv6tK9n8dBE/oTE+rKxrjkvmYiSV7APxt7dkEcC0pIXD/ybPBZFi1igYUql
-	Ro132J4VIe6r/zvebE3bsKITYUL8=
-X-Google-Smtp-Source: AGHT+IHHc0KQu4fVuvjX8fgbXi8r9B9WeHJTzec9xAQPc3wb88MrF8wCXiddTK5zZ0XCMEdTfP3iDQ==
-X-Received: by 2002:a05:600c:c8f:b0:45c:b55f:466a with SMTP id 5b1f17b1804b1-45ddde9295dmr54866415e9.15.1757304451344;
-        Sun, 07 Sep 2025 21:07:31 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a04:6f00:1::ee:b:1086])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm228428405e9.0.2025.09.07.21.07.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 07 Sep 2025 21:07:31 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	Liam.Howlett@oracle.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	dev.jain@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	usamaarif642@gmail.com,
-	ziy@nvidia.com,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split shrinker
-Date: Mon,  8 Sep 2025 12:07:13 +0800
-Message-ID: <20250908040713.42960-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1757305087; c=relaxed/simple;
+	bh=ou0gE7+TsdyUBbyMu7e+ekHhAilR/umQ1iDwnhJpy/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LQ2nTZM+dBO1WmNqLABjQQh1AGJYwpFWbA9vu+qk5rQ9ukBfkgdibK8ptyzzr0ve9iAdvwr/me2aNFzpidYJWBoFoE4glFJe5byOZtLdyU2NBlqel3jcppaXiczUHNMv1wI+m30UP8VmoALtgpxYvqRuR1xhehO9YA2z/C3CFHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com; spf=pass smtp.mailfrom=cosmicgizmosystems.com; arc=none smtp.client-ip=63.249.102.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cosmicgizmosystems.com
+Received: from [10.0.0.100] (c-71-193-224-155.hsd1.wa.comcast.net [71.193.224.155])
+	by host11.cruzio.com (Postfix) with ESMTPSA id 6D4761D4966A;
+	Sun,  7 Sep 2025 21:10:30 -0700 (PDT)
+Message-ID: <36f58d1b-8afe-4895-bef6-59edc791ef0d@cosmicgizmosystems.com>
+Date: Sun, 7 Sep 2025 21:10:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] 1a8953f4f774 ("HID: Add IGNORE quirk for
+ SMARTLINKTECHNOLOGY") causes issue with ID 4c4a:4155 Jieli Technology USB
+ Composite Device
+To: Salvatore Bonaccorso <carnil@debian.org>,
+ Zhang Heng <zhangheng@kylinos.cn>, Jiri Kosina <jkosina@suse.com>,
+ Staffan Melin <staffan.melin@oscillator.se>
+Cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ stable@vger.kernel.org, 1114557@bugs.debian.org
+References: <aL2gYJaXoB6p_oyM@eldamar.lan>
+Content-Language: en-US
+From: Terry Junge <linuxhid@cosmicgizmosystems.com>
+In-Reply-To: <aL2gYJaXoB6p_oyM@eldamar.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lance Yang <lance.yang@linux.dev>
 
-When a new THP is faulted in or collapsed, it is unconditionally added to
-the deferred split queue. If this THP is subsequently mlocked, it remains
-on the queue but is removed from the LRU and marked unevictable.
 
-During memory reclaim, deferred_split_scan() will still pick up this large
-folio. Because it's not partially mapped, it will proceed to call
-thp_underused() and then attempt to split_folio() to free all zero-filled
-subpages.
+On 9/7/25 8:10 AM, Salvatore Bonaccorso wrote:
+> Hi Zhang, hi Jiri,
+> 
+> In Debian Staffan Melin reported that after an update containing the
+> commit 1a8953f4f774 ("HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY"),
+> the input device with same idVendor and idProduct, the Jieli
+> Technology USB Composite Device, does not get recognized anymore.
+> 
+> The full Debian report is at: https://bugs.debian.org/1114557
+> 
 
-This is a pointless waste of CPU cycles. The folio is mlocked and
-unevictable, so any attempt to reclaim memory from it via splitting is
-doomed to fail.
+The root of the issue here is that two devices have bootlegged the same VID:PID.
 
-So, let's add an early folio_test_mlocked() check to skip this case.
+0x4c4a is not a valid VID that has been assigned according to the latest list from USBIF (vendor_ids072325_1.pdf) so conflicts like this could surface at any time.
 
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
- mm/huge_memory.c | 3 +++
- 1 file changed, 3 insertions(+)
+[   10.188336] usb 3-3: device descriptor read/64, error -71
+[   10.439533] usb 3-3: config 1 interface 0 altsetting 0 has 2 endpoint descriptors, different from the interface descriptor's value: 1
+[   10.451534] usb 3-3: New USB device found, idVendor=4c4a, idProduct=4155, bcdDevice= 1.00
+[   10.451540] usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[   10.451543] usb 3-3: Product: USB Composite Device
+[   10.451545] usb 3-3: Manufacturer: Jieli Technology
+[   10.451546] usb 3-3: SerialNumber: FFFFFFFFFFFFFFFF
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 77f0c3417973..d2e84015d6b4 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4183,6 +4183,9 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		bool underused = false;
- 
- 		if (!folio_test_partially_mapped(folio)) {
-+			/* An mlocked folio is not a candidate for the shrinker. */
-+			if (folio_test_mlocked(folio))
-+				goto next;
- 			underused = thp_underused(folio);
- 			if (!underused)
- 				goto next;
--- 
-2.49.0
+Can anyone supply the Jieli descriptors, including the Report Descriptor? It clearly has problems but not bad enough to fail enumeration.
+
+The commit 1a8953f4f774 should be reverted and SMARTLINKTECHNOLOGY should either bootleg a different PID, get a valid VID, or fix their device so a quirk is never required.
+
+Thanks,
+Terry
+
+> The issue is not specific to the 6.12.y series and confirmed in 6.16.3
+> as well.
+> 
+> Staffan Melin did bisect the kernels between 6.12.38 (which was still
+> working) and 6.1.41 (which was not), confirming by bisection that the
+> offending commit is 
+> 
+> 1a8953f4f774 ("HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY")
+> 
+> #regzbot introduced: 1a8953f4f774
+> #regzbot monitor: https://bugs.debian.org/1114557
+> 
+> So it looks that the quirk applied is unfortunately affecting
+> negatively as well Staffan Melin case.
+> 
+> Can you have a look?
+> 
+> Regards,
+> Salvatore
+> 
 
 
