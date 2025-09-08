@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-806627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687C0B49998
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:15:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC06B4999B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7379A3A3AEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF252058EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E92239570;
-	Mon,  8 Sep 2025 19:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCCE1B21BD;
+	Mon,  8 Sep 2025 19:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JChBP4GH"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UUD/ajQq"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3008238C26;
-	Mon,  8 Sep 2025 19:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45751E2312
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358897; cv=none; b=eU8VCxLUnsJPtE6CipphjvFweHDvef/9i3oIYgiC6Oz5J0BtiH0yHAIXf9dnCyta6EkYFzR4gfSSrtvarcCZ5TiYM9BS2IHllofgbizyyZ7sHZT2Wsn/t3aLTa3JCOZmHGM9iMOtJGGVlmM1M5qch5rQGWoVpRfd3hI24AS1BPY=
+	t=1757358945; cv=none; b=IjlJf22BHy5jMgRAvlELUb676b5EhhYyYeUx9jcFizl+ie6l6VaGq9Bwjjm9P25gXS3iaJ5swJ/A8/6X0eG0k1CqQTictZDt4KmcPFHU4hcsvrC8HTNxS+iELgXxZKzzbsItxNNnbkvWpp+YqAapuSPRu2z/EGTAgEpUbxU+tzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358897; c=relaxed/simple;
-	bh=QXGuf1VVAykG+B3ZsO/oBKnwI0j3Mud9gIZCGS/X+ic=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2u6uGPkLgLv2ZPkSkK652wuwCjOTxj4XYPAoTQJMSuJ5ofABTvNWdPhQNmIXZPXD9BKv1Nsb0LJEmHJTsvzI4IJSsQnsg+vik/gbIPCC3pB3J4gjuICJ564GDHX5O28suPjGho3dcrMRzd3yFRS7cYK2WD6oTZyaBOb9v1Dhos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JChBP4GH; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e07ffffb87so2239091f8f.2;
-        Mon, 08 Sep 2025 12:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757358894; x=1757963694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=srx4MAFwGWE7Nwzpo2SsNjXaK3mzSAkkPEoW4/Hw/ic=;
-        b=JChBP4GHSqB58LNwIbhm+xuf3HYtWJ53IzupCXneqbP7mOJSqPTK2LtkeBwBCf6mGd
-         yniUnGkfRCb3Syvqa/ZAnGYq+kgg1yPHD3oRNnPR9szSQnIWZwrQDRawy1Nt4Wr9prh5
-         MIEP4j8xmwoxNQ5/D9ycQbILdIvu9Ayv/fXl6qd7ecTGYvwdovqrBofE608CC5DX08Qn
-         LRNta5QdPt1EctvJ8WGSqWqoKW4EomkWelqGPrTc0+7BvJPuDbuetyeiyUXInJzLPvo7
-         pEKLqNjztHIeg7Pcsq4YaeRhtPtTimJ+F82tBKCCH5p21LQ+YQhbg6iMbSOXAzdyCmi1
-         c2DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757358894; x=1757963694;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=srx4MAFwGWE7Nwzpo2SsNjXaK3mzSAkkPEoW4/Hw/ic=;
-        b=H3SZrw1PBaYmTR/m089b10lxJNn1uIzM7D/wkVEJhWlWWiGl4eRXX4i7xNjIgIyHGJ
-         RQ10ojQYa2kAL6fMsud/HDNvfSUKH8Qqt2apnsVkqbPIvT5l7Ugwv/h0zvvM9h+TD5eg
-         v9Ksx+yshcRtUA4lcEo2AEhBQlHVIjqvbJYo8qt2C/BdRFQ/dehU/wcd8IQtkDXAG7rF
-         ttANoc8EoaPQFgMLmCYgGmrDxaWKpgen1UHqV+mBYKIbeAsm7bQ+svI3Ci1oPhPMyvmm
-         fTefqWyrlhEuy1ryc70vkOqwq+W0rAFFv6p8FVvG0X/HuKoU4yZh9bSz/upt1Pgj6DKO
-         0r5A==
-X-Forwarded-Encrypted: i=1; AJvYcCURRk4YY4yBfPZ0wnPJmM6a5FFgXl++Df+O4Cpv23RDP/d3jaokTT1zNFI9p0KAXmdYau36ddmTgXt5InpW@vger.kernel.org, AJvYcCWC8PhT5lyCsB26g5YaEIWv4duFH/2LVlcm2sLLyBac3DKTjr99/BVIng/umpwXOCmhMXt1belzR4hg@vger.kernel.org, AJvYcCX00y1kps7rnDDt13BlmqcaRgqwNFecPssntlTSCRe8gVGfo5BwagczSGeHqrJqmYXk8sIaXd2F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0N+HAhPD9RyA5UAIJ9cGXVkPaEWnhMsWa10pJKyguLE9Aw1KE
-	PzGzWeW+9oCr17tpuzpLTLGwOzwwrKidf851BEkuqQLyXMWLoVNOg2Tx
-X-Gm-Gg: ASbGncvwMZUXmwPk6gHJjY6ofuABOuCTn0jUhMIkq6hk5o0sRDp9YfMkQ0LvyKCVP7T
-	PPlv4QSWCAPZXCukQwya9yymmukdLglDGnKiLRy8AokG2A6Bo2ESoU2oS/m2+X+kEbtHc/T+fNw
-	Yd+8aqPTyp9XzjtNs+L9ifl6ndCKFfM38Ugp3iYE6EjSiDzkMph5208dNCTXAFAh6DM9hUdj8X/
-	A4h8IXR3pwfclPYX3rxk6tQtpvlkL1oCZ8XD/AI0sthRl16sNmKSr62gbloc34TZoeFhvm+UVAE
-	TqsMwb7iRY06NHx7rF4mWURCNHcFgTRK+fg/20UIAvUw81ZdQ18/SLDXhUkSv3hbZJve/zv8eYN
-	enEXvudGFklk7wiNegnI6mHGxUINw1+4RGfmX01UjZy2pygInjc9H4vABmg/fiL67c1v2Bs6myL
-	NGLazz
-X-Google-Smtp-Source: AGHT+IFziGLQzNAImKhYRQ8IDTrD1/2WSj934yaWV0EXCVxUAxpFR9rChLUkdsHXYck7WZfp1SktZA==
-X-Received: by 2002:a05:6000:2389:b0:3c9:f4a3:f145 with SMTP id ffacd0b85a97d-3e64355556bmr7434762f8f.27.1757358893920;
-        Mon, 08 Sep 2025 12:14:53 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd2304e16sm202559135e9.7.2025.09.08.12.14.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 12:14:53 -0700 (PDT)
-Message-ID: <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
-X-Google-Original-Message-ID: <aL8rKX72YDo7iU_V@Ansuel-XPS.>
-Date: Mon, 8 Sep 2025 21:14:49 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
-References: <20250908113723.31559-1-ansuelsmth@gmail.com>
- <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
- <68bf16e5.df0a0220.2e182c.b822@mx.google.com>
- <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+	s=arc-20240116; t=1757358945; c=relaxed/simple;
+	bh=YPKZOl89AJQZwlz1VpSwOMG/7dUSS4j86kNPIqkOXN0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BLxCE4mq7XrGNvYnjNGgUQGpsAdgP/8Ip3CxsZtEB8zi6n44galIO79B0GLEyC4QSjvrFbSl88c0eYm+24gbxUMlo2BrRcYvSlced/IHBrpNav8IddzI2psKkgYVdiGoPMHb1jFWeP0kfdQnAMa3NVjsnoH4DSekxcUXcUeft40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UUD/ajQq; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588JFXRr118736;
+	Mon, 8 Sep 2025 14:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757358933;
+	bh=XbuHFsOvA66sjk/Cm+9qrr4i3NfWmWgnU0tnmjhfxdk=;
+	h=From:Date:Subject:To:CC;
+	b=UUD/ajQqhmJG1AonVXN2n20H64B3c2WRVekpTrMjNO09PLAKHMM1V3WWLEiEtBBXy
+	 aRwT9o++ssDU1GbYFt4nLpuEoi2+JSyEG8ivgVuP7j49EE1co015VTRYVSrg+dWK3m
+	 WimN9Rcb2unflJ/XLulUCBPZ1a7jJRPFk98pPKWw=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588JFXjq3170991
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 14:15:33 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 14:15:32 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 14:15:32 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588JFWqI1096033;
+	Mon, 8 Sep 2025 14:15:32 -0500
+From: Bryan Brattlof <bb@ti.com>
+Date: Mon, 8 Sep 2025 14:15:28 -0500
+Subject: [PATCH] soc: ti: k3-socinfo: add information for AM62L SR1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250908-62l-chipid-v1-1-9c7194148140@ti.com>
+X-B4-Tracking: v=1; b=H4sIAE8rv2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwMLXTOjHN3kjMyCzBTdFONkI1Nzw1QzUwtzJaCGgqLUtMwKsGHRsbW
+ 1AG/rREdcAAAA
+X-Change-ID: 20250908-62l-chipid-d3c2571e6587
+To: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Bryan Brattlof <bb@ti.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1544; i=bb@ti.com;
+ h=from:subject:message-id; bh=YPKZOl89AJQZwlz1VpSwOMG/7dUSS4j86kNPIqkOXN0=;
+ b=owNCWmg5MUFZJlNZol4ITgAAZv///7/fp//+jJ7+N8ks/d5v5h9+/37fnttz9c4///L99m6wA
+ RsYHaQAA9QGgaAAAeoAwgAAaAAAZABoAAeoB6jQZAGR6RpkNohppmpjaoZQaaA00NBo00aMmmQA
+ BpkAAHpAAbSGg0ZGaRoNqA00AGgGTIANA9QPSA9IyHJhGmTI0GIABo0GmTTQ0A0A0ANABoYjaTI
+ YCGEaA0AaNNMmTQAAaBoyaYGDVIkjYQJ0YHhWwAyHz9MrLiM4nIVlQK47mGi4kES9uTnBpOt7FA
+ ThHAlYADzB4TLvP2yK/PgMCZr2zS1W/iozJzIoYbHtLscQqtQjjHUhNcxZ3mLygG20Prp94gMeB
+ Tq6gM8RfabUy4QL1XvXQh+W3koRLg3Dfxl1QAIR00jUmM4E3U8bVjNphFSXKWrwdtLMOv96JPgi
+ 47u3cEMsFiYg3C0iVwKWK6YrVpoq5XVnBi+/PGGfYNwtlEVTjMN86pfMYfaWoUctQ8hkdExUpRz
+ ie8DD/FQpBdaqTfqRzsgnc1gqB0rIVmnLqFvrWiKz9mN5qy1ezhtbPOoWk2gEWGNifYHHXU+uJi
+ RTFMiQgLy1iCpPhWhsQg9O+RPtPYqRAiXvIQKgwSjZYB6+MzB27FkzUiGzTNFwF3uUUAI32AWA2
+ 5z/F3JFOFCQol4ITg==
+X-Developer-Key: i=bb@ti.com; a=openpgp;
+ fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Sep 08, 2025 at 09:06:03PM +0200, Andrew Lunn wrote:
-> On Mon, Sep 08, 2025 at 07:48:17PM +0200, Christian Marangi wrote:
-> > On Mon, Sep 08, 2025 at 06:54:15PM +0200, Andrew Lunn wrote:
-> > > On Mon, Sep 08, 2025 at 01:37:19PM +0200, Christian Marangi wrote:
-> > > > With further testing with an attached Aeonsemi it was discovered that
-> > > > the pinctrl MDIO function applied the wrong bitmask. The error was
-> > > > probably caused by the confusing documentation related to these bits.
-> > > > 
-> > > > Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
-> > > > is never actually set but instead it's set force enable to the 2 GPIO
-> > > > (gpio 1-2) for MDC and MDIO pin.
-> > > 
-> > > Is the MDIO bus implemented using the GPIO bitbanging driver?
-> > > 
-> > 
-> > No it does use the MDIO bus integrated in the MT7530 Switch. It's just
-> > that the MDIO pin can be muxed as GPIO usage.
-> 
-> Then i do not understand this patch. Why configure the pinmux for GPIO
-> when you want it connected to the MDIO bus device?
->
+The second silicon revision for the AM62L was mainly a ROM revision
+and therefore this silicon revision is labeled SR1.1
 
-The usage of GPIO might be confusing but this is just to instruct the
-SoC to not mess with those 2 PIN and as Benjamin reported it's also an
-Errata of 7581. The FORCE_GPIO_EN doesn't set them as GPIO function
-(that is configured by a different register) but it's really to actually
-""enable"" those lines.
+Add a new decode array to properly identify this revision as SR1.1
 
-Normally the SoC should autodetect this by HW but it seems AN7581 have
-problem with this and require this workaround to force enable the 2 pin.
+Signed-off-by: Bryan Brattlof <bb@ti.com>
+---
+ drivers/soc/ti/k3-socinfo.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
+index d716be113c84f1b87a2547f9292a5a7138c00f3f..50c170a995f90bb7d153f7a54c9d321de783622b 100644
+--- a/drivers/soc/ti/k3-socinfo.c
++++ b/drivers/soc/ti/k3-socinfo.c
+@@ -66,6 +66,10 @@ static const char * const j721e_rev_string_map[] = {
+ 	"1.0", "1.1", "2.0",
+ };
+ 
++static const char * const am62lx_rev_string_map[] = {
++	"1.0", "1.1",
++};
++
+ static int
+ k3_chipinfo_partno_to_names(unsigned int partno,
+ 			    struct soc_device_attribute *soc_dev_attr)
+@@ -92,6 +96,12 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
+ 		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
+ 						   j721e_rev_string_map[variant]);
+ 		break;
++	case JTAG_ID_PARTNO_AM62LX:
++		if (variant >= ARRAY_SIZE(am62lx_rev_string_map))
++			goto err_unknown_variant;
++		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
++						   am62lx_rev_string_map[variant]);
++		break;
+ 	default:
+ 		variant++;
+ 		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%x.0",
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250908-62l-chipid-d3c2571e6587
+
+Best regards,
 -- 
-	Ansuel
+Bryan Brattlof <bb@ti.com>
+
 
