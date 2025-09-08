@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-805960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D52AB49002
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:46:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BABB48FF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6092A1894D75
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:45:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F07C07A5F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F8830BF75;
-	Mon,  8 Sep 2025 13:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DF1306B35;
+	Mon,  8 Sep 2025 13:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHQ+Jtpy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuCDerxS"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2A61898F8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757339112; cv=none; b=Jh9oXfyBTkukJKZkzf7AnaUpL3vGuqjyN6/spG7d2HPTXsMW3bb8wAn61rZd7Ot2aA7kmq/mz6Nu7iElzyDXLHvhYFKl45NrbUFd4o1+YTCBavjnLHnazU3Hz3nAC7hDNwAJnihOXiUgTWyKINNMbZmIH4AVDXfkp8WfffQcK84=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757339112; c=relaxed/simple;
-	bh=If26awibRVYgUkPhnEbv+S6ehJyJcV11t7MVTPEys5c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CXvN3+0wNIS1CkVskEbZxSqU5qFGcUo4BzL2UwXKxKNTMSSAunA41BYcvYapck4h9XhOaBHlAWjaWlrCvGW5Iafm+azysmyO4tmSzIntWEUdU9sRQ8gENPIXYwZH9woG0unlkeptHAJEupZlMcM29pVCXYh4hrnqCZv77rpO/q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KHQ+Jtpy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757339109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mkI4CbkVJ/MPAdUsHepXrw2RZnRbTcHxDEQJp790iHQ=;
-	b=KHQ+JtpyQE4G65EnqHiojVGOqnLbW8+o2GphuZpfTwO3Cb6MmxAd7ixDXrz2ZLWZMqU3V8
-	5yu/q/FaWjN8WrZlATq7OfYCDsIW+Yh3MQMkKz7c8AVbi49NbsyoVqJoQgQjWHK9U/Rlwv
-	c3eXF1ss1i0BNUjPaih99JY43SbxOJo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-120-ShfMb6jaMP6y04Sp9e1vww-1; Mon,
- 08 Sep 2025 09:45:06 -0400
-X-MC-Unique: ShfMb6jaMP6y04Sp9e1vww-1
-X-Mimecast-MFC-AGG-ID: ShfMb6jaMP6y04Sp9e1vww_1757339105
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 006231955BF1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0983330BB92;
 	Mon,  8 Sep 2025 13:45:05 +0000 (UTC)
-Received: from [10.44.32.12] (unknown [10.44.32.12])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E07B1800452;
-	Mon,  8 Sep 2025 13:45:02 +0000 (UTC)
-Date: Mon, 8 Sep 2025 15:44:59 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Ivan Abramov <i.abramov@mt-integration.ru>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    lvc-project@linuxtesting.org
-Subject: Re: [PATCH 1/1] dm-integrity: Remove unreachable code in
- dm_integrity_ctr()
-In-Reply-To: <20250908120831.135419-1-i.abramov@mt-integration.ru>
-Message-ID: <b4a06abf-eb97-055a-a986-6e629c59ca1b@redhat.com>
-References: <20250908120831.135419-1-i.abramov@mt-integration.ru>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757339107; cv=none; b=eqQ9g0UfFXScMavacTKf9KAU54LZeMQkf6RuON/Lo0TKDJsbETStKveJj2zap5I/9isbKevHVT3AsgCQWXlhpAllqeSE/618kuBL+nGvcsdIpCwCZ49cnfkU9ZtYTXNLxiCfgwUg/FMR5w7lFdCmNRPztdJBLo09TH9y6v01qq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757339107; c=relaxed/simple;
+	bh=6Exa49x2tTun8/GdPZIClkbq/hZZCYAZWPs6tflMRhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qhrmnD1+ozBrSw88N/WVUaR1/qFntyBnk8n/dOABmft85QfT/R/6UfIi4IqSFyRzSMC+Uu8Ivl7SzBgadlNtEQm55wjL7+hC1NC9DbcaiKtGeXdfdV3osIW3nOH69mOttH7FSM0NwOQfKC3+uFyxdtPiaZq+D/tZIRJAn/LnXKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuCDerxS; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e3aafe06a7so1922673f8f.0;
+        Mon, 08 Sep 2025 06:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757339104; x=1757943904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qa2FDEzfrHnj9/Bgif488Zx3zsoWnSpMm3bjoJ5kMkM=;
+        b=TuCDerxSxtZnl5PrnDzbFxaM5Wd5I5krD+QJ4QZWVGVehWdUJo4vDidWDdhypgcZuu
+         ozXT9EkK4vw8YiTy06bzuCd7/sDSQ7SB2dRCnQtBS+PkU6bZoZm8MaCR7zO6Erb+aNcn
+         COYvFuziCeNHg72LvgPw2golhu2FgBFvUrhGlI79T6oclvB/cQjB3Vy5Sioy9UCbobts
+         5Ma+XlalciiXyOQMZiDIfsZSyyEY8JTzYYgLC+BJzYqlvd9+N22YA5sOWnzUsNn7mZ8T
+         G+y++HX40bm/CLmi5iS+StRIcvzcyzJ0rj7opogCGwcdkwQCDr4GyJXlmSXQj55k18GS
+         xfeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757339104; x=1757943904;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qa2FDEzfrHnj9/Bgif488Zx3zsoWnSpMm3bjoJ5kMkM=;
+        b=Ac3048jGuEesAV076kPAbq7zCTVB1mf7ZOiimTQd7bim0mqL35pIK0jbR3kL3aedEE
+         4nJDH/lOCrb3tHCt1eUXMIKHP3Zx0kte1jDF0rQh0hp8t0Od0Ti4ateCHZlxdwMr5nHW
+         B5RRCVBZ38dVb0QLftEgYTtAyq/0m8S6rN1umugU9nsnC04SW5og2+5QGWkCGdEB7xIS
+         e2PqUM5CHWaJWtCrM6/PaV+Q8y5zeKmACWHv7Cmqm78W8JHWfsHFxwOmHjMZoPGLwBWE
+         tGY0I6xv3wIgTjOuhNC3zQKyIBYLS4Mw5JpBam9F16Mt+tsYk8Fi9JbhxQHcZEWKF2AI
+         /TMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3aDQjJwvfjNUFbaigIA4wPseGmTjpznQ08M+FjDcaMkdpbiMTpXf2fnu/HjOckRU2dHcQDza3cXih0Slc@vger.kernel.org, AJvYcCX0LUvRfsH34chcq5Cacs6qOhgy/JHJceFCxWJQAiqAO7zjLRGInbF78xPX9HT6+H7e+YGcvQoeL39C@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmlfxpvvsiY/R2vBf1fAsQfZJBTDdswEP2YhPfrjM6oDDt0mrQ
+	1076bKT/POouTGHpmQZdTMvojec/kJg8TE23broLOknwckswDM7wV/fd
+X-Gm-Gg: ASbGncshvzKnCnRHBK45n9y1zefLP9m1gSp83OYNslXWoQlx7/2jR7VvqHN17Z8esvy
+	XU/PW5cizz3Q/vHRKzYJ3p0d76c5fY6iDSRzA4daFEmNMa/tRYLUBfu+KvIeN65jMOr4pO0EgwD
+	7ssEp1V0pu/8RKjEjSKnxkjrJNxRMiT5+yIKx+AmbTCOguIpzqGzCK+5FT4NIoJk2rHkGyw1Gf5
+	KV+56eOsknTNaEiyasS+xpu+uYwNLjqcxSHmiHf3A0zEKTB3s9ojyJVPPpc2CoUzzoJ5mcwglmW
+	Th8BltqyZ9fHhLveaoMCkAxrRfGeJGgMoe3tHdFawodH8uOrFOqQz0z1heUxeql3p9lVBsPMWZE
+	XdYLUopACyY5k95OiHz4X6neZbCuCJawJemMz4RMFzzndJhFla1BK/Wn7nN4hoLcTekW9lHEcUp
+	qSWdUAd6lQqRZp29/CpyM=
+X-Google-Smtp-Source: AGHT+IF/bu6N4b17VGa4d32p6sVB8f7trrLvKQqSA5MvaDaYKtxhuslb1edIkbNaktRAD6ubBUZRfw==
+X-Received: by 2002:a05:6000:389:b0:3e6:fd4a:940d with SMTP id ffacd0b85a97d-3e6fd4a9c30mr6459105f8f.12.1757339104123;
+        Mon, 08 Sep 2025 06:45:04 -0700 (PDT)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfc3e11esm96635905e9.0.2025.09.08.06.45.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 06:45:03 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ Chen-Yu Tsai <wens@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Subject:
+ Re: [PATCH net-next v3 06/10] arm64: dts: allwinner: a527: cubie-a5e: Add
+ ethernet PHY reset setting
+Date: Mon, 08 Sep 2025 15:45:01 +0200
+Message-ID: <2795513.mvXUDI8C0e@jernej-laptop>
+In-Reply-To: <20250906041333.642483-7-wens@kernel.org>
+References:
+ <20250906041333.642483-1-wens@kernel.org>
+ <20250906041333.642483-7-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi
+Dne sobota, 6. september 2025 ob 06:13:29 Srednjeevropski poletni =C4=8Das =
+je Chen-Yu Tsai napisal(a):
+> From: Chen-Yu Tsai <wens@csie.org>
+>=20
+> The external Ethernet PHY has a reset pin that is connected to the SoC.
+> It is missing from the original submission.
+>=20
+> Add it to complete the description.
+>=20
+> Fixes: acca163f3f51 ("arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E=
+ board")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-What if someone changes it to a larger type later? I think that if this 
-branch doesn't do any harm and if it protects us from memory errors 
-introduced by future changes, we may let it be there.
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-But I found another bug when looking at this - the user may set tag size 
-up to MAX_TAG_SIZE (that is 0x1a8) and that gets truncated when it is 
-assigned in "bi->metadata_size = ic->tag_size". I need to limit 
-MAX_TAG_SIZE to 255.
+Best regards,
+Jernej
 
-Mikulas
-
-
-On Mon, 8 Sep 2025, Ivan Abramov wrote:
-
-> Since bi->metadata_size is an unsigned char, it's not practically
-> possible for it to be > PAGE_SIZE / 2.
-> 
-> Thus, remove the corresponding if statement.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
 > ---
->  drivers/md/dm-integrity.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-> index efeee0a873c0..b7ad7a5adb56 100644
-> --- a/drivers/md/dm-integrity.c
-> +++ b/drivers/md/dm-integrity.c
-> @@ -4752,11 +4752,6 @@ static int dm_integrity_ctr(struct dm_target *ti, unsigned int argc, char **argv
->  			ti->error = "The integrity profile is smaller than tag size";
->  			goto bad;
->  		}
-> -		if ((unsigned long)bi->metadata_size > PAGE_SIZE / 2) {
-> -			r = -EINVAL;
-> -			ti->error = "Too big tuple size";
-> -			goto bad;
-> -		}
->  		ic->tuple_size = bi->metadata_size;
->  		if (1 << bi->interval_exp != ic->sectors_per_block << SECTOR_SHIFT) {
->  			r = -EINVAL;
-> -- 
-> 2.39.5
-> 
-> 
+>  arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/ar=
+ch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> index 70d439bc845c..d4cee2222104 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> @@ -94,6 +94,9 @@ &mdio0 {
+>  	ext_rgmii_phy: ethernet-phy@1 {
+>  		compatible =3D "ethernet-phy-ieee802.3-c22";
+>  		reg =3D <1>;
+> +		reset-gpios =3D <&pio 7 8 GPIO_ACTIVE_LOW>; /* PH8 */
+> +		reset-assert-us =3D <10000>;
+> +		reset-deassert-us =3D <150000>;
+>  	};
+>  };
+> =20
+>=20
+
+
+
 
 
