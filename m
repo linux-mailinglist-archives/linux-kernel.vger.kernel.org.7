@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-805476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65112B488FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:47:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1C7B48901
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7C7F16653C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106623A96CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B8315D41;
-	Mon,  8 Sep 2025 09:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IHh4bkEw"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098512ECD3F;
+	Mon,  8 Sep 2025 09:48:03 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38812F744C;
-	Mon,  8 Sep 2025 09:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291781DDC2A;
+	Mon,  8 Sep 2025 09:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324812; cv=none; b=oeZsGsxxzD7A5Shc3qDnBgpQuzTuR1Pit822RxOTkaEuf9alXqPQ3LsNjh3+c3Oaq/QEEnNP5dJwkcsxqrT0LmYuww5Psdh49ncG/Q+i6n2k4iCacxPUob3TMorU0wiRC4F59fgXyFWme/UVuF1jT5HBi/nZ1vduBTLs/jlvuv8=
+	t=1757324882; cv=none; b=I5hO/HEJ0e2XA7On1/zZPny0VB3g44O5aEmGxtVOV7+lx5dt1MzNLhv1ICc0RMkej71zHW0zVeLl9MfkE6h7IY+PUfPaXH97yaxwvL2njZDYGpE2iZdnPDRiaf/HLLoPzYu+vxuMQveAYwSsZZjRUTQeEZubgB1x80q92zGRLy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324812; c=relaxed/simple;
-	bh=ziT/aLu8avuUvS3XHAWGbBPl0kaCQ3HaG/wfIZ5/D0Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chZipDB5y1sUCSJGG6Bfmn7v1QMl0iG4Y6Up8wbp1p+ehRTN81cR5VqmKrTY0FMzMoYxEvGnKGGwowI0oToLPnZMaiNldaKGmTwZmxGsHUmSAZsxzjhuVwKDBqGo0pu32LNNeFLLevy8W+7o05dJAoan3rrK66Zl7PTiXxxL+/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IHh4bkEw; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5889khcP3767020;
-	Mon, 8 Sep 2025 04:46:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757324803;
-	bh=DVpNAYv9QMh4KP4W1odbt5pAyANXJCF48xip5X7vrWU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=IHh4bkEwiYCZ1vM7QBQessgtpy7zw0R5q5EVPwKYV5/fTfFFr+K56idvFZc1NOxDP
-	 CXTBumPnkiUgioz3b6Duol/JWkoJlHKq8leZxT+Q7kmUdyV/D3OeuanF0U4Ii58/yo
-	 yFHKJPQu0JPvcJaosX79vGLkAXAd4RkcDohGt6s8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5889khxE2321912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 04:46:43 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 04:46:43 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 04:46:43 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5889kfo4396067;
-	Mon, 8 Sep 2025 04:46:42 -0500
-Date: Mon, 8 Sep 2025 15:16:41 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Beleswar Padhi <b-padhi@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
-        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Wadim
- Egorov <w.egorov@phytec.de>
-Subject: Re: [PATCH v3 32/33] arm64: dts: ti: k3-am64-ti-ipc-firmware:
- Refactor IPC cfg into new dtsi
-Message-ID: <20250908094641.5fxhrlv27zr2jtus@lcpd911>
-References: <20250905051846.1189612-1-b-padhi@ti.com>
- <20250905051846.1189612-33-b-padhi@ti.com>
+	s=arc-20240116; t=1757324882; c=relaxed/simple;
+	bh=GqqU9gQ6ksLgdH/oUPUWq87ARBy0UbhPT2s8vt4oWCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MSH/0nvaYMlVfGVZTEyjIc6iaoRkxacfNvrhg+rL+P3OYkE5og/nY5LtZvOmj1ADkK2JYCXUegqFz5ZME3z75XhBzfFJhdLVWCLctcMKGMJNzb6f7p8UHyD6FAM5DOaPA5DDgsEXO6wIa9atnYxzXd8+0Bz53qKzbEsHec2UHiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-545e265e2d0so3420946e0c.1;
+        Mon, 08 Sep 2025 02:48:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757324880; x=1757929680;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nzgk0xUzUlh6j52cGVIzM3waTCC9uxV/H9zzF7aMhCQ=;
+        b=dA47YkQiz7jxS1RNMY67oqCWE5R/CVRVzDifRaWTUQ0CFYKKZ4ujUsiUHEQwiJ08iz
+         ajwxQZ7CeNtsWEbhVKMH0FSK+W0pcpcfYW504flB3igbX14kHm+TRwy5OzOLdgapZR6V
+         XlJaERmUJ+m+NzYG/p26wcqB+t+5jpVDzLaMpEBEPD78lGyj5JCxODAC3kK/r4Yxone2
+         TixZCG9Ud3BfxtDrWEv+Ha0wGh5vWxjZTrKsTI6SrNH7UXXjInbVlb2loou+ne5cGeIo
+         mRF12BC+PprT3ddmVsAvTq66nIpelcrRSYOu3RB4VI/3b9nDOypSjoG/f91QVQXoJeLQ
+         z40A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqNdsDCwkOe27ULKCNdvbsFRglXeYiYW4zzMk38rKPFo6USPjpJhjieRPelokoNhgWDY5aOgBUXY8McXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygWCAUl/kHkPAS7JSNOgreTwbwuQXnbdK3yxhNjH5sIpElkVFM
+	V2cpg+DKJfDXSX2ZYKXuV35a+3HmewWBDmA+iQiJLlEHASreqydHSJHXf1X/AM+m
+X-Gm-Gg: ASbGncucya1Awi17VyCVtYysWnRHw2YpA6zle+rSXYtczzNhtvpS/cp6Jdz58tVTDeb
+	ZtzZgpueOn0wj9hGC/dFDCEqV5SuSRdkT6y7mhPIo7gYI0sg9aw3cpfI6dPOhduS/2dOq3B5gfJ
+	sfJYRMPR2jlmXizEAPkd144M9Cy0IpBDE6E0WwkuP6S9eK2M33zUgK5y2IgwX0AnxGZrm3OJ2p+
+	qe/UwSZLUCz1CZEFHOQslBvu5wp47nHVMqSDZL/mLEcNbLP0tX6xK8xQoZs+g7uMzPg4E7qFzmA
+	psSn96VC8CCuZAoTRFhmO0MN6T39W1RihvexutJItHv6JwDilFl6dviC2g+LhuG17YMbFa/XTqH
+	MLgP/CQPpR24apFPSGpYHmYACsJK5MEKFj5IXkAbdUFE8Nts0ZXbSMILUAMoS
+X-Google-Smtp-Source: AGHT+IE15eppcnMsPaYykP4nYivMIrhZ5KYq1+nFCB9ag6yFg08PC5aD6w6ZmVm3szvld2saamxPNA==
+X-Received: by 2002:a05:6122:d02:b0:545:d9d2:a832 with SMTP id 71dfb90a1353d-5472aeed8f7mr1980325e0c.7.1757324879871;
+        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491464bd1sm11953028e0c.19.2025.09.08.02.47.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5290c67854eso2967137137.3;
+        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8wZKNllkrpRBk80ZOsSdH90w6y6tPzrYEFiAv1pMRHZc54paO82P98uwyPMSzkgZ+iS6LkDkCuFv2zLk=@vger.kernel.org
+X-Received: by 2002:a05:6102:f83:b0:524:b9b7:af01 with SMTP id
+ ada2fe7eead31-53d1c3d6e5cmr2054887137.10.1757324879469; Mon, 08 Sep 2025
+ 02:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250905051846.1189612-33-b-padhi@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250822104208.751191-1-jirislaby@kernel.org>
+In-Reply-To: <20250822104208.751191-1-jirislaby@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Sep 2025 11:47:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVXcm=6HmHYfkDF--jTKu-o7jWO=T6EuzeedhEvU3An_A@mail.gmail.com>
+X-Gm-Features: AS18NWDoUuvjHVKj_6IGPnEkgWHda8d2Shyst11eUuVhsnm2ecFd1wqBdiVzjiE
+Message-ID: <CAMuHMdVXcm=6HmHYfkDF--jTKu-o7jWO=T6EuzeedhEvU3An_A@mail.gmail.com>
+Subject: Re: [PATCH] m68k: make HPDCA and HPAPCI bools
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sep 05, 2025 at 10:48:45 +0530, Beleswar Padhi wrote:
-> The TI K3 AM64 SoCs have multiple programmable remote processors like
-> R5F, M4F etc. The TI SDKs for AM64 SoCs offer sample firmwares which
-> could be run on these cores to demonstrate an "echo" IPC test. Those
-> firmware require certain memory carveouts to be reserved from system
-> memory, timers to be reserved, and certain mailbox configurations for
-> interrupt based messaging. These configurations could be different for a
-> different firmware.
-> 
-> While DT is not meant for system configurations, at least refactor these
-> configurations from board level DTS into a dtsi for now. This dtsi for
-> TI IPC firmware is board-independent and can be applied to all boards
-> from the same SoC Family. This gets rid of code duplication and allows
-> more freedom for users developing custom firmware (or no firmware) to
-> utilize system resources better; easily by swapping out this dtsi. To
-> maintain backward compatibility, the dtsi is included in all boards.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> Reviewed-by: Wadim Egorov <w.egorov@phytec.de> # phycore-am64x
-> Tested-by: Wadim Egorov <w.egorov@phytec.de> # phycore-am64x
-> Tested-by: Hari Nagalla <hnagalla@ti.com>
-> ---
+Hi Jiri,
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+On Fri, 22 Aug 2025 at 12:42, Jiri Slaby (SUSE) <jirislaby@kernel.org> wrote:
+> The only user -- 8250_hp300 -- tests for CONFIG_HPDCA and CONFIG_HPAPCI.
+> It does not test for *_MODULE variants. That means that if someone sets
+> the configs to =m, the code is not compiled at all.
+>
+> There is actually no point having these as tristate. Switch them to
+> bool.
+>
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+
+Thanks for your patch!
+
+> --- a/arch/m68k/Kconfig.devices
+> +++ b/arch/m68k/Kconfig.devices
+> @@ -105,14 +105,14 @@ config AMIGA_BUILTIN_SERIAL
+>           To compile this driver as a module, choose M here.
+>
+>  config HPDCA
+> -       tristate "HP DCA serial support"
+> +       bool "HP DCA serial support"
+>         depends on DIO && SERIAL_8250
+>         help
+>           If you want to use the internal "DCA" serial ports on an HP300
+>           machine, say Y here.
+>
+>  config HPAPCI
+> -       tristate "HP APCI serial support"
+> +       bool "HP APCI serial support"
+>         depends on HP300 && SERIAL_8250
+>         help
+>           If you want to use the internal "APCI" serial ports on an HP400
+
+This still causes a warning if SERIAL_8250 and HP300 are enabled,
+but none of HPDCA and HPAPCI are enabled:
+
+    drivers/tty/serial/8250/8250_hp300.c:24:2: warning: #warning
+CONFIG_SERIAL_8250 defined but neither CONFIG_HPDCA nor CONFIG_HPAPCI
+defined, are you sure? [-Wcpp]
+       24 | #warning CONFIG_SERIAL_8250 defined but neither
+CONFIG_HPDCA nor CONFIG_HPAPCI defined, are you sure?
+          |  ^~~~~~~
+
+I have sent and alternativ\e fix.
+
+[1] "[PATCH 0/2] tty: serial: 8250: Rework HP300 serial Kconfig logic"
+    https://lore.kernel.org/cover.1757323858.git.geert@linux-m68k.org
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
