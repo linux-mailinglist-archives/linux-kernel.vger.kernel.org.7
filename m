@@ -1,116 +1,185 @@
-Return-Path: <linux-kernel+bounces-805092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4712EB483EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:10:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3879CB483E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A1516DE93
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F398A189C762
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFAD225788;
-	Mon,  8 Sep 2025 06:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BCA22A4F8;
+	Mon,  8 Sep 2025 06:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RIuwxGtp"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B820BA42;
-	Mon,  8 Sep 2025 06:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uNiUJQrD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RfTP7bcB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UGgG6xj2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zGv5b2xe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9921D5CD7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311824; cv=none; b=nQsrCaW8wjfE8ZzLSMOeXNqQd7pxSy8pI14kT9HQq1zLCzNF2xEfFxaidZbx9+DAkL1zcN/XJySiy9lsHubC9wlkG8afbzuWqjE+kZ07e/0Q/L4iqpGXD97KOYFdgGeJhRsTv/3ZsGHBAUxX/H6xWEwoQKKJll0naRgfXsF9SGk=
+	t=1757311705; cv=none; b=NhVRtpwNjB70wY86kdTcWT6D/OVAhEAz3nULIfILjlGt/IA8bpSV0w/BOCIMsGqnLMEvGfdlZEPogYrA1X3YurH4WD7MuN4hk4tRJbFr+c6i+Jb+SRWQiyDP7zRUoYogkqvK4nM0uEiv+e/EwMtBHOK+TFZLmVSuymaOhUIQHME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311824; c=relaxed/simple;
-	bh=IgnxBFQ2ZnuUmZ8Ld9oKivTL8UCPcnZEYnZOWY2PUY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hnUP9vsY9FQjA4PtXo3+fxPPFL3IHP26nAzomlYtBUTIwB2STr8iA2v9hUbTopuXGTfWvIrlu16fTETBGjz4PavzsCb/lWHU43RyBADT5cdLNiN1myiRkctADH4FVp3oFzAF/iFWC1lSufmfkynBd34wslRu3kbcbjOsBa1PvMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RIuwxGtp; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=G1
-	RdfIYRkYAJz7zG2EzLoJ6HbpoIeBn2pLcgZL/fpPU=; b=RIuwxGtp8L/lbZ3SDi
-	M7mWfs59GTQtQmY81lctgmquCu0zIWCHPs5JX3kW5MxcjSIZRZnfnpd93TucElrV
-	M/FDYljcxu478wCl4kFDPgqNuY9FIYZbmPjcbxVS5CL1UXAXKgmH+AuLbrUhFsWr
-	OO7xkqlonD2E7qY1PBXP0Dd6k=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wB3iU_Kcr5oIivXHQ--.14510S2;
-	Mon, 08 Sep 2025 14:08:13 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 bpf-next] selftests/bpf: Fix the issue where the error code is 0
-Date: Mon,  8 Sep 2025 14:08:10 +0800
-Message-Id: <20250908060810.1054341-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757311705; c=relaxed/simple;
+	bh=LQR/AfoqvXaVEOazVZSpH60BeUksXZm/zWYQbiwVnwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exBpaOzO1U+4ovVjdF0mRllWIG5dm0L+UY2httpqYH0I8CHurchnW+DDgtegryOsppm+mWddal3f8uPwVWRMZSU6iBUs8Kv+hYzU4+cnlZ41M7fqXl1t5UDnIHnv8FnznuwDvazuzIQc9F/SwcvFHSNHTO+mjHBFg27kEqNDdy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uNiUJQrD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RfTP7bcB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UGgG6xj2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zGv5b2xe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D8D4E2433F;
+	Mon,  8 Sep 2025 06:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757311702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
+	b=uNiUJQrDmvzZ/IgGMlVfdrA9ec7H72CiMeUJyvCJMd79vyJklKQ+8ulnQTuu3o7c0p90mq
+	sNfbAUpI04XI/LsqtkZl+Xju/gZJYQN7MotNVfYblwmX3lxXWoSrMto4OZcl8P6Sdr5r22
+	4QIo50eMsbTnfUg/+X29mQWWPv8xXbo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757311702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
+	b=RfTP7bcB/OpQVoB5IIGSDmJt0C+s5wxHInpzWE8Bj24WzOKCZpiOfSCm0oIp3+34U4gPir
+	NGerp9oPknT1PKCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UGgG6xj2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zGv5b2xe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757311701; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
+	b=UGgG6xj20lMDgZalO55jxR5GTsFg60QOoePunodFrvBDz+moFd6ceBtaFJ0QQYw+IW+IcB
+	IdQZfKyasfzRP2oAlcDSW70skg2Y6+94QAPI/9KoPLDM/VeyijuGWYhWw3AuxLT10riP7Y
+	Dg4kuDngjKtSUZ12Ek2HO00yc8ayzuY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757311701;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
+	b=zGv5b2xeQV6T0SS7gQqixOYzzhRB9McyWQoP9IrmTR8wxhGcMo/mz+aaXqxAIZQrjs6aCY
+	XkV2woJOVIha7TCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FBD413946;
+	Mon,  8 Sep 2025 06:08:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LzsgBtVyvmjfLAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 08 Sep 2025 06:08:21 +0000
+Message-ID: <4d3b2fed-e42c-46f0-82d2-93eca2940759@suse.de>
+Date: Mon, 8 Sep 2025 08:08:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 07/12] scsi: Use block layer helpers to constrain queue
+ affinity
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
+ <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
+ Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Mel Gorman <mgorman@suse.de>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, storagedev@microchip.com,
+ virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-7-885984c5daca@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250905-isolcpus-io-queues-v8-7-885984c5daca@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wB3iU_Kcr5oIivXHQ--.14510S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CrW7WryUKF4UGw1rGF1fCrg_yoW8WF4Upa
-	y0gw40kr4rXr15Xa18Ww4UuFW0gws5X34rWwnFya4Yvrn5WryxXr1xtF43uFn8WrZ0vw4a
-	yasFgr18Z34UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jj_M-UUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZRLCeGi+cORAKAAAsn
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D8D4E2433F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On 9/5/25 16:59, Daniel Wagner wrote:
+> Ensure that IRQ affinity setup also respects the queue-to-CPU mapping
+> constraints provided by the block layer. This allows the SCSI drivers
+> to avoid assigning interrupts to CPUs that the block layer has excluded
+> (e.g., isolated CPUs).
+> 
+> Only convert drivers which are already using the
+> pci_alloc_irq_vectors_affinity with the PCI_IRQ_AFFINITY flag set.
+> Because these drivers are enabled to let the IRQ core code to
+> set the affinity. Also don't update qla2xxx because the nvme-fabrics
+> code is not ready yet.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 1 +
+>   drivers/scsi/megaraid/megaraid_sas_base.c | 5 ++++-
+>   drivers/scsi/mpi3mr/mpi3mr_fw.c           | 6 +++++-
+>   drivers/scsi/mpt3sas/mpt3sas_base.c       | 5 ++++-
+>   drivers/scsi/pm8001/pm8001_init.c         | 1 +
+>   5 files changed, 15 insertions(+), 3 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-The error message printed here only uses the previous err value,
-which results in it being printed as 0.
-When bpf_map__attach_struct_ops encounters an error,
-it uses libbpf_err_ptr(err) to set errno = -err and returns NULL.
-Therefore, Using -errno can fix this issue.
+Cheers,
 
-Fix before:
-run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilogue: err=0
-
-Fix after:
-run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilogue: err=-9
-
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
-Changes in v3:
-- Use -errno here directly, thanks: Andrii Nakryiko.
-- Link to v2: https://lore.kernel.org/all/20250829014125.198653-1-yangfeng59949@163.com/
----
-Changes in v2:
-- Use libbpf_get_error, thanks: Alexei Starovoitov.
-- Link to v1: https://lore.kernel.org/all/20250828081507.1380218-1-yangfeng59949@163.com/
----
- tools/testing/selftests/bpf/test_loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/bpf/test_loader.c b/tools/testing/selftests/bpf/test_loader.c
-index 78423cf89e01..33d59c093a27 100644
---- a/tools/testing/selftests/bpf/test_loader.c
-+++ b/tools/testing/selftests/bpf/test_loader.c
-@@ -1083,7 +1083,7 @@ void run_subtest(struct test_loader *tester,
- 			link = bpf_map__attach_struct_ops(map);
- 			if (!link) {
- 				PRINT_FAIL("bpf_map__attach_struct_ops failed for map %s: err=%d\n",
--					   bpf_map__name(map), err);
-+					   bpf_map__name(map), -errno);
- 				goto tobj_cleanup;
- 			}
- 			links[links_cnt++] = link;
+Hannes
 -- 
-2.25.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
