@@ -1,55 +1,87 @@
-Return-Path: <linux-kernel+bounces-806622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E75B4997C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33B9B4993C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33FC7B024E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8C51B27C4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D2923ABA7;
-	Mon,  8 Sep 2025 19:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594DD1E231E;
+	Mon,  8 Sep 2025 19:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IW2jLAAo"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wf4LoP69"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7610238145;
-	Mon,  8 Sep 2025 19:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045BB1F09B6
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358662; cv=none; b=P15OPTPrA7XoC/RGLgMdFEupw38W3ygn0niaIG9QNTQS/RuRnO/jpgkWQdWKNyAWcew+eFGoR6HAHFArltGdDDZpPlfUohzi5lxhKi6e1t3LmUrpYdkz7pw1jPdL2ZT9ce0BTcxW10q1rL+8r+TQgurEZnY5JcHo8bjfEwtxjgM=
+	t=1757358138; cv=none; b=u8C8sVV1ukqr5vsIBagUCvdCeKKDI+M+r9g6X0Ncq0E+kxHn87FYd02zvjIfTLkdFx2usfm+Z4ZOfSJc9bnES3Z5RWPrtXyb26bhuwCYY3W9ehwhiFvp94vpsp0n7xbmt/QuiD7B5kB2gH5wWbOR9oJO2nrQS3noUkKDV33hG8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358662; c=relaxed/simple;
-	bh=tTBO3ID1sSLMqsaIgfCHRdhJIAbh9CxxbXuceyAkEeA=;
+	s=arc-20240116; t=1757358138; c=relaxed/simple;
+	bh=ts5qeNugaWa6uGzCR+IjT2cVsvL8CbHutq8gZ75GqDM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDcKRdXg7Ck3geVUP5CDb6SdW1oo48wHPPPC2YDix0vss+/7DSeFnQ2aIhJe6AcP5KJfmg8h/DDacjAXBczbgXCSHZvMPpQM10W/HAWi/l2qo9jG7f7P7HeWw0KocAXFLcrRK6Zbswj4NUq0P4OQkxR2JgwFiB6fi4nE+bmUvcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IW2jLAAo; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vh7euvs8y7bJuvh7euwvlT; Mon, 08 Sep 2025 21:01:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757358112;
-	bh=SbDQh+dq477IG9GnwF+qupUP95OW5dWCgqdgVseqW7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=IW2jLAAojlH8bcSUDIauQOCw9WZ5y1bfEoM7tzkd8h/ViBbPnBCmc/2SalNsr/vuU
-	 c6Xp2sHgFmPoN4CZue4uwI9laSf5AsmISLr8gguJwpIL0U1pdLHBuj9nFYs5nZZ58v
-	 McVOqwlubSypGuM1d0AP1PnLFDt3y0F84/8rtbmER4nfs9D05JnwRR1OsTRy4KzKxt
-	 z9uviNaAtnM1A9UMRuvIa0rdDgZVACBtDqo2lNIIpUQNJqbJth7GqASeHbYaSJWNJ9
-	 eAhwYohlA+BdnSI8WuSghSldt3pLSnleEc8V8oWiKumbomI+kf+u0rKcnlFMuiiiKY
-	 YNfjKsASSfxUA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 08 Sep 2025 21:01:52 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <762f7869-3c8b-44c3-a4f9-bf0d443673de@wanadoo.fr>
-Date: Mon, 8 Sep 2025 21:01:50 +0200
+	 In-Reply-To:Content-Type; b=JG7cUWGURyIrohcsA5ZealRixCsuRAHKz2QTb1WF0a1vZHHvWv5dl8zm5iL9IkQPigG/X4eJ3tMMCCOkDglhYMqvkrXNMp5umwRG0ViKGY3++CHJSUTeAb/QjKDxBW6HF1vz69Po81TvdCBTiut+IHSqjLkbeMBQ8hiEL/wFG6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wf4LoP69; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757358133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Gmtib10VgDsxeCsuKSbiFn6OKNGc3wSlE9js8H+6KJs=;
+	b=Wf4LoP69cH2Y1QHZKMTnFk5QsvP74+GxHnF5ovqJnf7JUugLfMpKftzu3fkO5KZo3pQIER
+	pmEbbkEJE9nGSlUjzz74Ts0vbPvkNzwYrUADRk+ygueTNwd0bdsYpAxZZ0w08W5+ACsgLv
+	GlfiqmHXfr+wM1f+orZ5MGZX7+rMItk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-209-8QB1aFPBP-CCArgkbFm_6g-1; Mon, 08 Sep 2025 15:02:09 -0400
+X-MC-Unique: 8QB1aFPBP-CCArgkbFm_6g-1
+X-Mimecast-MFC-AGG-ID: 8QB1aFPBP-CCArgkbFm_6g_1757358128
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b467f5173so33334925e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:02:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757358127; x=1757962927;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gmtib10VgDsxeCsuKSbiFn6OKNGc3wSlE9js8H+6KJs=;
+        b=BM18DAa3QzlMgQkMhByPoIk/jmNgALbT2IwgwDcgIZ0K2oI50J2NiHTPArS0QBSsNk
+         areJMS3RkBb3ljTDD3n6TJ0jFndLfB6djh7JOWhjeHNEzaPNCn9MaGyUkR47sGf2sQdZ
+         eIBB+GvojbfD5G6QygLHrIryW66dWlWqlkjdDRq0Er2zmmcQFPcZNA+mDIxe7IyUX3rt
+         eQfTv1KWSDN4NtyIgSSJyb73oWuKuCY/Q/OAuahhXpoOBEOs7yHQJdr1zXK5kQG9jl1D
+         Q4MAjG8Ff60ajrSE1Z8GIoRNQEUeZ91WDPtdUOMcaxg5VCyIW1aOvUGc82wwgTUytIXP
+         Nnvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCrv5F2pFG6l70emwrzMV9ziZeqeQXpcD3yrwEI8NRQj6LJ1E6MfwJWtyy3BAIiZZ3N0BxHcfJnM1H8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1odJaDohtEQzTDAQ9e9lcK7IiyOxPTfky5k7TsmOa4uZOl/fD
+	p/UDbKHCOi2zMjwG5VeBS6iUiqoOha67XEbvkHj2bbiDuhkG1rRUJqR5jJ3KwSehIw/P9R1ZkoP
+	SRJnM3dXEViqQB3Lmt/7PLJqNNN8pQbdM9CsPFG08waPP7DS3PHENeFFpKLHZNhA1Fw==
+X-Gm-Gg: ASbGnctbkHRzQpC7DGzhepb2DlViq3u8+MxjxzYk/yTwWK3MW5DLrHJrAYNvt9m356d
+	L10IyoAGpbNkwEpnUAvjTK/VUTop+LW0yZxEBdSKVX0Vc31BxP9oAeM13pI0S1qfjKcuWn1n+BU
+	zSd1s4tYe2J4bGpaRrW0ZJZ8t8boP+bZLYGvo63YAiy7il4/t8wlrDuII3wMxs9rxVAhJ6Q6T2X
+	8ld33J06jhKbvsHvqxwxuIG4H4IAuGAeYidAeZh25GJqXXi5ZioOfghUsiKJhjToqLMScLFmUYV
+	7z4SDPcYeNe0sfg53KGgURXfjAnWsK44jB8vLcyg6hSXua7nrcUhtJKYyNiH8qTJoO+qRuy8lka
+	ZjXRcmRzm8w/X4PH/Bb0XokH1OzEZaVxoK04F/FfdWnc4K6UA2uXAiem2wLbOHaac
+X-Received: by 2002:a05:600c:4694:b0:45d:d908:dc02 with SMTP id 5b1f17b1804b1-45ddded9c21mr75728635e9.31.1757358127380;
+        Mon, 08 Sep 2025 12:02:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEs8y1x+Exxj0+uBNj9bFOyP7D7vv4bDun2+4IppnvfFcz7vwjW0GdrRhrh+4rIlBPR8FzbqQ==
+X-Received: by 2002:a05:600c:4694:b0:45d:d908:dc02 with SMTP id 5b1f17b1804b1-45ddded9c21mr75728125e9.31.1757358126762;
+        Mon, 08 Sep 2025 12:02:06 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm449738625e9.19.2025.09.08.12.02.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 12:02:06 -0700 (PDT)
+Message-ID: <fcaa9042-3e64-4719-a8ab-a08d10b6e1a1@redhat.com>
+Date: Mon, 8 Sep 2025 21:02:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,76 +89,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] dmaengine: ti: edma: Fix memory allocation size for
- queue_priority_map
-To: Anders Roxell <anders.roxell@linaro.org>, peter.ujfalusi@gmail.com,
- vkoul@kernel.org, nathan@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, dan.carpenter@linaro.org, arnd@arndb.de,
- benjamin.copeland@linaro.org
-References: <20250829232132.GA1983886@ax162>
- <20250830094953.3038012-1-anders.roxell@linaro.org>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20250830094953.3038012-1-anders.roxell@linaro.org>
+Subject: Re: [PATCH v3 06/22] mm/mshare: Add a vma flag to indicate an mshare
+ region
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
+ bp@alien8.de, brauner@kernel.org, bsegall@google.com, corbet@lwn.net,
+ dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
+ ebiederm@xmission.com, hpa@zytor.com, jakub.wartak@mailbox.org,
+ jannh@google.com, juri.lelli@redhat.com, khalid@kernel.org,
+ liam.howlett@oracle.com, linyongting@bytedance.com,
+ lorenzo.stoakes@oracle.com, luto@kernel.org, markhemm@googlemail.com,
+ maz@kernel.org, mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
+ mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de, osalvador@suse.de,
+ pcc@google.com, peterz@infradead.org, pfalcato@suse.de, rostedt@goodmis.org,
+ rppt@kernel.org, shakeel.butt@linux.dev, surenb@google.com,
+ tglx@linutronix.de, vasily.averin@linux.dev, vbabka@suse.cz,
+ vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com,
+ willy@infradead.org, x86@kernel.org, xhao@linux.alibaba.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+ <20250820010415.699353-7-anthony.yznaga@oracle.com>
+ <5c43116f-fef9-426d-8c90-1a3a129f3d20@redhat.com>
+ <b99517e5-7b4b-494e-8ec6-918f933ddf50@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <b99517e5-7b4b-494e-8ec6-918f933ddf50@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 30/08/2025 à 11:49, Anders Roxell a écrit :
-> Fix a critical memory allocation bug in edma_setup_from_hw() where
-> queue_priority_map was allocated with insufficient memory. The code
-> declared queue_priority_map as s8 (*)[2] (pointer to array of 2 s8),
-> but allocated memory using sizeof(s8) instead of the correct size.
+On 08.09.25 20:56, Anthony Yznaga wrote:
 > 
-> This caused out-of-bounds memory writes when accessing:
->    queue_priority_map[i][0] = i;
->    queue_priority_map[i][1] = i;
 > 
-> The bug manifested as kernel crashes with "Oops - undefined instruction"
-> on ARM platforms (BeagleBoard-X15) during EDMA driver probe, as the
-> memory corruption triggered kernel hardening features on Clang.
+> On 9/8/25 11:45 AM, David Hildenbrand wrote:
+>> On 20.08.25 03:03, Anthony Yznaga wrote:
+>>> From: Khalid Aziz <khalid@kernel.org>
+>>>
+>>> An mshare region contains zero or more actual vmas that map objects
+>>> in the mshare range with shared page tables.
+>>>
+>>> Signed-off-by: Khalid Aziz <khalid@kernel.org>
+>>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+>>> ---
+>>
+>> Why can't we query the mapping instead?
+>>
 > 
-> Change the allocation to use sizeof(*queue_priority_map) which
-> automatically gets the correct size for the 2D array structure.
 > 
-> Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->   drivers/dma/ti/edma.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> The bit check is nice and zippy since vma_is_mshare() is called for
+> every fault, but it's not required. The check could be made to be:
 > 
-> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-> index 3ed406f08c44..552be71db6c4 100644
-> --- a/drivers/dma/ti/edma.c
-> +++ b/drivers/dma/ti/edma.c
-> @@ -2064,8 +2064,8 @@ static int edma_setup_from_hw(struct device *dev, struct edma_soc_info *pdata,
->   	 * priority. So Q0 is the highest priority queue and the last queue has
->   	 * the lowest priority.
->   	 */
-> -	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8),
-> -					  GFP_KERNEL);
-> +	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1,
-> +					  sizeof(*queue_priority_map), GFP_KERNEL);
->   	if (!queue_priority_map)
->   		return -ENOMEM;
->   
+> 	return vma->vm_ops == &msharefs_vm_ops;
 
-Hi,
+Yes, like we do in secretmem_mapping(), for example.
 
-for what it worth:
-Acked-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+(there, we also have a vma_is_secretmem()).
 
-and for the records:
-  
-https://lore.kernel.org/all/8c95c485be294e64457606089a2a56e68e2ebd1a.1653153959.git.christophe.jaillet@wanadoo.fr/
+-- 
+Cheers
 
-;-)
-
-IMHO, the applied solution is cleaner than mine.
-
-Only the Fixes tag could be more relevant (because, the issue is older 
-than 2b6b3b742019), but I don't think it will make any difference.
-
-CJ
+David / dhildenb
 
 
