@@ -1,177 +1,426 @@
-Return-Path: <linux-kernel+bounces-806821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA2FB49C1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338EBB49C39
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDDDF1669F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227071C20F20
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BFE3203AE;
-	Mon,  8 Sep 2025 21:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDEE322C67;
+	Mon,  8 Sep 2025 21:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J0bK8NoP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bZcPBzqu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j7KRMTbT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D62320CDD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A350C322A32;
+	Mon,  8 Sep 2025 21:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757367154; cv=none; b=lzmBj8p3VyFN0VThykJobjEg7Gz1WGOYEu5UMKLW7eT2wglmKDl6ZAutzZxgtihOXtph0JqmWop51iBEoFMvkc29PRUiajuOnRz8i7k6CrBQ1yWDHv3zIlUV7qAWg5jvUy8mx1vH7EOcePwKfszeiRV2zNMy90PrtWFT4YIns7w=
+	t=1757367230; cv=none; b=h4fX2mgUB2QvI7GegtUPS3kyIOYgnmWVn/69EQllTj8q2JiyZktFPVmDYU+uiKLvG4iRtjecjIGeRTJadKAS288y39FfDCW4NWRlVoejJHPzpPMKEokcImqAAePFKuyqX+ujCMJ/E2f+KY0wUC7OpXtbnVrpLcaVNqs4zJa6arg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757367154; c=relaxed/simple;
-	bh=idnemD5Smqj2fqgK3kd8RGUZA0i77cquvlbmg+aJvuc=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=GrW00KRMiEigs5Uo/5TP1jiPbWJFqdoDxUxcRGtkKmzNnXyLeI1XGcIZfe4NjYYoPIdeZVQcj1GT+SmOedH6L8gX6hiT81zI/jmmnNXekeXmYKXiq6nc/ttx2zUB8jIbwIeMSPM0qG0bdSds8IzGQVIhd1nA0xTdA9jv1lnaIME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J0bK8NoP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bZcPBzqu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250908212927.247766392@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757367151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=KQeoIGYfqggUnusPasXjuw542cxf4ZnWphmxh0+lZYc=;
-	b=J0bK8NoPyGFhuAvZMGm1QAnBsTrtqvIDNYMkzEiatVmJ5P/uPWiqYB8afEVJJcAqx/vw64
-	D1AtiU9UZgYDnKOUR5BKefeVZA8TfBD8qxiyHUUz2/Fp2BlkDko7pjkfX9bQvIovbBu3Mt
-	RO0WpipcbyOUdh0muGSL7NYAE60w1AkrN3XZX2ifTJWUKLhGbIxIf6D6NOulR6TsOrBDm/
-	7MDE+kLS2C9w6JUzDmPRfY9dC3fnCJULVixBwT5No/fVTc24V+XjtL7edbIwROnOGUqXRQ
-	UAYyF/zykNnPOKVDrO8ZhWyM5QTwWFMkKCIuLJCUZ/A5Tfhb8U8MfdvIPRiBIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757367151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=KQeoIGYfqggUnusPasXjuw542cxf4ZnWphmxh0+lZYc=;
-	b=bZcPBzquwLSLMVr4tUjxyArG2k6OnVzlGJZAVXDSriZyAvVAhG32IA3d09JggXRPw9aEKm
-	y6jDTVIfy/Aa9MAA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- x86@kernel.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V4 31/36] asm-generic: Provide generic TIF infrastructure
-References: <20250908212737.353775467@linutronix.de>
+	s=arc-20240116; t=1757367230; c=relaxed/simple;
+	bh=cWjZ/0tujnxmnc8VcuuOQHPCItl8OhAMSkPsY3SIRCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SgYi8A5FuxvmoxppEjSemmrKKzkKjIr8ZCkuxHhGmxxVgX61v3t8tv39VWQ/gD2XkTYOuWAyh1XpS82pL/FWmXclbKljm64vxaz0uBuP/9BlF2daDJO8hw7tvKic8O/ijlQqUUs/Up3Py66f67wL7H1zLQmFH+S3JYMQUxEOTkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j7KRMTbT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=YMBiXsmw3+pphIcAsuGv9ZDurAs5Mc73MEcRV/bqKLE=; b=j7KRMTbTSoct2yth0mxl6n/Dun
+	WCgeohzSmkryZCDkKbfYbPpadCGiwb3cn1OZ8JKXD9PrZSkVELmfRJoZdF14k/it9ptGmiCDGkxvn
+	Ivj/q2tQe9VC7ZUOi0D+vl3mPlFncfvjxMIzTGcZs+vq1zLOJOnSI+TsCNgrov6bSSiiWQG6LgNKR
+	y0dZgtqtEX25ZvmtSLD0f25c+w+/ZIy7OYJny/FsDkK94j+xtASkN3C8lmVqu7kjsPbOQloo7qbG9
+	kkUqvhNMXKrDuLGwznjZf+MqBmaMiO156wXKvqLtUgVVOmLkjKXdCeRb0Yq8rrvnrcoYFVMqRrdnx
+	oQvrAHdQ==;
+Received: from griffoul by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvjUg-0000000DOEe-3ILa;
+	Mon, 08 Sep 2025 21:33:46 +0000
+From: Fred Griffoul <griffoul@infradead.org>
+To: kvm@vger.kernel.org
+Cc: griffoul@gmail.com,
+	Fred Griffoul <fgriffo@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 5/5] KVM: selftests: Add nested VMX APIC cache invalidation test
+Date: Mon,  8 Sep 2025 22:32:30 +0100
+Message-ID: <20250908213241.3189113-6-griffoul@infradead.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250908213241.3189113-1-griffoul@infradead.org>
+References: <20250908213241.3189113-1-griffoul@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon,  8 Sep 2025 23:32:30 +0200 (CEST)
+Content-Transfer-Encoding: 8bit
 
-Common TIF bits do not have to be defined by every architecture. They can
-be defined in a generic header.
+From: Fred Griffoul <fgriffo@amazon.co.uk>
 
-That allows adding generic TIF bits without chasing a gazillion of
-architecture headers, which is again a unjustified burden on anyone who
-works on generic infrastructure as it always needs a boat load of work to
-keep existing architecture code working when adding new stuff.
+Introduce selftest to verify nested VMX APIC virtualization page cache
+invalidation and refresh mechanisms for pfncache implementation.
 
-While it is not as horrible as the ignorance of the generic entry
-infrastructure, it is a welcome mechanism to make architecture people
-rethink their approach of just leaching generic improvements into
-architecture code and thereby making it accumulatingly harder to maintain
-and improve generic code. It's about time that this changes.
+The test exercises the nested VMX APIC cache invalidation path through:
 
-Provide the infrastructure and split the TIF space in half, 16 generic and
-16 architecture specific bits.
+- L2 guest setup: creates a nested environment where L2 accesses the
+  APIC access page that is cached by KVM using pfncache.
 
-This could probably be extended by TIF_SINGLESTEP and BLOCKSTEP, but those
-are only used in architecture specific code. So leave them alone for now.
+- Cache invalidation triggers: a separate update thread periodically
+  invalidates the cached pages using either:
+   - madvise(MADV_DONTNEED) to trigger MMU notifications.
+   - vm_mem_region_move() to trigger memslot changes.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The test validates that:
+- L2 can successfully access APIC page before and after invalidation.
+- KVM properly handles cache refresh without guest-visible errors.
+- Both MMU notification and memslot change invalidation paths work
+  correctly.
 
+Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
 ---
- arch/Kconfig                          |    4 ++
- include/asm-generic/thread_info_tif.h |   48 ++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../selftests/kvm/x86/vmx_apic_update_test.c  | 302 ++++++++++++++++++
+ 2 files changed, 303 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/x86/vmx_apic_update_test.c
 
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1730,6 +1730,10 @@ config ARCH_VMLINUX_NEEDS_RELOCS
- 	  relocations preserved. This is used by some architectures to
- 	  construct bespoke relocation tables for KASLR.
- 
-+# Select if architecture uses the common generic TIF bits
-+config HAVE_GENERIC_TIF_BITS
-+       bool
-+
- source "kernel/gcov/Kconfig"
- 
- source "scripts/gcc-plugins/Kconfig"
+diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+index 90f03f00cb04..5d4505c7f6f0 100644
+--- a/tools/testing/selftests/kvm/Makefile.kvm
++++ b/tools/testing/selftests/kvm/Makefile.kvm
+@@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
+ TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
+ TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
+ TEST_GEN_PROGS_x86 += x86/aperfmperf_test
++TEST_GEN_PROGS_x86 += x86/vmx_apic_update_test
+ TEST_GEN_PROGS_x86 += access_tracking_perf_test
+ TEST_GEN_PROGS_x86 += coalesced_io_test
+ TEST_GEN_PROGS_x86 += dirty_log_perf_test
+diff --git a/tools/testing/selftests/kvm/x86/vmx_apic_update_test.c b/tools/testing/selftests/kvm/x86/vmx_apic_update_test.c
+new file mode 100644
+index 000000000000..22f82cf6dd0c
 --- /dev/null
-+++ b/include/asm-generic/thread_info_tif.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_GENERIC_THREAD_INFO_TIF_H_
-+#define _ASM_GENERIC_THREAD_INFO_TIF_H_
++++ b/tools/testing/selftests/kvm/x86/vmx_apic_update_test.c
+@@ -0,0 +1,302 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * vmx_apic_update_test
++ *
++ * Copyright (C) 2025, mazon.com, Inc. or its affiliates. All Rights Reserved.
++ *
++ * Test L2 guest APIC access page writes with concurrent MMU
++ * notifications and memslot move updates.
++ */
++#include <pthread.h>
++#include "test_util.h"
++#include "kvm_util.h"
++#include "processor.h"
++#include "vmx.h"
 +
-+#include <vdso/bits.h>
++#define VAPIC_GPA	0xc0000000
++#define VAPIC_SLOT	1
 +
-+/* Bits 16-31 are reserved for architecture specific purposes */
++#define L2_GUEST_STACK_SIZE 64
 +
-+#define TIF_NOTIFY_RESUME	0	// callback before returning to user
-+#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
++#define L2_DELAY	(100)
 +
-+#define TIF_SIGPENDING		1	// signal pending
-+#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
++static void l2_guest_code(void)
++{
++	uint32_t *vapic_addr = (uint32_t *) (VAPIC_GPA + 0x80);
 +
-+#define TIF_NOTIFY_SIGNAL	2	// signal notifications exist
-+#define _TIF_NOTIFY_SIGNAL	BIT(TIF_NOTIFY_SIGNAL)
++	/* Unroll the loop to avoid any compiler side effect */
 +
-+#define TIF_MEMDIE		3	// is terminating due to OOM killer
-+#define _TIF_MEMDIE		BIT(TIF_MEMDIE)
++	WRITE_ONCE(*vapic_addr, 1 << 0);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#define TIF_NEED_RESCHED	4	// rescheduling necessary
-+#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
++	WRITE_ONCE(*vapic_addr, 1 << 1);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#ifdef HAVE_TIF_NEED_RESCHED_LAZY
-+# define TIF_NEED_RESCHED_LAZY	5	// Lazy rescheduling needed
-+# define _TIF_NEED_RESCHED_LAZY	BIT(TIF_NEED_RESCHED_LAZY)
-+#endif
++	WRITE_ONCE(*vapic_addr, 1 << 2);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#ifdef HAVE_TIF_POLLING_NRFLAG
-+# define TIF_POLLING_NRFLAG	6	// idle is polling for TIF_NEED_RESCHED
-+# define _TIF_POLLING_NRFLAG	BIT(TIF_POLLING_NRFLAG)
-+#endif
++	WRITE_ONCE(*vapic_addr, 1 << 3);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#define TIF_USER_RETURN_NOTIFY	7	// notify kernel of userspace return
-+#define _TIF_USER_RETURN_NOTIFY	BIT(TIF_USER_RETURN_NOTIFY)
++	WRITE_ONCE(*vapic_addr, 1 << 4);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#define TIF_UPROBE		8	// breakpointed or singlestepping
-+#define _TIF_UPROBE		BIT(TIF_UPROBE)
++	WRITE_ONCE(*vapic_addr, 1 << 5);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#define TIF_PATCH_PENDING	9	// pending live patching update
-+#define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
++	WRITE_ONCE(*vapic_addr, 1 << 6);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#ifdef HAVE_TIF_RESTORE_SIGMASK
-+# define TIF_RESTORE_SIGMASK	10	// Restore signal mask in do_signal() */
-+# define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
-+#endif
++	WRITE_ONCE(*vapic_addr, 0);
++	udelay(msecs_to_usecs(L2_DELAY));
 +
-+#endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
++	/* Exit to L1 */
++	vmcall();
++}
++
++static void l1_guest_code(struct vmx_pages *vmx_pages)
++{
++	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
++	uint32_t control, exit_reason;
++
++	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
++	GUEST_ASSERT(load_vmcs(vmx_pages));
++	prepare_vmcs(vmx_pages, l2_guest_code,
++		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
++
++	/* Enable APIC access */
++	control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
++	control |= CPU_BASED_ACTIVATE_SECONDARY_CONTROLS;
++	vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
++	control = vmreadz(SECONDARY_VM_EXEC_CONTROL);
++	control |= SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
++	vmwrite(SECONDARY_VM_EXEC_CONTROL, control);
++	vmwrite(APIC_ACCESS_ADDR, VAPIC_GPA);
++
++	GUEST_SYNC1(0);
++	GUEST_ASSERT(!vmlaunch());
++again:
++	exit_reason = vmreadz(VM_EXIT_REASON);
++	if (exit_reason == EXIT_REASON_APIC_ACCESS) {
++		uint64_t guest_rip = vmreadz(GUEST_RIP);
++		uint64_t instr_len = vmreadz(VM_EXIT_INSTRUCTION_LEN);
++
++		vmwrite(GUEST_RIP, guest_rip + instr_len);
++		GUEST_ASSERT(!vmresume());
++		goto again;
++	}
++
++	GUEST_SYNC1(exit_reason);
++	GUEST_ASSERT(exit_reason == EXIT_REASON_VMCALL);
++	GUEST_DONE();
++}
++
++static const char *progname;
++static int update_period_ms = L2_DELAY / 4;
++
++struct update_control {
++	pthread_mutex_t mutex;
++	pthread_cond_t start_cond;
++	struct kvm_vm *vm;
++	bool running;
++	bool started;
++	int updates;
++};
++
++static void wait_for_start_signal(struct update_control *ctrl)
++{
++	pthread_mutex_lock(&ctrl->mutex);
++	while (!ctrl->started)
++		pthread_cond_wait(&ctrl->start_cond, &ctrl->mutex);
++
++	pthread_mutex_unlock(&ctrl->mutex);
++	printf("%s: starting update\n", progname);
++}
++
++static bool is_running(struct update_control *ctrl)
++{
++	return READ_ONCE(ctrl->running);
++}
++
++static void set_running(struct update_control *ctrl, bool running)
++{
++	WRITE_ONCE(ctrl->running, running);
++}
++
++static void signal_thread_start(struct update_control *ctrl)
++{
++	pthread_mutex_lock(&ctrl->mutex);
++	if (!ctrl->started) {
++		ctrl->started = true;
++		pthread_cond_signal(&ctrl->start_cond);
++	}
++	pthread_mutex_unlock(&ctrl->mutex);
++}
++
++static void *update_madvise(void *arg)
++{
++	struct update_control *ctrl = arg;
++	void *hva;
++
++	wait_for_start_signal(ctrl);
++
++	hva = addr_gpa2hva(ctrl->vm, VAPIC_GPA);
++	memset(hva, 0x45, ctrl->vm->page_size);
++
++	while (is_running(ctrl)) {
++		usleep(update_period_ms * 1000);
++		madvise(hva, ctrl->vm->page_size, MADV_DONTNEED);
++		ctrl->updates++;
++	}
++
++	return NULL;
++}
++
++static void *update_move_memslot(void *arg)
++{
++	struct update_control *ctrl = arg;
++	uint64_t gpa = VAPIC_GPA;
++
++	wait_for_start_signal(ctrl);
++
++	while (is_running(ctrl)) {
++		usleep(update_period_ms * 1000);
++		gpa += 0x10000;
++		vm_mem_region_move(ctrl->vm, VAPIC_SLOT, gpa);
++		ctrl->updates++;
++	}
++
++	return NULL;
++}
++
++static void run(void * (*update)(void *), const char *name)
++{
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	struct vmx_pages *vmx;
++	struct update_control ctrl;
++	struct ucall uc;
++	vm_vaddr_t vmx_pages_gva;
++	pthread_t update_thread;
++	bool done = false;
++
++	vm = vm_create_with_one_vcpu(&vcpu, l1_guest_code);
++
++	/* Allocate VMX pages */
++	vmx = vcpu_alloc_vmx(vm, &vmx_pages_gva);
++
++	/* Allocate memory and create VAPIC memslot */
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, VAPIC_GPA,
++				    VAPIC_SLOT, 1, 0);
++
++	/* Allocate guest page table */
++	virt_map(vm, VAPIC_GPA, VAPIC_GPA, 1);
++
++	/* Set up nested EPT */
++	prepare_eptp(vmx, vm, 0);
++	nested_map_memslot(vmx, vm, 0);
++	nested_map_memslot(vmx, vm, VAPIC_SLOT);
++	nested_map(vmx, vm, VAPIC_GPA, VAPIC_GPA, vm->page_size);
++
++	vcpu_args_set(vcpu, 1, vmx_pages_gva);
++
++	pthread_mutex_init(&ctrl.mutex, NULL);
++	pthread_cond_init(&ctrl.start_cond, NULL);
++	ctrl.vm = vm;
++	ctrl.running = true;
++	ctrl.started = false;
++	ctrl.updates = 0;
++
++	pthread_create(&update_thread, NULL, update, &ctrl);
++
++	printf("%s: running %s (tsc_khz %lu)\n", progname, name, guest_tsc_khz);
++
++	while (!done) {
++		vcpu_run(vcpu);
++
++		switch (vcpu->run->exit_reason) {
++		case KVM_EXIT_IO:
++			switch (get_ucall(vcpu, &uc)) {
++			case UCALL_SYNC:
++				printf("%s: sync(%ld)\n", progname, uc.args[0]);
++				if (uc.args[0] == 0)
++					signal_thread_start(&ctrl);
++				break;
++			case UCALL_ABORT:
++				REPORT_GUEST_ASSERT(uc);
++				/* NOT REACHED */
++			case UCALL_DONE:
++				done = true;
++				break;
++			default:
++				TEST_ASSERT(false, "Unknown ucall %lu", uc.cmd);
++			}
++			break;
++		case KVM_EXIT_MMIO:
++			/* Handle APIC MMIO access after memslot move */
++			printf
++			    ("%s: APIC MMIO access at 0x%llx (memslot move effect)\n",
++			     progname, vcpu->run->mmio.phys_addr);
++			break;
++		default:
++			TEST_FAIL("%s: Unexpected exit reason: %d (flags 0x%x)",
++				  progname,
++				  vcpu->run->exit_reason, vcpu->run->flags);
++		}
++	}
++
++	set_running(&ctrl, false);
++	if (!ctrl.started)
++		signal_thread_start(&ctrl);
++	pthread_join(update_thread, NULL);
++	printf("%s: completed with %d updates\n", progname, ctrl.updates);
++
++	pthread_mutex_destroy(&ctrl.mutex);
++	pthread_cond_destroy(&ctrl.start_cond);
++	kvm_vm_free(vm);
++}
++
++int main(int argc, char *argv[])
++{
++	int opt_madvise = 0;
++	int opt_memslot_move = 0;
++
++	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
++	TEST_REQUIRE(kvm_cpu_has_ept());
++
++	if (argc == 1) {
++		opt_madvise = 1;
++		opt_memslot_move = 1;
++	} else {
++		int opt;
++
++		while ((opt = getopt(argc, argv, "amp:")) != -1) {
++			switch (opt) {
++			case 'a':
++				opt_madvise = 1;
++				break;
++			case 'm':
++				opt_memslot_move = 1;
++				break;
++			case 'p':
++				update_period_ms = atoi(optarg);
++				break;
++			default:
++				exit(1);
++			}
++		}
++	}
++
++	TEST_ASSERT(opt_madvise
++		    || opt_memslot_move, "No update test configured");
++
++	progname = argv[0];
++
++	if (opt_madvise)
++		run(update_madvise, "madvise");
++
++	if (opt_memslot_move)
++		run(update_move_memslot, "move memslot");
++
++	return 0;
++}
+-- 
+2.51.0
 
 
