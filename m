@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-805756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438DBB48CFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:12:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB6AB48D04
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8523C1890244
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD9D3C5931
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26462FE564;
-	Mon,  8 Sep 2025 12:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2042FDC58;
+	Mon,  8 Sep 2025 12:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dmq0prK8"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GDdS1fPl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1702EA752;
-	Mon,  8 Sep 2025 12:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050592E92D9;
+	Mon,  8 Sep 2025 12:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333519; cv=none; b=PjAa7GxuC7f+6LEEQPXgVvma/T4ik8IRwQ971G2dTP2AvbC8/IvS4GGMzRZRPdJQ6tRef7z5yS3JBkMofDM9NusnszFYoDkSO/2B//14TlmQWdedR4+lx/pRDIgudJXGojQafYVbrnyq9PXVq/6I3/AIO6EIVzfJ0P6m3QhpEYc=
+	t=1757333535; cv=none; b=YlgaDLW0vv+fziLXROLDxedztlYwgqdsVcHFodkckn9rUf06g0haH0+4nFRIxK0ufXnqWKrwNQR7dRBzu2GnWMMlFA6ahIkltrIdLDxFOb4rjBn+vMDfh8NmXZ8zFSXacPVzNzHs3VTXsEo2dC1iecgEp1O2LYeo/1fmGuGSXxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333519; c=relaxed/simple;
-	bh=PwwxKGLfVt4uIzhG+nW45gzD4DREaCAJHFYmbW9vFuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KD93EO41cjBhgCylneYwRCi5o8d5rhLw20CzwrU6x05QnBaGVwopDwMVEMwMMb3LUcPFodkswK7gj0qcDfYvlYA5WcCvd3+se6ywBdmM+DkXhV2oLk6pEphadrwNlWbY8+JLhDJyuWC2DGI+cPoRU53Oj7EUKMWB8Vo+5P2R6bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dmq0prK8; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5607a240c75so4309941e87.2;
-        Mon, 08 Sep 2025 05:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757333516; x=1757938316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vGIqTfiCgUOw2OrpuXsfg2pu2/xENru3s7eFwZpdpBI=;
-        b=Dmq0prK83euXaCoAfiZlyRIno4y7PtVNYD9aWnN2cMQ/NfvafLt1YD5LCsulFa36tV
-         CS9SDGJCTLkBTuBwhLEO69c42XnidvVsU702ffmyFkqD+ya5cfTeDKZWiI8k3uCugWXZ
-         dcbIH21FYqUCvRFYyZy3v9SARUaNyBnfSUWw6oPhyZqFoldAv3qULbNcm2+VKsdyvT3c
-         vclC8BdWvmPQvDpFDLqjEKmOXj7SD7GXnaGvME/OBhDWV7H3NmnJkjBjujoBBNjwy7fV
-         HUMRWd9wLYsxQ5RiX88B8q1dkVnSocFnZNei97HPVFvme7Dsh30CePqMlZipqcIXu23n
-         vOVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757333516; x=1757938316;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vGIqTfiCgUOw2OrpuXsfg2pu2/xENru3s7eFwZpdpBI=;
-        b=byDJE+Gu0BUPP17xfI/QpZRPmTfnDzoZem3o9095BioaPQCG8vMDN5idD3yqJTq9A8
-         8fmXT1yK2WddknNKaAZ/M2vU7ZOWJqqaZNPpIyV9yW5K1wYHoawfzm2pxSjHDZY93owb
-         1nO8X4DnIRT93qz4M/5ttuwH1OUNYhg3rGaGtxMTVH3F7j36Pv3e4Cd5yZHh45jNHME/
-         Idr+SDkgTgiZXupQglP8bkNNa7mWlfjy7olWvIS/Nl0eMNkmaeUJkUwopvtq6pnn3/LM
-         Yv9tWfyDiUFLe0PIZN8mQTIzr/Zl7s6Gx6etTtQTfkCu9FY3vRKb7Ziq1gT7Hxfwf4eA
-         D97A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAZs5zDQ7srJr7e4QQrT1RoLmibw00aut6bnlt9vWQmT//VAbFDJbXNdgi6G7++9eSX+6rrxtPoKw=@vger.kernel.org, AJvYcCWDQpIYdkyXpOuUOeYNpl07XuGbdXLjecSQto/g0L57m7u2+p2S62WJ3dFEj1HnT1wM8k50V53NH6MFGFJj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/zFblkfGzzrctKbbYwHtNj1O+P/8ESf0+uffGnF8tfppIiEVr
-	w3LgWSC+mJtdX7PiiEYCaHvmMpZ29owGx90VONPNWCnv3omP+dZ16we1ZDwSbE+vHI2PpA==
-X-Gm-Gg: ASbGncvaUHpfikdIPONu98kbW7b8ND3vwWKsMco+sWMsPUtzzyQJxRUxCr8jPB7Cs6g
-	GOCQ3zM4Obnef8zYOt486mN36MZiTYzwB8ayNu+3Gf5W1ZScc+Xv5COuTzXW49xp0Es8yJBSkCM
-	RK+6wtaGE1J7x2dzX3mBgQl2A9a5c7Ri3Q2x2X3JGSQUdvhQge9GbGucCTAPnZsl5yBzcpLotf1
-	3WKkY1pO16uASl+gCEq4kh9R/Tp9fSpIRBnTslx400sUtRLFKJnzK/qNHryihN47Q0KrSK1y89e
-	aD7rIJKlblvdC4JJHji3/6v/nM8tRZVigUMh1Fazmt0egVNQfOC2gIgBzHqMBR4qNS2LSf+L8aY
-	Nagj3PYtI6lrpUHiWchph8Pzuk9xYdxP/rMgyexE=
-X-Google-Smtp-Source: AGHT+IGqDPFvEpemRKPbrSA6WbGN/lMNtyNud8Sdfr8h9nkR0+GJ8mjVZCwf6E7Kc39/Poufs4qn4g==
-X-Received: by 2002:a05:6512:220b:b0:55f:6f5b:8e65 with SMTP id 2adb3069b0e04-562619d7fcemr2361565e87.30.1757333515395;
-        Mon, 08 Sep 2025 05:11:55 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([88.201.206.77])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-564572ac136sm1110235e87.69.2025.09.08.05.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 05:11:55 -0700 (PDT)
-From: Artem Shimko <artyom.shimko@gmail.com>
-To: 
-Cc: Artem Shimko <artyom.shimko@gmail.com>,
-	Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] i2c: amd-mp2-pci: Simplify PM code using DEFINE_RUNTIME_DEV_PM_OPS
-Date: Mon,  8 Sep 2025 15:11:51 +0300
-Message-ID: <20250908121153.754120-1-artyom.shimko@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202509070541.ilqlMkml-lkp@intel.com>
-References: <202509070541.ilqlMkml-lkp@intel.com>
+	s=arc-20240116; t=1757333535; c=relaxed/simple;
+	bh=A1nEkZqKBTKgjMS5u3/csdHzUSVuykKtfEll9i1YIcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S7Nymo7UlFgt9Irzj9m3XMX+Qe2iv80KSm7jLYpm7//xkOIAX5rrN7CALLgFz8p1aSYfmVpzoFuSUBwxIAoY4XplXceQRY7jFDuyW5zDVx56UPIklZ8xi9x0QQXpulWAdh/rItzMZHpeluJQF7T77hSVnUPi97bimUNKMhDRu1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GDdS1fPl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757333532;
+	bh=A1nEkZqKBTKgjMS5u3/csdHzUSVuykKtfEll9i1YIcw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GDdS1fPlVlqjGWv2o5Qt8uhh3csjD7EsLoJsufaiK5kR+7SYJMgeZGxaw4qTXF7cf
+	 HvILRv/0iUZG9uoGhVD1oKSBNo4+aD/wOtb2ILTvxaaowMlTdXmTkO0/iXQYrFVCGU
+	 HNsfA1kCThqWuGka0ethtZ5HXV+LgUO4FNX+DDCEBDUZYwHNht2hxAzJPaP3GWBdlN
+	 6mVrm1Vx3xcoKeLvjnJFDsLW/KthdOSAhjREQ7WmXFaE+7VJyifoBKjPQpRF1KxECm
+	 dPOBw+Enfn0sYs6Dd7nojakXLENLIskBnhvMTbLrRsx3H/jNmRW1RxezQo1UBSFafy
+	 TMNSrAw3PgV8g==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B695017E00A6;
+	Mon,  8 Sep 2025 14:12:11 +0200 (CEST)
+Date: Mon, 8 Sep 2025 14:11:56 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Matthew Brost"
+ <matthew.brost@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Steven Price"
+ <steven.price@arm.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ "Liviu Dudau" <liviu.dudau@arm.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20250908141156.3dbdea0b@fedora>
+In-Reply-To: <DCNDGFE7RR5Q.X3PCDW0KIX89@kernel.org>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+	<20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+	<20250905152505.005a610d@fedora>
+	<CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+	<DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org>
+	<aL1pSFB9iBsfHFM_@google.com>
+	<DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org>
+	<aL1u_YxOkuj1kIq6@google.com>
+	<20250908091140.44856fde@fedora>
+	<aL6TJYRmWIkQXujj@google.com>
+	<DCNAE3CJMEJ0.JH1F0MJABXQI@kernel.org>
+	<20250908122002.2c80dd3a@fedora>
+	<DCNDGFE7RR5Q.X3PCDW0KIX89@kernel.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello maintainers and reviewers,
+On Mon, 08 Sep 2025 13:11:32 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-Fix build errors when CONFIG_PM is disabled by:
+> On Mon Sep 8, 2025 at 12:20 PM CEST, Boris Brezillon wrote:
+> > I'm not following. Yes there's going to be a
+> > drm_gpuva_unlink_defer_put() that skips the
+> >
+> >         va->vm_bo = NULL;
+> >         drm_gpuvm_bo_put(vm_bo);
+> >
+> > and adds the gpuva to a list for deferred destruction. But I'm not
+> > seeing where the leak is. Once the gpuva has been put in this list,
+> > there should be no existing component referring to this object, and it's
+> > going to be destroyed or recycled, but not re-used as-is.  
+> 
+> I'm saying exactly what you say: "has to be a special unlink function" ->
+> drm_gpuva_unlink_defer_put(). :)
 
-Removing #ifdef CONFIG_PM guards around suspend/resume function
-declarations in i2c-amd-mp2.h
+I don't see how calling drm_gpuva_unlink() instead of
+drm_gpuva_unlink_defer_put() would leak the vm_bo though. I mean, it
+would certainly be wrong because you'd be calling cleanup methods that
+are expected to be called with the resv lock held from the
+dma-signalling path, but that's a different issue, no? Anyway, if we're
+going to allow gpuva cleanup/destruction deferral, we'll either need to
+do that through a different function, or through some specialization of
+drm_gpuva_unlink() that does things differently based on the
+immediate/non-immediate mode (or some other flag).
 
-Removing #ifdef CONFIG_PM guards around suspend/resume function
-assignments in i2c-amd-mp2-plat.c
+> 
+> >> Yeah, we really want to avoid that.  
+> >
+> > I think I agree that we want to avoid it, but I'm not too sure about
+> > the solution that involves playing with vm_bo::kref. I'm particularly
+> > worried by the fact drivers can iterate the evict/extobj lists
+> > directly, and can thus see objects scheduled for destruction. I know
+> > there's a gpuvm_bo_is_dead() helper, and drivers should be aware of the
+> > risks, but I don't feel comfortable about this.  
+> 
+> No, drivers can't iterate the evict/extobj lists directly; or at least this is
+> not intended by GPUVM's API and if drivers do so, this is considered peeking
+> into GPUVM internals, so drivers are on their own anyways.
+> 
+> Iterators, such as for_each_vm_bo_in_list() are not exposed to drivers.
 
-Keeping the suspend/resume function pointers defined but unused
-when CONFIG_PM is disabled, as the common structure should have
-consistent layout regardless of PM configuration
+Okay, that's a good thing. I thought Xe was doing some funky stuff with
+the list...
 
-This change reduces preprocessor conditional complexity and ensures
-better code elimination for non-PM configurations while maintaining
-build correctness in all config scenarios.
-
-Thank you for your consideration.
-
-Best regards,
-Artem Shimko
-
-ChangeLog:
-        v2:
-        * Fixed build errors when CONFIG_PM is disabled by properly
-        handling suspend/resume function pointers in i2c-amd-mp2.h
-        and i2c-amd-mp2-plat.c
-
-drivers/i2c/busses/i2c-amd-mp2.h | 4 +---
-drivers/i2c/busses/i2c-amd-mp2-pci.c | 9 +++------
-drivers/i2c/busses/i2c-amd-mp2-plat.c | 5 +----
-3 files changed, 5 insertions(+), 13 deletions(-)
-
--- 
-2.43.0
+> 
+> > And since we've mentioned the possibility of having to support
+> > gpuva destruction deferral too, I'm wondering it wouldn't be cleaner
+> > to just go for this approach from the start (gpuva owns a ref to a
+> > vm_bo, which gets released when the gpuva object is released).  
 
 
