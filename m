@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-805346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200D3B48761
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2215CB487B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14BB91887E06
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8431B2171B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F9727AC5C;
-	Mon,  8 Sep 2025 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7o0TxS5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A952ECD3F;
+	Mon,  8 Sep 2025 08:59:43 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4991531C8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8C224891;
+	Mon,  8 Sep 2025 08:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320792; cv=none; b=eB1BCghMMNYgBFB7P0hnBeUd3H0P9ABP1zYMPHZfRF+oRWOvJXDy90qUiJUi0bb0LS+8vroV6FGvqAESwGlihUn2LDK2/TN+fBXkeRCacn9nH3oVnXjqlQhLZcVxQPGwaxR3+4vFcK/DsNgwAYTT3ch2wM2X0mFwBHmxOnlARTE=
+	t=1757321983; cv=none; b=WkTB3Up/pxaDEf6OUC7Nvz2KexHLBoByniVShibMeAUZ7Ga/ikj2tVy74CyaJ2amRVtTvwhzDVrJfK6ShQ5V42psL84SiLKaEGW0fUW/cjMbfwoUpDUrJPQXXYFO2EyUbA44rzB6volIug8QtdkX9IAR25EXPVaNy7GPkeylqaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320792; c=relaxed/simple;
-	bh=KkCnrtHF6ChEI9N/28CbZ7v5UfJS88AZj6T3uigboOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BO3kExdE+3SDqmdQb1qvDztAkoFjor+4idwFrFdtZu31SH7me0fffM5QoVW46OY6VPZmeur+q683l+5ZbVlmhN+/9Ev0DsYjZd5P8AD8gS7QOKz6/FttXeYFfl6u8VTyEYxNysiUqCqCV5Rrx5f7JvDfm6eWWkovXepbguS0Apw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7o0TxS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78167C4CEF1;
-	Mon,  8 Sep 2025 08:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757320791;
-	bh=KkCnrtHF6ChEI9N/28CbZ7v5UfJS88AZj6T3uigboOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L7o0TxS5I0zZKoyfYdSdbEOiyt0P3N6e2YHCS/I7704BatJyVLRMLePl2ulakGvE4
-	 SIDijrqrveHMSETYWINN7rcCxOiKNlyWnZnBNFHX8BCYjWx42vM+GUbQfTehVU0XaF
-	 2a4vsKWlQpK1iwG1rQ4ZyzxdvxhlgtBk5U4B0wlD9dTy67UuqL8PlGG1ymOWdckjzH
-	 oWDK6yryqdgyz28ZvNDOam9dJNgyhdATsywj5XMLlIGiD0Ova59W5wWM/71F5xGon2
-	 FJkWNtxaCmbAYyZ18vqi8Pq3KwQhKpQXSXioL23OS+ZCG+pM4ZXbfahSG0aU7j6ppK
-	 YsnmkcB/nA8UA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uvXPi-000000008N4-2AIF;
-	Mon, 08 Sep 2025 10:39:51 +0200
-Date: Mon, 8 Sep 2025 10:39:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Carlo Caione <ccaione@baylibre.com>,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: firmware: meson-sm: fix compile-test default
-Message-ID: <aL6WVp10hET2-fql@hovoldconsulting.com>
-References: <20250725075429.10056-1-johan@kernel.org>
- <4eacd669-9967-4ad7-a3a6-d124477100fe@linaro.org>
+	s=arc-20240116; t=1757321983; c=relaxed/simple;
+	bh=8yOvBX+cJ58Nd86qf3UVRoxpmvGuv3h/l9QnQQ/2rPc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dme+1+AUpyn5DaXjHyoTP7hvgaggY06y1wUDpAEwyTSu4uY7sQIo7s2VjHn1VF3lYsS3epTedpmKvRc5gSrQxzggnpKhNZQ/PBNb1oCj1BLZWxK4KdeBVBZrrn9C6whhR90pQ8PWghaExrcmhpKsoukGbgsCcqPRtT8YHpuCbQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cL1445trrzRkJX;
+	Mon,  8 Sep 2025 16:55:00 +0800 (CST)
+Received: from dggpemf100009.china.huawei.com (unknown [7.185.36.128])
+	by mail.maildlp.com (Postfix) with ESMTPS id AF8391402CC;
+	Mon,  8 Sep 2025 16:59:37 +0800 (CST)
+Received: from huawei.com (10.67.175.29) by dggpemf100009.china.huawei.com
+ (7.185.36.128) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Sep
+ 2025 16:59:36 +0800
+From: Wang Tao <wangtao554@huawei.com>
+To: <stable@vger.kernel.org>
+CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <tglx@linutronix.de>, <frederic@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tanghui20@huawei.com>,
+	<zhangqiao22@huawei.com>
+Subject: [PATCH stable/linux-5.10.y] sched/core: Fix potential deadlock on rq lock
+Date: Mon, 8 Sep 2025 08:42:30 +0000
+Message-ID: <20250908084230.848195-1-wangtao554@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4eacd669-9967-4ad7-a3a6-d124477100fe@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf100009.china.huawei.com (7.185.36.128)
 
-Hi Neil,
+When CPU 1 enters the nohz_full state, and the kworker on CPU 0 executes
+the function sched_tick_remote, holding the lock on CPU1's rq
+and triggering the warning WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3).
+This leads to the process of printing the warning message, where the
+console_sem semaphore is held. At this point, the print task on the
+CPU1's rq cannot acquire the console_sem and joins the wait queue,
+entering the UNINTERRUPTIBLE state. It waits for the console_sem to be
+released and then wakes up. After the task on CPU 0 releases
+the console_sem, it wakes up the waiting console_sem task.
+In try_to_wake_up, it attempts to acquire the lock on CPU1's rq again,
+resulting in a deadlock.
 
-On Mon, Jul 28, 2025 at 05:42:00PM +0200, Neil Armstrong wrote:
-> On 25/07/2025 09:54, Johan Hovold wrote:
-> > Enabling compile testing should not enable every individual driver (we
-> > have "allyesconfig" for that).
-> > 
-> > Fixes: 4a434abc40d2 ("firmware: meson-sm: enable build as module")
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >   drivers/firmware/meson/Kconfig | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/firmware/meson/Kconfig b/drivers/firmware/meson/Kconfig
-> > index f2fdd3756648..179f5d46d8dd 100644
-> > --- a/drivers/firmware/meson/Kconfig
-> > +++ b/drivers/firmware/meson/Kconfig
-> > @@ -5,7 +5,7 @@
-> >   config MESON_SM
-> >   	tristate "Amlogic Secure Monitor driver"
-> >   	depends on ARCH_MESON || COMPILE_TEST
-> > -	default y
-> > +	default ARCH_MESON
-> >   	depends on ARM64_4K_PAGES
-> >   	help
-> >   	  Say y here to enable the Amlogic secure monitor driver
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The triggering scenario is as follows:
 
-Could you pick this one up for 6.18 as well?
+CPU 0								CPU1
+sched_tick_remote
+WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3)
 
-I noticed that there's a duplicate "firmware: " in Subject, perhaps you
-can fix that up when applying?
+report_bug							con_write
+printk
 
-Johan
+console_unlock
+								do_con_write
+								console_lock
+								down(&console_sem)
+								list_add_tail(&waiter.list, &sem->wait_list);
+up(&console_sem)
+wake_up_q(&wake_q)
+try_to_wake_up
+__task_rq_lock
+_raw_spin_lock
+
+This patch fixes the issue by deffering all printk console printing
+during the lock holding period.
+
+Fixes: d84b31313ef8 ("sched/isolation: Offload residual 1Hz scheduler tick")
+Signed-off-by: Wang Tao <wangtao554@huawei.com>
+---
+ kernel/sched/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 40f40f359c5d..fd2c83058ec2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4091,6 +4091,7 @@ static void sched_tick_remote(struct work_struct *work)
+ 		goto out_requeue;
+ 
+ 	rq_lock_irq(rq, &rf);
++	printk_deferred_enter();
+ 	curr = rq->curr;
+ 	if (cpu_is_offline(cpu))
+ 		goto out_unlock;
+@@ -4109,6 +4110,7 @@ static void sched_tick_remote(struct work_struct *work)
+ 
+ 	calc_load_nohz_remote(rq);
+ out_unlock:
++	printk_deferred_exit();
+ 	rq_unlock_irq(rq, &rf);
+ out_requeue:
+ 
+-- 
+2.34.1
+
 
