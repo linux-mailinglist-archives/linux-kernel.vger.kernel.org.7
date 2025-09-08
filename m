@@ -1,77 +1,105 @@
-Return-Path: <linux-kernel+bounces-806190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5564AB49329
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1640CB49330
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E3920455B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB4C1895B59
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2908030DEDD;
-	Mon,  8 Sep 2025 15:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="h5PWWhI/"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BDE30E0FD;
+	Mon,  8 Sep 2025 15:27:00 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28ED2E8E12
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26FD25634;
+	Mon,  8 Sep 2025 15:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345157; cv=none; b=pnq9/0aosENkynncG29YLESrrFmT6+nDdZM8+VHf8P0bDBKlfQp1ha/kl8XdlYvm+zvYpR16MMR9K9Wl5Pm2yPsc2nMjxK0EFS8QlGVbUC44ynLrGWv3wUbO9lI8GHcX0A58QvC2kavpHjz3zpbDXhdGaV0ETUlOgUI95UrfzKU=
+	t=1757345219; cv=none; b=YH4Ke+nLMvcReJF1BCu6i3e9ZcDv8eMrmmtgExKF5BT2jNVOvXv6XpqsqEqAsde3tx7wpKw4/sHQJ+dCIUPvMuYvhEbYauQGAaslLOOizSAfgxLxAxjtwCa7kTzR1sOsxJ5HMslVR4a84Gjz8jSkFdyRz7jGQ657IFjQDfe4OKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345157; c=relaxed/simple;
-	bh=kKNgUdnpjbd19H18Gsk3GITQ9Z67++kPL7jTcMUjT1Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sfulYKcLZtpEmp8lkIJhBuo+RZs/AEY4KDII3rsMicGJClMLDSG+HRCwcju9roCYVExsm9WUg9gaueuKiCvEQ79IQSqS2ICDKRjC5mXkkOm/x/T3iP4BJz1viBBCPIoGC2cgyo27lXTYfEG4SIKMFeEmBcev7gKJqsQpHlZ1a3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=h5PWWhI/; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1757345148;
-	bh=kKNgUdnpjbd19H18Gsk3GITQ9Z67++kPL7jTcMUjT1Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=h5PWWhI//okwWzSN9htNz0pCilywJtE0zHgRPyp5HJwv1seYORkVbGWxEwxxBbWdb
-	 k7TJrHlhbRA2amPYcxUDjkolyec+6P+izJEIWmNRBsArmn9yhzdpdC6g6apr0v37Ux
-	 u6WVQJgzExlV4UBlVb1OQm9PwWStdveeL0DDYQ58=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id BBD60401E9; Mon,  8 Sep 2025 08:25:48 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B9D02401DB;
-	Mon,  8 Sep 2025 08:25:48 -0700 (PDT)
-Date: Mon, 8 Sep 2025 08:25:48 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-cc: Adam Li <adamli@os.amperecomputing.com>, anna-maria@linutronix.de, 
-    tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, 
-    juri.lelli@redhat.com, vincent.guittot@linaro.org, vschneid@redhat.com, 
-    dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-    mgorman@suse.de, linux-kernel@vger.kernel.org, patches@amperecomputing.com
-Subject: Re: [PATCH RESEND 1/2] tick/nohz: Fix wrong NOHZ idle CPU state
-In-Reply-To: <aLrN4KQ1vDsqRTwM@localhost.localdomain>
-Message-ID: <8fcea325-ca5f-0abd-34e0-1ac7b092e2fb@gentwo.org>
-References: <20250821042707.62993-1-adamli@os.amperecomputing.com> <20250821042707.62993-2-adamli@os.amperecomputing.com> <aLm4wRwKBMGkekkT@localhost.localdomain> <6f14ff5c-cddb-f450-b4bb-fcc995b5ce5b@gentwo.org> <aLrN4KQ1vDsqRTwM@localhost.localdomain>
+	s=arc-20240116; t=1757345219; c=relaxed/simple;
+	bh=8kW7PT8xnCVYcw+Emi+X4DUHGAf+z383H0CvjEbitiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DFp/6ejcpSmBjXBqYilZXefyZGe9bvFfBaMRNwg5n2UBx+iZMhgmcwN8PFdYA1glBR4x2jRR2kOEH5D221iP+D74qy0PNli5ZrQi8Adu8uUQZxF+BBOCq6EZznSIgDjFaL/i+VhRJILIXt9g4G4t7KKq6dshN4GhdIKVFkca8iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.106] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowAC3DaCB9b5o9d+wAQ--.57957S2;
+	Mon, 08 Sep 2025 23:25:54 +0800 (CST)
+Message-ID: <b6dbb901-e904-47bf-b295-47f610ce3230@iscas.ac.cn>
+Date: Mon, 8 Sep 2025 23:25:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+References: <20250908-net-k1-emac-v10-0-90d807ccd469@iscas.ac.cn>
+ <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qwCowAC3DaCB9b5o9d+wAQ--.57957S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY67k0a2IF6FyUM7kC6x804xWl14x267AK
+	xVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+	A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+	6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gc
+	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
+	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8D3ktUUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Fri, 5 Sep 2025, Frederic Weisbecker wrote:
+On 9/8/25 20:34, Vivian Wang wrote:
 
-> isolcpus for domain isolation is indeed in the way for long term deprecation
-> and the only replacement possible is cpuset, which overhead is only visible
-> on partition creation and update.
->
-> We could argue on the interface, the point is that nohz_full doesn't make sense
-> without domain isolation.
+> [...]
+> +static u64 emac_get_stat_tx_dropped(struct emac_priv *priv)
+> +{
+> +	u64 result;
 
-Most use cases I see use nohz_full on all cpus and rely on the OS to
-exempt the sheperd cpu.
+Well, this should be result = 0. That was careless on my part. Will fix
+in v11.
+
+I need to start using this clang thing...
+
+Vivian "dramforever" Wang
+
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		result += READ_ONCE(per_cpu(*priv->stat_tx_dropped, cpu));
+> +	}
+> +
+> +	return result;
+> +}
 
 
