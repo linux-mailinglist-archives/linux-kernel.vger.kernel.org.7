@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-806684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4827AB49A58
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63DAB49A5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578F81B23F2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6883B0FBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325BA2D3EC2;
-	Mon,  8 Sep 2025 19:52:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5352D46C0;
+	Mon,  8 Sep 2025 19:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2YH7Uvw"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602CF239E60
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE32D3EDE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361125; cv=none; b=n8aey94fz7V2GPFrCESGRrsncnNRQp9RcU95yGS0GIOGbCruJrvcWzVb3wfdQIjuX0hJ8Th1bQlFhA8USu1M63aV0jRFn2aquHUr82icWT8iEe0j+K3pO0t65biNcEFCo+CP4WCfuSUvS3HPxx3cmbRJXYccPqRu4G3s5ltoIAc=
+	t=1757361146; cv=none; b=kmrHIcqTqtaOjgzXvu77/fGYFN2sfxBjCnpWMZejJ2mj+dQEUsS+1wRWIAJUjLmcyhaiVwYE+VJnbGG13Gyx2x5Q6wuRDBHClKrKBeeMBMHjKOVdxgGJLoCMfyTZ0qMEcxA5T/62QZ7OhX+ITK6VofKIFmbL7fyzm5KJUAR9Zyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361125; c=relaxed/simple;
-	bh=Xw3fA3hYo91wcLGD0HNrTR+08mGg9P6FC4LeHeM9EQA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YzDXmoI2bZg6PRD/A74QktaK2zeSm6lLwI/HJcJelZy1+ux+SQL/0fiIMPFqjYWiaatH0Qf6901JNN4fl1UeJ2YUCp6DhNBXDFbY/jm3gvDQQTz3b1+zx6zZvZyOHEvuNg6vxgnq4cvRxcxpg1cboY4jZYixM9ufbRZ0GPhkKNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4020e59b735so67983745ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:52:04 -0700 (PDT)
+	s=arc-20240116; t=1757361146; c=relaxed/simple;
+	bh=ni41cp1kJj0k2/vDWCHyxCjBN8Adfrh4nUQNG0JAfr0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ghYy8AgXmDzlhJAMJ4GUSjOS0zQW8F15B1IMcCajxZUYEvy5FG8gJ4dponfY+UuUlpzsEQ+nmp3EvsKXaI3fqFC03M5h/KwkU3PXpRmj0GTx+I0ymbMwNBA6H6lL/tly3R3miO6xKymku7ZjA6YONI2xcKg5gqCQsp9K/t1MLYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2YH7Uvw; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329ee88fb47so9074052a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757361144; x=1757965944; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WmHxV7Lreaj5eVFu8hF6qzhJomNY/sSV63hQxdrkJQ=;
+        b=z2YH7UvwPHG7hOnsoUEJAbW5/zfEZUnPeGWx1nBphACZjKch98yX1KPeI9m/K6QCEa
+         YQuox+R4y1dSujCmUX3Z+Lf+7PgiI30juQCWKwUxHQnrB0/YN8c3v5i7iwj7iTcQsfs0
+         wzZ4fDMnYo36fsgEPhAZN7O/mkHLgN0d8f8J5harw8RbG78HCXvuAsvte2vQk9vmLcA3
+         Cbd16EISVJwjqUjXVKan6fUJdN+Y2WQpzUEx63Jx59EP7vC5KzUaZQ4GMo+FL/MxMplA
+         8yIYDMh9cZrpwtzzdwXobLE3atlkqgSFn0al5IAo03NyZukluiWjCxGDt5riekzMnaU7
+         vYYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757361123; x=1757965923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6E6CGk2tmAlq5+OVCzHjqNr7fmm4smeKYiarZdZ2kMw=;
-        b=andpXvjxaEnoRMivfD2GpxrtWTi0f6fR6j6icBsCMP3a5S4xfsymG8Vybr43GIL8hr
-         cu0X83avypQ0Jnd+qJN0w36R3nPHY9KeVPxzATcKDDTwutesmcihcHKjsnaSurc8EQ0B
-         wqVhy3rjsSS7G9KUrtEOHB9deiPKv0KcaCb2NfKIItPabp8+rL5cG88fQ9+PZEixp7jJ
-         n6A0UdW7Bwxsx68J+txxuq5Dn8g2SGyEbz7RJDvsxCWHyIzL4lywZ6twBVxy832YzhVd
-         m7paZfj+5ThwRh6bg0fgd32A/txlbUe14Te0tfclVfnlOSzfCTE22z3FGLqCHtYLqFK3
-         eCDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfERaSmVlZKeahrQ0NmDtWm0ZA1sjRxncLsVNeFgzGRwSLmhrpGyf+TDnQkosvCxPZjxubSg1URQ8HnPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxP5uwYvfe7MgV+Sb5/feKWMZ8OgN2OT0B+cijSE8HFmu6D4hv
-	BJo9whKjRhS++esv77ZrIMfvPF4Jlcd9zgZL9MYeZ5hicgKHyTASdSftyt0Lx5nRSrqYQZWHfw2
-	lRfixNU2HU6pdMYv2aYSoGu5rT0//4Cz5k8S6P9QzPncWr8rYqOngdB4vdh4=
-X-Google-Smtp-Source: AGHT+IGXg7L5kD0uoY5KYmviwfxTBneLi5Cm1Bw2Zj7cRXNgGfxtx4v4PIo7McUtRBfK4wibi8nrfPuz44FeC2vNCprnp34kScX8
+        d=1e100.net; s=20230601; t=1757361144; x=1757965944;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WmHxV7Lreaj5eVFu8hF6qzhJomNY/sSV63hQxdrkJQ=;
+        b=vpObDi9MyddFCSi3KKtfwUispLsUkDP4CDAPfLchfki8lCKXXZs64sodg8R+X5S95Z
+         XKRz8/J9jX9MY8mNrvT0z354EOC9zcCtpVcttrqw0Ix56AfOPalwH5E1brRl5gq+hQp5
+         cby/wKdxrbGBXz08Mn2nOuvWC4eqi1VWrzJ6eWjxqcJMKHglLeqhxJW42fPTLyct5Tzy
+         Yd524Dg8s6go2dQjqk8/jKtkimHgNHrRJrx/VRPENTvLts3Km3MRuj8onn2wJwbeZiOf
+         tIeq9hF1ypbmQYZk5N364VKHtZ6U3UAE6l57circNp6DpYIgLb6Au5/grnlDNucsUouK
+         Of4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXsZ0KXHhbuhd4JA0/vVWQesCdBvIvnNUzOpVxAxASS1AuwBcpFQQZ6WruCR2gnBv31nMJK11Jh8Szl9Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc4/Qt9OSw1vmxI9+xAN0j+fBvl5wYDnpZZ8S/EILVT7DGxbFt
+	sGifL940EmicRHnyXqpiiGTJOoSc+uE9XAn1kYySYerI0EAELdWlCpB4ALxdAoU3xfU18VPzNlU
+	0JIxUCg==
+X-Google-Smtp-Source: AGHT+IExCPRBqVtXN8qVa8YjvqbzwvBpn9IxtzEsHXQ/2kgRMpC8TgSSgM/sP14o8i1EVRy2DO9MXQPJ5wU=
+X-Received: from pjbsj13.prod.google.com ([2002:a17:90b:2d8d:b0:328:116e:273])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5185:b0:32b:d851:be44
+ with SMTP id 98e67ed59e1d1-32d43f0b8e9mr11203024a91.11.1757361144105; Mon, 08
+ Sep 2025 12:52:24 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:52:22 -0700
+In-Reply-To: <20250819090853.3988626-1-keirf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1985:b0:407:51a8:6b5c with SMTP id
- e9e14a558f8ab-40751a86cfemr66244445ab.32.1757361123448; Mon, 08 Sep 2025
- 12:52:03 -0700 (PDT)
-Date: Mon, 08 Sep 2025 12:52:03 -0700
-In-Reply-To: <68bf244a.050a0220.192772.0883.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bf33e3.a70a0220.7a912.02c3.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [ext4?] WARNING in ext4_init_orphan_info
-From: syzbot <syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, akpm@linux-foundation.org, apopple@nvidia.com, 
-	byungchul@sk.com, david@redhat.com, gourry@gourry.net, jack@suse.cz, 
-	joshua.hahnjy@gmail.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com, 
-	rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250819090853.3988626-1-keirf@google.com>
+Message-ID: <aL8z9vZOAeQvTBKF@google.com>
+Subject: Re: [PATCH v3 0/4] KVM: Speed up MMIO registrations
+From: Sean Christopherson <seanjc@google.com>
+To: Keir Fraser <keirf@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot has bisected this issue to:
+On Tue, Aug 19, 2025, Keir Fraser wrote:
+> This is version 3 of the patches I previously posted here:
+> 
+>  https://lore.kernel.org/all/20250716110737.2513665-1-keirf@google.com/
+> 
+> Changes since v2:
+> 
+>  * Rebased to v6.17-rc2
 
-commit 02f310fcf47fa9311d6ba2946a8d19e7d7d11f37
-Author: Jan Kara <jack@suse.cz>
-Date:   Mon Aug 16 09:57:06 2021 +0000
+Note, looks like you missed a tested tag from Li on patch 4:
 
-    ext4: Speedup ext4 orphan inode handling
+https://lkml.kernel.org/r/b778c98abb4b425186bfeb1f9bed0c7a%40baidu.com
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16645562580000
-start commit:   76eeb9b8de98 Linux 6.17-rc5
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15645562580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11645562580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b92850d68d9b12934f5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168d2562580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15869562580000
+Nits aside, this looks good to my eyes (though I haven't tested yet).
 
-Reported-by: syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com
-Fixes: 02f310fcf47f ("ext4: Speedup ext4 orphan inode handling")
+Marc/Oliver,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Can you weigh in on the vgic changes when you get a chance?  And a more expert
+set of eyeballs on the memory ordering side of things would be nice to have, too :-)
+
+As for landing this, I'd be happy to take this through a dedicated kvm-x86 topic
+branch, or I can provide an ack on patches 3 and 4 (there's basically zero chance
+of this causing a conflict in x86).
+
+> Keir Fraser (4):
+>   KVM: arm64: vgic-init: Remove vgic_ready() macro
+>   KVM: arm64: vgic: Explicitly implement vgic_dist::ready ordering
+>   KVM: Implement barriers before accessing kvm->buses[] on SRCU read
+>     paths
+>   KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
+> 
+>  arch/arm64/kvm/vgic/vgic-init.c | 14 +++--------
+>  arch/x86/kvm/vmx/vmx.c          |  7 ++++++
+>  include/kvm/arm_vgic.h          |  1 -
+>  include/linux/kvm_host.h        | 11 ++++++---
+>  virt/kvm/kvm_main.c             | 43 +++++++++++++++++++++++++++------
+>  5 files changed, 53 insertions(+), 23 deletions(-)
+> 
+> -- 
+> 2.51.0.rc1.193.gad69d77794-goog
+> 
 
