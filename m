@@ -1,188 +1,117 @@
-Return-Path: <linux-kernel+bounces-805234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3981B485D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:43:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B81B485A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC763C07E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CEF1622E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFE62F546E;
-	Mon,  8 Sep 2025 07:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D2D2E975E;
+	Mon,  8 Sep 2025 07:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nutsiQVA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iWK/HRRB"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B622EDD6C;
-	Mon,  8 Sep 2025 07:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA58D2E8B8F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317150; cv=none; b=QJMyxC3ZBsBvzKT/eLOigtnuj8Z/i1usNuIpHnfgt5eLJKgo/yAFVImkuAf9gJichklRn/7U29UMvsBopuq8zEMiuA+HNVuJ4Hp/Ot/rwIxzxzPwI2JCtZ7rLA7wZ7Vv6lnI8vX003xCsi6+z+KwGraUlSNLeHlzIRW3BxbSBPE=
+	t=1757317140; cv=none; b=jGXpVGp5H0paZGOSB8mcHZ4LLzRWygxlnZ4nHeVamCuzUjZO+tT+zS9t4VRSpjPaUWLVLMZVdukgXoiE6MkALa02i6Mx4cOP8kfSnElVrY2+BLWm+wuhunolCTkjXgJ+Z9hfVTvEa6JlDvx/hwQDJTsh0DZtWB+lY+5qDoJAocI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317150; c=relaxed/simple;
-	bh=URV8aagyNXhcV74duf3+Gb4YOl16inU4YZ6GRjaBTPc=;
+	s=arc-20240116; t=1757317140; c=relaxed/simple;
+	bh=I/8wO493tvKgW8VniJJ/pXKCPEHvRGo26tejxMuOh1Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MHkkdQ+QDbJeVeyWwzA5N/IK3Oc3pLcbAE/OCaLD13R5piaAVCkrB2yBO2XGluwD23XVPX3PLP5wiyPr97WgB0M+DaGAmBVA+74QtFTynnIhvzQK8asDzThTHGK5BzMUQiV3xNnuo9oYLjbSupyya0LYsFVixFHpwTwHhIqjVJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nutsiQVA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587MvCaq011099;
-	Mon, 8 Sep 2025 07:38:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=FjFWcJ+slIN
-	PLLLGM2/NXcjtvFX1V8uxVOqcuDTk8ZM=; b=nutsiQVAROyTe20Q68OCYH25wuE
-	xyLkFC4sHijR/18jCsP5F7iPY9LLU9qdqNdzEmrZII70UtclC9MOjpdNBTdz2v7Q
-	FCq557U6eDsPA5rFitED5BjlKfZ++Z51Lf5LzH2Wy1thwHie4teNHcyFG1pnbKRr
-	1F3X0t8ReMZ6idPqrOZ9Xi+bOLgM+Z/uoRnnad8xl7/dNLOWv0j9myN/zJUVKRb5
-	yg0Z061wg5ipIRyGCr8D1XuLiS7VRMAOX5NHgoqelNyKOZYKs+LohaN/Z59rCNrh
-	23INgKzEyUjSfa4r4ofmIDm3UH4dwi3LacB9km6GdZJCYN62kiXTgDY0yaQ==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws3r5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 07:38:56 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5887csbk020713;
-	Mon, 8 Sep 2025 07:38:54 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 490e1kr3ms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 07:38:54 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5887csXD020705;
-	Mon, 8 Sep 2025 07:38:54 GMT
-Received: from ziyuzhan-gv.ap.qualcomm.com (ziyuzhan-gv.qualcomm.com [10.64.66.102])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5887crUX020700
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 07:38:54 +0000
-Received: by ziyuzhan-gv.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 67BF9529; Mon,  8 Sep 2025 15:38:50 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v13 5/5] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Mon,  8 Sep 2025 15:38:47 +0800
-Message-ID: <20250908073848.3045957-6-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250908073848.3045957-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250908073848.3045957-1-ziyue.zhang@oss.qualcomm.com>
+	 MIME-Version:Content-Type; b=CU3HbmX57EKjMPxVsqmfOdJQ3k8sN9MkbRFSllBseI/cGY8Bnew4OE2cjFHBZf3e4Ew1QVH3ruMJ0M7duGMitPiFDzt48IuDiQPnd8p5vr4bAS174qiC4hzoGVRQixf8zh7LDfYacD9Tf8QENoIYJhErL59iEn47QMajDTLm0M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iWK/HRRB; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so24943955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757317137; x=1757921937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+SeC71KiTcmvc906xFt+OsD+bdUmNuwTHs5QzOIrc/g=;
+        b=iWK/HRRBo41erD6gnD8N/6YXdvcglYZcubuDwTcBMcmpNQeju/baEfP+De2sbXmBlb
+         jRY+4xH9gFN9OfV6x0hIm51heIk66vIZhXvHVNdkMxxQYSCBRnKZiTS22jpNFtWaGbkJ
+         5OGi90JOSx5RrnTX8stEWrMMk1+f0xPZkL5LsaE0xnF3dk/omQp5tXl0fS9OJlrkVSKk
+         H41gixtuq0bmuJN7HqLjAsDWuugVOB6ncKxHXa1OgOBWnHkeccXFX41/JziY076aGk14
+         59VeCyl45grS9zRnqUa58voasS41YBfM+jlBZkGXQPICfMzLvE25kEG3SOmfd1sxNgVN
+         +WdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757317137; x=1757921937;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+SeC71KiTcmvc906xFt+OsD+bdUmNuwTHs5QzOIrc/g=;
+        b=Ol2uY2PYC36tL7D6dsjaTzUM0hXgrHWiwbAqdFmtNwHYt6DnZxGaEhsFXcjl4D4p91
+         +fqnr3wbTB+t+YTOKKfKwKquPvQuq/plbxwKh67wi7E1OJ3iQPZRu6lztk2jzxXy2hY9
+         0W/zYhF7YKdj39eihCXfJXGFKsBHwIM+iwFfOE/h4ySn9D2+vF5Owhfia38cOqDiT7Uq
+         ihSTRwnCYeIT0IQ79P0Pghp06qpraBMG150JhSq8SpsIcXPAfTkXNLR+dz+8aljbOXp8
+         LYjxBGYKTZF+v5/HI4CLR9hoUy5J7qUfyLM40VIaKxN6qm+tsXJ+5ZPdSr0tRmO9bjkc
+         6Jvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWknniKPKh910SLAKlGHK+TTvDqvwbjth8ey2W0YD4+ECs0FOKOGGc26MsSFwHek8AJd1q9cd2VbtD5fP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiCPfhOPvHROCK98FWF7b2bT+O4ACdsnBMaRhS75xPujbzR2un
+	VScYKUIP+0HtQfjEss1s/CwCau4Js9jF6HbjkXqxVbO6srBRfVcO+wZdiKsuQ50enXI1opHDA/Q
+	eQcLx
+X-Gm-Gg: ASbGnctZPyicIY8uB1gRVqLTSTy8h8tKtSEmjIacJHVUGW8cRVmRYOk6pZHvzcjbACb
+	Vot42A2QIcwOCf/oOzwL6C5nnf++7tQhWmKoZZ3G43FZGCERde5cO3YmMCrIaq0vIsW/YZRPzxm
+	cWA9r1HGC4AExxskbkh9jBobzOGU9L2/zknewRRUXTxf5YFyc1jo+M/UD1GJdrLcTsd5UgGOd1W
+	YbAdtjvZSXWK7NYACTfQwcMAkAFrLQfkyexscmKFNtkAkPRSbxUVWQBODnddk1PFG/5TNslsrYQ
+	mLmuQ7KC1zg90I3OBXucaRbJilkmYVHgJ1EhZ+Hjp/mmZ8BCUSV4uG8hzcCUq8lc72TU0gyHZ+c
+	M2NeZC5Zp4kxh8HAlnRF9K98x
+X-Google-Smtp-Source: AGHT+IHifsfv/Qynm+lweUW0TaX1cbTEu6B5/phXjByXJ7DDFPSF2vYdSkVq2b1g6PKImAH0XT0ciQ==
+X-Received: by 2002:a05:600c:3596:b0:45d:d6fc:2509 with SMTP id 5b1f17b1804b1-45dddeb00bfmr69380305e9.6.1757317137171;
+        Mon, 08 Sep 2025 00:38:57 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5cdc:d980:b6fb:1eb3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e92a42asm429977665e9.20.2025.09.08.00.38.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 00:38:56 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] gpio: Kconfig: Update help for GPIO_PCA953X
+Date: Mon,  8 Sep 2025 09:38:51 +0200
+Message-ID: <175731712487.48218.3656320884516812703.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <aLmtOWjAWPtWe/gH@bhairav-test.ee.iitb.ac.in>
+References: <aLmtOWjAWPtWe/gH@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2onqdqLwBNvFnzQ6Bkjf_0DcQlLan4OB
-X-Proofpoint-GUID: 2onqdqLwBNvFnzQ6Bkjf_0DcQlLan4OB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX35gice+mVzPf
- fZa2y8Ueq+lgnlSmMUf19Wc1QxBiRcBLH6NnwHiodtN3WigQ47to0nPtbmoj6NcVUXXvfyKUIkv
- 0CK4sf6yqW3mtmeWpC3Ga2OMupLjBL7B+4ScQoyirXnBaMBKA0s6dH4+UCKPsZB1iIOGbIYD9Sz
- 7ee/9Yr+mrAqNaUiReKIIXuLH6WuZJVivvKo9dn30LYsBNqMCGQEyEwfr5oGXSXun8WekLxHPW9
- VhanFpL9/OmxuRKj8iI4LpPR9lNAPURkKVcY+bkMtd5+ch2kiOnDIK0ty8bkxU36XH0it4VxxeR
- Jzj46ufc4qPI1FNyyG2V6KMXXYRz5kl9ulq6Gw+3JYOIpFEzrVuLLrVnaMdEmGLMPrPtNTQ5nn8
- rz6KriwY
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68be8810 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=niF0sU1HcdIRAeZIowcA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_02,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 42 +++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 9d2653007866..51f299fff910 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -328,6 +328,25 @@ &pcie0_phy {
- 	status = "okay";
- };
- 
-+&pcie1 {
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcieport1 {
-+	reset-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -411,6 +430,29 @@ perst-pins {
- 			bias-pull-down;
- 		};
- 	};
-+
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
- };
- 
- &uart7 {
+On Thu, 04 Sep 2025 20:46:09 +0530, Akhilesh Patil wrote:
+> Update help description with supported ICs from gpio-pca953x.c
+> Include missing IC names.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] gpio: Kconfig: Update help for GPIO_PCA953X
+      https://git.kernel.org/brgl/linux/c/d3e7efad8fbaf0c2d6f039ae074a20c3aa89bd12
+
+Best regards,
 -- 
-2.43.0
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
