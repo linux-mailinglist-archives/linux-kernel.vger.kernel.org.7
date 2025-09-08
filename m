@@ -1,174 +1,218 @@
-Return-Path: <linux-kernel+bounces-806524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA05CB4981A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:18:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E96B4981C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CC13A23D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:18:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93D127A26BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E94C30DD2D;
-	Mon,  8 Sep 2025 18:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D51313E11;
+	Mon,  8 Sep 2025 18:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="acV0Sq8Y"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LCiO52Se"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7BA4A1E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355503; cv=fail; b=R6uK491c4TqmkAryKBx19geKNhQZf/aQoaPueREchP86XN7afHXeAOkqTWB6wtIKxiQscGdOF4zJzTy8zqhU42z1762Rl3ukusA9qTrm9FJmeSBo0OuBzsrqRaIE8qCrTy6zexeb19LwH2FggYehbK9ICP2lhInKINgzllpvnoQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355503; c=relaxed/simple;
-	bh=ovbBUOIBtW23o3iP4lx2aRD3pMpyULOKBz0lWlgp3LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bm+CdLhsZHvbrMd1j54N9h2JJFYgNTxT+39SRzp38UwSTwi98Z7ORk39dm3riHtvPHRregpvjur0eI2ZGUWbEBB54gYG0f6euUxQ16iX1y6/AzJhHy0s3TTolqYrzAj2k2CyftJ4FJiMkb9C6V6oCkZXo+JtfflOGOaBW9GM4vE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=acV0Sq8Y; arc=fail smtp.client-ip=40.107.102.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qJWYD3hjZDW+nIO0hO0QzugoRV4eZlt6IzRuItEPScSmlFtiMW6pocxidF+yFm4DI8ZbGh9veQk01B1qUwQ+D0AM1o8537Mor/7Zu0uCP3dPmv9k6eKKLj2xRUZgaoiADjeCmp9OeuJwDmhO9OPy7bYU/0x7lguF1r/fhyZmScLR4TNqsfexCSrZ9Zx9SGXfzO6beHYNx4QRnLPquwGn8yv7Lbpo6X/6P/We3NIR+qJU6pLYuSo6Do638tbMOtxAuI1cnAMbKXoiTs4Tz7tyt9mxe9y59nU67zqU3K1LStfa97rusvbfRQL6y66p4UAa39UQsSPoE07hKYR6Lo2OCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mTazilRRQUgzVgW6twbcGUfVNxS0a3YnsG2oe8K77sc=;
- b=MEkjWac0KUV2zWcuYt4/2ng2FIiSk1cVSPz51LLYEZ3qYWLFYEo61yhLMYQx5JHgPe7DLIPheIzHxbTqR7XQyV2YTdFPE0xTR/JEfpBDubxITP+6Unv1JB1gpgaF/DaXecc1W8bzXZsHhkKcD38QkosnuzB0KzKkw/8XAjD1yppwBQObwGVwBY350xWEYtMi4JA4NixgS4fpWcyleJEzGIf/VfeHcf+PB1ZTj28BMLCum+DqfjkgE7nkNKk8VxhRNQmwXJk2Ujz1bY4eboXebwa2lPEvcvFe3l/NAgTRo0icC+dcoWvcmzIdcwD/JUkV6n4RDsKLvrqydD5vYaIwvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mTazilRRQUgzVgW6twbcGUfVNxS0a3YnsG2oe8K77sc=;
- b=acV0Sq8YdBQjyb8nHQiuPYuWav8jRbHuwHKgAdAhhr2KvFeCjAv8TP5pwswL/l9g3PsuUC/0PnftJQMknZWLFS+ckza/TP7FH7veWG/lPqf4L75N7Bcl3peceEtURgRj22HTtMhRDItYdLL6VPa8AP+WVcDdKEt8HqR3G8oyZR9iV83tVpC2Ma8jjpz1f4jfQCLk8d+H9cABUlZQZeBxDmmuwLmuRfFChjQ1nICcHD6BiRH8tdMBbmt8nE2bLyF6aERZkhCcQt+JcqXiwZMTDOWESAdOIG6ExtVHJL8KrAIInMvKJqwlEnjcwlI6OpA1NGnQKal0YbigHvc1D+K2nQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL1PR12MB5753.namprd12.prod.outlook.com (2603:10b6:208:390::15)
- by SN7PR12MB7276.namprd12.prod.outlook.com (2603:10b6:806:2af::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 18:18:18 +0000
-Received: from BL1PR12MB5753.namprd12.prod.outlook.com
- ([fe80::81e6:908a:a59b:87e2]) by BL1PR12MB5753.namprd12.prod.outlook.com
- ([fe80::81e6:908a:a59b:87e2%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 18:18:18 +0000
-Date: Mon, 8 Sep 2025 15:18:17 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	kexec@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] kho: add support for preserving vmalloc
- allocations
-Message-ID: <20250908181817.GG789684@nvidia.com>
-References: <20250908103528.2179934-1-rppt@kernel.org>
- <20250908103528.2179934-2-rppt@kernel.org>
- <mafs0ldmon784.fsf@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mafs0ldmon784.fsf@kernel.org>
-X-ClientProxiedBy: YT1PR01CA0156.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2f::35) To BL1PR12MB5753.namprd12.prod.outlook.com
- (2603:10b6:208:390::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBEF30F93D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757355520; cv=none; b=RhOgOEJPoxV9y40A0CETtmm6E7rKqTSBRjEAdPdJHpuS3tZ3oDIzvMaLhUFyX7pjSTftERiCUCzwUq9XfgA4C/e3v0T/ILup7nzjH3q5ieD9UvKHc6vxkyq/aDVWOpiIbsYrcS2A5p+Qu50sBLcJh25NVbK/9ZHhtF0qlcw/RrI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757355520; c=relaxed/simple;
+	bh=4qtyyFkAqi/EXUnCgIjsBDS6e3kOLtoXVXi5nZvXX4A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=r+/5WYv6AQ8gPSipyAPJdmMDIqulncOGzEF/MdK/zqUsJ6teBZyczK1gmSwJfQ+pbkiAC11RzAarmbgRGJC/c+SLJ9rA5BA9YrDEvGq86DllAPjqYuK7EyGmncRvGKvdIWFt4KLqrSqZpXS8HAoNHpamxQ80gkyv+PuHgh4EjLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LCiO52Se; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e249a4d605so3764498f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757355517; x=1757960317; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lb8SkQ+gt0WvvPJ4SzjGlb6HLfu8xf3EEt0ttO3omRo=;
+        b=LCiO52SexyXWWlSVyuolNT1J63bk+M3J0zJC/amCHsHl9KcVymvTUuYfe41t6dw6za
+         WK5hhcKR3GKhCTAzmq5XtbcL93tkswU+xTNzH24m1HOB0F6NatdtuFkpMniVibtpkS/9
+         x05mVI44Ls9aivDA/CajPlr3CXEg+djt1TB8o3xeDAKjgejDJwxIFpWHn/ggAXdDStAQ
+         iI0JMTlvZV3qcU73+1zL9SxgGaBA1BlGM26nOaYywrrclz+bG9VtMohyQKxVGZBS2VyW
+         uFRUxqkuJApOkxSnTMIF8l774tq+0j4KoAPKubvJd6nKIbhr009D1szKT4k12DZfFx/B
+         q2Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757355517; x=1757960317;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lb8SkQ+gt0WvvPJ4SzjGlb6HLfu8xf3EEt0ttO3omRo=;
+        b=eH4Gj9zCXUQDe6P8UR51V3A7/Aa5s2/fw0Z7Jd1y/XnoT4RCXizmvElmB6XJW+WylP
+         E/ZWwqIkRIbvc5s7vG2kbMkTGGJ17tTTd03lxjxA7PF5FH9CI6e3X7hdb2Ag/uQIPFi1
+         3n+Mi6Lr8HxLvfjl/VmG21h6XWz22i/xNkh/nbHLXRVJCBWv6ypJEoZ41ucXvtChXrH1
+         JVGV//tkY1xMc+BIrXrcrKadci/EgJ4W8Ra7Aru/OxQEOxCPm4+IznsMKf7EX7jWa/Dc
+         Q9KANYdR/fQB1g7YVO0iwk0mXmV5pLgyyixQFyAA7WUkzBBA77KpAT29XxYPDCtCJMsg
+         QGLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPTvf7Kn9JkZDd/H7q3Qai6+q9GfLoNdQTJjghcxSqxWiRL2bUfGCI7EZd4Gb1yfEkHFH4qXPtIRr9jkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7qcgwCj/WhOvBzufWfskHeXWD6QPplpQt6aqLHdVl40TO6mxs
+	LZRW2wI390FlyaUcjRHDDSCiXgZQ8XUoFZ1gU7+rSwoguHDkWR5678WSgQmYqlfKzIY=
+X-Gm-Gg: ASbGnct4OokAAQDK678xjFQZ9XcpRAkXY/Ofqmqj9UUmFMeqWWYUiMmmFrfUNgi/QCl
+	dXazNZKV31Q/AT5oWZtsH2FcDgpJ8/SadTcqWSm0z/0X3V6IYSEq1HhRaGBZdUpYSayZL/LheL0
+	UgqLMcsK+evQZ88X9qcqxmZo/+9Hl0iQxiAvHK2iFrrFMZT/0bYj+x8g9HBs3c7lhD1LA08WWHu
+	hICK9Q7CjeDGjquqEyxY7xE/2n8gYXSc/aSPAVkdIf1wlT0IJTVDjNkyp9DkeA0gX/Gz7STviCd
+	jzuFsv7rq4qRu/WvWCCLyaHsi7QGB8KyMV50GzD3EavxVTtP8Cvk/k8pBP2SEMv9EsMXQCoitm2
+	4Jsnyl/9WejpkE9bglMgNlQOWlm4=
+X-Google-Smtp-Source: AGHT+IFOzTS8FVjEgH8Go18e2etfKEqg7OecFkUxP2xoc5+BHcVI+ILWLt3vxVvL+fS0RCc5g0yPVA==
+X-Received: by 2002:a05:6000:2486:b0:3e2:e079:86cf with SMTP id ffacd0b85a97d-3e64bde66d6mr9363317f8f.36.1757355516935;
+        Mon, 08 Sep 2025 11:18:36 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:1299:47dd:d3d7:b7cf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda597641sm65257275e9.11.2025.09.08.11.18.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 11:18:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5753:EE_|SN7PR12MB7276:EE_
-X-MS-Office365-Filtering-Correlation-Id: c329a428-55df-406e-c63e-08ddef0415d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UtcEGsRI7GuAuR2NxPDzEu/lg+pSk5oHtRkV18CPIjlaSYef2fAsMomQlzYa?=
- =?us-ascii?Q?ZYwo3PtHC8eg1WAqpMdb6b2TfdFoten8siZ+CxQ+/x7loEahmuepX9N5OZi3?=
- =?us-ascii?Q?X9SxbbfxYNWymJejtL4gUUC08z9IrWFlU9s3oKsWTKyJ5E3mVq/HA9RQfDBU?=
- =?us-ascii?Q?6F6HeM6OTOweJ+wdeZ++dWCOVrnGzgJb0jUJUy2lmogP4V3QvxtI9V7m4Hx3?=
- =?us-ascii?Q?+0o4js0+jfMGYz9IH9MIZAntlN0NpmBexjkj2tDUGYkhVyQSwYVLmq8XCBF/?=
- =?us-ascii?Q?xlW34JKLPWmihJQJcDKsyW2BtgtDMbyLFbYYLYUlKnFdbJCLz0APr5auGz5l?=
- =?us-ascii?Q?gLASidoK4mgdYJa09d4qF2Xja3UJIzJpkSXRK86HI0gbSzLT3aWmM+ww/+vC?=
- =?us-ascii?Q?CgfgpdIcplAok39RTFsufIktqHy1HFWUNED7xAx5/4uV6/R+hFf/+wd8/ezN?=
- =?us-ascii?Q?vrf/Q1E0Ckry7VzUXzcfh/53I5+P4LDPqLAeb4JePLA/zW9j5TI4ttM2LuMO?=
- =?us-ascii?Q?4ttdqghHHbWu8d2KfvdflUee1qSJNzlOoYI6NjFxcOi5SEmyGoN8P/xb/zb+?=
- =?us-ascii?Q?iKW5Zx7aE68FenzNnAG50uddFIaSl42WmKpYK9b8zZEUNLWgKjACNsBET+9d?=
- =?us-ascii?Q?6zoiGXp6m9lzSfdpEivJcYgUfzxcEla8wpBhEBjyvTGTdp0FSUvGEO6j4WgQ?=
- =?us-ascii?Q?d5sKJPCGNQHDFkSVDIyDdXfCMxRPdZHn5sgF5ZRv3VIdkbcD9ggwrY69jyIH?=
- =?us-ascii?Q?HJel1/3VCoVMAmHycA0P3aA0KZ1RoLX8LOPr3oTus4+MJ5QXkk9BwAx3A1Az?=
- =?us-ascii?Q?KPGnFwCpnpoHJvvPWGTlHYnaHGvgn2+aK/WbXTkecPFU4ZVfO6aQkEGL+6+h?=
- =?us-ascii?Q?iH7MLt1lkvGKN02jh5YapFi+kgMSzrVK2Cqa7XvyU+LTg1p6EwQR0Ss3QYZ+?=
- =?us-ascii?Q?PzeCUEGQDpA6XPASpu/JN1VopN6iYl9P2tKrz6VkcEJBex8MNHlMbNm0vxKb?=
- =?us-ascii?Q?+/rs3wWWrGNDwOJj6i4Yc/QRJOHkmFQYBy8wibTnlnlP0zLNgHRG2c+mhpIf?=
- =?us-ascii?Q?O7LBdybWB6kbgQlZGxvXeTuxsM84SP83IkUoT7yIuPQSBY3zjlEHZ0ISnywD?=
- =?us-ascii?Q?Ka/CVk5o/t0C4444QtEq92jDM6xpoQV8rtcczTtEWHQvj86y1CBje1hcsQ9Y?=
- =?us-ascii?Q?FCJXuqowYuD5fxB8Xj/B9LnbbopB5AgGBV0GCJ1ydaqlDURgOO8ZeLd/Bbwn?=
- =?us-ascii?Q?dRgtkZlg+4iwfDb+vcBR+My1Argnrz02qXQRAbPwW/Ti0LTiECw1BqwStVhr?=
- =?us-ascii?Q?FjjYTCef3VYeuqXu/hdGP+rv6MsZgM+31Nmp+jHYu/LKDP0t0cDoz6yJ/0di?=
- =?us-ascii?Q?IV/Rxvv0JSt3hgsYXf+2xmUcErHZmTxPlayt1XQTAP3P109WUoDp3ZV4E4B2?=
- =?us-ascii?Q?ve5cgpUtBb4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5753.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?A2jLwsmkpKCa2vD7Tc3MicygEL4FIbDTA/H41ckRXagtav2Dk2Fmpr21Zs7M?=
- =?us-ascii?Q?G1i8uuCKG6jygjoToufAmjXoTawdMCswa+tDLrKp7tS4UhbdmVdTUjbNxWcx?=
- =?us-ascii?Q?E/cAypdiOMyZayrr9E8fDtD+mNsyOIoBkuJGHal8Emn/aywqFaLUClwpgk7H?=
- =?us-ascii?Q?5GtErHiTnSFkBzS2gZ0BDOBc6wPBIiTgV7ccfiJZFMRV4R7ZDi6WsGEPLEYj?=
- =?us-ascii?Q?DTOUqrab4RjDxVSp9mHvoXGbSTr55l3Cq6WAGJL58xfKbkmpsZ006IH77rqD?=
- =?us-ascii?Q?1Abluz7u2DsU2Ggge7+RySxG0gJaYYOZ0yRKO3v67Rf2Q1B3bGP0FRf+dK/L?=
- =?us-ascii?Q?YFwFsP7vjqgN6dbC0u0AXr6JlDpTtUK+fnyL07Lm1NWpGDArKJiuuXhK6/6c?=
- =?us-ascii?Q?ObVLpWSEatKmDn/L2h9Fy8RCBy7JNhdrZwDs8NatD2lywM1J9cjd0euXkkEC?=
- =?us-ascii?Q?3NNNNPzyFtBmW6bPNovBkfVdhOmxemm0rL62xCVIP+LL8aEe3GsutEf8AT2y?=
- =?us-ascii?Q?zjmJuwy3souq9KD3VQzXfSGBuhwvbbyKDl2H0vo93yBhzLR6E81RLXoIK02e?=
- =?us-ascii?Q?nvwOvjB3rgbJF793viGEYEVqPtWBzz9VlhJ3400yAmxBC4mVotq0cZA9KuNu?=
- =?us-ascii?Q?ABo4Icf5XwNN75D9EwUEh5AMvaFyCObVoBHykZBkRPjvQZsDpTlVIrYiDBfI?=
- =?us-ascii?Q?jktfXmcn2BCqzpNcbuEZVGiXjY213Iiisqf0izTCNhVWIbXAaNAA4LLnui3V?=
- =?us-ascii?Q?sW8uoIrpqy3boh5Dqhoh1Ci39zwYZPgwLxv+YPg/JoXLXuvVRzROVMvhCQwY?=
- =?us-ascii?Q?WbfcCbgJh+7Xu1AHJMG53HLfs2UmTCYGXfjNMsEpA+RowTmSSXSNV7YQsDt5?=
- =?us-ascii?Q?2xaOSdGSenoLobp5RcUZnQDesN+QIJ5mBTqieE2BQH+r/+LTFzSmWwbCpbXT?=
- =?us-ascii?Q?QNrDj+BsEaSyGm1jfCDDYpBHa4Zrx94MFYJldsR7XsNvGvCSYVwW5aJpxJzn?=
- =?us-ascii?Q?kPmgrnXuvRcf+X/3b1WRT6w8Lf5dyVSrFRexXQw/htebagkSaxk6dMrzF1rQ?=
- =?us-ascii?Q?Eos1ecD5koWgRco8K7OCn1vuKqR8UUMl5rV9F65utVYQ/TN44KI+l3gqAJWA?=
- =?us-ascii?Q?BClw0rCFdWvzblXfeszIkMhmOBGXi2piXrZ5NRj7xa2ussnK2gH0FrdASylY?=
- =?us-ascii?Q?W6WCW8OvAY+fwkk0POxDFMZISu9GBCvH25opzjA3+C1Jh0fbOE4xI5CsZF0s?=
- =?us-ascii?Q?JfzUH3baUMpc/OG9T2Tp8KE7qgcPH0PvBjrTlp41UjzHxf1HD1R/6sGy3a0H?=
- =?us-ascii?Q?LXV1pTgCZ2IAPEzFzeNKKM6RCkSWCjkF3OjBvI74NyWljWSgbTjJvLPd3BHX?=
- =?us-ascii?Q?P42SAadQGaCMLnQSEMzlSTlPNgadbR5iwWjilY9i0o1OK+H7X7BSqftv/AUQ?=
- =?us-ascii?Q?sg+ZPi+BZvfpCVjOyzYyAOIAXyWHanlizu5JWctiKzhO2FBBTn8zXA5zuaoM?=
- =?us-ascii?Q?vPRXC2a+xL7PbmeP+VZtgmTIDjw5ityEEUCJDUR2c3ZjAzXWC2/l4qza0YbG?=
- =?us-ascii?Q?RUqd9wZzLk3GVHSwMF4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c329a428-55df-406e-c63e-08ddef0415d5
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5753.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 18:18:18.4511
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Paa+zedHWXNKEHazkhnF89E9VgThDU9TgZMt0NqQ70So5MOJot3oXQjCDG7lMbSI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7276
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 19:18:35 +0100
+Message-Id: <DCNMJEP0XW33.1AUMCTJU5UPBY@linaro.org>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown"
+ <broonie@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones" <lee@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
+ <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v3 2/3] ASoC: codecs: add new pm4125 audio codec driver
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Srinivas
+ Kandagatla" <srini@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250814-pm4125_audio_codec_v1-v3-0-31a6ea0b368b@linaro.org>
+ <20250814-pm4125_audio_codec_v1-v3-2-31a6ea0b368b@linaro.org>
+ <df884334-c850-4ae9-b5e8-63cb834ae259@kernel.org>
+ <DCNIVW9XSSY3.3H7TSNFDH7TKT@linaro.org>
+ <690423ac-4283-47a0-9250-4c740978ccac@oss.qualcomm.com>
+In-Reply-To: <690423ac-4283-47a0-9250-4c740978ccac@oss.qualcomm.com>
 
-On Mon, Sep 08, 2025 at 08:12:59PM +0200, Pratyush Yadav wrote:
-> > +#define KHO_VMALLOC_FLAGS_MASK	(VM_ALLOC | VM_ALLOW_HUGE_VMAP)
-> 
-> I don't think it is a good idea to re-use VM flags. This can make adding
-> more flags later down the line ugly. I think it would be better to
-> define KHO_VMALLOC_FL* instead.
+On Mon Sep 8, 2025 at 4:45 PM BST, Srinivas Kandagatla wrote:
+> On 9/8/25 4:26 PM, Alexey Klimov wrote:
+>> Hi Srini,
+>>=20
+>> On Fri Aug 15, 2025 at 4:36 PM BST, Srinivas Kandagatla wrote:
+>
+>
+>>>> +static int pm4125_codec_enable_rxclk(struct snd_soc_dapm_widget *w, s=
+truct snd_kcontrol *kcontrol,
+>>>> +				     int event)
+>>>> +{
+>>>> +	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w-=
+>dapm);
+>>>> +
+>>>> +	switch (event) {
+>>>> +	case SND_SOC_DAPM_PRE_PMU:
+>>>>
+>>>> +static const struct snd_kcontrol_new pm4125_snd_controls[] =3D {
+>>>> +	SOC_SINGLE_EXT("HPHL_COMP Switch", SND_SOC_NOPM, 0, 1, 0,
+>>>
+>>>     SOC_SINGLE_EXT("HPHL_COMP Switch", PM4125_COMP_L, 0, 1, 0, ?
+>>>
+>>>> +		       pm4125_get_compander, pm4125_set_compander),
+>>>> +	SOC_SINGLE_EXT("HPHR_COMP Switch", SND_SOC_NOPM, 1, 1, 0,
+>>>
+>>>        SOC_SINGLE_EXT("HPHR_COMP Switch", PM4125_COMP_R, 1, 1, 0,?
+>>>
+>>>> +		       pm4125_get_compander, pm4125_set_compander),
+>>>
+>>> This is same issue in one of the WCD codec, which am going to send fixe=
+s
+>>> along with my original wcd fixes series.
+>>=20
+>> So this was in other codecs for years, right?
+>
+> only in wcd937x since it was added.
+>
+>>=20
+>>>> +
+>>>> +	SOC_SINGLE_TLV("HPHL Volume", PM4125_ANA_HPHPA_L_GAIN, 0, 20, 1,
+>>>> +		       line_gain),
+>>>> +	SOC_SINGLE_TLV("HPHR Volume", PM4125_ANA_HPHPA_R_GAIN, 0, 20, 1,
+>>>> +		       line_gain),
+> ...
+>                           PM4125_ANA_HPHPA_FSM_DIV_RATIO_MASK,
+>>>                                       PM4125_ANA_HPHPA_FSM_DIV_RATIO_68=
+);
+>>> @@ -309,8 +307,6 @@ static int pm4125_rx_clk_disable(struct
+>>> snd_soc_component *component)
+>>>         snd_soc_component_write_field(component,
+>>> PM4125_DIG_SWR_CDC_RX_CLK_CTL,
+>>>                                       PM4125_DIG_SWR_ANA_RX_CLK_EN_MASK=
+,
+>>>                                       PM4125_DIG_SWR_RX_CLK_DISABLE);
+>>> -       pm4125_global_mbias_disable(component);
+>>> -
+>>>         return 0;
+>>>  }
+>>=20
+>> This doesn't work. Playback has two issues: 1) volume is very low and pr=
+obably
+>> not adjustable and 2) sound during playback dies after a couple of secon=
+ds.
+>>=20
+>> Returning these global_mbias() calls restores the good behaviour.
+>
+> What is global micbias to do with rx playback? Maybe something is missing=
+.
 
-+1
+No idea. Spec that I can see doesn't say a lot about PM4125_ANA_MBIAS_EN re=
+gister.
+Just that these are main biases.
 
-This kind of stuff should be avoided, it becomes a very sneaky ABI.
+> Which RX path are you testing?
+>
+> I am testing this with Headphone and Lineout, it works for me.
+>
+>>=20
+>> Maybe let's make a widget out of it? In such case I am not sure about
+>> routing meaning that I not sure which paths do require mbias enable.
+> Not sure why RX would need mic bias?
 
-Jason
+I am testing lineout that goes into wsa881x amplifier in analog mode (mono)=
+.
+I use the following amixers:
+
+amixer -c0 cset iface=3DMIXER,name=3D'RX_CODEC_DMA_RX_0 Audio Mixer MultiMe=
+dia1' 1
+amixer -c0 cset iface=3DMIXER,name=3D'RX_MACRO RX0 MUX' 1
+amixer -c0 cset iface=3DMIXER,name=3D'RX INT0 DEM MUX' 1
+amixer -c0 cset iface=3DMIXER,name=3D'RX INT0_1 MIX1 INP0' 'RX0'
+#merge two channels together (right channel goes into INT0_1 input1)
+amixer -c0 cset iface=3DMIXER,name=3D'RX INT0_1 MIX1 INP1' 'RX1'
+amixer -c0 cset iface=3DMIXER,name=3D'EAR_RDAC Switch' 0
+amixer -c0 cset iface=3DMIXER,name=3D'HPHL_RDAC Switch' 0
+amixer -c0 cset iface=3DMIXER,name=3D'HPHR_RDAC Switch' 0
+amixer -c0 cset iface=3DMIXER,name=3D'LO_RDAC Switch' 1
+amixer -c0 cset iface=3DMIXER,name=3D'HPHL Switch' 1
+amixer -c0 cset iface=3DMIXER,name=3D'RX_RX0 Digital Volume' 80
+amixer -c0 cset iface=3DMIXER,name=3D'SpkrMono WSA_RDAC' 1
+
+and then aplay. With long .wav files the sound dies after few seconds of pl=
+ayback.
+But volume issue is present with any .wav files.
+
+After playing with pm4125_global_mbias_enable(), tt looks like
+both PM4125_ANA_MBIAS_EN_GLOBAL and PM4125_ANA_MBIAS_EN_V2I should be enabl=
+ed to avoid this problem.
+
+Thanks,
+Alexey
+
 
