@@ -1,125 +1,182 @@
-Return-Path: <linux-kernel+bounces-806145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9F0B49269
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:05:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EABB49277
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92D61BC2921
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591DB172885
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F3630E0C2;
-	Mon,  8 Sep 2025 15:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E730DD2D;
+	Mon,  8 Sep 2025 15:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HDqRDB47"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZlNpZF4H"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0513730ACE8;
-	Mon,  8 Sep 2025 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2342A228C9D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343844; cv=none; b=CjE4M/IMgSpoLbgGEX3VJjIJvHcu/1nACP7t1XtOc1Eb4mpnevsZKuwhbAQej6YQy7dFEzaMKNU9D6xprhF8YQ1lGDjb8Wz0ulXKTYLdEvZudwtq8SKqUH7TkXAP2aTBniD+sRvflbiMC4rfbZJp/piPzcA2c3tnd2lL7zotczo=
+	t=1757343909; cv=none; b=c7zq20uTJA3KI+ho5ECFndrfi2YE5osgvAsnx6OlLuMyQhDEkdyPqZ5qKeegtAO1uKy1Na/YX+VgXdJZ624st2uwPwIX3LBGYo/KifkQA9MFxmTH68cSzVOwHGJAhhdn2cKpLoe2K2VkAKw2sko/nFHeU3gTYO2EpWB7bQLGl3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343844; c=relaxed/simple;
-	bh=HGi+oMw2wcRLkxRtf1WqMmGBJnptQWvmxF2SQgOWE44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLVKu7tGAt0/csPA0gLU/b6REEY3YbSUGht3jp2dmodQ2pqwu7hoysOWSr1ebnmmEHoRIOZAnYEz3gnNPQN4NWvFFX+DREEEGTpTXzVm/V5iYFvWlnGFjadeoJIqsf23OZP3szSzXz92ll3v0vuot3PVJLRem8XbLkFY8rOnY9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HDqRDB47 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E00F640E01A2;
-	Mon,  8 Sep 2025 15:03:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Dx_Mcpvo0WRj; Mon,  8 Sep 2025 15:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757343830; bh=ZqDP/jFE+eeNiZ9/0ak0Uo6t8J44LbT5gL5scXJrlQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HDqRDB47PMky7RLUBXKoA6kDCZCnyPhpDnieFgQyS4iYOBrtI7OUwZ3P/P24eNpMP
-	 RZjYJ7CXQ+RFxfgr3ypDGl3VVhDtMIICPKslKj8nX1uxr5YtP0G6BzLP7lnVaCP2uz
-	 p7bJWjVqW4VEJhW1BLa7jJ31az0NgFRIFrZcWa5fl5evBLwFeqA95DyeVJM8leptpe
-	 6SLuEuWHCzT5KpmMruEseNLE2tu2D9uaSVUtACO/Llshwf5JjXnDkImumc/aIM+B+M
-	 AEHu4tb2lfi7/w+1DGOmLI41Rym4P8hyDfscfmtuPyX2y41zGyVgeaR4idphgX0HkP
-	 WuvTaSBeAhUq3HDJ2W2bq2bO3vQUoVx7LbMw1fKNR8WB9AhQRbyADvfUlh7Nv6SDVT
-	 9NevJMaKGLr24cBBp7TB16Uw0cBFDHRZpNC8/IoVpRM6xlW0nK6sKCpf6bsU4IjYeD
-	 oOtilGcqln6hADP5hfLUS1rjWGwyX/LqZg/rQKq5AIvAYA4D3e2nnQw9g+FiM+B/Wi
-	 78Od1JPs8BE1Sdqe70823RvbC7x08GGS7xJl2OIb1/cJrbmFjcd5le4camLhoxJSV1
-	 mODF9ClHnVlRWBGyXGWsuLZaaCPl8y65bxGu/Uh6ErE7QG8zq4738FNzELFCfog4vS
-	 j4hb6z78v+TQWvdB7mruFrhM=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D4F9C40E015D;
-	Mon,  8 Sep 2025 15:03:07 +0000 (UTC)
-Date: Mon, 8 Sep 2025 17:03:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Moger, Babu" <babu.moger@amd.com>,
-	Reinette Chatre <reinette.chatre@intel.com>
-Cc: corbet@lwn.net, tony.luck@intel.com, Dave.Martin@arm.com,
-	james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	kas@kernel.org, rick.p.edgecombe@intel.com,
-	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
-	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
-	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
-	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
-	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
-	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
-	tiala@microsoft.com, mario.limonciello@amd.com,
-	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
-	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
-	gautham.shenoy@amd.com
-Subject: Re: [PATCH v18 05/33] x86/cpufeatures: Add support for Assignable
- Bandwidth Monitoring Counters (ABMC)
-Message-ID: <20250908150301.GFaL7wJUiowzdhWUbu@fat_crate.local>
-References: <cover.1757108044.git.babu.moger@amd.com>
- <08c0ad5eb21ab2b9a4378f43e59a095572e468d0.1757108044.git.babu.moger@amd.com>
- <fb2d5df6-543f-43da-a86a-05ecf75be46d@intel.com>
- <d3e4ddd7-2ca2-4601-8191-53e00632bf93@amd.com>
+	s=arc-20240116; t=1757343909; c=relaxed/simple;
+	bh=JCXr4sAOs6jyNz4O24ld58oNIx50jfj0TS7I8twM4Zs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KmvLiWMBfVMfoXn+j5CKhHhJ7s2o8nimtrMs74MWSyKtT3D27Zstm9TmdHBei3tTS5+PqDRgddX02IwH3acsJICPTVMzWd7txH+QUchZ1rXX6YFlXlVIfdc3Afw5LJE7IxAe2PPuwip5Nw+dxLialE6XgxqN6s+MpXJ5Nx8db4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZlNpZF4H; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=F2lxZqLHHvrOw0VxmILgbptbym7kVrMCHFyEXnEt8RA=;
+	b=ZlNpZF4HQiUl62bILpZskVu6n6N89ejiRZZIVGu8Zvw9JDFXXCkxmgF1lP7KUR
+	pPN3JyXE2YoVWsXHeoLPubDPnbkIES2MvvnvJwada81xA0mxlVI4v1cAz6P6hIKe
+	20jmGAQXkbPhbndHbt69MLvsucdd4IvkPWa8u/DZGrKY4=
+Received: from nilq-virtual-machine.. (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDn_0FS8L5oTsR7Ag--.56211S2;
+	Mon, 08 Sep 2025 23:03:47 +0800 (CST)
+From: niliqiang <ni_liqiang@126.com>
+To: zong.li@sifive.com
+Cc: aou@eecs.berkeley.edu,
+	chenruisust@gmail.com,
+	iommu@lists.linux.dev,
+	jgg@ziepe.ca,
+	joro@8bytes.org,
+	kevin.tian@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	ni_liqiang@126.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robin.murphy@arm.com,
+	tjeznach@rivosinc.com,
+	will@kernel.org
+Subject: Re: [RFC PATCH v2 00/10] RISC-V IOMMU HPM and nested IOMMU support
+Date: Mon,  8 Sep 2025 23:03:46 +0800
+Message-Id: <20250908150346.4761-1-ni_liqiang@126.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANXhq0ra+yv-Wt_vKTN3+c4StsPQB1vR+=Kp3RVSh0g10Oogqw@mail.gmail.com>
+References: <CANXhq0ra+yv-Wt_vKTN3+c4StsPQB1vR+=Kp3RVSh0g10Oogqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d3e4ddd7-2ca2-4601-8191-53e00632bf93@amd.com>
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn_0FS8L5oTsR7Ag--.56211S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4R_miRDUUUU
+X-CM-SenderInfo: xqlbzxxtld0wa6rslhhfrp/1tbiJBPC5Wi+W2uTvQABsZ
 
-On Mon, Sep 08, 2025 at 09:41:22AM -0500, Moger, Babu wrote:
-> > Apologies for not catching this earlier. I double checked to make sur=
-e
-> > we get this right and I interpret Documentation/process/maintainer-ti=
-p.rst
-> > to say that "Link:" should be the final tag.
-> >=20
->=20
-> That=E2=80=99s fine. It wasn=E2=80=99t very clear to me in maintainer-t=
-ip.rst.
+On Tue, 2 Sep 2025 12:01:19 +0800 Zong Li <zong.li@sifive.com>  wrote:
+>
+> On Mon, Sep 1, 2025 at 9:37 PM niliqiang <ni_liqiang@126.com> wrote:
+> >
+> > Hi Zong
+> >
+> > Fri, 14 Jun 2024 22:21:48 +0800, Zong Li <zong.li@sifive.com> wrote:
+> >
+> > > This patch initialize the pmu stuff and uninitialize it when driver
+> > > removing. The interrupt handling is also provided, this handler need to
+> > > be primary handler instead of thread function, because pt_regs is empty
+> > > when threading the IRQ, but pt_regs is necessary by perf_event_overflow.
+> > >
+> > > Signed-off-by: Zong Li <zong.li@sifive.com>
+> > > ---
+> > >  drivers/iommu/riscv/iommu.c | 65 +++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 65 insertions(+)
+> > >
+> > > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> > > index 8b6a64c1ad8d..1716b2251f38 100644
+> > > --- a/drivers/iommu/riscv/iommu.c
+> > > +++ b/drivers/iommu/riscv/iommu.c
+> > > @@ -540,6 +540,62 @@ static irqreturn_t riscv_iommu_fltq_process(int irq, void *data)
+> > >   return IRQ_HANDLED;
+> > >  }
+> > >
+> > > +/*
+> > > + * IOMMU Hardware performance monitor
+> > > + */
+> > > +
+> > > +/* HPM interrupt primary handler */
+> > > +static irqreturn_t riscv_iommu_hpm_irq_handler(int irq, void *dev_id)
+> > > +{
+> > > + struct riscv_iommu_device *iommu = (struct riscv_iommu_device *)dev_id;
+> > > +
+> > > + /* Process pmu irq */
+> > > + riscv_iommu_pmu_handle_irq(&iommu->pmu);
+> > > +
+> > > + /* Clear performance monitoring interrupt pending */
+> > > + riscv_iommu_writel(iommu, RISCV_IOMMU_REG_IPSR, RISCV_IOMMU_IPSR_PMIP);
+> > > +
+> > > + return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +/* HPM initialization */
+> > > +static int riscv_iommu_hpm_enable(struct riscv_iommu_device *iommu)
+> > > +{
+> > > + int rc;
+> > > +
+> > > + if (!(iommu->caps & RISCV_IOMMU_CAPABILITIES_HPM))
+> > > +     return 0;
+> > > +
+> > > + /*
+> > > +  * pt_regs is empty when threading the IRQ, but pt_regs is necessary
+> > > +  * by perf_event_overflow. Use primary handler instead of thread
+> > > +  * function for PM IRQ.
+> > > +  *
+> > > +  * Set the IRQF_ONESHOT flag because this IRQ might be shared with
+> > > +  * other threaded IRQs by other queues.
+> > > +  */
+> > > + rc = devm_request_irq(iommu->dev,
+> > > +               iommu->irqs[riscv_iommu_queue_vec(iommu, RISCV_IOMMU_IPSR_PMIP)],
+> > > +               riscv_iommu_hpm_irq_handler, IRQF_ONESHOT | IRQF_SHARED, NULL, iommu);
+> > > + if (rc)
+> > > +     return rc;
+> > > +
+> > > + return riscv_iommu_pmu_init(&iommu->pmu, iommu->reg, dev_name(iommu->dev));
+> > > +}
+> > > +
+> >
+> > What are the benefits of initializing the iommu-pmu driver in the iommu driver?
+> >
+> > It might be better for the RISC-V IOMMU PMU driver to be loaded as a separate module, as this would allow greater flexibility since different vendors may need to add custom events.
+> >
+> > Also, I'm not quite clear on how custom events should be added if the RISC-V iommu-pmu is placed within the iommu driver.
+> 
+> Hi Liqiang,
+> My original idea is that, since the IOMMU HPM is not always present,
+> it depends on the capability.HPM bit, if we separate HPM into an
+> individual module, I assume that the PMU driver may not have access to
+> the IOMMU's complete MMIO region. I'm not sure how we would check the
+> capability register in the PMU driver and avoid the following
+> situation: capability.HPM is zero, but the IOMMU-PMU driver is still
+> loaded because the PMU node is present in the DTS. It will be helpful
+> if you have any suggestions on this.
+> 
+> Regarding custom events, since we don't have the driver data, my
+> current rough idea is to add a vendor event map table to list the
+> vendor events and use Kconfig to define them respectively. This is
+> just an initial thought and may not be the good solution, so feel free
+> to share any recommendations. Of course, if we eventually decide to
+> move it to drivers/perf as an individual module, then we could use the
+> driver data for custom events, similar to what ARM does.
+> 
+> Thanks
+> 
 
-You don't need to worry about minor things like that - our scripts fix th=
-em up
-while applying.
+Apologies for the late reply. I understand the reasoning behind this approach now, it is indeed necessary to check the capability.HPM bit to further determine whether to load the pmu-driver. 
+Also, the HPM-related registers are stored together with other registers without distinction.
+Regarding custom events, I also previously thought that distinguishing them via Kconfig was the way, though it isn't the most elegant approach.
+Sorry, I don't have a better idea for now. I'll be sure to follow up with you if it come across any better ideas.
 
-As to Link tags, see this here:
+Best regards,
+Liqiang
 
-https://lore.kernel.org/r/CAHk-=3Dwh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K=
-0dJHVg@mail.gmail.com
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
