@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-806721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03240B49AF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:21:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AA8B49AEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64A03208A6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4E01B22B2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA482E1EFF;
-	Mon,  8 Sep 2025 20:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5622DAFC1;
+	Mon,  8 Sep 2025 20:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Me17E9qJ"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTXHqS7h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E35C2E1726;
-	Mon,  8 Sep 2025 20:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEE62D9ECD;
+	Mon,  8 Sep 2025 20:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362769; cv=none; b=ooM0sTIwCgVQSAW6EHJLuBWnO1VNvrr7Zqnt2RxKvvhgdkwI1Kl7oBwb+n9NqnCFfaP0dim69AVB3LLNGfCOdI3wJ9+NjhEfo/pomAlyvkg/2BwsluraQo1XNwFIsBuuOfnYyD5crtuebUdfVd7CySlsADAsw1737mnvjnZbFXc=
+	t=1757362759; cv=none; b=QVqDITd+JdtcFsAn2BqDf1qZYn+K2HKwYGQ+Tdd8DxrQmvfQDkvGzhbWaQjZBtom+qoMtCS1sb1oyzW92qidL5JJVCesJwAbUPhdD5b3TYdgq0LFkTTtfXjbjrwnjq7idRGTEZfE9asraTo7/5vEHk9u0Iy2ZKM+1v86oDSW0Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362769; c=relaxed/simple;
-	bh=bEKhAzri7BBrxNHU6CjKqcmbERBZnrPEV1ur7Br4EzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8+MO5PFTJSCvwgZmQZpoFTlUl1fXoaoHJOfiwAMUlzIls8aNxK6pqnc9hUyp9GVb8hm3EoZv2Lpn5OEDxRODSK5KA75sn89ol71lspihBug0LrtD+cxhYK8TDdpFcyoqgC1Z8kPn3EDT4/mTlI/qTjpszhOg93xRssyxQiM0A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Me17E9qJ; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45decc9e83dso1583125e9.0;
-        Mon, 08 Sep 2025 13:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757362766; x=1757967566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bEKhAzri7BBrxNHU6CjKqcmbERBZnrPEV1ur7Br4EzE=;
-        b=Me17E9qJwuQhED6UIZbHs1IKI06FKOrht9doak1IOzAiutUHfnFVmYoDNAkIqvFadg
-         WxbjU3uNwU2Xt+h75WnoVHqtbNk5qZZzdHkdymBSTqDMxr+1xnGf71wVDVueBJY5efKX
-         OSQfR/3d3sPXZory8KIbvZTtxDapVgTf9BJaQmXp7wB3BUv6FbNiZkLOuwoylewhToBA
-         vu/54cNTdLNvKH+m4uPTNTw43bwqiz3IP4TpD21jU4LPQ52KN1hH7SNOtsxfKKG+R6hl
-         5YmZ7YY3edcYCfZVcco/o/m8pBxMG/exdGLRqGR2TLXSO60uloQPprHE5VqWY2EBDKKD
-         gSxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757362766; x=1757967566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bEKhAzri7BBrxNHU6CjKqcmbERBZnrPEV1ur7Br4EzE=;
-        b=wbfy49lCY/ZgZHt8VfpUIfaE2zCNcXAP4jTXyYSGg7ym8FalH2bu29otC1Qv05OA72
-         JYAp8Kfvrr75TGXSgJcTOHJdZ7wlPV5Ek9bpEo5vQG+7K4jaVSut+JlclBVCYvG7WCBV
-         QjTDsie0110PdwlxvthSHjlkCzXReFkohGLC4wMk7eTrXtc05tTdi59q58JQFwf6+pN5
-         P5QZtsAPxJ1Y/tgPLF5PBTF5AjKWxhnkd27ROv0KnxSiXHjy23hc8OcQm5dus/BQbSZ0
-         9eLy/3MHhgWpnrVM9xucmR9nmy8kc4r9TgK7kdzll0fRJNNIji44onjM1lJDsiUDD2r3
-         XrMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7lyywpxYdDd8zigbjQ4hbESoIuYaEGrvUeL4AHZQWxCxqsiOtBKMTOgUhiXzgF4ndDG23yH5w4A8mn/wX@vger.kernel.org, AJvYcCWFv+bhuNchDxGS/+1ItU9ssH3m9MOAe7bJbanIjglD7DmNZgmVU6nuIae+urcFQF0Zi7/47VIGzfI=@vger.kernel.org, AJvYcCWKT6K7xdLc3u0gUwAITMXUuwo32xO2BgpGCGyjQvTFCHNBbEq+1RQO04sUADYWsVxHwSssjXjghrH/lBmm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUO8dszxKLIpW+3xOQrih8x6UTLpzd4FOGwAmZ58w1abL9BJWQ
-	JDV0pau+JQZLs1iqWfkCe3ClcyOEhEFW+DmTmkh+kDJ/gHrqpQzos/1BFTPtbkhNvidHy3kQROE
-	hJNna13yMkY843dlq/agqCvmdCjYPcyA=
-X-Gm-Gg: ASbGnct1Dcqe5clme/m3qVRkadVTBbXeJNoDQgW0CSF4zBevIhxbQSjmgIqCfKKYcqh
-	irQ05E2XyazgGK5+GuL9rEfxs6kHlFCXftHY/MGM6U5AfcZxGxcR5LPN5oBKEnnYrUiGnJ9PdL5
-	2ePncPJjSKszSwOkk7u6Knn5pyWU0bHY03A01hkltPBKX6mOX5Pi/SVixe0XA6OKnafOo5QmuE3
-	tL62SxZ2JnD3rV568g=
-X-Google-Smtp-Source: AGHT+IETXcCyuhskt8NfiuIvMZk4HNrRqt02JjM5fpQLtTPCEi8+CDkXKLs0cMppBKfL27M9u+6qWLgrHDP5cvo0P64=
-X-Received: by 2002:a05:600c:35d3:b0:45d:98be:ee8e with SMTP id
- 5b1f17b1804b1-45ded05bcd0mr4878465e9.1.1757362766098; Mon, 08 Sep 2025
- 13:19:26 -0700 (PDT)
+	s=arc-20240116; t=1757362759; c=relaxed/simple;
+	bh=bmj7baRZNqvumNY5NHpR2oWGL0EJxE8zmdop29BhMQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JU24loyHGqu2aOoOpMH97P9iVdi9skxtAomJ1lb5FRG/5NgAeA4OJeUD3tsreC4ouSII2b2Z/ymo0Wg4gBKuofhE5TOmRq+EUxoRi9YuZuwsHc3GcW8mRjr9rN2A8vkCDzmOX1LfxFNtK/plJrpeHoRXjIGP6pw7o1P9erQq2QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTXHqS7h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897E3C4CEF1;
+	Mon,  8 Sep 2025 20:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757362759;
+	bh=bmj7baRZNqvumNY5NHpR2oWGL0EJxE8zmdop29BhMQQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DTXHqS7h+yz+vFVX545ZtDbe4ETk0KETGFu3KDxUMr/ylXeFqu54hmZCNuiVzX8Hc
+	 Xewcg9CZc2iHreLP8EpD+KZVL8m/UzzYywZDISFiSpfdcrtgCCVY3BA3jUWZpK7ZFu
+	 1YDPlG+afsx73hM0Mp+FoYOFw1qvw/BWHFxwjF+Brk6JLEkJ8n2K4qJKyWjcneUYlk
+	 75tv4J0ILR6GI25uvK3Vu/kC35y1Ne0lR8NpduPGAXFEnq1qi48QP8O4oV013OrnXb
+	 4FIszjqRdSbXY7N3bnV65Eb+/jBTptn1+zvKIYlXfVHwom2mcq8lFkuj3Kxu7pKnoz
+	 HwbWze95MSo0w==
+Date: Mon, 8 Sep 2025 13:19:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Gal Pressman
+ <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu
+ <cratiu@nvidia.com>, Nimrod Oren <noren@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 3/3] selftests: drv-net: Relax total BW check in
+ devlink_rate_tc_bw.py
+Message-ID: <20250908131917.10785ce0@kernel.org>
+In-Reply-To: <0cd98e25-b387-452b-b1a6-414ab20a4cf3@nvidia.com>
+References: <20250831080641.1828455-1-cjubran@nvidia.com>
+	<20250831080641.1828455-4-cjubran@nvidia.com>
+	<20250902162101.5c78cc88@kernel.org>
+	<20250905153243.6c03e257@kernel.org>
+	<0cd98e25-b387-452b-b1a6-414ab20a4cf3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
- <3339d11e69c9127108fe8ef80a069b7b3bb07175.1756151769.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZedGwtMThKjFLcXqJuc6+RD_EskQGvqKhV9Ew4dKdM_Og@mail.gmail.com> <2xfriqqibrl7pwvcn6f2zwfjromyuvlxas744vpqrn2jthbzu6@nrhlxafjpfnr>
-In-Reply-To: <2xfriqqibrl7pwvcn6f2zwfjromyuvlxas744vpqrn2jthbzu6@nrhlxafjpfnr>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Mon, 8 Sep 2025 22:19:15 +0200
-X-Gm-Features: AS18NWDjLBMTDDx-3GcgskVrIFrWTkldm4ARgshAhph95s8X05Rv1arvNW2pjfU
-Message-ID: <CA+fCnZeem3pBPfhQyPiSAUfp5K0YdHFuRs0FZykF03YXVS-f1g@mail.gmail.com>
-Subject: Re: [PATCH v5 18/19] mm: Unpoison vms[area] addresses with a common tag
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: sohil.mehta@intel.com, baohua@kernel.org, david@redhat.com, 
-	kbingham@kernel.org, weixugc@google.com, Liam.Howlett@oracle.com, 
-	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com, 
-	trintaeoitogc@gmail.com, axelrasmussen@google.com, yuanchu@google.com, 
-	joey.gouly@arm.com, samitolvanen@google.com, joel.granados@kernel.org, 
-	graf@amazon.com, vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org, 
-	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com, 
-	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com, 
-	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz, kaleshsingh@google.com, 
-	justinstitt@google.com, catalin.marinas@arm.com, 
-	alexander.shishkin@linux.intel.com, samuel.holland@sifive.com, 
-	dave.hansen@linux.intel.com, corbet@lwn.net, xin@zytor.com, 
-	dvyukov@google.com, tglx@linutronix.de, scott@os.amperecomputing.com, 
-	jason.andryuk@amd.com, morbo@google.com, nathan@kernel.org, 
-	lorenzo.stoakes@oracle.com, mingo@redhat.com, brgerst@gmail.com, 
-	kristina.martsenko@arm.com, bigeasy@linutronix.de, luto@kernel.org, 
-	jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com, mhocko@suse.com, 
-	ada.coupriediaz@arm.com, hpa@zytor.com, leitao@debian.org, 
-	peterz@infradead.org, wangkefeng.wang@huawei.com, surenb@google.com, 
-	ziy@nvidia.com, smostafa@google.com, ryabinin.a.a@gmail.com, 
-	ubizjak@gmail.com, jbohac@suse.cz, broonie@kernel.org, 
-	akpm@linux-foundation.org, guoweikang.kernel@gmail.com, rppt@kernel.org, 
-	pcc@google.com, jan.kiszka@siemens.com, nicolas.schier@linux.dev, 
-	will@kernel.org, jhubbard@nvidia.com, bp@alien8.de, x86@kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, 
-	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 3:12=E2=80=AFPM Maciej Wieczor-Retman
-<maciej.wieczor-retman@intel.com> wrote:
->
-> >Do we need this fix for the HW_TAGS mode too?
->
-> Oh, I suppose it could also affect the hardware mode since this is relate=
-d to
-> tagged pointers and NUMA nodes. I'll try to also make it work for HW_TAGS=
-.
+On Mon, 8 Sep 2025 22:16:29 +0300 Carolina Jubran wrote:
+> However, I=E2=80=99ll also need to extend load.py:
+>=20
+> 1. Binding support to ensure traffic flows through the specific VLAN
+>  =C2=A0 =C2=A0 interface.
+> 2. Interval-based measurement for iperf3 --json to analyze only the
+>  =C2=A0 =C2=A0 stable period.
+>=20
+> So my plan is:
+>=20
+> 1. Send v2 for net to fix the current test with interval-based
+>  =C2=A0 =C2=A0 measurement.
+> 2. Follow up with a patch to extend load.py with reverse/binding/interval
+>  =C2=A0 =C2=A0 support and then migrate the test to use it.
+>=20
+> Does that sound good to you?
 
-Ack. I suspect you won't need to provide two separate implementations
-for this then.
-
-Also, could you split out this fix into a separate patch with the
-Fixes and CC stable tags (or put the fix first in the series)?
+Sounds too complicated, this is just a stability improvement for a test
+which works on single device, and is not exercised / reported upstream.
+Let's jump straight to step 2.
 
