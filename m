@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-805597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88CEB48ABE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11399B48ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B424E1705
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA6E3AE33C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F176F2253F2;
-	Mon,  8 Sep 2025 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888CE22756A;
+	Mon,  8 Sep 2025 10:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RSpLr0gT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhPm/EQp"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A09189
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F86189;
+	Mon,  8 Sep 2025 10:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757329114; cv=none; b=RW0YTzMnXhsD/WLv29ydwRyIIuYn3/zm/VCOHOyjDk049wq36AW/UzePgLdKm5FCFjZEm+SKsoTzQ1DxORUsyzFJ35Pmah2JCsWBM6XoRN7qVyeNp+NjFWTQkX5BcEOO+k7C2vRNH6OX12sE+w/aUj3ngXGuJIDHYH5L+7n7v1M=
+	t=1757329155; cv=none; b=SPmqSo/33mbWkgJGgz5YSvI/u5bT9+OGGvum1nKB9UfkX9hebffAKpKwslO2Snd+20Xmw8Rzb5a3LVdH7tKfJnYG0rvzHZK0AtyhwwV7Z+GJGRboyB3lBGvEkmF4UwsqWv1n2NbtVw22PgGZMtLeUSiZ5GMzBwEWQ8Np5teRn4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757329114; c=relaxed/simple;
-	bh=G44EIqcHlPc0MPwbyXEzw8SRNF12eQUABiDDCqEXD9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ujm5us1eHWPWLitf0DPEXjv8Tp5Nu8GIk5JAmbGlmz0x3Je9fjxUnUwJw+yNe0Au3q7c4htIlVPNmrjpjdKkPRby6hypJa/qQT89ldvBcYMFbvA3sUpBLw87Ct3BUhbGbSCF4SuRHG/TWUeid9SapC37iORL14ODrL5S0+98I7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RSpLr0gT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757329111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=myamu423IxjnsnsnK8n7lFRHcKeofu6ER79sc7yqpzA=;
-	b=RSpLr0gTZdmrQJ+eXTKzXSMMEllq3oG59wfyO31CsLytE5uqdEXPwhTh7yce/tQdIcchBg
-	ftrSVeJzatNpYKFMfqbwgl2vU2boJrMOgkppDi5xvzGnFg/f2NQLL36mIXnJkK8uoDnr42
-	iPC+q0pR6Nn/o3YYcj/2KBVusPV+ckE=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-CHens0lVM0yrhRzSWrknKg-1; Mon, 08 Sep 2025 06:58:30 -0400
-X-MC-Unique: CHens0lVM0yrhRzSWrknKg-1
-X-Mimecast-MFC-AGG-ID: CHens0lVM0yrhRzSWrknKg_1757329109
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b521ae330b0so1675152a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:58:30 -0700 (PDT)
+	s=arc-20240116; t=1757329155; c=relaxed/simple;
+	bh=CNhxILeWIROJtkzjuwOixsLIs5eaP6mYdGrzHbxJbXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eqYCSVw+TggHc2hMPDrQABHRjpjwAW1jCOFSuzQ1wb7+InPqPkc6mjREg4mp4SQblOEGZUtMBto1XX6zOWpytCeug1Zxm2t3zenMUudFKQOriRO+NUkm4aN3znc1/3xV/rSHCQoELlT+4crn8DkxzyY9gXuT6gWmcgzp/vu6LEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhPm/EQp; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so14333795e9.1;
+        Mon, 08 Sep 2025 03:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757329152; x=1757933952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M/o3gVX4A+pC8uV/C9zqtdbM1sj81BgITs/nnRizczU=;
+        b=FhPm/EQpfyq9zEdoGKJx3Jb9D8/l//dqtbJaskajRNM9+WhTOPTUhH3ttFqbMDOvwN
+         WDdh3mKnTLaN6o2XsVwvBx6GUzRxjGwgY5lpLCXJUmTTclZxDgBaKK91MNgnQoTYTbU1
+         eKqs3M6pUAlobXjB+QVg0pKK8ahgMP8x9QxJzPhRc3ZrOyWZbvibBD0RtLKjozZ5OrOG
+         tiS0Y4YtEhbohlIwNE7nQmD1jdrUzldwNvKxHX/DdEbNzqZ/m19BfxQH+e8OnIist8DS
+         fZZnF9AnDLELa8bbSfYDscZvCmbfJ61L234yJgW3+63hASFRDKKrLNK9jYgyjAzo5HCE
+         qrag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757329109; x=1757933909;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=myamu423IxjnsnsnK8n7lFRHcKeofu6ER79sc7yqpzA=;
-        b=JYTbYmOyp0ozV8aIgl9+5zP4tPIximX7V1h7TLJh0yjRXWAX5B+juzpPuTuEtAoNnt
-         slEctZTdYu5FaMpkvVO2bGg+yYbO9I6vO9lnsJtd3Qohwr5mvGgbfp0pL1VefNbWD9Ll
-         tiiI75Rgzg1+npCCsqJvMrX6oUgUbD9Hcxmlvjt0d+TXMxKSTG7QKBX9P3gmfK/NeQ9R
-         pouOvCOZd7BRtFf5sdiCy0mq2zUgb/7XvBwHZKuQOCAYAj5NVY5m9DvujICYQfnQ3fNI
-         FHzXLnc/JXZhSYlurp1JQ38hY8iVk6jDVPT5I33a54x1ul00AvhD9w/uTKD+netmWTDZ
-         Wc0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVL1ESyw/FV+WHE5ZaJqgzOiZD7i8MQmS4sVjIlsm8BOV9UX3/umGU/E44QxrF36tPv1fSe63ow7xcA+t0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbWTPbHgN3Yf5tER+WDrY6y8fTRCvqpy4XUn465QNKikBWN7pe
-	Z32ZPiG9cr3j+J35FwyLcLCCXz0Iaq6e8LGWiF3ORZWkFrunDV9WlyDIz/nmpk41xAzXxrMkVB+
-	glmidFmQVqyWns1Z3Bg/QrAN/cffqrpNHlZvMTfn7HMVJKVek1v2GiPe3Iu0B8z1a8w==
-X-Gm-Gg: ASbGncvmkASzM9a7b5gdKthtbsBENzSDEvm9fWyGqOn8X0o9jVlfCnNdgtO2573h/WX
-	4De9m4oeI1mzOdDJa/NXDCkvHqJiE7oLGcwEQJ5dFxvHfDzpR72q0x1GR8sh+d3Q9BhbbAmVgI1
-	ncrpEJJ30x/bel3C/QumXSx+/hT4tSJtBlUtL1jTZnjQZ+glfCxCcl85SYB289G05i1reTBdbaC
-	JbRHGYAM039PVhIW6uTAtjnBm0I+XLxzNFBBAJVOGop61LFtMLf/KOY3FhcNKe2Zxp8L9h9zKG8
-	U76XLDU5vmO3ueo9bnH8PaIBHASQGgM=
-X-Received: by 2002:a05:6a20:430b:b0:243:ce0f:e809 with SMTP id adf61e73a8af0-2533e94f9b6mr10495776637.23.1757329109183;
-        Mon, 08 Sep 2025 03:58:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4DVeHGcV8BCDHrKD5vIE00IOinovx4zFRGm8WoZlYfoY+Z0xsXFPf2zD23vpJ0Ng5ZtHbYw==
-X-Received: by 2002:a05:6a20:430b:b0:243:ce0f:e809 with SMTP id adf61e73a8af0-2533e94f9b6mr10495760637.23.1757329108797;
-        Mon, 08 Sep 2025 03:58:28 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd092e2aasm25702026a12.21.2025.09.08.03.58.27
+        d=1e100.net; s=20230601; t=1757329152; x=1757933952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M/o3gVX4A+pC8uV/C9zqtdbM1sj81BgITs/nnRizczU=;
+        b=n5pQQ8g40FfKLP1KYNMhuCnhfiwttOrouhQvItjMqJF5VtQtbVSq06JBZTDy9N2hKv
+         MwYZVnJ9QQ4CY/bb/9R5XSzUmFAzVdifYhUhlAhZ4NeI0/3DHiMwaBoQwX3DJyZlwYY0
+         fopGLPxPwwsYjCHgIAwwQ/h+x3zWch1hB9OLTgCX9xtQ/KaHMft1M6tpcwU0yj7VCMYl
+         6iaNa7fuj5U1QS0KCtwcAuMY1kyVBnxhWtMHEql19sutU1sHS6QBn18cwq/T07WLGTLv
+         QJ4zHJ2tk+Blkx4mPqDCVwFNqFA2I/CRb0UMvKS5nihMfpBr/bW+4AwM+ub4TBODMaqi
+         IDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH48vXUPtud+cbCJK2fUhyv+4/W24zoEc2LXnqhGu18x37ZVyiimHjDfuoZzLQso4KjsGhty0Z0OwgvLIlL2PMtJw=@vger.kernel.org, AJvYcCVJKDGXb9gPX4v8RiXnEAkMUjXS1VZvRt8V4d+HzfsIWdpcyM0Bus+soyquvMGA7VKVnRWrs3zj9q8V9wix@vger.kernel.org, AJvYcCVwll05yxQ+dn3uPDWM7amEKimunz2UNgctToqWzy5KlXz7f/Kp0aWsm5sH9kllMI2bEkaxoyB1AwsN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOf7Z0M02DpdnJ6NqrjZKBzIvcWNJ+klaIuQ1cJe8md5PzyvlJ
+	NNZg2GLiR1dkD7+7p9Sbc+qIyPaC+zU03UJ4+rtGJnA/0aqtdRMto3JO
+X-Gm-Gg: ASbGncsgb4DA10+VRJdcrguTV+it2FyRJ0SesHg1HcdzbSFgUXnkr42HyLNRqCitjiu
+	Bw/Is5Uk/pCIK+tdSQVOwdq1W6x5X1pPLNirgf4r2eaLlHWyPALKeup/EkmUNu4XfSRVrom+A6D
+	2JWK8VGROYJHzqTJMA9bVz4A6GOdMmv+Y9fKtFbke5xe7Zu0jsmIPhs50yUqL/zGRJ1LlvNrcn6
+	eNijHCTjaw3jBKUqr2JGBEEN8MErktaasZvv0qcJ6eIsMLXX19IM/r6LhB+UO7jslj1lojsH7ui
+	3z0ok48SET2spBhsrjj24kKA7Ha8+ZM/ScGKKUYVav7/cU/H35j4+7QXeRA89i50IYqZgXjIjOw
+	+omBrt9wyljdgDwPbEUv1YC5llIq6RoUE3wAha/Cbv/lgFj01PFvlbrAKVA==
+X-Google-Smtp-Source: AGHT+IG6IGAiVacXOQNaZCh79TsdsAnmzFtfGBHM8HXzbwbzvmmNbEzbLXTJmKcec+tTtlvN5FexMg==
+X-Received: by 2002:a05:600c:468f:b0:45d:dbf4:888a with SMTP id 5b1f17b1804b1-45de6da472cmr20141115e9.25.1757329151701;
+        Mon, 08 Sep 2025 03:59:11 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:393b:4605:1f6c:eea1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45ddfe0b654sm91063195e9.3.2025.09.08.03.59.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 03:58:28 -0700 (PDT)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] ima: don't clear IMA_DIGSIG flag when setting non-IMA xattr
-Date: Mon,  8 Sep 2025 18:58:24 +0800
-Message-ID: <20250908105825.1573222-1-coxu@redhat.com>
+        Mon, 08 Sep 2025 03:59:11 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v3 0/3] Add GMAC support for Renesas RZ/{T2H, N2H} SoCs
+Date: Mon,  8 Sep 2025 11:58:58 +0100
+Message-ID: <20250908105901.3198975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250902042515.759750-1-coxu@redhat.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,112 +112,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently when both IMA and EVM are in fix mode, the IMA signature will
-be reset to IMA hash if a program first stores IMA signature in
-security.ima and then sets security.selinux for a file. For example, on
-Fedora, after booting the kernel with "ima_appraise=fix evm=fix
-ima_policy=appraise_tcb" and installing rpm-plugin-ima, reinstalling a
-package will not make good reference IMA signature generated. Instead
-IMA hash is generated,
-    # getfattr -m - -d -e hex /usr/bin/bash
-    # file: usr/bin/bash
-    security.ima=0x0404...
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This happens because when setting selinux.selinux, the IMA_DIGSIG flag
-that had been set early was cleared. As a result, IMA hash is generated
-when the file is closed.
+Hi All,
 
-Here's a minimal C reproducer,
+This series adds support for the Ethernet MAC (GMAC) IP present on
+the Renesas RZ/T2H and RZ/N2H SoCs.
 
-    #include <stdio.h>
-    #include <sys/xattr.h>
-    #include <fcntl.h>
-    #include <unistd.h>
-    #include <string.h>
-    #include <stdlib.h>
+While these SoCs use the same Synopsys DesignWare MAC IP (version 5.20) as
+the existing RZ/V2H(P), the hardware is synthesized with different options
+that require driver and binding updates:
+- 8 RX/TX queue pairs instead of 4 (requiring 19 interrupts vs 11)
+- Different clock requirements (3 clocks vs 7)
+- Different reset handling (2 named resets vs 1 unnamed)
+- Split header feature enabled
+- GMAC connected through a MIIC PCS on RZ/T2H
 
-    int main() {
-        const char* file_path = "/usr/sbin/test_binary";
-        const char* hex_string = "030204d33204490066306402304";
-        int length = strlen(hex_string);
-        char* ima_attr_value;
-        int fd;
+The series first updates the generic dwmac binding to accommodate the
+higher interrupt count, then extends the Renesas-specific binding with
+a to document both SoCs.
 
-        fd = open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
-        if (fd == -1) {
-            perror("Error opening file");
-            return 1;
-        }
+The driver changes prepare for multi-SoC support by introducing OF match
+data for per-SoC configuration, then add RZ/T2H support including PCS
+integration through the existing RZN1 MIIC driver.
 
-        ima_attr_value = (char*)malloc(length / 2 );
-        for (int i = 0, j = 0; i < length; i += 2, j++) {
-            sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
-        }
+Note this patch series is dependent on the PCS driver [0]
+(not a build dependency).
+[0] https://lore.kernel.org/all/20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-        if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) == -1) {
-            perror("Error setting extended attribute");
-            close(fd);
-            return 1;
-        }
+v2->v3:
+- Rebased on top next-20250908.
+- Made sure STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP flag is
+  always set for all the SoCs.
+- Updated Kconfig to include RZ/T2H and RZ/N2H.
 
-        const char* selinux_value= "system_u:object_r:bin_t:s0";
-        if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selinux_value), 0) == -1) {
-            perror("Error setting extended attribute");
-            close(fd);
-            return 1;
-        }
+- Fixed commit message typos.
+v1->v2:
+- Squshed incerasing interrupt count changes to snps,dwmac.yaml into this patch.
+- Dropped un-necessary blank lines.
+- Switched using "renesas,r9a09g077-gbeth" compatible string for RZ/T2H
+  instead of "renesas,rzt2h-gbeth" and used it as a fallback for RZ/N2H.
+- Updated description for reset property.
+- Added pcs-handle property required for RZ/T2H.
+- Updated commit message to reflect changes for patch 1/3.
 
-        close(fd);
+Cheers,
+Prabhakar
 
-        return 0;
-    }
+Lad Prabhakar (3):
+  dt-bindings: net: renesas,rzv2h-gbeth: Document Renesas RZ/T2H and
+    RZ/N2H SoCs
+  net: stmmac: dwmac-renesas-gbeth: Use OF data for configuration
+  net: stmmac: dwmac-renesas-gbeth: Add support for RZ/T2H SoC
 
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/ima/ima_appraise.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ .../bindings/net/renesas,rzv2h-gbeth.yaml     | 178 ++++++++++++++----
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   9 +-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  12 +-
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      | 108 ++++++++++-
+ 4 files changed, 248 insertions(+), 59 deletions(-)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index f435eff4667f..4e4750ea41ad 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, const char *xattr_name,
- 	return 0;
- }
- 
-+/*
-+ * ima_reset_appraise_flags - reset ima_iint_cache flags
-+ *
-+ * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
-+ *          0: clear IMA_DIGSIG
-+ *          1: set IMA_DIGSIG
-+ *         -1: don't change IMA_DIGSIG
-+ *
-+ */
- static void ima_reset_appraise_flags(struct inode *inode, int digsig)
- {
- 	struct ima_iint_cache *iint;
-@@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
- 		return;
- 	iint->measured_pcrs = 0;
- 	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
--	if (digsig)
-+	if (digsig == 1)
- 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
--	else
-+	else if (digsig == 0)
- 		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
- }
- 
-@@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
- 	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) {
- 		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
-+	} else {
-+		digsig = -1;
- 	}
- 	if (result == 1 || evm_revalidate_status(xattr_name)) {
- 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
 -- 
 2.51.0
 
