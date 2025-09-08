@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-806327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F96B49519
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:23:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1784B4951D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746E2167886
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F5C3A8CC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915373101B1;
-	Mon,  8 Sep 2025 16:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E2E3112B6;
+	Mon,  8 Sep 2025 16:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fb6MBuAY"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5765030FF33;
-	Mon,  8 Sep 2025 16:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PwXasI5W"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEA8310655;
+	Mon,  8 Sep 2025 16:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348479; cv=none; b=VfnH6Fd984jHNP+6B6ttEhpYTrcxX37rmXIvOpXKbdYnADlU2HvU6uVU+GWs+KdVsW1sKr4mthLwinTVmagKMHBwhbznxoEHXmjZ1LL/dX5/7Ee7TYOvuIEPYRoguq9TFT1/YnQYvm6dyDcE3ZbzbdKgLTYjtSf255Gf4fuYi+s=
+	t=1757348494; cv=none; b=m2ApNbeuDvPMV3DiTDkVt5qgrj18vl96vhiTX3oKl+WGQ9IGTEjlqAmxTqO40TZbdYe2d/N9xEehxnJbd69wzW45ynTnUEUjgOAL14kTxFsL/L3QBHJCJztQrZGxyTNFCC+1xpJNRN/O4TRHqAzwev81Rdez1p8sRXs31Pku4FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348479; c=relaxed/simple;
-	bh=ObIz+zp4lgzgox/7k1WlzLLzMcg9mj+QVGcH9Gr3WV8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r9otK4+Acc37YCyDw9wHnZVx6OxsjUe46S2ORu5MFZvgrXMpgEa0ncZIffVGNKr4EidOx3PQki5Ly+ej91MrEoLAiMWJrzQo1wuCFitTTaffHLIDgOU+mK+j1eWngc9wC43TgQjhVf8GmCYW+xoQfPoF3oz2WrQi5t5d5EgX+Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fb6MBuAY; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CB5CD4E40BFB;
-	Mon,  8 Sep 2025 16:21:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A03D66061A;
-	Mon,  8 Sep 2025 16:21:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4F428102F23A0;
-	Mon,  8 Sep 2025 18:21:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757348475; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=5UhibPtQVINFYBbqXWLMG4UxJzAoW2vDCrPuqBZnckk=;
-	b=fb6MBuAYKGgiKvyw1GlL2AM9X+MT2/NIV9LiTB9fspBia5AIVHnZ4lOyjGimoTP5JXAIjb
-	EXXt714Xl6CXh7PtfUC69+Pj/qsbLqm1v3r0ImtAZ17kdIBR3pMvvzXPpliKmCQNqIuGht
-	ESL1cdO3Xk3CNmgfABqfzdYNOFBGPJM0uI8wGgRr2WUToAeuPGlATNcnolL10L6lT3Hxaj
-	/SY43Q06F+8cRcVuLjPO3MWfzLfN+ZDkybW1AneAKhxIcSjJRpMQDGlbT05nn/IvA7ANHU
-	aKtzaSPHw/OB+aNAGw0q5z5nfFcaUrUxqmGcmk8txfCQHU64TmtUsOVkT6OdMQ==
-From: Richard Genoud <richard.genoud@bootlin.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Aswath Govindraju <a-govindraju@ti.com>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH 2/2] usb: dwc3-am62: support ti,lane-reverse property
-Date: Mon,  8 Sep 2025 18:20:52 +0200
-Message-ID: <20250908162052.355341-3-richard.genoud@bootlin.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250908162052.355341-1-richard.genoud@bootlin.com>
-References: <20250908162052.355341-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1757348494; c=relaxed/simple;
+	bh=34GpOzLXR0bFyAQy1FTwKhInP6+RG92gscjcwlECu4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqMp4rr4m7k8On2mqtCBpn2NqgmZapUafBLJdMmsyIPA1FSCE69EEknJ2CXd2t3/Lzzp47llIP2gBr2u8HS1CMCa1aQvxvUAdHxCy7Kpc7lxic0hw9q/NGVTFmL/quipxrjq47XDjQeFCK6IXdYeTFVfFsCWJbcbw24nZXEYIoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PwXasI5W; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 84E312114259;
+	Mon,  8 Sep 2025 09:21:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 84E312114259
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757348482;
+	bh=RwbrwhKhFyk94/grv3i9OeNqfC4w6utxpOAblVOvnD4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PwXasI5WFEeFUwo4+f9MgPn/P/sHAEf7MMusi9Y/95/ZdSJi8ojLuSnRfjBC0TST1
+	 Beezep5afWxBt5tMHKmvMBSogI7og7/kaDO72C65seuugaTJVVNEFeAJiltTwys13H
+	 gVWr0qXEt5PdbO3Tb8OElnPqgPXEuO+i1+eoU92I=
+Date: Mon, 8 Sep 2025 09:21:18 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v0 5/6] x86/hyperv: Implement hypervisor ram collection
+ into vmcore
+Message-ID: <aL8Cfsl3Vaeuw-QI@skinsburskii.localdomain>
+References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
+ <20250904021017.1628993-6-mrathor@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904021017.1628993-6-mrathor@linux.microsoft.com>
 
-Support the ti,lane-reverse property by setting the
-USBSS_PHY_LANE_REVERSE bit.
-This way, D+ line become D- and vice and versa.
+On Wed, Sep 03, 2025 at 07:10:16PM -0700, Mukesh Rathor wrote:
+> This commit introduces a new file to enable collection of hypervisor ram
+> into the vmcore collected by linux. By default, the hypervisor ram is locked,
+> ie, protected via hw page table. Hyper-V implements a disable hypercall which
+> essentially devirtualizes the system on the fly. This mechanism makes the
+> hypervisor ram accessible to linux without any extra work because it is
+> already mapped into linux address space. Details of the implementation
+> are available in the file prologue.
+> 
+> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+> ---
+>  arch/x86/hyperv/hv_crash.c | 618 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 618 insertions(+)
+>  create mode 100644 arch/x86/hyperv/hv_crash.c
+> 
+> diff --git a/arch/x86/hyperv/hv_crash.c b/arch/x86/hyperv/hv_crash.c
+> new file mode 100644
+> index 000000000000..50c54d39f0e2
+> --- /dev/null
+> +++ b/arch/x86/hyperv/hv_crash.c
+> +
 
-Tested on am625 SoC.
+<snip>
 
-Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
----
- drivers/usb/dwc3/dwc3-am62.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> +/*
+> + * generic nmi callback handler: could be called without any crash also.
+> + *  hv crash: hypervisor injects nmi's into all cpus
+> + *  lx crash: panicing cpu sends nmi to all but self via crash_stop_other_cpus
+> + */
+> +static int hv_crash_nmi_local(unsigned int cmd, struct pt_regs *regs)
+> +{
+> +	int ccpu = smp_processor_id();
+> +
+> +	if (!hv_has_crashed && hv_cda && hv_cda->cda_valid)
+> +		hv_has_crashed = 1;
+> +
+> +	if (!hv_has_crashed && !lx_has_crashed)
+> +		return NMI_DONE;	/* ignore the nmi */
+> +
+> +	if (hv_has_crashed && !hv_crash_enabled) {
+> +		if (ccpu == 0) {
+> +			pr_emerg("Hyper-V: core collect not setup. Reboot\n");
+> +			native_wrmsrq(HV_X64_MSR_RESET, 1);	/* reboot */
+> +		} else
+> +			for (;;)
+> +				cpu_relax();
+> +	}
+> +
+> +	crash_nmi_callback(regs);
+> +	return NMI_DONE;
+> +}
 
-diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
-index 9db8f3ca493d..9437d2246ee9 100644
---- a/drivers/usb/dwc3/dwc3-am62.c
-+++ b/drivers/usb/dwc3/dwc3-am62.c
-@@ -119,6 +119,7 @@ struct dwc3_am62 {
- 	struct regmap *syscon;
- 	unsigned int offset;
- 	unsigned int vbus_divider;
-+	unsigned int lane_reverse;
- 	u32 wakeup_stat;
- 	void __iomem *phy_regs;
- };
-@@ -203,6 +204,9 @@ static int dwc3_ti_init(struct dwc3_am62 *am62)
- 	if (am62->vbus_divider)
- 		reg |= 1 << USBSS_PHY_VBUS_SEL_SHIFT;
- 
-+	if (am62->lane_reverse)
-+		reg |= USBSS_PHY_LANE_REVERSE;
-+
- 	dwc3_ti_writel(am62, USBSS_PHY_CONFIG, reg);
- 
- 	clk_prepare_enable(am62->usb2_refclk);
-@@ -264,6 +268,7 @@ static int dwc3_ti_probe(struct platform_device *pdev)
- 	}
- 
- 	am62->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
-+	am62->lane_reverse = device_property_read_bool(dev, "ti,lane-reverse");
- 
- 	ret = dwc3_ti_init(am62);
- 	if (ret)
+One more thing.
+It looks like the function above goes through the new logic even when
+hypervisor is intact and there is no crash kernel loaded.
+This is redundant and it should rather return back to the existent
+generic kernel panic logic.
+
+Stanislav
+
 
