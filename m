@@ -1,195 +1,127 @@
-Return-Path: <linux-kernel+bounces-804959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF645B48265
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:03:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B0AB48279
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E657179129
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FAD18844C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA97217659;
-	Mon,  8 Sep 2025 02:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782B1DE8B3;
+	Mon,  8 Sep 2025 02:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="GUfGCuHu"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010008.outbound.protection.outlook.com [52.101.229.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un35fxMQ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E791FF7C8;
-	Mon,  8 Sep 2025 02:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757296965; cv=fail; b=dFYIfRJaiHgyQnYcqR+f9haKacu+0zTNxgcBSuYqNQcOgAaBRcLli0WWmucXBiUSGHTIgkKZH/lXHyRxOTkPaWCKxwK/khGEd0lURZndk9Kn0QX3o+3KRwYjoN3vb8MAqMClf30LgrbqCatAjLYI+hQulgn5e6H+tg17lOdPtKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757296965; c=relaxed/simple;
-	bh=aj6v/pDDa3z1ivdD6DEv5ynjikDGtF90rTlqJuWcnYU=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=r46sUP5zDw86f/QmU0KDRKhnqi/IGEzgNPDpqYpuflQBJ3Axh5Jo27UEJipeSlvZGBgpOzaP/DpCfqsKQ9E+PKp+2XoV+MW1Yt0NJFLN2l6OvWELwJh+G10oTml/HlXXQWlz+hN/CMSdxWVMMQ/dNhTCZWQb9+hWQ8N4kCrCKBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=GUfGCuHu; arc=fail smtp.client-ip=52.101.229.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iuCjL426AFeH380QDxXI9/6Mb51PwFyOVdA1JEE27ub7e4UgQoHu2J1tb5T0lFBtTQvUevkKA2DKCdNjg+eJLx0FZTll6ey/3gGNbpWo7pYiyfoafk/GpA3/sY8MuuMepIyFZioEewy925NNShUQZABRSFD1FbP5fe5pszXFuX+xDKSnPsJGA1XAe/cYWCPsoIKbyG1XjXeWVEuOF39CsjwOba++28w+v1asSewXzmLKDb7E8ydfWwPUi9brWTIlZ/tkPDSoV3UgI3uO0uRtUJZhuVp69tb5SX2Bx0DHsQeGR8wAzdUQ9vFLDPHM1r9epW5Y84vZI2NBIlaLNbdiUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y8E5myfmy78h11l54q33pBa2UGJU2T0udxbgaixtLEY=;
- b=Ybnf9ZgP+7v6kuqp8Tah24VflJTMA2jXqxZxej43uva4lDqMtuOr/fMD7RKIy6Q/UaBe3MTxZyasSup8xsMfUriSK2jKCvwOfsT0APkbLw8ulmjQJTbfzbA+LcPZDX5Lq96KhphDQWfeUIt5tjae75d8fQ8E/Zai/tsq7h8g1oJWSgPwTDzkO6D1WFyRQeGkvL08ioKlhrgB/KfXNQZ+7D2RgFtiHp7bYA0+jWKVKkMbFz/RSEZrthGerLnEC1bPSAxbvRgOoTVJuZYqDXvUFygtJxZ842moWUtsPV7OA/Cnw5pib/XonBOFmP2dsr37opCrM82PRr3pOIGq1p8A5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y8E5myfmy78h11l54q33pBa2UGJU2T0udxbgaixtLEY=;
- b=GUfGCuHuBlfTi7u7TBEGeJx7Eme/0Fg3xS506m81Ml1BPBmreTgPvTME59wipYENV0RZDlRJ9MesVcu23hm061BYuHMUENB/hA9xrgLvktMEAyCwk2iBRETs4ZnZqXvdbxeCccn6mlbmvrIH3l4xIykLCXHMrPHRgozfvoL8N28=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OS3PR01MB9721.jpnprd01.prod.outlook.com
- (2603:1096:604:1e8::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 02:02:39 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 02:02:39 +0000
-Message-ID: <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: chenyuan_fl@163.com
-Cc: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuan CHen <chenyuan@kylinos.cn>
-Subject: Re: [PATCH v2] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
-In-Reply-To: <20250908012810.4767-1-chenyuan_fl@163.com>
-References: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
-	<20250908012810.4767-1-chenyuan_fl@163.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Mon, 8 Sep 2025 02:02:39 +0000
-X-ClientProxiedBy: TYCP286CA0223.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5::11) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C002199385;
+	Mon,  8 Sep 2025 02:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757297147; cv=none; b=Kq1oK2OT06QWdYWKECRkHfv4HYDNy0sOL3CeY3K7/vKxSKt9pcDNtdSXJDvcDrzfHKKcu3PRS5L7EpOQb3B/IyvxbuA1K1cGy0pB/tF8+0JZTcX2OrGU8MB9JB1QVnHpt/FX7Aqth9tjuVY7/6cXPiwHSr0/iCrFGLI8rnBS2J8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757297147; c=relaxed/simple;
+	bh=htwW1xfmVzPRRVkaJnN+izgyhESSK69PwxwsdZqPpdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUriOgKhxt6KrrkmzbLrMAo8p/id2vlnx9xE7yo2Vtz2DOR7Zk9uHALdZFq6gZkO3OqGGfKY5AfbjDhsIusDhc10b3km/2m9eTm52EbXOroFKB5p7rasq86uF1jgtdA9nlV++tg/ggrYpikzcqpheMN2xVwuIgSKTDKbLPZZ/ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Un35fxMQ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24c784130e6so43507865ad.3;
+        Sun, 07 Sep 2025 19:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757297145; x=1757901945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XMux8eKktzYrGyHNJj+h74891VBOnd8NG5NmCraJ1jY=;
+        b=Un35fxMQj5STSMcd3OzVi8OK2WRCD3w9Y1zC5ArR04qYoSz3MRmeC/bQoDBPomEMRY
+         S1dkT0wL2l4RtID+dpG+Lmq5F0PivIqM2HBbP7B79MV83FYgwp6IIbANFXXIgxK5/goa
+         60Uzk3fNgfot3VZkJb6nGLmKP2+Dxzv9XWPBFVtHYJO/1OJ+OR8xmng9yKN3CVBNTgNW
+         +sWYn9zALQmXlQVqCJViVh8fMbttMysbDwxZ7ER67BaD4WaL9oxsDMXhfmRpe9dcA9PZ
+         6LlG4KzLTJX4HoLCmiFnWh6xWJP7FcBoLPtA2F+OfHeU019VyPtb+1pdfhGRE84la3GE
+         qunA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757297145; x=1757901945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XMux8eKktzYrGyHNJj+h74891VBOnd8NG5NmCraJ1jY=;
+        b=gpEnMEPuwZbMM2s7pbJwI8+vVl4l62OGT4sYe7aglrsXEF9KhGzGYTERuKUygVzyE5
+         IF7ETHE1qOgB0aYRtcmcYQ3hdhnt4imPmpMhlv4Es0DUWgt8sWRC2z5Vo3wYp3hrDbMz
+         GsogGpl/h48YIMk4mV9iZ2M8SB83pPu4c7mP1CHkg+sIxLQLgMhKJnK+veoxkGhhk2I+
+         0ObCfnqKPNQ6LdoY5QSR9/k1Ae5j1Jh+q/AV77pvL1/cvniCq6cz8Bl2430AyLS0XsO/
+         LUNbi1W6stH7cSXdH7E7fm10J+VQ03hzfBj5MBZCfqtAr9AUVE9UxSRnm3pwMOXkx06Z
+         W8qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUroeDxslrAegPlyvCDJHuT0kPGf6DGACWaHIE9Ik/KoIuXXBqMnGvWimHKalfHNST1s+TlR1E/ofnPF5c=@vger.kernel.org, AJvYcCXcAdA4ie/9qLoipi0D/rQIXjwuZ9cmhQfQBMCoz2ySJelufqvIDaNcWZUzmTYMk+ZLDY/kEsWW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0/ALODUTfCv+im+TobMb6RNUugpUGjbuFOswbV5USnbBCiChR
+	oENrFwYmW+Ja86K7oQBrStgzlEJjEHji1Apb1SyC+4AH4xK1VwT570qs
+X-Gm-Gg: ASbGnctUBLTzTRVR/0R4KOCabZ6WhTWXbfUG1Mr5HKFIQA9Ruh01TR3YtHggEhixY4e
+	k6lYMJxYbRorvpJorxtRgXJ6KCFTqIs3P75pS6KEit07DLhFJPmOZY1U4/lqJ4xxpKamXgJc2dz
+	+Ztp8jXZ++4cyaic9vHtzAvzKeCPowThpT6Kg46UrZMFaazwabk9YOmAiatSjktsU0rXwwpNqow
+	UBCyBZqjI2/BQsdCh51EwAw1JnwYJ1Oi0bd4+dRMr8ibSnNNqZUHf9jnQ7AwK4JWaPpqbwPkDcb
+	VuQOuzkkfDZKCw3bg6rRXY3dcZBki0Wevr6O2PdJPW06f+1/o/7CkSBRcx+qoUgNJJ1BZa9oKye
+	0TnJbkMM+d6SOcrFV3lVspJbB7wbvCSPco0f/l9Bc6Hobhq7B21k3csLfgfLmEMt5
+X-Google-Smtp-Source: AGHT+IFlWTF5WOzkIXIZY70TiMkV+dwbPWzTmWOpp6OHRIk4MOu/rKmvFMqIXWjKtv+kofwGYOnsnA==
+X-Received: by 2002:a17:903:22c7:b0:24b:e55:334 with SMTP id d9443c01a7336-2516d8187fcmr66151985ad.8.1757297145305;
+        Sun, 07 Sep 2025 19:05:45 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cd5092951sm94757905ad.18.2025.09.07.19.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 19:05:44 -0700 (PDT)
+Message-ID: <2a1e081b-22d3-4f96-a0c5-2427de8a44c5@gmail.com>
+Date: Sun, 7 Sep 2025 19:05:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB9721:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f1c81dc-ba09-4e12-baae-08ddee7bc9fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hVUHcLXhWD6hJCZpwSCUX5zD05Tbr1B3UNlRzJ6w6fyDE+jBKgVYAYgEQZaT?=
- =?us-ascii?Q?1mwnfw9iBqoQr6k3DGkeM2ynh0/KvCqx8X50CkLXvlhEkGll2jgrNTQ2BFPF?=
- =?us-ascii?Q?1fHHvYnGZhORnsZVRAZmzyYwC+pNgoYMgHbeLTPhCW2Ry2kuJS5Oewa/W0fF?=
- =?us-ascii?Q?klY1lV4ox+e3TI4+r1Lx0QNic/Ov4500X+MoZkiuoH58gwBqRk1zzbjBCz5i?=
- =?us-ascii?Q?TpMiG07JCU7y6e3+SRsoyveEO9n56daUdLypondH+w7lz1BK1dmkCyfS1Pqs?=
- =?us-ascii?Q?dGkWTG+eJRKusiPyo04dH5Q42nrdRlXvPGX6fB8Rvliwti7QjHEGBFSzfujx?=
- =?us-ascii?Q?ce8hb5J1RwKHo2JjS+EDYkXfNERhM+HcRL7wJFXQ7k/9uV6arx8wOqVDR05u?=
- =?us-ascii?Q?6l/79VrDnetkxWOlH7Cw39pOnZ6lDP21LLdP65XgKL5dzJkxJWte31hsUn0X?=
- =?us-ascii?Q?rs051+4aM7NuQLaoJ75vaKJZSjdtjWZkB0AEEYethopjSgeMHuqdE4QNzfLV?=
- =?us-ascii?Q?MxGR549Uy0FN7J5LZ/gzc1tHD17icgs2OSTXKNL0Z1pfKUXgGuE3qrdcAsNy?=
- =?us-ascii?Q?SPy4M9X6xLQdUCgBeCpUxrT6hhynf5mYFITYPSBlPe5I/hDDzd4HW9JhuR2R?=
- =?us-ascii?Q?1IT7WoBX5QT71FyTcbYNmp/a5VC9iyfjEJrSIXg/QWkxKOTI3jPpYZStQIy6?=
- =?us-ascii?Q?XCiLQCfLRXZRaKKsf4Zve28/ae/5QTVtwQFcVFwgkItiTvxPkZlS+dnz6mBy?=
- =?us-ascii?Q?HX4GSK+VfQQQ6tBCSXOsPN9m+0Nwi1UB8uLnMGfJAuqdA8GwU4klkK5GLt5m?=
- =?us-ascii?Q?259iRcAh7PLGGIf7GMt6NoBpeoOx214XZfozedGEzghHwy9T6GcbRnbZCsP+?=
- =?us-ascii?Q?1dN7FCg7Hoes3PuSVnjZhGFgtFFgB3lD83aZAm+QPeBDz3ZOlzR0r3hnTApT?=
- =?us-ascii?Q?rUUBuAS6/OIYPWRtJf3ewoCrzwiJZ4pgIo5947V1he6dFC1FjckTHon9mDLz?=
- =?us-ascii?Q?lsWwN0WhB5TSRnXr4iROtE5usNNMw7rV5+QrHZjLYo0x/sbVV33e9Q6osXRA?=
- =?us-ascii?Q?CQjQohM0M/cH2QU1H6A6klb5Joxl2Mb+RvcIdKyntjKkq9L9PQ948uuUrbCZ?=
- =?us-ascii?Q?LCQ6UGziVHV6qrlElQIcdi9+tD9JSnOdlix2J5S+x5Zvp/glUz3DCM4ngtV5?=
- =?us-ascii?Q?0iFkBgDQjlLqGDfS59K+7CyjD4/mD9Rc48hbyAxisWMJhFWmB/uHgzi5L86u?=
- =?us-ascii?Q?5g9e0REjWL3rKvqGsUStrcEfkyY9aPSb9SU2gC2KzUbx6GQdNBz97WIZpjJa?=
- =?us-ascii?Q?PoD+bYNtjeEG6Sa8BwfhyCc+0QNb5lkR+kc68lyu3a4Y+HWoOcgyu6oSkpWN?=
- =?us-ascii?Q?/WyPJNIvXEchITUz0QtYYa7rVPwS3k3ASlGPY7zzoXMjmgPK6PHwpOuo4+uH?=
- =?us-ascii?Q?cQxge6KwuS0o4w6fK9MzUojYWdeEmUOpEOyiyAT9a6k12GMMkNTJdw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SzGA9/dWKe4+PCKH8C+iI9bOHHp2hwqY/Nzn5MSeWiQK+HWFr1p1SqPAda6q?=
- =?us-ascii?Q?FMrWNjtQvcfhbmLeZTwr9NUmqiePS+QHyrRD40zY2C3urLLm7vLeyirAt1J+?=
- =?us-ascii?Q?o0gzThGLmEvESCxy2cgTTDKfd98bb6vpuyY5uf69gHisqtoH8z9jH2/6X4ED?=
- =?us-ascii?Q?cdZAK9HmEudqkt32HGKqmcTJ0czBIeHQG4BLYiFVn9azk52xYFGD42NH01Nt?=
- =?us-ascii?Q?5CSrnKwuSyjt2uJ5LJQC1h3qo0pC29VyteYA/ERbf8f5XSBO4m5M5YFHEKMp?=
- =?us-ascii?Q?CcR8haDdGSLsOMkkabGE2ZWIT3PlPV1RifDeayrJ2c1rxrbhyS3L9GcOZON3?=
- =?us-ascii?Q?/UYSvCtE4XrSnwDbqupYsvbzALyR/IcVCBpXDbQ+XPowNpwyN9ufZKKHPcmG?=
- =?us-ascii?Q?5wbSINRRnD+e9pDpEYLPcXQFIigVud/jEWgrBKQjAzIXAFX6k3gRVdRUa57x?=
- =?us-ascii?Q?4ShDy6ligtAb9I+LAKsbEDojzf8IhUHvXXTxhXqnBO3F/pQdlVwuZ0WIRYa0?=
- =?us-ascii?Q?nB6DIN3DVmpIyYyN2Fdfv7KrGRonwUXkMhkYT5lMKUeU6ev/dMPOdZNbKxQj?=
- =?us-ascii?Q?zoyffitoYWhJJ7br9HFYWJhEJyE8tv2wUDi30hTjnKUJgy9iehSN63iSIx92?=
- =?us-ascii?Q?tooeK+n3uMz7t1BppQZcm8eiQZAdnHlvcIgGaOfYppjBsATjcEhfZFDqvX8n?=
- =?us-ascii?Q?Y0R/qzLSxX0grc+jW2CX7BpIKcVJi3fRCupdn49RYLOJwC0bUCaUlUACeA49?=
- =?us-ascii?Q?O5+aDr0mnCbRheJz0g0zXUmLrMJBvdN7wzVJ4qiYSGkV3BH0lf5xuzG9nO45?=
- =?us-ascii?Q?gIp5Rzw3VwrDUojfECserZjbFB9IuSpk08hdJVJ/wVFQTlcDpbOsB/KC8yl4?=
- =?us-ascii?Q?jKz65I1LBWAyUNTSJTSpqN1PynTYiK1zWwRCgQmRPx7WEgaXmbzIpq0ghpeV?=
- =?us-ascii?Q?Q4xaEMdNepR7AS+CJUNiBgS8hAqY4qsvZ8ynzzytbHPyvPG4LVHoaj4EeE1i?=
- =?us-ascii?Q?VGPn+Rmgt0YV+4vN3/sAfhbCG6EKMhad4BRUj425xCy4k0mjuohq31YJ1Uaf?=
- =?us-ascii?Q?AxnhZq072WO6NyXmtFn8gxjt4zrtPaNQIXr8+3u/FwIphOVfcvlDVXue5Npo?=
- =?us-ascii?Q?ac6/uDU75DAS2S/PbEsLRTtWo+h8f3UhIWaetMdgiEHdYZCSoDIo8PTHKKmd?=
- =?us-ascii?Q?f/Mi8xSTPyw5ejRiA93m5OLYi9vHipUm9/XUWVAFwUl3fFfSyWCA5Wt0kGmy?=
- =?us-ascii?Q?B1/nq9AvwqZBKYCVb4UuvW2WtwCfAcoxAlNkz6OwdC32SP5knmst2DgdxQo4?=
- =?us-ascii?Q?x6zYAFs/n4gPY35fkK00vR/jAsIV0hyfDh+oAc+XL6hneIBRYQhH00wRCpFV?=
- =?us-ascii?Q?CJFmcyHJjLyWHTBNrSe0vKgApXSwyG7KsUQ98dfmjR6wNqWD9r8o4L17ql5c?=
- =?us-ascii?Q?/1GTfrhRiVadkNwZ3z5TDwcC8/+WP+R32yHw0ceg563IPY66MeUeFsjtfOkG?=
- =?us-ascii?Q?tX3BMbF0dp99LArAGaUP0NRG/BEEY11t1gtiD2fvOHwx81qY4My7JJspg3oS?=
- =?us-ascii?Q?fpSr2hu5c1FBJPqtHusZGeOSdKDcaIiDdZBwA5B33UlkGEtB/96fFvzspwVA?=
- =?us-ascii?Q?UG3EM2kAcMqYPu+UUp8AE9A=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f1c81dc-ba09-4e12-baae-08ddee7bc9fb
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 02:02:39.5181
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qyFD47VnwCUlKki23mef8Emj7Hc9eVGlQwxKCGp71A0jDRwzsJY5CdNY2ckaDYpXNS4rpejZVjt2CIixmcbdgjWNLFnzCMYX7ps1iImvNURVdb+YMtKWruGZACMiol3h
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9721
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 00/52] 5.10.243-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250907195601.957051083@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250907195601.957051083@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Hi chenyuan
 
-Thank you for the patch
-
-> In the current implementation, when krealloc_array() fails, the error handling path
-> incorrectly sets the original memory pointer to NULL before it is freed,
-> resulting in a memory leak during reallocation failure.
+On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.243 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-> Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.243-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-You want to use ${LINUX}/scripts/checkpatch.pl to get maximum 75 chars warning
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Patch itself is agree, but I still don't understand the git-log.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-	incorrectly sets the original memory pointer to NULL before it is freed,
-
-I still don't understand this part. which part are you talking about ?
-What does this "original memory pointer" mean ? And what does this "freed"
-mean ? freed what ??
-
-I guess you want to indicate is like this ?
-
-	In case of krealloc_array() failure, current error handling just
-	returns from function without freeing alloced array.
-	It cause a memory leak. Fixup it.
-
-Thank you for your help !!
-
-Best regards
----
-Kuninori Morimoto
 
