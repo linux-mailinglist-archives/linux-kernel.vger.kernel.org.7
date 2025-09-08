@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-806248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1A5B49410
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF302B49416
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045C1188C819
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A613B6583
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79408313E21;
-	Mon,  8 Sep 2025 15:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE2630F93F;
+	Mon,  8 Sep 2025 15:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNLTRDO0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="busFCn4m"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D932230FF39
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D653D30DD11;
+	Mon,  8 Sep 2025 15:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346156; cv=none; b=Eoq0gtfVkcLwnb+ATUery/6tQX3EkWYmZ9rZDXbcRKA+tLaRthKIhW6dVhQg/YdbWgmrjajF55D+rvDuXkVgcYcGZPZPu4FWF05fInJfkm9VfEPw5yMc6Yl6qFNovkEXyAXRzezyAdqkBahsxAZiRvxAzjemef4AIqc1Z19Miwo=
+	t=1757346139; cv=none; b=nopettR18pfGtzxriLTHnMSTixnbFbcDtIvpDiUM1mx59zkwu75AVR4YirQfoI3HeY2UjyzISfvsst4d+vZSdw/SXcrS5udJHP0O9e3MgBfrLT1QwCyjVobuF1b+0WLqu2jwL6mjT6ClwoRPBUUiNI/wjXRnWR+eeOZggs5WDYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346156; c=relaxed/simple;
-	bh=eXbgX0A48sO54B6uJSzEg/a+xGkMY4dc5ZXyPrbO1ec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o9HNfkExit1Ra3G6OfIdtD8oMRP40TqpFu6LptOuBbSOrg7jwNGNcRdKqbRk6wB5Z3qFU9gyuNRlntowQRlRvsyUPr3/x/CLsjQFFLbF2Uk2G/fXuXb22HyfxAgrVNU0BeajX6fEoYZ7PpjlOxZVPEKBHiDqWMefrUgm8J+yuUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNLTRDO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBE8C4CEF5;
-	Mon,  8 Sep 2025 15:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757346156;
-	bh=eXbgX0A48sO54B6uJSzEg/a+xGkMY4dc5ZXyPrbO1ec=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fNLTRDO0AqUVSrD7dbA1PfjpK+UdipNbg64hkJJszkoDNOFQ9SsmA+ZZcw0y+9e1O
-	 dx4hBbWwRqi24hWaMzevjdVfwuRB0+iRQxBYxHh/jSrGAgGRTn7anX73cpd7wOtoNs
-	 juvtoXFNMe6zMiEMYAV2C4fy5Fy4wmGL3EInvZCgBOsear5o6PrfP1fNslRPnp5hnT
-	 GkBVmUM4wdkA4GteK5/Pfbio1YDJMX/F6hkPuUPJxXHiuX4TUt3C3ZMxY38S5zazn9
-	 x11eBYNJxKZYubQnFMirB9VehYbVoM8DINone6mLNBC3RBBnCRq6C6RSlZYm6xS0Yc
-	 6gWmSKpDzNHrQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 08 Sep 2025 17:41:59 +0200
-Subject: [PATCH 3/3] scripts/decode_stacktrace.sh: code: preserve alignment
+	s=arc-20240116; t=1757346139; c=relaxed/simple;
+	bh=znzlOlX1SKjgnWUSiOGTq1/TJUFpYRGLYWMA/aNx69U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiQNYNYq2hQUugrZFNbcCzQUN0QqPghJuthiZJfO7B7sW8OlBRxOTr/CG+hQ3DQEZxudUdBC9Mg7RkaLdJdipNBXBtWiC9U+OMvXvMYqQAAsdqJsTbUyp05l1Vpu57JY3zwTGGoOa9LcBa+QtFr8hvELSBD8lErmjUZfgaKVAi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=busFCn4m; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afeec747e60so862013166b.0;
+        Mon, 08 Sep 2025 08:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757346135; x=1757950935; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1RIVhHktuInE+YYl4HPg+1KU37wgTUr1qxtdJGS1ilY=;
+        b=busFCn4mUY5W2XfQRTCQ64ocvdH1CNfdxBmQee+o/R/AGXfym2AwymKA60aQdW9Ti3
+         mXbDyuuXWBNz5JCNl+vvC7YgXsXY6hl2Yn7HrycYlNm8BCNrVU8Q8WsUn4L0mASpDx6q
+         bspPKcTPiC/5k6AImXguNN8vM0ft9tK4AwEAxIyBhoB804kdj8TyR39K95BLkRRNCdD7
+         UIGwRkwSJcq0LnlmL2y9fNU8grWD0wdoa37jiyd+eZjh0X4FAWwW5DuRaYfCY/qGRdHU
+         BwYdIzQ7WhR4wnnDJAiDxgV1KG+suPWuj6b8Efrh0Zfizvh5v72jBHq21of4gH7BApb5
+         8wtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757346135; x=1757950935;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RIVhHktuInE+YYl4HPg+1KU37wgTUr1qxtdJGS1ilY=;
+        b=Bp1tNPocryXGwxdhspLFa3sP+gpk/TAsvdbGoQfBYh72syFimToNaT7R0r9N1r7Hxd
+         iOrevkOifAVAf1U0oK9/Bvsfrgqxxh1ol9Emv4uV383obHRsdRTP11UacKYl1w+YMzwQ
+         HXGW3x8kWnW21rzZnKwKXtd/hVlEk/43dQQRrFYvW+B0REuTnBTKz0P40jRvrqJRYQeA
+         197fWyH1Md1FONms3D7PD679Sq/xrJKg8rOPDR0i//t4ioIsrnmFPX1kgIi92PzeItl6
+         Dy3Oq844C9NiI5asjTOCgJ1oW9qSztnGOfQtzwkqnTXd3ItYcpW+j39s1iL+Ma4+1gSt
+         ISGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/wT9jSn6vGhpOvcqsRzSyEZS6mK/YuDYL+OWaEmKirnLUclHY7Fj2NmJnm5mSATVann4pRR+c7wM6Jq5x@vger.kernel.org, AJvYcCXEuVwXoeZPhN9nPjSGDMvUN7fkJ5YC0R0pRlZhS5SmvYKlbdYPqfD/aG/kUcr075xESy3M7LR14ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzL+FP1MSEgzTJm3gCmZfvFvrF1tRq8470oZvubNKw/3snRXjN
+	Y3nib63JXIZVs9/SapGMM6lwnzpuYqRVXpQ6lI4O5qpRnQGgTl/roUC/lcaquA==
+X-Gm-Gg: ASbGncux1z+R+OTQgoXrRaXNKkXX3ZwTtF/NP9x4IAzymwK4MWV7ETaWWQyU33lmY9W
+	xTQMJTj+VmaQ6AX2pHUli8BGmEPgGEzVMHCM6mXLrQlJ9Tbhz5vDnt8zo6q3AScVk6TgeEfYJ4/
+	zRmu45FUXhBsknk3xXvc7QojR3d5tab/qCLJ/qhefU0DxOEDH5S04Ev2ZjcPcdUCL+WcNp+iVFv
+	qi0j+yxqiDk5Zol5suS0+k/sGUgUgOd6p1cBxeYmYpwz32zS3eMdavt464CLynzGnhZ81ayXe9a
+	hqnoof2zpoAo84CylCWOnx+d5eSDarHShi5fXR9aoDqowi7b4XqtNKYFcziGZnV1yB25hl2QQix
+	bCJbxI9D4AROds6mJU7DjXRRDVbD8q5VPJ0Ja/w==
+X-Google-Smtp-Source: AGHT+IEG8TPHri7sRvrKF0r+zEeF7Q42N+zx1K2kZvNsw9vuPmKTlrIbGzcirR2qrcIwb0lladOZbw==
+X-Received: by 2002:a17:906:c144:b0:b04:241c:e6f6 with SMTP id a640c23a62f3a-b04b1544dc7mr946601366b.40.1757346134936;
+        Mon, 08 Sep 2025 08:42:14 -0700 (PDT)
+Received: from hangmanPC ([86.124.200.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b042dcb9105sm1948519066b.2.2025.09.08.08.42.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 08:42:14 -0700 (PDT)
+Date: Mon, 8 Sep 2025 18:42:11 +0300
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] i2c: PCF8584: Fix debug macros defines of if
+ statements
+Message-ID: <aL75U7i7lyMfaupK@hangmanPC>
+References: <7e155481-b1b7-48db-af64-6a313ade1bbf@web.de>
+ <20250908133608.45773-1-chiru.cezar.89@gmail.com>
+ <20250908133608.45773-2-chiru.cezar.89@gmail.com>
+ <8c23242e-348f-467b-adc1-deae06e7ea09@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-decode_strace_indent-v1-3-28e5e4758080@kernel.org>
-References: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
-In-Reply-To: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Carlos Llamas <cmllamas@google.com>, 
- Elliot Berman <quic_eberman@quicinc.com>, 
- Stephen Boyd <swboyd@chromium.org>, Breno Leitao <leitao@debian.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1502; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=eXbgX0A48sO54B6uJSzEg/a+xGkMY4dc5ZXyPrbO1ec=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDL2/UyxDzp6QrhS/0Xl9mT2gATbvyXzr5+pcyn9ayC4/
- cy258bnO0pZGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACbSrsTIMLG4J4WFi33FNd+0
- ptqMcldeXsZ1W21Vm9TWHrjGc++aKsM/5drTbK9PPjBNfly51oL3yJnpEX8E84t3zUs+sdN+v74
- 4DwA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8c23242e-348f-467b-adc1-deae06e7ea09@web.de>
 
-With lines having a code to decode, the alignment was not preserved for
-the first line.
+On Mon, Sep 08, 2025 at 04:46:47PM +0200, Markus Elfring wrote:
 
-With this sample ...
+Hello Markus,
 
-  [   52.238089][   T55] RIP: 0010:__ip_queue_xmit+0x127c/0x1820
-  [   52.238401][   T55] Code: c1 83 e0 07 48 c1 e9 03 83 c0 03 (...)
+First I want to thank you for reviewing my patches and patchset and making
+comments for me to improve my patches.
 
-... the script was producing the following output:
+I am new to kernel hacking and this is the first patchset that I submit to
+linux kernel. I'm doing my best to improve my work so that it can be 
+accepted into the kernel tree.
 
-  [   52.238089][   T55] RIP: 0010:__ip_queue_xmit (...)
-  [ 52.238401][ T55] Code: c1 83 e0 07 48 c1 e9 03 83 c0 03 (...)
+> …> Change is necessary because …
+> 
+> Does anything hinder you to choose imperative mood for change descriptions?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc5#n94
 
-That's because scripts/decodecode doesn't preserve the alignment. No
-need to modify it, it is enough to give only the "Code: (...)" part to
-this script, and print the prefix without modifications.
+Sorry, I didn't understood the first time. I will try my best.
 
-With the same sample, we now have:
+> 
+> Would you occasionally care more also for word wrapping?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc5#n658
+> 
 
-  [   52.238089][   T55] RIP: 0010:__ip_queue_xmit (...)
-  [   52.238401][   T55] Code: c1 83 e0 07 48 c1 e9 03 83 c0 03 (...)
+I will follow from now on the line wrapped at 75 columns.
 
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- scripts/decode_stacktrace.sh | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> …> ---
+> >  drivers/i2c/algos/i2c-algo-pcf.c | 27 ++++++++++++++++++---------
+> …
+> 
+> Some contributors would appreciate patch version descriptions.
+> https://lore.kernel.org/all/?q=%22This+looks+like+a+new+version+of+a+previously+submitted+patch%22
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc5#n310
+> 
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 0c92d6a7f777e1b2d5452dd894a13a71e3d58051..c73cb802a0a3fc6559c5f53ff844e5cc6e433615 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -242,8 +242,10 @@ debuginfod_get_vmlinux() {
- 
- decode_code() {
- 	local scripts=`dirname "${BASH_SOURCE[0]}"`
-+	local lim="Code: "
- 
--	echo "$1" | $scripts/decodecode
-+	echo -n "${1%%${lim}*}"
-+	echo "${lim}${1##*${lim}}" | $scripts/decodecode
- }
- 
- handle_line() {
+After I sent V2 of patchset I realized I didn't included changes after ---
+marker line.
 
--- 
-2.51.0
+I will send V3 trying to apply your suggestions.
+
+Best regards,
+Cezar Chiru
 
 
