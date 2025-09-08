@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-806043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B902B49144
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8585BB49145
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612C21898E68
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4115B3B6B4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A0330DD0C;
-	Mon,  8 Sep 2025 14:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793F7309F1E;
+	Mon,  8 Sep 2025 14:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WSC+Qma6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UeoyFI+Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XdaW+D0X"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96EF30C63B;
-	Mon,  8 Sep 2025 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575BF1D63E4
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757341293; cv=none; b=I1laEHwEqWqtZ9oLeXKVqGeHTRPXEWcfD5oDoXuNfnOPQrKD2LWYm9Hp8RaEqThmuXJMEbhNzF9RoK2Cz8L8eGRVmA3GGcqnpOiGAppwrCfcqHX4KnU93vXFsUwudtO2u3OQLnx9cnifix750U4rMRdf+zz7JMXw+Z/r5uFtWII=
+	t=1757341355; cv=none; b=on48eLEdILe5tb1TInHM7OWpqtpM1stdYO2DfoKmA04mhxzhK6Kci+c+wZJ4Y9lEzfn29LcpaRljiuI5VjVbjLHQgdJjdJX2LL9MHrCH9klQoMolBqBn4ch8jtASxmT+i92Gvb6Ptw8KdEgCsFeNI7ERe+Uq7oQ6lPspO+YHumo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757341293; c=relaxed/simple;
-	bh=ESIQA0nX/DCU8Xslb2ku6ObdT57xdGnh1kp/DXH1dtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2tLO8ELIrclrmuMK0gflayO9/fCpYc14PyR8tdLduTd/e6l94faXuggcUOC8YS7voE8OriXQKM/nymSc8LR2JdWk0psYZO4+xk/PP0jgIOalfhENIQ+BtjjJWxWr0mjyggoSKLc0OxbQlRoNSfKgQFgSPWC1fjxYkrCE+GttrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WSC+Qma6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UeoyFI+Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 8 Sep 2025 16:21:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757341290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M2aXQHgqfK3sE5W83r8THuL/vQNj4SX4a/pKzmta4yA=;
-	b=WSC+Qma67qg6xcfmBxngR0YmE6xvkm/IgiaUGJrkMw3ia1ZdxKOcNNymdue6su7kNZJuJ0
-	XxKfT5G3qSPoR67SlUv2Nn2/tmsYlxNsONCSHe7Jnus6tO1llC8fG2zVqQdkM9WgWG49Ep
-	AULyRVI373Tx5hTfo1ct7RHaLkgWO07T3iwqA2nJqEQahZy3yNku1fpFSWw0lrbiMNVXbE
-	4tHx8SdcnwlL8E15h1gmTd1tlAhHI93IsKiSlUJcm/t5A9ehh7/iOxuF0jXeKz+ZPVJWp8
-	xLtLVhVZYh6YMvNU27HO9dUbMheY34aML0YgKKh4GBUwEplwNpC6I/v/86ZuxQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757341290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M2aXQHgqfK3sE5W83r8THuL/vQNj4SX4a/pKzmta4yA=;
-	b=UeoyFI+ZIu8iCQIUctUeRHL9Ya5s9OklwQUs0ZQf0WHwYLZH3v1S4QHjSpoDYIjTVnQv15
-	Z+j7W93iFX2teRCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Carlos O'Donell <carlos@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-	Alejandro Colomar <alx@kernel.org>,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 4/4] man/man2/futex.2: Add a pointer to Linux'
- memory-barrier
-Message-ID: <20250908142128.nciFBdjQ@linutronix.de>
-References: <20250829160200.756194-1-bigeasy@linutronix.de>
- <20250829160200.756194-5-bigeasy@linutronix.de>
- <1b4b0a00-3e80-49a9-bee4-2c7a90e85941@redhat.com>
+	s=arc-20240116; t=1757341355; c=relaxed/simple;
+	bh=gk1ToXqLVfFHyrhWVBDKXmQcXtkR/eVynveNUsyE22g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=D8g38a4SK9AgUeSCX/LytX2D/VfWhhmYUjdju1fW4hztHu99yg60N/DDTm+H6Z3aoLsr2ElBdervU/CDZjnvSz2MHHoeIg75gihdGyZO7jOsWgGHeKUIhG8GGkcd6CNZeEvBFjnG4ZQ1LPtw3vg9nz2SW68SbMY4JYPYSv0RWQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XdaW+D0X; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24c89867a17so43001885ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757341353; x=1757946153; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xrVD792Ek2sgQfwhqN9PhoMMPfdppvwqZK5xGEitoko=;
+        b=XdaW+D0Xz0SAkxhCv6BaXxx9xY4dpBeMisoO1hCObKrbBtQVGV+fLwKc50FxFCIt5c
+         eW2AVcWNH2oC0gAAhxqYS5ABBX8w/5xZ+y1b/9KqfdoUw+G4sdvaF35QpsCaPRsgHMpl
+         N9nh/q50fUaA8cipHwMIwwg1MvdoEU8WC+bWJk2/ZfadDr/FaAx1yLHS8KO6p+1H871B
+         fGx6wfc3DKVGEzo+Jz3O9umRHmj74dczSdqTW5Io9R7eT6DP7LDm7gq1GDRWzL1qTCcc
+         xcAE4M0/LtxZuLJYEGQUOS55iL5W0cShel64uELBbXhqHLahK2gywGYCEYV8s4j881BF
+         q7Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757341353; x=1757946153;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xrVD792Ek2sgQfwhqN9PhoMMPfdppvwqZK5xGEitoko=;
+        b=tPcmNb2Z9N+5jUcrBb3N/82PT1ZZGuVdqUXSBJ1RVEbe3zEl+qrWz10hY9OVggbbO1
+         +qZvjO0ya2miAiKhPskRWYWGv8jGOC7vbfPuKCVZSJV25oSvfJ6hS8gKbdrmnxfH1c0Y
+         TuP3hyo8ODDPNK66Di9CHqyyCjlgrwEoGUhUW//9j0tcCaM6ixMjqQKNyi7AB4NcAeG6
+         QGyBZ95iJ6y7cj5ZuB3ywiOAHWCZ4C/AY2kkfVOcjmfPyktUTMJnhfMOFvR7IgUrXi0f
+         AbD819msMRrMm7etTe8tdIrPeMLs1het8R63jSqoFTSogFWd7Wl4Qhd3u+oifp42BWQ3
+         fn6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXFRtn3kWWcRvALBNoS9TBgU+8oxLURE8Xm25cco1v9yNBAtwT9TZP2dQyYjczHkRd6E8xLeaQJiPYrKAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX+ShgjBTuRKt4SRjdpVwyFnE5/6jsW52qxZm0Kb4kU449yhR5
+	C8zr92DYNTcDtTnEm9MzBPggsCupSoIlTMLzc5Gcv8HCILnLK9+DrKopEpi+paVu29E82Op1aM1
+	VpTL2
+X-Gm-Gg: ASbGncu3Gl56zhtVePxuy4iT4aas2btkuMpq9QieKfhlhAvz7Wsz5NSTFE5tBPB/yJT
+	a7MeZCnELlYW759k135V0HmyQk7pKaR8Vf6xQFkcNC9m0qZPsyXV3y4YWNP/vALBld62+bPyiEi
+	7Mrf12ZVt8Chvf0NVeWeQ64bj3HDqQOnwJjkQSsWFhAmH8zqTvqrKOuulEwsd/Iu/BxAhpfEbFe
+	lmGR0Q5u/7iEAe6aRTq08LR/vk5g/WHaxVdbZjPvwHljpMfZKRb3m1uWckUD7QPOSfdvEUpaOQR
+	Hza8tLZ+0ElbdeSaJgzh4MOLVomBifLhJOiDgY5s/we5ZirrqqY0/hP88yX+f8arDYQudQoNO3a
+	SPcOF/Szx1QsYl6QRRWHzSXGoSA==
+X-Google-Smtp-Source: AGHT+IHGxLKpvVKAbv0Afa6m356ddtcVCdDITBH1IV2TsqY9fFZ958JktDTLLt5K1bQmXfFDf9f0Lw==
+X-Received: by 2002:a17:903:19ee:b0:24c:bdf5:d74b with SMTP id d9443c01a7336-2516dfcd7c5mr112932595ad.19.1757341353623;
+        Mon, 08 Sep 2025 07:22:33 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ced7ea5ccsm96723125ad.111.2025.09.08.07.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 07:22:32 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250905101817.392834-2-thorsten.blum@linux.dev>
+References: <20250905101817.392834-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] io_uring: Replace kzalloc() + copy_from_user() with
+ memdup_user()
+Message-Id: <175734135265.533336.3277901531044251712.b4-ty@kernel.dk>
+Date: Mon, 08 Sep 2025 08:22:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1b4b0a00-3e80-49a9-bee4-2c7a90e85941@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On 2025-08-29 13:46:19 [-0400], Carlos O'Donell wrote:
-> On 8/29/25 12:02 PM, Sebastian Andrzej Siewior wrote:
-> > The "totally ordered with respect to concurrent operations" part refers
-> > to memory ordering/ atomic update and has nothing to do with the inner
-> > workings of the FUTEX code. It simply tries to express that the futex
-> > operation will compare the supplied argument with that is written in
-> > memory.
-> > 
-> > This might be a tad too verbose but then there is a fixme asking for
-> > details on the sychronisation. Maybe a pointer to the memory barriers is
-> > enough in terms of the required synchronisaton. Assuming this is related
-> > to the memory value and not the futex internal synchronisation.
-> > 
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >   man/man2/futex.2 | 8 +++-----
-> >   1 file changed, 3 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/man/man2/futex.2 b/man/man2/futex.2
-> > index 027e91b826bf1..fe4a239c3812c 100644
-> > --- a/man/man2/futex.2
-> > +++ b/man/man2/futex.2
-> > @@ -84,16 +84,14 @@ on the same futex word.
-> >   .\"     would be sufficient? Or perhaps for this manual, "serialized" would
-> >   .\"     be sufficient, with a footnote regarding "totally ordered" and a
-> >   .\"     pointer to the memory-barrier documentation?
-> > +Please see
-> > +.IR https://docs.kernel.org/\:next/\:core-api/\:wrappers/\:memory-barriers.html
-> > +for the definition of atomic operations and memory ordering.
-> 
-> This seems out of place with the flow of the rest of the text.
-> 
-> I suggest adding this as a foot note.
-> 
-> >   Thus, the futex word is used to connect the synchronization in user space
-> >   with the implementation of blocking by the kernel.
-> >   Analogously to an atomic
-> >   compare-and-exchange operation that potentially changes shared memory,
-> >   blocking via a futex is an atomic compare-and-block operation.
-> > -.\" FIXME(Torvald Riegel):
-> > -.\" Eventually we want to have some text in NOTES to satisfy
-> > -.\" the reference in the following sentence
-> > -.\"     See NOTES for a detailed specification of
-> > -.\"     the synchronization semantics.
-> 
-> I think it is acceptable to link to Documentation/memory-barriers.rst, but
-> the truth is that this document doesn't yet provide all the notes required
-> to answer the questions wrt a futex. Fundamentally we use spinlocks for futexes
-> (and some arches use more like parisc), and spinlocks are covered in
-> "Implicit Kernel Memory Barrires", there isn't any direct connection between
-> them in the text (and doing so would create a design requirement).
 
-There might be two things to it. The spinlocks are used in kernel and
-synchronize the kernel internal state. The memory barriers might be
-important in regard to how the futex word should be updated atomically.
+On Fri, 05 Sep 2025 12:18:17 +0200, Thorsten Blum wrote:
+> Replace kzalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify io_probe().
+> 
+> No functional changes intended.
+> 
+> 
 
-> >   .P
-> >   One use of futexes is for implementing locks.
-> >   The state of the lock (i.e., acquired or not acquired)
+Applied, thanks!
 
-Sebastian
+[1/1] io_uring: Replace kzalloc() + copy_from_user() with memdup_user()
+      commit: 7b0604d77a41192316347618cce1d9c795613adb
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
