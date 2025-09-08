@@ -1,220 +1,164 @@
-Return-Path: <linux-kernel+bounces-806453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8ABB496F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:32:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D31FB49703
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40CE57AB903
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2220D3B450E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7AD313520;
-	Mon,  8 Sep 2025 17:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7833148D6;
+	Mon,  8 Sep 2025 17:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKb0Vaa6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SvQISnKl"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1F128399;
-	Mon,  8 Sep 2025 17:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7145E3148CE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352709; cv=none; b=RXt+8fPeLht4hOLPaWnvZEJ3AJMhXdO8G6xRQIZOtRHJBzNAwljQivOnKaPDlQoLb6qivPmPoAkI1z8tlZKltvJMMxPut/BbXC0ifkclRLRB+gcpuBCUif0t/laeb4u+g7yU3NPgcy4IHaH7GeqBivpO+pkeo2ZW9CIfvzqZ7cM=
+	t=1757352866; cv=none; b=H/QXDMV7yKAyFyskl3HUex2E5EAGNGf7s8cPrP41v+mAJJWLP+YmY5sWEQtzUeHsK352zwzjdLOzc3IaPWrprbMVolbtL441lw6QblsbAI2lGCRmLBcOFEGQNajPTROQ2RKJIMO9mmY+1EVX/98NScQm8mzmRa0yVKmsvmq6T4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352709; c=relaxed/simple;
-	bh=+GJvdWbYdEkO2iexLk7YraWW+Q1K7c80iEct8a7Ig08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=myFgTMlijUpivlObkhpf9SM+gz/89mPcn1pnyCqQIs0INvVmEk64ufNcAb1Pqx2BAII23TTy3jgGE74BgI9AsNKHwaH4bbLYxFeaKDE7aU9HRF0mA5/nZeYUx45aFGiIarY6u3WKBvrZzTFmmOWwpGt25uO9c5FTH6UxCTb3/7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKb0Vaa6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2627C4CEF1;
-	Mon,  8 Sep 2025 17:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757352708;
-	bh=+GJvdWbYdEkO2iexLk7YraWW+Q1K7c80iEct8a7Ig08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nKb0Vaa6R6NYNEhMOdCuSCZp+oUbllfgqCTq09Di+mi3HR05l7lLTtqUXO2QiPh5D
-	 2TkhXqVhsnCGDCILeuJ3Th5CZnGG/+Qy0vxAG1rQ7kOTmpDbwoxX0SpIlmc6yizT2u
-	 PBjtsWe4axam2aOM6I6nsko6txOuJ921r9tItcjIzmsK4kpJs9uFkg+dnjPocJxG6E
-	 i08+j0L54EyL4hquPoVsrO70xn22r89elZosE1O65Jzv/BIyWhEOE9/iwQNlQFw4EX
-	 gEEuvbp2hHx3njq3vEXg+8sgwjfCPgqFs8D8t63V0nQP0r8cronoUzyfFtmzjAPQDa
-	 lV0LtmAheILWg==
-Message-ID: <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org>
-Date: Mon, 8 Sep 2025 19:31:43 +0200
+	s=arc-20240116; t=1757352866; c=relaxed/simple;
+	bh=pgD1gNKpvNl5PPkW2ttuf0nOW9fRCBbgauUQRDFwsBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2T92Xi2wQUWgqBtpa7LCiGh7B0ymZIbshVrcL6aYyHL0ZqU8LdHBQBD4SC8BlYZErGBQYbjDKPHY42ILpISXW13A45XBq0bWLd37Gp8MBa+1wVB/jewGp4EQcaCCWrOp8AkF3o6/Pu6U48h9wFS3mp229lBtJgrzrRT7iCbErk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SvQISnKl; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 8 Sep 2025 13:34:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757352862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RI+4qBnk3MrykJHWhGMohkHW+kG9BF8eSFcQInaYa7k=;
+	b=SvQISnKlR1oILzgDvsjbRDxXubVynYLhCelBHtp/U9kB5wfTLXx0dUZiQAFKUapZTYrZsJ
+	Ql5pbx7rrCtJ9O3NrYBT+FA/ZqbuZnWwHdVSHpiLIp83MUCTzhNwG3aKFcuU9018widx8q
+	plU7OUU7PAG+fSXTz3ObRRiv7K5hyg4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Yueyang Pan <pyyjason@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Sourav Panda <souravpanda@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Message-ID: <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+ <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
+ <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
+ <aLFKHGe2loD657fu@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
- SOCK_KEEPOPEN
-Content-Language: en-GB, fr-BE
-To: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
- netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
- David Reaver <me@davidreaver.com>
-References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
- <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
- <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
- <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
- <aL8RoSniweGJgm3h@templeofstupid.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <aL8RoSniweGJgm3h@templeofstupid.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLFKHGe2loD657fu@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Krister,
-
-On 08/09/2025 19:25, Krister Johansen wrote:
-> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
->> Hi Geliang,
->>
->> On 07/09/2025 02:51, Geliang Tang wrote:
->>> Hi Matt,
->>>
->>> On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
->>>> Hi Krister,
->>>>
->>>> On 06/09/2025 02:43, Krister Johansen wrote:
->>>>> Users reported a scenario where MPTCP connections that were
->>>>> configured
->>>>> with SO_KEEPALIVE prior to connect would fail to enable their
->>>>> keepalives
->>>>> if MTPCP fell back to TCP mode.
->>>>>
->>>>> After investigating, this affects keepalives for any connection
->>>>> where
->>>>> sync_socket_options is called on a socket that is in the closed or
->>>>> listening state.  Joins are handled properly. For connects,
->>>>> sync_socket_options is called when the socket is still in the
->>>>> closed
->>>>> state.  The tcp_set_keepalive() function does not act on sockets
->>>>> that
->>>>> are closed or listening, hence keepalive is not immediately
->>>>> enabled.
->>>>> Since the SO_KEEPOPEN flag is absent, it is not enabled later in
->>>>> the
->>>>> connect sequence via tcp_finish_connect.  Setting the keepalive via
->>>>> sockopt after connect does work, but would not address any
->>>>> subsequently
->>>>> created flows.
->>>>>
->>>>> Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on
->>>>> the
->>>>> subflow when calling sync_socket_options.
->>>>>
->>>>> The fix was valdidated both by using tcpdump to observe keeplaive
->>>>> packets not being sent before the fix, and being sent after the
->>>>> fix.  It
->>>>> was also possible to observe via ss that the keepalive timer was
->>>>> not
->>>>> enabled on these sockets before the fix, but was enabled
->>>>> afterwards.
->>>>
->>>>
->>>> Thank you for the fix! Indeed, the SOCK_KEEPOPEN flag was missing!
->>>> This
->>>> patch looks good to me as well:
->>>>
->>>> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->>>>
->>>>
->>>> @Netdev Maintainers: please apply this patch in 'net' directly. But I
->>>> can always re-send it later if preferred.
->>>
->>> nit:
->>>
->>> I just noticed his patch breaks 'Reverse X-Mas Tree' order in
->>> sync_socket_options(). If you think any changes are needed, please
->>> update this when you re-send it.
->>
->> Sure, I can do the modification and send it with other fixes we have.
+On Fri, Aug 29, 2025 at 08:35:08AM +0200, Michal Hocko wrote:
+> On Tue 26-08-25 19:38:03, Suren Baghdasaryan wrote:
+> > On Tue, Aug 26, 2025 at 7:06 AM Yueyang Pan <pyyjason@gmail.com> wrote:
+> > >
+> > > On Thu, Aug 21, 2025 at 12:53:03PM -0700, Shakeel Butt wrote:
+> > > > On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+> > > > > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> > > > > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > > > > > > Right now in the oom_kill_process if the oom is because of the cgroup
+> > > > > > > limit, we won't get memory allocation infomation. In some cases, we
+> > > > > > > can have a large cgroup workload running which dominates the machine.
+> > > > > > > The reason using cgroup is to leave some resource for system. When this
+> > > > > > > cgroup is killed, we would also like to have some memory allocation
+> > > > > > > information for the whole server as well. This is reason behind this
+> > > > > > > mini change. Is it an acceptable thing to do? Will it be too much
+> > > > > > > information for people? I am happy with any suggestions!
+> > > > > >
+> > > > > > For a single patch, it is better to have all the context in the patch
+> > > > > > and there is no need for cover letter.
+> > > > >
+> > > > > Thanks for your suggestion Shakeel! I will change this in the next version.
+> > > > >
+> > > > > >
+> > > > > > What exact information you want on the memcg oom that will be helpful
+> > > > > > for the users in general? You mentioned memory allocation information,
+> > > > > > can you please elaborate a bit more.
+> > > > > >
+> > > > >
+> > > > > As in my reply to Suren, I was thinking the system-wide memory usage info
+> > > > > provided by show_free_pages and memory allocation profiling info can help
+> > > > > us debug cgoom by comparing them with historical data. What is your take on
+> > > > > this?
+> > > > >
+> > > >
+> > > > I am not really sure about show_free_areas(). More specifically how the
+> > > > historical data diff will be useful for a memcg oom. If you have a
+> > > > concrete example, please give one. For memory allocation profiling, is
+> > >
+> > > Sorry for my late reply. I have been trying hard to think about a use case.
+> > > One specific case I can think about is when there is no workload stacking,
+> > > when one job is running solely on the machine. For example, memory allocation
+> > > profiling can tell the memory usage of the network driver, which can make
+> > > cg allocates memory harder and eventually leads to cgoom. Without this
+> > > information, it would be hard to reason about what is happening in the kernel
+> > > given increased oom number.
+> > >
+> > > show_free_areas() will give a summary of different types of memory which
+> > > can possibably lead to increased cgoom in my previous case. Then one looks
+> > > deeper via the memory allocation profiling as an entrypoint to debug.
+> > >
+> > > Does this make sense to you?
+> > 
+> > I think if we had per-memcg memory profiling that would make sense.
+> > Counters would reflect only allocations made by the processes from
+> > that memcg and you could easily identify the allocation that caused
+> > memcg to oom. But dumping system-wide profiling information at
+> > memcg-oom time I think would not help you with this task. It will be
+> > polluted with allocations from other memcgs, so likely won't help much
+> > (unless there is some obvious leak or you know that a specific
+> > allocation is done only by a process from your memcg and no other
+> > process).
 > 
-> Thanks for the reviews, Geliang and Matt.  If you'd like me to fix the
-> formatting up and send a v2, I'm happy to do that as well.  Just let me
-> know.
+> I agree with Suren. It makes very little sense and in many cases it
+> could be actively misleading to print global memory state on memcg OOMs.
+> Not to mention that those events, unlike global OOMs, could happen much
+> more often.
+> If you are interested in a more information on memcg oom occurance you
+> can detext OOM events and print whatever information you need.
 
-I was going to apply this diff:
+"Misleading" is a concern; the show_mem report would want to print very
+explicitly which information is specifically for the memcg and which is
+global, and we don't do that now.
 
-> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
-> index 13108e9f982b..2abe6f1e9940 100644
-> --- a/net/mptcp/sockopt.c
-> +++ b/net/mptcp/sockopt.c
-> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_sock *msk, struct sock *ssk)
->  {
->         static const unsigned int tx_rx_locks = SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
->         struct sock *sk = (struct sock *)msk;
-> -       int kaval = !!sock_flag(sk, SOCK_KEEPOPEN);
-> +       bool keep_open;
->  
-> +       keep_open = sock_flag(sk, SOCK_KEEPOPEN);
->         if (ssk->sk_prot->keepalive)
-> -               ssk->sk_prot->keepalive(ssk, kaval);
-> -       sock_valbool_flag(ssk, SOCK_KEEPOPEN, kaval);
-> +               ssk->sk_prot->keepalive(ssk, keep_open);
-> +       sock_valbool_flag(ssk, SOCK_KEEPOPEN, keep_open);
->  
->         ssk->sk_priority = sk->sk_priority;
->         ssk->sk_bound_dev_if = sk->sk_bound_dev_if;
+I don't think that means we shouldn't print it at all though, because it
+can happen that we're in an OOM because one specific codepath is
+allocating way more memory than we should be; even if the memory
+allocation profiling info isn't correct for the memcg it'll be useful
+information in a situation like that, it just needs to very clearly
+state what it's reporting on.
 
-(sock_flag() returns a bool, and 'keep_open' is maybe clearer)
+I'm not sure we do that very well at all now, I'm looking at
+__show_mem() ad it's not even passed a memcg. !?
 
-But up to you, I really don't mind if you prefer to send the v2 by
-yourself, just let me know.
+Also, if anyone's thinking about "what if memory allocation profiling
+was memcg aware" - the thing we saw when doing performance testing is
+that memcg accounting was much higher overhead than memory allocation
+profiling - hence, most kernel memory allocations don't even get memcg
+accounting.
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+I think that got the memcg people looking at ways to make the accounting
+cheaper, but I'm not sure if anything landed from that.
 
