@@ -1,287 +1,162 @@
-Return-Path: <linux-kernel+bounces-806441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F451B496D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2A5B496D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259441886CC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B7188FE1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DCC312832;
-	Mon,  8 Sep 2025 17:19:36 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BF531283B;
+	Mon,  8 Sep 2025 17:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a29NeqFS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03D5C8E6
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37616215F4A;
+	Mon,  8 Sep 2025 17:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351975; cv=none; b=oIqLXg6fGD8oEi1UW0GmgTqBQESMa4W6ga3rAwKxmAixduSCXhJc0sjdG4hCvipdncUS16izKpwweMJS/q1Awqls/MGxxiw6xOaouv+k73BlpTFYFeOCurBUdJOs/OmB3mR1aMBr0CzRhf2GEcwqoiAhNDFysWTxeYsy1gSs47U=
+	t=1757352028; cv=none; b=KKk30V/10tUdI1luXwxJmmEBTveHOlVkATV0CwNbxaNqDAgoReiM/7/2aLnlTz+Ikj395QyqJf9C1UfopuUtOQm8GQ5YGXX4ubbNJTFz1BMU0+CphxzemUzz5yY49F3qZoyqNxOkIeefvsAVY34NovHJGPQtkiJBS8WE/U/G8F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351975; c=relaxed/simple;
-	bh=xgPpdpRS5YeqJM2vSt6bfnP09qMLw1kkYAKZN+6WBeo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WYKjy/7gSZhG4Vab6dJhsY5dwtsyjjN1lQZupCLRrdFFQHDvI9crEHK5Oix31V5dfn2zZfOmsUKXEGOD5yGJoqJHcHp17mCKqD0QOFKUTcU+lpF+oCAzrQrRypyXPadll6wjhpnTj+UVC0hqHbjRi5SK7E61Q0aUzxnN78BrEZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-40e59fba0cfso8173335ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:19:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757351973; x=1757956773;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3Leg9cAeI1Aa4vz9zGTp/K9ybu4DKv+4gSxkOFVAjtQ=;
-        b=q0mrruqbjmPV3yIBsUALrcnVeI+573gb+0XCCRsxhTrHhi1Tx2i1c+to9rJCaMIoqF
-         Bb6e2KIAA5NUQ3AIPLVOs1nDzLL+rt/MpktTOfgC6yGwYU+AqnuXT5FEB9CcUoO0I3Xv
-         61m8klDp6VDpukVbEraFUXi1hzRLH4HcdCWbbJY1F3k5ZmZG4RN5ONe5y0vZbcjDIpUU
-         ftbA3eBXYLBG3UrlCuMIhAQZ0lgfyYjRJ1J0ju2tSB8pdUXMOrxrCnZsb7Dn/aPIT0s+
-         KLneJp6RZCWtG/QldmK+ou2jReg4MhN/2VXceDUQGylZib8/c4FIHCaxNqPkP7ZDPfpe
-         InAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrv6p+l+EO8NLq7GKc6/WjzLHU5S5dErnf41JQqgYiEnWKT+xeQ+OJ94TalY/9cs6NsAEI0t1LaVWfNak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNwQE0+V/psYRHwTbfcssAX2LCfwL6WWHa52YtRiLUi+Ct8yHN
-	aIsqWGHrRR+lYFY6iVITpFDknabK3OdcWQ5nLxaT88fyXS1aQog7nZ7MhF7r2FE7miksaqEWVzT
-	e19CrdpAlVGGi2Vrboavb/X/fpm3e1a2F7qFL6QBtg6hp0+46XNaKKe2qD1I=
-X-Google-Smtp-Source: AGHT+IHTkIIBanqFC2H6WTUrou5t48+ZFeoSZMY4CSI3hByunRoE2qEKI8hFqQ+6dXkUNEz04jnsUekHe92LnKSS8Qnb09c8/5nG
+	s=arc-20240116; t=1757352028; c=relaxed/simple;
+	bh=WG6cG0RC7lf6sWYUt9oDwjKz1esgUSQzcQgi7vvimIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OiZPjdHXTaVlhCgSNvdiRy6xDZkqydY7/RObD3+CNa3fP4u6d601CA5Ll4cpZu+8qlAlwHJ7IEm75MiSrmhCtJ93OZIH7dklqsEFs0iD8dVdOeIrBmNLcfB/YrI8C2nVRy5l1j69BaGVKAK3rJYh//enA/vIgpg+pEGqPfcIKKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a29NeqFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF679C4CEF1;
+	Mon,  8 Sep 2025 17:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757352027;
+	bh=WG6cG0RC7lf6sWYUt9oDwjKz1esgUSQzcQgi7vvimIU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a29NeqFSGpEF+96xbTO1WNJwcaERIetmb81Xgnn4IU83YBoLk8Rutt4IWOwFALEE0
+	 Alo/yrF5Txar4LbjfsLU96+5JIOUdLTBbOWWhj863dRSEotYftRw8791NUViEN37uH
+	 7vL5SDt8lxvdJgFnXs8yyk5LmDGIhAqer9EnM8XSTbl9he/b2vz7jBdIztMdZ26zOW
+	 j7J5aPbexf2saw4lZKNoquB5ePSISpTgK86xUvgoCV98gqE2ZZaswqTjzpouutGG+Z
+	 JZZF8UXIBG4kOyYZQKC8Xcwpe9a9BxIFcAWHPiQ0O9LXBnyQ3FExVITht/Di+oXYzE
+	 U7DGVsfPwYeGA==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-74526ca7d64so3982335a34.2;
+        Mon, 08 Sep 2025 10:20:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX2bTPPTYpaS8NCi/XsLcDbxS38D26LN9AKlNc6bC1HosjmhM5hW23kvnTeOeOilLYxcREZ/x5sBbny@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuxh4bBgBgEAsxRjIaoLlXC62MyvVC8ZyOArB8/OnHbmsq2PwH
+	L2yM2qMh7kkV520OH5ZcUNX3mlYRrvSes7fK4V4vX6K0nRab80t87gNBduGUB4Hu9zbyei+AxAU
+	/YbyhB/I+DrlSg7wrfAwQgKDLxBR+lQA=
+X-Google-Smtp-Source: AGHT+IGXpy+OU2UasaskUg2nePmnXAYN4fXokbNZNAf4Iw8rD1AI0zGefB9ESZkm15LcjA+jXp80pFZFT6EmdeISh+o=
+X-Received: by 2002:a05:6808:181a:b0:43a:2e17:3ba8 with SMTP id
+ 5614622812f47-43b2988c314mr4081572b6e.0.1757352027077; Mon, 08 Sep 2025
+ 10:20:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a69:b0:3ed:eab:439a with SMTP id
- e9e14a558f8ab-3fd82164022mr123234325ab.12.1757351973009; Mon, 08 Sep 2025
- 10:19:33 -0700 (PDT)
-Date: Mon, 08 Sep 2025 10:19:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bf1024.a70a0220.7a912.02c2.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: slab-use-after-free Read in xfrm_state_find
-From: syzbot <syzbot+e136d86d34b42399a8b1@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20250908163127.2462948-1-maz@kernel.org> <20250908163127.2462948-3-maz@kernel.org>
+In-Reply-To: <20250908163127.2462948-3-maz@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 8 Sep 2025 19:20:15 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hSJ6yMnfZgYDSZRqL_KMLc6f4kcY06dWGSPCFYjdcbfg@mail.gmail.com>
+X-Gm-Features: Ac12FXwlVf4kn-tU9YEBjTnrid6i7WBV3fExLJM7cADt4nyooosqwvUywi8aWZo
+Message-ID: <CAJZ5v0hSJ6yMnfZgYDSZRqL_KMLc6f4kcY06dWGSPCFYjdcbfg@mail.gmail.com>
+Subject: Re: [PATCH 02/25] ACPI: irq: Add IRQ affinity reporting interface
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Sep 8, 2025 at 6:31=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
+>
+> Plug the irq_populate_fwspec_info() helper into the ACPI layer
+> to offer an IRQ affinity reporting function. This is currently
+> only supported for the CONFIG_ACPI_GENERIC_GSI configurations,
+> but could later be extended to legacy architectures if necessary.
+>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/acpi/irq.c   | 15 +++++++++++++++
+>  include/linux/acpi.h |  7 +++++++
+>  2 files changed, 22 insertions(+)
+>
+> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
+> index 76a856c32c4d0..22f93fe23ddce 100644
+> --- a/drivers/acpi/irq.c
+> +++ b/drivers/acpi/irq.c
+> @@ -300,6 +300,21 @@ int acpi_irq_get(acpi_handle handle, unsigned int in=
+dex, struct resource *res)
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_irq_get);
+>
+> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
+> +                                           unsigned int index)
+> +{
+> +       struct irq_fwspec_info info;
+> +       unsigned long flags;
+> +
+> +       if (!acpi_irq_parse_one(handle, index, &info.fwspec, &flags)) {
+> +               if (!irq_populate_fwspec_info(&info) &&
+> +                   info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID)
+> +                       return info.affinity;
+> +       }
 
-syzbot found the following issue on:
+I would prefer fewer logical negations to be used in this, for instance:
 
-HEAD commit:    6ab41fca2e80 Merge tag 'timers-urgent-2025-09-07' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=142f0642580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d7c422a5f41c669
-dashboard link: https://syzkaller.appspot.com/bug?extid=e136d86d34b42399a8b1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+if (acpi_irq_parse_one(handle, index, &info.fwspec, &flags))
+      return NULL;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+if (irq_populate_fwspec_info(&info))
+       return NULL;
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5ab9812c379f/disk-6ab41fca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5d3df1acc5a7/vmlinux-6ab41fca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/12541033d833/bzImage-6ab41fca.xz
+if (info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID)
+       return info.affinity;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e136d86d34b42399a8b1@syzkaller.appspotmail.com
+return NULL;
 
-==================================================================
-BUG: KASAN: slab-use-after-free in xfrm_state_find+0x44cd/0x5400 net/xfrm/xfrm_state.c:1574
-Read of size 1 at addr ffff88806ad62970 by task syz.5.2024/14900
-
-CPU: 1 UID: 0 PID: 14900 Comm: syz.5.2024 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- xfrm_state_find+0x44cd/0x5400 net/xfrm/xfrm_state.c:1574
- xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2522 [inline]
- xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2573 [inline]
- xfrm_resolve_and_create_bundle+0x768/0x2f80 net/xfrm/xfrm_policy.c:2871
- xfrm_lookup_with_ifid+0x2a7/0x1a70 net/xfrm/xfrm_policy.c:3205
- xfrm_lookup net/xfrm/xfrm_policy.c:3336 [inline]
- xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3347
- ip_route_connect include/net/route.h:355 [inline]
- __ip4_datagram_connect+0x9a5/0x1270 net/ipv4/datagram.c:49
- __ip6_datagram_connect+0x9f0/0x1150 net/ipv6/datagram.c:196
- ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
- ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
- __sys_connect_file net/socket.c:2086 [inline]
- __sys_connect+0x316/0x440 net/socket.c:2105
- __do_sys_connect net/socket.c:2111 [inline]
- __se_sys_connect net/socket.c:2108 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2108
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd80af8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd80be3f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007fd80b1c6090 RCX: 00007fd80af8ebe9
-RDX: 000000000000001c RSI: 0000200000000040 RDI: 000000000000000d
-RBP: 00007fd80b011e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fd80b1c6128 R14: 00007fd80b1c6090 R15: 00007fd80b2efa28
- </TASK>
-
-Allocated by task 12709:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:330 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4247
- xfrm_state_alloc+0x24/0x2f0 net/xfrm/xfrm_state.c:733
- xfrm_state_construct net/xfrm/xfrm_user.c:889 [inline]
- xfrm_add_sa+0x17d1/0x4070 net/xfrm/xfrm_user.c:1019
- xfrm_user_rcv_msg+0x7a0/0xab0 net/xfrm/xfrm_user.c:3501
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
- xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 12093:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2422 [inline]
- slab_free mm/slub.c:4695 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4797
- xfrm_state_free net/xfrm/xfrm_state.c:591 [inline]
- xfrm_state_gc_destroy net/xfrm/xfrm_state.c:618 [inline]
- xfrm_state_gc_task+0x52d/0x6b0 net/xfrm/xfrm_state.c:634
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff88806ad62640
- which belongs to the cache xfrm_state of size 928
-The buggy address is located 816 bytes inside of
- freed 928-byte region [ffff88806ad62640, ffff88806ad629e0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806ad62640 pfn:0x6ad60
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801afdf280 dead000000000122 0000000000000000
-raw: ffff88806ad62640 00000000800f000c 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801afdf280 dead000000000122 0000000000000000
-head: ffff88806ad62640 00000000800f000c 00000000f5000000 0000000000000000
-head: 00fff00000000002 ffffea0001ab5801 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 7519, tgid 7518 (syz.8.350), ts 330117177647, free_ts 330086232405
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2492 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2660
- new_slab mm/slub.c:2714 [inline]
- ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
- __slab_alloc mm/slub.c:3992 [inline]
- __slab_alloc_node mm/slub.c:4067 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4247
- xfrm_state_alloc+0x24/0x2f0 net/xfrm/xfrm_state.c:733
- xfrm_state_find+0x37d4/0x5400 net/xfrm/xfrm_state.c:1513
- xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2522 [inline]
- xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2573 [inline]
- xfrm_resolve_and_create_bundle+0x768/0x2f80 net/xfrm/xfrm_policy.c:2871
- xfrm_bundle_lookup net/xfrm/xfrm_policy.c:3106 [inline]
- xfrm_lookup_with_ifid+0x58a/0x1a70 net/xfrm/xfrm_policy.c:3237
- xfrm_lookup net/xfrm/xfrm_policy.c:3336 [inline]
- xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3347
- udp_sendmsg+0x142e/0x2170 net/ipv4/udp.c:1450
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x19c/0x270 net/socket.c:729
- ____sys_sendmsg+0x52d/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
-page last free pid 7493 tgid 7486 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- stack_depot_save_flags+0x436/0x860 lib/stackdepot.c:727
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_save_track+0x4f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:330 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_node_noprof+0x1bb/0x3c0 mm/slub.c:4292
- kmalloc_reserve+0xbd/0x290 net/core/skbuff.c:578
- __alloc_skb+0x142/0x2d0 net/core/skbuff.c:669
- alloc_skb include/linux/skbuff.h:1336 [inline]
- alloc_uevent_skb+0x7d/0x230 lib/kobject_uevent.c:289
- uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
- kobject_uevent_net_broadcast+0x2fa/0x560 lib/kobject_uevent.c:410
- kobject_uevent_env+0x55b/0x8c0 lib/kobject_uevent.c:608
- device_del+0x73a/0x8e0 drivers/base/core.c:3896
- device_unregister+0x20/0xc0 drivers/base/core.c:3919
- hci_conn_cleanup net/bluetooth/hci_conn.c:173 [inline]
- hci_conn_del+0xc33/0x11b0 net/bluetooth/hci_conn.c:1211
- hci_abort_conn_sync+0x658/0xe30 net/bluetooth/hci_sync.c:5689
- hci_disconnect_all_sync+0x1b5/0x350 net/bluetooth/hci_sync.c:5712
- hci_suspend_sync+0x3fc/0xc60 net/bluetooth/hci_sync.c:6188
-
-Memory state around the buggy address:
- ffff88806ad62800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88806ad62880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88806ad62900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff88806ad62980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff88806ad62a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +
+> +       return NULL;
+> +}
+> +
+>  /**
+>   * acpi_set_irq_model - Setup the GSI irqdomain information
+>   * @model: the value assigned to acpi_irq_model
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 1c5bb1e887cd1..c506ae4bacc86 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1509,12 +1509,19 @@ static inline int acpi_parse_spcr(bool enable_ear=
+lycon, bool enable_console)
+>
+>  #if IS_ENABLED(CONFIG_ACPI_GENERIC_GSI)
+>  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
+ *res);
+> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
+> +                                           unsigned int index);
+>  #else
+>  static inline
+>  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
+ *res)
+>  {
+>         return -EINVAL;
+>  }
+> +static inline const struct cpumask *acpi_irq_get_affinity(acpi_handle ha=
+ndle,
+> +                                                         unsigned int in=
+dex)
+> +{
+> +       return NULL;
+> +}
+>  #endif
+>
+>  #ifdef CONFIG_ACPI_LPIT
+> --
 
