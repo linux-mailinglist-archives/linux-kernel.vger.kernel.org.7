@@ -1,82 +1,39 @@
-Return-Path: <linux-kernel+bounces-806372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A09B495AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:40:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F33BB495F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0AD3AE3DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:40:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEFF87B9164
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A627430EF8E;
-	Mon,  8 Sep 2025 16:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVcDj2B2"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D9B3112B2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2E6311581;
+	Mon,  8 Sep 2025 16:34:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2EC30F946
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349211; cv=none; b=PmKimQIfEXYsA086Lut/Hjb/C/EO9B6fGTt60Tw/qq9Uf677u8wCQ8t4ZZpu+kX2OEBHRlcaFmmCcenbMoxK0xg16EGsKWqSqiHywWkm2qoPc92HdvtKfywuSU8CVVGjMvqpht5lhLW/+Joxp/FCAHrcAWt8wJxJDUkhXToTZ3s=
+	t=1757349281; cv=none; b=t+bA99BwFhCqe/w2ERfia2CZ1FInD7ClJpzkTpttbHZhJeCY748MA9rGIadMUpltn5BvnOWb3/DBnHXNBbjQBaY+cS8mjpJoFoVDJ2I4hLVYjyl1YxL3EHqhsTkJ2clab9YfuM9xqcHaFVTjggxDKti32yBOrKoHhjIqrRhSvRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349211; c=relaxed/simple;
-	bh=DQ5xqqgu7m8HNjsRr8+111a6SfDAiRkaBt5C1QHesLE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TrEzlbFYHTdXhTkydadq/gPoUooR2ReLF7FxeRaY25p2WRnUsbBPUHJ/8UkyZ2xsvQ2cEJWwANRoEHvwGJk41A6rYgJvCqV+bXCAXQfQhiLPUTUmVU9gGS0bu1rlrGyuPhd5vnnes19NscJjLWuE8RCFcLYQWddtR8pDLXdJHsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XVcDj2B2; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso26355485e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757349208; x=1757954008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hL4k/Psh7QV3Oz0BWAiE3A5PYnYKCxQRfGopalfqlC0=;
-        b=XVcDj2B2sPcocDn+jEnl6XX1xTqzv8ROmHltr7pVhN8IBbxTqtK685pyYkYiYf40Gm
-         pUsr5U0jMgboZcDJZP4unULB+FRIehhJrIiLtIpatiN/U8MXdy2sU9oDYunwVKrpEEv8
-         SEZ2CMd+Jc0l/mj634+JLDnEOTMEZvvz6w2F+2cLJnMvTZKyxEMcMXrmq9OvlQOYqLAK
-         PnJwUg2JmvHcBUZiehNBVMamtP4ySdcBUfRZxr6ZYWwQ7cTNZu/bqozXWM4H2DFmL7my
-         tO+w2thyXYQ/B9q5aSW7k9csooXsJUqd1f4xpshwyA9Ken4d/2XPMCw1ES5K26CC4yTD
-         90tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757349208; x=1757954008;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hL4k/Psh7QV3Oz0BWAiE3A5PYnYKCxQRfGopalfqlC0=;
-        b=KDIzRj+6gKge07AN6kOwNcVMgpOVy17Pkw813buWzsu+1qC4ZRDJxgEaT3aWQx5txi
-         tyQKxML0qQ9QaTUW9UpFiTGY4zKLDF91v8F/1uT3otQCCqMqkiah6QdpBbteOI6t9bpz
-         ldOt+NIa1EufhmZ+1J64uxXhVuZZhopo41xMdl5gQqhATNe9sVX+OndWuGccAHzBupUj
-         pgBoe62fAQ/8c5PkP8d1v1zceyO85CVnRmL4NGguhxNv5uXmaBgIyGjzs4wcwXun7Vid
-         yh/WrNSQUxdk0u4BWJzIDm4uuKF1SjxW/Aptoyp9sK7ueoRkrkk8a7kcfgYmiNFke6hk
-         d2lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVi61bYjtAtaH7tpdOFS6SimTDEF/3upi/e7EuxWNoEdnSQIjManDhKuHI3FDJXcnn7Gl3zJhO/8CLZ4ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXcL0DEDyaNhSEvKFXP9rcEy1CzdTyMzPuLC+AmxBroxcmH+fr
-	HrPRanaYOPklUi2odwA22FuPkXWuRES4s64OKpvA1vjoJbBvEkc5HA1gRGX5xmybvO0=
-X-Gm-Gg: ASbGnct7a0psXTXm/qehY5IIw5XjtCZrmqD0N2j8lHOyxX1Fx6M27DVONafLbp+gFk6
-	4iUZWnneR2BboZu99hoZafukS8yumlE5LuPTKzc8/YI1ce2LLLaWwcK6+hGPvzK1rXtF1IGdWFZ
-	klK881zIisfxMwUZ4eliBM7DOl3KfQsm44SWx3CMDRdlUP9rcjHvo4o1btclcp2ij74Ig9hykIO
-	n3KCY8muvcIMjotPUsro+79JpYWhYLMLY0ySUGOeEq270oUDQuHigRdb855uS/2FeiLzW86sF5f
-	QxUP+gOBUc8BFcdDN+un1A/7LtgNhtUlMs0QnrrxZEGrOAv4IKlqJAn+Xpl+bcBR4n6qDBZxu8z
-	rHtVvPz4ws0+nqv+0DKS5tqBSMsYqBbV7SXR7yfTzSdDzYrePE+EP5SqxwW0lKJiw9iP4kyq+I9
-	0=
-X-Google-Smtp-Source: AGHT+IHPshw4MFF3MtFW66lL56KGDr/ELsFHDavtEJzMD7lAGjt0usUJGeNNjmlUvzx4UEW9zDYZRQ==
-X-Received: by 2002:a05:600c:3547:b0:456:18cf:66b5 with SMTP id 5b1f17b1804b1-45dddecd814mr75926175e9.22.1757349207638;
-        Mon, 08 Sep 2025 09:33:27 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:61c1:5d31:4427:381b? ([2a01:e0a:3d9:2080:61c1:5d31:4427:381b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd3aadbcesm176753155e9.17.2025.09.08.09.33.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 09:33:27 -0700 (PDT)
-Message-ID: <f00dffa0-11d2-4e88-9770-c34682f770ff@linaro.org>
-Date: Mon, 8 Sep 2025 18:33:26 +0200
+	s=arc-20240116; t=1757349281; c=relaxed/simple;
+	bh=7SfC37qmEgMciDD/WKRfDsWdVbJU/SH5KFImmiMP5fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PsOHvEEquQm2BHyyh1qu6rJeiMPdLI8EDAxy2UCR38CPf1nscq12Dj0Y5/out8Rr7rZCBRqDOlaoyipZJuTaf7jyE0sVKjDYBcNtOjMXLs+6sYqb4bElweuDBN/Zs5nISK1jDiYokmW8Xnmt2gbYajShmkOR1mAYyn7gu1qAXj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 581001692;
+	Mon,  8 Sep 2025 09:34:30 -0700 (PDT)
+Received: from [10.57.91.39] (unknown [10.57.91.39])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C9E13F694;
+	Mon,  8 Sep 2025 09:34:36 -0700 (PDT)
+Message-ID: <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
+Date: Mon, 8 Sep 2025 17:34:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,165 +41,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2] drm/msm: adreno: a6xx: enable GMU bandwidth voting for
- x1e80100 GPU
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250725-topic-x1e80100-gpu-bwvote-v2-1-58d2fbb6a127@linaro.org>
- <e7ddfe18-d2c7-4201-a271-81be7c814011@oss.qualcomm.com>
- <33442cc4-a205-46a8-a2b8-5c85c236c8d4@oss.qualcomm.com>
- <b4f283ce-5be1-4d2f-82e2-e9c3be22a37f@oss.qualcomm.com>
- <269506b6-f51b-45cc-b7cc-7ad0e5ceea47@linaro.org>
- <1727374d-0461-4442-ab35-9acb8ef7f666@oss.qualcomm.com>
- <df007b41-5c3d-4c69-81b9-27155485ccf9@oss.qualcomm.com>
- <pxigrjxtizcrhn4l25ph4yh4runebintfp4swqfiewfq5hqceo@g5cy3mdgjir5>
- <77db4861-4868-4110-8c31-eb2045ddbf4b@oss.qualcomm.com>
- <4fa44ec5-2792-45e3-af87-b3e4d2ed5d86@oss.qualcomm.com>
- <dad0a37f-38b7-48b4-983d-fba265bc66f1@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <dad0a37f-38b7-48b4-983d-fba265bc66f1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
+ <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
+ <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
+ <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
+ <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
+ <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
+ <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
+ <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 08/09/2025 18:29, Akhil P Oommen wrote:
-> On 9/8/2025 9:52 PM, Konrad Dybcio wrote:
->> On 8/18/25 9:17 AM, Akhil P Oommen wrote:
->>> On 8/16/2025 3:45 AM, Dmitry Baryshkov wrote:
->>>> On Thu, Aug 14, 2025 at 07:52:13PM +0200, Konrad Dybcio wrote:
->>>>> On 8/14/25 6:38 PM, Akhil P Oommen wrote:
->>>>>> On 8/14/2025 7:56 PM, Neil Armstrong wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On 14/08/2025 13:22, Konrad Dybcio wrote:
->>>>>>>> On 8/14/25 1:21 PM, Konrad Dybcio wrote:
->>>>>>>>> On 7/31/25 12:19 PM, Konrad Dybcio wrote:
->>>>>>>>>> On 7/25/25 10:35 AM, Neil Armstrong wrote:
->>>>>>>>>>> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth
->>>>>>>>>>> along
->>>>>>>>>>> the Frequency and Power Domain level, but by default we leave the
->>>>>>>>>>> OPP core scale the interconnect ddr path.
->>>>>>>>>>>
->>>>>>>>>>> Declare the Bus Control Modules (BCMs) and the corresponding
->>>>>>>>>>> parameters
->>>>>>>>>>> in the GPU info struct to allow the GMU to vote for the bandwidth.
->>>>>>>>>>>
->>>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>>>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>>>>>>> ---
->>>>>>>>>>> Changes in v2:
->>>>>>>>>>> - Used proper ACV perfmode bit/freq
->>>>>>>>>>> - Link to v1: https://lore.kernel.org/r/20250721-topic-x1e80100-
->>>>>>>>>>> gpu-bwvote-v1-1-946619b0f73a@linaro.org
->>>>>>>>>>> ---
->>>>>>>>>>>    drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 11 +++++++++++
->>>>>>>>>>>    1 file changed, 11 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/
->>>>>>>>>>> gpu/drm/msm/adreno/a6xx_catalog.c
->>>>>>>>>>> index
->>>>>>>>>>> 00e1afd46b81546eec03e22cda9e9a604f6f3b60..892f98b1f2ae582268adebd758437ff60456cdd5 100644
->>>>>>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->>>>>>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->>>>>>>>>>> @@ -1440,6 +1440,17 @@ static const struct adreno_info a7xx_gpus[] = {
->>>>>>>>>>>                .pwrup_reglist = &a7xx_pwrup_reglist,
->>>>>>>>>>>                .gmu_chipid = 0x7050001,
->>>>>>>>>>>                .gmu_cgc_mode = 0x00020202,
->>>>>>>>>>> +            .bcms = (const struct a6xx_bcm[]) {
->>>>>>>>>>> +                { .name = "SH0", .buswidth = 16 },
->>>>>>>>>>> +                { .name = "MC0", .buswidth = 4 },
->>>>>>>>>>> +                {
->>>>>>>>>>> +                    .name = "ACV",
->>>>>>>>>>> +                    .fixed = true,
->>>>>>>>>>> +                    .perfmode = BIT(3),
->>>>>>>>>>> +                    .perfmode_bw = 16500000,
->>>>>>>>>>
->>>>>>>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>>>>>>
->>>>>>>>> Actually no, BIT(3) is for the CPU (OS), GPU should use BIT(2)
->>>>>>
->>>>>> You are right that BIT(2) is GPU specific, but that support was
->>>>>> commercialized from A7XX_GEN3. Anyway, the Win KMD uses BIT(2), so lets
->>>>>> use that in Linux too.
->>>>>>
->>>>>> I know some docs show BIT(2) support, but lets not bring in untested
->>>>>> configurations.
->>>>>
->>>>> Eh, then let's get the docs fixed if you don't trust them because we can't
->>>>> work like that..
->>>>>
->>>>> FWIW this is information from per-platform RPMh cmd-db data
->>>>
->>>> If it comes from cmd-db, then we should be requesting it from the cmd-db
->>>> driver rather than hardcoding it here.
+On 04/09/2025 22:49, Yang Shi wrote:
+> 
+> 
+> On 9/4/25 10:47 AM, Yang Shi wrote:
 >>
->> No, what I meant is that there is a piece of configuration that reflects
->> what goes into cmd-db as its compiled and that's where I found that
->> information
+>>
+>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
+>>> On 04/09/2025 14:14, Ryan Roberts wrote:
+>>>> On 03/09/2025 01:50, Yang Shi wrote:
+>>>>>>>>
+>>>>>>>> I am wondering whether we can just have a warn_on_once or something for the
+>>>>>>>> case
+>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
+>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
+>>>>>>>> of PTE
+>>>>>>>> tables for every PMD block mapping, which will give us
+>>>>>>>> the same memory consumption as we do today, but not sure if this is
+>>>>>>>> worth it.
+>>>>>>>> x86 can already handle splitting but due to the callchains
+>>>>>>>> I have described above, it has the same problem, and the code has been
+>>>>>>>> working
+>>>>>>>> for years :)
+>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable memory
+>>>>>>> if we
+>>>>>>> can...
+>>>>>> Yes, I agree. We simply don't know how many pages we need to cache, and it
+>>>>>> still can't guarantee 100% allocation success.
+>>>>> This is wrong... We can know how many pages will be needed for splitting
+>>>>> linear
+>>>>> mapping to PTEs for the worst case once linear mapping is finalized. But it
+>>>>> may
+>>>>> require a few hundred megabytes memory to guarantee allocation success. I
+>>>>> don't
+>>>>> think it is worth for such rare corner case.
+>>>> Indeed, we know exactly how much memory we need for pgtables to map the linear
+>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
+>>>> cache.
+>>>> We would still get the benefit of improved performance but we would lose the
+>>>> benefit of reduced memory.
+>>>>
+>>>> I think we need to solve the vm_reset_perms() problem somehow, before we can
+>>>> enable this.
+>>> Sorry I realise this was not very clear... I am saying I think we need to fix it
+>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can find a
+>>> better solution.
+>>
+>> Took a deeper look at vm_reset_perms(). It was introduced by commit
+>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions"). The
+>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
+>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
+>> vmalloc(). So the page table should be already split before reaching vfree().
+>> I think this why vm_reset_perms() doesn't not check return value.
+
+If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
+output a warning if it does?
+
+>>
+>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set. 
+
+Just checking; I think you made a comment before about there only being a few
+sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
+set_vm_flush_reset_perms(). So just making sure you also followed to the places
+that use that helper?
+
+>> The most
+>> of them has set_memory_ro() or set_memory_rox() followed. 
+
+And are all callsites calling set_memory_*() for the entire cell that was
+allocated by vmalloc? If there are cases where it only calls that for a portion
+of it, then it's not gurranteed that the memory is correctly split.
+
+>> But there are 3
+>> places I don't see set_memory_ro()/set_memory_rox() is called.
+>>
+>> 1. BPF trampoline allocation. The BPF trampoline calls
+>> arch_protect_bpf_trampoline(). The generic implementation does call
+>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
+>> For x86, it is because execmem cache is used and it does call
+>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
+>> so it should never fail. I think we just need to use the generic
+>> implementation (remove arm64 implementation) if this series is merged.
+
+I know zero about BPF. But it looks like the allocation happens in
+arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
+for small sizes, it grabs some memory from a "pack". So doesn't this mean that
+you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
+actually help at vm_reset_perms()-time?
+
+>>
+>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
+>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
+>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
+>>
+>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
+>> called set_memory_rox() before switching to execmem cache. The execmem cache
+>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
+>>
+>> So I think we just need to fix #1 and #3 per the above analysis. If this
+>> analysis look correct to you guys, I will prepare two patches to fix them.
+
+This all seems quite fragile. I find it interesting that vm_reset_perms() is
+doing break-before-make; it sets the PTEs as invalid, then flushes the TLB, then
+sets them to default. But for arm64, at least, I think break-before-make is not
+required. We are only changing the permissions so that can be done on live
+mappings; essentially change the sequence to; set default, flush TLB.
+
+If we do that, then if the memory was already default, then there is no need to
+do anything (so no chance of allocation failure). If the memory was not default,
+then it must have already been split to make it non-default, in which case we
+can also gurrantee that no allocations are required.
+
+What am I missing?
+
+Thanks,
+Ryan
+
+
+> 
+> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
+> kprobes. It seems work well.
+> 
+> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
+> kprobes.c
+> index 0c5d408afd95..c4f8c4750f1e 100644
+> --- a/arch/arm64/kernel/probes/kprobes.c
+> +++ b/arch/arm64/kernel/probes/kprobes.c
+> @@ -10,6 +10,7 @@
+> 
+>  #define pr_fmt(fmt) "kprobes: " fmt
+> 
+> +#include <linux/execmem.h>
+>  #include <linux/extable.h>
+>  #include <linux/kasan.h>
+>  #include <linux/kernel.h>
+> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>  static void __kprobes
+>  post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
+> 
+> +void *alloc_insn_page(void)
+> +{
+> +       void *page;
+> +
+> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+> +       if (!page)
+> +               return NULL;
+> +       set_memory_rox((unsigned long)page, 1);
+> +       return page;
+> +}
+> +
+>  static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>  {
+>         kprobe_opcode_t *addr = p->ainsn.xol_insn;
+> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> index 52ffe115a8c4..3e301bc2cd66 100644
+> --- a/arch/arm64/net/bpf_jit_comp.c
+> +++ b/arch/arm64/net/bpf_jit_comp.c
+> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
+> size)
+>         bpf_prog_pack_free(image, size);
+>  }
+> 
+> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
+> -{
+> -       return 0;
+> -}
+> -
+>  int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>                                 void *ro_image_end, const struct btf_func_model *m,
+>                                 u32 flags, struct bpf_tramp_links *tlinks,
+> 
+> 
+>>
+>> Thanks,
+>> Yang
 >>
 >>>
->>> Not really. This should be under the control of GPU driver.
->>> BIT(3) is correct for X1E.
+>>>
+>>>> Thanks,
+>>>> Ryan
+>>>>
+>>>>> Thanks,
+>>>>> Yang
+>>>>>
+>>>>>> Thanks,
+>>>>>> Yang
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Ryan
+>>>>>>>
+>>>>>>>
 >>
->> BIT(3) is for APPS, see the interconnect driver which also uses it.
->> This will create conflicts and may cause unvotes when some other
->> driver requests perf_mode through the ICC API, but the GPU is sitting
->> idle.
-
-Yeah gpu will vote via it's own bcm drv interface and they will be agregated in the rpmh.
-
-It's basically the whole point of this gpu bandwidth voting via gmu.
-
-> 
-> No. GPU vote goes via a different DRV. So it is independent. Anyway, I
-> checked this further earlier. X1E platform doesn't implement any
-> perfmode vote. So both BIT(3) and BIT(2) are no-op and are ignored by
-> AOSS. ICC driver's vote too should be no-op on X1E.
-
-So I can drop the ACV bcm or it's a compat for other SoCs ?
-
-Neil
-
-> 
-> -Akhil.
-> 
->>
->> Konrad
 > 
 
 
