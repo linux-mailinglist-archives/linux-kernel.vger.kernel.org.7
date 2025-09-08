@@ -1,117 +1,204 @@
-Return-Path: <linux-kernel+bounces-805357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1DDB4878C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:50:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8428BB48791
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD05B17ABF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:50:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5687A855F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A7E2E8882;
-	Mon,  8 Sep 2025 08:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35062EC09D;
+	Mon,  8 Sep 2025 08:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F38mM7rr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M0iZ8/RW"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8106F23CB;
-	Mon,  8 Sep 2025 08:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A423CB
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321432; cv=none; b=BNS1FTvMALaUlFnoWL/qiBnzeAIoR7HY7BKrcQMYyzy5U/9lXN37KDtNmQUjC2LVXQm5RHct00pPboL/GYWbDl8ax1zrUAC+uaqo7NSdk6LERF7uMFaaDQo4qw8t+fvmNT4u/ZS/0LRo9aQa9stypl42XbP4sIco0KWTaKZZl60=
+	t=1757321507; cv=none; b=SBKIfNedWYD4vYw54wO2GFPn9eHOjRpxDtYLXR12aXGaKVNVbJcFvxRwdeNhl+/qOlWG+g3RM7EmoZr0NBtCL612UNFDvQ0lj7+MM+W9Srcu3sEBIfhNUU53fD7jq8m1DQE8ma5i/6KWf9kYAj+bx+dHS7ZDF0XnMa49Rqsperc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321432; c=relaxed/simple;
-	bh=hXy8jp4sCJyc6cb27KtrieaZLOF3mq0on6D17/uWSP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRL+qB4X3wIYVNzjeKAgXe8OFJ0szxERwt54PwQMEtkpr7wr/aKs6fmtYPwYJu8U0igzyQumTa4mSrrkJ3Aax1C8vmwLF9OoUbto6nkKgJKSsuN1c6spWqOudsh2k5ooChbfY9boO7HuJw2gwJiQTT6Ei/0L2VZYhvFjiuDkNAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F38mM7rr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AFCC4CEF8;
-	Mon,  8 Sep 2025 08:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757321432;
-	bh=hXy8jp4sCJyc6cb27KtrieaZLOF3mq0on6D17/uWSP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F38mM7rrSo1mV051FnK0O2gQGczbdPo/XOvo2ua63MdkpCRJcqYIPHziOiN+gQ/1J
-	 Y/zfhPrhUKmlCZptI3VXvTMY5Fjq7cfB65QoDM/rO5t8OgrzbxtaamdUZZU19AFgjR
-	 bTpWg1d92wGPnTr0lWTVOJXeGm1pbHXo0DMsgpWpPSb86P8Qmsu6BZqwJEyYI/ucbl
-	 ZVn9KVD30Gp/BF4llHSaGSif1G6WARmjqfbhhN2xNPKX5B0VEB6M3VYAC8Gv36e3pS
-	 TKIVU3oOIVBklu6iwkn8aLOb/tH/8yUaUwL9OQMbcyDpSk81qiSNht5B2OoznW0a3g
-	 0+nFXCOs7AIOQ==
-Date: Mon, 8 Sep 2025 14:20:25 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: quic_cang@quicinc.com, quic_asutoshd@quicinc.com, 
-	peter.wang@mediatek.com, martin.petersen@oracle.com, alim.akhtar@samsung.com, 
-	avri.altman@wdc.com, bvanassche@acm.org, James.Bottomley@hansenpartnership.com, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: ufs: mcq: Fix memory allocation checks for SQE
- and CQE
-Message-ID: <fjcv7v3fli7gcdm4yyppfnazzt4eojzlo7yprefnvzcrxqu6xo@7zmecfu6m25f>
-References: <20250907194025.3611607-1-alok.a.tiwari@oracle.com>
+	s=arc-20240116; t=1757321507; c=relaxed/simple;
+	bh=sDEPpnLrs6YC8VPq9zlMrytA3P+7Pj4zyO6gg0438gU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s1m7cFZZwzB4KSZijw8XIyPMOwloI2RbyuozFUvISor0xR7qz8EzlhELIk85NulooWa3F30gXaUNj7kALmeZxKZlwPGZ+SdPeaTcfd/jonb7vtzp7XQgchmM8Qmb8IIQJxeBtcyiXVIdH41+Tsd8nFi6T8SkdnoTr5CLXdNAElE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M0iZ8/RW; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5886TPKA022908;
+	Mon, 8 Sep 2025 08:51:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=SPaCzwT5euVLX4cjSm1le8FJ8d4tv3xZCmtar6nGD
+	9I=; b=M0iZ8/RWVqekHf8NGa4h1ifYuqbnnWDSfCRAAYNhfbhFOO5YN02SNaSp0
+	aJsLYQiDyO0CUDLNEQHEZjWmZzCcDSSOYzkPGWRgWHTO/kWhP3mw8n3vP48YPA1g
+	dTh1MhwIzsOBqMtmg6x52zSEpuQBJWZP6GsRZ8YxHCpghCEKevdKM0hDdIpZrnkU
+	qzfR2k2E7vzrDggwwR7pBgf8Pc3mAx11iS+B8moo9/Vq8kzZig/3tVEtrq5divm0
+	0obd7BA9MFmAMAAMy2uy+66/vlKLVag64VjBe/Sti4JgOzgdeAyugexpToXS+L4S
+	oufQkZF0EanLodYhnU0a7x/OcrK6A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff08gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:51:31 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5888nGYG017220;
+	Mon, 8 Sep 2025 08:51:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff08g8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:51:30 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5886hc1c001156;
+	Mon, 8 Sep 2025 08:51:30 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912034wj9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:51:29 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5888pQ8d7537022
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 08:51:26 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A68D2004E;
+	Mon,  8 Sep 2025 08:51:26 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 557332004B;
+	Mon,  8 Sep 2025 08:51:24 +0000 (GMT)
+Received: from aboo.in.ibm.com (unknown [9.109.247.181])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 08:51:24 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
+Cc: mahesh@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] powerpc/powernv: Enable cpuidle state detection for POWER11
+Date: Mon,  8 Sep 2025 14:21:23 +0530
+Message-ID: <20250908085123.216780-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250907194025.3611607-1-alok.a.tiwari@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _nXOU51C7D55QJBEqtCChAahAfspMhHb
+X-Proofpoint-GUID: Q3yQJ3tYt9-jXTTWceHQM7L6tWaRn9xf
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68be9913 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=88GbL-a48S0T7VR8CBkA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX2C+frJyViY82
+ KOdntBRwLp5erZYWwLymNPpa2U/ahChCIzB3KRAIzkf/0TKIDpdNvO4PSFP9LYK+mPmpqmFMDX5
+ Qc6MGecwuIuFaC4ykhAAatz+BwHbX0SfCdbm7gv/GGE0Ls0VDyXyO18gU7c7XGrHcrK5llj6yKY
+ K+3QCvXYDYZsjccLKo+xt689ai2JB6YixCWM0txwsEhR/0v9bNNkFwYphr/6/IAeRGdoJyv89T5
+ Ex6qdHrQ//xtWEn+EfX5Cq5VTmZ4BCPDq9fNGLJBOvEUfa8QGDYw+OGWgyDl4yUkcY1wHrJ0xHL
+ MDwUKbOYefDkBEUr1CyCk2paG/vN8CfOdqjAoN5DwiU5+XxDl0+5+j5JOfNm5BAmnaS3bMRwdig
+ BG5+PX9g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-On Sun, Sep 07, 2025 at 12:40:16PM GMT, Alok Tiwari wrote:
-> Previous checks incorrectly tested the DMA addresses (dma_handle)
-> for NULL. Since dma_alloc_coherent() returns the CPU (virtual)
-> address, the NULL check should be performed on the *_base_addr
-> pointer to correctly detect allocation failures.
-> 
-> Update the checks to validate sqe_base_addr and cqe_base_addr
-> instead of sqe_dma_addr and cqe_dma_addr.
-> 
-> Fixes: 4682abfae2eb ("scsi: ufs: core: mcq: Allocate memory for MCQ mode")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+Extend cpuidle state detection to POWER11 by updating the PVR check.
+This ensures POWER11 correctly recognizes supported stop states,
+similar to POWER9 and POWER10.
 
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+Without Patch: (Power11 - PowerNV systems)
 
-- Mani
+CPUidle driver: powernv_idle
+CPUidle governor: menu
+analyzing CPU 927:
 
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
-> v1 -> v2
-> rephrase commit message and added Reviewed-by Alim
-> ---
->  drivers/ufs/core/ufs-mcq.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
-> index 1e50675772fe..cc88aaa106da 100644
-> --- a/drivers/ufs/core/ufs-mcq.c
-> +++ b/drivers/ufs/core/ufs-mcq.c
-> @@ -243,7 +243,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
->  		hwq->sqe_base_addr = dmam_alloc_coherent(hba->dev, utrdl_size,
->  							 &hwq->sqe_dma_addr,
->  							 GFP_KERNEL);
-> -		if (!hwq->sqe_dma_addr) {
-> +		if (!hwq->sqe_base_addr) {
->  			dev_err(hba->dev, "SQE allocation failed\n");
->  			return -ENOMEM;
->  		}
-> @@ -252,7 +252,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
->  		hwq->cqe_base_addr = dmam_alloc_coherent(hba->dev, cqe_size,
->  							 &hwq->cqe_dma_addr,
->  							 GFP_KERNEL);
-> -		if (!hwq->cqe_dma_addr) {
-> +		if (!hwq->cqe_base_addr) {
->  			dev_err(hba->dev, "CQE allocation failed\n");
->  			return -ENOMEM;
->  		}
-> -- 
-> 2.50.1
-> 
+Number of idle states: 1
+Available idle states: snooze
+snooze:
+Flags/Description: snooze
+Latency: 0
+Usage: 251631
+Duration: 207497715900
 
+--
+With Patch: (Power11 - PowerNV systems)
+
+CPUidle driver: powernv_idle
+CPUidle governor: menu
+analyzing CPU 959:
+
+Number of idle states: 4
+Available idle states: snooze stop0_lite stop0 stop3
+snooze:
+Flags/Description: snooze
+Latency: 0
+Usage: 2
+Duration: 33
+stop0_lite:
+Flags/Description: stop0_lite
+Latency: 1
+Usage: 1
+Duration: 52
+stop0:
+Flags/Description: stop0
+Latency: 10
+Usage: 13
+Duration: 1920
+stop3:
+Flags/Description: stop3
+Latency: 45
+Usage: 381
+Duration: 21638478
+
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+
+---
+
+v1: https://lore.kernel.org/all/20250421070718.162783-1-aboorvad@linux.ibm.com/
+
+v1 -> v2: Fixed overly permissive PVR version check as pointed out by
+Christophe.
+
+---
+ arch/powerpc/platforms/powernv/idle.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
+index d98b933e4984..e4f4e907f6e3 100644
+--- a/arch/powerpc/platforms/powernv/idle.c
++++ b/arch/powerpc/platforms/powernv/idle.c
+@@ -1171,8 +1171,9 @@ static void __init pnv_arch300_idle_init(void)
+ 	u64 max_residency_ns = 0;
+ 	int i;
+ 
+-	/* stop is not really architected, we only have p9,p10 drivers */
+-	if (!pvr_version_is(PVR_POWER10) && !pvr_version_is(PVR_POWER9))
++	/* stop is not really architected, we only have p9,p10 and p11 drivers */
++	if (!pvr_version_is(PVR_POWER9) && !pvr_version_is(PVR_POWER10) &&
++		!pvr_version_is(PVR_POWER11))
+ 		return;
+ 
+ 	/*
+@@ -1189,8 +1190,8 @@ static void __init pnv_arch300_idle_init(void)
+ 		struct pnv_idle_states_t *state = &pnv_idle_states[i];
+ 		u64 psscr_rl = state->psscr_val & PSSCR_RL_MASK;
+ 
+-		/* No deep loss driver implemented for POWER10 yet */
+-		if (pvr_version_is(PVR_POWER10) &&
++		/* No deep loss driver implemented for POWER10 and POWER11 yet */
++		if ((pvr_version_is(PVR_POWER10) || pvr_version_is(PVR_POWER11)) &&
+ 				state->flags & (OPAL_PM_TIMEBASE_STOP|OPAL_PM_LOSE_FULL_CONTEXT))
+ 			continue;
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.47.1
+
 
