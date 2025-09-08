@@ -1,363 +1,214 @@
-Return-Path: <linux-kernel+bounces-805839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF95B48E18
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162E2B48E1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301913433D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96811884E56
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5187305061;
-	Mon,  8 Sep 2025 12:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B34D30595E;
+	Mon,  8 Sep 2025 12:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VhFZMXKm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q04TGYks"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B030496A;
-	Mon,  8 Sep 2025 12:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757335767; cv=none; b=lzYtKoOICQnpf7UogZnXb3Olh8l5NVReDzjo3sfRano8/HzTEUF4ST8NnuvMWKOThpMYBoBhTfSpIhx+rIh1CchXLVLGaPtb2NPpWe6vxk80t3XqfaHJJSJZMTeHRAqQz29GzWOw+q4TIesoHi/hoMMJHhmbmV+YcSL+IS/9hWQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757335767; c=relaxed/simple;
-	bh=BW9QqUTnxdImH2dw+lKf1PJLRVjcmqu6EdnalgtPi08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlhEGLI48a+98pKd1HgbbJILvTsS5mRU6K4HyXNX9RW8Hwc25lL6enTgEAVNZT3jYWLkalyYVqzT9BOQHoGGrUIFL7GSIdFCIDHaNVmvuAefdR5ks2n8NBAz4I0Tn2yV76UtIZFXJrDhyak/t5ajyd8WVwm6HbdaKu5xjja6csg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VhFZMXKm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757335763;
-	bh=BW9QqUTnxdImH2dw+lKf1PJLRVjcmqu6EdnalgtPi08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VhFZMXKm3QcD+UiicvaqWjZjZTESYw6AGmLRQTY/VDOfpcPn/rvE76yqFgBa+zMRv
-	 qmUZnj5gWjzOLg7eLR1xb5jED0/vnN9o7XK05FUbAybkB9E6fZjscI7yeqctu5A6Fu
-	 KyVo7eMIn/giIRYJXe2dbvNOlI0dwhUdxLxEswOShmW4p6hoRXCwHGCxdiusmsgSSX
-	 26WV1OMpW2pBoQ9Ya4hHjXvpUBqarKPF7t1OaPo5jo9A5VD+RW4vkAmYP6U0UbLzJ1
-	 Y0rIUPColxIRQY/ESvaVjAdnRJi1KdkzPr9Qq8lnmif0F2XloPTvmgQhfmucwnjK1k
-	 Kc2jLmNKkYgQw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3462417E0C96;
-	Mon,  8 Sep 2025 14:49:22 +0200 (CEST)
-Message-ID: <0b31377d-70b4-4a51-84d9-1a568c8be5df@collabora.com>
-Date: Mon, 8 Sep 2025 14:49:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4BA2F39CD;
+	Mon,  8 Sep 2025 12:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757335871; cv=fail; b=hhA1yCgZOIeDgkVcHDNSIMIRI6fGkUAviU0dMpL4WcUd4O8YrEEjwrV4+kH/ercZpeA6XkUnCy0Hg1CmKSnSZ16yOz5jPzmS1ZVvQxwY+bczB1rKFTz13WYuziFuqNB0t/sWpVo6ocPASF6GeJv3EdOVR4n2tjM3XYyV9iXYrJk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757335871; c=relaxed/simple;
+	bh=iNh/lCEX1gVDgHCtrTe8+iAKxRYEL6C3y5Umw7EiPpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QL/dZw9A4fbDLKaruACfn3Y4epEriltMqQG6nUk9NsPPhlF7UCxDSXgA5p8kHmGEtIVU5axwfM3/fvmiyjh/L3nE8GUz9f3CqCMT0y/tdvSPf94BffG9IJ2WqGWjO1A7I0IFZBYpYTLgjdbnOY1jKCll0c1xeqj2SIPbFn0Qykk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q04TGYks; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kMvaxhUHleRxntZGYNAQ6oYMMU1JbeUP44toucYGKbizGwaVMRXKNbkyUFUPdd0e5Cx1IPl7vdp6NNOfeScVoPrEkHkhyxvyg4Z3WGpwprovcRWpUbAKPj3LpU3yLKYEGI4N/IBMz8V4RdV88lY/2ZC6Xue21KFvFMzNVqI//cN0BaviWdnunZkApyGcUGQYPnAfZT2SAd0F2w5Bh3reSRHld3eTwjTzhHpyuc9FBQOxUCbwFN4OtNc3B1ZiAyEbVcyqhEP5hi8KOmS/QIwrn/1kwgtzi/wnDJRZhlfqlp2fv4jY8SPduKV85cq+NgFbmtVBMuxznJWsv+Kl/L4G8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3OSHuO/Vc5BKJ5cHo5+Vst34M23kDq4EdFQN0zPkUWU=;
+ b=mAunikoQejeLXAvW4UoM/ycWFNsazJgGlsg2fFTcvhHr61/n9tobPBooHxj3TwWiuVwbSxm+AGM9klT5+AuulVxt82iMD+bqYOPay2LMN6Ls/xLRH5tMO6XW6R8SCwTGnLOYkS786s5iFd8HhFP8FgGqQK1nu/tRrY3hs+ZxLXc1GPyp0jAO9I2FD22OG0sVxSlQz+Cui+g2Oh0RartMJkUtDClkC0e1hCGEwoGk+bGiYer6erlnkqX2KXhpOBAKk6XGemXPUeOSV94gPD5qIE4/4g139jRdQ5kWOa+kqk26RabCHPWwcwiGEbQK6CJe/dcp4u4ZP4nWHjEKIfUt+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3OSHuO/Vc5BKJ5cHo5+Vst34M23kDq4EdFQN0zPkUWU=;
+ b=Q04TGYksIpFK4xKfPRXEpzDwggj1q0h+qYk0d7ZqmiIFm/0+DHpNdDkdmeqzhhmXNAxK6tDOsuNUGRIWSKaYTIG5AMBKPLb881wYG9gDr+uKXm6pyN+i5BynVcOpCxZ2Xj9hLjy2NgxwMI148lzpdn8BjAPTFj0x2TjA/p7nkI88Eop1JBFS7YAKe198Ojyk3/5COGrqsFV0lY0oDkcIyIBQgaxVlt23FiO/RU/LEHPqbSl1ax0qIjVoD7hcjBGQApcFaHSnC50dJZrkJjDEZ6kUPkw+ig62UravuzYtDCPVW6GSljOVxfg+blItmKBPDto7qLkD4i/X8iMtCzzmJw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by MW5PR12MB5623.namprd12.prod.outlook.com (2603:10b6:303:199::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 12:51:03 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9094.017; Mon, 8 Sep 2025
+ 12:51:03 +0000
+Date: Mon, 8 Sep 2025 09:51:01 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+	ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+	kasan-dev@googlegroups.com
+Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
+Message-ID: <20250908125101.GX616306@nvidia.com>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: YT4PR01CA0026.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fe::11) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 02/10] dt-bindings: devfreq: add mt8196-gpufreq
- binding
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com>
- <20250905-mt8196-gpufreq-v1-2-7b6c2d6be221@collabora.com>
- <751d3abc-cf40-40a2-a580-7c0ba425ac25@collabora.com>
- <13857717.uLZWGnKmhe@workhorse>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <13857717.uLZWGnKmhe@workhorse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|MW5PR12MB5623:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4535ed58-2ad9-4ee8-9dcc-08ddeed65ea1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RK/YBv5RNmNrwTy3JLCS1Y1nfiWysNq4+ETCGrZ4WZi0XuFOccD62zIDAlil?=
+ =?us-ascii?Q?nUIP8RZbII+RXqNS05kjw5UbPaF/PQU6Be88QsX5mxma/KsXEZF7cvvkHZO2?=
+ =?us-ascii?Q?rdqeSeZr5YraoB+Cr/Qk+akQ3NZ2HayLh/VudWRzntdZ0xpxUPq6FIO8Kile?=
+ =?us-ascii?Q?s5FE9Qjp0kv25LidB6vAS9HybJ3yEyF9t2rnW2VpddB1fNKdEZe56IS6eX6E?=
+ =?us-ascii?Q?CNOT3HxG3Wn988IPGJ4oKmmJ773At2GItnm/lEMmWSvBJ/UlzQfVoKODwdLA?=
+ =?us-ascii?Q?YHPKlBwJG72E7OotPbX9Y7qXLKi5smIS/C06uKbhWECr8idy/CU122C7Yl2b?=
+ =?us-ascii?Q?XD/RcFNqYQKzWVGzR8QrSIdDPn2FcmtrBcApFeOEdixuVlIm4s42RCtTm/g2?=
+ =?us-ascii?Q?xoVhUsJ/N9dBbVIisQWF5AllOd5e1+XYYdxIR5Kt1QkwioLJ0KyTEDeCTFGy?=
+ =?us-ascii?Q?lUQSASAg7/1Hj0swNb0t1Ed25d3dBPWK42qlFjWUlSpl7P7+on6HWCSw7J+e?=
+ =?us-ascii?Q?4evEH2DAzAcbmbaUfUXVlalDx8ckqV5vjEcDB8DUEZGowI4ViyWSEC9K3W1q?=
+ =?us-ascii?Q?IS3Qx84Oi7NAkm+WfOV8kYFaOogHkT0ts40/8aEY31D0fzCIK1ELHnrHzNkm?=
+ =?us-ascii?Q?pUho4uxM3CqCKWfugqZ0JFUHkK8PnIcJR8ya3hxr125S1jpyIiFAGA216uw9?=
+ =?us-ascii?Q?t8xdXPAmkOsIbHGh4QhvB/xbPrYwie4HqCCIIRIZxW2paXWxmBgo1PR1RU8e?=
+ =?us-ascii?Q?MWbad7VZbjodBwhrL8xGFZd2vvOuHcfbJQGo5q0Ep4zMsQgxP+kQ4LiLCE0j?=
+ =?us-ascii?Q?IuGz+MOgY6XXyZuwzp/P1xdHoTpT8M2XwdxuYR8BxH1N5m8PW/HS2dH4TVco?=
+ =?us-ascii?Q?VNUc83r6YFKFeighj5ALqEIsRZ17wUbCbYZ2ri2+pDTwKh0bubzc86Tu+9LG?=
+ =?us-ascii?Q?kVTyxhhlS/kRr6ASBt0DKNl17jpla7l+MAXu0TOJiDcBvGx/UdnF7JJ+GwSv?=
+ =?us-ascii?Q?v4MDkLqydrts2aOb+01r6FIi55aETunKug+Es4+4nRMT4ptW5icztTsEv6W9?=
+ =?us-ascii?Q?24ZT6eRRiIikbgND645qTHgusuaJ3aoQh4Ls6apYRamNS8yax+yeynAo4jZ4?=
+ =?us-ascii?Q?rO1fa2RoFM25adezfrSsYLS5lRFOWPfVW5iNIrUfNnVpCiJONDJJ968TLeaP?=
+ =?us-ascii?Q?IiBCfqG4Exa36ZYdyC06vfK50GLf2FK7OjtjYkKdqOwC4QoRwoTlcPawz03o?=
+ =?us-ascii?Q?gYAmipXzZVQ6otp2+Rnr+DIPRziuykb3ofJH6c20nxZlHmIqaapEiH8V2hXG?=
+ =?us-ascii?Q?mNf5NZQncmdcuZ4E2h/txc7MswUwwwhSNPG/zJXwB169zPSwpKTXduIf8wCL?=
+ =?us-ascii?Q?zO5m8DSRVMxSCZNcagD8yJrV5fMymM7BQeMJQLjj47O/uoc4a4qBg/ug4B/Y?=
+ =?us-ascii?Q?xFwDFI1zPwo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YOgrbUOulWOusbdk/vwY/I6Z0hEnYRMIwKYZWRYlkMsXhv0unFY8GITjYHEW?=
+ =?us-ascii?Q?FnoYUxSTvZfH+MbxKuG8wvPbmhco82reC6g7tADJQk/Ne/1S81ZpK1+qlZfD?=
+ =?us-ascii?Q?6r1tXru1+1lkTFks5IiZU5uNdIkDtH3gKk1cMyhFPNNlLcaTSUxy3wHKtOIT?=
+ =?us-ascii?Q?ONWrZmv0N8y5ZrAEe0bjSPpBkRWfA9gLXs8aoL/+fqWNNTsF7Ytv6yiDWEL3?=
+ =?us-ascii?Q?c8JBkZgNXWp33U1/D8XCrMtNxeGGECxEQklzrNYwXQv5Zfm3WcjN//xwIWIz?=
+ =?us-ascii?Q?6YTjg9IEV5hfrKr+uvzpsMEMT0ws5155Z0dJkdyoQ02LwQ5AQACKhh2hcUNs?=
+ =?us-ascii?Q?OkYpZIu1LiG3M6bi1ezhol1hGrg29Tn8OdoZVPRrItimWlN5V+r6tmE58NfD?=
+ =?us-ascii?Q?ooDp9ZT7dklMIKGRsL0PPbxXJ+8qQ9BETZNakHq/EQWunHRDuCbz0G/bIH41?=
+ =?us-ascii?Q?/klUb/zRAKYQoU22ga5sIoPqi/OzPKt+d0um5OobjK6BIN9r/XzddQEa+TsZ?=
+ =?us-ascii?Q?a/GVUuzPC87G/4dV36GMj7j6f0C8DQEuLUNbs83zQ0T+E9wvun1/sEwJUuiG?=
+ =?us-ascii?Q?gvfijF6fhL8wNQoD/lYo1kzQRrWRfsDzI/ywhPEUANQyo1rTcYEccgEqaiFs?=
+ =?us-ascii?Q?lbWpTI2agTB3i3XmPyJw7KG6SzrN4OIIeslybDy7xA826vEstw8ro+gQDXO+?=
+ =?us-ascii?Q?2sjqodoscdkfv3a8x+X9zgEisXkTTwhqO0eayayzehCwNKZs1GTxBzWucVJK?=
+ =?us-ascii?Q?s22no0ChtnK24gCSESJApYtZAn5D/go5ATo3i3OtAc1Oi2YxRIuWr6Nkm0q4?=
+ =?us-ascii?Q?eDxkbPA5lehfuCPidPixQoghqmDqqPIo6vvQBkK9DuqhTjrYlFDNaYdfj6D/?=
+ =?us-ascii?Q?AfDc+aROynD+8LQScdbXCy6FrRqr/YarM8tKdVJjK+UMotbYGicjMHd95UFW?=
+ =?us-ascii?Q?h501mXq1jmhhQZ2R/IW3LQTNdszvKZV9hg9WuFBEidHEkT5RSUGrgp6bosAX?=
+ =?us-ascii?Q?/cgE4rtBChfs8qOWdd/RrwfdBT0fE6so+0nSI4GeOb57wwtKAxWqAShaHLF1?=
+ =?us-ascii?Q?f0GsySe1WFciFtdY7OQSwzK2T7Z8T/SZNoGEqngNSQ0Yr+iXN3OcuORMBHbw?=
+ =?us-ascii?Q?GXO3y8XI4U2Ab6laC8IbG4E9dZu8fDBBoEdkaAGrNZ7s+UfP3GFDy0j19FWR?=
+ =?us-ascii?Q?VyNR59v23zZ6ZVdtMoYTT9cNJHloAZ9jPdrUYDTGVesEoYxEBtlHBYc6yOgG?=
+ =?us-ascii?Q?QM3OCOxzWNSqbgFfZOHkyeSBwUDkgr1r+7+9bW6GX6+r6g7n7BBeTZBCsrJO?=
+ =?us-ascii?Q?hr5cc0JW2YZetLCZ+OEWv5beZ8ksNlcnDTuu0Lydd4Opj8sUASzCLaaYqFt7?=
+ =?us-ascii?Q?ZC2yXeFf8vUhJ6m4qv33HWVMd1wBmOqtDgU7i/DWmD/LSLrbmUoJYUmOkf7F?=
+ =?us-ascii?Q?kOJZ0vqoxjg47Gt/Y4il4nlQioOgNhdhsCq4ojUuORoHXL4spuE2y4YSRggx?=
+ =?us-ascii?Q?CnAhL7Ev9UBO1vyGa6isplhSj+Ke/CpF8hqBx4gCEqS+gAUqGYr+06lH3PP2?=
+ =?us-ascii?Q?ZdmjeAbLBE+QQVTIYYE=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4535ed58-2ad9-4ee8-9dcc-08ddeed65ea1
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 12:51:03.6211
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hPSYzFEjHMyzJ4cZEzUHXo0bko3ctFNuaC/vuTYRitLPN1OBS4RYznmP/7soLPCh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5623
 
-Il 08/09/25 13:39, Nicolas Frattaroli ha scritto:
-> On Monday, 8 September 2025 13:15:03 Central European Summer Time AngeloGioacchino Del Regno wrote:
->> Il 05/09/25 12:22, Nicolas Frattaroli ha scritto:
->>> On the MediaTek MT8196 SoC, the GPU has its power and frequency
->>> dynamically controlled by an embedded special-purpose MCU. This MCU is
->>> in charge of powering up the GPU silicon. It also provides us with a
->>> list of available OPPs at runtime, and is fully in control of all the
->>> regulator and clock fiddling it takes to reach a certain level of
->>> performance. It's also in charge of enforcing limits on power draw or
->>> temperature.
->>>
->>> Add a binding for this device in the devfreq subdirectory, where it
->>> seems to fit in best considering its tasks.
->>>
->>> The functions of many of the mailbox channels are unknown. This is not
->>> the fault of this binding's author; we've never received adequate
->>> documentation for this hardware, and the downstream code does not make
->>> use of them in a way that'd reveal their purpose. They are kept in the
->>> binding as the binding should be complete.
->>>
->>> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
->>> ---
->>>    .../bindings/devfreq/mediatek,mt8196-gpufreq.yaml  | 116 +++++++++++++++++++++
->>>    1 file changed, 116 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/devfreq/mediatek,mt8196-gpufreq.yaml b/Documentation/devicetree/bindings/devfreq/mediatek,mt8196-gpufreq.yaml
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..1fe43c9fc94bb603b1fb77e9a97a27e92fea1ae8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/devfreq/mediatek,mt8196-gpufreq.yaml
->>> @@ -0,0 +1,116 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/devfreq/mediatek,mt8196-gpufreq.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: MediaTek MFlexGraphics Performance Controller
->>
->> Doesn't MFG stand for MediaTek Flexible Graphics? (or did they update the name?)
->>
->> Perhaps it's a good idea to also add that reference... I think it's a little more
->> readable and understandable compared to "MFlexGraphics" :-)
-> 
-> "MFlexGraphics" is what the abbreviation section in the datasheet calls "MFG".
-> I don't see "Flexible Graphics" at all in the datasheet, but it's an obvious
-> inference of what the name means.
-> 
-> I think keeping "MFlexGraphics" is better for people grepping for what
-> the datasheet calls it.
-> 
+On Mon, Sep 08, 2025 at 12:10:34PM +0100, Lorenzo Stoakes wrote:
+>  static int secretmem_mmap_prepare(struct vm_area_desc *desc)
+>  {
+> -	const unsigned long len = desc->end - desc->start;
+> +	const unsigned long len = vma_desc_size(desc);
+>  
+>  	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>  		return -EINVAL;
 
-Okay in MT8196 that was updated then.
+I wonder if we should have some helper for this shared check too, it
+is a bit tricky with the two flags. Forced-shared checks are pretty
+common.
 
-On any other SoC previous to MT8196, the datasheet name is
-"MediaTek Flexible Graphics (MFG)".
+vma_desc_must_be_shared(desc) ?
 
-If you want to keep "MFlexGraphics" in MT8196-style, it's still a good idea to also
-reference somewhere the old "MediaTek Flexible Graphics" name, as that was used for
-more than 10 years. Really.
+Also 'must not be exec' is common too.
 
->>
->>> +
->>> +maintainers:
->>> +  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
->>> +
->>> +properties:
->>> +  $nodename:
->>> +    pattern: '^performance-controller@[a-f0-9]+$'
->>> +
->>> +  compatible:
->>> +    enum:
->>> +      - mediatek,mt8196-gpufreq
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: GPR memory area
->>> +      - description: RPC memory area
->>> +      - description: SoC variant ID register
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: gpr
->>> +      - const: rpc
->>> +      - const: e2_id
->>
->> We should find a better name for that "e2_id".
-> 
-> Agreed, but we don't have a register map that includes this address
-> and would give us a different name.
-
-Yeah but still, it feels like this naming is MT8196-specific, and this driver is
-not entirely specific to this SoC (this version is, but with minor modifications
-this can work on other chips as well).
-
- > I think it's some sort of silicon revision.
-
-It is. And there's a broad range of names that you can use in place of "e2_id"...
-
-If there's no precise name, always go with something that is generic enough but
-that resembles what can be found inside of the mmio that you're specifying.
-
->>
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: main clock of the embedded controller (EB)
->>> +      - description: core PLL
->>> +      - description: stack 0 PLL
->>> +      - description: stack 1 PLL
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: eb
->>> +      - const: mfgpll
->>> +      - const: mfgpll_sc0
->>> +      - const: mfgpll_sc1
->>> +
->>> +  mboxes:
->>> +    items:
->>> +      - description: FastDVFS events
->>> +      - description: frequency control
->>> +      - description: sleep control
->>> +      - description: timer control
->>> +      - description: frequency hopping control
->>> +      - description: hardware voter control
->>> +      - description: gpumpu (some type of memory control, unknown)
->>> +      - description: FastDVFS control
->>> +      - description: Unknown
->>> +      - description: Unknown
->>> +      - description: Unknown, but likely controls some boosting behaviour
->>> +      - description: Unknown
->>> +
->>> +  mbox-names:
->>> +    items:
->>> +      - const: fast_dvfs_event
->>
->> Any problem if we avoid underscores in names?
->>
-> 
-> No but I'm not sure what the canonical naming style is for mailbox
-> channels. "fastdvfsevent" is hard to read.
-> 
-
-"fast-dvfs-event" would be good, wouldn't it? :-)
-
->>> +      - const: gpufreq
->>> +      - const: sleep
->>> +      - const: timer
->>> +      - const: fhctl
->>> +      - const: ccf
->>> +      - const: gpumpu
->>
->> "some type of memory control" .. it's really a MPU. For memory protection. :-)
->> Besides, I don't think we have to touch anything in the gpumpu for freq control
->> via gpueb.
->>
-> 
-> Gotcha, so should I leave it out of the GPUFreq binding's used channels?
-> 
-> Would leave a gap, but that's probably fine.
-> 
-
-I really doubt that this is ever getting used at all for GPUFreq, so yes, leave it
-out.
-
->>> +      - const: fast_dvfs
->>> +      - const: ipir_c_met
->>> +      - const: ipis_c_met
->>
->> MET is a hardware event tracer / profiler... and I'm fairly sure that we have no
->> real reason to support it (at least, not like that, and not in a first submission).
->>
->> Ah btw: ipir ipis .. ipi-receive ipi-send
->>
-> 
-> Gotcha, will remove those as well.
-> 
-
-P.S.: of course I was implying that if we ever need to support those, we can always
-add them later (but I still really doubt that we're ever going to use MET at all,
-even though it would be *really* nice to).
-
->>> +      - const: brisket
->>
->> Brisket is... something. There's one for the GPU, one for CPU, and one for APU.
->> Not sure what it exactly does, but seems to be or control a FLL (freq locked loop).
->>
->>> +      - const: ppb
->>
->> PPB = Peak Power Budget
->>
->> The PPB needs its own "big" driver (the PBM - Power Budget Manager) in order to do
->> anything - as in - this manages a SoC-global peak power setting based on the
->> available maximum deliverable instantaneous (and/or sustainable) power from the
->> board's power source and it is mainly used for smartphone usecase (battery!).
->>
->> In order to work, the PPB HW (yet another mcu) needs to be initialized with tables
->> for CPU and GPU (and APU? and something else too?), and with other data explaining
->> the maximum instantaneous power that can delivered at a certain battery percentage.
->>
->> Important point is... I doubt that PPB is being initialized by the bootloader, on
->> all of Genio, Kompanio and Dimensity chips, so this should be disabled by default.
->>
->> You can keep it, especially now that you have a description for it - and because it
->> does indeed exist, but I doubt that we're using this anytime soon.
-> 
-> If it's going to be used by a separate driver, wouldn't it be better if we don't make
-> this channel part of the channels the GPUFreq driver uses?
-> 
-
-Not sure if gpufreq needs to poke that channel to tell to the ppb "I'm setting this
-frequency here", or if the MCUs can communicate that stuff on their own.
-I didn't do any research about that.
-
-Since adding stuff is kinda easier than removing, I guess avoiding to add this for
-now is a sensible option. Let's do just that then.
-
->>
->> Cheers,
->> Angelo
->>
-> 
-> Kind regards,
-> Nicolas Frattaroli
-> 
->>> +
->>> +  shmem:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description: phandle to the shared memory region of the GPUEB MCU
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - reg-names
->>> +  - clocks
->>> +  - clock-names
->>> +  - mboxes
->>> +  - mbox-names
->>> +  - shmem
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/mediatek,mt8196-clock.h>
->>> +
->>> +    gpufreq: performance-controller@4b09fd00 {
->>> +        compatible = "mediatek,mt8196-gpufreq";
->>> +        reg = <0x4b09fd00 0x80>,
->>> +              <0x4b800000 0x1000>,
->>> +              <0x4b860128 0x4>;
->>> +        reg-names = "gpr", "rpc", "e2_id";
->>> +        clocks = <&topckgen CLK_TOP_MFG_EB>,
->>> +                 <&mfgpll CLK_MFG_AO_MFGPLL>,
->>> +                 <&mfgpll_sc0 CLK_MFGSC0_AO_MFGPLL_SC0>,
->>> +                 <&mfgpll_sc1 CLK_MFGSC1_AO_MFGPLL_SC1>;
->>> +        clock-names = "eb", "mfgpll", "mfgpll_sc0",
->>> +                      "mfgpll_sc1";
->>> +        mboxes = <&gpueb_mbox 0>, <&gpueb_mbox 1>, <&gpueb_mbox 2>,
->>> +                 <&gpueb_mbox 3>, <&gpueb_mbox 4>, <&gpueb_mbox 5>,
->>> +                 <&gpueb_mbox 6>, <&gpueb_mbox 7>, <&gpueb_mbox 8>,
->>> +                 <&gpueb_mbox 9>, <&gpueb_mbox 10>, <&gpueb_mbox 11>;
->>> +        mbox-names = "fast_dvfs_event", "gpufreq", "sleep", "timer", "fhctl",
->>> +                     "ccf", "gpumpu", "fast_dvfs", "ipir_c_met", "ipis_c_met",
->>> +                     "brisket", "ppb";
->>> +        shmem = <&gpufreq_shmem>;
->>> +    };
->>>
->>
->>
-> 
-> 
-> 
-> 
+Jason
 
