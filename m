@@ -1,39 +1,87 @@
-Return-Path: <linux-kernel+bounces-805394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D5CB487FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:12:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2012B48800
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C091B23426
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47ECC3BBC79
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80842E8B77;
-	Mon,  8 Sep 2025 09:12:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C727C199FD0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6FF2E8B77;
+	Mon,  8 Sep 2025 09:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+F/kAG7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB751DA23
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757322728; cv=none; b=IVslYtoIMTsNMpJxPT8t5G1rAB6AQLWN4eVRZJb0x31h8rvtE3J88z3srVLhhXq9UbdGHAlk+GDNauXj/87NDqMT9cILjXygkpgl8w4fcOe91iptLx1Zrcul4stquEzsNP8HyCYjLZfx3lQzQg05XxDjVTquE+GOs4IYfobh5VU=
+	t=1757322744; cv=none; b=gm0lLZPf+aeL/LS6MF1dF0Q64xkOBES0reKmYia6jyKj4EX9e+Ku5RnHWXYjwFnHf/CXiOM5qjMh3DZaH6x7kb7FEzwsviezn5zlIutyr9GrkLjYwNjgzkH5v/h3OXm2R0zzekS+PO1ZweyXsheVi7ZJVrxePP0FVSAiGGbkWGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757322728; c=relaxed/simple;
-	bh=WPsIIr54AtFpNsHhvHwN8M76Ll6H9I9m6ujJcV8B+hI=;
+	s=arc-20240116; t=1757322744; c=relaxed/simple;
+	bh=cWlbMD1cxFsjthTj+RxmRNApAcsJAy6LDIXWL9+H4a8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXUYJ60SakP+zI1x2Vz5AfWFaMokPU9JIIWi1PmE9kU7nB81TnlraBmWuOgp9uXdyPPz/WNbhGQBSMbhUg6diwGMetNpL9p244bKCjzDPy5HewBT0knAgy/lRs0QyB5iLMSG6Qmfm8CUsb+LdBMcdkjOEdH11mhNH24JMwi/+Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B204A1692;
-	Mon,  8 Sep 2025 02:11:56 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30D7B3F63F;
-	Mon,  8 Sep 2025 02:12:02 -0700 (PDT)
-Message-ID: <0a09268b-3112-43b9-b622-b847b3949bd7@arm.com>
-Date: Mon, 8 Sep 2025 10:12:01 +0100
+	 In-Reply-To:Content-Type; b=d5veS94CsbahZGeaj7NyFso5rzGbRm1vKg/aeAfcc5/YJ/SQboA4EX+heaL7QllhGFzYzoYrLmHifUwX1W0ktY49+Lt9186Wu0kJTvpcP5prZoewypexm8HsYlKKgEyXLdr08MdhjmmWipM1Cadm+ywYImz/jBOh5dXyk0Fsk7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+F/kAG7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757322741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rMk5fbLvH1OztzDpgTc6cAL60e6T56EOEU7K8zpDFd8=;
+	b=Q+F/kAG7TvbeZA2bZJ6Ufz51C0ctin60uTLO+rBlkKjBJJAT1J1s3A6h5zGb9qzdKNC/OO
+	h3XtX6eGGoiSfwPc9RcLHpx31RIZocP92T2uT4tElmrOkBHrFC4hueaqrVKbubGtNpVyD6
+	D3SfJN6ITmrOMQw99wb/ohMOkYewjWc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-ULh-8aodPlGoDE6GkEOrfQ-1; Mon, 08 Sep 2025 05:12:20 -0400
+X-MC-Unique: ULh-8aodPlGoDE6GkEOrfQ-1
+X-Mimecast-MFC-AGG-ID: ULh-8aodPlGoDE6GkEOrfQ_1757322739
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45ceeae0513so22987315e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:12:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757322739; x=1757927539;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rMk5fbLvH1OztzDpgTc6cAL60e6T56EOEU7K8zpDFd8=;
+        b=VW53cPXDZXNWD+NB2T1cTkM3XuVrdZFrhVUGgCN9GU6JnJn/KULEp5vermYmjiuQiG
+         FhA26flVMhhH1mIgVHSG/RjjlMN2/D69lOow+CugZBMVCUcxHx/8IBfwk5/58PDgnMjH
+         +4KHpPKavmxCSl/MVIy4X/gzfQROHN1CZXS+JqZlGVPm9sCJsM49OHs+SfHcxW77LGiI
+         jx4GzjG2K+Zg5JdoPl0TzH0gNJoYfDD4pUyeJ5W4ILCk9uj7X9FpDGMCDPhWGkFCDo94
+         YFawqllhtBW9aeeDha7yXVOhMEVHDN7Wrep8rfyEmA2EOAgCODS1jQP0hJAOR74Kyi0s
+         IVDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxCu/yHIl2HxuzJ1HmJyDgaWIdjd4IPCtBJoxlByucMSRevFxOE7N1hOTApONHGNlx/d45nHMrhPArX0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaQPz60z9lIW2yXoFL1PpJ593PGVNLJatcgdMpNDjTt6Isa2Wr
+	Q8o9wESDbYCHBJ3/+KdPTkpmpN8jKaANXt6Cu6M4+k7d/zo1IKBkHLSt5KNyCVYeusCL/pjFwln
+	x0PY+yWgR1lwDoa9K3PDkWXMgx+s4IzhgnjUmAZn+BwRn8EDCJbrjnA/NZrk19swfrA==
+X-Gm-Gg: ASbGncva9OwmUFnzcQ3ROq2fqROOq/QgTfeJKZ6adOq1U9kz8wZ06prOl0rEyRjb9oc
+	/qNWEBmoDx/Gamgh4ZxE04kUFOiO07g50YWxfENN0eCT5KUkJthIJbgTiQ8U5PekHLDBwBzRndl
+	Il1hEKHMH24Rl5FLob3EKII5YslJC/Bov2HkrvpmJDmltfKAcq1GltAxs1Kq5JFJBfKy4XuXj92
+	Jfn1Ybe4XvY7yh4YATRTDu9kDDUJ97gfPLdwUuO3jNZ2kG7GtBLdO4dsQ3HD1yrb2ntoNDhYwkR
+	aSfCA3YTT6o20/8SxyJoFlSzRHIBsMcZAK4FPzwFhxUg92p9vEKxxg5DAUz/HUFBQSb9FGtQPFH
+	YqtdF2mLK/p9LEWuxx8PqBSCKTKKCfgyRt0ND3TZ9Y+YHnia87uNRJ/HpIbRWR3Je
+X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr60116765e9.15.1757322738985;
+        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHn5yoWGgQH56O/EPuc4YNcL9NqMqoU7OryUdbi2S7sfF9LQiiebsbct4UzJYQr4SrAhrkn6g==
+X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr60116445e9.15.1757322738535;
+        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda202112sm133425495e9.5.2025.09.08.02.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
+Message-ID: <73c8a52c-37c5-45f4-b76e-f15267412242@redhat.com>
+Date: Mon, 8 Sep 2025 11:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,156 +89,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-To: Jason Gunthorpe <jgg@ziepe.ca>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
- tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org,
- steven.price@arm.com, david@redhat.com, Fuad Tabba <tabba@google.com>
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com> <20250905162258.GA483339@ziepe.ca>
+Subject: Re: [PATCH v2 1/1] mm: skip mlocked THPs that are underused early in
+ deferred_split_scan()
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ usamaarif642@gmail.com, ziy@nvidia.com
+References: <20250908090741.61519-1-lance.yang@linux.dev>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250905162258.GA483339@ziepe.ca>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250908090741.61519-1-lance.yang@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi
-
-On 05/09/2025 17:22, Jason Gunthorpe wrote:
-> On Fri, Sep 05, 2025 at 02:13:34PM +0100, Catalin Marinas wrote:
->> Hi Aneesh,
->>
->> On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
->>> When running with private memory guests, the guest kernel must allocate
->>> memory with specific constraints when sharing it with the hypervisor.
->>>
->>> These shared memory buffers are also accessed by the host kernel, which
->>> means they must be aligned to the host kernel's page size.
->>
->> So this is the case where the guest page size is smaller than the host
->> one. Just trying to understand what would go wrong if we don't do
-
-Correct.
-
->> anything here. Let's say the guest uses 4K pages and the host a 64K
->> pages. Within a 64K range, only a 4K is shared/decrypted. If the host
->> does not explicitly access the other 60K around the shared 4K, can
-
-There are two cases here:
-
-a) Guest memfd as it exists today, with shared pages coming from a 
-different pool
-b) Guest memfd with mmap support, where shared pages are from the 
-guest_memfd.
-
-In either case, guest_memfd tracks the page attributes at PAGE_SIZE
-level (64K in this case). Sub-page level tracking is going to make it
-complicated. Even with that in place,
-
-with (a), we cannot "punch holes" in the private vs shared pools, to
-maintain the sharing, as they are again in PAGE_SIZE. May be we can
-relax this for guest_memfd.
-
-with (b) coming in, mapping the shared pages into VMM (e.g., for virtio)
-will map the entire 64K page into the userspace (with private and shared
-bits) and thus opens up the security loophole of VMM bringing down the
-Host with "protected memory" for other operations.
-
-We did bring this up in one of the earlier guest_memfd upstream calls,
-and the recommendation was to fix this in the Guest, aligning the
-operations to the Host page size [0].
-
-e.g., pKVM guests simply fail the boot if the Guest page size is not
-aligned to the Host.
-
->> anything still go wrong? Is the hardware ok with speculative loads from
->> non-shared ranges?
-
+On 08.09.25 11:07, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 > 
-> +1 I'm also confused by this description.
+> When we stumble over a fully-mapped mlocked THP in the deferred shrinker,
+> it does not make sense to try to detect whether it is underused, because
+> try_to_map_unused_to_zeropage(), called while splitting the folio, will not
+> actually replace any zeroed pages by the shared zeropage.
 > 
-> I thought the issue here was in the RMM. The GPT or S2 min granule
-> could be > 4k and in this case an unaligned set_memory_decrypted()
-> from the guest would have to fail inside the RMM as impossible to
-> execute?
-
-
+> Splitting the folio in that case does not make any sense, so let's not even
+> scan to check if the folio is underused.
 > 
-> Though I'm a little unclear on when and why the S2 needs to be
-> manipulated. Can't the S2 fully map both the protected and unprotected
-> IPA space and rely on the GPT for protection?
+> Suggested-by: David Hildenbrand <david@redhat.com>
 
-As mentioned above, the problem lies with the "Host" unable to satisfy
-an unaligned request. If we can make that work with the Host, RMM
-doesn't need to worry about it.
+Feel free to drop that, I only tweaked you description :)
 
+Acked-by: David Hildenbrand <david@redhat.com>
 
-> 
-> I do remember having a discussion that set_memory_decrypted() has
-> nothing to do with the VM's S1 granule size, and it is a mistake to
-> have linked these together. The VM needs to understand what
-> granularity the RMM will support set_memory_decrypted() for and follow
-> that.
+-- 
+Cheers
 
-Granularity is determined by the Host (not RMM).
-
-> 
-> I don't recall there is also an issue on the hypervisor? I thought GPT
-> faults on ARM were going to work well, ie we could cleanly segfault
-> the VMM process if it touches any protected memory that may have been
-> mapped into it, and speculation was safe?
-
-The issue is with the VMM passing this around back to the Kernel and
-causing a GPT in the Kernel.
-
-
-Suzuki
-
-
-[0] 
-https://docs.google.com/document/d/1M6766BzdY1Lhk7LiR5IqVR8B8mG3cr-cxTxOrAosPOk/edit?pli=1&tab=t.0
-
-
-> 
->>> @@ -213,16 +213,20 @@ static gfp_t gfp_flags_quirk;
->>>   static struct page *its_alloc_pages_node(int node, gfp_t gfp,
->>>   					 unsigned int order)
->>>   {
->>> +	long new_order;
->>>   	struct page *page;
->>>   	int ret = 0;
->>>   
->>> -	page = alloc_pages_node(node, gfp | gfp_flags_quirk, order);
->>> +	/* align things to hypervisor page size */
->>> +	new_order = get_order(ALIGN((PAGE_SIZE << order), arch_shared_mem_alignment()));
->>> +
->>> +	page = alloc_pages_node(node, gfp | gfp_flags_quirk, new_order);
->>>   
->>>   	if (!page)
->>>   		return NULL;
->>>   
->>>   	ret = set_memory_decrypted((unsigned long)page_address(page),
->>> -				   1 << order);
->>> +				   1 << new_order);
->>
->> At some point this could move to the DMA API.
-> 
-> I don't think we should be open coding these patterns.
-> 
-> Esepcially given the above, it makes no sense to 'alloc page' and then
-> 'decrypt page' on ARM CCA. decryption is not really a OS page level
-> operation. I suggest coming with some series to clean these up into a
-> more sensible API.
-> 
-> Everything wanting decrypted memory should be going through some more
-> general API that has some opportunity to use pools.
-> 
-> DMA API may be one choice, but I know we will need more options in
-> RDMA land :|
-> 
-> Jason
+David / dhildenb
 
 
