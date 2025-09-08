@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-806461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FA1B49757
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBB4B49759
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B51A4E1F9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E0717BB29
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CE9313E14;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2252313E2E;
 	Mon,  8 Sep 2025 17:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yqMzfXgS"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E411C07C4;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DwSvuPvy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F187F22173F;
 	Mon,  8 Sep 2025 17:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757353119; cv=none; b=FIkOQZ8fw1noOVKB/2ocmtHGJALnYQB8ocOPT02ON6xPgRyuR2yzh2mbIWYCsnaaY/8WkFmNAwqCPjeaZTvLjAqW5j5LNTUZfAyRyAd60UamH2uU1uNEZ3gZ+mmh0ndYnuiZPRTgiIYvj7qeOPNAXiZfl4zrU6+A7Up8/ZhidUY=
+	t=1757353119; cv=none; b=AOKEg7YpUpKprA41b23G2f7XB+yX5jm0hYMrL7RTuAFPxvMWmrsUjYOSOxxA7IrwqhQ3qo/bkLQJ00E2jdJbQS2LSSuK76koPYlvXPESF3jrf4KUnTQwDeZgjpARFtqVyYp7+Qk8j8hVK+qdkVchADDxP1sJyl5km+5obDWlYP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757353119; c=relaxed/simple;
-	bh=BoIeC66onOFsw0HPcxliBVdwQXYRiHMW7ojCs/kgk9Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gOF23VHR8xScpIVtCGt7TXifcFxoju8UTv1tkFijctgl/XGmDwIsBQoNRDw283EdannzniYivrPurYqqGUETrvOwhd/f66QpZn2hdRAt1jEwxP0CfKoeDSiNQtyNuEeYaJ85408q2z+IouVMY0K3045Xp8Ao0fulSWi3aCigLp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yqMzfXgS; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588HcVCY3916323;
-	Mon, 8 Sep 2025 12:38:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757353111;
-	bh=P0oadEFhyKw8xNX02oSrKVOwP9QjJ5m1LgbJY0yE+Oo=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yqMzfXgSQL6Y7ytZL5GytIt2q/pn8UtZfYV4IfkkSod4FR4sFf1ESDpC1JCfTY0wS
-	 hxPJ/tYXSC0ts85MoX28Vv5vAMRtNCkgxFl+TYg+P/Fal+HqQ3Mx+b0ijrno3ELU6r
-	 sfm6N82qg+D5H/yeU+gw37ycdEl9W6P2jG2c3kFk=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588HcVZW2565880
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 12:38:31 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 12:38:31 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 12:38:31 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588HcVVp1281123;
-	Mon, 8 Sep 2025 12:38:31 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>
-CC: Moteen Shah <m-shah@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-am62p: Update eMMC HS400 STRB value
-Date: Mon, 8 Sep 2025 12:38:31 -0500
-Message-ID: <20250908173831.269039-3-jm@ti.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250908173831.269039-1-jm@ti.com>
-References: <20250908173831.269039-1-jm@ti.com>
+	bh=WlfiSYaSVoVxa8Ptzyy1VHkIpxOEz76sEwatt5F6bwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rhNaZPD56dyUbsXe+Rt47frZVrwgJI91bAytcnp/1vpDuwkw5btEUrNY0FxwJziZ57BxZFeaV2G2YsHs6y8FOpoyjnDX6xquRE3Ayau4kDl2BN06600pgHbQdzfxfeo1WT8BdeeINw1Qe4pIRf1suDiLeYod4KifyeGeAfmxQsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=DwSvuPvy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C8B320171BA;
+	Mon,  8 Sep 2025 10:38:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C8B320171BA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757353117;
+	bh=FXWIWaZroTZV0Yf4Lr1IBpE25EZNI56oMYhQSEb5rTw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DwSvuPvyWNm+qKQcZWeVZ4wEA8rqkBbobIvPVqfptyzYyuYdhGoRxX969Ug2kcoqG
+	 o7aRAHTT1qwRuVeqTdpezhE09UacU6e/2lveEirSJSeAKLua8vyC2vq3TOVpWAVpVZ
+	 z8zaTnjjD4cnWFOGYPSvU/NBRdSRqJp4VRQdIRtc=
+Message-ID: <d8b8f47d-8e17-95bd-a637-ea42d0eaa709@linux.microsoft.com>
+Date: Mon, 8 Sep 2025 10:38:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v0 5/6] x86/hyperv: Implement hypervisor ram collection
+ into vmcore
+Content-Language: en-US
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, arnd@arndb.de
+References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
+ <20250904021017.1628993-6-mrathor@linux.microsoft.com>
+ <aL8Cfsl3Vaeuw-QI@skinsburskii.localdomain>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <aL8Cfsl3Vaeuw-QI@skinsburskii.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-STRB setting for eMMC HS400 have been updated in device datasheet [0],
-so update for am62p in k3-am62p-main.
+On 9/8/25 09:21, Stanislav Kinsburskii wrote:
+> On Wed, Sep 03, 2025 at 07:10:16PM -0700, Mukesh Rathor wrote:
+>> This commit introduces a new file to enable collection of hypervisor ram
+>> into the vmcore collected by linux. By default, the hypervisor ram is locked,
+>> ie, protected via hw page table. Hyper-V implements a disable hypercall which
+>> essentially devirtualizes the system on the fly. This mechanism makes the
+>> hypervisor ram accessible to linux without any extra work because it is
+>> already mapped into linux address space. Details of the implementation
+>> are available in the file prologue.
+>>
+>> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+>> ---
+>>  arch/x86/hyperv/hv_crash.c | 618 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 618 insertions(+)
+>>  create mode 100644 arch/x86/hyperv/hv_crash.c
+>>
+>> diff --git a/arch/x86/hyperv/hv_crash.c b/arch/x86/hyperv/hv_crash.c
+>> new file mode 100644
+>> index 000000000000..50c54d39f0e2
+>> --- /dev/null
+>> +++ b/arch/x86/hyperv/hv_crash.c
+>> +
+> 
+> <snip>
+> 
+>> +/*
+>> + * generic nmi callback handler: could be called without any crash also.
+>> + *  hv crash: hypervisor injects nmi's into all cpus
+>> + *  lx crash: panicing cpu sends nmi to all but self via crash_stop_other_cpus
+>> + */
+>> +static int hv_crash_nmi_local(unsigned int cmd, struct pt_regs *regs)
+>> +{
+>> +	int ccpu = smp_processor_id();
+>> +
+>> +	if (!hv_has_crashed && hv_cda && hv_cda->cda_valid)
+>> +		hv_has_crashed = 1;
+>> +
+>> +	if (!hv_has_crashed && !lx_has_crashed)
+>> +		return NMI_DONE;	/* ignore the nmi */
+>> +
+>> +	if (hv_has_crashed && !hv_crash_enabled) {
+>> +		if (ccpu == 0) {
+>> +			pr_emerg("Hyper-V: core collect not setup. Reboot\n");
+>> +			native_wrmsrq(HV_X64_MSR_RESET, 1);	/* reboot */
+>> +		} else
+>> +			for (;;)
+>> +				cpu_relax();
+>> +	}
+>> +
+>> +	crash_nmi_callback(regs);
+>> +	return NMI_DONE;
+>> +}
+> 
+> One more thing.
+> It looks like the function above goes through the new logic even when
+> hypervisor is intact and there is no crash kernel loaded.
+> This is redundant and it should rather return back to the existent
+> generic kernel panic logic.
 
-[0] https://www.ti.com/lit/gpn/am62p
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62p-main.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-index 90afe21e972b..a1ce2fc8d947 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-@@ -34,7 +34,7 @@ usb1: usb@31100000 {
- 
- 	sdhci0: mmc@fa10000 {
- 		mmc-hs400-1_8v;
--		ti,strobe-sel = <0x77>;
-+		ti,strobe-sel = <0x66>;
- 		ti,otap-del-sel-hs400 = <0x5>;
- 	};
- };
--- 
-2.51.0
+Yeah, that is already addressed in V1 coming up.
 
 
