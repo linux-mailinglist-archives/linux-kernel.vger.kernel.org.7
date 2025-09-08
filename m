@@ -1,222 +1,81 @@
-Return-Path: <linux-kernel+bounces-805019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AD8B4830C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:53:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169ECB4830E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7BD189AE28
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1993BFDB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F7E21ABBB;
-	Mon,  8 Sep 2025 03:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A40021B196;
+	Mon,  8 Sep 2025 03:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uDmbm0hb"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2056.outbound.protection.outlook.com [40.107.96.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH1nX3ru"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3E241C63;
-	Mon,  8 Sep 2025 03:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757303585; cv=fail; b=dEwm0/zaFqIyjc0TkP2tAZ+P6hIMtiGaTB/RXPEapur/43jUdGfZmHn+kyLvkNmfvw77HfEgg1rP8K/XHNW8XtU1PX9SJTAhhEEZg6FScogbNG/HNUaCwFnFPnYCjpYpKR8jfZI2UF+tQLIn22B9O43pIvyQd+xbEqLe4vaSI1Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757303585; c=relaxed/simple;
-	bh=frCuS/bkkakXkCgPJvnpIWqN2bLBkJWzET4+OlR1P1Q=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=BBnYQpGXZp6xNzbKl+zv+syZH9AMP+iQxcTEtoZZM6O6YNyIUAebcSF0Eowq6x7kzJvJU202KXzcM5KusybsPQmX0GMCo+HOVMssRrjYfQp2yYifeZLgLeqM3F30gcGcqV5BUXvdnVYcBCW/SehdD1IYJvg4Syv3xFx4nThp5AQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uDmbm0hb; arc=fail smtp.client-ip=40.107.96.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dNPfk6Z99Sg9ZOwd1BbljtquIhKqTw5HxqMzhQ8+H+XkUCmbffGVZ4RpF0mcyv/rg0OE64WFCsjx7Ydu+reGfIjNe73LV8y2Kjx+ZRjzvbcDUIun4vrAj9oNy1tWTkcsydaiNM7aW5e0XHloRpqP9e+/mmgo1H/F4E4ly0i1gnYZmC984K3JIsSW1TSDMENSqahDIIjIMjLKrLOp3UnjT03cAZVVn5/cT+qWtFiqtLZjfdCxDlTvtHYb9roIZA6x2oA3NODn9JxuZM0h1aW3G8PhZc58cPerlNxSadbgtewZ4f2HUBMNWAw8yw84rZtA7RzpSAvTGhrxG303uhQt7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dW5eWUZ9Sw9dUAsagU/kGNSuHNLwLTgtBiXONDxY3w0=;
- b=dblBqAPLjzvB7qSTK0lL5cc5o/UBc6cuHEUTfzu13LU00eDEBr52hLF0BKE6vVpsEr6AlWwpequ0+Hd/pZRW+XyHRyZ49Mtz0ork7VMIBeTdqXdQvcXOGOGodYBBmByMbosftrdhcykel5g0zjQEj5D57rKkxp5gKfGsmBaktTaFzg7HypGDwqBmY9RzxleKZsafxUQJvppFmB9NR3urxSIJBp0/IwX/87jvdb4xOuITo2GhEwd+PAoj4bXDXakc/Ok0ZXNI+oUodLIOTuUYdkG+YN9A1hD3yHoVppdt9hlWIZV+7OlWjcTn1qcEnPxCGxJ/Ssv5prV/i1FaV2bc4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dW5eWUZ9Sw9dUAsagU/kGNSuHNLwLTgtBiXONDxY3w0=;
- b=uDmbm0hb3ouqPNevqdtwdpZ1gYe0+ta2C26vkO8frtmFjABed2BuUjje9ZylIPpxd5vav6tEpYdGzyqtqzVEmbP0TxdTl73uDRFBwLYf5sDjSGxnFv5v17SJEKYYptyZtgvHQUcqvtXAk3/ieC6/vRKcjFj+VYTCtC401oaTMfC1pAm1uNruvixa71dTAEutvgedZyIkVJbw2AJIFCfZRZ+JhE+t1b1+VMSBYBaEBqWADPfXh+BVUHJxJztTJirZ4BKUZM0kZDg5DrX8f4PeMtJ49Z8F/lYkhdyCCXijBfO86Opina6YkyQgQl3ZYbmt6mqbpsvLnxgxJiD3gNEhGQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CYYPR12MB8751.namprd12.prod.outlook.com (2603:10b6:930:ba::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Mon, 8 Sep
- 2025 03:53:00 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 03:53:00 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 12:52:57 +0900
-Message-Id: <DCN44MKQ8IMO.2PGDTZ0HC1M6O@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] rust: Move register and bitstruct macros out of
- Nova
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-5-joelagnelf@nvidia.com>
-In-Reply-To: <20250903215428.1296517-5-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCP301CA0065.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::10) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80FB1946AA;
+	Mon,  8 Sep 2025 03:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757303831; cv=none; b=EmW34kE5jhnGAUu6PE3QfVWcrRS5+m03lNIyVn3oDTWfAkojunTKxHGObabSBRersthAoCJcGlVfAQDu8ivKHwp1l/yg8rfuJT43QSrHBvvB7pJowPpa2bwiiwRQoUteEMeLJJ3kHvya/kt2zZu8/bYuQO1DMmTRu9Ck77azsy0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757303831; c=relaxed/simple;
+	bh=i9+jxlXHHwr6XtwkjqS08DAQOKAY8CAV8kZO53PWBkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecnD8gunniERvhK535TexBfuLK9I65VLqEMV850KRfyygO/u4EJjBtue7co8zlTEeP4BGSJvQO3Q3vAhOPa9omyjQdmzL+OFtjLNg/Jm01vHeJAfU1lCWaX2jBcXZGrHGFhsFDXZ6k1cbvyQsrfbZwiz7/VrUTf+v1aRPChuHGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pH1nX3ru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAA9C4CEF8;
+	Mon,  8 Sep 2025 03:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757303830;
+	bh=i9+jxlXHHwr6XtwkjqS08DAQOKAY8CAV8kZO53PWBkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pH1nX3ruaOph6o/MCPrO6clRVFmJTfJAQAcPTdeQEThyJnLC+jBC8m1rPOxLsopf4
+	 cpaY0moZvwzI9GdF8otwVERG7vKsl5Euvncf2wBwabeFdC5Zy2qvGWhaOxl38zHrSR
+	 fZ9WVMxpTNtOSL+3XMXTJP5rZiXudmU3/Q+qkpdOpLZ40X/z+5Bjyox859/BxJfOx9
+	 NPBiBabcDcESdJ1LsLlJ5WzRL9WBfl7PG6KX7LeLJmUE+XZJVMDjuuQj1QHbK8uWcb
+	 bBoerC5K5Bh4JDrk0CPXGli0s9u1ZVIDqln38ZAU07DPc8XssNTdoAY0tRIEs0qKhY
+	 dtIR37jCBdrBA==
+Date: Mon, 8 Sep 2025 03:57:06 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] platform/chrome: cros_ec_typec: Set
+ no_mode_control flag
+Message-ID: <aL5UErs3iHMnYGZm@google.com>
+References: <20250905142206.4105351-1-akuchynski@chromium.org>
+ <20250905142206.4105351-3-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CYYPR12MB8751:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2531256-1a8e-405c-2f27-08ddee8b3470
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dWN6Q01uSHpXRWV5TUdrZXZqbzVUekZ3RURzQnN1dXN3WnJBcFowLzNTQ2JB?=
- =?utf-8?B?d1BYalZYWFJKbjN0Tzl2S3NXKzBaNWRWNUpnNUNtWmR3YnFQM3JBY01yVndQ?=
- =?utf-8?B?L01GQ0hEd0FraDY5bk44ek8yRzRaOFVqcFkxTDFBejJOcnFla291NzBsaXEr?=
- =?utf-8?B?aU9SZGZ5WFd2VytwbGJaYnAxQU9zWXc2Q3RoMDJyNHllS2pma20yYnVYdGUw?=
- =?utf-8?B?ZzIraksraERZSWp0WXNNckl0WlprUzdDUWx3ejRoNS9HOWd1MkVhQjVYWEVM?=
- =?utf-8?B?MTdTUmt1djRmRG5tYkRJZ3hONWpKM296MnBiMDlwSWMrOHVRRWw0aUd2UllH?=
- =?utf-8?B?dFQ5cytHelU4dldFcWpxdVlLZU1ycVlPc1k5RnpqK1NuSzh3Z1BIcnJRd1Rk?=
- =?utf-8?B?eFVPQlFkZWdQTmNFYmRsRFV2T2drZ0hpS0pLeThWWG5aazFUNURUOGJyNGVr?=
- =?utf-8?B?Q2pFMTk1d3lGVmlCbjlZUkNuVURNdnZpWmcwOHBZemJyNllCWWY3Umh0VmtD?=
- =?utf-8?B?MEZEU1NFRHkzQTJ3RVlFR2JNY2hsMDJ3QmVKVEkyVWtVM0tCUElJM3daZ1R1?=
- =?utf-8?B?UVROTm5tcytsVVd5V29yTEdWM1NncFFZUzNodUxmWCtyKzFjeUo5bkEwd203?=
- =?utf-8?B?ZHZZeVg4V1pSUzB1aUQzMDdxR1VRUjdUZ0FNTlpBWHFKeEF1RHkweXBBL2dJ?=
- =?utf-8?B?REhqeFM4N3BDSksvWm9VbGQrL0V6dUUrWk1xY293VDZHTElpenptVWxCcUpu?=
- =?utf-8?B?WnNsNHBIRXN6aUJuazdJeXMyWXVTUnJmRkxIU1pEUzgwN3U1NUxvSEt2bDJu?=
- =?utf-8?B?MHBHZW5LbGRpMjRRUEcyNU1iRzlkSlJOR1dsT2lla2psN0hWSjRKdFF6eEZ5?=
- =?utf-8?B?T1VaMmdJZUVGU2dYakJNN1RNdnBMWE9hMlRvWVlzZUJXZlNOUGtLckgwVmNp?=
- =?utf-8?B?aGlkYUo2eE95RXBxQTB0R0lpL3Nlbi9jSEt6YTFLMm1PWVlqbEVaME9nZXZQ?=
- =?utf-8?B?U3NXUmZjcDNiQ2ZTcnJvdW9lS3VBRlJNdHRvWmJPd0JMd3NXU1hhcUZRaCtl?=
- =?utf-8?B?VGF5WUdOdnlLTzMvWUJxYXpEZnNZZFpMbFBYYWRYMk1vOE9SUWdMNjlBM0Rx?=
- =?utf-8?B?aEh3aVZLc0FuMUNkZ3ZlWkpJRGJEZytwMVlmYTVCODlWUHNBNHhrSS9waDN1?=
- =?utf-8?B?ODZDSVVtckVvUWxNY0QzVlBqOVpHNTZ1Z25UbDJHam5kMFdhbkxkWnJUeEJQ?=
- =?utf-8?B?ZUVyMTA5K29FOGMyc0YvV2U3WWZtd0RKOHVNWm9EanU3SEJMcEJ2SmtFZzMx?=
- =?utf-8?B?bFBZTXBtYkEvVmhJRWlLMlVpdElwaUZ4RFFhdHh4dGY2MlorMy83KzRkUzg1?=
- =?utf-8?B?MnB5RlhMZGNUL2J5WlE1VFJOc0xRY2taejdaakk0bkZnQkxJWS95MmJBeFRF?=
- =?utf-8?B?aE1pOVUxek1BUDJaTzlzUzJQUGhlRnZ0T3JlZjNzWVJDeXlIaWNidlhlZVU5?=
- =?utf-8?B?WjBmTUlJdmRwTHN3YTNTQXBaeHZPandwbCt4OGFJYkxFTFUydW5UQ0V1UFBG?=
- =?utf-8?B?S0QxcUdIckZ1blBlTU9LeXlRdityd3ltV0dXamhOMklNMVY2cW1xOW5QT05p?=
- =?utf-8?B?UXp3V0FIb3hBalROM3F6algrc25OOHFnVFdtTEVodktQTnY0RlQrZmhOaEJi?=
- =?utf-8?B?YmZTSDU2MVdIOTN5NS9ZVjZHYVluWTlicUUrTllJWVpzODdhTVYvVXB3QWJh?=
- =?utf-8?B?c3lZamJEc0dmK2JnRVRmc1NLbGE4aWt3c1lCSU15ZE55VWpOZmxJNXBNYnR2?=
- =?utf-8?B?bGl6bCtlbEN3U1d4RXI2RG0rbjV1d2VMSFhESXpRMEhGS0xOVE5leE01Rk9t?=
- =?utf-8?B?ZVc5dmZNNnVpeDQ0NFZjQWV6QS9EMW15STBhM1FsRmVwQWpYMXFCN0hsMjFK?=
- =?utf-8?Q?k/QDTQbr76o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OGhpelJmQkIrUEg5YmtjV0dNWnZwclVjQ0RlQnJMODZlRHhRSTE1V0kxUW41?=
- =?utf-8?B?bUhHb0JLeUpIdlFxaFdtT1VjMVhBekVTcmhCVm5tUnlycTh5dnV4WXpKZTVG?=
- =?utf-8?B?eWhIMzZzbUN2NTRNeXpTYnRtdHlaa0tqUjRtRkRQbW5NZFp1cWI5d2ZjZVZS?=
- =?utf-8?B?SjRKL2Q3UVBKUFhReVRsdWZya2lUYXQ3SG1RcWNSMmhlUnUzT0ZhTzNhSVA3?=
- =?utf-8?B?b2kzaGdMS2RrVjl4NytHamhLaWxiRG9VRmFvYnp3MjJrcGw5WFFVNDhzb000?=
- =?utf-8?B?MzRYN0YzUzZkVUd3VDVHZHQ0N3ZOUDYvQ0FZL09PTnoya2FwczdPSHlmL1BW?=
- =?utf-8?B?Y1NPY3YyR2g5TndDQ1l0OTZ1RDhSdkEyZE1BUTIrRDlaeVBSQ1VrUGVkck1m?=
- =?utf-8?B?YnhkUkZVSlVDakZTTkNsQ0Y5OG1FZlJZUlYwT1lFMTF5N29WdUtvL05CZ25n?=
- =?utf-8?B?VCtXcHRWdGtjc1RSZkovdnoyd0E3WUUwOG5lTnFmWVVldGFqeUo4b3dDUFdN?=
- =?utf-8?B?SEhmdUpZckhqMkt0dkZSbHV6ZXhaSEY0RlREQmZHQzd3REQrNkk5bmc2c0dL?=
- =?utf-8?B?WXZieE1IQUZBYXBNYjIyK292VTExK0Vock1Sa2FBNjkzUXBjR29yU3hIdEFK?=
- =?utf-8?B?alh5MzlaRXNDZXY5UU1KenlkK1QvV1J0VVhSRzRGTHhORU9MTjBrNXFvREFo?=
- =?utf-8?B?YzFEYVlMczVqQmtYbzRVZGY1UU1YOG02bjhpNGRGOGZrZXk1SEFHeFVQbUJz?=
- =?utf-8?B?OUU5WWtNalhGRUFVVG9SMUg3WVhYN09UVXZVQ0k1TUhmNmZsaHVNTXV5WE5X?=
- =?utf-8?B?c1Z0ZVBtUHRoWnIvblJXQXAzZ1NqTytJRk03bk5uSzVwSFloYW5taVV4ZVl1?=
- =?utf-8?B?WFdyWlBnbHFid2FtcDZqZ01WNi95MXljdm1xR1o4bWpTQXMwRGlsZW4wWjdU?=
- =?utf-8?B?dG5aRlpiR3dzb1FnUFpJSXZNdDdsM2pOaUZhcE1YeThrUzBiaFZYR1FxTTJv?=
- =?utf-8?B?dWE2aUZ1K1NxSTJTOHYwQnl1RFZ3cEhPYWxkL1Q1ZjZZbVpYMElvajZlTXNG?=
- =?utf-8?B?Uks1REpYYmw2aTdOVThsL3haSTJJQktYdFVPVzIvbXVsY3hCMERvRUg4Tlo4?=
- =?utf-8?B?Y0tOa3kzMkQ4c0lWenZlZlVLZTQ4SnZYY1l1L1pWZ3lsbXhHNnRUWlVWQWZz?=
- =?utf-8?B?YTU3KzQwdkxFdjl4eklINUlscGNsaVRUSk4xNDlndWRsbnVRZVp2Q3hXYnFO?=
- =?utf-8?B?MmdTeWVNZUoxZzY0N2dsajlGMFZ5d3JOa3p3eC9yR1JuOUFCYmt5VVpoRkFn?=
- =?utf-8?B?QXo1TFM5MVpZdnNhZ3ZiUjA2WFh5NlZrS2RlVG5NZm01cXQ1ckVLb2JlajBN?=
- =?utf-8?B?U0N5OTl6RHIxdG5zZDhRSTFlM2NPWkNhYzF6Tm1BNTNoaVlaWks1QTlTd1M5?=
- =?utf-8?B?L2FRSzR6aUppbC9iakFuRW5Za0h4SndVVVc0V1dYSVhqRmRmN0pRUitEZkc3?=
- =?utf-8?B?KzNPRjFqZ2tTTDBhZXNCS05tMWpyRG9SZ3EyMzQ2YjE2Nk5tWGZyQUV1SnNE?=
- =?utf-8?B?SHlNM0tLeXYzQkNIZS9vUEZ4STAyWTNUcy8rZXVaVlRES3FORWpVZjJIMEpY?=
- =?utf-8?B?NWpYN3lod2hiUmt6Q2czSEhMc0tnK1o2UmZ1OWpjbUpaSmNzbU1iQVlNZ3pZ?=
- =?utf-8?B?M1IrYkhQM0F4TFBPNjdiQWNrb2dDdkFoRWdVNjRzZmNpWEJyQ3dmQm1ibUMv?=
- =?utf-8?B?SzhLN2IxdmpMSS9wN0wwRUdXMEJiZ3JQU0UyK29FcXhsKzJKVVllTTBnc1M2?=
- =?utf-8?B?QXp6K01vY3hnRmttTmtoWmN0QVYvSzlpUE80ZHFscTBrZWV3ZTdDZXMyTmRU?=
- =?utf-8?B?VGdJSTJFU0tDMW9Ld1dSTzRNbFJzRGlETzI1QllpU0ZNZ2hoNGJKMlZjWkoz?=
- =?utf-8?B?ZHM0ajh6eGxKcU1udFRzYzZ1UlpzeW1IVjU3OUN3aWowL1NsQ04rSTZqT3Bx?=
- =?utf-8?B?dVRad0xBV3Y4b2VwNFFBY3k1V3haY0t4QlVjYVp2amtxaHYzVXlGU0o3cVdv?=
- =?utf-8?B?aEduVzFHdkdscE0xYjZ6Ukk3aU9YWnJDbnZvZWlkUHNtbGN4dFFyRG9yL0Qr?=
- =?utf-8?B?UXJsZTgwa1RVaHBTdFRzSWpjTDJndG54dUxwd2ZMM3kwUE12cEEweC9KZmZ4?=
- =?utf-8?Q?0YQv5u8B5L+yRiMkRAtJ7hxeGkXc4NembAbIJBqrIIPT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2531256-1a8e-405c-2f27-08ddee8b3470
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 03:53:00.5486
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ol40hPBBQbMWSmEzfx3nXAwS4dAD/3gVnNAgAnIT9+g+FHFbo64MKmQvUTBN7R+VUqC+FXNq5W/iG4AAy1B8dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8751
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905142206.4105351-3-akuchynski@chromium.org>
 
-On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
-> Out of broad need for these macros in Rust, move them out. Several folks
-> have shown interest (Nova, Tyr GPU drivers).
->
-> bitstruct - defines bitfields in Rust structs similar to C.
-> register - support for defining hardware registers and accessors.
->
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-<snip>
+On Fri, Sep 05, 2025 at 02:22:03PM +0000, Andrei Kuchynski wrote:
+> This flag specifies that the Embedded Controller (EC) must receive explicit
+> approval from the Application Processor (AP) before initiating Type-C
+> alternate modes or USB4 mode.
+> 
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index c859a8984bae..9c492fa10967 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -64,6 +64,7 @@
->  #[cfg(CONFIG_AUXILIARY_BUS)]
->  pub mod auxiliary;
->  pub mod bits;
-> +pub mod bitstruct;
->  #[cfg(CONFIG_BLOCK)]
->  pub mod block;
->  pub mod bug;
-> @@ -112,6 +113,7 @@
->  pub mod prelude;
->  pub mod print;
->  pub mod rbtree;
-> +pub mod register;
-
-I remember a discussion with Danilo where he mentioned the register
-macro should end up being in `kernel::io::register`.
-
-Also wondering whether `bitstruct` should not be in the
-appropriately-named `bits` module standing right above it. :)
+Acked-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
