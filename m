@@ -1,273 +1,155 @@
-Return-Path: <linux-kernel+bounces-806221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3984B493C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A341B493CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63AFE7B5DC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D5316C4DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DFC30E85C;
-	Mon,  8 Sep 2025 15:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038FC30F805;
+	Mon,  8 Sep 2025 15:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjquEXNR"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kdk9aelH"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085030E0EE;
-	Mon,  8 Sep 2025 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAC030E0F7;
+	Mon,  8 Sep 2025 15:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345978; cv=none; b=Wu62cHWzTEbR2BrREh/7Ot87JIQBxcGvGayJ57wQUjj49lekDF+FmBq858MyzIuifiZBlW6VieRBWtQiRoVFvNYBPIIYRd4UwkkfHncC4MQAhJD7ggOTKMyc5xJqTDer6VAgNvYBqCjP/jYopnj0s8aqKHz/euJWhhNw3UDWVnk=
+	t=1757346049; cv=none; b=gS4Smn5+3vQP48HPCV4gqwIXHaj87n8CEtfQv48vxeFYtDprsVlhFBba+7RcWZj9lTXeJ6EcIeLUSljqtm+5+I8gXYiZzEJwPjZAVxVJVwG6yhUbl3vqY6gynutgdSsrlMNJPbGG5KrOfLHHRh5Vgg5I0uzommlcAmVnICaLWrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345978; c=relaxed/simple;
-	bh=mkS7Q2XXsAh/hnvFTx5Ju9PCADKOOyXqSzzlVMxjm3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JEVkUacHkpYG+UTw95D8LcCoDJ1nYyjwN/tRvjVEMWxaldFRXwiJRA998UmN4UzKw1GUBoSAR8LtdfwLkKX8lprBevC488oirHma+wG6MAtq3oXoyLkNFEFLlUAc1Z9+sBrFJ0jVVfom82YWdeaHIjRI8Ug6LIkewRrBAtQwY04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjquEXNR; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-624fdf51b44so2086090a12.1;
-        Mon, 08 Sep 2025 08:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757345975; x=1757950775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlYi0zuf18CTjrvUd8KAUPgIego6gfmKRVz1YHq0aBY=;
-        b=fjquEXNRxQGOsY+Gdc9pL1KtQvjsCVPZE9dfX1j06dlXI+9Q/c4giz99AgQ3mZa01N
-         LuasJQvdIUT08dLo0TKsPEsjt6hmC+Cu6gmbRct6MROlD9z/sRTb1JHhncMRswzbW2hg
-         5QA/EmON6snZypSspVSn1JwNZ710x8TfgGPg+cvAWEWrldehbUPU5cUIwGdMMhjdryaR
-         zBe5Upt0ndI0owb//Z2E+cmNlaxJpdtr2k3RAZhUJtgfCrnD9v3x2VqIK3MH4Yn01EsM
-         0AgVzY+sSwZ/xBLiSobvnWhUnKd865ULQFY1MyreANmZSAPKKDJMQ6rvSQD3LgFy72NE
-         x2Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757345975; x=1757950775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HlYi0zuf18CTjrvUd8KAUPgIego6gfmKRVz1YHq0aBY=;
-        b=NXtieseQFOXkgb56KREvYzdXiH0VilYVoP3ruMT49rGcHBTcGT67wgyZHuSWzALmmO
-         VLM+RBLWim3zzLMC0S8K8c/vCMGmEu1iRKue2sX2yXFw+MFXjZtFwN0GBdUcdE06v/ZF
-         eblAJ/fv8vTM7p+Cy127kQYwFdf/0qUPSFa/wZH6MYK2z/w8zY9481zYihZcukjRSgCE
-         qoxnVPnbpdxehj6XO7JrBZdtXOvssZ77qRG9a43xxTClrgEfUJdCULtdG1p/C19iRxEW
-         dtFqaALYmdlFOZ6MAOa6dRqDIyqkdlwK8wV/Qw4bxZBAszrAG3y0+Ih3PDLQ6T2eoacD
-         S+tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKeE61znGxDXi241qN3d3oA2ndx0IxFCB7bmDbNf5by14DowGTnFGzy79rHOWKHEjZuZ4vHck4XruvcxOP@vger.kernel.org, AJvYcCWlL2g+VzSs7r2vDgRV+2mm+giWzpi3isx6DiVFlKxfr5ZxvTvWZ6tUbXTGzw5K7bLF/BDNUFIrjzSgTKeb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmc32oNIPIW1xW30HrLYhAZ3ffdCUnc40u1+KjZ8ng4gm7uMaS
-	aeQhO3saiJSjB8y/txksGdA+Xv8UyPdiiDvkbFgOba/A4mOiC0GH/OJjv5u+yiT8zX7Wu/RszPo
-	6AaeBiyWUrBpFfXWJ0fFOzlkBGdXf2do=
-X-Gm-Gg: ASbGncs/hr9GtqVmbrRVyp87YQtWGuFTNfPetYhdIAKJJjlBJy8nEZfx/jIvEeioqDS
-	+D8fX0UHQ6ZRwFzM8ckj3IKCfRd+4tlZAnZQsYfg1vMWfXCw76IdipytMfBvibu45HLTUvGaKQV
-	MM61pGY2yTIZBXYzWuH272TBEMaLv/1TDkL7Ho5IjC/gBj7+j7f2wU0XVr6i27P6HD1pnoJb+Ww
-	WkB0Us3nSdgfQjFQg==
-X-Google-Smtp-Source: AGHT+IGML91YmFHQAUDt0ahS98UGZdZ6TH072YQ585VVAQwaUmKdCU3wBiaMqQKljISwAsFDS8TgqDxeVR/5WQwPuXk=
-X-Received: by 2002:a05:6402:3549:b0:62b:2899:5b31 with SMTP id
- 4fb4d7f45d1cf-62b28995cabmr1224668a12.5.1757345974456; Mon, 08 Sep 2025
- 08:39:34 -0700 (PDT)
+	s=arc-20240116; t=1757346049; c=relaxed/simple;
+	bh=6hsHhAMzzpx9axcYsxclqZUNVuayYOO6Scs9OMAFiAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSL2QMG4hpL9K1Y459rUFNt9esuVIiZDgkXAxgmYkQa3McolCRextx8s3W4dmoQ0vVm+hGW+D5csuyohl8VW3NBZOjaDN1633EM60sCljH4aRNvu2CRtBgTI4ydBaZpwYZ+EzXqQWeOjytLjHb/y7/xWO9JhD7TbhkDjm7P/n34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kdk9aelH; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-99-126-nat.elisa-mobile.fi [85.76.99.126])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9497EC71;
+	Mon,  8 Sep 2025 17:39:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757345973;
+	bh=6hsHhAMzzpx9axcYsxclqZUNVuayYOO6Scs9OMAFiAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kdk9aelHrbady5scSiDf8dTVOAtFzUtzs3o+qTmCGmpkN/oV9YBxHG3okNzs+/fuI
+	 phf1WKKap6HOpL/W9u6Bg2+gowCLeZE+dUmJioGU319h2rxJ87GIG2WPlXXBoHltqs
+	 XslPC1gdqYbUnjqcPI75nxxqk19hkh6tbnLs9gEE=
+Date: Mon, 8 Sep 2025 17:40:24 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 01/10] media: v4l: ctrls: add a control for
+ flash/strobe duration
+Message-ID: <20250908154024.GJ26062@pendragon.ideasonboard.com>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-1-d58d5a694afc@linux.dev>
+ <20250907185512.GA4105@pendragon.ideasonboard.com>
+ <3neurtcv24b3djg5p5q2snw7lmmgyzky4y7vyuuid7hvb7tepg@ypheu6ephunl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
- <20250904154245.644875-1-mjguzik@gmail.com> <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
- <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
- <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com> <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
- <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com> <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
-In-Reply-To: <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 8 Sep 2025 17:39:22 +0200
-X-Gm-Features: AS18NWCDQLs5fysu8uWSj8ezNb9KhOg04xwtuZGK4FM2mMvAO4xkNE39g6GrKLU
-Message-ID: <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com>
-Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
- I_WILL_FREE usage
-To: Jan Kara <jack@suse.cz>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Tinguely <mark.tinguely@oracle.com>, 
-	ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, jlbec@evilplan.org, mark@fasheh.com, brauner@kernel.org, 
-	willy@infradead.org, david@fromorbit.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3neurtcv24b3djg5p5q2snw7lmmgyzky4y7vyuuid7hvb7tepg@ypheu6ephunl>
 
-On Mon, Sep 8, 2025 at 3:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 08-09-25 20:41:21, Joseph Qi wrote:
-> >
-> >
-> > On 2025/9/8 18:23, Jan Kara wrote:
-> > > On Mon 08-09-25 09:51:36, Joseph Qi wrote:
-> > >> On 2025/9/5 00:22, Mateusz Guzik wrote:
-> > >>> On Thu, Sep 4, 2025 at 6:15=E2=80=AFPM Mark Tinguely <mark.tinguely=
-@oracle.com> wrote:
-> > >>>>
-> > >>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
-> > >>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm tol=
-d is
-> > >>>>> fine (tm).
-> > >>>>>
-> > >>>>> The intent is to retire the I_WILL_FREE flag.
-> > >>>>>
-> > >>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > >>>>> ---
-> > >>>>>
-> > >>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it=
-.
-> > >>>>>
-> > >>>>> btw grep shows comments referencing ocfs2_drop_inode() which are =
-already
-> > >>>>> stale on the stock kernel, I opted to not touch them.
-> > >>>>>
-> > >>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocki=
-ng
-> > >>>>> other work. If accepted would be probably best taken through vfs
-> > >>>>> branches with said work, see https://urldefense.com/v3/__https://=
-git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs-6.18.inode=
-.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKB=
-MEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
-> > >>>>>
-> > >>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
-> > >>>>>   fs/ocfs2/inode.h       |  1 -
-> > >>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
-> > >>>>>   fs/ocfs2/super.c       |  2 +-
-> > >>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
-> > >>>>>
-> > >>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> > >>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
-> > >>>>> --- a/fs/ocfs2/inode.c
-> > >>>>> +++ b/fs/ocfs2/inode.c
-> > >>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode =
-*inode)
-> > >>>>>
-> > >>>>>   void ocfs2_evict_inode(struct inode *inode)
-> > >>>>>   {
-> > >>>>> +     write_inode_now(inode, 1);
-> > >>>>> +
-> > >>>>>       if (!inode->i_nlink ||
-> > >>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)=
-) {
-> > >>>>>               ocfs2_delete_inode(inode);
-> > >>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode=
-)
-> > >>>>>       ocfs2_clear_inode(inode);
-> > >>>>>   }
-> > >>>>>
-> > >>>>> -/* Called under inode_lock, with no more references on the
-> > >>>>> - * struct inode, so it's safe here to check the flags field
-> > >>>>> - * and to manipulate i_nlink without any other locks. */
-> > >>>>> -int ocfs2_drop_inode(struct inode *inode)
-> > >>>>> -{
-> > >>>>> -     struct ocfs2_inode_info *oi =3D OCFS2_I(inode);
-> > >>>>> -
-> > >>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
-> > >>>>> -                             inode->i_nlink, oi->ip_flags);
-> > >>>>> -
-> > >>>>> -     assert_spin_locked(&inode->i_lock);
-> > >>>>> -     inode->i_state |=3D I_WILL_FREE;
-> > >>>>> -     spin_unlock(&inode->i_lock);
-> > >>>>> -     write_inode_now(inode, 1);
-> > >>>>> -     spin_lock(&inode->i_lock);
-> > >>>>> -     WARN_ON(inode->i_state & I_NEW);
-> > >>>>> -     inode->i_state &=3D ~I_WILL_FREE;
-> > >>>>> -
-> > >>>>> -     return 1;
-> > >>>>> -}
-> > >>>>> -
-> > >>>>>   /*
-> > >>>>>    * This is called from our getattr.
-> > >>>>>    */
-> > >>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
-> > >>>>> index accf03d4765e..07bd838e7843 100644
-> > >>>>> --- a/fs/ocfs2/inode.h
-> > >>>>> +++ b/fs/ocfs2/inode.h
-> > >>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INOD=
-E_CACHE(struct inode *inode)
-> > >>>>>   }
-> > >>>>>
-> > >>>>>   void ocfs2_evict_inode(struct inode *inode);
-> > >>>>> -int ocfs2_drop_inode(struct inode *inode);
-> > >>>>>
-> > >>>>>   /* Flags for ocfs2_iget() */
-> > >>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
-> > >>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
-> > >>>>> index 54ed1495de9a..4b32fb5658ad 100644
-> > >>>>> --- a/fs/ocfs2/ocfs2_trace.h
-> > >>>>> +++ b/fs/ocfs2/ocfs2_trace.h
-> > >>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delet=
-e_inode);
-> > >>>>>
-> > >>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
-> > >>>>>
-> > >>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
-> > >>>>> -
-> > >>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
-> > >>>>>       TP_PROTO(void *inode, unsigned long long ino,
-> > >>>>>                unsigned int flags),
-> > >>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> > >>>>> index 53daa4482406..e4b0d25f4869 100644
-> > >>>>> --- a/fs/ocfs2/super.c
-> > >>>>> +++ b/fs/ocfs2/super.c
-> > >>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_so=
-ps =3D {
-> > >>>>>       .statfs         =3D ocfs2_statfs,
-> > >>>>>       .alloc_inode    =3D ocfs2_alloc_inode,
-> > >>>>>       .free_inode     =3D ocfs2_free_inode,
-> > >>>>> -     .drop_inode     =3D ocfs2_drop_inode,
-> > >>>>> +     .drop_inode     =3D generic_delete_inode,
-> > >>>>>       .evict_inode    =3D ocfs2_evict_inode,
-> > >>>>>       .sync_fs        =3D ocfs2_sync_fs,
-> > >>>>>       .put_super      =3D ocfs2_put_super,
-> > >>>>
-> > >>>>
-> > >>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
-> > >>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inod=
-e().
-> > >>>>
-> > >>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
-> > >>>>   ocfs2: flush inode data to disk and free inode when i_count beco=
-mes zero
-> > >>>> the return of 1 drops immediate to fix a memory caching issue.
-> > >>>> Shouldn't .drop_inode() still return 1?
-> > >>>
-> > >>> generic_delete_inode is a stub doing just that.
-> > >>>
-> > >> In case of "drop =3D 0", it may return directly without calling evic=
-t().
-> > >> This seems break the expectation of commit 513e2dae9422.
-> > >
-> > > generic_delete_inode() always returns 1 so evict() will be called.
-> > > ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'=
-m not
-> > > sure which case of "drop =3D 0" do you see...
-> > >
-> > I don't see a real case, just in theory.
-> > As I described before, if we make sure write_inode_now() will be called
-> > in iput_final(), it would be fine.
->
-> I'm sorry but I still don't quite understand what you are proposing. If
-> ->drop() returns 1, the filesystem wants to remove the inode from cache
-> (perhaps because it was deleted). Hence iput_final() doesn't bother with
-> writing out such inodes. This doesn't work well with ocfs2 wanting to
-> always drop inodes hence ocfs2 needs to write the inode itself in
-> ocfs2_evice_inode(). Perhaps you have some modification to iput_final() i=
-n
-> mind but I'm not sure how that would work so can you perhaps suggest a
-> patch if you think iput_final() should work differently? Thanks!
->
+On Mon, Sep 08, 2025 at 04:41:30PM +0200, Richard Leitner wrote:
+> On Sun, Sep 07, 2025 at 08:55:12PM +0200, Laurent Pinchart wrote:
+> > On Mon, Sep 01, 2025 at 05:05:06PM +0200, Richard Leitner wrote:
+> > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > > control, as the timeout defines a limit after which the flash is
+> > > "forcefully" turned off again.
+> > > 
+> > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > > of the flash/strobe pulse.
+> > 
+> > It took me a while to understand the difference between the
+> > V4L2_CID_FLASH_TIMEOUT and V4L2_CID_FLASH_DURATION controls, as I
+> > wondered how a device could implement different duration and timeout
+> > values. Then I realized that the timeout control is meant for flash
+> > controllers, while the duration control is meant for the source of the
+> > flash controller's external hardware strobe signal, typically the camera
+> > sensor. I'd like this to be more explicit, here and in the
+> > documentation. Here's a proposal for an updated commit message:
+> 
+> Thanks for that proposal! Sorry for not writing clear documentation on
+> this. I think I was too deep in the topic for too long and couldn't
+> step back enough to write something that would make sense on a first read
 
-I think generic_delete_inode is a really bad name for what the routine
-is doing and it perhaps contributes to the confusion in the thread.
+No need to apologize, it happens all the time, everywhere, and to
+everybody (myself included). Writing documentation is hard. That makes
+reviews from people not familiar with the topic important.
 
-Perhaps it could be renamed to inode_op_stub_always_drop or similar? I
-don't for specifics, apart from explicitly stating that the return
-value is to drop and bonus points for a prefix showing this is an
-inode thing.
+> > ----
+> > Add a V4L2_CID_FLASH_DURATION control to set the duration of a
+> > flash/strobe pulse. This controls the length of the flash/strobe pulse
+> > output by device (typically a camera sensor) and connected to the flash
+> > controller. This is different to the V4L2_CID_FLASH_TIMEOUT control,
+> > which is implemented by the flash controller and defines a limit after
+> > which the flash is "forcefully" turned off again.
+> > ----
+> > 
+> > This could probably be improved, but it's good enough for me for the
+> > commit message.
+> 
+> Thanks. I will adopt it for the next version of the series.
+> 
+> > On a side note, I think we could have reused the V4L2_CID_FLASH_TIMEOUT
+> > control for this purpose, even if the name isn't the best match, as the
+> > two usages are implemented on different devices (flash controller vs.
+> > camera sensor). We have no shortage of control ID space, so a separate
+> > control ID is fine too, and probably clearer (as long as we document it
+> > clearly).
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
+> > >  include/uapi/linux/v4l2-controls.h        | 1 +
+> > >  2 files changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > > index 1ea52011247accc51d0261f56eab1cf13c0624a0..f9ed7273a9f3eafe01c31b638e1c8d9fcf5424af 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > > @@ -1135,6 +1135,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+> > >  	case V4L2_CID_FLASH_FAULT:		return "Faults";
+> > >  	case V4L2_CID_FLASH_CHARGE:		return "Charge";
+> > >  	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
+> > > +	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
+> > >  
+> > >  	/* JPEG encoder controls */
+> > >  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+> > > diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> > > index f836512e9debbc65d62a9fe04069b056be42f7b2..a5b7c382d77118eb7966385c5b22d5a89bc2b272 100644
+> > > --- a/include/uapi/linux/v4l2-controls.h
+> > > +++ b/include/uapi/linux/v4l2-controls.h
+> > > @@ -1186,6 +1186,7 @@ enum v4l2_flash_strobe_source {
+> > >  
+> > >  #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+> > >  #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
+> > > +#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
+> > >  
+> > >  
+> > >  /* JPEG-class control IDs */
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+Regards,
+
+Laurent Pinchart
 
