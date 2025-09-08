@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-806825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C5BB49C22
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9B9B49C2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6CB7AB9C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0164E2FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D9A322523;
-	Mon,  8 Sep 2025 21:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144982E7BC2;
+	Mon,  8 Sep 2025 21:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U6dwpFsM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uE8+TOCU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qaCLrwer";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gsAOQHtN"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92102321F3E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA11322528
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757367163; cv=none; b=GcyaCch4rHSvkvn1+4Io10qj54Ff4EuXvtS4zD7IJfF6RFwX6k89DV7Yqt314sgHPP3YJa5STo9IdPs0/sF8aFEk3VEvlY5MRCoOtt5QpvUSF/DaKz+oEJD2qobYmsxuzHMAQWlt1VIiiboMCYxs8il/oUh8OWxmJ3uzawsKV8I=
+	t=1757367166; cv=none; b=NBHDg4T0tq7nRweishu5yZbJHbB43kA0sC7uvUyCHTgTnI6tWaiafLURUVExv6lxWVlTuM46WmhfVnVcw44RDI2QaXiOKLmb92woXJkSYdvbICnOZ8axx6IiQt+t6Ox+mUREH3dmcqEWxF0k0cG5yqrgaGGh5KW48phG7AiGQKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757367163; c=relaxed/simple;
-	bh=L1JWxnGadc4iAIpVHtydXa6Ji62JsSxxuMzlDkEfw/Y=;
+	s=arc-20240116; t=1757367166; c=relaxed/simple;
+	bh=NjSYr4oFOHM7DDxzgylV5xD+7tldPgYoNM0sv93DLbg=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=Fb36Q4QqpBJNCxopdLBgDKTUOQtJZ1+A9Jl55gAFIEXuFAiOQJp32whD3GgiH8Gudf4ssOjQte/sjREPHrRrAeIOk5HNsPGtKloV4ZrR1W4JDK/X7xH7NbN9bejUYxB49rUkT5wHXWYsLQLZyf3YT9P4yD/C8XgOvk4+Ikc1yBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U6dwpFsM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uE8+TOCU; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=nz2V4UhQjQriQ643bb8QJrfmteNJDdORt4VxsJz9xLra4LF6fpVgqbSO/2NI5b/MXQYqX5qPWCxOBZ1pHgMYXrYe6GcpWgtCUoQqrLBqxD6KQwGOpJPW+OwPapsqFrow8Zmf2HLHO4pNS7mU9VgZZpsmDScq5kADAMC9GVSblcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qaCLrwer; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gsAOQHtN; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250908212927.500173102@linutronix.de>
+Message-ID: <20250908212927.561676807@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757367159;
+	s=2020; t=1757367162;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=NPojs8vSDXAaW1DX67rhjWR33zDU0JjtuxM0InbbPUQ=;
-	b=U6dwpFsMZ2UnmUr2LIXC3AFDxZnUQLytLBgOGb3hi7wf0gJN0SaDABAEfze9AN4tHS1p30
-	DppC6lmgEwB+vfK7RGHA9N5YxP+Xc/GB3JdaFLYK4esuYIBF2k2HQLiE0CvWi8BErnCAQi
-	RgchO5dVBUTEnN4rHoCAtzslwGobA9ZSJw0lvDAoJPtJLJSE0skoHnE5/JPuhmRrQUoSNo
-	lDVPe7wnDI4zleRPYH25jsSITlYx2i3w8fzjpHCsWRFvvzYPjNml/iK4JNSWkUpVaA9Hz8
-	dA/ZGyg3D91F3gz2fb0zd8Ukh8a+WnpSfbcYegGh3Sl85/JEvKcq18/09UH+yg==
+	 references:references; bh=kO6C8pqbJNxzR5Z2UC1cbV4sM9/BmKA+9dWf6RDLf6A=;
+	b=qaCLrwer070fdIVMKD/AUSvgehbsMsWnzcdr42y077/qE1McQw3ZZmEdvd0K7+yF5O5qoB
+	O5naInMoCdDGbVyi3GMssX8hs0uyAkIMjTJbCAFTT3lerxvD77gtABDYbcBUargQ02qReg
+	7AuSi4wNS8/cb98DC+KlSgXC4166pmRaliz5bXdqRYVB3qu34G3dc+Cbf31BmrHWoXTHLC
+	BluQpTaoRK2Z6IJ7CclAZIolXB0+qAvxBRop240rAWxz1FYBEv2pGCNWNlWJsjb3hiBFH7
+	8i5nYxw7/lZKZRuUWOZObfxSPEboH5NxAFSlZzycLt/il2Ih48utXw27wkRtIA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757367159;
+	s=2020e; t=1757367162;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=NPojs8vSDXAaW1DX67rhjWR33zDU0JjtuxM0InbbPUQ=;
-	b=uE8+TOCUsa3+qa4lQ9GIkMwMABtrrthWGjvbJqAdNnwnnqHSCJo3a4y7ObxSazyYctTASO
-	3lPcVKZS5UrqttBQ==
+	 references:references; bh=kO6C8pqbJNxzR5Z2UC1cbV4sM9/BmKA+9dWf6RDLf6A=;
+	b=gsAOQHtNKMg9mavXNnbQiq2xp6J/k3pK3g3gx/Y6NDFFRiIbWEo9VOixXvpXtTYQn47qSh
+	WXO/WngOEArUTGCQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
  Jens Axboe <axboe@kernel.dk>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>,
@@ -68,8 +66,10 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Heiko Carstens <hca@linux.ibm.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
  Sven Schnelle <svens@linux.ibm.com>,
- Huacai Chen <chenhuacai@kernel.org>
-Subject: [patch V4 35/36] riscv: Use generic TIF bits
+ Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: [patch V4 36/36] rseq: Switch to TIF_RSEQ if supported
 References: <20250908212737.353775467@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,69 +78,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Mon,  8 Sep 2025 23:32:38 +0200 (CEST)
+Date: Mon,  8 Sep 2025 23:32:41 +0200 (CEST)
 
-No point in defining generic items and the upcoming RSEQ optimizations are
-only available with this _and_ the generic entry infrastructure, which is
-already used by RISCV. So no further action required here.
+TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is suboptimal especially
+with the RSEQ fast path depending on it, but not really handling it.
+
+Define a seperate TIF_RSEQ in the generic TIF space and enable the full
+seperation of fast and slow path for architectures which utilize that.
+
+That avoids the hassle with invocations of resume_user_mode_work() from
+hypervisors, which clear TIF_NOTIFY_RESUME. It makes the therefore required
+re-evaluation at the end of vcpu_run() a NOOP on architectures which
+utilize the generic TIF space and have a seperate TIF_RSEQ.
+
+The hypervisor TIF handling does not include the seperate TIF_RSEQ as there
+is no point in doing so. The guest does neither know nor care about the VMM
+host applications RSEQ state. That state is only relevant when the ioctl()
+returns to user space.
+
+The fastpath implementation still utilizes TIF_NOTIFY_RESUME for failure
+handling, but this only happens within exit_to_user_mode_loop(), so
+arguably the hypervisor ioctl() code is long done when this happens.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 ---
- arch/riscv/Kconfig                   |    1 +
- arch/riscv/include/asm/thread_info.h |   29 ++++++++++++-----------------
- 2 files changed, 13 insertions(+), 17 deletions(-)
+V4: Adjust it to the new outer loop mechanism
 
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -161,6 +161,7 @@ config RISCV
- 	select HAVE_FUNCTION_GRAPH_FREGS
- 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && HAVE_DYNAMIC_FTRACE
- 	select HAVE_EBPF_JIT if MMU
-+	select HAVE_GENERIC_TIF_BITS
- 	select HAVE_GUP_FAST if MMU
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_ERROR_INJECTION
---- a/arch/riscv/include/asm/thread_info.h
-+++ b/arch/riscv/include/asm/thread_info.h
-@@ -107,23 +107,18 @@ int arch_dup_task_struct(struct task_str
-  * - pending work-to-be-done flags are in lowest half-word
-  * - other flags in upper half-word(s)
+V3: Updated the comment for rseq_virt_userspace_exit() - Sean
+    Added a static assert for TIF_RSEQ != TIF_NOTIFY_RESUME - Sean
+---
+ include/asm-generic/thread_info_tif.h |    3 +++
+ include/linux/irq-entry-common.h      |    2 +-
+ include/linux/rseq.h                  |   32 ++++++++++++++++++++++++--------
+ include/linux/rseq_entry.h            |   29 +++++++++++++++++++++++++++--
+ include/linux/thread_info.h           |    5 +++++
+ kernel/entry/common.c                 |   10 ++++++++--
+ 6 files changed, 68 insertions(+), 13 deletions(-)
+
+--- a/include/asm-generic/thread_info_tif.h
++++ b/include/asm-generic/thread_info_tif.h
+@@ -45,4 +45,7 @@
+ # define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
+ #endif
+ 
++#define TIF_RSEQ		11	// Run RSEQ fast path
++#define _TIF_RSEQ		BIT(TIF_RSEQ)
++
+ #endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -30,7 +30,7 @@
+ #define EXIT_TO_USER_MODE_WORK						\
+ 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
+ 	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
+-	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
++	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL | _TIF_RSEQ |		\
+ 	 ARCH_EXIT_TO_USER_MODE_WORK)
+ 
+ /**
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -40,7 +40,7 @@ static inline void rseq_signal_deliver(s
+ 
+ static inline void rseq_raise_notify_resume(struct task_struct *t)
+ {
+-	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	set_tsk_thread_flag(t, TIF_RSEQ);
+ }
+ 
+ /* Invoked from context switch to force evaluation on exit to user */
+@@ -112,17 +112,25 @@ static inline void rseq_force_update(voi
+ 
+ /*
+  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
+- * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
+- * that case just to do it eventually again before returning to user space,
+- * the entry resume_user_mode_work() invocation is ignored as the register
+- * argument is NULL.
++ * which clears TIF_NOTIFY_RESUME on architectures that don't use the
++ * generic TIF bits and therefore can't provide a separate TIF_RSEQ flag.
+  *
+- * After returning from guest mode, they have to invoke this function to
+- * re-raise TIF_NOTIFY_RESUME if necessary.
++ * To avoid updating user space RSEQ in that case just to do it eventually
++ * again before returning to user space, because __rseq_handle_slowpath()
++ * does nothing when invoked with NULL register state.
++ *
++ * After returning from guest mode, before exiting to userspace, hypervisors
++ * must invoke this function to re-raise TIF_NOTIFY_RESUME if necessary.
   */
--#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
--#define TIF_NEED_RESCHED_LAZY	1       /* Lazy rescheduling needed */
--#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
--#define TIF_SIGPENDING		3	/* signal pending */
--#define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
--#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
--#define TIF_NOTIFY_SIGNAL	9	/* signal notifications exist */
--#define TIF_UPROBE		10	/* uprobe breakpoint or singlestep */
--#define TIF_32BIT		11	/* compat-mode 32bit process */
--#define TIF_RISCV_V_DEFER_RESTORE	12 /* restore Vector before returing to user */
+ static inline void rseq_virt_userspace_exit(void)
+ {
+ 	if (current->rseq.event.sched_switch)
++	/*
++	 * The generic optimization for deferring RSEQ updates until the next
++	 * exit relies on having a dedicated TIF_RSEQ.
++	 */
++	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) &&
++	    current->rseq.event.sched_switch)
+ 		rseq_raise_notify_resume(current);
+ }
  
--#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
--#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
--#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
--#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
--#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
--#define _TIF_UPROBE		(1 << TIF_UPROBE)
--#define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
+@@ -151,8 +159,16 @@ static inline void rseq_fork(struct task
+ 		/*
+ 		 * If it has rseq, force it into the slow path right away
+ 		 * because it is guaranteed to fault.
++		 *
++		 * Setting TIF_NOTIFY_RESUME is redundant but harmless for
++		 * architectures which do not have a seperate TIF_RSEQ, but
++		 * for those who do it's required to enforce the slow path
++		 * as the scheduler sets only TIF_RSEQ.
+ 		 */
+-		t->rseq.event.slowpath = t->rseq.event.has_rseq;
++		if (t->rseq.event.has_rseq) {
++			t->rseq.event.slowpath = true;
++			set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++		}
+ 	}
+ }
+ 
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -522,11 +522,36 @@ static __always_inline bool __rseq_exit_
+ 	return true;
+ }
+ 
+-static __always_inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
 +/*
-+ * Tell the generic TIF infrastructure which bits riscv supports
++ * Required to allow conversion to GENERIC_ENTRY w/o GENERIC_TIF_BITS
++ * as that's not upstream yet.
 + */
-+#define HAVE_TIF_NEED_RESCHED_LAZY
-+#define HAVE_TIF_RESTORE_SIGMASK
++#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
++static __always_inline bool test_tif_rseq(unsigned long ti_work)
+ {
++	return ti_work & _TIF_RSEQ;
++}
 +
-+#include <asm-generic/thread_info_tif.h>
++static __always_inline void clear_tif_rseq(void)
++{
++	static_assert(TIF_RSEQ != TIF_NOTIFY_RESUME);
++	clear_thread_flag(TIF_RSEQ);
++}
++#else
++static __always_inline bool test_tif_rseq(unsigned long ti_work) { return true; }
++static __always_inline void clear_tif_rseq(void) { }
++#endif
 +
-+#define TIF_32BIT			16	/* compat-mode 32bit process */
-+#define TIF_RISCV_V_DEFER_RESTORE	17	/* restore Vector before returing to user */
++static __always_inline bool
++rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
++{
++	if (likely(!test_tif_rseq(ti_work)))
++		return false;
 +
-+#define _TIF_RISCV_V_DEFER_RESTORE	BIT(TIF_RISCV_V_DEFER_RESTORE)
+ 	if (unlikely(__rseq_exit_to_user_mode_restart(regs)))
+ 		return true;
  
- #endif /* _ASM_RISCV_THREAD_INFO_H */
-
++	clear_tif_rseq();
+ 	return false;
+ }
+ 
+@@ -570,7 +595,7 @@ static inline void rseq_debug_syscall_re
+ }
+ #else /* CONFIG_RSEQ */
+ static inline void rseq_note_user_irq_entry(void) { }
+-static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
++static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
+ {
+ 	return false;
+ }
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -67,6 +67,11 @@ enum syscall_work_bit {
+ #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
+ #endif
+ 
++#ifndef TIF_RSEQ
++# define TIF_RSEQ	TIF_NOTIFY_RESUME
++# define _TIF_RSEQ	_TIF_NOTIFY_RESUME
++#endif
++
+ #ifdef __KERNEL__
+ 
+ #ifndef arch_set_restart_data
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -11,6 +11,12 @@
+ /* Workaround to allow gradual conversion of architecture code */
+ void __weak arch_do_signal_or_restart(struct pt_regs *regs) { }
+ 
++#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
++#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK & ~_TIF_RSEQ)
++#else
++#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK)
++#endif
++
+ static __always_inline unsigned long __exit_to_user_mode_loop(struct pt_regs *regs,
+ 							      unsigned long ti_work)
+ {
+@@ -18,7 +24,7 @@ static __always_inline unsigned long __e
+ 	 * Before returning to user space ensure that all pending work
+ 	 * items have been completed.
+ 	 */
+-	while (ti_work & EXIT_TO_USER_MODE_WORK) {
++	while (ti_work & EXIT_TO_USER_MODE_WORK_LOOP) {
+ 
+ 		local_irq_enable_exit_to_user(ti_work);
+ 
+@@ -68,7 +74,7 @@ static __always_inline unsigned long __e
+ 	for (;;) {
+ 		ti_work = __exit_to_user_mode_loop(regs, ti_work);
+ 
+-		if (likely(!rseq_exit_to_user_mode_restart(regs)))
++		if (likely(!rseq_exit_to_user_mode_restart(regs, ti_work)))
+ 			return ti_work;
+ 		ti_work = read_thread_flags();
+ 	}
 
 
