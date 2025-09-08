@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-805338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8BFB48751
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFE3B48748
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 739B87AF7B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:32:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0741641D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD7822A4D5;
-	Mon,  8 Sep 2025 08:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B82EACE2;
+	Mon,  8 Sep 2025 08:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ORT7pil0"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ev+Dr2+o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D70F1DDC3F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757C1DDC3F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320400; cv=none; b=E0NBsXsxRNGfLNv89880SYEDFwA+vdaHdLDOMn/yxAb+4Z/fHARzLqjk3iJ/dpEFuQ0/0dEPm1YjIpqPrQ4iH00/ApcCYv04INyDnXkxDYa+ByHvO6roNRozv0l1gm+ibVxSjJg9Z8VKavnzOS4n23SibwFkUVPca9ickdCA3+A=
+	t=1757320407; cv=none; b=iyhT3ewn0rtF9HWJfo9srRotxMmmD7E/cfGK97W00JaGLxqCMFBHZ3pUX0ho68epeS4HI/zViDTJkmT9//N10WJ++L6n3h6Z2P+jjriwOYCj6oPp42jAFD5sOhiNqCYwUzH2BPSPSNaf6OW1TlMaNdZKwgaITHPF3ZMEJbDWjbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320400; c=relaxed/simple;
-	bh=Z7S/1aekr1neAh4VHiWsp7E7Xdz6qSbaNR17Ap2tBPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZhYsGlPNLBT9lAlcOxSdp3316LhCb6/wLoQGCgRj1aVVwRD/XIuVhxtKU1XFP9eKW5w5vS9Ou85R/OUvNd0tHmcnGbEePKZSUy5njtwfEKiSsH4iozQx49DhPL05JXgZ5RIsqYqQYoWAX1CZDd6kQrxVUdrb5GvHekV+P2Yf8wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ORT7pil0; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45de5a7a080so417235e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757320397; x=1757925197; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OnheC95OnlOK53+zTXpXKRnAp4x3wTw5BQINyn47l04=;
-        b=ORT7pil0A2ciNThVKRPSB2trLIdRqNtDFnnWTm0q2GJemtCSiJlXTAtfHgAcJXcFJ/
-         dN6ShDSaWcm6mkMYGQeiwaW001V35MEZ8TS4lswzyMH8jqX4rBKN73dhOt12PsUQcEVD
-         4jy7DnYbfJymHv54Y0sguWlBKv/4DDfA7sHojNjZC5CM3zlO9dKX6oRl/lkF8KK533JP
-         AX6zTKeuSUFFaSHZ6iH+v3EyBDaY1eBXXcexe8Omr4Om6dLVHKqTN4mxWOi9skzCMseu
-         HpObGOmd3YS+V1I5JkcGuPTQCSK33bxXQZf6FJ351lXIjvboOhrTTE6li30ZAsPt5x2I
-         AScA==
+	s=arc-20240116; t=1757320407; c=relaxed/simple;
+	bh=YqwH95v3WxPKblwXHJFgW9MvFgWs3/w2C+P7HH2uXBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6XznUFOtKE0i+pX3Jm1voevD9lP1ikcYb5jdeMt7WgIGc4MxLVomhQPgYBebem7caHBXiPIZAwOosjJGMYJNbTXw9uL6EWfjvmT6rZv2prwV1+LlzVJAiLaMQl59rzWFULz1up6JebJm1bhpp0zwuzdNVa4P2PM7kJ8x8uboPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ev+Dr2+o; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757320404;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EtnnjkE2sa/VAFor/J7GmB/F8L3NsbnUCYVr2WFGbAs=;
+	b=Ev+Dr2+osGRCtaoP5xAv4cWwhwU03TwzEzV1bpIJCfmBT5fV3SnYd8JyXVVciZOK2M9CgJ
+	zRordCC7rleIvM8J7flRK/xJJynSFFbVUYXci4j0qGifcYXA9y8um45YEzwwG/Bz1FkpQo
+	XXQltXxzPYHRq5ndXvLMHwCmLYF9/v4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-inNCr9ZPOvGkQD77B4IJ8A-1; Mon, 08 Sep 2025 04:33:22 -0400
+X-MC-Unique: inNCr9ZPOvGkQD77B4IJ8A-1
+X-Mimecast-MFC-AGG-ID: inNCr9ZPOvGkQD77B4IJ8A_1757320402
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so21914205e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:33:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757320397; x=1757925197;
+        d=1e100.net; s=20230601; t=1757320402; x=1757925202;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnheC95OnlOK53+zTXpXKRnAp4x3wTw5BQINyn47l04=;
-        b=XV12AOk4y1WMdZSEGcsIy5X5Y+aEJviFCYw56AfXM5puLAzUyrGYHGZ4MjPakqc9ez
-         kjibh3xcKPTFMDia+OnF0krLiG8aKxd4jyE4L7TGyIEt9dPmGA0wuNQeH/b5xGTtLF61
-         EZYWFQN+BivBub5XA49I4dd34NATFcHQYWQq/Ax9Ho5vfbJfrvWKcrnAQ98DxCYIBLAh
-         qKpHzUS+t6cGyhCSQHQ0afoi1dLzK/SqZlr/d+Qsqklwe8l6NxmjpQ+2u3sj5g5Pn/SO
-         iISSfmBwxnTnyggjqgPLe/nSPyQgA4rUIgH9PF1CWzLXd61iDBciNx9daADd8tjiMbX+
-         SCcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXNANmJHp78rtablMppo9KNlW9lhQ0b5j0Z/86eji/l7NMG8+3sz/ZqMi6+YDZVl6gU+35UERC8fti/7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNMt7dc+vs4OhG7M9rasOhB4xXsNvTcRF6I77XsGrPLHyWuQIa
-	jiXtY5b8PFU8oNYXPFwAcHv+E7DrUjnEUB8y5JMubSwIDf2Ol7tFUphR54lURjHZA28=
-X-Gm-Gg: ASbGncszxjcSNRyBy9X4rIb9FpPS+VU2QfHdYQ9PE/TuNkLxw9EvM/YGi049O+RMyTY
-	UeZFgLZGnRYdAmx2Yw59Dnt4AmxZosQfESwHw+sSU4HG9ipz8Mfv/P1ngRHjmtGh1pV1aP2s5Kr
-	0tmtOMqTqQVskYc3DcpafHO1qtKG4s1Iy1f8QtCZTUmtDPRXrGcDG0pZS37ecr1V5GjCPy/JXng
-	MBXS9jObbcCcFK2DfCFaSTnunFL2EWI/7Mx91mtPzqaP+s7bHdwd8MY+3Hrb7uVPTCKLQNeqdrq
-	alBueDUH+94ECYb4T8UZfGFIpTbWxP6lCGPfoP3Z7QvUFRFRZwQ1ehSlP3ikQhdJ6nKtnK/BSx3
-	GH+MCavisjB99c+E9TN4NJujKk/Uh9gAPgv+Fp37ELi0=
-X-Google-Smtp-Source: AGHT+IF3IHsUtnMOb2fNM3kMxfaLehZjxi1GSv7m3gsG/U/1y0GT/M9yaGFm21AR1MEaf6IaBggJsA==
-X-Received: by 2002:a05:600c:8b0d:b0:45d:dbf0:4826 with SMTP id 5b1f17b1804b1-45dddee3af1mr26294325e9.6.1757320396822;
-        Mon, 08 Sep 2025 01:33:16 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda6da5casm129753735e9.7.2025.09.08.01.33.15
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EtnnjkE2sa/VAFor/J7GmB/F8L3NsbnUCYVr2WFGbAs=;
+        b=GDrNRQFzbWDJQvYIOxaIqFHOMKMJrW86zghXfT2nOGANsoMio3Hj5Ts0h2R4CV5QCR
+         pWPk/dky8GAooEjZS+tXHch8LxuOIZwJh2rdltAmA+g/EpJLolPlZ7bK9+CM58IDlabW
+         HUW3P45TvwEEDWVDKeV/FL5IlWlQdeJQcDKl4xFPPeGareb/kmiWRwQEbnzqCldCNKAI
+         Adn1+UdJoMCDYfaSVlTYuAZZqjZhifQS2Sy6zp95hqRL/MWN0Qthe+7MkTfdhSpupAwx
+         dzmJBQ8eA3Sk+QElTrtVmlTcNXq55MTx+NMbT74xSCBhVIj6KXkmUCo2MKlDGaMon6U6
+         4gag==
+X-Forwarded-Encrypted: i=1; AJvYcCUtjA0OAErhsIkEHWQIFaPN4TLALtbrhBkPZAiPqyTNMYvNCVrpqEtYBBmM5nV1HKoctblXYAHqKRS8kf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWR1ABQGvb4LOaRgjMfUxPeS+Xk4cm+8ciDG7DJG9lOt02D+Tq
+	jszSbuHgscS4RMiNzSHzowv47MrM+6D3yaE9kibFG5n8h/r7Zq80YOlmP1UhLI5XwsS+Q57aR2/
+	KLoxt/IFBXyjJx+vtOklFSQCvIz5yDhuh6Ikkbf51NCrPJzSrEk8/u0qcmmbFFtHisA3S9vgVUA
+	==
+X-Gm-Gg: ASbGnct7D9HmZgmqFaLXYg+MvvGzjDwkghxhT2u5ZKlkGGtI218ZPMU/iddH+JrUGrF
+	klQX+vbMCHSnSyA1tg97ZB7fLZBXERvbVurUD5rsaccP+kh6H1/ypsfwXbADyTPMUnZ/GzUEg7h
+	RiAOHLFunLXtkCocVrDz3WPiOZK+n8Oy5c8W1yZYdIsvxWqW0It74AnkWMI1us7t4/+rmYjpTkT
+	FMtZtcZoLKpfQNIXugnHwN3wdsXry0+1B5WpWIRn1pNKvPva/dEwbn2ZPAKqGQvAeNfzocT6WrA
+	dKgmOLdi3ryfCONpvI82iy/io9/EtBfVSiRPo2lKUZxFj/0zUaI2h8PriJYLU2eEXtP3qLg+8Tp
+	/3hWu09DNlBaypqD4oWmaXLeJFkO7xZia+CHif1mgHKYszZxgGSZFBwgbnJeVAbg1
+X-Received: by 2002:a05:600c:1912:b0:45d:d099:873 with SMTP id 5b1f17b1804b1-45de2547b9emr42261175e9.6.1757320401667;
+        Mon, 08 Sep 2025 01:33:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZ92pLEjQluT6SnPXGlHxbIiEKvzSoTm/+xGYPMrbleY5GV6dWcIL/gu8xTjnvzK1RgQmRqg==
+X-Received: by 2002:a05:600c:1912:b0:45d:d099:873 with SMTP id 5b1f17b1804b1-45de2547b9emr42260735e9.6.1757320401253;
+        Mon, 08 Sep 2025 01:33:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd05d0c43sm90946595e9.2.2025.09.08.01.33.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 01:33:16 -0700 (PDT)
-Message-ID: <b266b190-1c6b-4899-85bc-d3e4083410b5@linaro.org>
-Date: Mon, 8 Sep 2025 10:33:14 +0200
+        Mon, 08 Sep 2025 01:33:20 -0700 (PDT)
+Message-ID: <b30823ea-b987-4284-866b-9e179a2d8eb7@redhat.com>
+Date: Mon, 8 Sep 2025 10:33:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,76 +90,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8750-mtp: Enable PMIC RTC
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250905095353.150100-2-krzysztof.kozlowski@linaro.org>
- <a54442d0-a22e-42f9-889c-4bec128b3b58@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split
+ shrinker
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ usamaarif642@gmail.com, ziy@nvidia.com, akpm@linux-foundation.org
+References: <20250908040713.42960-1-lance.yang@linux.dev>
+ <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
+ <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <a54442d0-a22e-42f9-889c-4bec128b3b58@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 05/09/2025 14:28, Konrad Dybcio wrote:
-> On 9/5/25 11:53 AM, Krzysztof Kozlowski wrote:
->> Enable the Real Time Clock on PMK8550 RTC.
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
+>> If I run my reproducer from [1] and mlock() the pages just after
+>> allocating them, then I essentially get
+>>
+>> AnonHugePages:   1048576 kB
+>>
+>> converted to
+>>
+>> Anonymous:       1048580 kB
+>>
+>> Which makes sense (no memory optimized out) as discussed above.
 > 
-> I think it makes more sense to enable it by default instead
+> Yes, my reproducer also shows exactly that. It's clear a lot of work is
+> done but no memory is actually optimized out ;)
 
-Fair enough. I will send a v2.
+I'm not really concerned about the scanning overhead. The real harm is 
+splitting a THP without any benefit.
 
-Best regards,
-Krzysztof
+-- 
+Cheers
+
+David / dhildenb
+
 
