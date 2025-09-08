@@ -1,122 +1,154 @@
-Return-Path: <linux-kernel+bounces-805159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210BEB484B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A025B484BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1CA16D4FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50394174B37
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939A82E426B;
-	Mon,  8 Sep 2025 07:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949DC2E426B;
+	Mon,  8 Sep 2025 07:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEOf6Qe/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T14s/DqT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XJlTahcZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBED156C40;
-	Mon,  8 Sep 2025 07:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603B72E3AF1;
+	Mon,  8 Sep 2025 07:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757315002; cv=none; b=Uh0+qzDBLICSbeOfQyj8w2TAtJ9HGHwhxyQ+sb1plCM9546z6HRWhFzJnkmHi4m7dTq7IG6DIwuflZTuZU6NP3ZmeMszt3WAfbx6X6c4toAD7WwjhQzCSL4DFiwNRTTEbnXX/w/FaZTSG2eQpY2MyynKj+4UkLrCcc6lr1kLFCU=
+	t=1757315025; cv=none; b=aJtRVNXfMGN329GJDfVRhQtNLx2oHR+mYfayQVTzUtyD2OfeZKSJfDy+e9Q63GUPolP4rrQVxmoNa2MJarM9iO0ahH/YdvHQcEaQDcKM/QwFUkT106GigNpXjZNmdIs5F/jo+cv7kSHLZrBR2seFo30xxyVG2R2ENeMIggtdg70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757315002; c=relaxed/simple;
-	bh=gardhJoDlcB2B54SFRCBfswfuk2PQxE89vOcsIEvO04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QbHUolxyCuF1RjCath1sLH62OWlxHOAJNEntt8wsV1PZ5njTRI04aDUPjBvjWg9i1H/m623XKI7hbGz9Ajx+rBXBaEbUR3qktrnFkcmT29GfkkIU9+g/dYrDhX1D0OUy43hPdHmutlK4htpwqQNdA2u9I0EBYqKQY+GyclzNnKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEOf6Qe/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46944C4CEF5;
-	Mon,  8 Sep 2025 07:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757315001;
-	bh=gardhJoDlcB2B54SFRCBfswfuk2PQxE89vOcsIEvO04=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PEOf6Qe/n0PJIYvKCW3RFr/dAu6qERkI2rSTfBpYujzdlDHBTlTq8lh0uNVy4j5aV
-	 iONEKvbujs1kWKHuTuOwlj/orEfJpf7cYLHXCUQ4PnFMrMKLL+2jj8Xxjn2bQIzJYo
-	 vE8hpVoIafb1KLiMcy8jMJJjxnNLpxGZ+Q4Yzug6q7IIRS0KOvn7SwYEQ0Lkna+jrc
-	 6ChOH1BfO2gZFbLXm4QNuvlr+ZpZF14U5PUQQE/Sbga6H0YgQ2VXM+xz1uQj8G4hs6
-	 q785ovt8v/dRkBGdm5hSIw10GDNHrHpvTb17SG8vGnWK5HEE+y47WUCx3GV1SRcJhO
-	 ZD0mlkzlXGifA==
-Message-ID: <0ee2c586-74c7-4e61-9944-cfa41cd0390c@kernel.org>
-Date: Mon, 8 Sep 2025 09:03:16 +0200
+	s=arc-20240116; t=1757315025; c=relaxed/simple;
+	bh=0jhe+/vjvGRxpMw/BOQDCotGiq//HLdo4nHP/+YDC1k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V/zQrSVvz/xLMbhmNNkCB6rg6kAjar8eSLusy8FnRFvbjekZYPHFkXGDSHM5PjLoTtJ+pZl5a6JRyqPCNz5Vijh05rePpweSEpVhNDdeqC0tTOFDsDcGu8jFEBJDUm/cB0mbALYtOWE+LO8piY4pLHCAe1LycJF9x/zIj8fH154=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T14s/DqT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XJlTahcZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757315021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IhbcDKWpbNrOR3ICEZaJcaRbm70PW/6iqA4XJ8AQ6wM=;
+	b=T14s/DqT8UKIsnqD1SRuvSrT7ywshgCc+Lu6DEbwdCc9Jtwd2hqHDJvmqDI8+CqYPAf7XI
+	Ma+U2KQsFubeQNFe/Lj+EAfJHJxD+ExjHRrJdl33gIQFLL1dYlDlL7VJqi3gPKpFjzYxCO
+	exzAWgA1o/gxQ6SCPyOmNUseMGgT6p664qZH7VDjQArsnWxNV5O6tgqVAOcol0x51d2/3t
+	UFPBKH4ufzGsGRLsU61jLFxlMJbR0LPKG+Sy1DvSjKGWWK41gu81TkFpa0cC+G5EEH7Q3q
+	Wvn6rR7S+FhZpLOLcaBFShNLNPA3LSaAnhHXSWKIJGhaNHErTFc0c4drWILFsA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757315021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IhbcDKWpbNrOR3ICEZaJcaRbm70PW/6iqA4XJ8AQ6wM=;
+	b=XJlTahcZb0JBKv8BvMirOZtutmNlkeWd250m89bfGyGH/udvw2jGHsU64XPkJRxnyHTDIe
+	0kDcM6p7yXHcf/BQ==
+Date: Mon, 08 Sep 2025 09:03:38 +0200
+Subject: [PATCH RESEND v2] kunit: Enable PCI on UML without triggering
+ WARN()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] hwmon: (sht21) Add devicetree support
-To: Kurt Borja <kuurtb@gmail.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250907-sht2x-v3-0-bf846bd1534b@gmail.com>
- <20250907-sht2x-v3-3-bf846bd1534b@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250907-sht2x-v3-3-bf846bd1534b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250908-kunit-uml-pci-v2-1-d8eba5f73c9d@linutronix.de>
+To: Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757315020; l=2939;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=0jhe+/vjvGRxpMw/BOQDCotGiq//HLdo4nHP/+YDC1k=;
+ b=zMYhznVYS7837DpcO+nneTkCiRXZIbywAIYTg1rwRyg7fb7QGx4JmsY3Ug1FMRy6VD613B0a2
+ Q1JiWaDY2gfBxHvXU5+l65F9FvGMkRFcGIxg88+VSI70dXKgTxycBjH
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 08/09/2025 03:33, Kurt Borja wrote:
-> Add DT support for sht2x chips.
-> 
-> Cc: stable@vger.kernel.org
+Various KUnit tests require PCI infrastructure to work. All normal
+platforms enable PCI by default, but UML does not. Enabling PCI from
+.kunitconfig files is problematic as it would not be portable. So in
+commit 6fc3a8636a7b ("kunit: tool: Enable virtio/PCI by default on UML")
+PCI was enabled by way of CONFIG_UML_PCI_OVER_VIRTIO=y. However
+CONFIG_UML_PCI_OVER_VIRTIO requires additional configuration of
+CONFIG_UML_PCI_OVER_VIRTIO_DEVICE_ID or will otherwise trigger a WARN() in
+virtio_pcidev_init(). However there is no one correct value for
+UML_PCI_OVER_VIRTIO_DEVICE_ID which could be used by default.
 
-Describe the bug, otherwise not a stable backport.
+This warning is confusing when debugging test failures.
 
+On the other hand, the functionality of CONFIG_UML_PCI_OVER_VIRTIO is not
+used at all, given that it is completely non-functional as indicated by
+the WARN() in question. Instead it is only used as a way to enable
+CONFIG_UML_PCI which itself is not directly configurable.
+
+Instead of going through CONFIG_UML_PCI_OVER_VIRTIO, introduce a custom
+configuration option which enables CONFIG_UML_PCI without triggering
+warnings or building dead code.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+---
+Changes in v2:
+- Rebase onto v6.17-rc1
+- Pick up review from Johannes
+- Link to v1: https://lore.kernel.org/r/20250627-kunit-uml-pci-v1-1-a622fa445e58@linutronix.de
+---
+ lib/kunit/Kconfig                           | 7 +++++++
+ tools/testing/kunit/configs/arch_uml.config | 5 ++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+index c10ede4b1d2201d5f8cddeb71cc5096e21be9b6a..1823539e96da30e165fa8d395ccbd3f6754c836e 100644
+--- a/lib/kunit/Kconfig
++++ b/lib/kunit/Kconfig
+@@ -106,4 +106,11 @@ config KUNIT_DEFAULT_TIMEOUT
+ 	  If unsure, the default timeout of 300 seconds is suitable for most
+ 	  cases.
+ 
++config KUNIT_UML_PCI
++	bool "KUnit UML PCI Support"
++	depends on UML
++	select UML_PCI
++	help
++	  Enables the PCI subsystem on UML for use by KUnit tests.
++
+ endif # KUNIT
+diff --git a/tools/testing/kunit/configs/arch_uml.config b/tools/testing/kunit/configs/arch_uml.config
+index 54ad8972681a2cc724e6122b19407188910b9025..28edf816aa70e6f408d9486efff8898df79ee090 100644
+--- a/tools/testing/kunit/configs/arch_uml.config
++++ b/tools/testing/kunit/configs/arch_uml.config
+@@ -1,8 +1,7 @@
+ # Config options which are added to UML builds by default
+ 
+-# Enable virtio/pci, as a lot of tests require it.
+-CONFIG_VIRTIO_UML=y
+-CONFIG_UML_PCI_OVER_VIRTIO=y
++# Enable pci, as a lot of tests require it.
++CONFIG_KUNIT_UML_PCI=y
+ 
+ # Enable FORTIFY_SOURCE for wider checking.
+ CONFIG_FORTIFY_SOURCE=y
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250626-kunit-uml-pci-a2b687553746
 
 Best regards,
-Krzysztof
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
