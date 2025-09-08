@@ -1,140 +1,196 @@
-Return-Path: <linux-kernel+bounces-806519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A80B49802
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:14:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0560EB49807
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E985E4E178B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:14:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 470B57AE120
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2B3164A6;
-	Mon,  8 Sep 2025 18:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3E317717;
+	Mon,  8 Sep 2025 18:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvDMTEzV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="W92hAt8z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MIyhvqRj"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171FF314A7E;
-	Mon,  8 Sep 2025 18:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D093164CD;
+	Mon,  8 Sep 2025 18:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355149; cv=none; b=ZBvSvO/xq8nknqAIwVT9v8nZMVkMfrmWSspWRbrH9qijR+KOWsUHwlznE/RdtktvLHfYtJUotrUa9bX2L6iARrfhd0oyF+mN4P3kzMGFX77+HHGFCvUpqbkjNfpfiqcgJKOuIfULsZSqiUXnCODwNMHi7m/gPqMHj1MpKImmJr0=
+	t=1757355186; cv=none; b=QBYS8YyuPxF09xCFHPo1jJ7H973ScJ+SzA+mHUatFfRfwIdFK9ztjXLzTga3h5uuvzkQr4htqLm3tui6lILhwfykZ/y4fcTipoa/b340stzM9PuIFVh41/9BBshavyLQKU3yijqsSfmkNsf4ACwmcaNyBUqSC4iJ4BX+j8aJRgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355149; c=relaxed/simple;
-	bh=55uqEUrkSEH/g4S8O0Ls9N9ERmewReSvw0qIJ321yHU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=XqD46iAUC7wRs4LIGNvAjyt7FnaH73H6BlPmuPGDH4oMxvsGP4Z5wVtDktPT/F+euEGqzt3it6trKrdPL92wsmJE9IsI43dVmLPhKm2i2sVoPyAfl9/oyuoOId8WcNnriJSXZ3EAl7fflptvmksK1+DQjtTwG6uju5BBFFqMyAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvDMTEzV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8F5C4CEF1;
-	Mon,  8 Sep 2025 18:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757355148;
-	bh=55uqEUrkSEH/g4S8O0Ls9N9ERmewReSvw0qIJ321yHU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YvDMTEzVGTF5aOsROaBtp3Tmo4Glys448tT3SXnuYhwcVCrj85Jj3u/+YXw2Tq5Fe
-	 WWOSvpNdpbzhZKSvjC/LnOK2eO4EyFQ6DbvKqhXldkKzhHPXIYfRS00afuK39tfwok
-	 zlK3iZYaW5S8XvN3V0Az2kAcmAsAz/hdTN9pxIH/UKONDyrn42iEor9GNYk0+Qqeno
-	 uyNq1i3bwhij4DAY3MACsbXLq0wM8Ndn3opjNh6va2d1a+y1/7pNkrRqnAi+0+g1aj
-	 XnR7YTot90CDo3xSLZiWSrP425GVBHaQ9mEpWy8S72iQnZtS7zT5hhYyERZhWyVNjK
-	 9vUKysO8MOSBQ==
-Date: Mon, 8 Sep 2025 20:12:21 +0200 (GMT+02:00)
-From: Matthieu Baerts <matttbe@kernel.org>
-To: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Reaver <me@davidreaver.com>
-Message-ID: <01f13d40-93c4-4147-b10d-f86fd5f79fa5@kernel.org>
-In-Reply-To: <aL8YwEx1dxa93lpR@templeofstupid.com>
-References: <aLuDmBsgC7wVNV1J@templeofstupid.com> <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org> <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org> <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org> <aL8RoSniweGJgm3h@templeofstupid.com> <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org> <aL8WNpl8ExODg20q@templeofstupid.com> <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org> <aL8YwEx1dxa93lpR@templeofstupid.com>
-Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options
- propagate SOCK_KEEPOPEN
+	s=arc-20240116; t=1757355186; c=relaxed/simple;
+	bh=S/qIFkbE6NWMThaebjnBbzrG7hfvN4q9LxfI84fWnS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPpZFDIoowuiqY6RCqWslTgvvcC7B/JxlJWnAw+5kcxrMmK0bFhBKL3o471kcvoqt2Z09dxZbymf0l4VyWNCBbGvZHTjHmaVdSBXreSPUqROZSmrskeGdpoo5OcViM2ffknuj/AgbslhtHBBkMJuLq8GsIEQnaywVYSzIlLjKMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=W92hAt8z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MIyhvqRj; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 952921400182;
+	Mon,  8 Sep 2025 14:13:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 08 Sep 2025 14:13:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1757355183; x=1757441583; bh=2cuatXLabl
+	uJ3CkaEx442uHgntV1NQobYjc7F765Bzw=; b=W92hAt8zipaNUv9cn+SrTvTrzC
+	NJOgJzI0vFRPYjQC0AqqzSRUc5/lpz4lxaiMxA/lEUcwhlPM9GoPMWa6BSpysJbn
+	APX/lZB6GECks6Rvn+XTrq6ScDnqxa2tGkch66numKlCfbnJ4bLyMOM7IC+QvcCW
+	VNTbIeN7dHqbH/IS6L4zH6/bAI4FeMtzGGXapbDK8lzVFKGWz0vK70CtXNfomwaS
+	cd/IVW8nrJKxVV/fhaM1VcuWSPQQMWONR39/FJxOFVCEYL8sDdH2VYWSQSelV4xf
+	2/JxFf+NoFOq5Cgsci2Z01ulcAzSi0mI0HgfAIfnsriF3xOfmkP3+s1QC7Tg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757355183; x=1757441583; bh=2cuatXLabluJ3CkaEx442uHgntV1NQobYjc
+	7F765Bzw=; b=MIyhvqRjBUNSOm4wZlJKcDOjSu8kP13qHkI8HYpMx7iV24aUAkb
+	zMwQzv5dRQ7Pe5djmfH5doAFTRotxOKsbgDKYG7/MqU53yqb3E7rwhdlF25qNltE
+	cgMhiR+RZW6JlUfKDUOIwdcJmIeDVFObVxCd80nM2e3i6D0v5QB53i3U5SkytbOg
+	jzcyo+ngdUWAdaOxQiL2lzT7yosc8vd6M2HZJrksfnhNgY97+ViR630Pz9VLQMan
+	nnIGpLBmzob7B+dGiTpPZYiQ3RxtDSOUGhCt/xhBqxjMN5TknkTgH0FFLU+KYRS0
+	ML4f1Dv+l0mTQf+z3RI5E0GSDo6nbUbVvdg==
+X-ME-Sender: <xms:rRy_aCckTFKGj3UqR-_A4nAshhxmeBvKRrsXOKpXRzciK99eU_gihg>
+    <xme:rRy_aIGul-HuK25gId0D9zFT3dU6eJNh5MjwY6PkjdYV8_jgSnRq8WK4Qte5Dm5qn
+    5TA83p6nDA6afu0iu8>
+X-ME-Received: <xmr:rRy_aMVDJYMCXZ7F7u3T1dvxz20yYbiCdpGkr_GBmUKUU7JK3mOmqJGPPzJDFMWtEzF-AsdnrIpNX7nIvhGwthTB-t7JkqjhrJ0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvff
+    evleegudejfeefheehkeehleehfefgjefffeetudegtefhuedufeehfeetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
+    hnvghtpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepshhvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinh
+    hugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrghlsghi
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvih
+    hgrdhiohdprhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehv
+    khhouhhlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:rRy_aIwrJXCWtJE7suPMpRh1ic3XAezkLHTPqNk5dVvUumuVHPHmog>
+    <xmx:rRy_aHtkTLHmEb9hd72tiUpEswVJ4suy93U5PZkJR-P98ZPkfM6B1Q>
+    <xmx:rRy_aJBwIruCU49cyHDLKYgdLGTOQwQAkxFBHX7_SEII8mCAbQf7dw>
+    <xmx:rRy_aDp8LZwOolKR9BCGZ5aeyU9LY80VikcIZTMyymJyBvXGLNdylA>
+    <xmx:rxy_aLzHpswtNQp2E782Qjvm7pd021tNXj-BRacdJ6CrKoRTtr8UsX05>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 14:13:01 -0400 (EDT)
+Date: Mon, 8 Sep 2025 20:12:59 +0200
+From: Janne Grunau <j@jannau.net>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v2 18/22] phy: apple: Add Apple Type-C PHY
+Message-ID: <20250908181259.GC89417@robin.jannau.net>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <01f13d40-93c4-4147-b10d-f86fd5f79fa5@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
 
-8 Sept 2025 19:56:23 Krister Johansen <kjlx@templeofstupid.com>:
+On Sat, Sep 06, 2025 at 03:43:31PM +0000, Sven Peter wrote:
+> The Apple Type-C PHY (ATCPHY) is a PHY for USB 2.0, USB 3.x,
+> USB4/Thunderbolt, and DisplayPort connectivity found in Apple Silicon SoCs.
+> The PHY handles muxing between these different protocols and also provides
+> the reset controller for the attached dwc3 USB controller.
+> 
+> There is no documentation available for this PHY and the entire sequence
+> of MMIO pokes has been figured out by tracing all MMIO access of Apple's
+> driver under a thin hypervisor and correlating the register reads/writes
+> to their kernel's debug output to find their names. Deviations from this
+> sequence generally results in the port not working or, especially when
+> the mode is switched to USB4 or Thunderbolt, to some watchdog resetting
+> the entire SoC.
+> 
+> This initial commit already introduces support for Display Port and
+> USB4/Thunderbolt but the drivers for these are not ready. We cannot
+> control the alternate mode negotiation and are stuck with whatever Apple's
+> firmware decides such that any DisplayPort or USB4/Thunderbolt device will
+> result in a correctly setup PHY but not be usable until the other drivers
+> are upstreamed as well.
+> 
+> Co-developed-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Co-developed-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  MAINTAINERS                |    1 +
+>  drivers/phy/Kconfig        |    1 +
+>  drivers/phy/Makefile       |    1 +
+>  drivers/phy/apple/Kconfig  |   14 +
+>  drivers/phy/apple/Makefile |    4 +
+>  drivers/phy/apple/atc.c    | 2214 ++++++++++++++++++++++++++++++++++++++++++++
+>  6 files changed, 2235 insertions(+)
 
-> On Mon, Sep 08, 2025 at 07:51:10PM +0200, Matthieu Baerts wrote:
->> 8 Sept 2025 19:45:32 Krister Johansen <kjlx@templeofstupid.com>:
->>
->>> On Mon, Sep 08, 2025 at 07:31:43PM +0200, Matthieu Baerts wrote:
->>>> Hi Krister,
->>>>
->>>> On 08/09/2025 19:25, Krister Johansen wrote:
->>>>> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
->>>>>> =E2=80=A6
->>>>>
->>>>> Thanks for the reviews, Geliang and Matt.=C2=A0 If you'd like me to f=
-ix the
->>>>> formatting up and send a v2, I'm happy to do that as well.=C2=A0 Just=
- let me
->>>>> know.
->>>>
->>>> I was going to apply this diff:
->>>>
->>>>> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
->>>>> index 13108e9f982b..2abe6f1e9940 100644
->>>>> --- a/net/mptcp/sockopt.c
->>>>> +++ b/net/mptcp/sockopt.c
->>>>> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_=
-sock *msk, struct sock *ssk)
->>>>> {
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 static const unsigned int =
-tx_rx_locks =3D SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct sock *sk =3D (struc=
-t sock *)msk;
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int kaval =3D !!sock_flag(sk, S=
-OCK_KEEPOPEN);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool keep_open;
->>>>>
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keep_open =3D sock_flag(sk, SOC=
-K_KEEPOPEN);
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ssk->sk_prot->keepaliv=
-e)
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, kaval);
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEE=
-POPEN, kaval);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, keep_open);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEE=
-POPEN, keep_open);
->>>>>
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_priority =3D sk->s=
-k_priority;
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_bound_dev_if =3D s=
-k->sk_bound_dev_if;
->>>>
->>>> (sock_flag() returns a bool, and 'keep_open' is maybe clearer)
->>>>
->>>> But up to you, I really don't mind if you prefer to send the v2 by
->>>> yourself, just let me know.
->>>
->>> Thanks, I'll go ahead and amend as you suggest and then send a v2.
->>
->> Great, thanks.
->>
->> While at it, please use [PATCH net] as prefix.
->
-> Thanks, will do.=C2=A0 May I preserve the Reveiwed-By tags from the v1, o=
-r
-> would you like to review again?
+[...]
 
-You can preserve it.
+> diff --git a/drivers/phy/apple/atc.c b/drivers/phy/apple/atc.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9213485234873fcaafeb1d1d9de3ddf07767d552
+> --- /dev/null
+> +++ b/drivers/phy/apple/atc.c
+> @@ -0,0 +1,2214 @@
 
-Cheers,
-Matt
+[...]
+
+> +static int atcphy_load_tunables(struct apple_atcphy *atcphy)
+> +{
+> +	int ret;
+> +	struct {
+> +		const char *dt_name;
+> +		struct apple_tunable **tunable;
+> +	} tunables[] = {
+> +		{ "apple,tunable-fuses", &atcphy->tunables.fuses },
+> +		{ "apple,tunable-axi2af", &atcphy->tunables.axi2af },
+> +		{ "apple,tunable-common", &atcphy->tunables.common },
+> +		{ "apple,tunable-lane0-usb", &atcphy->tunables.lane_usb3[0] },
+> +		{ "apple,tunable-lane1-usb", &atcphy->tunables.lane_usb3[1] },
+> +		{ "apple,tunable-lane0-cio", &atcphy->tunables.lane_usb4[0] },
+> +		{ "apple,tunable-lane1-cio", &atcphy->tunables.lane_usb4[1] },
+> +		{ "apple,tunable-lane0-dp", &atcphy->tunables.lane_displayport[0] },
+> +		{ "apple,tunable-lane1-dp", &atcphy->tunables.lane_displayport[1] },
+> +	};
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(tunables); i++) {
+> +		*tunables[i].tunable =
+> +			devm_apple_tunable_parse(atcphy->dev, atcphy->np, tunables[i].dt_name);
+> +		if (IS_ERR(tunables[i].tunable)) {
+> +			dev_err(atcphy->dev, "Failed to read tunable %s: %ld\n",
+> +				tunables[i].dt_name, PTR_ERR(tunables[i].tunable));
+> +			return ret;
+
+ret is unitialized here, could be `return PTR_ERR(tunables[i].tunable);`
+instead
+
+Janne
 
