@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-806595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436D5B4991E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:55:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14957B49922
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA1E341774
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:55:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730AA7AA4D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC48A31E0F5;
-	Mon,  8 Sep 2025 18:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D226D31C594;
+	Mon,  8 Sep 2025 18:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMqnPm92"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="akzBGShJ"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093A531C576;
-	Mon,  8 Sep 2025 18:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D2031158A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357684; cv=none; b=UhCNqcPZsJHAe3fjPdswNBz3Z/SJUHQ2kr7SHUv2RAmURbEGVHm1Ay7nkt+qCl4thqTKJaK5QB8blUJdQnblqxFjpNopk70plvavAzVTR8bFRDV5OwPbIIR0zOg1il2MCTOw6Tc1bQdUau2FB+ADe4VQua+/I/lGgyzLAMOK5xE=
+	t=1757357774; cv=none; b=PWVzDnw7dEmtFj8QyrxCnvNAduKvikJeaLzWZEyNexe7mnK0vMCeZvuNJrUu6CFOxwrcUAy5SHTtXPap0mhhqSHtognA6G8WH1cFlWLOH2RODb4hALl7KGJ7M4rnQn26wew28XITgv3JiJISH25PZiHv9C7Uwt5AHunmuvNTnpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757357684; c=relaxed/simple;
-	bh=HC3BwWe2fJzOfGoybqsrEIEg9/rGhJskoegmSxORszM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ENHciBiFcD2OphEvzJ4yAWB0do7UJaFmwyBsrVh6XWuOAgzzzaVY8355wmLg7bdhygJZ4o82DLbwzowKldPj2dUuFMmzxgbU4bU7nWqJSbw6P0kleQ2vysfEQdj8pM7PxoTB4GOhUNpzOSFaK9fX0KWb9s+G5txSRyCmlpsrBD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMqnPm92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8796EC4CEFA;
-	Mon,  8 Sep 2025 18:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757357683;
-	bh=HC3BwWe2fJzOfGoybqsrEIEg9/rGhJskoegmSxORszM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nMqnPm929t4cun8MDWo706UzxnidQaGX+8PE+SOJmuXd0sw9p1OAy3fNeomhXuJ8y
-	 FAZXCbNIb9kFvxoKruPUz640gwSvvks0aSz4daKaNz0BFK94jyYUjeyPoXicy2WVa8
-	 gcr4rBCkxVp1Loh6kgfNRedrHgRgkISQtqHjxUwuoRkYhYQ1ZnqSgpgKGijCfAlBw1
-	 YVelIs/JTyvimSyzrdlvRfEpLfjPJlFfYn/Q0HUDzQpXQdwze3dGT1cjyz+Q4o1cW1
-	 hjPDKjoJz2n6khfeBDJgslryCFsARByLkpba5YVbBghJlwhMU/DOsMvHo14IL6VAhQ
-	 hEe/x2z22kY3g==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74542b1b2bcso3647286a34.3;
-        Mon, 08 Sep 2025 11:54:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW0lR1MpDjqL5LXt+dwYuZ7Nkzf9vLakbzOoLU5aYdvvzpNj0ND8TZpJ+Egq9kTOfoUWa4HzVEHpQhkOZM=@vger.kernel.org, AJvYcCX9XllCTRsNoqnWGgUb+WBOzqnw+lwRxDL1jjyLqztqZdYJKGoWzSwlW2b8v0H2Zi6dlEBRAIUlD7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1MWKdq65MrvSFIj6fWtOOwKJARVGtQiaVmfh4NHo+36wncPig
-	sV7ON/fvUp7EOn8OytHa0iMMwv0+oHP/844jV0AhfzH+Jc0IP3VSNVBQhjrPkFBV3oeh9jiZi5v
-	TTRncIBO0CC52Jt8pf3dTkEV/OizLpQY=
-X-Google-Smtp-Source: AGHT+IFI4Bx5Gvm0Ft6vinfpRqYEXas41f/whzbKpcuomonW8MSHnsmc1TuQt3oBeG1Cy67OATMaENJHiGiUwfm7FAs=
-X-Received: by 2002:a05:6808:2190:b0:439:adcd:9eb6 with SMTP id
- 5614622812f47-43b29859a99mr4229388b6e.0.1757357682859; Mon, 08 Sep 2025
- 11:54:42 -0700 (PDT)
+	s=arc-20240116; t=1757357774; c=relaxed/simple;
+	bh=jKoqQAc1VFhM4L0DcJWxLfr8M9tdHv3HkePDz6djPJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tyTerkNe2kCfbp89ts4KEL58GmtAq6WhHkwRj/Hhu362uXpWlv9/IYm50S5dmJgrzcFnx1CN5fA9aQQSkTPF04cJQ7qVIbMEAnxYiXLuWV5wFM7qySIMAixGcjmjOLvz7nIdEA8pN4I5XwF54D3duXh+7o2X3ao7Rohj6WPqOHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=akzBGShJ; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id m2DjCuTlLeepoyQC; Mon, 08 Sep 2025 14:56:11 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=NY/Q+BaQ/oifWT98guFvS/KoXG9Li4hZdsQ88vbBeT8=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=akzBGShJlx1/YgkyRBe+
+	s4IL9CZza7DOaXDEFCRi+A2IhK4u1FiAVrxiyHXMojMD8kXP67XSAIBRhXli8iEsEPAq2YWxzB6h2
+	b6dfb+NDDNKVLHDtAh54o2V5Jm+Gd1njMj478hobSLGvvE/g7ysAH6EcOOmB3eGS7bipTHoFKA=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14189095; Mon, 08 Sep 2025 14:56:11 -0400
+Message-ID: <da3a84a5-08e6-4faf-807f-3610f37612e0@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 8 Sep 2025 14:56:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826183644.220093-1-sohil.mehta@intel.com>
- <CAJZ5v0hw+797-mm3qA6PqQdA7hWyZKhkYobbvF+8MCvg1cHZvQ@mail.gmail.com> <67ffd6b7-55c2-4ee0-9243-44bf8336152d@intel.com>
-In-Reply-To: <67ffd6b7-55c2-4ee0-9243-44bf8336152d@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 8 Sep 2025 20:54:30 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iXrqs2oVx0iYanjyJ6ucXorWi6PXPqW7Kdjnsu-zTGEg@mail.gmail.com>
-X-Gm-Features: Ac12FXwY-2evvI3P2YVMrb7jo8op0NgDbdgESRZ7BRnBXWyTJn2_4vQQnQjFOus
-Message-ID: <CAJZ5v0iXrqs2oVx0iYanjyJ6ucXorWi6PXPqW7Kdjnsu-zTGEg@mail.gmail.com>
-Subject: Re: [PATCH v3] cpufreq: ondemand: Update the efficient idle check for
- Intel extended Families
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
-	x86@kernel.org, Tony Luck <tony.luck@intel.com>, Zhao Liu <zhao1.liu@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 07/15] scsi: qla2xxx: fix term exchange when cmd_sent_to_fw ==
+ 1
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH 07/15] scsi: qla2xxx: fix term exchange when cmd_sent_to_fw ==
+ 1
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+In-Reply-To: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1757357771
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 3572
+X-ASG-Debug-ID: 1757357771-1cf43947df30c3d0001-xx1T2L
 
-On Fri, Sep 5, 2025 at 11:32=E2=80=AFPM Sohil Mehta <sohil.mehta@intel.com>=
- wrote:
->
-> On 9/4/2025 1:02 PM, Rafael J. Wysocki wrote:
->
-> >
-> > Since you are adding this #ifdef below, why don't you go a bit farther =
-and do
-> >
-> >> +#ifdef CONFIG_X86
-> >> +#include <asm/cpu_device_id.h>
-> >
-> > static bool should_io_be_busy(void)
-> > {
-> >        /* All Intel Family 6 and later processors have efficient idle. =
-*/
-> >        return boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
-> > boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO;
-> > }
-> > #else
-> > static inline bool should_io_be_busy(void)
-> > {
-> >         return false;
-> > }
-> >> +#endif
-> >> +
-> >>  #include "cpufreq_ondemand.h"
-> >>
->
-> I am fine with this approach. Would moving the #define to the header be
-> slightly better?
+(target mode)
 
-I think so.
+Properly set the nport_handle field of the terminate exchange message.
+Previously when this field was not set properly, the term exchange would
+fail when cmd_sent_to_fw == 1 but work when cmd_sent_to_fw == 0 (i.e. it
+would fail when the HW was actively transferring data or status for the
+cmd but work when the HW was idle).  With this change, term exchange
+works in any cmd state, which now makes it possible to abort a command
+that is locked up in the HW.
 
-> Add to cpufreq_ondemand.h:
->
-> #ifdef CONFIG_X86
-> #include <asm/cpu_device_id.h>
-> bool od_should_io_be_busy(void);
-> #else
-> static inline bool od_should_io_be_busy(void) { return false; }
-> #endif
->
-> Then, cpufreq_ondemand.c doesn't need the #ifdefs. It can simply do:
->
-> bool od_should_io_be_busy(void)
-> {
->         /* For Intel, Family 6 and later have an efficient idle. */
->         return (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
->                 boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO);
-> }
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c | 52 ++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
 
-You'd still need to put the above under #ifdef CONFIG_X86 though.
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 72c74f8f5375..b700bfc642b3 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3622,14 +3622,35 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	struct qla_tgt_cmd *cmd,
+ 	struct atio_from_isp *atio)
+ {
+-	struct scsi_qla_host *vha = qpair->vha;
+ 	struct ctio7_to_24xx *ctio24;
+-	request_t *pkt;
+-	int ret = 0;
++	struct scsi_qla_host *vha;
++	uint16_t loop_id;
+ 	uint16_t temp;
+ 
+-	if (cmd)
++	if (cmd) {
+ 		vha = cmd->vha;
++		loop_id = cmd->loop_id;
++	} else {
++		port_id_t id = be_to_port_id(atio->u.isp24.fcp_hdr.s_id);
++		struct qla_hw_data *ha;
++		struct fc_port *sess;
++		unsigned long flags;
++
++		vha = qpair->vha;
++		ha = vha->hw;
++
++		/*
++		 * CTIO7_NHANDLE_UNRECOGNIZED works when aborting an idle
++		 * command but not when aborting a command with an active CTIO
++		 * exchange.
++		 */
++		loop_id = CTIO7_NHANDLE_UNRECOGNIZED;
++		spin_lock_irqsave(&ha->tgt.sess_lock, flags);
++		sess = qla2x00_find_fcport_by_nportid(vha, &id, 1);
++		if (sess)
++			loop_id = sess->loop_id;
++		spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
++	}
+ 
+ 	if (cmd) {
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
+@@ -3642,31 +3663,20 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		    vha->vp_idx, le32_to_cpu(atio->u.isp24.exchange_addr));
+ 	}
+ 
+-	pkt = (request_t *)qla2x00_alloc_iocbs_ready(qpair, NULL);
+-	if (pkt == NULL) {
++	ctio24 = qla2x00_alloc_iocbs_ready(qpair, NULL);
++	if (!ctio24) {
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe050,
+ 		    "qla_target(%d): %s failed: unable to allocate "
+ 		    "request packet\n", vha->vp_idx, __func__);
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (cmd != NULL) {
+-		if (cmd->state < QLA_TGT_STATE_PROCESSED) {
+-			ql_dbg(ql_dbg_tgt, vha, 0xe051,
+-			    "qla_target(%d): Terminating cmd %p with "
+-			    "incorrect state %d\n", vha->vp_idx, cmd,
+-			    cmd->state);
+-		} else
+-			ret = 1;
+-	}
+-
+ 	qpair->tgt_counters.num_term_xchg_sent++;
+-	pkt->entry_count = 1;
+-	pkt->handle = QLA_TGT_SKIP_HANDLE | CTIO_COMPLETION_HANDLE_MARK;
+ 
+-	ctio24 = (struct ctio7_to_24xx *)pkt;
+ 	ctio24->entry_type = CTIO_TYPE7;
+-	ctio24->nport_handle = cpu_to_le16(CTIO7_NHANDLE_UNRECOGNIZED);
++	ctio24->entry_count = 1;
++	ctio24->handle = QLA_TGT_SKIP_HANDLE | CTIO_COMPLETION_HANDLE_MARK;
++	ctio24->nport_handle = cpu_to_le16(loop_id);
+ 	ctio24->timeout = cpu_to_le16(QLA_TGT_TIMEOUT);
+ 	ctio24->vp_index = vha->vp_idx;
+ 	ctio24->initiator_id = be_id_to_le(atio->u.isp24.fcp_hdr.s_id);
+@@ -3683,7 +3693,7 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		qpair->reqq_start_iocbs(qpair);
+ 	else
+ 		qla2x00_start_iocbs(vha, qpair->req);
+-	return ret;
++	return 0;
+ }
+ 
+ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+-- 
+2.43.0
 
-But it may as well go into the header as static inline in the CONFIG_X86 ca=
-se.
+
 
