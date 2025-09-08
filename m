@@ -1,124 +1,186 @@
-Return-Path: <linux-kernel+bounces-806431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D08B496B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD2DB496BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1AE0440B4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1F23BC34C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D455312801;
-	Mon,  8 Sep 2025 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F245E312832;
+	Mon,  8 Sep 2025 17:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOsYG0DY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW3qbeNr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287213126DB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF623126C5;
+	Mon,  8 Sep 2025 17:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351569; cv=none; b=P/Dfb1hkpdADLxKF4YIV9EQBCct+iWMs22JQtZFVpiHfarWQnOBIl/CbxytvUG6exdvFrzdHvV0m9mzL2QHZ2S+ZA1jklmTA9BL8AWAawE5HObaWyaVyrpmGYsW8onv20BrG4EvkxvZ+Yqzn57SWqTErN/jlUXNBD+/APHa7vSc=
+	t=1757351598; cv=none; b=RG3iUYSLPTbvrfTqhF8hGc3HoKq43ax0wkvXoSbowIR/gEdztrbuLKTQDSXxkOqnJd0iev88AKFS8ZTPAhzKtRuQ/MpWkMaA/KaOVwDfXI/H6M81+KnWOdZUD7I3yp1J1lnOh5i6xY0tKByRn6ESOMy3U7bHiHVtPk4Y9VId0RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351569; c=relaxed/simple;
-	bh=9wENXREJWltOZIo5LsFs5L8jitKtQe8nqAyfDbsl9ys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hw8I7fFn0px4vXZy/VDA6MpX1ntZkseJZjfNsRG5Gl7Th+80CGQyMShCvp1VJLDMYCfBf/pDieDuO1p8Es0PAMkry0nmqikEy8dunu9xxhigE7rYDS50gxP2jRu0UR1XRCwuTkAp5ZlS9aChwLqa3tKhfcLLRXgJSZ6mZIA0d4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOsYG0DY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757351567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ITe2If+kWs1Wpx5tlRiHNQVWbTASg/lvnSb0pDekYg=;
-	b=DOsYG0DYxinBpThkxeAHTXfscqm7n+RGzdX1yvnZINwFaIDYjKOi4hIc5wasB6Dn/WcJni
-	ASm6Pxkjc8UISk7/4shO8ZSbBMtlj4BBojtOtf0mhKt3YwL9cXGkIqwiOMzKK0/WQNQC0m
-	nYodxerG+O3r/7ywFRNGdik8s8d3iK8=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-2d0c7X_SOkeQx0fyaLYZlw-1; Mon, 08 Sep 2025 13:12:45 -0400
-X-MC-Unique: 2d0c7X_SOkeQx0fyaLYZlw-1
-X-Mimecast-MFC-AGG-ID: 2d0c7X_SOkeQx0fyaLYZlw_1757351565
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e870614b86so1571904885a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:12:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757351565; x=1757956365;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ITe2If+kWs1Wpx5tlRiHNQVWbTASg/lvnSb0pDekYg=;
-        b=emIN8mR45Nc+iTPNbLeui/XWbZ/bBqIulat+HNyxb5YQV80i3cT0X9OSH2bgPBhm1J
-         jrfZklXGFkJ/337c5Z1JBfhaY4IcwfZkTrQFbd0zjFV79dF3MgMIwqy2J5UVj2yMDOh0
-         7Bc9exQQJjwxw7bpMWM6I+Lzm0t7XaObcLyWE/6T5+GsJEDaQ9zIkI6ziIdlB+su7oU0
-         J1sNjXnwYXApaIoVYYz7TQfEmwtyS8iu9KBU7cg9//EUWtt6BPl+9FYece+KcdxrXFoZ
-         KqEIJyEhgbZFyjEdWUGCSWeg5lV9vmRegWDYHF5LgPVK1MDOLpo0YYJh1HrCkW9V9r3u
-         m/jA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1WCGlryHYI5Xo3MAJ3OGW5ScgoVc/ItF+KRRk2CglQPirKjWebZmHw5GQwduOHm3v55NklGHs+l8yuAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx4rJLSVj7LQhCRptSa77etkCBM2dkXVl72diE/pNB0VZv3KbZ
-	CpQpFXbcvvYEPAkhVbsKXIbDgdiVVjL+ZdRbBDw1+/ymsTDkFJvkzQlRVU7NkqHtGO9j9pdB4Hl
-	pKwFKAJ3saXx0YGtTi1ljg1EHmBfv7BOWgTfLtOOGCTpY6qAOQ3PzyxAb7D/xetpZTg==
-X-Gm-Gg: ASbGncsF62chy/vTTNZC2hIuBP3Evk6PI3IVSfJ3JxBScosfsa5blgP0x19Zbof1gLj
-	tZhE2ZZBg1tD4oQe6ad567f3UuKD3dL3ZXutHZIZS/5WQMABOgyP+E6JVkHTTR3yun4YB3ykxuG
-	W2MI8G7pAe/Z0WpD7oRtqbsa9O0ZKy9KeMbpibls8BqVJAIE4KoNMWX/4U1XU3aRjjKW1rYSvei
-	0XGBAPLEvILhS2OVVktlwL0T2vaFH1qUYcTL4k04hYm1WUioKyvshA+d/jQLmidu7O4+MN0JIwk
-	yhxibvCw5lKCnwOXmRyu00AJGqtSZEG6/zxpnaltK3HmovvH3uRfo5DQ2vE=
-X-Received: by 2002:a05:620a:4714:b0:7e8:3fbd:4190 with SMTP id af79cd13be357-813bdf6a9c8mr829190385a.2.1757351564631;
-        Mon, 08 Sep 2025 10:12:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwMZsEl4SQNKbeMqNXOZc4NyVlPYCi+ENDx/Vjfad/o+tQQ/qJhvSwRqRuWnLNVWOHla1Uqg==
-X-Received: by 2002:a05:620a:4714:b0:7e8:3fbd:4190 with SMTP id af79cd13be357-813bdf6a9c8mr829186285a.2.1757351564056;
-        Mon, 08 Sep 2025 10:12:44 -0700 (PDT)
-Received: from x1 ([2600:382:8507:870e:b6f8:ee72:4f09:a16a])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8138798dfcesm600461485a.34.2025.09.08.10.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:12:43 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:12:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: scmi: migrate round_rate() to determine_rate()
-Message-ID: <aL8Oifz8zR9nJ_Wg@x1>
-References: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
+	s=arc-20240116; t=1757351598; c=relaxed/simple;
+	bh=Vlw2PodGlpH6M6DPQXMu0NrJCErZpds2VD2me/d72cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rfw0Kftuo3XnbU3OyiU2ivmeNTPqljkuhSuEYj+2jcmkvW7oaCA1Zk82Uytijh5tnAPqyPNghYo+gtibNfgcm85e39LqwA9E/zQ/1YB3QI8Dr79AzVbiBtF3ny+aQx9FSwuY0aASeJVL77TYAlBEAL5k3ogJqoY0kVuwySFdTmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW3qbeNr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFFFC4CEF1;
+	Mon,  8 Sep 2025 17:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757351597;
+	bh=Vlw2PodGlpH6M6DPQXMu0NrJCErZpds2VD2me/d72cY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oW3qbeNrlpu8ppgXT95Ck44viN5TsYegZgq8XIwZwWZnDOKV44i1sCeK2QsgFLj0r
+	 1u3NMyU/RCl3GBOuY2UT0SOBCzd9a1OE0W4I86J+CoZDlIPKxXN+HfdTg5roVmdKLO
+	 O384f6851628Gs+xQpMTDOiJ56kjHbuM3f3v+pO2Yxs0JYO7CbAo1B4azsBhrrCEEb
+	 0QTT+npqO5YC2xvWPHH4mQ+Ha3mYGzeHH8jTO4gehYL8vdhtnugeBWNcX8fvqIKbpe
+	 DdRS7giCEC5BDdLEy8diIMP5em+gh7JH7Fd9A+GytemIQokIUjK4pOLe/Sc5QzCBDc
+	 2HBVDVjzKGysA==
+Message-ID: <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
+Date: Mon, 8 Sep 2025 19:13:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
+ SOCK_KEEPOPEN
+Content-Language: en-GB, fr-BE
+To: Geliang Tang <geliang@kernel.org>,
+ Krister Johansen <kjlx@templeofstupid.com>,
+ Mat Martineau <martineau@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+ David Reaver <me@davidreaver.com>
+References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
+ <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
+ <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 01:12:07PM -0400, Brian Masney wrote:
-> This driver implements both the determine_rate() and round_rate() clk
-> ops, and the round_rate() clk ops is deprecated. When both are defined,
-> clk_core_determine_round_nolock() from the clk core will only use the
-> determine_rate() clk ops.
-> 
-> The existing scmi_clk_determine_rate() is a noop implementation that
-> lets the firmware round the rate as appropriate. Drop the existing
-> determine_rate implementation and convert the existing round_rate()
-> implementation over to determine_rate().
-> 
-> scmi_clk_determine_rate() was added recently when the clock parent
-> support was added, so it's not expected that this change will regress
-> anything.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Hi Geliang,
 
-I included this patch in this pull request to Stephen:
-https://lore.kernel.org/linux-clk/aL8MXYrR5uoBa4cB@x1/T/#u
+On 07/09/2025 02:51, Geliang Tang wrote:
+> Hi Matt,
+> 
+> On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
+>> Hi Krister,
+>>
+>> On 06/09/2025 02:43, Krister Johansen wrote:
+>>> Users reported a scenario where MPTCP connections that were
+>>> configured
+>>> with SO_KEEPALIVE prior to connect would fail to enable their
+>>> keepalives
+>>> if MTPCP fell back to TCP mode.
+>>>
+>>> After investigating, this affects keepalives for any connection
+>>> where
+>>> sync_socket_options is called on a socket that is in the closed or
+>>> listening state.  Joins are handled properly. For connects,
+>>> sync_socket_options is called when the socket is still in the
+>>> closed
+>>> state.  The tcp_set_keepalive() function does not act on sockets
+>>> that
+>>> are closed or listening, hence keepalive is not immediately
+>>> enabled.
+>>> Since the SO_KEEPOPEN flag is absent, it is not enabled later in
+>>> the
+>>> connect sequence via tcp_finish_connect.  Setting the keepalive via
+>>> sockopt after connect does work, but would not address any
+>>> subsequently
+>>> created flows.
+>>>
+>>> Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on
+>>> the
+>>> subflow when calling sync_socket_options.
+>>>
+>>> The fix was valdidated both by using tcpdump to observe keeplaive
+>>> packets not being sent before the fix, and being sent after the
+>>> fix.  It
+>>> was also possible to observe via ss that the keepalive timer was
+>>> not
+>>> enabled on these sockets before the fix, but was enabled
+>>> afterwards.
+>>
+>>
+>> Thank you for the fix! Indeed, the SOCK_KEEPOPEN flag was missing!
+>> This
+>> patch looks good to me as well:
+>>
+>> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>>
+>>
+>> @Netdev Maintainers: please apply this patch in 'net' directly. But I
+>> can always re-send it later if preferred.
+> 
+> nit:
+> 
+> I just noticed his patch breaks 'Reverse X-Mas Tree' order in
+> sync_socket_options(). If you think any changes are needed, please
+> update this when you re-send it.
 
-Brian
+Sure, I can do the modification and send it with other fixes we have.
+
+pw-bot: cr
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
