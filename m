@@ -1,184 +1,150 @@
-Return-Path: <linux-kernel+bounces-806678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD3AB49A4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:46:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900CFB49A50
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2DB175919
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA7A57B392D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123A02D3A9E;
-	Mon,  8 Sep 2025 19:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EB12D3EC1;
+	Mon,  8 Sep 2025 19:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oP4A1pOo"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P75I/mNA"
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F852BE7C3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439C82D3743
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360805; cv=none; b=GijB6Jvj6QwRttU+TaObTOnXv+32Pf5BVLe6St4mlML195Dyp2dumREX5UkioMB8VLfBsLX1KjgcEF2/vZHAtRrT2P/OEHiyCxMrW4gwfk0jKvgxopVTMdif6LoqIEkhHYJ7XsmiVlM7L+t1ggsVaEPiHqGftmUITaH4Nk+KBFM=
+	t=1757360894; cv=none; b=efCFyTMq61ZDaBkpVfPN86KOGbrEy7mSgixDmTXfAcXlYIOgzv/YROctZR49CMThQkNo7Lohq+K0H1dbGrEQ3VGINWZ+T54cEa8PAkIWj3W/UkpI44NHXAQfA9nmkhfScUWScuIY8jznxLg/iNJQsmLEUVdrKtRW8dSoITe1zXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360805; c=relaxed/simple;
-	bh=OR45YgabH7Xzwh9KWzzPc1daGgk0Nr/x02ecaLsxgSs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bnHl5P/tUQhe0VPyHRLP4SQ7pU4PpWPc2Ll2OYYeVPmthUekPFf3LVbiw7boykZxRigIVlIYSMmjX1UulZIlkPf0R2TWvk6udHNdNjXgdpuvwoldNum0Zkx4W+074NH+V4Ool8r+HzUPH9TNUDbBhu0Sq2K97yd8bukmTaVhq8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oP4A1pOo; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1757360894; c=relaxed/simple;
+	bh=3omYiVett5KT69OkLw6cgQRfDeNeE/hk5f2AnLMqdpY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eSXSP10+KrxT/dyUmbUm28FY8YlBacGWQCLs0ksZwiW8WwHEVwm1MsKC0Aqx/YK2BAATAo53HvkZhFGJ0uic0ObeQ3Os42qqhU6/7TnscPTylRYK6LVaKpftHxxWDrYWO90rDtB5qM5z/Vtho/mPn5+4DX/jnmDjcD3XJczSwp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P75I/mNA; arc=none smtp.client-ip=74.125.224.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24ca417fb41so56589585ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:46:43 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-5fe42994547so887891d50.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757360803; x=1757965603; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+        d=google.com; s=20230601; t=1757360892; x=1757965692; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OtuFE8fz0uXe9VtzwZec8xI+z6SKpPfaDmAZDtJxuFo=;
-        b=oP4A1pOo8K7zMGwGhdn8TaZX07j3rFwXsfVbgMoolBCly4Dd5KjVT311E28xLeYmFm
-         Pdc9K04h7U7ODJXEsYIufIB1JI/E3y0SJT7k3LuLGpnQCJEpMqWzkIslSqZ1wFTplYK7
-         l+mkbqRDyQLSfX2yRUGeaJ2976eSZDG6Ef831K60L+K4yCunsJ1pItTnUzSilUiLPyNN
-         Sv3AO7Dvq+KPZhfFQizdfDh3FHVG8jO4nZbrEQCLi6ux1SUCv2CG/8l4rLDAO88ZFvYv
-         SAfxTrbodTk8OMLn8ss/RlDHQNcbwGt8/2blEvDLYjYu+8PhBW79j//cLyieoJXaG+wE
-         M1tg==
+        bh=lkWutJuoMHFChanlNo58aMCO1DUKKA6gzqFMsdXKD24=;
+        b=P75I/mNA5tBUoM9rBXhoelsHenVVgG9C/CsXqhHBEAuOCWy9BYVXFvCX+KZ3SQ2ODY
+         dCt/r2XjVW/DNc7ro30rTyR61gYIzWj4p8cTm6sheu2KWmEftfYeRSTbPhoSx3DpHF9c
+         X0Zuq7E7lxyX9mWY1mzgRIx6TTTI83LYy+7xDNCQx038b3tV7/i/Nu3Criu4CgDVLuzo
+         y6ZBkIleLeu5Knil0hUqUE6JCepgcH5pl/3kEQ/7vRCsiH5FQcsy1LC/nD8Y7i+C90Nc
+         l0Lpnpafvwd4E8XHW4n5bDs1GD38kFpkEZDoFnHcJvszUrDTunxjZiieE9Y9TwMbjiqZ
+         Pung==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757360803; x=1757965603;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+        d=1e100.net; s=20230601; t=1757360892; x=1757965692;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OtuFE8fz0uXe9VtzwZec8xI+z6SKpPfaDmAZDtJxuFo=;
-        b=YrDNTTZc4dtloT9KX24CftpksdsZ3MGXQqProW+EMyGw3Ib7QurNIPj2CKZ/6S7m/l
-         0y3T1RUr0gVKI9eXVGAsXKYE+lILkCio9Qx8RO5iMt9V1phpiHhIYcgUnxrpGtQwmkPR
-         BmbGUpA0X6QdS5kgCwpPRWHnRC8raUTh0f9MGzs2HwZEDA9jXKPdOFy0lSec8+R3Iy7H
-         EG5BzRMeXWO0rZ2rV+C2Y5Uox2BWq5825yVvyuhbu/zr3mcYJFNXERTqLC9FSynzQ+vW
-         nmnZUVO2HbX4aKBIolxF8MewLaG3z5CAvkMHAicrlgYgbJmWmydBlVc+vEuvYdte2ugw
-         /p2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvW8uM6D16T1sfRqaXTNPyk6V7X8I4AUJeUXaxL6Np06Xa1Qadfa1V3k/BEWRQr9s6pwS5Gpw7Lu1akhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXbJiQ9+TsK9VT+QtTDrTRpOCtez0Ahzijv9k1CXM+whOO/r9W
-	9vDiFPRKnprOzrzfeJ27iVT4FdGwUt3r7PkiRFXBML3pWLdUKW3gqpZAdpkYRBlFpOORmBrKvWP
-	5IY/JWg==
-X-Google-Smtp-Source: AGHT+IFb1neEFkxq+1aKM895lwflQXUWxZfzQ3TkgAtLxYrbO6zawNDmMq2mZAuMldFhSu9Kf+nu0tLZnJY=
-X-Received: from pjeb1.prod.google.com ([2002:a17:90a:10c1:b0:32b:b3c4:a304])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec8e:b0:24e:e5c9:ed14
- with SMTP id d9443c01a7336-251734f2fbemr125000785ad.35.1757360803162; Mon, 08
- Sep 2025 12:46:43 -0700 (PDT)
-Date: Mon, 8 Sep 2025 12:46:41 -0700
-In-Reply-To: <20250819090853.3988626-4-keirf@google.com>
+        bh=lkWutJuoMHFChanlNo58aMCO1DUKKA6gzqFMsdXKD24=;
+        b=Ob2kF1BAgM/M6/4vTfcwROqP+s/76iIvyTCyrUBnWsVoklj84dfQC7VQuA9NP2CoDP
+         HIbLhzd0K/YmojxvE/hTPNxDpP2rrW+Ll1+X5UObMXpSPmm3rUuCvkMnq3henbE4eeAO
+         b6auAHPxLtZi6ocS6KU7sF6p3Of5Ks0wtNY/j1JjR5pyoH1AWLQ0jNNuxKh4kF01thLb
+         L+AwBOIGR9RYMsQ0OLqp+sKmWYVd/HJjbEpjtpfgGDVfQPxOyADgP4TiF8e27ODvQnmc
+         Oz9HUTQ5RI5rfi7MFyGXqIJysUA8dvvwM0mSTMUY324QLYpMjFax2TBC8vGI6RnzXCDq
+         xVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmo6fd/wOKp+U7/casGT9Khn9qMfNB/vk1pnSgxLuEntwe25VqsSpMs4xv8UlwCtUTRR4n87D3rUP2NI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIyv+ahLmBmQxmt7euXYAAn3KMeDdbIa2kjuos4EZqzIN3tGlz
+	hYZMmXKi1iRvHtgtpxTcjrGxT89uVfOV/m6lxQU+uRF9OfaM+zsoazDXc2D7bBan0Q==
+X-Gm-Gg: ASbGnctc1lVsK9mZT0jiFKjlndOopkgJJu4eym/i9X8zcJYsY1SC9xulYZvLyBfFX51
+	U4mgvxN/a1vkMMW+8SEuh9kejLlOoQzx8uYDbEnbmF5M07SHpQfm+FjhyCkKRlpETkGVxc6gF4Z
+	d2LDIHwv65SX2FlQJ9N8UFG+Yu/6D+8qQbN7LBlrYQ90MZi4ZIrluVsHMk/VBwlAF4mgMVCy1Su
+	uBKVB8eW7f54jzOcmtGHRddNuoZTRDWBRWPWXpG1j6U+rBLHbZBAJHYyUxqvIcZlsx4/DDHg5I8
+	lc8NbisMqt8G/vLoVyvGdLrWPHYuBm7hHDGbD7a0F4rjQMUoVf0XvmPzYPbsBkPeoGv9YBbKmpc
+	DIuEOMbhwWZRmlxuOnPb04ouRL2blEyWMNn3qAPKhpsVu8CYUiRU6rs/WFLyHIYkrThhxNJDTzk
+	O23WUPbEk=
+X-Google-Smtp-Source: AGHT+IG4PW91kFyjbmPgXJLgM5A2EFr+Ploj908V1ZohpTeRJB9+gDbvi/48Raxp7i+jqIStykUZkQ==
+X-Received: by 2002:a05:690c:3681:b0:721:29fe:1d49 with SMTP id 00721157ae682-727f5a347b5mr89278617b3.52.1757360892016;
+        Mon, 08 Sep 2025 12:48:12 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a82d58b8sm55941157b3.9.2025.09.08.12.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 12:48:11 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:47:59 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+cc: Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will@kernel.org>, 
+    Shivank Garg <shivankg@amd.com>, Christoph Hellwig <hch@infradead.org>, 
+    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+    John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>, 
+    Peter Xu <peterx@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
+    Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>, 
+    Axel Rasmussen <axelrasmussen@google.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, 
+    David Howells <dhowells@redhat.com>, ceph-devel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/7] mm: fix folio_expected_ref_count() when
+ PG_private_2
+In-Reply-To: <aL7w4qrJtvKE1cu5@casper.infradead.org>
+Message-ID: <685fa6c1-e343-ae92-b673-48524918548d@google.com>
+References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com> <f91ee36e-a8cb-e3a4-c23b-524ff3848da7@google.com> <aLTcsPd4SUAAy5Xb@casper.infradead.org> <52da6c6a-e568-38bd-775b-eff74f87215b@google.com> <92def216-ca9c-402d-8643-226592ca1a85@redhat.com>
+ <2e069441-0bc6-4799-9176-c7a76c51158f@redhat.com> <3973ecd7-d99c-6d38-7b53-2f3fca57b48d@google.com> <aL7w4qrJtvKE1cu5@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819090853.3988626-1-keirf@google.com> <20250819090853.3988626-4-keirf@google.com>
-Message-ID: <aL8yoZLK73svpYv7@google.com>
-Subject: Re: [PATCH v3 3/4] KVM: Implement barriers before accessing
- kvm->buses[] on SRCU read paths
-From: Sean Christopherson <seanjc@google.com>
-To: Keir Fraser <keirf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Aug 19, 2025, Keir Fraser wrote:
-> This ensures that, if a VCPU has "observed" that an IO registration has
-> occurred, the instruction currently being trapped or emulated will also
-> observe the IO registration.
+On Mon, 8 Sep 2025, Matthew Wilcox wrote:
+> On Mon, Sep 08, 2025 at 03:27:47AM -0700, Hugh Dickins wrote:
+> > On Mon, 1 Sep 2025, David Hildenbrand wrote:
+> > > On 01.09.25 09:52, David Hildenbrand wrote:
+> > > > On 01.09.25 03:17, Hugh Dickins wrote:
+> > > >> On Mon, 1 Sep 2025, Matthew Wilcox wrote:
+> > > >>> On Sun, Aug 31, 2025 at 02:01:16AM -0700, Hugh Dickins wrote:
+> > > >>>> 6.16's folio_expected_ref_count() is forgetting the PG_private_2 flag,
+> > > >>>> which (like PG_private, but not in addition to PG_private) counts for
+> > > >>>> 1 more reference: it needs to be using folio_has_private() in place of
+> > > >>>> folio_test_private().
+> > > >>>
+> > > >>> No, it doesn't.  I know it used to, but no filesystem was actually doing
+> > > >>> that.  So I changed mm to match how filesystems actually worked.
+> > 
+> > I think Matthew may be remembering how he wanted it to behave (? but he
+> > wanted it to go away completely) rather than how it ended up behaving:
+> > we've both found that PG_private_2 always goes with refcount increment.
 > 
-> At the same time, enforce that kvm_get_bus() is used only on the
-> update side, ensuring that a long-term reference cannot be obtained by
-> an SRCU reader.
-> 
-> Signed-off-by: Keir Fraser <keirf@google.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c   |  7 +++++++
->  include/linux/kvm_host.h | 10 +++++++---
->  virt/kvm/kvm_main.c      | 33 +++++++++++++++++++++++++++------
->  3 files changed, 41 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index aa157fe5b7b3..2d3c8cb4f860 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -5785,6 +5785,13 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
->  		if (kvm_test_request(KVM_REQ_EVENT, vcpu))
->  			return 1;
->  
-> +		/*
-> +		 * Ensure that any updates to kvm->buses[] observed by the
-> +		 * previous instruction (emulated or otherwise) are also
-> +		 * visible to the instruction we are about to emulate.
+> Let me explain that better.  No filesystem followed the documented rule
+> that the refcount must be incremented by one if either PG_private or
+> PG_private_2 was set.  And no surprise; that's a very complicated rule
+> for filesystems to follow.  Many of them weren't even following the rule
+> to increment the refcount by one when PG_private was set.
 
-Please avoid pronouns, e.g.
-
-		 * visible to the instruction KVM is about to emulate.
-
-> +		 */
-> +		smp_rmb();
+Thanks, yes, I hadn't realized that you were referring to the +1 (versus
++2) part of it: yes, a quite unnecessarily difficult rule to follow.
 
 ...
 
->  static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 6c07dd423458..4f35ae23ee5a 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1103,6 +1103,15 @@ void __weak kvm_arch_create_vm_debugfs(struct kvm *kvm)
->  {
->  }
->  
-> +/* Called only on cleanup and destruction paths when there are no users. */
-> +static inline struct kvm_io_bus *kvm_get_bus_for_destruction(struct kvm *kvm,
-> +							     enum kvm_bus idx)
-> +{
-> +	return rcu_dereference_protected(kvm->buses[idx],
-> +					 !refcount_read(&kvm->users_count));
-> +}
-> +
+> So the current behaviour where we set private_2 and bump the refcount,
+> but don't take the private_2 status into account is the safe one,
+> because the elevated refcount means we'll skip the PG_fscache folio.
+> Maybe it'd be better to wait for it to clear.  But since Dave Howells
+> is busy killing it off, I'm just inclined to wait for that to happen.
 
-Extra newline.
+Yes, that's where my internalized-Matthew brought me in the end;
+though killing off PG_private_2 seems to have been just around
+the corner for a very long time.
 
-> +
->  static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
->  {
->  	struct kvm *kvm = kvm_arch_alloc_vm();
-> @@ -1228,7 +1237,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
->  out_err_no_arch_destroy_vm:
->  	WARN_ON_ONCE(!refcount_dec_and_test(&kvm->users_count));
->  	for (i = 0; i < KVM_NR_BUSES; i++)
-> -		kfree(kvm_get_bus(kvm, i));
-> +		kfree(kvm_get_bus_for_destruction(kvm, i));
->  	kvm_free_irq_routing(kvm);
->  out_err_no_irq_routing:
->  	cleanup_srcu_struct(&kvm->irq_srcu);
-> @@ -1276,7 +1285,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
->  
->  	kvm_free_irq_routing(kvm);
->  	for (i = 0; i < KVM_NR_BUSES; i++) {
-> -		struct kvm_io_bus *bus = kvm_get_bus(kvm, i);
-> +		struct kvm_io_bus *bus = kvm_get_bus_for_destruction(kvm, i);
->  
->  		if (bus)
->  			kvm_io_bus_destroy(bus);
-> @@ -5843,6 +5852,18 @@ static int __kvm_io_bus_write(struct kvm_vcpu *vcpu, struct kvm_io_bus *bus,
->  	return -EOPNOTSUPP;
->  }
->  
-> +static struct kvm_io_bus *kvm_get_bus_srcu(struct kvm *kvm, enum kvm_bus idx)
-> +{
-> +	/*
-> +	 * Ensure that any updates to kvm_buses[] observed by the previous VCPU
+It's a pity that there isn't much incentive on ceph folks to
+get it fixed: the one who suffers is the compactor or pinner.
 
-s/VCPU/vCPU to match KVM's preferred/typical style.
-
-> +	 * machine instruction are also visible to the VCPU machine instruction
-> +	 * that triggered this call.
-> +	 */
-> +	smp_mb__after_srcu_read_lock();
-> +
-> +	return srcu_dereference(kvm->buses[idx], &kvm->srcu);
-> +}
+Hugh
 
