@@ -1,196 +1,107 @@
-Return-Path: <linux-kernel+bounces-806694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C63B49AAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:06:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122C4B49AAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36446206F0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21964E1BC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7882D7DFF;
-	Mon,  8 Sep 2025 20:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4212D7DD4;
+	Mon,  8 Sep 2025 20:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="hM5q/qJM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kaxq5pcp"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44A9219A86;
-	Mon,  8 Sep 2025 20:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757361955; cv=pass; b=hmTX3CcDHzVBHIID1R+iVappo1etwt+EUarRflfZDtymSWJHlTlP4S8SbS2nxYoX3IGw3Dox1MdO+5xCSv2p/7Ie4PEiRzkGZ4Uqu5j7bwy6WKiaISGB8mLWTvVrNchWu4x800Isu0rb9C0DFc85DmBydx0JQQxOLXz5uo99foY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757361955; c=relaxed/simple;
-	bh=erTUly9Qg9X6cog7y18GcAb2e51Bg9D6zVP2Ld+yegU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f3F5oM1el+YgBvHLUZhBx6ltCucQuKoFjn94yRuWd0qFE37Xfx57ZAULiqcW8vkZ8pzyMb/UCPsVjImjFO5uHbj4hF/fjf7MdyYEtsvcrKiEj47wV8mKEthN6L2v/YgQp9NlxOB4OY7VDo+asKP4y4OrNEXyqM3jr6WPyZgx/4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=hM5q/qJM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757361899; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FBqZoto3NaNrr+QEk2kOlolOBw3muYFVoz92mSEsCqHEHx9bRDQVMBbpJvXLiEZn1Q7eNia7ROlo6ioobMA+XLoysc8dYZF2eB4bzoY2q4Mvdb1w+fUxt8QL5vlTMVEHXiU9sJF53nbHrsyPV3UhZpUZZNyk0Y2P5HGhidk7fn0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757361899; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8Qmtq2CeP5Jx7vZXKA2CMOipGElDjnWELU/7DNqKtTE=; 
-	b=MxHttsUDp1O7iL94CxpC4azMxrqzbdHtZMwsjWmfVfDp8Kmnr2njcXzIJ9sg+185/H7MVUIhbYTGKo2AvEKkeCrHmqcY0aJmhVSm9dlrtrpjzhe6/gvFYThXkLahFKnJupZ127Pgmdll3zTjB/HE7cv6WeXprzWlrH1t6Cdaqrk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757361899;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=8Qmtq2CeP5Jx7vZXKA2CMOipGElDjnWELU/7DNqKtTE=;
-	b=hM5q/qJMILxUA2nOZg1Nvj3qrcEKZCqnn9aoxyH8Z6+lErg0o9Y5rGzh7VrQQh5j
-	/Vq82lI51wz8mQvigoFmbhZv+IZco6nfWCamUyuuMcf08vsBx+PYt5RNWhKIKHVhwpk
-	R/LDv7vzYP2AP5Oo+otV7uUA0uLne4OUJJM8R37A=
-Received: by mx.zohomail.com with SMTPS id 1757361898233170.25250327031745;
-	Mon, 8 Sep 2025 13:04:58 -0700 (PDT)
-Message-ID: <d32af8e4-0771-4674-8317-78dd1e24c95b@collabora.com>
-Date: Mon, 8 Sep 2025 17:04:41 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41C219A86;
+	Mon,  8 Sep 2025 20:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362035; cv=none; b=vDwIGjP2c72aiZmJEAA7WLJLaYhbgPnVdM+NtXf60/r4N+wvsw4+OxLZzgba1jyudK5p5sv0f1/EluC04mLdF0wti5H3l7WRuvhtSxT0P8qorP2HeW6Emt+5zGVltT5jQUDft99TRfjlM/CoYhUzyu6crZTwp7QgOnWDiE0ga88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362035; c=relaxed/simple;
+	bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7i4nfVICqgUJIudW1zJtFqs5LiNdhimtshGgkNBs+IBu1OCNtVb4uUutReCZ8giBDMxZc2fTJ0xxPWDE+gh4aL3WqqSijvoWdjVSNH572C825nUmZEijzA6ALDR+afJN7m44Ubmw1CRSkO/UPRrb29JS6k0BJ+9+Fu/AOBfDuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kaxq5pcp; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757362035; x=1788898035;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
+  b=kaxq5pcpCug2K8NkfBFZe0rqgNJY8RQU2vXA29a172zw1nyv54tesbn7
+   LlCguINCf/b0F3B4S1ymznq2xDU3PMytvizKzsH1JPEOQqzDmYpGz5C1z
+   FiGlRkWHm07+zLOqZ8ZU3tP+juckoN3m5UgCVmU358ouCb31/PrxXPDjZ
+   mCSpysqnUBkLbJaJ8TH4skphrnH990yigMX8UkejcV/uhZlscpdfN66/V
+   mPwTM4mHXPGqeNS5TBGesmGWjAvLSR7KXHEUBaBr7UbSy22NlHm6UwI1a
+   azfAqiukbPcfhsEnmqDdC+LWGcOCxmcRR1ALqJacwVQKeKLdpjSDN8DxQ
+   Q==;
+X-CSE-ConnectionGUID: EMpCwBz3Ssqhzk3id+g8NQ==
+X-CSE-MsgGUID: Z2lHKD+gRSG+WU2V/cbPIA==
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="277602015"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Sep 2025 13:07:08 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 8 Sep 2025 13:06:37 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 8 Sep 2025 13:06:37 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH] clk: at91: clk-master: Add check for divide by 3
+Date: Mon, 8 Sep 2025 13:07:17 -0700
+Message-ID: <20250908200725.75364-1-Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 05/14] sound: dt-bindings: Convert MediaTek RT5650
- codecs bindings to YAML
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
- simona@ffwll.ch, support.opensource@diasemi.com, tiffany.lin@mediatek.com,
- tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-6-ariel.dalessandro@collabora.com>
- <20250822151415.GA3819434-robh@kernel.org>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250822151415.GA3819434-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Rob,
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-On 8/22/25 12:14 PM, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 02:12:53PM -0300, Ariel D'Alessandro wrote:
->> Convert the existing text-based DT bindings for Mediatek MT8173 RT5650
->> codecs to a YAML schema.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../sound/mediatek,mt8173-rt5650.yaml         | 73 +++++++++++++++++++
->>   .../bindings/sound/mt8173-rt5650.txt          | 31 --------
->>   2 files changed, 73 insertions(+), 31 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
->>   delete mode 100644 Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
->>
->> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
->> new file mode 100644
->> index 0000000000000..36e4f9c4c3d62
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
->> @@ -0,0 +1,73 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Mediatek MT8173 with RT5650 codecs and HDMI via I2S
->> +
->> +maintainers:
->> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: "mediatek,mt8173-rt5650"
-> 
-> Drop quotes.
+A potential divider for the master clock is div/3. The register
+configuration for div/3 is MASTER_PRES_MAX. The current bit shifting
+method does not work for this case. Checking for MASTER_PRES_MAX will
+ensure the correct decimal value is stored in the system.
 
-Ack.
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/clk-master.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  mediatek,audio-codec:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      The phandles of rt5650 codecs and of the HDMI encoder node.
->> +    minItems: 2
->> +
->> +  mediatek,platform:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      The phandle of MT8173 ASoC platform.
->> +
->> +  mediatek,mclk:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      The MCLK source.
->> +      0: external oscillator, MCLK = 12.288M
->> +      1: internal source from mt8173, MCLK = sampling rate * 256
->> +
->> +  codec-capture:
->> +    description: Subnode of rt5650 codec capture.
->> +    type: object
->> +
->> +    properties:
->> +      sound-dai:
->> +        maxItems: 1
->> +        description: phandle of the CPU DAI
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - mediatek,audio-codec
->> +  - mediatek,platform
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    sound: sound {
-> 
-> Drop unused label.
-
-Ack.
-
-Thanks!
-
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index 7a544e429d34..d5ea2069ec83 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -580,6 +580,9 @@ clk_sama7g5_master_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct clk_master *master = to_clk_master(hw);
+ 
++	if (master->div == MASTER_PRES_MAX)
++		return DIV_ROUND_CLOSEST_ULL(parent_rate, 3);
++
+ 	return DIV_ROUND_CLOSEST_ULL(parent_rate, (1 << master->div));
+ }
+ 
 -- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+2.43.0
 
 
