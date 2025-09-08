@@ -1,196 +1,129 @@
-Return-Path: <linux-kernel+bounces-806563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982C6B49884
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:43:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D55EB49887
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B38C1BC62C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:43:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 134017A9F5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0AB31C56D;
-	Mon,  8 Sep 2025 18:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D1431C58C;
+	Mon,  8 Sep 2025 18:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gZnKd5Je"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUD1sI4l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B0230ACF0;
-	Mon,  8 Sep 2025 18:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118CA30ACF0;
+	Mon,  8 Sep 2025 18:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757356974; cv=none; b=XZa4O/tWf0WvVSmq+dINCoZSSQ5WTQvQdfreYbxCdpevpfQzN6mPx03dH4pXNCEj/cosbuUc5OSnuBakQiGBqCUgiR4461Jo0ap7QmUWTNrzAh92OB3DPICHrr5PDUN92QVdsBsxCXJO2fyvKZdNjPpHm+8jzmKDht+G7lKXt4c=
+	t=1757356981; cv=none; b=AVDHMZ2Lk7VP1T9oRmEGkOyHN9/SCFVwBnX5v+zaoyv5w6hMMxMtHRjHTkCptsFmn1e0jk4j/74V1xzyMhRIWLm7WBCB4SObaW9nGNjWsf9rxH15Q2dAC0Dwi1Cjqyy+cni3F58IrW+hxRM1tvMLm7PLKbpTdlmfrjuhWmVrX38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757356974; c=relaxed/simple;
-	bh=zHdgNKydKxrw1fqRJFtZWEZd13udUyK6lu/VL/D0pMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YJU0/v3P+On1SS09s3miwe5VctveABPf09oOfBHdfR9rZhXlVY/8hL0MH/1678NaaKhiTZalcTw9qge0xuLMsSyzk+3Q9hDvJlrBFiZeoeLqYA8Uc+w64NCoH8VgC5jc6M6Fwivjr6lAx8nM+sFwQs796c5OoyJcMhGKPGznHN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gZnKd5Je; arc=none smtp.client-ip=192.19.166.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 57CCFC0000F2;
-	Mon,  8 Sep 2025 11:42:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 57CCFC0000F2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1757356965;
-	bh=zHdgNKydKxrw1fqRJFtZWEZd13udUyK6lu/VL/D0pMQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gZnKd5Jecs8rqbYHprlxd/hMi6jxwtHbV31sGvJDDGKItghJE1WMLDKc6NrRY+2tU
-	 sYmYjlCObbaHaObAXm10/ggE3it75EYA9pv+pmRA07zv5gEMI0T+cQXKljh9M+Edca
-	 2llMRDkZxLSW1gS+UR4J5BG2T6+reHf1dazb3A5s=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 16D844002F44;
-	Mon,  8 Sep 2025 14:42:44 -0400 (EDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	stable <stable@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	Hardik Gajjar <hgajjar@de.adit-jv.com>,
-	Ma Ke <make_ruc2021@163.com>,
-	linux-usb@vger.kernel.org (open list:USB SUBSYSTEM)
-Subject: [PATCH stable 5.4] usb: hub: Fix flushing of delayed work used for post resume purposes
-Date: Mon,  8 Sep 2025 11:42:33 -0700
-Message-Id: <20250908184233.1596036-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757356981; c=relaxed/simple;
+	bh=BZVL1wCaBWzQfdJch1ffdxC/Fe3h5D6JkG5PQqCRoEo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y/37K/4pkojn3pJS3srA8pgiPO7U7qndxzxjqf5ZXC7NWUCzTKPPMR0fJxB9Nzfdf739cxeIEUZN448ykdMS62/gNWWoSl9cHbp8FI/eNpUJyOzQZg65G/v68hB+yAe0KrHFwQ4N8z4l3QPFoFEJT8/m9pGO4C0QLzu0fwwRKxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUD1sI4l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916A0C4CEF1;
+	Mon,  8 Sep 2025 18:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757356980;
+	bh=BZVL1wCaBWzQfdJch1ffdxC/Fe3h5D6JkG5PQqCRoEo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pUD1sI4lf9yVrcmuXxRcHKSwejJd8c7Pz3F4LcIN1L9q01ptztyLhz0L876ijAl4k
+	 vLhuoYjLukD+8FvAXwldQ1+Jo79G0dCTa6AU6rlHs7nyEOe6rE1ChxoMg2MmdeDa1w
+	 rFvN5+FkH/YQxm3hsZpOi6P1mDItF/kkMLvbUhwN4vr5C+cLhA8sTHEeVKGXuVO9ut
+	 cbEHg1ZKXV9h2nIJDiYoMltuktdMftCOroIsdwE+4BnCCKwubAlFDCt0p+ncfvbH34
+	 gU97IYcsuJFW9hr4TlVYhYHOi6Us93CwBsQ5F2Wowxf+0nPdBJvD3wmnC1l0W93GnS
+	 Vmr9kye74yOwA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uvgpO-00000004QJ8-15nD;
+	Mon, 08 Sep 2025 18:42:58 +0000
+Date: Mon, 08 Sep 2025 19:42:57 +0100
+Message-ID: <86segwdbv2.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 4/6] KVM: arm64: Set PSTATE.EXLOCK when entering an exception
+In-Reply-To: <ac3b2d52-5b24-441b-bcdc-463ae9c78b3d@sirena.org.uk>
+References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
+	<20250820-arm64-gcs-v15-4-5e334da18b84@kernel.org>
+	<87ms7tk5y4.wl-maz@kernel.org>
+	<ac3b2d52-5b24-441b-bcdc-463ae9c78b3d@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+On Thu, 21 Aug 2025 21:44:21 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Wed, Aug 20, 2025 at 11:02:11PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> 
+> > > +	// EL, or to GCSCR_ELx.EXLOCKEN for an exception to the same
+> > > +	// exception level.  See ARM DDI 0487 RWTXBY, D.1.3.2 in K.a.
 
-commit 9bd9c8026341f75f25c53104eb7e656e357ca1a2 upstream
+nit: I think you can drop the section number in the ARM ARM. The rule
+"numbers" are stable across revision of the document, and K.a is
+already absolutely ancient (over a year old and two revisions behind).
 
-Delayed work that prevents USB3 hubs from runtime-suspending too early
-needed to be flushed in hub_quiesce() to resolve issues detected on
-QC SC8280XP CRD board during suspend resume testing.
+> > > +	new |= enter_exception64_gcs(vcpu, mode, target_mode);
+> > > +
+> > >  	new |= PSR_D_BIT;
+> > >  	new |= PSR_A_BIT;
+> > >  	new |= PSR_I_BIT;
+> 
+> > But that's not the only case where we have to deal with EXLOCK, is it?
+> > What of ERET and its PAuth variants? R_TYTWB says:
+> 
+> > <quote>
+> > If in AArch64 state, any of the following situations can cause an
+> > illegal exception return:
+> > 
+> > [...]
+> > 
+> > - If the Effective value of GCSCR_ELx.EXLOCKEN is 1 and PSTATE.EXLOCK
+> >   is 0, the execution of an exception return instruction to return to
+> >   the current Exception level ELx.
+> > </quote>
+> 
+> > My reading of the spec is that this needs handling.
+> 
+> Am I right in thinking that this handling is needed for the NV case
+> only?
 
-This flushing did however trigger new issues on Raspberry Pi 3B+, which
-doesn't have USB3 ports, and doesn't queue any post resume delayed work.
+So far, NV is indeed the only case where we have to emulate ERET.
 
-The flushed 'hub->init_work' item is used for several purposes, and
-is originally initialized with a 'NULL' work function. The work function
-is also changed on the fly, which may contribute to the issue.
+	M.
 
-Solve this by creating a dedicated delayed work item for post resume work,
-and flush that delayed work in hub_quiesce()
-
-Cc: stable <stable@kernel.org>
-Fixes: a49e1e2e785f ("usb: hub: Fix flushing and scheduling of delayed work that tunes runtime pm")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/linux-usb/aF5rNp1l0LWITnEB@finisterre.sirena.org.uk
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Tested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> # SC8280XP CRD
-Tested-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/r/20250627164348.3982628-2-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[florian: adjust for lack of hub_{get,put} and timer_delete_sync]
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/usb/core/hub.c | 21 ++++++++-------------
- drivers/usb/core/hub.h |  1 +
- 2 files changed, 9 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 1a2039d1b342..63bb62680362 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1030,12 +1030,11 @@ int usb_remove_device(struct usb_device *udev)
- 
- enum hub_activation_type {
- 	HUB_INIT, HUB_INIT2, HUB_INIT3,		/* INITs must come first */
--	HUB_POST_RESET, HUB_RESUME, HUB_RESET_RESUME, HUB_POST_RESUME,
-+	HUB_POST_RESET, HUB_RESUME, HUB_RESET_RESUME,
- };
- 
- static void hub_init_func2(struct work_struct *ws);
- static void hub_init_func3(struct work_struct *ws);
--static void hub_post_resume(struct work_struct *ws);
- 
- static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- {
-@@ -1059,12 +1058,6 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 		goto init3;
- 	}
- 
--	if (type == HUB_POST_RESUME) {
--		usb_autopm_put_interface_async(to_usb_interface(hub->intfdev));
--		kref_put(&hub->kref, hub_release);
--		return;
--	}
--
- 	kref_get(&hub->kref);
- 
- 	/* The superspeed hub except for root hub has to use Hub Depth
-@@ -1318,8 +1311,8 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 		usb_autopm_get_interface_no_resume(
- 			to_usb_interface(hub->intfdev));
- 
--		INIT_DELAYED_WORK(&hub->init_work, hub_post_resume);
--		queue_delayed_work(system_power_efficient_wq, &hub->init_work,
-+		queue_delayed_work(system_power_efficient_wq,
-+				   &hub->post_resume_work,
- 				   msecs_to_jiffies(USB_SS_PORT_U0_WAKE_TIME));
- 		return;
- 	}
-@@ -1344,9 +1337,10 @@ static void hub_init_func3(struct work_struct *ws)
- 
- static void hub_post_resume(struct work_struct *ws)
- {
--	struct usb_hub *hub = container_of(ws, struct usb_hub, init_work.work);
-+	struct usb_hub *hub = container_of(ws, struct usb_hub, post_resume_work.work);
- 
--	hub_activate(hub, HUB_POST_RESUME);
-+	usb_autopm_put_interface_async(to_usb_interface(hub->intfdev));
-+	kref_put(&hub->kref, hub_release);
- }
- 
- enum hub_quiescing_type {
-@@ -1374,7 +1368,7 @@ static void hub_quiesce(struct usb_hub *hub, enum hub_quiescing_type type)
- 
- 	/* Stop hub_wq and related activity */
- 	del_timer_sync(&hub->irq_urb_retry);
--	flush_delayed_work(&hub->init_work);
-+	flush_delayed_work(&hub->post_resume_work);
- 	usb_kill_urb(hub->urb);
- 	if (hub->has_indicators)
- 		cancel_delayed_work_sync(&hub->leds);
-@@ -1921,6 +1915,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	hub->hdev = hdev;
- 	INIT_DELAYED_WORK(&hub->leds, led_work);
- 	INIT_DELAYED_WORK(&hub->init_work, NULL);
-+	INIT_DELAYED_WORK(&hub->post_resume_work, hub_post_resume);
- 	INIT_WORK(&hub->events, hub_event);
- 	spin_lock_init(&hub->irq_urb_lock);
- 	timer_setup(&hub->irq_urb_retry, hub_retry_irq_urb, 0);
-diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
-index 1c455800f7d3..de29ce856953 100644
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -69,6 +69,7 @@ struct usb_hub {
- 	u8			indicator[USB_MAXCHILDREN];
- 	struct delayed_work	leds;
- 	struct delayed_work	init_work;
-+	struct delayed_work	post_resume_work;
- 	struct work_struct      events;
- 	spinlock_t		irq_urb_lock;
- 	struct timer_list	irq_urb_retry;
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
