@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-806912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D44BB49D76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE57B49D78
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC604E43AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83DC04E43C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AABB2F7ADC;
-	Mon,  8 Sep 2025 23:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD88B2FC894;
+	Mon,  8 Sep 2025 23:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G16NZRd0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UoddI0GY"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F0F1B87F2;
-	Mon,  8 Sep 2025 23:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2118B22422A;
+	Mon,  8 Sep 2025 23:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757373894; cv=none; b=lyW9WRf9thYh05IHzoYHI5X0NKF8F219JBg6baIOXv3Bx7XjQqwNu+fx4cTsschE+xIHUqclo7BykfchHaG9XQzD1OljVdqCCgkH/wmYS9fbxe/3TQZPSre7W6hCYzo4WHuw8TJaQUAxpQB+RwKw7CRsUzJYxDFgZCZ0heW8f4U=
+	t=1757373960; cv=none; b=FgFbYNoXQ2WUd8qhjU72eg62/9ohdbUIALSMF5f6u90bcRC0iduX+ixnIMsm8z6IhnN0Fv9VFHKN9Elcm54jfEAMiJGiyxYeEE7/U7PtVlg+uXbRxHGYfmFqGfRX/BE0KC6EalWoH/pJJFrYFKPrSKE+x0OHCNK1m8c4MRiH+5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757373894; c=relaxed/simple;
-	bh=kknwVALPchxX0mj+Hxc56nDgnBNJk/z7KwE2dTVLSYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iUFyZ8SWEGRoXrHMVkVRtvMcQKPcnLGBMV+lXINhLQBmYXy/F0xpWHf0TRIU/g4mQ/TSISM5O+QTjaRdm9AY77gHWquN654DtFOEjbFclLv+gt524mSPL64bU4c1WBtn3dx3xrtsXQc8EEkNa1g4cQkmaJDF+wSKt7VVRWO2VHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G16NZRd0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=l95PSEtUbGHnCqBRekzfUsDtN3LLag+0o85iItgBhQ0=; b=G16NZRd0OjOFf1g2Psq/MdTzvm
-	v91ln3LmWVFnFMi+uvsezVYTDJRvFDq0rm+qXbNnrKgQzKp7L2h5nEh3qcKPlhtNA8mXbED0cSylL
-	nHO6Z5raIuuJ/pNFkd4+DdNWvOVEDzmHGDdu1NMU7VQb7TvC8+P9Quc05a0GI/iImkMQ7Zt8guckS
-	a9ZKaJLwOBREugd6GpEAw6/q5/tUHVFZTav8pjEknyMEFOX/KEdNmghtBsf2U8oB6MOXqGUfGLB0o
-	0NuBBesQaX0J3yjT/ZsJXeH/2ssPtlucmGvqvwztlZEaNQeIeo7xIlmzYnoY4WknAfy71gIqPR8Zi
-	hAFVr42g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvlEC-00000002wVg-0YFq;
-	Mon, 08 Sep 2025 23:24:52 +0000
-Message-ID: <b85f833d-1da7-4e4e-8258-7358c9d5a0b2@infradead.org>
-Date: Mon, 8 Sep 2025 16:24:51 -0700
+	s=arc-20240116; t=1757373960; c=relaxed/simple;
+	bh=0IXl2l3D+T2nhXGi4tQibdU53zosZMhElMuvaFdM3Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Di0H36clKqoHFbfq309oMjaEmfHGv954VrXbfQAo+TUQlHkjEpr+zK/G1gKJg3BHVPZaTlfcCL5jo0lzbsNltfsJhaMdBe6Hp0IweC58zt3W2djYw/CWd5lYdfbUGJ7eWE76ejgaAs6v01cdTOcCBzZJwIP2EArmSQOCE3TFJf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UoddI0GY; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588NPpHu3892219;
+	Mon, 8 Sep 2025 18:25:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757373951;
+	bh=1JTskB/UCChEzoe+7IbsfNIUYnxNVPm3fPK+F6ahfQc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=UoddI0GYQB+zGqKKbu3v8TmBLU93NKVHzqxnPThLX+Q6NHiRI+6jz985GqMjUB+M8
+	 US7nT49t11ITmspasIhoQy4dfhjRApD7E4ql+ptXI9SkljRDlyeCZn9xcYts5JOGMN
+	 VvjNbU0megVyekf3ZkPNrLebttChTI6KGKA4QVy8=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588NPpbC2731831
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 18:25:51 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 18:25:51 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 18:25:51 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588NPphW1651879;
+	Mon, 8 Sep 2025 18:25:51 -0500
+Message-ID: <f6c8abba-75f6-4a68-846a-780d37bb94fe@ti.com>
+Date: Mon, 8 Sep 2025 18:25:51 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,93 +64,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: update the guidance for Link: tags
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linuxfoundation.org>, linus.walleij@linaro.org
-References: <87segwyc3p.fsf@trenco.lwn.net>
+Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-am62p/j722s: Remove HS400
+ support from common
+To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>
+CC: Moteen Shah <m-shah@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250908173831.269039-1-jm@ti.com>
+ <20250908173831.269039-2-jm@ti.com>
+ <363878df-528b-4959-945f-3b531f156679@ti.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <87segwyc3p.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <363878df-528b-4959-945f-3b531f156679@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi,
 
-
-On 9/8/25 12:32 PM, Jonathan Corbet wrote:
-> As stated definitively by Linus, the use of Link: tags should be limited to
-> situations where there is additional useful information to be found at the
-> far end of the link.  Update our documentation to reflect that policy, and
-> to remove the suggestion for a Git hook to add those tags automatically.
+On 9/8/25 3:44 PM, Andrew Davis wrote:
+> On 9/8/25 12:38 PM, Judith Mendez wrote:
+>> Since eMMC HS400 has been descoped for J722s due to errata i2478 [0]
+>> and is supported for AM62Px device, remove eMMC HS400 support from
+>> common-main.dtsi and include only in am62p-main.dtsi.
+>>
+>> [0] https://www.ti.com/lit/pdf/sprz575
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 3 ---
+>>   arch/arm64/boot/dts/ti/k3-am62p-main.dtsi              | 6 ++++++
+>>   2 files changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/ 
+>> arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+>> index 4427b12058a6..0c05bcf1d776 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+>> @@ -576,15 +576,12 @@ sdhci0: mmc@fa10000 {
+>>           bus-width = <8>;
+>>           mmc-ddr-1_8v;
+>>           mmc-hs200-1_8v;
+>> -        mmc-hs400-1_8v;
+>>           ti,clkbuf-sel = <0x7>;
+>> -        ti,strobe-sel = <0x77>;
+>>           ti,trm-icp = <0x8>;
+>>           ti,otap-del-sel-legacy = <0x1>;
+>>           ti,otap-del-sel-mmc-hs = <0x1>;
+>>           ti,otap-del-sel-ddr52 = <0x6>;
+>>           ti,otap-del-sel-hs200 = <0x8>;
+>> -        ti,otap-del-sel-hs400 = <0x5>;
+>>           ti,itap-del-sel-legacy = <0x10>;
+>>           ti,itap-del-sel-mmc-hs = <0xa>;
+>>           ti,itap-del-sel-ddr52 = <0x3>;
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/ 
+>> boot/dts/ti/k3-am62p-main.dtsi
+>> index 6aea9d3f134e..90afe21e972b 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+>> @@ -31,6 +31,12 @@ usb1: usb@31100000 {
+>>               snps,usb2-lpm-disable;
+>>           };
+>>       };
+>> +
+>> +    sdhci0: mmc@fa10000 {
 > 
-> Link: https://lore.kernel.org/all/CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com/
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/maintainer/configure-git.rst | 28 ----------------------
->  Documentation/process/5.Posting.rst        |  7 +++---
->  2 files changed, 3 insertions(+), 32 deletions(-)
+> The node already has a label where it is defined, so you could just use:
 > 
-> diff --git a/Documentation/maintainer/configure-git.rst b/Documentation/maintainer/configure-git.rst
-> index 0a36831814ea..0c21f203cf7a 100644
-> --- a/Documentation/maintainer/configure-git.rst
-> +++ b/Documentation/maintainer/configure-git.rst
-> @@ -28,31 +28,3 @@ You may also like to tell ``gpg`` which ``tty`` to use (add to your shell
->  rc file)::
->  
->  	export GPG_TTY=$(tty)
-> -
-> -
-> -Creating commit links to lore.kernel.org
-> -----------------------------------------
-> -
-> -The web site https://lore.kernel.org is meant as a grand archive of all mail
-> -list traffic concerning or influencing the kernel development. Storing archives
-> -of patches here is a recommended practice, and when a maintainer applies a
-> -patch to a subsystem tree, it is a good idea to provide a Link: tag with a
-> -reference back to the lore archive so that people that browse the commit
-> -history can find related discussions and rationale behind a certain change.
-> -The link tag will look like this::
-> -
-> -    Link: https://lore.kernel.org/r/<message-id>
-> -
-> -This can be configured to happen automatically any time you issue ``git am``
-> -by adding the following hook into your git::
-> -
-> -	$ git config am.messageid true
-> -	$ cat >.git/hooks/applypatch-msg <<'EOF'
-> -	#!/bin/sh
-> -	. git-sh-setup
-> -	perl -pi -e 's|^Message-I[dD]:\s*<?([^>]+)>?$|Link: https://lore.kernel.org/r/$1|g;' "$1"
-> -	test -x "$GIT_DIR/hooks/commit-msg" &&
-> -		exec "$GIT_DIR/hooks/commit-msg" ${1+"$@"}
-> -	:
-> -	EOF
-> -	$ chmod a+x .git/hooks/applypatch-msg
-> diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-> index 22fa925353cf..9999bcbdccc9 100644
-> --- a/Documentation/process/5.Posting.rst
-> +++ b/Documentation/process/5.Posting.rst
-> @@ -207,10 +207,9 @@ document with a specification implemented by the patch::
->  
->  	Link: https://example.com/somewhere.html  optional-other-stuff
->  
-> -Many maintainers when applying a patch also add this tag to link to the
-> -latest public review posting of the patch; often this is automatically done
-> -by tools like b4 or a git hook like the one described in
-> -'Documentation/maintainer/configure-git.rst'.
-> +As per guidance from the Chief Penguin, a Link: tag should only be added to
-> +a commit if it leads to useful information that is not found in the commit
-> +itself.
->  
->  If the URL points to a public bug report being fixed by the patch, use the
->  "Closes:" tag instead::
+> &sdhci0 {
+>     ...
+> 
+> here at the base level, and not have it inside cbass_main.
+> 
 
--- 
-~Randy
+Oops, missed that detail, thanks Andrew. Will fix for v3.
+
+~ Judith
+
 
