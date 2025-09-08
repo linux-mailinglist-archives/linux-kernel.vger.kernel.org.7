@@ -1,540 +1,260 @@
-Return-Path: <linux-kernel+bounces-806199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045D3B4935F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55E7B4936F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23B2C4472DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:29:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3356B201E9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E6C30E0F7;
-	Mon,  8 Sep 2025 15:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E7730E82C;
+	Mon,  8 Sep 2025 15:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UFeX6nMg"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SFvLQco6";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Te6apsDp"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBCA30E0EC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345347; cv=none; b=XZ+uWN8BdiQj9YVEgMjI3D/ZSMymW2I2H91rpC9G5qoJ21snEnh/KSdyqqXRRfNyzk2z5sf3GeLhKt9ms5RCnnYPICTTKpqWso69hCyRYxttb/vpjJi81J4PBIY6FdpIU1IrpEvVlArSr5qMAtniw6FDuOvQDmJa36T+DuLwAvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345347; c=relaxed/simple;
-	bh=0ViUATA90Bf1KhWoo7r8YcNF/LGhx0ZjXriKP0Gbf58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pXMZc/myIkacAlIwXwsn5FqCcFjYkstwVeKSGQgdK8d+hXnOvYWus95PNTn5Ev2RNZyMBLMDJfE0xa+chny54vAmqK01WhvHAHz5MDUK7IUCOkdCXzlrz1j59Nd/yMrVAoJvafIwripz7UA/hERpxVLL8kEZHzSZov5bO4hgxu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UFeX6nMg; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f6b0049fbso5235772e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:29:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4E330DED4;
+	Mon,  8 Sep 2025 15:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757345408; cv=fail; b=juVdFbdvyqNwmVpEuXzTAzmUIPiF2lT9K5uqDK8gkO43CcC2fFDhXuJBDSAPvWwU8uPPrQ2o9DApLTdHPgAUnFMgLhhOA45Uw84jz6W0IU4cFMjr2bIuwupFKrXCH4IJCx5veb5Hy/giwEDrx4QWDNnEJfNGwfT1PMcnZrOY9DA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757345408; c=relaxed/simple;
+	bh=/aJ7MaalIE4vtmfq16saILTkbQCcztv2EhUCvGpoEO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WiGGKqzQXMcVOzF8Fi9eZMyErKpkvkawp+8vkkpUW62h2zgY+Ks7RcOlS5B8eyXAyNMMmUXiCbE+5wVgURJrSJ3K0mzZftlTmhBrzuZKIU5XYvY8rCYX1nzOguXt63is5hPrqqQemIS7aqVJcLGjlGxsuNypgiJ2a1zRq7KN9rk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SFvLQco6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Te6apsDp; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588E1tnk017874;
+	Mon, 8 Sep 2025 15:29:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=/aJ7MaalIE4vtmfq16
+	saILTkbQCcztv2EhUCvGpoEO4=; b=SFvLQco6ilB7UUbYMm7WZ/HC+QxagsykoG
+	wMJQ0X8AV4I+FYVheYo7mTQ4+NlFvD7t54bfW4X26JwHtUaXIJSvlGovPMXYplpq
+	RrDL0X1t3COtKXjIVnBgSekblkN4vhgyyVtWmmCfD6l8998jQPt9Rtv7s3A4XBcC
+	Mkf2QQboKqEd3hKzJErAlFqwKh5Txm/BY68h20lRZYWF3kmERf0nbUqD/lDb+kAc
+	t1VhHtgPjvjZ4UjLB/4TvmyrOEqk2Xq9PFhuDcMlmSSdI+i78hPTPIL7TIXyK67V
+	csQ2rh+nENXaTLQ9nOvnT0AlQWZRCuXcjkcavwC989EDRwUhVjaQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491yx6rabe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 15:29:29 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588Es9HA002957;
+	Mon, 8 Sep 2025 15:29:27 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdevj8n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 15:29:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nu4Z+0sjTLYAwpaLlnbGj9jQtq2h+Jb/W3gd6TpsxC6vjbjkMdymNFE7b+1E+K2QA7cZASIDdddn7UCaSVXTIoDw9QskRwpiAastiGV3PGpVYGCsGkyZBJ/IE+rrqH6/jXcrr9c8pv5GpFSl2cPLhWetzmw09UGz+qOqD07qCETPHAIExXTua2aq/Z7p/Id6BUxODOQrrwmvrNF21VlfWyvBWe9panXE15iRdq7+6S0w2FBdVbPG9ywa+Fel5AuPwjiHaMIzdB3/ndAz4CzrR7FCGvG2VTbvbdG3yV8VUkZ4EyhaFOhG+FS3Fg1ot1KephnRKLSqpkKv9xRDJ209ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/aJ7MaalIE4vtmfq16saILTkbQCcztv2EhUCvGpoEO4=;
+ b=n0bGgpeoJ3s8KayJdmKhNMrCKDg/LRjyHwCtc4IsHK9XCPSA0F24/s8cjH/TpybCe1QIgULMgRvmg1S/voKJez3PuKg9+btPNUQL2z4dpHfhc6+wleVbHMPTU8+FK6X71OqwIm/yy2nWS1F52sa5+1jkCBbiadF+4tVD054R3o5lpWH2u/4SbkHAexG/6vBoAaNnrS/0mt5R9W3IOSudlrGm9WbuVqfMnuJm3sOXvuaMHK3HKs28FvKVgIh+nu2d0q5qlIO6Fwh1VVQviL0Q2yr4IuCsigFQmC7DoI6iX3lAdUCR/Sdz5hyTNF6iy4/BrJsCgkQ6Ttf7YSrv5n4NYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757345343; x=1757950143; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VJKLfsPnTfdcj8umRfi/DgkgYYIGKkkVL202IOI/NLc=;
-        b=UFeX6nMg3f2NUlupwN4XJNOL97AJnw2cYBdinLhofDxRen3XHlLK5BiemXmeAt8Agu
-         axQgbsK+N9k5JWsXqOyhbnefc8qXcWyCki1Hh4NrFx1WPaYaZUCnQZgVIC92kkU9EjIp
-         R/pSkys+kX2lNFczebpj8U6gly+uLP7/luUi8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757345343; x=1757950143;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VJKLfsPnTfdcj8umRfi/DgkgYYIGKkkVL202IOI/NLc=;
-        b=d/Q3Bcn4kjg93SDY2KkgEvE96t8M5fnP7Iwv8JOMl1RApSqVIFcb+kaSTiIIiiEY/3
-         ntcSj0X3XObAubzwKjetBDrlOsGlLW5ueHxQXUtbc63exONmT9kjzOYteUlTxaUHKnkt
-         a90oAwqvQi39A7idKD+4bwlp4gLUkErI0eH4kbyNI7R/6nfLzkqlKIDeSnymjX+EItUM
-         xuXkRbgpyzlzdVadKxgcBVZ/fCnN2UKGSH42obZyul79tF0jDKA3kwfNnCVLbX01Rsxu
-         LvbJzX0nz/rxT7v5o1SELBgfojj6kkTRtOaT329d3Lz/V2Quvz3u1mtgooZPMy4b8Wh9
-         Lw0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWH0RA58xqNqdei+hVuORMwa/qteXQkztGQge9i3XP2WoZbm3FOnQ0nI9K1yHe9uOujla0s0OMbU68W+dM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywei+HVNBc9cNXXUCmlsLxfgHa7v5guJuHJ1Q1Peitg9Xf1qo7a
-	BhVtV0y/ian4wmJv+i+1zeLYGyLDQC7DBuZNzLwr4t7Yj2RxeuZt40S9niLAN3zgZFLQc2rioPZ
-	xTFY=
-X-Gm-Gg: ASbGncvKmjAa81zDffxj4IgSU4gygQqXsfn2F2Edfr/ow+xpksizohsjYR2eYeNrCC1
-	0LjrOJ8VSknojJ4jp9jZNJftK2f/GsJZ4Vqo3+o5cJcNBEDAi26JAd5oEWpqQukBM5BQVMehhNZ
-	0xxOtzNMJ8CqDTZclPQ4vk8V9Dp4dQ34hg3V4DpOTHieZQplDZxmtqhMbGmBW9HlaJK3Z6bWtLc
-	Lrdms+pHxg1Cj7/VbMXF1dArzmJoLxHZAg3KCaDxyovPYUtX1lo1i4jXg74q247siYWSegFTQEG
-	n5o4k1AirD1nWfZM37+IVcxerSfE+WGhBI2MqCfew7hSppDoIKoUwd/E03Ux6Y7aiii3WzhQJHx
-	hKtvs5f5rUsbu5dRzwpMBtd85+M0Hqi1lNc2meHfo1RQpKbo0AF0YiEYIOGcn
-X-Google-Smtp-Source: AGHT+IGMrtGHjPUf/9B0UFjOZlMyfxu3IrdBC7g9j8RbRZdt4bUWmzqrqqzoJltb2QNEZCuxqKCjZg==
-X-Received: by 2002:a05:6512:234f:b0:55f:4f46:9f2a with SMTP id 2adb3069b0e04-56260e42664mr2660485e87.19.1757345342531;
-        Mon, 08 Sep 2025 08:29:02 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad121acsm3607743e87.118.2025.09.08.08.29.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:29:01 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-560880bb751so4618920e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:29:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWZfoTCIBpeDx5qipS+WXk0J7gTa7ljFxppyPfuk9RAaYb9jD8nncl1U5AEvB75+V8m9ICTbtUPDkJsv9M=@vger.kernel.org
-X-Received: by 2002:a05:6512:131f:b0:55f:3ebc:133d with SMTP id
- 2adb3069b0e04-56260f37ba6mr2336185e87.21.1757345340679; Mon, 08 Sep 2025
- 08:29:00 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/aJ7MaalIE4vtmfq16saILTkbQCcztv2EhUCvGpoEO4=;
+ b=Te6apsDpL+jS7sGApX9l/vxP9oeoZIEDErfAJbha0GSAQO8kkZA4E74LD81VzSaRjfY5MA6034WWz2MLr3lwwGsFV08v6yIgMgdSdDUibLjVfHeRkfMElnhfRdyR+F9Y7B8W4xh3igI7fIOoi+ynz+615XN8u0D6zl5TPXYR4mw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS7PR10MB5214.namprd10.prod.outlook.com (2603:10b6:5:3a0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Mon, 8 Sep
+ 2025 15:29:24 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.021; Mon, 8 Sep 2025
+ 15:29:23 +0000
+Date: Mon, 8 Sep 2025 16:29:21 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+        Guo Ren <guoren@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 04/16] relay: update relay to use mmap_prepare
+Message-ID: <4ff77411-f760-4837-b5ab-24b4e181dcaa@lucifer.local>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <9cfe531c6d250665dfae940afdb54c9bd2e9ba37.1757329751.git.lorenzo.stoakes@oracle.com>
+ <e9b9b4f4-8ed1-40e8-8b49-22a0b10c72e6@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9b9b4f4-8ed1-40e8-8b49-22a0b10c72e6@redhat.com>
+X-ClientProxiedBy: LO4P123CA0170.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18a::13) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-uvc-racemeta-v1-1-360de2e15a9a@chromium.org>
- <20250908102532.GC26062@pendragon.ideasonboard.com> <CANiDSCsFCADj9NHURG8FV-1mTj8XhtksEqtk75-i3C3e6YyXUQ@mail.gmail.com>
- <20250908140034.GH26062@pendragon.ideasonboard.com>
-In-Reply-To: <20250908140034.GH26062@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 8 Sep 2025 17:28:47 +0200
-X-Gmail-Original-Message-ID: <CANiDSCs2PVavsycX83WA0OdPeZxYCqa57ckY1FutPDURDQ-FUQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzLfTTXWX7eZox5L-vlyGcfPtTAcFf53xn5GhXQLFewWIy7W7eRQrgMkIY
-Message-ID: <CANiDSCs2PVavsycX83WA0OdPeZxYCqa57ckY1FutPDURDQ-FUQ@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Fix race condition for meta buffer list
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB5214:EE_
+X-MS-Office365-Filtering-Correlation-Id: ffe4ad9c-e35a-45ef-c386-08ddeeec7d3d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Auhg6WnS42YFUmgqzkWNjiUJffFttrbrqnY+z44fISUfBnE4bOF41yXyy4I4?=
+ =?us-ascii?Q?0IXHYi21i0CNyeGD6gMoBIak7hLvi9CriSoSpbZPZ6cTfSdLd/9pQggwqKQu?=
+ =?us-ascii?Q?qMPpV7Ei9QRQ51G5exUqAxH6im2a8jmA+BQdGsJMVR8Wn7EN40bAs/JE4BRS?=
+ =?us-ascii?Q?mNsbV6NEZb06xGcHadn5K8Sv0bFEjifBENIEjtPfTfXOVJMeLX/jlde5mvBs?=
+ =?us-ascii?Q?lXIcHZZiNsbn6x1V7ZJJ6m+q5koHxkEXS3Zaoz+P70INxcYcTtPwgzWTSylH?=
+ =?us-ascii?Q?pfSnBy5iGE/y3RZhmWZLF4MdlmQpKIv0T40y7vfV2ir+jbQSjBjwG9cUasWu?=
+ =?us-ascii?Q?FGfeN8Qevu4sReNtoKP8trtlRpOlzuDgHzfz0us7TVwzvC7uPnfSN/PUBj98?=
+ =?us-ascii?Q?GAvvEo0Ctgim26zyHCkltcYgLi29o5cDyazcMNNx2SDroakXLgrnqpI6/T1T?=
+ =?us-ascii?Q?gs8kwMwkWb6UUaXGU1IV+ikmC4LxSAGERoNlc4wq7uwi5M5jRD/3ozWO9pcB?=
+ =?us-ascii?Q?WuNQxcUhfHCgiIhIAYRXdvXm9X6QRxBJDLDu92WYPLe+xhBjks2P6jGAegUO?=
+ =?us-ascii?Q?XZnMFS4zA4WjWIRA/5GDiodkGrOu486jBHxaw3k7bC8xMIkEzL6FELOEnKrw?=
+ =?us-ascii?Q?J51D79gPOIVnLN4WqRjmlO6AmLW35m4OHtfWOZUOlGXMLgfNl2ZGZWujtsGP?=
+ =?us-ascii?Q?Ttj44o1Id6OcqYs7KSUlaVyaX0vFaSRZ3im3FlABStpvHSMaHWzWl1Zexvid?=
+ =?us-ascii?Q?ojmSPIPC/sawXhJyIkgemijpu7wpraKv9pN3ZzvDaWy34WTZ2r5LbPxEGwhS?=
+ =?us-ascii?Q?6HWoSntVLiVONqvdmtM0MgyJud5wcMWzhhLvikcUYGHgGtkOyczbGRDh3Msv?=
+ =?us-ascii?Q?KCH4y9TRE9Emip5Wdrg3/xEvGmtm8+FTGeGZBMfd3sOdmUCPzvNvNsp3/1hs?=
+ =?us-ascii?Q?yR5OLeREAjTpEowpX+d7+xFaR879Q8B9HF1TLah2BoUi6GoO6psmq6K9kxHZ?=
+ =?us-ascii?Q?hU82rZU/LZdRaMw8Xzr36EfUrdb6DrsCLd3bxpBvCftg49sPK+8dpuitXZgv?=
+ =?us-ascii?Q?BH+u4SDhYze+ezfeEcpIj2uhF/TLps1kYfqeYva9Ukk25nmGqnkUX+Y3wuXE?=
+ =?us-ascii?Q?qUj/v+Xr4XFVMF9Oa937dlgIzpFUU/hoYjqyxIN7A/1QRjyooSi8pZfw9tLo?=
+ =?us-ascii?Q?7Tyts9t+Jf2E6Pbp5g8onq2ehQy0nH5qSdvUKrs1mjtH3Ms4jAmvwmopuxFd?=
+ =?us-ascii?Q?zAQ7dqCEzQvDfXS6dy4wD5Pps2TwbzVxNduWGYiQ6QIV2YvLMCWUkFtUYQTw?=
+ =?us-ascii?Q?1/cfKyjfRIWYocb0Iv81/GDr2zUkLZiBugQah/B5RVYQUIN8s2VWaEOYc65e?=
+ =?us-ascii?Q?xMjo9Kr4DywE6Ho5nyyC1N3akM++XGWcnG1aqMSn6Rr3R3JdEF8pG0YY2ptM?=
+ =?us-ascii?Q?GIXgBv6rNqk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DaDOTvnLRPB54zVyfs/PVrYYXoe0A8yUkPIQKXUm2x5S0apimVe760+qjU5j?=
+ =?us-ascii?Q?ZFOCCMOk1SJpdZafQuLny/9LaQViZTlqpTc9Qn4uegEBgZHE87mxUJ0x6KzN?=
+ =?us-ascii?Q?lsJAkp9Vn78/KMA8GGGwttCa4m43/ocCVGEZMWHC49cHY6KmZ9N1BfIGGCdm?=
+ =?us-ascii?Q?zoheguBqOOqmOT7mS3vjRcf+1XraG0aO7at1qZhEa2v/oijhfG8z016HJNhp?=
+ =?us-ascii?Q?t0mKwUfOBTmbFyCjHj1WLTGJYwmpK6chPX3QlOu/KUhltGvokUvknSrjqolh?=
+ =?us-ascii?Q?ikUgGuZaUhzdRGo8qOHkF7SYvjjLhI8oFHJasppwnim6P7BlH/KWmAVaAZVJ?=
+ =?us-ascii?Q?mYMeM+EHSINXmzWR8Jja+VY/yTBsiYLX7c28NcI/eJ1+FSwgy2GqIy/Q3IJB?=
+ =?us-ascii?Q?dAZ7Prfnk5wRyqG8SqlQ/dcxU+cAodUQwzbUYDD6LQWGd4/b5jm+uYwWeMTm?=
+ =?us-ascii?Q?gJZwuPR1EgiToQdszWVfsVdx7IvflhhqSaILKC8chiI2Oc7qUsgyJTR8qduv?=
+ =?us-ascii?Q?38eAHHa9op46IiiXFVZHMStBq23g6eWIYjTWINnzeDfe9l2DS+p8Ntb0L8iT?=
+ =?us-ascii?Q?owHRD6VOEVZVZZYAylcVuo9BryHUQscNsNNYDL++CLkAJqFcnB7+S5ARP4E4?=
+ =?us-ascii?Q?L1vBNdUh2/7pPGxvRvY0vH+YrwBT0OdT5PWIch0PzDJ2o4dP5f0hyuaxCBof?=
+ =?us-ascii?Q?yTH0wLBW6azewWoCnoWQbScRr9Oc1z014WkQeEGJCz5JO9YfpbdH+Pp2r6WL?=
+ =?us-ascii?Q?c9GtC+fPw29jTSsPogNAP3rrO26RJscajUIQ2a9/geLOzMzinuomZIYvaYjF?=
+ =?us-ascii?Q?Wh4CldJz3jVNI/aN3U5u74PBUckm0H7wIGF7XV6G8j/VRGbyTayMseN8kXes?=
+ =?us-ascii?Q?mmflHiHEVlQSJ2qJq3j5DDuj53FWdfzpvU7hWd4NBVU6Z0jvk3sg5RfvvMWm?=
+ =?us-ascii?Q?3UxtNnf8PbUB/OjigA9teI11Q06lrwRuhIbScpkb1KN4TyVdvRIr2cdj6/6X?=
+ =?us-ascii?Q?3LvC8LqBUcPK+IYU2q2bipoqsHOp3sqUlJMK8r74/X9vGdX4Ln4pRIhVzMiK?=
+ =?us-ascii?Q?TtrY/EvupfNSR1NzZGuqvKJmUsFq2z0OJ04rXrw7Img0Xr8zH/SuvmG1eGlP?=
+ =?us-ascii?Q?GH1TDCXf42bnC7KGzEK+dmhOz1P+6yhlvnvVBtxW94kqdIbfgKlmS9VYhtvH?=
+ =?us-ascii?Q?Q44zGqCOyBI3kW9r2RjUcuiZSFkZo3poa4rTUdvxkt+LuMVjV7UL4qT8nj9m?=
+ =?us-ascii?Q?NMohIYqhJq+ehFzxKCKOxqaIC1mwpVOu7nzlEhoE+ok/Ad+burOj9Ti35V83?=
+ =?us-ascii?Q?RHooyFYv8wACUh7WJGlm5ta6SueLHkWTr9xSdgvV4bmltTWuZUotdf64cOOw?=
+ =?us-ascii?Q?vuFPpn4eAkflunhZZ0mzPAphi3hzSHppVrWOlwnBagNzo7kjLYvR+iCvcEHa?=
+ =?us-ascii?Q?TVyZwcq4XSp4PM/M637MvD49V+C8ZlMyCU6sFkHnqWxfpOZEuYBOV4lJHxgM?=
+ =?us-ascii?Q?fuu+5qqYJt9wQ+QXcry15SRrM9nOiZHpGKbLz651ML41QYl9m4CiAAA7VCbt?=
+ =?us-ascii?Q?D+S9Ygun1MnPnU4tya49TzA01tcOd5Q/gMgF92j4LLc403e9oezucU8Y447V?=
+ =?us-ascii?Q?kg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	lJpGcq4XNcFO4EDb17CKV6I+n+cHBAJ1tlqTOB8k90OL2MBdEkyUDd88TgjCnFAfdeMG5ONGQMpoi9FL8NtHQMb2cWQAqyDnwi2iA2Bby20sjt8//BFulfiJnJEfdv9P3178E/vyVqI51QBVqt4QkF74vEqM5XtHnZp3jMqe/oJGxLE5AIAIr2dQSaUy/HAgvqgt7W7d5hV3RgsfoXCVBHNwKuoSY9JX9kgle/IE7nH70Z6t8z6XtNRDCdN9VPMoDhvi7p4CJ4qrEXNYPcwEPK8AHGTabCa6IZ8xSeT3V2P9V1G3tcFL+0BQEmdWyHzv/pvBstb8YI9rjGHluk7DuKfc5K5nsv/ZBXpBBQU5/0ZG2uzzc550a4AqZtMds43YfZ+xAwlupRqHE1f9vrztGUo040Z7nrlB8DrRLMLuFF6MIRhnXYwPg7Kw+rtf2O+i3rhscYnYimFKALPHypsYTCcwByKL+566I3yEQqMQ0CsiVHOMEHbEyaNXD2VyRmVf+nhBUGRDc0pPiFIdruqy2YITE0bQt4vyWF6j2/ideOQVrzyg87EUiAFRgQ/VoH0aIY1pqjg3AHVEe/68766J7HpflVhQu5dWVWK+QXMg4Ok=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffe4ad9c-e35a-45ef-c386-08ddeeec7d3d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 15:29:23.8018
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WNU7gTCbz4oDjO1rb87/HHjTWxiqDW2E/hvcfAvJNUTA6P3iq0ragIiICoWyjC50i/2wIgcTo7k0Db5KOHFnK52OgTSFqgdVXjOhAQGQNFw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5214
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509080153
+X-Authority-Analysis: v=2.4 cv=SaP3duRu c=1 sm=1 tr=0 ts=68bef659 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8
+ a=W5T_QLJ0vP-x9Pfon6UA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12069
+X-Proofpoint-ORIG-GUID: fIKLBgMxq1uWnp09MlV3wsW5G_6I3kG_
+X-Proofpoint-GUID: fIKLBgMxq1uWnp09MlV3wsW5G_6I3kG_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDEzMyBTYWx0ZWRfX7OAvJN+91qlR
+ DfCEdQxmTglbt6sfX27bvW6r4Wd8DgXzjwOLEkXxgwgYYuasPuBT7EgserC763ojbVmS/tPq4y9
+ 4qxn3WOKOhS5ig/Dh98zwzlykNw5uD6PKYQvq30Z+BBm4ihKb/0KxD8C1obbCc5FwkpxIN9zW48
+ HS8Wx2Yk2BYG8Cy8dd9He7kU4kTokAaEOujpfTMeDoRLccBUro4pbyMEokKJQXEgcSwsZUiOOuO
+ pQG84V5rYq0BeMLTxH5StGGxRcmeXor2Rg5572nMfh3nn9sxHkWTKrYhY7hM/a69eMyh55tgv4e
+ wtBje+4XMRn6Ep610728xGDdK87h4fxzq9sGUcRVCb8ln250rGJmYakqVbfuYG31JALr/fb18NP
+ kmYlKwm3YHEwhwsANP4vy3CmWI0t+w==
 
-On Mon, 8 Sept 2025 at 16:01, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Mon, Sep 08, 2025 at 12:57:03PM +0200, Ricardo Ribalda wrote:
-> > On Mon, 8 Sept 2025 at 12:25, Laurent Pinchart wrote:
-> > > On Mon, Jul 14, 2025 at 10:23:45AM +0000, Ricardo Ribalda wrote:
-> > > > queue->irqueue contains a list of the buffers owned by the driver. The
-> > > > list is protected by queue->irqlock. uvc_queue_get_current_buffer()
-> > > > returns a pointer to the current buffer in that list, but does not
-> > > > remove the buffer from it. This can lead to race conditions.
-> > > >
-> > > > Inspecting the code, it seems that the candidate for such race is
-> > > > uvc_queue_return_buffers(). For the capture queue, that function is
-> > > > called with the device streamoff, so no race can occur. On the other
-> > > > hand, the metadata queue, could trigger a race condition, because
-> > > > stop_streaming can be called with the device in any streaming state.
-> > > >
-> > > > We can solve this issue modifying the way the metadata buffer
-> > > > lifetime works. We can keep the queue->irqlock while the use the current
-> > > > metadata buffer.
-> > > >
-> > > > The core of this change is uvc_video_decode_meta(), it now obtains the
-> > > > buffer and holds the spinlock instead of getting the buffer as an
-> > > > argument.
-> > > >
-> > > > Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Closes: https://lore.kernel.org/linux-media/20250630141707.GG20333@pendragon.ideasonboard.com/
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: 088ead255245 ("media: uvcvideo: Add a metadata device node")
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > >  drivers/media/usb/uvc/uvc_isight.c |  3 +-
-> > > >  drivers/media/usb/uvc/uvc_queue.c  |  4 +-
-> > > >  drivers/media/usb/uvc/uvc_video.c  | 92 ++++++++++++++++++++++----------------
-> > > >  drivers/media/usb/uvc/uvcvideo.h   |  8 ++--
-> > > >  4 files changed, 62 insertions(+), 45 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_isight.c b/drivers/media/usb/uvc/uvc_isight.c
-> > > > index 43cda5e760a345af56186603e2f0594b814cdbcb..f0e71744d25cab98184335b46569b31ba1346e12 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_isight.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_isight.c
-> > > > @@ -98,8 +98,7 @@ static int isight_decode(struct uvc_video_queue *queue, struct uvc_buffer *buf,
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > -void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
-> > > > -                     struct uvc_buffer *meta_buf)
-> > > > +void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf)
-> > > >  {
-> > > >       struct urb *urb = uvc_urb->urb;
-> > > >       struct uvc_streaming *stream = uvc_urb->stream;
-> > > > diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> > > > index 790184c9843d211d34fa7d66801631d5a07450bd..e184e3ae0f59f142a683263168724bca64509628 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_queue.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_queue.c
-> > > > @@ -310,9 +310,11 @@ void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect)
-> > > >   * Buffers may span multiple packets, and even URBs, therefore the active buffer
-> > > >   * remains on the queue until the EOF marker.
-> > > >   */
-> > > > -static struct uvc_buffer *
-> > > > +struct uvc_buffer *
-> > > >  __uvc_queue_get_current_buffer(struct uvc_video_queue *queue)
-> > > >  {
-> > > > +     lockdep_assert_held(&queue->irqlock);
-> > > > +
-> > > >       if (list_empty(&queue->irqqueue))
-> > > >               return NULL;
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > > > index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..d6777090d0f892ffe93696c915acd4ec171ca798 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_video.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > > > @@ -1428,9 +1428,11 @@ static int uvc_video_encode_data(struct uvc_streaming *stream,
-> > > >   * previous header.
-> > > >   */
-> > > >  static void uvc_video_decode_meta(struct uvc_streaming *stream,
-> > > > -                               struct uvc_buffer *meta_buf,
-> > > >                                 const u8 *mem, unsigned int length)
-> > > >  {
-> > > > +     struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> > > > +     struct uvc_video_queue *qmeta = &stream->meta.queue;
-> > > > +     struct uvc_buffer *meta_buf;
-> > > >       struct uvc_meta_buf *meta;
-> > > >       size_t len_std = 2;
-> > > >       bool has_pts, has_scr;
-> > > > @@ -1439,7 +1441,13 @@ static void uvc_video_decode_meta(struct uvc_streaming *stream,
-> > > >       ktime_t time;
-> > > >       const u8 *scr;
-> > > >
-> > > > -     if (!meta_buf || length == 2)
-> > > > +     if (!vb2_qmeta || length <= 2)
-> > > > +             return;
-> > > > +
-> > > > +     guard(spinlock_irqsave)(&qmeta->irqlock);
-> > >
-> > > This keeps the spinlock held for longer than I would like. We should
-> > > really try to minimize the amount of work performed with a spinlock
-> > > held.
+On Mon, Sep 08, 2025 at 05:15:12PM +0200, David Hildenbrand wrote:
+> On 08.09.25 13:10, Lorenzo Stoakes wrote:
+> > It is relatively trivial to update this code to use the f_op->mmap_prepare
+> > hook in favour of the deprecated f_op->mmap hook, so do so.
 > >
-> > We are using meta_buf the whole function, which can disappear if  the
-> > user closes the metadata file descriptor.
-> >
-> > Besides memcopying meta_buf, how would you suggest reducing the
-> > spinlock held time?
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
 >
-> I'm thinking about a handshake with .stop_streaming(). The
-> .stop_streaming() operation can sleep, so we can just guard with a
-> spinlock the operation that acquires a metadata buffer, if we ensure
-> that .stop_streaming() waits until it completes.
+> Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Is this what you have in mind?
-(WARNING! non tested, think of it as pseudocode)
+Thanks!
 
-We still have to grab the spinlock twice in uvc_video_decode_meta(). I
-do not have the numbers, but I doubt that it is going to be much more
-efficient than the other versions.
-
-We could try to use memory barriers... but the chances of screwing
-things up grow.
-
-
-diff --git a/drivers/media/usb/uvc/uvc_queue.c
-b/drivers/media/usb/uvc/uvc_queue.c
-index e184e3ae0f59..761be28b0088 100644
---- a/drivers/media/usb/uvc/uvc_queue.c
-+++ b/drivers/media/usb/uvc/uvc_queue.c
-@@ -212,7 +212,18 @@ static void uvc_stop_streaming_meta(struct vb2_queue *vq)
-
-        lockdep_assert_irqs_enabled();
-
-+       while (1) {
-+               spin_lock_irq(&queue->irqlock);
-+               if (!queue->buffer_in_use) {
-+                       queue->buffer_in_use = true;
-+                       spin_unlock_irq(&queue->irqlock);
-+                       break;
-+               }
-+               spin_unlock_irq(&queue->irqlock);
-+       }
-+
-        uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
-+       spin_lock_irq(&queue->irqlock);       // probably not needed
-+       queue->buffer_in_use = false;
-+       spin_unlock_irq(&queue->irqlock);
- }
-
- static const struct vb2_ops uvc_queue_qops = {
-diff --git a/drivers/media/usb/uvc/uvc_video.c
-b/drivers/media/usb/uvc/uvc_video.c
-index 178f1e40c189..08a47e1f5d15 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1430,11 +1430,15 @@ static void uvc_video_decode_meta(struct
-uvc_streaming *stream,
-        if (!vb2_qmeta || length <= 2)
-                return;
-
--       guard(spinlock_irqsave)(&qmeta->irqlock);
--
-+       spin_lock_irq(&qmeta->irqlock);
-        meta_buf = __uvc_queue_get_current_buffer(qmeta);
--       if (!meta_buf)
-+       if (!meta_buf || qmeta->buffer_in_use) {
-+               spin_unlock_irq(&qmeta->irqlock);
-                return;
-+       }
-+
-+       qmeta->buffer_in_use = true;
-+       spin_unlock_irq(&qmeta->irqlock);
-
-        has_pts = mem[1] & UVC_STREAM_PTS;
-        has_scr = mem[1] & UVC_STREAM_SCR;
-@@ -1454,12 +1458,12 @@ static void uvc_video_decode_meta(struct
-uvc_streaming *stream,
-
-        if (length == len_std && (!has_scr ||
-                                  !memcmp(scr, stream->clock.last_scr, 6)))
--               return;
-+               goto done;
-
-        if (meta_buf->length - meta_buf->bytesused <
-            length + sizeof(meta->ns) + sizeof(meta->sof)) {
-                meta_buf->error = 1;
--               return;
-+               goto done;
-        }
-       meta = (struct uvc_meta_buf *)((u8 *)meta_buf->mem +
-meta_buf->bytesused);
-@@ -1485,6 +1489,12 @@ static void uvc_video_decode_meta(struct
-uvc_streaming *stream,
-                has_pts ? *(u32 *)meta->buf : 0,
-                has_scr ? *(u32 *)scr : 0,
-                has_scr ? *(u32 *)(scr + 4) & 0x7ff : 0);
-+
-+done:
-+
-+       spin_lock_irq(&qmeta->irqlock);
-+       qmeta->buffer_in_use = false;
-+       spin_unlock_irq(&qmeta->irqlock);
- }
-
- /* ------------------------------------------------------------------------
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index ccaab8c5a501..c5d954aacb20 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -337,8 +337,9 @@ struct uvc_video_queue {
-        unsigned int flags;
-        unsigned int buf_used;
-
--       spinlock_t irqlock;                     /* Protects irqqueue */
-+       spinlock_t irqlock;                     /* Protects irqqueue,
-buffer_in_use */
-        struct list_head irqqueue;
-+       bool buffer_in_use;
- };
-
- struct uvc_video_chain {
-
->
-> > > > +
-> > > > +     meta_buf = __uvc_queue_get_current_buffer(qmeta);
-> > > > +     if (!meta_buf)
-> > > >               return;
-> > > >
-> > > >       has_pts = mem[1] & UVC_STREAM_PTS;
-> > > > @@ -1512,30 +1520,48 @@ static void uvc_video_validate_buffer(const struct uvc_streaming *stream,
-> > > >   * Completion handler for video URBs.
-> > > >   */
-> > > >
-> > > > -static void uvc_video_next_buffers(struct uvc_streaming *stream,
-> > > > -             struct uvc_buffer **video_buf, struct uvc_buffer **meta_buf)
-> > > > +static void uvc_video_next_meta(struct uvc_streaming *stream,
-> > > > +                             struct uvc_buffer *video_buf)
-> > > >  {
-> > > > -     uvc_video_validate_buffer(stream, *video_buf);
-> > > > +     struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> > > > +     struct uvc_video_queue *qmeta = &stream->meta.queue;
-> > > > +     struct uvc_buffer *meta_buf;
-> > > > +     struct vb2_v4l2_buffer *vb2_meta;
-> > > > +     const struct vb2_v4l2_buffer *vb2_video;
-> > > >
-> > > > -     if (*meta_buf) {
-> > > > -             struct vb2_v4l2_buffer *vb2_meta = &(*meta_buf)->buf;
-> > > > -             const struct vb2_v4l2_buffer *vb2_video = &(*video_buf)->buf;
-> > > > +     if (!vb2_qmeta)
-> > > > +             return;
-> > > >
-> > > > -             vb2_meta->sequence = vb2_video->sequence;
-> > > > -             vb2_meta->field = vb2_video->field;
-> > > > -             vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-> > > > +     guard(spinlock_irqsave)(&qmeta->irqlock);
-> > > >
-> > > > -             (*meta_buf)->state = UVC_BUF_STATE_READY;
-> > > > -             if (!(*meta_buf)->error)
-> > > > -                     (*meta_buf)->error = (*video_buf)->error;
-> > > > -             *meta_buf = uvc_queue_next_buffer(&stream->meta.queue,
-> > > > -                                               *meta_buf);
-> > > > -     }
-> > > > -     *video_buf = uvc_queue_next_buffer(&stream->queue, *video_buf);
-> > > > +     meta_buf = __uvc_queue_get_current_buffer(qmeta);
-> > > > +     if (!meta_buf)
-> > > > +             return;
-> > > > +     list_del(&meta_buf->queue);
-> > > > +
-> > > > +     vb2_meta = &meta_buf->buf;
-> > > > +     vb2_video = &video_buf->buf;
-> > > > +
-> > > > +     vb2_meta->sequence = vb2_video->sequence;
-> > > > +     vb2_meta->field = vb2_video->field;
-> > > > +     vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-> > > > +     meta_buf->state = UVC_BUF_STATE_READY;
-> > > > +     if (!meta_buf->error)
-> > > > +             meta_buf->error = video_buf->error;
-> > > > +
-> > > > +     uvc_queue_buffer_release(meta_buf);
-> > > > +}
-> > > > +
-> > > > +static struct uvc_buffer *uvc_video_next_buffer(struct uvc_streaming *stream,
-> > > > +                                             struct uvc_buffer *video_buf)
-> > > > +{
-> > > > +     uvc_video_validate_buffer(stream, video_buf);
-> > > > +     uvc_video_next_meta(stream, video_buf);
-> > > > +     return uvc_queue_next_buffer(&stream->queue, video_buf);
-> > > >  }
-> > > >
-> > > >  static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
-> > > > -                     struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> > > > +                               struct uvc_buffer *buf)
-> > > >  {
-> > > >       struct urb *urb = uvc_urb->urb;
-> > > >       struct uvc_streaming *stream = uvc_urb->stream;
-> > > > @@ -1559,13 +1585,13 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
-> > > >                       ret = uvc_video_decode_start(stream, buf, mem,
-> > > >                               urb->iso_frame_desc[i].actual_length);
-> > > >                       if (ret == -EAGAIN)
-> > > > -                             uvc_video_next_buffers(stream, &buf, &meta_buf);
-> > > > +                             buf = uvc_video_next_buffer(stream, buf);
-> > > >               } while (ret == -EAGAIN);
-> > > >
-> > > >               if (ret < 0)
-> > > >                       continue;
-> > > >
-> > > > -             uvc_video_decode_meta(stream, meta_buf, mem, ret);
-> > > > +             uvc_video_decode_meta(stream, mem, ret);
-> > > >
-> > > >               /* Decode the payload data. */
-> > > >               uvc_video_decode_data(uvc_urb, buf, mem + ret,
-> > > > @@ -1576,12 +1602,12 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
-> > > >                       urb->iso_frame_desc[i].actual_length);
-> > > >
-> > > >               if (buf->state == UVC_BUF_STATE_READY)
-> > > > -                     uvc_video_next_buffers(stream, &buf, &meta_buf);
-> > > > +                     buf = uvc_video_next_buffer(stream, buf);
-> > > >       }
-> > > >  }
-> > > >
-> > > >  static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> > > > -                     struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> > > > +                               struct uvc_buffer *buf)
-> > > >  {
-> > > >       struct urb *urb = uvc_urb->urb;
-> > > >       struct uvc_streaming *stream = uvc_urb->stream;
-> > > > @@ -1607,7 +1633,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> > > >               do {
-> > > >                       ret = uvc_video_decode_start(stream, buf, mem, len);
-> > > >                       if (ret == -EAGAIN)
-> > > > -                             uvc_video_next_buffers(stream, &buf, &meta_buf);
-> > > > +                             buf = uvc_video_next_buffer(stream, buf);
-> > > >               } while (ret == -EAGAIN);
-> > > >
-> > > >               /* If an error occurred skip the rest of the payload. */
-> > > > @@ -1617,7 +1643,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> > > >                       memcpy(stream->bulk.header, mem, ret);
-> > > >                       stream->bulk.header_size = ret;
-> > > >
-> > > > -                     uvc_video_decode_meta(stream, meta_buf, mem, ret);
-> > > > +                     uvc_video_decode_meta(stream, mem, ret);
-> > > >
-> > > >                       mem += ret;
-> > > >                       len -= ret;
-> > > > @@ -1644,7 +1670,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> > > >                       uvc_video_decode_end(stream, buf, stream->bulk.header,
-> > > >                               stream->bulk.payload_size);
-> > > >                       if (buf->state == UVC_BUF_STATE_READY)
-> > > > -                             uvc_video_next_buffers(stream, &buf, &meta_buf);
-> > > > +                             buf = uvc_video_next_buffer(stream, buf);
-> > > >               }
-> > > >
-> > > >               stream->bulk.header_size = 0;
-> > > > @@ -1654,7 +1680,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
-> > > >  }
-> > > >
-> > > >  static void uvc_video_encode_bulk(struct uvc_urb *uvc_urb,
-> > > > -     struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-> > > > +                               struct uvc_buffer *buf)
-> > > >  {
-> > > >       struct urb *urb = uvc_urb->urb;
-> > > >       struct uvc_streaming *stream = uvc_urb->stream;
-> > > > @@ -1707,8 +1733,6 @@ static void uvc_video_complete(struct urb *urb)
-> > > >       struct uvc_video_queue *qmeta = &stream->meta.queue;
-> > > >       struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> > > >       struct uvc_buffer *buf = NULL;
-> > > > -     struct uvc_buffer *buf_meta = NULL;
-> > > > -     unsigned long flags;
-> > > >       int ret;
-> > > >
-> > > >       switch (urb->status) {
-> > > > @@ -1734,14 +1758,6 @@ static void uvc_video_complete(struct urb *urb)
-> > > >
-> > > >       buf = uvc_queue_get_current_buffer(queue);
-> > > >
-> > > > -     if (vb2_qmeta) {
-> > > > -             spin_lock_irqsave(&qmeta->irqlock, flags);
-> > > > -             if (!list_empty(&qmeta->irqqueue))
-> > > > -                     buf_meta = list_first_entry(&qmeta->irqqueue,
-> > > > -                                                 struct uvc_buffer, queue);
-> > > > -             spin_unlock_irqrestore(&qmeta->irqlock, flags);
-> > > > -     }
-> > > > -
-> > > >       /* Re-initialise the URB async work. */
-> > > >       uvc_urb->async_operations = 0;
-> > > >
-> > > > @@ -1755,7 +1771,7 @@ static void uvc_video_complete(struct urb *urb)
-> > > >        * Process the URB headers, and optionally queue expensive memcpy tasks
-> > > >        * to be deferred to a work queue.
-> > > >        */
-> > > > -     stream->decode(uvc_urb, buf, buf_meta);
-> > > > +     stream->decode(uvc_urb, buf);
-> > > >
-> > > >       /* If no async work is needed, resubmit the URB immediately. */
-> > > >       if (!uvc_urb->async_operations) {
-> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > > index 757254fc4fe930ae61c9d0425f04d4cd074a617e..bb41477ce4ff5cdbf27bc9d830b63a60645e3fa1 100644
-> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > > @@ -479,8 +479,7 @@ struct uvc_streaming {
-> > > >       unsigned int frozen : 1;
-> > > >       struct uvc_video_queue queue;
-> > > >       struct workqueue_struct *async_wq;
-> > > > -     void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
-> > > > -                    struct uvc_buffer *meta_buf);
-> > > > +     void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf);
-> > > >
-> > > >       struct {
-> > > >               struct video_device vdev;
-> > > > @@ -694,6 +693,8 @@ int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type);
-> > > >  void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect);
-> > > >  struct uvc_buffer *uvc_queue_next_buffer(struct uvc_video_queue *queue,
-> > > >                                        struct uvc_buffer *buf);
-> > > > +struct uvc_buffer *
-> > > > +__uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
-> > > >  struct uvc_buffer *uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
-> > > >  void uvc_queue_buffer_release(struct uvc_buffer *buf);
-> > > >  static inline int uvc_queue_streaming(struct uvc_video_queue *queue)
-> > > > @@ -802,8 +803,7 @@ u16 uvc_endpoint_max_bpi(struct usb_device *dev, struct usb_host_endpoint *ep);
-> > > >
-> > > >  /* Quirks support */
-> > > >  void uvc_video_decode_isight(struct uvc_urb *uvc_urb,
-> > > > -                          struct uvc_buffer *buf,
-> > > > -                          struct uvc_buffer *meta_buf);
-> > > > +                          struct uvc_buffer *buf);
-> > > >
-> > > >  /* debugfs and statistics */
-> > > >  void uvc_debugfs_init(void);
-> > > >
-> > > > ---
-> > > > base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-> > > > change-id: 20250714-uvc-racemeta-fee2e69bbfcd
 >
 > --
-> Regards,
+> Cheers
 >
-> Laurent Pinchart
-
-
-
--- 
-Ricardo Ribalda
+> David / dhildenb
+>
 
