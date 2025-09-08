@@ -1,209 +1,185 @@
-Return-Path: <linux-kernel+bounces-806846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C03AB49C99
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A085B49CA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00DC3A0651
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B444E3FEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B5B2E6CD4;
-	Mon,  8 Sep 2025 21:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7788E2E8B91;
+	Mon,  8 Sep 2025 22:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF7dlFDI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KG8awAPp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720CC1C863B;
-	Mon,  8 Sep 2025 21:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4A523B61A;
+	Mon,  8 Sep 2025 22:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757368794; cv=none; b=QogpHh7wI42Rvp+4m6ur10VXaHm2XrCw7PuLfNnJ6j9bqh9FD3GzU4QzekKWFJbiP0E/ukUsMMWhJW8ugeIHiqrxUpcdD0hBgHiP639u8EcXrThBgRCBa963iO5dsfur7vho5f0mq4kj+rCRBZeXlNgO3Cm0oXv8oOMOuSPHRn0=
+	t=1757368935; cv=none; b=JMVSIk7abRjsB97AsNDxpX3TakOT1LOJMnCJcAcmswFHwFzWtPE5X4EgEOW92HKvA8mGYOyvcUnT2jwuAXs+k8RhRQdsg2TIspeiu2/Qb3l/JRxYg1OJ3FDDX9mqssN1KJGZVL3YHmYb0qGMmMY5XQzPEBfqVEkltwoeQ3VIEyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757368794; c=relaxed/simple;
-	bh=pcF4XTkfaUSr501beAEhTtxZ4XbyrQgb5NrCV68riMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avdKpwQi6tiLafEmpI6NT3aThXYyqo21T7Cx5MB65s49k//FWoK6pfJG+65UuO6ILHQJZi6HHCux52g0SMT2ZIMx7q6Zpa/lWCy0nxQOETyd+KPAnbBoDiIMUFWDhSS+Rs9Lnc6PMnxRTJVbKPRmfRp/iXqt0SRFC2+ijLzj0Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF7dlFDI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAAE2C4CEF7;
-	Mon,  8 Sep 2025 21:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757368793;
-	bh=pcF4XTkfaUSr501beAEhTtxZ4XbyrQgb5NrCV68riMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LF7dlFDIec05cBgnVwxuxzoPA9lzwFIN7E4r1Czq8H/zWMtRppnYjb86LObWJMAla
-	 QIb5LV7exXDnBK6CkPoZZMNsxkZz+nTFuLmEsKfaJlTTel6NQz2S8RorNT4hcf94Kd
-	 PSMDOFekS3F1n/83o/BqNnZhsBBrKv3wyoG1M4bSFlJ5M4xG7Y8p7UtdJ2ZwR9zT8l
-	 Ni7CG3qNIa/bgSxUX5McQtF+hucb7jFTDeViD7qE23qHsu8jNG9jdTdkyhigkqQALS
-	 TpoaJNphMRb7u6Oo8zeQZCt6ApVotucTqmrrlwdwpPvsYXNEddAJDb2fCg0J8w6JfW
-	 rZLmq2Ftfk08A==
-Received: by venus (Postfix, from userid 1000)
-	id B0FCA180B26; Mon, 08 Sep 2025 23:59:51 +0200 (CEST)
-Date: Mon, 8 Sep 2025 23:59:51 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	"Derek J. Clark" <derekjohn.clark@gmail.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-Message-ID: <kshw3zf3rbpc4ytb6ofucannuv2uax6lz74q53qs73xcbxpl5z@qr6mgnj6olkm>
-References: <20250906-thinkpad-t14s-ec-v3-0-3ce6ec21ae89@collabora.com>
- <20250906-thinkpad-t14s-ec-v3-2-3ce6ec21ae89@collabora.com>
- <f16a858d-fb41-4cc9-a138-7bfe5ee2800f@oss.qualcomm.com>
+	s=arc-20240116; t=1757368935; c=relaxed/simple;
+	bh=hhE6RGL+FRpzFdGhBf7AK1KQErFfrcOxy9ye5CpwxNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWLJ+tZP4YoTlIDwlVvJ9AA/kpuC/wiU+n4vcJ1QFR6M/8Nm9wB6/piZ5i/7qvzqn0J6pvr1WF/NLtY+Kn2B4fnDvL6+xtDrtlB83iXptlI5PNEzft7vkc345Jubyfeyuyy1NcXkcVG64j0stuRNweaOuNBhDMd7GA0T6ZgF2JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KG8awAPp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588HsGjK006469;
+	Mon, 8 Sep 2025 22:02:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=qpbTHU8EIW3qhR3cjrpx1set9Uut6u/PXSeZfaBSi
+	UM=; b=KG8awAPpy/C8y8G7pcV5X4hzRXpOUghByGPU04rmEVwNGpkvEmBFtmduT
+	0HC4ecesu04ME5Gh4+nKfGd11+bGuZc1Zwm1fsQnjy/5yVCkHM0KiTXqheZzB8Xi
+	POcJ8dNBh9mOEbRfkOSkF88yvRA4b8qhfQUqwuMbzaVdOztxftyPubWb+rXJ4wDS
+	tWOg4HhHKw26sZrtUKyFsuBacT0YEsUAg1SJfcnLdWAEpIaP+GezXzkbpgWMi9V7
+	uUclB/POEwa/DO/MyeYgWlFdz4lKLLjoxpX/9FchUoXUrJz8CLPUfPdT2AqqDTcM
+	aNTxUWEhXFtx8hI0ZcTAkEs1wKMZQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwm43j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 22:02:09 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588LrKxp027864;
+	Mon, 8 Sep 2025 22:02:08 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwm43a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 22:02:08 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588KC61K011435;
+	Mon, 8 Sep 2025 22:02:07 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9u8b5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 22:02:07 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588M24Vk61538686
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 22:02:04 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDF4F20040;
+	Mon,  8 Sep 2025 22:02:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ADBA820043;
+	Mon,  8 Sep 2025 22:02:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 22:02:03 +0000 (GMT)
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Simon Horman <horms@kernel.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Dust Li <dust.li@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Halil Pasic <pasic@linux.ibm.com>
+Subject: [PATCH net-next v2 0/2] net/smc: make wr buffer count configurable 
+Date: Tue,  9 Sep 2025 00:01:48 +0200
+Message-ID: <20250908220150.3329433-1-pasic@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b42yzd7r3ovd6qno"
-Content-Disposition: inline
-In-Reply-To: <f16a858d-fb41-4cc9-a138-7bfe5ee2800f@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZvQu3b2NvW__VhgPLhLqlyl9HpPgnH97
+X-Proofpoint-ORIG-GUID: gtQ_0s5TQzq9r25UlxbXbPysDtje5wda
+X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68bf5261 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=yJojWOMRYYMA:10 a=OPAOpny1AAAA:8 a=vF7HM7XGAAAA:8 a=QyXUC8HyAAAA:8
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=piJGGMyLFvZckxoXyWEA:9
+ a=Vt4qOV5uLRUYeah0QK8L:22 a=bNn2QJc11pDkoTYzAKk6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfXxlIICvURjiWB
+ 1Cz96MRYfonkWO8i63gCKHPysWKwCzMbVrW93SYq+Qle4vnGNs5YUxwNCjsbjomitPms7p/TCJd
+ TRdPvmTox6zp4KaCBLPvIOLLOVsQNKVMVCadK0gHjZDp8ioTDtVu84pkWnJ3BZ1qLNxYEg4UORQ
+ 7A0UO92puRlWP61kG38eoSHgRNpBdg0NIpFG1AI8cEZEzYRIoCWNdKP1LlDEgHWOTdqh6E1o0gy
+ x0GjXacKyA7lpL0e2uwBNxPAJt7nwDvITRhr4uj9JnLiQr7uXO6BUqvZqM3CrhVzkThr4chzuU/
+ IM8R//Mue9lOkkowbi5cGuHA/ZTABKIlUmwie197k7fokePIlItP2kMnAAqRBWTFAulq/mP327l
+ CVtsbWxG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+
+The current value of SMC_WR_BUF_CNT is 16 which leads to heavy
+contention on the wr_tx_wait workqueue of the SMC-R linkgroup and its
+spinlock when many connections are competing for the work request
+buffers. Currently up to 256 connections per linkgroup are supported.
+
+To make things worse when finally a buffer becomes available and
+smc_wr_tx_put_slot() signals the linkgroup's wr_tx_wait wq, because
+WQ_FLAG_EXCLUSIVE is not used all the waiters get woken up, most of the
+time a single one can proceed, and the rest is contending on the
+spinlock of the wq to go to sleep again.
+
+Addressing this by simply bumping SMC_WR_BUF_CNT to 256 was deemed
+risky, because the large-ish physically continuous allocation could fail
+and lead to TCP fall-backs. For reference see this discussion thread on
+"[PATCH net-next] net/smc: increase SMC_WR_BUF_CNT" (in archive
+https://lists.openwall.net/netdev/2024/11/05/186), which concludes with
+the agreement to try to come up with something smarter, which is what
+this series aims for.
+
+Additionally if for some reason it is known that heavy contention is not
+to be expected going with something like 256 work request buffers is
+wasteful. To address these concerns make the number of work requests
+configurable, and introduce a back-off logic with handles -ENOMEM form
+smc_wr_alloc_link_mem() gracefully.
+
+Changelog:
+v2:
+ 1) Fixed https://lore-kernel.gnuweeb.org/linux-doc/202509070225.pVKkaaCr-lkp@intel.com/
+ 2) Inspired by 1) made the sysctls namespaced and moved the backing
+    variables into struct netns_smc 
+ 3) Use tabs instead of spaces for alignment in (Dust Li) 
+ 4) Renamed the sysctls form smcr_max_*_wr to smcr_pref_*_wr (along with
+    the affiliated fields/variables based on the discussion with Dust Li
+    (although maximal is mathematically accurate preferred is more fitting
+    IMHO). Should the community decide tha max was better I can roll
+    this change back very quickly
+ 5) Removed Wenjia's r-b form patch 1 as quite a few things changed
+ 4) Add r-b from Mahanta I forgot to add in v1 (which remains the
+    same moduo rename.
+v1: https://lore.kernel.org/all/20250904211254.1057445-1-pasic@linux.ibm.com/
+
+Halil Pasic (2):
+  net/smc: make wr buffer count configurable
+  net/smc: handle -ENOMEM from smc_wr_alloc_link_mem gracefully
+
+ Documentation/networking/smc-sysctl.rst | 40 +++++++++++++++++++++++++
+ include/net/netns/smc.h                 |  2 ++
+ net/smc/smc_core.c                      | 34 ++++++++++++++-------
+ net/smc/smc_core.h                      |  8 +++++
+ net/smc/smc_ib.c                        |  7 ++---
+ net/smc/smc_llc.c                       |  2 ++
+ net/smc/smc_sysctl.c                    | 22 ++++++++++++++
+ net/smc/smc_sysctl.h                    |  2 ++
+ net/smc/smc_wr.c                        | 32 ++++++++++----------
+ net/smc/smc_wr.h                        |  2 --
+ 10 files changed, 119 insertions(+), 32 deletions(-)
 
 
---b42yzd7r3ovd6qno
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-MIME-Version: 1.0
+base-commit: f3883b1ea5a8f31df4eba1c2cb5196e3a249a09e
+-- 
+2.48.1
 
-Hi,
-
-On Mon, Sep 08, 2025 at 09:28:12AM +0200, Konrad Dybcio wrote:
-> On 9/6/25 3:12 AM, Sebastian Reichel wrote:
-> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which is in
-> > theory compatible with ThinkPad ACPI. On Linux the system is booted with
-> > device tree, which is not supported by the ThinkPad ACPI driver
-> > (drivers/platform/x86/lenovo/thinkpad_acpi.c). Also most of the hardware
-> > compatibility is handled via ACPI tables, which are obviously not used
-> > when booting via device tree. Thus adding DT compatibility to the
-> > existing driver is not worth it as there is almost no code sharing.
->=20
-> [...]
->=20
-> couple nits, feel free to ignore
-
-I will do a v4 adding events for thermal zone status update (just
-debug prints for now), as I noticed the unknown event id messages
-in my dmesg after doing a full kernel compile.
-
-> > +#define T14S_EC_EVT_NONE			0x00
-> > +#define T14S_EC_EVT_KEY_FN_4			0x13
-> > +#define T14S_EC_EVT_KEY_FN_F7			0x16
-> > +#define T14S_EC_EVT_KEY_FN_SPACE		0x1F
-> > +#define T14S_EC_EVT_KEY_TP_DOUBLE_TAP		0x20
-> > +#define T14S_EC_EVT_AC_CONNECTED		0x26
-> > +#define T14S_EC_EVT_AC_DISCONNECTED		0x27
-> > +#define T14S_EC_EVT_KEY_POWER			0x28
-> > +#define T14S_EC_EVT_LID_OPEN			0x2A
-> > +#define T14S_EC_EVT_LID_CLOSED			0x2B
-> > +#define T14S_EC_EVT_KEY_FN_F12			0x62
-> > +#define T14S_EC_EVT_KEY_FN_TAB			0x63
-> > +#define T14S_EC_EVT_KEY_FN_F8			0x64
-> > +#define T14S_EC_EVT_KEY_FN_F10			0x65
-> > +#define T14S_EC_EVT_KEY_FN_F4			0x6A
-> > +#define T14S_EC_EVT_KEY_FN_D			0x6B
-> > +#define T14S_EC_EVT_KEY_FN_T			0x6C
-> > +#define T14S_EC_EVT_KEY_FN_H			0x6D
-> > +#define T14S_EC_EVT_KEY_FN_M			0x6E
-> > +#define T14S_EC_EVT_KEY_FN_L			0x6F
-> > +#define T14S_EC_EVT_KEY_FN_RIGHT_SHIFT		0x71
-> > +#define T14S_EC_EVT_KEY_FN_ESC			0x74
-> > +#define T14S_EC_EVT_KEY_FN_N			0x79
-> > +#define T14S_EC_EVT_KEY_FN_F11			0x7A
-> > +#define T14S_EC_EVT_KEY_FN_G			0x7E
->=20
-> Please use lowercase hex consistently across the file
->=20
-> [...]
-
-Changed in v4.
-
-> > +enum thinkpad_t14s_ec_led_status_t {
-> > +	T14S_EC_LED_OFF =3D	0x00,
-> > +	T14S_EC_LED_ON =3D	0x80,
-> > +	T14S_EC_LED_BLINK =3D	0xc0,
->=20
-> These conveniently translate to: BIT(7) and BIT(6)|BIT(7), meaning
-> BIT(7) could mean "ON" and BIT(6) could mean "pulse" (can you pulse
-> a disabled LED? arcane secrets..)
-
-FIELD_PREP would also be an option, but I don't think this becomes
-more readable by using either and kept this as-is.
-
-> [...]
->=20
-> > +	if (brightness =3D=3D LED_OFF)
-> > +		new_state =3D T14S_EC_LED_OFF;
-> > +	else if (led->cache !=3D T14S_EC_LED_BLINK)
->=20
-> =3D=3Ds are easier to logically follow than !=3D, but this is totally
-> potayto/potahto
->=20
-> [...]
-
-Changed in v4.
-
-> > +static int thinkpad_t14s_led_blink_set(struct led_classdev *led_cdev,
-> > +				       unsigned long *delay_on,
-> > +				       unsigned long *delay_off)
-> > +{
-> > +	struct thinkpad_t14s_ec_led_classdev *led =3D container_of(led_cdev,
-> > +			struct thinkpad_t14s_ec_led_classdev, led_classdev);
-> > +
-> > +	if (*delay_on =3D=3D 0 && *delay_off =3D=3D 0) {
-> > +		/* We can choose the blink rate */
->=20
-> "can't"?
-
-I will change this to:
-
-"Userspace does not provide a blink rate; we can choose it"
-
-> Needless to say, amazing work on piecing all this together,
-> Sebastian!
-
-Thanks. Btw. I tried the suspend logic from your X13s EC driver as
-the ACPI DSDT ECNT functions are exactly the same for X13s and T14s
-and you obviously got the logic from there. But I haven't noticed
-any difference and the PM handler is commented out in your driver.
-Thinkpads typically have a breathing animation on their power and
-LID leds when the machine is suspended. My expectation is, that the
-EC enables at least this animation when being programmed correctly.
-
-Greetings,
-
--- Sebastian
-
---b42yzd7r3ovd6qno
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi/UdQACgkQ2O7X88g7
-+priXQ//UJN4u610JRMKybsrPycmlYGKHFJl87pyIrZfaQykkmH48LxrKrbP71qG
-T9e/NWDXuIiJc58+Lc9hrEx8OcFtR3Bg9xAI75ydiu4J46JjgRFQeAlLdhmz6e1W
-qSNgrbh7n3V4UL1nJk9FI1PM+8XZ5D+F7/Sje2Sh8hvm+PA0PCUIDHkMzuylYdPt
-F6HQv8M+RIDsKzDORP2TfDnOo4SL0i+prRGZ2lC6e4vidWPXXMfe5+zLmJrPbYHa
-gsH7zzIEa0zI5UG3VCvxb5DJLfUOybjIr4hSYZMdPhV6k2AsikQYa8l7CVcH0IDz
-EB0xwrNs36fYgW9WxerByOAQm9vcshV1otCYMBPtqrOtOD1bqEwyYKTW+Zrk0BRr
-PMvKHqSPXc662xnbjLa/nfxsuNWTv4dXVY3zWzW2YCB1E1rDWu755RDArdEPGvSd
-o3qN4BurUXc2fEqk2Soiz5MfIwRZTm2gLfmSH9gDLvlK9ZTU3UamS9KeOT3GXxxu
-RPXdsDpfojWigdzxZmMwL/wu2vY95jeYtlLaFKslPdggkLLAgK7phcF6O9MmlDH4
-cO6HTc4ukH9f/MvpvjNxwpuHPQ14JEW5Nn+0agsJpulqBhv0hTMhQT5Iex10AuYd
-ElZf4Pkq/XnseDDmZkao9sNVydIJhOXr+IVcFFVbT9EqKM+ryZs=
-=xR/1
------END PGP SIGNATURE-----
-
---b42yzd7r3ovd6qno--
 
