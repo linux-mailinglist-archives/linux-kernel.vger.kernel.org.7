@@ -1,242 +1,301 @@
-Return-Path: <linux-kernel+bounces-805889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32F8B48EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:11:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1421B48EE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27DF444226F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E619F3B3C5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFE630BF5A;
-	Mon,  8 Sep 2025 13:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5E230ACE4;
+	Mon,  8 Sep 2025 13:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tMYr2yyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ntQxTops"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A930AABF;
-	Mon,  8 Sep 2025 13:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757336923; cv=none; b=aTgYQAoh4mKJ0olRYixVKz5WJfId3bjRfV7n/od+JCzSSAF63aOnVAETN6IMek/LjNBnHnPyiKdzvgxg3rrWr7fV1/ksFv7KMfOUmbO6tWm7gx0fcrVeLAXjjxUxb9Kxq7C31jrIkzHkkhticjyQHoHm7wTtZA+7zclpM2k4Pas=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757336923; c=relaxed/simple;
-	bh=jWHcLjsBUJIGDgf/RiVKlGGfz+U28RPgwKaOU64//co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9CEOQ7o0LFcHUx6htX/0ucUyYE+4cmywzupUP5xxP2m7twYvDbosATFkslTDeDer7GVfB8GPLCcHsCEi+y1l8HdgcBp6Krled8Hovk9d+7LJqJrVnM6bIhbFBvXwvaJwt/bJlAp0FtAljKHyiEtjRoL6zVkHUjoOGHqMqhJz6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tMYr2yyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45616C4CEF8;
-	Mon,  8 Sep 2025 13:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757336922;
-	bh=jWHcLjsBUJIGDgf/RiVKlGGfz+U28RPgwKaOU64//co=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tMYr2yytxfaGjeIO2wdotRAV/tikqhFnA6pk07VNiSRBPZoNy5meVmVxmGw1Kafiz
-	 PJ3Z1qaZ3N0E4VBXVExJEfFdxJRP3248UcHgcf9fy5pyBSw0T2KUckyieouF33hfmY
-	 HikdLA3fwkJweSAloeP1v6yw1r1KxnwYX73F3V2c=
-Date: Mon, 8 Sep 2025 15:08:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
-	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v11 5/7] samples: rust: Add debugfs sample driver
-Message-ID: <2025090838-twelve-snap-683a@gregkh>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-5-7d12a165685a@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979C72E92D9;
+	Mon,  8 Sep 2025 13:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757336959; cv=fail; b=jIMaAVLv8dO9UBa3sUSbkEcZIJP6jp5q/eUXhHfRrHC74yZ8vOgi+crItb/PxVYL2X3VKCZvPmG2nTa7y4QHsGCvsLMU712S4gednwp6mecklmPbWjRrm0GC6ohsfa58W45ftgtAU0kZ/Y8ubX9Tic+2ae3RjRCNadKDMK/XL6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757336959; c=relaxed/simple;
+	bh=Pr+EaIwAvW4IBb++WrtWAL8SkjD7WDJagCPvbHp7ffg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HJ+8RVfjhb7CdsL3zqTo+WD/sgCvOdV4OVsLCW6391oN6g7UprfqExPSQ62HuynNUUN4Tp+EhuzdNhVxrFA9E41F1uYhQxbqzlxm0Vhbq2qxY/xGtwHvSDAaymYfFyT8DcMy8wbFHpU4v2WfmFnt6Va9PS2vhd7c+fd1k8TwfEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ntQxTops; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757336957; x=1788872957;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=Pr+EaIwAvW4IBb++WrtWAL8SkjD7WDJagCPvbHp7ffg=;
+  b=ntQxTopsMCqJZiL1P/6a8ROrR7sLW1Eac3v5qXxFaqeCupp4Tgf4WyKS
+   tNwNHw+xxNiQ55GnhvNovxyGGlL2p9yPKK7spJa1jxYnz/uxn5uDdH6SW
+   WvknMk9ViCXArWRS9kv2CVM/OCk7iRRf2MKtoLs8dP1/lUFqkCe6gOLo3
+   X0jQFgFNRg1S1Gffi2TCMkzSjYxkhk8zkdXH/up8gt4+w25GsQKUziexZ
+   eJVj7RVuEsKcOS4VhUWBK1qfPHeTJbMdCQxLsQ7jGnaXbPS+WS24RP9dc
+   HXk+L5+neUQ82bbkvGR3UAKFFYXLd1/I5yEyhsF/pWnWkMg4kjnXenz+B
+   Q==;
+X-CSE-ConnectionGUID: hl50nn0eQX2rLLSX1FK6yg==
+X-CSE-MsgGUID: 50XWPyVARXy7tms+fQWBog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="58632642"
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="58632642"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 06:09:14 -0700
+X-CSE-ConnectionGUID: G+xMS0fpQCiWmIAYqbC3sw==
+X-CSE-MsgGUID: T3EE4dq+RReSfVXd9T43pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="196425867"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 06:09:14 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 06:09:13 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 8 Sep 2025 06:09:13 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.68)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 06:09:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tg907FeTnUKH9XERy6Uo1b11ANgnLMkpPeeKjZur93b09ZAc60UofAnu1k7FO3iR0OLSVKF0RReiLoJxGu0t0fbreOnARBOdi+uP68RCpZxEasCneX3W4cJVC1I3JOXBQPMVuM25WuH4xIJC9UHenkiw5apJ1PDhKxLHAtCXoiyR556xvTtDnt4EI1Q6fFxnYiu+HRJSXUDhYC16kVwCXvS6V1IRiGE7BaDiIgElc5ShWdb/doagx26ZgCejXDhe7Gwec6uEAeqSYtjM7qqKuH2Y+Miyj8cruMDrh0fCK5LSZPIo9uUbHO50bt5GTxrHDQBBDOjH7cPfYZgRqOnQBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FjDS2RNuu/O6CJuKey+gDijD5Fc0hZzwS5894PX4Fjw=;
+ b=ljIuTdkoFaVuyx8Zwpul1BalCAisYp9ZiIDA6gTwdRTHE7z5O4IDpzt17vj4cd87r80JaoSBw0WYBqQVqeVPtPDIYnwVfj8xETiw+DdLVJ4wFwV4IxIeyB8eDpdO2l1UsOwIPW+BoWsGcn2BPTpYSZujpZR4B+s9matNfXki8n2qZqgYQYDhFcwmWCBqkZp2E3BfZ+1mkaY+xz8SdewqabQWBmrOpAGtMHCMT86rH8iUpl6Jwee3VR5aWgcARsDjO9403sXV6oImUMXE8udWfj1bBXMHFXknyi00RUk3W5PKV2PJGVktMYhE9FiNrrh3jjnVlejL0vXbyLuXZkO79A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
+ by SJ0PR11MB5024.namprd11.prod.outlook.com (2603:10b6:a03:2dd::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 13:09:09 +0000
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2%3]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 13:09:09 +0000
+Date: Mon, 8 Sep 2025 15:08:52 +0200
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+CC: <sohil.mehta@intel.com>, <baohua@kernel.org>, <david@redhat.com>,
+	<kbingham@kernel.org>, <weixugc@google.com>, <Liam.Howlett@oracle.com>,
+	<alexandre.chartre@oracle.com>, <kas@kernel.org>, <mark.rutland@arm.com>,
+	<trintaeoitogc@gmail.com>, <axelrasmussen@google.com>, <yuanchu@google.com>,
+	<joey.gouly@arm.com>, <samitolvanen@google.com>, <joel.granados@kernel.org>,
+	<graf@amazon.com>, <vincenzo.frascino@arm.com>, <kees@kernel.org>,
+	<ardb@kernel.org>, <thiago.bauermann@linaro.org>, <glider@google.com>,
+	<thuth@redhat.com>, <kuan-ying.lee@canonical.com>,
+	<pasha.tatashin@soleen.com>, <nick.desaulniers+lkml@gmail.com>,
+	<vbabka@suse.cz>, <kaleshsingh@google.com>, <justinstitt@google.com>,
+	<catalin.marinas@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<samuel.holland@sifive.com>, <dave.hansen@linux.intel.com>, <corbet@lwn.net>,
+	<xin@zytor.com>, <dvyukov@google.com>, <tglx@linutronix.de>,
+	<scott@os.amperecomputing.com>, <jason.andryuk@amd.com>, <morbo@google.com>,
+	<nathan@kernel.org>, <lorenzo.stoakes@oracle.com>, <mingo@redhat.com>,
+	<brgerst@gmail.com>, <kristina.martsenko@arm.com>, <bigeasy@linutronix.de>,
+	<luto@kernel.org>, <jgross@suse.com>, <jpoimboe@kernel.org>,
+	<urezki@gmail.com>, <mhocko@suse.com>, <ada.coupriediaz@arm.com>,
+	<hpa@zytor.com>, <leitao@debian.org>, <peterz@infradead.org>,
+	<wangkefeng.wang@huawei.com>, <surenb@google.com>, <ziy@nvidia.com>,
+	<smostafa@google.com>, <ryabinin.a.a@gmail.com>, <ubizjak@gmail.com>,
+	<jbohac@suse.cz>, <broonie@kernel.org>, <akpm@linux-foundation.org>,
+	<guoweikang.kernel@gmail.com>, <rppt@kernel.org>, <pcc@google.com>,
+	<jan.kiszka@siemens.com>, <nicolas.schier@linux.dev>, <will@kernel.org>,
+	<jhubbard@nvidia.com>, <bp@alien8.de>, <x86@kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>, <llvm@lists.linux.dev>,
+	<linux-kbuild@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 13/19] kasan: x86: Handle int3 for inline KASAN reports
+Message-ID: <epbqhjyfdt3daudp2wx54jsw6d7jf6ifbr3yknlfuqptz7b4uq@73n5k6b2jrrl>
+References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
+ <36c0e5e9d875addc42a73168b8090144c327ec9f.1756151769.git.maciej.wieczor-retman@intel.com>
+ <CA+fCnZcMV0BOJyvx2nciCK2jvht-Hx0HnFtRzcc=zu+pQSOdVw@mail.gmail.com>
+ <couuy2aawztipvnlmaloadkbceewcekur5qbtzktr7ovneduvf@l47rxycy65aa>
+ <hw7xa2ooqeyjo5ypc5jluuyjlgyzimxtylj5sh6igyffsxtyaf@qajqp37h6v2n>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hw7xa2ooqeyjo5ypc5jluuyjlgyzimxtylj5sh6igyffsxtyaf@qajqp37h6v2n>
+X-ClientProxiedBy: DB9PR05CA0002.eurprd05.prod.outlook.com
+ (2603:10a6:10:1da::7) To MN2PR11MB3934.namprd11.prod.outlook.com
+ (2603:10b6:208:152::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-debugfs-rust-v11-5-7d12a165685a@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|SJ0PR11MB5024:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12af760c-c2b2-4262-b3e8-08ddeed8e5bf
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RS8wRjlmZEh6cDloYkZHMENTTzhEQnY5Z2ZJTTQwajBPVWU2aXNLNUs5RnNm?=
+ =?utf-8?B?RXhrWFhIVnBVMEFJYUdtWEl3NUJYaytBeHpuOFlMbGNzUmFVdjRERnVVbFBB?=
+ =?utf-8?B?QmZOaTgwdkZGYUh5NXVIWkpUdEFXTlFSSGxKWll6dDZHd0dWaVFiZGptbEsz?=
+ =?utf-8?B?U2dVSVpoNXhLaEY0cE1TbEtFSTJOT2ppNzZobG1TUDJJbGZERXBzY1BKNEVQ?=
+ =?utf-8?B?YVhxSXNNZFN0RUxDL3g4WHRka0xOdG92alQzdzZ2UlFlTWxybmNSeWFWVG1q?=
+ =?utf-8?B?Y1hNbTRNSSs5UTFyTG8xSklDaFRJL3BrdG9oOUxNS0VTcTdVc0xCdWFvT01I?=
+ =?utf-8?B?TFJNMTYzNllEYko2bjNoYS82dmJWQlp5Z1htMU5MWkQyM3RZT01uL09BeDJF?=
+ =?utf-8?B?NmpzYk53NitmTVBpZjgzczUxZmpQWW1ZdTEvVmsxWXltS0tncDhxRXZZM3NN?=
+ =?utf-8?B?Sm1oZWFLYUxsSXhhRGE1WkZRakIrL3lZN3dOWTBvUWd4QlhYbjJNb0JTTGV2?=
+ =?utf-8?B?K21CYjdSZFNoVjlGRDB0RXZITlA5RGVuNDA3cGRUUFNRTDltckFiYjFNZ1hW?=
+ =?utf-8?B?L1BDUmpnTXRib1paaFkxYTVEOFYzS0YycDJNMjVrYmZ4czNqWDlOWDE3RXV3?=
+ =?utf-8?B?bW15bWJSOEFadU53NWY2UUNLSlRLdWFqSHN5aTFhWFEzWitNVHBDaEtxWEVK?=
+ =?utf-8?B?NlBtdE9YVjVHRGdWQkt2N085UWhpbllaWlNEbU93MlBIYkY0U095VEFaU0Z1?=
+ =?utf-8?B?MGprZGl6WFEvNDJCVnpRMThHeEVxSlJqdlNqenloOWZGV1ZiK2l6a0ZFTzZa?=
+ =?utf-8?B?VkorTHNsQjluSkMxU3RLK2dRVkRXZUpGNXlpN1RWdENUc1kxeEZzdEN4M3Y0?=
+ =?utf-8?B?eGpEVHpSUXZubWo4dklvWEMxeWtkQUdGekVQYmdETElWZWtveU0vMjVxWndL?=
+ =?utf-8?B?aTJGaVBlUzltc0JXZlk0Q2FXYzA1Mm8wcXhYZ1l0RVhWZkU1cnhTaVdIS0pz?=
+ =?utf-8?B?REIxY2w4VjZsUko5SGNRc1dtTkd4UnBwMkM1b3k4N2NKTVpJN1Y5bSsxblEv?=
+ =?utf-8?B?clEzQm1SR0pzckFBOERzZ1FINldTZUxSbk5hL3NiRDl3STg4dVR6VWpmdXF1?=
+ =?utf-8?B?SG5WeTJ3K3BVdy9sQ0VOdGE1WURwSExSamFtbFFtMFJ0QnFkMFJKQmNxeldS?=
+ =?utf-8?B?QndhV25PTGFZRy9rNW96ZGx6VE5USndTWjkzTTdva2dZY250RFlrdkNTM2dp?=
+ =?utf-8?B?ekMvaDlEVzUzZUMyTGM2TkZ2eTVYblZTZnBoaDAwMW9tVC9aQ1kyTGs4YUEv?=
+ =?utf-8?B?bGlhVlplZFJjUVczbC8rV1NybStLL2xGWUJlNDJKSzN1V3BEYlhVeXlHMm41?=
+ =?utf-8?B?aDNJcm1OeU9kWXRtdWlXaDZCaXNYeGFXZGtiU0FUMUZvVWdBeDhYZU55SlNo?=
+ =?utf-8?B?cG11MFBhQW0vVGUzM3c5VmtoWjcxU21mTVVSZTVXU2h1RlVKWU12elhvVHVD?=
+ =?utf-8?B?SHFWVUQ2RzVoSFVaa0xtTm4xaE5YZU85WGtuczBGQVhWbEJBRWVtSFpzSlNp?=
+ =?utf-8?B?bnVOZWJtR2x4QzJFKzc0bkVYaGFaci9wZk9sVW9NZm5GK2Jud1QwaGdXYk8z?=
+ =?utf-8?B?MnRDS095YldNcEtIZWZZQ3cyZXdZV01DNmJJMDJaeDA4RFZCUXdXZTVqTzUw?=
+ =?utf-8?B?Q1Z4cy9QWmNyM3hOVXI5TWZaaU1MNXFWeVpIUzloN1UwUXpMcHdkRnlJY0RW?=
+ =?utf-8?B?Qk9BRko2aUNEZmVWYjVCYkl4YkxEaDJ0UTZaaTQvbmhENjdOaE1jT0ErYnlX?=
+ =?utf-8?B?UDR3Q2lGemkwTlUzaC9iSUx6cUxFbzcwZytFK0RLTHdKWFNHb3EwcE5ha1JH?=
+ =?utf-8?B?QmpXK1FIVG43Qi9GTHd4K0hXc1FiaTRTUEJqSGtFbDR3RW03azJaSTY2UHhr?=
+ =?utf-8?Q?6iwkNU5kOiM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YkxpdCtvV0YzMWRHVktaTGl1SnlrN0MvcW9HQzB6bHFrQUthbkR4TnB4K3pJ?=
+ =?utf-8?B?eXlRWTRZOTlRMU9rS016Zmk0TzdyUUdSQmVuN29CQTJuNlVjSFpOTzcvbG5k?=
+ =?utf-8?B?eHJKZnNNTWtFZnF1NmVQakxQNUNmalR3V3JUWVloTFhQVHpwcEJjdUdqYm5n?=
+ =?utf-8?B?VnF1clFkakZUbXVoYVdLR2FsdWx3SWsxRlNUVkhEQmlDLzBCRGc2SWdKM25l?=
+ =?utf-8?B?dkk4VnNiNnlFR2tLcEpHa3ZEWCtaRHU1cUNQdUxHamtWQW5LalRkcldxWkFl?=
+ =?utf-8?B?NHd5aGIvc1pPVUJnTHlQdFhkOWtoWGd4RVZiT2k4dDBPWi9EYUJZaDRwcTd0?=
+ =?utf-8?B?REVZUm1tc0hYUVRLOFo5OUJ6emFQWjUxVU1HaXBSdDVwUE51NGpvc0djVHc0?=
+ =?utf-8?B?NFkvYTJ3M3FsWXFYTklNVFJYalBzWmI0S1h6alVYMDk3ak1FeG1SMHhqd3hj?=
+ =?utf-8?B?bzRIaWlMUkdvdk5lYWl0eTRsNHdtMTQ1aE1RdlJHL3h0UjJMbWd3SmlYM1JZ?=
+ =?utf-8?B?d3lLRy9vclhJZHpMcUYzdmVVREtCZXFYSW5GT2NTWmgzNFNETkpoQ201QnAr?=
+ =?utf-8?B?OVFSSWpZM2w5bkZYY0JRMzN2YlI3UHdJcXlOcm9vaEtOclVzR3Q1YThCUGU2?=
+ =?utf-8?B?emhmQkhXby9uR2VNa1VTaTliMktpa2FMcDEyV1RidzRibjZnMDdYZFVaV1Zr?=
+ =?utf-8?B?YTRSRGF3cDRxLzFSdGxpZFBFWlZydUl1WnFDSjI1MWdNV3lLTVFMY2tYWWcy?=
+ =?utf-8?B?WmdlQ29CWU4xbm04cGdsZ1c0eUNFb25hYUh6bHVNZ2g1R1F1MWRUbHE2Y2c3?=
+ =?utf-8?B?L3FxcGdTWlVxOTNIOG9XM3U0eFFyenRUM05nOUFmdjNWZUlXQzIwT1doQTd3?=
+ =?utf-8?B?OHJ4VnVjbE93WEQ5T3oxRkN1Vkw3YUF4YVJsZDd3a3MvNFpoZjZtcFkvbXps?=
+ =?utf-8?B?Um5vNDk0WXArQ1ZuclZwS0xIcG5MNEdraXJ1QnYyYjBPTmcvMXRrMmVaTUVJ?=
+ =?utf-8?B?ekpLVFJvaWVPcWlvZ3ZFMGZmcUZ4eU83WVJBNEhLdmxqOXp6dGY5b1F5WEk3?=
+ =?utf-8?B?SGo2eG1ZSjc3am5OMWpGOXBlZW0vRTVmeUdEUTdzZmF4cGhUSFpmUk5YeTJ6?=
+ =?utf-8?B?blVSUDdaN2RvOGhLL3FLcVVqNnpaaEY1VktEdkRpUVo5b3lSVzV3TjFwb3d1?=
+ =?utf-8?B?TkxSRCtkNzNRQ09ZbmZseHpWYm43R1NTYWhCZElORVIrYU9xd0JjOWJES2ZV?=
+ =?utf-8?B?N1k5c21qVWpBYWdtQ3IyV0tMdzBueXBya0tHMkdHQm43WlJ5OGRLY2ZoaWhy?=
+ =?utf-8?B?cmpoMTZvMDhXSHplbHRkYzFqU1BlSXVWOTdSc2dsV2dmS3NRSHNZVXJ3dmxL?=
+ =?utf-8?B?ejlVMnNNTnZVQ1ZhZFpCYkZUYjVzQWRwZ2pkM0Z6aFJGVU5GdHVjYXNVWWhp?=
+ =?utf-8?B?eGFvOS9XM0RiR2xlUEViM3NIbXMzRjN3SEFtOEE0bGs5SEtSWXE5RFJHbjky?=
+ =?utf-8?B?NUZoMDN2dkxpdW4xTnpBelRZRVhjSStHeE5kQThXSUJCSDdFMHlKQzdHaGxX?=
+ =?utf-8?B?c09zMkwwN29GVzNrV0hkMXY4VEZMK09mbjh3aVFzVEhtN0lVT1FYK21BUkd5?=
+ =?utf-8?B?dzhqVEhIOVU1a2U0T21OWGJPRUxTYkVOTG96a0VvSDVKT0xPRGlIMFgvcVNj?=
+ =?utf-8?B?M212Q3JLSWJOQTBEK2pKTEdOZUxVT2tmZ0tqdkdIakMzWFBXdGpOM3I3WXBI?=
+ =?utf-8?B?MW9SZlZHa3lPbjV0T01tcndVR1dQZGJBRFpZM1RyamI4RWlMcVhOcU9JOXRi?=
+ =?utf-8?B?VnpvRWc1UGhWbzhDZ0F1WUcralhjUXp1clFUZzdEOVZHUFZEbTRqNTZHNDZq?=
+ =?utf-8?B?VWo2ZzNmYStZcVFtTVZxOG5LTHBOWUxrMjVsUk1tRDY1d09YbUhBdUhWRlAx?=
+ =?utf-8?B?eVpzMTZuQWpaQXdMK2VNTHBOZGdtY3ZvNjZ4dHBwcXFabzBBc0dYNEdqRlVn?=
+ =?utf-8?B?Y3UrN25HTzNwRDdXRTVVUUJEMEExRXo0YVpmTFI5eWc2ckVCRkJEZVVmcFpM?=
+ =?utf-8?B?U044QmxHbWFRYUdUeXJSZG13amV6TmptaldQb3hndGpaU1Q5MVVpWER3REl3?=
+ =?utf-8?B?YUVUMmczejFxSER0bndranEyU0RUOVJvdjRrRTlTcGFhZjJmZGMzTzRRZkZV?=
+ =?utf-8?Q?acsPwr7Lt8SC6BkMEqMRz2A=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12af760c-c2b2-4262-b3e8-08ddeed8e5bf
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 13:09:09.3570
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 085ghfueQO9Rendb+Qnh4CjbQQ8ddOgfISxHA8ZuHjuMesSghAML8P9qIjJ2pe1dE3o29DMVVU/L5f4IRrEBhzD2i6YS4K75isHisTP9UGw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5024
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 04, 2025 at 09:13:56PM +0000, Matthew Maurer wrote:
-> Adds a new sample driver that demonstrates the debugfs APIs.
-> 
-> The driver creates a directory in debugfs and populates it with a few
-> files:
-> - A read-only file that displays a fwnode property.
-> - A read-write file that exposes an atomic counter.
-> - A read-write file that exposes a custom struct.
-> 
-> This sample serves as a basic example of how to use the `debugfs::Dir`
-> and `debugfs::File` APIs to create and manage debugfs entries.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  MAINTAINERS                  |   1 +
->  samples/rust/Kconfig         |  11 ++++
->  samples/rust/Makefile        |   1 +
->  samples/rust/rust_debugfs.rs | 151 +++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 164 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8f2dbf71ca3f8f97e4d7619375279ed11d1261b2..5b6db584a33dd7ee39de3fdd0085d2bd7b7bef0e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7481,6 +7481,7 @@ F:	rust/kernel/devres.rs
->  F:	rust/kernel/driver.rs
->  F:	rust/kernel/faux.rs
->  F:	rust/kernel/platform.rs
-> +F:	samples/rust/rust_debugfs.rs
->  F:	samples/rust/rust_driver_platform.rs
->  F:	samples/rust/rust_driver_faux.rs
->  
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index 7f7371a004ee0a8f67dca99c836596709a70c4fa..01101db41ae31b08a86d048cdd27da8ef9bb23a2 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
->  
->  	  If unsure, say N.
->  
-> +config SAMPLE_RUST_DEBUGFS
-> +	tristate "DebugFS Test Module"
-> +	depends on DEBUG_FS
-> +	help
-> +	  This option builds the Rust DebugFS Test module sample.
-> +
-> +	  To compile this as a module, choose M here:
-> +	  the module will be called rust_debugfs.
-> +
-> +	  If unsure, say N.
-> +
->  config SAMPLE_RUST_DRIVER_PCI
->  	tristate "PCI Driver"
->  	depends on PCI
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index bd2faad63b4f3befe7d1ed5139fe25c7a8b6d7f6..61276222a99f8cc6d7f84c26d0533b30815ebadd 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -4,6 +4,7 @@ ccflags-y += -I$(src)				# needed for trace events
->  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->  obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
->  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
-> +obj-$(CONFIG_SAMPLE_RUST_DEBUGFS)		+= rust_debugfs.o
->  obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
->  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
->  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
-> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8d394f06b37e69ea1c30a3b0d8444c80562cc5ab
-> --- /dev/null
-> +++ b/samples/rust/rust_debugfs.rs
-> @@ -0,0 +1,151 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2025 Google LLC.
-> +
-> +//! Sample DebugFS exporting platform driver
-> +//!
-> +//! To successfully probe this driver with ACPI, use an ssdt that looks like
-> +//!
-> +//! ```dsl
-> +//! DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
-> +//! {
-> +//!    Scope (\_SB)
-> +//!    {
-> +//!        Device (T432)
-> +//!        {
-> +//!            Name (_HID, "LNUXDEBF")  // ACPI hardware ID to match
-> +//!            Name (_UID, 1)
-> +//!            Name (_STA, 0x0F)        // Device present, enabled
-> +//!            Name (_DSD, Package () { // Sample attribute
-> +//!                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-> +//!                Package() {
-> +//!                    Package(2) {"compatible", "sample-debugfs"}
-> +//!                }
-> +//!            })
-> +//!            Name (_CRS, ResourceTemplate ()
-> +//!            {
-> +//!                Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
-> +//!            })
-> +//!        }
-> +//!    }
-> +//! }
-> +//! ```
-> +
-> +use core::str::FromStr;
-> +use core::sync::atomic::AtomicUsize;
-> +use core::sync::atomic::Ordering;
-> +use kernel::c_str;
-> +use kernel::debugfs::{Dir, File};
-> +use kernel::new_mutex;
-> +use kernel::prelude::*;
-> +use kernel::sync::Mutex;
-> +
-> +use kernel::{acpi, device::Core, of, platform, str::CString, types::ARef};
-> +
-> +kernel::module_platform_driver! {
-> +    type: RustDebugFs,
-> +    name: "rust_debugfs",
-> +    authors: ["Matthew Maurer"],
-> +    description: "Rust DebugFS usage sample",
-> +    license: "GPL",
-> +}
-> +
-> +#[pin_data]
-> +struct RustDebugFs {
-> +    pdev: ARef<platform::Device>,
-> +    // As we only hold these for drop effect (to remove the directory/files) we have a leading
-> +    // underscore to indicate to the compiler that we don't expect to use this field directly.
-> +    _debugfs: Dir,
-> +    #[pin]
-> +    _compatible: File<CString>,
-> +    #[pin]
-> +    counter: File<AtomicUsize>,
-> +    #[pin]
-> +    inner: File<Mutex<Inner>>,
+On 2025-09-08 at 14:54:32 +0200, Maciej Wieczor-Retman wrote:
+>On 2025-09-08 at 12:38:57 +0200, Maciej Wieczor-Retman wrote:
+>>On 2025-09-06 at 19:19:01 +0200, Andrey Konovalov wrote:
+>>>On Mon, Aug 25, 2025 at 10:30 PM Maciej Wieczor-Retman
+>>>> diff --git a/arch/x86/mm/kasan_inline.c b/arch/x86/mm/kasan_inline.c
+>>>> new file mode 100644
+>>>> index 000000000000..9f85dfd1c38b
+>>>> --- /dev/null
+>>>> +++ b/arch/x86/mm/kasan_inline.c
+>>>> @@ -0,0 +1,23 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +#include <linux/kasan.h>
+>>>> +#include <linux/kdebug.h>
+>>>> +
+>>>> +bool kasan_inline_handler(struct pt_regs *regs)
+>>>> +{
+>>>> +       int metadata = regs->ax;
+>>>> +       u64 addr = regs->di;
+>>>> +       u64 pc = regs->ip;
+>>>> +       bool recover = metadata & KASAN_RAX_RECOVER;
+>>>> +       bool write = metadata & KASAN_RAX_WRITE;
+>>>> +       size_t size = KASAN_RAX_SIZE(metadata);
+>>>> +
+>>>> +       if (user_mode(regs))
+>>>> +               return false;
+>>>> +
+>>>> +       if (!kasan_report((void *)addr, size, write, pc))
+>>>> +               return false;
+>>>
+>>>Hm, this part is different than on arm64: there, we don't check the
+>>>return value.
+>>>
+>>>Do I understand correctly that the return value from this function
+>>>controls whether we skip over the int3 instruction and continue the
+>>>execution? If so, we should return the same value regardless of
+>>>whether the report is suppressed or not. And then you should not need
+>>>to explicitly check for KASAN_BIT_MULTI_SHOT in the latter patch.
+>>
+>>I recall there were some corner cases where this code path got called in outline
+>>mode, didn't have a mismatch but still died due to the die() below. But I'll
+>>recheck and either apply what you wrote above or get add a better explanation
+>>to the patch message.
+>
+>Okay, so the int3_selftest_ip() is causing a problem in outline mode.
+>
+>I tried disabling kasan with kasan_disable_current() but thinking of it now it
+>won't work because int3 handler will still be called and die() will happen.
 
-Why are you saving the file pointers here at all?  They shouldn't be
-needed to keep around, all that should be needed is the Dir, right?  If
-not, this needs to be revisited...
+Sorry, I meant to write that kasan_disable_current() works together with
+if(!kasan_report()). Because without checking kasan_report()' return
+value, if kasan is disabled through kasan_disable_current() it will have no
+effect in both inline mode, and if int3 is called in outline mode - the
+kasan_inline_handler will lead to die().
 
-And why do you need to keep "counter"?  Shouldn't that be passed back
-somehow in the callback automatically?
+>
+>What did you mean by "return the same value regardless of kasan_report()"? Then
+>it will never reach the kasan_inline_recover() which I assume is needed for
+>inline mode (once recover will work).
+>
+>-- 
+>Kind regards
+>Maciej Wieczór-Retman
 
-You use it:
-
-> +impl platform::Driver for RustDebugFs {
-> +    type IdInfo = ();
-> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
-> +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
-> +
-> +    fn probe(
-> +        pdev: &platform::Device<Core>,
-> +        _info: Option<&Self::IdInfo>,
-> +    ) -> Result<Pin<KBox<Self>>> {
-> +        let result = KBox::try_pin_init(RustDebugFs::new(pdev), GFP_KERNEL)?;
-> +        // We can still mutate fields through the files which are atomic or mutexed:
-> +        result.counter.store(91, Ordering::Relaxed);
-
-Here?  This feels odd, the file is the wrapper for the variable you want
-the file to show?  That feels backwards.  Usually the variable is always
-present, and then you can create a debugfs file to read/modify it.  But
-if debugfs is NOT enabled, you can still use the variable, it's just the
-file logic that is gone, right?
-
-So what would this file look like without debugfs being enabled?  Would
-the atomic variable still be here?  I think it wouldn't, which is not
-ok...
-
-Or am I confused again?
-
-thanks,
-
-greg k-h
+-- 
+Kind regards
+Maciej Wieczór-Retman
 
