@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-805895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1A5B48EDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F862B48F00
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DD01886C07
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B5B164E20
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F87730ACF1;
-	Mon,  8 Sep 2025 13:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9299330BB8F;
+	Mon,  8 Sep 2025 13:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a92aYAzt"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="up2dWAf4"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9248312DDA1
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A28530ACF6;
+	Mon,  8 Sep 2025 13:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757337079; cv=none; b=U9tpMISZV0gkOswSVacgRKoX2IE6JqNkUji2MWPHpNf3/bFCynF6B3ObyMk/njjBKgtBvTeCH+iyO5CjuldFjyDqPFfgOraMWMMp1cJeLXxKNsI3SaJTyGl7IXnJ8daadCIBFCdadP+UxglLrJ8RaHV+3HRgJPOgDmsPNKunyXI=
+	t=1757337093; cv=none; b=Yv0igB/qnM7QABYAOtsE49CwJyNizHnA+LpxzeykOO8GKfavd4ABU2MYwG2RpxwxQFzIRBbcQshL6bRgpuhbafQuKSpaRnTb+9TmpPUHBdoEWZPpt8Fl9W/C0ruKpkaKLOwN+N3OST/LLALhHtBoIawQgmXuAWlPNVx7aLO0m5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757337079; c=relaxed/simple;
-	bh=U0kXuH7wwN7QWxoYSQPKY7Q6TxlEDakVd8Nu76xiStU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TzN5tKj1zRZ2PfEJDLqTuAZEqywn3w3j//6ZWUrqgpKzkv10uEf7aqfnAe8Pd7VaIhXqHkyVwgeM89cKbBXuVf3qREv7vEm0c7Yov6YBPzvay/X5MtqMUMKSSqvHNP/WXaK1xXqkXVQJATnpNhnAiZ2RCOv/56sCeduh0P2RSJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a92aYAzt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f6ad5146eso4100532e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757337074; x=1757941874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AtaVnfyUFEfxnqjjSnpK4rRY532ZKtnmnioygkVKh1o=;
-        b=a92aYAztj47L3grzXnoSAPF80aoY7gAS4JbJA3E7Y/5uRFuxX1NMvNlG9WeJD4PurP
-         UgP+SRRgKcKNGzqpmbeEx4ByguXbscWNupOfDYn7wiSCPXzDiChTv46bE+9bQCH6kEyd
-         IfQqctCi17ysPGTtBhxdud0yqDe4cSY0xzc2gUhlIYE2YjDhJ6v2ZJF1vF+GVgkPyynE
-         /1uwkZsUKASV5FEpMTo3R9lHPASVKvJT8C7TKkI5HIi7fuK0XiQRoHj4zCGPkI8Wo4T/
-         EwStIOnfU0blgCucJ5dpA9L9h/w5TsXca14VcqU7ASZefts7hylg9oHAlRBLgl0PdtrL
-         A+wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757337074; x=1757941874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AtaVnfyUFEfxnqjjSnpK4rRY532ZKtnmnioygkVKh1o=;
-        b=WWxLfvUOfzKd7Ygz5R8uA/lj5dTO2yPiawkEtwRbrwiNRMNBp+NPsLhW9+SdfYU4k4
-         fNCqT3/0YaoePC3sizT7Wv2mgDW9z0z0zGivgfjmzqjPdk/cNxUcHSK/iiSE7KPE+pX1
-         8zNPKFyJ+0V+I+Ljq1oMx/zWUHyVK+y995cKJdQP7hYq7BOVWX+u0Xn2RnC5aSC3tKOq
-         pWenhVNemYTyB+Jvpf72T/0xlHVvW3e8sZE0NTE7BsnElacxdjjk0rpvGMgmV4Vbx2je
-         MxKRdXdsPY9+hj4Gv0r0hkIoNoRJNq/BMSzEdYgGwaPtmBQ3qZRRYcb/UVxTYYtAMIpc
-         0kEw==
-X-Gm-Message-State: AOJu0YzZeCMnylQ2Zlie0SByw6OKyRZMcuLc0+VNlVsbOul1zYPwTqD/
-	tF+NGr+Q2yY3I5TlfmL/3BOxGRopQRZMiDrhcb83tx3PXYU/dtWdvUv7+4y5Xg00mwpE7yz7yy6
-	LgQyXEjENJuyLaaz492z6tJfMn1uZEmgTLKQodaKYVf2HyZXEptT3h1M=
-X-Gm-Gg: ASbGncv51ipW6IEERy1wh9GtY6/EoKhgqJYLF5No0p4L3/JVzBHQzqcAfKXu3xRw/j/
-	vnbbNhaN8Bh4ax56U/3jifRAlIYi2W3i2InkPSTNjiJo3qIfV5+QmQwUknGAMYtD8cAOjR46VEN
-	cSHLC3XFGYrsXcyYnE7QvBlRdz2td5plgaU4djwZYiMk5ewqc0SY9idjpN3s2CFqMYSn+70FMog
-	6AXgVNlq0hpvainjA6PXhZaHcjjPSlBzD2nhv7c0bg/2ctTZ4o=
-X-Google-Smtp-Source: AGHT+IF2J3UftmSRUNFNM97EpuUrbHTRbXwpg7cT2WNP7NKSvr98Iiz7q7iNkLQzvv/p/faqNxouRTnQLnPVJDT36gY=
-X-Received: by 2002:a05:6512:b8a:b0:55f:43ab:b220 with SMTP id
- 2adb3069b0e04-562619d7f5dmr2213343e87.34.1757337074462; Mon, 08 Sep 2025
- 06:11:14 -0700 (PDT)
+	s=arc-20240116; t=1757337093; c=relaxed/simple;
+	bh=neVpymBMp3ra0hu16F/8V5PEhWaFXO1FE/6JZS7zy8w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uO2acorL5AsEoGinZQdTJxRZpi81SszUHaJj0auwox9hTxUtSDJz/XdKXbES32H4KbpZR027K+xNGuPS8XZlBKc+tvoRN00ptz6mn/loYSHuz+/lBfGzRgOuYTVIz30u5oyi5p3nVOEnR74UCfx22m4Ul5BQdF+GCS85TPy7zOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=up2dWAf4; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=NkcpqsNtIfH0/2T4tzf3ihFLKwziOQ6MGxZZ1TVH8gc=;
+	t=1757337092; x=1758546692; b=up2dWAf4YkkTq9nTdsnNLP3pkBaPrfxMReZNlF9VI5fn8AX
+	7ppjX12KTFUeP22VBKMNETjs8zGhbZrXh3uF5WrlzN2QR3aVImuNPC5XafKa4MefkBL2Yr3QNK7rY
+	FZArlPcvFShayPmOdcBO9yuWPcEEx5Dc5DScsAe/sj9BML0Loqa50CfnWm2kqT5V+7Uy/f/dgZrrJ
+	FsaoFwRu7YFifZUHuZc0YRe3zJiUTZuy+sx6a2TV8y9pQdr4z0LUxi9p0ev/UZeigldSzXNCNYh4x
+	Vp4vb3QXPGENNrX/v4Z74ADjUUVoGSSLjvwQq/HAH6FNzYxn3SuQGyv9waB/gvGQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uvbeH-00000007aGR-1hXH;
+	Mon, 08 Sep 2025 15:11:09 +0200
+Message-ID: <513c854db04a727a20ad1fb01423497b3428eea6.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 RFC 0/7] KFuzzTest: a new kernel fuzzing framework
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com, 
+	glider@google.com
+Cc: andreyknvl@gmail.com, brendan.higgins@linux.dev, davidgow@google.com, 
+	dvyukov@google.com, jannh@google.com, elver@google.com, rmoar@google.com, 
+	shuah@kernel.org, tarasmadan@google.com, kasan-dev@googlegroups.com, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, 	dhowells@redhat.com, lukas@wunner.de,
+ ignat@cloudflare.com, 	herbert@gondor.apana.org.au, davem@davemloft.net,
+ linux-crypto@vger.kernel.org
+Date: Mon, 08 Sep 2025 15:11:08 +0200
+In-Reply-To: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905091325.112168-1-marco.crivellari@suse.com>
- <20250905091325.112168-4-marco.crivellari@suse.com> <aLsdBIY01140Vyy_@slm.duckdns.org>
-In-Reply-To: <aLsdBIY01140Vyy_@slm.duckdns.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Mon, 8 Sep 2025 15:11:03 +0200
-X-Gm-Features: Ac12FXxee5iYluWOFYT9PKkhYmZXaxoSldhodg8zjixNJRbfJjWPXxjlNHh5LkY
-Message-ID: <CAAofZF4Wzf9kyvL_HY6uKyGvvrcnLQ0tJLnM+pKG9kXYV9My5g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] workqueue: WQ_PERCPU added to alloc_workqueue users
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Fri, Sep 5, 2025 at 7:25=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
-> Isn't this missing WQ_PERCPU for system_freezable_power_efficient_wq?
+Hi Ethan,
 
-I guess the flag is also missing for system_power_efficient_wq,
-because by default
-it should be per-cpu, unless there is  wq_power_efficient=3Dtrue.
+Since I'm looking at some WiFi fuzzing just now ...
 
---=20
+> The primary motivation for KFuzzTest is to simplify the fuzzing of
+> low-level, relatively stateless functions (e.g., data parsers, format
+> converters)
 
-Marco Crivellari
+Could you clarify what you mean by "relatively" here? It seems to me
+that if you let this fuzz say something like
+cfg80211_inform_bss_frame_data(), which parses a frame and registers it
+in the global scan list, you might quickly run into the 1000 limit of
+the list, etc. since these functions are not stateless. OTOH, it's
+obviously possible to just receive a lot of such frames over the air
+even, or over simulated air like in syzbot today already.
 
-L3 Support Engineer, Technology & Product
+> This RFC continues to seek feedback on the overall design of KFuzzTest
+> and the minor changes made in V2. We are particularly interested in
+> comments on:
+> - The ergonomics of the API for defining fuzz targets.
+> - The overall workflow and usability for a developer adding and running
+>   a new in-kernel fuzz target.
+> - The high-level architecture.
 
-marco.crivellari@suse.com
+As far as the architecture is concerned, I'm reading this is built
+around syzkaller (like) architecture, in that the fuzzer lives in the
+fuzzed kernel's userspace, right?
+
+> We would like to thank David Gow for his detailed feedback regarding the
+> potential integration with KUnit. The v1 discussion highlighted three
+> potential paths: making KFuzzTests a special case of KUnit tests, sharing
+> implementation details in a common library, or keeping the frameworks
+> separate while ensuring API familiarity.
+>=20
+> Following a productive conversation with David, we are moving forward
+> with the third option for now. While tighter integration is an
+> attractive long-term goal, we believe the most practical first step is
+> to establish KFuzzTest as a valuable, standalone framework.
+
+I have been wondering about this from another perspective - with kunit
+often running in ARCH=3Dum, and there the kernel being "just" a userspace
+process, we should be able to do a "classic" afl-style fork approach to
+fuzzing. That way, state doesn't really (have to) matter at all. This is
+of course both an advantage (reproducing any issue found is just the
+right test with a single input) and disadvantage (the fuzzer won't
+modify state first and then find an issue on a later round.)
+
+I was just looking at what external state (such as the physical memory
+mapped) UML has and that would need to be disentangled, and it's not
+_that_ much if we can have specific configurations, and maybe mostly
+shut down the userspace that's running inside UML (and/or have kunit
+execute before init/pid 1 when builtin.)
+
+Did you consider such a model at all, and have specific reasons for not
+going in this direction, or simply didn't consider because you're coming
+from the syzkaller side anyway?
+
+johannes
 
