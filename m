@@ -1,275 +1,259 @@
-Return-Path: <linux-kernel+bounces-806161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92582B492A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C614DB4929E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F1D16E69B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D11716919D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492F330BF70;
-	Mon,  8 Sep 2025 15:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D7A30CD92;
+	Mon,  8 Sep 2025 15:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzvo55RM"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxlJwd85"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DAC1C3BFC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC630CD80
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757344245; cv=none; b=OOgpZ76mPMy+bVkF09XjJf01ug0QdVepVDHvnRiax13GsGC9pSdpoPS3Kbu3w8UhySXSe3nL5zuOwFb/gXBWRWHzAIrzX+oYPpOR0GGYtxmc6kF1y4Pv+MULmwrg7UfXxdKiHCwH8SMyN1M3AYAQwMxGXJ3kgFh+Mp4/93q8IIM=
+	t=1757344230; cv=none; b=NjFJQRfzXn1IsHGWTEM9MpIOaO9V2RvI8xpRV+YqrMR0QTCDAsgTUlrf4+d70fWDh3MgNtZ7WEqW12MuWsXg73/J415BhJCfNNW++QcXoJplAEZeePp50qCZNDVqJx0J29YtZKDty7KU/Cb8xW9k+4D90v2nez+vMFu+rq/i8sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757344245; c=relaxed/simple;
-	bh=gxWSbA9eJNw9ZHVE/sN9jgcnjTBeZPUFrHxBRxp78Oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CCA8QUy7/73kRWldiUhgybtn7od/x812juIeCBbqX9GhjmDrv34cH6lXH00BN/5vuKo5IWbU0HyWOXD+3Bh729L2GcZQ8TO9+jJ7EHB8vOswok7M2pYocJIWKOJ9YILRyeH4B1WKPef1DWLCQoCfCxD1CASsGkJeOkpvPqo7ugg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mzvo55RM; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso4942907a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757344242; x=1757949042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/dO3Pa6dEWUP8pelQvefMYAqpzf+ZorOHLTvnJ330hQ=;
-        b=mzvo55RMGtrnZ7aNST8kcjCoX3Um2GUoc15PSRWv2mWhBswbIncN4cB13R4dr9h54g
-         SNQXd0Yyktto/ymRCmkGbR8w+H7Ygvbgw6cSdNSHsyFUuA/FOyorXaCz7CAVv3R0AmEg
-         Lfs/nSSoDbAZzyPEvMcw0agQONO0KICVBiQC2mD56dIyJkLBwWvjp0G/JYGx5lIB93JY
-         bGXKpVLd9GeYL8bFNbJFL101YVCiTFjFpUniW/+1Pbs/bkI9PpEASeNc+JkhthUk5lhq
-         37xdQNUSM0wlYT+JhZzu+VFn25sUUBJlKTQvf9lPNpwSjj6FTo8ALfXrhlzZGEQcN50B
-         684w==
+	s=arc-20240116; t=1757344230; c=relaxed/simple;
+	bh=+o2tafkg6TjpR08DCjpzYMHUFNGJ83pFkPMS/W5xD2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PSQhHJ3SniOb1i8L6AwAzK2tl9hjE+sFpMJ0bVDr+TQ56rM2q4JJIUnR0Pl5agfKbkoSE/VWIM5VP1qudoUHvbAIcIMNgkOGYJ1r2w5h1F9ikGRF3a9Izy/oxiMMXHMcyJ/mI5JG/zEnJOKpd+0p+z6C2FbzAtDTUZR6ELWFPfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxlJwd85; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757344227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MWs38ipt6qYVKPoOaNWVE9IjFwNAzWbj0IVoNQpA9LM=;
+	b=IxlJwd85W8ETsrzW7AjcvsBhpiYuR17lSYKAsXpJ9dGGl7vn+efkWJZCFU+QneYGvGksAW
+	8bVLdShnMQ1nKA/VAEv0p+XACbVqloh82JUv0S6RQhBmqCLV9iYNBO2Kj6os2q1mA7KBTD
+	lwNF8wv0674UL/v0tYuQPb2O4B/tQFo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683--U2kt1sqNZK3XfkviSutOQ-1; Mon, 08 Sep 2025 11:10:26 -0400
+X-MC-Unique: -U2kt1sqNZK3XfkviSutOQ-1
+X-Mimecast-MFC-AGG-ID: -U2kt1sqNZK3XfkviSutOQ_1757344225
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b990eb77cso32840635e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:10:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757344242; x=1757949042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/dO3Pa6dEWUP8pelQvefMYAqpzf+ZorOHLTvnJ330hQ=;
-        b=pDOSXJ0hQ4hrjvIrKaEiv2wxKWWitO3qcyWxga6Ryn55uXFJE0/u88Kn7ANgbiiRVq
-         VASySCTZRxFKOcGgZ5LKpz0nxXcpOR9xKXsK0uVvRR98TqrHIxWJSwwyMDV3g+8gDmu/
-         6/PNB8OFoaBCqlmRZg5KItfirQxQXF3gODsnHdU6+qc6hg/NBn9UMBQaeOYk324jyUWb
-         6NpaZvj6Tpkcp3M+lqf5iPrzvnnoO+tyhhO8OsyNcQONOErmSpw5DRnmzGFkN+gx7aJf
-         YoMxXyfrxZSHI7aCA/0s0x6jWMS+672DNd0GJIHfrPq2qZwmjz7pYAeOLFBhekVgaZko
-         DfiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTlMmUu+CP5EeVFjB501uqoxCzrDIK35k9kV7MR1hgY326JsqH5jk47eAW4bQhluEilCX7bM3gI/xdTpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVG8goFo//GvCKK3Q1HNXKHN6ENwi+oa3tAd6hw8ZYcdDnQkUo
-	G8sfa3xzGOGdl3TrpqP4U+Pgw8QFvvHRd5h2W0TN6nMldfITbZfXWpcXkDIw2cacICR2iSYIDNA
-	7E5yOkIzIrqnd95YWyy+g1VkrA62pqAw=
-X-Gm-Gg: ASbGncvhpgE7rtnHTSB6nOLit1MeGvt/B2Nill9VdY9Dc6um/GBuHl0cDo1lJpy5Vdq
-	XxR37IaVR6scMQwD7wfb7EPvIkBCE4LgwhRt1K5UwTeVb9snuncW6ejhLsiV5+egg993E+IRzOj
-	EZIw1SdsFqzxBMqQKSNhm2x1wsDbM2GLghhv5agWp5wPqiuyIK9gFOv/lEjUa+cdTxC117jP6C9
-	Eijdn54yHE=
-X-Google-Smtp-Source: AGHT+IHnINkBVpoQfKvgRMifbAKSbbKVvSSsU75fh0HsrYLeTsWizN/4a6ihqC0j6vCvL42vfQxG+u48mAibFUSQ4OI=
-X-Received: by 2002:a05:6402:2553:b0:617:b28c:e134 with SMTP id
- 4fb4d7f45d1cf-6236d2ca6cfmr8301330a12.0.1757344241773; Mon, 08 Sep 2025
- 08:10:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757344225; x=1757949025;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MWs38ipt6qYVKPoOaNWVE9IjFwNAzWbj0IVoNQpA9LM=;
+        b=LUnzGSud7dfzX/5JF+gA7O4DjNpbeMGt4mp3Fls+P/TQJSAw2FwBwAS13UVeoqhilz
+         jZhkK84LRGhaeCw5lP2WylIX8zyF32hwrsbxAvt83V4aVEUb4l/xKt8f3GAxUJU1DHGH
+         /X18+zsEHSEwtYwzEJOzzrHpd5KEVvyyv08o6vkCjfUOk/mLLFmnga5qplsp13eHg7Yw
+         fIrtoCcd3tPD3j9EtEOnEIdX50Qeo0E2MAvfXbDCZ/z/DYV1SP3PndzqU1L+zOdwtJbQ
+         xkm511U+q+rVVi0e+cNB7UVd/lKH+vC9HAn378WQGtbAMBqg4VSKR1fcFHsgnYXhd9/Q
+         Oa9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVSWe5A5hSSP9ROn1CVPsvjkMesa4i/a+gYxYTXJBZTkvPBM9JF1+EmkvldYLumbIApfny05dgfo0jXZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLOlyfMAosdaDXTn/jYj6evlm2m5GDAH7x3PHBIx2VyJeqwBT1
+	YZmDGMXxqepmhPm3i32sJL2Mh8CevucXxWcyC0nmZnhjpLauA2JlDiLuNkZJjRnp+eDi7Lad2hU
+	sv4oEJvXGBaqlDYuW6ov3rU7WO+RztLY0M1F6Ks6u+aqlNIo5eLTgbFvp9CaOaoyGaA==
+X-Gm-Gg: ASbGncu+4mxZTtKDkkAhKifbuRODs94cMUpaluQrRgnLR2iwAWLpb37Nroo64DM1mT9
+	GETbHr5jC9jtOsAuUoAGKmdwmqlZiOby7WoBIkOsbLBKcJUM1PPia+hriIxLn33AvFQvvLomchZ
+	A4trx2rF114t2VTQV9Q+ZaHb/HLmDFNUKHRSpzV4kl9rUmD7tpV1Woc+SnAoPHPbM9s2q7DkIIZ
+	VrfVilbSS5wxFs6DYnXnGmf9bAXnuxhwdrRFXJh6ndyuOpGCm4vrwymwLsWlr7sK4YRYf1KbezO
+	KsacNGG+mcZnSmFfXdMeWLK5YVNM0jltbkhkxevtr2ANEwSigDtvk9WjH8hhd3YgQOo7SRQxzOl
+	K5fGfn+U9xR/vqmlhLrTQJQ7DDhPOd4dtQxioufqL5WhJ6LUCpj21jcR2NXgvcR5r
+X-Received: by 2002:a05:600d:f:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45de775e1famr26225595e9.1.1757344224870;
+        Mon, 08 Sep 2025 08:10:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGe7ZTfhfsgtooC3/5pep0igJoOBuPGNNCiAINQdm3uwOco5gprVmhHIhPkct+pdrN1/wAPVA==
+X-Received: by 2002:a05:600d:f:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45de775e1famr26224795e9.1.1757344224275;
+        Mon, 08 Sep 2025 08:10:24 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dddf8c51dsm109133275e9.20.2025.09.08.08.10.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 08:10:23 -0700 (PDT)
+Message-ID: <076658ac-78bc-4d4b-bf3b-d04cd3f0fa21@redhat.com>
+Date: Mon, 8 Sep 2025 17:10:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-12-ryncsn@gmail.com>
- <vj7utcgrseaot6ktpbwgshthmjza7w7vk2glede273tza7yfi6@cyxppxoney5u>
- <CAMgjq7CLSuSfRwMYqNL9ZU3ehpZfR6oewHsYtLD4CTXcvEKOTg@mail.gmail.com> <eu3s6hqfcbkymjqk2rrngzx7qxjzpivfty2dr4lrduxohxuuuv@g63qihvder5d>
-In-Reply-To: <eu3s6hqfcbkymjqk2rrngzx7qxjzpivfty2dr4lrduxohxuuuv@g63qihvder5d>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 8 Sep 2025 23:10:05 +0800
-X-Gm-Features: AS18NWAOZumiwP4vIZdf4GKuXoH9G7uXKNhi2ON0m9FsP07PZ039SG3x5bSA-As
-Message-ID: <CAMgjq7AHZ+X83pOUiOfhXWkV158uAvv=NQE6ibh33BQVgPJ5iA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/15] mm, swap: use the swap table for the swap cache
- and switch API
-To: Klara Modin <klarasmodin@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+ Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ kexec@lists.infradead.org, kasan-dev@googlegroups.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 8, 2025 at 11:01=E2=80=AFPM Klara Modin <klarasmodin@gmail.com>=
- wrote:
->
-> On 2025-09-08 22:34:04 +0800, Kairui Song wrote:
-> > On Sun, Sep 7, 2025 at 8:59=E2=80=AFPM Klara Modin <klarasmodin@gmail.c=
-om> wrote:
-> > >
-> > > On 2025-09-06 03:13:53 +0800, Kairui Song wrote:
-> > > > From: Kairui Song <kasong@tencent.com>
-> > > >
-> > > > Introduce basic swap table infrastructures, which are now just a
-> > > > fixed-sized flat array inside each swap cluster, with access wrappe=
-rs.
-> > > >
-> > > > Each cluster contains a swap table of 512 entries. Each table entry=
- is
-> > > > an opaque atomic long. It could be in 3 types: a shadow type (XA_VA=
-LUE),
-> > > > a folio type (pointer), or NULL.
-> > > >
-> > > > In this first step, it only supports storing a folio or shadow, and=
- it
-> > > > is a drop-in replacement for the current swap cache. Convert all sw=
-ap
-> > > > cache users to use the new sets of APIs. Chris Li has been suggesti=
-ng
-> > > > using a new infrastructure for swap cache for better performance, a=
-nd
-> > > > that idea combined well with the swap table as the new backing
-> > > > structure. Now the lock contention range is reduced to 2M clusters,
-> > > > which is much smaller than the 64M address_space. And we can also d=
-rop
-> > > > the multiple address_space design.
-> > > >
-> > > > All the internal works are done with swap_cache_get_* helpers. Swap
-> > > > cache lookup is still lock-less like before, and the helper's conte=
-xts
-> > > > are same with original swap cache helpers. They still require a pin
-> > > > on the swap device to prevent the backing data from being freed.
-> > > >
-> > > > Swap cache updates are now protected by the swap cluster lock
-> > > > instead of the Xarray lock. This is mostly handled internally, but =
-new
-> > > > __swap_cache_* helpers require the caller to lock the cluster. So, =
-a
-> > > > few new cluster access and locking helpers are also introduced.
-> > > >
-> > > > A fully cluster-based unified swap table can be implemented on top
-> > > > of this to take care of all count tracking and synchronization work=
-,
-> > > > with dynamic allocation. It should reduce the memory usage while
-> > > > making the performance even better.
-> > > >
-> > > > Co-developed-by: Chris Li <chrisl@kernel.org>
-> > > > Signed-off-by: Chris Li <chrisl@kernel.org>
-> > > > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > > > ---
-> > > >  MAINTAINERS          |   1 +
-> > > >  include/linux/swap.h |   2 -
-> > > >  mm/huge_memory.c     |  13 +-
-> > > >  mm/migrate.c         |  19 ++-
-> > > >  mm/shmem.c           |   8 +-
-> > > >  mm/swap.h            | 157 +++++++++++++++++------
-> > > >  mm/swap_state.c      | 289 +++++++++++++++++++--------------------=
-----
-> > > >  mm/swap_table.h      |  97 +++++++++++++++
-> > > >  mm/swapfile.c        | 100 +++++++++++----
-> > > >  mm/vmscan.c          |  20 ++-
-> > > >  10 files changed, 458 insertions(+), 248 deletions(-)
-> > > >  create mode 100644 mm/swap_table.h
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 1c8292c0318d..de402ca91a80 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -16226,6 +16226,7 @@ F:    include/linux/swapops.h
-> > > >  F:   mm/page_io.c
-> > > >  F:   mm/swap.c
-> > > >  F:   mm/swap.h
-> > > > +F:   mm/swap_table.h
-> > > >  F:   mm/swap_state.c
-> > > >  F:   mm/swapfile.c
-> > > >
-> > >
-> > > ...
-> > >
-> > > >  #include <linux/swapops.h> /* for swp_offset */
-> > >
-> > > Now that swp_offset() is used in folio_index(), should this perhaps a=
-lso be
-> > > included for !CONFIG_SWAP?
-> >
-> > Hi, Thanks for looking at this series.
-> >
-> > >
-> > > >  #include <linux/blk_types.h> /* for bio_end_io_t */
-> > > >
-> > ...
-> >
-> > > >       if (unlikely(folio_test_swapcache(folio)))
-> > >
-> > > > -             return swap_cache_index(folio->swap);
-> > > > +             return swp_offset(folio->swap);
-> > >
-> > > This is outside CONFIG_SWAP.
-> >
-> > Right, but there are users of folio_index that are outside of
-> > CONFIG_SWAP (mm/migrate.c), and swp_offset is also outside of SWAP so
-> > that's OK.
-> >
-> > If we wrap it, the CONFIG_SWAP build will fail. I've test !CONFIG_SWAP
-> > build on this patch and after the whole series, it works fine.
-> >
-> > We should drop the usage of folio_index in migrate.c, that's not
-> > really related to this series though.
->
-> Interesting that it works for you. I have a config with !CONFIG_SWAP whic=
-h
-> fails with:
->
->  In file included from mm/shmem.c:44:
->  mm/swap.h: In function =E2=80=98folio_index=E2=80=99:
->  mm/swap.h:461:24: error: implicit declaration of function =E2=80=98swp_o=
-ffset=E2=80=99; did you mean =E2=80=98pmd_offset=E2=80=99? [-Wimplicit-func=
-tion-declaration]
->    461 |                 return swp_offset(folio->swap);
->        |                        ^~~~~~~~~~
->        |                        pmd_offset
->
-> (though it's possible I have misapplied the series somehow).
-> If I just move the linux/swapops.h include outside the CONFIG_SWAP ifdef:
->
-> diff --git a/mm/swap.h b/mm/swap.h
-> index caff4fe30fc5..12dd7d6478ff 100644
-> --- a/mm/swap.h
-> +++ b/mm/swap.h
-> @@ -3,6 +3,7 @@
->  #define _MM_SWAP_H
->
->  #include <linux/atomic.h> /* for atomic_long_t */
-> +#include <linux/swapops.h> /* for swp_offset */
->  struct mempolicy;
->  struct swap_iocb;
->
-> @@ -54,7 +55,6 @@ enum swap_cluster_flags {
->  };
->
->  #ifdef CONFIG_SWAP
-> -#include <linux/swapops.h> /* for swp_offset */
+On 08.09.25 13:10, Lorenzo Stoakes wrote:
+> It's useful to be able to determine the size of a VMA descriptor range used
+> on f_op->mmap_prepare, expressed both in bytes and pages, so add helpers
+> for both and update code that could make use of it to do so.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   fs/ntfs3/file.c    |  2 +-
+>   include/linux/mm.h | 10 ++++++++++
+>   mm/secretmem.c     |  2 +-
+>   3 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index c1ece707b195..86eb88f62714 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -304,7 +304,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
+>   
+>   	if (rw) {
+>   		u64 to = min_t(loff_t, i_size_read(inode),
+> -			       from + desc->end - desc->start);
+> +			       from + vma_desc_size(desc));
+>   
+>   		if (is_sparsed(ni)) {
+>   			/* Allocate clusters for rw map. */
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a6bfa46937a8..9d4508b20be3 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3560,6 +3560,16 @@ static inline unsigned long vma_pages(const struct vm_area_struct *vma)
+>   	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
+>   }
+>   
+> +static inline unsigned long vma_desc_size(struct vm_area_desc *desc)
+> +{
+> +	return desc->end - desc->start;
+> +}
+> +
+> +static inline unsigned long vma_desc_pages(struct vm_area_desc *desc)
+> +{
+> +	return vma_desc_size(desc) >> PAGE_SHIFT;
+> +}
 
-Oh, I think I know what the problem is here. You disabled SHMEM too.
-Most users of swap.h includes linux/swapops.h already. But for
-shmem.c, it doesn't include linux/swapops.h when !CONFIG_SHMEM
- so swp_offset is undefined.
+"const struct vm_area_desc *" in both cases?
 
-It's true that the problem is in swap.h, it should include swapops.h
-for !SWAP too to avoid build error like this. Thanks for the report!
+> +
+>   /* Look up the first VMA which exactly match the interval vm_start ... vm_end */
+>   static inline struct vm_area_struct *find_exact_vma(struct mm_struct *mm,
+>   				unsigned long vm_start, unsigned long vm_end)
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 60137305bc20..62066ddb1e9c 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -120,7 +120,7 @@ static int secretmem_release(struct inode *inode, struct file *file)
+>   
+>   static int secretmem_mmap_prepare(struct vm_area_desc *desc)
+>   {
+> -	const unsigned long len = desc->end - desc->start;
+> +	const unsigned long len = vma_desc_size(desc);
+>   
+>   	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>   		return -EINVAL;
 
+We really want to forbid any private mappings here, independent of cow.
 
->  #include <linux/blk_types.h> /* for bio_end_io_t */
->
->  static inline unsigned int swp_cluster_offset(swp_entry_t entry)
->
-> it fixes that issue for me, and my other CONFIG_SWAP builds do not seem
-> to be impacted. I attached the config in case it's useful.
->
-> >
-> > >
-> > > >       return folio->index;
-> > > >  }
-> > >
-> > > ...
-> > >
-> > > Regards,
-> > > Klara Modin
-> > >
+Maybe a is_private_mapping() helper
+
+or a
+
+vma_desc_is_private_mapping()
+
+helper if we really need it
+
+-- 
+Cheers
+
+David / dhildenb
+
 
