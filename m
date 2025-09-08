@@ -1,202 +1,113 @@
-Return-Path: <linux-kernel+bounces-806925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD1BB49D86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA74AB49D89
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2962F4E5314
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9402B3BC8A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C022422A;
-	Mon,  8 Sep 2025 23:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAD22F3616;
+	Mon,  8 Sep 2025 23:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB2VB/YW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sGdBMbwg"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A7C19D093;
-	Mon,  8 Sep 2025 23:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2022DEA95;
+	Mon,  8 Sep 2025 23:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757374514; cv=none; b=A/MdRU+ty9sPM2h5ZUD/PWFAsED480+aigep9MiaEKT17Luxg37fP9Vg5pwJxweDztlPKYt6y08te8evj0rvthiPIh2oQSZsddblCC3WLrCuFYUjKPaX877+m2ojcln2ehTJyXxfGoDNa38Wvfo6eVoRk4B5AjzxSTgqwyQQvpM=
+	t=1757374560; cv=none; b=bLNvCpmgLLpRk0pPFOvGcHNJ/dkHx9PpDbo19CV8SsAWQsJoyyd5aSWeGQewtJyBn1LYLkQWELj3VFkSyaI6eI8vxvtqwaZjYWQ/rR2K0MJTQXoEUH/K0Kk9jw48++Gk9mR4/j3biwJ4hTZD+Dro7zxR4/tOEtzj7ly+d9o9gYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757374514; c=relaxed/simple;
-	bh=ObGim7UGY/Gqo+55a2h+UbBIJQQ5lfF4BRj1q/BpMz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NHSKnZqYHHptPVREX5VzoJDMS2zTqensSep1BhfwvIVz+bEhKr+P6IcIX5R2PWzPfmYrtZTs/ZSe6V/tK/OQiAwPOkKCGkFDfoB0oViy+XXlyT0LXmFdDR4E9/gq+agg5A3NiGtLXeuw1SNe+IRrdMIytDWk3yQQq5LTk/QwZpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB2VB/YW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C03C4CEF1;
-	Mon,  8 Sep 2025 23:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757374513;
-	bh=ObGim7UGY/Gqo+55a2h+UbBIJQQ5lfF4BRj1q/BpMz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vB2VB/YWMV+D2JpxoXNTig8qW/5IyhS3mHiU18W62SSs3sTpySTi92oN4lSOkKqIJ
-	 gZusPGKTq3LfNbvvwrgByQGM7pXcr++vAODKQDO7CLyEejukTETl6NCo98d2vFj+U1
-	 StqIV88ezTr7vSzMBXS3k020pXJKTD4NDoKuCgRfmBwF+wSTnK4s3xnPyrV/6DGLND
-	 tgVLHmdGLswIha8tS42oPBqWVs/YqEWaI9WVsyIoAzbHeVskwyYXOExCPaex8DZ0nW
-	 uT6iyoRKgNH3NJsE8CU5Tfr1rAuIXK1zUqs1gA7KhiABTOvsKacpqTjr6e2kcuS4UT
-	 tvL68/Zq/nqKg==
-Date: Mon, 8 Sep 2025 16:35:11 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Collin Funk <collin.funk1@gmail.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf test: AMD IBS swfilt skip kernel tests if
- paranoia is >1
-Message-ID: <aL9oL8aAMam676Ra@google.com>
-References: <20250908221727.3635572-1-irogers@google.com>
+	s=arc-20240116; t=1757374560; c=relaxed/simple;
+	bh=EMM7E93s/ekUbTcRbj60Z72MQgUONxbUo/9aOqe7OOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V/h8wJXyl5MQbrbENmy1IPN0hVjDPdkvQf7iKr47J/vXR3MrjDdZ+g1VbMHlLPKU7P3CUuU2XK2TGUmyv0HO4T7/zPsYJxAv22rHZW56xb9xmPDBsKNKTWdlB7BMSPhuNqb99xdAYNpGasjjR107h24Hl9jxPoA60UPwb00lHS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sGdBMbwg; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588NZrXj155383;
+	Mon, 8 Sep 2025 18:35:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757374553;
+	bh=C+es+k3ho11cQTKuzpC2vE3k0arMuciL1EOZEVF5ce0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=sGdBMbwgBYMtC0S38l3sEFnz/BPdRdCPPTOrPomAeOg9FWe0jRDVlFsQHk/e+xuU0
+	 wzmMe8ubSb01a8GfmPc9xUa/GDGJqOvqNl47JmTSouUwXljw5Gp+9hr1/gJUbFFuOf
+	 BRRyLEaqPvpcZqk8412ajGrUoYbDOrqcPianv6ig=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588NZre64116798
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 18:35:53 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 18:35:53 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 18:35:53 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588NZrjg1662346;
+	Mon, 8 Sep 2025 18:35:53 -0500
+Message-ID: <fbbaf67a-8e59-44fa-8741-49cf53f4a31c@ti.com>
+Date: Mon, 8 Sep 2025 18:35:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250908221727.3635572-1-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] arm64: dts: ti: k3-pinctrl: Fix the bug in
+ existing macros
+To: Akashdeep Kaur <a-kaur@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <u-kumar1@ti.com>,
+        <sebin.francis@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>
+References: <20250905051448.2836237-1-a-kaur@ti.com>
+ <20250905051448.2836237-5-a-kaur@ti.com>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250905051448.2836237-5-a-kaur@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Ian,
-
-On Mon, Sep 08, 2025 at 03:17:27PM -0700, Ian Rogers wrote:
-> If not root and the perf_event_paranoid is set >1 swfilt will fail to
-> open the event failing the test. Add check to skip the test in that
-> case.
-
-Thanks for the fix!
-
+On 9/5/25 00:14, Akashdeep Kaur wrote:
+> Currently, DS_IO_OVERRIDE_EN_SHIFT macro is not defined anywhere but
+> used for defining other macro.
+> Replace this undefined macro with valid macro. Rename the existing macro
+> to reflect the actual behavior.
 > 
-> Some corrections to the kernel/user sample count test.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
 > ---
->  tools/perf/tests/shell/amd-ibs-swfilt.sh | 57 +++++++++++++++++-------
->  1 file changed, 41 insertions(+), 16 deletions(-)
+>   arch/arm64/boot/dts/ti/k3-pinctrl.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/perf/tests/shell/amd-ibs-swfilt.sh b/tools/perf/tests/shell/amd-ibs-swfilt.sh
-> index 7045ec72ba4c..80d5bf8db40c 100755
-> --- a/tools/perf/tests/shell/amd-ibs-swfilt.sh
-> +++ b/tools/perf/tests/shell/amd-ibs-swfilt.sh
-> @@ -1,6 +1,10 @@
->  #!/bin/bash
->  # AMD IBS software filtering
->  
-> +ParanoidAndNotRoot() {
-> +  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
-> +}
-> +
->  echo "check availability of IBS swfilt"
->  
->  # check if IBS PMU is available
-> @@ -16,6 +20,7 @@ if [ ! -f /sys/bus/event_source/devices/ibs_op/format/swfilt ]; then
->  fi
->  
->  echo "run perf record with modifier and swfilt"
-> +err=0
->  
->  # setting any modifiers should fail
->  perf record -B -e ibs_op//u -o /dev/null true 2> /dev/null
-> @@ -31,11 +36,17 @@ if [ $? -ne 0 ]; then
->      exit 1
->  fi
->  
-> -# setting it with swfilt=1 should be fine
-> -perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
-> -if [ $? -ne 0 ]; then
-> -    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
-> -    exit 1
-> +if ! ParanoidAndNotRoot 1
-> +then
-> +    # setting it with swfilt=1 should be fine
-> +    perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
-> +    if [ $? -ne 0 ]; then
-> +        echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
-> +        exit 1
-> +    fi
-> +else
-> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-> +    err=2
->  fi
->  
->  # check ibs_fetch PMU as well
-> @@ -46,22 +57,36 @@ if [ $? -ne 0 ]; then
->  fi
->  
->  # check system wide recording
-> -perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
-> -if [ $? -ne 0 ]; then
-> -    echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
-> -    exit 1
-> +if ! ParanoidAndNotRoot 1
-> +then
-> +    perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
-> +    if [ $? -ne 0 ]; then
-> +        echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
-> +        exit 1
-> +    fi
-> +else
-> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-> +    err=2
->  fi
->  
->  echo "check number of samples with swfilt"
->  
-> -kernel_sample=$(perf record -e ibs_op/swfilt/u -o- true | perf script -i- -F misc | grep -c ^K)
-> -if [ ${kernel_sample} -ne 0 ]; then
-> -    echo "[FAIL] unexpected kernel samples: " ${kernel_sample}
-> -    exit 1
-> -fi
-> -
-> -user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
-> +user_sample=$(perf record -e ibs_op/swfilt/u -o- true | perf script -i- -F misc | grep -c ^U)
+> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> index 8ce37ace94c9..e46f7bf52701 100644
+> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> @@ -88,8 +88,8 @@
+>   
+>   #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
+>   #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
+> -#define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
+> -#define PIN_DS_IO_OVERRIDE_ENABLE	(1 << DS_IO_OVERRIDE_EN_SHIFT)
+> +#define PIN_DS_ISO_OVERRIDE_DISABLE     (0 << ISO_OVERRIDE_EN_SHIFT)
+> +#define PIN_DS_ISO_OVERRIDE_ENABLE      (1 << ISO_OVERRIDE_EN_SHIFT)
+>   #define PIN_DS_OUT_ENABLE		(0 << DS_OUT_DIS_SHIFT)
+>   #define PIN_DS_OUT_DISABLE		(1 << DS_OUT_DIS_SHIFT)
+>   #define PIN_DS_OUT_VALUE_ZERO		(0 << DS_OUT_VAL_SHIFT)
 
-I think it should count kernel samples now (with ^K) as it sets 'u'
-modifier (exclude_kernel).
-
-
->  if [ ${user_sample} -ne 0 ]; then
->      echo "[FAIL] unexpected user samples: " ${user_sample}
-
-So that it should not have unexpected kernel samples.
-
-
->      exit 1
->  fi
-> +
-> +if ! ParanoidAndNotRoot 1
-> +then
-> +    kernel_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^K)
-> +    if [ ${kernel_sample} -ne 0 ]; then
-> +        echo "[FAIL] unexpected kernel samples: " ${kernel_sample}
-
-Vice versa.  It should count unexpected user samples from 'k' modifier.
-
-Thanks,
-Namhyung
-
-
-> +        exit 1
-> +    fi
-> +else
-> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-> +    err=2
-> +fi
-> +
-> +exit $err
-> -- 
-> 2.51.0.384.g4c02a37b29-goog
-> 
+Reviewed-by: Kendall Willis <k-willis@ti.com>
 
