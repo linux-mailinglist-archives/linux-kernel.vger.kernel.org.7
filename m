@@ -1,140 +1,251 @@
-Return-Path: <linux-kernel+bounces-806320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876DBB4950B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:21:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7422DB49511
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 741D47ADE24
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6C91BC5DAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6A23115AE;
-	Mon,  8 Sep 2025 16:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B13330F7EA;
+	Mon,  8 Sep 2025 16:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nvvCCuyH"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eS1ByXrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE83112CF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3A130F524;
+	Mon,  8 Sep 2025 16:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348344; cv=none; b=OYCeHoShiQJr605/qSPdA23U8bkR8z0z8UhTFOtjGiRizncc468o9Hp7agvCatn+yZX53Yt7859h+KA+Ys3aKkjaEkvGaYpgZRcG8q9eBerMNaVG1WSdg/zgKWqOdzsgZeku4mZxfCl0QH7H3Th8PS7PLDXE/PCvW4VsYaO7vU0=
+	t=1757348364; cv=none; b=Fh1Q3nO6/HlTH8AMtRTb15HgteIB+xMT0gUVsFdHnxm8uazXPjTrDGDXsEufAfmIlGukdzmSwHCR7g5crbMcpRXBgeDn6XOyHTZjCinq4pak9HBwqvBwKRLO04I3KUreEwq2m3c3O5UbrbLeNAzQlsIoMpyH5Pbap1AIJZ7IVP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348344; c=relaxed/simple;
-	bh=bBwWUtgXFKML7E6yZicrpMOFMmrhprvohwsczfPqm8Q=;
+	s=arc-20240116; t=1757348364; c=relaxed/simple;
+	bh=e/EEpehGh6qnGDieDWe5ga0sFpncxAw0w0vH1rbIMdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlpO+sdY9L5yy3eECCAU4uNh3oU//RAYgiRhheAUXrX3ETanPYcOBIunI4vUlw9R+eZ+5dOyh/cnnbtzyqc3vJ42ayg6KjpLc4nMNNYXbLBcBlx22pdIIxUjViEGU8B/dgtoXxdIdG3lkKZ18I1m4pHfuRImCG1yFtYDpIW9CuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nvvCCuyH; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24b2337d1bfso378125ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757348341; x=1757953141; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKW9Km5qoB4X4sWpHumCKWRFwBEUu5lnJQyMOnvlKZM=;
-        b=nvvCCuyH02PSVdA9XioRTEsYGKQayG4LVagnCqDWZqplO/8pV0xCxi2HFxMbc6jbFg
-         PwFuhlMZ1lrog23i1ZOY31CxMnrHYvFDMY14t77HRRFfTTHEt8xVTERFQR+1xItMOKgn
-         fAiWJnWT5oUE0mHzcSKWHjVLEzWBACJAuuazHbSyXfRk/+DaJkn3EOWqlKz/2zNxpUFv
-         PY++gTzhBGI5VP5yiOWbjTv0C2bWk0v6eYjfeL39sXddk5uORT8GQpodSeDOGcWdSQlC
-         +rChMJnL77HMbP++WD3/tN1JNFVKy62Cyxo+FyBDsDaxw8O0tr/arUjrVoBy35nu/13J
-         hqVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757348341; x=1757953141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CKW9Km5qoB4X4sWpHumCKWRFwBEUu5lnJQyMOnvlKZM=;
-        b=oZNqWPw8YFpEyQhoOvNneqstShcJNirq5JslXmdgYA/XxkAdjqcQ6Nv+sJd1AfleSh
-         dgp2whLEKIqFZxFtwnfdPh+nUGDhOPx6vbFP1cWUnZ5xlUB5/4NwSsOOeyGJLA819NcG
-         k4ROZMt7ceWVf3dIDjlGV9QwDamv2VIqjQSwZWpksf5Yy8miPkjm/hMklUQZJQlYN/4w
-         F7Ipz+seiDySKCNUhMf2QtKj+uKIwmk4Ki/Rgde4Yv9W9GeNpiVJuzvKWVO7E8vhKX7A
-         iIa/Df/iGGEMGnOyuTqHN0o18YjX/dg3X3vsV+EUOyT8ctOFcS6xTI78dFcMfOvKfsa0
-         4I3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW17sBKGrm7SizBxugjwxO0ddS9rDlHxeoNlMR8WB59HA+wiSy+JHAuBWkhRG6dTfCn3w5eE5FTWQWR4Hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwepHt7pHfz9cPANMFmpGHJ/mR2lndKgzZatwomrkeU+dPeXpfE
-	hDwXZbm6uwnID88gfyUjBbRuZ1b2lhDMxeWeiCA4X+Y7VINklapnrNDXkxbBhYh1PQ==
-X-Gm-Gg: ASbGncsYvj4G7Nug7eoWryKt56KGG3JkDAetlphkuPoCdylSDKLr1TH7sOs5wuD/9+k
-	EG2offfNpkM6E0Z0HOCubyjY7drHHaWRibLfH8wYjX6alrQQGmAMFYhlvDcLevOSvuBN3kaJTuV
-	MFQx9f9LrDQ5uiQ3KBrpuoPoVMX8W7eTR5vd6u43U+OSmbKhanu8hIVe3uO2FYw4RBLqnEkjuAR
-	OxUpkY+6Jdy8lTw6ZjEe8F8S/R5Baz9/jedgzoYWHTQIM1Ly433UadYSiv2Ep9hnAGzb9UXRwo1
-	+9UEdQuLW0gE45JU9YPKlJfZFylU2lHpwRhLfXbiCBgrk8obloEecl0AdQhDZkQEHNBB77UHOOR
-	5CdHMs3YnfiUGjxcitwA34kF5sdU4RI8J4UvuVX859j2Peo18pTttgn8XXQo28Q==
-X-Google-Smtp-Source: AGHT+IGALeDqJI4bBK7+ca8xnhgdtA37rM1ujrTFcj7NVpG6uQldYaHEZ4kn7maaD/vDb5uH/1GU/w==
-X-Received: by 2002:a17:903:1a70:b0:248:aa0d:f826 with SMTP id d9443c01a7336-25114d02755mr9469975ad.6.1757348341105;
-        Mon, 08 Sep 2025 09:19:01 -0700 (PDT)
-Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f57b232sm36827136a91.2.2025.09.08.09.18.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 09:18:59 -0700 (PDT)
-Date: Mon, 8 Sep 2025 16:18:54 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Breno Leitao <leitao@debian.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] scripts/decode_stacktrace.sh: symbol: avoid trailing
- whitespaces
-Message-ID: <aL8B7gvFAthV4EX0@google.com>
-References: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
- <20250908-decode_strace_indent-v1-1-28e5e4758080@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=piQhVuJLVI9wOCfU/9b0UeWccemmM9x/YKERFQwSZ6follI5Evnd4lrlTPKPTWB57EUEePVyh3rePCxZ1W3SNoivJKBr9IVcDIRyDTUaPvgFEKgLTKCgm75EEF7JdD+u8vGkfviHbvAEAy0WFQDCh7YJ0TZep51oBfwvBypLlJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eS1ByXrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9C2C4CEF1;
+	Mon,  8 Sep 2025 16:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757348363;
+	bh=e/EEpehGh6qnGDieDWe5ga0sFpncxAw0w0vH1rbIMdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eS1ByXrRIYO0Zqfsov22RapqMSiFem38xM4ZjISK0fRYTjxcMbruS++TsUUopmPc7
+	 tKuOsDLlqhitnVKfPcHryXcUUzqkCnBrzpvlbPNOEbpREh99cGA8cX7qeQs9FrL1WR
+	 Y66riCoAdyJWAfYteOS8x98qikF7YqaiWp5CGEcw=
+Date: Mon, 8 Sep 2025 18:19:20 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
+	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Message-ID: <2025090808-slicer-consent-6db0@gregkh>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <2025090807-bootleg-trophy-a031@gregkh>
+ <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
+ <2025090849-tweak-conductor-f642@gregkh>
+ <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
+ <2025090817-attendant-ungodly-78f6@gregkh>
+ <DCNGJMN80Z34.1O45B1LM9PB2S@kernel.org>
+ <2025090850-canon-banish-baf6@gregkh>
+ <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="XRVaOMEMeKg6C3LR"
+Content-Disposition: inline
+In-Reply-To: <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
+
+
+--XRVaOMEMeKg6C3LR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908-decode_strace_indent-v1-1-28e5e4758080@kernel.org>
 
-On Mon, Sep 08, 2025 at 05:41:57PM +0200, Matthieu Baerts (NGI0) wrote:
-> Lines having a symbol to decode might not always have info after this
-> symbol. It means ${info_str} might not be set, but it will always be
-> printed after a space, causing trailing whitespaces.
+On Mon, Sep 08, 2025 at 04:59:16PM +0200, Danilo Krummrich wrote:
+> On Mon Sep 8, 2025 at 4:16 PM CEST, Greg Kroah-Hartman wrote:
+> > On Mon, Sep 08, 2025 at 03:36:46PM +0200, Danilo Krummrich wrote:
+> >> On Mon Sep 8, 2025 at 3:30 PM CEST, Greg Kroah-Hartman wrote:
+> >> > On Mon, Sep 08, 2025 at 03:22:41PM +0200, Danilo Krummrich wrote:
+> >> >> On Mon Sep 8, 2025 at 2:48 PM CEST, Greg Kroah-Hartman wrote:
+> >> >> > On Mon, Sep 08, 2025 at 12:54:46PM +0200, Danilo Krummrich wrote:
+> >> >> >> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
+> >> >> >> index b26eea3ee723..475502f30b1a 100644
+> >> >> >> --- a/samples/rust/rust_debugfs.rs
+> >> >> >> +++ b/samples/rust/rust_debugfs.rs
+> >> >> >> @@ -59,6 +59,8 @@ struct RustDebugFs {
+> >> >> >>      #[pin]
+> >> >> >>      _compatible: File<CString>,
+> >> >> >>      #[pin]
+> >> >> >> +    _test: File<&'static CStr>,
+> >> >> >> +    #[pin]
+> >> >> >>      counter: File<AtomicUsize>,
+> >> >> >>      #[pin]
+> >> >> >>      inner: File<Mutex<Inner>>,
+> >> >> >> @@ -140,6 +142,7 @@ fn new(pdev: &platform::Device<Core>) -> impl PinInit<Self, Error> + '_ {
+> >> >> >>                          .property_read::<CString>(c_str!("compatible"))
+> >> >> >>                          .required_by(dev)?,
+> >> >> >>                  ),
+> >> >> >> +                _test <- debugfs.read_only_file(c_str!("test"), c_str!("some_value")),
+> >> >> >
+> >> >> > Cool, but again, we do not want to ever be storing individual debugfs
+> >> >> > files.  Well, we can, but for 90% of the cases, we do not, we only want
+> >> >> > to remove the whole directory when that goes out of scope, which will
+> >> >> > clean up the files then.
+> >> >> 
+> >> >> This API does not work in the way that you have a struct storing the data you
+> >> >> want to expose *and* another one for the files with the data attached.
+> >> >> 
+> >> >> The File type contains the actual data. For instance, if you have a struct Foo,
+> >> >> where you want to expose the members through debugfs you would *not* do:
+> >> >> 
+> >> >> 	struct Foo {
+> >> >> 	   a: u32,
+> >> >> 	   b: u32,
+> >> >> 	}
+> >> >> 
+> >> >> 	struct FooFiles {
+> >> >> 	   a: File<&u32>,
+> >> >> 	   b: File<&u32>
+> >> >> 	}
+> >> >> 
+> >> >> and then create an instance of Foo *and* another instance of FooFiles to export
+> >> >> them via debugfs.
+> >> >
+> >> > Ah, that's exactly what I was trying to do.
+> >> 
+> >> But that's bad, then we're back at the lifetime problem from the beginning,
+> >> because the File<&Foo> then somehow needs to ensure that the instance Foo
+> >> remains alive as long as File<&Foo> or the backing directory exists.
+> >> 
+> >> So, you eventually end of with Foo needing to be reference counted with its own
+> >> memory allocation, which horribly messes with your lifetimes in the driver.
+> >
+> > Once I want to drop Foo, FooFiles should "go out of scope" and be gone.
 > 
-> That's a detail, but when the output is opened with an editor marking
-> these trailing whitespaces, that's a bit disturbing. It is easy to
-> remove them by printing this variable with a space only if it is set.
+> We agree on the goal here, but unfortunately it's not really possible. There are
+> two options that were already exercised:
 > 
-> While at it, do the same with ${module} and print everything in one line.
+> 	(1) Force that FooFiles (or FooDir) is bound to the lifetime of a
+> 	    reference of Foo with FooDir<&'a Foo>.
 > 
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
->  scripts/decode_stacktrace.sh | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+> 	    This isn't workable because we then can't store both of them into
+> 	    the same parent structure.
 > 
-> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-> index 17abc4e7a9855b10e76acfdb92847e1671d6c2bd..c6b5c14412f0f6f78fb60b0b042d6e22bbb46b79 100755
-> --- a/scripts/decode_stacktrace.sh
-> +++ b/scripts/decode_stacktrace.sh
-> @@ -323,12 +323,7 @@ handle_line() {
->  	parse_symbol # modifies $symbol
->  
->  	# Add up the line number to the symbol
-> -	if [[ -z ${module} ]]
-> -	then
-> -		echo "${words[@]}" "$symbol ${info_str}"
-> -	else
-> -		echo "${words[@]}" "$symbol $module ${info_str}"
-> -	fi
-> +	echo "${words[@]}" "${symbol}${module:+ ${module}}${info_str:+ ${info_str}}"
->  }
->  
->  while read line; do
+> 	(2) Reference count Foo (Arc<Foo>) and make FooDir own a referenc count
+> 	    of Foo.
 > 
-> -- 
-> 2.51.0
+> 	    But this is bad for the mentioned reasons. :(
 > 
+> 	(3) The File<T> API we have now, which gives you the behavior you ask
+> 	    for with Scope<T>.
+> 
+> 	    Where Scope<T> creates a directory and owns the data you pass to it,
+> 	    e.g. a pci config descriptor.
+> 
+> 	    The user can create an arbitrary number of files exporting any of
+> 	    the fields in date that live in the scope and don't need to be tracked
+> 	    separately, i.e. don't create separate object instances.
+> 
+> 	    The directory (and hence all the files) is removed once the Scope<T>
+> 	    is dropped, including the data it owns.
+> 
+> > If a backing file descriptor is still held open, it will then become
+> > "stale" and not work.  Much like the revokable stuff works.
+> >
+> > Note, none of this is in the C code today, and debugfs is bound to root
+> > permissions, so it's not really an issue, but I can understand the goal
+> > of correctness...
+> 
+> The lifetime guarantee we talk about is about the debugfs file still having a
+> pointer to data that has already been dropped / freed.
+> 
+> In C you have to remove the debugfs file or directly (and hence the file) before
+> the data exposed through it is freed. In C this is on the driver to take care
+> of.
+> 
+> (If in C a driver has multiple structures exported in the same debugfs directory
+> it has to manually take care of keeping all structures alive as long as the
+> directory (and hence all files) exist.)
+> 
+> In Rust we need the abstraction to guarantee this.
+> 
+> > Anyway, I looked at the scoped example here, and I don't see how that
+> > works any differently.  How can I use it to have a single Dir "handle"
+> > that when goes out of scope, can drop the files attached to it that were
+> > created to reference Foo.a and Foo.b in your example above?
+> 
+> In the example above you would move Foo into the Scope<Foo>. For instance:
+> 
+> 	let dir = root_dir.scope(foo, cstr!("subdir"), |foo, dir| {
+> 		dir.read_only_file(c_str!("a"), foo.a);
+> 		dir.read_only_file(c_str!("b"), foo.b);
+> 	});
+> 
+> Note that those methods don't return anything, they're automatically bound to
+> the Scope in lifetime.
+> 
+> So, Foo could be your pci config descriptor.
+> 
+> If `dir` is dropped, everything dies, the Scope, the "subdir" directory, all the
+> files and also Foo.
+> 
+> I can provide some working code later on (currently in a meeting). :)
 
-LGTM,
+Working code for the simple "foo" example will be good.  Here's my
+horrible (and will not build) example I was trying to get to work.
 
-Reviewed-by: Carlos Llamas <cmllamas@google.com>
+thanks,
+
+greg k-h
+
+--XRVaOMEMeKg6C3LR
+Content-Type: application/rls-services+xml
+Content-Disposition: attachment; filename=rust_debugfs2.rs
+Content-Transfer-Encoding: quoted-printable
+
+// SPDX-License-Identifier: GPL-2.0=0A=0A// Copyright (C) 2025 Greg Kroah-H=
+artman <gregkh@linuxfoundation.org>=0A// Copyright (C) 2025 The Linux Found=
+ation=0A=0A//! Sample debugfs rust module that emulates soc_info to try to =
+see just how well the api can=0A//! work...=0A=0Ause kernel::c_str;=0Ause k=
+ernel::debugfs::Dir;=0Ause kernel::prelude::*;=0A=0Amodule! {=0A    type: S=
+ocInfo,=0A    name: "rust_soc_info",=0A    authors: ["Greg Kroah-Hartman"],=
+=0A    description: "Rust soc_info sample driver",=0A    license: "GPL",=0A=
+}=0A=0A// Fake "hardware SOC info object that ideally would read from the h=
+ardware to get the info.=0A// For now just use some fake data=0Astruct HwSo=
+cInfo {=0A    id: u32,=0A    ver: u32,=0A    raw_id: u32,=0A    foundry: u3=
+2,=0A    name: &'static CStr,=0A}=0A=0Aimpl HwSocInfo {=0A    pub fn new() =
+-> Self {=0A        Self {=0A            id: 123,=0A            ver: 456,=
+=0A            raw_id: 789,=0A            foundry: 0,=0A            name: c=
+_str!("hw_soc name"),=0A        }=0A    }=0A}=0A=0Astruct SocInfo {=0A    d=
+ebug_dir: Dir,=0A    hw_soc_info: HwSocInfo,=0A}=0A=0Aimpl kernel::Module f=
+or SocInfo {=0A    fn init(_this: &'static ThisModule) -> Result<Self> {=0A=
+=0A        // Read from the hardware and get our structure information=0A  =
+      let hw_soc_info =3D HwSocInfo::new();=0A=0A        // Create the root=
+ directory=0A        let root =3D Dir::new(c_str!("rust_soc_info"));=0A=0A =
+       // Create all the different debugfs files=0A        root.read_only_f=
+ile(c_str!("id"), &hw_soc_info.id);=0A        root.read_only_file(c_str!("v=
+er"), &hw_soc_info.ver);=0A        root.read_only_file(c_str!("raw_id"), &h=
+w_soc_info.raw_id);=0A        root.read_only_file(c_str!("name"), hw_soc_in=
+fo.name);=0A        root.read_callback_file(c_str!("foundry"), &hw_soc_info=
+, &|hw, f| {=0A            writeln!(f, "Foundry: {}", hw.foundry)=0A       =
+ });=0A=0A        Ok(Self {=0A            debug_dir: root,=0A            hw=
+_soc_info: hw_soc_info,=0A        })=0A    }=0A}=0A
+--XRVaOMEMeKg6C3LR--
 
