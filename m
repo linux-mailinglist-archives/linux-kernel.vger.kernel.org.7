@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-806474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC050B49785
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:48:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7C5B49789
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E1A1BC0345
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1334F20809F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0863112C8;
-	Mon,  8 Sep 2025 17:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE9C313265;
+	Mon,  8 Sep 2025 17:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IuW02gwl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I26kHjAg"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB0B224249
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B383B235BE8;
+	Mon,  8 Sep 2025 17:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757353683; cv=none; b=ogMKxi5GrVtVug4EJ3Wvx5Fuo7OV6V7PmdP8AlH3bQEvuMxJaIbZ904hKdJgRqmM3GdC/il4DeLGYAGnF5SGVzuQWbSw/0jZNr+vSON2qg3MMAdjuOeEB506LB8F6F/O+0evrzUbboo69EeW+XU5/hoFKCmeCYseyWsK7j2wE+8=
+	t=1757353705; cv=none; b=m+pFHixecV+zjJPo7ECeqR+5T7ooovH7LtzUZGDLOLNI+cA7YPFHXv5AEWe7zw5tf3lzSfJNEb/a/tLgvyw4M+DM8Rgz2O1GpIcQKx3j5t8GFYfi/xLSkCwRLYu8KRxuXBHvtExFBFhd4/PZb8IHV8Yrk7uAq06GWP+nlx2/Dio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757353683; c=relaxed/simple;
-	bh=P2T4j9MHYmvjZjVfLPw5l7tL8Soz3DvJFtuIN19StHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Se2nngFbwKT1aFD+2ShWiKNaIEwAdvWXcRSZwbK0U72QClAdON83g8fHwVh9AwJxg7d40dg/mW42DDnVbqO/XzU1o7KLlGR3IDWSydEr6HPJlVxQ77mA5LhRi2rrBiVLGXH+eq8LKna1MJC1Z8S6ci070pB86W6YAVEgFybh738=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IuW02gwl; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757353681; x=1788889681;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=P2T4j9MHYmvjZjVfLPw5l7tL8Soz3DvJFtuIN19StHM=;
-  b=IuW02gwlc96P4JIB6Hek8nbY6OEuBMLTU5svZyRSjKtGCUAs6u9CoIlc
-   HTYrBPblO0Ggm1MjyIkaUMv5H9qeJJgMlBzjZFhNd9jjHufISlm/EIt2Z
-   tbQfiZ8Qh/JLKM5E2RjnHdD/3pmsa0UIiitOhgYg3LEJ8q8zvbOODjU+U
-   gj74M1fBDph+xaCpHWyxtZmHxo6GSMOH9RCTjPFw1CjWBbrRcU9TUGNUo
-   82xYPeWoom560ajrxQ1X/bI1thCFXcW8ddZaFUV+iqI642/sTvuBgazVP
-   MxVbLKpukKhQsc56jwbOEe34L5eVMpMOKKA5ki8H7xyKJW6NzCd6RFOrq
-   g==;
-X-CSE-ConnectionGUID: FFR17bEsQImsRE8WSXUefA==
-X-CSE-MsgGUID: 9hB07doNRfKVOrCeKAJ+PQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70719881"
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="70719881"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 10:48:00 -0700
-X-CSE-ConnectionGUID: 4/IJXoazQJGVgbzNIZL56w==
-X-CSE-MsgGUID: 7K2zeK6GSS+MHIcdirOQNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="172021269"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.113]) ([10.125.110.113])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 10:48:00 -0700
-Message-ID: <46992d97-e803-4d7e-b951-1a2a9d1b6987@intel.com>
-Date: Mon, 8 Sep 2025 10:47:59 -0700
+	s=arc-20240116; t=1757353705; c=relaxed/simple;
+	bh=1J95CYJMj61O6AKdqpxemdltuAb3lriEHe9QY0csmrg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvlmNEjrBKzlLRkwF2/upHAyhzz7JlvdWehyAMdWE9fe/0K6flQ1+iIhi/m7NL+CimtBv58GmDSju/LURkBc9rd+C/kWA7cHWkQTiqxmTg0fWrEsxlhHyijDenxHPEfDxpKpVE/OUautBjM2QWLdlKKoZeGTcln3DuGKBUBNyqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I26kHjAg; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3d19699240dso3444955f8f.1;
+        Mon, 08 Sep 2025 10:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757353702; x=1757958502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YcHw8P5EMslNisFsrgaPX3AJmmyXYUwkEC6T9yd5ARw=;
+        b=I26kHjAg7MfSLw3ofIUfOBGi0rQ86dfcnufMiEGM7XyvBLgPNL4fwrgM7Ly4HnOfA8
+         4QnQPgzwSzP2Rf4BNaMZ2AgGYF3Dl6za3mQuy71KAciLxWFgQ4uBHcbSxApuM+1oI840
+         KV0IrTEYpPN9HNXQZXWAop3IIVcZsH/6TxSvibm4P6057fEPaUFpRvEKRBdkKGiFV0lf
+         HdaD40NK1mXQ8WqE2rjuyR7m4kwGfo9rZZyrQmLBFBA7j2EwwL0nzdd8eSMLTRCwkXFK
+         5tvanFIga5487u6ndQl2IQBtJkH9/DoFVBkIaDuuMZ2ATZThztvcqxa03f4ryN0mh6Ux
+         sYxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757353702; x=1757958502;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YcHw8P5EMslNisFsrgaPX3AJmmyXYUwkEC6T9yd5ARw=;
+        b=WY29bpjG7LgyvYinqx/FFp2AxcsKFk1EaRjvK/6bH1aA3LdcUQi2bP2s2pCBUnjTcR
+         UED1rCrnD5y5t1v6QOEbn8W9WKtbigqW3ZEbO/Nh4WJ6LYidkv0R2fNlDZsbfusGKrq8
+         ZzBJ1ZTMC0d5M4PU1I5yHMXej9ypdnnwm1tdKa09Wfj/ZxvH6ogBexJt2Om1dkMvwjNN
+         DwYY4WA+ajI30OsfWzWnfkVHoXCkVfFuvKi6KKRYUQs/PPRl1uNRea4UH/f8CpAqTBik
+         bWDJkC0xyB3Qfsy9nvnYlkIwmMmcXv8DY62FOKeCYb0eGp+3hoonio+1xTGmXdtja4bn
+         U2Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6UWETY+2rbBJeCcrfk208iUtV/jP+nZAw5AJkdYmrz1wQdG+J8v/TpCwS6WDZ7D6RPGSiAYmrQtQA@vger.kernel.org, AJvYcCWJl77hxsJUC1lIKIXdmpg5MzDv4CdwWbaE1vRzl1ftRCIVus7HR1MborlTfPge3ouyFENAUjlc/qDXz4Y8@vger.kernel.org, AJvYcCX8esvlbE78w+w+cz4wypRtEc3KgZJaqVzzOPf2gaPfZ+L1JaFyzwgM+RkZ6/SRiR9CN4p3Hk6j@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOo3+cQheoRKldNHP9rtmUdvtERt9OfizaY4YEQwsX1lNyzWO/
+	emnikQne/szMtsrje1z2JQ7P6APo/eHK2g523NeDAaKNQCClKfmSZdet
+X-Gm-Gg: ASbGncvk7oe/8BuJR2rbpAsIFem3ph76ruKX73409SNv6yD7+pKr94V+qYOkz/9lA+q
+	tag5jmOAapgyeJ+JfkhsfQGHEEaaSpaqZPwBPmWot37b1ltwgHdrQ0i9n6ZC7ixyKdBoxIhH1Pz
+	ast8nIA0F9A6SCwkJmJGU9+V57rXGwDigMB+YnBTZoNQIfi2JO3O6tZrKzi+oASJS8y0h88izFr
+	NxWKRYS2/9Awm6YLa4N/fhvaOCl2IsgXi5hzCYH0RXe5VgGbawi6Jg8C50TxlWg27WcnI/5UDqr
+	cWs5aBNCz4c6PNF5XXPebH7l3VsXDcPHGAaZDzamqQ/8qm8aeffibIfSU7fat2aV2GgoCIIvdf5
+	fnOanyoF3ch/1hitrfwHX947sMyyJoaiPBPxImPVSiNj5YNmf3JPKAmUHZLNOHuZmtNANF3Jwes
+	blSWuP
+X-Google-Smtp-Source: AGHT+IFq6o1EpTze8lAPdy/p+9IIgpxXlJzHOvrLDm8Mz2ZpQF7/Pb8OvU3JVQI7GB8uGSBt0UZ7Lw==
+X-Received: by 2002:a05:6000:2084:b0:3e7:45d1:9d91 with SMTP id ffacd0b85a97d-3e745d1a116mr4929204f8f.28.1757353701694;
+        Mon, 08 Sep 2025 10:48:21 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e1a31c69e4sm16547400f8f.44.2025.09.08.10.48.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 10:48:21 -0700 (PDT)
+Message-ID: <68bf16e5.df0a0220.2e182c.b822@mx.google.com>
+X-Google-Original-Message-ID: <aL8W4dEEI22W73DF@Ansuel-XPS.>
+Date: Mon, 8 Sep 2025 19:48:17 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
+References: <20250908113723.31559-1-ansuelsmth@gmail.com>
+ <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] ndtest: Fix incorrect handling for return value of
- device_create_with_groups.
-To: Lin Yujun <linyujun809@h-partners.com>, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, santosh@fossix.org
-Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250908122331.1315530-1-linyujun809@h-partners.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250908122331.1315530-1-linyujun809@h-partners.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
 
-
-
-On 9/8/25 5:23 AM, Lin Yujun wrote:
-> The return value of device_create_with_groups will not
-> be an null pointer, use IS_ERR() to fix incorrect handling
-> return value of device_create_with_groups.
+On Mon, Sep 08, 2025 at 06:54:15PM +0200, Andrew Lunn wrote:
+> On Mon, Sep 08, 2025 at 01:37:19PM +0200, Christian Marangi wrote:
+> > With further testing with an attached Aeonsemi it was discovered that
+> > the pinctrl MDIO function applied the wrong bitmask. The error was
+> > probably caused by the confusing documentation related to these bits.
+> > 
+> > Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
+> > is never actually set but instead it's set force enable to the 2 GPIO
+> > (gpio 1-2) for MDC and MDIO pin.
 > 
-> Fixes: 9399ab61ad82 ("ndtest: Add dimms to the two buses")
-> Signed-off-by: Lin Yujun <linyujun809@h-partners.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  tools/testing/nvdimm/test/ndtest.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Is the MDIO bus implemented using the GPIO bitbanging driver?
 > 
-> diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-> index 68a064ce598c..7d722f2f7d62 100644
-> --- a/tools/testing/nvdimm/test/ndtest.c
-> +++ b/tools/testing/nvdimm/test/ndtest.c
-> @@ -745,11 +745,11 @@ static int ndtest_dimm_register(struct ndtest_priv *priv,
->  
->  	dimm->dev = device_create_with_groups(&ndtest_dimm_class,
->  					     &priv->pdev.dev,
->  					     0, dimm, dimm_attribute_groups,
->  					     "test_dimm%d", id);
-> -	if (!dimm->dev) {
-> +	if (IS_ERR(dimm->dev)) {
->  		pr_err("Could not create dimm device attributes\n");
->  		return -ENOMEM;
->  	}
->  
->  	return 0;
 
+No it does use the MDIO bus integrated in the MT7530 Switch. It's just
+that the MDIO pin can be muxed as GPIO usage.
+
+-- 
+	Ansuel
 
