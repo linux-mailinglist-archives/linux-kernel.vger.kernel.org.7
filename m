@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-806566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C90B4988E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:45:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D735B4988C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C606207504
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385083B5610
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E8B2E1746;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4431C57F;
 	Mon,  8 Sep 2025 18:45:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28C43126BB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFD2315D25
 	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357133; cv=none; b=dBOi/a4Rn6Jv5TMGFEbhdw7y0TUivILpDm2y+IBHIu80h07KS82OlAsY7GP5OdHe/BzbpA15KTxxm4+rmq3xsCIB2/wlq9C3WpLRnh+JQBmUtBT5ubocYspIyYn/LzlHKdl82w/i5SjAIf5oAfyGqVEx3O4eqva/KmrxrbFCNro=
+	t=1757357133; cv=none; b=PHMVLkwoDRLkpGTtjSJa7Svu1ekQJ8FpKG4zdQHPCpfa/otRyaEIA+doRNZ4uGi8MQIam05964WYYKIZGGG//tvRCRDTZsXFL2ycspkHmFzEA2OU4hHV+QYfDVHceJc2Cy5Hq+0GrQdd3OmKsMKuAsMM/tcMtHZ3v5QHsfyonNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757357133; c=relaxed/simple;
-	bh=75f6wh5I0VzGYY0aHRtlH9tSHeadLrguK0DZmTzOgVc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HNxVkvfSMZn2l/+pXRxzEl3GB4EftFCrzxSNC3pjNRtswMcHxZJ0tX5QZqjm88rGPKW8qWfSQv1kvO0MapNxoaN4kW8uaaOipuhb9mN9xg6IianP3kKbLeqoGjBr/z03Fn2pJu7pGA0d0fLMfIB1PcM3JbZo+PBGUilc7+8FbaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+	bh=T1qo6a/TUcnJiT6mvynHEi9MWIhITWvsfSfmdZ6voVs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=j4iTHBZO/jyqsVD9mTWwVzLt1UCyiFqlcag5pfBt8FH2cl2nSP5yg38ixK8BQZOJh61wxEtFM50y1ByJ/jebfXaVYqH+IPFz3LbVHLdKhywMozq5k61g2lQl6jOVyfCC8HRHbVvfp5jF3DhPvJdQdJex/qMAB3fUrwtY65g1Ebo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-40a365627f4so26071565ab.3
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-402abd9bfadso23712465ab.0
         for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:45:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757357131; x=1757961931;
+        d=1e100.net; s=20230601; t=1757357130; x=1757961930;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0BYpbNj94Ojs8b5h4+Yv8Gr1eSotCP4HbUumdYPAAoY=;
-        b=UI8moVjprkmg67jkaqF+4CJpu9rO2vCq6aAaGC2HscMsthIVhlf3w3nREH8U36Tjsm
-         7FokHxNfwU9UaFpfOup3apwxEsKGXmNyX2GgORuQUsI183o6OaAiKHEyHXbexq2SKAaK
-         AjhOxOVMwpcu2myJeqKrTE+yuA7joLDqreYbaKWFeQ+IHVbP01YbpFKKabiiDDzzRaUE
-         G08o7LB+CIftIigSw8yRHf6to5H1JAZw7qUdT7+m4SoQP4/OUhYEGblthyid5dDD51AT
-         ynwQMtHfqvGHFOfVw8CpDTgdjXlOcHvYd41QjLISsALuF8K9om0WJldecsHBTqeAmt7J
-         /d9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJOTfof86iUn3nppTHil/r5R7ZS+vURwTD19dbbZ4uEjjGlAH4uRMwNl7sLvvLFKS6HoS+R9AbFl4RTTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSM4RsY7aDYTjXeU8zifg29apfBx7L+2XRlMOHBl4L4q6fzLaI
-	HUZW1DExismtBN/hkyBPgA8XwnqiA0Xs1VyxwuR1szLT3FNi4ExMuovL4OGZoekhwHvFeQhjW+d
-	UAlqCASIIb/rup8FOjMNjZLpv7PjLpju6hrspynnUBnO0RZLxa/WsHx9xjIM=
-X-Google-Smtp-Source: AGHT+IEK42zR8SiAURm5964soSiT50Cu6mxHG3e2DKnwf8R1xNwacwNFbovAXCL3TNOYUMvwm1EmQrN6AEqDV3VpCHYgYLTSy7aX
+        bh=e4rpIw4Z9cvceYkZykcJtkfZw05I+KJyWWW3NBceNUk=;
+        b=tJ1cb9qlN7mvg61zmcHfoyrolJGdXaSJOZsFb6MNZdhsrm+/ERCZKTomU49yVW06cD
+         U3Xdc3SKhOiHq88nVbHrz4yYtLp9Be8Y5qT8XckhkKVRy5tYQcVLBzcbMnR0Zp8D7CS7
+         OEYDQSISdGbQ48PcH6bEOpnHweQ8ZvOoeCG1Uz+EYHjer7PRQUukuO12vb5UVwPdEmJg
+         2bHGj8naBsbs/DUHOOXGUuSuVJ9M4M2Phdxube3YS7ss2y0neb8B6SC+EaBDr/wyxXyt
+         EFau+lx7t6oGpsMyi2DUfF/U3bqx81OC/CNivZDKMsEEkjOz5/MDW6/GM9NKJUlfVdOU
+         3t8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXRgZXadTnYIkNPxqkuGFulFbA20uoO0BRsZeADWhGEETH1Z+cqnSn2z6CxWW6YsXcfvDIxp3zVvjMu5AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx75gZRhoCtA+bZmw1ubQELIMhh26+mzqVaKCGFR8lrzARO930b
+	AylBBnIPHOXnha8+ShejlwvT5ZuFVYz4hL9qKCOvQr2oaFUeJGXVTTNG4LtLQHT+U3s/EwgaWB6
+	pOu51+ifxDiN6VCKwR0hG40ATLBHhJOLXHmRfcl8kBkFFakAQRcJibt4Yl4A=
+X-Google-Smtp-Source: AGHT+IHBT7DTZEGxAOZYWpHTes750AEJWQKD32H1tP+pCIa9zxYfigQhdZ5lXYfPESvvwcfciU1M0aHUoKTMrL0xl5+xAc9XQSLO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1487:b0:3f6:609d:1855 with SMTP id
- e9e14a558f8ab-3fd8925cb22mr129479185ab.31.1757357130805; Mon, 08 Sep 2025
+X-Received: by 2002:a05:6e02:1aa1:b0:3f6:618f:6b2b with SMTP id
+ e9e14a558f8ab-3fd87c4d5b5mr128088375ab.28.1757357130483; Mon, 08 Sep 2025
  11:45:30 -0700 (PDT)
 Date: Mon, 08 Sep 2025 11:45:30 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bf244a.050a0220.192772.0883.GAE@google.com>
-Subject: [syzbot] [mm?] [ext4?] WARNING in ext4_init_orphan_info
-From: syzbot <syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
-	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	matthew.brost@intel.com, rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
+Message-ID: <68bf244a.050a0220.192772.0882.GAE@google.com>
+Subject: [syzbot] [serial?] general protection fault in vc_deallocate
+From: syzbot <syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    76eeb9b8de98 Linux 6.17-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ca0934580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b92850d68d9b12934f5
+HEAD commit:    3e8e5822146b Add linux-next specific files for 20250908
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11984642580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=69cfefa929ab96f7
+dashboard link: https://syzkaller.appspot.com/bug?extid=f6cb41c144427dc0796a
 compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168d2562580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15869562580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17230934580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15984642580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eee687cc7d76/disk-76eeb9b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4062cd7a7107/vmlinux-76eeb9b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3bcb5a03c247/bzImage-76eeb9b8.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7e09a33c999c/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=140df312580000)
+disk image: https://storage.googleapis.com/syzbot-assets/eaa87d8bc6ca/disk-3e8e5822.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6640e70f5002/vmlinux-3e8e5822.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/40f622291050/bzImage-3e8e5822.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0b92850d68d9b12934f5@syzkaller.appspotmail.com
+Reported-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
 
-EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
-EXT4-fs (loop0): encrypted files will use data=ordered instead of data journaling mode
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6103 at mm/page_alloc.c:5124 __alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:5124
-Modules linked in:
-CPU: 0 UID: 0 PID: 6103 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Oops: general protection fault, probably for non-canonical address 0xdffffc00000000b2: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000590-0x0000000000000597]
+CPU: 0 UID: 0 PID: 6062 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:5124
-Code: 74 10 4c 89 e7 89 54 24 0c e8 24 e2 0c 00 8b 54 24 0c 49 83 3c 24 00 0f 85 a5 fe ff ff e9 a6 fe ff ff c6 05 a6 ac f6 0c 01 90 <0f> 0b 90 e9 18 ff ff ff a9 00 00 08 00 48 8b 4c 24 10 4c 8d 44 24
-RSP: 0018:ffffc900047676a0 EFLAGS: 00010246
-RAX: ffffc90004767600 RBX: 000000000000000e RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90004767708
-RBP: ffffc900047677a0 R08: ffffc90004767707 R09: 0000000000000000
-R10: ffffc900047676e0 R11: fffff520008ecee1 R12: 0000000000000000
-R13: 1ffff920008eced8 R14: 0000000000040cc0 R15: dffffc0000000000
-FS:  000055556bfce500(0000) GS:ffff8881268bf000(0000) knlGS:0000000000000000
+RIP: 0010:vc_deallocate+0x303/0x3e0 drivers/tty/vt/vt.c:1345
+Code: e8 f2 1f d7 fc 49 c7 07 00 00 00 00 eb 0e e8 14 1d 73 fc eb 05 e8 0d 1d 73 fc 31 db 4c 8d b3 90 05 00 00 4d 89 f4 49 c1 ec 03 <43> 80 3c 2c 00 74 08 4c 89 f7 e8 ce 1e d7 fc 4d 8b 3e 4d 85 ff 74
+RSP: 0018:ffffc900035f79e0 EFLAGS: 00010206
+RAX: ffffffff854c8f03 RBX: 0000000000000000 RCX: ffff88807dd3dac0
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000003f
+RBP: ffffc900035f7a90 R08: ffffffff8fc3c7cf R09: 1ffffffff1f878f9
+R10: dffffc0000000000 R11: fffffbfff1f878fa R12: 00000000000000b2
+R13: dffffc0000000000 R14: 0000000000000590 R15: ffffffff9a034a30
+FS:  000055557fa10500(0000) GS:ffff8881259f1000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f54f6aba6b0 CR3: 000000003b292000 CR4: 00000000003526f0
+CR2: 000055557fa10808 CR3: 000000007ba62000 CR4: 00000000003526f0
 Call Trace:
  <TASK>
- alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
- ___kmalloc_large_node+0x5f/0x1b0 mm/slub.c:4317
- __kmalloc_large_node_noprof+0x18/0x90 mm/slub.c:4348
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kmalloc_noprof+0x27a/0x430 mm/slub.c:4388
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kmalloc_array_noprof include/linux/slab.h:948 [inline]
- ext4_init_orphan_info+0x2b7/0xc70 fs/ext4/orphan.c:592
- __ext4_fill_super fs/ext4/super.c:5590 [inline]
- ext4_fill_super+0x55ef/0x60b0 fs/ext4/super.c:5728
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ vt_disallocate_all+0x60/0xe0 drivers/tty/vt/vt_ioctl.c:652
+ vt_ioctl+0x1adc/0x1f20 drivers/tty/vt/vt_ioctl.c:886
+ tty_ioctl+0x926/0xde0 drivers/tty/tty_io.c:2792
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbc7ab6038a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffed38a5318 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffed38a53a0 RCX: 00007fbc7ab6038a
-RDX: 0000200000000040 RSI: 00002000000001c0 RDI: 00007ffed38a5360
-RBP: 0000200000000040 R08: 00007ffed38a53a0 R09: 0000000000000c04
-R10: 0000000000000c04 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007ffed38a5360 R14: 0000000000000448 R15: 0000200000000580
+RIP: 0033:0x7f97fa38ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe553801c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f97fa5c5fa0 RCX: 00007f97fa38ebe9
+RDX: 0000000000000000 RSI: 0000000000005608 RDI: 0000000000000004
+RBP: 00007f97fa411e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f97fa5c5fa0 R14: 00007f97fa5c5fa0 R15: 0000000000000002
  </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vc_deallocate+0x303/0x3e0 drivers/tty/vt/vt.c:1345
+Code: e8 f2 1f d7 fc 49 c7 07 00 00 00 00 eb 0e e8 14 1d 73 fc eb 05 e8 0d 1d 73 fc 31 db 4c 8d b3 90 05 00 00 4d 89 f4 49 c1 ec 03 <43> 80 3c 2c 00 74 08 4c 89 f7 e8 ce 1e d7 fc 4d 8b 3e 4d 85 ff 74
+RSP: 0018:ffffc900035f79e0 EFLAGS: 00010206
+RAX: ffffffff854c8f03 RBX: 0000000000000000 RCX: ffff88807dd3dac0
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000003f
+RBP: ffffc900035f7a90 R08: ffffffff8fc3c7cf R09: 1ffffffff1f878f9
+R10: dffffc0000000000 R11: fffffbfff1f878fa R12: 00000000000000b2
+R13: dffffc0000000000 R14: 0000000000000590 R15: ffffffff9a034a30
+FS:  000055557fa10500(0000) GS:ffff8881259f1000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557fa10808 CR3: 000000007ba62000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	e8 f2 1f d7 fc       	call   0xfcd71ff7
+   5:	49 c7 07 00 00 00 00 	movq   $0x0,(%r15)
+   c:	eb 0e                	jmp    0x1c
+   e:	e8 14 1d 73 fc       	call   0xfc731d27
+  13:	eb 05                	jmp    0x1a
+  15:	e8 0d 1d 73 fc       	call   0xfc731d27
+  1a:	31 db                	xor    %ebx,%ebx
+  1c:	4c 8d b3 90 05 00 00 	lea    0x590(%rbx),%r14
+  23:	4d 89 f4             	mov    %r14,%r12
+  26:	49 c1 ec 03          	shr    $0x3,%r12
+* 2a:	43 80 3c 2c 00       	cmpb   $0x0,(%r12,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 f7             	mov    %r14,%rdi
+  34:	e8 ce 1e d7 fc       	call   0xfcd71f07
+  39:	4d 8b 3e             	mov    (%r14),%r15
+  3c:	4d 85 ff             	test   %r15,%r15
+  3f:	74                   	.byte 0x74
 
 
 ---
