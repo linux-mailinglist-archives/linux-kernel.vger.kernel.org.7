@@ -1,133 +1,218 @@
-Return-Path: <linux-kernel+bounces-806861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D7CB49CCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:22:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F70FB49CCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04021B26B12
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1CF47AB15F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0D32EB86A;
-	Mon,  8 Sep 2025 22:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12C2E92B0;
+	Mon,  8 Sep 2025 22:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2BsrGp3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KY+mx7RW"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7AD17E0;
-	Mon,  8 Sep 2025 22:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3382D9EFE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757370168; cv=none; b=J0ngJFCQYEihyrGPF43fH1TOB/kHKyCPwMdjZ3XZfT2YO3kzzCWQ1bRAtK3hpQ54p6wWgz1qVcBH3yQ5ovFCTL+++/Q7aVS8+ob348l7ZrZqK0ZbDB/F47gGAkFk7fJJfeOuArzU8UPGcImX74Mm2grAppZj5ACAeZd7pVbo0gM=
+	t=1757370202; cv=none; b=VwOQ1aN+lR8KDugN/BZ2h1+E5yC+KPOSqhSZDU0M/XJLwGkiB5dovwHFeQYyT+eiMwGz8eJ18BOKHapTuOHYLdxQ4Lr3YcK3Rf/EYQHtaohLjDlW2n3+SYgQcKF5SRvF3YkUpq3lPaTZ7aUvozg4HcROyXysLnSqubDSNTddLTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757370168; c=relaxed/simple;
-	bh=8cXwfOI9HP/FP1SpHc23/1LxWXO1om2wkblB5QFskag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nM7sYQxUscQeDtFJTuaV4QWqKAXNQYFQda5jWenk0Le5wKVXnNisbbHmuCxGfAXbsWoP8h/q3E4EyZmvuQEwR/SZHS/yH7CVrSWMiTQks7R0fA9XI6ScDqfLpUsv3Lzq8Fl/qcrAULEolrk8kKk+zn/FCS3CjHq2g67lQKRbaqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2BsrGp3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB8B4C4CEF1;
-	Mon,  8 Sep 2025 22:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757370168;
-	bh=8cXwfOI9HP/FP1SpHc23/1LxWXO1om2wkblB5QFskag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R2BsrGp3+jnEyIhsekQIbzBbDnaVfc4R4dvpIQNDENfwb+sk8t8boiajtDihgeeVD
-	 ZSuM5QLF+SUrtOtVc9U/Ktm5vBD+b4bEjx2V8ZnrKpKjCh2QMadCOYzVGGxgwW86Ul
-	 I1bJTENjOii9cyuzUzyM9CNkCOyf7gdjG2DlOYtdoHdESLUDfSF8dYnMQFw+Aqv0ko
-	 RGsIbBebuy1A8MTwov32N0zgLn1z58PWdz3DGt9Yl1g7e2gfyK9IOpHIOfKrOOHRMT
-	 hcpZIFtefPLkE4pQDTRw/VEoJhvPy7dfPl6/KpRFhRzdoaVIH3smhdVZqb90fLRMP8
-	 72Vw5rrTxdO5Q==
-Date: Mon, 8 Sep 2025 17:22:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Aleksandrs Vinarskis <alex@vinarskis.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: leds: commonize leds property
-Message-ID: <20250908222247.GA1943768-robh@kernel.org>
-References: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
- <20250908-leds-v3-2-5944dc400668@vinarskis.com>
- <0e030e7d-0a1a-4a00-ba18-ed26107d07fa@oss.qualcomm.com>
- <046b289d-b6a5-45f9-88b1-090e2ab7c95d@kernel.org>
- <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
+	s=arc-20240116; t=1757370202; c=relaxed/simple;
+	bh=ER47jYWIu/IrmL5sqEJFqeAQDaxCd19hP4zVhfcO7r0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=G2po0ltwIx0TBBw95cV06TULRq4GkXS7esloUWuJy6Y2kaVxgOvWwiSwzUjJbLwFT5DlgFfrerouH2SOf3POaanx2LN/uTTSOr/npNRiY7+sAIaGUhqd2nchHL6uCrAsxUem7PpHtwVisdejMRVGz5MaJeFGUS5UnTPyvBCKvzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KY+mx7RW; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d5fb5e34cso53172097b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757370200; x=1757975000; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7abeCEsm9hQSHKcfKnUycTIfAV4deoEGxrAOakrims=;
+        b=KY+mx7RW65oBGLlwDlcFSJHM9O8q3F47iWvgZyW8Q3H8+mwmZ1tEVg9/t7EH+PGLAj
+         UpzvBc4rQnuG8dZWi8C2eFqOxY+EgwtBcGkKgvZMLCi98Rt/adMKG7i9RN/avQ0KHdT5
+         Ve61y0lv1ka56BVDoXz1a/bOqZbocTz+2fsEuy65t5A3JfVZofo48SATOiUjCZRA8PEM
+         fG0uJP3QGJzkzNExV4Vs5Q3c1jR1VuHLEICARSEQuHgI8GaciperUmc9Z4ht7V3DnMZO
+         5RbIXbhJQVMn2bCNFzX53GHC2Z9W1Q8QiGN2Q70w5dwMQnC/UTFih+Ga0upjBXo/gmCg
+         Axqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757370200; x=1757975000;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7abeCEsm9hQSHKcfKnUycTIfAV4deoEGxrAOakrims=;
+        b=d9twGPGAKf5PUj6/9EYgadZmTUHXPvab9fVUESpOKWgz8Vz9pukGaHlsjoWpj51ri/
+         RwEegRK2e6qCI5Nd92v49pY4Ip9CUajtbS987shH8ZUvkxNx4PxHV2x15lLyv1bB70tp
+         v1hevhfRbjf60nsMO9hWmJYCnJLTmjzVEtOUWMynflYiaYeEQMPTjQb2alO4owUnoxcz
+         cf1kx9PukctUz4J1nux+TsMvHDHLhbv+1fZYlAezPpEO23qykE8WCIxkyTj4CWGR37+b
+         K38nlrgLvZvC9iKnimpPCCS1wjqMA/t8I7Bi7dZBUodSmd96jC7a4tj5JPSvoT0PMFEU
+         4ONA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJAK8+byMvIPlfdqzHrHS4JfTY/fUc+3Y6s2DOMRacIXnjPJ++3ThvF5vOVEklHGlrE7MY8R14HHspPWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1cWKBEGaydEur5LJsPjw4veg7aNe5aPMGcaPR9c9CyELOGSj/
+	g+/2zZVpqli80igD2LpXnQBxYtUJ6qh896s2/sj8992RYLhmDISytDLd4vXM+BCyPg==
+X-Gm-Gg: ASbGncupUDSRF3aBhFAM6u8CeMm6+b/WWskiLz8z8bp77BqnSlOyATqCCc/bb6dJnIS
+	q7QW3kCL0gzgHCMi4ju6t+othxwRYzc5NqLubD2kmCl7Ba1S9nlXi/Y6+JCJcJaO221bPwK10eV
+	euAT7PyLoJJIQtkmzfNBqipCbexgJT9A2lySvLy657/bIRRKi4/4xCbZD3L1e+O2GJ22YO4RAct
+	3yIzEibzAfzRHuEu7WCEeI4K3Ossn40bYSuiStBQZSIJSghQMHj030RgSAx17xgVamqlozjSsYm
+	6iUZsyfXDJhb9XGfYLl9j1ZWe+i8CjGefs2G9vcXKfDsMAJm1FDul3zuiqXo0CgfpINR22RgI3B
+	1mn1R+viKeeXGuPgqXp+wx0MwInqYuUWaIyyL1pA8W0zm39cTI2utsLE5YuG2Axa3tQ4qZvNQVu
+	uKhU3fVjYpB+eAEsqyRQ==
+X-Google-Smtp-Source: AGHT+IGaXcFHRTY5jFLccQQrjPx7QNGVNECmiV5ybnGf1NXLoPyxyEw6ZGSR0hlBxX5NCPzGYoRJWA==
+X-Received: by 2002:a05:690c:c8e:b0:71b:f0ae:1d6d with SMTP id 00721157ae682-7280a4487a6mr78339217b3.18.1757370199485;
+        Mon, 08 Sep 2025 15:23:19 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-724c8ba45b2sm36567057b3.53.2025.09.08.15.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 15:23:18 -0700 (PDT)
+Date: Mon, 8 Sep 2025 15:23:15 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Axel Rasmussen <axelrasmussen@google.com>, Chris Li <chrisl@kernel.org>, 
+    Christoph Hellwig <hch@infradead.org>, 
+    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, Johannes Weiner <hannes@cmpxchg.org>, 
+    John Hubbard <jhubbard@nvidia.com>, Keir Fraser <keirf@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Shivank Garg <shivankg@amd.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Wei Xu <weixugc@google.com>, 
+    Will Deacon <will@kernel.org>, yangge <yangge1116@126.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Yu Zhao <yuzhao@google.com>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 5/6] mm: folio_may_be_lru_cached() unless
+ folio_test_large()
+In-Reply-To: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
+Message-ID: <57d2eaf8-3607-f318-e0c5-be02dce61ad0@google.com>
+References: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Sep 08, 2025 at 09:36:39AM +0200, Konrad Dybcio wrote:
-> On 9/8/25 9:33 AM, Hans de Goede wrote:
-> > Hi,
-> > 
-> > On 8-Sep-25 09:20, Konrad Dybcio wrote:
-> >> On 9/8/25 1:18 AM, Aleksandrs Vinarskis wrote:
-> >>> A number of existing schemas use 'leds' property to provide
-> >>> phandle-array of LED(s) to the consumer. Additionally, with the
-> >>> upcoming privacy-led support in device-tree, v4l2 subnode could be a
-> >>> LED consumer, meaning that all camera sensors should support 'leds'
-> >>> and 'led-names' property via common 'video-interface-devices.yaml'.
-> >>>
-> >>> To avoid dublication, commonize 'leds' property from existing schemas
-> >>> to newly introduced 'led-consumer.yaml'.
-> >>>
-> >>> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>>  
-> >>> +  leds:
-> >>> +    minItems: 1
-> >>> +    maxItems: 1
-> >>
-> >> My brain compiler suggests this will throw a warning (minItems should
-> >> be redundant in this case)
-> >>> +
-> >>> +  led-names:
-> >>> +    enum:
-> >>> +      - privacy-led
-> >>
-> >> Nit: "privacy" makes more sense without the suffix, as we inherently
-> >> know this is supposed to be an LED
-> > 
-> > Note "privacy-led" as name is already used on the x86/ACPI side and
-> > the code consuming this will be shared.
-> > 
-> > With that said if there is a strong preference for going with just
-> > "privacy" the x86 side can be adjusted since the provider-info is
-> > generated through a LED lookup table on the x86/ACPI side. So we can
-> > just modify both the lookup table generation as well as the already
-> > existing led_get(dev, "privacy-led") call to use just "privacy"
-> > without problems.
-> 
-> In that case, it may be cleaner to just go with what we have today
-> (unless the dt maintainers have stronger opinions)
+mm/swap.c and mm/mlock.c agree to drain any per-CPU batch as soon as
+a large folio is added: so collect_longterm_unpinnable_folios() just
+wastes effort when calling lru_add_drain[_all]() on a large folio.
 
-Well, I do, but I guess it's fine. Please don't add the suffix on the 
-rest and add a comment for why it's there.
+But although there is good reason not to batch up PMD-sized folios,
+we might well benefit from batching a small number of low-order mTHPs
+(though unclear how that "small number" limitation will be implemented).
 
-Rob
+So ask if folio_may_be_lru_cached() rather than !folio_test_large(), to
+insulate those particular checks from future change.  Name preferred
+to "folio_is_batchable" because large folios can well be put on a batch:
+it's just the per-CPU LRU caches, drained much later, which need care.
+
+Marked for stable, to counter the increase in lru_add_drain_all()s
+from "mm/gup: check ref_count instead of lru before migration".
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+---
+ include/linux/swap.h | 10 ++++++++++
+ mm/gup.c             |  4 ++--
+ mm/mlock.c           |  6 +++---
+ mm/swap.c            |  2 +-
+ 4 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 2fe6ed2cc3fd..7012a0f758d8 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -385,6 +385,16 @@ void folio_add_lru_vma(struct folio *, struct vm_area_struct *);
+ void mark_page_accessed(struct page *);
+ void folio_mark_accessed(struct folio *);
+ 
++static inline bool folio_may_be_lru_cached(struct folio *folio)
++{
++	/*
++	 * Holding PMD-sized folios in per-CPU LRU cache unbalances accounting.
++	 * Holding small numbers of low-order mTHP folios in per-CPU LRU cache
++	 * will be sensible, but nobody has implemented and tested that yet.
++	 */
++	return !folio_test_large(folio);
++}
++
+ extern atomic_t lru_disable_count;
+ 
+ static inline bool lru_cache_disabled(void)
+diff --git a/mm/gup.c b/mm/gup.c
+index b47066a54f52..0bc4d140fc07 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2307,13 +2307,13 @@ static unsigned long collect_longterm_unpinnable_folios(
+ 			continue;
+ 		}
+ 
+-		if (drained == 0 &&
++		if (drained == 0 && folio_may_be_lru_cached(folio) &&
+ 				folio_ref_count(folio) !=
+ 				folio_expected_ref_count(folio) + 1) {
+ 			lru_add_drain();
+ 			drained = 1;
+ 		}
+-		if (drained == 1 &&
++		if (drained == 1 && folio_may_be_lru_cached(folio) &&
+ 				folio_ref_count(folio) !=
+ 				folio_expected_ref_count(folio) + 1) {
+ 			lru_add_drain_all();
+diff --git a/mm/mlock.c b/mm/mlock.c
+index a1d93ad33c6d..bb0776f5ef7c 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -255,7 +255,7 @@ void mlock_folio(struct folio *folio)
+ 
+ 	folio_get(folio);
+ 	if (!folio_batch_add(fbatch, mlock_lru(folio)) ||
+-	    folio_test_large(folio) || lru_cache_disabled())
++	    !folio_may_be_lru_cached(folio) || lru_cache_disabled())
+ 		mlock_folio_batch(fbatch);
+ 	local_unlock(&mlock_fbatch.lock);
+ }
+@@ -278,7 +278,7 @@ void mlock_new_folio(struct folio *folio)
+ 
+ 	folio_get(folio);
+ 	if (!folio_batch_add(fbatch, mlock_new(folio)) ||
+-	    folio_test_large(folio) || lru_cache_disabled())
++	    !folio_may_be_lru_cached(folio) || lru_cache_disabled())
+ 		mlock_folio_batch(fbatch);
+ 	local_unlock(&mlock_fbatch.lock);
+ }
+@@ -299,7 +299,7 @@ void munlock_folio(struct folio *folio)
+ 	 */
+ 	folio_get(folio);
+ 	if (!folio_batch_add(fbatch, folio) ||
+-	    folio_test_large(folio) || lru_cache_disabled())
++	    !folio_may_be_lru_cached(folio) || lru_cache_disabled())
+ 		mlock_folio_batch(fbatch);
+ 	local_unlock(&mlock_fbatch.lock);
+ }
+diff --git a/mm/swap.c b/mm/swap.c
+index 6ae2d5680574..b74ebe865dd9 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -192,7 +192,7 @@ static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
+ 		local_lock(&cpu_fbatches.lock);
+ 
+ 	if (!folio_batch_add(this_cpu_ptr(fbatch), folio) ||
+-			folio_test_large(folio) || lru_cache_disabled())
++			!folio_may_be_lru_cached(folio) || lru_cache_disabled())
+ 		folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
+ 
+ 	if (disable_irq)
+-- 
+2.51.0
+
 
