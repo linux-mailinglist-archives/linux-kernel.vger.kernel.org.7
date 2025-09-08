@@ -1,242 +1,268 @@
-Return-Path: <linux-kernel+bounces-805144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99374B4847F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F353BB48483
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D837A6DAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1281174F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CA710957;
-	Mon,  8 Sep 2025 06:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9692E22BF;
+	Mon,  8 Sep 2025 06:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="YhQ6rGec"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b="Uy6+zZe5"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021107.outbound.protection.outlook.com [52.101.65.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378AF2E229C;
-	Mon,  8 Sep 2025 06:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314401; cv=none; b=HtJlMpbeAbGVORg1s8HjkrVfTAdu2tqe4WEynjLi2KFQNFjidC/GV7kX+SgBdfTuQjoJi8gVwHDwD3rhX4OhxzI0KNp9ISVrMqj27WYg0bWlUvtZUaV3mtS7jkA+fdpMMhJGyQ7Kz7KDeLH2SBrij9ZoFTa/9PGNBnI3aHLi62o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314401; c=relaxed/simple;
-	bh=P4zxBnESGGZYzd4vT1edfckmSc7snYnot9EWu+3dxZw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gFeNYShBDfXFsa4FLmCh8KHa83m2BtxbZDX/f9WqeVvMnjsm9Cwa1VYJ+0DjN1nlnJ3THctn9t+qiSE8VNCvupXoXcC920mpwdNdywBB2h/NafpsU8MQ/KwVs7P6N0itCeDjOSd5RrG/AQNLhCvzt5WkUn/cl6TSpheNOw6u6go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=YhQ6rGec; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=vYsBnwgBDKLAbhmWEychLP56D9F6EzWftM/Wu56nqUc=; t=1757314399;
-	x=1757919199; b=YhQ6rGecQrasMXGXA5pWtZBu7O9ImvMHw8EFwvYahDxtDfgJeXbFKY3vGtQHx
-	wZ+Ls6Gpbu4jsfMaHFkrBnL2+8oy3pEV/jmUqhW3oFcGFJujD87sIrBdHUMP9MStqQw822PTucYKo
-	NUKmqvAqFQ2GsiqyztrBQkXG2g5toBC6vKv76AuSm2yEhqPop+dQxQFyrXArdmAU82b2mKMcxFxEh
-	YFuATohlgjyzw7Xsy7QJPZqcnz/NRD5R0lGPCmhH1tBJZPSDXvYr+ODpe6OVaD39jZ8MQnuIQqCZO
-	o/tdJgEJFWKq/lX7DPP+QcRmcJ54e0aejBJg8tqYE1IyAX65iw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uvVka-00000000BsW-33H6; Mon, 08 Sep 2025 08:53:16 +0200
-Received: from dynamic-077-183-099-053.77.183.pool.telefonica.de ([77.183.99.53] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uvVka-00000000P9A-28ro; Mon, 08 Sep 2025 08:53:16 +0200
-Message-ID: <a9eec6f5a51c82cd2a20a96d614cfd3095ddce88.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC III
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson
-	 <andreas@gaisler.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Yznaga
-	 <anthony.yznaga@oracle.com>, =?ISO-8859-1?Q?Ren=E9?= Rebe
- <rene@exactcode.com>
-Date: Mon, 08 Sep 2025 08:53:14 +0200
-In-Reply-To: <603f6661d99fc6c936f5a75e29f30d50650b9da8.camel@physik.fu-berlin.de>
-References: 
-	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-							 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-						 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
-					 <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
-				 <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
-			 <c3e1173f99e6222ab09093e1a197d6366bcf2b95.camel@physik.fu-berlin.de>
-		 <03957ee5ee562b70f7e3278d0ce95b2f52cbc721.camel@physik.fu-berlin.de>
-	 <603f6661d99fc6c936f5a75e29f30d50650b9da8.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F32214A64;
+	Mon,  8 Sep 2025 06:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757314451; cv=fail; b=bGBQyUo6Nt6zY4qF/5hd4KnTNKW4bTVUZghU2MJtniuglh2BEiY74lKuwKThT3g8Y1o1OAlZdn3vsfL1/Ne5K38Z4oQJMASPD2rhCF/GvQCQKoQfOzTE4J6n3t8mID+1LxeS29lKGSVBw35TkVFnxi6bG6ZGXU9etQdSPzD+p8w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757314451; c=relaxed/simple;
+	bh=oYPT4rdaNGfZ0NrSj7UhxR52dnrFM0vPQOAsuKsBySA=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=fVzv4L2/qAjzj2m34sIdPYCiWGfPP6cJTz2q8l+ygWE60yg8V+qXklIX2j9cSw/F2cjf2bHhhKBvW8seGTZqCrhJhD/pyUycUFk02ZiUBFhr7q//Azl/zfIq0F+2mVf2rQnA7rs2ZoH+1YH9PZKVrWs/qa91ML8Yt7eriQo9QDk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com; spf=pass smtp.mailfrom=vaisala.com; dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b=Uy6+zZe5; arc=fail smtp.client-ip=52.101.65.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaisala.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vZmY2eP55G9qVeBhhlelAfBHNCIZShYvb5d6DId/wM6+NO6EE6kxmEJltjRn3+2i3AQy9U/baS4o2E3NgGx4Ht6pQE8x1ufVjMZY0DF7jZ1i4iNQdKJ3pqcHTQFvKToq78hldzysWRsNs8KMfW2bFopflaBO1h+eYfWWzehxT/DvGKehso/YUBj8j8Oakn+9YK4XtrSEBVu7HEOHgkqIuhEtEp+khXLrw6Yq57GvJYYZoLMuqebGYgi9I6KPjy5UKN5SCZYNewAq9qZLb2XQxvOewsivSgY+23uskx+6Y6OWpUsbAacOpRPavkr8UcFgzhnB7CsLO6bsJ4xyrjHBjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iDLKKTthHPpddQZEJtuh+6M+jJ5qqafRYOJ6E0UnVPk=;
+ b=J5ad5rKBSg7X5Le4vXdW6009mlsox4N02LtEn+PaDNqQYW0CrX1f9e2qiQdBj0ZdJNqr3D8O8z+R2RTKCwO4E5SAAXeVWiQGsNa4wgAFzR4c+S/xBZ7GGXPAXRzRT0+2nT2tZHxqWdxmyKqqbRmePi9LC7zvnzh09AyI3UGNA/PjkX4xN/aIYL35VBBqgY8tnNkiaDQURxi9ZGn1OdYsj3E9c1NpfcrFMyCp8YWnyJmv5m/hkRNggfWNJ+lcF+K+DWwX8es1eBAG+d9o6d6JpotT56T84ReQ7BLk38GmBBRanYyUj0uZBlFqbVje21WcfKwtypP8IrqePCEHcDvuZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vaisala.com; dmarc=pass action=none header.from=vaisala.com;
+ dkim=pass header.d=vaisala.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vaisala.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iDLKKTthHPpddQZEJtuh+6M+jJ5qqafRYOJ6E0UnVPk=;
+ b=Uy6+zZe5keOawPzkNaoil7iY6/fT6RseHp8NQcy5BwXb0OWdDvveXwEhv+ERj1C4k/QCT8efu+YOBOmuRvoCScKkyZnCTsQ0HOC7R/B5D4gfyinob/Tbn6Jt7m40trWTNAiX805NQa9ToczZioajSBwFs45aJJpNtjddC5axgBOkGRm6uj5IdgQLQv7K9JjnuEADaV7hu7x/dK7J3YT8hCO9EXppn9qqxNurYdfnI+Cq54L27hUYtZKp/LNuO+9Y6UFIEOtUF36/ON/S4u96mlYcUfC8ZGVkrP65isKniswUMIAsXuRmltxI77VzimVZARf2n9SrsEmfucLTA38i0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vaisala.com;
+Received: from AS5PR06MB9040.eurprd06.prod.outlook.com (2603:10a6:20b:676::22)
+ by DUZPR06MB8611.eurprd06.prod.outlook.com (2603:10a6:10:4b0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Mon, 8 Sep
+ 2025 06:54:03 +0000
+Received: from AS5PR06MB9040.eurprd06.prod.outlook.com
+ ([fe80::f8cf:8122:6cad:4cf7]) by AS5PR06MB9040.eurprd06.prod.outlook.com
+ ([fe80::f8cf:8122:6cad:4cf7%5]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 06:54:03 +0000
+From: Tapio Reijonen <tapio.reijonen@vaisala.com>
+Date: Mon, 08 Sep 2025 06:53:43 +0000
+Subject: [PATCH v3] serial: max310x: improve interrupt handling
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250908-master-max310x-improve-interrupt-handling-v3-1-91985e82ba39@vaisala.com>
+X-B4-Tracking: v=1; b=H4sIAHZ9vmgC/52Nyw6CMBBFf4V0bU1bnrryP4yLKS0wCVDSYoMh/
+ LsDK13qanJv7pyzsmA92sCuycq8jRjQjRTSU8LqDsbWcjSUmRIqFxeR8gHCbD2dJZVi4ThM3kV
+ ajdT65zRz+jI9ji0HUEqXGmQtDSPe5G2Dy+G6Pyh3GGbnX4c6yr39xxIll1w3OssqdbFlIW4RM
+ EAP59oNbPdE9cnOf2ErYpdpVRa5hNwa9c3etu0Nviz970ABAAA=
+X-Change-ID: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ Tapio Reijonen <tapio.reijonen@vaisala.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757314442; l=2669;
+ i=tapio.reijonen@vaisala.com; s=20250903; h=from:subject:message-id;
+ bh=oYPT4rdaNGfZ0NrSj7UhxR52dnrFM0vPQOAsuKsBySA=;
+ b=9Ub6BvGuJnCxWau5ujpZzIto2WybJEjlOWx8sRVEVu3Qus2hsPZiBazgczag7JyIK0AZR0sJm
+ jDpYBLxiTDNBfWE9h9IRKyO6XwNH3jQc6ricUmG0EDEXUkN8dgCTeBM
+X-Developer-Key: i=tapio.reijonen@vaisala.com; a=ed25519;
+ pk=jWBz3VD84WbWgfEgIqB5iFFiyVIHZr52zVBPOm7qiGo=
+X-ClientProxiedBy: GVYP280CA0026.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:150:f9::29) To AS5PR06MB9040.eurprd06.prod.outlook.com
+ (2603:10a6:20b:676::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS5PR06MB9040:EE_|DUZPR06MB8611:EE_
+X-MS-Office365-Filtering-Correlation-Id: eba80c65-3040-4624-3cd9-08ddeea47ef4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y0xBdXF2M0hkb2tEY3JqYlF6WlM1Ukl4WTEvNDAydFJlYWQ0SGxhNDVISy8v?=
+ =?utf-8?B?ZFpqUUdpelhFMjEzN2Y5SEczNlZpRERqRytaL0hHeDJxL3pzQTFpL3JLSUhY?=
+ =?utf-8?B?R3RaM2srVllKem1DWlFYYytyNitFMDJjZk1MVjZsL1o2Tll6Y2RvV0UrRTNO?=
+ =?utf-8?B?WVlUQm1vamRjd2pKYWJtODg5OC9kK25SRnNiTzZhU0xRTFV0WGhXdDcrdm5W?=
+ =?utf-8?B?d2RRT2l3elFVbDdxUkdXV2Z0RWxBNDQ1bkREZDNpb1lReEFCcndlc1BNUnJi?=
+ =?utf-8?B?UVZFQThZRGZycWMxNVRyVGhyWjVjQzlPbkoyUVZuejhJbDJXSkFOa3pMYW9m?=
+ =?utf-8?B?dm12L21kRDNrNHgxN3NZQ3VsUzRtR3cvaFdPdWVoMVhYV1pYd0d3c205WmtG?=
+ =?utf-8?B?OEVDeEVKMkl0Z3RrcXRRLzdTOU02bi9ZenptM25hRkVKbVJSZHhJSDNyVEJZ?=
+ =?utf-8?B?QzJlZjRJNlRNWGJTSW1MVnRDUm1EN2dlNzRhTmhUU09kbHZadlVZT1ZPQ2xK?=
+ =?utf-8?B?WUhBN1ZzbDNNTnoybkl2cm9hZzZYQTJra3VIcDRXVW8zYmVQTTd6TkpRdFlw?=
+ =?utf-8?B?aGdLaWZXRlk2UVEvYXRMd1A3c1NyTTNwTjdHQU9tNm91dXlCV1RWeTlsUGtR?=
+ =?utf-8?B?TVJvdnExaGMwNWpadjlXdkdoZlNSQ1lRWnF6MFVFalVLazRqTUI3eFA3V3cw?=
+ =?utf-8?B?elA1Slo0Y2kxNkpXOGh4SStVU0RoSFREbXRLcUJjYW5vVFozNm5qeEZuMEZx?=
+ =?utf-8?B?Qmx1VHRMTCtnL3hwN21zblhYNTFVWXljenUyRHR0ZzU0TXJDZ2tycGlHMmZ1?=
+ =?utf-8?B?THdXV0lGQ0JZYTgvaFN6ZGI5WnR1aTZwbHRMYmErOXJadUU3SU4rd0Rra2Jw?=
+ =?utf-8?B?Kys4V3QrZ0Y5bkl0TVFINFo3cU1GZ2hnazJHbzNNdFhTUXhvbEVqUjR4dTdH?=
+ =?utf-8?B?U1IzRGRyK0NrWEhNeGtXemgxU1RrcTJiRXc5cGM1d085aDJyNW9pdjlsT3p3?=
+ =?utf-8?B?akxUNFkyWmRtZW9sUTBqK3ZBTFJUajVYbEtzS3FQTjhRK0R6bk4rbDcxTjVT?=
+ =?utf-8?B?MFJuQmFDREVrRlptR3hCMHp2MDYzN1p0blk0eE5adFU4Z0J5NG9CN1N5dm9E?=
+ =?utf-8?B?Y1d5YjBiaXkzWmwvN2N4eXZrN3F0MEhjSGV0dWdLYXRXc0hreUQ0Q0k3VWJv?=
+ =?utf-8?B?OTRjeXRKQnY5d3RQMk1ZaUVsMFk2UlI3TDhMeDdjb015bDdPZy9QRWltVUdM?=
+ =?utf-8?B?Y2V4QUNwYmFjck9BRTMvVzJLNUNIN1pSSGlYZnkyYlRKTEJMSHcvdEY3blhF?=
+ =?utf-8?B?TWJJQkNxQVZWK2U5UUxVd01nUWZrTytMNmVydEcwejZsaFBCY05WVmlKVjgr?=
+ =?utf-8?B?Yjg3V1l4RkxxTStmSTRoRG1qUXgvRGZsc0ZEdlhpNk9WSkVEcFl1aVlxa1NT?=
+ =?utf-8?B?MmpHY1NEM1VKL1lydytxVnVhRXd1RFh0LzJjT090MXpDSm12Z0Q1UGd4U3k2?=
+ =?utf-8?B?UmZoNVFWYituN1RHaHpDajcycVhud0M0QUNKRUJIazFwY2wzSFB5RUwzdmU3?=
+ =?utf-8?B?SmtDTnpKWFhxTVZIVDNHUnh3dXhRc1lWOUgwS2pCdkw1NTA2WnU0MWgzYUxm?=
+ =?utf-8?B?VE0rVHJpVTNaSWEyZnJGMUlwNmxqUTRTQSszZjF5OHJGMm9SaXE0eTZZaUZQ?=
+ =?utf-8?B?TUhRVXhVemlVVTVOL3Nod0NqbHhWZlBYU2JSTEJxZ0tORGxBWDJQYjhFUWpE?=
+ =?utf-8?B?TkdxZ2IvMmpVK1QzbUp1Z0ZhRkFuOWY4YW03L0ZZSUtyelZ0K00yV3c4UUd4?=
+ =?utf-8?B?T1B4NnpFWVVrUnBZVlpEQkl3SmVIdUxmbWVSWDhpRmVnM1VDY3ZCRG5pbEF5?=
+ =?utf-8?B?dURCZ2kxZ2JaekNCYlNKV3lwVXBqZkNzOG9HZEp4OUZpU0phUjExWFBTLzIz?=
+ =?utf-8?B?NGVSeWowVUk4YWdadVFEZjByZlhnbGVZVzV3amMxQzBZd3hIcGZNVEg4QXVI?=
+ =?utf-8?Q?TNMby0p4hakd0HOejAbF0nt+/dp4Qo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR06MB9040.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QmlIMjVhVEhocWFXQlNOK3BaeEI5alk4bHQ0bzRUdHFKelZjSUZFUnlOMEdD?=
+ =?utf-8?B?djRsZkdQakl6MXVQSy9FRklhSVNoQmg4T2RsMWg1SmZFUUxYSFBac1cxR2dX?=
+ =?utf-8?B?aTAxQlRXMWF3VVREc2JTSG1YdUxVVG9HZFlLRjdHK014d0lQVG5HTCtlQkFv?=
+ =?utf-8?B?NnVOaVdkL3BOR2FacFVoZ0h1dXRVeCtWY2FiV1czMXNMK3UrdjZVOGs4WWhV?=
+ =?utf-8?B?dXFmbmJzS2xhSVhockc5Z3RQYkF4YTJYcnNEWDNZODltZ2NreUxrbDhJQm12?=
+ =?utf-8?B?V05pT2NXT1E3UDd6aDQ1S1lhMkw4a1NDK0JQVDcrZ3JYWUdCWmUzTWVsZWdP?=
+ =?utf-8?B?b25xUzRjTE14dzA4RWY4YkkvbExOaXhIMTB2bTRsZWhyeEthOUlHRTVDMjkz?=
+ =?utf-8?B?M3QzTk1wTVFDU0FvYmRONTJaTkJUTmJUVlRIL2VFYTArQ0V5YUhjNjhobm1a?=
+ =?utf-8?B?YzladG5ac1l1U090SEZGZXY5Uks5YzNLN1IxUXJid011UmUxQWNKSFNESUtF?=
+ =?utf-8?B?V0puK1VoYlh0d1hyN2JSWmVsSHlzMitRcmg4T1QvSEtiNENqeFgxSnl3QytE?=
+ =?utf-8?B?Sy9LL0R3WHMraHRxVXB1dld5UDNZcmhiTExLUVVVMm1ia1FVSGNxTjBaVkVX?=
+ =?utf-8?B?amRGRjVxWXZoOGs3aHFwY1JDeGtSOXJFaDNndDd6Z000OVNpK2RZSS84NWhn?=
+ =?utf-8?B?V2VPQVlqbnpUNHFUMUVRZTVvYUo2UEtrWHgvTzJzbCtSVW15b2pNVUpqMnRq?=
+ =?utf-8?B?YldqcENNODI3cC9zMWdtYUpBMnBOUWJNcXcxK1ZYbCt3REs2ZlV4SkY0T0hu?=
+ =?utf-8?B?QVNFbXpUWmlrbnlKbEx3TCtjYXhKRFNBSEtJY0c5UW0zbFVlMDdQVSs0MW9N?=
+ =?utf-8?B?Y1k1UzhLeDJpdW0wN3dmN1VacmhDUHlwN0c3dlB4UXkzdWc0WXdPYnNvTXU0?=
+ =?utf-8?B?dXNuZ3dnVFBXbmV4Q1RHU2lmQVB0YS9pVzZHZnQxcWVCWW1nRm5pVGducXFV?=
+ =?utf-8?B?TGRKQkt2WVFaT3c4dGg5N1p3ZldJTGRIbnFxUm9iTG9HekhYQ1pJRDY5RXpJ?=
+ =?utf-8?B?MzhuRGE4ZHViRmEwejRLUXkvb3BPWkhiQ05jU2pXWEJUQmx2RW5TM0tUWTZV?=
+ =?utf-8?B?NGdmRDFGL3doMFlvYnZIVHM5RjMwQlhZU0dEWmROdlNHdWw1S3ljS3ZvN2do?=
+ =?utf-8?B?YzV4V0NtRGszaERFTDNUZktzSTdMb0tWVkYrOXRwNFFVTFBiNElLVWlqNUhq?=
+ =?utf-8?B?Nndla1lVMWxBYVdVM05BQzA5UHFJMWMrbmV6b1IwR0JKalVmdS90bCttSzJU?=
+ =?utf-8?B?NW93NEVDRzc4SVVwNDBkSVFaV2hvNlNWZzZzQXFNQjBqaGJ0R1pWWXMrM0dY?=
+ =?utf-8?B?NVQ2V0ZpQ1oyMlNiTTQrU0RWMXNTNTZ3SXBrNGJyU0Z1bko4d2xzak5ieGNm?=
+ =?utf-8?B?RS80RVVZZ1lVQTFwY093dkdXWm9QbkNFZVlneFl0RDVUaEhvbUp2SHBlUFZW?=
+ =?utf-8?B?ZmRpMzNwZmh5dUM3Sm5hNFZ0QW9RZExsSlpURWtaOFlGTGNYV25iK2xhQXZs?=
+ =?utf-8?B?VU9TUitYak4ybUt6cDdSRW1vaFh1bmxRS2dRYWkzSzRXdnpURTNUQ1pReE5W?=
+ =?utf-8?B?ajI5ZitPdm1LelEvN1BQd3J5dGdpNjRLK2dMM1JPK0RkVHE1S3N3RmRlU0Qv?=
+ =?utf-8?B?ZWFndjRPa0FCalZZd2E4dlhOM1FFYTZ0cFQwS0t6WGVydHJxeTRRelJnWEhq?=
+ =?utf-8?B?dG0wb0twZXN4WUhaKzdJRkF1ZlhMbk5SM0gwSWVqR1VVUktUZU1GL1pmMnY5?=
+ =?utf-8?B?Zkg2cmd3MjdYQjB2QUt5b1ptOENhRHpqT2l0K21NaU1wRkRWdXhocHl5U3FS?=
+ =?utf-8?B?UUhUUmxjSkhXbU5yK1cxOU5oTFV5aWYrbzhFQ0g5NFhPVHp5d2MyUFdCaU1Q?=
+ =?utf-8?B?alQvUm9jOGtycE9TRVNUZmYwRE1veWVCMnpZU05DNk1TbnRiZ1E2WjJpRlkz?=
+ =?utf-8?B?N09mYlJNK25oVm9lUllpQmxsQWY4djNtS0FoODdZRkxLVnF0eUM2UlgxWmpw?=
+ =?utf-8?B?ZDkzb1JrdWlQMmdCSEFnZW9uRTJmNDQvZUs4VmQwQzNiOUNZQnpkSy93OVhF?=
+ =?utf-8?B?UGlhNE8vRnJBWjBkeExhRFQ4Q2Y0c0MyN0tXMDhLRGZhQWV1WlpzdzhOYWVW?=
+ =?utf-8?B?d3c9PQ==?=
+X-OriginatorOrg: vaisala.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eba80c65-3040-4624-3cd9-08ddeea47ef4
+X-MS-Exchange-CrossTenant-AuthSource: AS5PR06MB9040.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 06:54:02.9956
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 6d7393e0-41f5-4c2e-9b12-4c2be5da5c57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oIgZPBgOijZPxIr1Kzp3wVx+dbizKna8H1WN69cpmxIe4ELZ4r4X4FPbJYaLl5N7MIjisS+P+6BmSvwRQUMgY81RH0ApAUDl8YvrnEfgLJM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR06MB8611
 
-On Mon, 2025-09-08 at 08:47 +0200, John Paul Adrian Glaubitz wrote:
-> Hi,
->=20
-> On Mon, 2025-09-08 at 08:30 +0200, John Paul Adrian Glaubitz wrote:
-> > Hi,
-> >=20
-> > On Sun, 2025-09-07 at 23:31 +0200, John Paul Adrian Glaubitz wrote:
-> > > Hi,
-> > >=20
-> > > On Sun, 2025-09-07 at 20:33 +0200, John Paul Adrian Glaubitz wrote:
-> > > > I assume that cheetah_patch_cachetlbops has to be invoked on UltraS=
-PARC III
-> > > > since there is other code depending on it. On the other hand, the T=
-LB code
-> > > > on UltraSPARC III was heavily overhauled in 2016 [1] which was also=
- followed
-> > > > by a bug fix [2].
-> > > >=20
-> > > > Chances are there are still bugs in the code introduced in [1].
-> > > >=20
-> > > > > [1] https://github.com/torvalds/linux/commit/a74ad5e660a9ee1d0716=
-65e7e8ad822784a2dc7f
-> > > > > [2] https://github.com/torvalds/linux/commit/d3c976c14ad8af421134=
-c428b0a89ff8dd3bd8f8
-> > >=20
-> > > I have reverted both commits. The machine boots until it tries to sta=
-rt
-> > > systemd when it locks up. So, I guess if there is a bug in the TLB co=
-de
-> > > it needs to be diagnosed differently.
-> >=20
-> > Another test with a kernel source rebased to 6.17-rc5+, with the follow=
-ing patch applied
-> > by Anthony Yznaga and CONFIG_SMP disabled:
-> >=20
-> > diff --git a/arch/sparc/mm/ultra.S b/arch/sparc/mm/ultra.S
-> > index 70e658d107e0..b323db303de1 100644
-> > --- a/arch/sparc/mm/ultra.S
-> > +++ b/arch/sparc/mm/ultra.S
-> > @@ -347,6 +347,7 @@ __cheetah_flush_tlb_kernel_range:	/* 31 insns */
-> >   	membar		#Sync
-> >   	stxa		%g0, [%o4] ASI_IMMU_DEMAP
-> >   	membar		#Sync
-> > +	flush
-> >   	retl
-> >   	 nop
-> >   	nop
-> > @@ -355,7 +356,6 @@ __cheetah_flush_tlb_kernel_range:	/* 31 insns */
-> >   	nop
-> >   	nop
-> >   	nop
-> > -	nop
-> >=20
-> >   #ifdef DCACHE_ALIASING_POSSIBLE
-> >   __cheetah_flush_dcache_page: /* 11 insns */
-> >=20
-> > Still crashes:
-> >=20
-> > [  139.236744] tsk->{mm,active_mm}->context =3D 00000000000000ab
-> > [  139.310042] tsk->{mm,active_mm}->pgd =3D fff0000007db8000
-> > [  139.378747]               \|/ ____ \|/
-> > [  139.378747]               "@'/ .. \`@"
-> > [  139.378747]               /_| \__/ |_\
-> > [  139.378747]                  \__U_/
-> > [  139.572059] systemd(1): Oops [#1]
-> > [  139.615613] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.17.0-rc=
-5+ #19 NONE=20
-> > [  139.712832] TSTATE: 0000004411001602 TPC: 00000000005e29e4 TNPC: 000=
-00000005e29e8 Y: 00000000    Not tainted
-> > [  139.842076] TPC: <bpf_patch_insn_data+0x204/0x2e0>
-> > [  139.905077] g0: ffffffffffffffff g1: 0000000000000000 g2: 0000000000=
-000065 g3: fff0000009618b28
-> > [  140.019460] g4: fff00000001f9500 g5: 0000000000657300 g6: fff0000000=
-22c000 g7: 0000000000000001
-> > [  140.133837] o0: 0000000100058000 o1: 0000000000000000 o2: 0000000000=
-000001 o3: 0000000000000002
-> > [  140.248208] o4: fff00000045ec900 o5: 0000000000000002 sp: fff0000000=
-22f031 ret_pc: 00000000005e2998
-> > [  140.367158] RPC: <bpf_patch_insn_data+0x1b8/0x2e0>
-> > [  140.430057] l0: fff0000009618000 l1: 0000000100046048 l2: 0000000000=
-000001 l3: 0000000100058000
-> > [  140.544437] l4: 0000000100046068 l5: 0000000000000005 l6: 0000000000=
-000000 l7: fff000000961e128
-> > [  140.658810] i0: 0000000100046000 i1: 0000000000000004 i2: 0000000000=
-000005 i3: 0000000000000002
-> > [  140.773189] i4: 0000000100066000 i5: fff0000009618ae8 i6: fff0000000=
-22f0e1 i7: 0000000000607a08
-> > [  140.887561] I7: <bpf_check+0x1988/0x34a0>
-> > [  140.940171] Call Trace:
-> > [  140.972191] [<0000000000607a08>] bpf_check+0x1988/0x34a0
-> > [  141.041963] [<00000000005d862c>] bpf_prog_load+0x8ec/0xc80
-> > [  141.114021] [<00000000005d9be4>] __sys_bpf+0x724/0x28a0
-> > [  141.182646] [<00000000005dc338>] sys_bpf+0x18/0x60
-> > [  141.245551] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
-> > [  141.322185] Disabling lock debugging due to kernel taint
-> > [  141.391952] Caller[0000000000607a08]: bpf_check+0x1988/0x34a0
-> > [  141.467440] Caller[00000000005d862c]: bpf_prog_load+0x8ec/0xc80
-> > [  141.545212] Caller[00000000005d9be4]: __sys_bpf+0x724/0x28a0
-> > [  141.619558] Caller[00000000005dc338]: sys_bpf+0x18/0x60
-> > [  141.688179] Caller[0000000000406174]: linux_sparc_syscall+0x34/0x44
-> > [  141.770535] Caller[fff000010089b80c]: 0xfff000010089b80c
-> > [  141.840301] Instruction DUMP:
-> > [  141.840305]  326ffffa=20
-> > [  141.879185]  c4004000=20
-> > [  141.910065]  c25e2038=20
-> > [  141.940945] <c4006108>
-> > [  141.971827]  80a0a000=20
-> > [  142.002709]  04400014=20
-> > [  142.033589]  c25860f0=20
-> > [  142.064474]  8400bfff=20
-> > [  142.095354]  8e00606c=20
-> > [  142.126234]=20
-> > [  142.176560] Kernel panic - not syncing: Attempted to kill init! exit=
-code=3D0x00000009
-> > [  142.277218] Press Stop-A (L1-A) from sun keyboard or send break
-> > [  142.277218] twice on console to return to the boot prom
-> > [  142.423608] ---[ end Kernel panic - not syncing: Attempted to kill i=
-nit! exitcode=3D0x00000009 ]---
->=20
-> Disabling support for Transparent Huge Pages (CONFIG_THP) avoids the cras=
-h.
+When there is a heavy load of receiving characters to all
+four UART's, the warning 'Hardware RX FIFO overrun' is
+sometimes detected.
+The current implementation always service first the highest UART
+until no more interrupt and then service another UART
+(ex: UART3 will be serviced for as long as there are interrupts
+for it, then UART2, etc).
 
-Sorry, the option is called CONFIG_TRANSPARENT_HUGEPAGE, of course.
+This commit handle all individual interrupt sources before
+reading the global IRQ register again.
 
-My suspicion is that it's related the flushing of D-Cache handling which is=
- enabled
-for small pages only:
+This commit has also a nice side-effect of improving the efficiency
+of the driver by reducing the number of reads of the global
+IRQ register.
 
-https://elixir.bootlin.com/linux/v6.16.5/source/arch/sparc/mm/ultra.S#L1016
+Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
+---
+Changes in v3:
+- Change variable port to unsigned int
+- Use varible bool to stop while loop
+- Link to v2: https://lore.kernel.org/r/20250905-master-max310x-improve-interrupt-handling-v2-1-7387651a5ed2@vaisala.com
 
-and:
+Changes in v2:
+- Improve content of the commit message
+- Fix a line indention in prevoius patch
+- According review comments, changed to use for_each_clear_bit
+  to simplify serve all IRQs in a loop.
+  NOTE: When a bit in IRQ[n] is set 0 the associated UART’s
+  internal IRQ is generated.
+- Link to v1: https://lore.kernel.org/r/20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com
+---
+ drivers/tty/serial/max310x.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-https://elixir.bootlin.com/linux/v6.16.5/source/arch/sparc/include/asm/page=
-_64.h#L9
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index ce260e9949c3c268e706b2615d6fc01adc21e49b..e3af381b1702ad7df7a7911030c958d07933fe43 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -823,17 +823,28 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
+ 	bool handled = false;
+ 
+ 	if (s->devtype->nr > 1) {
++		bool done;
++
+ 		do {
+ 			unsigned int val = ~0;
++			unsigned long irq;
++			unsigned int port;
++
++			done = true;
+ 
+ 			WARN_ON_ONCE(regmap_read(s->regmap,
+ 						 MAX310X_GLOBALIRQ_REG, &val));
+-			val = ((1 << s->devtype->nr) - 1) & ~val;
+-			if (!val)
+-				break;
+-			if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
+-				handled = true;
+-		} while (1);
++
++			irq = val;
++
++			for_each_clear_bit(port, &irq, s->devtype->nr) {
++				done = false;
++
++				if (max310x_port_irq(s, port) == IRQ_HANDLED)
++					handled = true;
++			}
++
++		} while (!done);
+ 	} else {
+ 		if (max310x_port_irq(s, 0) == IRQ_HANDLED)
+ 			handled = true;
 
-Interestingly, while running the reproducer with CONFIG_TRANSPARENT_HUGEPAG=
-E disabled,
-I'm also getting this kernel warning, but the kernel does not crash:
+---
+base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
+change-id: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
 
-[  108.733686] CPU[0]: Cheetah+ D-cache parity error at TPC[00000000005d78b=
-4]
-[  108.824096] TPC<bpf_prog_load+0x394/0xc80>
+Best regards,
+-- 
+Tapio Reijonen <tapio.reijonen@vaisala.com>
 
-Could it be that we need to enable the code guarded by DCACHE_ALIASING_POSS=
-IBLE
-unconditionally?
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
