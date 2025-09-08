@@ -1,234 +1,124 @@
-Return-Path: <linux-kernel+bounces-805725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EDEB48CB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A70B48CB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954882000F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6781B27A5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED9C2FAC09;
-	Mon,  8 Sep 2025 11:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B612F1FED;
+	Mon,  8 Sep 2025 11:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HVXtV3v+"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lmeVY484"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3772F83BE
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B462DE71C;
+	Mon,  8 Sep 2025 11:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757332686; cv=none; b=oZTilCBkgw8f21INhcoDfTgaElzO8jjRc4tWNOF+1US9c2Lrn8hau8nOctaUqRFaqzYkC8aqeRls9FZt2Orn1A700R+kE+N1+B6lMgP5kmV9w0+OAT0ev9ZYmu/Nw1tNgA6l5E2xM4mZ8htzp2vTYPDpaaxSaGcMdhDirQsefmk=
+	t=1757332738; cv=none; b=jknfEKUQklfATKmOPkfmWM5ILW15V4OUvE3TSHtZ3EEYQrrDpTfsu2dEN/oKoVxl/gKyaCaJRQNymPdAigRhKep9zQ9TKT/70MuH0cvYfV3wHS1aeWInowNX8r3deTlxuLaubRkkdCTtcmm35gbLS9H9YwFGM2y438OvDXcFbWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757332686; c=relaxed/simple;
-	bh=Pw0/luAVKwyfLrj7Phir5rySI3lK/pOU0unJq7NlZG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=urDpllta/Sp0OHruvtJx+JBJdjhhA3VhTiP7WoxljyWlOf87Cmun8LYdXJB5KdvyrCEj+8sQ2O6lwTPkGKmuOJD+hiCpov5mIfkgMJnNMxRpbJE/OhbxJYR+KlVq6+jp1ChFUN9E0hIGyxDm/ci0yLGm8I0KYEulR9O2eIl9zHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HVXtV3v+; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 8 Sep 2025 13:57:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757332671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PjD9DSD5AHmTdZuClWntrz4MEOfKYVkuIddVT8r1CQ=;
-	b=HVXtV3v+ftyHIRAjcuQf54SXqm3ariGeOjMuQjfmiE8fWy31YFiu8prVROIn/M5rDUHw5A
-	RKCN27YZK5fcNCpiyYKCQ7BkEVI1eC4/bjblxyPV5qWOZeDPhgw8U1X6Vk4yTVoF1g+4EL
-	PI73vZAYQfy+tD4mNylQLGvz1Cfv0b8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 07/10] media: i2c: ov9282: add strobe_duration v4l2
- control
-Message-ID: <ylnynvtb6jpuvahyjvot4o7igkzikzrokhgjn4xsbyepidn22k@err5jg65ubfo>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
- <aLYISb07ziGDmFGS@kekkonen.localdomain>
- <uzgdukvgqkpg5koehz6kzxg6dfjes7p5ntd5oyqgqpr7gz5otd@ykwax6c2bo6x>
- <20250907201839.GC19568@pendragon.ideasonboard.com>
- <20250907202154.GE19568@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1757332738; c=relaxed/simple;
+	bh=6QOPQOr+MMPkIBn3rM6zrLTI8GvkuF3KweTHN1ROwhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYXv9pqOFazD/JNkyjh2JbCGYpQlqOlt0S1hVGMyojz0GT8HQShPCOJ1/8CzJ3tjmL5WkqZxDE4HThlswN2IRMEErSbP/QP7rnLpLunslYXc/rHuQVTyctb1criSOcMoYkY0fama2gGOlIY63fcvfg/spyjeDZgOU24WzXRpLmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lmeVY484; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45ddddbe31fso11140985e9.1;
+        Mon, 08 Sep 2025 04:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1757332735; x=1757937535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eRM+uyebU2Rj5lbvmGYz/DfavkBeN9Z38pQmhJrF7OY=;
+        b=lmeVY484HGXcZQ0G64EO2Z3nWZkGneRA80NdcIdEB/6h0WbEjgHFOM72b5Cb1wlK40
+         V6EA2CRscC+lhGQ+EFTbsaE0edHKpIo1R1y0S3/SIu0wRdpsNDeVXcyYSZrEAmf42DwI
+         EvieD7P6jte7ilqhbvFurCW0elvV8lCM7lIHJN5IO0d1uCwMHpduiZwSNyBnvXn+jyfc
+         OVMJ/K/92XgO/4hmD0pazBTL5pbUfEC5WTX63AkXQOJUf+AfQyomjHe2Ut6P4uUzsGA6
+         3byVje/5XlT4jlZzx74d2EYItgSDQuG0wQlHd/BvZ+CSgSoFKwJZLLCI8XICGyW84/e8
+         Vc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757332735; x=1757937535;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eRM+uyebU2Rj5lbvmGYz/DfavkBeN9Z38pQmhJrF7OY=;
+        b=kMiWqNld08kiJlwIm8fIexBuG0k03GG0JxBIz+o6eSU26FekfmbLr6etifZoK310UY
+         RfwrYkkPuP0GtrwDiG+W9LDDPR8SNANpJqUVujjCscA0QTOurylILQi+oDy2uEXe/Aju
+         Q5RXlIua4f8/rinta1kTOqsft6Pm9kFIbMgjg2At8U5eow7RiMKzUIzwkmdGnCeS2uPA
+         MEuC8YuQuXe8pVbTP0P5K0oOWyX7ITuTXmLK0uXOelnK4sURxd/7E5uuRO3UGoDfPN1B
+         KkE8dJ5Q5IJbrV9w8tMmQ4/G/gDWIneJw9zaj/pLGHzx4z6gw+0JkxkvpYdBU6wbuhQk
+         HXAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhMlMu27QGNAnMIClsXb9e5FDSN74xwQO7D/caoLxm1Yfdgg5bbI1kCxUtfAss0MLDjePN/FsQ4FwfHKg=@vger.kernel.org, AJvYcCWvAjOcQ/0YCKVnU2/xPf0JRCTlN/MO2MxTMvdFHLRBCNTzV37NnJ/HJHHBAFv5EUTywfSu+TPk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrCNUnT2EPDFpJvkfA9Uaji1aCaGTJ17HuJoSYYwzenpGNgWBA
+	cG9FTuazmZBAjRODhllA6s1mzVeUTjtxjhkYxIOuZMWoCeVWJBHQt2o=
+X-Gm-Gg: ASbGncv9yotBEhwh7Mzu3r23W/Sf4I+40DHX9Vol3E2eE5XgznpoOWtTOfbFat59qYQ
+	XoVALg00zvfKp9fEPeCerHDGXC52G+mWlCnVdDQR2WOXLvH0O38QgPdyLbcfH0ZT7bTeKK234Zh
+	hPsgWVgVEt3zKOY/mgghOpjbwaCep29iaUlCOkQJxTNy/DKM3Rm03uvDrTKR28RHXcWRGXwNPMb
+	aKWlNM/WAJVug/ZzZYiOoz11dCck3KopxWE+wIZTfzPTyrTeGMCB8RNU6Pqtrc43G2VkClMd8kQ
+	1GK8vQAjEjJlnXyu8l//c6Expg3diksuAaqvj21DGY/l+YZg5pTE2ksFiqnRJe7TrXT7KqaPKRF
+	/QML+xPCLrXCwDM38K5jLm7Ra/b/q3VhFQLd/USdIpHvUtt3J0OYoaSfF1znsSEB8u/z2AMKEdx
+	ahCwqKN9837A==
+X-Google-Smtp-Source: AGHT+IFZgWcpxr6NhhjmxZvbiZnvCl/sZZdpHsCBeK240GnMFcxyIzd1XotzPDvdvGrx0kcUWiMGQw==
+X-Received: by 2002:a05:600c:1f90:b0:45b:8f11:8e00 with SMTP id 5b1f17b1804b1-45dddee8f49mr54141185e9.37.1757332734483;
+        Mon, 08 Sep 2025 04:58:54 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ac262.dip0.t-ipconnect.de. [91.42.194.98])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e12444de96sm16556416f8f.19.2025.09.08.04.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 04:58:54 -0700 (PDT)
+Message-ID: <09016717-6ae6-43d8-8985-54562dbbf956@googlemail.com>
+Date: Mon, 8 Sep 2025 13:58:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250907195615.802693401@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250907202154.GE19568@pendragon.ideasonboard.com>
-X-Migadu-Flow: FLOW_OUT
 
-Hi Laurent,
+Am 07.09.2025 um 21:57 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.16.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-thanks for the review!
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-On Sun, Sep 07, 2025 at 10:21:54PM +0200, Laurent Pinchart wrote:
-> On Sun, Sep 07, 2025 at 10:18:40PM +0200, Laurent Pinchart wrote:
-> > On Wed, Sep 03, 2025 at 08:54:42AM +0200, Richard Leitner wrote:
-> > > On Mon, Sep 01, 2025 at 11:55:37PM +0300, Sakari Ailus wrote:
-> > > > On Mon, Sep 01, 2025 at 05:05:12PM +0200, Richard Leitner wrote:
-> > > > > Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
-> > > > > feature of the sensor. This is implemented by transforming the given µs
-> > > > > value by an interpolated formula to a "span step width" value and
-> > > > > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> > > > > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> > 
-> > You name the register OV9282_REG_FLASH_DURATION below. Is
-> > "FLASH_DURATION" a term found in the datasheet ?
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-No, the datasheet named the registers strobe_frame_span. I guess it may
-be clearer to name it OV9282_REG_STROBE_FRAME_SPAN then... I will update
-the series accordingly. Thanks for the catch!
 
-> > 
-> > > > > 
-> > > > > The maximum control value is set to the period of the current default
-> > > > > framerate.
-> > 
-> > Should it be adjusted based on the sensor configuration ?
-> 
-> I've now noticed patch 10/10.
+Beste GrÃ¼ÃŸe,
+Peter Schneider
 
-Is this a problem? Should those patches be merged? The reason for this
-being a separate patch is it based on review by Sakari and therefore
-joined the series in v4. I left it in a separate patch as IMHO it's
-easier to review this way. But I'm open for merging it into this one if
-that's preferred.
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-> 
-> > > > > 
-> > > > > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> > > > > and tested using an ov9281 VisionComponents module.
-> > > > > 
-> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > ---
-> > > > >  drivers/media/i2c/ov9282.c | 31 ++++++++++++++++++++++++++++++-
-> > > > >  1 file changed, 30 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > > > index ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb..c405e3411daf37cf98d5af3535702f8321394af5 100644
-> > > > > --- a/drivers/media/i2c/ov9282.c
-> > > > > +++ b/drivers/media/i2c/ov9282.c
-> > > > > @@ -97,6 +97,10 @@
-> > > > >  #define OV9282_REG_MIPI_CTRL00	0x4800
-> > > > >  #define OV9282_GATED_CLOCK	BIT(5)
-> > > > >  
-> > > > > +/* Flash/Strobe control registers */
-> > > > > +#define OV9282_REG_FLASH_DURATION	0x3925
-> > > > > +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001a
-> > > > > +
-> > > > >  /* Input clock rate */
-> > > > >  #define OV9282_INCLK_RATE	24000000
-> > > > >  
-> > > > > @@ -687,6 +691,25 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
-> > > > >  				current_val);
-> > > > >  }
-> > > > >  
-> > > > > +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-> > > > > +{
-> > > > > +	/*
-> > > > > +	 * Calculate "strobe_frame_span" increments from a given value (µs).
-> > > > > +	 * This is quite tricky as "The step width of shift and span is
-> > > > > +	 * programmable under system clock domain.", but it's not documented
-> > > > > +	 * how to program this step width (at least in the datasheet available
-> > > > > +	 * to the author at time of writing).
-> > > > > +	 * The formula below is interpolated from different modes/framerates
-> > > > > +	 * and should work quite well for most settings.
-> > > > > +	 */
-> > > > > +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> > 
-> > I wonder if the register value ends up being expressed as a number of
-> > lines.
-
-I'm not sure... As mentioned in the comment this is not clearly
-documented in the datasheet. Tbh, I don't think it's "number of lines",
-but I can do some more measurements just to be sure...
-
-> > 
-> > > > > +
-> > > > > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> > > > > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> > > > > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> > > > > +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-> > 
-> > The CCI helpers would make this much simpler.
-
-As mentioned in the cover letter I'm planning to do the migration to
-v4l2-cci helpers in a seprate series. If that's fine with you I prefer
-to stick to this plan :)
-
-> > 
-> > > > The bitwise and operation is redundant.
-> > > 
-> > > True. Thanks for the catch!
-> > > 
-> > > > Could you do this in a single write?
-> > > 
-> > > I've implemented this in single byte writes due to some "special
-> > > behaviour" of the vision components ov9281 modules. On those modules
-> > > single byte interactions seem broken in some cases. Maybe Laurent knows
-> > > more about this and the current state, as he was/is in contact with VC.
-> > > 
-> > > See also: https://lore.kernel.org/all/918ce2ca-55ff-aff8-ea6c-0c17f566d59d@online.de/
-> > > 
-> > > Nonetheless, thanks for the pointer. I haven't documented this
-> > > accordingly. I will try to reproduce the issue again and either change
-> > > this to a single write or add a describing comment.
-> > > 
-> > > > Also error handling is (largely) missing.
-> > > 
-> > > Good catch. Thanks.
-> > > 
-> > > > > +}
-> > > > > +
-> > > > >  /**
-> > > > >   * ov9282_set_ctrl() - Set subdevice control
-> > > > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > > > @@ -756,6 +779,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > > > >  	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> > > > >  		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> > > > >  		break;
-> > > > > +	case V4L2_CID_FLASH_DURATION:
-> > > > > +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
-> > > > > +		break;
-> > > > >  	default:
-> > > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > > > >  		ret = -EINVAL;
-> > > > > @@ -1346,7 +1372,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > >  	u32 lpfr;
-> > > > >  	int ret;
-> > > > >  
-> > > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
-> > > > >  	if (ret)
-> > > > >  		return ret;
-> > > > >  
-> > > > > @@ -1414,6 +1440,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > >  	/* Flash/Strobe controls */
-> > > > >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > > > >  
-> > > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> > > > > +			  0, 13900, 1, 8);
-> > > > > +
-> > > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > > > >  	if (!ret) {
-> > > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-
-regards;rl
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
