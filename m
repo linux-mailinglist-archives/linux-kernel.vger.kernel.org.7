@@ -1,89 +1,136 @@
-Return-Path: <linux-kernel+bounces-804986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07305B482A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:39:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3528DB482AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F28F3AB562
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:39:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D47554E052B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30871F78E6;
-	Mon,  8 Sep 2025 02:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="hzH2/1c5"
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299CC1F7569;
+	Mon,  8 Sep 2025 02:43:03 +0000 (UTC)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A287AD51;
-	Mon,  8 Sep 2025 02:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F97AD51;
+	Mon,  8 Sep 2025 02:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757299158; cv=none; b=j0ynPlZpg7VVl0SS3/srUGOUSEyti+L3z3juuwlt9x6vpiOcdguaJeqmBRtnTBApb7dzIG2O2sjSZrMIHNKTdbIIiyKlBKarp+oTxeyCpNZePyb5chT7VSS05L3Z9WCNfnKkMTT5/oHtkVctjF6wesCmJEO+FVsanm8dPgMwzeQ=
+	t=1757299382; cv=none; b=HjqptLBUO58L7X1KYP1wo3N/8ysnfAfKpjf9cq38I4DX1s6/r5J0FWv4sn6wBmn7SHDoFh3uhaMdcEyGHhsrDUtzWpqEgWxcfCr+4NEhXv3Uyt6r7Jz22QFZGo8Ru7UrcyjwLYNGtDL18QPldfbVOdcuiQvQw+dzGILIRI07vv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757299158; c=relaxed/simple;
-	bh=erPSr5E2ysuBf+hRtvm3+7BYon2Byrj8kZ0jl3Lwk4M=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=H72J74hAylTYljSmf8keGJxYgG8irhao6wMLQVElpBrnWQrmx+kAyXM0w7RnHgYehfxgAnwLy4wPZt80i38Bb8Ok1mV6lUjFTqYdsijE/ltJxv1MQqe2Hu5Oef0bgflSYAvb89GzchdwDG4eif8mj8FDPtDXzpCk58l389TxSyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=hzH2/1c5; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=U66no8ixnDA1zqx5KQeVdw+6wSdnGjQ29/zGvuWRNKo=; b=hzH2/1c52HawTk1SDQdAO5c3YQ
-	jF6Ox10CL85aDXkRgjxNxf+g6dUM/8NLe0rrx65HwSmS4FGCMG/C5LB7PY7Fo9dcpnYG9TG2///LX
-	NEPr+6r5ohjzflARdRQKrTa72Y2BDO9wdGIu9eZeMHXH/MH74GVYfNTT/jFA4l5Rw6FPEKjwaWPd2
-	M5z7MGMShmq+B7ZSJLfsiVNwAeMc6xqkWUmx5LtRRqb0134HROauufAZ11HB34P5U6AmgtZF4pfPk
-	0dnkdhIJL3FBIlmk8mscNf8vQAFVyu/YO+sMWRrduyKNXR14ir4fBfv4ggDImsnVBGxEQij0gsQ+8
-	LyUTaU2A==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1uvRmg-00000000zol-1kB3;
-	Sun, 07 Sep 2025 23:39:10 -0300
-Message-ID: <5ad540512e8527bddcb474bd7c1f9f6b@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Eric Biggers <ebiggers@kernel.org>, linux-cifs@vger.kernel.org, Steve
- French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>
-Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N
- <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
- <bharathsm@microsoft.com>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Biggers
- <ebiggers@kernel.org>
-Subject: Re: [PATCH] smb: Use arc4 library instead of duplicate arc4 code
-In-Reply-To: <20250907032003.386794-1-ebiggers@kernel.org>
-References: <20250907032003.386794-1-ebiggers@kernel.org>
-Date: Sun, 07 Sep 2025 23:39:10 -0300
+	s=arc-20240116; t=1757299382; c=relaxed/simple;
+	bh=uFP29cNly6YMrOfoT9o+KWSTBUwmoAs9nNafqPy7vMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Avii3psGDxBiLI7Llx6vRLaPwzL9UZnR82u5tJCE8k3YYhfxasopJBxukvEvn8UWWajcNIko3ESROHwPBHhRgidqgAwmJ0L6Uyuu5pCIX0GuH1K1r/2GnjjbsRCvrcaWcy7UcXF2Mr2GhgTTaZqoCkNufJqEyPXh3SbtzkjOfEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-chip.com.cn
+X-QQ-mid: zesmtpgz8t1757299367t8a4b77a0
+X-QQ-Originating-IP: kDY0/8+9nALfx1XqnlgO5eSHKtE512wTM2GGkuQcJPg=
+Received: from localhost.localdomain ( [183.51.121.90])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 08 Sep 2025 10:42:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9255924790218013141
+EX-QQ-RecipientCnt: 15
+From: Kaison Deng <dkx@t-chip.com.cn>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Wayne Chou <zxf@t-chip.com.cn>,
+	Kaison Deng <dkx@t-chip.com.cn>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Peter Robinson <pbrobinson@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the ROC-RK3588-RT
+Date: Mon,  8 Sep 2025 10:42:45 +0800
+Message-Id: <20250908024245.1005875-1-dkx@t-chip.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2744084.BddDVKsqQX@diego>
+References: <2744084.BddDVKsqQX@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:t-chip.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: NY5+brHrxRqv0L0Vu+D4vlcTgkGN1Y20P8bYZwEZYKwhjPgUwPE3Q9Bg
+	L4aZOQLwui7Xb5gUMRR6JFAPT7Huu/s55mC5eAjwPENaQHhB+tdFg8IMQLWgKgCzTfNz6eQ
+	p7yjUI5L/TUN81zE1pJqWYhJKkkGg+8VzpFsYHQ7RiqnuZpzrGEFArN1J2Pg6Wupu3Ai34t
+	z5SwQSiTczErbFIDnDSyeebKC0dze8hHXTklaJEA+EYimWSY3VoCkrfMrC0yn3TrVrFVVVv
+	VU8x2yulKn8nhQO6HBJozNBC2j8xPuxYDYsZBOHqWPw73i4xW8xbpuJmD5pULzfqj2Sb2u8
+	b1O+r5HarGdtBjBs9s5zHlFK6S7MVALM9rrBUvKA37e5g9EE2HSp+FL5SlKw5hZsKTAJyIc
+	O+yiwIvxmZvKVXm47IWby/NY/FSQKiCzQAyf9NUgaaMHbmQjykOGxA5mK7NwpArSBDUhhnO
+	+wQiBtqaHE4nWSnJsB3cwtlc1wO2aOjMmvCTN1sP7NVsbw2huP/L5hINiNI8XhGCUQ80btl
+	uezuAGH+n+A8Vt2yGKlR5H6M8nhJpexi3rdpMMUATmP8O/1WoNPzFIBVN9RsDCztDOGK9E5
+	NiZt14frw0RDEkSYIz18/Ap2Rqos5QFR5De6J4qoy1KUva3Bux0HsDOhFFFyY87Zb+DPGpz
+	u+F5ovGEWBz3hfCJX3L3fHGXu637vIbKDimWHhofb628LgItb95zxXacF9iWYPNO/z/jJF2
+	2vENa20uS1vgdLFNrFHwpYRb4Z7ElxK0R3lgJTDbCY7naWjL+UmiE6YhOC1zkuoCbSaxUic
+	77XllQjUA/4geWb32x/4WPqvv5mFtodN2Fr2jBwfDrgoPVy1oAkHEcDmAgTg6ng0fPQ5OzT
+	VUKEF4gbvWrHy1UVxPNtHe1ds6GQAOAt8xY4VruCA9i8dNMVslazZCYOriUTwjuxlwKnvup
+	RphnJQztmr2LIqGm4HZ2yP5r8ZVRY4GgIP4jFCConJSz2+wd3HSIqK3Z53cr8A5ewcC6IX/
+	NfPJLuMx6a8B3WMoojjdOptcEPsHOgu5ALnkgPXnWtyDSCUTVTC4klB7uz7TSibiatLO7pa
+	bB2Dy9pRlR/aJdCZntzSNDM3jiE8BmdcLcxThWUTOTch9D0h23xe2hJ/MQ4/RQfIehBzyQO
+	5pS8bsgCM8xGK3nfbTH6+MG9Vw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Hi,
 
-> fs/smb/common/cifs_arc4.c has an implementation of ARC4, but a copy of
-> this same code is also present in lib/crypto/arc4.c to serve the other
-> users of this legacy algorithm in the kernel.  Remove the duplicate
-> implementation in fs/smb/, which seems to have been added because of a
-> misunderstanding, and just use the lib/crypto/ one.
+On Fri, 2025-09-05 at 11:19 +0200, Heiko Stübner wrote:
+> Hi,
 >
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  fs/smb/client/Kconfig       |  1 +
->  fs/smb/client/cifsencrypt.c |  8 ++--
->  fs/smb/common/Makefile      |  1 -
->  fs/smb/common/arc4.h        | 23 ------------
->  fs/smb/common/cifs_arc4.c   | 75 -------------------------------------
->  fs/smb/server/Kconfig       |  1 +
->  fs/smb/server/auth.c        |  9 ++---
->  7 files changed, 10 insertions(+), 108 deletions(-)
->  delete mode 100644 fs/smb/common/arc4.h
->  delete mode 100644 fs/smb/common/cifs_arc4.c
+> Am Freitag, 5. September 2025, 11:01:15 Mitteleuropäische Sommerzeit
+> schrieb Kaison Deng:
+> > The Firefly ROC-RK3588-RT is RK3588 based SBC featuring:
+>
+> On the webpage it is unclear about the soc, both rk3588 and rk3588s
+> are
+> mentioned?
+>
+> https://en.t-firefly.com/product/industry/rocrk3588rt
+>
+Is rk3588. This webpage is incorrectly described, we will correct it.
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+> > - TF card slot
+> > - NVME 2242 socket
+> > - 1x USB 3.0 Port, 1x USB 2.0 Port, 1x Typec Port
+> > - 1x HDMI 2.1 out, 1x HDMI 2.0 out
+> > - 2x Gigabit Ethernet, 1x 2.5G Ethernet
+> > - M.2 E-KEY for Extended WiFI and Bluetoolh
+> > - ES8388 on-board sound codec - jack in/out
+> > - RTC
+> > - LED: WORK, DIY
+> > - BTB connector for PCie, UART, USB, CAN, SARADC, GPIO
+> >
+> > Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
+>
+> you definitly need a 2nd patch adding an entry to
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree
+/Documentation/devicetree/bindings/arm/rockchip.yaml
+>
+Thanks for reminding, I will add a 2nd patch for him.
+
+> The rest looked pretty good on a short glance :-)
+>
+> Heiko
+>
+>
+
+Kaison
 
