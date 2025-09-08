@@ -1,144 +1,157 @@
-Return-Path: <linux-kernel+bounces-805146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B977AB48484
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069EDB4848A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98B63BC99D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1638175836
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691842E2657;
-	Mon,  8 Sep 2025 06:54:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0702E2EE5;
+	Mon,  8 Sep 2025 06:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRwrAnOE"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA222E229C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318E22333B;
+	Mon,  8 Sep 2025 06:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757314463; cv=none; b=fBfNGaVGdrBKWdunJttOx1Qz1kqCMkmIAq4Mg6NmuNvRjiSvneq0KDmeQw7kaWB/CHO3M96Zfjqv44sSPxhRooyLCH12u/C4RKAZDcHZHRrPV3ObOjpAhvvF2LIU9ETMTEP07fi6SrTryXb+pc0eWQ983UVY2ncl7fLMOLh3EK4=
+	t=1757314539; cv=none; b=E/kyejSR/6FPHY2rz93ewt7sC/XyWhNHB6+nF4Es+L3MjnyGZAE+hAXyRYawlOiSqQkt+arYnVgHyr3x2CCpAEG0SpxqEqy1AY7adzB9Eaf6zhaOvMOV1gjDcV1ipckiei6YOOZuposdj7flmH48oSTBCX8P8xZH2gdvpuYmMxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757314463; c=relaxed/simple;
-	bh=/rIr2d8Q/VceCZn2seP8jg9q6IuU4WX3KDColjkoiKg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=NUwww5e5k/jJdenhYb3fk54Wr11JZN0WBtd+qRD+zn6ozSp9iCBAZienYKbFSk3VyYFojqS/VBX6WIKQ2LTGXaHDkDZ9mUI7f7DvvBKgwcutzCVDK7w/g2aji7eLXX1boCX4DZ91rCeI7PzNDsDTMxz/q3ry0pDKUPdCM7qO3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-406d2dab9b0so8916655ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 23:54:21 -0700 (PDT)
+	s=arc-20240116; t=1757314539; c=relaxed/simple;
+	bh=7bTeksVHgoD9R6xdLvzwlbYp8OJAiXj4vQhWz3mJ+D8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AoNHnmhDgOBPCgryQNNxCI5lnXaCmD9VyVz3eng/9GM/XVdqCSQI3JfP/RLlllhnJa6Cw4rm1nsXCERegwj84lSEIcobChpZnXqOXNoAc1ehJpgW8U31mH6QyOgKu1RDMyPwJD9XaA2c3HtfP8BASHZrzrwxYyK531Zyt8Zcnlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRwrAnOE; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-24cbd9d9f09so54436085ad.2;
+        Sun, 07 Sep 2025 23:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757314537; x=1757919337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m+4an8/Jt/b4JIGzziEWzfZAC//LsinPWKCYsKZxOsU=;
+        b=LRwrAnOEvZ/oo3c0wpBTqevb3ifpqUBYAY4w38Bdeg2Sv1XpKCjnO/BrLFRSqJdGjG
+         L5IBwpwiV0gHfT6OIzglAGq9uDBZT5nywzbS92G8EOehFwlKmD/by/fbELDScnlRakZg
+         TCfYvrOVZgQPOZnj0N1kH4PWCnb7TdkYMraJhIgerAY9nPt4Q0ZW9U/d2QN2oG/35rSE
+         jwy5kguS+bR4qW4bIdrqhd041dFNnY3Wls+G/ewyRHQ97zmAUQCgWCWsEWYrwNLOJIy/
+         USA8wJ6OmJ9/a+pEzBss/9nETto6qUgKUZkvhJxK8Wg1Z25Sm5LL3A7h3mz/j8k1v48n
+         Wayg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757314460; x=1757919260;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eeXrRPyIgejXCeJuxm3Ac4RFmbo1rm6MPvzN4tnj+H0=;
-        b=ijzegoUic6tTHxPCj344HQ6LU2hy9CXgnolq1agY7999hwuBnR+ezNbyqufI5geeCo
-         TU2fT+FQa9uvYHODBqZTi3k+/AdPkV3g/vVY/pCyOzpmUxB6vD+a4nHy8cBju0gWDpCk
-         8lAX5OMXVTfJFgPd+t3V0SijNtsbO/CUBplhidcqc3UrVR38xaVCQcLTQrd/zRRaNF+u
-         84PWdZb6CmT52nP/0HXbc3YRVJhhg74tmB+Lr2ZlhdjefPKPw0SR//r+r0oJuSql99ir
-         rbYwZd84Elo0MZS4HKZfCjy/ycv+07eChL3qhW14na8w1rGp+IBb1+ZK5nxj5iQrUM9n
-         Wznw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFoNoBcZxbsZslYExDsOj3WWf8rWaqDAFy52ErhtaBhDzWhzKzBgIuu4oGbGaDDt9rj7R/QvEL2NlbkTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0wf+AHUBfsrdJlQKSLcZ8hVz4p73uc/0AnrvBXwOMPAQ4Euud
-	/nMr/x1VnFcMz8S3Ml4nyR60i07nxPkjCLgcjbe/E8R3Fin2BrNgibh3XnUqqH/FNaOeJoHTfiU
-	FUah3bInSdvtNGWQjUPhVQie6jXavpuHpPbId6ytXXXgQ9WiMD7rakO2azy8=
-X-Google-Smtp-Source: AGHT+IEHzVwxQ+idrbjlPpfSnJ42RVk67+cbnVu56F0ansDNYkV+viWueojAKjIWUsTglqs7rHm0m8C0piTahpr6RzlnJVbfQiVe
+        d=1e100.net; s=20230601; t=1757314537; x=1757919337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m+4an8/Jt/b4JIGzziEWzfZAC//LsinPWKCYsKZxOsU=;
+        b=vmM9ufqe40ovPMPcE+coh8QMqJS3K7vrYh/zUYU3gUtKQa4pDyDqqUgj7jJbycGYmo
+         w5VksW3R3/eh1u+7Et1rvOm4m9qIqE/9pHTwrO9dVTXOZPFeRPhd4DVSb/LtZbPFxaje
+         bTxs7RoXbVEIg/vrBYRNfk8FJlkz7ls1Ms9Si84KjEBZuqI1S2UN5oKI56Ia0xGap23s
+         jJ2Tvj9jsahVrj7ZP9gFA/bD0OSdqIgTMLkSgYIIhoblzNPNSCUmIakdjtB3bP1ujaPB
+         nvrs17kNdwlGqozfaLrkM6TPsIxmmAf34oviV7sSMG4ircbECeRc1O5Da/bU+dz4Ztrd
+         tG0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDbdrIGuu6w6YuhGAdQ5JUBVG/7RHBrZrzNEZ7KcB+BXxIDAqtuzwHK/K7PS11nG53AV6oaWvvZC9OxNER/PQz@vger.kernel.org, AJvYcCUG0Kq5nNB86umSZHp3cBHNMh4aY6AhgExUiICpW40aHdnAagpLSnAsap3mzVHfyss9UucDAtyQ@vger.kernel.org, AJvYcCUZI0Uintcsw/GF/usTPZ9PNsClLpFIcgjdZYLnSprYWRHe+XorgHnUEOHKIifaNKJWnbjgyD997UXLmnQ=@vger.kernel.org, AJvYcCXtvTlynpZeWIC8WaY0wgZmwkmuL4G1NRU7ypKK+Ujw9VE7H8XZsrHiQE2mgJ0EeJ0RBBkMcVQXVifK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB/5iNfXqS5kSboAxjMMzWpGMMWwKrZq/Ffpja+rnnV/d/YpMw
+	H51rdqXYuAhRJ2rBDr9vEbC01a/iddLjg0XR2QpOJXo5kPpyoY0N8OuL
+X-Gm-Gg: ASbGncvp2NQdyNZ8cjUu09fWOAK7s9dZER8Ux4kmOjX2vbHBsQRD/auOqZ/13EK42ha
+	+20SIjRUoGLUVBf9Dh6nCEyftNfoRBZ/vi+MTT0AgJD4rOsqoXLjRNILw0coLEF2E/LIVMSIQHL
+	3VGAq307c+trFeDXd9jzIe8DwSGg5FcgnKwfzh5N44zngfoDBspwqcU9tygI/xWUQzk7XbGZm/t
+	+t2b7B9NO1VMRGRxBC1RWNitmdjMyLWlWPm+5aQ5QNHmtjhVo3AGjlk0JuC87eZ/I5XX0R1PR9V
+	yflE6KCN6GAIe2GXKm3BoeXfh2hJWYc5HGxvzp2Ccmn0acZw3cyrMs1vs1uNjottIZhKgnE84A4
+	U/mc4Vv9iAxZMUQ3LO8xx1ZekJV+OWtkJNX7guzerv/zK8SYvgRKDMg==
+X-Google-Smtp-Source: AGHT+IERpqLRWZZggZfXidF0BIQUzIIQrruf3eLug6WWMnit4W8FJL2qnWiuLeQslKVuS6tNgq261A==
+X-Received: by 2002:a17:902:e2c4:b0:24a:f7dc:cad4 with SMTP id d9443c01a7336-2516ef54e11mr65328835ad.11.1757314537095;
+        Sun, 07 Sep 2025 23:55:37 -0700 (PDT)
+Received: from LAPTOP-PN4ROLEJ.localdomain ([221.228.238.82])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b94a2feacsm4566083a91.8.2025.09.07.23.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 23:55:36 -0700 (PDT)
+From: Slavin Liu <slavin452@gmail.com>
+To: Simon Horman <horms@verge.net.au>,
+	Julian Anastasov <ja@ssi.bg>
+Cc: Slavin Liu <slavin452@gmail.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	lvs-devel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] IPVS: Fix use-after-free issue in ip_vs_unbind_app()
+Date: Mon,  8 Sep 2025 14:54:58 +0800
+Message-Id: <20250908065458.536-1-slavin452@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1808:b0:40c:50c:376 with SMTP id
- e9e14a558f8ab-40c050c05a1mr892635ab.26.1757314460533; Sun, 07 Sep 2025
- 23:54:20 -0700 (PDT)
-Date: Sun, 07 Sep 2025 23:54:20 -0700
-In-Reply-To: <20250905132019.18915-1-yajun.deng@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68be7d9c.050a0220.192772.0853.GAE@google.com>
-Subject: [syzbot ci] Re: mm/rmap: make num_children and num_active_vmas update
- in internally
-From: syzbot ci <syzbot+ci787cecc1f1f83578@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, david@redhat.com, harry.yoo@oracle.com, 
-	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lorenzo.stoakes@oracle.com, riel@surriel.com, vbabka@suse.cz, 
-	yajun.deng@linux.dev
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot ci has tested the following series
+When exiting a network namespace, in cleanup_net()->ops_undo_list(),
+ip_vs_ftp_ops->exit() is called before ip_vs_core_ops->exit_batch().
+The ip_vs_app ip_vs_ftp and its incarnations will be freed by unregister_ip_vs_app().
+However, there could still be connections bound to ip_vs_ftp's incarnation.
+cp->app points to the free'd incarnation, which will be accessed later by
+__ip_vs_cleanup_batch()->ip_vs_conn_net_cleanup()->ip_vs_conn_flush()->ip_vs_conn_del()->
+ip_vs_conn_expire()->ip_vs_unbind_app(), causing a uaf. This vulnarability can
+lead to a local privilege escalation.
 
-[v1] mm/rmap: make num_children and num_active_vmas update in internally
-https://lore.kernel.org/all/20250905132019.18915-1-yajun.deng@linux.dev
-* [PATCH] mm/rmap: make num_children and num_active_vmas update in internally
+Reproduction steps:
+1. create a ipvs service on (127.0.0.1:21)
+2. create a ipvs destination on the service, to (127.0.0.1:<any>)
+3. send a tcp packet to (127.0.0.1:21)
+4. exit the network namespace
 
-and found the following issue:
-WARNING in unlink_anon_vmas
+I think the fix should flush all connection to ftp before unregistration.
+The simpler fix is to delete ip_vs_ftp_ops->exit, and defer the unregistration
+of ip_vs_ftp to ip_vs_app_net_cleanup(), which will unregister all ip_vs_app.
+It's after ip_vs_conn_net_cleanup() so there is no uaf issue. This patch
+seems to solve the issue but has't been fully tested yet, and is also not graceful.
 
-Full report is available here:
-https://ci.syzbot.org/series/8f2c8574-826d-4951-a11c-201f9e6fa666
-
-***
-
-WARNING in unlink_anon_vmas
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/6702bc54-be0f-4db2-85d2-1488a2ec7040/config
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5260 at mm/rmap.c:444 unlink_anon_vmas+0x63c/0x670
-Modules linked in:
-CPU: 1 UID: 0 PID: 5260 Comm: mount Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:unlink_anon_vmas+0x63c/0x670
-Code: 08 00 48 3b 6c 24 08 74 29 e8 30 7e af ff 49 89 ee e9 d0 fd ff ff e8 23 7e af ff 90 0f 0b 90 e9 4e fe ff ff e8 15 7e af ff 90 <0f> 0b 90 e9 82 fe ff ff e8 07 7e af ff eb 05 e8 00 7e af ff 48 83
-RSP: 0018:ffffc90001bef878 EFLAGS: 00010293
-RAX: ffffffff82102ffb RBX: ffff888109476118 RCX: ffff8880215d9cc0
-RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000000
-RBP: ffff88810f31e030 R08: ffff88810947611f R09: 1ffff1102128ec23
-R10: dffffc0000000000 R11: ffffed102128ec24 R12: ffffffffffffffff
-R13: 1ffff110212a6ce2 R14: ffff888109536710 R15: ffff888109476110
-FS:  0000000000000000(0000) GS:ffff8881a3c18000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8adf7b0440 CR3: 000000000df36000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- free_pgtables+0x72b/0x9c0
- exit_mmap+0x444/0xb50
- __mmput+0x118/0x420
- exit_mm+0x1da/0x2c0
- do_exit+0x648/0x2300
- do_group_exit+0x21c/0x2d0
- __x64_sys_exit_group+0x3f/0x40
- x64_sys_call+0x21f7/0x2200
- do_syscall_64+0xfa/0x3b0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8adf86ea90
-Code: Unable to access opcode bytes at 0x7f8adf86ea66.
-RSP: 002b:00007fffb8de8148 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007f8adf95f860 RCX: 00007f8adf86ea90
-RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00007f8adf95f860 R08: 00007fffb8de7fc0 R09: 00007fffb8de80a0
-R10: 00007fffb8de8000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f8adf963658 R15: 0000000000000001
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
+Signed-off-by: Slavin Liu <slavin452@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+ net/netfilter/ipvs/ip_vs_ftp.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
+index d8a284999544..68def1106681 100644
+--- a/net/netfilter/ipvs/ip_vs_ftp.c
++++ b/net/netfilter/ipvs/ip_vs_ftp.c
+@@ -598,22 +598,9 @@ static int __net_init __ip_vs_ftp_init(struct net *net)
+ 	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
+ 	return ret;
+ }
+-/*
+- *	netns exit
+- */
+-static void __ip_vs_ftp_exit(struct net *net)
+-{
+-	struct netns_ipvs *ipvs = net_ipvs(net);
+-
+-	if (!ipvs)
+-		return;
+-
+-	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
+-}
+ 
+ static struct pernet_operations ip_vs_ftp_ops = {
+ 	.init = __ip_vs_ftp_init,
+-	.exit = __ip_vs_ftp_exit,
+ };
+ 
+ static int __init ip_vs_ftp_init(void)
+-- 
+2.34.1
+
 
