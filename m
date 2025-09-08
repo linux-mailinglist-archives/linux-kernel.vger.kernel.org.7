@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-806758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54426B49B73
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD66B49B77
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0BE3B6F8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C68417DE85
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455FA2DCF63;
-	Mon,  8 Sep 2025 21:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89CF2DE1FE;
+	Mon,  8 Sep 2025 21:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EkSh9n2E"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AnYju9B5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC482DAFDF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F403F1E500C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365496; cv=none; b=YjcnNlvsih65Hwo4V6eGbUMNWhA6EXBjI2SiOsHwq9dhtapOhu30lQ6FjvJYPM+OPzdWCS4LF6jwczVvlSq9HlKkx9SAnzXwZWrFgIxgOlpYpg8aIzAh9fw4HTbFGFphrNKHRvmKHGm0wcOBc4q3rVQMF40mOdT5BwJGCbjMKAc=
+	t=1757365516; cv=none; b=cnwDgjloSq+mu9DBQ36UPmsUBLijcChrYrqANi6cSZjfxATYAcqmb3LEXOcpMAw80rE/KNoTgr/svmaR6bXE3EJTwTkC8GzX/tQAltIAot7E8BqGVwBMmwsNKtQJXK/dJAgLTiu9/GgzfR+k0SmfB2VV0KZPFAZAaXLJmHBqVOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757365496; c=relaxed/simple;
-	bh=fE6CRkz/GD9D/OsMzntzoDtOh53QN37FrWQwlKCWEls=;
+	s=arc-20240116; t=1757365516; c=relaxed/simple;
+	bh=WSuAv0FKT2XFS/Gcq1N0uVU1uFjx7nNI3LTbacLH360=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ukFxD8NkgewqYvSprz5jg893DIC4Qrd5mPZcWxD2NB48i6wgHTNaxSQCkj7NmUO+01jAj7kWYyAKQ9pWJ/ONUnXEhxc/+X68dl7xFA+qwrR3MkRJYMs/g2RWMWjVKSpbqgR5ERddsD+axnTHHsssY/6P/Eiig+HG8dHsjjmHHiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EkSh9n2E; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=fcGSbTysv/JYctcVAaof20NQwNXEvSPMJ9HmBjenBy7lQAGmgKN4nRUCzghCF5neOdhLPFK/P5xz0zCX5xDqItl6MO8fQa+3+5v7KZkfPCBgXnVyOv8ntBx9BZiDy2I02AcL/VWA2bNabgCli27Glhm5zTW3KhrTtACd9P03eZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AnYju9B5; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588FBbiu021177;
-	Mon, 8 Sep 2025 21:04:20 GMT
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Hfn2Y003804;
+	Mon, 8 Sep 2025 21:04:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
 	content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=wnAGceY0Q/IwJtGAq
-	o/3Lwiwww9USssIofTi1AyKsIY=; b=EkSh9n2EwSpBUrMd3/CqmkTuSlQW70eVB
-	zk5aj7H96jtdCqF+YUJ+rB6FdcGw02c4pYSDzZUdyLSzq0ZSOjOVbIUKX+GeCnrT
-	aHN4TL5ZBGknHflZwt5vqwNPYNWFlMboEM5xQoxL6iGN6G3cplXTqXs5DWccRuuV
-	7jjsXbxo+TDvYmtRxfBsvF2Vdy7huXJSCQIWsCKWKT4CL5xpMpUYqsqsWlGbnxvs
-	q0f1hVViJdDgntEFz2B1WNWn92CiQC22SIjaFJVyRRqrDRE7r3b8KQmX8fDktiv3
-	09Gv9eRNV5h+nsPIeEB7Ahk9QURn/7ekQay/DllEcU92whjQcx/Lw==
+	:mime-version:references:subject:to; s=pp1; bh=ReXtKKKww1lLhPa5I
+	GnlEFtq6TNJ6fpaENDSrdrrnTc=; b=AnYju9B57K3F02/BWc5H3oF0SnN+bMb+A
+	Vwl3yXBUa0my3/uQle4eccUMeXb7eaIiMBu99Mtd9hvZIemOXH6V/X9uwTL1IJCf
+	y6Qx8sv+7WkNUmnkTAWaFTxg+1NwSmYNd8IiRBu0JjFqbKgV3EQEFLVlq65fSj/x
+	aXjjw5TP68egXPX7voAK5zrCQVRBEYGk5CExF2KFA3B6b0CE0T4vp1SjbTVNoPQp
+	4Z0LpE/v7hnGzaLNQCVnqm6sC5qMdN9l4ettu3/AtKjCCGDZheZV57Vx9pPhbCqF
+	kXsiNXfvM+0a6DTh4uXVm4cju3pF87QCuyrAgJvtXkNbP8Jwso6sA==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsksum-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycrv3q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:04:20 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588L4D0e017639;
-	Mon, 8 Sep 2025 21:04:20 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsksuf-1
+	Mon, 08 Sep 2025 21:04:39 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588L1soJ014338;
+	Mon, 8 Sep 2025 21:04:38 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycrv3k-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:04:19 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588KQD5R020495;
-	Mon, 8 Sep 2025 21:04:19 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp0r36y-1
+	Mon, 08 Sep 2025 21:04:38 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588JpQEH011434;
+	Mon, 8 Sep 2025 21:04:37 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9u85uf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 21:04:19 +0000
+	Mon, 08 Sep 2025 21:04:37 +0000
 Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588L4Exh31129906
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588L4XIO44630460
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 21:04:14 GMT
+	Mon, 8 Sep 2025 21:04:33 GMT
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B9F4A20049;
-	Mon,  8 Sep 2025 21:04:14 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 983782004B;
+	Mon,  8 Sep 2025 21:04:33 +0000 (GMT)
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E338420040;
-	Mon,  8 Sep 2025 21:04:06 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 97C5320049;
+	Mon,  8 Sep 2025 21:04:25 +0000 (GMT)
 Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com.com (unknown [9.39.29.251])
 	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  8 Sep 2025 21:04:06 +0000 (GMT)
+	Mon,  8 Sep 2025 21:04:25 +0000 (GMT)
 From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
 To: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
         christophe.leroy@csgroup.eu, oleg@redhat.com, kees@kernel.org,
@@ -85,9 +85,9 @@ To: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
         mingo@kernel.org, oliver.upton@linux.dev, mark.barnett@arm.com,
         atrajeev@linux.vnet.ibm.com, rppt@kernel.org, coltonlewis@google.com,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [RFC V2 3/8] powerpc: introduce arch_enter_from_user_mode
-Date: Tue,  9 Sep 2025 02:32:31 +0530
-Message-ID: <20250908210235.137300-5-mchauras@linux.ibm.com>
+Subject: [RFC V2 4/8] powerpc: Introduce syscall exit arch functions
+Date: Tue,  9 Sep 2025 02:32:32 +0530
+Message-ID: <20250908210235.137300-6-mchauras@linux.ibm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250908210235.137300-2-mchauras@linux.ibm.com>
 References: <20250908210235.137300-2-mchauras@linux.ibm.com>
@@ -99,214 +99,332 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX/okvS8um5doc
- f6ex77ml23LL3HK2/kO8Z4Ii6t2aE7E0TK4mhNKWw+l3jUIWL93NijhSlkxa8EIdGgFAoN4/zjc
- Foy74kmhDs+G9JOzmMunqSxMhgqQDAno+pLDjVUccXmMMq13iLD2rc1JN5XZtexJlviTFw+2xnk
- PQjb6j17TI5vf0PrvZWJqFHU5nNs5WaUYj1C9YkJi1/HdOf/avhB5Q+NfkEipqFJc1hqFo2u+Vd
- 9zYSLyTld7CCl69HRvjAqaY7E0C/iOKi6V52c7ZtKoNmB3zuMO5unPB15grln7B29u2vT0gXRAM
- 6EX7kx0O1kV1dI62dnM6CX82W4HIRaTxgaedKYvCY5SjjhhHnBWhDajFh1A6EVs3sbA7ZRbBeO8
- s6GgMJPD
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68bf44d4 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=_bLvTq7iIsdV134y72cA:9
-X-Proofpoint-GUID: sl51tC8nna07i3ZnbQptd-o3AIfEGb7a
-X-Proofpoint-ORIG-GUID: Khy0z-eh1A2eIlIonVaNbcHPHmo4L6Wj
+X-Proofpoint-ORIG-GUID: 4Bj-9TghBmUhfEHrdvtFk5HtcJNUiDJw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX9Lga+NETD4/k
+ +Ttnrl13KtsiDlDSoCxDE5MPl15Ywt4DAwxRdiHzhHlqocs6F/OnUmFf12sBa+mmQygRPF+bZLG
+ dX+O6thbuaEF6+jyO18FlIHKgb9m1viZvE/k4MmHHLKw61WPGxlo0mPOxqPDV10RhVw3ljICzIo
+ 2wuO4T1OnIlj/I8gANcYt6MCm/S9xjrcA3irZHY5EUctNAK3aQ04OpthkpsoOA4lXRCRuQRvCS/
+ JHZxPX/BtpSC5reLHzBNcx3Nktxnbq3l97p5W9GaRTgiy8fQloXqwm5KOM0XtZ+2EkCSQxWrYbi
+ 8/wxLfEPC4DmqC6dRYbXmq2Cl/DU8LjBSxc+rO2PD28ahlEeGXBA7HxYTKOO/R4piM2JO2nMGi/
+ JZCMxxHN
+X-Proofpoint-GUID: _IvYmWnV2d2YD5dXPf3gkNtGR0n2yTDz
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bf44e7 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=azVfos6laG1Ide8r4ucA:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-- Implement the hook arch_enter_from_user_mode for syscall entry.
-- Move booke_load_dbcr0 from interrupt.c to interrupt.h
-
-No functional change intended.
+Introducing following functions for syscall exit
+ - arch_exit_to_user_mode_work
+ - arch_exit_to_user_mode_work_prepare
 
 Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
 ---
- arch/powerpc/include/asm/entry-common.h | 96 +++++++++++++++++++++++++
- arch/powerpc/include/asm/interrupt.h    | 23 ++++++
- arch/powerpc/kernel/interrupt.c         | 22 ------
- 3 files changed, 119 insertions(+), 22 deletions(-)
+ arch/powerpc/include/asm/entry-common.h | 46 ++++++++++++++
+ arch/powerpc/include/asm/interrupt.h    | 82 +++++++++++++++++++++++++
+ arch/powerpc/kernel/interrupt.c         | 81 ------------------------
+ arch/powerpc/kernel/signal.c            | 14 +++++
+ 4 files changed, 142 insertions(+), 81 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/entry-common.h b/arch/powerpc/include/asm/entry-common.h
-index 3af16d821d07e..49607292bf5a5 100644
+index 49607292bf5a5..adea093274279 100644
 --- a/arch/powerpc/include/asm/entry-common.h
 +++ b/arch/powerpc/include/asm/entry-common.h
-@@ -5,7 +5,103 @@
- 
- #ifdef CONFIG_GENERIC_IRQ_ENTRY
- 
-+#include <asm/cputime.h>
-+#include <asm/interrupt.h>
+@@ -8,6 +8,7 @@
+ #include <asm/cputime.h>
+ #include <asm/interrupt.h>
  #include <asm/stacktrace.h>
-+#include <asm/tm.h>
-+
-+static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs)
-+{
-+	if (IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG))
-+		BUG_ON(irq_soft_mask_return() != IRQS_ALL_DISABLED);
-+
-+	BUG_ON(regs_is_unrecoverable(regs));
-+	BUG_ON(!user_mode(regs));
-+	BUG_ON(regs_irqs_disabled(regs));
-+
-+#ifdef CONFIG_PPC_PKEY
-+	if (mmu_has_feature(MMU_FTR_PKEY)) {
-+		unsigned long amr, iamr;
-+		bool flush_needed = false;
-+		/*
-+		 * When entering from userspace we mostly have the AMR/IAMR
-+		 * different from kernel default values. Hence don't compare.
-+		 */
-+		amr = mfspr(SPRN_AMR);
-+		iamr = mfspr(SPRN_IAMR);
-+		regs->amr  = amr;
-+		regs->iamr = iamr;
-+		if (mmu_has_feature(MMU_FTR_KUAP)) {
-+			mtspr(SPRN_AMR, AMR_KUAP_BLOCKED);
-+			flush_needed = true;
-+		}
-+		if (mmu_has_feature(MMU_FTR_BOOK3S_KUEP)) {
-+			mtspr(SPRN_IAMR, AMR_KUEP_BLOCKED);
-+			flush_needed = true;
-+		}
-+		if (flush_needed)
-+			isync();
-+	} else
-+#endif
-+		kuap_assert_locked();
-+
-+	booke_restore_dbcr0();
-+
-+	account_cpu_user_entry();
-+
-+	account_stolen_time();
-+
-+	/*
-+	 * This is not required for the syscall exit path, but makes the
-+	 * stack frame look nicer. If this was initialised in the first stack
-+	 * frame, or if the unwinder was taught the first stack frame always
-+	 * returns to user with IRQS_ENABLED, this store could be avoided!
-+	 */
-+	irq_soft_mask_regs_set_state(regs, IRQS_ENABLED);
-+
-+	/*
-+	 * If system call is called with TM active, set _TIF_RESTOREALL to
-+	 * prevent RFSCV being used to return to userspace, because POWER9
-+	 * TM implementation has problems with this instruction returning to
-+	 * transactional state. Final register values are not relevant because
-+	 * the transaction will be aborted upon return anyway. Or in the case
-+	 * of unsupported_scv SIGILL fault, the return state does not much
-+	 * matter because it's an edge case.
-+	 */
-+	if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
-+			unlikely(MSR_TM_TRANSACTIONAL(regs->msr)))
-+		set_bits(_TIF_RESTOREALL, &current_thread_info()->flags);
-+
-+	/*
-+	 * If the system call was made with a transaction active, doom it and
-+	 * return without performing the system call. Unless it was an
-+	 * unsupported scv vector, in which case it's treated like an illegal
-+	 * instruction.
-+	 */
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+	if (unlikely(MSR_TM_TRANSACTIONAL(regs->msr)) &&
-+	    !trap_is_unsupported_scv(regs)) {
-+		/* Enable TM in the kernel, and disable EE (for scv) */
-+		hard_irq_disable();
-+		mtmsr(mfmsr() | MSR_TM);
-+
-+		/* tabort, this dooms the transaction, nothing else */
-+		asm volatile(".long 0x7c00071d | ((%0) << 16)"
-+				:: "r"(TM_CAUSE_SYSCALL|TM_CAUSE_PERSISTENT));
-+
-+		/*
-+		 * Userspace will never see the return value. Execution will
-+		 * resume after the tbegin. of the aborted transaction with the
-+		 * checkpointed register state. A context switch could occur
-+		 * or signal delivered to the process before resuming the
-+		 * doomed transaction context, but that should all be handled
-+		 * as expected.
-+		 */
-+		return;
-+	}
-+#endif // CONFIG_PPC_TRANSACTIONAL_MEM
-+}
-+#define arch_enter_from_user_mode arch_enter_from_user_mode
++#include <asm/switch_to.h>
+ #include <asm/tm.h>
  
+ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs)
+@@ -101,7 +102,52 @@ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs)
+ 	}
+ #endif // CONFIG_PPC_TRANSACTIONAL_MEM
+ }
++
+ #define arch_enter_from_user_mode arch_enter_from_user_mode
+ 
++static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
++		unsigned long ti_work)
++{
++	unsigned long mathflags;
++
++	if (IS_ENABLED(CONFIG_PPC_BOOK3S_64) && IS_ENABLED(CONFIG_PPC_FPU)) {
++		if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
++		    unlikely((ti_work & _TIF_RESTORE_TM))) {
++			restore_tm_state(regs);
++		} else {
++			mathflags = MSR_FP;
++
++			if (cpu_has_feature(CPU_FTR_VSX))
++				mathflags |= MSR_VEC | MSR_VSX;
++			else if (cpu_has_feature(CPU_FTR_ALTIVEC))
++				mathflags |= MSR_VEC;
++
++			/*
++			 * If userspace MSR has all available FP bits set,
++			 * then they are live and no need to restore. If not,
++			 * it means the regs were given up and restore_math
++			 * may decide to restore them (to avoid taking an FP
++			 * fault).
++			 */
++			if ((regs->msr & mathflags) != mathflags)
++				restore_math(regs);
++		}
++	}
++
++	check_return_regs_valid(regs);
++#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
++	local_paca->tm_scratch = regs->msr;
++#endif
++}
++#define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
++
++static __always_inline void arch_exit_to_user_mode(void)
++{
++	booke_load_dbcr0();
++
++	account_cpu_user_exit();
++}
++#define arch_exit_to_user_mode arch_exit_to_user_mode
++
  #endif /* CONFIG_GENERIC_IRQ_ENTRY */
  #endif /* _ASM_PPC_ENTRY_COMMON_H */
 diff --git a/arch/powerpc/include/asm/interrupt.h b/arch/powerpc/include/asm/interrupt.h
-index 56bc8113b8cde..6edf064a0fea2 100644
+index 6edf064a0fea2..c6ab286a723f2 100644
 --- a/arch/powerpc/include/asm/interrupt.h
 +++ b/arch/powerpc/include/asm/interrupt.h
-@@ -138,6 +138,29 @@ static inline void nap_adjust_return(struct pt_regs *regs)
+@@ -68,6 +68,8 @@
+ 
+ #include <linux/context_tracking.h>
+ #include <linux/hardirq.h>
++#include <linux/sched/debug.h> /* for show_regs */
++
+ #include <asm/cputime.h>
+ #include <asm/firmware.h>
+ #include <asm/ftrace.h>
+@@ -173,6 +175,86 @@ static inline void booke_restore_dbcr0(void)
  #endif
  }
  
-+static inline void booke_load_dbcr0(void)
++static inline void check_return_regs_valid(struct pt_regs *regs)
 +{
-+#ifdef CONFIG_PPC_ADV_DEBUG_REGS
-+       unsigned long dbcr0 = current->thread.debug.dbcr0;
++#ifdef CONFIG_PPC_BOOK3S_64
++	unsigned long trap, srr0, srr1;
++	static bool warned;
++	u8 *validp;
++	char *h;
 +
-+       if (likely(!(dbcr0 & DBCR0_IDM)))
-+               return;
++	if (trap_is_scv(regs))
++		return;
 +
-+       /*
-+        * Check to see if the dbcr0 register is set up to debug.
-+        * Use the internal debug mode bit to do this.
-+        */
-+       mtmsr(mfmsr() & ~MSR_DE);
-+       if (IS_ENABLED(CONFIG_PPC32)) {
-+               isync();
-+               global_dbcr0[smp_processor_id()] = mfspr(SPRN_DBCR0);
-+       }
-+       mtspr(SPRN_DBCR0, dbcr0);
-+       mtspr(SPRN_DBSR, -1);
++	trap = TRAP(regs);
++	// EE in HV mode sets HSRRs like 0xea0
++	if (cpu_has_feature(CPU_FTR_HVMODE) && trap == INTERRUPT_EXTERNAL)
++		trap = 0xea0;
++
++	switch (trap) {
++	case 0x980:
++	case INTERRUPT_H_DATA_STORAGE:
++	case 0xe20:
++	case 0xe40:
++	case INTERRUPT_HMI:
++	case 0xe80:
++	case 0xea0:
++	case INTERRUPT_H_FAC_UNAVAIL:
++	case 0x1200:
++	case 0x1500:
++	case 0x1600:
++	case 0x1800:
++		validp = &local_paca->hsrr_valid;
++		if (!READ_ONCE(*validp))
++			return;
++
++		srr0 = mfspr(SPRN_HSRR0);
++		srr1 = mfspr(SPRN_HSRR1);
++		h = "H";
++
++		break;
++	default:
++		validp = &local_paca->srr_valid;
++		if (!READ_ONCE(*validp))
++			return;
++
++		srr0 = mfspr(SPRN_SRR0);
++		srr1 = mfspr(SPRN_SRR1);
++		h = "";
++		break;
++	}
++
++	if (srr0 == regs->nip && srr1 == regs->msr)
++		return;
++
++	/*
++	 * A NMI / soft-NMI interrupt may have come in after we found
++	 * srr_valid and before the SRRs are loaded. The interrupt then
++	 * comes in and clobbers SRRs and clears srr_valid. Then we load
++	 * the SRRs here and test them above and find they don't match.
++	 *
++	 * Test validity again after that, to catch such false positives.
++	 *
++	 * This test in general will have some window for false negatives
++	 * and may not catch and fix all such cases if an NMI comes in
++	 * later and clobbers SRRs without clearing srr_valid, but hopefully
++	 * such things will get caught most of the time, statistically
++	 * enough to be able to get a warning out.
++	 */
++	if (!READ_ONCE(*validp))
++		return;
++
++	if (!data_race(warned)) {
++		data_race(warned = true);
++		printk("%sSRR0 was: %lx should be: %lx\n", h, srr0, regs->nip);
++		printk("%sSRR1 was: %lx should be: %lx\n", h, srr1, regs->msr);
++		show_regs(regs);
++	}
++
++	WRITE_ONCE(*validp, 0); /* fixup */
 +#endif
 +}
 +
-+
- static inline void booke_restore_dbcr0(void)
+ static inline void interrupt_enter_prepare(struct pt_regs *regs)
  {
- #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+ #ifdef CONFIG_PPC64
 diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index 0d8fd47049a19..2a09ac5dabd62 100644
+index 2a09ac5dabd62..f53d432f60870 100644
 --- a/arch/powerpc/kernel/interrupt.c
 +++ b/arch/powerpc/kernel/interrupt.c
-@@ -78,28 +78,6 @@ static notrace __always_inline bool prep_irq_for_enabled_exit(bool restartable)
+@@ -4,7 +4,6 @@
+ #include <linux/err.h>
+ #include <linux/compat.h>
+ #include <linux/rseq.h>
+-#include <linux/sched/debug.h> /* for show_regs */
+ 
+ #include <asm/kup.h>
+ #include <asm/cputime.h>
+@@ -78,86 +77,6 @@ static notrace __always_inline bool prep_irq_for_enabled_exit(bool restartable)
  	return true;
  }
  
--static notrace void booke_load_dbcr0(void)
+-static notrace void check_return_regs_valid(struct pt_regs *regs)
 -{
--#ifdef CONFIG_PPC_ADV_DEBUG_REGS
--	unsigned long dbcr0 = current->thread.debug.dbcr0;
+-#ifdef CONFIG_PPC_BOOK3S_64
+-	unsigned long trap, srr0, srr1;
+-	static bool warned;
+-	u8 *validp;
+-	char *h;
 -
--	if (likely(!(dbcr0 & DBCR0_IDM)))
+-	if (trap_is_scv(regs))
+-		return;
+-
+-	trap = TRAP(regs);
+-	// EE in HV mode sets HSRRs like 0xea0
+-	if (cpu_has_feature(CPU_FTR_HVMODE) && trap == INTERRUPT_EXTERNAL)
+-		trap = 0xea0;
+-
+-	switch (trap) {
+-	case 0x980:
+-	case INTERRUPT_H_DATA_STORAGE:
+-	case 0xe20:
+-	case 0xe40:
+-	case INTERRUPT_HMI:
+-	case 0xe80:
+-	case 0xea0:
+-	case INTERRUPT_H_FAC_UNAVAIL:
+-	case 0x1200:
+-	case 0x1500:
+-	case 0x1600:
+-	case 0x1800:
+-		validp = &local_paca->hsrr_valid;
+-		if (!READ_ONCE(*validp))
+-			return;
+-
+-		srr0 = mfspr(SPRN_HSRR0);
+-		srr1 = mfspr(SPRN_HSRR1);
+-		h = "H";
+-
+-		break;
+-	default:
+-		validp = &local_paca->srr_valid;
+-		if (!READ_ONCE(*validp))
+-			return;
+-
+-		srr0 = mfspr(SPRN_SRR0);
+-		srr1 = mfspr(SPRN_SRR1);
+-		h = "";
+-		break;
+-	}
+-
+-	if (srr0 == regs->nip && srr1 == regs->msr)
 -		return;
 -
 -	/*
--	 * Check to see if the dbcr0 register is set up to debug.
--	 * Use the internal debug mode bit to do this.
+-	 * A NMI / soft-NMI interrupt may have come in after we found
+-	 * srr_valid and before the SRRs are loaded. The interrupt then
+-	 * comes in and clobbers SRRs and clears srr_valid. Then we load
+-	 * the SRRs here and test them above and find they don't match.
+-	 *
+-	 * Test validity again after that, to catch such false positives.
+-	 *
+-	 * This test in general will have some window for false negatives
+-	 * and may not catch and fix all such cases if an NMI comes in
+-	 * later and clobbers SRRs without clearing srr_valid, but hopefully
+-	 * such things will get caught most of the time, statistically
+-	 * enough to be able to get a warning out.
 -	 */
--	mtmsr(mfmsr() & ~MSR_DE);
--	if (IS_ENABLED(CONFIG_PPC32)) {
--		isync();
--		global_dbcr0[smp_processor_id()] = mfspr(SPRN_DBCR0);
+-	if (!READ_ONCE(*validp))
+-		return;
+-
+-	if (!data_race(warned)) {
+-		data_race(warned = true);
+-		printk("%sSRR0 was: %lx should be: %lx\n", h, srr0, regs->nip);
+-		printk("%sSRR1 was: %lx should be: %lx\n", h, srr1, regs->msr);
+-		show_regs(regs);
 -	}
--	mtspr(SPRN_DBCR0, dbcr0);
--	mtspr(SPRN_DBSR, -1);
+-
+-	WRITE_ONCE(*validp, 0); /* fixup */
 -#endif
 -}
 -
- static notrace void check_return_regs_valid(struct pt_regs *regs)
+ static notrace unsigned long
+ interrupt_exit_user_prepare_main(unsigned long ret, struct pt_regs *regs)
  {
- #ifdef CONFIG_PPC_BOOK3S_64
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index aa17e62f37547..719930cf4ae1f 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -22,6 +22,11 @@
+ 
+ #include "signal.h"
+ 
++/* This will be removed */
++#ifdef CONFIG_GENERIC_ENTRY
++#include <linux/entry-common.h>
++#endif /* CONFIG_GENERIC_ENTRY */
++
+ #ifdef CONFIG_VSX
+ unsigned long copy_fpr_to_user(void __user *to,
+ 			       struct task_struct *task)
+@@ -368,3 +373,12 @@ void signal_fault(struct task_struct *tsk, struct pt_regs *regs,
+ 		printk_ratelimited(regs->msr & MSR_64BIT ? fm64 : fm32, tsk->comm,
+ 				   task_pid_nr(tsk), where, ptr, regs->nip, regs->link);
+ }
++
++#ifdef CONFIG_GENERIC_ENTRY
++void arch_do_signal_or_restart(struct pt_regs *regs)
++{
++	BUG_ON(regs != current->thread.regs);
++	local_paca->generic_fw_flags |= GFW_RESTORE_ALL;
++	do_signal(current);
++}
++#endif /* CONFIG_GENERIC_ENTRY */
 -- 
 2.51.0
 
