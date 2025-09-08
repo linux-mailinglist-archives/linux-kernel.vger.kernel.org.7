@@ -1,294 +1,125 @@
-Return-Path: <linux-kernel+bounces-805024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A94B4831D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0392B48320
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CC117A06E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749A617AE19
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583DE21C9E1;
-	Mon,  8 Sep 2025 04:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F8D21D00E;
+	Mon,  8 Sep 2025 04:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HMWSqTjs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ee2aa3k0"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0117136658
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E341D21B19D;
+	Mon,  8 Sep 2025 04:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757304851; cv=none; b=Hy5p+Cyiw4oZSsvS2BAxIu2Tg932MmexFJdszIVT03oEWoaUgg96oghECDs80/7+RptyxPvsBngbioWyE6TYoK1sFsZdcC4suc2zyICz08vMINRUbDnYr1dBJR5DqvEDew3c9LDIve+2tHjw5gahMmH6N6yUMubrq8eji7Sb14U=
+	t=1757304893; cv=none; b=aLpICQxtNVWI5rkExzd4St0/CD816gy7xbd5YHuA53cvXtpm0Gsgmsy41Lv3sxlkyDo560BGlKFbWIkYCR1SsOtUP2LnKH+g3P6P1QEGMTUlDVLl5H/Yw5mJnEXAnOrYkAJkAjTuR14cu3R3MCQsX69/EMs+EYFB2U6R0t4NNQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757304851; c=relaxed/simple;
-	bh=pl18FtxmRQkEuk8/U2WKz5seSMT0xb0I2q75aWzNVjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bN+m3rhNCj7FaxT4M0D2pgjiSRe5K/TM0Hwxc/gTsFPUhxKp1mRmCXnFvb57Zq82PgD/INQ8CZLP8kYtHirJQBy1moDeRyR1tkELerZK8uIOVj/7nIdvCjZdLVYwtghKwr25ovv14V6KCvRxfnzoM8iTUlgUZtmN/uqgF90cS08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HMWSqTjs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757304848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xJsCe6eTTTGDK/V3oOGv4fFA8SBbBbHuaXgk/m4NaJ0=;
-	b=HMWSqTjsiZM0MnGz6HyrdAWFmkzjc7WJpEbmRLkJZDvRtN+vSHWH6yTYE5wzIC5Ii92wTI
-	d8Sz47QhE1M6Xv0VBfu+YN4EkiALuez8vRT4/HoC6OCakDxJW6hwuGh3FBwqqcMghNq3+9
-	Tx8PipirggEZ5DKL171Oate6YvOnSds=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-133-L3GKh0AYMCu8NlhqqFbThg-1; Mon, 08 Sep 2025 00:14:07 -0400
-X-MC-Unique: L3GKh0AYMCu8NlhqqFbThg-1
-X-Mimecast-MFC-AGG-ID: L3GKh0AYMCu8NlhqqFbThg_1757304846
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dcfc6558cso27794025e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 21:14:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757304846; x=1757909646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJsCe6eTTTGDK/V3oOGv4fFA8SBbBbHuaXgk/m4NaJ0=;
-        b=q7dEpl3RmQXiDaGE812k7mLW62Rkomb9KgtWULXOosb0yrkYff0RXuxxFss4v3LfTc
-         3EtT9y/2Xp0DCX21Ar0Zfr+y5uMwb26JYyT+Ije6Zl4NM9B+HpWnoHCc2CGHqI9XeUmk
-         dxiJbPfU0Zn9jTjxnosK1Xyck8cXZx7pbyvzdzUvUEaR0pDlXpIpk8J9bJMmLYtREsRj
-         iwXxnJwZ9t4Z7y8BkG6RJq6Pad3oxgevkETPqu12to0wnKvtEn/hOwotGYzPhRUHKQ7U
-         UMRaGRDe3VMSsGcmb5JTMVPedUt5wPjhYUc8QHrVbZFJo/RuNYAcBLhtGKJxdDYKY8rx
-         pkVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaCM7OHdTqsaPbQwFX9sPb0towUysHYl2d+MMzQa0Yxi8Tfq2HDA/lp3DMnMT+VFhFUM4W6q0jO9Y4dkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqodhvf90SjtVfkcmx8DFbnxdbmAMUJhinhiYTEtd5KAc5O/MC
-	bsEZyMjl51RfQlm0AYiQgJzltk7mtWzw8jY5Kv/P4wK/A1iIvyCFJfHJEHbWp6OvSejMHXqe0Og
-	2f5HOFGofjcp6MhUw7GcruAwkDxs5kCxEzTTsKkhHUcpl57Q03U+mJu0s8ZtYuV5q
-X-Gm-Gg: ASbGncsFdyBr55uurl/FaYmt3GtyoEzQt8KE9a8aousw41X9yPGsVRak6N6+iyzWEoQ
-	aIboWaohWbsszu3Sxs9oHbkaLKMH/vQemq70DmO02y/Dz+uQP5Ue2WidD9rGpmN5+hcweyemYCx
-	6xsRdUpibYg43vohy4lB96TLEibfhELs11EVeOnGVAvWQql8UwVqT/VXUMZyPREjtqNnu9S2NMy
-	luSi/kifFtksA1f8JNal4f9QnwR63Ei7ILHpt52kWLIn54bg4EwAY9NevVyqJ64WKLe+d5VER2f
-	TZnlxbrUseQRsaDFPrdnRB4jlN4w4RwITqS2QS97yK4FI49gtprvXRJqRIFU9fkUXw==
-X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr52603685e9.15.1757304845805;
-        Sun, 07 Sep 2025 21:14:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFutUyjnY3i7VNpdhUwrQ7pqW1CmodIEYjJPgtpuIcj6TCRCx7EUrnPJPxT8ek+IEd6gcbzjw==
-X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr52603475e9.15.1757304845375;
-        Sun, 07 Sep 2025 21:14:05 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd4affb6bsm142588705e9.1.2025.09.07.21.14.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 21:14:04 -0700 (PDT)
-Message-ID: <e6b795de-f522-4952-9ec3-00a2359c43a9@redhat.com>
-Date: Mon, 8 Sep 2025 07:14:02 +0300
+	s=arc-20240116; t=1757304893; c=relaxed/simple;
+	bh=y6SgL0SvA8lYYyF90rTpTwKWfC2+R7sLAcCo0vATj4w=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=SlFtM5MJJ39laLx0R3Rzg8LylTDVOUsaRGpuAOjiMwx62sdFAtv374GQDCyZ0WYKBdOsYisZzk/9QPRUShtB5CgLlUu8lkt7xsQ5jwk5nlOOtlJ4m1tjzdZAHOq54B5K7g+xgxafLhBYhEEMGBdD4tA8VMPsZg405yvG9Yu8+00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ee2aa3k0; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757304891; x=1788840891;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=y6SgL0SvA8lYYyF90rTpTwKWfC2+R7sLAcCo0vATj4w=;
+  b=Ee2aa3k0TOOSXN/MOU1n7wskHt92aHadEVqelv3CihEq9PdanRAHSdhX
+   wAs7Ej9YPeF6PbZXNgWFl41T7RU/lgKSe3RiT1HnRw8kS+BPS9FqiQuH7
+   73WHN3IqvwfWOje6qleqBFLlrfYavpgyW4tKuS6sL7AFm8Lxu9ZaY4l2J
+   IrUTMei0GkLeCYxhtwGx3V5A5j2S9TKYmxSqV8HqtW9xZ1IsUR0Kv8KiD
+   wxZ+ON30xm2JWtCNMssRsBRpVjteUh7J/4y0KzOZB4c4ro/PQ6RGay8rW
+   nWQSPGTakP+QHIhlPHecLegbxB4EMRv9mMuUjMTOo+YuPuqdnoZM4ZhQF
+   w==;
+X-CSE-ConnectionGUID: YPpoJm/ATHeRsyPuBZAjnw==
+X-CSE-MsgGUID: 2h/b4mq/R1mRAd5Ns6IGCQ==
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="213580662"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Sep 2025 21:14:43 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Sun, 7 Sep 2025 21:14:24 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Sun, 7 Sep 2025 21:14:19 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v2 0/5] Add QSPI support for sam9x7 and sama7d65 SoCs
+Date: Mon, 8 Sep 2025 09:44:15 +0530
+Message-ID: <20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 05/15] mm/migrate_device: handle partially mapped folios
- during collection
-To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-6-balbirs@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <20250908000448.180088-6-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABdYvmgC/3WMQQ7CIBBFr9LMWsxAiw2uvIfpAnEqs2hpwRBNw
+ 93FLty5fD//vQ0SRaYE52aDSJkTh7mCOjTgvJ0fJPheGRQqjQaVmNjF4DwvYk0LC7r1znRSS9c
+ SVGmJNPJrD16Hyp7TM8T33s/yu/5NZSlQtL0dtbHY4clefoejCxMMpZQPkppai7AAAAA=
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+CC: <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Dharma Balasubiramani <dharma.b@microchip.com>, Varshini Rajendran
+	<varshini.rajendran@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757304860; l=1238;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=y6SgL0SvA8lYYyF90rTpTwKWfC2+R7sLAcCo0vATj4w=;
+ b=4pCMZOglzoprKTucas/IJXmT44MJpXJYol6/3hHpS0nGui4xFpvPjSPDGTnT8aYDaS1pgMwTv
+ wwLOyEqU7LoBxHT2D73t1pOgRMt0qlQg2ga5/lx5jfQuOKjSfO4jciT
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-Hi,
+This patch series adds support for SAM9X7 and sama7d65 QSPI controller
+along with the SoC-specific capabilities.
 
-On 9/8/25 03:04, Balbir Singh wrote:
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v2:
+- Fix typo sam9x75 to sam9x7 in commit message.
+- Fix subject prefix for dt-bindings.
+- Retain original author for some commits that changed during squashing and
+  resolving merge conflicts from internal tree.
+- Link to v1: https://lore.kernel.org/r/20250902-microchip-qspi-v1-0-37af59a0406a@microchip.com
 
-> Extend migrate_vma_collect_pmd() to handle partially mapped large
-> folios that require splitting before migration can proceed.
->
-> During PTE walk in the collection phase, if a large folio is only
-> partially mapped in the migration range, it must be split to ensure
-> the folio is correctly migrated.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
->
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> ---
->  mm/migrate_device.c | 94 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 94 insertions(+)
->
-> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> index abd9f6850db6..f45ef182287d 100644
-> --- a/mm/migrate_device.c
-> +++ b/mm/migrate_device.c
-> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
->  	return 0;
->  }
->  
-> +/**
-> + * migrate_vma_split_folio() - Helper function to split a THP folio
-> + * @folio: the folio to split
-> + * @fault_page: struct page associated with the fault if any
-> + *
-> + * Returns 0 on success
-> + */
-> +static int migrate_vma_split_folio(struct folio *folio,
-> +				   struct page *fault_page)
-> +{
-> +	int ret;
-> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +	struct folio *new_fault_folio = NULL;
-> +
-> +	if (folio != fault_folio) {
-> +		folio_get(folio);
-> +		folio_lock(folio);
-> +	}
-> +
-> +	ret = split_folio(folio);
-> +	if (ret) {
-> +		if (folio != fault_folio) {
-> +			folio_unlock(folio);
-> +			folio_put(folio);
-> +		}
-> +		return ret;
-> +	}
-> +
-> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +
-> +	/*
-> +	 * Ensure the lock is held on the correct
-> +	 * folio after the split
-> +	 */
-> +	if (!new_fault_folio) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	} else if (folio != new_fault_folio) {
-> +		folio_get(new_fault_folio);
-> +		folio_lock(new_fault_folio);
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  				   unsigned long start,
->  				   unsigned long end,
-> @@ -136,6 +183,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			 * page table entry. Other special swap entries are not
->  			 * migratable, and we ignore regular swapped page.
->  			 */
-> +			struct folio *folio;
-> +
->  			entry = pte_to_swp_entry(pte);
->  			if (!is_device_private_entry(entry))
->  				goto next;
-> @@ -147,6 +196,29 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			    pgmap->owner != migrate->pgmap_owner)
->  				goto next;
->  
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				int ret;
-> +
-> +				/*
-> +				 * The reason for finding pmd present with a
-> +				 * large folio for the pte is partial unmaps.
-> +				 * Split the folio now for the migration to be
-> +				 * handled correctly
-> +				 */
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
-> +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
-> +				addr = start;
-> +				goto again;
-> +			}
-> +
->  			mpfn = migrate_pfn(page_to_pfn(page)) |
->  					MIGRATE_PFN_MIGRATE;
->  			if (is_writable_device_private_entry(entry))
-> @@ -171,6 +243,28 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  					pgmap->owner != migrate->pgmap_owner)
->  					goto next;
->  			}
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				int ret;
-> +
-> +				/*
-> +				 * The reason for finding pmd present with a
-> +				 * large folio for the pte is partial unmaps.
-> +				 * Split the folio now for the migration to be
-> +				 * handled correctly
-> +				 */
+---
+Dharma Balasubiramani (2):
+      dt-bindings: spi: Document sam9x7 QSPI
+      dt-bindings: spi: Define sama7d65 QSPI
 
-This comment is still not changed, there are other reasons for pte mapped large pages. 
-Also now all the mTHPs are splitted, which is change of behavior (currently ignored)
-for order < PMD_ORDER.
+Varshini Rajendran (3):
+      spi: atmel-quadspi: add padcalib, 2xgclk, and dllon capabilities
+      spi: atmel-quadspi: add support for SAM9X7 QSPI controller
+      spi: atmel-quadspi: Add support for sama7d65 QSPI
 
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
-> +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
-> +				addr = start;
-> +				goto again;
-> +			}
->  			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
->  			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
->  		}
+ .../devicetree/bindings/spi/atmel,quadspi.yaml     |   3 +
+ drivers/spi/atmel-quadspi.c                        | 134 ++++++++++++++++-----
+ 2 files changed, 105 insertions(+), 32 deletions(-)
+---
+base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
+change-id: 20250902-microchip-qspi-eb7c94151c3e
 
---Mika
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
 
 
