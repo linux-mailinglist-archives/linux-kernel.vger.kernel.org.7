@@ -1,139 +1,196 @@
-Return-Path: <linux-kernel+bounces-806486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F962B497AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:56:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F661B4985E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6377B7A96DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7570F1B26D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE8B3128AB;
-	Mon,  8 Sep 2025 17:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2090314B6E;
+	Mon,  8 Sep 2025 18:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="M7maAJR2"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="oTwcWaK2"
+Received: from rusty.tulip.relay.mailchannels.net (rusty.tulip.relay.mailchannels.net [23.83.218.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B212919A288
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354146; cv=none; b=GZEzNFX/UNDlYRNNUcGtrgor8WOsVvUDD36xy8lLpqb52KZPOf7tD+iwBC9xggETGc+6ErZJ844eWxpbrJj6xpR+V6DQa15IPC60kvHOlW1oHDsraQLSjol3/jLs0WH1eTYfLeIi63/RRekoBIVn21QYxyjNLdK35TS07dYe3HU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354146; c=relaxed/simple;
-	bh=luD0W/bhW3JJu9+vgqpwc7IpxwiGIuat3uX0AMFM0vc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA343238C03
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.252
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757356399; cv=pass; b=Q6QKZ6tTcq612YZf/MYbWturaCUuVfbTsxtmTNrVwb4l2WxOt4/7lN70YG5uYhXVo7/Mb6KpnRy5U3CyulB65HIflPe9bv+sRPMVqSeSM1cipWCbPmQ2ZNfYVfOdq2SddnGGxJiEP2Awm7DdgydNz/4lBQOtaPW3yB3Zto7KQhw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757356399; c=relaxed/simple;
+	bh=P/J8Q5DYQYuStvC6Bc73MAqlu8BUvqjwHti8m+/JaQQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mh6XwKSXHnY1xhF4VWcrVIYGBBkKd6lgkhpLUPFoYpV1mkv5O9OeWUcIozsq+AibgL6rV96rUa6KsuHQtcZpTpw3UFcKK4N4v95wfPezAh5gJS2tlUWPRKpsh6/culnRI3Q4qyBdTO8gCV134ccJ3y0WvP3/2UGvBzBTTYNz27k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=M7maAJR2; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-73f29c5a4abso22011026d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1757354143; x=1757958943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngnzmJDONOgUG1rwcnXYUKxxVO5TVbhQcQIkSu6YQMY=;
-        b=M7maAJR2sne4PX3GHo1wiYCT8P/iShBnAh3rop2WTPG3yasONOX9wQY0tjbFhQ69+c
-         s1x/l90MD3yzVz+av5UB/86HKABH5ebk4gfj0lYP67cGuH9/4OiWZ5WX1zKjOdHNdr/C
-         K9f8EbDoLZ4y0zIc3n+KzhOvOQZ8MHn4gkHLUDIXWjuk5lP/PAy7p3RX9e8YGhAVPlCA
-         jrCQqFy47feY7oEr5gd8s7s/cMMHk3mpEX9VczXpR8Dm2lkUDsqR1BkNfSnsY0NSDs2e
-         dCNk3ogZ9STfDB0L+VS98URLfMPMSOP/8yWadxFcZDhmf23hO5uguL+i9HLIhHtaXtO1
-         afCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757354143; x=1757958943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngnzmJDONOgUG1rwcnXYUKxxVO5TVbhQcQIkSu6YQMY=;
-        b=U/THTpWCx1gYHBEKmwRAIf++v5iUomfbVFQ1IY6jRizTggGWZ2Mpn+ZMPK172svRrY
-         +3lUPsaVA/0IE9KWmjorvB9gE5i+8DQkb4sZmlNN5fsgR4rYtH1/VuS2dFZI9xY8DCKq
-         wOinAt3qGbPdJJGTrPNghMmkdWHwaNtVLTWuzLWOH1khK8M/q72pT6HnXKSucJnQHl6a
-         mbLFKK+ms/H0g1IjefRdEBOpZqZStzPdxK5t/dxR/41OoG1rD8OZt/2nGeM3PeXlBEpO
-         TnbWYMpwNDPQH7GUwUVG1HgpkPIGyMbbIE/Kjpyp3cbz12EHKlmtaR0BmtNYibp4PHmE
-         Z/qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiJphL0vTMYVjXDiKXAWsWTLaVrp+/AHprpQxFdJX7ivSiWb6Y0+sKXZY8Yv6DS16IvPS3+uAyCB4kyxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmcS3ZgbW1908686MOnBV+kFbU3m5zPSZHAuuHkcST15F7h7dn
-	hUWnluQMYL2NNb4i6lPzp4/nWPQ68JEeAhZnx1BhqHsqIO0g677kKetgPj7c1M/2TEM=
-X-Gm-Gg: ASbGncsysrzY4k1w9y3NyR7ZPfYCGUHMYmog7kfA67zlCaNiL20QjGM2L4eRLPZLjWS
-	tHd3vR/wSPXEFxRL3xQwQXQjfnNjDJNRBv31EZJIx5wWRO4Vf8NTswmDq1vVamnzcRLJEJRefMp
-	5010T6takQXVavEFWVVqpdR9HEX5TXrjeLvb+41JmD+lA1eMIju4XSTfqsFBFitn4BAUX6jUPaF
-	XkW6HwxjXEvYIrLpNtsy4xJ+nFOTzWt1xm2gYStQwRDPn1vhDmlCMB83MyfzzxavfpKsuK457hH
-	iWYVf/c2Z6Mmx9Calxqjb/kBRVGGLNh0jSxCcgGP9lhAmONI9J7v+d47maMfXOnX7dTzzN5kjT9
-	UHYhnMBXNs+Z6GSOr4AtBhbC2xz5oDeeVhoNHBsWj50bpV+PMnDXVEQCqGFM1g1/GpGOy
-X-Google-Smtp-Source: AGHT+IE00kJwyXYY2ZwvWXqThymzS6C5sZyc2P+J2HPIEW9i7tRHc/Ygwlxj4g6UeWvVOGWXsJ+oNg==
-X-Received: by 2002:a05:6214:f06:b0:728:69f2:dbc8 with SMTP id 6a1803df08f44-7393f9861e1mr86467006d6.46.1757354143607;
-        Mon, 08 Sep 2025 10:55:43 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-721cf6d6cffsm119699136d6.54.2025.09.08.10.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:55:43 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uvg5e-00000003M4i-2UqZ;
-	Mon, 08 Sep 2025 14:55:42 -0300
-Date: Mon, 8 Sep 2025 14:55:42 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Steven Price <steven.price@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-Message-ID: <20250908175542.GB699673@ziepe.ca>
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com>
- <yq5aikht1e0z.fsf@kernel.org>
- <aL7AoPKKKAR8285O@arm.com>
- <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
- <20250908145845.GA699673@ziepe.ca>
- <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsv0eXQzUA4uNDL3lVza3DdN3+VpqRH1yJDc1LYUK6HVS507PS7Hk/6VXAj+wul5kP+ZlGUWRuf0RjjjWw/7ZfojNs6uzrbhZuJcr4tkHlXnMkaVzltiFC01HpykEucCD/AGNO3IKAIecrHez3N12aonA/6fOcHmZZveKnr9FWA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com; spf=pass smtp.mailfrom=templeofstupid.com; dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b=oTwcWaK2; arc=pass smtp.client-ip=23.83.218.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id A5EF24E65BE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:56:19 +0000 (UTC)
+Received: from pdx1-sub0-mail-a204.dreamhost.com (trex-blue-9.trex.outbound.svc.cluster.local [100.106.201.146])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 494964E6514
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:56:19 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757354179; a=rsa-sha256;
+	cv=none;
+	b=mJXJPboKY7aNClNghZMbXlvt0pTNjqaCHHH9ji+BwEW7h7SRi8AhqelB3o+unz0B0h5xjn
+	BBAGoKMq8QH9Rijr32+/fyQYE22+/4USTwg9x/EnH9+nL44gWTsppZdOnYYThoEeEfGFJp
+	q7W8SxLsaUDmu5O5lrQ/1UARdinvv7IbR1eEq4DzfkM9nD3L7nEISjg/KxH166XECEeUbM
+	VE53YmbFtWftSupgGsjzjE1iyq3sWM9MnhnCHVNe/uviB40tZdUfUW5DX8lhDfy+jADRGA
+	UhSsw9uh4uIROrFoqNlznt+mX1LAJVmlVjHrOEkhevtBttulKum1QQ6k9fi50A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1757354179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=AjGVOBGP1+0JyYOyX6xCbtYcMOxH1qnoHVFbeUfubMo=;
+	b=xoDNf5PyyUn+LP3msgWk83Ydq/I9kt9rDVf/o+4u9/6ainAgPjTT9L90tonJmQ/a90O6Nw
+	dK3PGCFpb3AN2d8+a+Fxol/9JJJA2MSjmJ0TapCcgi8jSpqaLkZG6aBCejioHGx6kxRiWV
+	m0Zl6KShqrFZBBsEqwdUeOoc9yqnRB3sX0aAm1Y4WNHWMz1FfjcL7Fm+lHEQhXLLiUUgHw
+	FBG4pIZi/k0jxSSqlskU4bVao6XAKLDxUmN2+Hsu0KXob8zHO9jLkkyzuei0PfgGM+9mte
+	RVltNWT8eeykEPtCIw5bJQccEWPUWR65Cd0FSm5KUGij8a/yfEPUIexAhT5Yuw==
+ARC-Authentication-Results: i=1;
+	rspamd-8499c4bbdc-bvmt7;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Shade-Broad: 35a2e29323d4a634_1757354179518_2629374076
+X-MC-Loop-Signature: 1757354179518:3675282089
+X-MC-Ingress-Time: 1757354179518
+Received: from pdx1-sub0-mail-a204.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.106.201.146 (trex/7.1.3);
+	Mon, 08 Sep 2025 17:56:19 +0000
+Received: from kmjvbox.templeofstupid.com (c-73-70-109-47.hsd1.ca.comcast.net [73.70.109.47])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kjlx@templeofstupid.com)
+	by pdx1-sub0-mail-a204.dreamhost.com (Postfix) with ESMTPSA id 4cLF4f2lKczjd
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+	s=dreamhost; t=1757354178;
+	bh=AjGVOBGP1+0JyYOyX6xCbtYcMOxH1qnoHVFbeUfubMo=;
+	h=Date:From:To:Cc:Subject:Content-Type:Content-Transfer-Encoding;
+	b=oTwcWaK21N5kITtrVxD5p6EZojXyCi8T1Zfja/XVTHa987hjNMb8EDK6gIA3cm2/c
+	 KUdFQ6eXXe9vgt9EduoqzVYEPmjgvzIl7ymoJ/nEpsZCQ1lbka+GfFASqtQK4srD7l
+	 qSz0RwwyfCld76fhJ3hzpIbZijA4ecCbc/fvaPCJgZMrKStlFMcR8oq6M86lqHFfF/
+	 3D7L/kEXbQkgdO652dsZ7g0hn9fxj9WQt6GIylRetxmJ/w47jIsvfA7T0T66WmRvB3
+	 IbeOny7EgRBE1Sz1aLxfG1AjW+H1f6dFJ1dBr4EJi11c16T44PXAZOO/tetNLO5amg
+	 QEyVg/NCHxmbQ==
+Received: from johansen (uid 1000)
+	(envelope-from kjlx@templeofstupid.com)
+	id e0263
+	by kmjvbox.templeofstupid.com (DragonFly Mail Agent v0.13);
+	Mon, 08 Sep 2025 10:56:16 -0700
+Date: Mon, 8 Sep 2025 10:56:16 -0700
+From: Krister Johansen <kjlx@templeofstupid.com>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	netdev@vger.kernel.org, mptcp@lists.linux.dev,
+	linux-kernel@vger.kernel.org, David Reaver <me@davidreaver.com>
+Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
+ SOCK_KEEPOPEN
+Message-ID: <aL8YwEx1dxa93lpR@templeofstupid.com>
+References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
+ <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
+ <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
+ <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
+ <aL8RoSniweGJgm3h@templeofstupid.com>
+ <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org>
+ <aL8WNpl8ExODg20q@templeofstupid.com>
+ <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org>
 
-On Mon, Sep 08, 2025 at 04:39:13PM +0100, Steven Price wrote:
+On Mon, Sep 08, 2025 at 07:51:10PM +0200, Matthieu Baerts wrote:
+> 8 Sept 2025 19:45:32 Krister Johansen <kjlx@templeofstupid.com>:
+> 
+> > On Mon, Sep 08, 2025 at 07:31:43PM +0200, Matthieu Baerts wrote:
+> >> Hi Krister,
+> >>
+> >> On 08/09/2025 19:25, Krister Johansen wrote:
+> >>> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
+> >>>> Hi Geliang,
+> >>>>
+> >>>> On 07/09/2025 02:51, Geliang Tang wrote:
+> >>>>> Hi Matt,
+> >>>>>
+> >>>>> On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
+> >>>>>> …
+> >>>>>
+> >>>>> nit:
+> >>>>>
+> >>>>> I just noticed his patch breaks 'Reverse X-Mas Tree' order in
+> >>>>> sync_socket_options(). If you think any changes are needed, please
+> >>>>> update this when you re-send it.
+> >>>>
+> >>>> Sure, I can do the modification and send it with other fixes we have.
+> >>>
+> >>> Thanks for the reviews, Geliang and Matt.  If you'd like me to fix the
+> >>> formatting up and send a v2, I'm happy to do that as well.  Just let me
+> >>> know.
+> >>
+> >> I was going to apply this diff:
+> >>
+> >>> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
+> >>> index 13108e9f982b..2abe6f1e9940 100644
+> >>> --- a/net/mptcp/sockopt.c
+> >>> +++ b/net/mptcp/sockopt.c
+> >>> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_sock *msk, struct sock *ssk)
+> >>> {
+> >>>         static const unsigned int tx_rx_locks = SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
+> >>>         struct sock *sk = (struct sock *)msk;
+> >>> -       int kaval = !!sock_flag(sk, SOCK_KEEPOPEN);
+> >>> +       bool keep_open;
+> >>>
+> >>> +       keep_open = sock_flag(sk, SOCK_KEEPOPEN);
+> >>>         if (ssk->sk_prot->keepalive)
+> >>> -               ssk->sk_prot->keepalive(ssk, kaval);
+> >>> -       sock_valbool_flag(ssk, SOCK_KEEPOPEN, kaval);
+> >>> +               ssk->sk_prot->keepalive(ssk, keep_open);
+> >>> +       sock_valbool_flag(ssk, SOCK_KEEPOPEN, keep_open);
+> >>>
+> >>>         ssk->sk_priority = sk->sk_priority;
+> >>>         ssk->sk_bound_dev_if = sk->sk_bound_dev_if;
+> >>
+> >> (sock_flag() returns a bool, and 'keep_open' is maybe clearer)
+> >>
+> >> But up to you, I really don't mind if you prefer to send the v2 by
+> >> yourself, just let me know.
+> >
+> > Thanks, I'll go ahead and amend as you suggest and then send a v2.
+> 
+> Great, thanks.
+> 
+> While at it, please use [PATCH net] as prefix.
 
-> guest_memfd provided a nice way around this - a dedicated allocator
-> which doesn't allow mmap(). This meant we don't need to worry about user
-> space handing protected memory into the kernel. It's now getting
-> extended to support mmap() but only when shared, and there was a lot of
-> discussion about how to ensure that there are no mmap regions when
-> converting memory back to private.
+Thanks, will do.  May I preserve the Reveiwed-By tags from the v1, or
+would you like to review again?
 
-Yes, you probably have to loose mmap() support in this scenario unless
-the kernel has lot more work to make things like O_DIRECT aware of
-this sub-page safety requirement.
-
-But, IMHO, this is an optimization argument. Unaligned smaller buffers
-can memory copy in the VMM using read/write on the memfd. That is safe
-on ARM.
-
-I think the need should be made clear in the commit message what the
-issue is. As I see it:
-
-1) The RMM may have a 64K S2 or something else and just cannot do
-   shared/private at all using 4k
-
-2) The hypervisor wants mmap() of 64K pages to support O_DIRECT.
-   Kernel cannot safely support O_DIRECT on partially GPT protected
-   64k pages. If userspace tricks the kernel into accessing something
-   GPT protected we cannot handle the kernel fault.
-
-Therefor, the VM has to align shared/private pools to some size
-specified by the hypervisor that accommodates 1 and 2 above.
-
-Jason
+-K
 
