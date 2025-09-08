@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-804987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3528DB482AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66076B482B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D47554E052B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:43:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A51A17B221
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299CC1F7569;
-	Mon,  8 Sep 2025 02:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7A41F09B3;
+	Mon,  8 Sep 2025 02:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NzM8OPT4"
 Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F97AD51;
-	Mon,  8 Sep 2025 02:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956CC171CD;
+	Mon,  8 Sep 2025 02:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757299382; cv=none; b=HjqptLBUO58L7X1KYP1wo3N/8ysnfAfKpjf9cq38I4DX1s6/r5J0FWv4sn6wBmn7SHDoFh3uhaMdcEyGHhsrDUtzWpqEgWxcfCr+4NEhXv3Uyt6r7Jz22QFZGo8Ru7UrcyjwLYNGtDL18QPldfbVOdcuiQvQw+dzGILIRI07vv0=
+	t=1757299673; cv=none; b=OlDZTsCOtMg1sh6hKusqad+XOAll8bWwk1TUTiw5iZudFXYvbPRfpKWhb2GsZ3exFwcVkXYEi9cgHu9EhcyI+Nda8zCR3mW/SQz7A84CSjh+eUF/0BaRi+iLDpQNqIxZRRvfW7pJxEWGTuu15efVjeSJDXiv/Ckhkc2OfaKVzIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757299382; c=relaxed/simple;
-	bh=uFP29cNly6YMrOfoT9o+KWSTBUwmoAs9nNafqPy7vMI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Avii3psGDxBiLI7Llx6vRLaPwzL9UZnR82u5tJCE8k3YYhfxasopJBxukvEvn8UWWajcNIko3ESROHwPBHhRgidqgAwmJ0L6Uyuu5pCIX0GuH1K1r/2GnjjbsRCvrcaWcy7UcXF2Mr2GhgTTaZqoCkNufJqEyPXh3SbtzkjOfEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-chip.com.cn
-X-QQ-mid: zesmtpgz8t1757299367t8a4b77a0
-X-QQ-Originating-IP: kDY0/8+9nALfx1XqnlgO5eSHKtE512wTM2GGkuQcJPg=
-Received: from localhost.localdomain ( [183.51.121.90])
+	s=arc-20240116; t=1757299673; c=relaxed/simple;
+	bh=6PGniREo8iRRFGqf6SO/b73DgB7O+ZEKcoaMpvkIT28=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K7TtlpUvCf2HHOkbGYD+rxVfQ61EeNOr6a/auxOv/xjFESW7pEsqwwjS8HgjwvAGYEbSSRSIOEpSXpfldW7gEKXh5NwU5mc9Y7/Drqj/4bmCGyOSdHBg+uuxc3Lp+pWe4qg0SbZ8i19dCoGZSYcqouV6DD8DP3QZk1Csq+jzEF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NzM8OPT4; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1757299637;
+	bh=Kq5+ie83WAWG3dfLGgHu/YamvwscaWTECpHTn+2Mb8k=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=NzM8OPT4cHTA3kwdEWbe1vkloBMBhH6jaQIAn/W0Riu1IEP0N3BBl5qS4xQkSOBjX
+	 CjBYFBmVF8OnPJOCla3cpe/vmMH3REHMeoW+4RlLlxwktY/EF4MSC2XZG2KmUnZVMx
+	 +wyn+OUeQNO33CqQfnsrx6jk2z48iSSBVqonLR0o=
+X-QQ-mid: zesmtpip4t1757299617t525c1d29
+X-QQ-Originating-IP: sTFAx9BjWx3E+pTv9b41bJNlMLIKiEhtlvUot1PuhSE=
+Received: from localhost.localdomain ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 08 Sep 2025 10:42:45 +0800 (CST)
+	id ; Mon, 08 Sep 2025 10:46:56 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9255924790218013141
-EX-QQ-RecipientCnt: 15
-From: Kaison Deng <dkx@t-chip.com.cn>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Wayne Chou <zxf@t-chip.com.cn>,
-	Kaison Deng <dkx@t-chip.com.cn>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the ROC-RK3588-RT
-Date: Mon,  8 Sep 2025 10:42:45 +0800
-Message-Id: <20250908024245.1005875-1-dkx@t-chip.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2744084.BddDVKsqQX@diego>
-References: <2744084.BddDVKsqQX@diego>
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 4028751903999020214
+EX-QQ-RecipientCnt: 8
+From: tuhaowen <tuhaowen@uniontech.com>
+To: wusamuel@google.com,
+	saravanak@google.com
+Cc: rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huangbibo@uniontech.com
+Subject: Sync timeout mechanisms - Request for coordination
+Date: Mon,  8 Sep 2025 10:46:55 +0800
+Message-Id: <20250908024655.14636-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:t-chip.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NY5+brHrxRqv0L0Vu+D4vlcTgkGN1Y20P8bYZwEZYKwhjPgUwPE3Q9Bg
-	L4aZOQLwui7Xb5gUMRR6JFAPT7Huu/s55mC5eAjwPENaQHhB+tdFg8IMQLWgKgCzTfNz6eQ
-	p7yjUI5L/TUN81zE1pJqWYhJKkkGg+8VzpFsYHQ7RiqnuZpzrGEFArN1J2Pg6Wupu3Ai34t
-	z5SwQSiTczErbFIDnDSyeebKC0dze8hHXTklaJEA+EYimWSY3VoCkrfMrC0yn3TrVrFVVVv
-	VU8x2yulKn8nhQO6HBJozNBC2j8xPuxYDYsZBOHqWPw73i4xW8xbpuJmD5pULzfqj2Sb2u8
-	b1O+r5HarGdtBjBs9s5zHlFK6S7MVALM9rrBUvKA37e5g9EE2HSp+FL5SlKw5hZsKTAJyIc
-	O+yiwIvxmZvKVXm47IWby/NY/FSQKiCzQAyf9NUgaaMHbmQjykOGxA5mK7NwpArSBDUhhnO
-	+wQiBtqaHE4nWSnJsB3cwtlc1wO2aOjMmvCTN1sP7NVsbw2huP/L5hINiNI8XhGCUQ80btl
-	uezuAGH+n+A8Vt2yGKlR5H6M8nhJpexi3rdpMMUATmP8O/1WoNPzFIBVN9RsDCztDOGK9E5
-	NiZt14frw0RDEkSYIz18/Ap2Rqos5QFR5De6J4qoy1KUva3Bux0HsDOhFFFyY87Zb+DPGpz
-	u+F5ovGEWBz3hfCJX3L3fHGXu637vIbKDimWHhofb628LgItb95zxXacF9iWYPNO/z/jJF2
-	2vENa20uS1vgdLFNrFHwpYRb4Z7ElxK0R3lgJTDbCY7naWjL+UmiE6YhOC1zkuoCbSaxUic
-	77XllQjUA/4geWb32x/4WPqvv5mFtodN2Fr2jBwfDrgoPVy1oAkHEcDmAgTg6ng0fPQ5OzT
-	VUKEF4gbvWrHy1UVxPNtHe1ds6GQAOAt8xY4VruCA9i8dNMVslazZCYOriUTwjuxlwKnvup
-	RphnJQztmr2LIqGm4HZ2yP5r8ZVRY4GgIP4jFCConJSz2+wd3HSIqK3Z53cr8A5ewcC6IX/
-	NfPJLuMx6a8B3WMoojjdOptcEPsHOgu5ALnkgPXnWtyDSCUTVTC4klB7uz7TSibiatLO7pa
-	bB2Dy9pRlR/aJdCZntzSNDM3jiE8BmdcLcxThWUTOTch9D0h23xe2hJ/MQ4/RQfIehBzyQO
-	5pS8bsgCM8xGK3nfbTH6+MG9Vw==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N7JihbTpIyPv5hIB4CbsVYZYi2dZXHpVnqKgFL4WvyXGDDGCxXVtQhow
+	nUk2dfSHx1YOWKkvqjTOxxDUPd8OMkYFzi07NDU0wXt860gUv1POVZQsoY1UJ+eAf14/So8
+	jj5kT2anL83dKX9GScv8OH0lK7AgoLBDAVnfMuM3EpkR3IjmgS5yAl9MtaMPCyszIA5jUuC
+	GdIqsc+df5B33AME0NXXwHomCcD89PIE27HURyHtWwCsoXw29xeffuSGxJIPO0hMjm2j6SO
+	wvgJ36wIUhqBTyuchgW+YMhZz4rPG4YrjSg5KKKjKAIKYKlFrOMPD6z9LBEe+yvCZ7GLah1
+	4ZQ6SVoY7YnizRU9jun5m4Ngn9vJsyJzkwFzvB/ANPwFIydDy0I0vufVHLwHEJ+BoPByl54
+	7JKM2RRDogPFEqtoE1BfuUFP7ZjeQ6XmoNaLst1dMVxLKaCPfqh+nEIgtRoTEl+wrskbMlf
+	4xNymRXpOh6hp5YxAkgyaPbD8f+xi7iPVHTztPP4v0OESH/AfYVhVGYz5vDGxClAo5IVLmP
+	6Unf1T4dPuT6IGPO996V8uwdfMYySs/kOjge+er1fZkD9MhonxBf72CkNdwTDEiHu+qTBLM
+	YmNHeRmsIIqqoc+BRy5GJO2zBO1Uz3++nhEarh0CPOUxmRbTzXwCuveJK8/z6wo9FxZOdYY
+	/MOio0LbvUPaDs4qM5Ui+Owo7L6jJqariUM1xk6nZPXf9b1oN/GuJnusYSc/1s2hNzsTf4r
+	nUf9uGwRyUiwvOQta81drN0ru4cmJ9IXj6jl09fof6bfQ6jpzsO0DxwpNleudOe1Gwcl8SR
+	dLdTt602Ag8sno4Bex2sKJPwPiHtj5KcAWeywATin1vLWQkg2cokB/L4effCMyjO+EtBWjB
+	TXarzvSiOeffreyaUr86+G7phOXchZufCRjxdv6HAy0ylRjxRmSStB7gw07wzgEd2k8IjcA
+	dNbLwCUE52+VCuPPdDMHbfflmazloDOIfRttiaLNIxJpoClDXXatx9WTlkdkgScCQaLIAIw
+	O7AZfvNQMHl0jEiLUZMxVCDw0UFkFw90iwf+SjTA==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 
-Hi,
+Hi Samuel and Saravana,
 
-On Fri, 2025-09-05 at 11:19 +0200, Heiko Stübner wrote:
-> Hi,
->
-> Am Freitag, 5. September 2025, 11:01:15 Mitteleuropäische Sommerzeit
-> schrieb Kaison Deng:
-> > The Firefly ROC-RK3588-RT is RK3588 based SBC featuring:
->
-> On the webpage it is unclear about the soc, both rk3588 and rk3588s
-> are
-> mentioned?
->
-> https://en.t-firefly.com/product/industry/rocrk3588rt
->
-Is rk3588. This webpage is incorrectly described, we will correct it.
+I hope this email finds you well. I'm reaching out regarding the sync
+timeout mechanisms for suspend/hibernation that we've both been working on.
 
-> > - TF card slot
-> > - NVME 2242 socket
-> > - 1x USB 3.0 Port, 1x USB 2.0 Port, 1x Typec Port
-> > - 1x HDMI 2.1 out, 1x HDMI 2.0 out
-> > - 2x Gigabit Ethernet, 1x 2.5G Ethernet
-> > - M.2 E-KEY for Extended WiFI and Bluetoolh
-> > - ES8388 on-board sound codec - jack in/out
-> > - RTC
-> > - LED: WORK, DIY
-> > - BTB connector for PCie, UART, USB, CAN, SARADC, GPIO
-> >
-> > Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
->
-> you definitly need a 2nd patch adding an entry to
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree
-/Documentation/devicetree/bindings/arm/rockchip.yaml
->
-Thanks for reminding, I will add a 2nd patch for him.
+Rafael from the upstream kernel has indicated that he would prefer us to
+coordinate our approaches rather than having two separate implementations.
+He mentioned your patch series "PM: Support aborting suspend during
+filesystem sync" and suggested we work together on a unified solution.
 
-> The rest looked pretty good on a short glance :-)
->
-> Heiko
->
->
+I would like to discuss how we can merge our approaches. Below is a
+summary of my current implementation:
 
-Kaison
+**My approach - Time-based timeout mechanism:**
+- Introduces a configurable timeout for sync operations during both
+  suspend and hibernation
+- Uses kthread with wait_for_completion_timeout() to implement timeout
+- Provides sysfs interface /sys/power/sleep_sync_timeout for runtime
+  configuration  
+- Default behavior unchanged (timeout disabled by default)
+- Addresses scenarios where sync is excessively slow without wakeup events
+
+You can see the detailed implementation and Rafael's feedback at:
+https://lore.kernel.org/linux-pm/CAJZ5v0jBRy=CvZiWQQaorvc-zT+kkaB6+S2TErGmkaPAGmHLOQ@mail.gmail.com/
+
+**Key differences I see between our approaches:**
+1. Your solution focuses on aborting sync when wakeup events occur
+2. My solution addresses cases where there are no wakeup events but sync
+   is excessively slow (e.g., slow/faulty storage)
+3. Your approach uses workqueue + completion, mine uses kthread + timeout
+4. Both aim to prevent indefinite hangs but cover different scenarios
+
+**Potential unified approach:**
+I believe both mechanisms could complement each other:
+- Event-driven abort (your approach) for responsive wakeup handling
+- Time-based timeout (my approach) for proactive protection against
+  slow storage
+- Single, unified implementation in kernel/power/main.c
+
+Would you be interested in discussing how we can combine these approaches?
+I'm open to:
+1. Merging the implementations into a single solution
+2. Adopting your workqueue approach with added timeout functionality
+3. Any other technical approach you think would work better
+
+Looking forward to your thoughts and collaboration.
+
+Best regards,
+Haowen Tu
 
