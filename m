@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-806032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FA3B4910C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB594B49113
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEDC2164B39
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448BE17A043
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A830BF59;
-	Mon,  8 Sep 2025 14:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D7430BBB0;
+	Mon,  8 Sep 2025 14:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRWJu6yU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmPa1gkq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5362E200113;
-	Mon,  8 Sep 2025 14:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD787082A;
+	Mon,  8 Sep 2025 14:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757340986; cv=none; b=FjhneQgHzxSdJTSmtchAHHEAfbsuWCIQMUxzgl0gOOGs1CC5tgYizGSRWORPLDJFi2KLpnJp7FbqBT8/Auin+OaPkwNABJ0yvbJJmTqC3RBR3ErBjd8REKvG+z2QlsxeAhsoW0DiJOPd+sz9r+ZU2Qwtve1IycTqoniMfRNN2Gc=
+	t=1757341001; cv=none; b=PpO9mNCdfkO6kNoNmbPzZN7ykgp5Yhr4k4fR3yMdS4vnfr67Av0s0QGA68J+SIYKwIwdMhuKTtRA8EwA+Kjub166b+EJkZvxznu/T35ucskpRXH+f9bVoU3YXqy2/Q9mflGXP0Ib7w4Uwuqi4OQJ9kGTF5WfwZ++stf0iaCdq4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757340986; c=relaxed/simple;
-	bh=fGhYXshjva4tCRHwTtoZqiCEnqTSY0O96wQp6IM+eJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GxT5SOW3wmKOO+ywMvOCZFwQUHinq+dETwnoO5ky7OWSkTVOs6wttGoEwP0zL6WzMy8aWu4R3ENPwYDrsFx1CZTPhokI+Uta4cU7NJ+jP8BFxV7NsEaZVVw1M3jOsFwzuYjgapFwBCZxaffPFJHGTlev3iOuALmgJQaJfhrL6rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRWJu6yU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF4CCC4CEF1;
-	Mon,  8 Sep 2025 14:16:21 +0000 (UTC)
+	s=arc-20240116; t=1757341001; c=relaxed/simple;
+	bh=CBI4suASODhHBC14sipB186eMW1r9Bxk7k0WFgqClrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OufGSy2yjhyiRfREbVACUZjryM1S1om7wIWWchsemGJLkuAXzejd70CNqvnETDEv7wkGeNoN5OYcISAXTTnLqHssi902h0nM1QtI2bzipHZutIYGZai4nQXNimJaNKejdBeO148s3Rkj4qetSr3MnjU/A6ZmStBptvTzN5QHPmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmPa1gkq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB51C4CEF7;
+	Mon,  8 Sep 2025 14:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757340984;
-	bh=fGhYXshjva4tCRHwTtoZqiCEnqTSY0O96wQp6IM+eJ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BRWJu6yU87a5kdCJc9ndfy3Z50QHGMvGqNW/SPe1NheccbyKKCRsdZ43Hf9v6umMq
-	 Gdgek/u7w5nTi+9IfDmv1i9/U9Ayn5McDNps3rQBLO3ZVULtHE9FVOt28AKKAOs+q9
-	 +tuD14cdOS5lB+8NZhWSNeKj2HjVqeN4vbIsfVyrSYY6o+PthfPndOKM9oa2rgIybk
-	 eRt7Kjbmw779/oUFtg6sVGOoUo3xNINZIFm2YbCcEkJJvJ1h6KVE2tfGP14p+mauG2
-	 xt0QS9v4y2YgEZnZ43rWPtonY+RQtJtqJC75G3xs/g684GADJ6DMZKTJRFN8X9G+Ny
-	 JaBiXGyKgTlig==
-Message-ID: <592c9516-9ad1-4747-b74e-9ec462c1067c@kernel.org>
-Date: Mon, 8 Sep 2025 16:16:19 +0200
+	s=k20201202; t=1757341001;
+	bh=CBI4suASODhHBC14sipB186eMW1r9Bxk7k0WFgqClrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tmPa1gkqzuRx5RyBxCqHbzAfV5G4d4nmjTy6s6i+bt8myOEAOvu9tsR0PlDNaoEHs
+	 sST9fnnK7DNwNwUqjeW5R0YMOuZQPBrj7IDVOInuWfqw122jHn7oe+ryNfpvECbpT8
+	 QGOooXhdorgU/mWM3v6eZG5p0MbFRl7IM4VZVzmhwtupIt/tVZYx/y6bFRkpsf5kLb
+	 jNyXLVEg3krWoHqiJAJeueQguSgXgV502xPIwfMKDsJBq5oTKUw644aWNHdDZ4c4Ui
+	 edKOg88t//Hhs8IVxDpQPqbLQlkysNMXo9z37pCYTNLvn+zGjV6Vip71Pe++vy/BIc
+	 A5EjILmOauKQQ==
+Date: Mon, 8 Sep 2025 15:16:33 +0100
+From: Lee Jones <lee@kernel.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Robert Marko <robert.marko@sartura.hr>, linux@armlinux.org.uk,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	catalin.marinas@arm.com, will@kernel.org, olivia@selenic.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	andi.shyti@kernel.org, broonie@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, arnd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+	o.rempel@pengutronix.de, daniel.machon@microchip.com,
+	luka.perkov@sartura.hr
+Subject: Re: [PATCH v9 4/9] mfd: at91-usart: Make it selectable for
+ ARCH_MICROCHIP
+Message-ID: <20250908141633.GB9224@google.com>
+References: <20250813174720.540015-1-robert.marko@sartura.hr>
+ <20250813174720.540015-5-robert.marko@sartura.hr>
+ <20250902100254.GD2163762@google.com>
+ <769c8dc4-4db6-4d2e-aa2f-f86aa7ccaf78@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] dt-bindings: trivial-devices: Add sht2x sensors
-To: Kurt Borja <kuurtb@gmail.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250907-sht2x-v3-0-bf846bd1534b@gmail.com>
- <20250907-sht2x-v3-4-bf846bd1534b@gmail.com>
- <edc840e1-44ed-4397-8e5f-2f5e468ec030@kernel.org>
- <DCNDT81S98GW.2SJOV5C94E43H@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <DCNDT81S98GW.2SJOV5C94E43H@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <769c8dc4-4db6-4d2e-aa2f-f86aa7ccaf78@microchip.com>
 
-On 08/09/2025 13:28, Kurt Borja wrote:
-> Hi Krzysztof,
+On Thu, 04 Sep 2025, Nicolas Ferre wrote:
+
+> On 02/09/2025 at 12:02, Lee Jones wrote:
+> > On Wed, 13 Aug 2025, Robert Marko wrote:
+> > 
+> > > LAN969x uses the Atmel USART, so make it selectable for ARCH_MICROCHIP to
+> > > avoid needing to update depends in future if other Microchip SoC-s use it
+> > > as well.
+> > > 
+> > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> > > ---
+> > >   drivers/mfd/Kconfig | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > index 425c5fba6cb1..8f11b2df1470 100644
+> > > --- a/drivers/mfd/Kconfig
+> > > +++ b/drivers/mfd/Kconfig
+> > > @@ -138,7 +138,7 @@ config MFD_AAT2870_CORE
+> > >   config MFD_AT91_USART
+> > >        tristate "AT91 USART Driver"
+> > >        select MFD_CORE
+> > > -     depends on ARCH_AT91 || ARCH_LAN969X || COMPILE_TEST
+> > > +     depends on ARCH_MICROCHIP || COMPILE_TEST
+> > >        help
+> > >          Select this to get support for AT91 USART IP. This is a wrapper
+> > >          over at91-usart-serial driver and usart-spi-driver. Only one function
+> > 
+> > Let me know when the deps are in Mainline.
 > 
-> On Mon Sep 8, 2025 at 2:02 AM -05, Krzysztof Kozlowski wrote:
->> On 08/09/2025 03:33, Kurt Borja wrote:
->>> Add sensirion,sht2x trivial sensors.
->>>
->>> Cc: stable@vger.kernel.org
->>
->> No, drop. No bug to fix here.
+> Hi Lee,
 > 
-> I included it because stable is fine with device IDs [1]. Is this
-> avoided with dt-bindings related stuff?
+> I have tags from other maintainers, how about you give us your and we make
 
-You do not add quirks or new IDs. You add something completely new -
-support for OF. That's a feature in this driver.
+My?  AB?
 
-Best regards,
-Krzysztof
+> this patch travel through arm-soc like the other ones?
+
+Sure.
+
+Acked-by: Lee Jones <lee@kernel.org>
+
+-- 
+Lee Jones [李琼斯]
 
