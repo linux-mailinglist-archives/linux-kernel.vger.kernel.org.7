@@ -1,274 +1,200 @@
-Return-Path: <linux-kernel+bounces-806529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA69B49822
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:19:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1D2B49827
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05971883FE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2100D1896B2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CFF315766;
-	Mon,  8 Sep 2025 18:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC859311C1B;
+	Mon,  8 Sep 2025 18:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gDDp7T+b"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dYIviKrr"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1206314A8D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355568; cv=none; b=Ad+1bdYQPBcXUY0I2htJt62z0Z0UfuUKhYGtEQ/X86PbwgpoT7UNkw1W2jnbv5NfDztGWQfy0f1vbphyyjEpkHJBjRIlrZ+G+kC2Fs7kX4kWpCcLBgzoR0h1ul9A7mTFTDN4NPoW82J+yY2fHIT5X554W0cufs3Jpj5ZGu3cktg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355568; c=relaxed/simple;
-	bh=Xwquh3bwgFJpE0pIkJGqz/t5r0bKeHXc3Wt80ZhC3M0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Ny6Dmjhdco33CuICi4oS7wxfXH5kY4IFp0spO6EzoZHq/HC7XBTHw9TNMFbGY3itguTt/4D/7VziEPoPR7RWifHiUB+BxezFAWxU+F/kp6TQf1WZwoA77USpGwhIKsHjLkMZ5CS5W2yvFneRkM7yCXza0Iu/35JC2LpjI02loQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gDDp7T+b; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329dca88b5aso6686331a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757355566; x=1757960366; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LTH3K3V8fTrwxwbr7ThJRkDjglPD5Yew7cQGt4b8tZs=;
-        b=gDDp7T+b9Z2cWcibelyar60Frqt6PMY4KtosPope7z9mjUppEF5jdWsZNzX3ozsi84
-         mZDrIj8ObJ5nxb6Do2OMfma8JQOB38rz6FgHSKN9fPT9hT1Yz1+phsB4hi0C7QXiKh0f
-         sic6+iRAkXf3bZ2lVevadbfAB0/2/q52Ekt+sHrMto9VU5oyfY8zWs+0xmr2zyx8hUhd
-         L3QCCGbGW/9lWl3iwsRvZnfmse7wogTaEl3jQbAi4CR+evt/Ckc/s+MIpjhGJS+CEd2x
-         dkTZFD6rZorsFdQba3qGq362YNVbaR/r0nWKAQrkZ51ajP46s56tmogpqYph7P+aWW5K
-         JRpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757355566; x=1757960366;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LTH3K3V8fTrwxwbr7ThJRkDjglPD5Yew7cQGt4b8tZs=;
-        b=Z8jjOba9cWhBAvlc20mLyj6kKwVhHckxQL1uxb1+1kWnMM6JE01kqR46Ji9YaHn7VU
-         7pb+vtAn6rTzvgrqRJhAbgSOUjWygz2vDaNOcMEoUM+pg3NrUkB1Ujy7q5cMo9+uvSZ+
-         x48mxK2MTUc0jm05wKl0p2oHnQh3sJRM/Mfpydk3u08KLSoO396yB/B5tKPqkTbtf9K7
-         nzZZvhxS55I1m+2mS2R4+4EiMMpAZPmHro9ItZKu9RH2CGfMqdDCJrcsx64XjGU7suLR
-         ktnxcoNBzjd9m//0FX8+hzTHm4/18aKnRfxQZ0fdlbaPQF8kuCesnJTidjJJ+F11E/2S
-         SN8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUz1uTAvdvM8yKEqFTuGHb4JGpKtXK3UyiDsG6QEPhTM0cDILbmyRkP7Pe/cxmeN+aclmJUMvcoyx3bzgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw37NIIWXBxKzJ+MyvYgz55UMvtYVKKtkix5zi1mlvTBYB8iELl
-	d5qMUBUcohhR6WZkqbAiPp75aIDs+QdTEydBsdBt1kQz1o2/SlSMB2yTnoSzyPsNvfUMXdTtYgV
-	vy2CXc0dLTw==
-X-Google-Smtp-Source: AGHT+IFrs/zQc+ObXQbqH1OyQ107aiC3ghh/sI1b/bY3PIA0R/bl4RpgH+FbbA6oAuL5S+4BWMpcU/3QyU1a
-X-Received: from pjbsy7.prod.google.com ([2002:a17:90b:2d07:b0:327:b430:11ad])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2396:b0:32b:b514:3936
- with SMTP id 98e67ed59e1d1-32bbe214925mr12118508a91.13.1757355566230; Mon, 08
- Sep 2025 11:19:26 -0700 (PDT)
-Date: Mon,  8 Sep 2025 11:19:18 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B57013C8E8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757355633; cv=fail; b=Ba9SaaabOFJTuaUC35yJhPmHv5jU9kEvWol5nei1Jy1pAmMOCv26ECVYA88UwgVffV7xFDgLFF6+Qmr4ZfEwhU7TPfISYe4ZIhIXXCuP0KAB101YDH4r0LQQuNCi3Xn8SwGItChayY1ljSllHLCAx3jZ/p0dORVZzQHTusI1Oz0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757355633; c=relaxed/simple;
+	bh=SshYiGXoT1BOeA3Z4F86nkRs5yveTAUHE2w+j4xx6Y0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a74ZilZyakyShIHLvxVu7v0mHgT3VamWKI1fgG0JS6fnjMFQa6g0PPausfqkE9o4RR0TgpICkU79IM31XG+QnX1Dp7Qbaj6ps2lO5g7OWFnqIx72l3O9xFjtPydGp4/SeqU4D6vfxfnBNdUFDUIjWOIZvedkbCs5TV9MkiT9NkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dYIviKrr; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e3QhMrLci8/QDP4Je9qa7uk5p9lbP1vbAhoxsNfPRghSEqWCjJjvzUYXaTVXIhxDziXUx/C2yLGZ2asoBw/HWBswowtZOJGAQ/KwGVGnHag67THakhQ/eaZ0lRJA2io4CxfxrqBjUk33NOXog+YS+Wo0POQq/L273qr+7mBwPUcEP+00k9dVo588kF6uV8CB/dH5xoUS1WiVZeDcoU46ReB6DVsnaI2j0JbaBCWmm8h3LKbbqm94FEUHUkrosMboOviYvHz1Cn8FqzA61jS1IDtluGcMMdSepG/9qe/cpe5GF77GFoK0D2TKwmkQu0i4D2NL54ToYFtcW2UKp+zEWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dGhIMXrxXUZbqCTzrfXXsA9Gb+8o8bWSQ8JxykHGfP8=;
+ b=sGbI69o5n5t0ii9xf4BX3ndGl4g6Z9d0h6lDkPvgTi4vdoXqm/q/P2fN4HZTTnK1QjL/bZDtVHwGcJQa3ScpA4Imlrv8sl2R364rf1WWimvcNfUhlVnMUpwxRqWRKhy6rsFMHvfeaEfvREGQroCCFYQ2E2Y8SO5jtONJ3t/FAoEqyPgz36cDQQfa7FMd7a898X6yqG+58G9w4c1oOiTst2O45FJuvv1wzHR49jWbzzaWy3neUrC4ZlfwbcHft99vMHhTFey/9ce2UlS0R28cttOpneiky801talbaccCsJUjSNBaVIWXyCwj5sb/UI96Uc2LyxW6s57UK8CQFFIlpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dGhIMXrxXUZbqCTzrfXXsA9Gb+8o8bWSQ8JxykHGfP8=;
+ b=dYIviKrr19u5sUO571tbC1Q2ZaHvDjJgC+wPe1LkV7LafL+EVQpvJNlXJeqvoPYFahG8NYTtsKK6qEuRnlDeePcT7jvxCKyGxvTYqMSDstk9xVY0jmzPJd5AUtZqgP2do4y032ndOIrdIqqahJ/KxU0rCMviTrX5DNsaXJuGwMlgc89/0EDvO8vOkpQX8RTkTamIr2E4+PfoXUk2jF7TswzQLVtxYGFFbaYCqpfHdB3UxwZC5LMMQLKr5g2ck/U+WFFfPsrGH5Kw3iX/t9f4Xc6x380fnuvjmeNs62LIVNyXvU3MpuAgz1ybo0HnbPmM0r3dAbV6BJ+1S3tXVBp64w==
+Received: from SN4PR0501CA0116.namprd05.prod.outlook.com
+ (2603:10b6:803:42::33) by DM4PR12MB5889.namprd12.prod.outlook.com
+ (2603:10b6:8:65::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 18:20:23 +0000
+Received: from SA2PEPF000015C8.namprd03.prod.outlook.com
+ (2603:10b6:803:42:cafe::67) by SN4PR0501CA0116.outlook.office365.com
+ (2603:10b6:803:42::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13 via Frontend Transport; Mon,
+ 8 Sep 2025 18:20:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF000015C8.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 18:20:22 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 11:19:46 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 11:19:45 -0700
+Received: from nvidia.com (10.127.8.12) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 8 Sep 2025 11:19:42 -0700
+Date: Mon, 8 Sep 2025 11:19:40 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jean-philippe@linaro.org>, <miko.lenczewski@arm.com>, <balbirs@nvidia.com>,
+	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+Subject: Re: [PATCH rfcv1 7/8] iommu/arm-smmu-v3: Add arm_smmu_invs based
+ arm_smmu_domain_inv_range()
+Message-ID: <aL8ePHvQ25LUU81J@nvidia.com>
+References: <cover.1755131672.git.nicolinc@nvidia.com>
+ <8c4c5aec144f65cfd1fcef2eafb395876dac97ec.1755131672.git.nicolinc@nvidia.com>
+ <20250827184923.GC2206304@nvidia.com>
+ <aLvs8WrxEHpykCT/@nvidia.com>
+ <20250908153911.GC789684@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250908181918.3533480-1-irogers@google.com>
-Subject: [PATCH v1] tools build: Make libperl opt-in rather than opt-out, deprecate
-From: Ian Rogers <irogers@google.com>
-To: Michael Petlan <mpetlan@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, 
-	James Clark <james.clark@linaro.org>, Tomas Glozar <tglozar@redhat.com>, 
-	Yuzhuo Jing <yuzhuo@google.com>, Quentin Monnet <qmo@kernel.org>, Leo Yan <leo.yan@arm.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250908153911.GC789684@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C8:EE_|DM4PR12MB5889:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0faa90e1-8910-46bb-0bf9-08ddef04603f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014|3613699012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/ibXEekYgiSGEYCQFkPaft1Z7NkpuG4hGBcR1gYDx4CuUl55UoQE2CM6ThUL?=
+ =?us-ascii?Q?uHiu5Ti2CjnhebE2S5FkRAQOWv+o9w4KEqNRngAtlotFqnkZXkcdOfDdQRiF?=
+ =?us-ascii?Q?cSDb9E5SEKL1C6hcpwTt9fqkjO++unQ7mk+4hB6ms4PJHGpYJgJhqszG7qZG?=
+ =?us-ascii?Q?b/BN18lWCwj+7bheN6ntGNgaC2/aDW7DSoWcsBY1NcskYBCySZe0TtMV1GjY?=
+ =?us-ascii?Q?9EkbLoOGiKrjPctUkBUOkegXJHahW3aJPTuugcz/vR5FLdxlHg+JyP4n3oj1?=
+ =?us-ascii?Q?FOu80HvO3WQb2WlnP8HEQoYqSkUDbb/cji4zlwNh5o8GQDQr2+cjBZ/v1mKY?=
+ =?us-ascii?Q?1nbk2e/u/lcPm5/QEJZ5+7ndkFclo6iLxzSICMHqJO+JSX4yqH+l56TblRbb?=
+ =?us-ascii?Q?AR0HQQ3SV/+eS+3eLf9+xNLtdE64FgEga3vU3RpDsC9dBykg7qZf+WiAmueR?=
+ =?us-ascii?Q?dMM3RaeyQ/aF5SU6kRex42yusmddBHbu2BdRjBv/dHz0kMFhEnID0jK2Y7lH?=
+ =?us-ascii?Q?LyzfBMrYs8VPnWmV0k6LUdPUFTcw0DYPMO1pGwisIdp4ydmiRwVOJwPJiRoB?=
+ =?us-ascii?Q?+ayTpGTHW7p/2q5fAUZynKDfGiUshe2rs3ahGnLzlVE95/qcFGlMT3CtGzn+?=
+ =?us-ascii?Q?I05qBtBQP0A91HVrh8tfjPSnwCy2D/cu9ToQnI6QR5gotYXta2q+UrenRLyS?=
+ =?us-ascii?Q?yjBzmHJrMpQ9foHG/iUGWDzMJhXuhoCTZ1zz94Ui7RsuK7FDWZpcwv+pXVzt?=
+ =?us-ascii?Q?ZoLQcgICpzG3DEqarYYPCSPq4WelREENTSxCTskDboURH3gmgYILAOLxyOja?=
+ =?us-ascii?Q?Y/A470nYQeCj5Dy/VxGXq9R1MDeltCj2eAzMI8kgIokhCpTI8BSYs7p3/coO?=
+ =?us-ascii?Q?niSgh3hVZnMMmxlsRIy/4014/kJf0Rfk8VJWpGQIR2xT0sKiJvktl39s0jKt?=
+ =?us-ascii?Q?ZmPQeNTb8hM5Nm54/CIeRwvLStDA+NK8LMRbuJvuSbNtQBXxi4ylVNCAAzQB?=
+ =?us-ascii?Q?EYxFmf9Kh6xWGTz4a2WH1+sMVNdhP8sjzYxdpg441FHnixuQv29g3W5EvWQ5?=
+ =?us-ascii?Q?0pmGB8aX8g63S7GWOwpL8bdSMvTdMwdUgsHesUttg6wOQjsGowr3QrcBj9qA?=
+ =?us-ascii?Q?DuuOK9STJc1usVaTPICUMxHD9iFY//tt6yaYuLb/IvQ41SIWT41lzZP4asmf?=
+ =?us-ascii?Q?cC3IZs4boakS0Dh8BwRXjQc03lEce25xZxGTW4CSUtm+UgvP1Betq2vflxyv?=
+ =?us-ascii?Q?2HRxMF3kxHWIEctWGtt00TdROa9vg44ijFO6LFl4MMijIjzTlAm40++exP7v?=
+ =?us-ascii?Q?B9XOzXhAHZhvuzhFKHIHB0dbGkINZmr9xdF6zcxBlpZgTLAw9yBVoCx3mhD5?=
+ =?us-ascii?Q?vCoHmq/48cj4XmJVCxOSdnnI+xLwnK8oGFWXBtVrCDQC/9RgRgcHYoC8vKQB?=
+ =?us-ascii?Q?stnIBaMY49tnnDbdLeZZV6tPh85F1/TL+tCXLpDZhTtxwkZGmFW8vDRa0wUi?=
+ =?us-ascii?Q?AK9T8AxXpErKci/o3ntiU5Zx2XXGYSDQGjnfkFUhFM8mHeIf6JFbPtJfnV+Y?=
+ =?us-ascii?Q?Ykwv1Bl5tt3UGS4n6zo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014)(3613699012);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 18:20:22.7986
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0faa90e1-8910-46bb-0bf9-08ddef04603f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C8.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5889
 
-If libperl is installed then the perf tool build will build against
-it. There appears to be limited interest in the scripting support for
-perl so let's make it opt-in and deprecate it.
+On Mon, Sep 08, 2025 at 12:39:11PM -0300, Jason Gunthorpe wrote:
+> On Sat, Sep 06, 2025 at 01:12:33AM -0700, Nicolin Chen wrote:
+> 
+> > I know that performance-wise, this piece will be a quick respin,
+> > as the attach side releases the lock very fast. It still looks
+> > a bit complicated. And practically, it would respin even if the
+> > attachment removes a non-PCI device, right?
+> 
+> If you are paying the cost of taking the lock then it should become
+> fully locked and consistent.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-In the future it would be nice to refactor the python support, for
-example, so that perf doesn't steal the main thread which UIs like
-textual assume they can have. When such work is done, any equivalent
-perl work will be a challenge and it might just be best to delete it.
----
- tools/build/Makefile.feature   |  3 +--
- tools/build/feature/test-all.c |  9 ++-------
- tools/perf/Makefile.config     | 12 +++---------
- tools/perf/Makefile.perf       |  4 ++--
- tools/perf/builtin-check.c     |  2 +-
- tools/perf/tests/make          |  8 ++++----
- 6 files changed, 13 insertions(+), 25 deletions(-)
+Well, the point is that the reader doesn't know if an ATS entry
+is getting removed, and it can only speculate by looking at the
+full list.
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 649c5ab8e8f2..9c1a69d26f51 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -80,7 +80,6 @@ FEATURE_TESTS_BASIC :=                  \
-         libelf-zstd                     \
-         libnuma                         \
-         numa_num_possible_cpus          \
--        libperl                         \
-         libpython                       \
-         libslang                        \
-         libtraceevent                   \
-@@ -121,6 +120,7 @@ FEATURE_TESTS_EXTRA :=                  \
-          libbfd-liberty                 \
-          libbfd-liberty-z               \
-          libopencsd                     \
-+         libperl                        \
-          cxx                            \
-          llvm                           \
-          clang                          \
-@@ -144,7 +144,6 @@ FEATURE_DISPLAY ?=              \
-          libelf                 \
-          libnuma                \
-          numa_num_possible_cpus \
--         libperl                \
-          libpython              \
-          libcapstone            \
-          llvm-perf              \
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index 4419fb4710bd..e1847db6f8e6 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -7,17 +7,13 @@
-  */
- 
- /*
-- * Quirk: Python and Perl headers cannot be in arbitrary places, so keep
-- * these 3 testcases at the top:
-+ * Quirk: Python headers cannot be in arbitrary places, so keep this testcase at
-+ * the top:
-  */
- #define main main_test_libpython
- # include "test-libpython.c"
- #undef main
- 
--#define main main_test_libperl
--# include "test-libperl.c"
--#undef main
--
- #define main main_test_hello
- # include "test-hello.c"
- #undef main
-@@ -161,7 +157,6 @@
- int main(int argc, char *argv[])
- {
- 	main_test_libpython();
--	main_test_libperl();
- 	main_test_hello();
- 	main_test_libelf();
- 	main_test_get_current_dir_name();
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 5a5832ee7b53..0f4b297fbacc 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -817,9 +817,7 @@ ifdef GTK2
-   endif
- endif
- 
--ifdef NO_LIBPERL
--  CFLAGS += -DNO_LIBPERL
--else
-+ifdef LIBPERL
-   PERL_EMBED_LDOPTS = $(shell perl -MExtUtils::Embed -e ldopts 2>/dev/null)
-   PERL_EMBED_LDFLAGS = $(call strip-libs,$(PERL_EMBED_LDOPTS))
-   PERL_EMBED_LIBADD = $(call grep-libs,$(PERL_EMBED_LDOPTS))
-@@ -829,17 +827,13 @@ else
-   PERL_EMBED_LDOPTS := $(filter-out -specs=%,$(PERL_EMBED_LDOPTS))
-   FLAGS_PERL_EMBED=$(PERL_EMBED_CCOPTS) $(PERL_EMBED_LDOPTS)
- 
-+  $(call feature_check,libperl)
-   ifneq ($(feature-libperl), 1)
--    CFLAGS += -DNO_LIBPERL
--    NO_LIBPERL := 1
--    $(warning Missing perl devel files. Disabling perl scripting support, please install perl-ExtUtils-Embed/libperl-dev)
-+    $(error Missing perl devel files. Please install perl-ExtUtils-Embed/libperl-dev)
-   else
-     LDFLAGS += $(PERL_EMBED_LDFLAGS)
-     EXTLIBS += $(PERL_EMBED_LIBADD)
-     CFLAGS += -DHAVE_LIBPERL_SUPPORT
--    ifeq ($(CC_NO_CLANG), 0)
--      CFLAGS += -Wno-compound-token-split-by-macro
--    endif
-     $(call detected,CONFIG_LIBPERL)
-   endif
- endif
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index e2150acc2c13..7d6ac03a7109 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -17,7 +17,7 @@ include ../scripts/utilities.mak
- #
- # Define CROSS_COMPILE as prefix name of compiler if you want cross-builds.
- #
--# Define NO_LIBPERL to disable perl script extension.
-+# Define LIBPERL to enable perl script extension.
- #
- # Define NO_LIBPYTHON to disable python script extension.
- #
-@@ -1103,7 +1103,7 @@ endif
- 		$(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
- 	$(call QUIET_INSTALL, perf-iostat) \
- 		$(INSTALL) $(OUTPUT)perf-iostat -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
--ifndef NO_LIBPERL
-+ifdef LIBPERL
- 	$(call QUIET_INSTALL, perl-scripts) \
- 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/perl/Perf-Trace-Util/lib/Perf/Trace'; \
- 		$(INSTALL) scripts/perl/Perf-Trace-Util/lib/Perf/Trace/* -m 644 -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/perl/Perf-Trace-Util/lib/Perf/Trace'; \
-diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
-index b1e205871ab1..5457762f7dd5 100644
---- a/tools/perf/builtin-check.c
-+++ b/tools/perf/builtin-check.c
-@@ -49,7 +49,7 @@ struct feature_status supported_features[] = {
- 	FEATURE_STATUS("libelf", HAVE_LIBELF_SUPPORT),
- 	FEATURE_STATUS("libnuma", HAVE_LIBNUMA_SUPPORT),
- 	FEATURE_STATUS("libopencsd", HAVE_CSTRACE_SUPPORT),
--	FEATURE_STATUS("libperl", HAVE_LIBPERL_SUPPORT),
-+	FEATURE_STATUS_TIP("libperl", HAVE_LIBPERL_SUPPORT, "Deprecated, use LIBPERL=1 and install libperl-dev to build with it"),
- 	FEATURE_STATUS("libpfm4", HAVE_LIBPFM),
- 	FEATURE_STATUS("libpython", HAVE_LIBPYTHON_SUPPORT),
- 	FEATURE_STATUS("libslang", HAVE_SLANG_SUPPORT),
-diff --git a/tools/perf/tests/make b/tools/perf/tests/make
-index c574a678c28a..b650ce8864ed 100644
---- a/tools/perf/tests/make
-+++ b/tools/perf/tests/make
-@@ -73,9 +73,9 @@ make_extra_tests    := EXTRA_TESTS=1
- make_jevents_all    := JEVENTS_ARCH=all
- make_no_bpf_skel    := BUILD_BPF_SKEL=0
- make_gen_vmlinux_h  := GEN_VMLINUX_H=1
--make_no_libperl     := NO_LIBPERL=1
-+make_libperl        := LIBPERL=1
- make_no_libpython   := NO_LIBPYTHON=1
--make_no_scripts     := NO_LIBPYTHON=1 NO_LIBPERL=1
-+make_no_scripts     := NO_LIBPYTHON=1
- make_no_slang       := NO_SLANG=1
- make_no_gtk2        := NO_GTK2=1
- make_no_ui          := NO_SLANG=1 NO_GTK2=1
-@@ -118,7 +118,7 @@ make_install_prefix_slash := install prefix=/tmp/krava/
- make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1
- 
- # all the NO_* variable combined
--make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
-+make_minimal        := NO_LIBPYTHON=1 NO_GTK2=1
- make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
- make_minimal        += NO_LIBNUMA=1 NO_LIBBIONIC=1 NO_LIBDW=1
- make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
-@@ -143,7 +143,7 @@ run += make_extra_tests
- run += make_jevents_all
- run += make_no_bpf_skel
- run += make_gen_vmlinux_h
--run += make_no_libperl
-+run += make_libperl
- run += make_no_libpython
- run += make_no_scripts
- run += make_no_slang
--- 
-2.51.0.384.g4c02a37b29-goog
+So, would it be better to just always take the read lock, while
+applying the ATS condition to the writer side:
 
+[Reader]
++	/* A concurrent attachment has changed the array. Do a respin */
++	if (unlikely(!read_trylock(&invs->rwlock)))
++		goto again;
++	if (unlikely(!invs->old)) {
++		read_unlock(&invs->rwlock);
++		goto again;
++	}
+...
++	read_unlock(&invs->rwlock);
+
+[Writer]
++	bool ats_disabled = master->ats_enabled && !state->ats_enabled;
+...
++	if (ats_disabled)
++		write_lock_irqsave(&old_invs->rwlock, flags);
++	WRITE_ONCE(old_invs->old, true);
++	if (ats_disabled)
++		write_unlock_irqrestore(&old_invs->rwlock, flags);
+
+?
+
+Thanks
+Nicolin
 
