@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-805331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25882B48731
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:32:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6F7B48736
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0551516B7A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C186B7ACFE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545F22ECE98;
-	Mon,  8 Sep 2025 08:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9865F2FB965;
+	Mon,  8 Sep 2025 08:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hoVmBKWL"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DEv3KPAF"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175B42FB093
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D1C2FB61F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320107; cv=none; b=fFG4gjPZBxSxKNRRa+i0qMHUKNON7gnhFVgnqNYmCfh0Pi6sJezFWevELGFIcR5EZ8WnfTs4sexMgY9r1f/DUjU9PumFR7gv16ULnTXWjYVrkHVtMZ58q9pl+Svov/v5ft2NWSYgUjKSD3L44l83nxl7dOMXh09o0iajzIszHGg=
+	t=1757320110; cv=none; b=AwTBv5/tW7VV7Ja9TJ6BGoL/7JmC5LEaGr7qkcmL3/bx5afN3F9gM62Rp134AXO/jMrafJ+OWeOxNKFqjuelwHcTsl4cVO/3I5H7cR4B6MruAKKewUmbhL8HENgKR+KcT1C58QiZ2iISiSvhvuEOkPdivYP9X41+vVoabClKloo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320107; c=relaxed/simple;
-	bh=RujJUh0j4TEd2cIlAXEv6xdDosDvLPvDu1U8gcvWuDk=;
+	s=arc-20240116; t=1757320110; c=relaxed/simple;
+	bh=o8U4myRzv/oBOMXsCQ8UnooabLPG2l0zGBz0QEYwwUU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GohcEuB/MOYMFxarA+jOTiFot4zg/oJ3WtxoOM4lzZjSGbIrGZ7qrzCKM7Fc/5Jc8NHNmZshwHTEinD2bS99HtfvMpRROkDnvrDr7ozhCCi6NZu4Whe/7FxRfhE8AhcsCxXCSOgkIBul0nCa5xvsWb1QkPNtPuKJfAhDapDP2jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hoVmBKWL; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=RvGZDLDpTRdDvNn7CjN0wCZ3Cb2vpaB/82K316gqg1VuM9DhBLrJmyHoZAIddz80GIGTSq68z3qa5RmIY0C2BEoz8IbWBWQ0o2QKhpFCMMHGHbm1P5JGeexh5Udc+1TFqxasBSbify8+lSgh2dEqf9JKfZik770DvDjXKHDbpfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DEv3KPAF; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587NkEiv000692
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 08:28:25 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5883lOX7013554
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 08:28:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xqC7Zy6ivxrAZNOluQq2nuWFwYW/k4m65npdWDnVVQ8=; b=hoVmBKWLwzy1eYqU
-	v0eb9D8MOdTyHaLmDMzqaIxahQ+ODRYx04pYNp+aB1tl21xhPOSUdVmFieXf9WEy
-	r8w5lnPmbJ3+dW51NiavAI+5paOGVSVVfmGaIHX4zm3YXl3vKJhtlBFdZ8Yqs/b3
-	KZDWFY2asSMQsT/+QvfcF4MsM4qIBEqA9yzDmZSiGQqx4xAIqQpWkhQl9x0kbcJm
-	h1ty7WyiUxb82GdmddRrAF3X3hiO9LmELDLBT2mF9Y07Twkj+x0k/2znsho5KZXh
-	Zh7RzQE5pXYn5NDr8gE7jT39DBpnjxaHC9Zm+Z3tBLwXrYOgwp34tEraMn6jZhY5
-	GzGIfw==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws3vc2-1
+	Jik5lm7jrfO2g9HIoEsOASnx3tGiszLaeVJZjR2mw8E=; b=DEv3KPAF4jYzl9TU
+	F7gZeHcPn+pzH5tOVcTUADcBQKQQucHHPel/0jtExplP4DkbN6vCX6vZFOR2sCrC
+	CTmOGkQc5D4DI+5kkRVPVU7pIoh+ka86YTiW/QIMUgOjgisWnzvKctwNwF71JrWu
+	zqi0Dod0fTM1hbIMR4P9JAt+U/0NYlFGxKM2oCrAfUCqmG2XReapedBXipMpGQQK
+	ACzFkgSkdjzdrWYhRDUMUcRTNIqW4wL5S/v2nXVvq34jWi3aV2xlIH81vtlTSWR2
+	jjEZy1RwG8VnsAZUacuGY59/CWgz8kLpSvUSDGV4vyvntY2MhSFLkOHDNTMwQ+Il
+	N/d+Cw==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491qhdrneq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:28:25 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7723aca1cbcso3931321b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:28:25 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:28:28 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4e63a34f3fso3134321a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:28:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757320104; x=1757924904;
+        d=1e100.net; s=20230601; t=1757320108; x=1757924908;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xqC7Zy6ivxrAZNOluQq2nuWFwYW/k4m65npdWDnVVQ8=;
-        b=EGXrYWbi450t8EfocgAKiuVxZH0jawoWDabJxKYErYk6Q7/gaENemuxfgFx1RBWJtr
-         PArtg25D5KT2bNVX1dwcPA8w/Gfuk/3zsWoQYzIVXRKoXEALILEz+xZpmyMWkw1+rcGG
-         huwTvJ0ce8DUrs834VrcC4NvOHi/i59AZjNZJHpAVBM/V1w/xMEErohr5p9kMjFur/qB
-         F0a6p8E1zqOImbGnPIxLHR3cpk4tCPGDGr2vvjvbzROYP95jfaabnZJoYXfLcW4Wy2t5
-         vgKUolnNEkbKvgk/Eu1vYFb/bTznHI0qfAHB8eVlFfRkYUvQ5Z8ncel3v2dniGLRLSas
-         JG3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsczfvyEQ9hF/u2KsBcenQD1vFsBXDoSA/ZdUnQHqhHqGCaSLachmWokj/s0/BY05zDBekWx/3o/SMzwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWXcwP48jjgNng8qCppYtgM9t5ONxG6VXLN+i3EvBT4K32l030
-	eqfYgRl4754wlm/6qrnITj05DhCLHXcj9BdOmLuvYSvr93D9VcxeA0TZ6dvYdzeUkoyf3sHjeMA
-	9j/JE0gQjOnIgdsypGOy7I0DheKie9i1z/I/zHnZMGqM4Y9Z1gV4JuyfIR3H2Ln2e/Ts=
-X-Gm-Gg: ASbGncsSwpqa9jrJy5/CLW1T0biI8t+X3PNRFXQo0da/AiP0rPA8O9GS7X6dzkxnAlY
-	HvibxnSgH6drQBU8LuSwmJEzY2JXDc3akXJvQpdTQucQXGxetcgFRfgk/fKP6Ijo/tE0QomNa4g
-	jlclrGd0ZvT445pqWNkLSqO/nVZkswwmXKfbXNEIrXsfARoTaQvtwLKD/ifbWl0J2tv4togyi9d
-	FgD/tWSQLwHOhGAU4TTYoTs3I01OyaXciamu0KC8Rqkb+uw9p3hPgpY7WWoWzu/cnjBvbB2w+U5
-	j6tPMG0wEr7xDTq3gRNnU4nS75TJcguYYgqpRkeQBPffQNBypIeI17HXQbe2vzzc
-X-Received: by 2002:a05:6a00:ccc:b0:736:3ea8:4805 with SMTP id d2e1a72fcca58-7742dd10e6emr8094347b3a.7.1757320103575;
-        Mon, 08 Sep 2025 01:28:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVxoyp2PRB+QVncUti3N2Wj7nrXH65ckYK0eniIMm9C8JT1Cyw/QQPJ8BNF4g/yzey4I9VCA==
-X-Received: by 2002:a05:6a00:ccc:b0:736:3ea8:4805 with SMTP id d2e1a72fcca58-7742dd10e6emr8094308b3a.7.1757320102764;
-        Mon, 08 Sep 2025 01:28:22 -0700 (PDT)
+        bh=Jik5lm7jrfO2g9HIoEsOASnx3tGiszLaeVJZjR2mw8E=;
+        b=IBKnujIOCjp/wjaweWXlW3+iRouCjXUk/NH0VcND/8KoCACGoOhiCHB778crlz8fqJ
+         IRIwAquelqslNqltziXZlfnE0391PP1Wna84cxchC02IAQDghUIqXqaVK8V3k1CkE5bx
+         ufbTniH/6T8Pc89CJohD4Qrvv773C0U3W4hm6gL6OYjfqWeO2TSyn/eDQOcizJhzgLnm
+         a4eSjKN/Qs1I2Km7f3WQABV3HXG6UJNIRobCgBDZ9zVez5kmvt8Hl4XvbnUgnx9hIm9S
+         0OlfANLjTB5TBh59Hy/4jVdIzrg0sI6poXe+yN/Obtas/hBCyXC4KaXytKqcLHXyGBNF
+         nedA==
+X-Forwarded-Encrypted: i=1; AJvYcCWo4lElxJsAQs6bp7XoP3+wJfVtW+M+vOgAe/FcYFyeA/nH5it05GiHjNRjdTRTcrEFB+N9kYIWj2HT1ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzro0xlfDuXxM4on3ef96t7J3Hc7BNXwqic5ZZBJlBAuMGNXCjm
+	RVrtQcJKgMDBqBMKj6SXZ7X6pS8EmNO4aybfiHMOqdb2R+sDExqNsrt4ZzsBh7cEaf6ub0GYw1q
+	mNtDJbtAY0s1ycZ+4By14nmRTxhLwUaCFpR79oCcsUkvKuZc6ukQSsWdaxzLNkRz0Wjk=
+X-Gm-Gg: ASbGncsCMMZ/0xzG303lnu9s2WsElj4x/jrKGG57Ca6BeTbSY+DRHpNu/IPZpsCJJB/
+	WSd0Jrq1Q3USiyOlEs1mFXb3dKYqr4GTcFMWGqcNzFW3jnkEkkHfzx7KWwqi6FrA083OMivspgg
+	+bCEnZQ6IJvkNLYxKG9X0OQAWorM97bMNP//UhkUVuDrAtpR6XqxaJgF0e+Zop/2F8jKktrh76d
+	oW361sDeU1jtMhJbkZHaVSWr1E7P2+iDa7cFTFtxnJ4Uuier0UkAUWEKNQ+N+AwMV6YNEXQMfXP
+	jP85KrxfxhqFFKluoYo1JAzU++wJgtCqt/AH04h080j5rFAEbUrI+ggauwaRp1NO
+X-Received: by 2002:a05:6a20:734a:b0:248:7a71:c27 with SMTP id adf61e73a8af0-2534557977cmr9747290637.56.1757320107535;
+        Mon, 08 Sep 2025 01:28:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFK0s3h6UQc9GbOttiGA/Ef59MbpUbZfhJMHqzyURWFXx3DH+69jMQWAsCyT/2LIEcFhnYiEg==
+X-Received: by 2002:a05:6a20:734a:b0:248:7a71:c27 with SMTP id adf61e73a8af0-2534557977cmr9747267637.56.1757320107067;
+        Mon, 08 Sep 2025 01:28:27 -0700 (PDT)
 Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm29157523b3a.18.2025.09.08.01.28.18
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm29157523b3a.18.2025.09.08.01.28.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 01:28:22 -0700 (PDT)
+        Mon, 08 Sep 2025 01:28:26 -0700 (PDT)
 From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Mon, 08 Sep 2025 13:57:07 +0530
-Subject: [PATCH v2 14/16] drm/msm/a6xx: Make crashstate capture IFPC safe
+Date: Mon, 08 Sep 2025 13:57:08 +0530
+Subject: [PATCH v2 15/16] drm/msm/a6xx: Enable IFPC on Adreno X1-85
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-ifpc-support-v2-14-631b1080bf91@oss.qualcomm.com>
+Message-Id: <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
 References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
 In-Reply-To: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
@@ -106,149 +106,189 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Akhil P Oommen <akhilpo@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757320036; l=4450;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757320036; l=5434;
  i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=RujJUh0j4TEd2cIlAXEv6xdDosDvLPvDu1U8gcvWuDk=;
- b=5wro+WXTeqUixun67HjZQHEfABVu5UwSfZexitnxpMZK1qDmqI4AcxqupwnbNFFAEV9nxDgAC
- ix3JnxBJNeeDvaqbrFlgfHPOoaTjF5SNLyOGy3hjlTLZwtzr6q1qA6P
+ bh=o8U4myRzv/oBOMXsCQ8UnooabLPG2l0zGBz0QEYwwUU=;
+ b=5WvX3qPB1JBfrK4m/n5Oi07gGBgzXFQq4WiUCb2i+06Ili4j3p6IOaOvmQRFlNNzHk1ysrj+6
+ Q2hOqkE72stD6v9PwYT9Ny/idRE8aoaugRuRT/6XNW9hlPs3ZQlaEUY
 X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
  pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-ORIG-GUID: 3MLU-NOX21MNEcIubrLfyAn48zugfSrh
-X-Proofpoint-GUID: 3MLU-NOX21MNEcIubrLfyAn48zugfSrh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX1gwOWhhJNBiP
- 8KUx1ynxG5zwBQ+qOpQ7tFIqNR+8GGozMf5fnqdNsYk4CC9z/hZ+ZJDJcyeuLLAf+49S1+Gy2dJ
- ymEIWd18cF/RFrGFNXLNKNxtGZNANX5iOQlU5/pKTODhMGY9LnXlurwzJLMOUqmC9i1q2tttwIY
- N2sLtpm4XXhkz87ee/auzdSB19jvybW3BlbDwWK3k6x4zLzeXXUXDCmhCnDqDkfcOQ63sak2Uey
- h9SFjUwHtLSOLzAhIGV6loyWqcWRC9iN+ZeF/DCSZHFYxnE1dYVUbKY/NCDCd6NzcWViHzzx785
- cyDJDZWHn+biL58Oc0bYLR6Gbpmfn0D8PootrH8DN31x+z9ctYy8sWOTu+vEFlDdEovPYSI2CtM
- KciaoDD6
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68be93a9 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=yKEZsNg54XTt07RPwjwA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-GUID: QRtJxfFRhcPQgxmEehmcHp6EfUQNuujW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDAzNCBTYWx0ZWRfX9ZcLjSEvQF4g
+ 43ylcqYU+6coYR0siYW5qtM55HHHKrTv3JRzaTSTDKvqO7P0u4Uf7XhHyJq2N8HQIoB3H2sRgle
+ 2cWNFYSKk1IkxETVaNazSSCPtvk8pI5yHnmdQs9e8ojtK8zPkM5FOIDCpSMNLoUqIlwxkbJCHb2
+ F5KT1Cb221f+k0NEeULFpTKSvBOaUW/nsiiiDisiKd1eAKcAF7g0mVDhy93m24neYimzXBe0zDR
+ mAeGiJD/2QHzBelC5ixXy9krOVGPemL/WTxYzVq2yrCK4Im68Nqu596XO0MkYJTabjRPsVHuGMb
+ ZDNTDKe7mpYohPRwOndB8NFX8hQucEiEYacWVgNZ02f15fLG8OurzJLA922pX9y+AftnFz8so/s
+ BeMuu+jh
+X-Authority-Analysis: v=2.4 cv=YOCfyQGx c=1 sm=1 tr=0 ts=68be93ac cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=4fggu-2iGV-6hGlykgMA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: QRtJxfFRhcPQgxmEehmcHp6EfUQNuujW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080034
 
-Now with IFPC, GX domain can collapse as soon as GPU becomes IDLE. So
-add gx_is_on check before accessing any GX registers during crashstate
-capture and recovery.
+Add the IFPC restore register list and enable IFPC support on Adreno
+X1-85 gpu.
 
 Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c       |  4 ++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c       | 27 +++++++++++++++++++--------
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 10 +++++++---
- 3 files changed, 30 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 68 ++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 15 +++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
+ 3 files changed, 79 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index d76b6b766d4a644d342f62435892d54ebd7192e5..81076349d69c8c13e6c6b4e1c336c2d990ebda6d 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -101,6 +101,10 @@ bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
- 	if (!gmu->initialized)
- 		return false;
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index 00e1afd46b81546eec03e22cda9e9a604f6f3b60..547c046730a9b50a82cc9b27f08a5b1eeb08dced 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1343,6 +1343,69 @@ static const uint32_t a7xx_pwrup_reglist_regs[] = {
  
-+	/* If GMU is absent, then GX power domain is ON as long as GPU is in active state */
-+	if (adreno_has_gmu_wrapper(adreno_gpu))
-+		return true;
+ DECLARE_ADRENO_REGLIST_LIST(a7xx_pwrup_reglist);
+ 
++/* Applicable for X185, A750 */
++static const u32 a750_ifpc_reglist_regs[] = {
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0,
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_2,
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_3,
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_4,
++	REG_A6XX_TPL1_NC_MODE_CNTL,
++	REG_A6XX_SP_NC_MODE_CNTL,
++	REG_A6XX_CP_DBG_ECO_CNTL,
++	REG_A6XX_CP_PROTECT_CNTL,
++	REG_A6XX_CP_PROTECT(0),
++	REG_A6XX_CP_PROTECT(1),
++	REG_A6XX_CP_PROTECT(2),
++	REG_A6XX_CP_PROTECT(3),
++	REG_A6XX_CP_PROTECT(4),
++	REG_A6XX_CP_PROTECT(5),
++	REG_A6XX_CP_PROTECT(6),
++	REG_A6XX_CP_PROTECT(7),
++	REG_A6XX_CP_PROTECT(8),
++	REG_A6XX_CP_PROTECT(9),
++	REG_A6XX_CP_PROTECT(10),
++	REG_A6XX_CP_PROTECT(11),
++	REG_A6XX_CP_PROTECT(12),
++	REG_A6XX_CP_PROTECT(13),
++	REG_A6XX_CP_PROTECT(14),
++	REG_A6XX_CP_PROTECT(15),
++	REG_A6XX_CP_PROTECT(16),
++	REG_A6XX_CP_PROTECT(17),
++	REG_A6XX_CP_PROTECT(18),
++	REG_A6XX_CP_PROTECT(19),
++	REG_A6XX_CP_PROTECT(20),
++	REG_A6XX_CP_PROTECT(21),
++	REG_A6XX_CP_PROTECT(22),
++	REG_A6XX_CP_PROTECT(23),
++	REG_A6XX_CP_PROTECT(24),
++	REG_A6XX_CP_PROTECT(25),
++	REG_A6XX_CP_PROTECT(26),
++	REG_A6XX_CP_PROTECT(27),
++	REG_A6XX_CP_PROTECT(28),
++	REG_A6XX_CP_PROTECT(29),
++	REG_A6XX_CP_PROTECT(30),
++	REG_A6XX_CP_PROTECT(31),
++	REG_A6XX_CP_PROTECT(32),
++	REG_A6XX_CP_PROTECT(33),
++	REG_A6XX_CP_PROTECT(34),
++	REG_A6XX_CP_PROTECT(35),
++	REG_A6XX_CP_PROTECT(36),
++	REG_A6XX_CP_PROTECT(37),
++	REG_A6XX_CP_PROTECT(38),
++	REG_A6XX_CP_PROTECT(39),
++	REG_A6XX_CP_PROTECT(40),
++	REG_A6XX_CP_PROTECT(41),
++	REG_A6XX_CP_PROTECT(42),
++	REG_A6XX_CP_PROTECT(43),
++	REG_A6XX_CP_PROTECT(44),
++	REG_A6XX_CP_PROTECT(45),
++	REG_A6XX_CP_PROTECT(46),
++	REG_A6XX_CP_PROTECT(47),
++};
 +
- 	val = gmu_read(gmu, REG_A6XX_GMU_SPTPRAC_PWR_CLK_STATUS);
- 
- 	if (adreno_is_a7xx(adreno_gpu))
++DECLARE_ADRENO_REGLIST_LIST(a750_ifpc_reglist);
++
+ static const struct adreno_info a7xx_gpus[] = {
+ 	{
+ 		.chip_ids = ADRENO_CHIP_IDS(0x07000200),
+@@ -1432,12 +1495,14 @@ static const struct adreno_info a7xx_gpus[] = {
+ 		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+ 		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+ 			  ADRENO_QUIRK_HAS_HW_APRIV |
+-			  ADRENO_QUIRK_PREEMPTION,
++			  ADRENO_QUIRK_PREEMPTION |
++			  ADRENO_QUIRK_IFPC,
+ 		.init = a6xx_gpu_init,
+ 		.a6xx = &(const struct a6xx_info) {
+ 			.hwcg = a740_hwcg,
+ 			.protect = &a730_protect,
+ 			.pwrup_reglist = &a7xx_pwrup_reglist,
++			.ifpc_reglist = &a750_ifpc_reglist,
+ 			.gmu_chipid = 0x7050001,
+ 			.gmu_cgc_mode = 0x00020202,
+ 		},
+@@ -1466,6 +1531,7 @@ static const struct adreno_info a7xx_gpus[] = {
+ 		.a6xx = &(const struct a6xx_info) {
+ 			.protect = &a730_protect,
+ 			.pwrup_reglist = &a7xx_pwrup_reglist,
++			.ifpc_reglist = &a750_ifpc_reglist,
+ 			.gmu_chipid = 0x7090100,
+ 			.gmu_cgc_mode = 0x00020202,
+ 			.bcms = (const struct a6xx_bcm[]) {
 diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index b54c88fb27d57f81306163e699961803ff765bdb..76dd78f5c48ea818a2aa209e0c0c88bc5e8f4e06 100644
+index 76dd78f5c48ea818a2aa209e0c0c88bc5e8f4e06..91a2a82c4f388ca6b052172efdd7255165f3c04a 100644
 --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
 +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -1537,21 +1537,25 @@ static void a6xx_recover(struct msm_gpu *gpu)
+@@ -828,11 +828,10 @@ static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
+ 	u32 *dest = (u32 *)&lock->regs[0];
+ 	int i;
  
- 	adreno_dump_info(gpu);
- 
--	for (i = 0; i < 8; i++)
--		DRM_DEV_INFO(&gpu->pdev->dev, "CP_SCRATCH_REG%d: %u\n", i,
--			gpu_read(gpu, REG_A6XX_CP_SCRATCH_REG(i)));
-+	if (a6xx_gmu_gx_is_on(&a6xx_gpu->gmu)) {
-+		/* Sometimes crashstate capture is skipped, so SQE should be halted here again */
-+		gpu_write(gpu, REG_A6XX_CP_SQE_CNTL, 3);
- 
--	if (hang_debug)
--		a6xx_dump(gpu);
-+		for (i = 0; i < 8; i++)
-+			DRM_DEV_INFO(&gpu->pdev->dev, "CP_SCRATCH_REG%d: %u\n", i,
-+				gpu_read(gpu, REG_A6XX_CP_SCRATCH_REG(i)));
+-	reglist = adreno_gpu->info->a6xx->pwrup_reglist;
+-
+ 	lock->gpu_req = lock->cpu_req = lock->turn = 0;
+-	lock->ifpc_list_len = 0;
+-	lock->preemption_list_len = reglist->count;
 +
-+		if (hang_debug)
-+			a6xx_dump(gpu);
-+
-+	}
++	reglist = adreno_gpu->info->a6xx->ifpc_reglist;
++	lock->ifpc_list_len = reglist->count;
  
  	/*
- 	 * To handle recovery specific sequences during the rpm suspend we are
- 	 * about to trigger
- 	 */
--	a6xx_gpu->hung = true;
- 
--	/* Halt SQE first */
--	gpu_write(gpu, REG_A6XX_CP_SQE_CNTL, 3);
-+	a6xx_gpu->hung = true;
- 
- 	pm_runtime_dont_use_autosuspend(&gpu->pdev->dev);
- 
-@@ -2412,6 +2416,13 @@ static uint32_t a6xx_get_rptr(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
- 	if (adreno_gpu->base.hw_apriv || a6xx_gpu->has_whereami)
- 		return a6xx_gpu->shadow[ring->id];
- 
-+	/*
-+	 * This is true only on an A6XX_GEN1 with GMU, has IFPC enabled and a super old SQE firmware
-+	 * without 'whereami' support
-+	 */
-+	WARN_ONCE((to_adreno_gpu(gpu)->info->quirks & ADRENO_QUIRK_IFPC),
-+		"Can't read CP_RB_RPTR register reliably\n");
-+
- 	return ring->memptrs->rptr = gpu_read(gpu, REG_A6XX_CP_RB_RPTR);
- }
- 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index d5d1271fce611b60121b36f4b772d6f5e0093d2b..4c7f3c642f6ac0a397ac3b282966d25cd4488d3e 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -1586,8 +1586,7 @@ struct msm_gpu_state *a6xx_gpu_state_get(struct msm_gpu *gpu)
- 	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
- 	struct a6xx_gpu_state *a6xx_state = kzalloc(sizeof(*a6xx_state),
- 		GFP_KERNEL);
--	bool stalled = !!(gpu_read(gpu, REG_A6XX_RBBM_STATUS3) &
--			A6XX_RBBM_STATUS3_SMMU_STALLED_ON_FAULT);
-+	bool stalled;
- 
- 	if (!a6xx_state)
- 		return ERR_PTR(-ENOMEM);
-@@ -1608,15 +1607,20 @@ struct msm_gpu_state *a6xx_gpu_state_get(struct msm_gpu *gpu)
+ 	 * For each entry in each of the lists, write the offset and the current
+@@ -843,6 +842,14 @@ static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
+ 		*dest++ = gpu_read(gpu, reglist->regs[i]);
  	}
  
- 	/* If GX isn't on the rest of the data isn't going to be accessible */
--	if (!adreno_has_gmu_wrapper(adreno_gpu) && !a6xx_gmu_gx_is_on(&a6xx_gpu->gmu))
-+	if (!a6xx_gmu_gx_is_on(&a6xx_gpu->gmu))
- 		return &a6xx_state->base;
- 
-+	/* Halt SQE first */
-+	gpu_write(gpu, REG_A6XX_CP_SQE_CNTL, 3);
++	reglist = adreno_gpu->info->a6xx->pwrup_reglist;
++	lock->preemption_list_len = reglist->count;
 +
- 	/* Get the banks of indexed registers */
- 	if (adreno_is_a7xx(adreno_gpu))
- 		a7xx_get_indexed_registers(gpu, a6xx_state);
- 	else
- 		a6xx_get_indexed_registers(gpu, a6xx_state);
- 
-+	stalled = !!(gpu_read(gpu, REG_A6XX_RBBM_STATUS3) &
-+			A6XX_RBBM_STATUS3_SMMU_STALLED_ON_FAULT);
++	for (i = 0; i < reglist->count; i++) {
++		*dest++ = reglist->regs[i];
++		*dest++ = gpu_read(gpu, reglist->regs[i]);
++	}
++
  	/*
- 	 * Try to initialize the crashdumper, if we are not dumping state
- 	 * with the SMMU stalled.  The crashdumper needs memory access to
+ 	 * The overall register list is composed of
+ 	 * 1. Static IFPC-only registers
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+index 124c63c4615930b00c64e488a498163ae35afccd..0b17d36c36a9567e6afa4269ae7783ed3578e40e 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+@@ -45,6 +45,7 @@ struct a6xx_info {
+ 	const struct adreno_reglist *hwcg;
+ 	const struct adreno_protect *protect;
+ 	const struct adreno_reglist_list *pwrup_reglist;
++	const struct adreno_reglist_list *ifpc_reglist;
+ 	u32 gmu_chipid;
+ 	u32 gmu_cgc_mode;
+ 	u32 prim_fifo_threshold;
 
 -- 
 2.50.1
