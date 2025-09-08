@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-805862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C247B48E84
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:04:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB382B48E87
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 349CC1883D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924C53ABC68
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE972307AFC;
-	Mon,  8 Sep 2025 13:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA30309F00;
+	Mon,  8 Sep 2025 13:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="e6LZlfYV"
-Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MuIsOTaI"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974BA12DDA1
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6739F307AFC
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757336640; cv=none; b=aQn5/j1zZYW/UZUIYPAyLNzxWWvms2B8v5ggu1wAJgligH2sk+vctfKx34V8rKGafF3WCs4lPjlxTEaT+N3IHqmnleO+ky7dmmPqIj9JUlBxEkfH2u1MgpKPAQdyL3gD/lVwEy2F6X1XicDEDua17ycOIr1shUXZnAF0Zsomx0Y=
+	t=1757336659; cv=none; b=jBcQjjp4Mp/Byi4ABgyjNkzOVkZZ5c+aFAyeehTUYwrYqIB5KHnN20mn27Nxrtv45STMf7E1Y2Uu2rpAu0Q1irmSWumZo4jGwWP8gR00HgufzUgO6LCzWYVxefV5GFFKHFLFFi9hoTFdqLmrJkFODyd07WgHnLK6zrWgRunuGcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757336640; c=relaxed/simple;
-	bh=d0EszQpJE6gAdN9Ihx9jMPY5A+jVDaOLs+dRF4mke6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sgt3T2w5vRvvf4Ro6RuoEsF44F+NZs41Oxq2mvbTwdWHF4x8DpGdatBiybrbok8hDbqS3KCmZYKbao3IAk80lIvJ9pXmckI5WdbjL9VYDr/ngdXRtvFEBeGnEbLoig8wv6GdriGFVUSUULWlkViqPyuGQdc04+K5KcXmlV4O4h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=e6LZlfYV; arc=none smtp.client-ip=61.135.153.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757336633;
-	bh=b7esB1XJNn+nodpKtUsgf1GD+n4bl86RWHbZIZQz81c=;
-	h=From:Subject:Date:Message-ID;
-	b=e6LZlfYVLHRQQaU+xfLVOsj8RN4Y9dERovYPAtJOf/oQY3tgYfkwVFKUxU+z/jgC3
-	 /FEJ/aPiwv6zinipYuyFqA0mypylppTuXLueRWEUjSRTfsgn+MI651w8mHKyA0x+i8
-	 zbsYqcZYgDu8+eWl1qaoG61MSY0DxIHX4nIZYFaU=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68BED41100004D02; Mon, 8 Sep 2025 21:03:15 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4560234456895
-X-SMAIL-UIID: F0DE01F4424740A48DFDD88220311495-20250908-210315-1
-From: Hillf Danton <hdanton@sina.com>
-To: Eric Dumazet <edumazet@google.com>,
-	Yu Kuai <yukuai1@huaweicloud.com>
-Cc: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	thomas.hellstrom@linux.intel.com
-Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-Date: Mon,  8 Sep 2025 21:03:00 +0800
-Message-ID: <20250908130303.6609-1-hdanton@sina.com>
-In-Reply-To: <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
-References: <68bb4160.050a0220.192772.0198.GAE@google.com> <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com> <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com> <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com> <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
+	s=arc-20240116; t=1757336659; c=relaxed/simple;
+	bh=cbZwiukwDnHDrFq3wQYLcIHXlTy3luajkiLNTJ9nWiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ddxawkWRMh05pQ9KbhwNz8qWcx+4fY6orb2vf/1hNfSJc/2ba0VMibgg1Wi2NDmaWJYfQDqoJPWAKBJ7cIvw3qk7kF6qXgAwufK8ndOcNsmyZ0UARBKfikMZyfLYat3kck4Zf1Kac9EjeaCxC9RCFVTV3yw1gBti8gE6IDGZLOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MuIsOTaI; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-33730e1cda7so40327311fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757336655; x=1757941455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbZwiukwDnHDrFq3wQYLcIHXlTy3luajkiLNTJ9nWiM=;
+        b=MuIsOTaIbDk/Ne+m0B/pMslwiNeAYtXtApwjwNMtoj7EeRIGhnv9kWDsPBtIALLZN3
+         1U/spYWmvDSR+I0JF7ztWFbre74L11tS6ht7cPlKITrJgpYZ/MgQdA+SWUmlMPoQODMy
+         i4WEzp2bWtdzNaH5TIuL6NgDEHNlFpjdvHEdji+PtwJaol+7LOexLI6zorNvwmV5YcnR
+         B0z6T8sYtbOJy4MBe8VCOIy5xAZ82Vs1GU8B1g+j7nptIB39uzvBNpVYV9DTn71ZOZGh
+         OtXzumWQ/sTKg8rfWCIdQHHvzIoMI9xjToxUx7WSJEHrtzim5425JTlxGAC3hZIELFyw
+         NT6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757336655; x=1757941455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cbZwiukwDnHDrFq3wQYLcIHXlTy3luajkiLNTJ9nWiM=;
+        b=MPKQI7SDG5NZrWlEE8PccqxSRk2L8tBBDHhWFoxgcvyygO41NNOzulsCmNXc3BYK/Q
+         XctcJ4dRXXdcSZuuhDT2GuvGMAXL6T+EAMV/vxK5pJpEXJLQE4hXPgJWSWW+XlrptJbY
+         iCwS0R4QJMrl/mSkFpJdTc4L/X2CxnZ6o1Y9LDUyj9eLmD5I4bPk12QrowkgoO0M0ZHA
+         4/wSPz1+jEWEuhcAyWCgATYLpyzceep41wOQ8d0I6yXFoF78hKo7B34SsNYWA9nLu05q
+         LSrc09sQKBYiUz4HaMxwAl8XoPqfPGENfnYaiyr8wsNISyKhlcGr52G7HNmTUHW/RQHQ
+         tCPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZj73Iro9O83Fdv8kP4vklp82oNNqt6SprjCTRnAJ41hzaTglG1VT7hLojO5tDpr49+RYgRXpi8SEr5c4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+mcunW1Oez5R8pWy1rRc9VDNDRF2raCYUrFgVffYCnAEL/LS3
+	JpZPGU1FyuZsX2yfjkKTrLWnBAcNa4usCvChtb20A8WY+62hP1nxgqtcnx8YxqCINMR+s/ZJtyM
+	qzxv6r2k96yDpHNmZm6Ox8Gz2bhX8AItthFP8QUyE0A==
+X-Gm-Gg: ASbGncuH3O8m9EuaVon8D9eM34qNopnpaDj2pMXzDAtVFeae+Qfq5X93UZwjBePphsR
+	yJ/SJt8pcz0t7BR3i4zf5WJIK7dI78LI8zBZq+GncYQ/aGKcnP7aD0IqQkJ8kJKXZ054kIlzwBf
+	1xF2HyzcGxsue6ENJt4miYx0WbJrU1WplMAM7RCKN0PjPYoB9NwRAmn9f71TbMih7QpqamCdZA1
+	WIFO/c=
+X-Google-Smtp-Source: AGHT+IGg4rogX0hb8M3wkRrCGyxcIS8n1x/nra5mMODdrlIDHhbHVFLHqNZGqHHGv1GU+9Sji/glMKNv4ydxz2WaN08=
+X-Received: by 2002:a2e:a78a:0:b0:32c:a097:4140 with SMTP id
+ 38308e7fff4ca-33b485c2616mr21948241fa.0.1757336655209; Mon, 08 Sep 2025
+ 06:04:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250908113723.31559-1-ansuelsmth@gmail.com>
+In-Reply-To: <20250908113723.31559-1-ansuelsmth@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Sep 2025 15:04:04 +0200
+X-Gm-Features: Ac12FXyaXKE0nskg1RjYMc8Puf3_DYZA9QjaZBlexnTSmjTh-Rk2P6swvJ94zgM
+Message-ID: <CACRpkdYYYAeqZZg58-2De-gfJkovYxABssuRk4xrS5SAC5=YQg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Larsson <benjamin.larsson@genexis.eu>, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/09/08 17:07, Eric Dumazet 写道:
-> On Mon, Sep 8, 2025 at 1:52 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->> 在 2025/09/06 17:16, Eric Dumazet 写道:
->>> On Fri, Sep 5, 2025 at 1:03 PM Eric Dumazet <edumazet@google.com> wrote:
->>>> On Fri, Sep 5, 2025 at 1:00 PM syzbot
->>>> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
->>>
->>> Note to NBD maintainers : I held about  20 syzbot reports all pointing
->>> to NBD accepting various sockets, I  can release them if needed, if you prefer
->>> to triage them.
->>>
->> I'm not NBD maintainer, just trying to understand the deadlock first.
->>
->> Is this deadlock only possible for some sepecific socket types? Take
->> a look at the report here:
->>
->> Usually issue IO will require the order:
->>
->> q_usage_counter -> cmd lock -> tx lock -> sk lock
->>
-> 
-> I have not seen the deadlock being reported with normal TCP sockets.
-> 
-> NBD sets sk->sk_allocation to  GFP_NOIO | __GFP_MEMALLOC;
-> from __sock_xmit(), and TCP seems to respect this.
+On Mon, Sep 8, 2025 at 1:37=E2=80=AFPM Christian Marangi <ansuelsmth@gmail.=
+com> wrote:
+
+> With further testing with an attached Aeonsemi it was discovered that
+> the pinctrl MDIO function applied the wrong bitmask. The error was
+> probably caused by the confusing documentation related to these bits.
 >
-Only if ffa1e7ada45 is missed, given the __correct__ locking order
-enforced in ffa1e7ada45 ("block: Make request_queue lockdep splats
-show up earlier"), GFP_NOIO does not help to cure any case that
-reverses that order, while __GFP_MEMALLOC looks like a paperover,
-at least because __GFP_MEMALLOC does not match lock_sock().
+> Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
+> is never actually set but instead it's set force enable to the 2 GPIO
+> (gpio 1-2) for MDC and MDIO pin.
+>
+> Applying this configuration permits correct functionality of any
+> externally attached PHY.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
--> #0 (sk_lock-AF_INET6){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3733
-       lock_sock include/net/sock.h:1667 [inline]
-       inet_shutdown+0x6a/0x390 net/ipv4/af_inet.c:905
-       nbd_mark_nsock_dead+0x2e9/0x560 drivers/block/nbd.c:318
-       nbd_send_cmd+0x11ec/0x1ba0 drivers/block/nbd.c:799
-       nbd_handle_cmd drivers/block/nbd.c:1174 [inline]
-       nbd_queue_rq+0xcdb/0xf10 drivers/block/nbd.c:1204
+Patch applied, recorded Benjamins response as Acked-by.
+
+Yours,
+Linus Walleij
 
