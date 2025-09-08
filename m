@@ -1,221 +1,236 @@
-Return-Path: <linux-kernel+bounces-805427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8330B4886A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:28:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B23B4886D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687FC16E0A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD283B797E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7482F2908;
-	Mon,  8 Sep 2025 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF142F068E;
+	Mon,  8 Sep 2025 09:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z3qiOu/N"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iga563uX"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B4B2F616C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C4D2EFD81
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757323708; cv=none; b=T/Ix57p+NxULGJ7DZzxU8L3YfIPFcrBnIJnTqF5bokAYDV81Fo2TtgmVk9picdUnyuCe1HUbBfKsrrB9W4A6vqyPpy54G+Bz278Yj/qyKiuxyPjO+LVw+rwRDdrSzoyopu9dPGns1gNzTHPZ+Cix6BMUt6GSYSQACTThmhzSPww=
+	t=1757323747; cv=none; b=kqoz4JGhZJxKVhKeof5z5tt/BzUuPGQ5QVUwcG01Kf2FFhAMBNK7WIvNfuGngJEnV0hXLue1JwoNgRsR6sFFM0yRKjuwwJnF0AbKXqDq0IOIfhMuINzun7z1iA+qidsxpCH03VvxMtbHKY+Y04jNaUMWaogoVlux5DO3V2/l0U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757323708; c=relaxed/simple;
-	bh=TBVEeAm7Jtahmfw3TwXLAhZmf3DGQa3stylZWm+XYAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LlKTxXDcDLygZySuzfIpNbZwzDYiXrD7X3dU+Krmt1ztLe8PdmEw1qNZNnvKalK34br+d2U4790o/kCNLYv7iZ0PoKwKtYFKAhr8eHazlysr+pVR42LBN1pVseI1OeUoZBOePS0izyGSn6qyEikpu9UMcKsvMuD5/Kg85jgWiyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z3qiOu/N; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3dce6eed889so3488815f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:28:24 -0700 (PDT)
+	s=arc-20240116; t=1757323747; c=relaxed/simple;
+	bh=dvTFtkpvbBAQ74mYvHwTRIWN4szgqSmdrZSt7X8douQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Py3TnsGTi4DR0oL0BHAl3Q8edsEcfUp8C1JLVR0RB48TZ0Vycx86gOMP66unnT/fLWGMsNLi8IsFX4mV9gqX56ye70Zn5d9va0P3xr52AntKI3huRiNDAyiryPbnuB8ACswyO+vFCIL68V7+Cdjo/CllP/pNdE7hNiIymr3Wdkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iga563uX; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6229f5ed47fso2913983a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:29:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757323702; x=1757928502; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oULmcJMXha8v5gh2i1FU5HOTdqs6IUKbO31Sh0Sihfo=;
-        b=Z3qiOu/N5JLeCGJ1KArDUResn2Ooekd2eNrUjiBarf5GOd5FCc0lNZfL9+2w0PXXbw
-         SD/FqDX+a16g8ikki+1Ditu/8uB5GK8shol2pJY+23k9q2VpUH0V5yacstCgGQQxcUYx
-         7FHIk2G//Ku9nBRKZw/1ZnOmPen/jJvOxaBMYRNhxWYPViZu2ehEd7SBzt0qZq/9tppH
-         uzcTa0DWYbVYvZ3NLmfOV99WpEg1m9fQN5iPwCfDpEaZOsz8w0E08hwl+mEcJ1rLQDPS
-         ObJFaqbwEGHa+BxmOfs9DLYbGEN9cT0pD9ifsXGiEg4pUyLAfIP3CL7S0b5B1H5iqwqj
-         mYvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757323702; x=1757928502;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757323743; x=1757928543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oULmcJMXha8v5gh2i1FU5HOTdqs6IUKbO31Sh0Sihfo=;
-        b=BTTNILIPbgQnxVhwBQX750JgqsIs8zpkZxCgOQzmWq405zEWLTV+jEdIo2dcKYxo1R
-         bhSQik/l72q31kU0qbHMkNZH1LBqN6r2eeYGudgdKEUG+JkiDL4HsywoAix+5ds3HC4f
-         zRLuolmbcM99U+HZ1Rg7LwyG/SGOEWP6ZZ6oHJLoID/wi69jvxQh2b7RexBPlwCHeqEK
-         KlCLD4vz9KBpRdsbrPyYQFto1S4Npfd/7Ut3OGWm8WoSoULeKvZMQT+FRzV0HMbbQK/1
-         l0kU8k1PsjJUarghyKalO27TK7sFhx6B+R/2vMPYb27gsvar6QQUd5myxktm8CrrfGWk
-         m2VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Q5VJN1CD3faHuerwLYSEwWiz6sc1t/4YrIuu7OLxcTuUlt/9qUK+Pf8rgSgn9gdPITOuxOxbCvpBO6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6hz5LaAS/lP5ZfVgSEl1KnGsezWAFxXJzeBF95cV51V4XElU1
-	/Gm3ZcnRgNgpkcWwqCxoXBIolou9cDiPNbb9L7yUTrCTES2L+UJe3sDepVV1J1ENLAE=
-X-Gm-Gg: ASbGncsx5I6kzBdETuV8JUFRTYeBbgtF8vWdeufGn6RgVabpCa+jB/o07kRM/BVFreN
-	IT4RePeCQERshj2ISkBbNvtmY3CqbdyeUjf3zRSadkBATmK9nHBW4GNw/L5ZrIJevIq4Vc7giuG
-	7TjP1V8q/J+kTlHkWCvtGCyMh7wydmc14kZVAIhEhU6u/VBp6+LfmMbajh0m1Nxtq9nCvV4xal5
-	SfvawRgQg20duyE0GHHEYdvffxW4Tec2087g0Yd55AoDS/dRv33jy1B60MFsu3r08q92ln8qN4u
-	cyful4yJzkoOvzuxy+JcKP0oEkyJkZayYgq0G+LLn18VnT2cfNGsNeO1OaHt24Jz5rZySYBYQEB
-	mVULxPJ0FBqRydYnK4/KLf0OHAi6l3Q==
-X-Google-Smtp-Source: AGHT+IGGMokDFkj82R0pk4Z/rqNX/HhpeR5ehoF8XM4OAGAn6N/D/anNfAR0B0g0zuYN0L4mk8/Jeg==
-X-Received: by 2002:a05:6000:4404:b0:3e6:a8ba:7422 with SMTP id ffacd0b85a97d-3e6a8ba779cmr2767890f8f.10.1757323702096;
-        Mon, 08 Sep 2025 02:28:22 -0700 (PDT)
-Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf33fba9fbsm40887135f8f.50.2025.09.08.02.28.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 02:28:21 -0700 (PDT)
-Date: Mon, 8 Sep 2025 11:28:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peilin Ye <yepeilin@google.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org,
-	linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-Message-ID: <aL6htMt-jHAaCGLv@tiehlicka>
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
+        bh=3Ooin1G88GdZ0+3wSDhxUHtkMqwER0rPq5jXYI5jvdI=;
+        b=iga563uX2y9W8KwNlyfm/v0L3S1Wlizww67ICjgR737TCRG/Ng4J89+dogPcLp2S4D
+         13QJYviocLuuwTLz6pYeilZl+oy8ckl2NEa7TEqOCMdldiJNJwwGJueZ0q0ptHX2Tkh6
+         HFB/Z6OM5I7f+//NENHVzmEQ+qWI0bL28f14qYp87mLJO8mbThGt2wHM80kUy2WCJII7
+         nZ5684FL8KBS62Dz5huj08ZSeuwgVTI6z9kTKzgpa7Tqru49b9BSyt9HmV/g8G4wlpXX
+         Bx/jFwKhFIfDBXIfqTe0p+kKvu9Yhpx2vfGygmftQjNllLfeO0Ree3zLFxZYnIgxdtHZ
+         Q4xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757323743; x=1757928543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Ooin1G88GdZ0+3wSDhxUHtkMqwER0rPq5jXYI5jvdI=;
+        b=h/kQvVEvZBB39NCeQ5wCU5tx6aHiPGjKSz05vsQqJ3EtBn/uR+LzBYpDHatdz024F1
+         uoloWyt5JsjCzvcftseAg5DLLBtsNUDdrHjKXUBJmJzHlfgSnvF+tnyGkTLd1VnVoeRK
+         uaJf5r43a4s+IdtYA/R+TVRgTABPCPKkCi0CiOfkV3SuvJCOwdlyuKHIFev1uNHK404P
+         aneTTz6oURxCQUfKwhZbD/fgYmYHds9651dwdMq6zGk0VGUUIZYb1orCHc5YmLx/wEbo
+         3th9qc7pqoPzzp/KkjTidHZiplbAGlrBmyMIKx87e/r+4kDwrxzi8oYBRe7Vi5iJpF+N
+         hi2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJOVGo1gxpJBsTbqmRcPhXE+bt8m+nwQdhbxjX0aR69i/J/u03yrqg7j+9sMpSWRpeBPZ1DQAXORPj0lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyuZnqqTUPD5DnCb53xxZag1AjqLQkV3DATRDfZDSIFzfWH/FM
+	FmwwHKvaImqmLxQLwXCv/UTWHFFAXQ6HCGcu/InAJDQZUgxGLwQgYw9AyH7zq0ERh+ii3a1ivDp
+	c/f75CRk+L39cXiLXjP9vIbOMJOI/nC4=
+X-Gm-Gg: ASbGncvIUDrXQlu4+dBrwJTLYYtqsIOlRsvB0mCoo+Hd5h+bjXJuYPpSTyfw5nH7eSO
+	SSySD4jm3KFYawSJmQVFrRZUbHIMCSDZZKr9RuZEdfpDPRxqjfCk7NTGlQ9f2GOkhBiZXUbmps6
+	Iwk+8PbeQX4s+hjOikkzFrLt9OPDzN0dz9piVoUDajXNgBl+48tNOkgXZVw9+ajv7eI8O27G+sH
+	8ZrHdE3Nk+fABwvHZDEYQ==
+X-Google-Smtp-Source: AGHT+IEOq1WZvNp7RsZJzT2joT2V7EGbKS0rr1lEaYYRTxNqeng2QJ7n+ufynse4ZchY5MrJtEMb73i93D4BHKB+qzk=
+X-Received: by 2002:a05:6402:1eca:b0:627:4ee2:311b with SMTP id
+ 4fb4d7f45d1cf-6274ee234c9mr4021795a12.10.1757323743116; Mon, 08 Sep 2025
+ 02:29:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905201606.66198-1-shakeel.butt@linux.dev>
+References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-9-ryncsn@gmail.com>
+ <1ee09786-ed3c-485e-99e4-48c4d2b92ced@linux.alibaba.com>
+In-Reply-To: <1ee09786-ed3c-485e-99e4-48c4d2b92ced@linux.alibaba.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Mon, 8 Sep 2025 17:28:25 +0800
+X-Gm-Features: AS18NWBOELUCiaRBWWIvM9ECMaTp2eBhzWUmPrmjMqEJtKCwjrbscaUw6f9dQlg
+Message-ID: <CAMgjq7DPgUNT41pS+591UUR2TfR5pCrABD8y6CKWF-ENpPBN0g@mail.gmail.com>
+Subject: Re: [PATCH v2 08/15] mm/shmem, swap: remove redundant error handling
+ for replacing folio
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 05-09-25 13:16:06, Shakeel Butt wrote:
-> Generally memcg charging is allowed from all the contexts including NMI
-> where even spinning on spinlock can cause locking issues. However one
-> call chain was missed during the addition of memcg charging from any
-> context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> cgroup_file_notify().
-> 
-> The possible function call tree under cgroup_file_notify() can acquire
-> many different spin locks in spinning mode. Some of them are
-> cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> just skip cgroup_file_notify() from memcg charging if the context does
-> not allow spinning.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Mon, Sep 8, 2025 at 2:04=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2025/9/6 03:13, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Shmem may replace a folio in the swap cache if the cached one doesn't
+> > fit the swapin's GFP zone. When doing so, shmem has already double
+> > checked that the swap cache folio is locked, still has the swap cache
+> > flag set, and contains the wanted swap entry. So it is impossible to
+> > fail due to an Xarray mismatch. There is even a comment for that.
+> >
+> > Delete the defensive error handling path, and add a WARN_ON instead:
+> > if that happened, something has broken the basic principle of how the
+> > swap cache works, we should catch and fix that.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > ---
+> >   mm/shmem.c | 42 ++++++++++++------------------------------
+> >   1 file changed, 12 insertions(+), 30 deletions(-)
+> >
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 4e27e8e5da3b..cc6a0007c7a6 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -1698,13 +1698,13 @@ int shmem_writeout(struct folio *folio, struct =
+swap_iocb **plug,
+> >               }
+> >
+> >               /*
+> > -              * The delete_from_swap_cache() below could be left for
+> > +              * The swap_cache_del_folio() below could be left for
+> >                * shrink_folio_list()'s folio_free_swap() to dispose of;
+> >                * but I'm a little nervous about letting this folio out =
+of
+> >                * shmem_writeout() in a hybrid half-tmpfs-half-swap stat=
+e
+> >                * e.g. folio_mapping(folio) might give an unexpected ans=
+wer.
+> >                */
+> > -             delete_from_swap_cache(folio);
+> > +             swap_cache_del_folio(folio);
+> >               goto redirty;
+> >       }
+>
+> You should reorganize your patch set, as the swap_cache_del_folio()
+> function is introduced in patch 9.
+>
+> >       if (nr_pages > 1)
+> > @@ -2082,7 +2082,7 @@ static struct folio *shmem_swap_alloc_folio(struc=
+t inode *inode,
+> >       new->swap =3D entry;
+> >
+> >       memcg1_swapin(entry, nr_pages);
+> > -     shadow =3D get_shadow_from_swap_cache(entry);
+> > +     shadow =3D swap_cache_get_shadow(entry);
+>
+> Ditto.
+>
+> >       if (shadow)
+> >               workingset_refault(new, shadow);
+> >       folio_add_lru(new);
+> > @@ -2158,35 +2158,17 @@ static int shmem_replace_folio(struct folio **f=
+oliop, gfp_t gfp,
+> >       /* Swap cache still stores N entries instead of a high-order entr=
+y */
+> >       xa_lock_irq(&swap_mapping->i_pages);
+> >       for (i =3D 0; i < nr_pages; i++) {
+> > -             void *item =3D xas_load(&xas);
+> > -
+> > -             if (item !=3D old) {
+> > -                     error =3D -ENOENT;
+> > -                     break;
+> > -             }
+> > -
+> > -             xas_store(&xas, new);
+> > +             WARN_ON_ONCE(xas_store(&xas, new));
+> >               xas_next(&xas);
+> >       }
+> > -     if (!error) {
+> > -             mem_cgroup_replace_folio(old, new);
+> > -             shmem_update_stats(new, nr_pages);
+> > -             shmem_update_stats(old, -nr_pages);
+> > -     }
+> >       xa_unlock_irq(&swap_mapping->i_pages);
+> >
+> > -     if (unlikely(error)) {
+> > -             /*
+> > -              * Is this possible?  I think not, now that our callers
+> > -              * check both the swapcache flag and folio->private
+> > -              * after getting the folio lock; but be defensive.
+> > -              * Reverse old to newpage for clear and free.
+> > -              */
+> > -             old =3D new;
+> > -     } else {
+> > -             folio_add_lru(new);
+> > -             *foliop =3D new;
+> > -     }
+> > +     mem_cgroup_replace_folio(old, new);
+> > +     shmem_update_stats(new, nr_pages);
+> > +     shmem_update_stats(old, -nr_pages);
+> > +
+> > +     folio_add_lru(new);
+> > +     *foliop =3D new;
+> >
+> >       folio_clear_swapcache(old);
+> >       old->private =3D NULL;
+> > @@ -2220,7 +2202,7 @@ static void shmem_set_folio_swapin_error(struct i=
+node *inode, pgoff_t index,
+> >       nr_pages =3D folio_nr_pages(folio);
+> >       folio_wait_writeback(folio);
+> >       if (!skip_swapcache)
+> > -             delete_from_swap_cache(folio);
+> > +             swap_cache_del_folio(folio);
+> >       /*
+> >        * Don't treat swapin error folio as alloced. Otherwise inode->i_=
+blocks
+> >        * won't be 0 when inode is released and thus trigger WARN_ON(i_b=
+locks)
+> > @@ -2459,7 +2441,7 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >               folio->swap.val =3D 0;
+> >               swapcache_clear(si, swap, nr_pages);
+> >       } else {
+> > -             delete_from_swap_cache(folio);
+> > +             swap_cache_del_folio(folio);
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Oh you are right, or I should keep the delete_from_swap_cache here.
 
-> ---
->  include/linux/memcontrol.h | 23 ++++++++++++++++-------
->  mm/memcontrol.c            |  7 ++++---
->  2 files changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 9dc5b52672a6..054fa34c936a 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -993,22 +993,25 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
->  	count_memcg_events_mm(mm, idx, 1);
->  }
->  
-> -static inline void memcg_memory_event(struct mem_cgroup *memcg,
-> -				      enum memcg_memory_event event)
-> +static inline void __memcg_memory_event(struct mem_cgroup *memcg,
-> +					enum memcg_memory_event event,
-> +					bool allow_spinning)
->  {
->  	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
->  			  event == MEMCG_SWAP_FAIL;
->  
->  	atomic_long_inc(&memcg->memory_events_local[event]);
+Let me just rebase and move this patch later then. Thanks!
 
-Doesn't this involve locking on 32b? I guess we do not care all that
-much but we might want to bail out early on those arches for
-!allow_spinning
-
-> -	if (!swap_event)
-> +	if (!swap_event && allow_spinning)
->  		cgroup_file_notify(&memcg->events_local_file);
->  
->  	do {
->  		atomic_long_inc(&memcg->memory_events[event]);
-> -		if (swap_event)
-> -			cgroup_file_notify(&memcg->swap_events_file);
-> -		else
-> -			cgroup_file_notify(&memcg->events_file);
-> +		if (allow_spinning) {
-> +			if (swap_event)
-> +				cgroup_file_notify(&memcg->swap_events_file);
-> +			else
-> +				cgroup_file_notify(&memcg->events_file);
-> +		}
->  
->  		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
->  			break;
-> @@ -1018,6 +1021,12 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
->  		 !mem_cgroup_is_root(memcg));
->  }
->  
-> +static inline void memcg_memory_event(struct mem_cgroup *memcg,
-> +				      enum memcg_memory_event event)
-> +{
-> +	__memcg_memory_event(memcg, event, true);
-> +}
-> +
->  static inline void memcg_memory_event_mm(struct mm_struct *mm,
->  					 enum memcg_memory_event event)
->  {
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 257d2c76b730..dd5cd9d352f3 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2306,12 +2306,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	bool drained = false;
->  	bool raised_max_event = false;
->  	unsigned long pflags;
-> +	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
->  
->  retry:
->  	if (consume_stock(memcg, nr_pages))
->  		return 0;
->  
-> -	if (!gfpflags_allow_spinning(gfp_mask))
-> +	if (!allow_spinning)
->  		/* Avoid the refill and flush of the older stock */
->  		batch = nr_pages;
->  
-> @@ -2347,7 +2348,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	if (!gfpflags_allow_blocking(gfp_mask))
->  		goto nomem;
->  
-> -	memcg_memory_event(mem_over_limit, MEMCG_MAX);
-> +	__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
->  	raised_max_event = true;
->  
->  	psi_memstall_enter(&pflags);
-> @@ -2414,7 +2415,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	 * a MEMCG_MAX event.
->  	 */
->  	if (!raised_max_event)
-> -		memcg_memory_event(mem_over_limit, MEMCG_MAX);
-> +		__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
->  
->  	/*
->  	 * The allocation either can't fail or will lead to more memory
-> -- 
-> 2.47.3
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+> >       }
+> >       folio_mark_dirty(folio);
+> >       swap_free_nr(swap, nr_pages);
+>
+>
 
