@@ -1,190 +1,203 @@
-Return-Path: <linux-kernel+bounces-806818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B53B49C15
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:36:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFB7B49C26
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EE457B59CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE964E21F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769BA320CB6;
-	Mon,  8 Sep 2025 21:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABC82EB862;
+	Mon,  8 Sep 2025 21:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4owem+DP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/QfregFy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZmbsH5/D"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF2E2E228D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256B32E9EB7;
+	Mon,  8 Sep 2025 21:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757367149; cv=none; b=dd+sVbx9cDsbpi8UkpbpbLvg4l10SAUI4z5djKyw85Hc9WDLqEIGUrCebcHLj7Ar9gIj7mKFz4sUxB2TcEbEx5yLiG1rNmBaxynIXV8STewI+FztwtGBzz7Oq/gaRSnDtxFLQBUJUOZ4pmGZgm1BU6V9Nqp1q9kXTqWxQ/WFt2Y=
+	t=1757367198; cv=none; b=UTSADrgJhqzep5EszY8x3d8JS4Lgp0rznX8ixysGBd9xP7rcUdxczHOBRGLPRNIPQIfTWnLpGTyI9A8Nb9ahiaEBH25XEzz6X/SPMu/VXvnzdK72a8w1WNUh3oNojG1UaPzwAaYxIe9zaf6GRfGKhf0gA6X4EkQPrHccFoUI/B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757367149; c=relaxed/simple;
-	bh=j/2KYHKwMUKHzSF9eJA6I9CmNXA9iNyyoRgUC+QBP0I=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=bNBWMRicxxf5pQXNu03OigJBvqH1eqsnMc21yD8Vn67aiHnzNlJa3ZJT33TdJ0GIbf4TwTXHmi9IBWkyPsyf40DusN3pT/fBrgK5ZxXv0J1LrdAlfae1mMmAZzbmeC59NP5KcYwkU/AzeLev9CEAQrtbilfcnJTP4QFLh1FDZoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4owem+DP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/QfregFy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250908212927.122992794@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757367146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=uEpXb4MYm4+O+MxEi6/Nv49MCNNEk4A00lo72YqNxnw=;
-	b=4owem+DPsAERQ0QyT9rTbqvOZd5CRlKBnSo81czoks444BqEp5HQm4kSIQC0XFdKr1ref9
-	P6ExJpG/feZ+9rtC/IA4TGoddchSCnUrSNebpcI0Ws/6hylkMQGciJsJsIkXXhay7Cz/Aq
-	s1XibNbyX20sJaWgs34e4hnNCGtZyN2emv1yRp9f+DfNPKcx+fBF976K5aRZKjz270ff8x
-	bAJgoVUIn19l5KAHlnyHzkIO2QdEtuZZf/h4rgmC4ecJVeFrnhnMucDrd1LCLRtumRXRJe
-	/f7TBwQTmbgVR3+Xb9pNP6sU2ls/1E1nQa34UH3X99hfxil5KNliUFw6tYbJbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757367146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=uEpXb4MYm4+O+MxEi6/Nv49MCNNEk4A00lo72YqNxnw=;
-	b=/QfregFyqTNkYwOKIMddI9oVmZGfkzlKOZNMQHAanb31AOm+DKFNbDNMuR1kvyWmZ680Z3
-	stDCOph34DwLM0BA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- x86@kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V4 29/36] entry: Split up exit_to_user_mode_prepare()
-References: <20250908212737.353775467@linutronix.de>
+	s=arc-20240116; t=1757367198; c=relaxed/simple;
+	bh=phyHjqCS9uGKYCLf30hLTJeN8xw1q6nVFvs+aihC6Us=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fAzJIrdSizqjiqA6S04FlwG/rJsm9uE2fhjn8Rtx8eniPEWZ6WswdJplv7fVihWrFbJX5+SH//6M4m6CZr4/MwaAHoXPNbWd0dTapH8me/62LRl7H5sfgt4Jq4Kicg7sPogWy7/zi5lEUSDGQWlhib3mPMVSwJyaGi3eTQ8gdCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZmbsH5/D; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=AJRiZoVFyTJIE0rFVOLfgm4TnIZJeCki13dbxXUIFdA=; b=ZmbsH5/DWZ9tLnp1JDG2Kna9HU
+	p7uiOVDvJxe2a89hoPzH9i1pVL5IiOkKQpQOAQOmPwTHKa1mOd9f/45fQdNNCBXhKjnUN5qoHL9qw
+	ee/AKEHNEvbe3iaRlGDG1P8hAzu3P4Ct5fsXlNTUGRUQtDfJMYCigoT0Glz+VcFhyJZJT+IXrUbev
+	spFby46unZtN+cXdHg2qcRB9SkbXqGSTUmIKJfY5z+3zef9/85JsCuioVBf3B5x7YnrxniviI7FA+
+	sOaSQG2UALOipZl6FmW03GgtkWCkbZWI28HGoA2ahbeq0aH8mM80Y3xKpXy3Bkr9PkNzG4rWBE/PV
+	omoTX91g==;
+Received: from griffoul by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvjUA-0000000DNug-1ht0;
+	Mon, 08 Sep 2025 21:33:14 +0000
+From: Fred Griffoul <griffoul@infradead.org>
+To: kvm@vger.kernel.org
+Cc: griffoul@gmail.com,
+	Fred Griffoul <fgriffo@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 1/5] KVM: nVMX: Implement cache for L1 MSR bitmap
+Date: Mon,  8 Sep 2025 22:32:26 +0100
+Message-ID: <20250908213241.3189113-2-griffoul@infradead.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250908213241.3189113-1-griffoul@infradead.org>
+References: <20250908213241.3189113-1-griffoul@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon,  8 Sep 2025 23:32:25 +0200 (CEST)
+Content-Transfer-Encoding: 8bit
 
-exit_to_user_mode_prepare() is used for both interrupts and syscalls, but
-there is extra rseq work, which is only required for in the interrupt exit
-case.
+From: Fred Griffoul <fgriffo@amazon.co.uk>
 
-Split up the function and provide wrappers for syscalls and interrupts,
-which allows to separate the rseq exit work in the next step.
+Optimize L1 MSR bitmap access by replacing map/unmap operations with a
+persistent gfn_to_pfn_cache. This optimization reduces overhead during
+L2 VM-entry where nested_vmx_prepare_msr_bitmap() merges L1's MSR
+intercepts with L0's requirements.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Current implementation using kvm_vcpu_map_readonly() and
+kvm_vcpu_unmap() creates significant performance impact, particularly
+with unmanaged guest memory.
 
+New implementation:
+- Initializes a pfn cache when entering VMX operation.
+- Maintains persistent access throughout operation.
+- Deactivates cache when VMX operation ends.
+
+Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
 ---
- include/linux/entry-common.h     |    2 -
- include/linux/irq-entry-common.h |   42 ++++++++++++++++++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 42 +++++++++++++++++++++++++++++++++++----
+ arch/x86/kvm/vmx/vmx.h    |  2 ++
+ 2 files changed, 40 insertions(+), 4 deletions(-)
 
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -156,7 +156,7 @@ static __always_inline void syscall_exit
- 	if (unlikely(work & SYSCALL_WORK_EXIT))
- 		syscall_exit_work(regs, work);
- 	local_irq_disable_exit_to_user();
--	exit_to_user_mode_prepare(regs);
-+	syscall_exit_to_user_mode_prepare(regs);
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index b8ea1969113d..aa4fe1fe571d 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -315,6 +315,34 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
+ 	vcpu->arch.regs_dirty = 0;
  }
  
- /**
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -201,7 +201,7 @@ void arch_do_signal_or_restart(struct pt
- unsigned long exit_to_user_mode_loop(struct pt_regs *regs, unsigned long ti_work);
- 
- /**
-- * exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * __exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-  * @regs:	Pointer to pt_regs on entry stack
-  *
-  * 1) check that interrupts are disabled
-@@ -209,8 +209,10 @@ unsigned long exit_to_user_mode_loop(str
-  * 3) call exit_to_user_mode_loop() if any flags from
-  *    EXIT_TO_USER_MODE_WORK are set
-  * 4) check that interrupts are still disabled
-+ *
-+ * Don't invoke directly, use the syscall/irqentry_ prefixed variants below
-  */
--static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
-+static __always_inline void __exit_to_user_mode_prepare(struct pt_regs *regs)
- {
- 	unsigned long ti_work;
- 
-@@ -224,15 +226,45 @@ static __always_inline void exit_to_user
- 		ti_work = exit_to_user_mode_loop(regs, ti_work);
- 
- 	arch_exit_to_user_mode_prepare(regs, ti_work);
-+}
- 
--	rseq_exit_to_user_mode();
--
-+static __always_inline void __exit_to_user_mode_validate(void)
-+{
- 	/* Ensure that kernel state is sane for a return to userspace */
- 	kmap_assert_nomap();
- 	lockdep_assert_irqs_disabled();
- 	lockdep_sys_exit();
- }
- 
-+
-+/**
-+ * syscall_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * @regs:	Pointer to pt_regs on entry stack
-+ *
-+ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
-+ * syscalls and interrupts.
++/*
++ * Maps a single guest page starting at @gpa and lock the cache for access.
 + */
-+static __always_inline void syscall_exit_to_user_mode_prepare(struct pt_regs *regs)
++static int nested_gpc_lock(struct gfn_to_pfn_cache *gpc, gpa_t gpa)
 +{
-+	__exit_to_user_mode_prepare(regs);
-+	rseq_exit_to_user_mode();
-+	__exit_to_user_mode_validate();
++	int err;
++
++	if (WARN_ON_ONCE(!PAGE_ALIGNED(gpa)))
++		return -EINVAL;
++retry:
++	read_lock(&gpc->lock);
++	if (!kvm_gpc_check(gpc, PAGE_SIZE) || (gpc->gpa != gpa)) {
++		read_unlock(&gpc->lock);
++		err = kvm_gpc_activate(gpc, gpa, PAGE_SIZE);
++		if (err)
++			return err;
++
++		goto retry;
++	}
++
++	return 0;
 +}
 +
-+/**
-+ * irqentry_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
-+ * @regs:	Pointer to pt_regs on entry stack
-+ *
-+ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
-+ * syscalls and interrupts.
-+ */
-+static __always_inline void irqentry_exit_to_user_mode_prepare(struct pt_regs *regs)
++static void nested_gpc_unlock(struct gfn_to_pfn_cache *gpc)
 +{
-+	__exit_to_user_mode_prepare(regs);
-+	rseq_exit_to_user_mode();
-+	__exit_to_user_mode_validate();
++	read_unlock(&gpc->lock);
 +}
 +
- /**
-  * exit_to_user_mode - Fixup state when exiting to user mode
-  *
-@@ -297,7 +329,7 @@ static __always_inline void irqentry_ent
- static __always_inline void irqentry_exit_to_user_mode(struct pt_regs *regs)
+ static void nested_put_vmcs12_pages(struct kvm_vcpu *vcpu)
  {
- 	instrumentation_begin();
--	exit_to_user_mode_prepare(regs);
-+	irqentry_exit_to_user_mode_prepare(regs);
- 	instrumentation_end();
- 	exit_to_user_mode();
- }
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+@@ -344,6 +372,9 @@ static void free_nested(struct kvm_vcpu *vcpu)
+ 	vmx->nested.vmxon = false;
+ 	vmx->nested.smm.vmxon = false;
+ 	vmx->nested.vmxon_ptr = INVALID_GPA;
++
++	kvm_gpc_deactivate(&vmx->nested.msr_bitmap_cache);
++
+ 	free_vpid(vmx->nested.vpid02);
+ 	vmx->nested.posted_intr_nv = -1;
+ 	vmx->nested.current_vmptr = INVALID_GPA;
+@@ -625,7 +656,7 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	int msr;
+ 	unsigned long *msr_bitmap_l1;
+ 	unsigned long *msr_bitmap_l0 = vmx->nested.vmcs02.msr_bitmap;
+-	struct kvm_host_map map;
++	struct gfn_to_pfn_cache *gpc;
+ 
+ 	/* Nothing to do if the MSR bitmap is not in use.  */
+ 	if (!cpu_has_vmx_msr_bitmap() ||
+@@ -648,10 +679,11 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 			return true;
+ 	}
+ 
+-	if (kvm_vcpu_map_readonly(vcpu, gpa_to_gfn(vmcs12->msr_bitmap), &map))
++	gpc = &vmx->nested.msr_bitmap_cache;
++	if (nested_gpc_lock(gpc, vmcs12->msr_bitmap))
+ 		return false;
+ 
+-	msr_bitmap_l1 = (unsigned long *)map.hva;
++	msr_bitmap_l1 = (unsigned long *)gpc->khva;
+ 
+ 	/*
+ 	 * To keep the control flow simple, pay eight 8-byte writes (sixteen
+@@ -721,7 +753,7 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
+ 					 MSR_IA32_MPERF, MSR_TYPE_R);
+ 
+-	kvm_vcpu_unmap(vcpu, &map);
++	nested_gpc_unlock(gpc);
+ 
+ 	vmx->nested.force_msr_bitmap_recalc = false;
+ 
+@@ -5352,6 +5384,8 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
+ 
+ 	vmx->nested.vpid02 = allocate_vpid();
+ 
++	kvm_gpc_init(&vmx->nested.msr_bitmap_cache, vcpu->kvm);
++
+ 	vmx->nested.vmcs02_initialized = false;
+ 	vmx->nested.vmxon = true;
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index d3389baf3ab3..3a6983222841 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -152,6 +152,8 @@ struct nested_vmx {
+ 
+ 	struct loaded_vmcs vmcs02;
+ 
++	struct gfn_to_pfn_cache msr_bitmap_cache;
++
+ 	/*
+ 	 * Guest pages referred to in the vmcs02 with host-physical
+ 	 * pointers, so we must keep them pinned while L2 runs.
+-- 
+2.51.0
 
 
