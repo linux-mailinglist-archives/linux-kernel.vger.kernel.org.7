@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-804998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88647B482D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:24:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5E4B482DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6C93C1051
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:24:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE2C17E1F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6620D1FF1BF;
-	Mon,  8 Sep 2025 03:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C16820B80B;
+	Mon,  8 Sep 2025 03:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOieyuBw"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqdiuiBZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751A27263E;
-	Mon,  8 Sep 2025 03:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098877263E;
+	Mon,  8 Sep 2025 03:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757301875; cv=none; b=fVLlIPn6KUjIujyo+/bAChxzUkvBpgHUtzVzdWfts38Ce43eGT+ZfOLooFwlsZPwdF4xO//tyhLN1emQ2b8lxg7wZQyFqXV9WJ9LFpo7xnTIiG4tL8gVDC8lEgbhjQ8vlzAm71YFooQbG0yyQq0tghP/jlhknsDaSHkkdBbBkMA=
+	t=1757302013; cv=none; b=hSH+IqeM06eTCha0SEwxzql951LsZTiPCPocpDb1W9aTGJN3rLOa7avAtac0RP7j1Sla5cJTFDZD+dqq4mQ0OmNmJ7N/lrJrGp+RS3ATux3lyp8BerB95DL6kcfaO5UhHU25FgjQngKiSnMSKy8Nj40uciz7W+xDoGQVrAZD/Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757301875; c=relaxed/simple;
-	bh=4KMKE3rf7nGiE4o9mzO76A86cw0C5sJX1SugltkYX9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DgRvA3xNXCP8e5In+hiDmqtP9d/3s6iVVDe+WYjcefwnLmEN36OVyybg/r6e9qW0RYbUacSeZpN8WA0djaYugvXuIHld0cb9QIParYnhocqQxON+vFz1U/ypvHiZRNBvAXadBtF4GnPqS6KCwR34iiu8o9TEL9B/IJmQXye43g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOieyuBw; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so2367418a12.1;
-        Sun, 07 Sep 2025 20:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757301874; x=1757906674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1YdlViIZHKUzYpjlo2f7uFhrNB8IK0wvfe/kRf2ExMM=;
-        b=FOieyuBwUKr/vDEfOnmD8kQh8cDEPA8gXyFBVZFWtKXT2/r7a60shF7dJxjqgesMT1
-         XGANxcHs4g3q5hLqGOvJjOY0t2zXQPZgLCJfhLopjatdB9ZoSv8peUQEfWSs8UkU66bu
-         hjPMG327VzopYh6g3Gc+u2lHF6KhNDCfom9moHo8qbJqZmyl+5Gv9KW9R9PMMO5xllmt
-         USRYUiQr2Kz1Ym/xADwXZN55u7qiH5hWm4cE2ZPYPXOtD8+B5K8R25GSG9n+DkF6+AJ2
-         5Digp+QtUBIOIXOQ/rxnS/H0rLPGWlB4MMHLXfPM64TGW2Cy9euWSttv2+K/D52Pfvpl
-         hHgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757301874; x=1757906674;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1YdlViIZHKUzYpjlo2f7uFhrNB8IK0wvfe/kRf2ExMM=;
-        b=dnI1y/urKhUwXlW+HeyU1q8oTcvppBDbgcU87K9EcdkeNsuXesRUg0EeTKws42EZG+
-         WiycyCxgJnPq3FAS6oYyPqLSyIqR5jAv+A3Pmv/NdF8sW/JLECf/PCjRZEH8pl1nzhuh
-         yM556hBvQlXdhiXthgiJV3WrWOD2GpBC/tuXxlyAKO/oAD0ZsqgkUASDIg926lRhqScZ
-         eyeWrtFxPiMQ5qv27u1JXyJHRTp+zDBNnovhpfZuRfJutk3gTTx29h2O+jGN+xjRTkDN
-         8TzbHtvR9zgL5YxStIZyOFz04cZO26TUdFrQXwQrh35Rzm7YpvZYnKBIrDzBjudVAXit
-         bmDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4bvAyjiE3rigtTb8LRrJX16iymq2FRTs46PhRQAQ1sIvHzD505YTHzzqoGdNqyG6hU5n7Abt1hNlLFgA=@vger.kernel.org, AJvYcCVDVOZCJJjDjfHXODaM8bOPKJ6cHXy8dIKyOjLpcFzaoAsT5BBkyse0bnXSBzr9YRFdYVedeBU6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOwQdsRMMsA99BtvYmfsYQiilv+bJOuvc9fIAyMhLPnS3E0LUg
-	SdKXoBTkKD0QJs7+PgkLjdr+kk1evfRxF8E3b+Oq/cVUWnQf2oFaxZU0
-X-Gm-Gg: ASbGncuHiYVbDBD9eC09NQnGVLw4MsagwNCtnIvZNVD+lx0RRBhuMoYoltfgkIYKd3Y
-	URFjsOa1y2J6EqYkR5vaiwdXQqh23KjyBZTAy4Mtfv2VBtINi8RQCFNbUi/AP3xGeUDFpvCY8Wp
-	jF557Nuns/8QQDXVFcyB10qn6BhZWjCIdEA15WHzgCaZ1LFeTZKTd9TD6MWKOYNpWPvJk2RMwmQ
-	9ha9XvrNaSva6+heZoYsg41+i/Jwd1TzX8YEHgnq5VxpLh4S5Ez0louPw9y4D5mYorPUWvlq2qM
-	zIEPLKAPCucOr4RWKHX/JWANzDLnK938+gJmeUec9QV3VnPZa+bJNgZp+Q5KNc/8+Qy57gqm8fe
-	BjMmZ3EZzUc5slsq2CPF+hktYe1Ha34K1SzgLIpHCH7WqBgNDp4h5AdUN4IIKNUQH
-X-Google-Smtp-Source: AGHT+IH1B5ZE2vW99JA0qH8CCygG0lWswOWJA8nDyDWgxquAxw+pqFuu9wOxwpISgnD3lkc1Gw2lFQ==
-X-Received: by 2002:a17:903:2b03:b0:24c:e3bf:b456 with SMTP id d9443c01a7336-2516da0618dmr95348025ad.15.1757301873762;
-        Sun, 07 Sep 2025 20:24:33 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-252a0e700a7sm42273775ad.15.2025.09.07.20.24.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 20:24:33 -0700 (PDT)
-Message-ID: <ed431dd0-b044-4923-80a0-63abe0309f78@gmail.com>
-Date: Sun, 7 Sep 2025 20:24:26 -0700
+	s=arc-20240116; t=1757302013; c=relaxed/simple;
+	bh=rZNYmw/70yMdjxJYnR6jEUKkMb4RlqjEnkyFq1nx8hA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kzl3pCO0H5FbX1jSx6FdopoeG2xvmr5eQA3UgW5nVBvPfG3HWS7YDl7vDTM8gLEVL1AH7iYOfTmNL5BYGKgsOUZebcnsE+QLdqGpbO3a2OYkA8tCzVefoX4oFT+uwLpuqABhjRzSfWUEhGv+bsUIQAagVKQ3dvxQLaBKlr/u3ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqdiuiBZ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757302012; x=1788838012;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rZNYmw/70yMdjxJYnR6jEUKkMb4RlqjEnkyFq1nx8hA=;
+  b=PqdiuiBZqrqQZ5gQfW/EHB/mwToas5mse4aISoTkNkKuxKwFhNYjq2Uy
+   +hGyDilzL3FRqEr+8K1W68g8i6EdIlownjeAZzoHFWvvAfe9o02Gkjp5c
+   2L10GYDMC5FtJFqnjg6VJ4PLlGH+bAcB8ks9dpgoHGUkX898eWyUUswIm
+   saCu1nEv3WbrW7DVu/bWt1K0qMkOLza/FWEhC/vXtYFRyXcK35vzwjvJp
+   wOwgi2ylW08hLtn8F+S0TWpFqO6TsV+SNJgLj7hnB1OCgwCnmoUaJRpkr
+   2aA4dbbhvTp8GWFcIB3if6n8+5k4TmC8HISdQy4QwMmOf8P2XHakzwp33
+   w==;
+X-CSE-ConnectionGUID: hg+dna3lSMOKuqFupWrGUw==
+X-CSE-MsgGUID: PkNNY1UETh6OapPf1zrxaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="47124810"
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="47124810"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2025 20:26:52 -0700
+X-CSE-ConnectionGUID: A4BTjG6USqS0D/opF28n1Q==
+X-CSE-MsgGUID: MmnphY7BSlugVqp4NccDOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="177024497"
+Received: from shsensorbuild.sh.intel.com ([10.239.132.250])
+  by fmviesa005.fm.intel.com with ESMTP; 07 Sep 2025 20:26:49 -0700
+From: Even Xu <even.xu@intel.com>
+To: xinpeng.sun@intel.com
+Cc: bentiss@kernel.org,
+	jikos@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	srinivas.pandruvada@linux.intel.com,
+	Even Xu <even.xu@intel.com>
+Subject: Re: [PATCH v2 1/2] hid: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
+Date: Mon,  8 Sep 2025 11:26:33 +0800
+Message-Id: <20250908032633.1143113-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250828021000.3299377-1-xinpeng.sun@intel.com>
+References: <20250828021000.3299377-1-xinpeng.sun@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/121] 6.6.105-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250907195609.817339617@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20250907195609.817339617@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.105 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> From: Xinpeng Sun <xinpeng.sun@intel.com>
+> To: jikos@kernel.org, bentiss@kernel.org
+> Cc: srinivas.pandruvada@linux.intel.com, linux-input@vger.kernel.org,
+> 	linux-kernel@vger.kernel.org, Xinpeng Sun <xinpeng.sun@intel.com>
+> Subject: [PATCH v2 1/2] hid: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
+> Date: Thu, 28 Aug 2025 10:09:58 +0800	[thread overview]
+> Message-ID: <20250828021000.3299377-1-xinpeng.sun@intel.com> (raw)
 > 
-> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> Anything received after that time might be too late.
+> Add THC I2C WildcatLake device IDs.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.105-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
+
+Thanks for the patch!
+
+Reviewed-by: Even Xu <even.xu@intel.com>
+
+> ---
+>  drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c | 2 ++
+>  drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> thanks,
-> 
-> greg k-h
-
-Same perf build error for 6.6 as reported for 6.1:
-
-util/bpf-utils.c: In function 'get_bpf_prog_info_linear':
-util/bpf-utils.c:129:26: error: '__MAX_BPF_PROG_TYPE' undeclared (first 
-use in this function); did you mean 'MAX_BPF_LINK_TYPE'?
-   129 |         if (info.type >= __MAX_BPF_PROG_TYPE)
-       |                          ^~~~~~~~~~~~~~~~~~~
-       |                          MAX_BPF_LINK_TYPE
-
-
-caused by ce6db078aeb919d5fff7846e18bda2307c8a6ba9 ("perf bpf-utils: 
-Harden get_bpf_prog_info_linear")
--- 
-Florian
-
+> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> index f122fde879b9..17b1f2df8f8a 100644
+> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> @@ -1019,6 +1019,8 @@ static const struct pci_device_id quicki2c_pci_tbl[] = {
+>  	{ PCI_DEVICE_DATA(INTEL, THC_PTL_H_DEVICE_ID_I2C_PORT2, &ptl_ddata) },
+>  	{ PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_I2C_PORT1, &ptl_ddata) },
+>  	{ PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_I2C_PORT2, &ptl_ddata) },
+> +	{ PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_I2C_PORT1, &ptl_ddata) },
+> +	{ PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_I2C_PORT2, &ptl_ddata) },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(pci, quicki2c_pci_tbl);
+> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+> index b78c8864d39e..240492a38c24 100644
+> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+> @@ -13,6 +13,8 @@
+>  #define PCI_DEVICE_ID_INTEL_THC_PTL_H_DEVICE_ID_I2C_PORT2	0xE34A
+>  #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_I2C_PORT1	0xE448
+>  #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_I2C_PORT2	0xE44A
+> +#define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_I2C_PORT1 	0x4D48
+> +#define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_I2C_PORT2 	0x4D4A
+>  
+>  /* Packet size value, the unit is 16 bytes */
+>  #define MAX_PACKET_SIZE_VALUE_LNL			256
+> -- 
+> 2.40.1
 
