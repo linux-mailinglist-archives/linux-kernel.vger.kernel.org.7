@@ -1,103 +1,116 @@
-Return-Path: <linux-kernel+bounces-805177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C411DB484F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339D5B484F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376B53C1C28
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1CE17A861
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3942C2E54D3;
-	Mon,  8 Sep 2025 07:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F502E8897;
+	Mon,  8 Sep 2025 07:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LAHEyySx"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYzGPntm"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EED13B2A4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344692E62C8;
+	Mon,  8 Sep 2025 07:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757315975; cv=none; b=oQFKi/PxJSvnBEJjDop4rwsHWIONU28vkJXtdUVbM+WjTy0vLaSPodgdnjOtPj8TnVQ+8i0w9VuS1bnjmUvc4jpdj8zUPJmUNTRUL86IwRxraTxVJPLAuW3Kx3FwJ7yrbLul5e5UcNDtoia9tjeD3LS+r+//0rlhgv6Gaj+vygs=
+	t=1757315981; cv=none; b=YCv7b2swAt9peJPMuMbWfroBOx9wMKB7SFob6RppnfwMct0JVtJhOONcmkquAObx6NdGJnGW+VwcLU6FT1tubkyjHpq25x/9XfEkBdcQeuz701RRBoUg/tyivVWd1DQQseEOfffWp9Ze7QNJc/wui1s2pHlAywYaPxnv9bsBbj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757315975; c=relaxed/simple;
-	bh=zH4JD/dlrSY6OxOvJhnXD/9oDuUN/j0yj5itLceofGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WEhFeXV9hzN5jybWipEw42muLrD3f/MLt96NBRuqMKO3CA9qF9Nxi4KfYYHwpnAs2oExq5+EI6eiQysCOFzUdpmND63G0OHTN+7hsqKQcmVOwUYmBWTHLwNeHbXQuSuubtY2skcLI58WMYMf3WtZT7XHZDK20iGoVHLsCB2I1jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LAHEyySx; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757315970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IwgxsMq1tgAp2VqFUxjhXW3Xhestgip8zAuXd8bb+3Y=;
-	b=LAHEyySxMm2ColIe8xcvSzTEEKu5SetMoSnM2MtL8t2YpBW3s8JKoMwmSDbH9y6U5WdrTk
-	+cdcaSuL73nHXBydrN2Y1LTPEiwxyPVmkqqlXs/bJkmAluCWfHAaO6Sv+2sysohu9T1HQ8
-	55qPXAM6bBYuHR4o4WcbKHmsUOOBF40=
-From: Ye Liu <ye.liu@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/slub: Refactor note_cmpxchg_failure for better readability
-Date: Mon,  8 Sep 2025 15:19:21 +0800
-Message-ID: <20250908071922.1062170-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1757315981; c=relaxed/simple;
+	bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m+Wv78zxNAXWplUUTOwzbYigrw+9TphWdDL0jVK1KyN3Y670DSvfeTcHpu2m3OHSKmu0FkXaPcZJD3oiZA9QoasoINZWlkaabbaQuuZIotmXGl2QzT5SyHcdxHan5pjFv018wRUtmmMXJDPM5ZW4Go39SrNPoa7pRVMa1y7hgNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYzGPntm; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7722c8d2694so3474549b3a.3;
+        Mon, 08 Sep 2025 00:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757315978; x=1757920778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
+        b=gYzGPntml6XvaAbNFLAa302qxlIMSoyUrU5Qav1xpoNDQFP9FeRONwUiyNo2Lx195K
+         b3oNAwTh3wwGkABa09kS/UmpEz24hfHiZLGy36Xt5zU+0gqCJdL89O6t0YmWrYHQZtWn
+         nje14hxL5jNdrYNFy5iVvQnvuEkb2h9SKMtSWKriizr0eYlZ7n9vkSa935e26EUIPXKe
+         JAo8rA8gTv2PF+xfn0sNgyNu11HojQ2SflKEWjtcbNefTnCaDZLCH1lVKxU7LA4GZUsO
+         lap5qJDmfxC71PIXKc11iL6FSN/OkSuOy/UNxu0QehUvq3s8QXOcY3D4DBPcAossdOND
+         aevQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757315978; x=1757920778;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UhcDRmH8ZVlg+Evip09+ssNhAPTrYqoMlqk/l3FeugU=;
+        b=pac16HJX6dRlF1aog0pryfeUK4MqSPQbCwj8uudeM3gw3GvL/YLxHVGfRsP0BYsMbP
+         fKtoA0YikYLcrHXqynOPMkMhVZq5zcKbrCyN97N5rbnfK7DLEoJ5wT7TCNxPYWd2MKQa
+         crvY3+obgbNbVPXYMjmyfwpjd8GeNIZ4MfKH1/RxWFG4PS9XO6qW343jbTrsU4S6kkOu
+         PbSuwkALehd+ORjK67VPhr9QgJNeFO+HPQGCTxLdaqb6sjVn+h+SypVl6xzTUSwCV7LK
+         YRdFfXeYTU0iTxvbfLrXhpC9bycQ+ag69sSFkSaSp//4TAcPexbsrk/jq9DOzeINbXwr
+         DgJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZIhSJNAEctUk5xGYyjoJCMoOGe3pbV+4N7Tk93DYaLgoT+K7OpCeuGlMMcHBRdyu7tTg4K0+/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK6gpR1vmnqslv9QOedWEglaAqfvdwzqvjSVQS4334pIukyzpa
+	XTHP0UZKEw1gNalGtmL64hEHeNDThmO/9Ml3qXT2U18o6vPzSjVN9bVO
+X-Gm-Gg: ASbGncvGcQVeFBaSrhcYAvfzjqeU2Jcx0WdkLVEfR+4k+tE+bZpX1P2n7x5nAcHuXZ8
+	maOkogDHjNwdZwuGTw8ulCl1tLR67uF4dpgE7aKxY1f5Dz7Ealeq8ilx0R3A1HCCXem7qH+gCNI
+	sgYp9hZZSRCZZc3RsTIPBaonwKeLmb1/6BjhWwlGG5qSgZ/Lv7jj+4/SkRrQuvbof6IV1Y7m3Wo
+	94nfZgMKKItEWvPG7lllHya8dju1QCWjr079Y7vyunrGZMPfIxBuzEt1GEUNZigEW7CUrilDuqM
+	tcIXGyvlof9B9ia8tDHawR87i5jXc/8Bh2hiCpQOqhXqOUONNN0lj1PHxuRI1EmVH2tqSbl3Di1
+	ekqKQ49diBcz1c02SNKGxJSZvwhQEfcBpJPRCHzeu6r7wh4yDT8WAzPE=
+X-Google-Smtp-Source: AGHT+IE/LhwcY3G2UrWPSLBxBEy/834kFowCIFQddipKGcG/qLZGkfRNUXLRizohVB+NEmAxc9jpkg==
+X-Received: by 2002:a05:6a20:4320:b0:24c:cb06:f0db with SMTP id adf61e73a8af0-253430ae888mr9895534637.35.1757315978448;
+        Mon, 08 Sep 2025 00:19:38 -0700 (PDT)
+Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0e1cfbbsm25587173a12.23.2025.09.08.00.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 00:19:38 -0700 (PDT)
+From: Hongru Zhang <zhanghongru06@gmail.com>
+X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
+To: paul@paul-moore.com
+Cc: linux-kernel@vger.kernel.org,
+	omosnace@redhat.com,
+	selinux@vger.kernel.org,
+	stephen.smalley.work@gmail.com,
+	zhanghongru06@gmail.com,
+	zhanghongru@xiaomi.com
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
+Date: Mon,  8 Sep 2025 15:19:22 +0800
+Message-ID: <20250908071925.294803-1-zhanghongru@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAHC9VhSW69hmvduJK1cKt_XffiDwEeHUKAtJ3YLbohKWff0+bQ@mail.gmail.com>
+References: <CAHC9VhSW69hmvduJK1cKt_XffiDwEeHUKAtJ3YLbohKWff0+bQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Ye Liu <liuye@kylinos.cn>
+Apologies for the late reply, I sent the patch before leaving work on
+Friday, and didn't check email all weekend.
 
-Use IS_ENABLED() and standard if-else to make the code clearer.
+> On Fri, Sep 5, 2025 at 6:05 AM Hongru Zhang <zhanghongru06@gmail.com> wrote:
+> >
+> > From: Hongru Zhang <zhanghongru@xiaomi.com>
+> >
+> > On mobile device high-load situations ...
+>
+> What are you using for a SELinux policy?
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- mm/slub.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Android app smoothness test, testing metrics can quantify app smoothness
+from the user's perspective. The problem is also reproducible in
+cold-start test scenarios. These two are widely used testing model.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 30003763d224..34853c0441a6 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3064,18 +3064,16 @@ static inline void note_cmpxchg_failure(const char *n,
- 
- 	pr_info("%s %s: cmpxchg redo ", n, s->name);
- 
--#ifdef CONFIG_PREEMPTION
--	if (tid_to_cpu(tid) != tid_to_cpu(actual_tid))
-+	if (IS_ENABLED(CONFIG_PREEMPTION) && tid_to_cpu(tid) != tid_to_cpu(actual_tid)) {
- 		pr_warn("due to cpu change %d -> %d\n",
- 			tid_to_cpu(tid), tid_to_cpu(actual_tid));
--	else
--#endif
--	if (tid_to_event(tid) != tid_to_event(actual_tid))
-+	} else if (tid_to_event(tid) != tid_to_event(actual_tid)) {
- 		pr_warn("due to cpu running other code. Event %ld->%ld\n",
- 			tid_to_event(tid), tid_to_event(actual_tid));
--	else
-+	} else {
- 		pr_warn("for unknown reason: actual=%lx was=%lx target=%lx\n",
- 			actual_tid, tid, next_tid(tid));
-+	}
- #endif
- 	stat(s, CMPXCHG_DOUBLE_CPU_FAIL);
- }
--- 
-2.43.0
-
+I generate a flamegraph to record the sources of permission check:
+url: https://gist.github.com/zhr250/9f4415bfdefc8ff0d64e78d96351fffb
 
