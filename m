@@ -1,196 +1,202 @@
-Return-Path: <linux-kernel+bounces-805967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2923B49017
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FC1B49016
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F517A7E8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D979B7A7D12
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AFD30BB9E;
-	Mon,  8 Sep 2025 13:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9FC30BB83;
+	Mon,  8 Sep 2025 13:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fTqkyte5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lKfMG8a1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QfCzh9S6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A629D22FE0D;
-	Mon,  8 Sep 2025 13:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B1C1E5B64;
+	Mon,  8 Sep 2025 13:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757339281; cv=none; b=h0ULL7w5Il/D3bQVEEuV9DSV+IBvjasVOBX/wnCVzBxYMaX/wv2jR2ppFIAalJh1GlU6TgjGPbaPLH8lB3RkXEfhD/ArAYeAfz++N2cPQ6/4JmepfeRP7UWiLQD2xG24a+p4Udg5zvQm2fPYf3HVTBKPTQUR1lJXq6pNMOt5d/E=
+	t=1757339281; cv=none; b=kjXltj6CESE7DJrx54L1I6kYJth1JEUcthO6Vp2kv9hg8ymiE9vB6NEVOmHyLqhR1XaAMI8W7Meo/aqbc9mE3FObJiqEmoXCAlJ0VUXCDZPUbCOf2fOlkIU24qmBMbeH8CU5z7QpNthYC0MV6zFAG994cB0W1dtBAv4k9/pMXVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757339281; c=relaxed/simple;
-	bh=aUU66mA1SxFB9c1Xi8NaJzcoy+mG8NTkYHR2h/BbdPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVbitxIijqGN58T/1dKoV9SR0v4awNHZflUfSVIPxWMxO52KUEUWsKYrGuHeCFbLhSgWl+ipmq2p9VtwVQDvJiJlGXylD/jMqpLJ/j+2xUxG9lyViovD/c+cxOffpVht9NXnoqLNrYsC2cjL+biBx28/ZNq+Eb3fiGOXZdLGpAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fTqkyte5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (85-76-134-76-nat.elisa-mobile.fi [85.76.134.76])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 27D3599F;
-	Mon,  8 Sep 2025 15:46:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757339205;
-	bh=aUU66mA1SxFB9c1Xi8NaJzcoy+mG8NTkYHR2h/BbdPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fTqkyte5OOIGKga37FfYPeMr1IQ5EiGVQ+IBQHB92MRiHaidHv6oDufsdGrVCMFN5
-	 sWZgaOL1tL0MhNRUVX1jB41MvOqK98J0qmnJv6+9ms+VVg+x1q69pVgulMlNgwLh78
-	 8SdL7NyMg05j/XLhJDSM5nRMhIb9GMrSPUNHr000=
-Date: Mon, 8 Sep 2025 15:47:35 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 06/10] media: i2c: ov9282: add hardware strobe signal
- v4l2 control
-Message-ID: <20250908134735.GF26062@pendragon.ideasonboard.com>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-6-d58d5a694afc@linux.dev>
- <aLYIq6GxLgPM6ReC@kekkonen.localdomain>
- <ieqhz2bpvtnej7odzjz3laiudbib3q6j656ed5s7zk4n2nxafh@ci7sdkmdni7d>
- <20250907200811.GB19568@pendragon.ideasonboard.com>
- <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
+	bh=U7IqCyU23/VAExA6N48clU4WBs9N/sB4w7Za04VZNv8=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=V7YqyAqc1PlxokpPhSwjQfM17aWoh6QL70zB1mwT635pb51gvLupuxRHdWwQ54gWY4wJBIH3SQtKSuIW0lSDEJcLQikOwrdUUFD9V5a6HmpPy0fx2k811ZGuBezRny5LD3gzt5NY1wOCSTZ3zGKySJSN771s5MV7X7eubZdNGMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lKfMG8a1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QfCzh9S6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 08 Sep 2025 13:47:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757339275;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ennO6DFYiDanYyZ3yCUIBSy72hcmz7WE43LpKjrUOaw=;
+	b=lKfMG8a1wxV4KTljJ1mN4jvE2y2uxQ1/SlaYIcXr/jay24X7IbEBkeGZ5YZlw6a98msKbc
+	gdoKEuZD4uh1TcqUSM8oaSPjT7W+D7zRoRPHhiBKGkg/23yvICxXP4Yg7ft2KajcStnrXn
+	wqHuVHPcD/Hc6AIW33N3gH+c0V1CtRC9cyUpYlKC5Wl9tWDVSLeN9/D2oHHydAcZTUM+qm
+	LGAqXZl9c/odAl9iqjgnIvuFM0ecH2IJnyz9bt1KH/k/Q4VXOyzj8Zn/tJxuoLp53VPWcD
+	TO3TK+7wqCJlmBjDHhSzK6v6AtYNEOpS6FSE2ZPtMavFOj3ZlsNmuZA/W2Bjcg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757339275;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ennO6DFYiDanYyZ3yCUIBSy72hcmz7WE43LpKjrUOaw=;
+	b=QfCzh9S6U09MmOfDi4r+70DSf5ts4xwip3VMagy9KM3IKnwTCB3SL7sdYPnl+nXuTzTULi
+	I6Ih7itNDNQ/lnCQ==
+From: "tip-bot2 for K Prateek Nayak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/cpu/topology: Always try
+ cpu_parse_topology_ext() on AMD/Hygon
+Cc: "Naveen N Rao (AMD)" <naveen@kernel.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
+	#@tip-bot2.tec.linutronix.de, Only@tip-bot2.tec.linutronix.de,
+	v6.9@tip-bot2.tec.linutronix.de, and@tip-bot2.tec.linutronix.de,
+	above@tip-bot2.tec.linutronix.de;,
+	depends@tip-bot2.tec.linutronix.de, on@tip-bot2.tec.linutronix.de,
+	x86@tip-bot2.tec.linutronix.de, topology@tip-bot2.tec.linutronix.de,
+	rewrite@tip-bot2.tec.linutronix.de, x86@kernel.org,
+	linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <czhubfkhxayxbmn7hpgxjjqpylgo5c7jbrzobzxq65ruza2zfx@fhlxv2q63a5a>
+Message-ID: <175733927167.1920.13029463870144392599.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 08, 2025 at 02:09:06PM +0200, Richard Leitner wrote:
-> On Sun, Sep 07, 2025 at 10:08:11PM +0200, Laurent Pinchart wrote:
-> > On Wed, Sep 03, 2025 at 08:58:04AM +0200, Richard Leitner wrote:
-> > > On Mon, Sep 01, 2025 at 11:57:15PM +0300, Sakari Ailus wrote:
-> > > > On Mon, Sep 01, 2025 at 05:05:11PM +0200, Richard Leitner wrote:
-> > > > > Add V4L2_CID_FLASH_HW_STROBE_SIGNAL enable/disable support using the
-> > > > > "strobe output enable" feature of the sensor.
-> > > > > 
-> > > > > All values are based on the OV9281 datasheet v1.53 (january 2019) and
-> > > > > tested using an ov9281 VisionComponents module.
-> > > > > 
-> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > ---
-> > > > >  drivers/media/i2c/ov9282.c | 25 ++++++++++++++++++++++++-
-> > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > > > index f42e0d439753e74d14e3a3592029e48f49234927..ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb 100644
-> > > > > --- a/drivers/media/i2c/ov9282.c
-> > > > > +++ b/drivers/media/i2c/ov9282.c
-> > > > > @@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
-> > > > >  				current_val);
-> > > > >  }
-> > > > >  
-> > > > > +static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool enable)
-> > > > > +{
-> > > > > +	u32 current_val;
-> > > > > +	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > > +				  &current_val);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > 
-> > > > Please don't do assignments in variable declaration if that involves error
-> > > > handling.
-> > > 
-> > > Sure. Will fix that!
-> > > 
-> > > > > +
-> > > > > +	if (enable)
-> > > > > +		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > > +	else
-> > > > > +		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
-> > > > > +
-> > > > > +	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-> > > > > +				current_val);
-> > 
-> > It would be nice to cache the register value instead of reading it back.
-> > Regmap may help (and then the driver should use the CCI helpers). This
-> > can be done separately.
-> 
-> Currently all set_ctrl calls in the ov9282 driver have this
-> read/modify/write pattern. As mentioned in the cover letter I'm planning
-> to migrate to cci helpers in a future series to keep the set smaller.
-> But if you prefer the migration in this series I can try to rebase on
-> it?
+The following commit has been merged into the x86/urgent branch of tip:
 
-No, it's fine on top. I ask for enough yak-shaving already :-)
+Commit-ID:     cba4262a19afae21665ee242b3404bcede5a94d7
+Gitweb:        https://git.kernel.org/tip/cba4262a19afae21665ee242b3404bcede5=
+a94d7
+Author:        K Prateek Nayak <kprateek.nayak@amd.com>
+AuthorDate:    Mon, 01 Sep 2025 17:04:15=20
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 08 Sep 2025 11:37:49 +02:00
 
-> > > > > +}
-> > > > > +
-> > > > >  /**
-> > > > >   * ov9282_set_ctrl() - Set subdevice control
-> > > > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > > > @@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > > > >  		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
-> > > > >  				       (ctrl->val + ov9282->cur_mode->width) >> 1);
-> > > > >  		break;
-> > > > > +	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> > > > > +		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> > > > > +		break;
-> > > > >  	default:
-> > > > >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > > > >  		ret = -EINVAL;
-> > > > > @@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > >  	u32 lpfr;
-> > > > >  	int ret;
-> > > > >  
-> > > > > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> > > > > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > > > >  	if (ret)
-> > > > >  		return ret;
-> > > > >  
-> > > > > @@ -1391,6 +1411,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > >  						OV9282_TIMING_HTS_MAX - mode->width,
-> > > > >  						1, hblank_min);
-> > > > >  
-> > > > > +	/* Flash/Strobe controls */
-> > > > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > > > 
-> > > > This seems rather long.
-> > > 
-> > > It's exactly 100 chars wide, so from a policy point of view it should be
-> > > fine ;-). But I'm also fine with breaking it to 80 if you prefer?
-> > 
-> > That's the usual policy in V4L2, yes. 80 columns is the preferred soft
-> > limit.
-> 
-> So I should break this line in this case? Tbh I'm often unsure on
-> breaking on 80 or 100... Personally 100 is fine for me, but that's
-> "your" subsystem/driver, so I guess it's your descision ;-)
+x86/cpu/topology: Always try cpu_parse_topology_ext() on AMD/Hygon
 
-Sakari is even more strict than me about line lengths :-)
+Support for parsing the topology on AMD/Hygon processors using CPUID leaf 0xb
+was added in
 
-It a line is just a couple of charaters about 80 columns and doesn't
-have a nice split point I would avoid breaking it as I feel the result
-would be less readable.
+  3986a0a805e6 ("x86/CPU/AMD: Derive CPU topology from CPUID function 0xB whe=
+n available").
 
-In this particular case, breaking the line would lead to
+In an effort to keep all the topology parsing bits in one place, this commit
+also introduced a pseudo dependency on the TOPOEXT feature to parse the CPUID
+leaf 0xb.
 
-	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-			  V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+The TOPOEXT feature (CPUID 0x80000001 ECX[22]) advertises the support for
+Cache Properties leaf 0x8000001d and the CPUID leaf 0x8000001e EAX for
+"Extended APIC ID" however support for 0xb was introduced alongside the x2APIC
+support not only on AMD [1], but also historically on x86 [2].
 
+Similar to 0xb, the support for extended CPU topology leaf 0x80000026 too does
+not depend on the TOPOEXT feature.
 
-which I think is OK. It's very subjective of course.
+The support for these leaves is expected to be confirmed by ensuring
 
-> > > > > +
-> > > > >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > > > >  	if (!ret) {
-> > > > >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > > > > 
+  leaf <=3D {extended_}cpuid_level
 
--- 
-Regards,
+and then parsing the level 0 of the respective leaf to confirm EBX[15:0]
+(LogProcAtThisLevel) is non-zero as stated in the definition of
+"CPUID_Fn0000000B_EAX_x00 [Extended Topology Enumeration]
+(Core::X86::Cpuid::ExtTopEnumEax0)" in Processor Programming Reference (PPR)
+for AMD Family 19h Model 01h Rev B1 Vol1 [3] Sec. 2.1.15.1 "CPUID Instruction
+Functions".
 
-Laurent Pinchart
+This has not been a problem on baremetal platforms since support for TOPOEXT
+(Fam 0x15 and later) predates the support for CPUID leaf 0xb (Fam 0x17[Zen2]
+and later), however, for AMD guests on QEMU, the "x2apic" feature can be
+enabled independent of the "topoext" feature where QEMU expects topology and
+the initial APICID to be parsed using the CPUID leaf 0xb (especially when
+number of cores > 255) which is populated independent of the "topoext" feature
+flag.
+
+Unconditionally call cpu_parse_topology_ext() on AMD and Hygon processors to
+first parse the topology using the XTOPOLOGY leaves (0x80000026 / 0xb) before
+using the TOPOEXT leaf (0x8000001e).
+
+While at it, break down the single large comment in parse_topology_amd() to
+better highlight the purpose of each CPUID leaf.
+
+Fixes: 3986a0a805e6 ("x86/CPU/AMD: Derive CPU topology from CPUID function 0x=
+B when available")
+Suggested-by: Naveen N Rao (AMD) <naveen@kernel.org>
+Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: stable@vger.kernel.org # Only v6.9 and above; depends on x86 topology rew=
+rite
+Link: https://lore.kernel.org/lkml/1529686927-7665-1-git-send-email-suravee.s=
+uthikulpanit@amd.com/ [1]
+Link: https://lore.kernel.org/lkml/20080818181435.523309000@linux-os.sc.intel=
+.com/ [2]
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D206537 [3]
+---
+ arch/x86/kernel/cpu/topology_amd.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topolog=
+y_amd.c
+index 827dd0d..c79ebbb 100644
+--- a/arch/x86/kernel/cpu/topology_amd.c
++++ b/arch/x86/kernel/cpu/topology_amd.c
+@@ -175,27 +175,30 @@ static void topoext_fixup(struct topo_scan *tscan)
+=20
+ static void parse_topology_amd(struct topo_scan *tscan)
+ {
+-	bool has_topoext =3D false;
+-
+ 	/*
+-	 * If the extended topology leaf 0x8000_001e is available
+-	 * try to get SMT, CORE, TILE, and DIE shifts from extended
++	 * Try to get SMT, CORE, TILE, and DIE shifts from extended
+ 	 * CPUID leaf 0x8000_0026 on supported processors first. If
+ 	 * extended CPUID leaf 0x8000_0026 is not supported, try to
+-	 * get SMT and CORE shift from leaf 0xb first, then try to
+-	 * get the CORE shift from leaf 0x8000_0008.
++	 * get SMT and CORE shift from leaf 0xb. If either leaf is
++	 * available, cpu_parse_topology_ext() will return true.
+ 	 */
+-	if (cpu_feature_enabled(X86_FEATURE_TOPOEXT))
+-		has_topoext =3D cpu_parse_topology_ext(tscan);
++	bool has_xtopology =3D cpu_parse_topology_ext(tscan);
+=20
+ 	if (cpu_feature_enabled(X86_FEATURE_AMD_HTR_CORES))
+ 		tscan->c->topo.cpu_type =3D cpuid_ebx(0x80000026);
+=20
+-	if (!has_topoext && !parse_8000_0008(tscan))
++	/*
++	 * If XTOPOLOGY leaves (0x26/0xb) are not available, try to
++	 * get the CORE shift from leaf 0x8000_0008 first.
++	 */
++	if (!has_xtopology && !parse_8000_0008(tscan))
+ 		return;
+=20
+-	/* Prefer leaf 0x8000001e if available */
+-	if (parse_8000_001e(tscan, has_topoext))
++	/*
++	 * Prefer leaf 0x8000001e if available to get the SMT shift and
++	 * the initial APIC ID if XTOPOLOGY leaves are not available.
++	 */
++	if (parse_8000_001e(tscan, has_xtopology))
+ 		return;
+=20
+ 	/* Try the NODEID MSR */
 
