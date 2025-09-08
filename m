@@ -1,280 +1,147 @@
-Return-Path: <linux-kernel+bounces-805001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0123B482DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B031DB482DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1133189C806
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B318E3C10CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38995217659;
-	Mon,  8 Sep 2025 03:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE38207A0B;
+	Mon,  8 Sep 2025 03:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZjfL+mYB"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="PYYpWt7t"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A53C1FDA92;
-	Mon,  8 Sep 2025 03:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757302014; cv=fail; b=BFyeJfteqmPFz2i+vk/83cLCLBBE3wMNQZl8/ASZtYpau0uTieb3nroXv5DQgTVIkqNoclr6UbdXS9MJh/dAzAPIyJitoO0wDqETW60Wa/3QuMTC0m2YWHawxW6vu5pZ8HYQtn9ySwK1vSoHy6DZHja7GMjlvqKilRhBj/Gdrt0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757302014; c=relaxed/simple;
-	bh=4DbvUipWvLBAxP2l0D9Jq+VBJ/mCqwXhH6rV0XsggvI=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=p4nAG4n6EOiOFbh6fQOBWPMLcsCeyGKilz6CM/Qp/k5Rm9dDHQDYfbp0VGVLK64POISVANfgca0d+gpUdaBxcyLhgbNeE7QhYV1+Hj4aol21soCr2aH48M5EAsGBW6jdZx1+XPGLrMR41tVpUxj4/+753MzLbSq1ra+LM7atL/U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZjfL+mYB; arc=fail smtp.client-ip=40.107.92.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rIIzAKoTsPPE6fJwy1EIMkrbaeOjlnJnirNg+9DeY6VLhUpa4uCyuH9Ar03G/BCoSdcOHzV/UtD7b/weZRXTIgj/MhMmQVgzIQvROx4ce4Oy5O1cOPr6IBiQT4XlfnQQEDFW7uOHIdy3LFd9rdvm6sPHxv4Us/S2rdNXyZ63ovwoWNrfFp1ySEn7WP4Z2x31tMw58I3YYYWhaDNck0m2dM6rVhzcLc7cRcOm2pSNVfU9XPQMpodS2YPltMsgqjuW7yZDk6jAqHfYEJrYdHE5PubZbLZstTVJq+81Ch8aGkMjoedfIKXvRptxpqXAMmSn0ucc00jMCqTpKhk12U4ZCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pPGGYgn0fg9OCPHlDxdpZM4T9z/qAgn7U7gFsYxCBqw=;
- b=NjrMEqmHTouUyQTEhTH2o9AFCsPJx++PJ7Qwjn0JR12RbfXONivjegXdFjbqU1KcN8TUeIcNk5eO8TmNQoMKrxF5f21kpj73ZCecy+rkbdJ1Ag5mNoSycGCV9xqVizFzWxIHsh/uamDWIuBkL34u/8rLNDLYCCfRPFOsAm/rLYcd+AFSPI6vt9TBLm5G8tt6JNk1NeCOW+8q4Qqh2gO/B0TXh3IgX9vyYS9N7ZU5iDm6OkWZDKqKIDAobPrShsWnd66ieZYqTcpYVY8G/+P55PH756mTO4Tf8j+QVwLcWL603hf3UD9mu7kN6ssYMRj/5yU8P+hLH1CzO91t37q62w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pPGGYgn0fg9OCPHlDxdpZM4T9z/qAgn7U7gFsYxCBqw=;
- b=ZjfL+mYB0DxSon3lmRDFWnglTzhHvWcgK9qIVcbDxeUd6cM4Wvh8iW1Vj9GJwUXn1S1vm3UR+I4FmBoMPbABCZ6aIniMW2D4K6qi76+F8vuSTMeRAX4JN+Ribo0BbfiBwP6DVBB7/eyqWwj0x/XJeCiJ4ESLmUPC0dS6nEQXdCzancszJ8AUfyEK6PFucBevzrxGDWO/x+gYa0BP7jVKj/VkXPjWYpt0D2IfX9uQMYTzPL+aRPBFRHE1yBtK5OaaifgX7TLv3PT5EwHjKFkubdEoSP2D65uocVj4TRddIXe/JoFl1WAUTnoKSiDFUQnrvEoYkJ7y9DvF++LdelLZIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CH3PR12MB8852.namprd12.prod.outlook.com (2603:10b6:610:17d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 03:26:47 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 03:26:47 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 12:26:43 +0900
-Message-Id: <DCN3KJSVTTEJ.3W07PK2E85XO3@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] nova-core: bitstruct: Add support for different
- storage widths
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-3-joelagnelf@nvidia.com>
-In-Reply-To: <20250903215428.1296517-3-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0296.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c8::8) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06201FF1B5;
+	Mon,  8 Sep 2025 03:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757302033; cv=none; b=oEBqBRgnmZARL6hY7NPtgmx1Sp8OCS5kEGWCgqn1BQSUFQZqBng+l9rqIa9aVkZ9dkSpN6hx8lfE0t7hxpbi4SFhDoY4SG4NV0UffERgA4XKg1yLNH+iYZS01zfUv6tL/ms/AK4WC16BRB8fTDqklKJdJQqMAcgKKUqLMZhYZ7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757302033; c=relaxed/simple;
+	bh=hYKAnkkRC03lgxUIsEc7VRnyXmGbSgcYkE5SXUc6oPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxN3Z/kM7zSpl0+nqiEIyplSfORQ6vZquEAOVUs5Cbha+CMlcURrqYoB64SNjWD5Nep8m8e1xL4ZoXLjPYae1P0daN9hADMvYhvp60hkxFvODpxarkood6diSRGbjGQKBXt+9TY1PX/i0JWYuvYxiyt+ZCUb+GlbHcuu/8u+BP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=PYYpWt7t; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from sunspire (unknown [IPv6:2a02:2f0e:3503:4a00:e2d5:5eff:fed9:f1c4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id 0FF54173BE2;
+	Mon, 08 Sep 2025 06:27:08 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1757302028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BN3qREvBY72zOVP7T0gB8HXLT3gbh998Niiirc/UhnQ=;
+	b=PYYpWt7tcv1PzGufErRgxpqKnPELOap92CrB2Tcg0x/rAR3R4DSf1JR5nc4hIryeKbU7OJ
+	GidJ3lcW4CulYJxRMn2cZSwAwp3Z2LY18ioa2UBriAOQ9Wva3sX1YyU/DSlZeeTwynvElY
+	cGqnNWC50xh+HcDpbo4LrNlhHQ8h0h3o0yebrikYjAVDnRte1mCvw4kjTD044MLN880Gxl
+	6ArfQ3HpJomZmwwT1jozd6PnubQVhoevpBh6GRWfJonoyjMq+UmnHGBQ5X/O5s/SEqqxG1
+	65lacwtArOrKMjwkg+Dfynan/e9eqreOp9EHdSn3xeHdtIVgn8s/cjkD1rP/EA==
+Date: Mon, 8 Sep 2025 06:27:05 +0300
+From: Petre Rodan <petre.rodan@subdimension.ro>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno S?? <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH 03/10] iio: accel: BMA220 migrate to regmap API
+Message-ID: <aL5NCVh9WylPhZ1O@sunspire>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+ <20250901194742.11599-4-petre.rodan@subdimension.ro>
+ <20250907134506.580de654@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB8852:EE_
-X-MS-Office365-Filtering-Correlation-Id: e38de6a6-34ab-4c42-ef94-08ddee878a81
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VzhGNnRPaFVCQms4U1B6WU1TdjMxaUt0RzNJRW5HNXdsUTdOUVNTMW1RYWR1?=
- =?utf-8?B?UWIyNDhnKzZZY0pyM0ZYcXVSY2VpbVdza05OS0JwV1RRYjRSckk3Mk9XdlA5?=
- =?utf-8?B?WHduMVVvMm13YUg2d1F5bHhodWlPcEF1RElzS2Y4QkhIQXNqL28zQThWSHpn?=
- =?utf-8?B?VVUzaWRucGJxUmRSazExMjg4MHJRaVEveHdiNWRCT3BMMThONWRDQThEU1Zu?=
- =?utf-8?B?MXVKQlBMSzlldUxqY3JneUNMS2tVOFFFN0JuYmFBK25qUXY5K3pPbURNcjUy?=
- =?utf-8?B?TzdCSmR4MTJDZTFlU2wrSWM2VFB3NXNiS1BVZ2J4bTUwaWhqTm5MYnB3Ni9v?=
- =?utf-8?B?QU5tdDYySmpPY0h5S21NQnVaYjNRMGFtQ1FWU3lTSHIxRWFZb01yTWFaZ1Uz?=
- =?utf-8?B?b2NZKzlXRW1lSUVSbENSaDZNdk5nS1BKSmVrOHhDZUxlcE5BdUNiM1hyRWZS?=
- =?utf-8?B?RWVLSlI4cU9vSml0ZHJrenhMNEw5Z1Qya1FsT3R3eXM5K3pIVTNlQThFRkNW?=
- =?utf-8?B?M05nNnhMVDVmNkgxaUdoQVI1RmIvTlA2MVRDVGd5aktGNHh4bG9yUCtXVWFh?=
- =?utf-8?B?ZkNtTkw2cEZxekhUc3IzTk04THhkN2Nsb0lPb1JOK0EvZEFCYWpTcWp3SkJB?=
- =?utf-8?B?YVZLeFRtSDQ4dkxZYkdVelhTUUZrT3E3d1Nsb2s4YnlySFhlSnhBWnZtbWpW?=
- =?utf-8?B?cFNEQWRKNmJvbmM1ZDhlQU9CS3laRElJbzRnQmkyT1JLOW8vaC9Yb0F5dTNK?=
- =?utf-8?B?UE5zaUVkQnZBcndBME5kNVMzSG1aVCt2czBsMTl6dCtOZFhzMkNYU01QcWZM?=
- =?utf-8?B?NGxjVDY1cVJhZ1FzaHRoV3VlNlhXUFA5M1lGOUYremVpSjZ1VUxESjU3T0FN?=
- =?utf-8?B?Y2F5THZGMFU3cklTN21mcERoY3dCTDdJZEhNUDhwZEh6VW5iTDFaMGVXRE5p?=
- =?utf-8?B?b3ZVMFYyY0V4N2VoMnZDbjhIUzc2eHo2dGtDdml0Qk5RUTBJeTdpZ3EyL1Vx?=
- =?utf-8?B?Sk94Z0h3aDBTRUgwRlRvQ1VveCtQSkU5ek1QNmFXc2xjL3lTT25XR0RQT2Ex?=
- =?utf-8?B?UytJQnllMFA0dDdzUWRtV1RpdDkzWm1Qd0x0ME82VFhDYld2UkNXVENwK1p0?=
- =?utf-8?B?WTR5RjZoa0VSSGRwQnROZUdvakFCeXRBeGN1QS9EQW8xeHBEMU5DczlkTXJj?=
- =?utf-8?B?Q2ZURnpLYmlPZVB1MTdIU0ExRlVzSmFUWFB5OFpHKzVYQmpyUWZOQmN4dzdJ?=
- =?utf-8?B?K0F1UTZ2ZUZYRFg4am8vSWlQaVhiQkMvUFd2UDVXZXFzdWw5dXRuUGN4VytV?=
- =?utf-8?B?akxTUWtrNnBsSTBJZlE1cHJrOWlHTUx3Z2RvMkR5MTMzUmxtL0IzN2tSV1Z6?=
- =?utf-8?B?cjlhWWV4STVqbGhOVFJrN2podjVFZkdmTlZZSFdlWFlydnlzajN1YTRxQlVq?=
- =?utf-8?B?MmJDOCtiTllZbXM1cVFtc0lKRndmNGFhKzd0djZibEtZNjhjRHhpZk0ySWI2?=
- =?utf-8?B?TTNmeVBXOFMrQnhqOHRUM0lDSHEyY1VYMFRrWm9SS2QwUFlWeU9WbkFyMGUy?=
- =?utf-8?B?MmJGVnJ3UnZBT2ZFU2NQSmUxekxCNzd6VW04WlI4RnEvL055ODZmbGxDV0Zr?=
- =?utf-8?B?WXZPV1QyZUVMWWY5MzJmcVRFQ0FrT2JPRE80Tm9SN3dSVFpOK01xNkNuZ3lK?=
- =?utf-8?B?ZytXMFVlWVNxWlBRbHQ0SWNybFlLcUJGdXV1a2N0OUZ1a0NqbXEzcWJwSExM?=
- =?utf-8?B?TUFyUEwwUVhCNW5YclFYaktWdklCUU5oNXRmam1va0dQdGwycWVSWUNEc3Nn?=
- =?utf-8?B?eXViMHFwSkV3MzZiMUFJaE1nNlRNMzZJSis0ZVFRREN6TmI4Wjkwc1JXbGIv?=
- =?utf-8?B?OFdPNkNOazZtS0FORTBlL3BvMnNsZklUN2RuZTJPdExFQTF5ZGMxMjhmc2k3?=
- =?utf-8?Q?8h7jScT1OP8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WGhqNVA1TVBhaDVHem1mZ3dGQnlOcVNUc24vVDVDeFZFN1NjaHNjblY3amlZ?=
- =?utf-8?B?RXkwZjVzZFppMldlcks1dDRRRTdEUGc1MFJoNjRLU0xJK0FOYlZjOXBhV0ZJ?=
- =?utf-8?B?U2U5WmJFMGJpSW0yYURJbHRBbGR6WkV3bVhhNFh4Nm4rV21aV2pOSnpFYnI2?=
- =?utf-8?B?OXloVWlYVXlPR3grN1BndTcwUjVCaWVvcndxTjhaQnVKbnJPMW5abkN0VEVB?=
- =?utf-8?B?V2lFM1E4dGRvblQ1cUJUOU1xbU9HZWdkMFVVRXE3S0krc1lkZmFuR1JNYlVL?=
- =?utf-8?B?ZVZEVjVSdnhKTUc0TnBpdUYyYVNSVGZuWGVQeU9OZi9KSWpER2lIYkFIcDUz?=
- =?utf-8?B?ZUJuckhyN2lGTlNKSk9sWGd6emZmNXkyenBoNDEwdExCbUFPczUyS2hKenk1?=
- =?utf-8?B?dDU5TXdCRHFVV1VPM2c0YjlXQzJIYkR4ZXA3VHc4alFETkY2eVFGczl6SVV4?=
- =?utf-8?B?cU1lOTkyVzZkMTlyZ3pFMTYyUFlEMUlsWUQzTCtac0xFZ1lkQUhDbjhuTWxT?=
- =?utf-8?B?WFdvcDZhK0wwdDhwcGVjQWExOHQ1YVJ4c2FFcDZyaFlQeVQrcVQ2b0hNcXdD?=
- =?utf-8?B?REtoQXZST1JTWVBoRjlXdDBtTGxwUHVtVFJVZUFPQVo3cEZ1Q1ByNWIwdW84?=
- =?utf-8?B?K2N5YlF2UWFiRS9ETjFxNkdQS0QxWkNEckpPZE1jc3pVdC90YW8xcFNnanBj?=
- =?utf-8?B?Q3hCTDRPZnNoakk3QkhzallIN0lwNXZFbXBZOWlKWDJGOEFYZ3NtU2x3ckdK?=
- =?utf-8?B?c2YxWHIwSlUybUUvRklkeHVkNGcxakgxem83U0dkSFZ1Y2JEV0ExdWljYTRM?=
- =?utf-8?B?V0ZlNXBEKzliTjAwc2NzSHZEcnRqajJqSm5EWEdvL3lYRVk3NDV5cGRDUmJt?=
- =?utf-8?B?ODFVWU8xVzJVMHFSUEhjVjZFTVViL3JqNEFOdlI5U0lQK3h4RnlOOXplTENy?=
- =?utf-8?B?dE5ncGg1VXJseUIwZzQ1cWthMTkydURCak93OTRLYndWOS92Q3hBQVluQ0FC?=
- =?utf-8?B?Vy9ocGdhRmdUUy9ZVHhpODVoa0R6R2FLMmNhRGoyak1EdSsvbk5ORENMNHBs?=
- =?utf-8?B?Qmd1VVRQcHMxQTFKUE53d0V6cnZ6cmt1UjBpNXZlTzFTYmN4LzJ2QkRScmRC?=
- =?utf-8?B?QXhsOEh5WUZNb2RGNUdtN3BYcXRQc09uY3BKYlRnNzNyZStqTzIrVWtZZkd6?=
- =?utf-8?B?MngvZ2czTEpQS055NDNqeThZOVpZQURxTWl4Q29mMWh4WTRvcjloZFJ3MWFv?=
- =?utf-8?B?OVNWRE45OUV3cVNFTlI5c2ZxMzdjcW5yS2YzNXJaTThjTmI0WURZWEl4WWZP?=
- =?utf-8?B?VXlBeGVnTlVJSFh0OGhzbHN3SjNnbCtMOXlrdE5kV0E0QXEwNVpKOHNBbUIx?=
- =?utf-8?B?SmVXL2NtWHNlQXovclJBaGtKb2VWWWtFK2k5eGZDbktXOFhMNS94bW1SYlZ5?=
- =?utf-8?B?TEpnUHpjNDFRK3FMSGU0QWFhem5Db1diVjVsdUpRc0tRNEpsNXd0aGtuS0R2?=
- =?utf-8?B?MW95SzI4cHRXakJZaDkvUW1SZE5qOENaT3gxM1RRQmVYQUhRWXlhYitacHpO?=
- =?utf-8?B?UXRYVi9JbUNMdHloQzZGVkVkQkVSNVpKWDIwdmFhaVpxbEpjakNFU0dxVExM?=
- =?utf-8?B?L0VVa0xhVnQzZm1aK3dpWnJtb3Y3QUlEbGIyVU43MjVFSmN6ZmROMGo4QU5x?=
- =?utf-8?B?SmhaU0c1WldLNnNsUEJIOXZVWVVmOGI3cUZISElZSFpQUURDTDM3SlcrS2hG?=
- =?utf-8?B?cW5LYm5qVUlKa1hSbU0yMGErc0VxcUZXTHRCengyMGgreHZHZkJXd1duQ3dL?=
- =?utf-8?B?cG0xMVBVVTV6b1BFUUI2a0pYQlBuNWRETk15OGE2YlY2RGNnWmQ0MFE5UTBD?=
- =?utf-8?B?SndwWVFYTjN2RWlyWmpnOEpjSEo1TGttdWhrRG8xNzJTVCtPYTR5d0luK3pJ?=
- =?utf-8?B?bzNEc0dWaExVQk1YQjFNM08yTzhTVFJLQmR4UmpLZGljcDIrdGViWDlMVTJz?=
- =?utf-8?B?MFMyUkVRQ0RocnBFWVY5ZHlLL1BHelRJOWlYMEpqOVVKa3VoOTF4dlNXYmVU?=
- =?utf-8?B?Ujl1TlhqU1lIQmR5WllRcWRCakpCS3JGN29DdGhhaWJIK3F4Rm1ZT3lqRVA1?=
- =?utf-8?B?eWVBUFFKNGlMOHhzcWxiQjhMSUVGV2VWNVBmcnFWNzBEZU1JVzlkRnVWcUp3?=
- =?utf-8?Q?GL05fvx74G9Hj6/Z7TfqQ8bYQpsEpbzGeD50CRBQq25F?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e38de6a6-34ab-4c42-ef94-08ddee878a81
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 03:26:47.0550
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ldrWMTFXTm+MFLXRMDhx+Hy+Su8QxdnRCsGqnefjLT8UKnMcivBRkrvbHkaJiPzettolSf9a3hZMF+HQsNMu4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8852
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WKdEbefMa59kZAe4"
+Content-Disposition: inline
+In-Reply-To: <20250907134506.580de654@jic23-huawei>
 
-On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
-> Previously, bitstructs were hardcoded to use u32 as the underlying
-> storage type.  Add support for different storage types (u8, u16, u32,
-> u64) to the bitstruct macro.
->
-> New syntax is: struct Name: <type ex., u32> { ... }
->
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-<snip>
->      // Generates the accessor methods for a single field.
->      (
-> -        @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
-> +        @leaf_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ide=
-nt
->              { $process:expr } $to_type:ty =3D> $res_type:ty $(, $comment=
-:literal)?;
->      ) =3D> {
->          ::kernel::macros::paste!(
->          const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> =
-=3D $lo..=3D$hi;
-> -        const [<$field:upper _MASK>]: u32 =3D ((((1 << $hi) - 1) << 1) +=
- 1) - ((1 << $lo) - 1);
-> +        const [<$field:upper _MASK>]: $storage =3D {
-> +            // Generate mask for shifting
-> +            match ::core::mem::size_of::<$storage>() {
-> +                1 =3D> ::kernel::bits::genmask_u8($lo..=3D$hi) as $stora=
-ge,
-> +                2 =3D> ::kernel::bits::genmask_u16($lo..=3D$hi) as $stor=
-age,
-> +                4 =3D> ::kernel::bits::genmask_u32($lo..=3D$hi) as $stor=
-age,
-> +                8 =3D> ::kernel::bits::genmask_u64($lo..=3D$hi) as $stor=
-age,
-> +                _ =3D> <$storage>::MAX
 
-Since this is a const expression, you can use `build_error!` to make
-compilation fail in the unlikely event the `_` is taken due to bug in
-the code.=20
+--WKdEbefMa59kZAe4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +            }
-> +        };
->          const [<$field:upper _SHIFT>]: u32 =3D Self::[<$field:upper _MAS=
-K>].trailing_zeros();
->          );
-> =20
-> @@ -211,7 +220,7 @@ impl $name {
->          #[inline(always)]
->          pub(crate) fn $field(self) -> $res_type {
->              ::kernel::macros::paste!(
-> -            const MASK: u32 =3D $name::[<$field:upper _MASK>];
-> +            const MASK: $storage =3D $name::[<$field:upper _MASK>];
->              const SHIFT: u32 =3D $name::[<$field:upper _SHIFT>];
->              );
->              let field =3D ((self.0 & MASK) >> SHIFT);
-> @@ -226,9 +235,9 @@ pub(crate) fn $field(self) -> $res_type {
->          )?
->          #[inline(always)]
->          pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self=
- {
-> -            const MASK: u32 =3D $name::[<$field:upper _MASK>];
-> +            const MASK: $storage =3D $name::[<$field:upper _MASK>];
->              const SHIFT: u32 =3D $name::[<$field:upper _SHIFT>];
-> -            let value =3D (u32::from(value) << SHIFT) & MASK;
-> +            let value =3D (<$storage>::from(value) << SHIFT) & MASK;
->              self.0 =3D (self.0 & !MASK) | value;
-> =20
->              self
-> @@ -237,7 +246,7 @@ pub(crate) fn [<set_ $field>](mut self, value: $to_ty=
-pe) -> Self {
->      };
-> =20
->      // Generates the `Debug` implementation for `$name`.
-> -    (@debug $name:ident { $($field:ident;)* }) =3D> {
-> +    (@debug $name:ident $storage:ty { $($field:ident;)* }) =3D> {
+On Sun, Sep 07, 2025 at 01:45:06PM +0100, Jonathan Cameron wrote:
+> > +static int bma220_reset(struct bma220_data *data, bool up)
+> >  {
+> > +	int i, ret;
+> > +	unsigned int val;
+> > +	guard(mutex)(&data->lock);
+> >=20
+> > +	/**
+> > +	 * The chip can be reset by a simple register read.
+> > +	 * We need up to 2 register reads of the softreset register
+>=20
+> May need?  Given you return early if the first one succeeds. If you actua=
+lly
+> need two drop the loop and only check values on second read.
+>=20
+> > +	 * to make sure that the device is in the desired state.
+> > +	 */
+> > +	for (i =3D 0; i < 2; i++) {
+> > +		ret =3D regmap_read(data->regmap, BMA220_REG_SOFTRESET, &val);
+> > +		if (ret < 0)
+> > +			return ret;
 
-This rule doesn't make use of the `$storage` argument.
+I'm not sure how eloquently I can explain this. the sensor can be in
 
->          impl ::core::fmt::Debug for $name {
->              fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core:=
-:fmt::Result {
->                  f.debug_struct(stringify!($name))
-> @@ -251,7 +260,7 @@ fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> =
-::core::fmt::Result {
->      };
-> =20
->      // Generates the `Default` implementation for `$name`.
-> -    (@default $name:ident { $($field:ident;)* }) =3D> {
-> +    (@default $name:ident $storage:ty { $($field:ident;)* }) =3D> {
+sleep state / non-sleep state
+reset state / non-reset state
+(these overlap)
 
-Neither does this one.
+the sensor toggles between these states when the master reads the suspend a=
+nd
+the soft_reset registers respectively.
+based on the value read one can tell what was the previous state the sensor=
+ was in.
 
+bma220_init() simply places the sensor in the non-sleep AND non-reset modes=
+ (and
+resets all configuration registers so that we start from a known initial co=
+ndition)
+
+'may need' is used because the sensor might have been left in an unexpected=
+ mode
+in the previous session.
+we need at most two reads of a register to make sure bma220 ends up in the =
+state we need.
+
+best regards,
+peter
+
+--WKdEbefMa59kZAe4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE2Ap/wXYVGTXsPl+pzyaZmYROfzAFAmi+TQgACgkQzyaZmYRO
+fzCg3A//Tv0He6BWNBMOvNc/DqeM6+IX2jeZZzJuKzTtMLt8HPPmcpQtrqGDdnTG
+xLYQY51oEzBr0K8KCHj/z7ZmLxagEwqe2xQkx6XJg3E5ntXnri7CZ2CrmCtV7tKB
+Ire2QR2qEWFQY7TvG4iDVQE8lRl4Z/s8Cx9JJC02es5bGE080uxHtbvx89eopKbK
+g31lYzNiJBETS9F4f7SPf0FQB0dmlHwUc4Ra4AW3Z/mjdI6X8BTUUaXrAJ9VdyEW
+UkQGMzV/la80CeRC/CADkyt5tvHmbz2u7eDyId8TXdUKcVI3JTS2QnuKDzs2rU2U
+ZN0O6gfzVrDA6u+DGUe/ipWLLr+OpMRsKE6PgMu+5VzPwvZSxAdfBhuw1X0zvg7w
+R5iHj4aSPcj9IoPPk8Erl/S5Y/3vQUzvDBUIMkT2aBC+mPeL2HHJHBga7hSvZ+Om
+yFJS/N3acKtwWWq2I52DXmYqTMQIT5wqweqns84AFt0kcxxsTFIxKkt0UP5eTL4d
+AoHa660glDzeqEsaG6dEeNfIcxGn9tKElaEaxkdca8mA2ln6T4JyzlpDfLCYr3AP
+5Hyh7uEuQ0wheqmq3bNb6pJmq8pLH+zhv/70HCqEIAaxESptJnuCbCId0KT2NAFM
+E8bG35JTTGYs+vaEOHHqy8ZdxhpTd5FC7jowERh0UDzmYTGfYpE=
+=7TgT
+-----END PGP SIGNATURE-----
+
+--WKdEbefMa59kZAe4--
 
