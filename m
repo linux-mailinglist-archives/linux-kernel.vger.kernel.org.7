@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-806526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4177DB4981E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F292EB4981F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E860B207704
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01FE207057
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D0613C8E8;
-	Mon,  8 Sep 2025 18:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966530DD2D;
+	Mon,  8 Sep 2025 18:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="b+tgAoy8"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="SIh8nBrQ"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B4030DD2D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FD1A4E70
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355546; cv=none; b=eyKLwfMsfD2MeDyjoLRX5khBtwLBXHIJ0f4NZOzcyYeTJiU3PNxMe7dcS6YW7VdqnFoEJo2c5F0ky3rE+GBBnMU+zpMUZ8MumdN8LJ89REHc+drlOZArNyriv2ndy3sq+DxE69jHHMSLVyQx4bWjgMOH/nSr53dCPEXlu5nXoAk=
+	t=1757355553; cv=none; b=I6Q/MR1LsPJ5M0pWQI0+jplUnsE9nUWg6BOLhLUpFPw0+srAzpzVkROF5ae2vvjtCnHVd5cTSzpZZ2VZzDjGwzV8dGMtsuUFlopchPXK6q8UrW3xZd4oWJNlrlcH3nyPF3MIP/4ltnMCOhX8BtfGdKPy9o0DdHBHEDMqTVX6HaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355546; c=relaxed/simple;
-	bh=v5PyhRh/6O3NJBzdDH3C8VAeUqgpDMg5/t+bjfxiWVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t3OUDVci5TdKcQ/jAYC2aNhu3DxIqMBVW3ZxkrMptmxo6kQ0Ekl190W/uVYQ+hnLWqW2SEOep8+wYx/h9V4CA7phBco8Vnl8IF/xPq3RrUcB7zE2HamnBv2Xj8n7zrlNuXTf2pyqJKEEexNV5LDQZofER+ZRY0vNNH6/V3bQs/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=b+tgAoy8; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1757355553; c=relaxed/simple;
+	bh=4ngI4xpv5niSM5jXq4BIP6OuSAam1un1E/BjzFHjMhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZlTW9X9pyGJPyeoKvArfal1zOSdaLdXyF946K5Oi6fu5eu3o4SgORRHsbU1/1Vgo1i3QtlFYqyJ0K0nue9bKJP+SS87LVmq8cBba8H1vdr3Gh2B6ZZ1TcDOb9p3GMfwTIX4LztnJ5F7Z4qAIvHY1pSTN+fEetRVLPT9UGBhaH1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=SIh8nBrQ; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7728a8862ccso4081213b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:19:03 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24c8ef94e5dso38618015ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:19:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1757355543; x=1757960343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2c2wQQodFjkEZTZlM+O9ycbeTny9/E1x0SNuW3SVXwE=;
-        b=b+tgAoy8xjIY0U7IPE8KTl3Fd3irt15iO7Pk8xf9NSuxc+nhn1cshq85xCHUi7/5Pt
-         phXuv9b8o4xAQxX17Oxygz6gd2diedxPh19tChb4kTqep9YpiNSjwnhuw84Xct/PZzry
-         Pai5Z6qIZS+SCdJ/VVDP4xfPWB3RsFaVurDfORoL7SI5+2EIajbAFU8QDY2JkY8jIqln
-         MmeXwIjq/6Z0tRs0JtDUD3yT8anlAkQ6Gv9ol3YwNHahQ8diE2N8uY/99gzJQXS0wYmn
-         6Fb7RajotPOjXPWi9cMSZfX4/g4zZBLHLUkhVcMKcut/9eBxERDz+jwPxnpaLTl6VmGE
-         TGgg==
+        d=rivosinc.com; s=google; t=1757355551; x=1757960351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OljeesxWIp9jDHv6jz9r0EeqTIgS1JKVuBa2eUtHLpE=;
+        b=SIh8nBrQy5gYmHY6Q+29U4gr243O0j00oLIEQsB9WOUdJOZ/MgpQnw2MevlgWGgizu
+         MdC5p91mIXsc2Ua2TeWaBWIDvu8UygqP9yU9zBDyFTaF5n6f/E+lh6sRVD8LnQy3dcUo
+         Qwksy3BAh4TktoNVfICK7cjkBXP2RIz8JsMN7ozkUVrGDTPXhciudMlWcpRl6+UYLspQ
+         8sJdmV4AuXOWUCZ4fsgQ05BgFzfFMqL8/vGjWQrUGCybUD1Ue/IbpCBFf18CjpC/O4jc
+         i64sgvtSB2XWtJJT3/UXW4F+SU2T1VVsypGKsweYleJ/MzRHG3Z1XrgqjiZoCUx+SqcL
+         ck6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757355543; x=1757960343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2c2wQQodFjkEZTZlM+O9ycbeTny9/E1x0SNuW3SVXwE=;
-        b=EGahiQNf1jBnqJ3PAkAaB/OANPOpfZOSHUYUxYQQY0eQlVuUEiw1WOYWzZJ2x1ta1y
-         zQwa0PlYijyj2eKqkuUbFUxRqngMmEJVFfIHOTAXiZNyMbhIuDHX6pw7BzHKAABJUrzi
-         FMxI1y/KZai+YDRJwm7Zd6rALyj19IaxjKCnpasxe2WBnaY2zQCZnxg4Ck4yoASda5m/
-         CDq+LyFdYysBnxyJF9/fW9KW5weckVX9xYGpI1kPbJq0TGPo0qGnm2NwewoBaZWjX9x5
-         zbDUrLi3DaeuWIkAnM5tZS8jam5fgnaBtZ7pBpI4CLWbvyLExxhtaX8xJFmw4seaKDeF
-         +fiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTnwApCOJ9jB3vNKZyZhym4kCA6fmksOWUHN+yM8/oVdqPrXzZ2lNsLSDPemeTRC/auvgf3i4ti2DipUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYUeXcxKSt4ReZnfITTYvweem1+xlha4c3lOs9JRq+tQyCGKue
-	ArIgY4MWywAs6hsEItW6zgCTbO2ZbmKNDuivWtoZoO3xxQoK99SAOUQbk4iG4vb2tJ8Xfe9hLsU
-	dI6Xo
-X-Gm-Gg: ASbGncsLdjK6IKDK5EsCOHNygMXLsi2lGspwLzkyBGgpvrAmZ9WV2HYhcu9Dxh3qaNh
-	rpmnUHf+QGJ9aYHOWx/4+F56GQGPU2FyVcLoNr3vCxmi4u/c5tSEKMbomyEyb77dVbDp9+FxTCr
-	DrKysoyoC/8wfGMGVH6Klo4S1ears2Eccdp63WSIwrOr4X3CyVXakDDnlojZrtI5YWrh+P5A8ln
-	euLogsIoB5W0v/G98Oaw10hY/o050+N1E3nDuVYL8GCZbUMBLunGsxtzEw2iXOA0+qEkqT4fDev
-	RlhvVj3d1+FhoP49jzzIHpEI0Fw68HR1ZCZnsNv8E8sFN8G4j+tzA5sKdpj7l8d4YWbIdvweopo
-	hqL88oqlv8+7y1w==
-X-Google-Smtp-Source: AGHT+IGeK8xnjQMEsDvBnAQGCOTwp+zKHdddcPAw/zKXSbuv0/vgrl31tYylhn6Vgl90aigMwMS2Pg==
-X-Received: by 2002:a17:902:fc4f:b0:248:aa0d:bb22 with SMTP id d9443c01a7336-2516e1be7a9mr112628205ad.0.1757355543225;
-        Mon, 08 Sep 2025 11:19:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757355551; x=1757960351;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OljeesxWIp9jDHv6jz9r0EeqTIgS1JKVuBa2eUtHLpE=;
+        b=n2hI8Qz4pfuw7eXb+YTcWpwOUduSEpJB/vevt+relPfZ1+6GIbF1TzsnrLZ+NAuRJl
+         LnGBv0Lk9jRBGCHuJyJ60++DAmCAc4t1vaWkv5HD8T1ck1kxRVTyowKI4aXxpBxnifbw
+         IRKmhma75qnQk9dOb+568hJ5bDaqdlLfMQbTCmhMBExBmEB9AW47EciHRsaNcYPvjw95
+         6l+oECiWKGmjix4Q/h3pStycjr37Z75Q8hkdFn6sKPK1PuDOT8yyCUnLhbWu1ZVolmw6
+         ZCYZJcQPHJeeQQuaZzK2NKuP7fdmsAfFZkizczyi5GnYqE9V2eubKgbYphNOFTVeTeId
+         f4ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXNRQvkAWb56f+NJlF+Aj3QGeqevof1QA+7iaAKDLk9sFqKWfkhz36PxOSeOhO9+F3J+SY1+L5xmllFv/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd1qbHtmVFsYsHtlN6IJdbi1m7zMwdRPoxLXmXv8OPqo49GX85
+	0RB5AvLm1B/T3Ti+dv+Eh2GZpc0uQu1pjbh6E2PRJp0nKgSRhRK5S8aNW/2kR4DaC7A=
+X-Gm-Gg: ASbGncviBWqHEowDzr0mODh+HQQXhaJIdgyXZ6SgRZnmB1F3UXwsB9dYaMGnOsOOxVu
+	xPTRc5yjthtwntEELFhZ+/ZVUcoxbmi8T9we/feumWYm/7luA7pFYvURiafxsiXjRp2+v/iN2hN
+	3QJeo7ZsZGJW3peqGKuQrZrSqEVuPoActOK0iWxVao8zE2tPaJLUD4IZTDNC9sJxL6SmMY1cSxi
+	W5YfIG0XdsVqepfNGdLscZSy9mmK+j5U0FD05S4TNoYRiKY+MpA6uD4FZU3RTUdO74VMJwKDIjM
+	nErS8Lqkrvw6TJdcUVzjF/3+NMdJ9sm5cMHMsEJiJ7IRV2Xs1pBweGbYUnfawdHW2SBt6jBc7aC
+	mw5A2za48xvKKa+9tDabWaJBE
+X-Google-Smtp-Source: AGHT+IHobZOnXIMkvuSbjqGZcdW0FzEx8+rn30MylSnC+vt7QbpZ58d6DFDptlwzGDiTrysTelEV2w==
+X-Received: by 2002:a17:902:e811:b0:244:5bbe:acdd with SMTP id d9443c01a7336-25179f34dc0mr105646145ad.27.1757355551317;
+        Mon, 08 Sep 2025 11:19:11 -0700 (PDT)
 Received: from cleger.eu.int ([2001:41d0:420:f300::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd763948sm117012755ad.118.2025.09.08.11.18.55
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd763948sm117012755ad.118.2025.09.08.11.19.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 11:19:02 -0700 (PDT)
+        Mon, 08 Sep 2025 11:19:10 -0700 (PDT)
 From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
@@ -84,10 +85,12 @@ Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
 	Atish Patra <atishp@atishpatra.org>,
 	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
 	Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH v7 0/5] riscv: add support for SBI Supervisor Software Events
-Date: Mon,  8 Sep 2025 18:17:02 +0000
-Message-ID: <20250908181717.1997461-1-cleger@rivosinc.com>
+Subject: [PATCH v7 1/5] riscv: add SBI SSE extension definitions
+Date: Mon,  8 Sep 2025 18:17:03 +0000
+Message-ID: <20250908181717.1997461-2-cleger@rivosinc.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250908181717.1997461-1-cleger@rivosinc.com>
+References: <20250908181717.1997461-1-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,189 +100,96 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The SBI Supervisor Software Events (SSE) extensions provides a mechanism
-to inject software events from an SBI implementation to supervisor
-software such that it preempts all other supervisor level traps and
-interrupts. This extension is introduced by the SBI v3.0 specification[1].
+Add needed definitions for SBI Supervisor Software Events extension [1].
+This extension enables the SBI to inject events into supervisor software
+much like ARM SDEI.
 
-Various events are defined and can be send asynchronously to supervisor
-software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
-as platform specific events. Events can be either local (per-hart) or
-global. Events can be nested on top of each other based on priority and
-can interrupt the kernel at any time.
+[1] https://lists.riscv.org/g/tech-prs/message/515
 
-First patch adds the SSE definitions. Second one adds support for SSE
-at arch level (entry code and stack allocations) and third one at driver
-level. Finally, the last patch add support for SSE events in the SBI PMU
-driver. Additional testing for that part is highly welcomed since there
-are a lot of possible path that needs to be exercised.
-
-Amongst the specific points that needs to be handle is the interruption
-at any point of the kernel execution and more specifically at the
-beginning of exception handling. Due to the fact that the exception entry
-implementation uses the SCRATCH CSR as both the current task struct and
-as the temporary register to switch the stack and save register, it is
-difficult to reliably get the current task struct if we get interrupted
-at this specific moment (ie, it might contain 0, the task pointer or tp).
-A fixup-like mechanism is not possible due to the nested nature of SSE
-which makes it really hard to obtain the original interruption site. In
-order to retrieve the task in a reliable manner, add an additional
-__sse_entry_task per_cpu array which stores the current task. Ideally,
-we would need to modify the way we retrieve/store the current task in
-exception handling so that it does not depend on the place where it's
-interrupted.
-
-Contrary to pseudo NMI [2], SSE does not modifies the way interrupts are
-handled and does not adds any overhead to existing code. Moreover, it
-provides "true" NMI-like interrupts which can interrupt the kernel at
-any time (even in exception handling). This is particularly crucial for
-RAS errors which needs to be handled as fast as possible to avoid any
-fault propagation.
-
-A test suite is available as a separate kselftest module. In order to
-build it, you can use the following command:
-
-$ KDIR=<build_dir> make O=build TARGETS="riscv/sse"-j $(($(nproc)-1)) -C tools/testing/selftests
-
-Then load the module using:
-
-$ sh run_sse_test.sh
-
-A KVM SBI SSE extension implementation is available at [2].
-
-Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf [1]
-Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
-
+Signed-off-by: Clément Léger <cleger@rivosinc.com>
 ---
+ arch/riscv/include/asm/sbi.h | 61 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-Changes in v7:
- - Check return values of sse_on_each_cpu()
- - Fix typos in commit
- - Rename SBI_SSE_EVENT_SIGNAL to SBI_SSE_EVENT_INJECT
- - Rename SBI_SSE_EVENT_HART_UNMASK/MASK to SBI_SSE_HART_UNMASK/MASK
- - Add tlb flush for vmap stack to avoid taking exception during sse
-   handler upon stack access. (Alex)
- - Move some assembly instruction to slow path
- - Renamed sse.c to sbi_sse.c, ditto for other files
- - Renamed RISCV_SSE to RISCV_SBI_SSE
- - Renamed sse_event_handler to sse_event_handler_fn
- - Put ifdef around sse_evt in PMU SBI driver
-
-Changes in v6:
- - Fix comment in assembly argument
- - Check hart id to be the expected one in order to skip CPU id
-   matching in sse assembly.
-
-Changes in v5:
- - Added a SSE test module in kselftests
- - Removed an unused variable
- - Applied checkpatch.pl --strict and fix all errors
- - Use scope_guard(cpus_read_lock) instead of manual cpus_read_lock()
- - Fix wrong variable returned in sse_get_event
- - Remove useless init of events list
- - Remove useless empty for loop on cpus
- - Set sse_available as  __ro_after_init
- - Changed a few pr_debug to pr_warn
- - Fix event enabled stated updated in case of failure
- - Change no_lock to nolock
- - Rename attr_buf to attr
- - renamed sse_get_event_phys() to sse_event_get_attr_phys() and removed
-   the second argument
- - Simplify return value in sse_event_attr_set_nolock()
- - Remove while loop(-EINVAL) for event cpu set call
- - Renamed interrupted_state_phys to interrupted_phys
- - Use scoped_guards/guard for sse_mutex
- - Remove useless struct forward declaration in sse.h
- - Add more explanations as to why we set SIE bit in IP
- - Unconditionnally set SIE in SIP
- - Move SSE_STACK_SIZE adjustement in sse_stack_alloc/free()
- - Replace move instructions with mv
- - Rename NR_CPUS asm symbol to ASM_NR_CPUS
- - Restore SSTATUS first in sse_entry return path so that it works for
-   double trap without any modification later.
- - Implement proper per cpu revert if enable/register fails
-
-Changes in v4:
- - Fix a bug when using per_cpu ptr for local event (Andrew)
- - Add sse_event_disable/enable_local()
- - Add pmu_disable/pmu_enable() to disable/enable SSE event
- - Update event ID description according to the latest spec
- - Fix comment about arguments in handle_sse()
- - Added Himanchu as a SSE reviewer
- - Used SYM_DATA_*() macros instead of hardcoded labels
- - Invoke softirqs only if not returning to kernel with irqs disabled
- - Remove invalid state check for write attribute function.
- - Remove useless bneq statement in sse_entry.S
-
-Changes in v3:
- - Split arch/driver support
- - Fix potential register failure reporting
- - Set a few pr_err as pr_debug
- - Allow CONFIG_RISCV_SSE to be disabled
- - Fix build without CONFIG_RISCV_SSE
- - Remove fixup-like mechanism and use a per-cpu array
- - Fixed SSCRATCH being corrupted when interrupting the kernel in early
-   exception path.
- - Split SSE assembly from entry.S
- - Add Himanchu SSE mask/unmask and runtime PM support.
- - Disable user memory access/floating point/vector in SSE handler
- - Rebased on master
-
-v2: https://lore.kernel.org/linux-riscv/20240112111720.2975069-1-cleger@rivosinc.com/
-
-Changes in v2:
- - Implemented specification v2
- - Fix various error handling cases
- - Added shadow stack support
-
-v1: https://lore.kernel.org/linux-riscv/20231026143122.279437-1-cleger@rivosinc.com/
-
-Clément Léger (5):
-  riscv: add SBI SSE extension definitions
-  riscv: add support for SBI Supervisor Software Events extension
-  drivers: firmware: add riscv SSE support
-  perf: RISC-V: add support for SSE event
-  selftests/riscv: add SSE test module
-
- MAINTAINERS                                   |  15 +
- arch/riscv/include/asm/asm.h                  |  14 +-
- arch/riscv/include/asm/sbi.h                  |  61 ++
- arch/riscv/include/asm/scs.h                  |   7 +
- arch/riscv/include/asm/sse.h                  |  47 ++
- arch/riscv/include/asm/switch_to.h            |  14 +
- arch/riscv/include/asm/thread_info.h          |   1 +
- arch/riscv/kernel/Makefile                    |   1 +
- arch/riscv/kernel/asm-offsets.c               |  14 +
- arch/riscv/kernel/sbi_sse.c                   | 174 +++++
- arch/riscv/kernel/sbi_sse_entry.S             | 178 +++++
- drivers/firmware/Kconfig                      |   1 +
- drivers/firmware/Makefile                     |   1 +
- drivers/firmware/riscv/Kconfig                |  15 +
- drivers/firmware/riscv/Makefile               |   3 +
- drivers/firmware/riscv/riscv_sbi_sse.c        | 701 ++++++++++++++++++
- drivers/perf/Kconfig                          |  10 +
- drivers/perf/riscv_pmu.c                      |  23 +
- drivers/perf/riscv_pmu_sbi.c                  |  71 +-
- include/linux/perf/riscv_pmu.h                |   5 +
- include/linux/riscv_sbi_sse.h                 |  57 ++
- tools/testing/selftests/riscv/Makefile        |   2 +-
- tools/testing/selftests/riscv/sse/Makefile    |   5 +
- .../selftests/riscv/sse/module/Makefile       |  16 +
- .../riscv/sse/module/riscv_sse_test.c         | 513 +++++++++++++
- .../selftests/riscv/sse/run_sse_test.sh       |  44 ++
- 26 files changed, 1979 insertions(+), 14 deletions(-)
- create mode 100644 arch/riscv/include/asm/sse.h
- create mode 100644 arch/riscv/kernel/sbi_sse.c
- create mode 100644 arch/riscv/kernel/sbi_sse_entry.S
- create mode 100644 drivers/firmware/riscv/Kconfig
- create mode 100644 drivers/firmware/riscv/Makefile
- create mode 100644 drivers/firmware/riscv/riscv_sbi_sse.c
- create mode 100644 include/linux/riscv_sbi_sse.h
- create mode 100644 tools/testing/selftests/riscv/sse/Makefile
- create mode 100644 tools/testing/selftests/riscv/sse/module/Makefile
- create mode 100644 tools/testing/selftests/riscv/sse/module/riscv_sse_test.c
- create mode 100644 tools/testing/selftests/riscv/sse/run_sse_test.sh
-
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 341e74238aa0..874cc1d7603a 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -36,6 +36,7 @@ enum sbi_ext_id {
+ 	SBI_EXT_STA = 0x535441,
+ 	SBI_EXT_NACL = 0x4E41434C,
+ 	SBI_EXT_FWFT = 0x46574654,
++	SBI_EXT_SSE = 0x535345,
+ 
+ 	/* Experimentals extensions must lie within this range */
+ 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+@@ -430,6 +431,66 @@ enum sbi_fwft_feature_t {
+ 
+ #define SBI_FWFT_SET_FLAG_LOCK			BIT(0)
+ 
++enum sbi_ext_sse_fid {
++	SBI_SSE_EVENT_ATTR_READ = 0,
++	SBI_SSE_EVENT_ATTR_WRITE,
++	SBI_SSE_EVENT_REGISTER,
++	SBI_SSE_EVENT_UNREGISTER,
++	SBI_SSE_EVENT_ENABLE,
++	SBI_SSE_EVENT_DISABLE,
++	SBI_SSE_EVENT_COMPLETE,
++	SBI_SSE_EVENT_INJECT,
++	SBI_SSE_HART_UNMASK,
++	SBI_SSE_HART_MASK,
++};
++
++enum sbi_sse_state {
++	SBI_SSE_STATE_UNUSED     = 0,
++	SBI_SSE_STATE_REGISTERED = 1,
++	SBI_SSE_STATE_ENABLED    = 2,
++	SBI_SSE_STATE_RUNNING    = 3,
++};
++
++/* SBI SSE Event Attributes. */
++enum sbi_sse_attr_id {
++	SBI_SSE_ATTR_STATUS		= 0x00000000,
++	SBI_SSE_ATTR_PRIO		= 0x00000001,
++	SBI_SSE_ATTR_CONFIG		= 0x00000002,
++	SBI_SSE_ATTR_PREFERRED_HART	= 0x00000003,
++	SBI_SSE_ATTR_ENTRY_PC		= 0x00000004,
++	SBI_SSE_ATTR_ENTRY_ARG		= 0x00000005,
++	SBI_SSE_ATTR_INTERRUPTED_SEPC	= 0x00000006,
++	SBI_SSE_ATTR_INTERRUPTED_FLAGS	= 0x00000007,
++	SBI_SSE_ATTR_INTERRUPTED_A6	= 0x00000008,
++	SBI_SSE_ATTR_INTERRUPTED_A7	= 0x00000009,
++
++	SBI_SSE_ATTR_MAX		= 0x0000000A
++};
++
++#define SBI_SSE_ATTR_STATUS_STATE_OFFSET	0
++#define SBI_SSE_ATTR_STATUS_STATE_MASK		0x3
++#define SBI_SSE_ATTR_STATUS_PENDING_OFFSET	2
++#define SBI_SSE_ATTR_STATUS_INJECT_OFFSET	3
++
++#define SBI_SSE_ATTR_CONFIG_ONESHOT	BIT(0)
++
++#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SSTATUS_SPP	BIT(0)
++#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SSTATUS_SPIE	BIT(1)
++#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_HSTATUS_SPV	BIT(2)
++#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_HSTATUS_SPVP	BIT(3)
++
++#define SBI_SSE_EVENT_LOCAL_HIGH_PRIO_RAS	0x00000000
++#define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP		0x00000001
++#define SBI_SSE_EVENT_GLOBAL_HIGH_PRIO_RAS	0x00008000
++#define SBI_SSE_EVENT_LOCAL_PMU_OVERFLOW	0x00010000
++#define SBI_SSE_EVENT_LOCAL_LOW_PRIO_RAS	0x00100000
++#define SBI_SSE_EVENT_GLOBAL_LOW_PRIO_RAS	0x00108000
++#define SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED	0xffff0000
++#define SBI_SSE_EVENT_GLOBAL_SOFTWARE_INJECTED	0xffff8000
++
++#define SBI_SSE_EVENT_PLATFORM		BIT(14)
++#define SBI_SSE_EVENT_GLOBAL		BIT(15)
++
+ /* SBI spec version fields */
+ #define SBI_SPEC_VERSION_DEFAULT	0x1
+ #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
 -- 
 2.43.0
 
