@@ -1,228 +1,406 @@
-Return-Path: <linux-kernel+bounces-806128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F246FB49233
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F57CB49237
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71C8417FDAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DBF188F6C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B9B30CDA9;
-	Mon,  8 Sep 2025 14:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7B530C62E;
+	Mon,  8 Sep 2025 14:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6P7kvb0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M/YgQrJ4"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010002.outbound.protection.outlook.com [52.101.84.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9985730BB9A;
-	Mon,  8 Sep 2025 14:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757343563; cv=none; b=BWGzs9VUCymmbXG/tAyThwGnfc1WJLng/iFcATZq73a1KfAzIp6RD6vdYY5ho4oC+kSIeuLoRRRYqbkOkBbawUnwofHtNelpiTHbqsZ20yskquHsrOvGHergvDtM0VR9rOBk328qdr4JnyZMStwlPoL1Rr7I2vx5f2Nl812GYBE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757343563; c=relaxed/simple;
-	bh=otgqWTIuVTslI+DJ2LPpoUIdkOI9OhIMBK8AkSETJBY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=FPvsduXhMrUUt3LcJRJBvWxkdHz7/XARi1o43YwC8yTU3+jCkz0w+MT3S3kK3S5JnBORa/iFvpqeH9lyYN01+v1KOUHfxGYQh9WLZZFd6QfTSlCe/M7JrRvuOBGQQ7kN0f0x2z61GlX9qlORqpVk41lE3/zf6GOWPC+67QoNgBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6P7kvb0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B48C4CEF1;
-	Mon,  8 Sep 2025 14:59:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757343561;
-	bh=otgqWTIuVTslI+DJ2LPpoUIdkOI9OhIMBK8AkSETJBY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=S6P7kvb0tjREX8O3l15m4nh+9Sx7jA99s3DsXMQuJ2wRSBmOdxBKZyDKj7dgbUu0m
-	 dZKHtS6rlEL5lGJ7R8fwxgMCefwwzXqJWBEYrrPxZpLEasm9jE+610PkfBU4P2Wtil
-	 5TjKygA7SbOUy+9X0UW5iMNVk4emSoowHtJXHBfwUaZMmUeNEfMIpx6Wc9PlN0chWS
-	 kc5esLQjkVe1LBOSN0P86EjbgObKOQXdLprfNABWX6SGXWzWe7J+winuTO7kTuFNbA
-	 M2NkgvV+fdqIkkMX6e5rAuu7D4qsTftJMmHoqjSl4+RgtrQ3VamHszIrrwDAi0YEo+
-	 ITs+PI5krSUjA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC4130CD80;
+	Mon,  8 Sep 2025 14:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757343572; cv=fail; b=FaEFNPLS4xDye4HgFm853LutljkARxTUChynrVCRdWNObd42AEmRt/UtpQ8ReUD/vSGws+tQfO0E1yojOBwBEnj1ZJng7cy6ds4yCmPecFCC20LAxUnQuqj33tQETHrKQGo2CUu9ApKS/Jb0dSGnzgJFPPFW6109fZBPJalMOiE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757343572; c=relaxed/simple;
+	bh=8KLmt6zIYTqGQUVQw+MliASMXeF9cUJrnH7X3jQjgq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aLjhnMuzAQ4jfDCQ4bn8C2ya88EfKR7WeNaSHhi7Dnint8iLZclAMD69/hcsXHo7tvs9nMwJjLm0d3pKi+NT5NNXzXlvphyM/hqrMQZ/u+AYXWsCYEwimoetXrCH59tvVfqri3dWFm+mQTlt2Dpae1271t9qp/sxNCPoLJ+H3eA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M/YgQrJ4; arc=fail smtp.client-ip=52.101.84.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FhP4uKGjlxXeCmNPZu5lXEOKARFah6ylNS9DWXTpD8gI8/KusokhPjojw5VHa5aYCGVjgeXy0+gKcQk/DafbaG8sDUbAECyOZ1Jull6VrGThx8og9DdZ6qLoCmsdqxp14BQS4DNv8gU+6tzqv8/Jt2xT2bBsP/ZpmxAriEWrKby720V1Kp6RUF3KyaqwvKrrKvEzgV/uUvdXgzase+1LIdw68HDYF1uQi34J4qNmVg6CSPXO/9MszQP8U26Tjc8CiSiB9GXiJNyYZ2/zkRtPIHDS2P35YCuYZBJALIXX9IsMoKJjDF5VESISCvH5Uhn1q6zSjWNw4u1RCW9KR8wbBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GP5sdrcHd0U17e98GAyy4IL3wpjZTuEAJguN215taho=;
+ b=eyz58TS0oXsAAfAS47zzI2bd4l9ABLIiiySmfHvemreuLqrPv851TLt7yO7JrAYse6U8Yr2c/cO8I9yp4FiPr1/kJGHoEQm9ZEzP1Z7OL50SSZOsAxyC/oog0Bqm3ECoSXgW2Bv/kQnqyCxCbcmYDqu+BCgvWnwCtmCP1hQJZiWLSwq9loW8LBXMdrIewEL5HztnPBqUEXsRk8hcCbrndxgtdjdpADfjhzbtm5Ug6IGcdg1YmBDdXXlJkG3hRlv75IfLONle8lgucRhMggg9vkXZUK4fnsgYytdUIfV78agBLHbnoz8R2Cgz35mX1oy3jptPED2h3yhVNkpgk3902Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GP5sdrcHd0U17e98GAyy4IL3wpjZTuEAJguN215taho=;
+ b=M/YgQrJ4KUm92k3qpd/YdTS6Vupn82IeDcuTeWYCmgUFs3ucemBVUhTeqVlVKom0nO7AgXOIW4FF9QMH3kkLDNj31anYo49gtDJXLMYtoKS7kX6XQvy2gikCo4tRbvVdw5lI0awGG0UEGlKAScIZjWwpe1Dj82PJv+c34POKogNN3Zi6P0FAQ2Cdqxsto/IfMKxKwA1vEzem4ldvppjQEnDMtpTgBtfcZ54UmRmIBrBPU/4nfhZpl4NSyxZQUKs0rijPo8z+pfeeOTpST4DwRVdALzyBpzznjh8moSy0gWA9BS9R1lbFqFrvidhgjTvFeqwz5EMkFn6h5RtR82LHtA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by PAXPR04MB8141.eurprd04.prod.outlook.com (2603:10a6:102:1bf::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.14; Mon, 8 Sep
+ 2025 14:59:26 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 14:59:26 +0000
+Date: Mon, 8 Sep 2025 10:59:19 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] remoteproc: imx_rproc: Simplify IMX_RPROC_SCU_API
+ switch case
+Message-ID: <aL7vR190pYBlnujg@lizhi-Precision-Tower-5810>
+References: <20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com>
+ <20250908-imx-rproc-cleanup-v1-4-e838cb14436c@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-imx-rproc-cleanup-v1-4-e838cb14436c@nxp.com>
+X-ClientProxiedBy: PH8PR02CA0005.namprd02.prod.outlook.com
+ (2603:10b6:510:2d0::13) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 16:59:16 +0200
-Message-Id: <DCNIASL0KG57.3LC7NU7COE5KU@kernel.org>
-Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
- <2025090807-bootleg-trophy-a031@gregkh>
- <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
- <2025090849-tweak-conductor-f642@gregkh>
- <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
- <2025090817-attendant-ungodly-78f6@gregkh>
- <DCNGJMN80Z34.1O45B1LM9PB2S@kernel.org>
- <2025090850-canon-banish-baf6@gregkh>
-In-Reply-To: <2025090850-canon-banish-baf6@gregkh>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PAXPR04MB8141:EE_
+X-MS-Office365-Filtering-Correlation-Id: 790a2cc4-20a6-4197-c802-08ddeee84df8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0me9xYwGAtR27u1HYu53+JuxcZLsRyqcYsO+EfOSY9O9C9VymwZ06HFAttNf?=
+ =?us-ascii?Q?wtY3fa3VI9FbchIBI/+nE6IkACIBv5tY/MTNJNj8c5x1n3clWRdzgselB6pm?=
+ =?us-ascii?Q?O75ICUraA8iWVuv29ZmbIDqJjIiIoBQhnnONRGO8JDk67GQnaLN8zTzLs8Zb?=
+ =?us-ascii?Q?isg/17ohHoUfqGOYM6JHnIX4sZQxhTgUtfKNslYlAzDZDs2XtMsevHlv9Uxs?=
+ =?us-ascii?Q?g4AixEmhaCdbHhuehSSi4x+Eb2r4hegT4o9iIo5LbRKW9dJOL2OtIfnCPvcu?=
+ =?us-ascii?Q?vRpnq4V35i97TLQkygPzops89YvBd5XM5Z49MxAFwiBNKIpoxcyXoS8GFYs6?=
+ =?us-ascii?Q?Pa/JZv1CQ71h07YtyKN8+SrIO0KUhcB94HpscmLu8z+4RbGSE6KMDtqREzpM?=
+ =?us-ascii?Q?FB3Sf3VyBbp47C4aY74Wxar98XgGCn4FVIFzv+3JzXGyDbhgDispmv0vr9/B?=
+ =?us-ascii?Q?LNWQjuZdYt0o7isLDIZwU5SzSrAaKh6N+9xhdNdP8MRvryOYRoYGtobwMbX3?=
+ =?us-ascii?Q?FqAYv/yV4i0PeeCf8QrojeGXcMesQkCov8mNS1DCfdGpPXVlVuwgOahyn0rz?=
+ =?us-ascii?Q?/G4zTn8uQOV/Je0yZOFd6rWPK5+B0texql8KsQPq1+/mnTV/REIv1jEQhv+a?=
+ =?us-ascii?Q?auil/yvAXcnPdY//qfiJaITuO2W4++FmguemKrlwlO/6I304oeXVTYoazLOu?=
+ =?us-ascii?Q?kRm2fc4p8M/BUrMsKiAqrdTsuPkUkLEVsB6Lg4TFaVySpbdz0YDp6/L8UVW9?=
+ =?us-ascii?Q?hUqzU2xj6LPnOKepKZS7TqvJ7jM5d4xQAvkIJcSGlcIbp4fgG5Wdk30AWkY3?=
+ =?us-ascii?Q?ETure9ouhvO+O/WbaUwWqkI4GKz2YkufwTGtxCOZdv0kpgHPMr7J/ip76EOB?=
+ =?us-ascii?Q?ymWoIX8V9io+p9iTuZLpRAKUlqs5vGT3f5MPC6f2egfyEEF3KxLlgRpxDjg/?=
+ =?us-ascii?Q?YWIH4Pt5c/8avk4Bozcb88Xe70x0s8oudVEJ59u6TAcBWagNrYM1ocUjB6B2?=
+ =?us-ascii?Q?cFSYgALHOFAK9oOoWR+LpDXiF0IUVqdT1WesckLtrmUHmJyZNDlOajDNHruk?=
+ =?us-ascii?Q?9KMTddRWu5EHHr1jrQf9kJcW37UItZeOqx+pisIidIhIz0utImXEPK6KsmnZ?=
+ =?us-ascii?Q?bI6bgfyQ3pYVd8BDg7afwjYoFrS44lXsU8J+N/2cHd5PZN8DEzGnNJZ5aorx?=
+ =?us-ascii?Q?sKt9BH9c+1R0GzHcFehjMNGa/JdeHkgYgYX7Yiw/rSIvPJUzu9T3B9wxPZBp?=
+ =?us-ascii?Q?yFQzQOAkZmIOI/6yUOiNMumbc0k+WuxnXYMmtNpeVYQWC234FU4xwXw/5hdV?=
+ =?us-ascii?Q?naUlg38JXLPDmiD5+shlFZxgnkoCQ9b8uttkEw+/js4r77RD1G1SKhDKc1eI?=
+ =?us-ascii?Q?5dAc6b0tRZrm3NAhA2b18rD74Jt7F+ZDcPJaxjHoHNpcIHpjCP4u9eLgMU9K?=
+ =?us-ascii?Q?kYUCEwrmLMeogdncFeXG7M6DZg7724XNIiQWAZid2/kKazpf7OiGYA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/FPjKK+1BI3k0be3SMu//yqURvxcbqCV7YIvIuD56veMBmQKS5mch9A2k9ek?=
+ =?us-ascii?Q?R/N4GHjnlX/Y4/eu0GHpwPfrnxh7dM25lwTYwQCUsYWYhUbEcjjcvCvVlAQ4?=
+ =?us-ascii?Q?YW2CgTkbAfX59ZFSpej3IhPpM0sV4Q6s2d9wSRSWTYcaVyckcrhWlRkKi/1C?=
+ =?us-ascii?Q?ot+rDOxnDEKVHW3oeUQjBv/QmT2WkCSbM71gkTzd/N9xkqDv7qqrl6JZxOgq?=
+ =?us-ascii?Q?U8DOc394WXW2CfN+YOJXnF/zfSyh9+Q0UsxvyiXxByWJFyWo+2ahN1GD5sMI?=
+ =?us-ascii?Q?klxZ47+3H8Q40XTIp45QsA5UHN+TDllDduZv+j0cq9JR3me14UYRsktR5TJA?=
+ =?us-ascii?Q?KLHCAx5Vk0XE/IahoHegKkKzePH2N4BDVap2AZL07Usd6d0QfNGIWIZxcDMe?=
+ =?us-ascii?Q?yOTrHhUXPM+1HrzGasdvbfUXxmVT/rkmVBkeMqAd3HR3SxHY8FXwCnUlfXXE?=
+ =?us-ascii?Q?9wxHSpvg6bOo8/hcuvsb4XTyRrC49SHy8lzxvy5XQwaAmHdWnD/mdmEx8sLb?=
+ =?us-ascii?Q?atzu5eNNG1IZg2YuHV3Y6XAuM6aUpTqGH0KbG7A03P+ioPB7b/3N59qI0JmH?=
+ =?us-ascii?Q?NDElhS4vyzZwlb7ih3TPZU9UaTWKsCn+L/JCxJcZYVk3Cipv4QzQl12tlcGq?=
+ =?us-ascii?Q?eNl9IlhhZSouZYNWDVG8O94r7TfO+hjb68emK+/KEL8HSTZPe4e/bRIiZHgA?=
+ =?us-ascii?Q?O8AkOtH12etjvOC+4sQ9mR1uLjdKhVT/GD8ixMP/tZ0QAGLimR4zJMZ9lNLb?=
+ =?us-ascii?Q?drZYnsP3mJR1Lht9ToxK8zxEzXxkePgu1qcRdgu/M2chH8za9stKZi9UrS9d?=
+ =?us-ascii?Q?9AgkhJLgHqUoxu4gk9C5wr+4054aFZ1cf3gQ+ZsSCfY1BFymwtJbQvycjYtw?=
+ =?us-ascii?Q?Br5+Yj8yRXk7Zw1FzxII3/E4yuv7XWErrpSBSjqPSYKaB7hm0O1TCcvvk3pN?=
+ =?us-ascii?Q?/olBh50hqbTp5LGWABNq0jkh6ymBo9RVwmCw5qS+PgLrZl03YuCYrzYd7JW2?=
+ =?us-ascii?Q?H2FjVHC+hsrw4fOashziGqe+QY99Mu8aLIC/BOJoQJizRyJYHmBx/RIl9193?=
+ =?us-ascii?Q?MyrP6b8DTeA6l8hm83Ikvqy9Z+c0JGbL3R2vEDXZN/CqkwmGz7nJOD0OBCQ9?=
+ =?us-ascii?Q?yVsPMALyKHSack5EJnbEISC6AMmWIgqHBfUjarLYkv2ru4+Ip7kQMj8H/5Rs?=
+ =?us-ascii?Q?6/LGlFWeaHaqe+qHUczRopeCwgqXfalQRw6ddM2jFWOSYqyux/DkSmoU3w22?=
+ =?us-ascii?Q?e3ptRsDPj1MLm//vtQ7gM2lmhOb2hPpUv5sijBfOxWPPZGyRWPu1YfghjtNN?=
+ =?us-ascii?Q?HcdITJFJMsuS9n1iJ9kUCNzZwqseF9z316qzZm+BSao+XEEQcRS26rQLclCT?=
+ =?us-ascii?Q?xhzW2qf4HOJlPv9DJCZQuLuHpqZ9txfs/BSI1d58RYVqwv1VmYoCEx+0IY3C?=
+ =?us-ascii?Q?/wBkzxirQyICOW1/gE2FtIMhOUP4WFoLxIC/Qx2gVVN3WY7ECscCsBY4KcoL?=
+ =?us-ascii?Q?4xOA+ug0iaI+VVtbq5GreA96QGZrwk82NIMPc6jY5j6omr+u6P5tWZsOPM3D?=
+ =?us-ascii?Q?0+nrQKQG2OGEC23SwSw=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 790a2cc4-20a6-4197-c802-08ddeee84df8
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 14:59:26.6003
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +QkDFz/xiL6dzoG2VdVtRnPSY4fQtvCc7zHgplVSBXgACvoIlp9qNnx5zfDGXklVh+SQ7oEkh/mkZdCufiNTag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8141
 
-On Mon Sep 8, 2025 at 4:16 PM CEST, Greg Kroah-Hartman wrote:
-> On Mon, Sep 08, 2025 at 03:36:46PM +0200, Danilo Krummrich wrote:
->> On Mon Sep 8, 2025 at 3:30 PM CEST, Greg Kroah-Hartman wrote:
->> > On Mon, Sep 08, 2025 at 03:22:41PM +0200, Danilo Krummrich wrote:
->> >> On Mon Sep 8, 2025 at 2:48 PM CEST, Greg Kroah-Hartman wrote:
->> >> > On Mon, Sep 08, 2025 at 12:54:46PM +0200, Danilo Krummrich wrote:
->> >> >> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debu=
-gfs.rs
->> >> >> index b26eea3ee723..475502f30b1a 100644
->> >> >> --- a/samples/rust/rust_debugfs.rs
->> >> >> +++ b/samples/rust/rust_debugfs.rs
->> >> >> @@ -59,6 +59,8 @@ struct RustDebugFs {
->> >> >>      #[pin]
->> >> >>      _compatible: File<CString>,
->> >> >>      #[pin]
->> >> >> +    _test: File<&'static CStr>,
->> >> >> +    #[pin]
->> >> >>      counter: File<AtomicUsize>,
->> >> >>      #[pin]
->> >> >>      inner: File<Mutex<Inner>>,
->> >> >> @@ -140,6 +142,7 @@ fn new(pdev: &platform::Device<Core>) -> impl =
-PinInit<Self, Error> + '_ {
->> >> >>                          .property_read::<CString>(c_str!("compati=
-ble"))
->> >> >>                          .required_by(dev)?,
->> >> >>                  ),
->> >> >> +                _test <- debugfs.read_only_file(c_str!("test"), c=
-_str!("some_value")),
->> >> >
->> >> > Cool, but again, we do not want to ever be storing individual debug=
-fs
->> >> > files.  Well, we can, but for 90% of the cases, we do not, we only =
-want
->> >> > to remove the whole directory when that goes out of scope, which wi=
-ll
->> >> > clean up the files then.
->> >>=20
->> >> This API does not work in the way that you have a struct storing the =
-data you
->> >> want to expose *and* another one for the files with the data attached=
-.
->> >>=20
->> >> The File type contains the actual data. For instance, if you have a s=
-truct Foo,
->> >> where you want to expose the members through debugfs you would *not* =
-do:
->> >>=20
->> >> 	struct Foo {
->> >> 	   a: u32,
->> >> 	   b: u32,
->> >> 	}
->> >>=20
->> >> 	struct FooFiles {
->> >> 	   a: File<&u32>,
->> >> 	   b: File<&u32>
->> >> 	}
->> >>=20
->> >> and then create an instance of Foo *and* another instance of FooFiles=
- to export
->> >> them via debugfs.
->> >
->> > Ah, that's exactly what I was trying to do.
->>=20
->> But that's bad, then we're back at the lifetime problem from the beginni=
-ng,
->> because the File<&Foo> then somehow needs to ensure that the instance Fo=
-o
->> remains alive as long as File<&Foo> or the backing directory exists.
->>=20
->> So, you eventually end of with Foo needing to be reference counted with =
-its own
->> memory allocation, which horribly messes with your lifetimes in the driv=
-er.
+On Mon, Sep 08, 2025 at 09:07:37PM +0800, Peng Fan wrote:
+> Introduce imx_rproc_scu_api_{start, stop, detect_mode}() helper functions
+> for all i.MX variants using IMX_RPROC_SCU_API to manage remote processors.
 >
-> Once I want to drop Foo, FooFiles should "go out of scope" and be gone.
-
-We agree on the goal here, but unfortunately it's not really possible. Ther=
-e are
-two options that were already exercised:
-
-	(1) Force that FooFiles (or FooDir) is bound to the lifetime of a
-	    reference of Foo with FooDir<&'a Foo>.
-
-	    This isn't workable because we then can't store both of them into
-	    the same parent structure.
-
-	(2) Reference count Foo (Arc<Foo>) and make FooDir own a referenc count
-	    of Foo.
-
-	    But this is bad for the mentioned reasons. :(
-
-	(3) The File<T> API we have now, which gives you the behavior you ask
-	    for with Scope<T>.
-
-	    Where Scope<T> creates a directory and owns the data you pass to it,
-	    e.g. a pci config descriptor.
-
-	    The user can create an arbitrary number of files exporting any of
-	    the fields in date that live in the scope and don't need to be tracked
-	    separately, i.e. don't create separate object instances.
-
-	    The directory (and hence all the files) is removed once the Scope<T>
-	    is dropped, including the data it owns.
-
-> If a backing file descriptor is still held open, it will then become
-> "stale" and not work.  Much like the revokable stuff works.
+> This allows the removal of the IMX_RPROC_SCU_API switch-case blocks from
+> imx_rproc_start(), imx_rproc_stop(), and imx_rproc_detect_mode(), resulting
+> in cleaner and more maintainable code.
 >
-> Note, none of this is in the C code today, and debugfs is bound to root
-> permissions, so it's not really an issue, but I can understand the goal
-> of correctness...
+> No functional changes.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-The lifetime guarantee we talk about is about the debugfs file still having=
- a
-pointer to data that has already been dropped / freed.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-In C you have to remove the debugfs file or directly (and hence the file) b=
-efore
-the data exposed through it is freed. In C this is on the driver to take ca=
-re
-of.
-
-(If in C a driver has multiple structures exported in the same debugfs dire=
-ctory
-it has to manually take care of keeping all structures alive as long as the
-directory (and hence all files) exist.)
-
-In Rust we need the abstraction to guarantee this.
-
-> Anyway, I looked at the scoped example here, and I don't see how that
-> works any differently.  How can I use it to have a single Dir "handle"
-> that when goes out of scope, can drop the files attached to it that were
-> created to reference Foo.a and Foo.b in your example above?
-
-In the example above you would move Foo into the Scope<Foo>. For instance:
-
-	let dir =3D root_dir.scope(foo, cstr!("subdir"), |foo, dir| {
-		dir.read_only_file(c_str!("a"), foo.a);
-		dir.read_only_file(c_str!("b"), foo.b);
-	});
-
-Note that those methods don't return anything, they're automatically bound =
-to
-the Scope in lifetime.
-
-So, Foo could be your pci config descriptor.
-
-If `dir` is dropped, everything dies, the Scope, the "subdir" directory, al=
-l the
-files and also Foo.
-
-I can provide some working code later on (currently in a meeting). :)
+>  drivers/remoteproc/imx_rproc.c | 149 +++++++++++++++++++++++------------------
+>  1 file changed, 85 insertions(+), 64 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index c37dd67595960f08fd85c0b516d0d03855cec9fc..ea34080970c6a5a9b035ef0d389014b8268660a9 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -296,6 +296,13 @@ static int imx_rproc_mmio_start(struct rproc *rproc)
+>  	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_start);
+>  }
+>
+> +static int imx_rproc_scu_api_start(struct rproc *rproc)
+> +{
+> +	struct imx_rproc *priv = rproc->priv;
+> +
+> +	return imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
+> +}
+> +
+>  static int imx_rproc_start(struct rproc *rproc)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+> @@ -318,9 +325,6 @@ static int imx_rproc_start(struct rproc *rproc)
+>  		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START, 0, 0, 0, 0, 0, 0, &res);
+>  		ret = res.a0;
+>  		break;
+> -	case IMX_RPROC_SCU_API:
+> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
+> -		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -349,6 +353,13 @@ static int imx_rproc_mmio_stop(struct rproc *rproc)
+>  	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_stop);
+>  }
+>
+> +static int imx_rproc_scu_api_stop(struct rproc *rproc)
+> +{
+> +	struct imx_rproc *priv = rproc->priv;
+> +
+> +	return imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
+> +}
+> +
+>  static int imx_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+> @@ -369,9 +380,6 @@ static int imx_rproc_stop(struct rproc *rproc)
+>  		if (res.a1)
+>  			dev_info(dev, "Not in wfi, force stopped\n");
+>  		break;
+> -	case IMX_RPROC_SCU_API:
+> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
+> -		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -907,14 +915,74 @@ static int imx_rproc_mmio_detect_mode(struct rproc *rproc)
+>  	return 0;
+>  }
+>
+> -static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> +static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
+>  {
+> -	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> +	struct imx_rproc *priv = rproc->priv;
+>  	struct device *dev = priv->dev;
+> -	struct arm_smccc_res res;
+>  	int ret;
+>  	u8 pt;
+>
+> +	ret = imx_scu_get_handle(&priv->ipc_handle);
+> +	if (ret)
+> +		return ret;
+> +	ret = of_property_read_u32(dev->of_node, "fsl,resource-id", &priv->rsrc_id);
+> +	if (ret) {
+> +		dev_err(dev, "No fsl,resource-id property\n");
+> +		return ret;
+> +	}
+> +
+> +	if (priv->rsrc_id == IMX_SC_R_M4_1_PID0)
+> +		priv->core_index = 1;
+> +	else
+> +		priv->core_index = 0;
+> +
+> +	/*
+> +	 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
+> +	 * and Linux could only do IPC with Mcore and nothing else.
+> +	 */
+> +	if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
+> +		if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> +			return -EINVAL;
+> +
+> +		return imx_rproc_attach_pd(priv);
+> +	}
+> +
+> +	priv->rproc->state = RPROC_DETACHED;
+> +	priv->rproc->recovery_disabled = false;
+> +	rproc_set_feature(priv->rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
+> +
+> +	/* Get partition id and enable irq in SCFW */
+> +	ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc_id, &pt);
+> +	if (ret) {
+> +		dev_err(dev, "not able to get resource owner\n");
+> +		return ret;
+> +	}
+> +
+> +	priv->rproc_pt = pt;
+> +	priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
+> +
+> +	ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
+> +	if (ret) {
+> +		dev_err(dev, "register scu notifier failed, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt),
+> +				       true);
+> +	if (ret) {
+> +		imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> +		dev_err(dev, "Enable irq failed, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> +{
+> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> +	struct arm_smccc_res res;
+> +
+>  	if (dcfg->ops && dcfg->ops->detect_mode)
+>  		return dcfg->ops->detect_mode(priv->rproc);
+>
+> @@ -927,61 +995,6 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  		if (res.a0)
+>  			priv->rproc->state = RPROC_DETACHED;
+>  		return 0;
+> -	case IMX_RPROC_SCU_API:
+> -		ret = imx_scu_get_handle(&priv->ipc_handle);
+> -		if (ret)
+> -			return ret;
+> -		ret = of_property_read_u32(dev->of_node, "fsl,resource-id", &priv->rsrc_id);
+> -		if (ret) {
+> -			dev_err(dev, "No fsl,resource-id property\n");
+> -			return ret;
+> -		}
+> -
+> -		if (priv->rsrc_id == IMX_SC_R_M4_1_PID0)
+> -			priv->core_index = 1;
+> -		else
+> -			priv->core_index = 0;
+> -
+> -		/*
+> -		 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
+> -		 * and Linux could only do IPC with Mcore and nothing else.
+> -		 */
+> -		if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
+> -			if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> -				return -EINVAL;
+> -
+> -			return imx_rproc_attach_pd(priv);
+> -		}
+> -
+> -		priv->rproc->state = RPROC_DETACHED;
+> -		priv->rproc->recovery_disabled = false;
+> -		rproc_set_feature(priv->rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
+> -
+> -		/* Get partition id and enable irq in SCFW */
+> -		ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc_id, &pt);
+> -		if (ret) {
+> -			dev_err(dev, "not able to get resource owner\n");
+> -			return ret;
+> -		}
+> -
+> -		priv->rproc_pt = pt;
+> -		priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
+> -
+> -		ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
+> -		if (ret) {
+> -			dev_err(dev, "register scu notifier failed, %d\n", ret);
+> -			return ret;
+> -		}
+> -
+> -		ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt),
+> -					       true);
+> -		if (ret) {
+> -			imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> -			dev_err(dev, "Enable irq failed, %d\n", ret);
+> -			return ret;
+> -		}
+> -
+> -		return 0;
+>  	default:
+>  		break;
+>  	}
+> @@ -1163,6 +1176,12 @@ static const struct imx_rproc_plat_ops imx_rproc_ops_mmio = {
+>  	.detect_mode	= imx_rproc_mmio_detect_mode,
+>  };
+>
+> +static const struct imx_rproc_plat_ops imx_rproc_ops_scu_api = {
+> +	.start		= imx_rproc_scu_api_start,
+> +	.stop		= imx_rproc_scu_api_stop,
+> +	.detect_mode	= imx_rproc_scu_api_detect_mode,
+> +};
+> +
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn_mmio = {
+>  	.src_reg	= IMX7D_SRC_SCR,
+>  	.src_mask	= IMX7D_M4_RST_MASK,
+> @@ -1197,12 +1216,14 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qm = {
+>  	.att            = imx_rproc_att_imx8qm,
+>  	.att_size       = ARRAY_SIZE(imx_rproc_att_imx8qm),
+>  	.method         = IMX_RPROC_SCU_API,
+> +	.ops		= &imx_rproc_ops_scu_api,
+>  };
+>
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
+>  	.att		= imx_rproc_att_imx8qxp,
+>  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8qxp),
+>  	.method		= IMX_RPROC_SCU_API,
+> +	.ops		= &imx_rproc_ops_scu_api,
+>  };
+>
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
+>
+> --
+> 2.37.1
+>
 
