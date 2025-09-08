@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-805222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A6AFB48597
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:39:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F179DB485A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BD01B21A38
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 583BA17FAB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC392E92B0;
-	Mon,  8 Sep 2025 07:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492AC2EAB60;
+	Mon,  8 Sep 2025 07:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EzVtd4mM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u8SpLDU1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EzVtd4mM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u8SpLDU1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tqe1ZA6c"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A912E9746
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0362E9746
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 07:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757317040; cv=none; b=keClFu983IMb8u8vGq4X9G/n+zWH/URixsHL/XrMl703/xKL8tUNmsoX40rHMhvtrjTcLHyMIfdwZC6rB7RY6qBU4penqSqvWH5y0XPtrFenoG52Y/zE+DUbeJZAYTCfJNeibbgYAgrpioGdQqtPHRHZm35/TQbxf9W6Mua8Cvk=
+	t=1757317069; cv=none; b=E/eT6wGWAAIHZs0eVGSMvGJjLcHJNDuN09ztN8sPxlvV13Y8hKjxWUkrcUirb9ZkVshb49MQZkVCvJi1NhvH7bTXQEgxXiDkoVYxg41pdIXQ3NZ10G8VPhRr8JeVEfebYDm+Xt19k0DRPIU1NrzRavHwNn20CkMilFPlI/9i9fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757317040; c=relaxed/simple;
-	bh=YsNIdxbLsy4tn/WFM5GUxWkUoUit6Qn2LXw5/EkhjNo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hgNY1jIo/pRpcP92Hks9iQai/sEV4Lx1xGZmef/wShVA6rayGsyZHC1T0HJcooZfkR+/NPz8Ad2Ye6Mt50OnckXyKyP8XyVdIx7hfBSsXIvsfxxFssEMsTx4uq5JObFMToI3iovtewzLQV94DjPn2xaJ+qizKM2L43QNgad5Fy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EzVtd4mM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u8SpLDU1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EzVtd4mM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u8SpLDU1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6B2BB2625B;
-	Mon,  8 Sep 2025 07:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757317036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ao8SRK3csL1Kz6yvjwsT0ce+uyqxVPnZP4xKlldRDkE=;
-	b=EzVtd4mMLcyCx5FtzKJmsQQtiQDbowdKuEyrvBA2ns1oOAqfHlCIYLL16l4loCRceSPTrP
-	o4nAM4oyduM3O5Z4MKKIQTkcie64CmF44nXrgmORfCYkgW83GboJAmY1/FV19Kz0ZzTAGW
-	cL3EWJYUR9tAXVIo+S/WDH2jypDELW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757317036;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ao8SRK3csL1Kz6yvjwsT0ce+uyqxVPnZP4xKlldRDkE=;
-	b=u8SpLDU1xrOzkFI8HgxGN00FxCZZcLWeq/yWK/809YEtEeNzf7XXDinxvbYZD8MqEF5A44
-	0zaWIwCczz+jOlCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=EzVtd4mM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=u8SpLDU1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757317036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ao8SRK3csL1Kz6yvjwsT0ce+uyqxVPnZP4xKlldRDkE=;
-	b=EzVtd4mMLcyCx5FtzKJmsQQtiQDbowdKuEyrvBA2ns1oOAqfHlCIYLL16l4loCRceSPTrP
-	o4nAM4oyduM3O5Z4MKKIQTkcie64CmF44nXrgmORfCYkgW83GboJAmY1/FV19Kz0ZzTAGW
-	cL3EWJYUR9tAXVIo+S/WDH2jypDELW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757317036;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ao8SRK3csL1Kz6yvjwsT0ce+uyqxVPnZP4xKlldRDkE=;
-	b=u8SpLDU1xrOzkFI8HgxGN00FxCZZcLWeq/yWK/809YEtEeNzf7XXDinxvbYZD8MqEF5A44
-	0zaWIwCczz+jOlCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E8F113869;
-	Mon,  8 Sep 2025 07:37:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pLo1CqyHvmgrRQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 08 Sep 2025 07:37:16 +0000
-Date: Mon, 08 Sep 2025 09:37:15 +0200
-Message-ID: <87wm69l7is.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>
-Subject: Re: [PATCH v4] ALSA: hda/tas2781: Fix the order of TAS2781 calibrated-data
-In-Reply-To: <20250907222728.988-1-shenghao-ding@ti.com>
-References: <20250907222728.988-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1757317069; c=relaxed/simple;
+	bh=npgqeyJYtjMo1K7oEjKm+5dN1DpSLghDGmFXM3/+hLY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MoWIzcGmguYK+rYGb8ZssNwwnDjsJlw2s1o45P9zNSr2Eodw+5Fja/pldq55H/NEOKeLFNWRshYx51CZlDC2TbrS0xfXko0kCLWnJ0e3O5+ZmqaXgqVX9H9rqasTx4CWIoM2iKBDDN9UvDsJIUupGhtqhHfckffUYrWyAoeBWnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tqe1ZA6c; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6285612382aso46505a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 00:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757317066; x=1757921866; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c1ihnPj/Q847d8ksRu6ToPjh3J6EYfnXIG0faI+BDt0=;
+        b=Tqe1ZA6cVjwTto38GIJSCEC9QGXihI2SzcsCNgLbf/xTgxEXKyWW2MrhIjON3rmCoG
+         OPFLLn9OdCsRHvscVXwX6oxJdC0SfrIfl1svSRUrqUaVcZxRQvF4L/iOQ1Ouf3fIEP18
+         eXc+bXIOjogqqGePD3sM1xu8J6bDqYR7dtOhyzhqxDl9FUdXGqDbhXICahPDxZ+M0hzq
+         OxdF+4pEhiusblsyfOjlHuf2Vfpdoxz1pICU7kNvV5Q/RXqjq2xTt5AyLx288hMvCKuk
+         P8MzfhkKIF/uxXdaatQmSds4ZkVACHBe3bRCV5SLy8gwytyilBqTAqQjOzxYyltb02bB
+         yKpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757317066; x=1757921866;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c1ihnPj/Q847d8ksRu6ToPjh3J6EYfnXIG0faI+BDt0=;
+        b=Im3ucsC5wCHbz6uRDl43GaZ/MLeybw3PZYte3fFcylmmX7s8ASCdEGV/Sw/8mSsKXc
+         T2VzUKJZeZiFagrDGDQeT+4X1dbK4vGqj0BbTTB7YxmexNAjE3c9eDiBtuMyjSB2syQa
+         Oz3CYWmKyZU8CYJ0krwU6deXr7MAsKSx5hSgkcvnBnfbeNo+JzNQ1HUHCy6tSzgBibgv
+         f9Qhpch973aoSqYiFD+TDADA53R98/cnyfzjoc3E2AIFgfKz1oLNyvdVNZPB04TXe9Ek
+         +4dyFvEnBsXVTJ/rIUKz6UnvnfTe4Wbfs0kPqTgMbH/qJf/gQNIFast4g2HonnVfHT+n
+         UsMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX20fYCvHrM/Qul8FC0zJpcS/ol1xxfsJ971akeQGK9i3MYnwFOcKlZBWGbDV3xLbO6q+Ox7TkDLegdicQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkX4sHlcS2bl9QNh1I3q6CE5l3vhhLAwFqwIUkl8P1Q/ywZJpb
+	A/lGOrrKaKuH7qMVcVCBsYSyebc+FgG+HAfWkoXd0SyyLlDZewrJRaJuDy2FAsHpyGY=
+X-Gm-Gg: ASbGncuf+8/ZCqeuB9l3KfaEzWYB9L2Ne00aKcboX6SL7hpxSPFP3UkVTgr9QwgpDd4
+	QeED5stnD20bVQA1ngA2T8JTRhUCBORDcCb1DD8rE+oEYKqmqkk6c3e02tW5MX1k+5Ioo6JUYvT
+	Etq3MO10YNK6xQg6I8gyHawZjVuvAddT5hQ132CzX+sJjax0sUHMlKcS3Bf3jmv5mATqbYodWSF
+	DHgDusHsn03vRjwe2tu2VFeL/E6bw0/XLpSyWOHHtfLcyaKFO+h+eJ1zL8d4HkbDrDNYES5Zf3y
+	PR53zRB1GRuQRBrFYB7eKWe13cePOZlAKBB0n0oq+QvXH0k9FOghrFouxc06voohePLHepa8Cjb
+	zIVGh4EOjLQA2sqRH3W3nSOgenu1i3y0YqQKtYbhLqD32iBLL01k9OGEhwxd1
+X-Google-Smtp-Source: AGHT+IEwOfCfMLqhq1au4x2wehLLoFF6Zs3TLFmLiTfUckQkop+xb6mWxOrGK/1CnN+pfhpIuxlJSg==
+X-Received: by 2002:a05:6402:3547:b0:615:aec5:b595 with SMTP id 4fb4d7f45d1cf-6237adca141mr3186598a12.1.1757317066001;
+        Mon, 08 Sep 2025 00:37:46 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7edcsm21955357a12.6.2025.09.08.00.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 00:37:45 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Henrik Grimler <henrik@grimler.se>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
+References: <20250908-smdk5250-sromc-v2-0-e91b2375d4e1@grimler.se>
+Subject: Re: [PATCH v2 0/3] exynos5250-smdk5250: describe SROM controller
+ and ethernet port
+Message-Id: <175731706457.18620.18138563656034990579.b4-ty@linaro.org>
+Date: Mon, 08 Sep 2025 09:37:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 6B2BB2625B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, 08 Sep 2025 00:27:27 +0200,
-Shenghao Ding wrote:
+
+On Mon, 08 Sep 2025 09:26:54 +0200, Henrik Grimler wrote:
+> Based on smdk5250 description in Samsung's vendor kernel [1] and the
+> u-boot dts [2], the smdk5250 board seems to have a ethernet port
+> connected to bank 1 of the SROM controller.
 > 
-> A bug reported by one of my customers that the order of TAS2781
-> calibrated-data is incorrect, the correct way is to move R0_Low
-> and insert it between R0 and InvR0.
+> Unfortunately I do not have access to the board, so this is not tested
+> on an actual device, and based solely on the linked sources.
 > 
-> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+> [...]
 
-Applied now.  Thanks.
+Applied, thanks!
 
+[1/3] ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
+      https://git.kernel.org/krzk/linux/c/31f5a855f706f8b14055b6b4df083c3997e42907
+[2/3] ARM: dts: samsung: exynos5250: describe sromc bank memory map
+      https://git.kernel.org/krzk/linux/c/6016813c888ec7d4a1f592eab3aebf289a42e865
+[3/3] ARM: dts: samsung: smdk5250: add sromc node
+      https://git.kernel.org/krzk/linux/c/d19b1773362adfe8c0d5ccc4faf6aea0249976a6
 
-Takashi
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
