@@ -1,98 +1,524 @@
-Return-Path: <linux-kernel+bounces-805534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57742B489D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EEFB489D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F277172074
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD8A1748A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83777081E;
-	Mon,  8 Sep 2025 10:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A193529A32D;
+	Mon,  8 Sep 2025 10:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUjCb4rW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eZkwWuGk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E14C281375;
-	Mon,  8 Sep 2025 10:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702AC273F9;
+	Mon,  8 Sep 2025 10:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326574; cv=none; b=FyvFRNkd4byiiT41z53cgpBSrRTLwvBvypuF/F4lduhX03bEfiNJPbaX1fB2SctVpoQr7HfFJYCE6ErYYajHMJlrPbAPKPz2MfHQtz2WIUn9uyZCSfbfJ6ATzlCjqz+dvEwQ+h6TzAgft1r80d2e/BK1oLeLgf1hTPsbSXR7LVg=
+	t=1757326624; cv=none; b=b1PyoozHIH2B5WHgOxPUB9cihW5byIPfPIBmnfPF4JFgx25/bf5uR4/viSb3Ld/+bVW8QspkycEuZHigS3kzJytu0hNGICEl2Tdf2vJYW4VC0HmaPHcHHmvqaV/3bgCN5zYvfIRO9LxE/mobOh0Qqdmwi59Y84wjF6UgyEFLs4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326574; c=relaxed/simple;
-	bh=5DFonyNsZnbO+w46KiqgO+HRV9ffXCJz7BHFXEip3Mo=;
+	s=arc-20240116; t=1757326624; c=relaxed/simple;
+	bh=xcuHld45FMsSZXZksfSC4H58GyVAM9t1/XpltfBewEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYtGMxsvWP42KomWYBpWLvLWvD9cqkVfbTAVYhksLbaXBVw4WthH9WJhTlC3NMzAQbgopMqk71FS+Sx+YPxRoGClQDOOdx9vNNfoqtBEhNZGo7UmeuFkCv5EC5+4TBlaODnymt38vjCqXkKlcoIpIKkzW4gY8Qin7aU0B+E8Ph8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUjCb4rW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED5EC4CEF9;
-	Mon,  8 Sep 2025 10:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757326572;
-	bh=5DFonyNsZnbO+w46KiqgO+HRV9ffXCJz7BHFXEip3Mo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNWNbK6IQaLWaoNNsjnZaCvYGbPLRNYFJRXkR24ZLicQLt23ARH8HnOO9wZBvw3m6P9nbPHFU/2Vu0mxznekDn4QsDULZnVmC1EmC1+V+1A2xRMLbE3RvBJUZCim1jFs1PhQuIhlKhZbD4F0YKeOs46joznboSI1wl0yPB6XAyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eZkwWuGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673CCC4CEF1;
+	Mon,  8 Sep 2025 10:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757326624;
+	bh=xcuHld45FMsSZXZksfSC4H58GyVAM9t1/XpltfBewEw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eUjCb4rWvjaImzId0vGs71hkor/+yJuySYeFh48VIWa6oBD1QvNZBd2MULAFawYve
-	 O6lXUidasKRC7XB32hPCjZKeHs6lZGU9cNTTKdDThLCpLnjQVM8k8wW2+DtdV80erq
-	 3KgfI8FDjbf8pE02+1tcRDfyhQPExFJ6dWkTpgSqma/pG9tMv+vh4EOyZPA+4J0Mhj
-	 BXXhwlS44Oj7Y3d6HV50R4xpaxHsO0LJuJhmYhmSNPJZi0UCkLhZFgP0W//jmUHQz+
-	 2cb3RY3jMMRgBdkMaPZ5h/zE9GChCQGxT0vzn2zM4iAj+DAaw40q6U1F0Xq8UViPLo
-	 Vf9+lUbGFwHHQ==
-Date: Mon, 8 Sep 2025 15:46:05 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: daire.mcnamara@microchip.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, bhelgaas@google.com, robh@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: plda: Remove the use of dev_err_probe()
-Message-ID: <pxvdomiyvmor6eix4y733izqey763ygebtvzopf6fwppda4xm2@34c3afoxpipl>
-References: <20250820085200.395578-1-zhao.xichao@vivo.com>
+	b=eZkwWuGku/NnzwaNEd2+shzI4LSKl0bYR8gviCQRAYj9inUJQUD0WNEc1wzoQJ4gP
+	 WwjK0lzw3bCETOeuOSsnHj2GBQTaqxrrfXKQeeZF+LvislTPZikenagcTRv6YquWc3
+	 9gp+JUoGfOmltDJpZdpz6iJKRV91e7FsUhBbAB2k=
+Date: Mon, 8 Sep 2025 12:17:01 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
+	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Message-ID: <2025090807-bootleg-trophy-a031@gregkh>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820085200.395578-1-zhao.xichao@vivo.com>
+In-Reply-To: <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
 
-On Wed, Aug 20, 2025 at 04:52:00PM GMT, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
+On Thu, Sep 04, 2025 at 09:13:53PM +0000, Matthew Maurer wrote:
+> Extends the `debugfs` API to support creating read-only files. This
+> is done via the `Dir::read_only_file` method, which takes a data object
+> that implements the `Writer` trait.
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-
-Applied to pci/controller/plda!
-
-- Mani
-
+> The file's content is generated by the `Writer` implementation, and the
+> file is automatically removed when the returned `File` handle is
+> dropped.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 > ---
->  drivers/pci/controller/plda/pcie-plda-host.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  rust/kernel/debugfs.rs          | 148 +++++++++++++++++++++++++++++++++++++++-
+>  rust/kernel/debugfs/entry.rs    |  42 ++++++++++++
+>  rust/kernel/debugfs/file_ops.rs | 128 ++++++++++++++++++++++++++++++++++
+>  rust/kernel/debugfs/traits.rs   |  33 +++++++++
+>  4 files changed, 350 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
-> index 8e2db2e5b64b..3c2f68383010 100644
-> --- a/drivers/pci/controller/plda/pcie-plda-host.c
-> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
-> @@ -599,8 +599,7 @@ int plda_pcie_host_init(struct plda_pcie_rp *port, struct pci_ops *ops,
+> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+> index 65be71600b8eda83c0d313f3d205d0713e8e9510..b28665f58cd6a17e188aef5e8c539f6c7433a3b0 100644
+> --- a/rust/kernel/debugfs.rs
+> +++ b/rust/kernel/debugfs.rs
+> @@ -8,12 +8,18 @@
+>  // When DebugFS is disabled, many parameters are dead. Linting for this isn't helpful.
+>  #![cfg_attr(not(CONFIG_DEBUG_FS), allow(unused_variables))]
 >  
->  	bridge = devm_pci_alloc_host_bridge(dev, 0);
->  	if (!bridge)
-> -		return dev_err_probe(dev, -ENOMEM,
-> -				     "failed to alloc bridge\n");
-> +		return -ENOMEM;
+> -#[cfg(CONFIG_DEBUG_FS)]
+>  use crate::prelude::*;
+>  use crate::str::CStr;
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  use crate::sync::Arc;
+> +use core::marker::PhantomPinned;
+> +use core::ops::Deref;
+> +
+> +mod traits;
+> +pub use traits::Writer;
 >  
->  	if (port->host_ops && port->host_ops->host_init) {
->  		ret = port->host_ops->host_init(port);
-> -- 
-> 2.34.1
-> 
+> +mod file_ops;
+> +use file_ops::{FileOps, ReadFile};
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  mod entry;
+>  #[cfg(CONFIG_DEBUG_FS)]
+> @@ -53,6 +59,34 @@ fn create(name: &CStr, parent: Option<&Dir>) -> Self {
+>          Self()
+>      }
+>  
+> +    /// Creates a DebugFS file which will own the data produced by the initializer provided in
+> +    /// `data`.
+> +    fn create_file<'a, T, E: 'a>(
+> +        &'a self,
+> +        name: &'a CStr,
+> +        data: impl PinInit<T, E> + 'a,
+> +        file_ops: &'static FileOps<T>,
+> +    ) -> impl PinInit<File<T>, E> + 'a
+> +    where
+> +        T: Sync + 'static,
+> +    {
+> +        let scope = Scope::<T>::new(data, move |data| {
+> +            #[cfg(CONFIG_DEBUG_FS)]
+> +            if let Some(parent) = &self.0 {
+> +                // SAFETY: Because data derives from a scope, and our entry will be dropped before
+> +                // the data is dropped, it is guaranteed to outlive the entry we return.
+> +                unsafe { Entry::dynamic_file(name, parent.clone(), data, file_ops) }
+> +            } else {
+> +                Entry::empty()
+> +            }
+> +        });
+> +        try_pin_init! {
+> +            File {
+> +                scope <- scope
+> +            } ? E
+> +        }
+> +    }
+> +
+>      /// Create a new directory in DebugFS at the root.
+>      ///
+>      /// # Examples
+> @@ -79,4 +113,116 @@ pub fn new(name: &CStr) -> Self {
+>      pub fn subdir(&self, name: &CStr) -> Self {
+>          Dir::create(name, Some(self))
+>      }
+> +
+> +    /// Creates a read-only file in this directory.
+> +    ///
+> +    /// The file's contents are produced by invoking [`Writer::write`] on the value initialized by
+> +    /// `data`.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::c_str;
+> +    /// # use kernel::debugfs::Dir;
+> +    /// # use kernel::prelude::*;
+> +    /// # let dir = Dir::new(c_str!("my_debugfs_dir"));
+> +    /// let file = KBox::pin_init(dir.read_only_file(c_str!("foo"), 200), GFP_KERNEL)?;
+> +    /// // "my_debugfs_dir/foo" now contains the number 200.
+> +    /// // The file is removed when `file` is dropped.
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn read_only_file<'a, T, E: 'a>(
+> +        &'a self,
+> +        name: &'a CStr,
+> +        data: impl PinInit<T, E> + 'a,
+> +    ) -> impl PinInit<File<T>, E> + 'a
+> +    where
+> +        T: Writer + Send + Sync + 'static,
+> +    {
+> +        let file_ops = &<T as ReadFile<_>>::FILE_OPS;
+> +        self.create_file(name, data, file_ops)
+> +    }
+> +}
+> +
+> +#[pin_data]
+> +/// Handle to a DebugFS scope, which ensures that attached `data` will outlive the provided
+> +/// [`Entry`] without moving.
+> +/// Currently, this is used to back [`File`] so that its `read` and/or `write` implementations
+> +/// can assume that their backing data is still alive.
+> +struct Scope<T> {
+> +    // This order is load-bearing for drops - `_entry` must be dropped before `data`.
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    _entry: Entry,
+> +    #[pin]
+> +    data: T,
+> +    // Even if `T` is `Unpin`, we still can't allow it to be moved.
+> +    #[pin]
+> +    _pin: PhantomPinned,
+> +}
+> +
+> +#[pin_data]
+> +/// Handle to a DebugFS file, owning its backing data.
+> +///
+> +/// When dropped, the DebugFS file will be removed and the attached data will be dropped.
+> +pub struct File<T> {
+> +    #[pin]
+> +    scope: Scope<T>,
+> +}
+> +
+> +#[cfg(not(CONFIG_DEBUG_FS))]
+> +impl<'b, T: 'b> Scope<T> {
+> +    fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl PinInit<Self, E> + 'b
+> +    where
+> +        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
+> +    {
+> +        try_pin_init! {
+> +            Self {
+> +                data <- data,
+> +                _pin: PhantomPinned
+> +            } ? E
+> +        }
+> +        .pin_chain(|scope| {
+> +            init(&scope.data);
+> +            Ok(())
+> +        })
+> +    }
+> +}
+> +
+> +#[cfg(CONFIG_DEBUG_FS)]
+> +impl<'b, T: 'b> Scope<T> {
+> +    fn entry_mut(self: Pin<&mut Self>) -> &mut Entry {
+> +        // SAFETY: _entry is not structurally pinned.
+> +        unsafe { &mut Pin::into_inner_unchecked(self)._entry }
+> +    }
+> +
+> +    fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl PinInit<Self, E> + 'b
+> +    where
+> +        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
+> +    {
+> +        try_pin_init! {
+> +            Self {
+> +                _entry: Entry::empty(),
+> +                data <- data,
+> +                _pin: PhantomPinned
+> +            } ? E
+> +        }
+> +        .pin_chain(|scope| {
+> +            *scope.entry_mut() = init(&scope.data);
+> +            Ok(())
+> +        })
+> +    }
+> +}
+> +
+> +impl<T> Deref for Scope<T> {
+> +    type Target = T;
+> +    fn deref(&self) -> &T {
+> +        &self.data
+> +    }
+> +}
+> +
+> +impl<T> Deref for File<T> {
+> +    type Target = T;
+> +    fn deref(&self) -> &T {
+> +        &self.scope
+> +    }
+>  }
+> diff --git a/rust/kernel/debugfs/entry.rs b/rust/kernel/debugfs/entry.rs
+> index d2fba0e65e20e954e2a33e776b872bac4adb12e8..227fa50b7a79aeab49779e54b8c4241f455777c3 100644
+> --- a/rust/kernel/debugfs/entry.rs
+> +++ b/rust/kernel/debugfs/entry.rs
+> @@ -1,6 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (C) 2025 Google LLC.
+>  
+> +use crate::debugfs::file_ops::FileOps;
+> +use crate::ffi::c_void;
+>  use crate::str::CStr;
+>  use crate::sync::Arc;
+>  
+> @@ -40,6 +42,46 @@ pub(crate) fn dynamic_dir(name: &CStr, parent: Option<Arc<Self>>) -> Self {
+>          }
+>      }
+>  
+> +    /// # Safety
+> +    ///
+> +    /// * `data` must outlive the returned `Entry`.
+> +    pub(crate) unsafe fn dynamic_file<T>(
+> +        name: &CStr,
+> +        parent: Arc<Self>,
+> +        data: &T,
+> +        file_ops: &'static FileOps<T>,
+> +    ) -> Self {
+> +        // SAFETY: The invariants of this function's arguments ensure the safety of this call.
+> +        // * `name` is a valid C string by the invariants of `&CStr`.
+> +        // * `parent.as_ptr()` is a pointer to a valid `dentry` by invariant.
+> +        // * The caller guarantees that `data` will outlive the returned `Entry`.
+> +        // * The guarantees on `FileOps` assert the vtable will be compatible with the data we have
+> +        //   provided.
+> +        let entry = unsafe {
+> +            bindings::debugfs_create_file_full(
+> +                name.as_char_ptr(),
+> +                file_ops.mode(),
+> +                parent.as_ptr(),
+> +                core::ptr::from_ref(data) as *mut c_void,
+> +                core::ptr::null(),
+> +                &**file_ops,
+> +            )
+> +        };
+> +
+> +        Entry {
+> +            entry,
+> +            _parent: Some(parent),
+> +        }
+> +    }
+> +
+> +    /// Constructs a placeholder DebugFS [`Entry`].
+> +    pub(crate) fn empty() -> Self {
+> +        Self {
+> +            entry: core::ptr::null_mut(),
+> +            _parent: None,
+> +        }
+> +    }
+> +
+>      /// Returns the pointer representation of the DebugFS directory.
+>      ///
+>      /// # Guarantees
+> diff --git a/rust/kernel/debugfs/file_ops.rs b/rust/kernel/debugfs/file_ops.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c2fbef96580eaa2fab7cc8c1ba559c3284d12e1b
+> --- /dev/null
+> +++ b/rust/kernel/debugfs/file_ops.rs
+> @@ -0,0 +1,128 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2025 Google LLC.
+> +
+> +use super::Writer;
+> +use crate::prelude::*;
+> +use crate::seq_file::SeqFile;
+> +use crate::seq_print;
+> +use core::fmt::{Display, Formatter, Result};
+> +use core::marker::PhantomData;
+> +
+> +#[cfg(CONFIG_DEBUG_FS)]
+> +use core::ops::Deref;
+> +
+> +/// # Invariant
+> +///
+> +/// `FileOps<T>` will always contain an `operations` which is safe to use for a file backed
+> +/// off an inode which has a pointer to a `T` in its private data that is safe to convert
+> +/// into a reference.
+> +pub(super) struct FileOps<T> {
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    operations: bindings::file_operations,
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    mode: u16,
+> +    _phantom: PhantomData<T>,
+> +}
+> +
+> +impl<T> FileOps<T> {
+> +    /// # Safety
+> +    ///
+> +    /// The caller asserts that the provided `operations` is safe to use for a file whose
+> +    /// inode has a pointer to `T` in its private data that is safe to convert into a reference.
+> +    const unsafe fn new(operations: bindings::file_operations, mode: u16) -> Self {
+> +        Self {
+> +            #[cfg(CONFIG_DEBUG_FS)]
+> +            operations,
+> +            #[cfg(CONFIG_DEBUG_FS)]
+> +            mode,
+> +            _phantom: PhantomData,
+> +        }
+> +    }
+> +
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    pub(crate) const fn mode(&self) -> u16 {
+> +        self.mode
+> +    }
+> +}
+> +
+> +#[cfg(CONFIG_DEBUG_FS)]
+> +impl<T> Deref for FileOps<T> {
+> +    type Target = bindings::file_operations;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.operations
+> +    }
+> +}
+> +
+> +struct WriterAdapter<T>(T);
+> +
+> +impl<'a, T: Writer> Display for WriterAdapter<&'a T> {
+> +    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+> +        self.0.write(f)
+> +    }
+> +}
+> +
+> +/// Implements `open` for `file_operations` via `single_open` to fill out a `seq_file`.
+> +///
+> +/// # Safety
+> +///
+> +/// * `inode`'s private pointer must point to a value of type `T` which will outlive the `inode`
+> +///   and will not have any unique references alias it during the call.
+> +/// * `file` must point to a live, not-yet-initialized file object.
+> +unsafe extern "C" fn writer_open<T: Writer + Sync>(
+> +    inode: *mut bindings::inode,
+> +    file: *mut bindings::file,
+> +) -> c_int {
+> +    // SAFETY: The caller ensures that `inode` is a valid pointer.
+> +    let data = unsafe { (*inode).i_private };
+> +    // SAFETY:
+> +    // * `file` is acceptable by caller precondition.
+> +    // * `print_act` will be called on a `seq_file` with private data set to the third argument,
+> +    //   so we meet its safety requirements.
+> +    // * The `data` pointer passed in the third argument is a valid `T` pointer that outlives
+> +    //   this call by caller preconditions.
+> +    unsafe { bindings::single_open(file, Some(writer_act::<T>), data) }
+> +}
+> +
+> +/// Prints private data stashed in a seq_file to that seq file.
+> +///
+> +/// # Safety
+> +///
+> +/// `seq` must point to a live `seq_file` whose private data is a valid pointer to a `T` which may
+> +/// not have any unique references alias it during the call.
+> +unsafe extern "C" fn writer_act<T: Writer + Sync>(
+> +    seq: *mut bindings::seq_file,
+> +    _: *mut c_void,
+> +) -> c_int {
+> +    // SAFETY: By caller precondition, this pointer is valid pointer to a `T`, and
+> +    // there are not and will not be any unique references until we are done.
+> +    let data = unsafe { &*((*seq).private.cast::<T>()) };
+> +    // SAFETY: By caller precondition, `seq_file` points to a live `seq_file`, so we can lift
+> +    // it.
+> +    let seq_file = unsafe { SeqFile::from_raw(seq) };
+> +    seq_print!(seq_file, "{}", WriterAdapter(data));
+> +    0
+> +}
+> +
+> +// Work around lack of generic const items.
+> +pub(crate) trait ReadFile<T> {
+> +    const FILE_OPS: FileOps<T>;
+> +}
+> +
+> +impl<T: Writer + Sync> ReadFile<T> for T {
+> +    const FILE_OPS: FileOps<T> = {
+> +        let operations = bindings::file_operations {
+> +            read: Some(bindings::seq_read),
+> +            llseek: Some(bindings::seq_lseek),
+> +            release: Some(bindings::single_release),
+> +            open: Some(writer_open::<Self>),
+> +            // SAFETY: `file_operations` supports zeroes in all fields.
+> +            ..unsafe { core::mem::zeroed() }
+> +        };
+> +        // SAFETY: `operations` is all stock `seq_file` implementations except for `writer_open`.
+> +        // `open`'s only requirement beyond what is provided to all open functions is that the
+> +        // inode's data pointer must point to a `T` that will outlive it, which matches the
+> +        // `FileOps` requirements.
+> +        unsafe { FileOps::new(operations, 0o400) }
+> +    };
+> +}
+> diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0e6e461324de42a3d80b692264d50e78a48f561d
+> --- /dev/null
+> +++ b/rust/kernel/debugfs/traits.rs
+> @@ -0,0 +1,33 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2025 Google LLC.
+> +
+> +//! Traits for rendering or updating values exported to DebugFS.
+> +
+> +use crate::sync::Mutex;
+> +use core::fmt::{self, Debug, Formatter};
+> +
+> +/// A trait for types that can be written into a string.
+> +///
+> +/// This works very similarly to `Debug`, and is automatically implemented if `Debug` is
+> +/// implemented for a type. It is also implemented for any writable type inside a `Mutex`.
+> +///
+> +/// The derived implementation of `Debug` [may
+> +/// change](https://doc.rust-lang.org/std/fmt/trait.Debug.html#stability)
+> +/// between Rust versions, so if stability is key for your use case, please implement `Writer`
+> +/// explicitly instead.
+> +pub trait Writer {
+> +    /// Formats the value using the given formatter.
+> +    fn write(&self, f: &mut Formatter<'_>) -> fmt::Result;
+> +}
+> +
+> +impl<T: Writer> Writer for Mutex<T> {
+> +    fn write(&self, f: &mut Formatter<'_>) -> fmt::Result {
+> +        self.lock().write(f)
+> +    }
+> +}
+> +
+> +impl<T: Debug> Writer for T {
+> +    fn write(&self, f: &mut Formatter<'_>) -> fmt::Result {
+> +        writeln!(f, "{self:?}")
+> +    }
+> +}
 
--- 
-மணிவண்ணன் சதாசிவம்
+I tried using this in a "tiny" test module I had written, and I get the
+following build error:
+
+   --> samples/rust/rust_debugfs2.rs:64:53
+    |
+64  |         _file = root.read_only_file(c_str!("name"), &hw_soc_info.name);
+    |                      --------------                 ^^^^^^^^^^^^^^^^^ expected `&u32`, found `&&CStr`
+    |                      |
+    |                      arguments to this method are incorrect
+    |
+    = note: expected reference `&u32`
+               found reference `&&'static kernel::prelude::CStr`
+
+I'm trying to "just" print a CStr, which is defined as:
+
+struct HwSocInfo {
+    id: u32,
+    ver: u32,
+    raw_id: u32,
+    foundry: u32,
+    name: &'static CStr,
+}
+
+Is this just a "user is holding it wrong" error on my side, or can this api not
+handle CStr values?
+
+thanks,
+
+greg k-h
 
