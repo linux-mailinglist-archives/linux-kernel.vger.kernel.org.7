@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-806030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2148B49103
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE399B49104
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663441B24DD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:16:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28371B23D59
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24A30CDAA;
-	Mon,  8 Sep 2025 14:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDBA305073;
+	Mon,  8 Sep 2025 14:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBEMa3DL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kIVx4nia"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174D77082A;
-	Mon,  8 Sep 2025 14:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746661D5ADE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757340927; cv=none; b=YQeBOk/KRN7daIrEIWLOSOYa/5o0QVZ0ey6afRJI8PmrYbrsqV+LGRHTi8vuu7SFmSkfrpiC8YILubUJMJN3U7Mqgzxa7LPg43wQeHDpB9yzlxKaQTbSHlZWM72YcZ3GNQ7RtAvqGjGUAaw04Mv8h42RdI1z9dki0h3Z1RS8l00=
+	t=1757340970; cv=none; b=LzDKGki075UuRUiSwI5npitNOyOZnD2aOCn1KSqZEAud9iRNuhTftdDDSX5FWMwgJJBNGt8TFqLsSc7EA4Ao4I1il4aq25lK5CH7pSpSTxhv2IEafa4FG3z7QPfr0UpgKhS0sy7OokC6fluJSrZlDzEW8SE5oDm+JZ6Ei/4dZH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757340927; c=relaxed/simple;
-	bh=7YU1UeI4W5ZZgGKI5I9Pad1avQD9YJzn8mftLPPO940=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=apuwBYso+aAGmNL7AIQqjMRV8yrUkJFZpB4HJAGJgXkA9fe56PDyaaZxNSt6c/NpbSq50O4Tl/hXGv/P3VvuMdPX5P2dCBRmF4msPWURCB8s/eNQAuyw3hiuylYQNiISPByqJQ4cgBfT/Zhou3eX6birBJIO76uVBCcl/RL4FwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBEMa3DL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1154C4CEFB;
-	Mon,  8 Sep 2025 14:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757340926;
-	bh=7YU1UeI4W5ZZgGKI5I9Pad1avQD9YJzn8mftLPPO940=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aBEMa3DLnFEhYE5MM8rXin/IPrmqiJAruTHxw1YMdy1L8IKc6Vl9ySelCceSeNJTW
-	 TxPPJmu+AFBJXRNOodDcoGEkQchAqxW5lVzKMDUM1m5+gfp6ZfZaKMzBUgTj+ct8tt
-	 tcIgRZNynayEmViK8GQTzTNHXelqkwAWOQ9gjDV4UqVSlxzxQGu1tRAmVWenUBCWTZ
-	 XS/GCCnU2vPzxhFSDjdZCB8H6JM+Lh+c3JgcHluOyFm5Be9LHw52H1ak2yIpt1Jei9
-	 kFKN0+DYjUmbs5iNskMYMVmVvUqk/a0IREvZnQEmDPvVoG/YINVTqRlsqQ/QBMH9E8
-	 c6HwqyEHkryAw==
-Date: Mon, 08 Sep 2025 09:15:26 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1757340970; c=relaxed/simple;
+	bh=c18bqHtHLd49/U33Hm+QLoiMQvLoFeDb1158Y3RufR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=salAy2i4WGi94d/ufh8OPzv9flQQB+OAEAR/sX8H38lhY/eYM/kMbpRvgcxKHTikwlfWJ4W6iae9m6Qd39zXHcIbUyxDqK4C4aqM2CgUcxnTfoIzZIQ3TWTlKQeCYY03VTS3i7Www/4nliHY+jVFZWPp9L+NdZINPsSeg4YA2UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kIVx4nia; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 8 Sep 2025 16:15:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757340954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKqYPVwJIlTia7YGoo/RRLeAT0a8xetxvt+j1li7Od0=;
+	b=kIVx4nia7Dmdo6eLv4i0++4Fmq0glqtURT3yTsBRc215mhV1QN96A8Ws0sDotD89JqgnZS
+	KUbPf555DqEq2m2O9eytxnEMsmAri/OCAR5dfiFbRoGzsagYjE8sv3GlHQ1FBubZgwbYnr
+	AXFbLXn8ELgbIerAYV5omGSc8gVKbrU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Lee Jones <lee@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 02/10] media: v4l2-flash: add support for flash/strobe
+ duration
+Message-ID: <2u6jncxsvlzbs5d6uhxslxnyvtidagspb3rfxsnhm3beb5saa5@ctq2cftpcwry>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-2-d58d5a694afc@linux.dev>
+ <20250907190520.GB4105@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: manion05gk@gmail.com, conor+dt@kernel.org, 
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
- gustavoars@kernel.org, linux-i3c@lists.infradead.org, srinivas.goud@amd.com, 
- alexandre.belloni@bootlin.com, devicetree@vger.kernel.org, kees@kernel.org, 
- michal.simek@amd.com, shubhrajyoti.datta@amd.com, git@amd.com, 
- jarkko.nikula@linux.intel.com, Frank.Li@nxp.com, 
- radhey.shyam.pandey@amd.com, krzk+dt@kernel.org
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-In-Reply-To: <20250908112117.205270-2-manikanta.guntupalli@amd.com>
-References: <20250908112117.205270-1-manikanta.guntupalli@amd.com>
- <20250908112117.205270-2-manikanta.guntupalli@amd.com>
-Message-Id: <175734087989.1809191.3813013625215736173.robh@kernel.org>
-Subject: Re: [PATCH V5 1/2] dt-bindings: i3c: Add AMD I3C master controller
- support
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250907190520.GB4105@pendragon.ideasonboard.com>
+X-Migadu-Flow: FLOW_OUT
 
+Hi Laurent,
 
-On Mon, 08 Sep 2025 16:51:16 +0530, Manikanta Guntupalli wrote:
-> Add device tree binding documentation for the AMD I3C master controller.
+On Sun, Sep 07, 2025 at 09:05:20PM +0200, Laurent Pinchart wrote:
+> Hi Richard,
 > 
-> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-> ---
-> Changes for V2:
-> Updated commit subject and description.
-> Moved allOf to after required.
-> Removed xlnx,num-targets property.
+> Thank you for the patch.
 > 
-> Changes for V3:
-> Updated commit description.
-> Corrected the order of properties and removed resets property.
-> Added compatible to required list.
-> Added interrupts to example.
+> On Mon, Sep 01, 2025 at 05:05:07PM +0200, Richard Leitner wrote:
+> > Add support for the new V4L2_CID_FLASH_DURATION control to the v4l2
+> > flash led class.
 > 
-> Changes for V4:
-> Added h/w documentation details.
+> I don't think this is a good idea, based on the reasoning explained in
+> the review of 01/10. If V4L2_CID_FLASH_DURATION is meant to indicate the
+> duration of the external flash/strobe pulse signal, it should be
+> implemented by the source of the signal, and for external strobe mode
+> only. The flash controller, which receives the flash/strobe pulse,
+> should implement the timeout control.
+
+You're right. From that point of view it makes no sense to have this
+functions in v4l2-flash-led-class.c. I'll move the implementation to
+ov9282 for v9.
+
+If I do so I guess the patch already merged by Lee needs reverting?
+6a09ae828198 (leds: flash: Add support for flash/strobe duration, 2025-05-07)
+Should the revert be included in this series then?
+
 > 
-> Changes for V5:
-> Renamed the xlnx,axi-i3c.yaml file into xlnx,axi-i3c-1.0.yaml.
-> ---
->  .../bindings/i3c/xlnx,axi-i3c-1.0.yaml        | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/xlnx,axi-i3c-1.0.yaml
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-flash-led-class.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> > 
+> > diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> > index 355595a0fefac72c2f6941a30fa430d37dbdccfe..875d56d7190592c1e5ab7acd617b76dcec8792da 100644
+> > --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> > +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> > @@ -29,6 +29,7 @@ enum ctrl_init_data_id {
+> >  	INDICATOR_INTENSITY,
+> >  	FLASH_TIMEOUT,
+> >  	STROBE_SOURCE,
+> > +	FLASH_DURATION,
+> >  	/*
+> >  	 * Only above values are applicable to
+> >  	 * the 'ctrls' array in the struct v4l2_flash.
+> > @@ -298,6 +299,12 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
+> >  		 * microamperes for flash intensity units.
+> >  		 */
+> >  		return led_set_flash_brightness(fled_cdev, c->val);
+> > +	case V4L2_CID_FLASH_DURATION:
+> > +		/*
+> > +		 * No conversion is needed as LED Flash class also uses
+> > +		 * microseconds for flash duration units.
+> > +		 */
+> > +		return led_set_flash_duration(fled_cdev, c->val);
+> >  	}
+> >  
+> >  	return -EINVAL;
+> > @@ -424,6 +431,14 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+> >  		ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
+> >  				  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+> >  	}
+> > +
+> > +	/* Init FLASH_DURATION ctrl data */
+> > +	if (has_flash_op(fled_cdev, duration_set)) {
+> > +		ctrl_init_data[FLASH_DURATION].cid = V4L2_CID_FLASH_DURATION;
+> > +		ctrl_cfg = &ctrl_init_data[FLASH_DURATION].config;
+> > +		__lfs_to_v4l2_ctrl_config(&fled_cdev->duration, ctrl_cfg);
+> > +		ctrl_cfg->id = V4L2_CID_FLASH_DURATION;
+> > +	}
+> >  }
+> >  
+> >  static int v4l2_flash_init_controls(struct v4l2_flash *v4l2_flash,
+> > @@ -543,6 +558,16 @@ static int __sync_device_with_v4l2_controls(struct v4l2_flash *v4l2_flash)
+> >  			return ret;
+> >  	}
+> >  
+> > +	if (ctrls[FLASH_DURATION]) {
+> > +		if (WARN_ON_ONCE(!fled_cdev))
+> > +			return -EINVAL;
+> > +
+> > +		ret = led_set_flash_duration(fled_cdev,
+> > +					     ctrls[FLASH_DURATION]->val);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> >  	/*
+> >  	 * For some hardware arrangements setting strobe source may affect
+> >  	 * torch mode. Synchronize strobe source setting only if not in torch
 > 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
-My bot found errors running 'make dt_binding_check' on your patch:
+thanks again for your review!
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c-1.0.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/i3c/xlnx,axi-i3c.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c-1.0.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250908112117.205270-2-manikanta.guntupalli@amd.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+regards;rl
 
