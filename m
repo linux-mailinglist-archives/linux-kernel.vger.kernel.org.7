@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-805817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A989B48DD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FADB48DDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F0E169C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A045816A147
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEF72F3C28;
-	Mon,  8 Sep 2025 12:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEFD2FE573;
+	Mon,  8 Sep 2025 12:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7z2GRsi"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jmztIUA0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57462147C9B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F93147C9B;
+	Mon,  8 Sep 2025 12:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757335399; cv=none; b=mJ1nd4e7MEAp7C15Uza0/RszXdDekb43MjryENxP5NNRUCZ1oGNsl7R21rDciDXd2c/E3GiGyAwolU8FXEbkIcHHC1XR4E3gVlpBkVvVKHl6Yod/li+DeNxUejfiUO8Z9VICdIRglgMu0AUhWFNA47vzy/2iklg7YO2fXcV9Myw=
+	t=1757335441; cv=none; b=KAaqFVcyqqqtU9NMXaeRMcUW7WaQdlboaDemyi31Q1GUXKMw3SkXNX+oEB/AEwVFTTp9SgRea+ZHzpG2k+3fSG8AvHaA48WRUSMPdnt8rBxRHtUFaV+FbQx0mRWuefcgotf2/W6SRE4xfPHGQaGR0yKCqSWXQUeFYKVgFtvgptQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757335399; c=relaxed/simple;
-	bh=7wzXkqWaTtpbDbG1cb7HMetJwODd6HHjob4mHwKlVNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iZMpezLZN5ZmenB1+0uvQ3fEyLFPu3oW2xPQmohk5ohyOjswQxbDHYEWGEKOJLWv08Bgyex/wz0NfTfFAZ084h8nnEVahkHAQNt0Wu/gCj3Q9+slJie7/YVfBhBAAsoDgc8MPtXjNgJsozncWSGSH82/RQJH2AK8QJYdQMlsznk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K7z2GRsi; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de1e6d76fso13910915e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 05:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757335395; x=1757940195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Bv7N0nEEMIW8vc39iETSzqLknphU+YZnN2De3mvFq6o=;
-        b=K7z2GRsikpUzZyhGRUpKHkplH3LTqOzovePeMVfdewQaPeKeKPT1iOrmnE5q9N40fQ
-         K3CehL4U7cF3Nvv+E4Dd2EEz/Q1DSq8FArrnEUylkidUqOsTbEQfGBs44VCfliEf/vLI
-         qhbF9b3JZZkA2LAp94TSTBMFuMZqPYDCq0x7pTsKd2fdjE90v7TdarR+WdhAjGyqwX2N
-         7JJjfNS7jJuuSF/JaWbiVvZSfk5eXCQYlOoLjjuNlrOFj5WoVME6IgvzPMF0bHv2mrMY
-         Tn2095Kn7tM9ialUvEhGn6CUAK1GOQJQWG7/oHPzqq1SZHkj8Lnd2ZqPrMwZ9OBQtUt/
-         Y9Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757335395; x=1757940195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bv7N0nEEMIW8vc39iETSzqLknphU+YZnN2De3mvFq6o=;
-        b=LXRqUAKfUCUyIUgHpUmGKhdUG3YsVL+VG/0uNftgqjnWb1JH0o6txhiokm+m5MxvNB
-         C0U7ZOJonelwU4zucjOCCKONuZHgoK9mUlK2kME+R9P6jlJO7TDNex1AmJ9j6w2A2gh9
-         7RZjk138i2vHvZcFm03eUTjHKMzDboVh94ZjjLhEIMMvA37LLOHcAC/eXkRNlRBPIwLJ
-         zLTbySqcSs5ju3RiH1XVt9eeHuMhxR3M/vRXb+kid+yCzg6thJ4qifZpmkDJaRso2s32
-         oDDDtTg6e0nzZb3adGN7utDAnrHMZxqWroG49BGOpb/loPnHb7Sve3OFSBy2qnRYucCY
-         fPDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKklhVwO9AS1Pys/IVWmUKuVILpciRHUhdZpxt3fBOUKW+EqeBkUuBAVXODwZHpOXYcXEl5ewUw97ea4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb9UPzKNbWaSU10oipQidNmNk3IQG22h2FO41ZS7Qu0964637G
-	uvwBY9SGGxgVPll2K6dyc0Za1ILdiBohkPUSfNEPzMIcjUs9Yu8wdFz2dYbNRfTvxxc=
-X-Gm-Gg: ASbGnctQeQztGX0rMC3834FiWVm7h+tVcXsB9Qa+VL3iz62jg3lQ4AmkBSZPqejzmP1
-	8uNjVQPnHfUQlfDIaZn5S+IEAhTqs92LUT8YkZkPvuxh2B2+66qFbWDRL8Iv1Vr9NUmobAymi39
-	IMW3r5/+LEhGcIAjlnoq9CDn6VRH5oIrKWslbhDiblZjGDInf3A/WwJOWXF95XLQO1BIF1kcWvF
-	dkzu0+M5n4V29y5cA2aYwfkj9L8C30CzfbvIToJ5ryVX54rCwdkECZMvdotqjqv3v8T0am7lZg6
-	Q9S7UUCyYLQbNKahr9nufx1PFp6IqijSPPn5KHZ/4XrjdgJ2+/vpm+mLjQxPTjQhdWKf/SJ8ZCf
-	vG/iVh0XbHTbxcwX1VeOO+AHu66oj3Mn6L31adZGmoBsXONdTLhvg9BfPdCPAMIlwSO/r/o14H3
-	oYOjP+y4n3aqYp
-X-Google-Smtp-Source: AGHT+IEJWmUPrNny8/8KXYUnfyYJBB9DnJE5RKBe2s1VGrnXN7x8ilawMOISnApGgurJ/wJqGcwbVA==
-X-Received: by 2002:a05:600c:5299:b0:45d:dd47:b45f with SMTP id 5b1f17b1804b1-45dddef7fdamr61319805e9.31.1757335394504;
-        Mon, 08 Sep 2025 05:43:14 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:9b6a:7b16:fb30:a294? ([2a05:6e02:1041:c10:9b6a:7b16:fb30:a294])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab832sm438407955e9.23.2025.09.08.05.43.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 05:43:13 -0700 (PDT)
-Message-ID: <f0d72eac-f842-4060-b197-ced20048b34b@linaro.org>
-Date: Mon, 8 Sep 2025 14:43:13 +0200
+	s=arc-20240116; t=1757335441; c=relaxed/simple;
+	bh=w83WVjdsSpxuD8gScr0VDwouKP5uJ/QoPOHGCH8nxJc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ABEUXnHV8Xd8HItzZvh8u7Xs420XHNb3xHUS3YY4v9Bql93aVBH0VxAwHDjR1Apttuieh3cQNamhMyWEdaLivi8rJP8CqlqO8+SU3CLgkxgQsv6ryXiMnbQsitJgknmMJe+eaa60KXBnFzSit+7K/4GClMJkyM8K9dJ7wkGqnS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jmztIUA0; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757335440; x=1788871440;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=w83WVjdsSpxuD8gScr0VDwouKP5uJ/QoPOHGCH8nxJc=;
+  b=jmztIUA0zVVHvsmIMEPIv/o7S00vHc+kj2CMFvKkrDMLr38tt28+qtda
+   KEDNfvhTfWA4k4CvKTcGwft0KilkbLjSfObkkq70BPx126LqTPzsueqxI
+   kLOY6FGWg1jNPm4Lwc34LKnsGpCnatByS6KBL3+gOoe5Y1yIN6V2y6bmH
+   fkfl8iSiHqZndILEykCvc1xl75jabiH1Fr5ndKyEVp3Ieo/RBOoZpQNpV
+   JEQs8kgg3uEVpzoQQCjGZFpNRRX/APkV6Z5emN6guQcjVhMwenF+1S22N
+   XmNYeDtEk/9mK0QEFLi+RqLDCqe+WXWRiXGeVOjk308kDD3XGerK/4VYg
+   g==;
+X-CSE-ConnectionGUID: ma/Rhl0uQ+WAb3pKtorrTg==
+X-CSE-MsgGUID: ETYIlkTTRWSGFHmHOv5xQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="85033403"
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="85033403"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 05:43:59 -0700
+X-CSE-ConnectionGUID: kz/L9M0dSPSgPXsRVrCfIg==
+X-CSE-MsgGUID: T6gKGMO/R+qglbI7tLRsFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="176836358"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.204])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 05:43:56 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, linux-hardening@vger.kernel.org, Jouni
+ =?utf-8?Q?H=C3=B6gander?=
+ <jouni.hogander@intel.com>, Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH 3/3] overflow: add range_overflows() and
+ range_end_overflows()
+In-Reply-To: <202509040927.30BEE17@keescook>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250829174601.2163064-1-jani.nikula@intel.com>
+ <20250829174601.2163064-3-jani.nikula@intel.com>
+ <202509031942.A1669D10F@keescook>
+ <eb4a61f86330afe95e232cc515f117ed602e108d@intel.com>
+ <202509040927.30BEE17@keescook>
+Date: Mon, 08 Sep 2025 15:43:52 +0300
+Message-ID: <f73e233395bbc25f77f8345fde99b3b84c092823@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: timer-ti-dm : Capture functionality for
- OMAP DM timer
-To: Gokul Praveen <g-praveen@ti.com>, linux-kernel@vger.kernel.org,
- u-kumar1@ti.com, n-francis@ti.com
-References: <20250812105346.203541-1-g-praveen@ti.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250812105346.203541-1-g-praveen@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 12/08/2025 12:53, Gokul Praveen wrote:
-> Add PWM capture function in DM timer driver.
-> 
-> OMAP DM timer hardware supports capture feature.It can be used to
-> timestamp events (falling/rising edges) detected on input signal.
-> 
-> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+On Thu, 04 Sep 2025, Kees Cook <kees@kernel.org> wrote:
+> On Thu, Sep 04, 2025 at 10:34:04AM +0300, Jani Nikula wrote:
+>> On Wed, 03 Sep 2025, Kees Cook <kees@kernel.org> wrote:
+>> > On Fri, Aug 29, 2025 at 08:46:01PM +0300, Jani Nikula wrote:
+>> >> Move the range_overflows() and range_end_overflows() along with the _t
+>> >> variants over from drm/i915 and drm/buddy to overflow.h.
+>> >> 
+>> >> Cc: Kees Cook <kees@kernel.org>
+>> >> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> >> Cc: linux-hardening@vger.kernel.org
+>> >> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+>> >
+>> > Looks good to me! :)
+>> >
+>> > Reviewed-by: Kees Cook <kees@kernel.org>
+>> 
+>> Cool, thanks! How do you want to handle merging this?
+>
+> Since it's touching drm, feel free to take it there. I'm not worried
+> about conflict resolution in overflow.h.
 
-Applied, thanks
+Thanks a lot, series merged to drm-intel-next with Jouni's r-b and
+Thomas' IRC ack.
+
+BR,
+Jani.
+
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Jani Nikula, Intel
 
