@@ -1,185 +1,161 @@
-Return-Path: <linux-kernel+bounces-805091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3879CB483E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:08:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0193BB483ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F398A189C762
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA032170172
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BCA22A4F8;
-	Mon,  8 Sep 2025 06:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A24C224AEF;
+	Mon,  8 Sep 2025 06:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uNiUJQrD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RfTP7bcB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UGgG6xj2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zGv5b2xe"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k37D3aRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9921D5CD7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E323B21B199;
+	Mon,  8 Sep 2025 06:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311705; cv=none; b=NhVRtpwNjB70wY86kdTcWT6D/OVAhEAz3nULIfILjlGt/IA8bpSV0w/BOCIMsGqnLMEvGfdlZEPogYrA1X3YurH4WD7MuN4hk4tRJbFr+c6i+Jb+SRWQiyDP7zRUoYogkqvK4nM0uEiv+e/EwMtBHOK+TFZLmVSuymaOhUIQHME=
+	t=1757311857; cv=none; b=HPulRo2/YemvzqAZkw3WtcrX3l0ItWd0QZENgQhZrNpDwT+T3O56XlRTllzSzjF5PzS9OprlYoUm0xcM5HTQbus/PdlifbR35gsg9FC/YVIqFK+65/lxMElyF0JU9ouSJVZjrxoP8CPqfm4aAM7/9sJ4/6K0vibNvpCZb1xlEns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311705; c=relaxed/simple;
-	bh=LQR/AfoqvXaVEOazVZSpH60BeUksXZm/zWYQbiwVnwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=exBpaOzO1U+4ovVjdF0mRllWIG5dm0L+UY2httpqYH0I8CHurchnW+DDgtegryOsppm+mWddal3f8uPwVWRMZSU6iBUs8Kv+hYzU4+cnlZ41M7fqXl1t5UDnIHnv8FnznuwDvazuzIQc9F/SwcvFHSNHTO+mjHBFg27kEqNDdy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uNiUJQrD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RfTP7bcB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UGgG6xj2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zGv5b2xe; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D8D4E2433F;
-	Mon,  8 Sep 2025 06:08:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757311702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
-	b=uNiUJQrDmvzZ/IgGMlVfdrA9ec7H72CiMeUJyvCJMd79vyJklKQ+8ulnQTuu3o7c0p90mq
-	sNfbAUpI04XI/LsqtkZl+Xju/gZJYQN7MotNVfYblwmX3lxXWoSrMto4OZcl8P6Sdr5r22
-	4QIo50eMsbTnfUg/+X29mQWWPv8xXbo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757311702;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
-	b=RfTP7bcB/OpQVoB5IIGSDmJt0C+s5wxHInpzWE8Bj24WzOKCZpiOfSCm0oIp3+34U4gPir
-	NGerp9oPknT1PKCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UGgG6xj2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zGv5b2xe
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757311701; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
-	b=UGgG6xj20lMDgZalO55jxR5GTsFg60QOoePunodFrvBDz+moFd6ceBtaFJ0QQYw+IW+IcB
-	IdQZfKyasfzRP2oAlcDSW70skg2Y6+94QAPI/9KoPLDM/VeyijuGWYhWw3AuxLT10riP7Y
-	Dg4kuDngjKtSUZ12Ek2HO00yc8ayzuY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757311701;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ZrCZ037WW08oyA93gYDOgV1aEokOz6L4cBK1pOr+zY=;
-	b=zGv5b2xeQV6T0SS7gQqixOYzzhRB9McyWQoP9IrmTR8wxhGcMo/mz+aaXqxAIZQrjs6aCY
-	XkV2woJOVIha7TCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FBD413946;
-	Mon,  8 Sep 2025 06:08:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LzsgBtVyvmjfLAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 08 Sep 2025 06:08:21 +0000
-Message-ID: <4d3b2fed-e42c-46f0-82d2-93eca2940759@suse.de>
-Date: Mon, 8 Sep 2025 08:08:20 +0200
+	s=arc-20240116; t=1757311857; c=relaxed/simple;
+	bh=1thZV2Pc+/rIuED2jhR46ago4P89vFREkt1lyC2P3H0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AUyUgqx2b9e1wRgoZUx0t/3+PZxiGG5GKh62jt/Sc079OCzdUkiyiqgMFlShy8gyLJxfEpGw7HtSp7ihCmGnIQqCj29/3sTxHTIB3AbxhziJDHJGbWwdHA1h0f8Zcl7TbMu4lQQveVOM4SDXjv2P8Q/nCK/cbCjHcQ9mAeeIFGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k37D3aRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 212B0C4CEF5;
+	Mon,  8 Sep 2025 06:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757311856;
+	bh=1thZV2Pc+/rIuED2jhR46ago4P89vFREkt1lyC2P3H0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k37D3aRv0W8VMmELmNCABEr62RIcgQtIfiAfpPgY1LNceA9QD9j4GZe25zmfe+PJZ
+	 7IxB6WzL0A7/II2TG/LfVHVt8wSGHMsPLyZ/aDSRC+fjGYCymbqOlcderFKwQIr4Yf
+	 cwAesyiNmSwlOBEj18QXA7G95Jw+1CFZXeWsEFT41d0zkiR2fahBPBF1G7Jq+LB6aV
+	 eYEpYhHThdkGChDRM/GnWLxPpyahxvW4Ve89wjsPuSlBbuEGz+KKaIIMhMWlEcW2DW
+	 KI6rrwwZVFXkFt8RxWrLBggf1Ebo9PH72t5GjhmPs+O29zSKzhyRsnBw+b9WgNZ72+
+	 P5OhGd0ruyG5w==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/3] perf annotate: Fix signatue of annotate_browser__show()
+Date: Sun,  7 Sep 2025 23:10:48 -0700
+Message-ID: <20250908061050.27517-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 07/12] scsi: Use block layer helpers to constrain queue
- affinity
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Aaron Tomlin <atomlin@atomlin.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
- <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
- Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
- Mel Gorman <mgorman@suse.de>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, storagedev@microchip.com,
- virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-7-885984c5daca@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250905-isolcpus-io-queues-v8-7-885984c5daca@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D8D4E2433F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
 
-On 9/5/25 16:59, Daniel Wagner wrote:
-> Ensure that IRQ affinity setup also respects the queue-to-CPU mapping
-> constraints provided by the block layer. This allows the SCSI drivers
-> to avoid assigning interrupts to CPUs that the block layer has excluded
-> (e.g., isolated CPUs).
-> 
-> Only convert drivers which are already using the
-> pci_alloc_irq_vectors_affinity with the PCI_IRQ_AFFINITY flag set.
-> Because these drivers are enabled to let the IRQ core code to
-> set the affinity. Also don't update qla2xxx because the nvme-fabrics
-> code is not ready yet.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 1 +
->   drivers/scsi/megaraid/megaraid_sas_base.c | 5 ++++-
->   drivers/scsi/mpi3mr/mpi3mr_fw.c           | 6 +++++-
->   drivers/scsi/mpt3sas/mpt3sas_base.c       | 5 ++++-
->   drivers/scsi/pm8001/pm8001_init.c         | 1 +
->   5 files changed, 15 insertions(+), 3 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+According to the convention, the first argument should be
+annotate_browser instead of ui_brwoser.
 
-Cheers,
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/ui/browsers/annotate.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-Hannes
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index b770a8d4623ef1fb..6fd4c3483c5068ae 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -766,20 +766,21 @@ bool annotate_browser__continue_search_reverse(struct annotate_browser *browser,
+ 	return __annotate_browser__search_reverse(browser);
+ }
+ 
+-static int annotate_browser__show(struct ui_browser *browser, char *title, const char *help)
++static int annotate_browser__show(struct annotate_browser *browser, char *title, const char *help)
+ {
+-	struct map_symbol *ms = browser->priv;
++	struct ui_browser *b = &browser->b;
++	struct map_symbol *ms = b->priv;
+ 	struct symbol *sym = ms->sym;
+ 	char symbol_dso[SYM_TITLE_MAX_SIZE];
+ 
+-	if (ui_browser__show(browser, title, help) < 0)
++	if (ui_browser__show(b, title, help) < 0)
+ 		return -1;
+ 
+ 	sym_title(sym, ms->map, symbol_dso, sizeof(symbol_dso), annotate_opts.percent_type);
+ 
+-	ui_browser__gotorc_title(browser, 0, 0);
+-	ui_browser__set_color(browser, HE_COLORSET_ROOT);
+-	ui_browser__write_nstring(browser, symbol_dso, browser->width + 1);
++	ui_browser__gotorc_title(b, 0, 0);
++	ui_browser__set_color(b, HE_COLORSET_ROOT);
++	ui_browser__write_nstring(b, symbol_dso, b->width + 1);
+ 	return 0;
+ }
+ 
+@@ -858,7 +859,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 	int key;
+ 
+ 	annotate__scnprintf_title(hists, title, sizeof(title));
+-	if (annotate_browser__show(&browser->b, title, help) < 0)
++	if (annotate_browser__show(browser, title, help) < 0)
+ 		return -1;
+ 
+ 	annotate_browser__calc_percent(browser, evsel);
+@@ -896,7 +897,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 			if (delay_secs != 0) {
+ 				symbol__annotate_decay_histogram(sym, evsel);
+ 				annotate__scnprintf_title(hists, title, sizeof(title));
+-				annotate_browser__show(&browser->b, title, help);
++				annotate_browser__show(browser, title, help);
+ 			}
+ 			continue;
+ 		case K_TAB:
+@@ -947,7 +948,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 			continue;
+ 		case 'r':
+ 			script_browse(NULL, NULL);
+-			annotate_browser__show(&browser->b, title, help);
++			annotate_browser__show(browser, title, help);
+ 			continue;
+ 		case 'k':
+ 			annotate_opts.show_linenr = !annotate_opts.show_linenr;
+@@ -962,7 +963,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 			if (annotate_browser__toggle_source(browser, evsel))
+ 				ui_helpline__puts(help);
+ 			annotate__scnprintf_title(hists, title, sizeof(title));
+-			annotate_browser__show(&browser->b, title, help);
++			annotate_browser__show(browser, title, help);
+ 			continue;
+ 		case 'o':
+ 			annotate_opts.use_offset = !annotate_opts.use_offset;
+@@ -1050,7 +1051,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 		case 'b':
+ 			switch_percent_type(&annotate_opts, key == 'b');
+ 			annotate__scnprintf_title(hists, title, sizeof(title));
+-			annotate_browser__show(&browser->b, title, help);
++			annotate_browser__show(browser, title, help);
+ 			continue;
+ 		case 'B':
+ 			if (br_cntr_text)
+@@ -1071,7 +1072,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 				browser->type_hash = hashmap__new(type_hash, type_equal,
+ 								  /*ctx=*/NULL);
+ 			}
+-			annotate_browser__show(&browser->b, title, help);
++			annotate_browser__show(browser, title, help);
+ 			annotate_browser__debuginfo_warning(browser);
+ 			continue;
+ 		case K_LEFT:
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.51.0
+
 
