@@ -1,434 +1,309 @@
-Return-Path: <linux-kernel+bounces-805397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B5AB4880A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:14:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DCCB4880E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7193AB8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD08169B45
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6092727B328;
-	Mon,  8 Sep 2025 09:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721B2E9EA1;
+	Mon,  8 Sep 2025 09:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XuEL+w1h"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9WM93mn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B331DA23
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35311DA23
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757322851; cv=none; b=ZDcRFWGKfIinkmHG+A+nmgzb2fhDRXA+M9AvKWBldWU/A3YYJ7F9UIQw636o+zjvgsDGe2CyvGLiY7392egx0RMWWlrR1v3HkHRKaNpSj1Krr+nSF0qEDqqqohGLVyIqHk1Z6oOS3Tt3TB8YFhd4lUNyzXYLoPLF/z1tnAUJ41M=
+	t=1757322895; cv=none; b=p9C1VSHnV/gCQz4DSqasyi2AMijqviUyn7LNSKNcVdjJrPbwuDheuTjyY9uldC0N1SBb6glAfzMifmPU2SCUtVucKrsYPiwlI+QmUQTIMlAv+3MQkBrI2LiL61RWLK6BN4UHHvKdT0RZW+BGYe6KlVIysTqKrD1+PqGt5V6Cq9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757322851; c=relaxed/simple;
-	bh=wKm2il+Rl2qoLalc4t5SfaAIDZ8ce3WPmOfenl1XCFQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dkkvU4pMIR7/IwQYsHg2a51x88A0LKNPrTSoUX4j57keGD87CgXUhVoIOi3QFzY98f24Sk7ufH562Kjar5rWiEeW7P0EfZxPqIpfGAzP91HLxxKstTUrxKwQv0q7Lt3BWY/DSDZwVItXgCmBcl4Bx25SThFOoWcnelY4J/f8l74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XuEL+w1h; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8B06A596;
-	Mon,  8 Sep 2025 11:12:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757322768;
-	bh=wKm2il+Rl2qoLalc4t5SfaAIDZ8ce3WPmOfenl1XCFQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=XuEL+w1hBbTIv9l8xN53WLydkmzmDm7mC4vrMioawJkACZj18okd4wAwjwf5FlgXn
-	 Uw3NjtC61Tm1w++rXb6gxaOo7DVR7H3Vidc3MVVsQiCL81jKY54RPUqVu40u0D2gIp
-	 N1SlLJ8HXBjXfok8w3P4MUZovkb7xZWbGE/nnHPU=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Mon, 08 Sep 2025 12:13:34 +0300
-Subject: [PATCH v2] drm/tidss: Add some support for splash-screen
+	s=arc-20240116; t=1757322895; c=relaxed/simple;
+	bh=lJZ/yCvkMzmioXpRL2X+tfpI/HV3j+Qqm8DpY7BML00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eme2WNAvnnnPq3eYJuBdZw18GPM6GLQf9JFPE8lPGugIMKNyObTMOhS2cSm7ZqpEJg2YvUa2lIH6SmoP424pelW+n0uuqQNnNACph6UKc5pddev+AktLDTBKBukzgahBoAVMCZJYX2C1sNd64h++9TtfDsEhPMqos1YA5M9m/y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9WM93mn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757322891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mzcPvwRTvfDw+yZlp7hvvbxIV0w0du39GWUeSOlm0y8=;
+	b=C9WM93mnxb4u982W4rB7Clp2quFpVRjw9bq49XX7BZS7aTvEdheddr4JKKzDZgKQ7PfuJ0
+	qGPWvTMAJ35S1o4jjjEnR5ZgATs9EkQH9INVZa6nqyK+aevL9fHrYCsUGN6WWISLfKslJL
+	bdZZ9eKwJ1CrohoIk76sjiGFh1GUedA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-401-GJutnec9MSS_QrlU4Tvzig-1; Mon, 08 Sep 2025 05:14:50 -0400
+X-MC-Unique: GJutnec9MSS_QrlU4Tvzig-1
+X-Mimecast-MFC-AGG-ID: GJutnec9MSS_QrlU4Tvzig_1757322890
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3d3d2472b92so2290437f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:14:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757322889; x=1757927689;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mzcPvwRTvfDw+yZlp7hvvbxIV0w0du39GWUeSOlm0y8=;
+        b=B6HDwuEOvUK1B2ignFOMW+6+8XIwm1n08D2KjTwK86qfaiB1B5vR41XYF4lurzqcHr
+         CzSB5aNWfE+nkfNNKSd7bNIuhFYsWa39b6ovpJlQtIa0mBorVoO/s3ErOab7eYs9+8Cg
+         663NqqB2czRXGUQzV3C6s8KOt2kjo0qhNMkmjaDoahZ31wAm97nWzhaS/fRTzhWRWKGv
+         dhiQ/Wst1p4x7AeIgms3j5yp/Ko1Hu+eyb6qHxVi6ZH0+mznSDjmKWtCi0rZR7B+cuLa
+         3DeJiWvMMCsGPi7OcodkSm9dQU44C5xFY98cjAp61sUJkp2n40TBobrTfl/Iui/bHhQ1
+         47ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUoiFBmJjYPDX1rwC7C/3bdUAbIdZH3t8LdLUpnNExqRbohmEWhDOhgsnOtds2fGq7BtZKxnsUBM0Bv54o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz076bRkVbJio21xko63XyaCBSaFj2c8GfwmkAAjs7rDzHClrqk
+	en7V9L5tN7dRx4EiXDv2PrSJgCu3BI30j8EosCSp9rryGW7WjoldwFXZDBYWC9JQZyMaUl2Xyfp
+	dfmGtQWRmTiwNgyJIGtycyw/5azcOwo9BDjcutEYsW1tubC55NOVCTS43UqShws+t3e2KJUlU5g
+	==
+X-Gm-Gg: ASbGncvziCGNYCIX4+xv5ozw/xyumhyXPf8O873b8KNYft8DQvQqnWKBvTyBRfgpzXs
+	prwD+j7mm+VPMZiegTnBB8wEleC9eVf6SALepxAY8LHeVQ0p85mNhflQ7BxzTntFW+T0TSRbec7
+	PVII3GkHOSz8o7uFfVO5A29ROYkiY1zbKKepYoDBhqn61r7nwzrwuTYIQ18kge8JFlTAsrf1XHq
+	3TxEa6MbpInHXldc7lrAgEj4TDOXxrKdJBEe13SvguYbbB/wWFKfRrVW6zZ4veZ8hgLsHDd5zFF
+	Jip6wuzyv530HesfaiBt521N3R9IKi5mCMNAOkLPcpg3eexNJK6Mdqxwz2zHjiFJ+qmkMnl8dNS
+	db4R2qHnAFz7fLfg5YnD8GXQtjlcM0tGhl+rYZ/eKkQcooyxsFA7vnsfANVp+6GRe
+X-Received: by 2002:a5d:588c:0:b0:3e0:a5a2:ec9b with SMTP id ffacd0b85a97d-3e64ca76350mr4700086f8f.52.1757322889380;
+        Mon, 08 Sep 2025 02:14:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESch+TvPw/XuuDoI/s8ofhAgmUojqK0jp/GaJooIEd0GJefywm4JIByf3OsYAT9LaECB1NBw==
+X-Received: by 2002:a5d:588c:0:b0:3e0:a5a2:ec9b with SMTP id ffacd0b85a97d-3e64ca76350mr4700054f8f.52.1757322888839;
+        Mon, 08 Sep 2025 02:14:48 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2717sm40764051f8f.15.2025.09.08.02.14.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 02:14:48 -0700 (PDT)
+Message-ID: <1b95ca2a-bc1f-4e11-be4e-8341c3cc278e@redhat.com>
+Date: Mon, 8 Sep 2025 11:14:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-tidss-splash-v2-1-e388b0581dfa@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIAD2evmgC/3XMQQ6CMBCF4auQWVvTFqjIynsYFi2dyiRKSYcQD
- endrexd/i953w6MiZChr3ZIuBFTnEvoUwXjZOcHCvKlQUvdykYZsZJnFrw8LU+i9l2odecuykg
- olyVhoPfB3YfSE/Ea0+fQN/Vb/0CbElI0IdRXg66VsruRR8txdtEmfx7jC4ac8xfysqQerwAAA
- A==
-X-Change-ID: 20250416-tidss-splash-3d8f328b7160
-To: Jyri Sarha <jyri.sarha@iki.fi>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11144;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=wKm2il+Rl2qoLalc4t5SfaAIDZ8ce3WPmOfenl1XCFQ=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBovp5TVtgVtyYk+y3bCcWr/c0UTG4hJ0HSn3Bs+
- SRkYBe4ay2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaL6eUwAKCRD6PaqMvJYe
- 9TA9D/9ChherAn5l6V+hktY7k9V6f/I8Ul18Mq+YiuHrFVktTqXPA0E/wk4vJDq610hOucyainm
- z7t0hrcGDEpdcCjmghp67KBcoX6Ed0Ald9FmejO3s+FtfGzkWmAQIleptzOoFHZnqentF9vy7DZ
- G2cuV/PkTCYbiW93cpqroyzVB6Vj8QTaig3Ydn0EpftDxtsCHSrrkrrjDM29//3cxexRwgm47Rn
- itqwDdHS5VsJd1+HrWDPcRpYd3dlwo7TP7MqFYNQbnZ/0va5aMy+NgumcPqWZUhmskFXbiha1hD
- K6YGvQqZXWiNrsZPcH1h3AUbjWO07xA/ZUwi1QEmRAGa5hUOUvmRPZyRxMmCEiEY0gBftJF6wAU
- edlZSateXkz3+mma31+xyrU1edNfjPp68lkbZyfd6M9qWjlK7eQgRc2P4bB/wTlSQGCSzCRf/9C
- m83paCrjqB4BvzYGSA7uF/opsGjDmsYHFCdfxFCKVIDBMEJLK//wVL1kfnCvhrCkVrtAuIx81iX
- me2cp8x5s0O8c6TaY+B+79PH8pyw58FunLgUxaWZFzQGc/jx3tgtH1AUqrvxRobLvrQbax0WTsp
- +28thKF8x0gm3HOUZ1kIZ8fVh2jvoowK2MvMZFVTNEdtohnZSd0mB0usjrBrN8lhbeW4sZr3qRT
- +3K2e7iSQ+B+GmA==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
+ max_ptes_none default
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>
+References: <20250905141137.3529867-1-david@redhat.com>
+ <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
+ <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
+ <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
+ <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
+ <8461f6df-a958-4c34-9429-d6696848a145@gmail.com>
+ <3737e6e5-9569-464c-8cd0-1ec9888be04b@redhat.com>
+ <3c857cdb-01d0-4884-85c1-dfae46d8e4a0@gmail.com>
+ <aadf50b1-151b-41c6-b60c-5f1f2a4f2d8e@redhat.com>
+ <d48af6f4-2ded-40f5-849d-7aa991727a59@gmail.com>
+ <701d2994-5b9a-4657-a616-586652f42df5@redhat.com>
+ <686943a6-7043-41b0-bd4c-2bfc4463d49b@gmail.com>
+ <e41c8d5d-5685-49f4-a5f5-87513674a03b@redhat.com>
+ <27460707-3d93-4ff2-bc99-da96d26758e9@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <27460707-3d93-4ff2-bc99-da96d26758e9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Currently when the driver's probe is called, we do a full DSS reset. If
-the bootloader has set up a splash-screen, the reset will disable the
-video output, and after that it may still take time until the display is
-usable (all the kernel modules have been loaded) and even more time
-until the userspace is able to use the display.
+On 05.09.25 19:26, Usama Arif wrote:
+> 
+> 
+> On 05/09/2025 17:55, David Hildenbrand wrote:
+>> On 05.09.25 18:47, Usama Arif wrote:
+>>>
+>>>
+>>> On 05/09/2025 16:58, David Hildenbrand wrote:
+>>>> On 05.09.25 17:53, Usama Arif wrote:
+>>>>>
+>>>>>
+>>>>> On 05/09/2025 16:28, David Hildenbrand wrote:
+>>>>>> On 05.09.25 17:16, Usama Arif wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 05/09/2025 16:04, David Hildenbrand wrote:
+>>>>>>>> On 05.09.25 17:01, Usama Arif wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 05/09/2025 15:58, David Hildenbrand wrote:
+>>>>>>>>>> On 05.09.25 16:53, Usama Arif wrote:
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 05/09/2025 15:46, David Hildenbrand wrote:
+>>>>>>>>>>>> [...]
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> The reason I did this is for the case if you change max_ptes_none after the THP is added
+>>>>>>>>>>>>> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
+>>>>>>>>>>>>> so that its considered for splitting.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
+>>>>>>>>>>>>
+>>>>>>>>>>>> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
+>>>>>>>>>>>
+>>>>>>>>>>> Yes, I do this as well, i.e. have a low value from the start.
+>>>>>>>>>>>
+>>>>>>>>>>> Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
+>>>>>>>>>>> the usecase you are describing below, but we wont encounter the increased CPU usage.>
+>>>>>>>>>>
+>>>>>>>>>> I don't really see why we should do that.
+>>>>>>>>>>
+>>>>>>>>>> If the shrinker is a problem than the shrinker should be disabled. But if it is enabled, we should be shrinking as documented.
+>>>>>>>>>>
+>>>>>>>>>> Without more magic around our THP toggles (we want less) :)
+>>>>>>>>>>
+>>>>>>>>>> Shrinking happens when we are under memory pressure, so I am not really sure how relevant the scanning bit is, and if it is relevant enought to change the shrinker default.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> yes agreed, I also dont have numbers to back up my worry, its all theoretical :)
+>>>>>>>>
+>>>>>>>> BTW, I was also wondering if we should just always add all THP to the deferred split list, and make the split toggle just affect whether we process them or not (scan or not).
+>>>>>>>>
+>>>>>>>> I mean, as a default we add all of them to the list already right now, even though nothing would ever get reclaimed as default.
+>>>>>>>>
+>>>>>>>> What's your take?
+>>>>>>>>
+>>>>>>>
+>>>>>>> hmm I probably didnt understand what you meant to say here:
+>>>>>>> we already add all of them to the list in __do_huge_pmd_anonymous_page and collapse_huge_page and
+>>>>>>> shrink_underused sets/clears split_underused_thp in deferred_split_folio decides whether we process or not.
+>>>>>>
+>>>>>> This is what I mean:
+>>>>>>
+>>>>>> commit 3952b6f6b671ca7d69fd1783b1abf4806f90d436 (HEAD -> max_ptes_none)
+>>>>>> Author: David Hildenbrand <david@redhat.com>
+>>>>>> Date:   Fri Sep 5 17:22:01 2025 +0200
+>>>>>>
+>>>>>>        mm/huge_memory: always add THPs to the deferred split list
+>>>>>>            When disabling the shrinker and then re-enabling it, any anon THPs
+>>>>>>        allocated in the meantime.
+>>>>>>            That also means that we cannot disable the shrinker as default during
+>>>>>>        boot, because we would miss some THPs later when enabling it.
+>>>>>>            So always add them to the deferred split list, and only skip the
+>>>>>>        scanning if the shrinker is disabled.
+>>>>>>            This is effectively what we do on all systems out there already, unless
+>>>>>>        they disable the shrinker.
+>>>>>>            Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>>>
+>>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>>> index aa3ed7a86435b..3ee857c1d3754 100644
+>>>>>> --- a/mm/huge_memory.c
+>>>>>> +++ b/mm/huge_memory.c
+>>>>>> @@ -4052,9 +4052,6 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
+>>>>>>            if (folio_order(folio) <= 1)
+>>>>>>                    return;
+>>>>>>     -       if (!partially_mapped && !split_underused_thp)
+>>>>>> -               return;
+>>>>>> -
+>>>>>>            /*
+>>>>>>             * Exclude swapcache: originally to avoid a corrupt deferred split
+>>>>>>             * queue. Nowadays that is fully prevented by memcg1_swapout();
+>>>>>> @@ -4175,6 +4172,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>>>>>                    bool underused = false;
+>>>>>>                      if (!folio_test_partially_mapped(folio)) {
+>>>>>> +                       if (!split_underused_thp)
+>>>>>> +                               goto next;
+>>>>>>                            underused = thp_underused(folio);
+>>>>>>                            if (!underused)
+>>>>>>                                    goto next;
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>> Thanks for sending the diff! Now I know what you meant lol.
+>>>>>
+>>>>> In the case of when shrinker is disabled, this could make the deferred split scan for partially mapped folios
+>>>>> very ineffective?
+>>>>
+>>>> I hope you realize that that's the default on each and every system out there that ships this feature :)
+>>>>
+>>>
+>>> Yes, I made it default :)
+>>>
+>>> I am assuming people either keep shrinker enabled (which is an extremely large majority as its default), or disable shrinker
+>>> and they dont flip flop between the 2 settings.
+>>> There are 2 scenarios for the above patch:
+>>>
+>>> - shrinker is enabled (default): the above patch wont make a difference.
+>>> - shrinker is disabled: the above patch makes splitting partially mapped folios inefficient.
+>>>
+>>> I didnt talk about the shrinker enabled case as it was a no-op and just talked about the shrinker disabled
+>>> case.
+>>
+>>
+>> Yeah, and I am saying that all you raised as a concern would be a problem already today in all default setups (-> 99.999999%). :)
+>>
+>> Probably we should not just disable the shrinker during boot, and once enabled, it would only split THPs created afterwards.
+>>
+> 
+> I probably didnt understand this again lol. Sorry its friday evening :)
+> 
+> split_underused_thp is true at boot time [1]. You are saying we should not disable shrinker during boot, but it is already not
+> disabled during boot, right?
 
-If fbdev is enabled, in a perfect case tidss would take over the fb
-memory set up by the bootloader, and use that memory for tidss's fbdev,
-thus retaining the splash-screen. However, we're not there yet.
+It's all a mess, sorry, currently it's "enabled" as default but actually 
+"disabled". Let me see if I can clean all that up.
 
-As a partial solution, this patch changes the driver so that the driver
-will not reset (or change) the DSS registers until tidss_runtime_get()
-is called when the display is being set up (because of fbdev modesetting
-or modesetting from the userspace).
-
-This is achieved in two parts:
-
-1. Probe
-
-At probe time, in dispc_init_hw(), we check if the DSS is idle
-(videoports disabled). If yes, do a reset and continue as before. If
-not, we know that there's a splash-screen, and we set the
-'tidss->boot_enabled_vp_mask' field to reflect the enabled VPs.
-
-We then enable the corresponding VP clocks (to ensure they stay on), set
-the IRQENABLE to 0 to make sure we won't get any interrupts, and then
-exit leaving the fclk and VP clocks enabled, and the runtime PM status
-active.
-
-2. Runtime get
-
-Later, when the tidss_runtime_get() is called the first time, we check
-the 'boot_enabled_vp_mask'. If set, we know that we have the
-splash-screen showing on the screen, and thus the clocks are enabled and
-runtime PM status is active. This indicates that
-pm_runtime_resume_and_get() call just before in tidss_runtime_get() did
-not cause a runtime_resume callback to get called, so we need to do that
-manually.
-
-We call dispc_splash_fini() which essentially returns the DSS into the
-state where it would be in a non-splash-screen case: dispc_splash_fini()
-will do a DSS reset, manually call the runtime_resume callback, and then
-call clk_disable_unprepare() and pm_runtime_put_noidle() to counter the
-actions at probe time.
-
-Finally 'boot_enabled_vp_mask' is set to zero to mark that we're no
-longer in the "splash-screen mode".
-
-A note about fbdev emulation:
-
-If fbdev emulation is enabled in the DRM, tidss will set up an fbdev.
-This will cause a modeset, and the blank framebuffer from tidss's fbdev
-will be shown instead of the splash-screen.
-
-I see two improvements to this: either we should memcpy the pixel data
-from the bootloader's splash-screen to the new fbdev buffer, or the
-fbdev could use the splash-screen directly as its buffer. I have done
-some hacks for the former, but I'm not sure how to implement either of
-these properly.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
-Changes in v2:
-- Rebased to latest drm-misc-next, and fixed the issues with the new
-  register access macros
-- Clarified the patch description a bit
-- Dropped the second patch "drm/tidss: Remove early fb", as it's already
-  in upstream
-- Link to v1: https://lore.kernel.org/r/20250416-tidss-splash-v1-0-4ff396eb5008@ideasonboard.com
----
- drivers/gpu/drm/tidss/tidss_dispc.c | 127 ++++++++++++++++++++++++++++++++----
- drivers/gpu/drm/tidss/tidss_dispc.h |   5 ++
- drivers/gpu/drm/tidss/tidss_drv.c   |  29 +++++++-
- drivers/gpu/drm/tidss/tidss_drv.h   |   2 +
- 4 files changed, 148 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 7c8c15a5c39b..1bf208cb227b 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.c
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -2800,6 +2800,11 @@ void dispc_vp_setup(struct dispc_device *dispc, u32 hw_videoport,
- 	dispc_vp_set_color_mgmt(dispc, hw_videoport, state, newmodeset);
- }
- 
-+static bool dispc_is_idle(struct dispc_device *dispc)
-+{
-+	return REG_GET(dispc, DSS_SYSSTATUS, DSS_SYSSTATUS_DISPC_IDLE_STATUS);
-+}
-+
- int dispc_runtime_suspend(struct dispc_device *dispc)
- {
- 	dev_dbg(dispc->dev, "suspend\n");
-@@ -2940,7 +2945,7 @@ static int dispc_softreset(struct dispc_device *dispc)
- 	return 0;
- }
- 
--static int dispc_init_hw(struct dispc_device *dispc)
-+int dispc_init_hw(struct dispc_device *dispc)
- {
- 	struct device *dev = dispc->dev;
- 	int ret;
-@@ -2957,15 +2962,70 @@ static int dispc_init_hw(struct dispc_device *dispc)
- 		goto err_runtime_suspend;
- 	}
- 
--	ret = dispc_softreset(dispc);
--	if (ret)
--		goto err_clk_disable;
-+	dispc->tidss->boot_enabled_vp_mask = 0;
- 
--	clk_disable_unprepare(dispc->fclk);
--	ret = pm_runtime_set_suspended(dev);
--	if (ret) {
--		dev_err(dev, "Failed to set DSS PM to suspended\n");
--		return ret;
-+	if (dispc_is_idle(dispc)) {
-+		ret = dispc_softreset(dispc);
-+		if (ret)
-+			goto err_clk_disable;
-+	} else {
-+		for (u32 vp_idx = 0; vp_idx < dispc->feat->num_vps; vp_idx++) {
-+			bool enabled = VP_REG_GET(dispc, vp_idx,
-+						  DISPC_VP_CONTROL,
-+						  DISPC_VP_CONTROL_ENABLE_MASK);
-+
-+			if (!enabled)
-+				continue;
-+
-+			dispc->tidss->boot_enabled_vp_mask |= BIT(vp_idx);
-+
-+			/* Keep the VP clk enabled */
-+			ret = clk_prepare_enable(dispc->vp_clk[vp_idx]);
-+			if (ret) {
-+				while (vp_idx--) {
-+					if (!(dispc->tidss->boot_enabled_vp_mask &
-+					      BIT(vp_idx)))
-+						continue;
-+
-+					clk_disable_unprepare(dispc->vp_clk[vp_idx]);
-+				}
-+
-+				goto err_clk_disable;
-+			}
-+		}
-+
-+		if (!dispc->tidss->boot_enabled_vp_mask) {
-+			dev_warn(dev,
-+				 "Bad HW state: DSS not idle but no VPs are enabled. Resetting.\n");
-+			ret = dispc_softreset(dispc);
-+			if (ret)
-+				goto err_clk_disable;
-+		} else {
-+			/*
-+			 * Do basic HW init here, which won't interrupt the
-+			 * splash-screen.
-+			 */
-+
-+			/* Ensure we won't get interrupts */
-+			dispc_set_irqenable(dispc, 0);
-+			dispc_read_and_clear_irqstatus(dispc);
-+		}
-+	}
-+
-+	if (dispc->tidss->boot_enabled_vp_mask) {
-+		dev_dbg(dev,
-+			"Bootloader splash-screen detected, leaving DSS active.\n");
-+		pm_runtime_get_noresume(dev);
-+	} else {
-+		/*
-+		 * No splash-screen. Disable the clock and set DSS back to suspended.
-+		 */
-+		clk_disable_unprepare(dispc->fclk);
-+		ret = pm_runtime_set_suspended(dev);
-+		if (ret) {
-+			dev_err(dev, "Failed to set DSS PM to suspended\n");
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -2983,6 +3043,28 @@ static int dispc_init_hw(struct dispc_device *dispc)
- 	return ret;
- }
- 
-+void dispc_init_hw_cleanup(struct dispc_device *dispc)
-+{
-+	if (!dispc->tidss->boot_enabled_vp_mask)
-+		return;
-+
-+	/*
-+	 * Call clk_disable_unprepare() to counter the clk_prepare_enable() we
-+	 * did in the dispc_init_hw().
-+	 */
-+	clk_disable_unprepare(dispc->fclk);
-+
-+	for (u32 vp_idx = 0; vp_idx < dispc->feat->num_vps; vp_idx++) {
-+		if (dispc->tidss->boot_enabled_vp_mask & BIT(vp_idx))
-+			clk_disable_unprepare(dispc->vp_clk[vp_idx]);
-+	}
-+
-+	/* counter the pm_runtime_get_noresume() */
-+	pm_runtime_put_noidle(dispc->dev);
-+
-+	dispc->tidss->boot_enabled_vp_mask = 0;
-+}
-+
- int dispc_init(struct tidss_device *tidss)
- {
- 	struct device *dev = tidss->dev;
-@@ -3092,11 +3174,30 @@ int dispc_init(struct tidss_device *tidss)
- 	of_property_read_u32(dispc->dev->of_node, "max-memory-bandwidth",
- 			     &dispc->memory_bandwidth_limit);
- 
--	r = dispc_init_hw(dispc);
--	if (r)
--		return r;
--
- 	tidss->dispc = dispc;
- 
- 	return 0;
- }
-+
-+void dispc_splash_fini(struct dispc_device *dispc)
-+{
-+	if (WARN_ON(!dispc->tidss->boot_enabled_vp_mask))
-+		return;
-+
-+	/*
-+	 * Do a reset now, to clean up the bootloader setup, as we're about to
-+	 * do a modeset.
-+	 */
-+	dispc_softreset(dispc);
-+
-+	/*
-+	 * Call resume manually. This will clk_prepare_enable() the fclk, and do
-+	 * the common basic HW configuration.
-+	 */
-+	dispc_runtime_resume(dispc);
-+
-+	/*
-+	 * Revert the enables and gets we did in dispc_init_hw() at probe time.
-+	 */
-+	dispc_init_hw_cleanup(dispc);
-+}
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index 60c1b400eb89..647ed013e080 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -152,4 +152,9 @@ const u32 *dispc_plane_formats(struct dispc_device *dispc, unsigned int *len);
- int dispc_init(struct tidss_device *tidss);
- void dispc_remove(struct tidss_device *tidss);
- 
-+int dispc_init_hw(struct dispc_device *dispc);
-+void dispc_init_hw_cleanup(struct dispc_device *dispc);
-+
-+void dispc_splash_fini(struct dispc_device *dispc);
-+
- #endif
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-index 27d9a8fd541f..eb6a57b8f682 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.c
-+++ b/drivers/gpu/drm/tidss/tidss_drv.c
-@@ -36,8 +36,22 @@ int tidss_runtime_get(struct tidss_device *tidss)
- 	dev_dbg(tidss->dev, "%s\n", __func__);
- 
- 	r = pm_runtime_resume_and_get(tidss->dev);
--	WARN_ON(r < 0);
--	return r;
-+	if (WARN_ON(r < 0))
-+		return r;
-+
-+	if (tidss->boot_enabled_vp_mask) {
-+		/*
-+		 * If 'boot_enabled_vp_mask' is set, it means that the DSS is
-+		 * enabled and bootloader splash-screen is still on the screen,
-+		 * using bootloader's DSS HW config.
-+		 *
-+		 * This is the first time the driver is about to use the HW, and
-+		 * we need to do some cleanup and initial setup.
-+		 */
-+		dispc_splash_fini(tidss->dispc);
-+	}
-+
-+	return 0;
- }
- 
- void tidss_runtime_put(struct tidss_device *tidss)
-@@ -149,6 +163,12 @@ static int tidss_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = dispc_init_hw(tidss->dispc);
-+	if (ret) {
-+		dev_err(dev, "failed to initialize dispc HW: %d\n", ret);
-+		return ret;
-+	}
-+
- 	ret = tidss_oldi_init(tidss);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to init OLDI\n");
-@@ -211,6 +231,7 @@ static int tidss_probe(struct platform_device *pdev)
- 	tidss_irq_uninstall(ddev);
- 
- err_runtime_suspend:
-+
- #ifndef CONFIG_PM
- 	dispc_runtime_suspend(tidss->dispc);
- #endif
-@@ -219,6 +240,8 @@ static int tidss_probe(struct platform_device *pdev)
- 
- 	tidss_oldi_deinit(tidss);
- 
-+	dispc_init_hw_cleanup(tidss->dispc);
-+
- 	return ret;
- }
- 
-@@ -245,6 +268,8 @@ static void tidss_remove(struct platform_device *pdev)
- 
- 	tidss_oldi_deinit(tidss);
- 
-+	dispc_init_hw_cleanup(tidss->dispc);
-+
- 	/* devm allocated dispc goes away with the dev so mark it NULL */
- 	dispc_remove(tidss);
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-index 84454a4855d1..c23091be2b60 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.h
-+++ b/drivers/gpu/drm/tidss/tidss_drv.h
-@@ -39,6 +39,8 @@ struct tidss_device {
- 	/* protects the irq masks field and irqenable/irqstatus registers */
- 	spinlock_t irq_lock;
- 	dispc_irq_t irq_mask;	/* enabled irqs */
-+
-+	u32 boot_enabled_vp_mask;
- };
- 
- #define to_tidss(__dev) container_of(__dev, struct tidss_device, ddev)
-
----
-base-commit: 685e8dae19df73d5400734ee5ad9e96470f9c0b4
-change-id: 20250416-tidss-splash-3d8f328b7160
-
-Best regards,
 -- 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cheers
+
+David / dhildenb
 
 
