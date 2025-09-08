@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-805280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217B2B48662
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9E2B48664
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C6B176F2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F8716747A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5620E2E8E12;
-	Mon,  8 Sep 2025 08:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1652E92B7;
+	Mon,  8 Sep 2025 08:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TtGOTH4V"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjEy5dTz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89491D63EF;
-	Mon,  8 Sep 2025 08:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B106711712;
+	Mon,  8 Sep 2025 08:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318795; cv=none; b=sPwn98IoO+zh2467Cfon+MnX4xY5G9D2MH3mRS8nkFFiLL6+QXzOfrrMeeamyZTIB/NN4/J6vTdJ7dPrRiWuip3Uu17XlgZT3PfdxTpnbTBlx+8d0P73ARM9yXgj6tUbxcuKqUOYxdaYaHOOe4MrcYZnBaoIaUyxXZKuGhkjDfE=
+	t=1757318841; cv=none; b=aY73Sb/HWL/qNDfPtfqZA4SPze+HwA+10QiQNzWmNdWcxrUXNYCvTWyPMGv7iDY+BX5Zem5Srx2HKSfPvW0fQavDr+T3V7+vasFs9dkZOPa/sGVCsC+ujai2jlrblSBgkQJcnapRb1DyKlkcHMhy4nq/OErw30Y6cKAvPAZIg7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318795; c=relaxed/simple;
-	bh=ka8GlkxTCy83owtn+XSK9LfX0yLrjwJrVs7IxepHo08=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WN83mf7+KKEAmQh9D/C6/tLl5jopWqf/caWZzLkqAPp/f72wVwVQK8wSUeN/DWIWQY0EwUy1SjmAiubprs40x2a1XcwbYTF8HCKQcVTCcIHyfoKuMOclagtKiCh6KJ4sFY5G87YXbsXDIccwfvvbexPjL8PAkPcBxbnS/4Vrb6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TtGOTH4V; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757318790;
-	bh=3jFIAtd7ULVNBeq8F9dt1ianoECYMw0mZEed9e/JDSc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TtGOTH4VGz5j/ocRtljOYfc1+YDfiUeYLbLELbrh4FvfeAtjOsAbfuqOBGMbgiR4l
-	 dZwsEZQwk+y8Sq4xAJi++4nJ1FTpGIndge55Tc2SkTvG8z/7KQx2QIApU9pUWOXgpq
-	 gO3J2WtRVya6SV6MhA9YbjQYoPaDa6HFU1iy30Y0ely/NyMdEClTtiACD9DJcvdZRa
-	 WVzGUA8WI9rreRLp/hel4bCoA1adj+bMUypE6B0g7yUQ/RO4ZQmlcwwJr74Zhe78qc
-	 /rK3HmXG+ErMJLgvpqN3JYdyCvpAqJ8CKinN9ZasPwp3HxvA1Vb4ncxbhLst/6/hkM
-	 zaDXbBXN8Vdfw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cL0061HS9z4wBM;
-	Mon,  8 Sep 2025 18:06:29 +1000 (AEST)
-Date: Mon, 8 Sep 2025 18:06:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the hwmon-staging tree
-Message-ID: <20250908180629.504ecfc9@canb.auug.org.au>
+	s=arc-20240116; t=1757318841; c=relaxed/simple;
+	bh=sKGWBxutld7BDKkMoKF7Czft044gDLW37+VVeAroiKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HYQ90zBd76iH9+i3nDAxnPJgdqmDTVQBD+7nqeEplbEcOQWkWjdJ8SujWmRCOUcWE66LVbCyzC0Lp27d04sQGzfSCZfEmGVmEvmkm/aPVVtFxM9S5VriUkA/H/keFmYEsNohd6+2KsKS/bxYJaUM73u3vebXwtmJG33py5Yv3mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjEy5dTz; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757318840; x=1788854840;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sKGWBxutld7BDKkMoKF7Czft044gDLW37+VVeAroiKk=;
+  b=jjEy5dTzf8xEDLW28yEjXpQPPQttoPAYs7a9nEExrriY0tiRT4qa5eCh
+   g/bOHME1J1cKcb65zO5bR7UWKiyn6KMa7CQpwp1GsYOl64wfcjBycLKRd
+   ocxX0ZhpH8alrqt2D9Xqeb9W43H82nXZMG6whBx9VzIBZTVyRZweGoAwZ
+   5ZrqNkIiUok8fdBcIRf2HKhuIcB9NnqSrs/tbvzXc9p4tcZ9vgaTC3GOd
+   +is7R3Xji5e8RM/jrmXeq/H0TyKKcesUBxeNNXRfvVvrB63L/dktOMqHv
+   IO4rDIpAnv6M5R9lI26QTdJB+092E0Ha4VDFq52DvEYtsQ2fEmCgBSKZt
+   g==;
+X-CSE-ConnectionGUID: Mg4kaz61S0yjdkxkNPij2g==
+X-CSE-MsgGUID: F9JbG94vSD2zXBWL2YbXzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="59266802"
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="59266802"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 01:07:19 -0700
+X-CSE-ConnectionGUID: oe03nUxhRmWNq3aZ+eyHrA==
+X-CSE-MsgGUID: EYVIQ85yR8Sx3Ozc+jp8qQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="171993492"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 01:07:14 -0700
+Message-ID: <0e8a2035-caeb-4c75-9620-b65df07be1a0@linux.intel.com>
+Date: Mon, 8 Sep 2025 16:07:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LJVXs/YUaU1Yqc7.062wghi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 10/21] KVM: selftests: Set up TDX boot parameters
+ region
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250904065453.639610-1-sagis@google.com>
+ <20250904065453.639610-11-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250904065453.639610-11-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/LJVXs/YUaU1Yqc7.062wghi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the hwmon-staging tree, today's linux-next build (htmldocs)
-produced this warning:
+On 9/4/2025 2:54 PM, Sagi Shahar wrote:
+[...]
+> +
+> +void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm)
+> +{
+> +	struct td_boot_parameters *params =
+> +		addr_gpa2hva(vm, TD_BOOT_PARAMETERS_GPA);
+> +	uint32_t cr4;
+> +
+> +	TEST_ASSERT_EQ(vm->mode, VM_MODE_PXXV48_4K);
+> +
+> +	cr4 = kvm_get_default_cr4();
+> +
+> +	/* TDX spec 11.6.2: CR4 bit MCE is fixed to 1 */
+> +	cr4 |= X86_CR4_MCE;
+> +
+> +	/* Set this because UEFI also sets this up, to handle XMM exceptions */
 
-Documentation/hwmon/hwmon-kernel-api.rst:85: ERROR: Unknown target name: "d=
-evm". [docutils]
+I don't get it.
+Could you elaborate it a bit?
 
-Introduced by commit
-
-  c387594bb99b ("hwmon: Serialize accesses in hwmon core")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LJVXs/YUaU1Yqc7.062wghi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi+joUACgkQAVBC80lX
-0Gw1sggAjnpwGKk4G9O6Xb0ZL/tS7ecffJhGk2HDtvgDHyAF/Ne2KNB4MHhvjsMW
-3HOyFBoOY5XrG4tf5/U/exhxtJfpjlTYZ6vh8QBNE1+fguxEv0TGIcl4V0M7+Q9m
-GyfBxv3hR0I4HQ0lWA5iPCmwSrGLOqGyq3gCz+iswUjcCPo0mBY7n1OOait+/RJA
-56T/KM/hyfh8qsS/iBGckeSWyqNYxkzCin6DAqHyxpFxLZ0b+7/J9pLhIeVNYO5m
-Y1bJxlwDlEpdg2YQiRJXFnpx6kbJEcXZBqpgNYodxBcawE1FixBE8Dwj40kmYVki
-5aAl0IMKGFe++McfDj5ktYYKX00/RA==
-=E6HF
------END PGP SIGNATURE-----
-
---Sig_/LJVXs/YUaU1Yqc7.062wghi--
+> +	cr4 |= X86_CR4_OSXMMEXCPT;
+> +
+> +	/* TDX spec 11.6.2: CR4 bit VMXE and SMXE are fixed to 0 */
+> +	cr4 &= ~(X86_CR4_VMXE | X86_CR4_SMXE);
+> +
+> +	/* Set parameters! */
+> +	params->cr0 = kvm_get_default_cr0();
+> +	params->cr3 = vm->pgd;
+> +	params->cr4 = cr4;
+> +	params->idtr.base = vm->arch.idt;
+> +	params->idtr.limit = kvm_get_default_idt_limit();
+> +	params->gdtr.base = vm->arch.gdt;
+> +	params->gdtr.limit = kvm_get_default_gdt_limit();
+> +
+> +	TEST_ASSERT(params->cr0 != 0, "cr0 should not be 0");
+> +	TEST_ASSERT(params->cr3 != 0, "cr3 should not be 0");
+> +	TEST_ASSERT(params->cr4 != 0, "cr4 should not be 0");
+> +	TEST_ASSERT(params->gdtr.base != 0, "gdt base address should not be 0");
+> +	TEST_ASSERT(params->idtr.base != 0, "idt base address should not be 0");
+> +}
+> +
+[...]
 
