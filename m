@@ -1,118 +1,157 @@
-Return-Path: <linux-kernel+bounces-805562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8249B48A3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3BBB48A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3BD1188F19C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F613C4740
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6419F2F3639;
-	Mon,  8 Sep 2025 10:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C707B2FCBFC;
+	Mon,  8 Sep 2025 10:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szeDtN1H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZN6pjTBE"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25E22139C9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2492F99A3;
+	Mon,  8 Sep 2025 10:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757327703; cv=none; b=ld3IMood/o4ELP/B2DbS/wXwu4kecyn6gdYebTjzNPTyD6OfXLSTSwCjp84l3w+pN+mfvT/DZGLhReR2meJx/K/CFCapsPOFtfhaUWlI9kN5zmFWvGHvK5kgzdq+XTTE9t1H6MBjsphq0KiHZJe1uFcYYLTwhmjPgdZbVYq+llM=
+	t=1757327715; cv=none; b=nPoT29QMRQj6y+H/beRsngjUbSTR/oP5CHCfyh/B/48+uSWjq3Sodj1Y4RkuYEnQAFxOZrg2y4DE5FXgm9BwtdsyBUPsoRnPRYsia4MNTWVMjTBdkxlu8tq+WMWSXwHPEuKWu5B7/WeyHvC7qo0svwvnv2N3l/U/15IXK1/sN1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757327703; c=relaxed/simple;
-	bh=ezzayDxZ/eh5ilJqIeWgMDYws3Vth7AuzHHdrl/M/sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8fxpodsujngX5DHGwp/3eJw4Hni7S0XNK+8hI/IcmQYjduNDHPzyGXAWmoUdJzmOjIaWbqbNOiCzO2ejMJzxanSCYeu1ayECYQzTUXA3fwEJc3aL59Z35wmdGIOpowZOBgPAn50Ytw47Wq2gniQbMH95OREvCFV3av/2TXaNpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szeDtN1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7473C4CEF1;
-	Mon,  8 Sep 2025 10:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757327702;
-	bh=ezzayDxZ/eh5ilJqIeWgMDYws3Vth7AuzHHdrl/M/sY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=szeDtN1Hy2mboR7182GvWrEih1Lqvgrh7pESUmR/yxOa4iGH7GLgRDPaODJaaE42E
-	 Q+mUqvDPSjsg56jvX+7rgJ1+wuPyUugI4QU/jpJZlt8NSRls1xYbHigLf8KA27pGV+
-	 LiE1RsPffr5SnYhj3RJQ8MfSiAYdO3wvehZpTQO0AoNc+ro1RudQcLbP8Uiik3qY4D
-	 UEl+ngboJUpZcyvGg3dJ9kw0qNnqJsNzQejNlMtzWf9q2PGHr/0aoS2I29IdueHFZe
-	 MpfEcwSK+HrwPgxcHuYeJBngcROm/G86N0o3yCi9jpH9ZwG3tQ8HANOL+ZWT3ymxVt
-	 cEb+lKQGlJtxg==
-Date: Mon, 8 Sep 2025 13:34:56 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] kho: add support for preserving vmalloc
- allocations
-Message-ID: <aL6xUMlRFSYm41uS@kernel.org>
-References: <20250907070022.2177974-1-rppt@kernel.org>
+	s=arc-20240116; t=1757327715; c=relaxed/simple;
+	bh=BmVD7QgfOTrfaLNX9a19UJnOQJln7DMGiCLlEQdlL9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iKUnvzNj6t5NMhf5fsIy7q6Kxq/GUfGG8RkHNyZ/JFiUnWuxBQdrrTTTSSWeRfa76szfjit6YGaDIO8IlbqXvATo7ObD6Jc6SOsBWXE4PYOkyFE6jv3AIy5GbLB4fJQCopZd9+Y2pgHJ4FP1FPmeLjKpXpRyKFgc4t05o8IIdZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZN6pjTBE; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4c6fee41c9so3246713a12.1;
+        Mon, 08 Sep 2025 03:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757327713; x=1757932513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cxTumnJifkgJPif7PVPxOq7jYsk5ivTAe0dBYkW3OnI=;
+        b=ZN6pjTBE4t+jnmO7FF3D7fQdcGALqhBMWMfGOCXoCZC4gPQxqUhLh0j4n9aCn1LoIv
+         cTbJYkZdU+04PUWBbLNgWUzVEtMDwACg8bzVzZiaLn7cQWMOylaVusDliDK9m97OPJ7B
+         Nvf/XM13Ksma96KBOQHJrkEMvWholtJB/c78WCzvDvw8bXwFWG+PSkZFOco4vZMBTwdI
+         MsZzp1+C21NBVJFLJ3Ao0HChgSsGj172Sqh1WgDzZGN6KDnjQ3WEyX5ekZpKB1cUKdy5
+         ppnv01g4nsCZdv4l46Rn7c+vVyiLoLarvwoxjpAkZKwj7/o8LPY7TCfoWlORLE9U695L
+         ilpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757327713; x=1757932513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cxTumnJifkgJPif7PVPxOq7jYsk5ivTAe0dBYkW3OnI=;
+        b=nO2MFfj93mAzym/MtW0nufuLbANYcInpOx/2fMau5y60j6wrRwJ8Id0oXK5pxNeiCS
+         0cw8hV7FXpT0pQKhsa6xpYV1JHIf4423hY+v4q3RrkHaNorHjGgregc2+6GSD+B3yDvx
+         mS6/NUf9l9WrAjul0QIdErLTWdrmNiBaGF1XRpVCoLSpLXl649C4Qwnr8QnJ7RjbUpAZ
+         /pIXUx9t53namFj0QiS+MqWPmyyPBwc6ZToXicURDiouE04c5P2jD9yO07b2HUc6/Z2Y
+         SDub1LfupN+WcOEukW/5IKtkW3mmQ6u+1AQ4M6OYFiyhObmy6yY2bUYO01Y+sIWsuMEq
+         Sc3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhVVIKbY1Vi2rOCbmw5nhRlJPaGEZkV8qzCKnPuMrfjjxcoDs1nsA1DWgFsa9nMa/FnTqzkaD+vtaL@vger.kernel.org, AJvYcCUsn3LPR7vDqSWVLTdIxQ2IlY/rKwLZcW0/rt5CdQeo9ScKEfOAxExiSOpanJVhzs5qPVtBw5E0@vger.kernel.org, AJvYcCV/JTV4do8kuyB05YWbEVNp9qV8D9WFFfgwakqPzekZz1XTohT0TXKIaWBO1ChCzaWPUCFkcTzSROHsCN7H@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9e3r/8d8hPd9m/YBWN0N8bE2sGgnMFJvldTscnnZ55HNebXEh
+	IXjmhPczN/DZsE8BgyqvRdhVsN7BlTneJPZLNq0ZtTbk6/r4Fx3tEkGlK7y85NStg4kHeqFolWr
+	307r8kXAvmwRyirBvD7BRwPqh7REewdmCh1Qf
+X-Gm-Gg: ASbGncvSgQrRLSu4L2Qs51jii6yqhLii7zLNglotMn6gqNjlhO5FYtVa3z/SjNy0yLs
+	s5thyFgaQy0U81pqN0M9C+CLEE9LQR+B/VhroHfUKUbcKzmDXR2UwxAkXhVTRElGzhAp2Y6zT03
+	NmPWvN0mZDO6uJsV+rWGPTdbfLYUYjtb5lqp1eoXwYDoQvkcDVHmEbrnPcqlJoIjcDC6xnEq495
+	ioz5fU=
+X-Google-Smtp-Source: AGHT+IHXwJt48TDntK7/dCdj92RM0HKdEkW0OokMFMRElaK12ng3FfBDWu6bqf5x/X3vMFfaoOizFjTHychWtuxyZCY=
+X-Received: by 2002:a17:903:2450:b0:246:a543:199 with SMTP id
+ d9443c01a7336-25173301e63mr112072155ad.54.1757327712942; Mon, 08 Sep 2025
+ 03:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250907070022.2177974-1-rppt@kernel.org>
+References: <20250828111552.686973-1-max.kellermann@ionos.com>
+In-Reply-To: <20250828111552.686973-1-max.kellermann@ionos.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 8 Sep 2025 12:35:01 +0200
+X-Gm-Features: Ac12FXwNJ0Ml2g9M4GdnARoDd-tEu5GevYJx9y9IgKfVsaczWvQRN8fh3JOEpSA
+Message-ID: <CAOi1vP-p9GbzMHNRUa+vyC16w1zaFkfkZY7KX83217=o1qNg_g@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/addr: fix crash after fscrypt_encrypt_pagecache_blocks()
+ error
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Slava.Dubeyko@ibm.com, xiubli@redhat.com, amarkuze@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, brauner@kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Argh, I've messed up the posting :(
-Sorry for the noise.
+On Thu, Aug 28, 2025 at 1:16=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
+> The function move_dirty_folio_in_page_array() was created by commit
+> ce80b76dd327 ("ceph: introduce ceph_process_folio_batch() method") by
+> moving code from ceph_writepages_start() to this function.
+>
+> This new function is supposed to return an error code which is checked
+> by the caller (now ceph_process_folio_batch()), and on error, the
+> caller invokes redirty_page_for_writepage() and then breaks from the
+> loop.
+>
+> However, the refactoring commit has gone wrong, and it by accident, it
+> always returns 0 (=3D success) because it first NULLs the pointer and
+> then returns PTR_ERR(NULL) which is always 0.  This means errors are
+> silently ignored, leaving NULL entries in the page array, which may
+> later crash the kernel.
+>
+> The simple solution is to call PTR_ERR() before clearing the pointer.
+>
+> Fixes: ce80b76dd327 ("ceph: introduce ceph_process_folio_batch() method")
+> Link: https://lore.kernel.org/ceph-devel/aK4v548CId5GIKG1@swift.blarg.de/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  fs/ceph/addr.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 8b202d789e93..e3e0d477f3f7 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1264,7 +1264,9 @@ static inline int move_dirty_folio_in_page_array(st=
+ruct address_space *mapping,
+>                                                                 0,
+>                                                                 gfp_flags=
+);
+>                 if (IS_ERR(pages[index])) {
+> -                       if (PTR_ERR(pages[index]) =3D=3D -EINVAL) {
+> +                       int err =3D PTR_ERR(pages[index]);
+> +
+> +                       if (err =3D=3D -EINVAL) {
+>                                 pr_err_client(cl, "inode->i_blkbits=3D%hh=
+u\n",
+>                                                 inode->i_blkbits);
+>                         }
+> @@ -1273,7 +1275,7 @@ static inline int move_dirty_folio_in_page_array(st=
+ruct address_space *mapping,
+>                         BUG_ON(ceph_wbc->locked_pages =3D=3D 0);
+>
+>                         pages[index] =3D NULL;
+> -                       return PTR_ERR(pages[index]);
+> +                       return err;
+>                 }
+>         } else {
+>                 pages[index] =3D &folio->page;
+> --
+> 2.47.2
+>
 
-On Sun, Sep 07, 2025 at 10:00:17AM +0300, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Hi,
-> 
-> Following the discussion about preservation of memfd with LUO [1] these
-> patches add support for preserving vmalloc allocations.
-> 
-> Any KHO uses case presumes that there's a data structure that lists
-> physical addresses of preserved folios (and potentially some additional
-> metadata). Allowing vmalloc preservations with KHO allows scalable
-> preservation of such data structures.
-> 
-> For instance, instead of allocating array describing preserved folios in
-> the fdt, memfd preservation can use vmalloc:
-> 
->         preserved_folios = vmalloc_array(nr_folios, sizeof(*preserved_folios));
->         memfd_luo_preserve_folios(preserved_folios, folios, nr_folios);
->         kho_preserve_vmalloc(preserved_folios, &folios_info);
-> 
-> [1] https://lore.kernel.org/all/20250807014442.3829950-30-pasha.tatashin@soleen.com
-> 
-> v2 changes:
-> * support preservation of vmalloc backed by large pages
-> * add check for supported vmalloc flags and preserve the flags to be
->   able to identify incompatible preservations
-> * don't use kho_preserve_phys()
-> * add kernel-doc
-> 
-> v1: https://lore.kernel.org/all/20250903063018.3346652-1-rppt@kernel.org
-> 
-> Mike Rapoport (Microsoft) (2):
->   kho: add support for preserving vmalloc allocations
->   lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
-> 
->  include/linux/kexec_handover.h |  12 ++
->  kernel/kexec_handover.c        | 200 +++++++++++++++++++++++++++++++++
->  lib/test_kho.c                 |  30 +++--
->  3 files changed, 235 insertions(+), 7 deletions(-)
-> 
-> 
-> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> -- 
-> 2.50.1
-> 
+Queued up for 6.17-rc6.
 
--- 
-Sincerely yours,
-Mike.
+Thanks,
+
+                Ilya
 
