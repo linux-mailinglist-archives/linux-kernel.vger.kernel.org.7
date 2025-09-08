@@ -1,233 +1,226 @@
-Return-Path: <linux-kernel+bounces-806710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D27B49AD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:17:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA06B49AD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9828B207EE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9D1207EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DA42D9EC8;
-	Mon,  8 Sep 2025 20:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBE2D9ECD;
+	Mon,  8 Sep 2025 20:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gsu8tWZi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rIjBqD3W"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2043.outbound.protection.outlook.com [40.107.92.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFE226CE07
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362650; cv=none; b=oRMdU1M3jX4avoWSlr6UHwdGT3Esu94mRYP1/G+c1zop4QPD1L2TwQ/VJKYBUT2ap5EBmtCxgFcGrMgSO4qwnQP89zODv0KtCGoCIwGlZW9YtnitG0erFTZa56K1slDbgB+rshdmpBVo4mWvfe2XN0Pp+xsXUSyE1sPUeWc2pSc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362650; c=relaxed/simple;
-	bh=xrsYMX1yBTF+4DH2REGWKM+6iZ9nTT2FnywHIBJ9IfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/vQ6jjIAl042zd6cQbn6veenqxnlXe9KbfBkWdr/FO6ZQ7vA2ZXYy4CghwWRAaXMbMZiz2c/lmrXzqRCtztzH6pZlzF+jQ+S1QKI0+5kZaQ55VBZUEyWQVM+Gj7GGqAgxdxdhYuSPp55ddai59rbHxCOCp+0P4sj84cf3iLO2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gsu8tWZi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757362647;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uIdc2B3/3kj+ymcwj5i/pUFxxLC6d1gkotCHsH6YjzU=;
-	b=gsu8tWZiteZZXWX3NRkAEnGaKOQJ4OL48JTLaKj8TbYPiBlJ29RZ2E91DgysYvFAgbT3mF
-	pxmiIm3cyVc9tVFYNeaT3HlMKJIljk/37XkeaUvWIn+eWYGFIGDK5K8/mhi4a+1sbVTrLi
-	i7F5GcNodatOkY+j/wR5KRDDjE8sjS8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-19-anpeJ623PL-_cQZKnQyqCw-1; Mon, 08 Sep 2025 16:17:26 -0400
-X-MC-Unique: anpeJ623PL-_cQZKnQyqCw-1
-X-Mimecast-MFC-AGG-ID: anpeJ623PL-_cQZKnQyqCw_1757362645
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so26166595e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:17:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757362645; x=1757967445;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uIdc2B3/3kj+ymcwj5i/pUFxxLC6d1gkotCHsH6YjzU=;
-        b=rYAhM07y0+2Zc298Lzk01qmo2E+/myjePmQ7XRlmIVTjbBDnTlEgI2Wp5K0AGDkOo4
-         TJBrHTgXybfDmyskHc9CTGfIMqhOKFHe2h/eGacHWPBp/5M4dZ/ebNFI9prI0+EAx91v
-         tGTO3TQKc89e96AL9yeyle4XGkpDTifRHoU6VmJGugz948ETJmJsH0ldfZ8BWpJ+/jOC
-         +1RakOZXHQ2SlZmNZgnPNS7ndtBYFRwJJ0ofBav1SLe3DBWDIXfaDwmasIgDOXOJntgG
-         ExE7Nvn6KOcXdESdB/3hWYSHmcGaiKHUuILpCXky0ICJdnvReWknL45M3O8/bxAyITpt
-         paaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv5qbk6LXeOJO8I8H9h0vKDa2rphSG5eMyaNo6wQ6Ta4Fx0vAN2ehGySBVvwZYJwA9klnRu/3Z40XlO44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBOLkCn6XmqwSbbBtOfkuOmAQm/zH+Ffst/iQsJL0ShS/pbyjM
-	mATzrBh9/fA/0YHL5ZyQgbkVGc08Nf3904jdmj3q3z9lL8NOEG8inXztIutZs+Lk0f0MA3ckzji
-	9jW/SN8//uVs2rDMQCbj3Ne96w7hcUWEnf6MR8r61dz8XMkkyQPH8yUeJ0pNEpffJrQ==
-X-Gm-Gg: ASbGncuWf/Kvao7lhQgJpRhnqLrf4gOEA6yI6aDD5jOQUrWDIFF4RResYtnsR0jX5FL
-	Cfst32np1yDpuans2H2QcrmqoqYN6c7/uSkSqdf7FifRtE9r65T59Egz1SmcgKbfjA+vO0IH1MY
-	7m4bnmyEwR8XlnGUBs7UrFFlZx0dBxnyz35IQwAmLDkh53DpeO7uPghSPPiPP6Z/n+TbIOJMUsH
-	pXlAtAeMY8YnHLDXPqutY/RvW73ElYkwTj75MZ5Ra//a3eXA8cZB9FZ7PQk7uqi+TI/wpZJiji0
-	gGyl9f23oYdFAIU3Wi9zBcxOCgLx2aA2J2X7QonL4fiXxO5JU0udQQ5txdRaOVmzEV/bwmk=
-X-Received: by 2002:a05:600c:1c04:b0:45d:db2a:ce37 with SMTP id 5b1f17b1804b1-45dec615a1bmr11841685e9.0.1757362644763;
-        Mon, 08 Sep 2025 13:17:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7VTWXL8MTAyDz7RkkeZe8eMmnkRUN5PlJ90kWk1wvnC5CLCcvu1WLdP9XdvnFdls022qPbA==
-X-Received: by 2002:a05:600c:1c04:b0:45d:db2a:ce37 with SMTP id 5b1f17b1804b1-45dec615a1bmr11841315e9.0.1757362644276;
-        Mon, 08 Sep 2025 13:17:24 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1ae98.dip0.t-ipconnect.de. [87.161.174.152])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45decf817efsm6223815e9.18.2025.09.08.13.17.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 13:17:23 -0700 (PDT)
-Message-ID: <919ab2ee-6493-4415-a75b-e1a2b08c0d3e@redhat.com>
-Date: Mon, 8 Sep 2025 22:17:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A6926CE07;
+	Mon,  8 Sep 2025 20:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362708; cv=fail; b=boorwm7zDqoH/cDcHA/o157QQoOV8PHl7QIMRrvb1IXmgZ7Nhn+vY5JR55Nmf/YexK+deGkN66jxa0VNzHDvmfx/rAbWSPlrLE+bKHv2FmmXZiuXDywnPSci7vCnf05Cn0eW85wB599vAjopa+QbRg9HlbNy1DVIEbj+Ptdg0pk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362708; c=relaxed/simple;
+	bh=b06TgVahoNdIrCpukOGVEvs5lMH0WWbMMkeb8wp/JrE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YHKwEoWqKzf87Zp90VZCXmcZvbcIz8AphCnCxbGYFlYspja5dQd8bGmzUCfgB3YNtKMccBOjJc0IbkUIPiF/NAas6BxEzuXFa2JyQdQZk8VrtMgv9oflMrTWmbxl+PqfkoPRNAzGjB73ouuDbsVQrGWBuPCe3eXJKT/mo/e+dxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rIjBqD3W; arc=fail smtp.client-ip=40.107.92.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GThrJ8Fmgz3XO7iaW3KgUDc1UAc3Rmfezo+Ds58KMPX8Tgr7WJWc0oj9CHZ4MCHcbSVnGXir8ZohfLTMedJFxiHdqqIQF/RwWVX5jv44+Tx+J7exwDc8J+VLeLq+1jDkp2GEkC3AR7qPGy8xTFLOHD7wXs3vtqKENCRLuo0HR3lVG2BWEB/aQurdn5iavnq88ja7E8bFKtHUxRWbaIxfhGO1+xfyZQSFzYFu2ejDqwN/ikyj+/FRQmp+amEdpLNULFI3lmKoO26K1z0iOw+Ev+GHoHC4EkZOfELy+amufARN85hpO4yGgcsYuEPRGMoWibte15aTbhFXxAnWhXUnUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6DWefOvmB68bvnzzG7KNwlBAl6aFzd6dOnVNg9kxwVk=;
+ b=oQo77w8I3yn44LdbpRPJXw5snwf2/PyS2NHpJwQAD646FL6OWZgpHfZ3HL88lFSfR9OdQ7qqopdDToX0a10GY08oOAFRHWAWNckJOwEAHRKRCgMSnxgPEn2LWKvjFPTdNE1tm3U8kxEL3AHaWGpfHnv9SN9ckU2UXHKLCx+L8b1iYgITrZR/r8WP81G+yT3Rto3icLg7cO3GAdbj+udlsY7hcu14Ut39OGRux9DD68JSPCHdXg9gZHajecWI6xABL3lGo4TQkNHzeQLDJbFFO5pPafa4AloVvnzHhNWguaj8U33HYGby/DTsvCAw9v7dsn8ny1gpmJ9DcWECWTXbTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6DWefOvmB68bvnzzG7KNwlBAl6aFzd6dOnVNg9kxwVk=;
+ b=rIjBqD3WGku9aiBQzyBIMSVbB7jWKpCYjp7sEX0pQ0OywqeeK24aceWx7NCFFVQXtU+IYBfOohAd2sIr2G5NIo1r4+vBSyAo0I41SXAsChzQlRPrMRSwAPuUh6T4Lt8pxi/C7cfDXi2QfiGzrJhKG3biivxMkHyoHnj69MS5tBU=
+Received: from SA9P221CA0012.NAMP221.PROD.OUTLOOK.COM (2603:10b6:806:25::17)
+ by SJ2PR12MB9114.namprd12.prod.outlook.com (2603:10b6:a03:567::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 20:18:21 +0000
+Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
+ (2603:10b6:806:25:cafe::dc) by SA9P221CA0012.outlook.office365.com
+ (2603:10b6:806:25::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.21 via Frontend Transport; Mon,
+ 8 Sep 2025 20:18:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 20:18:21 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 13:18:10 -0700
+From: John Allen <john.allen@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>
+CC: <rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
+	<weijiang.yang@intel.com>, <chao.gao@intel.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <mingo@redhat.com>,
+	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, John Allen
+	<john.allen@amd.com>
+Subject: [PATCH v4 0/5] Enable Shadow Stack Virtualization for SVM 
+Date: Mon, 8 Sep 2025 20:17:45 +0000
+Message-ID: <20250908201750.98824-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] mm/gup: check ref_count instead of lru before
- migration
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will@kernel.org>,
- Shivank Garg <shivankg@amd.com>, Matthew Wilcox <willy@infradead.org>,
- Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Alexander Krabler <Alexander.Krabler@kuka.com>, Ge Yang
- <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>,
- Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Konstantin Khlebnikov <koct9i@gmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
- <47c51c9a-140f-1ea1-b692-c4bae5d1fa58@google.com>
- <e54b1d8c-ad63-4c7a-8b1b-b7c3d76446f2@redhat.com>
- <b008aef2-f69f-e2fb-d4d7-71a42d308529@google.com>
- <1f714ba0-cdda-4122-b6a1-e1e0ea44b1f2@redhat.com>
- <d5333648-7b88-9293-dc1f-e080dff65d1a@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d5333648-7b88-9293-dc1f-e080dff65d1a@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|SJ2PR12MB9114:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b8d1ede-68c0-45b4-ee6c-08ddef14db29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6KvWY+dC6Yu4aOlMtWnbz9gLtLG61KoFiZxeZUC3oUvVlxEkJP1T3GvSI3na?=
+ =?us-ascii?Q?LFj8ZY60Huz5mh8m7oO9cQAfBg+O1N2pS0UBX4mPERhQzv1r5WPBMsVtrlW0?=
+ =?us-ascii?Q?APT1EWRNREN4TrnDyY2EQ1puEo2yCRpDe4avKyFBQPcS5XiCCO7uCUUDopFz?=
+ =?us-ascii?Q?bW8HOupfdfecGJrV953+nxGBPX69yg0Eti6cSedaLwkfLwCx0wTU/og21hmy?=
+ =?us-ascii?Q?1h6VwS/WIpLswA0rj70kQligKe0dSvquHgk5SQxDZyQVmHjpG/QdtI8SKkJy?=
+ =?us-ascii?Q?6ppSP4S6q0PjSHT+GwfUIMGV3dItbbG9wYHaT/r2IWbwdgpeslvRpacctr8b?=
+ =?us-ascii?Q?C37WixC1wrVtNfloz7z34VfUruRuxgRsah/Yr8nU+WNcW+C4o2OgYmYqghdh?=
+ =?us-ascii?Q?lJkF6KCfa5f5OgFc0iJXhnKI9fchEd3ZsFkhTDfTcQawFvTpbY28x6YKYGFH?=
+ =?us-ascii?Q?TZFx5nSEzozZN0UO1RNhTQ2m5b4qNKu0DdES+zj4x3zkJhSI4AEm3PJXHaL2?=
+ =?us-ascii?Q?u0z55fxw+x02w99aAGznUrmh0RLN6FERYytBtHMP6K5iNH9erJx14sMHc8X7?=
+ =?us-ascii?Q?L1FtHb9HTf2di1ORkzQpxrf1pXkqnYXRPJhoUz+36tXSfTfcC8vT91c09MZz?=
+ =?us-ascii?Q?4PrQMVReRYPjgMNrTv3QwKeZAk3zaSNbSk+vrkCqC2h9FMLwOWTDfmjC/xHc?=
+ =?us-ascii?Q?Ux0EnMdMGPeYk22oq/2HWIjStUhwMdLmqe++Fqvzo7fE/0weHwBC2IPs4Z6/?=
+ =?us-ascii?Q?2rYhWlgIL2MepOzrUeou4+GS4RoQt3MNDtFT81s4Fik43Rt5OAvrTFmt5QFG?=
+ =?us-ascii?Q?c4JJhceFwL16fvHxduaUg9MeWFJXEN/sSOew/d544T+1v8NFkhaZimKqGap5?=
+ =?us-ascii?Q?9B/LmvSgaJ4vbLnJ0WzhXJt3NzkjHpqfUoETwyjOEhvUt5Nd7AoBnzJ1Q8AL?=
+ =?us-ascii?Q?050FlSHo/Y7lPfFv8VJhvxyWfqEeI7Xp/bT8c2fxaRAZgKP48rQWFH7xNZy+?=
+ =?us-ascii?Q?Ut+byInHflZVOwx4hgyB50+TGu2gI20wULTFhV72sTIas9FUTUJihhqs1lAh?=
+ =?us-ascii?Q?b4IVKFjDIKI1DdtYCMd6YOGkNrULmW7s9w1JY8YxzP3dmJcyFREtF1KbYuil?=
+ =?us-ascii?Q?U8yuXm5/GPlaqBZEFpYvMcyLspj/RX1NcMBrttBoyMgaBwQ4l8rFss9rH6rY?=
+ =?us-ascii?Q?MBWIVuIjX4BLfoZ44kP8gPIvoJSxtwEOFj62u48qfM1q7tL5T379iFCAYv1t?=
+ =?us-ascii?Q?MO8y/ePbFPfB9IqnRcRmTAMgFApNLOOa15Z7GuyBhUAQuK7HqQ9+elOiR1HD?=
+ =?us-ascii?Q?27lZlfuR9+G7rLQoAaavu6OhPEeEaMyFpUhY6vu1N/PtN3j2xQcgB071pfl+?=
+ =?us-ascii?Q?3rUAn2Ca0a2hYkZrsFZTWI/wjc3qZHiSCZthyJEwGZJOOHQ3su49h/QIe4nO?=
+ =?us-ascii?Q?2+2ZKdPjMw2Zt6ztqErF4yBSrIyHJi5xxVtB6LofQT8DQsmRgCW9XXw+mG1n?=
+ =?us-ascii?Q?x4YzgOn1T88UtjOT9iLcY7T8aqS85pKtlN89P/1bXHDOHsK3U+uXqHs8wA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:18:21.1073
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b8d1ede-68c0-45b4-ee6c-08ddef14db29
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9114
 
-On 08.09.25 21:57, Hugh Dickins wrote:
-> On Mon, 8 Sep 2025, David Hildenbrand wrote:
->> On 08.09.25 12:40, Hugh Dickins wrote:
->>> On Mon, 1 Sep 2025, David Hildenbrand wrote:
->>>> On 31.08.25 11:05, Hugh Dickins wrote:
->>>>> diff --git a/mm/gup.c b/mm/gup.c
->>>>> index adffe663594d..82aec6443c0a 100644
->>>>> --- a/mm/gup.c
->>>>> +++ b/mm/gup.c
->>>>> @@ -2307,7 +2307,8 @@ static unsigned long
->>>>> collect_longterm_unpinnable_folios(
->>>>>       	continue;
->>>>>       }
->>>>>     -		if (!folio_test_lru(folio) && drain_allow) {
->>>>> +		if (drain_allow && folio_ref_count(folio) !=
->>>>> +				   folio_expected_ref_count(folio) + 1) {
->>>>>        lru_add_drain_all();
->>>>>        drain_allow = false;
->>>>>       }
->>>>
->>>> In general, to the fix idea
->>>>
->>>>   Acked-by: David Hildenbrand <david@redhat.com>
->>>
->>> Thanks, but I'd better not assume that in v2, even though code the same.
->>> Will depend on how you feel about added paragraph in v2 commit message.
->>>
->>>>
->>>> But as raised in reply to patch #1, we have to be a bit careful about
->>>> including private_2 in folio_expected_ref_count() at this point.
->>>>
->>>> If we cannot include it in folio_expected_ref_count(), it's all going to be
->>>> a
->>>> mess until PG_private_2 is removed for good.
->>>>
->>>> So that part still needs to be figured out.
->>>
->>> Here's that added paragraph:
->>>
->>> Note on PG_private_2: ceph and nfs are still using the deprecated
->>> PG_private_2 flag, with the aid of netfs and filemap support functions.
->>> Although it is consistently matched by an increment of folio ref_count,
->>> folio_expected_ref_count() intentionally does not recognize it, and ceph
->>> folio migration currently depends on that for PG_private_2 folios to be
->>> rejected.  New references to the deprecated flag are discouraged, so do
->>> not add it into the collect_longterm_unpinnable_folios() calculation:
->>> but longterm pinning of transiently PG_private_2 ceph and nfs folios
->>> (an uncommon case) may invoke a redundant lru_add_drain_all().
->>
->> Would we also loop forever trying to migrate these folios if they reside on
->> ZONE_MOVABLE? I would assume that is already the case, that migration will
->> always fail due to the raised reference.
-> 
-> Loop around forever?  That would be unfortunate (but I presume killable).
-> But when I looked, it appeared that any failure of migrate_pages() there
-> gets reported as -ENOMEM, which would end up as an OOM?  But you know
-> mm/gup.c very much better than I do.
+AMD Zen3 and newer processors support shadow stack, a feature designed
+to protect against ROP (return-oriented programming) attacks in which an
+attacker manipulates return addresses on the call stack in order to
+execute arbitrary code. To prevent this, shadow stacks can be allocated
+that are only used by control transfer and return instructions. When a
+CALL instruction is issued, it writes the return address to both the
+program stack and the shadow stack. When the subsequent RET instruction
+is issued, it pops the return address from both stacks and compares
+them. If the addresses don't match, a control-protection exception is
+raised.
 
-Yes, like I expected, we just bail out. __gup_longterm_locked() will not 
-retry in that case. It's interesting that any migration failure is 
-treated as -ENOMEM, but well, that's certainly material for a completely 
-different discussion.
+Shadow stack and a related feature, Indirect Branch Tracking (IBT), are
+collectively referred to as Control-flow Enforcement Technology (CET).
+However, current AMD processors only support shadow stack and not IBT.
 
-Thanks Hugh!
+This series adds support for shadow stack in SVM guests and builds upon
+the support added in the CET guest support patch series [1]. Additional
+patches are required to support shadow stack enabled guests in qemu [2].
+
+[1]: CET guest support patches (v13)
+https://lore.kernel.org/all/20250821133132.72322-1-chao.gao@intel.com/
+
+[2]: CET qemu patches
+https://lore.kernel.org/all/20230720111445.99509-1-weijiang.yang@intel.com/
+
+[3]:  Previous SVM support patches (v3)
+https://lore.kernel.org/all/20250806204510.59083-1-john.allen@amd.com/
+
+---
+
+RFC v2:
+  - Rebased on v3 of the Intel CET virtualization series, dropping the
+    patch that moved cet_is_msr_accessible to common code as that has
+    been pulled into the Intel series.
+  - Minor change removing curly brackets around if statement introduced
+    in patch 6/6.
+RFC v3:
+  - Rebased on v5 of the Intel CET virtualization series.
+  - Add patch changing the name of vmplX_ssp SEV-ES save area fields to
+    plX_ssp.
+  - Merge this series intended for KVM with the separate guest kernel
+    patch (now patch 7/8).
+  - Update MSR passthrough code to conditionally pass through shadow
+    stack MSRS based on both host and guest support.
+  - Don't save PL0_SSP, PL1_SSP, and PL2_SSP MSRs on SEV-ES VMRUN as
+    these are currently unused.
+v1:
+  - Remove RFC tag from series
+  - Rebase on v6 of the Intel CET virtualization series
+  - Use KVM-governed feature to track SHSTK for SVM
+v2:
+  - Add new patch renaming boot_*msr to raw_*msr. Utilize raw_rdmsr when
+    reading XSS on SEV-ES cpuid instructions.
+  - Omit unnecessary patch for saving shadow stack msrs on SEV-ES VMRUN
+  - Omit passing through of XSS for SEV-ES as support has already been
+    properly implemented in a26b7cd22546 ("KVM: SEV: Do not intercept
+    accesses to MSR_IA32_XSS for SEV-ES guests") 
+v3:
+  - Rebased on v11 of the Intel CET Virtualization series.
+  - Split guest kernel patches into a separate series as these are
+    independent of this series and are needed to support non-KVM
+    hypervisors.
+v4:
+  - Rebased on v13 of the Intel CET Virtualization series.
+  - Add SEV-ES save area fields to dump_vmcb.
+  - Don't pass through MSR_IA32_INT_SSP_TAB.
+  - Don't remove clearing of IBT capability.
+
+John Allen (5):
+  KVM: x86: SVM: Emulate reads and writes to shadow stack MSRs
+  KVM: x86: SVM: Update dump_vmcb with shadow stack save area additions
+  KVM: x86: SVM: Pass through shadow stack MSRs
+  KVM: SVM: Add MSR_IA32_XSS to the GHCB for hypervisor kernel
+  KVM: SVM: Enable shadow stack virtualization for SVM
+
+ arch/x86/kvm/svm/sev.c |  5 +++++
+ arch/x86/kvm/svm/svm.c | 43 +++++++++++++++++++++++++++++++++++++++---
+ arch/x86/kvm/svm/svm.h |  1 +
+ 3 files changed, 46 insertions(+), 3 deletions(-)
 
 -- 
-Cheers
-
-David / dhildenb
+2.47.3
 
 
