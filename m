@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-806695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122C4B49AAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:07:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AF8B49AAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21964E1BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:07:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7702060B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4212D7DD4;
-	Mon,  8 Sep 2025 20:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637662D7DE9;
+	Mon,  8 Sep 2025 20:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kaxq5pcp"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BHl1k5w/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41C219A86;
-	Mon,  8 Sep 2025 20:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278722D59FA;
+	Mon,  8 Sep 2025 20:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362035; cv=none; b=vDwIGjP2c72aiZmJEAA7WLJLaYhbgPnVdM+NtXf60/r4N+wvsw4+OxLZzgba1jyudK5p5sv0f1/EluC04mLdF0wti5H3l7WRuvhtSxT0P8qorP2HeW6Emt+5zGVltT5jQUDft99TRfjlM/CoYhUzyu6crZTwp7QgOnWDiE0ga88=
+	t=1757362065; cv=none; b=oeamte24X/2w6iuqlODlfcFZpcfmpybW9GvmFy+iNSI2/DX6c/dQeYLDXS8/RnSEfPo9sJlBvpeE7ziDrK54JGiIpH8mE6AmObFriaB3sd/pDSjwsMkJXKEHei2k9Og6eumFSr4n6TDz8Tkvb7pIIqbhNFH9injTPwVWZstXWtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362035; c=relaxed/simple;
-	bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7i4nfVICqgUJIudW1zJtFqs5LiNdhimtshGgkNBs+IBu1OCNtVb4uUutReCZ8giBDMxZc2fTJ0xxPWDE+gh4aL3WqqSijvoWdjVSNH572C825nUmZEijzA6ALDR+afJN7m44Ubmw1CRSkO/UPRrb29JS6k0BJ+9+Fu/AOBfDuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kaxq5pcp; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757362035; x=1788898035;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
-  b=kaxq5pcpCug2K8NkfBFZe0rqgNJY8RQU2vXA29a172zw1nyv54tesbn7
-   LlCguINCf/b0F3B4S1ymznq2xDU3PMytvizKzsH1JPEOQqzDmYpGz5C1z
-   FiGlRkWHm07+zLOqZ8ZU3tP+juckoN3m5UgCVmU358ouCb31/PrxXPDjZ
-   mCSpysqnUBkLbJaJ8TH4skphrnH990yigMX8UkejcV/uhZlscpdfN66/V
-   mPwTM4mHXPGqeNS5TBGesmGWjAvLSR7KXHEUBaBr7UbSy22NlHm6UwI1a
-   azfAqiukbPcfhsEnmqDdC+LWGcOCxmcRR1ALqJacwVQKeKLdpjSDN8DxQ
-   Q==;
-X-CSE-ConnectionGUID: EMpCwBz3Ssqhzk3id+g8NQ==
-X-CSE-MsgGUID: Z2lHKD+gRSG+WU2V/cbPIA==
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="277602015"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Sep 2025 13:07:08 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 8 Sep 2025 13:06:37 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 8 Sep 2025 13:06:37 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH] clk: at91: clk-master: Add check for divide by 3
-Date: Mon, 8 Sep 2025 13:07:17 -0700
-Message-ID: <20250908200725.75364-1-Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757362065; c=relaxed/simple;
+	bh=LeZJP+pU9gKNfJpiPKIUW2+w0mvYsmt/t2VSk2lm2sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGcyCokekN2kcSmEc5JLks1aFW/4DvwGA3jp6UOWGe7uCoSjK5jlCY032ckmcz1hwhKO64Z7JHPM8S2/h2XJGuY/UQFlIuJdFPeaawGUAD50k702+arAMauSudA3SeDd1/vMsuzUrB9CmJKhmBp+3MCYj7G+P++1rt9BjzMSyGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BHl1k5w/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=w1EwyTie/h44Yv/fBjzwXChmTw4VRBobXct3dwrWQS4=; b=BHl1k5w/fsuK6Mj33b29YF4MIw
+	eA1CdklxrPNPohLDsJNrwVCyvYiOGdUefvcSJaltG3XQdjFwwLrye4/96faDnNb+OvaQncNEehOXE
+	ffqq3hE9ySuCYsdNheSOwmCJ3V0O04HYoBIw4O86rpReEGHhVUlBJI3xmtrcRfXESDvQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uvi9E-007iQO-Dl; Mon, 08 Sep 2025 22:07:32 +0200
+Date: Mon, 8 Sep 2025 22:07:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
+Message-ID: <f271a9bf-e6c2-45ca-afc7-7f6ac683572a@lunn.ch>
+References: <20250908113723.31559-1-ansuelsmth@gmail.com>
+ <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
+ <68bf16e5.df0a0220.2e182c.b822@mx.google.com>
+ <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+ <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Mon, Sep 08, 2025 at 09:14:49PM +0200, Christian Marangi wrote:
+> On Mon, Sep 08, 2025 at 09:06:03PM +0200, Andrew Lunn wrote:
+> > On Mon, Sep 08, 2025 at 07:48:17PM +0200, Christian Marangi wrote:
+> > > On Mon, Sep 08, 2025 at 06:54:15PM +0200, Andrew Lunn wrote:
+> > > > On Mon, Sep 08, 2025 at 01:37:19PM +0200, Christian Marangi wrote:
+> > > > > With further testing with an attached Aeonsemi it was discovered that
+> > > > > the pinctrl MDIO function applied the wrong bitmask. The error was
+> > > > > probably caused by the confusing documentation related to these bits.
+> > > > > 
+> > > > > Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
+> > > > > is never actually set but instead it's set force enable to the 2 GPIO
+> > > > > (gpio 1-2) for MDC and MDIO pin.
+> > > > 
+> > > > Is the MDIO bus implemented using the GPIO bitbanging driver?
+> > > > 
+> > > 
+> > > No it does use the MDIO bus integrated in the MT7530 Switch. It's just
+> > > that the MDIO pin can be muxed as GPIO usage.
+> > 
+> > Then i do not understand this patch. Why configure the pinmux for GPIO
+> > when you want it connected to the MDIO bus device?
+> >
+> 
+> The usage of GPIO might be confusing but this is just to instruct the
+> SoC to not mess with those 2 PIN and as Benjamin reported it's also an
+> Errata of 7581. The FORCE_GPIO_EN doesn't set them as GPIO function
+> (that is configured by a different register) but it's really to actually
+> ""enable"" those lines.
 
-A potential divider for the master clock is div/3. The register
-configuration for div/3 is MASTER_PRES_MAX. The current bit shifting
-method does not work for this case. Checking for MASTER_PRES_MAX will
-ensure the correct decimal value is stored in the system.
+So please extent the commit message: FORCE_GPIO_EN does not actually
+force the pin to GPIO, but really means....
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/clk-master.c | 3 +++
- 1 file changed, 3 insertions(+)
+The commit message is the correct place to try to explain why the
+patch makes no sense, because FORCE_GPIO_EN is wrongly named.
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 7a544e429d34..d5ea2069ec83 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -580,6 +580,9 @@ clk_sama7g5_master_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_master *master = to_clk_master(hw);
- 
-+	if (master->div == MASTER_PRES_MAX)
-+		return DIV_ROUND_CLOSEST_ULL(parent_rate, 3);
-+
- 	return DIV_ROUND_CLOSEST_ULL(parent_rate, (1 << master->div));
- }
- 
--- 
-2.43.0
-
+	 Andrew
 
