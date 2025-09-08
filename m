@@ -1,212 +1,197 @@
-Return-Path: <linux-kernel+bounces-805482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F62B48912
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:52:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06C5B48938
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFD5189782C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B4C7AD1BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E415F2F0C61;
-	Mon,  8 Sep 2025 09:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900122F0689;
+	Mon,  8 Sep 2025 09:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WjN/vY8I"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7heg0QG"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6161D1E505;
-	Mon,  8 Sep 2025 09:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086392EE61D;
+	Mon,  8 Sep 2025 09:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757325118; cv=none; b=EBKaMVQjecVFNifooEAatIy5IfwFHZ4knhW4OhvcijeqjnP85sKRvLbkReF9XzD3qPltTMI108mmHKMqEE188gesOofyTKYLAmm1o/PDxQ/JC/hybzS19HF4D2myE9kRvXFCcxzwrk3XRydJxT/de3aJa9VCuTFMzzqu4voGaO4=
+	t=1757325306; cv=none; b=G4SmpiCezVgVZUjOcPA53lvMnF+PH61e5HOCU5LgpQfK4HlXG0n6F/+9b7r6S6wKFiIcWiw3ByqFFjhJoPJfzdlUOlA50pQVskwt7x7kPJmOxRtlZbV0HLMyYgOuBAJI+eDgQR4eOFDNY6OpCQdHSgcq2vsLMHb1/Q4C0pWp5N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757325118; c=relaxed/simple;
-	bh=AewMyCtVmzpGoCtRfmUsnmVxguA8lkNLgMZfgg4IN80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UdYgh4BroP/lPXD2HAkukPURixh0frkt42qnEqj1t+19PYDVdvyw0nFre9hap9/us7Lzd6Ng/FBwRH20bkMopOZJrxs6ObMh6Ld6Om+SrLllV3f4VzaI19JRyOfcif16VuyCinJseVy0qSJDKeS5ZSgxzjTHrd4v1Oxz4lN5iBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WjN/vY8I; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5889pQE5029061;
-	Mon, 8 Sep 2025 04:51:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757325086;
-	bh=SS6DuSzgR76vaizUYakz4Izy7zwMeTZaSuY4kSQIbIU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=WjN/vY8IaoBYzndQySfVCWD0a7MFN+yOIL/iHqmNSGZJjF9TMloFBSplNRqA6QwKT
-	 4VHQgA1/49unadzhM0GnL9N2HQPzwsu1Xe4WzfVYR1/W4RvCNFjK2sCsE/54nf5+ld
-	 /6a/Mv2Smdrj471MbeGQ41dKGgpIMWoyAGmPM1vw=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5889pQU62877877
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 04:51:26 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 04:51:25 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 04:51:25 -0500
-Received: from [172.24.233.149] (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5889pJLO401019;
-	Mon, 8 Sep 2025 04:51:20 -0500
-Message-ID: <5f830f6e-f48d-4150-b705-0cad04ea5267@ti.com>
-Date: Mon, 8 Sep 2025 15:21:19 +0530
+	s=arc-20240116; t=1757325306; c=relaxed/simple;
+	bh=Cpf6u8mnULKW8NOv2lWmw4jXSP3ZZJGHV0cvbJrWCUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jNyek8b9nkNCDkkMaycH3dp1A6ryBL2N2rXpV7Kn6hLjebgKj5L6yN4QUoMc4+ia4Vd39T7INQop1mpAxmwTEwqAYNKCsdXC/1IvQIQsxNKXSGgl6TVZamRdyowN0NdaZB+REAJts6+KFWZQNGMHorBLJBsozN1GjRvt22HLbS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7heg0QG; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45de56a042dso5810315e9.3;
+        Mon, 08 Sep 2025 02:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757325302; x=1757930102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8x1Hsp+dpJ5U2ObHkY3BT1x09SwgDYmCzeo6+eGU2wY=;
+        b=m7heg0QGSUpn74VniRv2J8Ir8ZjEnLmZSpkzyF7xmuvq4kt014YcpNsYU1lOoT37f5
+         3n/m0a1L53mssVLRI2L14VONKbnPPHwGgTGTqoWUr3jjU9CfzKU6Ss3O+2VsyfV6+HnO
+         TukinHmmU5J0lPHwKj2tOuQ3/kU6Ynil+e7tM9Ybl0+eFC2Z2Qy9YuaoXvP18BoF9YWz
+         SBgapLvs0qESAbrXyfgdaSxdEmQVyWTvbr4wMh4d2cc3e9OlTHiOzIJGQ5XnKC1EQNCD
+         0J4odEgDihlz55KteL1IUo0OcNCkIqPn0LGN7py26IKI0flhSBsDL4WYLuytJOqTff0F
+         mkjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757325302; x=1757930102;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8x1Hsp+dpJ5U2ObHkY3BT1x09SwgDYmCzeo6+eGU2wY=;
+        b=iKLopVu5JkbgNi6fKYJokwQ3fEUkM1mt8DQo1gyTgeqFvxDqN5Xc3puC6xbvDmecgU
+         KHxPM/1RpmQDh3WVZHCTRIWAvhL/d71EshH2JjCNeODXbRCif6NnFt03hOWW/GbniYKW
+         UPG+UzBQqaVtfQFSiHjwortIebrPlWjuQTB+//7FQFUojeOL4f0yU6+yYd+QUM1fUVEE
+         dmrOBQgAKDcwsQyEvNXf/YThQtMgCmIGRAUjupiEog1h1I//Vbzi+CU1pX0Eq8iXfenW
+         gFuZmvpL/B9g5You9YTNIgxHfguXRXQpZp6m04QqmGF4Nd+otEY6IwmONUWKjDHwuzIv
+         LnjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZGZOZzmIqRqbDNzL0yDeD2HwLI0yiET3ntgQWOEoxRAkqzr8mAQpctpPq/3JALNbB5zNMFb2OZpk=@vger.kernel.org, AJvYcCXhNJ+7zgfY8sOzJJdQvu/w5m0tcIjSEMphTAunUuV02e/8vADp7RDHoNei1UA+f7xyXe3JW/7NLtwMbDjo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzsrB0U/Pw6nzQcqmdFPUopGDICahQKUXEH4fK2FQsMJEJu4ag
+	JwH3GVW+RDm+Vo8UZsKXqV7LT4DU29z3MjoJXkWsLFXLS5PqRxgRa8AY
+X-Gm-Gg: ASbGncsCj3qeEu1pyHT+wDDdQ2mI/SjUVeThIE4ok1lTDFfXOA01mnZrFFgaos+ttZp
+	LSxECdT0zeWbGyVPxE37urdGIYYnBN9AtZJei9nAEmfvI1ZbnUtWRyKwcaXex0qvvFrzxvuZuS/
+	Nbgg0CX/4Me7Nyw9IpogglQp1XX93hNNicMZSRyzWc1ywyMjG/5nXRTkayrplKOYYSh/hjdJjUJ
+	LX25hlrukEKEvz3ELPS8NXKY3UVaMw09pdKLOkcPxY88Acd+NqTB72apfaqG9VcKDQpDQJ2ARTU
+	BLYhOlmFiK2BgLu1+unXSX9JyGIsy9m0bhbQRUpYeHXMHBLoOrk945BAjwHHFSXer85kjf3xQGJ
+	zzzh5tnsoVWblraBL9YSOkBbFzchtmW5AdEs6Zr7BYLqfBEY=
+X-Google-Smtp-Source: AGHT+IFpX5YvuO3ig+/s1rYDvV/s66K6rV4ZFk+aZNpl+OJbyIG/Pd9Xd6ssYqvc8Q1pL8RLNoEYkQ==
+X-Received: by 2002:a05:600c:1c08:b0:45b:8600:2bd5 with SMTP id 5b1f17b1804b1-45dddea6002mr65196005e9.5.1757325301945;
+        Mon, 08 Sep 2025 02:55:01 -0700 (PDT)
+Received: from gmail.com ([147.161.145.112])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d7ac825b88sm27797095f8f.7.2025.09.08.02.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 02:55:01 -0700 (PDT)
+From: hariconscious@gmail.com
+To: corbet@lwn.net
+Cc: catalin.marinas@arm.com,
+	hariconscious@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	will@kernel.org
+Subject: 
+Date: Mon,  8 Sep 2025 15:24:50 +0530
+Message-ID: <20250908095450.42929-1-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <871pp8a9ze.fsf@trenco.lwn.net>
+References: <871pp8a9ze.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 14/14] media: ti: j721e-csi2rx: Wait for the last drain
- completion
-To: Jai Luthra <jai.luthra@ideasonboard.com>, <jai.luthra@linux.dev>,
-        <laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
-CC: <y-abhilashchandra@ti.com>, <devarsht@ti.com>, <vaishnav.a@ti.com>,
-        <s-jain1@ti.com>, <vigneshr@ti.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
-        <tomi.valkeinen@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
-        <jack.zhu@starfivetech.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250825142522.1826188-1-r-donadkar@ti.com>
- <20250825142522.1826188-15-r-donadkar@ti.com>
- <175707067154.8095.10777597561482124941@freya>
-Content-Language: en-US
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-In-Reply-To: <175707067154.8095.10777597561482124941@freya>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
+m mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286623770B;
+	Mon, 18 Aug 2025 16:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755533304; cv=none; b=uzqxObiUW0V5/KwDbGE974y+FjJSI5MFNyebWi2+5q0TOrcLDMz7UaGA7zz0rM3Untp7AnczUbPlO0EA7ijp4VWjKvA/jRHEa1WGY2xCRbl7sgaCW2Jjds9q0+1gZLf0j/daCCEppHrPUjZ8YflPc2iu9lSvMSpKu47NIakpBUE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755533304; c=relaxed/simple;
+	bh=ou2NodSL61SjBBx3oNoEL8d9FXu/qhf54SYinlYpEpw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZgMDNRzIMf6C1EvsD5ClxxovJPOa43e4oQ6VSmdSN6I7NCnbnvwlTuhLwbC7PoGla8+5kqNNoHprCsJFKlmaUz88nO4IC+USEYcRtm/2Bcyxy5Vkovozj6Qt8dT+KI2+uNMueCPw97mRWW184W5bNT6MZmCp0bCVjUVZaMhgFsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FS1soXLa; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FS1soXLa"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CE0F40AB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755533302; bh=PgKB2qnc/bRPAL5RwjdygVePDYnntw4ZWdIavREWLBQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FS1soXLa521ujJUbl/402whSSESTHg9tMk1J4yJXD61Dfi279n3ZYdXUxCAqBrXbP
+	 7uzuyvggLkYoXlerUj63roxK9vLzAUnVybiJ8ADgblvGi5LkC02Rne6uNwELG05I+6
+	 k7OuwJQBxt+73WjptP+fON5qK+HI/wyJ2vePn9MgKDmwsi+JYLLCa/Ou+Yk0IU287M
+	 3Bs39RXJcFhH8aA2anPFcTcN3lReE6Ci8Tc22FjnWBpnYKR6l1Y7r40THAF4d2OISs
+	 tpNV3csYjY/jWhXXQNvQZbmv84TtmdKAC3lrG0p2OxW0RInDuM1q8EFkKH6kheFgli
+	 bhQXe4L9M8KpA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5CE0F40AB4;
+	Mon, 18 Aug 2025 16:08:22 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: hariconscious@gmail.com, shuah@kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: HariKrishna <hariconscious@gmail.com>
+Subject: Re: [PATCH] documentation/arm64 : kdump fixed typo errors
+In-Reply-To: <20250816120731.24508-1-hariconscious@gmail.com>
+References: <20250816120731.24508-1-hariconscious@gmail.com>
+Date: Mon, 18 Aug 2025 10:08:21 -0600
+Message-ID: <871pp8a9ze.fsf@trenco.lwn.net>
+Precedence: bulk
+X-Mailing-List: linux-kernel@vger.kernel.org
+List-Id: <linux-kernel.vger.kernel.org>
+List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On 05/09/25 16:41, Jai Luthra wrote:
-> Quoting Rishikesh Donadkar (2025-08-25 19:55:22)
+hariconscious@gmail.com writes:
 
-Hi Jai,
-
-Thank you for the comments.
-
->> dmaengine_terminate_sync() causes all activity for the DMA channel to be
->> stopped, and may discard data in the DMA FIFO which hasn't been fully
->> transferred. No callback functions will be called for any
->> incomplete transfers[1].
->>
->> In multistream use case, calling dmaengine_terminate_sync() immediately
->> after issuing the last drain transaction will result in no callback
->> for the last drain cycle.
->>
->> Implement complete callback for the last drain cycle to make sure that
->> the last drain has completed properly, this will ensure that stale data
->> is not left out in the HW FIFO.
->>
->> [1] : https://docs.kernel.org/driver-api/dmaengine/client.html
->>
->> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
->> ---
->>   drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> index 4ac6a76b9409..520ee05eb5b4 100644
->> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> @@ -62,6 +62,7 @@
->>   #define TI_CSI2RX_MAX_PADS             (1 + TI_CSI2RX_MAX_SOURCE_PADS)
->>   
->>   #define DRAIN_BUFFER_SIZE              SZ_32K
->> +#define DRAIN_TIMEOUT_MS               50
-> This was dropped in the previous patch, and now reintroduce.
+> From: HariKrishna <hariconscious@gmail.com>
 >
-> IIUC this patch is fixing a bug introduced by the previous one, so it's
-> better to squash them together, and have a combined commit description that
-> goes over this end-of-stream case, as well as why continuous drain was
-> needed for mid-stream scenario.
-
-Okay
-
+> kdump.rst documentation typos corrected
 >
->>   
->>   #define CSI2RX_BRIDGE_SOURCE_PAD       1
->>   
->> @@ -137,6 +138,7 @@ struct ti_csi2rx_dev {
->>                  size_t                  len;
->>          } drain;
->>          bool                            vc_cached;
->> +       struct completion drain_complete;
-> Why is the struct completion shared amongst all contexts in the
-> ti_csi2rx_dev structure?
+> Signed-off-by: HariKrishna <hariconscious@gmail.com>
+> ---
+>  Documentation/arch/arm64/kdump.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> What happens when two streams are stopped together?
-Right, this struct completion must be per ctx.
->
->>   };
->>   
->>   static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
->> @@ -624,12 +626,14 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
->>   static void ti_csi2rx_drain_callback(void *param)
->>   {
->>          struct ti_csi2rx_ctx *ctx = param;
->> +       struct ti_csi2rx_dev *csi = ctx->csi;
->>          struct ti_csi2rx_dma *dma = &ctx->dma;
->>          unsigned long flags;
->>   
->>          spin_lock_irqsave(&dma->lock, flags);
->>   
->>          if (dma->state == TI_CSI2RX_DMA_STOPPED) {
->> +               complete(&csi->drain_complete);
-> Please also add comment above this if case explaining why we need to wait
-> for the drain to complete when dma->state == STOPPED, which is set by the
-> driver elsewhere when streamoff was requested, and no more data will be
-> coming in from the source.
-Sure, I believe it would make more sense to add this comment above the 
-wait_for_completion_timeout() call.
->
->>                  spin_unlock_irqrestore(&dma->lock, flags);
->>                  return;
->>          }
->> @@ -774,6 +778,7 @@ static int ti_csi2rx_start_dma(struct ti_csi2rx_ctx *ctx,
->>   static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
->>   {
->>          struct ti_csi2rx_dma *dma = &ctx->dma;
->> +       struct ti_csi2rx_dev *csi = ctx->csi;
->>          enum ti_csi2rx_dma_state state;
->>          unsigned long flags;
->>          int ret;
->> @@ -783,6 +788,8 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
->>          dma->state = TI_CSI2RX_DMA_STOPPED;
->>          spin_unlock_irqrestore(&dma->lock, flags);
->>   
->> +       init_completion(&csi->drain_complete);
->> +
->>          if (state != TI_CSI2RX_DMA_STOPPED) {
->>                  /*
->>                   * Normal DMA termination does not clean up pending data on
->> @@ -796,6 +803,10 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
->>                                   "Failed to drain DMA. Next frame might be bogus\n");
->>          }
->>   
->> +       if (!wait_for_completion_timeout(&csi->drain_complete,
->> +                                        msecs_to_jiffies(DRAIN_TIMEOUT_MS)))
->> +               dev_dbg(csi->dev, "DMA transfer timed out for drain buffer\n");
->> +
->>          ret = dmaengine_terminate_sync(ctx->dma.chan);
->>          if (ret)
->>                  dev_err(ctx->csi->dev, "Failed to stop DMA: %d\n", ret);
->> -- 
->> 2.34.1
->>
-> Thanks,
->      Jai
+> diff --git a/Documentation/arch/arm64/kdump.rst b/Documentation/arch/arm64/kdump.rst
+> index 56a89f45df28..d3195a93a066 100644
+> --- a/Documentation/arch/arm64/kdump.rst
+> +++ b/Documentation/arch/arm64/kdump.rst
+> @@ -5,7 +5,7 @@ crashkernel memory reservation on arm64
+>  Author: Baoquan He <bhe@redhat.com>
+>  
+>  Kdump mechanism is used to capture a corrupted kernel vmcore so that
+> -it can be subsequently analyzed. In order to do this, a preliminarily
+> +it can be subsequently analyzed. In order to do this, a preliminary
+>  reserved memory is needed to pre-load the kdump kernel and boot such
+>  kernel if corruption happens.
 
-Regards,
+I don't think this is right.  While reserving judgment on
+"preliminarily" as a word, the intended use is adverbial, so this change
+does not make things better.  The better fix, perhaps, is to say
+"previously" instead.
 
-Rishikesh
+Should you choose to resubmit this, we'll need your real name in the
+Signed-off-by tag, please.
+
+Thanks,
+
+jon
+
+Hi Jon,
+
+Good day.
+Thanks for the suggestion, will correct and send the patch again.
+And my real name is "HariKrishna" and see that it is mentioned in Signed-off-by tag.
+Do I need to add surname as well ? Please let me know.
+
+Thank you.
+HariKrishna.
 
 
