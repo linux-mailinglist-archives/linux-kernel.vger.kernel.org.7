@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-806458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36CDB49741
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1EDB49745
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96A6C4E1F8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D885F1C25C30
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D80314B76;
-	Mon,  8 Sep 2025 17:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNLmBGRR"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AC1314B90;
+	Mon,  8 Sep 2025 17:36:18 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B7630EF8F;
-	Mon,  8 Sep 2025 17:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4155F2FF645;
+	Mon,  8 Sep 2025 17:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352960; cv=none; b=KcT2LAs5wgJEXv0j8O7CY43Ai2ak1gMnAMD0KDTJka+kAzLSrA85lc0ZSztt6DJTwFkh61YNFqZDGNIOAGtWhwzhjjeSCNNH/Ntdy4UYn5wtqD5FP8FSfGV0Co7V9zpv7wFzxDm0V2zlirMsdA/FcW2fhWfsGvUgA+3nI6lNAZA=
+	t=1757352978; cv=none; b=mBac7ISJaK4ePcpfHKaFf6VcWPtzgpazkommtIb023d2oRZFOuwm5DBBxiCyKVHm3nkL1GgndP1tjrUtnFe83J23l4BywWnnjdhR9u+Entr64Jztx+kuzh0hkdJ1ybpMiv1438GcV0ZHKUoJJCT3+VSC9KA0Yz/8/xSWnIO7cx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352960; c=relaxed/simple;
-	bh=3MI0Q9/nyUstOeHj740Wjg/XrHQzY+Zb03YFQJbvkJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iW/gJr8WFfyv3arf1unH3sVWAZn8kuySOLugEpdEHGhoGwQcKMkY1kLUJP4ik+FqrPbMhVeLp1WMdwsSceVJsIRKRuwMEQ3teXM5lqiYUTMJZ2B2FlqyBaEiun72UXVorOInj8ijaOeFtMIaSdaN2jGKTJxNxqRUaWSfjtOTi90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNLmBGRR; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1757352978; c=relaxed/simple;
+	bh=8idK2oy7Zo4ccmkOav1LwfHm/x5wjjv4iakprekjEws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SeWBHzZ5NVIgYia/u6LYpmkB/j3RMdVSLQP6uUv7qjIwy4z5kehS+EWbcbu1n/N2kNg7sMiPjBiCPvNurT7ToQ1oS0MqYFLzgVdZZAFSqXk3nr+st3ryZMTDkn0SSyPIP+78vFH2399GYVihhoMzjRMYyroVgeSHWZat2teI5rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e537dc30f7so1375283f8f.2;
-        Mon, 08 Sep 2025 10:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757352957; x=1757957757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9MT7i5vkqpCAcgkA0fxu+rNAoTa3Goz5sl7XdMySXI=;
-        b=LNLmBGRRt4J7Y/YughcAsBVFwL20ThT4Qczylh7KxJqGbbbZwzB8JRj8KG1TpugIId
-         XVrqWBC8Y2pLfW434d07/9REqDwegjWhBHUhlHTlyfkczX5o/hYSfqj8BrH42i33Vuk+
-         6pcjc9zxKPiMXcBCh/HdYikwCCVwKGEdv3UJDVxKdah6qzhykpNcjFgkddTwe1Ec6XjX
-         z4ZskIuX8hG/OJoO467qHo8DgktJyE8qUMVhkm+RHEdERUtv0CO7ZYgPHpWfz8E8FoA5
-         gEJqf772COEqei6/0+VYzEnkrslQQR9+AYQoS6uoLjiFIjmIshhc3TqVAMHpFcfiq4hj
-         SP0w==
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77256e75eacso4195859b3a.0;
+        Mon, 08 Sep 2025 10:36:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757352957; x=1757957757;
+        d=1e100.net; s=20230601; t=1757352975; x=1757957775;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G9MT7i5vkqpCAcgkA0fxu+rNAoTa3Goz5sl7XdMySXI=;
-        b=CTastkrNCxn3O06T7aNpwnU05gvY47cpNFWgTG+cwznRodmWEU6g8REiLjcDwCb3hf
-         RfS1Xf+NZqzGce7SQbEVv1/WqX89LHqNktrHe6oozVku5kmFZKmtHrllq/+lPoXYRUuG
-         tCdjc/EordEMzqDwCN99NgL39cPT1PuDJnAwIqka/EnO2TQSa4AIsGg2dV5N3+YTBwxQ
-         fIMY7A3+mNvpeekwOP3j+/jjHD5guIYtvTl/wSOLUGWRz2QMMaRuIK0LZtYXZxHBXs/2
-         bSLOyGZ+XJIm8OMx8g2xOiYwnPi/MUJKNAw1C31/OExRoiy0g4fIQ+5rmluNXCN4YncX
-         wpgw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1a/24T2YKwcvxfzvk/87DVXEMhxnv/2RLm/zLq/0xa3x5hWV/ZlfLZRFu3mWt+BymmcDHfxqdCJrGoTk=@vger.kernel.org, AJvYcCXWxbC9sgeVeHK/vqU4Zja1fnrQx286Wy7iBDvmbyP+llbUb7hm87dUYt8OwD17W4saAcgrywxY63lNzqpHOT9w@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMiykw8bAXOOu70il5cV4hKL0kamucz8CHYYXHSsjuIABTMrvG
-	Q0oZYP6WvJA0m6YjT1qT2vOz/JcCWWbcPt0JCVSJQnyVl/io/DiNKX5Z
-X-Gm-Gg: ASbGncszOwsejo9QjCDWlwQCatzLUZLU8THZ+pthbRjKBHH3u+ycrM9oa4uaBDHGJnb
-	wE0d1Xl7rmGRBjnV+siw/Ql+0nsmat0dVWZRC90SEg8VxbCkHZIxQrSgbYlWQMrnsbBzmkCkc6T
-	YgBhk05tFbfy9S9G0LhNcG8zOw/cvmTJt79tcm3i0nvPl2ZCFkdWZMvq5lmUzUnIHbEn6E4K74V
-	KUoarhwdNaw/eE4fZcaSTFgtdSlvnHgZlBSFVq70RJfpg/gdU31vbCzX34fN5GHX7zmSjTMaepU
-	S3slpqiaAZENidkLX4CWxSbKFeLdGCZ3ogAo4LycPNRk9V0z45kS3CiETp0YLE7i/M2JX8T0KZG
-	rrA5iuICs4viIbEvfq5wDanhXjPlWm+SQeTF/1FGOE/CTcAOwc58PCAhXBX0LmbuuU86yKYPG/f
-	PYfITrWd2nLUERMeEf
-X-Google-Smtp-Source: AGHT+IFDSDXJKQrEZArrPIuM96vHeuqDlO5JsHzQT3eqCK7wNQTfwb+2kKo160Td3cu1AugzVzllEA==
-X-Received: by 2002:a05:6000:26d2:b0:3df:b9e7:35ba with SMTP id ffacd0b85a97d-3e6440f0674mr6594835f8f.57.1757352956830;
-        Mon, 08 Sep 2025 10:35:56 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dec3e2fd6sm8925865e9.19.2025.09.08.10.35.56
+        bh=TWOkXO1YSMafh5wZGCwi36l6ttH6nWTujllVdXtHiw4=;
+        b=m41Gjo3atWX/arjH9Hj5AMHd1en2zOIBI1NfDbA/IGaIgO90asBuuHbo8xvRAQMQMH
+         LJou2BkW9g0HSoB1uLnG4qLJqTTGtM7ATsO/KQvs2rSKaaOad5Z3Uj1zOABid0LPU/Fe
+         2okzYuvCnEtvxkpZuyMM3Ryi9knnuSFKynqX9uc75ROdOb4tkpGy0DcQR7fAq+HhQq6R
+         pUvyN+dOs4kQlgE8yDfh0KNIShJcttpRucWJdWgNCmpv1hnS1be+8e6IbO5B/qvWxy5e
+         G6UM101sf5Nc1av1FVAl5hLiQF2oVfxJCSed1X15+aChYw6Ak5qfubAXLYe550REVvOP
+         qt+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7RCQoghAoDz8gFFVj0olHpBySE4WacD7TDSlK7HZBfNAcyiaUK0YF2THcRy1W2zTGEeaOHKe/rId5hlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4PRozg7QB4gbIb1F+Y1HHhEdZlaNhEALdHrcKOeK2Ig07Q3Qd
+	5QknhyFi8XCnWRaCG2Y+2IIJsUWRPFBct465eoX762rmxn+LYUxhv0DhGHiM
+X-Gm-Gg: ASbGncti4KdZGp5+39n/ZEHwM7JeonGk4WKoMBAqlDUiZNIF330qi6+WwNNhawdk2/2
+	4K9Pm0gYIA1CaPd40GnvKa2Qi2Xypk0Pgc61wuDPCMCiPF8i75h8GOtXW+vU2OHEIzqz96s3L/D
+	L1xkFVgJaJrM5mV+MPzkxNs1Vdkl/KP4YRTBUNNZDUbIoSWANHDXkPJncMC9d/jB5G+ZDEoVqIm
+	oKZG1gH/jHHyoreSlrPZZDFqLCtbS2ISLmifpyx+x3SZ8rd7BUNxrYgdBZFiEYVARUsVMM3QP+b
+	MXyLEXe3JgNhITcvnXpOA1ouJOHsNmT64dAtjr244kzgPoXMQa6dR+x4idPjMSL6Qavj9R2qMJJ
+	bYx9HACxnwsfPxMH5qECB2uTR35FGLRPXgoYJzl9JzGsnHr0zdygwvMuqhTXMBSlXsFlX9fY3gp
+	Rv9r8mmGYfvL9YKg6wFJVc2PEk4tQR/QxaP7KJYRJrHvMfXBJcdNmAVU8n0YJYaE5ZMlU4EKY1f
+	8I5YDE+6R0K+2c=
+X-Google-Smtp-Source: AGHT+IERN6EDSYSkg/6wareSlQZNsXYOru97WYIXq6nvOxJ+0c5Ptsp/1vjusxPOKzL+cQOBPJs60A==
+X-Received: by 2002:a05:6a00:188b:b0:772:63ba:11b with SMTP id d2e1a72fcca58-7742ded355emr10665305b3a.28.1757352975241;
+        Mon, 08 Sep 2025 10:36:15 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7722a2b2f56sm29887344b3a.26.2025.09.08.10.36.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:35:56 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: shuah@kernel.org,
-	brauner@kernel.org,
-	amir73il@gmail.com,
-	jhubbard@nvidia.com,
-	jack@suse.cz,
-	mszeredi@redhat.com
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/filesystems: Use return value of the function 'chdir()'
-Date: Mon,  8 Sep 2025 19:35:49 +0200
-Message-ID: <20250908173554.126182-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 08 Sep 2025 10:36:14 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	sd@queasysnail.net,
+	andrew+netdev@lunn.ch,
+	sdf@fomichev.me,
+	linux-kernel@vger.kernel.org,
+	syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com
+Subject: [PATCH net] macsec: sync features on RTM_NEWLINK
+Date: Mon,  8 Sep 2025 10:36:14 -0700
+Message-ID: <20250908173614.3358264-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Fix to use the return value of the function 'chdir("/")' and check if the
-return is either 0 (ok) or 1 (not ok, so the test stops).
+Syzkaller managed to lock the lower device via ETHTOOL_SFEATURES:
 
-The patch fies the solves the following errors:
-mount-notify_test.c:468:17: warning: ignoring return value of ‘chdir’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  468 |                 chdir("/");
+ netdev_lock include/linux/netdevice.h:2761 [inline]
+ netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ netdev_sync_lower_features net/core/dev.c:10649 [inline]
+ __netdev_update_features+0xcb1/0x1be0 net/core/dev.c:10819
+ netdev_update_features+0x6d/0xe0 net/core/dev.c:10876
+ macsec_notify+0x2f5/0x660 drivers/net/macsec.c:4533
+ notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ netdev_features_change+0x85/0xc0 net/core/dev.c:1570
+ __dev_ethtool net/ethtool/ioctl.c:3469 [inline]
+ dev_ethtool+0x1536/0x19b0 net/ethtool/ioctl.c:3502
+ dev_ioctl+0x392/0x1150 net/core/dev_ioctl.c:759
 
-mount-notify_test_ns.c:489:17: warning: ignoring return value of
-‘chdir’ declared with attribute ‘warn_unused_result’ [-Wunused-
-result]
-  489 |                 chdir("/");
+It happens because lower features are out of sync with the upper:
 
-To reproduce the issue, use the command:
-make kselftest TARGET=filesystems/statmount
+  __dev_ethtool (real_dev)
+    netdev_lock_ops(real_dev)
+    ETHTOOL_SFEATURES
+      __netdev_features_change
+        netdev_sync_upper_features
+          disable LRO on the lower
+    if (old_features != dev->features)
+      netdev_features_change
+        fires NETDEV_FEAT_CHANGE
+	macsec_notify
+	  NETDEV_FEAT_CHANGE
+	    netdev_update_features (for each macsec dev)
+	      netdev_sync_lower_features
+	        if (upper_features != lower_features)
+	          netdev_lock_ops(lower) # lower == real_dev
+		  stuck
+		  ...
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+    netdev_unlock_ops(real_dev)
+
+Per commit af5f54b0ef9e ("net: Lock lower level devices when updating
+features"), we elide the lock/unlock when the upper and lower features
+are synced. Makes sure the lower (real_dev) has proper features after
+the macsec link has been created. This makes sure we never hit the
+situation where we need to sync upper flags to the lower.
+
+Reported-by: syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7e0f89fb6cae5d002de0
+Fixes: 7e4d784f5810 ("net: hold netdev instance lock during rtnetlink operations")
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- .../selftests/filesystems/mount-notify/mount-notify_test.c      | 2 +-
- .../selftests/filesystems/mount-notify/mount-notify_test_ns.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/macsec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-index 5a3b0ace1a88..a7f899599d52 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-@@ -458,7 +458,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 01329fe7451a..0eca96eeed58 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -4286,6 +4286,7 @@ static int macsec_newlink(struct net_device *dev,
+ 	if (err < 0)
+ 		goto del_dev;
  
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-index d91946e69591..dc9eb3087a1a 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-@@ -486,7 +486,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
++	netdev_update_features(dev);
+ 	netif_stacked_transfer_operstate(real_dev, dev);
+ 	linkwatch_fire_event(dev);
  
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
 -- 
-2.43.0
+2.51.0
 
 
