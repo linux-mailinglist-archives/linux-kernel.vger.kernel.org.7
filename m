@@ -1,222 +1,179 @@
-Return-Path: <linux-kernel+bounces-806253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A377B4942C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:49:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DE9B4942F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9AC2072B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988AA1BC498D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278A61FE44A;
-	Mon,  8 Sep 2025 15:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C12830F922;
+	Mon,  8 Sep 2025 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4wwz31m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3VA+1h1u"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3745630C639
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C62830EF8E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346370; cv=none; b=Cln/Fvi0FFcIKmBG9Fr7R/niekyzcnlqExyodzmGEEsDfv0Pq8MNv1cfdr8UI8icr6dfWw6uDrnlSInCsCrB3YILSOXkRdcQqEMYgcVqnSnsvZJQgXJEJJ0Em6zXmcbEvjej9hSD17e9/FvhRcJer9fgWVtc5Fv6kPAGjT9k5N8=
+	t=1757346446; cv=none; b=dcMdLKmxdNdNAeKeL61DoD9c06Jr96fFnRHZhJRXPseADf6SximymHxnjshvUqFuGZBNsUVHsw38R58+nZufJjb4rjHr1Sr8LG8KXBbjgT8/edo58HHnfNvZ+hEfyCGAVh08f3av/LxvoQvzuc1ttRlU9HMy6rMNRVAEtbNWh6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346370; c=relaxed/simple;
-	bh=zAjyz+sUpkrFQrEGDsHBHrFQafZRofKHU3NxpV0p+aw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qYxmlpkB3qj8zmF+Xl0Bexz3/dCGdb2cQvr9xueT6FDtQWc8kexH4aPSPEiELxfNs5UBmb+YsafjUeR5c39hMejp6IUftZGxPZvbSK2R+MbfwIoJ/2jmI4b6iTfZvcu2KSIaExCFXlvupIIDqZMdGqpTJFxtHMSbFHWJDGul2gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4wwz31m; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757346366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZriZC5ZCFi8VYhXaUXVlHuq1MXLstgNz6E2jeOUAEIM=;
-	b=J4wwz31m6gKuPG0IfcGaKCIPe1BClGsWbeyvKKYG/MdDs82aVa4vFdkO6h6DWUaMRNPqbN
-	XCqzF/kHVuGZFvQ5M2K6yvYfu8Jl1qr4VXUtYurB7KdmrfS4KmRdth6He3qbMolxflDjI+
-	is3SVqe+BLeMUcggFjOY0paAZKpJpYM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-324-UPFbqVP3PnuZi8tbOEeNQQ-1; Mon, 08 Sep 2025 11:46:05 -0400
-X-MC-Unique: UPFbqVP3PnuZi8tbOEeNQQ-1
-X-Mimecast-MFC-AGG-ID: UPFbqVP3PnuZi8tbOEeNQQ_1757346364
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45cb5dbda9cso28578785e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:46:05 -0700 (PDT)
+	s=arc-20240116; t=1757346446; c=relaxed/simple;
+	bh=aD3jXyKBXU31pvp9Myc8+fQsx0JMT3JspeZvV/Lksic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dCL05TGsMAkAGzQFzdSWE36So6Kv2y0m0mVUOS4WI9x+L759FgMS95FhxqknrftD0x1F70s2x+Tuylv5jxJ2+R5xCSI2vur/iQxSQqhANHNovZ4uL89pXTwkOBWERLbL0qrAJ/Jx0filGfNj/WRa4aozaiUNvRF4zF6LVE19YKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3VA+1h1u; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24b2d018f92so407535ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757346444; x=1757951244; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aD3jXyKBXU31pvp9Myc8+fQsx0JMT3JspeZvV/Lksic=;
+        b=3VA+1h1u48x4GSyq+AB8yklE9D/SS9FjjY0021pziiBvZVbAv5dvXLDtA/5unGV3/e
+         Y7bSbe9ByQfGxyIX1AXTa3wrZxEHYplggzswiTJjvoNXhOJIpBDDcTuqNNOkJ6fAK4N5
+         ReeRM7c2DcTtm57Ue0ydXdVhbyn4E8idpWeUsPr8cCwerLZrDZnY3ckmBSvpF1v2MaNE
+         1VBQ8fgZCuTM0WCVqmcBQe+3uLJJMU+frgLEtcy5Xb6AAzOqC2Grkq8qsoQ2YLlxDzgx
+         SnC0oOzF1WHVEbtK32Y3/RqiRuvtEX4rKXnNjFVa/Bx5kg9cyMt1C22u3zJOl0oTfvxO
+         pSPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757346364; x=1757951164;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZriZC5ZCFi8VYhXaUXVlHuq1MXLstgNz6E2jeOUAEIM=;
-        b=SnP3jfSK7L2EA6iaK8FMRN61TIYrdLtvbuOcOlXqFKHFn4evWq18bqOm2If8astA2A
-         /goXlhblMA2jwc44BCQijOr7xjlRQcB1dN44CMK6rZVF2q00xSLE0WnlvXgcpTvjpjnt
-         K3KBTzBZsqRcXtoYq8LTBADxUMTlttxNo3cD0On7qb9Fb9mqQm21RGJC3oXpVPa5pKWa
-         ggxBl19NdnbWhrYuw7l2S3QKkWy6fTlGHQk1yjyrDQQqJ8LOmbMPswEhqziO44IrOn0+
-         +oTmCbNJbqpXgfemFcZi2QH/c6y+0wW/13NeqK/NjSpX5aKl2nZQM6oJL3zaIo/g2PFY
-         dz/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWl8Zhbu0K1I17ziPmqbe+G6c7UchhdPpE23O7oaCwpCxzLXyypY7ZrTnAZE3TPcF0h6D+uzqt/nTXGp6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVpZX3yQPV/tUflmcCR11bKAq7+iqjfs/6fkMu+RquoC1LaG5s
-	9gvaIVfz0GEnBZ5iXhjfXSHQ9CYEc+TGNQJQewOcNW0Xmn2qpAvOlWUISstkM8Ew8Cr2hV9ynh0
-	Wet7mcr3QTQicPFI523DKUpmkzEpezJJBclleBi8YairYAp0XftuIf0z2bX8F2RNJNg==
-X-Gm-Gg: ASbGnctmIJIqeQOYO+SNN0m1IbnhrsB8sbZbRMq9qNtwrtiIz573UO2iNvZklkAFoH7
-	Wfd7/O9y0DfoOCxv2dZGCSkJCDk+7NaAib0JEXmWKWPqnqxW5lKf7xqwOu4Gl865zRTOcVjsS/z
-	jNufjaeejZCctuvkYytMXBJ3qE8Hvy7mjyqfqPm8Bi/jvmkShrdn1Dyos77/kRKa9OLo9Vsobho
-	pBW7SWxlnzxsr+ctB3ihmmTFeTYIjTRqS75NGBgPJNDCCu3etDlS49PcScW8i7jH81xndrhcQSI
-	bXM3LTXallxPplPEw/Ijf8vxpQN1d/YfSrc2pS9MERIFdCSkjzoKpk1WBpCiPrRcXJDpzSF7cfL
-	QUeWEpDevLcRNmRiwDv0ZFff7hmtom10qoCaC2AmZC9luk/U1ijBo8eGKrbNMn7i4
-X-Received: by 2002:a05:6000:2601:b0:3e4:64b0:a776 with SMTP id ffacd0b85a97d-3e64c4a5859mr6039919f8f.52.1757346364009;
-        Mon, 08 Sep 2025 08:46:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGH0L9/mCUrbfcy9B9f9kRjFruh5pYVslSI/dkJK5qtzud/rfRXHKTDbMjnJFVOPXLqfNNQtw==
-X-Received: by 2002:a05:6000:2601:b0:3e4:64b0:a776 with SMTP id ffacd0b85a97d-3e64c4a5859mr6039843f8f.52.1757346363314;
-        Mon, 08 Sep 2025 08:46:03 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e21e4c0e6fsm15532578f8f.17.2025.09.08.08.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:46:02 -0700 (PDT)
-Message-ID: <365c1ec2-cda6-4d94-895c-b2a795101857@redhat.com>
-Date: Mon, 8 Sep 2025 17:46:00 +0200
+        d=1e100.net; s=20230601; t=1757346444; x=1757951244;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aD3jXyKBXU31pvp9Myc8+fQsx0JMT3JspeZvV/Lksic=;
+        b=eU+qOIu09dkefsgDrSNRVpISjlFaNoFDwjnIGeadccmcPkW8hjgelEWtNomye8oWDm
+         PfsrqYcg4oNsVDXDIjgs/mExfeLTIsFP6OfeRBmJLO5GHMAmPM/XTw3uEXp7VRboNF8x
+         dP+0ZO1/T7ao+KMHjBF9L4yhgKk+r0YKNUdRNLylMXOKqgcVgxqrXlkkXF+wYITlZd8u
+         PE0Ewpqt8JR0q3wWSRvSvcbdxlXohM7bGw/VtKNkB4Gj6T9n/1OuKRC83zf3pXZD4Mmy
+         HGeTJOQHU5EHpW+l6E4b2sIZch9NovrA056v8CHU4nky5hsxmhQHhdZIcaW054FqXsjU
+         DSgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpEX8ZwD41R4i1K7KgBhJg5ZmnzcbOWuRuEXVLFITJdt0rP0mdvz21hazvq3EeFdJEQbBQBc73n3Rmnk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj7ZY30UmfAiIoyqqR+Hiufc12qIec7Pb9osrM/k1y0P81/Dbj
+	dYDQSkQlNbtUID5u4J+6nM1XbOyYFgxtgMpweTwWxy1CiU56mNlb70errANoQ0/TesYLC1AlYOZ
+	dZcw2pshWJWmUUoyphCWknNBGgRuPJnuZL1L8jFNe
+X-Gm-Gg: ASbGncvo+gA521iP8rAsF0ZdGOm0rBfA6TohpseipOFbFRYfrBguN5wC/TI/tDb5zJl
+	5WFOduGlR+5qm0XqKsY20YqXfpbCHcTKMp4+UET8fkyxG/ydIvRnNq40fCMi/hsmhFUI3IiG8E7
+	vDguRjqKPIdXY3uL+Lw/1iolClRJqzANUGyO+eEETuNFIUS32WAxpdXELV67Xd+iuQQu+i5EnqK
+	o6gHsRiGQNMnwb5Qk1ssz7RWofWw6eitc3XENnVv4QsOwDB+NMgBvg=
+X-Google-Smtp-Source: AGHT+IFRB2Zi7H8bLl4KDdTB4pTqHhLqyIcs4LqKCoPEIDGJ6guPwolnD8VdcorGTXxQsBy9SD4HG0t62zOwUJZKRhg=
+X-Received: by 2002:a17:902:c403:b0:231:d0ef:e8ff with SMTP id
+ d9443c01a7336-2511937bce8mr7909045ad.8.1757346444046; Mon, 08 Sep 2025
+ 08:47:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
- kexec@lists.infradead.org, kasan-dev@googlegroups.com
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
- <20250908125101.GX616306@nvidia.com>
- <e71b7763-4a62-4709-9969-8579bdcff595@lucifer.local>
- <20250908133224.GE616306@nvidia.com>
- <090675bd-cb18-4148-967b-52cca452e07b@lucifer.local>
- <20250908142011.GK616306@nvidia.com>
- <764d413a-43a3-4be2-99c4-616cd8cd3998@lucifer.local>
- <20250908151637.GM616306@nvidia.com>
- <8edb13fc-e58d-4480-8c94-c321da0f4d8e@redhat.com>
- <20250908153342.GA789684@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20250908153342.GA789684@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
+ <20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org>
+ <CAP-5=fWHGFBaCgiRcj8zVy196OE07F8jnSUbjvsO_HerdqeyTg@mail.gmail.com>
+ <70bd9eea-905a-4fa9-8265-f84ab9894b12@linaro.org> <2b958dec-7ba9-41a3-b11b-43b5e8418849@codeweavers.com>
+ <549d3812-a606-4981-83f5-0a99b0ff9f6a@linaro.org> <CAP-5=fXKthsZe3J4_UHHGwDafBq7pHzM18Mh=_2QrnSfCT3nOg@mail.gmail.com>
+ <3db2d6af-3b21-4ce2-be1f-668270adbbeb@codeweavers.com>
+In-Reply-To: <3db2d6af-3b21-4ce2-be1f-668270adbbeb@codeweavers.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 8 Sep 2025 08:47:12 -0700
+X-Gm-Features: Ac12FXx_k9AygYv7PTRqriXBaFYgUElhJVmWC1X25XbrTF3SCiUFkzquGcpd8G4
+Message-ID: <CAP-5=fX33kGxfHzqVGzusMBiHJM6G75TbLyZazjp37yohwscGg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
+To: Brendan McGrath <bmcgrath@codeweavers.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, =?UTF-8?B?UsOpbWkgQmVybm9u?= <rbernon@codeweavers.com>, 
+	Sam James <sam@gentoo.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08.09.25 17:33, Jason Gunthorpe wrote:
-> On Mon, Sep 08, 2025 at 05:24:23PM +0200, David Hildenbrand wrote:
->>>
->>>> I think we need to be cautious of scope here :) I don't want to
->>>> accidentally break things this way.
->>>
->>> IMHO it is worth doing when you get into more driver places it is far
->>> more obvious why the VM_SHARED is being checked.
->>>
->>>> OK I think a sensible way forward - How about I add desc_is_cowable() or
->>>> vma_desc_cowable() and only set this if I'm confident it's correct?
->>>
->>> I'm thinking to call it vma_desc_never_cowable() as that is much much
->>> clear what the purpose is.
->>
->> Secretmem wants no private mappings. So we should check exactly that, not
->> whether we might have a cow mapping.
-> 
-> secretmem is checking shared for a different reason than many other places..
+On Mon, Sep 8, 2025 at 3:24=E2=80=AFAM Brendan McGrath <bmcgrath@codeweaver=
+s.com> wrote:
+> Just wanted to let you know that I've been able to put together a PoC
+> that does just this. It allows the pe-file-parsing test to pass using
+> LLVM in place of libbfd.
+>
+> If there's interest, I would be happy to try to shape this in to
+> something that can be accepted upstream.
 
-I think many cases just don't want any private mappings.
+IMO that'd be great! In this series:
+https://lore.kernel.org/lkml/20250823003216.733941-1-irogers@google.com/
+I wanted to pull apart the disasm vs the srcline vs .. uses of
+libraries like llvm, capstone, let's delete libbfd, objdump, etc. The
+idea being to have the API defined somewhere like disasm.h and then
+based on compile time and runtime options select which implementation
+to use. Things have evolved in perf, with a lot of stuff just globbed
+into places like symbol without clear separation of APIs. Separating
+things by library used allows reuse of things like library handles.
 
-After all, you need a R/O file (VM_MAYWRITE cleared) mapped MAP_PRIVATE 
-to make is_cow_mapping() == false.
+That series has 2 issues I'm aware of:
+1) the last 6 patches remove libbfd support (rather than refactor) and
+some people may care. I suspect with your fix it could be down to ~1
+person caring. I removed rather than refactored as there is a very
+real risk that when you do refactor you break, and as this stuff is
+next to always disabled then it's easy for regressions to creep in at
+which point that ~1 person would probably complain. I'd much rather we
+had a good solution that everyone was working toward having work well,
+your patches would pull in this direction :-)
 
-And at that point, you just mostly have a R/O MAP_SHARED mapping IIRC.
+2) Namhyung didn't like that I'd reversed the struct definitions for
+the the capstone/LLVM APIs using pahole and would prefer that the
+definitions came from capstone.h/llvm.h. My reasons for not doing that
+are:
+2.1) if you have say capstone.h or llvm.h then why not just link
+against the library? But doing that avoids the decoupling the patch
+series is trying to set up. We'd need more build options, which option
+to make the default, etc. which is kind of messy.
+2.2) to support that you'd need to bring back a "what if no
+capstone.h/llvm.h" option in the code, I'd wanted that to be the
+dlopen/dlsym case which must already handle libcapstone.so or
+libLLVM.so being missing. Supporting the "no anything" option brings
+with it a lot of ifdef-ery I was hoping to avoid and it would again be
+one of those seldom used and often broken build options (like symbol
+minimal (no libelf) today).
+2.3) in my build environment (bazel) depending on headers means
+linking against the library and the global initializers mean that even
+though no code (in say libLLVM) is directly used you can't strip out
+the library again. I'd need to rework my build environment to try to
+get the headers without the library and that'd be a larger undertaking
+than the reverse engineering of the structs using pahole (as is
+already done in the series). So changing the patches would mean
+creating a patch series that I'd need to then do more work on to have
+work in my build environment, and I'm not sure things are any better
+by doing that. pahole was my compromise to just sidestep all of this
+without copy-pasting from header files and introducing licensing
+issues.
 
--- 
-Cheers
+Anyway, what does this mean to fixing PE executables in LLVM? Perhaps
+the first 12 patches of:
+https://lore.kernel.org/lkml/20250823003216.733941-1-irogers@google.com/
+can land and then you put your changes into llvm.c there? We can
+always clean up the issues of problem (2) above as later patches -
+don't let perfect be the enemy of good. If libbfd must live-on then we
+can move it to libbfd.c so that going through the generic source
+doesn't mean wading through the libbfd code.
 
-David / dhildenb
+Anyway, I know I'm hijacking your fix to advance my own patch series.
+I'm happy with your work landing independent of it, it just seemed we
+could do the APIs more cleanly if both series landed together. I don't
+object to (I'd also be positive for) just getting PE working without
+my series. Isolating your code in the llvm.c in my series may make
+things a bit easier for you. Having both series together would allow
+the library decoupling, BPF JIT disassembly along with LLVM PE
+support.
 
+Namhyung/Arnaldo as the barriers to entry, could you comment?
+
+Thanks,
+Ian
 
