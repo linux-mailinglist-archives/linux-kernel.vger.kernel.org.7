@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-806883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA8CB49D18
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79459B49D1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235084E73FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2651916F147
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319F82EE616;
-	Mon,  8 Sep 2025 22:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07602ECEAC;
+	Mon,  8 Sep 2025 22:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzV25RQW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gYGjV2L7"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EEE1EB5CE;
-	Mon,  8 Sep 2025 22:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420DD2DCF4C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757371782; cv=none; b=fsDn4p+Sk0vl/ar14XhZ+Kq2GWU/OtzvtQvRrqPSSDGq6lQNwz+QVbcoLvHHd4C4sH5KsO6QpAafU9DdSuorieIvwCS3Bjv2LiDemGwHcEt+rnDIbU7Tbt96d1n+F5zykfvrKqSt9Wacu7ZRKCGE8UhCIfe9OhBl6wyDQ4v7Vhk=
+	t=1757371893; cv=none; b=h1ZiuP9nULIzPKWoqrkbI3zvvx2K3pZHg/bR/WCQb9tRds3RErv1BP5yO/YXT5bv8dTOerjJqAJXb54uqCp1mszU/OF/hmo6QnEWQFoPMHyeMATQP/5wPBYLj6dJ0uuiR3g/SfI54qa3xSBbJYeaRJlEZ29j9PblmCvOjAwz3S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757371782; c=relaxed/simple;
-	bh=lnwnrrjuGfO0mxaFVDsCYUrjF7eAtqYJcIxxxfw8O5s=;
+	s=arc-20240116; t=1757371893; c=relaxed/simple;
+	bh=B7r/MdVFkxF8UOpjUQVzgKnL7FVHjfWobr88oKr636Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgX9NZA2O7yuCNy9nrHXXqkkg3Iox1K9VBc+eNUzNe3ADiZnNRlscgyzuvt0wPjnhsGyw5BGCIL5oKn53MpCvTKimBIxdC0Rdn0hTNgQksUhZPkBryOSh0kKOw9uUj26Fh3+r8dUxVtamqhaegYPUDhUpfDVIPtpyvs9ne+3jYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzV25RQW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F26F8C4CEF8;
-	Mon,  8 Sep 2025 22:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757371782;
-	bh=lnwnrrjuGfO0mxaFVDsCYUrjF7eAtqYJcIxxxfw8O5s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qzV25RQW+MgDi/hpupASciblnRwvwak6iSKey3VOtSYLukUwHI7fR+zUx1QST/x2Q
-	 6Em65Qfmn9/B4CzRdBo4+nd087sFEkJ5vfUGT4P2m+dbzUkPa8YxqP7boAFnn7uXt3
-	 gTVEUZiV8K3eTb/9xPfhX4fJK+mAbHPXs5CvfpNnFKONpFSW6Pd59zpCNXJoxekD2F
-	 hHDw5zXZe8hbKbKOu4Tu6MF4LvuhP7Xdr57eX8HWZOJNUeOSx/f5AjqufnoLeTt0UY
-	 Caev8zFMYNQo3OPQSgsaNYEib6Q/FIu7A+t68dAgynSZVLzRLAoaiXJ5mbl91LGTw9
-	 s61gtcduRHBBA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so7256013a12.0;
-        Mon, 08 Sep 2025 15:49:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUaSooCDTOU1zVGzpWGZLPmWlbDTyDInf/52pHzr4TOutLBVsYrIWvv08omtK8M1777NGJSBKO6IY92VPcO@vger.kernel.org, AJvYcCWymyU//5CocjfYWdwKiLuPlnOxqU3z4SMIb8eUmQl9DKnvuJfDLPu5OSxTEDwp+N2Mwz/cblm5Y8o5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsCfkuE2MDNRTpMGVVLwBimx7E9CZqvY2r3vPSbXbZDf+0rl/z
-	pDV6zr7H0PrgcuDlfvWvGgoxBd3+l/iDpqEp2uH/9tgwVZ4IwbqKKY1gQBRielxAobXjy8Hc1Lx
-	gK8kYWR2bsxRzispl3hfo+1oDWDNWSQ==
-X-Google-Smtp-Source: AGHT+IGHw+8G7L+ArmhFoRRdE1FV4g1i7ErMbY/OfAAY/uLB+PGTF8jRNyhPKgW/7xBDt1d7qcOsXVSoBcTc1Gd368Q=
-X-Received: by 2002:a05:6402:3484:b0:61e:8f70:ee26 with SMTP id
- 4fb4d7f45d1cf-62379b825a1mr8384508a12.38.1757371780463; Mon, 08 Sep 2025
- 15:49:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=rN30VHFG/nVtkH5rY15/LTj/A9WDTq/XJSNosnvcxEoq3623En0nZmc8eSFtfFuvM0Sz79st7ezmQyoVg6OfX55wSQ1WBMTED0+iQ2n1lJ1vM0Sz6OjOjIxy5GcSr5fK7bNXs+X8RDOlOLVo8/i3OJpRA4F0DT8hPq1yMjKjtkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gYGjV2L7; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5607a16639aso15898e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757371889; x=1757976689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B7r/MdVFkxF8UOpjUQVzgKnL7FVHjfWobr88oKr636Q=;
+        b=gYGjV2L7/MkOedYGu9TUdyLQ5CgBHp9YrCv6Gh70xrEJOxOFNVH+Bj5+9jKHlejWKy
+         0WpnYL4CDkSwBujtEtqgMFTSFtKHwGjTr1fGr+ob53RrOWGxU3C72+fhMrZF7fwiroT0
+         vlLlRZrum2/s6aoQpS1JbHClXZoEfwQiNMU+fKMfi+LA6BCkSSj59nGwpeNIRhbPwXXe
+         OcYArqmiQcwJ/tS52EqDJE9BiTWORo880ovUGWtZX73pHMvAt6AFQAQ7Ry4N6yjRAOxt
+         LxvQIMut1t9+ee9Zup03rNnL9zitqZgtu7EkNLatFTZj9brrh+ycHsurzJ4QGy1Y3mp1
+         KGQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757371889; x=1757976689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B7r/MdVFkxF8UOpjUQVzgKnL7FVHjfWobr88oKr636Q=;
+        b=XPLfEUkRUm3VQUpyXvZYvSV+bwAr39mP6Tuslj04BSIcr8fCfB+eg600sp78uKcVJH
+         pbGJVTO/eC7XYaWpT0nqw/1wl80VjLrNz6ducGoMD6rmuk4syWnwS93U4OIOxdzB5ZNv
+         YSizkvY7flQx1FMqOThX/czt4f7V/MOJ76azgo168pUXXdOQ7zRKaILP9wVuOO1aS0KO
+         1shYmqNY96Sj1KY9hCCKI77KF7eMAe9DMb3rkHqAqERWGIQEo2YrEZqiavaiElae0pks
+         vo3Fa6P4UDbyvUG82Ck4CHxga0NF8GG893hQzaaMmUknMRDAjH29mg33k71Pzvfb3uU+
+         KKFA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3wt7k0dpRdIP2+2pcmnJ0NUhU77hEqOjpr6pf4Z9SUhYEzOzjznmpHv6INxGMmjWVVNiUwe71BiwKX14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxkP+BEHBLkOn5wBf0arokdu4L+rZJiKnw5+vulbCiW9aeDjOK
+	23GyKU0yI9JbBaJPSvDOrs0BJtJrnpPto+5EI8Q5Mev1121sZ/BQ8F8Pa+A/tyKiioyi6gCBoSL
+	rtlzaH3c0BMDuAlitoh6/rvNDOSYOWOae9CQckG/z
+X-Gm-Gg: ASbGncvdEyEPr1YmoCosKKBt48eR99kOfasE/g+rIBl9lk4VOBxTKjl0bTgKHaLPxIE
+	HbF+BGtJrfq2SZ9z26DXQcoNU1V009HED6CrrI+WHh9WH1s91HAqnzxiqlveTFI3bkX0vdkCgVJ
+	0HtgNqOfMtYy2ePZVHk8h/jA/DCT377lNsyrXeTNPB7BC47GwWFSgr+Oj1kYHy6j5UOmgb0y1Iu
+	1Ncjiy3KweKubLLrQnw1SMfBwiJ7rdHyTlqXidfELyxNw==
+X-Google-Smtp-Source: AGHT+IHGlPCHT+44DAvJB9zRm+3LM/HXySp5XwuN4EFQvOUkmZCnoZLTNZDiAYuGffXb4da9PPxUbTsQPmLHNTo18Sg=
+X-Received: by 2002:ac2:5b92:0:b0:55f:6c68:400c with SMTP id
+ 2adb3069b0e04-56272295585mr463209e87.7.1757371889119; Mon, 08 Sep 2025
+ 15:51:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815144736.1438060-1-ivecera@redhat.com> <20250820211350.GA1072343-robh@kernel.org>
- <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com> <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
- <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
-In-Reply-To: <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 8 Sep 2025 17:49:28 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL5wQ+0Xcdo5T3FTyoa2csQ9aW8ZxxMxVOhRJpzc7fGhA@mail.gmail.com>
-X-Gm-Features: AS18NWAxhYNwJ56vsQfUczkl_R9TNuNktlxc2midcWQWDd56JDmUw5T0m2c6T2w
-Message-ID: <CAL_JsqL5wQ+0Xcdo5T3FTyoa2csQ9aW8ZxxMxVOhRJpzc7fGhA@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
- reference property
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com, 
-	Andrew Lunn <andrew@lunn.ch>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250908013419.4186627-1-tweek@google.com> <CAEjxPJ6QfUZijh3PEpHs_Yw6Hmte92-rg8gkvMw9cD=JxA+CMA@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6QfUZijh3PEpHs_Yw6Hmte92-rg8gkvMw9cD=JxA+CMA@mail.gmail.com>
+From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Date: Tue, 9 Sep 2025 08:51:12 +1000
+X-Gm-Features: Ac12FXzaXfPJRpw8SIYa0ofw9A3koHJPN82BozBv8c8kOd4rvQR4t_4Herx7EQg
+Message-ID: <CA+zpnLdbLjuGrk-178coxAH1pzpEA1jRzGn8zU9DHZ1rQspP4A@mail.gmail.com>
+Subject: Re: [PATCH v2] memfd,selinux: call security_inode_init_security_anon
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Isaac Manjarres <isaacmanjarres@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 5, 2025 at 1:50=E2=80=AFAM Ivan Vecera <ivecera@redhat.com> wro=
-te:
+On Tue, Sep 9, 2025 at 2:27=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
->
->
-> On 05. 09. 25 12:06 dop., Rob Herring wrote:
-> > On Fri, Aug 29, 2025 at 8:29=E2=80=AFAM Ivan Vecera <ivecera@redhat.com=
-> wrote:
-> >> ...
-> >>
-> >> Do you mean to add a property (e.g. dpll-channel or dpll-device) into
-> >> net/network-class.yaml ? If so, yes, it would be possible, and the way
-> >> I look at it now, it would probably be better. The DPLL driver can
-> >> enumerate all devices across the system that has this specific propert=
-y
-> >> and check its value.
+> On Sun, Sep 7, 2025 at 9:34=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@goog=
+le.com> wrote:
 > >
-> > Yes. Or into ethernet-controller.yaml. Is a DPLL used with wifi,
-> > bluetooth, etc.?
->
-> AFAIK no... ethernet-controller makes sense.
->
-> >>
-> >> See the proposal below...
-> >>
-> >> Thanks,
-> >> Ivan
-> >>
-> >> ---
-> >>    Documentation/devicetree/bindings/dpll/dpll-device.yaml  | 6 ++++++
-> >>    Documentation/devicetree/bindings/net/network-class.yaml | 7 ++++++=
-+
-> >>    2 files changed, 13 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> >> b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> >> index fb8d7a9a3693f..560351df1bec3 100644
-> >> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> >> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> >> @@ -27,6 +27,12 @@ properties:
-> >>      "#size-cells":
-> >>        const: 0
-> >>
-> >> +  "#dpll-cells":
-> >> +    description: |
-> >> +      Number of cells in a dpll specifier. The cell specifies the ind=
-ex
-> >> +      of the channel within the DPLL device.
-> >> +    const: 1
+> > Prior to this change, no security hooks were called at the creation of =
+a
+> > memfd file. It means that, for SELinux as an example, it will receive
+> > the default type of the filesystem that backs the in-memory inode. In
+> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> > be hugetlbfs. Both can be considered implementation details of memfd.
 > >
-> > If it is 1 for everyone, then you don't need a property for it. The
-> > question is whether it would need to vary. Perhaps some configuration
-> > flags/info might be needed? Connection type or frequency looking at
-> > the existing configuration setting?
+> > It also means that it is not possible to differentiate between a file
+> > coming from memfd_create and a file coming from a standard tmpfs mount
+> > point.
+> >
+> > Additionally, no permission is validated at creation, which differs fro=
+m
+> > the similar memfd_secret syscall.
+> >
+> > Call security_inode_init_security_anon during creation. This ensures
+> > that the file is setup similarly to other anonymous inodes. On SELinux,
+> > it means that the file will receive the security context of its task.
+> >
+> > The ability to limit fexecve on memfd has been of interest to avoid
+> > potential pitfalls where /proc/self/exe or similar would be executed
+> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> > similarly to the file class. These access vectors may not make sense fo=
+r
+> > the existing "anon_inode" class. Therefore, define and assign a new
+> > class "memfd_file" to support such access vectors.
+> >
+> > Guard these changes behind a new policy capability named "memfd_class".
+> >
+> > [1] https://crbug.com/1305267
+> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
+om/
+> >
+> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 >
-> Connection type maybe... What I am trying to do is define a relationship
-> between the network controller and the DPLL device, which together form
-> a single entity from a use-case perspective (e.g., Ethernet uses an
-> external DPLL device either to synchronize the recovered clock or to
-> provide a SyncE signal synchronized with an external 1PPS source).
+> When you revise a patch, you aren't supposed to retain other's tags
+> since they haven't technically reviewed, agreed to, or tested the
+> revised change.
+> That said, I have now done so and thus these tags can remain!
 >
-> Yesterday I was considering the implementation from the DPLL driver's
-> perspective and encountered a problem when the relation is defined from
-> the Ethernet controller's perspective. In that case, it would be
-> necessary to enumerate all devices that contain a =E2=80=9Cdpll=E2=80=9D =
-property whose
-> value references this DPLL device.
 
-Why is that?
-
->
-> This approach seems quite complicated, as it would require searching
-> through all buses, all connected devices, and checking each fwnode for a
-> =E2=80=9Cdpll=E2=80=9D property containing the given reference. I don=E2=
-=80=99t think this would
-> be the right solution.
-
-for_each_node_with_property() provides that. No, it's not efficient,
-but I doubt it needs to be. As you'd only need to do it once.
-
-> I then came across graph bindings and ACPI graph extensions, which are
-> widely used in the media and DRM subsystems to define relations between
-> devices. Would this be an appropriate way to define a binding between an
-> Ethernet controller and a DPLL device?
-
-Usually the graph is used to handle complex chains of devices and how
-the data flows. I'm not sure that applies here.
-
-> If so, what would such a binding roughly look like? I=E2=80=99m not very
-> experienced in this area, so I would appreciate any guidance.
->
-> If not, wouldn=E2=80=99t it be better to define the relation from the DPL=
-L
-> device to the network controller, as originally proposed?
-
-I have no idea really. I would think the DPLL is the provider and an
-ethernet device is the consumer. And if the ethernet device is unused
-(or disabled), then the DPLL connection associated with it is unused.
-If that's the case, then I think the property belongs in the ethernet
-node.
-
-Rob
+I'm sorry for that. Thanks for the clarification, I wasn't sure what
+the process was. And thanks for the review!
 
