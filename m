@@ -1,304 +1,119 @@
-Return-Path: <linux-kernel+bounces-806485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C80B497A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:55:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309E9B49793
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FF954E1FFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDB64E0265
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD7031812E;
-	Mon,  8 Sep 2025 17:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6BD3148A0;
+	Mon,  8 Sep 2025 17:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="eVpN7Xxa"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzMv/EDR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240323164A1;
-	Mon,  8 Sep 2025 17:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354029; cv=pass; b=kRMP2hP8YK4CPKtuWGPvnbKoMZKrNZiPB0I0xutMdmBoA9Gsj8t5wxIfbKdpEp6BVe3GgeSr5f9zVEpMsBkmwUQ/nXF64LRHLgICbRoQP5n95lG6NU0Cm/jnrQYmulxQil1L0nZmXbbVfp95CA0XC6YWiii3/90cPIrgWYQUit0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354029; c=relaxed/simple;
-	bh=OwdRsR4Z/3cQRq3276yVLRfEIjsQhJZfigcO//zTXpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pqfSPWGqUpqnCc9QYYvOXeb1pXOsly/g8WLyGDHPRgbP2dkx4/Y6VkSaKmP2U/7BBFSemdZtbGjCaYFW4Wxy1XZdIdK/Q09a8rUNIFNDpwPifatbS722J7J4mLq2kGSw1tr3e5u+hTTc2D41RRzrAWHb105aUBSr9KPz9i18Eyk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=eVpN7Xxa; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757353964; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=B4Mf6hX3bTYR3a7xiqiYtVcengOCYMtJ4uJlkCgsH8CHDfIpfPDn9QFXXw2JTXPIXbPjoVEoqmDlJ6+//kQSKYrl74uNirNimliuVIRmMSaqO/i326YtwRB2KLadoFMiMx/dZb9nrPGLCt0tlj96LCoXSGBmxLY/tHo2jPRkQ7o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757353964; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=naMSKwdItJDOVEut1clldy6rzfJ23gNVWfzo/NG/EPk=; 
-	b=mKNy732zMOeES4VFouY2+RdFC7btgwlztF00TDru9mn+yIv54ZdfAz8e39jQq4oiLF3IRxkBk0qG800GVy3RMMg6HIi+SOu16q91R8tjFTDKRMMEYw8qpMBfCCXqnL97P/1Xj46QZu3zXFHh2SqXEGGh//Hs+ErONriwiN8purw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757353963;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=naMSKwdItJDOVEut1clldy6rzfJ23gNVWfzo/NG/EPk=;
-	b=eVpN7XxaqwQUND+7FTzrATUGruIrEV/dnqxKdmazR6+iYVeul/IphtNTHtGsv/+L
-	kSzW1wYYT7hhzaaRz6IIPqgwHQp/4hshW+ePcAIsT0Bbv+tXe5d9KCs4aIW4JcYdeo4
-	yCZAuQEIoq/b/D9UUwXMI99G0aw05EuN8qyh0Jzo=
-Received: by mx.zohomail.com with SMTPS id 1757353961706173.12105076966714;
-	Mon, 8 Sep 2025 10:52:41 -0700 (PDT)
-Message-ID: <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
-Date: Mon, 8 Sep 2025 14:52:23 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758F913C8E8;
+	Mon,  8 Sep 2025 17:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757354024; cv=none; b=G5bn/fu3tVKFGFtueuETd1v5lT1mEV7JQujgCm037yjl5NBOZFZSxT56t7rXBlxXHrY9wPUod09chMTlGuHkENOTuXgLbq55eppSl4oBXkMoxjGQmrfDhtIb5pX/zEDllCLi0k/qLot/A3liPhy3DnQzNUMRWAc3DdiEROPq3lQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757354024; c=relaxed/simple;
+	bh=L4T7PdWR77h8wPb0TRSRQqBSx4nSQc+aT0+pK6PLhIw=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=HX+wKDGB1N3NwPUxsX35OquXTNt/jqb41G3JeCtbqFwEin/SVjeMsuR4eAnylHp+srgBOHAjPCSfhGukugq1m+I9yizLeGaazZFPvEYVcQaOBw7D7SVa3xYYGDCn0jSl9L9YNMuF6LueMmXfM2r2a8uBofLCLK/R6EifLR88sEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzMv/EDR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D9EC4CEF1;
+	Mon,  8 Sep 2025 17:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757354024;
+	bh=L4T7PdWR77h8wPb0TRSRQqBSx4nSQc+aT0+pK6PLhIw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WzMv/EDRHTQQOF57dDwqnUl2sMfIcXy29UKLDgmNptRtlDvJW9aQAvjblc/bA9Ohc
+	 f3xVCn+6OL+M7kBaAeHSvA/J3LhZQIJE6bA/9/bkNABf47PywHCmaM3Q2Qs5dmjq7H
+	 nlpsFQdOZrakMCfm25l3VjS8OOMsiHOMXFXUI5ZxZJF+nzf2RpyPFv+GWiu0e53QN2
+	 /nBKj3+CNn2TbatSCE1TrlDOvDJE9MKIBxoLGDSIEDsq1Y9ETqJxPvu6KFBPJ7yvqE
+	 8c+GMQcpwPtHMiBM+2Hcc7dMbfQYtlqMEHtnYY7lv/yVad0Jy68cZTK1c3HaOpMBtQ
+	 6r47wsPKB1R4w==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uvg4U-0000000769c-0Rpz;
+	Mon, 08 Sep 2025 13:54:30 -0400
+Message-ID: <20250908175319.841517121@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 08 Sep 2025 13:53:19 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>,
+ "Carlos O'Donell" <codonell@redhat.com>
+Subject: [PATCH v16 0/4] perf tool: Support the deferred unwinding infrastructure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
- bindings to YAML
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-2-ariel.dalessandro@collabora.com>
- <20250821-silky-slug-of-novelty-e4bb64@kuoka>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250821-silky-slug-of-novelty-e4bb64@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-Krzysztof,
 
-On 8/21/25 3:46 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
->> Convert the existing text-based DT bindings for MediaTek MT8173 Media Data Path
->> to a YAML schema.
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+This is the user space side of perf changes to handle deferred unwinding.
+It is based on the kernel side of perf patch series here:
 
-Thanks. Looks like my editor was misconfigured, sorry. Will fix in v2.
+  https://lore.kernel.org/linux-trace-kernel/20250908171412.268168931@kernel.org/
 
-> 
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 ++++++++++++++++++
->>   .../bindings/media/mediatek-mdp.txt           |  95 ----------
->>   2 files changed, 174 insertions(+), 95 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->>   delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
->>
->> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->> new file mode 100644
->> index 0000000000000..f3a08afc305b1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->> @@ -0,0 +1,174 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-mdp.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek MT8173 Media Data Path
->> +
->> +maintainers:
->> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> +
->> +description:
->> +  Media Data Path is used for scaling and color space conversion.
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
-> 
-> Just enum, no items here
+Changes since v15: https://lore.kernel.org/linux-trace-kernel/20250825180638.877627656@kernel.org/
 
-See below.
+- Separate out the kernel changes from the user space changes of perf.
 
-> 
-> 
->> +          - enum:
->> +              - mediatek,mt8173-mdp-rdma
->> +              - mediatek,mt8173-mdp-rsz
->> +              - mediatek,mt8173-mdp-wdma
->> +              - mediatek,mt8173-mdp-wrot
->> +      - items:
->> +          - enum:
->> +              - mediatek,mt8173-mdp-rdma
->> +              - mediatek,mt8173-mdp-rsz
->> +              - mediatek,mt8173-mdp-wdma
->> +              - mediatek,mt8173-mdp-wrot
->> +          - const: mediatek,mt8173-mdp
-> 
-> This makes no sense. How devices can be compatible and can not be
-> compatible.
+- Have the matching deferred code only skip when TID does not match.
+  Otherwise, process the sample but do not merge if the cookies do not match.
+  (Namhyung Kim)
 
-According to the driver source code (and the previous txt mt8173-mdp 
-bindings), there must be a "controller node" with compatible 
-`mediatek,mt8173-mdp`. Then its sibling nodes (including itself) should 
-be one of the component node ids, listed in `struct of_device_id 
-mtk_mdp_comp_dt_ids[]`.
+Namhyung Kim (4):
+      perf tools: Minimal CALLCHAIN_DEFERRED support
+      perf record: Enable defer_callchain for user callchains
+      perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+      perf tools: Merge deferred user callchains
 
-Is there a proper/different way to describe this compatible binding in 
-the yaml? Or you're saying the driver doesn't make sense here?
-
-[0] drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks: true
-> 
-> No, there's no such syntax. Look at other bindings.
-
-Ack.
-
-> 
-> 
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  iommus:
->> +    description: |
-> 
-> Drop |
-
-Ack.
-
-> 
->> +      This property should point to the respective IOMMU block with master port as argument,
->> +      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
-> 
-> Drop entire description, completely redundant. I don't know why my patch
-> fixing this was not applied, so you keep repeating same mistakes...
-
-Ack.
-
-> 
->> +    maxItems: 1
->> +
->> +  mediatek,vpu:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Describes point to vpu.
-> 
-> Useless description. We see that from the property name. Explain the
-> purpose in the hardware.
-
-Ack.
-
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - power-domains
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: mediatek,mt8173-mdp-rdma
->> +    then:
->> +      properties:
->> +        clocks:
->> +          items:
->> +            - description: Main clock
->> +            - description: Mutex clock
->> +    else:
->> +      properties:
->> +        clocks:
->> +          items:
->> +            - description: Main clock
->> +
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - mediatek,mt8173-mdp-rdma
->> +              - mediatek,mt8173-mdp-wdma
->> +              - mediatek,mt8173-mdp-wrot
->> +    then:
->> +      required:
->> +        - iommus
->> +
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: mediatek,mt8173-mdp
-> 
-> This makes no sense either.
-
-Same question above about compatibles.
-
-> 
->> +    then:
->> +      required:
->> +        - mediatek,vpu
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/mt8173-clk.h>
->> +    #include <dt-bindings/memory/mt8173-larb-port.h>
->> +    #include <dt-bindings/power/mt8173-power.h>
->> +
->> +    soc {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        mdp_rdma0: rdma@14001000 {
-> 
-> One example is enough. Two could be fine if they differ significantly.
-
-Sounds good. Will keep just a single example, including a node for the 
-controller node and one for each of the components.
-
-Thanks a lot for the feedback!
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+----
+ tools/lib/perf/include/perf/event.h       |  8 +++
+ tools/perf/Documentation/perf-script.txt  |  5 ++
+ tools/perf/builtin-script.c               | 92 +++++++++++++++++++++++++++++++
+ tools/perf/util/callchain.c               | 24 ++++++++
+ tools/perf/util/callchain.h               |  3 +
+ tools/perf/util/event.c                   |  1 +
+ tools/perf/util/evlist.c                  |  1 +
+ tools/perf/util/evlist.h                  |  1 +
+ tools/perf/util/evsel.c                   | 42 ++++++++++++++
+ tools/perf/util/evsel.h                   |  1 +
+ tools/perf/util/machine.c                 |  1 +
+ tools/perf/util/perf_event_attr_fprintf.c |  1 +
+ tools/perf/util/sample.h                  |  4 +-
+ tools/perf/util/session.c                 | 81 +++++++++++++++++++++++++++
+ tools/perf/util/tool.c                    |  2 +
+ tools/perf/util/tool.h                    |  4 +-
+ 16 files changed, 269 insertions(+), 2 deletions(-)
 
