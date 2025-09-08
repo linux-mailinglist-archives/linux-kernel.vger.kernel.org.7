@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-806513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E615B497FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC25B49806
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D074E191A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA53D1BC2CD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DD431B120;
-	Mon,  8 Sep 2025 18:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C533F3148D9;
+	Mon,  8 Sep 2025 18:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQ7y1IxU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="O3M0zof+"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3352B3191B4;
-	Mon,  8 Sep 2025 18:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694513148C7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355074; cv=none; b=SKYUUjABGfqncUGRrnchJpJ7Odh7Dbwu4mJpSPe3qHZfFj1UkwBkvpfAYP7LH/ZPZ91zNnABE0/Q6LewOyJXfb85yeGUpzU9cp7nM3z4Up3qY8xkJlFhDCnhuQTvf4FxjRzySX2AYb4hNQqc7m8P/yq+D3KKcCwMaFT2aIgJRCA=
+	t=1757355132; cv=none; b=T98FT8mciEnHzF4cyK8FS2kegn1QFUCebDaiY858dV8LOxhE1VBct3Yhg9NtHS8uhHnv8RVupf5YeyYtksTE/EWQBDRsMPhtXmd/IIvcMEfZR2g7DNCDXEpVohrqGPuab2Ie6nf7bx3hs7XcrXjqqgPwTWMQ8T3GX8zhDaFp5s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355074; c=relaxed/simple;
-	bh=zJ4rq1A7rDmdHeQfB8ynFE9503F7ovKFxfivFN/5hPw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MTdBgKXtpS9zOVRtuaRBxVuqWwZRJaJXd5UQB4Blp86rWkwFQ/6LDcLNpgMt4QXjwkVqi/cyl/Z+Mg2TWkn5EFPiIhY669oDytsIxU14tMH/GXXPOAgF9WwTYITPLVjULfK67PoD/21g6CQ0zpvV6PSjOYy7wPiNztS4uRlT/D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQ7y1IxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5601C4CEFC;
-	Mon,  8 Sep 2025 18:11:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757355073;
-	bh=zJ4rq1A7rDmdHeQfB8ynFE9503F7ovKFxfivFN/5hPw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hQ7y1IxUPVquvYgy5yUlyXqwhJc6iLQCwcSIFcqEjolAZNOyLB6+v3SRR2bxwaYTP
-	 dn0GnEftM+3JCtzI28l+z6EtBy2t2V6M8qGgtDu2XsnUSIndOr5LBM5CrRiHyydBaa
-	 TIg6n5G33v5pQ3tM7uVIf5GiGEXvIbGmX/+3Ece2SGgRMdinljCU6As5Kipc/H9xL7
-	 1/dxb+RAntzX9qc8L12Z5ARFPiZvngI4B9DbAd6h+8DdXN7peM19tvbGyUens0F9KP
-	 21lN9HzQQNf4b6c52XDkRRmKGzgGQpDPabLAx5UYqUM9TZJSga7yj07X5355fSPi98
-	 x8R6mDUh6svYQ==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 68C9B5FFA1; Tue, 09 Sep 2025 02:11:09 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH net-next v4 10/10] arm64: dts: allwinner: t527: orangepi-4a: Enable Ethernet port
-Date: Tue,  9 Sep 2025 02:10:59 +0800
-Message-Id: <20250908181059.1785605-11-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250908181059.1785605-1-wens@kernel.org>
-References: <20250908181059.1785605-1-wens@kernel.org>
+	s=arc-20240116; t=1757355132; c=relaxed/simple;
+	bh=H/p5xIJk8lmI/VqBNq2hGyqsRtnDqgWEJ++nq6tiL6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Up+Js2iZbPNoUweS06HwfrdutKPRkZxIPqlw8vSfqG5rM/KysUaVTbhtDnyWTUlxuI6S9aheS0hJXf0echfizfo2N3S65SEqZ3rMsgpCJOFn6QC1/wMciw2p5tycEysYExZUwjV6penZaPg3WH7EXSVMWgM/Lo/PPeqydS1bWn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=O3M0zof+; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b522e2866bcso89347a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1757355130; x=1757959930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ojzCABYGnMlZKVB/RdZnSfkc0o7nxef4JjZwU842o9o=;
+        b=O3M0zof+x+BCYjs9ZjSp4VVIPor0ngzVoFcOtksC9lIW+cZJAPPvk1GrAYf4MXxMJU
+         lWE544ynO8q6OfD7LoQmjAFPqHjuv09I8NtpOsUShLfHZXXs5bj2Wd7bXTtk99XBqacU
+         xBOi7fmch+4tdQ8jbCr7Bbqj4rO8slUaMhYWWscV66eZQ70nIXNF46msJzgSwoP5OFyZ
+         fd1XAwy/nWPTqiF5kmjiIAVcIEG/yAfmdTRKNlsIisaKyUFcxSuNZgbjNXIAD2cN4xRN
+         OGqBa9Z24RXCrAYRcIkrcR4NsW1MK7AZl4TEXudNId3lF+XLDCFpICF3Er1AgrByF3+c
+         Ckug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757355130; x=1757959930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ojzCABYGnMlZKVB/RdZnSfkc0o7nxef4JjZwU842o9o=;
+        b=sto++DBGVyF8+d7UgZw6NiH2gy9X/lemrpWApktHs8EalTqo28yQMWX48drb/yvCZS
+         lJrvWyvfN++Xr44S2kiEZsQpI17jupFqVRxpNrN7Sk+SsGZ0rw0HeWFAkiSL8MH9VNnZ
+         zWTxCv50YTB/ckDAdroneEdOQbeC5OmyLA+gzkETz332mMXLLF+E92QYciA1Q+Fr9oVJ
+         vpPW19KYIUdwmSyRnV7jzUbQsZZnPNnbX4Nxyp33LGfZh9ooOKgvJ5eGBk8KI1+Ri6r+
+         7ecMSbOVrmA9uU1iMP9Y/ZP6cW7fixq1pH6OtYUqyryVjCFFCHLVXk5JtHBKSW8JWC2a
+         TKnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjqT9Fz8di6n9Xv84LUu2IVEeylKpX4AjaeLgHHV2wPgD0Ihx//0gHnp21rWN8awHpT2nsx857uvEPJIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3AdDI6YCPmqpjnSzLD+6I/J+5KK1f3AHrmHWvrn4Tx51+hbpL
+	OC9/oSHrSG2sW98yGWcVxrRl17mADUVwEeJIV5nS0IMkMCeVS1AGRCdt9y3JdevI2AW0lbGojCS
+	yEdIuH84xbtQzd/y/mbd6g/mOUymqe3/pTXytYhFxIw==
+X-Gm-Gg: ASbGncs0d9bM8y9OVzy/dj7TbpYgqU42uS+FWyNrCiY7uVHrIrJ6sifXWAI8/kzcxpU
+	GUnurtdkiatzh1yxcuX4P7e4yQUQuIk9xe0vcyR5gG6ED+gitNymaaJgMEUUFX071uzfbKmbP28
+	30BcDKAeu0x4SCrjUOlsCXeLGDRBE/s35KoavUstWiMkrtSmbZpZ0LhmM2yEFsq+TwssX7V2N8d
+	HvfGumOG7ByyyzA+eniGgY=
+X-Google-Smtp-Source: AGHT+IGnaZQfRuThACjFkGL0OJplq2Sfcwtm084uzB80qdvnK8daKvu2HoJr1/1nhn8lVjDgbUhm7SfE4r4NCZxQwv4=
+X-Received: by 2002:a17:903:2442:b0:24e:4248:3d9b with SMTP id
+ d9443c01a7336-2517121749dmr52692415ad.4.1757355129582; Mon, 08 Sep 2025
+ 11:12:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250904170902.2624135-1-csander@purestorage.com>
+ <20250904170902.2624135-4-csander@purestorage.com> <07806298-f9d3-4ca6-8ce5-4088c9f0ea2c@kernel.dk>
+In-Reply-To: <07806298-f9d3-4ca6-8ce5-4088c9f0ea2c@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 8 Sep 2025 11:11:58 -0700
+X-Gm-Features: Ac12FXzi6ulJPkC8TSbiAM575fdZmfp3Iycust3u0vCQfoJDgKjsl5wGiRdKjZA
+Message-ID: <CADUfDZovKhJvF+zaVukM75KLSUsCwUDRoMybMKLpHioPpcfJCw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen-Yu Tsai <wens@csie.org>
+On Mon, Sep 8, 2025 at 7:13=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/4/25 11:09 AM, Caleb Sander Mateos wrote:
+> > IORING_SETUP_SINGLE_ISSUER doesn't currently enable any optimizations,
+> > but it will soon be used to avoid taking io_ring_ctx's uring_lock when
+> > submitting from the single issuer task. If the IORING_SETUP_SQPOLL flag
+> > is set, the SQ thread is the sole task issuing SQEs. However, other
+> > tasks may make io_uring_register() syscalls, which must be synchronized
+> > with SQE submission. So it wouldn't be safe to skip the uring_lock
+> > around the SQ thread's submission even if IORING_SETUP_SINGLE_ISSUER is
+> > set. Therefore, clear IORING_SETUP_SINGLE_ISSUER from the io_ring_ctx
+> > flags if IORING_SETUP_SQPOLL is set.
+> >
+> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > ---
+> >  io_uring/io_uring.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> > index 42f6bfbb99d3..c7af9dc3d95a 100644
+> > --- a/io_uring/io_uring.c
+> > +++ b/io_uring/io_uring.c
+> > @@ -3724,10 +3724,19 @@ static int io_uring_sanitise_params(struct io_u=
+ring_params *p)
+> >        */
+> >       if ((flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)) =3D=3D
+> >           (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED))
+> >               return -EINVAL;
+> >
+> > +     /*
+> > +      * If IORING_SETUP_SQPOLL is set, only the SQ thread issues SQEs,
+> > +      * but other threads may call io_uring_register() concurrently.
+> > +      * We still need uring_lock to synchronize these io_ring_ctx acce=
+sses,
+> > +      * so disable the single issuer optimizations.
+> > +      */
+> > +     if (flags & IORING_SETUP_SQPOLL)
+> > +             p->flags &=3D ~IORING_SETUP_SINGLE_ISSUER;
+> > +
+>
+> As mentioned I think this is fine. Just for posterity, one solution
+> here would be to require that the task doing eg io_uring_register() on a
+> setup with SINGLE_ISSUER|SQPOLL would be required to park and unpark the
+> SQ thread before doing what it needs to do. That should get us most/all
+> of the way there to enabling it with SQPOLL as well.
 
-On the Orangepi 4A board, the second Ethernet controller, aka the GMAC200,
-is connected to an external Motorcomm YT8531 PHY. The PHY uses an external
-25MHz crystal, has the SoC's PI15 pin connected to its reset pin, and
-the PI16 pin for its interrupt pin.
+Right, though that may make io_uring_register() significantly slower
+and disruptive to the I/O path. Another option would be to proxy all
+registrations to the SQ thread via task_work. I think leaving the
+current behavior as-is makes the most sense to avoid any regressions.
+If someone is interested in optimizing the IORING_SETUP_SQPOLL &&
+IORING_SETUP_SINGLE_ISSUER use case, they're more than welcome to!
 
-Enable it.
+I appreciate your feedback on the series. Do you have any other thoughts on=
+ it?
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-
-Changes since v1:
-- Switch to generic (tx|rx)-internal-delay-ps properties
----
- .../dts/allwinner/sun55i-t527-orangepi-4a.dts | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-index 38cd8c7e92da..7afd6e57fe86 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-@@ -15,6 +15,7 @@ / {
- 	compatible = "xunlong,orangepi-4a", "allwinner,sun55i-t527";
- 
- 	aliases {
-+		ethernet0 = &gmac1;
- 		serial0 = &uart0;
- 	};
- 
-@@ -95,11 +96,33 @@ &ehci1 {
- 	status = "okay";
- };
- 
-+&gmac1 {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ext_rgmii_phy>;
-+	phy-supply = <&reg_cldo4>;
-+
-+	tx-internal-delay-ps = <0>;
-+	rx-internal-delay-ps = <300>;
-+
-+	status = "okay";
-+};
-+
- &gpu {
- 	mali-supply = <&reg_dcdc2>;
- 	status = "okay";
- };
- 
-+&mdio1 {
-+	ext_rgmii_phy: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <1>;
-+		interrupts-extended = <&pio 8 16 IRQ_TYPE_LEVEL_LOW>; /* PI16 */
-+		reset-gpios = <&pio 8 15 GPIO_ACTIVE_LOW>; /* PI15 */
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <150000>;
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_cldo3>;
- 	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* PF6 */
--- 
-2.39.5
-
+Best,
+Caleb
 
