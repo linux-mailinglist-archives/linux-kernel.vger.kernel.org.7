@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-804925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FF6B48207
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:21:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA2AB48208
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A3016A55F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FA4189C447
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040111E990E;
-	Mon,  8 Sep 2025 01:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975C01FE44A;
+	Mon,  8 Sep 2025 01:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="LUbNN6nY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NrAEHOZG"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="gZJHO4D0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Iscf8s9u"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD601C3C11
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 01:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6D51DF246
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 01:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757294482; cv=none; b=YbEBpJwi2QcAtzmXTTx5wYXydVtaTJi315M0SIuY3PA+zoDNhZjJ6EVM3PtNvX95j0rx4MCFtBg2F60QWGaBE4C7dmclmvSqOjM6lGLhaKxwvY9cI32jVbFhXcjntii8szJPYYgqyc1WgLSJJdViSrnZ9Y1ulu3vFSIylaxf45Y=
+	t=1757294483; cv=none; b=LGxv4+KYq3RfnYthMZT12+/EgHnFkX7GXmeDp8+yCrUU0vCHcjZBz5Qxcg7uBPGMmAMDUHwIrahXubWzMVM5KSa6OVzG+ISX8h0/dO01Hn2+p1nXTLlG4+P5DmkfLECPOEuESifs5MSuXiFdSNg+VbiHcm3KqEAOycz3MNtkdFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757294482; c=relaxed/simple;
-	bh=c4HtsegVi3uw9RorKzEf9C5EDnAVZTi4VD9ITXs7jYk=;
+	s=arc-20240116; t=1757294483; c=relaxed/simple;
+	bh=3QvAJWGv1gPQ3eJSGXr06KRvz10xtfAcuAZOZKEKQMw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c2bv0sgVo+T3mB68Z8Jev+b+TXwR5gKUSaRclprant8Y0jpKMA5lIf52Ua5ZuZjSCEUoRYFdp5su6SNvfRwJatbbR8/U7t/8poo4r3k7FCCbC4vS2dtfD3nNF3CFiJuNUusGE2z9H5udgdBDee5L9HxvX2QojRNBazLKRXd5M00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=LUbNN6nY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NrAEHOZG; arc=none smtp.client-ip=103.168.172.146
+	 MIME-Version; b=JFQ7uRTzQetstc7AkYSc11zjgzI4BqNFpBI9Lo0KRDWcw1OxrfJajYA/jfawGLhkJgVtQm524+UqnkR86x2XBi1GttPQurDqULkC6leMLjILePhWmGimW9iTaXoo7a63ou3MsXApBXjs7t270Lt0Z6eloARCEAk7lM5uxpb1+xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=gZJHO4D0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Iscf8s9u; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7A0E1EC007B;
-	Sun,  7 Sep 2025 21:21:19 -0400 (EDT)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id EA0301400031;
+	Sun,  7 Sep 2025 21:21:20 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sun, 07 Sep 2025 21:21:19 -0400
+  by phl-compute-09.internal (MEProxy); Sun, 07 Sep 2025 21:21:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1757294479; x=
-	1757380879; bh=VnQqzEe4MIZzE9rsM4hqaAJTPrsvj4NXRFbWU+fyj6g=; b=L
-	UbNN6nYXHbf8e8gxRWAsbkmQJhBC1+f/l21su8w4hWVoTfF88WMwgKFxHMiN+ns0
-	LXcTq1/oOgR3YEBpZZ8Hquu/+XfL+l26EWV9rKSkOdM3ZZlMcUQvcG90z7B/ES2m
-	AxEuFK+pZaVAIE1pL7+U2qGuDnSTQswUe01KbZcj1dWtqpJBVapxA5xh0IZCc5kM
-	GNiANm/4ezkVLX7DXlAuqs5ZIlwXYbCd3z3RyISDJTjtmGi39TDoKGSeJQRDeSsn
-	suyUgyzBmS6SR9DpWk7RMDvk4S9oQZKW2rzgZ/2gk4yIHdv5vkqR9iphghKkpalM
-	p3P4QDb1ECrcrJKNW4mXA==
+	:reply-to:subject:subject:to:to; s=fm1; t=1757294480; x=
+	1757380880; bh=H7DOpTJkIKamZnnlkDD1SFk3tG3wPCtz+PxOLCk1rJA=; b=g
+	ZJHO4D0taD6mqOFuMbyNxqUv3ayiE4OGADR1Zl79iNhuahUTtiFSn2pgX5O5+C10
+	WVubXjw02/hbyh3kZihjTnqH9Jz800bpAOHyoseoM30U1ylIAI26LNnADfSCYGkh
+	ece6k/pZRXkOktfexQZWXuMFDr3Etm+KXS5Tk7IBWZXSnkv/H//AjdPkzECfQ1Hf
+	5mJDkHJObzA4KM32JrbA/DN9eR2g12+LM2F170MhSjwmY3e3zsiWavJi/8XaW/T0
+	yOAfElZx4Vp6BFE3bCJUDpbOi910sgzBqLSfoMmKO/9aAULeV43QrORa4tCE66xf
+	qu6UsjTN6qWX8XCJc752A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757294479; x=1757380879; bh=V
-	nQqzEe4MIZzE9rsM4hqaAJTPrsvj4NXRFbWU+fyj6g=; b=NrAEHOZGBrACcP2ji
-	i/S/QWBzQrlw+Tbb5tlHvGeV4qTmovOSINBFqbo/4h+ubcDhoq/Pw4O9h9KocsGZ
-	RqRor/VxLh6No6QOvmI47RO+QioxGeXGvnq9bHpJ6ZDrOI5NXonAi7jvL78S2VPD
-	UHMUN65M4TAcBhsdTImCFpzoBuiTRzMDTRvAYczd6mGnGpdegxTr5xw0gzaOjbtd
-	H9C81GrzLrCEnV45I3pDgRpMREQpBi+5xidt8cTAfIOHTtr32Y63FtdBHgPBSatx
-	RCRzdv2nzLKQBpLO729JmWQZsAPXiK0ZuW2q2vdDOAD+W3OAdma9BX/KHgS4uwLU
-	HsIWg==
-X-ME-Sender: <xms:jy--aCya6PGMMwKLrbrLGJyQj2eIggqXdcVxtBsJOkYQ6uxaTtEHMA>
-    <xme:jy--aHOq4yxWymP1ybzb5VzxC8AgnTfThXoGBMelV4By1ZKueUfHN3aTN5FEcI5NQ
-    VbGe7-iMK8q05BvO10>
-X-ME-Received: <xmr:jy--aGTQriEd4LweV8uribvlJSVXCnqebFzUuoJFB6oHVKeSj9uGkNRApJLxv6U2ZSOKN6K2EGW8YUB9hwUlQRB_b5EQLP-hnO-PB5kLtd8>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757294480; x=1757380880; bh=H
+	7DOpTJkIKamZnnlkDD1SFk3tG3wPCtz+PxOLCk1rJA=; b=Iscf8s9ugpTeE2bIo
+	Mr+nk6pxOKJF+PshEI92Til+A5+QvU7R2t8eOQQnNp5z3GNTjXJizfpUPI+BNOBc
+	vZnLdzQrXu47toE4X3b+hiLsKCYDBAfgAttZeIM7ut7RCQGBKV9OzE+5Wt5DKZMZ
+	sVWPFMOoJzwAm641M4C7doggo2FiwaZbXkQyRx1Suqgd7hbBcjRkt4ywN3y9+uDQ
+	0ulTG6t72FHFPC0eS6hLXNyllDK+Ynqp61lJT8Sg27Y1YvMHmnrKIBt4aCvIX7h3
+	JjxoZy0s9GPDDbjA6vMFI3sFw2nC2pvesDm3h7IMewBhFhgkh0W+WYn8h998NrCK
+	s3oIw==
+X-ME-Sender: <xms:kC--aNudcNueJvJQ3lZkptwGmdoKoQmDBGBvcYQCv2_eDbWcyMnrBA>
+    <xme:kC--aPZ1cPbOHMvPIEVU26nYNjSrAa3Ea6wlKBnEu0k_a2-d7wNPxaNn6NVKhqnsq
+    L5eHTciAdDq8IMr1jo>
+X-ME-Received: <xmr:kC--aCspPahR5kIwNC7zcdGImEGPWdIBbMoMj4LuFR_uVDlZ0u0NeEk7hYBrVEW6lQaw1MsPyrn-5tshj0oAf0IzkTNoDVM1Nm0M9mKcQ-0>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduiedulecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
     dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
     ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejuedvgf
     duudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgvrhfu
-    ihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
     grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
     pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
     gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
     rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:jy--aFZFbRYXy6xFLUcsLKE2QRLO5QoVAF1Nw1Y1ehu-Bo9oYZjt7Q>
-    <xmx:jy--aD3B6-lBxCZ3PSMI5q04Ysehz5Sq-6IbhXIXXCy3GM6BR49Sfw>
-    <xmx:jy--aFUduKdIX3pqogj-VIyNeH6JeqsbgHMtDSeQvKkmyDH6zqIoNw>
-    <xmx:jy--aNVe5XxawolN7UqXJsWY113kVZ1m2VavWkNkXeExLBTDyj0k2w>
-    <xmx:jy--aL1H-9PEEO24ySkQGXcCR87MByYgyhKMMWlzoUPpq46zMQxDoxnv>
+X-ME-Proxy: <xmx:kC--aBHcP65zhaAFLALZjAeHR6Qh1Y2_YsPb1ib1leeuzIpgca35AQ>
+    <xmx:kC--aNzwZeDor2aqyF0q1cuVCZ6obFK6BR45s2abmuJkhctKYRNNTA>
+    <xmx:kC--aAg-Gym3NZNiXnVEyeAZk6qIu61lP_9yILCul_XGxwu54B3IBA>
+    <xmx:kC--aAwdfwKwu6RQnbh1VLNvasykuU4g6OKg3QCz40i2HnyTzpkMAQ>
+    <xmx:kC--aCRK_8Zs3MtUY-M7pCc5YMi5ttth149UcA8gi5-_SycUP4OcfSPl>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 7 Sep 2025 21:21:18 -0400 (EDT)
+ 7 Sep 2025 21:21:19 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] firewire: core: add helper functions to access to fw_device data in fw_node structure
-Date: Mon,  8 Sep 2025 10:21:01 +0900
-Message-ID: <20250908012108.514698-5-o-takashi@sakamocchi.jp>
+Subject: [PATCH 05/11] firewire: core: use cleanup function in bm_work
+Date: Mon,  8 Sep 2025 10:21:02 +0900
+Message-ID: <20250908012108.514698-6-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250908012108.514698-1-o-takashi@sakamocchi.jp>
 References: <20250908012108.514698-1-o-takashi@sakamocchi.jp>
@@ -100,149 +100,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The data mbmer in fw_node structure is an opaque pointer, while nowadays
-it is just used to refer to fw_device associated with the fw_node.
+In "bm_work" function, the references to fw_card and fw_node are
+released at last. This is achieved by using goto statements. For this
+case, the kernel cleanup framework is available.
 
-This commit redefines the opaque pointer to a pointer to fw_device
-structure, and adds some helper functions to set/get it.
+This commit uses the framework to remove these statements.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-card.c   |  4 ++--
- drivers/firewire/core-device.c | 18 +++++++++---------
- drivers/firewire/core.h        | 14 ++++++++++++--
- 3 files changed, 23 insertions(+), 13 deletions(-)
+ drivers/firewire/core-card.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
-index 41902dcc10a0..4a4210cda571 100644
+index 4a4210cda571..5bd89ddf5018 100644
 --- a/drivers/firewire/core-card.c
 +++ b/drivers/firewire/core-card.c
-@@ -307,12 +307,12 @@ static void bm_work(struct work_struct *work)
- 	generation = card->generation;
- 
- 	root_node = fw_node_get(card->root_node);
--	root_device = root_node->data;
-+	root_device = fw_node_get_device(root_node);
- 	root_device_is_running = root_device &&
- 			atomic_read(&root_device->state) == FW_DEVICE_RUNNING;
- 	root_device_is_cmc = root_device && root_device->cmc;
- 
--	irm_device = card->irm_node->data;
-+	irm_device = fw_node_get_device(card->irm_node);
- 	irm_is_1394_1995_only = irm_device && irm_device->config_rom &&
- 			(irm_device->config_rom[2] & 0x000000f0) == 0;
- 
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index aeacd4cfd694..6a04a0014694 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -887,7 +887,7 @@ static void fw_device_release(struct device *dev)
- 	 * bus manager work looks at this node.
- 	 */
- 	scoped_guard(spinlock_irqsave, &card->lock)
--		device->node->data = NULL;
-+		fw_node_set_device(device->node, NULL);
- 
- 	fw_node_put(device->node);
- 	kfree(device->config_rom);
-@@ -1007,7 +1007,7 @@ static void fw_device_init(struct work_struct *work)
- 	int ret;
- 
- 	/*
--	 * All failure paths here set node->data to NULL, so that we
-+	 * All failure paths here call fw_node_set_device(node, NULL), so that we
- 	 * don't try to do device_for_each_child() on a kfree()'d
- 	 * device.
- 	 */
-@@ -1051,9 +1051,9 @@ static void fw_device_init(struct work_struct *work)
- 				struct fw_node *obsolete_node = reused->node;
- 
- 				device->node = obsolete_node;
--				device->node->data = device;
-+				fw_node_set_device(device->node, device);
- 				reused->node = current_node;
--				reused->node->data = reused;
-+				fw_node_set_device(reused->node, reused);
- 
- 				reused->max_speed = device->max_speed;
- 				reused->node_id = current_node->node_id;
-@@ -1292,7 +1292,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 		 * FW_NODE_UPDATED callbacks can update the node_id
- 		 * and generation for the device.
- 		 */
--		node->data = device;
-+		fw_node_set_device(node, device);
- 
- 		/*
- 		 * Many devices are slow to respond after bus resets,
-@@ -1307,7 +1307,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 
- 	case FW_NODE_INITIATED_RESET:
- 	case FW_NODE_LINK_ON:
--		device = node->data;
-+		device = fw_node_get_device(node);
- 		if (device == NULL)
- 			goto create;
- 
-@@ -1324,7 +1324,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 		break;
- 
- 	case FW_NODE_UPDATED:
--		device = node->data;
-+		device = fw_node_get_device(node);
- 		if (device == NULL)
- 			break;
- 
-@@ -1339,7 +1339,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 
- 	case FW_NODE_DESTROYED:
- 	case FW_NODE_LINK_OFF:
--		if (!node->data)
-+		if (!fw_node_get_device(node))
- 			break;
- 
- 		/*
-@@ -1354,7 +1354,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 		 * the device in shutdown state to have that code fail
- 		 * to create the device.
- 		 */
--		device = node->data;
-+		device = fw_node_get_device(node);
- 		if (atomic_xchg(&device->state,
- 				FW_DEVICE_GONE) == FW_DEVICE_RUNNING) {
- 			device->workfn = fw_device_shutdown;
-diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
-index 9b298af1cac0..083e39034c37 100644
---- a/drivers/firewire/core.h
-+++ b/drivers/firewire/core.h
-@@ -194,8 +194,8 @@ struct fw_node {
- 	/* For serializing node topology into a list. */
- 	struct list_head link;
- 
--	/* Upper layer specific data. */
--	void *data;
-+	// The device when already associated, else NULL.
-+	struct fw_device *device;
- 
- 	struct fw_node *ports[] __counted_by(port_count);
- };
-@@ -219,6 +219,16 @@ static inline void fw_node_put(struct fw_node *node)
- 	kref_put(&node->kref, release_node);
+@@ -280,14 +280,17 @@ void fw_schedule_bm_work(struct fw_card *card, unsigned long delay)
+ 		fw_card_put(card);
  }
  
-+static inline struct fw_device *fw_node_get_device(struct fw_node *node)
-+{
-+	return node->device;
-+}
++DEFINE_FREE(node_unref, struct fw_node *, if (_T) fw_node_put(_T))
++DEFINE_FREE(card_unref, struct fw_card *, if (_T) fw_card_put(_T))
 +
-+static inline void fw_node_set_device(struct fw_node *node, struct fw_device *device)
-+{
-+	node->device = device;
-+}
+ static void bm_work(struct work_struct *work)
+ {
+ 	static const char gap_count_table[] = {
+ 		63, 5, 7, 8, 10, 13, 16, 18, 21, 24, 26, 29, 32, 35, 37, 40
+ 	};
+-	struct fw_card *card = from_work(card, work, bm_work.work);
++	struct fw_card *card __free(card_unref) = from_work(card, work, bm_work.work);
+ 	struct fw_device *root_device, *irm_device;
+-	struct fw_node *root_node;
++	struct fw_node *root_node __free(node_unref) = NULL;
+ 	int root_id, new_root_id, irm_id, bm_id, local_id;
+ 	int gap_count, generation, grace, rcode;
+ 	bool do_reset = false;
+@@ -297,11 +300,13 @@ static void bm_work(struct work_struct *work)
+ 	bool keep_this_irm;
+ 	__be32 transaction_data[2];
+ 
++	lockdep_assert_held(&card->lock);
 +
- void fw_core_handle_bus_reset(struct fw_card *card, int node_id,
- 	int generation, int self_id_count, u32 *self_ids, bool bm_abdicate);
- void fw_destroy_nodes(struct fw_card *card);
+ 	spin_lock_irq(&card->lock);
+ 
+ 	if (card->local_node == NULL) {
+ 		spin_unlock_irq(&card->lock);
+-		goto out_put_card;
++		return;
+ 	}
+ 
+ 	generation = card->generation;
+@@ -366,9 +371,9 @@ static void bm_work(struct work_struct *work)
+ 				CSR_REGISTER_BASE + CSR_BUS_MANAGER_ID,
+ 				transaction_data, 8);
+ 
++		// Another bus reset, BM work has been rescheduled.
+ 		if (rcode == RCODE_GENERATION)
+-			/* Another bus reset, BM work has been rescheduled. */
+-			goto out;
++			return;
+ 
+ 		bm_id = be32_to_cpu(transaction_data[0]);
+ 
+@@ -382,8 +387,7 @@ static void bm_work(struct work_struct *work)
+ 			/* Somebody else is BM.  Only act as IRM. */
+ 			if (local_id == irm_id)
+ 				allocate_broadcast_channel(card, generation);
+-
+-			goto out;
++			return;
+ 		}
+ 
+ 		if (rcode == RCODE_SEND_ERROR) {
+@@ -393,7 +397,7 @@ static void bm_work(struct work_struct *work)
+ 			 * that the problem has gone away by then.
+ 			 */
+ 			fw_schedule_bm_work(card, DIV_ROUND_UP(HZ, 8));
+-			goto out;
++			return;
+ 		}
+ 
+ 		spin_lock_irq(&card->lock);
+@@ -417,7 +421,7 @@ static void bm_work(struct work_struct *work)
+ 		 */
+ 		spin_unlock_irq(&card->lock);
+ 		fw_schedule_bm_work(card, DIV_ROUND_UP(HZ, 8));
+-		goto out;
++		return;
+ 	}
+ 
+ 	/*
+@@ -455,7 +459,7 @@ static void bm_work(struct work_struct *work)
+ 		 * and let's try again once that's done.
+ 		 */
+ 		spin_unlock_irq(&card->lock);
+-		goto out;
++		return;
+ 	} else if (root_device_is_cmc) {
+ 		/*
+ 		 * We will send out a force root packet for this
+@@ -512,7 +516,7 @@ static void bm_work(struct work_struct *work)
+ 		 */
+ 		reset_bus(card, card->gap_count != 0);
+ 		/* Will allocate broadcast channel after the reset. */
+-		goto out;
++		return;
+ 	}
+ 
+ 	if (root_device_is_cmc) {
+@@ -525,16 +529,11 @@ static void bm_work(struct work_struct *work)
+ 				CSR_REGISTER_BASE + CSR_STATE_SET,
+ 				transaction_data, 4);
+ 		if (rcode == RCODE_GENERATION)
+-			goto out;
++			return;
+ 	}
+ 
+ 	if (local_id == irm_id)
+ 		allocate_broadcast_channel(card, generation);
+-
+- out:
+-	fw_node_put(root_node);
+- out_put_card:
+-	fw_card_put(card);
+ }
+ 
+ void fw_card_initialize(struct fw_card *card,
 -- 
 2.48.1
 
