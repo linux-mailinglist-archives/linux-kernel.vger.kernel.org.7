@@ -1,92 +1,69 @@
-Return-Path: <linux-kernel+bounces-805532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00823B489C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F997B489D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897713C2F2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E43B4A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E402FB091;
-	Mon,  8 Sep 2025 10:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe9MpACX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD71E2F7468;
-	Mon,  8 Sep 2025 10:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D32E5B11;
+	Mon,  8 Sep 2025 10:16:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963737081E;
+	Mon,  8 Sep 2025 10:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326438; cv=none; b=UOwcO2RMIfpcLO9tYLoOFf1vzWrXHSZNHY97N0Ksfuz49+ZyULFZ9/Y7RVV8E6uwCoBkgEx81t2a6cPajn/wvXomTFfkx+zXHl3QCM8UmmzR+zFkroN+K83bMiPG/fpR4XpSif6HpNwlu4EiYp8zUaR86Nx71y+EDrE07UMmGcE=
+	t=1757326563; cv=none; b=WYGyRcO16R88PsY/RTfa2EBh2KkBJrsJGbpd2A9mWJdGjGS0nrSo//1OBmMHHkcvO2WDIwb2nr5ovpah6d82aashqy03pz1veXLOHTi9jNN7BKTyYaze09CV7qzlwqikVOSQel2dVPEjqY85VvKGMnWsI2pNYR6u+uwScV2pzYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326438; c=relaxed/simple;
-	bh=V94qzqT6EmHCxPQT3ZN6FCJ70fG56TOb8lu9nQhI4D8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE1fGZnYJCjxcJr7oMFwdqFiqXPPqXh3IQZBxIx3N67Wyydtm7MwMHWsqc8/JZglOWsntihS6J0HmIhAE5B2Al+J7wRhJQuE4j+K/S6v6wrRhM0tSdOdxki4Ic6bmvXuJV67r2rl++LXuSj/n3fMWPlLWswAVQlWErGVxODEiCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qe9MpACX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 983A0C4CEF9;
-	Mon,  8 Sep 2025 10:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757326438;
-	bh=V94qzqT6EmHCxPQT3ZN6FCJ70fG56TOb8lu9nQhI4D8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qe9MpACXkeUd9jHlN1j//64hnAQuYMHeyAldfY/FEO6qlFulWpVjw3Nk153/wETUO
-	 2dPXGI7kveHUxJ28u890X2oP8hoyFTsgwp1l5TZIZyFNHXYZuIlLlu7Wp7bns6FHXM
-	 pYIfPBGlcf6p1d17B/9C18KfZfsrpwpXCaKxYGhAXkFiVm8Rv6U6gnpqxe+P3sksSD
-	 uw5NpW/o6wI81YtfEzn1uuENY5rLBZmH+YfZqIZ7Xur2xWS8uOzYqfPVPUSYJEdX2I
-	 skWkN5WUW0VquYPE6/6rWoJf7AXD6KJKWc+WYiDht8R1KkGeeocCNurcgjdjc0PRzm
-	 22Doa8LY3Wmpw==
-Date: Mon, 8 Sep 2025 11:13:53 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, david decotigny <decot@googlers.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de,
-	calvin@wbinvd.org, kernel-team@meta.com, stable@vger.kernel.org
-Subject: Re: [PATCH net v3 3/3] selftest: netcons: create a torture test
-Message-ID: <20250908101353.GC2015@horms.kernel.org>
-References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
- <20250905-netconsole_torture-v3-3-875c7febd316@debian.org>
+	s=arc-20240116; t=1757326563; c=relaxed/simple;
+	bh=I6CCdO2I8OfTKvg8UkxnpsuGGSkgbMN9yxQpOATLnbs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J2PyzEcMzBmxmWSXoIIDt1Kh627eQ439t8NKvNZhzQvMfkohh1Cqw7zx3XvxawRDQOTs7wA3zWvYbl6EZdoYblSki2Y+5u1kr9BbDIN7O0orTNhupr3maw2UxBN9TLUFf5GF3hS4P7uNLuc5e/nyTLnmJHpZvOjtli2uNQcmuYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87E621692;
+	Mon,  8 Sep 2025 03:15:52 -0700 (PDT)
+Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6EE433F66E;
+	Mon,  8 Sep 2025 03:15:59 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	Peng Fan <peng.fan@nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: Fix typo for scmi_perf_proto_ops
+Date: Mon,  8 Sep 2025 11:15:56 +0100
+Message-Id: <175732651445.3916791.4020244491858368527.b4-ty@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250831-scmi-cpufreq-v1-1-493031cf6e9b@nxp.com>
+References: <20250831-scmi-cpufreq-v1-1-493031cf6e9b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905-netconsole_torture-v3-3-875c7febd316@debian.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 05, 2025 at 10:25:09AM -0700, Breno Leitao wrote:
-> Create a netconsole test that puts a lot of pressure on the netconsole
-> list manipulation. Do it by creating dynamic targets and deleting
-> targets while messages are being sent. Also put interface down while the
-> messages are being sent, as creating parallel targets.
-> 
-> The code launches three background jobs on distinct schedules:
-> 
->  * Toggle netcons target every 30 iterations
->  * create and delete random_target every 50 iterations
->  * toggle iface every 70 iterations
-> 
-> This creates multiple concurrency sources that interact with netconsole
-> states. This is good practice to simulate stress, and exercise netpoll
-> and netconsole locks.
-> 
-> This test already found an issue as reported in [1]
-> 
-> Link: https://lore.kernel.org/all/20250901-netpoll_memleak-v1-1-34a181977dfc@debian.org/ [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Andre Carvalho <asantostc@gmail.com>
+On Sun, 31 Aug 2025 14:52:37 +0800, Peng Fan wrote:
+> The name is power_scale_get, not power_scale_mw_get, correct it.
+>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+
+[1/1] firmware: arm_scmi: Fix typo for scmi_perf_proto_ops
+      https://git.kernel.org/sudeep.holla/c/72ca981dba5e
+--
+Regards,
+Sudeep
 
 
