@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-804934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F71B48215
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB7FB48216
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BEE3C01B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF213C01CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924DA1BD9F0;
-	Mon,  8 Sep 2025 01:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B6E1B87F2;
+	Mon,  8 Sep 2025 01:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Fud/aShV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC04D1A76DE;
-	Mon,  8 Sep 2025 01:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIxRZkt5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9691A76DE;
+	Mon,  8 Sep 2025 01:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757294920; cv=none; b=Y0Toe6nFZBheBSEdvEkHC2iQRha8Avki942lqFAZjeTPNRYZOV+q2Rz38TlPzKv30VTpMxk1aV1Zrs6I8Z9C4yEt9ALZXRp+dddIzs+21EkUgFc/h9Sf477SXK2ROm+wHnmIGRRw5Vs7VJ07NBg2YKzamqLFt9fBdOaK/Y3p4Uo=
+	t=1757294947; cv=none; b=L40Vm5HCzxC1SfZQn7jVrnEJwNvU+uD5bnrGevMwHn3Xh1TgY4u0hAYlb1TcGi2ANX/KopYBVoSaIO/J5FW/uDn9tt1p9W+EuDJ9vzX7LlTHw+Mc6RbzpnZaxpuYzseoTbM5fJKF5mLGkfKbuAi33eWTunF63mWwiTaW92xsmO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757294920; c=relaxed/simple;
-	bh=z8yAPfMmQwzHszu4Z2lL+bTxIE9wiaxWaqZHn+igdFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AB3eopTw9rvFloWcDkl5lm/5xX5nr6neDY+cAvUICLs1nImpq7PW2ooZ4an+IWPQO+waItPrF8/G1LfKwV8pkXYmd7CdwOV0cyjdbwok54nX4lj4Odn+8ZquLdZ0lU0OLi+2BLIqNHzryAjyrOTOkVQPZrHB9EdGW/VlvZrXkos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Fud/aShV; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=b4
-	78YNyQYzpAeXDsMB01qHYuIYetAOgNkJR3xyEww0I=; b=Fud/aShV2wf7OgFZN/
-	NBMgK8XZrZeQv2CeKgjtdom0i66J14vQ2alQi5lLNowKvutpBcOSYSlQF9WbCa56
-	VKPdy5m3yrdk8ZoRSHqwaebejf5O/ynhCQYKlSgr8JJKAcwfir8LKv57JU4c4QdG
-	m+2bhKEahZn7XQu53/vbzUazE=
-Received: from 163.com (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgC3Rx0rMb5oOp+uCA--.6873S2;
-	Mon, 08 Sep 2025 09:28:13 +0800 (CST)
-From: chenyuan_fl@163.com
-To: kuninori.morimoto.gx@renesas.com,
-	geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuan CHen <chenyuan@kylinos.cn>
-Subject: [PATCH v2] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
-Date: Mon,  8 Sep 2025 02:28:10 +0100
-Message-Id: <20250908012810.4767-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
-References: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
+	s=arc-20240116; t=1757294947; c=relaxed/simple;
+	bh=5Z/FF6pET2UtcziqsLv1hcVFfVvtqwK/QtWa5mE6XGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEIiyIJ4HXM+hLbNgRJyMgZG9vEDRspzXoMIXhsQTNw5ULdVmuQDec4HmhQ4voxZFdeqZl3NpvxnsKGnh6ZS465nDQB/5wHlnTRMHB90aFWdeEfn8tW7yrOdt1OYdXbQAe+BOPAsz6OTj/tZQsDkBeKFYOVPdaBc8LrnQhXH2lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIxRZkt5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F4FC4CEF0;
+	Mon,  8 Sep 2025 01:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757294946;
+	bh=5Z/FF6pET2UtcziqsLv1hcVFfVvtqwK/QtWa5mE6XGU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=PIxRZkt53otjBTVAEc/6ZmTRulJ5DLl17FSCpkjbEBwqENNGZQtIDIT9ZzmMUgdJb
+	 MIDwXWEnIdEIJJ7JjIazOoVzHJXpWQsgpLuFOAeQolHJqVLIh8oii/dx/OaNNxWBVX
+	 HFK9Gs30PwAhC7FDgsxV9xwLREgV283pbfDTw9EYup8Ogz20a7UZmImJlfsn82l+kH
+	 DfP9SjnBvkgEP9kYjvLVJwyOVWJwMOG9LSeBZbmmoKpw/e4HWGZWyD+hBfXWJPD9Ks
+	 eqbTiWaneD50z4O9GpTUGZrkRAWvrJrwzpCPWnVjITLwDAO/j0qzYRdtmZfcZobOu7
+	 kay71iH25fDgg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 50CB2CE0877; Sun,  7 Sep 2025 18:29:06 -0700 (PDT)
+Date: Sun, 7 Sep 2025 18:29:06 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zqiang <qiang.zhang@linux.dev>
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com,
+	boqun.feng@gmail.com, urezki@gmail.com, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] srcu/tiny: Remove preempt_disable/enable() in
+ srcu_gp_start_if_needed()
+Message-ID: <9dfa7d4f-6e3f-4084-a14f-beb1db06f817@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250908003155.557070-1-qiang.zhang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgC3Rx0rMb5oOp+uCA--.6873S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrWxWr1fXFWxuFyktr1fWFg_yoW8XF43pr
-	W8GryIyF1Fyw1qgFZ7CayfZr1rZas7Ka47X342k3W8Zw1kAFya9r10qayDZFykJFZ5ZFya
-	gF90k3WUur4UCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFYLkUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/xtbBSQbBvWi+CmHOlgABsX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908003155.557070-1-qiang.zhang@linux.dev>
 
-From: Yuan CHen <chenyuan@kylinos.cn>
+On Mon, Sep 08, 2025 at 08:31:55AM +0800, Zqiang wrote:
+> Currently, the srcu_gp_start_if_needed() is always be invoked in
+> preempt disable's critical section, this commit therefore remove
+> redundant preempt_disable/enable() in srcu_gp_start_if_needed().
+> 
+> Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
+> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
 
-In the current implementation, when krealloc_array() fails, the error handling path
-incorrectly sets the original memory pointer to NULL before it is freed,
-resulting in a memory leak during reallocation failure.
+Looks good, but what would be a good way to make this code defend itself
+against being invoked from someplace else that did have preemption
+enabled?  Especially given that the Tree SRCU version of this function
+does get invoked with preemption enabled?
 
-Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+							Thanx, Paul
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5ff6ee1f7d4b..de1cf7ba45b7 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -1082,6 +1082,7 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 
- 		of_for_each_phandle(&it, rc, node, "clocks", "#clock-cells", -1) {
- 			int idx;
-+			unsigned int *new_ids;
- 
- 			if (it.node != priv->np)
- 				continue;
-@@ -1092,11 +1093,13 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 			if (args[0] != CPG_MOD)
- 				continue;
- 
--			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
--			if (!ids) {
-+			new_ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
-+			if (!new_ids) {
- 				of_node_put(it.node);
-+				kfree(ids);
- 				return -ENOMEM;
- 			}
-+			ids = new_ids;
- 
- 			if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 				idx = MOD_CLK_PACK_10(args[1]);	/* for DEF_MOD_STB() */
--- 
-2.39.5
-
+> ---
+>  kernel/rcu/srcutiny.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> index b52ec45698e8..417bd0e4457c 100644
+> --- a/kernel/rcu/srcutiny.c
+> +++ b/kernel/rcu/srcutiny.c
+> @@ -181,10 +181,8 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+>  {
+>  	unsigned long cookie;
+>  
+> -	preempt_disable();  // Needed for PREEMPT_LAZY
+>  	cookie = get_state_synchronize_srcu(ssp);
+>  	if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
+> -		preempt_enable();
+>  		return;
+>  	}
+>  	WRITE_ONCE(ssp->srcu_idx_max, cookie);
+> @@ -194,7 +192,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+>  		else if (list_empty(&ssp->srcu_work.entry))
+>  			list_add(&ssp->srcu_work.entry, &srcu_boot_list);
+>  	}
+> -	preempt_enable();
+>  }
+>  
+>  /*
+> -- 
+> 2.48.1
+> 
 
