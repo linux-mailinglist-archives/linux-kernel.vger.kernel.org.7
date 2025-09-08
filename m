@@ -1,195 +1,121 @@
-Return-Path: <linux-kernel+bounces-806454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0ECB496FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:33:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38A0B496EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D4217CAC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EC633B03CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263C83128BA;
-	Mon,  8 Sep 2025 17:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F523128BD;
+	Mon,  8 Sep 2025 17:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="fs8fKFq4"
-Received: from fossa.ash.relay.mailchannels.net (fossa.ash.relay.mailchannels.net [23.83.222.62])
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="ZX1JGizt"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750BB2F7AA9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352805; cv=pass; b=jAFy7NRWWv47FRXmBhCYe7HhBkx52aHOEDe1ZNF50ERSs8l1EzEJbjnUFz8EdrwkmORaQMOSI2e38rPP5kWOPQtyBdMD+t8kCWdgcOJG/anTNdA0orH31mhHIaDOolaUQ0CZiOw68e8jvrVuSYoNFFScEl+9H+vM872LL/EcW7E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352805; c=relaxed/simple;
-	bh=y+gok38nCHl8fHKbqQb9duk0EFb2ClPsu/Ttl/kBa/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sypVpz4pICwHTY+Kq92seQwSUKm3TPCAhTokMH2K0x5e4pv50fV2dLrWqANYgmTzlWGm7KU2idMUNqMIzhvxtMswMI2oryapHxjtPdUJMYkuJs8UsgPTiZXAGcIDj2u90Z3zz/Z5AdC2KUXKyGE6T75pdVtgR8fRYVprfwlitQ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com; spf=pass smtp.mailfrom=templeofstupid.com; dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b=fs8fKFq4; arc=pass smtp.client-ip=23.83.222.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=templeofstupid.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 3F2F9463EF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:25:55 +0000 (UTC)
-Received: from pdx1-sub0-mail-a204.dreamhost.com (trex-blue-1.trex.outbound.svc.cluster.local [100.106.213.9])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id D2801463FD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:25:54 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757352354; a=rsa-sha256;
-	cv=none;
-	b=Ij58mJRn9RVhOoo60cxC9QuQSQskgkVEqnOFJet5fWmO2WfSgeHKAzWTT2KZd+VHBN+Raw
-	1QTSanlx/L3Y9IwV5LcIDScADgGfg4HMCkA0JluP2BduckwqifOp+hftnVlZdHgnGg9FtP
-	toiZOEiOxcg0zeRlvc9egKnHDuptPPicXmC0YFIxMEDrH09xprUKPhlC28KqUFtfvA8uU9
-	HTIkY1irKa2ETyy5ns7u4Agf3VAhTA2ibktG9ZFJ/BPoL+eLTTQEWp7T6kAxdD9/sh8BfI
-	qx5aFDymVH9O1lLOUaINdJcuT43nrWJuhYb/lPaDMkdtI20gX7p9w+MoKH7wWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757352354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=gwa7Mfpih4MWlxuBxr9prkEft/umFWYN2yjVkeDZXEo=;
-	b=1/mosEVhOfVxzvujmZ46ADb708NHmN1mCTw7jSMIevCHdogYckViTsibr0gnJRmARhVZe8
-	YZNLTYOZ4rDTHEYkFfVMrQozKj1A2mxUwjifNl6AwvwWYmCtzwGmKiqQql5V2sruM3GQJO
-	zsUE/P1fxO+EwpzT+GXkqIb+dh9HiuVFEeaRJC4cGlxLCUQ5H9ALGVDGWeoxogpR7zfYQz
-	CBBqEZ8wSPKbJNbwjWJb1yV7Xr/nJ7fQHkWDgNwPPvznSQae829ZfrsZ0ieMFKAy6hdP5Y
-	qCYWmu5OzMWD0Lu01lB7CZyC+A820Vpd+oQG2Z/g9EcT1UXPJwcqPwRMcBoK/w==
-ARC-Authentication-Results: i=1;
-	rspamd-8499c4bbdc-bc8h7;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MailChannels-Auth-Id: dreamhost
-X-Trail-Harbor: 460d9aa42eb5e100_1757352355067_2595130417
-X-MC-Loop-Signature: 1757352355067:3256617296
-X-MC-Ingress-Time: 1757352355067
-Received: from pdx1-sub0-mail-a204.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.106.213.9 (trex/7.1.3);
-	Mon, 08 Sep 2025 17:25:55 +0000
-Received: from kmjvbox.templeofstupid.com (c-73-70-109-47.hsd1.ca.comcast.net [73.70.109.47])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kjlx@templeofstupid.com)
-	by pdx1-sub0-mail-a204.dreamhost.com (Postfix) with ESMTPSA id 4cLDPZ24Jfzlt
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
-	s=dreamhost; t=1757352354;
-	bh=gwa7Mfpih4MWlxuBxr9prkEft/umFWYN2yjVkeDZXEo=;
-	h=Date:From:To:Cc:Subject:Content-Type:Content-Transfer-Encoding;
-	b=fs8fKFq4pLlYJHd322+Pi7ceL1f/Zy3kwJO/Uyl/MO7aXSgBouOyqFCVHflsSPBXT
-	 0C6S1rNp3GmSObk8K7/AwbUGMHkvmYTHtijwFM7fgfrJ1DcQJ36htuI991rugeL7gA
-	 mlImXfNUQxi0L9LR/xiDmHa8RABSebIJmWXzDGj/2eHAYU2YBZTLQqRsecQ0EJK24p
-	 h46HQ7UYpSDka3rc4Bf5udhmbbVqcYbzUZD1gglI9LM8ZdBG+GnLFuTwVcqDhEWTx3
-	 N5o50KuXmVG3rlutqh04o/OC+6m/C6xrbdbVy80TK2FywB0JvBQ9khYz6h64c1fYfM
-	 jLP6IilFxomkA==
-Received: from johansen (uid 1000)
-	(envelope-from kjlx@templeofstupid.com)
-	id e01fb
-	by kmjvbox.templeofstupid.com (DragonFly Mail Agent v0.13);
-	Mon, 08 Sep 2025 10:25:53 -0700
-Date: Mon, 8 Sep 2025 10:25:53 -0700
-From: Krister Johansen <kjlx@templeofstupid.com>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
-	netdev@vger.kernel.org, mptcp@lists.linux.dev,
-	linux-kernel@vger.kernel.org, David Reaver <me@davidreaver.com>
-Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
- SOCK_KEEPOPEN
-Message-ID: <aL8RoSniweGJgm3h@templeofstupid.com>
-References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
- <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
- <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org>
- <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF2419A288
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757352558; cv=none; b=kxS0mEnPmV02yvb9h3QXzGZia6QhJQ1qbxEq3gFDciLk6nxXqXZ72QGGnImx7tY3G9meAr+r7D2oYu7QV6arMDDPMg2Ig3aKucxYMLLusD0zNrcKSWFOWQzPsDWoxVNbopSYzKAu6msplZbSiuDt2SpBWawKlq1tokfEoGPGvyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757352558; c=relaxed/simple;
+	bh=GKT+GbiVon4VPPhVVO/6LtO71Jyr95oN/MaAkNUZFcc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=i5NYzjTcRvCe6xBFs9JMTde7UaSSaII7rmIodpoxGAWd7KwTOfumOq63LALx8pKmaiy/1YV7mfIyrl7hbJpKrhR/JJ9WtHqTx69znFBCrMvKWqBCbdW4LqtDXaF4JHHZof8qsAMv4PuYGgUsjO8Egg3yRLzllusaNM8WqbEQUXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=ZX1JGizt; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p4528006-ipxg00s01tokaisakaetozai.aichi.ocn.ne.jp [153.219.73.6])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 588HT8OM005680
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 9 Sep 2025 02:29:08 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=HF9UkWsa8U+w0B6h/60UAV0P0s0sJtzgd1dSgvgkBl8=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1757352548; v=1;
+        b=ZX1JGiztS05V8tcXtLSZEDfH/vPxKko7rBdH3DQlCaw6Df5j8Picg1j3/Ct99RA5
+         +R1oCNIOAmrtEkyUvPj46nEA1AzPbb3RSMtPaTx7GEi9GB2VT0rnAu1kOo3Dg2Ev
+         i5w2E1B6RYs2XChhFrZ1t6hiBc6KKkC5vagKOLA6R6YfPcoDC1elS2Nd07LoGwyN
+         45BR29KVt8zOK96XIuUxt4ewmwNiyslRP0s1ZE7qKEdAcd7pXLObT1WThPBqeHgW
+         xDKMB2b9Xmtxvytmu2F/RHlWSIjoSMtA9xpPWPDbfNUYOL7UjgzGsFc2pfngpsYv
+         Qf9UzwUUX8BQV9iyuDJyEw==
+Message-ID: <7072d96b-c2d4-4225-ad4f-1cba8f683985@mgml.me>
+Date: Tue, 9 Sep 2025 02:29:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "yukuai (C)" <yukuai3@huawei.com>, Kenta Akagi <k@mgml.me>
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Yu Kuai <yukuai1@huaweicloud.com>, Li Nan <linan666@huaweicloud.com>,
+        Song Liu <song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+ <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+ <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
+ <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
+ <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
+ <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
+ <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
+ <48902d38-c2a1-b74d-d5fb-3d1cdc0b05dc@huaweicloud.com>
+ <34ebcc5b-db67-49e0-a304-4882fa82e830@mgml.me>
+ <ae39d3a6-86a2-b90d-b5d6-887b7fc28106@huaweicloud.com>
+Content-Language: en-US
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <ae39d3a6-86a2-b90d-b5d6-887b7fc28106@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org>
 
-On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
-> Hi Geliang,
+On 2025/09/08 10:20, Yu Kuai wrote:
 > 
-> On 07/09/2025 02:51, Geliang Tang wrote:
-> > Hi Matt,
-> > 
-> > On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
-> >> Hi Krister,
-> >>
-> >> On 06/09/2025 02:43, Krister Johansen wrote:
-> >>> Users reported a scenario where MPTCP connections that were
-> >>> configured
-> >>> with SO_KEEPALIVE prior to connect would fail to enable their
-> >>> keepalives
-> >>> if MTPCP fell back to TCP mode.
-> >>>
-> >>> After investigating, this affects keepalives for any connection
-> >>> where
-> >>> sync_socket_options is called on a socket that is in the closed or
-> >>> listening state.  Joins are handled properly. For connects,
-> >>> sync_socket_options is called when the socket is still in the
-> >>> closed
-> >>> state.  The tcp_set_keepalive() function does not act on sockets
-> >>> that
-> >>> are closed or listening, hence keepalive is not immediately
-> >>> enabled.
-> >>> Since the SO_KEEPOPEN flag is absent, it is not enabled later in
-> >>> the
-> >>> connect sequence via tcp_finish_connect.  Setting the keepalive via
-> >>> sockopt after connect does work, but would not address any
-> >>> subsequently
-> >>> created flows.
-> >>>
-> >>> Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on
-> >>> the
-> >>> subflow when calling sync_socket_options.
-> >>>
-> >>> The fix was valdidated both by using tcpdump to observe keeplaive
-> >>> packets not being sent before the fix, and being sent after the
-> >>> fix.  It
-> >>> was also possible to observe via ss that the keepalive timer was
-> >>> not
-> >>> enabled on these sockets before the fix, but was enabled
-> >>> afterwards.
-> >>
-> >>
-> >> Thank you for the fix! Indeed, the SOCK_KEEPOPEN flag was missing!
-> >> This
-> >> patch looks good to me as well:
-> >>
-> >> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> >>
-> >>
-> >> @Netdev Maintainers: please apply this patch in 'net' directly. But I
-> >> can always re-send it later if preferred.
-> > 
-> > nit:
-> > 
-> > I just noticed his patch breaks 'Reverse X-Mas Tree' order in
-> > sync_socket_options(). If you think any changes are needed, please
-> > update this when you re-send it.
 > 
-> Sure, I can do the modification and send it with other fixes we have.
+> 在 2025/09/02 0:48, Kenta Akagi 写道:
+>> In the current raid1_end_write_request implementation,
+>> - md_error is called only in the Failfast case.
+>> - Afterwards, if the rdev is not Faulty (that is, not Failfast,
+>>    or Failfast but the last rdev — which originally was not expected
+>>    MD_BROKEN in RAID1), R1BIO_WriteError is set.
+>> In the suggested implementation, it seems that a non-Failfast write
+>> failure will immediately mark the rdev as Faulty, without retries.
+> 
+> I still prefer a common helper to unify the code, not sure if I still
+> missing something ...
+> 
+> In general, if bio failed, for read/write/metadata/resync should be the
+> same:
+> 
+> 1) failfast is set, and not last rdev, md_error();
+> 2) otherwise, we should always retry;
+> 
+> And I do believe it's the best to unify this by a common helper.
 
-Thanks for the reviews, Geliang and Matt.  If you'd like me to fix the
-formatting up and send a v2, I'm happy to do that as well.  Just let me
-know.
+Yes, I realized that my idea is bad. Your idea is best,
+especially considering the error handling in super_written.
+I'll implement a common helper.
 
--K
+By the way, I think md_error should only be serialized on RAID1 and 10
+for now. Serializing unnecessary personalities is inefficient and can
+lead to unfavorable results. What do you think?
+
+Thanks,
+Akagi
+
+> Thanks,
+> Kuai
+> 
+> 
+
 
