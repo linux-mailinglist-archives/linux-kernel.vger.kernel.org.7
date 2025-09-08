@@ -1,314 +1,236 @@
-Return-Path: <linux-kernel+bounces-804972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40EEB48282
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:12:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4512AB48285
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632E23A45D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DF6189EDE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6A91DFE12;
-	Mon,  8 Sep 2025 02:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95AB1E2312;
+	Mon,  8 Sep 2025 02:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aF1k8Uxm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg9s0/EY"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0FF1DF246
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 02:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8273119D8A8;
+	Mon,  8 Sep 2025 02:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757297573; cv=none; b=hPBfsromUoSwSjB5MftdhlHtRf52BvjmgPph9aGdHxR5rqxEOFmbyyubeehvhAtZWZdbV0EC1B7K1Hv5R6/LiJtmv94cWqvZjrN6nyv2e2Qv2fBW7wTjya2DeLAkWp6+NXYA0WI65V02c1ATpETiWP4WVNzSyF9gRakpwIbD7WU=
+	t=1757297618; cv=none; b=dlL35zRVO7UJKDqiXFUPkon0Iqfts0tEOC5TAv/gE+itgzrcFliD8Rlcr0cT4KMagUccD3ZE2sjkdl9SAOLahQlWOHny0UKvflm4YaIfsmBSunE949mja+vmBah5DuHj9NLuYrYqA1bbL8zWyAqUxIE801H253qMXwuM350P8xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757297573; c=relaxed/simple;
-	bh=rH5V0FEWA/4OTC2w3xtP2uEnhbXBnOIqXqYpBxQzC80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pqt/VF3PToBND07NRzExk/Iu3X1+zPBPaCLKnsj9x/6w9GIasu9xD0VIh3RA0LGpiuzQo1oQ8UnDe2vNxo0EI3NGLss57U0JsFa2DSKarDLBHaj4BZwttYOMQjJJZi9fSy/oLMtdi0vV6hSLYOAXSPq9bkSXIk9xoevsNE8Z+UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aF1k8Uxm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757297570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MWpPh0mHESgML0G8Lfix+KcLD7sLsvv/p81owY9SAiI=;
-	b=aF1k8UxmjYq/9zM49x1eUB2UuzNRQWC4PndHkrZa5SZ9gHeHNHCdps7j4ACgaE1gALdVaI
-	4zkxssKWN30FqKNlA0F23zBjPSApNJQmf4Q/LRMQh2wbizk/4i7oZ8jQMCwpex5Y3Lv8Rv
-	u6JipEQTyLUdNY8NPNk3pZvD3DgWbWg=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-ifmxV0CXPaS_d26ZDqhGyA-1; Sun, 07 Sep 2025 22:12:48 -0400
-X-MC-Unique: ifmxV0CXPaS_d26ZDqhGyA-1
-X-Mimecast-MFC-AGG-ID: ifmxV0CXPaS_d26ZDqhGyA_1757297568
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3234811cab3so4415039a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 19:12:48 -0700 (PDT)
+	s=arc-20240116; t=1757297618; c=relaxed/simple;
+	bh=XjbMZ5/5Hc5SEZyQ+8sCJ+FX7X4M7/wRBJtPIsMCAiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxlqC1ZofhTMSOTd4nmZP1knQ90POoMyNJkP9iVuNQB6PXQvQQRmCgcKRbVhKexDnQXHHpIyEnOF9KLiCTLRdwL6jQ6IDJqmcQU26r0DKz9xabvp+ji/TfTGqHH80LrgmjKxd/33iFDLqLxyGg7iTMGKOKb/a4UlXQzAAuc2eIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg9s0/EY; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-70df91bdc53so33571446d6.3;
+        Sun, 07 Sep 2025 19:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757297615; x=1757902415; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=llF9fv7z/uauioRJ7KgGNNzGbEHa5eBbrTZiuDHegvs=;
+        b=Yg9s0/EYcZVg56yOFTuOPK9VpDCIvT2aJhYrZjrxDztJQMpqPsw+90SSXF+vDIXv9y
+         NolmIF13cFrBXKNtULuEylXd4A7oEEnra6JryYyJDXgVPvZoURW5wdWXo/7RXWPJRDmU
+         fF1TMb2ezd8d8pn90MzQZ2uOgzhZdoblhFNKTnlRfn60FIBl8001MhWl9GN1ksMXZtee
+         9VG4V3GOtWzQxX8bu6Dpmkno7sGX6XeT7yQpbpD9usgGaccsMPFKdgmkO76PolQeBku9
+         pm0X0zJ5H+pn/NswJJ+xiwT80PaJuC9dwKwir60iRWOFtNZSO5TncMFlqAOgmTNBjvLl
+         Tsxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757297567; x=1757902367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MWpPh0mHESgML0G8Lfix+KcLD7sLsvv/p81owY9SAiI=;
-        b=aSm5R/h8IGviG6Q/Xe0OJ7BviXySU6gXc9DAfJeEGlK+Jb9xz4I2LaTjPWrkJ7DyCM
-         6R2p7qzbOvsbmpafNG5mr3fzud+f/1yna9yXueO32xLOWze/mAKA+WDKD3m4DZCYluKo
-         52LBk5AGxX/fpUg4qakNeozUByKYzwTUt9q/+M/5L41XgUu7CwyFZz4bH+VrLNBZWriL
-         0Dyf6dfuEIqeae5KrYY7FJnfnL0FmmPYLPL9fLC84tf4Enm5WxhuVTBYiit8ya0vT+Sb
-         QKQ89+kL1el4EplrJ5PYLNjccu7puuK+z00SKgtc7+NAWCubA8m6fq4dbFnN+o/+lqwS
-         eNHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAY6l+IEDlxqZPClaTamkfOwOMHBvizow4WYTvjzvhHLzVrRAHMfI7bXmXB7LOwurs4/c/x427CZ0A15Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+dTSMvP7/CE5/36JMT2Jd1v2QR5o9seZmfkZmb0d0wEUuevDV
-	aFcJj/deYnDGDE3cK4+4SfH+rxsucyhxstYAEiKnAiIIdyiowMI8Z+rITs7lkcx3osQ5Fj7UsCv
-	cX0wiwErgzQEolZhXU77ulkfkmO+iXm8axrTQ4FA8M8SQKasqSh5UIQgT9zaKJMgMULDdSQnAL/
-	4564Jn502/SrjF2UPt9jK2rXfT5LnPcjcPOUaZLGL3WGdbxyczxXU=
-X-Gm-Gg: ASbGnctA3+Zv3wKJ5jYMvK6joXoyC1BdfHJO6C2KOUVjhLk9oZUyLWK+4+P65AbbMNh
-	Q0iIx78bP8iaSig4S4um/HUm7NEhhXR8vBBL5S3NHbJyjJJC4JfMyhN2e9JKGywIIytlawzCxWT
-	9msoluQo1C08z0fVFlBR5T
-X-Received: by 2002:a17:90b:2684:b0:32b:6223:259 with SMTP id 98e67ed59e1d1-32d43eff89amr7569645a91.13.1757297567524;
-        Sun, 07 Sep 2025 19:12:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSsiHEivkn+VQ6VUepAa6sQD7ojw5EVHfUx0SY58PVFB/0bDm63pxJKrggybbW9h3yTFhYqCxMsJKv6UAgIhE=
-X-Received: by 2002:a17:90b:2684:b0:32b:6223:259 with SMTP id
- 98e67ed59e1d1-32d43eff89amr7569617a91.13.1757297566988; Sun, 07 Sep 2025
- 19:12:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757297615; x=1757902415;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llF9fv7z/uauioRJ7KgGNNzGbEHa5eBbrTZiuDHegvs=;
+        b=tEI1ARrnOGvlsSh6LVuwSdkBIv8IShmbilfGP34jRlLZU8J7Z6FOz9RNdAwj1FkmRA
+         PWQolD3XKaWoPhWQGMJ7IpQ/+oa5u+xBswTldwHsRAnxoqSeAtDRlMTAIC1R6cNfI8nn
+         Strx8Nym+1825Js01Jl06mvRSlD1Ofo9EvIMRgGvu51miDSWYXlni4W/nlr9qOPhaA59
+         gwpbejbFVIwohE53SdsKukoQOqzEmgers5Ni3UcKjxFdgCwqY60xwrjR1ukZ3+lEinpB
+         Wt7p34az4t3oXcs2AuBG3BPysNOXCMQ1flkGCoghMBaN+yS5Li1Cdw739+RPBKhJ3OVc
+         AuDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVREcwx2XTnEDZf6HfazzzkqR3PUaXo6LFB4DTefj0muvFIBvVAslX3BjJXBeZGkMo23DOB7HCXgS65EQowhAk=@vger.kernel.org, AJvYcCWJnTVpT2QF/T87HOt7wmXafDGnnSAn9rLbUflHrNHbuq2DFJCop7kVffdElQcdAQu/mF/hBRqLHQxqTmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwrdYEzhwUPuV8N/c7tD0wSd/DUtioZpI6YVwdgPmnfYGQHMB6
+	ArrGv0yLOmHBNOO0rly4a1//5WfR2oAgbDr6lkyO0RCD/ugX3GnARKSH
+X-Gm-Gg: ASbGnctYDgi+yXBHwT5gRzWlNg5sav6m2ClRs9q9yTc2a/ldkyCH8lHEraPNZUHD9UQ
+	WNQiES0cEVJWhFBNVwSJDTmSrrm3kBuDwqVXQKo28BwoXGAVufY5dP3uL3HrgsHOFxPRbEDpGdE
+	f1nWBJKhKQNSMa1u9QFit8MUd1rp5YKi5gMdc2ukDw0l8GSSwwB6+lcUX/HuvlKWPABtAszdawi
+	zbtKikoF+Lyf+ahKP1ekwl9TsR70YEaJ6Sh708HukOx3C+brNktxszBifMr5HrDjy6DrUVJJWFe
+	+6c34B2nVcJlu62dVATQmUJPrenctZ4gVrGze6SQeiK0eJOFLGbCJHybeaAOr+8zi3hUX3f2jP0
+	Eqq5eFipw9Liq7mXKUZ5SmFhfewr+EQF/G/Fd+8xR3UvvogPWIyzZ5z3yUbuMGyNoQgpuCUhOK2
+	yVsVGpNuX+fltfINtXlXpZ7VlAvj8nERS7ag==
+X-Google-Smtp-Source: AGHT+IFV8MLUB1BXD3moIleBpEEpLwODqEVtt3dDUQDxMwa40denbLv0lUqBXrbH+Dne/tQmY4Soag==
+X-Received: by 2002:a05:6214:29ec:b0:72c:3873:2e52 with SMTP id 6a1803df08f44-738fb0ce2dfmr57649196d6.0.1757297615294;
+        Sun, 07 Sep 2025 19:13:35 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-727f26995desm85411306d6.48.2025.09.07.19.13.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 19:13:34 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 53F1DF40066;
+	Sun,  7 Sep 2025 22:13:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Sun, 07 Sep 2025 22:13:34 -0400
+X-ME-Sender: <xms:zju-aG-HasYFMboQIUjBHCskS7RbknhcUdZWDJ7w6EvkinHu6CTD1A>
+    <xme:zju-aB6iXB2Guba2JCqbqpFKMEvKIgGc0HQ7EN6FS-xSBukDUJBmm_-jDLuA2zzzM
+    O78DKPZmD_9M5f-_g>
+X-ME-Received: <xmr:zju-aP14-G21F09PPDK4lGSmaR0JWmAq6qG77H5WHoSWr3VNVc7Jiv0QzL7iusPreiKBR8lAHuo18YMlCRDAKvEfXuWfYCGK>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeftdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeetudelgeevudegueekueduiedtuedtfeejveejfeelhfethfdufeelveeujeef
+    vdenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhlohgtkhdruggrthgrnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
+    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
+    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
+    pdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+    grnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohep
+    lhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfh
+    hrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmh
+    grnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
+    htthhopehgrghrhiesghgrrhihghhuohdrnhgvth
+X-ME-Proxy: <xmx:zju-aIzXZ92e_jbJCUVY2nBVSJAhPTa6vXX4i5Z4-u3OmLwlmjRSeA>
+    <xmx:zju-aIlYcFsH2FhFRAg5SHmQ2NMGAWHytwm_HW5cRzVOgYAisXkKCw>
+    <xmx:zju-aL9qogSwsxdq5IgAAzDtLszwNECdv9nOqS-uVFGPQdRHxZPTnw>
+    <xmx:zju-aDrMZziBrzRcHzCyLcg338uJHKu8nK_jmyT7FaTcduHCLJbQlg>
+    <xmx:zju-aPKsB5ovIsQedyVbru88ox4f0qV-iqoFwMVVOMzmObKSAPCar3M4>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 7 Sep 2025 22:13:33 -0400 (EDT)
+Date: Sun, 7 Sep 2025 19:13:32 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Benno Lossin <lossin@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] rust: lock: add a Pin<&mut T> accessor
+Message-ID: <aL47zBoNpvjYxec5@tardis-2.local>
+References: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
+ <20250828-lock-t-when-t-is-pinned-v2-3-b067c4b93fd6@collabora.com>
+ <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
+ <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-3-eperezma@redhat.com>
- <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
- <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com>
- <CACGkMEsUjfPadVi8Qr8L723mbQ_21WG7e07mDd79KDHFNn_AFw@mail.gmail.com>
- <CAJaqyWejgnBngjrnuzefTVAhdjRcDOzAJfe5b0aE65uxON=G5w@mail.gmail.com>
- <CACGkMEtsCF5d_fdbkb9oPWQOscR=UgW3xq3ghQKXoWv1Be55Ag@mail.gmail.com>
- <CAJaqyWcAptQjRktZ7WcyDHADFqR0ZjGZ_D+gvKyq4JGSb7yFaQ@mail.gmail.com>
- <CACGkMEudOzDUzVr8i8PbeJ2q81vzBtEVDZKu=67R5y+p_9j8Bw@mail.gmail.com>
- <CACGkMEuPTzY1WD-yJri3q7pmx0D3DCNOD=iLJ2rpzx12K9370A@mail.gmail.com> <CAJaqyWcQwkpRZdKJBSHhtfLXfL5gb2_z8j-OsqSy3pPa+ZvYxw@mail.gmail.com>
-In-Reply-To: <CAJaqyWcQwkpRZdKJBSHhtfLXfL5gb2_z8j-OsqSy3pPa+ZvYxw@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 8 Sep 2025 10:12:35 +0800
-X-Gm-Features: Ac12FXwWAIz3NJeQs1U3UclbDxwZ7ptExqduje8uhFztt_0bqAoCJ9Ey3D8bTZ0
-Message-ID: <CACGkMEsX+D2_12xGDxusO3+BR2bqqXodHHjLy_4TJCpm96jRTA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] vduse: add vq group support
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
 
-On Fri, Sep 5, 2025 at 4:47=E2=80=AFPM Eugenio Perez Martin <eperezma@redha=
-t.com> wrote:
->
-> On Thu, Sep 4, 2025 at 5:20=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
-rote:
-> >
-> > On Thu, Sep 4, 2025 at 11:08=E2=80=AFAM Jason Wang <jasowang@redhat.com=
-> wrote:
-> > >
-> > > On Wed, Sep 3, 2025 at 6:31=E2=80=AFPM Eugenio Perez Martin <eperezma=
-@redhat.com> wrote:
-> > > >
-> > > > On Wed, Sep 3, 2025 at 9:40=E2=80=AFAM Jason Wang <jasowang@redhat.=
-com> wrote:
-> > > > >
-> > > > > On Wed, Sep 3, 2025 at 2:29=E2=80=AFPM Eugenio Perez Martin <eper=
-ezma@redhat.com> wrote:
-> > > > > >
-> > > > > > On Wed, Sep 3, 2025 at 5:58=E2=80=AFAM Jason Wang <jasowang@red=
-hat.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Sep 1, 2025 at 4:40=E2=80=AFPM Eugenio Perez Martin <=
-eperezma@redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Sep 1, 2025 at 3:59=E2=80=AFAM Jason Wang <jasowang=
-@redhat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9re=
-z <eperezma@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > This allows sepparate the different virtqueues in group=
-s that shares the
-> > > > > > > > > > same address space.  Asking the VDUSE device for the gr=
-oups of the vq at
-> > > > > > > > > > the beginning as they're needed for the DMA API.
-> > > > > > > > > >
-> > > > > > > > > > Allocating 3 vq groups as net is the device that need t=
-he most groups:
-> > > > > > > > > > * Dataplane (guest passthrough)
-> > > > > > > > > > * CVQ
-> > > > > > > > > > * Shadowed vrings.
-> > > > > > > > > >
-> > > > > > > > > > Future versions of the series can include dynamic alloc=
-ation of the
-> > > > > > > > > > groups array so VDUSE can declare more groups.
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > > > > > > > > ---
-> > > > > > > > > > v1: Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already =
-the bit (Maxime)
-> > > > > > > > > >
-> > > > > > > > > > RFC v3:
-> > > > > > > > > > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It wa=
-s set to a lower
-> > > > > > > > > >   value to reduce memory consumption, but vqs are alrea=
-dy limited to
-> > > > > > > > > >   that value and userspace VDUSE is able to allocate th=
-at many vqs.
-> > > > > > > > > > * Remove the descs vq group capability as it will not b=
-e used and we can
-> > > > > > > > > >   add it on top.
-> > > > > > > > > > * Do not ask for vq groups in number of vq groups < 2.
-> > > > > > > > > > * Move the valid vq groups range check to vduse_validat=
-e_config.
-> > > > > > > > > >
-> > > > > > > > > > RFC v2:
-> > > > > > > > > > * Cache group information in kernel, as we need to prov=
-ide the vq map
-> > > > > > > > > >   tokens properly.
-> > > > > > > > > > * Add descs vq group to optimize SVQ forwarding and sup=
-port indirect
-> > > > > > > > > >   descriptors out of the box.
-> > > > > > > > > > ---
-> > > > > > > > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 51 ++++++++++++++=
-++++++++++++++--
-> > > > > > > > > >  include/uapi/linux/vduse.h         | 21 +++++++++++-
-> > > > > > > > > >  2 files changed, 68 insertions(+), 4 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drive=
-rs/vdpa/vdpa_user/vduse_dev.c
-> > > > > > > > > > index e7bced0b5542..0f4e36dd167e 100644
-> > > > > > > > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > > > > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > > > > > > @@ -58,6 +58,7 @@ struct vduse_virtqueue {
-> > > > > > > > > >         struct vdpa_vq_state state;
-> > > > > > > > > >         bool ready;
-> > > > > > > > > >         bool kicked;
-> > > > > > > > > > +       u32 vq_group;
-> > > > > > > > > >         spinlock_t kick_lock;
-> > > > > > > > > >         spinlock_t irq_lock;
-> > > > > > > > > >         struct eventfd_ctx *kickfd;
-> > > > > > > > > > @@ -114,6 +115,7 @@ struct vduse_dev {
-> > > > > > > > > >         u8 status;
-> > > > > > > > > >         u32 vq_num;
-> > > > > > > > > >         u32 vq_align;
-> > > > > > > > > > +       u32 ngroups;
-> > > > > > > > > >         struct vduse_umem *umem;
-> > > > > > > > > >         struct mutex mem_lock;
-> > > > > > > > > >         unsigned int bounce_size;
-> > > > > > > > > > @@ -592,6 +594,13 @@ static int vduse_vdpa_set_vq_state=
-(struct vdpa_device *vdpa, u16 idx,
-> > > > > > > > > >         return 0;
-> > > > > > > > > >  }
-> > > > > > > > > >
-> > > > > > > > > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa=
-, u16 idx)
-> > > > > > > > > > +{
-> > > > > > > > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > > > > > > +
-> > > > > > > > > > +       return dev->vqs[idx]->vq_group;
-> > > > > > > > > > +}
-> > > > > > > > > > +
-> > > > > > > > > >  static int vduse_vdpa_get_vq_state(struct vdpa_device =
-*vdpa, u16 idx,
-> > > > > > > > > >                                 struct vdpa_vq_state *s=
-tate)
-> > > > > > > > > >  {
-> > > > > > > > > > @@ -678,6 +687,28 @@ static u8 vduse_vdpa_get_status(st=
-ruct vdpa_device *vdpa)
-> > > > > > > > > >         return dev->status;
-> > > > > > > > > >  }
-> > > > > > > > > >
-> > > > > > > > > > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
-> > > > > > > > > > +{
-> > > > > > > > > > +       /* All vqs and descs must be in vq group 0 if n=
-groups < 2 */
-> > > > > > > > > > +       if (dev->ngroups < 2)
-> > > > > > > > > > +               return 0;
-> > > > > > > > > > +
-> > > > > > > > > > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i=
-) {
-> > > > > > > > > > +               struct vduse_dev_msg msg =3D { 0 };
-> > > > > > > > > > +               int ret;
-> > > > > > > > > > +
-> > > > > > > > > > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
-> > > > > > > > > > +               msg.req.vq_group.index =3D i;
-> > > > > > > > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
-> > > > > > > > > > +               if (ret)
-> > > > > > > > > > +                       return ret;
-> > > > > > > > > > +
-> > > > > > > > > > +               dev->vqs[i]->vq_group =3D msg.resp.vq_g=
-roup.group;
-> > > > > > > > > > +       }
-> > > > > > > > > > +
-> > > > > > > > > > +       return 0;
-> > > > > > > > > > +}
-> > > > > > > > > > +
-> > > > > > > > > >  static void vduse_vdpa_set_status(struct vdpa_device *=
-vdpa, u8 status)
-> > > > > > > > > >  {
-> > > > > > > > > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > > > > > > @@ -685,6 +716,11 @@ static void vduse_vdpa_set_status(=
-struct vdpa_device *vdpa, u8 status)
-> > > > > > > > > >         if (vduse_dev_set_status(dev, status))
-> > > > > > > > > >                 return;
-> > > > > > > > > >
-> > > > > > > > > > +       if (((dev->status ^ status) & VIRTIO_CONFIG_S_F=
-EATURES_OK) &&
-> > > > > > > > > > +           (status & VIRTIO_CONFIG_S_FEATURES_OK))
-> > > > > > > > > > +               if (vduse_fill_vq_groups(dev))
-> > > > > > > > > > +                       return;
-> > > > > > > > >
-> > > > > > > > > I may lose some context but I think we've agreed that we =
-need to
-> > > > > > > > > extend the status response for this instead of having mul=
-tiple
-> > > > > > > > > indepdent response.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > My understanding was it is ok to start with this version by=
- [1]. We
-> > > > > > > > can even make it asynchronous on top if we find this is a b=
-ottleneck
-> > > > > > > > and the VDUSE device would need no change, would that work?
-> > > > > > >
-> > > > > > > I think I need to understand why we can not defer this to get=
-_group_asid() call.
-> > > > > > >
-> > > > > >
-> > > > > > Because we need to know the vq_groups->asid mapping in other ca=
-lls
-> > > > > > like set_group_asid or get_vq_group.
-> > > > >
-> > > > > I think we don't need the mapping of those, or anything I miss?
-> > > > >
-> > > >
-> > > > If the kernel module does not ask the userland device for the actua=
-l
-> > > > vq group of a virtqueue, what should it return in vduse_get_vq_grou=
-p?
-> > > > 0 for all vqs, even if the CVQ is in vq group 1?
-> > >
-> > > Since the topology is fixed I think userspace should provide this whe=
-n
-> > > creating a device.
-> > >
->
-> The topology is not fixed: The CVQ may be either the vq #2 or the last
-> one depending if mq has been negotiated or not.
->
-> So it cannot be provided at device creation, but only after feature negot=
-iation.
+On Thu, Sep 04, 2025 at 12:15:43PM -0300, Daniel Almeida wrote:
+> 
+> 
+> > On 4 Sep 2025, at 12:13, Benno Lossin <lossin@kernel.org> wrote:
+> > 
+> > On Thu Aug 28, 2025 at 10:52 PM CEST, Daniel Almeida wrote:
+> >> In order for callers to be able to access the inner T safely if T: !Unpin,
+> >> there needs to be a way to get a Pin<&mut T>. Add this accessor and a
+> >> corresponding example to tell users how it works.
+> >> 
+> >> This is not useful on its own for now, because we do not support pin
+> >> projections yet. This means that the following is not going to compile:
+> >> 
+> >>    let mut data: MutexGuard<'_, Data> = mutex.lock();
+> >>    let mut data: Pin<&mut Data> = data.as_mut();
+> >>    let foo = &mut data.foo;
+> >> 
+> >> A future patch can enable the behavior above by implementing support for
+> >> pin projections. Said patch is in the works already and will possibly
+> >> land on 6.18.
+> >> 
+> >> Link: https://github.com/Rust-for-Linux/linux/issues/1181
+> >> Suggested-by: Benno Lossin <lossin@kernel.org>
+> >> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> >> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> > 
+> > Reviewed-by: Benno Lossin <lossin@kernel.org>
+> > 
+> >> ---
+> >> rust/kernel/sync/lock.rs | 25 +++++++++++++++++++++++++
+> >> 1 file changed, 25 insertions(+)
+> >> 
+> >> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> >> index 9242790d15dbf65d66518d060a8a777aac558cfc..7191804a244da05db74294fdec598f1a4732682c 100644
+> >> --- a/rust/kernel/sync/lock.rs
+> >> +++ b/rust/kernel/sync/lock.rs
+> >> @@ -245,6 +245,31 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
+> >> 
+> >>         cb()
+> >>     }
+> >> +
+> >> +    /// Returns a pinned mutable reference to the protected data.
+> >> +    ///
+> >> +    /// The guard implements [`DerefMut`] when `T: Unpin`, so for [`Unpin`]
+> >> +    /// types [`DerefMut`] should be used instead of this function.
+> >> +    ///
+> >> +    /// [`DerefMut`]: core::ops::DerefMut
+> >> +    /// [`Unpin`]: core::marker::Unpin
+> >> +    ///
+> >> +    /// # Examples
+> >> +    ///
+> >> +    /// ```
+> >> +    /// # use kernel::sync::{Mutex, MutexGuard};
+> >> +    /// # use core::pin::Pin;
+> >> +    /// struct Data;
+> >> +    ///
+> >> +    /// fn example(mutex: &Mutex<Data>) {
+> >> +    ///   let mut data: MutexGuard<'_, Data> = mutex.lock();
+> >> +    ///   let mut data: Pin<&mut Data> = data.as_mut();
+> >> +    ///  }
+> > 
+> > The formatting looks off in this one, there should be 4 spaces of
+> > indentation here; there are also 2 spaces in front of the `}`.
+> > 
+> > Also `Data` implements `Unpin`, so you're not following your own
+> > recommendation from above :)
+> 
+> I´ll fix this :)
+> 
 
-You are correct. This has been discussed before.
+If the fix is small, feel free to send a diff and I can fold it when
+queueing (i.e. no need to resend the whole series). I'm trying to send
+it to tip before -rc6 so there will be some more tests. Thanks!
 
-Thanks
+Regards,
+Boqun
 
+> - Daniel
+> 
+> > 
+> > ---
+> > Cheers,
+> > Benno
+> > 
+> >> +    /// ```
+> >> +    pub fn as_mut(&mut self) -> Pin<&mut T> {
+> >> +        // SAFETY: `self.lock.data` is structurally pinned.
+> >> +        unsafe { Pin::new_unchecked(&mut *self.lock.data.get()) }
+> >> +    }
+> >> }
+> >> 
+> >> impl<T: ?Sized, B: Backend> core::ops::Deref for Guard<'_, T, B> {
+> 
+> 
 
