@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-805205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1117BB4854A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:32:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0753B48550
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176471895B74
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53BBB17BCD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B115B2E3391;
-	Mon,  8 Sep 2025 07:32:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24A45945;
-	Mon,  8 Sep 2025 07:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BAD2E5437;
+	Mon,  8 Sep 2025 07:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ec47b4dH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE06374D1;
+	Mon,  8 Sep 2025 07:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757316763; cv=none; b=lj5wWXzMXTS3hCRJ7da65dvg+Z+2GO90wmIkoqLa6KTa4WAtfUTyowtFb/rcQRHWz1zHPe4pxqA5tgkmn756vMcM/gtZ50kSsVjTOFklutGhZOPm1CTmB2edHFcZnpwNnoywu0hT2X0KzepmEZshSZAH3FNQeg1+vxN/rU/nhdM=
+	t=1757316823; cv=none; b=FhM9YrH65kZ2QZefQU39uwuoVRfLXuGf5P5EChvaOgf6zdPXP8FjrNW2nPW7DNuZ9TQQD0Zca7kiG1DDeUZ/CTZtMievYNE0RkMDqRubv0hrn7PdWcyxShBVT2nWwiJJ0MIxfD4s9c9cd4aJVvLQMsNjWqkxX6gbJbHXi5J/zl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757316763; c=relaxed/simple;
-	bh=8R5P2dpDsvTASOuuyiS145RMT8QLk3YS+Df8VTYF/Hk=;
+	s=arc-20240116; t=1757316823; c=relaxed/simple;
+	bh=hAVybpA7H/anoeTQK8EGJDw5HRCYRiseoHk0IZr37l8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QMUqOsCYV7/koZlLFx53LUJXuaCp4coJTxqZCt2jzoieOt1j37UIo88hNKB8A6xHYPaXckKhbIrMNeYbdi3gTM/5gKaZtxVfggqSMSRN7Tec/CqtmM1Di7pkNlAYpIjOVYIpGOu4fqAxtqlVjGwoKt9UqHcygYOxVBmYmuUeYlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88AA2169C;
-	Mon,  8 Sep 2025 00:32:32 -0700 (PDT)
-Received: from [10.57.58.69] (unknown [10.57.58.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFA563F63F;
-	Mon,  8 Sep 2025 00:32:34 -0700 (PDT)
-Message-ID: <1f822d8b-eb46-4998-b1c1-9996d70e1958@arm.com>
-Date: Mon, 8 Sep 2025 09:32:32 +0200
+	 In-Reply-To:Content-Type; b=K/IXwvoEZ5AlNWnUzlt1+ydn+gqNNobID5gKykNX3MW/RNNYfrBDw8Tb1or8qsRmxDLc3bHE3/eoLYZORPWtZ3AAYcZqUBsCF72X3iUln4oiwgrSB1+n1Ko07Gce09KRe7Mr8yq0opk04xEO18P2FFE2hRZr6xbZs6lxPorsfJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ec47b4dH; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757316821; x=1788852821;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hAVybpA7H/anoeTQK8EGJDw5HRCYRiseoHk0IZr37l8=;
+  b=Ec47b4dH2BmGsEGRlUgucyPQHXQvicqw1Ru6xCrRM08DRESUgo/EzVG6
+   +ATOPWhJrmWb1SmwLXKOI62YA4XQl2L3IXQofSuz6LHdyHMKEq0DbyQkf
+   4siHrZbLCvRkZKjT0N8QnqmdCOu7apWSRFAe4LVroNDW11teq23/Jit1L
+   QFB/ua7+AYdEt1D3vIsmbyQw1lDzaYQ3NWs8cJaRDEjAmTM+aGA2hCksA
+   fszqPOWCM84aX00pHg4powqPJPbCHqpFolYhLWyot7pD36t1g3s7wy33Q
+   yckbytf66+j9+zaQR4f1WI5ZGCDbbyzkkDrkHhKKTVprKbDLlTUClQLLR
+   A==;
+X-CSE-ConnectionGUID: b/5jc/8ESYCBGB7KNN9NxA==
+X-CSE-MsgGUID: qDJymgQ3Qd2XwW1Qz3Sv5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="58780321"
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="58780321"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 00:33:19 -0700
+X-CSE-ConnectionGUID: 8ySfjysOQraQTtpHdtyifg==
+X-CSE-MsgGUID: XmjGRSziRyes797oyNd4Sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,247,1751266800"; 
+   d="scan'208";a="177951390"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 00:33:08 -0700
+Message-ID: <9232bfac-e3a3-49a1-a956-31e13e3ef6bf@linux.intel.com>
+Date: Mon, 8 Sep 2025 15:33:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,65 +66,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] powerpc/mm: support nested lazy_mmu sections
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-6-kevin.brodsky@arm.com>
- <074ff6ab-5868-4fde-b5bb-9e17632ad817-agordeev@linux.ibm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <074ff6ab-5868-4fde-b5bb-9e17632ad817-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v10 08/21] KVM: selftests: Add TDX boot code
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250904065453.639610-1-sagis@google.com>
+ <20250904065453.639610-9-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250904065453.639610-9-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05/09/2025 17:52, Alexander Gordeev wrote:
-> On Thu, Sep 04, 2025 at 01:57:34PM +0100, Kevin Brodsky wrote:
-> ...
->>  static inline lazy_mmu_state_t arch_enter_lazy_mmu_mode(void)
->>  {
->>  	struct ppc64_tlb_batch *batch;
->> +	int lazy_mmu_nested;
->>  
->>  	if (radix_enabled())
->>  		return LAZY_MMU_DEFAULT;
->> @@ -39,9 +40,14 @@ static inline lazy_mmu_state_t arch_enter_lazy_mmu_mode(void)
->>  	 */
->>  	preempt_disable();
->>  	batch = this_cpu_ptr(&ppc64_tlb_batch);
->> -	batch->active = 1;
->> +	lazy_mmu_nested = batch->active;
->>  
->> -	return LAZY_MMU_DEFAULT;
->> +	if (!lazy_mmu_nested) {
-> Why not just?
+
+
+On 9/4/2025 2:54 PM, Sagi Shahar wrote:
+> From: Erdem Aktas <erdemaktas@google.com>
 >
-> 	if (!batch->active) {
+> Add code to boot a TDX test VM. Since TDX registers are inaccesible to
 
-Very fair question! I think the extra variable made sense in an earlier
-version of that patch, but now it's used only once and doesn't really
-improve readability either. Will remove it in v2, also in patch 6
-(basically the same code). Thanks!
+inaccesible -> inaccessible
 
-- Kevin
+> KVM, the boot code loads the relevant values from memory into the
+> registers before jumping to the guest code.
+>
+> Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+> Co-developed-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Co-developed-by: Sagi Shahar <sagis@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   tools/testing/selftests/kvm/Makefile.kvm      |  3 +
+>   .../selftests/kvm/include/x86/tdx/td_boot.h   |  5 ++
+>   .../kvm/include/x86/tdx/td_boot_asm.h         | 16 +++++
+>   .../selftests/kvm/lib/x86/tdx/td_boot.S       | 60 +++++++++++++++++++
+>   4 files changed, 84 insertions(+)
+>   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h
+>   create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+>
+> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> index 3f93c093b046..d11d02e17cc5 100644
+> --- a/tools/testing/selftests/kvm/Makefile.kvm
+> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> @@ -31,6 +31,7 @@ LIBKVM_x86 += lib/x86/sev.c
+>   LIBKVM_x86 += lib/x86/svm.c
+>   LIBKVM_x86 += lib/x86/ucall.c
+>   LIBKVM_x86 += lib/x86/vmx.c
+> +LIBKVM_x86 += lib/x86/tdx/td_boot.S
+>   
+>   LIBKVM_arm64 += lib/arm64/gic.c
+>   LIBKVM_arm64 += lib/arm64/gic_v3.c
+> @@ -336,6 +337,8 @@ $(LIBKVM_ASM_DEFS_OBJ): $(OUTPUT)/%.s: %.c FORCE
+>   $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+>   	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
+>   
+> +$(OUTPUT)/lib/x86/tdx/td_boot.o: $(OUTPUT)/include/x86/tdx/td_boot_offsets.h
+> +
+>   $(OUTPUT)/include/x86/tdx/td_boot_offsets.h: $(OUTPUT)/lib/x86/tdx/td_boot_offsets.s FORCE
+>   	$(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
+>   
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/td_boot.h b/tools/testing/selftests/kvm/include/x86/tdx/td_boot.h
+> index 8eda3ce10220..17c3083da9ca 100644
+> --- a/tools/testing/selftests/kvm/include/x86/tdx/td_boot.h
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/td_boot.h
+> @@ -66,4 +66,9 @@ struct td_boot_parameters {
+>   	struct td_per_vcpu_parameters per_vcpu[];
+>   };
+>   
+> +void td_boot(void);
+> +void td_boot_code_end(void);
+> +
+> +#define TD_BOOT_CODE_SIZE (td_boot_code_end - td_boot)
+> +
+>   #endif /* SELFTEST_TDX_TD_BOOT_H */
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h b/tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h
+> new file mode 100644
+> index 000000000000..10b4b527595c
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef SELFTEST_TDX_TD_BOOT_ASM_H
+> +#define SELFTEST_TDX_TD_BOOT_ASM_H
+> +
+> +/*
+> + * GPA where TD boot parameters will be loaded.
+> + *
+> + * TD_BOOT_PARAMETERS_GPA is arbitrarily chosen to
+> + *
+> + * + be within the 4GB address space
+> + * + provide enough contiguous memory for the struct td_boot_parameters such
+> + *   that there is one struct td_per_vcpu_parameters for KVM_MAX_VCPUS
+> + */
+> +#define TD_BOOT_PARAMETERS_GPA 0xffff0000
+> +
+> +#endif  // SELFTEST_TDX_TD_BOOT_ASM_H
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+> new file mode 100644
+> index 000000000000..7aa33caa9a78
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+> @@ -0,0 +1,60 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +
+> +#include "tdx/td_boot_asm.h"
+> +#include "tdx/td_boot_offsets.h"
+> +#include "processor_asm.h"
+> +
+> +.code32
+> +
+> +.globl td_boot
+> +td_boot:
+> +	/* In this procedure, edi is used as a temporary register. */
+> +	cli
+> +
+> +	/* Paging is off. */
+> +
+> +	movl $TD_BOOT_PARAMETERS_GPA, %ebx
+> +
+> +	/*
+> +	 * Find the address of struct td_per_vcpu_parameters for this
+> +	 * vCPU based on esi (TDX spec: initialized with vCPU id). Put
+> +	 * struct address into register for indirect addressing.
+> +	 */
+> +	movl $SIZEOF_TD_PER_VCPU_PARAMETERS, %eax
+> +	mul %esi
+> +	leal TD_BOOT_PARAMETERS_PER_VCPU(%ebx), %edi
+> +	addl %edi, %eax
+> +
+> +	/* Setup stack. */
+> +	movl TD_PER_VCPU_PARAMETERS_ESP_GVA(%eax), %esp
+> +
+> +	/* Setup GDT. */
+> +	leal TD_BOOT_PARAMETERS_GDT(%ebx), %edi
+> +	lgdt (%edi)
+> +
+> +	/* Setup IDT. */
+> +	leal TD_BOOT_PARAMETERS_IDT(%ebx), %edi
+> +	lidt (%edi)
+> +
+> +	/*
+> +	 * Set up control registers (There are no instructions to mov from
+> +	 * memory to control registers, hence use edi as a scratch register).
+> +	 */
+> +	movl TD_BOOT_PARAMETERS_CR4(%ebx), %edi
+> +	movl %edi, %cr4
+> +	movl TD_BOOT_PARAMETERS_CR3(%ebx), %edi
+> +	movl %edi, %cr3
+> +	movl TD_BOOT_PARAMETERS_CR0(%ebx), %edi
+> +	movl %edi, %cr0
+> +
+> +	/* Switching to 64bit mode after ljmp and then jump to guest code */
+> +	ljmp $(KERNEL_CS),$1f
+> +1:
+> +	jmp *TD_PER_VCPU_PARAMETERS_GUEST_CODE(%eax)
+> +
+> +/* Leave marker so size of td_boot code can be computed. */
+> +.globl td_boot_code_end
+> +td_boot_code_end:
+> +
+> +/* Disable executable stack. */
+> +.section .note.GNU-stack,"",%progbits
+
 
