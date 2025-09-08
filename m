@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-806048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B93FB4914D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:25:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD83B49150
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E519D3A6909
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3A43B0E01
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AE30BBA8;
-	Mon,  8 Sep 2025 14:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD1530C633;
+	Mon,  8 Sep 2025 14:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzfj6hB/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qhWQECUK"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC332FFDC1;
-	Mon,  8 Sep 2025 14:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A436F2F0C51
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757341504; cv=none; b=OqipP0sYnWPSCrg23OWB/SHQq3yL7qfEdR73SaVLCrvN5XRe3C221/lrVD3ZlXliwVtzSWlbbD0O2foOsRXWHallrcY4CROuT5P1kGTt1I00DVWmesOomH1VrKWNQubd1jo8o+fk8QNtXBVCqKtTrrg6dUWqkbqjZ8zSAzA4vic=
+	t=1757341514; cv=none; b=uKDgCvk3AlDVc/eikYN7u0QUVBtp/CwY4qh6D3fToNndErLROVLEz4rRDL82qyVeYV5lxxaIC/inz73JggGYiv53qwxalCc3Fnx6V7AInaFYi4uQyCZSXFWlqbVrGgiSvHn3ebatB0UMyvB+nFq1yYelgBSiTHGdiIOdsCz4uEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757341504; c=relaxed/simple;
-	bh=+NlQxgi42oWh+HtftTFZXTHY0Z27CctBEjtIacnisGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RXaK6VmHQe7fgn5I1m5O/0e5EkRYZjDtAQqiSlUsgQ/Xn3E/1Ue3UY6TCbPsfnNYXNKXMKGveeQBCSF1rviFYyze7t7jvTYFpx/BVTeq+2+Mx8G7M+kEYGcBiM9qAirGXm0t3GTQROAKclU+gajK4slNLImLbB+XirxbCoLiPwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzfj6hB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E39C4CEF1;
-	Mon,  8 Sep 2025 14:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757341502;
-	bh=+NlQxgi42oWh+HtftTFZXTHY0Z27CctBEjtIacnisGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fzfj6hB/QopZhk7fJQmSDVD4CPZTDykHEqRsuuudMXIpiyK1UiP0d07tJCwB626sQ
-	 z8B8yG+e2J6WFu9TbuXJLSo+PQbv32KW+a0aSZZswJiWrfWgR3ig80b9dzdlkfb14d
-	 mMR1WkvQYCZYOwUldRg1q+oR/uDB5k3HqJo4Xpf0fsM2jg7kHMxDhkGEqWZGs5qcAt
-	 eIKVcA4eOov9k2PhIUqbtHYuKbhtbdqCijholn1csY/UeucX8ytOBtuGlELXksrlOg
-	 G3rU7Neyha2AuMX2k4HtVoVD0rvsGGzswjTS/Neb85AaeuVZALPEluIVYpz80/mdCk
-	 ignQZwKQHx3ew==
-Date: Mon, 8 Sep 2025 17:24:57 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding
- cq->cq_lock
-Message-ID: <20250908142457.GA341237@unreal>
-References: <20250822081941.989520-1-philipp.reisner@linbit.com>
+	s=arc-20240116; t=1757341514; c=relaxed/simple;
+	bh=49N6VXEcb6CRiDTym7YEaVcGgy2IFaVW/XCBE/FWkb8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KDiSyaB6qqODCKJe6YTsLU4+/Y6RbBUWroJYYGA4w0tpN4RWrua6i3dwGlu1BGTR/e0NuIR/XL/3VrZBXZ0DJ9dbg8EfwxYrv4PHqf1gn0VmewNwRfl8f8sRE4VTKnyB3COFS0LwihfCyrimasCIttggWMChEHpapJEtMHOkz2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qhWQECUK; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-329b760080fso4247303a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757341511; x=1757946311; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZzRU1g4sXXFvuEmKPSKN3MMa+/bBXJsTRHKt64W0Ro=;
+        b=qhWQECUKJt5vaqeL8HkSLyl0BYwYSaP2U86J4QyTadwxnWT6rHG5WpipTiZs5VzZY1
+         beWIZQyIByOKH5puHFkHnR8zG/Q0pqak1D4JqDqlAIJGBM9n7RfSagTFQiYmX8rvLWIm
+         xj+kPKSnVwCdt61oIRf2GUuROFfuBL+FfT3g+p0hFCXyEWLhD9Ln6hUJwGZNeG1laTN9
+         KM52W4ajhARdULivAWGIR7vcvfjFiYcEf6D2SIVN3HFiB8J6XxMBdRNlwMYD75YUbmSR
+         UIKbHi7WivdX5DKssr/4RtAiYji4HkiEizd4AgSlfSJTYV+5VQ4V1Doelumf6qBYwkXg
+         j6bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757341511; x=1757946311;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tZzRU1g4sXXFvuEmKPSKN3MMa+/bBXJsTRHKt64W0Ro=;
+        b=ubs9dZCvZjQAceQX3B4+huU0+jp4PCYaHUqHZC6ylgGsnJRa40IMxNjxd2Yk561LtF
+         gtxL1iUH+ZiYIaMC4lzrMXkS0uqyeO3OdCM1grdbHEs4udwPkPnN0iq9tQAOnBry2p38
+         bu39QwsB7d04ycw6ExRWwDt5z1W+D2LFRMf33xBkAb+UVUzKC5s/kUSydTSg6XVyVNnj
+         RuP7+LhxqeXmo30zaf2el85UZCOKyKoeD5QZcdW7J8lC4yawRPcpEMbnc/FlYFvqfXz2
+         uVITtEp1iaheBVBKjvZXiYx3SNphlvVO2ZJG9dMG1beFx1HUvle3u5s+sInKkQGDfbds
+         uIMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmcZoV2la7aG934ZDpJDK8JmPxV211d/xdiTW5lQkMU0OZjOA0bcZUkqB1xQNXIcIaKfOcZ5O1OyvkB1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTpGJBmdFIHJzB0DBnXUNyEEkCRdLmTUc5EyT4QQ/twLcrWWdy
+	uEs8+ucxKy0Ni242Xt3sT4ss/UuKrpc/TZ2wZIRVh3V66KBiMY+DcFrKYpLOOowGk4ywuPPVBFa
+	JNi4p
+X-Gm-Gg: ASbGnct0arK5+vT00MRnTMF5uC5R4pZzMvFdK5ffarALwMM6fl/RE9/9aJ1ujUK1Fie
+	17JJLU2LT+7ldrLJMvjJ3zZCqZRPgFgLQkOgRPBvVGgPtCvp2CZ5zzd7v/RWZZgdEJimRw2g47A
+	Tt3uUr5lT3PoWIBRTrj7IqEf4yCzpdgScMZ4GePhskXGcyB+VxrkZdeHub1zLo4FgK6LVyla7Jo
+	A+KY8fsyCWxIi+J3FP2ImzHhBtjLj+Q/jVon5C7LiS225Fk0f0dZr7BLXXXxpXMDen9hzSFfWCQ
+	kcicQUF6zfq7lGpUx6nBCXG99i+7PoB8Lp9PFjCU6Iv/Q61WBEJxaoCYSaicGDht+gjN0J5qixM
+	KdtTSaPSsqEvuYI+6CVXk8ZHysw==
+X-Google-Smtp-Source: AGHT+IFlvk59BmFds07mYxDRPlCj7VecIAUwHvCl2d557Lh/Uv9Qv9QzR0mU35OFLy1w/BAmdDh4Yw==
+X-Received: by 2002:a17:90b:2683:b0:327:fd85:6cd2 with SMTP id 98e67ed59e1d1-32d43f6112cmr11950251a91.24.1757341511572;
+        Mon, 08 Sep 2025 07:25:11 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b92a671afsm5157308a91.5.2025.09.08.07.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 07:25:11 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: yukuai1@huaweicloud.com, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Han Guangjiang <gj.han@foxmail.com>
+Cc: hanguangjiang@lixiang.com, fanggeng@lixiang.com, yangchen11@lixiang.com, 
+ liangjie@lixiang.com
+In-Reply-To: <tencent_E009F9D3A4C7F814018C1DFA80304944BA0A@qq.com>
+References: <tencent_E009F9D3A4C7F814018C1DFA80304944BA0A@qq.com>
+Subject: Re: [PATCH v3] blk-throttle: fix access race during throttle
+ policy activation
+Message-Id: <175734151062.534076.10128778772498989432.b4-ty@kernel.dk>
+Date: Mon, 08 Sep 2025 08:25:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822081941.989520-1-philipp.reisner@linbit.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
-> Allow the comp_handler callback implementation to call ib_poll_cq().
-> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
-> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
 
-Can you please be more specific about the deadlock?
-Please write call stack to describe it.
+On Fri, 05 Sep 2025 18:24:11 +0800, Han Guangjiang wrote:
+> On repeated cold boots we occasionally hit a NULL pointer crash in
+> blk_should_throtl() when throttling is consulted before the throttle
+> policy is fully enabled for the queue. Checking only q->td != NULL is
+> insufficient during early initialization, so blkg_to_pd() for the
+> throttle policy can still return NULL and blkg_to_tg() becomes NULL,
+> which later gets dereferenced.
+> 
+> [...]
 
-> 
-> The Mellanox and Intel drivers allow a comp_handler callback
-> implementation to call ib_poll_cq().
-> 
-> Avoid the deadlock by calling the comp_handler callback without
-> holding cq->cq_lock.
-> 
-> Changelog:
-> v1: https://lore.kernel.org/all/20250806123921.633410-1-philipp.reisner@linbit.com/
-> v1 -> v2:
-> - Only reset cq->notify to 0 when invoking the comp_handler
-> ====================
-> 
-> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-> ---
->  drivers/infiniband/sw/rxe/rxe_cq.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_cq.c b/drivers/infiniband/sw/rxe/rxe_cq.c
-> index fffd144d509e..95652001665d 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_cq.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_cq.c
-> @@ -88,6 +88,7 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
->  	int full;
->  	void *addr;
->  	unsigned long flags;
-> +	bool invoke_handler = false;
->  
->  	spin_lock_irqsave(&cq->cq_lock, flags);
->  
-> @@ -113,11 +114,14 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
->  	if ((cq->notify & IB_CQ_NEXT_COMP) ||
->  	    (cq->notify & IB_CQ_SOLICITED && solicited)) {
->  		cq->notify = 0;
-> -		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
-> +		invoke_handler = true;
->  	}
->  
->  	spin_unlock_irqrestore(&cq->cq_lock, flags);
->  
-> +	if (invoke_handler)
-> +		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.50.1
+Applied, thanks!
+
+[1/1] blk-throttle: fix access race during throttle policy activation
+      commit: bd9fd5be6bc0836820500f68fff144609fbd85a9
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
