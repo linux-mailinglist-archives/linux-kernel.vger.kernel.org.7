@@ -1,222 +1,144 @@
-Return-Path: <linux-kernel+bounces-806426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB006B4969C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56E9B4969F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175353ACC3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32EF53AAE32
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9395D3126D2;
-	Mon,  8 Sep 2025 17:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE1931280B;
+	Mon,  8 Sep 2025 17:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IsTeU0Pm"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eg/yNx3D"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68073054D2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657063112BA;
+	Mon,  8 Sep 2025 17:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757351485; cv=none; b=ANLaYJwX66qYxAEWOJrdsawamS2s6PBnRmzASgUZ6lnZeqKZZ34/BJXRNuve1OlZVo5BDosAadcEGERLzWfAXXG6Q7F18HeD1IurVV7852akFbW0WkNhAD9f5F+tN5GaZe2aEcvB9DKVUfxwcNaBtMPN7UtcQOJ4nGn/tY7nSHo=
+	t=1757351504; cv=none; b=dGgFEVWyJik3+YP5T69xFUJmVG6Z0Vttdhawn2lNRFqV/oHpJmPhZ4sVZppag8nSyGNriCr+V4sE5jN7gDkNmiulQ8MoMgqomFolnibncG6+kdRo/NPsxcbkIzQ4+XUXBQxbIJazRxRbk5nD1Ph5jcplPnKniPZF2+oPj4/O6nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757351485; c=relaxed/simple;
-	bh=DavoxOhjLPcLDMahL3Y9U/VbM03JitHAgDMsWBFVdO0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tZB2iFzWAYFmtMPMv2ygO8Yi/ZYo7sfW4O116O9uccybMWcNu49cMID5wK1IKvOchcxt3e+/ITzMInfDb55vF/laY0MZSVueuU5mbE8UfkC8a1V/j+BHnYIVpfMcuGi6OVgj2u9A1C7hAbGl5mPIfSYipzPMMMPoGljyTMKyQtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IsTeU0Pm; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso4102478f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:11:23 -0700 (PDT)
+	s=arc-20240116; t=1757351504; c=relaxed/simple;
+	bh=nc/qUGfo82fdUqUDWPiQzP0//A1I8DqE1JSdgWBo+Bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=at9nACvES3MhqqY77wXCR0nWuf6zE/hv9wfNK4srWVhmNN0RtPpjunYItu39cdNkZI0Dq+TwHUu/pnyK3BJVIK0yci5LcLRPV1YdknKVqUP9XhE/TFLMPl/xmqvNghHtk/zEr+lR99jdJDJlrqjRWGUEzD/D53brk5u/gd/l9m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eg/yNx3D; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e34dbc38easo1902652f8f.1;
+        Mon, 08 Sep 2025 10:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757351482; x=1757956282; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JXRt87N5KcbZYpVffvCLbSJic16B7wGhz6E/yGN+Uxg=;
-        b=IsTeU0PmzwSYDbg3EIr3zQLnnf0NAyu84FP2kNyCbJvnuGT0pWQN0tYhfZesdCK+jJ
-         owCDBZ5MrzTyU7GtP65hf7XsbgZD5bzLZAJTDl4OYpCAWyPHy027Uo9hEL644atQMG46
-         JjOYuYgVBhvBh86fcyS80xnKbQsAdr5K+hLiZQr7Uw4rdVBXiLdnHlo2KAINc14viD60
-         1gAxsy15XxGLJy4HB5apgJR/CpJU6DG5ss4to+aPE/YZFeMEURMJvQAWbTBYLX9ACk0J
-         JqLHOv3a7G0WRBYJrHPgaQYwYoAkEzBItr5H+MZ+Th6AodrwBBq47TsZhFg7LnJ4G3Pj
-         FaCQ==
+        d=gmail.com; s=20230601; t=1757351501; x=1757956301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I1/Xo26IpLOmm9VGHwt34+har9g1uHoZGkWPqsB7phg=;
+        b=eg/yNx3DCHdSa+OPAbsEjN2oWBdyoLILBrsh/oZGbbrl5guGLUFsux/o2wC4eBAsc5
+         mAR1+Yr7qxmm6E2NMrmW/C9urwg7FN+wMNAP/H+5KmJACbmwNSKl3THwVM9xBOkid8yj
+         0EuFi37o6VMjNu+gxPVGUaW7XxaS0WEya0XYoMscs5XGGw3YbUddAD/GZfoV6H4ucEWR
+         RDO9f2jtayQEcuQn2aP0RKSWUg3JiB5agYsfRoWLOM30oh07OAImq60ipnlSdXJ4k2Z8
+         91qiEQLlSk5HZpwn+IWSENvfJFn8yC9bPVeSRCZ/oyFMWvgN1g/L3NXncFy7LGAvpIGt
+         V4IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757351482; x=1757956282;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JXRt87N5KcbZYpVffvCLbSJic16B7wGhz6E/yGN+Uxg=;
-        b=l0jeGlXR/PAeHAVXc3Fhlo/PiZOXttBbz5+5ShlKiaQKdfoqQAYI3A0V7gTMMf42rf
-         S1rA77FGF9IMaDqIBIuPHrPuB5iQcC9VUtu4+hQeqUXR9nimUQjlvueDR6sxnVsuctjZ
-         G82eoiBenZ/8crDut+YmIvGA0pXLHpTFH7s+af3K5rAWS7RwMyUWWn7qOo+KLSGgjXy9
-         f8xG+Dl4VJWgbZwhxomD57lYKeEHbqAr5liVFOxodqGLz5vJNpzXmzqsojhsRh9sCpIJ
-         kzveHkfQ6FnDXkQKyZjyOJPkEQM6drUkIYQ06pjC3mGEt3sAafhmmovvSJr+tIPGykNR
-         7DPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrP/dWr1M8eRR1KG/sNweLS+fdRCgcn3Uy01yS7JE+yOZzMZL/70kARRAdoQWj66uCEbYP8S6qOpMyivY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZfDhvXnAGTm/t8IaQ/Ke7ZAz2Pk5clm/QdT3FEzdugaLQTC15
-	CyTEu9TNKRvRtRR9aGymd4cqObQWrcPLu/o07tJVaXTVvIp4w4eq3UkcdE1fgj9ZVM0=
-X-Gm-Gg: ASbGncsSJ4RQeIaWBWGbjiq9abGTRdHxdZ6r+7UpRPpgBWPHxuB8IfPIYlq/BG3wJe7
-	qqCD88eyd8/yn79BBALy+kpD31hjHSei6BO8rkztC/rsHjFjPgGq7k/sD1/J8d5A7bXT8dxfGV5
-	g8pJpv2JFQXazHYTyqkIs4bfPnzAbNQQhemrItzy5hJVOn1UaAdOK6Ayz/EU3WC436nkw8t1dQn
-	FHqohD/kWk0ezRq/JaY6VTZF9B2CoEvN2YLR/g+aWDBufZBbAz5n1ix+HJotGImHZkVGtnhWKiF
-	bSvCUpqQZIVM3mSudDrRh5SVqOYTmGOQj2PMya8st5LGk5ux7SpWB2vkCm9+tVMpsH3YzXhg7md
-	EolgdSMAH/PfHoANzXPZ/OnTpmOkJzF6bw4Ef0PGm0iiPKeh1VFQGFKX7BGmpJW1Z+sbC3k5lq6
-	s=
-X-Google-Smtp-Source: AGHT+IEg/f9S1DLAfQQk3JRLZENFZPwKbjav2YVjwZU30nhH+LDJfuSBQA045+uH1/8zST8dM70ckw==
-X-Received: by 2002:a05:6000:230e:b0:3ca:3206:29f with SMTP id ffacd0b85a97d-3e642f91891mr7571829f8f.40.1757351482100;
-        Mon, 08 Sep 2025 10:11:22 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:61c1:5d31:4427:381b? ([2a01:e0a:3d9:2080:61c1:5d31:4427:381b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add504sm41829503f8f.30.2025.09.08.10.11.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 10:11:21 -0700 (PDT)
-Message-ID: <6fe68880-44a4-4b7e-a978-2c65d50f018c@linaro.org>
-Date: Mon, 8 Sep 2025 19:11:21 +0200
+        d=1e100.net; s=20230601; t=1757351501; x=1757956301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I1/Xo26IpLOmm9VGHwt34+har9g1uHoZGkWPqsB7phg=;
+        b=w6BXq5DibsesDAL/zpaM3VVNJN/mgZxXs24lXT2nU7jVfatZNJ/kpaaTKWMaRATcbB
+         PHEpn149NsjslYJDLMgmPPy99vu6z9i4ecIrlrTNVy6W9afyvLzVLA6ydtITV1XL76a2
+         faRI0EjuZ6kPZGHm4B4tVz72dA9E0k8KrT8J7Q+FM+aMNSEfahUL6dhvi/vFFeDHCMHn
+         vrXkjFlFYzKwTwQGUqcdxO1BNaY8zMuy0kKs26Ma6eEd6jtLlmOgHQk5oQnSfnTXxNWf
+         grb92imbbIFpPrWe+e/HijPsRYShK7D8sd14yBW4BIhFgJHS753qHUQIjEC+HMOJHXsy
+         kXZg==
+X-Forwarded-Encrypted: i=1; AJvYcCURLVc3IMiTQuCa3bPtpo/kIANcqhbemQG0HzDlGZ7KT8v9mH3pzEe54PcgV7JxW02iRtQ=@vger.kernel.org, AJvYcCW6y44gKzcXY1fVNUUi9/0Cfnjaern1BtyGX9P7L3i3LouXyrz4TzOoEA7XLWLc+rxQh7C+Dvwnjw==@vger.kernel.org, AJvYcCWug+UHAXtKqIJx5LH9v8XrvlUeIJgAy4BaW5tU6xJHdTdHDVzKSQO52bL21Vm1vHtsPamirfhIcZpZ+hbT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJx/8wQO/FunyiSSJNcEdBGKXmKKIUq+5J8lNCppkgnwKHNgJE
+	OwwmQ1+QJM8MQYehr+x8Uj+EORwTS5JYHcgs/E4rddyoPdWDDRCwySK65QBhTLUFol9k8BLAwmo
+	wUwYD3LFh0xCeimLqqryAMttUOfgVmRE=
+X-Gm-Gg: ASbGnct5q0yBcP1KrNscCCW2zXTtokgao8k7k8uJEc+DEsUHV+W6EB+MYSph2Qvs9Pr
+	jygQGGU8Y4Joy+A2s3mFF7vWNF/5Yx5xmM8Sg2/ElOIPvhwhUIdWbPsKESFlcHEtqCV1rxF5eKN
+	6Z7ewKREEgY5WcI3Dei8Ea2SdeMgponexPE99z9oRAdmuq4D1UfmZ53qwNLV9i3H+5gSJg3p6rN
+	U2/E3QQkmtwzb9XGqJfEVmBO2O6yLMnxv0d
+X-Google-Smtp-Source: AGHT+IHLSc9z9t6zrJNIia9iqmvjLGG9Y3cJVAfc2BnuuchdOalrLs4aZRfsDiiM6JS6UgJelkC0rFMQMh3PO0dNIHE=
+X-Received: by 2002:a05:6000:3113:b0:3dc:1a8c:e878 with SMTP id
+ ffacd0b85a97d-3e642cad4b3mr6110427f8f.18.1757351500438; Mon, 08 Sep 2025
+ 10:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 00/16] drm/msm: Support for Inter Frame Power Collapse
- (IFPC) feature
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Antonino Maniscalco <antomani103@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, stable@vger.kernel.org
-References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250905201606.66198-1-shakeel.butt@linux.dev>
+ <aLtMrlSDP7M5GZ27@google.com> <aL6dBivokIeBApj8@tiehlicka>
+In-Reply-To: <aL6dBivokIeBApj8@tiehlicka>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 8 Sep 2025 10:11:29 -0700
+X-Gm-Features: AS18NWCPGMAuKGdXbwS4CiI7NiTNAFh-3hy8_bYRFu2qhn-yMLQ9ZTr5pJnwwvw
+Message-ID: <CAADnVQLtc+OOQ67AS_1+u-sRmO+bDLWJrrihASXMrDNnvrmNSw@mail.gmail.com>
+Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
+To: Michal Hocko <mhocko@suse.com>
+Cc: Peilin Ye <yepeilin@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Meta kernel team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/09/2025 10:26, Akhil P Oommen wrote:
-> This patch series introduces the IFPC feature to the DRM-MSM driver for
-> Adreno GPUs. IFPC enables GMU to quickly transition GPU into a low power
-> state when idle and quickly resume gpu to active state upon workload
-> submission, hence the name 'Inter Frame Power Collapse'. Since the KMD is
-> unaware of these transitions, it must perform a handshake with the
-> hardware (eg: fenced_write, OOB signaling etc) before accessing registers
-> in the GX power domain.
-> 
-> Initial patches address a few existing issues that were not exposed in the
-> absence of IFPC. Rest of the patches are additional changes required for
-> IFPC. This series adds the necessary restore register list for X1-85/A750
-> GPUs and enables IFPC support for them.
-> 
-> To: Rob Clark <robin.clark@oss.qualcomm.com>
-> To: Sean Paul <sean@poorly.run>
-> To: Konrad Dybcio <konradybcio@kernel.org>
-> To: Dmitry Baryshkov <lumag@kernel.org>
-> To: Abhinav Kumar <abhinav.kumar@linux.dev>
-> To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> To: Marijn Suijten <marijn.suijten@somainline.org>
-> To: David Airlie <airlied@gmail.com>
-> To: Simona Vetter <simona@ffwll.ch>
-> To: Antonino Maniscalco <antomani103@gmail.com>
-> To: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Antonino Maniscalco <antomani103@gmail.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Elaborate commit text and add Fixes tags (Dmitry/Konrad)
-> - Document GMU_IDLE_STATE_RESERVED (Konrad)
-> - Add a memory barrier in fenced_write
-> - Move an error print in fenced_write to after polling
-> - %s/set_keepalive_vote/a6xx[gpu|preempt]_keepalive_vote (Dmitry)
-> - Add an "unlikely()" to read_gmu_ao_counter() (Konrad/Rob)
-> - Define IFPC_LONG_HYST to document a magic number
-> - Add a new patch to enable IFPC on A750 GPU (Neil/Antonino)
-> - Drop patch 12 & 17 from v1 revision
-> - Link to v1: https://lore.kernel.org/r/20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com
-> 
-> ---
-> Akhil P Oommen (16):
->        drm/msm: Update GMU register xml
->        drm/msm: a6xx: Fix gx_is_on check for a7x family
->        drm/msm/a6xx: Poll additional DRV status
->        drm/msm/a6xx: Fix PDC sleep sequence
->        drm/msm: a6xx: Refactor a6xx_sptprac_enable()
->        drm/msm: Add an ftrace for gpu register access
->        drm/msm/adreno: Add fenced regwrite support
->        drm/msm/a6xx: Set Keep-alive votes to block IFPC
->        drm/msm/a6xx: Switch to GMU AO counter
->        drm/msm/a6xx: Poll AHB fence status in GPU IRQ handler
->        drm/msm: Add support for IFPC
->        drm/msm/a6xx: Fix hangcheck for IFPC
->        drm/msm/adreno: Disable IFPC when sysprof is active
->        drm/msm/a6xx: Make crashstate capture IFPC safe
->        drm/msm/a6xx: Enable IFPC on Adreno X1-85
->        drm/msm/a6xx: Enable IFPC on A750 GPU
-> 
->   drivers/gpu/drm/msm/adreno/a6xx_catalog.c         |  71 ++++++-
->   drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 105 ++++++++--
->   drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |  14 ++
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.c             | 221 ++++++++++++++++++----
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.h             |   3 +
->   drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c       |  10 +-
->   drivers/gpu/drm/msm/adreno/a6xx_hfi.c             |  34 +++-
->   drivers/gpu/drm/msm/adreno/a6xx_preempt.c         |  40 +++-
->   drivers/gpu/drm/msm/adreno/adreno_gpu.h           |   1 +
->   drivers/gpu/drm/msm/msm_gpu.h                     |   9 +
->   drivers/gpu/drm/msm/msm_gpu_trace.h               |  12 ++
->   drivers/gpu/drm/msm/msm_submitqueue.c             |   4 +
->   drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |  11 ++
->   13 files changed, 459 insertions(+), 76 deletions(-)
-> ---
-> base-commit: 5cc61f86dff464a63b6a6e4758f26557fda4d494
-> change-id: 20241216-ifpc-support-3b80167b3532
-> 
-> Best regards,
+On Mon, Sep 8, 2025 at 2:08=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrote=
+:
+>
+> On Fri 05-09-25 20:48:46, Peilin Ye wrote:
+> > On Fri, Sep 05, 2025 at 01:16:06PM -0700, Shakeel Butt wrote:
+> > > Generally memcg charging is allowed from all the contexts including N=
+MI
+> > > where even spinning on spinlock can cause locking issues. However one
+> > > call chain was missed during the addition of memcg charging from any
+> > > context support. That is try_charge_memcg() -> memcg_memory_event() -=
+>
+> > > cgroup_file_notify().
+> > >
+> > > The possible function call tree under cgroup_file_notify() can acquir=
+e
+> > > many different spin locks in spinning mode. Some of them are
+> > > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, le=
+t's
+> > > just skip cgroup_file_notify() from memcg charging if the context doe=
+s
+> > > not allow spinning.
+> > >
+> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> >
+> > Tested-by: Peilin Ye <yepeilin@google.com>
+> >
+> > The repro described in [1] no longer triggers locking issues after
+> > applying this patch and making __bpf_async_init() use __GFP_HIGH
+> > instead of GFP_ATOMIC:
+> >
+> > --- a/kernel/bpf/helpers.c
+> > +++ b/kernel/bpf/helpers.c
+> > @@ -1275,7 +1275,7 @@ static int __bpf_async_init(struct bpf_async_kern=
+ *async, struct bpf_map *map, u
+> >         }
+> >
+> >         /* allocate hrtimer via map_kmalloc to use memcg accounting */
+> > -       cb =3D bpf_map_kmalloc_node(map, size, GFP_ATOMIC, map->numa_no=
+de);
+> > +       cb =3D bpf_map_kmalloc_node(map, size, __GFP_HIGH, map->numa_no=
+de);
+>
+> Why do you need to consume memory reserves? Shouldn't kmalloc_nolock be
+> used instead here?
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-
-Thanks,
-Neil
+Yes. That's a plan. We'll convert most of bpf allocations to kmalloc_nolock=
+()
+when it lands.
 
