@@ -1,112 +1,167 @@
-Return-Path: <linux-kernel+bounces-806107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303E5B491F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D0AB491F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF2F3AA9E5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8CE93A966E
 	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D365730B500;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D609430B505;
 	Mon,  8 Sep 2025 14:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="Za5epwye"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="j5m96H+i"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6962215853B;
-	Mon,  8 Sep 2025 14:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342825; cv=pass; b=WxajCA2zVh8u4V2LrczMo91UZr7vP3VMRowet2J3HtdLtjP+IkVMbPt4U7/HrPCURxIPegw+NtwKZD1LCQ4saLKCiURG7q+QjEhwQrq9uOvLYLIJWFQ/WjCpNwax35Hd/RzLmb8/GVZ9JgtsKZLIXikVLWHfd6FKLQgekVBneSk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342825; c=relaxed/simple;
-	bh=x7crhV08VPBnsufEovoxAY4NKlFOuXVLkS5Eme/gQ/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GcxTN/+1jeK1nogHRK+5lLClBzclYZyEhvWaTe7nKJbJOE/2IPfmi9rFz0YQN1LSZd+/dLFxNr0s6ouJmw+ObFpmyaolJxyl1+i4afbYCr4jhysP3SWDdNIybHysXbUJS50UmhNW8g4tfsejDgntgywbQOwFlr0xt61iL1qrMiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=Za5epwye; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 588EknhB011754
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 8 Sep 2025 23:46:49 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id E28D010A2494C;
-	Mon,  8 Sep 2025 23:46:48 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ILztLWlsm_1U; Mon,  8 Sep 2025 23:46:45 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id D7C1B109C12BC; Mon,  8 Sep 2025 23:46:44 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757342804;
-	cv=none; b=Yb9mTTu88UZWXCuHIlyiwA3tdVkIFgWZLQ/YzTiETPh6rfVMWh58taLLENPzHhZYRPQlvalCl9zQlww9Xhw+tKDZHxGo+GzElpGmFpj9i0ut8v8OlMyMmS0MzYpnCNcP385yzJeZ3aPaIdmXgK8E8C5QCE1zT4cdmSYSErgXEy8=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1757342804; c=relaxed/relaxed;
-	bh=FB9DSy76R+KkspwmLdy7aTmCl+PBGT6k/7lmJ25wzDA=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=je1Y28R+zXs6SPTTPvaL9BgUu912JZNxjG3h8XglfKzKLxJpTmU75hktrqRRwQ+NMcjowUhE3sYwwlK60dqoyPGL7o0h6Y+o5VMLPIJqdMX0ppTZ2dK+S/hPKwqv0BczvY5Km7afXhDJCtbat5yjeVNJUXHfHLNCwC2RxhVtc70=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org D7C1B109C12BC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1757342804;
-	bh=FB9DSy76R+KkspwmLdy7aTmCl+PBGT6k/7lmJ25wzDA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Za5epwyegoMrSgbwNd00vRQaDHhvn0a7o1yxicxzP78N2WtArhHoyPl3WVHGxpozr
-	 Va0ykpVdssLVdvL5G4Yv3HXIsqpC0CqVxa7e99jGsicliUZTkX92fxZCCG/LSkK0a7
-	 yCDSmKbJw92HtuRkBJvHxMrFI3rVV0FGAUzCyMvI=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] staging: rtl8723bs: fix coding style in hal_com_phycfg.c
-Date: Mon,  8 Sep 2025 23:46:41 +0900
-Message-ID: <20250908144641.39518-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE651CBEAA;
+	Mon,  8 Sep 2025 14:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757342826; cv=none; b=Qk0idyTb6g7YkJGSkU/noxnZ6M0dzAMslPQTulFBEzO4dvMsJJmLhKALJfwuY0yApp/lH+yH2Z1exo8P4F1KZttIgH3ijhE/1/EYiZlvfCFIfHKx5+fUkzxZdmqcRVZuTWfmLAKTL6cf7D9dpMh+VYDswgnQg5R42ulCwAC5xj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757342826; c=relaxed/simple;
+	bh=9FtytSLcPDTzcLt8Gmz0cfBpiTx/J/lLRNJG64nYcXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yni8nsoGF53Rj5ucSgAQEvCnclml6R0PGbC91Ctxyxe9/WC8zlOmn9C+ouwBFAGUEADsF17TVMETSA5r5TcALXYTDxlS9+DtncsAk4XiffxCMPE8rewfMpzor+VAcHzlEAI8mhltbbbV2qgiuBlqmUje9PrCqyYeu02IyqTnnzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=j5m96H+i; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757342808; x=1757947608; i=markus.elfring@web.de;
+	bh=LTcqGD2ZHZomvMiCK1tsUqyaJDh60KaU8okrgkX/cAo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=j5m96H+iJwgA4jMaYVq27CyH9CRe7h7EClRvO/AnRgt87ksQwZCvXTpPUwBLM7fF
+	 638Mgwj0EP8n9Cd92ZZ9eWgshjYUupeKZblIIr6nLR6nTiARtBAOzUO3RuqBesXE4
+	 6rqkPwyBESHp9/YXrCgOf0FGLCtf4j1ChpnD59lz52zo+QOvyx3lRTwIfkGpfJniT
+	 dQZeaxn3RGkazVLfTDjpbuVv6et0qFg9c6S5cWrS5jIQ8qhJJOjEznTbqX9NaMoUW
+	 b7c44CEMRDB/iUG/NSRynWZHvNaHZ3NgN28u0ndqZuzuvUPw5WIP6whuSXTUhx8xR
+	 potj2JQrxT4D1B7+uA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.229]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBjMO-1ujU4C2QJw-00DIwH; Mon, 08
+ Sep 2025 16:46:48 +0200
+Message-ID: <8c23242e-348f-467b-adc1-deae06e7ea09@web.de>
+Date: Mon, 8 Sep 2025 16:46:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] i2c: PCF8584: Fix debug macros defines of if
+ statements
+To: Cezar Chiru <chiru.cezar.89@gmail.com>, linux-i2c@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+References: <7e155481-b1b7-48db-af64-6a313ade1bbf@web.de>
+ <20250908133608.45773-1-chiru.cezar.89@gmail.com>
+ <20250908133608.45773-2-chiru.cezar.89@gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250908133608.45773-2-chiru.cezar.89@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:r4ZfHRm16/cy4zFTkq0C8nTuONFJcWzKUSm4AP+IKa3sSP6tB0i
+ 6kNvc9fUSlS5vCSg4Lag/byrOX7cPJecEEALgL04VY5CaKPSqIfgc0ROr0njnVmyDroikEn
+ dkkhT1JmUWxbPNDZmpR5WAiYNnbX2EWEEvFCvPbeXtwlZXyu459EngeZUe8daokU1CT/wow
+ Y4jNAP25Ytv1TUmMBPOSQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gkAvzbFbguE=;toucrV6BWXG6GnrbalSNKv6C/Ce
+ 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
 
-The function definition for phy_StoreTxPowerByRateBase() did not
-follow the kernel coding style.
+=E2=80=A6> Change is necessary because =E2=80=A6
 
-Move the closing parenthesis to the same line as the argument to fix
-the style issue reported by checkpatch.pl.
+Does anything hinder you to choose imperative mood for change descriptions=
+?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc5#n94
 
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
----
- drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Would you occasionally care more also for word wrapping?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc5#n658
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/stagi=
-ng/rtl8723bs/hal/hal_com_phycfg.c
-index d5649e7d8f99..f137ec747ab3 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-@@ -60,9 +60,7 @@ phy_SetTxPowerByRateBase(struct adapter *Adapter, u8 RfPa=
-th,
- }
-=20
- static void
--phy_StoreTxPowerByRateBase(
--struct adapter *padapter
--	)
-+phy_StoreTxPowerByRateBase(struct adapter *padapter)
- {
- 	u8 path, base;
-=20
---=20
-2.47.3
 
+=E2=80=A6> ---
+>  drivers/i2c/algos/i2c-algo-pcf.c | 27 ++++++++++++++++++---------
+=E2=80=A6
+
+Some contributors would appreciate patch version descriptions.
+https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
+viously+submitted+patch%22
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc5#n310
+
+Regards,
+Markus
 
