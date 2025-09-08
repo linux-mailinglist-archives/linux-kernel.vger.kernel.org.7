@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-804950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35046B4824B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E84B48249
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDAF316A602
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:51:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB14E7ACBBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 01:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C2F1DFE26;
-	Mon,  8 Sep 2025 01:51:27 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D377B1C860F;
+	Mon,  8 Sep 2025 01:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUnxJU6X"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DB9199931;
-	Mon,  8 Sep 2025 01:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B90146593
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 01:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757296286; cv=none; b=jDuvpVDN9ZWpXQh3VOTMJE3qpz/nxy5qtho5xICHqZfMNmQ3Fgb7R4JrVcHisHptS5tWLAglxH9KUeymrkFj7QISPEPpVowUD57y/ZyIaXFBZHUKBDY8L/OHYMDNCQcIltCqZzVdFZXEQ7AXT/NfgijimB55mHtLd0sW+yGgpy4=
+	t=1757296284; cv=none; b=Ng2QktsfC7x9zQo/v6oyi2GfnMgPyKe6j9BpwXchKkGIJWU2jo0kiGrI/m7hQDkucgVHaBaDvaZLHz/SCgAmftK0LBUrOrTrLE6N+4gXfhiZfg0l70vlSP1eTIAbI/Vb72Kkc2qN2h+OhChv9WNkfDhSDhADfzMyltAq1BW7elw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757296286; c=relaxed/simple;
-	bh=Rnd0oa7meviIzF6tXYf3+YacGjLDhyniXj2520WWRro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EWQZf76Q5Q61tP7GAV590xO3XXyQjzsADfYElxZbkiOw6namX+JapuYfE43v3hg/RtVXzzDADK/q0PMOyQaoO/2r1Z9/WC77xD4Fuq0uio6JvmPcncl6wjOha6fGwjbONCx2tvMETHmoAOMK+Nr2DUEYlTBME9hAf01RhWsGI4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cKqbb58x4z1R94P;
-	Mon,  8 Sep 2025 09:48:11 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3B41E1800D0;
-	Mon,  8 Sep 2025 09:51:13 +0800 (CST)
-Received: from kwepemn200010.china.huawei.com (7.202.194.133) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 09:51:08 +0800
-Received: from [10.174.178.56] (10.174.178.56) by
- kwepemn200010.china.huawei.com (7.202.194.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 09:51:07 +0800
-Message-ID: <57ed90e4-7030-4088-85e2-a166736a86f0@huawei.com>
-Date: Mon, 8 Sep 2025 09:51:02 +0800
+	s=arc-20240116; t=1757296284; c=relaxed/simple;
+	bh=Koi3RTmDGMcL8Puu/tRkXgzsXrdPRHfCcErBrrllvH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=arV/RKh/RKwjqmDWouz45sBl4p8eMIjB2n1u3LnyNTbLEiJKHicEYnJbntMTP6zXa5ceNTBPkcvthfd+JUuFQbU4vq6Ky32a849nk39M/xeRpuXbVH4WVzX3QBSZnE2u31VTmdmjEXqfWLPeQDqUpIH+g3/3DKr0yu5JQzrd1js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUnxJU6X; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f581aeso34256615ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 18:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757296281; x=1757901081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPEvufB0EVqqG+ndG77NaI5/Gjp1FLYPe4dZ5FOTg6A=;
+        b=cUnxJU6XIsba0vyMIZlyQnoZ8CW3I+lyFhGzRLYBD7yeUs8iXrAZ7pxszhdvlhjNqG
+         XxhOmvXqwDZCaxuZOn+YdMXGwwqvxh01tvMBqzrmXK3bCy+YytTK2Bo4ssYx4ZVg+7HK
+         Fc3lxGWfbMPuI9G8Q0vrWDn+QoY3alGJwA7InjO01l8TgqfwkI03R0f7O8H0KwMRvAe4
+         dpiy6SbVH/kCGAAj/FaMOmslKuD07mfCrc1nCuj0JALYwUK0CkfeNZXZGbSb0/AfSMHs
+         ZviNvtq33n7FIugfMh1l6zG+iUbpiMBWQxSYq/OhIiupO249aDwZacS/8h87liDmJ36A
+         ue/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757296281; x=1757901081;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mPEvufB0EVqqG+ndG77NaI5/Gjp1FLYPe4dZ5FOTg6A=;
+        b=c1Qu6rYqKVl5oKomAQajWO5vFL+ZFRNOojxL0YPAqZMK5Yh6OmMgjVCCczzF8ArPAS
+         F9fZWQkqSfY3H8YaKEgXqh4p+9pskxQlTT8SYQH7yTDRXufN67L9L1WO78pEz2chU1sA
+         obeVsL6UHMP943xU8z9NUzyAnkBvYM9Z478IT4k83kL/50m/xb0stZoy5Vu2WkR0R60V
+         rePxNg5RjQbYy/lWaFzGluz7ClIp5ra3BRyb/vXYK61sM+1NBWq4ggBTOnlsZ16z3MQd
+         oU4+l2ZLyP+VCcaVwoztYS7ZCbv9ECGqCrviv/CFbbQHTSraZ/CxahqvSeMBr1qaJdBN
+         WpVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTGIdUF+Fjnyx5GvCWAV99A0FkdLcYLIM0JXNGGIeF9NfhzYx++nbe5dD9CTx1zaKP3F8wvNtCHSoJI9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/YdmSVs5/6MsW7XNUZNQJhzflaSSrA0QPmDtMmE+7Qomo8owD
+	KbOTAG3vCd7mpSgCjnmqQqXPtL/lhGOOKC64HkKygDhP9sC/+rO3/Qry
+X-Gm-Gg: ASbGncstjP3Tch1MqCjVSbJDxx1OJpe+GTzqO4Zwb0YstnuVYFiOBpJS1fSL52a5HZn
+	bDdqtFu18IVBAIxrXLxt3m5J/7ojs02v3oL4rt9uz2jJtIZCHHauqQuNdEvjx2bmssitbmZbGeA
+	yRU0MZu6cQxjDz6B/pZ1Qc7bea3Wn2i76+WtWc6i7SMMOB8XZ5J6gOplGaPx5LR/KCtp2TUnEuZ
+	eM86++X3LAi8JPbH6ymYH+bZNJ/trlJd1+h6nBHTuvnBQsYF2XEnnLmedbuRAk1vGVgmqorjnMJ
+	Qzo8BH8zE0KKueZyo6F2o7THDeImL9JxeIEziuJttmY1w/AntPwJhEk8QKrapJEJa7hTa+/iLeh
+	aMC4JFby93FvegNDcoR2JomFtlDWz6jqqGnrrmPAWEcGiW6QGlhrc3Es=
+X-Google-Smtp-Source: AGHT+IE800VW5xcV/nHB5CXVcEw8AAc5XnqZer6B+ZirEQTtaJjRi9HUD+HyolHssecI2MMyShoh9w==
+X-Received: by 2002:a17:902:ea05:b0:24a:fd05:bc6b with SMTP id d9443c01a7336-2516fdc729dmr74978365ad.13.1757296281018;
+        Sun, 07 Sep 2025 18:51:21 -0700 (PDT)
+Received: from [10.125.192.100] ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b0e860ab5sm163709175ad.5.2025.09.07.18.51.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 18:51:20 -0700 (PDT)
+Message-ID: <7cd74213-5654-aac0-54d0-4f4b1a7f0fef@gmail.com>
+Date: Mon, 8 Sep 2025 09:51:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] once: fix race by moving DO_ONCE to separate section
-To: Eric Dumazet <edumazet@google.com>
-CC: <bobo.shaobowang@huawei.com>, <xiexiuqi@huawei.com>, <arnd@arndb.de>,
-	<masahiroy@kernel.org>, <kuba@kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <xiqi2@huawei.com>
-References: <20250906134934.1739528-1-xiqi2@huawei.com>
- <CANn89iLi4CQZhAw7DKVauk0+cC+nBjoVuHgAan=cOsCP07Jh=w@mail.gmail.com>
-Content-Language: en-GB
-From: Qi Xi <xiqi2@huawei.com>
-In-Reply-To: <CANn89iLi4CQZhAw7DKVauk0+cC+nBjoVuHgAan=cOsCP07Jh=w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: sched: observed instability under stress in 6.12 and mainline
+To: Chris Friesen <chris.friesen@windriver.com>,
+ LKML <linux-kernel@vger.kernel.org>, hanguangjiang@lixiang.com
+Cc: osandov@fb.com, Peter Zijlstra <peterz@infradead.org>
+References: <87254ef1-fa58-4747-b2e1-5c85ecde15bf@windriver.com>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <87254ef1-fa58-4747-b2e1-5c85ecde15bf@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemn200010.china.huawei.com (7.202.194.133)
 
-Hello Eric,
 
-DO_ONCE_LITE_IF() in once_lite.h is used by WARN_ON_ONCE() and other warning
-macros. Keep its ___done flag in the .data..once section and allow resetting
-by clear_warn_once, as originally intended.
 
-In contrast, DO_ONCE() is used for functions like get_random_once() and
-relies on its ___done flag for internal synchronization.  We should not 
-reset
-DO_ONCE() by clear_warn_once and move the flag to the new .data..do_once 
-section.
+On 2025/9/5 00:33, Chris Friesen wrote:
+> Hi,
+> 
+> I'd like to draw the attention of the scheduler maintainers to a number 
+> of kernel bugzilla reports submitted by a colleague a couple of weeks ago:
+> 
+> 6.12.18:
+> https://bugzilla.kernel.org/show_bug.cgi?id=220447
+> https://bugzilla.kernel.org/show_bug.cgi?id=220448
+> 
+> v6.16-rt3
+> https://bugzilla.kernel.org/show_bug.cgi?id=220450
+> https://bugzilla.kernel.org/show_bug.cgi?id=220449
+> 
+> There seems to be something wrong with either the logic or the locking. 
+> In one case this resulted in a NULL pointer dereference in 
+> pick_next_entity().  In another case it resulted in 
+> BUG_ON(!rq->nr_running) in dequeue_top_rt_rq() and 
+> SCHED_WARN_ON(!se->on_rq) in update_entity_lag().
+> 
+> My colleague suggests that the NULL pointer dereference may be due to 
+> pick_eevdf() returning NULL in pick_next_entity().
+> 
+> I did some digging and found that 
+> https://gitlab.com/linux-kernel/stable/-/commit/86b37810 would not have 
+> been included in 6.12.18, but the equivalent fix should have been in the 
+> 6.16 load.
+> 
+> We haven't yet bottomed out the root cause.
+> 
+> Any suggestions or assistance would be appreciated.
+> 
+> Thanks,
+> Chris
+> 
+> 
 
-I'll send the v2 patch with the comment.
+Maybe this patch can be useful for your problem.
+https://lore.kernel.org/all/tencent_3177343A3163451463643E434C61911B4208@qq.com/
 
-Qi
+If I understand correctly, we may dequeue_entity twice in 
+rt_mutex_setprio()/__sched_setscheduler(). cfs_bandwidth may break the 
+state of p->on_rq and se->on_rq.
 
-On 06/09/2025 22:34, Eric Dumazet wrote:
-> On Sat, Sep 6, 2025 at 6:58 AM Qi Xi <xiqi2@huawei.com> wrote:
->> The commit c2c60ea37e5b ("once: use __section(".data.once")") moved
->> DO_ONCE's ___done variable to .data.once section, which conflicts with
->> WARN_ONCE series macros that also use the same section.
->>
->> This creates a race condition when clear_warn_once is used:
->>
->> Thread 1 (DO_ONCE)             Thread 2 (DO_ONCE)
->> __do_once_start
->>      read ___done (false)
->>      acquire once_lock
->> execute func
->> __do_once_done
->>      write ___done (true)      __do_once_start
->>      release once_lock             // Thread 3 clear_warn_once reset ___done
->>                                    read ___done (false)
->>                                    acquire once_lock
->>                                execute func
->> schedule once_work            __do_once_done
->> once_deferred: OK                 write ___done (true)
->> static_branch_disable             release once_lock
->>                                schedule once_work
->>                                once_deferred:
->>                                    BUG_ON(!static_key_enabled)
-> Should we  use this section as well in include/linux/once_lite.h ?
->
-> Or add a comment there explaining that there is a difference
-> between the two variants, I am not sure this was explicitly mentioned
-> in the past.
+
+Thanks,
+Hao
 
