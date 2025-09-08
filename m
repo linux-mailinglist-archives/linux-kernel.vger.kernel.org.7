@@ -1,245 +1,229 @@
-Return-Path: <linux-kernel+bounces-805878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6655EB48EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:09:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD91B48EC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CB743427B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F5E163DDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B54630AD06;
-	Mon,  8 Sep 2025 13:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D27309F00;
+	Mon,  8 Sep 2025 13:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Xpmn5v7a"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="F54aaNJ/"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011030.outbound.protection.outlook.com [52.101.70.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA30030ACE7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757336818; cv=none; b=A13bBjQ3uGpC8we3GA2Lzqzrho+KQ+QtZuXIjKDcQOIvkvFhA0TCdfiM1e83sq6tbXOrfx0y7u8U7OMHSwa9+YUX4H3ou974GTUic+/EO4TMM/hBwAqtX1trOLQyCxQn4J3KnJ/FlUTLBhNoOlL70WCcjpRNItE7dhTHTIhkjpw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757336818; c=relaxed/simple;
-	bh=PLnJz39kDLECH+d7SpDM281bUAzO33U7yXlh+bairl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtqG+801sXPzvmvp3yPiVNaWqz2c9A8J7/ZpOaLXqNd9lssgvCpnbnM8And+OKAurwEXpjnCHGbvTsDamyy+HHCAn7DQfv45AXf/FUFe3iV9SeCoY+Iy7looHLfFJOkp2R3YgYlgzUuq/rQQ4ufXnHnpG4VL9lODV6/QI0wY9cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Xpmn5v7a; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b047f28a83dso723477866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 06:06:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757336814; x=1757941614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KfMVf6nBBryTF7E6UcdgModrpBMwN13bx9ZSeOrOTno=;
-        b=Xpmn5v7aSwh54eqyw/7YY5mBNjXsKPgt3kxkxasj/VLkUyecHmlmOMB9D21SpLBm5L
-         yhb+oYEzXpkSWbjM7ozz9zzjN6AA0io+VRo1l7zaSdJfVvSDUtsvplOlYLbJje1QcWFS
-         qecTFfqA5W9KNSV+xvYVBF+AjH6BsNwF1lfbfLdBFPawKHEnrXPRSHKOAvX/L5jgEaYH
-         udVyXbLxpDvgV3uKy8NjIJIQ5RtN48Y/fC4WwJETqyzdwIpCMJ+rFmRtYDtVU8R8CnIY
-         6GcKUrTZDfkpOlIaFz8biHLvvc1F3fEgf7TKB/Mum+lDHb1lPcGNLe8CS8AN/qgreFul
-         bqcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757336814; x=1757941614;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KfMVf6nBBryTF7E6UcdgModrpBMwN13bx9ZSeOrOTno=;
-        b=Qpy+mbevOTIiBM9lAD5qRMxq7Xe7uVii95QD+Uu7DBpepKeEjVduXbvQTaqUsdL3s9
-         eWXPZF65FWk88+i4S7UGCXnxQaGZWLwyQVpqS0Lebxq8Rih9YLNiZuEYP4EauUPxt8ul
-         eFrvfWlgaYyrDmyOH2kYsVunLEqAIabvQjJDYCx+5+bdRenkGxUDZoaMGQGJL4VTtc1s
-         TvpRpUsnPmc3zW1i/H0FLvukK9pFGHiZIZiqtGT/zayMkWbk4jZgG1gqq4yhaJNZvnGV
-         cm6XW3knZRe1To+QXF+DehM8IwWv2mDn1zV7b/p+wJ7an+evE83JO5pWMcjwkhc+Hrev
-         qalQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXbYLdIoetS83dZ+i0G5WW5X35I/juSvhiHxQMRgzbyyy8ukXEh/zLGcQP4LKQ3+cy3bQkWaZObbSB30c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW7qVgpqqe67y2mtX60M9BC0JPEKAzol0PudLr0/2dAjhUvAYf
-	hBNmXygvmmuXMmvedGnr/kC+mqxtoHK6Y5oZzHKKBMLClAhkQ32GJUgwGvLMxbvH7fU=
-X-Gm-Gg: ASbGncuyAdC5UYKVUK5IyfiCgG3gS+GNTsCHzHRJf0aqbhmkSSUlZUhsQT/Ftcm2wpi
-	KxVLJWw+CkBMnL1lhe+5Qj2cOkCparBWjRjNzBHb0WmI2wVNWFfY//l4rmWjayeOAuf/vF9m9yv
-	uFFs0QxY80bXUDHwaMzFAAx5oh7vxPx/NuHlXl+68QrYv4kHztynkX+Lesrl3xWhTblgrnLoLOL
-	6ikeBp9r6/jtT2ydi6P/8Q76uks/EdFRUkBxCOdkGW7tVvdN055z4W3436MzLZckk2GtEuuoGFz
-	Fg+tQyQtZpnfW1Osh+Cxm1wygaGCBmhp2H6AH+Otxt+PLQVYyhB4tvby1iYnufatMQ0evPDARBv
-	CD0PSnEYtRRHW1KTHuDlzn89ZBexKpHPTqBpmYyyAUCGd+HPogH5J
-X-Google-Smtp-Source: AGHT+IHNtIRcKMzfVe31q41uVJvIJUKXuFurzwJj/AutDBZPs44uojZLouOewThTolpsDraRQmap2Q==
-X-Received: by 2002:a17:907:2d0c:b0:b04:a780:4673 with SMTP id a640c23a62f3a-b04b1663c1cmr806523566b.31.1757336813148;
-        Mon, 08 Sep 2025 06:06:53 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0438102debsm1795871566b.66.2025.09.08.06.06.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 06:06:52 -0700 (PDT)
-Message-ID: <742cf1ae-1723-4cf5-8931-afd35699cc95@tuxon.dev>
-Date: Mon, 8 Sep 2025 16:06:50 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816B22FE079;
+	Mon,  8 Sep 2025 13:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757336896; cv=fail; b=J78GBCW3IftLSMgSW7bHHxCFkiyLLZEGetN1/myJ5MJ5XMLN91iSjK+QtS3kZkU5jLwQhHdkBl0RaLF+yDZ+7lC17L4czYvTfHpvS7usQwL5rJpsYwyyYr2qmn7cVHJhc0BoJyFAveewLQPrvbS5vUiRkqb/fhdYWW7HmgMUxNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757336896; c=relaxed/simple;
+	bh=W6LF7/jbabeACDQZKgZCtI6uCkrbReNr+2ou8NCGwco=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Tuv/FKah/pWImxVEIFSgIs8HI6YGLbrSGu9HmAUy1uz8v9MtcPlH1WM1MbmsmC5tBfuhEXz92m+upj5yx0cAH28HwFklDWLCNJv6N/oPIkZA/6w52TZrNmGVINfme72pulwmbDyjLQe/0YhMsOXRkWVryhE61zcXw+uPv13Wk2Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=F54aaNJ/; arc=fail smtp.client-ip=52.101.70.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FdtMBbdnXqPVJAsYjZBSgIy4EfrDnw6afWDxUhPSDfwkcK9O1zGNHXxt5NwFJZxpRW1b2EySLziFFDIhtMP4rkqDurgx+F2A0DyXj5sMINuzBPOd90oXOE95IAnbDTXg1eb+2Hx0bWBAOFu+a8ZRfm/EvdtUIzJFoU8TrFSTGW8Fl+SYwUF0liJO6fmx3skj0+RlHC2xlo7VcSkG7y/8xLLq1WhUzp+UXHJTwl2WBK6YzSphFYl4JgauUdsGdvFbDP4PJwh1Ywx3uo5S52P0Ij88kHDvEqZPjykTe7exgEzpx9HmynPPG6UhwUck9TecFwW0MNS2HS/Fd8BkJV9Iwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vRqMsG5hxJTJ8qceJZjGwoc3/QIW5eEGSdfvgWo57Bc=;
+ b=Gjnjz78c/2l9Xc8JHi9L6dlu9bGkE/mNyVzZ9wlxjUPbpcWoiLEQeFPIYP258oKbZbJREd08vbYIT79LM26XouzDD96qOVmQfK5WhgATPOWTO3yBWJNQsqTGh1X/EdbRLP+Esnn3bWeHrzAq0zejI0zX9qMsTCVmFnlyX6SDxjL5NRVJPnFtJqA5DslsNwOYXKgxtztXH6Nm06l9Ni6xjsSUWh1E4u97hwCRoner/9X8wCz/Hia8oxifxD6XN0HeqnpIjJVO20ZYvBV22U+btupQK+n8CBDS+ZRO6BlgerBflLsNNsYBlvUe68NuGL2Hr29TCn5rKDpdNT22zTuKDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vRqMsG5hxJTJ8qceJZjGwoc3/QIW5eEGSdfvgWo57Bc=;
+ b=F54aaNJ/Vpoz0O7Ude8JQkcUXO+Ur9CfkJNyJr3l2cmmAwEmWGYCR6fZ8GXPFm/vgWeaDM3G/mu3dJFb3kJJ7n7ttHxslC6Cvfvz/E1tE9KacZtjBeoeJJpD2kN7LE/eJ8aucb9wsA3/llpOi4sgpMLS62q4Lr+ZZEslh2A0CUjxfQewWuRVA/TSwpTCBwLaibRn/fUGIgqOn7pxzNY6WXgSCes49M9cnZKabsP6q+Yslg5wY94co4YF9HcDT3/p/GskrEEA4pZ0bplKS6v8sz/RKzahXi36GZS8rTzjKpo5UhpN7oEw6HgGhB6QOOkUMJWQjxMEYDCETVsDNYjJQw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DU2PR04MB8918.eurprd04.prod.outlook.com (2603:10a6:10:2e1::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Mon, 8 Sep
+ 2025 13:08:10 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 13:08:10 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/6] remoteproc: imx_proc: Simplify driver by removing the
+ switch-case
+Date: Mon, 08 Sep 2025 21:07:33 +0800
+Message-Id: <20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABXVvmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwML3czcCt2igqL8ZN3knNTEvNICXbM04yRTE7Mky7SUNCWgvoKi1LT
+ MCrCZ0bG1tQB+mShJYwAAAA==
+X-Change-ID: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Frank Li <frank.li@nxp.com>
+Cc: Hiago De Franco <hiago.franco@toradex.com>, 
+ linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757336884; l=1568;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=W6LF7/jbabeACDQZKgZCtI6uCkrbReNr+2ou8NCGwco=;
+ b=+wKRQvfRDVlwiEDf7Y0MLh7xkCKhg6Tq5/wP8SIvzO7M3XO7h7sr5y7BbWolJqhdsZDJaYwdF
+ DuwVy7v7BHWC95hzlixmSTCIef9xZ9m2OQGKFq+3A4wWaK4qxXVZHLg
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI1PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-To: Manivannan Sadhasivam <mani@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
- <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
- <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
- <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
- <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
- <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
- <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
- <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DU2PR04MB8918:EE_
+X-MS-Office365-Filtering-Correlation-Id: aba3763e-c916-4c14-a1b3-08ddeed8c2b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1YrYWtQeXdOOGZUanNvdm90OTlucEhDbjdsdEs3aGJIUTUrSTY4VUFaTGlj?=
+ =?utf-8?B?L0cwK21NMVBoRXF5RUErbEFRTS9rQWxyVXVsR2IxWmprUVdINTI1NENrUGNB?=
+ =?utf-8?B?NGxIc2Iya3BoOW5DdEFVTlA0QklWcjZvSEIvSFBZd2JmSFl4NHkwZlpqZHNZ?=
+ =?utf-8?B?Y0NXaUJVbzRNM21PclJsbGdLTDNDYi9HUzF3emllOGhsUnJwSDNCOTlIQlZZ?=
+ =?utf-8?B?T2xaMnZVRWI4V3cxY29HV0pVZkI1UWxMRUxqK0RoNlduZVk1aFFsWlh5M2FI?=
+ =?utf-8?B?WG9nYWpJNW01UXlRbXpMZVBZOHl0NGNvRmdnNDJJY3BBZDlNbDdZM2YxYlI2?=
+ =?utf-8?B?UG9nTmd0bWxIR2ROZEkzaStQMGt1Y3JsSU45dTRzVHM1YXY1Q3NJZkRJTndL?=
+ =?utf-8?B?b1JhY2dMWEVXc3RNSFFFT1hhSzZmTWVZbFBOS1JwbFBmM2hlL3FYTDJyNFpw?=
+ =?utf-8?B?YnRndEcrQ1FJRkRWMzZtQXJWUTVib1czT0syUlhrYTNUeW1mUFNsamlHKzRR?=
+ =?utf-8?B?Yi9SZ3B0aWJiN0IrQWN6T3h0c3AvZGNWM2dpZVZ5OGJQQ1RZSGtUV0VjcEcr?=
+ =?utf-8?B?UGtGV1hURmU2SlZKRTZBWlJ5SWVQMUVWck5IZSt4bUtrSTdxc21DeVZZSVR0?=
+ =?utf-8?B?OHhueDhlRVVHdFp3N1RDaXEzOHdLczNPRWsrSU5GdVBVUzJHbHF4RGovemVa?=
+ =?utf-8?B?dWM4ODc3b3pTbXNudi9MMlgwaGtmWnlpL3dkZmFGVGhhQWo3SUhHZ3E3ZHVt?=
+ =?utf-8?B?cGZWNGtTeVNJUkVIdC92N01LZ1JWdFROTnJKbnNBR2xkaEFlb21YTkV5d2RU?=
+ =?utf-8?B?eUZDQ0sreDU2dFlabXJFeStOVHViKzVlbDNqSWVyV0NiajNENlpaNTFKYWpl?=
+ =?utf-8?B?bWxrQVlJa1V4ZEZkeGlwOCttR0J2UXVTaGhKVzBLdklNK1VCV2FnSEFHaVlJ?=
+ =?utf-8?B?V3R4c0M0UEZzSUd0a29kMndFa0tPa2c1OUh6SkYrQ01OTGtYYWhpUUFXUXNC?=
+ =?utf-8?B?RHNsUGN6MkxvSCt1KzZxLzJPRFIvVzA1YmNMbDhRdGMxcU1YZzBodTN1ZEl5?=
+ =?utf-8?B?QXF5OVZXNHMvSmpUdFFKeVZnc2tINHN5Q0QxWklRMEVTREtxT2s3NG12aXg5?=
+ =?utf-8?B?ZmJIY1pCTlNSKzV0QXNJcncyVFc5b1BmSE90TXNQUXAwYUNKazFXNm5EOWt1?=
+ =?utf-8?B?b3hPNk5GbmNoOHkzeDNkSnZGb1pPVjVJdnpRcFpXN1RqL0FCMUhCYm9Gdy82?=
+ =?utf-8?B?Mys0OGxqUVNieVpkZmdoSEF6a1RZN2dxR3l6S290aXJnUXNRVzN2dENTMERh?=
+ =?utf-8?B?ZGc2VDBrNTN6MzdPRzY1MnExWTdleTJJTFZmUjA3bTBZeXJqYkZYRmNWTDFZ?=
+ =?utf-8?B?MUFLQmJ1OHFDR1JMWWsrdWFUWUZJY2ZFdEZxV3hqd29QUXRRUS8ycXZablJD?=
+ =?utf-8?B?MUNuVm00NFh2cXRpeWhGZDNBTUhhOWtiTmRaUTB2YmNETmNmb0I1U3BsTHFv?=
+ =?utf-8?B?eTl1Z2JZa1BBd21rZ25PTm9XVnVCTjJ0a1ZZOHpDYThuRDE0KzFKZkxsNjYr?=
+ =?utf-8?B?Ymg2K1k4djZEOHJqZ3hpN0lLVzZlQU51VXBZc2E0K3cwQmR6NFRNU0p2cTk3?=
+ =?utf-8?B?K2lFK0FTSk5iS2wzeEdQNUFzc1pNbEhaQ0NQdDBlSjNDc3NYZVhPVk1GcDBy?=
+ =?utf-8?B?SGVKbm5CdW1HUzh2eUE5VGFDNUVKRnZtWnE4VEllMVhiTjlLbGJrdEh4ZWFy?=
+ =?utf-8?B?NmpQcFE3djNhVS8vSkkwZU5WbVM0dWZBNGhLMHhVVEp6Ynh2aUwxQjBnY0pX?=
+ =?utf-8?B?Zk02bnNmV1pqQ3ZVWk9PL0xEUkpoVytsTVA4THhxUCs3U0VHWXRxQjRqeVZZ?=
+ =?utf-8?B?M2grTkY2c015UEJNYlVwbnowRHhhVVVKYWpMWHVUd0d4ODB3c0R2a1FRTERv?=
+ =?utf-8?B?cTE1Sm9haHFGYlpyZENoQm5NWk5VWE5tbHN2ZHVtZlkySUMrTkNES0l2cVRZ?=
+ =?utf-8?B?WTV0KzV3aFVBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VWl4V1UzeXJMejBoVFJWM3ZNZ0tHdHNtWGRaN0xpNXZOUTVrcXpkcGQ4cHA4?=
+ =?utf-8?B?amFjaG5xcURULzBNd0VWQU1LQS8zcmRwSVFVWUtXZ1VZTlZoSU5kdzE4Y1RQ?=
+ =?utf-8?B?VUxCengyWjlpcDdPRmhxUll5b2g2N1A3cUFQNURqTG42STFYbXhEakZGYTh1?=
+ =?utf-8?B?dVppcnNwVXh5QVZlcFpBcGVycHNMQkJjMllTUkVFeWlpVmtqdEhHcVlSc2RI?=
+ =?utf-8?B?VEs2STFmOCsyR1lQcEpzNFZ5L1pRU0cyTmdLR0lDR0F4cG1qaXRJYmMxZSto?=
+ =?utf-8?B?MFlOTFo2OEY0MmYzbXdSdm8wUStnellUeDh4WFgrQWRJaDN2OWcvckJ3dy9R?=
+ =?utf-8?B?RmtHT1orVHJrRnNmVTVEK3EzZnh6MmhmZU1jQ2RCUWRoTUtiaW9zeWtzUGVs?=
+ =?utf-8?B?aDErOTRkYjdCYlZzelkxZmtVd3VWSTN5c25Cb3FOb0xpNTJ1S0duR3QrQnQy?=
+ =?utf-8?B?cmNNSEg1dmNEMGlrdEVOQU8vKzB6T293cUpudk5aSTlUVkdzLy92ZUhXeU5v?=
+ =?utf-8?B?WU9vNU1mb1JUczNhS2ZiaXhQU3Z3N202Szd4NEY2UjdUS3JwWFV1MWx4cUJW?=
+ =?utf-8?B?QlVHY1UyVWVEbWF5dnFYNWlYN2gvQlhiUGtndlRxZC9CYlUydi9LSVVTS3J5?=
+ =?utf-8?B?RkN1bVNEY0tKTWEzWUY5RFB0UzhlQWxRdm5UbnlxNTJqeTRuMDIyMlFTaUZk?=
+ =?utf-8?B?NnZ4eHMrNDR0UjlCRmZNSFdoaVByc1pzMTZTTUN0ODIyQzM0eU1HY1RhdWdH?=
+ =?utf-8?B?SFk1QXhNS1EzZ3l0U3djRkhBem50WTZTMFQvYXdaOFBUZGNZQ2NWRHQwcEFR?=
+ =?utf-8?B?dTRmaFlXZTRqR0lTOFhQWG9TMlpid2pOU1MyNHdGMlcyVWJZTXhmTHo1NzBP?=
+ =?utf-8?B?dktDczJJQlhnZ3BIRFJkc3VlR1ZvZW83aElxbFFjNldJQ0VxTzZSblZMb2dF?=
+ =?utf-8?B?NS9kV2NmQ1dTbmp4N3BtMHZaRlhnZkpmMTZrSjRZczZuT1RzbmlSQ0pscjdR?=
+ =?utf-8?B?ZXIxMXUyTFZBUU9JNm56S3FuVXE2MXlQSDNybUhMMkdLL3dZT1RKamFTMGdR?=
+ =?utf-8?B?WEljNjhpM0Jtbm03S0dSSXplMVAycC9jbTBmWjRHQmZzK0RDdU1hUDJRNCtQ?=
+ =?utf-8?B?Ui80MFZKRWJMQldvelRLYmhkVG05cUlCZFVlR3pDNmRQWGxLNkFDNU15c0l3?=
+ =?utf-8?B?UFlIQzlKQVFML3paOVJqdEVCbW9YdElqTXljOWRQVEFOWG95cGVGeTN4b2ly?=
+ =?utf-8?B?N2NzRG83REVQdzZkMHFaT0ltYTgwdTZ3OEhwcm5tYUFOenprQml4ZW4wUUNt?=
+ =?utf-8?B?SUVNWm01NW9wQ2NLOUh0clZEU01UaTdnbGlTeWVOcUlXWUN6VHpwcVlPbEcw?=
+ =?utf-8?B?clRkOVg1SXpyOUI5ZlgrOUlSc2JvT3RxUDdlemliMitOc3NEY0VCa29iRG1X?=
+ =?utf-8?B?OG1DUUpHMzh1Wk9BeWV2WTIvR0VnaHpOVWUyVUh0Qzk2ZkRDaWhIZEkremR2?=
+ =?utf-8?B?a05PUkM1QkVodjZwTXFBOW1qb3JNWWI4OWpWS2xUcGR6cVFIcHFvVzZ2YU1h?=
+ =?utf-8?B?MGxPOG5qdG1IREllaHBmelM5U05wR0RlekNLVHcxdWdpais0MzM2TkFIYTFh?=
+ =?utf-8?B?REs0SktqS2YrVHdwWTJYWU9ZR29jdEVZTWhOVU1FYmRTQ0phcU9ZdGZ2Q3lV?=
+ =?utf-8?B?elBnWXpGL29WdWZiZjJkMGtiUUlPWHYzSnRZT3JTN1ZhVjZVbzJ5ZGRNUTA3?=
+ =?utf-8?B?QXRLUVFKVEE0K242Zml4Z29FdlJzMlNtUHlKZm9OczlMMmVlb01KdEg1WTkv?=
+ =?utf-8?B?RU9POFZtWWY0eFNvMXViSEd1WG1FUGVMYThVYUtWeldXTUJkTjdDQ1ZQemI1?=
+ =?utf-8?B?VkUrZ090bU12blhlRlFaQWh2V0ZGWnVnb3RiREFOSjhScWV0U3JRcmhTT3Rj?=
+ =?utf-8?B?enBNb2ZOaFRGbkdsVG5KVmlDQkhnVS8rU3hldHRpUGQ2WU8rOGpEWmtzWm90?=
+ =?utf-8?B?d3lhV1JDdE5heENpaGpOdVl4d3JYSWdWYmg0TWJGN2ZKbk1JUjAyU3lVak9D?=
+ =?utf-8?B?K2hwWVl3YW5JUDh5YnkvL2dKUkRLNWdrQUVRcWxaN2x4VWp2eHJXUCtkRHFS?=
+ =?utf-8?Q?/1s576KRJSIiaSdDvzFUbVpQK?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aba3763e-c916-4c14-a1b3-08ddeed8c2b4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 13:08:10.5070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rBugyg7EK2wcddkwwEZGhOnRcnQDQ7szyU0tpbUUf59vJ4RMdYu00LEoSfncnNhgNDwCEnXoEUEchuIVS0gGuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8918
 
-Hi, Manivannan,
+This patchset serves as a preparing patchset for i.MX95 support.
 
-On 9/1/25 18:54, Manivannan Sadhasivam wrote:
-> On Mon, Sep 01, 2025 at 04:22:16PM GMT, Geert Uytterhoeven wrote:
->> Hi Mani,
->>
->> On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
->>> On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
->>>> On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
->>>>> On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
->>>>>> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
->>>>>>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
->>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>
->>>>>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->>>>>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->>>>>>>> only as a root complex, with a single-lane (x1) configuration. The
->>>>>>>> controller includes Type 1 configuration registers, as well as IP
->>>>>>>> specific registers (called AXI registers) required for various adjustments.
->>>>>>>>
->>>>>>>> Hardware manual can be downloaded from the address in the "Link" section.
->>>>>>>> The following steps should be followed to access the manual:
->>>>>>>> 1/ Click the "User Manual" button
->>>>>>>> 2/ Click "Confirm"; this will start downloading an archive
->>>>>>>> 3/ Open the downloaded archive
->>>>>>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
->>>>>>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->>>>>>>>
->>>>>>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
->>>>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>>>>>> +  ret = pm_runtime_resume_and_get(dev);
->>>>>>>> +  if (ret)
->>>>>>>> +          return ret;
->>>>>>>> +
->>>>>>>
->>>>>>> Do you really need to do resume_and_get()? If not, you should do:
->>>>>>
->>>>>> It it's needed to enable the clock PM domain the device is part of.
->>>>>>
->>>>>
->>>>> I've replied below.
->>>>>
->>>>>>>
->>>>>>>     pm_runtime_set_active()
->>>>>>>     pm_runtime_no_callbacks()
->>>>>>>     devm_pm_runtime_enable()
->>>>
->>>>>>>> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
->>>>>>>> +{
->>>>>>>> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
->>>>>>>> +  const struct rzg3s_pcie_soc_data *data = host->data;
->>>>>>>> +  struct regmap *sysc = host->sysc;
->>>>>>>> +  int ret;
->>>>>>>> +
->>>>>>>> +  ret = pm_runtime_put_sync(dev);
->>>>>>>> +  if (ret)
->>>>>>>> +          return ret;
->>>>>>>
->>>>>>> Since there are no runtime callbacks present, managing runtime PM in the driver
->>>>>>> makes no sense.
->>>>>>
->>>>>> The PCIe device is part of a clock power domain. Dropping
->>>>>> pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
->>>>>> IP failing to work as its clocks will not be enabled/disabled. If you don't
->>>>>> like the pm_runtime_* approach that could be replaced with:
->>>>>>
->>>>>> devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
->>>>>> suspend/resume. W/o clocks the IP can't work.
->>>>>
->>>>> Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
->>>>> if you have a power domain attached to the IP, which you also do as I see now.
->>>>> So to conclude, you should enable/disable the clocks explicitly for managing
->>>>> clocks and use runtime PM APIs for managing the power domain associated with
->>>>> clock controller.
->>>>
->>>> Why? For the past decade, we've been trying to get rid of explicit
->>>> module clock handling for all devices that are always part of a
->>>> clock domain.
->>>>
->>>> The Linux PM Domain abstraction is meant for both power and clock
->>>> domains.  This is especially useful when a device is present on multiple
->>>> SoCs, on some also part of a power domain,  and the number of module
->>>> clocks that needs to be enabled for it to function is not the same on
->>>> all SoCs.  In such cases, the PM Domain abstraction takes care of many
->>>> of the integration-specific differences.
->>>
->>> Hmm, my understanding was that we need to explicitly handle clocks from the
->>> consumer drivers. But that maybe because, the client drivers I've dealt with
->>> requires configuring the clocks (like setting the rate, re-parenting etc...) on
->>> their own. But if there is no such requirement, then I guess it is OK to rely on
->>> the PM core and clock controller drivers.
->>
->> When you need to know the actual clock rate, or change it, you
->> indeed have to handle the clock explicitly.  But it still may be enabled
->> automatically through the clock domain.
->>
-> 
-> Yeah!
-> 
->>>>> But please add a comment above pm_runtime_resume_and_get() to make it clear as
->>>>> most of the controller drivers are calling it for no reason.
->>>>
->>>> Note that any child device that uses Runtime PM depends on all
->>>> its parents in the hierarchy to call pm_runtime_enable() and
->>>> pm_runtime_resume_and_get().
->>>
->>> Two things to note from your statement:
->>>
->>> 1. 'child device that uses runtime PM' - Not all child drivers are doing
->>> runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
->>> unless they depend on the parent for resource enablement as below.
->>
->> It indeed depends on the child device, and on the bus.  For e.g. an
->> Ethernet controller connected to a simple SoC expansion bus, the bus must
->> be powered and clock, which is what "simple-pm-bus" takes care of
->> ("simple-bus" does not).
->>
-> 
-> Right. But most of the PCI controller drivers call pm_runtime_resume_and_get()
-> for no good reasons. They might have just copied the code from a driver that did
-> it on purpose. So I tend to scrutinize these calls whenever they get added for a
-> driver.
+The current code logic is complicated, with mix the usage of switch-case
+and if-else.
 
-To be sure I will prepare the next version with something that was
-requested: are you OK with keeping pm_runtime_resume_and_get() and add a
-comment for it?
+To simplify the code logic:
+ Introduce struct imx_rproc_plat_ops to wrap platform start,stop,detect_mode.
+ Each imx_rproc_dcfg data structure is assigned a ops pointer.
+ The common imx_rproc_{start,stop}() directly invokes the plat ops, no
+ need the switch-case.
+ mmio/smc/scu_api ops are included.
+ No functional changes.
 
-Thank you,
-Claudiu
+Thanks to Daniel and Frank for the help.
+
+Test on i.MX8MM for MMIO ops, i.MX8MP for SMC ops. For SCU-API ops,
+I currently not have a setup at hand, I will give a setup and test
+later, but everything should be fine, no functional changes.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Peng Fan (6):
+      remoteproc: imx_rproc: Introduce start/stop/detect_mode ops for imx_rproc_dcfg
+      remoteproc: imx_rproc: Move imx_rproc_dcfg closer to imx_rproc_of_match
+      remoteproc: imx_rproc: Simplify IMX_RPROC_MMIO switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SCU_API switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SMC switch case
+      remoteproc: imx_rproc: Clean up after ops introduction
+
+ drivers/remoteproc/imx_rproc.c | 448 +++++++++++++++++++++++------------------
+ drivers/remoteproc/imx_rproc.h |   7 +
+ 2 files changed, 264 insertions(+), 191 deletions(-)
+---
+base-commit: 3e8e5822146bc396d2a7e5fbb7be13271665522a
+change-id: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
 
 
