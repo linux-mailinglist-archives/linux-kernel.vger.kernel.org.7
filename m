@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-805003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F170B482E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:28:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F64AB482E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02942189EF07
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361973BE7BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE7D20ADF8;
-	Mon,  8 Sep 2025 03:27:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15F214228;
+	Mon,  8 Sep 2025 03:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAHUGtf0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492B97263E;
-	Mon,  8 Sep 2025 03:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5A315D3A;
+	Mon,  8 Sep 2025 03:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757302072; cv=none; b=fHs/svrDVlDP77Rxeqk8v0IxuIV8JQ4Dr0e3YfmehA/kKVugvEJFzuTK/vdbWWrFOAVYl3xSMf8V139cPlC4zbD4fnDx8PbOwCXNXlpC0gNp/WktN97GNwl8MQuq6Kd/SAZiL0+AOvTf6Wbqk/KeH5A0BVllryauM0zwL9xoumI=
+	t=1757302760; cv=none; b=Ue09QyNTloHwtSCOtR48BLgUpb3gi1ysHnx9S565wnme7WKxtatkZ+17aoBLxRn5E1qo2mJAPgRwChwSP+a6aI4DcaYFHDjSbTW7JpzUFcN3u7AAwXhSeUrfB7GsoK4aiLZbEANUiHanx+t3TAwhoulOKrE354xIoyroR3zQdgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757302072; c=relaxed/simple;
-	bh=/xm0CoQperM2d+lJa/HVWwNf046vpRb170SWKROPvz4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UDFGCzFPBjvKtRoLb5LOHKGeE3iOg2hRW+cPP9CzhHnj9TRgfACr4qlAKoKlEBRy+FDh1xdtd/NG9YIUn+mDBntJxumLJ8ztrcUsu7U397sO7FMxbYGuzMVo6i53kYoRyDZYuOpgXAlW9YTqgyC6nXp9m/G7QdaIRdk+TtZor2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cKsj95s2czRk4v;
-	Mon,  8 Sep 2025 11:23:09 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id A65BE140258;
-	Mon,  8 Sep 2025 11:27:46 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 11:27:45 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: <vadim.fedorenko@linux.dev>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<gongfan1@huawei.com>, <guoxin09@huawei.com>, <gur.stavi@huawei.com>,
-	<helgaas@kernel.org>, <horms@kernel.org>, <kuba@kernel.org>, <lee@trager.us>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<luosifu@huawei.com>, <luoyang82@h-partners.com>, <meny.yossefi@huawei.com>,
-	<mpe@ellerman.id.au>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<przemyslaw.kitszel@intel.com>, <shenchenyang1@hisilicon.com>,
-	<shijing34@huawei.com>, <sumang@marvell.com>, <wulike1@huawei.com>,
-	<zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v04 06/14] hinic3: Nic_io initialization
-Date: Mon, 8 Sep 2025 11:27:40 +0800
-Message-ID: <20250908032741.1849-1-gongfan1@huawei.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <98c93693-0647-4c7e-ac1c-729502beab76@linux.dev>
-References: <98c93693-0647-4c7e-ac1c-729502beab76@linux.dev>
+	s=arc-20240116; t=1757302760; c=relaxed/simple;
+	bh=lVaQogxRxHTcdSmnAEDjTJ71tx8RD2jm4+c/+FwJSyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mADq0IRGd9EvJHP9YPz1BpFuLTiPw6XdJyfXwl3q7COpqZUJwZELcLUxF8Egn3z5/Zu/TckjLhpD8GbkS5whfdyPPI51zC1Ua1SUFICltPG6Z7wXmVwdSriWFV3VtO7mURzZNV8afqm/UYd6Ew3x+e80cRmnSf9Jo1C/cb4xdLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAHUGtf0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 263B2C4CEF5;
+	Mon,  8 Sep 2025 03:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757302759;
+	bh=lVaQogxRxHTcdSmnAEDjTJ71tx8RD2jm4+c/+FwJSyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LAHUGtf0ZWmD1BzjTl7H7Sc0d3vF4lov+wuMx7bLdXAyX9tfYide8ARlgvL247BVD
+	 6pty0/0GhHOqMwME5JIfCbDVWXip7nbj61JTjDyKp6RbFlpn7PJhS9SMqoVOQujpZ7
+	 tnaCbZypF1xWMznCZISz5uRnPkHE05vuyheacvOQe9OD5Jk6RfrRLUYk936fPnZVAc
+	 7PTbqBQ2cmlr7xR6cXAlGKVQBOU+Bx7EfNLFuitjg+moNn+vM2TIO7PfA5tR4lENCT
+	 hrJzn7qq0Te+FVFhxiT/+M+ynx4yZbxwwZU+I5l4NYurpfxqdIePQPWODIidGOcaBu
+	 fwvLrCfG6NkzA==
+Date: Mon, 8 Sep 2025 09:09:08 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, jingoohan1@gmail.com, fan.ni@samsung.com, 
+	quic_wenbyao@quicinc.com, namcao@linutronix.de, mayank.rana@oss.qualcomm.com, 
+	thippeswamy.havalige@amd.com, quic_schintav@quicinc.com, shradha.t@samsung.com, 
+	inochiama@gmail.com, cassel@kernel.org, kishon@kernel.org, 18255117159@163.com, 
+	rongqianfeng@vivo.com, jirislaby@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH 00/11] PCI: Keystone: Enable loadable module support
+Message-ID: <2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5>
+References: <20250903124505.365913-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+In-Reply-To: <20250903124505.365913-1-s-vadapalli@ti.com>
 
-On 9/8/2025 1:02 AM, Vadim Fedorenko wrote:
-
-> >   int hinic3_init_hwdev(struct pci_dev *pdev)
-> >   {
-> >       struct hinic3_pcidev *pci_adapter = pci_get_drvdata(pdev);
-> > @@ -451,6 +463,7 @@ int hinic3_init_hwdev(struct pci_dev *pdev)
-> >       hwdev->pdev = pci_adapter->pdev;
-> >       hwdev->dev = &pci_adapter->pdev->dev;
-> >       hwdev->func_state = 0;
-> > +    hwdev->dev_id = hinic3_adev_idx_alloc(); 
+On Wed, Sep 03, 2025 at 06:14:41PM GMT, Siddharth Vadapalli wrote:
+> Hello,
 > 
-> Why do you need dev_id? It's not used anywhere in the patchset. The
-> commit doesn't explain it neither... 
+> This series enables support for the 'pci-keystone.c' driver to be built
+> as a loadable module. The motivation for the series is that PCIe is not
+> a necessity for booting Linux due to which the 'pci-keystone.c' driver
+> does not need to be built-in.
+> 
 
-Thanks for your commit.
-This is the code to refine the first patchset of hinic3 driver. In
-hinic3_lld.c, we use "hadev->adev.id = hwdev->dev_id;" and dev_id
-is temporarily set to default value 0. In this patchset we complete
-hwdev's initialization.
-I will update this commit message to explain this modification.
+There are concerns from the irqchip maintainers that unloading an irqchip
+controller is a bad idea. We had a lot of previous discussions on this topic.
+
+But I would certainly welcome the idea of building a controller driver as a
+module (tristate) and prevent unloading it during runtime (by keeping it as
+builtin_platform_driver).
+
+> Series is based on linux-next tagged next-20250903.
+> 
+
+No need to base your patches on top of linux-next. Either do it on top of -rc1
+or pci/next.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
