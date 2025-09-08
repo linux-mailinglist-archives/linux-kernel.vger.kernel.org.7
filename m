@@ -1,399 +1,210 @@
-Return-Path: <linux-kernel+bounces-806192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B32B49332
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10510B4933A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B763B7A3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A5A3BD21B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850D30DEBF;
-	Mon,  8 Sep 2025 15:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91A030DD32;
+	Mon,  8 Sep 2025 15:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ba92znfh"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="EU2cyAgY"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67F21E260A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04542F0C78
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345216; cv=none; b=DGhcJ5Kt9jDH4uBDBXlmSSzgz/IHRdWdLWoo8OnvzBrAJm2x2MDrld2CFOX0//h9MZDfOQbyD2OCmPcWNeJVILhpiPtchYht9sCd/L2f0PVSS9XrXGw8u+3xJ6U8+W/v5kCYsWETk007+9x4HZl2QiY7di1wF3VeXi4wx5Pegzs=
+	t=1757345246; cv=none; b=iu5JGa5xANfUM3OkaVZP+rq28LEoyOKI4izTr1AduHln0BhdZRpE+C3KBT9iadcnmWlJzDeOPAIM6fWqztSf1kU1zi7jN6CIW0mEnGobdgY+Ft3hfHlfbJDTGW/9d5Yus8mllLcqHA07Qqi/CQB8O2FF1aC5nC3uVTXIKiftWXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345216; c=relaxed/simple;
-	bh=c2bbXfddnnTPZ2N//WN5BYLOJywpqTytk4ukua322jU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=vDf2Up0LHZbPKWGLqj5u2kLG6jhAYcOvrJATN2JXNMPRp9aXfsSVIjmWG3aOKK8j5Y/hNvobD3Tn8xCEWM0e0TUPAGx/6YGJENRP4C8+9XBaFG1XHx6yWoWeBCMgjo092yrAryJhIqAa9mPfvrhtBclNCiXI42k7KiqUxOrVDmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ba92znfh; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e46fac8421so2167462f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:26:52 -0700 (PDT)
+	s=arc-20240116; t=1757345246; c=relaxed/simple;
+	bh=7gFq6VypTDHyruMyiJeYVKPAb80OMpaoAGS5lkbz+sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbpynOuG0uIog91dgbBtn0xU9jmOwP0xo++eR5Fj9db16EklVW0ya1vIduqdqXGJnIyDv7kaectpCcVh5emgp2HZ7TQwsazw0azm6qKESYuBxYX//AC1hysApARTnWmI/y+/5OZqSW52/IuBkPgfWWY2GJwGW5U4AvHL9jAMlx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=EU2cyAgY; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74542b1b2bcso3403478a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757345211; x=1757950011; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yPiCYXc69M4SjfK5MFCW/PjpWwaPVtI+vQRtDqy3mEc=;
-        b=Ba92znfh8xQshvqw0rAgAanbm+jLMpfVBYvLu+MiCcc43/xEclB5Hc7yc/h5aX5xW/
-         /y6dtVhOdalvID+pfop2wq5dOXSyjVFo00WJGXucogdMLjktzelWMc3oYLg2YOnGjQTE
-         EWlMM/swdcJ8Y57/sQrA+sez+D5Xzejo9e04Yt4HMnE/cBA8sJWSwlvASrOu4O0/r2CU
-         LuTrPXorF7hQvoNFvlnAlrNCmYENcPlBStnseA4M+WOQk3FspzPZKobSMHrqiTkHeT0A
-         B1RRRkxrGVkAkKiQ1pDWEpWiYjOXXYFostQtzJcpHPUddPu+auUd6GPFzlux7/2CxUsi
-         0OBg==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1757345244; x=1757950044; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4jQqNVYIuMbhaHikEyc6LfEfgr3MBf/W2+nUiSWCx68=;
+        b=EU2cyAgY6dz3NiakLiKhVLjdCU4bkFssY45Z3PGXZcLMtmkoWGftbk0x+5s//no4wc
+         R9XteLzHGzb/9XnhiMPNC9upmUB5UPXDTECUkK56GOrkZ3JdH0z4F2bPt6+P6mKdUvvZ
+         hD2pu/EtxrpzezRxj1k94H6meC9U/4F/zarsxwJ+vK+wq8Z97X/D4k2uRL2wHYyzKXqB
+         +8QypE5f7CnmXn8Dx2rxBEfvKZ6STWfyv1Q0iOoHWZHcrt7Vg1OWrP0exhV/L4jzzg+P
+         BNeMDFyTtrEmCtuB3LZOjBqHDeC3J1sKDXVPjJe+2y8Fd6CxoyB2/ITfV31Pkl/gBYED
+         Xz/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757345211; x=1757950011;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yPiCYXc69M4SjfK5MFCW/PjpWwaPVtI+vQRtDqy3mEc=;
-        b=amntZy3JkhdOO53ZI8JbvyMIdhWNxbZn179T/TVF19J3TPWSDmntT050ak/y3qxYFg
-         eX3ORFPtul7kakhi1NxSvnvDCkm73l0ZZSve33SYw9RPw3jlKy50A47IFK3olUCxukWt
-         Z7p5XIjx1OvHME5zg39v13VoHNoKPRLPB0z33eHlqxTTNZh1d0pq26ISeo+VcJLEQZv6
-         SiIpSoVu+/LQR0ikumwwmca/pXmTdWIbLXGicxpFK8uBMYDiCxq0hTQi5DzSkbZQHGdO
-         q0VZpe9Kr851rWVcqAg+BCfqTHXEmh54K1C/BkEfjfBRzH3WAUZFxbqd3fK9B+7FihH9
-         Paqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtg7Kt3AWZciGVZGl0p9n8fxZTns6FXnK3JRZuiQ4yreH0lHWG2EqFw8Fwvo2GGSugIbtji6rG7S8UT+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBHT2y9BlIwmgI7CfHAIZKMOIUZ+vQ8PVA6H5nx8YHR5EM89pi
-	dIh6qedxXKVPkp1cpoO/nHaN7jtozjrC7qbwZ6jiaeMk2/6/qfbNI5XC83ayRZbSbIA=
-X-Gm-Gg: ASbGncsZK/kPASwkRqHlIcV8w6csDnbotdAgtVKEmbbsk3wK5qMVuT94wLPR/YS8hHL
-	Yaq/7pk9TEbSHR41eDlWkbRFWIVKvDKujLdBRPqaO0rlEAteSTozlRtVTqPELqw18s3OCWqWNcH
-	R1JJhMZ5CFTwYDTuuo6CFKZ8BktdvgkOMRuqj6l5kD3CQhqOu+wBQ58xUqUBnyhdFF6Y+XcdqTR
-	TbSZbTNWwqybKpLLz4/zc3NK0E3exdKWRn8szYkn/wb7rEB6i/dGR364WaHdSYvwJhhKbGfNYmb
-	dbo+55CSH/Hem7af5aom8Oc0ApDhyhgVJxPpCUy69GE71eyEBQCjuu/P5qcn7Tt8bIYN6zFlGmt
-	iqgQbspn8bdC9niYzEPLbsrl5Th3B5orHIjCTkoQaGUJm6PaU
-X-Google-Smtp-Source: AGHT+IHyT1kvUh0D0uxOlH1UOjqnYhuFKux5DQV7Wqv9yZfJ69T3JfIzMfV8HzGez+9kUbOha0nGkw==
-X-Received: by 2002:a5d:64c3:0:b0:3ce:f9b7:4db with SMTP id ffacd0b85a97d-3e642f92844mr5597472f8f.24.1757345210937;
-        Mon, 08 Sep 2025 08:26:50 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:1299:47dd:d3d7:b7cf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d978ab6fc7sm26976124f8f.45.2025.09.08.08.26.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:26:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757345244; x=1757950044;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jQqNVYIuMbhaHikEyc6LfEfgr3MBf/W2+nUiSWCx68=;
+        b=K/e6Ooky/ZX23Iht9EwFfU3oPUQLCT0QDeH8qOjDgt3RcZVGGSs6+4imWTLgmtHoC6
+         nqCThlu3vwEDB5+b8f+gN1kCKKQgth8215izhHRJvBaLLcXa6iTRnVlAsdSFLjAe9tyx
+         GW+ls/iep4+GpSWyEsi5qBLerRTlrf/mYnYdPNUb5kNTRWDAzRw/arl2VMrLlKc8yRx0
+         A+YxSE5auCUkuBaFoI9d+6umOq5+Mk8a9wa+QMx0aVZbpPm8i9gdX/1GwSrixdSwabeW
+         HF1FyYi0XRtuapbONaF6w353zSNZKthsLSClTOF98E0i3HyeFTnG8ogERzpZ86+2LBa2
+         VRtA==
+X-Gm-Message-State: AOJu0YynCz8Tgyb5aHjZxrngDnuUq3dHpunZ+i2GfCVl8ULD+L0SEMzX
+	mWamKFeFZbQi4/Y7TY8PQvyPrq2wx9D8JJdh0bTTbd6uBc54nyvPjOG32zvBxV5I/TQ=
+X-Gm-Gg: ASbGncufSWL/IS26RW3lPuxXqsJEuUwgrUbmmbEj1YIRrGIiBLKoAKAXbEKA+S2eTVT
+	J4gCRchmkdqGKfh4vzFViq89R05Lw9Q/y2/b7y/7k8Bg2V90kDiWmJRy0GD4IA0gR3V4SmfSTww
+	PtKb/cnnO8FbBmN7lsBhI8ZxvhXvrFjumMLuwf5gLH1xoQ7GDLmh9qftIo/2PN5M1xk3zIgkuNO
+	5z1BKI9aFiQWG7XSEImWS7w1RlLR+Jf/4z5cLn792S812Xfr0Fl1Bnppj1cbzId4ceFK/kUh4CM
+	vbPLmVyz94aiL/CZNy5y4thwaYOeaAD/OAhBlA0EaMAIslLto+hJzFSXKJHPkjRhyKShe2tvFTL
+	zvIBNIcgovqrtLvH4WcP4if3akg==
+X-Google-Smtp-Source: AGHT+IE2MMTUnKpOyARn855O4YY8YtMTYEMzR8gQvezmFV/9+j61YPoiDT1MhIgNdx9G81aUDa0RzQ==
+X-Received: by 2002:a05:6808:6f8f:b0:438:133e:635c with SMTP id 5614622812f47-43b299dd05fmr4341409b6e.10.1757345243578;
+        Mon, 08 Sep 2025 08:27:23 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:6c2d:e6cb:9ddd:bb13])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43836abed32sm3610146b6e.29.2025.09.08.08.27.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 08:27:22 -0700 (PDT)
+Date: Mon, 8 Sep 2025 10:27:19 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Gilles BULOZ <gilles.buloz@kontron.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+	OpenIPMI Developers <openipmi-developer@lists.sourceforge.net>
+Subject: Re: user->nr_msgs going negative in ipmi_msghandler.c
+Message-ID: <aL711299g2yKstat@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <5cc48305-d88d-ac15-ce0d-55306a60a0dd@kontron.com>
+ <aLrPbzfho1d2kMsn@mail.minyard.net>
+ <aLrRlQZdeToIgPBG@mail.minyard.net>
+ <c3c0cba1-a45d-8619-06c0-64046d8ecd76@kontron.com>
+ <f14bd1ca-c47a-13b3-fd5f-5f5ad0c89fad@kontron.com>
+ <aLsw6G0GyqfpKs2S@mail.minyard.net>
+ <5c0d8998-6cb2-5ce5-e3a5-67237a51049f@kontron.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 16:26:49 +0100
-Message-Id: <DCNIVW9XSSY3.3H7TSNFDH7TKT@linaro.org>
-To: "Srinivas Kandagatla" <srini@kernel.org>
-Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown"
- <broonie@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones" <lee@kernel.org>, "Jaroslav
- Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
- <srinivas.kandagatla@oss.qualcomm.com>, <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v3 2/3] ASoC: codecs: add new pm4125 audio codec driver
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-X-Mailer: aerc 0.20.0
-References: <20250814-pm4125_audio_codec_v1-v3-0-31a6ea0b368b@linaro.org>
- <20250814-pm4125_audio_codec_v1-v3-2-31a6ea0b368b@linaro.org>
- <df884334-c850-4ae9-b5e8-63cb834ae259@kernel.org>
-In-Reply-To: <df884334-c850-4ae9-b5e8-63cb834ae259@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5c0d8998-6cb2-5ce5-e3a5-67237a51049f@kontron.com>
 
-Hi Srini,
+On Mon, Sep 08, 2025 at 04:54:50PM +0200, Gilles BULOZ wrote:
+> Le 05/09/2025 à 20:50, Corey Minyard a écrit :
+> > I'm adding the OpenIPMI mailing list and the LKML.
+> >
+> > On Fri, Sep 05, 2025 at 05:04:28PM +0200, Gilles BULOZ wrote:
+> >> Le 05/09/2025 à 15:15, Gilles BULOZ a écrit :
+> >>> Le 05/09/2025 à 14:03, Corey Minyard a écrit :
+> >>>> On Fri, Sep 05, 2025 at 06:54:23AM -0500, Corey Minyard wrote:
+> >>>>> On Fri, Sep 05, 2025 at 10:16:19AM +0200, Gilles BULOZ wrote:
+> >>>>>> Hi Corey,
+> >>>>>>
+> >>>>>> I'm HW/SW developer at Kontron (computer manufacturer) and don't know what to
+> >>>>>> think about an issue with user->nr_msgs going negative in ipmi_msghandler.c.
+> >>>>>> Not sure if it's a weakness in ipmi_msghandler.c or a bug in the IPMC software
+> >>>>>> of our computer board (satellite) with event messages.
+> >>>>> I worked with people from Kontron a long time ago.  Those were good
+> >>>>> times :).
+> >>>>>
+> >>>>>> I see this when I run ipmitool on this board while some event messages already
+> >>>>>> available. In this case deliver_response() is processing the messages and is
+> >>>>>> decreasing user->nr_msgs below 0. Then when ipmitool calls
+> >>>>>> ioctl(IPMICTL_SEND_COMMAND) it gets an error with errno=EBUSY because in
+> >>>>>> i_ipmi_request() user->nr_msgs is incremented but still negative, casted to
+> >>>>>> unsigned int so becomes huge, and found greater than max_msgs_per_user (100).
+> >>>>> Thanks for the detailed description.  The fix for the bug is:
+> >>>>>
+> >>>>> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> >>>>> index e12b531f5c2f..ba33070622b1 100644
+> >>>>> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> >>>>> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> >>>>> @@ -1634,6 +1634,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
+> >>>>>
+> >>>>>                 list_for_each_entry_safe(msg, msg2, &msgs, link) {
+> >>>>>                         msg->user = user;
+> >>>>> +                       atomic_add(1, &usr->nr_msgs);
+> >>>> Sorry, that should obviously be user->nr_msgs
+> >>> Thanks very much !
+> >>> I've tried it with kernel 6.11.8 and it's better but still not enough.
+> >>> Running "ipmitool sensor" with some debug in ipmi_msghandler.c shows that I always have nr_msgs=1 right after the atomic_add (called
+> >>> 9 times), then when in i_ipmi_request() I reach line "rv = -EBUSY;" with nr_msgs=-2 (twice).
+> >> My understanding is that ipmitool calls ioctl(IPMICTL_SET_GETS_EVENTS_CMD) calling ipmi_set_gets_events() and thanks to your patch
+> >> for each event available the nr_msgs is incremented here and decremented in deliver_response(). So your patch is OK for that.
+> >> But after that if other events are coming, deliver_response() is called and nr_msgs gets decremented. So when ipmitool calls
+> >> ioctl(IPMICTL_SEND_COMMAND), this calls i_ipmi_request() with nr_msgs < 0 and that returns -EBUSY
+> >
+> > Yeah, after I sent my email I started looking through the driver for
+> > other issues around this, and there were several.  That change wasn't
+> > well thought through.
+> >
+> > So, I've added some tests around this in my test suite, and I've
+> > reworked this to be a much better implementation that's harder to get
+> > wrong.
+> >
+> > I'm going to send the fix in a separate email.
+> >
+> > Thanks,
+> >
+> > -corey
+> >
+> Thanks Corey
+> I confirm your fix (separate email) is working for me. Applied on kernel 6.17-rc5 sources, with few changes under drivers/char/ipmi/
+> to build the kernel modules there for kernel 6.11.8, and then using these modules.
 
-On Fri Aug 15, 2025 at 4:36 PM BST, Srinivas Kandagatla wrote:
->
-
-[..]
-
-> I manged to test this one, found 2 issues.
->
-> 1. incorrect mic bias handling, results in recording stop working.
-> 2. memory corruption leading to kernel crash.
->
-> More details below..
->
->> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.c=
-om>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com=
->
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  sound/soc/codecs/Kconfig      |   18 +
->>  sound/soc/codecs/Makefile     |    8 +
->>  sound/soc/codecs/pm4125-sdw.c |  547 +++++++++++++
->>  sound/soc/codecs/pm4125.c     | 1793 ++++++++++++++++++++++++++++++++++=
-+++++++
->>  sound/soc/codecs/pm4125.h     |  313 +++++++
->>  5 files changed, 2679 insertions(+)
-
->> --- /dev/null
->> +++ b/sound/soc/codecs/pm4125-sdw.c
->> @@ -0,0 +1,547 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +// Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights =
-reserved.
->> +// Copyright, 2025 Linaro Ltd
->
->
->> +
->> +static struct pm4125_sdw_ch_info pm4125_sdw_rx_ch_info[] =3D {
->> +	WCD_SDW_CH(PM4125_HPH_L, PM4125_HPH_PORT, BIT(0)),
->> +	WCD_SDW_CH(PM4125_HPH_R, PM4125_HPH_PORT, BIT(1)),
->> +	WCD_SDW_CH(PM4125_COMP_L, PM4125_COMP_PORT, BIT(0)),
->> +	WCD_SDW_CH(PM4125_COMP_R, PM4125_COMP_PORT, BIT(1)),
-> Issue 1: we are adding only 4 channels here however the mixer Switches
-> that lookup this table is more than 4.
->> +};
->> +
->> +static struct pm4125_sdw_ch_info pm4125_sdw_tx_ch_info[] =3D {
->> +	WCD_SDW_CH(PM4125_ADC1, PM4125_ADC_1_2_DMIC1L_BCS_PORT, BIT(0)),
->> +	WCD_SDW_CH(PM4125_ADC2, PM4125_ADC_1_2_DMIC1L_BCS_PORT, BIT(1)),
->
-> Same issue here,
->> +};
->> +
-
-Okay. Let's fix it as you suggested.
+Thanks a bunch for testing and reporting.  At this point it's destined
+for 6.18, marked for backport to 4.19.  It's a little late to push this
+to Linus now.
 
 
->> diff --git a/sound/soc/codecs/pm4125.c b/sound/soc/codecs/pm4125.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..fc320152b9254e4412cbf593=
-cdc456ee159d071f
->> --- /dev/null
->> +++ b/sound/soc/codecs/pm4125.c
->> @@ -0,0 +1,1793 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +// Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights =
-reserved.
->> +// Copyright (c) 2025, Linaro Ltd
->> +
->
->> +static int pm4125_rx_clk_enable(struct snd_soc_component *component)
->> +{
->> +	struct pm4125_priv *pm4125 =3D snd_soc_component_get_drvdata(component=
-);
->> +
->> +	if (atomic_read(&pm4125->rx_clk_cnt))
->> +		return 0;
->> +
->> +	snd_soc_component_write_field(component, PM4125_DIG_SWR_CDC_RX_CLK_CTL=
-,
->> +				      PM4125_DIG_SWR_ANA_RX_CLK_EN_MASK,
->> +				      PM4125_DIG_SWR_RX_CLK_ENABLE);
->> +	snd_soc_component_write_field(component, PM4125_DIG_SWR_CDC_RX_CLK_CTL=
-,
->> +				      PM4125_DIG_SWR_ANA_RX_DIV2_CLK_EN_MASK,
->> +				      PM4125_DIG_SWR_RX_CLK_ENABLE);
->> +	usleep_range(5000, 5100);
->> +
->> +	pm4125_global_mbias_enable(component);
->
-> Please remove handing of mbias calls directly this is racing, Please
-> handle it via dapm widgets directly. If not we will endup with switching
-> off micbias off while recording is in progress or recording will
-> continue assuming that micbias is on, but some path can switch it off.
+> Another simple fix that worked for me on 6.11.8 was to replace atomic_dec() with atomic_dec_if_positive() in deliver_response), in
+> addition to your suggested change to add an atomic_add() to ipmi_set_gets_events().
 
-Please see below, there are problems with playback without pm4125_global_mb=
-ias_enable().
+Yeah, but that's just covering over the problem.  It's ok for a quick
+hack, but it's not really fixing the issue.  The refcounts need to be
+right.
 
->> +
->> +	snd_soc_component_write_field(component, PM4125_ANA_HPHPA_FSM_CLK,
->> +				      PM4125_ANA_HPHPA_FSM_DIV_RATIO_MASK,
->> +				      PM4125_ANA_HPHPA_FSM_DIV_RATIO_68);
->> +	snd_soc_component_write_field(component, PM4125_ANA_HPHPA_FSM_CLK,
->> +				      PM4125_ANA_HPHPA_FSM_CLK_DIV_EN_MASK,
->> +				      PM4125_ANA_HPHPA_FSM_CLK_DIV_ENABLE);
->> +	snd_soc_component_update_bits(component, PM4125_ANA_NCP_VCTRL, 0x07, 0=
-x06);
->> +	snd_soc_component_write_field(component, PM4125_ANA_NCP_EN,
->> +				      PM4125_ANA_NCP_ENABLE_MASK,
->> +				      PM4125_ANA_NCP_ENABLE);
->> +	usleep_range(500, 510);
->> +
->> +	atomic_inc(&pm4125->rx_clk_cnt);
->> +
->> +	return 0;
->> +}
->> +
->> +static int pm4125_rx_clk_disable(struct snd_soc_component *component)
->> +{
->> +	struct pm4125_priv *pm4125 =3D snd_soc_component_get_drvdata(component=
-);
->> +
->> +	if (!atomic_read(&pm4125->rx_clk_cnt)) {
->> +		dev_err(component->dev, "clk already disabled\n");
->> +		return 0;
->> +	}
->> +
->> +	atomic_dec(&pm4125->rx_clk_cnt);
->> +
->> +	snd_soc_component_write_field(component, PM4125_ANA_HPHPA_FSM_CLK,
->> +				      PM4125_ANA_HPHPA_FSM_CLK_DIV_EN_MASK,
->> +				      PM4125_ANA_HPHPA_FSM_CLK_DIV_DISABLE);
->> +	snd_soc_component_write_field(component, PM4125_ANA_HPHPA_FSM_CLK,
->> +				      PM4125_ANA_HPHPA_FSM_DIV_RATIO_MASK,
->> +				      0x00);
->> +	snd_soc_component_write_field(component, PM4125_ANA_NCP_EN,
->> +				      PM4125_ANA_NCP_ENABLE_MASK,
->> +				      PM4125_ANA_NCP_DISABLE);
->> +	snd_soc_component_write_field(component, PM4125_DIG_SWR_CDC_RX_CLK_CTL=
-,
->> +				      PM4125_DIG_SWR_ANA_RX_DIV2_CLK_EN_MASK,
->> +				      PM4125_DIG_SWR_RX_CLK_DISABLE);
->> +	snd_soc_component_write_field(component, PM4125_DIG_SWR_CDC_RX_CLK_CTL=
-,
->> +				      PM4125_DIG_SWR_ANA_RX_CLK_EN_MASK,
->> +				      PM4125_DIG_SWR_RX_CLK_DISABLE);
->> +	pm4125_global_mbias_disable(component);
->> +
->> +	return 0;
->> +}
->> +
->> +
->
-> %s/^\n\n/\r/
+Thanks again.
 
-s/^/Ok\n/
-
->> +static int pm4125_codec_enable_rxclk(struct snd_soc_dapm_widget *w, str=
-uct snd_kcontrol *kcontrol,
->> +				     int event)
->> +{
->> +	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w->d=
-apm);
->> +
->> +	switch (event) {
->> +	case SND_SOC_DAPM_PRE_PMU:
->>=20
->> +static const struct snd_kcontrol_new pm4125_snd_controls[] =3D {
->> +	SOC_SINGLE_EXT("HPHL_COMP Switch", SND_SOC_NOPM, 0, 1, 0,
->
->     SOC_SINGLE_EXT("HPHL_COMP Switch", PM4125_COMP_L, 0, 1, 0, ?
->
->> +		       pm4125_get_compander, pm4125_set_compander),
->> +	SOC_SINGLE_EXT("HPHR_COMP Switch", SND_SOC_NOPM, 1, 1, 0,
->
->        SOC_SINGLE_EXT("HPHR_COMP Switch", PM4125_COMP_R, 1, 1, 0,?
->
->> +		       pm4125_get_compander, pm4125_set_compander),
->
-> This is same issue in one of the WCD codec, which am going to send fixes
-> along with my original wcd fixes series.
-
-So this was in other codecs for years, right?
-
->> +
->> +	SOC_SINGLE_TLV("HPHL Volume", PM4125_ANA_HPHPA_L_GAIN, 0, 20, 1,
->> +		       line_gain),
->> +	SOC_SINGLE_TLV("HPHR Volume", PM4125_ANA_HPHPA_R_GAIN, 0, 20, 1,
->> +		       line_gain),
->> +	SOC_SINGLE_TLV("ADC1 Volume", PM4125_ANA_TX_AMIC1, 0, 8, 0,
->> +		       analog_gain),
->> +	SOC_SINGLE_TLV("ADC2 Volume", PM4125_ANA_TX_AMIC2, 0, 8, 0,
->> +		       analog_gain),
->> +
->> +	SOC_SINGLE_EXT("HPHL Switch", PM4125_HPH_L, 0, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->> +	SOC_SINGLE_EXT("HPHR Switch", PM4125_HPH_R, 0, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->
-> <---
->> +	SOC_SINGLE_EXT("LO Switch", PM4125_LO, 0, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),--->
->
->> +
->> +	SOC_SINGLE_EXT("ADC1 Switch", PM4125_ADC1, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->> +	SOC_SINGLE_EXT("ADC2 Switch", PM4125_ADC2, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
-> <-----------------
->> +	SOC_SINGLE_EXT("DMIC0 Switch", PM4125_DMIC0, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->> +	SOC_SINGLE_EXT("DMIC1 Switch", PM4125_DMIC1, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->> +	SOC_SINGLE_EXT("MBHC Switch", PM4125_MBHC, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
->> +	SOC_SINGLE_EXT("DMIC2 Switch", PM4125_DMIC2, 1, 1, 0,
->> +		       pm4125_get_swr_port, pm4125_set_swr_port),
-> -------------->
-> Please delete these entires as there are no entires for any of this
-> channels in pm4125_sdw_rx_ch_info or pm4125_sdw_tx_ch_info.
->
-> Side effect of this out of boundary array access is memory corruption as
-> we will set port_config values based on port index which could be
-> negative in this cases resulting in writing to othe members of
-> pm4125_sdw_priv struct.
+-corey
 
 
-Ack. I applied your changes that you suggested.
-
-
->> +};
->> +
->> +static const struct snd_kcontrol_new adc1_switch[] =3D {
->> +	SOC_DAPM_SINGLE("Switch", SND_SOC_NOPM, 0, 1, 0)
->> +};
->> +
->> +static const struct snd_kcontrol_new adc2_switch[] =3D {
->> +	SOC_DAPM_SINGLE("Switch", SND_SOC_NOPM, 0, 1, 0)
->> +};
->> +
->> +static const struct snd_kcontrol_new dmic1_switch[] =3D {
->> +	SOC_DAPM_SINGLE("Switch", SND_SOC_NOPM, 0, 1, 0)
->> +};
->> +
->> +static const struct snd_kcontrol_new dmic2_switch[] =3D {
->> +	SOC_DAPM_SINGLE("Switch", SND_SOC_NOPM, 0, 1, 0)
->> +};
->> +
->> +static const struct snd_kcontrol_new ear_rdac_switch[] =3D {
->> +	SOC_DAPM_SINGLE("Switch", SND_SOC_NOPM, 0, 1, 0)
->> +};
->> +
->
-> during my test i had to do below code changes to get things working.
-> Please feel free to wrap it into your next version.
->
-> ----------------------->cut<----------------------------------
-> diff --git a/sound/soc/codecs/pm4125.c b/sound/soc/codecs/pm4125.c
-> index fc320152b925..12d4be1f7149 100644
-> --- a/sound/soc/codecs/pm4125.c
-> +++ b/sound/soc/codecs/pm4125.c
-> @@ -264,8 +264,6 @@ static int pm4125_rx_clk_enable(struct
-> snd_soc_component *component)
->                                       PM4125_DIG_SWR_RX_CLK_ENABLE);
->         usleep_range(5000, 5100);
->
-> -       pm4125_global_mbias_enable(component);
-> -
->         snd_soc_component_write_field(component, PM4125_ANA_HPHPA_FSM_CLK=
-,
->                                       PM4125_ANA_HPHPA_FSM_DIV_RATIO_MASK=
-,
->                                       PM4125_ANA_HPHPA_FSM_DIV_RATIO_68);
-> @@ -309,8 +307,6 @@ static int pm4125_rx_clk_disable(struct
-> snd_soc_component *component)
->         snd_soc_component_write_field(component,
-> PM4125_DIG_SWR_CDC_RX_CLK_CTL,
->                                       PM4125_DIG_SWR_ANA_RX_CLK_EN_MASK,
->                                       PM4125_DIG_SWR_RX_CLK_DISABLE);
-> -       pm4125_global_mbias_disable(component);
-> -
->         return 0;
->  }
-
-This doesn't work. Playback has two issues: 1) volume is very low and proba=
-bly
-not adjustable and 2) sound during playback dies after a couple of seconds.
-
-Returning these global_mbias() calls restores the good behaviour.
-
-Maybe let's make a widget out of it? In such case I am not sure about
-routing meaning that I not sure which paths do require mbias enable.
-
-Best regards,
-Alexey
+> >>>>>                         kref_get(&user->refcount);
+> >>>>>                         deliver_local_response(intf, msg);
+> >>>>>                 }
+> >>>>>
+> >>>>>
+> >>>>> Can you try that out?
+> >>>>>
+> >>>>> I'll forward port this to current kernel (if appropriate, this has all
+> >>>>> been rewritten) and required a backport.
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>> -corey
+> >>>>>
+> >>>>>> As workaround I set module parameter max_msgs_per_user to 0xffffffff so that
+> >>>>>> user->nr_msgs is never greater than this value.
+> >>>>>> I was using kernel 6.11.8 but updated to 6.16.3 and get the same issue.
+> >>>>>> I'm also not sure if our board is supposed to receive such event messages as
+> >>>>>> it is not Shelf Manager, even if these events come from the local sensors of
+> >>>>>> the board.
+> >>>>>>
+> >>>>>> Best regards
+> >>>>>>
+> >>>>>> Gilles Buloz
+> >>>>>> Kontron Modular Computers France
+> >>>>>> R&D SW/HW senior developer
+> >>>>>>
+> >>>> .
+> > .
+> 
 
