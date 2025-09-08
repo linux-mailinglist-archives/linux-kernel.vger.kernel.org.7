@@ -1,214 +1,527 @@
-Return-Path: <linux-kernel+bounces-805841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162E2B48E1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBACB48E25
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96811884E56
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:51:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28BA77AF301
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B34D30595E;
-	Mon,  8 Sep 2025 12:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAB93054ED;
+	Mon,  8 Sep 2025 12:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q04TGYks"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NDtWmacT"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4BA2F39CD;
-	Mon,  8 Sep 2025 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757335871; cv=fail; b=hhA1yCgZOIeDgkVcHDNSIMIRI6fGkUAviU0dMpL4WcUd4O8YrEEjwrV4+kH/ercZpeA6XkUnCy0Hg1CmKSnSZ16yOz5jPzmS1ZVvQxwY+bczB1rKFTz13WYuziFuqNB0t/sWpVo6ocPASF6GeJv3EdOVR4n2tjM3XYyV9iXYrJk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757335871; c=relaxed/simple;
-	bh=iNh/lCEX1gVDgHCtrTe8+iAKxRYEL6C3y5Umw7EiPpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QL/dZw9A4fbDLKaruACfn3Y4epEriltMqQG6nUk9NsPPhlF7UCxDSXgA5p8kHmGEtIVU5axwfM3/fvmiyjh/L3nE8GUz9f3CqCMT0y/tdvSPf94BffG9IJ2WqGWjO1A7I0IFZBYpYTLgjdbnOY1jKCll0c1xeqj2SIPbFn0Qykk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q04TGYks; arc=fail smtp.client-ip=40.107.244.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kMvaxhUHleRxntZGYNAQ6oYMMU1JbeUP44toucYGKbizGwaVMRXKNbkyUFUPdd0e5Cx1IPl7vdp6NNOfeScVoPrEkHkhyxvyg4Z3WGpwprovcRWpUbAKPj3LpU3yLKYEGI4N/IBMz8V4RdV88lY/2ZC6Xue21KFvFMzNVqI//cN0BaviWdnunZkApyGcUGQYPnAfZT2SAd0F2w5Bh3reSRHld3eTwjTzhHpyuc9FBQOxUCbwFN4OtNc3B1ZiAyEbVcyqhEP5hi8KOmS/QIwrn/1kwgtzi/wnDJRZhlfqlp2fv4jY8SPduKV85cq+NgFbmtVBMuxznJWsv+Kl/L4G8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3OSHuO/Vc5BKJ5cHo5+Vst34M23kDq4EdFQN0zPkUWU=;
- b=mAunikoQejeLXAvW4UoM/ycWFNsazJgGlsg2fFTcvhHr61/n9tobPBooHxj3TwWiuVwbSxm+AGM9klT5+AuulVxt82iMD+bqYOPay2LMN6Ls/xLRH5tMO6XW6R8SCwTGnLOYkS786s5iFd8HhFP8FgGqQK1nu/tRrY3hs+ZxLXc1GPyp0jAO9I2FD22OG0sVxSlQz+Cui+g2Oh0RartMJkUtDClkC0e1hCGEwoGk+bGiYer6erlnkqX2KXhpOBAKk6XGemXPUeOSV94gPD5qIE4/4g139jRdQ5kWOa+kqk26RabCHPWwcwiGEbQK6CJe/dcp4u4ZP4nWHjEKIfUt+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3OSHuO/Vc5BKJ5cHo5+Vst34M23kDq4EdFQN0zPkUWU=;
- b=Q04TGYksIpFK4xKfPRXEpzDwggj1q0h+qYk0d7ZqmiIFm/0+DHpNdDkdmeqzhhmXNAxK6tDOsuNUGRIWSKaYTIG5AMBKPLb881wYG9gDr+uKXm6pyN+i5BynVcOpCxZ2Xj9hLjy2NgxwMI148lzpdn8BjAPTFj0x2TjA/p7nkI88Eop1JBFS7YAKe198Ojyk3/5COGrqsFV0lY0oDkcIyIBQgaxVlt23FiO/RU/LEHPqbSl1ax0qIjVoD7hcjBGQApcFaHSnC50dJZrkJjDEZ6kUPkw+ig62UravuzYtDCPVW6GSljOVxfg+blItmKBPDto7qLkD4i/X8iMtCzzmJw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by MW5PR12MB5623.namprd12.prod.outlook.com (2603:10b6:303:199::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 12:51:03 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9094.017; Mon, 8 Sep 2025
- 12:51:03 +0000
-Date: Mon, 8 Sep 2025 09:51:01 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-	ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH 03/16] mm: add vma_desc_size(), vma_desc_pages() helpers
-Message-ID: <20250908125101.GX616306@nvidia.com>
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
- <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8767cda1afd04133e841a819bcedf1e8dda4436.1757329751.git.lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: YT4PR01CA0026.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:fe::11) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA739304BBF;
+	Mon,  8 Sep 2025 12:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757335941; cv=none; b=snWox5JCTraXafWqR7Bm3K1gsLsFOITwUe6EqkKUxuDNNF/kMvKjUmkceM5kpgDBbRYMgjR7SkfuKG3FWiVyuIyjlBzuavXcTuhz/uYYZeVzwgvn1E9VVHLdh9EMWOZAP9HMXCsHfvnvIms2/PZBjW1U0xfYTLWwajT4WQvlsNw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757335941; c=relaxed/simple;
+	bh=dWVxJxhUxncQk84A7irpjCAwbTL2ZXZPiLqCXAsCvPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cmrNUgY29AZJEBkwLh7ixy3BXaB6svOFkturq3lKTU1aCfgPrIc2QfJl5Hw3nmB2uXU/G74LRJhQ4aU+3hrsTnfm6KkyYRuMdwbRqYvUD1ytCVu3SqV63I4UoyKP/jt3SMZWkSqFhl2DEzBuZSUoBOUHyinVspQZCodUkR4S7aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NDtWmacT; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 39B99C6B3A7;
+	Mon,  8 Sep 2025 12:51:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C00066061A;
+	Mon,  8 Sep 2025 12:52:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA04E102F27D9;
+	Mon,  8 Sep 2025 14:51:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757335932; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Wtwvoj1RLwznHuyr5PlQVH+9jEoJm5SyipXGk+MavYM=;
+	b=NDtWmacTT0cNGnzWNKswyYTctMqsWGdk7LvXo5PM6CCiGkkJtJJUQtgeRsHrjZ4YYp3hkP
+	Lx9y4o4igPeePqLGfNDzlZn6/vJD3g/gWclfk77sBIaYPgwmi0DRziZFrclg/cER7yXM9l
+	FiZees4mNH9AZzlEKSqJj6Y4XelUadm1ofAXjBWLp7XFJx4DgOPUtOn3OWtKE254DNE+hW
+	71Sk+M8H6PKcroi1nSDVrmPjRG89UDHFqaHPZ095OwGYMkoQOa6ZW8q4Tp9fDpkhW5Kjxj
+	RGlo7cBxssmr3B2hjXp9UAsgM8TzuBm9BIwWV+ZOuNgZjvBTbk96VyU+IUOiJA==
+Date: Mon, 8 Sep 2025 14:51:55 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: David Gibson <david@gibson.dropbear.id.au>
+Cc: Ayush Singh <ayush@beagleboard.org>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, Jason Kridner
+ <jkridner@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <20250908145155.4f130aec@bootlin.com>
+In-Reply-To: <aL5dNtzwiinq_geg@zatzit>
+References: <20250902105710.00512c6d@booty>
+	<aLkiNdGIXsogC6Rr@zatzit>
+	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+	<aL5dNtzwiinq_geg@zatzit>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|MW5PR12MB5623:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4535ed58-2ad9-4ee8-9dcc-08ddeed65ea1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RK/YBv5RNmNrwTy3JLCS1Y1nfiWysNq4+ETCGrZ4WZi0XuFOccD62zIDAlil?=
- =?us-ascii?Q?nUIP8RZbII+RXqNS05kjw5UbPaF/PQU6Be88QsX5mxma/KsXEZF7cvvkHZO2?=
- =?us-ascii?Q?rdqeSeZr5YraoB+Cr/Qk+akQ3NZ2HayLh/VudWRzntdZ0xpxUPq6FIO8Kile?=
- =?us-ascii?Q?s5FE9Qjp0kv25LidB6vAS9HybJ3yEyF9t2rnW2VpddB1fNKdEZe56IS6eX6E?=
- =?us-ascii?Q?CNOT3HxG3Wn988IPGJ4oKmmJ773At2GItnm/lEMmWSvBJ/UlzQfVoKODwdLA?=
- =?us-ascii?Q?YHPKlBwJG72E7OotPbX9Y7qXLKi5smIS/C06uKbhWECr8idy/CU122C7Yl2b?=
- =?us-ascii?Q?XD/RcFNqYQKzWVGzR8QrSIdDPn2FcmtrBcApFeOEdixuVlIm4s42RCtTm/g2?=
- =?us-ascii?Q?xoVhUsJ/N9dBbVIisQWF5AllOd5e1+XYYdxIR5Kt1QkwioLJ0KyTEDeCTFGy?=
- =?us-ascii?Q?lUQSASAg7/1Hj0swNb0t1Ed25d3dBPWK42qlFjWUlSpl7P7+on6HWCSw7J+e?=
- =?us-ascii?Q?4evEH2DAzAcbmbaUfUXVlalDx8ckqV5vjEcDB8DUEZGowI4ViyWSEC9K3W1q?=
- =?us-ascii?Q?IS3Qx84Oi7NAkm+WfOV8kYFaOogHkT0ts40/8aEY31D0fzCIK1ELHnrHzNkm?=
- =?us-ascii?Q?pUho4uxM3CqCKWfugqZ0JFUHkK8PnIcJR8ya3hxr125S1jpyIiFAGA216uw9?=
- =?us-ascii?Q?t8xdXPAmkOsIbHGh4QhvB/xbPrYwie4HqCCIIRIZxW2paXWxmBgo1PR1RU8e?=
- =?us-ascii?Q?MWbad7VZbjodBwhrL8xGFZd2vvOuHcfbJQGo5q0Ep4zMsQgxP+kQ4LiLCE0j?=
- =?us-ascii?Q?IuGz+MOgY6XXyZuwzp/P1xdHoTpT8M2XwdxuYR8BxH1N5m8PW/HS2dH4TVco?=
- =?us-ascii?Q?VNUc83r6YFKFeighj5ALqEIsRZ17wUbCbYZ2ri2+pDTwKh0bubzc86Tu+9LG?=
- =?us-ascii?Q?kVTyxhhlS/kRr6ASBt0DKNl17jpla7l+MAXu0TOJiDcBvGx/UdnF7JJ+GwSv?=
- =?us-ascii?Q?v4MDkLqydrts2aOb+01r6FIi55aETunKug+Es4+4nRMT4ptW5icztTsEv6W9?=
- =?us-ascii?Q?24ZT6eRRiIikbgND645qTHgusuaJ3aoQh4Ls6apYRamNS8yax+yeynAo4jZ4?=
- =?us-ascii?Q?rO1fa2RoFM25adezfrSsYLS5lRFOWPfVW5iNIrUfNnVpCiJONDJJ968TLeaP?=
- =?us-ascii?Q?IiBCfqG4Exa36ZYdyC06vfK50GLf2FK7OjtjYkKdqOwC4QoRwoTlcPawz03o?=
- =?us-ascii?Q?gYAmipXzZVQ6otp2+Rnr+DIPRziuykb3ofJH6c20nxZlHmIqaapEiH8V2hXG?=
- =?us-ascii?Q?mNf5NZQncmdcuZ4E2h/txc7MswUwwwhSNPG/zJXwB169zPSwpKTXduIf8wCL?=
- =?us-ascii?Q?zO5m8DSRVMxSCZNcagD8yJrV5fMymM7BQeMJQLjj47O/uoc4a4qBg/ug4B/Y?=
- =?us-ascii?Q?xFwDFI1zPwo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YOgrbUOulWOusbdk/vwY/I6Z0hEnYRMIwKYZWRYlkMsXhv0unFY8GITjYHEW?=
- =?us-ascii?Q?FnoYUxSTvZfH+MbxKuG8wvPbmhco82reC6g7tADJQk/Ne/1S81ZpK1+qlZfD?=
- =?us-ascii?Q?6r1tXru1+1lkTFks5IiZU5uNdIkDtH3gKk1cMyhFPNNlLcaTSUxy3wHKtOIT?=
- =?us-ascii?Q?ONWrZmv0N8y5ZrAEe0bjSPpBkRWfA9gLXs8aoL/+fqWNNTsF7Ytv6yiDWEL3?=
- =?us-ascii?Q?c8JBkZgNXWp33U1/D8XCrMtNxeGGECxEQklzrNYwXQv5Zfm3WcjN//xwIWIz?=
- =?us-ascii?Q?6YTjg9IEV5hfrKr+uvzpsMEMT0ws5155Z0dJkdyoQ02LwQ5AQACKhh2hcUNs?=
- =?us-ascii?Q?OkYpZIu1LiG3M6bi1ezhol1hGrg29Tn8OdoZVPRrItimWlN5V+r6tmE58NfD?=
- =?us-ascii?Q?ooDp9ZT7dklMIKGRsL0PPbxXJ+8qQ9BETZNakHq/EQWunHRDuCbz0G/bIH41?=
- =?us-ascii?Q?/klUb/zRAKYQoU22ga5sIoPqi/OzPKt+d0um5OobjK6BIN9r/XzddQEa+TsZ?=
- =?us-ascii?Q?a/GVUuzPC87G/4dV36GMj7j6f0C8DQEuLUNbs83zQ0T+E9wvun1/sEwJUuiG?=
- =?us-ascii?Q?gvfijF6fhL8wNQoD/lYo1kzQRrWRfsDzI/ywhPEUANQyo1rTcYEccgEqaiFs?=
- =?us-ascii?Q?lbWpTI2agTB3i3XmPyJw7KG6SzrN4OIIeslybDy7xA826vEstw8ro+gQDXO+?=
- =?us-ascii?Q?2sjqodoscdkfv3a8x+X9zgEisXkTTwhqO0eayayzehCwNKZs1GTxBzWucVJK?=
- =?us-ascii?Q?s22no0ChtnK24gCSESJApYtZAn5D/go5ATo3i3OtAc1Oi2YxRIuWr6Nkm0q4?=
- =?us-ascii?Q?eDxkbPA5lehfuCPidPixQoghqmDqqPIo6vvQBkK9DuqhTjrYlFDNaYdfj6D/?=
- =?us-ascii?Q?AfDc+aROynD+8LQScdbXCy6FrRqr/YarM8tKdVJjK+UMotbYGicjMHd95UFW?=
- =?us-ascii?Q?h501mXq1jmhhQZ2R/IW3LQTNdszvKZV9hg9WuFBEidHEkT5RSUGrgp6bosAX?=
- =?us-ascii?Q?/cgE4rtBChfs8qOWdd/RrwfdBT0fE6so+0nSI4GeOb57wwtKAxWqAShaHLF1?=
- =?us-ascii?Q?f0GsySe1WFciFtdY7OQSwzK2T7Z8T/SZNoGEqngNSQ0Yr+iXN3OcuORMBHbw?=
- =?us-ascii?Q?GXO3y8XI4U2Ab6laC8IbG4E9dZu8fDBBoEdkaAGrNZ7s+UfP3GFDy0j19FWR?=
- =?us-ascii?Q?VyNR59v23zZ6ZVdtMoYTT9cNJHloAZ9jPdrUYDTGVesEoYxEBtlHBYc6yOgG?=
- =?us-ascii?Q?QM3OCOxzWNSqbgFfZOHkyeSBwUDkgr1r+7+9bW6GX6+r6g7n7BBeTZBCsrJO?=
- =?us-ascii?Q?hr5cc0JW2YZetLCZ+OEWv5beZ8ksNlcnDTuu0Lydd4Opj8sUASzCLaaYqFt7?=
- =?us-ascii?Q?ZC2yXeFf8vUhJ6m4qv33HWVMd1wBmOqtDgU7i/DWmD/LSLrbmUoJYUmOkf7F?=
- =?us-ascii?Q?kOJZ0vqoxjg47Gt/Y4il4nlQioOgNhdhsCq4ojUuORoHXL4spuE2y4YSRggx?=
- =?us-ascii?Q?CnAhL7Ev9UBO1vyGa6isplhSj+Ke/CpF8hqBx4gCEqS+gAUqGYr+06lH3PP2?=
- =?us-ascii?Q?ZdmjeAbLBE+QQVTIYYE=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4535ed58-2ad9-4ee8-9dcc-08ddeed65ea1
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 12:51:03.6211
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hPSYzFEjHMyzJ4cZEzUHXo0bko3ctFNuaC/vuTYRitLPN1OBS4RYznmP/7soLPCh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5623
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 08, 2025 at 12:10:34PM +0100, Lorenzo Stoakes wrote:
->  static int secretmem_mmap_prepare(struct vm_area_desc *desc)
->  {
-> -	const unsigned long len = desc->end - desc->start;
-> +	const unsigned long len = vma_desc_size(desc);
->  
->  	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->  		return -EINVAL;
+Hi David,
 
-I wonder if we should have some helper for this shared check too, it
-is a bit tricky with the two flags. Forced-shared checks are pretty
-common.
+On Mon, 8 Sep 2025 14:36:06 +1000
+David Gibson <david@gibson.dropbear.id.au> wrote:
 
-vma_desc_must_be_shared(desc) ?
+> On Thu, Sep 04, 2025 at 11:15:44AM +0530, Ayush Singh wrote:
+> > On 9/4/25 10:53, David Gibson wrote: =20
+> > > On Tue, Sep 02, 2025 at 10:57:10AM +0200, Luca Ceresoli wrote: =20
+> [snip]
+> > > 1) Connector local labels/symbols/aliases
+> > >=20
+> > > This is not a new idea - both the export-symbols proposal and my
+> > > ancient connector proposal had this in one form or another.  I think
+> > > something along these lines is almost essential.  Things that plug
+> > > into connectors almost always require references to several host board
+> > > resources (interrupt controller, gpio, ...).  In order to be pluggable
+> > > on multiple host boards you want to refer to those symbolically.  In
+> > > order to support multiple instances of the same connector type, you
+> > > need those symbols to refer to different things fordifferent connector
+> > > instances.
 
-Also 'must not be exec' is common too.
+Some of the resources can be "translated" using a nexus node.
+It works for interrupt, gpio, pwm, ...
 
-Jason
+I fact, it should work for all references that use a phandle with a resource
+number. I mean any reference in the form 'ref =3D <&ctrl 123>' to reference=
+ the
+resource 123 of the controller.
+
+=46rom the addon, &ctrl need to be resolved. Using a nexus node at connector =
+level
+this becomes "ref =3D <&connector 10>;" and considering the connector itsel=
+f in the
+base tree as a nexus node allows to perform the translation.
+   connector {
+      gpio-map =3D <10 &ctrl 123>;
+   };
+
+but this don't work for a reference that uses only a phandle without any
+number (pinctrl for instance) or for busses where devices need to be added.
+
+For busses where devices could be added by the add-on, bus extensions were
+introduced (i2c-bus-extension).
+
+In any cases, some symbols need to be referenced from the addon.
+
+> > >=20
+> > > Whhat I think is a mistake is trying to tie this too closely to the
+> > > existing __symbols__ structure.  Those have an ugly encoding that
+> > > requires tortured processing in a way that's not natural for dtb
+> > > handling.  Plus they already kinda-sorta duplicate old-school aliases
+> > > in an odd way.
+> > >=20
+> > > You want some sort of string =3D> node mapping on the connector side,
+> > > and a way to mark portions of properties on the plugin side as being
+> > > resolved to some string reference.  But we can take the opportunity to
+> > > design a better way of doing that than the ugly one we have now. =20
+> >=20
+> >=20
+> > Isn't export-symbols exactly this. We do take inspiration from __symbol=
+s__.
+> > However, in case of export-symbols, its string =3D> phandle mapping (as
+> > opposed to string =3D> string in __symbols__). =20
+>=20
+> As far as the specific It kind of is, yes, and that aspect I like.
+> What I'm not convinced by is how export-symbols is proposed to fit in
+> with and be used by surrounding logic.  export-symbols has been
+> designed to fit in with the existing (ugly) overlay mechanism.  I
+> think that's putting the cart before the horse.  Instead work out how
+> to logically define connectors first - which will involve information
+> equivalent to export-symbols - then work out how to update or replace
+> the overlay mechanism to work with that.
+
+I think that a connector is something with a bunch of resources provided
+by the board where the connector is soldered. Those resources are wired
+to the connector and defined by the connector pinout.
+
+     3v3   ------- Pin 0
+  i2c_scl  ------- Pin 1
+  i2c_sda  ------- Pin 2
+    gpio A ------- Pin 3
+    gpio B ------- Pin 4
+     gnd   ------- Pin 5
+
+IMHO, this need to be described and defined in the base board and an addon =
+can
+only reference resources wired and described by the connector node.
+
+Now, questions are:
+  - 1) How to describe a connector?
+  - 2) How to reference resources provided at connector level from an add-o=
+n?
+
+Our current approach was:
+---- base board DT ----
+  connector0 {
+	gpio-map =3D <0 &gpio0 12>, /* gpio A wired to gpio 12 of gpio0 controller=
+ */
+                   <1 &gpio2 10;  /* gpio B wired to gpio 10 of gpio2 contr=
+oller */
+        i2c-one {
+		compatible =3D "i2c-bus-extension";
+		i2c-parent =3D <i2c5>; /* i2c-one wired to i2c5 controller */
+	};
+
+	i2c-two {
+		compatible =3D "i2c-bus-extension";
+		i2c-parent =3D <i2c6>; /* i2c-two wired to i2c6 controller */
+	};
+
+	/*
+         * From the addon we need to reference:
+         *    - The connector itself,
+         *    - Maybe some pinctrl related to signals wired to the connecto=
+r,
+         *    - In some cases the i2c bus (HDMI, ddc-i2c-bus =3D <&i2c-two>=
+;)
+         *=20
+         * This was solved introducing the controversial export-symbols nod=
+e.
+         */
+  };
+
+---- addon board DT ----
+   {
+	some-node {
+		compatible =3D "foo,bar";
+		reset-gpios =3D <&connector 0>; /* gpio A used as a reset gpio */
+		ddc-i2c-bus =3D <&i2c-two>;
+        }
+
+        i2c-one {
+		eeprom@10 {
+			compatible =3D "baz,eeprom"
+			reg =3D 10;=20
+		};
+	};
+   };
+
+The addon board DT can only be applied at a connector node.
+It described the addon board connected to this connector.
+
+>=20
+> > I suppose export-symbols could follow aliase conventions, but that stil=
+l is
+> > a string =3D> string mapping, which seems worse to me than a phandle (s=
+ince
+> > phandle size is constant).
+> >=20
+> >  =20
+> > >=20
+> > > 2) Extend dtb itself
+> > >=20
+> > > A maor thing that makes current symbols and fixups ugly is the fact
+> > > that they are encoded into properties in the device tree itself,
+> > > despite being logically at a different semantic level.  Obviously you
+> > > *can* do that, but it's not natural.  It would make more sense to add
+> > > fixup tags into the dtb format itself. =20
+> >=20
+> > Having something akin to fixup in dtb format itself would be nice. =20
+>=20
+> Yes, it would.
+
+What could be the modification expected at dtb to support the connector
+use case?
+
+Also what could be the modification expected at dts to described the
+connector?
+
+>=20
+> > > 3) bus-reg / bus-ranges
+> > >=20
+> > > One thing that makes connector plugins a bit awkward is that they
+> > > often need to add things to multiple buses on the host system (MMIO &
+> > > i2c for a simple case).  This means that once resolved the plugin
+> > > isn't neatly a single subtree.  That's one factor making removal
+
+It can be a single subtree if decoupling is present at connector node avail=
+able
+in the base device tree.
+
+All resources wired to the connector should be described in the connector n=
+ode
+A add-on board should only see resources provided and described at the conn=
+ector
+node or translated by something (nexus, export-symbols) present in the conn=
+ector
+node.
+
+> > > really awkward.  Here's an idea I had a while ago to allow plugins to
+> > > be a single subtree, by extending what's allowed in the tree content:
+> > >=20
+> > > Currently a node can only really have a presence on its immediate
+> > > parent bus, as encoded in the 'reg' and 'ranges' properties.
+> > > 'bus-reg' and 'bus-ranges' would extend that having a similar format
+> > > to 'reg' and 'ranges' but adding a phandle for each entry saying which
+> > > bus it lives on - somewhat similar to interrupt-map.
+> > >=20
+> > > For example, here's an MMIO bus bridge of some sort, which has control
+> > > registers on I2C:
+> > >=20
+> > > 	mmio-bus@... {
+> > > 		#address-cells =3D < 2 >;
+> > > 		#size-cells =3D < 2 >;
+> > > 		bridge@XXXX {
+> > > 			ranges =3D <...>;
+> > > 			bus-reg =3D <&i2c0 0x407>
+> > > 		}
+> > > 	}
+> > > 	i2c0: i2c@... {
+> > > 		#address-cells =3D < 1 >;
+> > > 		#size-cells =3D < 0 >;
+> > > 	}
+> > >=20
+> > > In a sense this extends the device tree to a device DAG.
+> > >=20
+> > > Obviously this does need changes at the OS device core level, but it
+> > > gives you a lot of flexibility having done so. =20
+> >=20
+> > There is an i2c-bus-extension [1] and spi-bus-extension proposal to do =
+the
+> > same. But, if we can figure out a common way for all buses, that would =
+be
+> > great.
+
+Exactly, this is the purpose of bus extensions.
+
+Also, I don't thing that the 'ranges' property should be used for that purp=
+ose.
+The 'ranges' property is used to translate addresses from child addresses s=
+pace
+to parent addresses space.
+
+For instance, in case of i2c, where is the address translation?
+
+The address of a child (device) is its I2C address. This address is
+device in its datasheet. There is no reason to have this address depending
+on the I2C bus this child is connected to.
+
+In your example, the bridge@XXXX is not related to any hardware components.
+If is allows to physically perform I2C transaction from a MMIO device
+connected to MMIO bus, this is a traduction I2C controller with a bunch of
+registers to configure an perform I2C transactions.
+In that case, this "bridge" looks like all I2C we already support in the
+kernel.
+Having the additional indirection with the "bridge" between the MMIO bus
+and the i2c@... node seems not a hardware representation of the system.
+
+Did I miss something?
+ =20
+>=20
+> Heh, right.  That reinforces my thought that this could be a good
+> idea.
+>=20
+> [Btw, the theoretically correct IEEE1275 way to do this is change
+>  addressing across the whole tree.  e.g. set #address-cells =3D <3>,
+>  with the first cell being, say, 0 for mmio, 1 for i2c, 2 for SPI,
+>  then the remaining cells are the address within that bus.  So, this
+>  sort of thing is technically possible in old-school OF trees.  That
+>  would become pretty unmanageable though.  The idea of bus-reg is to
+>  encode the same information in a less awkward way]
+>=20
+> > [1]:
+> > https://lore.kernel.org/all/20250618082313.549140-1-herve.codina@bootli=
+n.com/
+> >=20
+> > [2]: https://lore.kernel.org/all/20250729-spi-bus-extension-v1-0-b20c73=
+f2161a@beagleboard.org/
+> >=20
+> >  =20
+> > > 4) You don't necessarily need to build a "full" device tree
+> > >=20
+> > > Flattened device trees (as opposed to original IEEE1275 device trees)
+> > > - by design - allow certain information to be omitted.  The most
+> > > common example is that for introspectable buses, like PCI, it's normal
+> > > to have the DT only include a node for the host bridge, with devices
+> > > under it being discovered by their own bus specific methods.  That's
+> > > discovery is handled by the bus/bridge driver.
+> > >=20
+> > > Connectors usually aren't introspectable, but it's still possible to
+> > > use an approach like this where the connector driver's discovery
+> > > method is "look at a different device tree".  So, for example,
+> > >=20
+> > > Board device tree:
+> > >=20
+> > > / {
+> > > 	compatible =3D "board-with-foo-connector";
+> > > 	. . .
+> > > 	mmio@... {
+> > > 		foo-connector@... {
+> > > 			compatible =3D "foo-connector";
+> > > 			ranges =3D < ... >;
+> > > 		}
+> > > 	}
+> > > }
+
+I would expect a description of resources wired to the connector
+available at the foo-connector node.
+
+> > >=20
+> > > Foo device tree:
+> > >=20
+> > > / {
+> > > 	compatible =3D "foo-device";
+> > > 	foo-port-id =3D < 0x1234 >;
+> > > 	component@... {
+> > > 		reg =3D < ... >;
+> > > 	}
+> > > }
+> > >=20
+> > > Obviously a "foo device tree" would have different conventions than a
+> > > board device tree.  It wouldn't have /cpus, /memory, /chosen - but it
+> > > could have its own "magic" nodes that make sense for the properties of
+> > > the specific connector type.
+
+I agree with the fact that /cpus, /memory, ... wouldn't be present at this
+node.=20
+
+Can you provide an example of the "magic" node and what do you have in mind
+to store this information in DTB?
+
+> > >=20
+> > > Again, that would require work in the device core part of the OS.  The
+> > > bonus is that runtime addition and removal is now trivial.  No hacking
+> > > of the base device tree is needed, and so doesn't need to be reverted.
+> > > The connector driver just adds/removes the reference to its own
+> > > private tree.
+
+Here also, I don't see exactly what you have in mind. Can you provide some
+details and example?
+
+> > >=20
+> > > This would, of course, need some way to refer to board resources
+> > > (interrupt controller, gpio controller) etc.  I think that can be
+> > > assembled using some of the previous ideas, though. =20
+> >=20
+> > I would need to wrap my head around this a bit, specially in context of
+> > chaining connectors. It does seem like it will still require the points=
+ you
+> > mentioned above to be present in one form or another, i.e. some way to
+> > extend busses to different nodes/trees and connector (even a chained on=
+e)
+> > local symbols/aliases. =20
+>=20
+> Yes, it would still require those mappings.  I don't think chained
+> connectors introduce a lot of extra complication.  An intermediate
+> connector would need to be able to "re-export" things it got from its
+> parent connector to its child connector(s) - renaming them if
+> necessary.
+>=20
+> I think those two elements would be enough to make something that's
+> useful in at least a few cases.  However, the pretty common case of a
+> connector with pins from multiple different parent buses would need
+> bus-reg or something similar.  Or else the nasty multiplexed encoding
+> described above.
+>=20
+> I say, "nasty" and in many cases it would be, but I think there may be
+> some cases where that approach does make sense: e.g. a connector that
+> has several logically separate address spaces but which always travel
+> together and are typically handled by a common bridge device.  PCI is
+> a case of this, if you squint - a host bridge provides a config space
+> bus, and an MMIO bus and a PIO bus.  Also sometimes some sort of
+> interrupt controller / interrupt routing, complicated by the fact that
+> there are several different models for that across PCI and PCI-E.
+>=20
+
+To move forward on the topic, some concrete example would help to
+understand how to describe link, how the information is stored in DTB.
+
+This would help us in moving in the right direction.
+
+
+If the issue with export-symbols is having it described as a DTS node, this
+could be changed with a new DTS keyword.
+
+/export/ <symbol_name_to_resolve> <resolved_symbol_name>
+  - <symbol_name_tp_resolved>: Symbol name seen by a user
+  - <resolved_symbol_name>: Symbol used once resolved.
+
+<resolved_symbol_name> can be restricted to phandle values.
+
+Mutiple /export/ can be available inside a node in order to give a list
+of exported symbols.
+
+
+For instance with the connector example I previously mentioned.
+We can replace the export-symbols node by the following:
+
+---- base board DT ----
+  conn0: connector0 {
+	gpio-map =3D <0 &gpio0 12>, /* gpio A wired to gpio 12 of gpio0 controller=
+ */
+                   <1 &gpio2 10;  /* gpio B wired to gpio 10 of gpio2 contr=
+oller */
+
+        i2c_one: i2c-one {
+		compatible =3D "i2c-bus-extension";
+		i2c-parent =3D <i2c5>; /* i2c wired to i2c5 controller */
+	};
+
+	i2c_two: i2c-two {
+		compatible =3D "i2c-bus-extension";
+		i2c-parent =3D <i2c6>; /* i2c wired to i2c6 controller */
+	};
+
+	/export/ connector &conn0
+	/export/ i2cA &i2c_one
+	/export/ i2cB &i2c_two
+  };
+
+A reference to connector (&connector) from the addon will be resolve
+to a reference to &conn0 (phandle of the connector0 node.
+
+---- addon board DT, applied at connector0 node ----
+   {
+	some-node {
+		compatible =3D "foo,bar";
+		reset-gpios =3D <&connector 0>; /* gpioA used as a reset gpio */
+		ddc-i2c-bus =3D <&i2cB> /* Resolved thanks to /export/ */
+	=09
+        }
+
+        i2c-one {
+		/*
+                 * A device added on the i2c-one bus wire to the connector.
+                 * /export/ not involved. i2c-one is a node (bus extension)=
+ available
+                 * in the DT node where this addon board DT is applied.
+                 *=20
+                 */
+		eeprom@10 {
+			compatible =3D "baz,eeprom"
+			reg =3D 10;=20
+		};
+	};
+   };
+
+
+Now, what is expected in term of DTB format?
+
+I think we need:
+ - Base DT: List of exported symbols per nodes (/export/)
+ - Addon DT: List of unresolved symbols and their location
+ - Addon DT: A way to avoid collision in phandle values
+
+Best regards,
+Herv=C3=A9
 
