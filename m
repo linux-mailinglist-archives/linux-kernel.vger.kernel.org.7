@@ -1,148 +1,140 @@
-Return-Path: <linux-kernel+bounces-806518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC25B49806
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A80B49802
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA53D1BC2CD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E985E4E178B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C533F3148D9;
-	Mon,  8 Sep 2025 18:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2B3164A6;
+	Mon,  8 Sep 2025 18:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="O3M0zof+"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvDMTEzV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694513148C7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171FF314A7E;
+	Mon,  8 Sep 2025 18:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757355132; cv=none; b=T98FT8mciEnHzF4cyK8FS2kegn1QFUCebDaiY858dV8LOxhE1VBct3Yhg9NtHS8uhHnv8RVupf5YeyYtksTE/EWQBDRsMPhtXmd/IIvcMEfZR2g7DNCDXEpVohrqGPuab2Ie6nf7bx3hs7XcrXjqqgPwTWMQ8T3GX8zhDaFp5s8=
+	t=1757355149; cv=none; b=ZBvSvO/xq8nknqAIwVT9v8nZMVkMfrmWSspWRbrH9qijR+KOWsUHwlznE/RdtktvLHfYtJUotrUa9bX2L6iARrfhd0oyF+mN4P3kzMGFX77+HHGFCvUpqbkjNfpfiqcgJKOuIfULsZSqiUXnCODwNMHi7m/gPqMHj1MpKImmJr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757355132; c=relaxed/simple;
-	bh=H/p5xIJk8lmI/VqBNq2hGyqsRtnDqgWEJ++nq6tiL6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Up+Js2iZbPNoUweS06HwfrdutKPRkZxIPqlw8vSfqG5rM/KysUaVTbhtDnyWTUlxuI6S9aheS0hJXf0echfizfo2N3S65SEqZ3rMsgpCJOFn6QC1/wMciw2p5tycEysYExZUwjV6penZaPg3WH7EXSVMWgM/Lo/PPeqydS1bWn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=O3M0zof+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b522e2866bcso89347a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757355130; x=1757959930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ojzCABYGnMlZKVB/RdZnSfkc0o7nxef4JjZwU842o9o=;
-        b=O3M0zof+x+BCYjs9ZjSp4VVIPor0ngzVoFcOtksC9lIW+cZJAPPvk1GrAYf4MXxMJU
-         lWE544ynO8q6OfD7LoQmjAFPqHjuv09I8NtpOsUShLfHZXXs5bj2Wd7bXTtk99XBqacU
-         xBOi7fmch+4tdQ8jbCr7Bbqj4rO8slUaMhYWWscV66eZQ70nIXNF46msJzgSwoP5OFyZ
-         fd1XAwy/nWPTqiF5kmjiIAVcIEG/yAfmdTRKNlsIisaKyUFcxSuNZgbjNXIAD2cN4xRN
-         OGqBa9Z24RXCrAYRcIkrcR4NsW1MK7AZl4TEXudNId3lF+XLDCFpICF3Er1AgrByF3+c
-         Ckug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757355130; x=1757959930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ojzCABYGnMlZKVB/RdZnSfkc0o7nxef4JjZwU842o9o=;
-        b=sto++DBGVyF8+d7UgZw6NiH2gy9X/lemrpWApktHs8EalTqo28yQMWX48drb/yvCZS
-         lJrvWyvfN++Xr44S2kiEZsQpI17jupFqVRxpNrN7Sk+SsGZ0rw0HeWFAkiSL8MH9VNnZ
-         zWTxCv50YTB/ckDAdroneEdOQbeC5OmyLA+gzkETz332mMXLLF+E92QYciA1Q+Fr9oVJ
-         vpPW19KYIUdwmSyRnV7jzUbQsZZnPNnbX4Nxyp33LGfZh9ooOKgvJ5eGBk8KI1+Ri6r+
-         7ecMSbOVrmA9uU1iMP9Y/ZP6cW7fixq1pH6OtYUqyryVjCFFCHLVXk5JtHBKSW8JWC2a
-         TKnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjqT9Fz8di6n9Xv84LUu2IVEeylKpX4AjaeLgHHV2wPgD0Ihx//0gHnp21rWN8awHpT2nsx857uvEPJIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3AdDI6YCPmqpjnSzLD+6I/J+5KK1f3AHrmHWvrn4Tx51+hbpL
-	OC9/oSHrSG2sW98yGWcVxrRl17mADUVwEeJIV5nS0IMkMCeVS1AGRCdt9y3JdevI2AW0lbGojCS
-	yEdIuH84xbtQzd/y/mbd6g/mOUymqe3/pTXytYhFxIw==
-X-Gm-Gg: ASbGncs0d9bM8y9OVzy/dj7TbpYgqU42uS+FWyNrCiY7uVHrIrJ6sifXWAI8/kzcxpU
-	GUnurtdkiatzh1yxcuX4P7e4yQUQuIk9xe0vcyR5gG6ED+gitNymaaJgMEUUFX071uzfbKmbP28
-	30BcDKAeu0x4SCrjUOlsCXeLGDRBE/s35KoavUstWiMkrtSmbZpZ0LhmM2yEFsq+TwssX7V2N8d
-	HvfGumOG7ByyyzA+eniGgY=
-X-Google-Smtp-Source: AGHT+IGnaZQfRuThACjFkGL0OJplq2Sfcwtm084uzB80qdvnK8daKvu2HoJr1/1nhn8lVjDgbUhm7SfE4r4NCZxQwv4=
-X-Received: by 2002:a17:903:2442:b0:24e:4248:3d9b with SMTP id
- d9443c01a7336-2517121749dmr52692415ad.4.1757355129582; Mon, 08 Sep 2025
- 11:12:09 -0700 (PDT)
+	s=arc-20240116; t=1757355149; c=relaxed/simple;
+	bh=55uqEUrkSEH/g4S8O0Ls9N9ERmewReSvw0qIJ321yHU=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XqD46iAUC7wRs4LIGNvAjyt7FnaH73H6BlPmuPGDH4oMxvsGP4Z5wVtDktPT/F+euEGqzt3it6trKrdPL92wsmJE9IsI43dVmLPhKm2i2sVoPyAfl9/oyuoOId8WcNnriJSXZ3EAl7fflptvmksK1+DQjtTwG6uju5BBFFqMyAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvDMTEzV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8F5C4CEF1;
+	Mon,  8 Sep 2025 18:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757355148;
+	bh=55uqEUrkSEH/g4S8O0Ls9N9ERmewReSvw0qIJ321yHU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=YvDMTEzVGTF5aOsROaBtp3Tmo4Glys448tT3SXnuYhwcVCrj85Jj3u/+YXw2Tq5Fe
+	 WWOSvpNdpbzhZKSvjC/LnOK2eO4EyFQ6DbvKqhXldkKzhHPXIYfRS00afuK39tfwok
+	 zlK3iZYaW5S8XvN3V0Az2kAcmAsAz/hdTN9pxIH/UKONDyrn42iEor9GNYk0+Qqeno
+	 uyNq1i3bwhij4DAY3MACsbXLq0wM8Ndn3opjNh6va2d1a+y1/7pNkrRqnAi+0+g1aj
+	 XnR7YTot90CDo3xSLZiWSrP425GVBHaQ9mEpWy8S72iQnZtS7zT5hhYyERZhWyVNjK
+	 9vUKysO8MOSBQ==
+Date: Mon, 8 Sep 2025 20:12:21 +0200 (GMT+02:00)
+From: Matthieu Baerts <matttbe@kernel.org>
+To: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+	David Reaver <me@davidreaver.com>
+Message-ID: <01f13d40-93c4-4147-b10d-f86fd5f79fa5@kernel.org>
+In-Reply-To: <aL8YwEx1dxa93lpR@templeofstupid.com>
+References: <aLuDmBsgC7wVNV1J@templeofstupid.com> <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org> <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org> <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org> <aL8RoSniweGJgm3h@templeofstupid.com> <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org> <aL8WNpl8ExODg20q@templeofstupid.com> <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org> <aL8YwEx1dxa93lpR@templeofstupid.com>
+Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options
+ propagate SOCK_KEEPOPEN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904170902.2624135-1-csander@purestorage.com>
- <20250904170902.2624135-4-csander@purestorage.com> <07806298-f9d3-4ca6-8ce5-4088c9f0ea2c@kernel.dk>
-In-Reply-To: <07806298-f9d3-4ca6-8ce5-4088c9f0ea2c@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 8 Sep 2025 11:11:58 -0700
-X-Gm-Features: Ac12FXzi6ulJPkC8TSbiAM575fdZmfp3Iycust3u0vCQfoJDgKjsl5wGiRdKjZA
-Message-ID: <CADUfDZovKhJvF+zaVukM75KLSUsCwUDRoMybMKLpHioPpcfJCw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <01f13d40-93c4-4147-b10d-f86fd5f79fa5@kernel.org>
 
-On Mon, Sep 8, 2025 at 7:13=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+8 Sept 2025 19:56:23 Krister Johansen <kjlx@templeofstupid.com>:
+
+> On Mon, Sep 08, 2025 at 07:51:10PM +0200, Matthieu Baerts wrote:
+>> 8 Sept 2025 19:45:32 Krister Johansen <kjlx@templeofstupid.com>:
+>>
+>>> On Mon, Sep 08, 2025 at 07:31:43PM +0200, Matthieu Baerts wrote:
+>>>> Hi Krister,
+>>>>
+>>>> On 08/09/2025 19:25, Krister Johansen wrote:
+>>>>> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
+>>>>>> =E2=80=A6
+>>>>>
+>>>>> Thanks for the reviews, Geliang and Matt.=C2=A0 If you'd like me to f=
+ix the
+>>>>> formatting up and send a v2, I'm happy to do that as well.=C2=A0 Just=
+ let me
+>>>>> know.
+>>>>
+>>>> I was going to apply this diff:
+>>>>
+>>>>> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
+>>>>> index 13108e9f982b..2abe6f1e9940 100644
+>>>>> --- a/net/mptcp/sockopt.c
+>>>>> +++ b/net/mptcp/sockopt.c
+>>>>> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_=
+sock *msk, struct sock *ssk)
+>>>>> {
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 static const unsigned int =
+tx_rx_locks =3D SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct sock *sk =3D (struc=
+t sock *)msk;
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int kaval =3D !!sock_flag(sk, S=
+OCK_KEEPOPEN);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool keep_open;
+>>>>>
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keep_open =3D sock_flag(sk, SOC=
+K_KEEPOPEN);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ssk->sk_prot->keepaliv=
+e)
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, kaval);
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEE=
+POPEN, kaval);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, keep_open);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEE=
+POPEN, keep_open);
+>>>>>
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_priority =3D sk->s=
+k_priority;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_bound_dev_if =3D s=
+k->sk_bound_dev_if;
+>>>>
+>>>> (sock_flag() returns a bool, and 'keep_open' is maybe clearer)
+>>>>
+>>>> But up to you, I really don't mind if you prefer to send the v2 by
+>>>> yourself, just let me know.
+>>>
+>>> Thanks, I'll go ahead and amend as you suggest and then send a v2.
+>>
+>> Great, thanks.
+>>
+>> While at it, please use [PATCH net] as prefix.
 >
-> On 9/4/25 11:09 AM, Caleb Sander Mateos wrote:
-> > IORING_SETUP_SINGLE_ISSUER doesn't currently enable any optimizations,
-> > but it will soon be used to avoid taking io_ring_ctx's uring_lock when
-> > submitting from the single issuer task. If the IORING_SETUP_SQPOLL flag
-> > is set, the SQ thread is the sole task issuing SQEs. However, other
-> > tasks may make io_uring_register() syscalls, which must be synchronized
-> > with SQE submission. So it wouldn't be safe to skip the uring_lock
-> > around the SQ thread's submission even if IORING_SETUP_SINGLE_ISSUER is
-> > set. Therefore, clear IORING_SETUP_SINGLE_ISSUER from the io_ring_ctx
-> > flags if IORING_SETUP_SQPOLL is set.
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > ---
-> >  io_uring/io_uring.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > index 42f6bfbb99d3..c7af9dc3d95a 100644
-> > --- a/io_uring/io_uring.c
-> > +++ b/io_uring/io_uring.c
-> > @@ -3724,10 +3724,19 @@ static int io_uring_sanitise_params(struct io_u=
-ring_params *p)
-> >        */
-> >       if ((flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)) =3D=3D
-> >           (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED))
-> >               return -EINVAL;
-> >
-> > +     /*
-> > +      * If IORING_SETUP_SQPOLL is set, only the SQ thread issues SQEs,
-> > +      * but other threads may call io_uring_register() concurrently.
-> > +      * We still need uring_lock to synchronize these io_ring_ctx acce=
-sses,
-> > +      * so disable the single issuer optimizations.
-> > +      */
-> > +     if (flags & IORING_SETUP_SQPOLL)
-> > +             p->flags &=3D ~IORING_SETUP_SINGLE_ISSUER;
-> > +
->
-> As mentioned I think this is fine. Just for posterity, one solution
-> here would be to require that the task doing eg io_uring_register() on a
-> setup with SINGLE_ISSUER|SQPOLL would be required to park and unpark the
-> SQ thread before doing what it needs to do. That should get us most/all
-> of the way there to enabling it with SQPOLL as well.
+> Thanks, will do.=C2=A0 May I preserve the Reveiwed-By tags from the v1, o=
+r
+> would you like to review again?
 
-Right, though that may make io_uring_register() significantly slower
-and disruptive to the I/O path. Another option would be to proxy all
-registrations to the SQ thread via task_work. I think leaving the
-current behavior as-is makes the most sense to avoid any regressions.
-If someone is interested in optimizing the IORING_SETUP_SQPOLL &&
-IORING_SETUP_SINGLE_ISSUER use case, they're more than welcome to!
+You can preserve it.
 
-I appreciate your feedback on the series. Do you have any other thoughts on=
- it?
-
-Best,
-Caleb
+Cheers,
+Matt
 
