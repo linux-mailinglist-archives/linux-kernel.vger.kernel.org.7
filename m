@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-805014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BADB482FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A65DB48301
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2178817BFB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC09517BC79
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8EC21ABC1;
-	Mon,  8 Sep 2025 03:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B872192E3;
+	Mon,  8 Sep 2025 03:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1+HGzm+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gKZ/c9x4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AF253A7;
-	Mon,  8 Sep 2025 03:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2D453A7;
+	Mon,  8 Sep 2025 03:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757303303; cv=none; b=DAwAo+vUh/QmcpL7Tb1f0jzVAlkoWB4XuOXKhHmMfkICqF1zn69tpDjBYr+ahHrwXx3fwwMfijHlFhutid3B1sFu3MXkla0FGOW01tBuWXdqw+jIkTjy4MjlrRNzeU8NHUPKA+l1BW8Xn6wHxgC7DBcB1hn8K/0qLH726lA3/Ts=
+	t=1757303361; cv=none; b=Q0JUjw5urgdUU9KFqy7sUgUvZkhSwenRvpwaOjpt9cDcq0hRtQeZvrfEDA1SxViOzJ+uGudVEL4FvV+3CW1qsRxGle8Jjxegq6NK/sN8IMwgWv2PRU2iakpkjOVpTTBxfBn9TWm2qx0lxMP642Av+irHT8/h7UXwqMsL2uwlsfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757303303; c=relaxed/simple;
-	bh=/bvacUJmYdkFKY7yQmb93B50LcYoGC9OGq8X6zGppu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKRwN+zWdCD3zna2eAqzxZeuYgmwHfXSXtTk4oGF080P+xOI2oIbivxwRr8hr8ln8A3IjvWhpnHfw7MSFJOiACzS2+OOvrUbF1rUqr7MGruBCXpu8nZqGlse1Ok7+7iy8MS9b7Be1c0DmQEK/p6gCtZi5HCnSdNAEWkG8My/DlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1+HGzm+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13397C4CEF5;
-	Mon,  8 Sep 2025 03:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757303303;
-	bh=/bvacUJmYdkFKY7yQmb93B50LcYoGC9OGq8X6zGppu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1+HGzm+6FBuuHKFwXA2r/dAOfshb4T4epFazWasn8UzvrOmv8DTR4eVO8rHRqv/J
-	 40R/S4yyYLU2GG4pXqUTTaZ+/m5ICTzIAa3pZZSdMBrTnJb20lkSUC9j6EY5HUst1m
-	 8xBL0M5Ayk+3Lrkj0roIemcPSwVJzRiFaqIeTV8qIJ/Re6gc6jQoeEjTyTMjoNqsOH
-	 awn/ZjCBkKavNvo0EevmR9z9StqweRN9sZxfqUfzFBbr17+OzafOeVQmrRB/U19PJ9
-	 pIGk3DsienHhrY85UhC3Amf8++fWFZfA/m4Wi41EqHrLCRmkObJr85fHpqnvmyebS5
-	 T8x4bPQ3CAB3Q==
-Date: Mon, 8 Sep 2025 09:18:15 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Brian Norris <briannorris@chromium.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 2/5] PCI/pwrctrl: Move pci_pwrctrl_init() before
- turning ON the supplies
-Message-ID: <tv7pahvoblw77jziivp7ulassnfdlpsg2z4xvisumbrueapfgu@iyfzlnjjubkv>
-References: <20250903-pci-pwrctrl-perst-v2-2-2d461ed0e061@oss.qualcomm.com>
- <20250907212242.GA1398560@bhelgaas>
+	s=arc-20240116; t=1757303361; c=relaxed/simple;
+	bh=o6yubI9o8aQSb1ZmwwN/UUkGxPQtv1/ashNFOWuq/wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iigvkmRORr3YxJuvfPnnBZneL7STcO5vPtTs95180itmD56wC96f7mcPc3/1/KgEac8ak64Gt4jp6IjdLLCrDUj1ZatHg2cqRgsATNiuN17L9Txwf6Y3CiXA/+/DC1uQ/sEAkP7b+yHjeNFtO75ULm/0MyAhONBkPBlUzEJuAeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gKZ/c9x4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757303354;
+	bh=vaew1mC3B+NoBNmlS8eQeiWBtsJew4atsMEh6lHY5JA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gKZ/c9x4RFtwQoXDXT3GkMCBwHvR9Sy61za2HokSiKhGdX+DsEeY7yJyhlOIkNjhv
+	 67r1NJEM68CneGugnlHroi6ZFIzmM+MuXpYhhHb7mEk/zqhsV9Wb3d4FrABtnq7lHu
+	 s/vR63LKnch01509miPacp2LHnI22vWSAyCIxnV281tKjTYIk8UECwJeNIr4TeI2it
+	 tlV1WjEMEjEHmKX9z0z7hs+2V6nxz3lXAKh4LWhSd7YP/ZmiFBDhC42FybxhvonaTg
+	 4vExAjHnyk5wfJSRIw6gsx1u2z9JeS7xLp85/O7CJ5E3iluduQ0tFCFL8KJwdTXf5G
+	 m/uTEoip3gGFQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cKtHG5lHrz4w9v;
+	Mon,  8 Sep 2025 13:49:14 +1000 (AEST)
+Date: Mon, 8 Sep 2025 13:49:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+ KBuild Mailing List <linux-kbuild@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Paul Walmsley <pjw@kernel.org>
+Subject: linux-next: manual merge of the kbuild tree with Lnus' tree
+Message-ID: <20250908134913.68778b7b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250907212242.GA1398560@bhelgaas>
+Content-Type: multipart/signed; boundary="Sig_/Fw2=JFUgtBQWYDmbqI7ullH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, Sep 07, 2025 at 04:22:42PM GMT, Bjorn Helgaas wrote:
-> On Wed, Sep 03, 2025 at 12:43:24PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > 
-> > To allow pwrctrl core to parse the generic resources such as PERST# GPIO
-> > before turning on the supplies.
-> 
-> Can we expand this a little bit?  Which function does that parsing,
-> for example?  pci_pwrctrl_init() itself doesn't do any of that, so the
-> connection isn't obious.
-> 
+--Sig_/Fw2=JFUgtBQWYDmbqI7ullH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sure.
+Hi all,
 
-Pwrctrl core function pci_pwrctrl_device_set_ready() deasserts PERST# if the
-callback is available. Since that requires accessing 'pwrctrl->dev',
-pci_pwrctrl_init() that is setting 'pwrctrl->dev' needs to be called earlier.
+Today's linux-next merge of the kbuild tree got a conflict in:
 
-I will change the description to be more elaborative. It also requires rewording
-since the pwrctrl core is not parsing PERST# on its own now.
+  arch/riscv/Kconfig
 
-- Mani
+between commit:
 
-> > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/pwrctrl/pci-pwrctrl-pwrseq.c | 4 ++--
-> >  drivers/pci/pwrctrl/slot.c               | 4 ++--
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pwrctrl/pci-pwrctrl-pwrseq.c b/drivers/pci/pwrctrl/pci-pwrctrl-pwrseq.c
-> > index 4e664e7b8dd23f592c0392efbf6728fc5bf9093f..b65955adc7bd44030593e8c49d60db0f39b03d03 100644
-> > --- a/drivers/pci/pwrctrl/pci-pwrctrl-pwrseq.c
-> > +++ b/drivers/pci/pwrctrl/pci-pwrctrl-pwrseq.c
-> > @@ -80,6 +80,8 @@ static int pci_pwrctrl_pwrseq_probe(struct platform_device *pdev)
-> >  	if (!data)
-> >  		return -ENOMEM;
-> >  
-> > +	pci_pwrctrl_init(&data->ctx, dev);
-> > +
-> >  	data->pwrseq = devm_pwrseq_get(dev, pdata->target);
-> >  	if (IS_ERR(data->pwrseq))
-> >  		return dev_err_probe(dev, PTR_ERR(data->pwrseq),
-> > @@ -95,8 +97,6 @@ static int pci_pwrctrl_pwrseq_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	pci_pwrctrl_init(&data->ctx, dev);
-> > -
-> >  	ret = devm_pci_pwrctrl_device_set_ready(dev, &data->ctx);
-> >  	if (ret)
-> >  		return dev_err_probe(dev, ret,
-> > diff --git a/drivers/pci/pwrctrl/slot.c b/drivers/pci/pwrctrl/slot.c
-> > index 6e138310b45b9f7e930b6814e0a24f7111d25fee..b68406a6b027e4d9f853e86d4340e0ab267b6126 100644
-> > --- a/drivers/pci/pwrctrl/slot.c
-> > +++ b/drivers/pci/pwrctrl/slot.c
-> > @@ -38,6 +38,8 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
-> >  	if (!slot)
-> >  		return -ENOMEM;
-> >  
-> > +	pci_pwrctrl_init(&slot->ctx, dev);
-> > +
-> >  	ret = of_regulator_bulk_get_all(dev, dev_of_node(dev),
-> >  					&slot->supplies);
-> >  	if (ret < 0) {
-> > @@ -63,8 +65,6 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
-> >  				     "Failed to enable slot clock\n");
-> >  	}
-> >  
-> > -	pci_pwrctrl_init(&slot->ctx, dev);
-> > -
-> >  	ret = devm_pci_pwrctrl_device_set_ready(dev, &slot->ctx);
-> >  	if (ret)
-> >  		return dev_err_probe(dev, ret, "Failed to register pwrctrl driver\n");
-> > 
-> > -- 
-> > 2.45.2
-> > 
-> > 
+  41f9049cff32 ("riscv: Only allow LTO with CMODEL_MEDANY")
 
--- 
-மணிவண்ணன் சதாசிவம்
+from Lnus' tree and commit:
+
+  6578a1ff6aa4 ("riscv: Remove version check for LTO_CLANG selects")
+
+from the kbuild tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/riscv/Kconfig
+index 51dcd8eaa243,850ba4b4b534..000000000000
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@@ -64,9 -64,8 +64,8 @@@ config RISC
+  	select ARCH_SUPPORTS_DEBUG_PAGEALLOC if MMU
+  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
+  	select ARCH_SUPPORTS_HUGETLBFS if MMU
+- 	# LLD >=3D 14: https://github.com/llvm/llvm-project/issues/50505
+- 	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >=3D 140000 && CMODEL_MEDA=
+NY
+- 	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >=3D 140000
+ -	select ARCH_SUPPORTS_LTO_CLANG
+++	select ARCH_SUPPORTS_LTO_CLANG if CMODEL_MEDANY
++ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+  	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if 64BIT && MMU
+  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
+  	select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
+
+--Sig_/Fw2=JFUgtBQWYDmbqI7ullH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi+UjkACgkQAVBC80lX
+0Gyh6wf/W4PirpeQLG/DIUC+aO9J8jIOEEBHrxmvVIEaHw60/JkhBD3cr4G2TPf2
+ee2Gcc12keswNPkDmBdByS1RU4GfpiCKkdBgucg+OedQ4/nsuL+MjQWT/e9b/bCh
+1sFq8aWqOVg8jqlKVfb2+1tOr8jSeaiBiYjgt6Zx9Pg9/uwfCCK4i/GgjSD/Yf5Z
+cq0B29lUDKJAHu8yGZEkhhmRPtNt7w37OiOInjJzG0ORLhlmuicIT4nc+JVi1qWL
++gomb1C34oRZDd1pLUc30wRiwf80md2qmJ2OsChho+WFuiiv+bvBjWSo+WaPaDe0
+mNFul8+eav84U0JXKVUdMCopb7YEAg==
+=w1EF
+-----END PGP SIGNATURE-----
+
+--Sig_/Fw2=JFUgtBQWYDmbqI7ullH--
 
