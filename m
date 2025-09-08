@@ -1,278 +1,158 @@
-Return-Path: <linux-kernel+bounces-806306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14699B494DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD18B494DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A96E188AA9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBA5A189EFF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36C930E0D2;
-	Mon,  8 Sep 2025 16:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812BD30EF81;
+	Mon,  8 Sep 2025 16:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YEjiPNB/"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JWP7pwRJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332D2E7F12
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8243030DECF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348080; cv=none; b=QFFPxsXlwjqhlX0RGeZchTCHElqA1QW6ch1BUpdOfKmlf+eRYNCvZAjU7GtOHDFtT5XaDVcvvDmEitjYyJ3Woo3eTjvh5fQq/Ifdl9Al23bvc30taObwukjKLeqSLvl5gAIiEFZZGTjSBDyKN+8HDCS28rvOGh10pnSKysew7WM=
+	t=1757348101; cv=none; b=CdIIm8zz73PbX9QN+AL9OvQSQhdsnkxnraIGGZ9fiHiJ/87F8wPeE1MtOwjdyHvK2ATq9h1S92eH0S2C0vFKlQ9cwPhCNc5wmoxsmXyLxLZExX1maThSINnY8tObCGvBn0eqpvjvSNZcPFgVsymCeapW9L7qMGVKAwZjLpDvS4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348080; c=relaxed/simple;
-	bh=eELHbab1pARrbClGXme+CovIgP1gERd4crFqe/JFhEU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=o2bes/KAmvwBsQbDcg2cWkAY/iCw5Vcm/wi0hGXRNmcveent9radf7gsSmYqC/gTGLSCewOkbwzPSfsLkSqAdTUGyGna5npz7WTGb6HmvNgbIP6bqm7rlSWnapMufjJKlMs0oL9+PaShFFIaVB92QUWlDUVZgfI5CNgKeN/zi6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YEjiPNB/; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24ae30bd2d0so43983635ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757348078; x=1757952878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8rBFCSqM8yS3/NCAxHSF50velNu8qIwnhk2Bn2P2ZhM=;
-        b=YEjiPNB/L8cLSe6u0cEJHAtOVjPeG7rqz3DKeRu33DzCdI302PwkW3tVYl0J1ReZxI
-         34722D2XIKPEIOIO2qXbrzAwuaJRnEKRjHoXtir31ltSwHPLx0edaUpO/3+2lSW17phL
-         DsiP4RyIsJ6Qi/4vgN5zehcPOq//b+9EK29NRrPlRLJXkBSCmQxEPXI5dYX6zb9/F79D
-         7Wwm8Ykv0/6wydaBb3U2Dgs/ttu2ywQriFJpw02vvMULZ9cQzHrE7pdssXUNKRYwVLQB
-         Z+qC28WELqAL6kJddaUC1ds6dD4OcfpnrpJ+8rCsHVT+ecqf9nhwTWcZO4vz/hzMkSu/
-         T1sw==
+	s=arc-20240116; t=1757348101; c=relaxed/simple;
+	bh=my2J7ZSJKgwOGws1Hzn3zA5jTkV8FObsyOMISQJ3baM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fESlTsxB/6sOYxeoqZRMsheFsksY+FBt+CrC4OWRsar2ddAs9L0hKhqeZNyoDDESr76n8Ceh2y4DIcQHg3cdyNRs2R7WLraEcC7j3onx7JtXYpm1mwltUcQDjRrGjwSxY4E0u2/MVqqz1hIUsnexhSv9SA1iAyQGTkGmdS7zubw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JWP7pwRJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58890EpT019349
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 16:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uNUg7SeCQHOb1a3Kr4zUTJOlns3BsZPwl8vdQ/gvp4U=; b=JWP7pwRJqb/4XlNK
+	BSNvvQAQIwgdwBtdYDtuX4xfXMrzCZkoe4s3IuBXiYQ+9P/hGqp9akDdbZ6c9dAL
+	iVyB3EjQJp1Y+Gsxs8Yopt0UTQzUfMlo3jfxNEmoqvgfFjgGScLVHoHMsWjp6Rrf
+	+rs7Eo2/IQhagay0vlyaCMy4JwQTpZRUiHY1oqXq2glG+jG55s2zJ+QUPVpZQF4E
+	NWcB7jKWAwGmcBH+u3gTsUazNdi2+nKGBcmgLxcNMppUfgsr7Gqj6dHX3yfEBQVf
+	fwaCklWz40tP12XQt3qskJTB8hHCbHFnQU80gthIPNLsD7d751jx0ExxPhkIUX1w
+	BM/eBQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqfw2ft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:14:59 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b4bcb1e32dso24132031cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:14:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757348078; x=1757952878;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8rBFCSqM8yS3/NCAxHSF50velNu8qIwnhk2Bn2P2ZhM=;
-        b=b2N+PESzM3GimAH0UZ6UcIPAjvXqnuXtx3OJtzzkrWBtqwn2dcwuxRKkABLZgDqDsR
-         rblPdnSILIg++QoLW9UJ1kUu+rkyPly1wIHsF2ix0Guaz6p/HE//cCy8ghIS5W0NamlY
-         CDckr7+RabAtDbnwZQb1IhQjNvIhgNDEbD8JFDfRdM55Fc1BhZbF5BsNgYeHHdoMZoDt
-         Axj68O2LtFx0F8vXFCmiTV1Kg0BQhZEcQ9W+60nsR0y2+ZOUTSxKmfMQjU1b1fZMmL8L
-         +OP/TaZgPMXSroI4HyihKfParpmozhJ+q/sTYWFIC0xkL/hzOEll8vC+s3F39bH3yz/Y
-         ZbDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf+fdgNEA5zWAS/V7GYUPrxcSpLMYv3klRnYMxOByPAvySz8v379NgI4fAXSc7QOCLWyb5Qq/fYoA0s3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ6f5MeXjD+hyiBWuMGVKvu4QPm9QRYmw/byd4nZvqW/p7fpLJ
-	29tq+K/XwPHf74WTzhDmHtdghM0PIr23WkuWcw/OYq0IodJ2jjw0n+gKS/sJ+Huh44yti2h7rM3
-	uyP4vUA==
-X-Google-Smtp-Source: AGHT+IEWAzA8mTwC3tCgvZzD5LQvveK/68x7NMUTFfM4rJzeR2Wz0YuzOB9GFrf9zLgodQ76Jjl9ikWAVBo=
-X-Received: from plbjw17.prod.google.com ([2002:a17:903:2791:b0:24c:863e:86a3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e943:b0:24c:9309:587d
- with SMTP id d9443c01a7336-251714fa774mr120638105ad.29.1757348078384; Mon, 08
- Sep 2025 09:14:38 -0700 (PDT)
-Date: Mon, 8 Sep 2025 09:14:37 -0700
-In-Reply-To: <c2979c40-0cf9-4238-9fb5-5cef6dd9f411@bytedance.com>
+        d=1e100.net; s=20230601; t=1757348098; x=1757952898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNUg7SeCQHOb1a3Kr4zUTJOlns3BsZPwl8vdQ/gvp4U=;
+        b=S4VNqfFyLEPMbhWuswafkakiCo+dzz2yGlfa1qgjspu8hPuG2S52R7OSsGesiTQzK9
+         lebt/UiJtXaNt0tfHX6PoDVZ9uUqPSG3bBIOmyKHZLBRkBH317kOFd6CC92NjZ0slnm5
+         yjWtVNrQCn2CpdrJV1p2wYusexnWeqZmjnCgJhGkVrM4iWNtncuphef52RajW4JNsPQZ
+         +gLj+p+zyhdPijqHxrBcgsfhKiwqp8T8M44x6bnXKFLZhxqKNukvmoTGPYwbThlt6HuJ
+         CzqiF79sR+2aGLfmB7JbzZA7JPVRwQ11JRsjCCqQ3Jl+UAk9mFgizVLsD2pDP/QmNW0K
+         7KEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzmktjh0fxsKdRlkJ0+JocoId2XjDcsemc2AX5hNyn83vgyrbyNKa6ApIAArUnynF8oLdDAcw90/08Yeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBQbIyyXrrF/Mm7VNM/Cblv9LNmRgKGncmnuq8cpZshqwnOw2
+	mdYPK1jqT3iZz2PNv5AFadRhZriizTF1PACHpTadnvMA40nQTKW8xHCbAv2y9w4kcsOW0B1gI/1
+	RW38mLSepefOsO1hqaD48nA1eRZyI27yloeEVWktTyAXKRIxN87z7XPUBJVbVS7jrpHU=
+X-Gm-Gg: ASbGncs1FFH6CiNZWHarG7NIT1lsCpFpc1xHZPpaTp0icGd4/MetIzL2pofSw7SUaaU
+	dHtoGwJOk7hO2LGo4fkrFP1ZIazWe/gsGXclRpfBDPzn4Dx6SLM5Y+MHTimUYRr8Ob2SVC/3n2a
+	GL/UK769Qa/SYPDz9ShHbmigcqh9GwftheAF9A4VAE5mR2kaQEfKED+nm+ciZZL2avBw9OL6ih6
+	aOmsvhIAQu4wLnC01a7O2zHs3yRvAx56jos5C7x06pe7iWwyy2A+Ny25spc3b3JrYRhZt2ZWTAN
+	VSKBGkLwiXss52u7pfemiPHCwUJ0e20GYJHChya/kOJgw+Hrg7bLkQLVsEErBgZEZAt7V1oe+69
+	U1x0CxMBzjVcaFtdzZCXvqQ==
+X-Received: by 2002:a05:622a:1803:b0:4b5:eeb8:9dbd with SMTP id d75a77b69052e-4b5f8389c08mr70178071cf.5.1757348098028;
+        Mon, 08 Sep 2025 09:14:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEco+Q/q3RTA++gNO5I3yZ9Bu9pgiKTfiyr/MiXQ9nF5ACsplPzOWYy4LyCZQCEZJJixvAMtA==
+X-Received: by 2002:a05:622a:1803:b0:4b5:eeb8:9dbd with SMTP id d75a77b69052e-4b5f8389c08mr70177621cf.5.1757348097446;
+        Mon, 08 Sep 2025 09:14:57 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0307435422sm2283685766b.78.2025.09.08.09.14.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 09:14:56 -0700 (PDT)
+Message-ID: <0583a79e-d87a-457c-8416-f3a0b240d63b@oss.qualcomm.com>
+Date: Mon, 8 Sep 2025 18:14:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827152754.12481-1-lifei.shirley@bytedance.com>
- <aK8r11trXDjBnRON@google.com> <CABgObfYqVTK3uB00pAyZAdX=Vx1Xx_M0MOwUzm+D1C04mrVfig@mail.gmail.com>
- <f904b674-98ba-4e13-a64c-fd30b6ac4a2e@bytedance.com> <CABgObfb4ocYcaZixoPD_VZL5Z_SieTGJW3GBCFB-_LuOH5Ut2g@mail.gmail.com>
- <d686f056-180c-4a22-a359-81eadb062629@bytedance.com> <c2979c40-0cf9-4238-9fb5-5cef6dd9f411@bytedance.com>
-Message-ID: <aL8A7WKHfAsAkPlh@google.com>
-Subject: Re: [External] Re: [PATCH] KVM: x86: Latch INITs only in specific CPU
- states in KVM_SET_VCPU_EVENTS
-From: Sean Christopherson <seanjc@google.com>
-To: Fei Li <lifei.shirley@bytedance.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, liran.alon@oracle.com, hpa@zytor.com, 
-	wanpeng.li@hotmail.com, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: lemans-evk-camera: Add DT
+ overlay
+To: Wenmeng Liu <quic_wenmliu@quicinc.com>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, bryan.odonoghue@linaro.org,
+        vladimir.zapolskiy@linaro.org, todor.too@gmail.com
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <20250815-rb8_camera-v2-0-6806242913ed@quicinc.com>
+ <20250815-rb8_camera-v2-3-6806242913ed@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250815-rb8_camera-v2-3-6806242913ed@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: qAbZGMpihxji36B3zKmU5ZdcK-v7YrOP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfX36JsD3MoesIp
+ KiQ6bSLPkoKGI8aQ+yGjW58fLtEckiuYtHmI6x7drdzF6q6023qgjPZcWUOhu6rNTRNfUScBv7j
+ MhoqMESfWKDIm6mZv3Y6y/wJUoszkRPxRLUiJmhfmQHMm5J7bzhJbtLbm+quu4HIbF8IlvlBwXH
+ zGo9mQ6Q6PlXGqO4Hvpb4B9FMa5x22T5bw1tbEyAkfJttUpTTphw9sEqofM8LEGDFqkK7fLLWNY
+ PRtl+ut5S7/BF3TNJGvAeiOaGR7ksj4hJMCp9vvE97wIEc9HmeHw79dk8hVwsmnU3xmHISk3h0y
+ Bgavd+tN0nYsP+FHyLmkULVF6JLcisTE1Fb2kJSiTmuA1cgjGYebJbjGdsRfaNgzq0n3TEXt6y+
+ 7e6keYn+
+X-Proofpoint-GUID: qAbZGMpihxji36B3zKmU5ZdcK-v7YrOP
+X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68bf0103 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=gJbItJof4LNU2qWXpP8A:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
 
-On Mon, Sep 08, 2025, Fei Li wrote:
->=20
-> On 9/5/25 10:59 PM, Fei Li wrote:
-> >=20
-> > On 8/29/25 12:44 AM, Paolo Bonzini wrote:
-> > > On Thu, Aug 28, 2025 at 5:13=E2=80=AFPM Fei Li <lifei.shirley@bytedan=
-ce.com>
-> > > wrote:
-> > > > Actually this is a bug triggered by one monitor tool in our product=
-ion
-> > > > environment. This monitor executes 'info registers -a' hmp at a fix=
-ed
-> > > > frequency, even during VM startup process, which makes some AP stay=
- in
-> > > > KVM_MP_STATE_UNINITIALIZED forever. But this race only occurs with
-> > > > extremely low probability, about 1~2 VM hangs per week.
-> > > >=20
-> > > > Considering other emulators, like cloud-hypervisor and
-> > > > firecracker maybe
-> > > > also have similar potential race issues, I think KVM had better do =
-some
-> > > > handling. But anyway, I will check Qemu code to avoid such race. Th=
-anks
-> > > > for both of your comments. =F0=9F=99=82
-> > > If you can check whether other emulators invoke KVM_SET_VCPU_EVENTS i=
-n
-> > > similar cases, that of course would help understanding the situation
-> > > better.
-> > >=20
-> > > In QEMU, it is possible to delay KVM_GET_VCPU_EVENTS until after all
-> > > vCPUs have halted.
-> > >=20
-> > > Paolo
-> > >=20
+On 8/15/25 9:07 AM, Wenmeng Liu wrote:
+> Enable IMX577 via CCI1 on Lemans EVK.
+> 
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> ---
 
-Replacing the original message with a decently formatted version.  Please t=
-ry to
-format your emails for plain text, I assume something in your mail system i=
-nserted
-a pile of line wraps and made the entire thing all but unreadable.
+[...]
 
-> > `info registers -a` hmp per 2ms[1]
-> >                AP(vcpu1) thread[2]
-> >       BSP(vcpu0) send INIT/SIPI[3]
-> >=20
-> > [1] for each cpu: cpu_synchronize_state
-> >     if !qemu_thread_is_self()
-> >         1. insert to cpu->work_list, and handle asynchronously
-> >         2. then kick the AP(vcpu1) by sending SIG_IPI/SIGUSR1 signal
-> >=20
-> > [2] KVM: KVM_RUN and then schedule() in kvm_vcpu_block() loop
-> >          KVM: checks signal_pending, breaks loop and  returns -EINTR
-> >     Qemu: break kvm_cpu_exec loop, run
-> >        1. qemu_wait_io_event()
-> >           =3D> process_queued_cpu_work =3D> cpu->work_list.func()
-> >              e.i. do_kvm_cpu_synchronize_state() callback
-> >           =3D> kvm_arch_get_registers
-> >              =3D> kvm_get_mp_state
-> >                 /* KVM: get_mpstate also calls kvm_apic_accept_events()=
- to handle INIT and SIPI */
-> >                 =3D> cpu->vcpu_dirty =3D true;
-> >           // end of qemu_wait_io_event
-> >=20
-> > [3] SeaBIOS: BSP enters non-root mode and runs reset_vector() in SeaBIO=
-S.
-> >     send INIT and then SIPI by writing APIC_ICR during smp_scan
-> >     KVM: BSP(vcpu0) exits, then=20
-> >     =3D> handle_apic_write
-> >        =3D> kvm_lapic_reg_write
-> >           =3D> kvm_apic_send_ipi to all APs
-> >              =3D> for each AP: __apic_accept_irq, e.g. for AP(vcpu1)
-> >                 =3D> case APIC_DM_INIT:
-> >                    apic->pending_events =3D (1UL << KVM_APIC_INIT) (not=
- kick the AP yet)
-> >                 =3D> case APIC_DM_STARTUP:
-> >                    set_bit(KVM_APIC_SIPI, &apic->pending_events) (not k=
-ick the AP yet)
-> >=20
-> > [2] 2. kvm_cpu_exec()
-> >        =3D> if (cpu->vcpu_dirty):
-> >           =3D> kvm_arch_put_registers
-> >              =3D> kvm_put_vcpu_events
-> >                 KVM: kvm_vcpu_ioctl_x86_set_vcpu_events
-> >                 =3D> clear_bit(KVM_APIC_INIT, &vcpu->arch.apic->pending=
-_events);
-> >                    e.i. pending_events changes from 11b to 10b
-> >                 // end of kvm_vcpu_ioctl_x86_set_vcpu_events
+> +/*
+> + * Camera Sensor overlay on top of leman evk core kit.
 
-Qemu is clearly "putting" stale data here.
+"LeMans EVK Core Kit", this will also fit in a /* single-line comment */
 
-> >     Qemu: =3D> after put_registers, cpu->vcpu_dirty =3D false;
-> >           =3D> kvm_vcpu_ioctl(cpu, KVM_RUN, 0)
-> >              KVM: KVM_RUN
-> >              =3D> schedule() in kvm_vcpu_block() until Qemu's next SIG_=
-IPI/SIGUSR1 signal
-> >              /* But AP(vcpu1)'s mp_state will never change from KVM_MP_=
-STATE_UNINITIALIZED
-> >                 to KVM_MP_STATE_INIT_RECEIVED, even then to KVM_MP_STAT=
-E_RUNNABLE without
-> >                 handling INIT inside kvm_apic_accept_events(), consider=
-ing BSP will never
-> >                 send INIT/SIPI again during smp_scan. Then AP(vcpu1) wi=
-ll never enter
-> >                 non-root mode */
-> >=20
-> > [3] SeaBIOS: waits CountCPUs =3D=3D expected_cpus_count and loops forev=
-er
-> >     e.i. the AP(vcpu1) stays: EIP=3D0000fff0 && CS =3Df000 ffff0000
-> >     and BSP(vcpu0) appears 100%  utilized as it is in a while loop.
+[...]
 
-> By the way, this doesn't seem to be a Qemu bug, since calling "info
-> registers -a" is allowed regardless of the vcpu state (including when the=
- VM
-> is in the bootloader). Thus the INIT should not be latched in this case.
+> +&camcc {
+> +	status = "okay";
+> +};
 
-No, this is a Qemu bug.  It is the VMM's responsibility to ensure it doesn'=
-t load
-stale data into a vCPU.  There is simply no way for KVM to do the right thi=
-ng,
-because KVM can't know if userspace _wants_ to clobber events versus when u=
-serspace
-is racing, as in this case.
+It's enabled by default and there's never a good reason to disable it
 
-E.g. the exact same race exists with NMIs.
-
-  1. kvm_vcpu_ioctl_x86_get_vcpu_events()=20
-       vcpu->arch.nmi_queued   =3D 0
-       vcpu->arch.nmi_pending  =3D 0
-       kvm_vcpu_events.pending =3D 0
-
-  2. kvm_inject_nmi()
-       vcpu->arch.nmi_queued   =3D 1
-       vcpu->arch.nmi_pending  =3D 0
-       kvm_vcpu_events.pending =3D 0
-
-  3. kvm_vcpu_ioctl_x86_set_vcpu_events()
-       vcpu->arch.nmi_queued   =3D 0 // Moved to nmi_pending by process_nmi=
-()
-       vcpu->arch.nmi_pending  =3D 0 // Explicitly cleared after process_nm=
-i() when KVM_VCPUEVENT_VALID_NMI_PENDING
-       kvm_vcpu_events.pending =3D 0 // Stale data
-
-But for NMI, Qemu avoids clobbering state thinks to a 15+ year old commit t=
-hat
-specifically avoids clobbering NMI *and SIPI* when not putting "reset" stat=
-e:
-
-  commit ea64305139357e89f58fc05ff5d48dc233d44d87
-  Author:     Jan Kiszka <jan.kiszka@siemens.com>
-  AuthorDate: Mon Mar 1 19:10:31 2010 +0100
-  Commit:     Marcelo Tosatti <mtosatti@redhat.com>
-  CommitDate: Thu Mar 4 00:29:30 2010 -0300
-
-    KVM: x86: Restrict writeback of VCPU state
-   =20
-    Do not write nmi_pending, sipi_vector, and mpstate unless we at least g=
-o
-    through a reset. And TSC as well as KVM wallclocks should only be
-    written on full sync, otherwise we risk to drop some time on state
-    read-modify-write.
-
-    if (level >=3D KVM_PUT_RESET_STATE) {  <=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-        events.flags |=3D KVM_VCPUEVENT_VALID_NMI_PENDING;
-        if (env->mp_state =3D=3D KVM_MP_STATE_SIPI_RECEIVED) {
-            events.flags |=3D KVM_VCPUEVENT_VALID_SIPI_VECTOR;
-        }
-    }
-
-Presumably "SMIs" need the same treatment, e.g.
-
-diff --git a/target/i386/kvm/kvm.c b/target/i386/kvm/kvm.c
-index 6c749d4ee8..f5bc0f9327 100644
---- a/target/i386/kvm/kvm.c
-+++ b/target/i386/kvm/kvm.c
-@@ -5033,7 +5033,7 @@ static int kvm_put_vcpu_events(X86CPU *cpu, int level=
-)
-=20
-     events.sipi_vector =3D env->sipi_vector;
-=20
--    if (has_msr_smbase) {
-+    if (has_msr_smbase && level >=3D KVM_PUT_RESET_STATE) {
-         events.flags |=3D KVM_VCPUEVENT_VALID_SMM;
-         events.smi.smm =3D !!(env->hflags & HF_SMM_MASK);
-         events.smi.smm_inside_nmi =3D !!(env->hflags2 & HF2_SMM_INSIDE_NMI=
-_MASK);
+Konrad
 
