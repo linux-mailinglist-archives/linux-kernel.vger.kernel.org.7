@@ -1,187 +1,178 @@
-Return-Path: <linux-kernel+bounces-805550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73062B48A1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:24:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A915B48A1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295283BA101
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3523A6E02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFDC2F83AE;
-	Mon,  8 Sep 2025 10:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD292F7AC2;
+	Mon,  8 Sep 2025 10:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LHz1ADtk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="I9Rn3OCS"
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4C7136358;
-	Mon,  8 Sep 2025 10:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B668C2F3C32;
+	Mon,  8 Sep 2025 10:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757327088; cv=none; b=g6nk/L7da9ONahI+RUYqhh4zyjk0bTIW+3JzO13ak8xw3KsBq2GDaxCyzlgitkdAl0Q/YvOlFkG3TjXWNztRHZ9P5YHotbRHN31A+TR5TTm//mH+5qPh1El/BnIHooaFL7MffM6gptckg8o1JSBfc4+V0VPRXjZyb8oLpM65C7E=
+	t=1757327101; cv=none; b=hCzdxJNEJ11MXrhPFEluuXcHM0ydUl24Hd4LSXLXYcKY4yC1e4w+ypASMzyrr1idnIzqvrqQtNYILzo7rnvgw8hXgMlWNk5fBWOdxnajwgdbCps2QJQocDEVJmUpiY9kZ9oCNznP8OXECrHOKxySpZAAEPXocoS3u0o1Zlx7Uig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757327088; c=relaxed/simple;
-	bh=3c4d46dbwYhFkAIji9CnButKaWApe47Fg8Mn2cBmfHg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UMvkLUy3Eg9sbJLEMp/shZyhOO2ejNs3crBbDNQ1z0mInqbEYhiJMI1a7qG8d3GqnfeqjI27ek/1aNzJJq4FSkHpIbUta9QXxi9Z5M21YblMEdrZGrEHUHGgy0FDcZ6RT/MjKO0coprbir9LKo4TzU2eVxl7drL0VZH4vv3Ovns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LHz1ADtk; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757327087; x=1788863087;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3c4d46dbwYhFkAIji9CnButKaWApe47Fg8Mn2cBmfHg=;
-  b=LHz1ADtkFSQu+lucmUA3HCQo1eo6Ic71+5h7B4LJwTB2CF8yM/KqL2kB
-   KS70hCtzBb4TFGRqC67flVKbnU9+ewrXkzNW5KhNvK7ArivurHSrQWPZ1
-   B3rpoLASCvC1SMoCjCg9+3lGsH1enCwx1/lkVIS8GySzEYg0+UE7fFRoP
-   QfPdb4vha8r5FlVGE9ZijOUvNII8InTI/k+/1+05Nq/EQVwzkcsEOjiRY
-   lRY9Wp0qHGeimhUXbY4cccuOIY/EZShAtmAlpStN8KaG0qSq3fKS5USQ9
-   yagOmWc1lSb0snymmZgL2gcbfZPRuVmoBvbtw4joiRpQ9far7qfWyTi5x
-   Q==;
-X-CSE-ConnectionGUID: LFYvIZzwRoaJ0WV6dyV7aw==
-X-CSE-MsgGUID: qJ6cFAkTQ/G7bCex7kiDHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="69832941"
-X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
-   d="scan'208";a="69832941"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 03:24:46 -0700
-X-CSE-ConnectionGUID: whEKi/v8TFudb7tIU+AjHA==
-X-CSE-MsgGUID: U/YpIi0KRGSt2P0AfeFMvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
-   d="scan'208";a="172875576"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.11])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 03:24:40 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 8 Sep 2025 13:24:35 +0300 (EEST)
-To: Manivannan Sadhasivam <mani@kernel.org>
-cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-    David Box <david.e.box@linux.intel.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
-    Rob Herring <robh@kernel.org>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
-    Jonathan Derrick <jonathan.derrick@linux.dev>, 
-    Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, 
-    linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
-    ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
-    Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 2/8] PCI/ASPM: Fix the behavior of pci_enable_link_state*()
- APIs
-In-Reply-To: <67274gnjp4qy4h3bcawey2edmjiuufdbm262q2qxgcc76dwlic@hdjxqczr54nt>
-Message-ID: <df354ae2-03bd-d17c-4e3a-9e62b248cc2a@linux.intel.com>
-References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com> <20250825-ath-aspm-fix-v2-2-61b2f2db7d89@oss.qualcomm.com> <f644fc83-31cc-1f0e-58cf-7c007e6173e4@linux.intel.com> <67274gnjp4qy4h3bcawey2edmjiuufdbm262q2qxgcc76dwlic@hdjxqczr54nt>
+	s=arc-20240116; t=1757327101; c=relaxed/simple;
+	bh=7XwAMwHH5guQVH4NlQeVLDaBQni8VA4GO34QBkjSrsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EjesAv1oJtYS7kKQPpkKbbMg3nA9QJE0D7CHw9eHQIIuqhWxv/8h4Vk8CzhADALzBOi/5fSlDTqA8pChJCbdQ+65iDyaPR22vRHPBuZaCU3/8ntYBK2hgEK2Tn8YGh4q16Opv9cg8FyEit+xhrlNfoCMp36BTJQWKtYX+RxrPFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=I9Rn3OCS; arc=none smtp.client-ip=4.36.192.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=codeweavers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To
+	:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kjodhArTHkwbk89MoyDDCGDQOaiGSJEGaIfs9n6I2Mg=; b=I9Rn3OCSgrJ0Pdcj4Q07t3xkDv
+	qBFpaMV5kzWu21Y1mqebjExdZPKkUR7WhOfAV+OsojDTpEGWctSQHiLWl2vvvv8ylIuW6WP1UYEqO
+	YuDZ5uhnh1FeW6EIwoyb/Dmx/c2ciV8oYgWX/iEYO0nC36eSITtJGxCCgaAMOlXb27KpNRLeTrVdr
+	IYdFqdvXEtsbDrynWBTWzfelq+rrABu7i8Eq4S0uIqlCnpZwlnn2QQ/bIVDMth8SOUgEoBmWIX/0H
+	QbXy7YtazEJBbARMfR+D/pQcOg4n6RSyspOF6P23iW547C/rwE3BKZHyjvNGE7zUjGu7L7IeVKOSD
+	2pDkvH7g==;
+Received: from cw141ip160.vpn.codeweavers.com ([10.69.141.160])
+	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <bmcgrath@codeweavers.com>)
+	id 1uvZ3K-005Fa0-1f;
+	Mon, 08 Sep 2025 05:24:50 -0500
+Message-ID: <3db2d6af-3b21-4ce2-be1f-668270adbbeb@codeweavers.com>
+Date: Mon, 8 Sep 2025 20:24:45 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1505528149-1757327075=:938"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
+To: Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>
+Cc: =?UTF-8?Q?R=C3=A9mi_Bernon?= <rbernon@codeweavers.com>,
+ Sam James <sam@gentoo.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
+ <20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org>
+ <CAP-5=fWHGFBaCgiRcj8zVy196OE07F8jnSUbjvsO_HerdqeyTg@mail.gmail.com>
+ <70bd9eea-905a-4fa9-8265-f84ab9894b12@linaro.org>
+ <2b958dec-7ba9-41a3-b11b-43b5e8418849@codeweavers.com>
+ <549d3812-a606-4981-83f5-0a99b0ff9f6a@linaro.org>
+ <CAP-5=fXKthsZe3J4_UHHGwDafBq7pHzM18Mh=_2QrnSfCT3nOg@mail.gmail.com>
+Content-Language: en-US
+From: Brendan McGrath <bmcgrath@codeweavers.com>
+In-Reply-To: <CAP-5=fXKthsZe3J4_UHHGwDafBq7pHzM18Mh=_2QrnSfCT3nOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1505528149-1757327075=:938
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Sat, 6 Sep 2025, Manivannan Sadhasivam wrote:
+On 9/5/25 01:53, Ian Rogers wrote:
+> On Thu, Sep 4, 2025 at 7:18 AM James Clark <james.clark@linaro.org> wrote:
+>>
+>>
+>>
+>> On 04/09/2025 9:27 am, Rémi Bernon wrote:
+>>> Hi!
+>>>
+>>> On 9/4/25 10:13, James Clark wrote:
+>>>>
+>>>>
+>>>> On 03/09/2025 5:07 pm, Ian Rogers wrote:
+>>>>> On Wed, Sep 3, 2025 at 8:15 AM James Clark <james.clark@linaro.org>
+>>>>> wrote:
+>>>>>>
+>>>>>> read_build_id() now has a blocking argument, but libbfd uses fopen()
+>>>>>> internally which doesn't support O_NONBLOCK. Fix the build by adding
+>>>>>> the
+>>>>>> argument and ignoring it:
+>>>>>>
+>>>>>>     util/symbol-elf.c:964:8: error: too many arguments to function
+>>>>>> ‘read_build_id’
+>>>>>>       964 |  err = read_build_id(filename, bid, block);
+>>>>>>
+>>>>>> Fixes: 2c369d91d093 ("perf symbol: Add blocking argument to
+>>>>>> filename__read_build_id")
+>>>>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>>>>
+>>>>> Libbfd should go away:
+>>>>> https://lore.kernel.org/lkml/20250823003216.733941-14-
+>>>>> irogers@google.com/
+>>>>> but I can imagine that currently this is hit in a build test - sorry
+>>>>> for missing that and thanks for the fix!
+>>>>>
+>>>>
+>>>> Yeah just one of the build tests, I'm not actually using it.
+>>>>
+>>>> Remi are you still using this? To be fair the addition for PE support
+>>>> is fairly recent and even includes a binary for testing it so I'm not
+>>>> sure if we should be so quick to remove it.
+>>>>
+>>> Yes, I'm still using it occasionally, and I think it's generally useful
+>>> for Wine profiling purposes and I would rather prefer that it's not
+>>> removed.
+>>>
+>>> I know it's not built by default because of license conflicts. I didn't
+>>> realize that was an issue when contributing the changes, and it is quite
+>>> unfortunate (and silly IMO).
+>>>
+>>> Then I'm not particularly attached to libbfd and any other option that
+>>> would let perf read PE files would be alright, as long as PE support is
+>>> kept.
+>>>
+>>> Cheers,
+>>
+>> It looks like libLLVM might work. Looking at the doxygen there are vague
+>> references to PE binaries around the getBuildID() function. But as
+>> mentioned in the linked thread, it's huge at 100+ MB.
+>>
+>> WRT that thread, I think maybe re-writing some of this in Perf wouldn't
+>> be so bad. Surely getting the buildID is trivial. For PE binaries it's
+>> hard to tell what's supported currently, what's being used and what's
+>> being done by what library or tool. addr2line, libbfd, symbols,
+>> disassembly etc.
+> 
+> I know some people who work on LLVM for Windows for the sake of having
+> a Chrome build from Linux. It should be possible to migrate the libbfd
+> use cases to LLVM.
 
-> On Tue, Aug 26, 2025 at 03:55:42PM GMT, Ilpo J=C3=A4rvinen wrote:
-> > +David
-> >=20
-> > On Mon, 25 Aug 2025, Manivannan Sadhasivam via B4 Relay wrote:
-> >=20
-> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > >=20
-> > > pci_enable_link_state() and pci_enable_link_state_locked() APIs are
-> > > supposed to be symmectric with pci_disable_link_state() and
-> > > pci_disable_link_state_locked() APIs.
-> > >=20
-> > > But unfortunately, they are not symmetric. This behavior was mentione=
-d in
-> > > the kernel-doc of these APIs:
-> > >=20
-> > > " Clear and set the default device link state..."
-> > >=20
-> > > and
-> > >=20
-> > > "Also note that this does not enable states disabled by
-> > > pci_disable_link_state()"
-> > >=20
-> > > These APIs won't enable all the states specified by the 'state' param=
-eter,
-> > > but only enable the ones not previously disabled by the
-> > > pci_disable_link_state*() APIs. But this behavior doesn't align with =
-the
-> > > naming of these APIs, as they give the impression that these APIs wil=
-l
-> > > enable all the specified states.
-> > >=20
-> > > To resolve this ambiguity, allow these APIs to enable the specified s=
-tates,
-> > > regardeless of whether they were previously disabled or not. This is
-> > > accomplished by clearing the previously disabled states from the
-> > > 'link::aspm_disable' parameter in __pci_enable_link_state() helper. A=
-lso,
-> > > reword the kernel-doc to reflect this behavior.
-> > >=20
-> > > The current callers of pci_enable_link_state_locked() APIs (vmd and
-> > > pcie-qcom) did not disable the ASPM states before calling this API. S=
-o it
-> > > is evident that they do not depend on the previous behavior of this A=
-PI and
-> > > intend to enable all the specified states.
-> >=20
-> > While it might be "safe" in the sense that ->aspm_disable is not set by=
-=20
-> > anything, I'm still not sure if overloading this function for two=20
-> > different use cases is a good idea.
-> >=20
->=20
-> Why? I thought your concern was with the callers of this API. Since that =
-is
-> taken care, do you have any other concerns?
+Just wanted to let you know that I've been able to put together a PoC 
+that does just this. It allows the pe-file-parsing test to pass using 
+LLVM in place of libbfd.
 
-I don't think it really matters anymore as it looks the vmd one is going=20
-to be removed by the David's patch and the qcom one is removed by your patc=
-h
-so no users remain.
+If there's interest, I would be happy to try to shape this in to 
+something that can be accepted upstream.
 
-> > I'd like to hear David's opinion on this as he grasps the ->aspm_defaul=
-t=20
-> > vs ->aspm_disable thing much better than I do.
-> >=20
-> > > And the other API, pci_enable_link_state() doesn't have a caller for =
-now,
-> > > but will be used by the 'atheros' WLAN drivers in the subsequent comm=
-its.
-> > >=20
-> > > Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> >=20
-> > This tag sound like I'm endorsing this approach which is not the case. =
-I'd=20
-> > prefer separate functions for each use case, setting aspm_default and=
-=20
-> > another for the enable state.
-> >=20
->=20
-> Sorry, I misunderstood then. I'll drop this tag.
->=20
-> - Mani
->=20
->=20
+> If I remember John Levine's Linkers and Loaders
+> book correctly (contents available by way of your favorite search
+> engine) everything is just a variant of COFF anyway.
+> 
+> It is a shame that the PE testing in buildid.sh (and the testing in
+> general) is requiring `cc` as it'd be much nicer to have the tests in
+> a form similar to the perf test workloads (e.g. perf test -w noploop).
+> I don't have a good idea on how to fix this but just wanted to note
+> it.
+> 
+> I'll write a non-blocking patch for read_build_id with libbfd that
+> matches what the others do and should avoid the hang in the meantime.
+> 
+> Thanks,
+> Ian
+> 
 
---=20
- i.
-
---8323328-1505528149-1757327075=:938--
 
