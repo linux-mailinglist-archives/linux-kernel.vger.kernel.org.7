@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-805799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF494B48D97
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F24B4B48D49
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC383C7F60
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65F83B72BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360B42FE058;
-	Mon,  8 Sep 2025 12:33:07 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6462FE05C;
+	Mon,  8 Sep 2025 12:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjqlUQvu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216AE1EB5B;
-	Mon,  8 Sep 2025 12:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957AF221DB5;
+	Mon,  8 Sep 2025 12:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757334786; cv=none; b=ltqTjfdFmVkntiKFP7iy6UQVGhuB6OKkvpB8J2J0xH5kPOJnT51VhO3l3wCJXI3i5M0tNKp9Y19bfE6VMg+6SD9HZ9a+5ZQV5pgvyxXbrWVZ6mu08NbC89aLkfFJcUnR3n2T67KXVfCUX8dEswF2bi/2Usg+gOG/GtI1/jNkdX4=
+	t=1757334206; cv=none; b=lPtI2YAx0i3dBfdPaAdz9arGHTw/OcOyOkWygvDuxlF9wY6KTBJBFMOYQ690UevqlE3doAMfe5ibFJoUCiV/QgyfvlnfDFnLDZLHuwpJgrgGZmlA0GZPtZ96cFAftydGQPX4em4FF9G87LVZM0CNugk1S/tei+lHO7Fyb8/F404=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757334786; c=relaxed/simple;
-	bh=BKg4H9nK6xetSrB+Afl1BMmTduUEIwRyxICyGKhQulA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DgftW+fahsOWYoH5XzQN1pRdj+g0NHoT426OvVNhdDZ6DnwMO2HFhhzgIa/23kbbyveoJ80k6g4ghwbPzQJKG7/KAaOYu2/DGgqIwmXvRe4sHp9VHdBxo/Hq2ltdjOycVfJNgmlUzZAJzSbw7VSOJS/4o9UWXh04McWCP8sSamg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cL5vM60s0z14N1k;
-	Mon,  8 Sep 2025 20:32:47 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D4CC180488;
-	Mon,  8 Sep 2025 20:33:00 +0800 (CST)
-Received: from kwepemq500007.china.huawei.com (7.202.195.21) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Sep 2025 20:33:00 +0800
-Received: from huawei.com (10.67.174.117) by kwepemq500007.china.huawei.com
- (7.202.195.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Sep
- 2025 20:32:59 +0800
-From: Lin Yujun <linyujun809@h-partners.com>
-To: <lizhi.hou@amd.com>, <brian.xu@amd.com>, <raj.kumar.rampelli@amd.com>,
-	<vkoul@kernel.org>, <michal.simek@amd.com>, <sonal.santan@amd.com>,
-	<max.zhen@amd.com>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] dmaengine: Fix incorrect handling for return value of devm_regmap_init_mmio.
-Date: Mon, 8 Sep 2025 20:22:06 +0800
-Message-ID: <20250908122206.1315473-1-linyujun809@h-partners.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757334206; c=relaxed/simple;
+	bh=D6cneQQmhd1FoJDTC/XACRkYANyh+3X4gy7qW3UFAos=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KJMUD99ICYuHP5sRHgR3vLoj8OH8nPZ5eP9TjFAKrxHmkHrOYG2axg8SP91a0yAJ8ev6kX0+sYGR52yeQ9os3jXmCG4FKvxJGq0xZbEUme6tywgWPyDp7fOeOALIAvunDxZDlpFMZBn681cYMeQx9C5EnTt6f1NCzM5Bw+7/nNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjqlUQvu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17027C4CEF1;
+	Mon,  8 Sep 2025 12:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757334206;
+	bh=D6cneQQmhd1FoJDTC/XACRkYANyh+3X4gy7qW3UFAos=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hjqlUQvugGe99TOgR4h6szERkWrZoLhqLcNOL2cwplnO85sQCIL7+gkzaRfwiWlki
+	 znXTi8CZIMYaAXqlqDpEH4BQa9yZJ5RVTgohMcvFedOVclposdrlC5O78FBNhHy6/5
+	 SIviNze3FKbLtE2sitMdF7EjogdVAdynt7uQcf1cWw2lJ6Lmgd0UhHI/l1+TGuolks
+	 aKsU1IFupqE7V3+tq3NiT0naS+YoQCRzfb7Mk3O4kP+1QT432XpD7BAqK3uWuyFEJR
+	 a0qtK+bevHkpLv9xFgTzJ/Cic5/X81ZpdCbHsVp+96ScxC+e4SA+80np7vUjRyKPgS
+	 4NmbxQ3U52xxA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+ bhelgaas@google.com, helgaas@kernel.org, kishon@kernel.org, vigneshr@ti.com, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: stable@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, srk@ti.com
+In-Reply-To: <20250908120828.1471776-1-s-vadapalli@ti.com>
+References: <20250908120828.1471776-1-s-vadapalli@ti.com>
+Subject: Re: [PATCH v4] PCI: j721e: Fix programming sequence of "strap"
+ settings
+Message-Id: <175733420164.9759.8251040864412190074.b4-ty@kernel.org>
+Date: Mon, 08 Sep 2025 17:53:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq500007.china.huawei.com (7.202.195.21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The devm_regmap_init_mmio() is described as follows:
-"The return value will be an ERR_PTR() on error or a valid pointer"
-Use IS_ERR() to fix incorrect handling return value
-of devm_regmap_init_mmio.
 
-Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-Signed-off-by: Lin Yujun <linyujun809@h-partners.com>
----
- drivers/dma/xilinx/xdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 08 Sep 2025 17:38:27 +0530, Siddharth Vadapalli wrote:
+> The Cadence PCIe Controller integrated in the TI K3 SoCs supports both
+> Root-Complex and Endpoint modes of operation. The Glue Layer allows
+> "strapping" the Mode of operation of the Controller, the Link Speed
+> and the Link Width. This is enabled by programming the "PCIEn_CTRL"
+> register (n corresponds to the PCIe instance) within the CTRL_MMR
+> memory-mapped register space. The "reset-values" of the registers are
+> also different depending on the mode of operation.
+> 
+> [...]
 
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 0d88b1a670e1..5db8f077dcc0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -1234,11 +1234,11 @@ static int xdma_probe(struct platform_device *pdev)
- 		goto failed;
- 	}
- 
- 	xdev->rmap = devm_regmap_init_mmio(&pdev->dev, reg_base,
- 					   &xdma_regmap_config);
--	if (!xdev->rmap) {
-+	if (IS_ERR(xdev->rmap)) {
- 		xdma_err(xdev, "config regmap failed: %d", ret);
- 		goto failed;
- 	}
- 	INIT_LIST_HEAD(&xdev->dma_dev.channels);
- 
+Applied, thanks!
+
+[1/1] PCI: j721e: Fix programming sequence of "strap" settings
+      commit: f842d3313ba179d4005096357289c7ad09cec575
+
+Best regards,
 -- 
-2.34.1
+Manivannan Sadhasivam <mani@kernel.org>
 
 
