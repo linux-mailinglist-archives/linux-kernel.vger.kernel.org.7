@@ -1,153 +1,210 @@
-Return-Path: <linux-kernel+bounces-806676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7AAB49A45
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FED9B49A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1391667D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061EC1B24D5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05152853F1;
-	Mon,  8 Sep 2025 19:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118F12D323E;
+	Mon,  8 Sep 2025 19:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uO2ir1uH"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Iyhhjxru"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECCB29BDB3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3842D3220
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360694; cv=none; b=cyQ65lqpFNQ7Rhnz61l/m9McvOpQy+W5eJFoZn5cw8h6mM0Em8D33XQCFYLGtwSLQWLljICZTDa7iXO3op9WsURgoFIyQUcqA7gTiZFkxuXKypheapD3ugGjZNTVRmJtZvG/NE8jcHnSAQ2FJIf77J7PsSRTcIbjy/ZemerDWEc=
+	t=1757360774; cv=none; b=lVPGKRIPYqOLB725+72OrBFC9qDV8H9WG+JikX/EjhpYVrkZrIdk0EkBl3pM51VOFOOBVsrmZQ0sG6DOLZlk8Mha2Hl0K+TENZd2ulSB5Q/dvoinp7ixeuD9Wz51p2D5nwz6AtOvQWuBNq606MKrsddqOxo7eKydDkjh8MRRvFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360694; c=relaxed/simple;
-	bh=xxX6qsulkVirIUPMtxxcMy/WlTsw7wbx1cEPYNOUvQ4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OYmNQgk0VcRlwFrBeMK32dyikXW/nL9w7VVjfKaOZpPWV1Dz5lhQL3eyeZSRqBZVseDangCwElWHm2u4HuTBhCEAq16Y8d/cCDbR8ih2P0rxEVZHI9BcTx5d0lCPuwzPoWcZwVT/IaZwp6tvLplf8owVl4dAYQ6u7uIwgMAQQUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uO2ir1uH; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4fb59a89acso3811264a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:44:52 -0700 (PDT)
+	s=arc-20240116; t=1757360774; c=relaxed/simple;
+	bh=N69wDxrbi+fA5VqgbL8Sr7yDr1PhsL3cbCP913A1f0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EiYLkfv5/Pyqm+d1ufdmwyoHMm5AutwI734lqVQu9cSO6MP1dtl9Jmuq/W4KE6S+PEBTUcRMuOpbFggk+QGTYdq3rdKnLcteoqd2sPTUbGsqFSKCfkGCGdCqlg8hwkO2wJT0MmP/xvHSg/y/nrrYhF1p46V6pVsxAml8SZdoyZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Iyhhjxru; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24498e93b8fso9515135ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757360692; x=1757965492; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+BN9f9TRNhPzZGbZcN/O3Z0X+3jX9IGhyykVuk72IV0=;
-        b=uO2ir1uHTtgukzGG0spIgfg73ve9aliGXE89LTjOEkzUnWj/hTErCIvAwFr+M6iZwp
-         67gTNZ7b5OA1pa5LjnHBZz0E4YylwDGqL+yFJBQuonphkgqKxrUfSd3Uc2HqnSCBpI5S
-         MVHJFjlraIreUeahQLMom+9wo8msLioW/kVGzsjyd2uuf0tVj3a9pF5BSRRUALaUe+TD
-         +MXJ9X9NEeVMrRNdykWQLFfDdx6negXe+fNELJaiNW/xZN3i48pB2fWPY2u8uOeLjyoi
-         WiUUvDGVritslS0J5MndrANAaep1frTiTnCjmC/OaKTzkBZZQMhEx81BITkVmVwXRlIE
-         cbgQ==
+        d=purestorage.com; s=google2022; t=1757360772; x=1757965572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
+        b=IyhhjxruxKzJWbDDF1uPQYyOYpyBbRogMc7Xmaq/yzTx/IYvzwP10Fztit3G92ei6O
+         dMSBh6IUFlNR6giw8b46vpPvHP2V4DCr1UabeIECOSlYTxGoc4gFp0aFfwNjKDWY60EM
+         v+idKqwvOGVoSldGmyXUC2TTLl6/Soh4G/9bE4gJkfl6J3doYVmHjWxdVR0XuiDnk9N+
+         PXynUHPlkMhOmMSdsosunN35cDI63PtlrrFnJaFHSPgOQlMqL3vKyU/XZNd0bJYsFGrJ
+         LqpK72SZN60+wByjeYDn3tO7hhpD+kNBpD1uEX6WdqcY8ZfRUxXQqdgEGRpPWfGu6mFc
+         LOuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757360692; x=1757965492;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+BN9f9TRNhPzZGbZcN/O3Z0X+3jX9IGhyykVuk72IV0=;
-        b=AfnP+fFpUn4OBwiG120A535a2nvgYgLUlcPXA4inNVihNAESWjLfJBnh02dR2W3e84
-         3K/09/icvMkEValYW5hW2fJ+RzjLEH6fueHE3qIByrf4sVGeFQQBGtoTUGtp71O+0sJu
-         3NcNKLjMboiP09Uuq1nDjpJnFFnPS197nqwEixRAO6kHjHZjk5T3amszcmDke6/XRpgw
-         bD+WHXV4D8eDbdbwJAxGaclVoCz500Aq6TZhwDGC3BFIvsje6Cio0kBkwNDm4uITHVjQ
-         fDghrkp2ahUPjZMhX5c5rEklZ+nzllOuG0MyNz73iVkyO0Maw50qLcFhowN+LFjRbzyu
-         YHTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEgpAgMPRhJCoCJaR6slEt+0UYJ68ONzB8vksAFRj8RCsBDJ5Rbx0rX9h94zCsWP31pK1T6AcwuqC3MsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk5RIojxdi8pihkbI/jzXKGUv8+bHWoGTswR3OMXUD2z4PL1S4
-	30aIVELygtCQ2rLV+iHqO2pzHnMRBLqlLn4um8ynNQ0NBReXNeVr/UYf0h4qoodmyqCbY/sjFHB
-	+c/Qsqg==
-X-Google-Smtp-Source: AGHT+IFxCnWEFD2vXNWgOPEAttN5OOtAqn765A51cfCV4FQPi8e13adf6at6Ei8q1uZLTqO9SeFgLpD0kRY=
-X-Received: from pjbsq16.prod.google.com ([2002:a17:90b:5310:b0:329:ccdd:e725])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc4:b0:327:e9f4:4dd8
- with SMTP id 98e67ed59e1d1-32d43f2f4b6mr13695527a91.10.1757360691927; Mon, 08
- Sep 2025 12:44:51 -0700 (PDT)
-Date: Mon, 8 Sep 2025 12:44:50 -0700
-In-Reply-To: <20250819090853.3988626-5-keirf@google.com>
+        d=1e100.net; s=20230601; t=1757360772; x=1757965572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
+        b=CKMZLJxUXRKK9OmZ6t2S70RsLwZHiFTs2J0gK4dSv+Sndh8blCnce3edxIOMksIJR0
+         Vj4wgvT2Rp7+j+gsLb730S8Ljfd1fC7WoDLkJlVqrLEUQaKdStK77Sg3aoow2/WVAJSS
+         sWyiJ8kq2GETViO4ofURjnx6sc/pGeCEqvG6XVYAgCy9avvR+hma1j4KIPYlPIIoG8kb
+         lX3hVelodeWaGbniXjBHbuZ9la5LcBnqyQ3uCPdLAEEU5gM0MVXyH0il/WU5a+7NwFfV
+         jePYiL/CPkTMeu3CAWQbZ34xZvnVHcqGWqoOQKa6zQcIGG5pJ0h9DiUhlvFKIRHWXLPI
+         cnFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCI8fx0gMRsjmp78NaHBAXgr00WO6x1k28VqvHMsoXUaXhK92jc1XlYVyTux/yA04NFozGwQ8e26W/eGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRNnstR5PwLP/eJq7c2EpmqObw/PTNbb42uUuN9/lPupa0ct8/
+	fXQEOXb3wspffmznKZOpkDT5D4BRr3NC176OCbbtj2itHC6u2OTkCQfwOgKGIzm86LYBSf+Dz9o
+	hiFs4bIwHkzfJ1xiQhjn/bmQ8wqPJr+8LinX1GQsGYw==
+X-Gm-Gg: ASbGncuw1goLkigNDnx9VEUuxpRqzjtNjV6A0V2pD6sK+eWxhNR7A4XmXXNZTdpK8Vb
+	YUOMcDBMNf4LC0owxJJGp6G77ND0RSJYUIvt+dwtvJu+V5Lfg3UzjHQ4GXzM0dPsBj4UiXBKjOT
+	9eUYQTM1QIDlN0rzdbE3u8K73IbT4Dbag2pDKYUKyJ01xy0bhNQIgHXudzwVpeagHxY6TEWOxRO
+	Nmv3Sw8
+X-Google-Smtp-Source: AGHT+IGThrKgpaZ2Jb+IxUr+u2cOUabVPTBAwo+RY7tux4h/Zk1WncO4NjXraMuphAlOZPqbrt4I+GCL5BfG+ELw2mM=
+X-Received: by 2002:a17:902:f54d:b0:24c:e213:ca4a with SMTP id
+ d9443c01a7336-2516ed66d7amr73266655ad.2.1757360771804; Mon, 08 Sep 2025
+ 12:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819090853.3988626-1-keirf@google.com> <20250819090853.3988626-5-keirf@google.com>
-Message-ID: <aL8yMum27Qw_Wkkw@google.com>
-Subject: Re: [PATCH v3 4/4] KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
-From: Sean Christopherson <seanjc@google.com>
-To: Keir Fraser <keirf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
+ <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
+ <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
+ <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
+In-Reply-To: <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 8 Sep 2025 12:45:58 -0700
+X-Gm-Features: Ac12FXwNfDS_Qqj870v2sNtiyiKyRUxgf6ydh_1JzHPqlof9837yRmLCR8lKXvE
+Message-ID: <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
+ io_uring_cmd_prep() to avoid UB
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025, Keir Fraser wrote:
-> Device MMIO registration may happen quite frequently during VM boot,
-> and the SRCU synchronization each time has a measurable effect
-> on VM startup time. In our experiments it can account for around 25%
-> of a VM's startup time.
-> 
-> Replace the synchronization with a deferred free of the old kvm_io_bus
-> structure.
-> 
-> Signed-off-by: Keir Fraser <keirf@google.com>
-> ---
->  include/linux/kvm_host.h |  1 +
->  virt/kvm/kvm_main.c      | 10 ++++++++--
->  2 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index e7d6111cf254..103be35caf0d 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -206,6 +206,7 @@ struct kvm_io_range {
->  struct kvm_io_bus {
->  	int dev_count;
->  	int ioeventfd_count;
-> +	struct rcu_head rcu;
->  	struct kvm_io_range range[];
->  };
->  
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 4f35ae23ee5a..9144a0b4a268 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -5953,6 +5953,13 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
->  }
->  EXPORT_SYMBOL_GPL(kvm_io_bus_read);
->  
-> +static void __free_bus(struct rcu_head *rcu)
-> +{
-> +	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
-> +
-> +	kfree(bus);
-> +}
-> +
->  int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
->  			    int len, struct kvm_io_device *dev)
->  {
-> @@ -5991,8 +5998,7 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
->  	memcpy(new_bus->range + i + 1, bus->range + i,
->  		(bus->dev_count - i) * sizeof(struct kvm_io_range));
->  	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
-> -	synchronize_srcu_expedited(&kvm->srcu);
-> -	kfree(bus);
-> +	call_srcu(&kvm->srcu, &bus->rcu, __free_bus);
+On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
+ wrote:
+>
+> On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
+> > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa=
+.ai> wrote:
+> > >
+> > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
+> > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@fu=
+riosa.ai> wrote:
+> > > > >
+> > > > > The pdu field in io_uring_cmd may contain stale data when a reque=
+st
+> > > > > object is recycled from the slab cache. Accessing uninitialized o=
+r
+> > > > > garbage memory can lead to undefined behavior in users of the pdu=
+.
+> > > > >
+> > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so th=
+at
+> > > > > each command starts from a well-defined state. This avoids exposi=
+ng
+> > > > > uninitialized memory and prevents potential misinterpretation of =
+data
+> > > > > from previous requests.
+> > > > >
+> > > > > No functional change is intended other than guaranteeing that pdu=
+ is
+> > > > > always zero-initialized before use.
+> > > > >
+> > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > > > > ---
+> > > > >  io_uring/uring_cmd.c | 1 +
+> > > > >  1 file changed, 1 insertion(+)
+> > > > >
+> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > > > index 053bac89b6c0..2492525d4e43 100644
+> > > > > --- a/io_uring/uring_cmd.c
+> > > > > +++ b/io_uring/uring_cmd.c
+> > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, c=
+onst struct io_uring_sqe *sqe)
+> > > > >         if (!ac)
+> > > > >                 return -ENOMEM;
+> > > > >         ioucmd->sqe =3D sqe;
+> > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
+> > > >
+> > > > Adding this overhead to every existing uring_cmd() implementation i=
+s
+> > > > unfortunate. Could we instead track the initialized/uninitialized
+> > > > state by using different types on the Rust side? The io_uring_cmd
+> > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
+> > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees =
+the
+> > > > PDU has been initialized.
+> > >
+> > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
+> > > the pdu. In uring_cmd callback, we can fill zero when it's not reissu=
+ed.
+> > > But I don't know that we could call T::default() in miscdevice. If we
+> > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
+> > >
+> > > How about assign a byte in pdu for checking initialized? In uring_cmd=
+(),
+> > > We could set a byte flag that it's not initialized. And we could retu=
+rn
+> > > error that it's not initialized in read_pdu().
+> >
+> > Could we do the zero-initialization (or T::default()) in
+> > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
+> > isn't set (i.e. on the initial issue)? That way, we avoid any
+> > performance penalty for the existing C uring_cmd() implementations.
+> > I'm not quite sure what you mean by "assign a byte in pdu for checking
+> > initialized".
+>
+> Sure, we could fill zero when it's the first time uring_cmd called with
+> checking the flag. I would remove this commit for next version. I also
+> suggests that we would provide the method that read_pdu() and write_pdu()=
+.
+> In read_pdu() I want to check write_pdu() is called before. So along the
+> 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
+> initialized?
 
-To address the syzkaller splat, KVM needs to call srcu_barrier() prior to freeing
-the structure.
+Not sure what you mean about "20 bytes for pdu".
+It seems like it would be preferable to enforce that write_pdu() has
+been called before read_pdu() using the Rust type system instead of a
+runtime check. I was thinking a signature like fn write_pdu(cmd:
+IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
+reason that wouldn't work and a runtime check would be necessary?
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 9144a0b4a268..62693f18ecf4 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1321,6 +1321,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
-                kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
-        }
-        cleanup_srcu_struct(&kvm->irq_srcu);
-+       srcu_barrier(&kvm->srcu);
-        cleanup_srcu_struct(&kvm->srcu);
- #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-        xa_destroy(&kvm->mem_attr_array);
+>
+> But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> an=
+d
+> issue_flags. How about some additional field for pdu is initialized like =
+below?
+>
+> struct IoUringCmdArgs {
+>   ioucmd: Pin<&mut IoUringCmd>,
+>   issue_flags: u32,
+>   pdu_initialized: bool,
+> }
+
+One other thing I realized is that issue_flags should come from the
+*current* context rather than the context the uring_cmd() callback was
+called in. For example, if io_uring_cmd_done() is called from task
+work context, issue_flags should match the issue_flags passed to the
+io_uring_cmd_tw_t callback, not the issue_flags originally passed to
+the uring_cmd() callback. So it probably makes more sense to decouple
+issue_flags from the (owned) IoUringCmd. I think you could pass it by
+reference (&IssueFlags) or with a phantom reference lifetime
+(IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
+ensure it can't be used after those callbacks have returned.
+
+Best,
+Caleb
 
