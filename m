@@ -1,113 +1,151 @@
-Return-Path: <linux-kernel+bounces-805918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C87AB48F4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:23:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FC7B48F4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB8B16A8A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:23:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70463A5F95
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3430C30B515;
-	Mon,  8 Sep 2025 13:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C0663B9;
+	Mon,  8 Sep 2025 13:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="faLSwB0l"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUCz31aE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B354A06;
-	Mon,  8 Sep 2025 13:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2594A06;
+	Mon,  8 Sep 2025 13:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757337775; cv=none; b=LJqd6vHlWoi7uyOxITJxcqGhJJOnon6dg8ui5X7bnW9gfClDESQRuIxR47to8UUFE/CPHDvC/esyZa8yIlaY05z818KiEhE8umaNFGDqOXQyPGhMwDgABKpCoR/CEkgvKIdM0SzaMd5meAkK1aF9KyNG+o1VSQpJ4ySE6Ch8iho=
+	t=1757337766; cv=none; b=R5gD2md2ZrPdo4rq/VZ6B37qVwFzgwq8wSpOGjT+0yLIUNPBbvYV8jLmQEX4MS/WoHvwlsDGOpdTqCGko741sC+mnAcFrFySjvGT3x9Xc3mPzx2c0AdGDpofLCCHZeftTOirmi5jW+onol1O1D4ETVBthn9L2YGOjFUr/Hvww+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757337775; c=relaxed/simple;
-	bh=SuRVL9yTkDR5h545LQmg+jQK9v+68jYw4M9j0Cty4Qw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tNoYQhSode8UhPMvou0dolSgxNhRnk7UmpNane9UmLAsKiTT7mfjWUqKC8aQLyVrBwuNbxDk1p8x1+oBZNRifiIhg+GmWoOHHAopBGaLvIGi1jk1m1swe+UjZCTnIs04D8NdlRfXjOT5GDwEggwCeSuAcINHFoHw3Wjc6lyjWWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=faLSwB0l; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=SuRVL9yTkDR5h545LQmg+jQK9v+68jYw4M9j0Cty4Qw=;
-	t=1757337774; x=1758547374; b=faLSwB0ljv4aTnWIIxsKS2E7GrDYhBDVqPu0ebYzKjLXPQx
-	XoHGzObf5BX7lI6EmZfXXoh83hVbvnCu3xfTr+zm/RMWvmkRLgZYg6KqRaT6LPgIRGfPwTtfUib+B
-	M7jHW9kq+zo0qpwMYw24ENPZeOVsZ6QWXl4wsNrOV+buxYak3Yb6ZltP3sPrpPh6EQdH5lJgvxLSI
-	PXNiqHpO5G3mAe2PRO8yt2PqSb+QKXW9N6eOM8z75mFFd6MhT6tjdtWJW4aScxJ2Tohvsu0/aVNhh
-	KlaObe4QZCrXCR2syBGW9+zWXdf5v6f+rb58ryhqLz92OFNaFMsZt9Yd5Dkh3L9A==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uvbpR-00000007biI-1yNJ;
-	Mon, 08 Sep 2025 15:22:41 +0200
-Message-ID: <4ef5406d68805d6b176a0078ed0bf21b00052264.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next 02/11] tools: ynl-gen: generate nested array
- policies
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?Asbj=F8rn?= Sloth =?ISO-8859-1?Q?T=F8nnesen?=	
- <ast@fiberby.net>, "Keller, Jacob E" <jacob.e.keller@intel.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>,  Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>,  Andrew Lunn <andrew+netdev@lunn.ch>,
- "wireguard@lists.zx2c4.com" <wireguard@lists.zx2c4.com>, 
- "netdev@vger.kernel.org"	 <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Mon, 08 Sep 2025 15:22:40 +0200
-In-Reply-To: <f574e4b9-d0ea-46ef-bbed-8f607ab7276f@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	 <20250904220156.1006541-2-ast@fiberby.net>
-	 <e24f5baf-7085-4db0-aaad-5318555988b3@intel.com>
-	 <6e31a9e0-5450-4b45-a557-2aa08d23c25a@fiberby.net>
-	 <c1a4da4cb54c0436d5f67efacf6866b4bc057b3e.camel@sipsolutions.net>
-	 <f574e4b9-d0ea-46ef-bbed-8f607ab7276f@fiberby.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757337766; c=relaxed/simple;
+	bh=oGMXLolCMDVFp1mzpmZLsQtGcdLcEDD0RTT5IraeD98=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=QcR5hWzASmJg3LNOxLZinFQmH4TDMxvbWAJME3v5XoVmvwa7MxL/uZ6rDNXf1PpSo5rolVv55Yx9lfexdMucJdyy1c3SaM+E/BlaP//q3xGyvnRpQePkyLM1ScODeuVxrSWmrtjXhw8eJx6iVU0I/HlxWtC2F9TVnKEcOxJB8xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUCz31aE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04276C4CEF1;
+	Mon,  8 Sep 2025 13:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757337766;
+	bh=oGMXLolCMDVFp1mzpmZLsQtGcdLcEDD0RTT5IraeD98=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=fUCz31aEhKMazmVeuIhP3Vg8oSJMlOUcTQUhtb9AbjKSIakE1rzGRCZubx+EkWbIv
+	 eeOeDG92oNZjKpQ+L5W3AoUljesDEDVeSsITBuhSjiNJ1xvMVeq2Wg8JQE9vtlSGrm
+	 QQTyQzkbR6eWVYhPcQKA5//eHAzfAQMBVk9v+448yPedeBPucdXGr7lB9p3fZx+Lqv
+	 dE+IoUPSlcPO1vrl80Ci4kJJc2gqYlHjqpY9IahU0vX1Q5I2hwmi/pe+31hgi9vtFh
+	 CPqC5LojP99iNVZPBTrL3Y7b6X1cZ1tbMf5qjePmWg1jRsE0qyLNPsAUu/x1Ji8x5L
+	 +VU/AuMSW55+g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 15:22:41 +0200
+Message-Id: <DCNG8UF8XFT2.12S9I7MBNV5PX@kernel.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <2025090807-bootleg-trophy-a031@gregkh>
+ <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
+ <2025090849-tweak-conductor-f642@gregkh>
+In-Reply-To: <2025090849-tweak-conductor-f642@gregkh>
 
-On Mon, 2025-09-08 at 09:08 +0000, Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
->=20
-> Thank you for the consensus write up. Should we prohibit indexed-array wi=
-th sub-type
-> nest for families with a genetlink protocol?
->=20
-> It is currently only used in families with a netlink-raw or genetlink-leg=
-acy protocol.
+On Mon Sep 8, 2025 at 2:48 PM CEST, Greg Kroah-Hartman wrote:
+> On Mon, Sep 08, 2025 at 12:54:46PM +0200, Danilo Krummrich wrote:
+>> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
+>> index b26eea3ee723..475502f30b1a 100644
+>> --- a/samples/rust/rust_debugfs.rs
+>> +++ b/samples/rust/rust_debugfs.rs
+>> @@ -59,6 +59,8 @@ struct RustDebugFs {
+>>      #[pin]
+>>      _compatible: File<CString>,
+>>      #[pin]
+>> +    _test: File<&'static CStr>,
+>> +    #[pin]
+>>      counter: File<AtomicUsize>,
+>>      #[pin]
+>>      inner: File<Mutex<Inner>>,
+>> @@ -140,6 +142,7 @@ fn new(pdev: &platform::Device<Core>) -> impl PinIni=
+t<Self, Error> + '_ {
+>>                          .property_read::<CString>(c_str!("compatible"))
+>>                          .required_by(dev)?,
+>>                  ),
+>> +                _test <- debugfs.read_only_file(c_str!("test"), c_str!(=
+"some_value")),
+>
+> Cool, but again, we do not want to ever be storing individual debugfs
+> files.  Well, we can, but for 90% of the cases, we do not, we only want
+> to remove the whole directory when that goes out of scope, which will
+> clean up the files then.
 
-I have no strong opinion on that, but I guess maybe so? At least print
-out a warning for anyone who's trying to add such a new thing perhaps,
-so that new stuff that isn't just a port (to ynl) or annotation of
-existing APIs doesn't add it.
+This API does not work in the way that you have a struct storing the data y=
+ou
+want to expose *and* another one for the files with the data attached.
 
-> > I can't get rid of the nested array types in nl80211 though, of course.
->=20
-> Wireguard is already in the same boat. [...]
+The File type contains the actual data. For instance, if you have a struct =
+Foo,
+where you want to expose the members through debugfs you would *not* do:
 
-Oh, sorry. I didn't look at the linked patch and thought it was adding
-such a new thing. Looking now, I see it just makes the policy validate
-it instead of (only) doing it in the code. (FWIW, in the code you could
-then also set the policy argument for nla_parse_nested() calls to NULL.)
+	struct Foo {
+	   a: u32,
+	   b: u32,
+	}
 
-> Given that, as Jacob pointed out, there are more families with nested arr=
-ays in
-> their YNL spec, than those using NLA_NESTED_ARRAY, then it appears that t=
-here
-> are more families already in the boat.
+	struct FooFiles {
+	   a: File<&u32>,
+	   b: File<&u32>
+	}
 
-Right.
+and then create an instance of Foo *and* another instance of FooFiles to ex=
+port
+them via debugfs.
 
-johannes
+Instead you would change your struct Foo to just be:
+
+	struct Foo {
+	   a: File<u32>,
+	   b: File<u32>,
+	}
+
+If you now create an instance of Foo (let's call it `foo`), then foo.a or f=
+oo.b
+dereferences to the inner type, i.e. the u32. Or in other words `foo` still
+behaves as if `a` and `b` would be u32 values. For instance:
+
+   if foo.a =3D=3D 42 {
+      pr_info!("Foo::b =3D {}\n", foo.b);
+   }
+
+The fact that the backing files of `a` and `b` are removed from debugfs whe=
+n Foo
+is dropped is necessary since otherwise we create a UAF.
+
+Think of File<T> as a containers like you think of KBox<T>.
+
+KBox<T> behaves exactly like T, but silently manages the backing kmalloc()
+allocation that T lives in.
+
+With File<T> it's exactly the same, it behaves exactly like the T that live=
+s
+within File<T>, but silently manages the debugfs file the T is exposed by.
 
