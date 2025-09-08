@@ -1,178 +1,133 @@
-Return-Path: <linux-kernel+bounces-806853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D70DB49CB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C79F1B49CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561494E3418
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9DD4445CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF732EA74C;
-	Mon,  8 Sep 2025 22:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B872E9EA6;
+	Mon,  8 Sep 2025 22:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgHh5ogG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WzrN3HAh"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A0C2E2DD4
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5F62E888F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757369247; cv=none; b=tZscaj/5jnrqJ+cWvOG/NmJR10RQmhzXwN3CXu3MnUwUtSw0dhZ1hBv9mWtQH9RrnvJUAzq316gqEvqQpOzAG2Ssu6slDofeFhcQqmAYz2SuT2jI5HpB/P4/avqjsnx5tAYJC6HQ/45MozG3+xYtXiVXfSJJhKWuCTbr2SKsuyQ=
+	t=1757369561; cv=none; b=t7JLkINcMhyDk2WaEKYz4ay/e6ZIWkS6AzpgvVQBk0oiJC4WSpj4FHG02nqN7/eCMeWt/D6jr2y7SV52+Ma6AIIZ617WfHqxsOY9WoZo2DfcELL3o+cU0jk/lPyX+w3lbhZkcfgP4H6OkDhW4z8wq26os3xaGCSnlAArMv0oqk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757369247; c=relaxed/simple;
-	bh=hc/nevHocOJ876jD2SRmqY5GYnp5OLlh9aqg2Gbf+DA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ai6cKh76qpGfzM0R9K1GKuM8EPfN7/3Mk2mU7/+NcWzp6upIGxiQiRV/TCHqPHQczXvb0eDqZqZJkQ1+WdbXesETC6uHEGepsFxuunvoPvWiAwrFDMVSwlGfmkJ+OQF82k3JQS9VTM9zs9fi0Go2XPdn7gSTnYS3rLWequKKufo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fgHh5ogG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757369244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b2wPtiNmJME90sAyrYUjZU76jbZvcVUh0oGD0p8TgMU=;
-	b=fgHh5ogGmstX1whwcgzwkDM/Va+ksXT365Tk5McD7VaNTebw0wcVHnIRW2ygOSIfgrW9PQ
-	nsm4uiky0HArR4npVrIb7sIuCew1IER0yvWCOz6MOX1mgy9AyFJs+bhQ+Sq/gfvqd0YUWd
-	Ed9vBnrdh4QU0nQJX/0pqvPuW7olfqI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-nYeROWUjPWeC8K3Twj_F2Q-1; Mon,
- 08 Sep 2025 18:07:20 -0400
-X-MC-Unique: nYeROWUjPWeC8K3Twj_F2Q-1
-X-Mimecast-MFC-AGG-ID: nYeROWUjPWeC8K3Twj_F2Q_1757369236
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F6821800292;
-	Mon,  8 Sep 2025 22:07:16 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.64.41])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C57331800452;
-	Mon,  8 Sep 2025 22:07:12 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Asahi Lina <lina+kernel@asahilina.net>
-Subject: [PATCH 2/2] rust/drm: Add gem::impl_aref_for_gem_obj!
-Date: Mon,  8 Sep 2025 18:04:45 -0400
-Message-ID: <20250908220657.165715-3-lyude@redhat.com>
-In-Reply-To: <20250908220657.165715-1-lyude@redhat.com>
-References: <20250908220657.165715-1-lyude@redhat.com>
+	s=arc-20240116; t=1757369561; c=relaxed/simple;
+	bh=aW9TrZIZCm6w9hqqtXvopMP+o17f9SPySxa6MwJYh9o=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=s5/am4YJKZM9HWOZPWjuIG8TfppQTHWbzuoOci3mahHi/OR/pZfsBUAqvE0ghrYJf6VRuFy9nAtfA8YSLaK/hyNVQUvcPyoZbBcz5uNrLjpWC1NVeIYt/2DOBmRJtSXB/NQJrgnoAw/CL0E/dzFhKDGDSwd4JV55jV1t6b6mRCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WzrN3HAh; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d605c6501so44304267b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:12:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757369559; x=1757974359; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gNtbdDCHgk+DiPqbiXpsjFsPHOrdOzQKbMxRyjp9MVM=;
+        b=WzrN3HAhk6i25N+7F92VYbQsPX2QJ/udpqaa/Cn3tA4FhNKu0byHG+wOszZ3Mm6W8g
+         DBDecl3HSKKSK6K0hD8rJOdftBQadfkkQQjtsw5GR8Jt5wfpbfdOCd436OhGam2nWiMd
+         kekx/WgKmaIajZhDsRE5G7k1jCmk4RcWhkUXnGj/WGekdAiPLLDC+ncjtpnmmu3zIG83
+         kqhWm0C2nD3fOzLbDNFNggfSoBdSbw78AP6rYgu2dzxZ7rexsHQ/LIUCffoo7ZlsIffH
+         PtTPrlgEYMXkoO6LjgKyciT1xeeU4xWE9oqi7gNYN02u+Xb4xC3ATY4ARrZQcOccKkWx
+         Upmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757369559; x=1757974359;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gNtbdDCHgk+DiPqbiXpsjFsPHOrdOzQKbMxRyjp9MVM=;
+        b=GotgkPTs6E452nscd/WZdE9qUx65Y1Eo499cfzKra3cAxoNNpKbcdsf2EH7oHKxr2/
+         wayRf89eLpZpbIH8nPadFsRogjfIy8pNX3sTQbasRMsQDGXDxzypvwwdW2TZsW+KzRcB
+         HO6F6RF3Cn012tSaYuirV43FSOL27r+9X+77+jdhWB2uM0FbPbH3FpMeBJ48/kJpjQ0/
+         QhtGbZOrW0tJ0CSa+wyercbEZg2u0s3ybmxFQCDPlXSUVXb/z79bZnJrtrUsud3bNaaj
+         fgoA/hAyy1gpcMMTuMvmeDiKbKd4Hpr3dGAML/kO2hF5G1sTTlB3yhKHEX1U5s3gmB66
+         YArA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRd2uCqMxfpAeXwMJOAKHfiTMUnc9ulMNKZzUm2Q/At3tyBZ6aultOpDsOI/9rcTxyCduTTf+cgC+ovDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr1QuakHWTPh5TuplUaG9cfkbNqmKkXxv8qAmOMcIQ02K7JY29
+	ri+liWqrzQxLO/pl9wzHcqmHUDrAqJNA7L0eiUYLbXxNyEqrdWwxCJsOu/ULPyrNgQ==
+X-Gm-Gg: ASbGnctMLd+sxvdfc3cvSfRAXfyqdoONZzRkMkEQgE7lTOjF8N9VN+4ZSnmUHeyI3+u
+	+TeuoA+0cWBTUAuJKTndOVhUX3pkrzRA41FWmQDHXXw+2WL2AGUkYUMI9Dnk5TiT1bIyOYcGyvR
+	LNArhbgNyRo/y9FQ5pjBvio9VT6zZzQ2Tm3hLvfDMLmYV43/Wc+Q48r47EfthpVz9Kxk+eeXaVU
+	vQOzP+L9C0ZQFC8KetF2hM5HD2K5nGqBYdlH8+oahqdFqx/f+6y3GTgCgE+OAvboKwu7wLnUwga
+	77gKPM4tDuNR8hFjKldMAdVMipfyUrC29HgIkYJwlpUEdz7tWc5IsaOdjr0taS3iWsnee5UikJ/
+	PFA7sy+nuUN5NMGorNR2si7AgExnMOHCuUelhuK/dBEXU20pmX+C6z3NwwjNKD9KzZvgFsXefAE
+	Lyi+DdoP8=
+X-Google-Smtp-Source: AGHT+IEcR9qj/dDVqywaUNohOEcHuvPXDWkQP4kYVA1b3P4MwbJPWFYGGqkq8v1AvH1FCx7J7AOhzw==
+X-Received: by 2002:a05:690c:6087:b0:721:6b2e:a07a with SMTP id 00721157ae682-727f5f3e326mr79337167b3.51.1757369558683;
+        Mon, 08 Sep 2025 15:12:38 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a85a0cd9sm56756867b3.69.2025.09.08.15.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 15:12:37 -0700 (PDT)
+Date: Mon, 8 Sep 2025 15:12:20 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Axel Rasmussen <axelrasmussen@google.com>, Chris Li <chrisl@kernel.org>, 
+    Christoph Hellwig <hch@infradead.org>, 
+    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, Johannes Weiner <hannes@cmpxchg.org>, 
+    John Hubbard <jhubbard@nvidia.com>, Keir Fraser <keirf@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Shivank Garg <shivankg@amd.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Wei Xu <weixugc@google.com>, 
+    Will Deacon <will@kernel.org>, yangge <yangge1116@126.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Yu Zhao <yuzhao@google.com>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 0/6] mm: better GUP pin lru_add_drain_all()
+Message-ID: <41395944-b0e3-c3ac-d648-8ddd70451d28@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
 
-In the future we're going to be introducing more GEM object types in rust
-then just gem::Object<T>. Since all types of GEM objects have refcounting,
-let's introduce a macro that we can use in the gem crate in order to copy
-this boilerplate implementation for each type: impl_aref_for_gem_obj!().
+Series of lru_add_drain_all()-related patches, arising from recent
+mm/gup migration report from Will Deacon.  Based on 6.17-rc3 but apply
+to replace v1 in mm.git.  I suggest all but 6/6 be hotfixes going to
+6.17 and stable.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/drm/gem/mod.rs | 53 +++++++++++++++++++++++++++-----------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+v1 was at
+https://lore.kernel.org/linux-mm/a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com/
+amd its
+1/7 mm: fix folio_expected_ref_count() when PG_private_2
+has been dropped from v2, per Matthew Wilcox.
 
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index af92f2d46d8d8..317edd455cc1c 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -14,6 +14,43 @@
- };
- use core::{ops::Deref, ptr::NonNull};
- 
-+/// A macro for implementing [`AlwaysRefCounted`] for any GEM object type.
-+///
-+/// Since all GEM objects use the same refcounting scheme.
-+macro_rules! impl_aref_for_gem_obj {
-+    (
-+        impl $( <$( $tparam_id:ident ),+> )? for $type:ty
-+        $(
-+            where
-+                $( $bind_param:path : $bind_trait:path ),+
-+        )?
-+    ) => {
-+        // SAFETY: All gem objects are refcounted
-+        unsafe impl $( <$( $tparam_id ),+> )? crate::types::AlwaysRefCounted for $type
-+        $(
-+            where
-+                $( $bind_param : $bind_trait ),+
-+        )?
-+        {
-+            fn inc_ref(&self) {
-+                // SAFETY: The existence of a shared reference guarantees that the refcount is
-+                // non-zero.
-+                unsafe { bindings::drm_gem_object_get(self.as_raw()) };
-+            }
-+
-+            unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
-+                // SAFETY: `obj` is a valid pointer to an `Object<T>`.
-+                let obj = unsafe { obj.as_ref() };
-+
-+                // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+                unsafe { bindings::drm_gem_object_put(obj.as_raw()) };
-+            }
-+        }
-+    };
-+}
-+
-+pub(crate) use impl_aref_for_gem_obj;
-+
- /// A type alias for retrieving a [`Driver`]s [`DriverFile`] implementation from its
- /// [`DriverObject`] implementation.
- ///
-@@ -252,21 +289,7 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
-     }
- }
- 
--// SAFETY: Instances of `Object<T>` are always reference-counted.
--unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
--    fn inc_ref(&self) {
--        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
--    }
--
--    unsafe fn dec_ref(obj: NonNull<Self>) {
--        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
--        let obj = unsafe { obj.as_ref() };
--
--        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
--    }
--}
-+impl_aref_for_gem_obj!(impl<T> for Object<T> where T: DriverObject);
- 
- impl<T: DriverObject> super::private::Sealed for Object<T> {}
- 
--- 
-2.51.0
+1/6 mm/gup: check ref_count instead of lru before migration
+    v1->v2: paragraph on PG_private_2 added to commit message
+2/6 mm/gup: local lru_add_drain() to avoid lru_add_drain_all()
+    v1->v2: lru_add_drain() only when needed, per David
+3/6 mm: Revert "mm/gup: clear the LRU flag of a page before
+    v1->v2: Acked-by David added
+4/6 mm: Revert "mm: vmscan.c: fix OOM on swap stress test"
+    v1->v2: Acked-by David added
+5/6 mm: folio_may_be_lru_cached() unless folio_test_large()
+    v1->v2: folio_may_be_lru_cached(): lru_ per David
+6/6 mm: lru_add_drain_all() do local lru_add_drain() first
+    v1->v2: Acked-by David added
 
+ include/linux/swap.h |   10 ++++++++
+ mm/gup.c             |   14 ++++++++---
+ mm/mlock.c           |    6 ++--
+ mm/swap.c            |   53 +++++++++++++++++++++++--------------------
+ mm/vmscan.c          |    2 -
+ 5 files changed, 54 insertions(+), 31 deletions(-)
+
+Thanks,
+Hugh
 
