@@ -1,84 +1,121 @@
-Return-Path: <linux-kernel+bounces-806476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E02B4978B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:49:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486B1B4978E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBAC14E1FC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A24E1BC0601
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444E3112C8;
-	Mon,  8 Sep 2025 17:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UuLquz8a"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5A2313520;
+	Mon,  8 Sep 2025 17:50:49 +0000 (UTC)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6297E107
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F26313C8E8;
+	Mon,  8 Sep 2025 17:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757353755; cv=none; b=asaaih0Zy1WVassDOoVSQh59XxkOC905dC8+v/0X+2P05aUQZB/dgXcqLu+Zpg2IDv0ml/GgKCwel+uBYUl3UWmd4hU1XXY6PhbELE3BzLh1XBl0wTRsX6lIVuR3F39Hi8JjINo8UOKPCKHlKdiVPrpr9Z9IJYjf5bHsHL5basM=
+	t=1757353848; cv=none; b=Q+M+5mlEgni6l6VPs5+G8YUrKZMAU+FmazOwYPRF1q7dGyxtV5Yk18R3LIPmQgADbJRMooRNzNMdQL4Vb0F6am93hXac7TshIj1KCtUL3YCNj3GjnRsqKd8wA7h3mVH32eR7cQ1ABwY/QYGGIX7fIoUS8iU7BS6iySw5DWJzPfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757353755; c=relaxed/simple;
-	bh=7QLH4KMagjgfNO0NejHF/vT+Y9PWdvp2h3e0uW+njAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXZfOR7q7hN5eDTkh+Xrsv+S7NaHQoVsHTx9h0TlGTh2kX27CAJI4ycnW0YT6Eqi43y85Ten4U3tozSaPMFf9sfln8Ap209LQT7RigDz24PinuZbbxnialdi6QsU4mh5v+toJRGc1fX/2mXbmtIM2jrfibQCfJ/1Wf585G1Qh8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UuLquz8a; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 8 Sep 2025 13:49:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757353750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rQg8gEFZWs/W0elemBVUBKG6Hh3kGDxreEQh4an/F3A=;
-	b=UuLquz8aTIdheUlo1oy+JJbjcaPc4x0UA0/t5TkXgduokBYwTu1dZqeQH6phSKTNEop3QL
-	eHVJia0mS2WEPE8MBGFFczFzSPjwljkxlfXQsqKh9hpgZ7Ot8MfRkgGMltaganW0QJGPvO
-	sh7B4O+5owx3zgj1B+yoNYDxqrKbkLc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Michal Hocko <mhocko@suse.com>, Yueyang Pan <pyyjason@gmail.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Sourav Panda <souravpanda@google.com>, 
-	Pasha Tatashin <tatashin@google.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-Message-ID: <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
-References: <cover.1755190013.git.pyyjason@gmail.com>
- <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
- <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
- <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
- <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
- <aLFKHGe2loD657fu@tiehlicka>
- <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
- <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
+	s=arc-20240116; t=1757353848; c=relaxed/simple;
+	bh=5YY088FLsTyhrftmqQfk5sbO8FI4XvIM5JKW8bZMtq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzI/FwhJbirm0asXnaMzBatEvZ7EpKn776+0yfQvtrEs39eFVFUhxtgMM4Rc8Bs0Iof02RYRoX69h3MReuM0nr/ADv6HomycKnnTJaMpI28VLq9JjrCNR/tU2UdK41DxHx8QuUT+had8AW7nMYzc6dfg7TIsb7xoAoYF39LK1io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-772301f8ae2so3829365b3a.0;
+        Mon, 08 Sep 2025 10:50:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757353846; x=1757958646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z3YSAFfQ0v2sBBmNLG7Qti585x+a4A5KEbS76irY4Js=;
+        b=tWlLTcKM97E6UkmIdqM/bLMudF1IG45YCogDgQm18h+m++oUd7/wfPNVmrqYocW+eA
+         9xsXJb2Ak6Hjqs9HItFSEB60bNBTTf96jDh47MPE2gFD7+43tj7EOSlzp3/F141+SCZo
+         3A61DctViGtPnSIQiMJVM+RGjnO6BGnTDVO6yd5EFfHZFpprnOk9srKp9o6p69LzYH8A
+         Mh5vH0uncW/sFUoBge635uySrvGbibhdAA05sus+y7YWfCwU97FuaLlaDdJcbKBOBeJq
+         p7RD8hqiDtDRWcahDeELiKiD5abLVkbojjsfkmQ4bXt57JaJlvZ4k0pl/+GVaRSeDYjW
+         Yp5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWehKh9yj/paA7Yy4MjlC1CZkWJnfnLaS7zAnBfPAOlLhoW2J67vmawlLP2BxjcNhwYW6GxbsbgeCkq75g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx48T5v0nMhbZnK6WKzAr1qwInXGO60S/ptnoOdEfaUriNXbuWw
+	M0NEa+HGtCMCBxUP/DmjZCLIJDhDFGYS0ziMr6ZfL+4z+4EOLN9O4FS39PIc
+X-Gm-Gg: ASbGncvFrFLaeoHk23bJoxkW+H00+HfmpEXXCmabEm1X4nPAgB9IykhcGgAYz2yq3fZ
+	0GLZe2VOIbRUHwC/ri2p9wuFQDlDV5WoNeSRZ8eEVnK3XIRqoHktZM7npHYPpQh+2blFYdVSWYe
+	XJJq94V82KzgEqyQFFdiMiOg/VZyB/ZZRX4EMu5gt9IVArZBuqVwYpvayPzioUCw4+onw8QH08+
+	3+UUWbmq+zlv2ltcALPy9Tz9swH5VXExrDNeOzoeUp+HJ2w5vENY00Kgosq8ttAHcao6Mtb4eqV
+	T8hPtfmSsWAjid3bVIg0d/r+tOLbTdfutGHIi965MU7FHvvkaf8a+HJGtnWPeUTi0LD8OgJqo8O
+	PrIWtNw3BGQ0fY1fOafgBTDuPgbfaEaPeQoe5dTZMZwtxqP8SJkatTSZZ5DTZoS5ffRjdo+jmUC
+	5eGHFe9SyvKFAPXUBWWQ+1fe6eBZcu8vG553JyMRcnEl7Vx/o55VfKQcFR6vTqtEs+ZQNkxvz6t
+	K/F
+X-Google-Smtp-Source: AGHT+IGcxfNb22s3jr7+1Cy+2Q+z7L23H4uk3O3sxYxG7gKcFstVC/6fh4ReASuZxujTamDx3bUf7A==
+X-Received: by 2002:a05:6a20:7f8a:b0:250:300f:2f32 with SMTP id adf61e73a8af0-2534547a71cmr12155131637.45.1757353846344;
+        Mon, 08 Sep 2025 10:50:46 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b4d96829a66sm25333596a12.6.2025.09.08.10.50.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 10:50:45 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	dsahern@kernel.org,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mina Almasry <almasrymina@google.com>
+Subject: [PATCH net-next] net: devmem: expose tcp_recvmsg_locked errors
+Date: Mon,  8 Sep 2025 10:50:45 -0700
+Message-ID: <20250908175045.3422388-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 08, 2025 at 10:47:06AM -0700, Suren Baghdasaryan wrote:
-> On Mon, Sep 8, 2025 at 10:34 AM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > I think that got the memcg people looking at ways to make the accounting
-> > cheaper, but I'm not sure if anything landed from that.
-> 
-> Yes, Roman landed a series of changes reducing the memcg accounting overhead.
+tcp_recvmsg_dmabuf can export the following errors:
+- EFAULT when linear copy fails
+- ETOOSMALL when cmsg put fails
+- ENODEV if one of the frags is readable
+- ENOMEM on xarray failures
 
-Do you know offhand how big that was?
+But they are all ignored and replaced by EFAULT in the caller
+(tcp_recvmsg_locked). Expose real error to the userspace to
+add more transparency on what specifically fails.
+
+In non-devmem case (skb_copy_datagram_msg) doing `if (!copied)
+copied=-EFAULT` is ok because skb_copy_datagram_msg can return only EFAULT.
+
+Cc: Mina Almasry <almasrymina@google.com>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ net/ipv4/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 588932c3cf1d..c56d53e32c29 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2820,7 +2820,7 @@ static int tcp_recvmsg_locked(struct sock *sk, struct msghdr *msg, size_t len,
+ 							 used);
+ 				if (err <= 0) {
+ 					if (!copied)
+-						copied = -EFAULT;
++						copied = err;
+ 
+ 					break;
+ 				}
+-- 
+2.51.0
+
 
