@@ -1,213 +1,154 @@
-Return-Path: <linux-kernel+bounces-804977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A620B4828E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:21:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBEDB4828F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F79189C36B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20066164E39
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C911E7C19;
-	Mon,  8 Sep 2025 02:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15721E5B60;
+	Mon,  8 Sep 2025 02:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzeZWNle"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIlsqLqu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CE91B87C0;
-	Mon,  8 Sep 2025 02:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54271B87F2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 02:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757298086; cv=none; b=Oh4b033ZJJq7ZQRKjkRRfRk3tFAMH9ZvkKRiq4k+8y6bi1tinXBK03UY/E+4VGBxXezFyZhmdRWpRXhHn7mEFTIijkeQGI6bicBAMvU+Rx/AcQMLlp118JcuzV4EVYLpVMMWeNiBhEFtonOQ6q47LfHBs64PJMfvOE3n9f+1dRI=
+	t=1757298161; cv=none; b=FWEhsZxPjy/zuN8rJu+fjfN5JKANSL5e4WhifMdnLV1JvQ0vSeUKX6nnDGOf3pInVpcsDnxp8lz9ABn9Kh4AgNG5xKs1ZiivQFJjWBgO4MwPOolrEQ+1SUKpL8QWP6aW0itdiL4poueUgBugWt6IAn9adnXcSvdDeUgDXNfuCw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757298086; c=relaxed/simple;
-	bh=a6aDfQv5FvaRhUAb0OYJMBK9zIDGlQ4Y7qdw+lTknrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwsNcjlof+F7/W49FfUTP4aB+Bz9jSxCttdccZ6xHHsOrf2maB1FUVD41QNWd76vRrRQiz07GPiEyMcYzEmbbDGQDHLoLy1u7PTMYqZWVIYTU5ZQjRvPZjHSHgdFyXEBHAxRgKq0z3a/1XjrAu/OjC5MKVzGPwx3WpakQFIzfwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzeZWNle; arc=none smtp.client-ip=209.85.219.44
+	s=arc-20240116; t=1757298161; c=relaxed/simple;
+	bh=AP7DCAwxSP7Qfa1iIAAo3yMJur9zniQqgWIVyOQdSsw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ys1oX9xj9JuukCtwcjeWrIeq0ILdG4Z/ZycENAVycs3gDYsh1l9IQdVrfBGeWj/aikTRo1QVsUYLR8rLJarNCbrqgR228AQEZsnwbFRbuLkH5KcJduTGzy3fmh0NVM8CDWuhEuq51Q+1I1a3paO2x4ZrZKDV7Iotyl1hbfpnLVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIlsqLqu; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-726ee1a6af3so44947036d6.1;
-        Sun, 07 Sep 2025 19:21:23 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24b21006804so39686495ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 19:22:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757298083; x=1757902883; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757298159; x=1757902959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oQvcsK9AmIWuwBEfBGVFuDmRu55e5gkgeGEkjyZNnRk=;
-        b=NzeZWNlew9vBcxb3GlJhilMatOkRiHqtyZEc/O6amHrQJ8uphCqMjWJGm8WQxrb9wt
-         Er8TPs6isVO0owrJDJjHgCZX8GO6EroWziluI+fi5tBzD2eEpnTffS5I/rlrIWF7ALeu
-         9H+wxfmWJGjxmJv0E1sO792Hjvelu9NlQA6W9quZgDxzcnE0bSrEksdZEZgop2ou7KXs
-         lv0LJrGMeSQQFagOfoBF+cJ8c0a530a4cejITQ5kUSThDSXphl+epBnquic/m4pw9DiO
-         nrmHjmIpmNiuKLH/WTIezEdclTqwP0KzJhAi2YEU43SBUbEzkliBK85jW++vGxtydWpV
-         6qyg==
+        bh=Zgit50PMT8trJxBKxf6xHc2MsdgHHdU62IVEwkntQtI=;
+        b=OIlsqLqu8Cogj5bfVWc3zGWrolwfFSDz40tjBshVPD3mMiE3EhgHgXw3d/6It8pr1S
+         yPqXA08QdMEka77dQFF3jTBEsopZR6hEQb7EYoVQBz7SPocj8ZkD+1fvnFmGLrtoQ931
+         sDSj5rk9F0K9fwJadsjrfjjBTE9eNJdtEy6hk4sK0r/o2H4ABBVAPfPcwp6Fj8Qn8BZ3
+         vpwevKHF/pbQQWwbwUbvh5gQRF+Q2FdlxrBNabkwNNAXTkAGdLvoIzco9Hok0y2NiVYz
+         +mqnJwBLUGfPIjzgFyEWN54XyqBURODXGQeKfMRg5RABB96jtRVqDqj9wQl5owwJEtKi
+         hL0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757298083; x=1757902883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oQvcsK9AmIWuwBEfBGVFuDmRu55e5gkgeGEkjyZNnRk=;
-        b=woa+yQS8+wF51agUyVaAYu4Cce9JR66eOIV8lGfFNEiTBSCEGIlsqSxHgpI0+eaE2L
-         Q14HBTufznUvI69WuzV86cWDuSxpg2afzc3+qWscIZnRl7eBI2cUafU6hXU+Z+6XasIP
-         D0CE17FLBmWfWdFzrVxa5w0f/UlVNNJvxZQRq7MpgIpaNhRrGXTp5sgYbDm3r74C19NG
-         2OTrIVWJVYUqAx/kJKlm/qPPhYV6rki2jBaX/ZYWKJKphoVLXWrXiVZvHL9+lOGuDx/x
-         cEggfoR4OjK5QA4wuMnJWwWvCFY4Qt5iQof7tVMsfl2t8IaaQ41vcxP15Kbd0UELfMjV
-         Gusg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5H09hdpuiowXx8ZcRP3+8MOFMMA95oPVJfwh4A9ouvK37zhy7kSDCptw0GPdTjfUTs3qFkEnPQPk0j5c=@vger.kernel.org, AJvYcCWE/oXBJgTQ7SEQijcdSzVQ1jnWOKiE0Fou8r2ZBJjbTArFa5P7iXnVQSwrKSkXZJbPnLEyjTGM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBKxF6w2PI5TtgYWGnF1xwBInShAecZ2OEMaDmyZZ8f0vbXrVY
-	KLUbCLNx9HeB8qmcBvDWI9tIE09ZrrSkExLJf0WlSjtVBmetuSXLq/rj
-X-Gm-Gg: ASbGncsRgiGNFrWKSGpSlRpbS5jKn/kS31L+4RE5iuC6Ucc9EptCnoEaP9Ztl++Tjk6
-	t90/L0DUyJMQ8MqfdNKsT06cqEVFEZzJCdGPxNQU9SVoqzTOdqU99UDBygWaoOf4DUZXkaPmUD8
-	ODz45ldAeffRZMMydamJhus3ThZSLL3OKUFLIJFR2/Xgu8V9qk0MxWM/Uyp/yJ2AMjKgTEq8kBS
-	qpSF9VJoYDY3T8QBDfdS4GXGPYJ/wbrQ8LWBwd9mfy+Twf83HzeWn4fDHQllKLTl1xjX+9baRZl
-	PhEQPhrBbkuJnf50yfwIpvo7ZkRE3GSwFbQjiRfDL39R+dSvQlB4OBQ61l2BMNXyAVJUaqojGj/
-	bWNU3Bn/saWB8AgDCPr2MedOVIEVlgAMlnkztqeMtKyEHJhy9dfyxVHggousDVy60NYTLdfqZgO
-	GtkxJ7Dxwh9XCJDCzc4inK0z4=
-X-Google-Smtp-Source: AGHT+IG8I2PGOdS/XAOAGqC2wIB7ZxqvqZATHztC1T6u482bnf8PjsXTF7RjY9Ld1wMw4JdkMbrrDg==
-X-Received: by 2002:a05:6214:5085:b0:71b:dd1c:5b10 with SMTP id 6a1803df08f44-7393f986199mr66923706d6.47.1757298082849;
-        Sun, 07 Sep 2025 19:21:22 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7220f78b9bfsm105268276d6.64.2025.09.07.19.21.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 19:21:22 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 1C73BF40066;
-	Sun,  7 Sep 2025 22:21:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sun, 07 Sep 2025 22:21:22 -0400
-X-ME-Sender: <xms:oj2-aMnIj4ZEcFoH-rkdJGBH7LCO_rUOKTJlZ2HLgmpICVZtfDDgiA>
-    <xme:oj2-aEdXN9jIUMKi-7NgfyL5X_kgZeZNfPier47ns1ZsKmUZZVBNB1eLJnyNHTfqP
-    3A9ayUDQAI2R3ZroA>
-X-ME-Received: <xmr:oj2-aCHGUsbVq_cVi3pa4Bs-vl_vP86Bu9JC002qXMWm_bHjhhN0ZoF06Rv9PF489U6cSqhX01PEX4_-_TQxnx6zRHL17R97>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrg
-    hnuggvrhdrshhvvghrughlihhnsehsihgvmhgvnhhsrdgtohhmpdhrtghpthhtohepvghl
-    vhgvrhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgr
-    uggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtg
-    hpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghn
-    sehrvgguhhgrthdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:oj2-aCgdd-MT8f1K_ycCQT_lV9STQlzpufu3HKigWWjk9n2cJGTSlQ>
-    <xmx:oj2-aO3E-ivoKL2hLeEMb5n1iuXaelkt7f7fJQo3nvr4ucQ0LzPDvw>
-    <xmx:oj2-aFcAgN9-NvgemsI1TJMZjquRa7UA2sf-kjmJY8YdXd4FPWWtSg>
-    <xmx:oj2-aEyMsB4589_e4tXilr9mrvtNkQduqQyonlIzu0CEJa-agSpddA>
-    <xmx:oj2-aNya0jOCemKvlL3WQkFYyXEs2tM9n4x2nJ5U-j5dWSHIcoJsF8aj>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 7 Sep 2025 22:21:21 -0400 (EDT)
-Date: Sun, 7 Sep 2025 19:21:20 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: "A. Sverdlin" <alexander.sverdlin@siemens.com>,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, stable@vger.kernel.org,
-	Adrian Freihofer <adrian.freihofer@siemens.com>
-Subject: Re: [PATCH RESEND] locking/spinlock/debug: Fix data-race in
- do_raw_write_lock
-Message-ID: <aL49oKS9v_sxYSee@tardis-2.local>
-References: <20250826102731.52507-1-alexander.sverdlin@siemens.com>
- <7325588b-189c-4825-a87f-5494b1230d7a@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1757298159; x=1757902959;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Zgit50PMT8trJxBKxf6xHc2MsdgHHdU62IVEwkntQtI=;
+        b=D3uIqL0AD7+mvfax8A1LvA9KoNc9+kmvxgaiwNtCaApCgdza7bk2s+Rjx2osjc2ZU1
+         U7SHbZwR0IOSbaJn4erlWVjvUrOj3twUktEncULK664naJRVxzGNwtZtrV1OCsu46vt1
+         h70BROPR7qluZT5dDuFd74lWksgiOdIc/++zdGuuH5Q08XTj5rgJk8yJJtS6e+sN/JJN
+         fxEv4RRfeh0qQ229bwMo59n0FZjrbe20McqpdlYZHERNNIe0ELGynFNJucmfA51zMrlC
+         68YjtbWsCzuUgUNtwcAdd+zmUAhCWxqg0z8aOomVbqVh669fDNyTEKUGA+lk0D35YJYJ
+         HMUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE+goil2TMS0fpCZjBbkY4UEXJoyXyqpzwv8iwaSFS8N8jE/Z463E7RSPb55c5pBLH5NIMIOatlbN5rdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJWU6QEaONEfgODrsadG1dsof4Lft52+x8gn0ivhkZRqM4pPIM
+	UTinewsqvNPCRL9iJW2xuv3eJX5Ycl4QRiyWT2Ue2aD0vSaCudZHmG7698qTQA==
+X-Gm-Gg: ASbGncu/IPj97k3Z+SgjBfTzNoPvCArGynHpzt3JL6mRxgMm1gEY9nddu/thuUwtl4z
+	pcQy8QjdDLBai1fGyE+ziKMjidsNfUvOI21PbFq/GcEeXwH2l9LJSm4lVNc6ucsd0Fv5bazecxN
+	k3Kn4KVUHDJ5SUZJDomVdEYS834bE0W/LJRYe55UBWUIEIq6UgLAi81CcwHqp1TgYurDZDLwbGJ
+	eI16itc39VzCGTvZhrlLKRkhuCDj704/z5Ye64OFFQBqHSLT8vfDSYPtdI6KdX39880j8q5ZYX7
+	LCmAU6rGjW+iuxrZhSTp9UUVv2w7z5cWLx3sPyHgXCj3MiBWkyWd0nlO5I7vC4ZlB0F3tZw4RlM
+	+rTanNsy1jukHDWA53T6nJND+AJBvgbzqrtjP1tjOIB1zWuCYc9N6QoE=
+X-Google-Smtp-Source: AGHT+IGETwtbkZFB2BfpD/cD+SllbmFjJVv1g0HxgqC7Iv/KWnOWu68ePxWYDxELw7uFHmyni+3kvA==
+X-Received: by 2002:a17:903:234a:b0:251:493c:43e3 with SMTP id d9443c01a7336-2517330a5f2mr112379165ad.31.1757298158846;
+        Sun, 07 Sep 2025 19:22:38 -0700 (PDT)
+Received: from [10.125.192.100] ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9e39094dsm123841375ad.84.2025.09.07.19.22.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Sep 2025 19:22:38 -0700 (PDT)
+Message-ID: <33cac97d-d73c-98e7-3a8b-852460cb1909@gmail.com>
+Date: Mon, 8 Sep 2025 10:22:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7325588b-189c-4825-a87f-5494b1230d7a@paulmck-laptop>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: sched: observed instability under stress in 6.12 and mainline
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: Chris Friesen <chris.friesen@windriver.com>,
+ LKML <linux-kernel@vger.kernel.org>, hanguangjiang@lixiang.com
+Cc: osandov@fb.com, Peter Zijlstra <peterz@infradead.org>
+References: <87254ef1-fa58-4747-b2e1-5c85ecde15bf@windriver.com>
+ <7cd74213-5654-aac0-54d0-4f4b1a7f0fef@gmail.com>
+In-Reply-To: <7cd74213-5654-aac0-54d0-4f4b1a7f0fef@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 04:44:30AM -0700, Paul E. McKenney wrote:
-> On Tue, Aug 26, 2025 at 12:27:27PM +0200, A. Sverdlin wrote:
-> > From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> > 
-> > KCSAN reports:
-> > 
-> > BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
-> > 
-> > write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
-> >  do_raw_write_lock+0x120/0x204
-> >  _raw_write_lock_irq
-> >  do_exit
-> >  call_usermodehelper_exec_async
-> >  ret_from_fork
-> > 
-> > read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
-> >  do_raw_write_lock+0x88/0x204
-> >  _raw_write_lock_irq
-> >  do_exit
-> >  call_usermodehelper_exec_async
-> >  ret_from_fork
-> > 
-> > value changed: 0xffffffff -> 0x00000001
-> > 
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
-> > 
-> > Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
-> > adressed most of these races, but seems to be not consistent/not complete.
-> > 
-> > >From do_raw_write_lock() only debug_write_lock_after() part has been
-> > converted to WRITE_ONCE(), but not debug_write_lock_before() part.
-> > Do it now.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
-> > Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
-> > Acked-by: Waiman Long <longman@redhat.com>
-> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+
+
+On 2025/9/8 09:51, Hao Jia wrote:
 > 
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> On 2025/9/5 00:33, Chris Friesen wrote:
+>> Hi,
+>>
+>> I'd like to draw the attention of the scheduler maintainers to a 
+>> number of kernel bugzilla reports submitted by a colleague a couple of 
+>> weeks ago:
+>>
+>> 6.12.18:
+>> https://bugzilla.kernel.org/show_bug.cgi?id=220447
+>> https://bugzilla.kernel.org/show_bug.cgi?id=220448
+>>
+>> v6.16-rt3
+>> https://bugzilla.kernel.org/show_bug.cgi?id=220450
+>> https://bugzilla.kernel.org/show_bug.cgi?id=220449
+>>
+>> There seems to be something wrong with either the logic or the 
+>> locking. In one case this resulted in a NULL pointer dereference in 
+>> pick_next_entity().  In another case it resulted in 
+>> BUG_ON(!rq->nr_running) in dequeue_top_rt_rq() and 
+>> SCHED_WARN_ON(!se->on_rq) in update_entity_lag().
+>>
+>> My colleague suggests that the NULL pointer dereference may be due to 
+>> pick_eevdf() returning NULL in pick_next_entity().
+>>
+>> I did some digging and found that 
+>> https://gitlab.com/linux-kernel/stable/-/commit/86b37810 would not 
+>> have been included in 6.12.18, but the equivalent fix should have been 
+>> in the 6.16 load.
+>>
+>> We haven't yet bottomed out the root cause.
+>>
+>> Any suggestions or assistance would be appreciated.
+>>
+>> Thanks,
+>> Chris
+>>
+>>
+> 
+> Maybe this patch can be useful for your problem.
+> https://lore.kernel.org/all/tencent_3177343A3163451463643E434C61911B4208@qq.com/
+> 
+> If I understand correctly, we may dequeue_entity twice in 
+> rt_mutex_setprio()/__sched_setscheduler(). cfs_bandwidth may break the 
+> state of p->on_rq and se->on_rq.
 > 
 
-Thank you, I will queue this for future testing ans reviews.
+Perhaps the "Defer throttle when task exits to user" patch set from the 
+sched/core branch can also fix this bug.
 
-Alexander, is there any link to a kcsan splat that we can use? Thanks!
+https://lore.kernel.org/all/20250829081120.806-4-ziqianlu@bytedance.com/
 
-Regards,
-Boqun
-
-> > ---
-> > There are still some inconsistencies remaining IMO:
-> > - lock->magic is sometimes accessed with READ_ONCE() even though it's only
-> > being plain-written;
-> > - debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
-> > lock->owner and lock->owner_cpu, but examine them with plain read accesses.
-> > 
-> >  kernel/locking/spinlock_debug.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-> > index 87b03d2e41dbb..2338b3adfb55f 100644
-> > --- a/kernel/locking/spinlock_debug.c
-> > +++ b/kernel/locking/spinlock_debug.c
-> > @@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
-> >  static inline void debug_write_lock_before(rwlock_t *lock)
-> >  {
-> >  	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
-> > -	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
-> > -	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
-> > +	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
-> > +	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
-> >  							lock, "cpu recursion");
-> >  }
-> >  
-> > -- 
-> > 2.47.1
-> > 
+Thanks,
+Hao
 
