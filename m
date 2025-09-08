@@ -1,171 +1,95 @@
-Return-Path: <linux-kernel+bounces-805463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B179AB488DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9034EB48905
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7121B24413
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:43:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C68D3AB4D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31F82EFD81;
-	Mon,  8 Sep 2025 09:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA652ECE95;
+	Mon,  8 Sep 2025 09:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dQ4NJpI5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PkcdiBC0"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C112EA752;
-	Mon,  8 Sep 2025 09:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405F8211A28
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324543; cv=none; b=CPBxIVAsXvm/vzI0oWxkjHMCHfPj42K7se5JaOJzXUaGMxVDr80gs93ABRbsJ7BwEl6wvdU9p+qwDcppcHFZXsrm3VQwe6q4krtVJSmzOaFG+5Kx0eyEOzCXGHmJXlIucqabIrPnT9iT2qIiLbS60Dzp3K+hvLz2hd+ksMIPJ4k=
+	t=1757324934; cv=none; b=Pt8BxUmcQ+uNhhsM0VUdjH3K87OlUHP7Ow+47T/RQHmvZceTxXYIEwNXBng51EYY85+solWCiOvJSuLkWRtdVKUYt1I0GmyMxVK7ST4zftxWvscoe+iHsjdGhMsW1W0YpGCJQqq9aAIZESfs3AqVPqovUpNCgoSIVfuZyl8W64w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324543; c=relaxed/simple;
-	bh=rnd6RDB+ozLJ6GnyO0aYYhAe1Suo1G2ATJAAjchaT4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wu4oxPiqOdc3ZttFigrTdMMi51Y6cY9bcIf6t1aIwtVBU2p6kkE9P1xIPGP/bx4eNf0g7YSXelyhJQjpslx6ORj2hRcoObrUmOFvrrWd9YDWYC27yOGsfFfibbCLVCjZI4tMfLeZpZjfzftdQVG2fASc8RclljFOa+ku2vrwi48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dQ4NJpI5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:c241:40fd:9e5d:437c])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A397310BE;
-	Mon,  8 Sep 2025 11:41:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757324464;
-	bh=rnd6RDB+ozLJ6GnyO0aYYhAe1Suo1G2ATJAAjchaT4k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dQ4NJpI5PqVhdipK9jmKPgYLgosjlgb1nWZtjezh3jmh7178lplS4hxGh+eXpqkO0
-	 W9MkAw4pnUxJBO9FfcZNU4Ypcr43Sg0OA/A3VxHHbB0d1NXDjDa5iUIrOm+D79CeZs
-	 U2knWweIh4ly9rdszHBoD/BuLpn1y2eweOHPcR40=
-From: Stefan Klug <stefan.klug@ideasonboard.com>
-To: linux-media@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: rkisp1: Improve frame sequence correctness on stats and params buffers
-Date: Mon,  8 Sep 2025 11:41:48 +0200
-Message-ID: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757324934; c=relaxed/simple;
+	bh=viGQPeZMM9v7tCRE2AArWz0qJbEDnVio5sMx06Y5T5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLKbeV4LhC+A9m+R1b5Keoqdi2HM8QVpAAgvISsgYvop1ijuB/J9h9dUk+uigcPl57LlU4S0XAYGmAEIBlHnCE3edratOtLn1nmCY5owJwbW1pgPRkfBYqI7PV8rT2lPyStuytsaXLI6Airy3Z8TGgUkmgOxqzorBVE+jq+c2BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PkcdiBC0; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=W2is
+	/B86XOzKSq4WSKL4Bv/G+KLrAqqioep1TTWBCXU=; b=PkcdiBC01IbDmXEoUIWt
+	7wbjjEaPM3YICYaPuexAWAM/AsgzOJzSN8OraOH1otDoImid2phVc3+QeJgU7FZi
+	GiAR1X6IPQUUiHsWFnljx65mJdmCKyq/tU5bDR7OweIseEv8na0ZaiPkZDbA9tew
+	D7C2R12+W3eAHAsFQuLlQQtWT5hYscMWAIRad+BB6eAQ5ZZtqEImhtkDCF7HkHwX
+	uY60ptxtJgGqRlasnlxrvt6vsxF4lkgPCTaMITB/4YxrKCrwztCyaqm/fIhgERPR
+	P3gpafLQpXJJebX552ZMrfooksMXIx8GhiUqYbKPY3z8+qxVTgfUjYf0AzKfURbv
+	Ow==
+Received: (qmail 780016 invoked from network); 8 Sep 2025 11:42:08 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Sep 2025 11:42:08 +0200
+X-UD-Smtp-Session: l3s3148p1@1fI+AEc+ls0gAwDPXyerAKQ7QDbxBzog
+Date: Mon, 8 Sep 2025 11:42:07 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and
+ RZ/V2N support
+Message-ID: <aL6k73TBfBcrW2J9@shikoro>
+References: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
-handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
-and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
-commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
-debugfs var for irq delay") a warning was added for that. There are two
-cases where this condition can occur:
+On Mon, Sep 08, 2025 at 10:39:30AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add device tree binding support for the I3C Bus Interface on Renesas
+> RZ/V2H(P) and RZ/V2N SoCs. The I3C IP on these SoCs is identical to
+> that found on the RZ/G3E SoC.
+> 
+> Add new compatible strings "renesas,r9a09g056-i3c" for RZ/V2N and
+> "renesas,r9a09g057-i3c" for RZ/V2H(P). Both variants use
+> "renesas,r9a09g047-i3c" as a fallback compatible to indicate hardware
+> compatibility with the RZ/G3E implementation.
+> 
+> Update the title to be more generic as it now covers multiple SoC
+> families beyond just RZ/G3S and RZ/G3E.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-1. The v-sync and the frame-end belong to the same frame. This means,
-   the irq was heavily delayed and the warning is likely appropriate.
-
-2. The v-sync belongs to the next frame. This can happen if the vertical
-   blanking between two frames is very short.
-
-The current code always handles case 1 although case 2 is in my
-experience the more common case and happens in regular usage. This leads
-to incorrect sequence numbers on stats and params buffers which in turn
-breaks the regulation in user space. Fix that by adding a frame_active
-flag to distinguish between these cases and handle the start of frame
-either at the beginning or at the end of the rkisp1_isp_isr().
-
-Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
----
- .../platform/rockchip/rkisp1/rkisp1-common.h    |  1 +
- .../media/platform/rockchip/rkisp1/rkisp1-isp.c | 17 +++++++++++++----
- 2 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-index ca952fd0829b..adf23416de9a 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-@@ -222,6 +222,7 @@ struct rkisp1_isp {
- 	struct media_pad pads[RKISP1_ISP_PAD_MAX];
- 	const struct rkisp1_mbus_info *sink_fmt;
- 	__u32 frame_sequence;
-+	bool frame_active;
- };
- 
- /*
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-index 8c29a1c9309a..1469075b2d45 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-@@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
- 	}
- 
- 	isp->frame_sequence = -1;
-+	isp->frame_active = false;
- 
- 	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
- 
-@@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
-  * Interrupt handlers
-  */
- 
--static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
-+static void rkisp1_isp_sof(struct rkisp1_isp *isp)
- {
- 	struct v4l2_event event = {
- 		.type = V4L2_EVENT_FRAME_SYNC,
- 	};
- 
-+	isp->frame_sequence++;
-+	isp->frame_active = true;
-+
- 	event.u.frame_sync.frame_sequence = isp->frame_sequence;
- 	v4l2_event_queue(isp->sd.devnode, &event);
- }
-@@ -1112,14 +1116,15 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
- 	rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
- 
- 	/* Vertical sync signal, starting generating new frame */
--	if (status & RKISP1_CIF_ISP_V_START) {
--		rkisp1->isp.frame_sequence++;
--		rkisp1_isp_queue_event_sof(&rkisp1->isp);
-+	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
-+		status &= ~RKISP1_CIF_ISP_V_START;
-+		rkisp1_isp_sof(&rkisp1->isp);
- 		if (status & RKISP1_CIF_ISP_FRAME) {
- 			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
- 			rkisp1->debug.irq_delay++;
- 		}
- 	}
-+
- 	if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
- 		/* Clear pic_size_error */
- 		isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
-@@ -1138,6 +1143,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
- 	if (status & RKISP1_CIF_ISP_FRAME) {
- 		u32 isp_ris;
- 
-+		rkisp1->isp.frame_active = false;
- 		rkisp1->debug.complete_frames++;
- 
- 		/* New frame from the sensor received */
-@@ -1152,5 +1158,8 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
- 		rkisp1_params_isr(rkisp1);
- 	}
- 
-+	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)
-+		rkisp1_isp_sof(&rkisp1->isp);
-+
- 	return IRQ_HANDLED;
- }
--- 
-2.48.1
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
