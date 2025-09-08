@@ -1,220 +1,132 @@
-Return-Path: <linux-kernel+bounces-806500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C542B497D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:02:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABD6B497D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2074E0F2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A031899DC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923A23148D9;
-	Mon,  8 Sep 2025 18:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E17313274;
+	Mon,  8 Sep 2025 18:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfTaRY1k"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HmlB72x3"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4AD145B16;
-	Mon,  8 Sep 2025 18:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21797145B16;
+	Mon,  8 Sep 2025 18:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757354530; cv=none; b=cCOvvuriPkRvw87ce02xezzAuOjmRIZ5TH+sl/ZU3C4nMb2Kgrn+SumMVbDZKfuJz/z36SBZRkk8wc3e+lZtcO9ccExqAq94UHnVlJJSuaeA3qZPASTnNQndmkrUUMjVSdHCgMhxxOXvm0fqUApLQf8fp2c7phFXGsA9xA2bJRE=
+	t=1757354680; cv=none; b=HifaYPggA6sauSirnKqiB9XcBNokfgYZP3wDNhuDhTNTN618wxJO050g9MZhNWIstYmwVx3HscNuG5q/rBSpoRAk8EFzT/tUbAWgXPp8R9I/VpprW3fUV5gaSCRi31+S7Oua/rqm5xZA5PSlY0+3zsyt/pZd5aPf5nlXeboxOnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757354530; c=relaxed/simple;
-	bh=W6Ecx1Pxm6pVnypIcRy7pTj31dzrtQMTFRBCwzDYq4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PqhO5UFPjCqJc6ifXQ9fNBTOPWIlRfWAVHAOwaDZ5tYxCZieG/IgM9UWFPu9ktJyE1R0p+Ss0BSWELqOte4hJ7QKlV4L6A+DIOcPLF7U2hEFC2Vzr54yGknFmmPw4Dgpp21+KYkF/kEUEVMEr/iQVQX/2na/NZ+Q6R1g7XNU4us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfTaRY1k; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b52196e8464so1923458a12.3;
-        Mon, 08 Sep 2025 11:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757354528; x=1757959328; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oeapqvce2e/YgpDoR/iLFBVYj0LNwbuiMP+6kJLqgg4=;
-        b=FfTaRY1knl1CQIngTI8IMbnHgzrLcmGltZmThPwoxXpxW5prHoOvlLQjCJS80H7EDU
-         pdJYkqkPiq6d5LW3TgYc+SDl1EpdNcPihZoPmxECvrbf5BZMRHU2dPzjlUHpTOnodpfi
-         Oz6b0gMvesyIc5mDXWiMz5srRLhNg79JdRAxcm+N1shgAJ8ujd64lHQGjFBruciALuLS
-         SyxUcYdXqqNi8AyVvG9HgeAacwUOAiZvOMlEykGaYAbujwsT1RUVSyrtH5mpLgfui2IM
-         Ehe3T+Oa9CxcAbD4Pt2k//vldt/7rlxhS6b4m9UTb9gQu68JcaonpYLah7rH8daTrQgI
-         m7dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757354528; x=1757959328;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oeapqvce2e/YgpDoR/iLFBVYj0LNwbuiMP+6kJLqgg4=;
-        b=Yxd5LdBZPb4hkCLlRIL09MWCVjwGMjvXmxyRUPtdOuIpVn/rEFivWw01nqaLPjT23V
-         qop1IkRJUQ3yCMM5VYa+ZRY0ZfEZuFR8pRWP0Elqn+S4S1PZc8bQiR0muLVTu3wVhZRq
-         w3XRKAFBBLE16uYPxyYyqVOSfwe0wIHy6EnMvsouRp260IiFAj1rojtGlyu4+tEvcOWZ
-         UraZjWh8vGoXEQ3aUM/VJPDMs5UpmAgNwWOrD1mgwS6aZK6Iic3o80sQowvPybXRKtQh
-         LbwbBRtqDewLTQFgdO7HhP07MKd0eKZGCod/FpvUz7U9vJAxt03Mw5+5FQwxcjKbrmM7
-         OntA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIXUJK95YrVEcGoTckvGR/6A9KPYek2e4dLvjG1MsaLf90MWBGhl4lGLMekGqWc2Z0+kfgUt3c/mVH@vger.kernel.org, AJvYcCVmRBJwPwQS/j+y7tHY6qNVBLcKUshC9D7AkLCuuGeRUA++BxsU+5dOb4WDHbITG4B2Of6Fd3KOoPR0n5Q=@vger.kernel.org, AJvYcCW3itdqOrM6H3q/PjiZGbIUeIb6sANQjsnyX1lzndBd+l+U/l4NW+iJ0/KoIPFPmAke7MEGPxb4@vger.kernel.org, AJvYcCWMa+rLCM9j2X9lH/nhQoIJeb4eMIiQwa8e15SNNz2BSWZdODF0W/FL8ovxcmyG5etokjkJb6KTT/Fj1jFM@vger.kernel.org, AJvYcCXgV1pYSaIdKubKpTy//0g8CWYzjoB5CYA6+Uk7nEmVXbLls91Hq/34w2h0tJzawzvJF9u1cg1hUxk9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLLVm5hM4xwgOkdD+FSDSbdtgw/m7tJasfOQ8stMr8e7Kc9NA9
-	7Mmr2xLxR80e7FUygbQg+MFDJrm5ExtxPXzJj0khzIpzANrGVP98LzO4
-X-Gm-Gg: ASbGnctNKS8TrmYC0tGvz6CY0EydtjigaKGYkIOQ0dKe2d0W9XHun4F4kOb2c6CTpfP
-	NJx2TgCb0EtIat2KwJ5P8GxmjKhwsxdjP8CXlnwgcp4yBkJ37MBYI4GlkprIL88tiyh6AZ2LFFi
-	J5F4/DF0mX4UJOQC4jq9+4RlQpvT5jHTdvFIBwiXuwA97ilJhoNpEpTVGlNW2BoZ9L79RTFIx0d
-	yyfWiKtTeqRzpDBCfLT5555R9LUxAT7Z26RrnxUHpkcJhXmtvhXA/dFuygWkveTII+bP6K+81Wz
-	QqV0UD/afFU7vsG6BoXHJk0AERmaNEKa7MZdnclm97AfGc2Lc7A4vKhI6PPO4pHXKEpC6MIVp46
-	JkxYRqJk5NBHJeAd1XYCVHcupxc7PgRIufVQkdXQxsFla3ik5yffjBgx4jylYBnipHO6YgTrNbQ
-	GElsk3C2n+DdWYensw
-X-Google-Smtp-Source: AGHT+IEeU/DB0HOb4fPagqRudZuMsg2x4PoB+G/k1VfzfmYv6JE/beBzNlrrOjMK54ZO08DaRL8UPA==
-X-Received: by 2002:a17:902:ce89:b0:24d:64bc:1495 with SMTP id d9443c01a7336-25172e32f31mr123848925ad.41.1757354527849;
-        Mon, 08 Sep 2025 11:02:07 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cb28c3110sm133495925ad.120.2025.09.08.11.02.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 11:02:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9e4db8d7-c99f-46f3-9ddb-00b0a9261d86@roeck-us.net>
-Date: Mon, 8 Sep 2025 11:02:05 -0700
+	s=arc-20240116; t=1757354680; c=relaxed/simple;
+	bh=CXyhYW8x/bV3wwNvRcSBJG3Rf+qaaGEaieFwPcKjB/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LSRWZrrkrN+0bE2dl+vp5MifeQcP3RnB4d01vvvJQXgQRrmp6KPtBuUAEP4QK6L8wDz76iP7XvXe07js4gI6QgdkDxq2xkKOMxTTvec+6MYV3T4OO2kbCSeXbqx41jrUlbhIP9CAmwqkA1fvAvm4ED2FCa4cFrWZi6wa5E11uN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HmlB72x3; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Hg5FR018214;
+	Mon, 8 Sep 2025 18:04:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=Gvfc1Iz0nE71iFyrDfLCzdho+9INv
+	h3b39JFa+yZSCg=; b=HmlB72x3mAG2OTF+mpFYTPWxWJAedUblKs0adiSA/9+FV
+	Eq032MZm7ZQHamSMLi2+11tSrTARtNIZ73cZBGGreh9CjWQajTVommebx+Ts4zyB
+	4Z2x2KtFPAkYBp6jMGux8zfFFncWMBSAvWXS90r+vovBjYPDSHg9sl5B9YSlAkIK
+	8NgY5Hmi1Eai9C/0tdHj0IXLkevpLlyoqjK8/+oR8W1w/nwqturpMeyD93ti5R3X
+	jhx3iHpmZ55ZRX3LoKuYBAckanzmNQUS//DTRLIScxcEiD2uBRpmL9gsI6jb2UUj
+	kKzM9mf5gFSrZ1u3xoAh5mfxT4vUgo++MN5Ps4J6Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921pe8bd4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 18:04:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 588GfmaV030651;
+	Mon, 8 Sep 2025 18:04:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bd8hetg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Sep 2025 18:04:17 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 588I4GZh026431;
+	Mon, 8 Sep 2025 18:04:16 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bd8hesq-1;
+	Mon, 08 Sep 2025 18:04:16 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: julien.thierry@arm.com, marc.zyngier@arm.com, jintack@cs.columbia.edu,
+        christoffer.dall@arm.com, maz@kernel.org, oliver.upton@linux.dev,
+        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] KVM: arm64: vgic: fix incorrect spinlock API usage
+Date: Mon,  8 Sep 2025 11:04:11 -0700
+Message-ID: <20250908180413.3655546-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] hwmon: (tps23861) add class restrictions and
- semi-auto mode support
-To: Gregory Fuchedgi <gfuchedgi@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Robert Marko <robert.marko@sartura.hr>,
- Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>,
- Network Development <netdev@vger.kernel.org>
-References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
- <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net>
- <aL5g2JtIpupAeoDz@pengutronix.de>
- <CAAcybuvqqKBniV+OtgfCLHJdmZ836FJ3p7ujp3is2B8bxQh4Kw@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CAAcybuvqqKBniV+OtgfCLHJdmZ836FJ3p7ujp3is2B8bxQh4Kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509080179
+X-Proofpoint-GUID: FW9NxWmtgJYneDA1syrnrDHum9ilFNl9
+X-Proofpoint-ORIG-GUID: FW9NxWmtgJYneDA1syrnrDHum9ilFNl9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MiBTYWx0ZWRfX1vkUAsbAZHAR
+ 8uD8FsEVyUc+aywSroPjXmMDYlWgwX+nmT1PWjNI9flpbQwmsYceTrUOKMbFjHBXPPe7eymXY/M
+ 0ucDTo42rK3jwhpXEXy7fPq/mg/13FWT0/GM1oZiFGGuIqGG0GvL7N84moIL7MwqgrCkYnUPy6Y
+ /HY2TrMFnsFhSf6kZXD5RvkS0qEO/iB1HVo2w4O4XxqBMdqz/OTmn0TSjtYykT4ZoIRyfZY8NXc
+ AQSlTIlTOaM+WPRLdph7xPQbEy772cXsWat9O+yHea1mkC4DVJDKxvBZz3Bw/Gq5YmO/6M7Cf+W
+ rrY0s5eAtxbzjX9Msn4+JvW6NLRPSN5SH+CxVuIucGa9E7imICW3pwUvvoIDZH6kM1U0oCtti9m
+ 0OtVFDre
+X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68bf1aa1 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=gWKObWcHZHFoBn1Bvp0A:9
 
-On 9/8/25 09:39, Gregory Fuchedgi wrote:
-> On Sun, Sep 7, 2025 at 9:51 PM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->>
->> On Sun, Sep 07, 2025 at 09:06:25AM -0700, Guenter Roeck wrote:
->>> +Cc: pse-pd maintainers and netdev mailing list
->>>
->>> On 9/4/25 10:33, Gregory Fuchedgi via B4 Relay wrote:
->>>> This patch series introduces per-port device tree configuration with poe
->>>> class restrictions. Also adds optional reset/shutdown gpios.
->>>>
->>>> Tested with hw poe tester:
->>>>    - Auto mode tested with no per-port DT settings as well as explicit port
->>>>      DT ti,class=4. Tested that no IRQ is required in this case.
->>>>    - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ required.
->>>>    - Tested current cut-offs in Semi-Auto mode.
->>>>    - On/off by default setting tested for both Auto and Semi-Auto modes.
->>>>    - Tested fully disabling the ports in DT.
->>>>    - Tested with both reset and ti,ports-shutdown gpios defined, as well as
->>>>      with reset only, as well as with neither reset nor shutdown.
->>>>
->>>> Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
->>>
->>> This entire series makes me more and more unhappy. It is not the responsibility
->>> of the hardware monitoring subsystem to control power. The hardware monitoring
->>> subsystem is for monitoring, not for control.
->>>
->>> Please consider adding a driver for this chip to the pse-pd subsystem
->>> (drivers/net/pse-pd). As it turns out, that subsystem already supports
->>> tps23881. This is a similar chip which even has a similar register set.
->>>
->>> This driver could then be modified to be an auxiliary driver of that driver.
->>> Alternatively, we could drop this driver entirely since the pse-pd subsystem
->>> registers the chips it supports as regulator which has its own means to handle
->>> telemetry.
->> Yes, Guenter is right. This driver belongs to the pse-pd framework.
-> No disagreement here in principle. However, the current hwmon driver
-> already implements power control and exposes it via in*_enable sysfs
-> files. I found this a bit odd, but I don't write drivers often.
-> My understanding of Guenter's suggestion is that it would require breaking
-> this userspace API?
-> 
+The function vgic_flush_lr_state() is calling _raw_spin_unlock()
+instead of the proper raw_spin_unlock().
 
-If the enable attributes enable power to the ports, that code and functionality
-is simply wrong. It should only enable (or have enabled) power _monitoring_.
-As such, changing that would from my perspective be a bug fix.
+_raw_spin_unlock() is an internal low-level API and should not
+be used directly; using raw_spin_unlock() ensures proper locking
+semantics in the vgic code.
 
-And, yes, that slipped my attention when reviewing the original code.
-Sorry to have to say that, but I am not perfect.
+Fixes: 8fa3adb8c6be ("KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
+---
+v1 -> v2
+Dropped extra paragraph and added Acked-by Marc
+---
+ arch/arm64/kvm/vgic/vgic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  From a quick look at the tps23881 datasheet I can see that it is
-> similar, however, it is quite different in the context of this patch.
-> tps23881 (unlike tps23861) has Port Power Allocation register that can
-> limit poe power class. This register can be set prior to
-> detection/classification. So the extra complexity of an interrupt
-> handler that decides whether to enable the power may not be required.
-> 
-> Perhaps it still makes sense to merge these drivers, but I don't have
-> time or hardware to do it at the moment.
-
-I didn't suggest to merge the tps23881 and tps23861 drivers; I just pointed out
-that they have a similar register set.
-
-The point here is that a hardware monitoring driver should limit itself
-to hardware monitoring. Actual control should, for example, be implemented
-through the regulator or thermal subsystems.
-
-Guenter
+diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+index f5148b38120a..c74d6120a12c 100644
+--- a/arch/arm64/kvm/vgic/vgic.c
++++ b/arch/arm64/kvm/vgic/vgic.c
+@@ -818,7 +818,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+ 		 * the AP list has been sorted already.
+ 		 */
+ 		if (multi_sgi && irq->priority > prio) {
+-			_raw_spin_unlock(&irq->irq_lock);
++			raw_spin_unlock(&irq->irq_lock);
+ 			break;
+ 		}
+ 
+-- 
+2.50.1
 
 
