@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-805078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AC6B483C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D0EB483C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8914C3A64F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D25A172B5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4AA21FF35;
-	Mon,  8 Sep 2025 05:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F217B2264D9;
+	Mon,  8 Sep 2025 05:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nzq1Sell"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knnGbkFN"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277511D5147
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 05:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F236B;
+	Mon,  8 Sep 2025 05:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757310513; cv=none; b=k57antmwfoNTXEAWP2blqP04MqdFZDZ+CSpenmHcD3rU6+LloGMR0b5stJrC12huaxTdjozxZvdOYGYm5DxWB/HPC2gp9krYyyT3UBHZx02zuyaKrmaaobUrkIhFXXpF7oKnJP2lYcx+KrHTh/qmXrfbdCCWAO5wS69J9WwrK7Q=
+	t=1757310540; cv=none; b=o2aYJWDElsBQ7HbISkxgV88RZF31kCF8PQM8cpsk/B0pPBletVBI3M9uTS4CHIor8ov26aHdYnLm9DmFAHVL7KYpM21EsKfnI9OHl1zx69N+7zFWOdd7hzPJwpvaeuzq+ven1OlIaBW1npo/mFJ/ITzr7+IS5tVLU+nPD/KCQ5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757310513; c=relaxed/simple;
-	bh=O8NNu0NVF2vSad/YWy2TjskknzxZXtBC6d6bSAsqhDk=;
+	s=arc-20240116; t=1757310540; c=relaxed/simple;
+	bh=COeoU0ztHhCgdeys2glEUJvCtfcCVtu34Nt5vKpb1Ow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDGnD6Z3rpn49gvQVC413azF2yecxLGkR0qHJyxSFXEIFI5DBhVNceLmgJS71/H/qEtdqndJtfo+5O2lsjSmTUMMcqLmITdk7Om9Ytkf+N4UsRnXAjlLPg0+6lu4XLVcqLiMrVgOKIMHAqYJXFHSRTL0PDCxWT3r9Vds070a8Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nzq1Sell; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e2055ce973so2010213f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 22:48:30 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zp7zAxZoR+IJnVGkyUPM81B6S7el7GaUjCFyekdhm2mhCK3IRQY/pXvv46bTXBq/BlfRBBpK9hSCrV4GJrmyC10B8Hj0XUcis4ej71nSNzEpbk+W8WE4pDtQHirfFkMZKghmeYGVNmJqNC7wk+iE4lrdpFEKMCcZ3q8E8MQnFl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knnGbkFN; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-772481b2329so4174776b3a.2;
+        Sun, 07 Sep 2025 22:48:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757310509; x=1757915309; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757310538; x=1757915338; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bK4xCCUkJgHnNsrWJUX5n2h3qweAwpi9anD1X6vMswc=;
-        b=Nzq1SellRDFSk35UDq0FYvz3kWCUysrPZWfWqFTRBnALMoj+tCJmVWn06EWMvelDpV
-         3dunj5CowVRTzYmKEaYiPUa/SipNTrg/p1U8RugzBg4VgoULsSr/d4XUm1pVNc/tIXff
-         5HtbqC9oe6aXzZUo8nXvAU809E5iP+ax+G5DUB1czi09ZtdOrWX+pahkRwKKUoyQ2sfv
-         TLEjZPYeSRf24RKDIMVX+zrLRmLyIiW89t1GR/t4vR8MCmB9cJ7kWg31eZubpRMkj4H5
-         4Ew5UwGRVyD+nFwVL8mJiHEQT65EndC0E/OiptYkSTQYg6SzImQTrA0HvUiE4pt2JxcN
-         /aQA==
+        bh=RoqFcoq4GIfiHOtzMW/QQ9khjq4YgpmVFRd8SsW0DUQ=;
+        b=knnGbkFNyiIEvR0R/paGPk9J1sjh7zJb7sW9aftIDUG2YXYp8002NZqdiDi8wVxUCV
+         0sfu9+4+5Io3XEcFfzTMqRdmz95oWDm0BWP98DBPwPH/lIBxwD5hoBjx66CWH4By1Z75
+         Es26zj4OK8K5YYRiEgYKtT6HJ6OrOShb6s+Nq5QcGty9DCadYds6GEhCO9UA4Shh8jCb
+         H82xwzjFXpqwM7UOJ8rrxtIT44tu/Zg+gviQQFJBtEx5Y46rGFUVp560SoiXUFw0xr2N
+         4+61WBIvT4BWXnNhlizPWDpiEDd1STgEpS66sfOURlwG1Bn3GNk+j2sVsLg8nDZJtQSK
+         lsUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757310509; x=1757915309;
+        d=1e100.net; s=20230601; t=1757310538; x=1757915338;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bK4xCCUkJgHnNsrWJUX5n2h3qweAwpi9anD1X6vMswc=;
-        b=JZMzzdzshKz2PKYNKmB6KT2SolHbs2ENTcsbgcvvCmsi0YqM36t4WcUIq9+FjqT0jt
-         Qm5ItQ0dMSqk4zWRclulEqym042AYi622Yc8UX4xY0oHqdLTx0DRv8R+vreqTGEPHOJQ
-         5MYveoX/IDTsp9B4dPPJaRbBmFaa38XZkSoSPmRnVBg8GHTRVSy2rSR5Z35XMD+Viv2K
-         jpiEJT5Bb8gYyYMQk6zETpNhNXvmMsE8IL806iMst3U8E17rH0r9YCglXxYiIBSLiKD1
-         cwps+bLtIyWn0ISrArHe+o9alu1cvKUyVWMuSGlO0l91BpUMhGMQVDHcOrab8rxfGuI3
-         ypEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtyjTiJUUA9WF5geFHPe0KSqtIlmZxPXpvmFT0uzadlodFQpVoyY9muBDtiU8GFY9BX4NcgD2WrezpkKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwv4Oy8W3l0LNv9m3NmpQ+DhfazS0bG1ThggL5dxqydBiRx7m
-	yqo1WdOowU9ATc3PqBDjLJUaj6zHhjYcTH6HP5hpkMieGCqpy1zKhwYpcL5+J8IrlNc=
-X-Gm-Gg: ASbGncuXVAu8xhEceWzcb6z2eHIwN2aNEyuPS5S2g3Up5e9NB/y+ZuwSLVJiiKdaFKC
-	jCIs5Nt5p+pfUmpafq53sigayo4oDcDgXBmsHOmQMxFV4TpG3UjhNUrJZh94juNAQbh2oYsgSYJ
-	lSOZe/qoRW3FsALRROMmEQ9RigxxLsTGfTnL1wIa8o/19TxVB+aiCr+vz3/w23VvjQbT2KYmQe8
-	2m0Bc+h+o9uDjdih22pC+XVTwNgTaCgKp28+1IPPCSL0O029kdpSUwkLrd2OpAi5YfdIjq99niK
-	AEf63Ze8W3RxZAFE3k2JtrSP3ntYS+ZSQp50Fwn3eG+2XvdBXxCseiRh/EiLVmKExJVqsB9AAnF
-	KirbawexNOe+mMULnsK1J7qiAcUQn3dorcnw+fQ==
-X-Google-Smtp-Source: AGHT+IEEWpQsJ4943vbis4w2dbJY/QBn55s5lkkvnQbqeLGZJhfjukVhzvhNNq/IsiNBzEyJkqP93A==
-X-Received: by 2002:a5d:6e46:0:b0:3e7:46bf:f8bd with SMTP id ffacd0b85a97d-3e746bfff15mr1956825f8f.23.1757310509421;
-        Sun, 07 Sep 2025 22:48:29 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d95df59e50sm25155604f8f.23.2025.09.07.22.48.28
+        bh=RoqFcoq4GIfiHOtzMW/QQ9khjq4YgpmVFRd8SsW0DUQ=;
+        b=QVzMTtEz0KpShJ7VwVDGRCvSwWEby/qjaQzlwdLMbj8C3tkrmaI7oLp9hs6ulmZSqz
+         T8wQdHtoiIniEvDUOjYEM4yTZqijKrYE5vGqtIbOC5UfzOauWalmhJihWZVZ/zRFuBQm
+         ziuDrwwW0TouAIVVL6OYjYVWTrViPx5qO1JLE611oCfqgh5NkGRFvnFuKaGqUtY1mX5F
+         UDpLH3dYySPO3nILB2dzIQQJXUT/pJkY+n5dJRBuwR5mejcIi65iDhsgQ+U1Vyrwpm+c
+         fAOLduCcmaTGjwCCDQjF98Jf5NVQ9ELT+9iOiLSeaeq9983CjKzRmgEhFHuIiCjfnYio
+         24uA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5vbyD1mnxcaJWt92Jv2V42dpscNdVQHa91FpYf10D6OiBishzpOUTwN1tWvPvHD+MGqlftH4fsKQ2I4PCGgHWow==@vger.kernel.org, AJvYcCVHP+O9HKPJLdOF4Ra/HkzvVxETvqc6qGmGsH1Cf3ep4ZkeKnn+bpfCMWIy8FxLXlVSTF1MjFzcSRuba4d9QHsDcnAT@vger.kernel.org, AJvYcCWlSNDnLkVBOvW6pEQNN0rUj5Ba+AuqERCGkuKP4p8O56rmxvcA/p4BNoetQbR8dKSeHgW19Qh/0uW85Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8xebggstwu5NMH6kpFsTMLGmISC7ZK2UaVR6/tNiB2P7fPLux
+	PQEUDpzFX9qkHYlXqhtBqO1ML0//TbICTfKiuxZ8Y6ITU5itH1kQzGs5
+X-Gm-Gg: ASbGncvlMZD051b2tzoqhDv4YzyYPDAxR8SfXyqbtH0BN1CZ2u5ddkbKPZf69qrYcYl
+	YlyerMj/xbBX2VqdW6DEZ18irrdtc7tZALB8+9QhVwJy2jxvaSY3Aw/GpB0424bl3/eI1IJm0/N
+	2S438pxskZtqV1G2yNUKcpsQpm0pscAOtwigDfhhktlfv62ApB6zu3Llt84liPsr4ZF2oHTS4K8
+	StkLYfa9XS1Cuo2H9DjNn4VZitejNKjc8/afRvwM4bB3PXEzR20KcXRby3PxXDV8rY6mllE9dY5
+	j6Y7aBBnI76q7np2Np0fjY55ztEMfXIrSnG21h1aMO4CdGBb0lpHgJ5oK4xa6/ov76mwMehyVMD
+	jvnAQhFSuYh537rIMZseEqRga+u+7GjulNgOknA==
+X-Google-Smtp-Source: AGHT+IG1bacu1jG5J6SpRnQGjBP/OMKnF08uWVko2woVDz6D1n5Xfqa8XGMBxoTAk8FeDTYRaTzoLQ==
+X-Received: by 2002:a05:6a00:1307:b0:772:2e09:bfcc with SMTP id d2e1a72fcca58-7742df2ee4cmr8310202b3a.30.1757310538216;
+        Sun, 07 Sep 2025 22:48:58 -0700 (PDT)
+Received: from localhost ([103.121.208.62])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77285bb2614sm13018142b3a.58.2025.09.07.22.48.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 22:48:29 -0700 (PDT)
-Date: Mon, 8 Sep 2025 08:48:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: Re: [PATCH v2 0/5] staging: Destage VCHIQ interface and MMAL
-Message-ID: <aL5uKTiEYZP68xLd@stanley.mountain>
-References: <20250907-vchiq-destage-v2-0-6884505dca78@ideasonboard.com>
+        Sun, 07 Sep 2025 22:48:57 -0700 (PDT)
+Date: Mon, 8 Sep 2025 13:48:51 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/18] mm/ksw: add build system support
+Message-ID: <aL5uQw2SQmHmCw-l@mdev>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-2-wangjinchao600@gmail.com>
+ <aLlD2CDengxSl4fS@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,18 +110,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250907-vchiq-destage-v2-0-6884505dca78@ideasonboard.com>
+In-Reply-To: <aLlD2CDengxSl4fS@kernel.org>
 
-It's really hard to review the code when it's just sigle line like
-this:
-
->  .../raspberrypi/vchiq-interface}/vchiq_arm.c       |    9 +-
-
-It's also a head ache to do a cat -n filename and then copy and paste
-it into an email message...  I thought there was a trick to make the
-diff show up in the email?
-
-regards,
-dan carpenter
-
+On Thu, Sep 04, 2025 at 10:46:32AM +0300, Mike Rapoport wrote:
+> On Thu, Sep 04, 2025 at 08:20:58AM +0800, Jinchao Wang wrote:
+> > Add Kconfig and Makefile infrastructure for KStackWatch, a real-time tool
+> > for debugging kernel stack corruption.
+> 
+> ...
+> 
+> > +static int __init kstackwatch_init(void)
+> > +{
+> > +	pr_info("KSW: module loaded\n");
+> > +	pr_info("KSW: usage:\n");
+> > +	pr_info("KSW: echo 'function+ip_offset[+depth] [local_var_offset:local_var_len]' > /proc/kstackwatch\n");
+> 
+> It feels like this belongs to Documentation/ rather than the kernel log.
+Thanks for the feedback, I will add a document to replace these logs.
+> 
+> > +	return 0;
+> > +}
+> > +
+> 
+> -- 
+> Sincerely yours,
+> Mike.
 
