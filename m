@@ -1,180 +1,135 @@
-Return-Path: <linux-kernel+bounces-805747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1548AB48CF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECB0B48CF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FCC7A7C87
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137D320072C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6640B2FF17D;
-	Mon,  8 Sep 2025 12:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36C12FC026;
+	Mon,  8 Sep 2025 12:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCVlGXDq"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fNqXUAAp"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0FF2FC02F;
-	Mon,  8 Sep 2025 12:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602302E92D9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333389; cv=none; b=m/U8S8EMsv+0OSAXNLFDPgTcZhNCqUXM8JbY23+uKPCzwlwbCiKj7O/JHG97EoVCGGWNT8DqP1svmkApKaknrVTDzh8Jo5hNR/CKnzPhZmFSS5o4wQETq03ZJcG0NoAvboqwDzkShYeTFvKzzyUjSPGVpndM3hDs2lSOvJUoCDM=
+	t=1757333443; cv=none; b=T3IS7fQuyHejT9wi1B5aM4mCPAcF4Yp8aT73+X7lddY+KabHVCeGfS1DtKSehYaZNKXdjrgiWiUArfoj1YCfQSZPeY0viQQUlwKu+W6ubpDJZRa5gy8ZGEfR5LC4m375NAXQAHso/FN0o0ONzRPv50G4eHvvLCdNuMDlF8wGLGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333389; c=relaxed/simple;
-	bh=LJBZR3g3tMapr1pcv05tu4758efqyzYypnEmmug+2k0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EV4seaRp5Cragb3Bksaby210VCeP6oihR+2EqfzLaBMzwZoNifzfQDJyP93vqpgudI1UW1kfCvY2WoIXtuh2H+ybx5HKUwHlYQAHc6bqQQAIg3OGlaWPUTLkJ6hRCjm8bivuw+mjJ8t+oXTYSuXqEOJzdJZpkUGZPbKuGb3sh7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCVlGXDq; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dda7d87faso18706465e9.2;
-        Mon, 08 Sep 2025 05:09:47 -0700 (PDT)
+	s=arc-20240116; t=1757333443; c=relaxed/simple;
+	bh=ioh+RrOLN+gJV2heq4myKOswgBP4J/2ilyblwg6F7dE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uCVkea2+A7iganBxU2FcOi9YPVp0MrOedgycovNtsWmXSevx+OFTjK9D0SovWAAQ5sSSbI/x9PnkmJjvgWb/klIxRMBG6pVf8nsr/Vz6LMid24o/XCGkIGL0++RL0SkG5BSGTJibqXyl6m3iMBRDBG1gY7QLfEampe+hq9aAV4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fNqXUAAp; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so1255231f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 05:10:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757333386; x=1757938186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K8djXVjM/tAen/yqZaA8g4X2SrzUVVaFVlQlWculVlI=;
-        b=PCVlGXDqvpRHBJAVrMo6jG4wSHtFgb+RF1Yl6X7Cji2jkNIFhEO55wxIJ2mme0gF5Q
-         gHNMettEeHUSoZ1Jv6AUW0SRtlOUscbWLp9HextA0a2KStq8aQTAyWezxSzLgJuKxNo+
-         QP7kZR/mOXxf3TmYQKMlAeFHJ3x5Y9tnwMHw5rJukdOOo5A3DxbX0w2UsN9cmNw3Eew8
-         v/0v+D9L3XY2pSdn9r8o3LtPHsrVFNdzWDJ62IFIk6oi3Ad4bj5y86Bzcx5EN8bZYLQh
-         gnKHRPstxPTHHCOFHdW1Ug5pQR1pBqjlbxhN2JA+EGdGUso51VgaJ/IotEYhIir8/J4f
-         j0Xw==
+        d=linaro.org; s=google; t=1757333439; x=1757938239; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rvTf8Il6f/mqfra/iGYvNWp4kf3icOzgbKsdoIlAr9k=;
+        b=fNqXUAApn4ClwGKAeOao1enLjqBWJOKEJFRAAqJuqQAb9nPQg6+P2cPP3QweqC8cDI
+         BOYRi09D1KXQ0NmTOZfyTAv4qeCIr3cxisGbeQuCZeZU5vOlR+TAK8PAnX+7/Lv1csDC
+         YFJzWFTE9L/GnjmKE0YX/DDqhSVfou5/gq1xOL6bKTdSAmFz+hxmUGZhk1OvJLTdZ9Xz
+         6rZWmupHEiHu+0/wlWunnb53Lv/IjwSOLaT0dqtInXnTuIL6+te9iW3AwCnyzQOlq51v
+         ILVjUv6E8AXiR8hsgNHS/wgkqKeUyllenbLS8n/zGrCbVPjAsMpNcbFzoW9VTL3GqOaL
+         zw7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757333386; x=1757938186;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K8djXVjM/tAen/yqZaA8g4X2SrzUVVaFVlQlWculVlI=;
-        b=E4/K37mvW01UaS9BJlxu/16lD29TRe+HYxHNzhpIG6YwmFAo1IJzABnwJdD1FOiyq0
-         kp+WpGmw/qgc0DcoFb7xyY/uEunst6Ekr4Ehp4qAgaswx0hkYCdbWWCUq3TEAgY6EHny
-         0cbmybSfl6Z1mV3l2e6/TFhZvldOiRV71OaIKNWWIFE6WlgBjcas+KLf5OFJ2zAW4L01
-         Gnw5yX+QW2ZF53jOLJwvHebWUSa/lo6IirvnI7Gdkq7lhDaipK1M2Dt33XSjMnuuAZzV
-         h6hjo0JFu7Y7pv9s8v+vxuEHTzU5ImrOd3rcBIqubPvhaTrNeMstpgcc4EWnGm/UqbN9
-         oSPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL9T1Bwf7kyUtyUtnrgu8Lh9aPM44yhlycbqMHQeXdF29LcKeQ9agI2HEKKEriYly2a3d30N5DNPvSeYGiuQPYQv8=@vger.kernel.org, AJvYcCWeNkAn1KAmRNaYBXo0o0zVDeRwaQWySCcHVNcDz4JVcWoSRu6dZ+YQ3L4uak5F/iv167sxySWGu4M=@vger.kernel.org, AJvYcCWzgZuiYnP4oRGJGCaL/QWN8skFGykEsTLV+6UnZwQ5yGO/ZptH0HCmXbyD2ia+5R8mNsbNhgDT0QjFkws7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/AiBwkxkVuc51XxyFYSAgpiaahiS8goDX1RTOf2fCu0IOUfcH
-	ES0nO9hlptfi1Vk5ZSnSB2giYWgs6VRWoDjILEDOgeB5BQNfPCRiIWPWJizWSw==
-X-Gm-Gg: ASbGncs8b0bb8gQ0Z4442wts5D/MzwuNEKSAfIGt71dbg/RWZXdBIvgpaKG1EzBaUMH
-	O0QQ9xdbO0Sh1sub+0Wxg9Zqy7UJsTQ0XNiWC5ng/R/y9EJ+SzZ7KPp7LCoGMAKdtVkDrOrEeeO
-	HhoX1RVB0Pux0apn64JvPYi0an16Qrj17ZmKNSC8EkjgvB6D/1tBs/ywkAmjjxg0tF/oR4aDJPk
-	ROvApdfQnLU8vqB7hibh0fn9zK+pqI5QSIKnvpiPsOoU93EBnXfKHE/rdUn4gLrCLk9OJGElSZO
-	IS/nVPp1ug9eOp9TUKkR9OwIUsVN2vC3IBRDF004N7ywcfLR+BqP/Fj6j+KNViGS56gBm4LsJer
-	SWsatWOLu0WP+zWRewgUODBuKJDE+LcA8/Sd3yKSlh1IcQozmpbKfYl/vTHrua+pystg73awcq6
-	teZzdFw4zDYVZLUSwGJ+PzIsg=
-X-Google-Smtp-Source: AGHT+IFjpk6nqhdVNDShGcxzbiNs4vrs3gpWpDN9fuWPpdIRFPnfd3J6qig+JsyHX7ik5Tokjyp/Eg==
-X-Received: by 2002:a05:600c:1f13:b0:458:a559:a693 with SMTP id 5b1f17b1804b1-45dddee8ec7mr73239255e9.18.1757333386069;
-        Mon, 08 Sep 2025 05:09:46 -0700 (PDT)
-Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e543e9f444sm9646415f8f.60.2025.09.08.05.09.45
+        d=1e100.net; s=20230601; t=1757333439; x=1757938239;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rvTf8Il6f/mqfra/iGYvNWp4kf3icOzgbKsdoIlAr9k=;
+        b=Oho8KtDzij9d0kukHxgA5FFJDvGQdWAnCmGK/Gemn3UaRi1zqK+elnu/q4GS3CN+8N
+         qcxYHB4OFFFqXj1xU6a2Ew89Br1AwyhWeWAoEjVhuz1qvsWJM/46Bjq42WL3TZlwumb+
+         bWY40xx0Xd5sI9CuURlnQReER8VQyzjgOTvl0Jc0QCmXWOQ3IMAVx8dva/fTql/Mav/T
+         HxL1c2MdE4/RPvpLtuKzGUxt5eSoLWC8glIuxl3gcodbDbHi42XuvXIQbrciioqk57Cn
+         XVM50yGJWPdUH1vWocjuYfbnExbSUNawRfNJqp8i33MxUsMx25+PPP1ArdOyuCzKG4y+
+         GbEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsJdPbk1/hsv7UWiHLXYYnVHbXdURBUGTdl3QD7QsqXVBAb41WdttW0VwGZMuPldhP/2wbffR/RUfKoiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3OJb17VBQAIrE/s4UZtgL2xcp5g7qDmBiea23ClwOqXY/ihPK
+	JSB7BNnV0B9CM0ND02aVxP+6KFC8AnpXz4IaFOqeyZEefZNFgbDPk3wqPEe3cnz4dh4=
+X-Gm-Gg: ASbGncu6cGYPv+AAY5MAygpLj3bpjFJMqZnYvftaqD7fLIlmvMIBIE/JxOyihmstlWr
+	yPiF2iODiK8LtQ1SM+Iam0JK3X8mzXEnsW6U9ThVUov3gkFkCXFOGuoHsWKTizteFVlSyyRfwZo
+	fEmAc2qr9iWj+KT4Fnn2zV38RDdlWuyhKvl6oUdLhEIBv6WSlOq3QRVmXvk5O/pDD6whXRXV/qo
+	Upgq/2cugZV83zgaSzspjFMf3Ovkr2GjUyRSOP4zA8rmwC+fqwr3z9YvBi4BTEsWgKXUvGxFrde
+	5z9+NfqmijhkMEuLrK37QSvQIdR+BoMW4tkMwOW8QIMrHlS8D5rOWG5tTX93/atB+phkfCDd+5g
+	xyCjzWMNEYscZqgdqOH87fjUW/8cwPfqH9oMMvkN5TQ==
+X-Google-Smtp-Source: AGHT+IFEyhgsQFK+8cAvwVvaOJyzzhjwcI+1heh5zPX3kbpjk/o0y5jOw3y2xWOVWDMeF85EgycT/A==
+X-Received: by 2002:a5d:64c3:0:b0:3d7:618b:293c with SMTP id ffacd0b85a97d-3e641c4d63fmr6143479f8f.16.1757333439535;
+        Mon, 08 Sep 2025 05:10:39 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fba9fbsm41397825f8f.50.2025.09.08.05.10.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 05:09:45 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-can@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 4/4] can: rcar_canfd: Simplify data bit rate config
-Date: Mon,  8 Sep 2025 13:09:33 +0100
-Message-ID: <20250908120940.147196-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250908120940.147196-1-biju.das.jz@bp.renesas.com>
-References: <20250908120940.147196-1-biju.das.jz@bp.renesas.com>
+        Mon, 08 Sep 2025 05:10:39 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH 0/4] perf arm-spe: Improve --itrace options
+Date: Mon, 08 Sep 2025 13:10:17 +0100
+Message-Id: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKnHvmgC/x2MSQqAMAwAvyI5G2il1uUr4qFqqhHU0oAI4t+t3
+ mYOMzcIRSaBNrsh0snCx55E5xmMi9tnQp6SQ6GKUjWqxtVtJBgoepRAH/Axoam0dqW14+AMpDZ
+ E8nz9365/nhfqGFC9ZwAAAA==
+To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, George Wort <George.Wort@arm.com>, 
+ Graham Woodward <Graham.Woodward@arm.com>, Ben Gainey <Ben.Gainey@arm.com>, 
+ Michael Williams <Michael.Williams@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Most people also want all the SPE samples (instructions group), not just
+the flagged samples that are put into the various memory groups. These
+should have been shown by default but weren't because the default
+interval type wasn't supported.
 
-Introduce rcar_canfd_compute_data_bit_rate_cfg() for simplifying data bit
-rate configuration by replacing function-like macros.
+Also when looking at this, it appears that the downsampling was behaving
+in a way that would discard samples from one group but not another.
+Improve that and the warning messages.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+I don't want to put fixes tags on these because it's only changing the
+defaults and the behavior, but I don't think the previous behavior was
+incorrect necessarily, just copied from tracing techs but not ideal for
+SPE.
+
+Signed-off-by: James Clark <james.clark@linaro.org>
 ---
-v2->v3:
- * Added Rb tag from Geert.
- * Dropped _MASK suffix from the macro RCANFD_DCFG_DBRP_MASK.
- * Followed the order as used in struct can_bittiming{_const} for easy
-   maintenance.
-v1->v2:
- * Split from patch#3 for computing data bit rate config separate.
-   separate.
- * Replaced RCANFD_DCFG_DBRP->RCANFD_DCFG_DBRP_MASK and used FIELD_PREP to
-   extract value.
----
- drivers/net/can/rcar/rcar_canfd.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+James Clark (4):
+      perf arm-spe: Show instruction sample types by default
+      perf arm-spe: Downsample all sample types equally
+      perf arm-spe: Display --itrace period warnings for all sample types
+      perf docs: Update SPE doc to include default instructions group
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 99719c84f452..401505264676 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -169,15 +169,7 @@
- #define RCANFD_CERFL_ERR(x)		((x) & (0x7fff)) /* above bits 14:0 */
- 
- /* RSCFDnCFDCmDCFG */
--#define RCANFD_DCFG_DSJW(gpriv, x)	(((x) & ((gpriv)->info->data_bittiming->sjw_max - 1)) << 24)
--
--#define RCANFD_DCFG_DTSEG2(gpriv, x) \
--	(((x) & ((gpriv)->info->data_bittiming->tseg2_max - 1)) << (gpriv)->info->sh->dtseg2)
--
--#define RCANFD_DCFG_DTSEG1(gpriv, x) \
--	(((x) & ((gpriv)->info->data_bittiming->tseg1_max - 1)) << (gpriv)->info->sh->dtseg1)
--
--#define RCANFD_DCFG_DBRP(x)		(((x) & 0xff) << 0)
-+#define RCANFD_DCFG_DBRP		GENMASK(7, 0)
- 
- /* RSCFDnCFDCmFDCFG */
- #define RCANFD_GEN4_FDCFG_CLOE		BIT(30)
-@@ -1401,6 +1393,19 @@ static inline u32 rcar_canfd_compute_nominal_bit_rate_cfg(struct rcar_canfd_chan
- 	return (ntseg1 | ntseg2 | nsjw | nbrp);
- }
- 
-+static inline u32 rcar_canfd_compute_data_bit_rate_cfg(const struct rcar_canfd_hw_info *info,
-+						       u16 tseg1, u16 tseg2, u16 sjw, u16 brp)
-+{
-+	u32 dtseg1, dtseg2, dsjw, dbrp;
-+
-+	dtseg1 = (tseg1 & (info->data_bittiming->tseg1_max - 1)) << info->sh->dtseg1;
-+	dtseg2 = (tseg2 & (info->data_bittiming->tseg2_max - 1)) << info->sh->dtseg2;
-+	dsjw = (sjw & (info->data_bittiming->sjw_max - 1)) << 24;
-+	dbrp = FIELD_PREP(RCANFD_DCFG_DBRP, brp);
-+
-+	return (dtseg1 | dtseg2 | dsjw | dbrp);
-+}
-+
- static void rcar_canfd_set_bittiming(struct net_device *ndev)
- {
- 	u32 mask = RCANFD_FDCFG_TDCO | RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
-@@ -1430,10 +1435,7 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 	sjw = dbt->sjw - 1;
- 	tseg1 = dbt->prop_seg + dbt->phase_seg1 - 1;
- 	tseg2 = dbt->phase_seg2 - 1;
--
--	cfg = (RCANFD_DCFG_DTSEG1(gpriv, tseg1) | RCANFD_DCFG_DBRP(brp) |
--	       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
--
-+	cfg = rcar_canfd_compute_data_bit_rate_cfg(gpriv->info, tseg1, tseg2, sjw, brp);
- 	writel(cfg, &gpriv->fcbase[ch].dcfg);
- 
- 	/* Transceiver Delay Compensation */
+ tools/perf/Documentation/perf-arm-spe.txt | 14 +++++---
+ tools/perf/util/arm-spe.c                 | 53 ++++++++++++++++---------------
+ 2 files changed, 37 insertions(+), 30 deletions(-)
+---
+base-commit: 75a7b9d29215c5aa813b9620f3c56817918f9f8c
+change-id: 20250908-james-perf-spe-period-4711a566cba4
+
+Best regards,
 -- 
-2.43.0
+James Clark <james.clark@linaro.org>
 
 
