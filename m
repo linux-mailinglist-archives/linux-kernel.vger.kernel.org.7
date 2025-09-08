@@ -1,515 +1,142 @@
-Return-Path: <linux-kernel+bounces-805050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6C0B4837B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:57:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3CDB4837D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 07:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AF23BEF39
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:57:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44C807A402C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ED322173D;
-	Mon,  8 Sep 2025 04:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685D32236F3;
+	Mon,  8 Sep 2025 05:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ho+Ppzfx"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rlXVNLXw"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483ED1386C9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 04:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757307458; cv=fail; b=EjIEA8KHOsz8t4dqg+2V/3MKsaHsyW9S47cm9Eux5ZPrKZ39Z8j30EZl3eFBo7UvkB5j61IP72C425GRrnkWJ8Q4AQq+fHvDpN9tUWh7YnmnP9rPZtQrVjlh+iVXMg3+FpxUX7XHtFB0PXf5WaO6+6TtjJAolljQkaN1kNsm6JY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757307458; c=relaxed/simple;
-	bh=kLJPAPVoiUsJG1Xg7wMnrRVE8CAxahaSfypBJwCKozY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ckkrw+trAFO5bSiZgdh1sfasiyqUfQrpBkMDe28jUDOWxexB3rnqIXdV+mEZze8XAPH7PJsawzTbIP+aRTX1RIkr8BkjeGDLl0YmgWEf5jJzLmD6QkZH6MNI2NprjM8rpCZVZ2RyGFMAHAcAXp/R0lI5BSi8pxC196NQ0JjbQSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ho+Ppzfx; arc=fail smtp.client-ip=40.107.244.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fVjRV9r91cPNLnyhTwLSbpfVpc+9VyJQRGXkxaEXC8fmXRluj9rKbTrDKwB4A4UwYUF42tPzq4jeHmt0Oc3tAaTHn1if4/z9mmXhNQvcw6fvy61WBymE4OW1sL0HoWvXUSoP5n6IG+LZXbzawDFHQdHCC8COC+JyHSY/9342AIvTQuw5I/dHWycWev5dM25dcMbwRZYaBM7gAt3ML3kykqp2SzHF3V7QxnsGRtvxFuvm2uXdr16NS0uX6d0n53BdvQgYFV0bVXEEZjltv3oCCBOzfS6CyQJ3SdGlTLT7DlFCyNGaHsO39K8DEYs5EurS3AqAfcJwQRNWsgBOOVBWRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9tDho38I7oXCYTWrfpC7Y/l9vooyYWyDbU72kq2JsVM=;
- b=wMlSwP7Yo+Xd9FRZbnhwzHIhMQECHS2xdVfBMZCLwInZGjIeieWFabQdmpZj2+Y/kjfl60YnEHIZZJaluGUI3YYZctl2SZkdrFKxwQq36WHYa49y+cxlAlDTP4Yp31JWu6YMH+svFrsGRMNVtK8TFTRnjErcWR1RPoSaucdNBT2hSbwpS3mAeZo4IoGmKUm0jaFA0IsyYIqd+fLjCYbsHRZLqgsfN1BfcsVO/kwz9WBxutQQz9iRqHnkXrGCh5CGvJvq+bojRiy6EojLMw8L+7paENwSzwJV06vcgdV/80PzsORwoOefr/+9P0fHCJjzeHiJR4qWLfD3O58RbA5wRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9tDho38I7oXCYTWrfpC7Y/l9vooyYWyDbU72kq2JsVM=;
- b=ho+Ppzfxi+5Hc8ToLef60Okr2cRVCKB4KbDMacQ4lkZ9J71g9ejvtZ24MdSKtriPTMeaFMEwkEDR+P/4q+F9jGokhvEWzqPl+3vwIcw7h0O1kLe7H/EmXGtpGxau9mqE8XBYHuO6iu2l4OJR1pDd1XDkftJYPNuBrXprHD3ywyUPTiMrSM4Fea+qC77AXhGRymW+y+bU/3MibYIGNcXvHpgaN8+ogIg4Fvbw33qu8xOuy3ATx/7wPaYR0XEQ7hQXINfbiI04QdNZtj6TcRoe/Rhe9TBQqKZvmlnP62ZtvUtUwD4FzvR9GYID1aha2dDFJfZ5g6E8hUAfyv1ih0tFYQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by DM6PR12MB4074.namprd12.prod.outlook.com (2603:10b6:5:218::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
- 2025 04:57:32 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 04:57:32 +0000
-Message-ID: <8e1ef390-ab28-4294-8528-c57453e3acc1@nvidia.com>
-Date: Mon, 8 Sep 2025 14:57:23 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 05/15] mm/migrate_device: handle partially mapped folios
- during collection
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-6-balbirs@nvidia.com>
- <e6b795de-f522-4952-9ec3-00a2359c43a9@redhat.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <e6b795de-f522-4952-9ec3-00a2359c43a9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:a03:331::24) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008F017A31E;
+	Mon,  8 Sep 2025 05:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757307606; cv=none; b=Cg7FWWbULCXjufs9CIEVON7f63l+lnbvqR/Q7uabSV/BtzEJCrlq2g20IIir6E9F7+kIxdmLVqRuidu8IDx0eudly0gI0dayDhkTcRKZp7VxVvn1TymqVHzEIfWTkE3XCh31o6fqUeIsp7Sa+AEoCHEt+OxD5OxTeYE73bBUPKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757307606; c=relaxed/simple;
+	bh=A3d+GyvmXDWrmDIBTpTQ5kTjwafRE1E9JwzCWI92G7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DeqOv+AMCMLqlsg5Gk0dhZk/l/t3RqlM3O1NEuDtvJrprC+CwFhlNe7PANSos7yHwePVIUa/zGuZf43Qx6tpZB9m8kWQl5JqTVS3akZtsGhrpwJoxxWOEbZ4IYiLPcDNWHTszUbCzXZWP6dywn5N653Koi7e1iBEHI92GIuSB40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rlXVNLXw; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5884xugx3711758;
+	Sun, 7 Sep 2025 23:59:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757307596;
+	bh=4gjZQgW/xl31RdOITnyAsXky79YG3q21/4jeDxToeak=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=rlXVNLXwB0xUZckCDWkqtZ1LvM2p29hsGHtoHircuuSi7o6IsoA9luVjdUHeFYNoh
+	 MIWEjDDdvWXaFofVMY/zVtp7W3nct7bMnnCMxzb4G8m+Ir0+eyQC9fApQQ4fMy2AGg
+	 xgY0Eyl808we+RYsKQlta531ix48EZJoFL3POH60=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5884xuBw2704947
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sun, 7 Sep 2025 23:59:56 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 7
+ Sep 2025 23:59:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sun, 7 Sep 2025 23:59:56 -0500
+Received: from [172.24.234.212] (uda0510294.dhcp.ti.com [172.24.234.212])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5884xojr290909;
+	Sun, 7 Sep 2025 23:59:51 -0500
+Message-ID: <b4f81ac3-2db0-42e2-bbd0-e53252b6f962@ti.com>
+Date: Mon, 8 Sep 2025 10:29:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|DM6PR12MB4074:EE_
-X-MS-Office365-Filtering-Correlation-Id: a21d6301-e497-4951-e31d-08ddee943803
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWlMSjl3dy9iUXJ4MXEzVDh2ZGtGRWh1eG5BdXB0YVJHWVowU1Q0c3RxTmxY?=
- =?utf-8?B?aGlPRkVaUFBtckdpOWlwODU5aUtqMEdCU1V1VTZUUlZNYWs2aDd1cGh3TjEz?=
- =?utf-8?B?blNVZkNDMVdiREtuZWNTTzFMODJWNVpGTFFkZDMwMTU4U0xSZ1lkZndiMldS?=
- =?utf-8?B?L1FYS0dTcGNNeEd3d0FRTjh3VnhmVHlQQ3Z5UE9xRXMzMDR4NVpqUGY4dWJS?=
- =?utf-8?B?R0hTK3IwNUNSeU1na1ZObnA2NDBRbmV3WFlBUHdiU1Jva0NQWlM2NCsyOVlp?=
- =?utf-8?B?WVhndlEyR1pjKy9FeWI2THJWSExWdFptY3llaGJtZTljb2NKTE45QUxXSCsw?=
- =?utf-8?B?K2lYVDhYVzFvNk1URDFSakhYWWtkeFF4RVlkWTZCV3BtUm9vbjRzOHo5c1Vp?=
- =?utf-8?B?MUJGczA5TVdYaEVBbjUwL1pHbVNVN3VTeDZvdmVEb2dYVFhEQXJxdVlwUUpO?=
- =?utf-8?B?bkkrZjRnT0VmWnNreHdVQzN3ekJxamlTU3NRMFJzMks0S0ZVNDE5MlBjTTB5?=
- =?utf-8?B?K3F0SWlpd05URnEwT1VSNmp1UitNL3dleTRHL3I0NWJGb0pmZTlNeE1vYk5X?=
- =?utf-8?B?bktzZlczY1J6VTgwQ085ZG81R0xCNzYrSmFXbEZQYmRtd1lNMDF5bVMxRVVv?=
- =?utf-8?B?Z1BMZE5jeXp4eFR4SndPQTJmMnV4QVlmTHFxRWptVmVzZ1JFNExhV2QzbmJX?=
- =?utf-8?B?S2c5YU5BWXUyUCs0cnlnREtuNkN6eHZGbWZ4b2U0cEYvR2x5SnV1RDFjZ1VK?=
- =?utf-8?B?UDB1ZzhENUl4Q2M0QUg0SlBjcUxhZ2QyZzBSSlpkRmI2ai9pcm9uN3BGUHE4?=
- =?utf-8?B?RG5XUXZVZVB5RnRqUVdaYmZxMmRqVVFmVEtKcWw5aTZPU0V1MnpEWkpSenor?=
- =?utf-8?B?eS8ya2k3VVFZTE1JWDQ5UTBQQmVRb21tNUw4TXlCenJhS29xaXpjQzRUaGxu?=
- =?utf-8?B?WHJ4R3ZXZ3BsZnlxb280ZytadWZxUUd6blZRRUhnT1YvKzJkSXYvaXdzalJB?=
- =?utf-8?B?M2pKeWVaejVMYTdRMlBHUnZGdnl6WXZBd0lxaHRFU3R2b0NNTEIxWURHL0JT?=
- =?utf-8?B?WGVNNUtrOFJ3VVdyaEVBWmdiODFaQUZMa25oQ3pzL2JPL1F3dVhCeFZLYmVT?=
- =?utf-8?B?dUZBRVVqS0o5Q2MvR1pKS0NFamFCbXRIZVdoVjZTOU5ONmpVK0tLTWYrOEVR?=
- =?utf-8?B?R0NYNXZJL0RabDVXVGg2M2Z5NmZPVWxqQ3FsS3F1V0ZQaWR1cm5jeXQzQ2w3?=
- =?utf-8?B?NkF2Z2d4NmdoZnFGNFNic1E3NU9PZjBBNmYrZ0dRa1Y5WUgzcVpJSmtJSUNi?=
- =?utf-8?B?VDBNK01LbGVHMjA1enN0emM0dDg0WHNvcDdlUWkvYVlLQk1xZ2FxVmp4cWc0?=
- =?utf-8?B?MDk2WmZUcGNueWtOZXVuLzJtTHBpM3g2YnRiR2Q4eGZLK0ZFVlloQ3NwWFZP?=
- =?utf-8?B?NVF0dnQ5dHExekRKaHZxalRVK01halV3aXVBNDR6RXEzZTY2UXE1dnU3RHpF?=
- =?utf-8?B?ZE8wZGZxb2JnR1E3SHd2YkFGRHV5R21rR2cyWGVJekJnZ1dQeWR5RXBBWDdR?=
- =?utf-8?B?QkIyV2IycEZxa3ZwMHRmT2RtdzQrRWE4b3FJNjdvbHlTSDNBcTJOZDg1SXR4?=
- =?utf-8?B?UjdKd2pEM1B4cWNvT0s3U0RCYUZjSU1Md2tCRGVqN3UwUGMzdG9odGJpVm9j?=
- =?utf-8?B?dFBoSFJvTHhuMWxrbGN5a1pMbzZQbHNXM0dlRGpSTVZzWWNwdGYzbE4vZmk4?=
- =?utf-8?B?T210aU13TmZ0TXh3REdPU3Z5TkFYNi9JL0k1UEQyVVAwd3U3M0JXSTVOdjJk?=
- =?utf-8?B?a08rOGRMUXVVOWdSaWZOWjFwZWt5STdDY1BjcjR5ejhYMGJJbk13OTg2RG0z?=
- =?utf-8?B?ZWpaRmd1WDV2WHhlSER1NzJhSE1uTGNEZmtyTFJnUUNTL09mcmFZV3RKV1dP?=
- =?utf-8?Q?OH0jSRlafkE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L0VIWUJ2bXc1KzRRM0JDUkg5cHFtSHAvUmtBd0cwLzFZbi9WRlhoZi9jdGpw?=
- =?utf-8?B?ZkNHWE5TaFBRMkw2YlRCTjV3S2VXTWFxbVhOOGFibzhPUnZuWVNEeExYb015?=
- =?utf-8?B?NUNRQWNzVXF6VzNDOEpLK2ZhUFpxOEVIR1c0YlRERGh0TGtGaDhXeGdsbXBp?=
- =?utf-8?B?ZElYOG90SlRGZml3QnlrZFNtQ0ZYc2IrRlZvSUkyMzBaZ09hcDRYc2o1S1pi?=
- =?utf-8?B?cUtRNzhxTmdGR2RGUThQbTE5Um5kZ1dEelIvS2ltTWNOaDhrS3F0K0MxSFNp?=
- =?utf-8?B?dm1MZWsxcnNEemtkMzQ1KzJqV242R0tOb09DU1VvYnhRcTNmQ05STlRZL0Ni?=
- =?utf-8?B?Vi85YkFJV0YyMGtqWDc3T0dRUUJHNE5UNHJIZDgxRnRFeTM0MlFwdmI1MWxk?=
- =?utf-8?B?QVQ4T3NrU2dxRXJTMjlGR1VzR3d4b2hEdzZDVUpoVlF1WXVYYjlhaGRlOGIy?=
- =?utf-8?B?Nys5MjRkelIvQjBHQXRFeGdjTS8wd3MwT1Z3aWRkeEYyMXFKSmhKZFN3MTg1?=
- =?utf-8?B?Rk0zd3FwQk5jMEVES2V4eG1DQjFvUTF4SWExTElsUUlpbmpNckw2U2RxSzBW?=
- =?utf-8?B?KzRIUDVlOHN2Z0pvaHE2RlBPWDZmclJ1aklCaERDUzdoak5HSlF1Zmh3UVZP?=
- =?utf-8?B?SXNhOGF3eVZFWU9hdStyL1ZncGhzTjBiWTdReFVrcDBNSE0yQ0hSeWJaSEdl?=
- =?utf-8?B?eksvK0s3bG15ZjJFdGhka0o2MUFHa1hibDhsQnlBaW14MGxRRFVOc1E1ZFJM?=
- =?utf-8?B?NjFjT0QwbEhFTm9QRGF0TmNjL0NFTnd0aTNFWE9YSUFoTTJGOVN5REVIb2hH?=
- =?utf-8?B?T3IvdFlqaFR3dkFxVC9NSy93NGEybkdlTzQweTRjSUxyd3BKc3Y2T1NGRFNp?=
- =?utf-8?B?SmZNQ0JUckdoTE1XSFhyZTJBR1BtNnlGQVdFL0FFMjZEaGg4bjRkcWpzeTBj?=
- =?utf-8?B?QmorV25STHR4cm45WWdvbHZCSFA0dUdXSUVPN0pNY3plZEZQVzlsWXoyMG91?=
- =?utf-8?B?RXB4ZUphSEdrTElYeFA3ZUxmNlYrTlZhclJMeVFHVldLT09ScDZ3OEdtbWc3?=
- =?utf-8?B?RGdYQzVFOEcrRDErQ1FHa3d1bHlyUkcvdDNFaVFKUXZmQ0ZWcDZtWHp0VnQz?=
- =?utf-8?B?dStYYmJvbjQ5NExwQ2JnQmVuK3F0VVFKODdpblkzZ3o3M0FNVlZ2LzJ5VHRD?=
- =?utf-8?B?M3BEM0tETDNuRzNhcElkYVhmTk9reEwyZVAvZjR4UzJDSEhZazVxZWEzWnov?=
- =?utf-8?B?OWRIeVR3cWk5ODJ0WXZkVlBmZzF4czdlVkkvMXVnaE1XeGRYTU9iK2R6WW1Y?=
- =?utf-8?B?eitzdmJzR1VXaHQxMVJ4a2NtOHJ2c1dXcWpVRmlNQkJkalJmdS9wSkJ2Uzdn?=
- =?utf-8?B?ZU5EM0VaZEZoOU5XSWJtK1JCbEtxK3ZQdFlzL1ZvSlRzYlBVbTNVckkrdmh1?=
- =?utf-8?B?RDhWS2t4M0Ztdmd2Wm5pWUE1MDRnd1F4ZHRZdGovMmJscWU4WHBPN0xyQVpO?=
- =?utf-8?B?NXF6TjZjVWgwRy8zcU5rMktrQ1ora2VwVXhMdTlzYVhqWW9UV2h3VkJabGVU?=
- =?utf-8?B?cGx6ODRqdmZiamhaeVpSQy9sMWlPdzVHNzlRbFBtRGk5T2Iwa1k4UVM1SFNx?=
- =?utf-8?B?VWhsY0g2VGRac0xEVy9DdkNsY0JuYUJlOTk3Y1h6dnRLOUp5OHo4aVQ5WDNP?=
- =?utf-8?B?a1I3M2hmd2hSdjRoYzFiek5kSUdCZjBlVC8wd1lRQ05ta2VYNWdjaVB0Q3JH?=
- =?utf-8?B?TG5VMXNWRUlBQXBSOE9kTlhNVFJtNjE0OTJnTGo5dEdRY2c0aVA1RFRSWlVD?=
- =?utf-8?B?Y2xWV0ZyUU5mRko0V2Rjdk5WZnJ3TU1ZVi9NMzZyR2tnWElTTVNGMnkxY3Fm?=
- =?utf-8?B?TzNHTFFKeTF4ZmIyelZoVGpWdm5TWVNXVDZIMzBsV2FWNmQwV0QrME11Y291?=
- =?utf-8?B?aWtxWUlsTnBDb25xc3czZUVqUCtrM3hNN2RJOVhiVGx0Yk5RdjdDK3B2QjNy?=
- =?utf-8?B?QWEzTGNaeUQ3ajdZbi9YTGwybEdJMEVocVhNSzFFYnFlNXNhTDR2bEtzMEhI?=
- =?utf-8?B?ZFltOGJPazl6ODZNdFN5YnppZFBYUlZaTThqWG83T1ZVNlY5SHAyeHdBeFZW?=
- =?utf-8?Q?Q2RVebTBbhghC4iGpdpHAFqeD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a21d6301-e497-4951-e31d-08ddee943803
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 04:57:32.1178
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZftkY7aB2ND6A4/G/vIQRpPBhG6v9iThLqhnfvcHGZqswnAKSI2vJmCHfVMWkNDZ3+KJOdy0yTdQXGe7I0e7RA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4074
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: ti: k3-j784s4-j742s2-main-common:
+ Update DSS EDP integration configuration register
+To: Harikrishna Shenoy <h-shenoy@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <r-ravikumar@ti.com>, <m-chawdhry@ti.com>,
+        <u-kumar1@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tomi.valkeinen@ideasonboard.com>, <aradhya.bhatia@linux.dev>,
+        <devarsht@ti.com>, <s-jain1@ti.com>
+References: <20250907182806.1031544-1-h-shenoy@ti.com>
+ <20250907182806.1031544-3-h-shenoy@ti.com>
+ <7cf605e3-e1be-43e4-ba14-c1310b4f5869@ti.com>
+ <d7031274-efac-4837-a8c2-9efef094d71c@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <d7031274-efac-4837-a8c2-9efef094d71c@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 9/8/25 14:14, Mika Penttilä wrote:
-> Hi,
-> 
-> On 9/8/25 03:04, Balbir Singh wrote:
-> 
->> Extend migrate_vma_collect_pmd() to handle partially mapped large
->> folios that require splitting before migration can proceed.
+
+On 08/09/25 10:20, Harikrishna Shenoy wrote:
+>
+> On 9/8/25 10:07, Beleswar Prasad Padhi wrote:
+>> On 07/09/25 23:58, Harikrishna Shenoy wrote:
+>>> Fix size of DSS_EDP0_INT_CFG_VP to 256B as stated in
+>>> TRM Table 2-1 MAIN Domain Memory Map.
+>>> Link:https://www.ti.com/lit/zip/spruj52/SPRUJ52-J84S4 AM69A TRM
 >>
->> During PTE walk in the collection phase, if a large folio is only
->> partially mapped in the migration range, it must be split to ensure
->> the folio is correctly migrated.
+>> Broken link
+>
+> https://www.ti.com/lit/zip/spruj52 , this link will download the zip 
+
+
+Then maybe put that part only in the link. Otherwise it just shows 404
+
+> and refer the SPRUJ52-J84S4 AM69A TRM.
+
+
+and put this in the commit message.
+
+
+Thanks,
+Beleswar
+
+>
 >>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->> Cc: Rakie Kim <rakie.kim@sk.com>
->> Cc: Byungchul Park <byungchul@sk.com>
->> Cc: Gregory Price <gourry@gourry.net>
->> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Lyude Paul <lyude@redhat.com>
->> Cc: Danilo Krummrich <dakr@kernel.org>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: Mika Penttilä <mpenttil@redhat.com>
->> Cc: Matthew Brost <matthew.brost@intel.com>
->> Cc: Francois Dugast <francois.dugast@intel.com>
+>>> Fixes: 9cc161a4509c ("arm64: dts: ti: Refactor J784s4 SoC files to a common file")
 >>
->> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->> ---
->>  mm/migrate_device.c | 94 +++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 94 insertions(+)
+>> Above commit only refactored the changes and carried the bug.
+>> The commit that introduced this bug should be:
 >>
->> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->> index abd9f6850db6..f45ef182287d 100644
->> --- a/mm/migrate_device.c
->> +++ b/mm/migrate_device.c
->> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
->>  	return 0;
->>  }
->>  
->> +/**
->> + * migrate_vma_split_folio() - Helper function to split a THP folio
->> + * @folio: the folio to split
->> + * @fault_page: struct page associated with the fault if any
->> + *
->> + * Returns 0 on success
->> + */
->> +static int migrate_vma_split_folio(struct folio *folio,
->> +				   struct page *fault_page)
->> +{
->> +	int ret;
->> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
->> +	struct folio *new_fault_folio = NULL;
->> +
->> +	if (folio != fault_folio) {
->> +		folio_get(folio);
->> +		folio_lock(folio);
->> +	}
->> +
->> +	ret = split_folio(folio);
->> +	if (ret) {
->> +		if (folio != fault_folio) {
->> +			folio_unlock(folio);
->> +			folio_put(folio);
->> +		}
->> +		return ret;
->> +	}
->> +
->> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
->> +
->> +	/*
->> +	 * Ensure the lock is held on the correct
->> +	 * folio after the split
->> +	 */
->> +	if (!new_fault_folio) {
->> +		folio_unlock(folio);
->> +		folio_put(folio);
->> +	} else if (folio != new_fault_folio) {
->> +		folio_get(new_fault_folio);
->> +		folio_lock(new_fault_folio);
->> +		folio_unlock(folio);
->> +		folio_put(folio);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>  				   unsigned long start,
->>  				   unsigned long end,
->> @@ -136,6 +183,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>  			 * page table entry. Other special swap entries are not
->>  			 * migratable, and we ignore regular swapped page.
->>  			 */
->> +			struct folio *folio;
->> +
->>  			entry = pte_to_swp_entry(pte);
->>  			if (!is_device_private_entry(entry))
->>  				goto next;
->> @@ -147,6 +196,29 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>  			    pgmap->owner != migrate->pgmap_owner)
->>  				goto next;
->>  
->> +			folio = page_folio(page);
->> +			if (folio_test_large(folio)) {
->> +				int ret;
->> +
->> +				/*
->> +				 * The reason for finding pmd present with a
->> +				 * large folio for the pte is partial unmaps.
->> +				 * Split the folio now for the migration to be
->> +				 * handled correctly
->> +				 */
->> +				pte_unmap_unlock(ptep, ptl);
->> +				ret = migrate_vma_split_folio(folio,
->> +							  migrate->fault_page);
->> +
->> +				if (ret) {
->> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
->> +					goto next;
->> +				}
->> +
->> +				addr = start;
->> +				goto again;
->> +			}
->> +
->>  			mpfn = migrate_pfn(page_to_pfn(page)) |
->>  					MIGRATE_PFN_MIGRATE;
->>  			if (is_writable_device_private_entry(entry))
->> @@ -171,6 +243,28 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>  					pgmap->owner != migrate->pgmap_owner)
->>  					goto next;
->>  			}
->> +			folio = page_folio(page);
->> +			if (folio_test_large(folio)) {
->> +				int ret;
->> +
->> +				/*
->> +				 * The reason for finding pmd present with a
->> +				 * large folio for the pte is partial unmaps.
->> +				 * Split the folio now for the migration to be
->> +				 * handled correctly
->> +				 */
-> 
-> This comment is still not changed, there are other reasons for pte mapped large pages. 
-> Also now all the mTHPs are splitted, which is change of behavior (currently ignored)
-> for order < PMD_ORDER.
-
-Oh! sorry I missed it. I am attaching the version with the comments removed.
-On the behaviour change, I agree, but it is required for migration to occur.
-Updated patch below:
-
-mm/migrate_device: handle partially mapped folios during collection
-
-Extend migrate_vma_collect_pmd() to handle partially mapped large
-folios that require splitting before migration can proceed.
-
-During PTE walk in the collection phase, if a large folio is only
-partially mapped in the migration range, it must be split to ensure
-the folio is correctly migrated.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Rakie Kim <rakie.kim@sk.com>
-Cc: Byungchul Park <byungchul@sk.com>
-Cc: Gregory Price <gourry@gourry.net>
-Cc: Ying Huang <ying.huang@linux.alibaba.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Nico Pache <npache@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mika Penttilä <mpenttil@redhat.com>
-Cc: Matthew Brost <matthew.brost@intel.com>
-Cc: Francois Dugast <francois.dugast@intel.com>
-
-Signed-off-by: Balbir Singh <balbirs@nvidia.com>
----
- mm/migrate_device.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
-diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index abd9f6850db6..0afdc8b67c60 100644
---- a/mm/migrate_device.c
-+++ b/mm/migrate_device.c
-@@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
- 	return 0;
- }
- 
-+/**
-+ * migrate_vma_split_folio() - Helper function to split a THP folio
-+ * @folio: the folio to split
-+ * @fault_page: struct page associated with the fault if any
-+ *
-+ * Returns 0 on success
-+ */
-+static int migrate_vma_split_folio(struct folio *folio,
-+				   struct page *fault_page)
-+{
-+	int ret;
-+	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
-+	struct folio *new_fault_folio = NULL;
-+
-+	if (folio != fault_folio) {
-+		folio_get(folio);
-+		folio_lock(folio);
-+	}
-+
-+	ret = split_folio(folio);
-+	if (ret) {
-+		if (folio != fault_folio) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+		}
-+		return ret;
-+	}
-+
-+	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
-+
-+	/*
-+	 * Ensure the lock is held on the correct
-+	 * folio after the split
-+	 */
-+	if (!new_fault_folio) {
-+		folio_unlock(folio);
-+		folio_put(folio);
-+	} else if (folio != new_fault_folio) {
-+		folio_get(new_fault_folio);
-+		folio_lock(new_fault_folio);
-+		folio_unlock(folio);
-+		folio_put(folio);
-+	}
-+
-+	return 0;
-+}
-+
- static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 				   unsigned long start,
- 				   unsigned long end,
-@@ -136,6 +183,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			 * page table entry. Other special swap entries are not
- 			 * migratable, and we ignore regular swapped page.
- 			 */
-+			struct folio *folio;
-+
- 			entry = pte_to_swp_entry(pte);
- 			if (!is_device_private_entry(entry))
- 				goto next;
-@@ -147,6 +196,23 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			    pgmap->owner != migrate->pgmap_owner)
- 				goto next;
- 
-+			folio = page_folio(page);
-+			if (folio_test_large(folio)) {
-+				int ret;
-+
-+				pte_unmap_unlock(ptep, ptl);
-+				ret = migrate_vma_split_folio(folio,
-+							  migrate->fault_page);
-+
-+				if (ret) {
-+					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-+					goto next;
-+				}
-+
-+				addr = start;
-+				goto again;
-+			}
-+
- 			mpfn = migrate_pfn(page_to_pfn(page)) |
- 					MIGRATE_PFN_MIGRATE;
- 			if (is_writable_device_private_entry(entry))
-@@ -171,6 +237,22 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 					pgmap->owner != migrate->pgmap_owner)
- 					goto next;
- 			}
-+			folio = page_folio(page);
-+			if (folio_test_large(folio)) {
-+				int ret;
-+
-+				pte_unmap_unlock(ptep, ptl);
-+				ret = migrate_vma_split_folio(folio,
-+							  migrate->fault_page);
-+
-+				if (ret) {
-+					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-+					goto next;
-+				}
-+
-+				addr = start;
-+				goto again;
-+			}
- 			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
- 			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
- 		}
--- 
-2.50.1
-
-
-Balbir Singh
-
+>> 603669b16701 arm64: dts: ti: k3-j784s4-main: Add DSS and DP-bridge node
+>>
+>> Thanks,
+>> Beleswar
+> Noted
+>>> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+>>> ---
+>>>   arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>>> index fbbe768e7a30..f0cda14c2530 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>>> @@ -2573,7 +2573,7 @@ port@1 {
+>>>       mhdp: bridge@a000000 {
+>>>           compatible = "ti,j721e-mhdp8546";
+>>>           reg = <0x0 0xa000000 0x0 0x30a00>,
+>>> -              <0x0 0x4f40000 0x0 0x20>;
+>>> +              <0x0 0x4f40000 0x0 0x100>;
+>>>           reg-names = "mhdptx", "j721e-intg";
+>>>           clocks = <&k3_clks 217 11>;
+>>>           interrupt-parent = <&gic500>;
 
