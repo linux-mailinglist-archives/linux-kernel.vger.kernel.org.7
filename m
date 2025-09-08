@@ -1,174 +1,113 @@
-Return-Path: <linux-kernel+bounces-806587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8733B498C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9067B498CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CD916805D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C9BA178E44
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87731C598;
-	Mon,  8 Sep 2025 18:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EB331CA66;
+	Mon,  8 Sep 2025 18:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="Y6/o9/tB";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="NfvqCtXf"
-Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="QQ20AbfK"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D5E31C591
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3920631C58A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357483; cv=none; b=ZCW7fcMLGg4AqbjbEuHLuff5LLWVmNCwIDjsXexbTsG1gRSKqPiIvLrx41aFjteBj55i3pR6+i2Fqi4vkxmRM1Z1KbnGPixfUPLCEcY6RK6MdOxzVpUYI5Xr58AgCOmILGSvAlEWYzr7N3w0N7WzXJHbBUjCxXdv/9PFITmzCW4=
+	t=1757357491; cv=none; b=htpFkGHoxxAIsqgWGYKcgYiRdfnAA5ynzi6PZGDcEXr4ZTijGdbkrXyW5O1WTeWd2m2CxXDG9mePCVwxdIkmLOg/axomoItTWF887Mc5Eg9V2JOMwusoA0vC5LtU6/Jrqn7wPmuc5aOC7DVlA4g6/4cbg3IdihARoS5GHI3t/uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757357483; c=relaxed/simple;
-	bh=c+tXIw22H7GmL5X/H+OdpBd4RRRzRwrd6dquWXNLbEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjoPtqkhBAhRmcyMP40JJo5lr1UroM/yiWpWOsq8iD2E0TzWnT+E1XH2rbmiB+WRr7MxXR50ME/5RruS2uX9C/5nUoPbmWBJjO+MhIhFcYpRdWv0rBt2Y0S8oOho0ot/WDDltnwtaCrztLWZIZYrqNSmskd9vtmcaj2cwpvyk4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=Y6/o9/tB; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=NfvqCtXf; arc=none smtp.client-ip=46.30.211.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757357470; x=1757962270;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=b0OrA6ztwdprbIrsGVPpqZHoL8FCk7RDtGNiYi1AB8A=;
-	b=Y6/o9/tBKmtzr/qxtociDT2bSMVYXoJelswDHk9m2iR4vQdq35lnruQ2xglgwYKhni2ZAwIxnwlqP
-	 VD5k0FtAnnsceOOutHj58w8inTRoqhI08hzL1HF2gf1qe8PZStFEoKk8lUX0jzPmYewJS6VhB716vf
-	 0yXcKczAaQguQdZetbLYRXxAkl9CxYQaGHQqBmdRbrv6JPlK8qv617DhGZ8eGS62HdqrhV7MRCgYVH
-	 nfKAhVS0YcZqTt5RakpksQbs35GWQRMGcBelJJ216+nP29iUNruohIgsEhYpdXkwGb1GoRxv0FTuEY
-	 OBoHm+sNa7bcKWkVuHNpwDUuMj2E1hw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757357470; x=1757962270;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=b0OrA6ztwdprbIrsGVPpqZHoL8FCk7RDtGNiYi1AB8A=;
-	b=NfvqCtXf73TsWDArjFg7yJk5dZykcxaHg4dbLfDJiNGSRV6blOrNGpFrbeiFjML83ZdBkxLFb6igR
-	 uUjLHMzDw==
-X-HalOne-ID: c85cbffc-8ce4-11f0-9fa4-d510462faafc
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id c85cbffc-8ce4-11f0-9fa4-d510462faafc;
-	Mon, 08 Sep 2025 18:51:10 +0000 (UTC)
-Date: Mon, 8 Sep 2025 20:51:09 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] fbcon: Move fbcon callbacks into struct fbcon_bitops
-Message-ID: <20250908185109.GA643261@ravnborg.org>
-References: <20250818104655.235001-1-tzimmermann@suse.de>
- <20250818104655.235001-5-tzimmermann@suse.de>
- <20250905185358.GA361827@ravnborg.org>
- <c1674a81-3435-445c-b359-e2b094b7f8a5@suse.de>
+	s=arc-20240116; t=1757357491; c=relaxed/simple;
+	bh=3B57ATz3UdD42KSx68Sb8PP+iMlVGiDpmiGvWhdCGyo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NaZWnFknwrMbv1T3Pn8D09XM3IXpViQRd6KMeA1Xegov7pbT/V4O8LBoEHXzFKVlMJIfsvxwLVrfX5BYEfKrCLtrsubow2YK3dT7iAggd8uIP5jESdhFDhsAUwJwdviuX3N+Txopnd6G64ICVd05kN+IZlzk+aCZSHtSxp6WSyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=QQ20AbfK; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id qfCNNj5fplSnWsK8; Mon, 08 Sep 2025 14:51:28 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=kI5kvHmGz7C9TMJF6aaUpsjVqkrCWX3ZpUSR28Va5/M=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=QQ20AbfK//ewd35yg0N8
+	cdf6UgI3TAWZE3af9P+mUcbEWj74kAxaNGQDGiJe6JuKQKDGV6QTVs9GdNxL5Rdr7ll4Vqfu6IXdA
+	aEHvdQ/ccQz0JgmRdA5bD0l6CO3NSp8+p4meOoL2XyCKbV12/fp8cutM/bc2qE2nqvrfDBDZbQ=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14189039; Mon, 08 Sep 2025 14:51:28 -0400
+Message-ID: <389db3ff-16e4-430f-a69d-dd41d83d83aa@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 8 Sep 2025 14:51:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1674a81-3435-445c-b359-e2b094b7f8a5@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 04/15] scsi: qla2xxx: use reinit_completion on mbx_intr_comp
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH 04/15] scsi: qla2xxx: use reinit_completion on mbx_intr_comp
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+In-Reply-To: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1757357488
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1335
+X-ASG-Debug-ID: 1757357488-1cf43947df30c2f0001-xx1T2L
 
-Hi Thomas.
+If a mailbox command completes immediately after
+wait_for_completion_timeout() times out, ha->mbx_intr_comp could be left
+in an inconsistent state, causing the next mailbox command not to wait
+for the hardware.  Fix by reinitializing the completion before use.
 
-On Mon, Sep 08, 2025 at 03:06:46PM +0200, Thomas Zimmermann wrote:
-> Hi Sam,
-> 
-> thanks for doing the review.
-> 
-> Am 05.09.25 um 20:53 schrieb Sam Ravnborg:
-> > Hi Thomas.
-> > 
-> > On Mon, Aug 18, 2025 at 12:36:39PM +0200, Thomas Zimmermann wrote:
-> > > Depending on rotation settings, fbcon sets different callback
-> > > functions in struct fbcon from within fbcon_set_bitops(). Declare
-> > > the callback functions in the new type struct fbcon_bitops. Then
-> > > only replace the single bitops pointer in struct fbcon.
-> > > 
-> > > Keeping callbacks in constant instances of struct fbcon_bitops
-> > > makes it harder to exploit the callbacks. Also makes the code slightly
-> > > easier to maintain.
-> > > 
-> > > For tile-based consoles, there's a separate instance of the bitops
-> > > structure.
-> > > 
-> > > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > > ---
-> > >   drivers/video/fbdev/core/bitblit.c   | 17 ++++---
-> > >   drivers/video/fbdev/core/fbcon.c     | 67 +++++++++++++++-------------
-> > >   drivers/video/fbdev/core/fbcon.h     |  7 ++-
-> > >   drivers/video/fbdev/core/fbcon_ccw.c | 18 +++++---
-> > >   drivers/video/fbdev/core/fbcon_cw.c  | 18 +++++---
-> > >   drivers/video/fbdev/core/fbcon_ud.c  | 18 +++++---
-> > >   drivers/video/fbdev/core/tileblit.c  | 16 ++++---
-> > >   7 files changed, 94 insertions(+), 67 deletions(-)
-> > > 
-> > > diff --git a/drivers/video/fbdev/core/bitblit.c b/drivers/video/fbdev/core/bitblit.c
-> > > index a2202cae0691..267bd1635a41 100644
-> > > --- a/drivers/video/fbdev/core/bitblit.c
-> > > +++ b/drivers/video/fbdev/core/bitblit.c
-> > > @@ -384,15 +384,18 @@ static int bit_update_start(struct fb_info *info)
-> > >   	return err;
-> > >   }
-> > > +static const struct fbcon_bitops bit_fbcon_bitops = {
-> > > +	.bmove = bit_bmove,
-> > > +	.clear = bit_clear,
-> > > +	.putcs = bit_putcs,
-> > > +	.clear_margins = bit_clear_margins,
-> > > +	.cursor = bit_cursor,
-> > > +	.update_start = bit_update_start,
-> > > +};
-> > > +
-> > >   void fbcon_set_bitops(struct fbcon *confb)
-> > >   {
-> > > -	confb->bmove = bit_bmove;
-> > > -	confb->clear = bit_clear;
-> > > -	confb->putcs = bit_putcs;
-> > > -	confb->clear_margins = bit_clear_margins;
-> > > -	confb->cursor = bit_cursor;
-> > > -	confb->update_start = bit_update_start;
-> > > -	confb->rotate_font = NULL;
-> > > +	confb->bitops = &bit_fbcon_bitops;
-> > >   	if (confb->rotate)
-> > >   		fbcon_set_rotate(confb);
-> > fbcon_set_rotate() is only used to set the correct bitops.
-> > 
-> > It would be simpler to just do
-> > 
-> > 	if (confb->rotate)
-> > 		confb->bitops = fbcon_rotate_get_ops();
-> > 
-> > And rename fbcon_set_rotate() to fbcon_rotate_get_ops() and return the
-> > pointer to the struct.
-> > 
-> > The no need to pass the struct, and it is obvious that the bitops are
-> > overwritten.
-> 
-> I tried to keep the changes here to a minimum and avoided changing the
-> function interfaces too much.
-> 
-> But did you read patch 5 already? I think the cleanup you're looking for is
-> there. fbcon_set_rotate() will be gone. And the update bit-op selection is
-> contained in fbcon_set_bitops(). I guess this could be renamed to
-> fbcon_update_bitops() to make it clear that it updates from internal state.
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ drivers/scsi/qla2xxx/qla_mbx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patch 5 looks good, and is again a nice cleanup.
-I like that the code is now more explicit in what it does and do not
-do overwrites.
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index 32eb0ce8b170..1f01576f044b 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -253,6 +253,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
+ 	/* Issue set host interrupt command to send cmd out. */
+ 	ha->flags.mbox_int = 0;
+ 	clear_bit(MBX_INTERRUPT, &ha->mbx_cmd_flags);
++	reinit_completion(&ha->mbx_intr_comp);
+ 
+ 	/* Unlock mbx registers and wait for interrupt */
+ 	ql_dbg(ql_dbg_mbx, vha, 0x100f,
+@@ -279,6 +280,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
+ 			    "cmd=%x Timeout.\n", command);
+ 			spin_lock_irqsave(&ha->hardware_lock, flags);
+ 			clear_bit(MBX_INTR_WAIT, &ha->mbx_cmd_flags);
++			reinit_completion(&ha->mbx_intr_comp);
+ 			spin_unlock_irqrestore(&ha->hardware_lock, flags);
+ 
+ 			if (chip_reset != ha->chip_reset) {
+-- 
+2.43.0
 
-Returning a pointer or adding the assignment in a helper is not a big
-deal.
 
-With or without the suggested renaming both patch 4 + 5 are r-b.
-
-That said, I am not expert in this field, but at least you had another
-pair of eyes on the changes.
-I look forward to see the next batches of refactoring you have planned.
-
-	Sam
 
