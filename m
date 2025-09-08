@@ -1,224 +1,202 @@
-Return-Path: <linux-kernel+bounces-806924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E10B49D85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD1BB49D86
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B45F7A3B0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2962F4E5314
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF60F2E370E;
-	Mon,  8 Sep 2025 23:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C022422A;
+	Mon,  8 Sep 2025 23:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tRH5Bmqr"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB2VB/YW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454319D093;
-	Mon,  8 Sep 2025 23:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A7C19D093;
+	Mon,  8 Sep 2025 23:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757374468; cv=none; b=Q8gfClmhKf2F/evuZF2/Y2b6K3tSJ+feJ2HRI7QyS/SNSA0akIuylc7ezYq78vaNbNvyFLPFNjsnkgLBeAVzqE+8mBD1D67r7agZlhtXW/2iFNCq8tGFHgymmmWvObmG5rZO4NnWLfUiCyz5HVhr392CMFzKifDNb0sbQrCkoqk=
+	t=1757374514; cv=none; b=A/MdRU+ty9sPM2h5ZUD/PWFAsED480+aigep9MiaEKT17Luxg37fP9Vg5pwJxweDztlPKYt6y08te8evj0rvthiPIh2oQSZsddblCC3WLrCuFYUjKPaX877+m2ojcln2ehTJyXxfGoDNa38Wvfo6eVoRk4B5AjzxSTgqwyQQvpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757374468; c=relaxed/simple;
-	bh=bPDZAO9oM8gIkI8gAFqygdI8EEH7PMlqHGDryBI42z4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W/hbja8ZmiuyYFayl0eVE//m/EBLK28Q+vO/VMnUN9FNdP3n1W77BGuyTDDV2t82bPqdJXc9Orndb2CB8wxRKQbWu7hUnvVUnYhzM7XiE3iyHpWoZZiIsziKQQV5qw7nyepRyZdTUaAoqCBJXtfwCPYwE0/gYGGYbeMqi4BP0G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tRH5Bmqr; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588NYKXA155036;
-	Mon, 8 Sep 2025 18:34:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757374460;
-	bh=f6jA0maJ2/cbrQIjQjmb6P8Q2JEEnLmcjnUmsx4PEvs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=tRH5BmqremEApuhcHphQXzGzMOlMusbJ9G5UFMNuS+NOVnkwZsj9lltL2Z7UgvSz6
-	 B8Vefl1L+hDK2V3JCL8C0SnhXuPttDwaI1T2E2X9G43eYXrfZBv8YhXvUNQsRaZytv
-	 v53AHuyZ5EcGlXzbac72dQ8xkUb6dMmiqflwcd8w=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588NYKmx3294758
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 18:34:20 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 18:34:19 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 18:34:19 -0500
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588NYJ5I1364923;
-	Mon, 8 Sep 2025 18:34:19 -0500
-Message-ID: <a89f9e4f-5306-4943-a70f-f6a60a4537d3@ti.com>
-Date: Mon, 8 Sep 2025 18:34:19 -0500
+	s=arc-20240116; t=1757374514; c=relaxed/simple;
+	bh=ObGim7UGY/Gqo+55a2h+UbBIJQQ5lfF4BRj1q/BpMz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHSKnZqYHHptPVREX5VzoJDMS2zTqensSep1BhfwvIVz+bEhKr+P6IcIX5R2PWzPfmYrtZTs/ZSe6V/tK/OQiAwPOkKCGkFDfoB0oViy+XXlyT0LXmFdDR4E9/gq+agg5A3NiGtLXeuw1SNe+IRrdMIytDWk3yQQq5LTk/QwZpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB2VB/YW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C03C4CEF1;
+	Mon,  8 Sep 2025 23:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757374513;
+	bh=ObGim7UGY/Gqo+55a2h+UbBIJQQ5lfF4BRj1q/BpMz4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vB2VB/YWMV+D2JpxoXNTig8qW/5IyhS3mHiU18W62SSs3sTpySTi92oN4lSOkKqIJ
+	 gZusPGKTq3LfNbvvwrgByQGM7pXcr++vAODKQDO7CLyEejukTETl6NCo98d2vFj+U1
+	 StqIV88ezTr7vSzMBXS3k020pXJKTD4NDoKuCgRfmBwF+wSTnK4s3xnPyrV/6DGLND
+	 tgVLHmdGLswIha8tS42oPBqWVs/YqEWaI9WVsyIoAzbHeVskwyYXOExCPaex8DZ0nW
+	 uT6iyoRKgNH3NJsE8CU5Tfr1rAuIXK1zUqs1gA7KhiABTOvsKacpqTjr6e2kcuS4UT
+	 tvL68/Zq/nqKg==
+Date: Mon, 8 Sep 2025 16:35:11 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Collin Funk <collin.funk1@gmail.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf test: AMD IBS swfilt skip kernel tests if
+ paranoia is >1
+Message-ID: <aL9oL8aAMam676Ra@google.com>
+References: <20250908221727.3635572-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] arm64: dts: ti: k3-pinctrl: Add the remaining
- macros
-To: Akashdeep Kaur <a-kaur@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <u-kumar1@ti.com>,
-        <sebin.francis@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <vishalm@ti.com>
-References: <20250905051448.2836237-1-a-kaur@ti.com>
- <20250905051448.2836237-4-a-kaur@ti.com>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250905051448.2836237-4-a-kaur@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250908221727.3635572-1-irogers@google.com>
 
-On 9/5/25 00:14, Akashdeep Kaur wrote:
-> Add the drive strength, schmitt trigger enable macros to pinctrl file.
-> Add the missing macros for DeepSleep configuration control referenced
-> from "Table 14-6172. Description Of The Pad Configuration Register Bits"
+Hi Ian,
 
-The Table number should be 14-8769 for the AM62P TRM.
+On Mon, Sep 08, 2025 at 03:17:27PM -0700, Ian Rogers wrote:
+> If not root and the perf_event_paranoid is set >1 swfilt will fail to
+> open the event failing the test. Add check to skip the test in that
+> case.
 
-> in AM625 TRM[0].
+Thanks for the fix!
 
-You should reference both the AM62X and AM62P TRMs because in the AM62P 
-TRM the ISO_OVERRIDE_EN bit is reserved, whereas in the AM62X TRM it is 
-defined.
-
-> Add some DeepSleep macros to provide combinations that can be used
-> directly in device tree files example PIN_DS_OUTPUT_LOW that
-> configures pin to be output and also sets its value to 0.
 > 
-> [0] https://www.ti.com/lit/pdf/SPRUJ83
+> Some corrections to the kernel/user sample count test.
 > 
-> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
->   arch/arm64/boot/dts/ti/k3-pinctrl.h | 47 ++++++++++++++++++++++++++++-
->   1 file changed, 46 insertions(+), 1 deletion(-)
+>  tools/perf/tests/shell/amd-ibs-swfilt.sh | 57 +++++++++++++++++-------
+>  1 file changed, 41 insertions(+), 16 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> index c0f09be8d3f9..8ce37ace94c9 100644
-> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> @@ -3,15 +3,20 @@
->    * This header provides constants for pinctrl bindings for TI's K3 SoC
->    * family.
->    *
-> - * Copyright (C) 2018-2024 Texas Instruments Incorporated - https://www.ti.com/
-> + * Copyright (C) 2018-2025 Texas Instruments Incorporated - https://www.ti.com/
->    */
->   #ifndef DTS_ARM64_TI_K3_PINCTRL_H
->   #define DTS_ARM64_TI_K3_PINCTRL_H
->   
-> +#define WKUP_LVL_EN_SHIFT       (7)
-> +#define WKUP_LVL_POL_SHIFT      (8)
->   #define ST_EN_SHIFT		(14)
->   #define PULLUDEN_SHIFT		(16)
->   #define PULLTYPESEL_SHIFT	(17)
->   #define RXACTIVE_SHIFT		(18)
-> +#define DRV_STR_SHIFT           (19)
-> +#define ISO_OVERRIDE_EN_SHIFT   (22)
-> +#define ISO_BYPASS_EN_SHIFT     (23)
->   #define DEBOUNCE_SHIFT		(11)
->   #define FORCE_DS_EN_SHIFT	(15)
->   #define DS_EN_SHIFT		(24)
-> @@ -19,6 +24,7 @@
->   #define DS_OUT_VAL_SHIFT	(26)
->   #define DS_PULLUD_EN_SHIFT	(27)
->   #define DS_PULLTYPE_SEL_SHIFT	(28)
-> +#define WKUP_EN_SHIFT           (29)
->   
->   /* Schmitt trigger configuration */
->   #define ST_DISABLE		(0 << ST_EN_SHIFT)
-> @@ -33,6 +39,29 @@
->   #define INPUT_EN		(1 << RXACTIVE_SHIFT)
->   #define INPUT_DISABLE		(0 << RXACTIVE_SHIFT)
->   
-> +#define DS_PULL_DISABLE         (1 << DS_PULLUD_EN_SHIFT)
-> +#define DS_PULL_ENABLE          (0 << DS_PULLUD_EN_SHIFT)
-
-nit: IMO either keep the format of these macros to ENABLE or EN unless 
-there is a good reason to change the format.
-
+> diff --git a/tools/perf/tests/shell/amd-ibs-swfilt.sh b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> index 7045ec72ba4c..80d5bf8db40c 100755
+> --- a/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> +++ b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> @@ -1,6 +1,10 @@
+>  #!/bin/bash
+>  # AMD IBS software filtering
+>  
+> +ParanoidAndNotRoot() {
+> +  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
+> +}
 > +
-> +#define DS_PULL_UP              (1 << DS_PULLTYPE_SEL_SHIFT | DS_PULL_ENABLE)
-> +#define DS_PULL_DOWN            (0 << DS_PULLTYPE_SEL_SHIFT | DS_PULL_ENABLE)
-> +
-> +#define DS_STATE_EN             (1 << DS_EN_SHIFT)
-> +#define DS_STATE_DISABLE        (0 << DS_EN_SHIFT)
+>  echo "check availability of IBS swfilt"
+>  
+>  # check if IBS PMU is available
+> @@ -16,6 +20,7 @@ if [ ! -f /sys/bus/event_source/devices/ibs_op/format/swfilt ]; then
+>  fi
+>  
+>  echo "run perf record with modifier and swfilt"
+> +err=0
+>  
+>  # setting any modifiers should fail
+>  perf record -B -e ibs_op//u -o /dev/null true 2> /dev/null
+> @@ -31,11 +36,17 @@ if [ $? -ne 0 ]; then
+>      exit 1
+>  fi
+>  
+> -# setting it with swfilt=1 should be fine
+> -perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
+> -if [ $? -ne 0 ]; then
+> -    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
+> -    exit 1
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +    # setting it with swfilt=1 should be fine
+> +    perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
+> +    if [ $? -ne 0 ]; then
+> +        echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+>  fi
+>  
+>  # check ibs_fetch PMU as well
+> @@ -46,22 +57,36 @@ if [ $? -ne 0 ]; then
+>  fi
+>  
+>  # check system wide recording
+> -perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
+> -if [ $? -ne 0 ]; then
+> -    echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
+> -    exit 1
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +    perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
+> +    if [ $? -ne 0 ]; then
+> +        echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+>  fi
+>  
+>  echo "check number of samples with swfilt"
+>  
+> -kernel_sample=$(perf record -e ibs_op/swfilt/u -o- true | perf script -i- -F misc | grep -c ^K)
+> -if [ ${kernel_sample} -ne 0 ]; then
+> -    echo "[FAIL] unexpected kernel samples: " ${kernel_sample}
+> -    exit 1
+> -fi
+> -
+> -user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
+> +user_sample=$(perf record -e ibs_op/swfilt/u -o- true | perf script -i- -F misc | grep -c ^U)
 
-nit: Is there anyway this could be more descriptive? Like 
-DS_IO_OVERRIDE_EN or DS_OVERRIDE_CTRL. It is hard to tell what these 
-bits do unless you look at the TRM, whereas the other macros are easier 
-to deduce their function.
+I think it should count kernel samples now (with ^K) as it sets 'u'
+modifier (exclude_kernel).
 
-> +
-> +#define DS_INPUT_EN             (1 << DS_OUT_DIS_SHIFT | DS_STATE_EN)
-> +#define DS_INPUT_DISABLE        (0 << DS_OUT_DIS_SHIFT | DS_STATE_EN)
 
-By looking at the TRM it looks like this disables or enables output, not 
-input. Shifting a 1 to DS_OUT_DIS_SHIFT should disable output.
+>  if [ ${user_sample} -ne 0 ]; then
+>      echo "[FAIL] unexpected user samples: " ${user_sample}
 
-> +
-> +#define DS_OUT_VALUE_ZERO       (0 << DS_OUT_VAL_SHIFT)
-> +#define DS_OUT_VALUE_ONE        (1 << DS_OUT_VAL_SHIFT)
-> +
-> +/* Configuration to enable wake-up on pin activity */
-> +#define WKUP_ENABLE             (1 << WKUP_EN_SHIFT)
-> +#define WKUP_DISABLE            (0 << WKUP_EN_SHIFT)
-> +#define WKUP_ON_LEVEL           (1 << WKUP_LVL_EN_SHIFT)
-> +#define WKUP_ON_EDGE            (0 << WKUP_LVL_EN_SHIFT)
-> +#define WKUP_LEVEL_LOW          (0 << WKUP_LVL_POL_SHIFT)
-> +#define WKUP_LEVEL_HIGH         (1 << WKUP_LVL_POL_SHIFT)
-> +
->   /* Only these macros are expected be used directly in device tree files */
->   #define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
->   #define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
-> @@ -53,6 +82,10 @@
->   #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
->   #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
->   
-> +#define PIN_DRIVE_STRENGTH_NOMINAL      (0 << DRV_STR_SHIFT)
-> +#define PIN_DRIVE_STRENGTH_SLOW         (1 << DRV_STR_SHIFT)
+So that it should not have unexpected kernel samples.
 
-DRV_STR value of 1 is reserved in both AM62X and AM62P TRMs
 
-> +#define PIN_DRIVE_STRENGTH_FAST         (2 << DRV_STR_SHIFT)
+>      exit 1
+>  fi
 > +
->   #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
->   #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
->   #define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
-> @@ -65,6 +98,18 @@
->   #define PIN_DS_PULLUD_DISABLE		(1 << DS_PULLUD_EN_SHIFT)
->   #define PIN_DS_PULL_DOWN		(0 << DS_PULLTYPE_SEL_SHIFT)
->   #define PIN_DS_PULL_UP			(1 << DS_PULLTYPE_SEL_SHIFT)
-> +#define PIN_DS_ISO_BYPASS               (1 << ISO_BYPASS_EN_SHIFT)
-> +#define PIN_DS_ISO_BYPASS_DISABLE       (0 << ISO_BYPASS_EN_SHIFT)
-> +
-> +#define PIN_DS_OUTPUT_LOW               (DS_INPUT_DISABLE | DS_OUT_VALUE_ZERO)
-> +#define PIN_DS_OUTPUT_HIGH              (DS_INPUT_DISABLE | DS_OUT_VALUE_ONE)
-> +#define PIN_DS_INPUT                    (DS_INPUT_EN | DS_PULL_DISABLE)
-> +#define PIN_DS_INPUT_PULLUP             (DS_INPUT_EN | DS_PULL_UP)
-> +#define PIN_DS_INPUT_PULLDOWN           (DS_INPUT_EN | DS_PULL_DOWN)
-> +
-> +#define PIN_WKUP_EN_LEVEL_LOW           (WKUP_ENABLE | WKUP_ON_LEVEL | WKUP_LEVEL_LOW)
-> +#define PIN_WKUP_EN_LEVEL_HIGH          (WKUP_ENABLE | WKUP_ON_LEVEL | WKUP_LEVEL_HIGH)
-> +#define PIN_WKUP_EN                     (WKUP_ENABLE | WKUP_ON_EDGE)
->   
->   /* Default mux configuration for gpio-ranges to use with pinctrl */
->   #define PIN_GPIO_RANGE_IOPAD	(PIN_INPUT | 7)
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +    kernel_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^K)
+> +    if [ ${kernel_sample} -ne 0 ]; then
+> +        echo "[FAIL] unexpected kernel samples: " ${kernel_sample}
 
-Best,
-Kendall
+Vice versa.  It should count unexpected user samples from 'k' modifier.
 
+Thanks,
+Namhyung
+
+
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+> +fi
+> +
+> +exit $err
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
