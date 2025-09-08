@@ -1,190 +1,162 @@
-Return-Path: <linux-kernel+bounces-806742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A55B49B35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B14B49B41
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24DD4E410F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23DD4E44B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711392DC33D;
-	Mon,  8 Sep 2025 20:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286572DCBFC;
+	Mon,  8 Sep 2025 20:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="SfRhTp1a"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e3WAj8hx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8E92D3756
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7FC2D24BA
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757364449; cv=none; b=sMnO6X8DFzvSxWib1kb+hGGzkPy8VzdIlcjoWPuVtJAFSyZODaCHe1L8xEXwEeioqHDCCY3GUi9VZJO5LtFoClFCQUP+Pi+/z+Y/Y3UmSOGmMCGZwq3drGbTQzPDHizP2yQCw+L+hSlP2ikvoLSS+fMOXvIOunYu/dAZ9y3nUGo=
+	t=1757364786; cv=none; b=jlyevGxEyGluzhT2qeE8jNEufCXc/H0vki+AXUcT7XGesHsLkWbHOaY9J4cf1KA+/X0f5VuDbB5iFNJhOrSpGBkzImRj3M2FYufApaLF0sNZ/2gxs5da/dq+aSxtEUcR0kVGaaXSBwM1WCgCiET1KyFUrBG2Cfe8lEZBpG1CZ+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757364449; c=relaxed/simple;
-	bh=YKKxSwyTIBd9mjDB+qKz1REMUGLWEBaGpgrm4p7F3mE=;
+	s=arc-20240116; t=1757364786; c=relaxed/simple;
+	bh=LEPVDJM5KJBRhq5C3sgsbrdDWUsFbSlaXmV6QC8esSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzOx5p9OeWN3R8pBOxTKq9czHqzyCFCARlV4T+b1v4J18PMGwjcsY2T5KNXogv9l2fYBdF5p6NSTwmsQPOxufur1VeeK9QLXPiQ1oMmBY70wsdOOKXfEdcpftdFaR5ZonY/9jQ79SscPjbMK2K4Ny4a1qM7booHMrLtwsnxLzco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=SfRhTp1a; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24cde6c65d1so35786855ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1757364447; x=1757969247; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iP4tQG17FxLA2u0B9bKbrzzkdZjZOjWIZIzpoM1+rjA=;
-        b=SfRhTp1aWjGGnwudzM5EvCXwKyCAuJXLLzkSQGnXiLKEV+Pjfq1Rl4V47GJSuUmV+V
-         74XKiDVO4QgWRL/bUY+4B5UfD0P5WKmC5pPn5uUKrYRyD0nFg18An+xSQF4XwgZP00I+
-         9KBmTZWaahFdBb7dAjOqdpTdrbysmCx6S2VVTr5rqCOpOlBOUKxA5Gbe3AO5CSM3W4Qt
-         7xv1X7W5aqHITbM7WlJ/JtbMRCh1pAqzVX2FpUPoIBstmPbrMRo7hu/RL3o9/DxxuyP0
-         J4a3y4KrvQVSRn6otixitQGzz8P1AWGKxKlemIFWUeIpvB1c2MC/Wl7Yta2TkHV6D9hw
-         OvfQ==
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpQcMYT7604DBxssPcw5lb7HDBmyhnBJv3XIW+2XUqkssnuBuzQEMsfuHFiGXrRJrijx/fvN1bDOIZXDR7Q9o/i/pEd8xFVDuyUvGm0babLMN3Hl14KRzTiiaXBAzq9h53Gymcj+zDt3Yxk6CmvqcEvgxR/Niqw0UDbsJjU9DEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e3WAj8hx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588DAteB004031
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 20:53:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2cwBnJZmqQBEZM73zk8hQa/m
+	ZMI37HHNaj/5XDzx4Kk=; b=e3WAj8hxbQLWGuEpn6EP2MS45wz6U/HtBBCgJeR+
+	TEsLeWpp9R1O7BPEX9HdSMDwrY9J5qmh/YVNGulPoFHdYE5695FDV7ivU25y+lX1
+	9s5qpcGUeKir5n7SVSIIAT7KGP9LR95hJBV8jKwjTA1ic2chaoLWfHx0fv3vRN8t
+	tgj6H3Ilz1jEVzDKO0wiOH8XnffhXZo4XM11sMLsUAZWXHweyFCYJVVVfU9NBNTT
+	KBz9Yfhse0E4FLYs+iGS/zTnEkhn78EZy+JeM9YQbRN3LgPotYrwRJ0C67qwJi8M
+	XX7i7OjSkql2xvVIEAQWBPKh0ROJSBsf7U2PQBcpXdBg6g==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491t37tdbb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:53:04 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5d5cc0f25so104794811cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:53:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757364447; x=1757969247;
+        d=1e100.net; s=20230601; t=1757364783; x=1757969583;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iP4tQG17FxLA2u0B9bKbrzzkdZjZOjWIZIzpoM1+rjA=;
-        b=SfDTkkUmiAuTzepST/3YJwCf7Ol/dbCu7Q0yxfG5lAjle1tYg8VbvdYfQnGQbavMcG
-         LwCvjWSvj4lvldOHKr7ZeTWFvBE8F8quJ+h8Hex5TphLR5/oMGtDC3xwti+UpuvmnHc9
-         2DZDUPGzkIFzOEqEOjLD/JReLtWvyzBbj/Y4ljvsdny7Kdss757M7rYoLA3hWwZ5Nxa3
-         PB7VRvurqWG+cprjVuVlKdD6CO5yCW29bBzf01cjSmGR5oGcBt/Sxr4qrIBiZM8mR90g
-         KT/IQRzWBnb4IHcpKO61NvyRcxE9D3ACVNHeW4j5Fqd5lnLZQVu1bmANsMYuIyEF1olk
-         wg6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVq2SvOUUs5tBb497kbDSZ72ZCI7a6ujFFaBILVNSLy1Tin8HQihUw2brc6ClPkm5xSOPcDdFGqHG/l46U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz91aFpqpZJ0Lys96sUOq7+h58GRc5wXNFqHmoBWMyJcvjuXixf
-	UQ1MWRSLQhw2HiS9a8qqIn/FvGgYTpZpA1YJW0rG1hlpDunDwl6TFmYRnnP3cHPiWmA=
-X-Gm-Gg: ASbGnctCdP4dSaUgSwGLMZBGJYISbq4VBYNzYxWEIwg3NWfNWQG+brB8rMlbnmai51C
-	UmB2wwJk6upMt3v/iKSFmE4taWJiSJyWRYnJ5Q7glzEfQ+QK4k88tdN4K8+TMgGjeFgSrHs38gz
-	2PPMfoVkV1H8jf3GTMK5iEVFfougufglJyB8vLsURfOwciBW7uHKEeiPb/0e0j4Eb/HlQLL+hwK
-	ix0hRDdpMFAUgZa35l5cWSqzd3noZgPI5Pv+4+reFDuteuG54egh3U7dITxcDfpufF9tHbM+PQs
-	d0KvL/ZPATLEXki4s/hkRdgjYroGkPA5v4gCVQCAm4B3vg6J97xak4WmM2W90oWdkQ2TmiiEoAt
-	P7oANz5NWt1gkyK4XFKb5boYgVkpftt4K9q4=
-X-Google-Smtp-Source: AGHT+IEFBuInL+DneJcr3VRDS17E6y4PwmSKDTAiiJ6BGt+ppjgTDkzNHMg5bs1Pf238HenN9lXafg==
-X-Received: by 2002:a17:903:2286:b0:24a:f7dc:caa3 with SMTP id d9443c01a7336-251715f33f7mr111877765ad.37.1757364447508;
-        Mon, 08 Sep 2025 13:47:27 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd655823sm119166405ad.114.2025.09.08.13.47.26
+        bh=2cwBnJZmqQBEZM73zk8hQa/mZMI37HHNaj/5XDzx4Kk=;
+        b=i4MHlMZvbyqWWdORUogmQvHmgS/6Z37VXLPDAIs74toa1CJbCPL7r8j4EBvWb8QD+t
+         IX3GplncW4itmUbQ1WkaBihepMHQCnMh/JY2gOXSBenNJNmzbv7Bi/bKjv3srWvtHooA
+         0x/dVRBoBRXKbNICuMV1MJe7wLXGYqPMa/E8apBb7/g+3VtWY1L/uEl1UpzLsHxRp7x3
+         ycXtSz4nTM/UT1cVTvkPjXSNKQn+5K0GsVmgzMLciLobqpT/bCRLySpkr6R0biaAtmVt
+         JrJQ21A6Xy6xbYe3E+oSIvS73owP5KWE4s06m2GTe29QBsVsJf2nOt2LEUXJGi6Js0Dn
+         zCRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZXUkN5HjnNNnBPl4Jl/aeOgYtdKzrKdyobW+roQrXPYnnLwRqr+wx+fimPKqPR/WRqAgtMMxa4I/taZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhm4LJ4NALipJi0hjB6/Gt3OMbJsDYeCx5Zei/61QVZ7Mwrx18
+	hZJhJp2ZansFsEXfjRKD0M6qpTo05Gzl6qVb9OnD993SPYgko9QKJpwlYu0ZemK1NjLYkQDHoYA
+	isz7P4oDFGEGPxlmQLzu5ZkqceuxJMkVcSukipXBAgniwhhrj1/jkh6LfyUbY275wnLE=
+X-Gm-Gg: ASbGnctsVS7QrNX5lKsirelBlXozysrKITs1t+Ch/VfbZRNwF48sYjxgNj32Fq5hXFA
+	wI0l2/8HwJANbgsdwWXsbuKF02+MDXpDrO8oup7B7C/cY6+bSlT4ujT4/y5etrIp8Avf2+SesHH
+	Y47M3vM9MCjUuXspaR3Uawqmafpw4hb07I4VrxPqUM0xBlNvUi1NKuNPU/yYyaWikTLeiTqXDxD
+	D0teTgsLok6iBT5N/5xGp69g7WlcTCLhnh1domHC68sSLhCaRHZGiaOK4KkXqhwBCKLY5iQufJv
+	Q5OVouSdUvctFYB4+iRE3EcoVXwZYOYXa2Ew0bXlFeoPMY/uAMXf/1G2sVEFp6BkXqy+hIQ3IC3
+	XzDFKo/QOUP2eEDRgX6R1L+hUAYpxcKqrHueDFMl75QO2sXFLzSrh
+X-Received: by 2002:a05:622a:104:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b5f844db47mr118280351cf.52.1757364782716;
+        Mon, 08 Sep 2025 13:53:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbgttt18cresQ+Ad/zQLdvrRN/v/9ChJ+Ozvktu88IRLlutb625Zv06Rrpn/u1jzrCVt+Q8Q==
+X-Received: by 2002:a05:622a:104:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b5f844db47mr118280001cf.52.1757364782156;
+        Mon, 08 Sep 2025 13:53:02 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680cce9f3csm19629e87.52.2025.09.08.13.53.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 13:47:27 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:47:24 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
-	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	asantostc@gmail.com, efault@gmx.de, kernel-team@meta.com,
-	stable@vger.kernel.org, jv@jvosburgh.net
-Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
- causing incorrect cleanup
-Message-ID: <aL9A3JDyx3TxAzLf@mozart.vkv.me>
-References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
- <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+        Mon, 08 Sep 2025 13:53:01 -0700 (PDT)
+Date: Mon, 8 Sep 2025 23:52:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Umang Chheda <umang.chheda@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Introduce support for Monaco Evaluation Kit
+Message-ID: <sftju3vzmxu26yeldakj7ksih7x53d7jdmw7ninjhmfmjc2bci@hizerlnne64q>
+References: <20250905192350.1223812-1-umang.chheda@oss.qualcomm.com>
+ <175735727830.2621347.7880458499216772171.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+In-Reply-To: <175735727830.2621347.7880458499216772171.b4-ty@kernel.org>
+X-Proofpoint-ORIG-GUID: PzmFohpKKqQ1awj4FAa1RwqpvhW4prJp
+X-Proofpoint-GUID: PzmFohpKKqQ1awj4FAa1RwqpvhW4prJp
+X-Authority-Analysis: v=2.4 cv=NdLm13D4 c=1 sm=1 tr=0 ts=68bf4230 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=yfUVIRKG-kQQsbwJQfoA:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA2NiBTYWx0ZWRfX7d5Tot/Wea/f
+ bAXhtewN38d51s7aoxWVL0yqhgaDY/Q50oY/kRyYLceWNCQPq80M2UJjKp9EOgjHEQJNriSL11k
+ ZZVU+o+mnF2hMh22YdmEK6i/gvVsuz8m1ACPUmdMXd6RHesRsV8IsCTKvbuTFsezoxOUZahICp3
+ poBycvHCHV3xDIruAPBrZP2yWef2Cr4r1MYeaFmxd9n5SCLIOvJfBBoGuKLPQCT8RLJqVJf2Q3w
+ n42PGSO0gYtap1ESbGX1D2tyuQ0ntsuOUEv1L2EzK7TOAQTF7yM0cAneNTutuMXZtCgOOUOPUSV
+ NYIKB+zNP+xA5D++wSMcKIcY/zEy6U2NGuHU5teGW3TnNhmWsM4vv0zLqH3i8ofAqW7XWXCpljH
+ yM+XK4sR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080066
 
-On Friday 09/05 at 10:25 -0700, Breno Leitao wrote:
-> commit efa95b01da18 ("netpoll: fix use after free") incorrectly
-> ignored the refcount and prematurely set dev->npinfo to NULL during
-> netpoll cleanup, leading to improper behavior and memory leaks.
+On Mon, Sep 08, 2025 at 01:48:00PM -0500, Bjorn Andersson wrote:
 > 
-> Scenario causing lack of proper cleanup:
+> On Sat, 06 Sep 2025 00:53:46 +0530, Umang Chheda wrote:
+> > Add support for Qualcomm's Monaco Evaluation Kit (EVK) without
+> > safety monitoring feature of Safety Island(SAIL) subsystem.
+> > This board is based on Qualcomm's QCS8300 SoC.
+> > 
+> > Monaco EVK board is a single board computer (SBC) that supports various
+> > industrial applications, including factory automation, industrial
+> > robots, drones, edge AI boxes, machine vision, autonomous mobile
+> > robots (AMRs), and industrial gateways.
+> > 
+> > [...]
 > 
-> 1) A netpoll is associated with a NIC (e.g., eth0) and netdev->npinfo is
->    allocated, and refcnt = 1
->    - Keep in mind that npinfo is shared among all netpoll instances. In
->      this case, there is just one.
+> Applied, thanks!
 > 
-> 2) Another netpoll is also associated with the same NIC and
->    npinfo->refcnt += 1.
->    - Now dev->npinfo->refcnt = 2;
->    - There is just one npinfo associated to the netdev.
-> 
-> 3) When the first netpolls goes to clean up:
->    - The first cleanup succeeds and clears np->dev->npinfo, ignoring
->      refcnt.
->      - It basically calls `RCU_INIT_POINTER(np->dev->npinfo, NULL);`
->    - Set dev->npinfo = NULL, without proper cleanup
->    - No ->ndo_netpoll_cleanup() is either called
-> 
-> 4) Now the second target tries to clean up
->    - The second cleanup fails because np->dev->npinfo is already NULL.
->      * In this case, ops->ndo_netpoll_cleanup() was never called, and
->        the skb pool is not cleaned as well (for the second netpoll
->        instance)
->   - This leaks npinfo and skbpool skbs, which is clearly reported by
->     kmemleak.
-> 
-> Revert commit efa95b01da18 ("netpoll: fix use after free") and adds
-> clarifying comments emphasizing that npinfo cleanup should only happen
-> once the refcount reaches zero, ensuring stable and correct netpoll
-> behavior.
+> [1/4] dt-bindings: arm: qcom: Add Monaco EVK support
+>       commit: 49e55bdbcbe0abf04d7c8c882d69755ecf43d878
+> [2/4] arm64: dts: qcom: qcs8300: Add Monaco EVK board
+>       commit: 117d6bc9326b1ff38591289f9677e273a9a467ae
+> [3/4] arm64: dts: qcom: qcs8300: Add gpr node
+>       commit: 89c85214735b633e846d8f6473fa57ba4cc11b81
+> [4/4] arm64: dts: qcom: monaco-evk: Add sound card
+>       commit: bb12da95a183253b619ca1691d6fd320b7e445e9
 
-This makes sense to me.
+Just to check: did you adjust it to be qcs8300-sndcard?
 
-Just curious, did you try the original OOPS reproducer?
-https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/
-
-I wonder if there might be a demon lurking in bonding+netpoll that this
-was papering over? Not a reason not to fix the leaks IMO, I'm just
-curious, I don't want to spend time on it if you already did :)
-
-The discussion on v1 isn't enlightening either:
-https://lore.kernel.org/lkml/0f692012238337f2c40893319830ae042523ce18.1404172155.git.decot@googlers.com/
-
-Thanks,
-Calvin
-
-> Cc: stable@vger.kernel.org
-> Cc: jv@jvosburgh.net
-> Fixes: efa95b01da18 ("netpoll: fix use after free")
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  net/core/netpoll.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-> index 5f65b62346d4e..19676cd379640 100644
-> --- a/net/core/netpoll.c
-> +++ b/net/core/netpoll.c
-> @@ -815,6 +815,10 @@ static void __netpoll_cleanup(struct netpoll *np)
->  	if (!npinfo)
->  		return;
->  
-> +	/* At this point, there is a single npinfo instance per netdevice, and
-> +	 * its refcnt tracks how many netpoll structures are linked to it. We
-> +	 * only perform npinfo cleanup when the refcnt decrements to zero.
-> +	 */
->  	if (refcount_dec_and_test(&npinfo->refcnt)) {
->  		const struct net_device_ops *ops;
->  
-> @@ -824,8 +828,7 @@ static void __netpoll_cleanup(struct netpoll *np)
->  
->  		RCU_INIT_POINTER(np->dev->npinfo, NULL);
->  		call_rcu(&npinfo->rcu, rcu_cleanup_netpoll_info);
-> -	} else
-> -		RCU_INIT_POINTER(np->dev->npinfo, NULL);
-> +	}
->  
->  	skb_pool_flush(np);
->  }
-> 
+> Best regards,
 > -- 
-> 2.47.3
-> 
+> Bjorn Andersson <andersson@kernel.org>
+
+-- 
+With best wishes
+Dmitry
 
