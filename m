@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-806799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE5FB49C01
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:33:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A326AB49C02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB164E2002
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38C157A14A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE242DF6E3;
-	Mon,  8 Sep 2025 21:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0CC2DF71F;
+	Mon,  8 Sep 2025 21:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mggKKJBp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GGvYyhKd"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y36/l8cP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0SQ6AoZH"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E6F2EA166
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFC08528E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 21:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757367109; cv=none; b=jgMuTSxSXpFH4TAmACBel2ulC3girbKacNLb7pl4VVyPpldXS31/5dYjL2AX4YOZizmpxKZBdzW1kGohyXwoSJGeU1QiLkQfl/r0n94skv5MLwxV1sencyHOY/bhoiTPouCyOKBkXBSR2tCYBo2zZx44Uh9uIGozqQC1T34UePs=
+	t=1757367111; cv=none; b=rsxFZ01liIa38CLZevr64hA4L28beGXnQw4L8PFFnGhl6muMeRJoG4aqtiHuHsdsSk7sOTQlsMceetXdad/dtkUPxBj0HInDTEGpK0WFuWFRqpXBWDE1jQ+Ix5PCFLpeaGtrS9TDe7nlhrVFhkNKztMpFZ+mL7/qPvh0jpz2EwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757367109; c=relaxed/simple;
-	bh=VRCH+3S1nYLtsVP5wT5GRsIb5J5+wL3+Y5fgdPoc/gs=;
+	s=arc-20240116; t=1757367111; c=relaxed/simple;
+	bh=wu6hAxsKWPE7DY0S8ysZCgyOw4/tfRE7eiBN1EwRIn8=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=YnQwvp0WmUn6i4O0Nbs/vOmatmUZ+Vwgpk1yktfhmTQ4e9SMlVTmGckoGRyVmNbvs6azgieMc4etUvgkNvV2I5xzIO5jwtAtyjDBBl/ccrwKnrcM5YiruvT2+ktY9OWUX3/rFZ0IKnpnQAWyHYUeVizmcGhhRpKOFPRCR+lnUqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mggKKJBp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GGvYyhKd; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=ahNObN7AB7yM7T1IPwq/+d9LRRKbJdjemN6yyJUHiUhyfAC7/gSColzpYg4DXCV1fMayTiAtfzrXLPfs4Rc+zOWCh3kfSdF6+ztbDk+dhuu4MiHU/P0sOHHkRxJyjdyGgynae4o5EwbYMEiVAd+KNxzKShBM32RMRuZLK5YwoYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y36/l8cP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0SQ6AoZH; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250908212925.906204537@linutronix.de>
+Message-ID: <20250908212925.969535895@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757367106;
+	s=2020; t=1757367108;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=hkDPRPHuDwYKtAirw1GKBU+66QpeUXopf/S0l+gqCv8=;
-	b=mggKKJBp5Nq6COvo89BBeXHubL5w7Hcc4j3A9xhEUQzweQZNeeZMn5YOy/ll+cZyERSrwo
-	TlaoM0zflZCRsyp5OKj1jf8CSQCf0NtVSoFTfnqSrf+rqlhPB9oBdj3GwOpVzXEEw73vkI
-	nVqais5Vkwk1zTZQwhbu8RZRnpuh2xPsPKnbriPToBjVxTFPaP0zqJhGAWVkq7+gnKQydk
-	18AqGH40ouCDu0eVotKcTQ0vzgUHxTlpzvQYro7ySxGO7baYI772AWG8WNXXOLDTBsezm1
-	TyUy6NEiGp19W1iJonyV24/orAZwyrsKPHeqtACIHhUe5RNWM0xAOO9b52959A==
+	 references:references; bh=W772ppsbVXrcXgg6JXtZ2z6RDHZDwt4/nIDNxAIJr7w=;
+	b=y36/l8cPsROsi8S78ljTL/R2TH8p7SkKzcd9ak3OwVH7L3ry4LuQl5aRVBvYGZFegKi9Hz
+	nL0x9NAQVsWHP042bmC5lxeftQmNFgPpxsC7ss1oUNnP7FhrK1gwwqEJzYPBFnxXCrSca0
+	7NOXwBLAzwMMcS/jYHZcGAJ/SR53nxxIwq67SqHWtAmVr8nGad3qiLixjfTf1DUdrywcTv
+	lEZpWr95g9tpgFZpUqsSJRcFjU7hIajdbSZEnFNY3ZxOQrlzTJDDOu0mgKF4h2OT9RlMIN
+	zUB7+Boe13vtFBnmDo4PRl2GHskQoKdqNu5v1TjVcr9lqVr7q8MHljWiO+carw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757367106;
+	s=2020e; t=1757367108;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=hkDPRPHuDwYKtAirw1GKBU+66QpeUXopf/S0l+gqCv8=;
-	b=GGvYyhKdzY66s0mFO0JbzgorHXrApVa1mzBEosixxlkHUsbCEM0BDhijSOoBQZvjksdj9R
-	kPhc5L0DibhR2bCA==
+	 references:references; bh=W772ppsbVXrcXgg6JXtZ2z6RDHZDwt4/nIDNxAIJr7w=;
+	b=0SQ6AoZHUslud7ILRXLyT7tLlwL3lrdT6JOQiPtuzpzlOSXPfogZa/HzdnnqHAZmYWhJAr
+	SujdOeF1NEbGskCA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
  Jens Axboe <axboe@kernel.dk>,
+ x86@kernel.org,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>,
@@ -61,7 +62,6 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>,
  Dexuan Cui <decui@microsoft.com>,
- x86@kernel.org,
  Arnd Bergmann <arnd@arndb.de>,
  Heiko Carstens <hca@linux.ibm.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
@@ -69,7 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V4 10/36] entry: Cleanup header
+Subject: [patch V4 11/36] entry: Remove syscall_enter_from_user_mode_prepare()
 References: <20250908212737.353775467@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,76 +78,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Mon,  8 Sep 2025 23:31:45 +0200 (CEST)
+Date: Mon,  8 Sep 2025 23:31:47 +0200 (CEST)
 
-From: Thomas Gleixner <tglx@linutronix.de>
-
-Cleanup the include ordering, kernel-doc and other trivialities before
-making further changes.
+Open code the only user in the x86 syscall code and reduce the zoo of
+functions.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-
+Cc: x86@kernel.org
 
 ---
- include/linux/entry-common.h     |    8 ++++----
- include/linux/irq-entry-common.h |    2 ++
- 2 files changed, 6 insertions(+), 4 deletions(-)
----
+ arch/x86/entry/syscall_32.c   |    3 ++-
+ include/linux/entry-common.h  |   26 +++++---------------------
+ kernel/entry/syscall-common.c |    8 --------
+ 3 files changed, 7 insertions(+), 30 deletions(-)
 
+--- a/arch/x86/entry/syscall_32.c
++++ b/arch/x86/entry/syscall_32.c
+@@ -274,9 +274,10 @@ static noinstr bool __do_fast_syscall_32
+ 	 * fetch EBP before invoking any of the syscall entry work
+ 	 * functions.
+ 	 */
+-	syscall_enter_from_user_mode_prepare(regs);
++	enter_from_user_mode(regs);
+ 
+ 	instrumentation_begin();
++	local_irq_enable();
+ 	/* Fetch EBP from where the vDSO stashed it. */
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		/*
 --- a/include/linux/entry-common.h
 +++ b/include/linux/entry-common.h
-@@ -3,11 +3,11 @@
- #define __LINUX_ENTRYCOMMON_H
+@@ -45,23 +45,6 @@
+ 				 SYSCALL_WORK_SYSCALL_EXIT_TRAP	|	\
+ 				 ARCH_SYSCALL_WORK_EXIT)
  
- #include <linux/irq-entry-common.h>
-+#include <linux/livepatch.h>
- #include <linux/ptrace.h>
-+#include <linux/resume_user_mode.h>
- #include <linux/seccomp.h>
- #include <linux/sched.h>
--#include <linux/livepatch.h>
--#include <linux/resume_user_mode.h>
- 
- #include <asm/entry-common.h>
- #include <asm/syscall.h>
-@@ -37,6 +37,7 @@
- 				 SYSCALL_WORK_SYSCALL_AUDIT |		\
- 				 SYSCALL_WORK_SYSCALL_USER_DISPATCH |	\
- 				 ARCH_SYSCALL_WORK_ENTER)
-+
- #define SYSCALL_WORK_EXIT	(SYSCALL_WORK_SYSCALL_TRACEPOINT |	\
- 				 SYSCALL_WORK_SYSCALL_TRACE |		\
- 				 SYSCALL_WORK_SYSCALL_AUDIT |		\
-@@ -61,8 +62,7 @@
-  */
- void syscall_enter_from_user_mode_prepare(struct pt_regs *regs);
- 
--long syscall_trace_enter(struct pt_regs *regs, long syscall,
--			 unsigned long work);
-+long syscall_trace_enter(struct pt_regs *regs, long syscall, unsigned long work);
+-/**
+- * syscall_enter_from_user_mode_prepare - Establish state and enable interrupts
+- * @regs:	Pointer to currents pt_regs
+- *
+- * Invoked from architecture specific syscall entry code with interrupts
+- * disabled. The calling code has to be non-instrumentable. When the
+- * function returns all state is correct, interrupts are enabled and the
+- * subsequent functions can be instrumented.
+- *
+- * This handles lockdep, RCU (context tracking) and tracing state, i.e.
+- * the functionality provided by enter_from_user_mode().
+- *
+- * This is invoked when there is extra architecture specific functionality
+- * to be done between establishing state and handling user mode entry work.
+- */
+-void syscall_enter_from_user_mode_prepare(struct pt_regs *regs);
+-
+ long syscall_trace_enter(struct pt_regs *regs, long syscall, unsigned long work);
  
  /**
-  * syscall_enter_from_user_mode_work - Check and handle work before invoking
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -68,6 +68,7 @@ static __always_inline bool arch_in_rcu_
- 
- /**
-  * enter_from_user_mode - Establish state when coming from user mode
-+ * @regs:	Pointer to currents pt_regs
+@@ -71,8 +54,8 @@ long syscall_trace_enter(struct pt_regs
+  * @syscall:	The syscall number
   *
-  * Syscall/interrupt entry disables interrupts, but user mode is traced as
-  * interrupts enabled. Also with NO_HZ_FULL RCU might be idle.
-@@ -357,6 +358,7 @@ irqentry_state_t noinstr irqentry_enter(
-  * Conditional reschedule with additional sanity checks.
-  */
- void raw_irqentry_exit_cond_resched(void);
-+
- #ifdef CONFIG_PREEMPT_DYNAMIC
- #if defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
- #define irqentry_exit_cond_resched_dynamic_enabled	raw_irqentry_exit_cond_resched
+  * Invoked from architecture specific syscall entry code with interrupts
+- * enabled after invoking syscall_enter_from_user_mode_prepare() and extra
+- * architecture specific work.
++ * enabled after invoking enter_from_user_mode(), enabling interrupts and
++ * extra architecture specific work.
+  *
+  * Returns: The original or a modified syscall number
+  *
+@@ -108,8 +91,9 @@ static __always_inline long syscall_ente
+  * function returns all state is correct, interrupts are enabled and the
+  * subsequent functions can be instrumented.
+  *
+- * This is combination of syscall_enter_from_user_mode_prepare() and
+- * syscall_enter_from_user_mode_work().
++ * This is the combination of enter_from_user_mode() and
++ * syscall_enter_from_user_mode_work() to be used when there is no
++ * architecture specific work to be done between the two.
+  *
+  * Returns: The original or a modified syscall number. See
+  * syscall_enter_from_user_mode_work() for further explanation.
+--- a/kernel/entry/syscall-common.c
++++ b/kernel/entry/syscall-common.c
+@@ -63,14 +63,6 @@ long syscall_trace_enter(struct pt_regs
+ 	return ret ? : syscall;
+ }
+ 
+-noinstr void syscall_enter_from_user_mode_prepare(struct pt_regs *regs)
+-{
+-	enter_from_user_mode(regs);
+-	instrumentation_begin();
+-	local_irq_enable();
+-	instrumentation_end();
+-}
+-
+ /*
+  * If SYSCALL_EMU is set, then the only reason to report is when
+  * SINGLESTEP is set (i.e. PTRACE_SYSEMU_SINGLESTEP).  This syscall
 
 
 
