@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-806243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4907FB4940B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:45:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240CEB4940E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17D7162F21
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59F31BC0F00
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F4D30F924;
-	Mon,  8 Sep 2025 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFBD30F955;
+	Mon,  8 Sep 2025 15:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZzjvnQ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMv5a8y0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB1B30EF6D;
-	Mon,  8 Sep 2025 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A741EB5CE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757346108; cv=none; b=BDVWweo8flH+nypAwblC/7ETyIV1cOUDJgSIsevVE6su94Rf+4XCWd6CdqeJsiqfG+/FU1Suc5+3cRY8+hdwm6I3F6uhRHiK/MGPCm6C2RYBft3f6dBisJMwa3KR8QL8X0Mjb3MYkSDsSyILXONhaeGQlUqs005c9q/qzDt7Irc=
+	t=1757346151; cv=none; b=miYIoX5nYnpVdJX/iB0Wu1Tlxul9bo0CkpYwF90efQrGStsJ47mOxQtnFFMj5In852wfyZXzQuC6KlBnNUWxPhJorL1tNcRlTMlvjVRvvkH9MCi7TwHyXScDWHmW8Jy3qfzkcxQmjx5IgLMiNcHOWFUpDM3FRumPGpe2hs85A34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757346108; c=relaxed/simple;
-	bh=ForpFWjtRAYGgGTACotYuD7ZB4CewBGLyHMIVTfN4b8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=asgYM+PBwO2cijv8ZYzVQp8pMta1d1NQM4FHjFY0uLfj5LwhKpJgB/9hr2TleOrO/StpNEibQbGgtq+nA6zYgTvNktCPj3Bjqsc0Bjk0hbjPciBje5AI3rUZZi+psFPDYB9216bov9BS2e8s29nMV/gZIAlx2UTOxesJ178R67I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZzjvnQ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C7DC4CEF1;
-	Mon,  8 Sep 2025 15:41:47 +0000 (UTC)
+	s=arc-20240116; t=1757346151; c=relaxed/simple;
+	bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ieuMP4VVJK8khOOMtbPygwB3fyFTICA59Wi/eI1OiqsUyt8b83viL7ngNj4QMkvHr7Rbt4zzQYtIyN3gydgkMuRVLOytsNDIM59h0reehTX/FUZoDMmWoOq7E8lYIXR98JEGw4nz4LNjqXoW0eORm4jCyiijp3TtYoqixfjYI2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMv5a8y0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC83C4CEF1;
+	Mon,  8 Sep 2025 15:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757346107;
-	bh=ForpFWjtRAYGgGTACotYuD7ZB4CewBGLyHMIVTfN4b8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=BZzjvnQ2jHd6Yap3kU11yHhKYHr313fyKx6kIpvfk85orBAHUBxCn/JjFi14TQ5XW
-	 XUD9ewu/H4ScHX79lbChEoGv0nW6QR3rqxa+FKaVueKFaSNPJ5uwNgg7T2UkGnTp9z
-	 m9FcU+7ZVlmrQxX34x4QtkQpovSosu6HbosXJolhJW1Z3+noVj0Yb4nd++j2DbBJhC
-	 FLBqJin0LbE6HI2dpu66LeSXr86lUJ8QiSDg0poA3h1Kju0zajmvyOG5OF3eD608GU
-	 /BVP/+y9/S+JQ8gDYdnKW0Q39NeUo/srjLHRjrYTC5NUc/JDT9yLgOE2tOKgo35Ibo
-	 hkJVja0jI+HPQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE331383BF69;
-	Mon,  8 Sep 2025 15:41:52 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250908-vfs-fixes-0096f8ec89ff@brauner>
-References: <20250908-vfs-fixes-0096f8ec89ff@brauner>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250908-vfs-fixes-0096f8ec89ff@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc6.fixes
-X-PR-Tracked-Commit-Id: e1bf212d0604d2cbb5514e47ccec252b656071fb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f777d1112ee597d7f7dd3ca232220873a34ad0c8
-Message-Id: <175734611125.4149734.12476243780802666556.pr-tracker-bot@kernel.org>
-Date: Mon, 08 Sep 2025 15:41:51 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1757346151;
+	bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iMv5a8y0dm693P+Yctu9KOnCXryKiqubMy2tZOU4TJIHtxlHYx0FT3xCoZdKXmpib
+	 iQTA6zSqFS60ZkQa7xZhq4lZMi+e3nb86OVVYO9QxdA8jj0qAmEA4KVj+o3VmZdR99
+	 bgDBDx2wVqWlcJ/MpMIBRVwcNJSqv2bxJPaSjc8QWEDpYCo7JH1QmntdttomyvkaFc
+	 /rCgzxq7mVGDr8uOwacdjLd3dcc9YPnIaqgfOimJZVF4djt1+5gQ/Tjh6Q5CeKhdpS
+	 Zn3YqydDFnMB5k1l6rznLzE0JhsofpxvtLBAamvMf8ivXjUngsEkdkQUHol+5aIv4U
+	 0QTEmkBdxnmeQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH 0/3] scripts/decode_stacktrace.sh: preserve alignment
+Date: Mon, 08 Sep 2025 17:41:56 +0200
+Message-Id: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAET5vmgC/x2MQQqAIBQFrxJ/naBhUV0lIkqf9TcaGhFId09az
+ GIWM5kSIiPRWGWKuDlx8EVUXZE5Vr9DsC1OjWxaOcheWJhgsaQrrgYLewt/CaldN2zKFTSV9Ix
+ w/PzbaX7fD5rDK0pmAAAA
+X-Change-ID: 20250908-decode_strace_indent-04f69b1f9b14
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Carlos Llamas <cmllamas@google.com>, 
+ Elliot Berman <quic_eberman@quicinc.com>, 
+ Stephen Boyd <swboyd@chromium.org>, Breno Leitao <leitao@debian.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=872; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=FHCOLYSxka0LOWodxjx4zzzMlCrhDKPUdzEAayNKOTE=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDL2/UyUOzUxzoK3hf24QYj/RuU5nsunrHP25exvnlkwX
+ 3z9mbd3OkpYGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACbyWobhr4jx+S+nw+9V23qq
+ MLedTjx5d3+fPdOt+yExuqqJmoxcFgw/jp+UTOzkyH0TU33o4M8NXdz7RCsfHuZvdHk9b7/ag0/
+ 8AA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-The pull request you sent on Mon,  8 Sep 2025 11:45:58 +0200:
+Here are a few patches slightly improving the output generated by
+decode_stacktrace.sh script.
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc6.fixes
+- Patch 1: avoid trailing whitespaces when printing symbols.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f777d1112ee597d7f7dd3ca232220873a34ad0c8
+- Patch 2: preserve alignment when printing symbols.
 
-Thank you!
+- Patch 3: preserve alignment when printing code.
 
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (3):
+      scripts/decode_stacktrace.sh: symbol: avoid trailing whitespaces
+      scripts/decode_stacktrace.sh: symbol: preserve alignment
+      scripts/decode_stacktrace.sh: code: preserve alignment
+
+ scripts/decode_stacktrace.sh | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250908-decode_strace_indent-04f69b1f9b14
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
