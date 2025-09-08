@@ -1,93 +1,258 @@
-Return-Path: <linux-kernel+bounces-805005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F64AB482E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:39:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FAFB482EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 05:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361973BE7BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07F83ACC5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 03:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15F214228;
-	Mon,  8 Sep 2025 03:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31486215075;
+	Mon,  8 Sep 2025 03:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAHUGtf0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LsIXWnNa"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5A315D3A;
-	Mon,  8 Sep 2025 03:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757302760; cv=none; b=Ue09QyNTloHwtSCOtR48BLgUpb3gi1ysHnx9S565wnme7WKxtatkZ+17aoBLxRn5E1qo2mJAPgRwChwSP+a6aI4DcaYFHDjSbTW7JpzUFcN3u7AAwXhSeUrfB7GsoK4aiLZbEANUiHanx+t3TAwhoulOKrE354xIoyroR3zQdgs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757302760; c=relaxed/simple;
-	bh=lVaQogxRxHTcdSmnAEDjTJ71tx8RD2jm4+c/+FwJSyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mADq0IRGd9EvJHP9YPz1BpFuLTiPw6XdJyfXwl3q7COpqZUJwZELcLUxF8Egn3z5/Zu/TckjLhpD8GbkS5whfdyPPI51zC1Ua1SUFICltPG6Z7wXmVwdSriWFV3VtO7mURzZNV8afqm/UYd6Ew3x+e80cRmnSf9Jo1C/cb4xdLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAHUGtf0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 263B2C4CEF5;
-	Mon,  8 Sep 2025 03:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757302759;
-	bh=lVaQogxRxHTcdSmnAEDjTJ71tx8RD2jm4+c/+FwJSyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LAHUGtf0ZWmD1BzjTl7H7Sc0d3vF4lov+wuMx7bLdXAyX9tfYide8ARlgvL247BVD
-	 6pty0/0GhHOqMwME5JIfCbDVWXip7nbj61JTjDyKp6RbFlpn7PJhS9SMqoVOQujpZ7
-	 tnaCbZypF1xWMznCZISz5uRnPkHE05vuyheacvOQe9OD5Jk6RfrRLUYk936fPnZVAc
-	 7PTbqBQ2cmlr7xR6cXAlGKVQBOU+Bx7EfNLFuitjg+moNn+vM2TIO7PfA5tR4lENCT
-	 hrJzn7qq0Te+FVFhxiT/+M+ynx4yZbxwwZU+I5l4NYurpfxqdIePQPWODIidGOcaBu
-	 fwvLrCfG6NkzA==
-Date: Mon, 8 Sep 2025 09:09:08 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, fan.ni@samsung.com, 
-	quic_wenbyao@quicinc.com, namcao@linutronix.de, mayank.rana@oss.qualcomm.com, 
-	thippeswamy.havalige@amd.com, quic_schintav@quicinc.com, shradha.t@samsung.com, 
-	inochiama@gmail.com, cassel@kernel.org, kishon@kernel.org, 18255117159@163.com, 
-	rongqianfeng@vivo.com, jirislaby@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH 00/11] PCI: Keystone: Enable loadable module support
-Message-ID: <2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5>
-References: <20250903124505.365913-1-s-vadapalli@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EC1315D3A;
+	Mon,  8 Sep 2025 03:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757302825; cv=fail; b=owYfUkuKyoSUIAd1ikFIro26GLhDW7UXn0QhK6KVqg99gZWNe7J8WAGTZRCSYTvyTAtf0XHtfrOpIOIH+lbd5YRX0KdHZ4dTGo8nEKO66msbyEJ2cIzeI1DMjeDJiJWyXLS/KJczTwcT4V40FMfYL7Hpw3eZL/e4FNqZsMpvxqM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757302825; c=relaxed/simple;
+	bh=4AzGLKbcknN+E16Hsxx9MQb+0tdogMebfTo5LiebDXU=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=dLxENicjsbb1jkL8kSbTbQPC6GzOUgslgIGgT58ZddkYoZ6r9lzsGpAbF0TRBgkzd059g/BkHUuIRYvWGOWapXicg/PaZB+sIz/ftAMZucDqVwBgNnIStFSUdh+zM4dqseHjLhSvaf7DtzO9+XJ6gy5KMeQjJkUEc6qNtuOYm7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LsIXWnNa; arc=fail smtp.client-ip=40.107.223.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QeOSlQbuq4s4/DApJaCr1G+IWqJp6V42wKs1IaNGxSjjoCJHTPZTWAxRyIJhnC4aoc1Vh7zOOIMfx/fDXV97qbrPmUozP7gz9fUpPuP528Yj41i8VLRfPJRguM+jmbGiWl7/1jjVy9G+TrjY56gcEK5FRc+Y07qCpX/xatUtdpGcM4dP68AM2gcPHrt7WIe+5QkhjF2BeKZhFHy702aWAvgrolB6ABmNBFs11DPsFjvGbmyL+v22sqaGXIaCAJQcKBdhK/pOybeAE8q+4KvH6lTq81uiRLTVKwMBNDmlCGOFtA5kRplHyyYw7k/exNoNIkG64VzxiHV6y89ls73gAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D9dEkFelRWIzZkji8dYB+E4xEcySUZcwewqWmQKhSwU=;
+ b=BFDfYa4q1kGEJs2zdTSx2k9Lfwe/dR0YyuqWqR/XjMU0IUybpf/bbc8sq5qE5KznaV6yTWUScQ26+usj5LFp4KMuYohLLjuKpti/olAVd7xMXX6lOMgzldmSfoEs3UFPXjTHCoU+hUtZWMusHX12kAChBTQIkl2FWuPkVUJHcu65WJnTCTjc0+kW75n35h8haEVshesnwAzuiiIWSOGB25cSUFy7jKwMfkkvJtkfk2/98q8ZZym6Zuzmu69Bvqg0JPf7fJtlARtoFRHoC2DqWhC+XMKwI/KuAeWFOynByg0qbUjI4Iz/J6s4ef8rNXr0252MOaHs+S/1+P6pzXnfJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D9dEkFelRWIzZkji8dYB+E4xEcySUZcwewqWmQKhSwU=;
+ b=LsIXWnNa1pGbpOCxgAYfH5u/Tc8VV2uaOUnPwBU2iLKavoIiuVnc0HVUuel63rF6GH7ndgoOmoshbsPEZUSxUslP0x5bK6o39BXsMIhtLhvxWFmZKly63/qEzVl3+DQYgiHKCS8qp3xvlZfSXkXCRYz6PugFAQBnZKoRI/q4kpAl84UgYvhelGnVgCI6xT82dtNd0ma2Rtllph7DF8tTZgvwL1ikal6GCHaCvUegoA7M27L1RxBTt0F/3HC26Cfr6Ao9O1lrJcrWzUv6rmi+J/X2nCMWvw9r3Pa65hyuJrvZDLEM96ea4se+P4GHWd1Sqe2n8Pn/xHof+9b2cLc/hA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH3PR12MB9394.namprd12.prod.outlook.com (2603:10b6:610:1cf::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
+ 2025 03:40:21 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 03:40:21 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 12:40:17 +0900
+Message-Id: <DCN3UXK0EQ1Q.KWGM7NKTCS13@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] nova-core: bitstruct: Add support for custom
+ visiblity
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
+ <20250903215428.1296517-4-joelagnelf@nvidia.com>
+In-Reply-To: <20250903215428.1296517-4-joelagnelf@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0085.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::8) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903124505.365913-1-s-vadapalli@ti.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB9394:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ba72191-c61f-44ac-c1c7-08ddee896f9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGdIdUlma3RsY21jbHA1NkZ0RDFjSGJWakVyeERSYzY0aGtGT2t5dnRua0c5?=
+ =?utf-8?B?UHp1U1dhbUNOK3lXNXNQMmlHSzJZbEVucVp0UVJCdnhNODN3UlhCaithNUpF?=
+ =?utf-8?B?cUhlaDlMUGRhMFA1K2RCZ0R5NkVLQjliRmN4YVpHT3FDaXQ0TVpXeHp1UFN2?=
+ =?utf-8?B?Y0txMncrcVhvM0pTbCtKcjl4RXp5SEtJVGI0dUsrblVqOVZ5eXVmYWZ5M1FU?=
+ =?utf-8?B?YWpWMGd6SURTRmxXRi9GNHF0cUc2Z0lBaWpyR3ZHdE5kVzc0aHdseXhPemkz?=
+ =?utf-8?B?SW1zWDJOcW00enlmeVhKTEtqZjB4UWNISjdLb1I1NWRvQlJFUHduOHkrZlM4?=
+ =?utf-8?B?bjk0THliMzlpaTRxVzJuUVFDZlhSVm8vTC95Ti9KcFV5SVFhWGJzMDhMRTg2?=
+ =?utf-8?B?c05lRkpwUUVEeE1BQmpLZ3JUOHJpVjdJRXowckZBQnM3em5FSnprbHB2ek5Z?=
+ =?utf-8?B?MHhsRmIrOWxQK2R4bUxTUlNuc2ZLZDMvb21ZcUZPQ1krR2VuQWVZNWZKaC90?=
+ =?utf-8?B?R1drR25DRVF1NjY2eTc5cDh4T2pSaUpTNVh5MSt6dkI0ODlIdXcxaXZmT3pk?=
+ =?utf-8?B?a2tEaGUwQWlKNjNDc20vUTErZU5hQW85S2Z2SlJYSWVLSGlKM3p3eUsvSi9W?=
+ =?utf-8?B?YmhoTDdEUnBtdU40TW5pZlROc09RbEZMOGxCL0U4STVyY3FNQWhVZUpYd0Ix?=
+ =?utf-8?B?RDQzbWhqK0lwWUUzN0xKcmU2TGdIM285aCt3cTlZWUs1WWp1UjdicTRMbG9P?=
+ =?utf-8?B?ZDVYSENuZmNHY2NwVkFzSWNNU1dnbU4yUmtrUUVkcUR2Yy9yaDFwN01tdVJT?=
+ =?utf-8?B?NG9kdFVwVzZsNUR0cTFLcmxaZDNvbUc5UWltbHZxajVyVTVEV0Vna3dKdFZv?=
+ =?utf-8?B?Vnd1enh2USs3MlptcnBuRXhscklVSHg3UzFCa3pveXdJaXdRL2VESWxHanhL?=
+ =?utf-8?B?M05uTEpYcDliaEZMM1Q3TDcrdmpFb2VzeXdISXBKS1l1L1JJR0xlRExqNU5k?=
+ =?utf-8?B?VnA4czFwcFhjUk9MS2hoNlY2YTYrVnZjZGdRTHNxbUp3cUtNelhWeEpzS3Jm?=
+ =?utf-8?B?MDZzdm5CMjVpYXhhNVlpZDRRK0I0R1hhc2JmOGYzYWpIMlRod1MvNDVpcGZ4?=
+ =?utf-8?B?eXNzY1AvdzBzRTlEWDZzTFB3cFo4akNvbkt5cGNKL0xxODVvNUZScnlnWTBv?=
+ =?utf-8?B?L0ZCbGRZVjltT3pkRGNoQlluV1RMd05jeStha01DLzJXWnpDd3RMRUpmSnhM?=
+ =?utf-8?B?ZmJuQ3ptUEsvQThCUkl5dWNNMDZMQnd3NUJKcXA4cW5ENkJTdHA3cTVuMFRl?=
+ =?utf-8?B?aUN5blBGbVIrRHpiQklGSkZQK2dxUU9aaEhoaS9XaEhJcmR3TnJ1SVoyUlEx?=
+ =?utf-8?B?M1NOTVI1bnpuVGh0TEhDTjdFMFNhYkYvempIWlhJMTQ5U3ZscVBiMlBhS0lF?=
+ =?utf-8?B?U0gydlF1R2k1UXVZOXhSaSt0eHZaN05mdVJQcllnUENsNnhyRlFLeW9WZ0t6?=
+ =?utf-8?B?MVpnWkY1TUdkRFpCZEIwdUhEcnJQLzdxL2JXTmlkMmtMQ0krM1JldXFVTEVD?=
+ =?utf-8?B?VkZ3UGJZYXU1VGg2RjJweDk0Qk01VXBxZVRBSlEvMlFuR0VaYURuMkt6SGI0?=
+ =?utf-8?B?VzBUQVV3b25XTEI3WlJVbzliQzlsbEdVcGRsR0d5emVMbHFvM2gvclJaS25K?=
+ =?utf-8?B?b0g1VDRQVDVNdys2U2MxL0xUWWVRMmZ6bVFHTWRmOWpjbGJENXU5TjBGZEp0?=
+ =?utf-8?B?Z1Z2Z3JxRE5sL2U0cVVmZkNqemlkRmxEdGN5cFNBTGVQVmRLd3JFM3ErMktN?=
+ =?utf-8?B?Ti9oOE9nS2pKZXJuUmM2ajhUbkhoOXdLK2NoYjZqMzY5Nys3ZVFKcU9FdG02?=
+ =?utf-8?B?OEdsTlVxZUF0eU9PZnBxc0hQblpLU1lxaDhjMmVZcHE5RmUvV0Y5bEU1NEVN?=
+ =?utf-8?Q?p8Qew45Md8Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TENUaVVEdkxwVFpHSEVMZ0V3UzFEdi9Zc0JGSjlnWkVKR2ZLYzFjVFBiZWJ0?=
+ =?utf-8?B?TnEzTHFVL2dncHNnN1ZIMDZydHJqWXcxc21lV2xEdGhlWWhyQThlRVlhYVFy?=
+ =?utf-8?B?bWxpK0RGMVhuTnA5dk1yc1BDZjFPdFgvSVNWdEl6SS9SbENkdTFKWldWM1BT?=
+ =?utf-8?B?VU5NZ1F3TGN6ZCtXZUxjZkptT0tRSjdoSTJIVTVjYWh1OTI5VDJCTDQrbHBD?=
+ =?utf-8?B?ZEVsQjZMVjRRNzVzRkVkanQrU1dNeWxoblNJTEl4aVRsc3BjaFRzcGsvdU5P?=
+ =?utf-8?B?cFg3ZlI0S0tJdFBnbWpXNXhoR1dIb3hZd1cyQTRiTFNjYyt5UzVxVDRVUzFP?=
+ =?utf-8?B?WitqRytHMFRKMjhWWG14ckxKRXJLMUpoRWZ5TldGcDVrYkdGY3NETHdzdTlw?=
+ =?utf-8?B?UDlqSVFyU2hqU3BTd2l5c05jVUFCZXlneXVMQW94Y09JSGtFU2VpNjY0aDBO?=
+ =?utf-8?B?TDZNN1hvRDRZczQ2U2dNZFQvV1NWc3JBMGFHdld5L0N5bGovNkROMUxKL1Zx?=
+ =?utf-8?B?V2prN1lmRWlhQXdmOGNsRHc5dEgxMXUxUSt2ektRMGxHVmhYaVhCaVpOZzA0?=
+ =?utf-8?B?VHNkQUdwUUxvQ3FMdU9LaXUwNXN4bnVhQ1lVaUxESDhmK05GQUhhd3dJZ21N?=
+ =?utf-8?B?TUZLb2ZKSTYzdWJNQStNWlFPTCttNmliVmZzTGhMZUpjSjlBZTZSNkhaVkk5?=
+ =?utf-8?B?WjFvWmtZRmlZUHB2bWI0RDlFTWQ3WkNIRW8veFRMM2hKWThDWGpxWVVwTWxS?=
+ =?utf-8?B?S3NPcThEdy9sR1ZRdUdTRmxMTWtwcFdPcFdrQWVUVHRmakdKWU81TkJrZUVN?=
+ =?utf-8?B?YmgwMzh5aG1uYVZuaVZRZmF6SnFrUzRnU2t5VjZqQVZrMmxnYXlOU08zWThG?=
+ =?utf-8?B?ZC9WV2wwbGZYTno2alpOb2lHczFKa0J1VDhScWR2eExnSGJiRzdZdGF2TFV2?=
+ =?utf-8?B?WlViMUhjKzV1ZGVkZ0VyenEwc1JzdjQ5NTNzaGxDdEFGZ2ptS1JVR0I3TDdp?=
+ =?utf-8?B?eXFOMlI3NG1wTnV6VVprYjlDeTUzd3VyN2ZkTTZxV05LT09GckcxUzduVkVL?=
+ =?utf-8?B?MnJSSTlORDUxLzRLMmh4eUV2ZEhVQk1TWmgybkRENXZzUEpsN2FuMXJYck1U?=
+ =?utf-8?B?b0QzY1U4MGhWajVzUnNka3c3WW5QVVJocWt5WjJTcnFibFA2N2p0RTlJMndY?=
+ =?utf-8?B?VHh1djNZbWlqcm94bWxCdjZObmVUSFlwT0NmUGI5OG13K0Q5OFozTklpRzdk?=
+ =?utf-8?B?SUZKSWZ5M2E4MFdZeHNjSm1rMDdxSVc4MkJhV2pDU0JXcVBEN1E3SmYycWg4?=
+ =?utf-8?B?TVI2cFA2RGZKNHNLUkJ1elh3U1NFVWhJL2tZS0J3aTNwV3lLZlpsYnZaU0Nv?=
+ =?utf-8?B?UFRBY3F2M2FoU2ZDaVZucjhXeWNvRlR1MW5OZXJGRXFrRmtOekl2Mm0vTlI4?=
+ =?utf-8?B?WGZ3bklheGhkODhid0wrVk5zTzYzNGZpaVkzbnBsalBmNmhTY0lwSkxNc0Vr?=
+ =?utf-8?B?WTBEMll5VzFjRmJpc2xSTFlqWVZSV29NUVZPbTFPbWFNbHhlaEhvcmNLMlVu?=
+ =?utf-8?B?TVJCNlV2UDFCTk56ZkNmRENRUjVwVjAyM1k1bmgzNjBGSE9pdXJBZW12dEFH?=
+ =?utf-8?B?USt4ZjFQOTZIemgwMFFSQWZIVUNCeUJSM3dWYUFWelNML1NjTDVCQlhCQWFa?=
+ =?utf-8?B?Vk5UZlZMdy9nNkhZRUtuUHlOd0RFYm9RelVQU0NqUzN0UDBUSWNOK2tmc1BI?=
+ =?utf-8?B?MXRkME9EeWFIMUVZMVhaMHQ3ZGRjR1JVTzExMzdEcTlTQ0p1empIZyticTlx?=
+ =?utf-8?B?ZGVaazFxdjV3by9tR0xJZ3A2SW02T0haaVVkL1dacklRNUNwVHc0K0l6a2J0?=
+ =?utf-8?B?Mk1MWWE3NG51L3VuTVlBMEY1UGtHN3B6Nk54eGpCVFJDdWNFaS9EVmkxREU3?=
+ =?utf-8?B?Z3VCdTJseFNrY3FObVNVQ3c0V0tseUE2ZldqRlkrVnYvOGdWc3UyVkl4TWFp?=
+ =?utf-8?B?TUgwTG8reEQrN2ZpeTJGc1NFYVVZYWV2NFg3Sk9McmZmQXJ0a1hmSzRjRTRR?=
+ =?utf-8?B?aDlTU1N5VWNYRW9wbVEzck02bFZjTCt0M1lZUXE0T3BrNzk2MmxhN3VkV2xY?=
+ =?utf-8?B?SU1MTEdVc2piTDZhVEZwb3V4QXVudGE1bTdVYWt5ZEFVbVl6cHJ3TjNNRmFz?=
+ =?utf-8?Q?5GbDEISYlGnB6OzhJm6tWfoNsX/yut7nvP3OeyV7pMCx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ba72191-c61f-44ac-c1c7-08ddee896f9f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 03:40:20.9219
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V/BQokXA81EpspBeXaJq3chsH0PPyAwPmw6y5Ct1oOXYWqZbut+pciiLbXqifW0UqANvMzcqL5Yr+Eo78/S6ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9394
 
-On Wed, Sep 03, 2025 at 06:14:41PM GMT, Siddharth Vadapalli wrote:
-> Hello,
-> 
-> This series enables support for the 'pci-keystone.c' driver to be built
-> as a loadable module. The motivation for the series is that PCIe is not
-> a necessity for booting Linux due to which the 'pci-keystone.c' driver
-> does not need to be built-in.
-> 
+On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
+> Add support for custom visiblity to allow for users to control visibility
+> of the structure and helpers.
+>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/bitstruct.rs   | 46 ++++++++++++++--------------
+>  drivers/gpu/nova-core/regs/macros.rs | 16 +++++-----
+>  2 files changed, 31 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/b=
+itstruct.rs
+> index 068334c86981..1047c5c17e2d 100644
+> --- a/drivers/gpu/nova-core/bitstruct.rs
+> +++ b/drivers/gpu/nova-core/bitstruct.rs
+> @@ -9,7 +9,7 @@
+>  ///
+>  /// ```rust
+>  /// bitstruct! {
+> -///     struct ControlReg: u32 {
+> +///     pub struct ControlReg: u32 {
+>  ///         3:0       mode        as u8 ?=3D> Mode;
+>  ///         7:4       state       as u8 =3D> State;
+>  ///     }
 
-There are concerns from the irqchip maintainers that unloading an irqchip
-controller is a bad idea. We had a lot of previous discussions on this topic.
+Maybe mention in the documentation that the field accessors are given
+the same visibility as the type - otherwise one might be led into
+thinking that they can specify visibility for individual fields as well
+(I'm wondering whether we might ever want that in the future?).
 
-But I would certainly welcome the idea of building a controller driver as a
-module (tristate) and prevent unloading it during runtime (by keeping it as
-builtin_platform_driver).
+> @@ -34,21 +34,21 @@
+>  ///   and returns the result. This is useful with fields for which not a=
+ll values are valid.
+>  macro_rules! bitstruct {
+>      // Main entry point - defines the bitfield struct with fields
+> -    (struct $name:ident : $storage:ty $(, $comment:literal)? { $($fields=
+:tt)* }) =3D> {
+> -        bitstruct!(@core $name $storage $(, $comment)? { $($fields)* });
+> +    ($vis:vis struct $name:ident : $storage:ty $(, $comment:literal)? { =
+$($fields:tt)* }) =3D> {
+> +        bitstruct!(@core $name $vis $storage $(, $comment)? { $($fields)=
+* });
+>      };
+> =20
+>      // All rules below are helpers.
+> =20
+>      // Defines the wrapper `$name` type, as well as its relevant impleme=
+ntations (`Debug`,
+>      // `Default`, `BitOr`, and conversion to the value type) and field a=
+ccessor methods.
+> -    (@core $name:ident $storage:ty $(, $comment:literal)? { $($fields:tt=
+)* }) =3D> {
+> +    (@core $name:ident $vis:vis $storage:ty $(, $comment:literal)? { $($=
+fields:tt)* }) =3D> {
 
-> Series is based on linux-next tagged next-20250903.
-> 
+Being very nitpicky here, but for consistency why not put `$vis` before
+`$name` since it is the order they are given by the caller?
 
-No need to base your patches on top of linux-next. Either do it on top of -rc1
-or pci/next.
+>          $(
+>          #[doc=3D$comment]
+>          )?
+>          #[repr(transparent)]
+>          #[derive(Clone, Copy)]
+> -        pub(crate) struct $name($storage);
+> +        $vis struct $name($vis $storage);
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+`$storage` should probably be kept private - we already have accessors
+for it, and the visibility parameter is for the outer type, not its
+internals.
 
