@@ -1,229 +1,179 @@
-Return-Path: <linux-kernel+bounces-805088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BC7B483DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B425AB483E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BDC1890255
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A8D189C7DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9598221FD4;
-	Mon,  8 Sep 2025 06:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1495231C9F;
+	Mon,  8 Sep 2025 06:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sScEA+sA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VTTm5WU3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1apyA0jq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GZ2SbxOq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4HvCLfSc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B911D5CD7;
-	Mon,  8 Sep 2025 06:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D752309B9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311571; cv=none; b=KMaeT5cjqYtTFeSEVCPIebNge9cY+Ex8FEJW/WdX38qDKb6583aFb5GgjTIJ+cAoskeUWTHtvdXPRC4fZ8YxfNZyfqItMJ+YJika6Bf0JdE99CODSTnaygLXv6BBMaw61d92/EUgJunjvByCmPx+PCsgdhr4t1oxTCVjwfmGG/A=
+	t=1757311576; cv=none; b=tt8fExz9iDGEQrSvrhf8bUhGs0RzfzKY3ZfCYDqd+3won/hiTcx/ygpC4TQ5VrBAQTk4roj8ajl2AE7hm0OtQJeN57UyichmcT7CH9Hv4shLZX1qJuU9lb9UjZcJ4NLoDrOPm0Hxj/mgrFemRjbRtazulbg00tKxZowVM/tEpK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311571; c=relaxed/simple;
-	bh=4A5Es5qiO5aqxXgStXXtaG5FSdU+XymwE0oZAPA6t9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AG9uWd66dC9YNpG23rFbD0XYXCoY/q1YtARdvyjAQIvTUpQLmZgAIFcURacBuLZyL06AiMUN865M2OA5g+1FFYkyjwEFpkZxUcESSyn1t5osaAmppCZsrSxYcf0DcPgNhOhCTDoq05AeCMunmnwLoTy/sgERZQrRgXmm+O5L4AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sScEA+sA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E95C4CEF5;
+	s=arc-20240116; t=1757311576; c=relaxed/simple;
+	bh=MNMoO5ZSxMijP7k+fy9/RMrnO7AfGEmLlYWp2adgo4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ts4VuvWs3mg95Iep3BX6QM47AqF2n8MNG6RaVcKuw2A59gDOBrFAnw1O8inQ98t/vQfwh+38axvCgwi1Vf8kpBXY3lNrA60u4OEGpIJC1bpR+hG9erAIs0E1/DSX2V4f6WwpFmfuSLrWfGGT9M2yVBOq9dBAp9Je9PamdVwph8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VTTm5WU3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1apyA0jq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GZ2SbxOq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4HvCLfSc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CF40F25D0F;
 	Mon,  8 Sep 2025 06:06:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757311570;
-	bh=4A5Es5qiO5aqxXgStXXtaG5FSdU+XymwE0oZAPA6t9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sScEA+sA2FKBBArmW0BBu8JxohX0FkHC+f/SBFY3YeWqUOyysMHCxb7/7iDt+0qoD
-	 TsDDdpD59sTlAPboK/rVjWhddPoh60Zx1CDViPXKrn6jIjwIKT2mSWE7hgQEneqsIL
-	 w5Im1LuSNaxaq6vY4DtByjrjiF4QYmI1ISKmTYFBzd+i4JStxYFPoEaQ38RISDvtnf
-	 AsoxLk3IWske/zTAK4Woe+7WX4AX200yGqkhe1/Ebgv9aa4tqEtJzbMmYEZ1gYmulU
-	 3mgXxvNNK0fvhzYLfcB+cDrwwIpvmYvb6lxEK7wH+QTufrLqN/IKyq9a2wLDyiB0SY
-	 RtwRLrLKVyZIw==
-Date: Mon, 8 Sep 2025 11:36:02 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] PCI: imx6: Add a method to handle CLKREQ#
- override active low
-Message-ID: <ryvt2k2blew5wisy7edkjqdcmulrwey7lkeriasrmvaigpe3ku@vdgkod2bf7ma>
-References: <20250820081048.2279057-1-hongxing.zhu@nxp.com>
- <20250820081048.2279057-3-hongxing.zhu@nxp.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757311566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33zHN0Ci2nsYAA6yJPzugyK4uZYR8sPBN6+QhEOeME8=;
+	b=VTTm5WU3gsVyWRU3QktGMLV/6wNuTlC1GvT11zmDJzV7/10JaU3gJN9oGS7GB8KBT+dpGE
+	56mNP8wZI2ZadrUFtyNlxzQmk7l2dLItE2Rw6TbXEYpqj/cRVsGVdvDNaHgM3+i9d3MxpW
+	m3VwxdFJbxGTRl1sWS0PSWYTWWZ1S0I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757311566;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33zHN0Ci2nsYAA6yJPzugyK4uZYR8sPBN6+QhEOeME8=;
+	b=1apyA0jqX6EwDS5uRd6bE48pTBzQ3FGvNFkOm6J5aco914Br93cxhN9D1G1A+iNMb+SqK5
+	U8h9sxulmcNDl5Cg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GZ2SbxOq;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4HvCLfSc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757311565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33zHN0Ci2nsYAA6yJPzugyK4uZYR8sPBN6+QhEOeME8=;
+	b=GZ2SbxOqRya+/f66Rdwoc0nc6Gz++0tmpkhcQZJK9vGquUwVgfq6ZpZQjsuPmU84U6B8/1
+	RdX/7/vEtdd9n77a9ypbLiIgt+W7lZS4qRukvNrYHExqhaH6VP/pOtcQhLhU5YX7OlwWxa
+	wC3uEpS4iTupAIB2cpAHXiuGSUIDUfU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757311565;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33zHN0Ci2nsYAA6yJPzugyK4uZYR8sPBN6+QhEOeME8=;
+	b=4HvCLfScqdpJvmaTSMixKtHACubY9c8sezJNuwyHjtTwciLeYslu9lj3jGbPWpM82DGgsU
+	o2hBkBriWApNJiDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10C2013946;
+	Mon,  8 Sep 2025 06:06:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3mn3AE1yvmhSLAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 08 Sep 2025 06:06:05 +0000
+Message-ID: <8f493741-5e39-4a09-ac3a-0bf22479e88f@suse.de>
+Date: Mon, 8 Sep 2025 08:06:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 01/12] scsi: aacraid: use block layer helpers to
+ calculate num of queues
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
+ <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
+ Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Mel Gorman <mgorman@suse.de>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, storagedev@microchip.com,
+ virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-1-885984c5daca@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250905-isolcpus-io-queues-v8-1-885984c5daca@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820081048.2279057-3-hongxing.zhu@nxp.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: CF40F25D0F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-On Wed, Aug 20, 2025 at 04:10:48PM GMT, Richard Zhu wrote:
-> The CLKREQ# is an open drain, active low signal that is driven low by
-> the card to request reference clock.
+On 9/5/25 16:59, Daniel Wagner wrote:
+> The calculation of the upper limit for queues does not depend solely on
+> the number of online CPUs; for example, the isolcpus kernel
+> command-line option must also be considered.
 > 
-> Since the reference clock may be required by i.MX PCIe host too.
-
-Add some info on why the refclk is needed by the host.
-
-> To make
-> sure this clock is available even when the CLKREQ# isn't driven low by
-> the card(e.x no card connected), force CLKREQ# override active low for
-> i.MX PCIe host during initialization.
+> To account for this, the block layer provides a helper function to
+> retrieve the maximum number of queues. Use it to set an appropriate
+> upper queue number limit.
 > 
-
-CLKREQ# override is not a spec defined feature. So you need to explain what it
-does first.
-
-> The CLKREQ# override can be cleared safely when supports-clkreq is
-> present and PCIe link is up later. Because the CLKREQ# would be driven
-> low by the card in this case.
-> 
-
-Why do you need to depend on 'supports-clkreq' property? Don't you already know
-if your platform supports CLKREQ# or not? None of the upstream DTS has the
-'supports-clkreq' property set and the NXP binding also doesn't enable this
-property.
-
-So I'm wondering how you are suddenly using this property. The property implies
-that when not set to true, CLKREQ# is not supported by the platform. So when the
-driver starts using this property, all the old DTS based platforms are not going
-to release CLKREQ# from driving low, so L1SS will not be entered for them. Do
-you really want it to happen?
-
-- Mani
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Fixes: 94970cfb5f10 ("scsi: use block layer helpers to calculate num of queues")
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 > ---
->  drivers/pci/controller/dwc/pci-imx6.c | 35 +++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>   drivers/scsi/aacraid/comminit.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 80e48746bbaf6..a73632b47e2d3 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -52,6 +52,8 @@
->  #define IMX95_PCIE_REF_CLKEN			BIT(23)
->  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
->  #define IMX95_PCIE_SS_RW_REG_1			0xf4
-> +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
-> +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
->  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
->  
->  #define IMX95_PE0_GEN_CTRL_1			0x1050
-> @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
->  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
->  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
->  	int (*wait_pll_lock)(struct imx_pcie *pcie);
-> +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
->  	const struct dw_pcie_host_ops *ops;
->  };
->  
-> @@ -149,6 +152,7 @@ struct imx_pcie {
->  	struct gpio_desc	*reset_gpiod;
->  	struct clk_bulk_data	*clks;
->  	int			num_clks;
-> +	bool			supports_clkreq;
->  	struct regmap		*iomuxc_gpr;
->  	u16			msi_ctrl;
->  	u32			controller_id;
-> @@ -267,6 +271,13 @@ static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)
->  			   IMX95_PCIE_REF_CLKEN,
->  			   IMX95_PCIE_REF_CLKEN);
->  
-> +	/* Force CLKREQ# low by override */
-> +	regmap_update_bits(imx_pcie->iomuxc_gpr,
-> +			   IMX95_PCIE_SS_RW_REG_1,
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL);
->  	return 0;
->  }
->  
-> @@ -1298,6 +1309,18 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
->  		regulator_disable(imx_pcie->vpcie);
->  }
->  
-> +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
-> +{
-> +	imx8mm_pcie_enable_ref_clk(imx_pcie, false);
-> +}
-> +
-> +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
-> +{
-> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL, 0);
-> +}
-> +
->  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -1322,6 +1345,12 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
->  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
->  		dw_pcie_dbi_ro_wr_dis(pci);
->  	}
-> +
-> +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
-> +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
-> +		if (imx_pcie->drvdata->clr_clkreq_override)
-> +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
-> +	}
->  }
->  
->  /*
-> @@ -1745,6 +1774,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	pci->max_link_speed = 1;
->  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
->  
-> +	imx_pcie->supports_clkreq =
-> +		of_property_read_bool(node, "supports-clkreq");
->  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
->  	if (IS_ERR(imx_pcie->vpcie)) {
->  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV)
-> @@ -1873,6 +1904,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
->  		.init_phy = imx8mq_pcie_init_phy,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
->  	},
->  	[IMX8MM] = {
->  		.variant = IMX8MM,
-> @@ -1883,6 +1915,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
->  	},
->  	[IMX8MP] = {
->  		.variant = IMX8MP,
-> @@ -1893,6 +1926,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
->  	},
->  	[IMX8Q] = {
->  		.variant = IMX8Q,
-> @@ -1913,6 +1947,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.core_reset = imx95_pcie_core_reset,
->  		.init_phy = imx95_pcie_init_phy,
->  		.wait_pll_lock = imx95_pcie_wait_for_phy_pll_lock,
-> +		.clr_clkreq_override = imx95_pcie_clr_clkreq_override,
->  	},
->  	[IMX8MQ_EP] = {
->  		.variant = IMX8MQ_EP,
-> -- 
-> 2.37.1
-> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
+
+Hannes
 -- 
-மணிவண்ணன் சதாசிவம்
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
