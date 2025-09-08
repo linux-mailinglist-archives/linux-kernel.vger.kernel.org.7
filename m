@@ -1,174 +1,100 @@
-Return-Path: <linux-kernel+bounces-806698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D5EB49AB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:09:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901E1B49AB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBC24E1CA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2F8207D99
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFCB2D7DE9;
-	Mon,  8 Sep 2025 20:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685312D7DC4;
+	Mon,  8 Sep 2025 20:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="bzhLdmNe"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sO+PjgDB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72726E711;
-	Mon,  8 Sep 2025 20:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362149; cv=pass; b=rFUh/GkESTeAGwXEGFIfGRLmHRE9LMxBddNduaSo+Vjs1Pe7DIjdn1lj9UbQ5CVievq/k6jhXG0GtgzHZ+R4gJxlmHpSL116dVU9OQzuHtswQY8gpUuUMg882u5BqwdkkFeBXPyqyVTKWJZ5xPxw2gdx/irGcYz7nWIdhMcY8+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362149; c=relaxed/simple;
-	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkz3sZPsWLX3OHOsnvacMjYX2ziUf6tS1boI6ohzfHKEh48vMwyHx832TzmH3s6AcVZBTR4H/LhxGD5aAmq63UAPqTF1bHQtc32JaMFwQkyPJr0yGm7cN83mEwZ1jnHmU8mZvJ9XGNfO4MXdqWa7dk5Vp1h2ED3u/oT8RAkPn7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=bzhLdmNe; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757362128; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=E1mI5O+BDwsYYpSLAByTqShmsSFPlSYjA0QQG11arz0JIb3l0hXMKZswHsKy6q6pZ0xJqFQs9ZiKcFFaZvUulJqUav1h5cnAXEhRucURC+3xI7XurBiTddAVdJ14lzIUuvQW/8yjGHVr2iJrwbaUHIy6iOiowe6sZzgOOytlhHc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757362128; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=; 
-	b=Ri6vHzbBorDOsfQYgge4VSpSZQaD0JucXQjQnv5bzhkwCuW3WQdaBhJjVWEUpETh3cy0+xpYhSaFNwKg4lVtlHm8zXSUPrrQGTRialWdBOQuRQV5/lruGlwQWXOut0pLTnehEZ0uREXKpnWYuGV0Zo2D9kTjNJt8s6rX7c9YhkI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757362128;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=ZVHLGUJZLSkdI8nNXcaoalwzWkaiHSFvSSx0MmfhHLY=;
-	b=bzhLdmNeSoKiUCCs+h3HRUTeksAj05YUsr2VX04toyCYMTy/TbaoVB+S5OklYhvS
-	QGKRfqt8MuXyrFuhLiICxnLP56psSav6qle5AARsAZ8jZwdFNfPzAwsSKX8rKK2imua
-	Ixcw1adB75NrB4EP8gE1xT8u3ikXDLeSJhCy5RCM=
-Received: by mx.zohomail.com with SMTPS id 17573621245361.8411634081112425;
-	Mon, 8 Sep 2025 13:08:44 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 2E84F180B26; Mon, 08 Sep 2025 22:08:41 +0200 (CEST)
-Date: Mon, 8 Sep 2025 22:08:41 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, 
-	linux-rockchip@lists.infradead.org, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
-Message-ID: <dr5qspjhwxaxutiilgx4rvfbrho4bijoll6lciv2bc7c7e7r7m@pgmxztqje5ux>
-References: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
- <3556261.BddDVKsqQX@workhorse>
- <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
- <1953725.CQOukoFCf9@workhorse>
- <CAPDyKFofhy5wiNsHUgdtzFwGtO3QPqhVuu1KsPLBWHF08JzqyA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C40C26E711
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 20:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362197; cv=none; b=DamHecM0GiSXQc1Z9gW77tgF0NSgpX+HsHgZd/+SUsNvuadbOvOB+5YUo9UxVd9ZG1CkhwiLVgFCxFfwkf9KXdJNI0rY4hdmwKn/yJA/8VkdLYWdNeW5GueQmoAe6m8H04UAcOutoseS+yhjVs2i3IHgrffd9cNhpxuTM9f27pU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362197; c=relaxed/simple;
+	bh=1YuuAoUsR01siboK02Tf/4cTnTTJSuWiVrPrARReGpU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LHQsTnFfip0TMFvwV91huo+WJzB3ErqfBHlNVhCrA6Nw9r2BAlMHT5ahyAcA/A/Nf0QDxvG3Sjklu9WR3yna13WHUGrmmQLxTKAKnxHD6YZHZxxyV/nz/ehbGj0iqtA6VOYH4WYWs+EHgInQD7P+BCWQmDRF8xiuodSndLRI2h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sO+PjgDB; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32bbacf6512so6683195a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 13:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757362196; x=1757966996; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yB3mttQlljbbkLy4J1oG902kb9s+z+iu7LLfGfGucrA=;
+        b=sO+PjgDB8R4SjObbI/DAI6UkUUHvZgeQUQ0QH+hkZabbbT9yVF2lgXqRpEHZ9jCFze
+         XPS6j3XdMvtvakqRC9aPZAThHDUvm6fBpwjOMXLUWaRDkMDbqvmSyHwc00F1J9xvToda
+         w1vF6irJhSiztPIHTnfOHGQzmqTOEz8Zu6dp79ctHv8E7xgKvL9/4q1SuU3u+xPqGqrF
+         M7L9h8FfTbgOw5HoeM+y8fbtu87RZDMepzH8hGZU62sl0JAU7KIqXxoCPLO92KIRxN3u
+         ED6eMwWjgGkN1XFn4TmH8pN5mMiR1jz1zD+HG5ECpxHRex3+efuedO6eVJrS0S8emfb0
+         LNew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757362196; x=1757966996;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yB3mttQlljbbkLy4J1oG902kb9s+z+iu7LLfGfGucrA=;
+        b=M3DvumIYw0AIssruQcnon+ZVR1BPyQIutKlVmWwDFGl1Tn1eihr+KwkuszNiBUMSEI
+         H1fTBYQeAZhfMOTOxVqGhzqWWqDQ3xuZY1JHBT4GxX0Etvv0cG5pbo6ZF30z6C1bSLVF
+         K9sW26ZwUT4s8ivKm7cryHa2X4TzEFemT8DpSKODFONf+sGxbOuLRytP5Z47hgGpwfYg
+         MAN+V1cADV7UcVf2CmoXtyxlx6nxspdOW25dl3YKAbt/QPVsdfs15RImMCo9fYGma/Eq
+         L45U7BdulH499q93YszRcV3372fu1nCg+7mBmbbzwddsIKo64BkNz4jQ5hctWpRrlUvq
+         NJ8w==
+X-Forwarded-Encrypted: i=1; AJvYcCX/2WtE0w0wXvSVmSXBna3RIT/caHlAS8+qjH/cLXkO9nbPwtJe25cevouZob3z9SEYeGwR+bjjS6Fn1vU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDo+6xsJC5yPCdlwhPyvxtcdf7geFeAFnHsRGuvObnHw7TTx3H
+	UtKF8RpPwpFCaOyQVRTCq6imhgtBVIByWjpQAJvxGVuv4cKZJuprbrZjQ8uRYz6E4XSRLlK7GOn
+	VDCS2kA==
+X-Google-Smtp-Source: AGHT+IFXWsl1Ykqzi9UP6IBXwVSCJf8ddgaZaFEEnXIqKb005Q2xiohYRyg/M74Z97YN+iSqXZxGERzLKgw=
+X-Received: from pjbqb11.prod.google.com ([2002:a17:90b:280b:b0:321:c441:a0a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f83:b0:32b:a4a2:27cf
+ with SMTP id 98e67ed59e1d1-32d43fadc90mr11914265a91.31.1757362195854; Mon, 08
+ Sep 2025 13:09:55 -0700 (PDT)
+Date: Mon, 8 Sep 2025 13:09:54 -0700
+In-Reply-To: <28d5fb22-5b0c-4bf9-85c7-1986d9cc005b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pjwce7oem4hc2zyx"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFofhy5wiNsHUgdtzFwGtO3QPqhVuu1KsPLBWHF08JzqyA@mail.gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/257.348.87
-X-ZohoMailClient: External
+Mime-Version: 1.0
+References: <20250828005249.39339-1-seanjc@google.com> <28d5fb22-5b0c-4bf9-85c7-1986d9cc005b@linux.intel.com>
+Message-ID: <aL84ElCqFIRF05JM@google.com>
+Subject: Re: [PATCH v2] x86/kvm: Force legacy PCI hole to UC when overriding
+ MTRRs for TDX/SNP
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, 
+	"=?utf-8?B?SsO8cmdlbiBHcm/Dnw==?=" <jgross@suse.com>, Korakit Seemakhupt <korakit@google.com>, Jianxiong Gao <jxgao@google.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Aug 28, 2025, Binbin Wu wrote:
+> > Note #2, relying on guest firmware to handle this scenario, e.g. by setting
+> > virtual MTRRs and then consuming them in Linux, is not a viable option, as
+> > the virtual MTRR state is managed by the untrusted hypervisor, and because
+> > OVMF at least has stopped programming virtual MTRRs when running as a TDX
+> > guest.
+> 
+> Not sure if it needs to mention that with this option, Linux kernel will set
+> CR0.CD=1 when programming MTRRs, which will trigger unexpected #VE in TDX guest.
 
---pjwce7oem4hc2zyx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
-MIME-Version: 1.0
-
-Hi,
-
-On Mon, Sep 08, 2025 at 03:40:24PM +0200, Ulf Hansson wrote:
-> On Mon, 8 Sept 2025 at 15:14, Nicolas Frattaroli wrote:
-> > On Friday, 5 September 2025 16:27:27 CEST Ulf Hansson wrote:
-> > > I would suggest implementing an auxiliary driver, along with the
-> > > rockchip_pm_domain_driver. The main job for the auxiliary driver would
-> > > be to get the regulator in its ->probe() - and if it fails because the
-> > > regulator isn't available yet, it should keep trying by returning
-> > > -EPROBE_DEFER. See more about the auxiliary bus/device/driver in
-> > > include/linux/auxiliary_bus.h and module_auxiliary_driver().
-> > >
-> > > Moreover, when the rockchip_pm_domain_driver probes, it becomes
-> > > responsible for pre-parsing the OF nodes for the domain-supply DT
-> > > property, for each of the specified power-domains. If it finds a
-> > > domain-supply, it should register an auxiliary device that corresponds
-> > > to that particular power-domain. This can be done by using
-> > > platform-data that is shared with the auxiliary device/driver. See
-> > > devm_auxiliary_device_create().
-> > >
-> > > Furthermore we would need some kind of synchronization mechanism
-> > > between the rockchip_pm_domain_driver and the auxiliary driver, to
-> > > manage the regulator get/enable/disable. I think that should be rather
-> > > easy to work out.
-> > >
-> > > Do you think this can work?
-> >
-> > This sounds similar to something Heiko suggested to me, and I agree
-> > it could work. It does seem like a pretty painful solution though,
-> > in terms of needed additional code and complexity to basically just
-> > tell Linux "hey you can't get this regulator yet but please try
-> > again later without our involvement".
->=20
-> Well, I would give this a go and see what you end up with. The nice
-> thing with this approach, I think, is that we get a driver and can use
-> the -EPROBE_DEFER mechanism.
->=20
-> Another option would be to explore using fw_devlink/device_links, to
-> somehow get a notification as soon as the regulator gets registered.
-
-I think the main pain issue with this is fw_devlink actually. The
-power domain consumers are all referencing the main DT node. So once
-it has been marked as initialized (of_genpd_add_provider_onecell()
-calls fwnode_dev_initialized() at some point), fw_devlink allows the
-consumers to be probed. As the DT node must be usable for processing
-after the normal pmdomains are registered, this means the consumers
-for pmdomains with "domain-supply" will potentially be probed too
-early resulting in some extra -EPROBE_DEFER. OTOH that should be the
-status quo, so probably it does not matter.
-
-> I think those kinds of dependencies are better solved by using
-> fw_devlink/device_links.
-
-I think the regulator dependency tracking would happen automatically
-when the auxillary sub-device uses the power-domain sub-node as its
-device fwnode.
-
-Greetings,
-
--- Sebastian
-
---pjwce7oem4hc2zyx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi/N8UACgkQ2O7X88g7
-+ppCahAAqkRqtVsC2durQTJGemBzq0yjG7dqCWIVfUIy4528VeNzKUM68rhTEM3Q
-DDCirmiWqQAa0loyj8c1BClUDHE1GYlLPZlFhJYT5X3riH0O9tvS9vqk89BlCqUw
-vV3iXxgnaB3Lf5otlZzGW7cIdh5NfOEDtl4uAB+oTdDhPtGSOIqVTyK2lez/qgyi
-J0ECOTVmc0XbvI6/nWgyj6WMVqpq8rJxsd/TBS2PmAfW0V4dFhr9BTOoeYOZowNB
-PPm4y0UOzS6YaprDF2F9jpPqY9yb/cSQJwZpteZaeNGdqlBucS22AvnmBTGQpmH3
-gCDj+ThQfm3kvTASarp/i4kv7KXBZFsecdbw8MnFu8rzryVC9SKRPIaKzKVqNdgk
-/ddMfYkWdoGp31DXc9EowBSNXBipYYpz7R/OInML/c1Q6/OAFeeys2qUy1iI/3zz
-IjOpu795St7XHwIYyLMNAzjP0AckJRm55+lUnxS7CpOTJGPYDELz55dM6YT9e+0Q
-xX8jmJwa79pffiCVV6BcMscMwxji7OMhoS0pbJ4S+BHuvdrEN+MmgJUNBDOeDG7a
-vvOpc8/6+y4LjZhV/zxRMGTKdTVQDnHuchg3uKaImghIplGEDkXsghrST5cAT4Aa
-zJpy1DDzDeUG/XWypyoRrnW+UlQ8SgIBPKv8shYELogchijmi7w=
-=o5Sb
------END PGP SIGNATURE-----
-
---pjwce7oem4hc2zyx--
+I don't think it's worth bringing up, because that is a very solvable problem,
+and orthogonal to the issues with using the untrusted hypervisor to store/track
+the virtual MTRR values.
 
