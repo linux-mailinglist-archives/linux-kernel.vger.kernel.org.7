@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-804966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B0AB48279
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B12B4827A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 04:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FAD18844C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D489618848C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 02:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782B1DE8B3;
-	Mon,  8 Sep 2025 02:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2751DE4C4;
+	Mon,  8 Sep 2025 02:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un35fxMQ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSXYeOI2"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C002199385;
-	Mon,  8 Sep 2025 02:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7022D1DE3CB;
+	Mon,  8 Sep 2025 02:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757297147; cv=none; b=Kq1oK2OT06QWdYWKECRkHfv4HYDNy0sOL3CeY3K7/vKxSKt9pcDNtdSXJDvcDrzfHKKcu3PRS5L7EpOQb3B/IyvxbuA1K1cGy0pB/tF8+0JZTcX2OrGU8MB9JB1QVnHpt/FX7Aqth9tjuVY7/6cXPiwHSr0/iCrFGLI8rnBS2J8=
+	t=1757297172; cv=none; b=CwcVRgtfPQpCFB1Dc2JqHSJTNqJyG0zwzGnRmfRdYBcJ8tRamZ5x1cbGN5clNOdj9khj1xMOl2SN0RUSwlUolpw7arGAExwmPyB1ewNmFHKKJlX7mSjseMn5Y+uMGxiHY1WT3Mc4C8gjXiQqjh/jAterQesgObhwpA+xKzQYgo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757297147; c=relaxed/simple;
-	bh=htwW1xfmVzPRRVkaJnN+izgyhESSK69PwxwsdZqPpdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUriOgKhxt6KrrkmzbLrMAo8p/id2vlnx9xE7yo2Vtz2DOR7Zk9uHALdZFq6gZkO3OqGGfKY5AfbjDhsIusDhc10b3km/2m9eTm52EbXOroFKB5p7rasq86uF1jgtdA9nlV++tg/ggrYpikzcqpheMN2xVwuIgSKTDKbLPZZ/ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Un35fxMQ; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1757297172; c=relaxed/simple;
+	bh=QJOp4NHIEyzIkCa2KKXGFZjQSIPaljNJbYzgbJPvaOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Le7oZ4tbevmHJd4oqZCHQASmaTrop6do62jTXLcwQ31OyB5z0On689dpkP6HhYwETuodtPJzcdgz0jKbAs1WGl1PtJub5M9ejwPd4j9f1l0Yw3nQROO0m6Y2qllOgCEMv54a7hBYNThLH0aftd9ATQTkQROpd7fXmdmwxhj9kas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSXYeOI2; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24c784130e6so43507865ad.3;
-        Sun, 07 Sep 2025 19:05:45 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-70dfa0a9701so46010846d6.2;
+        Sun, 07 Sep 2025 19:06:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757297145; x=1757901945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XMux8eKktzYrGyHNJj+h74891VBOnd8NG5NmCraJ1jY=;
-        b=Un35fxMQj5STSMcd3OzVi8OK2WRCD3w9Y1zC5ArR04qYoSz3MRmeC/bQoDBPomEMRY
-         S1dkT0wL2l4RtID+dpG+Lmq5F0PivIqM2HBbP7B79MV83FYgwp6IIbANFXXIgxK5/goa
-         60Uzk3fNgfot3VZkJb6nGLmKP2+Dxzv9XWPBFVtHYJO/1OJ+OR8xmng9yKN3CVBNTgNW
-         +sWYn9zALQmXlQVqCJViVh8fMbttMysbDwxZ7ER67BaD4WaL9oxsDMXhfmRpe9dcA9PZ
-         6LlG4KzLTJX4HoLCmiFnWh6xWJP7FcBoLPtA2F+OfHeU019VyPtb+1pdfhGRE84la3GE
-         qunA==
+        d=gmail.com; s=20230601; t=1757297169; x=1757901969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GvypTPf2Nmf1gYAAFO6PSJI6JwBdKCqaPYYToFGfJnU=;
+        b=CSXYeOI21YRkMJL2Nbq9bFKKRN449wqMt+j73chVxqHdwRBpANbBrwsaWEDhoPC68r
+         N/HajhmvyzwF/J1++xP0Um/ie8MX3q8j7pauPhxGntFIflrggR4B3hvPJ0ejSIj/Xbdh
+         KvODIyqjkpkFknuMSmHOcEweonnnxndR9YUSs7Nm+p6XAB6rumV4vt3D0KXHZFG7/J8g
+         AbIvBBneUzLF4CsP485kzKac0SKTcV3IAjVu5VfWijhPY7KM94LexWI6Q+78jPutDJA+
+         zx7CQ0PgHmtBn7zIAXK1TX4d+H9JKPCQ7CXg0CUYdFlwckIXCj6KNIlPa6cX0eTqswFh
+         OpRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757297145; x=1757901945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMux8eKktzYrGyHNJj+h74891VBOnd8NG5NmCraJ1jY=;
-        b=gpEnMEPuwZbMM2s7pbJwI8+vVl4l62OGT4sYe7aglrsXEF9KhGzGYTERuKUygVzyE5
-         IF7ETHE1qOgB0aYRtcmcYQ3hdhnt4imPmpMhlv4Es0DUWgt8sWRC2z5Vo3wYp3hrDbMz
-         GsogGpl/h48YIMk4mV9iZ2M8SB83pPu4c7mP1CHkg+sIxLQLgMhKJnK+veoxkGhhk2I+
-         0ObCfnqKPNQ6LdoY5QSR9/k1Ae5j1Jh+q/AV77pvL1/cvniCq6cz8Bl2430AyLS0XsO/
-         LUNbi1W6stH7cSXdH7E7fm10J+VQ03hzfBj5MBZCfqtAr9AUVE9UxSRnm3pwMOXkx06Z
-         W8qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUroeDxslrAegPlyvCDJHuT0kPGf6DGACWaHIE9Ik/KoIuXXBqMnGvWimHKalfHNST1s+TlR1E/ofnPF5c=@vger.kernel.org, AJvYcCXcAdA4ie/9qLoipi0D/rQIXjwuZ9cmhQfQBMCoz2ySJelufqvIDaNcWZUzmTYMk+ZLDY/kEsWW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0/ALODUTfCv+im+TobMb6RNUugpUGjbuFOswbV5USnbBCiChR
-	oENrFwYmW+Ja86K7oQBrStgzlEJjEHji1Apb1SyC+4AH4xK1VwT570qs
-X-Gm-Gg: ASbGnctUBLTzTRVR/0R4KOCabZ6WhTWXbfUG1Mr5HKFIQA9Ruh01TR3YtHggEhixY4e
-	k6lYMJxYbRorvpJorxtRgXJ6KCFTqIs3P75pS6KEit07DLhFJPmOZY1U4/lqJ4xxpKamXgJc2dz
-	+Ztp8jXZ++4cyaic9vHtzAvzKeCPowThpT6Kg46UrZMFaazwabk9YOmAiatSjktsU0rXwwpNqow
-	UBCyBZqjI2/BQsdCh51EwAw1JnwYJ1Oi0bd4+dRMr8ibSnNNqZUHf9jnQ7AwK4JWaPpqbwPkDcb
-	VuQOuzkkfDZKCw3bg6rRXY3dcZBki0Wevr6O2PdJPW06f+1/o/7CkSBRcx+qoUgNJJ1BZa9oKye
-	0TnJbkMM+d6SOcrFV3lVspJbB7wbvCSPco0f/l9Bc6Hobhq7B21k3csLfgfLmEMt5
-X-Google-Smtp-Source: AGHT+IFlWTF5WOzkIXIZY70TiMkV+dwbPWzTmWOpp6OHRIk4MOu/rKmvFMqIXWjKtv+kofwGYOnsnA==
-X-Received: by 2002:a17:903:22c7:b0:24b:e55:334 with SMTP id d9443c01a7336-2516d8187fcmr66151985ad.8.1757297145305;
-        Sun, 07 Sep 2025 19:05:45 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cd5092951sm94757905ad.18.2025.09.07.19.05.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Sep 2025 19:05:44 -0700 (PDT)
-Message-ID: <2a1e081b-22d3-4f96-a0c5-2427de8a44c5@gmail.com>
-Date: Sun, 7 Sep 2025 19:05:43 -0700
+        d=1e100.net; s=20230601; t=1757297169; x=1757901969;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GvypTPf2Nmf1gYAAFO6PSJI6JwBdKCqaPYYToFGfJnU=;
+        b=WC/ngJ6ycooNOcGjHQ48vMBABOVlsiFAssNUhFdmvNhWzz7VsGckIlqy0gZLevXY9A
+         +z/es60dqZ8RqGxqSPWpOUueC0c93H3ljcIN3Ae9VEOcq/L3+BPKruDOlhqQ5rBmYOj+
+         ssPuDUL4xcA29eVPJcqbaEoSQ2sjo1I1EQpvH98rXQPoERb/UmShDh5A16v5Kl6fXlSN
+         sa5gkJ6ecUoLRoRN3YwLwAQWHau8PBtP7jrHItukg1Hot+Y/Q2KPPD2wUZwlK7hAfv7R
+         IE63NyQV4+JvtvYsEq96afnlWWj/ZNDyyvLiM9gE37Eq8CKQqAD/qWg6SIIN0oi1A8tj
+         0/AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx/hbiZKmZylmg9MMSgyaz9zwgG/qlZOA3ONvRYXtKbby1xy5RNqlvttIjmglVnukW5o+hdVyNrz6pzIKNUwscgdTf@vger.kernel.org, AJvYcCXCYEzd3u3V9AW6dEvtG4d9IrNFwk/A3+dCa12BnbPtG8egcNWLFlu7rHhvIRwZ0s78ipjPo64af9Z7xx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU3/bDdUfJmd1spMzpw2clDOw4VcVRGz3OkUaV4sF7TpzpQ4Iz
+	5WLnmoAAxdgXJLl8ZuspXRAJlBkEKS+9nclnff/J/rXQwzGZ/MInMJ4W
+X-Gm-Gg: ASbGncuw4/GBqBReiCAKlUOL5gErgOryeWbo4VDYrERhVrKB4+fmND7VTGGun5KKnDL
+	syUEmkxHkZw6CbnUXH4YgeaH9Is82xS19xYtEIxo7CfTQhtsbz6zw8SQRy3qgxp2MckRj77u3+j
+	WJFcSsUYYUou1WB94SzWIgsgnNTNGic5ExPm0aPwTp/aQ7YWPYbn5Cz31KBvH6NGo+STENPSgJW
+	kL6wjIwZkomYVf0mxzhLIb36g2vLQ7CJfxog4lj8FX65HxY4StTS0oxN70BsxL4RFN6wjHKI202
+	6906hYZ92oyi2hUihuSFmPeWvm9Wh2zSZRfosJhFo0bmnBaFNTue1OmoH0GJvXMoHv6IXAnRF5J
+	59XVrINh12B72MEAcOvGF++4GYyTjp2OKyjxva3YRK1ivbnacwYl+H74DtIVYaekYXXXfO+ZFb8
+	GeB8xjiXQ=
+X-Google-Smtp-Source: AGHT+IF2vDv/Ts8PcRRIGsz4Znar8p8GM9h8PBCBwYi2ni8W2GqWIceHmXgATvKewaFwMk7XStKkUA==
+X-Received: by 2002:a05:6214:2428:b0:70d:f50e:afe5 with SMTP id 6a1803df08f44-73941de2ac2mr81558306d6.47.1757297169328;
+        Sun, 07 Sep 2025 19:06:09 -0700 (PDT)
+Received: from ideapad.solutionip.com (wsip-184-179-113-83.ri.ri.cox.net. [184.179.113.83])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72925b87571sm79638846d6.6.2025.09.07.19.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 19:06:08 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: rostedt@goodmis.org,
+	tglozar@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>
+Subject: [PATCH v3 0/3] rtla: fix cgroup and trace options parsing
+Date: Sun,  7 Sep 2025 22:05:56 -0400
+Message-ID: <cover.1757034919.git.ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 00/52] 5.10.243-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250907195601.957051083@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20250907195601.957051083@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+This series fixes 3 issue in rtla timerlat and osnoise parsing.
 
+1. Fix buffer overflow when using --on-threshold option. Currently
+   passing `--on-threshold trace` causes rtla timerlat to segfault.
+   First patch addresses this issue.
 
-On 9/7/2025 12:57 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.243 release.
-> There are 52 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.243-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+2. Make -C/--cgroup option more user-friendly. Currently rtla timerlat
+   and osnoise parses does not allow to specify tracer's threads cgroup
+   name as `-C [cgroup]` or `--cgroup [cgroup]`. Second patch fixes this
+   by allowing users to specify cgroup in the aforementioned manner.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+3. When specifying `-t/--trace` before `-a/--auto`, trace filename is
+   override to default <osnoise|timerlat>_trace.txt. For example, when
+   running rtla as
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+       `rtla timerlat top -t custom_file.txt -a 100`
+
+   when the threshold is reached, timerlat_trace.txt file is created
+   instead of specified custom_file.txt. Third patch addresses this
+   issue.
+
+changes v2 -> v3:
+   - Combined common logic into a utility function to parse optional
+     argument value
+   - Removed change that removed `clear_terminal` 
+
+changes v1 -> v2:
+   - Moved removing clear_terminal from `fix -C/--cgroup interface`
+     patch to `fix -a overriding -t argument` patch
+   - Added clarification why to remove clear_terminal
+   - Added `Fixes:` tag to the `fix -C/--cgroup interface` patch
+
+v2: https://lore.kernel.org/all/cover.1755018581.git.ipravdin.official@gmail.com/
+v1: https://lore.kernel.org/all/cover.1755014784.git.ipravdin.official@gmail.com/
+
+Ivan Pravdin (3):
+  rtla: fix buffer overflow in actions_parse
+  rtla: fix -C/--cgroup interface
+  rtla: fix -a overriding -t argument
+
+ Documentation/tools/rtla/common_options.rst |  2 +-
+ tools/tracing/rtla/src/actions.c            |  2 +-
+ tools/tracing/rtla/src/osnoise_hist.c       | 29 +++++++--------------
+ tools/tracing/rtla/src/osnoise_top.c        | 29 +++++++--------------
+ tools/tracing/rtla/src/timerlat_hist.c      | 29 +++++++--------------
+ tools/tracing/rtla/src/timerlat_top.c       | 29 +++++++--------------
+ tools/tracing/rtla/src/utils.c              | 26 ++++++++++++++++++
+ tools/tracing/rtla/src/utils.h              |  1 +
+ 8 files changed, 65 insertions(+), 82 deletions(-)
+
 -- 
-Florian
+2.48.1
 
 
