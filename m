@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-805445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784EBB48899
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2B3B4889F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BA23B7B3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C483C3D4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FDE2EB5BF;
-	Mon,  8 Sep 2025 09:34:38 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9DA2EC0AD;
+	Mon,  8 Sep 2025 09:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwHlHsPH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7ED21C186;
-	Mon,  8 Sep 2025 09:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6AA27F4F5;
+	Mon,  8 Sep 2025 09:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324078; cv=none; b=KPo5/1XKjSp+v3rLopvJp8teuAGRWTTec/RBfkvSoBsqnEyZopyj6tbUxY0THD4ATrcp5A2CJhHNR4FhruoPGcT5mrM0x9PQnUyRM88bj872pfglf3Kq0CJGa4b7kttF/LKo0CVmjIHZz9P1eAi17iWYKKvr89nC2k1BalavK7M=
+	t=1757324176; cv=none; b=TcX+SQCnHRsj5+RFKXBeEFGsOetvKYltfySFK9yfiel1peAKARk6G/S5yFYuNK9S7GZQwqKC89gOFVdDRlKsr6Am5Rc4VWUjcxYo31sQFfyfTMibN3ntFRj40nr5A1dgbRz67FumhtR8ICu5NfijlzrNcP0zaByR8+tMQMLH1JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324078; c=relaxed/simple;
-	bh=YzsJwu4bSe8qpnD0n9Z1JQk+MCIqNJAEcPjaD9JFnJE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dApmv0316Bd8daQezXFTfDB6x+ACCkKCQRHxwi97s1jVgbmoocM2vwcVRlFVFSIPm9JCxL//WXGB/o3765pIRJ7D1NVTj2MaZRnBFUGCguaLzgYjB1LvSW0BrmAjZuWFrmYTBukyhm69Su2ihZhyFeAv5NmIDJ1RUCxdVjvQ54w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cL1xh3DCXzKHMyt;
-	Mon,  8 Sep 2025 17:34:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 884D41A0DCA;
-	Mon,  8 Sep 2025 17:34:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY0mo75oX50yBw--.65125S3;
-	Mon, 08 Sep 2025 17:34:32 +0800 (CST)
-Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-To: Eric Dumazet <edumazet@google.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
- davem@davemloft.net, dsahern@kernel.org, horms@kernel.org, kuba@kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <68bb4160.050a0220.192772.0198.GAE@google.com>
- <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
- <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
- <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com>
- <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <51adf9cb-619e-9646-36f0-1362828e801e@huaweicloud.com>
-Date: Mon, 8 Sep 2025 17:34:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757324176; c=relaxed/simple;
+	bh=wTJIKbb7SQ1n1SinbgKp6nbexsmY5xc9jbdV11ciElk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NCoJcqV45+jtooV5iLQA87uPILC+q1YWScdUFDo0PXX4DGXWb81/XQOaMtJW+moiq9Loso/7+L/Gi3xgDFFGTByVXfOktwI2PBdrl0qjDm2IABlf5FcgB+e+ZeilVgrCk+4RAde6G6otCpLTsAE7sAZyy9d5TzMtnvhJU5GquC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwHlHsPH; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757324175; x=1788860175;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=wTJIKbb7SQ1n1SinbgKp6nbexsmY5xc9jbdV11ciElk=;
+  b=BwHlHsPHP3SzemgupF09ytMzZm0+k21xCwJ5JCVKswMbfjqNumOUxDzD
+   GY7NQvXnnBfxCaUMY9VrcEFTDuEG2ZeZ0wNMBE82Umk00uXZO7OzZALW/
+   RtSGA6rp28NasR4nO+oHO6/Sdnc0w1CS4FHZy7jFmkgnnGgTGKGZDwR1K
+   4G02SO0HWahSxiE6o1wvsgBDXDT2tqZ1t0pd/IjUXMWx3oMLOx+43rNVg
+   u09KwT/tQcZ9GkT7ok4YiKrKhyxLuQH1jH4X5vbDFxk4Cea0mml0PFIZ/
+   knOjNJaJ5r68aktbFC4koXYS1NH/+bw0uupqly19q9i7hc3oKAhrkkP9V
+   A==;
+X-CSE-ConnectionGUID: kqDkZUqLQZKp+husSV6bng==
+X-CSE-MsgGUID: bS6d8BP3SzCS0B/7Z3ZHMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11546"; a="59273467"
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="59273467"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 02:36:13 -0700
+X-CSE-ConnectionGUID: 8rx//6F7QnmJSxVMkP7RhA==
+X-CSE-MsgGUID: 8PNtX6E4QZuHCeH7CqapDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
+   d="scan'208";a="172010227"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.204])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 02:36:08 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Mauro Carvalho
+ Chehab <mchehab+huawei@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
+ <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab@kernel.org>
+Subject: Re: [PATCH v4] kernel.h: add comments for system_states
+In-Reply-To: <b47c91a4f4c337ec8e2fdb663e0a90fd62b5c3b6.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250904063631.2364995-1-rdunlap@infradead.org>
+ <6089e22ddfdc135040cdeb69329d817846026728@intel.com>
+ <20250905140104.42418fba@foz.lan>
+ <34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
+ <b47c91a4f4c337ec8e2fdb663e0a90fd62b5c3b6.camel@HansenPartnership.com>
+Date: Mon, 08 Sep 2025 12:36:04 +0300
+Message-ID: <a016a06ceaa05b446d06d669cc8bac43a64c72c8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY0mo75oX50yBw--.65125S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7XryfKFyruw1ruFWDWr4kWFg_yoWkuwb_Cr
-	48uwn3Ga17Xr13tFsxKrn7Gw1qqasYg34DXwn5Ja4fu3Z3ArWUAF18C3WrZw4rtan7KasI
-	krZ09a1ftFy3KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, 06 Sep 2025, James Bottomley <James.Bottomley@HansenPartnership.com=
+> wrote:
+> On Fri, 2025-09-05 at 16:06 +0300, Jani Nikula wrote:
+>> On Fri, 05 Sep 2025, Mauro Carvalho Chehab
+>> <mchehab+huawei@kernel.org> wrote:
+>> > Em Fri, 05 Sep 2025 12:02:37 +0300
+>> > Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+>> >=20
+>> > > On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:
+> [...]
+>> > > > +++ linux-next-20250819/Documentation/driver-api/pm/devices.rst
+>> > > > @@ -241,6 +241,14 @@ before reactivating its class I/O queues
+>> > > > =C2=A0More power-aware drivers might prepare the devices for
+>> > > > triggering system wakeup
+>> > > > =C2=A0events.
+>> > > > =C2=A0
+>> > > > +System states available for drivers
+>> > > > +-----------------------------------
+>> > > > +
+>> > > > +These system states are available for drivers to help them
+>> > > > determine how to
+>> > > > +handle state transitions.
+>> > > > +
+>> > > > +.. kernel-doc:: include/linux/kernel.h
+>> > > > +=C2=A0=C2=A0 :doc: General system_states available for drivers
+>> > > > =C2=A0
+>> > > > =C2=A0Call Sequence Guarantees
+>> > > > =C2=A0------------------------
+>> > > > =C2=A0
+>> > >=20
+>> >=20
+>> > If the problem is with "extern" before enum, fixing kdoc be
+>> > fairly trivial.
+>>=20
+>> The non-trivial part is deciding whether you're documenting the enum
+>> type or the variable. Both are equally valid options.
+>
+> If you're building a system that's easy to maintain, it shouldn't be at
+> all non trivial: you add the documentation where someone adding a new
+> state would find it.  i.e. on the enum.  If you document the variable,
+> no-one adding a new state would likely look at it.  I get that in this
+> case they're one after the other, but think about the precedent for
+> when they're not.
 
-在 2025/09/08 17:07, Eric Dumazet 写道:
-> On Mon, Sep 8, 2025 at 1:52 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2025/09/06 17:16, Eric Dumazet 写道:
->>> On Fri, Sep 5, 2025 at 1:03 PM Eric Dumazet <edumazet@google.com> wrote:
->>>>
->>>> On Fri, Sep 5, 2025 at 1:00 PM syzbot
->>>> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
->>>
->>> Note to NBD maintainers : I held about  20 syzbot reports all pointing
->>> to NBD accepting various sockets, I  can release them if needed, if you prefer
->>> to triage them.
->>>
->> I'm not NBD maintainer, just trying to understand the deadlock first.
->>
->> Is this deadlock only possible for some sepecific socket types? Take
->> a look at the report here:
->>
->> Usually issue IO will require the order:
->>
->> q_usage_counter -> cmd lock -> tx lock -> sk lock
->>
-> 
-> I have not seen the deadlock being reported with normal TCP sockets.
-> 
-> NBD sets sk->sk_allocation to  GFP_NOIO | __GFP_MEMALLOC;
-> from __sock_xmit(), and TCP seems to respect this.
-> .
-> 
+Ah, I meant deciding what the *tool* should do with the documentation
+when the type and the variable are bundled together like here.
 
-What aboud iscsi and nvme-tcp? and probably other drivers, where
-sk_allocation is GFP_ATOMIC, do they have similar problem?
+BR,
+Jani.
 
-Thanks,
-Kuai
-
+--=20
+Jani Nikula, Intel
 
