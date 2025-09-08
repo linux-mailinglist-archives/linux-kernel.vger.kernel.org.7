@@ -1,197 +1,175 @@
-Return-Path: <linux-kernel+bounces-806557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128AFB4986F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17567B4986A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD773B3FEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14E93B49FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F5F31C56F;
-	Mon,  8 Sep 2025 18:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACED531B82D;
+	Mon,  8 Sep 2025 18:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="UhaQwwTj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uh+IySZG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vr0Gn2Sh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uh+IySZG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vr0Gn2Sh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FE8314B75;
-	Mon,  8 Sep 2025 18:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757356641; cv=pass; b=dmVOfw1qWmJYRYsVXjpoa7KXUFIq8sD5WGzQwPV2OwHfx38NjjJBQY8t7Wp86NhqGJnqWhCz8daWO7IGNOvNoHdXiO7GjSQejG0AFF6AaOILlc6UduISbYO9IGSZLXv67b3gwKBWqt9pT95BW71SuQS8Gek47EpxB0VzMWBVdrs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757356641; c=relaxed/simple;
-	bh=RnxaE3KiraFUwjH7IqB0XC7621NVji1ZG4b3sg6u+1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQwg7khRsyxcxNtRPDP3gvggtePrImH3mIHueRLazi7MmBGVFEzBielGMsjKHMHzsDQLbkj0QLuFkdB7k4cUc8yfGVRpCUp8cWFX5RQ3vHFjW9EyW0PdBz6afLDKHfHbYLuEogWac5QF6rhPNZpNzhE0VzNbAKcYL69AzE2Ixpo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=UhaQwwTj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757356580; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cdVYgURB89dbHupAw4KMy46mfFbhabKB0fbmHFBgRBvBYvTtSQExrU1sKpfkpjcx1w/YUJ8oV4j9+YhGcpEjW7Zwj1jsW1OKgfubHjb4G2koqFAxMLoVYAz8Ccw0+lylg0YO1Htsg+KdPOqoubvi0rri2cAvyirq77JW+Ay5MYc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757356580; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mqorkaZP8K3w37+KQC5xsu9iciTdS53JJYYC8j1jjZY=; 
-	b=lw0+9hG76wtgGAX2WMoklsJubSvxRXKF08iwS28xRKhrNx1q6Cy5o04wQBEzwFoYCfg3NXiHFcSLuWgyv23G8QKMtYdPesUVladZMLFYZLSp6+nayixftZ6vLJb3H28vG8XCLQdinZhZxABbk/hAEKpPDM5kWMqp0o6B9ah+w94=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757356580;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=mqorkaZP8K3w37+KQC5xsu9iciTdS53JJYYC8j1jjZY=;
-	b=UhaQwwTja7SFF9hVLfmnIc1Nk3Ao2vojsdkFkQ1NSXggwHTHU8YksUOjnlk+k/dQ
-	Zo810evf7Bf1W1IQVDWhYK4GEiE3z9tw0FTs6kDO5JCJJ8/no4Jni8fjICCwkBC3Oo8
-	n7wmxd995Nc2uwbGBP5jZdIa+Dk2ftPoB1SA5g1U=
-Received: by mx.zohomail.com with SMTPS id 1757356577657388.2831972624366;
-	Mon, 8 Sep 2025 11:36:17 -0700 (PDT)
-Message-ID: <79baaa0a-7cc4-44f0-bf71-38aff550b177@collabora.com>
-Date: Mon, 8 Sep 2025 15:35:58 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC26314B75
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757356623; cv=none; b=aRubUXdzNreVw70kjnem4mE7VKgme/EWq1UX261fja+C3QE+fsNAdQjnnsd4kc/uiT54UWdBI8FRVgk/9pTmknrPEfWKL6G5KnA2OAXoIV58/FWHT9CJqB89BJpZmaTnT68V0G6GqmwFbScIkhxGX8uT4NiP8k7gsD5NiAGObGg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757356623; c=relaxed/simple;
+	bh=dNPd2jaIoSxmMwM6gZwoW01LukoBINlkeqPz3vWUTw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvxagvcKEZL167h8d6ejXlGY7N1N+WbXn9icJ8vSKxM3IM3X2khLEZMKfDTa1m8VHUuvB9iLOfONKVXvxE6pIgp5HZca2TwliW8OL+dh5XLPVs1r/xxJmIaDyKy9pcYlCF7OpPJHH3E6OLUKvpPWXIaDlMneDpXufyAg6lgDMfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uh+IySZG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vr0Gn2Sh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uh+IySZG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vr0Gn2Sh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9BD272808E;
+	Mon,  8 Sep 2025 18:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757356616;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G82WHAZamp3Qi5/JZDJfeWWFJSIuocxuyYdN+PzYvAY=;
+	b=uh+IySZG+KA8k9Y/wuO0JXtd4ulbMRTNn94jgmt41AoXxXgR4JM4ECYc5w2gCKvD1vlvPX
+	0xq58gxOg5Ud2t793AYRkhMlyZgDMxorvTjmXd9jjI/iVKOrkvPobO5ENggVmMMILoGOhE
+	UMSTOIqXmEBzsor9jjq4NFtn13uJwpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757356616;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G82WHAZamp3Qi5/JZDJfeWWFJSIuocxuyYdN+PzYvAY=;
+	b=vr0Gn2SheIgEO3lrh1g+XntVFQbV789RAvIACBOcLwr32yYdX9xKOgeV/QMPt+hn4lkpeN
+	r4XngDq/UmOTivAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757356616;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G82WHAZamp3Qi5/JZDJfeWWFJSIuocxuyYdN+PzYvAY=;
+	b=uh+IySZG+KA8k9Y/wuO0JXtd4ulbMRTNn94jgmt41AoXxXgR4JM4ECYc5w2gCKvD1vlvPX
+	0xq58gxOg5Ud2t793AYRkhMlyZgDMxorvTjmXd9jjI/iVKOrkvPobO5ENggVmMMILoGOhE
+	UMSTOIqXmEBzsor9jjq4NFtn13uJwpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757356616;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G82WHAZamp3Qi5/JZDJfeWWFJSIuocxuyYdN+PzYvAY=;
+	b=vr0Gn2SheIgEO3lrh1g+XntVFQbV789RAvIACBOcLwr32yYdX9xKOgeV/QMPt+hn4lkpeN
+	r4XngDq/UmOTivAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E3B013A54;
+	Mon,  8 Sep 2025 18:36:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rkarHkgiv2g0FgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 08 Sep 2025 18:36:56 +0000
+Date: Mon, 8 Sep 2025 20:36:55 +0200
+From: David Sterba <dsterba@suse.cz>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: scrub: replace max_t()/min_t() with clamp_t() in
+ scrub_throttle_dev_io()
+Message-ID: <20250908183655.GT5333@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250901150144.227149-2-thorsten.blum@linux.dev>
+ <20250906122458.75dfc8f0@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/14] media: dt-bindings: Convert MediaTek mt8173-vpu
- bindings to YAML
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-3-ariel.dalessandro@collabora.com>
- <20250821-piquant-rapid-bear-8cedc0@kuoka>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250821-piquant-rapid-bear-8cedc0@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906122458.75dfc8f0@pumpkin>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.50
 
-Krzysztof,
-
-On 8/21/25 3:47 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 20, 2025 at 02:12:50PM -0300, Ariel D'Alessandro wrote:
->> Convert the existing text-based DT bindings for Mediatek MT8173 Video Processor
->> Unit to a YAML schema.
+On Sat, Sep 06, 2025 at 12:24:58PM +0100, David Laight wrote:
+> On Mon,  1 Sep 2025 17:01:44 +0200
+> Thorsten Blum <thorsten.blum@linux.dev> wrote:
 > 
-> DT schema, not YAML. Don't say YAML at all, neither here nor in subject.
-
-Ack.
-
+> > Replace max_t() followed by min_t() with a single clamp_t(). Manually
+> > casting 'bwlimit / (16 * 1024 * 1024)' to u32 is also redundant when
+> > using max_t(u32,,) or clamp_t(u32,,) and can be removed.
+> > 
+> > No functional changes intended.
+> > 
+> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> > ---
+> >  fs/btrfs/scrub.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+> > index 6776e6ab8d10..ebfde24c0e42 100644
+> > --- a/fs/btrfs/scrub.c
+> > +++ b/fs/btrfs/scrub.c
+> > @@ -1369,8 +1369,7 @@ static void scrub_throttle_dev_io(struct scrub_ctx *sctx, struct btrfs_device *d
+> >  	 * Slice is divided into intervals when the IO is submitted, adjust by
+> >  	 * bwlimit and maximum of 64 intervals.
+> >  	 */
+> > -	div = max_t(u32, 1, (u32)(bwlimit / (16 * 1024 * 1024)));
+> > -	div = min_t(u32, 64, div);
+> > +	div = clamp_t(u32, bwlimit / (16 * 1024 * 1024), 1, 64);
 > 
-> Also looks not wrapped...
-
-Ack.
-
+> That probably ought to have a nack... although it isn't different.
+> bwlimit is 64bit, if very big dividing by 16M will still be over 32 bits.
+> and significant bits will be lost.
 > 
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../bindings/media/mediatek,mt8173-vpu.yaml   | 76 +++++++++++++++++++
->>   .../bindings/media/mediatek-vpu.txt           | 31 --------
->>   2 files changed, 76 insertions(+), 31 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-vpu.yaml
->>   delete mode 100644 Documentation/devicetree/bindings/media/mediatek-vpu.txt
->>
->> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-vpu.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-vpu.yaml
->> new file mode 100644
->> index 0000000000000..44f5d7cc44042
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-vpu.yaml
->> @@ -0,0 +1,76 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-vpu.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Mediatek MT8173 Video Processor Unit
->> +
->> +maintainers:
->> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> +
->> +description:
->> +  Video Processor Unit is a HW video controller. It controls HW Codec including
->> +  H.264/VP8/VP9 Decode, H.264/VP8 Encode and Image Processor (scale/rotate/color convert).
-> 
-> Please wrap code according to the preferred limit expressed in Kernel
-> coding style (checkpatch is not a coding style description, but only a
-> tool).  However don't wrap blindly (see Kernel coding style).
+> Just use clamp() without all the extra (bug introducing) (u32) casts.
 
-Thanks for the comment. Wrapped to 80 column width.
-
-> 
->> +
->> +properties:
->> +  compatible:
->> +    const: mediatek,mt8173-vpu
->> +
->> +  reg:
->> +    minItems: 2
-> 
-> No, from where do you get such syntax?
-
-IIUC, what you mean is s/minItems/maxItems.
-
-> 
->> +
->> +  reg-names:
->> +    items:
->> +      - const: tcm
->> +      - const: cfg_reg
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    items:
->> +      - const: main
->> +
->> +  memory-region:
->> +    description:
->> +      phandle to a node describing reserved memory used by VPU
->> +      (see bindings/reserved-memory/reserved-memory.txt)
-> 
-> Drop, redundant description.
-
-Ack.
-
-Thanks a lot!
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+Clamp without type works best, thanks. The bug with large values could
+happen, but the input value is expected to be in gigabytes range.
 
