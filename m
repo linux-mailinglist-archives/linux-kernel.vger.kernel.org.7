@@ -1,230 +1,127 @@
-Return-Path: <linux-kernel+bounces-805977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279A4B49040
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:51:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA766B49011
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80771C22EB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A64B7AF129
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B67630F92C;
-	Mon,  8 Sep 2025 13:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X+hawov2"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E8030C36B;
-	Mon,  8 Sep 2025 13:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC36330ACE9;
+	Mon,  8 Sep 2025 13:47:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41A0182D0
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757339322; cv=none; b=mf41MZlJnUNMfDa9X1yxdL01TpHPwUCBpFtOISKRAKP4lGDHwEe52E0kL2TyUukKzEGHO8kBiRW4dvTQLHKx6j7nVeAxhSWl2TRMjCRoLx2zuXrDkKKDeBZ6SGLk2hd92cyahPAVTALrsFyYFfc3bXageRXmw547XYbXIonIC5k=
+	t=1757339247; cv=none; b=pNyJwt599u75HLiqea1SqW3mHh1ryvtSXKNzsvVKN6tYuKa4WMLzUg/jt72qUW4Z/EvZBFLL31dSq+Bnbl3WgRbiDet9DIFyBy1jZbUldFSHMc4+anesCJNAWwFTm9b7RlgsSMnc3QrStGv+Jeie7uYZGmhiVzr2PHOuVlPtXCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757339322; c=relaxed/simple;
-	bh=thREJAU41fluorsIgGZ/hGTsKO2up+Ch/lggT0GOGes=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mv/CCZV2/zVmhnnxQW2l1nof3uwjxT/blyNOrO6ruc6yaBCikrpilAKYy7VRo/rAhvlOYJR9eD+MObeYEby6J6CACxQS7lpHwCi4yjhV4OJ7s3jKn7MpoP5barg2qjctL4WobiW30jMCQ4+rZicLODi9atcEuqcrtr6dP7Co2ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X+hawov2; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 588DmRN13876079;
-	Mon, 8 Sep 2025 08:48:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757339307;
-	bh=UYkh/1gJpkoH4H8cHvDZooE7vFtdt3NJ6qqGP2f8LAY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=X+hawov2HXteiCggjG7TVz3bpK/GLG3dO7vNk82j3P5Pk8SJSbmZ1QWsq5ModCV9x
-	 mpzqc68zuGxUVYjwafpP9IxTLHLCZKrOg+cPOqExDvvB4N66YWOImSCfLmV3AwFXbc
-	 qGvm/oIYDrm31tTSAz1fMECq8jNb25L7P0BboSMk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 588DmQDq3040727
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 08:48:26 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 08:48:26 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 08:48:26 -0500
-Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 588DlU90689321;
-	Mon, 8 Sep 2025 08:48:20 -0500
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
-        <mripard@kernel.org>
-CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
-        <s-jain1@ti.com>, <vigneshr@ti.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <p.zabel@pengutronix.de>,
-        <conor+dt@kernel.org>, <sakari.ailus@linux.intel.com>,
-        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
-        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
-        <jack.zhu@starfivetech.com>, <sjoerd@collabora.com>,
-        <hverkuil+cisco@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v6 07/16] media: ti: j721e-csi2rx: get number of contexts from device tree
-Date: Mon, 8 Sep 2025 19:17:20 +0530
-Message-ID: <20250908134729.3940366-8-r-donadkar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250908134729.3940366-1-r-donadkar@ti.com>
-References: <20250908134729.3940366-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1757339247; c=relaxed/simple;
+	bh=at18kgT/BeIp9qGsKxERWyzMfX1nvcNt1wBgQmAuGr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ot5QHKj6OpkuhWl1oLSno/u5okjabCT2v9aqYYtv/eKujrfmqXzxtUbbv/lEjg6MpWUyGsjWS19U+IEGYHgVHLph4M8rjBxrQJNDqu7HWOP7aOpbvP/o2nj2QXwttqtetZTtGNQ5aXpJvB3h1RkKL062RCHCMaro3YJOIt9HDm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA8F61692;
+	Mon,  8 Sep 2025 06:47:16 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 259FB3F63F;
+	Mon,  8 Sep 2025 06:47:23 -0700 (PDT)
+Message-ID: <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
+Date: Mon, 8 Sep 2025 14:47:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
+ properly aligned
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
+ tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org,
+ jgg@ziepe.ca, steven.price@arm.com
+References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+ <aLrh_rbzWLPw9LnH@arm.com> <yq5aikht1e0z.fsf@kernel.org>
+ <aL7AoPKKKAR8285O@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <aL7AoPKKKAR8285O@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Pratyush Yadav <p.yadav@ti.com>
+On 08/09/2025 12:40, Catalin Marinas wrote:
+> On Mon, Sep 08, 2025 at 03:07:00PM +0530, Aneesh Kumar K.V wrote:
+>> Catalin Marinas <catalin.marinas@arm.com> writes:
+>>> On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
+>>>> When running with private memory guests, the guest kernel must allocate
+>>>> memory with specific constraints when sharing it with the hypervisor.
+>>>>
+>>>> These shared memory buffers are also accessed by the host kernel, which
+>>>> means they must be aligned to the host kernel's page size.
+>>>
+>>> So this is the case where the guest page size is smaller than the host
+>>> one. Just trying to understand what would go wrong if we don't do
+>>> anything here. Let's say the guest uses 4K pages and the host a 64K
+>>> pages. Within a 64K range, only a 4K is shared/decrypted. If the host
+>>> does not explicitly access the other 60K around the shared 4K, can
+>>> anything still go wrong? Is the hardware ok with speculative loads from
+>>> non-shared ranges?
+>>
+>> With features like guest_memfd, the goal is to explicitly prevent the
+>> host from mapping private memory, rather than relying on the host to
+>> avoid accessing those regions.
+> 
+> Yes, if all the memory is private. At some point the guest will start
+> sharing memory with the host. In theory, the host could map more than it
+> was given access to as long as it doesn't touch the area around the
+> shared range. Not ideal and it may not match the current guest_memfd API
 
-Different platforms that use this driver might have different number of
-DMA channels allocated for CSI. So only as many DMA contexts can be used
-as the number of DMA channels available. Get the number of channels
-provided via device tree and only configure that many contexts, and
-hence only that many pads.
+The kernel may be taught not to touch the area, but it is tricky when
+the shared page gets mapped into the usespace and what it does with it.
 
-Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
-Co-developed-by: Jai Luthra <j-luthra@ti.com>
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
-Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
----
- .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 42 ++++++++++++++-----
- 1 file changed, 31 insertions(+), 11 deletions(-)
+> but I'd like to understand all the options we have.
+> 
+>> As per Arm ARM:
+>> RVJLXG: Accesses are checked against the GPC configuration for the
+>> physical granule being accessed, regardless of the stage 1 and stage 2
+>> translation configuration.
+> 
+> OK, so this rule doesn't say anything about the granule size at stage 1
+> or stage 2. The check is purely done based on the PGS field
+> configuration. The need for the host granule size to match PGS is just a
+> software construct.
+> 
+>> For example, if GPCCR_EL3.PGS is configured to a smaller granule size
+>> than the configured stage 1 and stage 2 translation granule size,
+>> accesses are checked at the GPCCR_EL3.PGS granule size.
+> 
+> I assume GPCCR_EL3.PGS is pre-configured on the system as 4K and part of
+> the RMM spec.
 
-diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index ac60b35ff9cb..d52cf5ec972d 100644
---- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-+++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -44,7 +44,7 @@
- 
- #define TI_CSI2RX_MAX_PIX_PER_CLK	4
- #define PSIL_WORD_SIZE_BYTES		16
--#define TI_CSI2RX_NUM_CTX		1
-+#define TI_CSI2RX_MAX_CTX		32
- 
- /*
-  * There are no hard limits on the width or height. The DMA engine can handle
-@@ -57,8 +57,8 @@
- 
- #define TI_CSI2RX_PAD_SINK		0
- #define TI_CSI2RX_PAD_FIRST_SOURCE	1
--#define TI_CSI2RX_NUM_SOURCE_PADS	1
--#define TI_CSI2RX_NUM_PADS		(1 + TI_CSI2RX_NUM_SOURCE_PADS)
-+#define TI_CSI2RX_MAX_SOURCE_PADS	TI_CSI2RX_MAX_CTX
-+#define TI_CSI2RX_MAX_PADS		(1 + TI_CSI2RX_MAX_SOURCE_PADS)
- 
- #define DRAIN_TIMEOUT_MS		50
- #define DRAIN_BUFFER_SIZE		SZ_32K
-@@ -118,14 +118,15 @@ struct ti_csi2rx_dev {
- 	void __iomem			*shim;
- 	struct mutex			mutex; /* To serialize ioctls. */
- 	unsigned int			enable_count;
-+	unsigned int			num_ctx;
- 	struct v4l2_device		v4l2_dev;
- 	struct media_device		mdev;
- 	struct media_pipeline		pipe;
--	struct media_pad		pads[TI_CSI2RX_NUM_PADS];
-+	struct media_pad		pads[TI_CSI2RX_MAX_PADS];
- 	struct v4l2_async_notifier	notifier;
- 	struct v4l2_subdev		*source;
- 	struct v4l2_subdev		subdev;
--	struct ti_csi2rx_ctx		ctx[TI_CSI2RX_NUM_CTX];
-+	struct ti_csi2rx_ctx		ctx[TI_CSI2RX_MAX_CTX];
- 	u8				pix_per_clk;
- 	/* Buffer to drain stale data from PSI-L endpoint */
- 	struct {
-@@ -459,7 +460,7 @@ static int csi_async_notifier_complete(struct v4l2_async_notifier *notifier)
- 		return ret;
- 
- 	/* Create and link video nodes for all DMA contexts */
--	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++) {
-+	for (i = 0; i < csi->num_ctx; i++) {
- 		struct ti_csi2rx_ctx *ctx = &csi->ctx[i];
- 		struct video_device *vdev = &ctx->vdev;
- 
-@@ -1246,10 +1247,11 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_dev *csi)
- 	csi->pads[TI_CSI2RX_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
- 
- 	for (unsigned int i = TI_CSI2RX_PAD_FIRST_SOURCE;
--	     i < TI_CSI2RX_NUM_PADS; i++)
-+	     i < TI_CSI2RX_PAD_FIRST_SOURCE + csi->num_ctx; i++)
- 		csi->pads[i].flags = MEDIA_PAD_FL_SOURCE;
- 
--	ret = media_entity_pads_init(&sd->entity, ARRAY_SIZE(csi->pads),
-+	ret = media_entity_pads_init(&sd->entity,
-+				     TI_CSI2RX_PAD_FIRST_SOURCE + csi->num_ctx,
- 				     csi->pads);
- 	if (ret)
- 		goto unregister_media;
-@@ -1340,8 +1342,9 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx *ctx)
- 
- static int ti_csi2rx_probe(struct platform_device *pdev)
- {
-+	struct device_node *np = pdev->dev.of_node;
- 	struct ti_csi2rx_dev *csi;
--	int ret, i;
-+	int ret = 0, i, count;
- 
- 	csi = devm_kzalloc(&pdev->dev, sizeof(*csi), GFP_KERNEL);
- 	if (!csi)
-@@ -1363,13 +1366,29 @@ static int ti_csi2rx_probe(struct platform_device *pdev)
- 	if (!csi->drain.vaddr)
- 		return -ENOMEM;
- 
-+	/* Only use as many contexts as the number of DMA channels allocated. */
-+	count = of_property_count_strings(np, "dma-names");
-+	if (count < 0) {
-+		dev_err(csi->dev, "Failed to get DMA channel count: %d\n", count);
-+		ret = count;
-+		goto err_dma_chan;
-+	}
-+
-+	csi->num_ctx = count;
-+	if (csi->num_ctx > TI_CSI2RX_MAX_CTX) {
-+		dev_err(csi->dev,
-+			"%u DMA channels passed. Maximum is %u.\n",
-+			csi->num_ctx, TI_CSI2RX_MAX_CTX);
-+		goto err_dma_chan;
-+	}
-+
- 	mutex_init(&csi->mutex);
- 
- 	ret = ti_csi2rx_v4l2_init(csi);
- 	if (ret)
- 		goto err_v4l2;
- 
--	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++) {
-+	for (i = 0; i < csi->num_ctx; i++) {
- 		csi->ctx[i].idx = i;
- 		csi->ctx[i].csi = csi;
- 		ret = ti_csi2rx_init_ctx(&csi->ctx[i]);
-@@ -1398,6 +1417,7 @@ static int ti_csi2rx_probe(struct platform_device *pdev)
- 	ti_csi2rx_cleanup_v4l2(csi);
- err_v4l2:
- 	mutex_destroy(&csi->mutex);
-+err_dma_chan:
- 	dma_free_coherent(csi->dev, csi->drain.len, csi->drain.vaddr,
- 			  csi->drain.paddr);
- 	return ret;
-@@ -1408,7 +1428,7 @@ static void ti_csi2rx_remove(struct platform_device *pdev)
- 	struct ti_csi2rx_dev *csi = platform_get_drvdata(pdev);
- 	unsigned int i;
- 
--	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++)
-+	for (i = 0; i < csi->num_ctx; i++)
- 		ti_csi2rx_cleanup_ctx(&csi->ctx[i]);
- 
- 	ti_csi2rx_cleanup_notifier(csi);
--- 
-2.34.1
+True. The GPC Page Size is going to be 4K. At present the RMM S2 page
+size is fixed to 4K. Please note that the future RMM versions may allow
+the Host to change the S2 for Realm (Globally) to something other than
+4K. (e.g., a 64K host could change it to 64K S2), which allows the host
+to manage the Realm S2 better (and efficient).
+
+Irrespective of that, the patch is trying to deal with Host pagesize
+(which affects sharing) vs the Realm alignment for sharing pages.
+
+Suzuki
+
+
+
+Suzuki
+
+
 
 
