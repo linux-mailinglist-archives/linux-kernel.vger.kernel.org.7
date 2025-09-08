@@ -1,243 +1,172 @@
-Return-Path: <linux-kernel+bounces-806553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7739FB4985D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13589B49862
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F5E87B515C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC63A1B27045
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7161531AF10;
-	Mon,  8 Sep 2025 18:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8F031B833;
+	Mon,  8 Sep 2025 18:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="gmdHZEpj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQjBvLjK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC204A2D;
-	Mon,  8 Sep 2025 18:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757356391; cv=pass; b=TiaTWiL2YcGG84/WG97/s4SqaDnofO/0ZIcdAqdxCF0qwN9ZjSJFGUsMYOILCN02Jme+pJpa4K5glc0Na9S6iCGAJA9LgkvxvcO4q8pVvzAcVTTJTVKRoFpGZX6lGbyHVE4crN2WCURIDAkHPyvFq1eZVcV7K2Yrli8EMBSMuAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757356391; c=relaxed/simple;
-	bh=EHo9+NbhnZGG6NdApLz2AIMTAkqhCWD3bSxkZ2zHasE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NUi2zCaMbgVXA8V8CL3bTYpI3eqlL4fkGLFYR2EXxj4AHPRZ/UKec66MkRGE6Yj7V0bMbsDFyJy4V6fqh1KFM9u+Z/nhJaMJvPtmwlgOzvlF1segVUQbfW+KJmYDlxVEgH4C6CFQh8R65I+rd7JdM2XlBsFLg5T861JgPgC3osg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=gmdHZEpj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757356371; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mP1gqjkdiUExNbEz/+ZLOQQRp/VIvy2jg6mCgwuNQvpld/C57PjRbvmWiRJhWc0OyzbbB65Ymt4tCkSYA9iTx0hgW3c/zRMmuSUC8zl97O1/jjklh4OHqQJDJoHNK0R4ACGeg0kxbnkIhx2Ma0ccXKkD73BObWmkSZFEX9n5L0g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757356371; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6ltzTi+I6kPPm3F0lLcLlkqmygrdjRSVDeW/ROJ50BY=; 
-	b=nEU6mm47QxW+KIhbYWdgDGNME8hkZ19fI0B+ngC/O/wyYyU6MvQ6q8A5rSx+wdNH7x7gCh1pnpcl9yY5tshNPPawa23W+z7SELy+UOrDk/G6efLfRRUpodfHJjrxVXAeQ06p6gXjZKl5wvWqmx6ZPos7dCZh4RPSv1mo6ah+cjE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757356371;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6ltzTi+I6kPPm3F0lLcLlkqmygrdjRSVDeW/ROJ50BY=;
-	b=gmdHZEpjqx+Qs0N9zbN7Mgz3VYtN9gkYEaDT2OQegj86gUyG0C+igfYzxfo69760
-	P6q8Y0ULhZPp/AskthsyD20oYxulxBHfDGLyTvGcNu83D/XLEiWWVN98eEW489zYcYs
-	uLSd90pCQs2vD5VVk7y3fPyi/DeL9IgdV7qMC430=
-Received: by mx.zohomail.com with SMTPS id 1757356367793396.9789493803712;
-	Mon, 8 Sep 2025 11:32:47 -0700 (PDT)
-Message-ID: <c05ea992-b0d8-4ea4-8a11-660b9cae4820@collabora.com>
-Date: Mon, 8 Sep 2025 14:32:45 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39C331AF10;
+	Mon,  8 Sep 2025 18:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757356409; cv=none; b=OhjSihkzTJ525fIoWqpaIurW96CGNKuKoF8kclrlsR+JSySn1aMuMldgt3DBsEl2hi2p0T5N4HJzTZ6lT7WtKo7+8XmbErqb0DUfkGtoWIOycEU3Nv4QQGXeZaEqAZ0yIhfWqAbcLy2kVJX4AqAWGsLH6VChkwnXAtuvBwwEOeE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757356409; c=relaxed/simple;
+	bh=ejH/GOe9Mp+BMNiV+zRI9hMfPJDA9yQMvdvKWLFHIu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mTWGPYGiIIlF0nxnkUt3k6OFBOWxpp6g81QWFRN55gSL4Qt8aNGWK2MRSWK9x9YOwSgDmXzI0utN5atQAVr5rM0iYCFswDRXhYguc3K7uzLFJ1qY0vKJPgCoChYEerFY3oVZFDxHLPGyfhQwsISLD6LYIGJzS+WoPXZFHqKoZsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQjBvLjK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B61AC4CEFA;
+	Mon,  8 Sep 2025 18:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757356407;
+	bh=ejH/GOe9Mp+BMNiV+zRI9hMfPJDA9yQMvdvKWLFHIu4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hQjBvLjKN/9OeE0fQURd4qFcWwXmB8JZ1u9xc224NcPx9FpTzpuEhqxV0vs1B3dA7
+	 gh5pVA2TmHTva9sC+gfDXVFKYTjhn7y3zSR8ufDN5GibKQzAdJ6LwvcLiEmSu8j3Ze
+	 N/x1jgF2OJ1O1occFYIh7TyD9h8E9gF0XZNA4iqEBxm/MM/hGfzeHQ3OWSxlXkXpWR
+	 D/yqCZsqZS/OlX4D72JrVcLJhIWABSAjeBJs4dXgUoVUDbzZYbHf2KpK3ncPjZHI7Q
+	 R3bkvMM25FB34Zf5S/qHhbhzdmAwAkshfYRbe0JqDvc16tx9JK1B9/bylkRp+KsthO
+	 LxGMqKqyr2pYw==
+Date: Mon, 8 Sep 2025 13:33:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v5 2/2] PCI: qcom: Add support for multi-root port
+Message-ID: <20250908183325.GA1450728@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] media: rkvdec: Add variants support
-To: Jonas Karlman <jonas@kwiboo.se>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Alex Bee <knaerzche@gmail.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250905161942.3759717-1-jonas@kwiboo.se>
- <20250905161942.3759717-3-jonas@kwiboo.se>
-Content-Language: en-US, fr-CA
-From: Detlev Casanova <detlev.casanova@collabora.com>
-In-Reply-To: <20250905161942.3759717-3-jonas@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-perst-v5-2-920b3d1f6ee1@qti.qualcomm.com>
 
-Hi Jonas,
-
-On 9/5/25 12:19, Jonas Karlman wrote:
-> From: Alex Bee <knaerzche@gmail.com>
->
-> Different versions of the Rockchip VDEC IP exists and one way they can
-> differ is what decoding formats are supported.
->
-> Add a variant implementation in order to support flagging different
-> capabilities.
->
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+On Wed, Jul 02, 2025 at 04:50:42PM +0530, Krishna Chaitanya Chundru wrote:
+> Move phy, PERST# handling to root port and provide a way to have multi-port
+> logic.
+> 
+> Currently, QCOM controllers only support single port, and all properties
+> are present in the host bridge node itself. This is incorrect, as
+> properties like phys, perst-gpios, etc.. can vary per port and should be
+> present in the root port node.
+> 
+> To maintain DT backwards compatibility, fallback to the legacy method of
+> parsing the host bridge node if the port parsing fails.
+> 
+> pci-bus-common.yaml uses reset-gpios property for representing PERST#, use
+> same property instead of perst-gpios.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > ---
-> Changes in v3:
-> - Use a reference to rkvdec_variant
-> - Add num_regs field
+>  drivers/pci/controller/dwc/pcie-qcom.c | 178 ++++++++++++++++++++++++++++-----
+>  1 file changed, 151 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index f7ed1e010eb6607b2e98a42f0051c47e4de2af93..56d04a15edf8f99f6d3b9bfaa037ff922b521888 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -267,6 +267,12 @@ struct qcom_pcie_cfg {
+>  	bool no_l0s;
+>  };
+>  
+> +struct qcom_pcie_port {
+> +	struct list_head list;
+> +	struct gpio_desc *reset;
+> +	struct phy *phy;
 
-Why are you adding this field ? I don't see it being used in a later patch.
+This change is already upstream (a2fbecdbbb9d ("PCI: qcom: Add support
+for parsing the new Root Port binding")), but it seems wrong to me to
+have "phy" and "reset" in both struct qcom_pcie and struct
+qcom_pcie_port.  
 
-Would that be useful for writing the right amount of registers later 
-when switching to structs and memcpy ?
+I know we need *find* those things in different places (either a
+per-Root Port DT stanza or the top-level qcom host bridge), but why
+can't we always put them in struct qcom_pcie_port and drop them from
+struct qcom_pcie?
 
-I haven't checked how different the register maps are between those 
-different variants.
+Having them in both places means all the users need to worry about
+that DT difference and look in both places instead of always looking
+at qcom_pcie_port.
 
-> - Collect r-b tag
->
-> Changes in v2:
-> - No change
-> ---
->   .../media/platform/rockchip/rkvdec/rkvdec.c   | 22 ++++++++++++++++++-
->   .../media/platform/rockchip/rkvdec/rkvdec.h   | 11 ++++++++++
->   2 files changed, 32 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index c15fc238d6af..daf6d9ab2d1d 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -14,6 +14,7 @@
->   #include <linux/iommu.h>
->   #include <linux/module.h>
->   #include <linux/of.h>
-> +#include <linux/of_device.h>
->   #include <linux/platform_device.h>
->   #include <linux/pm.h>
->   #include <linux/pm_runtime.h>
-> @@ -327,6 +328,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->   		.ops = &rkvdec_hevc_fmt_ops,
->   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_hevc_decoded_fmts),
->   		.decoded_fmts = rkvdec_hevc_decoded_fmts,
-> +		.capability = RKVDEC_CAPABILITY_HEVC,
->   	},
->   	{
->   		.fourcc = V4L2_PIX_FMT_H264_SLICE,
-> @@ -343,6 +345,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_decoded_fmts),
->   		.decoded_fmts = rkvdec_h264_decoded_fmts,
->   		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
-> +		.capability = RKVDEC_CAPABILITY_H264,
->   	},
->   	{
->   		.fourcc = V4L2_PIX_FMT_VP9_FRAME,
-> @@ -358,6 +361,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->   		.ops = &rkvdec_vp9_fmt_ops,
->   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_vp9_decoded_fmts),
->   		.decoded_fmts = rkvdec_vp9_decoded_fmts,
-> +		.capability = RKVDEC_CAPABILITY_VP9,
->   	}
->   };
->   
-> @@ -1186,8 +1190,18 @@ static void rkvdec_watchdog_func(struct work_struct *work)
->   	}
->   }
->   
-> +static const struct rkvdec_variant rk3399_rkvdec_variant = {
-> +	.num_regs = 78,
-> +	.capabilities = RKVDEC_CAPABILITY_HEVC |
-> +			RKVDEC_CAPABILITY_H264 |
-> +			RKVDEC_CAPABILITY_VP9,
 > +};
 > +
->   static const struct of_device_id of_rkvdec_match[] = {
-> -	{ .compatible = "rockchip,rk3399-vdec" },
-> +	{
-> +		.compatible = "rockchip,rk3399-vdec",
-> +		.data = &rk3399_rkvdec_variant,
-> +	},
->   	{ /* sentinel */ }
->   };
->   MODULE_DEVICE_TABLE(of, of_rkvdec_match);
-> @@ -1198,16 +1212,22 @@ static const char * const rkvdec_clk_names[] = {
->   
->   static int rkvdec_probe(struct platform_device *pdev)
->   {
-> +	const struct rkvdec_variant *variant;
->   	struct rkvdec_dev *rkvdec;
->   	unsigned int i;
->   	int ret, irq;
->   
-> +	variant = of_device_get_match_data(&pdev->dev);
-> +	if (!variant)
-> +		return -EINVAL;
-> +
->   	rkvdec = devm_kzalloc(&pdev->dev, sizeof(*rkvdec), GFP_KERNEL);
->   	if (!rkvdec)
->   		return -ENOMEM;
->   
->   	platform_set_drvdata(pdev, rkvdec);
->   	rkvdec->dev = &pdev->dev;
-> +	rkvdec->variant = variant;
->   	mutex_init(&rkvdec->vdev_lock);
->   	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
->   
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> index 209dd79ce9bd..c47457c954e5 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> @@ -22,6 +22,10 @@
->   #include <media/videobuf2-core.h>
->   #include <media/videobuf2-dma-contig.h>
->   
-> +#define RKVDEC_CAPABILITY_HEVC		BIT(0)
-> +#define RKVDEC_CAPABILITY_H264		BIT(1)
-> +#define RKVDEC_CAPABILITY_VP9		BIT(2)
-> +
->   struct rkvdec_ctx;
->   
->   struct rkvdec_ctrl_desc {
-> @@ -63,6 +67,11 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
->   			    base.vb.vb2_buf);
->   }
->   
-> +struct rkvdec_variant {
-> +	unsigned int num_regs;
-> +	unsigned int capabilities;
-> +};
-> +
->   struct rkvdec_coded_fmt_ops {
->   	int (*adjust_fmt)(struct rkvdec_ctx *ctx,
->   			  struct v4l2_format *f);
-> @@ -98,6 +107,7 @@ struct rkvdec_coded_fmt_desc {
->   	unsigned int num_decoded_fmts;
->   	const struct rkvdec_decoded_fmt_desc *decoded_fmts;
->   	u32 subsystem_flags;
-> +	unsigned int capability;
->   };
->   
->   struct rkvdec_dev {
-> @@ -111,6 +121,7 @@ struct rkvdec_dev {
->   	struct mutex vdev_lock; /* serializes ioctls */
->   	struct delayed_work watchdog_work;
->   	struct iommu_domain *empty_domain;
-> +	const struct rkvdec_variant *variant;
->   };
->   
->   struct rkvdec_ctx {
+>  struct qcom_pcie {
+>  	struct dw_pcie *pci;
+>  	void __iomem *parf;			/* DT parf */
+> @@ -279,24 +285,37 @@ struct qcom_pcie {
+>  	struct icc_path *icc_cpu;
+>  	const struct qcom_pcie_cfg *cfg;
+>  	struct dentry *debugfs;
+> +	struct list_head ports;
+>  	bool suspended;
+>  	bool use_pm_opp;
+>  };
 
-Regards,
+> +static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+>  {
+> -	gpiod_set_value_cansleep(pcie->reset, 1);
+> +	struct qcom_pcie_port *port;
+> +	int val = assert ? 1 : 0;
+> +
+> +	if (list_empty(&pcie->ports))
+> +		gpiod_set_value_cansleep(pcie->reset, val);
+> +	else
+> +		list_for_each_entry(port, &pcie->ports, list)
+> +			gpiod_set_value_cansleep(port->reset, val);
 
-Detlev
+This is the kind of complication I think we should avoid.
 
+> +static void qcom_pcie_phy_exit(struct qcom_pcie *pcie)
+> +{
+> +	struct qcom_pcie_port *port;
+> +
+> +	if (list_empty(&pcie->ports))
+> +		phy_exit(pcie->phy);
+> +	else
+> +		list_for_each_entry(port, &pcie->ports, list)
+> +			phy_exit(port->phy);
+
+And this.
+
+> +}
+> +
+> +static void qcom_pcie_phy_power_off(struct qcom_pcie *pcie)
+> +{
+> +	struct qcom_pcie_port *port;
+> +
+> +	if (list_empty(&pcie->ports)) {
+> +		phy_power_off(pcie->phy);
+> +	} else {
+> +		list_for_each_entry(port, &pcie->ports, list)
+> +			phy_power_off(port->phy);
+
+And this.  And there's more.
+
+Bjorn
 
