@@ -1,318 +1,229 @@
-Return-Path: <linux-kernel+bounces-805086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75BE8B483D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BC7B483DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BBD1899BDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BDC1890255
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 06:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD141D5CD7;
-	Mon,  8 Sep 2025 06:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9598221FD4;
+	Mon,  8 Sep 2025 06:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qx6h/3Wt"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013030.outbound.protection.outlook.com [40.107.162.30])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sScEA+sA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8B6258A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 06:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757311485; cv=fail; b=NyuNllFducbmycEHv9oSPSCux4cdQ18Jdd9bDeCAHEDTsQOO5sxcWvC06xcbh1x3D9SZXxizWA/DxgljIWNX2/TOOSRgyD3Z2ZgFB50itkjeRTEFBEHkzyUKCJqbWqGeBVMNT7jzIPAAwrdC3yf7RSEtbNDLuI1qaSlKaH3u0qA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757311485; c=relaxed/simple;
-	bh=qCKykvo70QpUeVqorlZxtn79exOXw7ryP943SYqMgzc=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=V2BvVFBJ6EfL/4+ez3xVbShQL/8zM7eYycSr20Qtaat99/7VnBLtK4fC5VQlGhJmbTWPv/gGrZmUGqP40LyyH+HnG6n8ah58Zmd1VJLT13oaoQ//YkJKOGgB6Qk1FQ8ZnC+M9zST8XbGgoXhrNl8TUmZptq2zA6LRE4depJkdO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qx6h/3Wt; arc=fail smtp.client-ip=40.107.162.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pBSDvheRNFbqvF1RHbERtDrEboupeAxlb/Sy/cDfnCWv61vdyisQOMcDN2O1hdg7hsc0Qa0c6/vo8rkJHnZMZYRkVhT96MKXvraMSRPeLbI8QZXup0eoWH21otkdeIiEpVXXvVVcEqFBtYXet7nOWhsnDyjGLKccLeRPAUHJnpKQhef90CAC7h2j/kmYqcmbIyoX6NyHO9AcDa/8algU4ju8lRnftqTqbfnRBH0xvhp7KU3JxGsLNde4v/ZT2v/joCP5QLQilRK8bhWk2IC/BTt7F4nEQaGRkUL/n0+l5XpeOeMSYLxOMaxUWmV6zJH4ugTIvVMBuxQggbb2SOF+6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1y0k2xxFlArNQz7c2qrnmFAf5Pkte3/LPVGHpfKL20k=;
- b=PM6cnA6Tm9t17de/ecDzpBzDZENEu3pALkLLdtPvbv2dOsRYdmuo/jikyNa2fL9paRScL64YqIYk7MxNIodzFcAqQNMS0F9zMqYlTJbychMFsrMO/lSsVwVUg0SLBlcSLQZ/GEudBSx5U4/l5Y8j2tkC7amK/qLtuJivpn8L9iXWcCFWc2Qnf1plnb0v7OuIu88KrvSCuSVtAes4mt5mcAVwl915wuK7mZqhztfB+LTfFeeh65QxLS9IylsfZ5j6SPoB1rpPjUnWOdxvdFozBBjSesO5xseVlkpwK1T3KOJFdHhJOqQ7P+9OWaCrz53yJJtayLbMkNIFpDdAFOrEFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1y0k2xxFlArNQz7c2qrnmFAf5Pkte3/LPVGHpfKL20k=;
- b=Qx6h/3Wt2DhOeqTPJUkHfU20iZ0LuybyB9BTmMtpKYz/91RIRbX5DK2jlT/bbiFv1xx6DepamLkzAEYV4g0j5HgEuCsLGxp+Mma42BjTxCMPsWG8txkn6WVWmdyk6nvCm3O2RXCDzlBhpt7KaVU/hX4TPnbOSittLo55gAutEOmmxEkULM9pdMlLXHtnVPgWhm2wP0xJsUjAHYRRwozEticnE3qRH+icFqfemu7YqBIykMJOBpPhAVdrJNsd/fC2Apn2sKmR6F/vT3c7vW2paOmQLfkHA5L4DxddaJGna1jdZW0k2zUZz/U+I/+KEfzHBEpq5eA8s3Wc1DVzoPb8JQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DU4PR04MB10838.eurprd04.prod.outlook.com (2603:10a6:10:581::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 8 Sep
- 2025 06:04:39 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%5]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
- 06:04:38 +0000
-From: Liu Ying <victor.liu@nxp.com>
-Date: Mon, 08 Sep 2025 14:05:48 +0800
-Subject: [PATCH v2] drm/bridge: ite-it6263: Support HDMI vendor specific
- infoframe
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
-X-B4-Tracking: v=1; b=H4sIADtyvmgC/5WNQQ6DIBAAv2L23G0AkaY9+Y/GA8Wl7kEwYIiN8
- e+l/qDHmcPMDpkSU4ZHs0OiwpljqKAuDbjJhjchj5VBCdWJu9DIq1GmxUJhjAnzQo49O+Tgo09
- 2JrRWCyW119LfoGaWRJ63c/EcKk+c15g+57HIn/0jXiRKNOTJdLp7mVb3YVuuLs4wHMfxBaJJ2
- 4rOAAAA
-X-Change-ID: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Liu Ying <victor.liu@nxp.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SG3P274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::32)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B911D5CD7;
+	Mon,  8 Sep 2025 06:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757311571; cv=none; b=KMaeT5cjqYtTFeSEVCPIebNge9cY+Ex8FEJW/WdX38qDKb6583aFb5GgjTIJ+cAoskeUWTHtvdXPRC4fZ8YxfNZyfqItMJ+YJika6Bf0JdE99CODSTnaygLXv6BBMaw61d92/EUgJunjvByCmPx+PCsgdhr4t1oxTCVjwfmGG/A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757311571; c=relaxed/simple;
+	bh=4A5Es5qiO5aqxXgStXXtaG5FSdU+XymwE0oZAPA6t9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AG9uWd66dC9YNpG23rFbD0XYXCoY/q1YtARdvyjAQIvTUpQLmZgAIFcURacBuLZyL06AiMUN865M2OA5g+1FFYkyjwEFpkZxUcESSyn1t5osaAmppCZsrSxYcf0DcPgNhOhCTDoq05AeCMunmnwLoTy/sgERZQrRgXmm+O5L4AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sScEA+sA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E95C4CEF5;
+	Mon,  8 Sep 2025 06:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757311570;
+	bh=4A5Es5qiO5aqxXgStXXtaG5FSdU+XymwE0oZAPA6t9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sScEA+sA2FKBBArmW0BBu8JxohX0FkHC+f/SBFY3YeWqUOyysMHCxb7/7iDt+0qoD
+	 TsDDdpD59sTlAPboK/rVjWhddPoh60Zx1CDViPXKrn6jIjwIKT2mSWE7hgQEneqsIL
+	 w5Im1LuSNaxaq6vY4DtByjrjiF4QYmI1ISKmTYFBzd+i4JStxYFPoEaQ38RISDvtnf
+	 AsoxLk3IWske/zTAK4Woe+7WX4AX200yGqkhe1/Ebgv9aa4tqEtJzbMmYEZ1gYmulU
+	 3mgXxvNNK0fvhzYLfcB+cDrwwIpvmYvb6lxEK7wH+QTufrLqN/IKyq9a2wLDyiB0SY
+	 RtwRLrLKVyZIw==
+Date: Mon, 8 Sep 2025 11:36:02 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] PCI: imx6: Add a method to handle CLKREQ#
+ override active low
+Message-ID: <ryvt2k2blew5wisy7edkjqdcmulrwey7lkeriasrmvaigpe3ku@vdgkod2bf7ma>
+References: <20250820081048.2279057-1-hongxing.zhu@nxp.com>
+ <20250820081048.2279057-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10838:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5e973f9-dabb-4d23-d1eb-08ddee9d9832
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|19092799006|366016|376014|52116014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?V0g1MUFubjJPU3hja0dEVElTeExRRG9YaFJ3ZFp5SnpwNlg2dlpmTlFCY1Vp?=
- =?utf-8?B?b3pSeGgySW1ZUnV3VC9NUHNVMUFEVTB6RUlETUxFdjd2SGNxRGw2Y0s5UmxK?=
- =?utf-8?B?RVgwZm5rcjFDUkZTL055dEJmTUF0Z3dJUVUydUs0RTJQenlxQjBTV093WlFE?=
- =?utf-8?B?cXVCNXVEYUJWaGRBZ3NxMDhNZ25tSVlabVdmNTBobUpUK21kU2pUZXFNczN0?=
- =?utf-8?B?U0JwZFIzVUV6Yk5kSkhnU2M4RkFZSGtDeGp6RE1Sdnd6eFJuSVk4QU5Lby82?=
- =?utf-8?B?Q1FqTDBmZmZUWkdtU25rSXlGWi9HUnlTQTFhRHRFbFNYK1B2eXE0K3R3a3V4?=
- =?utf-8?B?bzNQRzE5SGlEeStTQk9EK2h4cTdGY0lPNjhMdFdFVTF3VGk0Z1NzS0JUY1hU?=
- =?utf-8?B?aVlTRXROdy9jQXdoYlc1Tm1QS3FNVmZaTlAxVWdvTmM2QjJVT1k4QWlZUlpr?=
- =?utf-8?B?eFJTOER2TDZOZkM1cXo1OUNhSnh0T040bE5EN21GaWEyUnpWTVNNOG4zK2R4?=
- =?utf-8?B?NXFXRFRxYVNHQ1RnajlCWXAvam9PVG0zZTZVZ0l1c1J4UzZUZ0RZNVlaTWow?=
- =?utf-8?B?bWlVZFBGVk9Ob0gzRXpsNjNybDFhVHM1TmZaM20wQy96dUp2ckEzTzhuUTJY?=
- =?utf-8?B?cHMzTTVwblJ6cW5zWGk4VDJIaHhhNUtXUGtFOXhsSXJ2QWxIQ0dsc1ZmTEsz?=
- =?utf-8?B?SmFnb0orVXhJV1UwbGgzWUd2N3ZNc2RpRHFwN291RHJZRXJIYWxHbytXc0R0?=
- =?utf-8?B?N00wc29uUlJpaVBwZjVibmkyN0cvVHk5RENaWDJxNWJXY1I2N2RJRnllMDNZ?=
- =?utf-8?B?alBSWDcwUGt6L2dLaTdzSHpWY1dTbk9jN0Jmbzk1WGVJN3VuT0lBS1BwSTFq?=
- =?utf-8?B?bWFxV3pYOGJvVUppVk5LZ2U3U0FtS043TjJOQStkKytZeEJRMHg3K0lDWXNt?=
- =?utf-8?B?LzBCdjAxL244aEprQ2lhdXNJalhLWUd0clk1dU9lL2p1NkU2eGZ3Z2VNdUIz?=
- =?utf-8?B?NGk2TXY4MGprOExZdkJveEZva3NIRDF1WlYxVC9QTkJreFBzdTR3cUd1VVJK?=
- =?utf-8?B?VWtRWTUzWEJ1R2RYRm1sMmZLMFZBQno4OWhPS1lHYVYrUHltVDNMSkYyNTI3?=
- =?utf-8?B?c2ZFUDQ1dU1ZUzJ2L2xKeGdoUGtZVmE0NWxhMy9Fa0VKUCthZktBWE9vUXZ3?=
- =?utf-8?B?REYzUjgzSnBDNEJxTmtreFk2WFlHWDVmNERLQ1JLSzcwVmdhanFTWTVDeFJV?=
- =?utf-8?B?dDRyd2dadzRQOW1tSVVBaXBueHJlWFhFa1NURDBUTml2ckRJNyttb0pYWUc2?=
- =?utf-8?B?bm8xOHZTSUNjRkdSQ2NjRmhKRWpOMktyUndkMTUzdENHU2xlZ2h0WG15ZW9m?=
- =?utf-8?B?QVJnZkFUMmtuNllPdit5dHdHOUFsQmRneFVwRWFHaEc3NktpcjJPQUk1SVlm?=
- =?utf-8?B?UHVEZmxxZ0g0MTVvOWlqQWVRQ2NWTERVZjhVWjJabEovNzZIdGNzc2JpVzhL?=
- =?utf-8?B?dS9sQUpkd0VWbUVhdGNLbmY4elN1K2lCVm00WjVnT1lHMjRVcjJUZXljQkc4?=
- =?utf-8?B?cm9BRWQzZGNKdlp6QllpOGsvSDVJSkRWeC90NHpSZVVGcmZTeE5BM3VzUGlF?=
- =?utf-8?B?Y0VKbkZHZ3diWkJFREpBWWoxL3g4bC9vdDRZMU5OTlpIWitMU1p3RUJKRGVm?=
- =?utf-8?B?V0NpeThGM0hUMlhzbEtLUk96TnNrK0tsZjBDdnRnMUNiYmhmcjQ5SktpbDdR?=
- =?utf-8?B?bnNtZEpzNzN0RjBVS3NKTEgrMlZDNnd4Uk5xSzBTbXZ5T0ljbVpIN0xOVUs3?=
- =?utf-8?B?UFlwakRkNXBGQUFNbjN4ZUZBOXZwd0k0SVQwMUJTV2FJeFhlZW00NkpyUHlO?=
- =?utf-8?B?dFpyZmNFbTU3cU5aaW9qOG5YeWNka3ZmQ3JtS0FrU1FoNXJOQkUrTHBCNUpW?=
- =?utf-8?B?RGwrcC9hUGVwNzRaYUpmcW1GZWZzeEg2cDFmcjZMWnp5bDdwNitpT3lyNFBn?=
- =?utf-8?B?YUNESVoxdHRVV3FmSlZVaXJ5SnZVWk9ZNEYxVi9ZdndZS2U3QnNJbjFmUjE5?=
- =?utf-8?Q?8tWr8b?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?aHhWTVoyRnhDU2tJaE95ZWxhbUZuSjY0ZzBGZHBaSXFXSjNKY1hCRnhvNmtW?=
- =?utf-8?B?VHZKMFFNU2V4RnJFeHUxSlRTZUF2S2phaWJyN0JPNDVzY1dPY2xFbHQrcURF?=
- =?utf-8?B?YzJoZnFmTldXSUF3UW55VElmVllhWDROWGxsNm1STW4yaFNra3lRdHppQkNO?=
- =?utf-8?B?V0k2VVpLOXBKNnJCMWFlZEx6RlJhMEtVZG85ZXgzZ1BnQmZFZE1uaENrcytR?=
- =?utf-8?B?UDlFektlcVpVVUVjazN3L0NtbDd6U1dWT2xnZExIZHIvSjd6Q1QxUnd1QnpK?=
- =?utf-8?B?bW1wY3o2bU9MRGMwSEphRkh2VUZaOVd4b1F2ZjZiNG1HSnF1OEJremZ1VzRB?=
- =?utf-8?B?M2VsL1YzK1Bpa3RLUjBPWWJpQjRuR05CaDUwS1BSUlZ4Uk5aa2s1Yjc4RW0r?=
- =?utf-8?B?QkhRSUpXUUh2dnJHYThhbGI5N1RZdjlZWXk1R2MxSWpWcmRWTEpjQlNCSldW?=
- =?utf-8?B?eEJmZytRUkE1bUV4Zk9oWnQ4U3llUXhsQ0FzbjlubFBGT283c3IwS0JWR0Fu?=
- =?utf-8?B?dUZvbkRqbXdqVk4wcW9wdnlFVWtrVGZLdU1nUzJIZGZjWFZCa3V2TytwTDhy?=
- =?utf-8?B?WVVyUURIajZqaThHRjcwODdxZDhSNHFCaTZUZWwzU3FxcXMybTFBSjh5Um5Q?=
- =?utf-8?B?dEwrQ0d1YitmS0FNemxoQVFOTzc4dndVaW50MFFXRmlPalVPNXhMRUNoQWZC?=
- =?utf-8?B?UEE5cS9Oc01OZ2pWNVRyYzNCaXM0RVhmSWVhalRFRDhDVm5udkJZb2M1MU8r?=
- =?utf-8?B?YXUzbmVycmNIbCtqSUl4MXlzQ3pEYmFjUTEwYjlLYXpTVkMxa1RXeUVJbjFM?=
- =?utf-8?B?dEh1WGgva21KaWZOVWFJOTZWT0RMR29NVGh5ZDhKYlVseGhKYjRHNHdBNzV5?=
- =?utf-8?B?UTFpRkxMNWM3aUFHUmhuTWU2QTloWXVaUlpORHZxakorZkFxbkE4M0tsb2Y2?=
- =?utf-8?B?SndUY0dNYURjclFzTDJKTnZ2RjI0SXFWK1BTRkJ6aU10Y1lGZ1lTSXYrZUhn?=
- =?utf-8?B?T0h1SVlUUy85Sk1hTkVHUngwbW9TWUxUYkxYc1lMUTlyZTdpc1J6TnhGamVj?=
- =?utf-8?B?MmEwSVV0TkdkSVpNZGNtR241TTgxaEVjbVVxamN5cVdrUDRFQ0IxY2d4SDZY?=
- =?utf-8?B?TmFDVzNya01JTFowVjhLR2U5RmpiUEVJN2g5U1lCRURlK0xBU1lSWTJvSXRa?=
- =?utf-8?B?NG9ic2IvRFdkaitzR2pkcmYzaDN5QVVmeGx5VVBwZ2pWQk1aZ21LV3BYU2Zq?=
- =?utf-8?B?bk50cjgxSlpVRXEyUDNGMjA2SHpxUmtMd2d1Y2k4M0xXR2o1aXRwMEwxM2xl?=
- =?utf-8?B?UGVFbHhXMEFBdzdjS0hHSC8zZEhLWUNRbVY1c1ZCZzVQN2wrUlpFbExIU3pN?=
- =?utf-8?B?RGdHd3ZidExpNVkrbnJObEUwanhkK1VrRnJEcDhUUTMrY09rWmYzV05yZlYv?=
- =?utf-8?B?d0FGT1U5RCthcnV3V01SVlhzcmwyYWFvWHhGUmxtVGFpdUcrZG5zRjRMSjY1?=
- =?utf-8?B?SVpFSWpKV1pndjRQbkxnY1hhZGxVdXUvejhRM0ZFVGMzcnlHdVd4cG41NlBO?=
- =?utf-8?B?NWgvbkVqREF6ZFl0eXFWZU5mQkVuTTF3OWNYR3gwZHpoazZTd3VPc0c5OCsx?=
- =?utf-8?B?Qk1SRE8zeE9Vb3ZGMllxUXVTay9YeCtES3JEU0QvWEVOSVBxTDNQaDYzckZV?=
- =?utf-8?B?bFAwMmI3VHJUaXByOHZRTXdibWhyOUQ4L1ZhMnA1RjRkbElxLzFiYUtsOC9t?=
- =?utf-8?B?b1d2WUdmVUVBT3pmT3p3OW9EVHAwNmh2c3hLOVI0ME1iaGpLbTd3TmczNkFW?=
- =?utf-8?B?UWZZZ3BjbjA2am9lRWloVmk0L3BtVlM0TWtnbGlodUxJRTA4OUd4aGwwU0RH?=
- =?utf-8?B?WjV1L24yVmEzYmdPVS90cGhxZ3c5cDRDQmE4M1lHbzVSNG1jVUttUDY3NnBU?=
- =?utf-8?B?Ykw3SlNGSzRCWm4waXRzakQ3cFFsZEVvbGEvT3ZmTURQMzlITUxPemJwRHBI?=
- =?utf-8?B?Y2dDalQ4blQ3TGtVU1IwdlVldXBOV0Q1NFdXM2JmQnI3cWtNZi9QdGRmKytE?=
- =?utf-8?B?SFJaRjJaZEdhTHlrNlBMeEdhQjBqSVEwVy9iSVgwWG4xZUI4T0xmWVZTeTYr?=
- =?utf-8?Q?ku3bWev4lBg33jNobq+kRxzmV?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5e973f9-dabb-4d23-d1eb-08ddee9d9832
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 06:04:38.8370
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UexVS/IAP1LDInnorN07m5Rbe73E3KwWPE9v0s59+PyE2N/BRhD/Nnal/RBiD3Zsdl1czbDkHb9wYdp2FsV0Jg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10838
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820081048.2279057-3-hongxing.zhu@nxp.com>
 
-IT6263 supports HDMI vendor specific infoframe.  The infoframe header
-and payload are configurable via NULL packet registers.  The infoframe
-is enabled and disabled via PKT_NULL_CTRL register.  Add the HDMI vendor
-specific infoframe support.
+On Wed, Aug 20, 2025 at 04:10:48PM GMT, Richard Zhu wrote:
+> The CLKREQ# is an open drain, active low signal that is driven low by
+> the card to request reference clock.
+> 
+> Since the reference clock may be required by i.MX PCIe host too.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
-Changes in v2:
-- Drop zeroing out all NULL packet registers.  (Dmitry)
-- Drop no longer used HDMI_PKT_HB_PB_CHUNK_SIZE macro.
-- Link to v1: https://lore.kernel.org/r/20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com
----
- drivers/gpu/drm/bridge/ite-it6263.c | 64 +++++++++++++++++++++++++------------
- 1 file changed, 44 insertions(+), 20 deletions(-)
+Add some info on why the refclk is needed by the host.
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-index cf813672b4ffb8ab5c524c6414ee7b414cebc018..2eb8fba7016cbf0dcb19aec4ca8849f1fffaa64c 100644
---- a/drivers/gpu/drm/bridge/ite-it6263.c
-+++ b/drivers/gpu/drm/bridge/ite-it6263.c
-@@ -146,6 +146,7 @@
- #define  HDMI_COLOR_DEPTH_24		FIELD_PREP(HDMI_COLOR_DEPTH, 4)
- 
- #define HDMI_REG_PKT_GENERAL_CTRL	0xc6
-+#define HDMI_REG_PKT_NULL_CTRL		0xc9
- #define HDMI_REG_AVI_INFOFRM_CTRL	0xcd
- #define  ENABLE_PKT			BIT(0)
- #define  REPEAT_PKT			BIT(1)
-@@ -154,6 +155,12 @@
-  * 3) HDMI register bank1: 0x130 ~ 0x1ff (HDMI packet registers)
-  */
- 
-+/* NULL packet registers */
-+/* Header Byte(HB): n = 0 ~ 2 */
-+#define HDMI_REG_PKT_HB(n)		(0x138 + (n))
-+/* Packet Byte(PB): n = 0 ~ 27(HDMI_MAX_INFOFRAME_SIZE), n = 0 for checksum */
-+#define HDMI_REG_PKT_PB(n)		(0x13b + (n))
-+
- /* AVI packet registers */
- #define HDMI_REG_AVI_DB1		0x158
- #define HDMI_REG_AVI_DB2		0x159
-@@ -224,7 +231,9 @@ static bool it6263_hdmi_writeable_reg(struct device *dev, unsigned int reg)
- 	case HDMI_REG_HDMI_MODE:
- 	case HDMI_REG_GCP:
- 	case HDMI_REG_PKT_GENERAL_CTRL:
-+	case HDMI_REG_PKT_NULL_CTRL:
- 	case HDMI_REG_AVI_INFOFRM_CTRL:
-+	case HDMI_REG_PKT_HB(0) ... HDMI_REG_PKT_PB(HDMI_MAX_INFOFRAME_SIZE):
- 	case HDMI_REG_AVI_DB1:
- 	case HDMI_REG_AVI_DB2:
- 	case HDMI_REG_AVI_DB3:
-@@ -755,10 +764,16 @@ static int it6263_hdmi_clear_infoframe(struct drm_bridge *bridge,
- {
- 	struct it6263 *it = bridge_to_it6263(bridge);
- 
--	if (type == HDMI_INFOFRAME_TYPE_AVI)
-+	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AVI:
- 		regmap_write(it->hdmi_regmap, HDMI_REG_AVI_INFOFRM_CTRL, 0);
--	else
-+		break;
-+	case HDMI_INFOFRAME_TYPE_VENDOR:
-+		regmap_write(it->hdmi_regmap, HDMI_REG_PKT_NULL_CTRL, 0);
-+		break;
-+	default:
- 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-+	}
- 
- 	return 0;
- }
-@@ -770,27 +785,36 @@ static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
- 	struct it6263 *it = bridge_to_it6263(bridge);
- 	struct regmap *regmap = it->hdmi_regmap;
- 
--	if (type != HDMI_INFOFRAME_TYPE_AVI) {
-+	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AVI:
-+		/* write the first AVI infoframe data byte chunk(DB1-DB5) */
-+		regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
-+				  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
-+				  HDMI_AVI_DB_CHUNK1_SIZE);
-+
-+		/* write the second AVI infoframe data byte chunk(DB6-DB13) */
-+		regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
-+				  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
-+					  HDMI_AVI_DB_CHUNK1_SIZE],
-+				  HDMI_AVI_DB_CHUNK2_SIZE);
-+
-+		/* write checksum */
-+		regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
-+
-+		regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL,
-+			     ENABLE_PKT | REPEAT_PKT);
-+		break;
-+	case HDMI_INFOFRAME_TYPE_VENDOR:
-+		/* write header and payload */
-+		regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0), buffer, len);
-+
-+		regmap_write(regmap, HDMI_REG_PKT_NULL_CTRL,
-+			     ENABLE_PKT | REPEAT_PKT);
-+		break;
-+	default:
- 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
--		return 0;
- 	}
- 
--	/* write the first AVI infoframe data byte chunk(DB1-DB5) */
--	regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
--			  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
--			  HDMI_AVI_DB_CHUNK1_SIZE);
--
--	/* write the second AVI infoframe data byte chunk(DB6-DB13) */
--	regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
--			  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
--				  HDMI_AVI_DB_CHUNK1_SIZE],
--			  HDMI_AVI_DB_CHUNK2_SIZE);
--
--	/* write checksum */
--	regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
--
--	regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL, ENABLE_PKT | REPEAT_PKT);
--
- 	return 0;
- }
- 
+> To make
+> sure this clock is available even when the CLKREQ# isn't driven low by
+> the card(e.x no card connected), force CLKREQ# override active low for
+> i.MX PCIe host during initialization.
+> 
 
----
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-change-id: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
+CLKREQ# override is not a spec defined feature. So you need to explain what it
+does first.
 
-Best regards,
+> The CLKREQ# override can be cleared safely when supports-clkreq is
+> present and PCIe link is up later. Because the CLKREQ# would be driven
+> low by the card in this case.
+> 
+
+Why do you need to depend on 'supports-clkreq' property? Don't you already know
+if your platform supports CLKREQ# or not? None of the upstream DTS has the
+'supports-clkreq' property set and the NXP binding also doesn't enable this
+property.
+
+So I'm wondering how you are suddenly using this property. The property implies
+that when not set to true, CLKREQ# is not supported by the platform. So when the
+driver starts using this property, all the old DTS based platforms are not going
+to release CLKREQ# from driving low, so L1SS will not be entered for them. Do
+you really want it to happen?
+
+- Mani
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 35 +++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 80e48746bbaf6..a73632b47e2d3 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -52,6 +52,8 @@
+>  #define IMX95_PCIE_REF_CLKEN			BIT(23)
+>  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
+>  #define IMX95_PCIE_SS_RW_REG_1			0xf4
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
+>  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
+>  
+>  #define IMX95_PE0_GEN_CTRL_1			0x1050
+> @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
+>  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
+>  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
+>  	int (*wait_pll_lock)(struct imx_pcie *pcie);
+> +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
+>  	const struct dw_pcie_host_ops *ops;
+>  };
+>  
+> @@ -149,6 +152,7 @@ struct imx_pcie {
+>  	struct gpio_desc	*reset_gpiod;
+>  	struct clk_bulk_data	*clks;
+>  	int			num_clks;
+> +	bool			supports_clkreq;
+>  	struct regmap		*iomuxc_gpr;
+>  	u16			msi_ctrl;
+>  	u32			controller_id;
+> @@ -267,6 +271,13 @@ static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  			   IMX95_PCIE_REF_CLKEN,
+>  			   IMX95_PCIE_REF_CLKEN);
+>  
+> +	/* Force CLKREQ# low by override */
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr,
+> +			   IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL);
+>  	return 0;
+>  }
+>  
+> @@ -1298,6 +1309,18 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
+>  		regulator_disable(imx_pcie->vpcie);
+>  }
+>  
+> +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
+> +{
+> +	imx8mm_pcie_enable_ref_clk(imx_pcie, false);
+> +}
+> +
+> +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
+> +{
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL, 0);
+> +}
+> +
+>  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -1322,6 +1345,12 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+>  		dw_pcie_dbi_ro_wr_dis(pci);
+>  	}
+> +
+> +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
+> +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
+> +		if (imx_pcie->drvdata->clr_clkreq_override)
+> +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
+> +	}
+>  }
+>  
+>  /*
+> @@ -1745,6 +1774,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	pci->max_link_speed = 1;
+>  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
+>  
+> +	imx_pcie->supports_clkreq =
+> +		of_property_read_bool(node, "supports-clkreq");
+>  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
+>  	if (IS_ERR(imx_pcie->vpcie)) {
+>  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV)
+> @@ -1873,6 +1904,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
+>  		.init_phy = imx8mq_pcie_init_phy,
+>  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+>  	},
+>  	[IMX8MM] = {
+>  		.variant = IMX8MM,
+> @@ -1883,6 +1915,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.mode_off[0] = IOMUXC_GPR12,
+>  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+>  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+>  	},
+>  	[IMX8MP] = {
+>  		.variant = IMX8MP,
+> @@ -1893,6 +1926,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.mode_off[0] = IOMUXC_GPR12,
+>  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+>  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+>  	},
+>  	[IMX8Q] = {
+>  		.variant = IMX8Q,
+> @@ -1913,6 +1947,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.core_reset = imx95_pcie_core_reset,
+>  		.init_phy = imx95_pcie_init_phy,
+>  		.wait_pll_lock = imx95_pcie_wait_for_phy_pll_lock,
+> +		.clr_clkreq_override = imx95_pcie_clr_clkreq_override,
+>  	},
+>  	[IMX8MQ_EP] = {
+>  		.variant = IMX8MQ_EP,
+> -- 
+> 2.37.1
+> 
+
 -- 
-Liu Ying <victor.liu@nxp.com>
-
+மணிவண்ணன் சதாசிவம்
 
