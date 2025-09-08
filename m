@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-806176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974DBB492F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483E1B492F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C233174179
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F391B209DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE97430C63B;
-	Mon,  8 Sep 2025 15:20:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B9125634;
-	Mon,  8 Sep 2025 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873F630CD87;
+	Mon,  8 Sep 2025 15:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b1IkmVTD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547DE305944
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757344838; cv=none; b=ccGZZueOmFxsPR8EbDwYUxaIaPzrdEliDf3WONaX46DNIxYfwprBnMTzubRbbWibncS9CpLi8++EpJ3cz/Ilj8V42OyFevqmadp6GB6xfegEaR2qrJD6c2kX/kJw9l9H6GjQYbOg09EDrUk1qZzKwL92xnFnovR9SAx0TH3g5X0=
+	t=1757344875; cv=none; b=GIBdxhj4S1tmn1c7MvV5ifK8eqihJuvzr94ZYUPPrXastRv0x/srkTWePSX1c61OFQknvbzkdZ4WYcpfxe+l/7cxlWIOISHteQKI9f/qZ2KE1DebiZr6DSes7A+OtELTH0A+JcvVFmOHDqrOZS/lqkJA1O/z/cdgamuRv2i2+8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757344838; c=relaxed/simple;
-	bh=7gu6rErY7yQyZZzp5eHW86wOgE+oDXZBLtrctFta85o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lz/gByEISxDkz5cZtQUx3QUQQF2Tz6yuZTntoVkeIBCyKnQVUfwdeZ0Drw1hLZoYk6DQiPs3TdIOeGksNQ7eIGhYRyKuWR/gU/c+FFqZeR4rvpHtkqGGDW44ttbqG1tME77ddnRGJwO4DzLmxvm3x+ITpL2vXyAz46Q2LHZaMmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C59BB1692;
-	Mon,  8 Sep 2025 08:20:26 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C62D3F63F;
-	Mon,  8 Sep 2025 08:20:32 -0700 (PDT)
-Date: Mon, 8 Sep 2025 16:20:29 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-Cc: <admiyo@os.amperecomputing.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v23 1/2] mailbox/pcc: support mailbox management of the
- shared buffer
-Message-ID: <aL70PVhM-UVi5UrS@bogus>
-References: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
- <20250715001011.90534-2-admiyo@os.amperecomputing.com>
- <20250904-expert-invaluable-moose-eb5b7b@sudeepholla>
- <1ec0cb87-463c-4321-a1c7-05f120c607aa@amperemail.onmicrosoft.com>
+	s=arc-20240116; t=1757344875; c=relaxed/simple;
+	bh=PReJpi8e6c+cy8uZc9AKsgF+ro3fiy/sGgR42bM5gzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tdWS9DdVK7imzgRPEt50QuxP1FZZhLWtna9yIo+vFfrSQZJhsOFZ7jeW/5luf55K8Cpn9XRBCi/F1i8gX7n0/eRBGJxu9Ibcg1mSawUCzTLtmSISh0E41H5IYjNfCnPXF0tXrPyzOoueG/lO5wV+V1lK1dBMr+t6Rv6acOg1BO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b1IkmVTD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5889GSfX022590
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 15:21:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f6Pkzb5kg5j3jhry+0rAbxrUj/psaHYMGrHrVc/RvVE=; b=b1IkmVTDioXYCvCt
+	NGOY6mesOdodrYENwnVsGxDKbMOM8N1ZDWhZnwe7KEg2T09hiYFosNFK5sNCFFID
+	QQsFpfmAWTm6CK9AhopTyak4RxBI2DEFtAdDzMXr0+sMOXtDcR3JMPnnDZ2F2LXt
+	ac1m6HXUzAcNiBDCbITYeeeXTnupsdBwNUQAmhSEg5qNrSLOu7oQ/jbGT47U/rBw
+	ObinWYLympLe1DMcq5yZ+CigfODqgc5DUqFqVess2ieX/geqg4qvfo8mqfjuP+m5
+	7Lc/CyFhxqwY+1m4ts23U2E7AbTgyZLvmydMPcHxmNFLFaX6e1tlNFyVpA3I8xzh
+	YQaHTQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491vc20yy7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:21:13 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-72a0a533d63so3088446d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:21:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757344872; x=1757949672;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f6Pkzb5kg5j3jhry+0rAbxrUj/psaHYMGrHrVc/RvVE=;
+        b=CmISjXbCxrP8dY1xqSivlu/vTs86gbOsy7cXN/53q11Z4U8Al6odvZEx1jLTBo0mK8
+         Sn52xXNUzEeXPpNsOTYP4ESyk4jEcn0SKiZVBMcEP+tdv8UXf9YXnBygit6CEnC125nT
+         h7z22Ve8FjS4Xb3rGJ+fhKgOMYdHQhGinNR4Odz3zDU6JpzchjLkvwj1n6fgj9KCnzHh
+         CX1LF/ITHBCsJK67kuAuxKJreWPMuhw81+foKhaE4Yd17Jjl1EFJRY1SXH/gMMKw4OQ6
+         dOI2ob1lLEst+XqZHzR5tv0C9wLvdnAsT2UdHm93QLWAvfJ+n/W3en+MuIUBwhClzqiU
+         Gu/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOa1mr2QicHgmk66Twx9pZ91XNFqRtlgDueUbUbEVYsSBHpimwdsWtLr+voJRmZe7WW5KoWf8W60grgWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu7AJBF9awEeDlDwH0UOPZDiLMNAG3m6rvIqUYGCjrQy45JFtI
+	rbu2UV3IwgRQ7/Szwz2StwBWWnwlD5E9bvNrDGql4E4gccXIXw7jLoBdxmdtGYKy68YuAZ+wTEo
+	WQxN69eBFCQGL9Fj5gNxbw2LR5OEZBBrs2jZtoezVnqHKZGVWIs/dobktvBJRn4S9NgA=
+X-Gm-Gg: ASbGncspPuCITeh187Cav+ZEl1b7UQ0Zf4b5AURA6OTGXHbIUOe+80MVZeLxz/E1LK6
+	rHelY7c6+zqYYV9ZBEcqBvBIDgz9MTiRuaVTImUsJVkSbmWYoy24pFUUlDuT0xUOQTkRzndJj/m
+	DKFhQe6GdLYRZqb3a5R0/gPmnqSrSPqEn8nTVeVedcJSvaxjo40asIOn6bp9kaye3g/HmlX9IF4
+	l3bwRiSkcQEFPrGv/eH33/8g38wIUh3opXCYH7y6KNERnZq5VkDQGDbMYrMwWA9sdchfpN7yZk8
+	uHiFb5M0bPu35lxIgED5+292VJMr5KB04dq5r5wgB861w5oMiOD/JrMPBF/2QfNk7Fefu+27JQb
+	tZdqtyO4EM3mhUah8kPw3ig==
+X-Received: by 2002:ac8:5787:0:b0:4b4:9d39:3432 with SMTP id d75a77b69052e-4b5f85322c4mr61314841cf.10.1757344872108;
+        Mon, 08 Sep 2025 08:21:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsQXC64Y9u+F8HSfWVUBHFUIev7jGr7kCnI+D3oKSm/zJ4ylRrmHPoXwe05OfIypUYK6l3lA==
+X-Received: by 2002:ac8:5787:0:b0:4b4:9d39:3432 with SMTP id d75a77b69052e-4b5f85322c4mr61314421cf.10.1757344871484;
+        Mon, 08 Sep 2025 08:21:11 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0409bf055esm2249764966b.85.2025.09.08.08.21.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 08:21:11 -0700 (PDT)
+Message-ID: <f034dd83-0f50-4632-94a4-ff68400dd922@oss.qualcomm.com>
+Date: Mon, 8 Sep 2025 17:21:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ec0cb87-463c-4321-a1c7-05f120c607aa@amperemail.onmicrosoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/16] drm/msm: a6xx: Refactor a6xx_sptprac_enable()
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
+ <20250908-ifpc-support-v2-5-631b1080bf91@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250908-ifpc-support-v2-5-631b1080bf91@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=FN4bx/os c=1 sm=1 tr=0 ts=68bef469 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=vomQ-D7Nz7_NnwrRMiMA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: w2ytzPk3z09Y6WSHCp6tmnWxdW3wdDUF
+X-Proofpoint-GUID: w2ytzPk3z09Y6WSHCp6tmnWxdW3wdDUF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA5NCBTYWx0ZWRfX2A1HBNPWd9Ac
+ k6JdAHDqsxc39CYDL4HfQNzddKs+4JjKZvGqc4jEbOSLOLXNkmy9kTWH9vOSdlJbZHz+kHfOTLz
+ aI6L0bfjIFk7Egi3q90Ao/sSxPmHdoWZEFHD9ly63IJC/Q7d3hteaU7w7Zei7n1XMTwgHmWlktc
+ 8B+Z1qLO2R9Fp8lVAlysUTCUpUzAOsIdV+C5u7hswk3RMm1YE5bL4IirjMJElS+CGN3CJ1cU9gl
+ DDctIjd74IxnnpDfCnmXCbdBxlEg+pQsVIjQupdZC3orV6P7wBFa800X7XBEDrqo+qwXN59rZpQ
+ Ivzn+LVY5irhmbjqHmFnptzJq4iO+FrKdFLJ9SaqVKG6plIMcTsaEPk3qiFcg3Cx5thAFT2zY0i
+ 6YvPiLy5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080094
 
-On Mon, Sep 08, 2025 at 10:58:55AM -0400, Adam Young wrote:
+On 9/8/25 10:26 AM, Akhil P Oommen wrote:
+> A minor refactor to combine the subroutines for legacy a6xx GMUs under
+> a single check. This helps to avoid an unnecessary check and return
+> early from the subroutine for majority of a6xx gpus.
 > 
-> On 9/4/25 07:00, Sudeep Holla wrote:
-> > On Mon, Jul 14, 2025 at 08:10:07PM -0400,admiyo@os.amperecomputing.com wrote:
-> > > From: Adam Young<admiyo@os.amperecomputing.com>
-> > > 
-> > > Define a new, optional, callback that allows the driver to
-> > > specify how the return data buffer is allocated.  If that callback
-> > > is set,  mailbox/pcc.c is now responsible for reading from and
-> > > writing to the PCC shared buffer.
-> > > 
-> > > This also allows for proper checks of the Commnand complete flag
-> > > between the PCC sender and receiver.
-> > > 
-> > > For Type 4 channels, initialize the command complete flag prior
-> > > to accepting messages.
-> > > 
-> > > Since the mailbox does not know what memory allocation scheme
-> > > to use for response messages, the client now has an optional
-> > > callback that allows it to allocate the buffer for a response
-> > > message.
-> > > 
-> > > When an outbound message is written to the buffer, the mailbox
-> > > checks for the flag indicating the client wants an tx complete
-> > > notification via IRQ.  Upon receipt of the interrupt It will
-> > > pair it with the outgoing message. The expected use is to
-> > > free the kernel memory buffer for the previous outgoing message.
-> > > 
-> > I know this is merged. Based on the discussions here, I may send a revert
-> > to this as I don't think it is correct.
+> Also, document an intermediate unknown low power state which is not
+> exposed by the GMU firmware.
 > 
-> Have you decided what to do?  The MCTP over PCC driver depends on the
-> behavior in this patch. If you do revert, I will need a path forward.
-> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-Sorry not yet. I still need to understand and analyse your last reply.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> Based on other code review feed back, I need to make an additional change: 
-> the rx_alloc callback function needs to be atomically set, and thus needs to
-> move to the mailbox API.  There it will pair with the prepare transaction
-> function.  It is a small change, but I expect some feedback from the mailbox
-> maintainers.
-> 
-> I know all of the other drivers that use the PCC mailbox currently do direct
-> management of the shared buffer.  I suspect that is the biggest change that
-> is causing you concern.  Are you OK with maintaining a mailbox-managed path
-> to buffer management as well?  I think it will be beneficial to other
-> drivers in the long run.
-> 
-
-If you are really interesting to consolidating, then move all the buffer
-management into the core. Just don't introduce things that just work on
-your platform and for your use case. You need move all the drivers to this
-new model of accessing the buffers. Otherwise I see no point as it is just
-another churn but in core mailbox PCC driver instead of a client driver
-using PCC. So, I am not OK with the change as is and needs to be reworked
-or reverted. I need sometime to understand your email and requirements.
-
--- 
-Regards,
-Sudeep
+Konrad
 
