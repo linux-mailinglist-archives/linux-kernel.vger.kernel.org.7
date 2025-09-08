@@ -1,95 +1,52 @@
-Return-Path: <linux-kernel+bounces-806447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89F7B496E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:24:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B365B496E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EDC53B0328
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C701C254F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A253312819;
-	Mon,  8 Sep 2025 17:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kNExVKAC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2673128BA;
+	Mon,  8 Sep 2025 17:25:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDB013C8E8
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B492E2DCD;
+	Mon,  8 Sep 2025 17:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757352278; cv=none; b=c5d9fSIflXcjFJ5JyHt1WaMNw51L2DfqCOwY3UW/MI/hVMZPgU6Nyb3BspuH+xiYSAn3k23HAOweBn/bTjahhVpRA4Nn5LSomFIg89TTlzyOuuvwyRUGUx6gBYTlTVbE1uFb8+IESR6X4uZUhZadGN8QA8aHp4/Kjr5s2gu6PLU=
+	t=1757352316; cv=none; b=OmcTH8Mibz83du4ruthDipmRiLjPqQLjmsJfywIJNMEtxFoq7q5g8QTZvv+7feP22HlWtbpRb8L6r40zA2VGGlcBoEhHdoF3GA9cZ36RY0V9VzxaZplFaByS8n0RBtWXQgdKd0Tn8tw6rUAJfFQGj9NS0XEk1mNwy4038XeJEDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757352278; c=relaxed/simple;
-	bh=/NaatLCxwu4jxpeZRKwI9kVL/Y4rraEkUqgeduPIw3I=;
+	s=arc-20240116; t=1757352316; c=relaxed/simple;
+	bh=zkhWWy+sRv33C/oGCQzLKd0+ELPB11Lho+CSt3t+2vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6X7NsfM5c4NWzr9EBFp+qJaSIh1g8RC9IWB7QU5zQcPtC0X/EyJIK9hi/OzT0IgdmycNA3MrCojnuPPqzI7Pd0yGTeVK5Fi/66f54oIULuZO+7OUZ6Jl4n84d1iw1jCetJElmpVwgkcad0iaMQsDRZPcvhtQZFu6djjWq7Vc5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kNExVKAC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GI3N4003936
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 17:24:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=C0cWDImZ8z70BOaSp+butwsw
-	MvwnEMiQkgeS6sxwcOI=; b=kNExVKACiI/8ETgDMI31lk2JxzI6rbCTpVc70DAq
-	hs7Q9p17Co3kdezKORaRmp0hcRQY/ZSC/KknqKWQWQLxzTlkEGTv+cWYb5zTv2Ic
-	4pbmVc/ZLlBw3nWg1kb06Yr97QsM/43pMQ0QDDR3Wg/amim2c7Jmke3GM9r9gybV
-	7ba4pRa+5gM/lTJYfrWIgtiIZAT0LRKEadLPHMHQIvmTxWOFQZnoylbcWncToReD
-	DUbQSvuTYgl+SPfZlsmNywoTHbRC2BbMTKk2iJ6fr9MxdVgB53Cv8nEIb0X6e0Ew
-	cqteyTo5TeGXcntclkolad0xK40rcPZ0Tfmtpst557Z+KA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8dfen-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 17:24:36 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b302991816so108397051cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:24:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757352274; x=1757957074;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C0cWDImZ8z70BOaSp+butwswMvwnEMiQkgeS6sxwcOI=;
-        b=kF8vBw0v6XRtV/wHFyHbmOetxosxRMJhf0aTNnFQ3+jD2FNf6BVIqrYYU79LApm561
-         WJL2ei8fp+zNTu4YDakjsHNOrlaL5Kf/tjc056myUnewz6BzP7kxmHMQt6AR/Bflyiea
-         wLKUHx4Uis7yEzKNZti82LIkBoGkr0p2bCS2kAFucb+C0is+0EHWoGVdHrW97ALFqu++
-         xsrIq4IgiTICz66BFhKIIfCkFbgF3vv8mZ2CZdUKkVJY+d8ds9pJfER4/dVqjctKNsTE
-         7dTsk7kz4ceYI5KZoAVEMlVRL8CNgjnK6KA+Uc0efNJDK/FWCCzN7v5droGx+RBADo7o
-         1dqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDvS/duMH4LuuLLHgElbFCe/CS/etN7vxo/XCls+2doBZ5ACuZxD6xBjM6n+1wGk28XS+N9T6rGEvfpdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBx8rqg628LgrQK8wLw1yGrcqppmupQM04gb4cfJ4SGIRPGdGt
-	V1DIGyuQ1pRpSSrztrPvYVMJERX7b1wFfI7Syk1fia1vXI++ZyxSrNpxJ9u7p+z4+94UrNEmOYr
-	/d16C6LpaHoloz41ihKUugLRxlsTNqKRFeT0kHeboElh6VhHyFbbPuwkm4e12TSRcS4c=
-X-Gm-Gg: ASbGncthxRf5jaZuZQ2QhoqiSHZ+zew5OzcP1HoohD4uPvzLiPSurZs4Uk4VPjUQ7OC
-	DhRoU7wTV8yNvEBre9Y9uoMiuzX0cDMEGB6GjHoi7GpvwyzVZi9v26kQyQ3Y3qFkNauEDDBrvjN
-	xsEnQPAerlHKVktTHS9+/F8+Qb6CoM0+QRUdizibmNsShwBHzKQ8rIBmwaOUrDOrBOUjpwI8b4d
-	D9ru8qgA/H9xU1S/MV6S7YGHxfFTzn8BjrBX3IwguWPrUghTfYLnO5nMPwZNxqX97xvNPYF7LND
-	1iVZ5ZzrwWKXAuRP+ag3tMo950Ryl07FZbRxjJG7lFKX4BJa0aGdMiFPXwJZ8Yh6mqUzI83EDPZ
-	1iVz74C0K/lP/x1jupQBR8NhnKAYYG/V1G19ZMuTFonlGfo8RIrdL
-X-Received: by 2002:a05:622a:1a05:b0:4b4:9773:5863 with SMTP id d75a77b69052e-4b5f853956fmr84823221cf.48.1757352274043;
-        Mon, 08 Sep 2025 10:24:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHroLAl9V5JPPOY6AI+HWtJYULgdQbzIUd5r9lNqCkQrv5cWCcgBxu9k1K4dRxOnxNxznWegw==
-X-Received: by 2002:a05:622a:1a05:b0:4b4:9773:5863 with SMTP id d75a77b69052e-4b5f853956fmr84823001cf.48.1757352273562;
-        Mon, 08 Sep 2025 10:24:33 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfcd18sm3718116e87.108.2025.09.08.10.24.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 10:24:32 -0700 (PDT)
-Date: Mon, 8 Sep 2025 20:24:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        lumag@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Subject: Re: [PATCH] gpu: drm: bridge: anx7625: Fix NULL pointer dereference
- with early IRQ
-Message-ID: <alk2ovpplncgr4qf4l37wt74olqs4zpu4pddveml6wpny5jlgg@5kqcrpsk62z6>
-References: <20250709085438.56188-1-loic.poulain@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdiMkFXR4hRmdM5chU98IT3N+qslk8g/leJ57tXQNh0ieXbUSr6dgSQ6qhj/EFYcFBwS74g5af5n5xXpcUyVHAOyLhI9Ap70K2sJ5VaDz4bJONlBiXEfB19K+Qk6DI1DFChUliVhBZ5d0ApJoUY3KxXQKsaVMHaogNvARjdhvuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D14C4CEF1;
+	Mon,  8 Sep 2025 17:25:14 +0000 (UTC)
+Date: Mon, 8 Sep 2025 18:25:10 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
+ properly aligned
+Message-ID: <aL8RdvuDbtbUDk2D@arm.com>
+References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+ <aLrh_rbzWLPw9LnH@arm.com>
+ <yq5aikht1e0z.fsf@kernel.org>
+ <aL7AoPKKKAR8285O@arm.com>
+ <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
+ <20250908145845.GA699673@ziepe.ca>
+ <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,48 +55,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709085438.56188-1-loic.poulain@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX9ZnByKAeqcfC
- f83HW5W3ZckKX5xmrJeh2sN3Gq0wSIchgjwhUYNYj15BkEWhQmuNhkrPL1e6XXcmWsb+CwTYF04
- +x7GQfCqt3vBjB3jwkbzj8kD/GJSQN/E0bEfbPJtzv0cPcoGSn4rVis/l+XS3X3stCgi9iM8NaD
- Lt7sAejJcejFjz5Zl98iZyI/NH4QuOtoOm3yXolEsKLx9ymX77cTU/uX7bZnebqL5HOmciONFRJ
- m+nwfgTXhXbGcS3/oeYOTAwFaACASsQcztF8pJVgt9u11lnmF7DNoUTi/SCBP3hkD732Jna/naN
- 58aPx5SvT6VwjqjKD/KqQDmx/Vtk2ivanLIK03Zc8WZy7gUGou6OcrJ4np7UnUSrYfn2PLhnHm6
- IAe0FNcz
-X-Proofpoint-ORIG-GUID: deESqVIW13DVDMk5O14FgoLPYdhmyyue
-X-Proofpoint-GUID: deESqVIW13DVDMk5O14FgoLPYdhmyyue
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68bf1154 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=LWE9zbpONBY6LCXfEiwA:9 a=CjuIK1q_8ugA:10
- a=zZCYzV9kfG8A:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+In-Reply-To: <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
 
-On Wed, Jul 09, 2025 at 10:54:38AM +0200, Loic Poulain wrote:
-> If the interrupt occurs before resource initialization is complete, the
-> interrupt handler/worker may access uninitialized data such as the I2C
-> tcpc_client device, potentially leading to NULL pointer dereference.
+On Mon, Sep 08, 2025 at 04:39:13PM +0100, Steven Price wrote:
+> On 08/09/2025 15:58, Jason Gunthorpe wrote:
+> > If ARM has proper faulting then you don't have an issue mapping 64K
+> > into a userspace and just segfaulting the VMM if it does something
+> > wrong.
 > 
-> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
+> ...the VMM can cause problems. If the VMM touches the memory itself then
+> things are simple - we can detect that the fault was from user space and
+> trigger a SIGBUS to kill of the VMM.
 
-Fixes: 8bdfc5dae4e3 ("drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to DP")
+Similarly for uaccess.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> But the VMM can also attempt to pass the address into the kernel and
+> cause the kernel to do a get_user_pages() call (and this is something we
+> want to support for shared memory). The problem is if the kernel then
+> touches the parts of the page which are protected we get a fault with no
+> (easy) way to relate back to the VMM.
 
-I will fix subject pick it up for drm-misc-fixes if nobody objects in
-the next few days.
+I assume the host has a mechanism to check that the memory has been
+marked as shared by the guest and the guest cannot claim it back as
+private while the host is accessing it (I should dig out the CCA spec).
+
+> guest_memfd provided a nice way around this - a dedicated allocator
+> which doesn't allow mmap(). This meant we don't need to worry about user
+> space handing protected memory into the kernel. It's now getting
+> extended to support mmap() but only when shared, and there was a lot of
+> discussion about how to ensure that there are no mmap regions when
+> converting memory back to private.
+
+That's indeed problematic and we don't have a simple way to check that
+a user VMM address won't fault when accessed via the linear map. The
+vma checks we get with mmap are (host) page size based.
+
+Can we instead only allow mismatched (or smaller) granule sizes in the
+guest if the VMM doesn't use the mmap() interface? It's not like
+trapping TCR_EL1 but simply rejecting such unaligned memory slots since
+the host will need to check that the memory has indeed been shared. KVM
+can advertise higher granules only, though the guest can ignore them.
 
 -- 
-With best wishes
-Dmitry
+Catalin
 
