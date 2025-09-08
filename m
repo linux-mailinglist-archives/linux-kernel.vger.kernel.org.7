@@ -1,106 +1,147 @@
-Return-Path: <linux-kernel+bounces-806393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83107B4961C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:49:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E07B49625
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FAB1897FE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:50:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627597AA135
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9144A310768;
-	Mon,  8 Sep 2025 16:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D0E3112B2;
+	Mon,  8 Sep 2025 16:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv9fpBv6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OJIa+OnN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5D22173F;
-	Mon,  8 Sep 2025 16:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C0C30E0D6
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757350180; cv=none; b=nuECgFXj1tU62RcyVCvyZCDvvusFkIJKrmMdVaUoqLJ5QTBUD9RtSovzUkvvz1pEjsGqv4QCOpLI9HG+2419Ggkb947063lPv/kM3zX6vZw98PuLK1Z8QxEeDXUwWDUh9s3Spu0koAJOxnu5QvbV/UfebZXUteZcjL+4s6Ir59w=
+	t=1757350199; cv=none; b=QBjy6585gxiPrgBKTRYMms048e8vjwG4ejqvMYImp54Uj5Nz5x14c3LM2D2obI2yghZfCRtUPxJHUP1tWpCM1jpbl4Mn4c2PehLt0KXtjt94+Y5Hpi7+eOUwvp3PR88TwtSmwTMBDG6DNYw7hKHyoLtappppSht82hUupf43DZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757350180; c=relaxed/simple;
-	bh=qJ4M9NhyUUiwSrixiBqxntWQFHUQIk2D8Q+Syr+++4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bi5ACnEB9qegOTwTLfDeFotUi3dBujQ5ySOtK4xomoQR7p8ogpF7SqI1xsABMHg4uQykyXyk/Zu+PH9KbssaL9/9I4hEqWzqPuwsvIXpWWA4PQc5Mgkov1dSd9saYpZI9nJhOgbE/MJ5rAQoZSvBlA/r/KNd5EVMLiFdKbl5umE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Vv9fpBv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D4AC4CEF5;
-	Mon,  8 Sep 2025 16:49:39 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv9fpBv6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1757350177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QpB5tNXBjyOovnphQdFXz5SaIPdBCpYHvTLfm99HsZs=;
-	b=Vv9fpBv6zOVNc2wiXzUH8hqPT6/w9QKa42prXd24TRVkuGq0vms78eRkV0/+5GmHSeQT0u
-	or/xt3dOnIUEUBJWkn/794RW0z1Z1G+xf5zTtotCA37n/G11BfLwVJH0fUxsbvr3WRq8mI
-	V16AkEUbATUXANihR8D2O9swr/NmZWw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6dd8059c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 8 Sep 2025 16:49:37 +0000 (UTC)
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61e74d0539bso890062eaf.3;
-        Mon, 08 Sep 2025 09:49:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGSjp8q7EiQghpsDrJS7PBTZxVAqApYWNLLKxQsK3Cp95byyCQypNduCoI+L9uQRd1XvIQWsd3ahIfBwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4GssCMk1HJc2ffmS07xoUv178DjWKeZ72gKEzWtIyTAoyy4TH
-	54cf+Z4OOaYkt3nynMvQ8dnKQ9zD5lDa1XrCJtWuaoOXrGESzZIeRK6bbGK7blBoBfsN9GNNwjh
-	AmvjAj/2OI2IzFF2P4OM2HCuIqe82TqI=
-X-Google-Smtp-Source: AGHT+IG1k1MmnF81J1Vo2jmXSIx1yHc4qgVkpm2QOFlj3gX2CeXc8Y5S0Gow70vJKvxabq0LnsYZB9vjl73O/LZxUXQ=
-X-Received: by 2002:a05:6808:15a0:b0:439:1c13:4585 with SMTP id
- 5614622812f47-43b29a8995amr3903338b6e.20.1757350176315; Mon, 08 Sep 2025
- 09:49:36 -0700 (PDT)
+	s=arc-20240116; t=1757350199; c=relaxed/simple;
+	bh=/9CQ2OX3PxqBt7H0alYZbdGyWPsxjbARuPidtipLk1k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZvAQ8eMmDHmEuiKXG1K5axWeY7Ff3937QEdPYa1eJI3C6TG3/jR1K4xdaqZn8Vx1hosAPCKtA/CV0KmiwMAHw8dPGThCRmcA0kg2mtj5ud9LNESLs6h69crV+cdXNNNe0rN41K8cbYhwOihuWmxv1uxl5xlLsvkNiI2rwlqJpsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OJIa+OnN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GbJ5g017315
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 16:49:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dg2UgokEeWhMc48JRI2mp84dAZ/f8bS+61znB0C+pvU=; b=OJIa+OnN04Ie3fWo
+	MlrJaDYr5UfsJCOk47esyBzp/1kdLAWVOZyZCkWDJkT16me5b/sigwnmOSwSMHLi
+	Y5JgRGOCA0sbkQYuF+R2YfrUUISqEs1KJMBO/EnWcywiSjCgcWp6LrE8gPadrK7l
+	DZuZqXW6XY9MIrSYuWkD4MVmNtkaBlOjIzq/ev+AALmuTEaRyKe18UJXJj4CNZqC
+	leaWy86Wg8kMkF5CD2df1zxyVM/ZOORFpCcBUMxexR8ow364aD6rMR8IsWFj9QbJ
+	fd0f8GgDAxDyDupNHJBIJu2t8LxrePjqWKKC/6krQ0OTM8aD0foag/NqJ/5MvzIQ
+	i4RrDQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4kw6s1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:49:57 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24c99bd543aso86847975ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:49:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757350196; x=1757954996;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dg2UgokEeWhMc48JRI2mp84dAZ/f8bS+61znB0C+pvU=;
+        b=eN50P+IuIlhpG3EnMJrVAjRvXWNtAHtRK1NCHFl99f/JBgs3gmSCYHyevj/DACCFaB
+         NeqAdQmOF/fotFZk8KSTYMnMSPhiDyqIqobd6n8NUghlJkcPgPIGezNaKO0u+XepveY6
+         7mqMv49O7LSDIdocfCzfQyYvgTGQApNcD9XSwk7Ot5FU5YNRxT0Myst6dVnKudtZXl16
+         dxZbRYStb1uJexX+q7EdHZoa7EntFClbieumi+9+XvDreJF3jFKMLI9iZFi39Pa0euj1
+         geGQUVvxvw4RiN0M4XJfVk2fbOeFfNelpcLD0aljG92OtZq5EQFlW7u2pbTSiZm2Vilt
+         VndQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvC2iSWu0w5KiU5HNjMdtW/DXG5ec5Bsa7diqW2i1oDpjxK/yzZySLi/llm4ln/vBaJtsByMiJBsVSmdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2gPbYS6RIgsKhZXMX5Aq5f1czCkzA2PCTlpstQKdBdE4Te6He
+	NwZ4SGpnsCz3ETixTCBeGjYsBAHtUvj1Y96zlr2F+HWDLEpVpxoxjkjGsBvyZnssKxrX3BtpCzN
+	62Mtv43oZaKiO9iIiekbn7+77TRpiI3fMLkUhUZM0t4Jx24D8tLyBK3u1nXoohRxbXZg=
+X-Gm-Gg: ASbGncveCqEfEzfEoZsHd7UKAiN+869sAiTBCeq9HwZTUXFPV1lm9L4cCqzF7O+gGz2
+	f2a47VCQu7b9hGlcr2ulhEwMR+gBPE9VWSWFmCfPLGwBW9jmAZ5DGcAtWxbpBf66Ffv4iIzV75r
+	0jpX7B8LQvrKrm0vCI5+pAuABwD7vO//vjlFolyeBrcRo6X466KQqWPoiDzG8RVpRrRWx7bp1UY
+	nTiGFoVa3wohHpYbvC+d33sVaOZxT+WG+tSNCeAceqLFQmqlrJDms2YGNCMGNa/ptJ6UYdfeiob
+	jtHyeuLMJqNYQ7c3b6XjTzC9QQt1gNZnMD+RQurfrDWkg1OridDFsf33zPCnJqGNEwVJM1b/Zbt
+	h
+X-Received: by 2002:a17:902:e850:b0:24c:e6fa:2a38 with SMTP id d9443c01a7336-2516f050554mr107248825ad.25.1757350196249;
+        Mon, 08 Sep 2025 09:49:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEA+zIa0x4vuPGLZMXZtryawOhYTo5+tSCWHHkxGVO7NzqSam/ERzYOoCQyK3wKgWJuklzisg==
+X-Received: by 2002:a17:902:e850:b0:24c:e6fa:2a38 with SMTP id d9443c01a7336-2516f050554mr107248415ad.25.1757350195711;
+        Mon, 08 Sep 2025 09:49:55 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cb28c3147sm130460655ad.73.2025.09.08.09.49.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 09:49:55 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: jjohnson@kernel.org, Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+Cc: ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20250908015025.1301398-1-miaoqing.pan@oss.qualcomm.com>
+References: <20250908015025.1301398-1-miaoqing.pan@oss.qualcomm.com>
+Subject: Re: [PATCH ath-current] wifi: ath12k: Fix missing station power
+ save configuration
+Message-Id: <175735019498.347840.10113935121682584580.b4-ty@oss.qualcomm.com>
+Date: Mon, 08 Sep 2025 09:49:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906213523.84915-1-ebiggers@kernel.org> <20250906213523.84915-13-ebiggers@kernel.org>
- <CAHmME9qyfbn539Um9xoFJu2Mm9mM0zuOxyLgeOjF-R5nktbz4w@mail.gmail.com> <20250908164706.GA1331@sol>
-In-Reply-To: <20250908164706.GA1331@sol>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Mon, 8 Sep 2025 18:49:25 +0200
-X-Gmail-Original-Message-ID: <CAHmME9q3qa2ZmPrZWAe5tkWp2xGgNd=1BBx0APa_ACb3=bo-1Q@mail.gmail.com>
-X-Gm-Features: AS18NWCGPRb7OwMUI-tVEiz_hU1uUOJpyLd0OY7Ve43ZcitTO73IQk18snpDrbA
-Message-ID: <CAHmME9q3qa2ZmPrZWAe5tkWp2xGgNd=1BBx0APa_ACb3=bo-1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] wireguard: kconfig: Simplify crypto kconfig selections
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Zhiqi Song <songzhiqi1@huawei.com>, 
-	Longfang Liu <liulongfang@huawei.com>, x86@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfX1eWMsD6qGaY0
+ OYk8oqzr2hokTOkTwbeQ6/OgggHjjqQvzZSjaYGxcHmyrSac9yPjQFlgcb5lxPCXO5+5cGBEtx5
+ UR5xmr90+SjMxsyKU1zM0iSdhFAE5GoY8ncYzW8aASJHeKgPbxir5xJLdukY+h+pAvqWbe3sUJS
+ NuB/vK/yD+8WU7sOl8I+93JRICCUb4aagyt3mewf9LRIx+jTIuRi7aFRPR8+0Y0ExGY/n1n3UzJ
+ ejDPC1Fl+jK+0wD90R7TpOBf7sr/1CpW+9SHMnRpQFrpyLpYlYxQj46cVgMRihgnz4jeHLx9nu3
+ P44EjNUw4pdZgiXhNjAtGvqA/wZh2kAC5uXzFrSdHoSzIGoUhzDVNE0FvEPI1g+m02sK4Rg2aKC
+ RauT9FxR
+X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68bf0935 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=JgkEKiiD5wMD4hIjs0YA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: 8G7AkSY5mS-YQV8OEalSa9lmMuLAiatA
+X-Proofpoint-ORIG-GUID: 8G7AkSY5mS-YQV8OEalSa9lmMuLAiatA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
 
-On Mon, Sep 8, 2025 at 6:48=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> w=
-rote:
->
-> On Mon, Sep 08, 2025 at 06:35:04PM +0200, Jason A. Donenfeld wrote:
-> > Hi Eric,
-> >
-> > Just a small nit -- would you commit this with the subject line all
-> > lower case, like the other wireguard commits?
->
-> Done.
->
-> > By the way, I have been reading every single one of your patches. It
-> > didn't seem like it'd be useful for me to respond endlessly with
-> > Acked-by/Reviewed-by, so I haven't. But I have quite actively been
-> > looking through these series. Thanks for doing these cleanups and
-> > reorganizations. This patch here especially is quite the relief...
->
-> Thanks!  I think Acks/Reviews would still be helpful, as it shows that
-> someone else really read the patches.  Maybe you'd at least like to send
-> those for the cleanups for the algorithms used by WireGuard?
 
-I can do it for everything I read, I suppose. I care about a lot more
-than just wg, anyhow.
+On Mon, 08 Sep 2025 09:50:25 +0800, Miaoqing Pan wrote:
+> Commit afbab6e4e88d ("wifi: ath12k: modify ath12k_mac_op_bss_info_changed()
+> for MLO") replaced the bss_info_changed() callback with vif_cfg_changed()
+> and link_info_changed() to support Multi-Link Operation (MLO). As a result,
+> the station power save configuration is no longer correctly applied in
+> ath12k_mac_bss_info_changed().
+> 
+> Move the handling of 'BSS_CHANGED_PS' into ath12k_mac_op_vif_cfg_changed()
+> to align with the updated callback structure introduced for MLO, ensuring
+> proper power-save behavior for station interfaces.
+> 
+> [...]
 
-Jason
+Applied, thanks!
+
+[1/1] wifi: ath12k: Fix missing station power save configuration
+      commit: 4b66d18918f8e4d85e51974a9e3ce9abad5c7c3d
+
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+
 
