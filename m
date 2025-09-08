@@ -1,128 +1,85 @@
-Return-Path: <linux-kernel+bounces-806398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA65B4962F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADB1B49632
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130EF1B21DD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8F83A4C9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAE30BBBE;
-	Mon,  8 Sep 2025 16:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5848530BBBE;
+	Mon,  8 Sep 2025 16:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s21nS9vA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRPz0r9O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E711053A7;
-	Mon,  8 Sep 2025 16:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73CE53A7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757350353; cv=none; b=K1VJcbWtjH+oL6Lv4xvKnCow/aLS8KqseAn165zHBCTgjD3cFkuZbSbCiL31MvpNUHTXWYUJ8SlmSyAaLMr0bCZ3zGCw9q4dqxcEakJh9PxJDPy/EwC31rxSbAy21uIL0JBJCJUKlJmBJWkIyr3HOLYcIQQapPlzTMiTVMLgyPU=
+	t=1757350409; cv=none; b=te7/aCRHLn/XxnFeCF3XLWh+vei9MF19nFzN5YRx4Q7bLEzQoDddw2s/AmiJ6KDOe59nvy1Y7MZBAoE6/lRs/G3z5W6Ans/1r7MpO+PqujDcdQt96+i1D87WuVABTjRRs4HruMNdMYaGI/9loLOwgt7eYzfRkNlh5yauPM49t84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757350353; c=relaxed/simple;
-	bh=ipgLsUYzarrnGrEphNm/tqTdj2rpGBlkK2qyPnJmQnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NT7ueBoxzyE+sPlSFBoTTDtUiagG4ltoVrzlG1jPpo9czPT6QBdl838FacjcUK5Qu7GvY4f7CdtjT9QDlsPQZu+4Hu5Q2ZpJIlpKRG0mFosKce6C+YVdRFO6C5SRyEKaDLyq0nTTIN/FkjdDSQDK70xal1ZcjvF+zy5JqYtSdRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s21nS9vA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588GVwed024164;
-	Mon, 8 Sep 2025 16:52:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=JmuvXQ+q8hDfwKRCmUkENXXZeICgnf
-	iFYeYGEpjpG9U=; b=s21nS9vAVVjBmD8WOFP9JDvhQ/ZK+J2WRSbOiYXIelyUNJ
-	UuJgAPvnNOGsCKVoRagh/NZEoQRPZcl6G8V7IZSf5bCWUyDY8RM05VX4TMy9DMuT
-	2B5eq+fx9ZM18i3qwAoPCWq1XmUSdC5ODXdwuEzE4MGL7AbfBHbtSmEsPFGiKm5D
-	lyheoTy2ERVHyE/XJmAJLYnt2aCkpzKvI+XYlU9wgE2JpgV4oeU0J/Bamvr0lAqx
-	MigpQH2oPtij1AQEYGW/YsQ/ynXEgL7JpAYMGSUEJezMYhAHANJ9FqkA6WDd6beJ
-	09OTzKT6srswllybmrKubxYc3DSFE9b6HL1/gRlQ==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsjqga-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 16:52:17 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 588GYTFq007895;
-	Mon, 8 Sep 2025 16:52:17 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pf36n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 16:52:17 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588GqDn556557868
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 16:52:13 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3DD1E20043;
-	Mon,  8 Sep 2025 16:52:13 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 00B0D20040;
-	Mon,  8 Sep 2025 16:52:13 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  8 Sep 2025 16:52:12 +0000 (GMT)
-Date: Mon, 8 Sep 2025 18:52:11 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/nmi: Simplify return statement in
- nmi_registers_valid()
-Message-ID: <b1bf1f70-8b4f-4e96-908a-907da1748377-agordeev@linux.ibm.com>
-References: <20250908153221.383589-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757350409; c=relaxed/simple;
+	bh=lV0yv8d3FQGn2JQRxpKFAPLC8gctlKYdHFBgM3YrfCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GR69AqzFZYxmYRTk9CJqqGTg7ck4jilbXV78mlscw4aW8lzE6lAD1ANf+ar7hPMHKOi6Mtw0W0rWbDUfPJUYykFZKHkD3wyLD3WVgMdMeCfKvZcQklGynjkx6HpUT7UAj/GgKz/zOsJdTob1nFTjjmLa4TJNlZ+T9qn45MO520w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRPz0r9O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F75C4CEF1;
+	Mon,  8 Sep 2025 16:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757350409;
+	bh=lV0yv8d3FQGn2JQRxpKFAPLC8gctlKYdHFBgM3YrfCw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PRPz0r9O+LJ13Rzfout3/km0D9YWENTPrDpECj+WDHCnmAF0A5u9DD95be4egtac/
+	 AnCN2+ME4T0OMk5rNXbcC4PC/iJDNT/VfwP53h2rKDBHatWe/pXa6n7EBOs9Mzy0Pj
+	 2JYnr9ZWve+0F/CDDKeXSIiTHVyV1TCcoOI34ZuDf1IPuxEoBNux0Td5GfJNJsOTzK
+	 FvxzUnmXR/iZ0f6EAyH2hosxr/QtR9lq2fLh7B7uqq4IeMSJJ2W9VW4e1CP8aopuT/
+	 JmgCFholqbxFpplnFclkU7QhcKzWUNOpuzw1VMnx8+jj+ryazpn2sOy0Ihs2aRosrc
+	 i3EcOyRS/jrQQ==
+From: Saeed Mahameed <saeed@kernel.org>
+To: Dave Jiang <dave.jiang@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Avihai Horon <avihaih@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Saeed Mahameed <saeedm@nvidia.com>
+Subject: [PATCH fwctl 0/2] fwctl/mlx5: Add few new FW rpc commands
+Date: Mon,  8 Sep 2025 09:52:54 -0700
+Message-ID: <20250908165256.1255985-1-saeed@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908153221.383589-3-thorsten.blum@linux.dev>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX0iEHbOqjevkt
- bfM06hE4BNgfPk5pM+I+Ynr9g9Om02gXvKJA93qXJX5qvBahCIWW9QwpocAr76CWMjt9FXyGcMb
- BuIhy7r579IdqPiK6MKW27SJxLh/n0/H6u4e7TN26tifcfQtNGIs5zrenEs0SPwIKS6I7P31t1P
- zzfA4N0Wz8Z9YWDPk5r2h/q+K43wBs2TeryvMY1buoIZkke96gqFjPR6gWciJ1BSPEwvko/0kik
- xc/c/aX7A9YF7jPC7dkHfFCwvBilyNRjnSGHyfC2w6kf8c0dxToohSJAHeXWWJT+8TwRsxS8CqP
- E5kSYdLh4gO5c4gH0T4Y543J1Vij2WIixuRTK3KL1mC0TXRpt/UYnSCV4aEQTbcea5BE+w9xqnF
- 3BbYfI6k
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68bf09c1 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=5RwIgj8ufmiR05aHu9gA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: Cr10bPQ9Xkj29GL-Zt9yYeKM0SPSv9QX
-X-Proofpoint-ORIG-GUID: Cr10bPQ9Xkj29GL-Zt9yYeKM0SPSv9QX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 08, 2025 at 05:32:20PM +0200, Thorsten Blum wrote:
-...
-> @@ -321,9 +321,7 @@ static bool notrace nmi_registers_valid(union mci mci)
->  	cr2.reg = get_lowcore()->cregs_save_area[2];
->  	if (cr2.gse && !mci.gs && !test_cpu_flag(CIF_MCCK_GUEST))
->  		return false;
-> -	if (!mci.ms || !mci.pm || !mci.ia)
-> -		return false;
-> -	return true;
-> +	return mci.ms && mci.pm && mci.ia;
->  }
->  NOKPROBE_SYMBOL(nmi_registers_valid);
+From: Saeed Mahameed <saeedm@nvidia.com>
 
-This change does not make the whole function readability better.
+Hi Jason and Dave,
 
-Thanks!
+This series adds few new commands to fwctl/mlx5 driver:
+1) Adjacent function query commands and their scope
+2) Modify congestion status command
+
+For more details please see each patch description.
+
+Thanks,
+Saeed
+
+Avihai Horon (1):
+  fwctl/mlx5: Allow MODIFY_CONG_STATUS command
+
+Saeed Mahameed (1):
+  fwctl/mlx5: Add Adjacent function query commands and their scope
+
+ drivers/fwctl/mlx5/main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+-- 
+2.51.0
+
 
