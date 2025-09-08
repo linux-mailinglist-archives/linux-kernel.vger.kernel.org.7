@@ -1,200 +1,211 @@
-Return-Path: <linux-kernel+bounces-805700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD07B48C74
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C729B48C75
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2557B4E143A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D396C3B0EA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83A02EBDE6;
-	Mon,  8 Sep 2025 11:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6111E1E1C;
+	Mon,  8 Sep 2025 11:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y7pAgs1A"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sau7D/qH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A403E226D1D;
-	Mon,  8 Sep 2025 11:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1BE78F59
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 11:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757331886; cv=none; b=EDVkxaYszlaKK7DrT79qfetRLdj1fGhR28Dw6MqVK/e/Roz50yd+8f9aGa9Xj72YfP4javXl/QCl9lelIgqNWQShd0w2eLg0jqvjTEDFSbpuiPl1bfUZxlmSBFU4LkixnQKi3rTEwgnlcvHMSAC+dh/FCqp7OQkSxCnQ+x2z/f4=
+	t=1757331927; cv=none; b=NJQc1tkwPLUxKDh3BDSqe0TI3Eh92gL5F0dBDdf/o0OFhDXNc5BgxULbUsPU8J89zqABQvqykDPx8JVcvtysGxF3qF44DxGBvwwsO5HVc+4kUNfShzgTbJuAViTcfAuVYk6i6dR719d7DrmTk9ZOi5+frfJ5G1bCtSobm1H00qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757331886; c=relaxed/simple;
-	bh=FV1Jx3UNOeEL+L5Nadv/6Gyn+nvsh38hfa6Cnati12g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaXdc11oXkyUo1wmDA0gDLLgDaPUHBVKSkvMErkjcw6zUO8Uwb5xQFV5RFsSih3AsKOJE+4L6j9jpkkt20WiEWkAXg2c3NvHokTW7JKwEKbmo8HmwmPCgO0ukJ3jHD4M5IjtjnRjucpdOnxcBVWadVyxdhyhrVmMcA7thFtlMQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y7pAgs1A; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Bg3kB011739;
-	Mon, 8 Sep 2025 11:44:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=qG/xnkIWK4PuLPbvFIRXIRHxq2k2EO
-	2GObCsaIP6WSM=; b=Y7pAgs1A41MTIdx4808aIXhO9ICG8HSOOpbH9xAuKbvpby
-	/mgYPVXVi1u02Pnf/DkX/p6cnRlnTwGW5DXci0T3c+MslxUdrnXCena2lLddILmB
-	PJJFcKQa035/jMS7GfHvybzEZ54n2C4HQ68hzY3tvMbjl5dtzvvM4giIoKG7BUJ7
-	YoQkQ9DQz/To6VzSDR6Qy60AUdeolZCpJ3tZUfKGSWkQY1do9CuljWwHzamaZWe4
-	YvSkZOlg22yfGrXK7QhA8aRgQ4v9ZcDN20nbrEn5TkadEK1WW6aXai8SOLe3P2d1
-	mKJ1Qu/JzM1i8RJH60u8HhitsEnaXbw9rGwwYtsw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycp0ru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 11:44:37 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 588BgrQd016424;
-	Mon, 8 Sep 2025 11:44:37 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycp0rt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 11:44:36 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5889oEij017227;
-	Mon, 8 Sep 2025 11:44:36 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gm5p43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Sep 2025 11:44:35 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 588BiW7t48300348
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 8 Sep 2025 11:44:32 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 65BCA2004D;
-	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 135412004B;
-	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  8 Sep 2025 11:44:32 +0000 (GMT)
-Date: Mon, 8 Sep 2025 13:44:30 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>
-Subject: Re: [PATCH 2/2] s390: replace use of system_wq with system_percpu_wq
-Message-ID: <912c038e-b03d-432d-be24-54c0f90193fd-agordeev@linux.ibm.com>
-References: <20250905090857.108240-1-marco.crivellari@suse.com>
- <20250905090857.108240-3-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757331927; c=relaxed/simple;
+	bh=tzk0knxRTE8aiRQ9cykMvi0gv3BQ0zIY+t4NmWjCpuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kK08QzDVu6YzrbqkD83m63gtnnldA2X+PAGEMyZvnMqEnGlJz9be2E24dUImUlqgeIIBzBozpie1Jsz18NioS+KnSxUNRWYfomrl2V4YQKtPxd/WKfhQm0vrAcRW2aTUtnTJF9WeYeaTpHZk6c+p64zyps/LwhCDD+3P016VZb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sau7D/qH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757331925;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=12h3i1q+WWrHAuJ5iIWUvL4KT2SfI+Lf5biZMpfNNBU=;
+	b=Sau7D/qHfF45YVgRifDwT327viYGxUdTb7WxuNb/pJgJb7HIBJ0bvbetiCeBtHeNXUtw58
+	xtXMVUH3uLA6BB+xTE7FWv2U+D9Ef3PBl3vvzUITgUQb6K7BJ6uOPYO1qVVTwkpEikUYRj
+	NECSBxRZiInj78ZfI9f62d2XQ2MjQGQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-mmzzD1nsNq-HOy0Jce2mww-1; Mon, 08 Sep 2025 07:45:22 -0400
+X-MC-Unique: mmzzD1nsNq-HOy0Jce2mww-1
+X-Mimecast-MFC-AGG-ID: mmzzD1nsNq-HOy0Jce2mww_1757331921
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45de13167aaso13362865e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 04:45:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757331921; x=1757936721;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=12h3i1q+WWrHAuJ5iIWUvL4KT2SfI+Lf5biZMpfNNBU=;
+        b=PklC37Q+Y52UzJjeIq2O29pXgORYibit61iSeMsxBDVRpjJp1ggzveMXwKPoqjksFr
+         Hit8lGg76gEgftd5XEiFYr6XKN25Di3pSvDtkgvOcWD1Pr7/ORTIarrPSNDhDnp5UuzE
+         njQZDmWaB5EUW/MKjmfRVGqAzWOdxGoDP/q4/jCvmXAKQkJ5Zc+FGp2qTTtYKlDaqjMY
+         g1C/JC9beEHvZWE0avH+D0VwQ8Uyi/SwhOnpdStZkABYEEn7m2uOxOVNd/bOkpKy8fRA
+         zkq4Ceow/0BK4gY+yMkyYeqg977icoD8kTBT5W95xfybjlXTUBkx5HZmSeNpapRfBHsQ
+         tKBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEjeZtpjP5MNtNUlwIa0/KXCaTJPohSCrrBkmKf7CfyTXwGNV8lkBdmyF/u1CFk05lP1PUfvD8d/fnZT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGB76FcQu1gw47hzjAZzFZ7iiGDTxclIIZs32SePiHfLXV6Znp
+	YA7uN4y+f3mKJ57JhdKkZymA5R2EO4Tv0dnW7yFghJCFyrLYt67pCF+r9WndE86lSYH6YP54Wr8
+	sqiFOnsGkt269kBUIlBOvB+8vkbm8tBijcWvhnLr+IFXWa3lC1zpg4b6xpUq+cRVDsw==
+X-Gm-Gg: ASbGncuv6c5UGkOyUyjMaweeQMTBDTCT83quQo6zsInnt2Sh9W6Y1NrO1uPkFcrq83p
+	OH1wqENK+C9KArA0akUbcEdOOHdbwr5FYTaxF6S+rubqW9DEY5JyZ4ZjvhfrHSLcD93kfpOkQqN
+	laB6fxpHVm7t/9helJxz/EbS7TYySe3g7py+US9ru47+/02AdUAtIobOu03FjYjN+yFTeuHM1I0
+	GVPINWi4mXaTq+wQX6mSNWtyNx10JWQpy0/Uuyx6AqcwKTUDf0hBEFj+LXYVK2Oee11wr6FBH4A
+	/tKHEp/cexxM/mzpAyztLfqhq4nQJD6MfbWb+pgQ21NicC0QO3F+LS1knXTpZYlHxXwKrXdd6N5
+	6abFQFoaUXz+6lIiEmPiPqldhOv4KUfvVRoFsDSPGYL09fQO5X/Vf6PurBqr0rWPj
+X-Received: by 2002:a05:600c:5254:b0:45c:b607:ea95 with SMTP id 5b1f17b1804b1-45dddeeebcemr65061555e9.18.1757331921008;
+        Mon, 08 Sep 2025 04:45:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZMDWEcg53mmAIOa8ZxjdF1reUktiTZGkLpalLwMR7JFbLd43vy4hZ2Zk1Uqm7PJJc5QHe/A==
+X-Received: by 2002:a05:600c:5254:b0:45c:b607:ea95 with SMTP id 5b1f17b1804b1-45dddeeebcemr65061175e9.18.1757331920496;
+        Mon, 08 Sep 2025 04:45:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de229238fsm73104815e9.16.2025.09.08.04.45.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 04:45:20 -0700 (PDT)
+Message-ID: <22bc228e-4598-4b5d-ab5d-f9f493a4d961@redhat.com>
+Date: Mon, 8 Sep 2025 13:45:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905090857.108240-3-marco.crivellari@suse.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xd6P9vjBWpEvTMRhGj_a7wVvwWzpEyrC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfXyVuFxx0gGQke
- 1zslHwRri0qblw4OXkpXP62wi5j8ur7tGK60TuzvEtzbox67E3buhWBsSVAai3FK/1ma6Wboj+k
- P6VtYVB3edifzhgx++XXT+5NdPOHYDvPEVb7vNa2dFwNBjiuTAh0xwBc1YvJsI2H9vVcGb7M+2w
- ZioNBSnQN5pdKTdwicNFY9NFfarPnYobI9EEA6Tm+ew/MwlsXmhwXBZjYZ79hjVGFk1zcFX7Q3E
- TxCEe9FyE3i8DxpLYsD05dCeWL/g9TCKPZO9FXc44ZFB8IIyUt0BEfwYtDuDZK4+8bD/KGcBGhl
- 70nAu1mI60NWIz4SUnWXHi+g78qln5uuwURydMFcwDlMgAGdg8OlhpovHbdbzf0i9OJni0BcIy5
- cX5meiYc
-X-Proofpoint-GUID: kO6jCdgbmeu7TjSZrGsDOXkLXNUMrzf6
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bec1a5 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
- a=Qu0Jw8_RmZsxXOKw89sA:9 a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_04,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/15] mm, swap: fix swap cahe index error when
+ retrying reclaim
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
+ Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250905191357.78298-1-ryncsn@gmail.com>
+ <20250905191357.78298-4-ryncsn@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250905191357.78298-4-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 11:08:57AM +0200, Marco Crivellari wrote:
+On 05.09.25 21:13, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 
-Hi Marco,
+Subject: s/cahe/cache/
 
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
 > 
-> This lack of consistentcy cannot be addressed without refactoring the API.
+> The allocator will reclaim cached slots while scanning. Currently, it
+> will try again if the reclaim found a folio that is already removed from
+
+s/the reclaim/reclaim/
+
+> the swap cache due to a race. But the following lookup will be using the
+> wrong index. It won't cause any OOB issue since the swap cache index is
+> truncated upon lookup, but it may lead to reclaiming of an irrelevant
+> folio.
 > 
-> system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-> CPU affinity constraint, which is very often not required by users. Make
-> it clear by adding a system_percpu_wq.
-
-This paragraph is not exactly correct. You switch from system_wq to
-system_percpu_wq - which are two different queues with the same
-characteristics:
-
-	system_wq = alloc_workqueue("events", 0, 0);                            
-	system_percpu_wq = alloc_workqueue("events", 0, 0);                     
-
-> queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-> new per-cpu wq: whether the user still stick on the old name a warn will
-> be printed along a wq redirect to the new one.
+> This should not cause a measurable issue, but we should fix it.
 > 
-> This patch add the new system_percpu_wq except for mm, fs and net
-> subsystem, whom are handled in separated patches.
-
-I do not see this patch does anything like that.
-
-> The old wq will be kept for a few release cylces.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> Fixes: fae8595505313 ("mm, swap: avoid reclaiming irrelevant swap cache")
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 > ---
->  arch/s390/kernel/diag/diag324.c  | 4 ++--
->  arch/s390/kernel/hiperdispatch.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>   mm/swapfile.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/s390/kernel/diag/diag324.c b/arch/s390/kernel/diag/diag324.c
-> index 7fa4c0b7eb6c..f0a8b4841fb9 100644
-> --- a/arch/s390/kernel/diag/diag324.c
-> +++ b/arch/s390/kernel/diag/diag324.c
-> @@ -116,7 +116,7 @@ static void pibwork_handler(struct work_struct *work)
->  	mutex_lock(&pibmutex);
->  	timedout = ktime_add_ns(data->expire, PIBWORK_DELAY);
->  	if (ktime_before(ktime_get(), timedout)) {
-> -		mod_delayed_work(system_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
-> +		mod_delayed_work(system_percpu_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
->  		goto out;
->  	}
->  	vfree(data->pib);
-> @@ -174,7 +174,7 @@ long diag324_pibbuf(unsigned long arg)
->  		pib_update(data);
->  		data->sequence++;
->  		data->expire = ktime_add_ns(ktime_get(), tod_to_ns(data->pib->intv));
-> -		mod_delayed_work(system_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
-> +		mod_delayed_work(system_percpu_wq, &pibwork, nsecs_to_jiffies(PIBWORK_DELAY));
->  		first = false;
->  	}
->  	rc = data->rc;
-> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
-> index e7b66d046e8d..85b5508ab62c 100644
-> --- a/arch/s390/kernel/hiperdispatch.c
-> +++ b/arch/s390/kernel/hiperdispatch.c
-> @@ -191,7 +191,7 @@ int hd_enable_hiperdispatch(void)
->  		return 0;
->  	if (hd_online_cores <= hd_entitled_cores)
->  		return 0;
-> -	mod_delayed_work(system_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
-> +	mod_delayed_work(system_percpu_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
->  	hd_update_capacities();
->  	return 1;
->  }
-> -- 
-> 2.51.0
-> 
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 4b8ab2cb49ca..4c63fc62f4cb 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -240,13 +240,13 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+>   	 * Offset could point to the middle of a large folio, or folio
+>   	 * may no longer point to the expected offset before it's locked.
+>   	 */
+> -	entry = folio->swap;
+> -	if (offset < swp_offset(entry) || offset >= swp_offset(entry) + nr_pages) {
+> +	if (offset < swp_offset(folio->swap) ||
+> +	    offset >= swp_offset(folio->swap) + nr_pages) {
+>   		folio_unlock(folio);
+>   		folio_put(folio);
+>   		goto again;
+>   	}
+> -	offset = swp_offset(entry);
+> +	offset = swp_offset(folio->swap);
+>   
+>   	need_reclaim = ((flags & TTRS_ANYWAY) ||
+>   			((flags & TTRS_UNMAPPED) && !folio_mapped(folio)) ||
+
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers
+
+David / dhildenb
+
 
