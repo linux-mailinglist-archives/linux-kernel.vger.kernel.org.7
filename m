@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-806478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75ECFB49790
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:51:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B125B49791
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6904E041E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3946B20239C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3C231354E;
-	Mon,  8 Sep 2025 17:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A008B313520;
+	Mon,  8 Sep 2025 17:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT0pqtWZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="079uX+64"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2852FF645;
-	Mon,  8 Sep 2025 17:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891E83128AB
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 17:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757353877; cv=none; b=iAuIPt1QnsCksuoc5cdy8UAycpdch7vbdMnvrS2LxZgxug+xlZiLEC0YlQMyvMMCxMH1F1v5oZf5q1pExmBxXWMgfG1kUlA1gpOBb1C0dMcVlSHFEITTBwDWASCLnpjq8c2l+2W/h3UNFAD2dJnstfWJzutAp+wjGwV5DX1NAUA=
+	t=1757353906; cv=none; b=YkVPJudSCFiv7fkTgDWON5E6cX2w7MRGlKw6nqN29wrT0+SsZlhC/7sHivUwQuskEp0rVhiFwKRTeJYaFpOJVYlUUn8MyahRFkm+aD0gCZyTDHmttL1vWqr36gmPa4PapQYhzpJTn1xP8s3pbDNKYzK3rwLQSjL26Yq55FrHyVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757353877; c=relaxed/simple;
-	bh=/68Vf5FmSeABGxyVIZA6ZD2EBfHh21e0TSDOnBtrOIY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=VGBKCQK8DJIp/ffkfs0RMuM2uorBefx1AWdPwo5DyvjXU99+qtOqtuJMvrW24E6e9G834ZHdB0B+rOuaANngQmqwRlPHuhN3FMsBzzoOJTToiYt6tenAqAFy12wYByPYLJLNSFLG+0+6cjF6tg+hzF5fF1rIn32W/SfkRlz93K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT0pqtWZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8D2C4CEF1;
-	Mon,  8 Sep 2025 17:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757353877;
-	bh=/68Vf5FmSeABGxyVIZA6ZD2EBfHh21e0TSDOnBtrOIY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=IT0pqtWZXZrHwPrx13d5+UfrPkFSEvmPcCAmcf1sXnHxp1UswCcmV/FPq0/kKBqi4
-	 mY1r+i9/3dD7cGaJ5fXZrbO9oVQhXho3xjDb60xWpFES9s3W6fIfGzkY04XVM/Lciw
-	 9xtbUoc7gxCKOLTCHzJdpXoRPJYdjgdhQ5bJsXHHTpZp+TU97ucBBXxGnPmH60Hsxo
-	 RZYn3bWiFPsyx9MfIYvLSn4mMmX+O15ry4D6E+iJzfPxFgoLQGBFl11+6oDhIQEz72
-	 GZmNmrQGRd3LIuILi+aiYWF0DTaCvsl9xFBav7eAjqjvuGeBpAABPWTqq4ntGSjzvL
-	 y8MkFqg3mFizQ==
-Date: Mon, 8 Sep 2025 19:51:10 +0200 (GMT+02:00)
-From: Matthieu Baerts <matttbe@kernel.org>
-To: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Geliang Tang <geliang@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Reaver <me@davidreaver.com>
-Message-ID: <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org>
-In-Reply-To: <aL8WNpl8ExODg20q@templeofstupid.com>
-References: <aLuDmBsgC7wVNV1J@templeofstupid.com> <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org> <83191d507b7bc9b0693568c2848319932e6b974e.camel@kernel.org> <78d4a7b8-8025-493a-805c-a4c5d26836a8@kernel.org> <aL8RoSniweGJgm3h@templeofstupid.com> <23a66a02-7de9-40c5-995d-e701cb192f8b@kernel.org> <aL8WNpl8ExODg20q@templeofstupid.com>
-Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options
- propagate SOCK_KEEPOPEN
+	s=arc-20240116; t=1757353906; c=relaxed/simple;
+	bh=4G8OjR9ssKy/HeocTqhx3l5d0C6Xda9h262DRWrvvKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4SxYDTp5RlwVMI4VEcuEe3npo4oka+F9NiaK/akC+KpAGkmw84DYF5Zp5isz+2q6F6hb01WICU5Q6YfYV8vhDpnaQ2PXm6HCM3GGb7RvvFP9ipXWADK9HMJDhylB54TV4ptrrW6ZEBmnqZgc8C3jce99eI6wr7ijQc7IE2Hhjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=079uX+64; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b350971a2eso412711cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 10:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757353903; x=1757958703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4G8OjR9ssKy/HeocTqhx3l5d0C6Xda9h262DRWrvvKQ=;
+        b=079uX+64QLvdSDdn6L1FTABEUwHE14L07L2O1V8RZGepFO0Y8FvsUcywIiMP0CVHek
+         zUqG1ohbzNBNnIPbr9DZQydKLx55d2oH06+VZoHIbVeA0v4grk2zXXnNVVZrQeVH80gf
+         oukt0ou1jIgX7HMstE/5fJlNkWwvB93I5mqX2Tc5MbGGlSQNh53JkRSUJ2ZjmTs0Bpgu
+         7EoJmDREdxgCPySnOPQDbvuMwpqP1IQfAPKtZ/mL+vSLRmoLCXTPNp7Uc73bk4gKuyxp
+         2pGS3MTyXT/gJklr6xbnCKC1AoZlck4rsvaYrds5ASUWYLoed2lBL4GmNThEsW9S2sKq
+         ljBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757353903; x=1757958703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4G8OjR9ssKy/HeocTqhx3l5d0C6Xda9h262DRWrvvKQ=;
+        b=LXin7/SXs8kj+T2dye0Prv8HTkkVh+xGp3TnU1sHpZsdQixzyTsEmLoyZ+oXqlHFLm
+         0eDsn5Q68BuYUVPHsKYtjmI7UuQ31/YQa+FaK0L7ygqOTWO8o/TszBlu+I8Es66WuTW8
+         96meLb3ioNQi2VODZbBC7odT0Kr2OB+AuO1OllxFRTKypvjOi8COUIyczK/6E/kR92J4
+         FTJDUjRfIpNLdnD6j7QX6DN/aNavbTNpoPzPR/oeqWpZpHI9XpAGWyP4eSTf+pZf/EvP
+         zpUKxBJTdGE2PnhRT5u5zJQQmGsh8FjjbcyWbcjiVjXQHrCLo//aOdM0Kn9hamOU7S5z
+         1hJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPJ+UDHwhB3piCv2SjTPG1YQm1jv5QSEY3/cyiGS73cybfF3kOYb9ABFoH3b5Pcqq0xy19ldfVQVPNtlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd+0rC2AyNIV3rjFh5AR6y84fv4v+55EIW9Mz5NTIjwbsVUXfo
+	aAN6/ePnH/9fTlUCpYjN0HYS1Ol/e5E8Ixnqa1lus53twZ1wrsZ9UaB+SLrtpdWEfXB3fs1vAwn
+	E+8i8VqdcKoxov6nc17U64jXXLQUJUYHVUtZ8SUuv
+X-Gm-Gg: ASbGncs3W5Rfk7kuKwJ2TEJ185uKRlWxiRPbzWBjuVZ8PXRbLGTcDlb5PamKLzruy2Y
+	tCjiXZtCGT+hzIISdbrOONAZ6zRh+5IGqcn3T78kMZguLtbDLTvXZmC8iECHYx9w+oQIZ8kasvQ
+	swdAsOM1or0W1yKczk5nf4UW3rTqEgzNu1IzrAWgY5UcxWWGu4PUXizwj5S1f+t/W1MFt38Sd3f
+	9wzSblWskYpdJGXJo/URwE=
+X-Google-Smtp-Source: AGHT+IFX5M5+t7hmlxY9Bks+Ly9Dc9jsstbdD0XJ6NCNG5zc5agHlOjwp6nPJ4I+6VcViwGGr1N8NMZ0XWuJy7AaxH4=
+X-Received: by 2002:a05:622a:d0:b0:4b3:50ee:579e with SMTP id
+ d75a77b69052e-4b5f839899fmr9996781cf.11.1757353902829; Mon, 08 Sep 2025
+ 10:51:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <cover.1755190013.git.pyyjason@gmail.com> <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com> <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
+ <aLFKHGe2loD657fu@tiehlicka> <zerazodfo2uu5az4s6vuwsgnk7esgjptygh5kdgxnb74o2lzjm@fkziy4ggxrxc>
+ <CAJuCfpFynEuwBSu28UiRDjWrayN-raX4Nqqh283MwRoJLi8bMQ@mail.gmail.com> <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
+In-Reply-To: <uoyjzkybkqd3wkvauofmorv72gnjisoq3owvijsezpt3wbrazz@at562ngtvszd>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 8 Sep 2025 10:51:30 -0700
+X-Gm-Features: AS18NWDsU1J1RP4dbV6eRyI9elf2CPlWHKgnI901gTzxBYcnOYe7IoD0JikeTzY
+Message-ID: <CAJuCfpG17E_yoZeqEDrN0PFn8UBKqiGT28KDwEDmBm6byFje-Q@mail.gmail.com>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, Yueyang Pan <pyyjason@gmail.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sourav Panda <souravpanda@google.com>, 
+	Pasha Tatashin <tatashin@google.com>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <575893ce-11a8-492f-ac8c-5995b3e90c76@kernel.org>
 
-8 Sept 2025 19:45:32 Krister Johansen <kjlx@templeofstupid.com>:
-
-> On Mon, Sep 08, 2025 at 07:31:43PM +0200, Matthieu Baerts wrote:
->> Hi Krister,
->>
->> On 08/09/2025 19:25, Krister Johansen wrote:
->>> On Mon, Sep 08, 2025 at 07:13:12PM +0200, Matthieu Baerts wrote:
->>>> Hi Geliang,
->>>>
->>>> On 07/09/2025 02:51, Geliang Tang wrote:
->>>>> Hi Matt,
->>>>>
->>>>> On Sat, 2025-09-06 at 15:26 +0200, Matthieu Baerts wrote:
->>>>>> =E2=80=A6
->>>>>
->>>>> nit:
->>>>>
->>>>> I just noticed his patch breaks 'Reverse X-Mas Tree' order in
->>>>> sync_socket_options(). If you think any changes are needed, please
->>>>> update this when you re-send it.
->>>>
->>>> Sure, I can do the modification and send it with other fixes we have.
->>>
->>> Thanks for the reviews, Geliang and Matt.=C2=A0 If you'd like me to fix=
- the
->>> formatting up and send a v2, I'm happy to do that as well.=C2=A0 Just l=
-et me
->>> know.
->>
->> I was going to apply this diff:
->>
->>> diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
->>> index 13108e9f982b..2abe6f1e9940 100644
->>> --- a/net/mptcp/sockopt.c
->>> +++ b/net/mptcp/sockopt.c
->>> @@ -1532,11 +1532,12 @@ static void sync_socket_options(struct mptcp_so=
-ck *msk, struct sock *ssk)
->>> {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 static const unsigned int tx=
-_rx_locks =3D SOCK_RCVBUF_LOCK | SOCK_SNDBUF_LOCK;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct sock *sk =3D (struct =
-sock *)msk;
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int kaval =3D !!sock_flag(sk, SOC=
-K_KEEPOPEN);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool keep_open;
->>>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keep_open =3D sock_flag(sk, SOCK_=
-KEEPOPEN);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ssk->sk_prot->keepalive)
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, kaval);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEEPO=
-PEN, kaval);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ssk->sk_prot->keepalive(ssk, keep_open);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sock_valbool_flag(ssk, SOCK_KEEPO=
-PEN, keep_open);
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_priority =3D sk->sk_=
-priority;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ssk->sk_bound_dev_if =3D sk-=
->sk_bound_dev_if;
->>
->> (sock_flag() returns a bool, and 'keep_open' is maybe clearer)
->>
->> But up to you, I really don't mind if you prefer to send the v2 by
->> yourself, just let me know.
+On Mon, Sep 8, 2025 at 10:49=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> Thanks, I'll go ahead and amend as you suggest and then send a v2.
+> On Mon, Sep 08, 2025 at 10:47:06AM -0700, Suren Baghdasaryan wrote:
+> > On Mon, Sep 8, 2025 at 10:34=E2=80=AFAM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > I think that got the memcg people looking at ways to make the account=
+ing
+> > > cheaper, but I'm not sure if anything landed from that.
+> >
+> > Yes, Roman landed a series of changes reducing the memcg accounting ove=
+rhead.
+>
+> Do you know offhand how big that was?
 
-Great, thanks.
-
-While at it, please use [PATCH net] as prefix.
-
-Cheers,
-Matt
+I'll need to dig it up but it was still much higher than memory profiling.
 
