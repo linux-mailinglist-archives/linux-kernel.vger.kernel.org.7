@@ -1,134 +1,154 @@
-Return-Path: <linux-kernel+bounces-805363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12715B487A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D32B487A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1985A1B20BD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937223BD0BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0812EC555;
-	Mon,  8 Sep 2025 08:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02262ED17B;
+	Mon,  8 Sep 2025 08:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wQfgqq8r"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="b0iJ5o6U";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FQWa/vI9"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F2514AD2D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C9214AD2D;
+	Mon,  8 Sep 2025 08:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757321811; cv=none; b=pa6F8TPMJRhQV0B0iS1o1lguFwaTSUAp90A0oC3bLdIawuq7vteFzOaK0Vl6vETfgejz/cW/+dZaF5jDrC0HP+qsYEa5o2zB45tbZJZGvUoIgodMipPRZrdL8FbMmPQa2+df8VtOXNQ1jL+94tDBXZps+NhMJOzz2RCXg9X9aak=
+	t=1757321862; cv=none; b=fAbKPV+bstiZBVPuycnxPSQIJ/7OIKfE8M1bvGQ+MC+AOzMbpAK56k62WbzKdb8F8dPhJehNNX761NrH22AA0JXrPdExdKUE8XkQdLepZjS14CF4iSpUPq60WjrFDK1tpCWbl2Yvb2QzpcgZ2n+vr+9RuEF58Jh1rGg8WArDhVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757321811; c=relaxed/simple;
-	bh=V/bVGP/KdOF19nDlQUVl6n1WOYhjtPS3aZaW8tI//lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A7RVZWF6WMds+iw573ghVb4tTZKTXAkFQDEaRf7siFt2FAzX7x4+sKcrxvH5zaxt4EJD3hYa20VrHF7DKXnF92vkgW+3W1Gnjwap+L9E4VOe/RFdH7fvWDMQC3DNM56OTSVQSfexiv2vqt44YfRBjCrXqIR+OQSZIA/qHVH91OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wQfgqq8r; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c089b941-97c7-4392-828f-923e8da3510a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757321806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKQQNlo0TfpyWma+YA6JB+SzcXFLckK+IlyLWqw7/4Y=;
-	b=wQfgqq8rLxodgybIZRFdD/kgN3ta6mz+xdpAzih/j5QppO3iZswBVbKWZyS+GBkxdntlZ8
-	5SCZQokCfOfpOpNcCbYXeZ60Z5rCrCK8bFUyKpn8tjWXILFvOgib4DdfWeZ8xTgkBirO9U
-	b84OcVFZz4t7xKxfvrzb/uDQEFJ3Izs=
-Date: Mon, 8 Sep 2025 16:56:40 +0800
+	s=arc-20240116; t=1757321862; c=relaxed/simple;
+	bh=QGK/v4PygQlvVPP43NMCFMqvaQ0ghml0R3VgGlsv858=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXOUZfHcKoAwSnqK2IiCVKzOxQqaJQY/rs8PbiIp8wMBca/syCUplZGDV4LvOz0WxrX3Bh3L6iMAleE/vxcczrrQcm2Qyw/NiAm2zLki3GP5KNhyHw2Rx87CM+qvDMPhSQYqEPz0uV/v1YPxTOvdsSzUAdxsphs00pV9GfAM3wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=b0iJ5o6U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FQWa/vI9; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2C52F1400049;
+	Mon,  8 Sep 2025 04:57:39 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 08 Sep 2025 04:57:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1757321859; x=1757408259; bh=sCzLJmfkZO
+	esGcka2xCQVxJFYw2n743DJ47lQKuu0sk=; b=b0iJ5o6Ul0n0NQS1BZmMfO0hVD
+	2uxFNnjADLPxqM+4Rrt7fdAQG6h69V9PAUNGHQPQbXgWjUX+tB8ABmWrh2TxQxVk
+	nzePXryn9tRyB83evypckyViyVsZCcF8Sry48eoO9cSzW67rirkvkjVOYb2nYkQ0
+	cyduOjAwLybnO3QGkJt3Yzyb0n2qM9vAV80f0o0G42hMgLPEGOB7XPflWUh26y2m
+	RbLdqbILpjWtU4PqmLAqgI6TKGOPzPXpShE4drojoQWZiW2aPPAwjp747ZeGl1qX
+	4kzNhlNMiqDtzbPmreF8wug9ARp5V6J0j4ok+OPDZ9waxcfQTQeZkj7QA9Dw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757321859; x=1757408259; bh=sCzLJmfkZOesGcka2xCQVxJFYw2n743DJ47
+	lQKuu0sk=; b=FQWa/vI9r13Sql1I6G8aUJpxsQism1ikKaTLLgX3QJsbrH1ImNW
+	MnlKE0HdrBfMx67+CdTmoGU3ZIltsmMs4Nr6v5Bp4rv1LxLjrE6ha7cWFOJWRIQy
+	e2Fbzq25pdqmmdhSe/gGeQQ7NsY5JE5GKy2XSTpDXTwlOTCcQHip1RUYyGEgnFUN
+	7oei1NN5uWcLo7mDZ3BCxcf1ZToZbUCajxhwHl89fyoisS8Sb8umQWWw+yDxhuKw
+	dtmOhafnk8AJ8cWzkYIGX4GUmaf8a9qGiIdwg+5S2QBzuXqItURlzvH2h0tZqdWT
+	38ZsHV8QLtk+mWYY3rX8ZnAj435Buk1XSBQ==
+X-ME-Sender: <xms:gpq-aKYzZzhvLyEtWEhg1mTepULkt5HgaGrC4bjayA4QOawLo7atAg>
+    <xme:gpq-aC-BEwFNe6R_5rXShGIRtVBuH3r33LnFAXEKDvvsHDvlnXC579HNGaw0PoUmq
+    gr_kso5mOxiIg>
+X-ME-Received: <xmr:gpq-aOjCA-nhnBJ55sUVfE-9BHUE740RwZ1oSdXOiOeelNHQJit4lwqWuLnYuO7bFa5S-FbIiX18OxC816OCdADCYQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
+    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
+    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
+    homhdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopegrrhhnugesrg
+    hrnhgusgdruggvpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
+    pdhrtghpthhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtoh
+    hmpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:gpq-aNiqHFVbDMQrbIA1fXeNfYk44rjKDedHU4cTBlYSRjAp9C7HhQ>
+    <xmx:gpq-aM7pzkN4GYZ2LzoJ3-QtSWY4wRc3Vqso3lbKLqGIgAhLqYzB5w>
+    <xmx:gpq-aHTsdsRdUURPoPNQspkOQnzy61Khh3t-DE0Qk6yjsiYtYUpXNA>
+    <xmx:gpq-aD8jAuJG29FSSWZlILwPed75O7j9wSCe0hTxJdCX3Y0-AVOIyA>
+    <xmx:g5q-aNjcnAUNw4Gyu-FGfJfkFt5yEtvgo7XStoH6RrQR-S29nRMVVQ8F>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 04:57:37 -0400 (EDT)
+Date: Mon, 8 Sep 2025 10:57:35 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <2025090828-sushi-eternal-e09a@gregkh>
+References: <20250908162550.1a250f96@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm/slub: Refactor note_cmpxchg_failure for better
- readability
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Ye Liu <liuye@kylinos.cn>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250908071922.1062170-1-ye.liu@linux.dev>
- <aL6WTrXczZJYUoGb@hyeyoo>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ye Liu <ye.liu@linux.dev>
-In-Reply-To: <aL6WTrXczZJYUoGb@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908162550.1a250f96@canb.auug.org.au>
 
-
-
-在 2025/9/8 16:39, Harry Yoo 写道:
-> On Mon, Sep 08, 2025 at 03:19:21PM +0800, Ye Liu wrote:
->> From: Ye Liu <liuye@kylinos.cn>
->>
->> Use IS_ENABLED() and standard if-else to make the code clearer.
->>
->> Signed-off-by: Ye Liu <liuye@kylinos.cn>
->> ---
+On Mon, Sep 08, 2025 at 04:25:50PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Looks good to me,
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> Today's linux-next merge of the char-misc tree got a conflict in:
 > 
-> with a nit,
+>   rust/kernel/lib.rs
 > 
->>  mm/slub.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 30003763d224..34853c0441a6 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -3064,18 +3064,16 @@ static inline void note_cmpxchg_failure(const char *n,
->>  
->>  	pr_info("%s %s: cmpxchg redo ", n, s->name);
->>  
->> -#ifdef CONFIG_PREEMPTION
->> -	if (tid_to_cpu(tid) != tid_to_cpu(actual_tid))
->> +	if (IS_ENABLED(CONFIG_PREEMPTION) && tid_to_cpu(tid) != tid_to_cpu(actual_tid)) {
+> between commit:
 > 
-> nit: insert newline after && as it's more than 80 columns?
-
-I noticed this too, but using the script ./scripts/checkpatch.pl , there were no warnings.
-
-$ ./scripts/checkpatch.pl 0001-mm-slub-Refactor-note_cmpxchg_failure-for-better-rea.patch 
-total: 0 errors, 0 warnings, 22 lines checked
-
-0001-mm-slub-Refactor-note_cmpxchg_failure-for-better-rea.patch has no obvious style problems and is ready for submission.
-
-
+>   1f54d5e5cd2a ("rust: irq: add irq module")
 > 
->>  		pr_warn("due to cpu change %d -> %d\n",
->>  			tid_to_cpu(tid), tid_to_cpu(actual_tid));
->> -	else
->> -#endif
->> -	if (tid_to_event(tid) != tid_to_event(actual_tid))
->> +	} else if (tid_to_event(tid) != tid_to_event(actual_tid)) {
->>  		pr_warn("due to cpu running other code. Event %ld->%ld\n",
->>  			tid_to_event(tid), tid_to_event(actual_tid));
->> -	else
->> +	} else {
->>  		pr_warn("for unknown reason: actual=%lx was=%lx target=%lx\n",
->>  			actual_tid, tid, next_tid(tid));
->> +	}
->>  #endif
->>  	stat(s, CMPXCHG_DOUBLE_CPU_FAIL);
->>  }
->> -- 
->> 2.43.0
+> from the driver-core tree and commit:
+> 
+>   06cb58b310ea ("rust: iov: add iov_iter abstractions for ITER_SOURCE")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc rust/kernel/lib.rs
+> index 5300318a5309,99dbb7b2812e..000000000000
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@@ -93,7 -92,7 +93,8 @@@ pub mod fs
+>   pub mod init;
+>   pub mod io;
+>   pub mod ioctl;
+> + pub mod iov;
+>  +pub mod irq;
+>   pub mod jump_label;
+>   #[cfg(CONFIG_KUNIT)]
+>   pub mod kunit;
 
--- 
-Thanks,
-Ye Liu
+Looks good, thanks!
 
+greg k-h
 
