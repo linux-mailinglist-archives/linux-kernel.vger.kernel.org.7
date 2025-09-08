@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-805741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDA4B48CE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 604FDB48CE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C143C4BC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38E73C4222
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C8A2FB097;
-	Mon,  8 Sep 2025 12:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9683C2FC01D;
+	Mon,  8 Sep 2025 12:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aXIxN90A";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jh7b8Llc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKXrX9Ps"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453F2F7AD7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2FE2F0C51;
+	Mon,  8 Sep 2025 12:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333352; cv=none; b=Q0a65iQuQwt8EnTErdEOfSIDrXFXjOFs2PH5JYIBjCCFPgmVsnHJ4U5DdPDsSu2NAA2Ln1+0aiyBqfGPXyt4HFTKKXasFjibGCYFjSjZy3N3C1q3TNqAog1lZdVMxqzDSipyp7wUV9A0leJvN0GItAtgQbJ2Ba/yhrrRf1bIMJk=
+	t=1757333387; cv=none; b=GjIsf2F1BTbbiWhIV3PaCmb/TxzYtTdpznRtBmY7KGkBnq7ynxpyot3+P/6nLYs08uWBArUMlVCGC6JI3nGj6uqSaGV5WM2BNMlZZlRDq3etSoRy3EfGMMatrAP5ZroltKlqdJxVdX2jr4c/EzyARWQHuslevlgOkBYKg2syK1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333352; c=relaxed/simple;
-	bh=/t8BPTl4IpiRuzHRuKxJiZZJy0ABbfg4ll9mzhCdJaU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eJIEV5AqUi9FCp0c9QJoN6qR5WSrg6s/S3s3n59MD2I+VQtqkcH6idBT624iWDxtemmabNU0AqMzRyEJjxwWIWTekKrTvKgoo1VzlZKGeM2dUNPH0PhoDgT6/YT342SIDNL2iqkiw+USeY5se9MHfyiJG0rdL0x6XhPKaPBWK1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aXIxN90A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jh7b8Llc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757333349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bj4RYa63yog+buQ1zCGr7JNawWTRp4botS1M7B2K2Vs=;
-	b=aXIxN90AEh5CSoRHW5KSGj/MG67dqWG4pntFi+Z/cF2plG6ESffCsxgnu02x8qoAIwyFkn
-	dkkffTGABDdPJCI8h/jwCcVfny5wD4Z627ivZG77g31eYQAQrDlk4cAX17WweBh/CwD0GL
-	MBExR0oduVPOvCRaXg384PojFLfg/KSQAIn3dPq+pi2OiqU8c+beULBwKVhxKX547g8GMM
-	50PSPtSYhTFppZB8aI98s/+VYUCqdKSLKIdPPeHBKEFADSQ+h9ZkBexpVbz2qLuPbWBuZW
-	tFSqV5NexVIHeUqNrASk0waxyuDID/ap1bg7RyuawVs2mH+ooURhxg3UJ/84Ng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757333349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bj4RYa63yog+buQ1zCGr7JNawWTRp4botS1M7B2K2Vs=;
-	b=jh7b8LlcPKO6AYUugZ+dkgQ+L4SdirJvM1JbuW2a+8IZhjr0K1aZ8undcW7tlcfnID+1tI
-	BQ/AMS3J1RJD21DQ==
-To: Petr Mladek <pmladek@suse.com>, Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steven Rostedt
- <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson
- <danielt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
- linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v3 2/4] printk: nbcon: Introduce KDB helpers
-In-Reply-To: <aLsOBwV6CVBwG9JV@pathway.suse.cz>
-References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
- <20250902-nbcon-kgdboc-v3-2-cd30a8106f1c@suse.com>
- <aLsOBwV6CVBwG9JV@pathway.suse.cz>
-Date: Mon, 08 Sep 2025 14:15:08 +0206
-Message-ID: <84ikht87tn.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757333387; c=relaxed/simple;
+	bh=tLBf2x0aUy7Pj20wyMSFrIn59yfzdxdn0mzULMoSMYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ast/k63qSwqVmv1IgrvrZBlw1PFrQ3jhNl4MYqgHaS173dDcvqTHUFJikZE31glYZogdpp6FoDZvPqtT7j49BhaVP0zy5TNCxpbnkgP8HKbpWEW6MBxskH/czmq25qtnJ9pgsmQ9OFsPxcqpqPipfLFgGXJ70V7M/SRsXMjGhQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKXrX9Ps; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45de221da9cso7075615e9.0;
+        Mon, 08 Sep 2025 05:09:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757333383; x=1757938183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aF29gDbaZScA9f9y5T30f4pz/ssTg3xynxQbJY2OyqY=;
+        b=VKXrX9PsTIm1woOS6njJdDUerppENAAgjSo1obsz9WCLdDc4OgEaIJWf11/HHjnhXp
+         La7MLs11+IvOUU1Ngqc/a68tR/Zx/be2kvqkcU9ePxtFee9r7wWlTekcpvkKZwOJv3d/
+         cdlgsullya8zwHEw69trCEyq6GNNFa7Cgv9DYUCnYJU999VzCZ6FYezVOZX0Vl8MPIg+
+         L2jxEdrVBOzs1pphgQ8aRdOYU9EvrmKbEtWNUwknwtkDgLIe8intHxonLXMsmyOGY0Rc
+         imWQGy6tFEvPhcxJ3W7DSZ0UOV/WV60nNsgwSNeQnoMB0q0JOUqsEicoztpELTfGghKa
+         R7Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757333383; x=1757938183;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aF29gDbaZScA9f9y5T30f4pz/ssTg3xynxQbJY2OyqY=;
+        b=mvMy9Q4Vu8ZseQi+7RgfkAXdEiwc4c/x/pP7dXZ5ZwOpUrmtVlUJRPbzde0+xyfXve
+         KVSi1DH6U08yS0p8cKIYDpcC81je0r9+SDR+CB8279JFxWBG40NdWXLApw+nVUckPING
+         ppYMlA+lYe65YNUowKzkrf14+ZBBUIqaN4owOjKUg9mUo0dXFI70hhMcWznoqXFfv1QR
+         D3TLLX+fiWbpslSL7NOb0U7xoC3PGbtZeRqsBxED78E3bSz6Q1bmVtGAzFi8modOY7Wd
+         VAzm7YFDawtSIXUWgcMViVsJ3NPFQtOUYJkSb9cHLKsRVXsT2VdMvdyAkdf3jCInxpKj
+         vryQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2wZsYPfb+EvkeENUTDDxMAJ+hVsqhK3t1FQG/TOqadkYVyqKQyawIKR2av3BiON3FnJFt2OWObrw=@vger.kernel.org, AJvYcCUWJTfCmeN7KFIGtMyKB8w/f58cBiv1LrwG3yG1ZptEC8cW/TXPD9Kbn2uT+KkA8AvCP9KxXgXZUl6RAANEKFCAdSQ=@vger.kernel.org, AJvYcCXlrQ1hTRoO/kufjyWPNed0sSXEI216MGjtt1rJm8NFujSQV12plY9IIkccZGJCmViQeyHC0pnAroGgoJS5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy89rVYMSM5htE1TmiSXsoJi5pO0j13656TJJixl2fr9o05hGor
+	Tq4sB/fHt8jSVTbvAIyTxqJyuCGt9jyWN5ZTP8kIbRHbJR46PiJH5LED
+X-Gm-Gg: ASbGnctIncqEuJ9Od36CUO08Iw8XWpqc54MIS+ROcQoiuXbsdxuBCmLH5jxfNrvTccX
+	IhfgWroavF+AB+B0l7zABizqSUfpM0Kw8RkXskDhCDIGiDb4Gk8MAOZw76zK/DnlXY3zy/kRl19
+	7Op3xn+GdhcWSm3lmsw15EQj7AE7IFe8O7eRyq0UCTJTGN2nHCDjkvAg6Hju7aAwwI51r5sf2Vv
+	4tgql1JoaYz+cx+vJMLHjwd/GVM4Qt9dF7HSxW05ocNysgjiOSqAuchYYv6Tux5IlyL97rpFSEW
+	ieCs7xobW1twpEZmeeitDqCyBtIk7Sz11iI+0w8SUe7J8HUAjIce5cqHwolincyNrAf3UjwLTiE
+	qALcJZfj5gtd3FJ9DlyuN77ATcxi15nsMnRg33I7tW22U0mJFhbd6qDMtqaYYLVWwstf8/DSdew
+	EH+TH2N8sgHNi8
+X-Google-Smtp-Source: AGHT+IFl2ArUlZoUmXDMr1mr7YRCZ/zsPphU4IX2kB2gggELowbCYeT8py2xc4M+Qu0EKDQ0cb31ug==
+X-Received: by 2002:a05:600c:1f16:b0:45d:d5c6:482 with SMTP id 5b1f17b1804b1-45dddec845bmr66816655e9.18.1757333383238;
+        Mon, 08 Sep 2025 05:09:43 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e543e9f444sm9646415f8f.60.2025.09.08.05.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 05:09:42 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-can@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3 0/4] R-Car CANFD Improvements
+Date: Mon,  8 Sep 2025 13:09:29 +0100
+Message-ID: <20250908120940.147196-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2025-09-05, Petr Mladek <pmladek@suse.com> wrote:
-> On Tue 2025-09-02 15:33:53, Marcos Paulo de Souza wrote:
->> These helpers will be used when calling console->write_atomic on
->> KDB code in the next patch. It's basically the same implementaion
->> as nbcon_device_try_acquire, but using NBCON_PORIO_EMERGENCY when
->> acquiring the context.
->> 
->> For release we need to flush the console, since some messages could be
->> added before the context was acquired, as KDB emits the messages using
->> con->{write,write_atomic} instead of storing them on the ring buffer.
->
-> I am a bit confused by the last paragraph. It is a very long sentence.
->
-> Sigh, I wanted to propose a simple and clear alternative. But I ended
-> in a rabbit hole and with a rather complex text:
->
-> <proposal>
-> The atomic flush in the release function is questionable. vkdb_printf()
-> is primary called only when other CPUs are quiescent in kdb_main_loop()
-> and do not call the classic printk(). But, for example, the
-> write_atomic() callback might print debug messages. Or there is
-> one kdb_printf() called in kgdb_panic() before other CPUs are
-> quiescent. So the flush might be useful. Especially, when
-> the kdb code fails to quiescent the CPUs and returns early.
->
-> Let's keep it simple and just call __nbcon_atomic_flush_pending_con().
-> It uses write_atomic() callback which is used by the locked kdb code
-> anyway.
->
-> The legacy loop (console_trylock()/console_unlock()) is not
-> usable in kdb context.
->
-> It might make sense to trigger the flush via the printk kthread.
-> But it would not work in panic() where is the only known kdb_printf()
-> called when other CPUs are not quiescent. So, it does not look
-> worth it.
-> </proposal>
->
-> What do you think?
->
-> My opinion:
->
-> Honestly, I think that the flush is not much important because
-> it will most offten have nothing to do.
->
-> I am just not sure whether it is better to have it there
-> or avoid it. It might be better to remove it after all.
-> And just document the decision.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-IMHO keeping the flush is fine. There are cases where there might be
-something to print. And since a printing kthread will get no chance to
-print as long as kdb is alive, we should have kdb flushing that
-console.
+The calculation formula for nominal bit rate of classical CAN is same as
+that of nominal bit rate of CANFD on the RZ/G3E SoC and R-Car Gen4
+compared to other SoCs. Update the nominal bit rate constants.
 
-Note that this is the only console that will actually see the new
-messages immediately as all the other CPUs and quiesced. For this reason
-we probably want to use __nbcon_atomic_flush_pending() to try to flush
-_all_ the consoles.
+Apart from this, for replacing function-like macros, introduced
+rcar_canfd_compute_{nominal,data}_bit_rate_cfg().
 
-As to the last paragraph of the commit message, I would keep it simple:
+v2->v3:
+ * Replaced "shared_bittiming"->"shared_can_regs" as it is same for RZ/G3E
+   and R-Car Gen4.
+ * Updated commit header and description for patch#1.
+ * Added Rb tag from Geert for patch #2,#3 and #4.
+ * Dropped _MASK suffix from RCANFD_CFG_* macros.
+ * Dropped _MASK suffix from RCANFD_NCFG_NBRP_MASK macro.
+ * Dropped _MASK suffix from the macro RCANFD_DCFG_DBRP_MASK.
+ * Followed the order as used in struct can_bittiming{_const} for easy
+   maintenance.
+v1->v2:
+ * Dropped patch#2 as it is accepted.
+ * Moved patch#4 to patch#2.
+ * Updated commit header and description for patch#2.
+ * Kept RCANFD_CFG* macro definitions to give a meaning to the magic
+   number using GENMASK macro and used FIELD_PREP to extract value.
+ * Split patch#3 for computing nominal  and data bit rate config separate.
+ * Updated rcar_canfd_compute_nominal_bit_rate_cfg() to handle
+   nominal bit rate configuration for both classical CAN and CANFD.
+ * Replaced RCANFD_NCFG_NBRP->RCANFD_NCFG_NBRP_MASK and used FIELD_PREP to
+   extract value.
+ * Replaced RCANFD_DCFG_DBRP->RCANFD_DCFG_DBRP_MASK and used FIELD_PREP to
+   extract value.
 
-After release try to flush all consoles since there may be a backlog of
-messages in the ringbuffer. The kthread console printers do not get a
-chance to run while kdb is active.
+Biju Das (4):
+  can: rcar_canfd: Update bit rate constants for RZ/G3E and R-Car Gen4
+  can: rcar_canfd: Update RCANFD_CFG_* macros
+  can: rcar_canfd: Simplify nominal bit rate config
+  can: rcar_canfd: Simplify data bit rate config
 
-John
+ drivers/net/can/rcar/rcar_canfd.c | 84 +++++++++++++++++--------------
+ 1 file changed, 47 insertions(+), 37 deletions(-)
+
+-- 
+2.43.0
+
 
