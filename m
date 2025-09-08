@@ -1,238 +1,119 @@
-Return-Path: <linux-kernel+bounces-806568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBA3B49893
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A42DB4989A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 20:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46AA1B25F53
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECB4177236
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294C231C583;
-	Mon,  8 Sep 2025 18:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3CF31C57D;
+	Mon,  8 Sep 2025 18:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="BuYk+9mw"
-Received: from mail-qk1-f227.google.com (mail-qk1-f227.google.com [209.85.222.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="JJ7/j/sx"
+Received: from mail-244106.protonmail.ch (mail-244106.protonmail.ch [109.224.244.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2140731C57F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCEC31C57F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 18:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757357148; cv=none; b=sUsYoFmrnQzUK7VBSJ3wTCFQqYfdtalFFQfhsHSEZ5jhUsW8FUNdSmKoloWQdJklGYg2E+g+YHBkXZDAWDq1ThhpjUpAjAexMgFe38072tTNiLBVpf42riofewUNlm/g9BjoQoyRqkil80E+aZe5u+GrOvG23T8qHQxlkA6rBTI=
+	t=1757357192; cv=none; b=n00q/QM/fLp2BT3KuebtuuLObln0G44M7spvr+0UbW4i12RXkKFRZyTTGwHtFwWP+H/LP8v9XQ+5f+j0EZy9B6g4qCY5w4JNmiPgfxBqe70qiGVWkYig7sdN/ADorKEZCQgnm1HWJ76cR6EU8Ju9fuy8br4qXPL5ySWLGxZNQtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757357148; c=relaxed/simple;
-	bh=bs4Y23mCgkbnt3UBx65Ms29RtcfnigDOozwdxRrutj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AdvevKjjqyzXiGQhxc+9HOdlY+yRP6+CmxUI01Fx/tlCA0IbK8aV9TwxZxruek/LnH4QtBDKogmigKXfemBubpeSEZQprUc0J3UKfaWfMX9POMBpU6MjKLN7ey6b6gRTRrqu96dQnAhawabFwlsx/jE3cmCoGaIkAeuT9HbggoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=BuYk+9mw; arc=none smtp.client-ip=209.85.222.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qk1-f227.google.com with SMTP id af79cd13be357-802dd2ae55dso38450985a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 11:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757357145; x=1757961945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/DTdCtvVCgsE2r4Q32039ITkF16WxVWkLE1/TEOzfA=;
-        b=BuYk+9mw6KDSQA3ndl+WZDc7PLrIKDYEuBjEEqAtEhqFIDzcW+PdharjtF+G28Mqtk
-         HCl5SjmPyY2Xa1aH49OGRv0bwLgmU3k2rTnbGXN0x4HNEhGFCo3+7B+UB7M9GsDjuFBm
-         5PerThB+LKlhSRvdTjdtgiemsaWrYsEQVcwv8jX8P+KgiL8rsvIU6LoGg8/vMhXl8xO5
-         Es/nM1P0Tks2zSQPBfPmvgNlxBgcCZHkWknOIYKzXTjWzYrUzt8QneTj1hvkaAn7jWRZ
-         pZr9YgrBEEAIRElqsdb3v9xRDA7dW8Vz+/3aWL3J8JGv5Zsbpeg5eSyEvO4gbVN6nyA4
-         5gEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757357145; x=1757961945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O/DTdCtvVCgsE2r4Q32039ITkF16WxVWkLE1/TEOzfA=;
-        b=t2hU9FSARPkfHxP+OVq4auHHiayRzSJN83FqNuIUbH5Es4HyrD+my5+C5pHadMjw2+
-         B7qDwrhe05CA6l181BOO5hRWcnUtp82AM0jLA1+RF5Cd4dCXSgo4hdI7pzLHs7a+vg24
-         UrGoNlatqYHwK1o8jYWtdApddWAsA/emSibst/5x0ol4AwW+Z/7akmBrxFjit0p+DtU0
-         g/6F5XYS1N3Aut3TYZzgj3UtRxk5di420g0/0sBVrnxOX4elw3+yJ4RGtlZL0Z2y29D/
-         9TDgyAOIyccrxSebhKN95mw8xQSArt2zPpXxhe1/5qthTUsgAQ3mUdKepeufhcxFe4oH
-         ktYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMIfmim4COe5G/YUeWHSQuEwfA7dlRFYAhPAv4doRFLQQz4noqTfE9Ji2ntUM/LnloL8P8cSOzb6ZDqyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4+WqZiTQsww9sCcLCv/JPE+yV9jZq2FEUwEa+oZEjtJfyjTqF
-	FUHmDw7eJ5isGWWZ4KsQOpSQNqG4Ht/iw5VRrFD6Tin89QU0LDm9CO9RAeddCTxqDW/kOAVS3oi
-	tWak54mih/L4+uc8VZdVPALF8gedS1ppCXSXy
-X-Gm-Gg: ASbGncvXJz+tyGZTD+q6kZU7v3snLRGz7jKZoAEXi/AZuKJvj+ByuDrYGe6T2RlhX9z
-	csI0KDQpXms3hgJMEFnXGVodunZa3IEqxC7eriBeMWwAJjHG4sT31fGNvt26O6GnBAVcZMGAmJw
-	mG6d0Pg91JmDhpcoxmX/Hok1WBm0BG791nMfgt47RkIdQOtGXajlFc3IpToWGYfpCNMp2bEIr01
-	E9Hheqzm6W8PSekGn7nMzY8xveRTROZTsik5jqNLu18ZGwLpLZx3ENZlldxcPisiJN+uNslfi4R
-	xiPw77Kp75OC0m7s9abRkdGUImI0CUnTrWQbBuoqFTYhByC79Dvqmpt2TXLzIuRgGEd5aWru
-X-Google-Smtp-Source: AGHT+IHw6VuqllmK6/n48bgXeNTTwG0cfLASlmhRZTLoDOwdhBdjsJdOlcCJluCNJ3jDSZ4WJ48NIblCq0t/
-X-Received: by 2002:a05:620a:701c:b0:7f9:c230:2cbe with SMTP id af79cd13be357-813c2361ca5mr484273685a.11.1757357144716;
-        Mon, 08 Sep 2025 11:45:44 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id af79cd13be357-80aab3b4eacsm42261585a.8.2025.09.08.11.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 11:45:44 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 028AD340199;
-	Mon,  8 Sep 2025 12:45:44 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 0699EE41BCB; Mon,  8 Sep 2025 12:45:44 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ublk: consolidate nr_io_ready and nr_queues_ready
-Date: Mon,  8 Sep 2025 12:45:41 -0600
-Message-ID: <20250908184542.472230-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1757357192; c=relaxed/simple;
+	bh=P0Faj80sRK7sTe75N6OS0zqQYV5haDySqE9JOh5yoWY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YN+vjsTsdGdc8CmadD8tMVnAHCDfKX/AbkvfKSVGtPXSd9rbFYfxcXFSRfKZ4WPbiNmCZ2RCCjEgAuMJQ947wsZT6QvTXNfDEHTfImiR2EIt+rnZAR9vJqtsuioHXjEwclOS7dbKXPqDklIiIt6DBpaPiDaSo6pfag76L806bYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=JJ7/j/sx; arc=none smtp.client-ip=109.224.244.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1757357187; x=1757616387;
+	bh=meaZ0rdIKuJL9vmUg7Nj6Px+Q4a3GEkns2WLKMdlXkw=;
+	h=From:Subject:Date:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=JJ7/j/sxXUHAmp+QwwEstrtxo1+h3Tx7GOAAL+RQ6v+AxjCII32D0rar3zR1KgR4p
+	 yD67B84/ZYbBuq17sciwOI3fXX/pPdvuKcIvTiqT/LYBwuqIiK3RxE8xQYrKtN1Z1Z
+	 QN6kZjxpXvo2TTWpcaqlaCAixIkoNSSdpPAkvDWWN+Pj5iOiLwAZzTixH1/USXwb/W
+	 i1m3PGSnT+aVFiQF33Jhc0cRg5Y+V9nvUc2OZ1efQL6FMHTZpcGiavgxsK7gydngeR
+	 coTp0e0HOGJ5fXDXiBxoYRW8a7pD7PqTZN/CMq8v/dP/LxFiqL6LRAb+nhqytMzRBk
+	 aqDYSNKfOngPA==
+X-Pm-Submission-Id: 4cLGBT5n8Cz1DDL6
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Subject: [PATCH 0/3] arm64: dts: qcom: x1-asus-zenbook-a14: LCD, WiFi for
+ X1E support
+Date: Mon, 08 Sep 2025 20:45:44 +0200
+Message-Id: <20250908-zenbook-improvements-v1-0-43ecbbf39c60@vinarskis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFgkv2gC/x3MQQqAIBBA0avErBPUiqyrRIusqYZQQ0Oi8O5Jy
+ 7f4/4WAnjBAX7zgMVIgZzNEWcC8T3ZDRks2SC4b3nHFHrTauYOROb2LaNBegQkl6lZXSlZKQ05
+ Pjyvd/3YYU/oAP2sllmYAAAA=
+X-Change-ID: 20250908-zenbook-improvements-18147b38238b
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Aleksandrs Vinarskis <alex@vinarskis.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1984; i=alex@vinarskis.com;
+ h=from:subject:message-id; bh=P0Faj80sRK7sTe75N6OS0zqQYV5haDySqE9JOh5yoWY=;
+ b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBn7VWpEVHgeim9tOjGvZGFGqCDfZOn7O7ec+7vIJrlVb
+ cH9qzP2dJSyMIhxMciKKbJ0//ma1rVo7lqG6xrfYOawMoEMYeDiFICJ7JVm+O9XwhP/Omu+wMyL
+ Ya1zVHbIqDin8j02enX75sXXdaFrbgkw/I9vtTy39WTKxYopv8L/+kzb65lw939DuvXyzJ87VFa
+ XpDECAA==
+X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
+ fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
 
-ublk_mark_io_ready() tracks whether all the ublk_device's I/Os have been
-fetched by incrementing ublk_queue's nr_io_ready count and incrementing
-ublk_device's nr_queues_ready count if the whole queue is ready.
-Simplify the logic by just tracking the total number of fetched I/Os on
-each ublk_device. When this count reaches nr_hw_queues * queue_depth,
-the ublk_device is ready to receive I/O.
+Round of improvements for Asus Zenbook A14, two changes:
+1. Support LCD option on X1 (UX3407QA) variant. Until now, 'edp-panel'
+   was used for both X1/X1E models, for both OLED panels. The lower end
+   model also comes with IPS, which unfortunately needs PWM brightness
+   controls. Follow example of Lenovo t14s - create a dedicated DT with
+   dedicated 'compatible'. To maintain backward compatibility, do not
+   rename current devicetree nor the 'model'.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+   As this results in 3 DTs for 3 variants of the laptop, change
+   OLED variants from 'edp-panel' to respective drivers (it appears both
+   panels happily work both in old and new setup). Compatible for the
+   panels were added to linux-next some weeks ago.
+
+2. Add WiFi nodes for X1E (UX3407RA) variant. Almost identical to
+   UX3407QA but uses ath12k instead of ath11k. Was not addded during
+   initial bring-up due to lack of hardware to verify WiFi's operation.
+
+Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
 ---
- drivers/block/ublk_drv.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+Aleksandrs Vinarskis (3):
+      dt-bindings: arm: qcom: Add Asus Zenbook A14 UX3407QA LCD/OLED variants
+      arm64: dts: qcom: Rework X1-based Asus Zenbook A14's displays
+      arm64: dts: qcom: x1e80100-asus-zenbook-a14: Enable WiFi, Bluetooth
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 3cf6d344d1c0..aa64f530d5e9 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -199,11 +199,10 @@ struct ublk_queue {
- 	struct ublksrv_io_desc *io_cmd_buf;
- 
- 	bool force_abort;
- 	bool canceling;
- 	bool fail_io; /* copy of dev->state == UBLK_S_DEV_FAIL_IO */
--	unsigned short nr_io_ready;	/* how many ios setup */
- 	spinlock_t		cancel_lock;
- 	struct ublk_device *dev;
- 	struct ublk_io ios[];
- };
- 
-@@ -232,11 +231,11 @@ struct ublk_device {
- 	struct mm_struct	*mm;
- 
- 	struct ublk_params	params;
- 
- 	struct completion	completion;
--	unsigned int		nr_queues_ready;
-+	u32			nr_io_ready;
- 	bool 			unprivileged_daemons;
- 	struct mutex cancel_mutex;
- 	bool canceling;
- 	pid_t 	ublksrv_tgid;
- };
-@@ -1497,13 +1496,10 @@ static const struct blk_mq_ops ublk_mq_ops = {
- 
- static void ublk_queue_reinit(struct ublk_device *ub, struct ublk_queue *ubq)
- {
- 	int i;
- 
--	/* All old ioucmds have to be completed */
--	ubq->nr_io_ready = 0;
--
- 	for (i = 0; i < ubq->q_depth; i++) {
- 		struct ublk_io *io = &ubq->ios[i];
- 
- 		/*
- 		 * UBLK_IO_FLAG_CANCELED is kept for avoiding to touch
-@@ -1548,11 +1544,11 @@ static void ublk_reset_ch_dev(struct ublk_device *ub)
- 	for (i = 0; i < ub->dev_info.nr_hw_queues; i++)
- 		ublk_queue_reinit(ub, ublk_get_queue(ub, i));
- 
- 	/* set to NULL, otherwise new tasks cannot mmap io_cmd_buf */
- 	ub->mm = NULL;
--	ub->nr_queues_ready = 0;
-+	ub->nr_io_ready = 0;
- 	ub->unprivileged_daemons = false;
- 	ub->ublksrv_tgid = -1;
- }
- 
- static struct gendisk *ublk_get_disk(struct ublk_device *ub)
-@@ -1846,13 +1842,15 @@ static void ublk_uring_cmd_cancel_fn(struct io_uring_cmd *cmd,
- 
- 	WARN_ON_ONCE(io->cmd != cmd);
- 	ublk_cancel_cmd(ubq, pdu->tag, issue_flags);
- }
- 
--static inline bool ublk_queue_ready(struct ublk_queue *ubq)
-+static inline bool ublk_dev_ready(const struct ublk_device *ub)
- {
--	return ubq->nr_io_ready == ubq->q_depth;
-+	u32 total = (u32)ub->dev_info.nr_hw_queues * ub->dev_info.queue_depth;
-+
-+	return ub->nr_io_ready == total;
- }
- 
- static void ublk_cancel_queue(struct ublk_queue *ubq)
- {
- 	int i;
-@@ -1972,20 +1970,18 @@ static void ublk_reset_io_flags(struct ublk_device *ub)
- 	ublk_set_canceling(ub, false);
- 	mutex_unlock(&ub->cancel_mutex);
- }
- 
- /* device can only be started after all IOs are ready */
--static void ublk_mark_io_ready(struct ublk_device *ub, struct ublk_queue *ubq)
-+static void ublk_mark_io_ready(struct ublk_device *ub)
- 	__must_hold(&ub->mutex)
- {
--	ubq->nr_io_ready++;
--	if (ublk_queue_ready(ubq))
--		ub->nr_queues_ready++;
- 	if (!ub->unprivileged_daemons && !capable(CAP_SYS_ADMIN))
- 		ub->unprivileged_daemons = true;
- 
--	if (ub->nr_queues_ready == ub->dev_info.nr_hw_queues) {
-+	ub->nr_io_ready++;
-+	if (ublk_dev_ready(ub)) {
- 		/* now we are ready for handling ublk io request */
- 		ublk_reset_io_flags(ub);
- 		complete_all(&ub->completion);
- 	}
- }
-@@ -2187,12 +2183,12 @@ static int ublk_fetch(struct io_uring_cmd *cmd, struct ublk_queue *ubq,
- 	 * When handling FETCH command for setting up ublk uring queue,
- 	 * ub->mutex is the innermost lock, and we won't block for handling
- 	 * FETCH, so it is fine even for IO_URING_F_NONBLOCK.
- 	 */
- 	mutex_lock(&ub->mutex);
--	/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
--	if (ublk_queue_ready(ubq)) {
-+	/* UBLK_IO_FETCH_REQ is only allowed before dev is setup */
-+	if (ublk_dev_ready(ub)) {
- 		ret = -EBUSY;
- 		goto out;
- 	}
- 
- 	/* allow each command to be FETCHed at most once */
-@@ -2207,11 +2203,11 @@ static int ublk_fetch(struct io_uring_cmd *cmd, struct ublk_queue *ubq,
- 	ret = ublk_config_io_buf(ubq, io, cmd, buf_addr, NULL);
- 	if (ret)
- 		goto out;
- 
- 	WRITE_ONCE(io->task, get_task_struct(current));
--	ublk_mark_io_ready(ub, ubq);
-+	ublk_mark_io_ready(ub);
- out:
- 	mutex_unlock(&ub->mutex);
- 	return ret;
- }
- 
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   8 +-
+ arch/arm64/boot/dts/qcom/Makefile                  |   2 +
+ arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi  |   6 +-
+ .../boot/dts/qcom/x1e80100-asus-zenbook-a14.dts    | 102 +++++++++++++++
+ .../dts/qcom/x1p42100-asus-zenbook-a14-lcd.dts     |  62 +++++++++
+ .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dts    | 133 +------------------
+ .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dtsi   | 141 +++++++++++++++++++++
+ 7 files changed, 322 insertions(+), 132 deletions(-)
+---
+base-commit: 3e8e5822146bc396d2a7e5fbb7be13271665522a
+change-id: 20250908-zenbook-improvements-18147b38238b
+
+Best regards,
 -- 
-2.45.2
+Aleksandrs Vinarskis <alex@vinarskis.com>
 
 
