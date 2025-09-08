@@ -1,225 +1,254 @@
-Return-Path: <linux-kernel+bounces-805404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D28B4881F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527A5B48876
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145433A3CC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E0B17EECC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC1B2EFD86;
-	Mon,  8 Sep 2025 09:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mpgqrifp"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74CA2F60A1;
+	Mon,  8 Sep 2025 09:29:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C851E1E19;
-	Mon,  8 Sep 2025 09:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7942F069D;
+	Mon,  8 Sep 2025 09:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757323123; cv=none; b=Ozcs8CPsw0ADwbDTRkSiooOaXo30jC2QgG9WiV8hM7Rlec3JEvq/atf71rvA0Lu4LVDj8xzQ3RXxvGggjimDof9Z5XIVUY5F8814RH/3LGC1fedXfQV2Y1Tb12oPb431Tt/3onItdz+EjTz8e1koaDNFz1RgX4pf1Q9pckoPkhc=
+	t=1757323771; cv=none; b=q/tCF1VRUys7kEQt24BCEtrbbii1Q2XWfOl997UP+LCDnH8l1bwuIihm7n5LyCSBR1kcPREY2/raYLp9cUhUbgCLdyVQ8GgimMWWoluKl9TR/bn1/XC0AUsFE9GHjkhHqy9FkblggKpNrDaEFVOsUrJ6Bb+yscQn4TN1fWPYaeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757323123; c=relaxed/simple;
-	bh=sNlXJJ636+YqbuYzS4Qwsqp7lmB86wigvbLG3djtUHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6oossR61aY9Zk8ZoLlpAC4I+BcDZV/dO8/LsabH3atsBNMcOBycVLF0KG5ZLdqQx5FeB0KKcC2QekMgU/Lhdyhd/GpTasgu36kxQWvFsGbfnaiCOdRtubmIb+KcWyA2XG3ffwe7DCuC+Gmhv3B+CR3wfXcwCbnJDsZxyUk7HOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mpgqrifp; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id D3ED86DC;
-	Mon,  8 Sep 2025 11:17:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757323047;
-	bh=sNlXJJ636+YqbuYzS4Qwsqp7lmB86wigvbLG3djtUHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mpgqrifpuc3SQ9EmkMS8By22p4EVyx8TkIpiVmhpLo7vr3iQcsxFJcvWxpRlMOFiO
-	 PFuPI6Eav8N2ndsNyFaJNMHJFnNTkxkyub5U/gqGFX7IQY/4Nuuv37/ZmoXHX4oqww
-	 pRDktDmvYNsSLj9Q5nAbW9KiXQN/5Vfg8F2oxVHk=
-Date: Mon, 8 Sep 2025 11:18:19 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] media: uvcvideo: Move video_device under
- video_queue
-Message-ID: <20250908091819.GB22977@pendragon.ideasonboard.com>
-References: <20250725-uvc-onelocksless-v2-0-953477834929@chromium.org>
- <20250725-uvc-onelocksless-v2-2-953477834929@chromium.org>
+	s=arc-20240116; t=1757323771; c=relaxed/simple;
+	bh=WzCrMAhkDA+aG0BGBU3kEEBYjaDMJw7LyiiNySBW7NY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q97d0hmcCctMRDUNKwePsknbTEX42XvV1RyCH/tkqjmFH9E1ch/oXWVcll1T2r/309/Hdt9EX0zcGzMwIZDcP55Yf+/NwNHR1PreqBVhQKic6vpKTRlUY+/XEnZdS+xcXRW4K9m9Xz//kH5DQB6vY/yzARgGgtm2JzTQ73lMR3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cL1qp0cCwzKHLv3;
+	Mon,  8 Sep 2025 17:29:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2FA9E1A1751;
+	Mon,  8 Sep 2025 17:29:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIzzob5oGjMyBw--.46699S4;
+	Mon, 08 Sep 2025 17:29:25 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: dlemoal@kernel.org,
+	hare@suse.de,
+	bvanassche@acm.org,
+	ming.lei@redhat.com,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk,
+	yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v4 for-6.18/block 0/5] blk-mq-sched: support request batch dispatching for sq elevator
+Date: Mon,  8 Sep 2025 17:20:02 +0800
+Message-Id: <20250908092007.3796967-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250725-uvc-onelocksless-v2-2-953477834929@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIzzob5oGjMyBw--.46699S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrW3uF13Kr45tF4DXFWDArb_yoWrAryDpF
+	WfW3ZIkF4DW3ZIqwn7uw17Jr1rGw48X345Gr15tr4ft3WDAr47JFn5XFy8ZFW7JryfWFsr
+	Ww1DXry8Wa4UWaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbmsjUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Ricardo,
+From: Yu Kuai <yukuai3@huawei.com>
 
-On Fri, Jul 25, 2025 at 01:12:49PM +0000, Ricardo Ribalda wrote:
-> It is more natural that the "struct video_device" belongs to
-> uvc_video_queue instead of uvc_streaming.
-> 
-> This is an aesthetic change. No functional change expected.
-> 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Chagnes from v3:
+ - add a helper elevator_dispatch_lock/unlock, and flag
+ ELEVATOR_FLAG_DISPATCH_IRQ, so that mq-deadline don't have to disable
+ irq like bfq while dispatching;
+ - rebase for-6.18/block
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Changes from v2:
+ - add elevator lock/unlock macros in patch 1;
+ - improve coding style and commit messages;
+ - retest with a new environment
+ - add test for scsi HDD and nvme;
 
-> ---
->  drivers/media/usb/uvc/uvc_driver.c   | 16 ++++++++--------
->  drivers/media/usb/uvc/uvc_metadata.c |  3 +--
->  drivers/media/usb/uvc/uvc_v4l2.c     |  2 +-
->  drivers/media/usb/uvc/uvc_video.c    |  2 +-
->  drivers/media/usb/uvc/uvcvideo.h     |  4 +---
->  5 files changed, 12 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 3039e6a533b82dd917050d416c9ced8756d69170..505e85a6b4d99666f3a4a9441dd1ca72e13228e0 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1954,11 +1954,11 @@ static void uvc_unregister_video(struct uvc_device *dev)
->  
->  	list_for_each_entry(stream, &dev->streams, list) {
->  		/* Nothing to do here, continue. */
-> -		if (!video_is_registered(&stream->vdev))
-> +		if (!video_is_registered(&stream->queue.vdev))
->  			continue;
->  
-> -		vb2_video_unregister_device(&stream->vdev);
-> -		vb2_video_unregister_device(&stream->meta.vdev);
-> +		vb2_video_unregister_device(&stream->queue.vdev);
-> +		vb2_video_unregister_device(&stream->meta.queue.vdev);
->  
->  		/*
->  		 * Now both vdevs are not streaming and all the ioctls will
-> @@ -1980,12 +1980,12 @@ static void uvc_unregister_video(struct uvc_device *dev)
->  
->  int uvc_register_video_device(struct uvc_device *dev,
->  			      struct uvc_streaming *stream,
-> -			      struct video_device *vdev,
->  			      struct uvc_video_queue *queue,
->  			      enum v4l2_buf_type type,
->  			      const struct v4l2_file_operations *fops,
->  			      const struct v4l2_ioctl_ops *ioctl_ops)
->  {
-> +	struct video_device *vdev = &queue->vdev;
->  	int ret;
->  
->  	/* Initialize the video buffers queue. */
-> @@ -2067,9 +2067,9 @@ static int uvc_register_video(struct uvc_device *dev,
->  	uvc_debugfs_init_stream(stream);
->  
->  	/* Register the device with V4L. */
-> -	return uvc_register_video_device(dev, stream, &stream->vdev,
-> -					 &stream->queue, stream->type,
-> -					 &uvc_fops, &uvc_ioctl_ops);
-> +	return uvc_register_video_device(dev, stream, &stream->queue,
-> +					 stream->type, &uvc_fops,
-> +					 &uvc_ioctl_ops);
->  }
->  
->  /*
-> @@ -2105,7 +2105,7 @@ static int uvc_register_terms(struct uvc_device *dev,
->  		 */
->  		uvc_meta_register(stream);
->  
-> -		term->vdev = &stream->vdev;
-> +		term->vdev = &stream->queue.vdev;
->  	}
->  
->  	return 0;
-> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> index 649844e2ad60ed9e9951daec871f2000f48702a6..9ed50c3249cbd222be71ffdba18c41ff972158af 100644
-> --- a/drivers/media/usb/uvc/uvc_metadata.c
-> +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> @@ -228,12 +228,11 @@ static int uvc_meta_detect_msxu(struct uvc_device *dev)
->  int uvc_meta_register(struct uvc_streaming *stream)
->  {
->  	struct uvc_device *dev = stream->dev;
-> -	struct video_device *vdev = &stream->meta.vdev;
->  	struct uvc_video_queue *queue = &stream->meta.queue;
->  
->  	stream->meta.format = V4L2_META_FMT_UVC;
->  
-> -	return uvc_register_video_device(dev, stream, vdev, queue,
-> +	return uvc_register_video_device(dev, stream, queue,
->  					 V4L2_BUF_TYPE_META_CAPTURE,
->  					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
->  }
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index fdc4520a7bb42af7cd5cb9c1fa49957c31e0041c..5b0a7edc9966e7c66438af6daa1f98fa87a6d0d3 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -576,7 +576,7 @@ static int uvc_v4l2_open(struct file *file)
->  	if (!handle)
->  		return -ENOMEM;
->  
-> -	v4l2_fh_init(&handle->vfh, &stream->vdev);
-> +	v4l2_fh_init(&handle->vfh, &stream->queue.vdev);
->  	v4l2_fh_add(&handle->vfh);
->  	handle->chain = stream->chain;
->  	handle->stream = stream;
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..ef12a935829277d7f1c1ebffcd901742513fbe7e 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1705,7 +1705,7 @@ static void uvc_video_complete(struct urb *urb)
->  	struct uvc_streaming *stream = uvc_urb->stream;
->  	struct uvc_video_queue *queue = &stream->queue;
->  	struct uvc_video_queue *qmeta = &stream->meta.queue;
-> -	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-> +	struct vb2_queue *vb2_qmeta = stream->meta.queue.vdev.queue;
->  	struct uvc_buffer *buf = NULL;
->  	struct uvc_buffer *buf_meta = NULL;
->  	unsigned long flags;
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 86765b9d7935f0888476249c3fb826cd7f36b35c..d4947878fd0126d788d16977a553fa0f45645dcd 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -328,6 +328,7 @@ struct uvc_buffer {
->  #define UVC_QUEUE_DISCONNECTED		(1 << 0)
->  
->  struct uvc_video_queue {
-> +	struct video_device vdev;
->  	struct vb2_queue queue;
->  	struct mutex mutex;			/*
->  						 * Serializes vb2_queue and
-> @@ -450,7 +451,6 @@ struct uvc_urb {
->  struct uvc_streaming {
->  	struct list_head list;
->  	struct uvc_device *dev;
-> -	struct video_device vdev;
->  	struct uvc_video_chain *chain;
->  	atomic_t active;
->  
-> @@ -477,7 +477,6 @@ struct uvc_streaming {
->  		       struct uvc_buffer *meta_buf);
->  
->  	struct {
-> -		struct video_device vdev;
->  		struct uvc_video_queue queue;
->  		u32 format;
->  	} meta;
-> @@ -727,7 +726,6 @@ int uvc_meta_register(struct uvc_streaming *stream);
->  
->  int uvc_register_video_device(struct uvc_device *dev,
->  			      struct uvc_streaming *stream,
-> -			      struct video_device *vdev,
->  			      struct uvc_video_queue *queue,
->  			      enum v4l2_buf_type type,
->  			      const struct v4l2_file_operations *fops,
+Changes from v1:
+ - the ioc changes are send separately;
+ - change the patch 1-3 order as suggested by Damien;
+
+Currently, both mq-deadline and bfq have global spin lock that will be
+grabbed inside elevator methods like dispatch_request, insert_requests,
+and bio_merge. And the global lock is the main reason mq-deadline and
+bfq can't scale very well.
+
+For dispatch_request method, current behavior is dispatching one request at
+a time. In the case of multiple dispatching contexts, This behavior, on the
+one hand, introduce intense lock contention:
+
+t1:                     t2:                     t3:
+lock                    lock                    lock
+// grab lock
+ops.dispatch_request
+unlock
+                        // grab lock
+                        ops.dispatch_request
+                        unlock
+                                                // grab lock
+                                                ops.dispatch_request
+                                                unlock
+
+on the other hand, messing up the requests dispatching order:
+t1:
+
+lock
+rq1 = ops.dispatch_request
+unlock
+                        t2:
+                        lock
+                        rq2 = ops.dispatch_request
+                        unlock
+
+lock
+rq3 = ops.dispatch_request
+unlock
+
+                        lock
+                        rq4 = ops.dispatch_request
+                        unlock
+
+//rq1,rq3 issue to disk
+                        // rq2, rq4 issue to disk
+
+In this case, the elevator dispatch order is rq 1-2-3-4, however,
+such order in disk is rq 1-3-2-4, the order for rq2 and rq3 is inversed.
+
+While dispatching request, blk_mq_get_disatpch_budget() and
+blk_mq_get_driver_tag() must be called, and they are not ready to be
+called inside elevator methods, hence introduce a new method like
+dispatch_requests is not possible.
+
+In conclusion, this set factor the global lock out of dispatch_request
+method, and support request batch dispatch by calling the methods
+multiple time while holding the lock.
+
+Test Environment:
+arm64 Kunpeng-920, with 4 nodes 128 cores
+nvme: HWE52P431T6M005N
+scsi HDD: MG04ACA600E attached to hisi_sas_v3
+
+null_blk set up:
+
+modprobe null_blk nr_devices=0 &&
+    udevadm settle &&
+    cd /sys/kernel/config/nullb &&
+    mkdir nullb0 &&
+    cd nullb0 &&
+    echo 0 > completion_nsec &&
+    echo 512 > blocksize &&
+    echo 0 > home_node &&
+    echo 0 > irqmode &&
+    echo 128 > submit_queues &&
+    echo 1024 > hw_queue_depth &&
+    echo 1024 > size &&
+    echo 0 > memory_backed &&
+    echo 2 > queue_mode &&
+    echo 1 > power ||
+    exit $?
+
+null_blk and nvme test script:
+
+[global]
+filename=/dev/{nullb0,nvme0n1}
+rw=randwrite
+bs=4k
+iodepth=32
+iodepth_batch_submit=8
+iodepth_batch_complete=8
+direct=1
+ioengine=io_uring
+time_based
+
+[write]
+numjobs=16
+runtime=60
+
+scsi HDD test script: noted this test aims to test if batch dispatch
+will affect IO merge.
+
+[global]
+filename=/dev/sda
+rw=write
+bs=4k
+iodepth=32
+iodepth_batch_submit=1
+direct=1
+ioengine=libaio
+
+[write]
+offset_increment=1g
+numjobs=128
+
+Test Result:
+1) nullblk: iops test with high IO pressue
+|                 | deadline | bfq      |
+| --------------- | -------- | -------- |
+| before this set | 256k     | 153k     |
+| after this set  | 594k     | 283k     |
+
+2) nvme: iops test with high IO pressue
+|                 | deadline | bfq      |
+| --------------- | -------- | -------- |
+| before this set | 258k     | 142k     |
+| after this set  | 568k     | 214k     |
+
+3) scsi HDD: io merge test, elevator is deadline
+|                 | w/s   | %wrqm | wareq-sz | aqu-sz |
+| --------------- | ----- | ----- | -------- | ------ |
+| before this set | 92.25 | 96.88 | 128      | 129    |
+| after this set  | 92.63 | 96.88 | 128      | 129    |
+
+Yu Kuai (5):
+  blk-mq-sched: introduce high level elevator lock
+  mq-deadline: switch to use elevator lock
+  block, bfq: switch to use elevator lock
+  blk-mq-sched: refactor __blk_mq_do_dispatch_sched()
+  blk-mq-sched: support request batch dispatching for sq elevator
+
+ block/bfq-cgroup.c   |   6 +-
+ block/bfq-iosched.c  |  54 +++++-----
+ block/bfq-iosched.h  |   2 -
+ block/blk-mq-sched.c | 246 ++++++++++++++++++++++++++++++-------------
+ block/blk-mq.h       |  18 ++++
+ block/elevator.c     |   1 +
+ block/elevator.h     |  31 +++++-
+ block/mq-deadline.c  |  60 +++++------
+ 8 files changed, 278 insertions(+), 140 deletions(-)
 
 -- 
-Regards,
+2.39.2
 
-Laurent Pinchart
 
