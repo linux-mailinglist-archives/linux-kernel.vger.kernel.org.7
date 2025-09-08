@@ -1,123 +1,237 @@
-Return-Path: <linux-kernel+bounces-806765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE66B49B86
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEB2B49B89
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761733A46B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48AD8169978
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70862DCF61;
-	Mon,  8 Sep 2025 21:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C8A2DC34B;
+	Mon,  8 Sep 2025 21:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POW/2AD8"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YX4MG/2j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE06D210FB;
-	Mon,  8 Sep 2025 21:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0BC1E500C;
+	Mon,  8 Sep 2025 21:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757365684; cv=none; b=n5EgBkiZF0y2K0G3vx5Y+yOTzbSNIWkjaQcSS+eJVrvdUWJRDr0TVhMqeXzFwbnCI/Riv1ycXTN+G/wI27Ffzg+35k78aZtt6zy0VV4VYAAIlJ52TzLY3PQE+sZLZXemLrCJS7i5Ed7msJ6useORmXii5J6FMjzGtkYOCyNdPvQ=
+	t=1757365714; cv=none; b=r+xVvZEzNR+dES9lCBU4QgGzabPYUw5zBf9gG06v20jLHL0144jTNXxSx6WnQDP7/W5a7w9I1aSGA+Tk2Rwg63Zb1xWo9PwmfKHjHvhUCxM4zyWsuYXc5H5axDVfyROzkZyBcSSrDxQ4aR9qb7R0ZMM5/oqb6ojpUh6V5UhDVwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757365684; c=relaxed/simple;
-	bh=7x3M6OzxcXR2xOr1b5H9lv4C1AJvoLHd62rq0tUNUtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzQCo2GyXoayBgEiVpn2Tr5LDnTxdFL0Tx3p9Vy32onYisLWhNciygdYjGvBkL7nkswnwKoTbhL6T41+Nf+dVmWGslOKU3CpgXEEyBpuzCafFGWFoQ5JY7wkWgKBh0utCaI4A6hNZLcXTAMhtBruV6eUH53DBaxDfRQ5lqnCKYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POW/2AD8; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso2515135e9.3;
-        Mon, 08 Sep 2025 14:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757365680; x=1757970480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w4leMcgV/Vy8OWc/rM83qJwvkBLtx9OG8BWRrknnRgs=;
-        b=POW/2AD8tWwSwWHzLC4DAksINjFe8xj5JuDoQRsY6XKopNgjzy/4BRu4XxV47sBigU
-         ElI3cJ37TRG84ZkJ2qY/1pFAj6C9lYYXtqoAuK9bvQg84W0GAaSGkMzsKiSamIYK6vbK
-         nvACzCpuqzr4IATwRfWJCFtXU5j/j+oPAlG3FJ7niyoV6jwnaDpqlcG1RLz6MAG5O1tL
-         HBFRyWNElbVk6xDJvymJita33SS3EPevPzVGYhifhIgQegtMXSqyhJAFoboNn3Vk28m7
-         BgKWfk2n4Xyu4CZKMTpPE5HaxGgNAYEimqovYi86/RoS8l7H9IiN6wDodH49pd+kzWHd
-         w5Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757365680; x=1757970480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w4leMcgV/Vy8OWc/rM83qJwvkBLtx9OG8BWRrknnRgs=;
-        b=h/drUUoVQoNub6afjVtO52uC7xugoYB3CPfdvIO21CmGyt2AW7q7BCW2t7a+q1PKZi
-         YFPSCdv25KaGGanxxPlrmK47RA6INT4hxVQ/hGMlf2iqgdfM8KGYDzjWJnS5fpmk8guJ
-         Mr9arOVHIV2D2A6cHV2RNnuDtgP7VaS1tmnpAkmlQZYlqywF0r5Bhy07cz7gSDhzA9or
-         wTFmULKXplmznUtLjqcgv8RyYXwZ/r7deOaYkdh6eIaJ71sdpAaQpT7rcIgVXubk8M9q
-         slyIOs49iWxA16a48WsA0UeUbrLvsLi+LWCCamsS+pmfO/Fv5dlNG7HAaTzfIgm/keOB
-         0Fdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYrZr7zy3/10CUNlQ1JFeDBX5NIMOpoki6+K+NUbv8P4sG1Z1XOe6vWyFvhTibRfhtgvQ=@vger.kernel.org, AJvYcCW7RnaAeb5GzHx83LoDTDpdAsa850Bc5h0Rpo+tKzQwLvqRVpIcrLGtLZrOGhx9i3b9fAgK4w+JcRvVuUxn4019@vger.kernel.org, AJvYcCW8GSKMbOHyy6nLW2IxFSMert1vXfqVx8Dte9xOoiHpBaBzjvrbbOiXpSEYJvyngX4r3IJ3tHJMnW47Lvyp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0hw1wB6ukh5UhK9E0ThtszerUjazwZilCb76d1LLh5hoLrV6j
-	8vrDxQotgTv0ru199mFw+zcxNb8Znu0laHGLtp1K+3PQVUuS5jPbXX6m
-X-Gm-Gg: ASbGnct9lLsXI1a8HgxOAf3D38a/x8TSpqw9//eG66C9TO+OOxcJx6GfHXmYUOBwsim
-	U9d0hGkUq3EmSgzD7fIEuTVwIXFQnzcVLkJeqzhnAtKR6dKnzoCyIDuFvGG7dXkbS0GufHPlqEj
-	F1QJeMR/NgpKyURyz5p1KGDJEwDbTthebNAXbHBc0o1KFQ8t+AGtH8Px06EF0Dx4c/lA7HJFFm3
-	f/owe1XFDZieg4a+gQ8exhTeJhgVamT0q09cHf1UuksFTZUu2nLcbAs5zYk1y2IEu0+38m8cHBM
-	30pO2XzTQiBfp2cc7D8MLKLabpXHDzFC3fjK3VB/BPzVrbAru/IinPKYKc3paVPetnKbz0d7aIG
-	XhzsQJ3lzI/CecRI=
-X-Google-Smtp-Source: AGHT+IEZnnAHqHVfPKeJA9IdmNibK3eBQPXtsg1GVMTDzXHQwM4c/a/SYqcXoCqH7jonCYzxYsChJg==
-X-Received: by 2002:a05:600c:3503:b0:45c:b627:3b05 with SMTP id 5b1f17b1804b1-45de0060bb1mr88806405e9.5.1757365679876;
-        Mon, 08 Sep 2025 14:07:59 -0700 (PDT)
-Received: from hsukr3.. ([141.70.88.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de2132cd3sm92749285e9.9.2025.09.08.14.07.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 14:07:59 -0700 (PDT)
-From: Sukrut Heroorkar <hsukrut3@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Sukrut Heroorkar <hsukrut3@gmail.com>
-Subject: [PATCH] selftests/kvm: remove stale TODO in xapic_state_test
-Date: Mon,  8 Sep 2025 23:05:46 +0200
-Message-ID: <20250908210547.12748-1-hsukrut3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757365714; c=relaxed/simple;
+	bh=PnwSzwBS+IEk9VLEaKhhyerfyynPlGeUYEvlHpawoxM=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=nArTooNlZrbKBiTsZDZJqs4+kbpnA9iJKpuHw+egv0hN0IJ7JrA26EodPs1MFM1jF1dI+fhd9Yk1h+zM6RC+2omXTuSS5Ynk6cUquDZjkapjRMRUkup+x8enhwlMRtbKQ2UL/vDDRcZ/iRAE5lxIZaGeoGMj6Rc//Gb3o/vimVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YX4MG/2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F96C4CEF1;
+	Mon,  8 Sep 2025 21:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757365713;
+	bh=PnwSzwBS+IEk9VLEaKhhyerfyynPlGeUYEvlHpawoxM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YX4MG/2j6iLltF3MLeQEUox4oD8IA0Ptm4ATvZGrvVp1Mk0tnXBZGfdxf7S3uUPvC
+	 Z+biBVsAmbgm5xIfidgcXyekh92jaHq80Y8gLAULb9otCNNmRxD7aDq8uByxG+twAI
+	 ou8n3COdjVim9Y/tn9n0tTlCYEhPxTkIJk9u5Jtcu6O3tVC8FSAQwlImOx/PX+/hOs
+	 MfFLDcQB7FVLeIrFGNX12vcxUTSyEk1DBBkPFWFEDLPciSvAKGZ8njajwnYytKHaMa
+	 p2TRxDZ6a6oq2BKqudAffn8j//1PRDC4zgSP5CSsOXz2LVb9a11NpNEDsKxRn1phlI
+	 ouOOv3YVs6Zfw==
+Content-Type: multipart/mixed; boundary="------------Dlpxm7uriiqBCvrDdL5SnNH2"
+Message-ID: <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
+Date: Mon, 8 Sep 2025 23:08:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
+To: "Leo L. Schwab" <ewhac@ewhac.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250814212641.197573-2-ewhac@ewhac.org>
+ <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
+ <aLSntMknSv3lMarZ@ewhac.org>
+ <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
+ <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
+ <aLiZbkKgIC8jIqE9@ewhac.org>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <aLiZbkKgIC8jIqE9@ewhac.org>
 
-The TODO about using the number of vCPUs instead of vcpu.id + 1
-was already addressed by commit 376bc1b458c9 ("KVM: selftests: Don't
-assume vcpu->id is '0' in xAPIC state test"). The comment is now
-stale and can be removed.
+This is a multi-part message in MIME format.
+--------------Dlpxm7uriiqBCvrDdL5SnNH2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
----
- tools/testing/selftests/kvm/x86/xapic_state_test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Leo,
 
-diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-index fdebff1165c7..3b4814c55722 100644
---- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
-+++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-@@ -120,8 +120,8 @@ static void test_icr(struct xapic_vcpu *x)
- 		__test_icr(x, icr | i);
- 
- 	/*
--	 * Send all flavors of IPIs to non-existent vCPUs.  TODO: use number of
--	 * vCPUs, not vcpu.id + 1.  Arbitrarily use vector 0xff.
-+	 * Send all flavors of IPIs to non-existent vCPUs. Arbitrarily use
-+	 * vector 0xff.
- 	 */
- 	icr = APIC_INT_ASSERT | 0xff;
- 	for (i = 0; i < 0xff; i++) {
--- 
-2.43.0
+On 3-Sep-25 9:39 PM, Leo L. Schwab wrote:
+> 	For some reason, your replies aren't making it to me directly -- I
+> had to find and scrape your reply off the LKML web site:
+> 
+> On Tue, 2 Sep 2025 23:05:06 +0200, Hans de Goede wrote:
+>> On 2-Sep-25 22:41, Leo L. Schwab wrote:
+>>> 	This does not happen.  The G13 accepts and remembers backlight color
+>>> settings even when the LEDs have been toggled off locally.
+>>> [ ... ]
+>>
+>> I see, interesting.
+>>
+>> So what happens if you turn off the backlight with the toggle button on the G13
+>> and then write 0 to brightness in sysfs and then press the toggle button again?
+>>
+> 	It's a little difficult to see, but the backlight turns back on with
+> minimal brightness.  To my eye, it looks like it's displaying #000001.
 
+Ok.
+
+>> Right it does seem that using cdev.brightness_hw_changed is valid in
+>> this case.
+>>
+>> But the LED API is supposed to have the brightness attribute present
+>> the actual current brightness of the device.
+>>
+>> I'm not sure how upower will react if the poll() on brightness_hw_changed
+>> wakes upower up and then the reported brightness is unchanged...
+>>
+>> I need to think about this a bit and check the upower code, let me
+>> get back to you on this in a day or 2 ...
+>>
+> 	Certainly.
+
+Thank you for waiting. After looking at the upower code + running some
+tests with a G510 I think that your hw_brightness_changed support
+is pretty good as is.
+
+There are 2 improvements which I would like to see:
+
+1. When the backlight is turned on through the button, you
+should pass g15_led->brightness to the notify() call rather
+then LED_FULL. GNOME will show an OSD with the new brightness
+value shown as a mini progress bar similar to how it shows
+speaker volume when doing mute/unmute. This mini progress
+bar should show the actual brightness being restored, not
+always full brightness.
+
+2. ATM if the backlight is turned off on the G13 when
+the driver loads and then one of the buttons gets pressed
+then a notify() will happen because the led_cdev.hw_brightness_changed
+value of -1 will be different from the value of 0 in the
+input-report. This notify will lead to an unwanted OSD
+notification in GNOME, so this needs to be fixed.
+IMHO the best fix would be to use:
+
+	hid_hw_raw_request(..., HID_INPUT_REPORT, HID_REQ_GET_REPORT);
+
+at probe to get the input-report so that the driver will
+actually now the backlight state at probe() time without
+needing to wait for the first time the input-report is send.
+
+You have inspired me to add hw_brightness_changed support
+to the G510 code, see the attached patch. This patch can
+also be used as an example how to get the input report
+on the G13 during probe().
+
+Note this also adds a variable at the driver level to
+track the backlight state also fixing the compile issue
+you hit without needing to use #ifdef-ery.
+
+I'll wait for your G13 support to land first and then
+rebase the G510 patch on top.
+
+Regards,
+
+Hans
+
+
+
+
+--------------Dlpxm7uriiqBCvrDdL5SnNH2
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-HID-hid-lg-g15-Add-hw_brightness_changed-support-for.patch"
+Content-Disposition: attachment;
+ filename*0="0001-HID-hid-lg-g15-Add-hw_brightness_changed-support-for.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
+
+RnJvbSAxYzczNWU1ZGRiYTgxNGFjYzU3YTlkMjY4ZWQ3ODUyYmQ0YWE1ODg3IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBIYW5zIGRlIEdvZWRlIDxoYW5zZ0BrZXJuZWwub3Jn
+PgpEYXRlOiBNb24sIDggU2VwIDIwMjUgMjI6NTU6MTIgKzAyMDAKU3ViamVjdDogW1BBVENI
+XSBISUQ6IGhpZC1sZy1nMTU6IEFkZCBod19icmlnaHRuZXNzX2NoYW5nZWQgc3VwcG9ydCBm
+b3IgdGhlCiBHNTEwIGtleWJvYXJkCgpBZGQgaHdfYnJpZ2h0bmVzc19jaGFuZ2VkIHN1cHBv
+cnQgZm9yIHRoZSBHNTEwIGtleWJvYXJkLCBzbyB0aGF0IGUuZy4KR05PTUUgd2lsbCBzaG93
+IGFuIE9TRCBub3RpZmljYXRpb24gd2hlbiB0b2dnbGluZyB0aGUgYmFja2xpZ2h0IG9uL29m
+Zgp3aXRoIHRoZSBidXR0b24gdGhlIGtleWJvYXJkLgoKTm90ZSB0aGF0IGl0IGlzIG5vdCBw
+b3NzaWJsZSB0byB0dXJuIHRoZSBiYWNrbGlnaHQgYmFjayBvbiBieSB3cml0aW5nCi9zeXMv
+Y2xhc3MvbGVkcy8uLi4vYnJpZ2h0bmVzcyBpdCBjYW4gb25seSBiZSB0dXJuZWQgb24gYnkg
+cHJlc3NpbmcKdGhlIGJ1dHRvbiBvbiB0aGUga2V5Ym9hcmQuIFRvIHJlZmxlY3QgdGhpcyAv
+c3lzL2NsYXNzL2xlZHMvLi4uL2JyaWdodG5lc3MKd2lsbCBhbHdheXMgcmVwb3J0IHRoZSBs
+YXN0IGJyaWdodG5lc3MgdmFsdWUgaW5kZXBlbmRlbnQgb2YgdGhlIG9uL29mZgp0b2dnbGUg
+YnVpbHQgaW50byB0aGUga2V5Ym9hcmQuCgpTaWduZWQtb2ZmLWJ5OiBIYW5zIGRlIEdvZWRl
+IDxoYW5zZ0BrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvaGlkL2hpZC1sZy1nMTUuYyB8IDM3
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCAzNCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvaGlkL2hpZC1sZy1nMTUuYyBiL2RyaXZlcnMvaGlkL2hpZC1sZy1nMTUuYwppbmRleCBm
+ODYwNTY1NjI1N2IuLmU1YmUyYTVkZmE2NyAxMDA2NDQKLS0tIGEvZHJpdmVycy9oaWQvaGlk
+LWxnLWcxNS5jCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1sZy1nMTUuYwpAQCAtMjYsNiArMjYs
+OSBAQAogI2RlZmluZSBMR19HNTEwX0ZFQVRVUkVfQkFDS0xJR0hUX1JHQgkweDA1CiAjZGVm
+aW5lIExHX0c1MTBfRkVBVFVSRV9QT1dFUl9PTl9SR0IJMHgwNgogCisjZGVmaW5lIExHX0c1
+MTBfSU5QVVRfTUFDUk9fS0VZUwkweDAzCisjZGVmaW5lIExHX0c1MTBfSU5QVVRfS0JEX0JB
+Q0tMSUdIVAkweDA0CisKIGVudW0gbGdfZzE1X21vZGVsIHsKIAlMR19HMTUsCiAJTEdfRzE1
+X1YyLApAQCAtNjcsNiArNzAsNyBAQCBzdHJ1Y3QgbGdfZzE1X2RhdGEgewogCWVudW0gbGdf
+ZzE1X21vZGVsIG1vZGVsOwogCXN0cnVjdCBsZ19nMTVfbGVkIGxlZHNbTEdfRzE1X0xFRF9N
+QVhdOwogCWJvb2wgZ2FtZV9tb2RlX2VuYWJsZWQ7CisJYm9vbCBiYWNrbGlnaHRfZGlzYWJs
+ZWQ7CiB9OwogCiAvKioqKioqKiogRzE1IGFuZCBHMTUgdjIgTEVEIGZ1bmN0aW9ucyAqKioq
+KioqKi8KQEAgLTIyNyw2ICsyMzEsMjAgQEAgc3RhdGljIGludCBsZ19nNTEwX2dldF9pbml0
+aWFsX2xlZF9icmlnaHRuZXNzKHN0cnVjdCBsZ19nMTVfZGF0YSAqZzE1LCBpbnQgaSkKIAkJ
+ZzE1LT5sZWRzW2ldLmJyaWdodG5lc3MgPSAwOwogCX0KIAorCWlmIChpKQorCQlyZXR1cm4g
+MDsKKworCXJldCA9IGhpZF9od19yYXdfcmVxdWVzdChnMTUtPmhkZXYsIExHX0c1MTBfSU5Q
+VVRfS0JEX0JBQ0tMSUdIVCwKKwkJCQkgZzE1LT50cmFuc2Zlcl9idWYsIDIsCisJCQkJIEhJ
+RF9JTlBVVF9SRVBPUlQsIEhJRF9SRVFfR0VUX1JFUE9SVCk7CisJaWYgKHJldCAhPSAyKSB7
+CisJCS8qIFRoaXMgY2FuIGhhcHBlbiB3aGVuIGEgS1ZNIHN3aXRjaCBpcyB1c2VkLCBzbyBv
+bmx5IHdhcm4uICovCisJCWhpZF93YXJuKGcxNS0+aGRldiwgIkVycm9yIGdldHRpbmcgYmFj
+a2xpZ2h0IHN0YXRlOiAlZFxuIiwgcmV0KTsKKwkJcmV0dXJuIDA7CisJfQorCisJZzE1LT5i
+YWNrbGlnaHRfZGlzYWJsZWQgPSBnMTUtPnRyYW5zZmVyX2J1ZlsxXSAmIDB4MDQ7CisKIAly
+ZXR1cm4gMDsKIH0KIApAQCAtNTQ5LDE0ICs1NjcsMjQgQEAgc3RhdGljIGludCBsZ19nNTEw
+X2V2ZW50KHN0cnVjdCBsZ19nMTVfZGF0YSAqZzE1LCB1OCAqZGF0YSkKIAogc3RhdGljIGlu
+dCBsZ19nNTEwX2xlZHNfZXZlbnQoc3RydWN0IGxnX2cxNV9kYXRhICpnMTUsIHU4ICpkYXRh
+KQogeworCXN0cnVjdCBsZ19nMTVfbGVkICpnMTVfbGVkID0gJmcxNS0+bGVkc1tMR19HMTVf
+S0JEX0JSSUdIVE5FU1NdOwogCWJvb2wgYmFja2xpZ2h0X2Rpc2FibGVkOwogCisJYmFja2xp
+Z2h0X2Rpc2FibGVkID0gZGF0YVsxXSAmIDB4MDQ7CisJaWYgKGJhY2tsaWdodF9kaXNhYmxl
+ZCA9PSBnMTUtPmJhY2tsaWdodF9kaXNhYmxlZCkKKwkJcmV0dXJuIDA7CisKKwlsZWRfY2xh
+c3NkZXZfbm90aWZ5X2JyaWdodG5lc3NfaHdfY2hhbmdlZCgKKwkJJmcxNV9sZWQtPm1jZGV2
+LmxlZF9jZGV2LAorCQliYWNrbGlnaHRfZGlzYWJsZWQgPyAwIDogZzE1X2xlZC0+YnJpZ2h0
+bmVzcyk7CisKKwlnMTUtPmJhY2tsaWdodF9kaXNhYmxlZCA9IGJhY2tsaWdodF9kaXNhYmxl
+ZDsKKwogCS8qCiAJICogVGhlIEc1MTAgaWdub3JlcyBiYWNrbGlnaHQgdXBkYXRlcyB3aGVu
+IHRoZSBiYWNrbGlnaHQgaXMgdHVybmVkIG9mZgogCSAqIHRocm91Z2ggdGhlIGxpZ2h0IHRv
+Z2dsZSBidXR0b24gb24gdGhlIGtleWJvYXJkLCB0byB3b3JrIGFyb3VuZCB0aGlzCiAJICog
+d2UgcXVldWUgYSB3b3JraXRlbSB0byBzeW5jIHZhbHVlcyB3aGVuIHRoZSBiYWNrbGlnaHQg
+aXMgdHVybmVkIG9uLgogCSAqLwotCWJhY2tsaWdodF9kaXNhYmxlZCA9IGRhdGFbMV0gJiAw
+eDA0OwogCWlmICghYmFja2xpZ2h0X2Rpc2FibGVkKQogCQlzY2hlZHVsZV93b3JrKCZnMTUt
+PndvcmspOwogCkBAIC01ODgsOSArNjE2LDkgQEAgc3RhdGljIGludCBsZ19nMTVfcmF3X2V2
+ZW50KHN0cnVjdCBoaWRfZGV2aWNlICpoZGV2LCBzdHJ1Y3QgaGlkX3JlcG9ydCAqcmVwb3J0
+LAogCQlicmVhazsKIAljYXNlIExHX0c1MTA6CiAJY2FzZSBMR19HNTEwX1VTQl9BVURJTzoK
+LQkJaWYgKGRhdGFbMF0gPT0gMHgwMyAmJiBzaXplID09IDUpCisJCWlmIChkYXRhWzBdID09
+IExHX0c1MTBfSU5QVVRfTUFDUk9fS0VZUyAmJiBzaXplID09IDUpCiAJCQlyZXR1cm4gbGdf
+ZzUxMF9ldmVudChnMTUsIGRhdGEpOwotCQlpZiAoZGF0YVswXSA9PSAweDA0ICYmIHNpemUg
+PT0gMikKKwkJaWYgKGRhdGFbMF0gPT0gTEdfRzUxMF9JTlBVVF9LQkRfQkFDS0xJR0hUICYm
+IHNpemUgPT0gMikKIAkJCXJldHVybiBsZ19nNTEwX2xlZHNfZXZlbnQoZzE1LCBkYXRhKTsK
+IAkJYnJlYWs7CiAJfQpAQCAtNjI0LDYgKzY1Miw5IEBAIHN0YXRpYyB2b2lkIGxnX2cxNV9z
+ZXR1cF9sZWRfcmdiKHN0cnVjdCBsZ19nMTVfZGF0YSAqZzE1LCBpbnQgaW5kZXgpCiAJZzE1
+LT5sZWRzW2luZGV4XS5tY2Rldi5sZWRfY2Rldi5tYXhfYnJpZ2h0bmVzcyA9IDI1NTsKIAln
+MTUtPmxlZHNbaW5kZXhdLm1jZGV2Lm51bV9jb2xvcnMgPSAzOwogCisJaWYgKGluZGV4ID09
+IExHX0cxNV9LQkRfQlJJR0hUTkVTUykKKwkJZzE1LT5sZWRzW2luZGV4XS5tY2Rldi5sZWRf
+Y2Rldi5mbGFncyA9IExFRF9CUklHSFRfSFdfQ0hBTkdFRDsKKwogCXN1YmxlZF9pbmZvID0g
+ZGV2bV9rY2FsbG9jKCZnMTUtPmhkZXYtPmRldiwgMywgc2l6ZW9mKCpzdWJsZWRfaW5mbyks
+IEdGUF9LRVJORUwpOwogCWlmICghc3VibGVkX2luZm8pCiAJCXJldHVybjsKLS0gCjIuNTEu
+MAoK
+
+--------------Dlpxm7uriiqBCvrDdL5SnNH2--
 
