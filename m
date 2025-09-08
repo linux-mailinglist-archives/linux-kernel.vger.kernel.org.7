@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-806843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC32B49C68
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEA9B49C75
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092C71BC70B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED6716641F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476242E2F1A;
-	Mon,  8 Sep 2025 21:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6192E3B07;
+	Mon,  8 Sep 2025 21:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VS36maUZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiDbdfAu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9789523371B;
-	Mon,  8 Sep 2025 21:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A572367B3;
+	Mon,  8 Sep 2025 21:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757368304; cv=none; b=ly57Y7YwSkWcpshtcuH7gG20vb2z+9k/abH/cQBPS2IvZ96RcZvmN18F53TMqVu37hpaRmLU8QczqQ0UgRsiujLATJA9uMkoQ59DLfeItNGcxEN8bOIRhlj0GsPkZmrgfaYQud76EV9eXC1c78T/2FdYYfLsNAdosQywnGk8yo8=
+	t=1757368512; cv=none; b=QGcHzDRYu1GF6ftE8iQRV1l253keijRuioJ8nrdV+mq3VrWhet4PglV1oGXsVjm/kjmvoEiiFrEN8AHOqHxo/QFMD8pAsla4woxHSy3GehfRRLfK/bt7ow0LyVdY/Hy++uf04epXYawSWTm+oUBOKXlzHXzeHHjzWDeB1lDEWao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757368304; c=relaxed/simple;
-	bh=U9AbL5VFGndjUVgINshuPsOfUibJtOYH//MWS793yfE=;
+	s=arc-20240116; t=1757368512; c=relaxed/simple;
+	bh=+nYJPbuKlpnqlu3CLLJjdFbOtA1lzkZavy4yOLM+sGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ApaVMNT5DySaWswW3wpDOeroQ6nCFUnb8UWxuvuSPXAkaf0UN28pCtBF9chfgbJ9ljUsdRUeWcpOYUakT5TllT4I2Uk6rdQ1ON8BpOMznWxP+BJo4a/6RFq3ltluk/VeYvnS8lYcoGiPXdVbPJtxSXfSDvGYj1GUWfI7k3QijbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VS36maUZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07ACFC4CEF1;
-	Mon,  8 Sep 2025 21:51:43 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=HnhiZa9DThU19QkwL6ioGnx+Tn6a6MWXc21ofa6AOhU61+2G3Bl8L+bhKrvOhbVNWZXX1AODUy0gZOycEeM0HvAWhZphtzNFC45DL/gYUcLkSmy4qvM/faIn2JT0yd9wfictuePGZDXgk4E4L/ipeQEG1SZP0p+WW41scw5zW+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiDbdfAu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B7AC4CEF1;
+	Mon,  8 Sep 2025 21:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757368304;
-	bh=U9AbL5VFGndjUVgINshuPsOfUibJtOYH//MWS793yfE=;
+	s=k20201202; t=1757368511;
+	bh=+nYJPbuKlpnqlu3CLLJjdFbOtA1lzkZavy4yOLM+sGc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VS36maUZSdl08Q1FVLRzY0Aj10s8sHfIw14e21tydqTAHRI0sweL9IUAYHIthqy26
-	 29US43sB7uD/EKUBcYqHAshz5adGkFQ5UYKtcCOWdSNbyreuhQw5eAeJ+Ewx7kI1Y2
-	 6YgDxpVJFy6w9UX2Hec/VBoIVI1MHOyhyPHCyB+7lf+JdxZzg5bX9org18mOhH/22g
-	 x3jBR/v5oR16kIvLoZYaNUyYFStLSb/fu49lI+PNDVwe+k1T8MoTvmS5EqMwO98LzJ
-	 603vBAc6vz9EeHaz1oj0dj2Y8IauQt+NUUmIhaUjF06q5qyFtW/G8QISaAPRcKM6hT
-	 Z4XgKg5xvyXSA==
-Date: Mon, 8 Sep 2025 16:51:42 -0500
+	b=kiDbdfAuo9J++rxAYt2nbuOgNET0a6aGGKZyM1O70K6sKUOOBtjNGuP5/jiU0a2O7
+	 kgDOBgNSMfStFqgdYWCblaRMhdw7xF1V8/WBdswaXIMObwyEyCKJLFMb13dwZc07rt
+	 IjUSn7k/xbQQ3go5vh6EUy5WulEkff8YPQDzVBRI8kU5AuNWVfVPKUSSmrRtP1AYuR
+	 vx04Rru42xQY6+u2WSM0ZRr3xwOBqnxcctWQgasngIzjADGtKq7Iq4oQtMXlawR9kx
+	 yE3u9L6fsekFx4PQ4yK6olQo65pW1Ed4I3YxMTsa2Xwpa2lAJ+vPB3bRE/Tn/bCc2e
+	 nz5PYilemvA6Q==
+Date: Mon, 8 Sep 2025 16:55:10 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
-Message-ID: <20250908215142.GA1467111@bhelgaas>
+To: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Cc: Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, bhelgaas@google.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	yuji2.ishikawa@toshiba.co.jp
+Subject: Re: [PATCH v3 2/2] PCI: dwc: visconti: Remove cpu_addr_fix() after
+ DTS fix ranges
+Message-ID: <20250908215510.GA1467223@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,79 +60,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905052836.work.425-kees@kernel.org>
+In-Reply-To: <1757298848-15154-3-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 
-On Thu, Sep 04, 2025 at 10:28:41PM -0700, Kees Cook wrote:
-> After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
-> ffs()-family implementations"), which allows GCC's value range tracker
-> to see past ffs(), GCC 8 on ARM thinks that it might be possible that
-> "ffs(rq) - 8" used here:
-> 
-> 	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
-> 
-> could wrap below 0, leading to a very large value, which would be out of
-> range for the FIELD_PREP() usage:
-> 
-> drivers/pci/pci.c: In function 'pcie_set_readrq':
-> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
-> ...
-> drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
->   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
->       ^~~~~~~~~~
-> 
-> If the result of the ffs() is bounds checked before being used in
-> FIELD_PREP(), the value tracker seems happy again. :)
-> 
-> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
-> Signed-off-by: Kees Cook <kees@kernel.org>
+In subject, s/PCI: dwc: visconti:/PCI: visconti:/ to match previous
+history.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Sep 08, 2025 at 11:34:08AM +0900, Nobuhiro Iwamatsu wrote:
+> From: Frank Li <Frank.Li@nxp.com>
+> 
+> Remove cpu_addr_fix() since it is no longer needed. The PCIe ranges
+> property has been corrected in the DTS, and the DesignWare common code now
+> handles address translation properly without requiring this workaround.
 
-Would be great if you included this as part of your series, thanks!
+As Mani pointed out, the driver has to continue working correctly with
+any old DTs in the field.
 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+> 
 > ---
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: lkft-triage@lists.linaro.org
-> Cc: Linux Regressions <regressions@lists.linux.dev>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dan Carpenter <dan.carpenter@linaro.org>
-> Cc: Ben Copeland <benjamin.copeland@linaro.org>
-> Cc: <lkft-triage@lists.linaro.org>
-> Cc: <linux-pci@vger.kernel.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> ---
->  drivers/pci/pci.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> v3:
+>   Add pci->use_parent_dt_ranges fixes.
+>   Update Signed-off-by address, because my company email address haschanged.
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b0f4d98036cd..005b92e6585e 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  {
->  	u16 v;
->  	int ret;
-> +	unsigned int firstbit;
->  	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+> v2:
+>   No Update.
+> ---
+>  drivers/pci/controller/dwc/pcie-visconti.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-visconti.c b/drivers/pci/controller/dwc/pcie-visconti.c
+> index cdeac6177143c..d8765e57147af 100644
+> --- a/drivers/pci/controller/dwc/pcie-visconti.c
+> +++ b/drivers/pci/controller/dwc/pcie-visconti.c
+> @@ -171,20 +171,7 @@ static void visconti_pcie_stop_link(struct dw_pcie *pci)
+>  	visconti_mpu_writel(pcie, val | MPU_MP_EN_DISABLE, PCIE_MPU_REG_MP_EN);
+>  }
 >  
->  	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
-> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  			rq = mps;
->  	}
+> -/*
+> - * In this SoC specification, the CPU bus outputs the offset value from
+> - * 0x40000000 to the PCIe bus, so 0x40000000 is subtracted from the CPU
+> - * bus address. This 0x40000000 is also based on io_base from DT.
+> - */
+> -static u64 visconti_pcie_cpu_addr_fixup(struct dw_pcie *pci, u64 cpu_addr)
+> -{
+> -	struct dw_pcie_rp *pp = &pci->pp;
+> -
+> -	return cpu_addr & ~pp->io_base;
+> -}
+> -
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+> -	.cpu_addr_fixup = visconti_pcie_cpu_addr_fixup,
+>  	.link_up = visconti_pcie_link_up,
+>  	.start_link = visconti_pcie_start_link,
+>  	.stop_link = visconti_pcie_stop_link,
+> @@ -310,6 +297,8 @@ static int visconti_pcie_probe(struct platform_device *pdev)
 >  
-> -	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
-> +	firstbit = ffs(rq);
-> +	if (firstbit < 8)
-> +		return -EINVAL;
-> +	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
+>  	platform_set_drvdata(pdev, pcie);
 >  
->  	if (bridge->no_inc_mrrs) {
->  		int max_mrrs = pcie_get_readrq(dev);
+> +	pci->use_parent_dt_ranges = true;
+> +
+>  	return visconti_add_pcie_port(pcie, pdev);
+>  }
+>  
 > -- 
-> 2.34.1
+> 2.51.0
+> 
 > 
 
