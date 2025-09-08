@@ -1,168 +1,214 @@
-Return-Path: <linux-kernel+bounces-806186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A72FB49320
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B43BB49327
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6542007E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7251B25A6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9DD30E0C7;
-	Mon,  8 Sep 2025 15:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14C630DD39;
+	Mon,  8 Sep 2025 15:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mPbNWXMh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyTU68Y+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0CE30DEA5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A8630C616;
+	Mon,  8 Sep 2025 15:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345084; cv=none; b=PuTF2dRUIocANm9Uml60y2OfKSGPDC/xA+qqxKr6gK5ogf03Tt2pRb3QIYs2b+W4xrx03EkafDFU0+KfryyHuNRiP92MAOprOomDoBL846I4lLeWys1CBkNxrKjOvBF3uIWDYDa+5UVXiiewEdOw/gSVbCdPG2nbYL0oyTFjeSU=
+	t=1757345127; cv=none; b=SXmUjeTeZ2iwF4hocWtdHz9doP2HB/ap5hTMETPfgvUB9ZkjrdjBc1nEjg0JJFl9MxfXgiU//o/NqFrIygs/d51RTlhgkdYCYqw1MusykxU5suoSqyu/W3/l9hat+8DmqHfsSTIv1rgTogHrxCC36ZDatUFs9xjcbQnXXDRmTbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345084; c=relaxed/simple;
-	bh=BVmhf05AnvENSu4Q2O9muu1fjrqbpmJnlrdvdpeVF4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tyv1LSPb8CTzmTyI/xyleKJkELqtujBHU/OiMWxVHeEOpKFJiYEmQ7eE7DugOfF5IG3jHhkDz4lctP4f+VANO32CoNdlMVPCsVbw69c/VNTsnZN3RgDVyKm6c/ALjZe/rOvqCIIsAjtDQ3A0gPZOMVYe8SnsK87/H+aDKrghuGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mPbNWXMh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588939Ru006566
-	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 15:24:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s9XBnFXGBmeYr88ojm2wcO7hWjCnRSWfP1E0HSc5a+g=; b=mPbNWXMhJIB1bhi+
-	SKij4Hcmz4JORbUy7bwGxi3KJY/+t4JGgD6HzXlAAEHPTTssApfucuAqDPJwi2II
-	N1rDHu8CzFGOQqHKI6eF4dbDNiQT25jWJEIEwKqWU0TirDKbYSWANZs/2T2BCvI0
-	Kg9uRJgYeyk7i13NetjTPIAatSDzc22wyNHmZImgB7Df/YvYbohcidA44G5As0KV
-	m91nklRxVxSdeWzUPK0cZYAa+kOMqufPNUqhctvDtrhYnLYc4ZHCro/s7IiSFZ5y
-	Vs500sioapGS9OTfo5KdQbqtaa5tBH3KZRx8mnqmKHuipfw9ZdpkZ4Pv8UrerKC8
-	IHPvFg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490by8w3dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:24:41 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-71f2e7244c7so5406416d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:24:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757345081; x=1757949881;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9XBnFXGBmeYr88ojm2wcO7hWjCnRSWfP1E0HSc5a+g=;
-        b=JTm5oOFgKfrwURuCaWJPUr6DjjqqM9VgG8PAbY2aFrkZq5mKpj9k4u0RfyYFnrmBAc
-         G49mUHY6lyEQvbK8vs5QOKKK4HvMQnncFSwgxF7RhEIucOcBv+8niIXmpCsUOfwAWK3H
-         XpEWnUAucLMIcrWfket2yse/oEiwp9g6yojuNH+P4bhjDf8TEphuMrpTs3mMSU3Pz8u5
-         mDt5Ot5uUDTCnTTVUjj7fWaV4uft0RI70fgbJUXdKCZtTnBKhOIIYkjNh8wsqOmRTc3Z
-         UkL5ntFmxr29H45X82e+PXWZCE6TafIoAOh+8KuFi7qMHEFOwhPxLaxiBss5Z6R5u3wa
-         i0yg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5JihMojCGYZVA7GdwJT3phnReE1WqlMVWEOpCKxwtOP3mPgPmNS084EsheaJyhePdg3RIdFJQ9v3JEvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqp/jntJ3TaBgwiT+pv4g2G7JfaB6v6oI3k+xyruHbo32n/+Je
-	vYtvexwDIFI4JmqwmQ6Jf54tTFG/1P7PUaKZ545wn7pFNBM5THJ/xw/dBRky82HDUUufqkmGH91
-	z3BZPEjVOiKdyr3LUyhVhHVuJLjWU41aX7pWVGAe0mvHbGFxS5MTnglGzJlMEmAtzl1Q=
-X-Gm-Gg: ASbGncunhEpl8MQT8VlwG5cLdghp9PiQ9R9sqJRqkw9MOzHb8PjF3D4MU0IxBG7JZ7t
-	zMXDsoXgwNERq4iQ8IcgV7teH8lE3oC2E4ge5PVcoYG8aztLOGe8S85o/MXA0PPsThVQB77Tl1k
-	K3tJ7/Ny08JnOc3+LhmkO/SftamviCnjeCOI0ScUkseqRHE9yxQPF8aCxt/bXrvQPmH51jjtBu6
-	7wczb1tQsRHDFv6LR70Ib8J7w9SUrrRBHdhU2xXaSDttG/0C2HZRbosOV+lSJV1LJYQnJpgfgEG
-	+XtZD/EW1RZa+ktOOYodI5lZpZImhIc7cV+YYHxUhde1xjUu8g12LlEZd4j5EE42dpB+I5/IV32
-	O00gzbJuUt42TW/6dDatAzQ==
-X-Received: by 2002:ad4:5c62:0:b0:72a:df4a:e3 with SMTP id 6a1803df08f44-73946f70409mr55645156d6.8.1757345080626;
-        Mon, 08 Sep 2025 08:24:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/dM+YUVzCoKCgc+8cdXvnS5qCmMcy7DhBINwLAE11WFETAeMMaRl0ZDxjjD0D4fmvZpBH8A==
-X-Received: by 2002:ad4:5c62:0:b0:72a:df4a:e3 with SMTP id 6a1803df08f44-73946f70409mr55644876d6.8.1757345080079;
-        Mon, 08 Sep 2025 08:24:40 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62778a094a0sm3537550a12.31.2025.09.08.08.24.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 08:24:39 -0700 (PDT)
-Message-ID: <8cf65d78-2790-4467-a9b3-372af53c1374@oss.qualcomm.com>
-Date: Mon, 8 Sep 2025 17:24:37 +0200
+	s=arc-20240116; t=1757345127; c=relaxed/simple;
+	bh=xze1+fxvsPzdRtMPODz1XPQ0lxdL5slP1XUd9qQL0ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuDSZubRb2QsXPjnppXJOX5dcaGtQkZNQWQ0y0IqfRPuSCGNQVnwDlN83kED0FqkPAM2a+ToAyYsEuoK7WuEsIjP2g29JZ8QZpYICe0fedNrBe7u9RET34vURH3Co/DCnfUGRIb2MJWZpRYMQWVmEqvRngLCJzw+coCQNSTOMsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyTU68Y+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99800C4CEF1;
+	Mon,  8 Sep 2025 15:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757345127;
+	bh=xze1+fxvsPzdRtMPODz1XPQ0lxdL5slP1XUd9qQL0ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KyTU68Y+L8AxoUgOYplOYbRD7vcfIix5f1zj7y9rUsF0mCwiuVtMC51iUrXdh6Kio
+	 ffjp/kvxXdzVnq604zNpCEIWfzK/19XZo2gHHJqakbo9/GZFOKfRnaCk/0XJbxGjpw
+	 sGUOEAJwxO7AZBvrlQ5cDq0PyUVsi7zrMsOQbIdUQ3HifsTm1wyu/I4GMJYK0KUveV
+	 DSM0lcKrm5mk3A1Htr7dSnyVsWdkNVGpQOsMyLXPZf9n7TTvqIGfYDzfn409+Di0My
+	 QFXFC70/OORIVYFcRwFvyrb+9ROBhPszeSJAUiw8XT2p8m8/pSd7dd0Vtc3yc3FMeF
+	 pH1XDfrsdC8MQ==
+Date: Mon, 8 Sep 2025 20:55:15 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <qghspbzkde5rftdtqmrqt4v5qkx4hakqwdklotlf6vaj55tpmb@aoixy7umnrqj>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+ <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+ <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
+ <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
+ <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
+ <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
+ <742cf1ae-1723-4cf5-8931-afd35699cc95@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/16] drm/msm/a6xx: Enable IFPC on Adreno X1-85
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Antonino Maniscalco <antomani103@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
- <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Yv8PR5YX c=1 sm=1 tr=0 ts=68bef539 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=l1a4ANfPRBzC3aqxuR8A:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-GUID: zDO1OcMTmE2WcJMJVzJEGQzp5llYck5Z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX3I3QDaq77aoM
- riVtzbpGSUDmvK5B7z0Clt9Uxglipy7HnXtMaCBq7O1i1F+HFn7+hxJ7+VntRVPx9qFtNcqUysu
- F+tDZEWRSYN0Iob/LW4QTT5yq9UPjH7MEiFrtYJv9QniXuS8E16W+GunK2E0k6dc38kesc7BdqC
- AEoIpVwr5fZzNwRRA+0QzTi3wB2bNajwfwwQ5xpHw6VuJjEl7lxDeM8nDLgOjT8Aq+eJN7nm5PB
- omyiBLYNsvXMruM+edfrqsb9exvQuvi1r8AQfk6nja92h/BeKFHAVZiC/W0CW5awotYnsKCU+AG
- j2/CSmUf/Fui1tAZKcoAc3Fjdvz3kQs9wr5xLf+HJ5+gVNeDDdWpw43CgiEwtUK7ujuyELVHf/R
- VI+ubBi4
-X-Proofpoint-ORIG-GUID: zDO1OcMTmE2WcJMJVzJEGQzp5llYck5Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_05,2025-09-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <742cf1ae-1723-4cf5-8931-afd35699cc95@tuxon.dev>
 
-On 9/8/25 10:27 AM, Akhil P Oommen wrote:
-> Add the IFPC restore register list and enable IFPC support on Adreno
-> X1-85 gpu.
+On Mon, Sep 08, 2025 at 04:06:50PM GMT, Claudiu Beznea wrote:
+> Hi, Manivannan,
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
+> On 9/1/25 18:54, Manivannan Sadhasivam wrote:
+> > On Mon, Sep 01, 2025 at 04:22:16PM GMT, Geert Uytterhoeven wrote:
+> >> Hi Mani,
+> >>
+> >> On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >>> On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
+> >>>> On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >>>>> On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+> >>>>>> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+> >>>>>>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> >>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>>>>>>
+> >>>>>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> >>>>>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> >>>>>>>> only as a root complex, with a single-lane (x1) configuration. The
+> >>>>>>>> controller includes Type 1 configuration registers, as well as IP
+> >>>>>>>> specific registers (called AXI registers) required for various adjustments.
+> >>>>>>>>
+> >>>>>>>> Hardware manual can be downloaded from the address in the "Link" section.
+> >>>>>>>> The following steps should be followed to access the manual:
+> >>>>>>>> 1/ Click the "User Manual" button
+> >>>>>>>> 2/ Click "Confirm"; this will start downloading an archive
+> >>>>>>>> 3/ Open the downloaded archive
+> >>>>>>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> >>>>>>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> >>>>>>>>
+> >>>>>>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> >>>>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>>
+> >>>>>>>> +  ret = pm_runtime_resume_and_get(dev);
+> >>>>>>>> +  if (ret)
+> >>>>>>>> +          return ret;
+> >>>>>>>> +
+> >>>>>>>
+> >>>>>>> Do you really need to do resume_and_get()? If not, you should do:
+> >>>>>>
+> >>>>>> It it's needed to enable the clock PM domain the device is part of.
+> >>>>>>
+> >>>>>
+> >>>>> I've replied below.
+> >>>>>
+> >>>>>>>
+> >>>>>>>     pm_runtime_set_active()
+> >>>>>>>     pm_runtime_no_callbacks()
+> >>>>>>>     devm_pm_runtime_enable()
+> >>>>
+> >>>>>>>> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> >>>>>>>> +{
+> >>>>>>>> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> >>>>>>>> +  const struct rzg3s_pcie_soc_data *data = host->data;
+> >>>>>>>> +  struct regmap *sysc = host->sysc;
+> >>>>>>>> +  int ret;
+> >>>>>>>> +
+> >>>>>>>> +  ret = pm_runtime_put_sync(dev);
+> >>>>>>>> +  if (ret)
+> >>>>>>>> +          return ret;
+> >>>>>>>
+> >>>>>>> Since there are no runtime callbacks present, managing runtime PM in the driver
+> >>>>>>> makes no sense.
+> >>>>>>
+> >>>>>> The PCIe device is part of a clock power domain. Dropping
+> >>>>>> pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
+> >>>>>> IP failing to work as its clocks will not be enabled/disabled. If you don't
+> >>>>>> like the pm_runtime_* approach that could be replaced with:
+> >>>>>>
+> >>>>>> devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
+> >>>>>> suspend/resume. W/o clocks the IP can't work.
+> >>>>>
+> >>>>> Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
+> >>>>> if you have a power domain attached to the IP, which you also do as I see now.
+> >>>>> So to conclude, you should enable/disable the clocks explicitly for managing
+> >>>>> clocks and use runtime PM APIs for managing the power domain associated with
+> >>>>> clock controller.
+> >>>>
+> >>>> Why? For the past decade, we've been trying to get rid of explicit
+> >>>> module clock handling for all devices that are always part of a
+> >>>> clock domain.
+> >>>>
+> >>>> The Linux PM Domain abstraction is meant for both power and clock
+> >>>> domains.  This is especially useful when a device is present on multiple
+> >>>> SoCs, on some also part of a power domain,  and the number of module
+> >>>> clocks that needs to be enabled for it to function is not the same on
+> >>>> all SoCs.  In such cases, the PM Domain abstraction takes care of many
+> >>>> of the integration-specific differences.
+> >>>
+> >>> Hmm, my understanding was that we need to explicitly handle clocks from the
+> >>> consumer drivers. But that maybe because, the client drivers I've dealt with
+> >>> requires configuring the clocks (like setting the rate, re-parenting etc...) on
+> >>> their own. But if there is no such requirement, then I guess it is OK to rely on
+> >>> the PM core and clock controller drivers.
+> >>
+> >> When you need to know the actual clock rate, or change it, you
+> >> indeed have to handle the clock explicitly.  But it still may be enabled
+> >> automatically through the clock domain.
+> >>
+> > 
+> > Yeah!
+> > 
+> >>>>> But please add a comment above pm_runtime_resume_and_get() to make it clear as
+> >>>>> most of the controller drivers are calling it for no reason.
+> >>>>
+> >>>> Note that any child device that uses Runtime PM depends on all
+> >>>> its parents in the hierarchy to call pm_runtime_enable() and
+> >>>> pm_runtime_resume_and_get().
+> >>>
+> >>> Two things to note from your statement:
+> >>>
+> >>> 1. 'child device that uses runtime PM' - Not all child drivers are doing
+> >>> runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
+> >>> unless they depend on the parent for resource enablement as below.
+> >>
+> >> It indeed depends on the child device, and on the bus.  For e.g. an
+> >> Ethernet controller connected to a simple SoC expansion bus, the bus must
+> >> be powered and clock, which is what "simple-pm-bus" takes care of
+> >> ("simple-bus" does not).
+> >>
+> > 
+> > Right. But most of the PCI controller drivers call pm_runtime_resume_and_get()
+> > for no good reasons. They might have just copied the code from a driver that did
+> > it on purpose. So I tend to scrutinize these calls whenever they get added for a
+> > driver.
+> 
+> To be sure I will prepare the next version with something that was
+> requested: are you OK with keeping pm_runtime_resume_and_get() and add a
+> comment for it?
+> 
 
-[...]
+Yes!
 
-> @@ -1432,12 +1495,14 @@ static const struct adreno_info a7xx_gpus[] = {
->  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
->  		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
->  			  ADRENO_QUIRK_HAS_HW_APRIV |
-> -			  ADRENO_QUIRK_PREEMPTION,
-> +			  ADRENO_QUIRK_PREEMPTION |
-> +			  ADRENO_QUIRK_IFPC,
->  		.init = a6xx_gpu_init,
->  		.a6xx = &(const struct a6xx_info) {
->  			.hwcg = a740_hwcg,
->  			.protect = &a730_protect,
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
-> +			.ifpc_reglist = &a750_ifpc_reglist,
->  			.gmu_chipid = 0x7050001,
->  			.gmu_cgc_mode = 0x00020202,
->  		},
-> @@ -1466,6 +1531,7 @@ static const struct adreno_info a7xx_gpus[] = {
->  		.a6xx = &(const struct a6xx_info) {
->  			.protect = &a730_protect,
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
-> +			.ifpc_reglist = &a750_ifpc_reglist,
+- Mani
 
-The latter one should be part of the last patch
-
-Konrad
+-- 
+மணிவண்ணன் சதாசிவம்
 
