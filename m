@@ -1,69 +1,98 @@
-Return-Path: <linux-kernel+bounces-805533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F997B489D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:16:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57742B489D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E43B4A0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F277172074
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D32E5B11;
-	Mon,  8 Sep 2025 10:16:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963737081E;
-	Mon,  8 Sep 2025 10:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83777081E;
+	Mon,  8 Sep 2025 10:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUjCb4rW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E14C281375;
+	Mon,  8 Sep 2025 10:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326563; cv=none; b=WYGyRcO16R88PsY/RTfa2EBh2KkBJrsJGbpd2A9mWJdGjGS0nrSo//1OBmMHHkcvO2WDIwb2nr5ovpah6d82aashqy03pz1veXLOHTi9jNN7BKTyYaze09CV7qzlwqikVOSQel2dVPEjqY85VvKGMnWsI2pNYR6u+uwScV2pzYM=
+	t=1757326574; cv=none; b=FyvFRNkd4byiiT41z53cgpBSrRTLwvBvypuF/F4lduhX03bEfiNJPbaX1fB2SctVpoQr7HfFJYCE6ErYYajHMJlrPbAPKPz2MfHQtz2WIUn9uyZCSfbfJ6ATzlCjqz+dvEwQ+h6TzAgft1r80d2e/BK1oLeLgf1hTPsbSXR7LVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326563; c=relaxed/simple;
-	bh=I6CCdO2I8OfTKvg8UkxnpsuGGSkgbMN9yxQpOATLnbs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J2PyzEcMzBmxmWSXoIIDt1Kh627eQ439t8NKvNZhzQvMfkohh1Cqw7zx3XvxawRDQOTs7wA3zWvYbl6EZdoYblSki2Y+5u1kr9BbDIN7O0orTNhupr3maw2UxBN9TLUFf5GF3hS4P7uNLuc5e/nyTLnmJHpZvOjtli2uNQcmuYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87E621692;
-	Mon,  8 Sep 2025 03:15:52 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6EE433F66E;
-	Mon,  8 Sep 2025 03:15:59 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1757326574; c=relaxed/simple;
+	bh=5DFonyNsZnbO+w46KiqgO+HRV9ffXCJz7BHFXEip3Mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYtGMxsvWP42KomWYBpWLvLWvD9cqkVfbTAVYhksLbaXBVw4WthH9WJhTlC3NMzAQbgopMqk71FS+Sx+YPxRoGClQDOOdx9vNNfoqtBEhNZGo7UmeuFkCv5EC5+4TBlaODnymt38vjCqXkKlcoIpIKkzW4gY8Qin7aU0B+E8Ph8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUjCb4rW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED5EC4CEF9;
+	Mon,  8 Sep 2025 10:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757326572;
+	bh=5DFonyNsZnbO+w46KiqgO+HRV9ffXCJz7BHFXEip3Mo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eUjCb4rWvjaImzId0vGs71hkor/+yJuySYeFh48VIWa6oBD1QvNZBd2MULAFawYve
+	 O6lXUidasKRC7XB32hPCjZKeHs6lZGU9cNTTKdDThLCpLnjQVM8k8wW2+DtdV80erq
+	 3KgfI8FDjbf8pE02+1tcRDfyhQPExFJ6dWkTpgSqma/pG9tMv+vh4EOyZPA+4J0Mhj
+	 BXXhwlS44Oj7Y3d6HV50R4xpaxHsO0LJuJhmYhmSNPJZi0UCkLhZFgP0W//jmUHQz+
+	 2cb3RY3jMMRgBdkMaPZ5h/zE9GChCQGxT0vzn2zM4iAj+DAaw40q6U1F0Xq8UViPLo
+	 Vf9+lUbGFwHHQ==
+Date: Mon, 8 Sep 2025 15:46:05 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: daire.mcnamara@microchip.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, bhelgaas@google.com, robh@kernel.org, linux-pci@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scmi: Fix typo for scmi_perf_proto_ops
-Date: Mon,  8 Sep 2025 11:15:56 +0100
-Message-Id: <175732651445.3916791.4020244491858368527.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250831-scmi-cpufreq-v1-1-493031cf6e9b@nxp.com>
-References: <20250831-scmi-cpufreq-v1-1-493031cf6e9b@nxp.com>
+Subject: Re: [PATCH] PCI: plda: Remove the use of dev_err_probe()
+Message-ID: <pxvdomiyvmor6eix4y733izqey763ygebtvzopf6fwppda4xm2@34c3afoxpipl>
+References: <20250820085200.395578-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820085200.395578-1-zhao.xichao@vivo.com>
 
-On Sun, 31 Aug 2025 14:52:37 +0800, Peng Fan wrote:
-> The name is power_scale_get, not power_scale_mw_get, correct it.
->
+On Wed, Aug 20, 2025 at 04:52:00PM GMT, Xichao Zhao wrote:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+Applied to pci/controller/plda!
 
-[1/1] firmware: arm_scmi: Fix typo for scmi_perf_proto_ops
-      https://git.kernel.org/sudeep.holla/c/72ca981dba5e
---
-Regards,
-Sudeep
+- Mani
 
+> ---
+>  drivers/pci/controller/plda/pcie-plda-host.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
+> index 8e2db2e5b64b..3c2f68383010 100644
+> --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> @@ -599,8 +599,7 @@ int plda_pcie_host_init(struct plda_pcie_rp *port, struct pci_ops *ops,
+>  
+>  	bridge = devm_pci_alloc_host_bridge(dev, 0);
+>  	if (!bridge)
+> -		return dev_err_probe(dev, -ENOMEM,
+> -				     "failed to alloc bridge\n");
+> +		return -ENOMEM;
+>  
+>  	if (port->host_ops && port->host_ops->host_init) {
+>  		ret = port->host_ops->host_init(port);
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
