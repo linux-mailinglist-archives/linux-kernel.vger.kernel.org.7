@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-805643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AEEB48BD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:17:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C135BB48B2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A388D160AAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F0017B920
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5773002CA;
-	Mon,  8 Sep 2025 11:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D09E2FB08D;
+	Mon,  8 Sep 2025 11:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3fzRQuJ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQrPBfUD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A43002C8;
-	Mon,  8 Sep 2025 11:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53D822422D;
+	Mon,  8 Sep 2025 11:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757330000; cv=none; b=R/eSsc6R9HtI6bwJxP5m3dk+/zZSSOE18Uu4H66zQVgq/L/T1gRP84db5iu18vq7QkxEDhx9tTx+LmDf8h99oQeuCzLByZFOg/eOxOnLRKn2RqGObh6WgDhNyT418v79y1pBKoLqxwfGWIINvUtKtrkbboJ1i8MgNgnC0JdjUyg=
+	t=1757329897; cv=none; b=YfzSB/XkBrcd+cnuOJKhrwukMbpxbjjwyrp/HhsGmSTC/K7bDygA26rQ4FNmna0emX+l+dvSYrRuO2rRVFJjIjqiW080z+auGVCzcfQmrC00eSNmvH2Q9t89ESf4/NtPqIpRJ+KO1+9A9smAFY5HhOReHE7Wvw2arQhTWD+Mhz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757330000; c=relaxed/simple;
-	bh=dPb288Jo21uTWPVnj9MDJ0ryDL9Is033HnSH62NlSGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u11fRUOwWWjekPthGHap+f2Y3YgeKF2JBjf78/D9CMSc0jbQfYByHNUbSiDjmbEXJvYWhNstaWThABS0C0lfsu9Le2ZTyNEn9mG17O+N5SQ/dsgqF0hT30jtDqIgeLp7iCGobKX+x7118OXqFHr1kyWAfM5iuyQaZQazVx2xuDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3fzRQuJ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45de6490e74so7673325e9.2;
-        Mon, 08 Sep 2025 04:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757329996; x=1757934796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3JFsZ9+YKTnrhkakgaIYMEKoDfFk5f5bJk4s8F2eCHU=;
-        b=B3fzRQuJ6+Cdp+071F70MmQEnqOMkrMzZ54s7LNtYx63+Evh3pkaOVMiqR+RRd0GIR
-         0FGj5KQ2gfDFxwfg0pgEAXT5v2kr14iCvMT/oO6JfHHjDIMJM2+8AKavbvTmR0hF7R9Q
-         QnaeMl6k6c8ZWJZd36ve4gc5nPvxoiv+bShuV3Xb70zCdawx1cFI2ZNDQM2ySBWagugB
-         7OsighNzJBLwgtExGqXITHHGCRcTvRnrFz0PrJBzH5mTgzVJb+W5jORLlGu9XblVjCYi
-         tvsMfAOMHVQdv7N1O4HGA1ki97jEelKX6rX8vvPg76oprwXUANllG8eprTfYG3E8ZFQP
-         rE3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757329996; x=1757934796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3JFsZ9+YKTnrhkakgaIYMEKoDfFk5f5bJk4s8F2eCHU=;
-        b=UsT+R0pb9EtuJttQRk0DrXXD+loDblGqdvHU5QI8+DCDsP56hfBWZ4xvkXs1kI52hv
-         l94my9ncckS4Uzsd2Uf30XLJLgACcjAJIRzQut3kOaN/C9HyUYjI1WrC7pmmlkEp6i6p
-         q4g4ywTRigYP+6LtQHbYzYNWI+u6mQ+hu4GRMuFfTkrB+tFwOSvvXkbjYdDaAP4tSsDO
-         zsNkl+N+dy4dlGkGX1p9NSF6etvPjHYOckVMlyJB4MF7RVDJBdYzOigmSPmUrHiYF+AG
-         LtHRmJql0Bb50sqs03MH4KYw4LuFZ2q0qbsFoH3eweI/G0kow87lojkH6EheFb+f7h5W
-         JEow==
-X-Forwarded-Encrypted: i=1; AJvYcCU9y//PL/R9eeBxfCTZ0Aew8TcGKdf/UI27dWjxIuiX+Scmyx4j0HdmBllZ6BpEbPWKp/LH/wL9S2AxANoy@vger.kernel.org, AJvYcCXgXz7EWDzWfWLoPb4L2zHJSOEAplwTI8jbgtEUaDGh9MyUAUJrP472fcbg6r2Hbm4sMrKSaQ8H/b8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAF+aPXDv3vbS+fbCgoRWGr+94kI+fdTCOVwgKWup71UVH4Udc
-	Tz3SDI4UO/w/7TdE7J+CfEdEhWFOCWVmIPMywd71irl7LbdaIBbKYqu5
-X-Gm-Gg: ASbGncuyqQkTxBcsoWK3MjhItvJLBXms5kwyhLT8HIiEhVNixBkYODM62iFOVaJVEqQ
-	hn/V2EmjNDkrH8z93o5Qct6yOO2k0rtpnNK4k8CDIBTYkn6HXJcrwrfodTd54TXqDQNhWL417cf
-	c8naB4PzFCHEYgYMKzqNVWHr3y5HLE5K0AjJ/vFu422OL3jC/9rON0A/PJLkWcCFrDURdOd/PDG
-	z0/zdjE9b137u/cqFE4PnLYkKQQUa6RVGki7SE4EPjjNU/TD7zafjUJPIoV0LPWXlMPyTXT9SVa
-	zb7r6/AN7Ct5VRnTmORQmp7temOZHoN9BOdbvR4UDSW7HIH9fQM8LMrJYpIF9CEa6IqEeFMAdsF
-	MlfcZhOtSyA7yITSQ///6ZvcM
-X-Google-Smtp-Source: AGHT+IG5uQOiOoQhJJ/mhTQdnV7nSQkKRpmjvrrmU/zTkJX7X66L4LIULBGIcjgXcCeKAsh4gyVJsw==
-X-Received: by 2002:a05:600c:3586:b0:45d:d56c:4ab5 with SMTP id 5b1f17b1804b1-45ddde9583bmr63031115e9.5.1757329996041;
-        Mon, 08 Sep 2025 04:13:16 -0700 (PDT)
-Received: from gmail.com ([147.161.145.84])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd6891d23sm141671515e9.4.2025.09.08.04.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 04:13:15 -0700 (PDT)
-From: hariconscious@gmail.com
-To: shuah@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	corbet@lwn.net,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: HariKrishna S <hariconscious@gmail.com>
-Subject: [PATCH v2] documentation/arm64 : kdump fixed typo errors (review comment addressed)
-Date: Mon,  8 Sep 2025 16:41:19 +0530
-Message-ID: <20250908111118.46666-2-hariconscious@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757329897; c=relaxed/simple;
+	bh=Gf3bKLVGBIqbxULlO+jSRJmsI6c3oODRH0Ft0N6BqUk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=WFVq07G9y6fNqW9kjP8D7rAKx/UkSGh5owPVyIr3dfevvKnlUyOS4PnytcI1gNqTXErrhV/of2ba/XtC5ODfErlTbG/JEUQUDBC/l24P+1jdqX2QEpmw7l9dBaLqqt64/9Kz6ktCrtg9SgZ34BlOicggUPk/AwJXPqHWqfob5zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQrPBfUD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A381CC4CEF9;
+	Mon,  8 Sep 2025 11:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757329896;
+	bh=Gf3bKLVGBIqbxULlO+jSRJmsI6c3oODRH0Ft0N6BqUk=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=TQrPBfUDMaZ8w+ALMfFLKSvgLIRPLaLK+W+CWaalH/wWCWUoPzFjZ0G2iLGamw9OJ
+	 sv/zKxaR4+T5jJ7SlDF0D02rm1kLWcdlVtlN+UecUnq8RnmqniP1DiQHi/epJbcvvh
+	 Acy8thCDU9Y3ngaMXb2C3Zrzki91T9VsEu/fW0dCjk8ttFHBLP4wOVAOlJevIuer1a
+	 wnl5aRQezmoltG6R5YsniEjt7uN38e74A18aOSfBjpfifVPK/lFqkqaEsQdNZC2Gtm
+	 ua/od/aQ0Apavh28JTCwMemQtBmhlN7drI+ol2HVKQJTuDplWF3v87MuF6DkG1PehD
+	 MZIT9elzG9kpQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 08 Sep 2025 13:11:32 +0200
+Message-Id: <DCNDGFE7RR5Q.X3PCDW0KIX89@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Matthew Brost"
+ <matthew.brost@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Steven Price"
+ <steven.price@arm.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ "Liviu Dudau" <liviu.dudau@arm.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+To: "Boris Brezillon" <boris.brezillon@collabora.com>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+ <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+ <20250905152505.005a610d@fedora>
+ <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+ <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com>
+ <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org> <aL1u_YxOkuj1kIq6@google.com>
+ <20250908091140.44856fde@fedora> <aL6TJYRmWIkQXujj@google.com>
+ <DCNAE3CJMEJ0.JH1F0MJABXQI@kernel.org> <20250908122002.2c80dd3a@fedora>
+In-Reply-To: <20250908122002.2c80dd3a@fedora>
 
-From: HariKrishna S <hariconscious@gmail.com>
+On Mon Sep 8, 2025 at 12:20 PM CEST, Boris Brezillon wrote:
+> I'm not following. Yes there's going to be a
+> drm_gpuva_unlink_defer_put() that skips the
+>
+>         va->vm_bo =3D NULL;
+>         drm_gpuvm_bo_put(vm_bo);
+>
+> and adds the gpuva to a list for deferred destruction. But I'm not
+> seeing where the leak is. Once the gpuva has been put in this list,
+> there should be no existing component referring to this object, and it's
+> going to be destroyed or recycled, but not re-used as-is.
 
-Signed-off-by: HariKrishna S <hariconscious@gmail.com>
----
-Changes in v2:
-	- Review comment from Jonathan Corbet addressed
+I'm saying exactly what you say: "has to be a special unlink function" ->
+drm_gpuva_unlink_defer_put(). :)
 
- Documentation/arch/arm64/kdump.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> Yeah, we really want to avoid that.
+>
+> I think I agree that we want to avoid it, but I'm not too sure about
+> the solution that involves playing with vm_bo::kref. I'm particularly
+> worried by the fact drivers can iterate the evict/extobj lists
+> directly, and can thus see objects scheduled for destruction. I know
+> there's a gpuvm_bo_is_dead() helper, and drivers should be aware of the
+> risks, but I don't feel comfortable about this.
 
-diff --git a/Documentation/arch/arm64/kdump.rst b/Documentation/arch/arm64/kdump.rst
-index d3195a93a066..36701262ccaf 100644
---- a/Documentation/arch/arm64/kdump.rst
-+++ b/Documentation/arch/arm64/kdump.rst
-@@ -5,7 +5,7 @@ crashkernel memory reservation on arm64
- Author: Baoquan He <bhe@redhat.com>
- 
- Kdump mechanism is used to capture a corrupted kernel vmcore so that
--it can be subsequently analyzed. In order to do this, a preliminary
-+it can be subsequently analyzed. In order to do this, a previously
- reserved memory is needed to pre-load the kdump kernel and boot such
- kernel if corruption happens.
- 
--- 
-2.43.0
+No, drivers can't iterate the evict/extobj lists directly; or at least this=
+ is
+not intended by GPUVM's API and if drivers do so, this is considered peekin=
+g
+into GPUVM internals, so drivers are on their own anyways.
 
+Iterators, such as for_each_vm_bo_in_list() are not exposed to drivers.
+
+> And since we've mentioned the possibility of having to support
+> gpuva destruction deferral too, I'm wondering it wouldn't be cleaner
+> to just go for this approach from the start (gpuva owns a ref to a
+> vm_bo, which gets released when the gpuva object is released).
 
