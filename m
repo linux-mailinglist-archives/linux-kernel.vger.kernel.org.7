@@ -1,200 +1,242 @@
-Return-Path: <linux-kernel+bounces-805882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F80B48ECB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32F8B48EDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1D7F3B8449
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27DF444226F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 13:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D28130ACE3;
-	Mon,  8 Sep 2025 13:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFE630BF5A;
+	Mon,  8 Sep 2025 13:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xfUPBzcX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Swqd8fr0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xfUPBzcX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Swqd8fr0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tMYr2yyt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E8C3081B2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 13:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A930AABF;
+	Mon,  8 Sep 2025 13:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757336898; cv=none; b=NgbT8ws19d32vTVPzu8NCvbDCrNKo3wy1ybnvPVNc1pR5aw4Iuzc5YIC9WX9CfDM27cOLVcwqDUKFB3ICwde6tkC6p2ELq2rCE3OAzYTAJ3n5GKovTgd6oAjeOb8OQCnV4dxSPTfJVlf4IK1qZ+nkfLpofWeVelBUbhc4xhNR1A=
+	t=1757336923; cv=none; b=aTgYQAoh4mKJ0olRYixVKz5WJfId3bjRfV7n/od+JCzSSAF63aOnVAETN6IMek/LjNBnHnPyiKdzvgxg3rrWr7fV1/ksFv7KMfOUmbO6tWm7gx0fcrVeLAXjjxUxb9Kxq7C31jrIkzHkkhticjyQHoHm7wTtZA+7zclpM2k4Pas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757336898; c=relaxed/simple;
-	bh=LuQDjxqeBliLnw9Zg3n89ODA1CyvGxYFcQbsuwHd+dw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YUD8l/HCwZz/+B83QNBT1mR88KqG6nifJ9AvHF5NQqiRH0Mv3UqdSi7uvSBPkOk5yVLFrVGsBVi4vDoXxyCYNOkuhim4qauUVBFUFTPKrNOI/+LbTy5hXri70cko1hdscpAFrermCR0A6mLdag3JxsCrc2agOxk/G3auV370fSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xfUPBzcX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Swqd8fr0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xfUPBzcX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Swqd8fr0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0CC062054B;
-	Mon,  8 Sep 2025 13:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757336893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PcNK9AmJLp4CZh+dPOGK/vGBOn5CmKUDmZtd4SUgMfI=;
-	b=xfUPBzcXAi79soJwGHM5aPgYwvCB1tFlfAgb9zGxJjZzptLYMchduOihTfcZNxc9n92LE6
-	+55J9MgbgoEk2EIDTymgx+yAax+qK8pUQMR8wyc8r4e/aNeax5oPVu/3pSYkHbyTn3eeik
-	4L5Xj+Jk6Rf8Z6vZx9pB1cPhDe76HWA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757336893;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PcNK9AmJLp4CZh+dPOGK/vGBOn5CmKUDmZtd4SUgMfI=;
-	b=Swqd8fr08K8Yw4WPafS/pnaI5n+4m27JKaK9CoZt4EIJTI7ABfrvTTvcMUxHKgPu7VNCit
-	DDtH7cw7zabri2Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xfUPBzcX;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Swqd8fr0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757336893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PcNK9AmJLp4CZh+dPOGK/vGBOn5CmKUDmZtd4SUgMfI=;
-	b=xfUPBzcXAi79soJwGHM5aPgYwvCB1tFlfAgb9zGxJjZzptLYMchduOihTfcZNxc9n92LE6
-	+55J9MgbgoEk2EIDTymgx+yAax+qK8pUQMR8wyc8r4e/aNeax5oPVu/3pSYkHbyTn3eeik
-	4L5Xj+Jk6Rf8Z6vZx9pB1cPhDe76HWA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757336893;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PcNK9AmJLp4CZh+dPOGK/vGBOn5CmKUDmZtd4SUgMfI=;
-	b=Swqd8fr08K8Yw4WPafS/pnaI5n+4m27JKaK9CoZt4EIJTI7ABfrvTTvcMUxHKgPu7VNCit
-	DDtH7cw7zabri2Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6A0A13946;
-	Mon,  8 Sep 2025 13:08:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vej0MjzVvmgjMQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 08 Sep 2025 13:08:12 +0000
-Message-ID: <60f8cfc8-ccc0-4a55-bce5-7ab30c3ae1c1@suse.de>
-Date: Mon, 8 Sep 2025 15:08:12 +0200
+	s=arc-20240116; t=1757336923; c=relaxed/simple;
+	bh=jWHcLjsBUJIGDgf/RiVKlGGfz+U28RPgwKaOU64//co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9CEOQ7o0LFcHUx6htX/0ucUyYE+4cmywzupUP5xxP2m7twYvDbosATFkslTDeDer7GVfB8GPLCcHsCEi+y1l8HdgcBp6Krled8Hovk9d+7LJqJrVnM6bIhbFBvXwvaJwt/bJlAp0FtAljKHyiEtjRoL6zVkHUjoOGHqMqhJz6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tMYr2yyt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45616C4CEF8;
+	Mon,  8 Sep 2025 13:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757336922;
+	bh=jWHcLjsBUJIGDgf/RiVKlGGfz+U28RPgwKaOU64//co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tMYr2yytxfaGjeIO2wdotRAV/tikqhFnA6pk07VNiSRBPZoNy5meVmVxmGw1Kafiz
+	 PJ3Z1qaZ3N0E4VBXVExJEfFdxJRP3248UcHgcf9fy5pyBSw0T2KUckyieouF33hfmY
+	 HikdLA3fwkJweSAloeP1v6yw1r1KxnwYX73F3V2c=
+Date: Mon, 8 Sep 2025 15:08:40 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
+	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v11 5/7] samples: rust: Add debugfs sample driver
+Message-ID: <2025090838-twelve-snap-683a@gregkh>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-5-7d12a165685a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] fbcon: Pass struct fbcon to callbacks in struct
- fbcon_bitops
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250818104655.235001-1-tzimmermann@suse.de>
- <20250818104655.235001-7-tzimmermann@suse.de>
- <20250905190004.GB361827@ravnborg.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250905190004.GB361827@ravnborg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0CC062054B
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	FREEMAIL_CC(0.00)[ffwll.ch,gmx.de,vger.kernel.org,lists.freedesktop.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-debugfs-rust-v11-5-7d12a165685a@google.com>
 
-Hi
+On Thu, Sep 04, 2025 at 09:13:56PM +0000, Matthew Maurer wrote:
+> Adds a new sample driver that demonstrates the debugfs APIs.
+> 
+> The driver creates a directory in debugfs and populates it with a few
+> files:
+> - A read-only file that displays a fwnode property.
+> - A read-write file that exposes an atomic counter.
+> - A read-write file that exposes a custom struct.
+> 
+> This sample serves as a basic example of how to use the `debugfs::Dir`
+> and `debugfs::File` APIs to create and manage debugfs entries.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> ---
+>  MAINTAINERS                  |   1 +
+>  samples/rust/Kconfig         |  11 ++++
+>  samples/rust/Makefile        |   1 +
+>  samples/rust/rust_debugfs.rs | 151 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 164 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8f2dbf71ca3f8f97e4d7619375279ed11d1261b2..5b6db584a33dd7ee39de3fdd0085d2bd7b7bef0e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7481,6 +7481,7 @@ F:	rust/kernel/devres.rs
+>  F:	rust/kernel/driver.rs
+>  F:	rust/kernel/faux.rs
+>  F:	rust/kernel/platform.rs
+> +F:	samples/rust/rust_debugfs.rs
+>  F:	samples/rust/rust_driver_platform.rs
+>  F:	samples/rust/rust_driver_faux.rs
+>  
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index 7f7371a004ee0a8f67dca99c836596709a70c4fa..01101db41ae31b08a86d048cdd27da8ef9bb23a2 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
+>  
+>  	  If unsure, say N.
+>  
+> +config SAMPLE_RUST_DEBUGFS
+> +	tristate "DebugFS Test Module"
+> +	depends on DEBUG_FS
+> +	help
+> +	  This option builds the Rust DebugFS Test module sample.
+> +
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called rust_debugfs.
+> +
+> +	  If unsure, say N.
+> +
+>  config SAMPLE_RUST_DRIVER_PCI
+>  	tristate "PCI Driver"
+>  	depends on PCI
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index bd2faad63b4f3befe7d1ed5139fe25c7a8b6d7f6..61276222a99f8cc6d7f84c26d0533b30815ebadd 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -4,6 +4,7 @@ ccflags-y += -I$(src)				# needed for trace events
+>  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+>  obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+>  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+> +obj-$(CONFIG_SAMPLE_RUST_DEBUGFS)		+= rust_debugfs.o
+>  obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+> diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8d394f06b37e69ea1c30a3b0d8444c80562cc5ab
+> --- /dev/null
+> +++ b/samples/rust/rust_debugfs.rs
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2025 Google LLC.
+> +
+> +//! Sample DebugFS exporting platform driver
+> +//!
+> +//! To successfully probe this driver with ACPI, use an ssdt that looks like
+> +//!
+> +//! ```dsl
+> +//! DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
+> +//! {
+> +//!    Scope (\_SB)
+> +//!    {
+> +//!        Device (T432)
+> +//!        {
+> +//!            Name (_HID, "LNUXDEBF")  // ACPI hardware ID to match
+> +//!            Name (_UID, 1)
+> +//!            Name (_STA, 0x0F)        // Device present, enabled
+> +//!            Name (_DSD, Package () { // Sample attribute
+> +//!                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+> +//!                Package() {
+> +//!                    Package(2) {"compatible", "sample-debugfs"}
+> +//!                }
+> +//!            })
+> +//!            Name (_CRS, ResourceTemplate ()
+> +//!            {
+> +//!                Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
+> +//!            })
+> +//!        }
+> +//!    }
+> +//! }
+> +//! ```
+> +
+> +use core::str::FromStr;
+> +use core::sync::atomic::AtomicUsize;
+> +use core::sync::atomic::Ordering;
+> +use kernel::c_str;
+> +use kernel::debugfs::{Dir, File};
+> +use kernel::new_mutex;
+> +use kernel::prelude::*;
+> +use kernel::sync::Mutex;
+> +
+> +use kernel::{acpi, device::Core, of, platform, str::CString, types::ARef};
+> +
+> +kernel::module_platform_driver! {
+> +    type: RustDebugFs,
+> +    name: "rust_debugfs",
+> +    authors: ["Matthew Maurer"],
+> +    description: "Rust DebugFS usage sample",
+> +    license: "GPL",
+> +}
+> +
+> +#[pin_data]
+> +struct RustDebugFs {
+> +    pdev: ARef<platform::Device>,
+> +    // As we only hold these for drop effect (to remove the directory/files) we have a leading
+> +    // underscore to indicate to the compiler that we don't expect to use this field directly.
+> +    _debugfs: Dir,
+> +    #[pin]
+> +    _compatible: File<CString>,
+> +    #[pin]
+> +    counter: File<AtomicUsize>,
+> +    #[pin]
+> +    inner: File<Mutex<Inner>>,
 
-Am 05.09.25 um 21:00 schrieb Sam Ravnborg:
-> On Mon, Aug 18, 2025 at 12:36:41PM +0200, Thomas Zimmermann wrote:
->> The callbacks in struct fbcon_bitops are for struct fbcon. Pass an
->> instance to the callbacks; instead of the respective struct fb_info.
-> This looks looks like a pointless change.
-> All the operations requires fb_info and needs to pcik it anyway.
+Why are you saving the file pointers here at all?  They shouldn't be
+needed to keep around, all that should be needed is the Dir, right?  If
+not, this needs to be revisited...
 
-Yeah, it's in preparation of a later change. As I already had the patch 
-ready, i submitted it. I'll drop it now and re-submit when it's required.
+And why do you need to keep "counter"?  Shouldn't that be passed back
+somehow in the callback automatically?
 
-Best regards
-Thomas
+You use it:
 
->
-> 	Sam
+> +impl platform::Driver for RustDebugFs {
+> +    type IdInfo = ();
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
+> +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
+> +
+> +    fn probe(
+> +        pdev: &platform::Device<Core>,
+> +        _info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>> {
+> +        let result = KBox::try_pin_init(RustDebugFs::new(pdev), GFP_KERNEL)?;
+> +        // We can still mutate fields through the files which are atomic or mutexed:
+> +        result.counter.store(91, Ordering::Relaxed);
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Here?  This feels odd, the file is the wrapper for the variable you want
+the file to show?  That feels backwards.  Usually the variable is always
+present, and then you can create a debugfs file to read/modify it.  But
+if debugfs is NOT enabled, you can still use the variable, it's just the
+file logic that is gone, right?
 
+So what would this file look like without debugfs being enabled?  Would
+the atomic variable still be here?  I think it wouldn't, which is not
+ok...
 
+Or am I confused again?
+
+thanks,
+
+greg k-h
 
