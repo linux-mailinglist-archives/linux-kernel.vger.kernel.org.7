@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-806874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E737CB49CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:36:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A05B49CFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD726175D7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2CD1BC03A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 22:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DC530EF63;
-	Mon,  8 Sep 2025 22:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E6A2ECEB4;
+	Mon,  8 Sep 2025 22:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTA4gPp+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AyAC6sBO"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA7F2E7F3A;
-	Mon,  8 Sep 2025 22:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BFC2ECD30
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 22:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757370960; cv=none; b=udK2mB0dbWj+Eup7bfVTveEkpCI3YTJCOTbdEEzAbi03lfyE1d7lVE9nkqpLFhs5p486rT58D1EIXb7cRNXZDgax36gMT+3gSA92bNhO9GebzMv90dhw9vZG5N/CLxStMpq3KKyRwQxSTmySiIQ1fsZKxxx8ZJTgrKb90yE4HjU=
+	t=1757371017; cv=none; b=lIp50etp2I/yb2wOG3FSueB6Rd4TPQ5jdpfjjQXJsM5UWFEYFLky8hQqcHdKZaIWE5EtYmbUhtfEzvKtuHDrcsbeJVeRka9zOYRN94Lx9J/TBoxTkjxBXoQT0rn+3vEx9JjzeVv4Jc2khA0vIg2WGWXl6QTnwbuNCIlmMBGusRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757370960; c=relaxed/simple;
-	bh=dSo8PyCv5W3wiR8ABae/XBucYd73xpUbLl7qWfh1KCs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E/0gpl2OZmD4GQ0RAsEmoTaC1+BEqOV+G2i3VUCMLOxmFBvQZ9Ai4UsvGc14aJLA/5EHdfvCL+egXnpDQqA5uRAjU7LEZiSYjhZ3JQe3LngIIs3n9l1GusyhJ7OpIvIbDb87ahXWMHIx24ZUJBbpZSGgzDnXSHRlHtDPKJl6MH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTA4gPp+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76309C4CEF9;
-	Mon,  8 Sep 2025 22:35:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757370959;
-	bh=dSo8PyCv5W3wiR8ABae/XBucYd73xpUbLl7qWfh1KCs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jTA4gPp+ocKNmBDCeGmINDHmBHy+lIHT3uhGbvYbyaNA0SGZXpZSvSwzGiJka5o/a
-	 G6Gt0NwUQCqKj8iC311VexXJ9MrDU7jafO0ZEoZd0zEQhibJzVUNmBVMt93pZj3JlC
-	 IKN351YNKJJvBv9ENA57y3/mgXaE8O6D85Ig/hzxlxLz85vUaLbgHOD27nXaZmspFO
-	 iYL6qKaAeQRI4MNyAI4uLYNDYpAI3ACQFgkTrQdfi4sJAHD/WZQ5pNz92qYdIIZoLc
-	 6wbn9w8yOdT26Rf9ChWBGcpJ4dWu5UJ83FYPVCpp6JraSKFBSOtVyA90UUDXRXaSSn
-	 7UcD3Hj32LNiQ==
-Received: by venus (Postfix, from userid 1000)
-	id 930A5180B28; Tue, 09 Sep 2025 00:35:57 +0200 (CEST)
-From: Sebastian Reichel <sre@kernel.org>
-Date: Tue, 09 Sep 2025 00:35:52 +0200
-Subject: [PATCH v4 3/3] arm64: dts: qcom: x1e80100-t14s: add EC
+	s=arc-20240116; t=1757371017; c=relaxed/simple;
+	bh=T9P/K6SEcXRuUJUXzSA5TYU5bmqcQ8N7GHQaxFjMhXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LySW7nEjQ0FkBVRyOO06HOU2TXWMcEessyusboGjfTHiqm05JGFQSk5aHK0yipWgoc0sitB56pHQ+fOu6ULsvYscIQvcm39MQWDFbbTBtKKhzBLq0U4BquMk0e2gXAFKr/nquy7ffyv4gHaOHGnwMorQwTVhMxTeHaX7lkNayPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AyAC6sBO; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-40ab48f3924so9615375ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 15:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1757371014; x=1757975814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lhYf+Oj/7EuAlJsyRI1kl4nGXkiLJ1sdDKDHJYLWFpc=;
+        b=AyAC6sBOJckJGouZhLdbl/lu1ccFHoV/qtmPj0uIr39IJsJ31jHc7vRC+PeIZeiR5L
+         FZSgeTwOsX4PT77HElqFA3ZmJu4grxfR8uegrN/69eFZgmN5NEApyfwaE9TwlmDOHMi0
+         09X4srGgu5oqDRVX28CGzCCM/S5GXJNvVIZMg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757371014; x=1757975814;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lhYf+Oj/7EuAlJsyRI1kl4nGXkiLJ1sdDKDHJYLWFpc=;
+        b=s90dNjh0z9CtohgROxeKmg+8Ku5TyXxNCgHFTO31KzRG6aptZseO05cpHuogguXBiZ
+         ZMv+ElgIW9qQZFIplZhCoHkXp5uFbVqc2jPMAc3ydseb2o3ypFgVdObr6nVA6lkkXp73
+         e91rSX5exQaO3DIWg22Er6gftDNA2ZcQjVFYciJ1MFfa5tcGFX1acZhrmVlMl5LJPQEO
+         u1YCK9bvSJba/uo0+pCth8lfTWpYX8FwVko+JR9fIpe2E/Rvz1XEsp5lBr358EpknTHZ
+         bJw4wy0WnbdWBCe68AHPw86o5bEDTovFkCC579QRjUqSsrjCJYFAd4YhkhCU/iC6neFD
+         VOJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4nCeoPu6b2d7o2wQKPxKyLkRKpub7Ogptad2RxP7YvvCTq/W7wRqigmXEKwhXbO40sJk+93UxB2OvHNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjOQwlzAph44NshKrLnZb0TpiXYMGCvnQOPW57EZpR9C2qB1/f
+	NEcoLsGrEck7iy7H6JwnVCmiAR62nS8M0lSMkKEQmHhT9I3IKrlUOZMzfdayhD0s5EI=
+X-Gm-Gg: ASbGncvwvVScObu8W9TJsUtq+yHwqAaezfKpwYqBPotD9OqXKk769mYWWJ76qSuicGF
+	yqTmUX7QurhBpLu10kJorEb6BXJnHAqxquiGPbFIe8+zK6G1uP4Wexo9bVRJegkUa4p+mOtfGYJ
+	nIBGZQtiszneBWiuXVM0Qi+M7K3KatXsDpy6ndieYcqWV5lfohfvk1EjH1ERioX5TC49kfoRIVY
+	D+nC4l410Gs0ho90HrGpZEff6N1UYF0WDTi9/i9a9QjhrPCRvz7zi5w8WRva4r4ejpnSn+SoVFW
+	nAx4o9mo8P9IcpNKDYtbuPUP0hBmW4gbAWKanCaxMjTOhULqI/QGOtDmC9At/MSrYwL6SmfHOvh
+	HE/QrAUyqamQ29yC5E/AD5lg+6E5q5mcs56o=
+X-Google-Smtp-Source: AGHT+IGWCoQv8jgv0YHriek8VPPsKGGZClBOcgF0YLzARTTz5XIpyx2mZHmSef9NietX+UdPwGY8Wg==
+X-Received: by 2002:a05:6e02:932:b0:404:5e3a:292f with SMTP id e9e14a558f8ab-4045e3a2c31mr66923635ab.13.1757371014127;
+        Mon, 08 Sep 2025 15:36:54 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f31c926sm9214471173.53.2025.09.08.15.36.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 15:36:53 -0700 (PDT)
+Message-ID: <b4878e9f-7f22-4d73-9a98-ac26b2aa6cb2@linuxfoundation.org>
+Date: Mon, 8 Sep 2025 16:36:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/175] 6.12.46-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250907195614.892725141@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250907195614.892725141@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-thinkpad-t14s-ec-v4-3-caf6159daaee@collabora.com>
-References: <20250909-thinkpad-t14s-ec-v4-0-caf6159daaee@collabora.com>
-In-Reply-To: <20250909-thinkpad-t14s-ec-v4-0-caf6159daaee@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
- Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1616;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=dSo8PyCv5W3wiR8ABae/XBucYd73xpUbLl7qWfh1KCs=;
- b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBov1pN4xXXWqqAUYl/XplCfBRpZhO0iboVVnUyH
- 84Ht5jLde2JAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaL9aTQAKCRDY7tfzyDv6
- mieND/98CMoNikOQp2nJAi1uy5oRMwdxN+n/3m9Mp+qzQ3gPZtsIHOWQEGQrrqHFW4mbmqIEipY
- yraXvOEjkJFzFNWGoX8z/p3pnFzICyThSAddkTq84jXjWCwSKmRfx14QXtVHXsahGN2HVmXXVVx
- 7DdSEUUyTW37BygroH05SZnaiyjzf5nY/AFYvQbED0lo4FIK7q1nasq4S073B+qJyYKuUMFbMko
- 2obFwFvQZLc5Nc1s88tb0aP+ptjX0nb+67aEeYIwMJhylm7SujjUEWe5r3mYUtlFuCGTAwl0ONA
- me8jYmP6a4jY/svOkl2WSSbfMsodP9jacuOchKz94TYNCtccbeZyHcla5bt67t9GwLcgxKGerQr
- gnfbElfQ01aNnkz9utwHp+pYoveLBkDI4rNItKHc9/0hyBj8SH6ipgXE0g+UFBjyV3b5wT2wx7u
- 8VEt3crPBZRLo2K7UavqTGCPSAojLjS+W5shGY01Bk1p59ydUlHW/ncFJlJcLfyB0ajwjyVD+ge
- CFqSAvPQB06fI0ic3LIQ80dZUGLTnVtuPUC0CRKWPnm08Fpm5UejClf/eNOVicPc/lvs2abjyt+
- OWq5yGClv4Wa2G1momMKTL3h2clzsYlU2skmvSu4F8V6npaCKUVBl/ofZQJZsW4Sw5Cr5YyV/8f
- rnrnLt7I81l1PgA==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Describe ThinkPad Embedded Controller in the T14s device tree,
-which adds LED and special key support.
+On 9/7/25 13:56, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.46 release.
+> There are 175 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.46-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Sebastian Reichel <sre@kernel.org>
----
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Compiled and booted on my test system. No dmesg regressions.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index ac1dddf27da30e6a9f7e1d1ecbd5192bf2d0671e..f70489aba870289edbcf84ec22fdb004e010868b 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -887,6 +887,24 @@ eusb6_repeater: redriver@4f {
- 	};
- };
- 
-+&i2c6 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	embedded-controller@28 {
-+		compatible = "lenovo,thinkpad-t14s-ec";
-+		reg = <0x28>;
-+
-+		interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ec_int_n_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
- &i2c7 {
- 	clock-frequency = <400000>;
- 
-@@ -1267,6 +1285,12 @@ &tlmm {
- 			       <72 2>, /* Secure EC I2C connection (?) */
- 			       <238 1>; /* UFS Reset */
- 
-+	ec_int_n_default: ec-int-n-state {
-+		pins = "gpio66";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
- 	eusb3_reset_n: eusb3-reset-n-state {
- 		pins = "gpio6";
- 		function = "gpio";
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
--- 
-2.51.0
-
+thanks,
+-- Shuah
 
