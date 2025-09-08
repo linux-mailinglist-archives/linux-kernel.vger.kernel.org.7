@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-806376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99105B495B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:41:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24878B495B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A067340927
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB9F164C79
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B3D3126CA;
-	Mon,  8 Sep 2025 16:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B433128B6;
+	Mon,  8 Sep 2025 16:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="W8XWzjn0"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yyy4cZKc"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23931D6BB;
-	Mon,  8 Sep 2025 16:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D951D5CE8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349419; cv=none; b=b/vIRtwGHuMw51WuDXmMsShsjOknpBpBe6+peLeW0Vo/XMAppAWyz8q7xKqYCNE74WUHPoVwvs9qVbRxSWGvG0X1FxNm4wpYlB5ZbUUHdKJhO/+H/CMFv82ojqn1BlwRyXepdjtl57D6eGBtzbuhIh16IOf8Ks4dbN1JISg3DLQ=
+	t=1757349430; cv=none; b=jULEfzLlg3qycqnpdI3Dau75GMONrRnp6WYALBEqwNeAyHsj0eL+02ZRCRYIviRd6oeQvRs2qoouusowPQc7Ke9Qd8jzYkoyzkZdNbApE+C2MnOr1wGThIIN06ow6aUADVqVRXQwMPPWDV1Rdz2bPHjJVRo6DFSqec+2Q1VWYls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349419; c=relaxed/simple;
-	bh=l2HUbLQbbOd4ydEVoUQUaQnQtVY7KJ/hgeR69gZA1rY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzGGqqdlMxjpU2PibkuzgXZ1c4/jGGcjUPi4vdV9YGVG9HVo0Olkg6hOz+xVbfxS5cOWs2EbWOsLHEhsp6CiIkhs67TDuOWziU/djsnLCZNg8UH179XbVBKwJHdcDo6bjNBjHus1WuVqcrjDkd+AoXXN3+xPiJ+f6OvMgbjl+NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=W8XWzjn0; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=tIo+HgFDBSGjk+ryK4PE8d8TpiiCG+5aEmtrJp8mr2Y=; b=W8XWzjn0JY78XM1rjlNQr5OpUY
-	dXHyf6I+qj/yv6fEtIh9ljgEs0tYlnNlsu1SvcJJ8I83bEcJYaeJZRYsMjy7K6SlgnS9ba9ghfGfC
-	akZnwBMaDbsPGXKjbbs6qDtvRfDJxQgfdXCWXDWbymYozZsfUKUTwC8Kbzdk7wW6MOH0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uver6-007gmH-9h; Mon, 08 Sep 2025 18:36:36 +0200
-Date: Mon, 8 Sep 2025 18:36:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kaison Deng <dkx@t-chip.com.cn>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Wayne Chou <zxf@t-chip.com.cn>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Peter Robinson <pbrobinson@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the
- ROC-RK3588-RT
-Message-ID: <153e5099-ee64-4ce9-b70e-feb24d8731cb@lunn.ch>
-References: <20250905090115.718622-1-dkx@t-chip.com.cn>
+	s=arc-20240116; t=1757349430; c=relaxed/simple;
+	bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d/7pRgWoXvu/i/9E2tVlG5x5Z0vZIEvkygmnarSmofdeLFM9FordQn++JH0FfbMmcnp5L82mxXgME97YAicxTOH63lbJ2+H5SHCnmkQB5XoTDlbMoaB7o2LpE9uUoIdRg32RrnArRAiaqnYg+DrE5QdkFwydsyckX6vbcpDe3QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yyy4cZKc; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32ba1f9c87cso311221a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757349428; x=1757954228; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
+        b=Yyy4cZKc8crY90mGnCGCNfXPuTsDlQb8/rXT99TkpyadAPH8+oVvqGpEKA7uM5XHsM
+         jMdsMqM4D489/sDYmBiDyIHpASB1bnIMBxxztk3loEW+skb9JZBwMm+y0BFJlAi6WKrA
+         66s6+Ywqw7lFWwY4VP/zn7TOXsUlru9m4i7MqcVpvL8i0mDDhmzJ8rs/JqdPi4GTObHl
+         ExLD6BxY5cNeYNULUCDFLbuo5qRaVWyhMzUB15I9acKSF2cqJs3n1/cQiYDXLQN29u+U
+         xwS/Ma+WoA7La5REQb8WiDJUbjuZzwePyYkNUiMyxCqrABYDbxCj/INlX72xz/ujdVAs
+         UCCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757349428; x=1757954228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GD1rockcPLLPoutAyUyCLTlyfHITwp2bLmYUsEhn5Rw=;
+        b=LhiTeNHpF71eUAsUBniYaSL9HRy3aVWl/XKDlRBYvGzdsd0wlzDF91A7Q3rZiI4ks9
+         ExVr+0BP1chXW0vUlCs3WYLLQ2FEYYb7kfFMEfHZLFtOX1ojCZ3sp9qqKufTLqZeAEoe
+         0WZtT4fO9B7rGNjrLw97AR4vADJGXDoFN8Vc8hquCvjrAkyOSFXl5F5RkgNSLB5Mmrql
+         bcxE8d2EquEd1VJMbvg/cYkkc2t6NtBH+esURZ9eu8FmTx7H9nLaeT8E6wK/sVMNV5nB
+         YiqtmIxDiW1T6+dZad7PePQ8u+IQcD1VE0sxgbQLZKWRT1mOCXzkuJxfHuaLGEbKA9kS
+         vedQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLMgvozEO+LaGo2tVgGnlF+DeDI7/CLMWySfnGB85GKdFIZl/NQ/zxNa5WXFsUIm+49AlyEafJlhRV2w8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyuzt8YBS5LcgQpsdkeEA/hnjDv25Rfyj7jUylY7a1z0HSBH37t
+	WMuteoBlpa6dgpRNGNEQdZNIuQQ5TLJWEVCiz93PyjG4Dlb7DFU+pjdzomY+RZXo95V0EyGPgIR
+	vXDZUvAhHsI868TREStmFAZYEoJR6upE=
+X-Gm-Gg: ASbGncta19HpoR8T8dNhYJ173oEigd2r6EasPeLAAGE/qV6eHyHx2CTghLlHY26adK/
+	/7i0Gq4+AX14PZmV3ZbJBJDj3D/FKzb75duVx10etOSyemTHgHu1Rf0x3pXaHwzm9qxMgAv9xJp
+	fwOSUP2qQEtJ7ycWwIpT4dqP7+pAX4mx1eSQJrggEBdmtgdB9acBlms3IUtrmJceEU5iex6IvHk
+	yBq0nVrk8rnGqazFK+FJo8RMcQKqdCU47YuebmwV4ZU/enNuIeFQgE7atuO2elediUlzs8zlYhv
+	0fVz/HHa0R15VYsE6u75UzBcGQ==
+X-Google-Smtp-Source: AGHT+IG2myJ7vzeUyIz9b/rwozFXjQ9JQF/2Y9pLORdR5ksocCK1zUif0LUhypbVeitvwClaHWMsNtcB6ahJXXZ/3H4=
+X-Received: by 2002:a17:90b:1c89:b0:329:df65:de88 with SMTP id
+ 98e67ed59e1d1-32d43f9765bmr6140000a91.7.1757349428321; Mon, 08 Sep 2025
+ 09:37:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905090115.718622-1-dkx@t-chip.com.cn>
+References: <20250908125339.3313777-1-vitaly.wool@konsulko.se>
+In-Reply-To: <20250908125339.3313777-1-vitaly.wool@konsulko.se>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 8 Sep 2025 18:36:56 +0200
+X-Gm-Features: AS18NWBiOfnr_oE4JYJeMuf8U4qWLrtNvA_XHCFt0ZnpsbVAE9UetqtcLRqpwkM
+Message-ID: <CANiq72mekzqaNak+KYxqzxOeKpmNDYPO2bvATw6FkOjHWO1w0w@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: rbtree: add immutable cursor
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +&gmac0 {
-> +	clock_in_out = "output";
-> +	phy-handle = <&rgmii_phy0>;
-> +	phy-mode = "rgmii-rxid";
+On Mon, Sep 8, 2025 at 2:54=E2=80=AFPM Vitaly Wool <vitaly.wool@konsulko.se=
+> wrote:
+>
+> Sometimes we may need to iterate over, or find an element in a read
+> only (or read mostly) red-black tree, and in that case we don't need a
+> mutable reference to the tree, which we'll however have to take to be
+> able to use the current (mutable) cursor implementation.
+>
+> This patch adds a simple immutable cursor implementation to RBTree,
+> which enables us to use an immutable tree reference. The existing
+> (fully featured) cursor implementation is renamed to CursorMut,
+> while retaining its functionality.
+>
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
-The usual problem with rockchip boards. rgmii-rxid is probably wrong,
-unless you have a very odd PCB.
+Could you apply the `&raw` operator suggestion from v2 so that we
+don't have to migrate those later?
 
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/devicetree/bindings/net/ethernet-controller.yaml#L287
+Thanks!
 
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac0_miim
-> +		     &gmac0_tx_bus2
-> +		     &gmac0_rx_bus2
-> +		     &gmac0_rgmii_clk
-> +		     &gmac0_rgmii_bus>;
-> +	tx_delay = <0x47>;
+(For some reason I am not Cc'd)
 
-Please try rgmii-id, and small values here.
-
-> +	clock_in_out = "output";
-> +	phy-handle = <&rgmii_phy1>;
-> +	phy-mode = "rgmii-rxid";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac1_miim
-> +		     &gmac1_tx_bus2
-> +		     &gmac1_rx_bus2
-> +		     &gmac1_rgmii_clk
-> +		     &gmac1_rgmii_bus>;
-> +	tx_delay = <0x42>;
-
-Same here.
-
-	Andrew
+Cheers,
+Miguel
 
