@@ -1,160 +1,131 @@
-Return-Path: <linux-kernel+bounces-806158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA99B49299
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC12AB4929A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919E144727B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B6C3A4BE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1804B3054FE;
-	Mon,  8 Sep 2025 15:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D0A3054FE;
+	Mon,  8 Sep 2025 15:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3siD1NR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DL2sZetd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A8228C9D;
-	Mon,  8 Sep 2025 15:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4781F0E2E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757344124; cv=none; b=ZV1S9ilJDunuintSJNsK73z6RWBsj7jsef11ZomQdIvsivppR8MYZg2cTC5lFJh1tWSBWytwZvxDVwT7R7vbastwj5qBm0o243q7DafpKhdhXxpFfGJpUYWv4WSgnt4uEyHL7nWT0CBRVmO0SizMYT+9hJ11lBvufr0oTTWCrE4=
+	t=1757344179; cv=none; b=CxrSbtjKGojhM8G0+Jpi2WQuo9W0eSXraFjiRlCLGUMYr0zHAGgqcilPDbMihmG2BJEckxlOgvdsKeegTwbAfZI/06K0pS/m76+4GjPOS3BXTA9iXXVVsWXlz55xdku79N/TOG2fnRftJuVMyCgqth9DOznX5oWljK6Oa9n03Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757344124; c=relaxed/simple;
-	bh=fSYDgjY/SfJ5m+wyFnb04x7E2KP7tNSpQEmJ29X5mVc=;
+	s=arc-20240116; t=1757344179; c=relaxed/simple;
+	bh=IujjedwxqoC+IlQZCfHC7SQgOECGmWiYfazPxVnYZN8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUKXO/SBkmeDBJRy2SCDRbg283QvqpjxtwHE6frS2KMqmlXd1eveeFp2x7Mfz7KmKnLgfk/N9nGYwWmwLluI0YSlc7AnJ5pc7plxMXHTxxS7CHmzFJ99/Rav9WPSzo8MYJHuVKaEg75byvzfARQx4uHma8VCrXez6MGdbkSREbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3siD1NR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B0FC4CEF1;
-	Mon,  8 Sep 2025 15:08:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757344123;
-	bh=fSYDgjY/SfJ5m+wyFnb04x7E2KP7tNSpQEmJ29X5mVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M3siD1NRu8Q/mgEuCb+ckDctl2d4YV2M6tE8FcrBX5TtXeNYUc2DIS0rAANiXVDgE
-	 fZtfiAwHsI6EWBFwsNsb4jL7c2o3/2mTSSpbpFvjlH8xfXsKKFcHe8Y1Hxq2+r+MoI
-	 sPX0ng/FFYD+A+e9NxsxKGDLKNXtLA+HkCzX/wmhTPDg2N2jWCgSRA6kSTXDdOK5lk
-	 2F2q8/PE+cbwUacg4d5PZOTgvP//6gPcwPKWzUWXZhrQ7LXqXesprjawg56gxhDPvJ
-	 FyMAgiUZ073U18LOOx5+Y1TmjkW2GV5dpR+zQTaIOlfn+rRaygxcSZLZ+t4tgtGstV
-	 7PfrOZVzDGGcA==
-Date: Mon, 8 Sep 2025 17:08:35 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>, dlemoal@kernel.org, jdmason@kudzu.us,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v21 0/9] PCI: EP: Add RC-to-EP doorbell with
- platform MSI controller
-Message-ID: <aL7xc0aVi-olMAE-@flawful.org>
-References: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
- <175311109182.25848.8880954995049551501.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uw6nYEyy84EjtkZHHxq4hOKBjd96pkjNUn9aarzBBaUumbdhYkhVod60zWnsZmjDhHHkqO7Yl5oTQo+OSnAdU9a4xwax/9QQ7vuSroerBiQaXmis86Ed+CqUQ1ZbwxC8cAcNCihlJn0O0ll++ouK2whw6fxRf5iM3M2RBnnrhXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DL2sZetd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757344177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=heQQ3Ud2LMh6YOFJjpOWIBQv+t67vvA52HA8Ei7ieDs=;
+	b=DL2sZetdOPz21Jfbpdb3ubXW5apvQzOPOnqyrnvs2QLLTTwO8dMdzEy6Umi5Q4TemT1Mrt
+	2YYCr6sJ6WiRV0OdSc6DgSzrGKD3YbmQsd/oV0VtvKdRhzohuGDHnyZ+zsX62r6CnXDgLz
+	uyV71ZROnM+CaFgJA2Gle7c4o0HeEjU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-mbUoeq_OML650TvnQs5P0Q-1; Mon,
+ 08 Sep 2025 11:09:32 -0400
+X-MC-Unique: mbUoeq_OML650TvnQs5P0Q-1
+X-Mimecast-MFC-AGG-ID: mbUoeq_OML650TvnQs5P0Q_1757344170
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D324D19560AE;
+	Mon,  8 Sep 2025 15:09:29 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.11])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E389D1800451;
+	Mon,  8 Sep 2025 15:09:26 +0000 (UTC)
+Date: Mon, 8 Sep 2025 23:09:22 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] docs/mm: add document for swap table
+Message-ID: <aL7xoiTacg0vCLjz@MiWiFi-R3L-srv>
+References: <20250905191357.78298-1-ryncsn@gmail.com>
+ <20250905191357.78298-2-ryncsn@gmail.com>
+ <aL7NrhGw5ftOXUZs@MiWiFi-R3L-srv>
+ <CACePvbXi3Avsic62fMdhLaDfiq4LS_t8-wbm9yQnEkScoxYO-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <175311109182.25848.8880954995049551501.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACePvbXi3Avsic62fMdhLaDfiq4LS_t8-wbm9yQnEkScoxYO-g@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Jul 21, 2025 at 08:48:11PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, 10 Jul 2025 15:13:46 -0400, Frank Li wrote:
-> > [...]
+On 09/08/25 at 08:01am, Chris Li wrote:
+> On Mon, Sep 8, 2025 at 5:36 AM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 09/06/25 at 03:13am, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > From: Chris Li <chrisl@kernel.org>
+> >
+> > 'From author <authorkernel.org>' can only be one person, and the co-author
+> > should be specified by "Co-developed-by:" and "Signed-off-by:"?
 > 
-> Applied, thanks!
+> That is the artifact of sending another person's patch in a series.
+> The first "From" is from the email header sender. The second "from" is
+> the real author of the patch. Just like an IP tunnel packet there is
+> another inner IP packet wrapped in the outer IP packet.
 > 
-> [3/9] PCI: endpoint: Add RC-to-EP doorbell support using platform MSI controller
->       commit: b537ffe0eb2ab458f20ec135cc2b565c63a2ea00
-> [4/9] PCI: endpoint: pci-ep-msi: Add MSI address/data pair mutable check
->       commit: 1f2ed78e43abb9ac0856a82867f64d472368a832
-> [5/9] PCI: endpoint: Add pci_epf_align_inbound_addr() helper for address alignment
->       commit: 1c2c5f9855a5cf4617bcda721c22dbd3345f06a1
-> [6/9] PCI: endpoint: pci-epf-test: Add doorbell test support
->       commit: 5d4da5f8092e5a77ae371ae1112283b59790ac22
-> [7/9] misc: pci_endpoint_test: Add doorbell test case
->       commit: a1a293e709a4ec0fa2e4253993a4b75f581c6cf2
-> [8/9] selftests: pci_endpoint: Add doorbell test case
->       commit: b964b4894fcfc72e7496cf52a33cbba39d094c5b
+> I think that is all normal and did not violate the kernel rules. When
+> I include Kairui's patch in my swap allocator series. The same thing
+> happened there on Kairui's patch. In the end the git will know enough
+> who is the real author, because those patches are  outputted by git
+> anyway.
 
+Hmm, maybe git doesn't work like that. I applied this patch via git am,
+I got this on my local branch. The 2nd 'From' become part of commit log.
 
-Hello all,
+commit 337b3cd6c0ffad355df8851414e8aa5be052f4cb (HEAD -> kasan-v3)
+Author: Kairui Song <kasong@tencent.com>
+Date:   Sat Sep 6 03:13:43 2025 +0800
 
-I wanted to test this on rk3588, so I added msi-map to the pcie_ep node.
+    docs/mm: add document for swap table
+    
+    From: Chris Li <chrisl@kernel.org>
+    
+    Swap table is the new swap cache.
+    
+    Signed-off-by: Chris Li <chrisl@kernel.org>
+    Signed-off-by: Kairui Song <kasong@tencent.com>
 
-It works the first time:
-# ./pcitest -r pcie_ep_doorbell.DOORBELL_TEST
-TAP version 13
-1..1
-# Starting 1 tests from 1 test cases.
-#  RUN           pcie_ep_doorbell.DOORBELL_TEST ...
-[   17.996519] offset: 70040
-[   17.997904] left: 250 status: 0x240
-#            OK  pcie_ep_doorbell.DOORBELL_TEST
-ok 1 pcie_ep_doorbell.DOORBELL_TEST
-# PASSED: 1 / 1 tests passed.
-# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Prints on EP side:
-[   17.924761] pci_epf_test_enable_doorbell
-[   17.926035] doorbell offset: 70040
-[   17.927898] pci_epf_test_doorbell_handler
-[   17.932816] pci_epf_test_disable_doorbell
-
-
-
-However, if I run the exact same test case again:
-# ./pcitest -r pcie_ep_doorbell.DOORBELL_TEST
-TAP version 13
-1..1
-# Starting 1 tests from 1 test cases.
-RUN           pcie_ep_doorbell.DOORBELL_TEST ...
-[   34.672546] offset: 70040
-[   35.688190] left: 0 status: 0x0
-[   35.688480] pci-endpoint-test 0000:01:00.0: Failed to trigger doorbell in endpoint
-# pci_endpoint_test.c:258:DOORBELL_TEST:Expected 0 (0) == ret (-22)
-# pci_endpoint_test.c:258:DOORBELL_TEST:Test failed for Doorbell
-
-# DOORBELL_TEST: Test failed
-#          FAIL  pcie_ep_doorbell.DOORBELL_TEST
-not ok 1 pcie_ep_doorbell.DOORBELL_TEST
-# FAILED: 0 / 1 tests passed.
-
-Prints on EP side:
-[   34.600717] pci_epf_test_enable_doorbell
-[   34.602086] doorbell offset: 70040
-[   35.624718] pci_epf_test_disable_doorbell
-
-
-
-As you can see the print that I added in pci_epf_test_doorbell_handler()
-never comes the second time executing this test case.
-
-
-Frank, do you see the same problem?
-
-
-Kind regards,
-Niklas
 
