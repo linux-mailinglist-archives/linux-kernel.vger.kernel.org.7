@@ -1,154 +1,153 @@
-Return-Path: <linux-kernel+bounces-806675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B765AB49A44
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:44:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7AAB49A45
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CDF1BC3972
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1391667D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6AC2C0F69;
-	Mon,  8 Sep 2025 19:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05152853F1;
+	Mon,  8 Sep 2025 19:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBIgm7AC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uO2ir1uH"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D877E1A255C;
-	Mon,  8 Sep 2025 19:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECCB29BDB3
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360676; cv=none; b=PMbLxYNFnFUj4AVLO8ruYFnpC9s6p0frWRcuyDq3HgYICiOPS/qzkJycxUudVcAXYp9pCLsqa+UbMD3LhMAXWrXtCaikkTJIfCZ4eX4jw2XgICmUGaay2rRgq41picYPaz2udqPSWlAWcRxONRCiVqGffq8cTg10cPJuweTB4m4=
+	t=1757360694; cv=none; b=cyQ65lqpFNQ7Rhnz61l/m9McvOpQy+W5eJFoZn5cw8h6mM0Em8D33XQCFYLGtwSLQWLljICZTDa7iXO3op9WsURgoFIyQUcqA7gTiZFkxuXKypheapD3ugGjZNTVRmJtZvG/NE8jcHnSAQ2FJIf77J7PsSRTcIbjy/ZemerDWEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360676; c=relaxed/simple;
-	bh=o/DTnsN33P7EIb8svR5PswkHMaTvVF4k4Q5vDtNgxPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UPRUgsU8fiUuipJiAmOR16XnRcCdhQATP/ReihJAMb8MkRoSOuW4vD7ELWvaB6PgBoaRZqt6dqNUNVtKNxiDX4cFJG+No7egxTwCl4xaOKlJLZqAvYPXUi3UB5O9tVoT5w83sUEPiZtcJtWfFk0E/tDlMNTLSOYGPDAZdHTxJEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBIgm7AC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A808C4CEF1;
-	Mon,  8 Sep 2025 19:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757360676;
-	bh=o/DTnsN33P7EIb8svR5PswkHMaTvVF4k4Q5vDtNgxPE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=RBIgm7ACPdwtYByH86t0ZrIf7ELUqsMHKrWCcR4cWQo8QslgZ2EY3frdu5RHNh46M
-	 xLGb2Qpm+8GEUZSMugDPXMOzcRiETPeZ1bYHRUiMbNy+gifYsEhpvz8qFFWIMaQUCz
-	 GCZuxnIrsZZTCv6fHTr0sWvJLDayjJ1A51t4+fJc9M/MJVML53uNE7yFdPjgek5nuW
-	 26QqiwXToR5EmFiLowT/xFfnDI+Vl941ArQcDnvQdTTclwoz04d2f2Z8yxGGirWUeh
-	 KBRoGNMR8cAs8UpEP5mCauIussB0K++mPeoa1AeVN9MvBgM7u2oISWg5Q+50GiIUFb
-	 yTj89j0efGncA==
-Date: Mon, 8 Sep 2025 14:44:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Jan Palus <jpalus@fastmail.com>
-Subject: Re: [PATCH v2] PCI: mvebu: Fix use of for_each_of_range() iterator
-Message-ID: <20250908194434.GA1454201@bhelgaas>
+	s=arc-20240116; t=1757360694; c=relaxed/simple;
+	bh=xxX6qsulkVirIUPMtxxcMy/WlTsw7wbx1cEPYNOUvQ4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OYmNQgk0VcRlwFrBeMK32dyikXW/nL9w7VVjfKaOZpPWV1Dz5lhQL3eyeZSRqBZVseDangCwElWHm2u4HuTBhCEAq16Y8d/cCDbR8ih2P0rxEVZHI9BcTx5d0lCPuwzPoWcZwVT/IaZwp6tvLplf8owVl4dAYQ6u7uIwgMAQQUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uO2ir1uH; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4fb59a89acso3811264a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 12:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757360692; x=1757965492; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+BN9f9TRNhPzZGbZcN/O3Z0X+3jX9IGhyykVuk72IV0=;
+        b=uO2ir1uHTtgukzGG0spIgfg73ve9aliGXE89LTjOEkzUnWj/hTErCIvAwFr+M6iZwp
+         67gTNZ7b5OA1pa5LjnHBZz0E4YylwDGqL+yFJBQuonphkgqKxrUfSd3Uc2HqnSCBpI5S
+         MVHJFjlraIreUeahQLMom+9wo8msLioW/kVGzsjyd2uuf0tVj3a9pF5BSRRUALaUe+TD
+         +MXJ9X9NEeVMrRNdykWQLFfDdx6negXe+fNELJaiNW/xZN3i48pB2fWPY2u8uOeLjyoi
+         WiUUvDGVritslS0J5MndrANAaep1frTiTnCjmC/OaKTzkBZZQMhEx81BITkVmVwXRlIE
+         cbgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757360692; x=1757965492;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+BN9f9TRNhPzZGbZcN/O3Z0X+3jX9IGhyykVuk72IV0=;
+        b=AfnP+fFpUn4OBwiG120A535a2nvgYgLUlcPXA4inNVihNAESWjLfJBnh02dR2W3e84
+         3K/09/icvMkEValYW5hW2fJ+RzjLEH6fueHE3qIByrf4sVGeFQQBGtoTUGtp71O+0sJu
+         3NcNKLjMboiP09Uuq1nDjpJnFFnPS197nqwEixRAO6kHjHZjk5T3amszcmDke6/XRpgw
+         bD+WHXV4D8eDbdbwJAxGaclVoCz500Aq6TZhwDGC3BFIvsje6Cio0kBkwNDm4uITHVjQ
+         fDghrkp2ahUPjZMhX5c5rEklZ+nzllOuG0MyNz73iVkyO0Maw50qLcFhowN+LFjRbzyu
+         YHTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEgpAgMPRhJCoCJaR6slEt+0UYJ68ONzB8vksAFRj8RCsBDJ5Rbx0rX9h94zCsWP31pK1T6AcwuqC3MsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk5RIojxdi8pihkbI/jzXKGUv8+bHWoGTswR3OMXUD2z4PL1S4
+	30aIVELygtCQ2rLV+iHqO2pzHnMRBLqlLn4um8ynNQ0NBReXNeVr/UYf0h4qoodmyqCbY/sjFHB
+	+c/Qsqg==
+X-Google-Smtp-Source: AGHT+IFxCnWEFD2vXNWgOPEAttN5OOtAqn765A51cfCV4FQPi8e13adf6at6Ei8q1uZLTqO9SeFgLpD0kRY=
+X-Received: from pjbsq16.prod.google.com ([2002:a17:90b:5310:b0:329:ccdd:e725])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc4:b0:327:e9f4:4dd8
+ with SMTP id 98e67ed59e1d1-32d43f2f4b6mr13695527a91.10.1757360691927; Mon, 08
+ Sep 2025 12:44:51 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:44:50 -0700
+In-Reply-To: <20250819090853.3988626-5-keirf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250907102303.29735-1-klaus.kudielka@gmail.com>
+Mime-Version: 1.0
+References: <20250819090853.3988626-1-keirf@google.com> <20250819090853.3988626-5-keirf@google.com>
+Message-ID: <aL8yMum27Qw_Wkkw@google.com>
+Subject: Re: [PATCH v3 4/4] KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
+From: Sean Christopherson <seanjc@google.com>
+To: Keir Fraser <keirf@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, Sep 07, 2025 at 12:21:46PM +0200, Klaus Kudielka wrote:
-> The blamed commit simplifies code, by using the for_each_of_range()
-> iterator. But it results in no pci devices being detected anymore on
-> Turris Omnia (and probably other mvebu targets).
+On Tue, Aug 19, 2025, Keir Fraser wrote:
+> Device MMIO registration may happen quite frequently during VM boot,
+> and the SRCU synchronization each time has a measurable effect
+> on VM startup time. In our experiments it can account for around 25%
+> of a VM's startup time.
 > 
-> Issue #1:
+> Replace the synchronization with a deferred free of the old kvm_io_bus
+> structure.
 > 
-> To determine range.flags, of_pci_range_parser_one() uses bus->get_flags(),
-> which resolves to of_bus_pci_get_flags(). That function already returns an
-> IORESOURCE bit field, and NOT the original flags from the "ranges"
-> resource.
-> 
-> Then mvebu_get_tgt_attr() attempts the very same conversion again.
-> But this is a misinterpretation of range.flags.
-> 
-> Remove the misinterpretation of range.flags in mvebu_get_tgt_attr(),
-> to restore the intended behavior.
-> 
-> Issue #2:
-> 
-> The driver needs target and attributes, which are encoded in the raw
-> address values of the "/soc/pcie/ranges" resource. According to
-> of_pci_range_parser_one(), the raw values are stored in range.bus_addr
-> and range.parent_bus_addr, respectively. range.cpu_addr is a translated
-> version of range.parent_bus_addr, and not relevant here.
-> 
-> Use the correct range structure member, to extract target and attributes.
-> This restores the intended behavior.
-> 
-> Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for parsing "ranges"")
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
-> Reported-by: Jan Palus <jpalus@fastmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220479
-
-Applied to for-linus for v6.17, thanks!
-
+> Signed-off-by: Keir Fraser <keirf@google.com>
 > ---
-> v2: Fix issue #2, as well.
+>  include/linux/kvm_host.h |  1 +
+>  virt/kvm/kvm_main.c      | 10 ++++++++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 > 
->  drivers/pci/controller/pci-mvebu.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
-> index 755651f338..a72aa57591 100644
-> --- a/drivers/pci/controller/pci-mvebu.c
-> +++ b/drivers/pci/controller/pci-mvebu.c
-> @@ -1168,12 +1168,6 @@ static void __iomem *mvebu_pcie_map_registers(struct platform_device *pdev,
->  	return devm_ioremap_resource(&pdev->dev, &port->regs);
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index e7d6111cf254..103be35caf0d 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -206,6 +206,7 @@ struct kvm_io_range {
+>  struct kvm_io_bus {
+>  	int dev_count;
+>  	int ioeventfd_count;
+> +	struct rcu_head rcu;
+>  	struct kvm_io_range range[];
+>  };
+>  
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 4f35ae23ee5a..9144a0b4a268 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -5953,6 +5953,13 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
 >  }
+>  EXPORT_SYMBOL_GPL(kvm_io_bus_read);
 >  
-> -#define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
-> -#define    DT_TYPE_IO                 0x1
-> -#define    DT_TYPE_MEM32              0x2
-> -#define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
-> -#define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
-> -
->  static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
->  			      unsigned long type,
->  			      unsigned int *tgt,
-> @@ -1189,19 +1183,12 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
->  		return -EINVAL;
->  
->  	for_each_of_range(&parser, &range) {
-> -		unsigned long rtype;
->  		u32 slot = upper_32_bits(range.bus_addr);
->  
-> -		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
-> -			rtype = IORESOURCE_IO;
-> -		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
-> -			rtype = IORESOURCE_MEM;
-> -		else
-> -			continue;
-> -
-> -		if (slot == PCI_SLOT(devfn) && type == rtype) {
-> -			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
-> -			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
-> +		if (slot == PCI_SLOT(devfn) &&
-> +		    type == (range.flags & IORESOURCE_TYPE_BITS)) {
-> +			*tgt = (range.parent_bus_addr >> 56) & 0xFF;
-> +			*attr = (range.parent_bus_addr >> 48) & 0xFF;
->  			return 0;
->  		}
->  	}
-> -- 
-> 2.50.1
-> 
+> +static void __free_bus(struct rcu_head *rcu)
+> +{
+> +	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
+> +
+> +	kfree(bus);
+> +}
+> +
+>  int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+>  			    int len, struct kvm_io_device *dev)
+>  {
+> @@ -5991,8 +5998,7 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+>  	memcpy(new_bus->range + i + 1, bus->range + i,
+>  		(bus->dev_count - i) * sizeof(struct kvm_io_range));
+>  	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
+> -	synchronize_srcu_expedited(&kvm->srcu);
+> -	kfree(bus);
+> +	call_srcu(&kvm->srcu, &bus->rcu, __free_bus);
+
+To address the syzkaller splat, KVM needs to call srcu_barrier() prior to freeing
+the structure.
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 9144a0b4a268..62693f18ecf4 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1321,6 +1321,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+                kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
+        }
+        cleanup_srcu_struct(&kvm->irq_srcu);
++       srcu_barrier(&kvm->srcu);
+        cleanup_srcu_struct(&kvm->srcu);
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+        xa_destroy(&kvm->mem_attr_array);
 
