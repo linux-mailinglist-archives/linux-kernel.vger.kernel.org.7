@@ -1,151 +1,169 @@
-Return-Path: <linux-kernel+bounces-806384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E634B495C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5CEB495D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C221D1B243D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E011F1B28102
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277B9310762;
-	Mon,  8 Sep 2025 16:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACF630EF8F;
+	Mon,  8 Sep 2025 16:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vm/IzO8a"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzkPqdRL"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FDD292918
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF34221271;
+	Mon,  8 Sep 2025 16:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757349773; cv=none; b=XcsJD1iTFi06eM55ix43s58raAjVagiNxzrvOmPgZLoXKv8kRwJJHukefOOptXJryaeEMLy/y3YHcmf3LAjppI+TnSXSGO0uBZyreGAJXIqXXFYcIQ9ogzcLTYceJNqTM6J2xIkKMUozM1stSeYE7IQAhGEaFok5J0MZlcdaMN0=
+	t=1757349854; cv=none; b=A5Yad/FWSpG1fzZTTakUxmyVWT6wjb5DZQyYvYrkSbCtlSyUgSmavUJ+fgvFzsAAqenVwBqDBYUTAQKLTqbxgEyQ5VWrr5y+uMajTiz8kA/7KiWeCe3+L4NTxoW1B0RlfpyKFZeUpIzKsS+N5Qebeq1I0rMr9Hgvt3HiS7VTx9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757349773; c=relaxed/simple;
-	bh=SK+V3i1b4JHmPbAgOyQ+O9nq+ydOhVWHaRR5izAFwGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=swK1Z1iL4KrhuIBBwRJ6cdN6NuP7N7d/zgUWxOz+dTn5GBQDpRI4F5ZvGT22L0CZPOr04EoxtBfVXUREHPepb7VXUqkoMQZUcSDU09gw2nx8/lQAH7cGbY98o1PF1HjFHgkJC+zqYKRTIuEBaeYZGYRpTF2YjhJiKB87Pl6TkZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vm/IzO8a; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24cf5bcfb60so322855ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:42:51 -0700 (PDT)
+	s=arc-20240116; t=1757349854; c=relaxed/simple;
+	bh=c6RDo+MvvWy+hWXeayW1XjeBBC27GldxLu8pw/RdIQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZL7AveGfuIFw1dtQyOQXNxHlPE490PiDnxLqXNOVne3tplmJyB21rJPX7uRoQfGy2M8KGm4pkX/2bzXnPYUpf2+pZ4vf8hvWj1+y/Y5S7t8uG+ogjlX7NlXLb7ToNhcQ71K1K2mUZBZHchdPCtx7RNMLBEwFfDOyhSPt+hU4/20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzkPqdRL; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d60528734so36676507b3.2;
+        Mon, 08 Sep 2025 09:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757349771; x=1757954571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxpZ3PbJm0tZWt4QSlez9tE8S36lpDl95U5aEIOWH8M=;
-        b=Vm/IzO8auHY+GsFS7FGc66jLLFHwTpn3ofRlSocqDrFQSwEir3iuhwqH6EZl3s5b3J
-         cnh7YWe3RzzlxDjHiE+SvCU2QHPUeBAckSJYumdAlgdFQjWVA+Efj1gEACUGPwUk+ABA
-         cL8IqGpKZqod7tXG+JORvFMtcu0R86HhLgTv4FuvUwA1+ynKjshzwzOsXTShPbPcC6ve
-         ZpTtjQjiIyJzavvF0uYAqPmTFf+RFCAkbdsQ5jiVy8qCYIK6sLgNU8q7AlBREtaaV5Jb
-         nRMwCkN4O9C9V+oMT7gB5Vsebx3YB/gATlroYZ3fiCFcrAIpnJsiuFqVtq3B4C6UW3lr
-         kWWQ==
+        d=gmail.com; s=20230601; t=1757349852; x=1757954652; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wr34sNpRK9Vrc9Y5AeoZyDXPdh2Xa7V3XI2jmbZrnjQ=;
+        b=jzkPqdRL6y7IRpaWI55X/y8Lbm40xRXnu3SUdTUxntHUb+8hR4nx6c7Py++lznXlZ7
+         d3DH74ajlApHV34CS4KZR6xdd3/OmUngnum8uUnssu6SGfFloilEcPLQ3UWUD+uKAPdD
+         cUcHTs2/FDjt/sCKv80vZIuCBNrpN621rzVw4ZnwIxStVG6cNIHw/5+yhbPS1m5EIlnO
+         rV6nke0GlQMPxBu3cairl+6GzwfCQ1ecaHDVs6U/uREnbyiBn96kMeX9rzwIGigl4JBB
+         cFqPGJidVXaEBAePaxRcbYK9MuZk1yi8EBBD8UGJPwoMq2M0gyp/0wd2K2AQFBF182TS
+         CdZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757349771; x=1757954571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rxpZ3PbJm0tZWt4QSlez9tE8S36lpDl95U5aEIOWH8M=;
-        b=eSmWTLCRXhIImTr7dZqsc5rvFUxm8fheV1T0tqy6fFTNkYi4z/yinXjRF7CTynvLCC
-         0tNT9egJcFlelchhXEHcIPyvtDluA1+5CvOjIfqwKcIRyX7e4znUTJdFhBWNU0UQJjXb
-         NsTQe0b8pRjTXbLoWNqCopSaHFxMNRs6Q0tdu4e6giGIW22uHEuEzOJ4+75TphfpcD8p
-         E7n9fGHOoS73OGjsllMoKOUUlrOQeKvx0TC6uClVsRFyRs3/xiSchoJW065WgF9vw4Vj
-         vDgeYtHLJIUuTroWaItHPpr9sIV49UGGU0pjJTG128ZewzAuE09kglTgW0lqRQwMTQpt
-         3eSA==
-X-Gm-Message-State: AOJu0YyaxKffaJ41B+jNiRu583XEqemkr3+OOC2iJju1BK93ThUD6Vl6
-	lFckrvlR16R7YXh3oU4A2zB/MN37PsThGf0Fy/fv12nGFoysU7arNpdwZV4VRNBJ5nJNnkG1V59
-	DWmjPLLZ2YCyov3zN0iZSDayX9PmWJh2MNIO3bI2d
-X-Gm-Gg: ASbGnct5oP5FA258tm14ODimbPYR203ufU8YKO1/7Fm7zKhz3YM0aY1f+tnC50ohIjz
-	KwSCMkSggzsnw0Pk1lRpXQMXbm4AXzubBZx+uqPKrSVzaihVINf6E7cpi4SF4Jap8fO32VTK1e7
-	BJ0/sMj9KrWUWekKkTJPVEPfi4URdqtATBOVY7Dg+UyVa3wArXLE3jOUEpDyzeemSMeLFkv5Wm+
-	OkIPgkYqIVjfBGhYZfanIEI3ruwicveTt1SgRsXdmP2k/M0l5ktANU=
-X-Google-Smtp-Source: AGHT+IEoSQybo+B9Ek7ofJWgjkMpsbm1SkCuXz2R9pZBuMRExcNhf8XxMuhra3hawRg85LZyRSbST+/NDna5xaK6pP4=
-X-Received: by 2002:a17:902:d2c4:b0:240:640a:c564 with SMTP id
- d9443c01a7336-25171acbe36mr6682975ad.3.1757349771128; Mon, 08 Sep 2025
- 09:42:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757349852; x=1757954652;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wr34sNpRK9Vrc9Y5AeoZyDXPdh2Xa7V3XI2jmbZrnjQ=;
+        b=aF5UJ6cyLXTCLBBNRYy3ate8mKVCM/P44K9WYJKJHu+2fHmgbC78D0M5PQTENkEyZE
+         drbwJh3HMt4dIDTs+tOs9c8JKP4tDjI8Sqdlr+rIsI6YS5efeOAZAWBsd9HN0uwmEsX6
+         IKdA7VKZ+c5Zjo5RTbjnnyUlhC/DA1KpcaHOdeT9lXjafebUmfEPQGLcROxVSqVk9eYi
+         7eDxpSPZ8kwfQoT4EcEgTKfLub1rgxkvahzDlWBNvzbidzz7WfyPAeRMkzmPNBALn3q6
+         0OEmO6FmN4y1psKyTsQp7QISdmf7t6VPJzvdYR7Sw4qcKB1juiNBUw5QamOTI7W3XiQ2
+         qalg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxn/xRjiBLLnSrIvSNQ3cvya/3v9u6L8WIyCPrNwK3dLt2JgfkWFlc4dPSVtIZZpN+qeD8FTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw19MN4ALMjWkRkYuY6Bma3ksSgIdkhggpC8j7kAvoc6Ggsj8Pp
+	nrw5jduWamC684InqsVN0gXnhR8+kku3Grz4Ir2ZC2O+iergU7IcIkgA
+X-Gm-Gg: ASbGncvOzdfMUCEyrsHQ/DM4woITPMCi8Qp7AgqZP0XQeYjM9pwgMzM2XL26jJYVWMd
+	kjxUi4n6nge2e0sVFjX5Em94zAn0KgAgdRgwRIEXu47URz8e+Xw76OTX5dO5CQCpH1q5529AMBP
+	bpCxWNNFyORn5qgO6uAtVzM5lknE+sXJnoqIsJOcmgW/uOoJL79ibfEdpitf4Lvho3RUPD8P2Pn
+	ONhUUOIYLSKxtkcsmZD20acX04MlR8desIOqsQVs+pOGkO2petxeMdgVVRNiSn+O75yAzuXGZ5u
+	hOSfIGGOFk+HtelbJEs6lcQnUd34EYl66G4W5fKDu87l57mg4CQ6OCwZ6uUGo6FwrvuTzH1ZEZb
+	ZvuDLMUxb2a1wKHBkoShx2S8Q50k5czuknCp6rILoWAnb3Q3XDUFLcFdP
+X-Google-Smtp-Source: AGHT+IH3/Z3zS36W8LjI8s02PyQGn8XTxF5N3xxUa2cDq53wbgUDrDDcGIGoTBlL6XKJlDi6cFE6ng==
+X-Received: by 2002:a05:690c:4b0b:b0:722:8762:9d10 with SMTP id 00721157ae682-727f368a842mr84176087b3.22.1757349851580;
+        Mon, 08 Sep 2025 09:44:11 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:9::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a8552a82sm53212687b3.52.2025.09.08.09.44.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 09:44:10 -0700 (PDT)
+Date: Mon, 8 Sep 2025 09:44:09 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net-next 3/3] net: WQ_PERCPU added to alloc_workqueue
+ users
+Message-ID: <aL8H2VtN2dw1a8B+@devvm11784.nha0.facebook.com>
+References: <20250905090505.104882-1-marco.crivellari@suse.com>
+ <20250905090505.104882-4-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603181634.1362626-1-ctshao@google.com> <CAP-5=fVjA9630Com3xNWvgDHbwmsswQ8GEbqvnZ5QCtARQJuvQ@mail.gmail.com>
- <CAP-5=fXY68WRiz3PVD19GBPg4t+_-f3pyLCwhdCDZHmQ=Aag3Q@mail.gmail.com>
-In-Reply-To: <CAP-5=fXY68WRiz3PVD19GBPg4t+_-f3pyLCwhdCDZHmQ=Aag3Q@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 8 Sep 2025 09:42:38 -0700
-X-Gm-Features: Ac12FXz3ARBiOKDmnpPM27gy1mVzPRCmSPUEaTgHBWMDiYTBCCbQqzDPHiDjBcI
-Message-ID: <CAP-5=fU=5Be2mUL0Ptw1hLG9NuvS9dT1DN83nA2Q9kTskqmh-w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] perf: Reveal PMU type in fdinfo
-To: peterz@infradead.org, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, Chun-Tse Shao <ctshao@google.com>, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	james.clark@linaro.org, howardchu95@gmail.com, weilin.wang@intel.com, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250905090505.104882-4-marco.crivellari@suse.com>
 
-On Wed, Jul 9, 2025 at 8:25=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> On Tue, Jun 24, 2025 at 8:06=E2=80=AFPM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Tue, Jun 3, 2025 at 11:16=E2=80=AFAM Chun-Tse Shao <ctshao@google.co=
-m> wrote:
-> > >
-> > > It gives useful info on knowing which PMUs are reserved by this proce=
-ss.
-> > > Also add config which would be useful.
-> > > Testing cycles:
-> > >
-> > >   $ ./perf stat -e cycles &
-> > >   $ cat /proc/`pidof perf`/fdinfo/3
-> > >   pos:    0
-> > >   flags:  02000002
-> > >   mnt_id: 16
-> > >   ino:    3081
-> > >   perf_event_attr.type:   0
-> > >   perf_event_attr.config: 0
-> > >
-> > > Testing L1-dcache-load-misses:
-> > >
-> > >   $ ./perf stat -e L1-dcache-load-misses &
-> > >   $ cat /proc/`pidof perf`/fdinfo/3
-> > >   pos:    0
-> > >   flags:  02000002
-> > >   mnt_id: 16
-> > >   ino:    1072
-> > >   perf_event_attr.type:   3
-> > >   perf_event_attr.config: 65536
-> > >
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
-> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> >
-> > Ping.
-> >
-> > Thanks,
-> > Ian
->
-> Hi Peter and Ingo,
->
-> This small kernel change enables being able to better diagnose which
-> processes are using perf events for what. In the series it is used in
-> perf to blame EBUSY for PMUs like intel-pt on which processes are
-> using that PMU.
-> Are there issues that need resolving before the patch can be
-> considered for inclusion?
->
-> The original patch was sent in October 2024:
-> https://lore.kernel.org/lkml/20241031223948.4179222-2-ctshao@google.com/
+On Fri, Sep 05, 2025 at 11:05:05AM +0200, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistentcy cannot be addressed without refactoring the API.
+> 
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
+> 
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they’re needed and
+> reducing noise when CPUs are isolated.
+> 
+> This patch adds a new WQ_PERCPU flag at the network subsystem, to explicitly
+> request the use of the per-CPU behavior. Both flags coexist for one release
+> cycle to allow callers to transition their calls.
+> 
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+> 
+> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+> must now use WQ_PERCPU.
+> 
+> All existing users have been updated accordingly.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-Ping. We're nearly up to a 1 year anniversary on this 10 line change.
+[...]
 
-Thanks,
-Ian
+> diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+> index f0e48e6911fc..b3e960108e6b 100644
+> --- a/net/vmw_vsock/virtio_transport.c
+> +++ b/net/vmw_vsock/virtio_transport.c
+> @@ -916,7 +916,7 @@ static int __init virtio_vsock_init(void)
+>  {
+>  	int ret;
+>  
+> -	virtio_vsock_workqueue = alloc_workqueue("virtio_vsock", 0, 0);
+> +	virtio_vsock_workqueue = alloc_workqueue("virtio_vsock", WQ_PERCPU, 0);
+>  	if (!virtio_vsock_workqueue)
+>  		return -ENOMEM;
+>  
+> diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
+> index 6e78927a598e..bc2ff918b315 100644
+> --- a/net/vmw_vsock/vsock_loopback.c
+> +++ b/net/vmw_vsock/vsock_loopback.c
+> @@ -139,7 +139,7 @@ static int __init vsock_loopback_init(void)
+>  	struct vsock_loopback *vsock = &the_vsock_loopback;
+>  	int ret;
+>  
+> -	vsock->workqueue = alloc_workqueue("vsock-loopback", 0, 0);
+> +	vsock->workqueue = alloc_workqueue("vsock-loopback", WQ_PERCPU, 0);
+>  	if (!vsock->workqueue)
+>  		return -ENOMEM;
+>  
+ 
+LGTM for the vmw_vsock bits. Regarding step 2 "Check who really needs to
+be per-cpu", IIRC a few years ago I did some playing around with per-cpu
+wq for vsock and I don't think I saw a huge difference in performance,
+so I'd expect it to be in the "not really needs per-cpu" camp... I might
+be able to help re-evaluate that when the time comes.
+
+Reviewed-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
