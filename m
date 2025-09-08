@@ -1,97 +1,192 @@
-Return-Path: <linux-kernel+bounces-806183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E76B49314
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:24:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263CEB49303
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 17:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F531B231A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:25:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 968A87A2D39
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 15:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15F430E0F7;
-	Mon,  8 Sep 2025 15:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E764E30E0DC;
+	Mon,  8 Sep 2025 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJExGRa1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B+VTzXyi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABCF25634;
-	Mon,  8 Sep 2025 15:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E79630C63A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757345067; cv=none; b=dJkTKY+bChF0ZEFbXqe5pmgVLkEw3gxjmtbwc4KQpzaGMk+2ERQh4pJLsaRZmcbTDsTWw4pr+i5MHx9G4DB9Kq1J6zkw4988PKAFp2h5C8zsIH+oYsoMUtrHMYsUf/NecZyHFMPCe3HMo9yTaJiiaT5MyuOLfusRGz+G3Ale4ug=
+	t=1757344953; cv=none; b=tsNwPCs2Z2GhvC584F3Q3lIuFb94Lz7AyzVf4busyzA3MCi7QGEIu2dx7DKDnkGLAMngvny3eP4CnLV1zKOflqsXIkDYp7S15NgD9tke2Dbw04VIe//pe7hVMocBTYEkFL896i0xzophkGvtDnZAQhiL4EWy+mvcN+dvhQbHIHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757345067; c=relaxed/simple;
-	bh=XGZbwTONSmzAq2Qk/5cr9aqST0TZSvlYH6pzLmFcKTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CcjvYRXLc8/LDKyFeGrMN2c27qnKjknG8w4vaHrgUKrnl8ECFuz643c9lBq+M02ceoA1P7LaRsoERu20mFE6o9xZq4064vIIMn2u0gKbKs39b8tOOKTzD0lZAOHNgQbYq/Ili2ETt/3I54MkpzX/N+VFVKKFdmmHRhOGHHPNUuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJExGRa1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 066D2C4CEF7;
-	Mon,  8 Sep 2025 15:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757345067;
-	bh=XGZbwTONSmzAq2Qk/5cr9aqST0TZSvlYH6pzLmFcKTQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aJExGRa1uSAxPPR69okuzb67kOPyztd18IYtOdhu0fYc5ebUNgG8Ggdamq70Rnd1k
-	 om35DBKqj7KGW5lC8KvGxRTavvHqMky4CgbPXfCB9IDAjwTWqZt+Ors2aeM1hmeVCG
-	 FH++ZOBq8YTdp4Ca0aXnqGuyikQQaP0cfxelz4DR2VuNG5PRW+Jt/NvAoHz/JaCCvK
-	 z0dKmFu5r22sQStLq2nNsSjGq4mmA82vTfOZYxPrutUMisoKfPMPEIzet64LkORUD2
-	 2VcIrdGiZOM/6CQm3NamnfMsxGlolC4YoSdaNRjzYfxPTYs3uk9U0ivoQGtj9hHPM4
-	 xl0buuyk04Xuw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uvdjF-0000000080c-22Mh;
-	Mon, 08 Sep 2025 17:24:25 +0200
-From: Johan Hovold <johan@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/2] cpuidle: qcom-spm: drop unnecessary initialisations
-Date: Mon,  8 Sep 2025 17:22:13 +0200
-Message-ID: <20250908152213.30621-3-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250908152213.30621-1-johan@kernel.org>
-References: <20250908152213.30621-1-johan@kernel.org>
+	s=arc-20240116; t=1757344953; c=relaxed/simple;
+	bh=F32FXDZGXwaYxsj8gbSU0nKzm4ocUmQnsK9BI1F5gkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D1oMcTmreuoy2lOUc5ixYYTUTBNi9X8LU8+fwyI2O8PI2J5igM7jQhbUC3Rg7LdBtWgPqfFqxRhvrLQJvY0lqDjB3/QREYSkl5lC8VrXHaF7PSakkPoaDc6l7BILrVYcilFZrv6RrUD/YyPOifn+f0autUyuFaaT3KYHoVlysmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B+VTzXyi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757344950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=w4KMjz9pZf6Gn5SDTmwCP/agoyxxfuBiYUtMKRyfuzo=;
+	b=B+VTzXyi7V+Tf2jDC58RlR3q9cOdsYcSpsm8+lGDA39vIDrIxePyKl5JVYeB0cwENOrDa3
+	TWmsRe9o1PoQc7+QMnCpTZe12KR36FNRFLil66QnOVpAPjenoY2cgN4qFQ8F+0o9Ww/pcK
+	pedG8ZLnNTb+ZaIp34sk7McerhCz308=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-yis6oARdMMaQ72qi-ZdwUg-1; Mon, 08 Sep 2025 11:22:29 -0400
+X-MC-Unique: yis6oARdMMaQ72qi-ZdwUg-1
+X-Mimecast-MFC-AGG-ID: yis6oARdMMaQ72qi-ZdwUg_1757344948
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b96c2f4ccso27226185e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 08:22:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757344948; x=1757949748;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w4KMjz9pZf6Gn5SDTmwCP/agoyxxfuBiYUtMKRyfuzo=;
+        b=klXYX++J9y6Y0mNZN45milAsOLZKSro0DRn4W5rmMgXIoDfa5Na3hiW1ZUVgVkcApR
+         bNlfbSUKuH3lOIweVFgpOjdzTUcEnkVYfGgOfi1tt20+1TwKizMCyEKO2eWOizE7G3K0
+         Tfly4eFXse8n44vc5PTUcrJZdTovTyoy+BhmeaNoHzA+cCzS/5Le+lWYewxlUHZDeSYw
+         eSDXkRHDjYy4ChKmw+eVoVDKxi1VX0+/tU3k576FjMCs8s3reFbeOXPYG9ydWMUZGkny
+         mNCBDH8KJAQzWbi1bbMo/n88S306Es9I6eKoK/La48WSXncr1qsgj0A1kn17ul45eQRu
+         HHCw==
+X-Gm-Message-State: AOJu0Ywj84PFYEM85yG+TZHhqt3exJVGXn9GKZLVaxZ9iO/rIs7aOt9E
+	P89DgRdxQD62BpKe7AQZM4Wzf1PylHjqExh6UslkxDJkpii9rR1RUbIXS3dzYJreOe4OFxA+USl
+	mH68bRB/Cf2PpB5vQqqmonctrFpu7ORChISWBWqprcSdr6jCpdyWTljhvwbXTikWQWg==
+X-Gm-Gg: ASbGnctAkOjc8nsK5lCEA6xKgc3KL7/wZhkEypB97XRY9EEGT0DdrxPByszbkaPRQG3
+	6BoVc59sF2+1LSd/sQ7Nvd6X4JBmAjpu42vOWuEdAmynw3JBgIhJ3s864VAhRkBXYAsWfkowzAD
+	TO3rLDrv0yNKTeN2o/MJY7hnJVHipLypb1E2ZSJy+vM3zSbLhvbr/XHKNC3LelVsLiw+M15L1mT
+	/9js+BMy5V6dtiMf5Qan4V9iE2AsCIYUZU7h4RoeZmF4cRlSqK97g9nGjKDFeXXk+PoOX2qNu8g
+	0NY1IvD7lSeLvyW9PI6uH/6HFVbYqB501K2hZl+YHKM3tQT9jZKrOIkRAd01CfSfYoEU/W/bM5H
+	pK4PykyjBAoYdmIRZDc740FtCZomYVUf7ieTznsHVXbob+IKV3We8sr0XLK6IgMcF
+X-Received: by 2002:a05:600c:34cb:b0:45d:e0cf:41c9 with SMTP id 5b1f17b1804b1-45de0cf447fmr65100885e9.22.1757344947788;
+        Mon, 08 Sep 2025 08:22:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHYVI7uetiSbrjm9XefV08PSiCwYstCNobj3gljiWL9Oji0Bqd7BtZyoiA+b/dW0fMqgLp+w==
+X-Received: by 2002:a05:600c:34cb:b0:45d:e0cf:41c9 with SMTP id 5b1f17b1804b1-45de0cf447fmr65100515e9.22.1757344947304;
+        Mon, 08 Sep 2025 08:22:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf276d5e5fsm42252142f8f.27.2025.09.08.08.22.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 08:22:26 -0700 (PDT)
+Message-ID: <83d3ef61-abc7-458d-b6ea-20094eeff6cd@redhat.com>
+Date: Mon, 8 Sep 2025 17:22:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 19/37] mm/gup: remove record_subpages()
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-20-david@redhat.com>
+ <f5032553-9ec0-494c-8689-0e3a6a73853c@sirena.org.uk>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <f5032553-9ec0-494c-8689-0e3a6a73853c@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Drop the unnecessary initialisations of the platform device and driver
-data pointers which are assigned on first use when registering the
-cpuidle device during probe.
+On 08.09.25 17:16, Mark Brown wrote:
+> On Mon, Sep 01, 2025 at 05:03:40PM +0200, David Hildenbrand wrote:
+>> We can just cleanup the code by calculating the #refs earlier,
+>> so we can just inline what remains of record_subpages().
+>>
+>> Calculate the number of references/pages ahead of times, and record them
+>> only once all our tests passed.
+> 
+> I'm seeing failures in kselftest-mm in -next on at least Raspberry Pi 4
+> and Orion O6 which bisect to this patch.  I'm seeing a NULL pointer
+> dereference during the GUP test (which isn't actually doing anything as
+> I'm just using a standard defconfig rather than one with the mm
+> fragment):
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/cpuidle/cpuidle-qcom-spm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On which -next label are you on? next-20250908 should no longer have 
+that commit.
 
-diff --git a/drivers/cpuidle/cpuidle-qcom-spm.c b/drivers/cpuidle/cpuidle-qcom-spm.c
-index f60a4cf53642..7ab6f68b96a8 100644
---- a/drivers/cpuidle/cpuidle-qcom-spm.c
-+++ b/drivers/cpuidle/cpuidle-qcom-spm.c
-@@ -86,9 +86,9 @@ static const struct of_device_id qcom_idle_state_match[] = {
- 
- static int spm_cpuidle_register(struct device *cpuidle_dev, int cpu)
- {
--	struct platform_device *pdev = NULL;
-+	struct platform_device *pdev;
- 	struct device_node *cpu_node, *saw_node;
--	struct cpuidle_qcom_spm_data *data = NULL;
-+	struct cpuidle_qcom_spm_data *data;
- 	int ret;
- 
- 	cpu_node = of_cpu_device_node_get(cpu);
 -- 
-2.49.1
+Cheers
+
+David / dhildenb
 
 
