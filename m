@@ -1,107 +1,82 @@
-Return-Path: <linux-kernel+bounces-805464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78024B488DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D737FB488DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B4189320D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:43:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A94C162086
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A348B2ECD13;
-	Mon,  8 Sep 2025 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CB82EFD86;
+	Mon,  8 Sep 2025 09:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OXaAfLhA"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOfU7WIM"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011382EA493
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CA3292918
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324584; cv=none; b=ha6qLBR3iRi18/i9CmCkdUKKeKM1pQPnGRWM388ccrwtcV7lhyAUYzv5IAbV0WMaTWodtLeoDFQ+OZHOPvcRas7ZzHAURQ1EEtZ9+u0iEvnIzjxaw9hemQUSZCbonwOJconSbGHmiEQW52hv+gML2rLMEwu0esBMbdi6etQ/EmQ=
+	t=1757324639; cv=none; b=IEa4WaJ9roiT29OfbFH7BUfkEGb6n6oEuf79Cd9NSPpBW6jBwgrCosZLkJBJ2GFGBBB5eNez6+Kdmh8VKBlrwDkAlNgEyXtBU/X9nAIh5wVsk4AnvExy3jB1KSkKB9ih2kRL1jxxF2drWx6++wfIR2Qzp+YZU0tfVLRjWH4p+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324584; c=relaxed/simple;
-	bh=xh2qh2wFQLmmoW9l+Bt+TOOehxaC85l2SPjkP4RRXno=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XE19xTzd6tRMHphk0vRgdqHGrz6ztjLnvGY2XsdJIc1aNekEWVqmvkghUxuJ396MVFSiukW1bwCbcRzxzcob40pomdgBb5laEmp+G2f+daCJJSOan412JglfDAI1/z0VmOzVTLLUGPrtkbipV2S2doE/bUDgJHZqUy04sFvnPRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OXaAfLhA; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757324578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g8brv8Bfza3R1KuSBek60li89MoffBE0eSq7KMm0i8w=;
-	b=OXaAfLhAiiYm9lTf6d+u5S8yKXqSBlH3/3z0i/pqxpv9iH7ZjPDYKrdm7FtU3p6gIAptQU
-	1X6oIBdxLjYh30HhIKwP8pO4pO7/JPCrfCHDCMlWtgZjOIWTE4nuG1FrIxO8dd/vWiQgcE
-	8PlXmTnE4NUNXLqDIzFCEBaJcqyEayM=
-From: Ye Liu <ye.liu@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm/slub: Refactor note_cmpxchg_failure for better readability
-Date: Mon,  8 Sep 2025 17:42:51 +0800
-Message-ID: <20250908094251.1080646-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1757324639; c=relaxed/simple;
+	bh=aA6huiGocNu7EQwpUsqFk3t3njZJowfv7VE74cnDdTA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=UHEhL7bPk6gFdJi2oMLoxW2tM55Gy0yUtz6AL5qmTypb/C7XniDeHFb0GrxpzGo/OL81Z9yf6bfQjaetL4rJI//gjsCswKWRYMMK99m36yiYpn5hD+bKkeBkJN6o0H84XAgCny94HsYAGxsyaw1DfzqLKcreAk7k2Xm2ZNgP/8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOfU7WIM; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-321289dee84so1053840fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757324636; x=1757929436; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aA6huiGocNu7EQwpUsqFk3t3njZJowfv7VE74cnDdTA=;
+        b=GOfU7WIMkem9rzizRxQnjAHvJzPs2HLa6v7tn50XlzgkcnfI44UOYjvqZLH5FrkZ6J
+         swPvLyiLPMfXYIb1/nTk77cWtRJAQCTRWeDZ2C3UpJyig0/SH/XNPGecxjsMJ3H/y7Gs
+         FxCLgnADb+ZgHoOlLYbTEUAb+X3/lpc+6LMEibD0+bhoUdn4d83IOofXX0yTqQUdgDCS
+         t3dwVeMibt1vAiR+1pcDX0c1O4pZxzkC7MMODOv2HsSeAHaxFzxAxgvL39AMToxWlWMk
+         inTbSTiSfr66iBGaBK8jTcyde4PcNEhdYJZqbAttjRxumndkJ0/rhE47TLhzgvYay39k
+         g0ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757324636; x=1757929436;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aA6huiGocNu7EQwpUsqFk3t3njZJowfv7VE74cnDdTA=;
+        b=UhQMQHIsYgndwhcRGNUjukaCLvk+Q8Ih/ZFIpCY+PslZr3owIlNeIQznG/sLyTGnrL
+         sWf3Hy0wK87muroKXzoICc2kvzxbE3ff6qOxjNtdwjEnbllFIYpkqubVcX3m6J7CO+8J
+         Sor+Bvfv31B3a4hG0BGSytYXM7ANstZz+rO46RfW53YHIJDtOii18lFhJno9eG+JPCmg
+         nWrvjb/K99lLQ3ssOyHVYqXsQVHqyrEir5FcLo9NFVTCSZgGo8ydlwnovU32DlYyt9gX
+         ICNaNXCJCPo6hhQ3C52t/KWLFk41QuD227oNbio/BUQmuwR0MP4eFpN2OJz7tl39h78/
+         HMrA==
+X-Gm-Message-State: AOJu0YxgkkMwgOjlDBk1zAX6TtXQ7Mj0N2vQ8AhdDUEOLgnwIqMyklx+
+	G96M5tEPXyJHgGsHdbFQTyeGqzLhGudzBQ9HccgWX7iZrylf/YZW0hKnvT8W1Qb4FbOLJ/On9Le
+	bXZlEZpxMp2+aCM58II60IpYvYCtXe3/ITNNV
+X-Gm-Gg: ASbGnctvfZYMiRdFqoaCifChQv9bm/4d7+jufd7ZHXD88PqLyXbsOlcH3VSSfYeXv0U
+	IH2LH7A6xY7re1ot5OKKWAHS+VsuglmIamHEyVoExiM0+25DcWzYTx9GXrr4wDnyxKmt/G0Ch0n
+	0/o+1CQ8gpqn6MG9kUYv5tr+l+UZFu/OXaHm419nH5oLDQbJBlP2taj1uM6d1pLQnhyEhmIOFzO
+	m/VNzQX
+X-Google-Smtp-Source: AGHT+IFj63o6MrJrnHE9xGEkRohiCYk2AI8gjNQNKQqLtp0VNMdpHmddlA8BGVgkm0CZyopI8kf5LwpKDmdetyW6xzo=
+X-Received: by 2002:a05:6870:1b8f:b0:31d:8c33:59c0 with SMTP id
+ 586e51a60fabf-32264d19ad1mr4488609fac.29.1757324636627; Mon, 08 Sep 2025
+ 02:43:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: snow snow <snow.kevin748@gmail.com>
+Date: Mon, 8 Sep 2025 17:43:45 +0800
+X-Gm-Features: Ac12FXyIENtmH9UNJ5D_ZRNXgZCWuxv_-mSEWr0t7N7OOF8ZtPOKcqd_LINhLrc
+Message-ID: <CA+DxC5UCmYdK545NYiVGmui=-aUeMwDDK7YTqdxwqWqzSkJ+Lg@mail.gmail.com>
+Subject: 
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ye Liu <liuye@kylinos.cn>
-
-Use IS_ENABLED() and standard if-else to make the code clearer.
-
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-
-Changes in v2:
-- Insert newline after && as it's more than 80 columns.
----
- mm/slub.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 30003763d224..5711d6d29a3f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3064,18 +3064,17 @@ static inline void note_cmpxchg_failure(const char *n,
- 
- 	pr_info("%s %s: cmpxchg redo ", n, s->name);
- 
--#ifdef CONFIG_PREEMPTION
--	if (tid_to_cpu(tid) != tid_to_cpu(actual_tid))
-+	if (IS_ENABLED(CONFIG_PREEMPTION) &&
-+	    tid_to_cpu(tid) != tid_to_cpu(actual_tid)) {
- 		pr_warn("due to cpu change %d -> %d\n",
- 			tid_to_cpu(tid), tid_to_cpu(actual_tid));
--	else
--#endif
--	if (tid_to_event(tid) != tid_to_event(actual_tid))
-+	} else if (tid_to_event(tid) != tid_to_event(actual_tid)) {
- 		pr_warn("due to cpu running other code. Event %ld->%ld\n",
- 			tid_to_event(tid), tid_to_event(actual_tid));
--	else
-+	} else {
- 		pr_warn("for unknown reason: actual=%lx was=%lx target=%lx\n",
- 			actual_tid, tid, next_tid(tid));
-+	}
- #endif
- 	stat(s, CMPXCHG_DOUBLE_CPU_FAIL);
- }
--- 
-2.43.0
-
+subscribe linux-kernel
 
