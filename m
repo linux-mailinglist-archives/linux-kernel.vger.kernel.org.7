@@ -1,88 +1,81 @@
-Return-Path: <linux-kernel+bounces-805339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFE3B48748
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C253B4874B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0741641D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730003B15F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B82EACE2;
-	Mon,  8 Sep 2025 08:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CFB22A4D6;
+	Mon,  8 Sep 2025 08:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ev+Dr2+o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bVFbxb7T"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757C1DDC3F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 08:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59321ABBB;
+	Mon,  8 Sep 2025 08:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757320407; cv=none; b=iyhT3ewn0rtF9HWJfo9srRotxMmmD7E/cfGK97W00JaGLxqCMFBHZ3pUX0ho68epeS4HI/zViDTJkmT9//N10WJ++L6n3h6Z2P+jjriwOYCj6oPp42jAFD5sOhiNqCYwUzH2BPSPSNaf6OW1TlMaNdZKwgaITHPF3ZMEJbDWjbE=
+	t=1757320442; cv=none; b=GAs77kugR+Bnbdi3lvYIc3gkfxlj67WgVqIr+Rbhtoku7oQxoCNqdbm12/oLuPtw712kD1SXliown/pagScvBQLjXwxj//6p997DkxRgZMdHE3cOR99x11JlzaG1fYMSEtq7X6IEmKqecDlQLclPAY6b3srm04men9KS4Ss2gJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757320407; c=relaxed/simple;
-	bh=YqwH95v3WxPKblwXHJFgW9MvFgWs3/w2C+P7HH2uXBQ=;
+	s=arc-20240116; t=1757320442; c=relaxed/simple;
+	bh=vCqqU+yaPD5HIyTtG+hPFyDYgOIhmSc60FVhT9BDgbM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6XznUFOtKE0i+pX3Jm1voevD9lP1ikcYb5jdeMt7WgIGc4MxLVomhQPgYBebem7caHBXiPIZAwOosjJGMYJNbTXw9uL6EWfjvmT6rZv2prwV1+LlzVJAiLaMQl59rzWFULz1up6JebJm1bhpp0zwuzdNVa4P2PM7kJ8x8uboPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ev+Dr2+o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757320404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EtnnjkE2sa/VAFor/J7GmB/F8L3NsbnUCYVr2WFGbAs=;
-	b=Ev+Dr2+osGRCtaoP5xAv4cWwhwU03TwzEzV1bpIJCfmBT5fV3SnYd8JyXVVciZOK2M9CgJ
-	zRordCC7rleIvM8J7flRK/xJJynSFFbVUYXci4j0qGifcYXA9y8um45YEzwwG/Bz1FkpQo
-	XXQltXxzPYHRq5ndXvLMHwCmLYF9/v4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-inNCr9ZPOvGkQD77B4IJ8A-1; Mon, 08 Sep 2025 04:33:22 -0400
-X-MC-Unique: inNCr9ZPOvGkQD77B4IJ8A-1
-X-Mimecast-MFC-AGG-ID: inNCr9ZPOvGkQD77B4IJ8A_1757320402
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so21914205e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 01:33:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757320402; x=1757925202;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EtnnjkE2sa/VAFor/J7GmB/F8L3NsbnUCYVr2WFGbAs=;
-        b=GDrNRQFzbWDJQvYIOxaIqFHOMKMJrW86zghXfT2nOGANsoMio3Hj5Ts0h2R4CV5QCR
-         pWPk/dky8GAooEjZS+tXHch8LxuOIZwJh2rdltAmA+g/EpJLolPlZ7bK9+CM58IDlabW
-         HUW3P45TvwEEDWVDKeV/FL5IlWlQdeJQcDKl4xFPPeGareb/kmiWRwQEbnzqCldCNKAI
-         Adn1+UdJoMCDYfaSVlTYuAZZqjZhifQS2Sy6zp95hqRL/MWN0Qthe+7MkTfdhSpupAwx
-         dzmJBQ8eA3Sk+QElTrtVmlTcNXq55MTx+NMbT74xSCBhVIj6KXkmUCo2MKlDGaMon6U6
-         4gag==
-X-Forwarded-Encrypted: i=1; AJvYcCUtjA0OAErhsIkEHWQIFaPN4TLALtbrhBkPZAiPqyTNMYvNCVrpqEtYBBmM5nV1HKoctblXYAHqKRS8kf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWR1ABQGvb4LOaRgjMfUxPeS+Xk4cm+8ciDG7DJG9lOt02D+Tq
-	jszSbuHgscS4RMiNzSHzowv47MrM+6D3yaE9kibFG5n8h/r7Zq80YOlmP1UhLI5XwsS+Q57aR2/
-	KLoxt/IFBXyjJx+vtOklFSQCvIz5yDhuh6Ikkbf51NCrPJzSrEk8/u0qcmmbFFtHisA3S9vgVUA
+	 In-Reply-To:Content-Type; b=eXdrinlMdhGA5N3Kkol3AxGp/MU55HLQ9McNzVx20TXw1hMaPdQMeP9I3wzbnxliE8wP1lUzqxi3r/awg6S5LypQzukS25KrBiMSgDPn4uOUdferT+iDXWzV0C4TMMghk2zPUpGKzNnXmlt9APr4kMI7E3Vb+xbJz9u6Jg/HGgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bVFbxb7T; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587LIOVl027585;
+	Mon, 8 Sep 2025 08:33:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3AgNoS
+	T4CnKFruzoM5wTD2dQ313+ckKd764nKXmTeIw=; b=bVFbxb7TxBkszrjrs/DItw
+	V1rQwp0xWhouuojR9pFkF/lEe82+/XqS/LKlcSsA9LqUgAGqz0KtWR7WE1aThz9g
+	wCxPHn9m661o/cCRc7k6eOAnU48uGKvtli58ZOj5nh7c6JaSM9vZ1K7f8ThTgncd
+	i3ghaZaS/Vdh+/OHdsxeuov2CxwEeiiD+B4gffQcCWJwA1fFClfGt8/3yYahgqQl
+	rfNnjOEyGXXicfeLrgjavNNIi/rx5cUb7+s6Ez6a1YSgHL7vOHrhqX4nLVLksffq
+	A8AoCigOGZ7ZY48J2Cn8+GaAyVtJHQOc4owkEryzb8ZFOSL54AecnGUH8mcyhM5w
 	==
-X-Gm-Gg: ASbGnct7D9HmZgmqFaLXYg+MvvGzjDwkghxhT2u5ZKlkGGtI218ZPMU/iddH+JrUGrF
-	klQX+vbMCHSnSyA1tg97ZB7fLZBXERvbVurUD5rsaccP+kh6H1/ypsfwXbADyTPMUnZ/GzUEg7h
-	RiAOHLFunLXtkCocVrDz3WPiOZK+n8Oy5c8W1yZYdIsvxWqW0It74AnkWMI1us7t4/+rmYjpTkT
-	FMtZtcZoLKpfQNIXugnHwN3wdsXry0+1B5WpWIRn1pNKvPva/dEwbn2ZPAKqGQvAeNfzocT6WrA
-	dKgmOLdi3ryfCONpvI82iy/io9/EtBfVSiRPo2lKUZxFj/0zUaI2h8PriJYLU2eEXtP3qLg+8Tp
-	/3hWu09DNlBaypqD4oWmaXLeJFkO7xZia+CHif1mgHKYszZxgGSZFBwgbnJeVAbg1
-X-Received: by 2002:a05:600c:1912:b0:45d:d099:873 with SMTP id 5b1f17b1804b1-45de2547b9emr42261175e9.6.1757320401667;
-        Mon, 08 Sep 2025 01:33:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZ92pLEjQluT6SnPXGlHxbIiEKvzSoTm/+xGYPMrbleY5GV6dWcIL/gu8xTjnvzK1RgQmRqg==
-X-Received: by 2002:a05:600c:1912:b0:45d:d099:873 with SMTP id 5b1f17b1804b1-45de2547b9emr42260735e9.6.1757320401253;
-        Mon, 08 Sep 2025 01:33:21 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd05d0c43sm90946595e9.2.2025.09.08.01.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 01:33:20 -0700 (PDT)
-Message-ID: <b30823ea-b987-4284-866b-9e179a2d8eb7@redhat.com>
-Date: Mon, 8 Sep 2025 10:33:19 +0200
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycn3rf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:33:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5888XdSA012310;
+	Mon, 8 Sep 2025 08:33:39 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycn3rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:33:39 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58867UdA017187;
+	Mon, 8 Sep 2025 08:33:38 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gm4ygk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Sep 2025 08:33:38 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5888XZl920054420
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Sep 2025 08:33:35 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 485A42004B;
+	Mon,  8 Sep 2025 08:33:35 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E93720040;
+	Mon,  8 Sep 2025 08:33:35 +0000 (GMT)
+Received: from [9.152.212.43] (unknown [9.152.212.43])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Sep 2025 08:33:34 +0000 (GMT)
+Message-ID: <f672519b-d21e-4576-8cb8-989b95c88f97@linux.ibm.com>
+Date: Mon, 8 Sep 2025 10:33:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,88 +83,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm: avoid processing mlocked THPs in deferred split
- shrinker
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- usamaarif642@gmail.com, ziy@nvidia.com, akpm@linux-foundation.org
-References: <20250908040713.42960-1-lance.yang@linux.dev>
- <5a1429ad-3900-404a-bdca-f25623ce603a@redhat.com>
- <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] s390: replace use of system_wq with system_percpu_wq
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20250905090857.108240-1-marco.crivellari@suse.com>
+ <20250905090857.108240-3-marco.crivellari@suse.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <bc1182e7-3f70-4645-b8c4-a97898e57041@linux.dev>
+From: Mete Durlu <meted@linux.ibm.com>
+In-Reply-To: <20250905090857.108240-3-marco.crivellari@suse.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8DykrpHvg5_jwvbvVVdxtV48KqX8qJ9A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX5vlICxHRu+hQ
+ HHldcSCecfFovHT1Pmv71QZ9Lw7RT5McBdAMxWsluhylQax8T0Drp0nZepjNYg/iczYQkrVfhxr
+ N684VH7QZLFEzXwdHiWZPnBGOvfRn2C5AIuLmgTsjXPG6DgfHn9Ppsla0sul0hLD0B/I0/dmcOr
+ ZO1akh4GU3zewIjLrxJ3ekHsQU4g5UuwAdGgjbbmuZdvJez6UxyM+XBL0Bv321IwvUVc1d8wmA4
+ 7c1q1N4yit10Ekm/WpCvF4jfGtrdJuOpjxGNxXgMmO3/HikzHQyczi8BSkuyYbRQjH/bXW2S/EZ
+ oy6XrLou37tO9gSbvA3WdrlqNwu//XmJVe4L/4D/+TZfCyN+w1X5w6q2qjhQqEWs0p+DEeSc9hy
+ YbnB4t5Q
+X-Proofpoint-GUID: v2nzW-TXfSpyWtZXZn0hTQRZHWoMsj5V
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68be94e5 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+ a=YH03dvRjq84_0dL9y74A:9 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_02,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
->>
->> If I run my reproducer from [1] and mlock() the pages just after
->> allocating them, then I essentially get
->>
->> AnonHugePages:   1048576 kB
->>
->> converted to
->>
->> Anonymous:       1048580 kB
->>
->> Which makes sense (no memory optimized out) as discussed above.
+On 9/5/25 11:08 AM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> Yes, my reproducer also shows exactly that. It's clear a lot of work is
-> done but no memory is actually optimized out ;)
+> This lack of consistentcy cannot be addressed without refactoring the API.
+> 
+> system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+> CPU affinity constraint, which is very often not required by users. Make
+> it clear by adding a system_percpu_wq.
+> 
+> queue_work() / queue_delayed_work() mod_delayed_work() will now use the
+> new per-cpu wq: whether the user still stick on the old name a warn will
+> be printed along a wq redirect to the new one.
+> 
+> This patch add the new system_percpu_wq except for mm, fs and net
+> subsystem, whom are handled in separated patches.
+> 
+> The old wq will be kept for a few release cylces.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-I'm not really concerned about the scanning overhead. The real harm is 
-splitting a THP without any benefit.
+If I get this correctly system_wq will be obsolete and users will get
+system_percpu_wq instead, which means local cpu gets to deal with the
+delayed work and its timer and it has an affinity to that cpu via per
+cpu workqueue. In that case;
 
--- 
-Cheers
 
-David / dhildenb
+> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+> index e7b66d046e8d..85b5508ab62c 100644
+> --- a/arch/s390/kernel/hiperdispatch.c
+> +++ b/arch/s390/kernel/hiperdispatch.c
+> @@ -191,7 +191,7 @@ int hd_enable_hiperdispatch(void)
+>   		return 0;
+>   	if (hd_online_cores <= hd_entitled_cores)
+>   		return 0;
+> -	mod_delayed_work(system_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+> +	mod_delayed_work(system_percpu_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+>   	hd_update_capacities();
 
+Hiperdispatch's delayed work wouldn't get a noticeable benefit from
+utilizing a per-cpu workqueue. We probably settled on system_wq to
+utilize the global work queue at the time. Would system_unbound_wq
+make more sense here?
+
+Thanks.
 
