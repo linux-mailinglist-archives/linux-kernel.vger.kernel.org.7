@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-805591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46E3B48A9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CC8B48AA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC343C6380
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178983A8E6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540CD224B12;
-	Mon,  8 Sep 2025 10:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACDD223DD4;
+	Mon,  8 Sep 2025 10:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ru/psgNw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="7X7U2Xu2"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9239189;
-	Mon,  8 Sep 2025 10:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD17A189;
+	Mon,  8 Sep 2025 10:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757328892; cv=none; b=k3xlcXWA6sr9ZOBRAZ2Rc+zRe9uxF1eiFb7SQGQkaS1u+LhwrLULBHwcLw1VJuAY3rC5Lws9bTNcl9v3MV8Ku+7tpPDz98tSbHaDM6gW0ak5HI25fOmgKE1iuiYudZmSPdgzNvMln5rzqE9O27x2H152ERA4tzrPb0DkBhnXe2E=
+	t=1757328908; cv=none; b=L5ZQ9Pt0JAdJFrgpGIRdGnJguw3p5Rthk8Ixbo41ZRpOLzZVraHdQ+QK872LZDg4DKkOru4Z3qgsNOWzIJcFBFkp1gL8q51DvFtsNodS6mYrWUh4Empc0Cb/nKP67gzHKiX2RrqI1gtXrMon/fhXItAVQn/qF/nDwSEOjcDLMgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757328892; c=relaxed/simple;
-	bh=hlWRmP89svceQHxhWRC8JmwmeGVsWRQ8ttOXrLBPQaI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=iF9byY/vdhFEsLEiVABWUxE/8N/YoNeeITEFilhWQ4HOPFpe1Hv4x7HdC7g7T/Z7mEcnIwuRj2QJecDJ1MfaiZOBR2NmpSuS7zH5h7OqHNse5xswNC3SEUhTJd0XX0yq5JNwH37Ej4b1OrGaOUetRPRA+eRW9LgRubZROxOj994=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ru/psgNw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E58C4CEF1;
-	Mon,  8 Sep 2025 10:54:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757328891;
-	bh=hlWRmP89svceQHxhWRC8JmwmeGVsWRQ8ttOXrLBPQaI=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=ru/psgNwnsQURHU7EB4hRIrfDMZIjIFIs+UysEYBN+Rv0uXyOPVaQ0pxwhkeAFLmf
-	 F+E2fqKln9Q5y45IC2hUaNLExi2LSDxuXjs6+ayh6S9aP6O7aBvq24uyvFUyDpg3ri
-	 vuDQxmNCSz9RtwWt+o3Z+y2HU4e617Y2jaQqcVXfRL7Gdh7l/kjm8SVptCMsrC4EQQ
-	 TM3LMK58yt4uZdJkoXlKE+bZf203HqluJ1LDA1YgfGsqXQejEZj58q+MI96DeFghiU
-	 2l+MxgGCLDi1Bgniwm2fqLeArciv9OY5NM7MjDry6HB53UTaYkCRiCyjpKO7l40K6W
-	 YD8W8tg8k9jcg==
+	s=arc-20240116; t=1757328908; c=relaxed/simple;
+	bh=EqlZsQks+WW7jmnsAvVdsxSQzUjOCLYnk3kijMEKaYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Uq2xk3gSZanOxb1Yz3eylrs9/Kow69w8yVc++kq/4H3foCA8JE+Fg3SxAjHH5MF1V9L0RgPCHRgN5I6cEV0y9aZ8Q1KvHwmPGwKvAw+UvqH7RtvCs6plDKxKR34WCdfm8TKXWtT7WW6d+P8/L2TMWQNhMKgIh6hqffU8eFCo6Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=7X7U2Xu2; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=0LgwfZ9wkEAtJ94bNBrquAEb0mXoUgSOBRfwjUSoLhY=; b=7X7U2Xu2eOqFWTYsVy6vs1y2oY
+	0qG6OglqIbcf2y9/F6qWOOyWDeRwMGACXkuOBkf0KyklP4boGFnIgTIZ0mXik2Wcg4H8Hc2jVRPCb
+	vcr+fihtypb3Byy6CV8pu7S0bsd2tdMXI5UHzHfnP7XsC9y80TqZZWqgIsJYRB5wlj3Sgy3SlBA/W
+	J0LYtlK+vNe/iS3RKltZRnMAlhsR6qA50w/ZNqiwgOTe0a7MFEfHOSjA68xamZxSrICNHnJSQU5Hl
+	BkqPRnD2CHRWGcQB51w5qo3D/jWYnlckF46g+bG2mEEUwhMR6gdfse9oiZJ+ysc3yvpY5NxePkYay
+	KVA4IT3g==;
+Date: Mon, 8 Sep 2025 12:54:49 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andreas Kemnade <akemnade@kernel.org>, Lee Jones <lee@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Alistair Francis <alistair@alistair23.me>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: sy7636a: Add missing gpio pins
+ and supply
+Message-ID: <20250908125449.0b1443cf@akair>
+In-Reply-To: <288f0cf1-1ee4-4eba-b059-641120bb93f3@kernel.org>
+References: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
+	<20250906-sy7636-rsrc-v1-1-e2886a9763a7@kernel.org>
+	<288f0cf1-1ee4-4eba-b059-641120bb93f3@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Sep 2025 12:54:46 +0200
-Message-Id: <DCND3LBZ0Y2J.377ZTOSOUXMOB@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
- <2025090807-bootleg-trophy-a031@gregkh>
-In-Reply-To: <2025090807-bootleg-trophy-a031@gregkh>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon Sep 8, 2025 at 12:17 PM CEST, Greg Kroah-Hartman wrote:
-> I tried using this in a "tiny" test module I had written, and I get the
-> following build error:
+Am Sat, 6 Sep 2025 14:01:25 +0200
+schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+
+> On 06/09/2025 11:09, Andreas Kemnade wrote:
+> > To be able to fully describe how the SY7636A is connected to the system,
+> > add properties for the EN and VCOM_EN pins. To squeeze out every bit
+> > of unused current, in many devices it is possible to power off the
+> > complete chip. Add an input regulator to allow that.
+> > 
+> > Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
+> > ---
+> >  .../devicetree/bindings/mfd/silergy,sy7636a.yaml         | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > index ee0be32ac0204..08ad593e237f1 100644
+> > --- a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > @@ -32,6 +32,22 @@ properties:
+> >        Specifying the power good GPIOs.
+> >      maxItems: 1
+> >  
+> > +  en-gpios:  
+> 
+> enable-gpios, unless it is something else, but then please explain in
+> the description.
 >
->    --> samples/rust/rust_debugfs2.rs:64:53
->     |
-> 64  |         _file =3D root.read_only_file(c_str!("name"), &hw_soc_info.=
-name);
->     |                      --------------                 ^^^^^^^^^^^^^^^=
-^^ expected `&u32`, found `&&CStr`
->     |                      |
->     |                      arguments to this method are incorrect
->     |
->     =3D note: expected reference `&u32`
->                found reference `&&'static kernel::prelude::CStr`
->
-> I'm trying to "just" print a CStr, which is defined as:
->
-> struct HwSocInfo {
->     id: u32,
->     ver: u32,
->     raw_id: u32,
->     foundry: u32,
->     name: &'static CStr,
-> }
->
-> Is this just a "user is holding it wrong" error on my side, or can this a=
-pi not
-> handle CStr values?
+My idea here was to have it crystal clear which hw pin is meant since
+there are two pins which enable-like functions. But since you agree
+with the name for the other pin, I can live with enable-gpios here,
+as long as EN pin is mentioned in the description.
 
-What you're doing should fundamentally work.
-
-The above error suggests that your declaration of `_file` is File<&u32> rat=
-her
-than File<&'static CStr>.
-
-Also note the double reference you create with `&hw_soc_info.name`, this sh=
-ould
-just be `hw_soc_info.name`.
-
-You can also test this case by applying the following diff the the sample i=
-n v5:
-
-diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
-index b26eea3ee723..475502f30b1a 100644
---- a/samples/rust/rust_debugfs.rs
-+++ b/samples/rust/rust_debugfs.rs
-@@ -59,6 +59,8 @@ struct RustDebugFs {
-     #[pin]
-     _compatible: File<CString>,
-     #[pin]
-+    _test: File<&'static CStr>,
-+    #[pin]
-     counter: File<AtomicUsize>,
-     #[pin]
-     inner: File<Mutex<Inner>>,
-@@ -140,6 +142,7 @@ fn new(pdev: &platform::Device<Core>) -> impl PinInit<S=
-elf, Error> + '_ {
-                         .property_read::<CString>(c_str!("compatible"))
-                         .required_by(dev)?,
-                 ),
-+                _test <- debugfs.read_only_file(c_str!("test"), c_str!("so=
-me_value")),
-                 counter <- Self::build_counter(&debugfs),
-                 inner <- Self::build_inner(&debugfs),
-                 _debugfs: debugfs,
-
+Regards,
+Andreas
 
