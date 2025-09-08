@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-805477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1C7B48901
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3476BB48903
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106623A96CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00780189C85E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098512ECD3F;
-	Mon,  8 Sep 2025 09:48:03 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A63A2EBB80;
+	Mon,  8 Sep 2025 09:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ncyq0gAI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291781DDC2A;
-	Mon,  8 Sep 2025 09:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B92C1DDC2A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757324882; cv=none; b=I5hO/HEJ0e2XA7On1/zZPny0VB3g44O5aEmGxtVOV7+lx5dt1MzNLhv1ICc0RMkej71zHW0zVeLl9MfkE6h7IY+PUfPaXH97yaxwvL2njZDYGpE2iZdnPDRiaf/HLLoPzYu+vxuMQveAYwSsZZjRUTQeEZubgB1x80q92zGRLy8=
+	t=1757324890; cv=none; b=lQgkUTw7AOgnwttAnsQeU94Rsm2OOhlLDxHLF57OG3RCN1O37/+w3OCNvCVtaM7vQrkjcLE9Wkd0HlNVPHE8J21xdl78jmYULSiedI8vM10ZfIaGqAhIgZD10HRk0URXviUViqM2ozGoLthPY1XNO0nlCIY7fAVqoF6/FLAyZF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757324882; c=relaxed/simple;
-	bh=GqqU9gQ6ksLgdH/oUPUWq87ARBy0UbhPT2s8vt4oWCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MSH/0nvaYMlVfGVZTEyjIc6iaoRkxacfNvrhg+rL+P3OYkE5og/nY5LtZvOmj1ADkK2JYCXUegqFz5ZME3z75XhBzfFJhdLVWCLctcMKGMJNzb6f7p8UHyD6FAM5DOaPA5DDgsEXO6wIa9atnYxzXd8+0Bz53qKzbEsHec2UHiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-545e265e2d0so3420946e0c.1;
-        Mon, 08 Sep 2025 02:48:00 -0700 (PDT)
+	s=arc-20240116; t=1757324890; c=relaxed/simple;
+	bh=bWoPTqdfq2Z5itISj5h3T8LZVUE4R8Krkv83QbMaoEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxj6KsFAHuWtcLV9l6lYsSYQPbTNzZAP9Bebn42fqG24ld2l1StK5PxpQeA9QQN7h2ztseJY3CV/rHkljB3sda+vT+16MWDRz4bEopTNw4Qe1toYjpulKFKacsQcX2e36uLz2mPMK4cb+m4fjuwWFzlrUXjZsyZsjKstXHXCHAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ncyq0gAI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5889O3ch001510
+	for <linux-kernel@vger.kernel.org>; Mon, 8 Sep 2025 09:48:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LhfhHap5hYU7xmjyTW9F9rXA
+	9Whxyp4HeZGrijVcxzE=; b=Ncyq0gAIPuWEPH/DyS6X9PoHfbYjT9sBIjoie6G/
+	doMu2uQh5g8KAWMMwBaBXuc6RkJWKy9IAKrqYUY2bYBL/Kt3v/zJfjomGJMr+LIK
+	zQHBPqXgosk/m0N1ILf8T51Wlxny1qCY1xvbNEOYiSngUtY1xw7ioRLvcC+2oB7F
+	clrxM3ZMQ50cHXn2h2p8yGXWDKxYl5GWNjLaNa498v3KvmXVQE43QkVrwFJ4b3ic
+	IK9QFhVbW4aXu1LC5Byi8ESlsI8ap/ss1OWeklfDWJCoiMnIUZUzu8niEDF7h674
+	K4S/lAZKHaRCj/uloj14L5U18LZd3oGxPUd22nK6cn0Y2g==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490by8v6kg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 09:48:08 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b5fb1f057fso19152111cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:48:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757324880; x=1757929680;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nzgk0xUzUlh6j52cGVIzM3waTCC9uxV/H9zzF7aMhCQ=;
-        b=dA47YkQiz7jxS1RNMY67oqCWE5R/CVRVzDifRaWTUQ0CFYKKZ4ujUsiUHEQwiJ08iz
-         ajwxQZ7CeNtsWEbhVKMH0FSK+W0pcpcfYW504flB3igbX14kHm+TRwy5OzOLdgapZR6V
-         XlJaERmUJ+m+NzYG/p26wcqB+t+5jpVDzLaMpEBEPD78lGyj5JCxODAC3kK/r4Yxone2
-         TixZCG9Ud3BfxtDrWEv+Ha0wGh5vWxjZTrKsTI6SrNH7UXXjInbVlb2loou+ne5cGeIo
-         mRF12BC+PprT3ddmVsAvTq66nIpelcrRSYOu3RB4VI/3b9nDOypSjoG/f91QVQXoJeLQ
-         z40A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqNdsDCwkOe27ULKCNdvbsFRglXeYiYW4zzMk38rKPFo6USPjpJhjieRPelokoNhgWDY5aOgBUXY8McXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygWCAUl/kHkPAS7JSNOgreTwbwuQXnbdK3yxhNjH5sIpElkVFM
-	V2cpg+DKJfDXSX2ZYKXuV35a+3HmewWBDmA+iQiJLlEHASreqydHSJHXf1X/AM+m
-X-Gm-Gg: ASbGncucya1Awi17VyCVtYysWnRHw2YpA6zle+rSXYtczzNhtvpS/cp6Jdz58tVTDeb
-	ZtzZgpueOn0wj9hGC/dFDCEqV5SuSRdkT6y7mhPIo7gYI0sg9aw3cpfI6dPOhduS/2dOq3B5gfJ
-	sfJYRMPR2jlmXizEAPkd144M9Cy0IpBDE6E0WwkuP6S9eK2M33zUgK5y2IgwX0AnxGZrm3OJ2p+
-	qe/UwSZLUCz1CZEFHOQslBvu5wp47nHVMqSDZL/mLEcNbLP0tX6xK8xQoZs+g7uMzPg4E7qFzmA
-	psSn96VC8CCuZAoTRFhmO0MN6T39W1RihvexutJItHv6JwDilFl6dviC2g+LhuG17YMbFa/XTqH
-	MLgP/CQPpR24apFPSGpYHmYACsJK5MEKFj5IXkAbdUFE8Nts0ZXbSMILUAMoS
-X-Google-Smtp-Source: AGHT+IE15eppcnMsPaYykP4nYivMIrhZ5KYq1+nFCB9ag6yFg08PC5aD6w6ZmVm3szvld2saamxPNA==
-X-Received: by 2002:a05:6122:d02:b0:545:d9d2:a832 with SMTP id 71dfb90a1353d-5472aeed8f7mr1980325e0c.7.1757324879871;
-        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491464bd1sm11953028e0c.19.2025.09.08.02.47.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5290c67854eso2967137137.3;
-        Mon, 08 Sep 2025 02:47:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8wZKNllkrpRBk80ZOsSdH90w6y6tPzrYEFiAv1pMRHZc54paO82P98uwyPMSzkgZ+iS6LkDkCuFv2zLk=@vger.kernel.org
-X-Received: by 2002:a05:6102:f83:b0:524:b9b7:af01 with SMTP id
- ada2fe7eead31-53d1c3d6e5cmr2054887137.10.1757324879469; Mon, 08 Sep 2025
- 02:47:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757324887; x=1757929687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LhfhHap5hYU7xmjyTW9F9rXA9Whxyp4HeZGrijVcxzE=;
+        b=N+pHjCZ0kbfiadzDqRBorySHLpiZptL5waio/9fPFxYfM2fDOzcvdawh2JpEA17r0M
+         vj2ZwZFE11q0vqNTBJfAq2+9Ze7XvDv1BlOqAiKmqDI1jyc0Kr3W745BT7l4uR//OXiS
+         hGHzDuGJ/t4/QcgL1I8ZCPAWAEB0R3M9JShlNHaM99/IqLlYVfL0amUO0o6R5vhgkNxW
+         UX1CxIv4Qkwbf803ObQz0UTuTfURHQ+JdZpNLMycGgcHLJqscjDCQctCvFHcj6tyrAHB
+         +FVxPy5l/RZL7H8u9Q2NpmWe7LHIw40MGWtxITkTNXz3pqX4gSoGRXJMn+qp5M0XCvvW
+         6DkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1A2q0ZAnTv5v0A2EtaaoBWF1+vWHZ7JTc+ftIgfRmTEZK2kD71mwaJySDZQV29tL/v4qCf9f4f5P8xh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUj1F3A48hfwYndH3DWGhrm4PD/SIqLMYWyGh1FOgXZbUJLi++
+	C35svFrSgIN3MSJ/s3YgKYvKIt7F6kgLsxm1GRM+ZoU6OIiD9KaNCRK88tzLqblrrSrxe7rEZQI
+	5XmTZ7q6X9SqgGRYb00QCkRv9XUhwdZ1wDV3tTsDbOEcRVnGykw7nDvGWmBeOkVM/uz0=
+X-Gm-Gg: ASbGnctUHBy+but5g8018i6k8oZTJKF9G74FA2VziPshbU9FfqZcr2kZ5GeugKgKt5e
+	2Bhrzy7opbKcgGR7Q2CZsCnbsXDBzf3J8ScyhRVkdXK9/F6j6JHZKv/2EeyT8L/9ujXmgkyexWO
+	y3Q3shCBFev/zrzT6GeZ0lQ2KV8kZKGjn8hZClmILBcSTRlZQQNkkw9LgArUlGZ6r2E9n5GUbMb
+	RsjHjr6+jd+m/fCbteEWz7gqDDHrrUMfB19yNjGA97sihapkmJtUlzt+yz3IGP+PditaqGZpwz4
+	zV8+J+4Q047reGZvG/YcerP+py+mQa0K1CPzmF4dtoDTqCaE8d5ReHcTSnZh/3ClwKmcg60U8ga
+	5frANc1AsdwGQgn4x1zib1J6r/ZAWkGirXgPoSoWXb5BkyIGRTand
+X-Received: by 2002:a05:622a:5012:b0:4b5:ee26:5362 with SMTP id d75a77b69052e-4b5f834e673mr62482191cf.8.1757324887223;
+        Mon, 08 Sep 2025 02:48:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwW5yW9mmwUX414xMr4F3g7FOeHsQ908LynTz8dWVo8Jm54hMcp9b0uUEfgpV9Rx6Uqxf/EQ==
+X-Received: by 2002:a05:622a:5012:b0:4b5:ee26:5362 with SMTP id d75a77b69052e-4b5f834e673mr62481891cf.8.1757324886625;
+        Mon, 08 Sep 2025 02:48:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c50317sm35222401fa.2.2025.09.08.02.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 02:48:05 -0700 (PDT)
+Date: Mon, 8 Sep 2025 12:48:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: ite-it6263: Support HDMI vendor specific
+ infoframe
+Message-ID: <3ll7uxguykwufscftok7kxexfx7w33me5py4qejup2r6jsymxu@37jycbpwodng>
+References: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822104208.751191-1-jirislaby@kernel.org>
-In-Reply-To: <20250822104208.751191-1-jirislaby@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Sep 2025 11:47:48 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVXcm=6HmHYfkDF--jTKu-o7jWO=T6EuzeedhEvU3An_A@mail.gmail.com>
-X-Gm-Features: AS18NWDoUuvjHVKj_6IGPnEkgWHda8d2Shyst11eUuVhsnm2ecFd1wqBdiVzjiE
-Message-ID: <CAMuHMdVXcm=6HmHYfkDF--jTKu-o7jWO=T6EuzeedhEvU3An_A@mail.gmail.com>
-Subject: Re: [PATCH] m68k: make HPDCA and HPAPCI bools
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
+X-Authority-Analysis: v=2.4 cv=Yv8PR5YX c=1 sm=1 tr=0 ts=68bea658 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=8AirrxEcAAAA:8 a=EUspDBNiAAAA:8
+ a=6IanCRA773FJqE2TFJUA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-GUID: qfC-HS2-CHyAnCgK0HGCVAyOezH53MKL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfXzOd3L5Oy65gv
+ l5FCPfAPdprFFObMqd0ZsnLi/hanGraIa2X0Uw2Rr4sR6bpCGHBY2lFDvjaq92WBq02aSHRcRhm
+ BJYQ1G1RQ3QsxCHgg72z52Llea2zLauIyqu8ClERyBKTRjEEZnbsElOVBuq9+rO2MejbEGRuVIP
+ trPMqiCzLAuFXyTlT6pvuymejAzMXUa2UKS9RgOQB2eVH4gp833I/xdai715OMfLA/cnhSsdfW7
+ g6uLNc7i7BDj67NJUyUYR0GBTtrTgzv8DEsH6JykmPHFT68mF+4IEfLzIHVbh6Ql4ZURAuX0jUF
+ kCmi0qAP69iXIzv23efBFOs5AzlRRu/oak50qaWdk7BKxalfFAy4MDjJ41tfsTIK51AdkpSgHPm
+ A6uzbKaU
+X-Proofpoint-ORIG-GUID: qfC-HS2-CHyAnCgK0HGCVAyOezH53MKL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-Hi Jiri,
+On Mon, Sep 08, 2025 at 02:05:48PM +0800, Liu Ying wrote:
+> IT6263 supports HDMI vendor specific infoframe.  The infoframe header
+> and payload are configurable via NULL packet registers.  The infoframe
+> is enabled and disabled via PKT_NULL_CTRL register.  Add the HDMI vendor
+> specific infoframe support.
+> 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> Changes in v2:
+> - Drop zeroing out all NULL packet registers.  (Dmitry)
+> - Drop no longer used HDMI_PKT_HB_PB_CHUNK_SIZE macro.
+> - Link to v1: https://lore.kernel.org/r/20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com
+> ---
+>  drivers/gpu/drm/bridge/ite-it6263.c | 64 +++++++++++++++++++++++++------------
+>  1 file changed, 44 insertions(+), 20 deletions(-)
+> 
 
-On Fri, 22 Aug 2025 at 12:42, Jiri Slaby (SUSE) <jirislaby@kernel.org> wrote:
-> The only user -- 8250_hp300 -- tests for CONFIG_HPDCA and CONFIG_HPAPCI.
-> It does not test for *_MODULE variants. That means that if someone sets
-> the configs to =m, the code is not compiled at all.
->
-> There is actually no point having these as tristate. Switch them to
-> bool.
->
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Thanks for your patch!
-
-> --- a/arch/m68k/Kconfig.devices
-> +++ b/arch/m68k/Kconfig.devices
-> @@ -105,14 +105,14 @@ config AMIGA_BUILTIN_SERIAL
->           To compile this driver as a module, choose M here.
->
->  config HPDCA
-> -       tristate "HP DCA serial support"
-> +       bool "HP DCA serial support"
->         depends on DIO && SERIAL_8250
->         help
->           If you want to use the internal "DCA" serial ports on an HP300
->           machine, say Y here.
->
->  config HPAPCI
-> -       tristate "HP APCI serial support"
-> +       bool "HP APCI serial support"
->         depends on HP300 && SERIAL_8250
->         help
->           If you want to use the internal "APCI" serial ports on an HP400
-
-This still causes a warning if SERIAL_8250 and HP300 are enabled,
-but none of HPDCA and HPAPCI are enabled:
-
-    drivers/tty/serial/8250/8250_hp300.c:24:2: warning: #warning
-CONFIG_SERIAL_8250 defined but neither CONFIG_HPDCA nor CONFIG_HPAPCI
-defined, are you sure? [-Wcpp]
-       24 | #warning CONFIG_SERIAL_8250 defined but neither
-CONFIG_HPDCA nor CONFIG_HPAPCI defined, are you sure?
-          |  ^~~~~~~
-
-I have sent and alternativ\e fix.
-
-[1] "[PATCH 0/2] tty: serial: 8250: Rework HP300 serial Kconfig logic"
-    https://lore.kernel.org/cover.1757323858.git.geert@linux-m68k.org
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+With best wishes
+Dmitry
 
