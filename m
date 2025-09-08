@@ -1,207 +1,256 @@
-Return-Path: <linux-kernel+bounces-806093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC3CB491CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:39:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D78B491D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8AB7B71BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D0E167A24
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E72B30CD8A;
-	Mon,  8 Sep 2025 14:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21D730EF94;
+	Mon,  8 Sep 2025 14:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs4Qz4A/"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9ikHv1F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEA030C627
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EFE30EF63
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 14:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757342084; cv=none; b=SKcJo8T2nDpQSGqZs0p6+YHqNSG8L5rBr2kUN9wR2SC8oOQb15c901e7+MNzetjwuDwLhi1ntGayHKK/5k2N0tdD9xeBCz49aJoZFiaL6HIMa5fINBoKxB8CeCutW22yiYGktDqnXqepcNJg0XLUo7CfT979KMXbun++ktk5vlw=
+	t=1757342185; cv=none; b=o68rXZ3+dURSAmYlwVx+klTeFpDR96gbAKzwziSHqr2o1KOYQTR3EQkMTuXuQr5zxQA9SEQUH95UWkJs32MqYi7SNbcawkzm9H6DIp2CsrH45nMjmNKQmpAXqGOlN54Fspux4mGrZNTBM8H2jAZ4C8lf8bxqmbxSfwm4BSTy6Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757342084; c=relaxed/simple;
-	bh=caaN/ILWXlzTT7xkq4F60G0bMtS9b0cJOa58AQcy5/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IZA6KV3K/cFuGfH6xREs8oTYnLVQP8cvx7OU3OoZFJJVbSyozn1ubMRzV5I6BZU/VokGx4RkbwwpPk/ZgE4kanpEc5EzlA9319ERtxFoQC1iZjl08X5d/SJXUcN7rymw24uL9dYrcHqOciAjgYBWVMxSxLiOVJbqAmlVyXRDfFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bs4Qz4A/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso2810220a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757342081; x=1757946881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbtUk7FrbyMvuG+t0mCuOx9heZkWciOxr2cORrysFDA=;
-        b=Bs4Qz4A/aacBevDvL245yBtKGLFZLBcrRZIQy6ZsJld/6FMnN1hmQKEsOuKg+OIzYP
-         OZUNupPFCX7kYYSpOCA7exCtEzcS8JwB5GR5KQgZ92Gb2dd5nRj0fE8oEaQKfbySztX+
-         o0sqxnHBXE7uBVBUKjiljTtENlZjButsfkrNDJzcXVJB5JOlfIrWpLyI6f7sYDNUM5nn
-         PkWqL/CHbbnfykfOKNId8OT7tGqOi42H0YGPOl0Gg+JcalryQa7hetDrlrix4zaSuCmS
-         ARs65K3ZutQGbxy4KeJrUtjTsaBiUJJTTQGvs2QQoZwfNVa5irSlpnpppOj20sL4ivhi
-         dfWw==
+	s=arc-20240116; t=1757342185; c=relaxed/simple;
+	bh=FoWjCSXPqmUw4tXtyFyHHdkvzWrcngHUe9sCWzpWVCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PVUcMX3Ce0DYuBS+f+SnCkNh8WrMqCZCv8gHfiaelJvzpctq+s8AF9RDgxuILK2XyxYd6kgYCDicji9wiHKu6WQwzIuANWuiN1cy5UZ6dI8Oz52rJy/A11Av7TPzf5u9LtZzNpyjom0FkPQMU9KVVaaHvb6O8zMybKCMj+Qg1ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9ikHv1F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757342177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lrYPeuNTiOD7YUu2tmRr54ytzGFvKCHl5sfVYrawVLU=;
+	b=C9ikHv1FTdiZKlfOnAc3xLlcOqS0KgbNr29vTR6A2UYApXfueAI92e9vxsEGhvIiXAj/Q5
+	K76CSRiSEn01LWyMWW9xq6xkuc5U3hI6XMeXhCCuQw+QS7BZKj2K+b56XHJsVgXFMPJ402
+	Nx2Islly4jizTcfuDU1Xq/UkFxKJiyg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-179-4Pp2oB4BM3OCvTJFgsGXIA-1; Mon, 08 Sep 2025 10:35:42 -0400
+X-MC-Unique: 4Pp2oB4BM3OCvTJFgsGXIA-1
+X-Mimecast-MFC-AGG-ID: 4Pp2oB4BM3OCvTJFgsGXIA_1757342121
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e5190bcba1so2238521f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 07:35:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757342081; x=1757946881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qbtUk7FrbyMvuG+t0mCuOx9heZkWciOxr2cORrysFDA=;
-        b=mgmSdK8CB6bqo36itJTNNUDhR9YDDSq6wDdH91dxB9BeLYpmG+7rJwSlrS/bTOfRGz
-         cM/Lb0dwTN7WF8h7fHdL6v1Mz8q9JE0WSbUbXiWJlFsc33Pr1sUpcGuXqeDtmHZtCZTM
-         ezFC2ACrqyJx6qIyYuSPJobKUYHaZQIWU1zWnw9DoQfoNvchheqSQ5e3KJTLCxxFYk50
-         wMqs8VZxoqHskbvQpdLbJv4zHhbM5eH5DaHnXCunQBGMA3bVyFjiHuG6vyxrrSkcXAv0
-         ihNB7z0v4XNdGlrXISdpuwiYpGdskuqYH5jBFVdwXJDmpKkwxpDrAXuB+3rnBy0tZVKZ
-         XT1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBsJ9BUQP8YZxUM0PVXJ8hNcxyPKUXyjbT6MpT7QyJAMIY9tjsvD/qW7pwShXSFLyAUsbVCcrxSDf66o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjqLcrNMAT2n4yBDk6V754gcmCjE/WP0wZrmwsyFXxJv9N3sew
-	Dpl1qkOlloWoVgYgMBkHZpQrzQdijSHyQpYVpP5Okt9pgTzm/G+zcRJj20JPvVI8YnJkdCY3zD0
-	FPvz42vpijhfWN05GtBlF3adYN+c41Bs=
-X-Gm-Gg: ASbGncshBhW7MUnHjfhuo/9fX39wGwxNVoysFuoHE8gL+DV53LKpIVvbfhkf4gHoXVu
-	+eUFBy19Bq3PlRAswzc+4Uruf+SvF5OXOGgzmzthArpL5Vgj06MyYx/qzvX2pgduJf72VRt9Qps
-	TSSg7ck6+8pC6P6231HadUaoEBNWEhweOB93sbiIORhf9URmYEyXY167t6BK8/9FLW/VUMRXjar
-	TRAWfIuBQo=
-X-Google-Smtp-Source: AGHT+IHqvEea2P3gZapZ7WwlegqtHpa3ecGMHI6Ur9DTfr6rTk3jnzICltbuq7nedWKvU+dhuo0b2dODtNrs673nXtk=
-X-Received: by 2002:a05:6402:5242:b0:618:196b:1f8a with SMTP id
- 4fb4d7f45d1cf-623725ed8ebmr6204594a12.4.1757342080926; Mon, 08 Sep 2025
- 07:34:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757342120; x=1757946920;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lrYPeuNTiOD7YUu2tmRr54ytzGFvKCHl5sfVYrawVLU=;
+        b=mhfOE5ehZAagrq6dA9DT18gU58UGWSqtLYBYweRQqjW+sTg7rh/X2xmrwef5Sbz0L9
+         7MiC0kGET8KSq1BrKul8o/zyHICXeVoD56EJalV3NxqQtafrJP36ioAn+7//o7cB9NYf
+         qWtfvbdc+JMBaxzBnJVAJ5v5xMi8ZVvCpmPFBgS6XEHxCEG7qJrzVIc9rC8KE38siWU7
+         3GhidCvBcNK8wlRhMePgeYUSQvEk7RGMxkP73m34yZyAnV1gLxG+c0oUYJpWy9nbbuwJ
+         +ALoJ2pGaQxKVoZQCbDsgzRysFY4NMUX0EBRU0KsXTm7K8vTGHtWkcgMkYR2YXNeIExk
+         jB/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX53250b9LmzW9MQQd0lDw/Q/3UBfdkehmNTMH70PQfjEjWf+ljtSIBU4I/Qi6A3ayFWEqlZDG2X2mroZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA00AbJli0U6UaTueH9NHXuc+WZ2glE4XR1c5mgVm7ChrJZ0Fi
+	2dDNmUkz6g2lc68b+2HcODJo1noMVq4+Ovb0un0SEQI6frbHVJYCgChMJPbvAE1v3yK/pEYlj6p
+	Gsq7b3ahvg3TxMuUaUmEoliTYW2LF7gDKtQ4kmBxaiUL5dKGoKhi/LIvxp3d8YXE9Vw==
+X-Gm-Gg: ASbGnctX9EkWTmJYwN1aKsAnFZ5v4TETjGYb7xNchnmxxJg2UDQgVLnqNxMUUTmtjUy
+	IdjKz5+BriJtMYsAmjopxjbnxCCBpp3iLnAW5eEg7svV8/PLe1CnTqpv2+j0wCKyA2CdSCIxvgk
+	4Y+eM3DDN/wpjDFzkpokizrhn2rzTr67PpRoC0Cx5um3h0b4lduOlE6CQowB/nwD8yMwEF+ZZqo
+	DlD3t9QV1ObwpdJTVPj8HpBn+nD9WetbNCZLo8//2U2fs3ioWxj4LJiNQ3a9gD+UnUtOGJa8tst
+	aXO4S/QVE0pAUtzwpcWABUP6x+5IeAZuoYmTJikSJC+WfhNCx0HuZaM0lyYOiLWlAqARe82QIeE
+	jud5ZZtphZl99UpP67v+fUt1eNhr3+wanSf4O/H6dRmbCagHPtiiDI6C6e+Lsmrfb
+X-Received: by 2002:a05:6000:2489:b0:3e5:2082:8941 with SMTP id ffacd0b85a97d-3e642f9050amr6551060f8f.23.1757342119757;
+        Mon, 08 Sep 2025 07:35:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZLff5juSqm9neyAsOLAPZdqcSj6VvngesFbghyJRBNktZZTQa0GV4i8Hiyffrg0PBXtPEMA==
+X-Received: by 2002:a05:6000:2489:b0:3e5:2082:8941 with SMTP id ffacd0b85a97d-3e642f9050amr6551014f8f.23.1757342119247;
+        Mon, 08 Sep 2025 07:35:19 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e18537589dsm16164452f8f.54.2025.09.08.07.35.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Sep 2025 07:35:18 -0700 (PDT)
+Message-ID: <3f76748b-8f99-4e63-ba39-adadc2f58838@redhat.com>
+Date: Mon, 8 Sep 2025 16:35:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-12-ryncsn@gmail.com>
- <vj7utcgrseaot6ktpbwgshthmjza7w7vk2glede273tza7yfi6@cyxppxoney5u>
-In-Reply-To: <vj7utcgrseaot6ktpbwgshthmjza7w7vk2glede273tza7yfi6@cyxppxoney5u>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 8 Sep 2025 22:34:04 +0800
-X-Gm-Features: AS18NWAwbwczGgNQk1yhM1T5cz_8DfGfywC5MgRQgLVIxrrVVLjBFsAmV5awcxk
-Message-ID: <CAMgjq7CLSuSfRwMYqNL9ZU3ehpZfR6oewHsYtLD4CTXcvEKOTg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/15] mm, swap: use the swap table for the swap cache
- and switch API
-To: Klara Modin <klarasmodin@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] mm: folio_may_be_cached() unless folio_test_large()
+To: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will@kernel.org>,
+ Shivank Garg <shivankg@amd.com>, Matthew Wilcox <willy@infradead.org>,
+ Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Alexander Krabler <Alexander.Krabler@kuka.com>, Ge Yang
+ <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>,
+ Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Konstantin Khlebnikov <koct9i@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
+ <861c061c-51cd-b940-49df-9f55e1fee2c8@google.com>
+ <7fe2380f-a83e-4a9e-8c5e-8459c9af0d5f@redhat.com>
+ <7113d289-fb8e-4589-7eb5-1f7139965ade@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <7113d289-fb8e-4589-7eb5-1f7139965ade@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 7, 2025 at 8:59=E2=80=AFPM Klara Modin <klarasmodin@gmail.com> =
-wrote:
->
-> On 2025-09-06 03:13:53 +0800, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Introduce basic swap table infrastructures, which are now just a
-> > fixed-sized flat array inside each swap cluster, with access wrappers.
-> >
-> > Each cluster contains a swap table of 512 entries. Each table entry is
-> > an opaque atomic long. It could be in 3 types: a shadow type (XA_VALUE)=
-,
-> > a folio type (pointer), or NULL.
-> >
-> > In this first step, it only supports storing a folio or shadow, and it
-> > is a drop-in replacement for the current swap cache. Convert all swap
-> > cache users to use the new sets of APIs. Chris Li has been suggesting
-> > using a new infrastructure for swap cache for better performance, and
-> > that idea combined well with the swap table as the new backing
-> > structure. Now the lock contention range is reduced to 2M clusters,
-> > which is much smaller than the 64M address_space. And we can also drop
-> > the multiple address_space design.
-> >
-> > All the internal works are done with swap_cache_get_* helpers. Swap
-> > cache lookup is still lock-less like before, and the helper's contexts
-> > are same with original swap cache helpers. They still require a pin
-> > on the swap device to prevent the backing data from being freed.
-> >
-> > Swap cache updates are now protected by the swap cluster lock
-> > instead of the Xarray lock. This is mostly handled internally, but new
-> > __swap_cache_* helpers require the caller to lock the cluster. So, a
-> > few new cluster access and locking helpers are also introduced.
-> >
-> > A fully cluster-based unified swap table can be implemented on top
-> > of this to take care of all count tracking and synchronization work,
-> > with dynamic allocation. It should reduce the memory usage while
-> > making the performance even better.
-> >
-> > Co-developed-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  MAINTAINERS          |   1 +
-> >  include/linux/swap.h |   2 -
-> >  mm/huge_memory.c     |  13 +-
-> >  mm/migrate.c         |  19 ++-
-> >  mm/shmem.c           |   8 +-
-> >  mm/swap.h            | 157 +++++++++++++++++------
-> >  mm/swap_state.c      | 289 +++++++++++++++++++------------------------
-> >  mm/swap_table.h      |  97 +++++++++++++++
-> >  mm/swapfile.c        | 100 +++++++++++----
-> >  mm/vmscan.c          |  20 ++-
-> >  10 files changed, 458 insertions(+), 248 deletions(-)
-> >  create mode 100644 mm/swap_table.h
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 1c8292c0318d..de402ca91a80 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -16226,6 +16226,7 @@ F:    include/linux/swapops.h
-> >  F:   mm/page_io.c
-> >  F:   mm/swap.c
-> >  F:   mm/swap.h
-> > +F:   mm/swap_table.h
-> >  F:   mm/swap_state.c
-> >  F:   mm/swapfile.c
-> >
->
-> ...
->
-> >  #include <linux/swapops.h> /* for swp_offset */
->
-> Now that swp_offset() is used in folio_index(), should this perhaps also =
-be
-> included for !CONFIG_SWAP?
+On 08.09.25 13:19, Hugh Dickins wrote:
+> On Mon, 1 Sep 2025, David Hildenbrand wrote:
+>> On 31.08.25 11:16, Hugh Dickins wrote:
+>>> mm/swap.c and mm/mlock.c agree to drain any per-CPU batch as soon as
+>>> a large folio is added: so collect_longterm_unpinnable_folios() just
+>>> wastes effort when calling lru_add_drain_all() on a large folio.
+>>>
+>>> But although there is good reason not to batch up PMD-sized folios,
+>>> we might well benefit from batching a small number of low-order mTHPs
+>>> (though unclear how that "small number" limitation will be implemented).
+>>>
+>>> So ask if folio_may_be_cached() rather than !folio_test_large(), to
+>>> insulate those particular checks from future change.  Name preferred
+>>> to "folio_is_batchable" because large folios can well be put on a batch:
+>>> it's just the per-CPU LRU caches, drained much later, which need care.
+>>>
+>>> Marked for stable, to counter the increase in lru_add_drain_all()s
+>>> from "mm/gup: check ref_count instead of lru before migration".
+>>>
+>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>> Signed-off-by: Hugh Dickins <hughd@google.com>
+>>> Cc: <stable@vger.kernel.org>
+>>> ---
+>>>    include/linux/swap.h | 10 ++++++++++
+>>>    mm/gup.c             |  5 +++--
+>>>    mm/mlock.c           |  6 +++---
+>>>    mm/swap.c            |  2 +-
+>>>    4 files changed, 17 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+>>> index 2fe6ed2cc3fd..b49a61c32238 100644
+>>> --- a/include/linux/swap.h
+>>> +++ b/include/linux/swap.h
+>>> @@ -385,6 +385,16 @@ void folio_add_lru_vma(struct folio *, struct
+>>> vm_area_struct *);
+>>>    void mark_page_accessed(struct page *);
+>>>    void folio_mark_accessed(struct folio *);
+>>>    
+>>
+>> Two smaller things:
+>>
+>> (1) We have other "folio_maybe_*" functions, so this one should likely
+>>      better start with that as well.
+>>
+>> (2) With things like fscache in mind, the function can be a bit
+>>      misleading.
+>>
+>> So I wonder if (a) we should just add kerneldoc to document it clearly (lru
+>> cache, mlock cache?) and (b) maybe call it folio_may_be_lru_cached(). Not sure
+>> if we can find a better abstraction for these two caches.
+>>
+>> Thinking again, "maybe_cached" might be a bit misleading because it implements
+>> a very very very bad heuristic for small folios.
+>>
+>> Maybe it's more like "supports being cached".
+>>
+>> folio_lru_caching_supported()
+> 
+> folio_may_be_cached() -> folio_may_be_lru_cached(), yes, that's
+> very much better, thanks.
+> 
+> (Settimg aside that I've never perceived those pagevecs/batches as a
+> "cache"; but lru_cache_disable() gave us that terminology, and we've
+> gone with the flow ever since.  lru_add_drain() would be better named
+> lru_cache_drain() now, I've always got hung up on "adding a drain".)
 
-Hi, Thanks for looking at this series.
+Yeah, the terminology is not that intuitive :)
 
->
-> >  #include <linux/blk_types.h> /* for bio_end_io_t */
-> >
-...
+Not sure if using "batched" instead of "cached" might be clearer long-term?
 
-> >       if (unlikely(folio_test_swapcache(folio)))
->
-> > -             return swap_cache_index(folio->swap);
-> > +             return swp_offset(folio->swap);
->
-> This is outside CONFIG_SWAP.
+> 
+> "may be" rather than "maybe" was intentional: perhaps too subtle,
+> but to a native speaker it neatly expresses both the "we can do this"
+> and "might this have been done" cases.
 
-Right, but there are users of folio_index that are outside of
-CONFIG_SWAP (mm/migrate.c), and swp_offset is also outside of SWAP so
-that's OK.
+I would wish we could find something that also non-native speakers can 
+immediately understand ;)
 
-If we wrap it, the CONFIG_SWAP build will fail. I've test !CONFIG_SWAP
-build on this patch and after the whole series, it works fine.
+"may_get_lru_cached" / "may_get_lru_batched"?
 
-We should drop the usage of folio_index in migrate.c, that's not
-really related to this series though.
+/me could not even phrase it in German properly
 
->
-> >       return folio->index;
-> >  }
->
-> ...
->
-> Regards,
-> Klara Modin
->
+> 
+> kernel-doc?  I don't think so, this is very much an mm-internal
+> matter, and I don't care for the way kernel-doc forces us towards
+> boilerplate ("@folio: The folio.") rather than helpful comment.
+
+So a comment that this is an internal helper might be nice. Or we just 
+move it straight to mm/internal.h ?
+
+-- 
+Cheers
+
+David / dhildenb
+
 
