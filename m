@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-806612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32423B4994F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9777B49954
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 21:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93EC34E3C46
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65950207DA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 19:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D5822ACF3;
-	Mon,  8 Sep 2025 19:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A6F225409;
+	Mon,  8 Sep 2025 19:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQrd480F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Wo4z7ds+"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A52E7E107;
-	Mon,  8 Sep 2025 19:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9B4222564
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 19:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358292; cv=none; b=hQ7/JZgXQknfiuahWDP+4p0HFx1vVTW1mxjWPtmOysz3qxbEvaYGeZzQBHpUvrlYOtF2pLeLxDkh2mc/p0BumPhv7FJQRUBOojMqIUed+LfSDqWVOImC3dRcfVxt4msejDr0Mh9uiAOIulja5DZRqDzLOIbUPVp0rhX7eBF41vE=
+	t=1757358325; cv=none; b=LmW9jmVtLc+8tYD+21yzlmxX4PHCQTexQHnHGhupT8jtGA0Ico8gLdCNh+6fnkj8sHdVzTZfYfHpeQWdUyfIBWv7HlP+CUvg0L1W1TfaMqPsZdgpA+veBNW1EpQxT01nUXMX3mnS/92V3SzqbKco9PHI0DZ+WLuXPVvjvkIlYDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358292; c=relaxed/simple;
-	bh=OR+JDujD3Fb8Vx7FEcUt+VBJwg5Qbiq6BsKuLXHf/LM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fRZBl748QwFgiM2ghW7mj27y2LzGez9i0MYO2MwHpMyMYyBeI2Z1GUT7d/sXXSQHLmTFqRvgaxIzDXLvJmT2Ht5YyzIY176xtVUxPPAKMQCXxB1sxhyuW1Kg50BswQ8bdDmcZtI7NNfGdt/bJQx7iHAwsHV7HFHKYqLxblRYDAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQrd480F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB42C4CEF1;
-	Mon,  8 Sep 2025 19:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757358291;
-	bh=OR+JDujD3Fb8Vx7FEcUt+VBJwg5Qbiq6BsKuLXHf/LM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WQrd480Fgq1Jk+JXmJmwR/YKiGCUZnUSTJaJWmH65DmuXpMi7ZhJAd/tQR9S6B0L6
-	 5CI5ASp0pxqYnT42JJ0JIGqacWXGjtU/fZr/TixT3N0OvS3rue+r/Y9C086Teaq09V
-	 3ob28CFsh9f/V7aAe86IQ9o2qzmWC/U8IdmltfKMStDN0s6qou6/JmXT3wbXgNKUnn
-	 X+Mz+PypoxQYqEsimeZ6Aksdqr+k1IQalM0oYEKEABekbnL3aDHQ6juQcXywI74paJ
-	 +XkOPuo00CNGtR9m+JrpVoDhzm0SoTzREMl/op2/4T3Sq1MUq90IAuwMDg/GQ0kALb
-	 AB/axqJgWK9Zg==
-Message-ID: <b92c52f8-d5b5-45ba-9195-9d8e20b41f0e@kernel.org>
-Date: Mon, 8 Sep 2025 21:04:46 +0200
+	s=arc-20240116; t=1757358325; c=relaxed/simple;
+	bh=tZSNfigLca7zvNJlFawRwc/92FdL0vCgBdOheNTW3BA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t5oLMveNgJvGbWig4UkdC8DCDI4/X5i+Fgy754mSJma2vU1riOQ/5o01nV7odL+J+LBuIGTjGnis2gNwMSgAQR1kqRuiX660Agyv6eVIuezCNRqCViI3DG9bSUNihdxDimUpmTzZZk0vVhnL4xi/1jI3P7LMXLv8FAWaO5TbQ5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Wo4z7ds+; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id 60ulr7ePOEx7LDfx; Mon, 08 Sep 2025 15:05:22 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=EkPFE4p+Ecuk6YQC9uEfEle8erFPJs5rbx23sckMNus=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Wo4z7ds+zQxYS/KqbKtP
+	dT6Syvuewq5uOwXuvfqzGgQ6mNic3W0DWIncG6LPWQ0NWR7TmyNaQrJt2YjiLAuW4JN6cFYpVXUnc
+	RbEsuPucECenAPAWj/T9qrKLCuDPy4EYyCMeoQ3kxsn1fiHDDrR9q3dO2Cs7wD2EqB8559Ow68=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14189155; Mon, 08 Sep 2025 15:05:22 -0400
+Message-ID: <beb60661-ff0b-499c-a059-237bcc6a2551@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 8 Sep 2025 15:05:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +53,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] rust: drm: gem: Simplify use of generics
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>,
- "open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>
-References: <20250908185239.135849-1-lyude@redhat.com>
- <20250908185239.135849-2-lyude@redhat.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: [SCST PATCH 11/15] scsi: qla2xxx: fix invalid memory access with big
+ CDBs
 Content-Language: en-US
-In-Reply-To: <20250908185239.135849-2-lyude@redhat.com>
+X-ASG-Orig-Subj: [SCST PATCH 11/15] scsi: qla2xxx: fix invalid memory access with big
+ CDBs
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <93f444c0-bd88-4adc-9e97-bd15edf2a0bf@cybernetics.com>
+In-Reply-To: <93f444c0-bd88-4adc-9e97-bd15edf2a0bf@cybernetics.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1757358322
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 2088
+X-ASG-Debug-ID: 1757358322-1cf43947df30c630001-xx1T2L
+
+This patch applies to the out-of-tree SCST project, not to the Linux
+kernel.  Apply when importing the upstream patch with the same title.
+
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+index 76d3685a4..3c2d59b6f 100644
+--- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
++++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+@@ -420,16 +420,15 @@ static int sqa_qla2xxx_handle_cmd(scsi_qla_host_t *vha,
+ 	TRACE_DBG("sqatgt(%ld/%d): Handling command: length=%d, fcp_task_attr=%d, direction=%d, bidirectional=%d lun=%llx cdb=%x tag=%d cmd %p ulpcmd %p\n",
+ 		vha->host_no, vha->vp_idx, data_length, task_codes,
+ 		data_dir, bidi, cmd->unpacked_lun,
+-		atio->u.isp24.fcp_cmnd.cdb[0],
++		cdb[0],
+ 		atio->u.isp24.exchange_addr, cmd, cmd->scst_cmd);
+ 
+ 
+ 	cmd->scst_cmd = scst_rx_cmd(scst_sess,
+ 		(uint8_t *)&atio->u.isp24.fcp_cmnd.lun,
+ 		sizeof(atio->u.isp24.fcp_cmnd.lun),
+-		atio->u.isp24.fcp_cmnd.cdb,
+-		sizeof(atio->u.isp24.fcp_cmnd.cdb) +
+-		(atio->u.isp24.fcp_cmnd.add_cdb_len * 4),
++		cdb,
++		cmd->cdb_len,
+ 		SCST_ATOMIC);
+ 
+ 	if (cmd->scst_cmd == NULL) {
+@@ -1552,7 +1551,6 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
+ 		scst_to_tgt_dma_dir(scst_cmd_get_data_direction(scst_cmd));
+ 	cmd->offset = scst_cmd_get_ppl_offset(scst_cmd);
+ 	cmd->scsi_status = scst_cmd_get_status(scst_cmd);
+-	cmd->cdb = (unsigned char *) scst_cmd_get_cdb(scst_cmd);
+ 	cmd->lba = scst_cmd_get_lba(scst_cmd);
+ 	cmd->trc_flags |= TRC_XMIT_STATUS;
+ 
+@@ -1635,7 +1633,6 @@ static int sqa_rdy_to_xfer(struct scst_cmd *scst_cmd)
+ 	cmd->dma_data_direction =
+ 		scst_to_tgt_dma_dir(scst_cmd_get_data_direction(scst_cmd));
+ 
+-	cmd->cdb = scst_cmd_get_cdb(scst_cmd);
+ 	cmd->sg = scst_cmd_get_sg(scst_cmd);
+ 	cmd->sg_cnt = scst_cmd_get_sg_cnt(scst_cmd);
+ 	cmd->scsi_status = scst_cmd_get_status(scst_cmd);
+-- 
+2.43.0
 
 
-
-On 9/8/25 8:46 PM, Lyude Paul wrote:
-> Now that my rust skills have been honed, I noticed that there's a lot of
-> generics in our gem bindings that don't actually need to be here. Currently
-> the hierarchy of traits in our gem bindings looks like this:
-> 
->   * Drivers implement:
->     * BaseDriverObject<T: DriverObject> (has the callbacks)
->     * DriverObject (has the drm::Driver type)
->   * Crate implements:
->     * IntoGEMObject for Object<T> where T: DriverObject
->       Handles conversion to/from raw object pointers
->     * BaseObject for T where T: IntoGEMObject
->       Provides methods common to all gem interfaces
-> 
->   Also of note, this leaves us with two different drm::Driver associated
->   types:
->     * DriverObject::Driver
->     * IntoGEMObject::Driver
-> 
-> I'm not entirely sure of the original intent here unfortunately (if anyone
-> is, please let me know!), but my guess is that the idea would be that some
-> objects can implement IntoGEMObject using a different ::Driver than
-> DriverObject - presumably to enable the usage of gem objects from different
-> drivers. A reasonable usecase of course.
-> 
-> However - if I'm not mistaken, I don't think that this is actually how
-> things would go in practice. Driver implementations are of course
-> implemented by their associated drivers, and generally drivers are not
-> linked to each-other when building the kernel. Which is to say that even in
-> a situation where we would theoretically deal with gem objects from another
-> driver, we still wouldn't have access to its drm::driver::Driver
-> implementation. It's more likely we would simply want a variant of gem
-> objects in such a situation that have no association with a
-> drm::driver::Driver type.
-> 
-> Taking that into consideration, we can assume the following:
-> * Anything that implements BaseDriverObject will implement DriverObject
->   In other words, all BaseDriverObjects indirectly have an associated
->   ::Driver type - so the two traits can be combined into one with no
->   generics.
-> * Not everything that implements IntoGEMObject will have an associated
->   ::Driver, and that's OK.
-> 
-> And with this, we now can do quite a bit of cleanup with the use of
-> generics here. As such, this commit:
-> 
-> * Removes the generics on BaseDriverObject
-> * Moves DriverObject::Driver into BaseDriverObject
-> * Removes DriverObject
-> * Removes IntoGEMObject::Driver
-> * Add AllocImpl::Driver, which we can use as a binding to figure out the
->   correct File type for BaseObject
-> 
-> Leaving us with a simpler trait hierarchy that now looks like this:
-> 
->   * Drivers implement: BaseDriverObject
->   * Crate implements:
->     * IntoGEMObject for Object<T> where T: DriverObject
->     * BaseObject for T where T: IntoGEMObject
-> 
-> Which makes the code a lot easier to understand and build on :).
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
-Acked-by: Danilo Krummrich <dakr@kernel.org>
 
