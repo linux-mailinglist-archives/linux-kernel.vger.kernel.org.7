@@ -1,87 +1,59 @@
-Return-Path: <linux-kernel+bounces-805395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2012B48800
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A049AB48804
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 11:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47ECC3BBC79
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB943ACEC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 09:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6FF2E8B77;
-	Mon,  8 Sep 2025 09:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+F/kAG7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20F52F0677;
+	Mon,  8 Sep 2025 09:13:02 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB751DA23
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C71FF1BF;
+	Mon,  8 Sep 2025 09:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757322744; cv=none; b=gm0lLZPf+aeL/LS6MF1dF0Q64xkOBES0reKmYia6jyKj4EX9e+Ku5RnHWXYjwFnHf/CXiOM5qjMh3DZaH6x7kb7FEzwsviezn5zlIutyr9GrkLjYwNjgzkH5v/h3OXm2R0zzekS+PO1ZweyXsheVi7ZJVrxePP0FVSAiGGbkWGI=
+	t=1757322782; cv=none; b=QYgF87ua7zRwdeNN+JSGIX6TMByJbcPWBh6iRAAZtnXmy7ymNBAALzfIyOSlQYZmPrnmPcuw8S5YfohQIoSBvNvfsMA0u9/AwoOOHsKm4B82SR2JupDKz2TFXwg4IN+m2H4B+jHUaqnfWdRq2xND/iNyJr/RkS2RSXXo5BVJfso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757322744; c=relaxed/simple;
-	bh=cWlbMD1cxFsjthTj+RxmRNApAcsJAy6LDIXWL9+H4a8=;
+	s=arc-20240116; t=1757322782; c=relaxed/simple;
+	bh=ukh9KltCtNWgocUMmE8ReWaVb4Wu7TjADySQktith44=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5veS94CsbahZGeaj7NyFso5rzGbRm1vKg/aeAfcc5/YJ/SQboA4EX+heaL7QllhGFzYzoYrLmHifUwX1W0ktY49+Lt9186Wu0kJTvpcP5prZoewypexm8HsYlKKgEyXLdr08MdhjmmWipM1Cadm+ywYImz/jBOh5dXyk0Fsk7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+F/kAG7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757322741;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rMk5fbLvH1OztzDpgTc6cAL60e6T56EOEU7K8zpDFd8=;
-	b=Q+F/kAG7TvbeZA2bZJ6Ufz51C0ctin60uTLO+rBlkKjBJJAT1J1s3A6h5zGb9qzdKNC/OO
-	h3XtX6eGGoiSfwPc9RcLHpx31RIZocP92T2uT4tElmrOkBHrFC4hueaqrVKbubGtNpVyD6
-	D3SfJN6ITmrOMQw99wb/ohMOkYewjWc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-ULh-8aodPlGoDE6GkEOrfQ-1; Mon, 08 Sep 2025 05:12:20 -0400
-X-MC-Unique: ULh-8aodPlGoDE6GkEOrfQ-1
-X-Mimecast-MFC-AGG-ID: ULh-8aodPlGoDE6GkEOrfQ_1757322739
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45ceeae0513so22987315e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 02:12:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757322739; x=1757927539;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rMk5fbLvH1OztzDpgTc6cAL60e6T56EOEU7K8zpDFd8=;
-        b=VW53cPXDZXNWD+NB2T1cTkM3XuVrdZFrhVUGgCN9GU6JnJn/KULEp5vermYmjiuQiG
-         FhA26flVMhhH1mIgVHSG/RjjlMN2/D69lOow+CugZBMVCUcxHx/8IBfwk5/58PDgnMjH
-         +4KHpPKavmxCSl/MVIy4X/gzfQROHN1CZXS+JqZlGVPm9sCJsM49OHs+SfHcxW77LGiI
-         jx4GzjG2K+Zg5JdoPl0TzH0gNJoYfDD4pUyeJ5W4ILCk9uj7X9FpDGMCDPhWGkFCDo94
-         YFawqllhtBW9aeeDha7yXVOhMEVHDN7Wrep8rfyEmA2EOAgCODS1jQP0hJAOR74Kyi0s
-         IVDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxCu/yHIl2HxuzJ1HmJyDgaWIdjd4IPCtBJoxlByucMSRevFxOE7N1hOTApONHGNlx/d45nHMrhPArX0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaQPz60z9lIW2yXoFL1PpJ593PGVNLJatcgdMpNDjTt6Isa2Wr
-	Q8o9wESDbYCHBJ3/+KdPTkpmpN8jKaANXt6Cu6M4+k7d/zo1IKBkHLSt5KNyCVYeusCL/pjFwln
-	x0PY+yWgR1lwDoa9K3PDkWXMgx+s4IzhgnjUmAZn+BwRn8EDCJbrjnA/NZrk19swfrA==
-X-Gm-Gg: ASbGncva9OwmUFnzcQ3ROq2fqROOq/QgTfeJKZ6adOq1U9kz8wZ06prOl0rEyRjb9oc
-	/qNWEBmoDx/Gamgh4ZxE04kUFOiO07g50YWxfENN0eCT5KUkJthIJbgTiQ8U5PekHLDBwBzRndl
-	Il1hEKHMH24Rl5FLob3EKII5YslJC/Bov2HkrvpmJDmltfKAcq1GltAxs1Kq5JFJBfKy4XuXj92
-	Jfn1Ybe4XvY7yh4YATRTDu9kDDUJ97gfPLdwUuO3jNZ2kG7GtBLdO4dsQ3HD1yrb2ntoNDhYwkR
-	aSfCA3YTT6o20/8SxyJoFlSzRHIBsMcZAK4FPzwFhxUg92p9vEKxxg5DAUz/HUFBQSb9FGtQPFH
-	YqtdF2mLK/p9LEWuxx8PqBSCKTKKCfgyRt0ND3TZ9Y+YHnia87uNRJ/HpIbRWR3Je
-X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr60116765e9.15.1757322738985;
-        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHn5yoWGgQH56O/EPuc4YNcL9NqMqoU7OryUdbi2S7sfF9LQiiebsbct4UzJYQr4SrAhrkn6g==
-X-Received: by 2002:a05:600c:458d:b0:45d:d50d:c0db with SMTP id 5b1f17b1804b1-45dddea5102mr60116445e9.15.1757322738535;
-        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:700:d846:15f3:6ca0:8029? (p200300d82f250700d84615f36ca08029.dip0.t-ipconnect.de. [2003:d8:2f25:700:d846:15f3:6ca0:8029])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda202112sm133425495e9.5.2025.09.08.02.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Sep 2025 02:12:18 -0700 (PDT)
-Message-ID: <73c8a52c-37c5-45f4-b76e-f15267412242@redhat.com>
-Date: Mon, 8 Sep 2025 11:12:16 +0200
+	 In-Reply-To:Content-Type; b=EItMxjE6jTQzBFe2Zf3knvo2qS5GnelrWs7rUvoxPfu/NqdsRRnEQwbHqsOWFDwHnuZyUflevrzQvaoXQlNpLtDzCNxhsbQ5ZWAKeFyBb1ha8axGkrhcr5NcUELG53G22zeFMuzp+VVGfEB3T8UcXyhMWusSiaDQe+GHUSHDBKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ff62280e8c9311f0b29709d653e92f7d-20250908
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e2fab22a-c7aa-4216-90ca-404e6fb63c6d,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:046415f91e77839f7ce3c5f8880d4853,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ff62280e8c9311f0b29709d653e92f7d-20250908
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2046176838; Mon, 08 Sep 2025 17:12:52 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id A0BDEE008FA7;
+	Mon,  8 Sep 2025 17:12:51 +0800 (CST)
+X-ns-mid: postfix-68BE9E13-43449476
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 8B40BE008FA3;
+	Mon,  8 Sep 2025 17:12:38 +0800 (CST)
+Message-ID: <a968c6da-265a-405c-8f79-cf0474c80bc5@kylinos.cn>
+Date: Mon, 8 Sep 2025 17:12:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,85 +61,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm: skip mlocked THPs that are underused early in
- deferred_split_scan()
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- usamaarif642@gmail.com, ziy@nvidia.com
-References: <20250908090741.61519-1-lance.yang@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250908090741.61519-1-lance.yang@linux.dev>
+Subject: Re: [PATCH v5 0/6] cpufreq: use __free() for all cpufreq_cpu_get()
+ references
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
+ <20250905174928.GFaLsiqKV36JDowX94@fat_crate.local>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250905174928.GFaLsiqKV36JDowX94@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 08.09.25 11:07, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
-> 
-> When we stumble over a fully-mapped mlocked THP in the deferred shrinker,
-> it does not make sense to try to detect whether it is underused, because
-> try_to_map_unused_to_zeropage(), called while splitting the folio, will not
-> actually replace any zeroed pages by the shared zeropage.
-> 
-> Splitting the folio in that case does not make any sense, so let's not even
-> scan to check if the folio is underused.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
 
-Feel free to drop that, I only tweaked you description :)
+=E5=9C=A8 2025/9/6 01:49, Borislav Petkov =E5=86=99=E9=81=93:
+> On Fri, Sep 05, 2025 at 09:24:07PM +0800, Zihuan Zhang wrote:
+>> This patchset converts all remaining cpufreq users to rely on the
+>> __free(put_cpufreq_policy) annotation for policy references, instead o=
+f
+>> calling cpufreq_cpu_put() manually.
+> Sep 01 Zihuan Zhang ( :8.6K|) [PATCH v3 00/12] cpufreq: use __free() fo=
+r all cpufreq_cpu_get() references
+> Sep 03 Zihuan Zhang ( :  65|) [PATCH v4 00/10] cpufreq: use __free() fo=
+r all cpufreq_cpu_get() references
+> Sep 05 Zihuan Zhang ( :8.3K|) [PATCH v5 0/6] cpufreq: use __free() for =
+all cpufreq_cpu_get() references
+>
+> Please stop the spamming. While waiting, go read how this kernel proces=
+s thing
+> works:
+>
+> From: Documentation/process/submitting-patches.rst
+>
+> Don't get discouraged - or impatient
+> ------------------------------------
+>
+> After you have submitted your change, be patient and wait.  Reviewers a=
+re
+> busy people and may not get to your patch right away.
+>
+> Once upon a time, patches used to disappear into the void without comme=
+nt,
+> but the development process works more smoothly than that now.  You sho=
+uld
+> receive comments within a week or so; if that does not happen, make sur=
+e
+> that you have sent your patches to the right place.  Wait for a minimum=
+ of
+> one week before resubmitting or pinging reviewers - possibly longer dur=
+ing
+> busy times like merge windows.
+Sorry for the noise. I=E2=80=99ll split the patchset and avoid CC=E2=80=99=
+ing=20
+unnecessary people in the future.
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers
-
-David / dhildenb
-
+Thanks for the reminder!
 
