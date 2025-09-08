@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-805278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B34B4865B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 217B2B48662
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E164161E69
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C6B176F2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 08:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5D42E8E1F;
-	Mon,  8 Sep 2025 08:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5620E2E8E12;
+	Mon,  8 Sep 2025 08:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWL9z/U1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TtGOTH4V"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAC31D63EF;
-	Mon,  8 Sep 2025 08:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89491D63EF;
+	Mon,  8 Sep 2025 08:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757318777; cv=none; b=X9Tpu0sfQkQUTI7iClBBaxnYQk+PNB2MwqYsetQY1r6oCig4KxkR06i7qc2wUB4MEwCPgFCDsXJdF7E9XlDtVsexDC7OhEYK4dY00U7Ys16xaPEEYSmBB9v+7FOcjEy87K2k/Mnw7aL9vhtnrSfu247v2m68ONqMJ0OclB+kqhw=
+	t=1757318795; cv=none; b=sPwn98IoO+zh2467Cfon+MnX4xY5G9D2MH3mRS8nkFFiLL6+QXzOfrrMeeamyZTIB/NN4/J6vTdJ7dPrRiWuip3Uu17XlgZT3PfdxTpnbTBlx+8d0P73ARM9yXgj6tUbxcuKqUOYxdaYaHOOe4MrcYZnBaoIaUyxXZKuGhkjDfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757318777; c=relaxed/simple;
-	bh=/MaZlf3qg6WSWsFQF3K2Tns/uJau6BjYKOS9OyvSwkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6jwu2baDBC288PTN4tJ3q3Oc45V4xDGf/k9onpsr+e4Fkw77LOP12/8B9DfypVJl2+54fdO1pYymii9hS/CHNoKMZkPyjhVVslPxOa1IWcf9dNgemCCcoz6llmleRPtY1xlVH2JJf87CHaRQbxtr7TlmSBJgXZxkq2DJ0rSdNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWL9z/U1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD47CC4CEF5;
-	Mon,  8 Sep 2025 08:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757318777;
-	bh=/MaZlf3qg6WSWsFQF3K2Tns/uJau6BjYKOS9OyvSwkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oWL9z/U15ehLSAxaBmNWnVzk1OPQD4IhVdOEhak+TyojgLqt4fwot4rWTkF1NbUoE
-	 P9f8tK1PaQeBFCQJPwBNn2maOUV3ya90m7RgDvuFF6lcNRlNZ9a8/wydUFTLzxM/lv
-	 z5cpoclsJdwiL951G6dSnwjrzZP4iscpoVWB74qW/h3VfEny1DtGI/Y7Z+U6WCAm8e
-	 4O2iozIl1cQUwhvQmmXLSFm5c7fDIQ94iGYxAJp77NjhruKM5NdHKmtCxD2xGvUerk
-	 KDPMjacrcolEFBd3USMsl2eQvm7XiI9dnrGvyH9b5s09TJ0ZhXB0Ucoo5HtwwRkM0w
-	 0wxiQ+iB/o2IQ==
-Date: Mon, 8 Sep 2025 10:06:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Maxim Schwalm <maxim.schwalm@gmail.com>, 
-	Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/4] dt-bindings: arm: tegra: Add ASUS TF101G and SL101
-Message-ID: <20250908-clever-fierce-ibex-ebf0bd@kuoka>
-References: <20250906062934.6637-1-clamor95@gmail.com>
- <20250906062934.6637-4-clamor95@gmail.com>
+	s=arc-20240116; t=1757318795; c=relaxed/simple;
+	bh=ka8GlkxTCy83owtn+XSK9LfX0yLrjwJrVs7IxepHo08=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WN83mf7+KKEAmQh9D/C6/tLl5jopWqf/caWZzLkqAPp/f72wVwVQK8wSUeN/DWIWQY0EwUy1SjmAiubprs40x2a1XcwbYTF8HCKQcVTCcIHyfoKuMOclagtKiCh6KJ4sFY5G87YXbsXDIccwfvvbexPjL8PAkPcBxbnS/4Vrb6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TtGOTH4V; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757318790;
+	bh=3jFIAtd7ULVNBeq8F9dt1ianoECYMw0mZEed9e/JDSc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TtGOTH4VGz5j/ocRtljOYfc1+YDfiUeYLbLELbrh4FvfeAtjOsAbfuqOBGMbgiR4l
+	 dZwsEZQwk+y8Sq4xAJi++4nJ1FTpGIndge55Tc2SkTvG8z/7KQx2QIApU9pUWOXgpq
+	 gO3J2WtRVya6SV6MhA9YbjQYoPaDa6HFU1iy30Y0ely/NyMdEClTtiACD9DJcvdZRa
+	 WVzGUA8WI9rreRLp/hel4bCoA1adj+bMUypE6B0g7yUQ/RO4ZQmlcwwJr74Zhe78qc
+	 /rK3HmXG+ErMJLgvpqN3JYdyCvpAqJ8CKinN9ZasPwp3HxvA1Vb4ncxbhLst/6/hkM
+	 zaDXbBXN8Vdfw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cL0061HS9z4wBM;
+	Mon,  8 Sep 2025 18:06:29 +1000 (AEST)
+Date: Mon, 8 Sep 2025 18:06:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the hwmon-staging tree
+Message-ID: <20250908180629.504ecfc9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250906062934.6637-4-clamor95@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/LJVXs/YUaU1Yqc7.062wghi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, Sep 06, 2025 at 09:29:33AM +0300, Svyatoslav Ryhel wrote:
-> Add a compatible for ASUS Eee Pad Transformer TF101G and ASUS Eee Pad
-> Slider SL101.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/tegra.yaml | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+--Sig_/LJVXs/YUaU1Yqc7.062wghi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi all,
 
-Best regards,
-Krzysztof
+After merging the hwmon-staging tree, today's linux-next build (htmldocs)
+produced this warning:
 
+Documentation/hwmon/hwmon-kernel-api.rst:85: ERROR: Unknown target name: "d=
+evm". [docutils]
+
+Introduced by commit
+
+  c387594bb99b ("hwmon: Serialize accesses in hwmon core")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LJVXs/YUaU1Yqc7.062wghi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi+joUACgkQAVBC80lX
+0Gw1sggAjnpwGKk4G9O6Xb0ZL/tS7ecffJhGk2HDtvgDHyAF/Ne2KNB4MHhvjsMW
+3HOyFBoOY5XrG4tf5/U/exhxtJfpjlTYZ6vh8QBNE1+fguxEv0TGIcl4V0M7+Q9m
+GyfBxv3hR0I4HQ0lWA5iPCmwSrGLOqGyq3gCz+iswUjcCPo0mBY7n1OOait+/RJA
+56T/KM/hyfh8qsS/iBGckeSWyqNYxkzCin6DAqHyxpFxLZ0b+7/J9pLhIeVNYO5m
+Y1bJxlwDlEpdg2YQiRJXFnpx6kbJEcXZBqpgNYodxBcawE1FixBE8Dwj40kmYVki
+5aAl0IMKGFe++McfDj5ktYYKX00/RA==
+=E6HF
+-----END PGP SIGNATURE-----
+
+--Sig_/LJVXs/YUaU1Yqc7.062wghi--
 
