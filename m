@@ -1,103 +1,116 @@
-Return-Path: <linux-kernel+bounces-805544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AD6B48A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A3AB48A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7485D1B23063
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21B01B252DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 10:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F492F3617;
-	Mon,  8 Sep 2025 10:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B5A2F744C;
+	Mon,  8 Sep 2025 10:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SMZawYYS"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RiiAWDkJ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7D81DFFC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2E42E3391
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 10:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757326951; cv=none; b=mxm+3Jrs8xT566fOA/A/kuEc1oad8+hOxcfyE6Rar7cTTzoMODUg7NHz4YQ3OeTEYR4No+bqn3hkbF+TxX4QZVpbWCeGvRD33zD7CCWu5OWQT1kwwDI9G9Viwh3W43p0Bsxn3GSUS8Y8tEjzArGmu/bmyiSd/xLzQJ9G6y7qxDE=
+	t=1757326966; cv=none; b=lSll1k4t3vOZxZofhxFlCByTnLXAXNxh988qg5rmQY+OXDYgjz8AOZ2ieyVipK+lc9CsDdV32Iu7D+L2T8QDv4pKHvMS4t5+PuuQ0QxYOaV+AHgiZvBvvrQ5zpISriLizsi7wuOUqCSuvUT5qO+0p2RcnMaqCGYfjyMucN/KBQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757326951; c=relaxed/simple;
-	bh=Bo4R2srjkeq0H9/iqOb3QQxgaNQ2+g6uMTOt2Ia4jOk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iXfzMyFafz5y+Qh/PZELgbNcTuJLbN2ZaxZeSVj3t/qpKt/Uh2c5Rt5fTA08TCSPE7yOP1UukcQbAsOPi8/8onRWIn8sMJz0Rs9wisnX7LVZqVzaQTFUZmKH86FBXh1mcjh/xeuanjfum3MCKyGWe6XC50OFL8dCITKBfv6jOSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SMZawYYS; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757326947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dEhcnr2X+qmyqAXr9sSFjDSvggs46vsUK8XfBne8efQ=;
-	b=SMZawYYS+/zNrE0nb81PkQV+BiPtH5ixsQ9VmkXV0JWIuXLf0Uf7AszQfq0pCx+AeVrJGj
-	VWSrT0kT9/Cwe8Rtk317gwih9WrzxTXH3mhijO7jmN5sa7Y4Sx9AeSr1v2ZsqyMeBf1UIs
-	6VxQRWIQTqSpbVm0/NSbZoshD1OhRNI=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] drm: Use strscpy() instead of strscpy_pad()
-Date: Mon,  8 Sep 2025 12:22:16 +0200
-Message-ID: <20250908102217.3725-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757326966; c=relaxed/simple;
+	bh=RHFxWDCHLy5hvU8idDeLnpypbjz+dKFI/3c2JendMoY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gNLFjDDJvSF1VBVfP/P7nP3OCyV2iIlIBfpJwQ1R7piMTMRZfikps7H6lVZuapyV73JIsOohbbmWaCTdJ/yNldtQiwtLR7TO7VaWJQiiMvKPTneWeGJrm8TZTs8tVHHxQTG5TJi64BUkSBhp/wFNBvKVxHBRtqdaO88d2jVMptM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RiiAWDkJ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2770093f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 03:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757326963; x=1757931763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZrzZTtPMBTTwhC4hDpYeCTJZty1sUGPfAIEYck4kXTs=;
+        b=RiiAWDkJgLVkF/rUWUJGTeM5S6+zrBpg1qnCf0/zDs7A7WW4l7jqM7vu39E1N4SKn3
+         P2XZYzGHAWatVK9OUlT0g+DIMVDvut7SVvtHKl/5IoEMi703d2a1bDk1aUlT9kHkOl+e
+         ticcS0I+H8o4z8rIt9xhT00UdsxPsidZp5w6C6hwZPax8Gi+cAfciMEzqiQP0qNLltPu
+         JLt4KaIWNxM6atB+RUWcz57jxDTWokfmPy4wvXcQuu5aGkZgKCmusQl5Ti+k+lI/ILtS
+         kyZ2HCpT0a1v5kSREMjknDKOiSMUvTGNy9bQp5GrgOvW0e2hEDBhZOeKfoM2hiUMmvEX
+         xhow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757326963; x=1757931763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZrzZTtPMBTTwhC4hDpYeCTJZty1sUGPfAIEYck4kXTs=;
+        b=kq0h1LFgTecEhxsOFKpY4eyJVNyB087iYf7XKG87xAiP8UKz5Ymma6l2idP/+nmomi
+         aD6L4+ZhKzFbN22yz2TCdpqlHGAJJcb+xaQhOZ7x9he1R4JaiMs9rRXeFYPMOGH+mZDg
+         9iwHY1s58BsEiO8eG13AXJ7CslfE3k+TGracCJU3Wb1gWjac47OMKhuOCQNzbxIiEMWW
+         M7ZkHHyYOloJeN5jVF+eP/g3Oa1ncp/Ym8yrWsDLTkOo3wVbKd783pNSoIYyl182tdCy
+         FeWOrFNlvFFBUKEyccUc7HbQsR0vt9LyrYQCxN9UpgBOxXrLTIoJB6cj/F9u8cCUaw8d
+         uFGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkcfZNkTKQb+wD1vc44LVmp3EKQiGugDbKO6pqnO37he/qLv3ZyjOKgEBhtYV1nA2Cql9yMNEaAJb8Afc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXeb3jKcvFPkZaRo/rdMp2cV5qyF4FRwO+VCGSzRSD9Ve9KFaf
+	ajNcJMofHI6MyTEw48YS/vhIgrSm/u3ahl5Fabw6sS+cG+uymo2BZjJFTRSp8SToXcYli4VWyqC
+	wOej3y8FvF0tWEJZtQx+1Ef4SxPS9TeUZIj+yEpby
+X-Gm-Gg: ASbGncuWzrzOY8e/gGOC+XNZ2tvs0VoutCcXoGHVz5rtS6bCVD3NKho2SpEV4+Pm21T
+	io55hzzDdniIBs7xEHloOgy3HjhaUp4orlwLQ9H33YdqolY7tLcqTUpAYvVd5F0pn+i6+v7jt8b
+	B1g1pjTvzT6fLjb3ZcMimGU4d7krWMMP/EaXpR2FfdiKwdoQVoXpi+N5ChH5uXt0vrcgtvBCZgH
+	MuQy9khsZgiCuYnRgQcH+vP+cNfYrmwdPH1BKopKMySbhMlO4XmSQAb28c8dH7bXxJidw30lbxc
+X-Google-Smtp-Source: AGHT+IFgWYJROM17+WIrfUEk3tvBLaNIow64btrV8OrhYTpagog0f41sQ1woWipkCJ+Mg8IHT5GJftLiAT4HnQvHO3M=
+X-Received: by 2002:a05:6000:26ce:b0:3d3:8711:d934 with SMTP id
+ ffacd0b85a97d-3e63736edd3mr6168164f8f.14.1757326963179; Mon, 08 Sep 2025
+ 03:22:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250906140256.3059395-1-vitaly.wool@konsulko.se>
+ <aL6YHkF96ICqqbBZ@google.com> <94252007-f389-41d0-b5a0-ed948225543a@kernel.org>
+ <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com>
+In-Reply-To: <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 8 Sep 2025 12:22:29 +0200
+X-Gm-Features: AS18NWA9hYdpwy_1B5DZiD19hEAKMFtTbh_pCUoACeHBYWDL0ERivZum5zi9du0
+Message-ID: <CAH5fLghyDNd1SSL5uTZpSR-5j3q9=frAa=AgUjvap45b-DuUig@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: rbtree: add immutable cursor
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-kzalloc() already zero-initializes the destination buffers, making
-strscpy() sufficient for safely copying the names. The additional
-NUL-padding performed by strscpy_pad() is unnecessary.
+On Mon, Sep 8, 2025 at 11:21=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Sep 8, 2025 at 11:06=E2=80=AFAM Danilo Krummrich <dakr@kernel.org=
+> wrote:
+> >
+> > Why not use &raw? Consistency with the rest of the file?
+>
+> I guess -- it is a good thing, but since we are actively trying to
+> move to the operator, it would minimize work to avoid adding new ones:
+>
+>     https://github.com/Rust-for-Linux/linux/issues/1148
+>
+> Cheers,
+> Miguel
 
-If the destination buffer has a fixed length, strscpy() automatically
-determines its size using sizeof() when the argument is omitted. This
-makes the explicit size arguments unnecessary.
+Do we already have a patch making this refactor for rbtree? I don't
+think I saw one. I can send one if not.
 
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/gpu/drm/drm_property.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
-index 596272149a35..47f2891f3f06 100644
---- a/drivers/gpu/drm/drm_property.c
-+++ b/drivers/gpu/drm/drm_property.c
-@@ -128,7 +128,7 @@ struct drm_property *drm_property_create(struct drm_device *dev,
- 	property->num_values = num_values;
- 	INIT_LIST_HEAD(&property->enum_list);
- 
--	strscpy_pad(property->name, name, DRM_PROP_NAME_LEN);
-+	strscpy(property->name, name);
- 
- 	list_add_tail(&property->head, &dev->mode_config.property_list);
- 
-@@ -421,7 +421,7 @@ int drm_property_add_enum(struct drm_property *property,
- 	if (!prop_enum)
- 		return -ENOMEM;
- 
--	strscpy_pad(prop_enum->name, name, DRM_PROP_NAME_LEN);
-+	strscpy(prop_enum->name, name);
- 	prop_enum->value = value;
- 
- 	property->values[index] = value;
--- 
-2.51.0
-
+Alice
 
