@@ -1,346 +1,395 @@
-Return-Path: <linux-kernel+bounces-805765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-805766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D1FB48D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8862BB48D14
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 14:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67BC2018F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681C11B26ABC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 12:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10AE2FDC50;
-	Mon,  8 Sep 2025 12:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AvWnmmqZ"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2084.outbound.protection.outlook.com [40.107.100.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A52611187;
+	Mon,  8 Sep 2025 12:15:21 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9462EBDE6;
-	Mon,  8 Sep 2025 12:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757333662; cv=fail; b=NvK08IIfSERSjNkbI35L3UBJCBm9eJpGl8vZmW1hipv4qog54jJEEBUP2gaCSj/unCXPECcALYMMftkaXdkMDX78dqh3ImXVzARIfyvAxluGHL7mqBNjlBsKH+m+jCv91LQSFWp4owCWw/ccYrP7KgM17LZXWi5qtFwpPvcj6xM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757333662; c=relaxed/simple;
-	bh=MBxCnS1PdnEQpZWDmajRp/b0xAC1vKxcJz3MKKhM3oA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BOzBvKSi0azkA5lQyn/WB/euIUdi+JRhgpav2gy8Bo7MVBZ+XDR5OyMauxKtiR0Xgxxc1k1sUTLh/y2GBCDri1xo4tbUzg9HVxlieCCVYDp/PZ5qdbZ0KvsZ3D8N917TbwlKbC/gO5e7ZTKvarKeJQVUlXtmPIq2+reRFYR4nnk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AvWnmmqZ; arc=fail smtp.client-ip=40.107.100.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ux3MOjovrjHv3jKdQEMWF+ThWGux9aCVoqmm3JqAlMeWVqHrGSnFRZMlrOFGV5QRU5uwGOL/IH1tx1NFJC34wKjS8p+aXTjBusOxtyWJfbdmxMqZoyb5CyVI8C5blF/LqJKKxvU+u469kvNbh0Vc6QkaagmdXriDM4WPUVP4qjJf1QWq00ZNS2SApt0uwZJrcTCdxrtFi4KmPDOOrWoyDIiqLwYD6k67ewFvPzuoXNKRVSlxeFiIlr7Yhw2xSvyn1PtvJ7AwFfuOFtFN0yVf+CblIisqnyq3dBCHwarlvYlCF/BzRyLHzf1xV3+rS1lVmnGjLHuYCuxWElzZr1F2qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6bW3yiB6m967I7ePADYab7nVLEpUeLhOJ18eFpB6Ixw=;
- b=NdnyfO60K1waNQZfpH0Ib0iZ8biJBq56mpDT9jUJ40yGkPU4pJBOhvDaxiyo+EvkhfGP633q7mUrjTpDPafqlUG2NT1sjdRnvE+fpJHy7odJ6k9jK9z1i4h7vYhEJfPjEXNXlfheWlHEACqn4Zen15jKRhZCKDhl+tdndPjDCq4nqm4MvDrnbWRGJ3Y0LTdS79aVJKznYj3PaSPDQeviSGz0gQmfN5d3eNk21IHbpbmXys4OKVpsCHYSPwVfr9DjU0KrTbtkL+Y1o7OQyl0440eBID6DkCtL3xZ67cFy5l1nrLQzQB8rWUFKCFMysn6q6XvoA5Vg+VdYGg+xF08biQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6bW3yiB6m967I7ePADYab7nVLEpUeLhOJ18eFpB6Ixw=;
- b=AvWnmmqZ6i4opentFHkrl2ZPJC+6EJA7RIqczHySws7dm/O92DTA53SxpwA0mrH+XVpyUAPKAixLRdMItUr/CwWaFvoUOPUy9zrQ7xFEXe1Ph4l601dTol4ChTVKfCdrBK7xWw5gawIa1ZQ9K8ky1/nb+g7KRip4X0kJ9/pkT+M=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by DM6PR12MB4092.namprd12.prod.outlook.com (2603:10b6:5:214::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 12:14:13 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30%4]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 12:14:13 +0000
-Message-ID: <a0817722-50f5-44c6-b07e-a10a48e87239@amd.com>
-Date: Mon, 8 Sep 2025 14:13:56 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/2] dt-bindings: i3c: Add AMD I3C master controller
- support
-To: Rob Herring <robh@kernel.org>,
- Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Cc: git@amd.com, alexandre.belloni@bootlin.com, Frank.Li@nxp.com,
- krzk+dt@kernel.org, conor+dt@kernel.org, kees@kernel.org,
- gustavoars@kernel.org, jarkko.nikula@linux.intel.com,
- linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
- shubhrajyoti.datta@amd.com, manion05gk@gmail.com
-References: <20250905113740.3841181-1-manikanta.guntupalli@amd.com>
- <20250905113740.3841181-2-manikanta.guntupalli@amd.com>
- <20250905234037.GA1512025-robh@kernel.org>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- mpwx1d8=
-In-Reply-To: <20250905234037.GA1512025-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR07CA0226.eurprd07.prod.outlook.com
- (2603:10a6:802:58::29) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01482248B4
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757333720; cv=none; b=XtCIZljOgJeCZtclUMGJszsH+QXG+CsTIDI1wKtSlRd4PhnPxpy3rNVA+wlTOFuqKEb78iYmjyL+n1L1ZuAEF36wQvsdhSQAtIPfrgbdNYMCd8jcynUGATRt+tDDfbuZ+5YkxCnmFUYiYoYPz2lssXbVKii4+Rf6Q8XUNaeHdaU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757333720; c=relaxed/simple;
+	bh=m/Iu+SFgiPgzxWMeEPUimnkFc4jN0u62KIcG/VgpMdM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EGRJ5REqKfDpGGOJ6KhH0qrdgffJPU7tpD69HHrzZ+oMIRj3fhcV1V2Hz6JU+lngCV9O3ST+sZhZ2x0QObIcv/QYU5cO52yQj5/EsFXmxEUJUYUZ0BDNZjcDTQPaTMvPcyeHG8p339UGCMaHqZVjNI7VOtX6McsjemIUjYPe4RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cL5VW2CxrzYl3PR;
+	Mon,  8 Sep 2025 20:14:43 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Sep
+ 2025 20:15:08 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Sep
+ 2025 20:15:07 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <feng.han@honor.com>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <lorenzo.stoakes@oracle.com>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
+	<tglx@linutronix.de>, <zhongjinji@honor.com>
+Subject: Re: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA
+Date: Mon, 8 Sep 2025 20:15:03 +0800
+Message-ID: <20250908121503.20960-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <aLmmrvPb6mFHzqCc@tiehlicka>
+References: <aLmmrvPb6mFHzqCc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|DM6PR12MB4092:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1694e40b-7b0e-4ad6-c240-08ddeed13953
-X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K2FHSXAvblloNzl3cFAvakp0TndvRmhlRG1RaUdSeTBLSXNhWGVPRk5kQU8z?=
- =?utf-8?B?am42UDFudXhORXEwZSt4dEJHT0c2MnVPemF2eE9waWlyM1p2ZEUvNURoNk1Z?=
- =?utf-8?B?WTlGVHp6U0wrWjRPckI4NS9uOTVCcHJGR0YzcVZ3UENxamhSUVNtcmdmRlJR?=
- =?utf-8?B?ekNFeEx4WUV6M0duVmRLVnIxVDNKeGpzMTcyVDJnNW5TQVNIbkRjeVQ3LzNY?=
- =?utf-8?B?UElNaXkzSXcvU1NmY01BWnZFNXF4TkZKTW4vVmRwNit4a2ZCMGlCM2lPSEFO?=
- =?utf-8?B?UHJXdFN0b1RpdDRHRmxSWjNHYTJ3TkVYTy95dSthK3B2cDNBdkV2ZFM0eUxJ?=
- =?utf-8?B?cnRrbUVOdElXd1ZwQ2ZrUFVaaEZwNUNvWk13bzlDYlFaRU1ZV0liT0RwS3po?=
- =?utf-8?B?RnRFRjBxbGVaVmhLMmZsZG1EOXpadDgyL3gwRGtYZm54MTlaWWN3RkFpTGlq?=
- =?utf-8?B?RGhwbS84RGd2ZDBOMW1GQmJYc1ZFTDNucHdKN2Y0cjVhM25uQlJua2NkTG04?=
- =?utf-8?B?c1JnbldxV3hCOE44cnJMeUpnWkhrcmlDL203dzdkQ2cxeXVXMGhRRWVNTWxZ?=
- =?utf-8?B?TmEyU3F6NE8rUGRXclVSdjJkcWlvV0Y4aE9ob1N2OGxNNDhOUXppVmlrckVw?=
- =?utf-8?B?bjFwdWFCc2V1NUV5Yk1KN2pMekUzQlN2cFI1dG1XVm1wakRveFZyNHpEUUZo?=
- =?utf-8?B?b3hjbXN6WHRFd1JPTFliS1VJbjEzendNalpsbGYxQUZRVzhYOEJ3dFNPajdM?=
- =?utf-8?B?RCtRdEVVQkRjNUF6aFRJVytmTHJ5R01qc0ZsYWpSR0ZqcVY4ZmZHUWhnenVR?=
- =?utf-8?B?UFNPZHo3RGhPZmMyME01dmpOLzN6dDBVMjJ1S3VFSDNaVnJUS29GcnJjSVNB?=
- =?utf-8?B?WFMwR3JKUHdGV0tNOEllL2RMdDdHbVM0VU1vN1dUWURwWFZHQUc0ZWRSRmNs?=
- =?utf-8?B?bS9Ib2xjR3huN2ZldHI0NnRpV1EzNG9zZHhlOFQvS0V5VHR1OE9JNmwvNW11?=
- =?utf-8?B?M1BTNzlQeEFDMUVxSUxXZitNVkF5d3BkYW1uRG40bGtldUxXNFVQRi95bmNF?=
- =?utf-8?B?aUR1REtkb1l6dkhIOWhKQzNudXdvTG1DWUFpZWNXejFnSlM4SjJtNnNMOHVI?=
- =?utf-8?B?dE1EZFl2TUdoVnFGNmFBdENORktsUW9OOCsrendERUk2b3RqeWljUFVQTnI0?=
- =?utf-8?B?UGNhT250ZzZVZzN2N0QzQlVXV2JPVnpIVmtlQnRJeitiRW15dHNtQ3VGUHli?=
- =?utf-8?B?TGQ4dlIwMHlJdWxZQldYN25NV1Z3MVFBRGJWcUh2azhQSUdmdFlOSVpOUzR5?=
- =?utf-8?B?em9XeE45MXlnWktkUXRYUUJrbnRrdlpJS1FpWVBhRzZOVmVjY0UvNy9aMmVX?=
- =?utf-8?B?OVlBM3N4bWUwMzhqcnp3NWpzZ0gzYmJaSGFtUE9wSitiTE5hMzlqN3VRVWhx?=
- =?utf-8?B?SGVTekovdEV0STREZnUrTHlqTFNuVkpxVit0djJidGdkaXVjMGU0bXpaTkhC?=
- =?utf-8?B?akV5d1NlK2M0WjBXc0IwUTU3bU9ZVnB3cVZuVVlveHBmVWlCMmxkUk1VTHlu?=
- =?utf-8?B?VWF4d3lEQWtWdzJzQm50Qkg1b3M2Y2hsSUhPNFduRUxaQm9SRjNMQUFpZjNu?=
- =?utf-8?B?di9VTHZmdmlrQVpsb1ZBd3ZRVWNrRVJYYUxrSVh3NEhTSUxGMjh5clZJVVZs?=
- =?utf-8?B?WHpwUE9tck1QbVIxZ3QwNEpOOExIR3A4YVorbVRDdVBrVVNXbGlZbExZbHY5?=
- =?utf-8?B?VkNuSURxa3NXUExXWmJ1R2ZEZGVVaC9BemNDbWdRRkxPSlNsd09Fd3F2czNp?=
- =?utf-8?B?bXVPKytxSWc0SXp5MUFZRTF1RS9rYmJ1Z1Y1L1BaYk5NSUZML2NFaHV5VENK?=
- =?utf-8?Q?g0A/tVJcq0jdU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OUJiSlBkODRqemNTM0diSmVzaEpkUDVhL0U1OUZvZXcyd0VQS3lxOFVDRmtL?=
- =?utf-8?B?QmZ6WmFSUUlVWTBkbUM2c2JwbGhwSm9NTFhUTnlTbzhVY2NCMUJtNU9wRDh1?=
- =?utf-8?B?cUgvVFVpNnUzZ3RpcEFwTzVWbm9YV09SQzM4WlhYRkhndW51K1IrSXBId08x?=
- =?utf-8?B?Y2twV3lGOEJ2cDBDcDRQbHJ0bHl4UzlYTG1NY05iZ0c1NThPN0lyMjUzWXBr?=
- =?utf-8?B?T2lYM3VWMXhxL2QrSnRIL0ZLb253a0ErYkljbEJ4QlhRSlcvVForMW9kTVRB?=
- =?utf-8?B?RVAyUCtaYUFSWS9kMGVpQWtOMG5wL3E5RXhkTUJaNHNSKzRxNG0vZlYvc2V3?=
- =?utf-8?B?YklJYlZMdUhJZXJLK0Y1SjJUc0lRSmpaWTRNNERKQXpRdC80RmZseHdGckU1?=
- =?utf-8?B?dkY0UUp4N3FBWjVUR1lUK1JvbkF1Nm4wekhSYm1rb0R5MC9UQWRmL3JRakVs?=
- =?utf-8?B?YjRzb005L3lpdjlnai9Dd2NZWEZ0ZVc3M2pMS2hXMUgwZmVraG5oZ2JYeWU3?=
- =?utf-8?B?cU05aGx0eDFSZ1hkZkQ2bXl2S3hyTWphcitFajJTZ2VMQW95WkkxZ1hLcVpv?=
- =?utf-8?B?Wko1UmVpejRnSjhGRjZ4bGFQVUhIVklGZS81MEJ2TzNoZkJHQ1ZYdHY2RGFP?=
- =?utf-8?B?NGhjNEZlMityMFA0NWRGU2tnazhKemZTckQvOFFrRUFkWEl4NFdaZnF2UW44?=
- =?utf-8?B?VHpIWStyRjhyZ0E1bHBCb3BFV25xVWJGc2pYZUN1TFp6cC9qNE5JSE10UGJM?=
- =?utf-8?B?SUZiNm42aFVMdGx3YVBLcVNFYVVVSCtGSVVQYlY1YU53M2wzTEw3dEVMbDVk?=
- =?utf-8?B?UEpIOThaT2l1eS9oNjRZc3JZSDBBbnNzN3JnQUh2Wi92RDM3bktyRU5JWFJM?=
- =?utf-8?B?c1lMUVZsZGptM1NyS0xxa3ExMDVFaVEvcExScEtJWWFoZkM5andkTWZ3dDAw?=
- =?utf-8?B?SXNIVUhtSklrbGgrMldZTVdXKzFuNkJJWjQ3VWxiYlFEcmFXQnJEUHRYVUdK?=
- =?utf-8?B?ZHhQV0tiUjJKR3pTZDVBR3VYUDVTWUV2ZFQxcld6dGFLVW1XY3pYNzJMLzRl?=
- =?utf-8?B?RW9QQjJtSGZOSnZXMUE2WE9JV1J2S0ZsbVc3ZHViTWpRS2YwZDMxaXFvOVJz?=
- =?utf-8?B?VnJ5MEFUdjRTVUhBcUNZV2hScHpCUEgrSFprYkxwRk9xL1lIblBnM1lyeEhx?=
- =?utf-8?B?OFU4RjBLekJwR1RncXFMaTVLUUVHWlVNUS95UmI5MXVSdXljQWROLzliT0lW?=
- =?utf-8?B?S1EwNjJPV085OHdBeWJBMkpYNHZROHNGWFdRb0ZmT21KTk5mY0d0UTJISnp4?=
- =?utf-8?B?Z01VakhRMS9SS0U5RFU2UHY5czgrRzBiUGtmUnQvUVMwMDRsb3dsZXNGR2Fj?=
- =?utf-8?B?T0JzMVc2a2JpWWRvM2FHcUpPRVRzOU5IUDZRczdDc2Zmd0QyWCtKd1U1S1lI?=
- =?utf-8?B?cFVNTi9ITzVtTzhYUmNqSVBqRlFzcjdyYUNNVmlESGdBQjZkeCtaMTJnUjNS?=
- =?utf-8?B?VTBQZHlpczlVTFA4dHh3NWExU0VyTXp5Szk3ZVh2RUJmeVA0RzJwekhHOVNw?=
- =?utf-8?B?d3V3MWtJOVM5aXY1bGNqeE41THMyUXQ2R1VXVSs0TlU0S3RqQjJudjVMeEhq?=
- =?utf-8?B?bE5ZbTAwb3g4aktPRjEwRU41L2JSYWpPRW9GSDl3d2hucW10VWd6YUlyVnoy?=
- =?utf-8?B?Ly8yTjBVK2pldFpSbTIxaElQMkdRN3dTRGxvZjFMV1IrSFlCUVgzVXNQTXpH?=
- =?utf-8?B?SE1rTlhUS2laRWhEb2ZSVHVTaXo3UDdIMDVaMDIvenBFcEVoMmRDK3VqaGx5?=
- =?utf-8?B?bmxqUnRDWEpSSlgrM2F0MlF1VWRsVDlYL0I5SlJDbEdQNTBldkNFREVuQWxY?=
- =?utf-8?B?ZmswSWFST2tFR3JLcjNONXE1a1RYMkh4Z2NzMzJyZmRUQTZsSDZuVklEUzhI?=
- =?utf-8?B?ODRMUkdkSk50MDkvVmc3U0ZUN3ZEd2R3YTMwRTJCYThna3ZOY2NuVlg2cFgz?=
- =?utf-8?B?Wm8vU1dnMXNLbUhNSXFaaW1Ld3RGMDRaVHE2WTBXQlpIbXVGTm1TM3h1WUh6?=
- =?utf-8?B?VjRHK2lSc0hpWUVBeGsxZHlYWGtOLzdmSHIvOGJrVTRGc1lsTThuNXc1QWpI?=
- =?utf-8?Q?kP27P3hyuXEgrl5DrFQb3ztAZ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1694e40b-7b0e-4ad6-c240-08ddeed13953
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 12:14:13.6877
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fPZXMgE7sNX34T8kCxx8gx5y02+acboKVDkxy0w8BpCdAKljef9WUkWjFDaPdq6d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4092
+Content-Type: text/plain
+X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a018.hihonor.com
+ (10.68.17.250)
 
-Hi Rob,
+Since the perf report is too complicated, let us summarize the key points
+from the report.
 
-On 9/6/25 01:40, Rob Herring wrote:
-> On Fri, Sep 05, 2025 at 05:07:39PM +0530, Manikanta Guntupalli wrote:
->> Add device tree binding documentation for the AMD I3C master controller.
->>
->> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
->> ---
->> Changes for V2:
->> Updated commit subject and description.
->> Moved allOf to after required.
->> Removed xlnx,num-targets property.
->>
->> Changes for V3:
->> Updated commit description.
->> Corrected the order of properties and removed resets property.
->> Added compatible to required list.
->> Added interrupts to example.
->>
->> Changes for V4:
->> Added h/w documentation details.
->> ---
->>   .../devicetree/bindings/i3c/xlnx,axi-i3c.yaml | 55 +++++++++++++++++++
->>   1 file changed, 55 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml b/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
->> new file mode 100644
->> index 000000000000..1daeb20205ac
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
->> @@ -0,0 +1,55 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/i3c/xlnx,axi-i3c.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: AMD I3C master
->> +
->> +maintainers:
->> +  - Manikanta Guntupalli <manikanta.guntupalli@amd.com>
->> +
->> +description:
->> +  The AXI-I3C IP is an I3C Controller with an AXI4-Lite interface, compatible
->> +  with the MIPI I3C Specification v1.1.1. The design includes bidirectional I/O
->> +  buffers that implement open collector drivers for the SDA and SCL signals.
->> +  External pull-up resistors are required to properly hold the bus at a Logic-1
->> +  level when the drivers are released.
->> +
->> +  For more details, please see https://docs.amd.com/r/en-US/pg439-axi-i3c
->> +
->> +properties:
->> +  compatible:
->> +    const: xlnx,axi-i3c-1.0
-> 
-> I'm still wondering where 1.0 comes from? From the link the only
-> versions I could see are Vivado tool versions which appear to be year
-> based. If the IP is bundled with the tool, then use the tool version
-> (oldest version you tested with) if there is no other versioning. A 1.0
-> version really just sounds like you made it up.
-> 
-> Something like bindings/sifive/sifive,blocks-ip-versioning.yaml is what
-> I'm looking for.
+Conclusion:
+Compared to the version without the patch, the total time reduced by
+exit_mmap plus reaper work is roughly equal to the reduction in total
+pte spinlock waiting time.
 
-This is what I have found in public space talking about it.
+With the patch applied, for certain functions, the reaper performs
+more times, such as folio_remove_rmap_ptes, but the time spent by
+exit_mmap on folio_remove_rmap_ptes decreases accordingly.
 
-https://www.amd.com/en/products/adaptive-socs-and-fpgas/intellectual-property/vivado-ip-versioning.html
+Summary of measurements (ms):
++---------------------------------------------------------------+
+| Category                      | Applying patch | Without patch|
++-------------------------------+---------------+--------------+
+| Total running time            |    132.6      |    167.1      |
+|   (exit_mmap + reaper work)   |  72.4 + 60.2  |  90.7 + 76.4  |
++-------------------------------+---------------+--------------+
+| Time waiting for pte spinlock |     1.0       |    33.1      |
+|   (exit_mmap + reaper work)   |   0.4 + 0.6   |  10.0 + 23.1 |
++-------------------------------+---------------+--------------+
+| folio_remove_rmap_ptes time   |    42.0       |    41.3      |
+|   (exit_mmap + reaper work)   |  18.4 + 23.6  |  22.4 + 18.9 |
++---------------------------------------------------------------+
 
-https://docs.amd.com/r/en-US/ug1118-vivado-creating-packaging-custom-ip/Versioning-and-Revision-Control
+Report without patch:
 
-https://docs.amd.com/r/en-US/ug896-vivado-ip/Upgrading-IP
+Arch: arm64
+Event: cpu-clock (type 1, config 0)
+Samples: 6355
+Event count: 90781175
 
-In past structure was slightly different.
-There was also alphabet suffix.
-You can see it for example here
-Documentation/devicetree/bindings/timer/xlnx,xps-timer.yaml
+do_exit
+ |--93.81%-- mmput
+ |    |--99.46%-- exit_mmap
+ |    |    |--76.74%-- unmap_vmas
+ |    |    |    |--9.14%-- [hit in function]
+ |    |    |    |--34.25%-- tlb_flush_mmu
+ |    |    |    |--31.13%-- folio_remove_rmap_ptes
+ |    |    |    |--15.04%-- __pte_offset_map_lock
+ |    |    |    |--5.43%-- free_swap_and_cache_nr
+ |    |    |    |--1.80%-- _raw_spin_lock
+ |    |    |    |--1.19%-- folio_mark_accessed
+ |    |    |    |--0.84%-- __tlb_remove_folio_pages
+ |    |    |    |--0.37%-- mas_find
+ |    |    |    |--0.37%-- percpu_counter_add_batch
+ |    |    |    |--0.20%-- __mod_lruvec_page_state
+ |    |    |    |--0.13%-- f2fs_dirty_data_folio
+ |    |    |    |--0.04%-- __rcu_read_unlock
+ |    |    |    |--0.04%-- tlb_flush_rmaps
+ |    |    |    |          folio_remove_rmap_ptes
+ |    |    |     --0.02%-- folio_mark_dirty
+ |    |    |--12.72%-- free_pgtables
+ |    |    |    |--0.53%-- [hit in function]
+ |    |    |    |--35.81%-- unlink_file_vma
+ |    |    |    |--28.38%-- down_write
+ |    |    |    |--17.11%-- unlink_anon_vmas
+ |    |    |    |--5.70%-- anon_vma_interval_tree_remove
+ |    |    |    |--3.71%-- mas_find
+ |    |    |    |--3.18%-- up_write
+ |    |    |    |--2.25%-- free_pgd_range
+ |    |    |    |--1.19%-- vma_interval_tree_remove
+ |    |    |    |--1.06%-- kmem_cache_free
+ |    |    |--2.65%-- folio_remove_rmap_ptes
+ |    |    |--2.50%-- __vm_area_free
+ |    |    |    |--11.49%-- [hit in function]
+ |    |    |    |--81.08%-- kmem_cache_free
+ |    |    |    |--4.05%-- _raw_spin_unlock_irqrestore
+ |    |    |     --3.38%-- anon_vma_name_free
+ |    |    |--1.03%-- folio_mark_accessed
+ |    |    |--0.96%-- __tlb_remove_folio_pages
+ |    |    |--0.54%-- mas_find
+ |    |    |--0.46%-- tlb_finish_mmu
+ |    |    |    |--96.30%-- free_pages_and_swap_cache
+ |    |    |    |    |--80.77%-- release_pages
+ |    |    |--0.44%-- kmem_cache_free
+ |    |    |--0.39%-- __pte_offset_map_lock
+ |    |    |--0.30%-- task_work_add
+ |    |    |--0.19%-- __rcu_read_unlock
+ |    |    |--0.17%-- fput
+ |    |    |--0.13%-- __mt_destroy
+ |    |    |          mt_destroy_walk
+ |    |    |--0.10%-- down_write
+ |    |    |--0.07%-- unlink_file_vma
+ |    |    |--0.05%-- percpu_counter_add_batch
+ |    |    |--0.02%-- free_swap_and_cache_nr
+ |    |    |--0.02%-- flush_tlb_batched_pending
+ |    |    |--0.02%-- uprobe_munmap
+ |    |    |--0.02%-- _raw_spin_unlock
+ |    |    |--0.02%-- unlink_anon_vmas
+ |    |     --0.02%-- up_write
+ |    |--0.40%-- fput
+ |    |--0.10%-- mas_find
+ |    |--0.02%-- kgsl_gpumem_vm_close
+ |     --0.02%-- __vm_area_free
+ |--5.19%-- task_work_run
+ |--0.42%-- exit_files
+ |          put_files_struct
+ |--0.35%-- exit_task_namespaces
+
+Children  Self      Command            Symbol
+90752605  0         #APM_light-weig    do_exit
+90752605  0         #APM_light-weig    get_signal
+85138600  0         #APM_light-weig    __mmput
+84681480  399980    #APM_light-weig    exit_mmap
+64982465  5942560   #APM_light-weig    unmap_vmas
+22598870  1599920   #APM_light-weig    free_pages_and_swap_cache
+22498875  3314120   #APM_light-weig    folio_remove_rmap_ptes
+10985165  1442785   #APM_light-weig    _raw_spin_lock
+10770890  57140     #APM_light-weig    free_pgtables
+10099495  399980    #APM_light-weig    __pte_offset_map_lock
+8199590   1285650   #APM_light-weig    folios_put_refs
+4756905   685680    #APM_light-weig    free_unref_page_list
+4714050   14285     #APM_light-weig    task_work_run
+4671195   199990    #APM_light-weig    ____fput
+4085510   214275    #APM_light-weig    __fput
+3914090   57140     #APM_light-weig    unlink_file_vma
+3542680   28570     #APM_light-weig    free_swap_and_cache_nr
+3214125   2114180   #APM_light-weig    free_unref_folios
+3142700   14285     #APM_light-weig    swap_entry_range_free
+2828430   2828430   #APM_light-weig    kmem_cache_free
+2714150   528545    #APM_light-weig    zram_free_page
+2528445   114280    #APM_light-weig    zram_slot_free_notify
 
 
-This is for example change log based on Vivado version to give you an idea how 
-it is tracked and described.
+Arch: arm64
+Event: cpu-clock (type 1, config 0)
+Samples: 5353
+Event count: 76467605
 
-Thanks,
-Michal
+kthread
+|--99.57%-- oom_reaper
+|    |--0.28%-- [hit in function]
+|    |--73.58%-- unmap_page_range
+|    |    |--8.67%-- [hit in function]
+|    |    |--41.59%-- __pte_offset_map_lock
+|    |    |--29.47%-- folio_remove_rmap_ptes
+|    |    |--16.11%-- tlb_flush_mmu
+|    |    |           free_pages_and_swap_cache
+|    |    |    |--9.49%-- [hit in function]
+|    |    |--1.66%-- folio_mark_accessed
+|    |    |--0.74%-- free_swap_and_cache_nr
+|    |    |--0.69%-- __tlb_remove_folio_pages
+|    |    |--0.41%-- __mod_lruvec_page_state
+|    |    |--0.33%-- _raw_spin_lock
+|    |    |--0.28%-- percpu_counter_add_batch
+|    |    |--0.03%-- tlb_flush_mmu_tlbonly
+|    |     --0.03%-- __rcu_read_unlock
+|    |--19.94%-- tlb_finish_mmu
+|    |    |--23.24%-- [hit in function]
+|    |    |--76.39%-- free_pages_and_swap_cache
+|    |    |--0.28%-- free_pages
+|    |     --0.09%-- release_pages
+|    |--3.21%-- folio_remove_rmap_ptes
+|    |--1.16%-- __tlb_remove_folio_pages
+|    |--1.16%-- folio_mark_accessed
+|    |--0.36%-- __pte_offset_map_lock
+|    |--0.28%-- mas_find
+|     --0.02%-- __rcu_read_unlock
+|--0.17%-- tlb_finish_mmu
+|--0.15%-- mas_find
+|--0.06%-- memset
+|--0.04%-- unmap_page_range
+ --0.02%-- tlb_gather_mmu
+
+Children  Self      Command    Symbol
+76467605  0         unknown    kthread
+76139050  214275    unknown    oom_reaper
+56054340  4885470   unknown    unmap_page_range
+23570250  385695    unknown    __pte_offset_map_lock
+23341690  257130    unknown    _raw_spin_lock
+23113130  23113130  unknown    queued_spin_lock_slowpath
+20627540  1371360   unknown    free_pages_and_swap_cache
+19027620  614255    unknown    release_pages
+18956195  3399830   unknown    folio_remove_rmap_ptes
+15313520  3656960   unknown    tlb_finish_mmu
+11799410  11785125  unknown    cgroup_rstat_updated
+11285150  11256580  unknown    _raw_spin_unlock_irqrestore
+9028120   0         unknown    tlb_flush_mmu
+8613855   1342790   unknown    folios_put_refs
+5442585   485690    unknown    free_unref_page_list
+4299785   1614205   unknown    free_unref_folios
+3385545   1299935   unknown    free_unref_page_commit
 
 
-2025.1:
-  * Version 1.0 (Rev. 4)
-  * New Feature: Dynamic addressing feature updated to handle dynamic address 
-register update within the IP.
-  * New Feature: Updated IP Catalog taxonomy structure. This change has no 
-impact to the IP.
-  * Revision change in one or more subcores
+Report with patch:
 
-2024.2.2:
-  * Version 1.0 (Rev. 3)
-  * No changes
+Arch: arm64
+Event: cpu-clock (type 1, config 0)
+Samples: 5075
+Event count: 72496375
 
-2024.2.1:
-  * Version 1.0 (Rev. 3)
-  * Revision change in one or more subcores
+|--99.98%-- do_notify_resume
+|    |--92.63%-- mmput
+|    |           __mmput
+|    |    |--99.57%-- exit_mmap
+|    |    |    |--0.79%-- [hit in function]
+|    |    |    |--76.43%-- unmap_vmas
+|    |    |    |    |--8.39%-- [hit in function]
+|    |    |    |    |--42.80%-- tlb_flush_mmu
+|    |    |    |    |           free_pages_and_swap_cache
+|    |    |    |    |--34.08%-- folio_remove_rmap_ptes
+|    |    |    |    |--9.51%-- free_swap_and_cache_nr
+|    |    |    |    |--2.40%-- _raw_spin_lock
+|    |    |    |    |--0.75%-- __tlb_remove_folio_pages
+|    |    |    |    |--0.48%-- mas_find
+|    |    |    |    |--0.36%-- __pte_offset_map_lock
+|    |    |    |    |--0.34%-- percpu_counter_add_batch
+|    |    |    |    |--0.34%-- folio_mark_accessed
+|    |    |    |    |--0.20%-- __mod_lruvec_page_state
+|    |    |    |    |--0.17%-- f2fs_dirty_data_folio
+|    |    |    |    |--0.11%-- __rcu_read_unlock
+|    |    |    |    |--0.03%-- _raw_spin_unlock
+|    |    |    |    |--0.03%-- tlb_flush_rmaps
+|    |    |    |     --0.03%-- uprobe_munmap
+|    |    |    |--14.19%-- free_pgtables
+|    |    |    |--2.52%-- __vm_area_free
+|    |    |    |--1.52%-- folio_remove_rmap_ptes
+|    |    |    |--0.83%-- mas_find
+|    |    |    |--0.81%-- __tlb_remove_folio_pages
+|    |    |    |--0.77%-- folio_mark_accessed
+|    |    |    |--0.41%-- kmem_cache_free
+|    |    |    |--0.36%-- task_work_add
+|    |    |    |--0.34%-- fput
+|    |    |    |--0.32%-- __pte_offset_map_lock
+|    |    |    |--0.15%-- __rcu_read_unlock
+|    |    |    |--0.15%-- __mt_destroy
+|    |    |    |--0.09%-- unlink_file_vma
+|    |    |    |--0.06%-- down_write
+|    |    |    |--0.04%-- lookup_swap_cgroup_id
+|    |    |    |--0.04%-- uprobe_munmap
+|    |    |    |--0.04%-- percpu_counter_add_batch
+|    |    |    |--0.04%-- up_write
+|    |    |    |--0.02%-- flush_tlb_batched_pending
+|    |    |    |--0.02%-- _raw_spin_unlock
+|    |    |    |--0.02%-- unlink_anon_vmas
+|    |    |     --0.02%-- tlb_finish_mmu
+|    |    |               free_unref_page
+|    |    |--0.38%-- fput
+|    |     --0.04%-- mas_find
+|    |--6.21%-- task_work_run
+|    |--0.47%-- exit_task_namespaces
+|    |--0.16%-- ____fput
+|     --0.04%-- mm_update_next_owner
 
-2024.2:
-  * Version 1.0 (Rev. 2)
-  * New Feature: Support for Target added
-  * Revision change in one or more subcores
+Children  Self      Command     Symbol
+72482090  0         #APM6-IO    get_signal
+67139500  0         #APM6-IO    __mmput
+67139500  0         #APM6-IO    mmput
+66853800  528545    #APM6-IO    exit_mmap
+51097445  4285500   #APM6-IO    unmap_vmas
+21870335  0         #APM6-IO    tlb_flush_mmu
+21870335  1371360   #APM6-IO    free_pages_and_swap_cache
+20384695  485690    #APM6-IO    release_pages
+18427650  1814195   #APM6-IO    folio_remove_rmap_ptes
+13799310  13785025  #APM6-IO    cgroup_rstat_updated
+12842215  12842215  #APM6-IO    _raw_spin_unlock_irqrestore
+9485240   14285     #APM6-IO    free_pgtables
+7785325   428550    #APM6-IO    folios_put_refs
+4899755   642825    #APM6-IO    free_unref_page_list
+4856900   42855     #APM6-IO    free_swap_and_cache_nr
+4499775   14285     #APM6-IO    task_work_run
+4385495   114280    #APM6-IO    ____fput
+3971230   714250    #APM6-IO    zram_free_page
+3899805   14285     #APM6-IO    swap_entry_range_free
+3785525   185705    #APM6-IO    zram_slot_free_notify
+399980    399980    #APM6-IO    __pte_offset_map_lock
 
-2024.1.2:
-  * Version 1.0 (Rev. 1)
-  * No changes
+Arch: arm64
+Event: cpu-clock (type 1, config 0)
+Samples: 4221
+Event count: 60296985
 
-2024.1.1:
-  * Version 1.0 (Rev. 1)
-  * Revision change in one or more subcores
+Children  Self      Command  Pid  Tid  Shared Object      Symbol
 
-2024.1:
-  * Version 1.0
-  * General: Initial release
+kthread
+|--99.53%-- oom_reaper
+|    |--0.17%-- [hit in function]
+|    |--55.77%-- unmap_page_range
+|    |    |--20.49%-- [hit in function]
+|    |    |--58.30%-- folio_remove_rmap_ptes
+|    |    |--11.48%-- tlb_flush_mmu
+|    |    |--3.33%-- folio_mark_accessed
+|    |    |--2.65%-- __tlb_remove_folio_pages
+|    |    |--1.37%-- _raw_spin_lock
+|    |    |--0.68%-- __mod_lruvec_page_state
+|    |    |--0.51%-- __pte_offset_map_lock
+|    |    |--0.43%-- percpu_counter_add_batch
+|    |    |--0.30%-- __rcu_read_unlock
+|    |    |--0.13%-- free_swap_and_cache_nr
+|    |    |--0.09%-- tlb_flush_mmu_tlbonly
+|    |     --0.04%-- __rcu_read_lock
+|    |--32.21%-- tlb_finish_mmu
+|    |    |--88.69%-- free_pages_and_swap_cache
+|    |--6.93%-- folio_remove_rmap_ptes
+|    |--1.90%-- __tlb_remove_folio_pages
+|    |--1.55%-- folio_mark_accessed
+|    |--0.69%-- __pte_offset_map_lock
+|    |--0.45%-- mas_find_rev
+|    |    |--21.05%-- [hit in function]
+|    |     --78.95%-- mas_prev_slot
+|    |--0.12%-- mas_prev_slot
+|    |--0.10%-- free_pages_and_swap_cache
+|    |--0.07%-- __rcu_read_unlock
+|    |--0.02%-- percpu_counter_add_batch
+|     --0.02%-- lookup_swap_cgroup_id
+|--0.12%-- mas_find_rev
+|--0.12%-- unmap_page_range
+|--0.12%-- tlb_finish_mmu
+|--0.09%-- tlb_gather_mmu
+ --0.02%-- memset
 
-
+Children  Self      Command    Symbol
+60296985  0         unknown    kthread
+60011285  99995     unknown    oom_reaper
+33541180  6928225   unknown    unmap_page_range
+23670245  5414015   unknown    folio_remove_rmap_ptes
+21027520  1757055   unknown    free_pages_and_swap_cache
+19399030  2171320   unknown    tlb_finish_mmu
+18970480  885670    unknown    release_pages
+13785025  13785025  unknown    cgroup_rstat_updated
+11442285  11442285  unknown    _raw_spin_unlock_irqrestore
+7928175   1871335   unknown    folios_put_refs
+4742620   371410    unknown    free_unref_page_list
+3928375   942810    unknown    free_unref_folios
+3842665   14285     unknown    tlb_flush_mmu
+3385545   728535    unknown    free_unref_page_commit
+585685    571400    unknown    __pte_offset_map_lock
 
 
