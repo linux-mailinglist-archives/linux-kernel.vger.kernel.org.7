@@ -1,50 +1,52 @@
-Return-Path: <linux-kernel+bounces-806325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FD3B49512
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:22:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80D3B49516
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 18:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9482317B70F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A862B3AFC2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 16:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8786330DD30;
-	Mon,  8 Sep 2025 16:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D24D30FF39;
+	Mon,  8 Sep 2025 16:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hwuwIUja"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DnNBF3xV"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3D2EACF7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 16:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D179030F955;
+	Mon,  8 Sep 2025 16:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757348472; cv=none; b=LEViL0PhX8WdOWc1bTEjvW9hobdC1cserkeLRtSTvZIZ6Idf70dnEVnecG7AdWBiR9z4VHe15MjZrP1aSpd5+9SKTeKwbTjFuKabTeTbvuXTKBrx2Kw8Er8kflqv9hxQI2WbnR39ZaIC9yA/PVo3/nwCOVbloveCSdzBbthW+1E=
+	t=1757348476; cv=none; b=pSXbS3FqcVUVWGFynwAi3xEtSt7tRwMsMPbuA6dq20lwuOzhX41Rv+j+kx3mnpiRtnT9XiIW0WuZVA0VQ5M/7/VGegE7Bs7rxvtGIfMmXnyN8WC9Hjp+HbWQMBp84Tc9ygql6N14uK7vpjApV/KbB2KFFDfAj/Eunmtmier+xY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757348472; c=relaxed/simple;
-	bh=CxhtcWFOqB/3crGFNrb/zODeeqpMlXwf5hN3B4IO01E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nak5iNLFH9+0rT683ojUbl6CfkUlo5OTPNsfU7kgCNLZ6F5eqKx7/sefoBSKtPEd6x5z5DH4hhXRcPIjgenAmDWJtymn3Jt7f8l5wv0g7rYnvTWfq8oGUisGOo3TYZQQYbW4Gbe0Wn81mHCug7ArY2EK+PYj7Kz4nnGq7qVrZ4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hwuwIUja; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1757348476; c=relaxed/simple;
+	bh=Jw6IsKNrpsMFU9GuROwZE4X6mjU5ZWFBpwrLBHpZx/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Rns+rivnZHzxTfwv4kuwhqAtu60flqv+DifLoAJ0QlOSYbFrm2IF+jSL2FvTXesQqSjHho43uMQS3apoN1tp3oT9DRMjBeJAq7UuaLWOQrtC2uCnnxwvdJal7Rx56WnfliRlWKFGzfrhfj1RjXdgcJxsf+080C328N4NKzbKPUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DnNBF3xV; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C1ECE4E40BFA;
-	Mon,  8 Sep 2025 16:21:08 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 458D34E40BFA;
+	Mon,  8 Sep 2025 16:21:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 913806061A;
-	Mon,  8 Sep 2025 16:21:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 079E7102F27D2;
-	Mon,  8 Sep 2025 18:21:02 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 19A466061A;
+	Mon,  8 Sep 2025 16:21:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8A0D3102F27D2;
+	Mon,  8 Sep 2025 18:21:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757348467; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=enYDIFRj8AFyUbKEH7cvYkwYYEkfFE7ESezCSgRmQoA=;
-	b=hwuwIUja7WXxA1EYGHujFywZ/jIqGDvtzPaH/dORR/l5I7lh2tO9e1OwzCO+rZB0QpwZKR
-	YO2rSKCtG5GV4gDJ2Wpl0hCQdOxw85ISdtB2fcuWm0u3Umibvec7//GoIxrjotCrzJr4iB
-	4F134K9jjgx4Yp2luLOFoBuFjFRdoQSdgI4JsvTjBZGRx2Bm2oanUwx+8PJNKgvbPCpgz1
-	J1GjDVF66i/c7O1Fzv/Zqtvfg4Eraty5uBZjkziFsAtZOHCf7i9+T1/ZUjtrrsNHa+0RkZ
-	zjSVEh9XNHBD2S7EnHALniOSDCWKjxTJri7Juj1cN7crTjQxDQHYsTb3J6NqcA==
+	t=1757348472; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5dU3nNv2GWlrx7YqQ55TmDyusvkJ/gsQeOjrPzRly/w=;
+	b=DnNBF3xVGwHt20SRUkCHpBQmkGuIGVl806i28wavQMSl6Fovl1qSBpU55ifXHF7celZtsB
+	gOgJlq9X+3Sm6Oa6EUlJpVvmEF/X16LCQE5Lfhbm/E5ien45rqMrMS33JGDdoMWz+YHXPa
+	c8WF3YypvcwOxoSZxDA6pM1BDJj6BK0EI14UHBaAJTndUz8XdsnwkS9od7FkQLbYazYXIu
+	cyB6DUyxf7PWMUt+XOCh/H1SwMyERhnEqlmwK4vpNP8cQF5v945/llvarN8XyAgINZ1+Z3
+	HO0x9ddDXrmqvYqTapTcJgxYi8koyYM6w2MQQIMZ847HD9jlG4BvuBPTBESbQA==
 From: Richard Genoud <richard.genoud@bootlin.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh@kernel.org>,
@@ -57,10 +59,12 @@ Cc: Aswath Govindraju <a-govindraju@ti.com>,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH 0/2] ti,am62-usb: introduce ti,lane-reverse property
-Date: Mon,  8 Sep 2025 18:20:50 +0200
-Message-ID: <20250908162052.355341-1-richard.genoud@bootlin.com>
+Subject: [PATCH 1/2] dt-bindings: usb/ti,am62-usb.yaml: Add ti,lane-reverse property
+Date: Mon,  8 Sep 2025 18:20:51 +0200
+Message-ID: <20250908162052.355341-2-richard.genoud@bootlin.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250908162052.355341-1-richard.genoud@bootlin.com>
+References: <20250908162052.355341-1-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,22 +74,28 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This mini series introduces and uses the ti,lane-reverse property.
+On some designs, the D+ and D- lines are swapped (on purpose or not).
+The PHY can handle that with the LANE_REVERSE bit.
 
-dwc3-am62 USB PHY supports swapping D+ and D- lines which is quite
-useful when a mistake as been made in the design, or even if the lines
-were swapped on purpose, to facilitate routing for example.
-
-The first patch adds the binding and the second one uses it.
-
-This has been tested on a am625 Soc
-
-Richard Genoud (2):
-  dt-bindings: usb/ti,am62-usb.yaml: Add ti,lane-reverse property
-  usb: dwc3-am62: support ti,lane-reverse property
-
+Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+---
  Documentation/devicetree/bindings/usb/ti,am62-usb.yaml | 5 +++++
- drivers/usb/dwc3/dwc3-am62.c                           | 5 +++++
- 2 files changed, 10 insertions(+)
+ 1 file changed, 5 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
+index f6e6d084d1c5..ba894d610af0 100644
+--- a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
++++ b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
+@@ -36,6 +36,11 @@ properties:
+     items:
+       - const: ref
+ 
++  ti,lane-reverse:
++    description:
++      Should be present if D+ and D- lanes have to be swapped.
++    type: boolean
++
+   ti,vbus-divider:
+     description:
+       Should be present if USB VBUS line is connected to the
 
