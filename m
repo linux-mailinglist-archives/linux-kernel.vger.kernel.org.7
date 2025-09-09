@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-808029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF597B4AC4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C4B4AC55
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9556B3456A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8DC71BC2F84
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BEA322774;
-	Tue,  9 Sep 2025 11:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OkyQYxWb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C026E322775;
+	Tue,  9 Sep 2025 11:39:34 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938773218C7;
-	Tue,  9 Sep 2025 11:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F87D322745
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417960; cv=none; b=Kp5KuBiCNYclU6Pox90E5IYhVlQOow0ym8i9mE8H3wWx6kkLurA+FnXwfo0JYxUV0ACvorr6lEsHy+p7DMb23P5VbDd9ZYJclE/4bEXpM0nGSkGhskZgco9iHNpr0NLWeFxVuyIXQk/X0QYsE/U+a3wVpQ8Dwj3YuJ3lwGfnPco=
+	t=1757417974; cv=none; b=ihikj75r33lkXXRwAPgccv4Ft6pZ6rTnan0YFXkkKFdM7gUR73/7jMfARwytuJzybbKO72OZD+/QF8J9gWBN3PRcgomSy0ezoJH8HvyjN4if3Bpu5WnE6/AOFeYhvV6pzsg05Qx0+1quX3xjqrXFda9/asMOsEceC6jMdsRprPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417960; c=relaxed/simple;
-	bh=/lQPn8R9xF5EP26Yw19J4XYjAXrahPPIh8/YXIx3HiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWV1bwnDLEKxdSQx1RrEovK8Q9+qdjxpw6+1dIGu0MqRRtX2jJojZVkh35hMX4ImcBrSJ0jjjEuNkF/WesjApk4ARFpOafr/cxJZdJgh93VU0pZ4bsph0oppdVwTC97OP2QkJYEKNG7TdYw1eElK3QnsVgc2Ml9UIVDRXpEDWz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OkyQYxWb; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757417959; x=1788953959;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/lQPn8R9xF5EP26Yw19J4XYjAXrahPPIh8/YXIx3HiY=;
-  b=OkyQYxWbkAQMB7ukdQbxXcL41zwyNLj5lGFlzvIN3sS2kNta5KQ4Mner
-   Io1QBoiWZpJWflT3CaNxC30cmOqcR6r2M1lBQaliYjLsYKKBXvtPN1ywu
-   sycndcqCzVh4p+k/qiuFuNhwaotGArdvkI1B6l8VpQVRKv++vhSZTPnBb
-   QYr2eTd+1LHjK2Zj4i87kXjOXlsD0RGsuNPDRpU2NqWdW9NMvHDi/KtYd
-   K6AGsLCZ5CXxqa8ZLmjWdpjLGpa/hrWLjBdhZQ1WafDPevTNyEYTlmPOr
-   DJaPCJO6hr6fJcZBOBBcwLVFEH60JfgUt0ytUiPD9UWvqqEKDb8LxPXKS
-   w==;
-X-CSE-ConnectionGUID: NhFTDtjUQi2k/b1KqxJv9Q==
-X-CSE-MsgGUID: 6ttpKTHnTj6m54WDMtSAhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="71072876"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="71072876"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:39:18 -0700
-X-CSE-ConnectionGUID: BaPjKtCAQWKpUWbsyb3AOw==
-X-CSE-MsgGUID: 6QhrmVOxSlW3s04C9Z9qjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="177412667"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:39:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uvwgq-00000001QS8-1aCJ;
-	Tue, 09 Sep 2025 14:39:12 +0300
-Date: Tue, 9 Sep 2025 14:39:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	rafael@kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 5/5] iio: imu: inv_icm42600: use guard() to release
- mutexes
-Message-ID: <aMAR4Jx3pWQ1_rjX@smile.fi.intel.com>
-References: <20250909-icm42pmreg-v4-0-2bf763662c5c@geanix.com>
- <20250909-icm42pmreg-v4-5-2bf763662c5c@geanix.com>
+	s=arc-20240116; t=1757417974; c=relaxed/simple;
+	bh=mtfgJC6mRhWeUBamsoa21BCrYCeBPdeJ0l1lldAejIA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tN3ZIX8qc1MT2p1UsSoJUC/ZDTYBRln+x1T9NHR9ZPrE1B97BDoRNdFoaOmqSeKQ/ODhuVMCAxvCyFiOYEdIMg2SMPiAKVHAhuVOJqgLw1Ugzb0UYmdRcP1oRrz/OywzZqtepaKY9wD4OVnPKGbpVoWSP114aNP1k+mgE5ckufg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8875640a843so729238139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:39:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757417971; x=1758022771;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0DR1NbwOuCzEmWu0AkP/aduI1He0ADmflanoaSiOmxk=;
+        b=terN77yraAudNxl2Fdod7QEapMQlEQ6aHe7cHXhqymqVgXCWKRWghix80bX8JE0j93
+         lx+8CCR6pB79JLBgcGdLorAF1LQTTLoC2OB/MyyBK7v52uwmNfz+pGvAT5z8PdKdA6ms
+         CHFILjEbeUHJq8+PjukjwzRUW47m79g4/viOLlPaHzQaZ+ikG02JiYzoQP9K+KB2DHBv
+         ZGCSqMxCDD9xsDOIyyIcKsuTqxvSj3QfPBvyhRuYbu6/A8dpZ2KCAyYGOwQ8KriY1jR4
+         th0mLGxqLonVNnrXswO5uDH8z09QH4tPYjjqBaH8i0ocMuT3Q9+1mDAhijo353mw8X2j
+         hdTw==
+X-Gm-Message-State: AOJu0YyTlPhbMEx3OKJhBXm+JQfm7RGO2zUNoGdj89pgCeW2jbYKJ8PT
+	yD8AdrSV3b6l2UU+cuBp5uO285EP3EJTx+eYn5mIu2thTNkwJzbt5J7+6fiYgHd+KCv2xRAu3z0
+	M0IW8WYdaoPtHai2mCg8yxBjeYt0vorxOcgrX6X7RTbVDMBWU3SRjc9rQx3H6ng==
+X-Google-Smtp-Source: AGHT+IF62rkxMyBfjOX8r3B7ezx1SAJDtsbixOyF1uN6h+vq0suHWhPGowKv7zE5VUYKTqLk5spLkMq/1EwguJXacmhYt/7RATzz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909-icm42pmreg-v4-5-2bf763662c5c@geanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:1b06:b0:3f3:4562:ca92 with SMTP id
+ e9e14a558f8ab-3fd8e98d28cmr172816265ab.10.1757417971719; Tue, 09 Sep 2025
+ 04:39:31 -0700 (PDT)
+Date: Tue, 09 Sep 2025 04:39:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c011f3.050a0220.2ff435.0003.GAE@google.com>
+Subject: [syzbot] [trace?] WARNING in tracepoint_add_func (3)
+From: syzbot <syzbot+eb730f6ee28e001e5a2e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 09, 2025 at 09:11:11AM +0200, Sean Nyekjaer wrote:
-> Replace explicit mutex_lock() and mutex_unlock() with the guard() macro
-> for cleaner and safer mutex handling.
+Hello,
 
-...
+syzbot found the following issue on:
 
->  	/* exit if FIFO is already on */
->  	if (st->fifo.on) {
-> -		ret = 0;
-> -		goto out_on;
+HEAD commit:    d69eb204c255 Merge tag 'net-6.17-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f67162580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fecbb496f75d3d61
+dashboard link: https://syzkaller.appspot.com/bug?extid=eb730f6ee28e001e5a2e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Probably you wanted the same comment here
+Unfortunately, I don't have any reproducer for this issue yet.
 
-	/* increase FIFO on counter */
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a6f2a6d6a06c/disk-d69eb204.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3767a1bdccea/vmlinux-d69eb204.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2387e35c8e78/bzImage-d69eb204.xz
 
-> +		st->fifo.on++;
-> +		return 0;
->  	}
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eb730f6ee28e001e5a2e@syzkaller.appspotmail.com
 
-...
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 20575 at kernel/tracepoint.c:294 tracepoint_add_func+0xbf2/0xea0 kernel/tracepoint.c:294
+Modules linked in:
+CPU: 0 UID: 0 PID: 20575 Comm: syz.3.1826 Tainted: G          I         syzkaller #0 PREEMPT(full) 
+Tainted: [I]=FIRMWARE_WORKAROUND
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:tracepoint_add_func+0xbf2/0xea0 kernel/tracepoint.c:294
+Code: 54 12 fe ff 90 0f 0b 90 0f b6 74 24 43 31 ff bb ea ff ff ff e8 1f 0d fe ff 80 7c 24 44 00 0f 84 77 fb ff ff e8 2f 12 fe ff 90 <0f> 0b 90 e9 69 fb ff ff e8 21 12 fe ff 48 8b 44 24 10 48 8d 78 18
+RSP: 0018:ffffc90004b3fb48 EFLAGS: 00010287
+RAX: 000000000000128b RBX: ffffffffffffffef RCX: ffffc9000cf8c000
+RDX: 0000000000080000 RSI: ffffffff81bcf8a1 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
+R13: 0000000000000000 R14: ffffffff8e645aa0 R15: ffffffff81c3bd00
+FS:  00007f88b35446c0(0000) GS:ffff8881246bd000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b33600ff8 CR3: 000000004752c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ tracepoint_probe_register_prio+0xbc/0x100 kernel/tracepoint.c:464
+ register_trace_prio_sched_switch include/trace/events/sched.h:220 [inline]
+ register_pid_events kernel/trace/trace_events.c:2390 [inline]
+ event_pid_write.isra.0+0x480/0x7f0 kernel/trace/trace_events.c:2461
+ vfs_write+0x29d/0x11d0 fs/read_write.c:684
+ ksys_write+0x12a/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f88b278ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f88b3544038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f88b29c5fa0 RCX: 00007f88b278ebe9
+RDX: 000000000000fdf3 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f88b2811e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f88b29c6038 R14: 00007f88b29c5fa0 R15: 00007ffc283ad408
+ </TASK>
 
->  	/* exit if there are several sensors using the FIFO */
->  	if (st->fifo.on > 1) {
-> -		ret = 0;
-> -		goto out_off;
 
-In the similar way
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-	/* decrease FIFO on counter */
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +		st->fifo.on--;
-> +		return 0;
->  	}
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-With Best Regards,
-Andy Shevchenko
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
