@@ -1,101 +1,128 @@
-Return-Path: <linux-kernel+bounces-808212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8788AB4FBE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:57:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21762B4FBEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBAF14E2DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8281703E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A72033CE97;
-	Tue,  9 Sep 2025 12:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rqaubvdz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A142FB606;
-	Tue,  9 Sep 2025 12:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB9A33A002;
+	Tue,  9 Sep 2025 12:58:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD91321F21;
+	Tue,  9 Sep 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757422638; cv=none; b=Rdd/2GN3XxJk2b0QZZwqvWIo2W52VAWt8YvbuCPkZVqgoQek6c7299G8tPPTyV6MvzhNnw8LUtcYGrW94jNxz39rafqqIiKkcl3V5qCqsIDD2mMlnNK9YNYXnfwsj9UjGJUtvkfP6fTMpsZ82jUn6yEDGF13i96hMw+jzESduUU=
+	t=1757422727; cv=none; b=Aq23Lr/EPYEZCYOd0+gotBuuAza0fAdDUAR5t9D8fJFF2+6YJnqN1W735wHiwxNTeEip4h0Yh3/eB9psEtW5iC0gMkkQe2Yahm+6TmzsV4g8Znliw0MOzuvL6XECqiaMdp0M38R224guQHUaEMjc7ZUD2xDvn0LVIfoaHsch3iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757422638; c=relaxed/simple;
-	bh=8QS4xAENwRAuWHx2PONshZzPg+6Wl4OLWnziKlPHJOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4d/jj3QYA9DHvGAS17rmut/Lox5ggZuFZzg6PCTIHsnAMH/ncbRHe8UN8C/VVouKe8kWipt82aKGfa94g4uziE8uAvkjaPdxihme66c7Pp/0UBEseFfeL3TMke+ksjzzhkQJ8yOwhGAsrlo3HEZNb86xuFmIief1dm3Nn8aAPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rqaubvdz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 644BCC4CEF4;
-	Tue,  9 Sep 2025 12:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757422637;
-	bh=8QS4xAENwRAuWHx2PONshZzPg+6Wl4OLWnziKlPHJOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rqaubvdzpt2E6sZzI6ANiROrCU6b9g7XHQlhQCE4MqlOYTpA+ei6nIaFbE4YQrIMA
-	 rWiZ/wvrGy9aGk/ShRg9FlPR0JrG/bODYU1oCMj+z+WiPd8bwizMxKnYTeGbXywy4d
-	 K/eUscOPuhowcdbLXS6N1L/D/AydnLKWd/3/QkENlL0VGL62UeYhF9rbWTw+HCmuOF
-	 TZy4kiM5B1Hw6nK6LBC1az//u057HvVYhBhWfr2/mSuBERBiiqgktiP6fJL2VE+67+
-	 z3hkG7OszNU53Z2BhAD1PTvTvcl1no4q6uqh8fs/p6xcEIYBcbzqtmPaIyHz7D7Iis
-	 /zV6Xz4tSi2sg==
-Date: Tue, 9 Sep 2025 13:57:11 +0100
-From: Will Deacon <will@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Johan Hovold <johan@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1757422727; c=relaxed/simple;
+	bh=KLl9FirzP8OwgQ9Mucd7toQmRbvppPDs0WxC3Zyp0BI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jaAP1NkW64z49ixC8eJ6c73LSGUn6lojBk/JTTOwsxWNcCiXaXuFu30XT7UZ4OZ2i54WYPQ8JOOOvmpmkuDz/UElgytXFzpGxXeYN/pLFMhHS3uTvf/K3NVqOm8pstlab8zA/F19HYrG6sB/XtBxqEUyFMyTIdNyvez8NGxFCqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.207.111.194])
+	by gateway (Coremail) with SMTP id _____8BxG9KBJMBojWAIAA--.17351S3;
+	Tue, 09 Sep 2025 20:58:41 +0800 (CST)
+Received: from ubuntu.. (unknown [111.207.111.194])
+	by front1 (Coremail) with SMTP id qMiowJCxdOSBJMBo20aKAA--.47509S2;
+	Tue, 09 Sep 2025 20:58:41 +0800 (CST)
+From: Ming Wang <wangming01@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Enable use of all SMR groups when
- running bare-metal
-Message-ID: <aMAkJ7CfPQuhvhfm@willie-the-truck>
-References: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
+Subject: [PATCH] irqchip/loongson-pch-lpc: Use legacy domain for PCH-LPC IRQ controller
+Date: Tue,  9 Sep 2025 20:58:40 +0800
+Message-ID: <20250909125840.638418-1-wangming01@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxdOSBJMBo20aKAA--.47509S2
+X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAgEAEmi-wYsQQwAAsf
+X-Coremail-Antispam: 1Uk129KBj93XoWxZw1kCr1DArWUAr1kur1rAFc_yoW5Xr13pF
+	45Gas2vrWrJF4UAFZ8Cw1UZryfA3s7J3y7tanYkwnxArnxA34v9F1YkFyqvry8AF95X3WY
+	vrWqqayUu3Z09FXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8ctx3UU
+	UUU==
 
-On Thu, Aug 21, 2025 at 10:33:53AM +0200, Stephan Gerhold wrote:
-> Some platforms (e.g. SC8280XP and X1E) support more than 128 stream
-> matching groups. This is more than what is defined as maximum by the ARM
-> SMMU architecture specification. Commit 122611347326 ("iommu/arm-smmu-qcom:
-> Limit the SMR groups to 128") disabled use of the additional groups because
-> they don't exhibit the same behavior as the architecture supported ones.
-> 
-> It seems like this is just another quirk of the hypervisor: When running
-> bare-metal without the hypervisor, the additional groups appear to behave
-> just like all others. The boot firmware uses some of the additional groups,
-> so ignoring them in this situation leads to stream match conflicts whenever
-> we allocate a new SMR group for the same SID.
-> 
-> The workaround exists primarily because the bypass quirk detection fails
-> when using a S2CR register from the additional matching groups, so let's
-> perform the test with the last reliable S2CR (127) and then limit the
-> number of SMR groups only if we detect that we are running below the
-> hypervisor (because of the bypass quirk).
-> 
-> Fixes: 122611347326 ("iommu/arm-smmu-qcom: Limit the SMR groups to 128")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
-> I modified arm_smmu_find_sme() to prefer allocating from the SMR groups
-> above 128 (until they are all used). I did not see any issues, so I don't
-> see any indication that they behave any different from the others.
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 27 +++++++++++++++++----------
->  1 file changed, 17 insertions(+), 10 deletions(-)
+On certain Loongson platforms, drivers attempting to request a legacy
+ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
+virtual IRQ descriptor is not fully initialized and lacks a valid irqchip.
 
-Is the existing workaround causing you problems somehow? Limiting the SMR
-groups to what the architecture allows still seems like the best bet to
-me unless there's a compelling reason to do something else.
+This issue does not affect ACPI-enumerated devices described in DSDT,
+as their interrupts are properly mapped via the GSI translation path.
+This indicates the LPC irqdomain itself is functional but is not correctly
+handling direct VIRQ-to-HWIRQ mappings.
 
-Will
+The root cause is the use of irq_domain_create_linear(). This API sets
+up a domain for dynamic, on-demand mapping, typically triggered by a GSI
+request. It does not pre-populate the mappings for the legacy VIRQ range
+(0-15). Consequently, if no ACPI device claims a specific GSI
+(e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
+the LPC domain. A direct call to request_irq(4, ...) then fails because
+the kernel cannot resolve this VIRQ to a hardware interrupt managed by
+the LPC controller.
+
+The PCH-LPC interrupt controller is an i8259-compatible legacy device
+that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
+support legacy drivers.
+
+Fix this by replacing irq_domain_create_linear() with
+irq_domain_create_legacy(). This API is specifically designed for such
+controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
+mapping for the entire legacy range (0-15) immediately upon domain
+creation. This ensures that any VIRQ in this range is always resolvable,
+making direct calls to request_irq() for legacy IRQs function correctly.
+
+Signed-off-by: Ming Wang <wangming01@loongson.cn>
+---
+ drivers/irqchip/irq-loongson-pch-lpc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq-loongson-pch-lpc.c
+index 2d4c3ec128b8..68b09cc8c400 100644
+--- a/drivers/irqchip/irq-loongson-pch-lpc.c
++++ b/drivers/irqchip/irq-loongson-pch-lpc.c
+@@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *parent,
+ 		goto iounmap_base;
+ 	}
+ 
+-	priv->lpc_domain = irq_domain_create_linear(irq_handle, LPC_COUNT,
+-					&pch_lpc_domain_ops, priv);
++	/*
++	 * The LPC interrupt controller is a legacy i8259-compatible device,
++	 * which requires a static 1:1 mapping for IRQs 0-15.
++	 * Use irq_domain_create_legacy to establish this static mapping early.
++	 */
++	priv->lpc_domain = irq_domain_create_legacy(irq_handle, LPC_COUNT, 0, 0,
++			&pch_lpc_domain_ops, priv);
+ 	if (!priv->lpc_domain) {
+ 		pr_err("Failed to create IRQ domain\n");
+ 		goto free_irq_handle;
+-- 
+2.43.0
+
 
