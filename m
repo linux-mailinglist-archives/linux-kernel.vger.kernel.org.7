@@ -1,237 +1,185 @@
-Return-Path: <linux-kernel+bounces-808865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E884B5059C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:54:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC85CB5059B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A218560AD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:54:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28691B22A39
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D27334733;
-	Tue,  9 Sep 2025 18:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35582303A00;
+	Tue,  9 Sep 2025 18:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="RVZjnuXf"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r44l80wz"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB9331C587;
-	Tue,  9 Sep 2025 18:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7B8226D1F;
+	Tue,  9 Sep 2025 18:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757444030; cv=none; b=rON+mqkYWfUS3xUuyCtocsh5/gW2447nyvXq8YG2BR9OQsBNYjXejrIYRZI+xfctn5uy4BTkdf40sFQj0z0bcEnjscAdkDIafnChXXdQCgW5pe3BdOuFl01q/e+G4KS3gCw2EYFRNceRrlzxGRmSf27dvVPJYUW0IHOsdNiok7U=
+	t=1757444024; cv=none; b=J+ZuD9JD7gqcJyCUdSsk8xNRv146vy7WlYUXWC49sc9GH4YYaTa3Y9MlZmuGI3VI5lpR9tjiO76ttyTak9HUcTKU+ReV6ejNQ8ilnJoome5oib7fqx7i0hSPq1iqf52QuMd/5NTssFmhrlJR3D5KFIeM8iHzF7hl5zKSnA9AJ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757444030; c=relaxed/simple;
-	bh=FputWipSSfTVfr8BK8XvAWDTFFZ7gdoIjGybB0acfBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lRlbCBQuG+toAj3AWxDN3hA7ku8hFZ1Ifv/kQFK5Q/PEBUqNrvJVfwf+0MQyRH2ngmyZFCZ8YUWuor8G+BPC8WY5DA8jDsTYNjz2SnqbhJ6s7tOZg0tJIjnnfZ9/F2zdkmBpV4lJFYnPsub/fHCZ5dbNj9YqqAUHE95PGaMpmnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=RVZjnuXf; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:942:0:640:e3c0:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id D4989C8CF2;
-	Tue, 09 Sep 2025 21:53:37 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id WrOhTH7MFGk0-6Qyjwsa8;
-	Tue, 09 Sep 2025 21:53:36 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1757444017;
-	bh=oJEEm2hRVk2IKe/kVcsNH1V0PvXFKGCnAtSq3XwiMCE=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=RVZjnuXf411ii/pWLcqhWbmfPAx1mKS6zibhVNsDI/ey7JX53k01LVcMI7KNl5Zps
-	 o6uBtQ/7fDIzQYLlxtbsYvWalsmW1rwOgOOzsJQf2wruf5x0g/EGJImZa0XnFgIgdp
-	 U0C5ej7Y5haYwUeymZ/1OEh+RXLhWx5AVqsFbmMM=
-Authentication-Results: mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 9 Sep 2025 21:53:30 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com,
- tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com,
- a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com,
- gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com,
- ojeda@kernel.org
-Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original
- value
-Message-ID: <20250909215330.4a2f050f@nimda.home>
-In-Reply-To: <468A76F2-FC02-4B54-974B-7C52D946ECEB@collabora.com>
-References: <20250909170013.16025-1-work@onurozkan.dev>
-	<20250909170013.16025-2-work@onurozkan.dev>
-	<CANiq72=kWpxpo23JUYTqxwpsY=E0uUvCHgotRuepZpL-qUqXqw@mail.gmail.com>
-	<20250909204308.74ccedf4@nimda.home>
-	<468A76F2-FC02-4B54-974B-7C52D946ECEB@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1757444024; c=relaxed/simple;
+	bh=XUop5O5kW11KLry+Z6v1VzLLhJAfNPJ8c2DpXJ+7M40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rkV6DFKIvH+Fd/hHZwTh0GjA6esLG/UkOiR4JIXCzr+571UTKcUGxxf7Ab20XDIeVY+2K4twthLwKhzMm7RPfqt9wk4L8RTj7HGFpKf4GJ1q5bVrMR9W478eyRym4AKhco8vk5rzk+/NTOrx0j/l0xAwnOk11FVHiSUCeJXQgrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r44l80wz; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589IrWRK402242;
+	Tue, 9 Sep 2025 13:53:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757444012;
+	bh=6i6LfJYnF0mpTj8+0TXNNaKvctcr4H3+FEZf7qooHJU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=r44l80wzheOMrM5GmYrR8X17FYUnf8TPVw0fbVSnWKIL7eYPXy3xXSdNHUFLt4IzC
+	 elYF0aQNGzFzFoJ2QYfoCMMrrYmFrnOwlPMNyT4zgFeoiSTQQ/IzB+aBa43ms0ql4E
+	 hfQ/0lBuhgq6RXQuGcNKENPpnwKs67CZPNedk17I=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589IrWUh3910492
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 13:53:32 -0500
+Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 13:53:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 9 Sep 2025 13:53:31 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589IrVg33326741;
+	Tue, 9 Sep 2025 13:53:31 -0500
+Message-ID: <6416cc05-ce05-4b6b-ad8d-daa327c87d2a@ti.com>
+Date: Tue, 9 Sep 2025 13:53:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/4] can: m_can: Return ERR_PTR on error in allocation
+To: Markus Schneider-Pargmann <msp@baylibre.com>,
+        Chandrasekar Ramakrishnan
+	<rcsekar@samsung.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>,
+        Akashdeep
+ Kaur <a-kaur@ti.com>, Simon Horman <horms@kernel.org>,
+        Vincent MAILHOL
+	<mailhol.vincent@wanadoo.fr>,
+        <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com>
+ <20250820-topic-mcan-wakeup-source-v6-12-v9-3-0ac13f2ddd67@baylibre.com>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250820-topic-mcan-wakeup-source-v6-12-v9-3-0ac13f2ddd67@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 9 Sep 2025 15:25:55 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+On 8/20/25 07:42, Markus Schneider-Pargmann wrote:
+> We have more detailed error values available, return them in the core
+> driver and the calling drivers to return proper errors to callers.
+> 
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>   drivers/net/can/m_can/m_can.c          | 6 +++---
+>   drivers/net/can/m_can/m_can_pci.c      | 4 ++--
+>   drivers/net/can/m_can/m_can_platform.c | 4 ++--
+>   drivers/net/can/m_can/tcan4x5x-core.c  | 4 ++--
+>   4 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index c68c95cc97075ddf72dbd2f177a999a09b8a21ca..e08fae5ddf5efa8345670dd50d50954ec5d52b29 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2392,7 +2392,7 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
+>   					     sizeof(mram_config_vals) / 4);
+>   	if (ret) {
+>   		dev_err(dev, "Could not get Message RAM configuration.");
+> -		goto out;
+> +		return ERR_PTR(ret);
+>   	}
+>   
+>   	if (dev->of_node && of_property_read_bool(dev->of_node, "wakeup-source"))
+> @@ -2407,7 +2407,7 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
+>   	net_dev = alloc_candev(sizeof_priv, tx_fifo_size);
+>   	if (!net_dev) {
+>   		dev_err(dev, "Failed to allocate CAN device");
+> -		goto out;
+> +		return ERR_PTR(-ENOMEM);
+>   	}
+>   
+>   	class_dev = netdev_priv(net_dev);
+> @@ -2417,7 +2417,7 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
+>   
+>   	m_can_of_parse_mram(class_dev, mram_config_vals);
+>   	spin_lock_init(&class_dev->tx_handling_spinlock);
+> -out:
+> +
+>   	return class_dev;
+>   }
+>   EXPORT_SYMBOL_GPL(m_can_class_allocate_dev);
+> diff --git a/drivers/net/can/m_can/m_can_pci.c b/drivers/net/can/m_can/m_can_pci.c
+> index 9ad7419f88f83016e93667f4847fe536eca39ad1..eb31ed1f964491ab41c7811be317706a09951390 100644
+> --- a/drivers/net/can/m_can/m_can_pci.c
+> +++ b/drivers/net/can/m_can/m_can_pci.c
+> @@ -111,8 +111,8 @@ static int m_can_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+>   
+>   	mcan_class = m_can_class_allocate_dev(&pci->dev,
+>   					      sizeof(struct m_can_pci_priv));
+> -	if (!mcan_class)
+> -		return -ENOMEM;
+> +	if (IS_ERR(mcan_class))
+> +		return PTR_ERR(mcan_class);
+>   
+>   	priv = cdev_to_priv(mcan_class);
+>   
+> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_can/m_can_platform.c
+> index b832566efda042929486578fad1879c7ad4a0cff..40bd10f71f0e2fab847c40c5bd5f7d85d3d46712 100644
+> --- a/drivers/net/can/m_can/m_can_platform.c
+> +++ b/drivers/net/can/m_can/m_can_platform.c
+> @@ -87,8 +87,8 @@ static int m_can_plat_probe(struct platform_device *pdev)
+>   
+>   	mcan_class = m_can_class_allocate_dev(&pdev->dev,
+>   					      sizeof(struct m_can_plat_priv));
+> -	if (!mcan_class)
+> -		return -ENOMEM;
+> +	if (IS_ERR(mcan_class))
+> +		return PTR_ERR(mcan_class);
+>   
+>   	priv = cdev_to_priv(mcan_class);
+>   
+> diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+> index 39b0b5277b11f5cf86137528e7ebea93a6d29c80..31cc9d0abd45360de8700d0a0270af8d3e42967d 100644
+> --- a/drivers/net/can/m_can/tcan4x5x-core.c
+> +++ b/drivers/net/can/m_can/tcan4x5x-core.c
+> @@ -416,8 +416,8 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+>   
+>   	mcan_class = m_can_class_allocate_dev(&spi->dev,
+>   					      sizeof(struct tcan4x5x_priv));
+> -	if (!mcan_class)
+> -		return -ENOMEM;
+> +	if (IS_ERR(mcan_class))
+> +		return PTR_ERR(mcan_class);
+>   
+>   	ret = m_can_check_mram_cfg(mcan_class, TCAN4X5X_MRAM_SIZE);
+>   	if (ret)
+> 
 
-> Onur,
->=20
-> > On 9 Sep 2025, at 14:43, Onur =C3=96zkan <work@onurozkan.dev> wrote:
-> >=20
-> > On Tue, 9 Sep 2025 19:17:56 +0200
-> > Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
-> >=20
-> >> On Tue, Sep 9, 2025 at 7:01=E2=80=AFPM Onur =C3=96zkan <work@onurozkan=
-.dev>
-> >> wrote:
-> >>>=20
-> >>> This patch only fixes the callers that broke after the changes on
-> >>> `to_result`. I haven't included all the improvements made possible
-> >>> by the new design since
-> >>=20
-> >> I think Daniel asked in the previous version what you mean by
-> >> "callers that broke" here -- it is a bit confusing, since it seems
-> >> this is a fix (and thus needs to be prioritized).
-> >>=20
-> >> Is that the case?
-> >>=20
-> >> Thanks!
-> >>=20
-> >> Cheers,
-> >> Miguel
-> >=20
-> > What I meant is that the change on `to_result` signature introduced
-> > a breaking change so I had to update its callers accordingly.
-> >=20
-> > The fix I mentioned in this version is a different matter.
-> >=20
-> > Before the rebase, the regulator module had a get_voltage function
-> > like this:
-> >=20
-> > let voltage =3D unsafe {...};
-> >=20
-> > if voltage < 0 {
-> >     Err(...)
-> > } else {
-> >     Ok(Voltage::from_microvolts(voltage))
-> > }
-> >=20
-> > But on the regulator/for-next branch, a patch was applied that
-> > changed it to:
-> >=20
-> > let voltage =3D unsafe {...};
-> > to_result(voltage).map(|()| Voltage::from_microvolts(voltage))
-> >=20
-> > That change was incompatible with v1 (due to the different
-> > signature of to_result), which fails to build with my patch. This
-> > version (v2) fixes the issue introduced in v1.
->=20
-> Fixes what issue? What is the actual problem being addressed here?
->=20
-> It looks like a mere change from
->=20
-> to_result(=E2=80=A6) and,
-> to_result(=E2=80=A6).map()
->=20
-> To:
->=20
-> to_result(=E2=80=A6)?;
-> Ok(())
->=20
-> and
->=20
-> -        let voltage =3D unsafe {
-> bindings::regulator_get_voltage(self.inner.as_ptr()) }; -
-> -        to_result(voltage).map(|()|
-> Voltage::from_microvolts(voltage))
-> +        to_result(unsafe {
-> bindings::regulator_get_voltage(self.inner.as_ptr()) })
-> +            .map(Voltage::from_microvolts)
->     }
->=20
->=20
-> >=20
-> > Sorry for the confusion, I hope it's more clear now.
-> >=20
-> > Thanks,
-> > Onur
-> >=20
->=20
-> Your last regulator patch was minor, correct, and was picked up
-> (merged). It cleared up an if/else, so that was an improvement.
->=20
-> I now see yet another change, doing apparently the same thing
-> (correct me if I=E2=80=99m wrong) in a slightly different way, in a patch
-> that now has your previous regulator patch as a dependency.
->=20
-> So my question is, why do we need this?
->
-
-
-If you look at the changes in rust/kernel/error.rs, you will see that
-the `to_result` function has been modified and some of its callers were
-updated because the function signature changed.
-
-The regulator patch I sent earlier is unrelated to this one. They are
-not doing the same thing. That patch aimed to make use of `to_result`
-instead of handling errors manually. This patch on the other hand,
-changes how `to_result` itself works and some of its callers need to be
-updated accordingly just like in the other modules included here. The
-reason for changing the `to_result` function is explained in the commit
-description.
-
--Onur=20
-
-
-> diff --git a/rust/kernel/regulator.rsb/rust/kernel/regulator.rs
-> index 34bb24ec8d4d..a5f357bda6e9 100644
-> --- a/rust/kernel/regulator.rs
-> +++ b/rust/kernel/regulator.rs
-> @@ -260,15 +260,15 @@ pub fn set_voltage(&self, min_voltage: Voltage,
-> max_voltage: Voltage) -> Result min_voltage.as_microvolts(),
->                 max_voltage.as_microvolts(),
->             )
-> -        })
-> +        })?;
-> +        Ok(())
->     }
->=20
->     /// Gets the current voltage of the regulator.
->     pub fn get_voltage(&self) -> Result<Voltage> {
->         // SAFETY: Safe as per the type invariants of `Regulator`.
-> -        let voltage =3D unsafe {
-> bindings::regulator_get_voltage(self.inner.as_ptr()) }; -
-> -        to_result(voltage).map(|()|
-> Voltage::from_microvolts(voltage))
-> +        to_result(unsafe {
-> bindings::regulator_get_voltage(self.inner.as_ptr()) })
-> +            .map(Voltage::from_microvolts)
->     }
->=20
->     fn get_internal(dev: &Device, name: &CStr) ->
-> Result<Regulator<T>> { @@ -288,12 +288,14 @@ fn get_internal(dev:
-> &Device, name: &CStr) -> Result<Regulator<T>> {
->=20
->     fn enable_internal(&self) -> Result {
->         // SAFETY: Safe as per the type invariants of `Regulator`.
-> -        to_result(unsafe {
-> bindings::regulator_enable(self.inner.as_ptr()) })
-> +        to_result(unsafe {
-> bindings::regulator_enable(self.inner.as_ptr()) })?;
-> +        Ok(())
->     }
->=20
->     fn disable_internal(&self) -> Result {
->         // SAFETY: Safe as per the type invariants of `Regulator`.
-> -        to_result(unsafe {
-> bindings::regulator_disable(self.inner.as_ptr()) })
-> +        to_result(unsafe {
-> bindings::regulator_disable(self.inner.as_ptr()) })?;
-> +        Ok(())
->     }
->=20
->=20
-> =E2=80=94 Daniel
+Reviewed-by: Kendall Willis <k-willis@ti.com>
 
