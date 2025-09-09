@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-807221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90387B4A1BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963FAB4A1C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B327E1BC48EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 750674E79EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49DC3009C1;
-	Tue,  9 Sep 2025 06:03:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA903002C1;
-	Tue,  9 Sep 2025 06:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDA62FF65B;
+	Tue,  9 Sep 2025 06:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uDX+y5LW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D388C259CB9;
+	Tue,  9 Sep 2025 06:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757397822; cv=none; b=dSVxQIUBJvH3j5GNBkDP1+jPKGgJpmJKMIbmfeImPFeMYWLFNX49sr9r/iMJrLqaHTte4+6tAG3Bu8Vj3MLHacu1hJ42r6lQFudN9e0hYuKeHkkmN2gOClum1wd7h8JTvFG9Z5ivClyIcTTCQV0ssGBAhD7Ps66E2hTh9ID/Nzk=
+	t=1757397843; cv=none; b=oXkGH1ORiRYxuMHXUltd4D8M4i3EuE+sqA+uJvyaedDotjQv7JhAUBTmsTPcNvWbnLYC26/d/tV6+m9CbnG/PvMN+bJRD53SK2EJBdOWRc/v9Ep1coX8XmJ/EMkj8SsCITQH3ORkegaSXLAtBUZTHS6IOKn+2agWQaUlvDzpl4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757397822; c=relaxed/simple;
-	bh=yucePQQXalTmQpke8L/YvxaI6o+fEb0p9YAdKmOXYzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGZLuSgyJTfd/M6RwdAWIHb8q6HvM3syNvxtW6J41MFsxsgGSsnyn8YKMC+KEtlfG8xIGKiiIueG0rQkK1/dNKWW2FOvRipN1rXvJSJd53+4D8B2n+Y2B/zDXePUv9zj/63Q2EYic2SVNljPYoEkPPYBGez/VatcxrVflJSYJHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1715315A1;
-	Mon,  8 Sep 2025 23:03:30 -0700 (PDT)
-Received: from [10.163.72.34] (unknown [10.163.72.34])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A2433F66E;
-	Mon,  8 Sep 2025 23:03:31 -0700 (PDT)
-Message-ID: <a2f95b96-cc0a-44a4-bd2a-05ba65b39b6a@arm.com>
-Date: Tue, 9 Sep 2025 11:33:27 +0530
+	s=arc-20240116; t=1757397843; c=relaxed/simple;
+	bh=vxPgH8dME8jIAcqVK3SPdIPD0VaJknxbQyeDreJox24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1Sq4ZDouwg+tW3xmwUbRyhr18RZkrKirBsCmI7AVNejVRBWYpJ5lBkVZ9g37/lwZCzqRVOr/rSUxYDT/6e3F92lCbbGw3LP3JpGFwyl/J+I8f4ougpqUGhwJzUSfBp27NCITj3aLnj5Dsmto9GRBGhMSaueyessskXEHsYcT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uDX+y5LW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF75C4CEF5;
+	Tue,  9 Sep 2025 06:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757397841;
+	bh=vxPgH8dME8jIAcqVK3SPdIPD0VaJknxbQyeDreJox24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uDX+y5LWX+tl2/WnFJFGub6gpMCG1s0yZrvqJE5nixbLDjYWRkzTq+4W0acOTa6U4
+	 mP6/kA9i0Ou/lOcBI7VBIb1G7nrWUeE3QsqPpOiSSwhfEHPW6oJTOM+oqy4rMRVt09
+	 1ENz4jb76ph0/dJI1yoVrbrEruhenFdA5LDMH2eI=
+Date: Tue, 9 Sep 2025 08:03:56 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Forest Crossman <cyrozap@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] usb: mon: Increase BUFF_MAX to support modern higher-speed
+ devices
+Message-ID: <2025090921-oxidizing-legend-16ea@gregkh>
+References: <CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ8wC1kQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] arm64: refactor the rodata=xxx
-To: Shijie Huang <shijie@amperemail.onmicrosoft.com>,
- Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: patches@amperecomputing.com, cl@linux.com,
- Shubhang@os.amperecomputing.com, corbet@lwn.net, paulmck@kernel.org,
- akpm@linux-foundation.org, rostedt@goodmis.org, Neeraj.Upadhyay@amd.com,
- bp@alien8.de, ardb@kernel.org, suzuki.poulose@arm.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rdunlap@infradead.org
-References: <20250909033236.4099-1-shijie@os.amperecomputing.com>
- <20250909033236.4099-2-shijie@os.amperecomputing.com>
- <bc0ae013-2314-4513-a759-cbf2b922aa6a@arm.com>
- <a18f3b2a-0869-436b-ab20-41a92f1f468a@amperemail.onmicrosoft.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <a18f3b2a-0869-436b-ab20-41a92f1f468a@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ8wC1kQ@mail.gmail.com>
 
-
-
-On 09/09/25 10:56 AM, Shijie Huang wrote:
+On Mon, Sep 08, 2025 at 11:50:00PM -0500, Forest Crossman wrote:
+> Hello,
 > 
-> On 09/09/2025 12:29, Anshuman Khandual wrote:
->> On 09/09/25 9:02 AM, Huang Shijie wrote:
->>> As per admin guide documentation, "rodata=on" should be the default on
->>> platforms. Documentation/admin-guide/kernel-parameters.txt describes
->>> these options as
->>>
->>>     rodata=         [KNL,EARLY]
->>>             on      Mark read-only kernel memory as read-only (default).
->>>             off     Leave read-only kernel memory writable for debugging.
->>>             full    Mark read-only kernel memory and aliases as read-only
->>>                     [arm64]
->>>
->>> But on arm64 platform, RODATA_FULL_DEFAULT_ENABLED is enabled by default,
->>> so "rodata=full" is the default instead.
->>>
->>> This patch implements the following changes:
->>>   - Make "rodata=on" behaviour same as the original "rodata=full".
->>>     This keeps align with the x86.
->>>   - Make "rodata=noalias" (new) behaviour same as the original "rodata=on"
->>>   - Drop the original "rodata=full"
->>>
->>> After this patch, the "rodata=on" will be the default on arm64 platform
->>> as well.
->>>
->>> Different rodata options may have different performance, so record more
->>> detail information here:
->>>
->>>   rodata=on (default)
->>>      This applies read-only attributes to VM areas and to the linear
->>>      alias of the backing pages as well. This prevents code or read-
->>>      only data from being modified (inadvertently or intentionally),
->>>      via another mapping for the same memory page.
->>>
->>>      But this might cause linear map region to be mapped down to base
->>>      pages, which may adversely affect performance in some cases.
->>>
->>>   rodata=off
->>>      This provides more block mappings and contiguous hints for linear
->>>      map region which would minimize TLB footprint. This also leaves
->>>      read-only kernel memory writable for debugging.
->>>
->>>   rodata=noalias
->>>      This provides more block mappings and contiguous hints for linear
->>>      map region which would minimize TLB footprint. This leaves the linear
->>>      alias of read-only mappings in the vmalloc space writeable, making
->>                         typo     ^^^^^^^^
-> What's the typo? It seems "writeable" is okay.
-
-Alright.
->>>      them susceptible to inadvertent modification by software.
->>>
->>> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
->>> ---
->>>   Documentation/admin-guide/kernel-parameters.txt | 5 +++--
->>>   arch/arm64/include/asm/setup.h                  | 4 ++--
->>>   2 files changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>> index db84a629f7b1..138e0db5af64 100644
->>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>> @@ -6418,8 +6418,9 @@
->>>       rodata=        [KNL,EARLY]
->>>           on    Mark read-only kernel memory as read-only (default).
->>>           off    Leave read-only kernel memory writable for debugging.
->>> -        full    Mark read-only kernel memory and aliases as read-only
->>> -                [arm64]
->>> +        noalias    Mark read-only kernel memory as read-only but retain
->>> +            writable aliases in the direct map for regions outside
->>> +            of the kernel image. [arm64]
->> Should not the arm64 specific performance implications be mentioned
->> in the above documentation update as well ? But in case this appears
->> too much platform specific - probably do consider adding them above
->> or inside arch_parse_debug_rodata() as an in-code documentation.
+> The usbmon binary interface currently truncates captures for large
+> transfers from higher-speed USB devices. This is caused by the
+> BUFF_MAX limit in drivers/usb/mon/mon_bin.c, which has not been
+> updated since the usbmon binary interface was first introduced in
+> 2006. A single event capture is limited to one-fifth of the total
+> buffer size, capping URB captures at 240 KiB each.
 > 
-> Will had already suggested do not add them for the arch_parse_debug_rodata():
+> I discovered this limitation while developing a Wireshark protocol
+> dissector [1], where truncated captures made it impossible for the
+> dissector to defragment and reassemble the protocol packets (an
+> example of this truncation can be seen in frame 1580 of this capture
+> file [2]). Others in the community have also encountered this hard
+> limit when working with modern devices that use transfers of several
+> hundred kilobytes or more [3].
 > 
-> https://lists.infradead.org/pipermail/linux-arm-kernel/2025-September/1060135.html
-Alright.
+> The original comment for BUFF_MAX based its calculation on a saturated
+> 480 Mbit/s bus. Applying the same logic to a USB 3.2 Gen 2�2 20 Gbit/s
+> bus (~2500 MB/s over a 20ms window) indicates a required buffer size
+> of at least 50 MB.
+> 
+> I propose increasing BUFF_MAX to 64 MiB. Making this change would
+> enable usbmon to better support capturing the USB traffic of modern
+> higher-speed devices, enabling users and developers to debug and
+> reverse engineer their USB devices while running unmodified distro
+> kernels. This change would not affect the default buffer size, as a
+> larger buffer is only allocated when explicitly requested via the
+> MON_IOCT_RING_SIZE ioctl.
+> 
+> This proposal follows the same rationale as the original calculation,
+> but with updates for modern hardware.
+> 
+> I would appreciate any feedback on this approach before I prepare a patch.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+I would suggest trying it out and seeing if it will work properly.  CPU
+speeds are faster now, so a larger buffer will probably be just fine,
+but I think the original goal here was that the majority of the "real"
+information was in the beginning of the urb (protocol stuff, not
+data), so the end of the urb wasn't all that necessary to see if the
+buffer was too big.  And, as you point out, 480 Mbit was the speeds
+then, we didn't think that USB would ever be boosted to go this fast :)
+
+thanks,
+
+greg k-h
 
