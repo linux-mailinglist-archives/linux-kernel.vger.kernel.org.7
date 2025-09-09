@@ -1,193 +1,144 @@
-Return-Path: <linux-kernel+bounces-808656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEBDB502E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75498B502EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE84446121
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37501C64FA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D849353373;
-	Tue,  9 Sep 2025 16:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1C5352FC2;
+	Tue,  9 Sep 2025 16:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOHsNYKM"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naRpJOsN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E63350D5B;
-	Tue,  9 Sep 2025 16:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B83304BBA;
+	Tue,  9 Sep 2025 16:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757436111; cv=none; b=SJYOpkcN9Vr16gHrjtW2VYFJJo9qvrClrVEwsx6ytvdszt5ARHDuODPo5hQapYCWuRi6Lne6TXQze/wfiY2aWCys3xkkO0cJ13x60vhkeVN6qyA1k7K176Zm7jLLmqj31B72hWyYUpvMZHkZf87v+U1VJWMx0ABodjUSfcg/fH0=
+	t=1757436198; cv=none; b=qW9tdR4a923B5tkhpcZn1VhvalvoQtttkmX7XXT3+fEwWV5nAJf/niiaktSSOOm/F15+GlTiYItTVHeAUL1HzeTErgx2TMTjUh/6Fwl8bhDUD72be8PWdYcJdpKmhKNVdyIecI07SYGEwLsZJjMhtVAi69FRkZIvalnQ0/ziGXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757436111; c=relaxed/simple;
-	bh=DCfMUte54i2AHOFKz487gvz/KHi649gUt9FLd5HDDzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/QChEDCmj/Fu+N3FXXFH+udjW8h9FLt7C4JwC+Y2t9KGDeTerjbiL6DAf0UzsORprhzggsURk+xAfKxEPovs4HBLRHYnI2THbadj9vGavtsLIRYVldl2FjF3LQFR6HbWF3hcHrGenzF/MrbZtjqRfIwXcEe0k3T5iRW8Z1VP1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOHsNYKM; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso5285212a12.1;
-        Tue, 09 Sep 2025 09:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757436109; x=1758040909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3MwAS9mfPNRhr3pJzl8rJNuLhL2fMOs1cy6gWpgOkk=;
-        b=SOHsNYKM8ljwcfnF7fZ5hguYQHfOHIUvkivuJizzBHwxi1eq2LkBV+mQL/LbC7Aclv
-         m0fCfex3ssb9SRHft1gNWfWVy6WQYeCKR4Rk7axme3MY/PML/lbeFJPWsToUY98H8jK6
-         Nu6kNSzm9IEYJrZFcuE/CibUCyPjNOsAYG5wJH1gupjFab1dzvLe91L4PCuHqoeImh7e
-         8Br6wetWDitdp9qaqLdxybwjxKJMHxylESalLYdpD4O0CN8ZaXL3CPvwTjcG7WYMaHDO
-         DuRx5VEI04in3MQke1WmT/MX8wCKjVI6H8ZtQ/bNtqQkMQNF4PSgJeeEp7ISFPDy5dDW
-         kg2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757436109; x=1758040909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n3MwAS9mfPNRhr3pJzl8rJNuLhL2fMOs1cy6gWpgOkk=;
-        b=odZJKQ5Wol9Z/P2V/I5Tianma5/gjo8kW2jk1Mnkgs1XlIeVFBF3pPfeK0/aj71gJe
-         I3457ykQ3wqCxiYNfz/gz2qKveQPv8LXaXCKg7+2P09gtM54n1EWpXqlpoZCA4D51SJ4
-         EEEowmw6Cwg99JIteWso1s5cuXadcAZ8Y+7jH78KGEZbIdl6fEi8vMZ4VcLQYEXL6zEY
-         tXqeoxVd5FE7QTQLCwH4k7Hebfo43mJEEXtCtp55egqri/nskgS+5XHgygyUk4Ams5Q6
-         4FaWgvsc6XfuHrBEeSsWsKJktW7fcqTG7VtDH19kEkbxdjf778b4zMdXNr2XbapopAsR
-         j+qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnE5/UNRPr2FJCmRfHaf07i+jICR+u9gUHwi2aHT/bdjVTHNAAzIR33khijl8VPcwYYbU=@vger.kernel.org, AJvYcCX1lzTbsS7ymS0s9XFsTNCeJzS4Bo+QBOUzSKgDxWNE0n0bmqOxY8lUnJ6vyKB/bNLizhBBHGMblmT/Nn9U@vger.kernel.org, AJvYcCXRnVnOftpSpqt4wSfsJ4EIxkNFVd9jTj9hlYKf6JhtV/efluCI3rRCNSdb2E6fqeGWG/VQJtAtjDu49kQjDPJ38obt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ5NlJxSQu4lQO12vy3nfcmSJZVPdd7dycSQiUvdP9RacMmR0T
-	jvEA35vNqYKkZBLT6GmlptMXg8due+J7HSLwgmmJdZLH5BlWp2H1Uxpv250JVCEUsFFrVt3jVgN
-	SfA0qC7pzK/0IByF+DpQqJJJGxXeTNaI=
-X-Gm-Gg: ASbGnctmZ2g+zuF9CLN/TvJcNAd/5ZkgOocIBnJqS7LLQ0GivjJEl/0ud2/GW9HEJAu
-	zLBOCDlG3R6PryEckXBxBxuhD0ij9kLJ7NJWglY9PtrYU880199PgZkYl/u9FmyA60/y2SUz+TS
-	ifGX9/N81Epmcjir3zGqBfYWmBoqVsTY1rqVW0PFIWXs7tN3BexLp1PQWstst2ItnI2+OOsQstO
-	WjtDa8SBjOHnk4v3CO4DcTqMBWJKxNs8A==
-X-Google-Smtp-Source: AGHT+IF7nTcChSNOg3jKmBy4rr6ORW0Cr8Y0KddpqW35AjYb1eEwdirokGehMFj0Fri8ChN9kPGP+dpnz/TXXSO+Muk=
-X-Received: by 2002:a17:902:f644:b0:250:5ff5:3f30 with SMTP id
- d9443c01a7336-2516e4b071bmr184042435ad.19.1757436109114; Tue, 09 Sep 2025
- 09:41:49 -0700 (PDT)
+	s=arc-20240116; t=1757436198; c=relaxed/simple;
+	bh=86oIetmqc9J7WTCewXKydBYkVuOv54+Q2w6j4lVDCVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNM95MAnaSmBXoV68LE7YvuN1SE5RghiEkUoqTBPhvKy0EvBn7t70YCfhmCI96S7Vvda1I53jfwQuOdWjToK8C8NhGeAb9OriYaTQckvwOaFcIrd6z71KF6TsE3ket68zQ+ty/28mjMY8H1pnnF735GW8ThhhobfjsLV3Q2QKIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naRpJOsN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056B8C4CEF4;
+	Tue,  9 Sep 2025 16:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757436198;
+	bh=86oIetmqc9J7WTCewXKydBYkVuOv54+Q2w6j4lVDCVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=naRpJOsNlBoCwSEz/sX6N5hdTeUgwBJdc/pijvitIj/TfigQfjtyRiktNnNs7URGm
+	 1kvMgd0K9MMqV8kdy3CfUvnwdB/yob8NtZpBlZRnPd2E21r9mfcl2VB+GQdHFKapfK
+	 6Mx+Z5+Q1qzLT4inOW21eiXQ05rSe4o6hisQQNf+sP8BbShdXOmS4U1/hJowT8e1AO
+	 PIxubXVMnOOKuJV9VbXymSCNA8jsFhS4qhwtCYzoFVVxL2PATE1TgS0/lLPCIGBo7R
+	 tAcG6GrI2UuFhCP7943ocyRWP7Qw1WOaBEsmYEwgwb1FnZcyfkFn/f6SfHiO6fVRzp
+	 m0fuxxOy0JAbA==
+Date: Tue, 9 Sep 2025 11:43:17 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: tony@atomide.com, linux-omap@vger.kernel.org, andreas@kemnade.info,
+	lee@kernel.org, ukleinek@kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, krzk+dt@kernel.org,
+	devicetree@vger.kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v6 1/3] dt-bindings: mfd: twl: Add missing sub-nodes for
+ TWL4030 & TWL603x
+Message-ID: <175743619670.3343063.17627964858670802403.robh@kernel.org>
+References: <20250906145905.93845-1-jihed.chaibi.dev@gmail.com>
+ <20250906145905.93845-2-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909123857.315599-1-jolsa@kernel.org> <20250909123857.315599-2-jolsa@kernel.org>
-In-Reply-To: <20250909123857.315599-2-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 9 Sep 2025 12:41:36 -0400
-X-Gm-Features: Ac12FXxsABAPnj3WvC0PZYWkwuCM0X0efkpH9gaDyenI80oBWdUI_apAujQyV_U
-Message-ID: <CAEf4Bzbw0uvfNgUHQM9iG2YRtnVbgdh_GgFGy4Q7eQiPPJ==dA@mail.gmail.com>
-Subject: Re: [PATCHv3 perf/core 1/6] bpf: Allow uprobe program to change
- context registers
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906145905.93845-2-jihed.chaibi.dev@gmail.com>
 
-On Tue, Sep 9, 2025 at 8:39=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Currently uprobe (BPF_PROG_TYPE_KPROBE) program can't write to the
-> context registers data. While this makes sense for kprobe attachments,
-> for uprobe attachment it might make sense to be able to change user
-> space registers to alter application execution.
->
-> Since uprobe and kprobe programs share the same type (BPF_PROG_TYPE_KPROB=
-E),
-> we can't deny write access to context during the program load. We need
-> to check on it during program attachment to see if it's going to be
-> kprobe or uprobe.
->
-> Storing the program's write attempt to context and checking on it
-> during the attachment.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+
+On Sat, 06 Sep 2025 16:59:03 +0200, Jihed Chaibi wrote:
+> Update the main TI TWL-family binding to be self-contained and to fix
+> pre-existing validation errors.
+> 
+> Following maintainer feedback, the simple power and PWM bindings are
+> now defined directly within this file, and their legacy .txt files
+> are removed.
+> 
+> To ensure future patches are bisectable, child nodes whose bindings
+> are in other patches (audio, keypad, usb, etc.) are now defined using
+> a flexible 'additionalProperties: true' pattern. This removes hard
+> dependencies between the MFD and subsystem bindings.
+> 
+> The complete dtbs_check for this binding is clean except for two
+> warnings originating from pre-existing bugs in the OMAP DTS files,
+> for which fixes have already been submitted separately [1][2].
+> 
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> 
 > ---
->  include/linux/bpf.h      | 1 +
->  kernel/events/core.c     | 4 ++++
->  kernel/trace/bpf_trace.c | 7 +++++--
->  3 files changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index cc700925b802..404a30cde84e 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -1619,6 +1619,7 @@ struct bpf_prog_aux {
->         bool priv_stack_requested;
->         bool changes_pkt_data;
->         bool might_sleep;
-> +       bool kprobe_write_ctx;
->         u64 prog_array_member_cnt; /* counts how many times as member of =
-prog_array */
->         struct mutex ext_mutex; /* mutex for is_extended and prog_array_m=
-ember_cnt */
->         struct bpf_arena *arena;
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 28de3baff792..c3f37b266fc4 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11238,6 +11238,10 @@ static int __perf_event_set_bpf_prog(struct perf=
-_event *event,
->         if (prog->kprobe_override && !is_kprobe)
->                 return -EINVAL;
->
-> +       /* Writing to context allowed only for uprobes. */
-> +       if (prog->aux->kprobe_write_ctx && !is_uprobe)
-> +               return -EINVAL;
-> +
->         if (is_tracepoint || is_syscall_tp) {
->                 int off =3D trace_event_get_offsets(event->tp_event);
->
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 3ae52978cae6..dfb19e773afa 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -1521,8 +1521,6 @@ static bool kprobe_prog_is_valid_access(int off, in=
-t size, enum bpf_access_type
->  {
->         if (off < 0 || off >=3D sizeof(struct pt_regs))
->                 return false;
-> -       if (type !=3D BPF_READ)
-> -               return false;
->         if (off % size !=3D 0)
->                 return false;
->         /*
-> @@ -1532,6 +1530,7 @@ static bool kprobe_prog_is_valid_access(int off, in=
-t size, enum bpf_access_type
->         if (off + size > sizeof(struct pt_regs))
->                 return false;
->
-> +       prog->aux->kprobe_write_ctx |=3D type =3D=3D BPF_WRITE;
+> Changes in v6:
+>   - Refactored the ti,twl4030-power compatible schema to be much stricter,
+>     removing obsolete board-specific compatibles (-n900, -beagleboard-xm),
+>     that were added in v5. The schema now only permits specific, valid
+>     fallback combinations. This change is supported by subsequent patches
+>     in the same series (2/3) & (3/3), which update the affected DTS files.
+>   - Enforced the presence of the compatible property on all relevant
+>     sub-nodes by adding 'required: - compatible', closing a key validation
+>     loophole.
+>   - Applied various formatting cleanups for readability and correctness.
+> 
+> Changes in v5:
+>   - Restructured the entire binding to define properties at the top
+>     level instead of if/then blocks, per maintainer feedback.
+>   - Added specific compatible enums for new child nodes instead of a
+>     generic 'compatible: true'.
+>   - Set 'unevaluatedProperties: false' for 'pwm' and 'pwmled' nodes to
+>     enforce strict validation.
+>   - Expanded 'power' node compatible enum to include all board-specific
+>     compatible strings (used in existing device trees, e.g. OMAP3-based
+>     boards) for more complete coverage.
+>   - Corrected the schema for the 'power' node compatible to properly
+>     handle single and fallback entries.
+> 
+> Changes in v4:
+>   - Reworked binding to be independent and bisectable per maintainer
+>     feedback by using 'additionalProperties: true' for child nodes.
+>   - Added board-specific compatibles to the 'power' node enum.
+>   - Added definitions for 'clocks' and 'clock-names' properties.
+>   - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
+>     existing Device Tree usage (twl6030.dtsi).
+>   - Fixed some spelling/grammar erros in the description.
+> 
+> Changes in v3:
+>   - New patch to consolidate simple bindings (power, pwm) and add
+>     definitions for all child nodes to fix dtbs_check validation
+>     errors found in v2.
+> 
+> Changes in v2:
+>   - This patch is split from larger series [3] per maintainer feedback.
+>   - Added missing sub-node definitions, resolving dtbs_check errors.
+> 
+> [1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
+> [2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
+> [3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+> ---
+>  .../devicetree/bindings/mfd/ti,twl.yaml       | 221 +++++++++++++++++-
+>  .../devicetree/bindings/mfd/twl4030-power.txt |  48 ----
+>  .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+>  .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+>  4 files changed, 210 insertions(+), 93 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+> 
 
-nit: minor preference for
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-if (type =3D=3D BPF_WRITE)
-    prog->aux->kprobe_write_ctx =3D true;
-
-
->         return true;
->  }
->
-> @@ -2913,6 +2912,10 @@ int bpf_kprobe_multi_link_attach(const union bpf_a=
-ttr *attr, struct bpf_prog *pr
->         if (!is_kprobe_multi(prog))
->                 return -EINVAL;
->
-> +       /* Writing to context is not allowed for kprobes. */
-> +       if (prog->aux->kprobe_write_ctx)
-> +               return -EINVAL;
-> +
->         flags =3D attr->link_create.kprobe_multi.flags;
->         if (flags & ~BPF_F_KPROBE_MULTI_RETURN)
->                 return -EINVAL;
-> --
-> 2.51.0
->
 
