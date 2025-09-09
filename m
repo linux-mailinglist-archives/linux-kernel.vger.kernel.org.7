@@ -1,121 +1,85 @@
-Return-Path: <linux-kernel+bounces-808081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D68B4ACF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:54:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE26B4ACF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF2027B6FB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C881B2503B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0243203BE;
-	Tue,  9 Sep 2025 11:54:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12423203BE;
+	Tue,  9 Sep 2025 11:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="HdVQZPT1"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F4330ACE8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8490D280A5F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418855; cv=none; b=F2P4gVgi4Qa/2Uw4daoIIcd7Sa/dXDQvkgbBhHUFmU2OzeTXrifgGMJmE4nzKNigfEkwEBij7U6/QWFOaFMpcCe4ZC+1t67a6iFBYMuMA6yTlldwLzQya66CMfdlGygE41SwaPcuBkmWmAfDVBxwd0d+EqaMXuiEUYZ7Vk7BmyQ=
+	t=1757418902; cv=none; b=CcHrnVBn3w7iEDlPFXuvURfbpLmTD9Tm+DktrC9Uy5fLYJ0n6LQIAd7gTo8UG7ytqTfWbIDrw2XilCixztxtRvC++as7FC1VnZecDC7mp8syKCYrGQQCQrY5mV126sQ/vH4egbZaZ8ezrsdtEzHOpWw46aT49sJEWsr2UAlbaD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418855; c=relaxed/simple;
-	bh=9ba5ex7bxof/jGqA6YT3kw+LuTDvHMYtOk7qPh7zAXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rXWPIGjcGjfuMhEQ84KyjJFWrA2yYeyu2ZO0dF9zfCJ+jPqV21XT/wdlg04e9WoD+t2UQa3viZa+Nl5d9iRfh4UASMyjLY/OYiqbJUzcc3gOmQ0nwVjYl+GgnsfgU46gOm40LInzWwhGF5LpCwJVM+ccMS076bDNWy4ugPk/Pxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvwvI-00056N-I9; Tue, 09 Sep 2025 13:54:08 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvwvI-000PeB-07;
-	Tue, 09 Sep 2025 13:54:08 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A38CB469E9B;
-	Tue, 09 Sep 2025 11:54:07 +0000 (UTC)
-Date: Tue, 9 Sep 2025 13:54:07 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Robin van der Gracht <robin@protonic.nl>, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de, Oliver Hartkopp <socketcan@hartkopp.net>, 
-	Maxime Jayat <maxime.jayat@mobile-devices.fr>, Elenita Hinds <ecathinds@gmail.com>, 
-	Bastian Stender <bst@pengutronix.de>, linux-can@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] can: j1939: undo increment when j1939_local_ecu_get()
- fails
-Message-ID: <20250909-debonair-imported-salamander-83976f-mkl@pengutronix.de>
-References: <e7f80046-4ff7-4ce2-8ad8-7c3c678a42c9@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1757418902; c=relaxed/simple;
+	bh=SN3v4BDj6IFxe4p49D0eWcikdp1MC+MbA48ZuP9sTU8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uEr8Ua0bVx56iXWt/ASReoBnYrKX0Zh5sx86Dmtr1Dp5JDe4leDA9zm3JkA8dXkJQbix24uO+TGTI2jiPtEeK3y1yBwECk+IkfK+rwx6PFR/YXfaM8hF7N0ITlfVcRvUIrV/bYDHc3blMaHMrPcaYlnO3RuBwPEtMPuxy5ysxDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=HdVQZPT1; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=HdVQZPT1MOoq9Iy41Z4qJXtIUrvjtKu3enIoFGQe9cijQ+b7uEwYmjDDe0j2h87QqvRxCgfSsE7IRH53eYkgWCdW4Kv3A1EXouRpLy+jcEuHFjIbUoSLdRTO61XcSsXlLOUauIL1WQAV83m3XRXc+FkGXo7/wYNp3ZTj1qEH3ZlQHqk+O5z+zAmoNHbBBf/xmf3AIYzknK5903N2QOfKXS+Sr7zoraiW0SvxldlcpylWYXPJk3eelJH4iQeAXJoImfohO65Fm+sMnSurXQbAJmRTYxdUdHseo0p8sQ8HyU9OwKOK48zrYdDyZj3Jyj9/K1fYg4p0AHWLs3dzzwqqVg==; s=purelymail2; d=purelymail.com; v=1; bh=SN3v4BDj6IFxe4p49D0eWcikdp1MC+MbA48ZuP9sTU8=; h=Feedback-ID:Received:Date:Subject:From:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -713498179;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Tue, 09 Sep 2025 11:54:38 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v2sis5grc7frigxp"
-Content-Disposition: inline
-In-Reply-To: <e7f80046-4ff7-4ce2-8ad8-7c3c678a42c9@I-love.SAKURA.ne.jp>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---v2sis5grc7frigxp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: j1939: undo increment when j1939_local_ecu_get()
- fails
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 09 Sep 2025 13:54:36 +0200
+Message-Id: <DCO8ZY43WXEG.1EK23QDRO0X6C@mentallysanemainliners.org>
+Cc: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH 3/4] pinctrl: mediatek: Add debounce times for MT6878
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Igor Belwon" <igor.belwon@mentallysanemainliners.org>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, "Sean Wang"
+ <sean.wang@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org> <20250908-mt6878-pinctrl-support-v1-3-3fb78c8ab4e8@mentallysanemainliners.org> <493794af-a1e8-4a4e-a253-2b6b703df53b@collabora.com>
+In-Reply-To: <493794af-a1e8-4a4e-a253-2b6b703df53b@collabora.com>
 
-On 24.08.2025 19:27:40, Tetsuo Handa wrote:
-> Since j1939_sk_bind() and j1939_sk_release() call j1939_local_ecu_put()
-> when J1939_SOCK_BOUND was already set, but the error handling path for
-> j1939_sk_bind() will not set J1939_SOCK_BOUND when j1939_local_ecu_get()
-> fails, j1939_local_ecu_get() needs to undo priv->ents[sa].nusers++ when
-> j1939_local_ecu_get() returns an error.
->=20
-> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Tue Sep 9, 2025 at 10:00 AM CEST, AngeloGioacchino Del Regno wrote:
+> Il 08/09/25 21:17, Igor Belwon ha scritto:
+>> MT6878 uses different debounce times than other SoCs. Add them to the
+>> EINT driver.
+>
+> The only reason why I can't give you a R-b for this is that you forgot to=
+ add
+> your S-o-b...
+>
+> Cheers,
+> Angelo
+>
 
-Applied to linux-can.
+My apologies (again).
+I was rebasing these changes and rewording them a bunch, probably got
+lost somewhere there. I wonder why b4 didn't scream at me.
+Will add.
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---v2sis5grc7frigxp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAFVwACgkQDHRl3/mQ
-kZxtuQf9EhwJI5VXwsR+eR2lGqa0QJHSdvWhmvT8qZxHu6vLBFTMBVpwCrqrwNnZ
-wELLEoLOtEX+0WBEBTQm8yQXUGO1fnF/DW52uZBnEilYLybi1bQbhXN+KFu2DCnT
-Cef12zuUCte9ISH8gj/Coi988YNPycaA5apXW2tTbrYDwYX68OF/8jfTKXvtutkC
-7kLrXccpWDcZvmHZEEvnZwado8J2avPRkMLbINv/CDVHlusJAhQGuXdvrLsC9/dI
-kDPRQ8RmRjo/eQA2bCuewo9ldxztoaA+YJ0gNqTBPJVNC45ohlIUetECTiWW5B/U
-nCzy8rNRgHcNzNMRbP3tvPx67h2DYA==
-=bUhd
------END PGP SIGNATURE-----
-
---v2sis5grc7frigxp--
+Thanks,
+Igor
 
