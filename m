@@ -1,106 +1,130 @@
-Return-Path: <linux-kernel+bounces-807223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963FAB4A1C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E8FB4A1C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 750674E79EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:04:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F5807B0D63
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDA62FF65B;
-	Tue,  9 Sep 2025 06:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2A52FE060;
+	Tue,  9 Sep 2025 06:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uDX+y5LW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="2kiwonoS"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D388C259CB9;
-	Tue,  9 Sep 2025 06:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9792E7186
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757397843; cv=none; b=oXkGH1ORiRYxuMHXUltd4D8M4i3EuE+sqA+uJvyaedDotjQv7JhAUBTmsTPcNvWbnLYC26/d/tV6+m9CbnG/PvMN+bJRD53SK2EJBdOWRc/v9Ep1coX8XmJ/EMkj8SsCITQH3ORkegaSXLAtBUZTHS6IOKn+2agWQaUlvDzpl4I=
+	t=1757397979; cv=none; b=sonYiLR2VMfDTj6kGaH4dUfbWzv5jEUOldKQR1TXnqUpIjaKhpnew78HEReibHvxTWQtL0Ah5rXg1S4Vb5M2kvtVak5TGzteOhyc8Cvc8du3kOiE4jFINgnxFtr2IMS+ZzCETkk9PDoFWhBmL9iPLUMQ6GLfhG4/v0Q+id5vlOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757397843; c=relaxed/simple;
-	bh=vxPgH8dME8jIAcqVK3SPdIPD0VaJknxbQyeDreJox24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1Sq4ZDouwg+tW3xmwUbRyhr18RZkrKirBsCmI7AVNejVRBWYpJ5lBkVZ9g37/lwZCzqRVOr/rSUxYDT/6e3F92lCbbGw3LP3JpGFwyl/J+I8f4ougpqUGhwJzUSfBp27NCITj3aLnj5Dsmto9GRBGhMSaueyessskXEHsYcT90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uDX+y5LW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF75C4CEF5;
-	Tue,  9 Sep 2025 06:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757397841;
-	bh=vxPgH8dME8jIAcqVK3SPdIPD0VaJknxbQyeDreJox24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uDX+y5LWX+tl2/WnFJFGub6gpMCG1s0yZrvqJE5nixbLDjYWRkzTq+4W0acOTa6U4
-	 mP6/kA9i0Ou/lOcBI7VBIb1G7nrWUeE3QsqPpOiSSwhfEHPW6oJTOM+oqy4rMRVt09
-	 1ENz4jb76ph0/dJI1yoVrbrEruhenFdA5LDMH2eI=
-Date: Tue, 9 Sep 2025 08:03:56 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Forest Crossman <cyrozap@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] usb: mon: Increase BUFF_MAX to support modern higher-speed
- devices
-Message-ID: <2025090921-oxidizing-legend-16ea@gregkh>
-References: <CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ8wC1kQ@mail.gmail.com>
+	s=arc-20240116; t=1757397979; c=relaxed/simple;
+	bh=t3sp8W4lBqRQ3eAgd2Hnc9sHhw0bngi72HUjHNm71cI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSzVGyAubsUJE8TkjQphz1bhbLh2jnqdmH/Tfvt9/pYFsXD2Uf9bBl/u+3BdVmd6Vm0gh/Atnl8XNxvZrI9uRU4mlhi+b6YKhABz341I923LRnuoNpQPgwpYKQTQLFuKcPzUfrW682oR9KFbElwmXVLo1I4u+VerJX6uwaeIsbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=2kiwonoS; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
+	by cmsmtp with ESMTPS
+	id vWnDugJAZjzfwvrUdu5i2c; Tue, 09 Sep 2025 06:06:16 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id vrUduioUU9MM8vrUduNqHD; Tue, 09 Sep 2025 06:06:15 +0000
+X-Authority-Analysis: v=2.4 cv=Xf6JzJ55 c=1 sm=1 tr=0 ts=68bfc3d7
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Sq2vnZqGTaj5nL7bFp93D8iDNpza3fyp6NANLQD8Y8I=; b=2kiwonoShMTSQ4hclVBAv5R1NN
+	H+p57dt5t3nbQrBmdGG44h86+wwT0HYXYGSAfducBboqfwi1b8UMC/69f+rwbFyyf2cKrS37jaB2b
+	rZVdaG196zM0Hnsgv+laldV3Rb53y6qaMoF8lLpsBsD8tqyYs6y+9sYjZr+bvEn7uZ+n36R2X7ARU
+	pDkTtMdJJ7ZLn/CARbSLRzW7bi+EiOkhZBQiVIskjWUBcKlpFVXrUwBSEWu+NlV5iTZYpB/EmmbRi
+	7qhHzQD4KtgTVjAEP86BTFyqC8NcQOBxBYKizy2D391tYbWQ8R9j+bGEBZ8yu2Sn4TEgMNt9g2AJt
+	B6C4xHAg==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:56076 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uvrUc-00000001sOv-0uOb;
+	Tue, 09 Sep 2025 00:06:14 -0600
+Message-ID: <a26f0d99-dc8e-49c4-b6a2-07a2f3860818@w6rz.net>
+Date: Mon, 8 Sep 2025 23:06:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ8wC1kQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/101] 6.1.151-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250908151840.509077218@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250908151840.509077218@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1uvrUc-00000001sOv-0uOb
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:56076
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLit+zouWoISV7WXdstehzwI6TDduh8aRJXN9pwcURDe7XM4o6uVCypNTQIVIxFdgNTSbfTGs0GSo3VLNho/S2jOJ6rJmZy4MUlvoiwP7EYll7c3FWGl
+ LpAtL7kPIclmHeEMNTiOMVyZnXJqkwuXan1oiQOjn+xPDYhKgbMOaYUsMlUvKQ52NcbjyYOglpVXAVxvcXhD/9r4onnOE2rsWr8=
 
-On Mon, Sep 08, 2025 at 11:50:00PM -0500, Forest Crossman wrote:
-> Hello,
-> 
-> The usbmon binary interface currently truncates captures for large
-> transfers from higher-speed USB devices. This is caused by the
-> BUFF_MAX limit in drivers/usb/mon/mon_bin.c, which has not been
-> updated since the usbmon binary interface was first introduced in
-> 2006. A single event capture is limited to one-fifth of the total
-> buffer size, capping URB captures at 240 KiB each.
-> 
-> I discovered this limitation while developing a Wireshark protocol
-> dissector [1], where truncated captures made it impossible for the
-> dissector to defragment and reassemble the protocol packets (an
-> example of this truncation can be seen in frame 1580 of this capture
-> file [2]). Others in the community have also encountered this hard
-> limit when working with modern devices that use transfers of several
-> hundred kilobytes or more [3].
-> 
-> The original comment for BUFF_MAX based its calculation on a saturated
-> 480 Mbit/s bus. Applying the same logic to a USB 3.2 Gen 2×2 20 Gbit/s
-> bus (~2500 MB/s over a 20ms window) indicates a required buffer size
-> of at least 50 MB.
-> 
-> I propose increasing BUFF_MAX to 64 MiB. Making this change would
-> enable usbmon to better support capturing the USB traffic of modern
-> higher-speed devices, enabling users and developers to debug and
-> reverse engineer their USB devices while running unmodified distro
-> kernels. This change would not affect the default buffer size, as a
-> larger buffer is only allocated when explicitly requested via the
-> MON_IOCT_RING_SIZE ioctl.
-> 
-> This proposal follows the same rationale as the original calculation,
-> but with updates for modern hardware.
-> 
-> I would appreciate any feedback on this approach before I prepare a patch.
+On 9/8/25 09:04, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.151 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 10 Sep 2025 15:18:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.151-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I would suggest trying it out and seeing if it will work properly.  CPU
-speeds are faster now, so a larger buffer will probably be just fine,
-but I think the original goal here was that the majority of the "real"
-information was in the beginning of the urb (protocol stuff, not
-data), so the end of the urb wasn't all that necessary to see if the
-buffer was too big.  And, as you point out, 480 Mbit was the speeds
-then, we didn't think that USB would ever be boosted to go this fast :)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-thanks,
+Tested-by: Ron Economos <re@w6rz.net>
 
-greg k-h
 
