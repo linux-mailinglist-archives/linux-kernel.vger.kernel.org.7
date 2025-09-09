@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-807209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF5EB4A1A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF0EB4A1A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F711B2475D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:54:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9DC4E256D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE6F2FC036;
-	Tue,  9 Sep 2025 05:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE118A93F;
+	Tue,  9 Sep 2025 05:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UKM8MK4o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MiFReSeQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="TnNuZYna"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7A318A93F;
-	Tue,  9 Sep 2025 05:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABC92F0689
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 05:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757397212; cv=none; b=ix0eRDbD/XdSN3IJjSZgNIooTZ0nw7/WXnnOBz+RPoRsOb22TmrmUsgsL8D5NCmClZ6f6raIdxdq9soI+Oy6fjcTz1v1KnS+eqmPuu2r3ibaV9Pv1JLTQsBw6d9LHmSkuHdiH/8IReU5SlcMq+X2MYDE+wHrdMt9+hrsDE+aAHw=
+	t=1757397223; cv=none; b=Ykn0h+/krepEvqotRJFSNUyexIQqsYLpc9kNaRRRdr/d6JRcRgwzpsGE/LNc+9jnQIa8V8XtYlyh0LaxvEmSdaejMgtNuchcF2Z4CF7srSeebPpDLBFJn+Pn87O4BWvJ1kTv2E2JMeLXBX1hHcL9CCE/1BB2ReaKrbX18FUvGcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757397212; c=relaxed/simple;
-	bh=AH7v/0EMREj922mMNOjOXhivnD3q+LJG1JYeVGydfOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQGQZB+nxFrYl4saKaVMp83WvZxE29kHxsel23iWgEoChSTe+b07NVbJpj80p5/A3WgtMX5pDLHIvdFiZSQUVVyauia+0P9+V8w2T6BODFSiBwL+tj9kHcWy5DUOt9PdFrcPYZH4sNTxWdE0qth5NvWxVkR87MTEIXH4k53cB/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UKM8MK4o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MiFReSeQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 9 Sep 2025 07:53:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757397209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u00qc8KQ1fNjSOxfylahcZ76XCno456ST8BNeP1JmBk=;
-	b=UKM8MK4oRVUXEfIjcDVB8+cH6+CfiI/NaIvZ4Ve2TPXRCjT1zeHfosMQu4vnyyL8R1vJx0
-	pV2PPnRH98NbCI/ubyQUb/Ov7UIn46Kxd+FJrarPdwcsw60GJYhNYMcwL/sy2ay5MwnHJn
-	lwUxh/fOCEIfSGuS+3anuJN0dQbyqUPXPaYEVw40OGWEsMpZNkXyyU0DM4qARccbwRjiu4
-	h35DJfZhBOK0DbsYQq7Jbg3jyEd2qlagCukcP90QpgRcekKbrCvLH5BEn3R6jRRQN0lsDK
-	QIkKG+ctFf6T2F9XHNee871Dl6Cci3dsca/1ilwD8roubGzVbeo8oPWi1KBq4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757397209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u00qc8KQ1fNjSOxfylahcZ76XCno456ST8BNeP1JmBk=;
-	b=MiFReSeQzj5xuUjXwcvDyrcy105eFS0rlpYVpeWoy5EL4sFqX//SkSGbWku5LEOyuHvSdH
-	XoaERlptfblKgLDA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org
-Subject: Re: [PATCH RESEND v2] kunit: Enable PCI on UML without triggering
- WARN()
-Message-ID: <20250909075052-54454a48-3576-4d39-ae67-a04ee4616734@linutronix.de>
-References: <20250908-kunit-uml-pci-v2-1-d8eba5f73c9d@linutronix.de>
- <CAMuHMdX6raywNiuDG0zzYQu35YpfSHoE4KSsJLcDfeSqZAac+Q@mail.gmail.com>
+	s=arc-20240116; t=1757397223; c=relaxed/simple;
+	bh=qUtna0PyyH9rwBG66LiA94B2PnwwVPbPFDc3m6NUHac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQ1gH1hC7/I/yyP1fkTm07ey7+Tu4pN01c5K+wulvXVK+Bfa/60VA73vUIv0r2CFaozSuvCQe3ukF93AlTxmhs6K0gw5bk4d/h/N9AGwyB1KWVfV2YUxOrySFkojF8pPNDPpA3TK575RbW5hfWDEHSKbbHijeaaZylngiZ0ENw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=TnNuZYna; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id vh5wuwsxxSkcfvrITulKI0; Tue, 09 Sep 2025 05:53:41 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id vrISuUlhEHNANvrISuiXdx; Tue, 09 Sep 2025 05:53:40 +0000
+X-Authority-Analysis: v=2.4 cv=UOHdHDfy c=1 sm=1 tr=0 ts=68bfc0e5
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GwxR6IbGldVJlwKqBdAY14bWiXLRyUljxF73BTLNTyA=; b=TnNuZYnaZHCPmEw9vw8wFZbztt
+	1zmZZdKaCHqIv1Q2N8RFTimKkIhS1VReyzvklqjb85cGbOyclPxJjl/hTF2blBdw7Fye3WYCpzV2g
+	UGtg40e9oh1FpcMnN//ebuHiRR7JiZH2k0JIxwk3laaIR4R6JYyGantGE1TW79+2ptu2bA6UVcK8j
+	UeKDUWN868GzIsfywRplAklrg15g+tQAxBGbPdcAZKxwCU693W5MIL+kuxjl2ZPa0DX/ApCd5B8VT
+	66Jub+N00anEaX3guT1xaIlYhAvv4g8SUxeGPv8+RK3bL+QJXyrsXJPK/RHVu+phQl9JCV8T4C5W9
+	QeHsGo/Q==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:55018 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uvrIR-00000001mdn-2qR3;
+	Mon, 08 Sep 2025 23:53:39 -0600
+Message-ID: <3f9c3683-60ee-4532-a6ff-b45572d6bc06@w6rz.net>
+Date: Mon, 8 Sep 2025 22:53:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdX6raywNiuDG0zzYQu35YpfSHoE4KSsJLcDfeSqZAac+Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/175] 6.12.46-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250907195614.892725141@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250907195614.892725141@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1uvrIR-00000001mdn-2qR3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:55018
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 37
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfF67WwewpF1j8aX0zEQD/0UunySIokitSqbs8k5NFSZ3p8KgRagZCaxHTnB/s+/qwykLsvdvkp1QquEDmCmfEwu7aZH7xnYm3l9ceawszCOpqBpZXmXS
+ Wuov44AM1W6rLQJzyPUvz4mBgQ+nC4odF4AVDNrQHWw1YZr4w5A/irt82SS8SADdpAXtJJ8XEontHbkq+V3iT7os0gcG0ISyWU4=
 
-Hi Geert,
+On 9/7/25 12:56, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.46 release.
+> There are 175 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.46-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Mon, Sep 08, 2025 at 06:53:30PM +0200, Geert Uytterhoeven wrote:
-> On Mon, 8 Sept 2025 at 09:04, Thomas Weiﬂschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> > Various KUnit tests require PCI infrastructure to work. All normal
-> > platforms enable PCI by default, but UML does not. Enabling PCI from
-> > .kunitconfig files is problematic as it would not be portable. So in
-> > commit 6fc3a8636a7b ("kunit: tool: Enable virtio/PCI by default on UML")
-> > PCI was enabled by way of CONFIG_UML_PCI_OVER_VIRTIO=y. However
-> > CONFIG_UML_PCI_OVER_VIRTIO requires additional configuration of
-> > CONFIG_UML_PCI_OVER_VIRTIO_DEVICE_ID or will otherwise trigger a WARN() in
-> > virtio_pcidev_init(). However there is no one correct value for
-> > UML_PCI_OVER_VIRTIO_DEVICE_ID which could be used by default.
-> >
-> > This warning is confusing when debugging test failures.
-> >
-> > On the other hand, the functionality of CONFIG_UML_PCI_OVER_VIRTIO is not
-> > used at all, given that it is completely non-functional as indicated by
-> > the WARN() in question. Instead it is only used as a way to enable
-> > CONFIG_UML_PCI which itself is not directly configurable.
-> >
-> > Instead of going through CONFIG_UML_PCI_OVER_VIRTIO, introduce a custom
-> > configuration option which enables CONFIG_UML_PCI without triggering
-> > warnings or building dead code.
-> >
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-> 
-> Thanks for your patch!
-> 
-> > --- a/lib/kunit/Kconfig
-> > +++ b/lib/kunit/Kconfig
-> > @@ -106,4 +106,11 @@ config KUNIT_DEFAULT_TIMEOUT
-> >           If unsure, the default timeout of 300 seconds is suitable for most
-> >           cases.
-> >
-> > +config KUNIT_UML_PCI
-> 
-> Where is the consumer of this symbol?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-There is none. The relevant part is that it selects UML_PCI which on its own is
-not user-visible. Directly enabling UML_PCI wihtout any drivers only makes
-sense in the context of KUnit.
+Tested-by: Ron Economos <re@w6rz.net>
 
-> > +       bool "KUnit UML PCI Support"
-> > +       depends on UML
-> > +       select UML_PCI
-> > +       help
-> > +         Enables the PCI subsystem on UML for use by KUnit tests.
-> > +
-> >  endif # KUNIT
-> > diff --git a/tools/testing/kunit/configs/arch_uml.config b/tools/testing/kunit/configs/arch_uml.config
-> > index 54ad8972681a2cc724e6122b19407188910b9025..28edf816aa70e6f408d9486efff8898df79ee090 100644
-> > --- a/tools/testing/kunit/configs/arch_uml.config
-> > +++ b/tools/testing/kunit/configs/arch_uml.config
-> > @@ -1,8 +1,7 @@
-> >  # Config options which are added to UML builds by default
-> >
-> > -# Enable virtio/pci, as a lot of tests require it.
-> > -CONFIG_VIRTIO_UML=y
-> > -CONFIG_UML_PCI_OVER_VIRTIO=y
-> > +# Enable pci, as a lot of tests require it.
-> > +CONFIG_KUNIT_UML_PCI=y
-> >
-> >  # Enable FORTIFY_SOURCE for wider checking.
-> >  CONFIG_FORTIFY_SOURCE=y
 
