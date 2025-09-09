@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-808415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1A6B4FF76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:32:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C865AB4FF79
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DEF367BBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DEF3A9D99
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716DE3469FB;
-	Tue,  9 Sep 2025 14:31:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB14234AAEB;
+	Tue,  9 Sep 2025 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CjTMvVOG"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B27223708
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F9C3D6F;
+	Tue,  9 Sep 2025 14:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428313; cv=none; b=dS2oiG5ndKMKGXdChEYV8t0Csz+i3vg8YUbOprKwpc+29wNVKovyNpMScb394qp6rsNonVOHIQ35tmusHb9uYnMksEuONxRpey9Qwnk8iJIz0rTSsPE5epM3XmRPgUgfWzXeFSwQeDSz47OeDBPsQ05C9/HZotDSIavh0vE9Lzs=
+	t=1757428360; cv=none; b=ZSJbw4pPnPW+s2x4NOx0qfZAdS+FUhYpDhTYkML3uIj/qTk0EECoFqG84eI4VhTmgDF/LiBhoneYgJsL/hBChd51igeKTwsNDcHkevV+CZkwoM9RKjtFmqZaNQnlkWClEeh0f2fo+6GOeNcxP26HPR6TO9u/yAxcKegPRy3KSR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428313; c=relaxed/simple;
-	bh=TreZvkxp8XSRxg997tJky3Hnu4lPLXSt72DP2Lzhp98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFhgDjbAtiJys1pnfUascYPd5apeVk0ebUslNp9kRidLepfv8nldvVtOpSVLJuFTY6wuTLy/TvoX1aU1FVqDWxuh/kWXY1XJx6wd4PcQV4unCviq/8fUI6QjMsmH7vrIPivdJ7nI6+MnehmWfhGeRU5IqnV0dQHqIa20fb/2NUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzNd-0004n5-H2; Tue, 09 Sep 2025 16:31:33 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzNb-000R8v-2Z;
-	Tue, 09 Sep 2025 16:31:31 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 6426B46A15E;
-	Tue, 09 Sep 2025 14:31:31 +0000 (UTC)
-Date: Tue, 9 Sep 2025 16:31:29 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-Message-ID: <20250909-bulky-wolverine-of-artistry-49749f-mkl@pengutronix.de>
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
- <20250812-m_can-fix-state-handling-v1-3-b739e06c0a3b@pengutronix.de>
- <DC74JEKBB6HL.1LJ53UZJ0T0Q9@baylibre.com>
- <DC74YGSPTL16.KG2SWZD4L3YV@baylibre.com>
- <20250909-nightingale-of-strange-defense-631196-mkl@pengutronix.de>
+	s=arc-20240116; t=1757428360; c=relaxed/simple;
+	bh=uEpeLMtA+nt8my0EDQ4Co7+OdONko3/KLIe5wrgdqBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LkJNQIeAR9tEMieF1YOkyl3dbJgeaS4VIMx34YH4/QtOtyx69CzyECFig0ECA/lG82XyaBtw8m9Q5ruhUcZwWEPL5tafMSQ4+ni+j/GjFM2R/OVvQ9HSPmUxlvVGxYbX4TFbs/6z4W+jE8HGULBe3j1ej5mdPwbBfeDfwpaCLYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CjTMvVOG; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589EVjYJ356867;
+	Tue, 9 Sep 2025 09:31:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757428305;
+	bh=vykbjnLzz8rpOz9CYESVqRDv7BiXG2bRuVLyRjDYwak=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CjTMvVOGPgw0ugbauj/vW5ePOLo5FNRisZUjMHPKmlHLU5nF4vvScIxn4r/ch5zgM
+	 7zbBCeGRjORVmzpT8nFtNnwcs5an86ZReIVzCgBrJJc8nTTYW+kQFFDFJP9r1afBvE
+	 KLd3bMPXJSpctbegkLg23Q50xYmH+mz2ut+ke2s0=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589EViKD424810
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 09:31:45 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 09:31:44 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 9 Sep 2025 09:31:44 -0500
+Received: from [10.249.130.74] ([10.249.130.74])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589EVYIi2475049;
+	Tue, 9 Sep 2025 09:31:35 -0500
+Message-ID: <548eb7e2-ebde-464e-9467-7086e9448181@ti.com>
+Date: Tue, 9 Sep 2025 20:01:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e54chjukw6j4z4mj"
-Content-Disposition: inline
-In-Reply-To: <20250909-nightingale-of-strange-defense-631196-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 5/5] net: rnpgbe: Add register_netdev
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <danishanwar@ti.com>, <lee@trager.us>, <gongfan1@huawei.com>,
+        <lorenzo@kernel.org>, <geert+renesas@glider.be>,
+        <Parthiban.Veerasooran@microchip.com>, <lukas.bulwahn@redhat.com>,
+        <alexanderduyck@fb.com>, <richardcochran@gmail.com>, <kees@kernel.org>,
+        <gustavoars@kernel.org>, <rdunlap@infradead.org>,
+        <vadim.fedorenko@linux.dev>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
+References: <20250909120906.1781444-1-dong100@mucse.com>
+ <20250909120906.1781444-6-dong100@mucse.com>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <20250909120906.1781444-6-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
---e54chjukw6j4z4mj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-MIME-Version: 1.0
 
-On 09.09.2025 16:28:48, Marc Kleine-Budde wrote:
-> On 20.08.2025 11:09:16, Markus Schneider-Pargmann wrote:
-> > >> --- a/drivers/net/can/m_can/m_can.c
-> > >> +++ b/drivers/net/can/m_can/m_can.c
->=20
-> [...]
->=20
-> > >> +static enum can_state
-> > >> +m_can_can_state_get_by_psr(const u32 psr)
-> > >> +{
-> > >> +	if (psr & PSR_BO)
-> > >> +		return CAN_STATE_BUS_OFF;
-> > >> +	if (psr & PSR_EP)
-> > >> +		return CAN_STATE_ERROR_PASSIVE;
-> > >> +	if (psr & PSR_EW)
-> > >> +		return CAN_STATE_ERROR_WARNING;
-> > >
-> > > Why should m_can_handle_state_errors() should be called if none of th=
-ese
-> > > flags are set?
-> > >
-> > > m_can_handle_state_errors() seems to only be called if IR_ERR_STATE
-> > > which is defined as:
-> > >   #define IR_ERR_STATE	(IR_BO | IR_EW | IR_EP)
-> > >
-> > > This is the for the interrupt register but will the PSR register bits=
- be
-> > > set without the interrupt register being set?
-> >=20
-> > After reading the other users of the above function, I do see why this
-> > was added. I am still wondering if there is a way to return to
-> > ERROR_ACTIVE once the errors are cleared from the error register.
->=20
-> Sorry, I don't get what you mean.
->=20
-> > Also looking at all the users added for the function above, could you
-> > read the register inside the function? Currently you are adding a
-> > reg variable and a read call for each call to this function.
-> > m_can_handle_state_errors() also doesn't need the psr value with your
-> > refactoring.
->=20
-> That makes sense.
+On 9/9/2025 5:39 PM, Dong Yibo wrote:
+> Complete the network device (netdev) registration flow for Mucse Gbe
+> Ethernet chips, including:
+> 1. Hardware state initialization:
+>    - Send powerup notification to firmware (via echo_fw_status)
+>    - Sync with firmware
+>    - Reset hardware
+> 2. MAC address handling:
+>    - Retrieve permanent MAC from firmware (via mucse_mbx_get_macaddr)
+>    - Fallback to random valid MAC (eth_random_addr) if not valid mac
+>      from Fw
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
 
-I'm also preparing the driver to have error handling for all register
-reads...so I'll have to return in case of an error and pass the state
-via a pointer.
+> +/**
+> + * rnpgbe_xmit_frame - Send a skb to driver
+> + * @skb: skb structure to be sent
+> + * @netdev: network interface device structure
+> + *
+> + * Return: NETDEV_TX_OK or NETDEV_TX_BUSY
+> + **/
+> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> +				     struct net_device *netdev)
+> +{
+> +	dev_kfree_skb_any(skb);
+> +	netdev->stats.tx_dropped++;
+> +	return NETDEV_TX_OK;
+> +}
 
-regards,
-Marc
+The function comment says it returns NETDEV_TX_OK or NETDEV_TX_BUSY, but
+it only returns NETDEV_TX_OK.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
---e54chjukw6j4z4mj
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Thanks and Regards,
+Md Danish Anwar
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAOj0ACgkQDHRl3/mQ
-kZwWrgf7BdY+ptahLZATa0AFzO3ZIBhl10JwGw7j/tNeoWTipUKn3AqbczOUvYXC
-u0+WcPO86QHgc4xcprtJSkd1pYn1mpNk/y4CXQg+qyWIZlGsx+ibWRDxBFotcqKz
-E1IYFSKJQnyGVtH+mUkR4Y4+1i5h+zGQMDZ0YUqFFq8EfueYyDvHpyzJ6z0DXAzD
-rIsTz7FRk76MDyTiFmNQvWs6MaQnJAEqi9vALE4C6SiL4w3tmxGiVSazy3frMCVR
-5W5u82ZwxJxt73979tSGoOG5jplz0GfIpmrACkVXS/Eob+0NIvTNrjkCgSK2XXbB
-7axFr/+mPlY2qj7Fo57iCwZh43aAtA==
-=XkXU
------END PGP SIGNATURE-----
-
---e54chjukw6j4z4mj--
 
