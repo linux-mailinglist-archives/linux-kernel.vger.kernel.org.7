@@ -1,144 +1,311 @@
-Return-Path: <linux-kernel+bounces-807759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AC6B4A8ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B67CB4A8DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347301886DDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:53:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A11169BE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C442D1F6B;
-	Tue,  9 Sep 2025 09:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D8A2D3ED7;
+	Tue,  9 Sep 2025 09:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T9bxLVfO"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VbEJfUFM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0TRIbBQo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VbEJfUFM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0TRIbBQo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6EF2C08A2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B521D2D24A2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411478; cv=none; b=o9SfOYXx2DFQraz8asCkS/Jk6NYDxmqU1pHnlLm4fPkxOVkpbqo6K6sQqc3u+m48ezW45b4ZiRw8MKvbXkPo1pR/ZsNUbLoT2gw82hbGkuDIYzasQ5vjIFT8Y/TSPcTO8j7cFu2fAbcn6f12YESqpAEqjsXY1o7LEsV4LQkR2F0=
+	t=1757411485; cv=none; b=ZicPrEJqNOOZXjui12cB5hHzoFFD5usCGFdFRAq66gYH1xNLhOaa6rjyi0tEOURJVj1mEDlZvo8ufHcRurT5UXGG5AzQmBB6ZNkDBhS7zb/nm17KAIkrDs9x+Ma0L82EqsUdT2iFpfeJepXHoS3IK8Av1Cq+6c+f6p3zvk2ZgA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411478; c=relaxed/simple;
-	bh=EJa7vuO9thKOOMPB5lAnUhOysFC9tBG1PWSpmUvUADI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dERhOaQ/RoNbPJi+rsUn7TRjhj2zuQ7Oxj4QLR36dat2YvWNZR1Z/PVdWzXxUT8aIY2h4G93OZgrb5/4MYwp0UXboGO9BTz/3VmJLe4tQm7E1kTnoSe7TA7NctL4yFGyGls6/B78YGwcRWyUdgLpa9jyKWsTYNb2jpX5nz9B+Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T9bxLVfO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso8669255a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1757411475; x=1758016275; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttnhzG/W0udtzRhzi90XxZcALtTq/DsFRIfwgo9QFeM=;
-        b=T9bxLVfO9qnla7gK+DQ6KnfEp9PcZPfMI0juxYwKkIN8L+U0/9QtiM/MaP1IfBGXn8
-         H/t/poqrtPaoVd4v2pI5jPApbip5ymqBzo/QXB6oTPWTU6l6ehGqMurm/j0ueGzYk1mp
-         UyN+Uqryq1Qioo4GayF6F3vwegkDxolKkUImHyHMIVOwTPddFrkha991ZSM3WSt7vqwb
-         6WhCG4a7HJKgPKlUbtM3xtDrctarDG4ZK1XEWbvk9kgpP0lF/IQztL9vefue+4jinXqt
-         CKv+I23mTrBPw7hAgNBaBC6AhvSOMOgx/mxm5aQFarcQEUmOV8+uvi7loHgjHQzEjuyE
-         sUlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757411475; x=1758016275;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttnhzG/W0udtzRhzi90XxZcALtTq/DsFRIfwgo9QFeM=;
-        b=ImHLR6DOsd8GyaQ1LJ6WX/cB4ypK8jiguqTeevZBwljtCdoNrsknvgkoRDQis7UmIh
-         QFs3Yzc/nW4abCdzWlypu2P5XY+ZENy1fV/hqJL04KSoYbOq/M7wneiB7UKID0iH7T3d
-         Bi5BuslwykRuoVjILR31Jjl1AZqpB+wJi127uWgJdXjWv4XV3Nj/3A9neFafm6lhdQFh
-         G20PM9QypvQCFXYR5ZwcXlywxiY8Jpu4KeYaXTqNsA86DZzKD4kGoBXlflFgv47MYpr3
-         SV96bySc+sHepJvpwx+5jXx3m+bZLqNmyYOoZNIg4v/dEnivC+fJhgyg4wTCNc2K4bhp
-         mfjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0d4b6dHW/0dlhljsN0Ir6Zzv4rwndZHlyBJE7+ivWmfuZ3JWjU/S48CaMnoZ3wm+TutUFcsKjcIVkpp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL05nuANoSgwppjFL9JH7z5nOj/bCZxAzB29UvwvmvArYZPcd1
-	bamg6dzoZKuotgQaEn7tWxYlPpEEE8t2ABFpTZXRNsO0U0N179+d/qY3vphtpMJVzAI=
-X-Gm-Gg: ASbGncsGPR/wrzaG2fCJ3S7du1dz4kUZ6e25JA/8OexoJPMbKjVdb8/gObBtvr0c8Db
-	pXtpLUjxJTrFWvVBMgBS0TOElOgo0Hsx3Ggohlhub+K9qEvy3PCBmXanQdE9yd07Lr6rz51NcBi
-	FErU87pGIA91wvTT4I2YoZe+x7xVXb25w/S6jzEYvxKNV9MyCSvVMLJuqmhBKMcgPCKM37WlLTD
-	tGcZJieNuUX8VfYTVRUJrJI3WuYNGoKkf05sx1Mpd6jH+ICJkZoUtBA9oIKvOlNikoKm1hy7wFo
-	xvREytSx03tNe3zcr8+WQbwt9DRhsyaPymfpYEjkGgAK3D1qetuq7CweP2g7COKWXFkAdil7fMF
-	dUUIh1JvojJIGytSfbZCc0Db8
-X-Google-Smtp-Source: AGHT+IHL1A4xOak1CBPxy0OgkkpejE8KlndP1MveZHrFbWUYAt9r14ZZNm1gXyDoH8GW8mDi0O4o2A==
-X-Received: by 2002:a05:6402:1d52:b0:626:6ce5:4b8 with SMTP id 4fb4d7f45d1cf-6266ce50670mr9703104a12.32.1757411474932;
-        Tue, 09 Sep 2025 02:51:14 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:295f::41f:a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62bfe99febdsm923822a12.8.2025.09.09.02.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:51:14 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
- KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,
-  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
-  John Fastabend <john.fastabend@gmail.com>,  KP Singh
- <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
- <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
- <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,  bpf@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 1/5] selftests/bpf: sockmap_redir: Simplify
- try_recv()
-In-Reply-To: <20250905-redir-test-pass-drop-v1-1-9d9e43ff40df@rbox.co> (Michal
-	Luczaj's message of "Fri, 05 Sep 2025 13:11:41 +0200")
-References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
-	<20250905-redir-test-pass-drop-v1-1-9d9e43ff40df@rbox.co>
-Date: Tue, 09 Sep 2025 11:51:13 +0200
-Message-ID: <87ikhs54z2.fsf@cloudflare.com>
+	s=arc-20240116; t=1757411485; c=relaxed/simple;
+	bh=t1vqayHnqcAq9llNGw4nd5fqTqfl2Z5ptxrtalXBvEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdmwZHum+S+whGcOPVLUnOE8U0b8OlvAAfRYUw5DZGfqJH+mZom3enN7jqofBtue8Wzv8BapJzLqoruoWL69Yd3tV0Ixd1ep1PgQs48tdC+pIFyqjNktT5J1F0uI+P+uMPLhNTWvtXRiVrd5VuP+Cuoh0bKn5s7XiaO7PdDCyus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VbEJfUFM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0TRIbBQo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VbEJfUFM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0TRIbBQo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ABC0C2A387;
+	Tue,  9 Sep 2025 09:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757411479; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HIhIArzYhEphhk0Ih0HtKxJha79XByK1xHK2ihCWOAc=;
+	b=VbEJfUFM1Mk0pxL6QWvcK84IqzDFUg2+vMOphGUMR6xgte1xhu+iSZZbD78LtkSu1YMCVc
+	gq1Qs+kG2wLGTzd0w1esH93la0Bd/HMrkIHpAVzLGF5g/v7uX9uz4ZXJIf16zoofyOgegO
+	cfYDYKR9VYQJoTrBg/CyRlP9TN2Kq20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757411479;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HIhIArzYhEphhk0Ih0HtKxJha79XByK1xHK2ihCWOAc=;
+	b=0TRIbBQozYs3qwtxSmD009lYOrs8lGcRGqQTkFewZeftgJBOVJjRgLALL32imwAuj0evjS
+	aorwW0jCcUBFAQAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757411479; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HIhIArzYhEphhk0Ih0HtKxJha79XByK1xHK2ihCWOAc=;
+	b=VbEJfUFM1Mk0pxL6QWvcK84IqzDFUg2+vMOphGUMR6xgte1xhu+iSZZbD78LtkSu1YMCVc
+	gq1Qs+kG2wLGTzd0w1esH93la0Bd/HMrkIHpAVzLGF5g/v7uX9uz4ZXJIf16zoofyOgegO
+	cfYDYKR9VYQJoTrBg/CyRlP9TN2Kq20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757411479;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HIhIArzYhEphhk0Ih0HtKxJha79XByK1xHK2ihCWOAc=;
+	b=0TRIbBQozYs3qwtxSmD009lYOrs8lGcRGqQTkFewZeftgJBOVJjRgLALL32imwAuj0evjS
+	aorwW0jCcUBFAQAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 983CE1365E;
+	Tue,  9 Sep 2025 09:51:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id scUmJZf4v2irFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 09 Sep 2025 09:51:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 003CFA0A2D; Tue,  9 Sep 2025 11:51:18 +0200 (CEST)
+Date: Tue, 9 Sep 2025 11:51:18 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Mark Tinguely <mark.tinguely@oracle.com>, ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	jlbec@evilplan.org, mark@fasheh.com, brauner@kernel.org, willy@infradead.org, 
+	david@fromorbit.com
+Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
+ I_WILL_FREE usage
+Message-ID: <tmovxjz7ouxzj5r2evjjpiujqeod3e22dtlriqqlgqwy4rnoxd@eppnh4jf72dq>
+References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
+ <20250904154245.644875-1-mjguzik@gmail.com>
+ <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
+ <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
+ <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com>
+ <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
+ <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com>
+ <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
+ <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	REDIRECTOR_URL(0.00)[urldefense.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,urldefense.com:url,oracle.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Fri, Sep 05, 2025 at 01:11 PM +02, Michal Luczaj wrote:
-> try_recv() was meant to support both @expect_success cases, but all the
-> callers use @expect_success=false anyway. Drop the unused logic and fold in
-> MSG_DONTWAIT. Adapt callers.
->
-> Subtle change here: recv() return value of 0 will also be considered (an
-> unexpected) success.
->
-> Signed-off-by: Michal Luczaj <mhal@rbox.co>
-> ---
->  .../selftests/bpf/prog_tests/sockmap_redir.c       | 25 +++++++++-------------
->  1 file changed, 10 insertions(+), 15 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-> index 9c461d93113db20de65ac353f92dfdbe32ffbd3b..c1bf1076e8152b7d83c3e07e2dce746b5a39cf7e 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-> @@ -144,17 +144,14 @@ static void get_redir_params(struct redir_spec *redir,
->  		*redirect_flags = 0;
->  }
->  
-> -static void try_recv(const char *prefix, int fd, int flags, bool expect_success)
-> +static void fail_recv(const char *prefix, int fd, int more_flags)
->  {
->  	ssize_t n;
->  	char buf;
->  
-> -	errno = 0;
-> -	n = recv(fd, &buf, 1, flags);
-> -	if (n < 0 && expect_success)
-> -		FAIL_ERRNO("%s: unexpected failure: retval=%zd", prefix, n);
-> -	if (!n && !expect_success)
-> -		FAIL("%s: expected failure: retval=%zd", prefix, n);
-> +	n = recv(fd, &buf, 1, MSG_DONTWAIT | more_flags);
-> +	if (n >= 0)
-> +		FAIL("%s: unexpected success: retval=%zd", prefix, n);
->  }
+On Mon 08-09-25 17:39:22, Mateusz Guzik wrote:
+> On Mon, Sep 8, 2025 at 3:54 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Mon 08-09-25 20:41:21, Joseph Qi wrote:
+> > >
+> > >
+> > > On 2025/9/8 18:23, Jan Kara wrote:
+> > > > On Mon 08-09-25 09:51:36, Joseph Qi wrote:
+> > > >> On 2025/9/5 00:22, Mateusz Guzik wrote:
+> > > >>> On Thu, Sep 4, 2025 at 6:15 PM Mark Tinguely <mark.tinguely@oracle.com> wrote:
+> > > >>>>
+> > > >>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
+> > > >>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
+> > > >>>>> fine (tm).
+> > > >>>>>
+> > > >>>>> The intent is to retire the I_WILL_FREE flag.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > > >>>>> ---
+> > > >>>>>
+> > > >>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
+> > > >>>>>
+> > > >>>>> btw grep shows comments referencing ocfs2_drop_inode() which are already
+> > > >>>>> stale on the stock kernel, I opted to not touch them.
+> > > >>>>>
+> > > >>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocking
+> > > >>>>> other work. If accepted would be probably best taken through vfs
+> > > >>>>> branches with said work, see https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.18.inode.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKBMEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
+> > > >>>>>
+> > > >>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
+> > > >>>>>   fs/ocfs2/inode.h       |  1 -
+> > > >>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
+> > > >>>>>   fs/ocfs2/super.c       |  2 +-
+> > > >>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
+> > > >>>>>
+> > > >>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> > > >>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
+> > > >>>>> --- a/fs/ocfs2/inode.c
+> > > >>>>> +++ b/fs/ocfs2/inode.c
+> > > >>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
+> > > >>>>>
+> > > >>>>>   void ocfs2_evict_inode(struct inode *inode)
+> > > >>>>>   {
+> > > >>>>> +     write_inode_now(inode, 1);
+> > > >>>>> +
+> > > >>>>>       if (!inode->i_nlink ||
+> > > >>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
+> > > >>>>>               ocfs2_delete_inode(inode);
+> > > >>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
+> > > >>>>>       ocfs2_clear_inode(inode);
+> > > >>>>>   }
+> > > >>>>>
+> > > >>>>> -/* Called under inode_lock, with no more references on the
+> > > >>>>> - * struct inode, so it's safe here to check the flags field
+> > > >>>>> - * and to manipulate i_nlink without any other locks. */
+> > > >>>>> -int ocfs2_drop_inode(struct inode *inode)
+> > > >>>>> -{
+> > > >>>>> -     struct ocfs2_inode_info *oi = OCFS2_I(inode);
+> > > >>>>> -
+> > > >>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
+> > > >>>>> -                             inode->i_nlink, oi->ip_flags);
+> > > >>>>> -
+> > > >>>>> -     assert_spin_locked(&inode->i_lock);
+> > > >>>>> -     inode->i_state |= I_WILL_FREE;
+> > > >>>>> -     spin_unlock(&inode->i_lock);
+> > > >>>>> -     write_inode_now(inode, 1);
+> > > >>>>> -     spin_lock(&inode->i_lock);
+> > > >>>>> -     WARN_ON(inode->i_state & I_NEW);
+> > > >>>>> -     inode->i_state &= ~I_WILL_FREE;
+> > > >>>>> -
+> > > >>>>> -     return 1;
+> > > >>>>> -}
+> > > >>>>> -
+> > > >>>>>   /*
+> > > >>>>>    * This is called from our getattr.
+> > > >>>>>    */
+> > > >>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
+> > > >>>>> index accf03d4765e..07bd838e7843 100644
+> > > >>>>> --- a/fs/ocfs2/inode.h
+> > > >>>>> +++ b/fs/ocfs2/inode.h
+> > > >>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
+> > > >>>>>   }
+> > > >>>>>
+> > > >>>>>   void ocfs2_evict_inode(struct inode *inode);
+> > > >>>>> -int ocfs2_drop_inode(struct inode *inode);
+> > > >>>>>
+> > > >>>>>   /* Flags for ocfs2_iget() */
+> > > >>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
+> > > >>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+> > > >>>>> index 54ed1495de9a..4b32fb5658ad 100644
+> > > >>>>> --- a/fs/ocfs2/ocfs2_trace.h
+> > > >>>>> +++ b/fs/ocfs2/ocfs2_trace.h
+> > > >>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
+> > > >>>>>
+> > > >>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
+> > > >>>>>
+> > > >>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
+> > > >>>>> -
+> > > >>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
+> > > >>>>>       TP_PROTO(void *inode, unsigned long long ino,
+> > > >>>>>                unsigned int flags),
+> > > >>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> > > >>>>> index 53daa4482406..e4b0d25f4869 100644
+> > > >>>>> --- a/fs/ocfs2/super.c
+> > > >>>>> +++ b/fs/ocfs2/super.c
+> > > >>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
+> > > >>>>>       .statfs         = ocfs2_statfs,
+> > > >>>>>       .alloc_inode    = ocfs2_alloc_inode,
+> > > >>>>>       .free_inode     = ocfs2_free_inode,
+> > > >>>>> -     .drop_inode     = ocfs2_drop_inode,
+> > > >>>>> +     .drop_inode     = generic_delete_inode,
+> > > >>>>>       .evict_inode    = ocfs2_evict_inode,
+> > > >>>>>       .sync_fs        = ocfs2_sync_fs,
+> > > >>>>>       .put_super      = ocfs2_put_super,
+> > > >>>>
+> > > >>>>
+> > > >>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
+> > > >>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inode().
+> > > >>>>
+> > > >>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
+> > > >>>>   ocfs2: flush inode data to disk and free inode when i_count becomes zero
+> > > >>>> the return of 1 drops immediate to fix a memory caching issue.
+> > > >>>> Shouldn't .drop_inode() still return 1?
+> > > >>>
+> > > >>> generic_delete_inode is a stub doing just that.
+> > > >>>
+> > > >> In case of "drop = 0", it may return directly without calling evict().
+> > > >> This seems break the expectation of commit 513e2dae9422.
+> > > >
+> > > > generic_delete_inode() always returns 1 so evict() will be called.
+> > > > ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'm not
+> > > > sure which case of "drop = 0" do you see...
+> > > >
+> > > I don't see a real case, just in theory.
+> > > As I described before, if we make sure write_inode_now() will be called
+> > > in iput_final(), it would be fine.
+> >
+> > I'm sorry but I still don't quite understand what you are proposing. If
+> > ->drop() returns 1, the filesystem wants to remove the inode from cache
+> > (perhaps because it was deleted). Hence iput_final() doesn't bother with
+> > writing out such inodes. This doesn't work well with ocfs2 wanting to
+> > always drop inodes hence ocfs2 needs to write the inode itself in
+> > ocfs2_evice_inode(). Perhaps you have some modification to iput_final() in
+> > mind but I'm not sure how that would work so can you perhaps suggest a
+> > patch if you think iput_final() should work differently? Thanks!
+> >
+> 
+> I think generic_delete_inode is a really bad name for what the routine
+> is doing and it perhaps contributes to the confusion in the thread.
+> 
+> Perhaps it could be renamed to inode_op_stub_always_drop or similar? I
+> don't for specifics, apart from explicitly stating that the return
+> value is to drop and bonus points for a prefix showing this is an
+> inode thing.
 
-This bit, which you highlighted in the description, I don't get.
+I think inode_always_drop() would be fine...
 
-If we're expecting to receive exactly one byte, why treat a short read
-as a succcess? Why not make it a strict "n != 1" check?
+								Honza
 
-[...]
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
