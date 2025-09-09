@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-808853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16684B5056D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:35:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BB7B50576
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF632545856
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B157188D44E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FC03009C8;
-	Tue,  9 Sep 2025 18:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643453002C4;
+	Tue,  9 Sep 2025 18:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+pi9q6h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hLZZkvJz"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5692FFDD3;
-	Tue,  9 Sep 2025 18:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D95C22258C;
+	Tue,  9 Sep 2025 18:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442948; cv=none; b=sDFbya9c40qHnwtgvR5psmtfjg5P/EbRQkaRqjBEYLtsXBI3Qc6+0yGJCyHbIHmPmFdUP52n0LyQbrVG0Kd5L0sj49cqy5h0tCscX1cy18J9iR5GT5WTPvPjTYyCAsGk/Ar7vnCNUDuIbWGRUSCGBLPNsnhiVnTHrb59+JNicxY=
+	t=1757443082; cv=none; b=AyV8mTg4fU29AbqCS80oBjI8O5Nz1iE2FJEu9jQ3DDPy/hK7pMGLEbLzusL11qB6lQgMw0c+aeYB4moF079XJvUQ8+bpIt7zwmAW1zz3s+ZjQeybIRTSfnGYnh4sMcWzGmL+KO+MgBoikxQvJywewiileG54idOfULEEcNKGhKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442948; c=relaxed/simple;
-	bh=zCimBEEsW+SFcQwuUGAUgCl9LrL92q1g3x95hB4wno0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uD5IqIbcIbhkU6RuEjGD2/6TYAA83NZw7aITmO8uOLsAgYMBbv1JzkZtXWJrYNn+e3oSkLpq6oQVrWdXggAiCcrRl4vT/CcchXT8a/1yDjAB/7i4g8e0FNPKpzvRDgKke3nb0qw4VyQchv9NHiOCsZBzvNggQrrZUw+mA824M8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+pi9q6h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79CDC4CEF4;
-	Tue,  9 Sep 2025 18:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757442948;
-	bh=zCimBEEsW+SFcQwuUGAUgCl9LrL92q1g3x95hB4wno0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+pi9q6hBYDz9dZm8Tsp21PbpCnT6vybJVHLcbDQvEb1DAy1rrmn6zYM+5hRsEez4
-	 K9LRTKLQRSDC09Zs0ErZ+2HLDuG851XcxIeNPxuU/EEuuBLqekUDkpqAYeeK6kZSV5
-	 M8uoSMt4XOzk+RWwE2ScKJ8rxiTj0RFP2d4DVTQbiKENh+ftzDmDLYkKuJei74VyB+
-	 I41ObBBH5llZtYq/2sBQtXz8lGJBqIHqlcNqY2Yr/5HDYquzEqO7Oelvvax5MTegbt
-	 jpvlszHQPIuAxd3p+mDAawoIkDox6rTrCzGVuCdi5UWYDnWY+FhR0FcSXzLmMtNq65
-	 GypedVo+G5ggg==
-Date: Tue, 9 Sep 2025 19:35:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Josua Mayer <josua@solid-run.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH phy 13/14] dt-bindings: phy: lynx-28g: add compatible
- strings per SerDes and instantiation
-Message-ID: <20250909-cork-tyke-9b460c1a6f44@spud>
-References: <20250904154402.300032-14-vladimir.oltean@nxp.com>
- <20250905-bulky-umber-jaguarundi-1bf81c@kuoka>
- <20250905154150.4tocaiqyumbiyxbh@skbuf>
- <20250905-pamperer-segment-ab89f0e9cdf8@spud>
- <20250908093709.owcha6ypm5lqqdwz@skbuf>
- <2b1f112e-d533-46ae-a9a0-e5874c35c1fc@solid-run.com>
- <20250908153746.7mfobudenttdi4qd@skbuf>
- <fcfbea96-7978-49f6-88c6-f78fe52edb7c@solid-run.com>
- <fcfbea96-7978-49f6-88c6-f78fe52edb7c@solid-run.com>
- <20250909113543.q7zazfy5slrgnhtc@skbuf>
+	s=arc-20240116; t=1757443082; c=relaxed/simple;
+	bh=PKXkBQqM60f7+WgXJqMrEwWr6w1qo1F3TD5mCThSVEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XTojHXm/Q0iCQbBrcw/gwtfA+qMwteB+571cU5LJtju/jIksFVfr7k3/ksqr2bARegxfjW1JZQhf80fsJYZ8oC5A/O5cFcckJ3hT2zKx9BF3rxvW3TFPjTBaVZjeTle+vumlmBrnbc9GgGSUeHwCCkWuHG7scMNhgwD4F1WNM6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hLZZkvJz; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589IbtWf4165019;
+	Tue, 9 Sep 2025 13:37:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757443075;
+	bh=GKqZQ6H2ucEXsZBClsOawsfzpF0vS0ppOGE8BHVT8ek=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=hLZZkvJzmUzftQ9dGmPV4TDIRVTEmcKWMKzsRFwkRgI2vtW3RJclHsAfrsdyJy7Jp
+	 evddrp7TC0ii087yQvc8zcOio4GTg2gltaXlx47LmLJAqUgyBaJcaujNrw0g0A/wPM
+	 5a6eZ8Sduaof/73h9KoLMxNv7AznH4fVHyjRdNtU=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589Ibtt63346572
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 13:37:55 -0500
+Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 13:37:54 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE201.ent.ti.com
+ (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 9 Sep 2025 13:37:54 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589Ibs4N3272256;
+	Tue, 9 Sep 2025 13:37:54 -0500
+Message-ID: <228bd986-6182-4e4d-ba2f-58ed4dea27e0@ti.com>
+Date: Tue, 9 Sep 2025 13:37:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rgKk0EMXYsQjaFjK"
-Content-Disposition: inline
-In-Reply-To: <20250909113543.q7zazfy5slrgnhtc@skbuf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/3] Add support for Variscite VAR-SOM-AM62P5 and
+ Symphony board
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250904132240.36819-1-stefano.radaelli21@gmail.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250904132240.36819-1-stefano.radaelli21@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi,
 
---rgKk0EMXYsQjaFjK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/4/25 8:22 AM, Stefano Radaelli wrote:
+> This patch series adds support for the Variscite VAR-SOM-AM62P system on module
+> and the Symphony carrier board.
+> 
+> The VAR-SOM-AM62P is a compact SOM based on the TI AM62P Sitara processor,
+> featuring up to 8GB DDR4 memory, eMMC storage, Gigabit Ethernet, and various
+> peripheral interfaces. The Symphony board is a feature-rich carrier board that
+> showcases the SOM capabilities.
+> 
+> The series includes:
+> - Device tree bindings documentation
+> - SOM device tree with common peripherals
+> - Symphony carrier board device tree with board-specific features
+> 
+> The implementation follows the standard SOM + carrier board pattern where the
+> SOM dtsi contains only peripherals mounted on the module, while carrier-specific
+> interfaces are enabled in the board dts.
+> 
+> Tested on VAR-SOM-AM62P with Symphony carrier board.
 
-On Tue, Sep 09, 2025 at 02:35:43PM +0300, Vladimir Oltean wrote:
-> On Mon, Sep 08, 2025 at 04:04:45PM +0000, Josua Mayer wrote:
-> > Am 08.09.25 um 17:37 schrieb Vladimir Oltean:
-> > > On Mon, Sep 08, 2025 at 02:02:35PM +0000, Josua Mayer wrote:
-> > >>> My updated plan is to describe the schema rules for the compatible =
-as
-> > >>> follows. Is that ok with everyone?
-> > >>>
-> > >>> properties:
-> > >>>   compatible:
-> > >>>     oneOf:
-> > >>>       - const: fsl,lynx-28g
-> > >>>         deprecated: true
-> > >>>       - items:
-> > >>>           - const: fsl,lx2160a-serdes1
-> > >>>           - const: fsl,lynx-28g
-> > >>>       - enum:
-> > missed fsl,lx2160a-serdes1
->=20
-> I didn't miss anything. "fsl,lx2160a-serdes1" is deliberately not in
-> "enum" because there's no point specifying this compatible as
-> standalone, if for backwards compatibility reasons it will always have
-> to be "fsl,lx2160a-serdes1", "fsl,lynx-28g" (it was described as
-> "fsl,lynx-28g" before), which is already covered by "items".
+For the series,
 
-I think Josua was pointing out their own omission here.
-
-> > >>>           - fsl,lx2160a-serdes2
-> > >>>           - fsl,lx2160a-serdes3
-> > >>>           - fsl,lx2162a-serdes1
-> > >>>           - fsl,lx2162a-serdes2
-
---rgKk0EMXYsQjaFjK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMBzfwAKCRB4tDGHoIJi
-0uImAP4iSyFG0dBJjo95uX9m0Tmx93AaThmecCO8jIfuKbVbrQD+Jji3Uu3mPaRx
-UHP7rBa5RARB+qAIa/QDdFDUDGKfUQY=
-=KrBe
------END PGP SIGNATURE-----
-
---rgKk0EMXYsQjaFjK--
+Reviewed-by: Judith Mendez <jm@ti.com>
 
