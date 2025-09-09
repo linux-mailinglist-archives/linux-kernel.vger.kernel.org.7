@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-807592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145E4B4A6B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:07:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854EAB4A69E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4901188C4A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9437B23B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEF5274B5D;
-	Tue,  9 Sep 2025 09:05:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEA01A4E70;
-	Tue,  9 Sep 2025 09:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E922773E4;
+	Tue,  9 Sep 2025 09:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgpIdyA/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7951A4E70;
+	Tue,  9 Sep 2025 09:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408757; cv=none; b=JtvpYCV5eTOmEyHuvsj0MVqP5eEPxvzg/MrteE4prSWhrW2riuoxyeYYoRWmZ6qbJaCQDNWrrhjhZ2shsw2KjZ5PLUIChZleA26v3cAkwlD++IEkBT40/JOziQtYpt3TzvxokCjdIp3LEw0NGUvW1Aa3ULCx+Zjh+YwNu2Cx4ow=
+	t=1757408789; cv=none; b=VOsVJL1qR+8Z4/BvV0CMY7gRUOKUzgL75A9uW19W+qMi66Do3+/PoZn4l91+kSQAQ79rNDDRP19eFiFR1iA6PG6aq8f6f3PJwQzFbIRXlnG47K9nO+SvujdMA37LKzakQfwLv1b4WHSqKyKy7aj7rTvR2xTif6iADCrEwlPlAY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408757; c=relaxed/simple;
-	bh=PVcoYVsra2VVivjHJdr9TtHT2LeuybiCAVcVkV8gtlw=;
+	s=arc-20240116; t=1757408789; c=relaxed/simple;
+	bh=7KHRyNXulEzV5xfA0DTLR93wZhedtS6U0W/OgCRxzTo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AesuKOx0XX08B418JmAAMDnZmKLXYseCwURUq2JbWVLP8G9gaN+O64LELqdysT/Hr8HBILfYJfzJc7/4WQmRWbP1ukXadq89mhgliKIU8WCwXM8a6aNtyvxaJhGRvb/egxjN5xHsCYzMjTsyisJ7kjRIOUpXhLsHpHvVJ78zrMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E25F015A1;
-	Tue,  9 Sep 2025 02:05:44 -0700 (PDT)
-Received: from [10.57.60.124] (unknown [10.57.60.124])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7EF13F63F;
-	Tue,  9 Sep 2025 02:05:39 -0700 (PDT)
-Message-ID: <bd3958cc-f069-40a6-b201-7cab338e0cd9@arm.com>
-Date: Tue, 9 Sep 2025 11:05:35 +0200
+	 In-Reply-To:Content-Type; b=WTHeZrTL9rsbHgW3joBwov/tyAWHVvCpQQvcmHjkwv+WI3kvMA2qxfQsErKogAPG7HGRLmwk17wr4v5fgJXQ/i9IySiv7Giaf2Asi0/5xsRrRxaOdbdFmimzZ1duteiGyxrL2onl5hszwst9fKl1CV2YNmz0u9xBUWEWHYD084I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgpIdyA/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0263CC4CEF5;
+	Tue,  9 Sep 2025 09:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757408788;
+	bh=7KHRyNXulEzV5xfA0DTLR93wZhedtS6U0W/OgCRxzTo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YgpIdyA/7SeKJXe88JKdL+8cKRhcsDkqKgcop6CyNabiQH1IoGUGWwnhISrzq+ATK
+	 iw+a1kLwmrkdfoCl+Y3T4dFzQ8PiQC7YrA26Lp4HvdqoN2LU+n3Yoi0MtMBGjkeea2
+	 ohKhJtF5gy9ML01DyQtxo78OqfDTX/OtsszEzisC5gbN6zhA4mh5be1PK6inzH7n/n
+	 rmL1ylDc4WnEFZK9RumjHEvr/qFuHAbGJLE5xzf+fbRiKWYGDO4XzmzyUrtIezcjJc
+	 1Iv9IyF4uuYyhVUnsSMAOlvNmC0VKCUpivKwootXbR+ghdD42K7rqLJ4UQPM4rTMvI
+	 LhJpZ1LEvqxdw==
+Message-ID: <98871c1b-7183-4a08-a5ea-9fa5c91c6777@kernel.org>
+Date: Tue, 9 Sep 2025 11:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,102 +49,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <20250908224054.0a1969b493d8a837addd782e@linux-foundation.org>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <20250908224054.0a1969b493d8a837addd782e@linux-foundation.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: leds: commonize leds property
+To: Rob Herring <robh@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Aleksandrs Vinarskis <alex@vinarskis.com>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+ Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Thompson <daniel.thompson@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
+ <20250908-leds-v3-2-5944dc400668@vinarskis.com>
+ <0e030e7d-0a1a-4a00-ba18-ed26107d07fa@oss.qualcomm.com>
+ <046b289d-b6a5-45f9-88b1-090e2ab7c95d@kernel.org>
+ <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
+ <20250908222247.GA1943768-robh@kernel.org>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250908222247.GA1943768-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 09/09/2025 07:40, Andrew Morton wrote:
-> On Mon,  8 Sep 2025 08:39:26 +0100 Kevin Brodsky <kevin.brodsky@arm.com> wrote:
->
->> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
->> (taking and returning no value). This is proving problematic in
->> situations where leave() needs to restore some context back to its
->> original state (before enter() was called). In particular, this
->> makes it difficult to support the nesting of lazy_mmu sections -
->> leave() does not know whether the matching enter() call occurred
->> while lazy_mmu was already enabled, and whether to disable it or
->> not.
+Hi,
+
+On 9-Sep-25 12:22 AM, Rob Herring wrote:
+> On Mon, Sep 08, 2025 at 09:36:39AM +0200, Konrad Dybcio wrote:
+>> On 9/8/25 9:33 AM, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 8-Sep-25 09:20, Konrad Dybcio wrote:
+>>>> On 9/8/25 1:18 AM, Aleksandrs Vinarskis wrote:
+>>>>> A number of existing schemas use 'leds' property to provide
+>>>>> phandle-array of LED(s) to the consumer. Additionally, with the
+>>>>> upcoming privacy-led support in device-tree, v4l2 subnode could be a
+>>>>> LED consumer, meaning that all camera sensors should support 'leds'
+>>>>> and 'led-names' property via common 'video-interface-devices.yaml'.
+>>>>>
+>>>>> To avoid dublication, commonize 'leds' property from existing schemas
+>>>>> to newly introduced 'led-consumer.yaml'.
+>>>>>
+>>>>> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+>>>>> ---
+>>>>
+>>>> [...]
+>>>>
+>>>>>  
+>>>>> +  leds:
+>>>>> +    minItems: 1
+>>>>> +    maxItems: 1
+>>>>
+>>>> My brain compiler suggests this will throw a warning (minItems should
+>>>> be redundant in this case)
+>>>>> +
+>>>>> +  led-names:
+>>>>> +    enum:
+>>>>> +      - privacy-led
+>>>>
+>>>> Nit: "privacy" makes more sense without the suffix, as we inherently
+>>>> know this is supposed to be an LED
+>>>
+>>> Note "privacy-led" as name is already used on the x86/ACPI side and
+>>> the code consuming this will be shared.
+>>>
+>>> With that said if there is a strong preference for going with just
+>>> "privacy" the x86 side can be adjusted since the provider-info is
+>>> generated through a LED lookup table on the x86/ACPI side. So we can
+>>> just modify both the lookup table generation as well as the already
+>>> existing led_get(dev, "privacy-led") call to use just "privacy"
+>>> without problems.
 >>
->> This patch gives all architectures the chance to store local state
->> while inside a lazy_mmu section by making enter() return some value,
->> storing it in a local variable, and having leave() take that value.
->> That value is typed lazy_mmu_state_t - each architecture defining
->> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
->> For now we define it as int everywhere, which is sufficient to
->> support nesting.
->>
->> The diff is unfortunately rather large as all the API changes need
->> to be done atomically. Main parts:
-> This has a build error:
->
->   CC      arch/x86/kernel/asm-offsets.s
-> In file included from ./arch/x86/include/asm/irqflags.h:102,
->                  from ./include/linux/irqflags.h:18,
->                  from ./include/linux/spinlock.h:59,
->                  from ./include/linux/swait.h:7,
->                  from ./include/linux/completion.h:12,
->                  from ./include/linux/crypto.h:15,
->                  from arch/x86/kernel/asm-offsets.c:9:
-> ./arch/x86/include/asm/paravirt.h: In function 'arch_enter_lazy_mmu_mode':
-> ./arch/x86/include/asm/paravirt.h:534:16: error: 'LAZY_MMU_DEFAULT' undeclared (first use in this function)
->   534 |         return LAZY_MMU_DEFAULT;
->       |                ^~~~~~~~~~~~~~~~
-> ./arch/x86/include/asm/paravirt.h:534:16: note: each undeclared identifier is re
->
-> which gets fixed up later in the series.
+>> In that case, it may be cleaner to just go with what we have today
+>> (unless the dt maintainers have stronger opinions)
+> 
+> Well, I do, but I guess it's fine. Please don't add the suffix on the 
+> rest and add a comment for why it's there.
 
-Oh indeed good catch! I don't think there's an easy way to fix this
-cleanly due to the header soup. Since it's just a temporary change, I
-suggest:
+Dropping the "-led" suffix on the ACPI side really is no big deal,
+so if we don't want the suffix it is probably best to also drop
+it for "privacy-led" rather then setting a bad example to be
+copy and pasted.
 
-diff --git a/arch/x86/include/asm/paravirt.h
-b/arch/x86/include/asm/paravirt.h
-index 65a0d394fba1..67b9549b4255 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -531,7 +531,7 @@ static inline lazy_mmu_state_t
-arch_enter_lazy_mmu_mode(void)
- {
-     PVOP_VCALL0(mmu.lazy_mode.enter);
- 
--    return LAZY_MMU_DEFAULT;
-+    return 0; /* LAZY_MMU_DEFAULT */
- }
- 
- static inline void arch_leave_lazy_mmu_mode(lazy_mmu_state_t state)
+Regards,
+
+Hans
 
 
-That will generate a trivial conflict with patch 4, naturally.
-
-Should I send a v3 with that change?
-
-- Kevin
 
