@@ -1,359 +1,172 @@
-Return-Path: <linux-kernel+bounces-808285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF90B4FD85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE51B4FD8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD711889C97
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3A34E1B19
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656DE345755;
-	Tue,  9 Sep 2025 13:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136D121B9C8;
+	Tue,  9 Sep 2025 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hoisQODg"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3LHXIGTv"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2065.outbound.protection.outlook.com [40.107.100.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D4B342C89
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425002; cv=none; b=he6T4s7jb+IZMypX/20RNW7ZigCopzFA48/dfs9LPT86KZPJyc1d7DQEUcucpVhBpqPtfvNBim+iwjfcv2War9BTcMgKlpStyr9uFqcqtjBdiQ5rrPjl1MkQ87qOz1PxOfLQNP5AYCPHY6/cfVNZP8PBmKovFwgUouLlu8FJiFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425002; c=relaxed/simple;
-	bh=/Lhwto5s1ginBRFK1K461SpzI0kY9fIX6onz0SIu1pA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JSeiDcAqiWU9GjT67UsHeeCorgD/sE5oTcvC+rpELGKbjbHDHFkGMwiW+n15Zg1BOO6URSLvkIswrD2b/nq5g7YABFi1eaD1eJoF3xef4EVp+fWSrsxwfnkbSSncEBkrYeKuL5EY6learATatg12L0DBCPBmMePJSeCz5KBGF/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hoisQODg; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b044a42959dso469652466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757424998; x=1758029798; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MmbSiSnFwTIoU/JLu47n8SFv5vhZb2klpFQfcVoTQdo=;
-        b=hoisQODganKj576fIsZYv7zrOaZOz/kS+mzFu4bpEU59byiVAZYThzzy5PAjVcx/ag
-         Q3yFyUIDjw1fAys7FlenQSq/hpxKYnARx9pBQiv/0yjUnXZ/gSluTxDIDoiH4N6hKmE9
-         J2GrJEZWYgA88R2nFQpu2Mj1A1hLhZjObJMmzePMXvN8bTLgWZzEIGC5ju/VE0dVR/l1
-         x4kgXGnp7SDQVxICXpOA68Qswp+oL2xMXzzWePBDTiAq7P+Ycp7WT7EmovAUnjgESruR
-         51MixevmPHoO5IfTAh4eKRVQHHwhPzzut8mvODa8A37IbvPbud/L2jw74IdIo4FXgKbX
-         AnFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424998; x=1758029798;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MmbSiSnFwTIoU/JLu47n8SFv5vhZb2klpFQfcVoTQdo=;
-        b=PvfgsRXiMA+iENets/ZS8Ud1LwJ237EccrSW6R2DV06WxikI6daXpyylc3vOcguP6D
-         IzSsF7zsvFCivXpcFVpU5uqbfsjfJmkFd8/PNh9MyGbLAuxJLtrLyhydiN1CMfGG5HuP
-         2ov24dIydJLga8ZIzR4sR2IGLaaYz5MFaN+oxEszSMFnuLMT0/0M1xE4VmQMFExpxZKw
-         ZS1Sp6MN5MLQbcVE7muKq/0HBrAX0vEbN7dCVKVl3/U0ol/8yMrStDnAcYLwKo/ZX8Oi
-         bUkyg3tLfrBiaKlBcHFXZqGRGoJj6ojzpuxlr7ubU8JyatWTdXNEx8eNc7RO1keiaOxp
-         uqJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdQblW3qfQK6PpVetXWP8LPsu2WhSn6BSow4VUnerUQlfvVWWaHvx2b26OPTgnB/uIyLdK3u6r2Dn4Y+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAB2djVnbObIL2bCdWpLVn+Lnk3Dd/18sS2RYXQkSvS+42peco
-	pPAOia1f0i42Q2BVAz7RBR2UZ+gt1d8NEEo6K6bQMADHVxozY4qvmt9q6x9J3bOkmNT7vgd7LKV
-	agclH01bfJKluRWcgUw==
-X-Google-Smtp-Source: AGHT+IFAFV8+5PF+ACjxRZtS035sPxF/aJB68T82HGLHJTP0jManXfiLAOmflSk4J9V4JiFGh4CY21p9NhaMWQs=
-X-Received: from ejcwb15.prod.google.com ([2002:a17:907:d50f:b0:b04:b988:644c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:7e97:b0:b04:590a:a5b5 with SMTP id a640c23a62f3a-b04b1480b35mr1159064666b.24.1757424998120;
- Tue, 09 Sep 2025 06:36:38 -0700 (PDT)
-Date: Tue, 09 Sep 2025 13:36:23 +0000
-In-Reply-To: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B0832C33E;
+	Tue,  9 Sep 2025 13:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757424999; cv=fail; b=Y0X+6wyCZ1UCSzzdY+xvk6s7i4sQnIndQ0T2tyus08LpX6TP8KMcY7rZ1YR8TmJqa4rMsOzVIrV9ipvJWDrLHb0qHadiZKf6h8fzw3mNXiYZcE7jS2AVF7xaq+ZC7CCGxcUjR8uhoHC+wueS/SUCit34fohV5ijNcJ7GFrgQ9Q8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757424999; c=relaxed/simple;
+	bh=grnv5npyCF84e0SkbYpb2XVYfBf6ILG2ON62cmZhMIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=U1MH45uJgrtjmOZCAK/Vr/TXbc7sPVTtHrKLr2YHNEmhBazNMrxclPC3riLOAe9lgyT3QkE3N+zlJS7jZt9gr1TmvpJnYdXH+V8RzVYo5rtlsBL3wIDWN9kMR87z7ykmiza2/9/qSRfid1NnsawzcXIqrw2yrA6G2MVXS8ot6js=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3LHXIGTv; arc=fail smtp.client-ip=40.107.100.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UtIkoi+S7kkjq1oPDCclfxkSSHrO/bstSOidQ3TdHrBT1KZHDij0uZTzKJb2nuvtdjv7b5U4MhcDJpT1gnIOss2pAS7a1YZ7jUw77qT496wfu+xCLNZUZohAq50VG1++DX0Wv+FfuT3uvYmAK1AqzXg5HViYe2GKIR8LpFxrxvGCPf0A62Q6PObbxmd2HZ5nLMyqhnsTy3Tyij4W0cTQT+TlIYOEwQ0XXdRwbDIJnnDhAG0kEc+FFtedOVhdcHr13HnWh3I9yJsjWRKmcM3GS6xHp9SMDxPPSsNfzybfGttlvYad7lKcv69SHWruDKu+KtlwaLd0ZsUaX4HpnKiWBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yDgVO7PXh7nLS74CD+47EQ9Rjbmyx2AtFswoXzYHROo=;
+ b=h+xdWSXezi3CaHVH3Xeu+LR1DPTyXjXHDQEEnrTVetvoSxlQlw94OJuHqrQrXKAl8+O/JRqEyDGOeVKK4J/u3rtsB0b3jmzMOi7idzhM200hqny+RfRVhY0NLIl+oyc5ZLW7C5/wqCkU5SgtZTyNh45TMyG6nBn0A6xMr4dGfiCWMnLMgn2qAtZ6X4Fe4xkfXDElJxsSrxLORza8BLJyiXURejP1cxYgQTaRRZhAgwZi1fYk3hZXIrYhwgnYCjGGAK4hDWhDz41kv+qwlr2OnjsMq1bGv+itAxKSVFpCFqdDIEpEADqJgaUkNRvfuwTsOJlBfxdEx85ncFCWvQTCfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yDgVO7PXh7nLS74CD+47EQ9Rjbmyx2AtFswoXzYHROo=;
+ b=3LHXIGTvO9Z4W2ULcu5u7JTGc4TdmEPYegUx9uHkjQIXhKk5WWsCMExPuMWcexD70ZeRBko/Lxh8NeMcSoe2XypsLYZj68FPb3s5jYYY20oD6nx1KFmY68RNj9TiyGl7ACZKG4RB3CA33d1ULT+eilPy1zz2bsXjluDrlBxXZcg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SN7PR12MB6715.namprd12.prod.outlook.com (2603:10b6:806:271::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 13:36:34 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 13:36:34 +0000
+Date: Tue, 9 Sep 2025 09:36:29 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>,
+	"Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v6 00/15] AMD MCA interrupts rework
+Message-ID: <20250909133629.GA11602@yaz-khff2.amd.com>
+References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
+ <SJ1PR11MB60835A037ACBB309D3FBE7BAFC0CA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB60835A037ACBB309D3FBE7BAFC0CA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+X-ClientProxiedBy: YQBPR0101CA0098.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:4::31) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9052; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=/Lhwto5s1ginBRFK1K461SpzI0kY9fIX6onz0SIu1pA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBowC1iqBKdGP913iBnrFCBvAIMxLF+7dvDJhtb2
- Vee9/V2NAaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaMAtYgAKCRAEWL7uWMY5
- RkphD/wP6DfltzHI35xh9b46K2Va3My+E/65DQgQrsGjn8TnLx0MNvKWfTFhCKUJ7Yf4s3xNI0o
- hgqT3PsMCIjk1bvG3r1c2MH3ghPLrHKTbrVBDkcwj9eV6jRKHv8c+jr4JrjyISA+mezUEnzuVqX
- FUXuV6d+SplJlxzYudj2Q/Yfv36GLy4IAw+AVCv5hNGiSPbxaLVZ2JEJqlNcEoQJBoxmX9mCK8Z
- /HFEKGc8/ZlANMl9QAZQ6pYi5Z9hAxaU1bzVJRJGSYVRsa+YfaeSKvUdwRZNFwMmLsjGoE0c2mt
- tXqsqlBD/qdD6DXHqBfVNWcliItpZ17a4Podaojbn6djlv+QgbQ9DduO+JJPpbnU1UNHa2RxRpI
- vHRxQQcs4v0T1EGB7jmR49iqmmi9TjmbKRNJee2YZhpPcIY9wgj8fO09urMOKUACbizl3kVZAsO
- l9BBQ9ARwKox0AljkS9YJ2kwMFbydO8ZwyalgvYEoIO/UhOIxBel9uaolFWzuzo6F+f22ylS0TT
- 8QnI2rh92RwoqgqC+t8nJBM848s95+SW/wfhV2iaOJYm34TJKrfejU8e+RsnGOHXCQnX/B/G5xc
- HpfFNrYDrxIMpzlQ9c/0s6jj4Aoks5WfgPVGDJsz/MOQ28iF0ucIYXRdKEfagqIRcvX7BbKzRy/ 6PXqXitUFAi/Elg==
-X-Mailer: b4 0.14.2
-Message-ID: <20250909-vmbo-defer-v2-2-9835d7349089@google.com>
-Subject: [PATCH v2 2/2] panthor: use drm_gpuva_unlink_defer()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SN7PR12MB6715:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5b4f6850-1ef5-4fa9-00d3-08ddefa5e484
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b/GXK7uToxIx/QqIk9tF7KQwa85NV6Ji2iJpXMu9Go4SHF8c3tMIlpIDZyN9?=
+ =?us-ascii?Q?VIT83whT0wf29S6fClxusYBjGpiC1aLj4no/R/b0oQodrIK3NN9punsDL6Fk?=
+ =?us-ascii?Q?l+drLlE+DEshGPI7mzLVtvRBnv044kJ4y961hhubG4cPjlLUQvqBCoYNDz83?=
+ =?us-ascii?Q?+23DvYQqVVoDrpMCRuV5n2wNh4oKBd8jj696+3dBQ5ad0sP/H4MVOYHsN7HR?=
+ =?us-ascii?Q?Z7brJXZ8JKU9joQXaZD3UBD10CTeZdyYyLS9KKzsBbSdWv4qePdS2sH0mgpz?=
+ =?us-ascii?Q?/R+J9fJZx29mtYc+lDcakRkTEVgXstmvDYLvSW9uhdk0qDkDML1KcH4nyDdE?=
+ =?us-ascii?Q?uyV/TsetLMwr9+YBKouLimmvSE4kRhcEOl3IG94z7qfNnrfCjIjlPeDwKbLI?=
+ =?us-ascii?Q?LJwxX5zDVJcNNdqvT6S5sSOxx4ivKQNFG2ZZXg/JjlbBr5TI3G/r31i2T7/Y?=
+ =?us-ascii?Q?6Kwv+oFlxXK529rBDziShoSNdo97QrjRuinGEsaEQ18ymvJJYxmy0mYFAw1D?=
+ =?us-ascii?Q?pfMOu5uihm2RYku7edS52qLs0levl7R8A06nzi6Pd0qJ4uqrgFBSrvtOfDiy?=
+ =?us-ascii?Q?/9MXpO7f8JfNc+1Z9UU9nCL5eMzOcQqoiEyjnNbglzwJKsx6Y8K281u/RFjE?=
+ =?us-ascii?Q?vwSfLW0VMem9C7W0wT816TSSKGp/sZ74G69LR6WS+QzC9s72KjBoizisxPKN?=
+ =?us-ascii?Q?TQcpOuwlxI1gxNrRw38fNQXOk4SApjXiLEp7jfGrug2LmCJd+9vNLFACG9ww?=
+ =?us-ascii?Q?3mHqS/r29qs8Vi+c9/YFAcHfWniUx901fFWbvueqDuIR1tuVq0o7OZ8xK+RU?=
+ =?us-ascii?Q?t6LRmACgadQtoliGOIUOYlygDKSs6jDoohKzaNLyaWMoK7ZsmLig85fGoych?=
+ =?us-ascii?Q?Vp2AW/lhN+dl9a6Br6gUJ2tvPN7V7kYxcXAm5Jrhk45rqHuei4UjomvFeBK0?=
+ =?us-ascii?Q?V6czXQcPiD41tMiMWLBtOlNXdZrzGd0lPteeqpsa2HMWv9u/9paQWaVK8nLT?=
+ =?us-ascii?Q?24x6UjG57vJyel+qJUZ9s5zaiUlSiqEhS/Kg9AgySvycbC2/hjuKTC1uKWbB?=
+ =?us-ascii?Q?DWA9vX4LVgUoPHClQir/XwYrfmVUSeO9DRsmrapD3Ah+yEI17EWyUm1T9Iia?=
+ =?us-ascii?Q?cjz7CBXEpKZPmRGoepVYCVYRUcEFd//PrkkD0W1qJbWGr871zj6pp6NgW6uv?=
+ =?us-ascii?Q?1SK+8MYMbMpLuWz3E4rkrCzZ/T2PkEtg0JHHX7IJ3gsjCNqIjHusc0fmaSf9?=
+ =?us-ascii?Q?bPZJHoEhKbap3kFtHLcGMe2Uw+dSPp/kxSqr5KHgBMl+n/YmB2Va2W6BdpWU?=
+ =?us-ascii?Q?oSmF3fvu/nBI3Y+PNSo7jBRLLLbKcsxcXHSna6/ZPkZzmPH6D+pcVVqs2BkP?=
+ =?us-ascii?Q?P7ffCeIyTr7kGwPVBvp50oL2wchtcoBSoj6okXgEWXo/KJiU72aAoYoKEWNB?=
+ =?us-ascii?Q?LjI/hnvNdDs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/L12CmooYCwcHUF45CwSDiiywrgHlhuZ6Pt1GagmN1PZvp/7Zm1wKr/xF80T?=
+ =?us-ascii?Q?EDOyDlZwxpEkvgTjzsUcCU1XR0emGtPaCcz19EC8txD8LrS7aUTE82Z9dmQQ?=
+ =?us-ascii?Q?L38b9af9Sk9jeVlCDc8axC4PcOjhGM4cbA7CWOmBBkqqNqZZBNmwnyN6C8DI?=
+ =?us-ascii?Q?RmCqY1ZeEnh9PDiuyQlNPNgggHJuDowFIoPHuZKvhvAUuHAq0+Tpnu6C5to8?=
+ =?us-ascii?Q?yioks+JPN6hLrFREm0USSxW2YU81DO7u6TU7Yj+rrJlUpDi6DRBGDwaaep71?=
+ =?us-ascii?Q?MMUPqKgM1q1eXciZiFBKw2vrQJY1HjPPOIi2yfPp3kTcv6GApQYJy4UBW0jZ?=
+ =?us-ascii?Q?LDO6OI6z5gjyMGZiSpAt2lz9hcIkrElkIkjxPsD+JeA92zgo5lQN0e4npS0r?=
+ =?us-ascii?Q?M6BX3GjxuL4DykW4eq8h7c78N1wuLz6I8WwlFJKbm0RFJ7Yh6Y5Goyzx5GwK?=
+ =?us-ascii?Q?rcJyYLjf8mFGTDkE+ngRYfgzcxLSp9Jl3qd9biDw24wuZH3S/vojpD+ikPyi?=
+ =?us-ascii?Q?JIayI7g1ExQI7b23nsZo5V1BpOEE8E/u27S4R+C27+2uZEDDpalEzE6gb18k?=
+ =?us-ascii?Q?KFgNK4MumInwk7v0457KeSlWBbReiJOduDPYSnTzob6uEr4Lth8kW43gJEG1?=
+ =?us-ascii?Q?FnikDIIHEWljZzKI12CryTt90gEAX5Bl+C4ojzstnIMR6ni3mBuuEdWKkJzb?=
+ =?us-ascii?Q?lc9MteetG1VOtexugikRUN2tQvFe4kmlnu0JL+ga8BphNuKoVOjZPdd26io2?=
+ =?us-ascii?Q?EXtr5/ZwlCvM0PIlmNfHEuhnOg+nh8q3xJueFocLj5Dr9h+nI8Wxw81Y/xdG?=
+ =?us-ascii?Q?uU8xdayf1qdD/dQuTrV5hRiPGx1vQblNwNtikbM8RfhtFF0R8wr9Ov0sZt5o?=
+ =?us-ascii?Q?XPORkpIqHjGcVdtO7R2kMrgovdd/sYA803+zeRLdvEwrA3sRdRLdCiNmalMD?=
+ =?us-ascii?Q?RJnrOTVc1UhaQGYhRtl0/rKnbMlzbFV9ieu7nccPbr4yerABJQkznxIEe2Pv?=
+ =?us-ascii?Q?j8RQYRkdDrSTzfqRQUWPJv+y1k+bi3UNfBHIAVje/z/2bumTpqVDrhtwd7E8?=
+ =?us-ascii?Q?3EuYWK/SP+1obWP4xO2uwcWO8xhSjTKx9lAnvRxVIUZtDFp3Ft5dVuPtA7Ag?=
+ =?us-ascii?Q?skRq1cZ6kuVh4/LIsHY3xib3ieauOVkAaC5O3h4Cjt+M5RG5UQhdp1Dzk0Eg?=
+ =?us-ascii?Q?XlWIp+KBYKR3RDVVJMx9N9FN870C8VzOjlhO9MecSKx07YNn0kOZzfhYSOxl?=
+ =?us-ascii?Q?vimdQR0gK/ile64rSzYOFqratq+4aDsFGa5ej5bTgn4KboJ3WaPU7kjt97cJ?=
+ =?us-ascii?Q?inPM1cHpwrMBcJHbq/6c1aVqg3Ni+3tHxWrjMtxMJW5sch383pqPM1H4/mKQ?=
+ =?us-ascii?Q?caHODxKOzIiqjwYmCh36E9Rma97uBaAW7/PZC9C8d1LlhIU2HRpnHl3VEbpA?=
+ =?us-ascii?Q?kuW3t9OeDXbailKM9MV7hqKJ7k/fEyHtAYZRvp2BZqqlNDsHh4+3xmF5obfu?=
+ =?us-ascii?Q?cQc3lo8CS57rlVjFxt//acK16P4Fje+5Ov0cxuLzEoQIT79+2d8jDWaqbox7?=
+ =?us-ascii?Q?fjsDuxdcH/4k4m+NOkjb9aB08udHLKeRNZ1Y7kUF?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b4f6850-1ef5-4fa9-00d3-08ddefa5e484
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 13:36:34.3235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: US+pC+vEIdPlskpa4ZcEEaIujNqRmM2ULxj7eVFoOb/iZeZ4AHvIZl7fNw/5g+2pTETUOCjHJJTohYv2VkOVYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6715
 
-Instead of manually deferring cleanup of vm_bos, use the new GPUVM
-infrastructure for doing so.
+On Mon, Sep 08, 2025 at 04:10:30PM +0000, Luck, Tony wrote:
+> > This set unifies the AMD MCA interrupt handlers with common MCA code.
+> > The goal is to avoid duplicating functionality like reading and clearing
+> > MCA banks.
+> 
+> Still works fine on Intel Icelake system. Tested poison recovery, and CMCI
+> storm handling.
+> 
 
-To avoid manual management of vm_bo refcounts, the panthor_vma_link()
-and panthor_vma_unlink() methods are changed to get and put a vm_bo
-refcount on the vm_bo. This simplifies the code a lot. I preserved the
-behavior where panthor_gpuva_sm_step_map() drops the refcount right away
-rather than letting panthor_vm_cleanup_op_ctx() do it later.
+Thanks for testing!
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/gpu/drm/panthor/panthor_mmu.c | 113 ++++++----------------------------
- 1 file changed, 19 insertions(+), 94 deletions(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 6dec4354e3789d17c5a87fc8de3bc86764b804bc..fd9ed88a4259e5fb88e5acffcf6d8a658cc7115d 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -181,20 +181,6 @@ struct panthor_vm_op_ctx {
- 		u64 range;
- 	} va;
- 
--	/**
--	 * @returned_vmas: List of panthor_vma objects returned after a VM operation.
--	 *
--	 * For unmap operations, this will contain all VMAs that were covered by the
--	 * specified VA range.
--	 *
--	 * For map operations, this will contain all VMAs that previously mapped to
--	 * the specified VA range.
--	 *
--	 * Those VMAs, and the resources they point to will be released as part of
--	 * the op_ctx cleanup operation.
--	 */
--	struct list_head returned_vmas;
--
- 	/** @map: Fields specific to a map operation. */
- 	struct {
- 		/** @map.vm_bo: Buffer object to map. */
-@@ -1081,47 +1067,18 @@ void panthor_vm_free_va(struct panthor_vm *vm, struct drm_mm_node *va_node)
- 	mutex_unlock(&vm->mm_lock);
- }
- 
--static void panthor_vm_bo_put(struct drm_gpuvm_bo *vm_bo)
-+static void panthor_vm_bo_free(struct drm_gpuvm_bo *vm_bo)
- {
- 	struct panthor_gem_object *bo = to_panthor_bo(vm_bo->obj);
--	struct drm_gpuvm *vm = vm_bo->vm;
--	bool unpin;
--
--	/* We must retain the GEM before calling drm_gpuvm_bo_put(),
--	 * otherwise the mutex might be destroyed while we hold it.
--	 * Same goes for the VM, since we take the VM resv lock.
--	 */
--	drm_gem_object_get(&bo->base.base);
--	drm_gpuvm_get(vm);
--
--	/* We take the resv lock to protect against concurrent accesses to the
--	 * gpuvm evicted/extobj lists that are modified in
--	 * drm_gpuvm_bo_destroy(), which is called if drm_gpuvm_bo_put()
--	 * releases sthe last vm_bo reference.
--	 * We take the BO GPUVA list lock to protect the vm_bo removal from the
--	 * GEM vm_bo list.
--	 */
--	dma_resv_lock(drm_gpuvm_resv(vm), NULL);
--	mutex_lock(&bo->base.base.gpuva.lock);
--	unpin = drm_gpuvm_bo_put(vm_bo);
--	mutex_unlock(&bo->base.base.gpuva.lock);
--	dma_resv_unlock(drm_gpuvm_resv(vm));
- 
--	/* If the vm_bo object was destroyed, release the pin reference that
--	 * was hold by this object.
--	 */
--	if (unpin && !drm_gem_is_imported(&bo->base.base))
-+	if (!drm_gem_is_imported(&bo->base.base))
- 		drm_gem_shmem_unpin(&bo->base);
--
--	drm_gpuvm_put(vm);
--	drm_gem_object_put(&bo->base.base);
-+	kfree(vm_bo);
- }
- 
- static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 				      struct panthor_vm *vm)
- {
--	struct panthor_vma *vma, *tmp_vma;
--
- 	u32 remaining_pt_count = op_ctx->rsvd_page_tables.count -
- 				 op_ctx->rsvd_page_tables.ptr;
- 
-@@ -1134,16 +1091,12 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	kfree(op_ctx->rsvd_page_tables.pages);
- 
- 	if (op_ctx->map.vm_bo)
--		panthor_vm_bo_put(op_ctx->map.vm_bo);
-+		drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
- 
- 	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++)
- 		kfree(op_ctx->preallocated_vmas[i]);
- 
--	list_for_each_entry_safe(vma, tmp_vma, &op_ctx->returned_vmas, node) {
--		list_del(&vma->node);
--		panthor_vm_bo_put(vma->base.vm_bo);
--		kfree(vma);
--	}
-+	drm_gpuvm_bo_deferred_cleanup(&vm->base);
- }
- 
- static struct panthor_vma *
-@@ -1232,7 +1185,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 		return -EINVAL;
- 
- 	memset(op_ctx, 0, sizeof(*op_ctx));
--	INIT_LIST_HEAD(&op_ctx->returned_vmas);
- 	op_ctx->flags = flags;
- 	op_ctx->va.range = size;
- 	op_ctx->va.addr = va;
-@@ -1243,7 +1195,9 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 
- 	if (!drm_gem_is_imported(&bo->base.base)) {
- 		/* Pre-reserve the BO pages, so the map operation doesn't have to
--		 * allocate.
-+		 * allocate. This pin is dropped in panthor_vm_bo_free(), so
-+		 * once we call drm_gpuvm_bo_create(), GPUVM will take care of
-+		 * dropping the pin for us.
- 		 */
- 		ret = drm_gem_shmem_pin(&bo->base);
- 		if (ret)
-@@ -1263,9 +1217,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 
- 	preallocated_vm_bo = drm_gpuvm_bo_create(&vm->base, &bo->base.base);
- 	if (!preallocated_vm_bo) {
--		if (!drm_gem_is_imported(&bo->base.base))
--			drm_gem_shmem_unpin(&bo->base);
--
- 		ret = -ENOMEM;
- 		goto err_cleanup;
- 	}
-@@ -1282,16 +1233,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	mutex_unlock(&bo->base.base.gpuva.lock);
- 	dma_resv_unlock(panthor_vm_resv(vm));
- 
--	/* If the a vm_bo for this <VM,BO> combination exists, it already
--	 * retains a pin ref, and we can release the one we took earlier.
--	 *
--	 * If our pre-allocated vm_bo is picked, it now retains the pin ref,
--	 * which will be released in panthor_vm_bo_put().
--	 */
--	if (preallocated_vm_bo != op_ctx->map.vm_bo &&
--	    !drm_gem_is_imported(&bo->base.base))
--		drm_gem_shmem_unpin(&bo->base);
--
- 	op_ctx->map.bo_offset = offset;
- 
- 	/* L1, L2 and L3 page tables.
-@@ -1339,7 +1280,6 @@ static int panthor_vm_prepare_unmap_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	int ret;
- 
- 	memset(op_ctx, 0, sizeof(*op_ctx));
--	INIT_LIST_HEAD(&op_ctx->returned_vmas);
- 	op_ctx->va.range = size;
- 	op_ctx->va.addr = va;
- 	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP;
-@@ -1387,7 +1327,6 @@ static void panthor_vm_prepare_sync_only_op_ctx(struct panthor_vm_op_ctx *op_ctx
- 						struct panthor_vm *vm)
- {
- 	memset(op_ctx, 0, sizeof(*op_ctx));
--	INIT_LIST_HEAD(&op_ctx->returned_vmas);
- 	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_SYNC_ONLY;
- }
- 
-@@ -2033,26 +1972,13 @@ static void panthor_vma_link(struct panthor_vm *vm,
- 
- 	mutex_lock(&bo->base.base.gpuva.lock);
- 	drm_gpuva_link(&vma->base, vm_bo);
--	drm_WARN_ON(&vm->ptdev->base, drm_gpuvm_bo_put(vm_bo));
- 	mutex_unlock(&bo->base.base.gpuva.lock);
- }
- 
--static void panthor_vma_unlink(struct panthor_vm *vm,
--			       struct panthor_vma *vma)
-+static void panthor_vma_unlink(struct panthor_vma *vma)
- {
--	struct panthor_gem_object *bo = to_panthor_bo(vma->base.gem.obj);
--	struct drm_gpuvm_bo *vm_bo = drm_gpuvm_bo_get(vma->base.vm_bo);
--
--	mutex_lock(&bo->base.base.gpuva.lock);
--	drm_gpuva_unlink(&vma->base);
--	mutex_unlock(&bo->base.base.gpuva.lock);
--
--	/* drm_gpuva_unlink() release the vm_bo, but we manually retained it
--	 * when entering this function, so we can implement deferred VMA
--	 * destruction. Re-assign it here.
--	 */
--	vma->base.vm_bo = vm_bo;
--	list_add_tail(&vma->node, &vm->op_ctx->returned_vmas);
-+	drm_gpuva_unlink_defer(&vma->base);
-+	kfree(vma);
- }
- 
- static void panthor_vma_init(struct panthor_vma *vma, u32 flags)
-@@ -2084,12 +2010,12 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
- 	if (ret)
- 		return ret;
- 
--	/* Ref owned by the mapping now, clear the obj field so we don't release the
--	 * pinning/obj ref behind GPUVA's back.
--	 */
- 	drm_gpuva_map(&vm->base, &vma->base, &op->map);
- 	panthor_vma_link(vm, vma, op_ctx->map.vm_bo);
-+
-+	drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
- 	op_ctx->map.vm_bo = NULL;
-+
- 	return 0;
- }
- 
-@@ -2128,16 +2054,14 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
- 		 * owned by the old mapping which will be released when this
- 		 * mapping is destroyed, we need to grab a ref here.
- 		 */
--		panthor_vma_link(vm, prev_vma,
--				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
-+		panthor_vma_link(vm, prev_vma, op->remap.unmap->va->vm_bo);
- 	}
- 
- 	if (next_vma) {
--		panthor_vma_link(vm, next_vma,
--				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
-+		panthor_vma_link(vm, next_vma, op->remap.unmap->va->vm_bo);
- 	}
- 
--	panthor_vma_unlink(vm, unmap_vma);
-+	panthor_vma_unlink(unmap_vma);
- 	return 0;
- }
- 
-@@ -2154,12 +2078,13 @@ static int panthor_gpuva_sm_step_unmap(struct drm_gpuva_op *op,
- 		return ret;
- 
- 	drm_gpuva_unmap(&op->unmap);
--	panthor_vma_unlink(vm, unmap_vma);
-+	panthor_vma_unlink(unmap_vma);
- 	return 0;
- }
- 
- static const struct drm_gpuvm_ops panthor_gpuvm_ops = {
- 	.vm_free = panthor_vm_free,
-+	.vm_bo_free = panthor_vm_bo_free,
- 	.sm_step_map = panthor_gpuva_sm_step_map,
- 	.sm_step_remap = panthor_gpuva_sm_step_remap,
- 	.sm_step_unmap = panthor_gpuva_sm_step_unmap,
-
--- 
-2.51.0.384.g4c02a37b29-goog
-
+-Yazen
 
