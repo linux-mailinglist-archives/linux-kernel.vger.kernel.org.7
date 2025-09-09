@@ -1,247 +1,124 @@
-Return-Path: <linux-kernel+bounces-808963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735EFB506E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:21:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30DBB506E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD441C2281E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:21:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F57E7A9A4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F443054F0;
-	Tue,  9 Sep 2025 20:21:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BFF32CF92;
+	Tue,  9 Sep 2025 20:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvlNrdGE"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D581FE44A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 20:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275F91FE44A;
+	Tue,  9 Sep 2025 20:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757449281; cv=none; b=fN2Mwtec82yNgN/4GzqoX83XK9Z7ATjvDSnEJ4OZwJdtPh2xxppfHqh2mbPMGKNFDmdr11dtj+FHsF++pVXEjJJMl4o7ye120/56KvTPDqku/0BCr/YWb+U+kIapb9bI7bUz4vXDJJ9c6+L4a74l/u0V6Eq3guXGSvHpQXMYOwM=
+	t=1757449345; cv=none; b=qbdwFiQqxBWopsvQstym85nnBR7etSILnPmpEpMw69EWsWCRaJBl7c0NfBP2fP07H9BU+1TeNDzLYBPispdK2CPnDj7QxfuFdlO1Lai+b5rlCcGWPdJMpVSmNa1dRpRxaKJuWhOYobiRfkilo7hv8jo4lnxfZcAXxJ/gv03XE+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757449281; c=relaxed/simple;
-	bh=B/M5UH9SJiJn4aSOr67qjYJPA0fzRmeVBYk5T4w9MBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AGzL3c7KfYBk+3eFDSh52lnJg3SAeYdZFm8IdGUn3zscFcswBpE77twhOZ0feviLXw2K1kKsnad0bczHH2SQxvEMbZeQoXb0ECjnww0BctihlX1fGpa1EbjHr/H0FL+DuUO+zq1NAfegjT2c4Ts3Ll2bUr2CNFn6D8nj08E0aLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id A0BCF1404C1;
-	Tue,  9 Sep 2025 20:21:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 8163332;
-	Tue,  9 Sep 2025 20:21:07 +0000 (UTC)
-Date: Tue, 9 Sep 2025 16:21:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Guenter Roeck <linux@roeck-us.net>, Luo Gengkun
- <luogengkun@huaweicloud.com>, Pu Lehui <pulehui@huawei.com>, Qianfeng Rong
- <rongqianfeng@vivo.com>, Vladimir Riabchun <ferr.lambarginio@gmail.com>,
- Wang Liang <wangliang74@huawei.com>
-Subject: [GIT PULL] tracing: Fixes for v6.17
-Message-ID: <20250909162155.76756fe3@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757449345; c=relaxed/simple;
+	bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=AlcgdQPEOiQmxj5mft/JnbRSmCXWyJ+bV/3FPkq1cVWfHXBPIAymbho+qQ3Ct1kvDFpp/lmo7qO3JDH2MHcbB9RvGVONePryvOlVEbU7V/+02CIDzyUfJz+xr3n7NrkHqJ+RBrdKUSVSkHztOPZS70eKD9GF9S2ktXJ9MnYj/HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvlNrdGE; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52eb6872bd2so2671251137.3;
+        Tue, 09 Sep 2025 13:22:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757449343; x=1758054143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
+        b=PvlNrdGEYdSQn0pu9fbcgf2ReYuMsEsvIoSdtdvZoVf7KmpIaQYBybGMOjhmYamuFs
+         X6uJn2fanbtGP/VwChwHa50GC/LVC6gDpJtvmkLg9+bYI9OwPo1DisYuZ1FhPdMvk8GR
+         2QZjuN91tEjytinDW7H7z8ZRXsWvWF17AIUPEp8AwS4im7wMQfOxbvR4497WLuhj9eqZ
+         L8YXCSPRmN2puBK5u1sGM63oRzITThB4dniHvCD6sjlcxtQzNXuM/917w8lprL35Xzt2
+         ZTquaYWoCwHdtNjjr3S2VjycO1gHArR0qhDzSo5+mFjJQwjNClJx/Kpg7lpFdg99iUdh
+         DLXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757449343; x=1758054143;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
+        b=ibrvGQ/2m3BcEwx92xl5P3N4rwh+lXpscYGI/KaidgwR8F5/pvjGifxFcgdHFiez0W
+         WfE8E6MNdigZZlU+ocTx9QIT7qwrnot9IIZ/foPe+sZSGcoS0jSAoiGzUINRkGd8K6H4
+         ieXU1i/P5jLSzkEsYChcbUnbEe4UE9vEKmTfAUL6BprAbHQTVvKYuU4A7hO2GmOuwmC9
+         k5GCEzn0HOxB1+e3CvVPOaKGRayVrkS2gHVYlklDGHtlahhlLJrlIEKqG22qYKinfH2b
+         lxa/lb0SPlFyjRFLfQnt/Fwt3rmiYyqYMR5d6KK94/zTVLAvKJtXHf7C1ItEoKvHU5dx
+         St7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW3iXbyNU7MFWHMj8ZtyjlTmM7cVOC7Wfu8tbzwYEJp7sM/gaPoWiWjC4TRMS8IjRkEEWc9rumHK3X2A51D@vger.kernel.org, AJvYcCX5IIv1GJsh3X7w4Qtr4wlPKJaoexQ7lleRc1DS8p4bJFV6ZB0Fw95dqijTnSWd2BuTpptNQGDCNeRt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxbWDGor2xMKTjquMLgcPQLF+br5jAsICg2tYL+fZ0SyEY2hoR
+	K5LkJjsYxG1ICn1w0/MJ28tu4l8s5jRtI1XTL5RgT4lwgZ0SmyzxrORCbr45nTSn
+X-Gm-Gg: ASbGnctY5rQzZ5TuXre78g4toD2fUcKM+2h9kHbGru3vYfI6U8dJQ/k7coRb2hqfvGs
+	usociNnPGkRl9jdP7+xTycCEaBszEYJHra+ONpgknFPehzNzalAnn64loBx5ebzcCaXxOfQQcnD
+	ADMlmuXj7/s5hXKHsVPAZdqS+MijAVOILSCqJOmG4fKi43Xct87m+jJ+ciDLRjT7iYv1YVkGEV9
+	JIuqwfxOg2S47JYHQx7CqpCo1zGsLmZgRaAJJOsUwe9HARoA5mW0KRHBsiR4Sq5BCldyrk5qlOU
+	rR98tIxC42ZPKrwtKAo6XoPE6KGvt7SazByzohYG4NxObBCOp3IPg+YfCjTAh7duLLmj0wb6GPB
+	ntgq0fTT9HCtXLN3puiNpaaTFDPp9hL5Cb6rbltMODTE=
+X-Google-Smtp-Source: AGHT+IET0cEihoPzYDrli9hVnvOSOkquH6jtJx5NYH/GU0N8fQUT9tj3olQPNw7rngs0uDi4EVYuzQ==
+X-Received: by 2002:a05:6102:3586:b0:537:f1db:7694 with SMTP id ada2fe7eead31-53d100706d0mr3965895137.15.1757449342913;
+        Tue, 09 Sep 2025 13:22:22 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2804:18:93c:9509:7066:6bc:183f:9270])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8982751bf54sm8612711241.21.2025.09.09.13.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 13:22:22 -0700 (PDT)
+Date: Tue, 09 Sep 2025 17:22:17 -0300
+From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_1/3=5D_arm64=3A_dts=3A_qcom=3A_sm82?=
+ =?US-ASCII?Q?50-samsung-r8q=3A_Move_common_parts_to_dtsi?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <9e1e68e9-8bf1-4529-a2c0-3ecb2474d8d1@oss.qualcomm.com>
+References: <20250905190931.27481-1-ghatto404@gmail.com> <20250905190931.27481-2-ghatto404@gmail.com> <9e1e68e9-8bf1-4529-a2c0-3ecb2474d8d1@oss.qualcomm.com>
+Message-ID: <8155F2C9-1E99-457E-B4C8-9C9081D679B1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8163332
-X-Stat-Signature: 6ed81iphj3p4sq5zoh6x3x7pzog3zi4q
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/pFCtkiMlScp8QdSgap9eUBYoUUURp+/0=
-X-HE-Tag: 1757449267-593935
-X-HE-Meta: U2FsdGVkX192R7Z9nLYbjkTGYEO686FibHXC8V57T75Trc9sl5SL55tDVj8IXX2/Wrg/bRi/E4qFeTE0UrLK7y5YtB2cMqF2t76CotEOBVZ5R9t4JJ5O1CDoHGUVxV8DJ5bU+cQ4mb7jMeiu8hlKI6oPlFEGaQC4ktR0gO5gfZcZbS/Mm22VGY6qRnnZgWpR7Wr22IWVffSz2De+zayKfdBJP5hg4X/5oV/hStvPPQgkvLhKsie8yuPGbQvC8m2p5kxGkNlGr0aUQd0iUx66hB64Ce07x2d6lVXIc/KBiVL2WeAMsYRNHRh8szYUAGQtZ3tlyIuyeQUC7BSkDNh7rIPmQrFtnqWWMTAnOAsavA2oE7uXZ0HZWoqkYxowRImindyu4MWkzD9EfLLMOKgJdJRLGCsLZa54ch/h/BTHWtxYldJP2p4R0Edsr0laUma9zqNKHs4RO7S/DrLk8gWfBx89mjIPy58Va2Fd9C3Wazp40BYwTZyZCQ==
-
-Guenter Roeck <linux@roeck-us.net>, Luo Gengkun <luogengkun@huaweicloud.com>, Pu Lehui <pulehui@huawei.com>, Qianfeng Rong <rongqianfeng@vivo.com>, Vladimir Riabchun <ferr.lambarginio@gmail.com>, Wang Liang <wangliang74@huawei.com>
-
-Linus,
-
-Tracing fixes for v6.17:
-
-- Remove redundant __GFP_NOWARN flag is kmalloc
-
-  As now __GFP_NOWARN is part of __GFP_NOWAIT, it can be removed from kmalloc
-  as it is redundant.
-
-- Use copy_from_user_nofault() instead of _inatomic() for trace markers
-
-  The trace_marker files are written to to allow user space to quickly write
-  into the tracing ring buffer. Back in 2016, the get_user_pages_fast() and
-  the kmap() logic was replaced by a __copy_from_user_inatomic(). But the
-  _inatomic() is somewhat a misnomer, as if the data being read faults, it can
-  cause a schedule. This is not something you want to do in an atomic context.
-  Since the time this was added, copy_from_user_nofault() was added which is
-  what is actually needed here. Replace the inatomic() with the nofault().
-
-- Fix the assembly markup in the ftrace direct sample code
-
-  The ftrace direct sample code (which is also used for selftests), had the
-  size directive between the "leave" and the "ret" instead of after the ret.
-  This caused objtool to think the code was unreachable.
-
-- Only call unregister_pm_notifier() on outer most fgraph registration
-
-  There was an error path in register_ftrace_graph() that did not call
-  unregister_pm_notifier() on error, so it was added in the error path.
-  The problem with that fix, is that register_pm_notifier() is only called by
-  the initial user of fgraph. If that succeeds, but another fgraph
-  registration were to fail, then unregister_pm_notifier() would be called
-  incorrectly.
-
-- Fix a crash in osnoise when zero size cpumask is passed in
-
-  If a zero size CPU mask is passed in, the kmalloc() would return
-  ZERO_SIZE_PTR which is not checked, and the code would continue thinking it
-  had real memory and crash. If zero is passed in as the size of the write,
-  simply return 0.
-
-- Fix possible warning in trace_pid_write()
-
-  If while processing a series of numbers passed to the "set_event_pid" file,
-  and one of the updates fails to allocate (triggered by a fault injection),
-  it can cause a warning to trigger. Check the return value of the call to
-  trace_pid_list_set() and break out early with an error code if it fails.
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-Please pull the latest trace-v6.17-rc4 tree, which can be found at:
 
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.17-rc4
-
-Tag SHA1: ff84e946ad59a3b7f3254d667aa7f47bf21246a0
-Head SHA1: cd4453c5e983cf1fd5757e9acb915adb1e4602b6
-
-
-Guenter Roeck (1):
-      trace/fgraph: Fix error handling
-
-Luo Gengkun (1):
-      tracing: Fix tracing_marker may trigger page fault during preempt_disable
-
-Pu Lehui (1):
-      tracing: Silence warning when chunk allocation fails in trace_pid_write
-
-Qianfeng Rong (1):
-      trace: Remove redundant __GFP_NOWARN
-
-Vladimir Riabchun (1):
-      ftrace/samples: Fix function size computation
-
-Wang Liang (1):
-      tracing/osnoise: Fix null-ptr-deref in bitmap_parselist()
-
-----
- kernel/trace/fgraph.c                 |  3 ++-
- kernel/trace/trace.c                  | 10 +++++++---
- kernel/trace/trace_events_user.c      |  2 +-
- kernel/trace/trace_osnoise.c          |  3 +++
- samples/ftrace/ftrace-direct-modify.c |  2 +-
- 5 files changed, 14 insertions(+), 6 deletions(-)
----------------------------
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 2a42c1036ea8..1e3b32b1e82c 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1397,7 +1397,8 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 		ftrace_graph_active--;
- 		gops->saved_func = NULL;
- 		fgraph_lru_release_index(i);
--		unregister_pm_notifier(&ftrace_suspend_notifier);
-+		if (!ftrace_graph_active)
-+			unregister_pm_notifier(&ftrace_suspend_notifier);
- 	}
- 	return ret;
- }
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 1b7db732c0b1..b3c94fbaf002 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -834,7 +834,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 		/* copy the current bits to the new max */
- 		ret = trace_pid_list_first(filtered_pids, &pid);
- 		while (!ret) {
--			trace_pid_list_set(pid_list, pid);
-+			ret = trace_pid_list_set(pid_list, pid);
-+			if (ret < 0)
-+				goto out;
-+
- 			ret = trace_pid_list_next(filtered_pids, pid + 1, &pid);
- 			nr_pids++;
- 		}
-@@ -871,6 +874,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 		trace_parser_clear(&parser);
- 		ret = 0;
- 	}
-+ out:
- 	trace_parser_put(&parser);
- 
- 	if (ret < 0) {
-@@ -7209,7 +7213,7 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
- 	entry = ring_buffer_event_data(event);
- 	entry->ip = ip;
- 
--	len = __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
-+	len = copy_from_user_nofault(&entry->buf, ubuf, cnt);
- 	if (len) {
- 		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
- 		cnt = FAULTED_SIZE;
-@@ -7306,7 +7310,7 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
- 
- 	entry = ring_buffer_event_data(event);
- 
--	len = __copy_from_user_inatomic(&entry->id, ubuf, cnt);
-+	len = copy_from_user_nofault(&entry->id, ubuf, cnt);
- 	if (len) {
- 		entry->id = -1;
- 		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index af42aaa3d172..2ab283fd3032 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -496,7 +496,7 @@ static bool user_event_enabler_queue_fault(struct user_event_mm *mm,
- {
- 	struct user_event_enabler_fault *fault;
- 
--	fault = kmem_cache_zalloc(fault_cache, GFP_NOWAIT | __GFP_NOWARN);
-+	fault = kmem_cache_zalloc(fault_cache, GFP_NOWAIT);
- 
- 	if (!fault)
- 		return false;
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index fd259da0aa64..337bc0eb5d71 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
- 	int running, err;
- 	char *buf __free(kfree) = NULL;
- 
-+	if (count < 1)
-+		return 0;
-+
- 	buf = kmalloc(count, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
-diff --git a/samples/ftrace/ftrace-direct-modify.c b/samples/ftrace/ftrace-direct-modify.c
-index cfea7a38befb..da3a9f2091f5 100644
---- a/samples/ftrace/ftrace-direct-modify.c
-+++ b/samples/ftrace/ftrace-direct-modify.c
-@@ -75,8 +75,8 @@ asm (
- 	CALL_DEPTH_ACCOUNT
- "	call my_direct_func1\n"
- "	leave\n"
--"	.size		my_tramp1, .-my_tramp1\n"
- 	ASM_RET
-+"	.size		my_tramp1, .-my_tramp1\n"
- 
- "	.type		my_tramp2, @function\n"
- "	.globl		my_tramp2\n"
+On September 8, 2025 1:00:29 PM GMT-03:00, Konrad Dybcio <konrad=2Edybcio@=
+oss=2Equalcomm=2Ecom> wrote:
+>On 9/5/25 9:09 PM, Eric Gon=C3=A7alves wrote:
+>> Move common parts of the device tree to a separate dtsi in preparation =
+for
+>> adding other Samsung devices from the S20, Tab S7 or Note 20 families,
+>> creating sm8250-samsung-common=2Edtsi=2E Also add support for UFS, USB =
+and
+>> GPIO keys=2E
+>>=20
+>> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
+>> ---
+>
+>FWIW next time try:
+>
+>git config diff=2ErenameLimit 999999
+>
+>so that moving code around will hopefully generate a smaller diff
+>
+>Reviewed-by: Konrad Dybcio <konrad=2Edybcio@oss=2Equalcomm=2Ecom>
+>
+>Konrad
+will do, thanks!
 
