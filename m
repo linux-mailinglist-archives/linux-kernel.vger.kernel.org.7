@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-807053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4919B49F54
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:41:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D2DB49F62
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83F71BC24BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:41:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E4037A51E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289532550AD;
-	Tue,  9 Sep 2025 02:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71902561C5;
+	Tue,  9 Sep 2025 02:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yS3MXcXI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="VvE3WCTc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D799525485F;
-	Tue,  9 Sep 2025 02:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6F70830;
+	Tue,  9 Sep 2025 02:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757385656; cv=none; b=eVXMNuX/JEVeEnpShRhkXU0bvs+lr2rcoDpozLExYjUxaESZpsHSy3eU5EZjcMIarvSMeQgQDx7UC5SGsv8qShkfETCXk+sv+o3J75X7umaJosB0K+xt5L4KxB4SEkTDJW6gaDxK14cwza13jPGTUjKtIENTXmD+wmaK7rTrr0E=
+	t=1757386075; cv=none; b=WzkCJ1IxG4y8+OAGnT8E1KSL3BQPV2zWjpm67YPYdj6niPk/e66Fz4g8F2SQwyr9Oe+hOfBeRUpQczsvarIzfkmSxwlOjwXJLUxoYE7qTP/iD0F6aj/jjtiJO8xrECX1PalNHiulLHfO4+mPbqHMdBXwuv4d4Me6UIIdwFVtcEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757385656; c=relaxed/simple;
-	bh=gCl9SVS2HpXGwCDosjXmt0N4y6WvCp6gsVXWLl/9Ohk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kOSu7OC1HLP+aXzzuVyX1IlYahCDPKiS++whplOJV8cZUGszPgTCp2zHVyo03k9LAWitlBXGJrK3QtybA+sQbiAb/g041UP9b5aMN3k76MbLkoFXHwvR6CTl/qdFF3HNoOZE3XztZenjroialpp6OpQokv+aLNsvbABDldt4mns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yS3MXcXI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5892eoSU189023;
-	Mon, 8 Sep 2025 21:40:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757385650;
-	bh=oEuN3cjM/BEkZI5UyL8A+WNuDqsqCfNuIENBSMw2Vh4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=yS3MXcXI4ouRo+FFvCPNxlLPTdJoyH/ekj8RpIj8XKbxdMJ6oIkKxeWhoHftm56kp
-	 2u1qAK4pZ3nOZOBu8CN1ADhVeLm5kU+rqd32K2q2CP9jDoIuTPMeu47IYIBTZuGXns
-	 x4NYcC1IQkfo/8nnHBaWlprvQzVtvFYCWIRmstx8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5892eojt3450612
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 8 Sep 2025 21:40:50 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
- Sep 2025 21:40:49 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 8 Sep 2025 21:40:49 -0500
-Received: from [10.24.68.177] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5892eicK1581243;
-	Mon, 8 Sep 2025 21:40:45 -0500
-Message-ID: <836f7b6a-87ba-435a-9c5b-5be1f05114e8@ti.com>
-Date: Tue, 9 Sep 2025 08:10:44 +0530
+	s=arc-20240116; t=1757386075; c=relaxed/simple;
+	bh=ejR9grjKWc97yGUBrV5lFsu49cLZsmuMV1SaMV0W+CM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXQSRizc8NJu/582HlKLRvmb9dIJTto0GAFMHWfGdz590R6fcmazYmOfyDgXPF5vppOasCWy7LkOxXLlNafhU6n5Sw2vdVQOMkETfNQTtUS/VQmusHITbqDr3MKRMowxLVNXiIpeKYrpjblIQLDQRHYN3kANT9Cqy/v1hOsz2S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=VvE3WCTc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202508; t=1757386069;
+	bh=9+CdsBGy4T2E0zJIcbzCDvyA+QnH9bQ4ENyn6rO8WlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VvE3WCTct7v+aCxguHq3gqJpVVePqiabJVIongb0t81Yt+avhtQEJdlMKdvzWSnaL
+	 enw9rrsRUlmde5ZtOfNcnwt8QdGo2Ls44DiD1ZOVkkJVqTar9qDZeWm5a5/B0s8XVD
+	 EEaqG5IwUUhB6rFRhj9SluYm32FaUiZO+S31tSitpJgi2baoZbyeoPIiNA4PesIhvr
+	 kcPTJSb+tk/+SYdBb4Bpl2vTY9tRodzOCtgfZrDbrc6VeeWT9M1jy/qOIVVSt5Y2yF
+	 QxDiTaX5rRdKdGjAayqbWF06EiAeoO5wR13QyW6J7u2Aw5K2DqkVSt8Tm0d+mDXaBw
+	 gEnu2HsZqgx7w==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cLSsx4lf4z4wB0; Tue,  9 Sep 2025 12:47:49 +1000 (AEST)
+Date: Tue, 9 Sep 2025 12:44:06 +1000
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ayush Singh <ayush@beagleboard.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>, Andrew Davis <afd@ti.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aL-UdtUWAnyGOOzT@zatzit>
+References: <20250902105710.00512c6d@booty>
+ <aLkiNdGIXsogC6Rr@zatzit>
+ <337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+ <aL5dNtzwiinq_geg@zatzit>
+ <CAMuHMdWmJcwy8YUqfeBT+B79a19YeW77Ms6KjNhKGY8935tTog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: ti: k3-pinctrl: Fix the bug in
- existing macros
-To: Vignesh Raghavendra <vigneshr@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <afd@ti.com>, <d-gole@ti.com>, <u-kumar1@ti.com>,
-        <sebin.francis@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <vishalm@ti.com>
-References: <20250904112538.529857-1-a-kaur@ti.com>
- <20250904112538.529857-5-a-kaur@ti.com>
- <63c958a2-3973-4171-8a74-80381218723b@ti.com>
-Content-Language: en-US
-From: Akashdeep Kaur <a-kaur@ti.com>
-In-Reply-To: <63c958a2-3973-4171-8a74-80381218723b@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GkbB3ffqO/8m1/M2"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWmJcwy8YUqfeBT+B79a19YeW77Ms6KjNhKGY8935tTog@mail.gmail.com>
 
-On 08/09/25 12:26, Vignesh Raghavendra wrote:
-> 
-> 
-> On 04/09/25 16:55, Akashdeep Kaur wrote:
->> Currently, DS_IO_OVERRIDE_EN_SHIFT macro is not defined anywhere but
->> used for defining other macro.
->> Replace this undefined macro with valid macro. Rename the existing macro
->> to reflect the actual behavior.
->>
->> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
->> ---
-> 
-> Fixes: 325aa0f6b36e ("arm64: dts: ti: k3-pinctrl: Introduce deep sleep macros")
 
-Updated. Thanks!
-> 
-> Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-> 
-> 
->>   arch/arm64/boot/dts/ti/k3-pinctrl.h | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> index 7c5b5783769c..36bb403d718e 100644
->> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> @@ -88,8 +88,8 @@
->>   
->>   #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
->>   #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
->> -#define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
->> -#define PIN_DS_IO_OVERRIDE_ENABLE	(1 << DS_IO_OVERRIDE_EN_SHIFT)
->> +#define PIN_DS_ISO_OVERRIDE_DISABLE     (0 << ISO_OVERRIDE_EN_SHIFT)
->> +#define PIN_DS_ISO_OVERRIDE_ENABLE      (1 << ISO_OVERRIDE_EN_SHIFT)
->>   #define PIN_DS_OUT_ENABLE		(0 << DS_OUT_DIS_SHIFT)
->>   #define PIN_DS_OUT_DISABLE		(1 << DS_OUT_DIS_SHIFT)
->>   #define PIN_DS_OUT_VALUE_ZERO		(0 << DS_OUT_VAL_SHIFT)
-> 
+--GkbB3ffqO/8m1/M2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 08, 2025 at 11:01:42AM +0200, Geert Uytterhoeven wrote:
+> Hi David,
+>=20
+> On Mon, 8 Sept 2025 at 06:36, David Gibson <david@gibson.dropbear.id.au> =
+wrote:
+> > On Thu, Sep 04, 2025 at 11:15:44AM +0530, Ayush Singh wrote:
+> > > I would need to wrap my head around this a bit, specially in context =
+of
+> > > chaining connectors. It does seem like it will still require the poin=
+ts you
+> > > mentioned above to be present in one form or another, i.e. some way to
+> > > extend busses to different nodes/trees and connector (even a chained =
+one)
+> > > local symbols/aliases.
+> >
+> > Yes, it would still require those mappings.  I don't think chained
+> > connectors introduce a lot of extra complication.  An intermediate
+> > connector would need to be able to "re-export" things it got from its
+> > parent connector to its child connector(s) - renaming them if
+> > necessary.
+>=20
+> I don't expect chained connectors to be complicated.
+> Boards using multiple-connectors may be more difficult, e.g.
+> https://1bitsquared.de/products/pmod-hyperram
+
+Ah.. from the link, I'm gathering you mean a peripheral which plugs
+into multiple connectors on a parent board, rather than a board which
+supplies multiple connectors.
+
+That is a case I hadn't considered, which does complicate things
+further.  I think the main thing that would need to be tackled here is
+that the resources would need to be renamable / namespaced on the
+plugin side as well as the parent board side.
+
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
+
+--GkbB3ffqO/8m1/M2
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmi/lGkACgkQzQJF27ox
+2GdQFA/+KTFDZgTVxk+RY6KBqMXMZT1UNXamrgyLquBKVsOmVeJ+RwME1KSQmXfJ
+3Ky+OaPKtG9dg5qB+jgNykS6RYGMZLrLbmTzymt5hBgdVqWOoSK5N3gjYDxb2IB8
+KlcLf9dJfFqoqZbuikogEBw8USFUtu+/Rr5N53CUIszTagEz0BzSD922QZVfmI7f
+Kk+/bpQ18fgNxW8KH36oDnYKOU0HVBmCIyU3MhmhavIhh9kWTzBguWUTfU0JVDgo
+plEeYfpNfAq2pNDhX2uBEAtt+H4OXB9k4g1CRtIYredyLM5gXAPrE0fedtrzDotr
+3TPaZ02K6e0SzHzATLTM/1F+x8xsnO7MbJMhwFe2zdyLKi962L2vDKZ4LY6r6agy
+oT2nXfnLd4K/jJvLQ2+19C8G+BRx6I21DV3xr8DH3qGdamkviBGhlQB04f6LowBA
+3ORRi9Pn48YSKWzZWsSjdDFJGmv9RtBT3SOTjPV70JzI2cguc7DdtDqM7SN7JSmK
+AGykQuUOHlqd1qWUiP7OADqTqXieAdgXSpLH5VJLE96x/pLK//SSGt2OVCEx4rny
+bwRg0Hy+ZwJb6fg/gdiBR5v6cwssQXWNIilXo/tyU6nweHdxrnhBfYMUbG+/na9L
+4BF0ZZIUj/XWyR1KA77YGsgnFdLUCbEopUDSpSirpCilOHtyp1s=
+=2pQU
+-----END PGP SIGNATURE-----
+
+--GkbB3ffqO/8m1/M2--
 
