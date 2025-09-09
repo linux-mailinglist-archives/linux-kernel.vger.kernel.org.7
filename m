@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-808822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7248B50522
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC57BB50524
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DD7E4E564A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784105E6610
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1342352FDB;
-	Tue,  9 Sep 2025 18:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13C32252E;
+	Tue,  9 Sep 2025 18:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="VBLIms0F"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xzuqNp9o"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531A92FC88C;
-	Tue,  9 Sep 2025 18:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442213; cv=pass; b=MQ5Guz9SX1vVD8vN8d0Bz7wQzwQ5B0K9lHL2xdYtE7H/g5zJmBo88NUYSOcyy+Rr1S8rSDS1/hy7HVSngMF2khsKhOEhQsq5LMqm+AFm6Mu6Gt3tQCOc6AueKwYOdcStC7Dl4UoodCvEX+dzffLVR7jIYfG8P6ml5/v+BRvwB/8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442213; c=relaxed/simple;
-	bh=ubRkoJFbuAK+yS+v4W1ZNa9lC41JmMiyAmj1e7TS7bQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aXJVm6CkNgjQ3Aqu53NHHFrOOw8+IYrXsiXR4CPLnoF1YGgnN72qEEvXGIMHtvvQWEeQ8InTqkfAR0tB4oosZsZanl+4u8jMzIVd7AsXppnQ1/DtTwNUSj6hlHRa8JderALy/z+HOt8mlfnjECRbA5/9bBOhbAIdA5h2qHUozKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=VBLIms0F; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757442183; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bI40IG7HNevlCHBra3f0TBjpeg1nf2SprMYCxigrt3GtNFX4Drq51/bZfQKkOgsV8CiF23JBR6BvRLhHysGM78awQOOsEU0FQBh8w7KJFfObP46m0Mz1hadxZAm0lezTXBE6SUOnPHx5hpAEAhEWvwpAAuqKk5U3E7KsjQprW8E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757442183; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MRRNEQt8u3ZdYDHCaJT8rczhY+A4PzkMymyQNNuh5Tg=; 
-	b=HPwyUZ/xwN/NCSU5bS1fu1TluQJ8XIfNn9r2lVuZeQDUDDnglxf9Cvse0KKmfpQVXeNJJm8Fuw1MxaUMrY8IFxaR7IQvHGeM95DIh3zer5JmBR1ggqeIcqAgzE6mbQ9+6ZeKxlmZ2yLWSLBrJgJqHTAG2ZH8zdx4AB/ASjUvams=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757442182;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=MRRNEQt8u3ZdYDHCaJT8rczhY+A4PzkMymyQNNuh5Tg=;
-	b=VBLIms0FlinvQ4dVLcIWgjPqMfaYGAbxG2k0ecqafoC2Sl8W1LxDHShuKo6KzgXC
-	NqhRpVX390Gr2X1e2nnFy1eEPOTV69fyiSjwxzGhEBHIWLTBIGuUc9SQMEHmQJVbemZ
-	xh2+fIdsXPj4cjdhjpeJ3t5vVgU2JDH48KrbDy6o=
-Received: by mx.zohomail.com with SMTPS id 1757442181262749.6141457442421;
-	Tue, 9 Sep 2025 11:23:01 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB19D3126C5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757442244; cv=none; b=BF/gmtPw4XPgeZzvyvOy5Eht63l1HcyDLvfOXFZkup53FSQal0KlZQ+zHjXpj1rl8tp40cU7tf5AiTjGMi5y/QPSyCPT91t9IE32IZf2/kAtXuhgbm02N0PpPkFoXr9WsOA2E2vmjKzyJlF3SuN33z5XANr1IaKmk0KdKNeTax8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757442244; c=relaxed/simple;
+	bh=PYpuE1bg3M8RrfKVn/z5QPHZvCyw0Q4F4OFmwIUXtHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HO3S/xmd/tyJrnmWjBhT2vJeU0QJX8PMdXNqilPV8zFg1nSJ1OPRKdgBVnqMDSPtjguTD7uvwTgHwI4KemBVzaHF31FUlA9r0CvgDFm0pghNvnjnGjKW9J+IfCANpBP/EaBw+yb2sctnA/WsOb3U2HGzX/dGHhO+vQBxRUcMlSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xzuqNp9o; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f75e85dfeso726690e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757442241; x=1758047041; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWPK6qiwC5pY+gvwfZR7zxOqiXiBtA6mSbWCJx8aeqw=;
+        b=xzuqNp9oqvc7OsbdmnMzIjQ01w1yndPRuc9R/gAg1YwZG/rRF6tj2LSkhLJ1j30olM
+         bhT7B2wls3EafIP7H785zroYx8dUPbQi4rmOsYj4tKT/E2Zdyw/fKwOkkxs2EeYS1CQn
+         ILPhs0Fx5KvU0+wpnA9l10KNQDxSZ8UHdKPyaEmffnl9pYGi8yZPG/d4ouf/uEpBxRBB
+         irjuDG0B3W+NHtzQfZAlBjPkTh1o/cC8vfTf/OL14O/AzQ+ZHgvxlJFnSENPcJ380rtl
+         HUImEDOmtop+YVmksVXk15nzlSTupf/PL2EGaZ4SgrlwsLNWHwPBoQXuhYmjM3+QG56Q
+         Udcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757442241; x=1758047041;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WWPK6qiwC5pY+gvwfZR7zxOqiXiBtA6mSbWCJx8aeqw=;
+        b=Wilg6Wv2V1b5nYVFLOGoFQynlihBvXvYaNqAzDegI42r7AULekQvjIGZtX0Ba4A8jB
+         593WLJ1/7om529xxMtfhLqapI48O/RoiNTqvtA34I48pdiCpY6Xl8rQQRIqsmeEE1uAy
+         c1vnNAS3JtEfcdLro2XOuBM6pjQyMWfJsg3OzLmroct299Grib1YJQsELBuibWYt3+Bj
+         fuxI94Jz07+ftXeej7yWB+0UES97UT8aR5AGYdrM3dPes9XRzsLmRJdoM3BDKMGWbYtq
+         rKHD0zincSKzYNDACa0mVeTxHZuanG0IZDiLqx3kWsxK5yQBWdpkEo6BTZod2KRS6njW
+         cRDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDTnIhOiDwfmnV9TQpexS8PvijVMqV+PE0CbqZRevHHDPFAoLWdN/pz8JtTYs+ILlptLgEksrj3VxZuRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzUOhqgsDKgg9ToHs7hHmiPo5LN0MZY4bIVvU8ZtYSbwiIV4zv
+	jPH2Rz/ENLhY/806KRzGg4aAfiA5A28Q6QHPwXY/vmOafz8WeRkMyYqQgatXY8Ewoy8=
+X-Gm-Gg: ASbGncsBKxeivIssPWPwugR//PXtRGgl6m3WVXSlYad3xsEzIhihvJpMUAU/gViPu2f
+	YxutHUozpc0UgRk8zPv7RQRm7/uzzWeQXIPvS16IukT3ij+CVz3D2z8cKoWXdb7ktlW7GEN5fJt
+	Xwu7CD0wm1IcKCWrCKr27i9hCWV8OubU6qYfev7bnFIEh8R592mf2ql+6AGoCmbGs2Id1fiP568
+	tb1NlGvSzY0DMYEgW+4vUi2lZ0IAosIgM0NydYQPOgo6O0rgh4FpChiox1Zz52DVWjw90W4wxoo
+	9cNnzF6J8ctfdnNrVE0cdAaF8pnw6fRNNHhecVZ7kIaX3dsZm3lc1EcwaZFG0PyWHRwbV7MOfbU
+	SIs2XFpaVHQkuhmEYf3U6fxBxLjOuKXvyWg==
+X-Google-Smtp-Source: AGHT+IFKUMj2Ann+5FvQWmTru0FFpd1c0y5YYx+6dgpjzz3R0gwegHovdsmJzRrG+FbV0JmNIFTadw==
+X-Received: by 2002:a05:6512:61cf:10b0:560:986c:9b4c with SMTP id 2adb3069b0e04-56262a40f5fmr1551769e87.6.1757442241028;
+        Tue, 09 Sep 2025 11:24:01 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5681795d757sm676071e87.82.2025.09.09.11.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 11:24:00 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] arm64: dts: cleanups for v6.18
+Date: Tue,  9 Sep 2025 20:22:56 +0200
+Message-ID: <20250909182256.102840-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v4 1/3] rust: i2c: add basic I2C device and driver
- abstractions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DCOH6SUB5M7K.1K4V1DRAERH1S@kernel.org>
-Date: Tue, 9 Sep 2025 15:22:42 -0300
-Cc: Igor Korotin <igor.korotin.linux@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-i2c@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F8146F2E-E66B-4F47-816D-40AAFE8B65F7@collabora.com>
-References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
- <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
- <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
- <655ca23c-1fe6-498a-80b8-1b75044d9db3@gmail.com>
- <467F4F57-9452-4B68-931B-4A55A7CBC268@collabora.com>
- <DCOH6SUB5M7K.1K4V1DRAERH1S@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1713; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=PYpuE1bg3M8RrfKVn/z5QPHZvCyw0Q4F4OFmwIUXtHo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHCA48KtemWMzw1tyv2NmUMBfo7b8GHRTLSZU
+ QGFn/XMqgyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBwgAAKCRDBN2bmhouD
+ 1wcPD/9nMH+muQgC86bN7iFNvLm+8O4InFbUmjf+AamXpj6CNoZ81ArlR0OgqmaG696pZh8+RKz
+ r07DvRWDwSg2rSA1iAc6r45EvvPa2RCLFujMCLgp5llAixbu4GGVn9xvr9/bjUtqYIMcv7l8Xt7
+ VGZouaW2YwL+t/wgOuBuA4dBvO805/I3XOwpXsADwrBfXtUEEH5Dr7dYeULkMB6HyQTYUWqaU8e
+ mhnxKqrpUeF46mWVV1O7SWPswl7ieI60I6pmfFmn7eWbis0K4ihsCE3VcM9wsbT+OxkWcO5F+WE
+ Be4c1TzYiMA6vEzRkiMFo4egPhwxfdYp3eaO2DyXBTCoNjJmmc4Ymfy+pKvCxTJ03sl6rEpsbfQ
+ rOJNaon/J4sU0pz7pvecYodoADx9U8Y2RKpCqt6S/215BEOneyXDfIu9lMIEgoa2tpomeo4aVi0
+ NSKYCbqjowjxRQsEwXDTmRteMjDyLAXgu517Frl5nz1B6EquOMKNecVjF0m+rJ766gonkY3frfF
+ /TcJulsVdCrV90Nf/NCGpvCfa8WGrCtjAOO5oiZ/SkppfPy7K+PWIcdONYAwDIKJ8jwOhg4Loc2
+ t9j2UuQUUXiwx8rqagzMLmCpJGn+Kud/g1/etDtKEWAtVHXDKZiUSX7zUu1KftuvbgsMH6AsvX0 KY2NQzSXvxETe8Q==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+Few cleanups which were not picked up by their respective SoC maintainers.
+
+Best regards,
+Krzysztof
 
 
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-> On 9 Sep 2025, at 15:19, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On Tue Sep 9, 2025 at 7:53 PM CEST, Daniel Almeida wrote:
->>> On 9 Sep 2025, at 14:19, Igor Korotin <igor.korotin.linux@gmail.com> =
-wrote:
->>> On 8/27/2025 7:37 PM, Daniel Almeida wrote:
->>>>> +    /// Returns the driver's private data from the matching entry =
-in the [`i2c::IdTable`], if any.
->>>>> +    ///
->>>>> +    /// If this returns `None`, it means there is no match with =
-an entry in the [`i2c::IdTable`].
->>>>> +    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as =
-driver::Adapter>::IdInfo> {
->>>> Again, perhaps a private member function? I=E2=80=99m trying to =
-simplify the syntax here.
->>>=20
->>> Can you, please, kindly clarify what do you mean? If a function is =
-not pub/pub(crate),
->>> it is a private function.
->>=20
->> I mean a function that takes &self or &mut self as applicable.
->=20
-> This just turns things around you you have to pass in the Adapter =
-type, which is
-> required by this function. Having the device ID table and ID info =
-accessors on
-> the device structure doesn't really make sense.
->=20
-> The current implementation is also in line with what we do in the =
-driver core
-> code and in other bus implementations, such as PCI.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-Ok then, in which case feel free to disregard my previous comment :)
+are available in the Git repository at:
 
-=E2=80=94 Daniel=
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.18
+
+for you to fetch changes up to 7ee0f223cabe9b9384250024fec577c731cbcf72:
+
+  arm64: dts: toshiba: tmpv7708: Add default GIC address cells (2025-09-04 15:50:47 +0200)
+
+----------------------------------------------------------------
+Minor improvements in ARM64 DTS for v6.18
+
+Add default address cells for interrupt controllers to fix dtc W=1
+warnings on Amazon, APM, Socionext and Toshiba boards.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (6):
+      arm64: dts: socionext: uniphier-ld20: Add default PCI interrup controller address cells
+      arm64: dts: socionext: uniphier-pxs3: Add default PCI interrup controller address cells
+      arm64: dts: apm: storm: Add default GIC address cells
+      arm64: dts: amazon: alpine-v2: Add default GIC address cells
+      arm64: dts: amazon: alpine-v3: Add default GIC address cells
+      arm64: dts: toshiba: tmpv7708: Add default GIC address cells
+
+ arch/arm64/boot/dts/amazon/alpine-v2.dtsi        | 1 +
+ arch/arm64/boot/dts/amazon/alpine-v3.dtsi        | 1 +
+ arch/arm64/boot/dts/apm/apm-storm.dtsi           | 1 +
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 1 +
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi | 1 +
+ arch/arm64/boot/dts/toshiba/tmpv7708.dtsi        | 1 +
+ 6 files changed, 6 insertions(+)
 
