@@ -1,137 +1,407 @@
-Return-Path: <linux-kernel+bounces-807252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447BFB4A21E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:23:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2065CB4A21F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57EB4E2BA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:23:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 026924E1D32
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6ED3002B7;
-	Tue,  9 Sep 2025 06:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F56303A2A;
+	Tue,  9 Sep 2025 06:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ITP/0th2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3FDO3d86"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209C1302740;
-	Tue,  9 Sep 2025 06:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398936; cv=none; b=afCCiMAEq7QCnHLdYzg3djGE+6e0HmDB4l515//WJJ5EkP3aznpXVK09e1RXTF95fbBq2KYuvbZC386suOiZZuFLi04G0t1bmTWsvR7ezYWAaWW+oQrfnNU8QEzHVrYm7v2wL9nyGF9zgOlyvwD56o8k2juKMOrTPXi+P0W3pBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398936; c=relaxed/simple;
-	bh=4rkRBoLZgIEIaCabO4h6JlNqQyO0fcCJiekOwq/2hYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nK4p7/3FC1w+e51MXFcL87muNv7ahtubfb32bCai4nUUIvlNOiPidXF/QmfaBbI+6WNEBrLssrrkh3SXRJEcxviotFGINs++8GmWfBBYZ/aAnONZPqEkovF6Gu8KquyCi1ILxZ8xtzi43LUzvWStvImG1W9IaeKQSIq18/Nbbn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ITP/0th2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=FTJ7pzF/8gSabaIgTkVVYqrhoN2BcRC0CXQTEboR5Pw=; b=ITP/0th2/yHWIFcx7Suvj3zDPL
-	CGKKz80cpOwEO4NegOQf/Sh5iXBer6aA8iDafp4PhZeYsZ1WUQF9vRNe0CCgsLsHSyEZ0ndzxk1Sn
-	isWsk2CNlftMx15LKN7YC92AzSRRTk6EcZghinATDM7dbLDaVrxu8lqUp5rsmPwgw+ps7gW0H5NT9
-	V2R36H1KjibDMAUwoZQwMflo+4JQFA+Rve1MYEN+ID3rsQhbCZO7MLwsOmsjeSxmywxHKl7hmUab9
-	aNQtbAI+KuCGbW+OJjXt0XX8MEySnidtglTEiakNdJd5w8Ees7gQ0ToogDxtf6ka8QQCeGKsxdNPz
-	kbb1hAFA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvrk5-00000004fJy-25oG;
-	Tue, 09 Sep 2025 06:22:13 +0000
-Message-ID: <5cec20da-b8a6-4db9-ab4f-78ec6b327d28@infradead.org>
-Date: Mon, 8 Sep 2025 23:22:13 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CC6302771;
+	Tue,  9 Sep 2025 06:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757398952; cv=fail; b=kQhb+duJH5xgrgblASsXI0xKwLWOGzHvrplQIuZWQj88Oo7Ku2Q29xwQloWemDHpriv5xiTCUjyU23F1VH6z/y2eYOX6Kmb0y4T+nEcjFrnGCQt60XoG4JxBcHaCn3NdC+ecjpLxPSPZzIRmwMDk6SJ7eoR+axw+lHDFzquuOds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757398952; c=relaxed/simple;
+	bh=1iReGAEjo+zq/nf+9dGqVHs8pHXfI2x1nWETwV/yYEs=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DMz3bkhNdETid/zGZqKTgePoeSQTmGYnOT0xQ4B4iqkQqie6VtShsduFVk9ZklKYBQGDGbwO3DXOjWah5RhKO9/tc7JAZvtfRU8Mbg7LZLCFmLffNzYb9ZjlIDelenHhJArAvDvvtf3Bj1UWAsBh0BBmvWVuQROaRZXeAfKMig4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3FDO3d86; arc=fail smtp.client-ip=40.107.102.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jFI6vym/4x4fUu2cjsAkYmwe9O7f9A0w7fr/oGgOEdN+1tyo4zj82uJEjJ3lmA2IrEzym5qLoL4ffHTzsJSdGAaR9mvMdbMflTm2szZJ/F4kIr5ekspXf1LH8b8yYIKLmWkwIVoG3xHv1B04MKX+3SpfiiggR+AedLefLttF5UHf1fmtvpgCdqctYtPrNLbdsv0uyWZsEEqUcYWpDJPFSSde/BCZ2nxLJqmXpI18xA55/BU+2rj1sRk2T5dHeImx7AQvy7gc9j8bDjy0EwsgEK3JRFzgT9xatcTS6vyq9iUNKYKAwYzkl7iLKpAh9V6jDumEXIWnKc4xwYW43cRPTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tVF2ZrFRm25jha5Xm3qlXVaAjZIDSkZjVbumTHoKOmg=;
+ b=bAMLM6BHTLpQJF/I5ch/A7inXzBKacrpB2ikAQWwFJM8FNh1u+S0tRPTcFR4F1ordDTTqQvsCWolDovyCeC1ELCoUDcqxath9VXnx7CJnJ/1qIrMWJp6Vi0SnO8BMWHcTlVtbFWQvXF/F834Y67nHojnXCDAg9mT7KODekFiinUeIVdxak4fwCDloBOGINYnBmxeNSjN8Ew0V9P/9wA4qXUdXVYIlPi/29WeC2j6trWLyZNhcaucP6/P63WA/0vSrf0ohTbEXBMqpOV4KoIxRL4BetWD2r6+AHTimTYvRTmvSlpdNIssoV4Lz4X2TrTi7OeQOK2A+Md3m0WSYGZCiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tVF2ZrFRm25jha5Xm3qlXVaAjZIDSkZjVbumTHoKOmg=;
+ b=3FDO3d86czlGJ9L4QKknmO3NgLZTVeba9PQhQoYDSBUeXqtdEElkgyC5biC/pqq5qppctIH0RSQQA8yrgKSvPSV9Bsv9HQDKB240gYFVuNBePFxtzQC3EV+g/Wrp7JPMSSqBv/xOX4/uzWW96C45ilKRklisbmwlhsps6ltB1Bw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7301.namprd12.prod.outlook.com (2603:10b6:510:222::12)
+ by DM3PR12MB9352.namprd12.prod.outlook.com (2603:10b6:0:4a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 06:22:27 +0000
+Received: from PH8PR12MB7301.namprd12.prod.outlook.com
+ ([fe80::a929:e8eb:ef22:6350]) by PH8PR12MB7301.namprd12.prod.outlook.com
+ ([fe80::a929:e8eb:ef22:6350%6]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 06:22:27 +0000
+Message-ID: <a31fb1e1-517f-41e7-9a13-5518d66f971d@amd.com>
+Date: Tue, 9 Sep 2025 11:52:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] drm/buddy: Optimize free block management with RB
+ tree
+From: Arunpravin Paneer Selvam <arunpravin.paneerselvam@amd.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Matthew Auld <matthew.auld@intel.com>
+Cc: christian.koenig@amd.com, matthew.auld@intel.com,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ alexander.deucher@amd.com
+References: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
+ <20250901194151.GJ4067720@noisy.programming.kicks-ass.net>
+ <5f999a32-db26-4964-8152-ac06da8beea4@amd.com>
+Content-Language: en-US
+In-Reply-To: <5f999a32-db26-4964-8152-ac06da8beea4@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN4PR01CA0081.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26d::10) To PH8PR12MB7301.namprd12.prod.outlook.com
+ (2603:10b6:510:222::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
- <20250907233447.0cbe9954@foz.lan>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250907233447.0cbe9954@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7301:EE_|DM3PR12MB9352:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a459037-a612-49fb-0b04-08ddef693f3b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UGxLLzNiZE5Oc3gya0w2WWp5bE51MVpTc3ZEV0puU1Eyb2FQejVrUzUzREd3?=
+ =?utf-8?B?Zng1TmZub2dZWHo4YXhCTXc1aGZudTdEVkF2VW1ObHRuaXRERFB2N2xZekFy?=
+ =?utf-8?B?emhhSkFkZ3p0VWNXM2JkLzRLT205TzRvdHVHdk9jdWFGQ0sxQTRVKytJOEJo?=
+ =?utf-8?B?K3VEeWgybnRvOFovUWRUckVpSmFpenljcUhsMmZ1cWhhNDBqVjhOclhxVU41?=
+ =?utf-8?B?QzFVZkNxYnBYYzM2Zkl4eGxzMlZVaVVybkJWSHdZcHJCVTNhZ3J6bGY2RjRC?=
+ =?utf-8?B?L2d5WCsvUDNHS2hUMng4OGhIanR2aHZiYzlaYXRxTmxSbDhNVm9lOVlYTFdD?=
+ =?utf-8?B?QWx0c3FhaXJpMGJNdjZyNmZ3dTVMYS9yb2txYkxCL2RUSGpLZzhtZnNHbEpO?=
+ =?utf-8?B?bjVvVUwzOXB0WjJRVTZEcGg3blVuWnNDMy9xTVRnTVhRTytiMXpwaitEbllC?=
+ =?utf-8?B?MktDN3pTWk9tTE11STg5OUdZM3RSb0ZBdFFDd3RwNEUvdy9aUUxSb1pPckRs?=
+ =?utf-8?B?RlNjNDBPZ3lkRHozclFMaWZUbk5EQitYWTBqc2c1aWRPMkdPaDVUUGJWRER5?=
+ =?utf-8?B?QUk2TDc3UUpqZUZYNEVFbU95a0cwQlV1OGtOanMvYUpOUFBSUk9DNnFXYUND?=
+ =?utf-8?B?dDdjTktreFRHdEpkVjhWQ1ZiR2NaMGJ6cEw4UkZjTUlOTHFRSUhoY0YxZ3VX?=
+ =?utf-8?B?cDBNL2xpREhyODB3RjBQdUJLT0tKRlhDVXZrclMrYlp0NEY1a3MvcFlZN3Rz?=
+ =?utf-8?B?ejJGWDBIRXRBUlRnRERsWTZ1ei9lcnAzYzhqQjJkc3BRN1dwUEpWQzIzME55?=
+ =?utf-8?B?bWZRajBpR2QzQ05zNDREbXloZU90Zit2ZGNqQUtKb3djMU5GSmVPZ1E2bk9B?=
+ =?utf-8?B?NWhPdEV4VVB4ampuT2laQTJFbEpwWDRtUm5CK1l4aHBVcGNyVHZzbFdJODRQ?=
+ =?utf-8?B?bEdJcStYN0o5U1JaUXZRbVZKVEUxRlNSUXZkS1VMK3hqSFlIZCs3SWVvSi93?=
+ =?utf-8?B?MXdtZEV4SEo3K3lVRDF2b2NJaS8vWEFYaXpZQ1o5dzJvMm9oTUJVa2FHN01Y?=
+ =?utf-8?B?bW1VNFVmMExRV2RKZ09ROWpXQmpMeWR5TG92MjJYTjFXcC8wazJWYTVUM0Jh?=
+ =?utf-8?B?T0FrR3M0eWVZVzUvcU9TUERwYkNkYkdldWVack9XaTM1bmQ3SmFySkNxY296?=
+ =?utf-8?B?Y2dxZlhRNTJlcnZ2RjFEUTNFNEVMcHl6MWpBNmVWQktla2dvaGlnQ3p5bHZs?=
+ =?utf-8?B?L21wb0F6dmo2QWt0dk0wL1p1dGk3aGtaSmpEeU9nMlBhRXMrcS93aHpJN0RV?=
+ =?utf-8?B?czUxbE9rRGNjTC9xclIzQlI5d0ZOdmxzdVNYbUxzZW1KQkw2dlhvNk1ETDFN?=
+ =?utf-8?B?MS8zMlp3aDNDTlFQekhobkNZbE1hbmo5WFBRazdKZCtnUURGdFllTjVtSkh0?=
+ =?utf-8?B?RzlmVkpGWGJ4MHRpd2RjVTJ5ekNIUUhCTXV0YkRxY0RZNHJ2WGc4NkxJTjVl?=
+ =?utf-8?B?TWxyRFVjN3VIVk5OUlQ3b1E5c3BXVWU2ZndmWW9uK0RVYzNVbjNCNlFqSlpu?=
+ =?utf-8?B?ZTN4VWZ4M2ZpYy9CbCtQZXNKaDZoRTRCWHdzNnhxMEoyTU5ZNS9pbGsrWjBm?=
+ =?utf-8?B?dUlTSWZNR2pDaU1zOTVtNDQ3TXpsMC9uZUNPMlJyMkRocG1mSy9udmluUjhz?=
+ =?utf-8?B?Z0xaNjNjQjdRRGVod084RlJ5SEN5UjArNmUxa3RyWmNWaW82T1MxSWFDN25U?=
+ =?utf-8?B?U0tydWszRFJDcGxoUk04L0pNKzdQemVhLzczc29uQzZOVVMzanZIaHBKYUZG?=
+ =?utf-8?B?bXNqZ3VyY1VpSkF6YVU5ZzgvUk9YUy9RcnpvTk8vRitlbUxqRy9nT0ZhOTNp?=
+ =?utf-8?B?anRCOWhiYmlpbks2ZmVvKzVZbFNIZGcyTzZlVGJGOVhyM21ZZXpPZitFZU1D?=
+ =?utf-8?Q?sssKacIEZgk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cm1wY3NScXM5VVd4Z1ZyY0tXdCtNUjZyS1dPMjB0S2FUak5qMHlpUkJtVGha?=
+ =?utf-8?B?MnQxUmFaUWFMRlpvT0x4TGx4WHRhUzFsYWNTTW5QVUtmNmF5ZEhZN3E1aHZT?=
+ =?utf-8?B?QWVxWVY0eml2Ynh2elFPNVorOEtDQkd0Z2lWNlpxWndLQWt4b0YyQTNxNWl2?=
+ =?utf-8?B?UU9zZmtIR2drUEpZbXZyQkpxVXBnUnVhVjBMZnVubFNsSkwxdWpNWDBaK3pX?=
+ =?utf-8?B?eGlqWlVsbWNkQ2ZSNExDZG5yZDR1cmpUR1UzeWJHUWhQRWRxMi8yQ2s2Q3JV?=
+ =?utf-8?B?UndHYVZmTGVORm9zc2xFcjB4KzR5cXBGWnhSU1FXTGlSblZ6Qy9Zd0ZVVmRz?=
+ =?utf-8?B?S3pPcHZXaUV6WG9Ic0YxL0xyUWpJeFhMVWFyNnhVdThDYW82K1NyQVVaSDlU?=
+ =?utf-8?B?MXdiZ3pMMFRzeXBITzNwV3YrN0k5MkpycVIxL0doVVhSdGV3WWFMV0Jna3FU?=
+ =?utf-8?B?aXZDSExxT2gwY0pDSkpZSVRPMFhyb0hFaS9SSnhHOHV2bzE0VkEwbUdKV3V3?=
+ =?utf-8?B?RFVpaDRXczYxNmQvbFNUeFhYRzlHNWcra0ZIbEtPbUZQcndWdVF5REJqM3FT?=
+ =?utf-8?B?OXl0K1VqQm5jQWxjczY2QXVKK2Z2OGdUdlVyZk1YR3R5Y3h1RVZsMVhMT2N4?=
+ =?utf-8?B?UlVVT2pST3NZMVc5REMrbFNOb3hSZFNNT3pORTE0R1lCOXR5amFQc25ONFd1?=
+ =?utf-8?B?MC9KMmswcnFpWkRMbXpoaTlSYXZJSVNIWXl1Ty9iYlhHNmVmSzNKMTBzSnoy?=
+ =?utf-8?B?cnB4SHNtL2RyaGlhZWtyTllGNjJUSmU2cUlBbTE4Mk9paW92SUtxVVNTWG1w?=
+ =?utf-8?B?bkx5V29sK1p2QTBZWCszaVdjNzRmRlNRa2JUNHovK1pGNm5CQkI4RytqQnFN?=
+ =?utf-8?B?ZUJoS2hXSFBZdG01OHNlcHJYK1A4WW0zTC9JaStiTjZXK1g4cjVDMDIxY1Az?=
+ =?utf-8?B?ZDVJSU1GUHZRelZPR0xqaXBsNDNYRUJ6Nmg0ekFXZmpweWdTeHFZd1dvQi9j?=
+ =?utf-8?B?TVg1VDNuZUhFRW5BZitncGJuTWpaVVNnNTgxQkp5L0U3OTh6NDArL01naWFS?=
+ =?utf-8?B?L0NKVEpYVFQxaEd3SjVmWWJCb1N5ZTZ4U2RaU210TXdJNHAvcTZqK2V3VGN5?=
+ =?utf-8?B?SE02WU1tWk1BL3ZqNnhOZHk0YjEvV0hnZEtlVkJVanNVSndJaWljdExMeHhH?=
+ =?utf-8?B?SmZLb1RKTU1OZnlGelUvelR6Ykt0dE05eTVYRkdITnEramR0NDBCajBtUXV4?=
+ =?utf-8?B?ZDRLRnJwWnp5VTVLK1RLNVZKdUNDM3piL2ZhVlAreVNxYjdyOExmNHREQnUr?=
+ =?utf-8?B?YVNNVWxnL1RuVzkrSVdYOXQvUXZZNjRhQlFzWTU2enF2UUtuSjJwbDcvcXBB?=
+ =?utf-8?B?TWhycjFiSVpLeVh4Y2VINVRUYVlEeFpVV3BGQ1BaSnFkOFlQL0VibldtejRn?=
+ =?utf-8?B?dDB1c3dqYlhBUDdXUEhyNnpLRGhaUUNrZWVuMFRRc0NvRGlCSHRzRU1sTERK?=
+ =?utf-8?B?RUcxQ2p4REhlaU9tVVVsWkc4MldrU0FpUDhjNUFTdlRiWEhTTEZybmRyMXpL?=
+ =?utf-8?B?aTR2RDU1TXlab00xbi8zMXY1RGVwSDVQOGhXdGhRV0FCKzRIZ3U0VlFOYnlw?=
+ =?utf-8?B?U3lBZ1UyV0Q5eENuOExWTFh1eVZlV2VCeG4vN2kxQk1nbkM2bGo1K2V5UTFB?=
+ =?utf-8?B?M1IwT2hTK1VWWDdsVW1Qd2ZMOXFpZmJZbnJmcGpBalB5bGRLZVU0V1NJM01Z?=
+ =?utf-8?B?UTlFVzk3OHJWK29qempHVWV3bWx0V25DOVU3Q01QYkF6d3RZRzc2bGF0bUZV?=
+ =?utf-8?B?MmpJbnY1WVlIMWh5djNib3pQamhLaUJydituWFVzZ0lSaUVxQnNtajcrenlO?=
+ =?utf-8?B?eFF0bHFLVDdSc1FiRllocXYyVHZxY0d6U3BBN2pvZmZhWStpVXovcWg5ZlBN?=
+ =?utf-8?B?K0VjMzFuTFI0M1huU0M5Y0U0clVqREZxQUlpZEQxQWdscVBxNWlWdnA0eWhx?=
+ =?utf-8?B?d2FDNTFaV25iYk9WK04xZEhaUEY0elpNM0d5UWlCUjdoblh2Wjc1QzFaM0tX?=
+ =?utf-8?B?TDFhYWx1VDdsd0pPSGE1OTdMYjBHQllsaUVnM1psMUNPMHJoaHNlb1J4TG5j?=
+ =?utf-8?Q?HUF5xkKq8R88SirkAo5s2OGx1?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a459037-a612-49fb-0b04-08ddef693f3b
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7301.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:22:27.2583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CkWll/XYKdBnndtwT9IrZi+tm2kmQAUqTUE1PxzxqEnnWUlBwO4Dn696r4wGit8CBZ9v8YaE5ctMMancAZAe4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9352
 
+Hi Peter / Jani,
 
+ From the measurements I have done, the difference between RBtree full 
+iteration and list full iteration
+is negligible, even under heavy fragmentation. Based on this, I think it 
+would be reasonable to include
+these macros in rbtree.h as a convenience for cases where a full walk is 
+required, similar to the helper
+macros that already exist in list.h. In situations where the tree is 
+small or only modestly populated, the
+overhead is insignificant, and the decision of whether to use them can 
+be left to the user based on their
+workload.
 
-On 9/7/25 2:34 PM, Mauro Carvalho Chehab wrote:
-> Em Sun,  7 Sep 2025 18:22:22 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
-> 
->> Specially on kAPI, sometimes it is desirable to be able to
->> describe global variables that are part of kAPI.
+If that still is not acceptable, I can move the macros into drm_buddy.c 
+instead. Please let me know your
+suggestion.
+
+Thanks,
+Arun.
+On 9/2/2025 11:39 AM, Arunpravin Paneer Selvam wrote:
+>
+> On 9/2/2025 1:11 AM, Peter Zijlstra wrote:
+>> On Tue, Sep 02, 2025 at 12:26:04AM +0530, Arunpravin Paneer Selvam 
+>> wrote:
+>>> Replace the freelist (O(n)) used for free block management with a
+>>> red-black tree, providing more efficient O(log n) search, insert,
+>>> and delete operations. This improves scalability and performance
+>>> when managing large numbers of free blocks per order (e.g., hundreds
+>>> or thousands).
+>> Did you consider the interval tree?
+>
+> In this allocator, free blocks are tracked individually by order and 
+> not as arbitrary ranges. The
+>
+> operations are keyed insert/delete/lookup, for which an rbtree is 
+> sufficient and simper, AFAIK.
+>
 >>
->> Documenting vars with Sphinx is simple, as we don't need
->> to parse a data struct. All we need is the variable
->> declaration and use natice C domain ::c:var: to format it
->> for us.
 >>
->> Add support for it.
+>>> @@ -41,23 +43,53 @@ static void drm_block_free(struct drm_buddy *mm,
+>>>       kmem_cache_free(slab_blocks, block);
+>>>   }
+>>>   -static void list_insert_sorted(struct drm_buddy *mm,
+>>> -                   struct drm_buddy_block *block)
+>>> +static void rbtree_insert(struct drm_buddy *mm,
+>>> +              struct drm_buddy_block *block)
+>>>   {
+>>> +    struct rb_root *root = 
+>>> &mm->free_tree[drm_buddy_block_order(block)];
+>>> +    struct rb_node **link = &root->rb_node;
+>>> +    struct rb_node *parent = NULL;
+>>>       struct drm_buddy_block *node;
+>>> -    struct list_head *head;
+>>> +    u64 offset;
+>>> +
+>>> +    offset = drm_buddy_block_offset(block);
+>>>   -    head = &mm->free_list[drm_buddy_block_order(block)];
+>>> -    if (list_empty(head)) {
+>>> -        list_add(&block->link, head);
+>>> -        return;
+>>> +    while (*link) {
+>>> +        parent = *link;
+>>> +        node = rb_entry(parent, struct drm_buddy_block, rb);
+>>> +
+>>> +        if (offset < drm_buddy_block_offset(node))
+>>> +            link = &parent->rb_left;
+>>> +        else
+>>> +            link = &parent->rb_right;
+>>>       }
+>>>   -    list_for_each_entry(node, head, link)
+>>> -        if (drm_buddy_block_offset(block) < 
+>>> drm_buddy_block_offset(node))
+>>> -            break;
+>>> +    rb_link_node(&block->rb, parent, link);
+>>> +    rb_insert_color(&block->rb, root);
+>>> +}
+>> static inline bool __drm_bb_less(const struct drm_buddy_block *a,
+>>                  const struct drm_buddy_block *b)
+>> {
+>>     return drm_buddy_block_offset(a) < drm_buddy_block_offset(b);
+>> }
 >>
->> Link: https://lore.kernel.org/linux-doc/491c3022-cef8-4860-a945-c9c4a3b63c09@infradead.org/T/#m947c25d95cb1d96a394410ab1131dc8e9e5013f1
->> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
->> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> 
-> Btw, this is still at RFC level, as, for the final version we need:
-> 
-> - to document this new kernel-doc feature;
-
-Yes, I thought of that one.
-
-> - to suppress (or keep) the end ";";
-
-I'll need to see it, but I expect I would prefer to suppress it.
-
-> - do some cleanups/improvements at the regex to ensure that it is generic
->   enough. For instance, the way it was defineded, it doesn't handle yet
->   variables with assigned values like:
-> 	extern int foo = 5;
-> - if it has a default non-zero value, should it be documented or not,
->   and, if so, how;
-
-I think I came up with some examples (test cases) like these without even
-knowing that you had singled them out as possible issues.
-
-> - to decide if we add "extern" to all outputs, to none of them or if we
->   just follow what is at the documented declaration (the current
->   implementation does the latter;
-
-Follow what is documented for now (as you have it).
-
-> - to decide weather use "global"/"var" or something else.
-
-Just stick with "global". It's fine.
-
-> Also, it would be interesting to have a real case where we want
-> to document kAPI variables.
-> 
-> Randy,
-> 
-> if you have some real case examples, perhaps you could pick this patch
-> and add on a patch series after taking the above into consideration.
-
-I just searched for some real case examples and came up with around 6 from
-various source files. I put them into one source file that I will include
-in a Documentation/ .rst file for testing and let you know how that goes.
-
-Sorry for the delay. I've had some other things going on.
-
-Thanks for working on the feature.
-
--- 
-~Randy
+>> #define __node_2_drm_bb(node) rb_entry((node), struct 
+>> drm_buddy_block, rb)
+>>
+>> static inline bool rb_drm_bb_less(struct rb_node *a, const struct 
+>> rb_node *b)
+>> {
+>>     return __drm_bb_less(__node_2_drm_bb(a), __node_2_drm_bb(b));
+>> }
+>>
+>> static void rbtree_insert(struct drm_buddy *mm, struct 
+>> drm_buddy_block *block)
+>> {
+>>     rb_add(block->rb, &mm->free_tree[drm_buddy_block_order(block)], 
+>> rb_drm_bb_less);
+>> }
+>>
+>>> +
+>>> +static void rbtree_remove(struct drm_buddy *mm,
+>>> +              struct drm_buddy_block *block)
+>>> +{
+>>> +    struct rb_root *root;
+>>> +
+>>> +    root = &mm->free_tree[drm_buddy_block_order(block)];
+>>> +    rb_erase(&block->rb, root);
+>>>   -    __list_add(&block->link, node->link.prev, &node->link);
+>>> +    RB_CLEAR_NODE(&block->rb);
+>>> +}
+>>> +
+>>> +static inline struct drm_buddy_block *
+>>> +rbtree_last_entry(struct drm_buddy *mm, unsigned int order)
+>>> +{
+>>> +    struct rb_node *node = rb_last(&mm->free_tree[order]);
+>>> +
+>>> +    return node ? rb_entry(node, struct drm_buddy_block, rb) : NULL;
+>>> +}
+>> rb_add_cached() caches the leftmost entry, if you invert the key, the
+>> last is first.
+>
+> With inversion, the in-tree ordering changes from natural ascending 
+> offsets to descending,
+>
+> which can break assumptions in existing buddy allocator code that 
+> expects ascending order.
+>
+>>
+>>> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+>>> index 8d2ba3749866..17190bb4837c 100644
+>>> --- a/include/linux/rbtree.h
+>>> +++ b/include/linux/rbtree.h
+>>> @@ -79,6 +79,62 @@ static inline void rb_link_node_rcu(struct 
+>>> rb_node *node, struct rb_node *parent
+>>>          ____ptr ? rb_entry(____ptr, type, member) : NULL; \
+>>>       })
+>>>   +/**
+>>> + * rbtree_for_each_entry - iterate in-order over rb_root of given type
+>>> + *
+>>> + * @pos:    the 'type *' to use as a loop cursor.
+>>> + * @root:    'rb_root *' of the rbtree.
+>>> + * @member:    the name of the rb_node field within 'type'.
+>>> + */
+>>> +#define rbtree_for_each_entry(pos, root, member) \
+>>> +    for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), 
+>>> member); \
+>>> +         (pos); \
+>>> +         (pos) = rb_entry_safe(rb_next(&(pos)->member), 
+>>> typeof(*(pos)), member))
+>>> +
+>>> +/**
+>>> + * rbtree_reverse_for_each_entry - iterate in reverse in-order over 
+>>> rb_root
+>>> + * of given type
+>>> + *
+>>> + * @pos:    the 'type *' to use as a loop cursor.
+>>> + * @root:    'rb_root *' of the rbtree.
+>>> + * @member:    the name of the rb_node field within 'type'.
+>>> + */
+>>> +#define rbtree_reverse_for_each_entry(pos, root, member) \
+>>> +    for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), 
+>>> member); \
+>>> +         (pos); \
+>>> +         (pos) = rb_entry_safe(rb_prev(&(pos)->member), 
+>>> typeof(*(pos)), member))
+>>> +
+>>> +/**
+>>> + * rbtree_for_each_entry_safe - iterate in-order over rb_root safe 
+>>> against removal
+>>> + *
+>>> + * @pos:    the 'type *' to use as a loop cursor
+>>> + * @n:        another 'type *' to use as temporary storage
+>>> + * @root:    'rb_root *' of the rbtree
+>>> + * @member:    the name of the rb_node field within 'type'
+>>> + */
+>>> +#define rbtree_for_each_entry_safe(pos, n, root, member) \
+>>> +    for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), 
+>>> member), \
+>>> +         (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), 
+>>> typeof(*(pos)), member) : NULL; \
+>>> +         (pos); \
+>>> +         (pos) = (n), \
+>>> +         (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), 
+>>> typeof(*(pos)), member) : NULL)
+>>> +
+>>> +/**
+>>> + * rbtree_reverse_for_each_entry_safe - iterate in reverse in-order 
+>>> over rb_root
+>>> + * safe against removal
+>>> + *
+>>> + * @pos:    the struct type * to use as a loop cursor.
+>>> + * @n:        another struct type * to use as temporary storage.
+>>> + * @root:    pointer to struct rb_root to iterate.
+>>> + * @member:    name of the rb_node field within the struct.
+>>> + */
+>>> +#define rbtree_reverse_for_each_entry_safe(pos, n, root, member) \
+>>> +    for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), 
+>>> member), \
+>>> +         (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), 
+>>> typeof(*(pos)), member) : NULL; \
+>>> +         (pos); \
+>>> +         (pos) = (n), \
+>>> +         (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), 
+>>> typeof(*(pos)), member) : NULL)
+>>> +
+>> Not really a fan of these. That's typically a sign you're doing it
+>> wrong. Full tree iteration is actually slower than linked list.
+>
+> I understand your concern about full-tree iteration being slower than 
+> a list walk. In our current use cases, though,
+>
+> the cost is not on the hot path and performance is comparable or even 
+> better to list traversal. We occasionally need
+>
+> to walk the full set of blocks to perform specific operations, and 
+> these macros make that code simpler and
+>
+> less error-prone. They aren't meant to replace targeted lookups or 
+> bounded walks, just to cover where a full
+>
+> traversal is necessary.
+>
+> Thanks,
+>
+> Arun.
+>
 
 
