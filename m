@@ -1,63 +1,108 @@
-Return-Path: <linux-kernel+bounces-808107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C46B4AD55
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8211B4B0D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 280CB178931
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFFFE1C2548B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A59D32C33E;
-	Tue,  9 Sep 2025 12:03:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD732C30D;
+	Tue,  9 Sep 2025 12:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JDhUUnvh"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7DA3148B7
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72E92C1780
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757419403; cv=none; b=VdsBFtZ3kkbwkD4T/wvHQN/1dWvIjByq5jHMu7y7GIlWpns0oaP/T/nyfl/d+y49+CbKb76xM/molbcn+DnID3vwbsWwKxw2zobUemsCS//QmZV5WSp5qMOONx3AiGdZlfLef9A9m2P1Fvuhy9WQwSR4Bytwdu5ju+nv25Xm980=
+	t=1757419577; cv=none; b=k4oNyMcQpm5mO/xpPG2au59E2p/LGgsmYqqoFZsGNYECyFX5kq4IW2s2diSXOPyCHRt/NkGUkQjGzcl/HcAryESfk/re/ufcLEUL4AFBjZC60pYnJGcLU4EKaH35GKwsPljXqaijRH+UcO7Cf+ujpILu/TSyq4NhNX7I+BmCOao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757419403; c=relaxed/simple;
-	bh=lHQYFjYDhR0p/nDXRSfaLqH1lc163jMWGJ6PCp5IuFo=;
+	s=arc-20240116; t=1757419577; c=relaxed/simple;
+	bh=dTUUOGVXzgaBRgrWf4dD8/aZJutd88vOU+FwxGlU5QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEGgwFudi8u3NJQpe0dCxt0mNXmPgDI16TShU2auA3Bxwqm2hXptvUMu7hYNstHZUEKjK4XcvLqhHOhJJnHhRYLWH4KguhQO4H6Qdwj4/BLsY552yfOLoJhzrqahXMLbYFQ/VurZknyCH08qZtLyGQHt/JMY3usvo0U6T2FnDvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uvx42-0007MX-6N; Tue, 09 Sep 2025 14:03:10 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uvx41-000Pf6-2a;
-	Tue, 09 Sep 2025 14:03:09 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uvx41-00E2PJ-25;
-	Tue, 09 Sep 2025 14:03:09 +0200
-Date: Tue, 9 Sep 2025 14:03:09 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] dmaengine: add support for device_link
-Message-ID: <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
-References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
- <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
- <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyjFG0OH2DJx8y4juzicwjz/EERVMwTSsyU06t3p03igFJMRcFjGde9d1Ha+Lj6z4mYCX1BWKN6YG57rCK9GNcczXytDKjGCqvkv7HrJL6SiieOvf8jNxRE/0abRa4gFydZWnHvF4Yn64fQB/OUJ/shRfLr1YOvCXQv3aFnKbjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JDhUUnvh; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso4960088b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1757419574; x=1758024374; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6C8y1JVKk97i0jtD9cReVmUMzN4ri5HibTv4NinnwsU=;
+        b=JDhUUnvh1+9zmzmxrlMNbGCnDyybSwt0pxx4kjr7ctATJRmcCFyr+niM8n7jhn9am7
+         nleExd97JyUgUdxvTyZ5FX92lg//knXiYQUQbaunKVs6rTDQbrPjkREDzbGt9Qiz2g5S
+         2xt317AXxZpowh2y2uPqTMABI+1WPKd3W0gqOjX6mytzr8LQnYYVdwkn3YY8XJbMIEKd
+         yoqzEUZDYCZ3fg0sB5mU8WhA/pb7feqE4OAhsb4GR+H3SehOnbr/3CwaAYRfzKX+3hBB
+         qSedOgQPrN9uuD0IBdKuAdDposQ+ECke6BCgqyEmtqM2CBYlOln5UBG6sPT88IXTgjWB
+         7Dlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757419574; x=1758024374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6C8y1JVKk97i0jtD9cReVmUMzN4ri5HibTv4NinnwsU=;
+        b=Wu2+Z0J4YJskwFiSAhUUYvJ91BwMY3I8y6QLzxnIWFmycK7KgLe7m/pWOqxTtZEHKx
+         VHYtO5wRUq5X+A6Ht0/IW8W5ieNNDBP5V5mXiBy7WY4RtsNMugB4SFtSASoifl904kLw
+         P4iKX7y9qBkdt1xu39W+FaZ+0CZhcS+4n/CQNzsNbDf7D9sVqWj+2uH10Bho5FrB3QFl
+         D91muvQ06gjtwRYnStXOk0BNgjP4Bh59Harzx5CGYTZCI8EOlpLCMjKQggni//bgo+co
+         87Ud9FhuJ+yVEmm2bVAIfqeS50NkdNXmVTtBaIRVSJP1eR3cGinFPb3hjFQtmCHdKa2V
+         E5cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYTbgICRylXrM835xZFf9BfX/inUgyE11t9WgYt0L4/xVV+1r0dyKCPdZXgfaG63sA+8OmZmzFK7dircc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSLWrxdN8wJ+kJTXLqiRCTX6yZxp+3VJX/kI3HOygUmHXP2a+f
+	HRtKlpVkWjf85WvRX8upd2giCHbcFOMxPdIUL4KKJCKQFbko9GVhUpWiZeo4qjOkHg==
+X-Gm-Gg: ASbGncukU1gDZ74CGgfMrl0Ia6gX6DmTFFEqsS/Bvx1bOEpD8oG6i33X5ml/aRcKfzX
+	eYyoVDEgcvECNp1c7JjTbrcHWdgXuLfMrkyN6Zg3aEHutDKCVEJ8F3YoN0TM/cxnTuLMQPlVJxQ
+	VgUMQpKmSPiOtWCCBdLPX/b6CyXD/2nvK0mNtf7rlHvUZpA39JcwsQglnUsPHaYtSgPp/RQesYm
+	WSdrS5vVkzaginWJe0EyaQwalG9UYqMsDg90mPNrhv6xz0b9OBtbKNCn+/J8RFPbiuH/UzopeE7
+	usTD49+2FXPP464NmR/D1xVZPCQXqK2MZDhkMG+483NUHLZgaYxV+XU9wkd/tXE11zkE/ePBEC8
+	PL3R/VWakpkepfxI6MarwGVOd9Wm56PzhK2K41LK3Ah773NhuMarb4qOdzZ59
+X-Google-Smtp-Source: AGHT+IFBiGgQVqO+VBzN+gpd9EdxdpfseVBXdsYWl4G2cg34NY1NNSBYoMu4HzcVzmNLifbv4Bl9Qw==
+X-Received: by 2002:a05:6a20:1591:b0:245:fb85:ef58 with SMTP id adf61e73a8af0-2534519d16bmr17001811637.40.1757419573665;
+        Tue, 09 Sep 2025 05:06:13 -0700 (PDT)
+Received: from bytedance ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0736ba7sm28235655a12.12.2025.09.09.05.06.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 05:06:13 -0700 (PDT)
+Date: Tue, 9 Sep 2025 20:03:41 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Benjamin Segall <bsegall@google.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal Koutn?? <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250909120341.GA90@bytedance>
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
+ <20250829081120.806-4-ziqianlu@bytedance.com>
+ <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
+ <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
+ <xm26o6rrtgav.fsf@google.com>
+ <20250904081611.GE42@bytedance>
+ <da9141b1-d717-493f-939f-85e23d46e7ba@amd.com>
+ <20250904110504.GG42@bytedance>
+ <xm26frcwtgz2.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,156 +111,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <xm26frcwtgz2.fsf@google.com>
 
-Hi Frank,
-
-On 25-09-03, Frank Li wrote:
-> On Wed, Sep 03, 2025 at 03:06:17PM +0200, Marco Felsch wrote:
-> > Add support to create device_links between dmaengine suppliers and the
-> > dma consumers. This shifts the device dep-chain teardown/bringup logic
-> > to the driver core.
+On Mon, Sep 08, 2025 at 08:58:09PM -0700, Benjamin Segall wrote:
+> Aaron Lu <ziqianlu@bytedance.com> writes:
+> 
+> > On Thu, Sep 04, 2025 at 03:21:06PM +0530, K Prateek Nayak wrote:
+> >> Hello Aaron,
+> >> 
+> >> On 9/4/2025 1:46 PM, Aaron Lu wrote:
+> >> > @@ -8722,15 +8730,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >> >  	if (unlikely(se == pse))
+> >> >  		return;
+> >> >  
+> >> > -	/*
+> >> > -	 * This is possible from callers such as attach_tasks(), in which we
+> >> > -	 * unconditionally wakeup_preempt() after an enqueue (which may have
+> >> > -	 * lead to a throttle).  This both saves work and prevents false
+> >> > -	 * next-buddy nomination below.
+> >> > -	 */
+> >> > -	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
+> >> > -		return;
+> >> 
+> >> I think we should have a:
+> >> 
+> >> 	if (task_is_throttled(p))
+> >> 		return;
+> >> 
+> >> here. I can see at least one possibility via prio_changed_fair()
 > >
-> > Moving this to the core allows the dmaengine drivers to simplify the
-> > .remove() hooks and also to ensure that no dmaengine driver is ever
-> > removed before the consumer is removed.
+> > Ah right. I didn't realize wakeup_preempt() can be called for a throttled
+> > task, I think it is not expected. What about forbid that :)
+> > (not tested in anyway, just to show the idea and get feedback)
 > >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> 
-> Thank you work for devlink between dmaengine and devices. I have similar
-> idea.
-> 
-> This patch should be first patch.
-
-I can shuffle it of course!
-
-> The below what planned commit message in my local tree.
-
-Okay, so you focused on runtime PM handling. Not quite sure if I can
-test this feature with the SDMA engine. I also have limited time for
-this feature.
-
-Is it okay for you and the DMA maintainers to add the runtime PM feature
-as separate patch (provided by NXP/Frank)?
-
-> Implementing runtime PM for DMA channels is challenging. If a channel
-> resumes at allocation and suspends at free, the DMA engine often remains on
-> because most drivers request a channel at probe.
-> 
-> Tracking the number of pending DMA descriptors is also problematic, as some
-> consumers append new descriptors in atomic contexts, such as IRQ handlers,
-> where runtime resume cannot be called.
-> 
-> Using a device link simplifies this issue. If a consumer requires data
-> transfer, it must be in a runtime-resumed state, ensuring that the DMA
-> channel is also active by device link. This allows safe operations, like
-> appending new descriptors. Conversely, when the consumer no longer requires
-> data transfer, both it and the supplier (DMA channel) can enter a suspended
-> state if no other consumer is using it.
-> 
-> Introduce the `create_link` flag to enable this feature.
->
-> also suggest add create_link flag to enable this feature in case some
-> side impact to other dma-engine. After some time test, we can enable it
-> default.
-
-What regressions do you have in mind? I wouldn't hide the feature behind
-a flag because this may slow done the convert process, because no one is
-interessted in, or has no time for testing, ...
-
-> >  drivers/dma/dmaengine.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index cb93e74a850e8..f1383aede764f 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -13135,7 +13135,11 @@ static void task_fork_fair(struct task_struct *p)
+> >  static void
+> >  prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
+> >  {
+> > -	if (!task_on_rq_queued(p))
+> > +	/*
+> > +	 * p->on_rq can be set for throttled task but there is no need to
+> > +	 * check wakeup preempt for throttled task, so use p->se.on_rq instead.
+> > +	 */
+> > +	if (!p->se.on_rq)
+> >  		return;
+> >  
+> >  	if (rq->cfs.nr_queued == 1)
 > >
-> > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
-> > --- a/drivers/dma/dmaengine.c
-> > +++ b/drivers/dma/dmaengine.c
-> > @@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
-> >  	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> >  	struct dma_device *d, *_d;
-> >  	struct dma_chan *chan = NULL;
-> > +	struct device_link *dl;
-> >
-> >  	if (is_of_node(fwnode))
-> >  		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
-> > @@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
-> >  	/* No functional issue if it fails, users are supposed to test before use */
-> >  #endif
-> >
-> > +	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
-> 
-> chan->device->dev is dmaengine devices. But some dmaengine's each channel
-> have device, consumer should link to chan's device, not dmaengine device
-> because some dmaengine support per channel clock\power management.
-
-I get your point. Can you give me some pointers please? To me it seems
-like the dma_chan_dev is only used for sysfs purpose according the
-dmaengine.h.
-
-> chan's device's parent devices is dmaengine devices. it should also work
-> for sdma case
-
-I see, this must be tested of course.
-
->         if (chan->device->create_devlink) {
->                 u32 flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
-
-According device_link.rst: using DL_FLAG_STATELESS and
-DL_FLAG_AUTOREMOVE_CONSUMER is invalid.
-
->                 if (pm_runtime_active(dev))
->                         flags |= DL_FLAG_RPM_ACTIVE;
-
-This is of course interessting, thanks for the hint.
-
-> When create device link (apply channel), consume may active.
-
-I have read it as: "resue the supplier and ensure that the supplier
-follows the consumer runtime state".
-
->                 dl = device_link_add(chan->slave, &chan->dev->device, flags);
-
-Huh.. you used the dmaengine device too?
-
-Regards,
-  Marco
-
-
->         }
-> 
-> Need update kernel doc
-> 
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index bb146c5ac3e4c..ffb3a8f0070ba 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -323,7 +323,8 @@ struct dma_router {
->   * @cookie: last cookie value returned to client
->   * @completed_cookie: last completed cookie for this channel
->   * @chan_id: channel ID for sysfs
-> - * @dev: class device for sysfs
-> + * @dev: class device for sysfs, also use for pre channel runtime pm and
-> + *       use custom/different dma-mapping
-> 
-> Frank
+> >> where a throttled task might reach here. Rest looks good. I'll
+> >> still wait on Ben for the update_cfs_group() bits :)
 > 
 > 
-> > +	if (!dl) {
-> > +		dev_err(dev, "failed to create device link to %s\n",
-> > +			dev_name(chan->device->dev));
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
-> >  	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
-> >  	if (!chan->name)
-> >  		return chan;
-> >
-> > --
-> > 2.47.2
-> >
-> 
+> Yeah, I think I agree with all of these (this patch and the previous
+> patch); the preempt ones are subjective but I'd probably default to "no
+> special case needed for throttle". Removing the check in
+> update_cfs_group() I think is correct, unless we want to freeze
+> everything, yeah. (And that seems dangerous in its own way)
+
+Thanks for all these info, let me go ahead and send these changes for
+review then :)
 
