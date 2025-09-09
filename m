@@ -1,199 +1,252 @@
-Return-Path: <linux-kernel+bounces-808224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB76B4FC12
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FF3B4FC14
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73DD16B8B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4361C60A59
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0C33CEBD;
-	Tue,  9 Sep 2025 13:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DCD33EAF8;
+	Tue,  9 Sep 2025 13:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XCH0RLwA"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="M9m4+FCQ"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D82DCF55
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3C533EAF1
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423286; cv=none; b=g43cSfWc5VjIYOZV2gNieCvD4H/b6JVgQzy5zLBB9BEmtBdb7rzH3djx36ICh4pI8E/PM/2d5oIMjdBfCJdtLp52g8V75HoAba+/sVXyiX9M9EPkYn0nh5uOb5gRCjnZ+SSpz2XUXE7s1BuXg6c9WQiwUCBVaN9pD8NjpQqNoIg=
+	t=1757423300; cv=none; b=SApD2AYOmlFhFjbOFfPg+zAFhN16oJV5ZB1NRiyjo1bC1Pxl19oaMFRogaYbc402sg/fokQk/SK7Ll+t3urJE8oJ27a1HE19s4lGaZrZTkx9i45lBQtO7nbye6o1uWSnZu3KuvIDZWLQkLrakEcLgArfH9s5AJym+iJdhLdcNuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423286; c=relaxed/simple;
-	bh=7TvPHVtfVU3xUULY1g/HKzfegilr3cmBWwjzgYJehYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nv75jehQmHYj3Ujt8lolsDHKutur1UacuMLxDyqysTMZKHCrVR07RTOa/2/RWoBieYNx4PHb83THoL9MYFextLHlNQrQq1nmMeTxGNKaUTgxon5HB6Tfd9xkV2PlEV0dtvIH5jhrqlGkyRdJEEjeL5IDS3xo1hL0lB4lC4fPKvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XCH0RLwA; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <eae6de3a-284c-40f4-bdfa-ca4b98bf55e1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757423281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VkpfIlQh+PrxiqAnGrk16U7YS7hQ+EsyJNWqMlpTq4E=;
-	b=XCH0RLwAq7GvBXD/CYUKT+pkmDYL4PTvkkYgxbhAyWPJ0YqyDAx/mVQRykhzytW2cgvk0l
-	i1p4C4jZr3yfr0+Tel1hjxiqoisVKi//IEo+WNt6IrBlgCw9Zj04v1x69XD4awpqWN7lIV
-	VXUDGdhmTX4MdLHFvByADlfI93jgOsA=
-Date: Tue, 9 Sep 2025 21:07:48 +0800
+	s=arc-20240116; t=1757423300; c=relaxed/simple;
+	bh=zjw6MVBkpDIQn6iVFR8tdf1TpY8gbblM4BAHW35TjzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EPDDw18xCCgNgQucFsjkd4snXYSAwpBQlDI9aR8UdMR4AKMmgH2lrUF7LgAl3PFc60ULUnVQ5ZnVBmKBuAJ+1TgmmtlQyENqdR09bIzwKUvQEbo1QWIpD49nPXGDWCKmptv1/qvwaRpus6AJtHFE0vDd3FbVhXRR717C7J/tCoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=M9m4+FCQ; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-411498d92deso6404065ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1757423298; x=1758028098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H02U+YPaV9x25+zlEas3Ch0Yf6NwtoizNMk25VmvRb8=;
+        b=M9m4+FCQWMfpV4rJ5Cc8HSp/ZPewVVWK1Oe9KV51QWSBbDXElqBFFGzoH5iZ4hYTY/
+         ROclV46RyjrxklOol1GSy+rczzBxxSiQSIoXhl8TKI919obtkjEKIIeXvE+abN40mY1o
+         EnqY/jPvFdmjJWvgdV8P50RbaLxKq0mdrPQwSZA2KcCk0FLzdNTPiLU/Lk6cC8u9/YSw
+         6CLdeLsxFs3u9Lf2JFr7dC/lD1u9OpzEpsuUms34jotjIigBApcWGzdmFBtnj90xrgAV
+         2wvJ2kK9d5ORmhqOInKDPIhsiIlcV3AYQtUlP+FGW15lbdTyQkDyrbZXAnD5AnjVbuRT
+         WqSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757423298; x=1758028098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H02U+YPaV9x25+zlEas3Ch0Yf6NwtoizNMk25VmvRb8=;
+        b=R4iHDlyGuPRU+ZeGYlNVhWIK/veYo80ALKECzmd2qhp5oljQ3yKv9zWXtigOa39Pzp
+         wFToqQbgoDN94oLhasj5NXfgjc34MJw/WJuOvTa4q4fq6kt27HHTWbLI0eFMNo6k/f3p
+         CuVSzIRHstjWdb0WdqYVyVAY8uXUKKBLc2YYkky/tVb70fFpaubzZcv0psq4GGAhq9eF
+         PFIuRqMOhFTLnHBXBPlVo8wpA+YVpQMsp2pta6qDkw5QV9oCLI2+j8TK096cgov6yqfP
+         L1op9fZByOiWbRf5to0niIu3xgwZXwEbPITcfGG4vBBnyjGwUMe/+JS7uCGTJr9/PqSg
+         x6qw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2FvyqWAUvl7J/hnLvkosxF3ZUdWztiYoE9EFfm9OqM7onAMOIvInmlTYn2FCUB5iFvD3lx46fxueGlY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKWo61F+ndj0PfDdrGoGGi1rLDEAPhNnX7ua555MPifa+uccf1
+	QgSs9OaE4DZF5U6qwaINexHBnQjJCPVBgEV7wZ61nWznmGZDomDmsZCVqYDctx1LfZnl1RJBlvL
+	gRvpRX7USg1pgEYWqqhnLgl6VYZoGxorAIolVQES2QQ==
+X-Gm-Gg: ASbGncs4ap1kC+i/P+LpspAd9z1kycvYII7BOM7MUQzN1x2XJgYewe2FaEip1a+cmOA
+	ebPTJ4VsLxWlVo/Bzd3/LKd/DOKEE4OXEY3v8OUn1M5S12Xl39aJhxM0PTpikwg2s1Vv9Dn7b5f
+	8QqR0Uz8E/YOhR3Gm4d9cgVq1rRbrR0UIm6RpaVC/rYsopuNC8cXYe62K40fLqKzpj7VjAvlQ3s
+	4+edYXvuaxXuHTFcExcWrxvnkpjjNvm9clSGZXychPFE8TdEr5zbpVsId3pkg==
+X-Google-Smtp-Source: AGHT+IGIXFEd6NKG4t1EShH+ohsgxoCLtKtko69/nI1/uYg3PQTsrCp5aYkq76x9El7gzpg8jEvl7mss/PUosQ8Pi6Q=
+X-Received: by 2002:a05:6e02:1987:b0:415:de5:2e1 with SMTP id
+ e9e14a558f8ab-4150de504admr1018785ab.18.1757423297934; Tue, 09 Sep 2025
+ 06:08:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add stacktrace map
- lookup_and_delete_elem test case
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250908113622.810652-1-chen.dylane@linux.dev>
- <20250908113622.810652-2-chen.dylane@linux.dev> <aMAfAf1JEAcbYOuq@krava>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <aMAfAf1JEAcbYOuq@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250909-pmu_event_info-v6-0-d8f80cacb884@rivosinc.com> <20250909-pmu_event_info-v6-4-d8f80cacb884@rivosinc.com>
+In-Reply-To: <20250909-pmu_event_info-v6-4-d8f80cacb884@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 9 Sep 2025 18:38:06 +0530
+X-Gm-Features: Ac12FXxyfsjvXfBOgxxqCKAcoZ2p-9S1up8nmISURF_bFVVeW9nkGyF0NIeOPT0
+Message-ID: <CAAhSdy30m5uwt1HBPoKdh6VMUjZxR6tPznUGBmb5D6YWMYPw3w@mail.gmail.com>
+Subject: Re: [PATCH v6 4/8] drivers/perf: riscv: Implement PMU event info function
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/9/9 20:35, Jiri Olsa 写道:
-> On Mon, Sep 08, 2025 at 07:36:22PM +0800, Tao Chen wrote:
->> ...
->> test_stacktrace_map:PASS:compare_stack_ips stackmap vs. stack_amap 0 nsec
->> test_stacktrace_map:PASS:stack_key_map lookup 0 nsec
->> test_stacktrace_map:PASS:stackmap lookup and detele 0 nsec
->>   #397     stacktrace_map:OK
->> ...
->>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   .../selftests/bpf/prog_tests/stacktrace_map.c  | 18 +++++++++++++++++-
->>   .../selftests/bpf/progs/test_stacktrace_map.c  | 12 +++++++++++-
->>   2 files changed, 28 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
->> index 84a7e405e91..496c4dcf4ea 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
->> @@ -3,7 +3,7 @@
->>   
->>   void test_stacktrace_map(void)
->>   {
->> -	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
->> +	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd, stack_key_map_fd;
->>   	const char *prog_name = "oncpu";
->>   	int err, prog_fd, stack_trace_len;
->>   	const char *file = "./test_stacktrace_map.bpf.o";
->> @@ -11,6 +11,9 @@ void test_stacktrace_map(void)
->>   	struct bpf_program *prog;
->>   	struct bpf_object *obj;
->>   	struct bpf_link *link;
->> +	__u32 stackmap_key;
->> +	char val_buf[PERF_MAX_STACK_DEPTH *
->> +		sizeof(struct bpf_stack_build_id)];
->>   
->>   	err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, &prog_fd);
->>   	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
->> @@ -41,6 +44,10 @@ void test_stacktrace_map(void)
->>   	if (CHECK_FAIL(stack_amap_fd < 0))
->>   		goto disable_pmu;
->>   
->> +	stack_key_map_fd = bpf_find_map(__func__, obj, "stack_key_map");
->> +	if (CHECK_FAIL(stack_key_map_fd < 0))
->> +		goto disable_pmu;
->> +
->>   	/* give some time for bpf program run */
->>   	sleep(1);
->>   
->> @@ -68,6 +75,15 @@ void test_stacktrace_map(void)
->>   		  "err %d errno %d\n", err, errno))
->>   		goto disable_pmu;
->>   
->> +	err = bpf_map_lookup_elem(stack_key_map_fd, &key, &stackmap_key);
->> +	if (CHECK(err, "stack_key_map lookup", "err %d errno %d\n", err, errno))
->> +		goto disable_pmu;
->> +
->> +	err = bpf_map_lookup_and_delete_elem(stackmap_fd, &stackmap_key, &val_buf);
->> +	if (CHECK(err, "stackmap lookup and detele",
-> 
-> nit typo 's/detele/delete/'
+On Tue, Sep 9, 2025 at 12:33=E2=80=AFPM Atish Patra <atishp@rivosinc.com> w=
+rote:
+>
+> With the new SBI PMU event info function, we can query the availability
+> of the all standard SBI PMU events at boot time with a single ecall.
+> This improves the bootime by avoiding making an SBI call for each
+> standard PMU event. Since this function is defined only in SBI v3.0,
+> invoke this only if the underlying SBI implementation is v3.0 or higher.
+>
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
 
-my fault, will fix it in v2.
+LGTM.
 
-> 
->> +		  "err %d errno %d\n", err, errno))
->> +		goto disable_pmu;
-> 
-> should we also check the record got deleted? like make sure following
-> lookup fails with NOENT:
-> 
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-yes we can, will add it in v2. Thanks.
+Regards,
+Anup
 
->    bpf_map_lookup_elem(stackmap_fd, &stackmap_key, &val_buf)
-> 
->> +
->>   disable_pmu:
->>   	bpf_link__destroy(link);
->>   close_prog:
->> diff --git a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
->> index 47568007b66..d036e8e9c83 100644
->> --- a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
->> +++ b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
->> @@ -38,6 +38,13 @@ struct {
->>   	__type(value, stack_trace_t);
->>   } stack_amap SEC(".maps");
->>   
->> +struct {
->> +	__uint(type, BPF_MAP_TYPE_ARRAY);
->> +	__uint(max_entries, 1);
->> +	__type(key, __u32);
->> +	__type(value, __u32);
->> +} stack_key_map SEC(".maps");
->> +
->>   /* taken from /sys/kernel/tracing/events/sched/sched_switch/format */
->>   struct sched_switch_args {
->>   	unsigned long long pad;
->> @@ -54,7 +61,7 @@ SEC("tracepoint/sched/sched_switch")
->>   int oncpu(struct sched_switch_args *ctx)
->>   {
->>   	__u32 max_len = PERF_MAX_STACK_DEPTH * sizeof(__u64);
->> -	__u32 key = 0, val = 0, *value_p;
->> +	__u32 key = 0, val = 0, *value_p, stackmap_key = 0;
->>   	void *stack_p;
->>   
->>   	value_p = bpf_map_lookup_elem(&control_map, &key);
->> @@ -64,6 +71,9 @@ int oncpu(struct sched_switch_args *ctx)
->>   	/* The size of stackmap and stackid_hmap should be the same */
->>   	key = bpf_get_stackid(ctx, &stackmap, 0);
->>   	if ((int)key >= 0) {
->> +		val = key;
->> +		bpf_map_update_elem(&stack_key_map, &stackmap_key, &val, 0);
-> 
-> why not use '&key' directly as the update value?
-> 
-will clean it in v2.
-
-> jirka
-> 
-> 
->> +		val = 0;
->>   		bpf_map_update_elem(&stackid_hmap, &key, &val, 0);
->>   		stack_p = bpf_map_lookup_elem(&stack_amap, &key);
->>   		if (stack_p)
->> -- 
->> 2.48.1
->>
->>
--- 
-Best Regards
-Tao Chen
+> ---
+>  arch/riscv/include/asm/sbi.h |  9 ++++++
+>  drivers/perf/riscv_pmu_sbi.c | 69 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 78 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index b0c41ef56968..5ca7cebc13cc 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -136,6 +136,7 @@ enum sbi_ext_pmu_fid {
+>         SBI_EXT_PMU_COUNTER_FW_READ,
+>         SBI_EXT_PMU_COUNTER_FW_READ_HI,
+>         SBI_EXT_PMU_SNAPSHOT_SET_SHMEM,
+> +       SBI_EXT_PMU_EVENT_GET_INFO,
+>  };
+>
+>  union sbi_pmu_ctr_info {
+> @@ -159,6 +160,14 @@ struct riscv_pmu_snapshot_data {
+>         u64 reserved[447];
+>  };
+>
+> +struct riscv_pmu_event_info {
+> +       u32 event_idx;
+> +       u32 output;
+> +       u64 event_data;
+> +};
+> +
+> +#define RISCV_PMU_EVENT_INFO_OUTPUT_MASK 0x01
+> +
+>  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
+>  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
+>  /* SBI v3.0 allows extended hpmeventX width value */
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index 3644bed4c8ab..a6c479f853e1 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -299,6 +299,66 @@ static struct sbi_pmu_event_data pmu_cache_event_map=
+[PERF_COUNT_HW_CACHE_MAX]
+>         },
+>  };
+>
+> +static int pmu_sbi_check_event_info(void)
+> +{
+> +       int num_events =3D ARRAY_SIZE(pmu_hw_event_map) + PERF_COUNT_HW_C=
+ACHE_MAX *
+> +                        PERF_COUNT_HW_CACHE_OP_MAX * PERF_COUNT_HW_CACHE=
+_RESULT_MAX;
+> +       struct riscv_pmu_event_info *event_info_shmem;
+> +       phys_addr_t base_addr;
+> +       int i, j, k, result =3D 0, count =3D 0;
+> +       struct sbiret ret;
+> +
+> +       event_info_shmem =3D kcalloc(num_events, sizeof(*event_info_shmem=
+), GFP_KERNEL);
+> +       if (!event_info_shmem)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
+> +               event_info_shmem[count++].event_idx =3D pmu_hw_event_map[=
+i].event_idx;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
+> +               for (j =3D 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++=
+) {
+> +                       for (k =3D 0; k < ARRAY_SIZE(pmu_cache_event_map[=
+i][j]); k++)
+> +                               event_info_shmem[count++].event_idx =3D
+> +                                                       pmu_cache_event_m=
+ap[i][j][k].event_idx;
+> +               }
+> +       }
+> +
+> +       base_addr =3D __pa(event_info_shmem);
+> +       if (IS_ENABLED(CONFIG_32BIT))
+> +               ret =3D sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO=
+, lower_32_bits(base_addr),
+> +                               upper_32_bits(base_addr), count, 0, 0, 0)=
+;
+> +       else
+> +               ret =3D sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO=
+, base_addr, 0,
+> +                               count, 0, 0, 0);
+> +       if (ret.error) {
+> +               result =3D -EOPNOTSUPP;
+> +               goto free_mem;
+> +       }
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++) {
+> +               if (!(event_info_shmem[i].output & RISCV_PMU_EVENT_INFO_O=
+UTPUT_MASK))
+> +                       pmu_hw_event_map[i].event_idx =3D -ENOENT;
+> +       }
+> +
+> +       count =3D ARRAY_SIZE(pmu_hw_event_map);
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
+> +               for (j =3D 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++=
+) {
+> +                       for (k =3D 0; k < ARRAY_SIZE(pmu_cache_event_map[=
+i][j]); k++) {
+> +                               if (!(event_info_shmem[count].output &
+> +                                     RISCV_PMU_EVENT_INFO_OUTPUT_MASK))
+> +                                       pmu_cache_event_map[i][j][k].even=
+t_idx =3D -ENOENT;
+> +                               count++;
+> +                       }
+> +               }
+> +       }
+> +
+> +free_mem:
+> +       kfree(event_info_shmem);
+> +
+> +       return result;
+> +}
+> +
+>  static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
+>  {
+>         struct sbiret ret;
+> @@ -316,6 +376,15 @@ static void pmu_sbi_check_event(struct sbi_pmu_event=
+_data *edata)
+>
+>  static void pmu_sbi_check_std_events(struct work_struct *work)
+>  {
+> +       int ret;
+> +
+> +       if (sbi_v3_available) {
+> +               ret =3D pmu_sbi_check_event_info();
+> +               if (ret)
+> +                       pr_err("pmu_sbi_check_event_info failed with erro=
+r %d\n", ret);
+> +               return;
+> +       }
+> +
+>         for (int i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
+>                 pmu_sbi_check_event(&pmu_hw_event_map[i]);
+>
+>
+> --
+> 2.43.0
+>
 
