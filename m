@@ -1,82 +1,125 @@
-Return-Path: <linux-kernel+bounces-807448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328F9B4A473
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F54CB4A479
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58034189CDC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:03:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A17A189D184
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F48242D70;
-	Tue,  9 Sep 2025 08:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F801244EA1;
+	Tue,  9 Sep 2025 08:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="SNbUNCEc"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtMLFa8C"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A3C1A262A;
-	Tue,  9 Sep 2025 08:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A324338F;
+	Tue,  9 Sep 2025 08:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757404991; cv=none; b=Qz3tE6shMFhBYNFL9cmn93V5QOKkkwqtFu5QjEztiNaMKC7j9Ib0Dao+HH53V7yg5cuUPYI9ILWbmQqdotjXvfbpdIQoye/YpcarICLq48/cykjtQKc7pqkSqxQ8zVhSdVriy9DAxUL+Dk9eQKBgK9PEX9+QMs6XpzEadBlvZkU=
+	t=1757405059; cv=none; b=T1byt788xBTciSXfd9RP8rK+hyZeEp16ALpWhgDkHc3x4AfhDOsIVDYLQkSkbcszZmmx/9DZPg9I1qUoyx8LK189Hz1PMSsQpSuC3307VvF6nxLmcTlUjbEckPZGKPYcFG2OAMaW4XD0cZO1EKHZf0nRaM9o8BDuoPWmV6e6NRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757404991; c=relaxed/simple;
-	bh=ZLGUpI+Wdo34rg5qSS9psPdxKAfzinKVPb6v9e0+ybc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vd0OTBmrx/G47VM4PcdSj38LDoIKrHxSSxpLjQMSSP8OVCL1+3yo2Z52wzzf7RVb3bbFKNSJaXqOk/vP0dxxJrGWBW3tx8+Uj/5kmVTW1j9wRqmogEuyfA5g4Ah9qsd+9Eug+NcSmN71NgAu1yoA5ihKIQebAFi3PD3Y9kvOtew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=SNbUNCEc; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=KX17V2NjcwJJ6NiVlViLAU+7MVjS3l7fc1IXv5WS+xY=; b=SNbUNCEcw0MGhSRr27lg4we1lp
-	U12IEUlvN14FdUwWejSyYgbdxAoRRm0d8sQHKL4mosEnCRbbNzYZU1Vhg8o4eg9UEE+5TMiw4xeyo
-	N7HHcWl75nh3Dsqpi1ScI1iVqMbTWwwVjbBt3IFPd223fsDHzSOw8l2Lxumi0MrbijJUWt6L19FOd
-	5MN5avbmav+CjxJIFjtqWhQpRVqgh52o8AeUZK27wJO7aiw0dSshn2IMdnk3TVN5Xnhbc+DJHN21n
-	XQpk8YsTk4FbyxCneL7moCAFQC/sZITH3iHkRwwTOyq0PZCWuvDed+tsLmyZ4sh2cwwf11IR5SJSp
-	4kZumm2Q==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2] hwmon: sy7636a: add alias
-Date: Tue,  9 Sep 2025 10:02:49 +0200
-Message-Id: <20250909080249.30656-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1757405059; c=relaxed/simple;
+	bh=hheBO53S4cuD1hHV8+7z+fXYLzy/l5AiYW98zwt2iWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmGpjQXDMuaV5Pcu63L9tedLRSUS9mYw5zmVsUjtIs8FVQG2IZ8xULCb+kl4e/OW4ibGsibPcnxHTouW7g3PyFf2ZaTrOyTOpArz9CfnFxyPyridtcVmhv9VmTfWUA1r0X6ZrqQwsU8NdeFQbLcqe/Q+obNUEqONYiXSAERk/bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtMLFa8C; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757405058; x=1788941058;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hheBO53S4cuD1hHV8+7z+fXYLzy/l5AiYW98zwt2iWs=;
+  b=BtMLFa8CxWte7EPEJYDSl4Uu4ie9Z9gzq7hGc/NXlZxpnUhewBEGr/11
+   eHgNr1P4y5Eu+A97EdAUev0bYOSo4Suyi1b6fqbfn7WXmqF93LNewtam/
+   ZiTJOUHpfrTK18pWCM56fu4815lECI+W6Ynd/Oon6/oWUWG7OdFNmAzd8
+   vgu5JTt+AA+i4ev125ziglSSjeVM1xtR/S5Y5TrR52YaQ4YIQtGTJSq9B
+   9CqGZaNEySLgcfadhhtoptzZdBlg2h1uleYHa3RSjmH49iABctMZIwbgu
+   tGOCt0fNKWByloz/6jTfBPiSw8mlgZdV6BWYxucJgmdpxG/cdvyn/yU/R
+   Q==;
+X-CSE-ConnectionGUID: uJj9OkJMQtyXS/R0SyqiVg==
+X-CSE-MsgGUID: VPoqZVzjT2u+FEV8j9uwfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62306729"
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="62306729"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:04:17 -0700
+X-CSE-ConnectionGUID: aUhvH03JTpa8sKMWBcGqIQ==
+X-CSE-MsgGUID: PJIE3vMoSSis6CmgX1wFjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="196683482"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:04:14 -0700
+Date: Tue, 9 Sep 2025 16:04:11 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Yi Lai <yi1.lai@intel.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, shuah@kernel.org, wad@chromium.org,
+	luto@amacapital.net, kees@kernel.org, usama.anjum@collabora.com
+Subject: Re: [PATCH] selftests/kselftest_harness: Add
+ harness-selftest.expected to TEST_FILES
+Message-ID: <aL/fe6xsyZCrJKIP@ly-workstation>
+References: <20250815091032.802171-1-yi1.lai@intel.com>
+ <20250815112711-473df6c4-d0d4-452f-9411-b72491adf2af@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250815112711-473df6c4-d0d4-452f-9411-b72491adf2af@linutronix.de>
 
-Add module alias to have it autoloaded.
+On Fri, Aug 15, 2025 at 11:28:40AM +0200, Thomas Weiﬂschuh wrote:
+> On Fri, Aug 15, 2025 at 05:10:32PM +0800, Yi Lai wrote:
+> > The harness-selftest.expected is not installed in INSTALL_PATH.
+> > Attempting to execute harness-selftest.sh shows warning:
+> > 
+> > diff: ./kselftest_harness/harness-selftest.expected: No such file or
+> > directory
+> > 
+> > Add harness-selftest.expected to TEST_FILES.
+> > 
+> > Signed-off-by: Yi Lai <yi1.lai@intel.com>
+> 
+> Fixes: df82ffc5a3c1 ("selftests: harness: Add kselftest harness selftest")
+> Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+> Thanks!
+>
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in v2:
- use macro instead of device table
+Sorry for the late response. Thank you for review. I will send a v2
+patch containing the fixes tag.
 
- drivers/hwmon/sy7636a-hwmon.c | 1 +
- 1 file changed, 1 insertion(+)
+Regards,
+Yi Lai
 
-diff --git a/drivers/hwmon/sy7636a-hwmon.c b/drivers/hwmon/sy7636a-hwmon.c
-index ed110884786b4..a12fc0ce70e76 100644
---- a/drivers/hwmon/sy7636a-hwmon.c
-+++ b/drivers/hwmon/sy7636a-hwmon.c
-@@ -104,3 +104,4 @@ module_platform_driver(sy7636a_sensor_driver);
- 
- MODULE_DESCRIPTION("SY7636A sensor driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:sy7636a-temperature");
--- 
-2.39.5
-
+> > ---
+> >  tools/testing/selftests/kselftest_harness/Makefile | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/tools/testing/selftests/kselftest_harness/Makefile b/tools/testing/selftests/kselftest_harness/Makefile
+> > index 0617535a6ce4..d2369c01701a 100644
+> > --- a/tools/testing/selftests/kselftest_harness/Makefile
+> > +++ b/tools/testing/selftests/kselftest_harness/Makefile
+> > @@ -2,6 +2,7 @@
+> >  
+> >  TEST_GEN_PROGS_EXTENDED := harness-selftest
+> >  TEST_PROGS := harness-selftest.sh
+> > +TEST_FILES := harness-selftest.expected
+> >  EXTRA_CLEAN := harness-selftest.seen
+> >  
+> >  include ../lib.mk
+> > -- 
+> > 2.43.0
+> > 
 
