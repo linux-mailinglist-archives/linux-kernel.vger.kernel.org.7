@@ -1,245 +1,210 @@
-Return-Path: <linux-kernel+bounces-808440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDFBB4FFBD
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F64FB4FFC2
 	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50BB54E10CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B9E1C60134
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9DB34A302;
-	Tue,  9 Sep 2025 14:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94740350844;
+	Tue,  9 Sep 2025 14:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oK0ywa0m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="VnTco8KB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887251A9F97
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428991; cv=fail; b=aBuxaR1fGxS0c4SEtNk9eYVA6VWRQS3SbBYF+8gx0ESTfQjZsoMyz1Rt1HgnwbhW5t0uBF3zMv/kSbDq9EOmmrNXXEEaJbtsnTp4YV0ZvHNtrFaDarZWJ5610mzHxHZBonRpnmXIWBaMNnn6mNMXczCzOfZWJ7l5m5iLzAD61zc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428991; c=relaxed/simple;
-	bh=RzhRi1e5HLaKtIaUbijEfUeMbA+h3UZ9l664Rlu4RFE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=k7oZEb4dAV8pKdu8nSpUoFrFwX1s2HkRNa9V9q58J0cK840plVDc7LzYg1Cs/fwo3LiLhHFcXM1MdRlN+07OkpShv7TAkB95rmtokzk6ABZ+hqokUYhFSc6uB5w681HrDX5jU2V7euK3gpaPmxOSYhHsTGPtgA22O/f6tPayo4w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oK0ywa0m; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757428989; x=1788964989;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=RzhRi1e5HLaKtIaUbijEfUeMbA+h3UZ9l664Rlu4RFE=;
-  b=oK0ywa0mHJTNm212DySZEUfGAtxjIXeds77cn6s3RSqjNQK0aV/W5+VI
-   4VH3ERMg/gX4dgzl9Sss9VE/bOMAVTrP7G33nSBlQCyCh0K71dwAHShr3
-   wWv/KpRwtQLedH6Oln8b1WLiEfg94U3wZSzwXPG1itn4Fzdlvjw/2Z4sN
-   pb2Ki6Wl5I+fbnwdQyWHtN3i7S6nyAQbWfG/Vw2Pvmre0X653/JD3HjoI
-   uRhE9qw/auePbxaLYRk6BV67XIOuFxHYZYX7NNH2ByFUjc6L1ED7CB4Mz
-   kgmGI7/+fi9DZELVbZTrzNp5uZ5+xBDfjOCthvrA9R3xzoXoFMRnKwUus
-   A==;
-X-CSE-ConnectionGUID: 66oC0ClcTiCF/T/OF/pxdw==
-X-CSE-MsgGUID: xIEVnVieTB6C2zXESJtbnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="47287290"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="47287290"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 07:43:09 -0700
-X-CSE-ConnectionGUID: L8uKPx7QSwWBsRaVUdy8fw==
-X-CSE-MsgGUID: T+4P070wRVKju4q9oHtOnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="172270969"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 07:43:09 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Sep 2025 07:43:08 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 9 Sep 2025 07:43:08 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.72) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Sep 2025 07:43:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XDkCXY05fJTqXgGsBw2xEeN3PVTRVJ/igIIC1LxJe349TevLpwXpBt0l/402rnlufHiUwf9VLqzkQ7pK3cYSduAAuUlB6q13FSkaaKjosagNnaDMQdu1T0l4NC7aQcc7M0ibBA815rDLUGBRAkn66rffvdO9s3WsDPi831NOIwqDPySf47FOtXGERFlogkhDmpzBv5+/TwVaSIawAp1lSSVREABErDiBxZnYjow6tjt7zmdcG200l4NIsYLeXcFHut085BVrNoPsCyCNDAIV6hEz3dTtWLRiXojbeZA4CoVF4U1jDKEyJkCXKgkFfB5jCyvdLeprxjAIBVIaDq7diQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D7EeMEBRyxTXtEabyaqLR5/+ztZYDX+Doq5etY6FlKM=;
- b=pSS4lQRWQA0S90WdI75z1C9eZ8KzJK9T7C9GKkQpZwfnstR7BZhNOT6qbnRkPYF11rTGNQyFKc+6f2qFbiRupB8h/NHLmIjELUNhqi31jAy6yeCwzlkZFKOAfUcn7yoL5L+SHejnEkGmAITtDU2V2vTfBQlcS0hUyoqLCG4TYIbXG/+WPSVHT7wq7m7JbdEjC0xP4LsfWDO6Brko/yjU5Zt4bpcQATkqnxYWzU0+1RoB3WHcj24x6hvNvSrj2ydBN/Ks3MvbJhC9CIYzvRhoUAtN30wkmYcaej7k7/qJFO3K+0avuNYOxarBMfATRD0JdEDQdnXM3PXZVI9LiSHv9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by DS7PR11MB8808.namprd11.prod.outlook.com (2603:10b6:8:257::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Tue, 9 Sep
- 2025 14:43:05 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 14:43:05 +0000
-Date: Tue, 9 Sep 2025 09:43:02 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-CC: "Nilawar, Badal" <badal.nilawar@intel.com>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gupta,
- Anshuman" <anshuman.gupta@intel.com>, "Vivi, Rodrigo"
-	<rodrigo.vivi@intel.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "Ceraolo Spurio, Daniele"
-	<daniele.ceraolospurio@intel.com>, "mika.westerberg@linux.intel.com"
-	<mika.westerberg@linux.intel.com>, "Poosa, Karthik" <karthik.poosa@intel.com>
-Subject: Re: [PATCH v9 2/9] mei: late_bind: add late binding component driver
-Message-ID: <wuy7xx57puqytyigl2fbosluckauxikgdvcrdvtubbob6olvyl@wlbsiuquprep>
-References: <20250905154953.3974335-1-badal.nilawar@intel.com>
- <20250905154953.3974335-3-badal.nilawar@intel.com>
- <tbflj3r6picnz7pzhiz77gzhrdnmfxlruhtas4rfrvm27dapss@3wqf4dd2lmsx>
- <CY5PR11MB63665FAB1FE8D8CBE17C31CEED0FA@CY5PR11MB6366.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB63665FAB1FE8D8CBE17C31CEED0FA@CY5PR11MB6366.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BYAPR04CA0027.namprd04.prod.outlook.com
- (2603:10b6:a03:40::40) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CA434F49E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757428996; cv=none; b=CP8RigB94gp/aa9ORFJFOZJg+P0aK/0E8DzrldQkDPqvRQI0jgAta+4Y5eLEdU4M74mYTgqfHCOILwokwQgaKd0gqL3qBaB/cxYrG8rTp5zPKEUm4b0sa6Kncs7TCDpjaEXgqN0XIIcYGUdN3AYymb1RPBIFRgAzH+Mzw9QaZJw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757428996; c=relaxed/simple;
+	bh=kZsPvc1qbpj/gMZ9DpWcp5bZPO/uvzGdQpRMrhizyWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NceEH27A9U1luUB9onctG5cOu3E/R6RvsBGx+webkBRR8Hzer2YElO5+NKOn9zvSfBjQZS3tKLABBjP6c4RG5EXSltlaY3N8bQJ7xs5Lm37gbrWVa+T1f1NLHDkfrYERbTrrhffle46asCwUf84iEea+tAU0RH4kxFpx1E7wWxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=VnTco8KB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-25669596921so20926625ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1757428994; x=1758033794; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ddrCOGQrTk4YnXFxSW8TsT6ATPKz9oABWw9Dn9DJNeo=;
+        b=VnTco8KBuR+foyDbPPs2k5BaCq3hw7833lztpl+dYU9WOW+WxH18sfdJnOIW9PhnRj
+         vodWHS72+E04YHPbrwkyROO1BQgbbgGHvb3VNbiOeSyVrWrktMWNmAy24mNwTCb1eKzk
+         AWxagRq8es04G0qRnkBfJX5Q7Q9McDMON6QcA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757428994; x=1758033794;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ddrCOGQrTk4YnXFxSW8TsT6ATPKz9oABWw9Dn9DJNeo=;
+        b=YEy0t63WvPlVA14pvgqCfdRHXb+AZ3UNCX3iKcnvqIoAdcmSKWtXC+hVBpeDghojsH
+         0CWD/e7oXBIQg25iA3kCQ5wH/d4zDT/7F003XNM4LGr3DVFNIMLo3RmLpXlRaHsbNI+/
+         H/OdzLT9038ErseFvdmBqNI0J2Gmf1NoTEDmG2aWmu0SkJBHM+ItqWAzNZb0MnEeNC3i
+         7mplgq4GhHrC8j+u539MaZ6baBzV2DUPs/78PzHuAzjO9S+BvuQeL6r6+ON+/QGm8WOk
+         aOECG8YSTz59NoNWy3cpqJd7sh4cqH0XaQlxKZDfFQhoXbmfZ1CRkJc84K+w0jqQWAmX
+         ORlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUriYSN8aWoLV3w/eEyQTghzN33FPaTzKB+Vrk0+tooRyRknuLAWccnu4nV0kUVybWV9LJjc/yCwCkKZ50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3S58KbXH6BUVLfju3hLiZcBIymwgomCl4+TcONJFjYiNma7xC
+	ghfCY+dMLJObt6LkhCgLGUaJtteWus84MOl3uiSE+3vEHhftHfk25ec2dyszTs19Wcs=
+X-Gm-Gg: ASbGncvOSgAS3NUAfk/LE8hFTw2Otxs64qyV9+gSGxHQf3C1XoKOdeDvpzYpBcNv8IF
+	Ss5jVb/OswuI7mMszy+UYKKZ5s2YIFTOVmpx3VRiYECfHi3v+IlXe3psIxqKxQ/tmu8TOrYNp48
+	M2wTsBAkk/XEWAy2akQA6+FikCrXpPR9CaZDsCV3oZFBAbIcUDT8ds3JxD8ATZFcrDUQBz20k/j
+	EylQYEH0mVYArsP0k+fvKaF5TT8lWzNjkpCcF6YMUsLNlUs/21lRMtZ1VTYpeScllv5Pm8SNqMc
+	eYARxYie65DASbLEMVvu/EDCqOJvXBflG6KTLI8CpXb6ZkQuPYhebwhIHwgO6i1qC1j6SzeuQEA
+	exeTIMiHUb33S2xZcfvGRm4nTzz/i+866wIp2QmClY68rqUhbKVv2nw==
+X-Google-Smtp-Source: AGHT+IF0maZnaaLQLAz9HyDOMDlcVgeagw7Fn/NEgjbTn/SufuWhh4SmMvMtEn5ZIob4ZX3rKUzR3A==
+X-Received: by 2002:a17:903:b48:b0:258:dc72:9d76 with SMTP id d9443c01a7336-258dc729f05mr38100225ad.10.1757428994417;
+        Tue, 09 Sep 2025 07:43:14 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a281e5620sm313525ad.63.2025.09.09.07.43.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 07:43:13 -0700 (PDT)
+Date: Tue, 9 Sep 2025 23:43:08 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
+ io_uring_cmd_prep() to avoid UB
+Message-ID: <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-3-sidong.yang@furiosa.ai>
+ <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
+ <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
+ <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
+ <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
+ <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS7PR11MB8808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18159c85-fff7-42e0-960a-08ddefaf2f97
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|27256017;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5gDY1LcElEuO0CBdXMtYUF+z38y6VtcITEfCrdhO3OXg+vI2Vh3zjR1CQq6c?=
- =?us-ascii?Q?Jg2/8mT08cnefxadkYyccep/nEQJ1B/679ucIAqtRX+2kv47G6DyRn3icCE3?=
- =?us-ascii?Q?ZiL+sXF7GMwdprFzYE8FXEFcfNOmW9SaUPZLqSA2NEIiJqAKhIwC+mkJ1mHR?=
- =?us-ascii?Q?NpfTpdag0oMUKuYYiviecRzR295m8rl0gJXSQNeT7hMg642bYAO5z+0cezaP?=
- =?us-ascii?Q?P3Bo6O0sikgocVT3Mx57CWlksMgsa6VBYYF7Mgwc08Y05WStO6b/L8RCkCaQ?=
- =?us-ascii?Q?kV4JExzzilYdRr7qqlPzFmvI6PSdJ4XgezzOi4OeCQf9UQ42/M6kq+NKYKIy?=
- =?us-ascii?Q?wF9BkL2mn01Kb9N3cGCb6UCEr8HykOYsUeFSELIxz9JuMvBGLcTB753f1OxD?=
- =?us-ascii?Q?JQpLuzAJslgKE08d6x0Le/8b69mkBHCP4cvLDnrZ0CzIUDf4ffLkjulIOMJQ?=
- =?us-ascii?Q?dTGS3VA2rocUQKgRWz0ySxj1a7CpDhkwnWRA98MRoBwn/JnY3VcyIzu8pc0r?=
- =?us-ascii?Q?OWQ/pejsqR6Vw0azixP2AIKHH18DaKd/r9RdsRsHZzIjm2yGbm7GidmfqHOi?=
- =?us-ascii?Q?WxL1ZEiLbFUTvzLMu8CoK5sHFKlEVkpexOkP7D8U/m6sfu6DFO841pkyh9hu?=
- =?us-ascii?Q?8k/A2SdXSX2aUjULQc2CnkRDMVENCtWYxyHVsQR/ddaZhePhJy0pnYqC2Xm6?=
- =?us-ascii?Q?snUb3qNFyedxVNXscmGu9qtKD4FtNtNdk5Ld5+61AzvFNTxNi82lGN74SLs+?=
- =?us-ascii?Q?tXLGjPKNiK0gdjWe5Dm1fEiz975fzfyb9S6tptWIbWei4OQptm58zG37Vi9j?=
- =?us-ascii?Q?xCwUqvuaxmHWTBCXPBCz3EgVO2m6jSXG8MWGQqGv+JrsfSzl1tBi1B/hkSVt?=
- =?us-ascii?Q?5aVhi20Me8BluQn93VaTsnqn4L/j3wpScpvqsIQMwIofnaNDGp7Ce+GvklW+?=
- =?us-ascii?Q?SMcp4oLpn1AcdR4aXRwdtGt5WPPcyDGXtWoA6OsMP27LR9kbxiwoNQZ+2R66?=
- =?us-ascii?Q?g6PByOP8FTkCbYnT/jFDjdLP4TXDeP0kRheremWWvIgp5FWY3N4drzWmt55t?=
- =?us-ascii?Q?oCbEBWl9TmN7faFqI7XqlDoxEW0QBTElSPcvLyMOVNUeHSO9up0lj7Iy07iw?=
- =?us-ascii?Q?bVfyYC/YFI9RrwHvuTaLNQ5/b9LNwbJFRuAt9lI6FOn9SMNGKl1OvOPbtuA8?=
- =?us-ascii?Q?eWtdwt3qhO4cF9cTT28s1Qh+Rweq8YQ9qGsb/fcXIOQRYkqpelgsKPaeGjPf?=
- =?us-ascii?Q?EyZga4gGRsOrqm8xrKKjMtB9j8CHcPwGC6MnBGxS2VQkvCIiroHsKSQcYx24?=
- =?us-ascii?Q?aNaXytJ9I92l6lbQwRX5hVDgb2SyruMfzJYTtxfKZRGOOJZWvN5KxAb8YyuV?=
- =?us-ascii?Q?6rb5ffAk22pJsDswV2cFCgBd/EY8Vps+0sUTo9Zz/SA777olG21BGlBVWznK?=
- =?us-ascii?Q?WjkZFOVCVE/OqXQIktBDWUPyN0mzqZxREvzel8nOwtGk3x3rUyXqDQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VP+AazWAGsMwKcMNOsuRAXAn8rhHNRbtsFSbz2BoB5dgMihzDS+YwdzmUMOZ?=
- =?us-ascii?Q?3IgrijzK/N4YeWVHys9pAPLGUY+oaAfWcnC1R5HMMgeyHEVB3vPPwPL9E/p8?=
- =?us-ascii?Q?MhrHpYxJalJmHj3lLb4kv+YxQdpYa1GGxWyu/qacmmRpM0Ax9gcvPGWoeO5e?=
- =?us-ascii?Q?Vmt+Q+vMn27gVEvfLKfy6NDZAKwWRlmCv6nHvyyH6bEREy7bZPA+t7NzO6Om?=
- =?us-ascii?Q?96THttyQuBkVYvIfc1fR55HuOC13/r1UldXZ5RZivKx662G5CiJLKqH5xa6y?=
- =?us-ascii?Q?vsnbj592RR865YM3ohL1FhtgpQiqKN8ruwFhz8sn3i/X6nXV3ngoEl2ms7B2?=
- =?us-ascii?Q?grhnhLo0oI6T7XHyeRWdK24y57Uvk8m5WIeuMwXnPpW5/UmjG7hGIw7H1bOL?=
- =?us-ascii?Q?jpptJhYrdXlUMJaZyunoKH9H/FMwJxNckjxS+b8EN4CNCpGLFMShDXIeH3D7?=
- =?us-ascii?Q?jRrF3sd1sFCPE5wCZY6RnUe3oJblREAoE296ZJ7LHT68OdeNi4PYnjxo6sTW?=
- =?us-ascii?Q?E70OAA/aMmJxre+uDffx1OsoQfXApJEz//7bwm29WXQwdmkjjap1EmkCgYhr?=
- =?us-ascii?Q?ba5vqdylwi2B2Sq08FyKjBr1NovE+jkOb8H1hHS5VMgOnMqPbU3XhQUUyFUg?=
- =?us-ascii?Q?6k6LtqcwGe7HkDqnwnb++8HtKMmfdDbr5BQlzH/O1od2It5pJB/rvCSMwpsB?=
- =?us-ascii?Q?7bJ0hqVWXa+ZTvF5qDfiRJduDSe5+qSh3rI4p/XzYRkvSfL9wUZp26IjOXRR?=
- =?us-ascii?Q?d24liBMMl3BO4jREW5D1WOb3WuagpYSyqaF8eEIusOjB/L8IhDwLoWAJC+Bc?=
- =?us-ascii?Q?XT5AVm2fba3hZnw23s7WD2v9SymaFGAUjn1Ob+wECv+cku35S1Vvv6LL/c7a?=
- =?us-ascii?Q?YRMah7aOqIljyKT6BB27hnb9YO3NSPYgtM3YoIjEYxbSbLWwVNxVFaiDHKP1?=
- =?us-ascii?Q?9+wqimD2WPh3W1VFjVgS4bzxdyNLn2fRExsz08fxT+w4YXgJId8WgOWjZBaZ?=
- =?us-ascii?Q?vgIEQOAVIAjbdeERW9cjKYZfxUDJnWCy4dA3/wUMu+XeS4SrvQieRDVKmM95?=
- =?us-ascii?Q?tPxjlBBxtRR3mXsNSpEFnI5ZNscHxjCSQo1tdGiZpKZTzmF4tB+kt2UMvP5o?=
- =?us-ascii?Q?+mgWzera7zD1gtalRv/0KE2DEgnBbrXzDr9EyUnj/ypT8N17OqHnGacFu4R0?=
- =?us-ascii?Q?IquDUa5TZjqXHN/AhFl9UYmPlm3cEihqaLD8RTd4eXZ9pdl0Hwe2zqE8XRKp?=
- =?us-ascii?Q?jyV3kL3Zm25XsWZ+GrZ8i4XiODB75q2QixXXVmXBCtEeiIYhrUPSfJStiqB+?=
- =?us-ascii?Q?66obgQyV9R7hVDocuanufxxvo5q/mTQlq7/AYHeZZXhMDP1GnJX8UfPn4Hx9?=
- =?us-ascii?Q?HYxghkeXphhYK4CjW6uoVpdQbjjfoiFmhVmb0gAcD6u3LxTHy58Uk1tvl5kO?=
- =?us-ascii?Q?xmQArc8QCqPX7ixY27DgVc+JDaH1TloACnvPs5eJgy47eR/4yrKdkc/9pIL/?=
- =?us-ascii?Q?MVZ7zC/aMgCqkgD/0gm+ahjKEUIghcqviPljr9cY8r/pF0+S6N2y4JcepHMR?=
- =?us-ascii?Q?E7nFE+A1zl62IZF5BvMIP8Ggxs3rlzfBlpSMRfo0nIECeqQ5maj1C65PF74z?=
- =?us-ascii?Q?+g=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18159c85-fff7-42e0-960a-08ddefaf2f97
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 14:43:05.4998
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /o4dWKRhra5Lez70c8z8dyQ6BHvu6xfuCgF9mMcMho4GHqWF4BLWgfeIihx9ctAIZ993HkAhLthOrLpVd+p3Lo+AkL2nfD+cTRMW4nIKSbQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB8808
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
 
-On Tue, Sep 09, 2025 at 04:50:41AM +0000, Usyskin, Alexander wrote:
->> >+static int mei_lb_component_match(struct device *dev, int subcomponent,
->> >+				  void *data)
->> >+{
->> >+	/*
->> >+	 * This function checks if requester is Intel %PCI_CLASS_DISPLAY_VGA
->> or
->> >+	 * %PCI_CLASS_DISPLAY_OTHER device, and checks if the requester is
->> the
->> >+	 * grand parent of mei_if i.e. late bind MEI device
->> >+	 */
->> >+	struct device *base = data;
->> >+	struct pci_dev *pdev;
->> >+
->> >+	if (!dev)
->> >+		return 0;
->> >+
->> >+	if (!dev_is_pci(dev))
->> >+		return 0;
->> >+
->> >+	pdev = to_pci_dev(dev);
->> >+
->> >+	if (pdev->vendor != PCI_VENDOR_ID_INTEL)
->> >+		return 0;
->> >+
->> >+	if (pdev->class != (PCI_CLASS_DISPLAY_VGA << 8) &&
->> >+	    pdev->class != (PCI_CLASS_DISPLAY_OTHER << 8))
->>
->> this doesn't seem right, we should allow other PCI classes. AFAICS this
->> check could just be removed and just leave the INTEL_COMPONENT_LB below
->> to protect for component match
->>
->> Lucas De Marchi
->>
->
->The subcomponent is unique only in its own instance of the component framework.
->Or I'm wrong here?
->We have to ensure that we have Intel display device, not any other device to
->subcomponent check to work correctly.
+On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
+> On Sat, Sep 6, 2025 at 7:28 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> >
+> > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
+> > > On Tue, Sep 2, 2025 at 3:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > > >
+> > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
+> > > > > On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > > > > >
+> > > > > > The pdu field in io_uring_cmd may contain stale data when a request
+> > > > > > object is recycled from the slab cache. Accessing uninitialized or
+> > > > > > garbage memory can lead to undefined behavior in users of the pdu.
+> > > > > >
+> > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
+> > > > > > each command starts from a well-defined state. This avoids exposing
+> > > > > > uninitialized memory and prevents potential misinterpretation of data
+> > > > > > from previous requests.
+> > > > > >
+> > > > > > No functional change is intended other than guaranteeing that pdu is
+> > > > > > always zero-initialized before use.
+> > > > > >
+> > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > > > > > ---
+> > > > > >  io_uring/uring_cmd.c | 1 +
+> > > > > >  1 file changed, 1 insertion(+)
+> > > > > >
+> > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > > > > index 053bac89b6c0..2492525d4e43 100644
+> > > > > > --- a/io_uring/uring_cmd.c
+> > > > > > +++ b/io_uring/uring_cmd.c
+> > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> > > > > >         if (!ac)
+> > > > > >                 return -ENOMEM;
+> > > > > >         ioucmd->sqe = sqe;
+> > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
+> > > > >
+> > > > > Adding this overhead to every existing uring_cmd() implementation is
+> > > > > unfortunate. Could we instead track the initialized/uninitialized
+> > > > > state by using different types on the Rust side? The io_uring_cmd
+> > > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
+> > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
+> > > > > PDU has been initialized.
+> > > >
+> > > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
+> > > > the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
+> > > > But I don't know that we could call T::default() in miscdevice. If we
+> > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
+> > > >
+> > > > How about assign a byte in pdu for checking initialized? In uring_cmd(),
+> > > > We could set a byte flag that it's not initialized. And we could return
+> > > > error that it's not initialized in read_pdu().
+> > >
+> > > Could we do the zero-initialization (or T::default()) in
+> > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
+> > > isn't set (i.e. on the initial issue)? That way, we avoid any
+> > > performance penalty for the existing C uring_cmd() implementations.
+> > > I'm not quite sure what you mean by "assign a byte in pdu for checking
+> > > initialized".
+> >
+> > Sure, we could fill zero when it's the first time uring_cmd called with
+> > checking the flag. I would remove this commit for next version. I also
+> > suggests that we would provide the method that read_pdu() and write_pdu().
+> > In read_pdu() I want to check write_pdu() is called before. So along the
+> > 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
+> > initialized?
+> 
+> Not sure what you mean about "20 bytes for pdu".
+> It seems like it would be preferable to enforce that write_pdu() has
+> been called before read_pdu() using the Rust type system instead of a
+> runtime check. I was thinking a signature like fn write_pdu(cmd:
+> IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
+> reason that wouldn't work and a runtime check would be necessary?
 
-We are matching by child-parent relationship + the component id. So you
-have both the mei device and another pci device that added that specific
-subcomponent and both need to have a common parent. Thinking about
-another device that would match the parent-child relationship:  audio,
-but audio doesn't add that.
+I didn't think about make write_pdu() to return IoUringCmdPdu<T> before.
+I think it's good way to pdu is safe without adding a new generic param for
+MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could call
+IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
 
-what scenario would cause a false match that I'm not seeing?
+> 
+> >
+> > But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> and
+> > issue_flags. How about some additional field for pdu is initialized like below?
+> >
+> > struct IoUringCmdArgs {
+> >   ioucmd: Pin<&mut IoUringCmd>,
+> >   issue_flags: u32,
+> >   pdu_initialized: bool,
+> > }
+> 
+> One other thing I realized is that issue_flags should come from the
+> *current* context rather than the context the uring_cmd() callback was
+> called in. For example, if io_uring_cmd_done() is called from task
+> work context, issue_flags should match the issue_flags passed to the
+> io_uring_cmd_tw_t callback, not the issue_flags originally passed to
+> the uring_cmd() callback. So it probably makes more sense to decouple
+> issue_flags from the (owned) IoUringCmd. I think you could pass it by
+> reference (&IssueFlags) or with a phantom reference lifetime
+> (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
+> ensure it can't be used after those callbacks have returned.
 
-Lucas De Marchi
+I have had no idea about task work context. I agree with you that
+it would be better to separate issue_flags from IoUringCmd. So, 
+IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
+
+> 
+> Best,
+> Caleb
 
