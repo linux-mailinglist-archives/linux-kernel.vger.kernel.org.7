@@ -1,195 +1,125 @@
-Return-Path: <linux-kernel+bounces-808561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0352B501B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:43:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A4FB50192
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 349187BEE4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA681BC3421
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7184E352FF3;
-	Tue,  9 Sep 2025 15:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C58135A298;
+	Tue,  9 Sep 2025 15:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z+nXkTF9"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzIa7Kh8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B25350D52
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B620435A291;
+	Tue,  9 Sep 2025 15:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432021; cv=none; b=NPsqyPGF5zFtHv+OoKtUcjQFI7YUEDT6ZSBC+iKo2Q0UgUiQqcfQvNwv1yG88Yl9IvxBGKM8+sDXkgfKhe0wdneQ+J6vANrfdIfgWkE+EYIYLR2VTaqJHa2NQg4C2lyAn096g+nJrYpjzwBiAjmJZWzq/hFhRY3U5ow4Le+RgzI=
+	t=1757432076; cv=none; b=GBbmLd1b/mkvuvc/QsxlMiqFQFriDcYUiYVocOFYg7NqbrZ7hDGeISrIpzY9+zTHvWUOnB/EXM2g2CymstlapvBwQ5DrNKUpg+imq89twU+dKRzIHakrbgRlnfNgp3bzUQcnUcFJDB1wDYtYe+CceTzBYDqeipGAOB6B2hy40A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432021; c=relaxed/simple;
-	bh=eXqcsEVT0O/GOfA/Ca74pae233qQpT8kMZ1DFItem6g=;
+	s=arc-20240116; t=1757432076; c=relaxed/simple;
+	bh=8qTa9xeWxgzia/87N+H0CPE3siON5KYKzADDzEoot48=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LW4M439EruPUAOZWmIagyPIJpyr33saeuoq9TO5keLA4sHrhuK9P815k7B1b3ozqJ34O33hVVakRlfspxTf9ygZhXhG5K9kdM3n0sbZfR73XLmLTGSRRKyW3ZzQCcmY50fS/cdTAMmVlBAiV/6nYkEzcooDUvETuOnVREF6gR5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z+nXkTF9; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b109c6b9fcso46035871cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757432019; x=1758036819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LH53MCx6ogN1k+/cTYDbkLwp7+QCPYAr+PyETboPxPU=;
-        b=Z+nXkTF9JfnULQd3XbzxXlfRdTzzgDr49lrdpLuq3FXi+I/MaDoS4jQRaHR6rOOQhF
-         B/3pLnFn9bjNO1++zCzgpyqUfunnQ07fMWf37xR7NueFFIvkF8T6AyvbM8opEwlS5JYW
-         kftTpR7HzlG04ODQ9DSDefG6P1JtarUJ7noZfTTsRAT+2cyAFzKhTqtrWkC246XJVNDK
-         2lbhqkoG7F7JofQnoDh4ZAXllkj5suioJJJgj4lQ+kCnZy78NO7ZhbLTAYWxzNXIljS0
-         CJDlBsbb5hEYXEBsBz2pMD3UgpBP++xQ+cDVAKmfcuauQ9+AYTYweAyb1aCkekZ3oPTJ
-         corg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757432019; x=1758036819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LH53MCx6ogN1k+/cTYDbkLwp7+QCPYAr+PyETboPxPU=;
-        b=xD+j9fxZLRkulohLktXcX/YKzwkGBYMhGEHRcWFurXBmLLR88xSOgq9f3jAzpZRCyK
-         krVpkq3EjPGeFdGnnwb6pVlZFgMRI+uwqKngkpWd9JCCOfd7zVcH9pXsuR2KAPKm+fN+
-         G23ghER2batq5pKubiNssvxtE09c/I/Myx9haOPZ5mx7puEpS1gLZ3niZz6NPXgS8m7K
-         NiG9C2IPUw7Y5+L0zU0F+9nNKYTd1Ngfb3NRCN2qn5KcQt/+0XJg8dSvAr7o2ynnmYO0
-         msGcZ4amdoFB+mPTk+Gj9t2qaDBfYYoXE2J8cBU6H9ePL8BlrGUXq8583Sxm13qB+hLi
-         oi7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXfPdYZZXk/NuOimAdkMR8Y+0r75Q25Fv75CHi9X/4OPBct6RCpZqboP0g4GucJu/EAnvoUfJIBOQaqJT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx27Mnj7fbBzWkt4Ivi5id462yo7I3uy1Ttp1bjEc0oYdPEXMZ9
-	bJqsVNPNSetGKXzIHegUo00HI3z+MsodDdo8601jHBt6h/oICmU1Q29zkE4Ii1s2KQUu8uddHHa
-	o2LJerOFed5hMdWWaRC0NiNymmLDqYpyTNJPGakgb
-X-Gm-Gg: ASbGncvWprAvoEnyWa+vcOn2a6O5PZ4TXzydHrgJYQ2WQp+ykg9T3EMxdF+HYZFMRhF
-	P206Ikt07igrEcdUV30kak3Psnlu8I7ULYY3NQnOZ5XRc9MPeaVmYQ/OoAzvX84+VgmzPmmMpYF
-	+UvAJb4CTNlLkBw8aOLlixtUmoMRbBdfw/M83NQ1G0LfQ5PIzYeJ/kSxetHOc+UdjZPj0gUPvJQ
-	Hpf+1y5/nBrACHwp7hlRrkMP9e/lYFCE10t3jWlXYFUNsJr1V2Uyxhp2sY=
-X-Google-Smtp-Source: AGHT+IEBSJFGC5HE816C89rHJ7brsZIZ78JEBVc19MhZewWuyBdDU+KpX7j08rvkOLFoUtfGNDkZcsKLsSZemorc0Ok=
-X-Received: by 2002:a05:622a:1887:b0:4b5:ea94:d715 with SMTP id
- d75a77b69052e-4b5f8390522mr114936061cf.1.1757432018215; Tue, 09 Sep 2025
- 08:33:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=E8cfrJ1SL3P/Sl6NYKVPjXU/szfGS/o0vZoJFx4zBXJ1Lzz/f1NubfhVfII+LLavQujtCT9iNuCeQf50E01518MaOfCUiaEIFMw0meKMH/xofdHvSUWvXbuGkYEWvd403wsVpQBhpj6zP1GyCOrHb1BAoep7PXbjmXMQTa3LbRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzIa7Kh8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5073FC4CEFB;
+	Tue,  9 Sep 2025 15:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757432076;
+	bh=8qTa9xeWxgzia/87N+H0CPE3siON5KYKzADDzEoot48=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fzIa7Kh8A+c4euikmlUP8hLomx5oWx3DBAZ6jCnnIagemusOCdrxQi+2KaoWh7TMZ
+	 +MBpoROERj82RLZTPYdtuJgmmggYqlwvNIvQ/O1S73WoMPpMxauUMKTp8RR98ti9VI
+	 ZFq/XjW3+lKnz9kl0F2gnCBxkUPJpOrXyBEtlDtEt1kItt8TIk9xDp5gIieCD+Vyhy
+	 Yv739grGcrfZ4042PoTWTfnAnT3j4cWC+JPaN6TjwMt9IzyWf1kLRxv+rFtCdKjs2g
+	 uu0wbaC1EtIMudDV43mbstoOiQy+H+0dEqMgTDqpYVVetuoqNoINgsS9OMipNkb5+b
+	 ehhNxx3sXZAbQ==
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-746d3b0f7e5so4329064a34.2;
+        Tue, 09 Sep 2025 08:34:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0odrrSJNYxr2OIK8VXO7cUwBa/3ZcNlXD1qZugZn2UJOVc/hVPxJw7OQ/jgOw/dlf0zlv2IGepAcdg2iZ@vger.kernel.org, AJvYcCWI1xmzb/JXbwEwQ/GIBMKmIx+Z5jxk8xWU5+/nbkYS/aqNjkwREfQDEWGkxJ0epzNNBNqXV1ctCwj+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9/XdlfVCFTqe3d9w3bRZLaFLQvARQF2mXiNoZU9pcCjF4081c
+	e+unYK+l+3hYNtNr2qP3gOxopjO+tSzOgCfW7DB7FtqAOQW4igSGPm7kHv/nBlr4B8bYRPUAFEr
+	013SuLWb+yLbGezBVvd4tzeRw8EZce1s=
+X-Google-Smtp-Source: AGHT+IHWaK8rYsvG12LJ1v+wQd3FH4Ew6lJ7hajdwsT4NMXGUbcx+CA4lOF7uu7KaVTgx45qL5upgAToWfN8TS73sR4=
+X-Received: by 2002:a05:6830:3692:b0:745:98e8:d7cb with SMTP id
+ 46e09a7af769-74c7192d474mr7456377a34.12.1757432075741; Tue, 09 Sep 2025
+ 08:34:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909132243.1327024-1-edumazet@google.com> <20250909132936.GA1460@redhat.com>
- <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
- <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
- <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk> <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
- <20250909151851.GB1460@redhat.com>
-In-Reply-To: <20250909151851.GB1460@redhat.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 9 Sep 2025 08:33:27 -0700
-X-Gm-Features: Ac12FXwmsBi8N5rZnVovo52dil5DJvY7h1QqJGILCkzQ81ibk4sKlJtshywQWDc
-Message-ID: <CANn89i+-mODVnC=TjwoxVa-qBc4ucibbGoqfM9W7Uf9bryj9qQ@mail.gmail.com>
-Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
-To: "Richard W.M. Jones" <rjones@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <eric.dumazet@gmail.com>, 
-	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
-	Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
-	linux-block@vger.kernel.org, nbd@other.debian.org, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>
+References: <20250908053335.36685-1-xu.yang_2@nxp.com> <20250908053335.36685-2-xu.yang_2@nxp.com>
+In-Reply-To: <20250908053335.36685-2-xu.yang_2@nxp.com>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Wed, 10 Sep 2025 00:33:58 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1ts4_qO4L9X1ZoYtr0SGLW+3EBCqSybntQLGQztALKSA@mail.gmail.com>
+X-Gm-Features: Ac12FXyorylKhwqGw0HT9IiTuqn3a-WrKEI_gkRmAKNLzi4HndmDxi15M7mbjSM
+Message-ID: <CAGTfZH1ts4_qO4L9X1ZoYtr0SGLW+3EBCqSybntQLGQztALKSA@mail.gmail.com>
+Subject: Re: [RESEND v4 2/4] dt-bindings: extcon: ptn5150: Allow "connector"
+ node to present
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: krzk@kernel.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
+	robh@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
+	swboyd@chromium.org, heikki.krogerus@linux.intel.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	jun.li@nxp.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 9, 2025 at 8:19=E2=80=AFAM Richard W.M. Jones <rjones@redhat.co=
-m> wrote:
->
-> On Tue, Sep 09, 2025 at 07:47:09AM -0700, Eric Dumazet wrote:
-> > On Tue, Sep 9, 2025 at 7:37=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wro=
-te:
-> > >
-> > > On 9/9/25 8:35 AM, Eric Dumazet wrote:
-> > > > On Tue, Sep 9, 2025 at 7:04=E2=80=AFAM Eric Dumazet <edumazet@googl=
-e.com> wrote:
-> > > >>
-> > > >> On Tue, Sep 9, 2025 at 6:32=E2=80=AFAM Richard W.M. Jones <rjones@=
-redhat.com> wrote:
-> > > >>>
-> > > >>> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
-> > > >>>> Recently, syzbot started to abuse NBD with all kinds of sockets.
-> > > >>>>
-> > > >>>> Commit cf1b2326b734 ("nbd: verify socket is supported during set=
-up")
-> > > >>>> made sure the socket supported a shutdown() method.
-> > > >>>>
-> > > >>>> Explicitely accept TCP and UNIX stream sockets.
-> > > >>>
-> > > >>> I'm not clear what the actual problem is, but I will say that lib=
-nbd &
-> > > >>> nbdkit (which are another NBD client & server, interoperable with=
- the
-> > > >>> kernel) we support and use NBD over vsock[1].  And we could suppo=
-rt
-> > > >>> NBD over pretty much any stream socket (Infiniband?) [2].
-> > > >>>
-> > > >>> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
-> > > >>>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
-> > > >>> [2] https://libguestfs.org/nbd_connect_socket.3.html
-> > > >>>
-> > > >>> TCP and Unix domain sockets are by far the most widely used, but =
-I
-> > > >>> don't think it's fair to exclude other socket types.
-> > > >>
-> > > >> If we have known and supported socket types, please send a patch t=
-o add them.
-> > > >>
-> > > >> I asked the question last week and got nothing about vsock or othe=
-r types.
-> > > >>
-> > > >> https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A=
-12+ndzBcQs_kZoBA@mail.gmail.com/
-> > > >>
-> > > >> For sure, we do not want datagram sockets, RAW, netlink, and many =
-others.
-> > > >
-> > > > BTW vsock will probably fire lockdep warnings, I see GFP_KERNEL
-> > > > being used in net/vmw_vsock/virtio_transport.c
->
-> CC-ing Stefan & Stefano.  Myself, I'm only using libnbd
-> (ie. userspace) over vsock, not the kernel client.
->
-> > > > So you will have to fix this.
-> > >
-> > > Rather than play whack-a-mole with this, would it make sense to mark =
-as
-> > > socket as "writeback/reclaim" safe and base the nbd decision on that =
-rather
-> > > than attempt to maintain some allow/deny list of sockets?
-> >
-> > Even if a socket type was writeback/reclaim safe, probably NBD would no=
-t support
-> > arbitrary socket type, like netlink, af_packet, or af_netrom.
-> >
-> > An allow list seems safer to me, with commits with a clear owner.
-> >
-> > If future syzbot reports are triggered, the bisection will point to
-> > these commits.
->
-> From the outside it seems really odd to hard code a list of "good"
-> socket types into each kernel client that can open a socket.  Normally
-> if you wanted to restrict socket types wouldn't you do that through
-> something more flexible like nftables?
+Hi,
 
-nftables is user policy.
+Applied it .Thanks.
 
-We need a kernel that will not crash, even if nftables is not
-compiled/loaded/used .
-
-
+On Mon, Sep 8, 2025 at 2:34=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
 >
-> Rich.
+> PTN5150 is usually used with a Type-C connector, so allow a "connector"
+> node to be defined under it.
 >
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+>
+> ---
+> Changes in v4:
+>  - no changes
+> Changes in v3:
+>  - add Acked-by tag
+> Changes in v2:
+>  - improve commit message
+> ---
+>  Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml=
+ b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
+> index 072b3c0c5fd0..79f88b5f4e5c 100644
+> --- a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
+> +++ b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
+> @@ -42,6 +42,9 @@ properties:
+>      description:
+>        A port node to link the usb controller for the dual role switch.
+>
+> +  connector:
+> +    $ref: /schemas/connector/usb-connector.yaml#
+> +
+>  required:
+>    - compatible
+>    - interrupts
 > --
-> Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rj=
-ones
-> Read my programming and virtualization blog: http://rwmj.wordpress.com
-> virt-p2v converts physical machines to virtual machines.  Boot with a
-> live CD or over the network (PXE) and turn machines into KVM guests.
-> http://libguestfs.org/virt-v2v
+> 2.34.1
 >
+>
+
+
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
