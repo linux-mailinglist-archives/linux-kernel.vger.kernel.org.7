@@ -1,112 +1,247 @@
-Return-Path: <linux-kernel+bounces-808724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B49B50403
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:10:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F39DB5041C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831671695B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722EE1891423
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D8F32C33D;
-	Tue,  9 Sep 2025 17:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7243333A023;
+	Tue,  9 Sep 2025 17:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLqacjB/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UbX6MPiq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929E33471C;
-	Tue,  9 Sep 2025 17:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9538D3376BF;
+	Tue,  9 Sep 2025 17:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437792; cv=none; b=FYegB0x6UB8mCpp5BQc8lvkO9jxya0AA4W0s1UoA6K0urSBmzkzmp0LQPHdJItCZMbhlEVX41Qx+hHAL6dqaaexd6OXDe39KNhsQ8ZVzAQz1rduCh3EjC3AtzYc/VsdoF7j46NAZkQG4wl7Pic7NOaFiszOZv/BeZD2PBaS7Zfo=
+	t=1757437833; cv=none; b=Fibd6ie8TN/LrO4sqGxhNmRlIvJIt3IJS3ypvD5vhvuYXLLDuNkCpIB1Je0u6vE2Txgn/Hv/Un5OMU+uUD3yVrYLxp+oNIjH+OXRYoUt0rpR0iuZ6/BQfLizq6wA6bDkIvYocfdFSlk2N9TVHhajrTR+Gt7hJxKpeDyEolxtAgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437792; c=relaxed/simple;
-	bh=mTZCk0YysupG4SdzVgITyMExGpzb1FzxUWWrQIt6Ems=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NRdeJGZt4CJaw8v7om7QwbpAHWL8U7rUFQ730haj5p5b7xbS17Lu1G7hqzgTWNE8IRraVIUHfzy7oc66ORzaLY1ANorMG0VD4OuVm71eviS5PFMRusXQIBD5ffH16dhjhfEyDdhCcVNVY51TcWUux7g4A0I52K47h/H/6v5DCoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLqacjB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E981C4CEF4;
-	Tue,  9 Sep 2025 17:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757437791;
-	bh=mTZCk0YysupG4SdzVgITyMExGpzb1FzxUWWrQIt6Ems=;
+	s=arc-20240116; t=1757437833; c=relaxed/simple;
+	bh=UZU6hfXndsnQ6oXDXRhik44UXzuRx7di2NJWgi8veEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SLvVpPl7fJBGcgLd4tdCupHqn9BpT6l8lTA5+eHRRPPVy4sUc0ot3Xd2+mwaS1t76pFoyQhDSO79YpubGTBLLAV2vxRMQwh1i5nkDfnq6LjKeFcznShDhO7Toj4F3jpSH1c/mdPG8pp/kmnuNpb5cHSDe0MzIryEuWUJqBz/MXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UbX6MPiq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE9D3C4CEF8;
+	Tue,  9 Sep 2025 17:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757437833;
+	bh=UZU6hfXndsnQ6oXDXRhik44UXzuRx7di2NJWgi8veEA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=fLqacjB/h0fG+akp9RST3Ff6Luym6SCgdiy7wjkfyuN98O3vrwCZaW/rLjH6rRvb8
-	 ywSA+nWhQxsDkO1BVXDOVGeCncv2id+7aGjJZ3/KY6TL0ODioV8UtraKBpYaF8kmpO
-	 0pezqDLCZxc3w4tr/38lhzD7PY5JjaZ2Q529Wa7V5NKUg8p1iz9nkCy+HW87GhHKhu
-	 4F1kJCSHuLj+AeUcoq4qdQ9hC4KCvDfxT5UjeTEObe6V0Y6QtJi9I7SK3pjEYt1Pq/
-	 ogn08k779XKvwra9EKgWjcnXnJs+3dVZhIa/LOAKm5+p4AEiKS0pGd919l0a0Byqs6
-	 pRRlDd+6yNnCg==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 8146B5FD80; Wed, 10 Sep 2025 01:09:48 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-sunxi@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: sun6i-rtc: Add A523 specifics
-Date: Wed, 10 Sep 2025 01:09:47 +0800
-Message-Id: <20250909170947.2221611-1-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	b=UbX6MPiqdp1Gg6sdfnxvRrOLmWbu5v3XPFPzPOKktcQVj5xvMiy4lpGVYHs3zaPtV
+	 gqzVBnkIMyq6DVoVCRnHNmSjQOz7SeK1gmYm/H+qgX5Yubo16QmevsDJxFfywoH0Gh
+	 xXUylxOpgq2KAVoC/RIwJVLhvYihbzde/b4wjbww=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 5.4.299
+Date: Tue,  9 Sep 2025 19:10:27 +0200
+Message-ID: <2025090928-grid-uncured-a227@gregkh>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chen-Yu Tsai <wens@csie.org>
+I'm announcing the release of the 5.4.299 kernel.
 
-The A523's RTC block is backward compatible with the R329's, but it also
-has a calibration function for its internal oscillator, which would
-allow it to provide a clock rate closer to the desired 32.768 KHz. This
-is useful on the Radxa Cubie A5E, which does not have an external 32.768
-KHz crystal.
+All users of the 5.4 kernel series must upgrade.
 
-Add new compatible-specific data for it.
+The updated 5.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.4.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+thanks,
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index 0536e880b80f..f6bfeba009e8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -325,6 +325,13 @@ static const struct sun6i_rtc_match_data sun50i_r329_rtc_ccu_data = {
- 	.osc32k_fanout_nparents	= ARRAY_SIZE(sun50i_r329_osc32k_fanout_parents),
- };
- 
-+static const struct sun6i_rtc_match_data sun55i_a523_rtc_ccu_data = {
-+	.have_ext_osc32k	= true,
-+	.have_iosc_calibration	= true,
-+	.osc32k_fanout_parents	= sun50i_r329_osc32k_fanout_parents,
-+	.osc32k_fanout_nparents	= ARRAY_SIZE(sun50i_r329_osc32k_fanout_parents),
-+};
-+
- static const struct of_device_id sun6i_rtc_ccu_match[] = {
- 	{
- 		.compatible	= "allwinner,sun50i-h616-rtc",
-@@ -334,6 +341,10 @@ static const struct of_device_id sun6i_rtc_ccu_match[] = {
- 		.compatible	= "allwinner,sun50i-r329-rtc",
- 		.data		= &sun50i_r329_rtc_ccu_data,
- 	},
-+	{
-+		.compatible	= "allwinner,sun55i-a523-rtc",
-+		.data		= &sun55i_a523_rtc_ccu_data,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sun6i_rtc_ccu_match);
--- 
-2.39.5
+greg k-h
+
+------------
+
+ Makefile                                          |    2 -
+ arch/powerpc/boot/util.S                          |    4 +-
+ arch/x86/kvm/x86.c                                |   16 +++++++-
+ drivers/dma/mediatek/mtk-cqdma.c                  |   10 ++---
+ drivers/gpio/gpio-pca953x.c                       |    5 ++
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c            |    5 --
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c            |    5 --
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c             |    5 --
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c             |    5 --
+ drivers/iio/chemical/pms7003.c                    |    5 +-
+ drivers/iio/light/opt3001.c                       |    5 +-
+ drivers/isdn/mISDN/dsp_hwec.c                     |    6 +--
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c |   20 ++++++-----
+ drivers/net/ethernet/intel/e1000e/ethtool.c       |   10 +++--
+ drivers/net/ethernet/intel/i40e/i40e_client.c     |    4 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c       |   10 ++++-
+ drivers/net/ethernet/xircom/xirc2ps_cs.c          |    2 -
+ drivers/net/ppp/ppp_generic.c                     |    6 +--
+ drivers/net/vmxnet3/vmxnet3_drv.c                 |    5 +-
+ drivers/net/wireless/marvell/libertas/cfg.c       |    9 +++-
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c   |    5 +-
+ drivers/net/wireless/marvell/mwifiex/main.c       |    4 +-
+ drivers/net/wireless/st/cw1200/sta.c              |    2 -
+ drivers/pcmcia/rsrc_iodyn.c                       |    3 +
+ drivers/pcmcia/rsrc_nonstatic.c                   |    4 +-
+ drivers/scsi/lpfc/lpfc_nvmet.c                    |   10 +++--
+ drivers/spi/spi-fsl-lpspi.c                       |   15 ++++----
+ fs/cifs/connect.c                                 |    5 ++
+ kernel/sched/cpufreq_schedutil.c                  |   28 +++++++++++++--
+ mm/khugepaged.c                                   |   14 +++++++
+ mm/slub.c                                         |    7 +++
+ net/atm/resources.c                               |    6 ++-
+ net/ax25/ax25_in.c                                |    4 ++
+ net/batman-adv/network-coding.c                   |    7 +++
+ net/bluetooth/l2cap_sock.c                        |    3 +
+ net/dsa/tag_ksz.c                                 |   22 +++++++++---
+ net/ipv4/devinet.c                                |    7 +--
+ net/ipv4/icmp.c                                   |    6 ++-
+ net/ipv6/ip6_icmp.c                               |    6 ++-
+ net/netfilter/nf_conntrack_helper.c               |    4 +-
+ net/wireless/scan.c                               |    3 +
+ scripts/gcc-plugins/gcc-common.h                  |   32 +++++++++++++++++
+ scripts/gcc-plugins/randomize_layout_plugin.c     |   40 ++++++----------------
+ sound/pci/hda/patch_hdmi.c                        |    1 
+ sound/pci/hda/patch_realtek.c                     |    1 
+ sound/usb/mixer_quirks.c                          |    2 +
+ 46 files changed, 249 insertions(+), 131 deletions(-)
+
+Alex Deucher (1):
+      drm/amdgpu: drop hw access in non-DC audio fini
+
+Alok Tiwari (1):
+      xirc2ps_cs: fix register access when enabling FullDuplex
+
+Chris Chiu (1):
+      ALSA: hda/realtek - Add new HP ZBook laptop with micmute led fixup
+
+Cryolitia PukNgae (1):
+      ALSA: usb-audio: Add mute TLV for playback volumes on some devices
+
+Dan Carpenter (3):
+      wifi: cw1200: cap SSID length in cw1200_do_join()
+      wifi: libertas: cap SSID len in lbs_associate()
+      ipv4: Fix NULL vs error pointer check in inet_blackhole_dev_init()
+
+David Lechner (1):
+      iio: chemical: pms7003: use aligned_s64 for timestamp
+
+Dmitry Antipov (1):
+      wifi: cfg80211: fix use-after-free in cmp_bss()
+
+Emanuele Ghidoli (1):
+      gpio: pca953x: fix IRQ storm on system wake up
+
+Eric Dumazet (1):
+      ax25: properly unshare skbs in ax25_kiss_rcv()
+
+Fabian Bläse (1):
+      icmp: fix icmp_ndo_send address translation for reply direction
+
+Felix Fietkau (1):
+      net: ethernet: mtk_eth_soc: fix tx vlan tag for llc packets
+
+Greg Kroah-Hartman (1):
+      Linux 5.4.299
+
+Jakob Unterwurzacher (1):
+      net: dsa: microchip: linearize skb for tail-tagging switches
+
+Jann Horn (1):
+      mm/khugepaged: fix ->anon_vma race
+
+John Evans (1):
+      scsi: lpfc: Fix buffer free/clear order in deferred receive path
+
+Kees Cook (2):
+      randstruct: gcc-plugin: Remove bogus void member
+      randstruct: gcc-plugin: Fix attribute addition
+
+Kuniyuki Iwashima (1):
+      Bluetooth: Fix use-after-free in l2cap_sock_cleanup_listen()
+
+Larisa Grigore (3):
+      spi: spi-fsl-lpspi: Fix transmissions when using CONT
+      spi: spi-fsl-lpspi: Set correct chip-select polarity bit
+      spi: spi-fsl-lpspi: Reset FIFO and disable module on transfer abort
+
+Li Qiong (1):
+      mm/slub: avoid accessing metadata when pointer is invalid in object_err()
+
+Luca Ceresoli (1):
+      iio: light: opt3001: fix deadlock due to concurrent flag access
+
+Ma Ke (1):
+      pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
+
+Miaoqian Lin (1):
+      mISDN: Fix memory leak in dsp_hwec_enable()
+
+Nathan Chancellor (1):
+      powerpc: boot: Remove leading zero in label in udelay()
+
+Phil Sutter (1):
+      netfilter: conntrack: helper: Replace -EEXIST by -EBUSY
+
+Pieter Van Trappen (1):
+      net: dsa: microchip: update tag_ksz masks for KSZ9477 family
+
+Qianfeng Rong (1):
+      wifi: mwifiex: Initialize the chan_stats array to zero
+
+Qingfang Deng (1):
+      ppp: fix memory leak in pad_compress_skb
+
+Qiu-ji Chen (2):
+      dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()
+      dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
+
+Rafael J. Wysocki (1):
+      cpufreq/sched: Explicitly synchronize limits_changed flag handling
+
+Roman Smirnov (1):
+      cifs: fix integer overflow in match_server()
+
+Ronak Doshi (1):
+      vmxnet3: update MTU after device quiesce
+
+Rosen Penev (2):
+      net: thunder_bgx: add a missing of_node_put
+      net: thunder_bgx: decrement cleanup index before use
+
+Sean Christopherson (1):
+      KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
+
+Stanislav Fort (1):
+      batman-adv: fix OOB read/write in network-coding decode
+
+Takashi Iwai (1):
+      ALSA: hda/hdmi: Add pin fix for another HP EliteDesk 800 G4 model
+
+Vitaly Lifshits (1):
+      e1000e: fix heap overflow in e1000_set_eeprom
+
+Wang Liang (1):
+      net: atm: fix memory leak in atm_register_sysfs when device_register fail
+
+Wentao Liang (1):
+      pcmcia: Add error handling for add_interval() in do_validate_mem()
+
+Zhen Ni (1):
+      i40e: Fix potential invalid access when MAC list is empty
 
 
