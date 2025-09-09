@@ -1,459 +1,195 @@
-Return-Path: <linux-kernel+bounces-808560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283A3B50187
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:38:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0352B501B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBAF41C63A0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 349187BEE4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C1E350844;
-	Tue,  9 Sep 2025 15:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7184E352FF3;
+	Tue,  9 Sep 2025 15:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="rNT9Ew4u"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2117.outbound.protection.outlook.com [40.107.212.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z+nXkTF9"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5316A345755
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757431947; cv=fail; b=KgP5M8bKoq0VTOLhkYJPHskTU6OdYkshurgmhEALU3emcatqkakLx8ca5kJWRBf2pq+nwhNOaRyBeXs5jUn9fvBz714YPldVIzWgx4p15CXlj9aPu0zxEHY9xgdiyevfh0Xz7nC0yDdS7kTMOoMrnMAyd14PTkBtNWTqgoHES08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757431947; c=relaxed/simple;
-	bh=zeIN04FXdEimyhB6SZbP0f+tposX1mTHKRb7poeLCmU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qLy6B1MzYDetMX93zT3CeJK3KAvlQ24T2fn7j6wqY0zJWhBZXsl2ZqJ38ikvY9cUSKg9J3yh2QrXfuBf9DEuE+BoxXr1BUXUYv4m49ncqP4oIYZGhDoagfKUL77WrhqxowecZRvprFxLdikH8xoiqAbD3p/0uy80tj86n3KOtdY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=rNT9Ew4u; arc=fail smtp.client-ip=40.107.212.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hbluEnUrDn+FurW2h0arPJuTeDRkWGJzWAi6/iLqOo4kXT3yr9Eo+rVrVVmYJ4ESvKF5RfqhOs/NHtMb1ConkEPeRv9JiTYxgScOhXlrKg7RGro4quwrm4pzXaBPNuzQPzMiPR7NCAAxx8/AIM8qsnMiBDS5jYxSHLA794XLx9GVxMxcFHCCS8nHYJ812MmAnIgsiBMQQXlIV2/5d/OvLhsdSL0T7iS2sqvzEnbp161CfbPQCYM3XhXeDIzvx7vlHq3VD5VphHOQFLdUrcf9/LCGZY6m41cS8/JWEJ5ZRV24QwCySnLsyfW32pBPGd6HbvC3NTCaW8ck6CwdZNEPdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aHxzYcnowHA64IK04GCOWxnV74PwcV9ahri8ck0ZIwE=;
- b=zKPZf9hW/PehYy908CvCzoErSJ64qArGS20kdI1Qgf/qYU6tDuYM9+8UUrDGVG3aFXHCWPOTLQSlrYQETa4yo3HwCpI9LVbMyOQaC3/2mwtbS7+CTBkaSZchRGFMcTDjsV3H9nqTDI81PKrsY/ILMsF9B+kLQm9CcM7xMb92Afglxsd2rq+cudKLuQx3If7Zsltes7FL/UdPwWq4D07Lc3jsaUi10gZNt9fqfDHoaiobHB5mp+scW6DTgPBPMmiMdLtSJM1pnBup/UxVRxeFXYKSIT1CZXASnn6e750MjT7BJfumbaxOVun8IXBg6aO6htRqtelZ2nrJ9Wo4X2M6vQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B25350D52
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757432021; cv=none; b=NPsqyPGF5zFtHv+OoKtUcjQFI7YUEDT6ZSBC+iKo2Q0UgUiQqcfQvNwv1yG88Yl9IvxBGKM8+sDXkgfKhe0wdneQ+J6vANrfdIfgWkE+EYIYLR2VTaqJHa2NQg4C2lyAn096g+nJrYpjzwBiAjmJZWzq/hFhRY3U5ow4Le+RgzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757432021; c=relaxed/simple;
+	bh=eXqcsEVT0O/GOfA/Ca74pae233qQpT8kMZ1DFItem6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LW4M439EruPUAOZWmIagyPIJpyr33saeuoq9TO5keLA4sHrhuK9P815k7B1b3ozqJ34O33hVVakRlfspxTf9ygZhXhG5K9kdM3n0sbZfR73XLmLTGSRRKyW3ZzQCcmY50fS/cdTAMmVlBAiV/6nYkEzcooDUvETuOnVREF6gR5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z+nXkTF9; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b109c6b9fcso46035871cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aHxzYcnowHA64IK04GCOWxnV74PwcV9ahri8ck0ZIwE=;
- b=rNT9Ew4uSR/f8qYdW+fytL1lK85fyQqYH8sqJmOBZGqYKJY6Uhg4qMvn8EgL4PUaXv/eHJG56DRa849ERLYFF8VtwTByZy9WAOyXyimkPI5/CgddJJfqacatd8QK4Z9LtfjHZekKJtZFYt/3zG3hHm86bqv/8DCzDQhtwwM+wiE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CH3PR01MB8540.prod.exchangelabs.com (2603:10b6:610:199::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.22; Tue, 9 Sep 2025 15:32:18 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.9094.018; Tue, 9 Sep 2025
- 15:32:17 +0000
-Message-ID: <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
-Date: Tue, 9 Sep 2025 08:32:13 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-To: Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
- <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
- <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
- <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
- <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
- <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
- <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
- <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
- <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
- <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0125.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::10) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=google.com; s=20230601; t=1757432019; x=1758036819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LH53MCx6ogN1k+/cTYDbkLwp7+QCPYAr+PyETboPxPU=;
+        b=Z+nXkTF9JfnULQd3XbzxXlfRdTzzgDr49lrdpLuq3FXi+I/MaDoS4jQRaHR6rOOQhF
+         B/3pLnFn9bjNO1++zCzgpyqUfunnQ07fMWf37xR7NueFFIvkF8T6AyvbM8opEwlS5JYW
+         kftTpR7HzlG04ODQ9DSDefG6P1JtarUJ7noZfTTsRAT+2cyAFzKhTqtrWkC246XJVNDK
+         2lbhqkoG7F7JofQnoDh4ZAXllkj5suioJJJgj4lQ+kCnZy78NO7ZhbLTAYWxzNXIljS0
+         CJDlBsbb5hEYXEBsBz2pMD3UgpBP++xQ+cDVAKmfcuauQ9+AYTYweAyb1aCkekZ3oPTJ
+         corg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757432019; x=1758036819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LH53MCx6ogN1k+/cTYDbkLwp7+QCPYAr+PyETboPxPU=;
+        b=xD+j9fxZLRkulohLktXcX/YKzwkGBYMhGEHRcWFurXBmLLR88xSOgq9f3jAzpZRCyK
+         krVpkq3EjPGeFdGnnwb6pVlZFgMRI+uwqKngkpWd9JCCOfd7zVcH9pXsuR2KAPKm+fN+
+         G23ghER2batq5pKubiNssvxtE09c/I/Myx9haOPZ5mx7puEpS1gLZ3niZz6NPXgS8m7K
+         NiG9C2IPUw7Y5+L0zU0F+9nNKYTd1Ngfb3NRCN2qn5KcQt/+0XJg8dSvAr7o2ynnmYO0
+         msGcZ4amdoFB+mPTk+Gj9t2qaDBfYYoXE2J8cBU6H9ePL8BlrGUXq8583Sxm13qB+hLi
+         oi7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfPdYZZXk/NuOimAdkMR8Y+0r75Q25Fv75CHi9X/4OPBct6RCpZqboP0g4GucJu/EAnvoUfJIBOQaqJT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx27Mnj7fbBzWkt4Ivi5id462yo7I3uy1Ttp1bjEc0oYdPEXMZ9
+	bJqsVNPNSetGKXzIHegUo00HI3z+MsodDdo8601jHBt6h/oICmU1Q29zkE4Ii1s2KQUu8uddHHa
+	o2LJerOFed5hMdWWaRC0NiNymmLDqYpyTNJPGakgb
+X-Gm-Gg: ASbGncvWprAvoEnyWa+vcOn2a6O5PZ4TXzydHrgJYQ2WQp+ykg9T3EMxdF+HYZFMRhF
+	P206Ikt07igrEcdUV30kak3Psnlu8I7ULYY3NQnOZ5XRc9MPeaVmYQ/OoAzvX84+VgmzPmmMpYF
+	+UvAJb4CTNlLkBw8aOLlixtUmoMRbBdfw/M83NQ1G0LfQ5PIzYeJ/kSxetHOc+UdjZPj0gUPvJQ
+	Hpf+1y5/nBrACHwp7hlRrkMP9e/lYFCE10t3jWlXYFUNsJr1V2Uyxhp2sY=
+X-Google-Smtp-Source: AGHT+IEBSJFGC5HE816C89rHJ7brsZIZ78JEBVc19MhZewWuyBdDU+KpX7j08rvkOLFoUtfGNDkZcsKLsSZemorc0Ok=
+X-Received: by 2002:a05:622a:1887:b0:4b5:ea94:d715 with SMTP id
+ d75a77b69052e-4b5f8390522mr114936061cf.1.1757432018215; Tue, 09 Sep 2025
+ 08:33:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH3PR01MB8540:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4b9a288-0d2c-49ba-e276-08ddefb60f53
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWNRbXpEdlBMR09udFNiRnFOVEdvSkhpTk5TSXNZcUwzdmtCc2NuT3o1S3RU?=
- =?utf-8?B?ZmE2aXVReDRCYUJmVDZpYmhLdEpBclhIc0p2WnFJdDZLMzlmN3gxZFJDV3Qx?=
- =?utf-8?B?NUxDOWNSWkJlRTFiR0dXVTlvR1doWjBvUXZPbWs3SnFUcENqaTd4WW96Z3JM?=
- =?utf-8?B?WVJnelEwbnJhMVUya1J1VUxpSjE5ZTNhWkx5Z3dtaVZJOHJoYmowa2ZobmJm?=
- =?utf-8?B?V2Z3ZXpEU0RlNzVGNkxGZWdpU2lkZ0ZySWZuY1BZWjNyT2NDWnNrNTRJMGwz?=
- =?utf-8?B?U1hwUzEvUWI1NjJiYTQvdEk3TElGMU1WK3dsNUNvcGNDb1p0OFpIeXRyZlFY?=
- =?utf-8?B?ZTVzMVBEUGp5U1RVWWQ4d1JJUEJlV1BiN2NUdEk5NEVJTXJaUlhlWXA2Ymp1?=
- =?utf-8?B?OHU5UnZlaDgvb3N6MTE5a1hQTDczaXY1Z2poc1picEh2ekdxQ2taZXRCZTBJ?=
- =?utf-8?B?WWNXVmZuc0FCbGFGN091Ulp4cnkweUJCZ01IZDMyYk1lamZUOHR1VXVnd29m?=
- =?utf-8?B?TEkxQU1rU3o3MXNVejNXTndpRFBHREV3Tnp1Ny8yZE4rSDlOaXVXdFNnMjVW?=
- =?utf-8?B?U25PbXdjMGhLd2pWd004K1NPSEcxcFE1NzhkOXoyTy9MczNHVFYrTjdCSWYx?=
- =?utf-8?B?WXlhUGFVa1dPcWgzd2FDbytZZUQzYmk3QlBjU21MTy84VGVDNTNkSC9NcEdV?=
- =?utf-8?B?bDRyNTRuUzF5bXBqYVNoWHV0RWZFNUFPNUxTai9ld0M0U2lkSWdWSnBlLzhl?=
- =?utf-8?B?VzNnTU03UlJKdG5EUk1yK1BDeUtvdkl2UU5QOVpnK3FtZVdDYjZnWldrSE5O?=
- =?utf-8?B?bjVTK0d5Q1VNTHNrN3p0bmZqRWRUOVBMeE9mQ1Q3VUZ0WEhjNnEzVzJDVXV4?=
- =?utf-8?B?Vnl3TW5maCtaZmhBYlRyekIvbHRXUmdMNXdTd2c0ZEM2QnQrOFlWTlJvNlB6?=
- =?utf-8?B?elZnUlVxV0piei95NDhnY0NCSnh6WnBtTGlXam15T1NsS1FYK3VKT0xXUUhR?=
- =?utf-8?B?Q2hWbVlqbVlWVWRKQ2RXeHcxdVdzUysrcnhualRHcG8wdHAzeFBVcFhCTzYy?=
- =?utf-8?B?dm1RUHBMTGJMSHVhZnhDVmtmNnowbitLOExYMHFLdGcyMkZ3di9nSEtUN21k?=
- =?utf-8?B?OHQrekFYMlA1Sm9seVVsdkdrdVN5Tzhuc1dvM2xQeDVzM2dLa1ljOWxOYnZ2?=
- =?utf-8?B?N2ZiSWhMTXdkeVVrZEZHbk5KRXRvYkJ6K0tjakg2RmZCamFmVnFRYllodzh1?=
- =?utf-8?B?ZHVna0F2MEMxdHhoTUI2alcvdkxLRmNjaWk5MmxvaWtzaU1WdGFuNG00R0xo?=
- =?utf-8?B?N3Exc21ZWlRyUzhQcTlYTzBTRkxORzVTa2tXN2xnYVhPS3FsWFhnRk5HODk3?=
- =?utf-8?B?N3liNjZJQkMzUExUZEZ6OUNocVRVNTZ1VEp3bEEvN2k0U1JRWXYxV3UvZGtv?=
- =?utf-8?B?Tkc4VGI0R0VEWmtmYWR5elJkcE5SV0Y4cHhNU1hITG40WnlObmp3aUtBMzlw?=
- =?utf-8?B?QnBnY0ExT2N6K1NKMVBKTTFscGo4K3R4Q015WTdIN2czV3ZyS2lYRDFFa2tk?=
- =?utf-8?B?RlozYlA5WTAxR1RLbzNSbWlGVjBQelZKa1oycmhOWWx3TjNXc0NQZG1RdC8w?=
- =?utf-8?B?RXhXVDNMb2NqWmVDR1k2K1NITGxpL1pQYzk2a3VDY3h2OXBieGtvT042Y3VV?=
- =?utf-8?B?ZzZVa0oxMWFlSklWYXdxbi9aK3p3VzcwUTh4TTBieDc0Ky9DeVZqMFo0a2VP?=
- =?utf-8?B?c1dDa0c1ZFBIRGdrWHp5YjhpMDBvZTEzWC9NdVNpZDVoUWVzdVg2QzBvcHBI?=
- =?utf-8?B?WGcwS3hJSDFnaHhvRzRhQ2V1Ui9ZZHdnM2pNSWl5NzJGWmw1UnJ5Y2lOTjAx?=
- =?utf-8?B?NjNmdGpKVThiUkRNNHg5T1RhR3c3MFZzazVOUGVabWpNSHVNWUlmNUk2bk9H?=
- =?utf-8?B?T08yMWQ4ZVhDdUl2ZThQV3RPVnFURkZaSEhmWGdRbzg0QVVtRklRelIyOEtr?=
- =?utf-8?B?SGowT0xlQ0RBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cWJFYUhqc0UyZnduRUdtcC8rMHlWSVEvaGhRRW9STWRqR1h3bHljbTlCWUll?=
- =?utf-8?B?TkNJSkVGZzRHYnZSdDJkTW1MMDVQT0dOZE40R3pvdDc3YUVvWThUM2RIZmhB?=
- =?utf-8?B?WDNIbW14UStNTUozVWJDRFhYQjBOSVpxYkUxNmpHNzRZSEt0OVdtUTJDWFVN?=
- =?utf-8?B?VjFVTnA4ZmdTUDBPUlBOZ3EvSnNkb3ZGR2I5eC9takIzeG1mK3ZkWm1vY0Y0?=
- =?utf-8?B?TjhmTUlNT0MxSmlzOWZBY3lwQ2RLUTBjY2NJOE55MWNVN1VGSGtyUlNHbUI0?=
- =?utf-8?B?eVpkbVNoRDlEdFdlbm9ZamFNb2pockVPRWVzaHVUeVdhRmQ4cEwwRjJ1clVt?=
- =?utf-8?B?YWV3cDdVWnpPWlJFMmVHYVdoTmlvM1FrTGJFb3dIaFcxOVhSY2tMN1FjbWx5?=
- =?utf-8?B?eE5LbCtvTERjRnBFSjRBWUQ4NkpnYlM4WXRwVytwSkwyVHFQMkc4Qk0yK1po?=
- =?utf-8?B?aTVoRFJsdjd4T3g0NlZ3bmh6OGxhUEdUU3ZGY0FWZWJnMEtYcGhXTVUzNEJM?=
- =?utf-8?B?NHE5TWdYd3YwajB5ZFpsb2VIekVvRXIrNnM5RGhia0lPUFVkMGI5QzI5WGsr?=
- =?utf-8?B?bXJYTzRGb3NESHRmc3RPL2l0bklQMFY3UHl5MFRIZWwzZUxGeXZnN29UclA2?=
- =?utf-8?B?SHVHL3lXQ3JCVWxIZXVsRnpJRUgyd09RSnJXbW8wQXN4M0cxdmp0WVJ1S200?=
- =?utf-8?B?ZXgxYXoyeDA1MlNpT2VPRXpsSnB1VlZFNDdCQlZCYnpKanNIKzRMdDVoWFA0?=
- =?utf-8?B?dGxIeG45a2orclRmRHRSY2NQSWNvSCtTQUtTWTJ3cno3RURWWktEekRUZUFG?=
- =?utf-8?B?a2psZjh3bGJxWVprTUNCSVBucU5NNjhIdllTMENXNzVpQmIyUjdkbUpnSW4w?=
- =?utf-8?B?UWNNZ3RnSTRxSWlDWVBmcnladlV0Y2VxRGdTZGkxWFZaeEZQWHJqQjZyNmwv?=
- =?utf-8?B?NFUrYk5TbjZnbldnYjUvUE1SM2Ixbk90RVExR090bXdLdE9Banp1Y0drbHU2?=
- =?utf-8?B?eVZjZWJyeTY1T1ZhRlN5Q29FSzd5bG5ENk9VUGVXeG1Wck12VUZ0U21PQzk4?=
- =?utf-8?B?VFhIQXZqTS9mMmlJS0NTcmtPNis0MjZ3QTUyK09tM1A3Mkh6UWxUN2UzSmxT?=
- =?utf-8?B?QjNQMW5jUXM5Mm83N3NMcVI2bWpxelQxWFVsU1R3YmM2NTNuVDl5ZWJvY1p4?=
- =?utf-8?B?MVpaaUxYOWljZjkzSG9rUmExZStpTlloRFNMd091cHhMTVdzOXA0U1FNeFV4?=
- =?utf-8?B?UDkxeXJBSHJabzcwNjJGMHJ2SE9weFdEa0t5N0ovNm5oWnNZY2N1MjBKZXRK?=
- =?utf-8?B?V0lKODIrUVcram9QWERYRFRoVW9XSzVjMkprVVJuUHZHNXVKdGdOb2JhZnVB?=
- =?utf-8?B?MzhzSFdPRnRXd0NIeGttQjJyZFEySjBicHdaTXQxak4yeXZmZTZVTUNWSWFW?=
- =?utf-8?B?Q3hYN1ZvZXFRbUhPbm4zMExaTndHakVQU0tpWUI4OUlvZnZDcEJyOUJxWVY0?=
- =?utf-8?B?N1ZIdFRIU0JjQXV0L0Z2SzQ2MW1qRnVXa0lMSFdwZDR6MkpUUks1bk5JbDhv?=
- =?utf-8?B?MWRzdnRhRDB2NWtTZC82LysraDR2WmUwY2dNUkF0RE5kZUplWFZnY0JFK1da?=
- =?utf-8?B?MVFYYm5xNG5LOGFqUEVKSFBOUkVDdzJ5WERqODJ1SUFXdEkyRGtKdDdZMEF3?=
- =?utf-8?B?dFlVZHZ1N3hXL0sxVFNPejA4UDhTZFFXd20xYlFwUGpjMUl4ZHAwaERZNi9L?=
- =?utf-8?B?b2xCRnF3REZrN2Q0cStTTkM4UzB0SVIvNHZSZ0JCbDNKakhMWDF2QzRCSDJu?=
- =?utf-8?B?OGJSamtxV3hOeXQ5ZG1GSFhlQU44eEZnUExOV0pKZCthRFBYb1pZUXVVNTFC?=
- =?utf-8?B?a0gxV0dLR24wT25KYkZHV0dpN051VW9mQnVHckxKYVVXSHpxUFdPMmw4TFVN?=
- =?utf-8?B?TjVCWmxmREhtdXFHTXVRU0xIdnBBejJUS0E2cGNrVkNYdE9vazZobFFodkRY?=
- =?utf-8?B?Yk82TjRMd1Z4YUQreU12aVk4akMrTW16ckZ4ZlZON3NrSG9DSXBBSjY4N280?=
- =?utf-8?B?L1Fldm0ydm9DT1kxdmV5dXVNYXAvb01KK1ZWcUdzb2hXWDRRU2x6SlZFSDZP?=
- =?utf-8?B?NTBaVFJ4MUM2TE50TS9oNzE5NWFzeDMrT0F5eW9ZSktCdFhDQXZZZ3ZFNElR?=
- =?utf-8?Q?RuQWifphhSd5FbyBZikY2nk=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b9a288-0d2c-49ba-e276-08ddefb60f53
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 15:32:17.8380
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KxoyV7CQO/wHuh9dNigT1+gqYcl+49+fI9xdxOLbIeMpOMPrWT3ThH/xQB7i45gnuv1isYlvGAnQzikE7Kz8hK+N2ur4W8wfsvW8ZT0NF+0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR01MB8540
+References: <20250909132243.1327024-1-edumazet@google.com> <20250909132936.GA1460@redhat.com>
+ <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
+ <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
+ <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk> <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
+ <20250909151851.GB1460@redhat.com>
+In-Reply-To: <20250909151851.GB1460@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 9 Sep 2025 08:33:27 -0700
+X-Gm-Features: Ac12FXwmsBi8N5rZnVovo52dil5DJvY7h1QqJGILCkzQ81ibk4sKlJtshywQWDc
+Message-ID: <CANn89i+-mODVnC=TjwoxVa-qBc4ucibbGoqfM9W7Uf9bryj9qQ@mail.gmail.com>
+Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
+To: "Richard W.M. Jones" <rjones@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <eric.dumazet@gmail.com>, 
+	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
+	Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
+	linux-block@vger.kernel.org, nbd@other.debian.org, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9/9/25 7:36 AM, Ryan Roberts wrote:
-> On 08/09/2025 19:31, Yang Shi wrote:
->>
->> On 9/8/25 9:34 AM, Ryan Roberts wrote:
->>> On 04/09/2025 22:49, Yang Shi wrote:
->>>> On 9/4/25 10:47 AM, Yang Shi wrote:
->>>>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
->>>>>> On 04/09/2025 14:14, Ryan Roberts wrote:
->>>>>>> On 03/09/2025 01:50, Yang Shi wrote:
->>>>>>>>>>> I am wondering whether we can just have a warn_on_once or something
->>>>>>>>>>> for the
->>>>>>>>>>> case
->>>>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
->>>>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
->>>>>>>>>>> of PTE
->>>>>>>>>>> tables for every PMD block mapping, which will give us
->>>>>>>>>>> the same memory consumption as we do today, but not sure if this is
->>>>>>>>>>> worth it.
->>>>>>>>>>> x86 can already handle splitting but due to the callchains
->>>>>>>>>>> I have described above, it has the same problem, and the code has been
->>>>>>>>>>> working
->>>>>>>>>>> for years :)
->>>>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable memory
->>>>>>>>>> if we
->>>>>>>>>> can...
->>>>>>>>> Yes, I agree. We simply don't know how many pages we need to cache, and it
->>>>>>>>> still can't guarantee 100% allocation success.
->>>>>>>> This is wrong... We can know how many pages will be needed for splitting
->>>>>>>> linear
->>>>>>>> mapping to PTEs for the worst case once linear mapping is finalized. But it
->>>>>>>> may
->>>>>>>> require a few hundred megabytes memory to guarantee allocation success. I
->>>>>>>> don't
->>>>>>>> think it is worth for such rare corner case.
->>>>>>> Indeed, we know exactly how much memory we need for pgtables to map the
->>>>>>> linear
->>>>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
->>>>>>> cache.
->>>>>>> We would still get the benefit of improved performance but we would lose the
->>>>>>> benefit of reduced memory.
->>>>>>>
->>>>>>> I think we need to solve the vm_reset_perms() problem somehow, before we can
->>>>>>> enable this.
->>>>>> Sorry I realise this was not very clear... I am saying I think we need to
->>>>>> fix it
->>>>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can
->>>>>> find a
->>>>>> better solution.
->>>>> Took a deeper look at vm_reset_perms(). It was introduced by commit
->>>>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions"). The
->>>>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
->>>>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
->>>>> vmalloc(). So the page table should be already split before reaching vfree().
->>>>> I think this why vm_reset_perms() doesn't not check return value.
->>> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
->>> output a warning if it does?
->> It should. Anyway warning will be raised if split fails. We have somehow
->> mitigation.
->>
->>>>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
->>> Just checking; I think you made a comment before about there only being a few
->>> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
->>> set_vm_flush_reset_perms(). So just making sure you also followed to the places
->>> that use that helper?
->> Yes, I did.
->>
->>>>> The most
->>>>> of them has set_memory_ro() or set_memory_rox() followed.
->>> And are all callsites calling set_memory_*() for the entire cell that was
->>> allocated by vmalloc? If there are cases where it only calls that for a portion
->>> of it, then it's not gurranteed that the memory is correctly split.
->> Yes, all callsites call set_memory_*() for the entire range.
->>
->>>>> But there are 3
->>>>> places I don't see set_memory_ro()/set_memory_rox() is called.
->>>>>
->>>>> 1. BPF trampoline allocation. The BPF trampoline calls
->>>>> arch_protect_bpf_trampoline(). The generic implementation does call
->>>>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
->>>>> For x86, it is because execmem cache is used and it does call
->>>>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
->>>>> so it should never fail. I think we just need to use the generic
->>>>> implementation (remove arm64 implementation) if this series is merged.
->>> I know zero about BPF. But it looks like the allocation happens in
->>> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
->>> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
->>> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
->>> actually help at vm_reset_perms()-time?
->> Took a deeper look at bpf pack allocator. The "pack" is allocated by
->> alloc_new_pack(), which does:
->> bpf_jit_alloc_exec()
->> set_vm_flush_reset_perms()
->> set_memory_rox()
->>
->> If the size is greater than the pack size, it calls:
->> bpf_jit_alloc_exec()
->> set_vm_flush_reset_perms()
->> set_memory_rox()
->>
->> So it looks like bpf trampoline is good, and we don't need do anything. It
->> should be removed from the list. I didn't look deep enough for bpf pack
->> allocator in the first place.
->>
->>>>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
->>>>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
->>>>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
->>>>>
->>>>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
->>>>> called set_memory_rox() before switching to execmem cache. The execmem cache
->>>>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
->>>>>
->>>>> So I think we just need to fix #1 and #3 per the above analysis. If this
->>>>> analysis look correct to you guys, I will prepare two patches to fix them.
->>> This all seems quite fragile. I find it interesting that vm_reset_perms() is
->>> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB, then
->>> sets them to default. But for arm64, at least, I think break-before-make is not
->>> required. We are only changing the permissions so that can be done on live
->>> mappings; essentially change the sequence to; set default, flush TLB.
->> Yeah, I agree it is a little bit fragile. I think this is the "contract" for
->> vmalloc users. You allocate ROX memory via vmalloc, you are required to call
->> set_memory_*(). But there is nothing to guarantee the "contract" is followed.
->> But I don't think this is the only case in kernel.
->>
->>> If we do that, then if the memory was already default, then there is no need to
->>> do anything (so no chance of allocation failure). If the memory was not default,
->>> then it must have already been split to make it non-default, in which case we
->>> can also gurrantee that no allocations are required.
->>>
->>> What am I missing?
->> The comment says:
->> Set direct map to something invalid so that it won't be cached if there are any
->> accesses after the TLB flush, then flush the TLB and reset the direct map
->> permissions to the default.
->>
->> IIUC, it guarantees the direct map can't be cached in TLB after TLB flush from
->> _vm_unmap_aliases() by setting them invalid because TLB never cache invalid
->> entries. Skipping set direct map to invalid seems break this. Or "changing
->> permission on live mappings" on ARM64 can achieve the same goal?
-> Here's my understanding of the intent of the code:
+On Tue, Sep 9, 2025 at 8:19=E2=80=AFAM Richard W.M. Jones <rjones@redhat.co=
+m> wrote:
 >
-> Let's say we start with some memory that has been mapped RO. Our goal is to
-> reset the memory back to RW and ensure that no TLB entry remains in the TLB for
-> the old RO mapping. There are 2 ways to do that:
+> On Tue, Sep 09, 2025 at 07:47:09AM -0700, Eric Dumazet wrote:
+> > On Tue, Sep 9, 2025 at 7:37=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wro=
+te:
+> > >
+> > > On 9/9/25 8:35 AM, Eric Dumazet wrote:
+> > > > On Tue, Sep 9, 2025 at 7:04=E2=80=AFAM Eric Dumazet <edumazet@googl=
+e.com> wrote:
+> > > >>
+> > > >> On Tue, Sep 9, 2025 at 6:32=E2=80=AFAM Richard W.M. Jones <rjones@=
+redhat.com> wrote:
+> > > >>>
+> > > >>> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
+> > > >>>> Recently, syzbot started to abuse NBD with all kinds of sockets.
+> > > >>>>
+> > > >>>> Commit cf1b2326b734 ("nbd: verify socket is supported during set=
+up")
+> > > >>>> made sure the socket supported a shutdown() method.
+> > > >>>>
+> > > >>>> Explicitely accept TCP and UNIX stream sockets.
+> > > >>>
+> > > >>> I'm not clear what the actual problem is, but I will say that lib=
+nbd &
+> > > >>> nbdkit (which are another NBD client & server, interoperable with=
+ the
+> > > >>> kernel) we support and use NBD over vsock[1].  And we could suppo=
+rt
+> > > >>> NBD over pretty much any stream socket (Infiniband?) [2].
+> > > >>>
+> > > >>> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
+> > > >>>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
+> > > >>> [2] https://libguestfs.org/nbd_connect_socket.3.html
+> > > >>>
+> > > >>> TCP and Unix domain sockets are by far the most widely used, but =
+I
+> > > >>> don't think it's fair to exclude other socket types.
+> > > >>
+> > > >> If we have known and supported socket types, please send a patch t=
+o add them.
+> > > >>
+> > > >> I asked the question last week and got nothing about vsock or othe=
+r types.
+> > > >>
+> > > >> https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A=
+12+ndzBcQs_kZoBA@mail.gmail.com/
+> > > >>
+> > > >> For sure, we do not want datagram sockets, RAW, netlink, and many =
+others.
+> > > >
+> > > > BTW vsock will probably fire lockdep warnings, I see GFP_KERNEL
+> > > > being used in net/vmw_vsock/virtio_transport.c
+>
+> CC-ing Stefan & Stefano.  Myself, I'm only using libnbd
+> (ie. userspace) over vsock, not the kernel client.
+>
+> > > > So you will have to fix this.
+> > >
+> > > Rather than play whack-a-mole with this, would it make sense to mark =
+as
+> > > socket as "writeback/reclaim" safe and base the nbd decision on that =
+rather
+> > > than attempt to maintain some allow/deny list of sockets?
+> >
+> > Even if a socket type was writeback/reclaim safe, probably NBD would no=
+t support
+> > arbitrary socket type, like netlink, af_packet, or af_netrom.
+> >
+> > An allow list seems safer to me, with commits with a clear owner.
+> >
+> > If future syzbot reports are triggered, the bisection will point to
+> > these commits.
+>
+> From the outside it seems really odd to hard code a list of "good"
+> socket types into each kernel client that can open a socket.  Normally
+> if you wanted to restrict socket types wouldn't you do that through
+> something more flexible like nftables?
 
+nftables is user policy.
+
+We need a kernel that will not crash, even if nftables is not
+compiled/loaded/used .
 
 
 >
-> Approach 1 (used in current code):
-> 1. set PTE to invalid
-> 2. invalidate any TLB entry for the VA
-> 3. set the PTE to RW
+> Rich.
 >
-> Approach 2:
-> 1. set the PTE to RW
-> 2. invalidate any TLB entry for the VA
-
-IIUC, the intent of the code is "reset direct map permission *without* 
-leaving a RW+X window". The TLB flush call actually flushes both VA and 
-direct map together.
-So if this is the intent, approach #2 may have VA with X permission but 
-direct map may be RW at the mean time. It seems break the intent.
-
-Thanks,
-Yang
-
+> --
+> Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rj=
+ones
+> Read my programming and virtualization blog: http://rwmj.wordpress.com
+> virt-p2v converts physical machines to virtual machines.  Boot with a
+> live CD or over the network (PXE) and turn machines into KVM guests.
+> http://libguestfs.org/virt-v2v
 >
-> The benefit of approach 1 is that it is guarranteed that it is impossible for
-> different CPUs to have different translations for the same VA in their
-> respective TLB. But for approach 2, it's possible that between steps 1 and 2, 1
-> CPU has a RO entry and another CPU has a RW entry. But that will get fixed once
-> the TLB is flushed - it's not really an issue.
->
-> (There is probably also an obscure way to end up with 2 TLB entries (one with RO
-> and one with RW) for the same CPU, but the arm64 architecture permits that as
-> long as it's only a permission mismatch).
->
-> Anyway, approach 2 is used when changing memory permissions on user mappings, so
-> I don't see why we can't take the same approach here. That would solve this
-> whole class of issue for us.
->
-> Thanks,
-> Ryan
->
->
->> Thanks,
->> Yang
->>
->>> Thanks,
->>> Ryan
->>>
->>>
->>>> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
->>>> kprobes. It seems work well.
->>>>
->>>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
->>>> kprobes.c
->>>> index 0c5d408afd95..c4f8c4750f1e 100644
->>>> --- a/arch/arm64/kernel/probes/kprobes.c
->>>> +++ b/arch/arm64/kernel/probes/kprobes.c
->>>> @@ -10,6 +10,7 @@
->>>>
->>>>    #define pr_fmt(fmt) "kprobes: " fmt
->>>>
->>>> +#include <linux/execmem.h>
->>>>    #include <linux/extable.h>
->>>>    #include <linux/kasan.h>
->>>>    #include <linux/kernel.h>
->>>> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->>>>    static void __kprobes
->>>>    post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs
->>>> *);
->>>>
->>>> +void *alloc_insn_page(void)
->>>> +{
->>>> +       void *page;
->>>> +
->>>> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
->>>> +       if (!page)
->>>> +               return NULL;
->>>> +       set_memory_rox((unsigned long)page, 1);
->>>> +       return page;
->>>> +}
->>>> +
->>>>    static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
->>>>    {
->>>>           kprobe_opcode_t *addr = p->ainsn.xol_insn;
->>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
->>>> index 52ffe115a8c4..3e301bc2cd66 100644
->>>> --- a/arch/arm64/net/bpf_jit_comp.c
->>>> +++ b/arch/arm64/net/bpf_jit_comp.c
->>>> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
->>>> size)
->>>>           bpf_prog_pack_free(image, size);
->>>>    }
->>>>
->>>> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
->>>> -{
->>>> -       return 0;
->>>> -}
->>>> -
->>>>    int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
->>>>                                   void *ro_image_end, const struct
->>>> btf_func_model *m,
->>>>                                   u32 flags, struct bpf_tramp_links *tlinks,
->>>>
->>>>
->>>>> Thanks,
->>>>> Yang
->>>>>
->>>>>>> Thanks,
->>>>>>> Ryan
->>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Yang
->>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>> Yang
->>>>>>>>>
->>>>>>>>>> Thanks,
->>>>>>>>>> Ryan
->>>>>>>>>>
->>>>>>>>>>
-
 
