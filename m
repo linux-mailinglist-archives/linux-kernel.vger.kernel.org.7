@@ -1,216 +1,202 @@
-Return-Path: <linux-kernel+bounces-808033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AE5B4AC58
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55064B4AC5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675B83458CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9203A5FE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1AF32252E;
-	Tue,  9 Sep 2025 11:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D032252B;
+	Tue,  9 Sep 2025 11:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LcWLajU7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aMlfp729"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D0C321F30
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB02D0C70;
+	Tue,  9 Sep 2025 11:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418031; cv=none; b=GuRMwLzO2vJ4as1Zu8torLTXZ5djUvUd/hqG1sPRnozJ4zZc/L6vRpPyfMjNAnUT1me/IJiZuU6jvB4gtQILjr7duhYm4r2NJ7rXDlq7YhQzu4fv2oHWwGqwHSzsS689oIEcQ5WRCxlGDCS8pLKzLurrwkSqzYnlqLih29sShSg=
+	t=1757418055; cv=none; b=dw0sO6X++I0yOj7fjwv83YKwFrV/PZiVfH4ERWpAneP+CHZ/Rb4/PrGet0PVXIB0929NYyR6bHEXLhscT3mlrF5Bl57ME6bmzrlc7IU/0oNCZZm6q8XbU6qTQZwFsIeCXhrgg2Akfj/4I+H9mKEAuu/aw4ESVzGj1zu/PijgNjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418031; c=relaxed/simple;
-	bh=BOU4atm98zqe0exxJvBZhUOhA+KpqHaqcfoeWJi/b+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTJaaXWk4cxvfgqCUZzRWusxTqwg5SIXZxx4h+uh5Od1KZpwCFmp9m/8wbUqD6jOtbSspVvcMSYjr5uZS7xb8P1pvbwG5BxSQ9Qo97TWLD1bBcUC6nafMF0M/2mx6uiljAJntprZ89XrT7zhb9IwoJx9YMADqbfmVglImuR82OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LcWLajU7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LT24031521
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 11:40:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WkBZK4nX8r8AkRcyHEfLR0jL
-	z865vmuc1R3ut1MxHM0=; b=LcWLajU7pmng9f5CC2hU8jnbi4VfEWJPLitPJqRq
-	tVziE2UTN/VxVg5lJ0ZAtXP8Jf8K7mD34WvQcRwyxy/lCr/YKXaS449RDKOxhMoT
-	ZeLbpGk4rCwv+leG6flx5+K7DT8VbvZg5gg2sdnEpsdl69IgnsG7aQFTKuWHMWja
-	jqhy8pvG4MpwsjBkDQP5R98660muQp6JMZRy+1sowuJk/YOXYhMmHHuRFthLNMqP
-	4XaD9UaJDYGdVTn4c0AXPMt45rZe0XOURiTjN9nh79hrEMzEepz24Jdqo9Iuj0Kc
-	GHDXpdyjt/q5STE0wBgywjqv1KUuDjAbyUARZLPJLIye3w==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws85gn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:40:28 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7296c012e7dso111268866d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:40:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757418027; x=1758022827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkBZK4nX8r8AkRcyHEfLR0jLz865vmuc1R3ut1MxHM0=;
-        b=wfV8RLK1vAvmpDPfA56JEkz5b8B5Sn5477wwFoNfIgYXXI+y3lk2GRSNQ3xigz78Yp
-         Htsj6d9c6QJQ6ljYeZDpybmUQIJIr4gBgMziKE2MLYXJlO5dpErBjCP5OUlo6cjiaZyh
-         ZfOSD7/7Nb/ucHxv7hUxnCkty1cWTuUbthW3kyfnamZx0zKUpjXhGWir5jLbSsDm0VFj
-         c62oJqMJhUIx6jXBEwLKeunhv2HctN+fgDCE1DUjVONWHjYB/XNrSXL0QWJwgqcGVi4X
-         ZA0t9czaHV57F4yaJfZLbDLY9BRSZMGOPdI7PydgwzCJRqTPluWr9oKm6tXN1nndveyA
-         a+HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6wlz6HKK/qTrmJqsR3u2MzGYi3vStwY6hF4jFB6iOwLB4+weLx0mVeSKrvIEJk0HMeLM8uFPh0EDnb2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztESDWWvpz2fzGRXcED/zneTNozS13Hrbp/zC3C62di3PaFa6i
-	H36Hp8jhO/TD+1WGk9Yixl92wGTcCg6V2PVFx+Irw5eRL3uJoOVFakRULBbb86gYMMH2mjgWN/d
-	60mIyRtZKlGI1cyDJs3nyHc64p4RcG2DFfG9PZE2f8QOa6Jhylq+4hiimGZl8uDbKUX8=
-X-Gm-Gg: ASbGncvqKnQGZ+cZmz6YlaMJ6hQE8jln29FVyewbDpRwKY9I9ne/+EDImMZ+ujtWNHo
-	ZnVfDtZzkkUSaml3tAkMLBhzdnmV+oy6gm5TsNBZphsqfAadRoQ3v4IBDAzLv98RNa6OTBdq9Yu
-	g5J+YYYqfgp0UFLLN2vPbByAzMwcoNQLfnjl4k42DaQb6Tw50b3G2oJLLUG4EV6bU63BeJ1GGPE
-	tb9JVWYWH9I30oLUF9v6h0Si6haFIG1oMqzimW/C5g3wQBBlNQUN2DWMBHIP6IQc7B6ZMi2/ibw
-	DvyRn1AsvXNDOkMkLJGNxuWrUTI/mEoopD6ZlzcmttYDLQr0Cd57Hs54Lc74NNx370oZsz8he/D
-	GRI3BzzoZtoMm/m53P3N9Ic3OhBDV3WTcVHNX1PUJWxs1gLPPM3Kp
-X-Received: by 2002:a05:6214:5287:b0:734:c868:fb4c with SMTP id 6a1803df08f44-73944249693mr115542126d6.62.1757418027277;
-        Tue, 09 Sep 2025 04:40:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1x5yuvHnnOA+bErPR7PqGkCxp1J6nz/QL7NqI2NRrDi1/NlaUQaX5MIKLRDoOyGf3VbZlEA==
-X-Received: by 2002:a05:6214:5287:b0:734:c868:fb4c with SMTP id 6a1803df08f44-73944249693mr115541686d6.62.1757418026714;
-        Tue, 09 Sep 2025 04:40:26 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-568180679a6sm474574e87.105.2025.09.09.04.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 04:40:24 -0700 (PDT)
-Date: Tue, 9 Sep 2025 14:40:22 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] phy: qcom-qmp: qserdes-com: Add v8 DP-specific
- qserdes register offsets
-Message-ID: <dq6hg2l6mseov3koisg5vsrkhifiwutlfy2phwaehvwzxxfgug@vgtcptgcopmw>
-References: <20250909-phy-qcom-edp-add-glymur-support-v2-0-02553381e47d@linaro.org>
- <20250909-phy-qcom-edp-add-glymur-support-v2-2-02553381e47d@linaro.org>
- <3xw54kzk36u7zrfhgva4p577nzle3ctzi3lyhcxapczv2bhceo@23zcaylkqoff>
- <12ae186b-9816-4269-ab3a-7aacdc7cb954@oss.qualcomm.com>
+	s=arc-20240116; t=1757418055; c=relaxed/simple;
+	bh=s9NY9uwMOTLbNgXNSfkPK1HPJxzJpqK+YQtSm1l6Pbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KQLydV984ZCWROYtdF/BrW1vJiMNa4nv4RdbamvhkHrXN8XUKJc3WYmKqB6LDyQ3/fRSNisCJc2d1zU5WVLJzlk37Onx4u0kJBocY/aJp3s0+p564NifVaysVwrMsCuyrAu/PV8WVipig1Y7DU0dQu6Lv1lfPOIaiEQF0FBRJp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aMlfp729; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5897LS4M001202;
+	Tue, 9 Sep 2025 11:40:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=CHbk+J
+	OaifgnyjxftWdKWmFE7PwKdQsRxmsglnKUgMQ=; b=aMlfp729AyqgLfMU0IMxhF
+	Mh+lgs2pOZmtORVcH20Jl8mv2eSyInUIUpmun4fNWAn1flWQXZujGGPVcrAicLVa
+	EcQeOqGVpFvkXH3ckKgVt1uuLpIb3+EqGSDf9EWNAP5Pf8lkEampFZRpqSppIm8B
+	8XPtK9t7iYg2pEzG2wqtuxunMt5LNdk7W+0YF1INZkZcY7+cnOEBs0jLXMvM7JVY
+	X/tiHXm3UHqD8yajkEJZEzqNXlvZQBA5IzJp7nrRPFDguTpAjHD3ObNTdt2B14fE
+	eDsFoaKs/eKIh4fpeRTVStXC3r9lxPyJEhA4KIFfy17713ENvzSieK25shqXUZfA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqyav5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 11:40:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589AS2O8010613;
+	Tue, 9 Sep 2025 11:40:37 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910smttpk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 11:40:37 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589BeaaA41026166
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 11:40:36 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84C5358057;
+	Tue,  9 Sep 2025 11:40:36 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B6C6F58058;
+	Tue,  9 Sep 2025 11:40:32 +0000 (GMT)
+Received: from [9.43.86.190] (unknown [9.43.86.190])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Sep 2025 11:40:32 +0000 (GMT)
+Message-ID: <0d471fbc-ec63-4a96-a49a-1f54754c2432@linux.ibm.com>
+Date: Tue, 9 Sep 2025 17:10:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12ae186b-9816-4269-ab3a-7aacdc7cb954@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 2fkp2rnM5ZSjq_Z4xlskj9Gln085yXZi
-X-Proofpoint-GUID: 2fkp2rnM5ZSjq_Z4xlskj9Gln085yXZi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX5KizElZT+HLf
- FqQIrlXTdSJP12RCWJxbhLRgDtfazYcntoyDHISfQyKXPgFpT32N9k5SuSIFrR1dPER9geEjz51
- AvXhVANx3cq+t3l2GdD1HIlD2YNJAxjuI+hsoD5yt0EGoNbTdLtYuLzPriilbwppeQt0gTBheUz
- 8LpnoSp9a9IGRHwRabdXLOUFmPCShPLPce/CWXIjHOKXIdgghepS6e07Cz/dqQjb8hGXBufyOce
- mYgRVTB2r6ObgjiNj/04yGd5EQdwsDX5OPLQfawuPexDYtyxXKrs6dw8V7HQsDLQNukKv2sVEUX
- wFHBk0gSInsO6alRJRCWXKx989jUapT0CQdjoMRA9o+J23nHzPOsH5BypEkkKVxWBFxgjXspftZ
- 1Gf8/7bj
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68c0122d cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=pQyaD6lL6sn_3oYIr7sA:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-6.18/block 04/10] blk-mq: convert to serialize
+ updating nr_requests with update_nr_hwq_lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-5-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250908061533.3062917-5-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: djP8IWlXhYx4U2A9tq2-i73u8opfIGbd
+X-Authority-Analysis: v=2.4 cv=Mp1S63ae c=1 sm=1 tr=0 ts=68c01235 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=CTgejVLxCpRuXOwdBJ0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: djP8IWlXhYx4U2A9tq2-i73u8opfIGbd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX4XcTJHmS1hcV
+ kWRYGHw97Nol8nYZ+jTZDD70XEBGy1Yq2AdwU9f1SHtAPQlq9Ydv4ujYJOWG8vttNdSmLI94suq
+ 4wlxSCU+GyzmqLZLQFtsD42pmM40NuTxTWVCTZ58FzMtguKwDTwvXgueDT6IfT3ov11f0V+weRl
+ LibvEUjfmTCUtvt4z/4nbu/DhpXNYssVk3YmebfBg1dRByuCtPx7//xjuMBAoRima5lhi2qLpfE
+ 6m3QaVRIK8qYDEVaRgmj2P7ge+30QFMhKLgGJ6KwOHWTkSO1zXUY40aSJbEJ63RvK0nQ6vOeMcC
+ xX7msHhQbY86jAJ4t8otMExsLrgflBREiHNvfK/gvrusGrEGgv1Ed+276/Bj0nqVxNh1eurEmYP
+ 26NwZ3/a
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 phishscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060000
 
-On Tue, Sep 09, 2025 at 01:24:02PM +0200, Konrad Dybcio wrote:
-> On 9/9/25 1:19 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 09, 2025 at 01:07:27PM +0300, Abel Vesa wrote:
-> >> Starting with Glymur, the PCIe and DP PHYs qserdes register offsets differ
-> >> for the same version number. So in order to be able to differentiate
-> >> between them, add these ones with DP prefix.
-> >>
-> >> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> >> ---
-> >>  .../phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h  | 52 ++++++++++++++++++++++
-> >>  1 file changed, 52 insertions(+)
-> >>
-> >> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h b/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h
-> >> new file mode 100644
-> >> index 0000000000000000000000000000000000000000..2bef1eecdc56a75e954ebdbcd168ab7306be1302
-> >> --- /dev/null
-> >> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h
-> >> @@ -0,0 +1,52 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +/*
-> >> + * Copyright (C) 2025 Linaro Ltd.
-> >> + */
-> >> +
-> >> +#ifndef QCOM_PHY_QMP_DP_QSERDES_COM_V8_H_
-> >> +#define QCOM_PHY_QMP_DP_QSERDES_COM_V8_H_
-> >> +
-> >> +/* Only for DP QMP V8 PHY - QSERDES COM registers */
-> >> +#define DP_QSERDES_V8_COM_HSCLK_SEL_1			0x03c
-> >> +#define DP_QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE1_MODE0	0x058
-> >> +#define DP_QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE2_MODE0	0x05c
-> >> +#define DP_QSERDES_V8_COM_SSC_STEP_SIZE1_MODE0		0x060
-> >> +#define DP_QSERDES_V8_COM_SSC_STEP_SIZE2_MODE0		0x064
-> >> +#define DP_QSERDES_V8_COM_CP_CTRL_MODE0			0x070
-> >> +#define DP_QSERDES_V8_COM_PLL_RCTRL_MODE0		0x074
-> >> +#define DP_QSERDES_V8_COM_PLL_CCTRL_MODE0		0x078
-> >> +#define DP_QSERDES_V8_COM_CORECLK_DIV_MODE0		0x07c
-> >> +#define DP_QSERDES_V8_COM_LOCK_CMP1_MODE0		0x080
-> >> +#define DP_QSERDES_V8_COM_LOCK_CMP2_MODE0		0x084
-> >> +#define DP_QSERDES_V8_COM_DEC_START_MODE0		0x088
-> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START1_MODE0		0x090
-> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START2_MODE0		0x094
-> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START3_MODE0		0x098
-> >> +#define DP_QSERDES_V8_COM_INTEGLOOP_GAIN0_MODE0		0x0a0
-> >> +#define DP_QSERDES_V8_COM_VCO_TUNE1_MODE0		0x0a8
-> >> +#define DP_QSERDES_V8_COM_INTEGLOOP_GAIN1_MODE0		0x0a4
-> >> +#define DP_QSERDES_V8_COM_VCO_TUNE2_MODE0		0x0ac
-> >> +#define DP_QSERDES_V8_COM_BG_TIMER			0x0bc
-> >> +#define DP_QSERDES_V8_COM_SSC_EN_CENTER			0x0c0
-> >> +#define DP_QSERDES_V8_COM_SSC_ADJ_PER1			0x0c4
-> >> +#define DP_QSERDES_V8_COM_SSC_PER1			0x0cc
-> >> +#define DP_QSERDES_V8_COM_SSC_PER2			0x0d0
-> >> +#define DP_QSERDES_V8_COM_BIAS_EN_CLKBUFLR_EN		0x0dc
-> >> +#define DP_QSERDES_V8_COM_CLK_ENABLE1			0x0e0
-> >> +#define DP_QSERDES_V8_COM_SYS_CLK_CTRL			0x0e4
-> >> +#define DP_QSERDES_V8_COM_SYSCLK_BUF_ENABLE		0x0e8
-> >> +#define DP_QSERDES_V8_COM_PLL_IVCO			0x0f4
-> >> +#define DP_QSERDES_V8_COM_SYSCLK_EN_SEL			0x110
-> >> +#define DP_QSERDES_V8_COM_RESETSM_CNTRL			0x118
-> >> +#define DP_QSERDES_V8_COM_LOCK_CMP_EN			0x120
-> >> +#define DP_QSERDES_V8_COM_VCO_TUNE_CTRL			0x13c
-> >> +#define DP_QSERDES_V8_COM_VCO_TUNE_MAP			0x140
-> >> +#define DP_QSERDES_V8_COM_CLK_SELECT			0x164
-> >> +#define DP_QSERDES_V8_COM_CORE_CLK_EN			0x170
-> >> +#define DP_QSERDES_V8_COM_CMN_CONFIG_1			0x174
-> > 
-> > The registers are the same at least up to this point. Would it make
-> > sense to keep common part in the same header and define only those bits
-> > that actually differ between DP and PCIe parts? (Is it really about PCIe
-> > or is it eDP vs everything else?)
+
+
+On 9/8/25 11:45 AM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> No, there's a wild amount of variation between various "v8" PHYs and this
-> is impossible to catch by eye
+> request_queue->nr_requests can be changed by:
+> 
+> a) switching elevator by update nr_hw_queues
+> b) switching elevator by elevator sysfs attribute
+> c) configue queue sysfs attribute nr_requests
+> 
+> Current lock order is:
+> 
+> 1) update_nr_hwq_lock, case a,b
+> 2) freeze_queue
+> 3) elevator_lock, cas a,b,c
+> 
+> And update nr_requests is seriablized by elevator_lock() already,
+> however, in the case c), we'll have to allocate new sched_tags if
+> nr_requests grow, and do this with elevator_lock held and queue
+> freezed has the risk of deadlock.
+> 
+> Hence use update_nr_hwq_lock instead, make it possible to allocate
+> memory if tags grow, meanwhile also prevent nr_requests to be changed
+> concurrently.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-sysfs.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index f99519f7a820..7ea15bf68b4b 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -68,13 +68,14 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
+>  	int ret, err;
+>  	unsigned int memflags;
+>  	struct request_queue *q = disk->queue;
+> +	struct blk_mq_tag_set *set = q->tag_set;
+>  
+>  	ret = queue_var_store(&nr, page, count);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	memflags = blk_mq_freeze_queue(q);
+> -	mutex_lock(&q->elevator_lock);
+> +	/* serialize updating nr_requests with switching elevator */
+> +	down_write(&set->update_nr_hwq_lock);
+>  
+>  	if (nr == q->nr_requests)
+>  		goto unlock;
+> @@ -89,13 +90,18 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
+>  		goto unlock;
+>  	}
+>  
+> +	memflags = blk_mq_freeze_queue(q);
+> +	mutex_lock(&q->elevator_lock);
+> +
+>  	err = blk_mq_update_nr_requests(disk->queue, nr);
+>  	if (err)
+>  		ret = err;
+>  
+> -unlock:
+>  	mutex_unlock(&q->elevator_lock);
+>  	blk_mq_unfreeze_queue(q, memflags);
+> +
+> +unlock:
+> +	up_write(&set->update_nr_hwq_lock);
+>  	return ret;
+>  }
+>  
+As you moved ->elevtor_lock here and thus directly access q->elevator
+without holding ->elevator_lock, please add a comment explaining why
+is it safe to access q->elevator without holding ->elevator_lock. 
+So with that change, please add:
 
-I see. Let's see how it will surface later. For now:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
 
--- 
-With best wishes
-Dmitry
+
+
+
+
+
+
+
 
