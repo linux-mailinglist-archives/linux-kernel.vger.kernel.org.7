@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-807002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953E5B49EBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:34:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B346B49EBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A8E7B2730
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BF73AA810
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39E122FDE8;
-	Tue,  9 Sep 2025 01:34:28 +0000 (UTC)
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811F122D7B1;
+	Tue,  9 Sep 2025 01:34:17 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2355221C9E5;
-	Tue,  9 Sep 2025 01:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D6421C9E5;
+	Tue,  9 Sep 2025 01:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757381668; cv=none; b=AEwL1DstT+aobFkFdVK0NGrA0FGQCwe6ZitWj+N2J4W77/PvngsmhmNzkn7LwsCY8hbKTNK1R+KiBzRPJpLnca5mGDh2aFsUCo1sjDngMJG1ZZ57QAjxq+Vh9/sDy43fjyltPXREr/o+SkCv+gJF71CzAuyS89BkLGvjOArDrIA=
+	t=1757381657; cv=none; b=uslfwgwdabw7kQ976MxFkSDc103lek0J9sdeCsXvMpd4apgzaq13JdrsVxiHoMjs3VbwNINy3+l/OjZcR85lsp5MefUDuFRWOolH7MIF9DDaJEBj26ydatKCk74CB4ayFK0ksddAgtb4Gb9+5QhoKg1bhp2zJEG8peY30hr+BDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757381668; c=relaxed/simple;
-	bh=GR5EMTRphhCH44tJC9xw/gzcmFFoMIZVZOMaa4839k0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CYB0AwyUatzw91V6rVEl7ztW44CiLzUIQ11xJtf06FKfsyIobrpQpTmkslzHCO2UA2GF1uAvxC/IfjXnYhxaNY4jB2uCtqWBaBC0g5HcCyhrf3avJAcGv0BOA8c8m1DHaX12VjOT2kSt4+A57XDZ1SuksGMOId/8pi3AJ55hXSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=43.155.80.173
+	s=arc-20240116; t=1757381657; c=relaxed/simple;
+	bh=PWwZlOMgQZ5EsTgMntBi+pBYkolk7r3+koDiGloawY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fG5Jd5F1whbozY4bPd2OkaL8VPHnsUH/FzrhSGqMfTqBwow9mlbNEMgQqvbVJcE1eLGaLSZ/7HMJ/30jRjdFsosTt6TGX0sorO0yqC4OS/Ml7LGCwPYT0R/V6sCGnUIIJ4NsMstLUc/J+bX4x7naX6zv1b1Ll57RrDmiWNhPEf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=18.169.211.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-chip.com.cn
-X-QQ-mid: esmtpsz16t1757381621taf35abd6
-X-QQ-Originating-IP: GkvDGhRfvU5f3ziOtpKn3TX27MEXcp6MDTyVpMjXBxk=
+X-QQ-mid: esmtpsz16t1757381628t9ba36c9e
+X-QQ-Originating-IP: Mh/hsRNNK39po3NG8qvNWg5UqjGRImn/yE4N+a68b9w=
 Received: from localhost.localdomain ( [183.51.121.90])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 09 Sep 2025 09:33:39 +0800 (CST)
+	id ; Tue, 09 Sep 2025 09:33:42 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15890518757870112891
+X-BIZMAIL-ID: 1423506342381787432
 EX-QQ-RecipientCnt: 16
 From: Kaison Deng <dkx@t-chip.com.cn>
 To: Rob Herring <robh@kernel.org>,
@@ -53,10 +54,12 @@ Cc: Wayne Chou <zxf@t-chip.com.cn>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Kaison Deng <dkx@t-chip.com.cn>
-Subject: [PATCH v2 0/2] Add support for Firefly ROC-RK3588-RT
-Date: Tue,  9 Sep 2025 09:31:46 +0800
-Message-Id: <cover.1757322046.git.dkx@t-chip.com.cn>
+Subject: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add Firefly ROC-RK3588-RT
+Date: Tue,  9 Sep 2025 09:31:47 +0800
+Message-Id: <27b2ce7950fdbf28c6c8404c3f8be3c1c35d6b3c.1757322046.git.dkx@t-chip.com.cn>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1757322046.git.dkx@t-chip.com.cn>
+References: <cover.1757322046.git.dkx@t-chip.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,48 +69,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:t-chip.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: M/5qe47GLMYO7J3VNDqF1neGr/2SGH9GQfI+Yb+JBzt0PyeyHldPYxhu
-	nTNscmx8DcEdnlZmVGHoe2HT2d754bxzchs3y3qGSjzkADBgTf3g3jCC3TCnFTSqZYH1H59
-	UJ4Gqj+Hz7gsB9Jq87pzkHGi8vktb2y3YAgITx+wOrv6lTIqq7JBBld8X/oBBmnx9v4zgQZ
-	RTMAtY7gmAjszFLLIBG0rbbUV0DyL99+01Wnt7UYB+irVi9ub+OOob/1LnT0Qe8S1HcL1Vx
-	YYQwKXnDrZIO2/kX+QC+rPwXomU8T1BHkfc+P7kf10xhB+pn+cg9/TTCGxxX3g6ezRMG7sr
-	pcc1xxq4QxjAd8mSfcbvjY2m+voS4vQC7n5dSjOf7JWKo6NLmd3IIfvyvklT1G8zgQD+4Si
-	gV9dQQmMAb92S7JAMpkLKKH3CLv23TBkeOxz0yZ20+R4Y3jLS1vHvJHo5ydrYXBU+Y5Q+cW
-	LGTagn8Bg1QxkP88DQ9ZeBJIPVxfgC7nFVHjaBEQQlwwjB+iKrfEVmmQJWvyoM0OjdofNrM
-	aQwhF0xD5WJiOFZ7hwwjXFmkDMafrNm3UHZnxf36YeFUwS3q0sQmr0xsVyQu/62/ukF32g9
-	3U/qTS1Cg4bCsnT0/c5fvrFt5ok7HX0iPIg+3Tsjww8BLV+5hfOZdzG0/vT/McXN2X5KHg+
-	HTNbLfdjMwdmY/kaDSkDDutl4a9c7zMM1C5jguwMQF61Vp2IE1yEl+zz1FsGdN0816ZLG4B
-	vQ11YDrBCRzE+EpdEH7MY9SOOcMnapdQ82CCrOoNkrQjC5Lx6cE8uwTNb0W0nTWpfUt8BCl
-	lUbNugkDuCaVG3hrwPAYxDPQVH0uqcGiGOFma5ZGOhlJ8bTNPaHbdFxswNbjVXhFzwetZDI
-	CuntXKsSghck7RxKYM/4KScB9O7+TFIkGF4ntq9jPiZXTgNw+RoXSo2V5O999DSK3WBs8jC
-	LWbNSt4Ogaay/qux/75GaABhv022FWhmJopsGjVAhZKcuc9aPAh51D393R5f9JfquyG8OdY
-	tpupLAZn6XFAuKvv2TsSCLBzRiDZFtwmaYv3HfT/3mQcfOCdx4GD9JBqYuLXvLOQ/i4GPhf
-	JTe7MgfffV0CN9d+SuzUxOLayoaQ7WD8svBYIzCxfp4PCJj2Vx6bQTDg/3d0ShFLA==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: MKaR9rzCpvw0jKGvvVVWo81KjrVT6EWIy+fh4qImaz9g1TR8ddlV5hlA
+	peilBeaV5S61bOqEMDHsLVgqq08ifS2oyIHzcYYyQ7E1vLC2A96cUurQf5KB7HIP8KSVT6V
+	l6MRrZk9YimixCzZKdM8gQNgux7C3KVUcvSR8vrrpHD1EPJY6JCl7Fg0FySVA02UYK3+3N3
+	0hukTUDL+7Yg3znivmgaLOOVcrWCSGCIs6PJ5q+l08Zwq7/IoqBL7cLviOxFSKVWfm4pWEz
+	OfeZSjlS/ch/EhukWNs4+6Ouz80m/BtWjdSzcv3chRv9t9WKKp4HqZjmmc/0J6CqWGq5lR9
+	VKGxFx1GpMffVkdR4P7AbzxZyhXBjPe4PHHNW+kPpN2EQWDJMyFHKlGT4wuJEc8DJJ89qR/
+	/OZFHWMCYyp3S1OHtjUSIE585UWQN31X+gRfxJWITJ2B30FmcNiTTWycVAs8x0HgeKAAlUS
+	cP4hYAcz5wjSC97kh1uS+WYxRowEFjDuVpUY8lV5ID6Bl1Emk5o5rI7UvCl67aklMAjIrGY
+	K9YaT+5CX7uSUt/pP5DY8opDseX3+qrdvNBZk5dB9k6Kq7+briY5vCa0Zms31hvVk/ibJG8
+	2fcBmrhYgMKag4ZJRqrX53zFsDi8taaPkMXBaK8dchNilVmQgyJ+Cqcq8tbrVaAA64W1AT2
+	sR2q1OcVo/bIXrA7wefwXbAegfle+sttZF/PlHQeaFIekBFwYtTwLPGvgktB2QR9sXCWW0L
+	APYic2/YBBxlbPiLKVF73hMIYr4an91g/y/cO35y4vHbMvHx5l6KCJVzJdoad8B1OfaNCKJ
+	jU3L8/vFUGD+LoHe794DKJHt6mm+IwZcO66f6bnunpASIHRuSBAKmOrqHCYdBv+kLug/83k
+	MYvdQVMR24JwUB4lz7/MtuvoxHcGtWtUnPVb3hO+xRCp5ZnN8TaZa+VC7008nh5unlFr9t7
+	aMGJyHXmG9460U/fZSuCEKuTIEAd34vkeoFi7x7iTrr4t3Mskz7UJ23/20F3YExy3tvLmhi
+	FiIqOd0lpR2GhpnFoLo/ym2ClvYzHsjEenFqadRD+cW8MgoZeVKMEZU08Y8LDJMLmfwC+/v
+	KLFwYmjxqeq+eyxvY6cNr+A7wrZ8QTaiw00Ee5mvpuThKpBhCIX/LM=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 
-This series add support for Firefly ROC-RK3588-RT.
+This documents Firefly ROC-RK3588-RT which is a SBC based on RK3588 SoC.
 
-Info of device can be found at:
-https://en.t-firefly.com/product/industry/rocrk3588rt
+Link: https://en.t-firefly.com/product/industry/rocrk3588rt
 
-Changes in v2:
-- Add devicetree binding documentation for the Firefly ROC-RK3588-RT
-- Update the description to match the device tree
-- Adjust the descriptions of the model and compatible properties
-- Add audio support for hdmi0 and hdmi1
-- Adjust the attributes of sdhci in alphabetical order
+Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Kaison Deng (2):
-  dt-bindings: arm: rockchip: Add Firefly ROC-RK3588-RT
-  arm64: dts: rockchip: Add devicetree for the ROC-RK3588-RT
-
- .../devicetree/bindings/arm/rockchip.yaml     |    5 +
- arch/arm64/boot/dts/rockchip/Makefile         |    1 +
- .../arm64/boot/dts/rockchip/rk3588-roc-rt.dts | 1136 +++++++++++++++++
- 3 files changed, 1142 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index f9ee77f17ad7..6aceaa8acbb2 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -258,6 +258,11 @@ properties:
+           - const: firefly,roc-rk3576-pc
+           - const: rockchip,rk3576
+ 
++      - description: Firefly ROC-RK3588-RT
++        items:
++          - const: firefly,roc-rk3588-rt
++          - const: rockchip,rk3588
++
+       - description: Firefly Station M2
+         items:
+           - const: firefly,rk3566-roc-pc
 -- 
 2.25.1
 
