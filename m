@@ -1,160 +1,133 @@
-Return-Path: <linux-kernel+bounces-808390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3F7B4FF26
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B7AB4FF23
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901B1171BA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E15C18869CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C15345727;
-	Tue,  9 Sep 2025 14:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280E5343D86;
+	Tue,  9 Sep 2025 14:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xh1Vgjf+"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k5oVGOib"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4D334164A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A06434164A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427512; cv=none; b=SKxgRoS7Mlc3uksnB9db4rBEDSuOOrqTzXGXcSBWI/zstC6HHoLfD/d3JmRvDIsrEdz1ODViTNY3feTD30sa7WBtCiXMmaR2T8G9EE1EUaYmwc981QQy1AoqmNw+d4O8tNIrRhOvu7uavuKZo7Xgbn6BdbiBk+zd4UmTlHbkUUk=
+	t=1757427506; cv=none; b=WwmEDdTMDe2Bgs7f7rNoA+ym4Qyu2A34HXYazYoYAr/KxcTY+ZvEIV5ndHQnnvpLo0fr5kp9ikoPXrdGeZCRPNGy3IWTFeyp3C0BOgxOAHt6eW02gZfrzsLLjq7X7ZMVYmtdiYYN4V2wXk+9O2Gt2EvchQs2SB+Ln1u4DW10sA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427512; c=relaxed/simple;
-	bh=VwaGSalmTnd9X03Tr6wOBFfCuOTcCNXRJiR2HIPuqsc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h4HTzd3qLDPY3p4ko2Fs3tBrk2KkxXy5nxw1U8ZCxEhvqezhi0aNbljxFfAUC+vyFk4JDgVCqzCmRb4gA04orH0Myw3m42opD/s6aBEC5AmWpYggFds87q+P36uV81irHLH0zYBUEcNQplOjoJ2DVQ9ggKFsxORYGvygOtx6PQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xh1Vgjf+; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24b21006804so60966725ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:18:31 -0700 (PDT)
+	s=arc-20240116; t=1757427506; c=relaxed/simple;
+	bh=nr6jAAPv1DstOpTATAmpLEi+i/7+vIDpb7U41NZDK3c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cqRb5jRS1YdPUYxjkmXSeo77qAamyaJ+a5CmY4WU9HImbx8hdaBDn0scOv1ZufvN17F3ehs7fKHVoNIo+ootavvQRBdjZBpnG3eyGQxbOXuBzU0Dd731dxxlN7/8jqUdrcZycafzgfbkTW8LU/k2SwdKEICGjbdFgFF2kyyreIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k5oVGOib; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b522037281bso2630647a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757427510; x=1758032310; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zoeLKoDwjK6xqBtfTeAvIy0pYPkAc80c1vYBt2cZKrE=;
-        b=xh1Vgjf+NbtbDO0fjTB5rs5XFdKUDOFSlJ3uMXWcR6F7qCXb3nlgN+NVnfOKfwmGSu
-         ktQAX4IZ4HtMODKp35aqQojNe8pqkjijjn3kx1LZyP80JcmpWxa07ESqoKfEGWD/6E6K
-         gyuoQ4WzZrVSiUbOPWU4VFBQdZVLA3UT0nZZjIvRiaXcuCRSOrtpDqqZHcCYduhHeLoJ
-         tPJbXZ1lVYiLCsAXvzktK1DWRlHSG9aARr8oFgkUUpHXknCayu2QTwQqt7lCjPHefKeu
-         BPwWJWLwSjcmqKM5EYBeMK266GKUsCimsaz+/nNmc7uRdBE3eNza53dEPpnDF9ldP1rv
-         uO1A==
+        d=google.com; s=20230601; t=1757427504; x=1758032304; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNEX+HX4i8Zee6p5GwSFppRRtMTU8aAW6YWdaSYbVnQ=;
+        b=k5oVGOibIlUXK9X++g0buH1qTTEGAq8Ducb+XoDrL4b00u4ugoM7bty5K8VptnWbX6
+         +SjTpo0H04jF8Xc5SM+4jF7kIgGu6+YyBHHExCV+zMooM8ozVLcllR72QXfORXvYJn24
+         cZldndPhcl+pVfkIFOuuuFPUXx2IqoapFxL35uPGN3CZcmiXPfTUzBY9vemcBKzFhm2a
+         fnFJZ3lvGFGvMr7Yj08OFbZoEvynWBbY7qz13YnFjmux7ZRhce5zRETavU0/Rf8jigxs
+         bsVN764kBoC6rWIiZ9Hp2MnHxgl6bKZktGdPhKJw4EDaDb3j5qQGi3yeWxa9MKe66SyZ
+         wIQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757427510; x=1758032310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zoeLKoDwjK6xqBtfTeAvIy0pYPkAc80c1vYBt2cZKrE=;
-        b=FdJxIGvVZUEB2LE1rJENVuYrHpIMlAqMimAlnvjsGnqnnF7ihYwc24xpl+tb8IGyR9
-         YNCVnc4dilBdf2rlGoXgFBvBzGzfN1rBVO4SNyv+yonAQMtRRdhxA6Qa3W2gY9+qdSms
-         kK1U3FesIy0YarXe4iQ8LMwj8pR6JIKASWN5T99iQtv/VTILRwDg9kjttmImkbaE1ysM
-         gytG8LvuULVQk4Yl76xCAjcfLXca9MJ0nFmvGsH+n2du2WQU6UQGtWSLV34ow+PRhux1
-         RNvLWA6TER5W6LKJmLcGCOduC2HxNzCWmmRYeIuFLZJ/W3QTqKx/UQJILnHzSIoxIXmP
-         LQ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW/yqTyDtpNxiNtkQbYko4lQK5SuCjSaWAEpA8xYVBm86kI7y5pED1K5KpmCyWkwx18yguGlMOGxK9xqC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrD2oP6A8QFyIKJgJ3qNKpcEYPkr9MabE8/NQ/FNiSlJt+ZboI
-	DknXy+vDmOFytiz1uqMkZa5QYdai/6eh0iYNalDu8yJn6IRgDUQMfcYMaVZ+h7r2debgqZTxKlH
-	FFjqEBucCgulqKJLukCOD6pifpvbTDjo0iq7d+BuAbA==
-X-Gm-Gg: ASbGncsi50zyujz/XRddLtYopU7uks+iVPv3j9Vb7sWxr1n35jEu1cwwg/bEjMvCSjY
-	8B2E4UUX4AcPnZ497fHv2yMCfygg3Z60sThHvClpRLM/6Q9x2YSA/wnIzlQ+k2qjJA7KSxlj1bq
-	/2i0NhK8EQtK5KvZorYaUZZElUUudnznNAt7ClkWoTy6meDvLkGxrZVykw7ruiVf7GPSXm7HBdC
-	3nnbUuw5J7pRRTgJ+Wo7wcGdYYjGKegT1YgE0pFwc8SO0D21k4hG++DpsWd3uwIY4ltqqITTCoQ
-	bXStLJc=
-X-Google-Smtp-Source: AGHT+IHh4HOPmijlA/45Ds82kWFJee3dfMdyV+TppiDj9iodQ/RUx1HwiEqgdvNxgEwgPGcnXfLB9BNxwH16jvQOjmI=
-X-Received: by 2002:a17:902:f78f:b0:248:ff5a:b768 with SMTP id
- d9443c01a7336-2516f05021amr131781565ad.10.1757427510278; Tue, 09 Sep 2025
- 07:18:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757427504; x=1758032304;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNEX+HX4i8Zee6p5GwSFppRRtMTU8aAW6YWdaSYbVnQ=;
+        b=T/WBPaTDAYRA1rLBml5yVM1WdIgOuaJ7JN3jNMI2pUPjTFvR+hwnMRnQbd22x0Eown
+         7+NEn0MxikgJ5Jt0rL9S43TouMLlj8aG8ophvThIAaZNGq4jIq8NTd0sNNpX5WoAj/tT
+         66chJFm66rXIvPdh09oK5iCdQEI5uYfVkfKMPRZmhUvxN6yguMkMwi+Qu7r5EzZDePAU
+         GgFvuMJiCmcq/hA+1ZVeRIfdMxdG50BR4FVrSY/Qa3KbY0hap1zM6d+LJHkxgbLuDemW
+         58B7DagimjFwa6LqG10xda4hhOjKXNfcp1pAn705XbTLzbqxDkhyBucXAkeFFdEjk2JX
+         eJPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvIZZ/o25jVBpBNhnJVwH0q6Mn/hjBd74iRvT9osJt5fXMHg2qiAAwAlEk/XECfrsEM4SC5F/t/f26KGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCQCCelJv8zGcPR7GbJGME6PniIcmAgGHN6vQ6XyCSqEGANbKM
+	WmkCZTYYeNb+493JgbH768Acm0bvrQVNNAdC0Wc9uP+XSzZN+D/d6y7oLhzyuUYq7RYTdxVLwjL
+	9QIo03A==
+X-Google-Smtp-Source: AGHT+IGjBKRuus6AQPq5wORgSoqZJ5Tvjrd4h24fLb2PTkSPtnUoSNeAfh5TUD6Fe2fxb8hp+hqfCAOt00c=
+X-Received: from pjm15.prod.google.com ([2002:a17:90b:2fcf:b0:31e:3c57:ffc8])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f786:b0:24b:74da:6273
+ with SMTP id d9443c01a7336-2516f04e031mr162886165ad.3.1757427504302; Tue, 09
+ Sep 2025 07:18:24 -0700 (PDT)
+Date: Tue, 9 Sep 2025 07:18:22 -0700
+In-Reply-To: <2257f7a6-e4f5-4b90-bb18-cb0af756323f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250907195603.394640159@linuxfoundation.org> <CA+G9fYvQw_pdKz73GRytQas+ysZzRRu7u3dRHMcOhutvcE4rHA@mail.gmail.com>
- <2025090948-excuse-rebate-e496@gregkh>
-In-Reply-To: <2025090948-excuse-rebate-e496@gregkh>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 9 Sep 2025 19:48:18 +0530
-X-Gm-Features: AS18NWC7gkmQdU-chaPVM86yKMvcaA9k41BDjODWDxD3Fa_J7L_tblddsNpoFN4
-Message-ID: <CA+G9fYvXsG1veoK-i93J2BgymNauvOU_FpO6d7BhUBnMkuZVCA@mail.gmail.com>
-Subject: Re: [PATCH 5.15 00/64] 5.15.192-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org, 
-	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250822070305.26427-1-yan.y.zhao@intel.com> <20250822070523.26495-1-yan.y.zhao@intel.com>
+ <2257f7a6-e4f5-4b90-bb18-cb0af756323f@linux.intel.com>
+Message-ID: <aMA3LjGP9nezNM7e@google.com>
+Subject: Re: [PATCH v2 2/3] KVM: TDX: Do not retry locally when the retry is
+ caused by invalid memslot
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, reinette.chatre@intel.com, 
+	rick.p.edgecombe@intel.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 9 Sept 2025 at 15:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Sep 08, 2025 at 11:54:56PM +0530, Naresh Kamboju wrote:
-> > On Mon, 8 Sept 2025 at 01:43, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 5.15.192 release.
-> > > There are 64 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > While building Linux stable-rc 5.15.192-rc1 the arm64 allyesconfig
-> > builds failed.
-> >
-> > * arm64, build
-> >   - gcc-12-allyesconfig
-> >
-> > Regression Analysis:
-> > - New regression? yes
-> > - Reproducibility? yes
-> >
-> > Build regression: stable-rc 5.15.192-rc1 arm64 allyesconfig
-> > qede_main.c:199:35: error: initialization of void from incompatible
-> > pointer
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > ### build log
-> > drivers/net/ethernet/qlogic/qede/qede_main.c:199:35: error:
-> > initialization of 'void (*)(void *, u16,  u16)' {aka 'void (*)(void *,
-> > short unsigned int,  short unsigned int)'} from incompatible pointer
-> > type 'void (*)(void *, void *, u8)' {aka 'void (*)(void *, void *,
-> > unsigned char)'} [-Werror=incompatible-pointer-types]
-> >   199 |                 .arfs_filter_op = qede_arfs_filter_op,
-> >       |                                   ^~~~~~~~~~~~~~~~~~~
-> >
-> > This was reported on the Linux next-20250428 tag,
-> > https://lore.kernel.org/all/CA+G9fYs+7-Jut2PM1Z8fXOkBaBuGt0WwTUvU=4cu2O8iQdwUYw@mail.gmail.com/
->
-> Odd, I can't reproduce this here, and nothing has changed in this driver
-> at all for this -rc cycle.  I see no one responded to the linux-next
-> issue either, so any hints?
+On Tue, Sep 09, 2025, Binbin Wu wrote:
+> On 8/22/2025 3:05 PM, Yan Zhao wrote:
+> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> > index 6784aaaced87..de2c4bb36069 100644
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -1992,6 +1992,11 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+> >   	 * blocked by TDs, false positives are inevitable i.e., KVM may re-enter
+> >   	 * the guest even if the IRQ/NMI can't be delivered.
+> >   	 *
+> > +	 * Breaking out of the local retries if a retry is caused by faulting
+> > +	 * in an invalid memslot (indicating the slot is under removal), so that
+> > +	 * the slot removal will not be blocked due to waiting for releasing
+> > +	 * SRCU lock in the VMExit handler.
+> > +	 *
+> >   	 * Note: even without breaking out of local retries, zero-step
+> >   	 * mitigation may still occur due to
+> >   	 * - invoking of TDH.VP.ENTER after KVM_EXIT_MEMORY_FAULT,
+> > @@ -2002,6 +2007,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+> >   	 * handle retries locally in their EPT violation handlers.
+> >   	 */
+> >   	while (1) {
+> > +		struct kvm_memory_slot *slot;
+> > +
+> >   		ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
+> >   		if (ret != RET_PF_RETRY || !local_retry)
+> > @@ -2015,6 +2022,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+> >   			break;
+> >   		}
+> > +		slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
+> > +		if (slot && slot->flags & KVM_MEMSLOT_INVALID)
+> 
+> The slot couldn't be NULL here, right?
 
-Please ignore this allyesconfig build failure for now on 5.15 and 5.10.
-Seems like it is my local builder issue.
+Uh, hmm.  It could be NULL.  If the memslot deletion starts concurrently with the
+S-EPT violation, then the memslot could be transitioned to INVALID (prepared for
+deletion) prior to the vCPU acquiring SRCU after the VM-Exit.  Memslot deletion
+could then assign to kvm->memslots with a NULL memslot.
 
- - Naresh
+  vCPU                          DELETE
+  S-EPT Violation
+                                Set KVM_MEMSLOT_INVALID
+                                synchronize_srcu_expedited()
+  Acquire SRCU
+  __vmx_handle_ept_violation()
+  RET_PF_RETRY due to INVALID
+                                Set memslot NULL
+  kvm_vcpu_gfn_to_memslot()
 
