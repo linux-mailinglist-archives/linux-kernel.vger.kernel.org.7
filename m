@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-808498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E919B50092
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD91B50096
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CD21C634F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59CCB189F8AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343E5322C66;
-	Tue,  9 Sep 2025 15:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498D8322C66;
+	Tue,  9 Sep 2025 15:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="CeN53NkP"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EmdaHhGp"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8814F226D1D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730502749DC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430132; cv=none; b=Y9cmSPeY5RfqTQxQ2Kanwa9nA7tX77w8Wp2+XAuu+2CqgroGgoXJ7sZ5YWKHwN1CcqiDU5Ede9s2JIessJeuCD/EcEYuM8UQYthY7bY2KziCDZvZRRi8IkQL+PiBLgald3IuiRSKBmzGM/a3nD/On5Q4okd+CETUeCVhMVjGVyY=
+	t=1757430204; cv=none; b=cxcoiTIAPy84PimoJD67z9aIG4QXJY8ZfG3Toui4J+gPsIXWgtrNAxw/GayPw0muRD5mEEPg/feZrqOawSo/9AVC3X3UgUu1IorX92GWxGP9pNdsxLrnfv1rv3af9sSROtvpuWofk/LtIM6Kf59DXVIv87lqMNljq+EjGbquOLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430132; c=relaxed/simple;
-	bh=qoj7mzHYT9f1wy0zIuGFs5Y3sZ5ArqKmQOu/ZbfDY8g=;
+	s=arc-20240116; t=1757430204; c=relaxed/simple;
+	bh=jDXVbSbhTbe7AacmcJHMRUvWeIYoAwxzJWrvX7BAmwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/w8oBZD8+3sY1mF5kgRpSK790+BjkkDjoxDbEKxum79IuCMnujW1ECOD+oHTdqGYogGn32Lj4mfFANhcq8JZ0Q/vElGRvMPTkrqyFDsdlpu8GpizW38iPwWBzvzGcI4BZD77+5S3bdeqcTC5YGtf7zMfWcrAIBEYieuFwq0QEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=CeN53NkP; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7221ce7e814so46164466d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:02:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NmPSv5tJtq9lny00M1ps/FnJdc+9AnC841B3rOPuRpRBvCVf4SNEai7CO8hy47iFnQkzGEQ4IYk6SHsQPwPWZJ98lwV3lsI64U3GTDSPHX6EexnWpMlxo+EmJ6kQsQX4RYG0f2ihdfY7sQXpuY0iL9O7TJhKkTtEr0Su0AKCt+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EmdaHhGp; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b00a9989633so202532066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1757430128; x=1758034928; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1757430201; x=1758035001; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh0fjNDYqjzdJxYcthmflSzVU8lAPQ437Tv8jqJmBNM=;
-        b=CeN53NkPXCSrwkx18dHHJyrusFRAiIIvviYNB77R4zGm+W5l6wUHmmnlt0jLvRYPrP
-         yIhQPSyGwzELEO6BBqQr0vWj1ofnUtUHvz+n85DdRk1U2BPsSYQArWWpa4pz7cu54YlV
-         PpI9xzb7uzaO1vQC5zNkjqR5CyhfNIo8R7yDPtzwp1qR4xqAbRVwNdbvGEEXG2q901bW
-         aduQelvgnaFdMFG13ACIopc02ke55r8znaIETeXYBvJROT5k7tHuiblylpIjaumAeWrE
-         v/0NKZMlsm3j4UQuzX2vcqooa1oXqhFdf8j3fIN1MxF7JmjzrnPBhNPKLfny5o2yliUE
-         jYXA==
+        bh=5JCNA5C9ya4Jo5xtjb6FS9fyG6SoJInYHtCloGYGcus=;
+        b=EmdaHhGp89T4r3dyM2EFi1E8Ep0Mr1pXMnoNP7HOgc4HXSHQaF7xnyjUW5vnnYpz/d
+         UQVGLV9jjbBBuAdadaA8skmBY3Cayz5xAa0NYY6PxuHFRvJH04LwV3FJwjpAV2sL0jxQ
+         2mTufF1GzBj7z5vS+7ILU5+WeNZshkO0bYbt0mBWWBrg5NMSY71VrqrVV3pdTGg/UzVj
+         I+7OM7LHWzPyCHc6Gbnadz6lAM+PjTTp1Wa2ySyeaVZ5bULsc5C+F2d2uON1Va3X6UCt
+         IQSDst7/W2v6l5EFCsfYLC1ajw2fzBiEwNk/CpO3P7RTws4vogeo6Dq64KakZFLnFIIK
+         zNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430128; x=1758034928;
+        d=1e100.net; s=20230601; t=1757430201; x=1758035001;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yh0fjNDYqjzdJxYcthmflSzVU8lAPQ437Tv8jqJmBNM=;
-        b=JXmwSNENAB/SNx0NY2+U1RPPyWN/r90RGWZ11ZI7+DD7jycxrbj/ukeYzZMffoUsPj
-         z0M40/z33EOpB92dyaDX4ePmhdJxzLi+4ahfizjmNiwTSzXJTbH7eo7s+SHqQKOF9V7H
-         F863Vqbx09YCYqgSwW0Pv9VebblWe8/R0FL5V5HFQtiBsO2yN9pn/Fr2XodqZ2/b3HNj
-         dbFiNRlXhfDMqH8FKkHX8riRHPXMNNvf4Zf4REP++t6qtLv5Dwft4QU9W3Bqsd022M25
-         wR0PeWdYiM6m/w3uh98Jrd8dTv29O8aOiLkG3inZvnTZuiJ3993My9FYJ4uWqUfMeAnc
-         vMWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwK20JQOE+8qAcTmfy5ZUUQrnqFs+ZPmcQ//entajcm8m1YTZvUFTwhejjYm+kA0U+7KX70UmL1qpaAY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNjhZMJZwPDmlNshX0FXMubBVbYTR0Fq1Ase52sk0y+zkpTejH
-	0ahaM/d+9ARfYewgaasWWAWCJvYqwhaNw1Lrll6DquBZ6v0KZJCINilv6MbmdfPY++0=
-X-Gm-Gg: ASbGncuYqZ1yE8Rfnok9PoMsaJyVL2WU4SfmMKq5fQIg3AFjb7KtjHWo5AzhpiwFUCr
-	EbfmR4Go3/t5qc6nFbkK4YhnAO+u8U29fI0YPLmXI19Xx/n8QLclKXf+0ZWYrGp25TAY9cKSnQ0
-	/wBIP2qcjc2J1XWWtM9u2ShH3CRgD8RBiaGwDtCADYrVRh71ib10Qsp5d1VZhkV0ZeqdnOFG+pG
-	nBwJnn4f9Ctn5qQKzd8bsleufpWagjc3u5E2anSuTunedhyLxlzsFK8Vr1WdVNvn0rHfSRJ9i73
-	CjRfQpKNL4Y0fRl4Pz/4WM7mAXiH2CqRkCXYkicgKL5wo5iHOy8hdSwQJSQJw3I88FmAf3blyYR
-	c/Q==
-X-Google-Smtp-Source: AGHT+IFOGeEWrEyaAhZ9HLZ8ljGlKxieYtI7L7qfboXpXt08DoBi9j/dcjK8l0X0zckOHyw5S1Wt3g==
-X-Received: by 2002:ad4:5aa7:0:b0:729:4be4:7fdb with SMTP id 6a1803df08f44-739435d4633mr118482876d6.52.1757430127822;
-        Tue, 09 Sep 2025 08:02:07 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:600::1ad8])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-727b2c047dcsm112542926d6.59.2025.09.09.08.02.06
+        bh=5JCNA5C9ya4Jo5xtjb6FS9fyG6SoJInYHtCloGYGcus=;
+        b=BZzdS3jnJ2pntJg46n8tT+KyN2Y63KxrJWha/ONxbd0IaRxXhqcXr9vW2AoT0Aa3Ax
+         +9yJNWndiY6aUeHPbKs7Ss8i83FKpLrNSCafnfHlyZsPfMzKcnE11K6JGE9TuOvq6q1X
+         4BKVZCXLHGSDUz7CZqCwA0bEfxyxf0+pHw5AHb7y8nljkZp/K0Hczz6kl/nhVopq0tj7
+         cwENvnnK8wOS0EW1w7FAH+TbbBjL1PaYdlbdG7VJkj5ShIx1aJF9IMiTe9E3bqhX+K/l
+         flLYs7nGgaDbU5YTPraXYcJt724k/hiLyKJ27yQEkknvLtIx2xX/0y1T77h2vsAZ51aX
+         CtmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWe1+2ygxF+HD3E8qjgxqLizTCkeLhfpg9BEmaVoTib9gcb3ohKYOg8lKGIYJuBWnX/7hKR+JkU5TqiS+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ7GKs8Z7DDgLcdyjGNGO7Y1LeGJtxtD/T2umeE9OTlU4vuQp9
+	rDx3qJ5J+kUIhnjFVSZ7uuO7XsbSPOtOhz5bqScjlDbKlaM0QsAbMvQStFHl+m9VCAg=
+X-Gm-Gg: ASbGnct0oqb/YC9IqwU5dpRo++4N4SzLd2Z2rf9bnqxdXM61lQZQzhJxJkuc6iPg1m/
+	Yiw59mneIpKvg5hgcCX4CkZSK3UrVknUitmDGxNnvvKeyWwU1/VDXpTb0mr6I3ThCfpL+8nXb7t
+	QhgF7sY79p+SjHeEXRyin71GcnR/e7yQvY/W0nnF7zS7eoBl/Ev0wn+vTJfgLd2rKks5BWmH7S0
+	qYMTJT6Jrwie0nVDuIroGphybUPjiOQYWpCvpq4aw+fiSR9c9xaej0OsY9Cm1Xqn8V37bMkdU1O
+	pPa3xmC+RvYDdS45zXOBoHdnGSKedlSLfbtxlTwjinlJ+TCU8QhBRDisIylZMWhLPJR9PA2RgtS
+	XBSYnyzMkTepmLL4NeIKm8sqgIw==
+X-Google-Smtp-Source: AGHT+IHdxC0JePk3qeMEY0oBAOfP9396mjUVW5jGrhBODN2YmkUTvFgIlwQkSj3Cm41Bms/JnFAwUw==
+X-Received: by 2002:a17:907:9691:b0:afe:ed05:2e68 with SMTP id a640c23a62f3a-b04930ac043mr1723174666b.11.1757430200254;
+        Tue, 09 Sep 2025 08:03:20 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0783411a3csm3334966b.100.2025.09.09.08.03.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 08:02:06 -0700 (PDT)
-Date: Tue, 9 Sep 2025 16:01:56 +0100
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: zswap: interact directly with zsmalloc
-Message-ID: <20250909150156.GB1474@cmpxchg.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250829162212.208258-2-hannes@cmpxchg.org>
- <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
+        Tue, 09 Sep 2025 08:03:19 -0700 (PDT)
+Date: Tue, 9 Sep 2025 17:03:17 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v3 4/4] kdb: Adapt kdb_msg_write to work with NBCON
+ consoles
+Message-ID: <aMBBtYK0pIYa_Ba6@pathway.suse.cz>
+References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
+ <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
+ <aL77aq4gZBsn4epT@pathway.suse.cz>
+ <d73e8cc0259c140a0a49f670c6c165bb662281ed.camel@suse.com>
+ <84segwjbxq.fsf@jogness.linutronix.de>
+ <aMAwMz4vWC5u9OpN@pathway.suse.cz>
+ <84h5xbk8ll.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,98 +100,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
+In-Reply-To: <84h5xbk8ll.fsf@jogness.linutronix.de>
 
-On Fri, Sep 05, 2025 at 06:53:15PM +0000, Yosry Ahmed wrote:
-> On Fri, Aug 29, 2025 at 05:15:26PM +0100, Johannes Weiner wrote:
-> > zswap goes through the zpool layer to enable runtime-switching of
-> > allocator backends for compressed data. However, since zbud and z3fold
-> > were removed in 6.15, zsmalloc has been the only option available.
-> > 
-> > As such, the zpool indirection is unnecessary. Make zswap deal with
-> > zsmalloc directly. This is comparable to zram, which also directly
-> > interacts with zsmalloc and has never supported a different backend.
-> > 
-> > Note that this does not preclude future improvements and experiments
-> > with different allocation strategies. Should it become necessary, it's
-> > possible to provide an alternate implementation for the zsmalloc API,
-> > selectable at compile time. However, zsmalloc is also rather mature
-> > and feature rich, with years of widespread production exposure; it's
-> > encouraged to make incremental improvements rather than fork it.
-> > 
-> > In any case, the complexity of runtime pluggability seems excessive
-> > and unjustified at this time. Switch zswap to zsmalloc to remove the
-> > last user of the zpool API.
-> > 
-> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> > ---
-> [..]
-> > @@ -315,52 +292,29 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
-> >  error:
-> >  	if (pool->acomp_ctx)
-> >  		free_percpu(pool->acomp_ctx);
-> > -	if (pool->zpool)
-> > -		zpool_destroy_pool(pool->zpool);
-> > +	if (pool->zs_pool)
-> > +		zs_destroy_pool(pool->zs_pool);
-> >  	kfree(pool);
-> >  	return NULL;
-> >  }
-> >  
-> >  static struct zswap_pool *__zswap_pool_create_fallback(void)
-> >  {
-> > -	bool has_comp, has_zpool;
-> > -
-> > -	has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-> > -	if (!has_comp && strcmp(zswap_compressor,
-> > -				CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-> > +	if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
-> > +	    strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-> >  		pr_err("compressor %s not available, using default %s\n",
-> >  		       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
-> >  		param_free_charp(&zswap_compressor);
-> >  		zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
-> > -		has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-> > -	}
-> > -	if (!has_comp) {
-> > -		pr_err("default compressor %s not available\n",
-> > -		       zswap_compressor);
-> > -		param_free_charp(&zswap_compressor);
-> > -		zswap_compressor = ZSWAP_PARAM_UNSET;
-> > -	}
-> > -
-> > -	has_zpool = zpool_has_pool(zswap_zpool_type);
-> > -	if (!has_zpool && strcmp(zswap_zpool_type,
-> > -				 CONFIG_ZSWAP_ZPOOL_DEFAULT)) {
-> > -		pr_err("zpool %s not available, using default %s\n",
-> > -		       zswap_zpool_type, CONFIG_ZSWAP_ZPOOL_DEFAULT);
-> > -		param_free_charp(&zswap_zpool_type);
-> > -		zswap_zpool_type = CONFIG_ZSWAP_ZPOOL_DEFAULT;
-> > -		has_zpool = zpool_has_pool(zswap_zpool_type);
-> > -	}
-> > -	if (!has_zpool) {
-> > -		pr_err("default zpool %s not available\n",
-> > -		       zswap_zpool_type);
-> > -		param_free_charp(&zswap_zpool_type);
-> > -		zswap_zpool_type = ZSWAP_PARAM_UNSET;
-> > +		if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
-> > +			pr_err("default compressor %s not available\n",
-> > +			       zswap_compressor);
-> > +			zswap_compressor = ZSWAP_PARAM_UNSET;
-> > +			return NULL;
-> > +		}
+On Tue 2025-09-09 16:29:50, John Ogness wrote:
+> On 2025-09-09, Petr Mladek <pmladek@suse.com> wrote:
+> > The problem is that wctxt->unsafe_takeover would need to get updated
+> > after acquiring the context. And might be reused for different
+> > consoles, ...
 > 
-> Hmm it seems like there may be a change of behavior here. If
-> zswap_compressor == CONFIG_ZSWAP_COMPRESSOR_DEFAULT at the beginning and
-> crypto_has_acomp() returns false, the old code will go into the second
-> if (!has_comp) block, printing an error, freeing the string, and setting
-> zswap_compressor to ZSWAP_PARAM_UNSET, then we eventually return NULL.
-> 
-> It seems like the new code will just call zswap_pool_create() anyway.
-> 
-> Am I missing something here?
+> You are right. I think it is best to make nbcon_write_context_set_buf()
+> available.
 
-I don't think that scenario is possible, due to the way the Kconfig
-works. Whatever backend I select for CONFIG_ZSWAP_COMPRESSOR_DEFAULT
-pulls in the crypto module as built-in/=y. It should always be there.
+I am fine with it.
+
+> > But wait. I do not see any code using wctxt->unsafe_takeover.
+> >
+> > It seems that the motivation was that console drivers might
+> > do something else when there was an unsafe_takeover in the past,
+> > see https://lore.kernel.org/lkml/87cyz6ro62.fsf@jogness.linutronix.de/
+> > But it seems that no console driver is using it.
+> >
+> > So, I would prefer to remove the "unsafe_takeover" field from
+> > struct nbcon_write_context and keep this kdb code as it is now.
+> 
+> No one is using it because the nbcon drivers are still implementing the
+> "hope and pray" model on unsafe takeovers. The flag is an important part
+> of the API to allow drivers to maximize their safety.
+> 
+> I think it is too early to remove the flag when there are still so few
+> nbcon drivers in existance.
+
+I feel that that I should be more strict and push for removing
+the flag because it is not used and complicates the design.
+I am sure that there are cleaner ways how to provide
+the information when anyone would need it.
+
+But I do not want to fight for it. It is not worth a blood
+(changing code back and forth). I am fine with exporting
+nbcon_write_context_set_buf() for now. We might know more
+about real users next time it causes problems ;-)
+
+Best Regards,
+Petr
 
