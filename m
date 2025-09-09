@@ -1,113 +1,171 @@
-Return-Path: <linux-kernel+bounces-808619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F007B5025D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C90B50261
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AB91C61ED4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78813BF356
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8465350D6C;
-	Tue,  9 Sep 2025 16:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F883352FC6;
+	Tue,  9 Sep 2025 16:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kcmnc1GC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oHzO5MRy"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613C32676DE;
-	Tue,  9 Sep 2025 16:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CC2274B5E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434821; cv=none; b=uplQFROWHr+mFLRrwHgKzpR3tz1ibFTGQLRnucJk/nMbwSjDpdVKAdT9Yn0WHRsThdGLP5TchMbdCdoKZrgliwae6/arnmUm4p5cTgEdWN6Alq7uRDKg+eGYX0w5s9YFV35+VGF5h6X0XxUYbOleaShgE5n/7Ea5XPWUGByLcCk=
+	t=1757434823; cv=none; b=VeQDNUvy/qv7MBpHHeK4nhWcd6bNqhC2ruSTvMkJo8x9B1W6oflMjcpfEEwQSqggc2DJ2fnXyeU3yQmM95dOsqiCxaAW2JE2oDXOTJH/lOhMGOJDutuYPfQjAI41Bop8f4mWCvYnfuH05dPpqH96gspSU4Nlj35DLldBsb6kCpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434821; c=relaxed/simple;
-	bh=DZrzh3YrIPCMm+fmI9j9QYQyXWS+KJz5vNz1swKkAZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9JuMh07Zq2QNi+l2Jj1bJUm8qNQky8yRB+xawEmMq1+mOt2q3XH+F48iNzF8xeJk+6DxJQc0/YahQSQm3yngSY0y+kHnleAiJ7GAw5Tbw7K+vBhnd7sC1UhoFw5Y7GPd0aA3QBazZux8oclLd3dkUrzHextqpu3pn5jCK/f5TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kcmnc1GC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B178640E015C;
-	Tue,  9 Sep 2025 16:20:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JWkyA880veGD; Tue,  9 Sep 2025 16:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757434814; bh=JXykKyxBLHPVAEdl8ppaWAN7HuPa8yfNHgz3CX8cwqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kcmnc1GCRz9SHgxzzrXJ63GQDbBvJcdzZtKmen8BLUqe2LJS+m9Br8OammWEpS0Ia
-	 tElg+Gy16W/i17ZoG6U1z31PNB66l/wIg3qPgbLDniEYspZ3QAct1na/8mC1P3xjxG
-	 q50ZN2hf1+L74xulicSh/PdfGXKR6LvOyPv39orm4N1BK0cfU9Bg4HyEljgMFzNIDT
-	 dUNX8U6W53J9zF658boiBukyD7u2P3/mOqzATPSzQNdm1kaDAh8JBrwWkamEcGrYMr
-	 LsurNyA91GCLYpMMr8g1Jxl65wECTdLNkvl0U3tYrZmcrbKxWul4NTfeSsWRQXcmvg
-	 F0OwvmfByKCM4jx/x155nHi/2CDzhl6uqxGz9z1vKEQ3XijEi10Wu0Xqpm2iY6j/ip
-	 AHPV3gaSxzwvSsEKJ52qWK3Xm/Ys6KXZenjmUKL3oyUAhp4DwWQdRozm1Ru1Hmldgv
-	 wR35iE9/jibplztA8xr7rxtff48fsvEzPp1JUeDqPUFw/whH2ANUq1cl/1rLxN3LN6
-	 i5e3CL9UB2kAj06nFmbA7bL2FJ+lfRO4aQHLtvTSq8B6GwAg3DykheyJEKTowehsnX
-	 fhIvKU5e8/KPncZa0+gg585jgNOOldGsWDtSFN4XL7sP5FYZxo1454MdTuhk6xvxP8
-	 9MpMWVGymPDe+d6nV1jkQcOo=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D60D140E015F;
-	Tue,  9 Sep 2025 16:19:31 +0000 (UTC)
-Date: Tue, 9 Sep 2025 18:19:30 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
-	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
-	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
-	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
-	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
-	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
-	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
-	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
-	tiala@microsoft.com, mario.limonciello@amd.com,
-	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
-	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
-	gautham.shenoy@amd.com
-Subject: Re: [PATCH v18 00/33] x86,fs/resctrl: Support AMD Assignable
- Bandwidth Monitoring Counters (ABMC)
-Message-ID: <20250909161930.GBaMBTku_VgKUpTs2V@fat_crate.local>
-References: <cover.1757108044.git.babu.moger@amd.com>
- <107058d3-9c2d-4cd4-beba-d65b7c6bd9a0@intel.com>
+	s=arc-20240116; t=1757434823; c=relaxed/simple;
+	bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pn04Xqld/Eogy6kDdH1HfPVic4jJauJND0W84JVsn0nvdNUp1yibJ5omlVFBGvxnKqaj0hXPWIrJOWEHt3MIEdNweRyUILLYMe/QND+BZu4C87yZD3/4FtIUHirB9Tz85PYx3ukXUeFf/kUd8zKc406bdzDd7tU3h60WOET8Qsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oHzO5MRy; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-336d84b58edso59084831fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757434820; x=1758039620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
+        b=oHzO5MRypNPGSYT+cS1qjpCPBkDDZVEF6v8ZkWs4ra6N6tKJrEm0p5JnR7OJS18gM2
+         OGpaCu+QivbfwzwdAVvMn9aFnFN85bTszabjPr/2YgG2kmprx9uWYcwY0sST6+mBXBVI
+         baf3USlelGNrvqF9mHK1D4M5spGZCewl+g45SDMk/RMMLwIi/ld0atRpB7p7zNTrxHwb
+         4q8J/Joljnpd/TjjBGPIa9D6OBe0vn+nOlXFSKrCIHhkRlX6pR/4Q79iMGArNxgBVUoJ
+         4AP/w8TOLDhheN0swWem4Gu6nNRaWcLjyCXXptqhtGU4wQQjHyZYkhRLbHeXTCbezxYb
+         /MXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757434820; x=1758039620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
+        b=ZlAqZFD1c/YXqTzvs3J7zO7MN+j6cqQVEGGhLbxdKK7pMUSevUhaBVIlRk7HcPyZ8y
+         M09bfs2opkeZoAPFTZHzsjviTa/EVsyaf9cEuTgcamlDz1CpxHT1PpdH23e6WpGKghv6
+         oGVrutxLtMPH/2/vf03JTUiPymnefiMeohhrtATA1xanNhm0/DbdjkokMEniRKxpIK2T
+         UUKiEeiN4i6Kl8V2TQBSVOWF/zD2hwLsHXa0QfKMe/UGO4JCDlsEfBl3ByM1lUXM1Vj3
+         RNNic88Nf+I/arzEdkFSWsRDcxHCMAVcsHmrc6GYwAfxarhM4uEdkvGUz6nuyMf4ckZ4
+         wclw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8sGZxY1biYztNfsCtpdRzarRxuxL77svNtocp5uXMTgK1pI5txGefpzbuwGbTPKTihzeaTYE6zqc3XTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLbldK/p6k4jQrSQ9pGeaS6YHnvgdrvZaRGgwAAolSWzqzwUQp
+	mWo1OIT/Zda4ZVmuoj6NN8hw2Kv+yf0P6nFncMr8/D7taatHrOgWiBSSyD7MA3BBdP9i3i3q077
+	YH+ai8AOKVhf08fTmG56AhA/GhphyHOM3DMXPW5k9VQ==
+X-Gm-Gg: ASbGncvlmL5WvChBfeZmxbSHnNlaVBvaYLkz+IvhBvBfLE7Y5B7pfgOcPgSEHg44CVQ
+	k3PCP1L4ccHXzWBoNT4Ek6YbDjvaJ7UT2WTAzRfeIRF/Tuwvv+3N5z9BNxj8f6eAYOTjMc3mOx6
+	9SN0QiZcmEGy0YGFyXYX1h/cxnII5ldWGPGtB4aLIQJjq4bwy204QWT1pwnsDMXCkKq/eH0CakG
+	fEk/+0HTXFVYVyD1FqqHFlvjy/cAxZGg4X9y4bhrCk3THc7QA==
+X-Google-Smtp-Source: AGHT+IEztBpigh5RxbO1CBt/5KgEHGRrHXuTWtPssLeYdALPuaphhHGsx19aeCNSyhIa3AeA3fW9VXpZoFoDSTU49vc=
+X-Received: by 2002:a2e:be08:0:b0:337:e3e0:39fc with SMTP id
+ 38308e7fff4ca-33b51b18984mr33377121fa.21.1757434819790; Tue, 09 Sep 2025
+ 09:20:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <107058d3-9c2d-4cd4-beba-d65b7c6bd9a0@intel.com>
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
+ <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
+ <aMAn4MM_Fs8q8qwj@smile.fi.intel.com> <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
+ <aMAve1MbONmKVjjg@smile.fi.intel.com> <aMAv3STeZUdSQ14p@smile.fi.intel.com>
+ <CAMRc=MeA87p0QAzq_3MACQM90MhN0eRccr7u-VzcfyP8b90AaQ@mail.gmail.com>
+ <aMAzZAbNwrRTgFi-@smile.fi.intel.com> <CAMRc=Mfn7atHTqKc9nMTQ19ZserqeNi3skb-QhG3CVdEhmr0gg@mail.gmail.com>
+ <CAHp75VdDAJO3+NPp29GnqL=C5m7tdWbyYvNFax=Dh+dG49YAnA@mail.gmail.com> <CAHp75VffDLfvdVhnzZk6V6a9eXq4R0ZBYLUw3S=g0ABqozhWFQ@mail.gmail.com>
+In-Reply-To: <CAHp75VffDLfvdVhnzZk6V6a9eXq4R0ZBYLUw3S=g0ABqozhWFQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 9 Sep 2025 18:20:07 +0200
+X-Gm-Features: Ac12FXz3JLlhRsOgq8cOPinTet2g1mbuWxd9zMtxwsTKBrX27rDe6FL8vxMW4vc
+Message-ID: <CAMRc=Mf0sXnak0Ov3bwgv_xVVvw+CxA1iAcvDv+B4a155HZq2w@mail.gmail.com>
+Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 09, 2025 at 09:03:13AM -0700, Reinette Chatre wrote:
-> When I checked tip/master did not include x86/urgent yet but when it does (and
-> tip/master thus includes x86/cache and x86/urgent), could you please
-> merge your series on top of tip/master to ensure all conflicts can be resolved
-> cleanly and ready to provide conflict resolutions to Boris if needed?
+On Tue, Sep 9, 2025 at 5:26=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Tue, Sep 9, 2025 at 6:15=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Sep 9, 2025 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+> > > On Tue, Sep 9, 2025 at 4:02=E2=80=AFPM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+> > > > On Tue, Sep 09, 2025 at 03:56:41PM +0200, Bartosz Golaszewski wrote=
+:
+> > > > > On Tue, Sep 9, 2025 at 3:47=E2=80=AFPM Andy Shevchenko
+> > > > > <andriy.shevchenko@intel.com> wrote:
+>
+> ...
+>
+> > > > > > TBH, I think those 6 all made the same mistake, i.e. thinking o=
+f the compound
+> > > > > > literal as a cast. Which is not!
+> > > > >
+> > > > > What do you suggest?
+> > > >
+> > > > Write it in less odd way :-)
+> > > >
+> > > > foo =3D (struct bar) { ... };
+> > >
+> > > I don't get your reasoning. typeof() itself is well established in th=
+e
+> > > kernel and doesn't
+> > >
+> > > foo =3D (struct bar){ ... };
+> > >
+> > > evaluate to the same thing as
+> > >
+> > > foo =3D (typeof(foo)){ ... };
+> > >
+> > > ? Isn't it still the same compound literal?
+> >
+> > It makes it so, but typeof() usually is used for casts and not for
+> > compound literals. That's (usage typeof() for compound literals) what
+> > I am against in this case.
+>
+> FWIW, brief googling showed that nobody (okay, I haven't found yet
+> reddit/SO/GCC or LLVM documentation) uses typeof() for compound
+> literals. So, this makes me feel right, that the form of typeof() is
+> weird and works due to unknown reasons. Any pointers to the
+> documentation you read about it?
+>
 
-Thanks, just give it a test but no rebasing anymore - I'm going through the
-set. If there are conflicts, we do enough patch tetris in tip to catch them
-and handle them upfront - you guys don't have to worry about it.
+Ok I'll change it. I also need to change it in existing patches that
+already landed in next then.
 
-Thx.
+> > > > > And are we not allowed to use C99 features now anyway?
+> > > >
+> > > > It's fine, it's not about the C standard number.
+>
+> E.g., https://gcc.gnu.org/onlinedocs/gcc-15.1.0/gcc/Compound-Literals.htm=
+l
+> (8.1.0 is the same).
+>
 
--- 
-Regards/Gruss,
-    Boris.
+I get it, I understood incorrectly how they work, no need to rub it in. :)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Bart
 
