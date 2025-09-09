@@ -1,128 +1,274 @@
-Return-Path: <linux-kernel+bounces-808795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E1EB504D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:06:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0E4B504DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97A887AB8AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F41C62880
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942313570DF;
-	Tue,  9 Sep 2025 18:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9EB35E4C9;
+	Tue,  9 Sep 2025 18:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aeqREOwg"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6tg5HaR"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B47C352FE5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7723570B8;
+	Tue,  9 Sep 2025 18:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757441202; cv=none; b=WgppGexsi25eIhX9fWrjl5kGzilR3Iwe+mcKq+0bxxSIBd+4KESoYMgmKl7TxncR8p7ngadQ+C4BqUO6W+c2EpoawcJ5C6ZcfimlgZ5950o45RChTjkPAfLDSSW49jsfLRowtZGLYUtJAooLhkQ+qTh9kv4ezUjlRFTFPK4nSFw=
+	t=1757441221; cv=none; b=Pkekunzu7idFAjlPuzM0diJq/6CPBm42mF24k2RQy6hzvU+htGAzQrHmvAH0Z+FBtoHLO24BQ7+Z2W4lTArKvOKiJKX4LjnImjP95TtU9BVdwltjs3xrM7f+LNlJsYmeqPqYnECHFvxBPPivjXWcK7Z9eqvJIbhDLUXr8n/594o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757441202; c=relaxed/simple;
-	bh=jZ4q7/TmAhAt9Egg4Ce9ImZslltIxN0BNL1jgujUK+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vCXXeKRljgWFt1EcLcO+27AqbNh9xYEp4Ba6tRA2X8ow2OemYxWkdZ/sIFQnjFZ0qFqRDNhaV50O4U0JeePNxj2WGdjp1vEAJVq+BV8SOhpOBZc5pG80Ybw8lYiUM3i97Nx/yV2tbsQimhY3EBwsTrLMLWdfV+epMRr4ic/CCAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aeqREOwg; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61cfbb21fd1so1632a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:06:38 -0700 (PDT)
+	s=arc-20240116; t=1757441221; c=relaxed/simple;
+	bh=COUUp+dytOaa4h0pvUMtk0BvGhM37JjC6rq+LUDaqtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=enzhmKBC7rcCpokxz6uv7HGD1wsuWfjGe2osNe1vQE/Jw7OYo0TJY0EKcklT4rGdB+i5dluYFPBTKSQ6wyX4Di+1o7kzh0LVw/+pOqE3NPRGi4rhV9aQFzWzuz9OJYLCfyVfxswLj4/EIdoz4cJ4ztccd2i357ap/oa/EhWWqZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6tg5HaR; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32b6108f2d5so4295576a91.3;
+        Tue, 09 Sep 2025 11:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757441196; x=1758045996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zs2bT3Dg9Ff25HRhQXBnWG6WLypX8eEtjPTIvXY4ebI=;
-        b=aeqREOwgtqZzVMwht/CmjhUXvcOqESCiykwZa6O/6NtvH4K8D1xxEC7rD2UoXiDlSx
-         Ztw3/m6BjtCICe85Aai3y7zBZymhJfVoZw/UYFacxzsrx/9y/+RZS7C9SL9WHw83PLNY
-         YuB85yMUbXTGKAaShc+0/B8DnZ3Mdkv2zZfhJ73vrgiXjWRGmC798/v+5YudnkS2yQXA
-         t9Y/60lpdxHMhpJPrvEcQwJMAcjhjrnnClX2zlayJBH18EfOIOyMR/XH0zL1ueUo4bO/
-         QfSLVQ2245wwr3UqgwXtKBDM4mDWs7ojRYOWYpqUABhiMeNUCY6dUVzakxi4WPTIAQ23
-         UJ1w==
+        d=gmail.com; s=20230601; t=1757441219; x=1758046019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
+        b=g6tg5HaRn2pY6C4v6V0IH2GCiA8s3Y8lskDauOEpHv+HEA+3KlSWB1zcZWKQyQOF15
+         VajrP5nZ0LFmERX86zybdrBYoNJHcRG3atgJ3VcALZdYTzTpsRIEvhNxMgXMua4GG3yy
+         IYCEd49MYbzBFVmr65ifHhn1kyYCpEdo4B90PJ/p9tQ7GoW/2diJLiiSYWjzJdR29+GB
+         6j6sTjOtpCL6u54IXruFOKMQBk6fVcZIUfOGKJSet3SOBdP59EP0VaqoVasKLzNtkn2r
+         tjacWEiRSh4ySCddtVlGGw7QNXLs9IkMEmRqxp5XEFDqwgiylnaxTzEnG8KZdD8WhGsr
+         gyvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757441196; x=1758045996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zs2bT3Dg9Ff25HRhQXBnWG6WLypX8eEtjPTIvXY4ebI=;
-        b=SSXTyWwTp3uOzHQDXedyyYTYJ0NrVC26Sbatf3fN0fcmpG5NBQvNW8gOoXO4+B6e7b
-         eAxsyjsdG1x8L2yFzW8oika4GT/TW2za761VDO/RTB7FW99xZQj+t2gHHfR5FWpmRgY/
-         RAcAbf2/aBfqkeMXAgCaqyFObKpM6rp1UILIGzMXDlTZ5m18czEAO90lWZ+sbQgCxg7P
-         bA6Qs/cdzUVNMhuSJumMTvXPaNWjnFQIJxbTvau3p9Yj2+ZEKolpUGz8yZu6wDliLj4P
-         IVcufSDMiPhHDRME6/uuQlWS8lCOhOC0ezmSeWG8al/UB355V2e4K8xDSDviU8P3U6TQ
-         4VbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBIu0T9eTQjBNNYcMS6Wis69W0E1rMR/QRozSs0tammjiTzLDtH5uKNDijGaxWaYYY2q8LlxaXb9q49gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8uC7MSogbxIdUyXb+qkpo/z6FDjYOfobbAsmVLzOkGCtXccJ3
-	eNiXc+x2Ly+QKjP0FZd/0gi4dbgb1nAghZoPWnbCSqgIK9SWiqTzpdXVn7DO7qJGkSIMB6OyTtv
-	3FdUclQ0Q6a1OD3H7bvIQyTO+FMY1MUDAvoOilXer
-X-Gm-Gg: ASbGncvduNIeZB73beO3pusMtuw0CMpQHT2PmJ9pe+YP6I5oHP25or/iaYdnf+sWwDQ
-	VknkltGAtRqvTrPWqpVztthfK7WiHYH6ad3xIFpveVWDVJDAqkJYC+U7XiIp+TuCTnT61Nrb39x
-	MMNi1kpVe4DDoTavw69SmKNKWYPKmVJQDcpjqVBfAAfAVtGKnyrMAUBriEJumBc1eJvWyKXwjQU
-	k7ORta0tfN5Nj51K+StTIXG6b1Y9ynQ+7hSDTVIujhz
-X-Google-Smtp-Source: AGHT+IGeH7jyX9ct4ZAzKinokBQ1+zc2FEaXfp6pE5j81gEVTiuyh5DC4nkYapGmxfFWYMAqNWcHbugCP2vmV3t5O7Q=
-X-Received: by 2002:a05:6402:21d4:b0:61c:c08d:359d with SMTP id
- 4fb4d7f45d1cf-62d27d84e7amr6983a12.4.1757441196486; Tue, 09 Sep 2025 11:06:36
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757441219; x=1758046019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
+        b=wIdMNYBb6g/sRDH58UU0+58u28c8jbcTjp29GIYKTeF1pGFX143nkr0k91PDIu8Gr4
+         WzXeDugPtfYu8Q62oWXL2Ely6lfUrQVwDw2mYf5xuPwBtD/ukhnNBScWJpJXNKYTnqQj
+         nflT28IDkB6EZaKYzB0SCad5N08DBB7CyAz7WAmEl9YycxmYUMrJ4a8LsAi+YFrNA3/b
+         bbL2LV5XJyLW1kROrzVkg0Z+KvmF1AJnAT0LlMtnIVCwsoQ7elqGL/qt2Bk+18KOb41+
+         NSUomY4/UtSTzOx8nLif5wx3vMUubu6roYK213KLvFiE8dgI7gN8edO+FzynNUWWZnma
+         garA==
+X-Forwarded-Encrypted: i=1; AJvYcCV46ybBpYz3WL1e+ZUzVFFpatn56V3cSVRr1ce/7IeZBfr/6fWO2JRkDwymMIC63VZULh8A8G6U+9QZqYjM@vger.kernel.org, AJvYcCVHKamF1TokTle2W8pjQYh66vLCJaAAjTIWn+SfSeyQ798340MBIJt0mTH2twpH6NaxpRTySDGY6Pp8X/lUkZeFOsE=@vger.kernel.org, AJvYcCWlxiSAMWwrdyrPWasuvwx6Ult0+1G27QTMvzKXwSqmRkxaXHsz8HvbMexBQXZaYCA5iwEeHPd7SqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEevcqO9OrUmTCmVVxSUmC4dwkHIt+UTcl4ZWZEmMSzLXUnk9J
+	KJBW113ogEEnKUz6BglXdBGT/+OI4EMWc5041XoHNYP05EDBSUJzNnO+
+X-Gm-Gg: ASbGncvWXgn35fFnX2yGXrBe12D7EtIv3bWapZhOy0n8Q6pCjUhkpVsaP31ADCjcAIO
+	7KiEi8GMldXelmhOorK9ScR5thbQkosuLG+KXhhwQA4KWoks1iGSyKFvaCHNhzMgfodEsfqwyyT
+	hjtbA5c7wOrkgsXP93+8XtCn7zheStXHg10he7hvLrIGbGRNWiy1KYXG2KMg3t6B4IfnfsZPkUZ
+	RkajUxDS6yedl9LYSXjeSfLVegIll2fZCrK2GeujJQ/dj1JXSe+0QLRR09eADC1shRCPK4dK/tt
+	M/SRmm2q/FnbHKHUKVxW0P5YhIk3bkrYV3Ql+1PZae79eyLAFWET8VdQ9ibMRvPfDd+okcL0BBo
+	B8ANf2bryia7MvljcVxBTmB75OraXwYg=
+X-Google-Smtp-Source: AGHT+IEQ8Fdk0HbZvmKlziMWHOi6q7YSOReqEYtXvWbMeLz8O2VLpBEy5+WUL5qEMmSebQfRgcmeeQ==
+X-Received: by 2002:a17:90b:3dcc:b0:329:e9da:35d0 with SMTP id 98e67ed59e1d1-32d43ef5112mr14793775a91.5.1757441218843;
+        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.216])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e7186sm35182693a91.16.2025.09.09.11.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1] clk: samsung: exynos5420: Add support for power control registers
+Date: Tue,  9 Sep 2025 23:36:49 +0530
+Message-ID: <20250909180652.7130-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909092707.3127-1-yangtiezhu@loongson.cn> <20250909092707.3127-3-yangtiezhu@loongson.cn>
- <CANiq72n7OSCUzycAQXFybx6BSVnj3MWAXvZj7U=AWf_UQwmO+g@mail.gmail.com>
-In-Reply-To: <CANiq72n7OSCUzycAQXFybx6BSVnj3MWAXvZj7U=AWf_UQwmO+g@mail.gmail.com>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Tue, 9 Sep 2025 11:06:25 -0700
-X-Gm-Features: Ac12FXyLkTDu-xW8KQeBG2jwxZmVi08cxdiK25_6D-p0oCXaRRpW6X0CHqv7ho0
-Message-ID: <CAGSQo01mQfcU1EiW53be1hcts0c1p-HQAab_HBk6VcVmhq3n2Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] LoongArch: Handle jump tables option for RUST
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, WANG Rui <wangrui@loongson.cn>, rust-for-linux@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 9, 2025 at 3:16=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Sep 9, 2025 at 11:27=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > +config RUSTC_HAS_ANNOTATE_TABLEJUMP
-> > +       depends on RUST
-> > +       def_bool $(rustc-option,-Cllvm-args=3D--loongarch-annotate-tabl=
-ejump)
->
-> I am not sure if this needs the `depends on` -- from a quick test, it
-> seems to run regardless of it (and your `ifdef` below doesn't care
-> either). Cc'ing Matthew in case he remembers why the docs mention that
-> the Kconfig one should be guarded by `RUST_IS_AVAILABLE`.
+As per the Exynos5422 user manual, settings for the PWR_CTRL, PWR_CTRL2,
+PWR_CTRL_KFC, and PWR_CNTL_KFC registers manage ARM clock down and up
+configurations for idle and standby states.
 
-I think this isn't needed. I added it initially because Kconfig was
-dying when `rustc` was not on the path, but I'm not sure how I managed
-that, since `success,trap` should guard against that (perhaps I was
-doing something wrong in earlier development, fixed it, and didn't
-remove the restriction). I have tested `rustc-option` with an
-intentionally missing `rustc`, and Kconfig doesn't seem to be taken
-down (and it gets a no answer), so the change to the macro means that
-doc warning should be removed.
+The Exynos5422's dynamic clock frequency down feature enables automatic
+clock down when all CPU cores are in Wait For Event (WFE) or
+Wait For Interrupt (WFI) states, utilizing this feature in standby
+configurations.
 
->
-> In any case, it shouldn't hurt and it is only on the LoongArch Makefile.
->
-> If you will be taking this through the LoongArch tree:
->
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
->
-> Thanks again for fixing this!
->
-> Cheers,
-> Miguel
+These modifications enhance the power management capabilities of the
+Exynos542x by providing finer control over the ARM clock behavior in
+various states.
+
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 111 +++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a9df4e6db82fa..ce4c554eb59f1 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <dt-bindings/clock/exynos5420.h>
++#include <linux/bitfield.h>
+ #include <linux/slab.h>
+ #include <linux/clk-provider.h>
+ #include <linux/mod_devicetable.h>
+@@ -29,6 +30,8 @@
+ #define CLKOUT_CMU_CPU		0xa00
+ #define SRC_MASK_CPERI		0x4300
+ #define GATE_IP_G2D		0x8800
++#define PWR_CTRL		0x1020
++#define PWR_CTRL2		0x1024
+ #define CPLL_LOCK		0x10020
+ #define DPLL_LOCK		0x10030
+ #define EPLL_LOCK		0x10040
+@@ -139,10 +142,50 @@
+ #define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+ #define DIV_KFC0		0x28500
++#define PWR_CTRL_KFC		0x29020
++#define PWR_CTRL2_KFC		0x29024
+ 
+ /* NOTE: Must be equal to the last clock ID increased by one */
+ #define CLKS_NR			(CLK_DOUT_PCLK_DREX1 + 1)
+ 
++/* Below definitions are used for PWR_CTRL settings */
++#define PWR_CTRL_ARM2_RATIO_MASK       GENMASK(30, 28)
++#define PWR_CTRL_ARM_RATIO_MASK        GENMASK(18, 16)
++#define PWR_CTRL_DIVARM2_DOWN_ENB      BIT(9)
++#define PWR_CTRL_DIVARM_DOWN_ENB       BIT(8)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE3  BIT(7)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE2  BIT(6)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE1  BIT(5)
++#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE0  BIT(4)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE3  BIT(3)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE2  BIT(2)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE1  BIT(1)
++#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE0  BIT(0)
++
++#define PWR_CTRL2_DIVARM2_UP_ENB       BIT(25)
++#define PWR_CTRL2_DIVARM_UP_ENB        BIT(24)
++#define PWR_CTRL2_DUR_STANDBY2_MASK    GENMASK(23, 16)
++#define PWR_CTRL2_DUR_STANDBY1_MASK    GENMASK(15, 8)
++#define PWR_CTRL2_UP_ARM2_RATIO_MASK   GENMASK(6, 4)
++#define PWR_CTRL2_UP_ARM_RATIO_MASK    GENMASK(2, 0)
++
++/* Below definitions are used for PWR_CTRL_KFC settings */
++#define PWR_CTRL_KFC_RATIO_MASK       GENMASK(21, 16)
++#define PWR_CTRL_KFC_DIVKFC_DOWN_ENB       BIT(8)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3  BIT(7)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2  BIT(6)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1  BIT(5)
++#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0  BIT(4)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3  BIT(3)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2  BIT(2)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1  BIT(1)
++#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0  BIT(0)
++
++#define PWR_CTRL2_KFC_DIVKFC_UP_ENB        BIT(24)
++#define PWR_CTRL2_KFC_DUR_STANDBY2_MASK    GENMASK(23, 16)
++#define PWR_CTRL2_KFC_DUR_STANDBY1_MASK    GENMASK(15, 8)
++#define PWR_CTRL2_KFC_UP_ARM_RATIO_MASK    GENMASK(5, 0)
++
+ /* Exynos5x SoC type */
+ enum exynos5x_soc {
+ 	EXYNOS5420,
+@@ -1574,6 +1617,72 @@ static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ },
+ };
+ 
++static void __init exynos5420_core_down_clock(void)
++{
++	unsigned int tmp;
++
++	/*
++	 * Enable arm clock down (in idle) and set arm divider
++	 * ratios in WFI/WFE state.
++	 */
++	tmp = (FIELD_PREP(PWR_CTRL_ARM2_RATIO_MASK, 7) |
++		FIELD_PREP(PWR_CTRL_ARM_RATIO_MASK, 7) |
++		PWR_CTRL_DIVARM_DOWN_ENB |
++		PWR_CTRL_DIVARM2_DOWN_ENB |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE3 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE2 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE1 |
++		PWR_CTRL_USE_STANDBYWFE_ARM_CORE0 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE3 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE2 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE1 |
++		PWR_CTRL_USE_STANDBYWFI_ARM_CORE0);
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL);
++
++	/*
++	 * Enable arm clock up (on exiting idle). Set arm divider
++	 * ratios when not in idle along with the standby duration
++	 * ratios.
++	 */
++	tmp = (PWR_CTRL2_DIVARM2_UP_ENB | PWR_CTRL2_DIVARM_UP_ENB |
++		FIELD_PREP(PWR_CTRL2_DUR_STANDBY2_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_DUR_STANDBY1_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_UP_ARM2_RATIO_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_UP_ARM_RATIO_MASK, 2));
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL2);
++
++	/*
++	 * Enable arm clock down (in idle) and set kfc divider
++	 * ratios in WFI/WFE state.
++	 */
++	tmp = (FIELD_PREP(PWR_CTRL_KFC_RATIO_MASK, 7) |
++		PWR_CTRL_KFC_DIVKFC_DOWN_ENB |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1 |
++		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1 |
++		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0);
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL_KFC);
++
++	/*
++	 * Enable arm clock up (on exiting idle). Set kfc divider
++	 * ratios when not in idle along with the standby duration
++	 * ratios.
++	 */
++	tmp = (PWR_CTRL2_KFC_DIVKFC_UP_ENB |
++		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY2_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY1_MASK, 3) |
++		FIELD_PREP(PWR_CTRL2_KFC_UP_ARM_RATIO_MASK, 2));
++
++	writel_relaxed(tmp, reg_base + PWR_CTRL2_KFC);
++}
++
+ /* register exynos5420 clocks */
+ static void __init exynos5x_clk_init(struct device_node *np,
+ 		enum exynos5x_soc soc)
+@@ -1649,6 +1758,8 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 				ARRAY_SIZE(exynos5800_cpu_clks));
+ 	}
+ 
++	exynos5420_core_down_clock();
++
+ 	samsung_clk_extended_sleep_init(reg_base,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+
+base-commit: cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+-- 
+2.50.1
+
 
