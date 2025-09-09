@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-808497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D88B5008D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:02:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E919B50092
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F47C3A8A72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CD21C634F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE19302759;
-	Tue,  9 Sep 2025 15:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343E5322C66;
+	Tue,  9 Sep 2025 15:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fq5ymuoA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="CeN53NkP"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C583350D6C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8814F226D1D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430106; cv=none; b=usT3FQh2bd47FG5A1wkLN63KAF6C/9MVpSul4HaEKyQh12eDjRVMfDPHs/E46OroCxX+pCbmRBwTWcLaI4J/kOhniDmLqnbB+hVm5jEzqsK0P1BM9QhBp/XmuF2MgsrtATM4xDOq4OOjwpf31ydduoGgCX82qntboabXQm1nQGQ=
+	t=1757430132; cv=none; b=Y9cmSPeY5RfqTQxQ2Kanwa9nA7tX77w8Wp2+XAuu+2CqgroGgoXJ7sZ5YWKHwN1CcqiDU5Ede9s2JIessJeuCD/EcEYuM8UQYthY7bY2KziCDZvZRRi8IkQL+PiBLgald3IuiRSKBmzGM/a3nD/On5Q4okd+CETUeCVhMVjGVyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430106; c=relaxed/simple;
-	bh=C1KSsn2fwC2E/SLQEDeJ174av+Kw/fJ8vG0zw/sGLog=;
+	s=arc-20240116; t=1757430132; c=relaxed/simple;
+	bh=qoj7mzHYT9f1wy0zIuGFs5Y3sZ5ArqKmQOu/ZbfDY8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/ruIqVpA3SQ4CfZ5ufE7X/1C/8iVTe5c8pxInykLSY2LzMPrm5j6p2MOcgrhSq3sdLV22GJ8qtBsoXefBPObD3Q2h8Sn99sNbRmN7kVxro8vTqo+JsP/if5xTH8CqSmELbE4mevBrxbmd2LhZgxmmicdcg5QzVkjIu2OCMQsD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fq5ymuoA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LSuT029173
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 15:01:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+YAkGp0Was8SY+eD78frAm2r
-	kjGCrvc6KWsSn1t2uZE=; b=fq5ymuoAhCxfolSJ7QsAym0GWLEar7BQu4+tpmuq
-	o+JzNNpJQxs4yIecyqSOB/xNjJQlO9N347rAkP7ZFcqiuZXPMbMv+zwM2Y9GhVV/
-	s5jvxgSEGG+IQlKe3s34ii9GYGguXNOhEqSWacsDMmxW6uPYXgHJ1xkJPHTRcuAb
-	nz1n8yUcCxfG0OMnlj6Ys8VvJc6+OXo+9M9mmAFMRgzffJbiNTXrRV/np8G8P+XM
-	zY0DcvMHF1f3ILkY8XU6FWhMUDZ2pkBiGe1uZ3Vi1XTNW1Y9JIPzcK+cLIPm0jCV
-	Vwer4dyuWdpJ9jlYLXCtjGGJoGAiJZw77FiF+xC2R0ogAQ==
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8gmfs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:01:44 +0000 (GMT)
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-8972110658cso10878807241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:01:44 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/w8oBZD8+3sY1mF5kgRpSK790+BjkkDjoxDbEKxum79IuCMnujW1ECOD+oHTdqGYogGn32Lj4mfFANhcq8JZ0Q/vElGRvMPTkrqyFDsdlpu8GpizW38iPwWBzvzGcI4BZD77+5S3bdeqcTC5YGtf7zMfWcrAIBEYieuFwq0QEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=CeN53NkP; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7221ce7e814so46164466d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1757430128; x=1758034928; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yh0fjNDYqjzdJxYcthmflSzVU8lAPQ437Tv8jqJmBNM=;
+        b=CeN53NkPXCSrwkx18dHHJyrusFRAiIIvviYNB77R4zGm+W5l6wUHmmnlt0jLvRYPrP
+         yIhQPSyGwzELEO6BBqQr0vWj1ofnUtUHvz+n85DdRk1U2BPsSYQArWWpa4pz7cu54YlV
+         PpI9xzb7uzaO1vQC5zNkjqR5CyhfNIo8R7yDPtzwp1qR4xqAbRVwNdbvGEEXG2q901bW
+         aduQelvgnaFdMFG13ACIopc02ke55r8znaIETeXYBvJROT5k7tHuiblylpIjaumAeWrE
+         v/0NKZMlsm3j4UQuzX2vcqooa1oXqhFdf8j3fIN1MxF7JmjzrnPBhNPKLfny5o2yliUE
+         jYXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430103; x=1758034903;
+        d=1e100.net; s=20230601; t=1757430128; x=1758034928;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+YAkGp0Was8SY+eD78frAm2rkjGCrvc6KWsSn1t2uZE=;
-        b=MIi8uYhG3jqfHHC4XABMRKV29kbFBtf81DQh3Lg/IebnW2BhU/Fnxi7hTSFypa+HOf
-         uZKlmVY9Z/xt54SKnXIBXDkIr12O6Daq3kFcaumHD8RQqwRft5k0cX+KP6UbYzSyCAfU
-         eLl1kMFTnHPGZf58H5IVqjy8//dzsjpsQZWTQx1Decru1CAuqGiAPNiKWCqBoxKzeCO0
-         b3Bneid+0bC/7Fdgg/3Pa17HsKqt3FX4bDyRjG6jZ/jX91fLzJDuwjmiqpOkcwP1qqUS
-         xNbw4v126+ExJK1Fdwf7u4zypn5YhGr+mWjJSkdiScjqeA40NOMOin69Z56FH1mpP62b
-         Armw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoz2Nbv4kiwt6G8vznd3mqeVpWXR49Kb5Y1yvUk9g1svQiK3H+/WcPIDAqktJNMbzplaCGkKFhc9hMwTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/c6s0Bues5XC6AeR6b8SeJtz+3nq7dSWdGFJIbC6l6/1N5uD3
-	eWSkvfyYmC8iP65JYWXuixcSJ5hjkflSNbnperO2Yz/FyiO+F/YPuIgkaGKrq/Cd/nRDwJc451k
-	sLtMHM6T6LzObt+6cS82i6Fb20TNbzlzmuFtSLDYNFdTjLmIKjuN+ulCjvQBgxs8h8Yk=
-X-Gm-Gg: ASbGncvF+6zaw4EmnGKOMZ5cvRRJ7j3b7+AVm1P5oZ2HBMy4rIKCdcRZctW4u29GZhs
-	mm/bVGDZKumCFgJmiEXDaeaglwkJulNZwWPJipgjTYnhL5uy1JIN1p2+vqKJy83EMJUovSMrdoP
-	d5Ix/iXF3hmZRf3qvMp3d/Tw/b4SCoaoEo482b9sreQWoe18j49tO6TQ9e4IGgQpqT1sXEOwrA1
-	MvcfQb91u7jFDAd0ROfwU2Cz+VzUETFFFlnLxuYUQi+nILjPjVi0oLqh6h+V7lD+Mq7PGHhWlgt
-	M9LPLaJ++NoX1XXzOwm0m527peVeA0rEKO8isgzSRmAk5UT0SuN8mqjzbC5+x30eacEkL51D+W9
-	F0wgZKqwn60CXG7KQ0AgMkQlyYlTRPxj0XQr175K4AGg11beBK3eW
-X-Received: by 2002:a05:6102:809f:b0:4e4:5ed0:19b2 with SMTP id ada2fe7eead31-53d1c3d661cmr4304923137.9.1757430103276;
-        Tue, 09 Sep 2025 08:01:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbmFVS3O9rFOkq1qoy/EYq4X6azRKsts/lxojCWvOsI6IFbFnDvbit2/OPl1wUqGZICszRTA==
-X-Received: by 2002:a05:6102:809f:b0:4e4:5ed0:19b2 with SMTP id ada2fe7eead31-53d1c3d661cmr4304813137.9.1757430102638;
-        Tue, 09 Sep 2025 08:01:42 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680cfe2496sm587402e87.61.2025.09.09.08.01.41
+        bh=Yh0fjNDYqjzdJxYcthmflSzVU8lAPQ437Tv8jqJmBNM=;
+        b=JXmwSNENAB/SNx0NY2+U1RPPyWN/r90RGWZ11ZI7+DD7jycxrbj/ukeYzZMffoUsPj
+         z0M40/z33EOpB92dyaDX4ePmhdJxzLi+4ahfizjmNiwTSzXJTbH7eo7s+SHqQKOF9V7H
+         F863Vqbx09YCYqgSwW0Pv9VebblWe8/R0FL5V5HFQtiBsO2yN9pn/Fr2XodqZ2/b3HNj
+         dbFiNRlXhfDMqH8FKkHX8riRHPXMNNvf4Zf4REP++t6qtLv5Dwft4QU9W3Bqsd022M25
+         wR0PeWdYiM6m/w3uh98Jrd8dTv29O8aOiLkG3inZvnTZuiJ3993My9FYJ4uWqUfMeAnc
+         vMWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwK20JQOE+8qAcTmfy5ZUUQrnqFs+ZPmcQ//entajcm8m1YTZvUFTwhejjYm+kA0U+7KX70UmL1qpaAY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNjhZMJZwPDmlNshX0FXMubBVbYTR0Fq1Ase52sk0y+zkpTejH
+	0ahaM/d+9ARfYewgaasWWAWCJvYqwhaNw1Lrll6DquBZ6v0KZJCINilv6MbmdfPY++0=
+X-Gm-Gg: ASbGncuYqZ1yE8Rfnok9PoMsaJyVL2WU4SfmMKq5fQIg3AFjb7KtjHWo5AzhpiwFUCr
+	EbfmR4Go3/t5qc6nFbkK4YhnAO+u8U29fI0YPLmXI19Xx/n8QLclKXf+0ZWYrGp25TAY9cKSnQ0
+	/wBIP2qcjc2J1XWWtM9u2ShH3CRgD8RBiaGwDtCADYrVRh71ib10Qsp5d1VZhkV0ZeqdnOFG+pG
+	nBwJnn4f9Ctn5qQKzd8bsleufpWagjc3u5E2anSuTunedhyLxlzsFK8Vr1WdVNvn0rHfSRJ9i73
+	CjRfQpKNL4Y0fRl4Pz/4WM7mAXiH2CqRkCXYkicgKL5wo5iHOy8hdSwQJSQJw3I88FmAf3blyYR
+	c/Q==
+X-Google-Smtp-Source: AGHT+IFOGeEWrEyaAhZ9HLZ8ljGlKxieYtI7L7qfboXpXt08DoBi9j/dcjK8l0X0zckOHyw5S1Wt3g==
+X-Received: by 2002:ad4:5aa7:0:b0:729:4be4:7fdb with SMTP id 6a1803df08f44-739435d4633mr118482876d6.52.1757430127822;
+        Tue, 09 Sep 2025 08:02:07 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:600::1ad8])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-727b2c047dcsm112542926d6.59.2025.09.09.08.02.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 08:01:41 -0700 (PDT)
-Date: Tue, 9 Sep 2025 18:01:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org,
-        Karmjit Mahil <karmjit.mahil@igalia.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] drm/msm/registers: Sync GPU registers from mesa
-Message-ID: <2rlos7qjnawikqhotu27svqyo4yevpc25cugscc7tihxz6go73@rfas2xavrn2n>
-References: <20250908193021.605012-1-robin.clark@oss.qualcomm.com>
- <20250908193021.605012-6-robin.clark@oss.qualcomm.com>
+        Tue, 09 Sep 2025 08:02:06 -0700 (PDT)
+Date: Tue, 9 Sep 2025 16:01:56 +0100
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: zswap: interact directly with zsmalloc
+Message-ID: <20250909150156.GB1474@cmpxchg.org>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
+ <20250829162212.208258-2-hannes@cmpxchg.org>
+ <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,52 +91,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908193021.605012-6-robin.clark@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX9p7K7ARuFkZA
- JEJBBrgdqLfc6LdbPKFbMDt8aG9L8OjmXUnoJfSLH7sqcrpYz4KQSQygGOTGFqMHZaKOYgzL5IS
- dBhH2GhMlDKUKlEeswOg4euB89nv7QzZgGVfkjepxSyhX3TVAKe3Bbhz6UzygK28J1+tQJWcYYq
- XjQqZxwwu/s+NcpjzZTIa/JKUk6Nsg1kNYOFQVJQhj0FGNJoM09BdJxy3o9EJ2zlidsty+GcvR9
- 8Dw2SnxBluCKq+qaW0GIgde2myltg96l0HeWl7edH1+3s+kpogmkGi2oAtRlAjud2B/VjzXlOzW
- haBIhIUd9bY3prjHI9a9PZFn9e5X58y2dMv+yUfMrWVGQF93XkfPfzmisianr1eb9ZUnqxjQFaN
- CG8G1lLT
-X-Proofpoint-ORIG-GUID: 0KlCUuSt7Pb3LgY4T6xPBWBLB6DKQdBn
-X-Proofpoint-GUID: 0KlCUuSt7Pb3LgY4T6xPBWBLB6DKQdBn
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c04158 cx=c_pps
- a=KB4UBwrhAZV1kjiGHFQexw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=V2sgnzSHAAAA:8 a=EUspDBNiAAAA:8 a=rLiRm7ZfGlefp7lywOQA:9
- a=CjuIK1q_8ugA:10 a=o1xkdb1NAhiiM49bd1HK:22 a=Z31ocT7rh6aUJxSkT1EX:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+In-Reply-To: <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
 
-On Mon, Sep 08, 2025 at 12:30:08PM -0700, Rob Clark wrote:
-> In particular, to pull in a SP_READ_SEL_LOCATION bitfield size fix to
-> fix a7xx GPU snapshot.
+On Fri, Sep 05, 2025 at 06:53:15PM +0000, Yosry Ahmed wrote:
+> On Fri, Aug 29, 2025 at 05:15:26PM +0100, Johannes Weiner wrote:
+> > zswap goes through the zpool layer to enable runtime-switching of
+> > allocator backends for compressed data. However, since zbud and z3fold
+> > were removed in 6.15, zsmalloc has been the only option available.
+> > 
+> > As such, the zpool indirection is unnecessary. Make zswap deal with
+> > zsmalloc directly. This is comparable to zram, which also directly
+> > interacts with zsmalloc and has never supported a different backend.
+> > 
+> > Note that this does not preclude future improvements and experiments
+> > with different allocation strategies. Should it become necessary, it's
+> > possible to provide an alternate implementation for the zsmalloc API,
+> > selectable at compile time. However, zsmalloc is also rather mature
+> > and feature rich, with years of widespread production exposure; it's
+> > encouraged to make incremental improvements rather than fork it.
+> > 
+> > In any case, the complexity of runtime pluggability seems excessive
+> > and unjustified at this time. Switch zswap to zsmalloc to remove the
+> > last user of the zpool API.
+> > 
+> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> > ---
+> [..]
+> > @@ -315,52 +292,29 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+> >  error:
+> >  	if (pool->acomp_ctx)
+> >  		free_percpu(pool->acomp_ctx);
+> > -	if (pool->zpool)
+> > -		zpool_destroy_pool(pool->zpool);
+> > +	if (pool->zs_pool)
+> > +		zs_destroy_pool(pool->zs_pool);
+> >  	kfree(pool);
+> >  	return NULL;
+> >  }
+> >  
+> >  static struct zswap_pool *__zswap_pool_create_fallback(void)
+> >  {
+> > -	bool has_comp, has_zpool;
+> > -
+> > -	has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
+> > -	if (!has_comp && strcmp(zswap_compressor,
+> > -				CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
+> > +	if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
+> > +	    strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
+> >  		pr_err("compressor %s not available, using default %s\n",
+> >  		       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
+> >  		param_free_charp(&zswap_compressor);
+> >  		zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
+> > -		has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
+> > -	}
+> > -	if (!has_comp) {
+> > -		pr_err("default compressor %s not available\n",
+> > -		       zswap_compressor);
+> > -		param_free_charp(&zswap_compressor);
+> > -		zswap_compressor = ZSWAP_PARAM_UNSET;
+> > -	}
+> > -
+> > -	has_zpool = zpool_has_pool(zswap_zpool_type);
+> > -	if (!has_zpool && strcmp(zswap_zpool_type,
+> > -				 CONFIG_ZSWAP_ZPOOL_DEFAULT)) {
+> > -		pr_err("zpool %s not available, using default %s\n",
+> > -		       zswap_zpool_type, CONFIG_ZSWAP_ZPOOL_DEFAULT);
+> > -		param_free_charp(&zswap_zpool_type);
+> > -		zswap_zpool_type = CONFIG_ZSWAP_ZPOOL_DEFAULT;
+> > -		has_zpool = zpool_has_pool(zswap_zpool_type);
+> > -	}
+> > -	if (!has_zpool) {
+> > -		pr_err("default zpool %s not available\n",
+> > -		       zswap_zpool_type);
+> > -		param_free_charp(&zswap_zpool_type);
+> > -		zswap_zpool_type = ZSWAP_PARAM_UNSET;
+> > +		if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
+> > +			pr_err("default compressor %s not available\n",
+> > +			       zswap_compressor);
+> > +			zswap_compressor = ZSWAP_PARAM_UNSET;
+> > +			return NULL;
+> > +		}
 > 
-> Sync from mesa commit 15ee3873aa4d ("freedreno/registers: Update GMU
-> register xml").
+> Hmm it seems like there may be a change of behavior here. If
+> zswap_compressor == CONFIG_ZSWAP_COMPRESSOR_DEFAULT at the beginning and
+> crypto_has_acomp() returns false, the old code will go into the second
+> if (!has_comp) block, printing an error, freeing the string, and setting
+> zswap_compressor to ZSWAP_PARAM_UNSET, then we eventually return NULL.
 > 
-> Cc: Karmjit Mahil <karmjit.mahil@igalia.com>
-> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |   8 +-
->  drivers/gpu/drm/msm/adreno/a6xx_preempt.c     |   4 +-
->  drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 702 ++++++++++--------
->  .../msm/registers/adreno/a6xx_descriptors.xml |  40 -
->  .../drm/msm/registers/adreno/a6xx_enums.xml   |  50 +-
->  .../drm/msm/registers/adreno/adreno_pm4.xml   | 179 ++---
->  6 files changed, 508 insertions(+), 475 deletions(-)
+> It seems like the new code will just call zswap_pool_create() anyway.
 > 
+> Am I missing something here?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
+I don't think that scenario is possible, due to the way the Kconfig
+works. Whatever backend I select for CONFIG_ZSWAP_COMPRESSOR_DEFAULT
+pulls in the crypto module as built-in/=y. It should always be there.
 
