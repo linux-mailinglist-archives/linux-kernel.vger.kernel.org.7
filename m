@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-807957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E42B4AB67
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:16:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E981B4AB5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CDF367457
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:14:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31357B7CA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA5F341AD8;
-	Tue,  9 Sep 2025 11:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04E0321F33;
+	Tue,  9 Sep 2025 11:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3aQ1E/G"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rqaep0ha"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97653341644;
-	Tue,  9 Sep 2025 11:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DECA3203B0;
+	Tue,  9 Sep 2025 11:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416147; cv=none; b=twrNlAKeS6mOCRyn42Cvik0yUAswtLflzKxJfL/LK8B/jj3wfQrGpzOWV8ggek8wjMxM92GcBiq1CiwEKziKmsYJhNd9dRQgI+Zjs8V+Ys9QT82Fvfro7KZGHs6e7kItvxJc+g6wkebiBR/y6RH5/F2bojRJBDU7ig3vLH9+XGk=
+	t=1757416267; cv=none; b=raU18kvZA2FxdRFcxXsdaLco7aTrD1QWSDTkhwtnVZUVMDrt0bBlN+JOyb/kRwXbXTjgUBHnibH1EK6wV7NfAYUWi+NZS4dLr5eQ0n9MtJopifhPML30gEMaQR4BC3xKzb0iPelcON85KHiLn1OPK5rBl7lZ75J9EyUEzf9itrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416147; c=relaxed/simple;
-	bh=k6VG5O7q00a/a+YkOEVzLXHlH/LdT+cKIq2dw6clWDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLqh6P8AGEXHF47kb9tXVuF2KvwqJzeSI1tdSQUKgcMbFGZpADzWEJp6I9kZVV0WsGQKSua+7svGZ7P+9XwZBwC4C6ZYEzWsNnmN2ZZvHxJFt3Jylt11447wmyLr95746ChhyVebukIwGwYa1GYeaFYChic+BM+NIWCr06Vwwfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3aQ1E/G; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-329b760080fso5348563a91.1;
-        Tue, 09 Sep 2025 04:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757416145; x=1758020945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/kqIBpGmaqjfdWv2U553qBzw0kO4MEkC0nT25ifs4mA=;
-        b=X3aQ1E/GL9DBY5K8u5OkjInMPPjswUq6u1KE9oP7mldhRL6m1PD4FTqFeStQwBu92G
-         6Z++2HQ22Kl4VU3bRvIK4MED2i6d9dPASndRAo95VWpSN3ncy5wpZEIbSfbDVBJNhg6I
-         EQpO2Ei3Sn9lUsTn0nfI7uyJmxTDbDlqVmSK/Lx0KgNYNEUbkmS1sQGTHMHbUAN6sjDM
-         3MNjtoDkHip45/htElz7VvmUXZ9P34Kbc9FfJa5tRorE8nwSVwCaLzMrJ1YumUf3cvix
-         SkAMqEh/hg84YqLMfvzoNOr2fxm4IRzegkUeZ0N7ZQ6HUD0/ZmBqbG+3wrXJosqMqMCY
-         7SMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757416145; x=1758020945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/kqIBpGmaqjfdWv2U553qBzw0kO4MEkC0nT25ifs4mA=;
-        b=xA71gvmwb6BTsatmjycywzyGuYifZ9pYwwFFhVDCMRd5BvxhtT0/fqr/0ARMBQIWRB
-         +K22I7JJcf0qtH7s97FzpZZ2BLzSEJY4BQA8Tz0PnP4aqLGxSP2XCe3TF8Mzc+YIA3EE
-         PBzRHxnuYNzOjVvpzMWt1ggCf9tWiDqh6EC+rPfYon4lRUGVTZtWzMjAMFxruZ1xNPaf
-         5EX7BTIgY/mdOIDitMs2wTIfgt63eSCBm3ImGDbqgqFC4H/cPhh/C0alr9Z3dkQkVO/H
-         BHcIVai000K0mBh5qsAi4cuPbyRT8h7EdOh79Es4k1FvgNJDXIRZRu7/D2r6CQj0uz4z
-         EISg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwwnINcwuvgtCJIWe9qBlkypGD0apXR5On2jm82EObve9wk+qLOhxVhmUgmbjndTHeUiCflm+2ej3Rj04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkJcbnb6MjkQQDq0/GueAfDEYTaaaPH0JXnGWpjv6nivkT5qVP
-	Hoev2zoq/GrWM1ydsNepYZKlhuHid8G8EY8zcW0kQPI84sSseAUV9gK3A+y0S5IT
-X-Gm-Gg: ASbGnctcf/RaD4n0S1yudViM6pvs8xLmjjLzZBY9jEd5Brdq8HDhnDaoaxwgIOyU5SA
-	27TghLG7Tn4MpxwaejZMUordw/Z/GKzM+MBJx0KgpWtS37tPqUzKF0ItGK8G2nYYWdEhIV80GeD
-	E6Gi4gcgZqBUVjXmph9oGnt1z6OlHrcvOpBATn1Ad9bm+C5NHJsECzMCFa881o/RdgyvB5G8bgb
-	z1+SOkne2eP77yp4+obOcrhmp3cV2fKjPRjLNRVJoLsHcPqkNraVGzcKRNmnhLRCzKaO/UH93U8
-	0c86AYjvS5gOLss720KmCt+0OB7sEYp9c2U+WJkSdRX6sFNhRshzcO18RSTwRBgYvVh2poIwp3D
-	m7mMajjg7mjM+0DhBb7DyveyhIa2SBBe+vI5+Kz58QYM4Q/g=
-X-Google-Smtp-Source: AGHT+IF+RlXuj41RmCzuMtvcig7RTTgQYCSvnSceofYj588/JUlAWiHFZtQEhiGnX1uyJzV23IXvsg==
-X-Received: by 2002:a17:90b:38cb:b0:32b:df0e:928f with SMTP id 98e67ed59e1d1-32d43f936ccmr15732556a91.37.1757416144774;
-        Tue, 09 Sep 2025 04:09:04 -0700 (PDT)
-Received: from localhost.localdomain ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e9fd022dsm21342608a91.3.2025.09.09.04.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 04:09:04 -0700 (PDT)
-From: Rahul Kumar <rk0006818@gmail.com>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	rk0006818@gmail.com
-Subject: [PATCH] wireless/ti/wl1251: Replace strncpy with strscpy in fw_version
-Date: Tue,  9 Sep 2025 16:38:41 +0530
-Message-ID: <20250909110841.2904546-1-rk0006818@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757416267; c=relaxed/simple;
+	bh=bOM0a0A+HB5LBofYI+3MTNno0SLEwnhQSFIL8qE1y+Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IAkINNSWpQOLtNMlSgzuzWSeh7mpce1fMdYGCybkzGOMm8lBM47J8vqUsMo6LgN+bbN461y2l1tTC1xgHpRyt35M3IlX7aOKKTSa9uRDsZKEZXrM8f+yXldJxRfkds9Jrl9C8hVqzALB8sOyEKEMBPGjwu38FGN6Jh/RE8dwyN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rqaep0ha; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757416264; x=1788952264;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=bOM0a0A+HB5LBofYI+3MTNno0SLEwnhQSFIL8qE1y+Q=;
+  b=Rqaep0haG1h6esJfx3hQq7bXVXArUR/P0Zjp1GaFptq8a9+Go+kZf60O
+   +MqE8f08r870Eb5mO3v4aV/IImbm183oU3gZ3E+bet4x76SqaGQduXpgY
+   zCeTBXYrJMRwlZL++3z+MrvbXnv8miuMGn6PB0v+FUyfmGYxOYgMEZfWg
+   gwQG5oncqzy9urSLL5QTXqg76rPWi1QmD7rbbPXETT/tqDqcMEMApWwyk
+   zYOBkEBigRGdaEntZYMr9juui/1pcIPEr3eeD0FNjSsmFRoRxmKtIsEub
+   vIv64PFZ2FAKPZwOUruP0Pq8Rqm6pWfwH/ikWDtfclLqqpKDWvwMoRkvR
+   g==;
+X-CSE-ConnectionGUID: 7BKBUH5aQ26QP2KadzocSQ==
+X-CSE-MsgGUID: tIDQFZFfRhijYlgkPsIi8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62323931"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="62323931"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:11:03 -0700
+X-CSE-ConnectionGUID: Z7coOfXjRzyh+dC2z08F5A==
+X-CSE-MsgGUID: SqhHfoc2QVKtI97PVE5nLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="172936765"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.244.108]) ([10.245.244.108])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:11:00 -0700
+Message-ID: <cbd5c99d2394335ac4aeb2740994ab14508e2553.camel@linux.intel.com>
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Alice Ryhl	
+ <aliceryhl@google.com>, Matthew Brost <matthew.brost@intel.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann	 <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter	 <simona@ffwll.ch>, Steven Price
+ <steven.price@arm.com>, Daniel Almeida	 <daniel.almeida@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, 	rust-for-linux@vger.kernel.org
+Date: Tue, 09 Sep 2025 13:10:59 +0200
+In-Reply-To: <8078cad2-d5d3-4e20-9848-034c2a503f3d@kernel.org>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+	 <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+	 <20250905152505.005a610d@fedora>
+	 <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+	 <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com>
+	 <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org> <aL1u_YxOkuj1kIq6@google.com>
+	 <20250908091140.44856fde@fedora> <aL6TJYRmWIkQXujj@google.com>
+	 <DCNAE3CJMEJ0.JH1F0MJABXQI@kernel.org> <20250908122002.2c80dd3a@fedora>
+	 <DCNDGFE7RR5Q.X3PCDW0KIX89@kernel.org> <20250908141156.3dbdea0b@fedora>
+	 <7aa3f464-a3d0-47a0-b044-d8db93f45918@kernel.org>
+	 <a2006f74-75bb-48ac-ac9c-0a71c8f9d510@linux.intel.com>
+	 <8078cad2-d5d3-4e20-9848-034c2a503f3d@kernel.org>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-strncpy is deprecated for use on NUL-terminated strings, as documented in
-Documentation/process/deprecated.rst. It NUL-pads the destination buffer
-and does not guarantee NUL termination if the source string is longer
-than the copy length
+On Tue, 2025-09-09 at 12:47 +0200, Danilo Krummrich wrote:
+> On 9/9/25 12:39 PM, Thomas Hellstr=C3=B6m wrote:
+> > On 9/8/25 14:20, Danilo Krummrich wrote:
+> > > On 9/8/25 2:11 PM, Boris Brezillon wrote:
+> > > > On Mon, 08 Sep 2025 13:11:32 +0200
+> > > > "Danilo Krummrich" <dakr@kernel.org> wrote:
+> > > > > I'm saying exactly what you say: "has to be a special unlink
+> > > > > function" ->
+> > > > > drm_gpuva_unlink_defer_put(). :)
+> > > > I don't see how calling drm_gpuva_unlink() instead of
+> > > > drm_gpuva_unlink_defer_put() would leak the vm_bo though.
+> > > Initially (i.e. a few mails back), it sounded to me as if you'd
+> > > propose to drop
+> > > the drm_gpuva's vm_bo reference only when it is freed.
+> > >=20
+> > > > > No, drivers can't iterate the evict/extobj lists directly; or
+> > > > > at least this is
+> > > > > not intended by GPUVM's API and if drivers do so, this is
+> > > > > considered peeking
+> > > > > into GPUVM internals, so drivers are on their own anyways.
+> > > > >=20
+> > > > > Iterators, such as for_each_vm_bo_in_list() are not exposed
+> > > > > to drivers.
+> > > > Okay, that's a good thing. I thought Xe was doing some funky
+> > > > stuff with
+> > > > the list...
+> > > Maybe, I don't know. If they do so, the should send patches
+> > > adding the
+> > > corresponding iterators and provide a rationale why drivers need
+> > > to access those
+> > > lists directly and why we can't provide an API that handles the
+> > > overall
+> > > use-case, such as drm_gpuvm_prepare_objects(), etc.
+> >=20
+> > We're using the drm_gpuvm_*for_each* macros in drm_gpuvm.h,
+> > assuming from name
+> > and docs they are driver api.
+> >=20
+> > Also the drm_gem_for_each_gpuvm_bo(), although this usage could
+> > easily be
+> > converted to a helper.
+>=20
+> We were talking about the extobj/evict lists, the ones you mention
+> are fine of
+> course. :)
+>=20
 
-This patch replaces the existing strncpy() and manual NUL termination with
-strscpy(), which ensures safe copying and automatic NUL termination.
+Hmm. Now on closer inspection it looks like we're checking for evict
+list empty, It looks like rebinding after validation may in theory
+evict some bos to system memory and then we'd rerun the validation step
+if the evict list was not empty.
 
-Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
----
- drivers/net/wireless/ti/wl1251/acx.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+We could of course add a helper for that or if there are better
+suggestions to handle that situation, that'd be fine as well.
 
-diff --git a/drivers/net/wireless/ti/wl1251/acx.c b/drivers/net/wireless/ti/wl1251/acx.c
-index f78fc3880423..73232f7e92d1 100644
---- a/drivers/net/wireless/ti/wl1251/acx.c
-+++ b/drivers/net/wireless/ti/wl1251/acx.c
-@@ -149,15 +149,8 @@ int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len)
- 		goto out;
- 	}
- 
--	/* be careful with the buffer sizes */
--	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
--
--	/*
--	 * if the firmware version string is exactly
--	 * sizeof(rev->fw_version) long or fw_len is less than
--	 * sizeof(rev->fw_version) it won't be null terminated
--	 */
--	buf[min(len, sizeof(rev->fw_version)) - 1] = '\0';
-+	/* copy firmware version safely, strscpy ensures NUL termination */
-+	strscpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
- 
- out:
- 	kfree(rev);
--- 
-2.43.0
+Thanks,
+Thomas
 
 
