@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-807198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECA3B4A176
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133D0B4A17B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358B34E2200
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE2AB17001E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB472F8BC5;
-	Tue,  9 Sep 2025 05:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308C12E2DCD;
+	Tue,  9 Sep 2025 05:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="nOWvEa0n"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cb+wjxKD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6F42EBDF0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 05:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1B579DA;
+	Tue,  9 Sep 2025 05:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757396837; cv=none; b=dLZ3WK60zrBmitgTf+M4X2wNV24g0oWSDWDiGhnlZzUBZ9RnnaV8llM2wcu+zHanfdl6hP6uPpv9tzMV07RJVJQPF6Q6s7DAGBp1Pf/qLPGsb1nOgkHKYTs8QlyQ8JaY1ndNHS7fhYSnCfpHFhl1uKJ+nKh1znpikcCBMN6esA0=
+	t=1757396909; cv=none; b=MfsBpmqK8Ev/8sccse2QNWQmLIKiA9j3VXK8uLCYqqUPkAZ6KmegvcGrXUDoWdj3QLkFAkAdIMnCaRI8KRAgClq3fmCw8+o9/IR9WTTT6c1QXaxim8jnjwVV6skwuFt4fBtFRF50zNeS95SYmEHLlXMJdZISCEdRuY6F5WFUt8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757396837; c=relaxed/simple;
-	bh=pNFLJBWaBI/4oOG7dhwpGC6SsZk9hVfRXeYkyZRJWhk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LS4zFz47bEekWulJirKLFCRcz/Gq6mMpDCIjaUJG2bN1F5o9Bx/IBNNRPkcE4yeQFfZmulPARmPH2UF4vtf3SMCG1tDT9+Ou25aCwyAeobQR3Q/ngZkrin1ICp1b9UgBPq2urYIJZ2QhhsCkb5ms+8MGWDCIkmd3jbEU+ioEMe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=nOWvEa0n; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id vqCRulRbojzfwvrCEu5aKY; Tue, 09 Sep 2025 05:47:14 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id vrCDux2tlrez1vrCDuG63P; Tue, 09 Sep 2025 05:47:13 +0000
-X-Authority-Analysis: v=2.4 cv=F65XdrhN c=1 sm=1 tr=0 ts=68bfbf61
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ftbTpB0QAGd6IXrwbd+wdafHWdUigT/c1X1z9SsHSFQ=; b=nOWvEa0nmGoB43DuqXYy0xRSKC
-	Gf1l6+nJARY0FE6Xj52zWE/e840mvLgKfgS7URxEQ4UrCMUlDHlHktvtUrBcbOLQY7YnQpkivv4p2
-	8vfgnzRKdXesJFgJqfaeHvm38GY+nJFV9iN2HFFgSM05flh4BmUCWbSL1r+B0oxl3/Nlr3rw+CETi
-	LcJXwwVL/gxLYlIgJOAWmtd22ObC64yqkouk3ULZSQuRYBzxg+WK5jblCvVfgLQ3iGJrLC+J2SLWy
-	ocPOVKA4aTs4k6/WyTDPk9vzHkW/t+SN3IAakmhvB+O/SFSz+WxIpy1EyhLcn0F0vBGp+aUfkI7db
-	WY/byp6w==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:44608 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uvrCC-00000001kTV-1MGZ;
-	Mon, 08 Sep 2025 23:47:12 -0600
-Message-ID: <57940525-7e4e-4f65-92d0-19d8ae244ba1@w6rz.net>
-Date: Mon, 8 Sep 2025 22:47:10 -0700
+	s=arc-20240116; t=1757396909; c=relaxed/simple;
+	bh=WINNx3eWJz8cAlfPPoawH5Z0jYMwElQz4sl1NcoH8P4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZNqpc7uxlyfb43K/Ai/ahJC+FjEvaNti9ijDJ3UOJbkSmotkL4LmyYddmnxf5FAi4FFYVqVBp37wO4A920bJ+SqH0Ur40REWnFvHhl+BjK7OhjPTyar2/Pmcd6llw53WdC+MyNJhSPmDbvTO4gIdlliFU32ttr+3An97SKQOoSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cb+wjxKD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5895aOam022902;
+	Tue, 9 Sep 2025 05:48:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=wWfrwIlqmFX5w8P4Z6jsOp
+	gi0ADB2gY1JtPF4LC/2TU=; b=cb+wjxKDW4fCmpGoSfzJqbsi5SsxdaU8XaUPUv
+	yvY6+ZlGKLdkZFn6abQxIzVKLGJg1AYakagyr1Rtmv8nAcIXOSSDlfiv/aCBCSaP
+	b4OZZafTHKO7xqMlFGjDS5j0R5zEL4AUXT8pWzEMycK6rKaJQL5/IY5fAJW6uL4C
+	KWR3IrBhm3ae0FjTaCVFDWHz8rqjLSQCMiUCqq8lsUjMH7crA5TtRV0LiWzgi14m
+	M76tfpJGW4gimdBkG7mEVkCWKcNK7H9Q6z18XsYAhrFbM0Abtf1Xnw2J2cmojNSF
+	tvUpQGWM2vI5T3OTGqnK52P8SFQKYyHP2RV6V0/pvPdh2y1A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4kxx25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 05:48:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5895mONM003358
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Sep 2025 05:48:24 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Mon, 8 Sep 2025 22:48:20 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <quic_msavaliy@quicinc.com>, <quic_vdadhani@quicinc.com>,
+        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        <kathiravan.thirumoorthy@oss.qualcomm.com>
+Subject: [PATCH v3 0/2] Add I2C support for IPQ5424
+Date: Tue, 9 Sep 2025 11:18:09 +0530
+Message-ID: <20250909054811.3991901-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250907195615.802693401@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1uvrCC-00000001kTV-1MGZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:44608
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 17
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGYulynHciaREifRP4udOz8OkLRiNhrWA4NfkBL+p/dui7Q/OxnVnU96kzSj5AzrOpliIh4STiK0SzcTpb1fXriJ+6mQo7iuRVZahmjXP7lO0nnh5MHP
- sG95zO+IGXsBibgnI25GELOiJqehRHTxDFOgV76WgRBW/5m1oE+/RpjxyyFXcWW6+zTZd41GMnrPQ/oGbHGUxMQQpa5wjdgNhQM=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfXxT9eC3YfEAPf
+ QzfMhddvfV2d9AEErTEqcC03p3qCJtDpg0AKGWplh3bKC226xRuqkdq/OUxtetKVfrGmQHA7F8Q
+ 3S40gOglnKn8BKJBxcvhVw+62LJwRYiLhwh3K2IPBVshWjkDuugP2znS1tyiZPGEETzRbSGVsZz
+ iZES8afQ17XK+ry+YLzrvf8skPVt21RqTP7brtbgWAiQ9OGnDh2uTMrburM2GxuZnD+sw9UPOVS
+ ma3NUTRjHRzz5x7kPARIqz3rMLahZcgdUfFLFWmzAIiP8a00YKA5d9zpclViql+NfEMDcr3kEQS
+ +7T7z9ol2j/57LQ7SFWhbv2yWgc/8N7Ii/ajjJ7YCw6bqaeD1GwvzA72api1x4cY5c35Ra6PMJM
+ OB/n0EJE
+X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68bfbfa9 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=6LalJhrV3jZtuP9h-eEA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: W289eeaIT9b1nHekKwVMLXu27yRqmK9K
+X-Proofpoint-ORIG-GUID: W289eeaIT9b1nHekKwVMLXu27yRqmK9K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
 
-On 9/7/25 12:57, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.6 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Serial engines 2 and 3 on the IPQ5424 support I2C. The I2C instance
+operates on serial engine 2, designated as i2c0, and on serial engine 3,
+designated as i2c1. Add both the i2c nodes.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+v3: * Pick up R-b tag.
+    * Fix the format-specifier to correctly display the clock rate and change
+      '&pdev->dev' to 'dev' as per suggestions from Andi Shyti.
 
-Tested-by: Ron Economos <re@w6rz.net>
+v2: https://lore.kernel.org/linux-arm-msm/20250903080948.3898671-1-quic_mmanikan@quicinc.com/
+
+v1: https://lore.kernel.org/linux-arm-msm/20250711111418.3980520-1-quic_mmanikan@quicinc.com/
+
+
+Manikanta Mylavarapu (2):
+  i2c: qcom-geni: add OPP table support
+  arm64: dts: qcom: ipq5424: add i2c nodes
+
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 28 +++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-qcom-geni.c    | 27 +++++++++++++++++++++++---
+ 2 files changed, 52 insertions(+), 3 deletions(-)
+
+
+base-commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+-- 
+2.34.1
 
 
