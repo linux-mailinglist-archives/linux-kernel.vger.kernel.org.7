@@ -1,171 +1,127 @@
-Return-Path: <linux-kernel+bounces-808164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D2B4FB59
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:36:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44370B4FB57
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CDB4E2D4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:35:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF507B3422
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3794337687;
-	Tue,  9 Sep 2025 12:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56161322C67;
+	Tue,  9 Sep 2025 12:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mc1KBfpr"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PfYYnW8l"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996E4334704;
-	Tue,  9 Sep 2025 12:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D9F285C9F;
+	Tue,  9 Sep 2025 12:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757421339; cv=none; b=S4mm4FUTTBptYdlbbs3WU7DkfqDyggcNwo4rZaSKaepTbVXEplvCjX8hb7nEhM096mmk8q/PtbuhAU8LP1IdeLzWkGEdg2DJI/Mmu0R8z+ZuZi87rp8afHxaqoUuLlQHEiuRPRKOot7LE6ZJteYofOCOVC/5LEumcn4xus2J0oA=
+	t=1757421330; cv=none; b=CE+EDTJEV+3KiWoRWOdmTcpF0ncmlTDyJEeUUgz348qOW7H/jb6vQNLMcoUasYUl9x6lmZJ8tQJM92nnwXz1WeKZiqssNnrhiIxO+453IzleFENaz+nvxkBIkkDlL3twPA8HnKMbFo95lKED2l4svK92xiUYd8AUZBrypIap218=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757421339; c=relaxed/simple;
-	bh=oz15XcYvyoG1Vj7doIEmZ4rSoEoAPHMUCB2YH7Tk65c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1QiMOQSNuiuLzjdiwdV1FfhmAMAb8bNCIOuuPcahtmMR5tZAJ18CwPcm1oMvoE9Bc7dfjOQerLpxDSHh6L9Q6e62TsO0HJyAOUiG7KQgJXG2q//bNjb90CjE2v8hCZs8G7DCtvkwkRlK7c7+vYgivb8JQbWCAVi5S9fk4BizIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mc1KBfpr; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b04679375f6so984575766b.2;
-        Tue, 09 Sep 2025 05:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757421336; x=1758026136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRb5B7o2xDB9wgWoSpkMOT2610gE/WgW3/wgBC4P3qg=;
-        b=Mc1KBfprQM7+tfW/K19HybQ8VpVbrrr90j3aNt7o3r5GQ3ttXl58ye7GZQAhZZEpAK
-         oHat5YWRPjbxTy/9CgQQN8PM09PN1DmVDYSyHlH6QJzQ4oJN6FIR0hysO9QmYP+Sp0W7
-         wcbY7w5xSB0rhlxN/eJckmg997mcZshTYqzI1PErM61xIGfbciL8T+OOZkPuXlhVsbuu
-         /iS90An88V7QTdHB2RMaE/3DTJTUykToqofx0OL8ZmH9+fD33e7jU1tLTVEa8rMPyS3m
-         EOVwokmyPV/EAnuCpgTTXOsSiZtxM3qcuKscFcFFkFKIzZRG7RsLmVPpmsysqwLmHNFR
-         wmww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757421336; x=1758026136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRb5B7o2xDB9wgWoSpkMOT2610gE/WgW3/wgBC4P3qg=;
-        b=JK7QWUvPUYP8/vGsugAAU2GvXv4yYs26oJ/IHAGvDW6ugSJU5vo6hv1IrTwe4naA2w
-         EWK1rEtzpCTRFFgPbahZtpukOaUDurU1QdEnh1x7IzSOcKcZol0/5hOVvP9U58FZ7JQS
-         PGjxTJN8Ll0qaKs7i3mvaAbFqN4zeUAlFHWbh/KXzixTy7eRpJMrRY5E0H7pnBHC+P7K
-         kZ+1ch1lRW985gfpwM8MVMgpJOrhhpMWOwmRlfy5deqfcBq1j96SYjiD3O13mWE5K8Pa
-         VkK18BQbqKVBOlhUorVpnt4iW09j3nDYym8V1oO5/xXUsGBY4eu+i2CVQU+aozkKZoYb
-         J4jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVIayhAFZKkBtAHNRlbtMuetzHX3nsolC5U1agowOHbBP6rpzQiIPhEvRGyq24rpnUX3xRZhPPTbHY6bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYVjUPO3Z5x0od+7CY6fpydtkrAl7KRLrJsHKa1YE/9ZUhgEVs
-	xkFGfRvE1J+ddJ/YwimLagQKdWxlBCBvxep7U/NqVZU+8K6niDp/PrOeK9e1Dx0t
-X-Gm-Gg: ASbGncvObyON1vfPxmvyZMAtB7JM0fjutQBIEyYVnl+nAbv8Y7B7plKRkSxRVhv9EYl
-	ZpWE/TwCetzxo/CjtOqy8WYxKV3XnAbaO235VKprGyriQ41zMpUaGDrWIW1EgcVioZGsFyywzcU
-	9QJjyXXdX+HHh0/QZwqLoQZYEwO/Q7/yXU2cfeZQ6RJ+u3wE4V3ci0JOjNW+7nD85dxTRB8mAto
-	lacKupaobyZIAtl67uSzs8fjjSwLxTIt0GYXPMPl01qw6TOHFeYP+l9sTBZXaJrdfqR/CqyRX/e
-	h3ulIOI517VSUTDKu5VcMtb7owhRh+XVlfQMw6MLQNuImp6qsiPEDOwJWZidn6u4jUo4d4XXu/I
-	Ta+3H2NZTM7pZG7a2PeOsAiBbX18o6yE1
-X-Google-Smtp-Source: AGHT+IEkilOY34M+BmivOzBrvGQ1PpWHdWNeuJAn+WCn8p/bQkZh4CGqQwnsODNTbVkX7+D1ggO3Eg==
-X-Received: by 2002:a17:906:fe0c:b0:b04:7708:ee36 with SMTP id a640c23a62f3a-b04b13c8c2dmr1146633366b.9.1757421335594;
-        Tue, 09 Sep 2025 05:35:35 -0700 (PDT)
-Received: from avt74j0.fritz.box ([2a02:8109:8617:d700:4bd8:5793:1d49:8ea3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047a90387esm1342975366b.0.2025.09.09.05.35.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 05:35:35 -0700 (PDT)
-From: Martin Hecht <mhecht73@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: sakari.ailus@linux.intel.com,
-	michael.roeder@avnet.eu,
-	martin.hecht@avnet.eu,
-	Martin Hecht <mhecht73@gmail.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Subject: [PATCH v1] media: i2c: alvium: cleanup media bus formats
-Date: Tue,  9 Sep 2025 14:35:06 +0200
-Message-ID: <20250909123507.2704703-1-mhecht73@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757421330; c=relaxed/simple;
+	bh=HMOJgDmzbklbWB34lpWhrZmvzVhTyGV59YpwlqeGk9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILeKahqKha2ejCskE1n6+ptx8N/ohrBe/9vkUZkytFDl31nEZyH0yd5qrneD+mw05SAxl3WwbLEYbanbzY3pEqFl0TQ7ybzTJZtI0qXgJCegIWNQvIjmx7tepstufSeRCq2abEAtB0l/Byh7Bw9yqwDydgyGj9rDG6D5u/4Nb0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PfYYnW8l; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5897q4Kk004056;
+	Tue, 9 Sep 2025 12:35:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=eJjoaU
+	Wz6/8jNYwUyJDPayIHu7u/nwMi7eI79sZP+9U=; b=PfYYnW8l4Rra4CTH1Ahp98
+	VpNeUQZLPrWioYLY+qxdGbeUf99dRV2xgb/xPl5ChDrEGA2eScOkqaNMXwKDcR+y
+	ZPjwp9tQ/vKCGgcQLxuCAsCcVJC4kIVpFcW6u32PPKQ25W4b6NizoyO7V4DK2dra
+	IpkgHMw5evr9VM7pT57uae0EsGyEHyfmvn1INtw8uht/meyaeC1seztBsYfwnXMn
+	+I5HYUR/GmjisxZ8Ms6aKZH5huZ9lqgxqZBNhmlp+3pcEFvQ4QR4zxm0BRvBZPfm
+	vbPx8ZMwgSdq9BmRcQoxnVaKUivzr2tJlO1HDHJMGQhNvbHrrwtu/VwS4E4DeFjw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff7s1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 12:35:19 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5899AV2x020499;
+	Tue, 9 Sep 2025 12:35:17 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp0u7xm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 12:35:17 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589CZHnn31392348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 12:35:17 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3FDDB58059;
+	Tue,  9 Sep 2025 12:35:17 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 88DFF58057;
+	Tue,  9 Sep 2025 12:35:13 +0000 (GMT)
+Received: from [9.43.86.190] (unknown [9.43.86.190])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Sep 2025 12:35:13 +0000 (GMT)
+Message-ID: <b516e882-d427-4acb-b6a8-b3f011eef311@linux.ibm.com>
+Date: Tue, 9 Sep 2025 18:05:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-6.18/block 10/10] blk-mq: fix stale nr_requests
+ documentation
+To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-11-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250908061533.3062917-11-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QrpXw5FqOeCpI7ODN7Gzkj10RgZqnlUU
+X-Proofpoint-GUID: QrpXw5FqOeCpI7ODN7Gzkj10RgZqnlUU
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c01f07 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=tYaLi_SPQAiz_1EOLDQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX4Fw3GitvJxkP
+ /+KoF+9VXnKkjvvqM09Zch8La4MPAcTjIhcplZscSpd26rcfMKUXVwMmcZP45Pctr9S15U/nPH+
+ xedS+NaCPT7AKk5VLsmH9vojyBzKyx3H4Tt2IypINXkEO07vawIP8a1UnVOjyip34z9G8IqMPa9
+ mDmqgKGW+s2/85fV1TeM3fEenGg0Fnq6VpAWtEjpRodimOD2raZM3h/7U8JuDRwZkzoHqAMrwDA
+ Y0apZIXUJ+qniG21bYuciNpKzqpb7CwgOODu+Eer8aTpRZD6JPl2mww4GsjeBIghxkSuwm3boe9
+ zH0BVgQ0dveoNqmz2zJQhPoNTOY5uqtWUZc1QzizT4qAev7zZE4IKmoVe1xo48XLaKv74gEiaLY
+ JLHH1yqz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-This patch removes MEDIA_BUS_FMT_RBG888_1X24 and MEDIA_BUS_FMT_BGR888_1X24
-as of that formats are not supported by Alvium currently.
-The missing and supported MEDIA_BUS_FMT_RGB565_1X16 has been added.
 
-Signed-off-by: Martin Hecht <mhecht73@gmail.com>
----
- drivers/media/i2c/alvium-csi2.c | 28 +++++++++-------------------
- drivers/media/i2c/alvium-csi2.h |  3 +--
- 2 files changed, 10 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
-index c63af96d3b31..743b300fba4c 100644
---- a/drivers/media/i2c/alvium-csi2.c
-+++ b/drivers/media/i2c/alvium-csi2.c
-@@ -94,19 +94,9 @@ static const struct alvium_pixfmt alvium_csi2_fmts[] = {
- 		.bay_fmt_regval = -1,
- 		.is_raw = 0,
- 	}, {
--		/* RBG888_1X24 */
--		.id = ALVIUM_FMT_RBG888_1X24,
--		.code = MEDIA_BUS_FMT_RBG888_1X24,
--		.colorspace = V4L2_COLORSPACE_SRGB,
--		.fmt_av_bit = ALVIUM_BIT_RGB888,
--		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
--		.mipi_fmt_regval = MIPI_CSI2_DT_RGB888,
--		.bay_fmt_regval = -1,
--		.is_raw = 0,
--	}, {
--		/* BGR888_1X24 */
--		.id = ALVIUM_FMT_BGR888_1X24,
--		.code = MEDIA_BUS_FMT_BGR888_1X24,
-+		/* RGB888_3X8 */
-+		.id = ALVIUM_FMT_RGB888_3X8,
-+		.code = MEDIA_BUS_FMT_RGB888_3X8,
- 		.colorspace = V4L2_COLORSPACE_SRGB,
- 		.fmt_av_bit = ALVIUM_BIT_RGB888,
- 		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
-@@ -114,15 +104,15 @@ static const struct alvium_pixfmt alvium_csi2_fmts[] = {
- 		.bay_fmt_regval = -1,
- 		.is_raw = 0,
- 	}, {
--		/* RGB888_3X8 */
--		.id = ALVIUM_FMT_RGB888_3X8,
--		.code = MEDIA_BUS_FMT_RGB888_3X8,
-+		/* RGB565_1X16 */
-+		.id = ALVIUM_FMT_RGB565_1X16,
-+		.code = MEDIA_BUS_FMT_RGB565_1X16,
- 		.colorspace = V4L2_COLORSPACE_SRGB,
--		.fmt_av_bit = ALVIUM_BIT_RGB888,
-+		.fmt_av_bit = ALVIUM_BIT_RGB565,
- 		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
--		.mipi_fmt_regval = MIPI_CSI2_DT_RGB888,
-+		.mipi_fmt_regval = MIPI_CSI2_DT_RGB565,
- 		.bay_fmt_regval = -1,
--		.is_raw = 0,
-+		.is_raw = 0,
- 	}, {
- 		/* Y8_1X8 */
- 		.id = ALVIUM_FMT_Y8_1X8,
-diff --git a/drivers/media/i2c/alvium-csi2.h b/drivers/media/i2c/alvium-csi2.h
-index 978af44f76c7..0f1af5e5355c 100644
---- a/drivers/media/i2c/alvium-csi2.h
-+++ b/drivers/media/i2c/alvium-csi2.h
-@@ -224,9 +224,8 @@ enum alvium_mipi_fmt {
- 	ALVIUM_FMT_YUYV8_2X8,
- 	ALVIUM_FMT_YUYV10_1X20,
- 	ALVIUM_FMT_RGB888_1X24,
--	ALVIUM_FMT_RBG888_1X24,
--	ALVIUM_FMT_BGR888_1X24,
- 	ALVIUM_FMT_RGB888_3X8,
-+	ALVIUM_FMT_RGB565_1X16,
- 	ALVIUM_FMT_Y8_1X8,
- 	ALVIUM_FMT_SGRBG8_1X8,
- 	ALVIUM_FMT_SRGGB8_1X8,
--- 
-2.43.0
+On 9/8/25 11:45 AM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The nr_requests documentation is still the removed single queue, remove
+> it and update to current blk-mq.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
