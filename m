@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-808457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4860B4FFF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:48:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC30B4FFF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57281779CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A185E3808
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F8725487C;
-	Tue,  9 Sep 2025 14:48:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F19341AD2;
+	Tue,  9 Sep 2025 14:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QH4+FR/0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1DF2288E3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3639E341643
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429298; cv=none; b=GfXcm5YH+ZsTh7AmddxHIvkAiaPjnxshE9xdsBBuOD1qiDbwE2EH53T/JAqWPQ4j7zgJsHu7saPSDCYTDnC1kiWuaYu2DnZeygoka50mHLttVoml9/JIwzwrAoZMMBj++5dvgLs5/yCrfX7P1lF+jr16XU6z7L+74XAsI3vyxfY=
+	t=1757429303; cv=none; b=aK4L3ige40nodXXFXMf1u8tPV0isG/J0kv3Dvt8s3BoJRBpqXp1VZJbiLIjEJ0HxhvWPaI+ABIQLcFWu0pdX4FT2/HlqVchHrjvMhSl1mvBiZB/uCByYt5/MSCie86H+MsV5XcfGPbcD45T9TivYnJklutsvYys0BD+otOvgYOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429298; c=relaxed/simple;
-	bh=XzfVWNSC6ZAx32wU0veENsGQOFRetaqmUgN8wfJrWpc=;
+	s=arc-20240116; t=1757429303; c=relaxed/simple;
+	bh=qeFBiCCMd0NN/EaY4Oj44Sbt1RY3NQlb4g0NqAuemFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/5sWDPYbK0tEfLxPlKSgRI51EhGUGsrLhppuoOW4QZkKeqii9W62wQtfq3o/X/9UIzBgjiLWdYRSX1+RwJBSyc0MuWPO6cpb3ByftBiLZNEoJJIsBJ2dhkJkx2tIUECvc1LGGaI6dTuYQcyuhkwA2y2tb8Crp6XmPY18GjWmQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzdh-00089t-Gk; Tue, 09 Sep 2025 16:48:09 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzdf-000REu-2H;
-	Tue, 09 Sep 2025 16:48:07 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 500A546A1A8;
-	Tue, 09 Sep 2025 14:48:07 +0000 (UTC)
-Date: Tue, 9 Sep 2025 16:48:06 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH 4/7] can: m_can: m_can_chip_config(): bring up interface
- in correct state
-Message-ID: <20250909-spiked-adamant-raccoon-90a315-mkl@pengutronix.de>
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
- <20250812-m_can-fix-state-handling-v1-4-b739e06c0a3b@pengutronix.de>
- <DC74S0QJQ0JV.39VRZ1Y5JSEWS@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUPAVLn6SJWXvBNeDPz88DOQSg98eZVJZCEc/qhm6kn1amygB894pYeqA3B9Z/YXGGLTPfwsQIkZwxWTi7gvFQno59ibazAuXdqiUPGKGTAZHmUTmADvUhnylrfiJf3Uo4C+Zs/9eJMhAUGG2feB0ZPvNfXu0BylBdnG6PNbd6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QH4+FR/0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so36335475e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757429300; x=1758034100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbI93laRlNgIRcKRGecsho/v9toZeJCEiFVnSaQwrVA=;
+        b=QH4+FR/0HAuMorMdrZV7QgtqwB3l3IC80M6u2/7Swii/NL5QGDSpjnDPZDZhKUPY6d
+         RWdFDCCE3x59U8DPgxVhdUKp7IOC0YRHLJamqHkf1MuWGCRx4aShZO/Lk97SH2/OjGTD
+         Hq58F6PxSgdNpyHzJ12oYnzZIVvdT7+diwYLef+6QogaZWWQxQSnm1G5F8rglpTy8Dm0
+         33LqwtxQ9+WuAVHjwRw6tBF5m9S0NGOst301BFrvoJy3zbUEUgQkzb5OGNJpiDGVQOao
+         EFECAB1T3vMx6XDsl0DU+2WuT74EjEYwhy0GqnqEwlbNg1nA5e2Bb80ktiNJtJvA5tQ3
+         jVxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757429300; x=1758034100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbI93laRlNgIRcKRGecsho/v9toZeJCEiFVnSaQwrVA=;
+        b=Q4SsWgNs8MSOcYNobMUPJuLoSR5czTQQ9OmUISZytASRV1CsC8VR+T63pIGjLR8YcY
+         UMTmRtlm9DI4NqeJhqQG1krsDMNONS0MPqYUYXjqBWkzqTVRmlGM5ZfZaBdWuzUtHF0O
+         L84IbuxrIseakfO8wMwyl/9sXAtrx30cxhzsjTOSpah9WAFO6D9JBQECESYyXbh3kFGG
+         1VBZi3fIzYeFVMiC4lcVH+53PnCXk4aABZ+rqA42TXNMnVGA++THkAbHD0Jm08GfLprF
+         nIGMz4J4Ww5qm4tY9IlMp2iQdf2Z5W0ZCTTFd465NmfZHIgUr4XMYB5/QyBPuDPtYBKM
+         K90g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9YfCXkDpIvpz/2zegoAEGBojlHPNp8Z5BG8SWZ1MS+w1mdXiKM+gAUigZDFtX047X4iG79yeIQ+b2KKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym5kXQYfaMbKDmWM93o0pe4bEIhqBtpweAXVSlXKoXza+ogy91
+	i/5Rdlu8SqNp1nVFbEDG/pxQMlpk7Rum3MJx0K0wi7JLOu52oykMucQq
+X-Gm-Gg: ASbGncuqm46Pf4O98ywoVQoPO7MAIiI4BSVSsw8q95Ng/uA5hDH2sXXPLOyttacMFXO
+	fuBFdw3na9tUTPJce7bbB7YczEQXtD0dsds701YdANKXDAq2qh0iJ+fCDju/uWUfIAOC4kkSxxB
+	Xc6167oI+Zo0bnFOT3KELgwKvET9gEZtyBLgxdcPmr1WCpAckhea7v+Reu1ESu0fvUoMy71qLMB
+	6jCiVLNueaurHPTDoCbubGYJE+Ipj7EZ0/EpLTPqIULRL9ff4eaPAiSokzamVorxd0CCvwkrAmz
+	M7qzcFATEwPyomqbUFrEHHBjTiQwpcsitNn80HSsVjyl0nsXv3Sym52BlIw5L2xKomE55F4Q0Le
+	1kyv3WVv0ADL3J1kFZWDdOYln2lNkQKqu5RJ0gw==
+X-Google-Smtp-Source: AGHT+IEdh8354eQN9A5Sng+jnPw+cbisVt6PO5x7gvAVRbMfR/z03XAWKcqmiMVY1oeoI3wzWdTYSg==
+X-Received: by 2002:a05:600c:1991:b0:45b:5f3d:aa3d with SMTP id 5b1f17b1804b1-45dddeee57cmr95952195e9.21.1757429300065;
+        Tue, 09 Sep 2025 07:48:20 -0700 (PDT)
+Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df14dc4e7sm12217285e9.1.2025.09.09.07.48.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 07:48:19 -0700 (PDT)
+Date: Tue, 9 Sep 2025 16:48:17 +0200
+From: Dave Penkler <dpenkler@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: GOPI JEGANATHAN <ggopijeganathan@gmail.com>,
+	Michael Rubin <matchstick@neverthere.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gpib: Declare processor directive as
+ CONFIG_TNT4882
+Message-ID: <aMA-MelgO2yaxnUs@egonzo>
+References: <20250909041707.3001-1-ggopijeganathan@gmail.com>
+ <2025090940-backyard-mud-253a@gregkh>
+ <CAGt2Sa+MriEYjPOFGmKWuHXabwkJeWn7q9o8U14B7o3QY4xmyg@mail.gmail.com>
+ <2025090945-ecologist-gravel-d028@gregkh>
+ <CAGt2Sa+tKAmxspYX=iyihmZYxWg0=xOJPW+J0h=9rTG8E99AAg@mail.gmail.com>
+ <2025090945-yearbook-busboy-2b28@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eda5myf3wxj5q6sz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DC74S0QJQ0JV.39VRZ1Y5JSEWS@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <2025090945-yearbook-busboy-2b28@gregkh>
 
+On Tue, Sep 09, 2025 at 04:40:08PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Sep 09, 2025 at 07:56:07PM +0530, GOPI JEGANATHAN wrote:
+> > Hi Greg
+> > 
+> > I just saw the warning message in Checkpatch.pl file. It's says #if 0 is
+> > something wrong so I just change the processor directives properly using
+> > #ifdef CONFIG_TNT4882, Is that change is wrong!?
+> 
+> #if 0 is a way to comment out code, you just enabled that code to now be
+> present.  That's probably not the correct thing for this driver, right?
+> The whole thing is already using CONFIG_TNT4882, so declaring it again
+> would be the same as just removing the #if 0 line.
+> 
+> In short, only change this type of thing either by removing the code
+> entirely, or figuring out why it's still present and then fixing it up
+> to actually be used and remove the #if 0 lines.
+> 
+> thanks,
+> 
+> greg k-h
 
---eda5myf3wxj5q6sz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/7] can: m_can: m_can_chip_config(): bring up interface
- in correct state
-MIME-Version: 1.0
-
-On 20.08.2025 11:00:51, Markus Schneider-Pargmann wrote:
-> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
-n.c
-> > index b485d2f3d971..310a907cbb7e 100644
-> > --- a/drivers/net/can/m_can/m_can.c
-> > +++ b/drivers/net/can/m_can/m_can.c
-> > @@ -1607,6 +1607,7 @@ static int m_can_chip_config(struct net_device *d=
-ev)
-> >  static int m_can_start(struct net_device *dev)
-> >  {
-> >  	struct m_can_classdev *cdev =3D netdev_priv(dev);
-> > +	u32 reg_psr;
-> >  	int ret;
-> > =20
-> >  	/* basic m_can configuration */
-> > @@ -1617,7 +1618,8 @@ static int m_can_start(struct net_device *dev)
-> >  	netdev_queue_set_dql_min_limit(netdev_get_tx_queue(cdev->net, 0),
-> >  				       cdev->tx_max_coalesced_frames);
-> > =20
-> > -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> > +	reg_psr =3D m_can_read(cdev, M_CAN_PSR);
-> > +	cdev->can.state =3D m_can_can_state_get_by_psr(reg_psr);
->=20
-> Previous patch makes sense for use here. But how is the state set back
-> in operation after mcan was in an error state? Maybe I missed the path
-> back to CAN_STATE_ERROR_ACTIVE somewhere?
-
-Sorry, I don't exactly get what you mean here.
-
-> Also CAN_STATE_ERROR_ACTIVE is set in resume() as well, should that also
-> read the PSR instead?
-
-see next patch :)
-
-> Ans lastly I don't like the function name, because of the repeated can,
-> maybe something like m_can_error_state_by_psr()?
-
-It's m_can_state_get_by_psr() now.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---eda5myf3wxj5q6sz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAPiMACgkQDHRl3/mQ
-kZzywAf/WPSc70nEf3JBlQRZpqQaextMDsmozEvirHn9QavcoFM2vbAJFLzpmnFq
-OIcv3o7F78vIm4Odj9FTVZz17lmQa4ObuigCCngm9YWo+jPwODlJbqKllXnGYJrh
-yToNoAsEdp8Yh8U7rrzturX+1o92T69zmZPOW5ESEyJrRGrEmdPUO1ZX+lljMl2r
-wy1uNbW9Z1qFoDGUV7aVJdQh4WffLoPs4ziqR/ZElNM9jWGgv/zhPkvr5Og7X5x2
-nplvFjxfJigip8YA7lFA4uW8swQ7k5Y+fuofchMQMrQPfZq4mgOZQKjJfOr+MGJc
-p8+gTq4TOY97s4bTg9/LthysdECeeg==
-=+ni9
------END PGP SIGNATURE-----
-
---eda5myf3wxj5q6sz--
+The code in the #if 0 scope in question can be removed entirely.
+There is no call to make the driver it into a pnp driver.
+cheers,
+-dave
 
