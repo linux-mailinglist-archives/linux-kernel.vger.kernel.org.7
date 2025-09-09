@@ -1,123 +1,311 @@
-Return-Path: <linux-kernel+bounces-806939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA353B49DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309AAB49DD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71A844391B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DDD21BC5BAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1955D42AA4;
-	Tue,  9 Sep 2025 00:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B409E4A3E;
+	Tue,  9 Sep 2025 00:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lTibQFap"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wi6vX0iw"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7E74A07
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 00:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AC71EA65;
+	Tue,  9 Sep 2025 00:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757376049; cv=none; b=rq0zBpV1VVyMW6rOmusejdvJhOTNVzdMGFVipc2QdG/dq1nJQ1y6KydmCT/PkyXd76wgJ+84AbNyJIhmAAQfNFSCp0PgtpR09iWjL0VtNxpPJ4VxqiSdMdMBuiMFfNSO0NPOeJ2CcIaKtipjf01YmpWJeisBt972z6FblMriJeQ=
+	t=1757376266; cv=none; b=syQOtjmU+524Vxl8ShWXfZRb6LYV5IJ9dkn6uAavleO2iG37+AT3gMAQzB0pCrasP1q0YnIN25vchRAAzzFw2QLjefb2YdJbSz24qjLWVYat/1M5/RYgkHIiyflHLNC+paDNRXPZGfQIx0LkuKBnOSn8C/ifRbJ9VaVVvmZKce4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757376049; c=relaxed/simple;
-	bh=t43UlVpJasRoQxmkSV3wU/+OU03S3iZK+XwFqLne8/4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=S/lKzfhPoykJZE4bJTSRfP3BAl+NXGJkLK/+ktK3954237aKQGO4WzS74NQnsA/u9hQtxUFslYL2EBM5gJmejnwort7AuI+udaNYFnj9PztCFN62I3c16ClxPNiprgCzCXN9Gac8ihRQF9yt/wa0kOIFkefQ9RP7/sHM5p3qi8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lTibQFap; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32811874948so4308135a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 17:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757376047; x=1757980847; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HsJSTvORJeiE9AQsY+DJV4sYMEZ3S3aUT20uePDrvh0=;
-        b=lTibQFapm4QWn/J4TXdRViO1Oa/uzU51tR71zZJD/Cmos7nHNkHrvckXhmmFavL+KU
-         QcY0Ce8ZnVW/UNFGQuUUI9nW2SCeIe/Bad0wW5eEDyv4DncaPOgakPmDl2Tla2gi9S/F
-         OpyzEB/2qNbR4W74Bn7NwQOFRCpQiShgZWj+obyV57zBpcFpYijFO8u4bT5J2FcEfBcA
-         toDy24WT+lB7pevWOakh6MjQI5Geo5E9YiOqoYiTkguySRsoj6qEqByvjj1F9GSekB1a
-         tqRGUhHxIgEXnvRyi345ln2pds1Mq2yCcM5cOUlrcdbMn38mS5PHJhKPTommFZfI/MdV
-         riTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757376047; x=1757980847;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HsJSTvORJeiE9AQsY+DJV4sYMEZ3S3aUT20uePDrvh0=;
-        b=kto/8Ts2NPBRpP65KD5pbsOfj6UdR34GKtBdf8vbrpkikXRzkpAwV6zi1Vjmsr4m2t
-         OV8jjLJ8IzoE8iKb5YMm/T4xJw48oUVbzo+4vozDF3yTUXXgzrpE7+/wCsKRkjF5RU9J
-         Z4bCgHkgEbckBI2BfY2AfoMVg7uoLiT7f3UlRnRaXWUGgNgbar0p/WFI5uaYCHNLraHT
-         D/txk7PwbtTeTi+kcW6Oo7of+0PcW1SekZgA7LmEHVZ+ebGWfpYr/ORLJxzjqDMn2tUA
-         CM+gV1elSepgSgTNo0qzjUkxcve2zWmrCqb9QGiw+z9iuTDrsDmauTszJNKqZkRwZTgG
-         7yFQ==
-X-Gm-Message-State: AOJu0YzF/8O9HkrePnHCQIjPRcD7dlletrFCYQKVfO6m+p736YpyGqP0
-	5HMF8PKNDSC6PK0dJbUO78gcjRw87iepcLL6eYUl1tpNEnyFz9GcnfV89vLBF8zH9YAl2fFC+7z
-	TNGwugQ==
-X-Google-Smtp-Source: AGHT+IGN+rw9t4njipIiYxG3sgW7qTh9wknWMp/Sn0+Kp9pr6wiAlds7UuRQrwUPPIjws8ivFi1cX3gkDSc=
-X-Received: from pjbsv16.prod.google.com ([2002:a17:90b:5390:b0:327:7035:d848])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c83:b0:32b:be68:bb35
- with SMTP id 98e67ed59e1d1-32d440cf991mr11855628a91.36.1757376047061; Mon, 08
- Sep 2025 17:00:47 -0700 (PDT)
-Date: Mon, 8 Sep 2025 17:00:45 -0700
-In-Reply-To: <20250908212925.708769718@linutronix.de>
+	s=arc-20240116; t=1757376266; c=relaxed/simple;
+	bh=pRZjHQoFH62EYaeMpsF4DR0l84AzCwps4zDvT4iDhU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WWYyH6k4IzXQF00y/q2OEbWTyz5gr/CJ24iGE3Jn75CmSRW+FxDaqe4qodDDSK5JFbQFMLJmkoul5XGoK8SVovxyq5YVS8oqMR1qIitnzQG0z3/du8hQNh+DjxiR7MBaRMe7n5lonnZ/5wtaYpwRgJ9HJB8lKIVHajAHUCpqisw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wi6vX0iw; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=PLJuzxS4XydjJQvP7zCb6sZSVl2ofWt7QvMJnd1o/8Q=; b=wi6vX0iwjKg2ehIRoRPHG6QaNT
+	AjcHBXYW6Xr4kmIEytTALJSer340j9SXaoz8mZ5dstagUx/UuM4fpdX/8C6ZdMnTtXRV8URAQVBO9
+	dKeLPR97eeeNtQ+giryXShgDL9EdCyl1NyQYu4mxrT7XWQ3VHjJbM97gA455YYfiYWQNJuv1JjHql
+	g5k/sXeAndm5BURdBZYXc8DCX6hDwUtLQornAIUT7nbk2tXsG7J1wv9eVpWs7uV5T5S453voNoH6Y
+	RAjD0ie5O0vvthPKV2tq+VwGrAQiQyaUS2BfCDM7Dcia96sxOMu2l2RWJHdvdXwSYsRZ6A4eaZS2/
+	gNyvxHMw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvlqR-000000038vC-3Urr;
+	Tue, 09 Sep 2025 00:04:23 +0000
+Message-ID: <f014e40a-a994-4c49-bcaa-c29be885fd3d@infradead.org>
+Date: Mon, 8 Sep 2025 17:04:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908212737.353775467@linutronix.de> <20250908212925.708769718@linutronix.de>
-Message-ID: <aL9uLYpUcOA9Jt4q@google.com>
-Subject: Re: [patch V4 07/36] rseq, virt: Retrigger RSEQ after vcpu_run()
-From: Sean Christopherson <seanjc@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson <mjeanson@efficios.com>, 
-	Jens Axboe <axboe@kernel.dk>, Paolo Bonzini <pbonzini@redhat.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 02/12] rseq: Add fields and constants for time slice
+ extension
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20250908225709.144709889@linutronix.de>
+ <20250908225752.679815003@linutronix.de>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250908225752.679815003@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025, Thomas Gleixner wrote:
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -49,6 +49,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/kthread.h>
->  #include <linux/suspend.h>
-> +#include <linux/rseq.h>
->  
->  #include <asm/processor.h>
->  #include <asm/ioctl.h>
-> @@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
->  		r = kvm_arch_vcpu_ioctl_run(vcpu);
->  		vcpu->wants_to_run = false;
->  
+Hi Thomas,
 
-Finally had a lightbulb moment as to how to eat this hack while not stonewalling
-the entire series.  Can you add something like:
-
-		/*
-		 * FIXME: Remove this hack once all KVM architectures support
-		 * the generic TIF bits, i.e. a dedicated TIF_RSEQ.
-		 */
-
-to discourage further abuse, and to make it clear that such ugliness isn't anyone's
-first choice.  With that,
-
-Acked-by: Sean Christopherson <seanjc@google.com>
-
-> +		rseq_virt_userspace_exit();
-> +
->  		trace_kvm_userspace_exit(vcpu->run->exit_reason, r);
->  		break;
->  	}
+On 9/8/25 3:59 PM, Thomas Gleixner wrote:
+> Aside of a Kconfig knob add the following items:
 > 
+
+> ---
+>  Documentation/userspace-api/index.rst |    1 
+>  Documentation/userspace-api/rseq.rst  |  129 ++++++++++++++++++++++++++++++++++
+>  include/linux/rseq_types.h            |   26 ++++++
+>  include/uapi/linux/rseq.h             |   28 +++++++
+>  init/Kconfig                          |   12 +++
+>  kernel/rseq.c                         |    8 ++
+>  6 files changed, 204 insertions(+)
+> 
+
+> --- /dev/null
+> +++ b/Documentation/userspace-api/rseq.rst
+> @@ -0,0 +1,129 @@
+> +=====================
+> +Restartable Sequences
+> +=====================
+> +
+> +Restartable Sequences allow to register a per thread userspace memory area
+> +to be used as an ABI between kernel and user-space for three purposes:
+
+userspace or user-space or user space -- be consistent, please.
+(above 2 times, and more below)
+
+FWIW, "userspace" overwhelmingly wins in the kernel source tree.
+On the $internet it looks like "user space" wins (quick look).
+
+
+> +
+> + * user-space restartable sequences
+> +
+> + * quick access to read the current CPU number, node ID from user-space
+> +
+> + * scheduler time slice extensions
+> +
+> +Restartable sequences (per-cpu atomics)
+> +---------------------------------------
+> +
+> +Restartables sequences allow user-space to perform update operations on
+> +per-cpu data without requiring heavy-weight atomic operations. The actual
+just                              heavyweight
+
+> +ABI is unfortunately only available in the code and selftests.
+> +
+> +Quick access to CPU number, node ID
+> +-----------------------------------
+> +
+> +Allows to implement per CPU data efficiently. Documentation is in code and
+> +selftests. :(
+> +
+> +Scheduler time slice extensions
+> +-------------------------------
+> +
+> +This allows a thread to request a time slice extension when it enters a
+> +critical section to avoid contention on a resource when the thread is
+> +scheduled out inside of the critical section.
+> +
+> +The prerequisites for this functionality are:
+> +
+> +    * Enabled in Kconfig
+> +
+> +    * Enabled at boot time (default is enabled)
+> +
+> +    * A rseq user space pointer has been registered for the thread
+
+                ^^^^^^^^^^
+
+> +
+> +The thread has to enable the functionality via prctl(2)::
+> +
+> +    prctl(PR_RSEQ_SLICE_EXTENSION, PR_RSEQ_SLICE_EXTENSION_SET,
+> +          PR_RSEQ_SLICE_EXT_ENABLE, 0, 0);
+> +
+> +prctl() returns 0 on success and otherwise with the following error codes:
+> +
+> +========= ==============================================================
+> +Errorcode Meaning
+> +========= ==============================================================
+> +EINVAL	  Functionality not available or invalid function arguments.
+> +          Note: arg4 and arg5 must be zero
+> +ENOTSUPP  Functionality was disabled on the kernel command line
+> +ENXIO	  Available, but no rseq user struct registered
+> +========= ==============================================================
+> +
+> +The state can be also queried via prctl(2)::
+> +
+> +  prctl(PR_RSEQ_SLICE_EXTENSION, PR_RSEQ_SLICE_EXTENSION_GET, 0, 0, 0);
+> +
+> +prctl() returns ``PR_RSEQ_SLICE_EXT_ENABLE`` when it is enabled or 0 if
+> +disabled. Otherwise it returns with the following error codes:
+> +
+> +========= ==============================================================
+> +Errorcode Meaning
+> +========= ==============================================================
+> +EINVAL	  Functionality not available or invalid function arguments.
+> +          Note: arg3 and arg4 and arg5 must be zero
+> +========= ==============================================================
+> +
+> +The availability and status is also exposed via the rseq ABI struct flags
+> +field via the ``RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE_BIT`` and the
+> +``RSEQ_CS_FLAG_SLICE_EXT_ENABLED_BIT``. These bits are read only for user
+
+                                                          read-only for
+
+> +space and only for informational purposes.
+
+   userspace ?
+
+> +
+> +If the mechanism was enabled via prctl(), the thread can request a time
+> +slice extension by setting the ``RSEQ_SLICE_EXT_REQUEST_BIT`` in the struct
+> +rseq slice_ctrl field. If the thread is interrupted and the interrupt
+> +results in a reschedule request in the kernel, then the kernel can grant a
+> +time slice extension and return to user space instead of scheduling
+
+                                      ^^^^^^^^^^
+
+> +out.
+> +
+> +The kernel indicates the grant by clearing ``RSEQ_SLICE_EXT_REQUEST_BIT``
+> +and setting ``RSEQ_SLICE_EXT_GRANTED_BIT`` in the rseq::slice_ctrl
+> +field. If there is a reschedule of the thread after granting the extension,
+> +the kernel clears the granted bit to indicate that to user space.
+
+                                                         ?
+
+> +
+> +If the request bit is still set when the leaving the critical section, user
+> +space can clear it and continue.
+
+   ?
+
+> +
+> +If the granted bit is set, then user space has to invoke rseq_slice_yield()
+
+                                       ?
+
+> +when leaving the critical section to relinquish the CPU. The kernel
+> +enforces this by arming a timer to prevent misbehaving user space from
+
+OK, I think that you like "user space".  :)
+
+> +abusing this mechanism.
+> +
+> +If both the request bit and the granted bit are false when leaving the
+> +critical section, then this indicates that a grant was revoked and no
+> +further action is required by user space.
+> +
+> +The required code flow is as follows::
+> +
+> +    rseq->slice_ctrl = REQUEST;
+> +    critical_section();
+> +    if (!local_test_and_clear_bit(REQUEST, &rseq->slice_ctrl)) {
+> +        if (rseq->slice_ctrl & GRANTED)
+> +                rseq_slice_yield();
+> +    }
+> +
+> +local_test_and_clear_bit() has to be local CPU atomic to prevent the
+> +obvious RMW race versus an interrupt. On X86 this can be achieved with BTRL
+> +without LOCK prefix. On architectures, which do not provide lightweight CPU
+
+                          no comma      ^
+
+> +local atomics this needs to be implemented with regular atomic operations.
+> +
+> +Setting REQUEST has no atomicity requirements as there is no concurrency
+> +vs. the GRANTED bit.
+> +
+> +Checking the GRANTED has no atomicity requirements as there is obviously a
+> +race which cannot be avoided at all::
+> +
+> +    if (rseq->slice_ctrl & GRANTED)
+> +      -> Interrupt results in schedule and grant revocation
+> +        rseq_slice_yield();
+> +
+> +So there is no point in pretending that this might be solved by an atomic
+> +operation.
+> +
+> +The kernel enforces flag consistency and terminates the thread with SIGSEGV
+> +if it detects a violation.
+
+> --- a/include/uapi/linux/rseq.h
+> +++ b/include/uapi/linux/rseq.h
+> @@ -23,9 +23,15 @@ enum rseq_flags {
+>  };
+>  
+>  enum rseq_cs_flags_bit {
+> +	/* Historical and unsupported bits */
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT	= 0,
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT	= 1,
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT	= 2,
+> +	/* (3) Intentional gap to put new bits into a seperate byte */
+
+	                                              separate
+("There is a rat in separate." -- old clue)
+           'arat'
+
+> +
+> +	/* User read only feature flags */
+> +	RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE_BIT	= 4,
+> +	RSEQ_CS_FLAG_SLICE_EXT_ENABLED_BIT	= 5,
+>  };
+>  
+>  enum rseq_cs_flags {
+
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1908,6 +1908,18 @@ config RSEQ_DEBUG_DEFAULT_ENABLE
+>  
+>  	  If unsure, say N.
+>  
+> +config RSEQ_SLICE_EXTENSION
+> +	bool "Enable rseq based time slice extension mechanism"
+
+	             rseq-based
+
+> +	depends on RSEQ && HIGH_RES_TIMERS && GENERIC_ENTRY && HAVE_GENERIC_TIF_BITS
+> +	help
+> +          Allows userspace to request a limited time slice extension when
+
+Use tab + 2 spaces above instead of N spaces.
+
+> +	  returning from an interrupt to user space via the RSEQ shared
+> +	  data ABI. If granted, that allows to complete a critical section,
+> +	  so that other threads are not stuck on a conflicted resource,
+> +	  while the task is scheduled out.
+-- 
+~Randy
+
 
