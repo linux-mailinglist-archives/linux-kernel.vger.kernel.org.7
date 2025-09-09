@@ -1,79 +1,131 @@
-Return-Path: <linux-kernel+bounces-806948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8C2B49DEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1667B49DF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835301882F09
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0870018905CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED12B1CAA79;
-	Tue,  9 Sep 2025 00:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B37F1D88B4;
+	Tue,  9 Sep 2025 00:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYvFn/Ap"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC5176FB1;
-	Tue,  9 Sep 2025 00:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35F65223;
+	Tue,  9 Sep 2025 00:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757377186; cv=none; b=p1OF6dsTn55Qk5N74jS4WJt8UJ667SlktlOJsfMKwKhdE2OkGL1e3HFMp3/hQWTRCQVbtW0HlM31TA6z6LgSxqk3/onm13nOLt3+gfVin9Fdp2q1lGA5UScvFMdZGkAxKf+eRRSrIriprAej7XjSal8wYWewrjfIIICJIRLcUzQ=
+	t=1757377414; cv=none; b=bbhEMsvvpD0ar8XwU4Dv4xP69mKasfzIXHYnJ/FHetmsAXGqN8c9aRKvAz0izcy50AuEhUm5yqTzxpB4FVdzA2Fml7kZkhkKCIONocmq4zdCa3k+DJOlluhd4dJfapwC9ruLB7qQuX9gMiB246QCGNQXmeiZ0f/YrN+g8CIcaLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757377186; c=relaxed/simple;
-	bh=4r0NsQhLsfOxiKR1RoAZClT3fpMFPT6rmz4K6eDA9jY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O6V7T+w5gakLElNGKFD58+j5U1AH8SzZoYhG41+NvNFKLROI19hzICqL2fudefPiK0ofAHFlpirEJZtj/1IV+zlCrRB1Ms9FwQm8D3r/y620uJkc1VE8Pe0dWLrO5qB8hcDYUxUszOH81454K/AuE8gN3LJ8fISfQttfW33kVV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3B8C4CEF7;
-	Tue,  9 Sep 2025 00:19:46 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id 3FEBC180B18; Tue, 09 Sep 2025 02:19:44 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Marco Crivellari <marco.crivellari@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Michal Hocko <mhocko@suse.com>, Sebastian Reichel <sre@kernel.org>
-In-Reply-To: <20250905090641.106297-1-marco.crivellari@suse.com>
-References: <20250905090641.106297-1-marco.crivellari@suse.com>
-Subject: Re: [PATCH 0/2] power: replace wq users and add WQ_PERCPU to
- alloc_workqueue() users
-Message-Id: <175737718425.13878.11571194583527518524.b4-ty@collabora.com>
-Date: Tue, 09 Sep 2025 02:19:44 +0200
+	s=arc-20240116; t=1757377414; c=relaxed/simple;
+	bh=tsZco8RBN2ARLwRKQybz2Ac7AKZxSxzRkUgis3zqLtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKwumvhDl7dv6yHcFQLuodtBK3zeuUAUK4Q6amoMyNx29TsDcsGJAyTMFQ43O5+W8y6B3jvMNAVMplUOwFx1unB/Pj10ttIGCPDd0U1xYH6l4W8pbaRlEZfl0LJkjIjti/2SW4cmQrltA21Y+FQN/COI6mmQYTpdgTvnEr3HV+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYvFn/Ap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A20C4CEF1;
+	Tue,  9 Sep 2025 00:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757377413;
+	bh=tsZco8RBN2ARLwRKQybz2Ac7AKZxSxzRkUgis3zqLtg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=tYvFn/ApfUQs7BkuzEMfaUfFXBoBh7noMMx2qpDHMuLkwNyAhLjP3xamokvZOaQG0
+	 091H0aorZnH3sYyw0XmLhSpIntEKfU/ZQW2zkYkVyr4NnKtRJ4zW68B6reQvkJc6NT
+	 iLIoZhTAGKAkUkOZSP3/D7+WNpxc/jqLZakz58PNkgAqM/ll1GxYBqUDQ4g14hksbu
+	 M4Y892aBr0aR3QAaAWvxGLZ9Z7P8TJC5EBUjeDKfZ9gGqrY2C1iwhBlN0FlFQKltxz
+	 bKWLQkSTreWX2ji8YpvK1wbm35vv17JhVHZcFs1C+nZLZdM1GCGYKCO4HjdeE/PNlN
+	 VqdV8sk0tz7cQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3D83CCE0B32; Mon,  8 Sep 2025 17:23:30 -0700 (PDT)
+Date: Mon, 8 Sep 2025 17:23:30 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zqiang <qiang.zhang@linux.dev>
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com,
+	boqun.feng@gmail.com, urezki@gmail.com, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] srcu/tiny: Remove preempt_disable/enable() in
+ srcu_gp_start_if_needed()
+Message-ID: <1a489672-935d-4966-b151-c5248ceaf43b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250908003155.557070-1-qiang.zhang@linux.dev>
+ <9dfa7d4f-6e3f-4084-a14f-beb1db06f817@paulmck-laptop>
+ <63d537e65b7f4b6f77a16112a871103d07a248d2@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63d537e65b7f4b6f77a16112a871103d07a248d2@linux.dev>
 
-
-On Fri, 05 Sep 2025 11:06:39 +0200, Marco Crivellari wrote:
-> Below is a summary of a discussion about the Workqueue API and cpu isolation
-> considerations. Details and more information are available here:
+On Mon, Sep 08, 2025 at 01:19:44PM +0000, Zqiang wrote:
+> > 
+> > On Mon, Sep 08, 2025 at 08:31:55AM +0800, Zqiang wrote:
+> > 
+> > > 
+> > > Currently, the srcu_gp_start_if_needed() is always be invoked in
+> > >  preempt disable's critical section, this commit therefore remove
+> > >  redundant preempt_disable/enable() in srcu_gp_start_if_needed().
+> > >  
+> > >  Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
+> > >  Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+> > > 
+> > Looks good, but what would be a good way to make this code defend itself
+> > against being invoked from someplace else that did have preemption
+> > enabled? Especially given that the Tree SRCU version of this function
+> > does get invoked with preemption enabled?
 > 
->         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
->         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> ok, maybe we can add lockdep_assert_preemption_disabled() in
+> the srcu_gp_start_if_needed() ?
+
+That sounds like a good idea to me!
+
+							Thanx, Paul
+
+> Thanks
+> Zqiang
 > 
-> === Current situation: problems ===
 > 
-> [...]
-
-Applied, thanks!
-
-[1/2] power: supply: replace use of system_wq with system_percpu_wq
-      commit: c4a7748b551e5a06fe9a3862001192b1b5cfe195
-[2/2] power: supply: WQ_PERCPU added to alloc_workqueue users
-      commit: cc2ec444e461b6ca2bc73cd7cbd06aaf15bdfa1a
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
-
+> > 
+> >  Thanx, Paul
+> > 
+> > > 
+> > > ---
+> > >  kernel/rcu/srcutiny.c | 3 ---
+> > >  1 file changed, 3 deletions(-)
+> > >  
+> > >  diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> > >  index b52ec45698e8..417bd0e4457c 100644
+> > >  --- a/kernel/rcu/srcutiny.c
+> > >  +++ b/kernel/rcu/srcutiny.c
+> > >  @@ -181,10 +181,8 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+> > >  {
+> > >  unsigned long cookie;
+> > >  
+> > >  - preempt_disable(); // Needed for PREEMPT_LAZY
+> > >  cookie = get_state_synchronize_srcu(ssp);
+> > >  if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
+> > >  - preempt_enable();
+> > >  return;
+> > >  }
+> > >  WRITE_ONCE(ssp->srcu_idx_max, cookie);
+> > >  @@ -194,7 +192,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+> > >  else if (list_empty(&ssp->srcu_work.entry))
+> > >  list_add(&ssp->srcu_work.entry, &srcu_boot_list);
+> > >  }
+> > >  - preempt_enable();
+> > >  }
+> > >  
+> > >  /*
+> > >  -- 
+> > >  2.48.1
+> > >
+> >
 
