@@ -1,225 +1,150 @@
-Return-Path: <linux-kernel+bounces-807811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E64B4A9A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD988B4A95B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676893BD2A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89041892156
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2055431CA4C;
-	Tue,  9 Sep 2025 10:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2ghhF4K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A705C31B83E;
-	Tue,  9 Sep 2025 10:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6F730ACF5;
+	Tue,  9 Sep 2025 10:07:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709D82D46BC;
+	Tue,  9 Sep 2025 10:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757412503; cv=none; b=amxYwLiMaiCwu1lYmxWEL6E3HnwKt5COqMfULuRGTBV35a1DvAW5b60ktWlhjtx0Uz9ieg51P9KpxgtWzifM4kANR52Q7vdTQ3PjafHNFHfWAYgKRBa+DbkmYggKjyAmLn5ThMlaozglHo3sGej2mdLuQiVOodSAouZ005FH1jY=
+	t=1757412431; cv=none; b=L/ZqVJP1LV/GHub81gvfd3jRSleVAaI0MvVwLm3ziZjbEdeS4MowajtFKPjGUZpEyCCZJb2aJdZM4iPWUJbHgr/eryw6Jck/o8Q0vxENom6pRILYW43cuNyW+BYlO61f57fuGrjkhcFlZDhmJTRq+4hAJZkCEgTqbWKObQjOmDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757412503; c=relaxed/simple;
-	bh=TTPMXjY8qFzobtrZBfLA9XlG3M7qUX9ujzgR0RrUWoA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WPIh7ZvPhOUcazE/XfaZvETJwe2AHyv21MVkmtlsoIAfiJ/A7fKvpXMsV447U02idJHUus66vl7S4sDex/PqWq9LjQB7kkDO4vsd7yZQBwHPozqtdULICjwZx3Jpbxnp1eAvJQq4MZDfjP12L579B044lnAlkoWnAdQhVjvg7D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P2ghhF4K; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757412501; x=1788948501;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TTPMXjY8qFzobtrZBfLA9XlG3M7qUX9ujzgR0RrUWoA=;
-  b=P2ghhF4KhnNDBC2kFgTB9aOzuogtckIZnaSC6/4ZjRuXM1MGqOPSFlaG
-   GIbIpab3OhAWIS2oTmrjZaVFynIC4C0aIFvMHAy/w6EP6AgvDz6vXI9UV
-   lJLgdfPy8DLv7mubuiQnqDfKmRPudAvBmD/4YTBCl3xDsvWTm6kYBqptG
-   MFk6KaFB1vl3DbbFLqtZZGlP2N11esMjQZ66akmUFq3oSRMtvZ+M/NEk+
-   bGSQ1FmShwyc0FBg73F9gV3cU6jyPRno2n2RrU59IAje7dkTv3hNDaDPH
-   1FoMf1DSTFbcUWK9QHiq7fM6m6DqkEQLyo58LmDLAyQJO5YCAhgh1f/XV
-   Q==;
-X-CSE-ConnectionGUID: jgQPxthhSFe3GHvQsufhaQ==
-X-CSE-MsgGUID: uxektMJGTA64KYjAVGS6oA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="58730358"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="58730358"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 03:08:20 -0700
-X-CSE-ConnectionGUID: buH9qxfYSd25Ewe3+SdWfQ==
-X-CSE-MsgGUID: TlN6UXqfRYeNAAiFbBfcvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="172915539"
-Received: from kandpal-x299-ud4-pro.iind.intel.com ([10.190.239.10])
-  by orviesa007.jf.intel.com with ESMTP; 09 Sep 2025 03:08:11 -0700
-From: Suraj Kandpal <suraj.kandpal@intel.com>
-To: kernel-list@raspberrypi.com,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org
-Cc: ankit.k.nautiyal@intel.com,
-	arun.r.murthy@intel.com,
-	uma.shankar@intel.com,
-	jani.nikula@intel.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	harry.wentland@amd.com,
-	siqueira@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	liviu.dudau@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	robin.clark@oss.qualcomm.com,
-	abhinav.kumar@linux.dev,
-	tzimmermann@suse.de,
-	jessica.zhang@oss.qualcomm.com,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	laurent.pinchart+renesas@ideasonboard.com,
-	mcanal@igalia.com,
-	dave.stevenson@raspberrypi.com,
-	tomi.valkeinen+renesas@ideasonboard.com,
-	kieran.bingham+renesas@ideasonboard.com,
-	louis.chauvet@bootlin.com,
-	Suraj Kandpal <suraj.kandpal@intel.com>
-Subject: [PATCH 7/7] drm/connector: Modify cleanup_writeback_job helper
-Date: Tue,  9 Sep 2025 15:36:49 +0530
-Message-Id: <20250909100649.1509696-8-suraj.kandpal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250909100649.1509696-1-suraj.kandpal@intel.com>
-References: <20250909100649.1509696-1-suraj.kandpal@intel.com>
+	s=arc-20240116; t=1757412431; c=relaxed/simple;
+	bh=/KbbwvQvwoDDtcfJnQaWn3NiqCRJWQONsBAd5RtWH88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WM7pl55cwm8HwDomgt/uHJ3xZiDJZzxDsPIj/l/C3TRd9/l+cgOI4GlwUkF90M9ltgCZ3ljvecLfxNkaNv38zd8ep5hikESsGI4zR9qKuLKndkNbO2m3sTjvS1H89q7knhhsjS1hVGp/++rBQnlIDXQ8phW3AopzjtN+7PRNQUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4797113E;
+	Tue,  9 Sep 2025 03:06:58 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36B533F66E;
+	Tue,  9 Sep 2025 03:07:01 -0700 (PDT)
+Date: Tue, 9 Sep 2025 11:06:52 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 04/33] ACPI / PPTT: Stop acpi_count_levels() expecting
+ callers to clear levels
+Message-ID: <aL/8PIcebYGoB/g6@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-5-james.morse@arm.com>
+ <aK7iyf/6iVOuVhTr@e133380.arm.com>
+ <1914b7f0-10e6-4cf4-ad53-5ae03c69964d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1914b7f0-10e6-4cf4-ad53-5ae03c69964d@arm.com>
 
-Lets now pass drm_connector to prepare_writeback_job since
-drm_writeback_connector now resides within drm_connector.
-It also make it uniform with params passed to other
-drm_connector_helper_funcs.
+Hi James,
 
-Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 4 ++--
- drivers/gpu/drm/drm_writeback.c                      | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c        | 4 +---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c  | 6 ++----
- drivers/gpu/drm/vkms/vkms_writeback.c                | 5 +----
- include/drm/drm_modeset_helper_vtables.h             | 2 +-
- 6 files changed, 8 insertions(+), 15 deletions(-)
+On Thu, Aug 28, 2025 at 04:57:15PM +0100, James Morse wrote:
+> Hi Dave,
+> 
+> On 27/08/2025 11:49, Dave Martin wrote:
+> > On Fri, Aug 22, 2025 at 03:29:45PM +0000, James Morse wrote:
+> >> acpi_count_levels() passes the number of levels back via a pointer argument.
+> >> It also passes this to acpi_find_cache_level() as the starting_level, and
+> >> preserves this value as it walks up the cpu_node tree counting the levels.
+> >>
+> >> This means the caller must initialise 'levels' due to acpi_count_levels()
+> >> internals. The only caller acpi_get_cache_info() happens to have already
+> >> initialised levels to zero, which acpi_count_levels() depends on to get the
+> >> correct result.
+> >>
+> >> Two results are passed back from acpi_count_levels(), unlike split_levels,
+> >> levels is not optional.
+> >>
+> >> Split these two results up. The mandatory 'levels' is always returned,
+> >> which hides the internal details from the caller, and avoids having
+> >> duplicated initialisation in all callers. split_levels remains an
+> >> optional argument passed back.
+> > 
+> > Nit: I found all this a bit hard to follow.
+> > 
+> > This seems to boil down to:
+> > 
+> > --8<--
+> > 
+> > In acpi_count_levels(), the initial value of *levels passed by the
+> > caller is really an implementation detail of acpi_count_levels(), so it
+> > is unreasonable to expect the callers of this function to know what to
+> > pass in for this parameter.  The only sensible initial value is 0,
+> > which is what the only upstream caller (acpi_get_cache_info()) passes.
+> > 
+> > Use a local variable for the starting cache level in acpi_count_levels(),
+> > and pass the result back to the caller via the function return value.
+> > 
+> > Gid rid of the levels parameter, which has no remaining purpose.
+> > 
+> > Fix acpi_get_cache_info() to match.
+> > 
+> > -->8--
+> 
+> I've taken this instead,
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-index d02f5d20f3b1..bf1ecf5d3027 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-@@ -144,8 +144,8 @@ static int amdgpu_dm_wb_prepare_job(struct drm_connector *connector,
- 	return r;
- }
- 
--static void amdgpu_dm_wb_cleanup_job(struct drm_writeback_connector *connector,
--				struct drm_writeback_job *job)
-+static void amdgpu_dm_wb_cleanup_job(struct drm_connector *connector,
-+				     struct drm_writeback_job *job)
- {
- 	struct amdgpu_bo *rbo;
- 	int r;
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 32a8e6498585..a2cb66f70ed1 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -451,7 +451,7 @@ void drm_writeback_cleanup_job(struct drm_writeback_job *job)
- 		connector->helper_private;
- 
- 	if (job->prepared && funcs->cleanup_writeback_job)
--		funcs->cleanup_writeback_job(wb_connector, job);
-+		funcs->cleanup_writeback_job(connector, job);
- 
- 	if (job->fb)
- 		drm_framebuffer_put(job->fb);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-index 26a93c3cc454..03e63b6c5351 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-@@ -96,11 +96,9 @@ static int dpu_wb_conn_prepare_job(struct drm_connector *connector,
- 	return 0;
- }
- 
--static void dpu_wb_conn_cleanup_job(struct drm_writeback_connector *wb_connector,
-+static void dpu_wb_conn_cleanup_job(struct drm_connector *connector,
- 		struct drm_writeback_job *job)
- {
--	struct drm_connector *connector =
--		container_of(wb_connector, struct drm_connector, writeback);
- 	struct dpu_wb_connector *dpu_wb_conn = to_dpu_wb_conn(connector);
- 
- 	if (!job->fb)
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-index 725981cc1d0c..e3aab132ded1 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-@@ -72,12 +72,10 @@ static int rcar_du_wb_prepare_job(struct drm_connector *connector,
- 	return 0;
- }
- 
--static void rcar_du_wb_cleanup_job(struct drm_writeback_connector *connector,
-+static void rcar_du_wb_cleanup_job(struct drm_connector *connector,
- 				   struct drm_writeback_job *job)
- {
--	struct drm_connector *conn =
--		drm_writeback_to_connector(connector);
--	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(conn);
-+	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(connector);
- 	struct rcar_du_wb_job *rjob = job->priv;
- 
- 	if (!job->fb)
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 032896fb5c5b..320d553f5f1f 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -102,13 +102,10 @@ static int vkms_wb_prepare_job(struct drm_connector *connector,
- 	return ret;
- }
- 
--static void vkms_wb_cleanup_job(struct drm_writeback_connector *wb_conn,
-+static void vkms_wb_cleanup_job(struct drm_connector *connector,
- 				struct drm_writeback_job *job)
- {
- 	struct vkms_writeback_job *vkmsjob = job->priv;
--	struct drm_connector *connector = container_of(wb_conn,
--						       struct drm_connector,
--						       writeback);
- 	struct vkms_output *vkms_output = container_of(connector,
- 						       struct vkms_output,
- 						       wb_connector);
-diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-index f6a14f396c40..483de9978e0c 100644
---- a/include/drm/drm_modeset_helper_vtables.h
-+++ b/include/drm/drm_modeset_helper_vtables.h
-@@ -1145,7 +1145,7 @@ struct drm_connector_helper_funcs {
- 	 *
- 	 * This callback is used by the atomic modeset helpers.
- 	 */
--	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
-+	void (*cleanup_writeback_job)(struct drm_connector *connector,
- 				      struct drm_writeback_job *job);
- 
- 	/**
--- 
-2.34.1
+OK
 
+[...]
+
+> >> @@ -731,7 +735,7 @@ int acpi_get_cache_info(unsigned int cpu, unsigned int *levels,
+> >>  	if (!cpu_node)
+> >>  		return -ENOENT;
+> >>  
+> >> -	acpi_count_levels(table, cpu_node, levels, split_levels);
+> >> +	*levels = acpi_count_levels(table, cpu_node, split_levels);
+> >>  
+> >>  	pr_debug("Cache Setup: last_level=%d split_levels=%d\n",
+> >>  		 *levels, split_levels ? *split_levels : -1);
+> > 
+> > Otherwise, looks reasonable to me.
+> > 
+> > (But see my comments on the next patches re whether we really need this.)
+> 
+> It was enough fun to debug that I'd like to save anyone else the trouble!
+
+Fair enough.
+
+Cheers
+---Dave
 
