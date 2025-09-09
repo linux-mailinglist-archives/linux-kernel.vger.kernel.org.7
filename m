@@ -1,164 +1,209 @@
-Return-Path: <linux-kernel+bounces-808148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95BEB4FAD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B31B4FAD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147F01C27A8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:29:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACAF4E1532
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C7C31CA57;
-	Tue,  9 Sep 2025 12:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CC5335BB0;
+	Tue,  9 Sep 2025 12:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WFG0R2Ys";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XxHsryW+"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5ql/Nzr"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D34322C66
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE62322C66
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757420963; cv=none; b=R5lzkxMcLITb5nU2yYyxgurLrUAwUGLaLaJKy6H4B7RR6F4HIpJ4lDc0SN7OxWX+lGS+vFo0ffGqfUwME8zkYy802wxiJ0qpxLOK4mFB0cy66MYNw12rDdNEUrAdun3Xaxw2MVsFtsUzv16b/kaFWZNy0SoyA8TpUNAgEaAc29k=
+	t=1757420973; cv=none; b=rIXjwxvv/G1ilGNuuzjMSeA/LkveWmzxcypysHueYOdpz28jZ1HdPtxYqUafpfeIltOquDAQnauVcjiVdk+ua9glG4O6tTMJUTcOzAWRhvxejyJK6TjCB6iSltp72BV7WFP7ZP3vuxdd4HpGZal5BTW8oCIh0lmTeWDe/Dnb5uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757420963; c=relaxed/simple;
-	bh=hI8LYwkhJ2hsvMSHofs0BWyxXSx1uhBWD1aDRW0j71U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GCbL614gZLuD4zXbPSnTJ4F23Nz7taahPea6PIorogPiGPxjxKM12UxfoxYdNNfnqFmWn+Hk9DffoRrUy2PqsLPeww59H18yuP2xm0L9cKSxu0ZyQYdPpKojNcXYJ0KxQivGA4af4Aw22OnescP0E4eZo3EfCPXi0gxR78tSekA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WFG0R2Ys; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XxHsryW+; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6E3F6EC1D1D;
-	Tue,  9 Sep 2025 08:29:20 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-06.internal (MEProxy); Tue, 09 Sep 2025 08:29:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1757420960;
-	 x=1757507360; bh=/5QUYul75LVf73bnFi+E1ia3JzB02v3UT7J4baXowV8=; b=
-	WFG0R2YsdUIIn8guSOvzcR/576lHa3/Y6WikMO3iUnXjD/9KGH8xLVPfZ6cXxUBT
-	6tnfFyHvzQk+sWYc7Gr7COiv1wZtB8XgnGO/DhvXBtt6kqk4LlIR3KMK7JWiC1Hj
-	j2KDgA4iPufJ3yUxe9roZLdA+MrCcjGx9woeyu/zIXOK4Hhco/SPEjwwiIcn4AUL
-	kzrAhL2dp2OPFD87Rs8k8dMg0NyJiix/xrZXSTbUGbwI+VpqpDPaHvW/gI3PePgx
-	sAEI9/ZU+qUbNKDNa8a/azSJIu+fCq+3j3W2u0Hd1P2xRZsj3U30x8LWcrjgPqB/
-	gkKPdI/y7EvW3zVjs1EPXw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757420960; x=
-	1757507360; bh=/5QUYul75LVf73bnFi+E1ia3JzB02v3UT7J4baXowV8=; b=X
-	xHsryW+M2k1jilg6p7frTmtwRMfNY0SUYPbHr1ir1/jhH5Kxem89BBOSPOeOCiyH
-	rJ4lUCVrZZAMPPB3cBrGKBcK3BiWLNP3EPeZjVPgj3W7Y4RyjYiJqVzBRiByKZpe
-	xcnBYsigYXKTkNDlBa9Nesw/34kUxV+kBXvSuLITxBckTf6fhk4COf3cGVL58pOP
-	otPwxlhJlu9we2mygy5l5c5ej313bWKcMLLoaHeyzZ2vV7bzbbDsVyt6hf3CaZRK
-	MkL4sbRtnzi2BSOKiPUlf34NMID8IR6tdblVzvZ2g1K69GaxwRvOU8jk+K21WVY5
-	fX1tu6en+jyy2kbr6lWRg==
-X-ME-Sender: <xms:nx3AaDMxmZis_CXxAvgm6F12Q1Cgmxbgw7kBOJTydfczqzbVf-nVFg>
-    <xme:nx3AaN_gZ3g2NfQIso-fNSMzwgSY-fm3LKqaT4JlkIuVD2FcFrS5sTwXhf8QciP46
-    EQNNfMyPkhid77a1QI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgrgihu
-    nhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffekteehhfelgfdvvedvkeeuffefkeeh
-    heegvefhveetjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphht
-    thhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegthhgvnhhhuhgrtggrih
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvghvpd
-    hrtghpthhtoheptghhvghnhhhurggtrghisehlohhonhhgshhonhdrtghnpdhrtghpthht
-    oheplhhigihuvghfvghngheslhhoohhnghhsohhnrdgtnhdprhgtphhtthhopeiihhhouh
-    gsihhnsghinheslhhoohhnghhsohhnrdgtnhdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhesgi
-    gvnhdtnhdrnhgrmhgvpdhrtghpthhtohepgihrhiduudduseigrhihudduuddrshhithgv
-X-ME-Proxy: <xmx:nx3AaDGjD9vN-S3-z7_PFNUW1_V0FhiV3yBhigTFHInmiG9bZ_Vu8w>
-    <xmx:nx3AaB5-eQpFa99C-QJ8nhXH29cBbRkwSgGac9-RASyhz6b-umQikA>
-    <xmx:nx3AaLeNfVyM4r_eVGx7YA_Uuo-pVFoBiweFta3CvL95etyF6fg_Zw>
-    <xmx:nx3AaM75IfkcYmrReEM4cD9c78Qj4tj7eJ4l97iIWAogw_FZtSSKBQ>
-    <xmx:oB3AaEf4wY5kC08FVQ2P39ZVskazm6NdkWs_elRA-5U0d_XdCtkbZKQF>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6D9B72CE0072; Tue,  9 Sep 2025 08:29:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757420973; c=relaxed/simple;
+	bh=a46tfuTHiQ5PODxeSEShGGb74MLduiQahZTs6n4y9P4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TS+8UrcvL82mHINneLSR3uVb7JZTHqLXHqJgwfuwmm6ppE5EBWjeqeyGKyrjR915SxWokdwf1dwXFKPBOlnLLNmt339MdRLgG+W81e/yqXTJXKUwo4bEJEow/O0dXKOworjV9kkWT4py1BiFB6YsSnN1CnwlghPdK1R5Y9F7sy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5ql/Nzr; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4cb3367d87so3687877a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:29:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757420971; x=1758025771; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sP14GaO9hh/AViIMu35gYGXTB37uSd6BGzGkZYr487c=;
+        b=f5ql/NzrxW1oua17Gz2LOQ5Ecz7roE2nEk/UTpIbQMAOZ+8gMLHRmtAvsz29Q4vrJy
+         7nQ4ThiDES7pL/nmaXmp3tW1klys6I1P0Caj3OGV52TCnmu0Qn/K4RpEmk6yRceGOhn1
+         eUDoYVk2xD50eQ/qBiSiYZiMz7bUPYgbxC9D9Kwe4ZJd7zFYtH8xwnZPa+pfKEGGZ1zq
+         1CMgunaKWuBGRP3297FWLCR78Ii2lAiu54ChCjhf3oiheiFdMSzxSJnpUELrazvpvxXU
+         4HAfqEGunupRGrPuIWeveXptIU7NOrZJlXBaZUlv808E2aoMORsZMZKAh3fKEVSImQUP
+         NqSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757420971; x=1758025771;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sP14GaO9hh/AViIMu35gYGXTB37uSd6BGzGkZYr487c=;
+        b=NGOZwL9idzDUNtlDkUxZpnY8Vyvr1H1WfLDy3/Z5qfZuZDSvQJIZJnzVNNGQm+Yl1Q
+         O2yTFnXoKusQv6rNfnCoqrrT3H31879TvFvA59P5ck90FI//qhzeMZPyUM7VGl95cULO
+         A7U33whmrk3xEIVqJslZ+hAhk7grlpsBmi5cUyw8lls8E6da9kdYXTT0gbYsWBe1Z/ij
+         7MaHjgru/5jwTCE5dpbXlTmg5tfC/U08m84keMIYS4XFAS/0eNYZNGjgoSTrwpt1bFkQ
+         /KCQ3k1lU1UjRI9/MCMUY0ZZaRRMV7Ef4uv4yLR3kbLKIWe/+zjvE9X/ej3kCWNyD3w4
+         +eVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxwjYLwfZFwAURtfyuLJR2l3r2Q8st7fMQWCaOeZEsTPrTWW9SKl1RTbp9WHaFmgAmE0BIESAwGKge3iI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO8Z1OwmC+AmhInYqw2E/UG6CY593FfdpFf79f79oTnP68JH7t
+	hn9VbTXuWwhea2BAf7T7RT3JPi2Suz0LynnuVMl+PT9GYqp98LlJX0fa
+X-Gm-Gg: ASbGncvgcCRE0zXbS0uImHb8IVFF/owiBvRARNPvujNZZ3SorKS7Pu6wb/3nzxIHcBN
+	6To3WQV15r7oOE8/eiQFhNSiUcTLZycytVvj+aIr5jQiD790quadWd91zPgcyiur+SO7dOkhBo9
+	Ta0jAYJ4P6Eb2WmlVUrxFRa/GABEd3RglD8BX9y4yYQkwWlkmrLvTrp6GysbB9g8Ca6Dxdzd2J5
+	z5Yfm9LBFxmVJePp2XquTJGF4XPBNrHjgsk+1wXH+LIQtYlJV4+JntazLEJ89XYvsefT8Xl8/wR
+	tQC9/+//ZRLaEbBRC9/7JPIDFUkkgXDW63eSIpDnX2OrKtdt4wE+2/6HUjMQ/0V2HQUt6beSC5p
+	94+PgYV38yUp/SZW76JPWuyjQ/GV8mJrw+oNo1iu6
+X-Google-Smtp-Source: AGHT+IFW338xaoGXmgeJuL5dLdv0vvtEaqjETaGyLvB3JHkac4awC+VJGJGYIiRnKQBTZkkp6c8LVA==
+X-Received: by 2002:a17:90a:c10e:b0:32b:9595:ea58 with SMTP id 98e67ed59e1d1-32d43f8e9e4mr12819259a91.34.1757420971319;
+        Tue, 09 Sep 2025 05:29:31 -0700 (PDT)
+Received: from smtpclient.apple ([185.220.238.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32d7d4074b4sm6703233a91.4.2025.09.09.05.29.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Sep 2025 05:29:30 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: AW9Y6xjD3IRZ
-Date: Tue, 09 Sep 2025 20:28:59 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@loongson.cn>,
- "Huacai Chen" <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, "Xuefeng Li" <lixuefeng@loongson.cn>,
- "Guo Ren" <guoren@kernel.org>, "Xuerui Wang" <kernel@xen0n.name>,
- linux-kernel@vger.kernel.org, "Binbin Zhou" <zhoubinbin@loongson.cn>,
- "Xi Ruoyao" <xry111@xry111.site>
-Message-Id: <07042615-8fc9-476f-b614-46c8b9f148ab@app.fastmail.com>
-In-Reply-To: <20250909095320.4083749-1-chenhuacai@loongson.cn>
-References: <20250909095320.4083749-1-chenhuacai@loongson.cn>
-Subject: Re: [PATCH] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] mm: shmem: fix too little space for tmpfs only fallback
+ 4KB
+From: Vernon Yang <vernon2gm@gmail.com>
+In-Reply-To: <c245dbb5-2e2b-4308-a296-f711b74002eb@linux.alibaba.com>
+Date: Tue, 9 Sep 2025 20:29:14 +0800
+Cc: Vernon Yang <vernon2gm@gmail.com>,
+ hughd@google.com,
+ akpm@linux-foundation.org,
+ da.gomez@samsung.com,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ Vernon Yang <yanglincheng@kylinos.cn>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <3349E5A6-BCDC-47B9-956B-CB0D0BC02D84@gmail.com>
+References: <20250908123128.900254-1-vernon2gm@gmail.com>
+ <c245dbb5-2e2b-4308-a296-f711b74002eb@linux.alibaba.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+X-Mailer: Apple Mail (2.3826.700.81)
 
 
 
-=E5=9C=A82025=E5=B9=B49=E6=9C=889=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=
-=8D=885:53=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> ARCH_STRICT_ALIGN is used for hardware without UAL, now it only control
-> the -mstrict-align flag. However, ACPI structures are packed by default
-> so will cause unaligned accesses.
->
-> To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in Makefile to
-> align ACPI structures if ARCH_STRICT_ALIGN enabled.
->
-> Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> Suggested-by: Xi Ruoyao <xry111@xry111.site>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  arch/loongarch/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> index a3a9759414f4..a86de4f26264 100644
-> --- a/arch/loongarch/Makefile
-> +++ b/arch/loongarch/Makefile
-> @@ -147,10 +147,10 @@ ifdef CONFIG_ARCH_STRICT_ALIGN
->  # Don't emit unaligned accesses.
->  # Not all LoongArch cores support unaligned access, and as kernel we=20
-> can't
->  # rely on others to provide emulation for these accesses.
-> -KBUILD_CFLAGS +=3D $(call cc-option,-mstrict-align)
-> +KBUILD_CFLAGS +=3D $(call cc-option,-mstrict-align)=20
-> -DACPI_MISALIGNMENT_NOT_SUPPORTED
-
-This is a little bit hacky.
-
-Maybe a better place for `ACPI_MISALIGNMENT_NOT_SUPPORTED would be
-`arch/loongarch/include/asm/acenv.h`, or `include/acpi/platform/aclinux.=
-h`
-
->  else
->  # Optimise for performance on hardware supports unaligned access.
-> -KBUILD_CFLAGS +=3D $(call cc-option,-mno-strict-align)
-> +KBUILD_CFLAGS +=3D $(call cc-option,-mno-strict-align)=20
-> -UACPI_MISALIGNMENT_NOT_SUPPORTED
->  endif
+> On Sep 9, 2025, at 13:58, Baolin Wang <baolin.wang@linux.alibaba.com> =
+wrote:
 >=20
->  KBUILD_CFLAGS +=3D -isystem $(shell $(CC) -print-file-name=3Dinclude)
-> --=20
-> 2.47.3
+>=20
+>=20
+> On 2025/9/8 20:31, Vernon Yang wrote:
+>> From: Vernon Yang <yanglincheng@kylinos.cn>
+>> When the system memory is sufficient, allocating memory is always
+>> successful, but when tmpfs size is low (e.g. 1MB), it falls back
+>> directly from 2MB to 4KB, and other small granularity (8KB ~ 1024KB)
+>> will not be tried.
+>> Therefore add check whether the remaining space of tmpfs is =
+sufficient
+>> for allocation. If there is too little space left, try smaller large
+>> folio.
+>=20
+> I don't think so.
+>=20
+> For a tmpfs mount with 'huge=3Dwithin_size' and 'size=3D1M', if you =
+try to write 1M data, it will allocate an order 8 large folio and will =
+not fallback to order 0.
+>=20
+> For a tmpfs mount with 'huge=3Dalways' and 'size=3D1M', if you try to =
+write 1M data, it will not completely fallback to order 0 either, =
+instead, it will still allocate some order 1 to order 7 large folios.
+>=20
+> I'm not sure if this is your actual user scenario. If your files are =
+small and you are concerned about not getting large folio allocations, I =
+recommend using the 'huge=3Dwithin_size' mount option.
+>=20
 
-Thanks
---=20
-- Jiaxun
+No, this is not my user scenario.
+
+Based on your previous patch [1], this scenario can be easily reproduced =
+as=20
+follows.
+
+$ mount -t tmpfs -o size=3D1024K,huge=3Dalways tmpfs /xxx/test
+$ echo hello > /xxx/test/README
+$ df -h
+tmpfs            1.0M  4.0K 1020K   1% /xxx/test
+
+The code logic is as follows:
+
+shmem_get_folio_gfp()
+    orders =3D shmem_allowable_huge_orders()
+    shmem_alloc_and_add_folio(orders) return -ENOSPC;
+        shmem_alloc_folio() alloc 2MB
+        shmem_inode_acct_blocks()
+            percpu_counter_limited_add() goto unacct;
+        filemap_remove_folio()
+    shmem_alloc_and_add_folio(order =3D 0)
+
+
+As long as the tmpfs remaining space is too little and the system can =
+allocate=20
+memory 2MB, the above path will be triggered.=20
+
+[1] =
+https://lore.kernel.org/linux-mm/10e7ac6cebe6535c137c064d5c5a235643eebb4a.=
+1756888965.git.baolin.wang@linux.alibaba.com/
+
+>> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
+>=20
+> No, this doesn't fix anything.
+>=20
+>> Signed-off-by: Vernon Yang <yanglincheng@kylinos.cn>
+>> ---
+>>  mm/shmem.c | 13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index 8c592c6db2a0..b20affd57b23 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -1820,6 +1820,7 @@ static unsigned long =
+shmem_suitable_orders(struct inode *inode, struct vm_fault
+>>     unsigned long orders)
+>>  {
+>>   struct vm_area_struct *vma =3D vmf ? vmf->vma : NULL;
+>> + struct shmem_sb_info *sbinfo =3D SHMEM_SB(inode->i_sb);
+>>   pgoff_t aligned_index;
+>>   unsigned long pages;
+>>   int order;
+>> @@ -1835,6 +1836,18 @@ static unsigned long =
+shmem_suitable_orders(struct inode *inode, struct vm_fault
+>>   while (orders) {
+>>   pages =3D 1UL << order;
+>>   aligned_index =3D round_down(index, pages);
+>> +
+>> + /*
+>> + * Check whether the remaining space of tmpfs is sufficient for
+>> + * allocation. If there is too little space left, try smaller
+>> + * large folio.
+>> + */
+>> + if (sbinfo->max_blocks && percpu_counter_read(&sbinfo->used_blocks)
+>> + + pages > sbinfo->max_blocks) {
+>> + order =3D next_order(&orders, order);
+>> + continue;
+>> + }
+>> +
+>>   /*
+>>   * Check for conflict before waiting on a huge allocation.
+>>   * Conflict might be that a huge page has just been allocated
+>=20
+
 
