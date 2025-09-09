@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-808230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D72DB4FC1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:12:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFC5B4FC21
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AD816E983
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:12:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B14C3B4AE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F64F340D9A;
-	Tue,  9 Sep 2025 13:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gp3d7dds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32E3340D87;
+	Tue,  9 Sep 2025 13:13:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF34335BAE;
-	Tue,  9 Sep 2025 13:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18C7255F5E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423530; cv=none; b=LYNhCLC+tWVWlrBWvYE2xplUZWF4qbqNPXIzVyuzdCB5nEjp95thXgvogaoKPYbTVxKxb09uBSVgpd9lDxCUzxaolnX4PZS1mJ1cAz8XJDP1qGITq4/ZVg8kyzlqXRk5G3soe9y0JhGR6C4y540vIoai809G1nTcOLstmfYuBlQ=
+	t=1757423582; cv=none; b=Pbx0qRX5bMQAH441BoQOhfL6FY8vGbHTIHieEpJoV2+CGDKxXubgxAmugeFeSWgZW9ouxdhn+4KUPugLVJCc4hWdqv/uReC0E5z7hSbthvKCxqMyXJnzSFlYt9lz/YyQt0MjmuIErXprYTwynMLwy1E++VDJPDRoU6Hzzaibyb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423530; c=relaxed/simple;
-	bh=gKJA5qVK6epw+rflk+7KDWhPkkSQ8HIBUNn4mxtldCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iav+lbsI1UA7GG8DaKzrJncfjS1Ti0CiXCtnJXNaQ+cPN72LuNmhkEeZLtmKIuc2AhL6D3bYEs8iKswjIR1ljYpgXXRBsLUOT4Qap3JX3AiKpbXDevGjKSSdcLlJKYE8dYaWZzIu5zTUTJ/WlEC1dV/KLMK2fo1WssAJUVoEHao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gp3d7dds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97C5C4CEF4;
-	Tue,  9 Sep 2025 13:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757423530;
-	bh=gKJA5qVK6epw+rflk+7KDWhPkkSQ8HIBUNn4mxtldCw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gp3d7ddsviq3ErlSBbi033LuArTUBYaS5C0afFD1U0Ug2gkTLVzeFPAq/3+Rfke1I
-	 K3jxfcIT0zTgDuNhNuGNhqIororwgN/HQwNLPXP7xVnOPa/PCaQgM6XEJuifEkB3y3
-	 g+D63JOCvT0mJKpyaC5h7szDkdty0dTk5IwhJ/+BUy+z6VteCzJb8JVncXCim/mCuE
-	 L4gjtRR3QyrbH4D+yDjeKPRreF9PIgBHCiTjRMpkkO4Pd4/frN55hEoktz1JXl17Ue
-	 aChOQ6lwu/X7poekW/TNKNK7mijz6JpMnrSRlZj6U3ZRdViK9XmueE7UjbAmnpIL3H
-	 3hDg1Zy85VDEA==
-Date: Tue, 9 Sep 2025 14:12:03 +0100
-From: Will Deacon <will@kernel.org>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
-	nicolas.dufresne@collabora.com, jgg@ziepe.ca,
-	p.zabel@pengutronix.de, mchehab@kernel.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, kernel@collabora.com,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH v8 3/7] iommu: Add verisilicon IOMMU driver
-Message-ID: <aMAno-DkDJumcAtj@willie-the-truck>
-References: <20250827090809.34555-1-benjamin.gaignard@collabora.com>
- <20250827090809.34555-4-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1757423582; c=relaxed/simple;
+	bh=6qQ3DItVAex3a+IFW57jqNRLGBgS5DJ1kwYkirTXp/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sN+NbYzinR1t89kPH841ZmE/tKra5QSmCbG7q5xBinMFTmlNQsSH3XPgSfILL/PsK9qOemk8mLHJwQBVPY0+H6OGEeSLQMQlBSPujPjU1qFXZMvsrzIPp/IAkGptWBm9V0PhOHZK1wQF6FDNxIRGnd4v3XBSSLblhoQN+g+rH0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvy9T-0003qv-9v; Tue, 09 Sep 2025 15:12:51 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvy9R-000QbE-2T;
+	Tue, 09 Sep 2025 15:12:49 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uvy9R-0000000HPAU-2vA7;
+	Tue, 09 Sep 2025 15:12:49 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v1 1/1] net: phy: clear EEE runtime state in PHY_HALTED/PHY_ERROR
+Date: Tue,  9 Sep 2025 15:12:48 +0200
+Message-ID: <20250909131248.4148301-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827090809.34555-4-benjamin.gaignard@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Aug 27, 2025 at 11:07:59AM +0200, Benjamin Gaignard wrote:
-> The Verisilicon IOMMU hardware block can be found in combination
-> with Verisilicon hardware video codecs (encoders or decoders) on
-> different SoCs.
-> Enable it will allow us to use non contiguous memory allocators
-> for Verisilicon video codecs.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> ---
-> changes in version 8:
-> - Add API to restore VSI iommu context from decoder driver
-> - Fix reported checkpatch issues: add comment in pinlock_t declaration
->   and remove blank line.
-> 
->  drivers/iommu/Kconfig     |  11 +
->  drivers/iommu/Makefile    |   1 +
->  drivers/iommu/vsi-iommu.c | 810 ++++++++++++++++++++++++++++++++++++++
->  include/linux/vsi-iommu.h |  21 +
->  4 files changed, 843 insertions(+)
->  create mode 100644 drivers/iommu/vsi-iommu.c
->  create mode 100644 include/linux/vsi-iommu.h
+Clear EEE runtime flags when the PHY transitions to HALTED or ERROR
+and the state machine drops the link. This avoids stale EEE state being
+reported via ethtool after the PHY is stopped or hits an error.
 
-I still object to the duplication with the rockchip driver:
+Suggested-by: Russell King (Oracle) <linux@armlinux.org.uk>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+Related discussion: https://lore.kernel.org/r/aKg7nf8YczCT6N0O@shell.armlinux.org.uk
+---
+ drivers/net/phy/phy.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-https://lore.kernel.org/all/aH5yR9CkYSJ4PaZV@willie-the-truck/
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 13df28445f02..b8963d26af26 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -1555,6 +1555,8 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
+ 	case PHY_ERROR:
+ 		if (phydev->link) {
+ 			phydev->link = 0;
++			phydev->eee_active = false;
++			phydev->enable_tx_lpi = false;
+ 			phy_link_down(phydev);
+ 		}
+ 		state_work = PHY_STATE_WORK_SUSPEND;
+--
+2.47.3
 
-at least drop me from cc if you're going to ignore my comments, please.
-
-Will
 
