@@ -1,166 +1,161 @@
-Return-Path: <linux-kernel+bounces-807763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFB2B4A906
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75169B4A8FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEDF7BEAF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EADC188F35F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296942D5C89;
-	Tue,  9 Sep 2025 09:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A972D5A10;
+	Tue,  9 Sep 2025 09:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lx/o1FXn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gf4EH5ge"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zMXqczCx"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDEA2D3EEE;
-	Tue,  9 Sep 2025 09:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682422D47FE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411523; cv=none; b=AVVugVx2Uqvzz5AMtzMXqkF6XBMYvqveAcM4lt3/V0VzufiHcd3/Oa/pHL/DbKDyu9IQnQ8s+6nXna8wHCRzuT1sktLSmXDgzwpDUomdlWsAvJl5BVXBRwbMcYDTGGKz9Tni813R4LvM7p8aAJs0GRLa8TV3t6jzb49VGcvTzFs=
+	t=1757411523; cv=none; b=h2/BoehplrBzDwazrI7BfFBUzcB2WJG38HCZB3fW7FhtKACfGNHxkohsfl6TeD/XBmCAjXGUNx9WXFhle2+HC9NKhlW+ErHZPlTawHoDyQlp0J2QZ0rRbo8u1ZJfuHBF/mj8sNFsZ19B7TaluqMJ5VM4auc+ha3dPgWl2NbYD/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757411523; c=relaxed/simple;
-	bh=QP/aBIPQSbnVcdKKUXJvpPZF/QKZMFi6CbXoEKsJvh4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gulzORF3wcYHt/SqtFRbyVNt0/UVsm237sl4kr0VuGyjX0RgD/2du2omkO8pOxaXu7MMhSgnoqmcP8OtEql+T/jdho45kbd0EHcLJx1WG8WLCApkN+uFeInb10LE3y7HEU/PumeEPWQ/qYs5EgVoB05o82+YKPlEac6V+jv1qnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lx/o1FXn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gf4EH5ge; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Sep 2025 09:51:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757411519;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Htl9VYOpJyLZ/63WFSvnVtkxGtnkVobts9X9O+GZEek=;
-	b=lx/o1FXnbStQ37jrUmws6+N2iFJ/JjPCOJMI/7Unwqm0V5As1RFSn7OORZVmMB0Helh4ym
-	J+D8qF6HEEGlr+iUazKqC/8FL67bqg5nB24TA0DGM8xnGxaOxImBwz9LA2950DxZH9WTuF
-	Qwg8dUllSA038evp4ockVQr0LiXUlgiLqtKADlzFxkfzwctj1p4Mz2KOoIjoaJkduWX2yh
-	yA6xQ9PlgajcYpgrUknmkc8gPIAuNIM+JBCndNvdCEgYO75ZO3Y6eHLTM4daGpebqyHigT
-	GpXL5/M5dGqShonZwTVCV3LfWaJq2LPRKV42eMzdDn7RjUwdcjEm0TXvmTZdrg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757411519;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Htl9VYOpJyLZ/63WFSvnVtkxGtnkVobts9X9O+GZEek=;
-	b=Gf4EH5ge4LX10BPnnzTEvDRomotQflEjtBzgKYfJ9ByI+vTaacOwClSlSq7VaqW5+2FpJK
-	TBO8jwR2BFj3OSCw==
-From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/gic-v5: Fix error handling in
- gicv5_its_irq_domain_alloc()
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Zenghui Yu <yuzenghui@huawei.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250908082745.113718-4-lpieralisi@kernel.org>
-References: <20250908082745.113718-4-lpieralisi@kernel.org>
+	bh=/nAB+7McT31ZFyxcHGz5vvCMmup4DoT7EB2iLR5nwcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dfzccz/yWtLKcsr8WfWs7/8jdVMLPUcyrWJJ68wpubVXptoBFOXmA1abpq4AI9/ZWeuJZXHbIXgJHtEQ2HcjiUj4ukyw5/Sjo4cOvPvTNO+fEz7pF0nLmTkafL+B2emvq7b7wq7WmhQn4N+EWdz+dKRHbevwjQtLSIVCGBiaqQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zMXqczCx; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45ddddbe31fso18478805e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757411519; x=1758016319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iFGYAxN7KhpHBrugmRev4scw5IytGj3RswCGCmkqFTw=;
+        b=zMXqczCxMtTTyM5JSRPxXKvJJHpRbuZeX5NYNEkg0JCl15iOEjgThVeSd5OuAjB3Vq
+         mXmjPHO2mO9DIaR12JJcdHIBGhwipemNXWSJkpA63ynCK6Mp3KfWTRv4poUJa3kJZ80p
+         tLqhP0runi0iuyAtc8eq1+QXg16v4Bq6QDc2aZxpEaETMQuBPwR53lVWXzDrSZa0DDQo
+         0vLkVNgJX+m/CpNeDFsJXaBLJu9ZxOaGsm7Ewuo3eAJ45IzOpB46bERd7Ukf1yUyMLcC
+         9DsZaodNEnIOJ+uEVPVKhXv8xlSUK7NlBJgukhTr00T9zuwP7acksLWVJUVnWXnO8ayX
+         2M/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757411519; x=1758016319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iFGYAxN7KhpHBrugmRev4scw5IytGj3RswCGCmkqFTw=;
+        b=U3i1R4xDHYMOkUs7PioDEAxUwWWzXtGepImlxKSTsUtjaHkwUiC+ZpMbdsXllkh+Me
+         wsnLn9ilcXg3G9WRPhDMA4P2X/9RjpAeDUAjxbgF3t6ZkI8MuPigZxNuclpeklCiuVW3
+         HiZ+kAv8bvUkenv4/Atj1Ij39/JsuiAruBDx5wvo20KJVCZRj8shSTmA/raXrP9HlqRf
+         Ajgu13p/eO/7jYfZ6SfMRxv58MnQEYIyI3Hez56NFYpeyO2R84O0Ug4b1i9iL2PzoThH
+         HqqAxB3qnveNNzvzsAlYb0YGyXewyQYVE9r0w/QgrxGW0Yqoe4KRK0qZ0bB1KyKls4kF
+         hyOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmA971hBA9klo1KB2qkr0HE62MhyZcURgvYPNsqZ3zm99cZcaXnZC75mdCu86Vy6yXnW1S9p3LDR8/4gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuAO8OgFe7xCqOagHcDjfBiqbhbPXGBv33dRdM0qXPfp6PNOQV
+	4tmgTRAIOKb22u6YMCdMI5nPclgMOImzDEYxBq2gFQXC89YVOQ2t88fGVzKnpwGPl3E=
+X-Gm-Gg: ASbGncvJwxjjs4TJqNYhGSL+xs8eLTl0+rcgUpEGWvuRHGl5CEVPJIKJahQH+Fj2XP8
+	EQ0OWdtGVRzREhjFp3OdAIw8yOOBRIYGnT5uqRqEzAYYQ6dQdWhTbSYpk3d+JcffM7YEbCyay0n
+	ohzJ7Y9NEULvSY8VBviPhpt/D7sn+24sr1De+vzpQxONpRoWpHhHU/OXQcUHgyYbOH1T3LdOpwu
+	TYd1fL71+86jc8nvI5TSc3kXCL0ehV8qvaev1AzLxsfJIX4Nb7L8qD+dsFFI/+izy/CFOQSHZSr
+	SotdAAD1v7MbWenDSK1fMmPp+92UAmpGm2JEoH2ePsEZbIRMglO3LP16ofOga2UhTJw8WqVHgHa
+	FotHmFNiFZdNSqSg7pE38cIfB5qo=
+X-Google-Smtp-Source: AGHT+IESmYHdHard1McUHhkFXGOst3hEfh+qWrJbkAkYlZD2XyacUZJFctXBns93b9p1corUeRwWcg==
+X-Received: by 2002:a05:6000:22c3:b0:3de:78c8:11fc with SMTP id ffacd0b85a97d-3e6497c0668mr9559747f8f.63.1757411518659;
+        Tue, 09 Sep 2025 02:51:58 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea15sm1916533f8f.47.2025.09.09.02.51.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 02:51:58 -0700 (PDT)
+Message-ID: <02cba58e-86f6-48de-a59c-6d31a29258df@linaro.org>
+Date: Tue, 9 Sep 2025 10:51:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175741151009.1920.16587083303795597560.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] perf arm-spe: Improve --itrace options
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, George Wort <George.Wort@arm.com>,
+ Graham Woodward <Graham.Woodward@arm.com>, Ben Gainey <Ben.Gainey@arm.com>,
+ Michael Williams <Michael.Williams@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
+ <aL9HvOl-n_IM0qiB@x1>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aL9HvOl-n_IM0qiB@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     a186120c780e21e4cfd186a925e34f718e30de88
-Gitweb:        https://git.kernel.org/tip/a186120c780e21e4cfd186a925e34f718e3=
-0de88
-Author:        Dan Carpenter <dan.carpenter@linaro.org>
-AuthorDate:    Mon, 08 Sep 2025 10:27:45 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 09 Sep 2025 11:51:09 +02:00
 
-irqchip/gic-v5: Fix error handling in gicv5_its_irq_domain_alloc()
+On 08/09/2025 10:16 pm, Arnaldo Carvalho de Melo wrote:
+> On Mon, Sep 08, 2025 at 01:10:17PM +0100, James Clark wrote:
+>> Most people also want all the SPE samples (instructions group), not just
+>> the flagged samples that are put into the various memory groups. These
+>> should have been shown by default but weren't because the default
+>> interval type wasn't supported.
+>>
+>> Also when looking at this, it appears that the downsampling was behaving
+>> in a way that would discard samples from one group but not another.
+>> Improve that and the warning messages.
+>>
+>> I don't want to put fixes tags on these because it's only changing the
+>> defaults and the behavior, but I don't think the previous behavior was
+>> incorrect necessarily, just copied from tracing techs but not ideal for
+>> SPE.
+> 
+> I keep trying to find some hardware to have in my homelab to test these
+> series, but till then I depend on people having access to such hardware
+> for acks or better, tested-by, so waiting a bit for those to appear.
+> 
+> - Arnaldo
+>   
 
-Code in gicv5_its_irq_domain_alloc() has two issues:
+Unfortunately I don't have any good homelab suggestions. Radxa Orion O6 
+are the only not-super-expensive boards that have it, but it's not 
+currently working due to some ACPI issue. AWS Gravitons also have it, 
+but you currently need a metal instance so that's expensive too.
 
- - it checks the wrong return value/variable when calling gicv5_alloc_lpi()
+Leo should be able to have a look at this one until the hardware 
+trickles down further.
 
- - The cleanup code does not take previous loop iterations into account
+Thanks
+James
 
-Fix both issues at once by adding the right gicv5_alloc_lpi() variable
-check and by reworking the function cleanup code to take into account
-current and previous iterations.
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>> James Clark (4):
+>>        perf arm-spe: Show instruction sample types by default
+>>        perf arm-spe: Downsample all sample types equally
+>>        perf arm-spe: Display --itrace period warnings for all sample types
+>>        perf docs: Update SPE doc to include default instructions group
+>>
+>>   tools/perf/Documentation/perf-arm-spe.txt | 14 +++++---
+>>   tools/perf/util/arm-spe.c                 | 53 ++++++++++++++++---------------
+>>   2 files changed, 37 insertions(+), 30 deletions(-)
+>> ---
+>> base-commit: 75a7b9d29215c5aa813b9620f3c56817918f9f8c
+>> change-id: 20250908-james-perf-spe-period-4711a566cba4
+>>
+>> Best regards,
+>> -- 
+>> James Clark <james.clark@linaro.org>
+>>
 
-[ lpieralisi: Reworded commit message ]
-
-Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Link: https://lore.kernel.org/all/20250908082745.113718-4-lpieralisi@kernel.o=
-rg
-
----
- drivers/irqchip/irq-gic-v5-its.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-it=
-s.c
-index dcdf8bc..554485f 100644
---- a/drivers/irqchip/irq-gic-v5-its.c
-+++ b/drivers/irqchip/irq-gic-v5-its.c
-@@ -947,15 +947,18 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain=
- *domain, unsigned int vi
- 	device_id =3D its_dev->device_id;
-=20
- 	for (i =3D 0; i < nr_irqs; i++) {
--		lpi =3D gicv5_alloc_lpi();
-+		ret =3D gicv5_alloc_lpi();
- 		if (ret < 0) {
- 			pr_debug("Failed to find free LPI!\n");
--			goto out_eventid;
-+			goto out_free_irqs;
- 		}
-+		lpi =3D ret;
-=20
- 		ret =3D irq_domain_alloc_irqs_parent(domain, virq + i, 1, &lpi);
--		if (ret)
--			goto out_free_lpi;
-+		if (ret) {
-+			gicv5_free_lpi(lpi);
-+			goto out_free_irqs;
-+		}
-=20
- 		/*
- 		 * Store eventid and deviceid into the hwirq for later use.
-@@ -975,8 +978,13 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain =
-*domain, unsigned int vi
-=20
- 	return 0;
-=20
--out_free_lpi:
--	gicv5_free_lpi(lpi);
-+out_free_irqs:
-+	while (--i >=3D 0) {
-+		irqd =3D irq_domain_get_irq_data(domain, virq + i);
-+		gicv5_free_lpi(irqd->parent_data->hwirq);
-+		irq_domain_reset_irq_data(irqd);
-+		irq_domain_free_irqs_parent(domain, virq + i, 1);
-+	}
- out_eventid:
- 	gicv5_its_free_eventid(its_dev, event_id_base, nr_irqs);
- 	return ret;
 
