@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-806938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ACA9B49DA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:54:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA353B49DCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F020E3C6ACF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Sep 2025 23:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71A844391B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D09B3101D9;
-	Mon,  8 Sep 2025 23:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1955D42AA4;
+	Tue,  9 Sep 2025 00:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D4UtkBDx"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lTibQFap"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5BE1CAB3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Sep 2025 23:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7E74A07
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 00:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757375665; cv=none; b=UCT5aQt1tXFEiTi4ecNn/BgjsaaW51dG/1KRTcLGpe1MU4QUsrziXvPST9bgT0xCKRRXvYJVIsRngs0mGkWuRw4CBz7ljyAj8V5gPhHME2EZxK8NHI8AnB/qLUlRvdKRhzE9dEwZd3XRtqTucmUH402X7RzhDikXdV/xTBiyUvY=
+	t=1757376049; cv=none; b=rq0zBpV1VVyMW6rOmusejdvJhOTNVzdMGFVipc2QdG/dq1nJQ1y6KydmCT/PkyXd76wgJ+84AbNyJIhmAAQfNFSCp0PgtpR09iWjL0VtNxpPJ4VxqiSdMdMBuiMFfNSO0NPOeJ2CcIaKtipjf01YmpWJeisBt972z6FblMriJeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757375665; c=relaxed/simple;
-	bh=nqQiLGDt4E8Jq4QZSeVe7zoFw3b3ODJL8vpKGUrpq1Y=;
+	s=arc-20240116; t=1757376049; c=relaxed/simple;
+	bh=t43UlVpJasRoQxmkSV3wU/+OU03S3iZK+XwFqLne8/4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=P4vk3EQ5fLdFZRzsYZbS1kEZPtiPB1Sa1t2v20DbbCVVEZwKYOY7CHUl1v817MJxio+h9mmK7CQ42mGEEzJvam1GSK+604HCbJW7ggm80tPv51HqaMnggQn62ltf4TdPVEpDud6SBUPxHq80K1SRbXY0/PLZoFxYae1YuUUXE9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D4UtkBDx; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=S/lKzfhPoykJZE4bJTSRfP3BAl+NXGJkLK/+ktK3954237aKQGO4WzS74NQnsA/u9hQtxUFslYL2EBM5gJmejnwort7AuI+udaNYFnj9PztCFN62I3c16ClxPNiprgCzCXN9Gac8ihRQF9yt/wa0kOIFkefQ9RP7/sHM5p3qi8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lTibQFap; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-772299b3405so10293383b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 16:54:24 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32811874948so4308135a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 17:00:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757375663; x=1757980463; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757376047; x=1757980847; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/rfS9/CYErQEW8MvIwXJiXzKk2lG6NUVw07jdOfv2E=;
-        b=D4UtkBDx6kewgzUqBGgAizUJQL+gilwW6/qUW7e1sW9aLGQQJrdZI/uSXgJCkfEsok
-         BxXjOZVcva7pGHmBk6fyDs8VvDQm0KHaWgZWAfrT+BZahGLSBNk2fibvaOeHXJLmQkH1
-         /gJhA+PUgHl+TV93h2958FIIvV6+PqLKUtlXZPPYQUR+0lXvnb6aw03Lm6G9TDS+ua0f
-         yBG3oVWlZHr/eyz43zxB6Fwj4xXSaEwbh8FYRpAW9zsRIMmWjLloCnX5yomvCKf/2HYf
-         kTJTbvZcVH7t4a+PbxM9FC3gAaB99cU7SmecDa4l5X2IrsJXJ1jQk9UivSx2CaL3htFY
-         IgdQ==
+        bh=HsJSTvORJeiE9AQsY+DJV4sYMEZ3S3aUT20uePDrvh0=;
+        b=lTibQFapm4QWn/J4TXdRViO1Oa/uzU51tR71zZJD/Cmos7nHNkHrvckXhmmFavL+KU
+         QcY0Ce8ZnVW/UNFGQuUUI9nW2SCeIe/Bad0wW5eEDyv4DncaPOgakPmDl2Tla2gi9S/F
+         OpyzEB/2qNbR4W74Bn7NwQOFRCpQiShgZWj+obyV57zBpcFpYijFO8u4bT5J2FcEfBcA
+         toDy24WT+lB7pevWOakh6MjQI5Geo5E9YiOqoYiTkguySRsoj6qEqByvjj1F9GSekB1a
+         tqRGUhHxIgEXnvRyi345ln2pds1Mq2yCcM5cOUlrcdbMn38mS5PHJhKPTommFZfI/MdV
+         riTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757375663; x=1757980463;
+        d=1e100.net; s=20230601; t=1757376047; x=1757980847;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/rfS9/CYErQEW8MvIwXJiXzKk2lG6NUVw07jdOfv2E=;
-        b=uZWOiaC+n9Epst+mP/nC0uS9M/su36aM8YQNVmkK8Wvceyh+1h6YitzYgQD9cXngAB
-         2zGvA73SgzuFeTUB47N8N2WJ+PCJenft3FJB8Yd4xJo/WKmO1LcARYdV655l4dfFwmkb
-         gP7mBC29f/24r67sz/InpUnfcmr7atkrb5X3KOQJMeP0RRwwroR9giHCMHVjA/SfpaYT
-         v0Ua9e+0wXHRgEXbHmiQOBkObHj/jftjDBoRUSiR5l2Vsvs5aI/bmZcRy/+ogeAV1x9H
-         lhjwKyojZemy2XvQkvIMh+qhbJIbAJ0dYZzLk8dMEotTG2X0Aa0LXyRkzzcK+fFNnWr9
-         Zk/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXMlxh4c/RmuLl6a5aj4fWntsmNXrY+LJEmjWbed0hLs0B69wSgQTuD5/rOvxJhpQq64vGgVQ3m7Y2rf1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbG9Av71XKmBWePNZ39UUMYbuY0DPlU3Z81wwIGl5n5bcDRiPu
-	2cJIqvpHrHutgFDx0YcMIPHB1jbqIDTE4cRJDP6EKR3UbCk89nUFbrmT2QW7PE0+G91ux+luqmx
-	z7QQf3w==
-X-Google-Smtp-Source: AGHT+IHFuX9HZZ+3Ap9KfIP9YqmTsis1lj1RdPwzOjpZRGAUvoQwOVBBtSltO2l5sj1D1kqm/ucDlsqS4As=
-X-Received: from pfet12.prod.google.com ([2002:aa7:938c:0:b0:772:32b1:58f9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1394:b0:771:ef79:9338
- with SMTP id d2e1a72fcca58-7742def5d1emr11472262b3a.21.1757375663426; Mon, 08
- Sep 2025 16:54:23 -0700 (PDT)
-Date: Mon, 8 Sep 2025 16:54:21 -0700
-In-Reply-To: <b55f2ab4-da7c-5fed-adab-ceca54282ddb@amd.com>
+        bh=HsJSTvORJeiE9AQsY+DJV4sYMEZ3S3aUT20uePDrvh0=;
+        b=kto/8Ts2NPBRpP65KD5pbsOfj6UdR34GKtBdf8vbrpkikXRzkpAwV6zi1Vjmsr4m2t
+         OV8jjLJ8IzoE8iKb5YMm/T4xJw48oUVbzo+4vozDF3yTUXXgzrpE7+/wCsKRkjF5RU9J
+         Z4bCgHkgEbckBI2BfY2AfoMVg7uoLiT7f3UlRnRaXWUGgNgbar0p/WFI5uaYCHNLraHT
+         D/txk7PwbtTeTi+kcW6Oo7of+0PcW1SekZgA7LmEHVZ+ebGWfpYr/ORLJxzjqDMn2tUA
+         CM+gV1elSepgSgTNo0qzjUkxcve2zWmrCqb9QGiw+z9iuTDrsDmauTszJNKqZkRwZTgG
+         7yFQ==
+X-Gm-Message-State: AOJu0YzF/8O9HkrePnHCQIjPRcD7dlletrFCYQKVfO6m+p736YpyGqP0
+	5HMF8PKNDSC6PK0dJbUO78gcjRw87iepcLL6eYUl1tpNEnyFz9GcnfV89vLBF8zH9YAl2fFC+7z
+	TNGwugQ==
+X-Google-Smtp-Source: AGHT+IGN+rw9t4njipIiYxG3sgW7qTh9wknWMp/Sn0+Kp9pr6wiAlds7UuRQrwUPPIjws8ivFi1cX3gkDSc=
+X-Received: from pjbsv16.prod.google.com ([2002:a17:90b:5390:b0:327:7035:d848])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c83:b0:32b:be68:bb35
+ with SMTP id 98e67ed59e1d1-32d440cf991mr11855628a91.36.1757376047061; Mon, 08
+ Sep 2025 17:00:47 -0700 (PDT)
+Date: Mon, 8 Sep 2025 17:00:45 -0700
+In-Reply-To: <20250908212925.708769718@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250826233734.4011090-1-seanjc@google.com> <b55f2ab4-da7c-5fed-adab-ceca54282ddb@amd.com>
-Message-ID: <aL9srWU7gnKJzeig@google.com>
-Subject: Re: [PATCH] KVM: SEV: Reject non-positive effective lengths during LAUNCH_UPDATE
+References: <20250908212737.353775467@linutronix.de> <20250908212925.708769718@linutronix.de>
+Message-ID: <aL9uLYpUcOA9Jt4q@google.com>
+Subject: Re: [patch V4 07/36] rseq, virt: Retrigger RSEQ after vcpu_run()
 From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Roth <michael.roth@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson <mjeanson@efficios.com>, 
+	Jens Axboe <axboe@kernel.dk>, Paolo Bonzini <pbonzini@redhat.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
 Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Sep 08, 2025, Tom Lendacky wrote:
-> On 8/26/25 18:37, Sean Christopherson wrote:
-> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > index f4381878a9e5..746a57bf1f71 100644
-> > --- a/arch/x86/kvm/svm/sev.c
-> > +++ b/arch/x86/kvm/svm/sev.c
-> > @@ -2360,6 +2360,8 @@ static int snp_launch_update(struct kvm *kvm, struct kvm_sev_cmd *argp)
-> >  		return -EINVAL;
-> >  
-> >  	npages = params.len / PAGE_SIZE;
-> > +	if (npages <= 0)
-> > +		return -EINVAL;
-> 
-> Would it make sense to include a !params.len in the giant if check just
-> above this, e.g.:
-> 
-> 	if (!params.len || !PAGE_ALIGNED(params.len) || ...
-> 
-> ?
-> 
-> That way everything related to checking "params" remains in the one
-> statement.
+On Mon, Sep 08, 2025, Thomas Gleixner wrote:
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -49,6 +49,7 @@
+>  #include <linux/lockdep.h>
+>  #include <linux/kthread.h>
+>  #include <linux/suspend.h>
+> +#include <linux/rseq.h>
+>  
+>  #include <asm/processor.h>
+>  #include <asm/ioctl.h>
+> @@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
+>  		r = kvm_arch_vcpu_ioctl_run(vcpu);
+>  		vcpu->wants_to_run = false;
+>  
 
-Oh, yeah, duh.  I overlooked that the only way for npages to be '0' is if
-params.len is '0', because the PAGE_ALIGNED() check will handed len == 1-4095.
+Finally had a lightbulb moment as to how to eat this hack while not stonewalling
+the entire series.  Can you add something like:
 
-Will send a v2.  Thanks Tom!
+		/*
+		 * FIXME: Remove this hack once all KVM architectures support
+		 * the generic TIF bits, i.e. a dedicated TIF_RSEQ.
+		 */
+
+to discourage further abuse, and to make it clear that such ugliness isn't anyone's
+first choice.  With that,
+
+Acked-by: Sean Christopherson <seanjc@google.com>
+
+> +		rseq_virt_userspace_exit();
+> +
+>  		trace_kvm_userspace_exit(vcpu->run->exit_reason, r);
+>  		break;
+>  	}
+> 
 
