@@ -1,153 +1,128 @@
-Return-Path: <linux-kernel+bounces-807792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF319B4A94E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847B3B4A93E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C091895DB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317F8178698
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D17317704;
-	Tue,  9 Sep 2025 10:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A91314B8E;
+	Tue,  9 Sep 2025 10:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyrqvrah"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djM9+JjF"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F58313E3E;
-	Tue,  9 Sep 2025 10:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07A5314B89
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757412024; cv=none; b=jXWC7cOpLefwMKIvcH9kQywz93SflRLRmqBFD4IDmymIXlTLvzS5PwlJT94FyEEm8J2DnKP99B2D9EuVNGjfqfGwO5k50PWeDiX7E5yQlBMIaN+VYHRbmnjDLhnW5mfyDPKKFMircZ/RIXIB97gAsiPq74KyQWv5c5v8p4lQbAM=
+	t=1757412054; cv=none; b=Nz5TZQLTC9gsSdcT6X7RyZfOfA1MpGwRO0jg7gn7/b0Kq1ucHOuSlWD8XiQe9F2tegy6X/stL0jq3mpkO0atToLQHQiSGWWuqQXF/M8VR2syytRcUwWuCDoOcOaYVhfWzLUBwJBlFf5qeghwhDWDj3rcocm6FbZAmqOSQzw92k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757412024; c=relaxed/simple;
-	bh=sel26hbdubN+palGD2gZ0/eOdFAx9Akb98dFmcE1PVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hnp/SGCzsadCTKy4Gl/7HW/q8Cw+usBW+jJZcDipRz1eQQiem41duO+dg/SlTi8Tusqoe17YKOcxlZXgMosAbNbUHAWRv/9TxTChV4I708atOMN8YKRqsTi/LrYyl17+j7yZ9PtGU5SCTIYfWTfJ4A5na/YuGA2gOTrktphenSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyrqvrah; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1757412054; c=relaxed/simple;
+	bh=Slu5P8r0LHK6Jp3prV/7F1/5MptqhIDFYEYC+2CfMUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QluN3iR41fqnxS5LTfEzmlElq9bGT+Z25cT2nWr21LuFmfwW1E+3PlqjkZds8WtClKLtwU6QkNydpGdGSTrGCt6cF3i7bmLC0A7sWTqxBX8unkWPrzt8iM8XhNwHQe955uu/U7NTq32T2x6jOq+NgcaAjyfsRNJSQDUPZYriu4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djM9+JjF; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2445826fd9dso64105425ad.3;
-        Tue, 09 Sep 2025 03:00:23 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so48157365e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 03:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757412023; x=1758016823; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jOx81+m5TMKBCfvFeUd2lc1fUQ8CVG2MRH89iHXYyPo=;
-        b=hyrqvrah7hSvGOqxW563p5/ejvbwhbwGbleoOl/Mc4+KfRDyXhVb02Cp1FfjSBKrJ+
-         oCOTXkhTWM46yWFgGO9fQHzbhZCIAD2kQBRy/ujRaw1+hgf4H8slS5X2K/Pq19DJI/XF
-         GVGiI2lrixdCgKhrZX1Wyi69IUfGmm0A2oQ62ffoQnteBWUEFiL1HHuuGy/kedx9E8Ih
-         eKVaf7C+j63PUikSlX9s3pEbXt5ebbvz1OH8kUG13E3vCP/tIoMc3vm10n/OXE/DdJhO
-         AWugg3O38TVIoo9b0hj/K8Nps1UfhVQdwB6M3BovzOZQta/BsMczGx5K+sV4YbQrZq0I
-         4sOw==
+        d=gmail.com; s=20230601; t=1757412050; x=1758016850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vWjL6fWQ6ts2PbHk6RH5bPsx2j9pJX+mY/or7KNz6F4=;
+        b=djM9+JjF/nbO8J4g688q6HDExvPL2c5Ko9yFHMJLMfQ0XZxcjs2IWUhLSZkyJEBVv4
+         nhuF8RxCBUE/wNLUDeF0aA/tW+gIFd/H6Ssc42+2TnF6ZqBhDHFNWozaa6a2vbEU5b4I
+         MG2N73q3Pv+lFFNKNJcCXyPCsyXn+8OINadm2j0UMRr3dkNW7YNd2ueL/sifFhFtn2Ef
+         FMf96MR8MFnbzyDYv/H+UpfkbFbuFeaAL5cG/LWCE7hFItII135a4UX0kuIxmkKE6Rw8
+         EwwvRo5g4rG+4sqe6pV2ELHJuoQopGVXo6kx7lua9G+U/efUIxhO8IC/09TgrEFd//ev
+         aUqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757412023; x=1758016823;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jOx81+m5TMKBCfvFeUd2lc1fUQ8CVG2MRH89iHXYyPo=;
-        b=t6WA3nFtKzV5QIPLYgstwNpun9GtlfOajgjyezXLi6ywiAsggzOoU/YoFi5LcP3ZCq
-         bWzfMlXhkavSvKqUO+r3hg8Hd3x2hN4dI6PS+p0i/XafJ3ZdN2Yn0RdcLPhxt3eifyzJ
-         EBJ9KXBQSyMkQb10Vpy6Fnj3LovWbAHudsJ0Nn5xK1rGaUypACyPQ90CJSVWZRi5/cWs
-         yj+uZDhMYYCrrKuazVlJGfJNWPHf6XjaRFYO1O3uXx035QUs+LO//Af6KQFBOzwpJ/mE
-         icpZWxjHDGfjq0OZCf7MVvy0wmdLWHIh7EZHTzciHlLzMv3/GPKpItedHbap7k8nK7J+
-         PlhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+wRWaXFITv2qvEvDQhgGbll3rdJRKutjXcD2YfOypynrOnSJZTbtvDiGOUQdN3XM2BfgVDXI8@vger.kernel.org, AJvYcCUfMDYOnDxBVLbGzM0yrIqGJj4yYyQhDwHibpHG+Nz7+LBStwlLzMZZcVAtu+TSBtiMiSKAOFwqRJXkVS7vLSvK@vger.kernel.org, AJvYcCWpSHyLOW2BNUV3cDnG8yMpujCuHrTgqMhDXTJvS9ksYtB9w+6bfQKNNDyfdueHQZfELVVqiDIeF+zZZkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTRNFoDOK391OBaduobUgjj8rPT9Mn7mlIzi4/zv5MfYUuvcgl
-	jDonPPPxQO8TPM3l+A+R7ai212OCwRBwYFbPuML4E4SOY47gI9zao6Ng
-X-Gm-Gg: ASbGncsL6NQDu+8OxUZ5JmAO5+7QtDzAr+ro81fP/g7wOCGPjV9pFuM3nTCID+IonI2
-	n6MYf+cLbDUco8Ku+L+yYKN8aRvSHauUoWY5PO3lSIn40qoubLtZPQ7twStdlx8lZvFfLNmZAAW
-	kXRlcJrKR12pi+4Rh5KazD1dyefMSO+26af+FZzatd0O+chHI2p1JQYZXc9uNUi/gwH4AzFEt3+
-	+QTgTj1MiD27usmjplsOHxLL6m/Ir8HJi5LchT97BIXazpr91KelR/iZyDlz5krKQLkX21bSFZ1
-	eaWbmKnS90sGXIMtC1SEJsbGjMXteOhqUlOYEo1jh7oHm3UCBhJYkU/ksTbOC9eFXlw6lUAftpj
-	4gVXh+nAdAdNbbOLsQJHJHXB4
-X-Google-Smtp-Source: AGHT+IFODb9BV49tp09UgtdQ81xWoNMdmIOHFlia0/7sBhuTUz5mRZhUGLhapz+IyBuFX8A7Wx0f4Q==
-X-Received: by 2002:a17:902:ec8e:b0:24c:d33d:418e with SMTP id d9443c01a7336-2516ef57cdfmr170678475ad.1.1757412022461;
-        Tue, 09 Sep 2025 03:00:22 -0700 (PDT)
-Received: from [10.101.1.72] ([140.124.249.9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ca63c9e71sm161671585ad.95.2025.09.09.03.00.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 03:00:22 -0700 (PDT)
-Message-ID: <a3d1c5ca-cdce-428d-8c1c-6a1f59e2dd76@gmail.com>
-Date: Tue, 9 Sep 2025 18:00:17 +0800
+        d=1e100.net; s=20230601; t=1757412050; x=1758016850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vWjL6fWQ6ts2PbHk6RH5bPsx2j9pJX+mY/or7KNz6F4=;
+        b=Hj3SbIkbXXnD4zgZdzYOCTV+mjyscLIxcazbmI9dvpGrSWF7yCtNOWY/n4hFz5Ll1U
+         k7XIYr4Ol7/Rk2+eiSk4AK9O6RgPaGWgDpHkwMIMpB4gjAXESOBwybs3TaT8vvrAA4ix
+         gIatCp40X4kytS2fjAoZhTnclpQO1WgfyBGbzOeZS/5Zhy5Xs/NG9FJK+2anA8gT3uij
+         akNrFxv0+Fx/iXdKPxQ9lxyvY55n/6MOPKMqketaTrcLwvBE+06PnC41KVGomqdAJcJl
+         CeDeFOn5iUrqHHiCX8bZPNvoclUrzcluFWXTOMwNwaxSplN7LF74pbfUiflqf1XDeQoz
+         NYxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxDGBNKSrpK7OiwamCUp46ovK6dicOc1/w+xar5w941sp5ahOss53GHJNzHowHrdTPfOqqKCcTM3AmoBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2nSJKYOKIQ/PhlmJ0fHabHHL9XSBksx587HmXaQAWL+ad+lp4
+	LQEOnTmA0/IAwzDEu5UfVbreqHjcj3nxhDjal70Rcu1S1KAtprnClYfQ
+X-Gm-Gg: ASbGnct6gwXSfketv0gdAnp4tx+cgnMVnoy4S3vRMDt1RHwAbeF+gzLunSmoF7LKnWt
+	48yg+B5ULN9uDlURqfObA569qt3WbqRwhOMqHBCGpvOV3+EcTr4QG/4ZXb3NtS2Z5m8Z8wglaGM
+	1TosHvTcIV5LllEBvE4U0RBHPRvlyIJRQaHsHT9JTSN5ZzTKS9Of7ifuafNnN197t2rlEjbBxyW
+	vnwtTAn075H9uPtWfHp+ulQDr24TqAyeeI/VGeBos48j7YzYu9mAFoFFCy3ljixT4MsZ4yCvpxq
+	3NxKHkVA8wgonxY/8HLrk4fRjEkPNgL3/CGdILnLHbyV6ir4dGpuWyqk4Nvcpdla9WUGSOWs0/J
+	VlSdFLy5bpk/nj/deH6kD8Wf28qf7WIy1qw==
+X-Google-Smtp-Source: AGHT+IH5MStqYR3WqijkASLiXsN2hWC7VOPdq/6i6k0WD9JEvGDTxARnSTnfaeHkOwpDxds2O+9mUQ==
+X-Received: by 2002:a05:600c:46cf:b0:45b:67e9:121e with SMTP id 5b1f17b1804b1-45de2b4e677mr71029565e9.14.1757412049872;
+        Tue, 09 Sep 2025 03:00:49 -0700 (PDT)
+Received: from fedora ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df3353ae6sm3641375e9.0.2025.09.09.03.00.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 03:00:49 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH -tip] x86/asm: Use UD2 mnemonic in <asm/bug.h>
+Date: Tue,  9 Sep 2025 12:00:21 +0200
+Message-ID: <20250909100038.1709394-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/net: fix unused return value warnings in ksft.h
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
- <20250908182018.28d9ff10@kernel.org>
-Content-Language: en-US
-From: "Nai-Chen(Simone) Cheng" <bleach1827@gmail.com>
-In-Reply-To: <20250908182018.28d9ff10@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-09-09 09:20, Jakub Kicinski wrote:
- > Is it just a GCC warning or rather a combination of GCC and some
- > misguided glibc decorator to force check the return of read/write?
- > Naming the compiler versions and the warning flag which enables
- > this would be useful. We don't see it building with normal warning
- > level today.
+Current minimum required version of binutils is 2.30, which
+supports UD2 instruction mnemonic.
 
-Thanks for the review!
+Replace the byte-wise specification of UD2 with this proper
+mnemonic.
 
-I found that the warnings occur under specific build
-conditions that explain why it's not consistently seen:
+No functional change intended.
 
-The warning appears when manually cleaning and rebuilding net/lib/:
-   cd tools/testing/selftests/net/lib/
-   make clean && make
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/include/asm/bug.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The warning messages are:
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index e427a3f7b751..de6015765015 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -9,7 +9,7 @@
+ /*
+  * Despite that some emulators terminate on UD2, we use it for WARN().
+  */
+-#define ASM_UD2		".byte 0x0f, 0x0b"
++#define ASM_UD2		"ud2"
+ #define INSN_UD2	0x0b0f
+ #define LEN_UD2		2
+ 
+-- 
+2.51.0
 
-ksft.h: In function ‘ksft_ready’:
-ksft.h:27:9: warning: ignoring return value of ‘write’ declared with 
-attribute ‘warn_unused_result’ [-Wunused-result]
-
-ksft.h: In function ‘ksft_wait’:
-ksft.h:51:9: warning: ignoring return value of ‘read’ declared with 
-attribute ‘warn_unused_result’ [-Wunused-result]
-
-This is triggered by:
-- GCC version: 14.2.0
-- -Wall flag (which includes -Wunused-result)
-
-During investigation of this unused result warning and following up on 
-the patch by Minh-Quang Bui [1], I also discovered an issue with the 
-selftests build system: running 'make clean' from 
-tools/testing/selftests/ doesn't clean objects in net/lib/ because the 
-clean target doesn't include $(INSTALL_DEPS_TARGET). This explains why 
-net/lib compiled objects persist after cleaning and why the warning only
-appears with manual cleaning of that specific directory.
-
- > Can you not cast the read() to void directly?
-
-Sure. Direct casting is much cleaner. I haven't noticed it... Thanks for 
-the advice.
-
-Would it be acceptable to:
-1. Send a v2 of this patch with the direct void casting approach and 
-more precise commit message?
-2. Send a separate patch to fix the selftests Makefile clean target to 
-include $(INSTALL_DEPS_TARGET)?
-
-[1] 
-https://lore.kernel.org/all/20250601142914.13379-1-minhquangbui99@gmail.com/
-
-Thanks,
-Nai-Chen Cheng
 
