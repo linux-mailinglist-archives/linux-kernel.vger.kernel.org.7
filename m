@@ -1,110 +1,199 @@
-Return-Path: <linux-kernel+bounces-808223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE14B4FC11
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB76B4FC12
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536231C28232
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73DD16B8B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E063341642;
-	Tue,  9 Sep 2025 13:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0C33CEBD;
+	Tue,  9 Sep 2025 13:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rot2GEcQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XCH0RLwA"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FF3311591;
-	Tue,  9 Sep 2025 13:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D82DCF55
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423199; cv=none; b=Kdj1w4De/MfyEC6fhSgb5A2rDNGVJV1aJmu+bn345Z7/AMN9nAj4BlvSENPGKdhC8uZHasIJkFmOgWDdROt7/x0eGfMXqBj+yh2GTaJSofte3dRbHwyKFvXl8t1zJDQbeTk3+GM+VeGqfbzCa5qSMnRz8Vro9WlN0/AJ1+FFV68=
+	t=1757423286; cv=none; b=g43cSfWc5VjIYOZV2gNieCvD4H/b6JVgQzy5zLBB9BEmtBdb7rzH3djx36ICh4pI8E/PM/2d5oIMjdBfCJdtLp52g8V75HoAba+/sVXyiX9M9EPkYn0nh5uOb5gRCjnZ+SSpz2XUXE7s1BuXg6c9WQiwUCBVaN9pD8NjpQqNoIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423199; c=relaxed/simple;
-	bh=qD3qU9O4hlrWhqMeW5jgxqVBElkWJH2c2E7/Z1BSu6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8qdFHvdc9uxhyXVCji9rtyYu5NoFxQUfZzycl8SyeEtLpIeFzyRWE9Cc6y4fvAdLlbncBTDDwUtElfs3UYhVZKGdbROoEd96AUCTNcUxAgXqCkvqyZI27Fj0p8bghYi4ngW15Ens27ZwTTvEEzlDbTlVp+hrEPb8K+oDWTioIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rot2GEcQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB552C4CEF5;
-	Tue,  9 Sep 2025 13:06:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757423199;
-	bh=qD3qU9O4hlrWhqMeW5jgxqVBElkWJH2c2E7/Z1BSu6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rot2GEcQCJuw19L4oJjHHEmn/gp9gGTbjsbZB15G3pfXwHp2rhi+7dwYum6IPmC88
-	 H4+LtAugy5wda6Ay31wKIZFcNznjpD+4lAIlsH7f2MgUBBjmiDvn0DzpydQmoxxqHj
-	 9cgknz8DROKFqNQeUjCok2xacqJRa/ip9fuHHipB/rthodIAgM7JruLmjUrgv7bbzC
-	 oRvZ9yraynZUF/e5ihhvklsZT2gw7sHZ8QV9TKkJVq8xNOZwH3HfuHtp0G4doHG/tZ
-	 akpgbgcMPbQ71HQZUCD0LWST4W747Js1bAV9ZF89mIzPmDsn+OwANl9PQK218ef64j
-	 FBvO0AKp0XcgQ==
-Date: Tue, 9 Sep 2025 14:06:33 +0100
-From: Will Deacon <will@kernel.org>
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	yangyicong@huawei.com, wangzhou1@hisilicon.com,
-	prime.zeng@hisilicon.com, xuwei5@huawei.com, fanghao11@huawei.com,
-	jonathan.cameron@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
-Message-ID: <aMAmWQJy_G50xoBf@willie-the-truck>
-References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
- <20250814093005.2040511-2-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1757423286; c=relaxed/simple;
+	bh=7TvPHVtfVU3xUULY1g/HKzfegilr3cmBWwjzgYJehYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nv75jehQmHYj3Ujt8lolsDHKutur1UacuMLxDyqysTMZKHCrVR07RTOa/2/RWoBieYNx4PHb83THoL9MYFextLHlNQrQq1nmMeTxGNKaUTgxon5HB6Tfd9xkV2PlEV0dtvIH5jhrqlGkyRdJEEjeL5IDS3xo1hL0lB4lC4fPKvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XCH0RLwA; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <eae6de3a-284c-40f4-bdfa-ca4b98bf55e1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757423281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VkpfIlQh+PrxiqAnGrk16U7YS7hQ+EsyJNWqMlpTq4E=;
+	b=XCH0RLwAq7GvBXD/CYUKT+pkmDYL4PTvkkYgxbhAyWPJ0YqyDAx/mVQRykhzytW2cgvk0l
+	i1p4C4jZr3yfr0+Tel1hjxiqoisVKi//IEo+WNt6IrBlgCw9Zj04v1x69XD4awpqWN7lIV
+	VXUDGdhmTX4MdLHFvByADlfI93jgOsA=
+Date: Tue, 9 Sep 2025 21:07:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814093005.2040511-2-xiaqinxin@huawei.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add stacktrace map
+ lookup_and_delete_elem test case
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250908113622.810652-1-chen.dylane@linux.dev>
+ <20250908113622.810652-2-chen.dylane@linux.dev> <aMAfAf1JEAcbYOuq@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <aMAfAf1JEAcbYOuq@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 14, 2025 at 05:30:04PM +0800, Qinxin Xia wrote:
-> +/**
-> + * iova_info_dump - dump iova alloced
-> + * @s - file structure used to generate serialized output
-> + * @iovad: - iova domain in question.
-> + */
-> +static int iommu_iova_info_dump(struct seq_file *s, struct iommu_domain *domain)
-> +{
-> +	struct iova_domain *iovad;
-> +	unsigned long long pfn;
-> +	unsigned long i_shift;
-> +	struct rb_node *node;
-> +	unsigned long flags;
-> +	size_t prot_size;
-> +
-> +	iovad = iommu_domain_to_iovad(domain);
-> +	if (!iovad)
-> +		return -ENOMEM;
-> +
-> +	i_shift = iova_shift(iovad);
-> +
-> +	/* Take the lock so that no other thread is manipulating the rbtree */
-> +	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-> +	assert_spin_locked(&iovad->iova_rbtree_lock);
-> +
-> +	for (node = rb_first(&iovad->rbroot); node; node = rb_next(node)) {
-> +		struct iova *iova = rb_entry(node, struct iova, node);
-> +
-> +		if (iova->pfn_hi <= iova->pfn_lo)
-> +			continue;
-> +
-> +		for (pfn = iova->pfn_lo; pfn <= iova->pfn_hi; ) {
-> +			prot_size = domain->ops->dump_iova_prot(s, domain, pfn << i_shift);
-> +			pfn = ((pfn << i_shift) + prot_size) >> i_shift;
-> +		}
-> +	}
-> +
-> +	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+在 2025/9/9 20:35, Jiri Olsa 写道:
+> On Mon, Sep 08, 2025 at 07:36:22PM +0800, Tao Chen wrote:
+>> ...
+>> test_stacktrace_map:PASS:compare_stack_ips stackmap vs. stack_amap 0 nsec
+>> test_stacktrace_map:PASS:stack_key_map lookup 0 nsec
+>> test_stacktrace_map:PASS:stackmap lookup and detele 0 nsec
+>>   #397     stacktrace_map:OK
+>> ...
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   .../selftests/bpf/prog_tests/stacktrace_map.c  | 18 +++++++++++++++++-
+>>   .../selftests/bpf/progs/test_stacktrace_map.c  | 12 +++++++++++-
+>>   2 files changed, 28 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
+>> index 84a7e405e91..496c4dcf4ea 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
+>> @@ -3,7 +3,7 @@
+>>   
+>>   void test_stacktrace_map(void)
+>>   {
+>> -	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
+>> +	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd, stack_key_map_fd;
+>>   	const char *prog_name = "oncpu";
+>>   	int err, prog_fd, stack_trace_len;
+>>   	const char *file = "./test_stacktrace_map.bpf.o";
+>> @@ -11,6 +11,9 @@ void test_stacktrace_map(void)
+>>   	struct bpf_program *prog;
+>>   	struct bpf_object *obj;
+>>   	struct bpf_link *link;
+>> +	__u32 stackmap_key;
+>> +	char val_buf[PERF_MAX_STACK_DEPTH *
+>> +		sizeof(struct bpf_stack_build_id)];
+>>   
+>>   	err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, &prog_fd);
+>>   	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
+>> @@ -41,6 +44,10 @@ void test_stacktrace_map(void)
+>>   	if (CHECK_FAIL(stack_amap_fd < 0))
+>>   		goto disable_pmu;
+>>   
+>> +	stack_key_map_fd = bpf_find_map(__func__, obj, "stack_key_map");
+>> +	if (CHECK_FAIL(stack_key_map_fd < 0))
+>> +		goto disable_pmu;
+>> +
+>>   	/* give some time for bpf program run */
+>>   	sleep(1);
+>>   
+>> @@ -68,6 +75,15 @@ void test_stacktrace_map(void)
+>>   		  "err %d errno %d\n", err, errno))
+>>   		goto disable_pmu;
+>>   
+>> +	err = bpf_map_lookup_elem(stack_key_map_fd, &key, &stackmap_key);
+>> +	if (CHECK(err, "stack_key_map lookup", "err %d errno %d\n", err, errno))
+>> +		goto disable_pmu;
+>> +
+>> +	err = bpf_map_lookup_and_delete_elem(stackmap_fd, &stackmap_key, &val_buf);
+>> +	if (CHECK(err, "stackmap lookup and detele",
+> 
+> nit typo 's/detele/delete/'
 
-Why is the IOVA rbtree lock sufficient for serialising the page-table
-accesses made by ->dump_iova_prot()? I don't see anything here that
-prevents the walker walking into page-table pages that are e.g. being
-freed or manipulated concurrently.
+my fault, will fix it in v2.
 
-Will
+> 
+>> +		  "err %d errno %d\n", err, errno))
+>> +		goto disable_pmu;
+> 
+> should we also check the record got deleted? like make sure following
+> lookup fails with NOENT:
+> 
+
+yes we can, will add it in v2. Thanks.
+
+>    bpf_map_lookup_elem(stackmap_fd, &stackmap_key, &val_buf)
+> 
+>> +
+>>   disable_pmu:
+>>   	bpf_link__destroy(link);
+>>   close_prog:
+>> diff --git a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
+>> index 47568007b66..d036e8e9c83 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
+>> @@ -38,6 +38,13 @@ struct {
+>>   	__type(value, stack_trace_t);
+>>   } stack_amap SEC(".maps");
+>>   
+>> +struct {
+>> +	__uint(type, BPF_MAP_TYPE_ARRAY);
+>> +	__uint(max_entries, 1);
+>> +	__type(key, __u32);
+>> +	__type(value, __u32);
+>> +} stack_key_map SEC(".maps");
+>> +
+>>   /* taken from /sys/kernel/tracing/events/sched/sched_switch/format */
+>>   struct sched_switch_args {
+>>   	unsigned long long pad;
+>> @@ -54,7 +61,7 @@ SEC("tracepoint/sched/sched_switch")
+>>   int oncpu(struct sched_switch_args *ctx)
+>>   {
+>>   	__u32 max_len = PERF_MAX_STACK_DEPTH * sizeof(__u64);
+>> -	__u32 key = 0, val = 0, *value_p;
+>> +	__u32 key = 0, val = 0, *value_p, stackmap_key = 0;
+>>   	void *stack_p;
+>>   
+>>   	value_p = bpf_map_lookup_elem(&control_map, &key);
+>> @@ -64,6 +71,9 @@ int oncpu(struct sched_switch_args *ctx)
+>>   	/* The size of stackmap and stackid_hmap should be the same */
+>>   	key = bpf_get_stackid(ctx, &stackmap, 0);
+>>   	if ((int)key >= 0) {
+>> +		val = key;
+>> +		bpf_map_update_elem(&stack_key_map, &stackmap_key, &val, 0);
+> 
+> why not use '&key' directly as the update value?
+> 
+will clean it in v2.
+
+> jirka
+> 
+> 
+>> +		val = 0;
+>>   		bpf_map_update_elem(&stackid_hmap, &key, &val, 0);
+>>   		stack_p = bpf_map_lookup_elem(&stack_amap, &key);
+>>   		if (stack_p)
+>> -- 
+>> 2.48.1
+>>
+>>
+-- 
+Best Regards
+Tao Chen
 
