@@ -1,307 +1,283 @@
-Return-Path: <linux-kernel+bounces-807677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6940B4A7AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:26:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0ECB4A7BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C797B3EBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE353189510B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6879430F958;
-	Tue,  9 Sep 2025 09:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE0E28AB16;
+	Tue,  9 Sep 2025 09:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/pHKjSy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="W9UkyFJ5"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9F830CDA5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E50301020
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409369; cv=none; b=oXINxBpb1rpKyjd9OqR+H2BMjiNmHkFhGmfQRfZaRHEkDYKGjAyhBPZIbFODj6MVC0uczisHfIH5ktCfhxRsVJga1kyLUG1VX6pkgrtJ6LVqUR6rmGUlDHZOFEUgbl5kkQxV6v3r+HjHt24nuSzpwDOjWIvDAjQrSyeDayhdZKM=
+	t=1757409356; cv=none; b=AVbk+5NkmFDTQx44sJ0IIITD3O6qvk5nD0PJoLHHySaagFCuzIbQY3MCYaawIHJ1dr047tbRsxiFADW+BYulcafnRbQy3AYL6wY0LURLE40Txr1BjcBFRxHlCwSAxKyzto19B4fodZetlYVCOG6u+SlHhZ3Z0GnhAiOhidynHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409369; c=relaxed/simple;
-	bh=oVv24RZQlKH22Ja6cyHWdi7oBOb6EOI1GUtwdyNI2ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s1pyXe3OAwrbzqb5SBWUzBft8UzISR6CGTfdrACSIn+BrblfdzR0RRuy2k+3v4ks35rGXlpfOJzcFLZiX5fwzL3lDAQqLKt1PODYKCaDjbqHsPi2faNbz/+F2h8MdaFkADqSnrF5bmxYVaeLjxzrxHQYfIq+0nuFT2k9N2o8fnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/pHKjSy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757409365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wjGJD3gvFoEiZrkJU/Pic1oDbV4RUgzaWVlQA83tMU=;
-	b=g/pHKjSyjRWBL9tdFbWqQodAfJLg9HV1VM6+ZCc7ePeW0TKKLY8qgzO8UURDQAb/85i7+L
-	KhRgm+Y3XMRrXciwGtvvqwg1yRAdfy/vXspLvX7rZdQn3br3GDSqb9yXtZ0USyBt4xa9YM
-	447ZgcHKKehHlj9ygE2ftEifyUWSzVM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-2hrXO8lRM1e7LR9xd7vyCw-1; Tue,
- 09 Sep 2025 05:16:01 -0400
-X-MC-Unique: 2hrXO8lRM1e7LR9xd7vyCw-1
-X-Mimecast-MFC-AGG-ID: 2hrXO8lRM1e7LR9xd7vyCw_1757409360
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83B2A19560B7;
-	Tue,  9 Sep 2025 09:15:59 +0000 (UTC)
-Received: from p16v.. (unknown [10.43.2.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DB92819560B4;
-	Tue,  9 Sep 2025 09:15:55 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>,
-	Petr Oros <poros@redhat.com>
-Subject: [PATCH net-next v6 5/5] dpll: zl3073x: Implement devlink flash callback
-Date: Tue,  9 Sep 2025 11:15:32 +0200
-Message-ID: <20250909091532.11790-6-ivecera@redhat.com>
-In-Reply-To: <20250909091532.11790-1-ivecera@redhat.com>
-References: <20250909091532.11790-1-ivecera@redhat.com>
+	s=arc-20240116; t=1757409356; c=relaxed/simple;
+	bh=uqmvOvOfxF1o679wpIAUV6JzoYwqq817uSg3c0UoFGs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Sexd+Iy5FONOSswUV7uti3aln++tdzNGIzf5aPhCZAQXLLNWEWSmnL1utpxuGNMxUzSBRuE/M5UbgcRBLau0KQYfRleCh+jrqXoIOppDb4qOSOe11I3hksb253Zv2YcTLDWaWjmGY9o2jUy3a5nK2iBjLacM3oTg0Ap4TklZqiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=W9UkyFJ5; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dec026c78so10063955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757409352; x=1758014152; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cNyb/s8rhsBAw5oMG7jCFkP07jFHaAfhwIfXxzBcLE0=;
+        b=W9UkyFJ51dea0nnmj2k8qBOgtiK7Dlq9lsEMyH/Nt+p1E7tazm8eoAOzIZRAWwcseh
+         7dIuOzwYKg2jO8NUGaLxbmI05R9G0roE7U+7JneMGqSlWrICzqOKkMYrjfP/47dTSjbu
+         irOweBS0HVq+KWvGy0oEGiMcLu9CDCfVFeZIk+232e2A7XS4qMaLwLMXr8qoDAolcMlj
+         AD9sMBYxUiATIz5onh192VfWetC90knWPwMAFLYW+vE6nj6LHc9UIgO5R8bFNJPkYCKg
+         I0Y4eo46tXXKnzs6ps5uPphd9K+97/alBHFDbubt5VNdlnBnQ+Wgd9wuP/8h7a36qXUx
+         ObXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757409352; x=1758014152;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cNyb/s8rhsBAw5oMG7jCFkP07jFHaAfhwIfXxzBcLE0=;
+        b=RWxIzrRm00sUTHDH77V1SqPosRLEIlIwnu+Ncf9KzSqCvGNw6Z0Anc9CBbUBhtRw44
+         F6CxGOmVHOrMITsrQSPZDQ9K23SPOj1N2ns+1aljTuy/oCUhQFP3OuEkoEudOIQJn3x5
+         3AQfbn4TyLIgRKMhH7kI0GQ8f4NOkPMA2wZUtv+/Rz7mxh2d4ue58VuX+8G844bzbdf7
+         71QcCLzGlLnOtvCqekbUqiJdFrwRYzZklK/BqSA3P4pUZnLgBtIM779s6MV6AVoe1Swq
+         iR8byU1hKfEjWMBe6aTBUPIh+qNdVQD3npmoF8Xma+aUP/qS7Ph18eSQ1f4/R+t6xAG9
+         H1AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/+oY/sOyU4VRFAr5GULs2yDkORfh8JGgVp4MQ1FYXhlukgjFVxrkjBS3lnj4JP2/AEp80Ur1ex9tHSfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwC70gbYQXVfnCzi8rzyuOoqxg2kX9tMtSUSagte0Ki1EN04H3
+	OYDp2crpujag5GBwu/1R8nfefPcMsfQtHLIfDsOOJDtzz5Od41izvp3xXe862LPj6yk=
+X-Gm-Gg: ASbGncu41+7tDlcmL5pmjSJI+2aio/mwoa5vMYUvNdGClUsyEJ1lMU7/HHHUJDWEfOI
+	Sdpp6by0F+Q0cnRXHoGPGN0+vQk1ZXy9cvCg5FfHWwKbeE+JhksoQr4TZ5rpwHFqgtdn/2AMwMF
+	J60AGIQAG9uHYYqrKxM4Llu0UiqKd4Dw+a/pZAogCmqwaRXPW6nJV9oJf2CPVobyUf9lcE7OT+Q
+	yXJ20ruc1+ALGQQ7k7prXHALUx3seRNa2qzIcXhkjgXj8rMmK1mAKnhdTJ+7jVRaprUdCHKxqBE
+	cZbfsKydip+otC5GmTV983GnusJI9PzQ7PWrc/6gzyY4avZU9ZvMk5AoqLE1bucwSVTKgptBLYP
+	Z6OY4d3S75PDHgPLA3XmdarzIk8NoPeet7zz4Cf0=
+X-Google-Smtp-Source: AGHT+IH7uav1IGVrER9dF4PIYsOMNVrb5nwXYkyZEzGGA0F6yjDXZab7m4d2f1saSDymZ1SvoB+UGw==
+X-Received: by 2002:a05:600c:4f4e:b0:45d:d13f:6061 with SMTP id 5b1f17b1804b1-45df12e35efmr10405945e9.30.1757409351787;
+        Tue, 09 Sep 2025 02:15:51 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1ee:7be9:3ebb:6cc0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm1900039f8f.19.2025.09.09.02.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 02:15:50 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 09 Sep 2025 11:15:32 +0200
+Subject: [PATCH 05/15] gpio: ath79: use the generic GPIO chip lock for IRQ
+ handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250909-gpio-mmio-gpio-conv-part4-v1-5-9f723dc3524a@linaro.org>
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+In-Reply-To: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
+ Doug Berger <opendmb@gmail.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5431;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=wEUGfBQ2UNxF7/X679yAoQw1e/9zTBMrjziqIk7+UbI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBov/A3rUn0axD0jqdCFa1rrDC0FyUulthioK0bV
+ kzSvPlTeQiJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaL/wNwAKCRARpy6gFHHX
+ cj5IEAC93Ew7Nap6XkKixHXb8mM7E7WAQwY12FXIbaAQ3/zHlili51XHOWjWy6W0b/hG+b3cdyz
+ flhBhVFWTBh7gYvARJNn1QcUi8VMWqMd498eNSoKzxs/zcTYuqR/fz+YJLQTOIE1hI73iQiQNJz
+ ACHbxiRCtfcv5xxo0k8Dr4LlKgxZ2yzEjXyCPBp8ba9QuZffZ46y5r3NNuIMUzEOwkJtU2nQ24p
+ Ka39Mq10yb7hjNe9iAubmhlHN0Q5jFZKuK0UZ5rG6JGgnYfRSiwmLOFxXDeDCbgPHMLdwy5W3eH
+ 1DdThWaN3Alnc0POqBRA2LNuUrQkUp7plh7P0A9FUZTDNii7LGARLOkjyJm6iJKPFG/MzLB/uPd
+ TNUtjyiOw0o4J2UM4bsHSvoWCZl/zK6Az0fppMrHEFrl9Xqk3mKZKp6H+JYu1xBUFzPDYBwyaEl
+ VfyRFoeaR3XQAZzVvCXq3znCPJOQGzp8Y6nCMKSutM37jxi9VcUtr/fX46IagulYISBKOWl4+fq
+ aa4+9tadu04IcOzyjmkAku8D+39RruxxdigQqZ9Ij+CQqEBHO5HKc/R/ExQZTaYdLMVAwdjZJ7T
+ JSb7oJhUdEBGsKTnSxzrw6JLAGFtikjqEZ5jQy4QoE4OsgtPQI8VtFynvDHdyo6YHRHKGSS9+IB
+ ibJ40dH4keBex6w==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Use the introduced functionality to read firmware files and flash their
-contents into the device's internal flash memory to implement the devlink
-flash update callback.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Sample output on EDS2 development board:
- # devlink -j dev info i2c/1-0070 | jq '.[][]["versions"]["running"]'
- {
-   "fw": "6026"
- }
- # devlink dev flash i2c/1-0070 file firmware_fw2.hex
- [utility] Prepare flash mode
- [utility] Downloading image 100%
- [utility] Flash mode enabled
- [firmware1-part1] Downloading image 100%
- [firmware1-part1] Flashing image
- [firmware1-part2] Downloading image 100%
- [firmware1-part2] Flashing image
- [firmware1] Flashing done
- [firmware2] Downloading image 100%
- [firmware2] Flashing image 100%
- [firmware2] Flashing done
- [utility] Leaving flash mode
- Flashing done
- # devlink -j dev info i2c/1-0070 | jq '.[][]["versions"]["running"]'
- {
-   "fw": "7006"
- }
+This driver uses its own raw spinlock in interrupt routines while the
+generic GPIO chip callbacks use a separate one. This is, of course, racy
+so use the fact that the lock in generic GPIO chip is also a raw
+spinlock and convert the interrupt handling functions in this module to
+using the provided generic GPIO chip locking API.
 
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-v4:
-* Removed excessive comments
-* Refactored flash callback by adding helper for preparation and finish
-  phase
-v3:
-* Fixed return value documentation for zl3073x_flash_update()
----
- Documentation/networking/devlink/zl3073x.rst |  14 ++
- drivers/dpll/zl3073x/devlink.c               | 129 +++++++++++++++++++
- 2 files changed, 143 insertions(+)
+ drivers/gpio/gpio-ath79.c | 51 ++++++++++++++++++-----------------------------
+ 1 file changed, 19 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/networking/devlink/zl3073x.rst b/Documentation/networking/devlink/zl3073x.rst
-index 4b6cfaf386433..fc5a8dc272a77 100644
---- a/Documentation/networking/devlink/zl3073x.rst
-+++ b/Documentation/networking/devlink/zl3073x.rst
-@@ -49,3 +49,17 @@ The ``zl3073x`` driver reports the following versions
-       - running
-       - 1.3.0.1
-       - Device configuration version customized by OEM
-+
-+Flash Update
-+============
-+
-+The ``zl3073x`` driver implements support for flash update using the
-+``devlink-flash`` interface. It supports updating the device flash using a
-+combined flash image ("bundle") that contains multiple components (firmware
-+parts and configurations).
-+
-+During the flash procedure, the standard firmware interface is not available,
-+so the driver unregisters all DPLLs and associated pins, and re-registers them
-+once the flash procedure is complete.
-+
-+The driver does not support any overwrite mask flags.
-diff --git a/drivers/dpll/zl3073x/devlink.c b/drivers/dpll/zl3073x/devlink.c
-index d0f6d9cd4a68e..f55d5309d4f9c 100644
---- a/drivers/dpll/zl3073x/devlink.c
-+++ b/drivers/dpll/zl3073x/devlink.c
-@@ -9,6 +9,8 @@
- #include "core.h"
- #include "devlink.h"
- #include "dpll.h"
-+#include "flash.h"
-+#include "fw.h"
- #include "regs.h"
- 
- /**
-@@ -141,11 +143,138 @@ void zl3073x_devlink_flash_notify(struct zl3073x_dev *zldev, const char *msg,
- 					   total);
- }
- 
-+/**
-+ * zl3073x_devlink_flash_prepare - Prepare and enter flash mode
-+ * @zldev: zl3073x device pointer
-+ * @zlfw: pointer to loaded firmware
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * The function stops normal operation and switches the device to flash mode.
-+ * If an error occurs the normal operation is resumed.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_devlink_flash_prepare(struct zl3073x_dev *zldev,
-+			      struct zl3073x_fw *zlfw,
-+			      struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_fw_component *util;
-+	int rc;
-+
-+	util = zlfw->component[ZL_FW_COMPONENT_UTIL];
-+	if (!util) {
-+		zl3073x_devlink_flash_notify(zldev,
-+					     "Utility is missing in firmware",
-+					     NULL, 0, 0);
-+		zl3073x_fw_free(zlfw);
-+		return -ENOEXEC;
-+	}
-+
-+	/* Stop normal operation prior entering flash mode */
-+	zl3073x_dev_stop(zldev);
-+
-+	rc = zl3073x_flash_mode_enter(zldev, util->data, util->size, extack);
-+	if (rc) {
-+		zl3073x_devlink_flash_notify(zldev,
-+					     "Failed to enter flash mode",
-+					     NULL, 0, 0);
-+
-+		/* Resume normal operation */
-+		zl3073x_dev_start(zldev, true);
-+
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * zl3073x_devlink_flash_finish - Leave flash mode and resume normal operation
-+ * @zldev: zl3073x device pointer
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * The function switches the device back to standard mode and resumes normal
-+ * operation.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_devlink_flash_finish(struct zl3073x_dev *zldev,
-+			     struct netlink_ext_ack *extack)
-+{
-+	int rc;
-+
-+	/* Reset device CPU to normal mode */
-+	zl3073x_flash_mode_leave(zldev, extack);
-+
-+	/* Resume normal operation */
-+	rc = zl3073x_dev_start(zldev, true);
-+	if (rc)
-+		zl3073x_devlink_flash_notify(zldev,
-+					     "Failed to start normal operation",
-+					     NULL, 0, 0);
-+
-+	return rc;
-+}
-+
-+/**
-+ * zl3073x_devlink_flash_update - Devlink flash update callback
-+ * @devlink: devlink structure pointer
-+ * @params: flashing parameters pointer
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_devlink_flash_update(struct devlink *devlink,
-+			     struct devlink_flash_update_params *params,
-+			     struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dev *zldev = devlink_priv(devlink);
-+	struct zl3073x_fw *zlfw;
-+	int rc = 0;
-+
-+	zlfw = zl3073x_fw_load(zldev, params->fw->data, params->fw->size,
-+			       extack);
-+	if (IS_ERR(zlfw)) {
-+		zl3073x_devlink_flash_notify(zldev, "Failed to load firmware",
-+					     NULL, 0, 0);
-+		rc = PTR_ERR(zlfw);
-+		goto finish;
-+	}
-+
-+	/* Stop normal operation and enter flash mode */
-+	rc = zl3073x_devlink_flash_prepare(zldev, zlfw, extack);
-+	if (rc)
-+		goto finish;
-+
-+	rc = zl3073x_fw_flash(zldev, zlfw, extack);
-+	if (rc) {
-+		zl3073x_devlink_flash_finish(zldev, extack);
-+		goto finish;
-+	}
-+
-+	/* Resume normal mode */
-+	rc = zl3073x_devlink_flash_finish(zldev, extack);
-+
-+finish:
-+	if (!IS_ERR(zlfw))
-+		zl3073x_fw_free(zlfw);
-+
-+	zl3073x_devlink_flash_notify(zldev,
-+				     rc ? "Flashing failed" : "Flashing done",
-+				     NULL, 0, 0);
-+
-+	return rc;
-+}
-+
- static const struct devlink_ops zl3073x_devlink_ops = {
- 	.info_get = zl3073x_devlink_info_get,
- 	.reload_actions = BIT(DEVLINK_RELOAD_ACTION_DRIVER_REINIT),
- 	.reload_down = zl3073x_devlink_reload_down,
- 	.reload_up = zl3073x_devlink_reload_up,
-+	.flash_update = zl3073x_devlink_flash_update,
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index 1b2a59ddbec4088c95fb766277bb94ffff8692b2..75c9e3bf7db1b5fbfede960dd1c0b3a76d2ecb8f 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -31,7 +31,6 @@
+ struct ath79_gpio_ctrl {
+ 	struct gpio_generic_chip chip;
+ 	void __iomem *base;
+-	raw_spinlock_t lock;
+ 	unsigned long both_edges;
  };
  
- static void
+@@ -72,23 +71,22 @@ static void ath79_gpio_irq_unmask(struct irq_data *data)
+ {
+ 	struct ath79_gpio_ctrl *ctrl = irq_data_to_ath79_gpio(data);
+ 	u32 mask = BIT(irqd_to_hwirq(data));
+-	unsigned long flags;
+ 
+ 	gpiochip_enable_irq(&ctrl->chip.gc, irqd_to_hwirq(data));
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
++
++	guard(gpio_generic_lock_irqsave)(&ctrl->chip);
++
+ 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, mask);
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+ }
+ 
+ static void ath79_gpio_irq_mask(struct irq_data *data)
+ {
+ 	struct ath79_gpio_ctrl *ctrl = irq_data_to_ath79_gpio(data);
+ 	u32 mask = BIT(irqd_to_hwirq(data));
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
+-	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
++	scoped_guard(gpio_generic_lock_irqsave, &ctrl->chip)
++		ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
++
+ 	gpiochip_disable_irq(&ctrl->chip.gc, irqd_to_hwirq(data));
+ }
+ 
+@@ -96,24 +94,20 @@ static void ath79_gpio_irq_enable(struct irq_data *data)
+ {
+ 	struct ath79_gpio_ctrl *ctrl = irq_data_to_ath79_gpio(data);
+ 	u32 mask = BIT(irqd_to_hwirq(data));
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
++	guard(gpio_generic_lock_irqsave)(&ctrl->chip);
+ 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, mask);
+ 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, mask);
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+ }
+ 
+ static void ath79_gpio_irq_disable(struct irq_data *data)
+ {
+ 	struct ath79_gpio_ctrl *ctrl = irq_data_to_ath79_gpio(data);
+ 	u32 mask = BIT(irqd_to_hwirq(data));
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
++	guard(gpio_generic_lock_irqsave)(&ctrl->chip);
+ 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
+ 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, 0);
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+ }
+ 
+ static int ath79_gpio_irq_set_type(struct irq_data *data,
+@@ -122,7 +116,6 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
+ 	struct ath79_gpio_ctrl *ctrl = irq_data_to_ath79_gpio(data);
+ 	u32 mask = BIT(irqd_to_hwirq(data));
+ 	u32 type = 0, polarity = 0;
+-	unsigned long flags;
+ 	bool disabled;
+ 
+ 	switch (flow_type) {
+@@ -144,7 +137,7 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
+ 		return -EINVAL;
+ 	}
+ 
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
++	guard(gpio_generic_lock_irqsave)(&ctrl->chip);
+ 
+ 	if (flow_type == IRQ_TYPE_EDGE_BOTH) {
+ 		ctrl->both_edges |= mask;
+@@ -169,8 +162,6 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
+ 		ath79_gpio_update_bits(
+ 			ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, mask);
+ 
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+-
+ 	return 0;
+ }
+ 
+@@ -192,26 +183,24 @@ static void ath79_gpio_irq_handler(struct irq_desc *desc)
+ 	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
+ 	struct ath79_gpio_ctrl *ctrl =
+ 		container_of(gen_gc, struct ath79_gpio_ctrl, chip);
+-	unsigned long flags, pending;
++	unsigned long pending;
+ 	u32 both_edges, state;
+ 	int irq;
+ 
+ 	chained_irq_enter(irqchip, desc);
+ 
+-	raw_spin_lock_irqsave(&ctrl->lock, flags);
++	scoped_guard(gpio_generic_lock_irqsave, &ctrl->chip) {
++		pending = ath79_gpio_read(ctrl, AR71XX_GPIO_REG_INT_PENDING);
+ 
+-	pending = ath79_gpio_read(ctrl, AR71XX_GPIO_REG_INT_PENDING);
+-
+-	/* Update the polarity of the both edges irqs */
+-	both_edges = ctrl->both_edges & pending;
+-	if (both_edges) {
+-		state = ath79_gpio_read(ctrl, AR71XX_GPIO_REG_IN);
+-		ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_POLARITY,
+-				both_edges, ~state);
++		/* Update the polarity of the both edges irqs */
++		both_edges = ctrl->both_edges & pending;
++		if (both_edges) {
++			state = ath79_gpio_read(ctrl, AR71XX_GPIO_REG_IN);
++			ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_POLARITY,
++					       both_edges, ~state);
++		}
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+-
+ 	for_each_set_bit(irq, &pending, gc->ngpio)
+ 		generic_handle_domain_irq(gc->irq.domain, irq);
+ 
+@@ -256,8 +245,6 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ctrl->base))
+ 		return PTR_ERR(ctrl->base);
+ 
+-	raw_spin_lock_init(&ctrl->lock);
+-
+ 	config = (typeof(config)){
+ 		.dev = dev,
+ 		.sz = 4,
+
 -- 
-2.49.1
+2.48.1
 
 
