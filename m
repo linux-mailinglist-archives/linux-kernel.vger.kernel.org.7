@@ -1,123 +1,259 @@
-Return-Path: <linux-kernel+bounces-807999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20BEB4ABED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:29:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673DBB4ABD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E014E1B217D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2D53B91E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338AE32142C;
-	Tue,  9 Sep 2025 11:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7903F3203BE;
+	Tue,  9 Sep 2025 11:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmodOF5C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS08+RbH"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA79320386
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA0331E101;
+	Tue,  9 Sep 2025 11:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417337; cv=none; b=Mq+vZ244R6O2+B+OjPedByg0h87UNcWki16qDtZbmrhbaP3uC/6bmiKe+NdsTyUjiwIE932QCiw2Y37GU+s7KWoekYo4yAOfKMqKoOoElSv6aCQC63X48PD/SvHbCsiSaprnAm4zs7QknUgc76XysZWAjLOdt3UGfqkBYN8iku0=
+	t=1757417299; cv=none; b=KMHVgoGso5PBlwk7nsn+6zlT5EhyztF0wpMZar9inrKfTsmkuavs9/6nlG/euVT2CDuUM4DBqCB0XujuVcwKuPisIobFpB+DVvTcNLfBwMtGNxfpxm6y7izbuHx24oBMCZNelXU8qm4vriuttdpgS2EItpBLxTuycbFzWY7sCaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417337; c=relaxed/simple;
-	bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HN0sbP9yZ38BBBY0sXub/zcYEybDrc8o65ffXj2dtr30JKS/fhcDSCAXG6rlNNQp/rALhUQQ1TmY8oBc1gUel4lMSBeyAC+oE5lTdv7V8Ncbm/FMSCi9O6l9gPncH2XN3n0dVoNWhuHDnBktx2aS8cswd2p46OXKEv4eQcbETkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmodOF5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8ECCC4CEF7;
-	Tue,  9 Sep 2025 11:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757417337;
-	bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dmodOF5CRBsUowJYyvBF7Rl5d0dMoS4w9lQosU6NaAmAnlUkAPLqP7CTgn+R1IkQm
-	 Y4jH4wDOD/q97SKkqakLlH5lgCZt70GqyHm0A0XRH6mC0zbIcChzR7rdNZxH+Qy7Ky
-	 HZ6ZfUvLg7rG3CSR2+AaX+R0dH+vNCWPC6IWMti+62S+46xVrCafM2Ou1Sjb2m6FGk
-	 LBc9j0/mVT2OWzCca0YS6FuLtOAFlEL/UV+invbrWccRwAO7boygmZ2fwT06ClsZug
-	 QxYxA5Pfx/W1TfNav+xCyobizXYfMtSMYMvVEbKF8zCsl70KwtXad3VipKEUb3z+vC
-	 IeH1qSVLT8eWw==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 09 Sep 2025 13:27:43 +0200
-Subject: [PATCH v3 24/39] drm/mediatek: Switch to
- drm_atomic_get_new_crtc_state()
+	s=arc-20240116; t=1757417299; c=relaxed/simple;
+	bh=NkcoMXcp/rsBqEhVBnTXi4VMn3SOAZiUsivNdt5NTVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SbOLapp4+3S3qqOdgTVW3/uy7el3DqHuTPI+mLtDB9v3vqx5cW5Tf1E4b3OQB78rKFShYBmHxgKYShOT1czoYGIHDI57Yzmzux8AxN96X1yEzlmkPgDHaRnscTZiaRs3mc/MiQ6FZZuJkcUg1MqynLWDt/QXjWaQIh4GMB5v3xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fS08+RbH; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2570bf6058aso23395635ad.0;
+        Tue, 09 Sep 2025 04:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757417296; x=1758022096; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MKBowNiYyd4mCCO3VytXljo5TnEKYxL/OTwxTT+s4sY=;
+        b=fS08+RbHQKrIv88XpWvoex409nZIxQYsPqhmChpuRyYp0CdBuKdyCzorq+XBGY2ipy
+         YmqlJXrevkNEbSE6g1TXoy45Mxq5k7O+AVY3fl9dQUeKWXPdwJcEJoWopI89SGRR76ku
+         RC0RtAfWFqBwPuFhGjsgd5sNCAor1LlaPXMtTL+EjFiN610Jf6dzdy/Rp49wVtFA23y/
+         AQKKClYtSJ5RK/J34o2ZtVUTrD0GROyVIbDZp5fDc6ZH4vCEsfyTSsyYwq9HcWSYhnBG
+         Suym5KrFL5BWFwPye4dNyUPGoCLLofh7OoUaF82X+2UNZNdEv+qk5YvEEk0nEK3q839v
+         Qaww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757417296; x=1758022096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MKBowNiYyd4mCCO3VytXljo5TnEKYxL/OTwxTT+s4sY=;
+        b=pzNxpbw4tAAPiSLQVhqFTxRInkRS/YeAWoHwN+4MuMO7gippUMnTO2PWLo/X8l0sRV
+         0ZUfJLYQWY6oitHNrH2HPDZt4JcJQMansswqYfyTzzfLFVw4psvFj91V4sZVAUcEng5+
+         rQ5xq49FX8neFcY7n/U9g9CCbQeuAG8PEETrnh528m6NkxAO6WcNjOzO8OVOTtivg221
+         jioDBrTFK4NTLoyexrFh1sATnuUybnYngpEJXCsrfmuNslw0MxvoZehD7c/sOWPnEKW1
+         zSyMWS5XNj1ZoHDegQjufiOh+tQWWt6FDapU2vvWDckp7s5mF/cJ7DjMXNdpiM4Sl29J
+         ykMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZB8+5aPG/QnN9OIwGBgkq7dMlhwrWRlTuc2f2lR+nD2o118EOa3VLIEgvYU5M/TbAchYYujKbwDxkAe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoKJ2X0lpVzsESWQjVPQEFdq804wTt3/7ZDY3h6xKmSovDJwaQ
+	7TdhfCihFLr269hptfsUWr8yQYs7MLkN3+DNmhz0OJT04kleNjw/ZA9Aeum7i2AU7wLb27aQgi/
+	hkwCBbIBWO7deo/sGT75hQueAWQwW+N2xUj0q
+X-Gm-Gg: ASbGncuzul1v1RDNR/kEWDw5KdcKTEw+hS84sf02iiYLC7T0ttGFH0Jr2FXSlv9or8C
+	8KCLNgtlrIH+k1OHV8nK3oqt2Yvf4FaPFebc8sZhoOgyDEM//Dwyea3EEY1gQOYOTTMTeJdbIAz
+	l2GJdfzE9bYENhE4mRxK32OjnRHjcao9bGHfR61SBsvwwkX0iC0IwKwGmsgGfO4TyebPDwoxPnl
+	Za4k7Y=
+X-Google-Smtp-Source: AGHT+IEdgDyuozo7m9SpQ2EAkEIfDTbGGoRWnYiotpIaXyia2X3Ga0glRgqZ7t6tJ0e30zO4z5BiY4NSYzr4BdoKDvU=
+X-Received: by 2002:a17:902:e801:b0:24b:1589:5046 with SMTP id
+ d9443c01a7336-2516d52d41amr158030495ad.5.1757417296018; Tue, 09 Sep 2025
+ 04:28:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250909-drm-no-more-existing-state-v3-24-1c7a7d960c33@kernel.org>
-References: <20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org>
-In-Reply-To: <20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1747; i=mripard@kernel.org;
- h=from:subject:message-id; bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBkH+HUqU3i/bM45HMOb3/izYaNgp5Mx61n3h3Z/GhPld
- v2673m1YyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExEL4Sx4YLQmvt+bz9w9Zoc
- Svwvd28OQ1Jv4as9/6ebrtaoiIn6df3Mh7tTlLhzdHmLFobM3j3nNGPDqtWnn7t5rHzM1fKb94B
- A9Ql7gWuGd7+6ebnXBz86P3P+rtdOf07w+U9Id9kkU8zrlOUMAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+References: <20250904101234.1258643-1-amarkuze@redhat.com>
+In-Reply-To: <20250904101234.1258643-1-amarkuze@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 9 Sep 2025 13:28:04 +0200
+X-Gm-Features: Ac12FXyB_8sKtfQu_fFLf0mwWYf4WAlNdwO3mU-F_AR4vcWEI0ZzQYJhiK0QjFc
+Message-ID: <CAOi1vP89DMp5Ka8zcSMJb9Vi6rN8U_Y-mogeNHNj0FYDhUTkgA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ceph/inode: drop extra reference from
+ ceph_get_reply_dir() in ceph_fill_trace()
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The mediatek atomic_check implementation uses the deprecated
-drm_atomic_get_existing_crtc_state() helper.
+On Thu, Sep 4, 2025 at 12:12=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
+wrote:
+>
+> ceph_get_reply_dir() may return a different, referenced inode when r_pare=
+nt is stale and the parent directory lock is not held.
+> ceph_fill_trace() used that inode but failed to drop the reference when i=
+t differed from req->r_parent, leaking an inode reference.
+>
+> Keep the directory inode in a local and iput() it at function end if it d=
+oes not match req->r_parent.
+>
+> Signed-off-by: Alex Markuze <amarkuze@redhat.com>
+> ---
+>  fs/ceph/inode.c | 30 +++++++++++++++++++-----------
+>  1 file changed, 19 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 470ee595ecf2..cffa2cd7b530 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -1584,6 +1584,7 @@ int ceph_fill_trace(struct super_block *sb, struct =
+ceph_mds_request *req)
+>         struct ceph_vino tvino, dvino;
+>         struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
+>         struct ceph_client *cl =3D fsc->client;
+> +       struct inode *parent_dir =3D NULL;
+>         int err =3D 0;
+>
+>         doutc(cl, "%p is_dentry %d is_target %d\n", req,
+> @@ -1601,9 +1602,13 @@ int ceph_fill_trace(struct super_block *sb, struct=
+ ceph_mds_request *req)
+>                  * r_parent may be stale, in cases when R_PARENT_LOCKED i=
+s not set,
+>                  * so we need to get the correct inode
+>                  */
+> -               struct inode *dir =3D ceph_get_reply_dir(sb, req->r_paren=
+t, rinfo);
+> -               if (dir) {
+> -                       err =3D ceph_fill_inode(dir, NULL, &rinfo->diri,
+> +               parent_dir =3D ceph_get_reply_dir(sb, req->r_parent, rinf=
+o);
+> +               if (unlikely(IS_ERR(parent_dir))) {
+> +                       err =3D PTR_ERR(parent_dir);
+> +                       goto done;
+> +               }
+> +               if (parent_dir) {
+> +                       err =3D ceph_fill_inode(parent_dir, NULL, &rinfo-=
+>diri,
+>                                               rinfo->dirfrag, session, -1=
+,
+>                                               &req->r_caps_reservation);
+>                         if (err < 0)
+> @@ -1612,14 +1617,14 @@ int ceph_fill_trace(struct super_block *sb, struc=
+t ceph_mds_request *req)
+>                         WARN_ON_ONCE(1);
+>                 }
+>
+> -               if (dir && req->r_op =3D=3D CEPH_MDS_OP_LOOKUPNAME &&
+> +               if (parent_dir && req->r_op =3D=3D CEPH_MDS_OP_LOOKUPNAME=
+ &&
+>                     test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags)=
+ &&
+>                     !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+>                         bool is_nokey =3D false;
+>                         struct qstr dname;
+>                         struct dentry *dn, *parent;
+>                         struct fscrypt_str oname =3D FSTR_INIT(NULL, 0);
+> -                       struct ceph_fname fname =3D { .dir        =3D dir=
+,
+> +                       struct ceph_fname fname =3D { .dir        =3D par=
+ent_dir,
+>                                                     .name       =3D rinfo=
+->dname,
+>                                                     .ctext      =3D rinfo=
+->altname,
+>                                                     .name_len   =3D rinfo=
+->dname_len,
+> @@ -1628,10 +1633,10 @@ int ceph_fill_trace(struct super_block *sb, struc=
+t ceph_mds_request *req)
+>                         BUG_ON(!rinfo->head->is_target);
+>                         BUG_ON(req->r_dentry);
+>
+> -                       parent =3D d_find_any_alias(dir);
+> +                       parent =3D d_find_any_alias(parent_dir);
+>                         BUG_ON(!parent);
+>
+> -                       err =3D ceph_fname_alloc_buffer(dir, &oname);
+> +                       err =3D ceph_fname_alloc_buffer(parent_dir, &onam=
+e);
+>                         if (err < 0) {
+>                                 dput(parent);
+>                                 goto done;
+> @@ -1640,7 +1645,7 @@ int ceph_fill_trace(struct super_block *sb, struct =
+ceph_mds_request *req)
+>                         err =3D ceph_fname_to_usr(&fname, NULL, &oname, &=
+is_nokey);
+>                         if (err < 0) {
+>                                 dput(parent);
+> -                               ceph_fname_free_buffer(dir, &oname);
+> +                               ceph_fname_free_buffer(parent_dir, &oname=
+);
+>                                 goto done;
+>                         }
+>                         dname.name =3D oname.name;
+> @@ -1659,7 +1664,7 @@ int ceph_fill_trace(struct super_block *sb, struct =
+ceph_mds_request *req)
+>                                       dname.len, dname.name, dn);
+>                                 if (!dn) {
+>                                         dput(parent);
+> -                                       ceph_fname_free_buffer(dir, &onam=
+e);
+> +                                       ceph_fname_free_buffer(parent_dir=
+, &oname);
+>                                         err =3D -ENOMEM;
+>                                         goto done;
+>                                 }
+> @@ -1674,12 +1679,12 @@ int ceph_fill_trace(struct super_block *sb, struc=
+t ceph_mds_request *req)
+>                                     ceph_snap(d_inode(dn)) !=3D tvino.sna=
+p)) {
+>                                 doutc(cl, " dn %p points to wrong inode %=
+p\n",
+>                                       dn, d_inode(dn));
+> -                               ceph_dir_clear_ordered(dir);
+> +                               ceph_dir_clear_ordered(parent_dir);
+>                                 d_delete(dn);
+>                                 dput(dn);
+>                                 goto retry_lookup;
+>                         }
+> -                       ceph_fname_free_buffer(dir, &oname);
+> +                       ceph_fname_free_buffer(parent_dir, &oname);
+>
+>                         req->r_dentry =3D dn;
+>                         dput(parent);
+> @@ -1869,6 +1874,9 @@ int ceph_fill_trace(struct super_block *sb, struct =
+ceph_mds_request *req)
+>                                             &dvino, ptvino);
+>         }
+>  done:
+> +       /* Drop extra ref from ceph_get_reply_dir() if it returned a new =
+inode */
+> +       if (unlikely(!IS_ERR_OR_NULL(parent_dir) && parent_dir !=3D req->=
+r_parent))
+> +               iput(parent_dir);
+>         doutc(cl, "done err=3D%d\n", err);
+>         return err;
+>  }
+> --
+> 2.34.1
+>
 
-This hook is called as part of the global atomic_check, thus before the
-states are swapped. The existing state thus points to the new state, and
-we can use drm_atomic_get_new_crtc_state() instead.
+Folded into "ceph: fix client race condition where r_parent becomes stale
+before sending message" along with the following kerneldoc fixup
 
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
----
- drivers/gpu/drm/mediatek/mtk_plane.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  * ceph_mdsc_build_path - build a path string to a given dentry
+  * @dentry: dentry to which path should be built
+- * @plen: returned length of string
+- * @pbase: returned base inode number
++ * @path_info: output path, length, base ino+snap, and freepath ownership =
+flag
+  * @for_wire: is this path going to be sent to the MDS?
+  *
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index cbc4f37da8ba81ff9c8b3b58f66363837ffc21ec..d4486a63a6e01f02b6777522440dee8e39d51bf1 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -120,11 +120,12 @@ static int mtk_plane_atomic_async_check(struct drm_plane *plane,
- 	ret = mtk_crtc_plane_check(new_plane_state->crtc, plane,
- 				   to_mtk_plane_state(new_plane_state));
- 	if (ret)
- 		return ret;
- 
--	crtc_state = drm_atomic_get_existing_crtc_state(state, new_plane_state->crtc);
-+	crtc_state = drm_atomic_get_new_crtc_state(state,
-+						   new_plane_state->crtc);
- 
- 	return drm_atomic_helper_check_plane_state(plane->state, crtc_state,
- 						   DRM_PLANE_NO_SCALING,
- 						   DRM_PLANE_NO_SCALING,
- 						   true, true);
+and queued up for 6.17-rc6.
 
--- 
-2.50.1
+Thanks,
 
+                Ilya
 
