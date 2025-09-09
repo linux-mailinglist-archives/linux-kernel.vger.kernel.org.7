@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-809083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0043DB50847
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA46B5084B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EDA1563676
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9D61C65FFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336CA25CC74;
-	Tue,  9 Sep 2025 21:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C75F25BEE1;
+	Tue,  9 Sep 2025 21:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PkmszKdI"
-Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com [209.85.214.227])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FiUByit2"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4AA257452
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 21:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDECE31D380;
+	Tue,  9 Sep 2025 21:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757453811; cv=none; b=Vie/zTVRsRGbxi7VsH6JApQcQWjdJRiGngJ0R9ZdZUTlPLrV/yv3ZgLnCT4GY2FC1ObQI+BDBKokKMNkDE6KIU+7VI59s4/o+omiDtTrWQwKeNmoD8acD0itcvfDMt4buKqV2KqYXA5hdGOdxh1STwXsmZmCM0YWRuKS/6xm4QE=
+	t=1757453887; cv=none; b=i5VZWZ0ovFVkHS4/UuCAMON+4g7bjYG3HWe94nHQ93oCmoGPfyRuN/+HtR/PJNe0LncLqLKdj6lC8ffvXUGoLlsuWHKsnbyk03oH1/UZ4xFFBSpBh31ncFlLohvsIywMUZJVbRCofCSgdtMsk0huhowKV3RZw5iN94WCK6IUr48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757453811; c=relaxed/simple;
-	bh=CZNhlT52Alzx0Js21jOkkJfApwjjx3fxDjTZoI6b7/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eAFe6posvR3CQrN3r/mV3bkXFBQILJEvYZzZ28fJOU10YZ0YhcysTZVncznVGY9qQ3kgm6SaT2jI7lzfdmdEJPEJ43koNE7suQDYD2Swt3yPsuyNZxTDWziikfhbSbfyavuI9C5ICC8kBGCnRxZGWanGmcqtZY0vG+7nJxFj5Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PkmszKdI; arc=none smtp.client-ip=209.85.214.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f227.google.com with SMTP id d9443c01a7336-2445826fd9dso73075555ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:36:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757453809; x=1758058609;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zR/DYeoSBnco4wnNVcRf2KymAUJXNjwzJbVzGxmCiQw=;
-        b=FsQhZj2a3/EPK7rWTCPtn5er4F5JrQEIzdpV8Gr1vsubybsteXMAuds3IWi+tRi0Gv
-         1/qKh6EeYEjMMfzMqmvKZTCFyWdmALLnYDfmM88yf9ly24oQCQaWKI53k9orT1DmLV0B
-         LsetYDc/QF9bYJ++6NOf5QmiSF2+/dac58MQqWh1ajLMpyxUnZlqS4cdDuZ87+4fMIwB
-         B+tgJ/PmVgWXAko249neROKVtlKSMcPjTJ+eFDdKrsqYI7TsYh4+p5Ed8saUGIi77qXM
-         VKBcC/sIyg32e+US4jzUPZQOh8c0scoikZoMF9ADwMrhJsh2HcGyqCCdDYPW1YLc4nND
-         yH2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEqG5S1+x7cFgClvtt6tDVhWI/bUmL0rNnxEgr5O25NklacLgpNMdInLK6pKB4Pk/BCVZOEqm0bDtU3Sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOGo0WWgc2cCeEwzrA6selq6+1JBqnBYjlJr6mY6sEhZFQdk8u
-	9Br/SneO1bK0VUWBeaAjkUqehW5iyNx4Eqv7y/XKfROdwbOJOcnemhqQrqNAEA6ZX6q7/hgZoyn
-	kWAJ3bC0eiW9wFiYlZ5c7Ee0EwmJMVpZZuKMfSjCmOujqTyOTMJUi1mQZVv/smBlaKLZm8nMK5M
-	fCucxfqEjc1nzFd3L2AgpTYviRM7Db6CC8+Hhbf+aiT0bJMRh1c34shReTmAyZGuzdiY588H3if
-	bcSdlSdjpRth6IJbre4bvFH
-X-Gm-Gg: ASbGncv/CsmgQw12OaqeQV2/rntz+HpvVpxAmB4lg/SYc77l6Ed3XxAfP+FIowPfJPx
-	DG/QICnVOxU6v5qPUlmdKoQtZdoBudGS/2R38itQyr3Jxk2JSFbEFzQ/m278xWJ5CGAltf0P/xk
-	Plgr5nMeQ4F6ZcZ3VOVc80B1IRxH4De0HP+pu6hOFwR5Jt47zTTNmB19ldiSkBh/D304sUeQ15E
-	HJczTRepeN1e4H50rAoU3HTnfLYTxW1KOYlRBZt/XHRiCIlh6Dy6JzO4LJEv8g6AfC71rJsZEmP
-	Q4zky6NbrzNh3Yui86jbH9BRQ6gUP6Be4PSUDTU4r3yZs6RAwCrcYN7fUuHtDkt83K9jA2H44kV
-	0J7Ss8M+ee4VnyU63iQBiX1H6wJesANMrL6AQJdSXPE+gOkDc3YZQbTKK4KkdA+vyQ2oURzwCdz
-	hHM1LtYzU=
-X-Google-Smtp-Source: AGHT+IFJct9im+knftS76cMjrPkLgVinmKH/cw09E4mq3A8fUUV9Oj64PAMzgl4AeHQ3JpuCKSoWW8k1Aah9
-X-Received: by 2002:a17:902:fc4f:b0:24e:8a54:accc with SMTP id d9443c01a7336-2516fbdaf52mr155466965ad.13.1757453809572;
-        Tue, 09 Sep 2025 14:36:49 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-25a26f4d44bsm801305ad.8.2025.09.09.14.36.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Sep 2025 14:36:49 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-72048b6e864so62647256d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:36:48 -0700 (PDT)
+	s=arc-20240116; t=1757453887; c=relaxed/simple;
+	bh=+KlaB2ZRUlkXAjDQ0cgQArXWIVoa1KUG/Gd4ELTPYiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dkFOq258Xg4bPeUiGykboznBaKgXADHZIt93xgS1t03XEG/FSqHvhcFaiKAjUWKKK8qcnyCrXwnrGSpqfQKf25qipw49kr6agJnTGaxTmFkF+oIJ+qeg9VCNm0VG2xjQ9HafYe9Mtaj00JB4ul47aV/9+k9lS0wHltV6FID4y1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FiUByit2; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso13183895e9.3;
+        Tue, 09 Sep 2025 14:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757453808; x=1758058608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zR/DYeoSBnco4wnNVcRf2KymAUJXNjwzJbVzGxmCiQw=;
-        b=PkmszKdIPDEs1Cm9quKIR2iDi0u8Ax2vRH/Y47ycjZiISx4hSakn40kZiPaks8PGLt
-         vUSsiGjpyVwDAwKGdHwA1D/HJZw5VPaHz4+ah+5+D51ZpDhWdn0M/ADyT/dh5sJDXKWS
-         Tp83B0vbaQwgh9R6/S79BfRSlnOi6+ycnPT0o=
-X-Forwarded-Encrypted: i=1; AJvYcCUQuouCIWTXpZcxXZGgR5nAr+OToLUpALz/aiF/Tlu3LohsPhDp6mJe9mxomIfS1UgrjPa2b9KRmkpQw7U=@vger.kernel.org
-X-Received: by 2002:a05:6214:2408:b0:728:8b2:1e34 with SMTP id 6a1803df08f44-73932311130mr150355876d6.27.1757453808385;
-        Tue, 09 Sep 2025 14:36:48 -0700 (PDT)
-X-Received: by 2002:a05:6214:2408:b0:728:8b2:1e34 with SMTP id 6a1803df08f44-73932311130mr150355676d6.27.1757453807984;
-        Tue, 09 Sep 2025 14:36:47 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b57c3240sm144718516d6.50.2025.09.09.14.36.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 14:36:47 -0700 (PDT)
-Message-ID: <b6e764b8-e8c8-42a3-81aa-87b3b1dd49f9@broadcom.com>
-Date: Tue, 9 Sep 2025 14:36:45 -0700
+        d=gmail.com; s=20230601; t=1757453884; x=1758058684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9bRzHx5EoiydheNT5Yf/8MPbvT1DEWaavIvj84zoZs=;
+        b=FiUByit2jNW4OuZZRdVJGxZPw4sTGaz/7HcLxEhjF9cXBUKWlkdN3ZuPSRFB7QqNb6
+         4ET5fOK1Hbj37ujC4s8265jBiOzX83GHX6RCGtJURFSz6ts77KK6S4/wAHjte4EfkYU3
+         Mm2FRSYV9BDH+wd7auinGOUp/NYE5HFmRqJ/tlvJ3Fd6XnoCXeaxD/MX5qxwCvMnSRHP
+         0KD72ItdgovunyyTFHkB/YCPG8r3OFRB9CT5fgm3p4ej1bA3Y1ZNTgNO5oB0WkUhTPCX
+         Q3PMSnZgLz17/P7nJWnL4oqRCEh5XDGdRCW2G8w04yRexSdrzsMo+n/Sg0PeSlYEYwqp
+         yn2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757453884; x=1758058684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+9bRzHx5EoiydheNT5Yf/8MPbvT1DEWaavIvj84zoZs=;
+        b=HnSXMYZ+dRRLOiXo0VnJOHb1OmJpHHiMdMETt4P+GOzP+xVYq4ky4SbG4khK3t1h6A
+         fMvCXUexkdnrShjVjToAR9PsCJVrCbqmhZMvTYamNDiyRioB2MSg011OyJva56cb0JFY
+         xdMSXEKEFQvO+U6CIa3wq54Xkqd9l4wTwcZD+KTjQ4utq5AuQxZeuOE8zCvm+1M+FckI
+         vFetcl6coPUpwPc4Uf6uWl3uJz2Kek5h4HncFEoPVLwaBvKur/wq821wLVqp411GFPwa
+         VvKwgVae8K9DJonZB21lwN+MhsOxfgpdyLn8OJYovjVA2uIdCWnqZgFx1Df2dkRDp6Gi
+         o1YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUfN8yXOwfIiFwLwjpVahxdFUrU8mLUgwgbQd13W3pEgmIrenN6oXe2PNlT7aUmDArv9PMGmbM/tvdw/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk8+x8aBj5AbmchU+2AHNnZMy89qSqrzkxary/ZN8RSYUgoWlJ
+	0gZ0X5Amp9Duo7szO0dErcMp3qHQVMsn0eb0i+ie0yPPkybkliHU7huf/IAMFm8n
+X-Gm-Gg: ASbGncujazm34hLaZJ/qYtzNeiR+JnqDIAdZ0ajTd9aQM4XJAR7xgVjpjsURhDMGIwL
+	CkGgfgSoOMflkt/VEsYO0Tl2cg9epzkyJr33snGZyL2AmgrAuBolwgoBVecg5BV4kHNEgpTBzPa
+	oNpA/AG7Q8cUdAgRynQSSscKbvoJQ2Un8KKPNEAa5c1qN3Z4vsGDEfWz5zyiP3qdAKgyib92Viw
+	95dEaGUxfc7j/3Y35ZdnlSfRRvT6Zh0szBXnkeZJxMx/n4p4AuqmYsWgs84+neAZH9suZg14m/f
+	wF8unLGErMSV/nLiCvawcfySwqPgl4OyWS8KMD7xfi53qDUHJekqF8oQImDemuDUg9xlpbp76Ww
+	0kyxUMPF7IBdS+qMtbd2tXkn+Ps71Ydt3vGpueojclduo3bY=
+X-Google-Smtp-Source: AGHT+IEaYCcYmIThqF41pmILuOuIJ2YZka3UAOBXQPT8N14he2DWgi46sPZw0th9YjJQIKcRzA/Tag==
+X-Received: by 2002:a5d:64e6:0:b0:3cb:a937:a35f with SMTP id ffacd0b85a97d-3e641969f7dmr11109760f8f.23.1757453883833;
+        Tue, 09 Sep 2025 14:38:03 -0700 (PDT)
+Received: from localhost.localdomain ([151.84.244.111])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81cbb08sm2315165e9.2.2025.09.09.14.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 14:38:03 -0700 (PDT)
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/3] Add support for Variscite VAR-SOM-AM62P5 and Symphony board
+Date: Tue,  9 Sep 2025 23:37:38 +0200
+Message-ID: <20250909213749.28098-1-stefano.radaelli21@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [net-next PATCH 3/3] net: phy: broadcom: Convert to
- PHY_ID_MATCH_MODEL macro
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250909202818.26479-1-ansuelsmth@gmail.com>
- <20250909202818.26479-3-ansuelsmth@gmail.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250909202818.26479-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Transfer-Encoding: 8bit
 
-On 9/9/25 13:28, Christian Marangi wrote:
-> Convert the pattern phy_id phy_id_mask to the generic PHY_ID_MATCH_MODEL
-> macro to drop hardcoding magic mask.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+This patch series adds support for the Variscite VAR-SOM-AM62P system on module
+and the Symphony carrier board.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+The VAR-SOM-AM62P is a compact SOM based on the TI AM62P Sitara processor,
+featuring up to 8GB DDR4 memory, eMMC storage, Gigabit Ethernet, and various
+peripheral interfaces. The Symphony board is a feature-rich carrier board that
+showcases the SOM capabilities.
+
+The series includes:
+- Device tree bindings documentation
+- SOM device tree with common peripherals
+- Symphony carrier board device tree with board-specific features
+
+The implementation follows the standard SOM + carrier board pattern where the
+SOM dtsi contains only peripherals mounted on the module, while carrier-specific
+interfaces are enabled in the board dts.
+
+Tested on VAR-SOM-AM62P with Symphony carrier board.
+
+Stefano Radaelli (3):
+  dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
+  arm64: dts: ti: Add support for Variscite VAR-SOM-AM62P
+  arm64: dts: ti: var-som-am62p: Add support for Variscite Symphony
+    Board
+
+ .../devicetree/bindings/arm/ti/k3.yaml        |   6 +
+ arch/arm64/boot/dts/ti/Makefile               |   1 +
+ .../dts/ti/k3-am62p5-var-som-symphony.dts     | 500 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 387 ++++++++++++++
+ 4 files changed, 894 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
+
+
+base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
 -- 
-Florian
+2.47.3
+
 
