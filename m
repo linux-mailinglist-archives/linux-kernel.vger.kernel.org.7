@@ -1,162 +1,318 @@
-Return-Path: <linux-kernel+bounces-807269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17234B4A255
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6E2B4A24E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC84E18947F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26772188E169
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67133303CB4;
-	Tue,  9 Sep 2025 06:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D481D303A3F;
+	Tue,  9 Sep 2025 06:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GhxE7zhS"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp/hdWj6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898D03019B1;
-	Tue,  9 Sep 2025 06:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92B118A93F;
+	Tue,  9 Sep 2025 06:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757399640; cv=none; b=qP0TFj+1gcOa1yk7PHNs0J47W9Kge/XLHjObz16YJ9c4Vd901N+qnLACUlO2ArbW0w4XpBYa69JH6mZRoffz4UULrqeK20HTJopkJOd8z6DE9SFkgFjj59RUt38+zOccouDXYQtBDDgok+2zJgmZBUIP0fd0q9qsrlyjf/fY3Kk=
+	t=1757399551; cv=none; b=KEceyEFFXzBzuVvbjbnS7dRp6DwlwW15gknr+jb8AhZFDGr0KEiEr1yv+pmRz5Qgt5aQz64wUPGJU7N5feCHtx2JSLm1rBf+a7ueYUQCB+Cf+i971nuf+sbvd0Jjt4Z3iQI02rGUKfaDgYFIZxgntBjTTxasG3Um/Qbok+DPPJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757399640; c=relaxed/simple;
-	bh=Ogqp4XpuBL7zJJTDs42HXfHEo3R5sIvtQqrPOh+C3Os=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BaTxhIke5Ntv4LwZfYXiDPWtCU0rNwjjiR/ER5kSHv8LWfwxklLWxdAEhk9zi/xkI4kS/h+T/cVM0OcONh+P6CqKkowyQCxBzfYNP3zSgLniqTDWERdkzkUbQm4G7e3SUCTrqWu3rZoI93PFaQJg5C+MBI0lLHJDKqq1mGHNHsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GhxE7zhS; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0i
-	bI9vEsP3MNEc9wHQ+cBn0xW5pSKNT6VjhUISVbHXA=; b=GhxE7zhS5WGBgpfF/t
-	Ip6eSVueZdpc5689jRbQ/JkWIdRHAzG7pweO4rijIyJVeFuJXRxt5c3JCdMNHF+A
-	eBDZKdoo9vfMk/TolmpXpEoVFXbLr6bnlLp5kFkHhljI82xS9hRecPLkiAmBGnNm
-	WAYRln6qdb5dRjpwnZBz6eyQA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCHKMY4yr9ohNkqHw--.60047S2;
-	Tue, 09 Sep 2025 14:33:29 +0800 (CST)
-From: James Guan <guan_yufei@163.com>
-To: johannes@sipsolutions.net
-Cc: kuba@kernel.org,
-	kuniyu@google.com,
-	shaw.leon@gmail.com,
-	kees@kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Guan <guan_yufei@163.com>
-Subject: [PATCH] wifi: cfg80211: Fix page fault in __cfg80211_connect_result()
-Date: Tue,  9 Sep 2025 14:32:13 +0800
-Message-Id: <20250909063213.1055024-1-guan_yufei@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757399551; c=relaxed/simple;
+	bh=2G05gzx1PbaHyR1yYOE2y+mLcbStlpmfMPAJKrEzaC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sQpcxBDGFDVYOzLAK+x8GbMPJABX+l0gMvQQQWYwGE5lJlCIjz4Qr1qWUOwWR/LME2ryNWI9NXibLe1T1GHz3zmigHr4cvKu+OoutV6x6C0IQXemU9kWVfCHWmkTc3ZWsrE6V1KPtHgt1RJCjXigIC8xhuoA0pWjNm2Zk6SKBhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp/hdWj6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634CDC4CEF5;
+	Tue,  9 Sep 2025 06:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757399549;
+	bh=2G05gzx1PbaHyR1yYOE2y+mLcbStlpmfMPAJKrEzaC8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pp/hdWj6LY6bGFjsgsADGJsGjUD6dcZ8sIz1E2W8Bp78HpLJf5tiqc6PaS2tctJdm
+	 vmRk4z5ffK38g1LunQBW0MQIF8wH/i8WasdyLDVZhqU5vYlbAWpRm+5WdrI4F4e1nx
+	 SZk6v7FD0wB9wfJnihoizbTt7Ts6XaoOFKQzUFaVUmnfIwh3Fb69isdIlQwB+DU/zV
+	 sUK7LXBTh4A/R913c5kWjfFNoDCsJAzLL/Fjd+T7S001RLhPcMZsFqlGTK+5PtZRI4
+	 Rh2iw78Rf2haihzrZVl0vVKInRdOFZSP9QhMrMB3DmwQLT65Da5TroKWm2ahjZzO7A
+	 YG0KA2UCAnqHw==
+Message-ID: <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
+Date: Tue, 9 Sep 2025 08:32:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHKMY4yr9ohNkqHw--.60047S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JFW3uFWUCr1xCF1ftr18Zrb_yoW7Xw4Dpr
-	yxtFZ8Gr4kJryUXr1UAF4UJr17ZanrAF1UXryIvr1rZa4UWw1DJryUGFW7Jry5Jr1DX3Wx
-	Jr1kJw48t348GaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEgAwsUUUUU=
-X-CM-SenderInfo: xjxd0s51xivxi6rwjhhfrp/1tbiJxzDS2i-wRhhzgABsT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
+ bindings to YAML
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-2-ariel.dalessandro@collabora.com>
+ <20250821-silky-slug-of-novelty-e4bb64@kuoka>
+ <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When I attempted to connect to a virt_wifi device using iw on 6.17-rc5,
-a page fault occurred in __cfg80211_connect_result(), preventing successful
-connection.
+On 08/09/2025 19:52, Ariel D'Alessandro wrote:
+> Krzysztof,
+> 
+> On 8/21/25 3:46 AM, Krzysztof Kozlowski wrote:
+>> On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
+>>> Convert the existing text-based DT bindings for MediaTek MT8173 Media Data Path
+>>> to a YAML schema.
+>>
+>> Please wrap commit message according to Linux coding style / submission
+>> process (neither too early nor over the limit):
+>> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+> 
+> Thanks. Looks like my editor was misconfigured, sorry. Will fix in v2.
+> 
+>>
+>>>
+>>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>>> ---
+>>>   .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 ++++++++++++++++++
+>>>   .../bindings/media/mediatek-mdp.txt           |  95 ----------
+>>>   2 files changed, 174 insertions(+), 95 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+>>>   delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+>>> new file mode 100644
+>>> index 0000000000000..f3a08afc305b1
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+>>> @@ -0,0 +1,174 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-mdp.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: MediaTek MT8173 Media Data Path
+>>> +
+>>> +maintainers:
+>>> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>>> +
+>>> +description:
+>>> +  Media Data Path is used for scaling and color space conversion.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    oneOf:
+>>> +      - items:
+>>
+>> Just enum, no items here
+> 
+> See below.
+> 
+>>
+>>
+>>> +          - enum:
+>>> +              - mediatek,mt8173-mdp-rdma
+>>> +              - mediatek,mt8173-mdp-rsz
+>>> +              - mediatek,mt8173-mdp-wdma
+>>> +              - mediatek,mt8173-mdp-wrot
+>>> +      - items:
+>>> +          - enum:
+>>> +              - mediatek,mt8173-mdp-rdma
+>>> +              - mediatek,mt8173-mdp-rsz
+>>> +              - mediatek,mt8173-mdp-wdma
+>>> +              - mediatek,mt8173-mdp-wrot
+>>> +          - const: mediatek,mt8173-mdp
+>>
+>> This makes no sense. How devices can be compatible and can not be
+>> compatible.
+> 
+> According to the driver source code (and the previous txt mt8173-mdp 
+> bindings), there must be a "controller node" with compatible 
+> `mediatek,mt8173-mdp`. Then its sibling nodes (including itself) should 
 
-The page fault is triggered because virt_wifi_connect_complete() sets
-requested_bss to NULL when no BSSID is specified.
+But you did not define "mediatek,mt8173-mdp" here, so what are you
+talking about?
 
-This patch fixes the bug by adding a check for a NULL connected_addr
-before calling ether_addr_copy() in __cfg80211_connect_result().
+I talk here about "wrot" and others, I thought it is obvious from the
+mistake in the schema.
 
-Reproduction:
-	root@host:~# modprobe virt_wifi
-	root@host:~# ip tuntap add tap0 mode tap
-	root@host:~# ip link set tap0 up
-	root@host:~# ip link add link tap0 name wlan0 type virt_wifi
-	root@host:~# iw dev wlan0 scan
-	root@host:~# iw dev wlan0 connect "VirtWifi"
 
-Kernel panic occurred after running the connect command.
-Below is panic messages from kernel:
+> be one of the component node ids, listed in `struct of_device_id 
+> mtk_mdp_comp_dt_ids[]`.
+> 
+> Is there a proper/different way to describe this compatible binding in 
+> the yaml? Or you're saying the driver doesn't make sense here?
+> 
+> [0] drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+> 
+>>
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks: true
+>>
+>> No, there's no such syntax. Look at other bindings.
+> 
+> Ack.
+> 
+>>
+>>
+>>> +
+>>> +  power-domains:
+>>> +    maxItems: 1
+>>> +
+>>> +  iommus:
+>>> +    description: |
+>>
+>> Drop |
+> 
+> Ack.
+> 
+>>
+>>> +      This property should point to the respective IOMMU block with master port as argument,
+>>> +      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
+>>
+>> Drop entire description, completely redundant. I don't know why my patch
+>> fixing this was not applied, so you keep repeating same mistakes...
+> 
+> Ack.
+> 
+>>
+>>> +    maxItems: 1
+>>> +
+>>> +  mediatek,vpu:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      Describes point to vpu.
+>>
+>> Useless description. We see that from the property name. Explain the
+>> purpose in the hardware.
+> 
+> Ack.
+> 
+>>
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clocks
+>>> +  - power-domains
+>>> +
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: mediatek,mt8173-mdp-rdma
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          items:
+>>> +            - description: Main clock
+>>> +            - description: Mutex clock
+>>> +    else:
+>>> +      properties:
+>>> +        clocks:
+>>> +          items:
+>>> +            - description: Main clock
+>>> +
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - mediatek,mt8173-mdp-rdma
+>>> +              - mediatek,mt8173-mdp-wdma
+>>> +              - mediatek,mt8173-mdp-wrot
+>>> +    then:
+>>> +      required:
+>>> +        - iommus
+>>> +
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: mediatek,mt8173-mdp
+>>
+>> This makes no sense either.
+> 
+> Same question above about compatibles.
 
-[  150.197544] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[  150.199333] #PF: supervisor read access in kernel mode
-[  150.199787] #PF: error_code(0x0000) - not-present page
-[  150.200148] PGD 0 P4D 0
-[  150.200339] Oops: Oops: 0000 [#1] SMP NOPTI
-[  150.200641] CPU: 0 UID: 0 PID: 78 Comm: kworker/u4:5 Not tainted 6.17.0-rc5 #5 PREEMPT(voluntary)
-[  150.201264] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[  150.202056] Workqueue: cfg80211 cfg80211_event_work [cfg80211]
-[  150.202528] RIP: 0010:__cfg80211_connect_result+0x35d/0xa40 [cfg80211]
-[  150.203032] Code: 8d 14 db 49 89 84 d6 00 04 00 00 41 0f b7 44 24 68 41 83 c5 01 44 89 eb 66 85 c0 75 b6 48 85 db 74 c0 41 80 8e a4 00 00 00 01 <41> 8b 07c
-[  150.204305] RSP: 0018:ffffc9000069bd10 EFLAGS: 00010202
-[  150.204670] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[  150.205169] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff888110e1f830
-[  150.205666] RBP: ffffc9000069bd90 R08: ffffffff0000afd4 R09: 0000000000000003
-[  150.206169] R10: 0000000000000001 R11: 0000000000000000 R12: ffff8881065e4c18
-[  150.206670] R13: 0000000000000001 R14: ffff888110e1f000 R15: 0000000000000000
-[  150.207165] FS:  0000000000000000(0000) GS:ffff8881f7c3e000(0000) knlGS:0000000000000000
-[  150.207723] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  150.208129] CR2: 0000000000000000 CR3: 000000010577d004 CR4: 0000000000372ef0
-[  150.208627] Call Trace:
-[  150.208811]  <TASK>
-[  150.208972]  ? wakeup_preempt+0x74/0x80
-[  150.209262]  cfg80211_process_wdev_events+0x13c/0x1b0 [cfg80211]
-[  150.209738]  ? cfg80211_process_wdev_events+0x13c/0x1b0 [cfg80211]
-[  150.210219]  cfg80211_process_rdev_events+0x2f/0x50 [cfg80211]
-[  150.210766]  cfg80211_event_work+0x3a/0x60 [cfg80211]
-[  150.211323]  process_scheduled_works+0xa3/0x420
-[  150.211806]  worker_thread+0x12a/0x270
-[  150.212170]  kthread+0x10d/0x230
-[  150.212460]  ? __pfx_worker_thread+0x10/0x10
-[  150.212770]  ? __pfx_kthread+0x10/0x10
-[  150.213043]  ret_from_fork+0x8c/0x100
-[  150.213322]  ? __pfx_kthread+0x10/0x10
-[  150.213595]  ret_from_fork_asm+0x1a/0x30
-[  150.213911]  </TASK>
-[  150.214076] Modules linked in: virt_wifi cfg80211 intel_rapl_msr intel_rapl_common intel_uncore_frequency_common kvm_intel kvm bochs drm_client_lib drm_sh4
-[  150.216925] CR2: 0000000000000000
-[  150.217176] ---[ end trace 0000000000000000 ]---
-[  150.217526] RIP: 0010:__cfg80211_connect_result+0x35d/0xa40 [cfg80211]
-[  150.218120] Code: 8d 14 db 49 89 84 d6 00 04 00 00 41 0f b7 44 24 68 41 83 c5 01 44 89 eb 66 85 c0 75 b6 48 85 db 74 c0 41 80 8e a4 00 00 00 01 <41> 8b 07c
-[  150.219483] RSP: 0018:ffffc9000069bd10 EFLAGS: 00010202
-[  150.219863] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[  150.220372] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff888110e1f830
-[  150.220874] RBP: ffffc9000069bd90 R08: ffffffff0000afd4 R09: 0000000000000003
-[  150.221379] R10: 0000000000000001 R11: 0000000000000000 R12: ffff8881065e4c18
-[  150.221899] R13: 0000000000000001 R14: ffff888110e1f000 R15: 0000000000000000
-[  150.222433] FS:  0000000000000000(0000) GS:ffff8881f7c3e000(0000) knlGS:0000000000000000
-[  150.223192] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  150.223728] CR2: 0000000000000000 CR3: 000000010577d004 CR4: 0000000000372ef0
-[  150.224373] note: kworker/u4:5[78] exited with irqs disabled
+How same question? Do you understand this code? It is nothing the same -
+you have here contains!
 
-Signed-off-by: James Guan <guan_yufei@163.com>
----
- net/wireless/sme.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index 3a028ff287fb..6014d71d2845 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -863,7 +863,8 @@ void __cfg80211_connect_result(struct net_device *dev,
- 		wdev->links[link].client.current_bss =
- 			bss_from_pub(cr->links[link].bss);
- 	wdev->connected = true;
--	ether_addr_copy(wdev->u.client.connected_addr, connected_addr);
-+	if (connected_addr)
-+		ether_addr_copy(wdev->u.client.connected_addr, connected_addr);
- 	if (cr->valid_links) {
- 		for_each_valid_link(cr, link)
- 			memcpy(wdev->links[link].addr, cr->links[link].addr,
--- 
-2.25.1
-
+Best regards,
+Krzysztof
 
