@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-807359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BC9B4A367
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39674B4A36F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4DE017649A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3FE2540A13
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C4D306B17;
-	Tue,  9 Sep 2025 07:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301C305974;
+	Tue,  9 Sep 2025 07:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EakU8L/J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ODs7c9Ig"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB8301020;
-	Tue,  9 Sep 2025 07:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064E31F30A4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757402570; cv=none; b=jg1aOtgkjg0o17xLTF16XQdMvxcmJNnLGNSC6QOHLLXx49jBhT5kznRCbbpTsgari3GKhzMp53FBDQiDNfZBQ3N852okbTvVCzZox2YuS1vsyEGGb3jCF729K2ILWpGWLldsgONwD9SQoiEWpWvosDfum6+BCR7BvLcB4HruVeM=
+	t=1757402762; cv=none; b=COJaCefV8ShYH1WvnZGf5h3GYTywrZWm2JeGHwKTt2rrcJn3UiSy1LvmIm2j5aDHRbgWkKdBC1oPlYoIEkaH2eFjb2tDOQXXXvG1xVHOHFWnaL9uPMV4fgqscnMpGUl6cW8RaOAjrj2kAh0nGUaZsYk+dQfMCtyc+58XwvyDYv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757402570; c=relaxed/simple;
-	bh=o7ugIVkJo/aKAs4gBVOk2r95UE0mR+SIVxJvnGxthO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oX4dBdhNC5/5+TaEDKINok0GTjI701YaYioI/8R7lfKFL5RcNqgaGhViEBNrKDIoFfjQb0vayZfn/F7H3RXLb7hvSaGe+HS4m3kwo0JvbpDVBeAGqSwn2qUwmrVnOJxIHp2Yok6zrMsXhVxe4penRHYLfOXG09lpkWsPrb89ScI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EakU8L/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3070AC4CEF8;
-	Tue,  9 Sep 2025 07:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757402569;
-	bh=o7ugIVkJo/aKAs4gBVOk2r95UE0mR+SIVxJvnGxthO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EakU8L/Jq5POaXQsD0wfdo4YzZ/8nBG24jChwZwnvvp15g3V2xXZrgpmN0WZMiX6c
-	 f5aXmEFo0VuZTs0dWH6UNww6ZlkDAX+Uwk+60HlOpjrKNKU9u/MK5nViQevDf3wctO
-	 rQl+GLQ4QtgPokRfpsPy6y6EL+XvCk/PsSTUaema8dOt8oDZqyfVRC25TE79sS8yaj
-	 3h9gq/Au7kJy2UitiT/RLUBchO6Vl+u5a0+i/uZsjBL4d4INVTPAmbXUsMu4erAWGN
-	 encq7Xd3HnkYMYeUCgIw6gwaoxdXCOTJkaUgfXU6orTCe7i2Snb9woryfoqkWNUbAJ
-	 Q3MxysQNGf/7w==
-Date: Tue, 9 Sep 2025 09:22:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaison Deng <dkx@t-chip.com.cn>
-Cc: Rob Herring <robh@kernel.org>, Jimmy Hon <honyuenkwun@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Wayne Chou <zxf@t-chip.com.cn>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Dragan Simic <dsimic@manjaro.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, FUKAUMI Naoki <naoki@radxa.com>, 
-	Peter Robinson <pbrobinson@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add Firefly
- ROC-RK3588-RT
-Message-ID: <20250909-romantic-efficient-sambar-4fc38f@kuoka>
-References: <cover.1757322046.git.dkx@t-chip.com.cn>
- <27b2ce7950fdbf28c6c8404c3f8be3c1c35d6b3c.1757322046.git.dkx@t-chip.com.cn>
+	s=arc-20240116; t=1757402762; c=relaxed/simple;
+	bh=7inUfeL4iXoWEN8KQCUXVzIGFwKhSb19V12WXUhx85g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dg5Gl5JZHz9LGA7WOdSaXV4ugnFlSFUdARj2+FV0PjVhdEKwc6AyyIhFvBvSm7SK2/CuBPMuZ3/QX3Fj8UDa4J4RYoFATvnuGHh9cX0KEgRUp5WRsKZLG8o/3RdDn+/25xgi4Uv51pdTL0Fj4wyOuRRCaEvvszlxn/aBIdcX9Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ODs7c9Ig; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55f76454f69so4958228e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757402758; x=1758007558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7inUfeL4iXoWEN8KQCUXVzIGFwKhSb19V12WXUhx85g=;
+        b=ODs7c9IgYkys8UB0jUCrGrMWA6Ua/xACuwga4FX91iWx/Fsd/n1sbw2Iwj5biHHZhO
+         C11+hlO1q8PTgnX8OfA0rdeLsYza1oepTcRTU6i3eMQqvqVqihpN/FLLyIOc+decyvUM
+         81v+E6uZOLvvRyMFLG7xxprOzEYjt93wUra50U3z3Rt7S3F/vzQKq5i8W5dYve+6DDxl
+         8S8IRXYBv8XShs2J0YA/8sUQ0UU2XzrwoHX6xp6SpOiyzDrGbqcR3lWTn0+aVgwknPUk
+         hJNltnthqziXxtAIIe8nkMyTBTtp9RSzHygEvjL5oj6epzXFDEze5t1wXV0wmzSRVl+L
+         6bGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757402758; x=1758007558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7inUfeL4iXoWEN8KQCUXVzIGFwKhSb19V12WXUhx85g=;
+        b=J2IpC13Ot5HS7YE5NVlywbT/FPPHJL0JCv2lPHpzicA6A79PVFqxj8qGz5xgMUSDwn
+         g1n6ztbaCY7bj6vLcVOmZRNxQR6vKLggv5nQ5rS0QuiJ0Y6wvd24Whzt6Xfi66K9krhC
+         61+AI34VhEwShDCqJhtshKt8OsxbI5wgEhHgVh2ykseuygWM5h2dyQhb3VGDof4sGu9N
+         P0tvC6dxHjMtgLBuYdKIlaxIuA0YsdnO9Ro5YB0jYJSzfhLeGBMTrZ97qbKdguB258F8
+         SgLQ2O4LzUQl4aHHp8a1Xim5PWd9tbEsIht3lhy1Zqh5Qg6N1p+V2kmsrNIHx/n6ybvS
+         zAxg==
+X-Gm-Message-State: AOJu0Yyu+8F1AcaZeL09Z2wgPHRWygWmkB+VF7WyESmRo9yONIvfF5Ue
+	EyphyUG+pz+NYPgdy5Rp6e3XtLJeLcG5TzyWSylvZeLIKPT0Zpzo0Ws9Vk5H69KFshRrPgfCBs6
+	o1Tuk3NZCbbk9rjK9tFAV+22QNM/Gan0DZfAafRfpjQ==
+X-Gm-Gg: ASbGncsG0jGpoodrPkYIBRmQ8J+4XHSSM0BO5l1w8gxWqszCvuSU0u1ZL57hynPhIf7
+	PiBaihy+2c/xBBbXdgmLtyiweuqSedgufJBRDg2II22J8XLDpyEHt/feUN66XYcEjU2mlEROmEz
+	urVvRDOL9c1d1u5eD36zSmLEqlLeOf08jT3JgStkU25GBwVWFWRCtXlCYoF4FdfExQjJwKHY7SP
+	jUyhE7LxbPSEgbSKEhrbcVN/rJ2C5VxiI8CMJJ9HpzznYon6yI=
+X-Google-Smtp-Source: AGHT+IEAItx5LkxY8bTTPzFu+ytmMJgwFxFU4kyv09Ue8x63R9gquD9wuNy4+Xc6/sBQ575h9u2bBPxcfvQknO5Np5A=
+X-Received: by 2002:a05:6512:3347:b0:55f:727d:408c with SMTP id
+ 2adb3069b0e04-56261db51a5mr3072329e87.50.1757402758113; Tue, 09 Sep 2025
+ 00:25:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <27b2ce7950fdbf28c6c8404c3f8be3c1c35d6b3c.1757322046.git.dkx@t-chip.com.cn>
+References: <20250908160224.376634-1-marco.crivellari@suse.com> <CANiq72kJxwEncXVVrZoMyjXrtsJUGf+kamz0G+d2we7Fk1Vp6w@mail.gmail.com>
+In-Reply-To: <CANiq72kJxwEncXVVrZoMyjXrtsJUGf+kamz0G+d2we7Fk1Vp6w@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 9 Sep 2025 09:25:47 +0200
+X-Gm-Features: Ac12FXx4zNW2OZlT8is3cwmhq9h30yBg847pi9uvblZgAiJ2p8d049FN04Yni2o
+Message-ID: <CAAofZF5JbC0=zKMXRDSGfbLaZ7y8Ems0x-5GEVADkHJyY3BkMg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] rust: replace use of system_unbound_wq and system_wq
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 09, 2025 at 09:31:47AM +0800, Kaison Deng wrote:
-> This documents Firefly ROC-RK3588-RT which is a SBC based on RK3588 SoC.
-> 
-> Link: https://en.t-firefly.com/product/industry/rocrk3588rt
-> 
-> Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index f9ee77f17ad7..6aceaa8acbb2 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -258,6 +258,11 @@ properties:
->            - const: firefly,roc-rk3576-pc
->            - const: rockchip,rk3576
->  
-> +      - description: Firefly ROC-RK3588-RT
-> +        items:
-> +          - const: firefly,roc-rk3588-rt
+On Mon, Sep 8, 2025 at 6:32=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> If I understand correctly, these two patches are "just" following the
+> C side, right?
+>
+> i.e. the summary below comes from that original patch series, but this
+> one is just adding the `system_{dfl,percpu}_wq`s that were added on
+> the C side.
+>
+> In other words, I would have just said that, plus a link to the patch
+> series or commit that actually added the new wqs.
+>
+> I would do so similarly in the commit messages.
 
-That's just enum with ROC-RK3576-PC. BTW, all these descriptionis are
-completely redundant. Actually getting harmful, because copy+paste of
-the same is only obfuscating code.
+Hello Miguel,
 
-Best regards,
-Krzysztof
+Exactly.
+I kept the same cover letter for every subsystem involved to give all
+the information.
 
+> This is not what the patches are doing? There is no replacement nor renam=
+e.
+
+Yes you're right. This is done on the C side, the rename of all the
+uses; but the old wq(s) are not removed.
+
+> > =3D=3D=3D For Maintainers =3D=3D=3D
+> >
+> > There are prerequisites for this series, already merged in the master b=
+ranch.
+> > The commits are:
+> >
+> > 128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu=
+_wq and
+> > system_dfl_wq")
+> >
+> > 930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU=
+ flag")
+>
+> Why are these prerequisites if they are already merged?
+
+I kept the old cover letter paragraph name.
+
+Unfortunately I noticed I made some mistakes not updating the cover
+letter accordingly... sorry!
+
+Thanks!
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+marco.crivellari@suse.com
 
