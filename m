@@ -1,910 +1,438 @@
-Return-Path: <linux-kernel+bounces-807068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C33FB49FA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74545B49FAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82EE1B258E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218A64E693F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646401A9F87;
-	Tue,  9 Sep 2025 03:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8632C25A32E;
+	Tue,  9 Sep 2025 03:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="hKu6xPXP"
-Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="L9fDzuI7"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azolkn19012011.outbound.protection.outlook.com [52.103.23.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7645722541B;
-	Tue,  9 Sep 2025 03:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.61.253
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757387022; cv=none; b=EMMCgR+aUm1z5k/ScqrF02uWkq5DehSGjsABgT4AfICHlHfwMgnZKtX/KaQhSaVskvYNR8EP5MmQw5EDEoa/ChIHrYc3P8xlEjvueuT02yPOJjOEwRM9P7hjvUipwxESlpO+kwCluIdqJ2fLR3szBRHDP88dF4Qs+BKBwCt0VjE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757387022; c=relaxed/simple;
-	bh=szVCB9PKESaBfc2RM83VvyQYf6PNzbc6iKUbRPRaTfc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=TB7oAsY+40dw1wmZJZcuEp2scaUP9VH4ZYVQt8bndbUreTgaQnxyc1+kiHomVOIz7FBLtk+TIrfP8HcUJjclpkUtnxv99smKt0ioHEtBsVy3UItGwWAMLqlIvmebNaAwp0aUl6nxEGV7RLUGYFOTnmzM0H2GkP+gXZWingIlT/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=hKu6xPXP; arc=none smtp.client-ip=139.138.61.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1757387019; x=1788923019;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=szVCB9PKESaBfc2RM83VvyQYf6PNzbc6iKUbRPRaTfc=;
-  b=hKu6xPXPH3qq/v4+a9A5fX2ap8eAw1s2GZTF94Qn+WRP1jIU0iyxbcDe
-   /AqSdT8VgcmeQxYZi3P1ZOPbj68NJyomJW3TW0v0myCPnQmZdOGl1Hkwp
-   rsJ2pXnRQiqkKOeoMOnwiMQOdfLy/PlJkeW3JR4YnUR87Oe/ClN8jNGoS
-   zU5pvvsDJkivFAPrjSwO42X1hQLNISf6SFMdrhE9rpDxl1Y7RbLu4hOEz
-   oJ3U4L+whOZXHp2uVxPZQ2L/KdtsNCBCbZ1RFfyhpes+Kvg7aaBZmzbW0
-   viUCQnMToBktC4+stHZ0X1jm3TMNcMi8q/CzZplX7+jyHRm6nkej9/SxA
-   A==;
-X-CSE-ConnectionGUID: IeG2Zq1VSzqZUqBKJlIoeg==
-X-CSE-MsgGUID: dFZJ94aaQ8eJt4dIsn0cCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="200190585"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751209200"; 
-   d="scan'208";a="200190585"
-Received: from unknown (HELO az2nlsmgr4.o.css.fujitsu.com) ([20.61.8.234])
-  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 12:03:31 +0900
-Received: from az2nlsmgm1.o.css.fujitsu.com (unknown [10.150.26.203])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr4.o.css.fujitsu.com (Postfix) with ESMTPS id BE6EA42A31A;
-	Tue,  9 Sep 2025 03:03:31 +0000 (UTC)
-Received: from az2nlsmom2.o.css.fujitsu.com (az2nlsmom2.o.css.fujitsu.com [10.150.26.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm1.o.css.fujitsu.com (Postfix) with ESMTPS id 75D04C020B2;
-	Tue,  9 Sep 2025 03:03:31 +0000 (UTC)
-Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by az2nlsmom2.o.css.fujitsu.com (Postfix) with ESMTP id A2B011800B14;
-	Tue,  9 Sep 2025 03:03:25 +0000 (UTC)
-From: Koichi Okuno <fj2767dz@fujitsu.com>
-To: Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Gowthami Thiagarajan <gthiagarajan@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Koichi Okuno <fj2767dz@fujitsu.com>
-Subject: [PATCH v9] perf: Fujitsu: Add the Uncore PMU driver
-Date: Tue,  9 Sep 2025 12:02:50 +0900
-Message-ID: <20250909030259.2313226-1-fj2767dz@fujitsu.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C5D2459C8;
+	Tue,  9 Sep 2025 03:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.23.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757387351; cv=fail; b=mc+iQC3hZATR/+M/Ir2AD77uFBwkQ1vD1A2jEJR5I6zElDx8xFoPSc55LoxT/5FYycSBvof+gdjCv/yDA8l0cRiH2cI33kQ3ixZp+FjjSr1Cr8BhMHQYXFxKth+7zkB4+F2/7K2WYb9g3fpmOGbCLzu95MNjQB6wibkYvqCE21U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757387351; c=relaxed/simple;
+	bh=5Asgca6ff0D0ntKCQBP+Nozq+J9cSZkf9xdlK8LQySE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=E693fZIAHPzlyPfg76LzMb9GX7GOyIMR86oj5FgIYCcJJZj6A78aA2kE3UCxNLE/HsJ3tuSj1Vn+J69nXyzr7NPB9zxugEiwCsDusoEh9uxyLDFqvokDoPYwmBbPriyDDaDl06KxpUVhU6hYDOZqh0qUI60NgMEbw1vodZo55r8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=L9fDzuI7; arc=fail smtp.client-ip=52.103.23.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d4kukQ481mavGJuYRXmkhB5tn0yL+Rq70srEQZa66qUKrUFWVlD8eZ3W4vidw6JHhUClRxB6e4WEJCMxvxYFfl8hsaWE82yHvDP2vE5hYH9GGZf7bZnq5nO0ZdYgiJBH9Le7IIpNa1quKr/M4ljdTbUglTlf6jpKf+vuOmVldltJanutJ77O3kzKfS3CIW+uRBJ40BDxXBGvYYP19izCliElQBGjV1YLEFsFeQynnpCoMqPUyEJ3CEAerHsHhnsbGg7mzoSuBbnLf3PMgfGjcKmCVJn7kORS1xZhIhSaM7Wyuu816BGq5zGPFQTYikXVFJ4t3NY2PJaZmJXw16TjFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m1i37IsLaIbXYjNVLrUYIlmWuBy3+uOelM6OEK65a3w=;
+ b=r56Sg8qBjePrRNiFJVxhO1pDluXdEJIyUZNYpUNwJahpGes2C6rV3hYpNHqzR3w9zRGW5XbAqCuzGzLDIVRkD30Tt+kJz0cDw4d0tIY1sRkb3tDrCahQ8UTC05NEsYl15XKVkj0LdgCfqd9pqiA+AuVSekrsIKCPXNrA7LkntTeFm5Eb6aLmXNohnSQ1WoygB9amEca1bxGnADptJNbViY6BGeagZbVZsDYcYybCpSbJBr/ysWYw9CpuaxZt69fd5eYpH2r8IbMbw+QxqDCp7ZZ5Fps7Ji6/PwKrbuHycrmMkxDiIOL2a3AhiVt4WTEExgLXbuuoH7A155wg4RogGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m1i37IsLaIbXYjNVLrUYIlmWuBy3+uOelM6OEK65a3w=;
+ b=L9fDzuI78jFJlE6Mi7EHgsuA9HXMoqGSeiSkyyb7nPiIDjlyQoldyUgpZ4oaxZx+LDJ37yYU3sSb1bARaa7OTvbw3wkvgvvcCUk8PluyNC+pJTKM0zAiJU1D6zwpEnSD4rb2Gt/DAx6vcvCK33/tQa6YEwN8vooe7QMQi/5ntMGPhe/KfDWMpM6HLf/SCsdKFV3vbCzfqLN7oCRAAS6gROHfkdc019NNzP7aDAD63qNJjdpBRYKrr0A3ebUe66fLKaKh6ypC1w34/fennhEslG/1sNl/eXp1ERZ8BRHHttubQVVxlW+ZkGZ1c0mMTSp35LGqVit4nTnR30xjyYw9PQ==
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
+ by DM8PR02MB8055.namprd02.prod.outlook.com (2603:10b6:8:18::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Tue, 9 Sep
+ 2025 03:09:05 +0000
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::6007:d1a1:bcf9:58ef]) by BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::6007:d1a1:bcf9:58ef%4]) with mapi id 15.20.9094.018; Tue, 9 Sep 2025
+ 03:09:05 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Roman Kisel <romank@linux.microsoft.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"kys@microsoft.com" <kys@microsoft.com>, "mikelley@microsoft.com"
+	<mikelley@microsoft.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "Tianyu.Lan@microsoft.com"
+	<Tianyu.Lan@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>
+CC: "benhill@microsoft.com" <benhill@microsoft.com>, "bperkins@microsoft.com"
+	<bperkins@microsoft.com>, "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Subject: RE: [PATCH hyperv-next v5 00/16] Confidential VMBus
+Thread-Topic: [PATCH hyperv-next v5 00/16] Confidential VMBus
+Thread-Index: AQHcF7f+XPdlxfCyL0CN1MV9SyqDBLSJ5aVA
+Date: Tue, 9 Sep 2025 03:09:05 +0000
+Message-ID:
+ <BN7PR02MB41489330C83724F1DC3E8427D40FA@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <20250828010557.123869-1-romank@linux.microsoft.com>
+In-Reply-To: <20250828010557.123869-1-romank@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|DM8PR02MB8055:EE_
+x-ms-office365-filtering-correlation-id: f9df587b-1efa-4ae1-020d-08ddef4e3c4b
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799015|19110799012|8062599012|13091999003|461199028|31061999003|15080799012|52005399003|10035399007|4302099013|3412199025|440099028|40105399003|12091999003|102099032|1602099012|56899033;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?/O8zGP4x1QoPE9tbvI0AuIDsMhAlD9g8KIVBcd2js2i8OftPato0np0BlZzO?=
+ =?us-ascii?Q?M26gumJG9d24SI05C2Hpe6NZHQcP3rwJLju/U1tF0D5iACttE+pQYx8TLSaM?=
+ =?us-ascii?Q?Qhaa/o3R+xHNTnWT0Q49qXuTrznI41fFl2wO/LkkDcGGcOjdErEKissgfMsm?=
+ =?us-ascii?Q?fF/foK2qOPWBGR8vDrCjVp92bbl85OpIvs/JdpVYkhweJd4WjumIZnB2JNDT?=
+ =?us-ascii?Q?nzYHlk4LAhj9u1FpPsuamPtU0TqhS8ytCHUIZP7FRF8IowHFNm2FujdcADU9?=
+ =?us-ascii?Q?lqWbcXZrSJhL3K88hqHM+5iyNQ3uKAezXczd72ZgAGfXuSYOEZbfPebgcgnU?=
+ =?us-ascii?Q?zETbgAaZSDYWbkOJcYonxKj/QYI/9TF7E5tNNbAcV+l9uYqLgqnuFR0SStU3?=
+ =?us-ascii?Q?qnPEzAx3r5MDxoWnGkx8bdvlt8VXvE5hwO5YE7Ig83iz/qmRUnA1m0MFZgtO?=
+ =?us-ascii?Q?P0AUVcVRGEaOjZaGSUxcn7je6APQGyUzs9ZRBcDewmwNgkdEv/iHUCxmxxwo?=
+ =?us-ascii?Q?Jsje07LQC4F/qQEFdIuH+cG4C8d6u4aE/TLkeRoJ/0cztAqmHPX2hqwu+3X6?=
+ =?us-ascii?Q?OdGXPTy7DhVoRf3xP6l39IuZEDm490X3FuRjl0uYwb4uky6yDDRRx/Na8phl?=
+ =?us-ascii?Q?epD1PmY/fNcCTD5d5lCSnGZZbR0+2mAhOzYCoCPT/Icj/ue6+iL96CnCMZzz?=
+ =?us-ascii?Q?9rq6C8yBxwC3Q5tngi1zV0iBvSYyz12na836Ljt0lFhaANJrYM9qpmfEBst1?=
+ =?us-ascii?Q?4nnAMpIZoNNNOswcCPdQs1jtPlf85TqQLFbXcFA8RzHfXSUL1EPYlEQZGCDl?=
+ =?us-ascii?Q?UnWHQqJ8EtAxbZXmHxmuRK8HwPKSDFJPSm0Pjel3p6hFPQJOIrVlWZAyEicz?=
+ =?us-ascii?Q?6w0GMeoYaj9qqewO7rGbQbXXT2ujG089H18wRHh9GOr+BdaU8Z2PemnGpRL+?=
+ =?us-ascii?Q?QoNmZdsOLhDTjz/C70ukIvOc1yqVWb3d05lI1zXz3PRWqcgaR/p71878Mt2e?=
+ =?us-ascii?Q?p7XXkCxkD2JELzAhaVVDbf5i+Hpcjp6HIvIYHnpRhW2syGkPx8kT2G2Q55KQ?=
+ =?us-ascii?Q?VHTruRtOgr7dkzSuPg3+BFS7xnFMGDDyjV2AZa4LULuCs/nkUkBhFDSZs7GI?=
+ =?us-ascii?Q?sVq4n/3Uf/J9IC5o2mRFhbpYOzM1eB62H4v3lxULZJ3gxq1uNbK0eYw205qH?=
+ =?us-ascii?Q?rOjQ2BdCZ6RFSL4cqfltEfpdkIjpdxDBM67jX0alypo044tiISauwIOEDOsr?=
+ =?us-ascii?Q?w3gx2ZkKOyMnOhtoQXlFRwFa3+sXjuDGLIc6TcIMcMUkuKhsw/RjuKdJNJla?=
+ =?us-ascii?Q?BhfwG1dBMv7hC3ATLZSOhUuz?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Us28SZSEim9j3iXY7ccihMy1f7n6hiKEfOaepRFqAdmVo5BHvei93SgijoNb?=
+ =?us-ascii?Q?QLK9s+7Vt7Flcwj+JyynmCHxx0ahfLm183O3ACQYlcgfLPYX3gDJId9XNQAA?=
+ =?us-ascii?Q?KFOLf8/HOp8f57kARMoaCdB9//uzcpnajxqrhoqyj651Z7RL7QmntEfAdehx?=
+ =?us-ascii?Q?QqP1ip/tMiijijPpA5Pxzt4malZKrqNItHOEZ/57620sis6/7YCc1d5RnS43?=
+ =?us-ascii?Q?wWxLaS+gtVeGBgb2MRsen5nuX8C0SIhzaZqQdiS/19sD4BKwtRoekvK8k9pU?=
+ =?us-ascii?Q?eRTbAQLvFEMcKSyieY0jU68DLrVAN5IkLU5w6hbBz5ApRKVml5cDJHfSTdrA?=
+ =?us-ascii?Q?Vqw2cnW2aYZQHvTFtgkmUJn55aHsLyDnnQVbryIyml6rzy/swnCFrNzNuxk/?=
+ =?us-ascii?Q?N/0YnoyX8NpQb1djO+Qz47379tP6o+EL3zOkSUt1ElXC4jYPmzPJ3PKZK4iN?=
+ =?us-ascii?Q?6NZMWef/1hd7gnBxLEBJwSiDOZJDXoymr+Sb+svW5OTp6ztD3lMYfpAme0Dc?=
+ =?us-ascii?Q?Eh5XyYCu9tWVimJYlGvc8foQCVZmZiiTiAuxbhq+mHrw1St8mbbH/TdzcswF?=
+ =?us-ascii?Q?SQKf56z0NYP7NIXKfdTavxcW6LNJTqc5jjKCKkFOEit25Skoob2SopLMr6GQ?=
+ =?us-ascii?Q?srGlo+uvVUl5qqGgCTPuqOaRMIYmOb3I1K69kY3T/kXeLmRC5nwbRuau4c3g?=
+ =?us-ascii?Q?ApBSWgEh3UT+OfOEtNVrbM5rI2fvn3COeJfFOnEMvO2Q99Cdk3NVgLf8n7sF?=
+ =?us-ascii?Q?olklKW5FfCtpa+MveEIbFJ0UZNYZUoYAhZ+DPQ1DF3XcDOKRuSUSwv72KYjj?=
+ =?us-ascii?Q?mN73ieLf8/xFy3ZdBL/pESjO/aPJzhDV2Ox2WqRMZ4+m9i0r3ALGfxq5H6A/?=
+ =?us-ascii?Q?KiCgoxeJhqX6qgLGq80kn6Z7DjlcI1CldF5Z9WvvwhZYm1Sa3/XyhNUoL8Xj?=
+ =?us-ascii?Q?isSYgXaf+eEJKLz4z7qZnP4weLlW5NXELFEjIv3iCxrulTtQBh9Evh9DOwgi?=
+ =?us-ascii?Q?Mbb1VsByHvCZwd7lByIko6bdCa3QKWANzRtymriGSmRjU+iqUkAhDs25f9a6?=
+ =?us-ascii?Q?WVG222eWv9BPxu5btiNsYPAoLVdkAhLHiryhHgPQAbpKD8zEttAWAvlQaUm0?=
+ =?us-ascii?Q?xp2a2qx9Rpy4Vl57umBNuxev0PRbgDiuZj/ZSFepjkonD2mJtcuMP6pt+Kho?=
+ =?us-ascii?Q?jLaIHzEO4LfwHJofc6Tfc861bh/AfI0lpsCU/ecC2a2RLlCjwvh8a38ML5A?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9df587b-1efa-4ae1-020d-08ddef4e3c4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2025 03:09:05.4126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR02MB8055
 
-This adds a new dynamic PMU to the Perf Events framework to program and
-control the Uncore PMUs in Fujitsu chips.
+From: Roman Kisel <romank@linux.microsoft.com> Sent: Wednesday, August 27, =
+2025 6:06 PM
+>=20
+> Hello all,
+>=20
+> This is the 5th version of the patch series, and the full changelog
+> is at the end of the cover letter. The most notable change is that
+> now there is a CPUID bit set under the virtualization leaf to indicate
+> that the Confidential VMBus is available. The fallback approach used
+> in the first versions received some criticism, and that has been addresse=
+d
+> in this version.
+>=20
+> The COUID bit is obviously an x86_64 specific technique. On ARM64, the
 
-This driver exports formatting and event information to sysfs so it can
-be used by the perf user space tools with the syntaxes:
+s/COUID/CPUID/
 
-perf stat -e pci_iod0_pci0/ea-pci/ ls
-perf stat -e pci_iod0_pci0/event=0x80/ ls
-perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
-perf stat -e mac_iod0_mac0_ch0/event=0x80/ ls
+> Confidential VMBus is expected to be required once support for ARM CC is
+> implemented. Despite that change, the functions for getting and setting
+> registers via paravisor remain fallible. That provides a clearer root cau=
+se
+> for failures instead of printing messages about unchecked MSR accesses.
+> That might seem as not needed with the paravisors run in Azure (OpenHCL
+> and the TrustedLauch aka HCL paravisor). However, if someone decides to
+> implement their own or tweak the exisiting one, this will help with debug=
+ging.
+>=20
+> TLDR; is that these patches are for the Hyper-V guests, and the patches
+> allow to keep data flowing from physical devices into the guests encrypte=
+d
+> at the CPU level so that neither the root/host partition nor the hypervis=
+or
+> can access the data being processed (they only "see" the encrypted/garble=
+d
+> data) unless the guest decides to share it. The changes are backward comp=
+atible
+> with older systems, and their full potential is realized on hardware that
+> supports memory encryption.
+>=20
+> These features also require running a paravisor, such as
+> OpenHCL (https://github.com/microsoft/openvmm) used in Azure. Another
+> implementation of the functionality available in this patch set is
+> available in the Hyper-V UEFI: https://github.com/microsoft/mu_msvm.
+>=20
+> A more detailed description of the patches follows.
+>=20
+> The guests running on Hyper-V can be confidential where the memory and th=
+e
+> register content are encrypted, provided that the hardware supports that
+> (currently support AMD SEV-SNP and Intel TDX is implemented) and the gues=
+t
 
-FUJITSU-MONAKA PMU Events Specification v1.1 URL:
-https://github.com/fujitsu/FUJITSU-MONAKA
+s/support/support for/
 
-Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
-Signed-off-by: Koichi Okuno <fj2767dz@fujitsu.com>
----
-Changes in v9:
-- Fix v8 issues.
-  - Changed to use is_sampling_event()
-  - Changed request_irq flag
-  - Undo the deletion of set PM_CR.ENABLE in fujitsu_uncore_init()
-  - Added Yicong Yang's Reviewed-by:.
-  - Jonathan Cameron provided a Reviewed-by: for v7, but due to significant
-    changes in v8, it's not included in this v9.
-- Link to v8: https://lore.kernel.org/all/20250904021315.353541-1-fj2767dz@fujitsu.com/
-
- .../admin-guide/perf/fujitsu_uncore_pmu.rst   | 110 ++++
- Documentation/admin-guide/perf/index.rst      |   1 +
- drivers/perf/Kconfig                          |   9 +
- drivers/perf/Makefile                         |   1 +
- drivers/perf/fujitsu_uncore_pmu.c             | 613 ++++++++++++++++++
- 5 files changed, 734 insertions(+)
- create mode 100644 Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
- create mode 100644 drivers/perf/fujitsu_uncore_pmu.c
-
-diff --git a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
-new file mode 100644
-index 000000000000..46595b788d3a
---- /dev/null
-+++ b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
-@@ -0,0 +1,110 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+================================================
-+Fujitsu Uncore Performance Monitoring Unit (PMU)
-+================================================
-+
-+This driver supports the Uncore MAC PMUs and the Uncore PCI PMUs found
-+in Fujitsu chips.
-+Each MAC PMU on these chips is exposed as a uncore perf PMU with device name
-+mac_iod<iod>_mac<mac>_ch<ch>.
-+And each PCI PMU on these chips is exposed as a uncore perf PMU with device name
-+pci_iod<iod>_pci<pci>.
-+
-+The driver provides a description of its available events and configuration
-+options in sysfs, see /sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/
-+and /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
-+This driver exports:
-+- formats, used by perf user space and other tools to configure events
-+- events, used by perf user space and other tools to create events
-+  symbolically, e.g.:
-+    perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
-+    perf stat -a -e pci_iod0_pci0/event=0x24/ ls
-+- cpumask, used by perf user space and other tools to know on which CPUs
-+  to open the events
-+
-+This driver supports the following events for MAC:
-+- cycles
-+  This event counts MAC cycles at MAC frequency.
-+- read-count
-+  This event counts the number of read requests to MAC.
-+- read-count-request
-+  This event counts the number of read requests including retry to MAC.
-+- read-count-return
-+  This event counts the number of responses to read requests to MAC.
-+- read-count-request-pftgt
-+  This event counts the number of read requests including retry with PFTGT
-+  flag.
-+- read-count-request-normal
-+  This event counts the number of read requests including retry without PFTGT
-+  flag.
-+- read-count-return-pftgt-hit
-+  This event counts the number of responses to read requests which hit the
-+  PFTGT buffer.
-+- read-count-return-pftgt-miss
-+  This event counts the number of responses to read requests which miss the
-+  PFTGT buffer.
-+- read-wait
-+  This event counts outstanding read requests issued by DDR memory controller
-+  per cycle.
-+- write-count
-+  This event counts the number of write requests to MAC (including zero write,
-+  full write, partial write, write cancel).
-+- write-count-write
-+  This event counts the number of full write requests to MAC (not including
-+  zero write).
-+- write-count-pwrite
-+  This event counts the number of partial write requests to MAC.
-+- memory-read-count
-+  This event counts the number of read requests from MAC to memory.
-+- memory-write-count
-+  This event counts the number of full write requests from MAC to memory.
-+- memory-pwrite-count
-+  This event counts the number of partial write requests from MAC to memory.
-+- ea-mac
-+  This event counts energy consumption of MAC.
-+- ea-memory
-+  This event counts energy consumption of memory.
-+- ea-memory-mac-write
-+  This event counts the number of write requests from MAC to memory.
-+- ea-ha
-+  This event counts energy consumption of HA.
-+
-+  'ea' is the abbreviation for 'Energy Analyzer'.
-+
-+Examples for use with perf::
-+
-+  perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
-+
-+And, this driver supports the following events for PCI:
-+- pci-port0-cycles
-+  This event counts PCI cycles at PCI frequency in port0.
-+- pci-port0-read-count
-+  This event counts read transactions for data transfer in port0.
-+- pci-port0-read-count-bus
-+  This event counts read transactions for bus usage in port0.
-+- pci-port0-write-count
-+  This event counts write transactions for data transfer in port0.
-+- pci-port0-write-count-bus
-+  This event counts write transactions for bus usage in port0.
-+- pci-port1-cycles
-+  This event counts PCI cycles at PCI frequency in port1.
-+- pci-port1-read-count
-+  This event counts read transactions for data transfer in port1.
-+- pci-port1-read-count-bus
-+  This event counts read transactions for bus usage in port1.
-+- pci-port1-write-count
-+  This event counts write transactions for data transfer in port1.
-+- pci-port1-write-count-bus
-+  This event counts write transactions for bus usage in port1.
-+- ea-pci
-+  This event counts energy consumption of PCI.
-+
-+  'ea' is the abbreviation for 'Energy Analyzer'.
-+
-+Examples for use with perf::
-+
-+  perf stat -e pci_iod0_pci0/ea-pci/ ls
-+
-+Given that these are uncore PMUs the driver does not support sampling, therefore
-+"perf record" will not work. Per-task perf sessions are not supported.
-diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-index 072b510385c4..47d9a3df6329 100644
---- a/Documentation/admin-guide/perf/index.rst
-+++ b/Documentation/admin-guide/perf/index.rst
-@@ -29,3 +29,4 @@ Performance monitor support
-    cxl
-    ampere_cspmu
-    mrvl-pem-pmu
-+   fujitsu_uncore_pmu
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index a9188dec36fe..638321fc9800 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -178,6 +178,15 @@ config FSL_IMX9_DDR_PMU
- 	 can give information about memory throughput and other related
- 	 events.
- 
-+config FUJITSU_UNCORE_PMU
-+	tristate "Fujitsu Uncore PMU"
-+	depends on (ARM64 && ACPI) || (COMPILE_TEST && 64BIT)
-+	 help
-+	 Provides support for the Uncore performance monitor unit (PMU)
-+	 in Fujitsu processors.
-+	 Adds the Uncore PMU into the perf events subsystem for
-+	 monitoring Uncore events.
-+
- config QCOM_L2_PMU
- 	bool "Qualcomm Technologies L2-cache PMU"
- 	depends on ARCH_QCOM && ARM64 && ACPI
-diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-index 192fc8b16204..ea52711a87e3 100644
---- a/drivers/perf/Makefile
-+++ b/drivers/perf/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARM_XSCALE_PMU) += arm_xscale_pmu.o
- obj-$(CONFIG_ARM_SMMU_V3_PMU) += arm_smmuv3_pmu.o
- obj-$(CONFIG_FSL_IMX8_DDR_PMU) += fsl_imx8_ddr_perf.o
- obj-$(CONFIG_FSL_IMX9_DDR_PMU) += fsl_imx9_ddr_perf.o
-+obj-$(CONFIG_FUJITSU_UNCORE_PMU) += fujitsu_uncore_pmu.o
- obj-$(CONFIG_HISI_PMU) += hisilicon/
- obj-$(CONFIG_QCOM_L2_PMU)	+= qcom_l2_pmu.o
- obj-$(CONFIG_QCOM_L3_PMU) += qcom_l3_pmu.o
-diff --git a/drivers/perf/fujitsu_uncore_pmu.c b/drivers/perf/fujitsu_uncore_pmu.c
-new file mode 100644
-index 000000000000..c3c6f56474ad
---- /dev/null
-+++ b/drivers/perf/fujitsu_uncore_pmu.c
-@@ -0,0 +1,613 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for the Uncore PMUs in Fujitsu chips.
-+ *
-+ * See Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst for more details.
-+ *
-+ * Copyright (c) 2025 Fujitsu. All rights reserved.
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/list.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/perf_event.h>
-+#include <linux/platform_device.h>
-+
-+/* Number of counters on each PMU */
-+#define MAC_NUM_COUNTERS  8
-+#define PCI_NUM_COUNTERS  8
-+/* Mask for the event type field within perf_event_attr.config and EVTYPE reg */
-+#define UNCORE_EVTYPE_MASK   0xFF
-+
-+/* Perfmon registers */
-+#define PM_EVCNTR(__cntr)           (0x000 + (__cntr) * 8)
-+#define PM_CNTCTL(__cntr)           (0x100 + (__cntr) * 8)
-+#define PM_CNTCTL_RESET             0
-+#define PM_EVTYPE(__cntr)           (0x200 + (__cntr) * 8)
-+#define PM_EVTYPE_EVSEL(__val)      FIELD_GET(UNCORE_EVTYPE_MASK, __val)
-+#define PM_CR                       0x400
-+#define PM_CR_RESET                 BIT(1)
-+#define PM_CR_ENABLE                BIT(0)
-+#define PM_CNTENSET                 0x410
-+#define PM_CNTENSET_IDX(__cntr)     BIT(__cntr)
-+#define PM_CNTENCLR                 0x418
-+#define PM_CNTENCLR_IDX(__cntr)     BIT(__cntr)
-+#define PM_CNTENCLR_RESET           0xFF
-+#define PM_INTENSET                 0x420
-+#define PM_INTENSET_IDX(__cntr)     BIT(__cntr)
-+#define PM_INTENCLR                 0x428
-+#define PM_INTENCLR_IDX(__cntr)     BIT(__cntr)
-+#define PM_INTENCLR_RESET           0xFF
-+#define PM_OVSR                     0x440
-+#define PM_OVSR_OVSRCLR_RESET       0xFF
-+
-+enum fujitsu_uncore_pmu {
-+	FUJITSU_UNCORE_PMU_MAC = 1,
-+	FUJITSU_UNCORE_PMU_PCI = 2,
-+};
-+
-+struct uncore_pmu {
-+	int			num_counters;
-+	struct pmu		pmu;
-+	struct hlist_node	node;
-+	void __iomem		*regs;
-+	struct perf_event	**events;
-+	unsigned long		*used_mask;
-+	int			cpu;
-+	int			irq;
-+	struct device		*dev;
-+};
-+
-+#define to_uncore_pmu(p) (container_of(p, struct uncore_pmu, pmu))
-+
-+static int uncore_pmu_cpuhp_state;
-+
-+static void fujitsu_uncore_counter_start(struct perf_event *event)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+
-+	/* Initialize the hardware counter and reset prev_count*/
-+	local64_set(&event->hw.prev_count, 0);
-+	writeq_relaxed(0, uncorepmu->regs + PM_EVCNTR(idx));
-+
-+	/* Set the event type */
-+	writeq_relaxed(PM_EVTYPE_EVSEL(event->attr.config), uncorepmu->regs + PM_EVTYPE(idx));
-+
-+	/* Enable interrupt generation by this counter */
-+	writeq_relaxed(PM_INTENSET_IDX(idx), uncorepmu->regs + PM_INTENSET);
-+
-+	/* Finally, enable the counter */
-+	writeq_relaxed(PM_CNTCTL_RESET, uncorepmu->regs + PM_CNTCTL(idx));
-+	writeq_relaxed(PM_CNTENSET_IDX(idx), uncorepmu->regs + PM_CNTENSET);
-+}
-+
-+static void fujitsu_uncore_counter_stop(struct perf_event *event)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+
-+	/* Disable the counter */
-+	writeq_relaxed(PM_CNTENCLR_IDX(idx), uncorepmu->regs + PM_CNTENCLR);
-+
-+	/* Disable interrupt generation by this counter */
-+	writeq_relaxed(PM_INTENCLR_IDX(idx), uncorepmu->regs + PM_INTENCLR);
-+}
-+
-+static void fujitsu_uncore_counter_update(struct perf_event *event)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+	u64 prev, new;
-+
-+	do {
-+		prev = local64_read(&event->hw.prev_count);
-+		new = readq_relaxed(uncorepmu->regs + PM_EVCNTR(idx));
-+	} while (local64_cmpxchg(&event->hw.prev_count, prev, new) != prev);
-+
-+	local64_add(new - prev, &event->count);
-+}
-+
-+static inline void fujitsu_uncore_init(struct uncore_pmu *uncorepmu)
-+{
-+	int i;
-+
-+	writeq_relaxed(PM_CR_RESET, uncorepmu->regs + PM_CR);
-+
-+	writeq_relaxed(PM_CNTENCLR_RESET, uncorepmu->regs + PM_CNTENCLR);
-+	writeq_relaxed(PM_INTENCLR_RESET, uncorepmu->regs + PM_INTENCLR);
-+	writeq_relaxed(PM_OVSR_OVSRCLR_RESET, uncorepmu->regs + PM_OVSR);
-+
-+	for (i = 0; i < uncorepmu->num_counters; ++i) {
-+		writeq_relaxed(PM_CNTCTL_RESET, uncorepmu->regs + PM_CNTCTL(i));
-+		writeq_relaxed(PM_EVTYPE_EVSEL(0), uncorepmu->regs + PM_EVTYPE(i));
-+	}
-+	writeq_relaxed(PM_CR_ENABLE, uncorepmu->regs + PM_CR);
-+}
-+
-+static irqreturn_t fujitsu_uncore_handle_irq(int irq_num, void *data)
-+{
-+	struct uncore_pmu *uncorepmu = data;
-+	/* Read the overflow status register */
-+	long status = readq_relaxed(uncorepmu->regs + PM_OVSR);
-+	int idx;
-+
-+	if (status == 0)
-+		return IRQ_NONE;
-+
-+	/* Clear the bits we read on the overflow status register */
-+	writeq_relaxed(status, uncorepmu->regs + PM_OVSR);
-+
-+	for_each_set_bit(idx, &status, uncorepmu->num_counters) {
-+		struct perf_event *event;
-+
-+		event = uncorepmu->events[idx];
-+		if (!event)
-+			continue;
-+
-+		fujitsu_uncore_counter_update(event);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void fujitsu_uncore_pmu_enable(struct pmu *pmu)
-+{
-+	writeq_relaxed(PM_CR_ENABLE, to_uncore_pmu(pmu)->regs + PM_CR);
-+}
-+
-+static void fujitsu_uncore_pmu_disable(struct pmu *pmu)
-+{
-+	writeq_relaxed(0, to_uncore_pmu(pmu)->regs + PM_CR);
-+}
-+
-+static bool fujitsu_uncore_validate_event_group(struct perf_event *event)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	struct perf_event *leader = event->group_leader;
-+	struct perf_event *sibling;
-+	int counters = 1;
-+
-+	if (leader == event)
-+		return true;
-+
-+	if (leader->pmu == event->pmu)
-+		counters++;
-+
-+	for_each_sibling_event(sibling, leader) {
-+		if (sibling->pmu == event->pmu)
-+			counters++;
-+	}
-+
-+	/*
-+	 * If the group requires more counters than the HW has, it
-+	 * cannot ever be scheduled.
-+	 */
-+	return counters <= uncorepmu->num_counters;
-+}
-+
-+static int fujitsu_uncore_event_init(struct perf_event *event)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	/* Is the event for this PMU? */
-+	if (event->attr.type != event->pmu->type)
-+		return -ENOENT;
-+
-+	/*
-+	 * Sampling not supported since these events are not
-+	 * core-attributable.
-+	 */
-+	if (is_sampling_event(event))
-+		return -EINVAL;
-+
-+	/*
-+	 * Task mode not available, we run the counters as socket counters,
-+	 * not attributable to any CPU and therefore cannot attribute per-task.
-+	 */
-+	if (event->cpu < 0)
-+		return -EINVAL;
-+
-+	/* Validate the group */
-+	if (!fujitsu_uncore_validate_event_group(event))
-+		return -EINVAL;
-+
-+	hwc->idx = -1;
-+
-+	event->cpu = uncorepmu->cpu;
-+
-+	return 0;
-+}
-+
-+static void fujitsu_uncore_event_start(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	hwc->state = 0;
-+	fujitsu_uncore_counter_start(event);
-+}
-+
-+static void fujitsu_uncore_event_stop(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (hwc->state & PERF_HES_STOPPED)
-+		return;
-+
-+	fujitsu_uncore_counter_stop(event);
-+	if (flags & PERF_EF_UPDATE)
-+		fujitsu_uncore_counter_update(event);
-+	hwc->state |= PERF_HES_STOPPED | PERF_HES_UPTODATE;
-+}
-+
-+static int fujitsu_uncore_event_add(struct perf_event *event, int flags)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	int idx;
-+
-+	/* Try to allocate a counter. */
-+	idx = bitmap_find_free_region(uncorepmu->used_mask, uncorepmu->num_counters, 0);
-+	if (idx < 0)
-+		/* The counters are all in use. */
-+		return -EAGAIN;
-+
-+	hwc->idx = idx;
-+	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
-+	uncorepmu->events[idx] = event;
-+
-+	if (flags & PERF_EF_START)
-+		fujitsu_uncore_event_start(event, 0);
-+
-+	/* Propagate changes to the userspace mapping. */
-+	perf_event_update_userpage(event);
-+
-+	return 0;
-+}
-+
-+static void fujitsu_uncore_event_del(struct perf_event *event, int flags)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	/* Stop and clean up */
-+	fujitsu_uncore_event_stop(event, flags | PERF_EF_UPDATE);
-+	uncorepmu->events[hwc->idx] = NULL;
-+	bitmap_release_region(uncorepmu->used_mask, hwc->idx, 0);
-+
-+	/* Propagate changes to the userspace mapping. */
-+	perf_event_update_userpage(event);
-+}
-+
-+static void fujitsu_uncore_event_read(struct perf_event *event)
-+{
-+	fujitsu_uncore_counter_update(event);
-+}
-+
-+#define UNCORE_PMU_FORMAT_ATTR(_name, _config)				      \
-+	(&((struct dev_ext_attribute[]) {				      \
-+		{ .attr = __ATTR(_name, 0444, device_show_string, NULL),      \
-+		  .var = (void *)_config, }				      \
-+	})[0].attr.attr)
-+
-+static struct attribute *fujitsu_uncore_pmu_formats[] = {
-+	UNCORE_PMU_FORMAT_ATTR(event, "config:0-7"),
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_uncore_pmu_format_group = {
-+	.name = "format",
-+	.attrs = fujitsu_uncore_pmu_formats,
-+};
-+
-+static ssize_t fujitsu_uncore_pmu_event_show(struct device *dev,
-+					     struct device_attribute *attr, char *page)
-+{
-+	struct perf_pmu_events_attr *pmu_attr;
-+
-+	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
-+	return sysfs_emit(page, "event=0x%02llx\n", pmu_attr->id);
-+}
-+
-+#define MAC_EVENT_ATTR(_name, _id)					     \
-+	PMU_EVENT_ATTR_ID(_name, fujitsu_uncore_pmu_event_show, _id)
-+
-+static struct attribute *fujitsu_uncore_mac_pmu_events[] = {
-+	MAC_EVENT_ATTR(cycles,				0x00),
-+	MAC_EVENT_ATTR(read-count,			0x10),
-+	MAC_EVENT_ATTR(read-count-request,		0x11),
-+	MAC_EVENT_ATTR(read-count-return,		0x12),
-+	MAC_EVENT_ATTR(read-count-request-pftgt,	0x13),
-+	MAC_EVENT_ATTR(read-count-request-normal,	0x14),
-+	MAC_EVENT_ATTR(read-count-return-pftgt-hit,	0x15),
-+	MAC_EVENT_ATTR(read-count-return-pftgt-miss,	0x16),
-+	MAC_EVENT_ATTR(read-wait,			0x17),
-+	MAC_EVENT_ATTR(write-count,			0x20),
-+	MAC_EVENT_ATTR(write-count-write,		0x21),
-+	MAC_EVENT_ATTR(write-count-pwrite,		0x22),
-+	MAC_EVENT_ATTR(memory-read-count,		0x40),
-+	MAC_EVENT_ATTR(memory-write-count,		0x50),
-+	MAC_EVENT_ATTR(memory-pwrite-count,		0x60),
-+	MAC_EVENT_ATTR(ea-mac,				0x80),
-+	MAC_EVENT_ATTR(ea-memory,			0x90),
-+	MAC_EVENT_ATTR(ea-memory-mac-write,		0x92),
-+	MAC_EVENT_ATTR(ea-ha,				0xa0),
-+	NULL
-+};
-+
-+#define PCI_EVENT_ATTR(_name, _id)					     \
-+	PMU_EVENT_ATTR_ID(_name, fujitsu_uncore_pmu_event_show, _id)
-+
-+static struct attribute *fujitsu_uncore_pci_pmu_events[] = {
-+	PCI_EVENT_ATTR(pci-port0-cycles,		0x00),
-+	PCI_EVENT_ATTR(pci-port0-read-count,		0x10),
-+	PCI_EVENT_ATTR(pci-port0-read-count-bus,	0x14),
-+	PCI_EVENT_ATTR(pci-port0-write-count,		0x20),
-+	PCI_EVENT_ATTR(pci-port0-write-count-bus,	0x24),
-+	PCI_EVENT_ATTR(pci-port1-cycles,		0x40),
-+	PCI_EVENT_ATTR(pci-port1-read-count,		0x50),
-+	PCI_EVENT_ATTR(pci-port1-read-count-bus,	0x54),
-+	PCI_EVENT_ATTR(pci-port1-write-count,		0x60),
-+	PCI_EVENT_ATTR(pci-port1-write-count-bus,	0x64),
-+	PCI_EVENT_ATTR(ea-pci,				0x80),
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_uncore_mac_pmu_events_group = {
-+	.name = "events",
-+	.attrs = fujitsu_uncore_mac_pmu_events,
-+};
-+
-+static const struct attribute_group fujitsu_uncore_pci_pmu_events_group = {
-+	.name = "events",
-+	.attrs = fujitsu_uncore_pci_pmu_events,
-+};
-+
-+static ssize_t cpumask_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	struct uncore_pmu *uncorepmu = to_uncore_pmu(dev_get_drvdata(dev));
-+
-+	return cpumap_print_to_pagebuf(true, buf, cpumask_of(uncorepmu->cpu));
-+}
-+static DEVICE_ATTR_RO(cpumask);
-+
-+static struct attribute *fujitsu_uncore_pmu_cpumask_attrs[] = {
-+	&dev_attr_cpumask.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_uncore_pmu_cpumask_attr_group = {
-+	.attrs = fujitsu_uncore_pmu_cpumask_attrs,
-+};
-+
-+static const struct attribute_group *fujitsu_uncore_mac_pmu_attr_grps[] = {
-+	&fujitsu_uncore_pmu_format_group,
-+	&fujitsu_uncore_mac_pmu_events_group,
-+	&fujitsu_uncore_pmu_cpumask_attr_group,
-+	NULL
-+};
-+
-+static const struct attribute_group *fujitsu_uncore_pci_pmu_attr_grps[] = {
-+	&fujitsu_uncore_pmu_format_group,
-+	&fujitsu_uncore_pci_pmu_events_group,
-+	&fujitsu_uncore_pmu_cpumask_attr_group,
-+	NULL
-+};
-+
-+static void fujitsu_uncore_pmu_migrate(struct uncore_pmu *uncorepmu, unsigned int cpu)
-+{
-+	perf_pmu_migrate_context(&uncorepmu->pmu, uncorepmu->cpu, cpu);
-+	irq_set_affinity(uncorepmu->irq, cpumask_of(cpu));
-+	uncorepmu->cpu = cpu;
-+}
-+
-+static int fujitsu_uncore_pmu_online_cpu(unsigned int cpu, struct hlist_node *cpuhp_node)
-+{
-+	struct uncore_pmu *uncorepmu;
-+	int node;
-+
-+	uncorepmu = hlist_entry_safe(cpuhp_node, struct uncore_pmu, node);
-+	node = dev_to_node(uncorepmu->dev);
-+	if (cpu_to_node(uncorepmu->cpu) != node && cpu_to_node(cpu) == node)
-+		fujitsu_uncore_pmu_migrate(uncorepmu, cpu);
-+
-+	return 0;
-+}
-+
-+static int fujitsu_uncore_pmu_offline_cpu(unsigned int cpu, struct hlist_node *cpuhp_node)
-+{
-+	struct uncore_pmu *uncorepmu;
-+	unsigned int target;
-+	int node;
-+
-+	uncorepmu = hlist_entry_safe(cpuhp_node, struct uncore_pmu, node);
-+	if (cpu != uncorepmu->cpu)
-+		return 0;
-+
-+	node = dev_to_node(uncorepmu->dev);
-+	target = cpumask_any_and_but(cpumask_of_node(node), cpu_online_mask, cpu);
-+	if (target >= nr_cpu_ids)
-+		target = cpumask_any_but(cpu_online_mask, cpu);
-+
-+	if (target < nr_cpu_ids)
-+		fujitsu_uncore_pmu_migrate(uncorepmu, target);
-+
-+	return 0;
-+}
-+
-+static int fujitsu_uncore_pmu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	unsigned long device_type = (unsigned long)device_get_match_data(dev);
-+	const struct attribute_group **attr_groups;
-+	struct uncore_pmu *uncorepmu;
-+	struct resource *memrc;
-+	size_t alloc_size;
-+	char *name;
-+	int ret;
-+	int irq;
-+	u64 uid;
-+
-+	ret = acpi_dev_uid_to_integer(ACPI_COMPANION(dev), &uid);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "unable to read ACPI uid\n");
-+
-+	uncorepmu = devm_kzalloc(dev, sizeof(*uncorepmu), GFP_KERNEL);
-+	if (!uncorepmu)
-+		return -ENOMEM;
-+	uncorepmu->dev = dev;
-+	uncorepmu->cpu = cpumask_local_spread(0, dev_to_node(dev));
-+	platform_set_drvdata(pdev, uncorepmu);
-+
-+	switch (device_type) {
-+	case FUJITSU_UNCORE_PMU_MAC:
-+		uncorepmu->num_counters = MAC_NUM_COUNTERS;
-+		attr_groups = fujitsu_uncore_mac_pmu_attr_grps;
-+		name = devm_kasprintf(dev, GFP_KERNEL, "mac_iod%llu_mac%llu_ch%llu",
-+				      (uid >> 8) & 0xF, (uid >> 4) & 0xF, uid & 0xF);
-+		break;
-+	case FUJITSU_UNCORE_PMU_PCI:
-+		uncorepmu->num_counters = PCI_NUM_COUNTERS;
-+		attr_groups = fujitsu_uncore_pci_pmu_attr_grps;
-+		name = devm_kasprintf(dev, GFP_KERNEL, "pci_iod%llu_pci%llu",
-+				      (uid >> 4) & 0xF, uid & 0xF);
-+		break;
-+	default:
-+		return dev_err_probe(dev, -EINVAL, "illegal device type: %lu\n", device_type);
-+	}
-+	if (!name)
-+		return -ENOMEM;
-+
-+	uncorepmu->pmu = (struct pmu) {
-+		.parent		= dev,
-+		.task_ctx_nr	= perf_invalid_context,
-+
-+		.attr_groups	= attr_groups,
-+
-+		.pmu_enable	= fujitsu_uncore_pmu_enable,
-+		.pmu_disable	= fujitsu_uncore_pmu_disable,
-+		.event_init	= fujitsu_uncore_event_init,
-+		.add		= fujitsu_uncore_event_add,
-+		.del		= fujitsu_uncore_event_del,
-+		.start		= fujitsu_uncore_event_start,
-+		.stop		= fujitsu_uncore_event_stop,
-+		.read		= fujitsu_uncore_event_read,
-+
-+		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
-+	};
-+
-+	alloc_size = sizeof(uncorepmu->events[0]) * uncorepmu->num_counters;
-+	uncorepmu->events = devm_kzalloc(dev, alloc_size, GFP_KERNEL);
-+	if (!uncorepmu->events)
-+		return -ENOMEM;
-+
-+	alloc_size = sizeof(uncorepmu->used_mask[0]) * BITS_TO_LONGS(uncorepmu->num_counters);
-+	uncorepmu->used_mask = devm_kzalloc(dev, alloc_size, GFP_KERNEL);
-+	if (!uncorepmu->used_mask)
-+		return -ENOMEM;
-+
-+	uncorepmu->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &memrc);
-+	if (IS_ERR(uncorepmu->regs))
-+		return PTR_ERR(uncorepmu->regs);
-+
-+	fujitsu_uncore_init(uncorepmu);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_irq(dev, irq, fujitsu_uncore_handle_irq,
-+			       IRQF_NOBALANCING | IRQF_NO_THREAD,
-+			       name, uncorepmu);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to request IRQ:%d\n", irq);
-+
-+	ret = irq_set_affinity(irq, cpumask_of(uncorepmu->cpu));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to set irq affinity:%d\n", irq);
-+
-+	uncorepmu->irq = irq;
-+
-+	/* Add this instance to the list used by the offline callback */
-+	ret = cpuhp_state_add_instance(uncore_pmu_cpuhp_state, &uncorepmu->node);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Error registering hotplug");
-+
-+	ret = perf_pmu_register(&uncorepmu->pmu, name, -1);
-+	if (ret < 0) {
-+		cpuhp_state_remove_instance_nocalls(uncore_pmu_cpuhp_state, &uncorepmu->node);
-+		return dev_err_probe(dev, ret, "Failed to register %s PMU\n", name);
-+	}
-+
-+	dev_dbg(dev, "Registered %s, type: %d\n", name, uncorepmu->pmu.type);
-+
-+	return 0;
-+}
-+
-+static void fujitsu_uncore_pmu_remove(struct platform_device *pdev)
-+{
-+	struct uncore_pmu *uncorepmu = platform_get_drvdata(pdev);
-+
-+	writeq_relaxed(0, uncorepmu->regs + PM_CR);
-+
-+	perf_pmu_unregister(&uncorepmu->pmu);
-+	cpuhp_state_remove_instance_nocalls(uncore_pmu_cpuhp_state, &uncorepmu->node);
-+}
-+
-+static const struct acpi_device_id fujitsu_uncore_pmu_acpi_match[] = {
-+	{ "FUJI200C", FUJITSU_UNCORE_PMU_MAC },
-+	{ "FUJI200D", FUJITSU_UNCORE_PMU_PCI },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, fujitsu_uncore_pmu_acpi_match);
-+
-+static struct platform_driver fujitsu_uncore_pmu_driver = {
-+	.driver = {
-+		.name = "fujitsu-uncore-pmu",
-+		.acpi_match_table = fujitsu_uncore_pmu_acpi_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = fujitsu_uncore_pmu_probe,
-+	.remove = fujitsu_uncore_pmu_remove,
-+};
-+
-+static int __init fujitsu_uncore_pmu_init(void)
-+{
-+	int ret;
-+
-+	/* Install a hook to update the reader CPU in case it goes offline */
-+	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
-+				      "perf/fujitsu/uncore:online",
-+				      fujitsu_uncore_pmu_online_cpu,
-+				      fujitsu_uncore_pmu_offline_cpu);
-+	if (ret < 0)
-+		return ret;
-+
-+	uncore_pmu_cpuhp_state = ret;
-+
-+	ret = platform_driver_register(&fujitsu_uncore_pmu_driver);
-+	if (ret)
-+		cpuhp_remove_multi_state(uncore_pmu_cpuhp_state);
-+
-+	return ret;
-+}
-+
-+static void __exit fujitsu_uncore_pmu_exit(void)
-+{
-+	platform_driver_unregister(&fujitsu_uncore_pmu_driver);
-+	cpuhp_remove_multi_state(uncore_pmu_cpuhp_state);
-+}
-+
-+module_init(fujitsu_uncore_pmu_init);
-+module_exit(fujitsu_uncore_pmu_exit);
-+
-+MODULE_AUTHOR("Koichi Okuno <fj2767dz@fujitsu.com>");
-+MODULE_DESCRIPTION("Fujitsu Uncore PMU driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+> is capable of using these features. The confidential guests cannot be
+> introspected by the host nor the hypervisor without the guest sharing the
+> memory contents upon doing which the memory is decrypted.
+>=20
+> In the confidential guests, neither the host nor the hypervisor need to b=
+e
+> trusted, and the guests processing sensitive data can take advantage of t=
+hat.
+>=20
+> Not trusting the host and the hypervisor (removing them from the Trusted
+> Computing Base aka TCB) necessitates that the method of communication
+> between the host and the guest be changed. Here is the data flow for a
+> conventional and the confidential VMBus connections (`C` stands for the
+> client or VSC, `S` for the server or VSP, the `DEVICE` is a physical one,
+> might be with multiple virtual functions):
+>=20
+> 1. Without the paravisor the devices are connected to the host, and the
+> host provides the device emulation or translation to the guest:
+>=20
+>   +---- GUEST ----+       +----- DEVICE ----+        +----- HOST -----+
+>   |               |       |                 |        |                |
+>   |               |       |                 |        |                |
+>   |               |       |                 =3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D                |
+>   |               |       |                 |        |                |
+>   |               |       |                 |        |                |
+>   |               |       |                 |        |                |
+>   +----- C -------+       +-----------------+        +------- S ------+
+>          ||                                                   ||
+>          ||                                                   ||
+>   +------||------------------ VMBus --------------------------||------+
+>   |                     Interrupts, MMIO                              |
+>   +-------------------------------------------------------------------+
+>=20
+> 2. With the paravisor, the devices are connected to the paravisor, and
+> the paravisor provides the device emulation or translation to the guest.
+> The guest doesn't communicate with the host directly, and the guest
+> communicates with the paravisor via the VMBus. The host is not trusted
+> in this model, and the paravisor is trusted:
+>=20
+>   +---- GUEST --------------- VTL0 ------+               +-- DEVICE --+
+>   |                                      |               |            |
+>   | +- PARAVISOR --------- VTL2 -----+   |               |            |
+>   | |     +-- VMBus Relay ------+    =3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D            |
+>   | |     |   Interrupts, MMIO  |    |   |               |            |
+>   | |     +-------- S ----------+    |   |               +------------+
+>   | |               ||               |   |
+>   | +---------+     ||               |   |
+>   | |  Linux  |     ||    OpenHCL    |   |
+>   | |  kernel |     ||               |   |
+>   | +---- C --+-----||---------------+   |
+>   |       ||        ||                   |
+>   +-------++------- C -------------------+               +------------+
+>           ||                                             |    HOST    |
+>           ||                                             +---- S -----+
+>   +-------||----------------- VMBus ---------------------------||-----+
+>   |                     Interrupts, MMIO                              |
+>   +-------------------------------------------------------------------+
+>=20
+> Note that in the second case the guest doesn't need to share the memory
+> with the host as it communicates only with the paravisor within their
+> partition boundary. That is precisely the raison d'etre and the value
+> proposition of this patch series: equip the confidential guest to use
+> private (encrypted) memory and rely on the paravisor when this is
+> available to be more secure.
+>=20
+> An implementation of the VMBus relay that offers the Confidential VMBus
+> channels is available in the OpenVMM project as a part of the OpenHCL
+> paravisor. Please refer to
+>=20
+>   * https://openvmm.dev/guide/, and
+>   * https://github.com/microsoft/openvmm
+>=20
+> for more information about the OpenHCL paravisor. A VMBus client
+> that can work with the Confidential VMBus is available in the
+> open-source Hyper-V UEFI: https://github.com/microsoft/mu_msvm.
+>=20
+> I'd like to thank the following people for their help with this
+> patch series:
+>=20
+> * Dexuan for help with validation and the fruitful discussions,
+> * Easwar for reviewing the refactoring of the page allocating and
+>   freeing in `hv.c`,
+> * John and Sven for the design,
+> * Mike for helping to avoid pitfalls when dealing with the GFP flags,
+> * Sven for blazing the trail and implementing the design in few
+>   codebases.
+>=20
+> I made sure to validate the patch series on
+>=20
+>     {TrustedLaunch(x86_64), OpenHCL} x
+>     {SNP(x86_64), TDX(x86_64), No hardware isolation, No paravisor} x
+>     {VMBus 5.0, VMBus 6.0} x
+>     {arm64, x86_64}.
+>=20
+> [V5]
+>     - Rebased onto the latest hyperv-next tree.
+>=20
+>     - Fixed build issues with the configs provided by the kernel robot.
+>       **Thank you, kernel robot!**
+>=20
+>     - Fixed the potential NULL deref in a failure path.
+>       **Thank you, Michael!**
+>=20
+>     - Removed the added blurb from the vmbus_drv.c with taxonomy of Hyper=
+-V VMs
+>       that was providing reasons for the trade-offs in the fallback code.=
+ That
+>       code is no longer needed.
+>=20
+> [V4] https://lore.kernel.org/linux-hyperv/20250714221545.5615-1-romank@li=
+nux.microsoft.com/
+>     - Rebased the patch series on top of the latest hyperv-next branch,
+>       applying changes as needed.
+>=20
+>     - Fixed typos and clarifications all around the patch series.
+>     - Added clarifications in the patch 7 for `ms_hyperv.paravisor_presen=
+t && !vmbus_is_confidential()`
+>       and using hypercalls vs SNP or TDX specific protocols.
+>       **Thank you, Alok!**
+>=20
+>     - Trim the Documentation changes to 80 columns.
+>       **Thank you, Randy!**
+>=20
+>     - Make sure adhere to the RST format, actually built the PDF docs
+>       and made sure the layout was correct.
+>     **Thank you, Jon!**
+>=20
+>     - Better section order in Documentation.
+>     - Fixed the commit descriptions where suggested.
+>     - Moved EOI/EOM signaling for the confidential VMBus to the specializ=
+ed function.
+>     - Removed the unused `cpu` parameters.
+>     - Clarified comments in the `hv_per_cpu_context` struct
+>     - Explicitly test for NULL and only call `iounmap()` if non-NULL inst=
+ead of
+>       using `munmap()`.
+>     - Don't deallocate SynIC pages in the CPU online and offline paths.
+>     - Made sure the post page needs to be allocated for the future.
+>     - Added comments to describe trade-offs.
+>     **Thank you, Michael!**
+>=20
+> [V3] https://lore.kernel.org/linux-hyperv/20250604004341.7194-1-romank@li=
+nux.microsoft.com/
+>     - The patch series is rebased on top of the latest hyperv-next branch=
+.
+>     - Reworked the "wiring" diagram in the cover letter, added links to t=
+he
+>       OpenVMM project and the OpenHCL paravisor.
+>=20
+>     - More precise wording in the comments and clearer code.
+>     **Thank you, Alok!**
+>=20
+>     - Reworked the documentation patch.
+>     - Split the patchset into much more granular patches.
+>     - Various fixes and improvements throughout the patch series.
+>     **Thank you, Michael!**
+>=20
+> [V2] https://lore.kernel.org/linux-hyperv/20250511230758.160674-1-romank@=
+linux.microsoft.com/
+>     - The patch series is rebased on top of the latest hyperv-next branch=
+.
+>=20
+>     - Better wording in the commit messages and the Documentation.
+>     **Thank you, Alok and Wei!**
+>=20
+>     - Removed the patches 5 and 6 concerning turning bounce buffering off=
+ from
+>       the previous version of the patch series as they were found to be
+>       architecturally unsound. The value proposition of the patch series =
+is not
+>       diminished by this removal: these patches were an optimization and =
+only for
+>       the storage (for the simplicity sake) but not for the network. Thes=
+e changes
+>       might be proposed in the future again after revolving the issues.
+>     ** Thanks you, Christoph, Dexuan, Dan, Michael, James, Robin! **
+>=20
+> [V1] https://lore.kernel.org/linux-hyperv/20250409000835.285105-1-romank@=
+linux.microsoft.com/
+>=20
+> Roman Kisel (16):
+>   Documentation: hyperv: Confidential VMBus
+>   drivers: hv: VMBus protocol version 6.0
+>   arch: hyperv: Get/set SynIC synth.registers via paravisor
+>   arch/x86: mshyperv: Trap on access for some synthetic MSRs
+>   Drivers: hv: Rename fields for SynIC message and event pages
+>   Drivers: hv: Allocate the paravisor SynIC pages when required
+>   Drivers: hv: Post messages through the confidential VMBus if available
+>   Drivers: hv: remove stale comment
+>   Drivers: hv: Check message and event pages for non-NULL before iounmap(=
+)
+>   Drivers: hv: Rename the SynIC enable and disable routines
+>   Drivers: hv: Functions for setting up and tearing down the paravisor Sy=
+nIC
+>   Drivers: hv: Allocate encrypted buffers when requested
+>   Drivers: hv: Free msginfo when the buffer fails to decrypt
+>   Drivers: hv: Support confidential VMBus channels
+>   Drivers: hv: Set the default VMBus version to 6.0
+>   Drivers: hv: Support establishing the confidential VMBus connection
+>=20
+>  Documentation/virt/hyperv/coco.rst | 143 +++++++++-
+>  arch/x86/include/asm/mshyperv.h    |   2 +
+>  arch/x86/kernel/cpu/mshyperv.c     |  86 +++++-
+>  drivers/hv/channel.c               |  73 +++--
+>  drivers/hv/channel_mgmt.c          |  27 +-
+>  drivers/hv/connection.c            |   6 +-
+>  drivers/hv/hv.c                    | 426 ++++++++++++++++++++---------
+>  drivers/hv/hv_common.c             |  24 ++
+>  drivers/hv/hyperv_vmbus.h          |  70 ++++-
+>  drivers/hv/mshv_root.h             |   2 +-
+>  drivers/hv/mshv_synic.c            |   6 +-
+>  drivers/hv/ring_buffer.c           |   5 +-
+>  drivers/hv/vmbus_drv.c             | 186 ++++++++-----
+>  include/asm-generic/mshyperv.h     |  39 +--
+>  include/hyperv/hvgdk_mini.h        |   1 +
+>  include/linux/hyperv.h             |  69 +++--
+>  16 files changed, 878 insertions(+), 287 deletions(-)
+>=20
+>=20
+> base-commit: 03ac62a578566730ab3c320f289f7320798ee2e1
+> --
+> 2.43.0
+>=20
 
 
