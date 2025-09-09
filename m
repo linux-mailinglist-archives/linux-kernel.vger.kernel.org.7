@@ -1,179 +1,149 @@
-Return-Path: <linux-kernel+bounces-808518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00812B500CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BD5B500CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9EDF1BC36DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7B172D5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D519A350847;
-	Tue,  9 Sep 2025 15:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BA7350D69;
+	Tue,  9 Sep 2025 15:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="lSFK0nHr"
-Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgT9jkV7"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E320102C;
-	Tue,  9 Sep 2025 15:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80A1341652
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430927; cv=none; b=nEdHLqW3foYtKgUHMrT0Wg56L/lizFM6EENAO/2dKmO5280SRpdJG8p0nIm9+8zxsIeMoT2GQS1xFiTAJcPurMjvC73quu5CziPxI1z78zLf+517L9CpMMJ1Svu/IyHDwVXaDQr1PKx2G7ondMa/qh/aRUlCReKpbZ1Pv1O3+VI=
+	t=1757430968; cv=none; b=hpdfbqdnpthqVYiS+xy5CpahsQj7lb2IS/LutFflcHcY/L0UojHeOsabXK27ZUTBJ2ESwUSs87gbgQzwpNza5XsfYYiNXpPFDoJr1oGWFHUcrcKJmHC8MEfFG3BmX5mfwA0IxL8ibRL/Ii1b2oDZdbPpbmAofR2v96TvfoD1Otw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430927; c=relaxed/simple;
-	bh=2anOpUEB8ZrluT6ZWpZLfBR8vUKUSxK7hCmigQanedM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jJdvIhbW9mgMroohiYvBYWz0rm87GQLMc6WsJudtDDMiACZK2t6Rg1BnPdFXZhDanjXDAQtesOJlks8U8t82f4QZP+JHRsx8roOL6lcBrLM1vBBVpzyslCohW6R7qRZoGDt0qW9PWSFWqUdMHFrXlbOjpTF9Hjpx5jJDsCcINSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=lSFK0nHr; arc=none smtp.client-ip=193.238.174.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mx.ssi.bg (localhost [127.0.0.1])
-	by mx.ssi.bg (Potsfix) with ESMTP id 27CC920545;
-	Tue,  9 Sep 2025 18:15:14 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
-	:content-type:content-type:date:from:from:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
-	 bh=DuUlhG3uOqtSZMpp6pl4y3fP1ka9SPbGB7gebbWP824=; b=lSFK0nHrsuCA
-	ejR2F/HmmWM2++InmsQweYuQfmsC5IZHceyuUfHbFklT7GOsSN9uQvrocJPjNaqz
-	v/4G3vVdTXuTwJSUJDYJX3w4wmZ1z3usgn2D7/ZkXz2IfD/ErHlwNSPbc80Fx1MT
-	7IWfqlQwTN5Ng5dZT7SmgbCl/5fILkmp6OHTtD/3oOTmg63INA4Bkq8RZKhNtBfj
-	dcvvUtswQPXpDJy4xWcGZM56gbh3RvtYL/jyDiz41bQEtxSZSPHps4mjEn0EMP4q
-	+gya1ZyEJUpi4omZb8pjW8Ig8DNftsRGtqT2uWsdb8bOkeOvlZIsA2vdVxvjEQtq
-	THDQsTK8C5Ycj65nkMjed6NQYHISPBsl0srCH0MfEw9t46ts4tV9g5fABRHmgcqH
-	GjwbgomrUTw8cENwL5t8DO/6vjtChSZzfT4nl3ziTnzOhygcj6S+7Tx0X4p5/8es
-	qP+fMihwKvPMYbud3kVmIMUV4bYNAeRKnG4NK2mYMZURpDkO/pco4Xe+7v8AjAa3
-	0rtDGvkVJWfGLhQxfZ1d9yMsRwvzxflKqzHeZ/xmpqupAk3J61Ie/INIiVmLWAbM
-	Rx1hZd6KlXsSWaAFl5g5mBQvWMTKMPlaxEyUVHIABrEsvV5WRHs/SyIVEhgDCWdj
-	cDit2fXowT4PeVJbQH6gPIuXWwme13U=
-Received: from box.ssi.bg (box.ssi.bg [193.238.174.46])
-	by mx.ssi.bg (Potsfix) with ESMTPS;
-	Tue,  9 Sep 2025 18:15:12 +0300 (EEST)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by box.ssi.bg (Potsfix) with ESMTPSA id 184A464D0A;
-	Tue,  9 Sep 2025 18:15:09 +0300 (EEST)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.18.1) with ESMTP id 589FF4bN041717;
-	Tue, 9 Sep 2025 18:15:04 +0300
-Date: Tue, 9 Sep 2025 18:15:04 +0300 (EEST)
-From: Julian Anastasov <ja@ssi.bg>
-To: Slavin Liu <slavin452@gmail.com>
-cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] IPVS: Fix use-after-free issue in
- ip_vs_unbind_app()
-In-Reply-To: <20250908065458.536-1-slavin452@gmail.com>
-Message-ID: <b5d51ae8-df71-713f-3f08-14cf6272f52a@ssi.bg>
-References: <20250908065458.536-1-slavin452@gmail.com>
+	s=arc-20240116; t=1757430968; c=relaxed/simple;
+	bh=HhszSRQXIU5hyXmbHS1r8ihhw943QEplSsfQYmIy1lw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a1Pal/08n3qWx8zATl/DBqO6ea7pSE4KDvq7tI0IU6LpxEQq6JIZGcOnvSXSDS6NZBrq1CuTbWfYKrO/VyrRL3n1TSHJ1+J7R6c6+mS46o5iypnalP1vY9DOCNROYhKq29RDQ1Yy1OlCCSeKnjr3+VQn+TrfRI7K3XfiKs6Ea3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HgT9jkV7; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b04770a25f2so781592766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757430965; x=1758035765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HhszSRQXIU5hyXmbHS1r8ihhw943QEplSsfQYmIy1lw=;
+        b=HgT9jkV72Ek5jVAJfgKMo0NY1Xee9cmxE7wMVdNroBd9lwTzKY1OPToUkcaaiVfA1Q
+         w+HqEoBYBV1C4z/1V/aXFwb5/P6xIeCWXw1jQiRuO1E0tpxEogi7KQjSuZ9UJJIfxHtr
+         srt6hpJq/20lHtorszEHi+nBfkSNHWCV4LVBWat8AW+UDlMlFa2nD8kXn9kVztF0slZY
+         e+pR0ldJH0KxkMqT8dZJKIwlhXD+9IkKn7rN7OgBXD5M05vok/Xsc1I/4m8bHKMAbmY3
+         B4QWURkumU478t/8T0f/wz/GzkmiBRU8S4ejTXxSVpSRgMyjDLEeiUcWtV+jLMzKLGV4
+         JJsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757430965; x=1758035765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HhszSRQXIU5hyXmbHS1r8ihhw943QEplSsfQYmIy1lw=;
+        b=V7z+2HOAv24G0zMkkVmfS/YF0geDGDu0YuTU58TjQ6mW/pjjQ9/W/KMb13cDpjjyFp
+         HJ5LnbdKbYcFwlj3DZGMDdAEKObNyCI5bzEueSSZx1h5qwc98yRJTSLQbv6JRwvvHuBQ
+         3fZro8Bart5jd5Xv6kHKZ6l1z2eDtk1DgZjgqcnrsD0wPQCJueNH+2LsFC1kUSkiz+AX
+         tDWIObi9S+DiQVwOcx/GdthyjHSAzZEA4t8TD88Nu2YZsUS7Qe9U7IqAxz6A2BL/zfLf
+         NyjLWcjsQTxpSHMWL1r/Vox3a2bVETELagZzy8GjLHyL6P4xDJV3ylx1EvnEX0LjbPOR
+         R6xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjkAnk5KigeJWKKB/Dp5Hgh4w7YAnhOk7yxhqIInOET+2RGvj9OeVguyT7za244U2j+lQHN9V/dNTPwjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsHs+gMahHdIHOhFcLHIMXqNJoVjfHH5xhnIjIw/ngVkis5uBb
+	RXHoxKUtUn3BIAgN5e458ReJjBzx0Ic5fjkOEez3q4sYBW9nku8BHJ7/GxRy9W+Jxzuz27Z9NEf
+	QiXd760eV1do1BY6C+ZtFr9tu8FXTAMk=
+X-Gm-Gg: ASbGncs4CPtrrxN9bDiNy5urQhBRX9DcbfaZjNySijdyOLqj1SoRW/L9qpLaiyNuvDI
+	xhtyvI0StoLymdriLz4MC3jgYso+Iop7dvWrji8O5Lr17N6OKVINCuk6o/zHDje0gQqAaveraS1
+	uUPzETxm4D4/9jGRP6iL2ZFpbtZyrkyktLYeoDCSdbeQ4v9d3VuDqvM9VhqT4NS2M+tjOMnG1SS
+	oH/dkrGRQ==
+X-Google-Smtp-Source: AGHT+IGeaHcV2kH627FcZIyd8vYLnu/2Up2e6b2i9sBG/bmosVjOp6dqHGnQ87UTIB1WpGArwM97TNlubL6NJn+jj/k=
+X-Received: by 2002:a17:907:7e8c:b0:b04:39af:bee9 with SMTP id
+ a640c23a62f3a-b04b1003707mr1194942566b.0.1757430964857; Tue, 09 Sep 2025
+ 08:16:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
+ <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
+ <aMAn4MM_Fs8q8qwj@smile.fi.intel.com> <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
+ <aMAve1MbONmKVjjg@smile.fi.intel.com> <aMAv3STeZUdSQ14p@smile.fi.intel.com>
+ <CAMRc=MeA87p0QAzq_3MACQM90MhN0eRccr7u-VzcfyP8b90AaQ@mail.gmail.com>
+ <aMAzZAbNwrRTgFi-@smile.fi.intel.com> <CAMRc=Mfn7atHTqKc9nMTQ19ZserqeNi3skb-QhG3CVdEhmr0gg@mail.gmail.com>
+In-Reply-To: <CAMRc=Mfn7atHTqKc9nMTQ19ZserqeNi3skb-QhG3CVdEhmr0gg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 9 Sep 2025 18:15:28 +0300
+X-Gm-Features: Ac12FXySsG8IXlocwCfN3VG6y5KLpIc0a90AoYqlSY-xU72GOTjlNCZIc8n9fs0
+Message-ID: <CAHp75VdDAJO3+NPp29GnqL=C5m7tdWbyYvNFax=Dh+dG49YAnA@mail.gmail.com>
+Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 9, 2025 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+> On Tue, Sep 9, 2025 at 4:02=E2=80=AFPM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Tue, Sep 09, 2025 at 03:56:41PM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Sep 9, 2025 at 3:47=E2=80=AFPM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+
+...
+
+> > > > TBH, I think those 6 all made the same mistake, i.e. thinking of th=
+e compound
+> > > > literal as a cast. Which is not!
+> > >
+> > > What do you suggest?
+> >
+> > Write it in less odd way :-)
+> >
+> > foo =3D (struct bar) { ... };
+>
+> I don't get your reasoning. typeof() itself is well established in the
+> kernel and doesn't
+>
+> foo =3D (struct bar){ ... };
+>
+> evaluate to the same thing as
+>
+> foo =3D (typeof(foo)){ ... };
+>
+> ? Isn't it still the same compound literal?
+
+It makes it so, but typeof() usually is used for casts and not for
+compound literals. That's (usage typeof() for compound literals) what
+I am against in this case.
+
+> > > And are we not allowed to use C99 features now anyway?
+> >
+> > It's fine, it's not about the C standard number.
 
 
-	Hello,
-
-On Mon, 8 Sep 2025, Slavin Liu wrote:
-
-> When exiting a network namespace, in cleanup_net()->ops_undo_list(),
-> ip_vs_ftp_ops->exit() is called before ip_vs_core_ops->exit_batch().
-> The ip_vs_app ip_vs_ftp and its incarnations will be freed by unregister_ip_vs_app().
-> However, there could still be connections bound to ip_vs_ftp's incarnation.
-> cp->app points to the free'd incarnation, which will be accessed later by
-> __ip_vs_cleanup_batch()->ip_vs_conn_net_cleanup()->ip_vs_conn_flush()->ip_vs_conn_del()->
-> ip_vs_conn_expire()->ip_vs_unbind_app(), causing a uaf. This vulnarability can
-> lead to a local privilege escalation.
-> 
-> Reproduction steps:
-> 1. create a ipvs service on (127.0.0.1:21)
-> 2. create a ipvs destination on the service, to (127.0.0.1:<any>)
-> 3. send a tcp packet to (127.0.0.1:21)
-> 4. exit the network namespace
-> 
-> I think the fix should flush all connection to ftp before unregistration.
-> The simpler fix is to delete ip_vs_ftp_ops->exit, and defer the unregistration
-> of ip_vs_ftp to ip_vs_app_net_cleanup(), which will unregister all ip_vs_app.
-> It's after ip_vs_conn_net_cleanup() so there is no uaf issue. This patch
-> seems to solve the issue but has't been fully tested yet, and is also not graceful.
-> 
-> Signed-off-by: Slavin Liu <slavin452@gmail.com>
-> ---
->  net/netfilter/ipvs/ip_vs_ftp.c | 13 -------------
->  1 file changed, 13 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
-> index d8a284999544..68def1106681 100644
-> --- a/net/netfilter/ipvs/ip_vs_ftp.c
-> +++ b/net/netfilter/ipvs/ip_vs_ftp.c
-> @@ -598,22 +598,9 @@ static int __net_init __ip_vs_ftp_init(struct net *net)
->  	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
->  	return ret;
->  }
-> -/*
-> - *	netns exit
-> - */
-> -static void __ip_vs_ftp_exit(struct net *net)
-> -{
-> -	struct netns_ipvs *ipvs = net_ipvs(net);
-> -
-> -	if (!ipvs)
-
-	What if we change this 'if' check to:
-
-	if (!ipvs || !ipvs->enable)
-
-	If netns exits, the cleanup order is:
-
-1. exit handlers for pernet device (&ipvs_core_dev_ops) where
-	ipvs->enable is set to 0
-
-2. exit handlers for ip_vs_ftp_ops (as last pernet subsys)
-	By checking for ipvs->enable, we should not call
-	unregister_ip_vs_app() in __ip_vs_ftp_exit() because
-	there can be existing conns with valid cp->app
-
-3. exit handlers for pernet subsys (&ipvs_core_ops) where
-	ip_vs_app_net_cleanup() unregisters all apps for netns.
-	Here the apps will be freed after all conns are gone
-
-	Why we should keep the ftp pernet subsys: because when
-there are no conns using the app, the module can be removed and
-it must unregister its app from all netns where ipvs->enable will
-be 1.
-
-	But note that we have a pending patch that changes
-the access to ipvs->enable to use READ_ONCE/WRITE_ONCE:
-
-https://archive.linuxvirtualserver.org/html/lvs-devel/2025-09/msg00000.html
-
-> -		return;
-> -
-> -	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
-> -}
->  
->  static struct pernet_operations ip_vs_ftp_ops = {
->  	.init = __ip_vs_ftp_init,
-> -	.exit = __ip_vs_ftp_exit,
->  };
->  
->  static int __init ip_vs_ftp_init(void)
-> -- 
-> 2.34.1
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
