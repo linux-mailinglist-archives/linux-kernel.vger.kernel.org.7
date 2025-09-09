@@ -1,346 +1,138 @@
-Return-Path: <linux-kernel+bounces-807915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8770B4AB0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E02B4AB0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCE63A685D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3A5443DF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A994C31C591;
-	Tue,  9 Sep 2025 11:02:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1D8366;
-	Tue,  9 Sep 2025 11:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FF31CA75;
+	Tue,  9 Sep 2025 11:04:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFB72D77E6
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757415750; cv=none; b=PEsc7fnbca5tw/G1elLOd7xBG8JmRnxCQtwFZwCgws8mMKllkdagx6IxCNeQQGyGEHYbYURTn1+xiL7XVDK5ZflHHLYmgb3+t0YtUvtXwj1R9tQEtFicseGHXfIr39fXBm9wPRUs0jQJ4fRYZ1dFZQrYMdtZ5JHij++yRzbruvA=
+	t=1757415853; cv=none; b=WCk3IhWJxMOm1DGpWc+duube3EAb+6PL7zSvEUlBZibALPjDewBx3HKvxQ9eXcWew0U5jWVS8DOWFGa3R8uivRIHP0AbSut4/TYXhscu4WliX33Zns/Mhb6gPOLgG5DTcIaaERiXH9JAjT6dBo3d0+w8w15nPY81DT6BRYR4azQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757415750; c=relaxed/simple;
-	bh=WtAfe/jd/YqfqJ7tJAnEy1Mmd8laQThPeKclnfCzHzw=;
+	s=arc-20240116; t=1757415853; c=relaxed/simple;
+	bh=B8c2377KZdS+EHZcUQDQTlAZiq6HWEeL9hg1Ganu0hc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjG1/iiYZ6fUDEsV1dhH8ng9D0p2IyeE7ZX7yQP5UAUiZnUwa2Oj2H7pX0DDxMNC/E/UcD2rV2Evfpbpw+Lfqd6uQYhjUit3jVf+ENgAxqg+4gXxEfgT/oHjidyTyJRHNryTL94dr/eDkeLpG4CsJBQvHtb/9PSAG4CD7uahl50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 906F712FC;
-	Tue,  9 Sep 2025 04:02:18 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 548A13F63F;
-	Tue,  9 Sep 2025 04:02:21 -0700 (PDT)
-Date: Tue, 9 Sep 2025 12:02:18 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 09/33] dt-bindings: arm: Add MPAM MSC binding
-Message-ID: <aMAJOghPhaKu1hO+@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-10-james.morse@arm.com>
- <aK8w1L3gHBk2Fz1k@e133380.arm.com>
- <96827d9f-cea8-4ca3-b709-1ae09e3d901c@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUKYOwon3WdigUVj/SQimC7bbilS5BpSu5hbK19WtsDiiFB9nqYVh8yzFARbJjpNX6I0mDlQ5Hv7WksWENWR/ocp4NKNfWScEqpD8gLwztW2tY2tt0DUKljmoZ99f4LbR8Fce89wSkNJpfMAKAFKqOZkK/mjrXjVumOatU2imE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvw8m-0003MR-3W; Tue, 09 Sep 2025 13:04:00 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvw8k-000PEq-1b;
+	Tue, 09 Sep 2025 13:03:58 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 31F2A469DDC;
+	Tue, 09 Sep 2025 11:03:58 +0000 (UTC)
+Date: Tue, 9 Sep 2025 13:03:57 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	Alex Tran <alex.t.tran@gmail.com>, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	horms@kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
+ member to support flexible array
+Message-ID: <20250909-victorious-micro-copperhead-24eaa0-mkl@pengutronix.de>
+References: <20250904031709.1426895-1-alex.t.tran@gmail.com>
+ <a7c707b7-61e1-4c40-8708-f3331da96d34@hartkopp.net>
+ <c649a695-caeb-4c20-b983-9035c396e145@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mcbodx5e3hand5vz"
 Content-Disposition: inline
-In-Reply-To: <96827d9f-cea8-4ca3-b709-1ae09e3d901c@arm.com>
+In-Reply-To: <c649a695-caeb-4c20-b983-9035c396e145@redhat.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Sep 05, 2025 at 10:11:03AM +0100, James Morse wrote:
-> Hi Dave,
-> 
-> On 27/08/2025 17:22, Dave Martin wrote:
-> > On Fri, Aug 22, 2025 at 03:29:50PM +0000, James Morse wrote:
-> >> From: Rob Herring <robh@kernel.org>
+--mcbodx5e3hand5vz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
+ member to support flexible array
+MIME-Version: 1.0
+
+On 09.09.2025 12:35:46, Paolo Abeni wrote:
+> On 9/4/25 8:25 AM, Oliver Hartkopp wrote:
+> > On 04.09.25 05:17, Alex Tran wrote:
+> >> The documentation of the 'bcm_msg_head' struct does not match how
+> >> it is defined in 'bcm.h'. Changed the frames member to a flexible arra=
+y,
+> >> matching the definition in the header file.
 > >>
-> >> The binding is designed around the assumption that an MSC will be a
-> >> sub-block of something else such as a memory controller, cache controller,
-> >> or IOMMU. However, it's certainly possible a design does not have that
-> >> association or has a mixture of both, so the binding illustrates how we can
-> >> support that with RIS child nodes.
+> >> See commit 94dfc73e7cf4 ("treewide: uapi: Replace zero-length arrays w=
+ith
+> >> flexible-array members")
 > >>
-> >> A key part of MPAM is we need to know about all of the MSCs in the system
-> >> before it can be enabled. This drives the need for the genericish
-> >> 'arm,mpam-msc' compatible. Though we can't assume an MSC is accessible
-> >> until a h/w specific driver potentially enables the h/w.
-> 
-> > I'll leave detailed review to other people for now, since I'm not so up
-> > to speed on all things DT.
-> 
-> Me neither!
-> 
-> 
-> >> diff --git a/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
-> > 
-> > [...]
-> > 
-> >> @@ -0,0 +1,200 @@
-> > 
-> > [...]
-> > 
-> >> +title: Arm Memory System Resource Partitioning and Monitoring (MPAM)
-> >> +
-> >> +description: |
-> >> +  The Arm MPAM specification can be found here:
-> >> +
-> >> +  https://developer.arm.com/documentation/ddi0598/latest
-> >> +
-> >> +maintainers:
-> >> +  - Rob Herring <robh@kernel.org>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    items:
-> >> +      - const: arm,mpam-msc                   # Further details are discoverable
-> >> +      - const: arm,mpam-memory-controller-msc
-> > 
-> > There seems to be no clear statement about how these differ.
-> 
-> It's a more-specific compatible, I think these are usually things like:
-> | compatible = "acme,mega-cache-9000", "arm,mpam-msc"
-> 
-> Where the driver can key errata-workaround on the vendor specific bit when needed.
-> 
-> In this case - I think they're examples, but Rob said they were supposed to be in some
-> other list of compatible. (not sure what/where that is)
+> >> Bug 217783 <https://bugzilla.kernel.org/show_bug.cgi?id=3D217783>
+> >>
+> >> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+> >=20
+> > Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+>=20
+> @Mark, @Oliver: I assume you want us to apply this patch directly to the
+> net tree, am I correct?
 
-I guess I'll defer to the DT folks about how this ought to be presented.
+I'll take it.
 
-The DT bindings are a weird hybrid of informal and formal that I'm not
-really used to.
+> If so, @Alex: please use a formal 'Fixes:' tag for the blamed commit and
+> 'Link: to reference the bz entry, thanks!
 
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +    description: A memory region containing registers as defined in the MPAM
-> >> +      specification.
-> 
-> > There seems to be no handling of PCC-based MSCs here.  Should there be?
-> 
-> That is newer than this document. On DT platforms PCC is spelled SCMI, and is
-> discoverable. Andre P prototyped this, (patches in the extras branch) but no-one
-> has come out of the woodwork to say they actually need it yet.
-> 
-> ACPI PCC is a definite maybe.
->
-> > If this can be added later in a backwards-compatible way, I guess
-> > that's not a problem (and this is what compatible strings are for, if
-> > all else fails.)
-> > 
-> > An explicit statement that PCC is not supported here might be helpful,
-> > though.
-> 
-> I'm pretty sure its discoverable on DT/SCMI platforms.
+Will do.
 
-OK.  If this may not be needed, is discoverable and/or can be bolted on
-in a compatible way later, I guess we wouldn't need to panic about it
-just now.
+Marc
 
-(At least we can do that much more easily than promulgating an update
-to the ACPI tables.)
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-> >> +  interrupts:
-> >> +    minItems: 1
-> >> +    items:
-> >> +      - description: error (optional)
-> >> +      - description: overflow (optional, only for monitoring)
-> >> +
-> >> +  interrupt-names:
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - enum: [ error, overflow ]
-> >> +      - items:
-> >> +          - const: error
-> >> +          - const: overflow
-> > 
-> > Yeugh.  Is this really the only way to say "one or both of foo"?
-> > 
-> > (I don't know the answer to this -- though I can believe that it's
-> > true.  Perhaps just not describing this property is another option.
-> > Many bindings seem not to bother.)
-> > 
-> >> +
-> >> +  arm,not-ready-us:
-> >> +    description: The maximum time in microseconds for monitoring data to be
-> >> +      accurate after a settings change. For more information, see the
-> >> +      Not-Ready (NRDY) bit description in the MPAM specification.
-> >> +
-> >> +  numa-node-id: true # see NUMA binding
-> >> +
-> >> +  '#address-cells':
-> >> +    const: 1
-> >> +
-> >> +  '#size-cells':
-> >> +    const: 0
-> >> +
-> >> +patternProperties:
-> >> +  '^ris@[0-9a-f]$':
-> > 
-> > It this supposed to be '^ris@[0-9a-f]+$' ?
-> 
-> Looks like yes. Fixed.
+--mcbodx5e3hand5vz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-OK
+-----BEGIN PGP SIGNATURE-----
 
-> > Currently MPAMF_IDR.RIS_MAX is only 4 bits in size and so cannot be
-> > greater than 0xf.  But it is not inconceivable that a future revision
-> > of the architecture might enable more -- and the are 4 RES0 bits
-> > looming over the RIS_MAX field, just waiting to be used...
-> > 
-> > (In any case, it feels wrong to try to enforce numeric bounds with a
-> > regex, even in the cases where it happens to work straightforwardly.)
-> > 
-> >> +    type: object
-> >> +    additionalProperties: false
-> >> +    description:
-> >> +      RIS nodes for each RIS in an MSC. These nodes are required for each RIS
-> > 
-> > The architectural term is "resource instance", not "RIS".
-> > 
-> > But "RIS nodes" is fine for describing the DT nodes, since we can call
-> > them what we like, and "ris" is widely used inside the MPAM driver.
-> 
-> 
-> > People writing DTs should not need to be familiar with the driver's
-> > internal naming conventions, though.
-> 
-> What about the architecture's name for fields?
-> This number goes in MPAMCFG_PART_SEL.RIS.
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjACZoACgkQDHRl3/mQ
+kZwXkQf/UEh23x6d+laA+YYWTD4yIXfk/XOixd7eGpRJzaYl3wRVjM36gzRioI7H
+kMIchzpl2QmrzKSvA+j5KTwfSkpotYAt4BMJA+X622lnoV2N3Up2KcsHAqwwbsYq
+SPSm6NZbc+Pj4jKl+hFt7i7Yp/rnqJcM0LI061o1/rSU41WKPmj4e1iD0Uxc+OrM
+QCd2Epdfd+p5QZUstr7yDErKUoxhoh38TkzqnX/22kmopWg+bfW3rEuqzyyT/3ev
+20xX3Cb/GIoDDfisKfshlJwXlW5x3p2oADRUfykxmg9ghUoalO249XZYZ8owKMgy
+Sjd0AC8KOBt87W/tXWdbO3FxQnvhEQ==
+=3Dg+
+-----END PGP SIGNATURE-----
 
-That's the identifier for the resource instance (= "Resource Instance
-Selector", see e.g., ARM IHI 0099A.a Section 9.4.14 "MPAMCFG_PART_SEL,
-MPAM Partition Configuration Selection Register").  The way I read this,
-the contents of MPAMCFG_PART_SEL.RIS is just a numeric identifier
-identifier, rather than the thing being identified.
-
-(I guess I am bikeshedding, here.  The chance for actual confusion
-remains low.  I just find this use of "RIS" a bit dissonant.)
-
-> > (There are other instances, but I won't comment on them all
-> > individually.)
-> > 
-
-> >> +      implementing known MPAM controls
-> >> +
-> >> +    properties:
-> >> +      compatible:
-> >> +        enum:
-> >> +            # Bulk storage for cache
-> > 
-> > Nit: What is "bulk storage"?
-> 
-> Probably to distinguish it from other storage a cache may have, such as tag-ram.
-> 
-> > The MPAM spec just refers to "cache" or "cache memory".
-> 
-> I figure these are comments, I'll remove them...
-> 
-> 
-> >> +          - arm,mpam-cache
-> >> +            # Memory bandwidth
-> >> +          - arm,mpam-memory
-
-I think that the meaning of "mpam-cache" is pretty obvious without
-benefiting from a comment, but "mpam-memory" is not an obvious name for
-memory _bandwidth_.  That probably still wants clarification.
-
-> >> +
-> >> +      reg:
-> >> +        minimum: 0
-> >> +        maximum: 0xf
-> >> +
-> >> +      cpus:
-> >> +        description:
-> >> +          Phandle(s) to the CPU node(s) this RIS belongs to. By default, the parent
-> >> +          device's affinity is used.
-> >> +
-> >> +      arm,mpam-device:
-> >> +        $ref: /schemas/types.yaml#/definitions/phandle
-> >> +        description:
-> >> +          By default, the MPAM enabled device associated with a RIS is the MSC's
-> > 
-> > Associated how?
-> 
-> By the phandle this is a description for.
-> 
-> 
-> > Is this the device where the physical resources managed by the MSC are located?
-> 
-> Yes,
-
-OK, that's not "associated by the phandle".  It's a physical hardware
-property.
-
-[...]
-
-> >> +examples:
-> >> +  - |
-> >> +    L3: cache-controller@30000000 {
-> >> +        compatible = "arm,dsu-l3-cache", "cache";
-> >> +        cache-level = <3>;
-> >> +        cache-unified;
-> >> +
-> >> +        ranges = <0x0 0x30000000 0x800000>;
-> >> +        #address-cells = <1>;
-> >> +        #size-cells = <1>;
-> >> +
-> >> +        msc@10000 {
-> >> +            compatible = "arm,mpam-msc";
-> >> +
-> >> +            /* CPU affinity implied by parent cache node's  */
-> > 
-> > "node's" -> "nodes".
-> > 
-> > (or it this supposed to be in the singular -- i.e., the immediately
-> > parent cache node only?)
-> 
-> The MSC's parent cache node can be used to find the affinity.
-> I'll make it singular and drop the 's
-
-OK
-
-> > Anyway, it looks like this is commenting on the "reg" property, which
-> > doesn't seem right.
-> > 
-> > Is this commnent supposed instead to explain the omission of the "cpus"
-> > property?  If so, that should be made clearer.
-> 
-> 
-> I'll move it to the end of the list of properties so it doesn't look like it belongs to
-> the one below it.
-
-Ack, that works.
-
-Cheers
----Dave
+--mcbodx5e3hand5vz--
 
