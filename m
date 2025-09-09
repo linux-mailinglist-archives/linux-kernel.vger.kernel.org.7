@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-807565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C30B4A639
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170A7B4A63A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39463AE81A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2291C241F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91C0279780;
-	Tue,  9 Sep 2025 08:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkETyx8Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9F42522A8;
-	Tue,  9 Sep 2025 08:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BF22773C9;
+	Tue,  9 Sep 2025 08:58:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA34275AFE;
+	Tue,  9 Sep 2025 08:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408311; cv=none; b=YGbMEfd3sR0/Z9c+3JY9nIzloQdGDMPJxGbCeuEYgvpRNdi2gYHqdxXIjCqDG8G6FS0wEdVj1UqNIN50SoGJPStIH2r2MlZIMo15Iu92j85B3VZPjoooYDCV1blJOo4G1phDF7BdneKEMEhrj4ATR+saJlNZVJfE20vB4V8NB78=
+	t=1757408307; cv=none; b=GEOMxmCb7/55mMUL/9x5A4Vm5kAbtcib5gSPlYt91/qkejm8/8frMThSRUDKAT1QncGVFQ7muSTRx0Z39i6eDzUy2KXZx2IBeXSDnTz7XWKwvfrfDpYg14ZYkc3K/Xa7rGRKV4NcyeFe0jxpr8Zu2rcCKC5ZFkaZE1eYs1nqKyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408311; c=relaxed/simple;
-	bh=R84Vk67aONLqs9yimOEnlLpQaSiDWiX/yLC0yfwDvQg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G7PRLPOU8TewY16OnBeFsqHLgXTs2cTSSxcKJHy/N1iblAoQzIlPAih9QLQ7AxejFODQcNlgjzEQo6jwoWbYIzpS3HN8gAloyVIyDcTXGW5U4KgqSTYfqVJhJ1ylrEfEHpE3p/rQyIvKQPhIeOGZlZnGBL1HI0G+6JiwX5T5gf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkETyx8Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FA9AC4CEF4;
-	Tue,  9 Sep 2025 08:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757408310;
-	bh=R84Vk67aONLqs9yimOEnlLpQaSiDWiX/yLC0yfwDvQg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jkETyx8ZamV+NaqeH6+fgYrlVQgVOpQwz6UdRVa5c6iFRjXolbqawZTGi0NNoLq1n
-	 W+G4GT3YrqPRviB0zXbcjV+7t+Q8sVKg1nNJpkx8HgWRkE4PrfiYrf1+dzMGXuQXE/
-	 zKmDBCfzZwXDjZKyrEEnWePEfHoFwH0U6401M1aNfr/Z/hZOeIhTuSWlTDVKoQeHpN
-	 5Y0347NXEGVOBJZIRWprtzVKmO6eaRlciXc7DeXEQAzChcqKtjpBbnCqh7f/fAE5Yg
-	 QwP4PreaMimQ6VNJG6vdw9GsyYeLo02mfWyqij+tcxvT2zXk+LM6Uua2PL3qpISHdE
-	 6xe8o8x6givOQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAAECAC587;
-	Tue,  9 Sep 2025 08:58:30 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Tue, 09 Sep 2025 10:58:01 +0200
-Subject: [PATCH] intel/vt-d: Send Page Request Drain only if supported
+	s=arc-20240116; t=1757408307; c=relaxed/simple;
+	bh=7l3LSyW/dszeN+8436Ru+Gt/JPA/DJ9sw5nh3KFAMvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTJ38o6qi8Gy2tDn2m0mKKb5vwI89Jufj0BmBYZsYiA/VM9Le7rRmTBmUx+rbjXcZa9/BoTQG6cA2GYS9ut4X8h28AnK8ic4S6GvCy7j7g8Qt2GWAwJaNLjqPISukbGaEoFkLQed5KDz4WvnCvmq5B6Qm9QOqtQW3W9j/J1tmBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C4CC15A1;
+	Tue,  9 Sep 2025 01:58:16 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C48493F63F;
+	Tue,  9 Sep 2025 01:58:20 -0700 (PDT)
+Date: Tue, 9 Sep 2025 09:58:13 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 5/6] firmware: arm_scmi: imx: Support getting syslog
+ of MISC protocol
+Message-ID: <20250909-excellent-unbiased-seriema-8d619f@sudeepholla>
+References: <20250904-sm-misc-api-v1-v4-0-0bf10eaabdf1@nxp.com>
+ <20250904-sm-misc-api-v1-v4-5-0bf10eaabdf1@nxp.com>
+ <20250908-sparkling-owl-of-judgment-f17eeb@sudeepholla>
+ <PAXPR04MB845929E7106141E785A32387880CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250909040159.GC20475@nxa18884-linux.ap.freescale.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-jag-pds-v1-1-ad8cba0e494e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABjsv2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwNL3azEdN2ClGJd8xQL0yQzg8QUyxQjJaDqgqLUtMwKsEnRsbW1APN
- AWXlZAAAA
-X-Change-ID: 20250909-jag-pds-7d85b60ad9d2
-To: David Woodhouse <dwmw2@infradead.org>, 
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1333;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=R84Vk67aONLqs9yimOEnlLpQaSiDWiX/yLC0yfwDvQg=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGi/7DWIt1dxbKK1nES9puS/0fThmuhAYzX+C
- KcoH0a+wd/n7okBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJov+w1AAoJELqXzVK3
- lkFP5hML/RA+hoWbDh4Sjga0mdO0hQB0LiYXRME/LTlVph89SDbZ8jSCT0qO7IY+reePdmmoikV
- onj5AofS+EKfs1v/eEIR7RatVbIA1E4LIu08JYArFUDAu2T8Nwfvzy+qipRCxmwPSlWzx6ZMlf3
- l1KQW7hJS+5NMq8GrD7AXwmZhy+RjviHRoLwQ1ENenOxR6Q6xqFRF3pgi2/wdtXmOpTdjDk3tOq
- wsh69V2ayejpTCtawtNeBp13p3hdKCo30gmtKEeDc537JInEKXuj3iMT+fZm+5oYyfbN7YtAZh2
- 3I4T1Wks2opapNkdksLunm0FOw8q0RM3arMO8AqToBf2YteaQ9QZe/YQS+Ye7As9Q3QGXM2RAZA
- 5+KVd2GKM68juxuSUUh5f/Ym/d+W02ZUi36c3METWuF9n3rMXOgf5DzVGhnlrr4GyLwrp/ARQpS
- amSxE23nSVOgb5sVPkYrVJ/snxWte190HsgaqDXPfjAVdTFd20IjDboLAUx6781f5brfaelHGd7
- d0=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909040159.GC20475@nxa18884-linux.ap.freescale.net>
 
-The intel_iommu_drain_pasid_prq function sends QI_OPT_WAIT_DRAIN to
-hardware without verifying Page Request Drain Support (PDS). According
-to VT-d specification section 6.5.2.8, PRQ drain functionality should
-only be used when PDS (bit 42) is set in the extended capability
-register. Add ecap_pds() check to conditionally use QI_OPT_WAIT_DRAIN
-based on hardware capability.
+On Tue, Sep 09, 2025 at 12:01:59PM +0800, Peng Fan wrote:
+> Hi Sudeep,
+> 
+> On Mon, Sep 08, 2025 at 11:51:02AM +0000, Peng Fan wrote:
+> >Hi Sudeep,
+> >
+> >> Subject: Re: [PATCH v4 5/6] firmware: arm_scmi: imx: Support getting
+> >> syslog of MISC protocol
+> >[...]
+> >> > +};
+> >> > +
+> >> 
+> >> Much better now. But I am still thinking if this must go to the
+> >> document to make sure it remains ABI and firmware can't reorder the
+> >> as we might have no way to deal with that. That's the reason I was
+> >> asking for raw dump so that you need not put all these details in the
+> >> spec/document.
+> >
+> >Let me check with firmware owner whether they would include this
+> >into i.MX SM spec or not. 
+> >If no, raw dump would be the choice.
+> 
+> I checked with firmware owner, this should be using raw dump.
+> The layout would be changed for new platforms.
+> 
+> Since this is raw dump, I think debugfs might be preferred.
+>
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
- drivers/iommu/intel/prq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It can be sysfs, but it can be just one single 4K dump, no more details
+from the kernel than just raw bytes.
 
-diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-index 52570e42a14c05b7492957909568805dc9c7b6ef..f89916de31a3439866f059f5400e45fb362a6a7d 100644
---- a/drivers/iommu/intel/prq.c
-+++ b/drivers/iommu/intel/prq.c
-@@ -119,7 +119,7 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	}
- qi_retry:
- 	reinit_completion(&iommu->prq_complete);
--	qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
-+	qi_submit_sync(iommu, desc, 3, ecap_pds(iommu->ecap) ? QI_OPT_WAIT_DRAIN : 0);
- 	if (readl(iommu->reg + DMAR_PRS_REG) & DMA_PRS_PRO) {
- 		wait_for_completion(&iommu->prq_complete);
- 		goto qi_retry;
-
----
-base-commit: f777d1112ee597d7f7dd3ca232220873a34ad0c8
-change-id: 20250909-jag-pds-7d85b60ad9d2
-
-Best regards,
 -- 
-Joel Granados <joel.granados@kernel.org>
-
-
+Regards,
+Sudeep
 
