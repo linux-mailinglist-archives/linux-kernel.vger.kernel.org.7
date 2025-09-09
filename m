@@ -1,130 +1,148 @@
-Return-Path: <linux-kernel+bounces-807210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF0EB4A1A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6E1B4A1A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9DC4E256D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBDE3ABB6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE118A93F;
-	Tue,  9 Sep 2025 05:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584272FC88C;
+	Tue,  9 Sep 2025 05:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="TnNuZYna"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="CB28A2ac"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABC92F0689
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 05:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412A718A93F;
+	Tue,  9 Sep 2025 05:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757397223; cv=none; b=Ykn0h+/krepEvqotRJFSNUyexIQqsYLpc9kNaRRRdr/d6JRcRgwzpsGE/LNc+9jnQIa8V8XtYlyh0LaxvEmSdaejMgtNuchcF2Z4CF7srSeebPpDLBFJn+Pn87O4BWvJ1kTv2E2JMeLXBX1hHcL9CCE/1BB2ReaKrbX18FUvGcM=
+	t=1757397308; cv=none; b=JpIcA8ASI8qNgbOgZ7gME9A6fg3f5qFjUbZScp2dWr3nrE6GBZI3j9nz5fgmwjiioxcu+J41NICPskyfPkAIILXjwhwM8iyp7Vy1tC5V06bCAEfK0HAmC4UAEKASuRHIzfm93N+1jp5GoRUdVWqfMbGGMf9mUp8I8MSL74NhUiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757397223; c=relaxed/simple;
-	bh=qUtna0PyyH9rwBG66LiA94B2PnwwVPbPFDc3m6NUHac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQ1gH1hC7/I/yyP1fkTm07ey7+Tu4pN01c5K+wulvXVK+Bfa/60VA73vUIv0r2CFaozSuvCQe3ukF93AlTxmhs6K0gw5bk4d/h/N9AGwyB1KWVfV2YUxOrySFkojF8pPNDPpA3TK575RbW5hfWDEHSKbbHijeaaZylngiZ0ENw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=TnNuZYna; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id vh5wuwsxxSkcfvrITulKI0; Tue, 09 Sep 2025 05:53:41 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id vrISuUlhEHNANvrISuiXdx; Tue, 09 Sep 2025 05:53:40 +0000
-X-Authority-Analysis: v=2.4 cv=UOHdHDfy c=1 sm=1 tr=0 ts=68bfc0e5
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GwxR6IbGldVJlwKqBdAY14bWiXLRyUljxF73BTLNTyA=; b=TnNuZYnaZHCPmEw9vw8wFZbztt
-	1zmZZdKaCHqIv1Q2N8RFTimKkIhS1VReyzvklqjb85cGbOyclPxJjl/hTF2blBdw7Fye3WYCpzV2g
-	UGtg40e9oh1FpcMnN//ebuHiRR7JiZH2k0JIxwk3laaIR4R6JYyGantGE1TW79+2ptu2bA6UVcK8j
-	UeKDUWN868GzIsfywRplAklrg15g+tQAxBGbPdcAZKxwCU693W5MIL+kuxjl2ZPa0DX/ApCd5B8VT
-	66Jub+N00anEaX3guT1xaIlYhAvv4g8SUxeGPv8+RK3bL+QJXyrsXJPK/RHVu+phQl9JCV8T4C5W9
-	QeHsGo/Q==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:55018 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uvrIR-00000001mdn-2qR3;
-	Mon, 08 Sep 2025 23:53:39 -0600
-Message-ID: <3f9c3683-60ee-4532-a6ff-b45572d6bc06@w6rz.net>
-Date: Mon, 8 Sep 2025 22:53:37 -0700
+	s=arc-20240116; t=1757397308; c=relaxed/simple;
+	bh=Df96yvf2Xh6xrEIUgiicm19yjU2AICaVs86nIWkCN0E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UBlQ3kZeeetW3y9z7CXPYH9K9l/T+dJ7l0c+aeBnO+cNWm5/Jmz44cvp0d4La3lzELACGNDiAtfWXWnoVm/ix4QooUBDvHzcj2jkLatUzCt4vZbOhIO13fgKySu5tDkp1Xzzw2thctQlcElY9rz1WxZOJrzoUXKMqBmr/mCakbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=CB28A2ac; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=5hXliLQHucvQWNmJ5HAB5OK/4ev/m3qsVijclDYkrFI=; t=1757397305;
+	x=1758002105; b=CB28A2act5gvhCU6OCtMeRcaZIZ7D9wYEAzIg2qQkcA3d0AFtSYH9UlzRiHYD
+	4tHQM915SH3Z4FIdQcTFM3Ryuy8mPSCcdjTV7HlFptiszinSd+e46feocE5/eS6R7Rfn5+7dut1lT
+	mnMx+yO0ypEGg17vhkDygIZD1qlWyRPG+Gj0TWsSAD6lQKDzOiUz7g2J+M6xGNccWHbQH6w/jwUOs
+	yGvlab0boBcxwWBtbtd3TzZxVjL9EF2ieA1Y0s82Xz+nXaQmom8lv7rT58cMaMFsZG7/qVXbyXfWf
+	odC3CK369uU+U+70AZId9cQhCzeleZsfzyrnPFw7wdoxXKvxpw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uvrJk-000000022PG-11tt; Tue, 09 Sep 2025 07:55:00 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uvrJj-00000001eRs-42WM; Tue, 09 Sep 2025 07:55:00 +0200
+Message-ID: <a12114a3e8c48e88a5ae9e0b49577b93bbf30d2d.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, Michael Karcher	
+ <kernel@mkarcher.dialup.fu-berlin.de>, Andreas Larsson <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?ISO-8859-1?Q?Ren=E9?= Rebe
+	 <rene@exactcode.com>
+Date: Tue, 09 Sep 2025 07:54:58 +0200
+In-Reply-To: <fec617e3-8955-42c6-9cca-588e86833998@oracle.com>
+References: 
+	<20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+	 <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+	 <326c98bf3adf52da64bc606741770c638409b938.camel@physik.fu-berlin.de>
+	 <2fe65b101b36304369866e30f64a921591ecdd8b.camel@physik.fu-berlin.de>
+	 <e791dbb534aac79805389a4b754901c24991de89.camel@physik.fu-berlin.de>
+	 <c3e1173f99e6222ab09093e1a197d6366bcf2b95.camel@physik.fu-berlin.de>
+	 <03957ee5ee562b70f7e3278d0ce95b2f52cbc721.camel@physik.fu-berlin.de>
+	 <603f6661d99fc6c936f5a75e29f30d50650b9da8.camel@physik.fu-berlin.de>
+	 <a9eec6f5a51c82cd2a20a96d614cfd3095ddce88.camel@physik.fu-berlin.de>
+	 <fec617e3-8955-42c6-9cca-588e86833998@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/175] 6.12.46-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250907195614.892725141@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250907195614.892725141@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1uvrIR-00000001mdn-2qR3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:55018
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 37
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfF67WwewpF1j8aX0zEQD/0UunySIokitSqbs8k5NFSZ3p8KgRagZCaxHTnB/s+/qwykLsvdvkp1QquEDmCmfEwu7aZH7xnYm3l9ceawszCOpqBpZXmXS
- Wuov44AM1W6rLQJzyPUvz4mBgQ+nC4odF4AVDNrQHWw1YZr4w5A/irt82SS8SADdpAXtJJ8XEontHbkq+V3iT7os0gcG0ISyWU4=
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 9/7/25 12:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.46 release.
-> There are 175 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.46-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Anthony,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+On Mon, 2025-09-08 at 15:47 -0700, Anthony Yznaga wrote:
+> > Could it be that we need to enable the code guarded by DCACHE_ALIASING_=
+POSSIBLE
+> > unconditionally?
+>=20
+> It's already essentially enabled unconditionally. PAGE_SHIFT will always=
+=20
+> be 13 on sparc64 systems.
 
-Tested-by: Ron Economos <re@w6rz.net>
+I see.
 
+I was confused by this comment:
+
+
+/* Flushing for D-cache alias handling is only needed if
+ * the page size is smaller than 16K.
+ */
+#if PAGE_SHIFT < 14
+#define DCACHE_ALIASING_POSSIBLE
+#endif
+
+My thinking was that there might be a flush skipped when using transparent
+huge pages which causes these crashes.
+
+> The flushing should be happening for folios of any size. See=20
+> flush_dcache_folio(()/flush_dcache_folio_all().
+
+OK, I'll have a look and maybe add a printk() there.
+
+> You could try setting page_poison=3D1 on the kernel command line to see i=
+f=20
+> the kernel detects any freed pages being used.
+
+Ah, good to know. Thanks.
+
+> Is this a different Cheetah+-based system than the one I borrowed?=20
+> Definitely some sort of memory corruption happening, but the system I=20
+> used seemed much more stable than this.
+
+Yes, it's the same Sun Netra 240. It has been running stable for days, but
+upgrading to the latest systemd version caused these new reproducible crash=
+es
+which started my new investigation.
+
+Replacing "call cheetah_patch_copyops" with "call generic_patch_copyops" di=
+d
+not help in this situation which indicates that the bug is not in Michael's
+patch set which is a good sign at least for Michael's work.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
