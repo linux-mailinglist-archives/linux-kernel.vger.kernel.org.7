@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-808565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5BDB501BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:44:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B67B501BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB8087BF219
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F89B7BE57F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72135AACC;
-	Tue,  9 Sep 2025 15:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A237C352FC2;
+	Tue,  9 Sep 2025 15:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUBYwksb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEvZXBfT"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E5335A291;
-	Tue,  9 Sep 2025 15:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F734F48C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432113; cv=none; b=nbK9T+wnkVf3soNXtPSqr7/93gsBkynARDi+4keyGwLwk91HysP+EVHA0NCwkFglniPaymb23YcRK/wHtprSqwcf0G6M9kkHEuriLRLl/XtlVTwXNz8nxVPQPn3HD1NvwhJQvCskkL5ulrpHfX53gS/hnaRzEDL5WlpNMy5fFKw=
+	t=1757432130; cv=none; b=In6ZrhlHVFDsX/OgLI26MbbEjBnMuVqTOewr4U+bOVg6AVHXaKoSYXEUj8xbEgaI5TrJ5fOuGQ0FfQuctc99DGLQGDnJBXjc6fF6A7hSJlTp81PXZ3oCWBClo8pcwZKIr3CQbeZIAXJwTbG40H8VRpRXXsxe91hm1PTnxQEs0lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432113; c=relaxed/simple;
-	bh=r10iZ7zeg/sR/nZIwbyfdzbIVMfWHdFFer/db8R+TlY=;
+	s=arc-20240116; t=1757432130; c=relaxed/simple;
+	bh=Fq/a1hYveqfilX2beABwo3Isccg1iO0R9DMPHxOXsz8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RdZ0ounaGeBuFDegGT33njtZbq7GcOz209akfRZeP7rhAL7dCfmYRN5xJsVHII8M9nEmTK3e0Xa4O4glZXnkV3x9ZAWI2ZV8rq1cvEB7two1uzLITUMrX2BN+ieYosWVEb4U5rRAqKqOGkii6MO5cp2pXuLa+yZQPC58vtnU6UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUBYwksb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82D1C4CEFC;
-	Tue,  9 Sep 2025 15:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757432112;
-	bh=r10iZ7zeg/sR/nZIwbyfdzbIVMfWHdFFer/db8R+TlY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nUBYwksbxZTX850YqvKjGd7Pdwnngqp+BqCfASPo3dfXxvAwOIyJrgHoIhC234V2A
-	 cJIzfqrlrDgeFbHX6SzkNsdccoAoehtMcavuuANykp1OSfYPUJjZ1oB2uVH0+I9NVT
-	 lx7I4qXxbo8boBXZfEQBz0TLQ2EHbVqXQ1ZTCirBgDfR9egR1YTYh0a3Ne2yR6PriF
-	 YD8oxCzl9At7UZyA7UN5QnpyOUqNEVwituxVHj3kFLIWloq4O/1tFy9bB4O5PDXF1M
-	 fw0QwgF/0XHCg6kfCoV96dHRVngQITRX33+JxRKdEL7YxaYVin0Ym1zy19WN/diHXr
-	 J6cYssdEUceRA==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74526ca79beso4940799a34.0;
-        Tue, 09 Sep 2025 08:35:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX29UMbOsd6OoYMCdW/Ubn3wqBymN26bjlAGnqRf78C+OUQtMDqYrAOeYqmn9C1CAy2F9itRJWR6G7iPFyh@vger.kernel.org, AJvYcCXBWwLig5DcZZr7FHPpkitSAJ9CihtV5xxemoVk4BclsmvF1Nvm9F5E2H70MlWIpvP4fRYhEQI15YFQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB5/lJ1cBMVzzZfYw0VnCMGBySs3LJBZUj/qNxeFpbIHVQMlH2
-	45wfJRvUEyQxF80ctdHRendbV/T58XHfjoltGAZNOzF5+YA2I7ewMN7VOcMZe0GXorgFo163ZeQ
-	AWY8VqgD0ZKRK4+eP1cn81o9Y2AUxx6c=
-X-Google-Smtp-Source: AGHT+IFY52ypMIAoRlEjnBako5mUfNmKO1ctM4His3e3+VHyOFYstPxSUTPJe7B/elUpaHufT8qYmM79UMa2SAn9RL4=
-X-Received: by 2002:a05:6830:25d3:b0:741:a5f0:bc82 with SMTP id
- 46e09a7af769-74c74fb9225mr6102217a34.17.1757432112096; Tue, 09 Sep 2025
- 08:35:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=kf37uiYd59+bS7Xsv2VyCUxKGLNAhrwbSBIWnsuj44qvHoQ/KcCFfzKNuHBI3fSvODXxxovRqmSkbvNZHdQCZk8FSlKJTwDcaVAHhq7w8a8WhlBOQwCDNLMbAUN1q3KIobo13Zdz91C67zfm1IrsbvH1a53DDDwDWVSKPOyB7EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEvZXBfT; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24b1331cb98so9245535ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757432128; x=1758036928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b8GWkB9syykE4BVjFSTAYOdo22xPuq6rOAVZtxlTsOY=;
+        b=UEvZXBfT7EuAhMEW8p8PPbHC4KyqCBz4/287ad7eKxz13gxfhD9xzsh61kT2Lh/Ph/
+         4dVMo7fSId6XIIqducS80jdaCT/UzstFXL3SfU5mh9ff5rJNBvB4es13DfNbFT/nLEqE
+         40GO6Dg4/DwViOn/dpuE5BA5Xtvp0PowMpPkJxd8uh1GXTQxHmaKHHSKH4EAO2NW1lUt
+         dWVG7osd+Cg67ZdUNsqB7l7Y4ZiyWNlB3cZZ3JdLBJ7EMq6lnmjJaeTX+Q0UyJXJYSBn
+         tQTRi+p7hyR+U9ci6eccmpmRTdSjLLaXmh56aOaaIaw/m2HgJvUhmLjiXubVSKlVZulk
+         3U8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757432128; x=1758036928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b8GWkB9syykE4BVjFSTAYOdo22xPuq6rOAVZtxlTsOY=;
+        b=fPfhGICTZsYA4abpD1ZHPSLxv2cL+QPjRH6Vhl452ToEUNX8EOZrv/XbNm+1C4es9+
+         YSzC8l3UXoA28D/yuCA/X24a730IrTrR0ijl0EknVJlXgML0dLattOpXqKnsSqoxvqWm
+         8qtJIePVpNT5R+ZLuSR6imkuYnGaZzM139IdPYAVlcAijnzvv2tFr090T6+TW7Vu4qUU
+         Rc5a3dxNvJk4cCCpxEvWumAJrnnTpKskUGA5JcIhJlc15uZE/Aiu8JxLYDAWVoyf3dl1
+         xCnIPYE0StVsk8eY75YsSHPNiZ/HmUGUpuDoDRUOpQbTGiR3SnsiovlNqgATJy4H25ws
+         KDcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAQcXP14IOnP5dCb5/6XhO2kcPdXaxZxJJhG+i9mM/gaSD/6fKP69BPgBIHHjzy0IrCdjSM6X7Ul4j8rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhIALgxE2v1xwsqDCftz/h7KHmXbFDMK7CdZKNV0KwihoNGSXe
+	ReVM51n6PMxcgICeepbkdEYZKQO0YiuuNGTgX9h3h0qAvj3DSKxPGNjqgfqhnWTLEfbjV540+SU
+	IZEBIHQcgrFlAbH5wS+rF0U3Ne8ZrZHR+Mw==
+X-Gm-Gg: ASbGnctCLkJjLAdPV6GqXsGWEGGdW0/CNifjNwkJ5SMPFxlXMAXmNtFSWtimGPZhP3Y
+	MPbTKzf3TWFihI2m3PjtA2XR0MgjIzfPpGoZ5vrvVuoA27UuFWEHLERVkMshy/29I3m6pcqOUUN
+	RjEyka9BHDA8O3+jDDa55dkyCkCGABAiKQO2IlVNBSf191M7I4Evj+hNKNrlG+4waIsHehAMVSO
+	kAnqVg=
+X-Google-Smtp-Source: AGHT+IENnQgx9GOpffswO6V15fGtrHaA0nF3KXNRPZySzd62PQEvFKMKh8Wvce7O5KirXBk04iY+MZAgHeWms3DCyOs=
+X-Received: by 2002:a17:902:cec3:b0:24c:7bc8:a51c with SMTP id
+ d9443c01a7336-25172e31d9cmr94477925ad.9.1757432127744; Tue, 09 Sep 2025
+ 08:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908053335.36685-1-xu.yang_2@nxp.com> <20250908053335.36685-4-xu.yang_2@nxp.com>
-In-Reply-To: <20250908053335.36685-4-xu.yang_2@nxp.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Wed, 10 Sep 2025 00:34:35 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH1Mt3cYenBSHG9Uz0j6pr0Na_E6aPfrn7pKV0ah22k+WA@mail.gmail.com>
-X-Gm-Features: Ac12FXyNrhC_JrxpQlWIyq0hZrbQBd7StcRc7qJeExZMgjdtwvNrB_wOUgpGcQM
-Message-ID: <CAGTfZH1Mt3cYenBSHG9Uz0j6pr0Na_E6aPfrn7pKV0ah22k+WA@mail.gmail.com>
-Subject: Re: [RESEND v4 4/4] extcon: ptn5150: Support USB role switch via
- connector fwnode
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: krzk@kernel.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
-	robh@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
-	swboyd@chromium.org, heikki.krogerus@linux.intel.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	jun.li@nxp.com
+References: <20250909151146.760450-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250909151146.760450-2-thorsten.blum@linux.dev>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 9 Sep 2025 11:35:16 -0400
+X-Gm-Features: Ac12FXzaPUWMuCN-x-hshy0CTAfSQd8c0YMhaAvVwkLYzaetb5wApp6nywvJXYE
+Message-ID: <CADnq5_MFDZdJg3XFFw9+tWB=_LP47PwE3HXgPK=sryOx+_0wGQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: Replace kmalloc + copy_from_user with memdup_user
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Applied.  Thanks!
 
-Applied it. Thanks.
+Alex
 
-On Mon, Sep 8, 2025 at 2:34=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
+On Tue, Sep 9, 2025 at 11:29=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
 >
-> Since the PTN5150 is a Type-C chip, it's common to describe related
-> properties under the connector node. To align with this, the port
-> node will be located under the connector node in the future.
+> Replace kmalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify kfd_criu_restore_queue().
 >
-> To support this layout, retrieve the USB role switch using the
-> connector's fwnode. For compatibility with existing device trees,
-> keep the usb_role_switch_get() function.
+> No functional changes intended.
 >
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
->
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
-> Changes in v4:
->  - add Rb tag
-> Changes in v3:
->  - no changes
-> Changes in v2:
->  - improve commit message
-> ---
->  drivers/extcon/extcon-ptn5150.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../amd/amdkfd/kfd_process_queue_manager.c    | 22 +++++--------------
+>  1 file changed, 6 insertions(+), 16 deletions(-)
 >
-> diff --git a/drivers/extcon/extcon-ptn5150.c b/drivers/extcon/extcon-ptn5=
-150.c
-> index 768428d306ce..f33f80e103c2 100644
-> --- a/drivers/extcon/extcon-ptn5150.c
-> +++ b/drivers/extcon/extcon-ptn5150.c
-> @@ -352,6 +352,8 @@ static int ptn5150_i2c_probe(struct i2c_client *i2c)
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/dri=
+vers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+> index 7fbb5c274ccc..70c17a12cadf 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+> @@ -1004,13 +1004,9 @@ int kfd_criu_restore_queue(struct kfd_process *p,
+>         if (*priv_data_offset + sizeof(*q_data) > max_priv_data_size)
+>                 return -EINVAL;
+>
+> -       q_data =3D kmalloc(sizeof(*q_data), GFP_KERNEL);
+> -       if (!q_data)
+> -               return -ENOMEM;
+> -
+> -       ret =3D copy_from_user(q_data, user_priv_ptr + *priv_data_offset,=
+ sizeof(*q_data));
+> -       if (ret) {
+> -               ret =3D -EFAULT;
+> +       q_data =3D memdup_user(user_priv_ptr + *priv_data_offset, sizeof(=
+*q_data));
+> +       if (IS_ERR(q_data)) {
+> +               ret =3D PTR_ERR(q_data);
+>                 goto exit;
 >         }
 >
->         info->role_sw =3D usb_role_switch_get(info->dev);
-> +       if (!info->role_sw && connector)
-> +               info->role_sw =3D fwnode_usb_role_switch_get(connector);
->         if (IS_ERR(info->role_sw))
->                 return dev_err_probe(info->dev, PTR_ERR(info->role_sw),
->                                      "failed to get role switch\n");
+> @@ -1022,15 +1018,9 @@ int kfd_criu_restore_queue(struct kfd_process *p,
+>                 goto exit;
+>         }
+>
+> -       q_extra_data =3D kmalloc(q_extra_data_size, GFP_KERNEL);
+> -       if (!q_extra_data) {
+> -               ret =3D -ENOMEM;
+> -               goto exit;
+> -       }
+> -
+> -       ret =3D copy_from_user(q_extra_data, user_priv_ptr + *priv_data_o=
+ffset, q_extra_data_size);
+> -       if (ret) {
+> -               ret =3D -EFAULT;
+> +       q_extra_data =3D memdup_user(user_priv_ptr + *priv_data_offset, q=
+_extra_data_size);
+> +       if (IS_ERR(q_extra_data)) {
+> +               ret =3D PTR_ERR(q_extra_data);
+>                 goto exit;
+>         }
+>
 > --
-> 2.34.1
+> 2.51.0
 >
->
-
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
 
