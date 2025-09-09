@@ -1,161 +1,89 @@
-Return-Path: <linux-kernel+bounces-808926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E92FB5069A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3328B50699
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B6316DCEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C258D1C64387
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B288340D9D;
-	Tue,  9 Sep 2025 19:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UQG/ebZv"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916F435AAD1;
+	Tue,  9 Sep 2025 19:50:41 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18F302CD0;
-	Tue,  9 Sep 2025 19:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757447466; cv=pass; b=r2E1I/ez87zvz3M2wWZfw42P1BRAYPXv/GzJsBH14B6PfvgRP+ct04d/CLJImZinSzWHzeYtBULRsecYJoOpbsF8omoruM6tk9R1gGwCHkxfplJ1gyc/gXHRKrUHbjQSQdf2jEwyCvtV0tGEXo1VJu68yqqGx3b5O4GIvm4Ebls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757447466; c=relaxed/simple;
-	bh=CgaI1ryl2lJRZTbc5uvxKQsL94BLJ/VJBanvuIHtCcs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=u6AMbqp5bLizO0YJZWnKMkxyMXg2V8pB/MvxGMXycf1MWVFTAKebOOQEKWtaHFpC1yijgnts501eFBannl4kD9Zoc/ZwhvMqX3qhqrXTPGWTzDRWSnG6SBpIPnhi5++yZrf5VxNaBZ23hPTc/BKhZS19UfqOR99Nj+lG+4S8UKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UQG/ebZv; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757447438; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mdXUVHaTT6B+QCx6ISABg9nUfKZdsF9aINIGyxEJTvwqOo+5K1ffYLUmvaQaowxSd3TkIMDxgTLqvjeYHW2h3IwqBzUeAqGAz8G0MGMMWtS46qlfxMSuFXQIFZIz7rvBwIRuzbC9V2UmT8fG+8UfJryj0799vMGXmIZcUt5ZoiQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757447438; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X4kc+sqIlqwrRZbkovqf9uhYtz6iUvsGomVE2OHyz+c=; 
-	b=N8Sai4QeeZiP013Tt6PHIYLVwbFuR3ROZwlSp+cAZ2nozt6Ayt2KjLZP7pEwJ+vGPVk+TaHG/RLLxm5cquC3Mv2j0AHEEHFCloNNAEChQvfAxo6Ep570rfSVROmLoPDraJvpkqm8jAzN3iBGSGIgZvmn7uulSLUZP1isShbyl0c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757447438;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=X4kc+sqIlqwrRZbkovqf9uhYtz6iUvsGomVE2OHyz+c=;
-	b=UQG/ebZvJr1AwVLprrByb3U8QkfhR1XqpH5VztWm8GNPYQA89udX2/gEa2SwFO4b
-	tqT0zk+K0gmWQ1F7kUEwpqRI63BgUVevqf9cabiRkIH16oKoDTMBmivHb8XyC4fxdJY
-	whZsRORpOoSFhB1JC7XbY3+2Zc0S60OOO/IDtnI4=
-Received: by mx.zohomail.com with SMTPS id 1757447437317465.8216735890609;
-	Tue, 9 Sep 2025 12:50:37 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C0352FE5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757447441; cv=none; b=gzKaJfaB8PpHsrmcuj2KtofZ265goUV3h+KYb2D1ordnO4J0KkvhCIfUq38tog2s3p3aSR8dIuwh1sRiqBb5jsCrE1q+jH6rQqNEfpRGA2UT/JZqZ1b2Zu+f/8qc81dJ4XKQzIBcxDSW6pqMKvU2RiLZlABKttzkQfi1C0jp1rI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757447441; c=relaxed/simple;
+	bh=boebRLjC3MqhTM6FRyewhM4YpgC8hJFcovwAtYZ+hkI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=JPsq2ijEm/xtAGv1QZ+1gERmpMMVonZaE23NloOuyaN3FKbRxqIwNJgM5pUb3TGuiHbV4cHeaS5R144Y3lvWPRlLWrRMZyeN01QrpgO5s2gxilEiG2GfLNeD4hHHE7Toey4Kkfdsq9bcghDj6hb7K7zswdQuWQkynKy0nnS56Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 3C79D2E52E9;
+	Tue,  9 Sep 2025 21:50:31 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id IJOKrqkLy_x5; Tue,  9 Sep 2025 21:50:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id DF7D62E5308;
+	Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rXMUa9oNKVkg; Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id B79F52E52E9;
+	Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
+Date: Tue, 9 Sep 2025 21:50:30 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Rahul Kumar <rk0006818@gmail.com>
+Cc: pratyush <pratyush@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-kernel-mentees <linux-kernel-mentees@lists.linux.dev>, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <589829523.18235.1757447430401.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAKY2RybqkE74EADTPnCUHAXpJLJmM9skPXQ6S3UOq8TK_y9EQA@mail.gmail.com>
+References: <20250908070124.2647038-1-rk0006818@gmail.com> <87tt1djtot.fsf@bootlin.com> <93578759.11447.1757322260340.JavaMail.zimbra@nod.at> <mafs08qinn92v.fsf@kernel.org> <CAKY2RybqkE74EADTPnCUHAXpJLJmM9skPXQ6S3UOq8TK_y9EQA@mail.gmail.com>
+Subject: Re: [PATCH v2] mtd: sm_ftl: replace strncpy with memcpy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 3/3] rust: lock: add a Pin<&mut T> accessor
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aL47zBoNpvjYxec5@tardis-2.local>
-Date: Tue, 9 Sep 2025 16:50:19 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <A2534940-B847-40F6-8420-4ABEAE1D9A39@collabora.com>
-References: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
- <20250828-lock-t-when-t-is-pinned-v2-3-b067c4b93fd6@collabora.com>
- <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
- <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
- <aL47zBoNpvjYxec5@tardis-2.local>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
+Thread-Topic: sm_ftl: replace strncpy with memcpy
+Thread-Index: VA8ZEQcKf8WO20Yg9PP2GrFtA20LJQ==
 
-Hi Boqun, sorry for the delay,
+Rahul,
 
->>>> +
->>>> +    /// Returns a pinned mutable reference to the protected data.
->>>> +    ///
->>>> +    /// The guard implements [`DerefMut`] when `T: Unpin`, so for =
-[`Unpin`]
->>>> +    /// types [`DerefMut`] should be used instead of this =
-function.
->>>> +    ///
->>>> +    /// [`DerefMut`]: core::ops::DerefMut
->>>> +    /// [`Unpin`]: core::marker::Unpin
->>>> +    ///
->>>> +    /// # Examples
->>>> +    ///
->>>> +    /// ```
->>>> +    /// # use kernel::sync::{Mutex, MutexGuard};
->>>> +    /// # use core::pin::Pin;
->>>> +    /// struct Data;
->>>> +    ///
->>>> +    /// fn example(mutex: &Mutex<Data>) {
->>>> +    ///   let mut data: MutexGuard<'_, Data> =3D mutex.lock();
->>>> +    ///   let mut data: Pin<&mut Data> =3D data.as_mut();
->>>> +    ///  }
->>>=20
->>> The formatting looks off in this one, there should be 4 spaces of
->>> indentation here; there are also 2 spaces in front of the `}`.
->>>=20
->>> Also `Data` implements `Unpin`, so you're not following your own
->>> recommendation from above :)
->>=20
->> I=C2=B4ll fix this :)
->>=20
->=20
-> If the fix is small, feel free to send a diff and I can fold it when
-> queueing (i.e. no need to resend the whole series). I'm trying to send
-> it to tip before -rc6 so there will be some more tests. Thanks!
->=20
-> Regards,
-> Boqun
->=20
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Rahul Kumar" <rk0006818@gmail.com>
+> Thanks a lot for the detailed feedback on my patch. I understand now
+> that this change does not add much value, and I=E2=80=99ll keep your poin=
+ts in
+> mind for future contributions. I really appreciate the guidance.
 
+I hope my comment wasn't too demotivating.
+You are *very* welcome to improve the code.
+One of the major problems in open-source projects is that
+we're short on review power. That's why sometimes maintainers (including me=
+)
+react grumpily when code is changed just for the sake of change.
 
-This should address what Benno pointed out:
-
-
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index 7191804a244d..cb00fdb94ffd 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -258,13 +258,13 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl =
-FnOnce() -> U) -> U {
-     ///
-     /// ```
-     /// # use kernel::sync::{Mutex, MutexGuard};
--    /// # use core::pin::Pin;
--    /// struct Data;
-+    /// # use core::{pin::Pin, marker::PhantomPinned};
-+    /// struct Data(PhantomPinned);
-     ///
-     /// fn example(mutex: &Mutex<Data>) {
--    ///   let mut data: MutexGuard<'_, Data> =3D mutex.lock();
--    ///   let mut data: Pin<&mut Data> =3D data.as_mut();
--    ///  }
-+    ///     let mut data: MutexGuard<'_, Data> =3D mutex.lock();
-+    ///     let mut data: Pin<&mut Data> =3D data.as_mut();
-+    /// }
-     /// ```
-     pub fn as_mut(&mut self) -> Pin<&mut T> {
-         // SAFETY: `self.lock.data` is structurally pinned.=
+Thanks,
+//richard
 
