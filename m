@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-807987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C546B4AB9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443D5B4ABA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C43307BAD99
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB04189E99B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062623218A4;
-	Tue,  9 Sep 2025 11:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAC931D74E;
+	Tue,  9 Sep 2025 11:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glUFniJe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXF4Z007"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DAB31B833;
-	Tue,  9 Sep 2025 11:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638A731B82C;
+	Tue,  9 Sep 2025 11:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416924; cv=none; b=pa1ljUGO7QCnCU816ELoeRjXf7lQMHSnY8+WeVGUuuBaz0BOHBKwdhCPL3xYXpXKGZMKPPzl04lbGXNuNUDXqmU1aipzLotKOWyT0WRTbRs35r+VbW97OeCy29Ay0LYat+RG3I/11yr9FIBHnCUZByT7a9+v2OBFvA2Jmq/4IsY=
+	t=1757416956; cv=none; b=ttJXtDLz5KyXAX9UcpD+DMn8mgqZMZFLdSZnxtHPhoMF/9j7SKJMRV9MNTeuhu6EP0c33a7d6gin0AFYOWfGAKhH64SsL5sIvtF19MMHgocClKfd8zijzFZ55+ZnM7VMYIX/jnIokffI8dDRgPvHx6E8tTVN7g7dwPWspCj4nGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416924; c=relaxed/simple;
-	bh=0G9Av7ANIO2fUWuPDj0VHtC7wbKj6xDsSLiijqjtmYs=;
+	s=arc-20240116; t=1757416956; c=relaxed/simple;
+	bh=1MZh7woJ0rdN+tehZ1cFMkjdvxHB0uNLIFNJTJya+Tc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9HW+zxSjK7n37qjGB9JxI/kcsWuKlU/WzGHpOQ+V6ftbZdqsnGjMCGLmqmG7SuaoDf0tT7EYz2A7i4wu2tWv/sdoPb92O9rsf15CQs7OksuvyYIVU9EOSYtEtSvcvIUqelfnZ1/VB0t3iyBc7jkpcjl6eChzcrKufe/5kW9NvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glUFniJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537D6C4CEF5;
-	Tue,  9 Sep 2025 11:22:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVuKHd+BcnQuDg9TBB14cOFwWUSGcxXca1hCrOcUtWa5OG7O6O8ly7yKeRldjKkVBAxr0FXZNDcf72cAtOsJfFw4+3DPv46wpjxaKRm/VJnRa5D4VjQDkXWnSruRutDpNHvEl7qCF+l8uFFZxzPb8Qstp4gprJsSs8oIRbGAH7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXF4Z007; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F198C4CEF4;
+	Tue,  9 Sep 2025 11:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757416923;
-	bh=0G9Av7ANIO2fUWuPDj0VHtC7wbKj6xDsSLiijqjtmYs=;
+	s=k20201202; t=1757416955;
+	bh=1MZh7woJ0rdN+tehZ1cFMkjdvxHB0uNLIFNJTJya+Tc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glUFniJeEhLZD1YxKBvf4pFAF/AAejsrUDtc1l7ovHctHOc8IRnfddYocSCTW8lGL
-	 nCejM5YKqMTKeFVHYj19Ia+NqxnRGxkM1FY+VMc15OEck+ePcBraN9CRdmYytBXtw4
-	 yt+FB9YfHcKhVtmyAtfN5tyb3VSaC1cp3MjLjVpv9Umk1qqFjwm/YHA14bP9lQe+CT
-	 CcSZwXiK/D8AXKWSSgHYrQIKeb/wk9XbPqwjWvyf09wlJmBlEZQmwFNRL0wgLa/zrO
-	 glcpgYWKuAzhuCpPqrUfE2E0FaYWYAWgKZ99afXCcU1At6VO3y87qAlkh1VaTa759d
-	 cxSVG0KFcReJQ==
-Date: Tue, 9 Sep 2025 12:21:57 +0100
+	b=FXF4Z007FLjA3PVwAxJmU9bqNx7BTsubwzEimaX0SKeey3p34WQH9oqMrIyPA7exS
+	 KlxpQpZqkRoAmwZj0/l0YTnGYBCDW1tuRlQW1Xxy83P04gILlCMTFPxZ8g//PCk1X5
+	 uGoZCoIhsX3br6j/HyxAU+5J9ga6VSFGHiB6A/47uYcZVO96HrMu8szveOsbnzvFPD
+	 q3FYxMirHIj+IZdOZsa2fq3l59hyMsDVjBFQXX/I7JMemeKgk9uI/XVxu7Cm+jC9tm
+	 ZAvzDPu8xyf6y7M7doo4+nwRbFGRDNHhMsxny8R+jlXRvBB0xKqrO8g1wz7FuRo9s8
+	 cf3YaKczAVuAg==
+Date: Tue, 9 Sep 2025 12:22:31 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.12 000/175] 6.12.46-rc1 review
-Message-ID: <f786cc74-8fd2-475a-aae9-bef837aa09af@sirena.org.uk>
-References: <20250907195614.892725141@linuxfoundation.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ryan Roberts <ryan.roberts@arm.com>, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/2] arm64/sysreg: Update TCR_EL1 register
+Message-ID: <4f0ace4d-3398-4b5e-a85c-a30cd3f122b4@sirena.org.uk>
+References: <20250907123000.414181-1-anshuman.khandual@arm.com>
+ <20250907123000.414181-2-anshuman.khandual@arm.com>
+ <a195095c-8ebd-4d74-959b-7b407d416a1f@sirena.org.uk>
+ <bfe55fd9-e00f-44a8-bf4f-0b0a6cfc16bb@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,38 +62,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2qE3M5PPISUPH2Qr"
+	protocol="application/pgp-signature"; boundary="I0KRvPxGGLsT2cj1"
 Content-Disposition: inline
-In-Reply-To: <20250907195614.892725141@linuxfoundation.org>
+In-Reply-To: <bfe55fd9-e00f-44a8-bf4f-0b0a6cfc16bb@arm.com>
 X-Cookie: Ma Bell is a mean mother!
 
 
---2qE3M5PPISUPH2Qr
+--I0KRvPxGGLsT2cj1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Sep 07, 2025 at 09:56:35PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.46 release.
-> There are 175 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Sep 09, 2025 at 09:20:26AM +0530, Anshuman Khandual wrote:
+> On 08/09/25 7:28 PM, Mark Brown wrote:
 
-Tested-by: Mark Brown <broonie@kernel.org>
+> > I guess the cleanup of the redundant definition could've been a separate
+> > patch but it's not super important.
 
---2qE3M5PPISUPH2Qr
+> Dropping SYS_TCR_EL1 definition from header (asm/sysreg.h)
+> into a separate patch ?
+
+> #define SYS_TCR_EL1 	sys_reg(3, 0, 2, 0, 2)
+
+Yes.
+
+--I0KRvPxGGLsT2cj1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjADdQACgkQJNaLcl1U
-h9AHFQf+LCw2ijwrndK6hoHt3E/FqdgcxQUPWJGtmZI6WXZjM7/xevXsVHLT/Np1
-ZfkHZ+drpvLr9w9BEmwJsKHv9vXrIoexlZ9FOp/X+gO2QFcVmjfWqg3ySjAlRf18
-1P/0S/9D/te5DisgFFda7+nhjyt+KaFQoh+F3TAQk7cV3gPDWsLnzg4TYnC8EbR0
-k7mxmsY/z9c8EsYYymKAUnIoN6wAqUQma9GmezOY9gJ0Wh9BYStslLAt5CidWiLE
-3gg3uHmyii2RVUB1DkkWs6D4eBP3WNQ2rqDdb9MaWLUgP+HPGL1gm2mXVPW+zZ/d
-6s13+oGtS04jH/qwCbYMfwn7yJtKyw==
-=du1U
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjADfYACgkQJNaLcl1U
+h9D6Pwf8DT22bvBoI7SpN2eLMz5LCdZMEh25CjOW2LNAP5BIWVDEDFZGaP3M/ADa
+XnUO06bqloVs2fljkorHAHDxZM/ohqoYJgQ+rbQIcqrpRWO/+59qEpqCuYQZYCKF
++Z/7HWTMlblQVeoAzxGR4DP+JAgKkH1KF3p4ryJjRzbTka7mBkUGQtFhsgVCITMy
+q0/1PdZGjiVHa1AU4QNtVqpTqIIWlPWYf8ukhk6mTza46Y99eiQS5wqtEGLujW7v
+IfvMwmnrBBwuBCBXnzC5FBjPlzFCjfemdqIqgsQ2CFJ5BpItRA8MOqrLfE0w72qe
+EUrjJOEAS7L4SeeicUhCG6dFN8LSCw==
+=Bqax
 -----END PGP SIGNATURE-----
 
---2qE3M5PPISUPH2Qr--
+--I0KRvPxGGLsT2cj1--
 
