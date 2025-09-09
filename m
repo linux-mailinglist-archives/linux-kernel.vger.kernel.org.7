@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-808386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A178B4FF1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855EBB4FF22
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566AC3B3030
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841863B8E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999D13431F4;
-	Tue,  9 Sep 2025 14:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF5934167C;
+	Tue,  9 Sep 2025 14:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLkqCTKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZSLIy9Z"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55BA2EDD52;
-	Tue,  9 Sep 2025 14:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E549C2EDD52
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427394; cv=none; b=oeUGaDz9Hel0numgcgBfUtOgmup2R/g6qlpCM0+suHf6Gb2qNUBTEdEKtL0ZqhcJfwmGtxK1kPqAAjsA9P6ocqAZlRdEPIgzjnupj6nGcxEBCE5miHIl+hBfIOYN6o9BMwsuPRkEuEV4JilOp/5S77+wwiU7OFkkcsjSliV8X5A=
+	t=1757427413; cv=none; b=Z8XqAp22VvmpT87WR6qfjmp/BoB/nLmj/z1t84rCGTfnWKL0/Tgilmr3mbZr453vD5r9SfsK4Rv37QPHSSG9vWZuwdPOjmizTgk/CaNT6vLjVgX63ofeLdtMAukwOX1fOdiaGj7KSlPDKIcfhDD8eNDqfVJuPQeDj8/wpQYKaN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427394; c=relaxed/simple;
-	bh=2l6KZN5Zc9kV5MLkJIQhcmAGY9mNemETDpLwFvQUzWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5DFAnXNruTsbqsYM8WOlersDO3eBw9ZuFWcCDUa528sU40MYOkhgRCGNPwHhjsFrOBoqFtf8XluT8cmleNLmmGSowd7Hh7uLGog+7dyjhVBdabXT7M9Vkn9FOlstv1w0qhFMyfHhIKrVgGeJNfv/QcoPV2zawueRzhKrK0y8W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLkqCTKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C963BC4CEF4;
-	Tue,  9 Sep 2025 14:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757427393;
-	bh=2l6KZN5Zc9kV5MLkJIQhcmAGY9mNemETDpLwFvQUzWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LLkqCTKJuacndmqViTJT4y49WssfoH6kozYjLZvwCQGsczOTRO59xxXjIa06L7nyl
-	 Y+jhH6jCzDmqSpxCK0kZNL788FD2bxf5nhnWFyBA8I29dfOARW35OwBMoWq9QrEyfL
-	 EwIz7nKNJxs+RcXRoNfAMvcpwL+k6DnZ5YXK+zDDiqMG1GRuJBoNXQCuL5yXrBWz/C
-	 q/jaNfCOhjw7bsHjjt4p/YbSuZic7i7qjPOSoUO7KZ+zM0TEZPDa2c7AoT+CmwdQZm
-	 W6x2eaIRuuuXgejOpBCMi8BbNfojSoL/A900rYDM0AejW8AgPoBo2wViMnRUUvZcXd
-	 05P9Y3XnwAsag==
-Date: Tue, 9 Sep 2025 15:16:26 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 03/28] KVM: arm64: pkvm: Add pkvm_time_get()
-Message-ID: <aMA2ugNakqrA1Pg0@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-4-smostafa@google.com>
+	s=arc-20240116; t=1757427413; c=relaxed/simple;
+	bh=o+VqiFi1ZuJKXK/R+K8Ffj0lVMmVJnNeQeEd17w/NPI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MipHS0eMZPB7O5VHlM/1fOzfg+K8Sz/+zcff8cyHA8P8zR4VjBe+U6Nc317R+McYqvtqTN2r46kNW5g1Sa59BnNGyQHFhlcIr1FqccYtxm9RWP5hv41hBMJ1/YTce/pu+sXOtkIvVUv5O4w9ucpYcGyjHzdnTGbMTkZitc8dOes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZSLIy9Z; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2518a38e7e4so35307055ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757427411; x=1758032211; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TBPCbx1t1DtRFy/Qmvoz+7PpnPwODyvsfSiVPNyKvTQ=;
+        b=ZZSLIy9ZcrR8UT488nV34k2lWSG2XAWhYoWMBQ4umwLUfSGZZoHPb0Oql7o0PRb/MR
+         lwTexgiJSbpJS3Bi+PlPJExiAAE5Z3HkoL9a49cXFLDy6JUp3LWUO45u63f15jtNuIFH
+         azKEZ6giBniPrJ4x7mHARtkx/+bIcfdITJ++YOp7tcd0SHExTKaX2l4hU0RXzu+32YJ3
+         4hNc45fQHxqqsrCH3FZAsodArEXEVDw3ct3do9jjhYyoDrQXPJZXKFB1FmxnGx+mtlps
+         w9llkZ4CXVDLLh/1Mpxbaua/joOmEg0rQ0ucXdmSd309sGTvFR+rGVmKmMEBkesATcdZ
+         F/KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757427411; x=1758032211;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TBPCbx1t1DtRFy/Qmvoz+7PpnPwODyvsfSiVPNyKvTQ=;
+        b=lpaySn6ooZRv7Es5BkZ+XStiSemUkNkP4N0xARDBBxXSAqnEk0ILLwgbw3HCNcGo5U
+         EJHQoePF3Mo1/ECy3AGLazDbaiikP2elhXN2NI0NelcJZ3CtZMZd+EmYcoxVUFOMMNH7
+         cQKrD75jF3OHYeBNxBmB/ushYSyd9SvCpcE0s6J2ad1cq8VrhqsK34tWYx9t64O1oaat
+         KyK8Uu8GgZSD8osDhs1H1rxTRxMs386mWlc+531hjYNvA5IoKi+rKJ/YGzXASqinL3HU
+         o4vjeoqXnbmO8kM3VVfLXfKJaI8rAhsxLWHCH99mEkDmB/CgNmsVz20powUoJg5v3wlx
+         pKGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIxNB1nS3rxjC4EoeKeHIdxWu2o7TusYkaq0jmWNiXp17Lex5RvqHHheh6rUr0A0JzOKQArfaJg3uelQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgHJZs+CkPWNp/I+Ll6telTQZPQga6tAZap9AZ6gOV1VUs74Gt
+	F7WKWQjqRvA7j05ZEjf0aJ7G5tF0xVCCjxoKQBNkh/zsEGxoCBKAobFk
+X-Gm-Gg: ASbGncteZo/aC1ItVWQcIaA/ahaKWZ6dOyqH2g/XZzjo3qYqp1JrQZERiKdvpSMq+8Y
+	3JWWPPF8vaiMzb5Zwz9ASRRrZe0Q53aNZpf3sTmqLQeQ9N892jKjoxBR+hT64KNkBKf7bbQHWmb
+	tEsR84D4PgMmzJZCsguyIDjUxGdwEz5PlDC/7syrWy6Pdm/CXzfRoiG6mXpOyzpAZzmWVQ3AQA/
+	CdCIJbm/RYf4zRIUSYejdMT9pH9kr9TjNfvKfyLLNo6D+PWSOuTwQPZCVLaEJYYNWMmEPYQy4K+
+	9VIxi9kXHDZbF279l4RuDRVexBFKnjKYE5C8R8wdhRG7VanxtYWnaaHLixvzcJeUD9rX37lmIgh
+	a/I2krxQkSBAciZQKNTgSaOkb7Uc8k4BCohrqDNYIIUobXmZCd7Q=
+X-Google-Smtp-Source: AGHT+IEnAyzLMxqnxsLrvjbSykcpJDqbEB5tk3wlxNjto04xhv0xpGQJTdUpv/FS+YKjD89GTMMNpQ==
+X-Received: by 2002:a17:902:f70f:b0:24d:34:b9e7 with SMTP id d9443c01a7336-24d0034be6cmr205718095ad.29.1757427410945;
+        Tue, 09 Sep 2025 07:16:50 -0700 (PDT)
+Received: from smtpclient.apple ([39.144.103.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9c2b12f9sm171757705ad.101.2025.09.09.07.16.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Sep 2025 07:16:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-4-smostafa@google.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] mm: shmem: fix too little space for tmpfs only fallback
+ 4KB
+From: Vernon Yang <vernon2gm@gmail.com>
+In-Reply-To: <20250908162220.480d7014cc6c6ad2e14748c5@linux-foundation.org>
+Date: Tue, 9 Sep 2025 22:16:34 +0800
+Cc: Vernon Yang <vernon2gm@gmail.com>,
+ hughd@google.com,
+ baolin.wang@linux.alibaba.com,
+ da.gomez@samsung.com,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ Vernon Yang <yanglincheng@kylinos.cn>
+Content-Transfer-Encoding: 7bit
+Message-Id: <441CA7B5-4D1C-4334-AC1A-2CDA87530478@gmail.com>
+References: <20250908123128.900254-1-vernon2gm@gmail.com>
+ <20250908162220.480d7014cc6c6ad2e14748c5@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+X-Mailer: Apple Mail (2.3826.700.81)
 
-On Tue, Aug 19, 2025 at 09:51:31PM +0000, Mostafa Saleh wrote:
-> Add a function to return time in us.
-> 
-> This can be used from IOMMU drivers while waiting for conditions as
-> for SMMUv3 TLB invalidation waiting for sync.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/pkvm.h |  2 ++
->  arch/arm64/kvm/hyp/nvhe/setup.c        |  4 ++++
->  arch/arm64/kvm/hyp/nvhe/timer-sr.c     | 33 ++++++++++++++++++++++++++
->  3 files changed, 39 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> index ce31d3b73603..6c19691720cd 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> @@ -87,4 +87,6 @@ bool kvm_handle_pvm_restricted(struct kvm_vcpu *vcpu, u64 *exit_code);
->  void kvm_init_pvm_id_regs(struct kvm_vcpu *vcpu);
->  int kvm_check_pvm_sysreg_table(void);
->  
-> +int pkvm_timer_init(void);
-> +u64 pkvm_time_get(void);
->  #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
-> diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-> index a48d3f5a5afb..ee6435473204 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/setup.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-> @@ -304,6 +304,10 @@ void __noreturn __pkvm_init_finalise(void)
->  	};
->  	pkvm_pgtable.mm_ops = &pkvm_pgtable_mm_ops;
->  
-> +	ret = pkvm_timer_init();
-> +	if (ret)
-> +		goto out;
-> +
->  	ret = fix_host_ownership();
->  	if (ret)
->  		goto out;
-> diff --git a/arch/arm64/kvm/hyp/nvhe/timer-sr.c b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-> index ff176f4ce7de..e166cd5a56b8 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-> @@ -11,6 +11,10 @@
->  #include <asm/kvm_hyp.h>
->  #include <asm/kvm_mmu.h>
->  
-> +#include <nvhe/pkvm.h>
-> +
-> +static u32 timer_freq;
-> +
->  void __kvm_timer_set_cntvoff(u64 cntvoff)
->  {
->  	write_sysreg(cntvoff, cntvoff_el2);
-> @@ -68,3 +72,32 @@ void __timer_enable_traps(struct kvm_vcpu *vcpu)
->  
->  	sysreg_clear_set(cnthctl_el2, clr, set);
->  }
-> +
-> +static u64 pkvm_ticks_get(void)
-> +{
-> +	return __arch_counter_get_cntvct();
-> +}
-> +
-> +#define SEC_TO_US 1000000
-> +
-> +int pkvm_timer_init(void)
-> +{
-> +	timer_freq = read_sysreg(cntfrq_el0);
-> +	/*
-> +	 * TODO: The highest privileged level is supposed to initialize this
-> +	 * register. But on some systems (which?), this information is only
-> +	 * contained in the device-tree, so we'll need to find it out some other
-> +	 * way.
-> +	 */
-> +	if (!timer_freq || timer_freq < SEC_TO_US)
-> +		return -ENODEV;
-> +	return 0;
-> +}
 
-Right, I think the frequency should be provided by the host once the arch
-timer driver has probed successfully. Relying on CNTFRQ isn't viable imo.
 
-Will
+> On Sep 9, 2025, at 07:22, Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+> On Mon,  8 Sep 2025 20:31:28 +0800 Vernon Yang <vernon2gm@gmail.com> wrote:
+> 
+>> From: Vernon Yang <yanglincheng@kylinos.cn>
+>> 
+>> When the system memory is sufficient, allocating memory is always
+>> successful, but when tmpfs size is low (e.g. 1MB), it falls back
+>> directly from 2MB to 4KB, and other small granularity (8KB ~ 1024KB)
+>> will not be tried.
+>> 
+>> Therefore add check whether the remaining space of tmpfs is sufficient
+>> for allocation. If there is too little space left, try smaller large
+>> folio.
+> 
+> Thanks.
+> 
+> What are the effects of this change?  I'm assuming it's an
+> *improvement*, rather than a fix for some misbehavior?
+> 
+
+When we use tmpfs and the tmpfs space is getting smaller and smaller 
+(e.g. less than 2MB), it can still allocate 8KB~1MB large folio.
+
+Thank you for your feedback.
 
