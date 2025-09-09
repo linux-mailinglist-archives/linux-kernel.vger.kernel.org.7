@@ -1,118 +1,77 @@
-Return-Path: <linux-kernel+bounces-807136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A611B4A08F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B99B4A092
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 974767AB701
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894073B1CC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA02DAFD7;
-	Tue,  9 Sep 2025 04:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49532DECBD;
+	Tue,  9 Sep 2025 04:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjHshiue"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yClCobl9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03E923F405
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1001F1DA4E;
+	Tue,  9 Sep 2025 04:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757391440; cv=none; b=p96u/NQIbr3K9XyN8kkGVC5KQHddcKgVBfXwu3UHjUNsG1cf1BXWrfvUyV6cB6HIUwE5TMlqXTKHXYP/xMptpZaifj9QSW0BkhXbNeGJ1XBYynJo/IjThChoYEtTubjCJe+h1m5WwJtM5arXwQhxsEzA6i4yyqfaSsu4SvvDuVc=
+	t=1757391527; cv=none; b=jZrCb2sU2G+0+Y5RsHKtDdvK1zmCAxCVX0qfJ5nFqQ8K4OHP0yV3Szlykh2hCAgXv6jIfOnTyyLvaBM0oVXQAm1D974tJxxwBUOKushAPd338MFBZ18ir/Zfr/Ddh2ISh/nhxX2fDi5lJBLT2YbBnC0tCTQVeOkqSo2B+1tb3Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757391440; c=relaxed/simple;
-	bh=WzfDYZ1/295BDSpNZdAsFTCdD4z1X2KS9R3h2y1gY2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G5E+J+C3DWtMulLzHdsU7ZRS9H2UB0/UnaahZAUDDJzM0cJgW4M8RqMou18jGVTLYLY1EwdGwLtJXCz79SnEFZ02J/8AVlRQOHVgeXPQDtWbNAxsG1xgAH3Q3neyoZRmFOxIInF4mugPuKdZSCndwhiDB2gLUlnwGhZhjmlWy/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjHshiue; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32b60a9aa4cso3289585a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757391438; x=1757996238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ez6ws/owLuMN5VyJ05mQBNBzD0cyX1jnOdsu5qx93Ps=;
-        b=BjHshiueST4khVSI5H0dvjMaDjqDHRegeqt8Nqe4rCBsjrBNp3bd6kJl9D84aMACFu
-         q1wuBwAWeFUqkl37wUmEEqi3S0/1mBqyrwz/hEIFImrkqtsCDWrd2bhjk9NBCTSmO43i
-         r6RPYl7KHR1A2MxQmRFzq/Ud9OSkGAODK72oKH+29OAmU3qK69k9ZAJxcDyI/DZQGXrc
-         3UIqpZ32dnB8/1twKzPglg+tyhq3OkegYzxE1xFCxC2215pBf5Ah+Vxvu+gJMgnN5Pb/
-         Wgx4wBsMxUpxw518lUytjiLDa2CQNXpezpPeExrtn6UV1ChnxzhZURaPVXcoO5pvLVm6
-         2IDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757391438; x=1757996238;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ez6ws/owLuMN5VyJ05mQBNBzD0cyX1jnOdsu5qx93Ps=;
-        b=Z+MMLboVT5nvsZWlajt0Y+phr3W9y8SbtONNplWOisvU9a9RTWZ+HyOmXY47gVc/SS
-         FZTqdhJWJzSY5p95ZrqsSosHANChvS9TX60rvcrfFm/g4cNSqGZ/S8yrdaIi1wHHeO50
-         LaUS/jGgwQJE4k6SVXb0RiBWW5m/j/8V6xTsLtmQ450KLqHgBId23gtiNUixftrzjYL3
-         iAtWN1TCCoURm/UIaf27ik2va/P7s0XDj+hjbpuKPWA8UvHSZ0pSxosiJJVAEFCkrt2+
-         urrruqA5LWzUYamwe4P0qHuravGkUC3mLGWZvHPY7T9cC+JIJKJL0wxdtbQBqYGZm0RV
-         odmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kxMRdgF0aJ5qopQUfc6Jtj8BbNbe0o7PZ+Z36hIsprxGRh3xnPTEIBumLu4MozGIWG7H/LzGGiiSbmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoT6VaocsH938Uu2lCKinj0OJ0NK/Nn37zvNpjMsac4E2FuYxb
-	0VOG8UieX1idpxg6dnt5JkEbJGDWLiD3wQGmAygsdnJoef2vJ37kbW5J1279n/wCgNs=
-X-Gm-Gg: ASbGncvLf8hBhH0aZqE6ezydfb79yF3kxwMxftcm6Qawb1lD8+MxK8/gM8cmK3101d2
-	NGWLTq2EVH/2dB0OTdYTn+v0c1ZTdv+0+tKjpj8wvUQe05df7ech+D2P7MqAB4RC+NNc6yNNdLb
-	2JhMCetGwb6SeK4ydLhsECQ5Udk3LyiE3I50a7o+FPCqq2xxWAAapy9yNFvKhL0mMlc5U2pa2s8
-	zKI8SdSA+SO64rmqEHdvQGK/5POZorOyZcjEaJTWPymU/x9met92vwLj+cHfi3qdWVkYPahjzw2
-	LHIkE/2ChaaIcR6+/J7QyFOZt0CxOGBoPzhJHVisjvtk+CqUZCEKdeDzpxyK4KaLTUwkknHPLro
-	GojAbWIAetsXYrYcdlRgUY4MOj4sxDOaUDrMnL+R2
-X-Google-Smtp-Source: AGHT+IGzK1092pVJREpJAKVPiRzEhUau1GpXgrcz1XiLkQShk6Jw+e+QnC7Tw1XkjiDyvKNRr8g40A==
-X-Received: by 2002:a17:90b:3904:b0:32b:6132:5f94 with SMTP id 98e67ed59e1d1-32d43f95d02mr14142423a91.21.1757391437861;
-        Mon, 08 Sep 2025 21:17:17 -0700 (PDT)
-Received: from localhost ([2409:408d:3e07:67a0:20a1:b9c9:f581:f3be])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774660e488esm562919b3a.2.2025.09.08.21.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 21:17:17 -0700 (PDT)
-From: Gopi <ggopijeganathan@gmail.com>
-To: 
-Cc: ggopijeganathan@gmail.com,
-	Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Rubin <matchstick@neverthere.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gpib: Declare processor directive as CONFIG_TNT4882
-Date: Tue,  9 Sep 2025 09:46:54 +0530
-Message-Id: <20250909041707.3001-1-ggopijeganathan@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757391527; c=relaxed/simple;
+	bh=oirQprCJ1ESduAaLG341IAD0wVCBpr+7HmBynU9vLKE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nvhe7Lr2LYuShOROyoVPh46//k7bA+uwE2syneMxqaT81FnuOLt9pbWE3h39qAPqlk/Onqdm+C4wGoXl33krpnkkC2jrLb6CgUkrac8Im3Z3GN9EZhwAdh5jyjDnvJYrGSsZQUXBOGnjXMYV5yEgwKcOwqhSud/LFLUFws87kxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yClCobl9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560B2C4CEF4;
+	Tue,  9 Sep 2025 04:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757391526;
+	bh=oirQprCJ1ESduAaLG341IAD0wVCBpr+7HmBynU9vLKE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yClCobl9sVnh1i5/FMXkKY1Bbi4M1x49V6PSeAguv7zIeJyc9op/jeClHjNhHueWv
+	 6yi6GaDy/xDdg/iuAzfBQaFoh+Uw2p2Li3gi+MXpAAercb9l3Ahozq3Vk9pHKZbrkk
+	 dPvO8cUmCXBhsdp9qtYoI+8CxcH0YqpeGtd9vhic=
+Date: Mon, 8 Sep 2025 21:18:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: "# 6 . 17-rc1" <stable@vger.kernel.org>, damon@lists.linux.dev,
+ kernel-team@meta.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/3] samples/damon: fix boot time enable handling fixup
+ merge mistakes
+Message-Id: <20250908211845.bfc7299d783c361b10ae810b@linux-foundation.org>
+In-Reply-To: <20250909035141.7545-1-sj@kernel.org>
+References: <20250908193548.a153ef39d85cc54816950f71@linux-foundation.org>
+	<20250909035141.7545-1-sj@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Warning massage found by checkpatch.pl script.
+On Mon,  8 Sep 2025 20:51:41 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-Signed-off-by: Gopi <ggopijeganathan@gmail.com>
----
- drivers/staging/gpib/tnt4882/tnt4882_gpib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > > Note that the broken commits are merged into 6.17-rc1, but also
+> > > backported to relevant stable kernels.  So this series also need to be
+> > > merged into the stable kernels.  Hence Cc-ing stable@.
+> > 
+> > That's unfortunate, but the about doesn't actually tell us what this
+> > series does.  
+> 
+> Good point.  The issue is that the sample modules can crash if those are
+> enabled at boot time before DAMON is initialized, via kernel command line.
+> 
+> Would you prefer me sending another version of this patch series with an
+> elaborated cover letter?
 
-diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-index a17b69e34986..918a4cebbc6c 100644
---- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-+++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-@@ -1369,7 +1369,7 @@ static struct pci_driver tnt4882_pci_driver = {
- 	.probe = &tnt4882_pci_probe
- };
- 
--#if 0
-+#ifdef CONFIG_TNT4882
- /* unused, will be needed when the driver is turned into a pnp_driver */
- static const struct pnp_device_id tnt4882_pnp_table[] = {
- 	{.id = "NICC601"},
--- 
-2.25.1
-
+Please just send out the appropriate words and I'll paste it in.
 
