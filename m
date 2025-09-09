@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-809016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387D0B5078C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A07FEB50791
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1771564A06
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52627564A77
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498293570B8;
-	Tue,  9 Sep 2025 20:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643FC35CEDB;
+	Tue,  9 Sep 2025 20:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RmnofjqO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ft3cfVa2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKWEbPvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CEC27735;
-	Tue,  9 Sep 2025 20:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B3530215F;
+	Tue,  9 Sep 2025 20:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757451491; cv=none; b=coJD7lBD2IStwCOhVOxW3Qed/Ja/DzIeuhVVtnFzVnZQJMikcs9OfSTeKLiQKiRGCWPxeho4uw3jCFzfsqMyVQgO3oZP0WhdPAgsMvvLpPjrnPrbgNk7oYV69qYjD0HIGlg9+P4ydTl7Z9zLRjLDWf0EAb+pZJs1TtgmOakxPCM=
+	t=1757451504; cv=none; b=j2Vhk0M23L75ndwfbCAZojx6YvJjnpJKHcVDKy0JhXP/s+exhIzXzuB0fUzYVoQntI5KJiQc2NOWajD2gOC8zKC9woQDXdJelsXoq62p/K9Dz7G4ZSKhobrwGUSrZ1swhoBXhxq7byUVeFW1S22TEHhkkuBoqTt6pv7exfS0yyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757451491; c=relaxed/simple;
-	bh=ABHj5e8kb5++h/Z8f89+QmkiXI9fQYWM4MvUjHJQr/s=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=lJPccCnPhqHneGF4aMuJ/dY75luN/uBLLvxfG4zkXbxPYY1XxhPhQ0p1HyGgGl4nbBSWBco/ZHL9a5YLHxDsEgTMAMaL4r2U9s+1wsquW25A5tn5eDvVbm/ibjpo0YnXPqBW3daYCdwXQsg9OYqp/GAANglXn6zDnIkFOLB606c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RmnofjqO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ft3cfVa2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Sep 2025 20:58:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757451488;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=t7hj1423Dyvjjl2rVIgjpHUbk2Ysgh+GgeiSplhAYfg=;
-	b=RmnofjqO3+PYxheAAQXpM2JIWKtGmn/7RojBkABZoTroTVdB+fPVHcSRiy4d1VGGgqBE0z
-	QkqUm1sFLEWsRkpSmP+sdsil7+bRjlMzBepfUq6WE9g3cl4p+K0Pj2bALXkO+7vsieyKW7
-	MPd/Yy7R620p/dLVpWPqG0Uix81e44n+hKGEmzRgd6zyj8udo53Q9hsxNjHAJ9nardlQBa
-	KELGwNv9cJmQD4hyyTuyl/UqxGn4M6Jinq2R66wQgOC7tYNBQE+7tbJW3GWOd7uLotQSeK
-	MdV0a5S0pUEwZALvbBsNIzB5kvoVFOzoqCnKY7CWB+yIlVbjdyI6HwSpkNdvEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757451488;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=t7hj1423Dyvjjl2rVIgjpHUbk2Ysgh+GgeiSplhAYfg=;
-	b=Ft3cfVa2NbEJXonx5hn9cN2r+3jaTnHSjdRGPu5fD5PS0bgLDOr+QN7RO11nraasZhkE7y
-	aMD5wm+lmJYpfZBw==
-From: "tip-bot2 for Ming Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/loongson-pch-lpc: Use legacy domain for
- PCH-LPC IRQ controller
-Cc: Ming Wang <wangming01@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1757451504; c=relaxed/simple;
+	bh=d053UT9D7w+A6kL9ac5x+bCv1+lr5wb0p5BL1ocIRSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WXnfOABX6Z1g2dFdoOlHSaykwHp0+COApiDmdtq9Q6iD4/HMqnTK8d6Oxr0E7cAn8eF8g4aIFh5qg62c97jVU0Wf/UI4e6hY+nnoBdfFwX5u/AyXRjFYXuSBH+upIdrDbIhqMRRZ6Mt+cqfN3wK0vkcXF9UipOtghZ+HyFDkI0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKWEbPvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 120BBC4CEF4;
+	Tue,  9 Sep 2025 20:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757451504;
+	bh=d053UT9D7w+A6kL9ac5x+bCv1+lr5wb0p5BL1ocIRSA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qKWEbPvB6B5W1I+8ibL1fUgdngRXAB3lydQg2aEHeC7D1Gx+BvdXO0J+NbxR3tqOS
+	 MdUHopDoD4l8MG4EWORwGVqWdLwHZ45uKRLEkmzjaEgdGtTE8XRr5FZz/IPBui06xy
+	 FhylzG3vhyQcoxC/yHt3SYEwvVyOt9V/wjk5/1YcPUiDJ8pnmbhFsGcXHlktA4kjkQ
+	 js6F3J4WblA9GyVzB+VncGdXirTf0U0qdLzKPeb9rqH96uaJlWZjGfC1TjtJ1y3wnW
+	 98RBXYOTZWJ9g5nLrvHu+rbXa9/pPQJnoyOJ9WX4OgNOD36rnWI4Vqhmotd2RDCNA+
+	 LpKOFiHC9rTuQ==
+Date: Tue, 9 Sep 2025 13:58:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Anwar, Md Danish" <a0501179@ti.com>
+Cc: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <horms@kernel.org>, <corbet@lwn.net>, <gur.stavi@huawei.com>,
+ <maddy@linux.ibm.com>, <mpe@ellerman.id.au>, <danishanwar@ti.com>,
+ <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+ <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+ <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+ <richardcochran@gmail.com>, <kees@kernel.org>, <gustavoars@kernel.org>,
+ <rdunlap@infradead.org>, <vadim.fedorenko@linux.dev>,
+ <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH net-next v11 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <20250909135822.2ac833fc@kernel.org>
+In-Reply-To: <68fc2f5c-2cbd-41f6-a814-5134ba06b4b5@ti.com>
+References: <20250909120906.1781444-1-dong100@mucse.com>
+	<20250909120906.1781444-5-dong100@mucse.com>
+	<68fc2f5c-2cbd-41f6-a814-5134ba06b4b5@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175745148670.682091.1818025730058668071.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/drivers branch of tip:
+On Tue, 9 Sep 2025 19:59:11 +0530 Anwar, Md Danish wrote:
+> > +int mucse_mbx_sync_fw(struct mucse_hw *hw)
+> > +{
+> > +	int try_cnt = 3;
+> > +	int err;
+> > +
+> > +	do {
+> > +		err = mucse_mbx_get_info(hw);
+> > +		if (err == -ETIMEDOUT)
+> > +			continue;
+> > +		break;
+> > +	} while (try_cnt--);
+> > +
+> > +	return err;
+> > +}  
+> 
+> There's a logical issue in the code. The loop structure attempts to
+> retry on ETIMEDOUT errors, but the unconditional break statement after
+> the if-check will always exit the loop after the first attempt,
+> regardless of the error. The do-while loop will never actually retry
+> because the break statement is placed outside of the if condition that
+> checks for timeout errors.
 
-Commit-ID:     c33c43f71bda362b292a6e57ac41b64342dc87b3
-Gitweb:        https://git.kernel.org/tip/c33c43f71bda362b292a6e57ac41b64342d=
-c87b3
-Author:        Ming Wang <wangming01@loongson.cn>
-AuthorDate:    Tue, 09 Sep 2025 20:58:40 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 09 Sep 2025 22:37:57 +02:00
-
-irqchip/loongson-pch-lpc: Use legacy domain for PCH-LPC IRQ controller
-
-On certain Loongson platforms, drivers attempting to request a legacy
-ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
-virtual IRQ descriptor is not fully initialized and lacks a valid irqchip.
-
-This issue does not affect ACPI-enumerated devices described in DSDT,
-as their interrupts are properly mapped via the GSI translation path.
-This indicates the LPC irqdomain itself is functional but is not correctly
-handling direct VIRQ-to-HWIRQ mappings.
-
-The root cause is the use of irq_domain_create_linear(). This API sets
-up a domain for dynamic, on-demand mapping, typically triggered by a GSI
-request. It does not pre-populate the mappings for the legacy VIRQ range
-(0-15). Consequently, if no ACPI device claims a specific GSI
-(e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
-the LPC domain. A direct call to request_irq(4, ...) then fails because
-the kernel cannot resolve this VIRQ to a hardware interrupt managed by
-the LPC controller.
-
-The PCH-LPC interrupt controller is an i8259-compatible legacy device
-that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
-support legacy drivers.
-
-Fix this by replacing irq_domain_create_linear() with
-irq_domain_create_legacy(). This API is specifically designed for such
-controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
-mapping for the entire legacy range (0-15) immediately upon domain
-creation. This ensures that any VIRQ in this range is always resolvable,
-making direct calls to request_irq() for legacy IRQs function correctly.
-
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/irqchip/irq-loongson-pch-lpc.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq-loo=
-ngson-pch-lpc.c
-index 2d4c3ec..912bf50 100644
---- a/drivers/irqchip/irq-loongson-pch-lpc.c
-+++ b/drivers/irqchip/irq-loongson-pch-lpc.c
-@@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *parent,
- 		goto iounmap_base;
- 	}
-=20
--	priv->lpc_domain =3D irq_domain_create_linear(irq_handle, LPC_COUNT,
--					&pch_lpc_domain_ops, priv);
-+	/*
-+	 * The LPC interrupt controller is a legacy i8259-compatible device,
-+	 * which requires a static 1:1 mapping for IRQs 0-15.
-+	 * Use irq_domain_create_legacy to establish this static mapping early.
-+	 */
-+	priv->lpc_domain =3D irq_domain_create_legacy(irq_handle, LPC_COUNT, 0, 0,
-+						    &pch_lpc_domain_ops, priv);
- 	if (!priv->lpc_domain) {
- 		pr_err("Failed to create IRQ domain\n");
- 		goto free_irq_handle;
+The other way around. continue; in a do {} while () look does *not*
+evaluate the condition. So this can loop forever.
 
