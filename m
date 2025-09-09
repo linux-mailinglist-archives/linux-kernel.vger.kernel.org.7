@@ -1,62 +1,87 @@
-Return-Path: <linux-kernel+bounces-808872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F05CEB505AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A1FB505B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9736E16B5B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367AD442DA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8721D33A019;
-	Tue,  9 Sep 2025 18:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB2230215B;
+	Tue,  9 Sep 2025 18:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VdC3/bFk"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KhaElix8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBEC1DC994;
-	Tue,  9 Sep 2025 18:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E592C32CF75
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757444288; cv=none; b=KjHlY6OL5vnLJq921tsD3Pdi2BY3PHcUxik0HtLwH1L0bAD1NgAydgpUWxFYYrGZMmcO54lUJ9HRfmqggzPNfYTPiTIiC5zfAQgkcPx/YIOzLKWrP0RK1f91j/X8lwhyqU/1hLAmzG496GJuqZnrVHnn+zx3RQTVcy6iMZsD6Zs=
+	t=1757444295; cv=none; b=AxvSRQpvTroGXNlhg1fwNz9BmC2gewVMSi+ZWc79eXGvzPoVlYq3qJqXSYaI7O8eNBfkOb2GeRkp6vhyXjQsqlS+W9egV+WwvMgBOdWtO0ckkKBezqaJwD3hPbbjx6ilVntCYcc0Cz9q7eygkzn4Swh4dKcr7uLosNcH1Txfeu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757444288; c=relaxed/simple;
-	bh=vpCVeBskAneFYTPmHPDRUM94rGrQFjr5iXyund9widk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FwTPPNazfLeIwNxc+BTukha49AqHw8fOHDMopMtZwq46QaHL4ZmkoRfsFLwyvbNizffYm3hv2VWL/pcbTNAGFtepSaIYP6Tfe8ZGanoKAUozAIrT9DzWh/QI9/9/xxYs809gESpO1Fal0Of7lint963GlNp8L6xfPxmUsGd/shw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VdC3/bFk; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589IvuPk402841;
-	Tue, 9 Sep 2025 13:57:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757444276;
-	bh=ytWS5Pm3i5Hzdw1rnIsUCp2dtf9prOUQfRQPEmBioM4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VdC3/bFkMDTyMBaCrMGWwRudnc9/B45o8GH7SG+Zc7hm2KazM+RjGNx/LdI2kjBaj
-	 ou4sLlRXEWVKtau98/7KCc384Zc4DM3k7PHr/KqYPm8v23iBHMPz481AaGB0WtM4Qi
-	 M/aqyo0IlR8zk2E23Ho9ljA2NHlI+q41z2ENsaJ8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589Ivun13355508
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 9 Sep 2025 13:57:56 -0500
-Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
- Sep 2025 13:57:56 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
- (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 9 Sep 2025 13:57:56 -0500
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589IvtR43042598;
-	Tue, 9 Sep 2025 13:57:56 -0500
-Message-ID: <ad567aed-3b8b-4ed4-bfee-e072a514558f@ti.com>
-Date: Tue, 9 Sep 2025 13:57:55 -0500
+	s=arc-20240116; t=1757444295; c=relaxed/simple;
+	bh=yAU1xs4OMymWHOKYKdpxggNYhkm00IDst2AdLJtu3nI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOm3yJUCp1Pw4xNoTocm8LfL4CQlFZE0YRBLOJXW9EBfLpe5cLZzlQAK3M8m4vDkKQItEEZlrkohJXxVODuHsVSoWRjXMTc6sfhSMZ3ycA/WdxgMWbQoFqh/miHgqZhk/8x84hrHHK1OgCU1TNHxPNRbJBwNBY+rx6qAIrOIgTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KhaElix8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757444292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tEeTKl2Am8ceYqmZeJXkbvM2lrOEYBAJICAMqquNxT8=;
+	b=KhaElix8GRkh2YfSzfMpvGuw1RdR1u/Vhu3OEhjxJ6GdzFRNtvphkBf2MEnfRd6aH+2yx4
+	MY9ZskqJbCBmU2wsy967gfcoSF2jH8aOXQWQ1m1kdK//iczgfg0owdMV1EFEaoZLBiPO2s
+	v59bPJgqtSON5Mi7RBXvJ0RSjLKHu8s=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-gyp12XfBNZCqPHJmHk9i6g-1; Tue, 09 Sep 2025 14:58:11 -0400
+X-MC-Unique: gyp12XfBNZCqPHJmHk9i6g-1
+X-Mimecast-MFC-AGG-ID: gyp12XfBNZCqPHJmHk9i6g_1757444291
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7224cb09e84so129003226d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:58:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757444291; x=1758049091;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tEeTKl2Am8ceYqmZeJXkbvM2lrOEYBAJICAMqquNxT8=;
+        b=shywAOEWhsMYyNXMgi3N5I3i3axsq9FDIaaqfXd6iGj4pUbqsf/zJ/TL0rYw8IiMws
+         Rb49pV2PQWqJ/rj6VFxHcNPNN68cL5BXYTe5+0sIb866MAn3uS4HGBFjRXvn1bk2LUzl
+         Zw73p7AK2aaQiLjGaMm4P9JvPIJECFdQ77ZYq5H0DVjM2GQkWI2fwMzsao3O5sUDZuTN
+         v3aFhphu/1528DBGGffhO8TJG8P5QD245ujU3hvmcQmugJS4HG3BiI2Uche+mzdHmJrs
+         Yg+jDYfrOQ4gjQakjgkB/TigcpY/2jNlf+r436iq6x2p0RyBM1Csgiyxr2ntpUTV4fZl
+         OUUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0CTEGUclawrwLIfyZ/zPmb7Y+FA/QBxNHZQHrfSiACdeE2r/ySRt13F7M84YQVLAiL1Y+Kpxz9QTh2b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4k8+nlOIAnZKOcmSwuCfgx/ClrSNVS3Uizdy2L43EixEAFQw4
+	BNR6rV1CRoOpfeeRy6Q6G4NHn1eMiiVEESFGzRMM78hqkYvcZovIQY612rv/cUrMJrk0NMk8WOj
+	4h4YSXjL0wVO7D5DEcN52BqBM+0d+BbdjJyYo5xCkbPpnUruRx2G9T878Tl9rBoIRH/qiF6Qfks
+	FZ
+X-Gm-Gg: ASbGnctGiwQnPnZsy+9QOITLPXJWnst6LI/Mdt7Pb3vOsakwc7t/l2g9S6Z0e1R2CRW
+	W6zGwey3CAYYSlWmtqk30T6l0wSt3rZdUOrd4tRysgZvZFNmb3DI9O2Hx6rK2+b1IYA7d0FUZ7s
+	HbvZWhJgzxPAJvv241A9uiYHH5mmE7W73ODNs8HARPmL87NVRNkK+bVrZQKxvbolVS+OvGrnTeW
+	b90onbStQhRTL4HPynQXmYJf5J4XOjHaiATX75BCtniE7E+jKJtLmJKbFvUmnT9ERHKvrZwBkvo
+	2C+CYPZFP9WFZdPWGuYuvZ9Bw65SPtCxk9+f4kQ5toMWvc+kU9/0BGDiagMgV+nJP8Jl46JuDKU
+	/xQdcWV2Upuez
+X-Received: by 2002:ad4:5fc5:0:b0:707:6cf8:5963 with SMTP id 6a1803df08f44-72bbf3fb0b1mr167451196d6.9.1757444290728;
+        Tue, 09 Sep 2025 11:58:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhF+OsEgNK7/8p/dRDiQRMr/orPC3+MXuUsFgulrWFnDz5gzikw27aQ/Tlem1vSIuP46h3SA==
+X-Received: by 2002:ad4:5fc5:0:b0:707:6cf8:5963 with SMTP id 6a1803df08f44-72bbf3fb0b1mr167450966d6.9.1757444290315;
+        Tue, 09 Sep 2025 11:58:10 -0700 (PDT)
+Received: from ?IPV6:2600:4040:5308:eb00:a77e:fec5:d269:f23e? ([2600:4040:5308:eb00:a77e:fec5:d269:f23e])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ada83b25sm146538706d6.27.2025.09.09.11.58.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 11:58:09 -0700 (PDT)
+Message-ID: <340645fa-5c6b-4b28-bd56-63088d4705da@redhat.com>
+Date: Tue, 9 Sep 2025 14:58:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,188 +89,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] can: m_can: Support pinctrl wakeup state
-To: Dhruva Gole <d-gole@ti.com>, Markus Schneider-Pargmann <msp@baylibre.com>
-CC: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-        Marc Kleine-Budde
-	<mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vishal Mahaveer
-	<vishalm@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sebin Francis
-	<sebin.francis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
-        Simon Horman
-	<horms@kernel.org>,
-        Vincent MAILHOL <mailhol.vincent@wanadoo.fr>,
-        <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com>
- <20250820-topic-mcan-wakeup-source-v6-12-v9-4-0ac13f2ddd67@baylibre.com>
- <20250904090523.4zglietnh3fvbhnr@lcpd911>
+Subject: Re: [PATCH 1/1] dm-vdo: Refactor VDO_ASSERT usage in
+ start_restoring_volume functions
 Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250904090523.4zglietnh3fvbhnr@lcpd911>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Ivan Abramov <i.abramov@mt-integration.ru>
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20250908222410.223574-1-i.abramov@mt-integration.ru>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <20250908222410.223574-1-i.abramov@mt-integration.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 9/4/25 04:05, Dhruva Gole wrote:
-> On Aug 20, 2025 at 14:42:28 +0200, Markus Schneider-Pargmann wrote:
->> am62 requires a wakeup flag being set in pinctrl when mcan pins acts as
+On 9/8/25 6:24 PM, Ivan Abramov wrote:
+> There's an incorrect VDO_ASSERT macro usage in
+> start_restoring volume_index() and start_restoring_volume_sub_index(),
+> since assert's return value is not used anywhere.
 > 
-> Let's call it "TI AM62x SoC" or TI K3 SoCs? This commit goes into a driver so let's not assume
-> everyone knows what am62 means ;)
+> Thus, use VDO_ASSERT_LOG_ONLY macro in such cases.
 > 
-> Also nit: s/"mcan pins acts"/"mcan pins act"/
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
->> a wakeup source. Add support to select the wakeup state if WOL is
->> enabled.
->>
->> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
->> ---
->>   drivers/net/can/m_can/m_can.c | 69 +++++++++++++++++++++++++++++++++++++++++--
->>   drivers/net/can/m_can/m_can.h |  3 ++
->>   2 files changed, 70 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
->> index e08fae5ddf5efa8345670dd50d50954ec5d52b29..a1fa4b2f6b6cc94e5e10259cca53bd931ab238c8 100644
->> --- a/drivers/net/can/m_can/m_can.c
->> +++ b/drivers/net/can/m_can/m_can.c
->> @@ -2249,7 +2249,26 @@ static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
->>   		return ret;
->>   	}
->>   
->> +	if (!IS_ERR_OR_NULL(cdev->pinctrl_state_wakeup)) {
->> +		if (wol_enable)
->> +			ret = pinctrl_select_state(cdev->pinctrl, cdev->pinctrl_state_wakeup);
->> +		else
->> +			ret = pinctrl_pm_select_default_state(cdev->dev);
->> +
->> +		if (ret) {
->> +			netdev_err(cdev->net, "Failed to select pinctrl state %pE\n",
->> +				   ERR_PTR(ret));
->> +			goto err_wakeup_enable;
->> +		}
->> +	}
->> +
->>   	return 0;
->> +
->> +err_wakeup_enable:
->> +	/* Revert wakeup enable */
->> +	device_set_wakeup_enable(cdev->dev, !wol_enable);
->> +
->> +	return ret;
->>   }
->>   
->>   static const struct ethtool_ops m_can_ethtool_ops_coalescing = {
->> @@ -2377,6 +2396,42 @@ int m_can_class_get_clocks(struct m_can_classdev *cdev)
->>   }
->>   EXPORT_SYMBOL_GPL(m_can_class_get_clocks);
->>   
->> +static bool m_can_class_wakeup_pinctrl_enabled(struct m_can_classdev *class_dev)
->> +{
->> +	return device_may_wakeup(class_dev->dev) && class_dev->pinctrl_state_wakeup;
->> +}
->> +
->> +static int m_can_class_setup_optional_pinctrl(struct m_can_classdev *class_dev)
->> +{
->> +	struct device *dev = class_dev->dev;
->> +	int ret;
->> +
->> +	class_dev->pinctrl = devm_pinctrl_get(dev);
->> +	if (IS_ERR(class_dev->pinctrl)) {
->> +		ret = PTR_ERR(class_dev->pinctrl);
->> +		class_dev->pinctrl = NULL;
->> +
->> +		if (ret == -ENODEV)
->> +			return 0;
->> +
->> +		return dev_err_probe(dev, ret, "Failed to get pinctrl\n");
->> +	}
->> +
->> +	class_dev->pinctrl_state_wakeup =
->> +		pinctrl_lookup_state(class_dev->pinctrl, "wakeup");
->> +	if (IS_ERR(class_dev->pinctrl_state_wakeup)) {
->> +		ret = PTR_ERR(class_dev->pinctrl_state_wakeup);
->> +		class_dev->pinctrl_state_wakeup = NULL;
->> +
->> +		if (ret == -ENODEV)
->> +			return 0;
->> +
->> +		return dev_err_probe(dev, ret, "Failed to lookup pinctrl wakeup state\n");
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
->>   						int sizeof_priv)
->>   {
->> @@ -2418,7 +2473,15 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
->>   	m_can_of_parse_mram(class_dev, mram_config_vals);
->>   	spin_lock_init(&class_dev->tx_handling_spinlock);
->>   
->> +	ret = m_can_class_setup_optional_pinctrl(class_dev);
+> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+> ---
+>   drivers/md/dm-vdo/indexer/volume-index.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> optional makes it sound a little confusing IMO, might make sense to call
-> it something like m_can_class_configure_pinctrl or m_can_class_setup_wakeup_pinctrl
+> diff --git a/drivers/md/dm-vdo/indexer/volume-index.c b/drivers/md/dm-vdo/indexer/volume-index.c
+> index 12f954a0c532..99608f14400a 100644
+> --- a/drivers/md/dm-vdo/indexer/volume-index.c
+> +++ b/drivers/md/dm-vdo/indexer/volume-index.c
+> @@ -832,11 +832,9 @@ static int start_restoring_volume_sub_index(struct volume_sub_index *sub_index,
+>   		decode_u32_le(buffer, &offset, &header.first_list);
+>   		decode_u32_le(buffer, &offset, &header.list_count);
+>   
+> -		result = VDO_ASSERT(offset == sizeof(buffer),
+> +		VDO_ASSERT_LOG_ONLY(offset == sizeof(buffer),
+>   				    "%zu bytes decoded of %zu expected", offset,
+>   				    sizeof(buffer));
+> -		if (result != VDO_SUCCESS)
+> -			result = UDS_CORRUPT_DATA;
 
-I agree it should be changed to something different. Maybe you could add 
-a comment or add in the commit message denoting that configuring the 
-pinctrl is optional?
+This is not a correct fix so we should not take this.
 
-> 
->> +	if (ret)
->> +		goto err_free_candev;
->> +
->>   	return class_dev;
->> +
->> +err_free_candev:
->> +	free_candev(net_dev);
->> +	return ERR_PTR(ret);
->>   }
->>   EXPORT_SYMBOL_GPL(m_can_class_allocate_dev);
->>   
->> @@ -2533,7 +2596,8 @@ int m_can_class_suspend(struct device *dev)
->>   		m_can_clk_stop(cdev);
->>   	}
->>   
->> -	pinctrl_pm_select_sleep_state(dev);
->> +	if (!m_can_class_wakeup_pinctrl_enabled(cdev))
->> +		pinctrl_pm_select_sleep_state(dev);
->>   
->>   	cdev->can.state = CAN_STATE_SLEEPING;
->>   
->> @@ -2547,7 +2611,8 @@ int m_can_class_resume(struct device *dev)
->>   	struct net_device *ndev = cdev->net;
->>   	int ret = 0;
->>   
->> -	pinctrl_pm_select_default_state(dev);
->> +	if (!m_can_class_wakeup_pinctrl_enabled(cdev))
->> +		pinctrl_pm_select_default_state(dev);
->>   
->>   	cdev->can.state = CAN_STATE_ERROR_ACTIVE;
->>   
->> diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
->> index bd4746c63af3f0a032910644dfd48a9ebb3a6168..583c7f1d005d61b3fc8587697388522993ff11a8 100644
->> --- a/drivers/net/can/m_can/m_can.h
->> +++ b/drivers/net/can/m_can/m_can.h
->> @@ -128,6 +128,9 @@ struct m_can_classdev {
->>   	struct mram_cfg mcfg[MRAM_CFG_NUM];
->>   
->>   	struct hrtimer hrtimer;
->> +
->> +	struct pinctrl *pinctrl;
->> +	struct pinctrl_state *pinctrl_state_wakeup;
->>   };
->>   
->>   struct m_can_classdev *m_can_class_allocate_dev(struct device *dev, int sizeof_priv);
->>
->> -- 
->> 2.50.1
->>
-> 
+This assertion (and the one below) should only fail if the stored 
+metadata has been corrupted, but in that case we definitely need to 
+return the error and fail the load.
+
+You are correct that we don't seem to use this result, but the correct 
+fix is to return UDS_CORRUPT_DATA when this assertion fails.
+
+Matt
+
+
+>   		if (memcmp(header.magic, MAGIC_START_5, MAGIC_SIZE) != 0) {
+>   			return vdo_log_warning_strerror(UDS_CORRUPT_DATA,
+> @@ -924,11 +922,9 @@ static int start_restoring_volume_index(struct volume_index *volume_index,
+>   		offset += MAGIC_SIZE;
+>   		decode_u32_le(buffer, &offset, &header.sparse_sample_rate);
+>   
+> -		result = VDO_ASSERT(offset == sizeof(buffer),
+> +		VDO_ASSERT_LOG_ONLY(offset == sizeof(buffer),
+>   				    "%zu bytes decoded of %zu expected", offset,
+>   				    sizeof(buffer));
+> -		if (result != VDO_SUCCESS)
+> -			result = UDS_CORRUPT_DATA;
+>   
+>   		if (memcmp(header.magic, MAGIC_START_6, MAGIC_SIZE) != 0)
+>   			return vdo_log_warning_strerror(UDS_CORRUPT_DATA,
 
 
