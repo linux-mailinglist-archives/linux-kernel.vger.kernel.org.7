@@ -1,165 +1,83 @@
-Return-Path: <linux-kernel+bounces-807399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C06B4A3EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154EBB4A39C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DC45E1439
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:39:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DE127A40B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE44314A68;
-	Tue,  9 Sep 2025 07:34:24 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E23306B33;
+	Tue,  9 Sep 2025 07:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVHoCJPh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2548311594;
-	Tue,  9 Sep 2025 07:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4E2EB87F;
+	Tue,  9 Sep 2025 07:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403263; cv=none; b=fpZ5ktofoYaG3DpV5JC8lsXRdFbU3+eA9wD/yAimsKFy+gqpWl+NFUyW2yBBfaroxwPs+eUr1oUnE1hwanl8mBX47jh++EnOzm+T97n1C1lI7APrOurJoF1p1SZ/CntMfXL13zNjkrGXeWO3s+WJte1CHhOhIA53SiHJ/czNwhQ=
+	t=1757403231; cv=none; b=KqtobNyEgQC1mro3/YNVkBgXkeAN8QAy2lGMmEA/1wW11ehNoqsnyKrBRubTy1Z3yCyg7hTU0CN57tCJeFzfx0CiUMPZN1sHKF0Qbl3YIF9tiKZVwZnKOeRyUZALunHcsDm68DqUaxjm/vEzWScsYms7Sexa7h22pWdlN2I/2sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403263; c=relaxed/simple;
-	bh=s6eDdhRxwiAGwBQu1EeWsS2Kiz3ungjNpeZ+VY7CMBk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EmCgr6OTxCaegUQFNzfzB+29qx2swWRL8Xc2E2PQ6t6AvvhARZsF6LxISYl5Rcq1lwCzbm0LFjta1chcCy17k9SQEFf/x6JksxWEWCQg9hNQyWbb2reC1GKlQh2+ye3Vu8ZVuk6OHeNJ7zhjLvF3SqWst7kS+nd5RUZWIaU+3ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cLb7H27lyzdcXr;
-	Tue,  9 Sep 2025 15:29:47 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3C116180485;
-	Tue,  9 Sep 2025 15:34:19 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Sep 2025 15:34:17 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, Meny Yossefi
-	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
-	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
- Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v05 14/14] hinic3: Fix code style (Missing a blank line before return)
-Date: Tue, 9 Sep 2025 15:33:39 +0800
-Message-ID: <c697066a3e0d574d159be9ba49ec7f19ed6ad06b.1757401320.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1757401320.git.zhuyikai1@h-partners.com>
-References: <cover.1757401320.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1757403231; c=relaxed/simple;
+	bh=29h+C2RAqYP6IwgLpJq+YR56gxRGczHq5a7zqDGvuYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKhTi75ZQq3nVsoM0az2Y97gHD5zTQoAd2JeFsvbYzrokXP5haCzIpRFgm6kDYuxeP8KWG8TkF+qTvkuzqvGLNLM2063sfjVxLPlYf1z3VbG4fOXBRsDW0oLaKhe+ByTrYg3noHjPPLMaitpww0WEPrKCmaVEUE0GlC1eOO6vdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVHoCJPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 389DBC4CEF4;
+	Tue,  9 Sep 2025 07:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757403230;
+	bh=29h+C2RAqYP6IwgLpJq+YR56gxRGczHq5a7zqDGvuYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AVHoCJPhPOjbF0rgeVlW4WNjW0VWQwRmDxd63Gw3YKKAr43Db+qw91nG44I/xwRPC
+	 eyrnIUxQ/VwPDJ4+l2LHuaBTlRrHN10itAnFnlS3xen6Z+oDgIeqjk2aq2KB0+LCdV
+	 BHoVckfsz8SET7OAMF7dy6x6W85MlkiBG8J2mJ3a11Y+rLPtD99Hhdwor+28Dqmtf3
+	 AhGFWjYRf20I10gNZeyZRWZtB+qBWbuK5NdCJp2FCm4tpqzsPoFc08ZIgtWIqm4KUe
+	 HB0F3aCldVeK7oZF7UbOIl8T2IFTF7y8hDSGft4o87wboQCR2o4brOVBzfl52afcV/
+	 2xBTOR/9Er0aA==
+Date: Tue, 9 Sep 2025 09:33:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: Add Asus Zenbook A14
+ UX3407QA LCD/OLED variants
+Message-ID: <20250909-fragrant-meaty-bird-beb7ec@kuoka>
+References: <20250908-zenbook-improvements-v1-0-43ecbbf39c60@vinarskis.com>
+ <20250908-zenbook-improvements-v1-1-43ecbbf39c60@vinarskis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250908-zenbook-improvements-v1-1-43ecbbf39c60@vinarskis.com>
 
-Fix code style of missing a blank line before return.
+On Mon, Sep 08, 2025 at 08:45:45PM +0200, Aleksandrs Vinarskis wrote:
+> X1/X1 Plus variant of the said device comes in either FHD+ OLED or FHD+
+> LCD panel, and shares the same model number UX3407QA. It appears LCD
+> panel's brightness adjustment is PWM backlight controlled, so a
+> dedicated device-tree is required. Introduce dedicated compatibles with
+> fallback to 'asus,zenbook-a14-ux3407qa' as they are otherwise the same.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
----
- drivers/net/ethernet/huawei/hinic3/hinic3_lld.c     | 5 +++++
- drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c | 1 +
- drivers/net/ethernet/huawei/hinic3/hinic3_tx.c      | 2 ++
- 3 files changed, 8 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c b/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-index 10477fb9cc34..3db8241a3b0c 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-@@ -122,6 +122,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
- 			goto err_del_adevs;
- 	}
- 	mutex_unlock(&pci_adapter->pdev_mutex);
-+
- 	return 0;
- 
- err_del_adevs:
-@@ -133,6 +134,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
- 		}
- 	}
- 	mutex_unlock(&pci_adapter->pdev_mutex);
-+
- 	return -ENOMEM;
- }
- 
-@@ -154,6 +156,7 @@ struct hinic3_hwdev *hinic3_adev_get_hwdev(struct auxiliary_device *adev)
- 	struct hinic3_adev *hadev;
- 
- 	hadev = container_of(adev, struct hinic3_adev, adev);
-+
- 	return hadev->hwdev;
- }
- 
-@@ -335,6 +338,7 @@ static int hinic3_probe_func(struct hinic3_pcidev *pci_adapter)
- 
- err_out:
- 	dev_err(&pdev->dev, "PCIe device probe function failed\n");
-+
- 	return err;
- }
- 
-@@ -367,6 +371,7 @@ static int hinic3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- err_out:
- 	dev_err(&pdev->dev, "PCIe device probe failed\n");
-+
- 	return err;
- }
- 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-index 9349b8a314ae..979f47ca77f9 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-@@ -112,6 +112,7 @@ int hinic3_set_port_mtu(struct net_device *netdev, u16 new_mtu)
- 	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
- 
- 	func_tbl_cfg.mtu = new_mtu;
-+
- 	return hinic3_set_function_table(hwdev, BIT(L2NIC_FUNC_TBL_CFG_MTU),
- 					 &func_tbl_cfg);
- }
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-index dea882260b11..92c43c05e3f2 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-@@ -116,6 +116,7 @@ static int hinic3_tx_map_skb(struct net_device *netdev, struct sk_buff *skb,
- 	}
- 	dma_unmap_single(&pdev->dev, dma_info[0].dma, dma_info[0].len,
- 			 DMA_TO_DEVICE);
-+
- 	return err;
- }
- 
-@@ -601,6 +602,7 @@ netdev_tx_t hinic3_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
- 
- err_drop_pkt:
- 	dev_kfree_skb_any(skb);
-+
- 	return NETDEV_TX_OK;
- }
- 
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
