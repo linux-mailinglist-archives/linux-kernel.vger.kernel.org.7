@@ -1,252 +1,441 @@
-Return-Path: <linux-kernel+bounces-807665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E55B4A7C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:28:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB8AB4A79D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A663AB444
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:23:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B8C57B142B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFE304BC9;
-	Tue,  9 Sep 2025 09:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E180030CDBB;
+	Tue,  9 Sep 2025 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Y43vgzqc"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Suo7xsQn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF4B2D9ECF
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC97230BB88
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409353; cv=none; b=TMTAg9Y/BXSl+skcjTvUfmRl4HLYYBhKP8w8qo8A8BD+o+BtW1dx12r564RQabIScpcNBMhO0WOB65VReX7DhevEDyUXq/BZg5UTaIrvt/Ohz764eoigZhiIVD58Z2UaemDX3abXBqdSU5naIOlrYsLC4emoJdM2QErMEL+E+1o=
+	t=1757409365; cv=none; b=lwTFqNcNP12wjgl9nN1vrSjYVZYMOTbWxfqDASO3VwiaTXCxf5D62kd7KICfqWElamDey8S17Imy6dNTX7H6GeUMsdhuHxbMPNV1opz/i8y+YsWyYfCcNmSp9W2kHpZCEWmFMk9JUULwYZ5vC0fnN/4IpXgc0FWcS5hlkjdiUdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409353; c=relaxed/simple;
-	bh=m3C6YMA5NpordnkRgnAsfsyx2uMyKsrWO0yN6UpIPP8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MqmWDwiIUux2TL6lD1CIP1q9mTSDG0ndc8lGNCl/MY52y1jZhDncTBnadEi65wyxDQZeyUTwF76zVyqavxBIyXzvK6C9777IN+4t4S+lqY1Mr4v5QbG8IKMCJ82VZf8SS5LcQsjYApJqEUH2Lxt7e+bT7wrjr3P+bGHFw4++erk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Y43vgzqc; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so33818455e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757409350; x=1758014150; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bfVsXcyRTPM0823GsALirp0A0UZxDbq+MOQO0Rm+6MM=;
-        b=Y43vgzqcU8Qarv+KOPsEAj/DOnRwQ6o23H+Je3U77Z9Zc6irNpbooWFxaxOD6GbDcQ
-         h27gDR98ysMvBDcXKinLu3ooLnennjAxASQuII3sdDZagHGTwKZ9i/VmM3ei2wFcOx5n
-         Sjr6JfLvF+xUhbeEacj0D3IcC90+4BPuYBPoJKMfTdbiWL5NxowfNykflPW2ZYMvkqWT
-         juDDaaFTMlG5r3HJ9e1r+/V0hhlu6fIMlKbh5avP/WkzIhcnY84ecOp/LC0RrrZAToYh
-         eHzhxNKENiSFsqqwHpU6lzi/Tf2eMLQ+YR4NQj6fHPJZGqdc1IAbepp3d77usvFuOLck
-         CL/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409350; x=1758014150;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfVsXcyRTPM0823GsALirp0A0UZxDbq+MOQO0Rm+6MM=;
-        b=t5PuOkQ5sa+unSOEuziEYBMNrQh40uRfaZ5IqoJM1auPeijilpKMAoSdvO1o6WY4jV
-         cA3SbRUiznuJz3F6ybHQyecfjBMJ1Y7EADwwVn94goe5XFZEYgBOXjEiBO5wGNUBwqbn
-         6W+evsLZVaS4hXEgtfJ/e1tRqoBeXLeKhU7pNwSgNZ1aY3nRWSYgzgbhdllEG+kQeAcY
-         iYC65manxR358w9hG/7iAqvMLz9LAuY2pgdrYgj7HKQcRn1IRt1AFzut60XabF60fiJY
-         lMU9dZ7tEyjvAnoVOYVlI/ERmgQmEKL/IhDoRBr5l/+97wIuHXO7yQPq8L4/AEqLWswc
-         9olg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuEyDlf3fA2g061aKGMsLIHmBmfgFIHGv13vFPrzYEw0uTiXSsfWChzUK0whBXeZmKTmxcGmqj4M8xW5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTtOjw0ysFqaaZ8JIwXfDKPecVjR5T6lPmdVdaU6tSPYPqMglx
-	a100EzxXBsrC/gmSv9gQ0moQF3qjvfuuvHduB18ApnlDrg3MuuG7k4OpwBRtuMKKAcM=
-X-Gm-Gg: ASbGncvLUfVNafG4aJiNeSeThxMOg2j9WaTF3Y7OhQUW3dIXy8CM+VeU3bJpoqopxT4
-	gJlC4sUqxq2xm2EQTWSMVvpypcCTLpjSbS2bXJkJ9c2+apACXWMiBzTDU8OFOgTXaM7RwbgKI2d
-	MGlf4TMJBZVYsEskHSxMElkQDmSLk/3YQCHPpGy/n7Mhg4jVzk+pSmT8mlARD1365U++a/GxaTh
-	+wdpDURk5jI64euYpu+pElWjwE05ivMm2Q66BPDD8tjGifrPMXBLD1LtStx4gBsZgYDvG39Co3f
-	SEpvFavJIGvzaF3mvhSYmgxoWFd3CKboRzylO1SNedMa2vmH/iwtCPUfGHPT23aNDwPwtEMAHyW
-	g+xDWM66/1j8mjk5BrQ==
-X-Google-Smtp-Source: AGHT+IFWuFmitLzvuFEhGEXuEuX7h1gnAXktOXE047kf9ZXksjM66NyEnLgZClefDTe7m/DeVUPeow==
-X-Received: by 2002:a05:600c:6304:b0:45b:43cc:e558 with SMTP id 5b1f17b1804b1-45dddef818cmr82339105e9.35.1757409349756;
-        Tue, 09 Sep 2025 02:15:49 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1ee:7be9:3ebb:6cc0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm1900039f8f.19.2025.09.09.02.15.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:15:48 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 09 Sep 2025 11:15:31 +0200
-Subject: [PATCH 04/15] gpio: ath79: use new generic GPIO chip API
+	s=arc-20240116; t=1757409365; c=relaxed/simple;
+	bh=Q94FZDmaYo0Q+kN/ERxd3PoUEzzy2FQEfsEXXL8McgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kexSHJ7XJak6O3bJCIq1fxyj2MoEXen4i2W/+3ooEG3HRXo8ctzRj3evAkliccGSDCDBwRSntIkdubAYeiwgRlnswj3nm5LinxhXrrc4s7hTglnCzMJ2dzJpSI0q/hQgGbIfJTiursPNnj686g4mj4KajmK70XmxIPmhYQ2mEAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Suo7xsQn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757409360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X4gjdfHoGOjc0ayt/oAGODhuCY/fH5GnPsZmcC+mm+Y=;
+	b=Suo7xsQn0I3r9pKCVjQjotgUHNml3uP3UlcPFzQC4OT/Z+AoKdkN7LCkKUAOb8dUFI5+Nf
+	CEQ+jkZJoKaI+P/i1a/Wq8dsQ9MqLWmxFr/XVSlcA8J2aWWvtmh87reTeV2tvlpSrNLEAB
+	95+qtK/3ML+1BkAjDfpYGZKbCGvG3gg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-18-fnP7xP4ZNUORubexJ3Ou4g-1; Tue,
+ 09 Sep 2025 05:15:57 -0400
+X-MC-Unique: fnP7xP4ZNUORubexJ3Ou4g-1
+X-Mimecast-MFC-AGG-ID: fnP7xP4ZNUORubexJ3Ou4g_1757409355
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7BF0119560B7;
+	Tue,  9 Sep 2025 09:15:55 +0000 (UTC)
+Received: from p16v.. (unknown [10.43.2.187])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0612F19560B4;
+	Tue,  9 Sep 2025 09:15:51 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>,
+	Petr Oros <poros@redhat.com>
+Subject: [PATCH net-next v6 4/5] dpll: zl3073x: Refactor DPLL initialization
+Date: Tue,  9 Sep 2025 11:15:31 +0200
+Message-ID: <20250909091532.11790-5-ivecera@redhat.com>
+In-Reply-To: <20250909091532.11790-1-ivecera@redhat.com>
+References: <20250909091532.11790-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-gpio-mmio-gpio-conv-part4-v1-4-9f723dc3524a@linaro.org>
-References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
-In-Reply-To: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
- Doug Berger <opendmb@gmail.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4596;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=KmFRStxrtBvgq9SHCuo+p5UvH6qsrW0hcSZujIjU2hM=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBov/A3uBuQUbggrZea4yqPMYEhQc7SR2SyAu4FG
- dnGFptiCCCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaL/wNwAKCRARpy6gFHHX
- cn7KEAC75xLioRo7Kh1dAfxq+uodLO/+7Wk5UsHsHIvgNKgcWkuWxxBBlb5yTHgZY8lOfw01MAv
- HLoSw+kRGn25m6kndbzXFcCkeAazbboy8tacIA34T9zLdqqiwNpQ6savUwoWwvQkJCe0Zd1sqyI
- X0+vuDS5bIpm+F1QnjiLMe0Sbb5PdipzpKDn9Qwvnh9Q1eKdnSW7fzabnl+ZttJSyqO9c77+dlW
- vo0l5G1dhMiwMY22CWhQs+0Gf2yPiwTZNH2IZggwTy5Na4Y7W6g8ioYaRYaAVsV7JVE+2sagt1b
- 7Z6NrRm51Mjd01e8i9/OaOH/o3nrWYM3/CETm+sekj8hOtYGtazwGUB8hHTtSy1++BBuRVvn1w5
- 8rHU8b0ScSiXUkEMSJ+BcGNF15jH3HfKtRCJN3+oO9GO/zHO96i5/v9gIeW/n/B5ivuN9QYHj3H
- 2A2/MveLQWeuYS6pJTiDY0LW+Ca84OmZDAL7rXXHxhhBR2GGAsU7R+G/J9V54uK7wxEpV29NbAJ
- ZhSbTRuR8KfbBPHNHz4dMXLnfg3POU4uZ9gTYS4Hj4W2nq7UIAFdcqefi4dcZ4isDmpX37sSQN9
- 7tu6A1Uoe8feo2JitwhMJoDwuuxnvLFgCKh3IiC+gesr2EEf4/dOHoE2K9kLjL3LpOHzh3r2b96
- UGm1jx/g7L4nGcg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Refactor DPLL initialization and move DPLL (de)registration, monitoring
+control, fetching device invariant parameters and phase offset
+measurement block setup to separate functions.
 
-Convert the driver to using the new generic GPIO chip interfaces from
-linux/gpio/generic.h.
+Use these new functions during device probe and teardown functions and
+during changes to the clock_id devlink parameter.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+These functions will also be used in the next patch implementing devlink
+flash, where this functionality is likewise required.
+
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 ---
- drivers/gpio/gpio-ath79.c | 39 ++++++++++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
+v2:
+* fixed warning with uninitialized 'mask'
+---
+ drivers/dpll/zl3073x/core.c    | 207 +++++++++++++++++++++------------
+ drivers/dpll/zl3073x/core.h    |   3 +
+ drivers/dpll/zl3073x/devlink.c |  18 +--
+ 3 files changed, 142 insertions(+), 86 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index de4cc12e5e0399abcef61a89c8c91a1b203d20fb..1b2a59ddbec4088c95fb766277bb94ffff8692b2 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/device.h>
- #include <linux/gpio/driver.h>
-+#include <linux/gpio/generic.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/mod_devicetable.h>
-@@ -28,7 +29,7 @@
- #define AR71XX_GPIO_REG_INT_MASK	0x24
- 
- struct ath79_gpio_ctrl {
--	struct gpio_chip gc;
-+	struct gpio_generic_chip chip;
- 	void __iomem *base;
- 	raw_spinlock_t lock;
- 	unsigned long both_edges;
-@@ -37,8 +38,9 @@ struct ath79_gpio_ctrl {
- static struct ath79_gpio_ctrl *irq_data_to_ath79_gpio(struct irq_data *data)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
- 
--	return container_of(gc, struct ath79_gpio_ctrl, gc);
-+	return container_of(gen_gc, struct ath79_gpio_ctrl, chip);
+diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
+index 86c26edc90462..e96095baac657 100644
+--- a/drivers/dpll/zl3073x/core.c
++++ b/drivers/dpll/zl3073x/core.c
+@@ -956,21 +956,142 @@ zl3073x_dev_periodic_work(struct kthread_work *work)
+ 				   msecs_to_jiffies(500));
  }
  
- static u32 ath79_gpio_read(struct ath79_gpio_ctrl *ctrl, unsigned reg)
-@@ -72,7 +74,7 @@ static void ath79_gpio_irq_unmask(struct irq_data *data)
- 	u32 mask = BIT(irqd_to_hwirq(data));
- 	unsigned long flags;
- 
--	gpiochip_enable_irq(&ctrl->gc, irqd_to_hwirq(data));
-+	gpiochip_enable_irq(&ctrl->chip.gc, irqd_to_hwirq(data));
- 	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, mask);
- 	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
-@@ -87,7 +89,7 @@ static void ath79_gpio_irq_mask(struct irq_data *data)
- 	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
- 	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
--	gpiochip_disable_irq(&ctrl->gc, irqd_to_hwirq(data));
-+	gpiochip_disable_irq(&ctrl->chip.gc, irqd_to_hwirq(data));
- }
- 
- static void ath79_gpio_irq_enable(struct irq_data *data)
-@@ -187,8 +189,9 @@ static void ath79_gpio_irq_handler(struct irq_desc *desc)
- {
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
- 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
-+	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
- 	struct ath79_gpio_ctrl *ctrl =
--		container_of(gc, struct ath79_gpio_ctrl, gc);
-+		container_of(gen_gc, struct ath79_gpio_ctrl, chip);
- 	unsigned long flags, pending;
- 	u32 both_edges, state;
- 	int irq;
-@@ -224,6 +227,7 @@ MODULE_DEVICE_TABLE(of, ath79_gpio_of_match);
- 
- static int ath79_gpio_probe(struct platform_device *pdev)
- {
-+	struct gpio_generic_chip_config config;
- 	struct device *dev = &pdev->dev;
- 	struct ath79_gpio_ctrl *ctrl;
- 	struct gpio_irq_chip *girq;
-@@ -253,21 +257,26 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(ctrl->base);
- 
- 	raw_spin_lock_init(&ctrl->lock);
--	err = bgpio_init(&ctrl->gc, dev, 4,
--			ctrl->base + AR71XX_GPIO_REG_IN,
--			ctrl->base + AR71XX_GPIO_REG_SET,
--			ctrl->base + AR71XX_GPIO_REG_CLEAR,
--			oe_inverted ? NULL : ctrl->base + AR71XX_GPIO_REG_OE,
--			oe_inverted ? ctrl->base + AR71XX_GPIO_REG_OE : NULL,
--			0);
++/**
++ * zl3073x_dev_phase_meas_setup - setup phase offset measurement
++ * @zldev: pointer to zl3073x_dev structure
++ *
++ * Enable phase offset measurement block, set measurement averaging factor
++ * and enable DPLL-to-its-ref phase measurement for all DPLLs.
++ *
++ * Returns: 0 on success, <0 on error
++ */
++static int
++zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev)
++{
++	struct zl3073x_dpll *zldpll;
++	u8 dpll_meas_ctrl, mask = 0;
++	int rc;
 +
-+	config = (typeof(config)){
-+		.dev = dev,
-+		.sz = 4,
-+		.dat = ctrl->base + AR71XX_GPIO_REG_IN,
-+		.set = ctrl->base + AR71XX_GPIO_REG_SET,
-+		.clr = ctrl->base + AR71XX_GPIO_REG_CLEAR,
-+		.dirout = oe_inverted ? NULL : ctrl->base + AR71XX_GPIO_REG_OE,
-+		.dirin = oe_inverted ? ctrl->base + AR71XX_GPIO_REG_OE : NULL,
-+	};
++	/* Read DPLL phase measurement control register */
++	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
++	if (rc)
++		return rc;
 +
-+	err = gpio_generic_chip_init(&ctrl->chip, &config);
- 	if (err) {
--		dev_err(dev, "bgpio_init failed\n");
-+		dev_err(dev, "failed to initialize generic GPIO chip\n");
- 		return err;
++	/* Setup phase measurement averaging factor */
++	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
++	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
++
++	/* Enable DPLL measurement block */
++	dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
++
++	/* Update phase measurement control register */
++	rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
++	if (rc)
++		return rc;
++
++	/* Enable DPLL-to-connected-ref measurement for each channel */
++	list_for_each_entry(zldpll, &zldev->dplls, list)
++		mask |= BIT(zldpll->id);
++
++	return zl3073x_write_u8(zldev, ZL_REG_DPLL_PHASE_ERR_READ_MASK, mask);
++}
++
++/**
++ * zl3073x_dev_start - Start normal operation
++ * @zldev: zl3073x device pointer
++ * @full: perform full initialization
++ *
++ * The function starts normal operation, which means registering all DPLLs and
++ * their pins, and starting monitoring. If full initialization is requested,
++ * the function additionally initializes the phase offset measurement block and
++ * fetches hardware-invariant parameters.
++ *
++ * Return: 0 on success, <0 on error
++ */
++int zl3073x_dev_start(struct zl3073x_dev *zldev, bool full)
++{
++	struct zl3073x_dpll *zldpll;
++	int rc;
++
++	if (full) {
++		/* Fetch device state */
++		rc = zl3073x_dev_state_fetch(zldev);
++		if (rc)
++			return rc;
++
++		/* Setup phase offset measurement block */
++		rc = zl3073x_dev_phase_meas_setup(zldev);
++		if (rc) {
++			dev_err(zldev->dev,
++				"Failed to setup phase measurement\n");
++			return rc;
++		}
++	}
++
++	/* Register all DPLLs */
++	list_for_each_entry(zldpll, &zldev->dplls, list) {
++		rc = zl3073x_dpll_register(zldpll);
++		if (rc) {
++			dev_err_probe(zldev->dev, rc,
++				      "Failed to register DPLL%u\n",
++				      zldpll->id);
++			return rc;
++		}
++	}
++
++	/* Perform initial firmware fine phase correction */
++	rc = zl3073x_dpll_init_fine_phase_adjust(zldev);
++	if (rc) {
++		dev_err_probe(zldev->dev, rc,
++			      "Failed to init fine phase correction\n");
++		return rc;
++	}
++
++	/* Start monitoring */
++	kthread_queue_delayed_work(zldev->kworker, &zldev->work, 0);
++
++	return 0;
++}
++
++/**
++ * zl3073x_dev_stop - Stop normal operation
++ * @zldev: zl3073x device pointer
++ *
++ * The function stops the normal operation that mean deregistration of all
++ * DPLLs and their pins and stop monitoring.
++ *
++ * Return: 0 on success, <0 on error
++ */
++void zl3073x_dev_stop(struct zl3073x_dev *zldev)
++{
++	struct zl3073x_dpll *zldpll;
++
++	/* Stop monitoring */
++	kthread_cancel_delayed_work_sync(&zldev->work);
++
++	/* Unregister all DPLLs */
++	list_for_each_entry(zldpll, &zldev->dplls, list) {
++		if (zldpll->dpll_dev)
++			zl3073x_dpll_unregister(zldpll);
++	}
++}
++
+ static void zl3073x_dev_dpll_fini(void *ptr)
+ {
+ 	struct zl3073x_dpll *zldpll, *next;
+ 	struct zl3073x_dev *zldev = ptr;
+ 
+-	/* Stop monitoring thread */
++	/* Stop monitoring and unregister DPLLs */
++	zl3073x_dev_stop(zldev);
++
++	/* Destroy monitoring thread */
+ 	if (zldev->kworker) {
+-		kthread_cancel_delayed_work_sync(&zldev->work);
+ 		kthread_destroy_worker(zldev->kworker);
+ 		zldev->kworker = NULL;
  	}
  
- 	/* Optional interrupt setup */
- 	if (device_property_read_bool(dev, "interrupt-controller")) {
--		girq = &ctrl->gc.irq;
-+		girq = &ctrl->chip.gc.irq;
- 		gpio_irq_chip_set_chip(girq, &ath79_gpio_irqchip);
- 		girq->parent_handler = ath79_gpio_irq_handler;
- 		girq->num_parents = 1;
-@@ -280,7 +289,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 		girq->handler = handle_simple_irq;
+-	/* Release DPLLs */
++	/* Free all DPLLs */
+ 	list_for_each_entry_safe(zldpll, next, &zldev->dplls, list) {
+-		zl3073x_dpll_unregister(zldpll);
+ 		list_del(&zldpll->list);
+ 		zl3073x_dpll_free(zldpll);
+ 	}
+@@ -986,7 +1107,7 @@ zl3073x_devm_dpll_init(struct zl3073x_dev *zldev, u8 num_dplls)
+ 
+ 	INIT_LIST_HEAD(&zldev->dplls);
+ 
+-	/* Initialize all DPLLs */
++	/* Allocate all DPLLs */
+ 	for (i = 0; i < num_dplls; i++) {
+ 		zldpll = zl3073x_dpll_alloc(zldev, i);
+ 		if (IS_ERR(zldpll)) {
+@@ -996,25 +1117,9 @@ zl3073x_devm_dpll_init(struct zl3073x_dev *zldev, u8 num_dplls)
+ 			goto error;
+ 		}
+ 
+-		rc = zl3073x_dpll_register(zldpll);
+-		if (rc) {
+-			dev_err_probe(zldev->dev, rc,
+-				      "Failed to register DPLL%u\n", i);
+-			zl3073x_dpll_free(zldpll);
+-			goto error;
+-		}
+-
+ 		list_add_tail(&zldpll->list, &zldev->dplls);
  	}
  
--	return devm_gpiochip_add_data(dev, &ctrl->gc, ctrl);
-+	return devm_gpiochip_add_data(dev, &ctrl->chip.gc, ctrl);
+-	/* Perform initial firmware fine phase correction */
+-	rc = zl3073x_dpll_init_fine_phase_adjust(zldev);
+-	if (rc) {
+-		dev_err_probe(zldev->dev, rc,
+-			      "Failed to init fine phase correction\n");
+-		goto error;
+-	}
+-
+ 	/* Initialize monitoring thread */
+ 	kthread_init_delayed_work(&zldev->work, zl3073x_dev_periodic_work);
+ 	kworker = kthread_run_worker(0, "zl3073x-%s", dev_name(zldev->dev));
+@@ -1022,9 +1127,14 @@ zl3073x_devm_dpll_init(struct zl3073x_dev *zldev, u8 num_dplls)
+ 		rc = PTR_ERR(kworker);
+ 		goto error;
+ 	}
+-
+ 	zldev->kworker = kworker;
+-	kthread_queue_delayed_work(zldev->kworker, &zldev->work, 0);
++
++	/* Start normal operation */
++	rc = zl3073x_dev_start(zldev, true);
++	if (rc) {
++		dev_err_probe(zldev->dev, rc, "Failed to start device\n");
++		goto error;
++	}
+ 
+ 	/* Add devres action to release DPLL related resources */
+ 	rc = devm_add_action_or_reset(zldev->dev, zl3073x_dev_dpll_fini, zldev);
+@@ -1039,46 +1149,6 @@ zl3073x_devm_dpll_init(struct zl3073x_dev *zldev, u8 num_dplls)
+ 	return rc;
  }
  
- static struct platform_driver ath79_gpio_driver = {
-
+-/**
+- * zl3073x_dev_phase_meas_setup - setup phase offset measurement
+- * @zldev: pointer to zl3073x_dev structure
+- * @num_channels: number of DPLL channels
+- *
+- * Enable phase offset measurement block, set measurement averaging factor
+- * and enable DPLL-to-its-ref phase measurement for all DPLLs.
+- *
+- * Returns: 0 on success, <0 on error
+- */
+-static int
+-zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev, int num_channels)
+-{
+-	u8 dpll_meas_ctrl, mask;
+-	int i, rc;
+-
+-	/* Read DPLL phase measurement control register */
+-	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
+-	if (rc)
+-		return rc;
+-
+-	/* Setup phase measurement averaging factor */
+-	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
+-	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
+-
+-	/* Enable DPLL measurement block */
+-	dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
+-
+-	/* Update phase measurement control register */
+-	rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
+-	if (rc)
+-		return rc;
+-
+-	/* Enable DPLL-to-connected-ref measurement for each channel */
+-	for (i = 0, mask = 0; i < num_channels; i++)
+-		mask |= BIT(i);
+-
+-	return zl3073x_write_u8(zldev, ZL_REG_DPLL_PHASE_ERR_READ_MASK, mask);
+-}
+-
+ /**
+  * zl3073x_dev_probe - initialize zl3073x device
+  * @zldev: pointer to zl3073x device
+@@ -1146,17 +1216,6 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+ 		return dev_err_probe(zldev->dev, rc,
+ 				     "Failed to initialize mutex\n");
+ 
+-	/* Fetch device state */
+-	rc = zl3073x_dev_state_fetch(zldev);
+-	if (rc)
+-		return rc;
+-
+-	/* Setup phase offset measurement block */
+-	rc = zl3073x_dev_phase_meas_setup(zldev, chip_info->num_channels);
+-	if (rc)
+-		return dev_err_probe(zldev->dev, rc,
+-				     "Failed to setup phase measurement\n");
+-
+ 	/* Register DPLL channels */
+ 	rc = zl3073x_devm_dpll_init(zldev, chip_info->num_channels);
+ 	if (rc)
+diff --git a/drivers/dpll/zl3073x/core.h b/drivers/dpll/zl3073x/core.h
+index 16e750d77e1dd..128fb899cafc3 100644
+--- a/drivers/dpll/zl3073x/core.h
++++ b/drivers/dpll/zl3073x/core.h
+@@ -112,6 +112,9 @@ struct zl3073x_dev *zl3073x_devm_alloc(struct device *dev);
+ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+ 		      const struct zl3073x_chip_info *chip_info);
+ 
++int zl3073x_dev_start(struct zl3073x_dev *zldev, bool full);
++void zl3073x_dev_stop(struct zl3073x_dev *zldev);
++
+ /**********************
+  * Registers operations
+  **********************/
+diff --git a/drivers/dpll/zl3073x/devlink.c b/drivers/dpll/zl3073x/devlink.c
+index f3ca973a4d416..d0f6d9cd4a68e 100644
+--- a/drivers/dpll/zl3073x/devlink.c
++++ b/drivers/dpll/zl3073x/devlink.c
+@@ -86,14 +86,12 @@ zl3073x_devlink_reload_down(struct devlink *devlink, bool netns_change,
+ 			    struct netlink_ext_ack *extack)
+ {
+ 	struct zl3073x_dev *zldev = devlink_priv(devlink);
+-	struct zl3073x_dpll *zldpll;
+ 
+ 	if (action != DEVLINK_RELOAD_ACTION_DRIVER_REINIT)
+ 		return -EOPNOTSUPP;
+ 
+-	/* Unregister all DPLLs */
+-	list_for_each_entry(zldpll, &zldev->dplls, list)
+-		zl3073x_dpll_unregister(zldpll);
++	/* Stop normal operation */
++	zl3073x_dev_stop(zldev);
+ 
+ 	return 0;
+ }
+@@ -107,7 +105,6 @@ zl3073x_devlink_reload_up(struct devlink *devlink,
+ {
+ 	struct zl3073x_dev *zldev = devlink_priv(devlink);
+ 	union devlink_param_value val;
+-	struct zl3073x_dpll *zldpll;
+ 	int rc;
+ 
+ 	if (action != DEVLINK_RELOAD_ACTION_DRIVER_REINIT)
+@@ -125,13 +122,10 @@ zl3073x_devlink_reload_up(struct devlink *devlink,
+ 		zldev->clock_id = val.vu64;
+ 	}
+ 
+-	/* Re-register all DPLLs */
+-	list_for_each_entry(zldpll, &zldev->dplls, list) {
+-		rc = zl3073x_dpll_register(zldpll);
+-		if (rc)
+-			dev_warn(zldev->dev,
+-				 "Failed to re-register DPLL%u\n", zldpll->id);
+-	}
++	/* Restart normal operation */
++	rc = zl3073x_dev_start(zldev, false);
++	if (rc)
++		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
+ 
+ 	*actions_performed = BIT(DEVLINK_RELOAD_ACTION_DRIVER_REINIT);
+ 
 -- 
-2.48.1
+2.49.1
 
 
