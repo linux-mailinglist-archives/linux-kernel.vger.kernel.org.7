@@ -1,82 +1,89 @@
-Return-Path: <linux-kernel+bounces-808168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD164B4FB66
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:38:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2578B4FB64
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3CAE3B6A03
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABC716897F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B508337688;
-	Tue,  9 Sep 2025 12:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131F532CF6B;
+	Tue,  9 Sep 2025 12:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K8q7vAU+"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gVIEy9P3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2xlJSqd/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8FD2D3ED7;
-	Tue,  9 Sep 2025 12:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257AA322DB4;
+	Tue,  9 Sep 2025 12:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757421479; cv=none; b=laKDac8dzPT/4pEx90uCNUlyWsguedjb4rP3LmHV8J2dNZuPu6VURxy02o/5mneHdVpB1v5IBhAD/ppF/r1OdEUfpHRMdZqwBPBi+jMZdeMNe1LuidiynlOCJ0LdiLFIDoyN+u0Tt9vGn+LBA9KSoNEfXygBTUecFxvEW5UlFbM=
+	t=1757421477; cv=none; b=aKy7WL1hK3CPBJpCCshkhEPmMb6AfJ+NH1mFcw3zHoSZIE0VQZ/kMhbe/c5JMJ28uCXp1Gmr8L7OruWRRQRVLmCl2ZJMfYvZq1KOT+tqVGtA+kICijLPRGfe7r3hyPVBQQH1OsLZmskBZOo1ulGQT92Jpah1/YT/e7Xwi7h7Ygg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757421479; c=relaxed/simple;
-	bh=AwlCg6UHOncWugo3loGql859Ew84PL/D9QEznoNdr4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DYXPTBw/kXDrHCtf+QJnkyInQl3uX69hD0mUOTVqs34dOy1m64f2lLCdzTF4KtK58uza1eR5UsF5ZqFFDRN5TyIeb3I6s5voJswSMDsdg1GJ73ujHAsfR/NszAsrKMb/8XX1nzE5ain8Ru6jn+DSZodQEIcoVFcEJvudcu1qbAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K8q7vAU+; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <71629bf0-9c61-47a0-a56e-664bde0ba853@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757421474;
+	s=arc-20240116; t=1757421477; c=relaxed/simple;
+	bh=H8hZBFuaGCxEuXIGV38vj5JgKcCgDj247yDqFpnurRI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ePHwhdtkiE10kjDYsONjX5w4be8W6fz3wHbo/YBF+WvnR9z3BoG94yI7o9DA5WExBzL7sJ351XCevCSRPHhWa3ZkBhY83CrRMfL9bFkGRQ6UaoNtbWeqlTr5kD43dbiNOJp1qNbLo3z5feX/YRRn2tMq/jhnyCLR+5NqsGQ2dj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gVIEy9P3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2xlJSqd/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757421474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=48/xwh638NkFUCq4et+8iyMSrrRkWWc1f9x5JOS6UrU=;
-	b=K8q7vAU+GggklQq47Rd7nds+ybARZaP6wmn0tzNbBQgLmexzx/99WHXN+/9G9R2g2425Yv
-	lhJ+97Q7LmIQumu5YVmWTvuTQ1LM5u1LPdHz3X/nSYYEzrQ5URmt9GaX0raILlrMdMYr1U
-	hMlnHEEvXEBt5i8BXv23OaPDeoDD2y8=
-Date: Tue, 9 Sep 2025 13:37:34 +0100
+	bh=5Um56MO6Hq4AwOnzJ7D/qva49PwBVaEV0uBgzg3toHk=;
+	b=gVIEy9P3ljh8c2xVFo99+PSRIH5lMlI555kLIYmKiG1Fb0K602eAAKi6/HWoOMG2slDmvS
+	aVOIkejHz5j/Lg7qNWZg6C1aMnx7xx90lh8R5kccVYp9EBcdUnZIvIeQZO05Ddvcb/rAjM
+	TfkpILWlHyPQz536W7e76hggep4PAEOGOYCZOHnzjAujkuu+lPOg6W6KEUj8HLuwfmdvG7
+	SxZe+PmPs8hvnv2nP4NLChPRwkoyekK4AZ4YlUu4rLVPb44jt+p1WOFmBEtwKocHS59K+i
+	+ZGqU1usd64lvu8aSLPPfpgUy/I2mnc2QEL7Dx+V/6c/nYOuX/+q9NwI7GWKHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757421474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Um56MO6Hq4AwOnzJ7D/qva49PwBVaEV0uBgzg3toHk=;
+	b=2xlJSqd/+rzD+Im+p2LcvY0WGrQPCgDbgaLKsr4e2bTGkGHgCtXpYzvYcPM1eHGvhOgnA7
+	nrQHPoxAOXXLGqDA==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zilstra <peterz@infradead.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
+ <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [patch 00/12] rseq: Implement time slice extension mechanism
+In-Reply-To: <20250908225709.144709889@linutronix.de>
+References: <20250908225709.144709889@linutronix.de>
+Date: Tue, 09 Sep 2025 14:37:53 +0200
+Message-ID: <87ms73vm1q.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v11 1/5] net: rnpgbe: Add build support for
- rnpgbe
-To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
- gustavoars@kernel.org, rdunlap@infradead.org
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>
-References: <20250909120906.1781444-1-dong100@mucse.com>
- <20250909120906.1781444-2-dong100@mucse.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250909120906.1781444-2-dong100@mucse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On 09/09/2025 13:09, Dong Yibo wrote:
-> Add build options and doc for mucse.
-> Initialize pci device access for MUCSE devices.
-> 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Tue, Sep 09 2025 at 00:59, Thomas Gleixner wrote:
+> For your convenience all of it is also available as a conglomerate from
+> git:
+>
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/slice
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Force pushed a new version into the branch, which addresses the initial
+feedback and fallout.
+
+Thanks,
+
+        tglx
 
