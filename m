@@ -1,84 +1,120 @@
-Return-Path: <linux-kernel+bounces-807037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07947B49F2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:23:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F6DB49F2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2531BC3F4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D045A7AA58E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB762459DD;
-	Tue,  9 Sep 2025 02:23:33 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01E72472A2;
+	Tue,  9 Sep 2025 02:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XP46+QMs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C9F2236F0;
-	Tue,  9 Sep 2025 02:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A9F23A9B0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 02:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757384613; cv=none; b=eeXZ+m0hYsX93x9UOL3kiq3iX/d/caRnXfKOG6RmoBKuvXtk4jA2KFE3EvCcbsK3QiyoXAPEctP7InHwJLWdlka9LGUWBiylL2NKHjbKojgRuhDZGfn7O4BLb1fMRt/mKOx+aS/GYYbfrqkGL5V6QFRhHyS8FpW8xQqWB+3jq08=
+	t=1757384668; cv=none; b=mKCqI9Phr0zFjck5wjIh6E3ElGFPWCktKR2Bb/M3NP8Yw8fq3Nh39Xf4PaH6casTzN5fSa/FWS3IOH0JawDPnEfdu/8O2HOsJDWuUGMbsaUJ6p8DZ1IGKUR3tcKctVNBIX6LNfA5nyutBL2nXfYkc8d906/kfD6lu2F43c99haE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757384613; c=relaxed/simple;
-	bh=UkWhHdd9NUv+uIyG7x3woimdUTovmLF3qGi6a3dM1hI=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=TIcdiO5g8/+ML0BQYLsXg7eI7+rLYgfaDi6LOE65SgQNa/tmBE9Rz6ZuE7dn5jAr5jyc0Qv3Fr8yTXX0LR/YNiPYQ4yhs3ijam+nkBJL2SsUBFgjelcNkIVCejbopEUmxN9q6HKOcpL/LDWYUSax1NLZMDpgNErfXr5UbL++ILw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cLSKk2ytPz5PM37;
-	Tue, 09 Sep 2025 10:23:22 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 5892N8wD035468;
-	Tue, 9 Sep 2025 10:23:08 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 9 Sep 2025 10:23:09 +0800 (CST)
-Date: Tue, 9 Sep 2025 10:23:09 +0800 (CST)
-X-Zmail-TransId: 2afb68bf8f8d85e-a2c12
-X-Mailer: Zmail v1.0
-Message-ID: <20250909102309375p7Qo7NCj--86aJ6-hj3r1@zte.com.cn>
-In-Reply-To: <20250907001417537vSx6nUsb3ILqI0iQ-WnGp@zte.com.cn>
-References: 20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn,20250907001417537vSx6nUsb3ILqI0iQ-WnGp@zte.com.cn
+	s=arc-20240116; t=1757384668; c=relaxed/simple;
+	bh=rXblcU4RJo1epq/Ugyh9sei8B9zyUqPVXquk+rYm3w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3/TPF2rMDDzsX4cXihE18/4tAvzjR0iCnwaEHM812hyrYN9gI1rFFHdRlw4lUkhmXgmpCsd2Q6ivFnnQKa4WkLuckV5u04HcoQQ3q2Sllso5COx6p5wG/fGCyJuV8xZQEnCdl/lGLFTmDyYtfqQkUpkGL7/qqoMG7lK91OKDpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XP46+QMs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757384666; x=1788920666;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rXblcU4RJo1epq/Ugyh9sei8B9zyUqPVXquk+rYm3w8=;
+  b=XP46+QMs8c52gJdFaJT/zALpacsjH+zD5xZVTnuTtSsLUutZOe5q80RX
+   KcVGFmnpSbvoDjmPMsdaDealUmjg4k677/nQQ4ZkenV+hpA1fgh0TVvrT
+   1/AqJHdogyvJDTqH3H9htTJdANLbEjOGmcRLmCg4KPUd8mSYhOkk+QkJ1
+   iqJGE0+wSwjAHy7OWJY3A9QK4QQnToWdAmC31thyCP0tR+7L7oQKJi3Di
+   d8RrjQpdnjRi1+O9hVWdGxb9k2/LNttghayDndYJmKQQJ8QGkzxD49BQV
+   4gxU/GhdN5qkFZTtvE1YhklsZk8qbljrnP8Im3ZsnvJh5VYnbuBQb8jfI
+   g==;
+X-CSE-ConnectionGUID: yz8WHhz0TRuJiEdB5obAiA==
+X-CSE-MsgGUID: WCXiFN6UTbeDY9Vu6NMJmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="77114454"
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="77114454"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 19:24:25 -0700
+X-CSE-ConnectionGUID: 2RIKdZ4lTKC0lKLdgcJ3sA==
+X-CSE-MsgGUID: RQqgG6QqSDWXZELyXXpfVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="177302420"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Sep 2025 19:24:21 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uvo1q-0004LD-3A;
+	Tue, 09 Sep 2025 02:24:18 +0000
+Date: Tue, 9 Sep 2025 10:23:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
+	nicolinc@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	robin.murphy@arm.com, will@kernel.org, joro@8bytes.org,
+	kevin.tian@intel.com, jsnitsel@redhat.com, vasant.hegde@amd.com,
+	iommu@lists.linux.dev, santosh.shukla@amd.com,
+	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
+	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
+	gptran@google.com, kpsingh@google.com,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH v4] iommu/amd: Add support for hw_info for iommu
+ capability query
+Message-ID: <202509090900.HNQfwn5v-lkp@intel.com>
+References: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <fan.yu9@zte.com.cn>, <akpm@linux-foundation.org>
-Cc: <wang.yaxin@zte.com.cn>, <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSHYyIGxpbnV4LW5leHQgNC81XSB0b29scy9kZWxheXRvcDogSW1wcm92ZSBlcnJvciBoYW5kbGluZyBmb3IgbWlzc2luZyBQU0kgc3VwcG9ydA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 5892N8wD035468
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 09 Sep 2025 10:23:22 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68BF8F9A.000/4cLSKk2ytPz5PM37
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
 
-> From: Fan Yu <fan.yu9@zte.com.cn>
-> 
-> Enhanced display logic to conditionally show PSI information only
-> when successfully read, with helpful guidance for users to enable
-> PSI support (psi=1 cmdline parameter).
-> 
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-> ---
->  tools/accounting/delaytop.c | 182 +++++++++++++++++++++++-------------
->  1 file changed, 116 insertions(+), 66 deletions(-)
+Hi Suravee,
 
-Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17-rc5 next-20250908]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Suravee-Suthikulpanit/iommu-amd-Add-support-for-hw_info-for-iommu-capability-query/20250905-033352
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250904193112.7418-1-suravee.suthikulpanit%40amd.com
+patch subject: [PATCH v4] iommu/amd: Add support for hw_info for iommu capability query
+config: x86_64-rhel-9.4-func (https://download.01.org/0day-ci/archive/20250909/202509090900.HNQfwn5v-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090900.HNQfwn5v-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509090900.HNQfwn5v-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld: drivers/iommu/amd/iommu.o:(.rodata+0x25a8): undefined reference to `amd_iommufd_hw_info'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
