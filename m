@@ -1,193 +1,283 @@
-Return-Path: <linux-kernel+bounces-807697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DECB4A82B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFBBB4A82D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841203A370E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739EA444F87
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47042D1913;
-	Tue,  9 Sep 2025 09:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630A82D23B9;
+	Tue,  9 Sep 2025 09:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1kUUruk"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIau1DiM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076272D130C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682AE286894
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409981; cv=none; b=skk8swTCMXuMVXW7kw5uw7XcuY3tPbWQlRGi4qoajknz/LypoqEUD8olTxPONZAuGmKcxo70U/P9yA7aIN9QCS7vddRNNdZ7LMVcZNex2vUI9YkjSSRdrdgddhh8+sGanHyH9+UJCYpOYNl+RyY9do8bCpGGzoxeuQba9/X/Ba4=
+	t=1757409991; cv=none; b=e8R5U+cQeXo2b4wsvAGnnNPqEksuomiB4TYn4sHWDFCW3QojyuKrgszNSvL8EXUKEZOzfXu4/d08S1Sdyg49yhXMpKCVwELUvCgG/HIdo8PSzB2H+9ivhigfnvbHAe5xPd4iYtqh+rF4gLfbD46/8fru0cUXwCsw3zaKfjFjUq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409981; c=relaxed/simple;
-	bh=hIv0M1xI8frJxsikJ5DnOhEUO2kleaKFfsP8HrIZwSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PF8GPYjwV3m22m/OqSjR/Ecom2bFDYqPuYSdi11ZoBj325EgVDPTaDmTrLwloAiUh/IDzNxl3Nn3HVtxcQEeCB598hPIRyg8g4rE18eCk1D/GGJ1ff3XH4ENAGAi+Y9LD108QlD0A9pgj5APmncQtHTxYWP9DLfq5XVzvi5OrrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1kUUruk; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45ddddbe31fso18266385e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757409978; x=1758014778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZBpNNflTkMWuUHCsBPf2naE+qYZiwrT7qmaFKr9fdw=;
-        b=F1kUUruklAMZIxcZr51n7oEC3UR5qZsVyCCqIbGXjeIkWQbcB6UO61SYsYELXUw9TA
-         A+1FwJ1R/XJ/XszBYZ9Vl6DpCHWTwhFMwagIB4fWsyPtlDYfXbxxe1eFOa2Htx1EdvTI
-         vqxvtMBz8c422Y+KjI74INowrdf+fXKP7ksRqVBBSgl0EG0Vty+7Iq3yrW4HsAHI36LG
-         PVa1w729ZkQxh14qtbQ3WKl31+OYpNVXivwIoWNkqCITPUT4anO94o4nVf/SpMFa++SD
-         vwMGCGFBG1CNYrRDnTa4JgksNQ11QNIZZ9mQVL3FTzTqSVmFYuA+Ad5PM6Lo9CgBgBru
-         9Idw==
+	s=arc-20240116; t=1757409991; c=relaxed/simple;
+	bh=CAjkASl3Kw0SHk511xgoj+VcTreDuYnw5V5zpEIPpvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NG2m5KWOraFLReCM3dgWIm+J4ko27jfnft7g9aHco1zY9cRfUDK9oPpRhWw36DIUoVc/K4l7/Cc/xWI5YCjXujfO4RfaCtYKRSeT9FSIW4XVR7OKkfCO4shVasfHB3WH+lTcRiAgJEI3WPWravwect++D436pfGjaAswf0XA69w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FIau1DiM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757409988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OurCkvo8cRfbGgLYwYff0XkxeLDF9OohYudpKg0Q2Mc=;
+	b=FIau1DiMRicThLT/pfqhL9J3pt0vKCPADedalRdVcVHY+xQLpcjraYrEv1qoJ6Wjy6lax2
+	Ecu7jyrlW6ilgoiPCBkbFbbzgQh2DIuHQluLF9uRgjTKllhnCTBwUr0HghcHBvp64LkC6F
+	/fHLYG9mJ42lv2SSnSOZkI7VVovbNrg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-cGXDWu2yOAeYDuvVYvyLNw-1; Tue, 09 Sep 2025 05:26:27 -0400
+X-MC-Unique: cGXDWu2yOAeYDuvVYvyLNw-1
+X-Mimecast-MFC-AGG-ID: cGXDWu2yOAeYDuvVYvyLNw_1757409986
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e26569a11aso2671740f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:26:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409978; x=1758014778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757409986; x=1758014786;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4ZBpNNflTkMWuUHCsBPf2naE+qYZiwrT7qmaFKr9fdw=;
-        b=ejz1b6w9+UPiz64eybtZAsqFdVUcJGOF18XcGrdGxj2uQQjN1pTOKarrcla17W+mvK
-         3aetHWsqg5kBntUIs2Up19DQqZYag6nGMKOGygwWqQj7RMcuSs8ScmZag1T/PdlwVFLM
-         KFhS9Y3HpnTeXQAroGkE1mnLAQj4vHpG8IfRbat29zgYlamjANt5lIn3vxnXMoC5JxbQ
-         OPVOgj8PBB2VSfV6ZaT9jPONrjjcsunfAMT01BW45eX08RlOYE6EVnAs+W03fJeMR6Ur
-         3EvEQefU+JaJTvPIO6tB/YL9ysbBuC0i/eES9Hwqv4DfyKo0lwkYGuKxMDsUAxeKQyoS
-         es6g==
-X-Gm-Message-State: AOJu0YxVMFlWGuDUFagYRk9FlQpOykFqqydShS7pe4cEhpKbMW6sKh3o
-	4z8Eru1ZwqaWwsJInwZu4lQCBE2Q6YhCN4X5mnK1lQYHv3NUkvhgF3V6croivQ==
-X-Gm-Gg: ASbGncsjtEk9SHcfbwb6JtigX/V4a/z3cfqeNc8+AyDPNOkaX+YHZ3CUpoVP/Z7zhQ9
-	mGjPxF6T0+02D9b5FGiQsucuEqz2X2sdoR6zM5qAXt8q0Eu+s/7h3emECNlmQ6j2ohv6RyyPbxO
-	S7KAb5OQ89vm3JgVZBqeeiysbycZd3JPwGRTSYjlMpO2iLxslJj62dziY8CemEI4hz2RDrTSl/P
-	Z1VjAHz1b9rLEOQFeAhwKk3BmTRhyYuJe11p6pIWlZld+j0v3cWSwI/Ipi+uqO3K8Goc8MfTRqk
-	bGvdotvfQFVXRjKq7fndlN9ubXQKyJ5J119vNrgHasBvJdrvMRddlmgD///3U8zep2drs3rmOi+
-	+sWWrdDzimCF87ml+IMm5/TI=
-X-Google-Smtp-Source: AGHT+IGWrx1bb2cUBMB5LIaILRjDOZfhZW+ZgLyibZtX8apgT8z/wC4Ly25gHnGwXQHSNQFe0S7lZA==
-X-Received: by 2002:a05:600c:4fcd:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-45dddee3ae6mr106910395e9.33.1757409977589;
-        Tue, 09 Sep 2025 02:26:17 -0700 (PDT)
-Received: from fedora ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd4affb6bsm196955685e9.1.2025.09.09.02.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:26:17 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: [PATCH RESEND -tip] sched/core: use try_cmpxchg() in mm_cid_pcpu_unset()
-Date: Tue,  9 Sep 2025 11:25:52 +0200
-Message-ID: <20250909092606.1678763-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        bh=OurCkvo8cRfbGgLYwYff0XkxeLDF9OohYudpKg0Q2Mc=;
+        b=sUOun0gmXLej5Uo9s3Vu7+QpEHcR57uDKJwiRbkjbj0a7IboeK8zpeXDyN3DhKkA3r
+         nLDB99NrXqgKtOHjsJRKoGNo5Dwqy6UsoP34nE2CKsidj9YQprvEUR/uyM9+WM3jYZey
+         petcD3Oq6DOhTJzC/UoxFisdwKegyndxydcwJHZ5vlX7xcdXYd4QpOs+Y/CZXPDumY1w
+         iIGE9K0xpked4k2QMgoI8dmJfVDnfSpAOvmjAOTLR0y2HqX50jHbg2BGyIBzm7UkBDP2
+         6IWFcSgT21etLGz7mEFpGuXm5y6ZQCORzpITZL/9Ocon3D6nHtOI/tMmyafjy9lPd6EO
+         R2rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr5wUARzbUl2OtiwAlpNdgKVjYkG+qTE0y/kYiXxfdC+LY+i8d9VVm/I33ReGD83vyGVwXLk+VVLHUiMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPm+NW3MKyYf7CFAG3fxlbfQ7rj2ruI8rUj/43et2BSTJsjnWI
+	5IQQadjjgY8DKM5GAqEnTxIiOytdqi+R6CWIoieUeO7XPq6oGmhUKeiypjxVUqBylxe9TiPfSti
+	Mxq615T1NG/nJZRVP0f8KdZxghxxp7qa07264mJv6BB8ytIQkpA+ZF2vWhhV3BBIUZg==
+X-Gm-Gg: ASbGncvlYdZNHtPQsA1+iIMPicE9XR2d1KoF41FL8L9fyJFPgDwc3SWFeGvkjzmdyrQ
+	Tp/cnP5Ed02E6lxeOLWVKfmeqb+REx/zrRKSgrgPAF8Nty602/6MlK7kwpjTWT/dJzq5qRP44Fc
+	Yo95BtxXLWTsjZ5Jscje8a61krBl+ZolGfidz064lECzn/qT/pXc4f1jOPic24hXzLqyDt9E0+Y
+	yLKE+GJRxJJgfLzLDuXJ7xsTAmbyPxCI2Va5kiwaEX5VygcyWVFo9Bqtw2DYZjB4SNeCH1Rg7wb
+	eFft++fd5CTV8m7UQp+LH0wsf/wzEBrgYaUhhCwbJNBn5JJk61QoGyVBQEMpyj2c1INB7/ZGF14
+	fr6c9E1rUJLbi0u6I2V5mZps+RXg6tJbKT9ZHerSg6wuLwa+YnCN2xZwutNo1/rjtjT8=
+X-Received: by 2002:a05:6000:2f81:b0:3c8:d236:26bd with SMTP id ffacd0b85a97d-3e63736f01fmr10702033f8f.11.1757409985909;
+        Tue, 09 Sep 2025 02:26:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFxR9lLCllY89SGP0DnTjf2QCQWH2LpNqo/3CEdj7ZBEWXvSf1n4XCUk73I9R4VihF1/vNGg==
+X-Received: by 2002:a05:6000:2f81:b0:3c8:d236:26bd with SMTP id ffacd0b85a97d-3e63736f01fmr10701953f8f.11.1757409985314;
+        Tue, 09 Sep 2025 02:26:25 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34? (p200300d82f239c00d1f6f7fe8f147e34.dip0.t-ipconnect.de. [2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238832sm1808267f8f.31.2025.09.09.02.26.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 02:26:24 -0700 (PDT)
+Message-ID: <e882bb41-f112-4ec3-a611-0b7fcf51d105@redhat.com>
+Date: Tue, 9 Sep 2025 11:26:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/16] mm: introduce the f_op->mmap_complete, mmap_abort
+ hooks
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+ Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ kexec@lists.infradead.org, kasan-dev@googlegroups.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+ <ea1a5ab9fff7330b69f0b97c123ec95308818c98.1757329751.git.lorenzo.stoakes@oracle.com>
+ <ad69e837-b5c7-4e2d-a268-c63c9b4095cf@redhat.com>
+ <c04357f9-795e-4a5d-b762-f140e3d413d8@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <c04357f9-795e-4a5d-b762-f140e3d413d8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use try_cmpxchg() instead of cmpxchg (*ptr, old, new) == old in
-mm_cid_pcpu_unset(). x86 CMPXCHG instruction returns success in
-ZF flag, so this change saves a compare after cmpxchg.
+On 09.09.25 11:13, Lorenzo Stoakes wrote:
+> On Mon, Sep 08, 2025 at 05:27:37PM +0200, David Hildenbrand wrote:
+>> On 08.09.25 13:10, Lorenzo Stoakes wrote:
+>>> We have introduced the f_op->mmap_prepare hook to allow for setting up a
+>>> VMA far earlier in the process of mapping memory, reducing problematic
+>>> error handling paths, but this does not provide what all
+>>> drivers/filesystems need.
+>>>
+>>> In order to supply this, and to be able to move forward with removing
+>>> f_op->mmap altogether, introduce f_op->mmap_complete.
+>>>
+>>> This hook is called once the VMA is fully mapped and everything is done,
+>>> however with the mmap write lock and VMA write locks held.
+>>>
+>>> The hook is then provided with a fully initialised VMA which it can do what
+>>> it needs with, though the mmap and VMA write locks must remain held
+>>> throughout.
+>>>
+>>> It is not intended that the VMA be modified at this point, attempts to do
+>>> so will end in tears.
+>>>
+>>> This allows for operations such as pre-population typically via a remap, or
+>>> really anything that requires access to the VMA once initialised.
+>>>
+>>> In addition, a caller may need to take a lock in mmap_prepare, when it is
+>>> possible to modify the VMA, and release it on mmap_complete. In order to
+>>> handle errors which may arise between the two operations, f_op->mmap_abort
+>>> is provided.
+>>>
+>>> This hook should be used to drop any lock and clean up anything before the
+>>> VMA mapping operation is aborted. After this point the VMA will not be
+>>> added to any mapping and will not exist.
+>>>
+>>> We also add a new mmap_context field to the vm_area_desc type which can be
+>>> used to pass information pertinent to any locks which are held or any state
+>>> which is required for mmap_complete, abort to operate correctly.
+>>>
+>>> We also update the compatibility layer for nested filesystems which
+>>> currently still only specify an f_op->mmap() handler so that it correctly
+>>> invokes f_op->mmap_complete as necessary (note that no error can occur
+>>> between mmap_prepare and mmap_complete so mmap_abort will never be called
+>>> in this case).
+>>>
+>>> Also update the VMA tests to account for the changes.
+>>>
+>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> ---
+>>>    include/linux/fs.h               |  4 ++
+>>>    include/linux/mm_types.h         |  5 ++
+>>>    mm/util.c                        | 18 +++++--
+>>>    mm/vma.c                         | 82 ++++++++++++++++++++++++++++++--
+>>>    tools/testing/vma/vma_internal.h | 31 ++++++++++--
+>>>    5 files changed, 129 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>>> index 594bd4d0521e..bb432924993a 100644
+>>> --- a/include/linux/fs.h
+>>> +++ b/include/linux/fs.h
+>>> @@ -2195,6 +2195,10 @@ struct file_operations {
+>>>    	int (*uring_cmd_iopoll)(struct io_uring_cmd *, struct io_comp_batch *,
+>>>    				unsigned int poll_flags);
+>>>    	int (*mmap_prepare)(struct vm_area_desc *);
+>>> +	int (*mmap_complete)(struct file *, struct vm_area_struct *,
+>>> +			     const void *context);
+>>> +	void (*mmap_abort)(const struct file *, const void *vm_private_data,
+>>> +			   const void *context);
+>>
+>> Do we have a description somewhere what these things do, when they are
+>> called, and what a driver may be allowed to do with a VMA?
+> 
+> Yeah there's a doc patch that follows this.
 
-Also, try_cmpxchg() implicitly assigns old *ptr value to "old" when
-cmpxchg fails, enabling substantial source code simplifications.
+Yeah, spotted that afterwards.
 
-The generated asm code improves from:
+> 
+>>
+>> In particular, the mmap_complete() looks like another candidate for letting
+>> a driver just go crazy on the vma? :)
+> 
+> Well there's only so much we can do. In an ideal world we'd treat VMAs as
+> entirely internal data structures and pass some sort of opaque thing around, but
+> we have to keep things real here :)
 
-    d6cd:	eb 18                	jmp    d6e7 <...>
-    d6cf:	65 48 8b 0d 00 00 00 	mov    %gs:0x0(%rip),%rcx
-    d6d6:	00
-    d6d7:	89 d0                	mov    %edx,%eax
-    d6d9:	4c 01 c1             	add    %r8,%rcx
-    d6dc:	f0 0f b1 71 08       	lock cmpxchg %esi,0x8(%rcx)
-    d6e1:	39 c2                	cmp    %eax,%edx
-    d6e3:	74 3a                	je     d71f <...>
-    d6e5:	89 c2                	mov    %eax,%edx
-    d6e7:	83 fa ff             	cmp    $0xffffffff,%edx
-    d6ea:	75 e3                	jne    d6cf <...>
-    d6ec:	48 c7 83 20 0a 00 00 	movq   $0xffffffffffffffff,0xa20(%rbx)
-    d6f3:	ff ff ff ff
-    ...
-    d71f:	81 e2 ff ff ff 7f    	and    $0x7fffffff,%edx
-    d725:	f0 48 0f b3 95 90 05 	lock btr %rdx,0x590(%rbp)
-    d72c:	00 00
-    d72e:	eb bc                	jmp    d6ec <...>
+Right, we'd pass something around that cannot be easily abused (like 
+modifying random vma flags in mmap_complete).
 
-to a substatially more streamlined:
+So I was wondering if most operations that driver would perform during 
+the mmap_complete() could be be abstracted, and only those then be 
+called with whatever opaque thing we return here.
 
-    d6cd:	83 f9 ff             	cmp    $0xffffffff,%ecx
-    d6d0:	74 23                	je     d6f5 <...>
-    d6d2:	65 48 8b 15 00 00 00 	mov    %gs:0x0(%rip),%rdx
-    d6d9:	00
-    d6da:	89 c8                	mov    %ecx,%eax
-    d6dc:	4c 01 c2             	add    %r8,%rdx
-    d6df:	f0 0f b1 72 08       	lock cmpxchg %esi,0x8(%rdx)
-    d6e4:	75 42                	jne    d728 <...>
-    d6e6:	81 e1 ff ff ff 7f    	and    $0x7fffffff,%ecx
-    d6ec:	f0 48 0f b3 8d 90 05 	lock btr %rcx,0x590(%rbp)
-    d6f3:	00 00
-    d6f5:	48 c7 83 20 0a 00 00 	movq   $0xffffffffffffffff,0xa20(%rbx)
-    d6fc:	ff ff ff ff
-    ...
-    d728:	89 c1                	mov    %eax,%ecx
-    d72a:	eb a1                	jmp    d6cd <...>
+But I have no feeling about what crazy things a driver might do. Just 
+calling remap_pfn_range() would be easy, for example, and we could 
+abstract that.
 
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Valentin Schneider <vschneid@redhat.com>
----
- kernel/sched/sched.h | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b5367c514c14..d7f2cf458aa5 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3557,21 +3557,16 @@ static inline void mm_cid_put_lazy(struct task_struct *t)
- static inline int mm_cid_pcpu_unset(struct mm_struct *mm)
- {
- 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
--	int cid, res;
-+	int cid;
- 
- 	lockdep_assert_irqs_disabled();
- 	cid = __this_cpu_read(pcpu_cid->cid);
--	for (;;) {
-+	do {
- 		if (mm_cid_is_unset(cid))
- 			return MM_CID_UNSET;
--		/*
--		 * Attempt transition from valid or lazy-put to unset.
--		 */
--		res = cmpxchg(&this_cpu_ptr(pcpu_cid)->cid, cid, MM_CID_UNSET);
--		if (res == cid)
--			break;
--		cid = res;
--	}
-+		/* Attempt transition from valid or lazy-put to unset. */
-+	} while (!try_cmpxchg(&this_cpu_ptr(pcpu_cid)->cid, &cid, MM_CID_UNSET));
-+
- 	return cid;
- }
- 
 -- 
-2.51.0
+Cheers
+
+David / dhildenb
 
 
