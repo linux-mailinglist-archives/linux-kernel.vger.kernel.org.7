@@ -1,162 +1,116 @@
-Return-Path: <linux-kernel+bounces-808203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81086B4FBC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05239B4FBC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620691C22CF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A159B5409F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A81533CEBC;
-	Tue,  9 Sep 2025 12:50:09 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF2533A035;
+	Tue,  9 Sep 2025 12:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s9954l1u"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CAF33CEAE;
-	Tue,  9 Sep 2025 12:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA95334733;
+	Tue,  9 Sep 2025 12:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757422208; cv=none; b=gI44aV1iH70HQM5Nof730zKXLtwzUsplZkqeJIU0hXtXWxRAb1sozpALZlKA3t3JPeySeHBTd4PzcFIdr7ycOlkjsQySvYTvOhbDwriOXXXQ0TGHWy+zouP8cV3ytYIdWlmCRtWoJxd3SH7+rK1k0b0sQG3hdyYCFFvsOUjjxTo=
+	t=1757422243; cv=none; b=hL2AfboY9o+DpyyPjLdUESj3PyD3oHX2qU46W49PvZB/KjSyofWkHGgbvR4a9K1t88wEJX5u4CeqYCf+M1+HWb2MH3nGiZ0TqNIRvuLT55MflK6hmhBSyDxYEQRW1bHRmVp8XXNIhroyx/kAEulSRzip/zrm4ddtMF71Fi54gwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757422208; c=relaxed/simple;
-	bh=PuVjVHV1wc9pYl8GdTdV3JGTO6HWYNhQHMq2EYi4iJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIWpKr3ecn78U3Uw2S9EniTuXF+pf9NeKRq2GZKzHFcjeoX4PL9+XrPKPCb0Y24588B2Jr9t36hSmBCvC3h1Tjqyv3iDVBzszbPlnUZJOCfVggagqCp2EMvwivXGq4aHcU6cUF3DxEg8/pEUcv1/lwVsLtLYdthVkDfDeuPZcmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b00a9989633so172200266b.0;
-        Tue, 09 Sep 2025 05:50:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757422205; x=1758027005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PL5W7r7SW+5I44FlF/G9YaBRML8VYNr4bNZkUgMqIaA=;
-        b=OHxkZGRvBOI7Kz/dyyFtyhCH/OZLAg5XULST6Se8Ox7BYqqOj+yrpUFBBnJVt+K4K5
-         TID3RB2ggCRi6azvidc0Ns5XoRjDvaS/BaB+6uiB5lY5ARYkxWjSURvzTWW0AbdoudUr
-         3Ne9zq4f7/Ww9veWBt5FswwpanZRXSdR3YNL6QlYvcmxuv++6hhkdURT82tPpLilBLld
-         BYBY8mgz+AM3iDzJ2it7VJS0fdZhcp/qCsnWZfWVIjfzb6vDZ4ZnLzFeKLAQs9fUip4o
-         txhL8LdbE/KlHz7QAZ3cPm2mVkzmb1kD+ZKPTChfo4vMN5BKEvSeUkXmFkBe/GwZC8CJ
-         WSuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhY9jHNaHIyn1JZQqYkI4cKkw+EVKYf76nINxSEse265gAI45rm6tsN0fXg1lZOyz7OaMY69notxjmu/Y=@vger.kernel.org, AJvYcCW0o/MBESfSQpc2ByLYK3BiT2FQcAV4pq5mhn9VutRCYFuCwoyVMEt3+Ep/mWHgXpl7Nv3c9hxh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaAQWNCb2mzpvLf4Epf1XZ9WgUTUh+OopisuI8w6lvmJCFbh6a
-	dUywrr3u8iIrn9DmS312fQh1z2h4pv+SfzFYvaqUF3bDVZYMpdKhRiFD
-X-Gm-Gg: ASbGncv6nbOnD5npl1ql8uj+0qimhsxtMTgzIs9jAmf+ObexqlmknZB1/pCi1NCeAi0
-	PJi5L6qxRuNFRHy+e3O2kM87Y5Bn42NdRV6JA6uyuL5iFdkp/bgB3PScQMTU2yvmyzYIazP+0JA
-	z+EV7/0YJSXeSQHJBb6bnmnt2VQkKk5CBSiOpRMfrwaFOn+dXVC8t4smobKvKm+Jcim3iyGDBww
-	Ka2AEJ/N6jp/mIyrLDXwt3bWsgZd2So9UErpPVDZRaVnZGruc2foFMOUGzAJVGZHiAhfVKWcVW/
-	tzk3dowk/soMHQ+X2HxC7Knt21PPxYJE9A0WxZNC0P7usE+Vpdl4+bDemMZ6shso68BHHSvri+O
-	n0Ea47P2LuDGYNA==
-X-Google-Smtp-Source: AGHT+IFt/HhYIRfjMPYRAmI2pRuNGPplO0iIBQjsLKZgH0ZZ5p6msexYhicjU4gVciMaUBH61p47eg==
-X-Received: by 2002:a17:907:a088:b0:b04:3cd2:265b with SMTP id a640c23a62f3a-b04b1dd47b0mr1190898466b.5.1757422204798;
-        Tue, 09 Sep 2025 05:50:04 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413ee67a3sm2273063466b.24.2025.09.09.05.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 05:50:04 -0700 (PDT)
-Date: Tue, 9 Sep 2025 05:50:01 -0700
-From: Breno Leitao <leitao@debian.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>, 
-	kuba@kernel.org, calvin@wbinvd.org, Pavel Begunkov <asml.silence@gmail.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
-References: <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
- <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
- <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757422243; c=relaxed/simple;
+	bh=6pt6fdbI51HnlsLiKVQpPu5I3HDVPxOkLiCUOACXNg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BktqdKm4JBWlDBOHJlHDr9dtKSuR5T0aradExuqrh3trpP6kZ3cMtgjQTaNWOlc/U5ZWr/PGwJ2r+eAXW3eJkTVWGp2lbfTOxVkaUHgNLsMBa2IskMU812Ysyhke/QPEEcq8jZDbjO5/Hv0B13ctB2JQIivK2RpSLcEyZg+CQyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s9954l1u; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=6pt6fdbI51HnlsLiKVQpPu5I3HDVPxOkLiCUOACXNg4=; b=s9954l1uhglycDr4Wx0bZzwOyN
+	86g/vyWbzQ/33j/pZ6FDJ3oAlbiLLPt8rVzNBWHyObqeudvGOE8ui9BfDC/mFSAT4oI6Rfgr4sa2u
+	DCIUzmgDwixU6jVGC/lyMmmzQ3KnjORJ17WtFYFUeAtF7b+wru5DFLz4gilvnAVguMtkS90YAfcG5
+	pTo4PSbKviF6JHJKNvaaZqdmr6ZWCoqMAB9oD7klg1nf1goqgaizlzwtiYJTGeM7J4uhfJoNbLIHF
+	D946yRmCUhqK1aZXOz+kPoEgvSRd9CV0uJ211wJ5JJe/TxsgJF7CjI8z7Y7CcR/jracjqAikkslKK
+	TBZ7s/jw==;
+Received: from i53875b3d.versanet.de ([83.135.91.61] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uvxnW-0001F3-Ee; Tue, 09 Sep 2025 14:50:10 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sebin Francis <sebin.francis@ti.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Peng Fan <peng.fan@oss.nxp.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>,
+ Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 1/5] pmdomain: core: Restore behaviour for disabling unused PM
+ domains
+Date: Tue, 09 Sep 2025 14:50:09 +0200
+Message-ID: <6841173.4vTCxPXJkl@diego>
+In-Reply-To: <20250909111130.132976-2-ulf.hansson@linaro.org>
+References:
+ <20250909111130.132976-1-ulf.hansson@linaro.org>
+ <20250909111130.132976-2-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84a539f4kf.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hello John,
+Am Dienstag, 9. September 2025, 13:11:20 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb Ulf Hansson:
+> Recent changes to genpd prevents those PM domains being powered-on during
+> initialization from being powered-off during the boot sequence. Based upon
+> whether CONFIG_PM_CONFIG_PM_GENERIC_DOMAINS_OF is set of not, genpd relies
+> on the sync_state mechanism or the genpd_power_off_unused() (which is a
+> late_initcall_sync), to understand when it's okay to allow these PM domai=
+ns
+> to be powered-off.
+>=20
+> This new behaviour in genpd has lead to problems on different platforms.
+> Let's therefore restore the behavior of genpd_power_off_unused().
+> Moreover, let's introduce GENPD_FLAG_NO_STAY_ON, to allow genpd OF
+> providers to opt-out from the new behaviour.
+>=20
+> Link: https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@lin=
+aro.org/
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Link: https://lore.kernel.org/all/20250902-rk3576-lockup-regression-v1-1-=
+c4a0c9daeb00@collabora.com/
+> Reported-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sy=
+nc_state")
+> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until la=
+te_initcall_sync")
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On Fri, Sep 05, 2025 at 02:54:32PM +0206, John Ogness wrote:
+NPU on rk3588 now again correctly gets its supplying regulator and
+running said npu does not end up in a kernel panic :-)
 
-> >> The bigger issue for the nbcon patch would seem to be the seemingly
-> >> required .write_atomic leading to landing here with disabled IRQs.
-> 
-> Using spin_lock_irqsave()/spin_unlock_irqrestore() within the
-> ->device_lock() and ->device->unlock() callbacks is fine.
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-But it is not fine for netpoll, given that netpoll calls the network TX
-path, that in some cases, tries to get a IRQ-unsafe locks, such as
-&fq->lock. This is the current issue reported in this thread.
 
-In other words, netconsole/netpoll cannot call the TX path with IRQ
-disabled for some devices, due to some driver's TX path using IRQ unsafe
-locks.
 
-> > 1) Decouple the SKB pool from netpoll and move it into netconsole
-> >
-> >   * This makes netconsole behave like any other netpoll user,
-> >     interacting with netpoll by sending SKBs.
-> > 	* The SKB population logic would then reside in netconsole, where it
-> > 	  logically belongs.
-> >
-> >   * Enable NBCONS in netconsole, guarded by NETCONSOLE_NBCON
-> > 	* In normal .write_atomic() mode, messages should be queued in
-> > 	  a workqueue.
-> 
-> This is the wrong approach. It cannot be expected that the workqueue is
-> functional during panic. ->write_atomic() needs to be able to write
-> directly, most likely using pre-allocated SKBs and pre-setup dedicated
-> network queues.
-
-Netpoll has pre-allocated SKBs and, although not the primary way
-of allocating it, it can easily be set up to do so.
-
-The problem happens later, when netpoll calls netdev_start_xmit(), which
-calls ops->ndo_start_xmit(skb, dev), which might have some IRQ unsafe
-locks (depending on the sub system).
-
-To summarize the problem:
-
-1) netpoll calls .ndo_start_xmit() with IRQ disabled, which causes the
-lockdep problem reported in this thread. (current code)
-
-2) moving netconsole to use NBCON will help in the thread context, given
-that .write_thread() doesn't need to have IRQ disabled. (This requires
-rework of netconsole target_list_lock)
-
-3) In the atomic context, there is no easy solution so far. The options
-are not good, but, I will list them here for the sake of getting things
-clear:
-
-  a) Defer the msg as proposed initially.
-    Pro: If the machine is not crashing, it should simply work (?!)
-    Cons: It cannot be expected that the workqueue is functional during panic, thus
-          the messages might be lost
-   
-  b) Send the message anyway (and hope for the best)
-    Cons: Netpoll will continue to call IRQ unsafe locks from IRQ safe
-          context (lockdep will continue to be unhappy)
-    Pro: This is how it works today already, so, it is not making the problem worse.
-         In fact, it is narrowing the problem to only .write_atomic().
-
-  c) Not implementing .write_atomic
-    Cons: we lose the most important messages of the boot.
-
-  c) Any other option I am not seeing?
-
-Thanks for the insights,
---breno
 
