@@ -1,172 +1,168 @@
-Return-Path: <linux-kernel+bounces-808909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450E0B5065F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 551D9B50661
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD460543032
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF53154306A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B1335E4FE;
-	Tue,  9 Sep 2025 19:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BC350D79;
+	Tue,  9 Sep 2025 19:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwHXtEpJ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="afKHlGNk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B33352FDC;
-	Tue,  9 Sep 2025 19:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8346213A265
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757445734; cv=none; b=AeyucgOxtaiqGfPNpaUy35O08Rz/6RbgwbDMM6kLegXNPfWEHRokbDkeD3/iGSUL2qHwC/YMdyPERZ8wIJkodoP11TlOW5KoFHfH3U81Whuhg9G+tHrQwJ1ApVtgDcx5dc+kiNB48MurPt1bcur/xuSnxknLZS+wyqLMSMqf9YQ=
+	t=1757445792; cv=none; b=Y6/2QheH5sdNJxdTXBioxDkPRxbjDhBO6i1BRsiyxiwM0ZI/cT42kbDcpdZyIlu0z/o/gk1ptGsbADcK8pb4a/0wbjoFgDL8PbpMv2Ke7BOchBcRMDjuTsO8rjNSx/1oatZtRGr908H+dAVtCD7f/rozL8i6CKnGdE85uKs9PdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757445734; c=relaxed/simple;
-	bh=qdLV6/3+/lrDARwwF4gML3gh+ae10lFxH70/A3U06Tw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oo2mnEyBh27PS3obWL17bRuza9uLpSr8nHZ/aP7rozm27NzsGZYuJB9Y4XP5luiIA64i9X2PqY9gCjhmzsg6mcCzRcGa6IhnnwP0hVFJXv4y/I48WqWxqcyId0nJGKkDBTUkR/0mitv1JAdvca0NDUsCQQsnbTY0ILWiyuAdW9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwHXtEpJ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62bec18abe6so2425016a12.3;
-        Tue, 09 Sep 2025 12:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757445731; x=1758050531; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aV7GXnC31a6+Cg+cxmDgtlX37//JD5ZC5/oqghxN6v4=;
-        b=HwHXtEpJPSY4EOQHoRnD1nybjUnx5C3hRRt2rRyXwk45vEhExol2K0DvU3dhYmotoZ
-         edHdwuXkR7T5GNDsspmoiNxB5NoSXFgRbAodxZ4CJzULF0b2V1vqPbyDLTr6YHSN2O7Z
-         Q3V5ZgWBWC2g7TiPZeu+xKygLMrnyiayvFQ59HKVfhjZamdi/n8EuF8mCWnD+pC4AxON
-         R3lNHXmm2As9XnJuejAQGPKAZyNr8pWE/xrARlNd6JmRYbaosjCFCNY4AZv+hYrl5TRK
-         DRf4QcJ8od9Lz95B8KRZUgcxLNjho5J4TktK89MYdiVUnfz12K6mi5yfimKd94KYExDL
-         1q8A==
+	s=arc-20240116; t=1757445792; c=relaxed/simple;
+	bh=Dr41Tcqata/raqAboRNakNManKKV7R8cd3/aEJ1vBTY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JLiocYsc+bx/OWWPJdGfqVYEzuFQDU8aCzBls5aXRyWEdL/+hdVXZKYLbvsM+lOCcmlpxbKuBKogWXtXzAwyu/yeooXm04G8LNCmnQIAZ3Kq2Ti4teD2To1fnoGSWTbijj4iXF8/E3rvYw6Jj01GZ8RXK8o20tCbPmlWXqu8e8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=afKHlGNk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757445789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KaahEf6JZRZ6NZ6hGjJioziPQJonllTKnhQkCCQ9Zy0=;
+	b=afKHlGNk4Pnxa3W4skjN5v4/8YOjgS/LpUQ8gk0qjqSRqtutlBCq87RbsLDIr4YtLYsyws
+	LinqYF5cs2LJ2B88aFuegGUfgrzHvDn0rKYfqH1GHccqkP6iGgdk0lAw7wiDBmX42hDwVg
+	Ynyc0ZRGyw5nzRsJnJfC+wTFhfESEd8=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-58-KOuc1lywNKKnsOHgt2OD7A-1; Tue, 09 Sep 2025 15:23:08 -0400
+X-MC-Unique: KOuc1lywNKKnsOHgt2OD7A-1
+X-Mimecast-MFC-AGG-ID: KOuc1lywNKKnsOHgt2OD7A_1757445787
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-816ae20ff2dso687493285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 12:23:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757445731; x=1758050531;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aV7GXnC31a6+Cg+cxmDgtlX37//JD5ZC5/oqghxN6v4=;
-        b=gf2G9OvwhcqAILIkSiUSBJTvoIsCGbhWCLKaMxBX7qYjKNKIM9t2c8bUjFPp4d9DFJ
-         xbZCWKQ6wilMMBubP2o2F/0FiBn9wuSdJ+Wy1+dnM6FiJqmbjvMS8f9S7i8/8eSjtI/Q
-         6S6Z2cw23ZUDJI8/sT9iNiQeokB+oHESh6bW3g0VgM8LO5QN7GnnmZlBza+EOMHHMh9p
-         N1r2DF+Yyim1iCVp0Ph5f5bjUHfHL4wE4LncArmjnv2OmbKl09jRDguVRdoU6yDjD7Jz
-         24XcRNjaQ5PPEbEkTVtZpXo+WJ+We4vtMgzeoJleExb8xyaytyeiv4SNIHVBfEOLnvEg
-         owJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVesJi4+UmKTDgnea8Hctx+B4yYVceIGybL3d/lQjCYqMi6Mxx4fyAiH1D4xA0tznvTXYns2n7jwkKD@vger.kernel.org, AJvYcCWu6BWwsGNalxi9d6tKkhgG13AqQLMke99MUljVAOVuyJFG2eu+MXsBh0ZyIeC4ipdzWaGDkM9bBQhmCCVQDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRdMQF9XS4PaEty5BGs6eVkw0p2gQev3PV520yQrDNeuwyNF72
-	1jBhxk4Z0G417YwnDS6MLQDGmWiHjwUZC17aK5xnofIorTYzQN82dnI2
-X-Gm-Gg: ASbGncugfcS8a+65fyvbY+3qllFmxtH0X1NXAYhNKCSV5ZhQ406qfrppRnNp7JE4sJv
-	xqcrobhXfKWppv3US161gBfPotw1G4wNW4vU1ekk4HompYOL3YXH1bI9roUYJLEjJqTyILY81Mc
-	CCBv0UZekgLtJBtJaw0XT996yN4si9t3T/jUk0jr8o40u1IZVMX3GUwOrUCzlzaGpeu1gIT0C+W
-	Vusird3O/2nkk8kd1/9ruvHw/Hajbau26Qbh2I/9CZwCsqgitCiGjPRdfUcUWZN3aIncwYqng8T
-	6DoNIi7ZsdNV2KrbmpHptZ9wNpe4eRimoJ5veaXFZq1Y/An2VGZVDtqlUVwU1UJeHzsxY1vUkZJ
-	aPJMv2IGV3shMmoSHfegr
-X-Google-Smtp-Source: AGHT+IHrwxd77+1kRRdC9c95ipF2nTEJD6C6mWuCBmBnUTAJkbFqzDSJGw7t//aVeZcq2XkrSAq53A==
-X-Received: by 2002:a05:6402:26cb:b0:627:c107:842d with SMTP id 4fb4d7f45d1cf-627c1080d8emr8345248a12.4.1757445730676;
-        Tue, 09 Sep 2025 12:22:10 -0700 (PDT)
-Received: from [127.0.1.1] ([46.53.240.27])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm1847142a12.46.2025.09.09.12.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 12:22:10 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Tue, 09 Sep 2025 22:22:05 +0300
-Subject: [PATCH v2 3/3] arch: arm64: dts: qcom: sdm845-starqltechn: fix
- max77705 interrupts
+        d=1e100.net; s=20230601; t=1757445787; x=1758050587;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KaahEf6JZRZ6NZ6hGjJioziPQJonllTKnhQkCCQ9Zy0=;
+        b=UPDT4E5LCYldxcb++RtoL5oQN2wnhZF5nzzE41TceO8aIoyddb9+QHdY0lsVbALuZx
+         SSCH6p2Mtt5D151nEjbtQiFwIa/G8N0LEfvCXkqAJiBJ4JaC+y7FxcIyrAzcaqwkg8us
+         jBanJbraMJdNFrj8rJkWZqBIpOKCpILjk+rLi+/uT/KbNTy54kjCVH89rKI2/22FjNOY
+         l/BJCavpel0uTJN4EROrqctbXQe+qU128DXoz+zoifL8UbEM2ovVWt0CXRZAArIObEF1
+         RAIv2I7jFVrDSECxH7pBtY9v7Sh6P8yDI4qsAkOJElny0WaBwJx7tE/tEYpJGdtxKyBx
+         tQ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCURZj0+D53Y0KngodhLr77ISv0qb1XkP26XFpNANstZ+Un/0ZyskZ4vCgO+nlkDXPlrEGkFqZk4Act++Aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcCQ+5kPuiXhddHXcxKclKxFNfQlWkWhF3dzsG8XxqCR/lqofy
+	ZzoJTvQGxW1J4LQrROKy7Nj2/IYIjwBclnfopX1P50j99hfUUesq9e5bHFYeaT5J13/Sw4ADCNs
+	LpZc+ZWvI60eEAeHauj5juCcfTFu2DvxPZrF1SsbpmNt1HE81UF50w+alwlpAW1ly8A==
+X-Gm-Gg: ASbGncvZCpFPGIFq6o/z0Zo2mEKmpiNDca428mqPIwjZcojSG/R24ZCfGJHhVf9AfWD
+	A54TKqI/JcSNdpkppd0U/FMzRgrP0gc8IS92MaZlmjrkOWVbBFX0q/CouqRWnNRJcxMYs1NqrOD
+	lKf4g0Uq37Ro2NOvPgNbWbv7a/Oyov2/fMG/7KFHw1KvxZ4b7I7DVlisBXUB94msZ4uBFkPEOf2
+	Ydl7uiIfbfjUj7939aFLHcmnPnIb//vlFeafLdnHMS6TIAajRZkxfKWXKjpiFi+62TOQkdBBAXC
+	OlrYDNYnitBFmisLa0xuAqXvRHaaO+iGKVZjD15dLs8GUgleSENe8y/tUZS+382OOzPcyFCKTWS
+	kjitDrsHY4eOy
+X-Received: by 2002:a05:620a:28c4:b0:7f9:1f6b:67fa with SMTP id af79cd13be357-813be440672mr1186303585a.11.1757445787483;
+        Tue, 09 Sep 2025 12:23:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLY5kexLTwmeWexP1KElG9GzegYJmUBuptStZfbFZ+i//+RQxgQVoBsSR7G6dKU9Eld5w6MQ==
+X-Received: by 2002:a05:620a:28c4:b0:7f9:1f6b:67fa with SMTP id af79cd13be357-813be440672mr1186300685a.11.1757445786985;
+        Tue, 09 Sep 2025 12:23:06 -0700 (PDT)
+Received: from ?IPV6:2600:4040:5308:eb00:a77e:fec5:d269:f23e? ([2600:4040:5308:eb00:a77e:fec5:d269:f23e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81d97fdcc6fsm14133085a.42.2025.09.09.12.23.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 12:23:06 -0700 (PDT)
+Message-ID: <1788ec12-c362-440a-b63e-fc720bd5a18d@redhat.com>
+Date: Tue, 9 Sep 2025 15:23:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-starqltechn-correct_max77705_nodes-v2-3-e4174d374074@gmail.com>
-References: <20250909-starqltechn-correct_max77705_nodes-v2-0-e4174d374074@gmail.com>
-In-Reply-To: <20250909-starqltechn-correct_max77705_nodes-v2-0-e4174d374074@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757445725; l=1935;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=qdLV6/3+/lrDARwwF4gML3gh+ae10lFxH70/A3U06Tw=;
- b=OhmJ8WCY0i8ipcbuRaw8IQURN7oYyvqeB9f5BsKdQd8TqvmpZ8O3eDcVib3zPb0KWOVe51/jg
- IJWs1c9x1QzC8agpQnu7sGDSpYLGrOAWVz7ABpXbCsucQ6/joNZbJQt
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dm-vdo: Refactor VDO_ASSERT usage in
+ start_restoring_volume functions
+Content-Language: en-US
+From: Matthew Sakai <msakai@redhat.com>
+To: Ivan Abramov <i.abramov@mt-integration.ru>
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20250908222410.223574-1-i.abramov@mt-integration.ru>
+ <340645fa-5c6b-4b28-bd56-63088d4705da@redhat.com>
+In-Reply-To: <340645fa-5c6b-4b28-bd56-63088d4705da@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Since max77705 has a register, which indicates interrupt source, it acts
-as an interrupt controller.
 
-Use max77705 as an interrupt controller for charger and fuelgauge
-subdevices.
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-Changes for v2:
-- fix commit msg header prefix to 'arm64: dts: qcom: sdm845-starqltechn:'
-- remove binding header for interrupt numbers
-- make interrupt-cells 1, because irq trigger type is not used
----
- arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+On 9/9/25 2:58 PM, Matthew Sakai wrote:
+> On 9/8/25 6:24 PM, Ivan Abramov wrote:
+>> There's an incorrect VDO_ASSERT macro usage in
+>> start_restoring volume_index() and start_restoring_volume_sub_index(),
+>> since assert's return value is not used anywhere.
+>>
+>> Thus, use VDO_ASSERT_LOG_ONLY macro in such cases.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+>> ---
+>>   drivers/md/dm-vdo/indexer/volume-index.c | 8 ++------
+>>   1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/md/dm-vdo/indexer/volume-index.c b/drivers/md/dm- 
+>> vdo/indexer/volume-index.c
+>> index 12f954a0c532..99608f14400a 100644
+>> --- a/drivers/md/dm-vdo/indexer/volume-index.c
+>> +++ b/drivers/md/dm-vdo/indexer/volume-index.c
+>> @@ -832,11 +832,9 @@ static int 
+>> start_restoring_volume_sub_index(struct volume_sub_index *sub_index,
+>>           decode_u32_le(buffer, &offset, &header.first_list);
+>>           decode_u32_le(buffer, &offset, &header.list_count);
+>> -        result = VDO_ASSERT(offset == sizeof(buffer),
+>> +        VDO_ASSERT_LOG_ONLY(offset == sizeof(buffer),
+>>                       "%zu bytes decoded of %zu expected", offset,
+>>                       sizeof(buffer));
+>> -        if (result != VDO_SUCCESS)
+>> -            result = UDS_CORRUPT_DATA;
+> 
+> This is not a correct fix so we should not take this.
+> 
+> This assertion (and the one below) should only fail if the stored 
+> metadata has been corrupted, but in that case we definitely need to 
+> return the error and fail the load.
+> 
+> You are correct that we don't seem to use this result, but the correct 
+> fix is to return UDS_CORRUPT_DATA when this assertion fails.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-index 8a1e4c76914c..597e25d27d76 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-@@ -584,13 +584,15 @@ &uart9 {
- &i2c14 {
- 	status = "okay";
- 
--	pmic@66 {
-+	max77705: pmic@66 {
- 		compatible = "maxim,max77705";
- 		reg = <0x66>;
- 		interrupt-parent = <&pm8998_gpios>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
- 		pinctrl-0 = <&pmic_int_default>;
- 		pinctrl-names = "default";
-+		#interrupt-cells = <1>;
- 
- 		leds {
- 			compatible = "maxim,max77705-rgb";
-@@ -629,8 +631,8 @@ max77705_charger: charger@69 {
- 		reg = <0x69>;
- 		compatible = "maxim,max77705-charger";
- 		monitored-battery = <&battery>;
--		interrupt-parent = <&pm8998_gpios>;
--		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&max77705>;
-+		interrupts = <0>;
- 	};
- 
- 	fuel-gauge@36 {
-@@ -638,8 +640,8 @@ fuel-gauge@36 {
- 		compatible = "maxim,max77705-battery";
- 		power-supplies = <&max77705_charger>;
- 		maxim,rsns-microohm = <5000>;
--		interrupt-parent = <&pm8998_gpios>;
--		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&max77705>;
-+		interrupts = <2>;
- 	};
- };
- 
+Replying to myself, feel free to correct this patch, or I can probably 
+get to posting a proper fix later in the week.
 
--- 
-2.39.5
+> Matt
+> 
+> 
+>>           if (memcmp(header.magic, MAGIC_START_5, MAGIC_SIZE) != 0) {
+>>               return vdo_log_warning_strerror(UDS_CORRUPT_DATA,
+>> @@ -924,11 +922,9 @@ static int start_restoring_volume_index(struct 
+>> volume_index *volume_index,
+>>           offset += MAGIC_SIZE;
+>>           decode_u32_le(buffer, &offset, &header.sparse_sample_rate);
+>> -        result = VDO_ASSERT(offset == sizeof(buffer),
+>> +        VDO_ASSERT_LOG_ONLY(offset == sizeof(buffer),
+>>                       "%zu bytes decoded of %zu expected", offset,
+>>                       sizeof(buffer));
+>> -        if (result != VDO_SUCCESS)
+>> -            result = UDS_CORRUPT_DATA;
+>>           if (memcmp(header.magic, MAGIC_START_6, MAGIC_SIZE) != 0)
+>>               return vdo_log_warning_strerror(UDS_CORRUPT_DATA,
+> 
 
 
