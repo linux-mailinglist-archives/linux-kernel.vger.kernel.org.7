@@ -1,322 +1,152 @@
-Return-Path: <linux-kernel+bounces-807373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5135BB4A38B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8888BB4A38C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4FA64E156C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E83F189FCA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E412307AE1;
-	Tue,  9 Sep 2025 07:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E0C233723;
+	Tue,  9 Sep 2025 07:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="S74u19D+"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012055.outbound.protection.outlook.com [52.101.66.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PNn/FiRs"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEF83081A3;
-	Tue,  9 Sep 2025 07:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403023; cv=fail; b=HEtlxVdaV2/fD3edgj70O1hHUVOGVIcQBaBwBALTJ6TvpShrY5jHEZPUCRPOrikRAl35v6Pt/JJAE4wQX5STGIlVvFXdYQ517hTxYFI7aOEFx87btqMA938ou2MJqj7Wc9TXDEMBzRu2ETq+L5GO6Ve7NbwZPePauRD+1WpqOeU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403023; c=relaxed/simple;
-	bh=E7Hf5VCZEqNBtcwc5ArzxAvODWPipBuyS5dXfYgOyQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MjU5db3x1K2J56jqzrMpxVvxF24PUj8OMsmVnbqIqtP9Rf4lIEQRvU4PXgvzI6aS9g0nr8057+egpTAB5r9A5YOugKom58o7rxhkiK0ecH2OUcXZRxJknYAZyoYmvHY5Xc+TRJ/6so1ghlrwkYobHpScguKciZNpFMvFtIv6LT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=S74u19D+; arc=fail smtp.client-ip=52.101.66.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h3yvWZBk9r+khT0XBtHKlsTKO+BfM7w2azakPnY0Ar2E50HmQh50WqDlA/91pu8oifkihc9ojw2rvCRhXnH5QwMj/oKAVXvuZZ8TSEwClxg7KW6LLXqqES0isXUoe+IWAa4W3If1rAK8a9ypX5wX0h1bs+jegVbTKlKzVH8kDbA7TN8PY33c1dE4ngs8Lgub7b7C7wDwn/8YmuCqir1a/4eMh6XiqP8mpCzv2TdftbpToNBAkJ9o6BgwVKqh2nfM3gfiQd87J987j91R4Hh3+ip0wxXhTyGv3GAMf1GEv/9yyVs5Y9FAOTCt//bmgzg5NzfDap2ZzN/9CS9q3o1mlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fr2kPHkrILfv3jTzpfO5iIdTlYFfcSS+Dhp0VwJ0e1M=;
- b=VifW7IfX4rG6cIBGzubIERsZoRJZ6h0Ky8oNtfX7iF359hwYU4lugxnXCGf6mTLgHhZh6EyGjnGYHLwNuNJtnJ0Oj0r+TL6N87ZXZBAX5xI7uf2IMJYuHI8UGnR42BJhoW/3PrAwPz2iev/ttjznIdD+8M2iYwZyXHSUeAtcdt1cE0926VrxrgDkRcqjEwLXgfvL2HyQTN2XkbbVaL0O1e2klg5gbXqNFtLqNbnEIODEgWsMGOHn0y1zqbEe5QYFyBQrpGeEHpLK5kWw4XXELK08/DmdMmXJbX60S7HezoDGCdl885tUpTIOp6NOrciDgQUJI1+iBYnmcST8nyZq7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=google.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fr2kPHkrILfv3jTzpfO5iIdTlYFfcSS+Dhp0VwJ0e1M=;
- b=S74u19D+/MRQqPQh2Lx83G/7V37f65Jec0oyO3ueplrlalL5/uE/WPLKF8HMTMaUk+Ep+QtwziF592v850wpP6T1YZ10Jmdpt/qhmivhOeyqwv/RkucuWHD7boUzfEcjzFFPcXSNJIPg0QyqtCwRU53lRa140KquTMsjUQ9XrSJ4Jviaugs26x/p5YgrkktIZpiwNkxAEI+VtRtdkyOcF/0LX7UFRsx88xE5qt0E1CQZLfvtxqT9dy5CtB/IlQ1PpiW1eSKRbFS1kXMvH0QDQ2LA8/1fLGRwb8pl1DOMs15RWhzGUdw9SiS/Z9i3yaTK0W83VHsQnhXKBtLPzyszVA==
-Received: from AM8P251CA0010.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:21b::15)
- by PA1PR10MB8642.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:440::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 07:30:11 +0000
-Received: from AMS0EPF0000019D.eurprd05.prod.outlook.com
- (2603:10a6:20b:21b:cafe::69) by AM8P251CA0010.outlook.office365.com
- (2603:10a6:20b:21b::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Tue,
- 9 Sep 2025 07:30:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- AMS0EPF0000019D.mail.protection.outlook.com (10.167.16.249) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 07:30:11 +0000
-Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Sep
- 2025 09:30:01 +0200
-Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
- (10.124.11.208) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Sep
- 2025 09:30:00 +0200
-Message-ID: <45f6f6e0-bd1e-41e7-8c8e-bb556644a873@de.bosch.com>
-Date: Tue, 9 Sep 2025 09:29:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDF1307AE1;
+	Tue,  9 Sep 2025 07:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757403015; cv=none; b=ZW6i5RRpET3/sx9HOYiSwPmigeo4+iySSo6ibghAxzZvHprvCkG8J+ljIC8NMJo8zhnacnyFc1B0yEKfK5hKxvP01QEMNnoa3/w54UyrK/jArlKsUVoIjfBTZ0ECfg1NJqHBGOUVgPTkDYtfkMSUGhdGbTlyRYn7H9P7GlaKef8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757403015; c=relaxed/simple;
+	bh=17TjPEGleH6jkUH/eop+H4Y2Hc+UAEPRsawJCtI45zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iP5s1l7x2kA3NfIDYOSCG3WlUypOHksy9tvidKqkY7KsGknfiqlpm9NkFp0/9ErW4uhS15m7LW+v9klMXoH816L2WPlH+SipoQhc0vBdIS1N3NRWOVIVMB2fohK+n/blUgmypq2XILtW92Ibalh/N/JbsfJrsMb0a7uNlqXrVwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PNn/FiRs; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757403006; x=1758007806; i=markus.elfring@web.de;
+	bh=17TjPEGleH6jkUH/eop+H4Y2Hc+UAEPRsawJCtI45zE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=PNn/FiRsXHec54fw0ClKI4eVek2u5cIYnr/9Wu95+T4s+5H4mXQ+LAFC3dwcENbh
+	 dJxeGlgrD2SJTOVzLRB3sR0mowG3lVQYxYMYgkaSQ2HT8PTr2PPTzHia8ZnO8bylQ
+	 VORDUHHe2INC9atE2ms4JJXQQDQr0u49WZsZV8ZMMBBzRYVBBwJcT611Y3SZNLNLF
+	 3mWQUfYPEHInGjofggbZPkt6qU6tkdaUbURCTeoYY8BVyVaCOYmwDX1O+mt+H6DRa
+	 wwXAGoa4LsVk3BGK855SQRJPY5AaR0MdkNmX3y1LTJAixKrPZL8BlYuZprwkYq1UU
+	 Ubg9xwgkvzHqhuPeWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.239]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mhnvw-1uI8CM1eOe-00n5r9; Tue, 09
+ Sep 2025 09:30:06 +0200
+Message-ID: <d81c00f2-8b77-4b5d-baf7-afcc7dc5ac9b@web.de>
+Date: Tue, 9 Sep 2025 09:30:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
-To: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	"Alex Gaynor" <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
-	<bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sami
- Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, Benno
- Lossin <lossin@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
-Content-Language: en-GB
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] i2c: PCF8584: Fix space(s) required before or
+ after different operators
+To: Cezar Chiru <chiru.cezar.89@gmail.com>, linux-i2c@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+References: <207f485f-df06-43a6-b91d-8153b8922089@web.de>
+ <20250908175902.214066-1-chiru.cezar.89@gmail.com>
+ <20250908175902.214066-4-chiru.cezar.89@gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250908175902.214066-4-chiru.cezar.89@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019D:EE_|PA1PR10MB8642:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1e6ac3a-47b9-4727-f918-08ddef72b601
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MlJvcTFDdk5LUXg2T0dHZXBYRW9yVXBNd0NpcWhUdk93bWhSZ0VtQXpLUnEv?=
- =?utf-8?B?NFkrQ3NyMmV2ZHJBZkg5Z2U1WUVDcHpLT0xoeFBiRzVON1N0cDJ6b0F6RlNH?=
- =?utf-8?B?WnVkTnRwUElHczl1NEdnc0J0L3NvTmxoQlZySGVnMTkySER4YlRyVWJwRmhl?=
- =?utf-8?B?Mm5nTzRLbFN4c2pGS1VxTkx6QldoY2l5Y0xkQXZIR3BBaHpYdUJrbi9Vbjkw?=
- =?utf-8?B?MkErbzdiU0FtWEEyNlRFcGNpbWJhV2VCMG9ZZDVycDVSODBZeEJOWUlMb2w5?=
- =?utf-8?B?YUo0QU5ETTlHeU93WTJFV01BZVRJTGxwVGZZRTdLUHY4STR3WEh1MkFYd01T?=
- =?utf-8?B?WmZyZFE0Qm1KM1dVRmJkcVpPRmNvUzJrQTd0cnBCLzNSUEhZdnhwUmV3Tnl1?=
- =?utf-8?B?am96UGpOVVpLK0REYXRyRU9DN2pCTEROOHQ5Qk5IMjEzanlvUEhScmdVV3Jp?=
- =?utf-8?B?dHJ2bzNZQTJINGR1Z3B6SGoyM3ZXUXVoTnZJcmdjZlpFUVh4bTQyampwZTBW?=
- =?utf-8?B?TGJQS1JqbnRpTFQvbzV3cWlWdmtZbWhKSFZZRUV5MG92T3hMeVllV3U3NVFO?=
- =?utf-8?B?azkyR1JadHJZL0ZpNkdickExNHBvanVQc2x2M2t4alBvV2dPZzBrekF2dzN1?=
- =?utf-8?B?UnRrNTQ4eVgwcDJXWTZ3NDdnUm9JTFZlWVRJN3U0QStqTW4va3J2ZE5TZzBC?=
- =?utf-8?B?dE9yV0FFNENFeE5mY2dNc1ZYdnVQUjhCekczMG9sQXBJUFZzNGZKT2ZmTEJX?=
- =?utf-8?B?b1pvL1RscVdiajliYW9wNUNScHlGdzZ5MkMzSUE0ZTBWZXVNbG9zV254eUlC?=
- =?utf-8?B?KzlIdTgrYjhhY1lUbWxFbm1KdURjWituVmpJYWFoVDB4WXRYdlJNdG4weEUy?=
- =?utf-8?B?aUtxMTNreDZtOWZVQ1JYU2RvWXByYnhIZXF2ZHJrMmZTeHdTejhJZDdVVEtk?=
- =?utf-8?B?K0NtcGtndHV4UGZTZlpRNm1ZeWo3YjFXQXF4bHRCMkZJMDljMDRXejM3R3B6?=
- =?utf-8?B?YUx4VllyL2RqSUtia1RZclh1MjlEQlRUNTlkK0NDNS9XM0hXM2R1YW4rVnpR?=
- =?utf-8?B?TTJzakxsaU1hL055YnkwMjVzQlhRNnRiNE5Ocm00ajFleEM2OUZKc2x3aFZF?=
- =?utf-8?B?c2dYUGh5MDdnZ0ZSclBhT05HRlgwOXd4TVUzaCt0Q0JGVFlxaWhmTmY0Q3M2?=
- =?utf-8?B?dVRvZlMzTDdabTRCbUFTZ0pvdzBxeXN2K1JzY0VvMTlPQU9xaWRqTXBPUWho?=
- =?utf-8?B?d2RQcHR6ZE05VnRDUExIU1k3SHpIT0NrdytNTWo0aVFEV281R3ljRjlyN3pD?=
- =?utf-8?B?QUFEb0lVV0o5K2hVWTJPZzBBUTY4Z0l5ODUzbHJva3dmWCtmY29yNGllYno3?=
- =?utf-8?B?SENiVU5yY3dsbmwwaTZULyt0SElSR3lhTjNSOUlWUVFoT3czNkhLMmJiVjNr?=
- =?utf-8?B?QzRFK2haK3p1bm5yd3hldDhETGpRWUlXcjlHY0hHeUdWSG1RMUkrdXEwK3VO?=
- =?utf-8?B?WXM5S1BkQmxMOHgxQ0g4NDFxc1E5dUg1SFk4WmlOVWUwZ0VsajE1K2p1OTB6?=
- =?utf-8?B?RFkzeFMrOGRjUDBON1gwK3prbllVYjZJR1pTOUtibGVvQmJIWmRRTWxSZDB6?=
- =?utf-8?B?T0U4QnhpajdlTzFNVkp4WWdvcjJITFJSak5saytCTG9FTVJidXNSaFBtUGZ3?=
- =?utf-8?B?dkJyK0kxUzZjNUUyZ1JHN0pERlJPZmRnRlM3ZDhKcFVYQndPTmEyWi9IdUVN?=
- =?utf-8?B?Q3lPU2UwVkFJRXE5azEyblgzQVlxTUFDeHoxWFFLREM5SmRSZ3d3Vk1ockVz?=
- =?utf-8?B?N3pBZGFVSFFPdVJXYzkvNWtWa3c2WENwUGFqWGhpYVRWdDBlYmFRWVloZWdn?=
- =?utf-8?B?QitIU216c0ZCYXhRMVFaVU13RThLeXJqUzdpUDBudmR4NENmR0MweGVEWXlF?=
- =?utf-8?B?RlJJb3VMa1NXTEw0MnY2ZkVNeE9oTUZhOVNaK01scnZaYjNxRzAxOHpVa0tz?=
- =?utf-8?B?T3k5ZVhmSlI0TWFBTVMwMFFLajQrYlhweUFTUzY0aldIVUx4OWpRUXo3RlRv?=
- =?utf-8?B?d0ZDc0JPYnZhV3BHcW1Ud2pJUU1lVUJiWHhKQT09?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 07:30:11.4640
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1e6ac3a-47b9-4727-f918-08ddef72b601
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019D.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8642
+X-Provags-ID: V03:K1:l/fJlVBUoECITIEhU/X4kmvf1OlJLNMoR5VvSDUb5ICkKbuxa0+
+ Drwd3xMwKPNhaXVmS9xjZ/01+p5ao7SOCWxBWCpRSV6zIlkUc2TfO0Eq+wiA+CWAAZuCL0a
+ Rv/x+asGS4XN7gXXvubCu/1jY11odvdvJOD3tFOWH0iOGFelP5n7cDGYnBL83xdX3oVCPq3
+ fy24h4oWqf4S//vTZ6DCA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:v50c91MgUao=;PLa/zQN4OpiXBrY3ufg8et5Ca7u
+ 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
 
-On 04/09/2025 23:13, Matthew Maurer wrote:
-> Extends the `debugfs` API to support creating read-only files. This
-> is done via the `Dir::read_only_file` method, which takes a data object
-> that implements the `Writer` trait.
-> 
-> The file's content is generated by the `Writer` implementation, and the
-> file is automatically removed when the returned `File` handle is
-> dropped.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  rust/kernel/debugfs.rs          | 148 +++++++++++++++++++++++++++++++++++++++-
->  rust/kernel/debugfs/entry.rs    |  42 ++++++++++++
->  rust/kernel/debugfs/file_ops.rs | 128 ++++++++++++++++++++++++++++++++++
->  rust/kernel/debugfs/traits.rs   |  33 +++++++++
->  4 files changed, 350 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-> index 65be71600b8eda83c0d313f3d205d0713e8e9510..b28665f58cd6a17e188aef5e8c539f6c7433a3b0 100644
-> --- a/rust/kernel/debugfs.rs
-> +++ b/rust/kernel/debugfs.rs
-> @@ -8,12 +8,18 @@
->  // When DebugFS is disabled, many parameters are dead. Linting for this isn't helpful.
->  #![cfg_attr(not(CONFIG_DEBUG_FS), allow(unused_variables))]
->  
-> -#[cfg(CONFIG_DEBUG_FS)]
->  use crate::prelude::*;
->  use crate::str::CStr;
->  #[cfg(CONFIG_DEBUG_FS)]
->  use crate::sync::Arc;
-> +use core::marker::PhantomPinned;
-> +use core::ops::Deref;
-> +
-> +mod traits;
-> +pub use traits::Writer;
->  
-> +mod file_ops;
-> +use file_ops::{FileOps, ReadFile};
->  #[cfg(CONFIG_DEBUG_FS)]
->  mod entry;
->  #[cfg(CONFIG_DEBUG_FS)]
-> @@ -53,6 +59,34 @@ fn create(name: &CStr, parent: Option<&Dir>) -> Self {
->          Self()
->      }
->  
-> +    /// Creates a DebugFS file which will own the data produced by the initializer provided in
-> +    /// `data`.
-> +    fn create_file<'a, T, E: 'a>(
-> +        &'a self,
-> +        name: &'a CStr,
-> +        data: impl PinInit<T, E> + 'a,
-> +        file_ops: &'static FileOps<T>,
-> +    ) -> impl PinInit<File<T>, E> + 'a
-> +    where
-> +        T: Sync + 'static,
-> +    {
-> +        let scope = Scope::<T>::new(data, move |data| {
-> +            #[cfg(CONFIG_DEBUG_FS)]
-> +            if let Some(parent) = &self.0 {
-> +                // SAFETY: Because data derives from a scope, and our entry will be dropped before
-> +                // the data is dropped, it is guaranteed to outlive the entry we return.
-> +                unsafe { Entry::dynamic_file(name, parent.clone(), data, file_ops) }
-> +            } else {
-> +                Entry::empty()
-> +            }
-> +        });
-> +        try_pin_init! {
-> +            File {
-> +                scope <- scope
-> +            } ? E
-> +        }
-> +    }
-> +
->      /// Create a new directory in DebugFS at the root.
->      ///
->      /// # Examples
-> @@ -79,4 +113,116 @@ pub fn new(name: &CStr) -> Self {
->      pub fn subdir(&self, name: &CStr) -> Self {
->          Dir::create(name, Some(self))
->      }
-> +
-> +    /// Creates a read-only file in this directory.
-> +    ///
-> +    /// The file's contents are produced by invoking [`Writer::write`] on the value initialized by
-> +    /// `data`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// # use kernel::c_str;
-> +    /// # use kernel::debugfs::Dir;
-> +    /// # use kernel::prelude::*;
-> +    /// # let dir = Dir::new(c_str!("my_debugfs_dir"));
-> +    /// let file = KBox::pin_init(dir.read_only_file(c_str!("foo"), 200), GFP_KERNEL)?;
-> +    /// // "my_debugfs_dir/foo" now contains the number 200.
-> +    /// // The file is removed when `file` is dropped.
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn read_only_file<'a, T, E: 'a>(
-> +        &'a self,
-> +        name: &'a CStr,
-> +        data: impl PinInit<T, E> + 'a,
-> +    ) -> impl PinInit<File<T>, E> + 'a
-> +    where
-> +        T: Writer + Send + Sync + 'static,
-> +    {
-> +        let file_ops = &<T as ReadFile<_>>::FILE_OPS;
-> +        self.create_file(name, data, file_ops)
-> +    }
-> +}
-> +
-> +#[pin_data]
-> +/// Handle to a DebugFS scope, which ensures that attached `data` will outlive the provided
-> +/// [`Entry`] without moving.
-> +/// Currently, this is used to back [`File`] so that its `read` and/or `write` implementations
-> +/// can assume that their backing data is still alive.
-> +struct Scope<T> {
-> +    // This order is load-bearing for drops - `_entry` must be dropped before `data`.
-> +    #[cfg(CONFIG_DEBUG_FS)]
-> +    _entry: Entry,
-> +    #[pin]
-> +    data: T,
-> +    // Even if `T` is `Unpin`, we still can't allow it to be moved.
-> +    #[pin]
-> +    _pin: PhantomPinned,
-> +}
-> +
-> +#[pin_data]
-> +/// Handle to a DebugFS file, owning its backing data.
-> +///
-> +/// When dropped, the DebugFS file will be removed and the attached data will be dropped.
-> +pub struct File<T> {
-> +    #[pin]
-> +    scope: Scope<T>,
-> +}
-> +
-> +#[cfg(not(CONFIG_DEBUG_FS))]
-> +impl<'b, T: 'b> Scope<T> {
-> +    fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl PinInit<Self, E> + 'b
-> +    where
-> +        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
+> operators: Require spaces around or before or after '=', ';', '<' and ','.
+> Add space(s) around or before or after different operators.
 
-Inspired by Greg's & Danilo's discussion I tried building with
-CONFIG_DEBUG_FS disabled. And get
+How do you think about to refine such a wording approach another bit?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.17-rc5#n274
+https://elixir.bootlin.com/linux/v6.17-rc5/source/scripts/checkpatch.pl#L5090-L5399
 
-error[E0412]: cannot find type `Entry` in this scope
-   --> rust/kernel/debugfs.rs:351:37
-    |
-351 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
-    |                                     ^^^^^ not found in this scope
-
-And giving it some Entry (for my 1.81.0)
-
-error: hidden lifetime parameters in types are deprecated
-   --> rust/kernel/debugfs.rs:352:37
-    |
-352 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
-    |                                     ^^^^^ expected lifetime parameter
-
-Dirk
+Regards,
+Markus
 
