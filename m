@@ -1,181 +1,141 @@
-Return-Path: <linux-kernel+bounces-807657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6F5B4A7B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7ADB4A7B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBEBC4E7ECD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06884E813F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87D2D6E5C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B9C288C8B;
 	Tue,  9 Sep 2025 09:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iH0gXyKH"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7v8kvNK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561872D640F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B61D28853A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409346; cv=none; b=qLVAy8z5KgY+WNECoZTEKy5XidRi4B48Fs/YWQeChTmzIdg9wsg383zMXVl6rXuGLrsuuSEE2hN2RvSqwP8vNF4nE76uLHjxcM1VdU9SVNIDieM7ykUyvNsfW037F9LU/YmMabFQX1uL60gi7HKHXVp6UZwyV70ByCQWcgq59Bg=
+	t=1757409347; cv=none; b=TzzopBexdgev5RWmpAtXl9X/vqcY2lPlxJ9BE5szcI9oSgyXdV5GEBANRIiV998Lmw/5JmSpLAX/Yx99ZvS9b1PVIYrDfCxAgE86kNjmXBvZI8dMrw7V+kRxFdNPEXrrBJHlmhwZEhvnWHUKOMDHgMxDPWXLykqGNsfjTMvRRhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409346; c=relaxed/simple;
-	bh=sVPlOFYsePlUlVyNjlOXy8QPDA01db/Wvcm9y2+eUf8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mHrBiY7nu1+FGDGZcnL/FGH6CiQqUWV9M8Wf7HF4abJBIIAmL00qR07Su+LcjkN2Mcrde8Hy+AGrfyPyiUEs82I6WGOoJiZbugvasMnaKveqShkTOx5egMo40QJXLYgOBHHhpuKBYrxppuvb/u3FXwrFA6uDiRk4ysAytcXCuOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iH0gXyKH; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e5190bca95so1860748f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757409342; x=1758014142; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tP+ETbVnBSQFrRZK3WwBGuGE5HSVEMwxjNtKrFEHY8A=;
-        b=iH0gXyKHBnyb9tjp6vpWY6VlMKF9VjNqWlXcNzWKwy2TsIqGZBr9gVvwaerHG7s3YL
-         llS6Po+PrsliYsRPf36fLQELla1i8Ez23T1TnmL/NiS/kbZNYaaTQmanlMyb4kSLoDFo
-         oYu6GwgL8kAiWfxCUXMrc6pUl9pSxc9schRCdYfXEch3LrPfGpHBw2cKWX/6WmSwik47
-         gMuMFr0YQ4Ce47tGt6UpXP4iTdtp/iA/DHKBjCRSVCKZSGlIxuKcc4cJ9vdjathWgh4F
-         kWeCRbMfrYHHdMagV7naFnIfMjWaFCh0X8yy6XOLcb9mDk9Vrzrc9tqDDIZAorgPDnoQ
-         MdPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409342; x=1758014142;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tP+ETbVnBSQFrRZK3WwBGuGE5HSVEMwxjNtKrFEHY8A=;
-        b=fQR990G4/606exr8uWacV4qXsRoqBhNPCYaSqZ0hgEZW7JLJ38DCYIkdxZtK18NDAD
-         ++I9m1ZOgWW6x3o6mYSIAQfWzKl3NAMXR+2EEgkDHtq1ZGrJIL7ReSf8KtxX7FCcwHXz
-         H90vOwtHZjOt5iBQxVVj4eZe7Jf91+bwgJNxZc/AyuMYjhojV70sjOhwkAjYS9INlf0h
-         qssiGPnLjbQD48TvL2EtNfHGjPhoVtNwQeLug3v6DtMYDtvgT3GBa4v3S/dUg3N2A3JQ
-         /jovmNK+nGQK3BQSGb7sw1FvMu2szChVrfzQ1lhOTv5la2l3zFv+7dIoub/Zb7M4SI6M
-         ktgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbuKHY9gVB5f/rMJfd9JVCn2wfyHtZ9oIHkrelmWiF+Zh25VpiWub1IepKWb3vbSfTR6b8xVp4r2BWgg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnDf+bXMYPIGYHRreF/zWz1XfFEmlHNvFv9lBJNBdOYXX7UPk9
-	SNlLV12K83nHY0UcoxIiCfzPWr5pJW8YYgD1/d1azZ0yHSTNLvYZ5KVRL9p9a0xVsII=
-X-Gm-Gg: ASbGncsciMlLklcImaX3CBtEw0MAIQd+TxkTf9wVoJc3k10sq9DRHxYY2/p3s9awk0Z
-	p68wFao6hF7/KE0nhhf470yU2pL4f8Xi4LmQhvny7i0L4BN7FgZJ4uJnp1GHgu2Q0Sa60PMqqZd
-	ShHQqKh0qF2Wvz+OJBNdzqXIKCFSv9WTJsF8HGmsGFKx9SUASgxgvBAMwqVKP4eWbW+QxdAhGjs
-	mUcOfbPjZOXWlnqCSZ2VHCxY6kWSa8PEoG/VJ7FmuD8SHXVBtQ3tf+lVGZ6pd22eMaQIkJ/NPme
-	XIsY9/rUTUrMk56s5FWWmm0t8+aQdIqaqbDi8KfqzVt/K4oY6IZz1/wQgXrZJP0SuMcC5XOj4Vv
-	2kNnlG0iqQg7GJgCO2Q==
-X-Google-Smtp-Source: AGHT+IFxM+HICQsKhDaBX2Rk22xBRkSqIHTShzXPmAQzNiNBdQoOhni1m43entJS3MAB8D5d0TZglQ==
-X-Received: by 2002:a05:6000:3106:b0:3e6:116a:8fed with SMTP id ffacd0b85a97d-3e64bde97a5mr9793821f8f.45.1757409341378;
-        Tue, 09 Sep 2025 02:15:41 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1ee:7be9:3ebb:6cc0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm1900039f8f.19.2025.09.09.02.15.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:15:40 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 00/15] gpio: replace legacy bgpio_init() with its
- modernized alternative - part 4
-Date: Tue, 09 Sep 2025 11:15:27 +0200
-Message-Id: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+	s=arc-20240116; t=1757409347; c=relaxed/simple;
+	bh=wjvHEOpNTJXgSUPx/Djy9L2Swmi3MuXtTYqnwyQKsbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R2vODW7YsLJS78+L0nJSJmEkRzx6o2uoUJ9yG7nmJIP9Ll/usRIRlC0y957ZxGHa7xO8rf6wJFegcZDOcZbARaowG8cDo2YUBF3fKIs8yvdlGz03q1Si3YDWqR+w1GVFYvlmZCyV6JqAXYSFUUhzaZmVUJiHyH3jCDBezsrfD1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e7v8kvNK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757409344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C5QcXolarFAbpy368VuZzh5UPuxBsU6hGFK9X7XlUcw=;
+	b=e7v8kvNKCbs9DXL26mSZt+DX4fA2hCpnM6TbhegcHvibiINI+znGk8rQg1DnZdozz3xTR9
+	dXCTt9wn1e1jLJfNvpAgHbQFcSdxFYIWzaWwl9KUI2fD/TQ/xKrkL0h2qzvd3JBPte52fT
+	S99ENobe649jS0WFjhpUwU1AG1cJ65M=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-154-7cJqFdyNMCmfLTV2eblJJQ-1; Tue,
+ 09 Sep 2025 05:15:40 -0400
+X-MC-Unique: 7cJqFdyNMCmfLTV2eblJJQ-1
+X-Mimecast-MFC-AGG-ID: 7cJqFdyNMCmfLTV2eblJJQ_1757409338
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC39118004D8;
+	Tue,  9 Sep 2025 09:15:37 +0000 (UTC)
+Received: from p16v.. (unknown [10.43.2.187])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DF7A419560B4;
+	Tue,  9 Sep 2025 09:15:33 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>,
+	Petr Oros <poros@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: [PATCH net-next v6 0/5] dpll: zl3073x: Add support for devlink flash
+Date: Tue,  9 Sep 2025 11:15:27 +0200
+Message-ID: <20250909091532.11790-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAC/wv2gC/x2MywqAIBBFf0Vm3YCKIfUr0cJqsln4QCOC6N+TN
- od7Fvc8UKkwVRjFA4UurpxiE9UJWA8XPSFvzUFL3ctBGvSZE4bQ8K81xQuzK6fBntRurV6c1Qb
- aPxfa+f7b0/y+HxskalRrAAAA
-X-Change-ID: 20250904-gpio-mmio-gpio-conv-part4-5e1f772ba724
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
- Doug Berger <opendmb@gmail.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2606;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=sVPlOFYsePlUlVyNjlOXy8QPDA01db/Wvcm9y2+eUf8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBov/Ays28j7tkwm0rJbaeX4j6Qex2lOj/LqMAOK
- 1PDzm34psOJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaL/wMgAKCRARpy6gFHHX
- ciEyD/4rjlTpLHFFOAETzbM8BZ7x3WlTsL5ofRL45hTWSkD3Bsd0OZjcixkAe0OHW2e3zFw2szF
- KeXpnt2sCS7J2vacxQtg0jH2fWZAf5bZ+OoGUTAieReshYzmxRi1YJFUgIrAX33d2SDzSvQrZvR
- VCG+aKnwtsgLIS3bpQ1AqNCIuxAy4Ry9lCAY3GF9UpNsbYioHxmLpykb53ferurCzD0dP9d2FfA
- qniXI92yE/VlFaWTo+gqGjUntxHg8iOH4ZhmUCDpE+Jd4zHfEBtw+OfWRmZkRnTp79FeNdacHx5
- p6k4r4XWU7dQ7BVOwC7MAvwAE8H7OI0viWBqD/6NVLyk6JNskJqsOwu8e94Ddt2gGDw0ARDpeD+
- I7mJlpyD/qmL48+7obrP2XRtew+5bs1uUUL9Agv17b6I59tLZFIO+8lix4XEyj9/Fg2w8cNkyZY
- c24JWXw0s0j+0JaiJKzZ5d6j7Bt4uYvxV2CCUoJ7bN1qi60NyHcPYrP2AwQ8sZKU1xtPedwTG+O
- KxwLrf9Cweg0/cRvkk6QQ82ss5f+Y7QsEwe7HuuKRKPRU9azoXk5BTPKu4ym9w5yjZDgjO+RreU
- OYdfHdNscHAHrLf43/UNtW2sSEmvItWokNn8tfM/e/oZXWUa6NjPf7lUXt62Wdv9ck60Df/2/bM
- oqEJP5tTEFOaNGA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Here's the final part of the generic GPIO chip conversions. Once all the
-existing users are switched to the new API, the final patch in the
-series removes bgpio_init(), moves the gpio-mmio fields out of struct
-gpio_chip and into struct gpio_generic_chip and adjusts gpio-mmio.c to
-the new situation.
+Add functionality for accessing device hardware registers, loading
+firmware bundles, and accessing the device's internal flash memory,
+and use it to implement the devlink flash functionality.
 
-Down the line we could probably improve gpio-mmio.c by using lock guards
-and replacing the - now obsolete - "bgpio" prefix with "gpio_generic" or
-something similar but this series is already big as is so I'm leaving
-that for the future.
+Patch breakdown:
+Patch1: helpers to access hardware registers
+Patch2: low level functions to access flash memory
+Patch3: support to load firmware bundles
+Patch4: refactoring device initialization and helper functions
+        for stopping and resuming device normal operation
+Patch5: devlink .flash_update callback implementation
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Bartosz Golaszewski (15):
-      gpio: loongson1: allow building the module with COMPILE_TEST enabled
-      gpio: loongson1: use new generic GPIO chip API
-      gpio: hlwd: use new generic GPIO chip API
-      gpio: ath79: use new generic GPIO chip API
-      gpio: ath79: use the generic GPIO chip lock for IRQ handling
-      gpio: xgene-sb: use generic GPIO chip register read and write APIs
-      gpio: brcmstb: use new generic GPIO chip API
-      gpio: mt7621: use new generic GPIO chip API
-      gpio: mt7621: use the generic GPIO chip lock for IRQ handling
-      gpio: menz127: use new generic GPIO chip API
-      gpio: sifive: use new generic GPIO chip API
-      gpio: spacemit-k1: use new generic GPIO chip API
-      gpio: sodaville: use new generic GPIO chip API
-      gpio: mmio: use new generic GPIO chip API
-      gpio: move gpio-mmio-specific fields out of struct gpio_chip
+Changes:
+v6:
+* fixed documentation
+v5:
+* additional fixes for issues reported by Jakub
+v4:
+* fixed issues reported by Jakub (see patches' changelogs)
+v3:
+* fixed issues reported by Przemek (see patches' changelogs)
+v2:
+* fixed several warnings found by patchwork bot
+* added includes into new .c files
+* fixed typos
+* fixed uninitialized variable
 
- drivers/gpio/Kconfig            |   2 +-
- drivers/gpio/TODO               |   5 -
- drivers/gpio/gpio-ath79.c       |  88 +++++-----
- drivers/gpio/gpio-brcmstb.c     | 112 +++++++------
- drivers/gpio/gpio-hlwd.c        | 105 ++++++------
- drivers/gpio/gpio-loongson1.c   |  40 +++--
- drivers/gpio/gpio-menz127.c     |  31 ++--
- drivers/gpio/gpio-mlxbf2.c      |   2 +-
- drivers/gpio/gpio-mmio.c        | 350 +++++++++++++++++++++-------------------
- drivers/gpio/gpio-mpc8xxx.c     |   5 +-
- drivers/gpio/gpio-mt7621.c      |  80 ++++-----
- drivers/gpio/gpio-sifive.c      |  73 +++++----
- drivers/gpio/gpio-sodaville.c   |  20 ++-
- drivers/gpio/gpio-spacemit-k1.c |  28 +++-
- drivers/gpio/gpio-xgene-sb.c    |   5 +-
- include/linux/gpio/driver.h     |  44 -----
- include/linux/gpio/generic.h    |  67 +++++---
- 17 files changed, 548 insertions(+), 509 deletions(-)
----
-base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
-change-id: 20250904-gpio-mmio-gpio-conv-part4-5e1f772ba724
 
-Best regards,
+*** BLURB HERE ***
+
+Ivan Vecera (5):
+  dpll: zl3073x: Add functions to access hardware registers
+  dpll: zl3073x: Add low-level flash functions
+  dpll: zl3073x: Add firmware loading functionality
+  dpll: zl3073x: Refactor DPLL initialization
+  dpll: zl3073x: Implement devlink flash callback
+
+ Documentation/networking/devlink/zl3073x.rst |  14 +
+ drivers/dpll/zl3073x/Makefile                |   2 +-
+ drivers/dpll/zl3073x/core.c                  | 362 +++++++---
+ drivers/dpll/zl3073x/core.h                  |  33 +
+ drivers/dpll/zl3073x/devlink.c               | 156 ++++-
+ drivers/dpll/zl3073x/devlink.h               |   3 +
+ drivers/dpll/zl3073x/flash.c                 | 666 +++++++++++++++++++
+ drivers/dpll/zl3073x/flash.h                 |  29 +
+ drivers/dpll/zl3073x/fw.c                    | 419 ++++++++++++
+ drivers/dpll/zl3073x/fw.h                    |  52 ++
+ drivers/dpll/zl3073x/regs.h                  |  51 ++
+ 11 files changed, 1696 insertions(+), 91 deletions(-)
+ create mode 100644 drivers/dpll/zl3073x/flash.c
+ create mode 100644 drivers/dpll/zl3073x/flash.h
+ create mode 100644 drivers/dpll/zl3073x/fw.c
+ create mode 100644 drivers/dpll/zl3073x/fw.h
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.49.1
 
 
