@@ -1,91 +1,211 @@
-Return-Path: <linux-kernel+bounces-808634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E010CB5029E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8E5B502A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C3A1BC21E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9402541401
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C07D352FDD;
-	Tue,  9 Sep 2025 16:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C4347D0;
+	Tue,  9 Sep 2025 16:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pATF4K9t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JfcmVSjw"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E0710E3;
-	Tue,  9 Sep 2025 16:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF633272E7B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435395; cv=none; b=bgnUAzzJWklaM/27WDwTUrWFKpkPTVUO0CHBdP5WUm2JC3X43q1UIJby91DBR/zkRzaCsDOdrwgeQk1EGRDBRunoTTeriYiYDvgw+kRbJjx0c+XhZh06OfhX7QxlnVwUPzBd3SEyuZZMpYIyonDfgDqYCJFqxSbqUxeJvylwhHI=
+	t=1757435423; cv=none; b=jpOvVxi5ZiCx1cHq9tt5l6CcIVZZSy42YjuXNY8pmaIx6aMxeeJj4jcP148LdmyCjpwDeGZwOajvnRBMWciEUJ+Xzv0BzGmfig9E0Pd4v8GcgXPKKIYPP+olUxzvKZtzDep8H1j4cm7SAF5kBrhCHPoM3ycE40vqOJmqWwQOhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435395; c=relaxed/simple;
-	bh=RFUXkjR/+l3yxMFaWzJjdIShtLguQR12lvOYMzRJoHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/tlkprmZYTw4F0801XbSSsQP4PU7ct4beSWVSlNhFb1Vnyzw3vIAqdTwA/BZMB5RRWPYV6gr52drjt26xROPASEdZx6SK/357jAqREMEuvzr56b01liCJfX2HS5pru1suZgAYY4te1YIHYbi9R3GGLCvqkXs9ZyU7KURy1KBSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pATF4K9t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2270C4CEF4;
-	Tue,  9 Sep 2025 16:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757435394;
-	bh=RFUXkjR/+l3yxMFaWzJjdIShtLguQR12lvOYMzRJoHs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pATF4K9tWq8EsDvRYLWCu8ax4jh8eQTdcVuAz61u+t6otm4vIA8qF/CYheZ6sgee7
-	 yznz6KMlm1+li7Z3S9klPS2AMzJR9NgEOuz9R2YYDP5NwZGILTiVUHCJUSf+RXCrZF
-	 /RmbWiXwyLsiumjjETKJO+kcpdM2MxePDncchzVMKXDBnVnvOuhZvsONkoVGCtYRhm
-	 HBnG3Hu8RyJgLrtzHarPIGnK+J+9e4Z1Dk+mPoeqmRJbt7LnWVW2fDMGAh/cGw0lMT
-	 ymtvlZhClmfLzGLa/z1CY21+VWT/sFLhx+FPHdKkYhWyWwZeThDXm16GxyP9ZPfRI3
-	 hKchfMeIRYItA==
-Message-ID: <871905b9-995b-4b16-97a1-7be580716ce4@kernel.org>
-Date: Tue, 9 Sep 2025 18:29:49 +0200
+	s=arc-20240116; t=1757435423; c=relaxed/simple;
+	bh=G9PEcnKcf0gtKT3AM2VvMAbi0kN3cdo24SxGQ889Ud4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=njfyXa2EvbOjDCo6I/HJNBsZXms4iQbcYnpmjec5RvdKjMA56Mr/LQ4UsutUsY9PdrGsTgZmqJ18G/zzamwq+30MHJkh1yYMjt1wek00NuKbNoWTUcGxLMZqMr/7fPkcG03BuODQxcx3ZXnXZx9y3oFWKWb7pBwQ2uPfp82TGKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JfcmVSjw; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-621c6ae39b5so49a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757435418; x=1758040218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FHJHNlNOaMOyVoBAHvHo+maMOWkTYnhe6QXua4Kxw8s=;
+        b=JfcmVSjwopHDQIStx+t09KlHzkV+DQ3usXYMp1aXOcUZ98o//nTTDJfElTAj0e3jU/
+         ZD+E9r39lwpi8cR7envVxeCniVnP/UNoqGgYHblsa0yjG4Xz07GGMG/RyRVYJWHfrxxX
+         b06g9OgwslN2cuDEHHtt9KCzFIOpq4iZbMUVd4/x9xXZJl1o8kJmKj3Y7EnL3Qk538GC
+         FaF4LmRCRhTRXmbyn2RsXQTgZD9DaNwiBTRMaETOFWN5EoYL7AKcV2v5waYqrP2REix3
+         Cd9fKvw/KuGYQZa0tu2epuAuU60zydq+iELXq+4IMMpvrAcGD5nWTCLzaDQ//19k5F3c
+         DeBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757435418; x=1758040218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FHJHNlNOaMOyVoBAHvHo+maMOWkTYnhe6QXua4Kxw8s=;
+        b=bAi44vGzlC5DcUNscSMlyiiQqyCUsjkYhGGLWgPV1eEp3Ce284M6GvegXybLiUdI1D
+         9p2Y6UFk/xNfXBoiz3Z46g0WFSq/QYkQgjXWnCjTWUdRMKFaTG/+6rTqUJu9c/wglJK7
+         x3hIuotZjDYM+MbaFaPUvulSjeAM1tBNr0EhkBowWG2tEIKME6O7M92wamCGhAiWukX7
+         RtbDlDdB5lm4aXgLGdxgsY9s0S7eavuXC1qM/W16PAIc/nCKMEkgLurGC+HaCgIo61Hz
+         0cRhTagqlcs9bbQXt7vZkGNgK6TzG9QF9lXaPvwQ7nZknWiHfsqHqIFVjJRvj11+1bFC
+         qlYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ+1KzmmGPLEJbqXSKwL7M6g+A7USgy6HIj345FlujT38GR7k0xTpWp54v2qYY+KNmn3ndkx/96lOrQzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv4D5jkI4yrNljHaHGDmhDHCw5GW7k83pnvFPz6tLeplsO4uLL
+	L0qFO/hRiy2rUUI6bUmUnckKLjpQFlUw3KZ75HTXcPK8c4WuCOTPXhzIY8+PZEuWEK+TdC0sgs2
+	/24N1xXstkxTLsm3bfAS8OSAgBt6jiGVpap1DJirr
+X-Gm-Gg: ASbGnctlqVT0x2UgAxj16uufOjgBX48GbYuByMYSXnLZEoxl0Y1J9RnCtG389H8Um8P
+	EvKO967h/t+JqO9IA9bnfKwd1YgSqmf2bMC15/pKncT/LUQzDp1VhQRbo/Y3bEAtfzAyV+QZPfV
+	DsQO1T5UdRCvsyXnTyfXCGwYJys63FcvbDcBNHoL3wsCzXDQYdFyeLNxpdKijXVcbcxZI+w60AB
+	lUqUf1oNo/psxO5xspr8uKHBvH49oYXFIqNEnWGDw32
+X-Google-Smtp-Source: AGHT+IFbWAiDVlID1hnyzgk511dH5neUI5OLeqIjJ12rVpIAxmuNfaLD/tbpY5u2JY5Vm3Sgx+0SMd1CXr4QkvXrU5o=
+X-Received: by 2002:a05:6402:4541:b0:61e:c6ae:7a58 with SMTP id
+ 4fb4d7f45d1cf-626a1f9b6a2mr267968a12.0.1757435417828; Tue, 09 Sep 2025
+ 09:30:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and
- devm_enable_optional
-To: Mark Brown <broonie@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
- <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
- <aL_PwXck1HsLp5wH@tardis-2.local>
- <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
- <aMBJ805QjQcPdRol@tardis-2.local>
- <d59eae86-9b8b-4d4d-9a1c-b76ff0f42704@sirena.org.uk>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <d59eae86-9b8b-4d4d-9a1c-b76ff0f42704@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250909090659.26400-1-zhongjinji@honor.com> <20250909090659.26400-4-zhongjinji@honor.com>
+ <CAJuCfpHVzRtUQukO0kZP072vCu89DwOEAocS571b4sGxMc6Zow@mail.gmail.com>
+In-Reply-To: <CAJuCfpHVzRtUQukO0kZP072vCu89DwOEAocS571b4sGxMc6Zow@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 9 Sep 2025 09:30:04 -0700
+X-Gm-Features: AS18NWAA3gXYcKcu6BJyCASw1JY2Tg5yKdBcwtKDAMzJA7pfY6LSVb0ENi0HJp8
+Message-ID: <CAJuCfpFKyPht_31Xq+a7YXhjxMWCrucdMSjJS--YnzMf6npqoQ@mail.gmail.com>
+Subject: Re: [PATCH v8 3/3] mm/oom_kill: The OOM reaper traverses the VMA
+ maple tree in reverse order
+To: zhongjinji <zhongjinji@honor.com>
+Cc: mhocko@suse.com, rientjes@google.com, shakeel.butt@linux.dev, 
+	akpm@linux-foundation.org, tglx@linutronix.de, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, lenb@kernel.org, rafael@kernel.org, 
+	pavel@kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, liulu.liu@honor.com, feng.han@honor.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/25 6:17 PM, Mark Brown wrote:
-> On Tue, Sep 09, 2025 at 08:38:27AM -0700, Boqun Feng wrote:
-> 
->> Well, then the question is why we want to compiler regulator.rs if
->> CONFIG_REGULATOR=n? Shouldn't we do:
-> 
->> #[cfg(CONFIG_REGULATOR)]
->> pub mod regulator
-> 
->> in rust/kernel/lib.rs?
-> 
-> If we do that then every single user needs to also add ifdefs for the
-> regulator API which is not exactly wonderful usability.
+On Tue, Sep 9, 2025 at 9:29=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Sep 9, 2025 at 2:07=E2=80=AFAM zhongjinji <zhongjinji@honor.com> =
+wrote:
+> >
+> > Although the oom_reaper is delayed and it gives the oom victim chance t=
+o
+> > clean up its address space this might take a while especially for
+> > processes with a large address space footprint. In those cases
+> > oom_reaper might start racing with the dying task and compete for share=
+d
+> > resources - e.g. page table lock contention has been observed.
+> >
+> > Reduce those races by reaping the oom victim from the other end of the
+> > address space.
+> >
+> > It is also a significant improvement for process_mrelease(). When a pro=
+cess
+> > is killed, process_mrelease is used to reap the killed process and ofte=
+n
+> > runs concurrently with the dying task. The test data shows that after
+> > applying the patch, lock contention is greatly reduced during the proce=
+dure
+> > of reaping the killed process.
+> >
+> > The test is based on arm64.
+> >
+> > Without the patch:
+> > |--99.57%-- oom_reaper
+> > |    |--0.28%-- [hit in function]
+> > |    |--73.58%-- unmap_page_range
+> > |    |    |--8.67%-- [hit in function]
+> > |    |    |--41.59%-- __pte_offset_map_lock
+> > |    |    |--29.47%-- folio_remove_rmap_ptes
+> > |    |    |--16.11%-- tlb_flush_mmu
+> > |    |    |--1.66%-- folio_mark_accessed
+> > |    |    |--0.74%-- free_swap_and_cache_nr
+> > |    |    |--0.69%-- __tlb_remove_folio_pages
+> > |    |--19.94%-- tlb_finish_mmu
+> > |    |--3.21%-- folio_remove_rmap_ptes
+> > |    |--1.16%-- __tlb_remove_folio_pages
+> > |    |--1.16%-- folio_mark_accessed
+> > |    |--0.36%-- __pte_offset_map_lock
+> >
+> > With the patch:
+> > |--99.53%-- oom_reaper
+> > |    |--55.77%-- unmap_page_range
+> > |    |    |--20.49%-- [hit in function]
+> > |    |    |--58.30%-- folio_remove_rmap_ptes
+> > |    |    |--11.48%-- tlb_flush_mmu
+> > |    |    |--3.33%-- folio_mark_accessed
+> > |    |    |--2.65%-- __tlb_remove_folio_pages
+> > |    |    |--1.37%-- _raw_spin_lock
+> > |    |    |--0.68%-- __mod_lruvec_page_state
+> > |    |    |--0.51%-- __pte_offset_map_lock
+> > |    |--32.21%-- tlb_finish_mmu
+> > |    |--6.93%-- folio_remove_rmap_ptes
+> > |    |--1.90%-- __tlb_remove_folio_pages
+> > |    |--1.55%-- folio_mark_accessed
+> > |    |--0.69%-- __pte_offset_map_lock
+> >
+> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> > Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+>
+> Reviewed-by: Suren Baghdsaryan <surenb@google.com>
 
-OOC, I assume users do not just depend on CONFIG_REGULATOR, as it depends on the
-actual platform / board whether they require control over a regulator?
+Apparently I misspelled my own last name :)
+
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+
+>
+> > ---
+> >  mm/oom_kill.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index ffa50a1f0132..52d285da5ba4 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm=
+)
+> >  {
+> >         struct vm_area_struct *vma;
+> >         bool ret =3D true;
+> > -       VMA_ITERATOR(vmi, mm, 0);
+> > +       MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
+> >
+> >         /*
+> >          * Tell all users of get_user/copy_from_user etc... that the co=
+ntent
+> > @@ -526,7 +526,13 @@ static bool __oom_reap_task_mm(struct mm_struct *m=
+m)
+> >          */
+> >         set_bit(MMF_UNSTABLE, &mm->flags);
+> >
+> > -       for_each_vma(vmi, vma) {
+> > +       /*
+> > +        * It might start racing with the dying task and compete for sh=
+ared
+> > +        * resources - e.g. page table lock contention has been observe=
+d.
+> > +        * Reduce those races by reaping the oom victim from the other =
+end
+> > +        * of the address space.
+> > +        */
+> > +       mas_for_each_rev(&mas, vma, 0) {
+> >                 if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+> >                         continue;
+> >
+> > --
+> > 2.17.1
+> >
 
