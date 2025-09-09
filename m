@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-808605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FCB50235
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:13:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37C0B5023C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648193B53EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36671C6197C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91D33EB15;
-	Tue,  9 Sep 2025 16:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A055B33A023;
+	Tue,  9 Sep 2025 16:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="X69xpkj0"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3+Ig/RmQ"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B236124;
-	Tue,  9 Sep 2025 16:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434405; cv=pass; b=uW3j4l4pDGn92vL1jegqlH9WlAjtcEARBRg9GEu9u7CTSmPntlJy//WZfRXwtlacme2I2K7BXJAP0XyeAXsEYtC9jwXOpruS2ygPbwRcg/tiDvcMOgykTpkViyoSI0qosNYBW/jyFxkoBdblxOmGJbD3LT/0FJT0ncjrPftmtv4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434405; c=relaxed/simple;
-	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=smPs+USByiLi9YrXX+Zg3JlBhMNcEkS2SyYgiPdKpfK4uvVmZ374EL6Ym+NCtu+pVdG6vAAcf9DVrcW39Sd1dvYNUSo0rSvp7t3ApzIVL6+sUBluSuzprc3HtzLLeZry+g8/BsL3JkBjrEtWkGraUHdYJ+vjeZo0OW1Ya6zT7DY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=X69xpkj0; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757434389; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=atUOZXQRSK/DXAWNftmQAt+h4rUMp7ZFthyhYEiHJPW2lCDaWP6qrHtL38oHxHOZ6DJH9zcMU44SUlS76/+tt66YJWxmON8MCv7xsotUBNyu6JlAorxlV2LLg6ZZA3vo6kUBiYZ9/5onYt0UtRDHTIt+crRG+cZDb9DWBGYbLbQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757434389; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=; 
-	b=WGJl16zmiD7maN9N/i2zdiuHDUWG4CvGtTuYTnNmsscEskvCjniktK7jIi4k8KEytZ3sMMl5z1hzuYHO8J3ZV74DXGvq7untiEfdY89qkcDMztgqa1IvN6516bzOoJNydSVido7OYkml/aCWcorpiBwp6U5Xpp8OaUd9FcyG8CE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757434389;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=;
-	b=X69xpkj0nSvR+fDAGJZ5Y0sGMkD3puMrdA0CpKk1GhitMVY6HiH9xC7iMAL9RvnT
-	nfpqraHaeTRkNcUkRmSkGIEfAVphdHm+4Wb3zmGIz1qmCYajR+R3iomjvZ2kRWetJOj
-	0ewet1cjx+WH2A9kz/jJoK/5JhCr6DY4JewvrPTw=
-Received: by mx.zohomail.com with SMTPS id 1757434387476350.1436464211441;
-	Tue, 9 Sep 2025 09:13:07 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E293594E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757434483; cv=none; b=i11miamlCrRkH8UmXlhhKX2sSdUEd0FEG6cR4i2IMb6Pd/xg0f9lR2f6Om/UUTh2EicxV3LXYuKf0R4/1nF07QWZUiKHuESmG5Vzx1h53I0cUY3w6ptlgbx0o+uFxf+xfiVF4X1oYcqfQQDpgAw9LhS91VtMUPRTMz4HgeRsRGQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757434483; c=relaxed/simple;
+	bh=Mz5sKRsdSfgn13KUBdRg6Vvpk9EwU24uw45F0iw35JE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eiuhp3piwrAM7LlXGty+VLIIPSvy+aSidn33lfR2prGJN+jee1CJxJ0SUltxU7Q+LtckoSSY+RMGGKsoy6Sg1z42TRbxjadgLsNYvy4hpfa/7frxh8p9Bf+/iuLjZiKrJjyTBwR7k8AEuYrsbJcPoONGwBT8GZte2T8M4xyCJZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3+Ig/RmQ; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso3694028f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757434480; x=1758039280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t3MUxe5idS+BGR3j6o3LYiON4iTePZTn2nSk7Al8lT8=;
+        b=3+Ig/RmQzXfUlRYvHiUY95vJ5X6M0CfS7015vFlA5Kgt4WBKEInYBbC6T0DiVjKdt2
+         as38KcjOcFOloJJr7oXfoJCVfvDs4m0BTxZACUlXdpGkWxaL6/XHSPcWpIv5NWR0e775
+         NCh6ISuFaDfEGPzimgfiaFDVDGqiIVQSXNbsHq1A1W3TGQyyUPe8kiwHv+weP2sfu6t4
+         zWlnYADi4gXEVZSM2YpNg0Kr7qvo6t6GlJX1zH9x0J+qIbDGHlQ6/ol3IY1aAK+Vf2U6
+         vgfemXbHdO8hcwWS+kkZ01Mauo1IHkiHuQD3Vbomtm3J49bHn1cD59UbTsOgPyHnjLVX
+         6m+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757434480; x=1758039280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t3MUxe5idS+BGR3j6o3LYiON4iTePZTn2nSk7Al8lT8=;
+        b=A9YX1UkRGW7Gy6l8WpEAj0afOnnn4WVnWzc1mWrfkaYoKRwZsuLKmLtaYNSaiqAt1E
+         x2A++iuOUhecXaqAXYS/7XvegpxcRLqpA3WqJwe+GAlKWVmlDOqjekoIdgj/aB6IBszv
+         XTaAk68b52NkNKUh4kk7nzPs6S9Zipq8K4YfC7jAaIjhgtvsz20CJ/8sun7Sjm4hZLfR
+         Hy5kgFEzwkNDfCL4f/52kxsOMG5ctZgxEf3KXl9jhhHKjQTGNVPmHlwYtuHD91sLkgTu
+         GDC8nqEDCoR1yCmUGpO6eefDUuscfbGDkUjfNdQyN2QeLfQSkxGu54af2CENu4n8Se6J
+         Tc9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXjVV4WGmZ95N5rtZKSbUpJa43465hCpbftzC3JMm+pCisWgU+1UifCjSZ2QyIPUoxwttOYdzr8n3ej7MI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz299TVRssRd62kn+CSbtMUZ7gWssGrsoQ40av8jipt2dxF5m9r
+	oCgVkeANb3WeQUIz0bOryNLuGOy6DKfVqwsa6PJTJ+/qozEMc31QUuKs+v4XBywowQ==
+X-Gm-Gg: ASbGncvCbEKMOx22CxJHx9IsYhrA7/pMVcqpk/RYu4Rd+yRkRZquIrNsl21zL5QgJ5v
+	iwlL28G8H6JgXpwB1nQBnRikenHWX1dHeNae6AUbGlbmV+nIBt5KH0YfhG+jARSVcxGeIpd3oHP
+	LQ7NcyN+E6yTXzt6oSyCraldh7SiX81EJTCAIKt/K8GleCta3v0EGS8pbrPleFU2jB6IITmTItb
+	Xe4MVVJs5mjb4BHg42msyulESPgYJJY3y/OCXS6JzBa76nEQPz3cX2lKvJq9+h68EIm3yWxlEz8
+	6QQ32NAW1449RP7aA1SGskwwTE4d5+dryQf3vC1dk6NAv0Jgyh34uh8LyExLHrgriUIMMMEbXks
+	6jrviSr2nd+N+AFlhxS6yVWQXh+gNlf3KM4Fvmkc9hBrFQp0FF3fQuzqoKMIRgettCze2gWVQiO
+	Js0Fid
+X-Google-Smtp-Source: AGHT+IGptLchfw5sfmOjEPtY8r2qXSKc2v7A8C2EV7ihJJOKFikE7Xpor1boUUPU/n3AR1zmFBHKUQ==
+X-Received: by 2002:a05:6000:248a:b0:3e4:f194:2887 with SMTP id ffacd0b85a97d-3e6462583c1mr8562991f8f.30.1757434479398;
+        Tue, 09 Sep 2025 09:14:39 -0700 (PDT)
+Received: from google.com (211.29.195.35.bc.googleusercontent.com. [35.195.29.211])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9a2esm3528836f8f.14.2025.09.09.09.14.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 09:14:38 -0700 (PDT)
+Date: Tue, 9 Sep 2025 17:14:35 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, jstultz@google.com,
+	qperret@google.com, will@kernel.org, aneesh.kumar@kernel.org,
+	kernel-team@android.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/24] tracing: Add reset to trace remotes
+Message-ID: <aMBSa29ev0BNgr5R@google.com>
+References: <20250821081412.1008261-1-vdonnefort@google.com>
+ <20250821081412.1008261-5-vdonnefort@google.com>
+ <20250908193757.079aae76@gandalf.local.home>
+ <aMAZMaZJ1_Eny5Ku@google.com>
+ <20250909094028.3265b751@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and
- devm_enable_optional
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aMBJ805QjQcPdRol@tardis-2.local>
-Date: Tue, 9 Sep 2025 13:12:51 -0300
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8CA69D19-754C-43F5-96CD-B7060C68B025@collabora.com>
-References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
- <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
- <aL_PwXck1HsLp5wH@tardis-2.local>
- <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
- <aMBJ805QjQcPdRol@tardis-2.local>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909094028.3265b751@gandalf.local.home>
 
+On Tue, Sep 09, 2025 at 09:40:28AM -0400, Steven Rostedt wrote:
+> On Tue, 9 Sep 2025 13:10:25 +0100
+> Vincent Donnefort <vdonnefort@google.com> wrote:
+> 
+> > > I wonder if we should name the file "reset" to not be confusing to users
+> > > when they cat the file and it doesn't produce any output.  
+> > 
+> > My idea was to keep the exact same interface as the rest of the tracing. I could
+> > keep that /trace file for compatibility and add /reset?
+> > 
+> > "cat trace" could also just returns a text like *** not supported *** ?
+> 
+> If it's never going to be supported, I rather not add it. It not being
+> there is a sure way of knowing it's not supported. Just adding it because
+> the normal system has it is actually worse if it doesn't behave the same.
 
+If later we extend the meta-page to support non-consuming read, /trace would
+then become useful.
 
-> On 9 Sep 2025, at 12:38, Boqun Feng <boqun.feng@gmail.com> wrote:
->=20
-> On Tue, Sep 09, 2025 at 12:04:35PM -0300, Daniel Almeida wrote:
->> Hi Boqun, thanks for chiming in!
->>=20
->>> On 9 Sep 2025, at 03:57, Boqun Feng <boqun.feng@gmail.com> wrote:
->>>=20
->>> On Mon, Sep 08, 2025 at 08:10:28PM -0300, Daniel Almeida wrote:
->>>> A lot of drivers only care about enabling the regulator for as long =
-as
->>>> the underlying Device is bound. This can be easily observed due to =
-the
->>>> extensive use of `devm_regulator_get_enable` and
->>>> `devm_regulator_get_enable_optional` throughout the kernel.
->>>>=20
->>>> Therefore, make this helper available in Rust. Also add an example
->>>> noting how it should be the default API unless the driver needs =
-more
->>>> fine-grained control over the regulator.
->>>>=20
->>>> Suggested-by: Danilo Krummrich <dakr@kernel.org>
->>>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->>>> ---
->>>> rust/helpers/regulator.c | 10 +++++++++
->>>> rust/kernel/regulator.rs | 58 =
-+++++++++++++++++++++++++++++++++++++++++++++++-
->>>> 2 files changed, 67 insertions(+), 1 deletion(-)
->>>>=20
->>>> diff --git a/rust/helpers/regulator.c b/rust/helpers/regulator.c
->>>> index =
-cd8b7ba648ee33dd14326c9242fb6c96ab8e32a7..11bc332443bd064f4b5afd350ffc045b=
-adff9076 100644
->>>> --- a/rust/helpers/regulator.c
->>>> +++ b/rust/helpers/regulator.c
->>>> @@ -40,4 +40,14 @@ int rust_helper_regulator_is_enabled(struct =
-regulator *regulator)
->>>> return regulator_is_enabled(regulator);
->>>> }
->>>>=20
->>>> +int rust_helper_devm_regulator_get_enable(struct device *dev, =
-const char *id)
->>>> +{
->>>> + return devm_regulator_get_enable(dev, id);
->>>> +}
->>>> +
->>>> +int rust_helper_devm_regulator_get_enable_optional(struct device =
-*dev, const char *id)
->>>> +{
->>>> + return devm_regulator_get_enable_optional(dev, id);
->>>> +}
->>>> +
->>>=20
->>> These two functions are already EXPORT_SYMBOL_GPL(), so you won't =
-need
->>> to add rust_helper for them. Creating rust_helper_*() for them will =
-just
->>> export additional symbols.
->>=20
->> These are inlined (stubbed) if CONFIG_REGULATOR is not set, so we =
-need the
->> helpers to get around that, IIUC.
->>=20
->=20
-> Well, then the question is why we want to compiler regulator.rs if
-> CONFIG_REGULATOR=3Dn? Shouldn't we do:
+Another argument for non-consuming read would be to enable dump on panic.
 
-Yes, we do want to compile regulator .rs. There=E2=80=99s been prior =
-discussion on
-this (see [0] below, but also [1]).
+But I understand your point, it might be wishful thinking at this point.
 
->=20
-> #[cfg(CONFIG_REGULATOR)]
-> pub mod regulator
->=20
-> in rust/kernel/lib.rs?
-
-This was the original approach, but this is incorrect behavior (again, =
-see
-[0]). The right thing to do is to call the stubs if CONFIG_REGULATOR is =
-not
-set, not make the regulator API unavailable.
-
->=20
->> In fact, doing the change you proposed will result in Intel=C2=B4s =
-bot
->> complaining. Same for all other functions defined in the helper C =
-file.
->>=20
->=20
-> With above, we probably can remove the whole helper file for =
-regulator.
-
-Given the above, we cannot remove the file, and we must also add the =
-devm
-helpers as they are in the current patch.
-
-=E2=80=94 Daniel
-
-[0] =
-https://lore.kernel.org/rust-for-linux/a1b3561d-f5de-4474-85ef-1525a6c36bc=
-5@arm.com/T/#mdf9d4005ee99929d0009ccc988efbc0789164b6d
-
-[1] =
-https://lore.kernel.org/rust-for-linux/25e9a9b6-4d81-4731-98fa-add40ccd4aa=
-b@sirena.org.uk/
-
-
-
-
+> 
+> -- Steve
 
