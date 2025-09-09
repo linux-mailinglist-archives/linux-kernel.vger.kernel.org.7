@@ -1,182 +1,129 @@
-Return-Path: <linux-kernel+bounces-806996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8B9B49EAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:28:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0C7B49EAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484584E3D75
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607471B27058
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A05921A436;
-	Tue,  9 Sep 2025 01:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC03622154B;
+	Tue,  9 Sep 2025 01:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/9Y4851"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="dNR5ffp6"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275811B4236;
-	Tue,  9 Sep 2025 01:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DC81E32D3
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 01:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757381280; cv=none; b=jEQeopMvIarmfgDqAHmiO9B9PMLH/mGz0rN/kdTzBh+XHvF13sdEi3W/z4gK4RZBbYSUenLS/dFlRXRWUvkgnNxw50tslelzNXFc0J5HYQQEquAXxvKqXcWcJWszL5xZyDZpPDQllSRT3r0omD+eLqWloF8/5d6i4O1tQz3E7pg=
+	t=1757381370; cv=none; b=R2yocOx0kk97ajqUUe+NaKS2AWFZXXAVGvGYD0skLapPBXRrVVfH9l1q6B/+lkDIp5pPQkV5EJFU44SHGpXMCvelV5Bw6ddU+YK0Uae8h2183u+cJtfKKha4wvhZiPYSJL1k8Cb3OA+mWJjGNRYCmHcwK54TFH1AsDlEig0osQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757381280; c=relaxed/simple;
-	bh=B5ZFMkGjmY+vIrXnKhTW9Lh6m3Wku/o+F3qXKFeoB8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=THRbhZnUPMfenFs0K5C76iMHKlCB3AAj8JWmKtXVfBL7sP8DZZ9Yyx+oQJ4YJrR/hTK5jPSV+Q/qFVktZbiD8KTvCsuA28H8pff682ujVDNf57EbjVICnAoiy7xR0YOeiHK4wRqWrf9uhQr05omjjx7kxFSGM7/cfGEJf/1MJUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/9Y4851; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b21006804so53895875ad.3;
-        Mon, 08 Sep 2025 18:27:58 -0700 (PDT)
+	s=arc-20240116; t=1757381370; c=relaxed/simple;
+	bh=ZKoeUU823s3dZ0r5Bf8rKKvuaP+8FHcqdrcVRN7BOjw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qy+6B47ZvlxS8J0v76UvuMu/1BReW6qknsKNr/VxGMTXm7OyesLdkkEirLXuDE+x/0TqJf8vnPkQoX40YtZgvERbZnKk36BevjgviIfqDjkjxC6ycVfkLxVBGQYEkU43pCeS94WX62BU8B0OpslJdyte4o9dqSXkUoo9h2LZOV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=dNR5ffp6; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32da35469f7so256762a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 18:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757381278; x=1757986078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zVL5RQzUcb9PU/O16qoWzzj4q/7jnz1L2B/aT6TsKSE=;
-        b=G/9Y4851kFEjbRrdrcIPcCXeUhuyTvXY/3qB69njJLtRdZ0rwqSSvv9H0Y0M7ELA2X
-         moX66wW65p5t2ferm/GHXcAiVtmUX7TnehazS8j1kHILXaR9COThIcCQHFt1pE/l79IJ
-         o8j1vOqbz57utOOCfga5MjCEn7xr6Ela8eEuXPLSRnnLrQNIytuD/0gfH2QzAI/en6Nh
-         SnV543dla5L8OSzbusonUNnxqZcmmpHYFCmFiIaQKmqfpqe5gRSVUneL9x8vd+ZuLofc
-         08cRNcnvsM0ifJHjEEsMMvEcYqGpjBRFmvyP8RaS6OlKkvpynINmaFp1rK7LE9R45AEh
-         9WNw==
+        d=arista.com; s=google; t=1757381368; x=1757986168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8IufIVogrUx5W0Cl3Z4URgdEyzv6FmhILTyi/wZgHmg=;
+        b=dNR5ffp6GUEiUeLikvZ+7FDh50/xHQXIoHmgUsJxA1EYu5WON/fN9BAHErAxWfDB6P
+         MpVpMO2CPKvfnNAbdkqrg3BfAz9n5RHHs3yqpMMm2Cx5VWna6ZrghzhzPN1GcBjVNY28
+         qYRLTaYsISh4hLeM/Q9lTNMi4X0Ev47rCVymcNhygNIgvtTEIDt/CSjiwBJxvKfAFPin
+         z0zQKe3UPMZ7OGlFky1kY4FbY3PssChrFfbjFBz03rtGW+CADLV2qBROe7YBI10J/+1c
+         DzxtDQqnzbNmyQbsMSgG9TFR4yo/MatNW/QFwcfW0/vlZk6DxSbZdecglqZEOw3toe3T
+         g26w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757381278; x=1757986078;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zVL5RQzUcb9PU/O16qoWzzj4q/7jnz1L2B/aT6TsKSE=;
-        b=BlUTUzUb/MZhqrJvisokYta7Ye8+QB5d8d01y2Sw+QBHGzOr3RIm3azGAlR137RT3a
-         Q92BbRoA6JxpVjIw+wCxKQZhHCkEHBHBe2GhTx7MrAFEVp7TsxI1PA+LhjpTOZqSUrAC
-         84b/amhMvyuoBG7kK+Qi7pOz3zP7a/0eFFw0AfOg/3KrRlRuOV5gif4EBZ6UmQQfp691
-         KK3GpVHhGJZtKWnbMhxsk57mJ04kfD2uCxJyhAYxBwsW6oCeekM8OV+DQPlDlUv/V+Y4
-         uLnM62gvS0q3etPm7fTlmurxLDfhEi5i5UoHtuAhnV0eJo3HWXiwUJq3tYSSvNElpMEE
-         cB8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGsdUe8jTlCIMe4gal1CLJjPaPk49Ymmv037BqMwTg+Aj7tpb87z5vaOQ3CTC4hryeljVQKGxo@vger.kernel.org, AJvYcCVODhKnnI+lzFVGF+qew7PCPIZU17Fd8VYemHfJXQdEPW9DWFR9K5Qwv+fsWoDCDnu26UzDojHsmE9fuN4=@vger.kernel.org, AJvYcCXa2hq+w93xnfMcpvHTNzr+tz/xNev6VGXjlhafi8iGNOskPaY5q/xD5z2Lx+r6sY9AXFObf8e8uP/2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz46YzdUXkfUo5z2+OebWanSJgHKZ7XxYG8zR+YLkfHlnHgo2wT
-	gTdL8PAV66H0Mb3XQvbAYwgZEmxl6VkRBs9XEVEJkl7vQHJWIj8Rfdpl
-X-Gm-Gg: ASbGncvA9ouBfVE/cIlpAljZpwoUGSVgHq2ggqbhT5uU+nD4RjeOI7eQRnYdFFiB945
-	NWM03dhTQUly96918+rKYdzGTAtD2gERkJQJphS5P0nWZVBuuRn4QZ1/r1PjiNtyonqJThhcnnr
-	HN6mjHKJxFjvAcZVY3mupBbgB2PgzAAt5BniERsgNb3nNA3NRTefY/BGAJYv8l9Y6uGXgk9Hus/
-	UDoaY2P1q95uDcAb96nqxHJ7M/SwJFLSRCrAU+/cYG9TcOOox91UL6tzbq98qAoYOfIeV29DB8Z
-	yRCL9o72AvNOBhY47EAEElZS2FVD6+1fX6esKyhGgxvJPeXhpmm7L8Z7KQEFs8KCC9sBQCNkHUQ
-	ZJ1PJ4G05U+jitN2Lgi7tBZvm
-X-Google-Smtp-Source: AGHT+IEPtuO7DboDqC0Z65bSwRCzFJptOMP2db+sMR313mW4hzlCUzZaKdQapUJHP8Ppi+kuvjZ4AQ==
-X-Received: by 2002:a17:902:8342:b0:24c:a22d:4c34 with SMTP id d9443c01a7336-25174373ed5mr90647735ad.41.1757381278329;
-        Mon, 08 Sep 2025 18:27:58 -0700 (PDT)
-Received: from gmail.com ([223.166.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b1f7492d8sm182020375ad.129.2025.09.08.18.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 18:27:57 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-Subject: [RFC PATCH net-next v2] ppp: enable TX scatter-gather
-Date: Tue,  9 Sep 2025 09:27:42 +0800
-Message-ID: <20250909012742.424771-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1757381368; x=1757986168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8IufIVogrUx5W0Cl3Z4URgdEyzv6FmhILTyi/wZgHmg=;
+        b=I2eB1NP8VyPLNqQsS6ijvxH6lR8nxxDn2Ov5eiWlgrgGiyQJeepX+xhCnpO7CIsBdI
+         w1b1uRewk1543+6nVnvUN+3SRuPXYA1zozXYC73+I0YA9CZS5zytJgT5oP1Sbu0mchag
+         Z513i5xNl4ydWM38W/Z1zOOcuYTU4nb1V1r9pvzsFgelHODCe5+lk/bABc/vaEC3A5kT
+         FzIhwg7dEKKZjcR7uUfQSpeETSw4zBe8cJrJU005kjzS06GtDHQ0Jl2JzaNTjd1U5TqI
+         2LteKLomhjujpVzH11OlzBZXQp/D+tiLCqqXBqQy/oGsY8M1v3qoEpkdqg+IaT+6h7Lt
+         JyKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxxEfLx9etTBpVM0p5bGDdG/E09ZyBkmfS3PizP+qH7tt8nj3IOyxhYbsbsI1ajMZMrXXiWjczsqeZGS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8iU83sG+jDgVMgu2F60B5OpFLVhU9sREwEaS7fAgvb0MiYRPL
+	uXrAU9iKH9p2JHQxmGWOUe3ew88xGv3D3Ze1OUi71ynce72HJTqQUbKRikd6/oViBXa7LRhgnrn
+	wtUoWoAUt4KIKXBTZN12FrQGbyxEgSEshk/yePM7L
+X-Gm-Gg: ASbGncs8kFLj+6hqGV0TAy42fQJyW7o2uYkB+8HjwCzkMe6Zc290mWxXGVuKC5puk/t
+	3sjjsJ2aAPJDIkpETU/aKDjDgumcY3gItHMfCFQ2DAA5tDhZvnMLoyfdUoduduNwNFOc/Q1PqjE
+	AJ+6sPGhdIhITqYHwtIeCEEMHTg/vK4/kswJNLuBUuJwH1T6eraTYbf7u3LZ4ud1YFgTekZtP1V
+	WHmjHsymU34HHabToSkecRVZJO4K1JX19hIEHdCP80fpRwdVxbNF5cAYc8v5lh6UhKeg3F0CoHv
+	vjc1UNB9n1MRLjcK0os=
+X-Google-Smtp-Source: AGHT+IFH+wwEUO3RIISkmb/dD9lGkicUbZRUa3Xe1lQO7mKP/+N/aJmGWVz4x7eyoiCWGPPhPaZbSheSNa4JxMcfVm4=
+X-Received: by 2002:a17:90b:3f8c:b0:32b:be68:bb30 with SMTP id
+ 98e67ed59e1d1-32d440d2749mr13489875a91.37.1757381368283; Mon, 08 Sep 2025
+ 18:29:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250830-b4-tcp-ao-md5-rst-finwait2-v3-0-9002fec37444@arista.com>
+ <20250830-b4-tcp-ao-md5-rst-finwait2-v3-2-9002fec37444@arista.com>
+ <20250902160858.0b237301@kernel.org> <CAGrbwDRHOaiBcMecGrE=bdRG6m0aHyk_VBtpN6-g-B92NF=hTA@mail.gmail.com>
+ <20250903152331.2e31b3cf@kernel.org> <CAGrbwDTT-T=v672DR4wJU0qw_yO2QCMQ4OyuLjw+6Y=zSu5xfw@mail.gmail.com>
+ <20250903162758.2bae802c@kernel.org>
+In-Reply-To: <20250903162758.2bae802c@kernel.org>
+From: Dmitry Safonov <dima@arista.com>
+Date: Tue, 9 Sep 2025 02:29:16 +0100
+X-Gm-Features: Ac12FXxNvfpjs0LONIP8XH31Y_M-Y_UcZVzasS4KRi-wIESHeToTN5MrMCtmpZY
+Message-ID: <CAGrbwDRTx8NvG7sOxtgj9shuNaJK=6=FaHFUEGsZBBvcryxEYA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 2/2] tcp: Free TCP-AO/TCP-MD5 info/keys
+ without RCU
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Bob Gilligan <gilligan@arista.com>, 
+	Salam Noureddine <noureddine@arista.com>, Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When chan->direct_xmit is true, and no compressors are in use, PPP
-prepends its header to a skb, and calls dev_queue_xmit directly. In this
-mode the skb does not need to be linearized.
-Enable NETIF_F_SG and NETIF_F_FRAGLIST, and add .ndo_fix_features()
-callback to conditionally disable them if a linear skb is required.
-This is required to support PPPoE GSO.
+On Thu, Sep 4, 2025 at 12:27=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+> On Thu, 4 Sep 2025 00:17:34 +0100 Dmitry Safonov wrote:
+[..]
+> > Looking at the code now, I guess what I could have done even more is
+> > migrating tcp_sock::ao_info (and tcp_timewait_sock::ao_info) from
+> > rcu_*() helpers to acquire/release ones. Somewhat feeling uneasy about
+> > going that far just yet. Should I do it with another cleanup on the
+> > top, what do you think?
+>
+> No preference :)
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
-RFC v2:
- Dynamically update netdev features with ndo_fix_features() callback.
- Link to RFC v1: https://lore.kernel.org/netdev/20250904021328.24329-1-dqfext@gmail.com/
+Jakub,
 
- drivers/net/ppp/ppp_generic.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+I've sent v5, addressing minor v4 review comments.
+I have a patch that migrates ao_info from rcu_*() to
+smp_{store,release}*(), it seems to work. I'm going to send it as a
+follow-up, once this gets into net-next as these two seem to be mostly
+reviewed/ready.
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index f9f0f16c41d1..22e17f8fb61f 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -835,6 +835,10 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		ppp_unlock(ppp);
- 		if (cflags & SC_CCP_OPEN)
- 			ppp_ccp_closed(ppp);
-+
-+		rtnl_lock();
-+		netdev_update_features(ppp->dev);
-+		rtnl_unlock();
- 		err = 0;
- 		break;
- 
-@@ -1545,6 +1549,22 @@ ppp_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats64)
- 	dev_fetch_sw_netstats(stats64, dev->tstats);
- }
- 
-+static netdev_features_t
-+ppp_fix_features(struct net_device *dev, netdev_features_t features)
-+{
-+	struct ppp *ppp = netdev_priv(dev);
-+
-+	ppp_lock(ppp);
-+	/* Allow SG/FRAGLIST only when we have direct-xmit, and no compression
-+	 * path that wants a linear skb.
-+	 */
-+	if (!(dev->priv_flags & IFF_NO_QUEUE) ||
-+	    (ppp->flags & (SC_COMP_TCP | SC_CCP_OPEN | SC_CCP_UP)))
-+		features &= ~(NETIF_F_SG | NETIF_F_FRAGLIST);
-+	ppp_unlock(ppp);
-+	return features;
-+}
-+
- static int ppp_dev_init(struct net_device *dev)
- {
- 	struct ppp *ppp;
-@@ -1619,6 +1639,7 @@ static const struct net_device_ops ppp_netdev_ops = {
- 	.ndo_start_xmit  = ppp_start_xmit,
- 	.ndo_siocdevprivate = ppp_net_siocdevprivate,
- 	.ndo_get_stats64 = ppp_get_stats64,
-+	.ndo_fix_features = ppp_fix_features,
- 	.ndo_fill_forward_path = ppp_fill_forward_path,
- };
- 
-@@ -1641,6 +1662,8 @@ static void ppp_setup(struct net_device *dev)
- 	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
- 	dev->priv_destructor = ppp_dev_priv_destructor;
- 	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
-+	dev->hw_features = NETIF_F_SG | NETIF_F_FRAGLIST;
-+	dev->features = dev->hw_features;
- 	netif_keep_dst(dev);
- }
- 
-@@ -3537,6 +3560,12 @@ ppp_connect_channel(struct channel *pch, int unit)
- 	spin_unlock(&pch->upl);
-  out:
- 	mutex_unlock(&pn->all_ppp_mutex);
-+	if (ret == 0) {
-+		rtnl_lock();
-+		netdev_update_features(ppp->dev);
-+		rtnl_unlock();
-+	}
-+
- 	return ret;
- }
- 
--- 
-2.43.0
+While on it, I noticed that potentially I could trim (struct
+tcp_timewait_sock) by 8 bytes if tw_md5_key and ao_info would union in
+another helper structure. As on time-wait socket only one of MD5 or AO
+could be set.
 
+Planning to send these two patches in a separate thread/patches set.
+
+Thanks,
+            Dmitry
 
