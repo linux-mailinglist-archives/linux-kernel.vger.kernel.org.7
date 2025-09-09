@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-808267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA49B4FD52
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031D6B4FD56
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57822541BDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7758F5E3D0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9181D34F489;
-	Tue,  9 Sep 2025 13:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5EB340DA6;
+	Tue,  9 Sep 2025 13:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0htYoHK"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGGJOp4J"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90953343202;
-	Tue,  9 Sep 2025 13:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FA2341653;
+	Tue,  9 Sep 2025 13:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424686; cv=none; b=Uwi+cIN65NSQ/Y8fDzl1bhdplCh2OlO8YyqaTmTN5I40XaVVQy4CxdvVn9ohxUw1e0f+WOe3pLEGSvl/WvhclhewIpY7aiUPxFa67NtAS4bmJfJbP0NqsoxlSkI58Bb39obUPeJlw67pDqMg+RwAnxq/M3sIa1tcMAYkXB8hTFI=
+	t=1757424694; cv=none; b=nfjupo6yR3zf24r7AqHRytpwDsdYWqJlOjAqNSJGsFq7YnRrKrlGA3EG3TkC/a5LwOoFjEyU+PY6R23oDL5ll9IwKfYJz35L5k3nLGegv7taOElJ4slRsMe71sBMbY+PURP+7T10c35gieqacn8/kGqgiVcXN/K0O216L56Ynmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424686; c=relaxed/simple;
-	bh=74jqY+mnMXvKdEQRbPvlpFxLgryx3h4uviT6MmtE7T0=;
+	s=arc-20240116; t=1757424694; c=relaxed/simple;
+	bh=EFaSWLlqCQFtM9g9Cg2x2HgnpsgConLUMd8fvLW4Wlw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gLqgxMEqoCwQloAEUGMws05P+ZoqNEcdMYSKrwajgdR0e3yXojzyaPyKq3JT8nnzHUOC7NEEhEg9uBHVX2KjgllYjf4uViOiHCNj/SgHqXxoSxYKeXuJJmfqYaqv7edCPWCFTld/gW33SmdZ2guwDbIqrDq2+qHOgOI032lvArU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0htYoHK; arc=none smtp.client-ip=209.85.215.169
+	 MIME-Version; b=aytBy5are1nO4c3//C6NfuHwGBu62k0ijybPBOeZb/RqhmQnOgGH5TRZbf5lVjzUY7LRF4mjhS3QEOtVufN54G+oOSyBhCR9VI0c+1NEFB85Wpyw3pFPtak2ZLqibVmi+3WFMNkNetbwO5OyZB++/3Ljv8ibJcl3gNPghlLExvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGGJOp4J; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b52403c47b7so1085660a12.0;
-        Tue, 09 Sep 2025 06:31:24 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so3434485a12.1;
+        Tue, 09 Sep 2025 06:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757424684; x=1758029484; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757424692; x=1758029492; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dgSML/DthZavsnlbDnrmGiAVx3wcugzJPKg3K/xvLk0=;
-        b=S0htYoHK2z0BFPygbUjozuIj6y8CpLv+1YKyCRpJvbvNd4xsw852atzs/pqEAjfd9I
-         mQSmrKFslcOEuYNbihe5UgC4dAZPmxrz/EpKNCgFyogcqBZRvLv87mkhdfMptWaO4Owd
-         C+RsTbp1d7sKYsLYB25KSZTRbyjlA0WGtr9spxuhSJ9uWTxFJwmVpoUuunRzYw7IBcLY
-         Ao2AdzsvjHha4tN5GAIS0PB9lAIlFZ5tEEn7N8+QtYB3cuaM+VwqWbYrCq0oVtbutoX2
-         i7LdDqmOGL5Y37Qq6lFxRbTcjA0at4qYD3ud+Yesy+iFdslmyPQi3ZCjhlOe+5vKNuNr
-         2rxA==
+        bh=vf227nmbBVr78eoCmY1YIfO+zmAzbc+5L95fUaWK5oM=;
+        b=FGGJOp4J3rTYSv8+g+h+rGlgDnnhyXUqPYGczZRi4qGcUHSSpiEZy2+EsQxJR7tLnh
+         4KMDb0x8bvkol7c2xpOJbtSzwz5UM9WNrQSJYIJhMDgesCUR8fQDl841RLnZUORvNKmD
+         1feC1PpDX+zhkmBLMxho0vfvc17lXGu3VXYubl9uyOpuX/4RRBoDw8WigriZRu6WGW2+
+         3gpPos7q3ILbWBx4nHo3E+oZTIg1iuoDnduRfSQ29hJS/wOrgXElp9rCqLENBgfHTu1z
+         weDzJPOHpQ9RtlDBkjhZdbOOrZfDCEtQRX8oDlDngQDQ7gFoFNSU7xq256/da3fzVjtp
+         8ISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424684; x=1758029484;
+        d=1e100.net; s=20230601; t=1757424692; x=1758029492;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dgSML/DthZavsnlbDnrmGiAVx3wcugzJPKg3K/xvLk0=;
-        b=Lbb/XesBaz+9VTj42fv4YUteLSSaeQ+qFDBP/2NTj9yEv+yvv0CuxNjIy2F2QWf8EM
-         UhcEtTnMi36oTSTfyLJQpsSGFAu3EV2w5M8SJA224XiCLxKTCtpF1TcTaN/+CUOrTt12
-         y50wWitJ4wOkxVHtr9B41CYIkDtHim4wmo+mLW6TXX/vneqPKtRioIbzCbc5tlExVwYV
-         yrZeK9Q4CrHWwQ+ESGPukb4++M6WDi18XoJW3jjaf6cOP0fVGXzf4JrYen98ugg8Gvex
-         /43SIdg+fHCr6bmOz3TZG8XOs79p7fCO+2ALBxiakgrgU5cDgRPJQ6MbfJd7E9tSZm5b
-         +JEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCOH4ZS5I9RN6k5RLUcTYZ1SDX/KiN2zsF/QcSMgucQWiTwIuXL9NqDCtFcmOJA8qCPt4f+Qfvfhup@vger.kernel.org, AJvYcCWwcYOd9E9wCeZEDG8Lp/wPSHdKSt19iy1rBRtCpqDgE9q4ibv3xe2oNj+Eq9pc9KpO9z0gYjbkbSJqlCyQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh+gSnK+GdyMgk+bxGNpG3pAyOJpCRasFcUgZCjgvN4PNUsd2T
-	DjSrKW5e3PNYHCp2K93BV9imZ4PLG8GqzXsJommUvC3sZewxm4/B0PDa
-X-Gm-Gg: ASbGncuFvQriKjR2HzDdLtBURsQMjsSBX5fbAw50icXXU+SRVflAguLHRqRg+K43OrZ
-	TXn4azo4WzvINmwfXJakXd/u+llnNifxVEzG8mIH7QGmzYdXfYka7MUaSEGPavVGNSrmPtcv5NR
-	NW1xsc0FbwRVMa9k7i3Z2eyBgYCxHnHpTOq/xbC8rP+Dk4W5QW8Utryy4I1oLlf7nRXX9GKSYZl
-	9qXZTNuwy1d5DtobpsKBDKHn3hqtNkXdl/981wGMbC7ouWQ75cjy0n3/76/ZbBMlF4ZVEw8ufJE
-	i4vbC0bVs6RMt/MFP8TV+0BXUL9FIfmF3JeRN/IifYtzfsYnL4ZkvOCYkkUNi5rl5k4BH/AWuN1
-	cfmKznjRlM6ORPX42+WuxZF91+OMc0GaEFz/hyRG3Vfdjl+t4JVo=
-X-Google-Smtp-Source: AGHT+IFh0492S5Vla97I5jRBRsyJDDPnjkq7JJGcXNqhS9uUo8pi3cIay9te3rObVGyihMKVHOaRpA==
-X-Received: by 2002:a17:902:da88:b0:24b:1b5f:1c0a with SMTP id d9443c01a7336-24cef93b49cmr202420885ad.21.1757424683650;
-        Tue, 09 Sep 2025 06:31:23 -0700 (PDT)
+        bh=vf227nmbBVr78eoCmY1YIfO+zmAzbc+5L95fUaWK5oM=;
+        b=WqewpiNwi1vi/h8aDxrEWWUnWuS274pi5le1tXC38HOBPA24S4Vj9eY0WRcKquIRgR
+         ykV669PexmcSOuZlX+8+haK9wU5RIVB2tDHNV+K3oa3fX+DsiFpqrYD5gJtnvlEhHSuM
+         mcXBoUERvDxyjWy5g8dCEmy7U7KMwwLMzwkFzZr+B56kwyVTVDIMrFq9vyG1Ia2lQD6A
+         MbJA5tmoEipf1uYySkVX6hVxK3K/YZxO6PPiDDSyMHVgOz9qPDUkJ6ZJfguXVh+XYEtZ
+         C2CKMDjfdWNUDyHrumfrmkst/fetzHfZE9OHMluJTYCtjU6+TdHlrImwKf2DKQmKoShm
+         DfAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVByBVcBIhqX+zPKhRIgpgHWA3NkscmM7vxFEnwqGQz4Gob63i0HB5yB4QhwHxbel1qvAEJO/Efr/yWOIlY@vger.kernel.org, AJvYcCVElgViFtH+OEuIRrXz48LZ61+c9D/wPt1BUaZczjcwDOVizF65MzHAblH7z15YYTk7tUj9jLvfmpFn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU3JE7uVdAKO9eVE5NKDGG5tL2j9b8wNImV+TlslgQIvyemxgo
+	+/FctG+wdk2EEEmVDTuiUHAMlZj1AMSY4sWbt+63ouEGRTBpmJhmA1mi
+X-Gm-Gg: ASbGncv5gLYH/nljIwFR5xG5++zlhQgu9uj2kH+FhctN900VgODl9CcgD0Lu2KDug+Z
+	EW/yrFMEGkPceb6houIyB+NiSijV/QRsgDmSXlrraaO3bSBEMdlM0VbvAi7pOUTMQhXL7gvt4UU
+	0Ew5QEFRAmCx1DrsNi45OrU7SDRlVnoreYRxcFgkpdf/QwnK7b16qbgRPRS2Ob8ao4GuaEC1XM9
+	fHOEcyVVxaE1i6sQhQphMiiVmZvr+InkHd0njXxwffdbdEa93rSRhB+j0IufDfofFvCnl687adO
+	AtRoV58DtSSzyCAOImMMnAXS7SAq6o+Ku90GE5RqgfcrKv+xVxzXc8tIPA3oBwbNSsbT9YAyWEH
+	/cbeZhnWWVmsxZUXya6f/5VblPcO1K1gsaCStxl6WjUpog9/nLJQ=
+X-Google-Smtp-Source: AGHT+IEthdGhsisvIyGN1Z48pv9jWv3jpKaTdVzpsB9Py8tu3c9ndMxLN9nH0PnL8uY/ax5mYMCrtQ==
+X-Received: by 2002:a17:90a:d403:b0:327:9345:7097 with SMTP id 98e67ed59e1d1-32d43f003bemr16178584a91.10.1757424690779;
+        Tue, 09 Sep 2025 06:31:30 -0700 (PDT)
 Received: from localhost.localdomain ([240e:3a6:1c4b:13c0:db95:4539:1490:64d2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dab173060sm810778a91.5.2025.09.09.06.31.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dab173060sm810778a91.5.2025.09.09.06.31.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 06:31:22 -0700 (PDT)
+        Tue, 09 Sep 2025 06:31:29 -0700 (PDT)
 From: WeiHao Li <cn.liweihao@gmail.com>
 To: heiko@sntech.de,
 	robh@kernel.org
@@ -82,11 +82,10 @@ Cc: krzk+dt@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	WeiHao Li <cn.liweihao@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 3/4] dt-bindings: phy: rockchip,inno-usb2phy: Document rk3368 usb phy
-Date: Tue,  9 Sep 2025 21:29:57 +0800
-Message-ID: <20250909132958.26423-4-cn.liweihao@gmail.com>
+	WeiHao Li <cn.liweihao@gmail.com>
+Subject: [PATCH v2 4/4] arm64: dts: rockchip: Add phys attribute of USB host node for RK3368
+Date: Tue,  9 Sep 2025 21:29:58 +0800
+Message-ID: <20250909132958.26423-5-cn.liweihao@gmail.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250909132958.26423-1-cn.liweihao@gmail.com>
 References: <20250909132958.26423-1-cn.liweihao@gmail.com>
@@ -98,34 +97,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add compatible for the USB2 phy in the Rockchip RK3368 SoC.
+RK3368 has a USB host controller and a OTG controller, both of them use
+a extra phy, this add missing ohci node and add phys attribute for them.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
 ---
- .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml          | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-index 58e735b5dd..6e3197c168 100644
---- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-@@ -19,6 +19,7 @@ properties:
-       - rockchip,rk3308-usb2phy
-       - rockchip,rk3328-usb2phy
-       - rockchip,rk3366-usb2phy
-+      - rockchip,rk3368-usb2phy
-       - rockchip,rk3399-usb2phy
-       - rockchip,rk3562-usb2phy
-       - rockchip,rk3568-usb2phy
-@@ -192,6 +193,7 @@ allOf:
-               - rockchip,rk3308-usb2phy
-               - rockchip,rk3328-usb2phy
-               - rockchip,rk3366-usb2phy
-+              - rockchip,rk3368-usb2phy
-               - rockchip,rk3399-usb2phy
-               - rockchip,rk3562-usb2phy
-               - rockchip,rk3568-usb2phy
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+index b09e431a64..cdcbc0a944 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -503,9 +503,21 @@ gmac: ethernet@ff290000 {
+ 
+ 	usb_host0_ehci: usb@ff500000 {
+ 		compatible = "generic-ehci";
+-		reg = <0x0 0xff500000 0x0 0x100>;
++		reg = <0x0 0xff500000 0x0 0x20000>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru HCLK_HOST0>;
++		clocks = <&cru HCLK_HOST0>, <&u2phy>;
++		phys = <&u2phy_host>;
++		phy-names = "usb";
++		status = "disabled";
++	};
++
++	usb_host0_ohci: usb@ff520000 {
++		compatible = "generic-ohci";
++		reg = <0x0 0xff520000 0x0 0x20000>;
++		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HOST0>, <&u2phy>;
++		phys = <&u2phy_host>;
++		phy-names = "usb";
+ 		status = "disabled";
+ 	};
+ 
+@@ -520,6 +532,8 @@ usb_otg: usb@ff580000 {
+ 		g-np-tx-fifo-size = <16>;
+ 		g-rx-fifo-size = <275>;
+ 		g-tx-fifo-size = <256 128 128 64 64 32>;
++		phys = <&u2phy_otg>;
++		phy-names = "usb2-phy";
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.47.2
 
