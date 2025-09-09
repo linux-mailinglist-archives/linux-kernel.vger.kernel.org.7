@@ -1,248 +1,203 @@
-Return-Path: <linux-kernel+bounces-807132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CBDB4A07F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFBDB4A080
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3DDF4E49C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EE44E4A01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C132D77EF;
-	Tue,  9 Sep 2025 04:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271162D838F;
+	Tue,  9 Sep 2025 04:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSvuDIwj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hAQtXYvF"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B6A23C512
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA51254654
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757391043; cv=none; b=eWZlvdm+689OHlzUvOvg4bJg/tH/ym7PfU6k6+YG4Ow16OGHa8ot7e0fGf1BFpadO3ZaSHnAIwJENS26mbFuMjoWKseiQZ5BWaSBx8OkHhR6QYq6xT4n9L2w3uvOHrSbcb/BWh4pkbMBIgCMl8a0QekvvFXfwidKsQwjI2H92eY=
+	t=1757391058; cv=none; b=roCCk3rAfkweGrF8Xz9LPeIyD+2I4s38h9mpchyL/VEBn31qjWk7rPBJeR0Ev6eBN5FCJN4NtwBDu//l0iYsHa7AEw/HckeKAFzKPHtZnDHJsgSIpijDIFHok2/AInENo9wzeXSQYBTEoCNCO5Mc0Dl+n+EJF1dK3AXRNNYmQdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757391043; c=relaxed/simple;
-	bh=3akNCatce6KOE95D4GEI/qD9m//H8mmo2tfFU7blmdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oeyz4IIfntyzjcbuX6jaAygdRAK7BT6LYkEZi367QHQXNInODWnDNhsdUIVCIERGDoUBKWCgs10dp5Pg04FR68vV1akaSuVf4eYbSQxm9nbGGW6km9HePCrqOyyjPEBjqa+XLmAtAtikcagkLHJnG8tLzjxNgAnmvPd3ea0R63Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSvuDIwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699DCC4CEF5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757391043;
-	bh=3akNCatce6KOE95D4GEI/qD9m//H8mmo2tfFU7blmdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BSvuDIwjAuVo7DHZZLcvMx9af8HmnElTZWxE1vpqxoN33/30LQZ1wkJ7a3ilOjTf3
-	 JWYaH7iW8/xP7VOmeYr4qtioqP0sD6BZ14tdtSpabT5lQ5tHUnAjum+9bZIfSWzgIa
-	 9syACfQLKU4Anw1TE+ctkLaau5uw128ti3yzl4uMcijzAsTOT2eT+mYPmo47d6ySoi
-	 eQ6dATjBmw3P/HAIM2mBeAnukdPtwpUiM30ASSGYzTvBhcWxhCLcC5XZc3DcMSzMTX
-	 9uo2sOM1n/R49bHI1FKt1suzntUTXskDg3ImSPrpWjD4Dbirjl7+Tpb4HhLidOQ0dH
-	 v05GBzqrP5Jnw==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-620724883e6so8590565a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:10:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQE78ONJsBy2iXMj133Vhr1X7nFdOT2btAT7Zc870kjOrWyAKH0QkrCAvnUQoR3+vFoR3FyfUJ1SYN554=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz10/orLBU2mdPt6mx4pD1TwwQmO9pZ4uZTmZiUP+p6ZsLkhyCt
-	HOnu1s/eFmTUViU7+fFhsZ/Cn5w8/k4K6Qzf2MbFf7KhtlQftKw8voeAAOxb2DLpH3cdbOiDWUV
-	A4hcSNG11ZxbqrPU6UsJ4qebP26uGvHg=
-X-Google-Smtp-Source: AGHT+IFbPOswZZOp3pr/Mv6PfhzF9+grvdHgGCFvh6Uv38pwroMVVCzD+KT2cf2gQCvOLV+T363PMulv1FlwR8vVYms=
-X-Received: by 2002:a05:6402:27d3:b0:62b:ae0f:11cf with SMTP id
- 4fb4d7f45d1cf-62bae0f287amr1452760a12.19.1757391041965; Mon, 08 Sep 2025
- 21:10:41 -0700 (PDT)
+	s=arc-20240116; t=1757391058; c=relaxed/simple;
+	bh=l7OLerfaZkQQfdQg5SVoQUJYh8Lk1NrIPheczY/nbH8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TyY+p7BbBVpv9DYgLG9yP3T1gxVbdH5sOQwXegMdASTvKUHRnFuWy0AuJjAGbKCxOIQcQvGoHTT6qH7HO0oZ+TNOSU6IumiJp7CpSe4Szz4DeljnQyWSPVDC5TJjd4ImTp9C+PK3Ro98yorsfVLqqmlytiES0NR75C8nsr6GQIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hAQtXYvF; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-772481b2329so5333833b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757391056; x=1757995856; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyswnYcg0saFRXMrJ9h8foV6bZoR61ComRxjzP/MVYA=;
+        b=hAQtXYvFuGCwodfyjkLLtSyZvVFeMGYnW4oEKRjD8x2tYled1LxZh/eHGqZ5qXKU5K
+         boazLstM6yHuJ52UVcjM1pHRpyImitBf3MnAjfCC/ZNlWOyz6U9QtiXIAn415WFCw0cF
+         cHjhbLb53IhtU8LvGZdP/Fwg1D+EdyiDDmAqfL6PW74YlWxMgilgQgg0JzibUVZIVuTe
+         Oi0DxkI58c/WITsnHAKVdRIzpBiSsv8cxkD/umLyhgO/JHt+U/YpQkoI90bHb/1vLKWc
+         GZ3qlIDFSnUYpzKc1kXCmxU6f8+mLFBRx9bxNpbj5ZH+8PxJjI0dQBP57xSzVPJ95Tk8
+         qbUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757391056; x=1757995856;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oyswnYcg0saFRXMrJ9h8foV6bZoR61ComRxjzP/MVYA=;
+        b=NMiOfMhpn9RSPGZ2XOExJhkegYVjmJxKV75jloFYjVIYnIzs8PNEvSvIIhA/StVyeJ
+         5UAOmBZpKW47JOO65PvATacaY/tIGH7w1cB1AX4pNZO2WMM0kijvf7qsuUZ9bdIgsRIx
+         V9aAAE3djmILlMlIVK+xoLi4fgB9vdALAcL+/h7wyqwQZcR36InL0cGQcs8q7HPovCX9
+         XMZ0BSVYqKA5edVLWE6Lgoxk4y+fz0DqGnHpSAQu7H2ZcFTZZ6KArA2ri8v/r78rltEk
+         EmM448aiblFpStQiw/Mb6A/6NSKWsclJvoG+fJZuZKDMGk0OkawB2xLg4S3NLo3vbK/E
+         +QRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaohg8KqtxxMmoA7hvIwW4LhtR56PVjWNglbJc7HvaFexKi/HDWfrpaerj4YgxWWs6o9LZps5LNpMTZ6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPtIUjuXbYNlZo4KMvNIr7mCQnS6+QMG735pTElSH7J5DDzmDY
+	KyEdQkv0E83Tumxy5aKWWWo8x+U8D1X7fEtD6J0TPZyFeS0d3Bz6aNaLud/1ms5kWw==
+X-Gm-Gg: ASbGncvBbZU6tN9bAvyVizxzu47Ke11v2xAJbxgfgjrv+LlLI2a3trZ3IEQCa1YwHka
+	+d1Ki/O6Ll1lWrF9rlyEtvdt49aIwjYlu8LjtArBIHKVdrh6JPqbfV8hScKhniVqgqFQJDYOIPs
+	+3xeL8viuWF5emuDhgvFAkjWlteDOt/ugkAtyT/HePULjvqqpgj4P4tZE7bk8ScXO1qlmmHNhSM
+	uKkmVNdEQe16a36AL5T1D3R/hvYmH+2Kj0XsEwhTJaxkEHeF+Fo30aYzSwdEfRVSrYCYtQTv0pP
+	Wrgh6GvYVmo2Cb5kz7mj8U8iPtQdKF/YwA4Yn4rh1HCe5rFIOqjkjj2M807Pk8IajT2qKC2okt9
+	kF7LVv35JToIGvxu0SQ1U5KnF4u7RXzJKLZYJh/+c44wYdVMfrTtyJkIUNzwsfLQCk+UdI4yB6M
+	MihOYW
+X-Google-Smtp-Source: AGHT+IEuqAIvwPL13BUxyY2lZ1Qa4zyra1O2FCT3sFXJiXBD2gUqTmeoVTWwFxJmprTyh6zeUPF9Lg==
+X-Received: by 2002:a05:6a20:6a06:b0:24a:94db:bcfa with SMTP id adf61e73a8af0-25344415d85mr14676262637.31.1757391055853;
+        Mon, 08 Sep 2025 21:10:55 -0700 (PDT)
+Received: from bsegall-glaptop.localhost (c-76-132-13-32.hsd1.ca.comcast.net. [76.132.13.32])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4dad911628sm25661893a12.11.2025.09.08.21.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 21:10:55 -0700 (PDT)
+From: Benjamin Segall <bsegall@google.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,  Aaron Lu
+ <ziqianlu@bytedance.com>,  Valentin Schneider <vschneid@redhat.com>,
+  Chengming Zhou <chengming.zhou@linux.dev>,  Josh Don
+ <joshdon@google.com>,  Ingo Molnar <mingo@redhat.com>,  Vincent Guittot
+ <vincent.guittot@linaro.org>,  Xi Wang <xii@google.com>,
+  <linux-kernel@vger.kernel.org>,  Juri Lelli <juri.lelli@redhat.com>,
+  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
+ <rostedt@goodmis.org>,  Mel Gorman <mgorman@suse.de>,  Chuyi Zhou
+ <zhouchuyi@bytedance.com>,  Jan Kiszka <jan.kiszka@siemens.com>,  Florian
+ Bezdeka <florian.bezdeka@siemens.com>,  Songtang Liu
+ <liusongtang@bytedance.com>,  Chen Yu <yu.c.chen@intel.com>,  Matteo
+ Martelli <matteo.martelli@codethink.co.uk>,  Michal Koutn??
+ <mkoutny@suse.com>,  Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
+In-Reply-To: <a5dd474c-5436-413c-a72a-38dfae9121cb@amd.com> (K. Prateek
+	Nayak's message of "Thu, 4 Sep 2025 11:33:55 +0530")
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
+	<20250829081120.806-4-ziqianlu@bytedance.com>
+	<20250903145124.GM4067720@noisy.programming.kicks-ass.net>
+	<14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
+	<xm26o6rrtgav.fsf@google.com>
+	<a5dd474c-5436-413c-a72a-38dfae9121cb@amd.com>
+Date: Mon, 08 Sep 2025 21:10:53 -0700
+Message-ID: <xm26bjnktgdu.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
- <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn> <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
- <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn> <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
- <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn> <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
- <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
- <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
- <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
- <itoqfhz4pxaf7aclzajkxcdsxe5akxhgahzj4dp24leh7w334k@epnvcxdga75p> <49ceb19c-6107-d026-3ae6-ae897d1fcae4@loongson.cn>
-In-Reply-To: <49ceb19c-6107-d026-3ae6-ae897d1fcae4@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 9 Sep 2025 12:10:29 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7U+-WM_cmehAEyKZrGteosZZ3GUsO3yy7wjUNK-v=qjw@mail.gmail.com>
-X-Gm-Features: Ac12FXxLHrJ7b7AIuzKZTtFqGXbWuSCptZrNXaIw1zTZ4WV2EmDgcU8pN6mB4CY
-Message-ID: <CAAhV-H7U+-WM_cmehAEyKZrGteosZZ3GUsO3yy7wjUNK-v=qjw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
- warnings about EFISTUB
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Sep 9, 2025 at 12:00=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> On 2025/9/6 =E4=B8=8A=E5=8D=8812:04, Josh Poimboeuf wrote:
-> > On Fri, Sep 05, 2025 at 12:36:16PM +0800, Huacai Chen wrote:
-> >> Hi, Josh,
-> >>
-> >> On Fri, Sep 5, 2025 at 5:46=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel=
-.org> wrote:
-> >>>
-> >>> On Thu, Sep 04, 2025 at 10:39:30AM -0700, Josh Poimboeuf wrote:
-> >>>> On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
-> >>>>> This is from RISC-V code.
-> >>>>>
-> >>>>> __HEAD
-> >>>>> SYM_CODE_START(_start)
-> >>>>>          /*
-> >>>>>           * Image header expected by Linux boot-loaders. The image =
-header data
-> >>>>>           * structure is described in asm/image.h.
-> >>>>>           * Do not modify it without modifying the structure and al=
-l bootloaders
-> >>>>>           * that expects this header format!!
-> >>>>>           */
-> >>>>> #ifdef CONFIG_EFI
-> >>>>>          /*
-> >>>>>           * This instruction decodes to "MZ" ASCII required by UEFI=
-.
-> >>>>>           */
-> >>>>>          c.li s4,-13
-> >>>>>          j _start_kernel
-> >>>>> #else
-> >>>>>          /* jump to start kernel */
-> >>>>>          j _start_kernel
-> >>>>>          /* reserved */
-> >>>>>          .word 0
-> >>>>> #endif
-> >>>>>
-> >>>>> The HEAD section has instructions, if you change it into a data
-> >>>>> section then it loses the "x" attribute.
-> >>>
-> >>> Actually, the "x" attribute isn't needed for vmlinux.  The vmlinux
-> >>> linker script places it in the text region regardless.
-> >>>
-> >>> Moving the data to a data section should be really simple, something
-> >>> like the below.
-> >>>
-> >>> And yes, even the above RISC-V code can be in a data section.  Those
-> >>> instructions are part of the 'struct riscv_image_header' data structu=
-re.
-> >> This may work but also look strange (code in data section), it is more
-> >> like a "workaround". :)
-> >
-> > The "strange" part of the code is the intermixing of code and data.  If
-> > they can't be separated, then they are part of a data structure and
-> > belong in a data section.
->
-> I tried the following minimal changes, put the image header into
-> the section .head.data, do not link efistub lib.a into vmlinux.o,
-> just link efistub lib.a into vmlinux, no other changes, they have
-> same effect with patch #1 and #2, what do you think?
-I still don't think we have to put the HEAD into a data section. Yes,
-it is a mix of code and data, but the data is read-only so it doesn't
-need the "w" attribute (and code needs "x", at least in theory).
+K Prateek Nayak <kprateek.nayak@amd.com> writes:
 
-From my point of view, the text section is still the best for HEAD.
+> Hello Ben,
+>
+> On 9/4/2025 2:16 AM, Benjamin Segall wrote:
+>> K Prateek Nayak <kprateek.nayak@amd.com> writes:
+>> 
+>>> Hello Peter,
+>>>
+>>> On 9/3/2025 8:21 PM, Peter Zijlstra wrote:
+>>>>>  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>>>>  {
+>>>>> +	if (task_is_throttled(p)) {
+>>>>> +		dequeue_throttled_task(p, flags);
+>>>>> +		return true;
+>>>>> +	}
+>>>>> +
+>>>>>  	if (!p->se.sched_delayed)
+>>>>>  		util_est_dequeue(&rq->cfs, p);
+>>>>>  
+>>>>
+>>>> OK, so this makes it so that either a task is fully enqueued (all
+>>>> cfs_rq's) or full not. A group cfs_rq is only marked throttled when all
+>>>> its tasks are gone, and unthrottled when a task gets added. Right?
+>>>
+>>> cfs_rq (and the hierarchy below) is marked throttled when the quota
+>>> has elapsed. Tasks on the throttled hierarchies will dequeue
+>>> themselves completely via task work added during pick. When the last
+>>> task leaves on a cfs_rq of throttled hierarchy, PELT is frozen for
+>>> that cfs_rq.
+>>>
+>>> When a new task is added on the hierarchy, the PELT is unfrozen and
+>>> the task becomes runnable. The cfs_rq and the hierarchy is still
+>>> marked throttled.
+>>>
+>>> Unthrottling of hierarchy is only done at distribution.
+>>>
+>>>>
+>>>> But propagate_entity_cfs_rq() is still doing the old thing, and has a
+>>>> if (cfs_rq_throttled(cfs_rq)) break; inside the for_each_sched_entity()
+>>>> iteration.
+>>>>
+>>>> This seems somewhat inconsistent; or am I missing something ? 
+>>>
+>>> Probably an oversight. But before that, what was the reason to have
+>>> stopped this propagation at throttled_cfs_rq() before the changes?
+>>>
+>> 
+>> Yeah, this was one of the things I was (slowly) looking at - with this
+>> series we currently still abort in:
+>> 
+>> 1) update_cfs_group
+>> 2) dequeue_entities's set_next_buddy
+>> 3) check_preempt_fair
+>> 4) yield_to
+>> 5) propagate_entity_cfs_rq
+>> 
+>> In the old design on throttle immediately remove the entire cfs_rq,
+>> freeze time for it, and stop adjusting load. In the new design we still
+>> pick from it, so we definitely don't want to stop time (and don't). I'm
+>> guessing we probably also want to now adjust load for it, but it is
+>> arguable - since all the cfs_rqs for the tg are likely to throttle at the
+>> same time, so we might not want to mess with the shares distribution,
+>> since when unthrottle comes around the most likely correct distribution
+>> is the distribution we had at the time of throttle.
+>
+> So we were having a discussion in the parallel thread here
+> https://lore.kernel.org/lkml/20250903101102.GB42@bytedance/ on whether
+> we should allow tasks on throttled hierarchies to be load balanced or
+> not.
+>
+> If we do want them to be migrated, I think we need update_cfs_group()
+> cause otherwise we might pick off most task from the hierarchy but
+> the sched entity of the cfs_rq will still be contributing the same
+> amount of weight to the root making the CPU look busier than it
+> actually is.
+>
+> The alternate is to ensure we don't migrate the tasks on throttled
+> hierarchies and let them exit to userspace in-place on the same CPU
+> but that too is less than ideal.
+>
 
-Huacai
+Yeah - if we don't update group se load then we shouldn't load balance
+throttled-hierarchy because the amount of root load migrated in the
+moment is always 0. Once we do all of that properly we should be fine to
+migrate in/out of a throttled hierarchy.
 
->
-> ----->8-----
-> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> index a3a9759414f4..919c1970ce14 100644
-> --- a/arch/loongarch/Makefile
-> +++ b/arch/loongarch/Makefile
-> @@ -164,7 +164,6 @@ CHECKFLAGS +=3D $(shell $(CC) $(KBUILD_CPPFLAGS)
-> $(KBUILD_CFLAGS) -dM -E -x c /dev
->   endif
->
->   libs-y +=3D arch/loongarch/lib/
-> -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/lib=
-.a
->
->   drivers-y              +=3D arch/loongarch/crypto/
->
-> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
-> index e3865e92a917..c42500d9fad8 100644
-> --- a/arch/loongarch/kernel/head.S
-> +++ b/arch/loongarch/kernel/head.S
-> @@ -17,7 +17,7 @@
->
->   #include "efi-header.S"
->
-> -       __HEAD
-> +       __HEADDATA
->
->   _head:
->          .word   IMAGE_DOS_SIGNATURE     /* "MZ", MS-DOS header */
-> diff --git a/arch/loongarch/kernel/vmlinux.lds.S
-> b/arch/loongarch/kernel/vmlinux.lds.S
-> index 08ea921cdec1..fc35ef349aba 100644
-> --- a/arch/loongarch/kernel/vmlinux.lds.S
-> +++ b/arch/loongarch/kernel/vmlinux.lds.S
-> @@ -38,6 +38,7 @@ SECTIONS
->          . =3D VMLINUX_LOAD_ADDRESS;
->
->          _text =3D .;
-> +       HEAD_DATA_SECTION
->          HEAD_TEXT_SECTION
->
->          . =3D ALIGN(PECOFF_SEGMENT_ALIGN);
-> diff --git a/include/asm-generic/vmlinux.lds.h
-> b/include/asm-generic/vmlinux.lds.h
-> index ae2d2359b79e..0f95fb1649f3 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -645,6 +645,14 @@ defined(CONFIG_AUTOFDO_CLANG) ||
-> defined(CONFIG_PROPELLER_CLANG)
->                  *(.static_call.text)                                    =
-\
->                  __static_call_text_end =3D .;
->
-> +/* Section used for early init (in .S files) */
-> +#define HEAD_DATA  KEEP(*(.head.data))
-> +
-> +#define HEAD_DATA_SECTION                                              \
-> +       .head.data : AT(ADDR(.head.data) - LOAD_OFFSET) {               \
-> +               HEAD_DATA                                               \
-> +       }
-> +
->   /* Section used for early init (in .S files) */
->   #define HEAD_TEXT  KEEP(*(.head.text))
->
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index a60d32d227ee..4e5be09c42cd 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -98,6 +98,7 @@
->
->   /* For assembly routines */
->   #define __HEAD         .section        ".head.text","ax"
-> +#define __HEADDATA     .section        ".head.data","aw"
->   #define __INIT         .section        ".init.text","ax"
->   #define __FINIT                .previous
->
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index 51367c2bfc21..c664bfb9b15f 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -69,6 +69,12 @@ vmlinux_link()
->                  libs=3D"${KBUILD_VMLINUX_LIBS}"
->          fi
->
-> +       if [ "${SRCARCH}" =3D "loongarch" ]; then
-> +               if is_enabled CONFIG_EFI_STUB; then
-> +                       libs=3D"${libs} drivers/firmware/efi/libstub/lib.=
-a"
-> +               fi
-> +       fi
-> +
->          if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
->                  objs=3D"${objs} .builtin-dtbs.o"
->          fi
->
-> Thanks,
-> Tiezhu
->
+Much like wakeup there's an argument for not migrating into a throttled
+hierarchy, at least from an unthrottled one, where there's presumably a
+high likelyhood of the thread just being preempted in userspace. (And my
+gut feeling is that this case is probably even more common than wakeup,
+that need_rescheds land in (return to) userspace more often than wakeups
+go straight to userspace with no significant kernel work)
 
