@@ -1,283 +1,233 @@
-Return-Path: <linux-kernel+bounces-808042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB15B4AC73
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259D6B4ACB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A933341FC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0641631A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21009322C85;
-	Tue,  9 Sep 2025 11:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E25E27F183;
+	Tue,  9 Sep 2025 11:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XURj5asx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EcHzSlEI"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5E322766
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418155; cv=none; b=HJ7BhAyY3OfVfk20faKHjwb2rGoPwQRuZ/UM7OOVAkPa6xL+717+FgSj6hlXYVawzuxhrkrEeed3DcHjZFixZZqATe+y+UJjJOQO+BkJkcrW98bEP65E4/vqV4oohaKEitJR6o6Vaq6YV+qk1bnhphwJWGCRJP0tAXwAxzU0AcY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418155; c=relaxed/simple;
-	bh=H6VAzLsPOmxWnyESHgkWPwLGyz9Zb+oLYRPmgzNBHSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftZ5za7d7B4+OWoARmB8t/Y+gj91PWKm8BXv+nLcqxE9lJEYWfVbsxSghgSoxkSYrh1yyZd/uQkvlEVbgV9ZfHelPhVexBXNDecPAzztlxRGcFKamKRpN6QSOGsAOs6td5Hpb9l+j8mPZ/Y378X6WBnLKxQfHa/s9wdcnepvAgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XURj5asx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757418152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tUGU+TjHtTHHLTK2zHbFOGsi468ffG0Hp57VOnPF+Rk=;
-	b=XURj5asx7KBEiw0pBstgaPKlyImzj/RMxcAmhiG56aNffbzvc7Sn+GqjVTIyMKG+3Wk2yn
-	6zQ9qdZ5IMxdw4ntXJmoCqPJJ5P8xrRkKqPR19Z7qpTs2MRzkhQlp5tNkzF9xLevLHl1VZ
-	7UKnRbqSWIkzdPVav3rylDR3RLJAS2E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-575-eyeh8VlVOMmiMg-OV0UB3w-1; Tue, 09 Sep 2025 07:42:31 -0400
-X-MC-Unique: eyeh8VlVOMmiMg-OV0UB3w-1
-X-Mimecast-MFC-AGG-ID: eyeh8VlVOMmiMg-OV0UB3w_1757418150
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3e4a8e6df10so1746457f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:42:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757418150; x=1758022950;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tUGU+TjHtTHHLTK2zHbFOGsi468ffG0Hp57VOnPF+Rk=;
-        b=ifKmzaL7QtGFwl7wtmfeP0fcwQC5wssBu2M9A0O4RYCXEklVYOGqwo6pUiQVgLK6u1
-         RPHi4Z+bNrWnaD6eEJrDqfHfu+SPKSn1OogRCFRpnntFIiEOK/n7eqMBfbAtuuH6RwfS
-         4wEJ9rlPO2NJ8J6qr0ql0Rz8Nyl+WS3k/p4y8ZPMyJYQ9WEPlPoJ924jviPKdCa1XCT9
-         4eLRpWp164a6bL7BMBp1CDTt8hJ+xG4DtvcwBGPA8HnwlJWG7iKYE9MrpbyZF56AEElY
-         c1fb1zmJH9CnDoB1ioL6kdYwySqmy8SL1GtFhxOweYwRaNj7oKuAo9K4gSF03tNIFwqg
-         EkYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXShn2jSBwYEL/dDSZf8RJuMnq5jHCOeIfIiWBv2Wpy8hilQKBD1xQXZYRNNsBYKhVesVl7hPIxTfA5rCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8jLEc6Ha6HomhSD4UGiSHcfkoFVlDKRHtOzphAoCffQSGmBg
-	Bgf6V7/dZtAhN4JEH7sPNHFXaD/LSh4hAwxXUydXZTZojCAUKGQl0/cQ6+qT1Y/GYoEfWzmBo5D
-	/vTi79UbC6GaAejUrL7lFI9pNYDWgM70sa6DcQMzFbRRD9ay0MFmsCNvenpp8F+ZgNw==
-X-Gm-Gg: ASbGnctrFlAOlbCFqoFeYS3AY7c5LosE5N18oV53sa99fzlUACf7Z6yvxFH+KkN1fWN
-	KK7EbCP52ITGeyQ/+4AeaVni6yEvf3NzAU6UyYte1Dg1mLlkclfGxR86/U41YytrVPgD2yoaNyI
-	h9OGiy570xaKNYVU7gdcKYZIM2FcIDo1GMkY7rd5RSSYz1dbje+st3BcBpeecZ3K5MP/vAvcIBp
-	3zo0Jz0eaasTHqsuPR3TDWNSbqQhnYgww3FyGB8/VcX19+6SO15wh8NZjky+QEiW6vEWotXV21t
-	5MsaETGcrgbYfgi1ZacJkqcBRRDCMg8HrxN2PnfMZdBlYu9mGYYgYQPM8dHblchcRmkfUg==
-X-Received: by 2002:a05:6000:420f:b0:3e5:3346:6e91 with SMTP id ffacd0b85a97d-3e64383717dmr10654844f8f.34.1757418149847;
-        Tue, 09 Sep 2025 04:42:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKFeXgvK0zu78cnS/MrxQ6hYkXo2ROCVXFAQC8NTjQM7+aKrD3KcmqhXZxE0LXSSAZhwTOPg==
-X-Received: by 2002:a05:6000:420f:b0:3e5:3346:6e91 with SMTP id ffacd0b85a97d-3e64383717dmr10654811f8f.34.1757418149387;
-        Tue, 09 Sep 2025 04:42:29 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1a41f.dip0.t-ipconnect.de. [87.161.164.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea15sm2306665f8f.47.2025.09.09.04.42.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 04:42:28 -0700 (PDT)
-Message-ID: <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
-Date: Tue, 9 Sep 2025 13:42:26 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9458322A15;
+	Tue,  9 Sep 2025 11:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757418484; cv=fail; b=h8n4vGgcJT/MtFjKDMcAN19Lcz06SkTjIOJ5D1/YQlz1floPLdq8eoxz6Z6zhZB8GhZHkKywJH8fVQgHp84vWL4XQnWL5LZNz9YKkr7S0I77TVoKVUStRqHvTnxx6dzAqowJohB/J4wwWfkmZVURvUtFp2zhhY3rjgq/OWRs3QE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757418484; c=relaxed/simple;
+	bh=EfcLY3NDp1lMvkV1Jfb+289V3teDCdYSigVXRWpSN7g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sYra9hIaHCJ9jRUkyA9uNaL+4kFmdYYmBD62koAwwRgXVIIpI2IRudxq6orTOL2QhVcpIgdxRehQ7Vudjcy2ErKu2vWHCYUhk8et7bbGFmSlTtbZas3lcZPlFLDQaOk3zjDDOYDHtwBtRNC6YFbHMbDtZsV09s/kwcHLpXaJvTk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EcHzSlEI; arc=fail smtp.client-ip=40.107.237.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xFet5MTkx8fPRLPmqgJAX6bgep/0c+OZon0KFuwrX6XYiUTXjwj04j5RnEboLOUVvAQhs2fx/g5NtHJUYo+QlFAXcyp7Dv9QiKiqbWSlbHtbQ0gadunnoW/mhIrvuyluUUbisFbjviW/WDP5EqBF/8Zz/TZ0M2oaVpcOndaIbnZDDASMB3NyQYJ/a6I7ZSAaX+uahE81YuuDy+HxwZMr/HfdhQcY33pBXQ7zRFzVkBO3JuzMSxvk4ittsZIecqGSEIuNwj3D01A5wbQf7F8nRdeAT9lOxalWzJDoDLj1wkzF4RzkNP/Unq3mvXazTjFf7ZAohogXVQFa9YLS5zHr1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZSWJRxFUSRR/75Ge00v7x+d4eXsR1bungyJ55lp1BIU=;
+ b=tOTpYJVp67qoK9UD8hcdInCpu/EGXKJlrW2hLu0qPwpJ4BMt4SuInatZn3iRgmiJ4tJSuNF8Ds/T9DhcGPYGeZNpjfm9HFw3MqjzyMUjZBW6itzVxxRSMtIA3WO0ZVIzEO1xoLO+3Butfp4Y6+6fbBzF295lhb5n16k/KE0+gLj9ZWn3U/X/tK+OZoq7Cn6AI3LJWGHuAlpp6UOo/8XIEjOIiC+Cg1+XItldYBnRVdRhMHuMRc0C5iWa/l8HLYlHy2QAklNkBBBrsyNB3/gMa4cRL6lmmccSoSqvVyJCDLBo6Nm0u4rtB+pfWRnUH2h6U0WG8FZCl/mwoECMaurcwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZSWJRxFUSRR/75Ge00v7x+d4eXsR1bungyJ55lp1BIU=;
+ b=EcHzSlEIvhKScNjRLMtqxAVAEOeEjCEmkvQMcnWB3sPxbhjjT3rRqByhTsMZa0aCdyfcu3eMu1BFFrPVovN5s0Kyt/0StHBPwpaNN0q5i2thDMaQWLy5s0x9HSuwMAh2a/7vyHF7b7SaGN3JYsqnUzuHda0ktdfmH08ToXwdhw4=
+Received: from BYAPR07CA0077.namprd07.prod.outlook.com (2603:10b6:a03:12b::18)
+ by DM4PR12MB6184.namprd12.prod.outlook.com (2603:10b6:8:a6::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Tue, 9 Sep 2025 11:47:58 +0000
+Received: from SJ1PEPF000023D3.namprd21.prod.outlook.com
+ (2603:10b6:a03:12b:cafe::fc) by BYAPR07CA0077.outlook.office365.com
+ (2603:10b6:a03:12b::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Tue,
+ 9 Sep 2025 11:47:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ1PEPF000023D3.mail.protection.outlook.com (10.167.244.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.0 via Frontend Transport; Tue, 9 Sep 2025 11:47:57 +0000
+Received: from tapi.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 9 Sep
+ 2025 04:47:45 -0700
+From: Swapnil Sapkal <swapnil.sapkal@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <irogers@google.com>, <james.clark@arm.com>
+CC: <ravi.bangoria@amd.com>, <swapnil.sapkal@amd.com>, <yu.c.chen@intel.com>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
+	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
+	<sshegde@linux.ibm.com>, <ctshao@google.com>, <quic_zhonhan@quicinc.com>,
+	<thomas.falcon@intel.com>, <blakejones@google.com>, <ashelat@redhat.com>,
+	<leo.yan@arm.com>, <dvyukov@google.com>, <ak@linux.intel.com>,
+	<yujie.liu@intel.com>, <graham.woodward@arm.com>, <ben.gainey@arm.com>,
+	<vineethr@linux.ibm.com>, <tim.c.chen@linux.intel.com>, <linux@treblig.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<santosh.shukla@amd.com>, <sandipan.das@amd.com>
+Subject: [PATCH RESEND v4 10/11] perf sched stats: Add basic perf sched stats test
+Date: Tue, 9 Sep 2025 11:42:26 +0000
+Message-ID: <20250909114227.58802-11-swapnil.sapkal@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250909114227.58802-1-swapnil.sapkal@amd.com>
+References: <20250909114227.58802-1-swapnil.sapkal@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>,
- Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
- <20250909095611.803898-2-zhangchunyan@iscas.ac.cn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250909095611.803898-2-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D3:EE_|DM4PR12MB6184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17c7c995-c196-49c8-5cb3-08ddef96b89a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IGYnRUBokuvYUP0JmHpQ+wW/fE32vhGM1BDppRSMA7WAkH1E7KqTmmMqsYDf?=
+ =?us-ascii?Q?eAJVTlfn4/CbsUR0XIMDLboTX7yQj4xGsSrnpKUF8fHSP5gS5ld9DzF++HAV?=
+ =?us-ascii?Q?0zST1S9PmI8ChO1/6/r88tkIZFJLQi+6NFIdJgBJ9ZNW+q6GcHxwQIlCzId9?=
+ =?us-ascii?Q?iBJMirvrheZ6QtgSPa5Qy6X+PW4W4mEeELpeyx+o/KZF1WHBdjuEIu2nnsGh?=
+ =?us-ascii?Q?LnHGL69QTHNlsOLmdlZ9/u/E1MUxrt3BYWug0LbPMEqX73Srakbv980YKKQu?=
+ =?us-ascii?Q?FL4DmeGpcpjer2mDXb7wGw70OBgNE1Qaef2xSR1mbQiQo26pOMCdJ1vqn3Kx?=
+ =?us-ascii?Q?1mjZB/2gEDt2BG02eEI4GiNFwK3Znm6mbz1jdsV6DGWXcH4etJqhh6aTW4fW?=
+ =?us-ascii?Q?jsKUKkTYcHljMniIkRVjTEo4e8HB1CYpulCI3TPNIWHkew1LGJAfLa6eoJ4n?=
+ =?us-ascii?Q?Ot0aNXl8AdFUmueA9bITm+2EgSEZnG9oIy84O7rGjKkmaobdfcy9Lh+nFw2P?=
+ =?us-ascii?Q?/I5K7FCZHA4kxGA8wStnxWanlTz9qjvxhhX95jEurVSIVCFmtm/9f6p6s+XA?=
+ =?us-ascii?Q?4RgIM9wy1EyZQ0d78UI23uxBLNhlvKo2Ze2Nhea1UTPX2oN+Joq6Rm8UiZJH?=
+ =?us-ascii?Q?NzSbV8/CW/A9AFLpNnMROZutD0g3TPG4DUeAhhRwkG6y3B//zth9QF009YjD?=
+ =?us-ascii?Q?ZmoLK/JfY5jtExVQ9R3vKVO8zcxAx6wT3A+I8BHGUnWQ5oVIHc6INa9qNzIb?=
+ =?us-ascii?Q?wkXh+NXI7CgHleGwB+paF/kqLn1Cf/c1PO4dtRnAfpti+Um4RlTD2x4Y/ODi?=
+ =?us-ascii?Q?S3YaDtqfUNGUoRlNRvk5C2UOzfwa35XGOy04qe/nNEYrjzcN5PF3kBRdXAfx?=
+ =?us-ascii?Q?mFjgeF/52fu26IjCD+nu2W/u0CMKLSPsn0WvgT/BrI7vyq4mnpSPVeOm/ZIe?=
+ =?us-ascii?Q?eJ16FO8BgBM+UZIhQhKhxhPAMr+qrnAzjYL42yYb8GkTYUfmr+8yK0MpbznI?=
+ =?us-ascii?Q?87hmhT3GEXPLqahZnejHCWvrQxd4mQM5OJDx9YnAKO98WfnCDF72wwrZocyn?=
+ =?us-ascii?Q?BW1PrZ5DKYVyx1IfbFOBsheA9qOuTY5akY/YxoZ6bCeGsay4BoCc35fJyLPH?=
+ =?us-ascii?Q?QuNiNMz4LV9U+TkT9J0CdFyOeCA4MNbX4wLk9O9H4AWTOrWmweIGbga3N/gg?=
+ =?us-ascii?Q?E4Bqdf5D4/Pp9zXmWOTs3NQRWP6fj9SgR89D/f/g1jBnhX5ego0BSwmQe/aF?=
+ =?us-ascii?Q?wG11tkgEpi6yT6Qotm2nKOfVdJ+TsmOQnBFPAGUD9/1SuCbsmEo05HHjSdZQ?=
+ =?us-ascii?Q?R2q20kxbF3oanEB65A52w1qAmHAVEZq6NUbPnPijKjyadJvg5OzF0fDujoMs?=
+ =?us-ascii?Q?8Jo5RIG4XARCGdG7UQwwgiXV8iUlTOBNVq5GDoSAyCgaGKNNSMiesQfJ8dNY?=
+ =?us-ascii?Q?6q+Dul/nKs2ZECtvJ6oTUoBdHXcuYzf3L/ENl10jfEeQ5Kk/6POb37vF87GH?=
+ =?us-ascii?Q?erPzDxOOq12hXW/GfpGwsS7G3+5N0YfZ5w4s?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 11:47:57.6397
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17c7c995-c196-49c8-5cb3-08ddef96b89a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D3.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6184
 
-On 09.09.25 11:56, Chunyan Zhang wrote:
-> Some platforms can customize the PTE soft dirty bit and make it unavailable
-> even if the architecture allows providing the PTE resource.
-> 
-> Add an API which architectures can define their specific implementations
-> to detect if the PTE soft-dirty bit is available, on which the kernel
-> is running.
-> 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
->   include/linux/pgtable.h | 10 ++++++++++
->   mm/debug_vm_pgtable.c   |  9 +++++----
->   mm/huge_memory.c        | 10 ++++++----
->   mm/internal.h           |  2 +-
->   mm/mremap.c             | 10 ++++++----
->   mm/userfaultfd.c        |  6 ++++--
->   7 files changed, 48 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 29cca0e6d0ff..20a609ec1ba6 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   	 * -Werror=unterminated-string-initialization warning
->   	 *  with GCC 15
->   	 */
-> -	static const char mnemonics[BITS_PER_LONG][3] = {
-> +	static char mnemonics[BITS_PER_LONG][3] = {
->   		/*
->   		 * In case if we meet a flag we don't know about.
->   		 */
-> @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   		[ilog2(VM_SEALED)] = "sl",
->   #endif
->   	};
-> +/*
-> + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
-> + * unavailable on which the kernel is running, even if the architecture
-> + * allows providing the PTE resource and soft-dirty is compiled in.
-> + */
-> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> +	if (!pte_soft_dirty_available())
-> +		mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> +#endif
-> +
->   	size_t i;
->   
->   	seq_puts(m, "VmFlags: ");
-> @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
->   static inline void clear_soft_dirty(struct vm_area_struct *vma,
->   		unsigned long addr, pte_t *pte)
->   {
-> +	if (!pte_soft_dirty_available())
-> +		return;
->   	/*
->   	 * The soft-dirty tracker uses #PF-s to catch writes
->   	 * to pages, so write-protect the pte as well. See the
-> @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
->   {
->   	pmd_t old, pmd = *pmdp;
->   
-> +	if (!pte_soft_dirty_available())
-> +		return;
-> +
->   	if (pmd_present(pmd)) {
->   		/* See comment in change_huge_pmd() */
->   		old = pmdp_invalidate(vma, addr, pmdp);
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 4c035637eeb7..c0e2a6dc69f4 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
->   #endif
->   
->   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> +
-> +/*
-> + * Some platforms can customize the PTE soft dirty bit and make it unavailable
-> + * even if the architecture allows providing the PTE resource.
-> + */
-> +#ifndef pte_soft_dirty_available
-> +#define pte_soft_dirty_available()	(true)
-> +#endif
-> +
->   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
->   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
->   {
-> @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
->   }
->   #endif
->   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> +#define pte_soft_dirty_available()	(false)
->   static inline int pte_soft_dirty(pte_t pte)
->   {
->   	return 0;
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 830107b6dd08..98ed7e22ccec 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
+Add basic test for perf sched stats {record|report|diff} subcommand.
 
-I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
+Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+---
+ tools/perf/tests/shell/perf_sched_stats.sh | 64 ++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100755 tools/perf/tests/shell/perf_sched_stats.sh
 
-e.g., for the default implementation
-
-define pte_soft_dirty_available()	IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-
-That way you can avoid some ifefs and cleanup these checks.
-
-
-But as we do also have PMD soft-dirty support, I guess we would want to call this
-something more abstract "pgtable_soft_dirty_available" or "pgtable_soft_dirty_supported"
-
+diff --git a/tools/perf/tests/shell/perf_sched_stats.sh b/tools/perf/tests/shell/perf_sched_stats.sh
+new file mode 100755
+index 000000000000..2b1410b050d0
+--- /dev/null
++++ b/tools/perf/tests/shell/perf_sched_stats.sh
+@@ -0,0 +1,64 @@
++#!/bin/sh
++# perf sched stats tests
++# SPDX-License-Identifier: GPL-2.0
++
++set -e
++
++err=0
++test_perf_sched_stats_record() {
++  echo "Basic perf sched stats record test"
++  if ! perf sched stats record true 2>&1 | \
++    grep -E -q "[ perf sched stats: Wrote samples to perf.data ]"
++  then
++    echo "Basic perf sched stats record test [Failed]"
++    err=1
++    return
++  fi
++  echo "Basic perf sched stats record test [Success]"
++}
++
++test_perf_sched_stats_report() {
++  echo "Basic perf sched stats report test"
++  perf sched stats record true > /dev/null
++  if ! perf sched stats report 2>&1 | grep -E -q "Description"
++  then
++    echo "Basic perf sched stats report test [Failed]"
++    err=1
++    rm perf.data
++    return
++  fi
++  rm perf.data
++  echo "Basic perf sched stats report test [Success]"
++}
++
++test_perf_sched_stats_live() {
++  echo "Basic perf sched stats live mode test"
++  if ! perf sched stats true 2>&1 | grep -E -q "Description"
++  then
++    echo "Basic perf sched stats live mode test [Failed]"
++    err=1
++    return
++  fi
++  echo "Basic perf sched stats live mode test [Success]"
++}
++
++test_perf_sched_stats_diff() {
++  echo "Basic perf sched stats diff test"
++  perf sched stats record true > /dev/null
++  perf sched stats record true > /dev/null
++  if ! perf sched stats diff > /dev/null
++  then
++    echo "Basic perf sched stats diff test [Failed]"
++    err=1
++    rm perf.data.old perf.data
++    return
++  fi
++  rm perf.data.old perf.data
++  echo "Basic perf sched stats diff test [Success]"
++}
++
++test_perf_sched_stats_record
++test_perf_sched_stats_report
++test_perf_sched_stats_live
++test_perf_sched_stats_diff
++exit $err
 -- 
-Cheers
-
-David / dhildenb
+2.43.0
 
 
