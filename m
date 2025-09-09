@@ -1,202 +1,256 @@
-Return-Path: <linux-kernel+bounces-807608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB131B4A6D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081FDB4A6BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF0C5431EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4FC176028
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D91327F198;
-	Tue,  9 Sep 2025 09:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F562512F1;
+	Tue,  9 Sep 2025 09:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VRImg0Kw"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iikrhaVG"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FF927932E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369D1275B1C;
+	Tue,  9 Sep 2025 09:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408975; cv=none; b=VuccM5fkVpirGzokkHN9QRSDYKJvg+3IYqxfe84zwrYLsrTZBffyPAPSwg96DiWP5FgHs8y+6v1767spZfRUnD8E/nVLkierlqhLJ9DscFbG8LS7Sx7jeFyKJpV0Em0NLFgVH96BzLJWF2QygEYBgPrVaNnBCfomTMDBkNgTZoM=
+	t=1757408907; cv=none; b=P0H6EUXmyFLcu6SqX0p9TJpSAkNSsODkWUH00tRgnJwlcE3nv0Div36w7V1oUYqPDOhQvpCsmqm9OrnI2JMYhvH3Fqt3Jmqb6+mwLv3qvCq5inHDPo1VZPppS2lohryjBnYBcdgqsBSb9iHq4xUcBe3t7ZGi+zE2ZVAzNMVb9tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408975; c=relaxed/simple;
-	bh=VwOdqvXP8yHvSIdjTHcp9EDnOjS/uTnbwvPceFqwE6Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k4/XrSyX3oCDz5RqfD8cfsgjOp9N3XD2Ft3g/WyWbfveJgH2+mMpR//j4oFn+95YUNEqaxgYWqjsXUr9aBbhbv+BapzQvDeX/5uqYS7eMP2lhSIpdSzIj+9yMv3sQ7xztRCIn0bwphvD3vZD4enjFdgAqbr+uJKaCvIsthEIU/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VRImg0Kw; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58998nTX255415;
-	Tue, 9 Sep 2025 04:08:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757408929;
-	bh=8GbLAFxTDKXutP/hH409KLose45hw46R/FdhRmrKl1o=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=VRImg0KwF0OruarACU7ba7GiEx3D9tWUjZoSGMZNDEGHyL513NRfwadCSXqfK8aNv
-	 nxdX2GbztReaSl37wB7yISiFhXouBW9Y3phDcBCV5ZrPT4a0gDUVPqxfsRLJYcd7QQ
-	 kAU6QzdADQytM9oSQKJlUJf6mKXF8V8sXSzaEOHw=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58998nDV3606706
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 9 Sep 2025 04:08:49 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
- Sep 2025 04:08:49 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 9 Sep 2025 04:08:49 -0500
-Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58998Pks2399851;
-	Tue, 9 Sep 2025 04:08:41 -0500
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <lumag@kernel.org>, <dianders@chromium.org>,
-        <andy.yan@rock-chips.com>, <mordan@ispras.ru>, <linux@treblig.org>,
-        <viro@zeniv.linux.org.uk>, <aradhya.bhatia@linux.dev>,
-        <javierm@redhat.com>, <tomi.valkeinen@ideasonboard.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devarsht@ti.com>, <u-kumar1@ti.com>, <s-jain1@ti.com>
-CC: <lyude@redhat.com>, <luca.ceresoli@bootlin.com>
-Subject: [PATCH v6 2/6] drm/bridge: cadence: cdns-mhdp8546*: Change drm_connector from structure to pointer
-Date: Tue, 9 Sep 2025 14:38:20 +0530
-Message-ID: <20250909090824.1655537-3-h-shenoy@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250909090824.1655537-1-h-shenoy@ti.com>
-References: <20250909090824.1655537-1-h-shenoy@ti.com>
+	s=arc-20240116; t=1757408907; c=relaxed/simple;
+	bh=XzFNPRuR50tjfJ2GSCD7tgo/xB72FBuDGkn1WlX5hWs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YH9qG4ykGarpMK/ez/s3aR6va5pTOWlhur3Fo9TFKMfepvlN/TJnWznYwfJ4juNvpQqPrORQO58iUs65VxtYfRkSzxg3XjTwZSzDKJNkYZ6Hf3wgyBI+QnaRf5VdJLZhKomMpAi0CBrC+8wTDhhtro4THmxRVXbwkUUiNqZxjB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iikrhaVG; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f68d7a98aso6312816e87.3;
+        Tue, 09 Sep 2025 02:08:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757408903; x=1758013703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m15/6HK6IXoWcPOIkEnGT9WR5ix6JXTW5qiMEnkeKfY=;
+        b=iikrhaVGTgeKPAnY0HRagkWadiTd71GQB+6dFYJeYTXltNy/KC6P3uFNioSvMGIIAH
+         JlCpvJNuiGwE0Ziy4MCYVMwoMq6xRj2/UVmfWUSbfJKXBuYpKTJdHCR1DYVFSlVM1Ru4
+         yPyyOarCm6vGjkJly51Slb/fc5tv4usW7NBpcBKQuRa62mQkJOsZcZ06B5Von+q9+Fi2
+         /j6g6CRlwmutZo2YJ2m/Beg9uTwLHg95ETDNasRBgwUDkc+48l91E6m/zeRTKby3PfDT
+         kiM6yLu7dl12xvpWljv6ZYA1kyAVZah14OgUeUGJeyT28/b6uBAO/uy5Ke7qvzpdym49
+         q1BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757408903; x=1758013703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m15/6HK6IXoWcPOIkEnGT9WR5ix6JXTW5qiMEnkeKfY=;
+        b=eWvj6oJzlEw7gfc+gHBj1douPjt/NzwFh/wWN9M9e4gOxYXw73MFJh3Wu0E7pzBEDH
+         IHv2RcPWsZ/91QOMCW+TI4rvq2H5jID6Tbv40D/SJ53E/X66t7AaSVxXXUk8qJ3gbjeb
+         o2YuHxP4GM9ChfE6/lqW/trMIClJ2Ei6l+cXhuiz+hDLu0/ePngvCpEAF3H4ZGe0SNPZ
+         lduBg69qvW6cuWv2IGjo8SQtOMSwfV5qQJ4dc2X3JQPGAyYNiayt++XbrrD4wrNRizId
+         0/B0puNCLFqOzG53nZJEkR9/q8DwcmW3jGXjK6bH4nwYlGIPfDqRUtUZWwcxWK48B8lx
+         bqgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxC6Qq8jWjopr+gcATtNv6rgfpbPij+45KfZJx4G0rHa8r8FAmqHcvB7rbxjJuUi0oRqEn@vger.kernel.org, AJvYcCVcCC/fqzNkp3RGPAr8/bISD4gZzshICoNDRCkZjVmBs1x+JVjORUllXPEdD4kdyx1qgMwetwUOGk15u+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvd9w7vCbmwexrkBztzGGyfJVzsYaDXJ/Q2mNZdItoH1PTjrW/
+	o7e683n2C2i748Qc5A7qKyqEkPwIam48csx6t9iahbTBqca2hm5usCd5
+X-Gm-Gg: ASbGncv8FWzc13aC/PNXAi1UlL59gVwxnmlEB9BkGaukjEEyNKezTVw0OG45JgD0dqB
+	WYcewX61zOl3Zh4/zrgYovgI9dHAv6ipYja8K94sgMiRncaPaWz7PtaiTAZ55TaZnN+8F96cCmb
+	NrNnKupxq5JTlf++qbeKmPK9RKQ7NZi+c1UAeAdby+OvhFRV4H33/uPXQJIBzUNDT43QAeMsQwl
+	/WWP0iVjeqYwidpI7bdMBzeSzsWfRD/lva/fYjOql+O/Wt92PfnKGGzrXosOHSgmxR/4y+wBHei
+	MiDcrFXz2i3q7Ft+5rDOFHaqIzhz77Vo62Zt/DiRvH//m/zapMcsyOn2BrsxSWrU+1Jqf3Khej/
+	axtJlgUsSbmC0v52Kr/jW33lQFp+itZdHGvfp2r3oizeVJ6q3fVWTzPLvoeHqFkmIW43lNuw=
+X-Google-Smtp-Source: AGHT+IEnyV5ZBqivGAbEdD2OGowTdG9/z5D2YczrchhVQjLP1DvK2+GKpP7bXLYhTGA7oyfnNfxlPw==
+X-Received: by 2002:a05:6512:63c5:20b0:563:3ac3:1ec1 with SMTP id 2adb3069b0e04-5633ac31f71mr2335880e87.54.1757408902875;
+        Tue, 09 Sep 2025 02:08:22 -0700 (PDT)
+Received: from pc636 (host-95-203-28-174.mobileonline.telia.com. [95.203.28.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c4246f2sm390317e87.26.2025.09.09.02.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 02:08:22 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 9 Sep 2025 11:08:20 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH v7 04/21] slab: add sheaf support for batching
+ kfree_rcu() operations
+Message-ID: <aL_uhPtztx7Ef0T2@pc636>
+References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
+ <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
+ <aL7FFpIMmXtzzSL1@pc638.lan>
+ <6f8274da-a010-4bb3-b3d6-690481b5ace0@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f8274da-a010-4bb3-b3d6-690481b5ace0@suse.cz>
 
-From: Jayesh Choudhary <j-choudhary@ti.com>
+On Mon, Sep 08, 2025 at 02:45:11PM +0200, Vlastimil Babka wrote:
+> On 9/8/25 13:59, Uladzislau Rezki wrote:
+> > On Wed, Sep 03, 2025 at 02:59:46PM +0200, Vlastimil Babka wrote:
+> >> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
+> >> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
+> >> addition to main and spare sheaves.
+> >> 
+> >> kfree_rcu() operations will try to put objects on this sheaf. Once full,
+> >> the sheaf is detached and submitted to call_rcu() with a handler that
+> >> will try to put it in the barn, or flush to slab pages using bulk free,
+> >> when the barn is full. Then a new empty sheaf must be obtained to put
+> >> more objects there.
+> >> 
+> >> It's possible that no free sheaves are available to use for a new
+> >> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
+> >> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
+> >> kfree_rcu() implementation.
+> >> 
+> >> Expected advantages:
+> >> - batching the kfree_rcu() operations, that could eventually replace the
+> >>   existing batching
+> >> - sheaves can be reused for allocations via barn instead of being
+> >>   flushed to slabs, which is more efficient
+> >>   - this includes cases where only some cpus are allowed to process rcu
+> >>     callbacks (Android)
+> >> 
+> >> Possible disadvantage:
+> >> - objects might be waiting for more than their grace period (it is
+> >>   determined by the last object freed into the sheaf), increasing memory
+> >>   usage - but the existing batching does that too.
+> >> 
+> >> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
+> >> implementation favors smaller memory footprint over performance.
+> >> 
+> >> Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
+> >> count how many kfree_rcu() used the rcu_free sheaf successfully and how
+> >> many had to fall back to the existing implementation.
+> >> 
+> >> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> >> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> >> ---
+> >>  mm/slab.h        |   2 +
+> >>  mm/slab_common.c |  24 +++++++
+> >>  mm/slub.c        | 192 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >>  3 files changed, 216 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/mm/slab.h b/mm/slab.h
+> >> index 206987ce44a4d053ebe3b5e50784d2dd23822cd1..f1866f2d9b211bb0d7f24644b80ef4b50a7c3d24 100644
+> >> --- a/mm/slab.h
+> >> +++ b/mm/slab.h
+> >> @@ -435,6 +435,8 @@ static inline bool is_kmalloc_normal(struct kmem_cache *s)
+> >>  	return !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT));
+> >>  }
+> >>  
+> >> +bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj);
+> >> +
+> >>  #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+> >>  			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
+> >>  			 SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS | \
+> >> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> >> index e2b197e47866c30acdbd1fee4159f262a751c5a7..2d806e02568532a1000fd3912db6978e945dcfa8 100644
+> >> --- a/mm/slab_common.c
+> >> +++ b/mm/slab_common.c
+> >> @@ -1608,6 +1608,27 @@ static void kfree_rcu_work(struct work_struct *work)
+> >>  		kvfree_rcu_list(head);
+> >>  }
+> >>  
+> >> +static bool kfree_rcu_sheaf(void *obj)
+> >> +{
+> >> +	struct kmem_cache *s;
+> >> +	struct folio *folio;
+> >> +	struct slab *slab;
+> >> +
+> >> +	if (is_vmalloc_addr(obj))
+> >> +		return false;
+> >> +
+> >> +	folio = virt_to_folio(obj);
+> >> +	if (unlikely(!folio_test_slab(folio)))
+> >> +		return false;
+> >> +
+> >> +	slab = folio_slab(folio);
+> >> +	s = slab->slab_cache;
+> >> +	if (s->cpu_sheaves)
+> >> +		return __kfree_rcu_sheaf(s, obj);
+> >> +
+> >> +	return false;
+> >> +}
+> >> +
+> >>  static bool
+> >>  need_offload_krc(struct kfree_rcu_cpu *krcp)
+> >>  {
+> >> @@ -1952,6 +1973,9 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+> >>  	if (!head)
+> >>  		might_sleep();
+> >>  
+> >> +	if (kfree_rcu_sheaf(ptr))
+> >> +		return;
+> >> +
+> > Uh.. I have some concerns about this.
+> > 
+> > This patch introduces a new path which is a collision to the
+> > existing kvfree_rcu() logic. It implements some batching which
+> > we already have.
+> 
+> Yes but for caches with sheaves it's better to recycle the whole sheaf (as
+> described), which is so different from the existing batching scheme that I'm
+> not sure if there's a sensible way to combine them.
+> 
+> > - kvfree_rcu_barrier() does not know about "sheaf" path. Am i missing
+> >   something? How do you guarantee that kvfree_rcu_barrier() flushes
+> >   sheafs? If it is part of kvfree_rcu() it has to care about this.
+> 
+> Hm good point, thanks. I've taken care of handling flushing related to
+> kfree_rcu() sheaves in kmem_cache_destroy(), but forgot that
+> kvfree_rcu_barrier() can be also used outside of that - we have one user in
+> codetag_unload_module() currently.
+> 
+> > - we do not allocate in kvfree_rcu() path because of PREEMMPT_RT, i.e.
+> >   kvfree_rcu() is supposed it can be called from the non-sleeping contexts.
+> 
+> Hm I could not find where that distinction is in the code, can you give a
+> hint please. In __kfree_rcu_sheaf() I do only have a GFP_NOWAIT attempt.
+> 
+For PREEMPT_RT a regular spin-lock is an rt-mutex which can sleep. We
+made kvfree_rcu() to make it possible to invoke it from non-sleep contexts:
 
-After adding DBANC framework, mhdp->connector is not initialised during
-bridge_attach(). The connector is however required in few driver calls
-like cdns_mhdp_hdcp_enable() and cdns_mhdp_modeset_retry_fn().
-Use drm_connector pointer instead of structure, set it in bridge_enable()
-and clear it in bridge_disable(), and make appropriate changes.
+CONFIG_PREEMPT_RT
 
-Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 ++++++------
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h |  2 +-
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c |  8 ++++----
- 3 files changed, 11 insertions(+), 11 deletions(-)
+preempt_disable() or something similar;
+ kvfree_rcu();
+  GFP_NOWAIT - lock rt-mutex
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 08702ade2903..c2ce3d6e5a88 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -1755,7 +1755,6 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
- 	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
- 	struct cdns_mhdp_bridge_state *mhdp_state;
- 	struct drm_crtc_state *crtc_state;
--	struct drm_connector *connector;
- 	struct drm_connector_state *conn_state;
- 	struct drm_bridge_state *new_state;
- 	const struct drm_display_mode *mode;
-@@ -1785,12 +1784,12 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
- 	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
- 			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
- 
--	connector = drm_atomic_get_new_connector_for_encoder(state,
--							     bridge->encoder);
--	if (WARN_ON(!connector))
-+	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
-+								   bridge->encoder);
-+	if (WARN_ON(!mhdp->connector))
- 		goto out;
- 
--	conn_state = drm_atomic_get_new_connector_state(state, connector);
-+	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
- 	if (WARN_ON(!conn_state))
- 		goto out;
- 
-@@ -1853,6 +1852,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
- 		cdns_mhdp_hdcp_disable(mhdp);
- 
- 	mhdp->bridge_enabled = false;
-+	mhdp->connector = NULL;
- 	cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
- 	resp &= ~CDNS_DP_FRAMER_EN;
- 	resp |= CDNS_DP_NO_VIDEO_MODE;
-@@ -2134,7 +2134,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
- 
- 	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
- 
--	conn = &mhdp->connector;
-+	conn = mhdp->connector;
- 
- 	/* Grab the locks before changing connector property */
- 	mutex_lock(&conn->dev->mode_config.mutex);
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-index bad2fc0c7306..b297db53ba28 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-@@ -375,7 +375,7 @@ struct cdns_mhdp_device {
- 	 */
- 	struct mutex link_mutex;
- 
--	struct drm_connector connector;
-+	struct drm_connector *connector;
- 	struct drm_bridge bridge;
- 
- 	struct cdns_mhdp_link link;
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-index 42248f179b69..59f18c3281ef 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-@@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
- 	int ret;
- 
- 	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
--		mhdp->connector.name, mhdp->connector.base.id);
-+		mhdp->connector->name, mhdp->connector->base.id);
- 
- 	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
- 
-@@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
- 
- 	dev_err(mhdp->dev,
- 		"[%s:%d] HDCP link failed, retrying authentication\n",
--		mhdp->connector.name, mhdp->connector.base.id);
-+		mhdp->connector->name, mhdp->connector->base.id);
- 
- 	ret = _cdns_mhdp_hdcp_disable(mhdp);
- 	if (ret) {
-@@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
- 	struct cdns_mhdp_device *mhdp = container_of(hdcp,
- 						     struct cdns_mhdp_device,
- 						     hdcp);
--	struct drm_device *dev = mhdp->connector.dev;
-+	struct drm_device *dev = mhdp->connector->dev;
- 	struct drm_connector_state *state;
- 
- 	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
- 	mutex_lock(&mhdp->hdcp.mutex);
- 	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
--		state = mhdp->connector.state;
-+		state = mhdp->connector->state;
- 		state->content_protection = mhdp->hdcp.value;
- 	}
- 	mutex_unlock(&mhdp->hdcp.mutex);
--- 
-2.34.1
+If GFP_NOWAIT semantic does not access any spin-locks then we are safe
+or if it uses raw_spin_locks.
 
+> > - call_rcu() can be slow, therefore we do not use it in the kvfree_rcu().
+> 
+> If call_rcu() is called once per 32 kfree_rcu() filling up the rcu sheaf, is
+> it still too slow?
+>
+You do not know where in a queue this callback lands, in the beginning,
+in the end, etc. It is part of generic list which is processed one by
+one. It can contain thousands of callbacks.
+
+If performance is not needed then it is not an issue. But in
+kvfree_rcu() we do not use it, because of we want to offload
+fast.
+
+--
+Uladzislau Rezki
 
