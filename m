@@ -1,159 +1,149 @@
-Return-Path: <linux-kernel+bounces-807138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE927B4A093
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:20:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC61B4A098
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7458B4E59E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ECEE3A9B70
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE69C2E0B42;
-	Tue,  9 Sep 2025 04:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1859D2E8B77;
+	Tue,  9 Sep 2025 04:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itXIm1sE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FpqBSn5h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8519C2C3257
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7522C3257;
+	Tue,  9 Sep 2025 04:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757391604; cv=none; b=iKSPVa3VllbBjK/p24+BRlRd8yO/uqvUMQw3Clfe8NtI+X7pOqvpt43g9d70YWtX6y6J8z+wl8Yzl8HctBE+n2r3zqLOewmbP8w7pSvdi6F6fAHOtSGqKexInz0TWIqv9KDpPbh6tK/8y78DE3jBVZxikKWa9hxahOfp65gunao=
+	t=1757391711; cv=none; b=o9BHxd0N7qbvRfzNjc4Nk0TGgeLSW+DsyXKiRjjP4dBob7X3GkTYPy80Wa7dtKsW0b2ngbF8lp6ykkdqLthCXYwm/W8aHSMLE7akBf02YbxpjvByEx4En8f55+bIjE1WAOyCsraawPZQ4aYifpS5n1963q3agjGkguvT+4z/Gr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757391604; c=relaxed/simple;
-	bh=kcJMNEpEeX4hcspzTai+arozdN7w9isGuN5jMeekjZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bU8vNoITC9HhVj+I8G+u3hIeD1b1GzD/zzC0TZiiqb05y19Eyva+mEaKY0Y6eQ8Fm862l1kzq2t+bgGPJtuTb9nqLkOqjGav88IA7z7NXh3Xoe4CxRWsDam93xfBfKKzSKQC6fH4ouCIYKFDEhMGFvCyVjhYrOFFF27l7a9E48M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itXIm1sE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757391601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=54MsxNCmmlAlcM5f+BHWGLYP6L+NuEk1hd/wbu7HmzE=;
-	b=itXIm1sE7Wsw/T2sTwg/lSrMp/cna6MZ6tO99hGCLeKLgDiZa0h8ViBIHN9OTqPYhaY+XN
-	7YH1Cpms3ATfLvMvR891g/PfovoJNaYois9xQwHk8WcHebT8tDaSaW7b2wJxYQTVKSpG4L
-	UKV268n7sCZLGvMczUD5jliuPL8EPGU=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-fzgyxxnUM6y8jucEf5fBSA-1; Tue, 09 Sep 2025 00:19:59 -0400
-X-MC-Unique: fzgyxxnUM6y8jucEf5fBSA-1
-X-Mimecast-MFC-AGG-ID: fzgyxxnUM6y8jucEf5fBSA_1757391598
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b47630f9aa7so4107305a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:19:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757391598; x=1757996398;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54MsxNCmmlAlcM5f+BHWGLYP6L+NuEk1hd/wbu7HmzE=;
-        b=C0nrPCezHr77+89n6fkh2yd+tx3LLJbjOsbrCU4MOmbbC2z8LZ1QCI1f2KMgoFIbCo
-         ZKyuDBiQicFGT8Kf0Yrg3NALglJOC1pdNxSi3geSSQqk3X7qYHaSZSyKeen1GlGiaIbg
-         78qf4LYUfWGvP5JGuYtAH4OAyIJDnM653v1KLo7vQgiBXog3zy9SVuSEFhdlIzqj7AHx
-         P9PjZBnPIWVCoii4t8gHbTkTJ5knFYvf1Qk5C7A93Azi+7ce20c0UHzE/bhcE45PuEXr
-         a2J0YhuIuOVVIGwEDLxlrktai0xbLBw8X8tnJ5RCydZEbKT5y9npPW/4rAo8VhhvqEJf
-         yuOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl2eVce3GdRiwv1QbosGTWFeEZoBQlJgl2AbgcazL35n4/IS7l1f7khULUGrThThahLPtPP1N5vifpUXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymQicst4nwANzy4jUhVR9Ukj98jYhS+enlIUbyDM6S5RMOB//H
-	F4LVZCCPnrba6v6atFWax+6RPsfkBshkMqpOeyXNDPSGsGxZ4p6cSh2d85Ocl32ps+ERw70TbLN
-	KuqKwcNBaUEyoIILm3zr68uIBpKv5IfR3F5b8EuIwgOnxVC+gaTnsv9dA4blUx4kBUg==
-X-Gm-Gg: ASbGncuf5KNeFTdeKAfur8MCti303gVNVbT9ZTNkEojR4e+Bz8GFPtuZMTVfkgd1Azz
-	d7kQzV2TwvOQ7m9z/GQC2ywChTWJOSBnPNvja4zhPa277+JfBRWcLFBuCwU6hrp1fwvE98YsljW
-	Nkpl9wPf1WrbRUDkavEvVTcJoTm5/wRv2VdopHnrPf6CZp/cZ6pssd9PNclp7t9rM71/CgKpypJ
-	WBDEjUkrrSdM6LB5xwlo7xng52IsR57u0wIFYCUmG507Gmxm8zYGfFy4M4hBgGIEvapF0/AsQru
-	5bIRNWI85HG2WvcIjkuEC1knjeVc/04=
-X-Received: by 2002:a17:903:b0e:b0:258:fa62:ab17 with SMTP id d9443c01a7336-258fa62ac03mr15850375ad.29.1757391598385;
-        Mon, 08 Sep 2025 21:19:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEv36p9UxA54Z3porfTlTxG7LAGzqKIDTmwybjkcWmGH9oQOVl5p8+shON8WpdrhlHXD9O2lQ==
-X-Received: by 2002:a17:903:b0e:b0:258:fa62:ab17 with SMTP id d9443c01a7336-258fa62ac03mr15850235ad.29.1757391597940;
-        Mon, 08 Sep 2025 21:19:57 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9952bccasm157077385ad.105.2025.09.08.21.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 21:19:57 -0700 (PDT)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ima: setting security.ima to fix security.evm for a file with IMA signature
-Date: Tue,  9 Sep 2025 12:19:53 +0800
-Message-ID: <20250909041954.1626914-1-coxu@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757391711; c=relaxed/simple;
+	bh=u2eWVDfOjZ/eUZU18XVmgcF0dNk+tPxSOkUryUdg0+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJc/8j7Xt/vNXHjIhCOzBNZ445I534pPOPVa6oACJTObRAbcarLzfebm344pmC4d3vAfDbW8u30VEFIqlzHjEd5kBVoeqhnhbirjjBO9McMJ6FvsatEaH8t1VFhLH1a1OVkrN9YlNv+Oxs11R3/cY7qti+TKrwDR7YyOHs6m8Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FpqBSn5h; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757391709; x=1788927709;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u2eWVDfOjZ/eUZU18XVmgcF0dNk+tPxSOkUryUdg0+k=;
+  b=FpqBSn5hwkPZVYmI5XKFDCmp73o8rH4ztJbkJocgi5N6BxV8HxmoeK5s
+   fzYqFTppRp9i2EZNGEWkFXFHWkLVKqsK0TA2Raja8YkTWDVBfNwMrl8+Q
+   YiLyYRwhXjb4db1Y7LHG7XkhkjFHy6k+XuMlowbX0SCA7W00W4dEY9A+9
+   LZwdc+cdH10ljKjAKjeiqdFH5vCqe1bcjhotQ/TsBHlR2sLVbZ3Gnc/HX
+   zPIWciPZRUWr4KN71k0zC47RALvpPTngls6mZxuHQNlj1fLFa3EYXQ/7B
+   La4Y5XA5rq1fw88XbEuQYJOXn7YDnUuX3DKOUqvNVWmEaXTiyQ2VdjE61
+   Q==;
+X-CSE-ConnectionGUID: 3egONS/oTpWYkpyTIBFt2w==
+X-CSE-MsgGUID: ySm2J2+cSKu48PKxqPaNog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="69920328"
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="69920328"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 21:21:49 -0700
+X-CSE-ConnectionGUID: rCcz4ynoSY2VL8BqXW/FiQ==
+X-CSE-MsgGUID: 2PP/FEzCTmSJGEBnXH18aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="196622451"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Sep 2025 21:21:44 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uvprR-0004Qf-1j;
+	Tue, 09 Sep 2025 04:21:41 +0000
+Date: Tue, 9 Sep 2025 12:20:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vivian Wang <wangruikang@iscas.ac.cn>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH net-next v10 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <202509091137.JnioPegN-lkp@intel.com>
+References: <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
 
-When both IMA and EVM fix modes are enabled, accessing a file with IMA
-signature won't cause security.evm to be fixed. But this doesn't happen
-to a file with correct IMA hash already set because accessing it will
-cause setting security.ima again which triggers fixing security.evm
-thanks to security_inode_post_setxattr->evm_update_evmxattr.
+Hi Vivian,
 
-Let's use the same mechanism to fix security.evm for a file with IMA
-signature.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+[auto build test WARNING on 062b3e4a1f880f104a8d4b90b767788786aa7b78]
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index f435eff4667f..18c3907c5e44 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		integrity_audit_msg(audit_msgno, inode, filename,
- 				    op, cause, rc, 0);
- 	} else if (status != INTEGRITY_PASS) {
--		/* Fix mode, but don't replace file signatures. */
--		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
--		    (!xattr_value ||
--		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
--			if (!ima_fix_xattr(dentry, iint))
--				status = INTEGRITY_PASS;
-+		/*
-+		 * Fix mode, but don't replace file signatures.
-+		 *
-+		 * When EVM fix mode is also enabled, security.evm will be
-+		 * fixed automatically when security.ima is set because of
-+		 * security_inode_post_setxattr->evm_update_evmxattr.
-+		 */
-+		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
-+			if (!xattr_value ||
-+			    xattr_value->type != EVM_IMA_XATTR_DIGSIG) {
-+				if (ima_fix_xattr(dentry, iint))
-+					status = INTEGRITY_PASS;
-+			} else if (xattr_value->type == EVM_IMA_XATTR_DIGSIG &&
-+				   evm_revalidate_status(XATTR_NAME_IMA)) {
-+				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
-+							   dentry,
-+							   XATTR_NAME_IMA,
-+							   xattr_value,
-+							   xattr_len, 0))
-+					status = INTEGRITY_PASS;
-+			}
- 		}
- 
- 		/*
+url:    https://github.com/intel-lab-lkp/linux/commits/Vivian-Wang/dt-bindings-net-Add-support-for-SpacemiT-K1/20250908-203917
+base:   062b3e4a1f880f104a8d4b90b767788786aa7b78
+patch link:    https://lore.kernel.org/r/20250908-net-k1-emac-v10-2-90d807ccd469%40iscas.ac.cn
+patch subject: [PATCH net-next v10 2/5] net: spacemit: Add K1 Ethernet MAC
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250909/202509091137.JnioPegN-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509091137.JnioPegN-lkp@intel.com/reproduce)
 
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509091137.JnioPegN-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In function 'emac_get_stat_tx_dropped',
+       inlined from 'emac_get_stats64' at drivers/net/ethernet/spacemit/k1_emac.c:1234:24:
+>> drivers/net/ethernet/spacemit/k1_emac.c:1218:24: warning: 'result' is used uninitialized [-Wuninitialized]
+    1218 |                 result += READ_ONCE(per_cpu(*priv->stat_tx_dropped, cpu));
+         |                        ^~
+   drivers/net/ethernet/spacemit/k1_emac.c: In function 'emac_get_stats64':
+   drivers/net/ethernet/spacemit/k1_emac.c:1214:13: note: 'result' was declared here
+    1214 |         u64 result;
+         |             ^~~~~~
+
+
+vim +/result +1218 drivers/net/ethernet/spacemit/k1_emac.c
+
+  1211	
+  1212	static u64 emac_get_stat_tx_dropped(struct emac_priv *priv)
+  1213	{
+  1214		u64 result;
+  1215		int cpu;
+  1216	
+  1217		for_each_possible_cpu(cpu) {
+> 1218			result += READ_ONCE(per_cpu(*priv->stat_tx_dropped, cpu));
+  1219		}
+  1220	
+  1221		return result;
+  1222	}
+  1223	
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
