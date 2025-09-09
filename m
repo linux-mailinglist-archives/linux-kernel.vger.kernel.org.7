@@ -1,232 +1,134 @@
-Return-Path: <linux-kernel+bounces-808984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BC0B50724
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D2BB5070C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FEC03A8117
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715AA44561B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CE73570CF;
-	Tue,  9 Sep 2025 20:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484B0340D9D;
+	Tue,  9 Sep 2025 20:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b="BCtBrI98"
-Received: from smtpout01-ext2.partage.renater.fr (smtpout01-ext2.partage.renater.fr [194.254.240.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNHfDlbx"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BA02FD1B6
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 20:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.254.240.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2093D2F747B;
+	Tue,  9 Sep 2025 20:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757450030; cv=none; b=sfMlDBSm+CBW8OMbAjYxVdALWyrvrNAW/eBrRi9wo+6Y9m6xt0AAu3xIKQ9wtTQM0CoHX+THWHx8XqGza+3I8RjmZAKY4yLRRtcDFxmufVyOK11F5yXKEKhk5OjG9NbX+ECBrRhPj+EDyjvts7JXnCrYJdou9oOXE+pXVXISjBM=
+	t=1757449715; cv=none; b=qp7TBn2egbxz3Gvw2na+BoUQzMGkG9T+qSUp0PGz+QPA19ms04cDqDcZS7fFLpIPZ9srrSEPlMt7Kkevpe5KXqeurssyQ/vd7qbbk3P7mfrbj54bOP6EtKtCPBzbhhucBx45J7a7FJYNznqr/mlPZEuH0zDcrujXlu5R8qD9waY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757450030; c=relaxed/simple;
-	bh=yq6xPpkW9blIYWjrt3urU0YFEqfdkmIhGv3QpePmGhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jLHKIT7ofU8c9JWBhHtwhdNXw423nbqOZh895c44T5Ea4t81Avn/ZRFB6UVc2X2HFft7QD63XxDiA9bM822BcClBFohuLd/uJLb22omMT1o26UZ09CPyoxskRao0o+zbZ/gY4IXoTbmqXbxNOcHM3QNBgLpYNiDWytHpPRCjKL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org; spf=none smtp.mailfrom=grenoble-inp.org; dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b=BCtBrI98; arc=none smtp.client-ip=194.254.240.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=grenoble-inp.org
-Received: from zmtaauth03.partage.renater.fr (zmtaauth03.partage.renater.fr [194.254.240.26])
-	by smtpout10.partage.renater.fr (Postfix) with ESMTP id 529D06461B;
-	Tue,  9 Sep 2025 22:26:37 +0200 (CEST)
-Received: from zmtaauth03.partage.renater.fr (localhost [127.0.0.1])
-	by zmtaauth03.partage.renater.fr (Postfix) with ESMTPS id 44E1D8000B;
-	Tue,  9 Sep 2025 22:26:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by zmtaauth03.partage.renater.fr (Postfix) with ESMTP id 3396F800EF;
-	Tue,  9 Sep 2025 22:26:37 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zmtaauth03.partage.renater.fr 3396F800EF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble-inp.org;
-	s=F42A61D9-9621-4693-8E8E-830FB5F1ED6E; t=1757449597;
-	bh=Buy1T95uIc1Zz/z/TPg/PIi9MThQ2QqgRVzaijMTRzc=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=BCtBrI98qZFR5d26ZdPzSYuNyTP3Qj39LmHzt2+aZXr9/RK85xHIJeLzOzEWzFEsu
-	 QO4AtLgMMpiDJhFqohuZvzcNPKtiFYgpWBRltPagJZgr3q84L/tn6rX0l0L45XcyW4
-	 XLiFCs8P9FxHeKPGnzSihW4Bjrb3nGTzPh07oiE6BvlBttt7Gflc1+gkS9/mjG9OjQ
-	 LiLpg63heukcUeZh14ox/B1AewOBaHePq8+3TXQPApoG6HE5Cfz+/dWRY364M6uxoy
-	 5sQZHqFCmW5X7KBPJ0WD7jli0WdKe1qr6+jDDCQ/+M/fc+IeY2tm8BhvROq4tZ7h1U
-	 Jl30XShobUJ1A==
-Received: from zmtaauth03.partage.renater.fr ([127.0.0.1])
- by localhost (zmtaauth03.partage.renater.fr [127.0.0.1]) (amavis, port 10026)
- with ESMTP id QhnL2tjYwYpB; Tue,  9 Sep 2025 22:26:37 +0200 (CEST)
-Received: from 91.166.147.41 (unknown [194.254.241.250])
-	by zmtaauth03.partage.renater.fr (Postfix) with ESMTPA id B41C980048;
-	Tue,  9 Sep 2025 22:26:36 +0200 (CEST)
-From: Calixte Pernot <calixte.pernot@grenoble-inp.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Calixte Pernot <c@lixte.email>,
-	Calixte Pernot <calixte.pernot@grenoble-inp.org>
-Subject: [PATCH v3] vt: add support for smput/rmput escape codes
-Date: Tue,  9 Sep 2025 22:26:30 +0200
-Message-ID: <20250909202629.9386-2-calixte.pernot@grenoble-inp.org>
+	s=arc-20240116; t=1757449715; c=relaxed/simple;
+	bh=tD0+0ZYpsqsbc3fFT8l4+ZcUtMzM3K0vkSTOzW61kR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OCa3BdBUQsvR1Tn7VVXBEN5mkhNsWLwF8GKeZ0pyjeG+YJsjx5I/6n3B4xCuzXGodoDXSQwLsVXWpX+sU/zy50nlGDO4txZJe10HxTUbwGLYNRAVl/dyrOVHJOP8dtT7S0Eog7QnitgTRjhAWhHyHManmYo9//JbuQ57vkeurwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNHfDlbx; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45de1084868so16656485e9.2;
+        Tue, 09 Sep 2025 13:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757449712; x=1758054512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbMix5+DWmyUggOh0OF3R/1SnFjy31jtsOG4VomZp/Q=;
+        b=UNHfDlbxs38SV/4pkMUvwSI7DKQVHkUgfNoTMCeZnWzly1QYP/sO/mVcuIW1CG6B+L
+         6zQcezXiDlAKHH2t2z7qNzYy2ib8x5Wxk+xEw6KD7BAzffVbY28BNSgaPM+VDt7OlpAU
+         JUZrJQTyAgiaC0/KY/8ifOemk3o7tjiJ5oNVgtWv1ChSzdGSURQyPEDyowChcYHgP53x
+         SUYMYfHWoqr/sf+pK9Zql4tFSvZ7MlNEFTc04oCqAWcdxOcY83WMhpDdvoh0sz5L9FvL
+         z8dxkGHNTAKVUqHN7GThtto2L5J87vsqTPCSpvdnM9SRa3bZFn8wazHFOuq+7ZZ+7bqY
+         U7ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757449712; x=1758054512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CbMix5+DWmyUggOh0OF3R/1SnFjy31jtsOG4VomZp/Q=;
+        b=mtP3Pa/EIVtap1xXIKLR/NRflDdD44CKQre44Hp9gWvwm82DIyazxQ+8Cc+WIH+EQi
+         YdRu4K8fbqVh5UbhTO1Mfa5N7zYKlqZ1etTdpNIK7ASXr9iJvaa4EF/4vP/ZPSGS8noO
+         P9u1h3qEGaZyOozr/LpJM3uy5gY25eg6lalL0peVu7So6Y3H/A09wz3/JRtzFUxG+mJu
+         VYabvO/fbJhMmvl3aoq6Wgdu2ekCPEjauOTovELMxFZtqtb32dY6uYgDhMspWLnfF6uf
+         x04GPrYly1s2p9FCAP9xYPl3i2oN0IaUFqZakDZcvHT+vUCZ56+ziXo/BdPqVs1UF1Yf
+         apMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+qH75EYA34Z4TXdHSZvNiWPHMBIajbXvPFXRrzx5JfW8dbubb5hfVkNzJ5pa6A2m0ebiB/S6Z@vger.kernel.org, AJvYcCXt+yPNmhReW18ms1ckfh+/2+vu1mkjcynNb4Ryiq1b4F+KZetTwxFOp4X70KfAkQ5ebCRMFDI5P+pJJSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0luQi8Ec/J9Hc1+aFKBSlmTDWXyfPoCNj1Pp8UPhSQTR+UPc1
+	KzycJnH1BGrZI76Fep8heKldpaDr5k3n7jD6QBA+f0Y0UJKq6BmRtqlW
+X-Gm-Gg: ASbGncv8kOPcG7z87NPcRN/yNFRal6JAPdVgAcGHuDEC/PG0C/uV3FJGJdnaQ2hjjwK
+	Mw6Asmddg248/nfbwK9krf1oECShhM0wOgukYpqpHjiFPQW5pJca6h8qxeuqdI8kXu7LZHPs1ZL
+	lA74DTch6Tbi4xiDh2tMSErX8Waogfll1SEXnHzdZmC4q9plYt+QMSj9CLzIPsS68crWCXv6f/5
+	MO1L2Old5xXasNVmKw6dHUfAAzum8We5sJvp670Vr67LIiSrC+bNWpx21DHjdL63nJqBAdePFOb
+	Q+FSQNDy2u/L6hacvQExBHuyZYKVn9KdbxArCVye8eAvPEegYdTnpA5tiNDxh2+Vib+nybQkJHx
+	Zn8XFj8UnK26xQpuZ5Y+76hwEH35IgK0aKIuF+QORtdK8r7yuPY+MNhFOHbI8LOcQqa7/jhNh0h
+	ipE641dg==
+X-Google-Smtp-Source: AGHT+IFIpfEneAcAsyfbb4BXzh3CEpaqYBQuBJbMIsuK17THKtbrKlS7oMo1g1RExw28vNrALhIe+w==
+X-Received: by 2002:a05:6000:2288:b0:3d8:afc6:e8f8 with SMTP id ffacd0b85a97d-3e642214be7mr9580305f8f.2.1757449712236;
+        Tue, 09 Sep 2025 13:28:32 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3e7521be57esm3895842f8f.2.2025.09.09.13.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 13:28:31 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH 1/3] net: phy: introduce phy_id_compare_model() PHY ID helper
+Date: Tue,  9 Sep 2025 22:28:10 +0200
+Message-ID: <20250909202818.26479-1-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <5002d4f9-4999-4a84-9329-edb20098fd7a@gmail.com>
-References: <5002d4f9-4999-4a84-9329-edb20098fd7a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Virus-Scanned: clamav-milter 0.103.12 at clamav02
-X-Virus-Status: Clean
-X-Renater-Ptge-SpamState: clean
-X-Renater-Ptge-SpamScore: -100
-X-Renater-Ptge-SpamCause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvudefjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucftgffptefvgfftnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeevrghlihigthgvucfrvghrnhhothcuoegtrghlihigthgvrdhpvghrnhhothesghhrvghnohgslhgvqdhinhhprdhorhhgqeenucggtffrrghtthgvrhhnpeevvdejheegvdfgffevhffgiedthfffjefggfeuudevteduveeuueehueekteejjeenucfkphepudelgedrvdehgedrvdeguddrvdehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleegrddvheegrddvgedurddvhedtpdhhvghlohepledurdduieeirddugeejrdeguddpmhgrihhlfhhrohhmpegtrghlihigthgvrdhpvghrnhhothesghhrvghnohgslhgvqdhinhhprdhorhhgpdhnsggprhgtphhtthhopeehpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptgeslhhigihtvgdrvghmrghilhdprhgtphhtthhopegtrghlihigthgvrdhpvghr
- nhhothesghhrvghnohgslhgvqdhinhhprdhorhhg
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: Calixte Pernot <c@lixte.email>
+Similar to phy_id_compare_vendor(), introduce the equivalent
+phy_id_compare_model() helper for the generic PHY ID Model mask.
 
-Support "\e[?1049h" and "\e[?1049l" escape codes.
-This patch allows programs to enter and leave alternate screens.
-This feature is widely available in graphical terminal emulators and most=
-ly
-used by fullscreen terminal-based user interfaces such as text editors.
-Most editors such as vim and nano assume this escape code in not supporte=
-d
-and will not try to print the escape sequence if TERM=3Dlinux.
-To try out this patch, run `TERM=3Dxterm-256color vim` inside a VT.
-
-Signed-off-by: Calixte Pernot <calixte.pernot@grenoble-inp.org>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/tty/vt/vt.c            | 58 ++++++++++++++++++++++++++++++++++
- include/linux/console_struct.h |  3 ++
- 2 files changed, 61 insertions(+)
+ include/linux/phy.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 62049ceb3..d9e4eb3f0 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -141,6 +141,7 @@ static const struct consw *con_driver_map[MAX_NR_CONS=
-OLES];
- static int con_open(struct tty_struct *, struct file *);
- static void vc_init(struct vc_data *vc, int do_clear);
- static void gotoxy(struct vc_data *vc, int new_x, int new_y);
-+static void restore_cur(struct vc_data *vc);
- static void save_cur(struct vc_data *vc);
- static void reset_terminal(struct vc_data *vc, int do_clear);
- static void con_flush_chars(struct tty_struct *tty);
-@@ -1344,6 +1345,10 @@ struct vc_data *vc_deallocate(unsigned int currcon=
-s)
- 		kfree(vc->vc_screenbuf);
- 		vc_cons[currcons].d =3D NULL;
- 	}
-+	if (vc->vc_saved_screen !=3D NULL) {
-+		kfree(vc->vc_saved_screen);
-+		vc->vc_saved_screen =3D NULL;
-+	}
- 	return vc;
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 04553419adc3..6adf7c5a91c2 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1308,6 +1308,19 @@ static inline bool phy_id_compare_vendor(u32 id, u32 vendor_mask)
+ 	return phy_id_compare(id, vendor_mask, PHY_ID_MATCH_VENDOR_MASK);
  }
-=20
-@@ -1878,6 +1883,45 @@ static int get_bracketed_paste(struct tty_struct *=
-tty)
- 	return vc->vc_bracketed_paste;
- }
-=20
-+/* console_lock is held */
-+static void enter_alt_screen(struct vc_data *vc)
+ 
++/**
++ * phy_id_compare_model - compare @id with @model mask
++ * @id: PHY ID
++ * @vendor_mask: PHY Model mask
++ *
++ * Return: true if the bits from @id match @model using the
++ *	   generic PHY Model mask.
++ */
++static inline bool phy_id_compare_model(u32 id, u32 model_mask)
 +{
-+	unsigned int size =3D vc->vc_rows * vc->vc_cols * 2;
-+
-+	if (vc->vc_saved_screen !=3D NULL)
-+		return; /* Already inside an alt-screen */
-+	vc->vc_saved_screen =3D kmemdup((u16 *)vc->vc_origin, size, GFP_KERNEL)=
-;
-+	if (vc->vc_saved_screen =3D=3D NULL)
-+		return;
-+	vc->vc_saved_rows =3D vc->vc_rows;
-+	vc->vc_saved_cols =3D vc->vc_cols;
-+	save_cur(vc);
-+	/* clear entire screen */
-+	csi_J(vc, CSI_J_FULL);
++	return phy_id_compare(id, model_mask, PHY_ID_MATCH_MODEL_MASK);
 +}
 +
-+/* console_lock is held */
-+static void leave_alt_screen(struct vc_data *vc)
-+{
-+	unsigned int rows =3D min(vc->vc_saved_rows, vc->vc_rows);
-+	unsigned int cols =3D min(vc->vc_saved_cols, vc->vc_cols);
-+	u16 *src, *dest;
-+
-+	if (vc->vc_saved_screen =3D=3D NULL)
-+		return; /* Not inside an alt-screen */
-+	for (unsigned int r =3D 0; r < rows; r++) {
-+		src =3D vc->vc_saved_screen + r * vc->vc_saved_cols;
-+		dest =3D ((u16 *)vc->vc_origin) + r * vc->vc_cols;
-+		memcpy(dest, src, 2 * cols);
-+	}
-+	restore_cur(vc);
-+	/* Update the entire screen */
-+	if (con_should_update(vc))
-+		do_update_region(vc, vc->vc_origin, vc->vc_screenbuf_size / 2);
-+	kfree(vc->vc_saved_screen);
-+	vc->vc_saved_screen =3D NULL;
-+}
-+
- enum {
- 	CSI_DEC_hl_CURSOR_KEYS	=3D 1,	/* CKM: cursor keys send ^[Ox/^[[x */
- 	CSI_DEC_hl_132_COLUMNS	=3D 3,	/* COLM: 80/132 mode switch */
-@@ -1888,6 +1932,7 @@ enum {
- 	CSI_DEC_hl_MOUSE_X10	=3D 9,
- 	CSI_DEC_hl_SHOW_CURSOR	=3D 25,	/* TCEM */
- 	CSI_DEC_hl_MOUSE_VT200	=3D 1000,
-+	CSI_DEC_hl_ALT_SCREEN	=3D 1049,
- 	CSI_DEC_hl_BRACKETED_PASTE =3D 2004,
- };
-=20
-@@ -1944,6 +1989,12 @@ static void csi_DEC_hl(struct vc_data *vc, bool on=
-_off)
- 		case CSI_DEC_hl_BRACKETED_PASTE:
- 			vc->vc_bracketed_paste =3D on_off;
- 			break;
-+		case CSI_DEC_hl_ALT_SCREEN:
-+			if (on_off)
-+				enter_alt_screen(vc);
-+			else
-+				leave_alt_screen(vc);
-+			break;
- 		}
- }
-=20
-@@ -2182,6 +2233,13 @@ static void reset_terminal(struct vc_data *vc, int=
- do_clear)
- 	vc->vc_deccm		=3D global_cursor_default;
- 	vc->vc_decim		=3D 0;
-=20
-+	if (vc->vc_saved_screen !=3D NULL) {
-+		kfree(vc->vc_saved_screen);
-+		vc->vc_saved_screen =3D NULL;
-+		vc->vc_saved_rows =3D 0;
-+		vc->vc_saved_cols =3D 0;
-+	}
-+
- 	vt_reset_keyboard(vc->vc_num);
-=20
- 	vc->vc_cursor_type =3D cur_default;
-diff --git a/include/linux/console_struct.h b/include/linux/console_struc=
-t.h
-index 59b4fec5f..13b35637b 100644
---- a/include/linux/console_struct.h
-+++ b/include/linux/console_struct.h
-@@ -159,6 +159,9 @@ struct vc_data {
- 	struct uni_pagedict *uni_pagedict;
- 	struct uni_pagedict **uni_pagedict_loc; /* [!] Location of uni_pagedict=
- variable for this console */
- 	u32 **vc_uni_lines;			/* unicode screen content */
-+	u16		*vc_saved_screen;
-+	unsigned int	vc_saved_cols;
-+	unsigned int	vc_saved_rows;
- 	/* additional information is in vt_kern.h */
- };
-=20
---=20
+ /**
+  * phydev_id_compare - compare @id with the PHY's Clause 22 ID
+  * @phydev: the PHY device
+-- 
 2.51.0
 
 
