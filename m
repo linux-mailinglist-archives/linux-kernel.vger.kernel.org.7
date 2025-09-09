@@ -1,174 +1,651 @@
-Return-Path: <linux-kernel+bounces-807395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF678B4A3D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0522B4A3E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1367417EB43
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5755C5E08A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3374312826;
-	Tue,  9 Sep 2025 07:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkWxPlvT"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56046313E3E;
+	Tue,  9 Sep 2025 07:34:20 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B77311593
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED1311952;
+	Tue,  9 Sep 2025 07:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403256; cv=none; b=Z/odxOeDaFc/NyYhN86aNG4zeYLDQ5d2UHeExy+FmnJlcW5vKl5nk+kYKt3m59XtHzxpqTPM3H8/SpWwjriUzYS6AHIUivt4ZjLqPnZIrUsDwgCFp/E+MEV8RMjdIM590RrYeUkoBumQctLDA8WTqrlVG60bq34t2bMtW2JZ2Io=
+	t=1757403259; cv=none; b=Q+VvHkhzHHc+beZmMdYAhRykyog8PCCGvshgUkR07Yul8rD/ufnFuJHiuT83BaVXxJL9wN3V47Y+zWwF+H6bfMfYLoc/u8cWlNMpMICTWgDsdsjog75bPbpNErkKiESftk+acBALEvsXmMfa6ooAAongcP+El/FaGiIeduS+d8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403256; c=relaxed/simple;
-	bh=jhpfAllvRjUQlvp/6puQsgbTZIwx8t1Hc8Kbpiklwqg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mC9yfrBVSkoXjpiweoDwSX78cGtiDpNvYl222wCqvten73BygdOGqVhHVvFAJyE96Dm60uE/rXORL8OQ4w2kwixYk9fRVob8SJIoxyVuJla+oKysiZqK9pz6tYtZt7Thy9jw17WikeiFiMQ6QQ5va/uwdNp3V7EyLGoWohnwvUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fkWxPlvT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso8985358a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757403253; x=1758008053; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xIWkj5abBOD5CGfZVD0eUu8lpneYawl7S35HHz5a778=;
-        b=fkWxPlvTk8Yz5W28fD5Ou8a5rKWK+aBNnAElaRHKB0Aw3LdVivejDErxjksLcUN1S/
-         R6pHuPv6wyRi/uaZQ1CqpWBaD6L0BlYHnmUbSeHOe1Ont785OMU7vS9tl1QBaPcX07Ka
-         jHQVT4A0mXgWOI8WJlBk8Ll2oTXbRSkhvARWyKzjleBx2D9tUzhcmVlD05rW6ZdgHuZw
-         J9LCMVZoHI77z6Mypi0AvfuXat6qzFsuGXLhrEZv+4CTJFyQNyjYU5QFU52tkiNklMFd
-         KueBig/sO+11xU0NNcMy3lhNhor2c1be+ejrqf4rwnozug4h9+N8qU037Q11Zc+aiyoA
-         gvqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757403253; x=1758008053;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xIWkj5abBOD5CGfZVD0eUu8lpneYawl7S35HHz5a778=;
-        b=JLya0Bt9h2lkyhxrgTo5JVxG4y9lVWDmwQGVsnTriB2p36tdiuluVvQMPlF+BGHuRP
-         ookasHZsRpneEmWGlmKm9TPglfIxdOkhpaYuqdQmdU5NtqgjhPXQ5cWh3J5TUaCapWsB
-         xelDE310azoVOGvmPGWa7Xd9xuvIYV5lhpEVxGOCZJ/pZIMoBaQtPjeX8A8w4BS3CLwq
-         0qDoEWH9gLFJBUlOutZCLWZHk+hJKLNunU+uHJ/ANdkOURuHdLTpk4yoiEL7VO/6nRKa
-         p24QFXQGU5dcUsd+AljSwzVlm5+efW/SVrbp09qmxKsntkMAUD7aTbTPVfwlHeP6lq/w
-         ze8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWS3P349jkoyVKMyAzDAY8tydXJZCSn5mvbNOiequtsA1dtBMStSpBcMMtfAKzLoIaQg2gC+Wpm3R999UU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3fMM/vGf490C35K3HmnZB7PQeXNVVIevyWO9TI2S7+Tz6mdsz
-	HBBGYwWgkpSIx4JFLBo8IGw7Yzvz+Knamn0ZbwJg59hQn9A139csGE9HimG9QK7Gmsw=
-X-Gm-Gg: ASbGncsgRJs2SJ8GmeQDAyiocWLOjZ6/ivYpwnICHeravE+THXaGbOQSvprYNBKu/KF
-	mj8xUCvrtkWgrTq9KwHAk2zcYUVe04b5hjh7JIaxd8k9jOp/JdJp+9g54jrv57s7hMrYC5r95Sj
-	2fhc2xFaUnpLy/bb/2Jiy372cUg3vvEAmhiXXx7jDlAjoh1bNi59EBC2XTUOfq16D4QQc6Bjc0j
-	E4q1wEbhLZX63w01D8r8Y9MESpDMM2BhsVjab5q+NzSHnpulTkpZAfFco1uGRpxC/Oa5H+OWw4I
-	25UmrBL6Wqy+wau/9wDT2B+fQ+sQZIPwPxW+DHL4OYroughgk4Q7InBkg0o7lB3imGM7oOZtu+V
-	ly/h89/bO/INClqDmoIqLWHvfJa4cuONBhQ==
-X-Google-Smtp-Source: AGHT+IE0JfJPrysG+ilt1P6XQou5Dh9p7qghCInAMInYwMKKh6nyr5AwYwkSehYOlA2CdaSMSROzTg==
-X-Received: by 2002:a05:6402:3549:b0:62a:91d5:8844 with SMTP id 4fb4d7f45d1cf-62a91e4cee2mr3840644a12.21.1757403252689;
-        Tue, 09 Sep 2025 00:34:12 -0700 (PDT)
-Received: from hackbox.lan ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c6a264285sm226976a12.2.2025.09.09.00.34.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 00:34:11 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 09 Sep 2025 10:33:35 +0300
-Subject: [PATCH v3 3/3] arm64: dts: qcom: Add missing TCSR ref clock to the
- DP PHYs
+	s=arc-20240116; t=1757403259; c=relaxed/simple;
+	bh=xDLG8fRmGQBHQ2AumwI/05RRBUUNXdcvtlSaoKaE7GI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LtAIy1Bkz71AwUzMJ5yfJ6xfbN71G7xmAj9CbrkD96u3ru9K+StVkzC591P5hW4a8MCKZ6+UQcNnoGCS1OkJ7oMLwXxpy00tWw0N+Y54J4Bt7L1uofGCcE6w4IuihGUwPaMno5G+cnHbgOUi36Hb9JMIPoRh4sIrwCCuSV/NFJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cLb8c12QLz2TSsr;
+	Tue,  9 Sep 2025 15:30:56 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2FA1140279;
+	Tue,  9 Sep 2025 15:34:10 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 9 Sep 2025 15:34:09 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, Meny Yossefi
+	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v05 11/14] hinic3: Add Rss function
+Date: Tue, 9 Sep 2025 15:33:36 +0800
+Message-ID: <23bb96cdfca81005315d33de90bd223eadf63c1c.1757401320.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
+In-Reply-To: <cover.1757401320.git.zhuyikai1@h-partners.com>
+References: <cover.1757401320.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-phy-qcom-edp-add-missing-refclk-v3-3-4ec55a0512ab@linaro.org>
-References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
-In-Reply-To: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1849; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=jhpfAllvRjUQlvp/6puQsgbTZIwx8t1Hc8Kbpiklwqg=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBov9ho+JLGxomLt25iZX5/tjQqlJECZ8uFp2zeL
- Cl7wISPeSSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaL/YaAAKCRAbX0TJAJUV
- VuLyD/9OQNNgomIbCRgZHuDmHgU7/hgXhVD19B2LyP53pmSJQuX9lemU59oQC9bdFE/7V6xdrh1
- Z50yP88jFTTR8lZyOOOJs53p2XvAUO6nhURGYwqcpp/Ff+2LCif1YmjDJ0XkElCQhvXG5g3mcsh
- HjOmNn0Doqa/WPo3nqrD3glt629ywhGJL+V1knazqdHeYKxD1itncWZhZV9JL2hp69N6d6q4w8Y
- FIVRbk2x9LsLnwi55yBFBc9TyyP1VGLvdj0sfXiK40neFOlm1m7gEP7i1gZ4cxApLy3Pb6bTuc9
- x8WcopxeCZQk0CPms2xx1fGJHs/ehMnWi6CGx6aPpKuRMvGPE5NfqIVqwpXg3HqJaPjOohYDXmR
- cbnjjvSHe00nDQKfc78qogtuXwzW1R9eYpj26kqhETBxBoYDghOIbyOMOOcx3lmIoLySh9ai62x
- I2FSYg0aDEyudcMjNoD5xLQ9C60Y7cVFvUogx3f1OpTgchckqxoJ5yakVGSEfPwR+52kndrDKLH
- gc9Y/7V5NKRoNL1GLatG8VOfVfds/6XHyoxQnhINTP2p0Q55vt2UgELkNvY6dH7HquMumMQwVI7
- T8fy5Tc/tpV0oAfqEJYExzKYTC3leASB7xzYx4u4YU2QpDWdojmziwVDU0xazZuqLF6Dhdd+5wk
- QLJVT9BLUrxd+Iw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-The DP PHYs on X1E80100 need the ref clock which is provided by the
-TCSR CC.
+Initialize rss functions. Configure rss hash data and HW resources.
 
-The current X Elite devices supported upstream work fine without this
-clock, because the boot firmware leaves this clock enabled. But we should
-not rely on that. Also, even though this change breaks the ABI, it is
-needed in order to make the driver disables this clock along with the
-other ones, for a proper bring-down of the entire PHY.
-
-So lets attach it to each of the DP PHYs in order to do that.
-
-Cc: stable@vger.kernel.org # v6.9
-Fixes: 1940c25eaa63 ("arm64: dts: qcom: x1e80100: Add display nodes")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+Signed-off-by: Fan Gong <gongfan1@huawei.com>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |   8 +-
+ .../huawei/hinic3/hinic3_mgmt_interface.h     |  55 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         |  18 +
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   5 +
+ .../net/ethernet/huawei/hinic3/hinic3_rss.c   | 336 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_rss.h   |  14 +
+ 7 files changed, 436 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 737c5dbd1c808300041cc8897ca1f7450e16e019..551fa270e6ecbe6462ebc1736a36be65534d3ae0 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -5670,9 +5670,11 @@ mdss_dp2_phy: phy@aec2a00 {
- 			      <0 0x0aec2000 0 0x1c8>;
+diff --git a/drivers/net/ethernet/huawei/hinic3/Makefile b/drivers/net/ethernet/huawei/hinic3/Makefile
+index a9f055cfef52..c3efa45a6a42 100644
+--- a/drivers/net/ethernet/huawei/hinic3/Makefile
++++ b/drivers/net/ethernet/huawei/hinic3/Makefile
+@@ -19,6 +19,7 @@ hinic3-objs := hinic3_cmdq.o \
+ 	       hinic3_nic_cfg.o \
+ 	       hinic3_nic_io.o \
+ 	       hinic3_queue_common.o \
++	       hinic3_rss.o \
+ 	       hinic3_rx.o \
+ 	       hinic3_tx.o \
+ 	       hinic3_wq.o
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_main.c b/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
+index a0b04fb07c76..6d87d4d895ba 100644
+--- a/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
+@@ -12,6 +12,7 @@
+ #include "hinic3_nic_cfg.h"
+ #include "hinic3_nic_dev.h"
+ #include "hinic3_nic_io.h"
++#include "hinic3_rss.h"
+ #include "hinic3_rx.h"
+ #include "hinic3_tx.h"
  
- 			clocks = <&dispcc DISP_CC_MDSS_DPTX2_AUX_CLK>,
--				 <&dispcc DISP_CC_MDSS_AHB_CLK>;
-+				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+				 <&tcsr TCSR_EDP_CLKREF_EN>;
- 			clock-names = "aux",
--				      "cfg_ahb";
-+				      "cfg_ahb",
-+				      "ref";
+@@ -134,6 +135,8 @@ static int hinic3_sw_init(struct net_device *netdev)
+ 	nic_dev->q_params.sq_depth = HINIC3_SQ_DEPTH;
+ 	nic_dev->q_params.rq_depth = HINIC3_RQ_DEPTH;
  
- 			power-domains = <&rpmhpd RPMHPD_MX>;
++	hinic3_try_to_enable_rss(netdev);
++
+ 	/* VF driver always uses random MAC address. During VM migration to a
+ 	 * new device, the new device should learn the VMs old MAC rather than
+ 	 * provide its own MAC. The product design assumes that every VF is
+@@ -145,7 +148,7 @@ static int hinic3_sw_init(struct net_device *netdev)
+ 			     hinic3_global_func_id(hwdev));
+ 	if (err) {
+ 		dev_err(hwdev->dev, "Failed to set default MAC\n");
+-		return err;
++		goto err_clear_rss_config;
+ 	}
  
-@@ -5690,9 +5692,11 @@ mdss_dp3_phy: phy@aec5a00 {
- 			      <0 0x0aec5000 0 0x1c8>;
+ 	err = hinic3_alloc_txrxqs(netdev);
+@@ -159,6 +162,8 @@ static int hinic3_sw_init(struct net_device *netdev)
+ err_del_mac:
+ 	hinic3_del_mac(hwdev, netdev->dev_addr, 0,
+ 		       hinic3_global_func_id(hwdev));
++err_clear_rss_config:
++	hinic3_clear_rss_config(netdev);
  
- 			clocks = <&dispcc DISP_CC_MDSS_DPTX3_AUX_CLK>,
--				 <&dispcc DISP_CC_MDSS_AHB_CLK>;
-+				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+				 <&tcsr TCSR_EDP_CLKREF_EN>;
- 			clock-names = "aux",
--				      "cfg_ahb";
-+				      "cfg_ahb",
-+				      "ref";
+ 	return err;
+ }
+@@ -170,6 +175,7 @@ static void hinic3_sw_uninit(struct net_device *netdev)
+ 	hinic3_free_txrxqs(netdev);
+ 	hinic3_del_mac(nic_dev->hwdev, netdev->dev_addr, 0,
+ 		       hinic3_global_func_id(nic_dev->hwdev));
++	hinic3_clear_rss_config(netdev);
+ }
  
- 			power-domains = <&rpmhpd RPMHPD_MX>;
+ static void hinic3_assign_netdev_ops(struct net_device *netdev)
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
+index 20d37670e133..7012130bba1d 100644
+--- a/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
+@@ -87,9 +87,59 @@ struct l2nic_cmd_set_dcb_state {
+ 	u8                   rsvd[7];
+ };
  
-
++#define L2NIC_RSS_TYPE_VALID_MASK         BIT(23)
++#define L2NIC_RSS_TYPE_TCP_IPV6_EXT_MASK  BIT(24)
++#define L2NIC_RSS_TYPE_IPV6_EXT_MASK      BIT(25)
++#define L2NIC_RSS_TYPE_TCP_IPV6_MASK      BIT(26)
++#define L2NIC_RSS_TYPE_IPV6_MASK          BIT(27)
++#define L2NIC_RSS_TYPE_TCP_IPV4_MASK      BIT(28)
++#define L2NIC_RSS_TYPE_IPV4_MASK          BIT(29)
++#define L2NIC_RSS_TYPE_UDP_IPV6_MASK      BIT(30)
++#define L2NIC_RSS_TYPE_UDP_IPV4_MASK      BIT(31)
++#define L2NIC_RSS_TYPE_SET(val, member)  \
++	FIELD_PREP(L2NIC_RSS_TYPE_##member##_MASK, val)
++#define L2NIC_RSS_TYPE_GET(val, member)  \
++	FIELD_GET(L2NIC_RSS_TYPE_##member##_MASK, val)
++
++#define L2NIC_RSS_INDIR_SIZE  256
++#define L2NIC_RSS_KEY_SIZE    40
++
+ /* IEEE 802.1Qaz std */
+ #define L2NIC_DCB_COS_MAX     0x8
+ 
++struct l2nic_cmd_set_rss_ctx_tbl {
++	struct mgmt_msg_head msg_head;
++	u16                  func_id;
++	u16                  rsvd1;
++	u32                  context;
++};
++
++struct l2nic_cmd_cfg_rss_engine {
++	struct mgmt_msg_head msg_head;
++	u16                  func_id;
++	u8                   opcode;
++	u8                   hash_engine;
++	u8                   rsvd1[4];
++};
++
++struct l2nic_cmd_cfg_rss_hash_key {
++	struct mgmt_msg_head msg_head;
++	u16                  func_id;
++	u8                   opcode;
++	u8                   rsvd1;
++	u8                   key[L2NIC_RSS_KEY_SIZE];
++};
++
++struct l2nic_cmd_cfg_rss {
++	struct mgmt_msg_head msg_head;
++	u16                  func_id;
++	u8                   rss_en;
++	u8                   rq_priority_number;
++	u8                   prio_tc[L2NIC_DCB_COS_MAX];
++	u16                  num_qps;
++	u16                  rsvd1;
++};
++
+ /* Commands between NIC to fw */
+ enum l2nic_cmd {
+ 	/* FUNC CFG */
+@@ -110,6 +160,11 @@ enum l2nic_cmd {
+ 	L2NIC_CMD_MAX                 = 256,
+ };
+ 
++struct l2nic_cmd_rss_set_indir_tbl {
++	__le32 rsvd[4];
++	__le16 entry[L2NIC_RSS_INDIR_SIZE];
++};
++
+ /* NIC CMDQ MODE */
+ enum l2nic_ucode_cmd {
+ 	L2NIC_UCODE_CMD_MODIFY_QUEUE_CTX  = 0,
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+index cc0a1c2eb681..3d17ca5e7ba5 100644
+--- a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+@@ -8,6 +8,7 @@
+ #include "hinic3_nic_cfg.h"
+ #include "hinic3_nic_dev.h"
+ #include "hinic3_nic_io.h"
++#include "hinic3_rss.h"
+ #include "hinic3_rx.h"
+ #include "hinic3_tx.h"
+ 
+@@ -221,9 +222,25 @@ static int hinic3_configure(struct net_device *netdev)
+ 	/* Ensure DCB is disabled */
+ 	hinic3_sync_dcb_state(nic_dev->hwdev, 1, 0);
+ 
++	if (test_bit(HINIC3_RSS_ENABLE, &nic_dev->flags)) {
++		err = hinic3_rss_init(netdev);
++		if (err) {
++			netdev_err(netdev, "Failed to init rss\n");
++			return err;
++		}
++	}
++
+ 	return 0;
+ }
+ 
++static void hinic3_remove_configure(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++
++	if (test_bit(HINIC3_RSS_ENABLE, &nic_dev->flags))
++		hinic3_rss_uninit(netdev);
++}
++
+ static int hinic3_alloc_channel_resources(struct net_device *netdev,
+ 					  struct hinic3_dyna_qp_params *qp_params,
+ 					  struct hinic3_dyna_txrxq_params *trxq_params)
+@@ -304,6 +321,7 @@ static void hinic3_close_channel(struct net_device *netdev)
+ {
+ 	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+ 
++	hinic3_remove_configure(netdev);
+ 	hinic3_qps_irq_uninit(netdev);
+ 	hinic3_free_qp_ctxts(nic_dev);
+ }
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
+index 9fad834f9e92..5ba83261616c 100644
+--- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
+@@ -73,6 +73,11 @@ struct hinic3_nic_dev {
+ 	struct hinic3_txq               *txqs;
+ 	struct hinic3_rxq               *rxqs;
+ 
++	enum hinic3_rss_hash_type       rss_hash_type;
++	struct hinic3_rss_type          rss_type;
++	u8                              *rss_hkey;
++	u16                             *rss_indir;
++
+ 	u16                             num_qp_irq;
+ 	struct msix_entry               *qps_msix_entries;
+ 
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+new file mode 100644
+index 000000000000..4ff1b2f79838
+--- /dev/null
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+@@ -0,0 +1,336 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
++
++#include <linux/ethtool.h>
++
++#include "hinic3_cmdq.h"
++#include "hinic3_hwdev.h"
++#include "hinic3_hwif.h"
++#include "hinic3_mbox.h"
++#include "hinic3_nic_cfg.h"
++#include "hinic3_nic_dev.h"
++#include "hinic3_rss.h"
++
++static void hinic3_fillout_indir_tbl(struct net_device *netdev, u16 *indir)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++	u16 i, num_qps;
++
++	num_qps = nic_dev->q_params.num_qps;
++	for (i = 0; i < L2NIC_RSS_INDIR_SIZE; i++)
++		indir[i] = ethtool_rxfh_indir_default(i, num_qps);
++}
++
++static int hinic3_rss_cfg(struct hinic3_hwdev *hwdev, u8 rss_en, u16 num_qps)
++{
++	struct mgmt_msg_params msg_params = {};
++	struct l2nic_cmd_cfg_rss rss_cfg = {};
++	int err;
++
++	rss_cfg.func_id = hinic3_global_func_id(hwdev);
++	rss_cfg.rss_en = rss_en;
++	rss_cfg.rq_priority_number = 0;
++	rss_cfg.num_qps = num_qps;
++
++	mgmt_msg_params_init_default(&msg_params, &rss_cfg, sizeof(rss_cfg));
++
++	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
++				       L2NIC_CMD_CFG_RSS, &msg_params);
++	if (err || rss_cfg.msg_head.status) {
++		dev_err(hwdev->dev, "Failed to set rss cfg, err: %d, status: 0x%x\n",
++			err, rss_cfg.msg_head.status);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void hinic3_init_rss_parameters(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++
++	nic_dev->rss_hash_type = HINIC3_RSS_HASH_ENGINE_TYPE_XOR;
++	nic_dev->rss_type.tcp_ipv6_ext = 1;
++	nic_dev->rss_type.ipv6_ext = 1;
++	nic_dev->rss_type.tcp_ipv6 = 1;
++	nic_dev->rss_type.ipv6 = 1;
++	nic_dev->rss_type.tcp_ipv4 = 1;
++	nic_dev->rss_type.ipv4 = 1;
++	nic_dev->rss_type.udp_ipv6 = 1;
++	nic_dev->rss_type.udp_ipv4 = 1;
++}
++
++static void decide_num_qps(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++	unsigned int dev_cpus;
++
++	dev_cpus = netif_get_num_default_rss_queues();
++	nic_dev->q_params.num_qps = min(dev_cpus, nic_dev->max_qps);
++}
++
++static int alloc_rss_resource(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++
++	nic_dev->rss_hkey = kmalloc_array(L2NIC_RSS_KEY_SIZE,
++					  sizeof(nic_dev->rss_hkey[0]),
++					  GFP_KERNEL);
++	if (!nic_dev->rss_hkey)
++		return -ENOMEM;
++
++	netdev_rss_key_fill(nic_dev->rss_hkey, L2NIC_RSS_KEY_SIZE);
++
++	nic_dev->rss_indir = kcalloc(L2NIC_RSS_INDIR_SIZE, sizeof(u16),
++				     GFP_KERNEL);
++	if (!nic_dev->rss_indir) {
++		kfree(nic_dev->rss_hkey);
++		nic_dev->rss_hkey = NULL;
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static int hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev,
++				    const u16 *indir_table)
++{
++	struct l2nic_cmd_rss_set_indir_tbl *indir_tbl;
++	struct hinic3_cmd_buf *cmd_buf;
++	__le64 out_param;
++	int err;
++	u32 i;
++
++	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
++	if (!cmd_buf) {
++		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
++		return -ENOMEM;
++	}
++
++	cmd_buf->size = cpu_to_le16(sizeof(struct l2nic_cmd_rss_set_indir_tbl));
++	indir_tbl = cmd_buf->buf;
++	memset(indir_tbl, 0, sizeof(*indir_tbl));
++
++	for (i = 0; i < L2NIC_RSS_INDIR_SIZE; i++)
++		indir_tbl->entry[i] = cpu_to_le16(indir_table[i]);
++
++	hinic3_cmdq_buf_swab32(indir_tbl, sizeof(*indir_tbl));
++
++	err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
++				      L2NIC_UCODE_CMD_SET_RSS_INDIR_TBL,
++				      cmd_buf, &out_param);
++	if (err || out_param) {
++		dev_err(hwdev->dev, "Failed to set rss indir table\n");
++		err = -EFAULT;
++	}
++
++	hinic3_free_cmd_buf(hwdev, cmd_buf);
++
++	return err;
++}
++
++static int hinic3_set_rss_type(struct hinic3_hwdev *hwdev,
++			       struct hinic3_rss_type rss_type)
++{
++	struct l2nic_cmd_set_rss_ctx_tbl ctx_tbl = {};
++	struct mgmt_msg_params msg_params = {};
++	u32 ctx;
++	int err;
++
++	ctx_tbl.func_id = hinic3_global_func_id(hwdev);
++	ctx = L2NIC_RSS_TYPE_SET(1, VALID) |
++	      L2NIC_RSS_TYPE_SET(rss_type.ipv4, IPV4) |
++	      L2NIC_RSS_TYPE_SET(rss_type.ipv6, IPV6) |
++	      L2NIC_RSS_TYPE_SET(rss_type.ipv6_ext, IPV6_EXT) |
++	      L2NIC_RSS_TYPE_SET(rss_type.tcp_ipv4, TCP_IPV4) |
++	      L2NIC_RSS_TYPE_SET(rss_type.tcp_ipv6, TCP_IPV6) |
++	      L2NIC_RSS_TYPE_SET(rss_type.tcp_ipv6_ext, TCP_IPV6_EXT) |
++	      L2NIC_RSS_TYPE_SET(rss_type.udp_ipv4, UDP_IPV4) |
++	      L2NIC_RSS_TYPE_SET(rss_type.udp_ipv6, UDP_IPV6);
++	ctx_tbl.context = ctx;
++
++	mgmt_msg_params_init_default(&msg_params, &ctx_tbl, sizeof(ctx_tbl));
++
++	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
++				       L2NIC_CMD_SET_RSS_CTX_TBL, &msg_params);
++
++	if (ctx_tbl.msg_head.status == MGMT_STATUS_CMD_UNSUPPORTED) {
++		return MGMT_STATUS_CMD_UNSUPPORTED;
++	} else if (err || ctx_tbl.msg_head.status) {
++		dev_err(hwdev->dev, "mgmt Failed to set rss context offload, err: %d, status: 0x%x\n",
++			err, ctx_tbl.msg_head.status);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int hinic3_rss_cfg_hash_type(struct hinic3_hwdev *hwdev, u8 opcode,
++				    enum hinic3_rss_hash_type *type)
++{
++	struct l2nic_cmd_cfg_rss_engine hash_type_cmd = {};
++	struct mgmt_msg_params msg_params = {};
++	int err;
++
++	hash_type_cmd.func_id = hinic3_global_func_id(hwdev);
++	hash_type_cmd.opcode = opcode;
++
++	if (opcode == MGMT_MSG_CMD_OP_SET)
++		hash_type_cmd.hash_engine = *type;
++
++	mgmt_msg_params_init_default(&msg_params, &hash_type_cmd,
++				     sizeof(hash_type_cmd));
++
++	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
++				       L2NIC_CMD_CFG_RSS_HASH_ENGINE,
++				       &msg_params);
++	if (err || hash_type_cmd.msg_head.status) {
++		dev_err(hwdev->dev, "Failed to %s hash engine, err: %d, status: 0x%x\n",
++			opcode == MGMT_MSG_CMD_OP_SET ? "set" : "get",
++			err, hash_type_cmd.msg_head.status);
++		return -EIO;
++	}
++
++	if (opcode == MGMT_MSG_CMD_OP_GET)
++		*type = hash_type_cmd.hash_engine;
++
++	return 0;
++}
++
++static int hinic3_rss_set_hash_type(struct hinic3_hwdev *hwdev,
++				    enum hinic3_rss_hash_type type)
++{
++	return hinic3_rss_cfg_hash_type(hwdev, MGMT_MSG_CMD_OP_SET, &type);
++}
++
++static int hinic3_config_rss_hw_resource(struct net_device *netdev,
++					 u16 *indir_tbl)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++	int err;
++
++	err = hinic3_rss_set_indir_tbl(nic_dev->hwdev, indir_tbl);
++	if (err)
++		return err;
++
++	err = hinic3_set_rss_type(nic_dev->hwdev, nic_dev->rss_type);
++	if (err)
++		return err;
++
++	return hinic3_rss_set_hash_type(nic_dev->hwdev, nic_dev->rss_hash_type);
++}
++
++static int hinic3_rss_cfg_hash_key(struct hinic3_hwdev *hwdev, u8 opcode,
++				   u8 *key)
++{
++	struct l2nic_cmd_cfg_rss_hash_key hash_key = {};
++	struct mgmt_msg_params msg_params = {};
++	int err;
++
++	hash_key.func_id = hinic3_global_func_id(hwdev);
++	hash_key.opcode = opcode;
++
++	if (opcode == MGMT_MSG_CMD_OP_SET)
++		memcpy(hash_key.key, key, L2NIC_RSS_KEY_SIZE);
++
++	mgmt_msg_params_init_default(&msg_params, &hash_key, sizeof(hash_key));
++
++	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
++				       L2NIC_CMD_CFG_RSS_HASH_KEY, &msg_params);
++	if (err || hash_key.msg_head.status) {
++		dev_err(hwdev->dev, "Failed to %s hash key, err: %d, status: 0x%x\n",
++			opcode == MGMT_MSG_CMD_OP_SET ? "set" : "get",
++			err, hash_key.msg_head.status);
++		return -EINVAL;
++	}
++
++	if (opcode == MGMT_MSG_CMD_OP_GET)
++		memcpy(key, hash_key.key, L2NIC_RSS_KEY_SIZE);
++
++	return 0;
++}
++
++static int hinic3_rss_set_hash_key(struct hinic3_hwdev *hwdev, u8 *key)
++{
++	return hinic3_rss_cfg_hash_key(hwdev, MGMT_MSG_CMD_OP_SET, key);
++}
++
++static int hinic3_set_hw_rss_parameters(struct net_device *netdev, u8 rss_en)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++	int err;
++
++	err = hinic3_rss_set_hash_key(nic_dev->hwdev, nic_dev->rss_hkey);
++	if (err)
++		return err;
++
++	hinic3_fillout_indir_tbl(netdev, nic_dev->rss_indir);
++
++	err = hinic3_config_rss_hw_resource(netdev, nic_dev->rss_indir);
++	if (err)
++		return err;
++
++	err = hinic3_rss_cfg(nic_dev->hwdev, rss_en, nic_dev->q_params.num_qps);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++int hinic3_rss_init(struct net_device *netdev)
++{
++	return hinic3_set_hw_rss_parameters(netdev, 1);
++}
++
++void hinic3_rss_uninit(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++
++	hinic3_rss_cfg(nic_dev->hwdev, 0, 0);
++}
++
++void hinic3_clear_rss_config(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++
++	kfree(nic_dev->rss_hkey);
++	nic_dev->rss_hkey = NULL;
++
++	kfree(nic_dev->rss_indir);
++	nic_dev->rss_indir = NULL;
++}
++
++void hinic3_try_to_enable_rss(struct net_device *netdev)
++{
++	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
++	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
++	int err;
++
++	nic_dev->max_qps = hinic3_func_max_qnum(hwdev);
++	if (nic_dev->max_qps <= 1 ||
++	    !hinic3_test_support(nic_dev, HINIC3_NIC_F_RSS))
++		goto err_reset_q_params;
++
++	err = alloc_rss_resource(netdev);
++	if (err) {
++		nic_dev->max_qps = 1;
++		goto err_reset_q_params;
++	}
++
++	set_bit(HINIC3_RSS_ENABLE, &nic_dev->flags);
++	decide_num_qps(netdev);
++	hinic3_init_rss_parameters(netdev);
++	err = hinic3_set_hw_rss_parameters(netdev, 0);
++	if (err) {
++		dev_err(hwdev->dev, "Failed to set hardware rss parameters\n");
++		hinic3_clear_rss_config(netdev);
++		nic_dev->max_qps = 1;
++		goto err_reset_q_params;
++	}
++
++	return;
++
++err_reset_q_params:
++	clear_bit(HINIC3_RSS_ENABLE, &nic_dev->flags);
++	nic_dev->q_params.num_qps = nic_dev->max_qps;
++}
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rss.h b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.h
+new file mode 100644
+index 000000000000..78d82c2aca06
+--- /dev/null
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved. */
++
++#ifndef _HINIC3_RSS_H_
++#define _HINIC3_RSS_H_
++
++#include <linux/netdevice.h>
++
++int hinic3_rss_init(struct net_device *netdev);
++void hinic3_rss_uninit(struct net_device *netdev);
++void hinic3_try_to_enable_rss(struct net_device *netdev);
++void hinic3_clear_rss_config(struct net_device *netdev);
++
++#endif
 -- 
-2.45.2
+2.43.0
 
 
