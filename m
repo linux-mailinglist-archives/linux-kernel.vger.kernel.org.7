@@ -1,71 +1,59 @@
-Return-Path: <linux-kernel+bounces-807841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C46B4AA2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40836B4AA2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EF61C23DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6C03AFD6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFEF31CA74;
-	Tue,  9 Sep 2025 10:14:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716BA31A573;
-	Tue,  9 Sep 2025 10:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A07032145B;
+	Tue,  9 Sep 2025 10:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/BUqdfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C495D2E975A;
+	Tue,  9 Sep 2025 10:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757412872; cv=none; b=TQttMfR0rY9FBjEXKvThbbHODQScO1A+d5PHWr0153tRYBjS6z1jQYFD9rv/vzZz7OpV5jX38w2Y9GCMFF5KjH4dN88gm7ZLGqOPeQffS3OeTqxX7rxy8M7p5O9EOfPST6XCmgEDs5EIYiv/ZXL06UfzjV48X+c6/ND1JE7GG7U=
+	t=1757412924; cv=none; b=udpcE3lO9ShH0RD6FQdQhMZW0uez4qNi52VPLL0pJMGLGuG3953wa73SrYzGwmhsaczCBrBZSY/c1KyQamBNz1bslf5iAjjn3k2zjt+/YNssCR9nVtR2iXAy/zlmDrI6hvYuXFh/h0OZdJjfPvXRHfCsZ1JLubu2mtx+ZkgkfAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757412872; c=relaxed/simple;
-	bh=ym80XdqDh0Lyk6nkO25aoerkSsuVfLPsaJi31FE8O70=;
+	s=arc-20240116; t=1757412924; c=relaxed/simple;
+	bh=W4ZNNxvoHzwG3XR6SRFoMRWquFrLJc9azWmuVkfqFbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5SAFiHxoJbeURjU75th6b7ZrGXbwtO7Ju6sE/PpkU5p13LeC5/2pkI86zCA2ReSd7xAAo/qyAMtDVGWlaUUInQy1eBFmM5Jk7Zkr3LHnfE2N75udE+5t7Ym6TtevqQqQlxa/6BTL8LJ899P7xjbupobAUlaflCnT7T2j8RoBog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BEA6113E;
-	Tue,  9 Sep 2025 03:14:21 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 013613F66E;
-	Tue,  9 Sep 2025 03:14:23 -0700 (PDT)
-Date: Tue, 9 Sep 2025 11:14:20 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 06/33] ACPI / PPTT: Add a helper to fill a cpumask from a
- cache_id
-Message-ID: <aL/9/KSH35ou8Mgj@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-7-james.morse@arm.com>
- <aK7ju2caTjqf1+VN@e133380.arm.com>
- <2e4c3c00-b248-421e-8ff1-d24b7b03be1a@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/WBcor0S/Emj9aqd8IjqQklVll/Yn09e320/XH7ADLBXEoGH9zs7tRLGdsEDbIVYhjfPnqvQUGzCqd8Z1eI/gdeAu/TE1XbGF+LK3m2eKmuEJ9NxD1R2KcqCXowYp0URoTuu4YZ++OI0NLkvyjr0LIT5VDbWZRVFbl1AqxydoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/BUqdfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1ACBC4CEF4;
+	Tue,  9 Sep 2025 10:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757412924;
+	bh=W4ZNNxvoHzwG3XR6SRFoMRWquFrLJc9azWmuVkfqFbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P/BUqdfDHVAiCMuZDphbqs1NG9VJi7db+t8nkDQz3QVKv0Dfm/UmlSNu8SkGceqrL
+	 4DNtHy3sIm01JuUR6VxzRG14wg36xFHUCeYafD/CVf1PLWLLMlZF6cucspP9kpZu2i
+	 JnXwA5Nz4XHdp7BrcMhA3wBX3wD7Whna8PQb6OX66SgkhomCdMHQWULD6elxq6q8mU
+	 SXRBYjMqw9PuBx3Y5TaGqDoUHCODQJFFvHvhw4NAoP6YhGpoVe9DFT4cUTwoAGp/3Q
+	 bP7SNzyUVyQBg/AK5BlzTodr/etp4Q6Du6UgzhFQt67cSknW9nVs7dtBksmjAOdKO+
+	 RR5JoZ8/i8pjA==
+Date: Tue, 9 Sep 2025 11:15:19 +0100
+From: Will Deacon <will@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mostafa Saleh <smostafa@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
+Message-ID: <aL_-N43BTtQynMS_@willie-the-truck>
+References: <20250905162446.88987-1-smostafa@google.com>
+ <19a6f296-eb40-49cf-9571-2d7964cd3313@kernel.org>
+ <aLshJ11k3c2T-MRs@google.com>
+ <84332e77-cfd2-4090-a3c0-114a9eb5422a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,107 +62,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e4c3c00-b248-421e-8ff1-d24b7b03be1a@arm.com>
+In-Reply-To: <84332e77-cfd2-4090-a3c0-114a9eb5422a@kernel.org>
 
-Hi,
+Krzysztof,
 
-On Thu, Aug 28, 2025 at 04:58:16PM +0100, James Morse wrote:
-> Hi Dave,
-> 
-> On 27/08/2025 11:53, Dave Martin wrote:
-> > On Fri, Aug 22, 2025 at 03:29:47PM +0000, James Morse wrote:
-> >> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
+On Sat, Sep 06, 2025 at 09:07:02AM +0200, Krzysztof Kozlowski wrote:
+> On 05/09/2025 19:43, Mostafa Saleh wrote:
+> >>>
+> >>> As this value is only read once, it doesn't require to be stable, so
 > >>
-> >> The driver needs to know which CPUs are associated with the cache,
-> >> the CPUs may not all be online, so cacheinfo does not have the
-> >> information.
+> >> Why it does not need to be stable? Onlining wrong CPU number is not
+> >> desired...
+> >>
+> >>> just use "raw_smp_processor_id" instead.
+> >>
+> >> You might be just hiding some other real issue, because above stacktrace
+> >> is from gs101_cpuhp_pmu_online() which IRQs disabled and preemption
+> >> disabled. Provide analysis of the warning, instead of just making it
+> >> disappear.
 > > 
-> > Nit: cacheinfo lacking the information is not a consequence of the
-> > driver needing it.
-> > 
-> > Maybe split the sentence:
-> > 
-> > -> "[...] associated with the cache. The CPUs may not [...]"
+> > Not sure I understand, how is preemption disabled? that wouldn't fire
+> > in that case.
 > 
-> Sure,
+> Because there is explicit preempt_disable().
 
-OK
+Where do you see that?
 
-> >> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> >> index 660457644a5b..cb93a9a7f9b6 100644
-> >> --- a/drivers/acpi/pptt.c
-> >> +++ b/drivers/acpi/pptt.c
-> >> @@ -971,3 +971,65 @@ int find_acpi_cache_level_from_id(u32 cache_id)
+From what I can tell, the driver (somewhat bizarrely) registers its
+online callback much earlier (at CPUHP_BP_PREPARE_DYN) than the offline
+callback so that gs101_cpuhp_pmu_online() will be run in the context of
+the caller/onliner rather than the actual CPU coming up. I don't see
+anything which disables preemption on that path.
 
-[...]
+> So far you did not present any code analysis, any actual arguments, so
+> deflecting reviewer's comment like above will get you nowhere. Instead
+> of replying with a question, bring arguments that the code path does not
+> disable the preemption.
 
-> >> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
-> >> + *					   specified cache
-> >> + * @cache_id: The id field of the unified cache
-> >> + * @cpus: Where to build the cpumask
-> >> + *
-> >> + * Determine which CPUs are below this cache in the PPTT. This allows the property
-> >> + * to be found even if the CPUs are offline.
-> >> + *
-> >> + * The PPTT table must be rev 3 or later,
-> >> + *
-> >> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> >> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
-> >> + */
-> >> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
-> >> +{
+Mostafa's reported a bug and had a go at fixing it, for goodness sake.
+Would you rather not hear about bugs in the code you maintain?
 
-[...]
+As somebody who should understand this code better than most, perhaps
+you could try a bit harder to fill in the blanks on the technical side
+rather than pointing out extraneous blank lines and making questionable
+judgements about CC lines.
 
-> >> +	/*
-> >> +	 * If we found the cache first, we'd still need to walk from each cpu.
-> >> +	 */
-> >> +	for_each_possible_cpu(cpu) {
+> My call is that you run all this on some other kernel, just like usually
+> happens in Google.
 
-[...]
+Whilst that inevitably happens with some of the more product-facing
+teams, I think it's foolish to assume that nobody works directly with
+upstream at Google. We're also not going to waste time fabricating bug
+reports which is why we bother to reproduce issues on Pixel 6, as that
+can boot upstream without any additional patches.
 
-> > Again, it feels like we are repeating the same walk multiple times to
-> > determine how deep the table is (on which point the table is self-
-> > describing anyway), and then again to derive some static property, and
-> > then we are then doing all of that work multiple times to derive
-> > different static properties, etc.
-> > 
-> > Can we not just walk over the tables once and stash the derived
-> > properties somewhere?
-> 
-> That is possible - but its a more invasive change to the PPTT parsing code.
-> Before the introduction of the leaf flag, the search for a processor also included a
-> search to check if the discovered node was a leaf.
-> 
-> I think this is trading time - walking over the table multiple times, against the memory
-> you'd need to de-serialise the tree to find the necessary properties quickly. I think the
-> reason Jeremy L went this way was because there may never be another request into this
-> code, so being ready with a quick answer was a waste of memory.
-> 
-> MPAM doesn't change this - all these things are done up front during driver probing, and
-> the values are cached by the driver.
-
-I guess that's true.
-
-> > I'm still getting my head around this parsing code, so I'm not saying
-> > that the approach is incorrect here -- just wondering whether there is
-> > a way to make it simpler.
-> 
-> It's walked at boot, and on cpu-hotplug. Neither are particularly performance critical.
-
-Do we do this only for unknown late secondaries (e.g., that haven't
-previously come online?)  I haven't gone to track this down but, if not,
-this cuts across the assertion that "there may never be another request
-into this code".
-
-cpu hotlug is slow in practice, but gratuitous cost on this path should
-still be avoided where feasible.
-
-> I agree that as platforms get bigger, there will be a tipping point ... I don't think
-> anyone has complained yet!
-
-Ack -- when in ACPI, do as the ACPI folks do, I guess.
-
-Cheers
----Dave
+Will
 
