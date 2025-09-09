@@ -1,122 +1,191 @@
-Return-Path: <linux-kernel+bounces-808319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DF9B4FE22
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2BCB4FE24
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EF9171F3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAFBB175460
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A882923C4FD;
-	Tue,  9 Sep 2025 13:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027C33CEB3;
+	Tue,  9 Sep 2025 13:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6O+tDe2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CpJvyial"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F6E21FF24;
-	Tue,  9 Sep 2025 13:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B1632CF7A;
+	Tue,  9 Sep 2025 13:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425610; cv=none; b=gjVx4/HCvmR0LKa/Rm+/fmUP+TnwUI2Nw5d+YTcYeseQWraENxnFHogAdAfPsbn69JsFEVm0paX0X2xvnGoi74urlv6lGceAc2LFahREuMR5mU8kSfIVcevHJsdAAvHTch20xp5Quo+tYMLcB4t7ZFEcQ1V6Zd9INmeNh5dAv/o=
+	t=1757425641; cv=none; b=pc7XYsIg8B38OAubDh6Q42et7OhwdLouauG0GDC9YqhJLF5Na8YiqNJL7HTKBJVXKRwFovZsq4fUEuXb41ucw5MWLAeiFZvl7aThyzgZk/PPUplYyC1RNIdP6E2T8MlipaYpj+Dq9jzGGYC+YWngRGmtoB9e8WlzkqLbDYltqqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425610; c=relaxed/simple;
-	bh=fzqqDDXTXgc1xKVVIHwn9vLmbH7HU5zTtM5qBx+V1ZU=;
+	s=arc-20240116; t=1757425641; c=relaxed/simple;
+	bh=SgpPAjADQzC6Aebwe3Gl5hrmCduvtTFHZe4sNN8KxNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvCkzOvHw12hjEo90jHirLB+iVACfOPxYMviqHcPCzau4BlTOZlG2CRGtOwMJW43nj8iOMmVnRoTzbfGJLxSI3TTdd8sPpS7jQpt3OQIQce/+m1ZefSBfNv1Ae9/dZoDuzHN83+xUgDcBoQL3WbsQndJHH6eRwKWBDEa4bY7ZjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6O+tDe2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C10C4CEF4;
-	Tue,  9 Sep 2025 13:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757425609;
-	bh=fzqqDDXTXgc1xKVVIHwn9vLmbH7HU5zTtM5qBx+V1ZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s6O+tDe2nrg87Y7/S+Zk9CUrbY2AdJMilB+urbthEyUsD50w1xb2noRQ1hCfq76IO
-	 OC9sU4Hg0uJfdwkJkJOdPfYuPYJ3kLD6dm4xpaPKqMxOpRvB6YOhyKHGaoqDDtJNMk
-	 dwqSNFvk3G51DEKHhMh5plT2MAealjDxEpioHpsZDuSJmRqbkzRxgN5bRqAXaPdL4Z
-	 qecqt2l8gxUclecmElV1DM1/ODvksxyOjKEL6UsI40CQDjtXObCrGsN+vpMdcM4jU+
-	 xFO2svDAchpW7sWBsiJrHobI4p46x7Kj0bJp+Tgv4oE94k83/EhbqFzHRLuvO3gP6j
-	 fXLkQS3/pTCCg==
-Date: Tue, 9 Sep 2025 14:46:42 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 01/28] KVM: arm64: Add a new function to donate memory
- with prot
-Message-ID: <aMAvwlMQ-Jf2MWzd@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-2-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaqCEVBWZjkIPWohYqLMJS2Zsv0EiDmWQVgm52K7NIfVRfyoD1yvFJ+jadqZ+Re9fNs6KMD0gxrb5LhPpUwFz33P2WCRyDqhGKrjTBm6/lY16YPWyIo2vXgm3N9y7CzbGhDpGaK0LgSwesnm5Gi7JdhlGHRkuvIRQitfTKhsaS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CpJvyial; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757425640; x=1788961640;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=SgpPAjADQzC6Aebwe3Gl5hrmCduvtTFHZe4sNN8KxNA=;
+  b=CpJvyialNhQqSwiAUvGUNEgyH7jPPjni4Q4TRZKoZ6lglirQB+n6vG8o
+   M8AFYfdEgROxCUOWUFnQj7hO+rvdWbsALT3lL5js+9qeWlN2wgJ/J1VVt
+   3QRxI+y8FSt75U2Ko1FvMEfI8oiYlFljT23iotGtUFRKJEpJRNlr8q1rj
+   p95fOzUfZ9STedj4Wn07o2CmF3MN5tQbu7oTlYtrtUUDoARjlOBp6oVww
+   wLw3zLr/pa2bo/BVpIbhgpFDKof6aVirp+h6dWZxOKBRi/g+QwB0pyLAy
+   mQUxaZJrHJYY2CrbnE3IdNRGNFUzbA9WyPP0phCz0QnOgtwoFRYgNcgHL
+   Q==;
+X-CSE-ConnectionGUID: 4yFjxPBDTauivDFKi7dx6w==
+X-CSE-MsgGUID: YDSPkkzZR3envU1LghONAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="85156569"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="85156569"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:47:19 -0700
+X-CSE-ConnectionGUID: aQJ5SNjrRiC9oY5or5hmCw==
+X-CSE-MsgGUID: IvhvaCp3Shak7FgkN3F39Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="173207838"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:47:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uvygf-00000001SBf-44Rc;
+	Tue, 09 Sep 2025 16:47:09 +0300
+Date: Tue, 9 Sep 2025 16:47:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
+Message-ID: <aMAv3STeZUdSQ14p@smile.fi.intel.com>
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
+ <aMAP9hAWars0T83r@smile.fi.intel.com>
+ <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
+ <aMAn4MM_Fs8q8qwj@smile.fi.intel.com>
+ <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
+ <aMAve1MbONmKVjjg@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-2-smostafa@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMAve1MbONmKVjjg@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Aug 19, 2025 at 09:51:29PM +0000, Mostafa Saleh wrote:
-> Soon, IOMMU drivers running in the hypervisor might interact with
-> non-coherent devices, so it needs a mechanism to map memory as
-> non cacheable.
-> Add ___pkvm_host_donate_hyp() which accepts a new argument for prot,
-> so the driver can add KVM_PGTABLE_PROT_NORMAL_NC.
+On Tue, Sep 09, 2025 at 04:45:31PM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 09, 2025 at 08:24:23AM -0500, Bartosz Golaszewski wrote:
+> > On Tue, 9 Sep 2025 15:13:04 +0200, Andy Shevchenko
+> > <andriy.shevchenko@intel.com> said:
+> > > On Tue, Sep 09, 2025 at 01:35:04PM +0200, Bartosz Golaszewski wrote:
+> > >> On Tue, Sep 9, 2025 at 1:31 PM Andy Shevchenko
+> > >> <andriy.shevchenko@intel.com> wrote:
+> > >> > On Tue, Sep 09, 2025 at 11:15:40AM +0200, Bartosz Golaszewski wrote:
+
+...
+
+> > >> > > +     config = (typeof(config)){
+> > >> >
+> > >> > This looks unusual. Why can't properly formed compound literal be used as in
+> > >> > many other places in the kernel?
+> > >>
+> > >> It is correct C
+> > >
+> > > If it compiles, it doesn't mean it's correct C, it might be non-standard.
+> > > Have you checked with the standard (note, I read that part in the past,
+> > > but I may forgot the details, so I don't know the answer to this)?
+> > 
+> > It's a GNU extension alright
 > 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 11 +++++++++--
->  2 files changed, 10 insertions(+), 2 deletions(-)
+> clang, I suppose, also okay with this?
 > 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index 5f9d56754e39..52d7ee91e18c 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -36,6 +36,7 @@ int __pkvm_prot_finalize(void);
->  int __pkvm_host_share_hyp(u64 pfn);
->  int __pkvm_host_unshare_hyp(u64 pfn);
->  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
-> +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot);
->  int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
->  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
->  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 8957734d6183..861e448183fd 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -769,13 +769,15 @@ int __pkvm_host_unshare_hyp(u64 pfn)
->  	return ret;
->  }
->  
-> -int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
-> +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
->  {
->  	u64 phys = hyp_pfn_to_phys(pfn);
->  	u64 size = PAGE_SIZE * nr_pages;
->  	void *virt = __hyp_va(phys);
->  	int ret;
->  
-> +	WARN_ON(prot & KVM_PGTABLE_PROT_X);
+> > but it's supported in the kernel as it evaluates
+> > to a simple cast.
+> 
+> There is no cast. And that's make a big difference to what the code tries to do.
+> 
+> > >> and checkpatch doesn't raise any warnings.
+> > >
+> > > checkpatch is far from being useful in the questions like this.
+> > > It false positively complains for for_each*() macros all over
+> > > the kernel, for example.
+> > >
+> > >> It's the
+> > >> same kind of argument as between kmalloc(sizeof(struct foo)) vs
+> > >> kmalloc(sizeof(f)).
+> > >
+> > > Maybe, but it introduces a new style while all other cases use the other,
+> > > _established_ style. So we have a precedent and the form the code is written
+> > > in is against the de facto usage of the compound literals.
+> > 
+> > It may not be *very* common but it's hardly new style:
+> 
+> I think your statement is incorrect see below why.
+> 
+> > $ git grep -P "\(typeof\(.*\)\) ?\{" | wc
+> >     108     529    7315
+> 
+> Not correct. The correct output will be closer to
+> 
+> $ git grep -l -P "\(typeof\(.*\)\) ?\{" | wc -l
+> 15
+> 
+> And if you looked at the output carefully, you see the bug in the RE you used.
+> 
+> So, even closer will be this one:
+> 
+> $ git grep -l -P "=[[:space:]]+\(typeof\(.*\)\) ?\{" | wc -l
+> 7
+> 
+> 2 out of which are related to libeth, effectively makes this 6.
 
-Should this actually just enforce that the permissions are
-KVM_PGTABLE_PROT_RW:
+TBH, I think those 6 all made the same mistake, i.e. thinking of the compound
+literal as a cast. Which is not!
 
-	WARN_ON((prot & KVM_PGTABLE_PROT_RWX) != KVM_PGTABLE_PROT_RW);
+> No, this is completely non-standard and unusual thing in the kernel.
+> 
+> > >> I guess it's personal taste but I like this version better.
+> > >
+> > > In kernel we also try to be consistent. This add inconsistency. Am I wrong?
+> > >
+> > >> > > +             .dev = &pdev->dev,
+> > >> > > +             .sz = 4,
+> > >> > > +             .dat = sd->gpio_pub_base + GPINR,
+> > >> > > +             .set = sd->gpio_pub_base + GPOUTR,
+> > >> > > +             .dirout = sd->gpio_pub_base + GPOER,
+> > >> > > +     };
 
-?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Since the motivation is about the memory type rather than the
-permissions, it would be best to preserve the current behaviour.
 
-Will
 
