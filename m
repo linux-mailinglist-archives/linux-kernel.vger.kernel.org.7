@@ -1,194 +1,271 @@
-Return-Path: <linux-kernel+bounces-807520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257C4B4A581
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:38:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58A0B4A584
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C653A74F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704D5162DDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308DC25228B;
-	Tue,  9 Sep 2025 08:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B558125393C;
+	Tue,  9 Sep 2025 08:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qV0h+0sf"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="TM6Aozzh"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842FD2472B1
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757407077; cv=none; b=HC6T+iK8i/5RPV4yXbzBdrWhrXXkPWntvypG+B7eWvqqnMpuBGV67+ZxvQEPbgUX+UXCQ2U19hGXw7OtRM+VTlbXUmgdxC+F31RgI7H+spGYCHc1l4x58BH+8LYdZWaceg4gfMwgO9dM1CtxbzpjzNr8+biNQm69osOTKpOMjR4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757407077; c=relaxed/simple;
-	bh=0D9zPGqjWWZl+QOHnnAWgsHVUD2gzmiemRgdPYNgRh0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=mutm0XYO6U0wPv9LfMbtsNMlbz74LIn+seAGgL8Lyv6NkFleaQv8gis96UlX5LqGxQ6HmTrcD8hBlZge1SPRGmnkxh4v/ZdXpSpzyJ3oEMh6IU0KQHPsgmdWCyvAs21+BUcUDaomooMClSWrPjAM8aa22VB4WkEyZLTpYWrPNxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qV0h+0sf; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so47141025e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757407074; x=1758011874; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPzxhl5A2vCjE+tX3cc2Xu+QNXbQb+GYtT6YGGU4Vz8=;
-        b=qV0h+0sfUEjDWEfPIqWiA1jJZIOcEBEA+7FwY+xuz8sfqRU5aPNKsaeX2XCpl0Jk6Z
-         DMQ+iv1WBS75ZwueLQzhwJyu/BwLmC/+fo71DNRwGDaTnvvsTule1+KCqM8Li+ZxAjvI
-         3J3wjfHMJ9vp7END0UfaeuZ5Mf586WAkOfJAyrSc1HPjhPM/cnA5uZwS+skh434f18dA
-         AGd1qI5EKgBe2HzyeMgTCxoM89Kg9whpxeoXw65LMBG/I2tkqDAmgX2ZbnSrXq7YIYlL
-         9QVd/NiRQTUoZQEtm5Jt8ukFLBrJumwSBH47BQAY8ZbZvrb/KUbd6+HugHM4D2QY5gFB
-         T0fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757407074; x=1758011874;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FPzxhl5A2vCjE+tX3cc2Xu+QNXbQb+GYtT6YGGU4Vz8=;
-        b=S0ZuHqAy6ugl1AIgQTVNdppaBhEZnRJa9IwTmHdPJQxdp3DFBoF3qYLDRLDvchUbWu
-         Tr+r+XyBMi9I1RYc1sq01GjZm7+XI5AfKd2FZkVxp7jWHOyFji7JR4Laupw3oOMAdf2O
-         Nz7fjDwSszzk6RCJw6y4a4UtWJI763KlxrUcXWWK+zeBhYs6sHBQrrUYcBcvqOD3jbgj
-         T6ZZyrTUIJy6bWOgV+3VKwjAa8Ns5xwP07elCLZAjXpYQ8TMBMTCcB08b8TbHrLlZ7AR
-         uoGlqY0QtldAvAFt1OfIUwtpEGJejdh2FiXwe87T79eQc9/6UrFoADPHLxWxcdi3PM2Z
-         FrYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSELu56wHQCEUJRov+lnIMjN3gwQJNQKdeW8FGVBx2Intwo+wXjGj+9pRHS37pPiKBzSV5KPCYIisnEVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGm5kV/1fMLWIh8J5LXTd0kH6+9Cmav/PppLo6oXT/lsToWBVz
-	B8bD84g9dkDewy43s7u5zBX9HoBu1KKXuXkR8p2lH7Odzy0TF6HU+PXd1mt+7MXdpsA=
-X-Gm-Gg: ASbGncueLhz/vrsLBK6o9NkugagR19nv0MSYAPG9wp7GaDc0SOy9SyWLeOmk6NryaQ0
-	eYfjzGlt8ps/3/NAwYyMuGcDwXUTZPI5psRat2p+aWtaBTuDIvow1VCgPxBjYHRPhuv7XzGYYCf
-	0tumQc+KpxazNEqZhYu63jRE+RkvQPf2E4WLtCmgXcP8iaOBkYMpN8FUOVB3LK6EHSExlUX4XzR
-	ILEtuvutjc4qGNbEzBLjdMUsvKJ2VwJzvk+wKxUb1Vdbln+FrMsbGcHnXVA7xopgRCKdOb6p33p
-	f4CZB8N+/u5rgz/ki9TknGd4Va2wU+RZYidGujqUucXx9GCj0y4ng2YXNzjp0pu8LeIEfQ1GVcM
-	X71DiQB6DauumRO9QOK3i8Bpfqg==
-X-Google-Smtp-Source: AGHT+IGFY+CbQVY2RNO5FrloUQSNGkLpTLZZd3Iw5vqTDy31kdS591iFBn0tWIOYy70yOYW8CLpAlg==
-X-Received: by 2002:a05:6000:2385:b0:3ca:a70d:5710 with SMTP id ffacd0b85a97d-3e64bedfe82mr7375351f8f.41.1757407073557;
-        Tue, 09 Sep 2025 01:37:53 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e7521ca1c1sm1728849f8f.24.2025.09.09.01.37.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 01:37:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A115924EF76;
+	Tue,  9 Sep 2025 08:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757407100; cv=pass; b=EWIp4BcCAnWpBJmeK6WNhOAIU2/HrM3MQ5kQUEExVgghJNcxHOPOHJ1xbf7R5lxmoHLSiqIASEEWrJWlD/sMafQjG7V2roMeQvM2404wcqezMzgd23XiCL1iIQdhTs9hpwiz15Dm5cug4qvAPzkzh1qUqomoM2zCXpf1vSHnzh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757407100; c=relaxed/simple;
+	bh=UAlbRau57FLa95xbSqzEkELi2fP5jfjN/IV0/0N6Dd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPUfqh7oNJRSzTrvKg5lpygvq4O/MsnuaKXrg2HQ+zZJFKB/xxyTzgDRMaL82BBEunSARfAbMqcqw0gJbPBnvkxGSdi8NcCgbRgdSzXITJ+tBmTM8R6BqaOZ/q005cx/XtRvkbQrj/5pHVpWW3B3Hgms+AW0pS0sNqXh4gfnBv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=TM6Aozzh; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cLcf85BxtzyQ5;
+	Tue,  9 Sep 2025 11:38:08 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1757407088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cafJFHXmLgV2tuyOB5uga2YykmlqWipvwJGhaBu2g+4=;
+	b=TM6AozzhGcIXM7Ah1cx0qibrl2Wh4WPYFqdUpG23dHy/Q88hobRWnOv0q2k3z7gbXw1T4b
+	2B60+QHJot6DUiwDS+p1qHX86bhggrFQ0brMoc/lalcJNmCs7tlUW82glaMW3A0NfMtXqL
+	vY/PpjnGP7PFJ4N4VMdnZNMVauN0LDU=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1757407088; a=rsa-sha256; cv=none;
+	b=PfxDC7zdqKa/iVpQzeaVlgMVy+tnNAKPifWAYpYWPR9ZexhprWwebkQZpHc38IedhZX4r+
+	hqByaTfWH8D3h1yPTS+CnW+F4aLegSvpxYHrs02YXSxUAVNeMEdb67b5mYbauGq2j5fPz/
+	wr3Ke/lXPh+JmyNcPlV5Qwf1cgz9aKA=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1757407088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cafJFHXmLgV2tuyOB5uga2YykmlqWipvwJGhaBu2g+4=;
+	b=QalqDfF/ivRbEssOms8x4jVTq4smrnuuLJjPWZ+nHDrz7o5VtSHkoKUrOF1HDO9g6Idqi8
+	38LmXE68rngFger8vtceBB7JvXk7CEfUugXl9v95EZB3F9HDoAUZYLox3N0awJrrgRpEVT
+	56DjRUyfKk/TtAC+gk28WK9bwQ3F4u4=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id E7C67634C93;
+	Tue,  9 Sep 2025 11:38:07 +0300 (EEST)
+Date: Tue, 9 Sep 2025 11:38:07 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: i2c: add Himax HM1246 image
+ sensor
+Message-ID: <aL_nb8J1JNYxLG36@valkosipuli.retiisi.eu>
+References: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
+ <20250526-hm1246-v2-1-6b882827a3a5@emfend.at>
+ <aLq0jJtdaxIpN9CT@valkosipuli.retiisi.eu>
+ <b2826079-7db5-4adf-9e2a-e372e977acf3@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=4856b23f253d4ec58fd417d6be2d91cf025155c02cab64c8d8f827067e17;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 09 Sep 2025 10:37:47 +0200
-Message-Id: <DCO4T9E3SGQ5.1J2ARMXFB9ONJ@baylibre.com>
-Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-am62x-sk-common: Enable Main
- UART wakeup
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Markus Schneider-Pargmann" <msp@baylibre.com>, "Kendall Willis"
- <k-willis@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Cc: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
- <khilman@baylibre.com>, <a-kaur@ti.com>
-X-Mailer: aerc 0.20.1
-References: <20250904212827.3730314-1-k-willis@ti.com>
- <20250904212827.3730314-2-k-willis@ti.com>
- <DCO4RGJBMTRM.1XNHG5EHBPS24@baylibre.com>
-In-Reply-To: <DCO4RGJBMTRM.1XNHG5EHBPS24@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2826079-7db5-4adf-9e2a-e372e977acf3@emfend.at>
 
---4856b23f253d4ec58fd417d6be2d91cf025155c02cab64c8d8f827067e17
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Matthias,
 
-On Tue Sep 9, 2025 at 10:35 AM CEST, Markus Schneider-Pargmann wrote:
-> On Thu Sep 4, 2025 at 11:28 PM CEST, Kendall Willis wrote:
->> The Main UART can resume from suspend to RAM states when PIN_WKUP_EN
->> is enabled. Add the necessary pins needed to wakeup the system. Add the
->> system idle states that the Main UART can wakeup the system from.
->>
->> Signed-off-by: Kendall Willis <k-willis@ti.com>
->> ---
->>  .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 +++++++++++++++----
->>  1 file changed, 20 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am62x-sk-common.dtsi
->> index 13e1d36123d51..72801cf890d20 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
->> @@ -163,14 +163,26 @@ &phy_gmii_sel {
->> =20
->>  &main_pmx0 {
->>  	/* First pad number is ALW package and second is AMC package */
->> -	main_uart0_pins_default: main-uart0-default-pins {
->> +	main_uart0_tx_pins_default: main-uart0-tx-default-pins {
->>  		bootph-all;
->>  		pinctrl-single,pins =3D <
->> -			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14/A13) UART0_RXD */
->>  			AM62X_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (E14/E11) UART0_TXD */
->>  		>;
->>  	};
->> =20
->> +	main_uart0_rx_pins_default: main-uart0-rx-default-pins {
->> +		bootph-all;
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14/A13) UART0_RXD */
->> +		>;
->> +	};
->> +
->> +	main_uart0_rx_pins_wakeup: main-uart0-rx-wakeup-pins {
->> +		pinctrl-single,pins =3D <
->> +			AM62X_IOPAD(0x1c8, PIN_INPUT | PIN_WKUP_EN, 0) /* (D14/A13) UART0_RX=
-D */
->> +		>;
->> +	};
->> +
->>  	main_uart1_pins_default: main-uart1-default-pins {
->>  		bootph-pre-ram;
->>  		pinctrl-single,pins =3D <
->> @@ -342,8 +354,12 @@ &wkup_uart0 {
->>  &main_uart0 {
->>  	bootph-all;
->>  	status =3D "okay";
->> -	pinctrl-names =3D "default";
->> -	pinctrl-0 =3D <&main_uart0_pins_default>;
->> +	pinctrl-names =3D "default", "wakeup";
->
-> I think you may need to add this to the DT binding of the uart device
-> as well.
+On Tue, Sep 09, 2025 at 10:32:21AM +0200, Matthias Fend wrote:
+> Hi Sakari,
+> 
+> Thanks for you feedback!
+> 
+> Am 05.09.2025 um 11:59 schrieb Sakari Ailus:
+> > Hi Matthias,
+> > 
+> > Thanks for the set.
+> > 
+> > On Mon, May 26, 2025 at 08:59:27AM +0200, Matthias Fend wrote:
+> > > Add YAML device tree binding for Himax HM1246 image sensor.
+> > > 
+> > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> > > ---
+> > >   .../bindings/media/i2c/himax,hm1246.yaml           | 111 +++++++++++++++++++++
+> > >   1 file changed, 111 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..8a67de7e3ffcaa9f1acfe443b1e36fffb79dbacf
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+> > > @@ -0,0 +1,111 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +# Copyright 2025 Matthias Fend <matthias.fend@emfend.at>
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/media/i2c/himax,hm1246.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Himax HM1246-AWD 1/3.7-Inch megapixel SoC image sensor
+> > > +
+> > > +maintainers:
+> > > +  - Matthias Fend <matthias.fend@emfend.at>
+> > > +
+> > > +description:
+> > > +  The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
+> > > +  array size of 1296 x 976. It is programmable through an I2C interface and
+> > > +  connected via parallel bus.
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/media/video-interface-devices.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: himax,hm1246
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    description: Input reference clock (6 - 27 MHz)
+> > > +    maxItems: 1
+> > > +
+> > > +  reset-gpios:
+> > > +    description: Active low XSHUTDOWN pin
+> > > +    maxItems: 1
+> > > +
+> > > +  avdd-supply:
+> > > +    description: Power for analog circuit (3.0 - 3.6 V)
+> > > +
+> > > +  iovdd-supply:
+> > > +    description: Power for I/O circuit (1.7 - 3.6 V)
+> > > +
+> > > +  dvdd-supply:
+> > > +    description: Power for digital circuit (1.5 / 1.8 V)
+> > > +
+> > > +  port:
+> > > +    $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +    additionalProperties: false
+> > > +    description: Parallel video output port
+> > > +
+> > > +    properties:
+> > > +      endpoint:
+> > > +        $ref: /schemas/media/video-interfaces.yaml#
+> > > +        unevaluatedProperties: false
+> > > +
+> > > +        properties:
+> > > +          bus-type:
+> > > +            const: 5
+> > 
+> > Does the device also support e.g. Bt.656? If not, you can drop this.
+> 
+> It is always a parallel interface. Okay, will remove it.
+> > 
+> > If the rest of the parallel interface parameter properties aren't
+> > mandatory, what are their default values?
+> 
+> The defaults are:
+> hsync-active: 1 (high)
+> vsync-active: 1 (high)
+> pclk-sample: 0 (falling)
+> 
+> Should I add the default values? The properties section of the endpoint
+> would then look like this:
+> 
+> properties:
+>   hsync-active:
+>     default: 1
+> 
+>   vsync-active:
+>     default: 1
+> 
+>   pclk-sample:
+>     default: 0
 
-Nevermind, I just saw your other series, can you please mention the
-other series as a dependency in the cover letter?
+If these indeed are the typical values, using the defaults makes sense. The
+other option is indeed to make them required.
 
->
-> Best
-> Markus
->
->> +	pinctrl-0 =3D <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_defa=
-ult>;
->> +	pinctrl-1 =3D <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_wake=
-up>;
->> +	wakeup-source =3D <&system_deep_sleep>,
->> +			<&system_mcu_only>,
->> +			<&system_standby>;
->>  };
->> =20
->>  &main_uart1 {
+> 
+> > 
+> > > +
+> > > +        required:
+> > > +          - bus-type
+> 
+> Then I should probably remove that too?
+> 
+> > > +
+> > > +    required:
+> > > +      - endpoint
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - clocks
+> > > +  - avdd-supply
+> > > +  - iovdd-supply
+> > > +  - dvdd-supply
+> > > +  - port
+> > > +
+> > > +unevaluatedProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/gpio/gpio.h>
+> > > +    #include <dt-bindings/media/video-interfaces.h>
+> > > +
+> > > +    i2c {
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <0>;
+> > > +
+> > > +        sensor@24 {
+> > > +            compatible =  "himax,hm1246";
+> > > +            reg = <0x24>;
+> > > +
+> > > +            clocks = <&hm1246_clk>;
+> > > +
+> > > +            reset-gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
+> > > +
+> > > +            avdd-supply = <&hm1246_avdd>;
+> > > +            iovdd-supply = <&hm1246_iovdd>;
+> > > +            dvdd-supply = <&hm1246_dvdd>;
+> > > +
+> > > +            orientation = <2>;
+> > 
+> > It'd be nice to add macros for these in
+> > include/dt-bindings/media/video-interfaces.h .
+> 
+> True. However, since this is not specific to this sensor, I think it's
+> something for a separate series.
+> Should I omit these properties in this example?
 
+Feel free to keep them.
 
---4856b23f253d4ec58fd417d6be2d91cf025155c02cab64c8d8f827067e17
-Content-Type: application/pgp-signature; name="signature.asc"
+Such definitions should go to another patch (or even series) in any case.
 
------BEGIN PGP SIGNATURE-----
+-- 
+Kind regards,
 
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaL/nWxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlMC
-ggD+KJ4+mIFOxqZ/OOfUILmagchKuJNiUOwdInV0goSql4sBAJYAIM5L0vr0Eqqo
-w1Qatmm1+IfunotaRO+Sd8q8eUUB
-=1rxv
------END PGP SIGNATURE-----
-
---4856b23f253d4ec58fd417d6be2d91cf025155c02cab64c8d8f827067e17--
+Sakari Ailus
 
