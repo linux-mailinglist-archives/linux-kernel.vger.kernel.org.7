@@ -1,163 +1,334 @@
-Return-Path: <linux-kernel+bounces-807301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D23B4A2BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5723B4A2C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980D57B3C56
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3ED4E2816
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E359A259CB9;
-	Tue,  9 Sep 2025 06:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313523009D5;
+	Tue,  9 Sep 2025 06:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sr22RboN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="YwPg07wX"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DBF1FDA92;
-	Tue,  9 Sep 2025 06:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23582594BE;
+	Tue,  9 Sep 2025 06:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757401046; cv=none; b=cCZD9HD1Ez8P99huZbSTznY85ot2z0ABnVVpeZXSDkg57d298D8RzLJRvZQqfyFha2qFZQRuqLZcCTsNPck4HaZHpo2WBq8UCqG9b8da9OCbZ3vNIs18VToQM3eCafcKqKJ/7WWOP6UtB6klo3+1ilFTJ3ow4UhKbgjUaVEqm/0=
+	t=1757401187; cv=none; b=gjMzupHpvaxL3JwcgkFgcIuI7jtklNVkQehRwd/mqujLHwye8QdpTG0AXcGctHAraELxacBlyfuzr2eCEfKai/Cvu0e8wHotg8ksym2m6KTpBcQbL8hcyuR/jtxZigQ25fE4XRkENGJUa1nmKAIVSarQhAL56n+M6b7l6PlyeCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757401046; c=relaxed/simple;
-	bh=cS4MWuIE0ADmFE0DRU64PLX5wR8zFTwbbEc/XSo/4SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rfg/ID3ETiXdd2UWhXZ0REnDn/EP3DINA0P1yrk6qef1UQL2bgHtDrOql//KheGnfJosm6upSHqz/mHK0EIK29jbiVz83LerUlL56zgVpzXw2GwwGpltLSyd1u3RD1g5rnsvtbEJQdMyNIqrjMcR5lRk/ixLo9eew/NP0qxydQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sr22RboN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588LSDgM019819;
-	Tue, 9 Sep 2025 06:57:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=kCYuieGAK/0zEEAO2rBoIMsFX1UbSM
-	nvaKgT+tOmDzY=; b=Sr22RboNg8Kq2tJQQTEDv3FQeqfhi6GPYiEZlMpVhkYUec
-	VkTSqhcF7RMjEW/Zh3HXItu32FGywasIXkj7FKjWQKPhr5MPFTa8EQxFtsN243jE
-	uSuqMs9loKPuU8cYeF3lGXv2NPh1aqG+RO3SBz78cxzoL7UfaQ3y4pPvEai+wgdP
-	9Mum2dzF/Y0j3ul9g4NspJ7Kkr0T6ZEXdf4Gq08+/Fxp3g07XFY6fWG8/fPYSdL7
-	NEETdszYWVBXj/UrY9U1LoRA+u5Z64BrTYnduJgwJaqw8uFcpZQ4fIZNwyvCvN9S
-	SXVkH40RiwMQOvFaBufSF7I7z9xuWe17h7FU3Gpw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeb7hc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:57:17 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5896pFLs005882;
-	Tue, 9 Sep 2025 06:57:17 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeb7h9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:57:17 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5896IvN4010604;
-	Tue, 9 Sep 2025 06:57:16 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910smsqq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:57:16 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5896vEOx13697426
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 06:57:14 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5BFDC20043;
-	Tue,  9 Sep 2025 06:57:14 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 02F5B20040;
-	Tue,  9 Sep 2025 06:57:12 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Sep 2025 06:57:11 +0000 (GMT)
-Date: Tue, 9 Sep 2025 12:27:09 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v5 04/12] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <aL_PxUApMCyL-6K5@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1755849134.git.ojaswin@linux.ibm.com>
- <8b7e007fd87918a0c3976ca7d06c089ed9b0070c.1755849134.git.ojaswin@linux.ibm.com>
- <e2892851-5426-43d3-a25e-be9d9c7f860a@oracle.com>
- <aLsP6ROqLqhdbLZz@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <448079fd-ac31-4a6e-99f8-9021c0a92476@oracle.com>
+	s=arc-20240116; t=1757401187; c=relaxed/simple;
+	bh=BHJ8sqoqyUyJ68vlzeIfk7fhhGNyUBpM7zl7WiDhdE8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VUUnUcSBnmZK53Z5kaE33PiaVw2+acmi0aCqKEPpSSfGccITMsjHNBJwllYwM4Ylz6pTdyDwZ1Y8DT27VqsT0jsX/UtnrgrydHWYRNLScV6C2FgZU1VEHNDsIWokymGkwOxgTiMKPZbiD2/xXB9oUtgURJPvSWv5Fnz36hgc7Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=YwPg07wX; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1757401133;
+	bh=EwH0w4PvA3lfCqW8m/2b+fjNT4NdGf5u9DmtXqAOHkk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=YwPg07wXe7jGG/NTKieEzMgV1hECOJEJyTgi+wkJdBlFn7QvxpTTNikbIHrMRG9Nf
+	 tyFsWtuEhqw4oxcIc/NysLuitdkoh0OF1ILk9q3JsTBGyYBPYC4dmNWcnu9nJeI+b7
+	 6BVAUZ8opg4wPRO6U3O1tzuLN5JICBookmGS5uIk=
+X-QQ-mid: zesmtpip2t1757401125t4e3447c9
+X-QQ-Originating-IP: 8UGy5pCIyeWgCEIGkL9vSwscSkxUIz1k8lZ1704/x84=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 09 Sep 2025 14:58:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17818815471825471435
+EX-QQ-RecipientCnt: 10
+From: tuhaowen <tuhaowen@uniontech.com>
+To: rafael@kernel.org
+Cc: tuhaowen@uniontech.com,
+	huangbibo@uniontech.com,
+	kernel-team@android.com,
+	len.brown@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	pavel@kernel.org,
+	saravanak@google.com,
+	wusamuel@google.com
+Subject: [PATCH v3] PM: Add configurable sync timeout for suspend and hibernation
+Date: Tue,  9 Sep 2025 14:58:36 +0800
+Message-Id: <20250909065836.32534-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250908022238.6852-1-tuhaowen@uniontech.com>
+References: <20250908022238.6852-1-tuhaowen@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <448079fd-ac31-4a6e-99f8-9021c0a92476@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX2FSe2J4IvgXG
- m8EohUFgTotDU+Tg2nqSpspue/zSz09uogtwJJGTAIkjxr/oQcdz6pUdMpKKuqvJqDZnSx9k8Tn
- mxd7DFQiqOjKkGq6SSV+XdD/hSy2ptDkrFVtwaGa8NUHM+YWfWtOirudRzIZuCKR/SMDtQa+Kvg
- 4Rvp6DQ7LBpEq7wY/ItoqBymZemJY0lVFvhfBuJyK9Sr5CU/qvXKgKMtGR8zlW72O/CBWCnBHXP
- zpqtLhi5MtVQLO/MMk7iFxqT5aPfM4BkcCQ3SLI29fo2EId0ZQLV+0rW4trfShz0YQqiayTJ33B
- iVGZoHNzY0LXmjnC6vZ4PSj4bO6kRWC4n3qglfKOwoXVyjpW8tcEFAsvUJXEZvVxIkm4pnSGnlB
- VX47jehY
-X-Proofpoint-ORIG-GUID: wpUwkgzQ6m59TNrEPOfSe7ql8RqhgdgE
-X-Proofpoint-GUID: 7YiOeNKxEcmx0AEMeVjOwf9wcsOy5G9M
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68bfcfcd cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=V3uXAB9MKXCMtpp5kXoA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Of2cEohDBRJBDM+Qe3D+WtGbjNGrZtKNGF2ObA7PgfFGF04sLwd3fww+
+	JAcBwSI4QO2tOrGOj6nhCAVeS3KUxYKfsZwbosiy5koe9IQYGK/uV71TKtATlZy+7n1sviA
+	3jMYms430TLxFi3pMQShs++xR3J7XCa83/oAFApWFQ615xIPO3DohiE6/0UBISjIScdUUXR
+	bSJFeWjijWph2y0RNraTYoxSL0mbbNJclIHorB84rCcLJs6v/hmTLmhSfjTH6vSj2n2jf1q
+	1SVv9bZrRTcYhUd/gcqJY9eeZAUlaUcUHbas+cPcrRQxPcufbpO3hbHnSM9sH/g603AskUh
+	megS3JEl52pD5NvkdCyvM/d0FLYT55+0BiN+F4BeLUcgQszDShxLQURJqd9CjqYcZ6E2/Vt
+	KzJ6gqe/acdeULCy/kLtKpj/J2x275U0oJ9KIhAOVYzkQqymFSoSewe9VujpJ3BXvfA2QDj
+	ehpeFL9M4BchTFDU9TKeUkAb9NCNlIjq2u7RRO1sIgZit2AvGnqvr0B+sWqwrO0uolB3ixb
+	9Bja4cI39lo5SYKVYzmICpMXD3fLAGq5gvMDncaAx5wO1M1P7UnJWATenH7d67bm0BOyeEF
+	0dXgONEwdxZG9nU9n967dto1W8Ga1wUYqZnsZbMPrEEN0GR2zC0S/oYb/xO8MRNn+2k9+OU
+	rDbXu4BfSG+SxeRT7iXp+P50dpt0esUMYfmrSWPKJu669bzW5klEWXtrI2AZ5mr7YMrQcQt
+	0Yktcgui+WNDw2AleSDgeQxGEJuXJtz0n2CXJeGHE8ncJ0t+jPZEXooe1bi61AsrzliK/c+
+	SUoy2lW5SAg8kawY/XQfc5yq/8gaNWRrVN96IUSRpw+8l6IV7s+MwLDEcSvuio8xRvhmDqN
+	HcjeeYAbYrieOFbfLXHu2G3BglifjBTG0MmL2XH+zPzw2UdlHNsyzSyjnNo0+hg20ytseLg
+	aUrafInsRDpmctQlsSPc58ncVdyZnD/FI7w6vdNUc8Q2DGzEVueezoYXNjnfBga2ATu3JWt
+	W4qo/XqG2CokiVh9AjBoUFv8PD4Sg=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Sep 08, 2025 at 08:53:59AM +0100, John Garry wrote:
-> On 05/09/2025 17:29, Ojaswin Mujoo wrote:
-> > > > +
-> > > > +/*
-> > > > + * Round down n to nearest power of 2.
-> > > > + * If n is already a power of 2, return n;
-> > > > + */
-> > > > +static int rounddown_pow_of_2(int n) {
-> > > > +	int i = 0;
-> > > > +
-> > > > +	if (is_power_of_2(n))
-> > > > +		return n;
-> > > > +
-> > > > +	for (; (1 << i) < n; i++);
-> > > > +
-> > > > +	return 1 << (i - 1);
-> > > Is this the neatest way to do this?
-> > Well it is a straigforward o(logn) way. Do you have something else in
-> > mind?
-> 
-> check what the kernel does is always a good place to start...
-> 
-> Thanks
+When large file operations are in progress during system suspend or
+hibernation, the ksys_sync() call can hang for extended periods,
+leading to unresponsive system behavior. Users copying large files
+to USB drives may experience black screen hangs when attempting to
+suspend, requiring forced power cycles.
 
-So kernel pretty much does same thing:
+A specific problematic scenario occurs when data is being copied and
+the system enters S3 suspend. If the block device is removed during
+this process, some filesystems may not properly handle the device
+disappearance and continue to believe the block device exists. This
+causes ksys_sync() to be switched out and never complete, with the
+following stack trace:
 
-unsigned long __rounddown_pow_of_two(unsigned long n)
-{
-	return 1UL << (fls_long(n) - 1);
-}
+[<0>] __switch_to+0xd0/0x168
+[<0>] iterate_supers+0x88/0x118
+[<0>] ksys_sync+0x48/0xb8
+[<0>] ksys_sync_helper+0x18/0xa0
+[<0>] pm_suspend+0x260/0x3e8
 
-where fls*() variants jump into asm for efficiency. asm is obviously not
-needed here so we use the for loop to calculate the fls (find last bit
-set):
+This patch introduces a unified sync timeout mechanism for both
+suspend-to-RAM (S3) and hibernation (S4) to prevent indefinite
+hangs while maintaining data integrity.
 
-	for (; (1 << i) < n; i++);
+Key features:
+- Configurable timeout via sysfs interface
+- Default behavior unchanged (timeout disabled by default)
+- Unified implementation for both suspend and hibernation paths
+- Graceful fallback to direct sync on thread creation failure
+- Non-blocking timeout: sync continues in background after timeout
 
-Ideally the compiler should do the right thing and optimize it.
+Sysfs interface:
+- /sys/power/sleep_sync_timeout: Runtime configuration (0-600000ms)
 
-Regards,
-ojaswin
+When timeout is enabled and exceeded, the suspend/hibernation operation
+fails gracefully with -ETIMEDOUT to prevent system hangs, while the
+sync operation continues running in the background to ensure eventual
+data integrity. This approach provides responsive user experience
+without compromising data safety.
+
+Implementation creates a separate kthread for sync operations when
+timeout is enabled. If the timeout expires, the main suspend path
+immediately returns with an error, allowing the system to remain
+responsive, while the background sync thread continues to completion
+independently. The sync operation is never forcibly terminated or
+interrupted.
+
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+---
+Changes in v3:
+- Added mutex protection to prevent concurrent sync timeout operations
+- Removed kthread_stop() to allow sync completion after system resume
+- Non-blocking timeout implementation: sync continues in background
+---
+ include/linux/suspend.h  |  3 ++
+ kernel/power/hibernate.c |  4 +-
+ kernel/power/main.c      | 88 ++++++++++++++++++++++++++++++++++++++++
+ kernel/power/suspend.c   |  6 ++-
+ 4 files changed, 99 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index da6ebca3f..976c8f8a1 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -439,6 +439,8 @@ void restore_processor_state(void);
+ extern int register_pm_notifier(struct notifier_block *nb);
+ extern int unregister_pm_notifier(struct notifier_block *nb);
+ extern void ksys_sync_helper(void);
++extern int ksys_sync_helper_timeout(unsigned int timeout_ms);
++extern unsigned int sync_timeout_ms;
+ extern void pm_report_hw_sleep_time(u64 t);
+ extern void pm_report_max_hw_sleep(u64 t);
+ 
+@@ -486,6 +488,7 @@ static inline void pm_report_hw_sleep_time(u64 t) {};
+ static inline void pm_report_max_hw_sleep(u64 t) {};
+ 
+ static inline void ksys_sync_helper(void) {}
++static inline int ksys_sync_helper_timeout(unsigned int timeout_ms) { return 0; }
+ 
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 23c0f4e6c..2678181a5 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -777,7 +777,9 @@ int hibernate(void)
+ 	if (error)
+ 		goto Restore;
+ 
+-	ksys_sync_helper();
++	error = ksys_sync_helper_timeout(sync_timeout_ms);
++	if (error)
++		goto Exit;
+ 
+ 	error = freeze_processes();
+ 	if (error)
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 6254814d4..a437fa0b2 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -17,10 +17,22 @@
+ #include <linux/suspend.h>
+ #include <linux/syscalls.h>
+ #include <linux/pm_runtime.h>
++#include <linux/completion.h>
++#include <linux/kthread.h>
++#include <linux/jiffies.h>
+ 
+ #include "power.h"
+ 
+ #ifdef CONFIG_PM_SLEEP
++/* Sync timeout parameters */
++unsigned int sync_timeout_ms;
++EXPORT_SYMBOL_GPL(sync_timeout_ms);
++
++/* Sync timeout implementation */
++static struct completion sync_completion;
++static struct task_struct *sync_task;
++static DEFINE_MUTEX(sync_timeout_mutex);
++
+ /*
+  * The following functions are used by the suspend/hibernate code to temporarily
+  * change gfp_allowed_mask in order to avoid using I/O during memory allocations
+@@ -79,6 +91,50 @@ void ksys_sync_helper(void)
+ }
+ EXPORT_SYMBOL_GPL(ksys_sync_helper);
+ 
++static int sync_thread_func(void *data)
++{
++	ksys_sync_helper();
++	complete(&sync_completion);
++	return 0;
++}
++
++int ksys_sync_helper_timeout(unsigned int timeout_ms)
++{
++	unsigned long timeout_jiffies;
++	int ret = 0;
++
++	/* If timeout is 0, use regular sync without timeout */
++	if (timeout_ms == 0) {
++		ksys_sync_helper();
++		return 0;
++	}
++
++	mutex_lock(&sync_timeout_mutex);
++	init_completion(&sync_completion);
++	sync_task = kthread_run(sync_thread_func, NULL, "sync_timeout");
++	if (IS_ERR(sync_task)) {
++		pr_warn("%s: Failed to create sync thread, performing sync directly\n",
++			__func__);
++		ksys_sync_helper();
++		goto unlock;
++	}
++
++	timeout_jiffies = msecs_to_jiffies(timeout_ms);
++	if (!wait_for_completion_timeout(&sync_completion, timeout_jiffies)) {
++		pr_warn("%s: Sync operation timed out after %u ms, aborting suspend/hibernation\n",
++			__func__, timeout_ms);
++		pr_info("%s: Sync operation continues in background\n", __func__);
++		ret = -ETIMEDOUT;
++	}
++
++unlock:
++	mutex_unlock(&sync_timeout_mutex);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(ksys_sync_helper_timeout);
++
++
++
+ /* Routines for PM-transition notifications */
+ 
+ static BLOCKING_NOTIFIER_HEAD(pm_chain_head);
+@@ -240,6 +296,37 @@ static ssize_t sync_on_suspend_store(struct kobject *kobj,
+ }
+ 
+ power_attr(sync_on_suspend);
++
++/*
++ * sleep_sync_timeout: configure sync timeout during suspend/hibernation.
++ *
++ * show() returns the current sync timeout in milliseconds.
++ * store() accepts timeout value in milliseconds. 0 disables timeout.
++ */
++static ssize_t sleep_sync_timeout_show(struct kobject *kobj,
++				 struct kobj_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%u\n", sync_timeout_ms);
++}
++
++static ssize_t sleep_sync_timeout_store(struct kobject *kobj,
++				  struct kobj_attribute *attr,
++				  const char *buf, size_t n)
++{
++	unsigned long val;
++
++	if (kstrtoul(buf, 10, &val))
++		return -EINVAL;
++
++	/* Allow any reasonable timeout value */
++	if (val > 600000) /* Max 10 minutes */
++		return -EINVAL;
++
++	sync_timeout_ms = val;
++	return n;
++}
++
++power_attr(sleep_sync_timeout);
+ #endif /* CONFIG_SUSPEND */
+ 
+ #ifdef CONFIG_PM_SLEEP_DEBUG
+@@ -974,6 +1061,7 @@ static struct attribute * g[] = {
+ #ifdef CONFIG_SUSPEND
+ 	&mem_sleep_attr.attr,
+ 	&sync_on_suspend_attr.attr,
++	&sleep_sync_timeout_attr.attr,
+ #endif
+ #ifdef CONFIG_PM_AUTOSLEEP
+ 	&autosleep_attr.attr,
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 8eaec4ab1..4f8015a75 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -585,8 +585,12 @@ static int enter_state(suspend_state_t state)
+ 
+ 	if (sync_on_suspend_enabled) {
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-		ksys_sync_helper();
++		error = ksys_sync_helper_timeout(sync_timeout_ms);
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++		if (error) {
++			pr_err("PM: Sync timeout, aborting suspend\n");
++			goto Unlock;
++		}
+ 	}
+ 
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+-- 
+2.20.1
+
 
