@@ -1,169 +1,186 @@
-Return-Path: <linux-kernel+bounces-807935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5EFB4AB32
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E28B4AB28
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34361361E41
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451704E74D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8F232BF31;
-	Tue,  9 Sep 2025 11:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AD8322A3F;
+	Tue,  9 Sep 2025 11:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="BSSKVvD3"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTzwqRKr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B689B32A3FF;
-	Tue,  9 Sep 2025 11:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E483322C74
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416053; cv=none; b=RV4UHYvluizxPAiVyFPeBqp7HBLp5I9D+mLIB02AWSuzmhUF4LyDjIeN+QxcS7hNlQKJa9eK+cLo0QwfRz6obNACJ3BGzR1l2j50qeZ6KMPYiqsLyYRvV4yuraWINcIA+StrJ4pN50oGINsHyTCkYUd8SSz+PjYBGevc9/HFlro=
+	t=1757416029; cv=none; b=TT+LatgJLTcooX8J+KJFkpd5GIaI/iIQrsxeIyytlIvmEbFOzdxZQ3Mt5cj83FFBBTakBpSa3NkHa5noFqO0HEXKjyphGiYQLIPshNp8wFKy4nD5CtzyPw5KfxdVU3y6HlFJFu+r4yG6NItOFlRrj55WbTKL4CA6GRAfaYX71Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416053; c=relaxed/simple;
-	bh=L1r/8uxRlM/kp1r+xQYQKLRaeaIZcG+wTHH1zLo1dPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=baGgpJMNEAFiSn6/rT2VC48uchz2Lr1la9sV4OzbhDHtnSAHqAOdAe2VfpCdNZyrrXG7cJRrdtWWjB2iDS6Mk6ZVHtMpAV4Q11On7wYzkP+syw7glDcKom0KNnB2ehhe9Ibd2P29pV7xWYm7JUe3hPcfA4MkaLI4gjPuEyZuBMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=BSSKVvD3; arc=none smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1757416052; x=1788952052;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L1r/8uxRlM/kp1r+xQYQKLRaeaIZcG+wTHH1zLo1dPg=;
-  b=BSSKVvD3bgWUaZJXlhBfnRdDvXPYdFXqPCjcOSW1fu0g+63+rS/klvSJ
-   2IZzLX/sdqzzPyR16O3MdZc+foqjyv0XHeVfaMX/SBTsNt8x2hBveCOje
-   TgCk3cllr2+B/QymgPfO5wsQ6lvhRu+cdx5hE9GBpb4vCJg1RcANVe4P4
-   OJpeMPaWwrU/z5lEofpsD82VAadJwMvSGoSuS6P1z0KCQuOVyde+7H494
-   vBMTHy+BIRYfi20mFw/utqH2RADtxtxoiHcfAI/E4M2vax5Std/ADVSOQ
-   7YanslDibrs/ITWw2BRXYTOsrxBirKA5clzvTkPf+sEbHeJmPWN58WnzF
-   w==;
-X-CSE-ConnectionGUID: x3xD8wRbTliz9SXpduLUCg==
-X-CSE-MsgGUID: QeMNkhffSuOi+4QBud7Qnw==
-X-IronPort-AV: E=Sophos;i="6.18,251,1751212800"; 
-   d="scan'208";a="112810311"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Sep 2025 19:07:31 +0800
-IronPort-SDR: 68c00a73_h+NRTEx8IiwGfKL24sEiNYZUcelO5W7AB4BIzq42ezMBB0o
- q6KgDFSlRgG6TD570bsRJABHD/JDn/3381Gk5SQ==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2025 04:07:31 -0700
-WDCIronportException: Internal
-Received: from c02g55f6ml85.ad.shared (HELO C02G55F6ML85.wdc.com) ([10.224.183.46])
-  by uls-op-cesaip01.wdc.com with ESMTP; 09 Sep 2025 04:07:27 -0700
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-btrace@vger.kernel.org,
-	John Garry <john.g.garry@oracle.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 16/16] blktrace: handle BLKTRACESETUP2 ioctl
-Date: Tue,  9 Sep 2025 13:06:11 +0200
-Message-Id: <20250909110611.75559-17-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250909110611.75559-1-johannes.thumshirn@wdc.com>
-References: <20250909110611.75559-1-johannes.thumshirn@wdc.com>
+	s=arc-20240116; t=1757416029; c=relaxed/simple;
+	bh=eGHe1jcUmg5KUlhvrK6wv4UHe3itsWYAkQSUtMtqe/Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rg6NqDFhtiJ2EoNjA+8MudNdVNn9NJ++GpUNuxReGJOfZI/UwMnFwc0sS9qjydKYpDKRrQLPspKNSHy4ty4rLPG15qX5349SAjE3OdVchjlG7t1kFc2jfccuxgX76RdVD38Qrttr4YFhKGGouQ9xPYDZLHghlyh1VgzAEdrrp+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTzwqRKr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757416027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F645HJ3vveFmp34mF8+WjlKqHIVzKpVZ1NP3PP0iotw=;
+	b=gTzwqRKrqOdl90AwgwrNFvvtJZM0mi3t+ss2O+MvZcCmFRBEq1jws0mHzrzIGbsO/QaHKl
+	E2oTtIlmqtXnGqZpD8e7zB/hi3hucaOxUEidpNoVPyhVVTkP8zBi7iVMw2ccjiAl0dWA1s
+	O42TJPx0ZRPZ7Ypk4EIqkoOeNMCb6vM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-550-UzCbqJpwPbiAfJtWoI-kHg-1; Tue, 09 Sep 2025 07:07:03 -0400
+X-MC-Unique: UzCbqJpwPbiAfJtWoI-kHg-1
+X-Mimecast-MFC-AGG-ID: UzCbqJpwPbiAfJtWoI-kHg_1757416023
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3df9f185b82so2356528f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757416022; x=1758020822;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F645HJ3vveFmp34mF8+WjlKqHIVzKpVZ1NP3PP0iotw=;
+        b=WqtF4bwzpXeaLmMZi5VTVdiggvHHPg8rExICdH8OsmX1I8ryrPzoGTHm4Uy1RM89pJ
+         ZXetkb03vsrsMypSRIgdYApfSi5Z+7pJlFhZ5Ol8fCL6XgIOQcvLk6tLvhpGzm8n88gm
+         dPHUB+A07yvgF+gxZKVUr6QY8sulXTcUM/qCUBhyfj1SmoaXhxmZK3q7FKCR8Rub5RSr
+         bc6YuBS44SKXi5P6ZbeL2ANztKX6/QuBTvfHhRciG7SaAPbQ3+3nh8dUUhLeUlUagspG
+         PBthejGFXlmLDSuYotAYvuJcqLFt1pC1bwQvqaloLWoxB+hQD8AFUmJSfcozdunyDITM
+         e3Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUD15CrJijPE86UqvC2GlEid6hAXEjI566C9nM8Q4uQO+blnMoLipHbeX9iQXOiRwvNZZu/P8j1z8rqQ7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYsfh7AMgD5tUA/+oMECbHrCmOCVN3DW/ajqQIVrpXe8HkMX42
+	BPf+JkevHsh8fbbB5uLyqZhsgK88ns7QGscVTHR5thl/eVbEuTz/a0e0vAc2wpwhWRqTYDVPmOY
+	kV2uFDEANa1rvdnpoXR0s9PgVvsz955BicjsKzhGEF6uCIR2d4v5aCxSfOLhusTnLdQ==
+X-Gm-Gg: ASbGncsy/n1Diknz6aBdFZRns0vjGUf0YZJagxIO7rcT3wL4rYlDZCmKYo/48TDkTfc
+	+CcYkVPXerdd+J5ERWmx4G5Ovwe0Qe9IY56lwt6v7wfuXBrvpDSI7IZSvrQawTqf3kXtoXDo70X
+	IDQQoBsPI30e1P7mH3EofDH7MreGvAIIwWU8jGUbFXRbROUeLJfWCXsnHBgtQElF7P1VDVWEDqA
+	rz09pNtr8jJmtTNQS61i6196ZDMCU2nSwbBJoqDX14jIIgZHrxWP5tuqWYX4brSi8ZE1TxxEIa1
+	YLhBUThZzAxIISRoII5VUTjeJ0w51i8pocdtLe3RSR/HWzKFDeNJ+e+o8T2kkNilUg==
+X-Received: by 2002:a05:6000:3108:b0:3d6:212b:9ae2 with SMTP id ffacd0b85a97d-3e643ff9652mr9440730f8f.63.1757416022498;
+        Tue, 09 Sep 2025 04:07:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeI98m17yynV1gNprmpuJG/4VqnfMA/ofoyol0VPV/L8nFCDCvGKffsiP06RboObT8nGFhQQ==
+X-Received: by 2002:a05:6000:3108:b0:3d6:212b:9ae2 with SMTP id ffacd0b85a97d-3e643ff9652mr9440699f8f.63.1757416022037;
+        Tue, 09 Sep 2025 04:07:02 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223898csm2306074f8f.39.2025.09.09.04.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 04:07:01 -0700 (PDT)
+Message-ID: <93a46874ceadf0080891e06d930336e120f2d753.camel@redhat.com>
+Subject: Re: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64
+ clone_flags
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: schuster.simon@siemens-energy.com, Nam Cao <namcao@linutronix.de>, 
+ Steven Rostedt <rostedt@goodmis.org>, Christian Brauner
+ <brauner@kernel.org>, Stephen Rothwell	 <sfr@canb.auug.org.au>
+Cc: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes	
+ <lorenzo.stoakes@oracle.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel
+ test robot <lkp@intel.com>
+Date: Tue, 09 Sep 2025 13:06:59 +0200
+In-Reply-To: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
+References: 
+	<20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Handle the BLKTRACESETUP2 ioctl, requesting an extended version of the
-blktrace protocol from user-space.
+On Thu, 2025-09-04 at 13:36 +0200, Simon Schuster via B4 Relay wrote:
+> From: Simon Schuster <schuster.simon@siemens-energy.com>
+>=20
+> Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64
+> across
+> calltree") the task_newtask trace event exposes clone_flags as u64 to
+> its callbacks.
+>=20
+> However, ltl_monitor was not adapted, resulting in a faulty callback.
+> This also resulted in an lkp build warning due to
+> -Wincompatible-pointer-types.
+>=20
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- block/ioctl.c           |  1 +
- kernel/trace/blktrace.c | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+Looks good to me, thanks!
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index f7b0006ca45d..e7f83a58c8ae 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -691,6 +691,7 @@ long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- 
- 	/* Incompatible alignment on i386 */
- 	case BLKTRACESETUP:
-+	case BLKTRACESETUP2:
- 		return blk_trace_ioctl(bdev, cmd, argp);
- 	default:
- 		break;
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 3e7cd8f46c0c..e16a3dbed527 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -742,6 +742,38 @@ int blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- }
- EXPORT_SYMBOL_GPL(blk_trace_setup);
- 
-+static int blk_trace_setup2(struct request_queue *q, char *name, dev_t dev,
-+			    struct block_device *bdev, char __user *arg)
-+{
-+	struct blk_user_trace_setup2 buts2;
-+	struct blk_trace *bt;
-+	int ret;
-+
-+	ret = copy_from_user(&buts2, arg, sizeof(buts2));
-+	if (ret)
-+		return -EFAULT;
-+
-+	if (!buts2.buf_size || !buts2.buf_nr)
-+		return -EINVAL;
-+
-+	mutex_lock(&q->debugfs_mutex);
-+	bt = blk_trace_setup_prepare(q, name, dev, buts2.buf_size, buts2.buf_nr,
-+				     bdev);
-+	if (IS_ERR(bt)) {
-+		mutex_unlock(&q->debugfs_mutex);
-+		return PTR_ERR(bt);
-+	}
-+	bt->version = 2;
-+	blk_trace_setup_finalize(q, name, bt, &buts2);
-+	mutex_unlock(&q->debugfs_mutex);
-+
-+	if (copy_to_user(arg, &buts2, sizeof(buts2))) {
-+		blk_trace_remove(q);
-+		return -EFAULT;
-+	}
-+	return 0;
-+}
-+
- #if defined(CONFIG_COMPAT) && defined(CONFIG_X86_64)
- static int compat_blk_trace_setup(struct request_queue *q, char *name,
- 				  dev_t dev, struct block_device *bdev,
-@@ -833,6 +865,10 @@ int blk_trace_ioctl(struct block_device *bdev, unsigned cmd, char __user *arg)
- 	char b[BDEVNAME_SIZE];
- 
- 	switch (cmd) {
-+	case BLKTRACESETUP2:
-+		snprintf(b, sizeof(b), "%pg", bdev);
-+		ret = blk_trace_setup2(q, b, bdev->bd_dev, bdev, arg);
-+		break;
- 	case BLKTRACESETUP:
- 		snprintf(b, sizeof(b), "%pg", bdev);
- 		ret = blk_trace_setup(q, b, bdev->bd_dev, bdev, arg);
--- 
-2.51.0
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+
+Adding Nam (author of LTL) to the loop.
+
+Gabriele
+
+> Fixes: edd3cb05c00a ("copy_process: pass clone_flags as u64 across
+> calltree")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes:
+> https://lore.kernel.org/lkml/20250904113334.18822d43@canb.auug.org.au/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes:
+> https://lore.kernel.org/oe-kbuild-all/202509040134.bQVbm7ja-lkp@intel.com=
+/
+> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+> ---
+> I did further search for other in-tree users of the task_newtask
+> callback, but the trace macros make it a bit harder. Yet, as far as I
+> could see, there are none, so this patch hopefully resolves the
+> problem
+> for good. The other matches all relate to "tp_btf/task_newtask",
+> which
+> seems to be unaffected.
+>=20
+> With this patch, ARCH=3DS390 allmodconfig -- that originally tripped
+> the
+> LKP builds -- now builds without further -Wincompatible-pointer-types
+> warnings.
+>=20
+> Sorry for causing this trouble, and thanks to Stephen Rothwell for
+> testing/reporting.
+> ---
+> =C2=A0include/rv/ltl_monitor.h | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
+> index 67031a774e3d..5368cf5fd623 100644
+> --- a/include/rv/ltl_monitor.h
+> +++ b/include/rv/ltl_monitor.h
+> @@ -56,7 +56,7 @@ static void ltl_task_init(struct task_struct *task,
+> bool task_creation)
+> =C2=A0	ltl_atoms_fetch(task, mon);
+> =C2=A0}
+> =C2=A0
+> -static void handle_task_newtask(void *data, struct task_struct
+> *task, unsigned long flags)
+> +static void handle_task_newtask(void *data, struct task_struct
+> *task, u64 flags)
+> =C2=A0{
+> =C2=A0	ltl_task_init(task, true);
+> =C2=A0}
+>=20
+> ---
+> base-commit: edd3cb05c00a040dc72bed20b14b5ba865188bce
+> change-id: 20250904-trace-task-newtask-fix-callbacks-b158634c59da
+>=20
+> Best regards,
 
 
