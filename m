@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-808446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21301B4FFD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC40FB4FFD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEB41C6179B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7265A5E341E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597DF34F494;
-	Tue,  9 Sep 2025 14:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7DB338F23;
+	Tue,  9 Sep 2025 14:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTCMk9Ub"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTeyXhqa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D06334F490
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDD3352095
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429082; cv=none; b=b9V7dUHtkaTroD7Q6thLrVCAN+c9GNZvVBf2omWoTYecFIJ/e8jDrecxOcYJfXBVa6InzEdjCgcEMLaqSGgTvZkZrcvNAe2AB2d8Wvt0FJTjtcEMg/mvlNmumjIMzKQIekFdPiOFI1K+4784LqZwRE2Ir6cMG1NGggUKNZL/qHM=
+	t=1757429084; cv=none; b=ePJCvT5aYxk9RatTDAmokredB6UDaKhJlB+7KN215x5cDMEtm17anjw7YnRO/mh4x2KfXVq/gK7KT/HeVfA+dxv8cCk9JA9X3Omwz4rqonY+GILJ6EWUXjqJlTRzAVwEKL7cOs/ubb+K4IW315d1q9/pn3BJxSxOt9TAfVgqtmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429082; c=relaxed/simple;
-	bh=9MZqSQvw5qyTZgNHswRXw8wMGyHQiJ8VgjtL5Ns5Ug4=;
+	s=arc-20240116; t=1757429084; c=relaxed/simple;
+	bh=R58t8Ck7gaCyPwSxTfKs4rf/zne/bpphAKyTAFsHSEg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=owoOhyZr5K6/Tc3frs86r7eAtV0QdNgtmH/KVtYjSQLwK/prOObDC3gSP2q0AD6z7W8Pp5vfOXqzoVGtg7j7GYKGc+E/vpzVHFSLD1UmNAjQZOFJLmpHZfuEPA6WnSs6w+vQsyOlh4NAoDU3n45T6Ryxc7X3u0AJlGvlM+IzgHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTCMk9Ub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1801C4CEF4;
-	Tue,  9 Sep 2025 14:44:39 +0000 (UTC)
+	 MIME-Version; b=OuPGOp9sh647t5ZCuBLHCVutHiHyPxNgAPU2M7Y4El/HEKmEKT42mulEwQ+9eLUBAEz8hTBqVsWErxnO/7Oq3gQ5FjsX5rrzn7TJWF0Bl93UZrBMXNT0cXrpXIK44rXImDjMKJAyk0ZcqzmVTx/v9MCcB4JeBx0X258R2+/zCGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTeyXhqa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 547C8C4CEFC;
+	Tue,  9 Sep 2025 14:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757429082;
-	bh=9MZqSQvw5qyTZgNHswRXw8wMGyHQiJ8VgjtL5Ns5Ug4=;
+	s=k20201202; t=1757429084;
+	bh=R58t8Ck7gaCyPwSxTfKs4rf/zne/bpphAKyTAFsHSEg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hTCMk9Ub9Ng4v+4IqxsqNkL1aWkxpzQIFyf+EXDEwI319MXSJoe6p59xW7F5cMZer
-	 juosq20FywgDc+qbSFwXismNwfJE2hPy6oFtTPvDYl0BHz19MJFqdquTnx3V7eKfj3
-	 QTrauj37Pq/l709vyei0pdqxuQnr69m+mdsOk7JV1+zLyX0j6w7A4Mhw6r9PlxPHEb
-	 GCV3X6k1uqS+eMqGyTddkfqGpNuljywn0mPJB+gGDW5QSeOABCXFWFMBsgEbGJtaMf
-	 HSI+sHNEbu369ei3q/LC0EL7G7DmDx94Jziq5At/SYHfPCI1OutZQS3WELmFc32DSh
-	 YhTtId0FXEHzQ==
+	b=nTeyXhqaog50wiTHSSHI/usuM6Lz1jubOhD0MerikJmeK4c/dobUWCoKgpcwy2wFK
+	 Lb39k544yz4KwqKbBp7ObMKBgessNF88sW9kNtV3Ueo704WFmO60mTKjH0CrO62j2O
+	 HdVlqYH1A3Y42pMDsi8xJAc9FsgOPyNeayWGFy1Wd6wgpbDhyiUjCPscw9EP/5yrSi
+	 tVhcWdijota3s2Uc6HG8jMDzcVTXp1inUWpKioo0B3Dj28uWySSwbWDLOIe8VwGI0j
+	 8IqLOJNwnFkzlz3AxXHJiIA4jQt3cWdaBsmtSeyUztA1fDXjqYXiEOiWJnuxVX7HlF
+	 uHD9wGZNDLPpw==
 From: Pratyush Yadav <pratyush@kernel.org>
 To: Alexander Graf <graf@amazon.com>,
 	Mike Rapoport <rppt@kernel.org>,
@@ -57,9 +57,9 @@ To: Alexander Graf <graf@amazon.com>,
 Cc: linux-kernel@vger.kernel.org,
 	kexec@lists.infradead.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH 2/4] kho: use KHO array for preserved memory bitmap serialization
-Date: Tue,  9 Sep 2025 16:44:22 +0200
-Message-ID: <20250909144426.33274-3-pratyush@kernel.org>
+Subject: [RFC PATCH 3/4] kho: add support for preserving vmalloc allocations
+Date: Tue,  9 Sep 2025 16:44:23 +0200
+Message-ID: <20250909144426.33274-4-pratyush@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250909144426.33274-1-pratyush@kernel.org>
 References: <20250909144426.33274-1-pratyush@kernel.org>
@@ -71,277 +71,245 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The preserved memory bitmap preservation creates a linked list of pages
-to track the bitmaps for preserved memory. Essentially, it is a
-scattered list of pointers grouped by folio order. Use a KHO array to
-hold the pointers to the bitmaps instead. This moves the burden of
-tracking this metadata to the KHO array layer, and makes the KHO core
-simpler.
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-Currently, the bitmaps are held in chunks, which is a fixed-size array
-of pointers, plus some metadata including the order of the preserved
-folios. The KHO array holds only pointers and has no mechanism for
-grouping. To make the serialization format simpler, move the folio order
-from struct khoser_mem_chunk to struct khoser_mem_bitmap_ptr.
+A vmalloc allocation is preserved using binary structure similar to
+global KHO memory tracker. It's a linked list of pages where each page
+is an array of physical address of pages in vmalloc area.
 
-The chunks to hold the bitmaps are not KHO-preserved since they are only
-used during the scratch-only phase. The same holds true with the KHO
-array. The pages which track the KHO array metadata are not
-KHO-preserved and thus are only valid during the scratch phase of the
-next kernel. After that, they are discarded and freed to buddy.
+kho_preserve_vmalloc() hands out the physical address of the head page
+to the caller. This address is used as the argument to
+kho_vmalloc_restore() to restore the mapping in the vmalloc address
+space and populate it with the preserved pages.
 
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+[pratyush@kernel.org: use KHO array instead of linked list of pages to
+track physical addresses]
 Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
 ---
+ include/linux/kexec_handover.h |  21 +++++
+ kernel/kexec_handover.c        | 143 +++++++++++++++++++++++++++++++++
+ 2 files changed, 164 insertions(+)
 
-The diff is a bit hard to read. The final result can be found at
-https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/tree/kernel/kexec_handover.c?h=kho-array-rfc-v1#n227
-
- kernel/kexec_handover.c | 148 +++++++++++++++++++---------------------
- 1 file changed, 69 insertions(+), 79 deletions(-)
-
+diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+index 348844cffb136..633f94cec1a35 100644
+--- a/include/linux/kexec_handover.h
++++ b/include/linux/kexec_handover.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/errno.h>
++#include <linux/kho_array.h>
+ 
+ struct kho_scratch {
+ 	phys_addr_t addr;
+@@ -37,13 +38,23 @@ struct notifier_block;
+ 	})
+ 
+ struct kho_serialization;
++struct kho_vmalloc;
+ 
+ #ifdef CONFIG_KEXEC_HANDOVER
++struct kho_vmalloc {
++	struct kho_array ka;
++	unsigned int total_pages;
++	unsigned int flags;
++	unsigned short order;
++};
++
+ bool kho_is_enabled(void);
+ 
+ int kho_preserve_folio(struct folio *folio);
++int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation);
+ int kho_preserve_phys(phys_addr_t phys, size_t size);
+ struct folio *kho_restore_folio(phys_addr_t phys);
++void *kho_restore_vmalloc(struct kho_vmalloc *preservation);
+ int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
+ int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
+ 
+@@ -70,11 +81,21 @@ static inline int kho_preserve_phys(phys_addr_t phys, size_t size)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline struct folio *kho_restore_folio(phys_addr_t phys)
+ {
+ 	return NULL;
+ }
+ 
++static inline void *kho_restore_vmalloc(struct kho_vmalloc *preservation)
++{
++	return NULL;
++}
++
+ static inline int kho_add_subtree(struct kho_serialization *ser,
+ 				  const char *name, void *fdt)
+ {
 diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index ecd1ac210dbd7..26f9f5295f07d 100644
+index 26f9f5295f07d..5f89134ceeee0 100644
 --- a/kernel/kexec_handover.c
 +++ b/kernel/kexec_handover.c
-@@ -18,6 +18,7 @@
- #include <linux/memblock.h>
+@@ -19,6 +19,7 @@
  #include <linux/notifier.h>
  #include <linux/page-isolation.h>
-+#include <linux/kho_array.h>
+ #include <linux/kho_array.h>
++#include <linux/vmalloc.h>
  
  #include <asm/early_ioremap.h>
  
-@@ -80,15 +81,13 @@ struct kho_mem_track {
- 	struct xarray orders;
- };
- 
--struct khoser_mem_chunk;
--
- struct kho_serialization {
- 	struct page *fdt;
- 	struct list_head fdt_list;
- 	struct dentry *sub_fdt_dir;
- 	struct kho_mem_track track;
--	/* First chunk of serialized preserved memory map */
--	struct khoser_mem_chunk *preserved_mem_map;
-+	/* Serialized preserved memory map */
-+	struct kho_array *preserved_mem_map;
- };
- 
- static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, size_t sz)
-@@ -226,11 +225,11 @@ EXPORT_SYMBOL_GPL(kho_restore_folio);
- 
- /* Serialize and deserialize struct kho_mem_phys across kexec
-  *
-- * Record all the bitmaps in a linked list of pages for the next kernel to
-- * process. Each chunk holds bitmaps of the same order and each block of bitmaps
-- * starts at a given physical address. This allows the bitmaps to be sparse. The
-- * xarray is used to store them in a tree while building up the data structure,
-- * but the KHO successor kernel only needs to process them once in order.
-+ * Record all the bitmaps in a KHO array for the next kernel to process. Each
-+ * bitmap stores the order of the folios and starts at a given physical address.
-+ * This allows the bitmaps to be sparse. The xarray is used to store them in a
-+ * tree while building up the data structure, but the KHO successor kernel only
-+ * needs to process them once in order.
-  *
-  * All of this memory is normal kmalloc() memory and is not marked for
-  * preservation. The successor kernel will remain isolated to the scratch space
-@@ -240,118 +239,107 @@ EXPORT_SYMBOL_GPL(kho_restore_folio);
- 
- struct khoser_mem_bitmap_ptr {
- 	phys_addr_t phys_start;
--	DECLARE_KHOSER_PTR(bitmap, struct kho_mem_phys_bits *);
--};
--
--struct khoser_mem_chunk_hdr {
--	DECLARE_KHOSER_PTR(next, struct khoser_mem_chunk *);
- 	unsigned int order;
--	unsigned int num_elms;
--};
--
--#define KHOSER_BITMAP_SIZE                                   \
--	((PAGE_SIZE - sizeof(struct khoser_mem_chunk_hdr)) / \
--	 sizeof(struct khoser_mem_bitmap_ptr))
--
--struct khoser_mem_chunk {
--	struct khoser_mem_chunk_hdr hdr;
--	struct khoser_mem_bitmap_ptr bitmaps[KHOSER_BITMAP_SIZE];
-+	unsigned int __reserved;
-+	DECLARE_KHOSER_PTR(bitmap, struct kho_mem_phys_bits *);
- };
- 
--static_assert(sizeof(struct khoser_mem_chunk) == PAGE_SIZE);
--
--static struct khoser_mem_chunk *new_chunk(struct khoser_mem_chunk *cur_chunk,
--					  unsigned long order)
-+static struct khoser_mem_bitmap_ptr *new_bitmap(phys_addr_t start,
-+						struct kho_mem_phys_bits *bits,
-+						unsigned int order)
- {
--	struct khoser_mem_chunk *chunk;
-+	struct khoser_mem_bitmap_ptr *bitmap;
- 
--	chunk = kzalloc(PAGE_SIZE, GFP_KERNEL);
--	if (!chunk)
-+	bitmap = kzalloc(sizeof(*bitmap), GFP_KERNEL);
-+	if (!bitmap)
- 		return NULL;
--	chunk->hdr.order = order;
--	if (cur_chunk)
--		KHOSER_STORE_PTR(cur_chunk->hdr.next, chunk);
--	return chunk;
-+
-+	bitmap->phys_start = start;
-+	bitmap->order = order;
-+	KHOSER_STORE_PTR(bitmap->bitmap, bits);
-+	return bitmap;
+@@ -723,6 +724,148 @@ int kho_preserve_phys(phys_addr_t phys, size_t size)
  }
+ EXPORT_SYMBOL_GPL(kho_preserve_phys);
  
--static void kho_mem_ser_free(struct khoser_mem_chunk *first_chunk)
-+static void kho_mem_ser_free(struct kho_array *ka)
- {
--	struct khoser_mem_chunk *chunk = first_chunk;
-+	struct khoser_mem_bitmap_ptr *elm;
++#define KHO_VMALLOC_FLAGS_MASK	(VM_ALLOC | VM_ALLOW_HUGE_VMAP)
++
++/**
++ * kho_preserve_vmalloc - preserve memory allocated with vmalloc() across kexec
++ * @ptr: pointer to the area in vmalloc address space
++ * @preservation: pointer to metadata for preserved data.
++ *
++ * Instructs KHO to preserve the area in vmalloc address space at @ptr. The
++ * physical pages mapped at @ptr will be preserved and on successful return
++ * @preservation will hold the structure that describes the metadata for the
++ * preserved pages. @preservation itself is not KHO-preserved. The caller must
++ * do that.
++ *
++ * NOTE: The memory allocated with vmalloc_node() variants cannot be reliably
++ * restored on the same node
++ *
++ * Return: 0 on success, error code on failure
++ */
++int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation)
++{
++	struct kho_mem_track *track = &kho_out.ser.track;
++	struct vm_struct *vm = find_vm_area(ptr);
++	unsigned int order, flags;
 +	struct ka_iter iter;
- 
--	while (chunk) {
--		struct khoser_mem_chunk *tmp = chunk;
-+	if (!ka)
-+		return;
- 
--		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
--		kfree(tmp);
--	}
-+	ka_iter_init_read(&iter, ka);
-+	ka_iter_for_each(&iter, elm)
-+		kfree(elm);
++	int err;
 +
-+	kho_array_destroy(ka);
-+	kfree(ka);
- }
- 
- static int kho_mem_serialize(struct kho_serialization *ser)
- {
--	struct khoser_mem_chunk *first_chunk = NULL;
--	struct khoser_mem_chunk *chunk = NULL;
- 	struct kho_mem_phys *physxa;
--	unsigned long order;
-+	unsigned long order, pos = 0;
-+	struct kho_array *ka = NULL;
++	if (!vm)
++		return -EINVAL;
++
++	if (vm->flags & ~KHO_VMALLOC_FLAGS_MASK)
++		return -EOPNOTSUPP;
++
++	flags = vm->flags & KHO_VMALLOC_FLAGS_MASK;
++	order = get_vm_area_page_order(vm);
++
++	preservation->total_pages = vm->nr_pages;
++	preservation->flags = flags;
++	preservation->order = order;
++
++	ka_iter_init_write(&iter, &preservation->ka);
++
++	for (int i = 0, pos = 0; i < vm->nr_pages; i += (1 << order), pos++) {
++		phys_addr_t phys = page_to_phys(vm->pages[i]);
++
++		err = __kho_preserve_order(track, PHYS_PFN(phys), order);
++		if (err)
++			goto err_free;
++
++		err = ka_iter_setpos(&iter, pos);
++		if (err)
++			goto err_free;
++
++		err = ka_iter_setentry(&iter, ka_mk_value(phys));
++		if (err)
++			goto err_free;
++	}
++
++	err = kho_array_preserve(&preservation->ka);
++	if (err)
++		goto err_free;
++
++	return 0;
++
++err_free:
++	kho_array_destroy(&preservation->ka);
++	return err;
++}
++EXPORT_SYMBOL_GPL(kho_preserve_vmalloc);
++
++/**
++ * kho_restore_vmalloc - recreates and populates an area in vmalloc address
++ * space from the preserved memory.
++ * @preservation: the preservation metadata.
++ *
++ * Recreates an area in vmalloc address space and populates it with memory that
++ * was preserved using kho_preserve_vmalloc().
++ *
++ * Return: pointer to the area in the vmalloc address space, NULL on failure.
++ */
++void *kho_restore_vmalloc(struct kho_vmalloc *preservation)
++{
++	unsigned int align, order, shift, flags;
++	unsigned int idx = 0, nr;
++	unsigned long addr, size;
++	struct vm_struct *area;
++	struct page **pages;
 +	struct ka_iter iter;
++	void *entry;
++	int err;
 +
-+	ka = kzalloc(sizeof(*ka), GFP_KERNEL);
-+	if (!ka)
-+		return -ENOMEM;
-+	ka_iter_init_write(&iter, ka);
- 
- 	xa_for_each(&ser->track.orders, order, physxa) {
- 		struct kho_mem_phys_bits *bits;
- 		unsigned long phys;
- 
--		chunk = new_chunk(chunk, order);
--		if (!chunk)
--			goto err_free;
--
--		if (!first_chunk)
--			first_chunk = chunk;
--
- 		xa_for_each(&physxa->phys_bits, phys, bits) {
- 			struct khoser_mem_bitmap_ptr *elm;
-+			phys_addr_t start;
++	flags = preservation->flags;
++	if (flags & ~KHO_VMALLOC_FLAGS_MASK)
++		return NULL;
 +
-+			start = (phys * PRESERVE_BITS) << (order + PAGE_SHIFT);
-+			elm = new_bitmap(start, bits, order);
-+			if (!elm)
-+				goto err_free;
- 
--			if (chunk->hdr.num_elms == ARRAY_SIZE(chunk->bitmaps)) {
--				chunk = new_chunk(chunk, order);
--				if (!chunk)
--					goto err_free;
--			}
--
--			elm = &chunk->bitmaps[chunk->hdr.num_elms];
--			chunk->hdr.num_elms++;
--			elm->phys_start = (phys * PRESERVE_BITS)
--					  << (order + PAGE_SHIFT);
--			KHOSER_STORE_PTR(elm->bitmap, bits);
-+			ka_iter_setpos(&iter, pos);
-+			if (ka_iter_setentry(&iter, elm))
-+				goto err_free;
-+			pos++;
- 		}
- 	}
- 
--	ser->preserved_mem_map = first_chunk;
-+	ser->preserved_mem_map = ka;
- 
- 	return 0;
- 
- err_free:
--	kho_mem_ser_free(first_chunk);
-+	kho_mem_ser_free(ka);
- 	return -ENOMEM;
- }
- 
--static void __init deserialize_bitmap(unsigned int order,
--				      struct khoser_mem_bitmap_ptr *elm)
-+static void __init deserialize_bitmap(struct khoser_mem_bitmap_ptr *elm)
- {
- 	struct kho_mem_phys_bits *bitmap = KHOSER_LOAD_PTR(elm->bitmap);
- 	unsigned long bit;
- 
- 	for_each_set_bit(bit, bitmap->preserve, PRESERVE_BITS) {
--		int sz = 1 << (order + PAGE_SHIFT);
-+		int sz = 1 << (elm->order + PAGE_SHIFT);
- 		phys_addr_t phys =
--			elm->phys_start + (bit << (order + PAGE_SHIFT));
-+			elm->phys_start + (bit << (elm->order + PAGE_SHIFT));
- 		struct page *page = phys_to_page(phys);
- 
- 		memblock_reserve(phys, sz);
- 		memblock_reserved_mark_noinit(phys, sz);
--		page->private = order;
-+		page->private = elm->order;
- 	}
- }
- 
- static void __init kho_mem_deserialize(const void *fdt)
- {
--	struct khoser_mem_chunk *chunk;
-+	struct khoser_mem_bitmap_ptr *elm;
- 	const phys_addr_t *mem;
-+	struct kho_array *ka;
-+	struct ka_iter iter;
- 	int len;
- 
- 	mem = fdt_getprop(fdt, 0, PROP_PRESERVED_MEMORY_MAP, &len);
-@@ -361,15 +349,17 @@ static void __init kho_mem_deserialize(const void *fdt)
- 		return;
- 	}
- 
--	chunk = *mem ? phys_to_virt(*mem) : NULL;
--	while (chunk) {
--		unsigned int i;
--
--		for (i = 0; i != chunk->hdr.num_elms; i++)
--			deserialize_bitmap(chunk->hdr.order,
--					   &chunk->bitmaps[i]);
--		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
-+	ka = *mem ? phys_to_virt(*mem) : NULL;
-+	if (!ka)
-+		return;
-+	if (!kho_array_valid(ka)) {
-+		pr_err("invalid KHO array for preserved memory bitmaps\n");
-+		return;
- 	}
++	err = ka_iter_init_restore(&iter, &preservation->ka);
++	if (err)
++		return NULL;
 +
-+	ka_iter_init_read(&iter, ka);
-+	ka_iter_for_each(&iter, elm)
-+		deserialize_bitmap(elm);
- }
++	nr = preservation->total_pages;
++	pages = kvmalloc_array(nr, sizeof(*pages), GFP_KERNEL);
++	if (!pages)
++		goto err_ka_destroy;
++	order = preservation->order;
++	shift = PAGE_SHIFT + order;
++	align = 1 << shift;
++
++	ka_iter_for_each(&iter, entry) {
++		phys_addr_t phys = ka_to_value(entry);
++		struct page *page;
++
++		page = phys_to_page(phys);
++		kho_restore_page(page, 0);
++		pages[idx++] = page;
++		phys += PAGE_SIZE;
++	}
++
++	area = __get_vm_area_node(nr * PAGE_SIZE, align, shift, flags,
++				  VMALLOC_START, VMALLOC_END, NUMA_NO_NODE,
++				  GFP_KERNEL, __builtin_return_address(0));
++	if (!area)
++		goto err_free_pages_array;
++
++	addr = (unsigned long)area->addr;
++	size = get_vm_area_size(area);
++	err = vmap_pages_range(addr, addr + size, PAGE_KERNEL, pages, shift);
++	if (err)
++		goto err_free_vm_area;
++
++	kho_array_destroy(&preservation->ka);
++
++	return area->addr;
++
++err_free_vm_area:
++	free_vm_area(area);
++err_free_pages_array:
++	kvfree(pages);
++err_ka_destroy:
++	kho_array_destroy(&preservation->ka);
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(kho_restore_vmalloc);
++
+ /* Handling for debug/kho/out */
  
- /*
+ static struct dentry *debugfs_root;
 -- 
 2.47.3
 
