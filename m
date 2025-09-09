@@ -1,199 +1,197 @@
-Return-Path: <linux-kernel+bounces-807347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38F2B4A342
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C96B4A346
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C172E1B23B35
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDC0189BFFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1564220687;
-	Tue,  9 Sep 2025 07:16:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA02D2DCF63;
+	Tue,  9 Sep 2025 07:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pUlj9UUz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C521F63CD;
-	Tue,  9 Sep 2025 07:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B91F63CD;
+	Tue,  9 Sep 2025 07:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757402188; cv=none; b=r+yDtpIia1sASQLWmIn5a4rfQdVSPdUsSUpmNmekufs7IiwiurX3JWP5lDHVV8jQIv/ModONid6F2X54D7Po+gpzofHqsfqVUN/d27A/tmXpioaIHEaiFkyo9Trkc+aiasz7DhWikY8BxmFZHa3LScwS6rYtBikwBgakkkRqsXU=
+	t=1757402205; cv=none; b=p6LumqF1MTAeTlWsblac2d1rpYaG8cv5+P82NpkStPafDEh4d6DJiG7Hc+v+VpISEVAir3nhQhv5eodYIM4CayeCF4uBR92Kx9xFNkRa3c30OTxAhVMw+fP7945JbTuRxo+OKTs6pxNL/YjSMHEVDKNjCbMZ8PGAkhFHGSVAcMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757402188; c=relaxed/simple;
-	bh=AIN6/m/D2UXX+4IgAXchl8YKCzCFuJlNXENSxlCyu1U=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=l00Hmd8Wdk6Cd/iUKB+xDdGDHIDWiIejIVod5SL2FfsX/bZ5cRz4Z4leDRZQdcvem48GmWuPwABs3g055HkeAF48EhcoEXWfuyHdqX2AYZ98/Ju+2pabVp65G13/0maj1iUbtGG5Q02TLVD1F5C9mIDzzdRkPXLag5z+hrlY+y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cLZqg52jMzKHMhs;
-	Tue,  9 Sep 2025 15:16:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D63801A0A9D;
-	Tue,  9 Sep 2025 15:16:15 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYIw+1L9of2maBw--.6877S3;
-	Tue, 09 Sep 2025 15:16:15 +0800 (CST)
-Subject: Re: [PATCH for-6.18/block 04/10] blk-mq: convert to serialize
- updating nr_requests with update_nr_hwq_lock
-To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- ming.lei@redhat.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
- <20250908061533.3062917-5-yukuai1@huaweicloud.com>
- <9708abeb-7677-4c0e-931b-7ca5fe0a0242@linux.ibm.com>
- <329ca336-21f6-e686-0446-b3ae9a46f4c9@huaweicloud.com>
- <f57ebcf8-9225-4e3d-86d2-cac7f9cacb54@linux.ibm.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <43d25899-6b1a-c0e1-c3f5-8e2a560c93d5@huaweicloud.com>
-Date: Tue, 9 Sep 2025 15:16:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757402205; c=relaxed/simple;
+	bh=hQREbEaVSab6fA0oSS9yjWUfrq4dUsWJ0uPGr1c+mII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjT8npMm0YAE9Odp4oYjmxbQQeJTWmNp6Vjm66JQDbfagvluINuvSFti+6M6OcRPjPBXe93Qm01LiUu2KZyyKlI9H/gQcPy76di+eVZTaQgqwWMRXRYcywwWlUQ7Gv2dUXmciV5fI9UpTt0p8U43Q0PdLbvOzh0gPJaINX8LS5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pUlj9UUz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588LlYq1028671;
+	Tue, 9 Sep 2025 07:16:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=mTMUOehaX8G9XYDSq5p+n6TZgkX68f
+	h62k9GJjGycMU=; b=pUlj9UUzUswT5wMvbf1RhBNqini0okTYjnSwvwGxHXDc29
+	Ef3Ejgax8uu32F5R38AJh2vmexn8fkQB+8vX29yLsfGFQwVw49v5gZfzhVEcTBdE
+	iGJ468eQCqegk6WGcrxodH6eIRz71IBxgMOaemaSJWxctWzS53VqmlMQZosJKTLS
+	yS6fwsn0hZobKC8Ni3R/Zj5a9BSleQrFesFI7C5vb18r3XKEjFGM45NLW0Ow7nyy
+	ugAPiPN6nCU4wvZB7sAeJ/bqndc/qVHVAIbGOeQ++ygfMetk6u8asSt7O+0WmWFT
+	8CD7HZlqhN0O+IqtYDMmxlBWMaORu434EyQfTo6Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycu02n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:16:36 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5897BoPu015898;
+	Tue, 9 Sep 2025 07:16:36 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycu02j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:16:35 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5893EhQL001177;
+	Tue, 9 Sep 2025 07:16:35 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4912039k00-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:16:34 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5897GXHN52756922
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 07:16:33 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A3602004B;
+	Tue,  9 Sep 2025 07:16:33 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D570520040;
+	Tue,  9 Sep 2025 07:16:30 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  9 Sep 2025 07:16:30 +0000 (GMT)
+Date: Tue, 9 Sep 2025 12:46:27 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: John Garry <john.g.garry@oracle.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
+Message-ID: <aL_US3g7BFpRccQE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
+ <1b12c0d9-b564-4e57-b1a5-359e2e538e9c@oracle.com>
+ <20250907052943.4r3eod6bdb2up63p@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f57ebcf8-9225-4e3d-86d2-cac7f9cacb54@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYIw+1L9of2maBw--.6877S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF1xGr1kZr1rCFy3WF1rZwb_yoWrJry7pr
-	Z5Jayqk340q348Zw1jv3W7W34ktw42gw13Wr1xtF17JrnIyr9aqF18Xr1jgFW8Ars7Jr42
-	qw18tFW3ZryDZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250907052943.4r3eod6bdb2up63p@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: cpppd1dr-2q73_zibYzFYMRO9bVEFxWv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX09Nir5E2napS
+ ELVjPwoex8CJmZRGp13LgUyZLyfbbzmL+i0YG3PsKLfgiFikfNRW4AkyzNE3vHIwMHee7GyUg60
+ 7HvRyG2sa9NMEoqm4qclsxX3te5J/tivNeZfp6l2eosQ/JfGHniF25lHCOcfaABRC63TrNAw/jz
+ vKpCqltcfWhe96Ix4Xgz8/KnoGMQRlWLhJh+OTAu8+ArzvLU8ln8QpFIFrsRJtcE+WLyif1/DMZ
+ kXhbODyvg5CQOWlO7cgHSaasPDHAcOsTFXdzrfK49B94ufQoWcKRvtELnzQDfoNlHusBgrpZO0q
+ IvBGDzQUPZIuaIWVV2Hq8I8qSSeLlG7yPYcDh3zqdf8si5i3bTK/2osj+0dIAY1XcxE/SJs0yJs
+ v/B8bB+8
+X-Proofpoint-GUID: GWd2MecVCtrnP5CM7arXcJlhp8vusOjb
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bfd454 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=c_9EunDC1JvEA1HTsxcA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-Hi,
-
-在 2025/09/09 14:52, Nilay Shroff 写道:
+On Sun, Sep 07, 2025 at 01:29:43PM +0800, Zorro Lang wrote:
+> On Tue, Sep 02, 2025 at 03:50:10PM +0100, John Garry wrote:
+> > On 22/08/2025 09:02, Ojaswin Mujoo wrote:
+> > > The main motivation of adding this function on top of _require_fio is
+> > > that there has been a case in fio where atomic= option was added but
+> > > later it was changed to noop since kernel didn't yet have support for
+> > > atomic writes. It was then again utilized to do atomic writes in a later
+> > > version, once kernel got the support. Due to this there is a point in
+> > > fio where _require_fio w/ atomic=1 will succeed even though it would
+> > > not be doing atomic writes.
+> > > 
+> > > Hence, add an explicit helper to ensure tests to require specific
+> > > versions of fio to work past such issues.
+> > > 
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > ---
+> > >   common/rc | 32 ++++++++++++++++++++++++++++++++
+> > >   1 file changed, 32 insertions(+)
+> > > 
+> > > diff --git a/common/rc b/common/rc
+> > > index 35a1c835..f45b9a38 100644
+> > > --- a/common/rc
+> > > +++ b/common/rc
+> > > @@ -5997,6 +5997,38 @@ _max() {
+> > >   	echo $ret
+> > >   }
+> > > +# Check the required fio version. Examples:
+> > > +#   _require_fio_version 3.38 (matches 3.38 only)
+> > > +#   _require_fio_version 3.38+ (matches 3.38 and above)
+> > > +#   _require_fio_version 3.38- (matches 3.38 and below)
+> > 
+> > This requires the user to know the version which corresponds to the feature.
+> > Is that how things are done for other such utilities and their versions vs
+> > features?
+> > 
+> > I was going to suggest exporting something like
+> > _require_fio_atomic_writes(), and _require_fio_atomic_writes() calls
+> > _require_fio_version() to check the version.
 > 
+> (Sorry, I made a half reply in my last email)
 > 
-> On 9/9/25 12:08 PM, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/09/09 14:29, Nilay Shroff 写道:
->>>
->>>
->>> On 9/8/25 11:45 AM, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> request_queue->nr_requests can be changed by:
->>>>
->>>> a) switching elevator by update nr_hw_queues
->>>> b) switching elevator by elevator sysfs attribute
->>>> c) configue queue sysfs attribute nr_requests
->>>>
->>>> Current lock order is:
->>>>
->>>> 1) update_nr_hwq_lock, case a,b
->>>> 2) freeze_queue
->>>> 3) elevator_lock, cas a,b,c
->>>>
->>>> And update nr_requests is seriablized by elevator_lock() already,
->>>> however, in the case c), we'll have to allocate new sched_tags if
->>>> nr_requests grow, and do this with elevator_lock held and queue
->>>> freezed has the risk of deadlock.
->>>>
->>>> Hence use update_nr_hwq_lock instead, make it possible to allocate
->>>> memory if tags grow, meanwhile also prevent nr_requests to be changed
->>>> concurrently.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>    block/blk-sysfs.c | 12 +++++++++---
->>>>    1 file changed, 9 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->>>> index f99519f7a820..7ea15bf68b4b 100644
->>>> --- a/block/blk-sysfs.c
->>>> +++ b/block/blk-sysfs.c
->>>> @@ -68,13 +68,14 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
->>>>        int ret, err;
->>>>        unsigned int memflags;
->>>>        struct request_queue *q = disk->queue;
->>>> +    struct blk_mq_tag_set *set = q->tag_set;
->>>>          ret = queue_var_store(&nr, page, count);
->>>>        if (ret < 0)
->>>>            return ret;
->>>>    -    memflags = blk_mq_freeze_queue(q);
->>>> -    mutex_lock(&q->elevator_lock);
->>>> +    /* serialize updating nr_requests with switching elevator */
->>>> +    down_write(&set->update_nr_hwq_lock);
->>>>    
->>> For serializing update of nr_requests with switching elevator,
->>> we should use disable_elv_switch(). So with this change we
->>> don't need to acquire ->update_nr_hwq_lock in writer context
->>> while running blk_mq_update_nr_requests but instead it can run
->>> acquiring ->update_nr_hwq_lock in the reader context.
->>>
->>> So the code flow should be,
->>>
->>> disable_elv_switch  => this would set QUEUE_FLAG_NO_ELV_SWITCH
->>> ...
->>> down_read ->update_nr_hwq_lock
->>> acquire ->freeze_lock
->>> acquire ->elevator_lock;
->>> ...
->>> ...
->>> release ->elevator_lock;
->>> release ->freeze_lock
->>>
->>> clear QUEUE_FLAG_NO_ELV_SWITCH
->>> up_read ->update_nr_hwq_lock
->>>
->>
->> Yes, this make sense, however, there is also an implied condition that
->> we should serialize queue_requests_store() with itself, what if a
->> concurrent caller succeed the disable_elv_switch() before the
->> down_read() in this way?
->>
->> t1:
->> disable_elv_switch
->>          t2:
->>          disable_elv_switch
->>
->> down_read    down_read
->>
-> I believe this is already protected with the kernfs internal
-> mutex locks. So you shouldn't be able to run two sysfs store
-> operations concurrently on the same attribute file.
+> This looks better than only using _require_fio_version. But the nature is still
+> checking fio version. If we don't have a better idea to check if fio really
+> support atomic writes, the _require_fio_version is still needed.
+> Or we rename it to "__require_fio_version" (one more "_"), to mark it's
+> not recommended using directly. But that looks a bit like a trick :-D
 > 
-
-There really is no such internal lock, the call stack is:
-
-kernfs_fop_write_iter
-  sysfs_kf_write
-   queue_attr_store
-
-There is only a file level mutex kernfs_open_file->lock from the top
-function kernfs_fop_write_iter(), however, this lock is not the same
-if we open the same attribute file from different context.
-
-Thanks,
-Kuai
 > Thanks,
-> --Nilay
-> 
-> .
-> 
+> Zorro
 
+Hey Zorro, I agree with your points that version might not be the best
+indicator esp for downstream software, but at this point I'm unsure
+what's the workaround. 
+
+One thing that comes to mind is to let fio do the atomic write and use
+the tracepoints to confirm if RWF_ATOMIC was passed, but that adds a lot
+of dependency on tracing framework being present (im unsure if something
+like this is used somewhere in xfstests before). Further it's messy to
+figure out that out of all the IO fio command will do, which one to
+check for RWF_ATOMIC.
+
+It can be done I suppose but is this sort of complexity something we
+want to add is the question. Or do we just go ahead with the version
+check.
+
+Regards,
+ojaswin
+
+> 
+> 
+> > 
+> > Thanks,
+> > John
+> > 
+> > 
+> 
 
