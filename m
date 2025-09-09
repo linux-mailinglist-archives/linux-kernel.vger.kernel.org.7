@@ -1,203 +1,175 @@
-Return-Path: <linux-kernel+bounces-807406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D4DB4A411
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4060EB4A413
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DCF1C2065B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:41:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6CC1C2371A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A570330C373;
-	Tue,  9 Sep 2025 07:39:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C85D30BB9A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031283081BA;
+	Tue,  9 Sep 2025 07:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sRv7I9MT"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4EC30BB9A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403542; cv=none; b=AOdMSsX55rTUgLwuQhHwNDWFbnxVApUS2kDoKfU25nHk4tSF7IQMYoYU+NoujEJ76pD5gtqq356ggCuFHHul+FdzmjfrAiErVZEEnGPypx5tGf4EthSvd63TTR0DrloexxzexSM7g5SjFlMFBv+prQD/OgtB6obU9l++kWcolI4=
+	t=1757403552; cv=none; b=mMT5eMc6aM5NKdMDEd9QUxqIPgBwab/Q7LLkZCgLo6FuXWAamWaEdDsH3UAfaH3YHdZRf7FQvOaf48dIzLpu5Mc7VtJxEm0EC+sToZvxD0a7mh0PzMFhqRfKHeB8v3lFjuy7wq8Spb/U3XnRz6DTkTmJ88phlkrC4B3+AyalDrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403542; c=relaxed/simple;
-	bh=SLtxp11XTu1recNPs1/xzW+z6f5V0NCSxCwmo8YSqJY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=mQP/3izuNpObX8W4pDTqGGaZWbAxHY7Yn60KsYJdh05VJ98x4/kZbuWZ6XZaSVIhw3WRRGfht94BtoVM7mASwqfXZ6i4fNGx1T4T2FJ/yyvl4JYvm0aF5xgxVq/XCuey3NKAvZtT8jGsBuHNRmsReiK4NwiDySPMU1nWy86hIaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9AE4D15A1;
-	Tue,  9 Sep 2025 00:38:49 -0700 (PDT)
-Received: from [10.57.91.39] (unknown [10.57.91.39])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD1E23F63F;
-	Tue,  9 Sep 2025 00:38:56 -0700 (PDT)
-Message-ID: <5b6afdef-8a5e-4445-934f-38a27cabacb7@arm.com>
-Date: Tue, 9 Sep 2025 08:38:54 +0100
+	s=arc-20240116; t=1757403552; c=relaxed/simple;
+	bh=K0aPggGEOTRmUyRZFo/DV0xphP60f1axIKEtguCKkhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eakBgZMgfZbQ+K+3zOZTAc2qNCyJznU2ZQ+7TXZ1ZuJmBwix1p24l3AsuOfOvA5VswrcpuotSZ/XNg9oqIAp4ymZ79plaTSZT1pGwdWpjAwU1TtquiNhFNVdWvqM7xAAtacWot54MYV49nxisdEufHT1Fk5LzlqUl2j5Uov/RbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sRv7I9MT; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0449b1b56eso768225966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757403549; x=1758008349; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNA+enFp9mFHaApkAPMar5j9pjUFiMUPT5abXuL1ISs=;
+        b=sRv7I9MT+WK+EOLrajvacAAB4DYPHlVffVS6fUxdAH7wj5RB7F7KJaSFpj8fCfZ46Q
+         4wVoEHPmFqBr9Dbq3KlrZTXNa/thr8tooCwOSgjeXLE4qTksvLhEQtIBtlVqhwCOODMh
+         XF47FcldXToR5XtvwzuGGrSRe0ntROCQEVCAQ6xIw0xNBuSNpJDqzz2tBGUiRMoF5qZN
+         q/suvnw8ygzJqoTtyOcdsZkor1nGkGkAR8wlPFbVhk0AOpWdpNPKVDexbgFTs5Nj8MAc
+         KvoRNZ7oJk9sIaLpktn5ImTvKep0pZ9sCpQbbhmwmI0CAXkAhlnQC/hkX8idFmb/INka
+         P5sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757403549; x=1758008349;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NNA+enFp9mFHaApkAPMar5j9pjUFiMUPT5abXuL1ISs=;
+        b=PhBOBLrTnb20q4aGyKu0tM1Whxh3Q1ejRQ8CFTdWuSaxw4O5TpRcicpoffVoWyS4Cr
+         xPPbTvtXKSCWqXb3si9ewBcGocYCk+dRWJRpAuK6SDpxqP5Nf1tNTAlqkFXNCa+fNbPp
+         t+UaSOtZ9ceseJgvLmYEIZhGwP7UVFb+z/daLcP5WI16AxSQjItNCjTBfc0Zfdv9llSE
+         dya2nkHuVASOFsI3c5Z8wJkTLBM+mNRRV4kj/jGSDW4gfuoyBoSR15qOks9rZLZP9lj1
+         5ElgBKehidPaLKRROQ0ApzsgRZwoegBO2lXe+3iu7qSjtW2ZLcAZoK70NM2iromBM9+c
+         1AmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSFCFzZph6U4InreQUl5D9B1L3S2OzD0DFvYAUesY6lFif0yRO71nGFCPFViOJNsXWZ3fQKlG8x4rqLqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT5Nz7YcQ+c5e5YNFhm7MAh3ekB5D+yPpoLAyuuyAiHyze/9yU
+	bRPWNeoKwsGSKd1o/X1evCOgiLaVtkjA6LHcjWYBfli3NZ+Uy/Z7OIvFjxIVA/XjrCSbqgjS2FT
+	Ho754aWlPPp5wywjce32+SGqtodJt7dppwuT/8GoBxA==
+X-Gm-Gg: ASbGncv1nttgThKx03xKBLa3cnkR9CLcNcgoofaHWVpvKFAv2A1uT0mclttqghwouSS
+	ZdcYELT9S4hF/atDGLfd/+xVKPqru1PJNSCrSJx18Yxflu8xZMVxfmeUDR72DL1w4ricLIq4e2d
+	dhKRvxhSCbMcMg4HY/SRDORSz34IyYoBgAapVh/PD7hElRh9z6h/ZtSqaTSUF9A35UeRBlaZgc6
+	Lx0P8sckH/hmMlvf/VD/Rdnhz3l/ygwmIPlyFOCCZIe3exDcA==
+X-Google-Smtp-Source: AGHT+IE5J401+ZOXeNcir7uiDmpw6NJzRHPL83/eS3uh60fnMH+ktE6gyIx3UCx9dsQc+ULaURKa09rPlurVaTZAQkI=
+X-Received: by 2002:a17:907:3f1c:b0:add:fe17:e970 with SMTP id
+ a640c23a62f3a-b04b14b3857mr1034768966b.14.1757403548642; Tue, 09 Sep 2025
+ 00:39:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: bump sd->max_newidle_lb_cost when newidle
- balance fails
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Chris Mason <clm@fb.com>, peterz@infradead.org,
- vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
- Aishwarya Rambhadran <Aishwarya.Rambhadran@arm.com>
-References: <20250626144017.1510594-2-clm@fb.com>
- <e5277634-1d06-456c-bb57-2c0a9e245b4a@arm.com>
-In-Reply-To: <e5277634-1d06-456c-bb57-2c0a9e245b4a@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250904154122.63acc45c@canb.auug.org.au> <20250904063043.GE2764654@google.com>
+ <CACMJSev63kfCBTzQnija6Q+PNm8KgD-LWVKeqRJ2kLBtT7Zh6A@mail.gmail.com>
+ <20250904092319.GG2764654@google.com> <20250909122227.4dbbeb6f@canb.auug.org.au>
+In-Reply-To: <20250909122227.4dbbeb6f@canb.auug.org.au>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 9 Sep 2025 09:38:57 +0200
+X-Gm-Features: Ac12FXwS0BgE2iFe-65_HqqVX12oIt2DaDQqjBo7c-ElCXSWRrEKU6JLLE6rcBU
+Message-ID: <CACMJSeu8Zv7i+_2bH5Lp5fuE0aBUNRfuq5ne0rPCxXCij4orDA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee@kernel.org>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/09/2025 19:21, Ryan Roberts wrote:
-> On 26/06/2025 15:39, Chris Mason wrote:
->> schbench (https://github.com/masoncl/schbench.git) is showing a
->> regression from previous production kernels that bisected down to:
->>
->> sched/fair: Remove sysctl_sched_migration_cost condition (c5b0a7eefc)
->>
->> The schbench command line was:
->>
->> schbench -L -m 4 -M auto -t 256 -n 0 -r 0 -s 0
->>
->> This creates 4 message threads pinned to CPUs 0-3, and 256x4 worker
->> threads spread across the rest of the CPUs.  Neither the worker threads
->> or the message threads do any work, they just wake each other up and go
->> back to sleep as soon as possible.
->>
->> The end result is the first 4 CPUs are pegged waking up those 1024
->> workers, and the rest of the CPUs are constantly banging in and out of
->> idle.  If I take a v6.9 Linus kernel and revert that one commit,
->> performance goes from 3.4M RPS to 5.4M RPS.
->>
->> schedstat shows there are ~100x  more new idle balance operations, and
->> profiling shows the worker threads are spending ~20% of their CPU time
->> on new idle balance.  schedstats also shows that almost all of these new
->> idle balance attemps are failing to find busy groups.
->>
->> The fix used here is to crank up the cost of the newidle balance whenever it
->> fails.  Since we don't want sd->max_newidle_lb_cost to grow out of
->> control, this also changes update_newidle_cost() to use
->> sysctl_sched_migration_cost as the upper limit on max_newidle_lb_cost.
->>
->> Signed-off-by: Chris Mason <clm@fb.com>
-> 
-> Hi,
-> 
-> I'm seeing a ~25% regression in requests per second for an nginx workload in 
-> 6.17-rc4 compared with 6.16, when the number of simulated clients (threads) is 
-> high (1000). Bisection led me to this patch. The workload is running on an 
-> AmpereOne (arm64) system with 192 CPUs. FWIW, I don't see the regression on an 
-> AWS Graviton3 system.
-> 
-> I'm also seeing a 10% regression on the same system for a MySQL workload; but I 
-> haven't yet bisected that one - I'll report back if that turns out to be due to 
-> this too.
+On Tue, 9 Sept 2025 at 04:22, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> On Thu, 4 Sep 2025 10:23:19 +0100 Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Thu, 04 Sep 2025, Bartosz Golaszewski wrote:
+> >
+> > > On Thu, 4 Sept 2025 at 08:30, Lee Jones <lee@kernel.org> wrote:
+> > > >
+> > > > On Thu, 04 Sep 2025, Stephen Rothwell wrote:
+> > > >
+> > > > > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> > > > > failed like this:
+> > > > >
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
+> > > > > gpio-stmpe.c:(.text+0x21a7c29): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
+> > > > > gpio-stmpe.c:(.text+0x21a7db2): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
+> > > > > gpio-stmpe.c:(.text+0x21a8166): undefined reference to `stmpe_reg_write'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a82ef): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8372): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
+> > > > > gpio-stmpe.c:(.text+0x21a8c27): undefined reference to `stmpe_block_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f05): undefined reference to `stmpe_reg_write'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f89): undefined reference to `stmpe_reg_write'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
+> > > > > gpio-stmpe.c:(.text+0x21a91dc): undefined reference to `stmpe_disable'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
+> > > > > gpio-stmpe.c:(.text+0x21a93a4): undefined reference to `stmpe_reg_write'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a941e): undefined reference to `stmpe_set_bits'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
+> > > > > gpio-stmpe.c:(.text+0x21a95a4): undefined reference to `stmpe_set_bits'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
+> > > > > gpio-stmpe.c:(.text+0x21a9705): undefined reference to `stmpe_set_bits'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
+> > > > > gpio-stmpe.c:(.text+0x21a983e): undefined reference to `stmpe_set_altfunc'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
+> > > > > gpio-stmpe.c:(.text+0x21a99c0): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9b8c): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9bb1): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9c61): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9e6c): undefined reference to `stmpe_reg_read'
+> > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
+> > > > > gpio-stmpe.c:(.text+0x21aa5b2): undefined reference to `stmpe_enable'
+> > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21aa83e): undefined reference to `stmpe_disable'
+> > > > >
+> > > > > Presumably caused by commit
+> > > > >
+> > > > >   e160dd0ac8c3 ("mfd: stmpe: Allow building as module")
+> > > >
+> > > > Okay, I have removed this patch until it can be better tested.
+> > > >
+> > > > > I have used the mfd tree from next-20250903 for today.
+> > > > >
+> > > > > Note that commit
+> > > > >
+> > > > >  03db20aaa3ba ("gpio: stmpe: Allow to compile as a module")
+> > > > >
+> > > > > is in the gpio-brgl tree which has not been merged into linux-next at
+> > > > > this point.
+> > > >
+> > > > Okay, perhaps these need to go in together then.
+> > > >
+> > > > Thanks Stephen.
+> > > >
+> > >
+> > > I can take it through the GPIO tree if you will and set up an
+> > > immutable branch for you. Or not if the potential conflict is minimal.
+> >
+> > An IB would be good.  Thank you.
+>
+> I am still seeing this failure.
+>
 
-Just to add that this MySQL workload regression was also bisected to the same patch.
+The offending commit is still in Lee's tree[1]. FYI: It's also now in
+the GPIO tree as commit df6a44003953 ("mfd: stmpe: Allow building as
+module") and was made available in an immutable branch[2].
 
-Thanks,
-Ryan
+Bartosz
 
-> 
-> I saw that there was a regression raised against this patch by kernel test robot 
-> for unixbench.throughput back in July, but it didn't look like it got resolved.
-> 
-> I can repro this easily so happy to try out any candidate fixes.
-> 
-> 
-> Here is the bisect log:
-> 
-> # good: [038d61fd642278bab63ee8ef722c50d10ab01e8f] Linux 6.16
-> git bisect good 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> # status: waiting for bad commit, 1 good commit known
-> # bad: [8f5ae30d69d7543eee0d70083daf4de8fe15d585] Linux 6.17-rc1
-> git bisect bad 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> # bad: [8be4d31cb8aaeea27bde4b7ddb26e28a89062ebf] Merge tag 'net-next-6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
-> git bisect bad 8be4d31cb8aaeea27bde4b7ddb26e28a89062ebf
-> # good: [115e74a29b530d121891238e9551c4bcdf7b04b5] Merge tag 'soc-dt-6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
-> git bisect good 115e74a29b530d121891238e9551c4bcdf7b04b5
-> # good: [49f02e6877d1bec848048dc6366859c30bbc0a04] Octeontx2-af: Debugfs support for firmware data
-> git bisect good 49f02e6877d1bec848048dc6366859c30bbc0a04
-> # good: [14bed9bc81bae64db98349319f367bfc7dab0afd] Merge tag 'x86_sev_for_v6.17_rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect good 14bed9bc81bae64db98349319f367bfc7dab0afd
-> # good: [c6dc26df6b4883de63cb237b4070feba92b01a87] Merge tag 'nf-next-25-07-25' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf-next
-> git bisect good c6dc26df6b4883de63cb237b4070feba92b01a87
-> # bad: [3bb38c52719baa7f9cdbf200016ed481b4498290] Merge tag 'm68k-for-v6.17-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k
-> git bisect bad 3bb38c52719baa7f9cdbf200016ed481b4498290
-> # bad: [bcb48dd3b344592cc33732de640b99264c073df1] Merge tag 'perf-core-2025-07-28' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect bad bcb48dd3b344592cc33732de640b99264c073df1
-> # good: [d403a3689af5c3a3e3ac6e282958d0eaa69ca47f] sched/fair: Move max_cfs_quota_period decl and default_cfs_period() def from fair.c to sched.h
-> git bisect good d403a3689af5c3a3e3ac6e282958d0eaa69ca47f
-> # bad: [9fdb12c88e9ba75e2d831fb397dd27f03a534968] tools/sched: Add root_domains_dump.py which dumps root domains info
-> git bisect bad 9fdb12c88e9ba75e2d831fb397dd27f03a534968
-> # bad: [570c8efd5eb79c3725ba439ce105ed1bedc5acd9] sched/psi: Optimize psi_group_change() cpu_clock() usage
-> git bisect bad 570c8efd5eb79c3725ba439ce105ed1bedc5acd9
-> # good: [11867144ff81ab98f4b11c99716c3e8b714b8755] rust: sync: Mark PollCondVar::drop() inline
-> git bisect good 11867144ff81ab98f4b11c99716c3e8b714b8755
-> # good: [7e611710acf966df1e14bcf4e067385e38e549a1] rust: task: Add Rust version of might_sleep()
-> git bisect good 7e611710acf966df1e14bcf4e067385e38e549a1
-> # bad: [155213a2aed42c85361bf4f5c817f5cb68951c3b] sched/fair: Bump sd->max_newidle_lb_cost when newidle balance fails
-> git bisect bad 155213a2aed42c85361bf4f5c817f5cb68951c3b
-> # good: [d398a68e8bcf430e231cccfbaa27cb25a7a6f224] Merge tag 'rust-sched.2025.06.24' of git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux into sched/core
-> git bisect good d398a68e8bcf430e231cccfbaa27cb25a7a6f224
-> # first bad commit: [155213a2aed42c85361bf4f5c817f5cb68951c3b] sched/fair: Bump sd->max_newidle_lb_cost when newidle balance fails
-> 
-> 
-> Thanks,
-> Ryan
-> 
-> 
-> 
->> ---
->>  kernel/sched/fair.c | 19 ++++++++++++++++---
->>  1 file changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 7a14da5396fb2..042ab0863ccc0 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -12174,8 +12174,14 @@ static inline bool update_newidle_cost(struct sched_domain *sd, u64 cost)
->>  		/*
->>  		 * Track max cost of a domain to make sure to not delay the
->>  		 * next wakeup on the CPU.
->> +		 *
->> +		 * sched_balance_newidle() bumps the cost whenever newidle
->> +		 * balance fails, and we don't want things to grow out of
->> +		 * control.  Use the sysctl_sched_migration_cost as the upper
->> +		 * limit, plus a litle extra to avoid off by ones.
->>  		 */
->> -		sd->max_newidle_lb_cost = cost;
->> +		sd->max_newidle_lb_cost =
->> +			min(cost, sysctl_sched_migration_cost + 200);
->>  		sd->last_decay_max_lb_cost = jiffies;
->>  	} else if (time_after(jiffies, sd->last_decay_max_lb_cost + HZ)) {
->>  		/*
->> @@ -12867,10 +12873,17 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
->>  
->>  			t1 = sched_clock_cpu(this_cpu);
->>  			domain_cost = t1 - t0;
->> -			update_newidle_cost(sd, domain_cost);
->> -
->>  			curr_cost += domain_cost;
->>  			t0 = t1;
->> +
->> +			/*
->> +			 * Failing newidle means it is not effective;
->> +			 * bump the cost so we end up doing less of it.
->> +			 */
->> +			if (!pulled_task)
->> +				domain_cost = (3 * sd->max_newidle_lb_cost) / 2;
->> +
->> +			update_newidle_cost(sd, domain_cost);
->>  		}
->>  
->>  		/*
-> 
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=e160dd0ac8c35747a8ef74aa62c6346c2d76e644
+[2] https://lore.kernel.org/all/20250904130516.72266-1-brgl@bgdev.pl/
 
