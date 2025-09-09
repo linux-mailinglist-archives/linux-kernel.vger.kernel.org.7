@@ -1,77 +1,103 @@
-Return-Path: <linux-kernel+bounces-807484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC66B4A4F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62728B4A4F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0326D1BC723C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:18:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D121BC8259
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF4824634F;
-	Tue,  9 Sep 2025 08:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E3F23E35B;
+	Tue,  9 Sep 2025 08:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pNg0bIVB"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtmLEtRP"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5432F181CFA;
-	Tue,  9 Sep 2025 08:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221661E231E;
+	Tue,  9 Sep 2025 08:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757405877; cv=none; b=IfFust+z3N47uR/xle0F3JZnTJDq1CL5E2pmDLYUCjvPm0lyIuSCgTDSjSmeXM64mFOz60uDlcXVN6/7fh7L74uiqrKB6tqZdOYUt4mxxC1m2zp8OowPZ57tUAf0m+Z31C4/zfBPZin5s6XNGWchiC9YAVpjvcr4X9S+RWdg7Pg=
+	t=1757405906; cv=none; b=JrY0SXpR6UfOs4Qnvc80S5UYD7M8Ms72iAjuD5iwg8BDxPFrgJxd00kQLdVP4xAZ7bRu5lnu9AFQgXWppjigcW271aCvFKyYndJbhpq+5NClQerWS/qoEXEqyDsm4V0RKm+RocanaX5OAD5bzoGBYkx+F99FHjv6pRMisM1MWkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757405877; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fy4UJQMwlGr1HVWZcdNnlCx/ViS0Rs59QFhRidgc7iwsBTgyHnBBPCV7zPmApAiONKrwl9qsmDJTb1pJCdElRVdrq9n4aFG8sPZOqbLASMRYqL92EaKb6H/BOyo4rfN+mgVe06nxtEf3tUYuXUuR3NlE/DcR/5A1IFN/tp0onug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pNg0bIVB; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=pNg0bIVByphpIqYmlYDFnDnh8T
-	hi+Zq/y//jdh8HmwLnSVh9ACwqwDqvIzjbyRkJVbDdU1lPnnDXfB9CY/3d2safPVXcxjgsXzLyesC
-	kLZepgXzpCliGpM9STyMntIxbqsQvSOnMsioRyvcoEKmE3jK7h4Rr2ee8pMFqCdOOW1U6J8WEW5j3
-	MoBv1y94BmJv004BoAJR8Hyji7D2089VPW17a1S//gdkXuhsp3kyOYCOo1n5aaHLCCWIXhWCD5jPj
-	nIYgZYBUyxuwRjUZbjp3u3JEwTiaPzg60hbq1fFoEmA91Ml0PCZTYkpky1bW1Ns653PlR+Fmu1a75
-	xONdzQaQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvtXy-00000005Vxp-2Lrx;
-	Tue, 09 Sep 2025 08:17:50 +0000
-Date: Tue, 9 Sep 2025 01:17:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
-	tieren@fnnas.com, bvanassche@acm.org, axboe@kernel.dk,
-	tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
-	yukuai3@huawei.com, satyat@google.com, ebiggers@google.com,
-	kmo@daterainc.com, akpm@linux-foundation.org, neil@brown.name,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-raid@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH for-6.18/block 16/16] md/raid0: convert
- raid0_make_request() to use bio_submit_split_bioset()
-Message-ID: <aL_irmKcXR8tEkTX@infradead.org>
-References: <20250905070643.2533483-1-yukuai1@huaweicloud.com>
- <20250905070643.2533483-17-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1757405906; c=relaxed/simple;
+	bh=ShouuRcmlT0Jj95VOKuFkiyHAoxYWLxA00N2sQSS+Mo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e8q6jpPS7C5oW09hYU6SvqGMKyB3h4wdzGINybt+xJazC12HwnmaaSQmgsZ1TeE3Ac5kdncCU6ELa68EHMvAQaOgHVojFmNhC+pakycR7rj7bA2nJ3dCiV7OFDZeflJwzR1M5yWCwHoABWtcXfVY7zoNozH4/+kWr8Elyeb+rNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtmLEtRP; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d6083cc69so51088837b3.2;
+        Tue, 09 Sep 2025 01:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757405902; x=1758010702; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ShouuRcmlT0Jj95VOKuFkiyHAoxYWLxA00N2sQSS+Mo=;
+        b=DtmLEtRPkim7oHm340Th3lbcvHFzpYLZqcMIAN+NyG9yfn4dAN7+qb0F/dSUo9IsjV
+         Fpvk9EBEWGg4yUJVGUYJtZ339VDE/JTrqE+WNfx5A6nXHS4R+RpVzxivP9XfyX5/8eEp
+         g7H/HaGyQfzlQ80dFkJDZTFGHmIhbQyEfcA1M7WZ6g7J5cL8s4QUHl/4mRZ5bVTstVSY
+         m+G+hL22OnJ9WvAXCKdNqkM5y3iGxmXNCsoQ8BcSbf5pHXup3+8sIUPrmc5K6l1gQj1v
+         LlGo1zMX0qvcqeQ2zVz62/quUln5M9/ADf8Hq/tWrz42c4e8ccEZe0KCe74HtDVHaX+h
+         i/3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757405902; x=1758010702;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ShouuRcmlT0Jj95VOKuFkiyHAoxYWLxA00N2sQSS+Mo=;
+        b=kzEbi50OQzm/A4kkaKqaghpWsBbEwZz/MEn4VsFe1hbmVwWgIWg+0fEG06yxug8t2u
+         Kso9vuONSIPQSTt7tssIApjdWI4P6GAHWS7o5qfntFQmuQb3szlyFd4EpF5aXLVF/eAP
+         35oVHOtmc/jAoXv4eXMZ8r582u7sVNZiFY3QpKa3+/SdFLVAcwowscdF1IaUT8xzR/WD
+         GTNCwy3w/HiFkHSSOUqrZqoo6d/j2m/bAvETg8Nrp2V4fDixS+HW4n22SWRRa1KbUB1W
+         mkfMtM80CIzRbfTYIPMFxVfk+Rrw/cjk7G7+8azv6FakxCCyXbdBTXNGepExcnejOj+H
+         kf/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHAqbP92FSvRUcYJlwQupKOZw21rJ9lRny31ZKOmABbbBS1DQXm1xsHGJKs2/A89xERyzazAiZdGAhQb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4/x9ZYtHQ74Gf7oO5mD/rqU8kHb+qtj/LSSWb5JLRj2AWraGB
+	8L9WEJoAfqceY7RP0tHE23VQkqSYCgITkKT3IYUi5b2LQlrOWswaCccqgozRi57uNZ0OsmSGoZr
+	vxUWSMb72d9bNJ/TLESGPBUMgZFDQxtftMLL8
+X-Gm-Gg: ASbGncvLZZo1RLmr9iaTIU+14iMs31Aab9Vh6jsMq8tau3/9QQjltGzgWfKAI4gpL9w
+	jv3oCirU18KkoLBROpRCYrwOqukCTUQSZJAuRDb/yzDs4gN+b6XEXRlol3aWFs7KvwwyfJ3V25H
+	r1l0w+CJSpNtNvXjh5YIj5h94TBZfPYJhN0hZNl7R8pHmC5twlmmg7WoctfGGIwHCvpssgZyZW0
+	X5asGgj
+X-Google-Smtp-Source: AGHT+IHReIMfclxr9I0y6ckmePu5mtLcLqLO2Vmjw0P2wqGPItnJeyqEbpewiMpnxUx4aQA1WTXVRXssL8AJMGERlAk=
+X-Received: by 2002:a05:690c:6187:b0:724:b902:bda5 with SMTP id
+ 00721157ae682-727f573dd66mr102083477b3.42.1757405901763; Tue, 09 Sep 2025
+ 01:18:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905070643.2533483-17-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <207f485f-df06-43a6-b91d-8153b8922089@web.de> <20250908175902.214066-1-chiru.cezar.89@gmail.com>
+ <20250908175902.214066-4-chiru.cezar.89@gmail.com> <d81c00f2-8b77-4b5d-baf7-afcc7dc5ac9b@web.de>
+In-Reply-To: <d81c00f2-8b77-4b5d-baf7-afcc7dc5ac9b@web.de>
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+Date: Tue, 9 Sep 2025 11:18:10 +0300
+X-Gm-Features: Ac12FXy3nkmDhCXQf24N3VjXQYXgWCEobcnzvYmoKgVgY2buIgmtan79J4COiKc
+Message-ID: <CANvS2vXUYdB53+uHJps=1FBfBpYhO3C30FVEc3TL7JGQu-zNCA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] i2c: PCF8584: Fix space(s) required before or
+ after different operators
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Looks good:
+Hi Markus,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thank you for the time to review my patch series.
 
+> > operators: Require spaces around or before or after '=', ';', '<' and ','.
+> > Add space(s) around or before or after different operators.
+>
+> How do you think about to refine such a wording approach another bit?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.17-rc5#n274
+> https://elixir.bootlin.com/linux/v6.17-rc5/source/scripts/checkpatch.pl#L5090-L5399
+
+I will refer to binary and ternary operators instead of listing them. Also I
+will say punctuation signs like: ';' , ','
 
