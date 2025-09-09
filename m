@@ -1,170 +1,142 @@
-Return-Path: <linux-kernel+bounces-807222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF915B4A1C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B78B4A1B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E19D7AAD33
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4334A1894FDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E53019C1;
-	Tue,  9 Sep 2025 06:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4922FE049;
+	Tue,  9 Sep 2025 06:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5cY24hc"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="F2pFR8ln"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488D6301480;
-	Tue,  9 Sep 2025 06:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D689F2E888F;
+	Tue,  9 Sep 2025 06:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757397824; cv=none; b=KU1W0ArxAUQV+vV4l4gba/Lm+hELUWSn4amqkYzhUon2M9JEijjKdLWpG9pDBkpGRc+8Aqmw+akAtd/SEwIbOZJwPgJ2ivtM2Wm9n7wcjXn6anAhIv2h+RvOV81lcwSGpYbE3XhFs3mJ10v6zSl0c/CEZG1ijR2d+Yw8zE0IPMw=
+	t=1757397801; cv=none; b=G/+J4JLJl1iHvMwJxc0XBlyKg64vDaA8iKDpyIViWZW2WKVJJNAsiC/o2YIM591JT/pN2CXWD2iXFIuBjL5Vc6cFcsW3W66oQZcfoIkBw0LfSrUjJsxYrQUYEOAt408YmTRF9fC4ee9mZFENPtTCHY4DAV77NfhbtFhXnx7UAeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757397824; c=relaxed/simple;
-	bh=sArw20JjfCGt3Tt3VJw4wcfrb4jGqV5C5oSbve8OqSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DsXUDRa91WLseKweRez1yzLm1gpitIGR8G0c6Mzw18aCIMW30VTKWr3mkQMmXmj1sKk+uOxPEJRDBq132/ojB+u3YpCbfdMcGbO9gFnU9RPsBzK9gEp/UemgS5rMWtW0fFPro7gFWnXseLoKCrSDmZ0UrO5P2PjoHosYg+FJDvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5cY24hc; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77246079bc9so6213107b3a.3;
-        Mon, 08 Sep 2025 23:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757397822; x=1758002622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xUdZKaT5B2ZhU9BDE5iqzR0B7D+QHqptUpqCo3VtYQ=;
-        b=E5cY24hc/a4QMqN1+MEjk/UZh/bpa5igthcrWSG9KXZmiTgByWE+9lt5sG7twuLtLy
-         BKmPwtPawIOWfGW3V0h0ymXGnyPi7MlHY5qFzl6B/wjnY5L2gILGkig9fCxuvOzkZZVU
-         Tvtexg7/O+BumkBLgdCDbPgnU8MpiIu9+t3fL4mn/MPTGzCIkDhFKSgzDN8Hb0x93T09
-         L41UPcdsSb2zsiMCu+saz8HV+DOAY3ziwUmxzN8IBq52Rfnj/T2ry2SCMtZqjxMvFR+t
-         7A+Vz5MiKL7WF9pHtX7fGyb+uWpfd1rrbKlPhfIVk+1Xh7INjmSTqONcpcRo5IrB3+VV
-         ZZ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757397822; x=1758002622;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0xUdZKaT5B2ZhU9BDE5iqzR0B7D+QHqptUpqCo3VtYQ=;
-        b=GXfETsY9x/Ej7LyjG1NXgweazS+Yp7S8B6HAMnlZZ7hCt7X+S0uT4wcKljgwCDuvVF
-         YRVO1Cs9P5GX4xDNZ26OUjhdCtLl0IsaQO/xycyryDezj3T6ARts/XxMSaOLzPug5x9w
-         iTIFe7357lcvpt+u6a54Bo7FaD6dHDTvcoLen1yCwgy1pjlr0+Ym7NlER37ibGmHo+Mc
-         j1bnKIRm7ySK0J4U24LyxroAFRpMV/Ii3KpZ3M+1dLY0WY6AWwpLglSOX3wdwJfUKBx9
-         QHURIQkCKpJcEXuPwzplOcCGOMXVlCx1uMoLVQFxN/B2gZtQ4HO06b1TGOuyIHW0iVRT
-         oD7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8RGFeomWCKTqjEvTR6xT7VYFR93s6sZhiyQjqYTsnGWHFt3qPuZCrJHI/Zq1NuDrM7Vx1eeMgO2q8sg==@vger.kernel.org, AJvYcCVBE1Y9uJF6xHSl9HAL5BwQVJtlHPqwg972uEJuutflb2DHgatWbxxsDaDTZlXMosL898P3Qf/HuOUQ5gva@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxFqNJmp/H5urtu2E29iRqqRUoYO3sNTdn+3VTmrXFpBGiTZkz
-	3eHdyfZWeiVyJVW8TTriTiqZMoR92QYSgsfwRL1Qm/YuPkEpT5l6mbAq
-X-Gm-Gg: ASbGncsgsmBUIhTXnqd+mGqfhXFaGlTKucDG1X05K9Ogj6gkpfc7m4XiGXwgKz0Eiw9
-	ma+ec/qu8DTkzHWBq08y+P/Yo/o8eS2ojhAA82Nw2Ckfq56TI8iOd0WHMVY6jGq0jnPy1fa+Kgf
-	b5uPgzDwj2V5Uh5XN8YYye0/vhxut6FeEU4OmvrjkWfbVfYFPs8HFgijVnCR0BD2DttGi4QHFss
-	GUOvEU2lL6W+eAmIZUpL+PQv71IrjFRlqoWlZ86BJFzOehsxh4jCjwh1yG6fTN2cQl9Mw352AP2
-	XDUefCYLVaA6ZP3fkmib8fa4TYwrIp1xVPWffIyBYQZRp7OoX4/G9IOh4WWQOkcyIsD8adF5gQO
-	u5UV5l0lnaYs2aRkb4Vq4Fnk8gyi1mEFuWPKmdHgYEVQEFld/YB//BrBQbQ8y4p3s8yYMyejmbm
-	H+wBfZh6fZjFAhqbljIesEpg==
-X-Google-Smtp-Source: AGHT+IELkEZWe7bc0mm4YjG+JrKa1xdnUFM2Qo97pI+DJaZi6VrJk2uBZqkDxhuO3JMPgeL9l6sllw==
-X-Received: by 2002:a05:6a00:4104:b0:772:750f:4e2a with SMTP id d2e1a72fcca58-7742df53ec5mr13133323b3a.31.1757397822314;
-        Mon, 08 Sep 2025 23:03:42 -0700 (PDT)
-Received: from klmny09 (awork062176.netvigator.com. [203.198.28.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77466156d94sm852148b3a.40.2025.09.08.23.03.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 23:03:42 -0700 (PDT)
-From: Yiming Qian <qianym1996@gmail.com>
-To: dan.carpenter@linaro.org
-Cc: gregkh@linuxfoundation.org,
-	linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	qianym1996@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	teddy.wang@siliconmotion.com
-Subject: [PATCH v2 2/2] staging: sm750fb: rename snake case variables
-Date: Tue,  9 Sep 2025 14:01:30 +0800
-Message-ID: <20250909060130.12919-3-qianym1996@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250909060130.12919-1-qianym1996@gmail.com>
-References: <aL5tjv_2YkvHPs5C@stanley.mountain>
- <20250909060130.12919-1-qianym1996@gmail.com>
+	s=arc-20240116; t=1757397801; c=relaxed/simple;
+	bh=yJuvRHhnIWChKRRVR+i2PvOkR8rwSGjePC/rXWxMRws=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=F+8NUpW25zC6iCQAcsQSAwkmlmb3AJigZcsOFFJh9WiyI3rD1dsBJNRbNLqLeCGmyX7QjH7f7rfV/IeZMBQTivWcyLIRx4HmtXhoUL3fEOUXoVtE1nRYy5/kJsflK8A6NTt73YyPi2S8/VVlq/3jq3v7tmsLGBqBgMfpuEkmcj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=F2pFR8ln; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 5DD76A09C2;
+	Tue,  9 Sep 2025 08:03:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=3/vNO0y7ZvfBYbA6q8Xew1TMw4aI4q8qx+4g80bgv70=; b=
+	F2pFR8lnY+T6sNQFVZxa0iieNlFwIryh9wfckzXZXTY3HxTmQeqlL1zAWUXQMZAA
+	jk7GbckDS98hyVI6BOgRa4xcwpqaG14KFVsJS0P/KIudNdqdEddFgUOMown/ar02
+	9Fw7qkAJ6C35nLt25vV8rTF3KhrBI0Tnu235L7j6Q74AuQbitbvwob7r7k/RVvTv
+	tJMcVf5bxDvg/YqLmUteF5JYIqVIy6sh09Xv2ovJYPyuK7Y7FIE27IWQZ5BrKyTp
+	nh76rycXnZ/R+huXIsQVFpTuQzvY33AdZLBfEsuf/hDLZbrecJjvSXjY81knhysC
+	kqoThezm6VNWPRePGSYQ6tEKmiFKruF8Uieb65SXp+BtlVHCyEEq41jaLPcEcCA5
+	e+2qaGTAzA+2fLjMElit/BniupYPGN+5e0GjQnZ+2KKjVVslJXS39Th1jtveEjs/
+	EhzuOLlUzW0+YRK1EyJewhx4UKk7cu5GopAI7HpohPb9LI+SO7r6p2mzELu36qhW
+	m8Qn/6Fjm/OMnm2NRLOOyPSpzidkSK9OlTw+FlPpQb2kWkTO2nHVIcrmldjE8qjd
+	Dyz+pYjk0Lp49TdPtHSmd/BZ1L9RJpTYwt74a/dhYWCb8yiyOeHd2wgjGW5ifYvb
+	Gs7WuBi51H+h8VGOYF/eIz6EzgPg8DVxa1SrWoU5T9Q=
+From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+Subject: [PATCH v4 0/3] Replace verbatim license text with a
+ `SPDX-License-Identifier`.
+Date: Tue, 9 Sep 2025 08:03:09 +0200
+Message-ID: <20250909-sr-som-dts-lic-v4-0-02f4e0e440fb@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAB7Dv2gC/3XNzQ6CMBAE4FcxPbumP7YFT76H8dCWRZookC4Sj
+ eHdLZyIxOMk8818GGGKSOy0+7CEY6TYtTkc9zsWGtfeEGKVM5Ncam65BEpA3QOqgeAeA3hh6mA
+ N18FLllGfsI6vZfByzdk7QvDJtaGZZx6OBkxzsYk0dOm9HI9irv/9GAUIkFjo4ogmFMqe+9TdX
+ Xtonmz+GOWaqw2XmXNV6lB6a01V/nK15uWGK+CgRR18ZYTDWqz5NE1f2zDk+0MBAAA=
+X-Change-ID: 20250702-sr-som-dts-lic-b16fc7605cb2
+To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Rabeeh Khoury <rabeeh@solid-run.com>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
+	<csokas.bence@prolan.hu>
+X-Mailer: b4 0.14.2
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1757397794;VERSION=7998;MC=2887821443;ID=61058;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E627462
 
-Replaces CamelCase variable names with snake_case:
-- dprBase -> dpr_base
-- dpPortBase -> dp_port_base
+Fix up Device Tree files by replacing the license text in comment blocks
+by a `SPDX-License-Identifier`.
 
-Signed-off-by: Yiming Qian <qianym1996@gmail.com>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 ---
- drivers/staging/sm750fb/sm750.h       | 4 ++--
- drivers/staging/sm750fb/sm750_accel.c | 6 +++---
- drivers/staging/sm750fb/sm750_hw.c    | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+Changes in v4:
+- Merge HummingBoard changes into this series
+  - Link: https://lore.kernel.org/r/20250709-hb-dts-lic-v2-1-a168bd9d24bd@prolan.hu
+- Fix typos in msg
+- Link to v3: https://lore.kernel.org/r/20250709-sr-som-dts-lic-v3-0-51fcbd61aef1@prolan.hu
 
-diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
-index 41f1fb390..fcb7d586e 100644
---- a/drivers/staging/sm750fb/sm750.h
-+++ b/drivers/staging/sm750fb/sm750.h
-@@ -50,9 +50,9 @@ struct init_status {
- 
- struct lynx_accel {
- 	/* base virtual address of DPR registers */
--	unsigned char __iomem *dprBase;
-+	unsigned char __iomem *dpr_base;
- 	/* base virtual address of de data port */
--	unsigned char __iomem *dpPortBase;
-+	unsigned char __iomem *dp_port_base;
- 
- 	/* function pointers */
- 	void (*de_init)(struct lynx_accel *accel);
-diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
-index 44b9e3fe3..7ac2e7b6e 100644
---- a/drivers/staging/sm750fb/sm750_accel.c
-+++ b/drivers/staging/sm750fb/sm750_accel.c
-@@ -19,17 +19,17 @@
- #include "sm750_accel.h"
- static inline void write_dpr(struct lynx_accel *accel, int offset, u32 regValue)
- {
--	writel(regValue, accel->dprBase + offset);
-+	writel(regValue, accel->dpr_base + offset);
- }
- 
- static inline u32 read_dpr(struct lynx_accel *accel, int offset)
- {
--	return readl(accel->dprBase + offset);
-+	return readl(accel->dpr_base + offset);
- }
- 
- static inline void write_dpPort(struct lynx_accel *accel, u32 data)
- {
--	writel(data, accel->dpPortBase);
-+	writel(data, accel->dp_port_base);
- }
- 
- void sm750_hw_de_init(struct lynx_accel *accel)
-diff --git a/drivers/staging/sm750fb/sm750_hw.c b/drivers/staging/sm750fb/sm750_hw.c
-index 7119b67ef..ce46f240c 100644
---- a/drivers/staging/sm750fb/sm750_hw.c
-+++ b/drivers/staging/sm750fb/sm750_hw.c
-@@ -58,8 +58,8 @@ int hw_sm750_map(struct sm750_dev *sm750_dev, struct pci_dev *pdev)
- 	}
- 	pr_info("mmio virtual addr = %p\n", sm750_dev->pvReg);
- 
--	sm750_dev->accel.dprBase = sm750_dev->pvReg + DE_BASE_ADDR_TYPE1;
--	sm750_dev->accel.dpPortBase = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
-+	sm750_dev->accel.dpr_base = sm750_dev->pvReg + DE_BASE_ADDR_TYPE1;
-+	sm750_dev->accel.dp_port_base = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
- 
- 	mmio750 = sm750_dev->pvReg;
- 	sm750_set_chip_type(sm750_dev->devid, sm750_dev->revid);
+Changes in v3:
+- Also patch imx6q-h100.dts
+- Link to v2: https://lore.kernel.org/r/20250703-sr-som-dts-lic-v2-1-0395c9b776d9@prolan.hu
+
+Changes in v2:
+- Fix message tags
+- Also patch solidsense files
+- Link to v1: https://lore.kernel.org/r/20250702-sr-som-dts-lic-v1-1-2e8584e6c837@prolan.hu
+
+---
+Bence Csókás (3):
+      ARM: dts: imx6-sr-som: Replace license text comment with SPDX identifier
+      ARM: dts: imx6-hummingboard: Replace license text comment with SPDX identifier
+      ARM: dts: imx6q-h100: Replace license text comment with SPDX identifier
+
+ .../nxp/imx/imx6dl-hummingboard-emmc-som-v15.dts   | 38 +--------------------
+ .../dts/nxp/imx/imx6dl-hummingboard-som-v15.dts    | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard.dts  | 38 +--------------------
+ .../nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts  | 39 +---------------------
+ .../dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts   | 39 +---------------------
+ arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts    | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6q-h100.dts           | 38 +--------------------
+ .../nxp/imx/imx6q-hummingboard-emmc-som-v15.dts    | 38 +--------------------
+ .../dts/nxp/imx/imx6q-hummingboard-som-v15.dts     | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6q-hummingboard.dts   | 38 +--------------------
+ .../nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts   | 39 +---------------------
+ .../dts/nxp/imx/imx6q-hummingboard2-som-v15.dts    | 39 +---------------------
+ arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts  | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts     | 38 +--------------------
+ .../arm/boot/dts/nxp/imx/imx6qdl-hummingboard.dtsi | 38 +--------------------
+ .../dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi    | 39 +---------------------
+ .../boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi    | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-solidsense.dtsi  | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sr-som-brcm.dtsi | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sr-som-emmc.dtsi | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sr-som-ti.dtsi   | 38 +--------------------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sr-som.dtsi      | 38 +--------------------
+ 23 files changed, 23 insertions(+), 856 deletions(-)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250702-sr-som-dts-lic-b16fc7605cb2
+
+Best regards,
 -- 
-2.51.0
+Bence Csókás <csokas.bence@prolan.hu>
+
 
 
