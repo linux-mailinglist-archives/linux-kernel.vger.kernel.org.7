@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-808454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9129EB4FFED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB53B4FFEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 920154E2CEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26D25E2A17
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD2525487C;
-	Tue,  9 Sep 2025 14:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K77XlKGr"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8DE2DA75F;
+	Tue,  9 Sep 2025 14:47:45 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A62F205ABA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7857621323C;
+	Tue,  9 Sep 2025 14:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429246; cv=none; b=fekf+Jc9sz3vFoBVNFbwBwBeWEFZuFRDqnWNm17zRgZX8dsBHnpWO4j+taPEfX82nVTE1xQ/jXRKBVLTCrTgwBJPyB4MTsq3eQSv2HSX+WxY/rA2YrE52h9/kesdWZnHif4sOn4SrRDNxrFZbTlJVqXeNabk2IA4Knx2w7Qkk+s=
+	t=1757429265; cv=none; b=DWwovnNgOPnVWhX+XSLg13kfUhOC9oYufSF50MB1Zl6n+WIhWgWrOoxi9o30v/18NGV1KmgODsfs4zXPpwOdxArOIIYY33nvMtHuyvFqkKseZl87OHc41kxIIijKim1ccRdghm6PDhoXFU6NYwqCEg0lLWL2KIq1GOFZCpYHD6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429246; c=relaxed/simple;
-	bh=na0qcNvQJYZarjhYVsaDNm+DNueOfC1mq9L1wdwqIWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iND67NiDnpOdLuM+v1hnGObm72XT6fkHcDfx501zqVcAgt8kKEk//9sp+EnS6geIu1wV5M2RnqZsKRPwv2q5nuB3WLI1fRXzxOIUHikc/X+tZVE2lRJC0E4+zLH3whz2l5CPwDYpguI695IXBZdMNFqwc7wTnSQGaL/BJl2P6Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K77XlKGr; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b600575a54so17365141cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757429243; x=1758034043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vIPTmtHCDrJgBeBgHlzsCibUN0YnxA4RCxNX1u5+HrA=;
-        b=K77XlKGrJ9+ZRVxgSYlht55aLZoGcK0RmfEgbd5sF7KEg4DbwaUq8QmD3uBFel6gkQ
-         AYwM8czCzwGvtM5+ZBY8JSOBDHX1Lo6n8NN6/2wXj4JdkFaNZPE24sSP9+XxBltFPwDv
-         SSUbItY/QfF8CxcG27azsk6kOJyYj/e64KeBX+fh37BB6GMRlbAlVqc/o/84Erryngs6
-         p+gQpRzvfpwQnemp+Xv8Gg4CFwtF9221peX/yALyP5RkVX3cBjcSLb7AmHju6PpnVnkc
-         FA76j8wz7l884NOmDjEjK97jlPRnbDcEvtNso0XOzKBtU/covLzibeMCqu9j5jeiMRzB
-         SykA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757429243; x=1758034043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vIPTmtHCDrJgBeBgHlzsCibUN0YnxA4RCxNX1u5+HrA=;
-        b=GFY3QoxBRKYDem7jTfLcxG1lee/LoaBHljdqdqtVs5wvewtyToK2N0zCRJHS25qdWO
-         Y2GcTrPCFxjbu24KyzzfvmaK1GoMdT6pxSG9Y6Ygy/+106zPPYA+XiB513U2ZgpLs0/G
-         oVWaJoAm+sdgdOqj6e7nGYsL2PTjwjReT5JBnN6WGE1kSRHFC9/zTXymmspDapJyb745
-         NkW8JYMbORqOHMYuZ6th16qo6lpAHX/4bNEBNGG6MMMP3sWcgpr8AociR6vELcMacgpa
-         nV+PDgJGHP/Z+1kJAm1k0zG53UYgeo1H7b6DGIxnBoXPqDid4vHCFBXqmd7UUw7n2xB9
-         2WvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+/i6d6rJvNs8od+boty+wmqcmzu5Dtl3suOgOR3VawM5vjcwIiaspcs/yIkCCGqTB1ux7ScGBNU3EOc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCSAH/m4GXsTpNdCD5Mhza14W7rEfDhky6XN0IK1IKBg7zCUnE
-	LNMlTHurFm0+iC51S+1enDUPSgVUCKgQJdtSbJFfpoQhtWLS+2Slf+k3Wg6I05tTuf55Qb+BqIS
-	P/jdNelduRpNgqm6uif2MtgOd2fTDQyxCeIPJquMA
-X-Gm-Gg: ASbGncuO+rW4zK4lKVqnJH6WsOAuH9QKrF3ztf0ciiQLNQnDsKNVqdQfhFzWwqCDABB
-	OpOXIeH+pOsQ63ypumlVC4KzOtnwSxhPxSoT4JwQdso/7ueFRfhiT4ueG7+SRWUnKuNMKUK+Go2
-	ifySjaUT8g0QrCsOInQ8KMBnoDQeFNj9ZJejgmgrBmoLfXP1gpvN+eDII/bKrEt7Xwad6/5er4W
-	YlXtKrQDqt2TV+rkPMhonmHd/1fQrlHS9O0Z70KX5lxwUtIAzFMeJt30yk=
-X-Google-Smtp-Source: AGHT+IHNkl4F/jlHneGYF/DVcUMGaWB8Yx5qk0wUjgE1GPGbrefbzEWPV3RJqRwpMoeMSkvolvqz8buuDcIXFrAO/fU=
-X-Received: by 2002:a05:622a:28a:b0:4b5:e600:3d4f with SMTP id
- d75a77b69052e-4b5f844d163mr132837011cf.41.1757429242916; Tue, 09 Sep 2025
- 07:47:22 -0700 (PDT)
+	s=arc-20240116; t=1757429265; c=relaxed/simple;
+	bh=0fGRb6AXdpQw9S8Sy3BAcuqQEjUyKwC9HyYR5gjbJL8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FXEU4z65ZTH32l2GOSnS4blDEn3qD75FuMp/DRX2i8YdRth6+8TTkOnaSA7Fns+mNRmErPecmeQhlSfMRVaaV9vDn/OUKzzGmZIxNa3M2IgYZxxray0u1XBm1Oa+S1IXwuDQjJSmS1dVo7oCGGNFYChJXwH6Ez8IaYopgX3SAdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cLmr15WXTzYl9B5;
+	Tue,  9 Sep 2025 22:47:13 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
+ 2025 22:47:40 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
+ 2025 22:47:39 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
+	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
+	<tglx@linutronix.de>, <zhongjinji@honor.com>
+Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for thawing OOM victims
+Date: Tue, 9 Sep 2025 22:47:35 +0800
+Message-ID: <20250909144735.6166-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <aMAzkQQ4XAFh9xlm@tiehlicka>
+References: <aMAzkQQ4XAFh9xlm@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909132243.1327024-1-edumazet@google.com> <20250909132936.GA1460@redhat.com>
- <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
- <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com> <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk>
-In-Reply-To: <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 9 Sep 2025 07:47:09 -0700
-X-Gm-Features: Ac12FXzNtkWC68OEJylvLMh65_Zd3JlyhYqvJ9DDcC2NpONUi_gkcjAG5cZuFt8
-Message-ID: <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
-Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
-To: Jens Axboe <axboe@kernel.dk>
-Cc: "Richard W.M. Jones" <rjones@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <eric.dumazet@gmail.com>, 
-	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
-	Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
-	linux-block@vger.kernel.org, nbd@other.debian.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a018.hihonor.com
+ (10.68.17.250)
 
-On Tue, Sep 9, 2025 at 7:37=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 9/9/25 8:35 AM, Eric Dumazet wrote:
-> > On Tue, Sep 9, 2025 at 7:04=E2=80=AFAM Eric Dumazet <edumazet@google.co=
-m> wrote:
-> >>
-> >> On Tue, Sep 9, 2025 at 6:32=E2=80=AFAM Richard W.M. Jones <rjones@redh=
-at.com> wrote:
-> >>>
-> >>> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
-> >>>> Recently, syzbot started to abuse NBD with all kinds of sockets.
-> >>>>
-> >>>> Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
-> >>>> made sure the socket supported a shutdown() method.
-> >>>>
-> >>>> Explicitely accept TCP and UNIX stream sockets.
-> >>>
-> >>> I'm not clear what the actual problem is, but I will say that libnbd =
-&
-> >>> nbdkit (which are another NBD client & server, interoperable with the
-> >>> kernel) we support and use NBD over vsock[1].  And we could support
-> >>> NBD over pretty much any stream socket (Infiniband?) [2].
-> >>>
-> >>> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
-> >>>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
-> >>> [2] https://libguestfs.org/nbd_connect_socket.3.html
-> >>>
-> >>> TCP and Unix domain sockets are by far the most widely used, but I
-> >>> don't think it's fair to exclude other socket types.
-> >>
-> >> If we have known and supported socket types, please send a patch to ad=
-d them.
-> >>
-> >> I asked the question last week and got nothing about vsock or other ty=
-pes.
-> >>
-> >> https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+n=
-dzBcQs_kZoBA@mail.gmail.com/
-> >>
-> >> For sure, we do not want datagram sockets, RAW, netlink, and many othe=
-rs.
-> >
-> > BTW vsock will probably fire lockdep warnings, I see GFP_KERNEL being u=
-sed
-> > in net/vmw_vsock/virtio_transport.c
-> >
-> > So you will have to fix this.
->
-> Rather than play whack-a-mole with this, would it make sense to mark as
-> socket as "writeback/reclaim" safe and base the nbd decision on that rath=
-er
-> than attempt to maintain some allow/deny list of sockets?
+> > > On Tue 09-09-25 19:41:31, zhongjinji wrote:
+> > > > > On Tue 09-09-25 17:06:57, zhongjinji wrote:
+> > > > > > OOM killer is a mechanism that selects and kills processes when the system
+> > > > > > runs out of memory to reclaim resources and keep the system stable.
+> > > > > > However, the oom victim cannot terminate on its own when it is frozen,
+> > > > > > because __thaw_task() only thaws one thread of the victim, while
+> > > > > > the other threads remain in the frozen state.
+> > > > > > 
+> > > > > > Since __thaw_task did not fully thaw the OOM victim for self-termination,
+> > > > > > introduce thaw_oom_process() to properly thaw OOM victims.
+> > > > > 
+> > > > > You will need s@thaw_oom_process@thaw_processes@
+> > > > 
+> > > > The reason for using thaw_oom_process is that the TIF_MEMDIE flag of the
+> > > > thawed thread will be set, which means this function can only be used to
+> > > > thaw processes terminated by the OOM killer.
+> > > 
+> > > Just do not set the flag inside the function. I would even say do not
+> > > set TIF_MEMDIE to the rest of the thread group at all. More on that
+> > > below
+> > > 
+> > > > thaw_processes has already been defined in kernel/power/process.c.
+> > > > Would it be better to use thaw_process instead?
+> > > 
+> > > Sorry I meant thaw_process as thaw_processes is handling all the
+> > > processes.
+> > > 
+> > > > I am concerned that others might misunderstand the thaw_process function.
+> > > > thaw_process sets all threads to the TIF_MEMDIE state, so it can only be
+> > > > used to thaw processes killed by the OOM killer.
+> > > 
+> > > And that is the reason why it shouldn't be doing that. It should thaw
+> > > the whole thread group. That's it.
+> > >  
+> > > > If the TIF_MEMDIE flag of a thread is not set, the thread cannot be thawed
+> > > > regardless of the cgroup state.
+> > > 
+> > > Why would that be the case. TIF_MEMDIE should only denote the victim
+> > > should be able to access memory reserves. Why the whole thread group
+> > > needs that? While more threads could be caught in the allocation path
+> > > this is a sort of boost at best. It cannot guarantee any forward
+> > > progress and we have kept marking only the first thread that way without
+> > > any issues.
+> > 
+> > When a process is frozen, all its threads enter __refrigerator() (in kernel/freezer.c). 
+> > When __thaw_task is called, the threads are woken up and check the freezing(current) 
+> > state (in __refrigerator). The freezing check is implemented via freezing_slow_path. 
+> > When TIF_MEMDIE is set for a thread, freezing_slow_path will return false, allowing 
+> > the thread to exit the infinite loop in __refrigerator(), and thus the thread will 
+> > be thawed.
+> > 
+> > The following code can explain how TIF_MEMDIE works in thread thawing.
+> > __refrigerator
+> >   for (;;) {
+> >     freezing = freezing(current)
+> >       freezing_slow_path
+> >         if (test_tsk_thread_flag(p, TIF_MEMDIE))
+> >           return false;
+> >     if (!freezing)
+> >       break;
+> >     schedule();
+> >   }
+> 
+> OK, I see. We could deal with that by checking tsk_is_oom_victim()
+> instead of TIF_MEMDIE
 
-Even if a socket type was writeback/reclaim safe, probably NBD would not su=
-pport
-arbitrary socket type, like netlink, af_packet, or af_netrom.
-
-An allow list seems safer to me, with commits with a clear owner.
-
-If future syzbot reports are triggered, the bisection will point to
-these commits.
+Thank you, this looks great. It seems that oom_reserves_allowed implies
+that tsk_is_oom_victim is not always effective (in page_alloc.c).
+I will check it.
 
