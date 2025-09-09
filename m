@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-808675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E74B5034A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5422B5035A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45ACD7B641E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588CD164949
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785335E4E4;
-	Tue,  9 Sep 2025 16:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2739335FC0F;
+	Tue,  9 Sep 2025 16:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7nTeuZo"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="MUkpfAfa"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D552426E165;
-	Tue,  9 Sep 2025 16:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3189E35E4EE;
+	Tue,  9 Sep 2025 16:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757436889; cv=none; b=hRehAAjbYoUBivos15nKnTN9/5Be3nVDyKbJrqA4hLV++oFsacWYARXOldalfsFX+Yr+qiut91PS8g5TXKQiwdyfgDoGwuFefGdVAKQIESRzJiK6QrtrPmeEWlMJg1yJv9ZYiQiItBr5yfGsAvjCkKgfbK7A9qydQQaK86RbnbA=
+	t=1757436958; cv=none; b=UBLJBUo65H77+D/wXjxQzjgTHbDVLXO3+bONAbjOE47scY1IIeRRYABn0rd96tC3EtxBOqTKNlk0FiD3CBCCdOUUAHAb5BWi8JXEN4BPpXgQcUb6wSU3gK3aPGg/quojQFiFxnTzOxfkKPBpLpX8Ke8eNOHkuOYueBJv9Uzm16k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757436889; c=relaxed/simple;
-	bh=6wDwSZQTdkZ0K6r7ARP+lPOkd/GdIG5zCPz9SFVrFE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GiwoukhFVKgASXD7vTjrUogfE6HiUI8xIjoHD7CBp76koU8Af+WV+tt2HACgQhzveuq/pmic8vyzXNZteUG0gYoj2WKnos4q6J5B4AmvDGBGXRTy0B4fqAo4OkgOGlQPg/oi2rA8gILEepGbC01ATSFByV1uDpvvZfLjE1nUO1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7nTeuZo; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-772627dd50aso7381436b3a.1;
-        Tue, 09 Sep 2025 09:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757436887; x=1758041687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDPNTwpJax4vDS4+xWgLAHPOpHhyQT4nEZr7m0wZXMw=;
-        b=X7nTeuZoaJ7zp0AxZ2342Ep5eBeoi7GIXovA/YXVm5iGIzyJ+x7ruEMFeF4L3eSzHH
-         027fQwCuFPfdI6xlAg15uaohWlFmtDM1PmsAUFF78dEMXCWZrvoLKAnge9wPvFS7ZzDT
-         x5X7BbjN57uFBz9MncuXF15iVmG6H2kTTu0gYnc7U5Mp8Bw52oBL3niVEnugyNOrWDJU
-         RBUEFs7c4bdrdIBseA2VdBKJashy89RX/+GPkhbjPCkooDk30+mS8YkvlSY09CFilfcc
-         A0E+S+W7XbhXkvyrpEySyrpSGE1+RaQ1Y/fApWCD7clK9fGSfaCRFlG5dGXJpRsTgLhx
-         kQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757436887; x=1758041687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jDPNTwpJax4vDS4+xWgLAHPOpHhyQT4nEZr7m0wZXMw=;
-        b=fVWUQUbKjHEJV3T26Rs+UMo8YoOR8x6c675TAewskKUO4AiYD4Qkbw15ZOvPw4pLZd
-         DCnmSip4fH+WGEQYuuFJkw5TPAu+Rnm9x9lckono9+Q9GK4IJjV1TmjG8OLRR6kWuY+q
-         cTy3/54S9Mpaac8WI29p7tOq56hv/0draqL9RXxKaxrHosdZOQafg2P2xcTlPp7QylH8
-         BWF43E2l0VSW706opkyKbfjJb9tFUI5WjRzX1Kr/GahxTp3Ij4R6VFWoaox/PhVwI6rF
-         rmmSOU6B8zW6v3VYoTVt5m5FZkkshscowduRWZz3a+QoYxWdottjy9BxECwkT5t5iZ9H
-         Gljw==
-X-Forwarded-Encrypted: i=1; AJvYcCViH0dbHalbZT8rmWZXnd++oFsJLo9VgZGgA1ovTfN1lPGKH9ROzuRENUsh/ce3Cv9zfH4CRbtE5P3Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwQzvTvvv2XAaL5N9lJwV+uNz8cE1YETIZHxyQ7u8MzgYq6zPz
-	s+qi0tKSkPeDIQFJhk0NXcp43Ucbi76MPPwF4xSHorL5Gu78zoCpmk59
-X-Gm-Gg: ASbGncv5dIwRh9EzM7NlUW1ZBxGC9BgpMwW4X3LNEsvSppkk7FKFIValuLaiNLj7HyS
-	Z0SzPlmu6nQNjeE5K8sYRL0jSTUxHRxZcqopWyEWHnd+glAkhnOdKumnqW5QyW63opzOx4lLa+J
-	Jpz863waiJ22LBalMY3azBO0hH7uFY0r3ej80gOVyJaq9M5b4VmgAJmYGDn1gnpv/U3bi0Tdnp3
-	cxGsf8OdHNucAoHTYFHvtRhKG54tCcHJ7EW7XAZF0X3wqZcTbuuGOhxJiF8l68xNuuPOnvy/Ck1
-	3IaLbmde5fTfwPjxAuAPElZMaJKE7KE1G1CgkrlxAXXyzpUul/j0GD72e+NRYArPwNJNHSKpBEf
-	v/euQ5CN1NyCVrP925JrOASVUkB1ZJnQ3s+6DFg1G08A=
-X-Google-Smtp-Source: AGHT+IFrYN8CUrJUZf40DuX4y97YP/kms4GG/GBFv83blRmALDwU+NZgfuWuuuA1HX44RC7TCcek2w==
-X-Received: by 2002:a17:903:234e:b0:248:f844:678f with SMTP id d9443c01a7336-24ceff455eamr258584605ad.30.1757436886803;
-        Tue, 09 Sep 2025 09:54:46 -0700 (PDT)
-Received: from archlinux ([205.254.163.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2a921953sm2565805ad.103.2025.09.09.09.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 09:54:46 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	djwong@kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH RESEND] fs/ext4: remove unused variable 'de' in ext4_init_new_dir()
-Date: Tue,  9 Sep 2025 22:24:38 +0530
-Message-ID: <20250909165438.7583-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757436958; c=relaxed/simple;
+	bh=ID5pBaN+J7CFVgwgGvd/b4VwA4Vonh4fLPlaGQEOJyw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KirW0r+bid+Wb5q80RhkpZli6HBCiMhdkHVHeEEkrTEDZT33I4J7NCxMvkuMzQkwkKReiqVHpqluHW1wW/tJ49DSrzovZUpE/9JKiGQ5qE8uoQb6a06wsLnPtj5iiDupIfO99gQnyM490IGYwyy7CxqTF7pgQxeFN8GQI3m0LNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=MUkpfAfa; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=sPN0vF1fWjVPwup+IvE1wc/L2gE265AvyobNRjnRsgg=; t=1757436955;
+	x=1758041755; b=MUkpfAfaExd8KFxU8mhOah+efgUEFrEXy1zfS8Ov8wGLiyMtUCeelomZbu3/l
+	942Q3uFnsOkp/N3D69hy1L+EoThtdufI5sJmq9XyZLj4BStvdsHwyUhWehSONXunebNJMV7QHxr9O
+	uK4NEtXV9Hi5yiltnJB2YOnO4xvl17we5LKw/W9LzfpJ/pXIssR91tGDMZjMZbGZy22TICrUCo2Ok
+	BYBAG0EuEv0psOL5r9S5bOZg+w6pmGp5RCvAbuwAXseDK4LuzS4lMyUuGswZcrZnMbMWQ2nXMHELc
+	Pcu7PO2281mFKLLQXKWik3dV2danh6jeeKh8gXkuMXk+e0jyQQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uw1d9-00000002IGB-3gLx; Tue, 09 Sep 2025 18:55:43 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uw1d9-000000005xt-2NaX; Tue, 09 Sep 2025 18:55:43 +0200
+Message-ID: <b7db49106e6e7985ea949594f2e43cd53050d839.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Kent Overstreet <kent.overstreet@linux.dev>, Lance Yang
+	 <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, amaindex@outlook.com,
+ anna.schumaker@oracle.com, 	boqun.feng@gmail.com, fthain@linux-m68k.org,
+ geert@linux-m68k.org, 	ioworker0@gmail.com, joel.granados@kernel.org,
+ jstultz@google.com, 	leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, 
+	mingo@redhat.com, mingzhe.yang@ly.com, oak@helsinkinet.fi,
+ peterz@infradead.org, 	rostedt@goodmis.org, senozhatsky@chromium.org,
+ tfiga@chromium.org, will@kernel.org, 	stable@vger.kernel.org
+Date: Tue, 09 Sep 2025 18:55:42 +0200
+In-Reply-To: <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+	 <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-The variable 'de' was declared but never used in the ext4_init_new_dir()
-function, causing a compiler warning:
-variable 'de' set but not used [-Werror=unused-but-set-variable]
-Remove the unused declaration to clean up the code and fix the warning.
+On Tue, 2025-09-09 at 12:46 -0400, Kent Overstreet wrote:
+> On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
+> > From: Lance Yang <lance.yang@linux.dev>
+> >=20
+> > The blocker tracking mechanism assumes that lock pointers are at least
+> > 4-byte aligned to use their lower bits for type encoding.
+> >=20
+> > However, as reported by Eero Tamminen, some architectures like m68k
+> > only guarantee 2-byte alignment of 32-bit values. This breaks the
+> > assumption and causes two related WARN_ON_ONCE checks to trigger.
+>=20
+> Isn't m68k the only architecture that's weird like this?
 
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- fs/ext4/namei.c | 2 --
- 1 file changed, 2 deletions(-)
+Yes, and it does this on Linux only. I have been trying to change it upstre=
+am
+though as the official SysV ELF ABI for m68k requires a 4-byte natural alig=
+nment [1].
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index d83f91b62317..bb2370829928 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2965,7 +2965,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
- 			     struct inode *inode)
- {
- 	struct buffer_head *dir_block = NULL;
--	struct ext4_dir_entry_2 *de;
- 	ext4_lblk_t block = 0;
- 	int err;
- 
-@@ -2982,7 +2981,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
- 	dir_block = ext4_append(handle, inode, &block);
- 	if (IS_ERR(dir_block))
- 		return PTR_ERR(dir_block);
--	de = (struct ext4_dir_entry_2 *)dir_block->b_data;
- 	err = ext4_init_dirblock(handle, inode, dir_block, dir->i_ino, NULL, 0);
- 	if (err)
- 		goto out;
--- 
-2.50.1
+Adrian
 
+> [1] https://people.debian.org/~glaubitz/m68k-sysv-abi.pdf (p. 29)
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
