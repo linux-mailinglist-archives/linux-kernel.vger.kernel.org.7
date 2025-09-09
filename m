@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-808333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCECB4FE72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:59:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F0DB4FE5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2CD1652E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F1C17B81B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051A341AC3;
-	Tue,  9 Sep 2025 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33700342C88;
+	Tue,  9 Sep 2025 13:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WshGuwoP"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPvtTTcD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F4B34166D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9D933A027;
+	Tue,  9 Sep 2025 13:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426217; cv=none; b=EeueoBkolvEWuCK3s8BwWYHmOfrgrxYzJxFANiz+5SbM1Fj8nuuC0J48Pk1piACe7UkgELrGMGQpk+4B1SQcLyDa+MhAC6XKQnkUFIk+2Atam+C2d8JiTTXFe1HYrWh9v1l4XRIXE4L47JwaVVRY0+jm+kNJIVVZPGmnu9kTTEg=
+	t=1757426247; cv=none; b=SwQWbMQUsMGD5A7o9ye49BcW8sX0cl9kcZO9GY3sJLDYksoEVOoXYACV2Fe1OtaL0+BmldPfKQrvQa3d1PmEIw1iQLdaa2kQ9L/O8TlB5H45LhYSyjkEiX50gOg7DABS1xioKRQ/NBaFzNyhg/ZMmvSh6ACuEgxNBt+YkTJf1LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426217; c=relaxed/simple;
-	bh=WHJeyQoxrfPmUkZrw+WhWWyRIvgBswo4VP/FGQPO7jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H8ft3yNqzIppt584s4KkReu+T7lmRtcDQ8pRHA9mnLeQA+lgXFXR/PiC0KdvgJwjpHTKNpeB+VBxnnlK12R6G1+FjQYjmTEzyTNUdIC29yKFFojqOV/niKWN8hhldDKhJrjOKktEv/VU9QHxzx0Yp7nw9rev6NulHMiBzc/TWs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WshGuwoP; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f76454f69so5340213e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757426214; x=1758031014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WHJeyQoxrfPmUkZrw+WhWWyRIvgBswo4VP/FGQPO7jw=;
-        b=WshGuwoPIVsb9lFy2eO/07IyciUutK7uuQEzLrSTUSjfNKPS5wMpQEXrjv0NeaGdI4
-         c3TspzI3Xx4JxsLMCrHx2SjoAgubjCg4jQgdrlsl1oXQFC5P852zHoPA7bR24/YCbBcA
-         I1XdtZlv9Xjv2ATUJk3NEB8lgddayESWcvn1bKOltvSyl6zwIQM0DbITSlBHpsyWne5y
-         HUuK6CgsEu4Xqyp1Ym+0rMJS0UlW5r2c2TVaKifxEMAA2IXIfVCAulOl4gbCWJDT48iN
-         gX8xeYRZdAxI0Bx8h1SIaS6Pv9DarT+jOs+0IaBBNvPI2xTr9Xzi+WkMAhhjGCABzpu/
-         tz7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426214; x=1758031014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WHJeyQoxrfPmUkZrw+WhWWyRIvgBswo4VP/FGQPO7jw=;
-        b=QEuv4OcVUHj03cU8tS15WltjDxbU01OmLcsQ9458KGZsa/Mjf1aZtAX6W5H5iEc+Md
-         SBQgoXb/mU2WsDlWcmGpsgumfHcSy1rISNGDGBYzTE8OBMmvoxhoKPRR4eCxwR4LkCGd
-         eWwJxxbvJ0Dcsy7xVvFO7NvMJgWR2ACm1eFFPyN5wYp0tEmf1FCZF2F2UFdLZ6iBdA7d
-         NUTaK3DtdrItK/Fhwf/4hSgcEn3NTW1a1bsoAYy+HEQ9yoDEAkKiS/RTqjJr/IGpHnl8
-         ZKjsyWstFIIBOiy+mCI+ss3c6w70HbfP0W1dg7BAlauOqxp+aOa3IvGKaEbpD4dUDA6t
-         J0VA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiJgN+eQd0kaPkkQSFktj6+36Fpjz249JNH745xEIa9caueVqc22qZHWwoT4WsmMnB5ZcpT4PpYA2Pu5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBVirI/VJTjp5rk2kj8P45mQ5lfEEQKxnQa8iitX4kVIPqdv+V
-	12emEXKAGtKwn5ryK+k4RO/xtELyXs90o8S0SbC9B+/llM52sOUgh2yMU45k38HckLmQs1alRu4
-	XaCpH87GvHIkC1xuS6rbSPlDTzQWpHTnpwSH46E7mOw==
-X-Gm-Gg: ASbGncsqp8wOnQZPq+ZyZ47CRRxOsfg3Oc3+fNKR4y2k+FLAzfzDv6YEDA9kxEFkbgM
-	zH4iGZ/HwPP3EK341Iw0gSXy1JPtRUIH4ivXz2LhuiqIvT1ZrAfI3WUVOFZhiTlqR3WY2gNuGfE
-	reRekcLGEBXU8B9EBMwoi6HUmpNCY6XaduGxIPMdO0mtToz69R/VaDefewpDcqDdHyi8gFIdXrF
-	lRWWqMLJkit+/+y116eNyi4wzq9Bja0VC5jQO2ow+XqLkl6Qw==
-X-Google-Smtp-Source: AGHT+IHBxkyJPoP3osXnpgBU6pdsryw/ot72GCgtbXz1ukCkdeMh24NQ6AJOJ87AcYe5pD0xcM8OlZUSXTQKermPfKE=
-X-Received: by 2002:a05:6512:b8a:b0:561:9635:5af5 with SMTP id
- 2adb3069b0e04-562619d971fmr3883543e87.48.1757426213571; Tue, 09 Sep 2025
- 06:56:53 -0700 (PDT)
+	s=arc-20240116; t=1757426247; c=relaxed/simple;
+	bh=bb/FjlQu/Ux5p9tdtjU1fbLj/LzbXt751l1WJQfoO4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UtMqaRLp0UYJy8mainitpmzlzyg0JWH/ilMyxMEsy5ruvWD6hR0KTGEumJ7MAHYIwOSyAQs5fzl08LX+jvcGehPPEWy03mPHgAj1uOV9LqmmCeZSMb9h/oMJB2+NmEfKwDdQeWHjgxIiahtMNFmwvFxFHx+DdqIQTDs9pSqnqNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPvtTTcD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9388EC4CEF4;
+	Tue,  9 Sep 2025 13:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757426247;
+	bh=bb/FjlQu/Ux5p9tdtjU1fbLj/LzbXt751l1WJQfoO4Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oPvtTTcDam3nIiRnJHTonNtTiW52CCO7VNOUYZBAAcBX5+AudTDX9koJIyfY5GQAp
+	 ND+a/CPzjUYkVWIGPWZzn6YTHy+0WZkrjC/8t74++jLfW1EMzKldyFVH0qgZQExalh
+	 lnr0z8+lJkHJ4h0QkyR88QwI4kKD8VVaouhfIS5czfrNCJCo6loo4/n4LUqkE4/doj
+	 pAaTL36tlEgy+SUSu/wxzdHI9p0k216ucyY951su2jPWz7X6SENknkO3l42jFsF3Rl
+	 xRm0X+m5t/gXgFj7JwEILnQi6Rdpyz2+iZn2J4KeRWrSz1ljISRDlKSikIodwO23V2
+	 eUxpwVX/wgEIQ==
+Message-ID: <4869bf32-7a0c-4db3-b3ee-4a237f20f81a@kernel.org>
+Date: Tue, 9 Sep 2025 15:57:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
- <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
- <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
- <aMAn4MM_Fs8q8qwj@smile.fi.intel.com> <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
- <aMAve1MbONmKVjjg@smile.fi.intel.com> <aMAv3STeZUdSQ14p@smile.fi.intel.com>
-In-Reply-To: <aMAv3STeZUdSQ14p@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 9 Sep 2025 15:56:41 +0200
-X-Gm-Features: Ac12FXw-xJdDcWBTzEH08jjeniZk8zNeWwiQ6jDsDwHAH3I_S_ZPt9IHyI66KLg
-Message-ID: <CAMRc=MeA87p0QAzq_3MACQM90MhN0eRccr7u-VzcfyP8b90AaQ@mail.gmail.com>
-Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: add bindings for QCS615 talos
+ evk board
+To: Sudarshan Shetty <tessolveupstream@gmail.com>, konradybcio@kernel.org
+Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tingweiz@qti.qualcomm.com
+References: <20250909125255.1124824-1-tessolveupstream@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250909125255.1124824-1-tessolveupstream@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 9, 2025 at 3:47=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> TBH, I think those 6 all made the same mistake, i.e. thinking of the comp=
-ound
-> literal as a cast. Which is not!
->
+On 09/09/2025 14:52, Sudarshan Shetty wrote:
+> This adds binding support for the QCS615-based talos evk SMARC platform.
 
-What do you suggest?
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
 
-And are we not allowed to use C99 features now anyway?
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-Bartosz
+So simple patch and so many trivial mistakes which are already covered
+in documentation. Did you read the docs?
+
+> 
+> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index 03a7d3c92ecd..a5dbe6af68ac 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -952,6 +952,12 @@ properties:
+>            - const: qcom,qcs615
+>            - const: qcom,sm6150
+>  
+> +      - items:
+> +          - enum:
+> +              - qcom,qcs615-iq-615-evk
+
+That's enum with previous entry.
+
+> +          - const: qcom,qcs615
+> +          - const: qcom,sm6150
+> +
+>        - items:
+>            - enum:
+>                - qcom,sa8155p-adp
+
+
+Best regards,
+Krzysztof
 
