@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-808387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855EBB4FF22
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E43EB4FF24
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841863B8E2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5805E01DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF5934167C;
-	Tue,  9 Sep 2025 14:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD63342C98;
+	Tue,  9 Sep 2025 14:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZSLIy9Z"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PqaGk1D5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2nCol7o8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E549C2EDD52
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFC01553A3
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427413; cv=none; b=Z8XqAp22VvmpT87WR6qfjmp/BoB/nLmj/z1t84rCGTfnWKL0/Tgilmr3mbZr453vD5r9SfsK4Rv37QPHSSG9vWZuwdPOjmizTgk/CaNT6vLjVgX63ofeLdtMAukwOX1fOdiaGj7KSlPDKIcfhDD8eNDqfVJuPQeDj8/wpQYKaN8=
+	t=1757427480; cv=none; b=gJSaGG1NUFYu1WyvbClatofOfYsRg0F5BLIcO4IHDST/Z4pwIaeK65S06/KENhMPvuzD1mKGA3veoXnaAIYMPduAO7DWtDiQG5qH9GCrfU2tQqTYZnCchw6VJitbppxIyezOj1XtmQRG5NEEmoJ0Cr14Yl3OC1tkUpMzwL1KUNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427413; c=relaxed/simple;
-	bh=o+VqiFi1ZuJKXK/R+K8Ffj0lVMmVJnNeQeEd17w/NPI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=MipHS0eMZPB7O5VHlM/1fOzfg+K8Sz/+zcff8cyHA8P8zR4VjBe+U6Nc317R+McYqvtqTN2r46kNW5g1Sa59BnNGyQHFhlcIr1FqccYtxm9RWP5hv41hBMJ1/YTce/pu+sXOtkIvVUv5O4w9ucpYcGyjHzdnTGbMTkZitc8dOes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZSLIy9Z; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2518a38e7e4so35307055ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757427411; x=1758032211; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TBPCbx1t1DtRFy/Qmvoz+7PpnPwODyvsfSiVPNyKvTQ=;
-        b=ZZSLIy9ZcrR8UT488nV34k2lWSG2XAWhYoWMBQ4umwLUfSGZZoHPb0Oql7o0PRb/MR
-         lwTexgiJSbpJS3Bi+PlPJExiAAE5Z3HkoL9a49cXFLDy6JUp3LWUO45u63f15jtNuIFH
-         azKEZ6giBniPrJ4x7mHARtkx/+bIcfdITJ++YOp7tcd0SHExTKaX2l4hU0RXzu+32YJ3
-         4hNc45fQHxqqsrCH3FZAsodArEXEVDw3ct3do9jjhYyoDrQXPJZXKFB1FmxnGx+mtlps
-         w9llkZ4CXVDLLh/1Mpxbaua/joOmEg0rQ0ucXdmSd309sGTvFR+rGVmKmMEBkesATcdZ
-         F/KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757427411; x=1758032211;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TBPCbx1t1DtRFy/Qmvoz+7PpnPwODyvsfSiVPNyKvTQ=;
-        b=lpaySn6ooZRv7Es5BkZ+XStiSemUkNkP4N0xARDBBxXSAqnEk0ILLwgbw3HCNcGo5U
-         EJHQoePF3Mo1/ECy3AGLazDbaiikP2elhXN2NI0NelcJZ3CtZMZd+EmYcoxVUFOMMNH7
-         cQKrD75jF3OHYeBNxBmB/ushYSyd9SvCpcE0s6J2ad1cq8VrhqsK34tWYx9t64O1oaat
-         KyK8Uu8GgZSD8osDhs1H1rxTRxMs386mWlc+531hjYNvA5IoKi+rKJ/YGzXASqinL3HU
-         o4vjeoqXnbmO8kM3VVfLXfKJaI8rAhsxLWHCH99mEkDmB/CgNmsVz20powUoJg5v3wlx
-         pKGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIxNB1nS3rxjC4EoeKeHIdxWu2o7TusYkaq0jmWNiXp17Lex5RvqHHheh6rUr0A0JzOKQArfaJg3uelQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgHJZs+CkPWNp/I+Ll6telTQZPQga6tAZap9AZ6gOV1VUs74Gt
-	F7WKWQjqRvA7j05ZEjf0aJ7G5tF0xVCCjxoKQBNkh/zsEGxoCBKAobFk
-X-Gm-Gg: ASbGncteZo/aC1ItVWQcIaA/ahaKWZ6dOyqH2g/XZzjo3qYqp1JrQZERiKdvpSMq+8Y
-	3JWWPPF8vaiMzb5Zwz9ASRRrZe0Q53aNZpf3sTmqLQeQ9N892jKjoxBR+hT64KNkBKf7bbQHWmb
-	tEsR84D4PgMmzJZCsguyIDjUxGdwEz5PlDC/7syrWy6Pdm/CXzfRoiG6mXpOyzpAZzmWVQ3AQA/
-	CdCIJbm/RYf4zRIUSYejdMT9pH9kr9TjNfvKfyLLNo6D+PWSOuTwQPZCVLaEJYYNWMmEPYQy4K+
-	9VIxi9kXHDZbF279l4RuDRVexBFKnjKYE5C8R8wdhRG7VanxtYWnaaHLixvzcJeUD9rX37lmIgh
-	a/I2krxQkSBAciZQKNTgSaOkb7Uc8k4BCohrqDNYIIUobXmZCd7Q=
-X-Google-Smtp-Source: AGHT+IEnAyzLMxqnxsLrvjbSykcpJDqbEB5tk3wlxNjto04xhv0xpGQJTdUpv/FS+YKjD89GTMMNpQ==
-X-Received: by 2002:a17:902:f70f:b0:24d:34:b9e7 with SMTP id d9443c01a7336-24d0034be6cmr205718095ad.29.1757427410945;
-        Tue, 09 Sep 2025 07:16:50 -0700 (PDT)
-Received: from smtpclient.apple ([39.144.103.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9c2b12f9sm171757705ad.101.2025.09.09.07.16.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Sep 2025 07:16:50 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1757427480; c=relaxed/simple;
+	bh=7Gmo3a7pESQltpZ9RdaQUBxFCUORBSSfC0rsagv3xlo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z2+ae+TTGvTZ2P87CrnJSPUh9NAtYiBDNcpiP6jNIgWq7s8dHcJcyGMOepo2VPTB4JrZVH4IHE+Om9tRxWBYlXyTiou1MG95MKS5X7cPfbDgtpWpvDGKwPb2t8i0ed9+WqnnQ/HRlITXKX61qfz/Z4noq1LGn/mfKeg8lbbPDQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PqaGk1D5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2nCol7o8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757427476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q1LyQA98wvR3voNidWP/si5VQTWPYqq/tKAxaM7Wr3U=;
+	b=PqaGk1D5ixpoS9ODrbt9Xz2d7GWllJoCVIvjDd0emVAfcOKqM2QzOb9akAgeWu3CRngZie
+	trW13lhSU6oOD5IkQCC3fGoTAseKMRvRgiAzpKWZvvQYAJzyBT0oMO1KI1Okf+liNWD53E
+	tMtEGmJCh8sn+/KCc+BaeW70vvKN7XbhklDStcUixk/OuvY3GXcIMDHmMLvrQ1nKk+YtvF
+	XhF3WlGnieUlglEcmsOY5iT43scgVQhyho+PgxNt9jYIp+e7oNTLHSfcwnqUwmH1fKywHl
+	SJ3CoscovRATheCXQJ/5IAQrKC2XoVAMPLUW0uhsC6lPdRX37sKwMvzsGbUjoQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757427476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q1LyQA98wvR3voNidWP/si5VQTWPYqq/tKAxaM7Wr3U=;
+	b=2nCol7o8moXnqFuTvW/A7+c+Ay98rdKuDq+4Q4/2tPamY2jvXT5BE2VBVgnmayPK4nSp9v
+	6SaBsH5ZDOXlnnBg==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 15/36] rseq: Record interrupt from user space
+In-Reply-To: <5911c934-db16-433b-a1b8-c5367e420248@efficios.com>
+References: <20250908212737.353775467@linutronix.de>
+ <20250908212926.225746125@linutronix.de>
+ <5911c934-db16-433b-a1b8-c5367e420248@efficios.com>
+Date: Tue, 09 Sep 2025 16:17:55 +0200
+Message-ID: <87ecsfvhf0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] mm: shmem: fix too little space for tmpfs only fallback
- 4KB
-From: Vernon Yang <vernon2gm@gmail.com>
-In-Reply-To: <20250908162220.480d7014cc6c6ad2e14748c5@linux-foundation.org>
-Date: Tue, 9 Sep 2025 22:16:34 +0800
-Cc: Vernon Yang <vernon2gm@gmail.com>,
- hughd@google.com,
- baolin.wang@linux.alibaba.com,
- da.gomez@samsung.com,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- Vernon Yang <yanglincheng@kylinos.cn>
-Content-Transfer-Encoding: 7bit
-Message-Id: <441CA7B5-4D1C-4334-AC1A-2CDA87530478@gmail.com>
-References: <20250908123128.900254-1-vernon2gm@gmail.com>
- <20250908162220.480d7014cc6c6ad2e14748c5@linux-foundation.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Type: text/plain
+
+On Tue, Sep 09 2025 at 09:53, Mathieu Desnoyers wrote:
+>>   static __always_inline void rseq_exit_to_user_mode(void)
+>>   {
+>> -	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
+>> -		if (WARN_ON_ONCE(current->rseq.event.has_rseq &&
+>> -				 current->rseq.event.events))
+>> -			current->rseq.event.events = 0;
+>> -	}
+>> +	struct rseq_event *ev = &current->rseq.event;
+>> +
+>> +	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
+>> +		WARN_ON_ONCE(ev->sched_switch);
+>
+> OK. Now I'm confused.
+>
+> It is perfectly legal to issue a system call from userspace as long
+> as it's not from within an rseq critical section.
+>
+> That system call can be scheduled out, and can set the ev->sched_switch.
+>
+> This would cause the rseq_exit_to_user_mode from system call to
+> hit this.
+>
+> What is disallowed is only issuing a system call from a rseq critical
+> section. The other parts of rseq (updates of cpu id and mm cid) still
+> have to happen when returning from a system call.
+>
+> What am I missing ?
+
+The fact that any setting of ev->sched_switch has to be handled on the
+way out independent of user interrupt or not as MM CID can change
+obviously.
+
+This is not any different from the state before this patch. Just that it
+now only looks at sched_switch instead of the full event as that might
+contain a set user_irq bit w/o sched_switch being set, no?
+
+Thanks,
+
+        tglx
 
 
-
-> On Sep 9, 2025, at 07:22, Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> On Mon,  8 Sep 2025 20:31:28 +0800 Vernon Yang <vernon2gm@gmail.com> wrote:
-> 
->> From: Vernon Yang <yanglincheng@kylinos.cn>
->> 
->> When the system memory is sufficient, allocating memory is always
->> successful, but when tmpfs size is low (e.g. 1MB), it falls back
->> directly from 2MB to 4KB, and other small granularity (8KB ~ 1024KB)
->> will not be tried.
->> 
->> Therefore add check whether the remaining space of tmpfs is sufficient
->> for allocation. If there is too little space left, try smaller large
->> folio.
-> 
-> Thanks.
-> 
-> What are the effects of this change?  I'm assuming it's an
-> *improvement*, rather than a fix for some misbehavior?
-> 
-
-When we use tmpfs and the tmpfs space is getting smaller and smaller 
-(e.g. less than 2MB), it can still allocate 8KB~1MB large folio.
-
-Thank you for your feedback.
 
