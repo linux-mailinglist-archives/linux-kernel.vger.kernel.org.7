@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-806950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1667B49DF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:23:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FBBB49DF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0870018905CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D796E1BC3670
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B37F1D88B4;
-	Tue,  9 Sep 2025 00:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYvFn/Ap"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35F65223;
-	Tue,  9 Sep 2025 00:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A151DF738;
+	Tue,  9 Sep 2025 00:25:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F0F1D799D;
+	Tue,  9 Sep 2025 00:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757377414; cv=none; b=bbhEMsvvpD0ar8XwU4Dv4xP69mKasfzIXHYnJ/FHetmsAXGqN8c9aRKvAz0izcy50AuEhUm5yqTzxpB4FVdzA2Fml7kZkhkKCIONocmq4zdCa3k+DJOlluhd4dJfapwC9ruLB7qQuX9gMiB246QCGNQXmeiZ0f/YrN+g8CIcaLM=
+	t=1757377527; cv=none; b=eOIWhLGB3PbEy6pBTa+4rB6jGcFwVGEYX3Kcm0L/YEBB1UFElEEdefDXnoZLBYRnne5oXPj3HxnZ00lNJGdWW4mrOKYIpD8bJv/SUu7nZ0W+SQv9ZUpS4Bcra9jDh4mU2fhXC172F5E3pZUDHyQH81jwnL8X1XPGmxep05Zv19c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757377414; c=relaxed/simple;
-	bh=tsZco8RBN2ARLwRKQybz2Ac7AKZxSxzRkUgis3zqLtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKwumvhDl7dv6yHcFQLuodtBK3zeuUAUK4Q6amoMyNx29TsDcsGJAyTMFQ43O5+W8y6B3jvMNAVMplUOwFx1unB/Pj10ttIGCPDd0U1xYH6l4W8pbaRlEZfl0LJkjIjti/2SW4cmQrltA21Y+FQN/COI6mmQYTpdgTvnEr3HV+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYvFn/Ap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A20C4CEF1;
-	Tue,  9 Sep 2025 00:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757377413;
-	bh=tsZco8RBN2ARLwRKQybz2Ac7AKZxSxzRkUgis3zqLtg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=tYvFn/ApfUQs7BkuzEMfaUfFXBoBh7noMMx2qpDHMuLkwNyAhLjP3xamokvZOaQG0
-	 091H0aorZnH3sYyw0XmLhSpIntEKfU/ZQW2zkYkVyr4NnKtRJ4zW68B6reQvkJc6NT
-	 iLIoZhTAGKAkUkOZSP3/D7+WNpxc/jqLZakz58PNkgAqM/ll1GxYBqUDQ4g14hksbu
-	 M4Y892aBr0aR3QAaAWvxGLZ9Z7P8TJC5EBUjeDKfZ9gGqrY2C1iwhBlN0FlFQKltxz
-	 bKWLQkSTreWX2ji8YpvK1wbm35vv17JhVHZcFs1C+nZLZdM1GCGYKCO4HjdeE/PNlN
-	 VqdV8sk0tz7cQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3D83CCE0B32; Mon,  8 Sep 2025 17:23:30 -0700 (PDT)
-Date: Mon, 8 Sep 2025 17:23:30 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com,
-	boqun.feng@gmail.com, urezki@gmail.com, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] srcu/tiny: Remove preempt_disable/enable() in
- srcu_gp_start_if_needed()
-Message-ID: <1a489672-935d-4966-b151-c5248ceaf43b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250908003155.557070-1-qiang.zhang@linux.dev>
- <9dfa7d4f-6e3f-4084-a14f-beb1db06f817@paulmck-laptop>
- <63d537e65b7f4b6f77a16112a871103d07a248d2@linux.dev>
+	s=arc-20240116; t=1757377527; c=relaxed/simple;
+	bh=wYHaiOgv0c3CrrngmkGXy1RIZbf87Ynod0lCMxWdIZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V8bcHC4t6j/y7iO7NbRvsTqNLtDq3RG0E/LPKC0Rmlrm4oKwbOlrL4FS371mcX/nrnLdwFg24twMHRplMKYBJfVD5CASji4o/HMGplxO3IT/AOdm87FrhICEOovpTiH8HDjZNQtq73KMxQbUMU5n6Ajeb6DjgvQTQ3VKC9W6Vf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4225C1691;
+	Mon,  8 Sep 2025 17:25:16 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBCBE3F66E;
+	Mon,  8 Sep 2025 17:25:22 -0700 (PDT)
+Date: Tue, 9 Sep 2025 01:24:22 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, wens@csie.org,
+ jernej.skrabec@gmail.com, samuel@sholland.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwiner: h5: OrangePi PC2: add ethernet
+ LEDs
+Message-ID: <20250909012422.43b755a4@minigeek.lan>
+In-Reply-To: <20250818163520.1004528-1-olek2@wp.pl>
+References: <20250818163520.1004528-1-olek2@wp.pl>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63d537e65b7f4b6f77a16112a871103d07a248d2@linux.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025 at 01:19:44PM +0000, Zqiang wrote:
-> > 
-> > On Mon, Sep 08, 2025 at 08:31:55AM +0800, Zqiang wrote:
-> > 
-> > > 
-> > > Currently, the srcu_gp_start_if_needed() is always be invoked in
-> > >  preempt disable's critical section, this commit therefore remove
-> > >  redundant preempt_disable/enable() in srcu_gp_start_if_needed().
-> > >  
-> > >  Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
-> > >  Signed-off-by: Zqiang <qiang.zhang@linux.dev>
-> > > 
-> > Looks good, but what would be a good way to make this code defend itself
-> > against being invoked from someplace else that did have preemption
-> > enabled? Especially given that the Tree SRCU version of this function
-> > does get invoked with preemption enabled?
+On Mon, 18 Aug 2025 18:35:13 +0200
+Aleksander Jan Bajkowski <olek2@wp.pl> wrote:
+
+> This patch adds support for Ethernet LEDs.
+
+So I tried this on my OPi-PC2, but I cannot influence the LEDs. I have
+CONFIG_LED_TRIGGER_PHY and CONFIG_LEDS_TRIGGER_NETDEV built in, and I
+see mdio_mux-0.2:01:amber:lan and mdio_mux-0.2:01:green:lan in
+/sys/class/leds, but anything I write into trigger does not seem to
+change the output: it always stays on the network functionality, I
+guess because it's still configured to the PHY hardware wired function?
+
+What am I missing?
+
+Cheers,
+Andre
+
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> ---
+>  .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 20
+> +++++++++++++++++++ 1 file changed, 20 insertions(+)
 > 
-> ok, maybe we can add lockdep_assert_preemption_disabled() in
-> the srcu_gp_start_if_needed() ?
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts index
+> 0f29da7d51e6..7688f565ec9b 100644 ---
+> a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts +++
+> b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts @@ -7,6
+> +7,7 @@ 
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+>  #include <dt-bindings/pinctrl/sun4i-a10.h>
+>  
+>  / {
+> @@ -132,6 +133,25 @@ &external_mdio {
+>  	ext_rgmii_phy: ethernet-phy@1 {
+>  		compatible = "ethernet-phy-ieee802.3-c22";
+>  		reg = <1>;
+> +
+> +		leds {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			led@0 {
+> +				reg = <0>;
+> +				color = <LED_COLOR_ID_GREEN>;
+> +				function = LED_FUNCTION_LAN;
+> +				linux,default-trigger = "netdev";
+> +			};
+> +
+> +			led@1 {
+> +				reg = <1>;
+> +				color = <LED_COLOR_ID_AMBER>;
+> +				function = LED_FUNCTION_LAN;
+> +				linux,default-trigger = "netdev";
+> +			};
+> +		};
+>  	};
+>  };
+>  
 
-That sounds like a good idea to me!
-
-							Thanx, Paul
-
-> Thanks
-> Zqiang
-> 
-> 
-> > 
-> >  Thanx, Paul
-> > 
-> > > 
-> > > ---
-> > >  kernel/rcu/srcutiny.c | 3 ---
-> > >  1 file changed, 3 deletions(-)
-> > >  
-> > >  diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > >  index b52ec45698e8..417bd0e4457c 100644
-> > >  --- a/kernel/rcu/srcutiny.c
-> > >  +++ b/kernel/rcu/srcutiny.c
-> > >  @@ -181,10 +181,8 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  {
-> > >  unsigned long cookie;
-> > >  
-> > >  - preempt_disable(); // Needed for PREEMPT_LAZY
-> > >  cookie = get_state_synchronize_srcu(ssp);
-> > >  if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
-> > >  - preempt_enable();
-> > >  return;
-> > >  }
-> > >  WRITE_ONCE(ssp->srcu_idx_max, cookie);
-> > >  @@ -194,7 +192,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  else if (list_empty(&ssp->srcu_work.entry))
-> > >  list_add(&ssp->srcu_work.entry, &srcu_boot_list);
-> > >  }
-> > >  - preempt_enable();
-> > >  }
-> > >  
-> > >  /*
-> > >  -- 
-> > >  2.48.1
-> > >
-> >
 
