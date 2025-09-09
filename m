@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-806979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFA0B49E5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:56:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59A4B49E64
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B233B3C71
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 486953B3571
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096FD212562;
-	Tue,  9 Sep 2025 00:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B022192EE;
+	Tue,  9 Sep 2025 00:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MpqrQSd3"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7cgbs8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F4E1172A;
-	Tue,  9 Sep 2025 00:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9B71172A;
+	Tue,  9 Sep 2025 00:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757379397; cv=none; b=r+E3ioDQPdeWkuBc0nZfLHNjhtUPh7tslG4L4p/siRYRoHeHXdqFuph6bWgyQn4y74CsgqS1HUs79vAvqgw0dtyEcdAsPkjsf6LEMHm9iudl0HNK5XlRZ8hVQJ9yNdIiI3OAL71Nu4KPtqxt2hhj113MECOyBrPxRd6+AUnjpP0=
+	t=1757379451; cv=none; b=VIrJ+Pg+16ciX10C/I1MkZpunTxwNc5vGoESk6WK9tPPhq8ivLnyF6KIyOg9jd3e08ZN/B/nSslrCD5M53rqen7Id1kymseb2e4SPY6VJz9SdMrNHlUourXx3yAQhUIUzeWDrRILkhuVu8l8H5BSgAIPbupp96iPX4+gWHulOPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757379397; c=relaxed/simple;
-	bh=XhzBiDGiol9wyvPgh5vh1KhcYsg2UGW9ydEq1dGZiSY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=lohc2djSdpeD84r9xVla/3Gp/35UtzOvZF0ct3qyMgVhRwdptnkqNCmzyyq/lFuDcs1FF3aycbAUnCb6GB6dFWjZ4mMXLHh1sR/HlQPHI5rTV8CFNLUysqndR5A0nKJm7fZeqnipz/O31h6MIGDQBnEKUafeMYpn9SFKOberGd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MpqrQSd3; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757379084; bh=Cb68Jn2uwxC6pyB6/FvUvwuMpp16nWNi6ZZMlRAV/Wg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MpqrQSd3azuZ/JfXiGdjf11PaOprBxinwsHTmzarYFVm5Eb+o2DwUxl0uL/8KIfxE
-	 cWVjP1OTQrZWXrej8sn8HmBMSUu6wWBF/nh+ATZeRiC4Js13Dnth5zkjtrZO9qCTWl
-	 JqKDDyepxK13JVYjEfbR2EMIaXhpVsmHiavUZnt4=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id CD6896F1; Tue, 09 Sep 2025 08:51:22 +0800
-X-QQ-mid: xmsmtpt1757379082t7h96ve00
-Message-ID: <tencent_CAD45DB31906CF890DBB25AB0DED12205D07@qq.com>
-X-QQ-XMAILINFO: OeFOmPvKThpBxl2fsSe77dJmC11yOuJLqXTDzULnTvHALyPR/iVM2407KuSVK5
-	 sTLIyIjFPySfBBaw1PF2+d0n3j2x0JmtsPIWBMTZc7sHtq+Gs4D2mD96rR6dwScE4fhE9RdiSU62
-	 beGTpIrVsodIIMkkCJuLPTZxUXLxY6dj6p9gRW4sppCIylsvjIJpicobhtOmxW1g49ig/Dxq/boN
-	 iO0kAvxYAWr3rNMSFb2eanLwKjHPUSyAioyBbGe53+VWEmUL5/d1hSw0+Zv32Vbn3Ll4/3KZgJWy
-	 tTRYHKMg6dOHL/TXmeXm7kaC1a+vINNr8ISyE2L6ZJEUHu1bVGgwWLXlVpJU0nhnbbsHJISRkqn/
-	 IvV8b9740zzhGc6wAOAsnrukhkWfy8Xub4EqZp0PacpTwXznzP6ldUSoUL3s4UNoHHsTjuj2iQyv
-	 MEgvOJyxk6FY3NxiXjRup8Dox856WE2ST/eBWEd7XHBqKvJgp0ebQgoMcp99MC+C8FTj4hwoYjX3
-	 pSHUlw841PM+tZ+i5g38W3vuNdukEoDyizfx3Kd9tSAmRKF+ImFYpagXagiKoSIHbZXrI7FBb90J
-	 h16SVzpok1kCx9Gmu+YLrUi7V5GX77igEYvJxAbecue02aN/BUWQIyysT8V7UmFRvB/hLNbeNOg8
-	 B7oGeV2+QorCbXHj7c+nUOXQtZOHpHEbhIGQefJMg3XNbhnNUglAHEuZzLlYzkMI7RZqcSLQFNuf
-	 h+CC8jtyhcd5sR+zmext8CJZnLiGNxgjMgri/snxuIsnTcJqykLVCmAUWfb6t5f4n+8fMi54wS+u
-	 NMBl2gqwnTwwsw5MnHS25aX6QVqOBOaz0y4PqujOVB9T1GrBWA6DLpfA2DnU/hS9NaCmu4uqSrQN
-	 WUngRaffc93x546UlleVSejV7crGioIy0FZK5XCmKnwS+s1vV+oSlj029m4t/RWiZ3nb5T2A4Yz1
-	 55If3/JESvDYxybebbmYmUXcit/JDGVerdDAI/xLAT2gI7ZSQ81S2ATctg/nC/
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-Cc: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH Next] vt: move vc_saved_screen to within tty allocated judgment
-Date: Tue,  9 Sep 2025 08:51:22 +0800
-X-OQ-MSGID: <20250909005121.2757067-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68bf244a.050a0220.192772.0882.GAE@google.com>
-References: <68bf244a.050a0220.192772.0882.GAE@google.com>
+	s=arc-20240116; t=1757379451; c=relaxed/simple;
+	bh=PjNOvGE6PkHjCvw20rHybUKZIXuJkJvMK2PCMpSEbq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oGEOXJPai+E9IlcT1M/5doN4rwISByxLaxahcArXWPk0zMEnnVPLMxshaQ3i3UIOhwtUgqzuVdo6konrnrPUokltrHfzmeksAwKP39i1Ha7pc7dETxM7jlK6rf2xxTsfYSinomh4Uer8W/AKAbMW9n12aXQVvLx1ROvqAYbCNKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7cgbs8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D55EC4CEF1;
+	Tue,  9 Sep 2025 00:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757379450;
+	bh=PjNOvGE6PkHjCvw20rHybUKZIXuJkJvMK2PCMpSEbq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c7cgbs8VJW5Kfmg6zCzZFs1Yk866LLUqXEQf4OmD4Qjd78Cr3RouhpMNLgfKAtFi3
+	 GnAI3dl8KFwCxJe2EDdP02mYcyKwH0+pM+wFkYVv+DZ+WvrkdpIYo1Lgub4EhYMRaA
+	 eScbRZTPDTPiR16D4xoQmNm81uk8mn+cV3V+5qKKFpsMObI1EWrcvSQTQv0CxLwOr3
+	 t+UYtftF9wPK7/L2Q253k660f/RfuGNeq3cnHN29KZ0HD37L9f2nU27HTceMFNXWSS
+	 HaHYpru1/gZGnUSPwu64pddgH0cCQvDXf8JrOIS93vON9BV3TZsflECmAudO0Bm4c1
+	 iASGiZZE/L2vQ==
+Date: Mon, 8 Sep 2025 19:57:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 12/23] dt-bindings: display: tegra: move
+ avdd-dsi-csi-supply from VI to CSI
+Message-ID: <20250909005729.GA2330015-robh@kernel.org>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-13-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906135345.241229-13-clamor95@gmail.com>
 
-Everything starts with the assumption that a tty has been allocated.
-Therefore, Move it to within the tty allocation check.
+On Sat, Sep 06, 2025 at 04:53:33PM +0300, Svyatoslav Ryhel wrote:
+> The avdd-dsi-csi-supply is CSI power supply, it has nothing to do with VI,
+> like same supply is used with DSI and has nothing to do with DC. Move it
+> to correct place.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml   | 3 ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml | 3 +++
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> index dd67d4162884..bb138277d5e8 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> @@ -75,9 +75,6 @@ properties:
+>    ranges:
+>      maxItems: 1
+>  
+> -  avdd-dsi-csi-supply:
+> -    description: DSI/CSI power supply. Must supply 1.2 V.
+> -
+>    vip:
+>      $ref: /schemas/display/tegra/nvidia,tegra20-vip.yaml
+>  
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
+> index fa07a40d1004..37f6129c9c92 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
+> @@ -37,6 +37,9 @@ properties:
+>        - const: cile
+>        - const: csi_tpg
+>  
+> +  avdd-dsi-csi-supply:
+> +    description: DSI/CSI power supply. Must supply 1.2 V.
 
-Fixes: 23743ba64709 ("vt: add support for smput/rmput escape codes")
-Reported-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f6cb41c144427dc0796a
-Tested-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/tty/vt/vt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On further thought, why does this have 'dsi' in the name at all. If it 
+happens to be the same supply for DSI and CSI, that's an SoC integration 
+detail. The name here should be local to the module. Perhaps 
+'avdd-supply' is enough? Fine to rename it as you are breaking the ABI 
+moving it anyways.
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 1d9abcfac4c9..6e0089b85c27 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1341,10 +1341,10 @@ struct vc_data *vc_deallocate(unsigned int currcons)
- 		vc_uniscr_set(vc, NULL);
- 		kfree(vc->vc_screenbuf);
- 		vc_cons[currcons].d = NULL;
--	}
--	if (vc->vc_saved_screen != NULL) {
--		kfree(vc->vc_saved_screen);
--		vc->vc_saved_screen = NULL;
-+		if (vc->vc_saved_screen != NULL) {
-+			kfree(vc->vc_saved_screen);
-+			vc->vc_saved_screen = NULL;
-+		}
- 	}
- 	return vc;
- }
--- 
-2.43.0
-
+Rob
 
