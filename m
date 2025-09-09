@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-806992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DB6B49E9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:20:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EDC4B49EA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB9F4E6842
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3554517AD6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 01:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A266B219A8A;
-	Tue,  9 Sep 2025 01:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7hhlXoR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3531E7C12;
+	Tue,  9 Sep 2025 01:22:10 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E921B1459F6;
-	Tue,  9 Sep 2025 01:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B480572634
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 01:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757380820; cv=none; b=g8cUkfJj6GikyLm40qsbxIONK9CHkN+RryJoDhtJMjslnEKwm+t7xYHwCqjeZ4pUMkRZnBnslK3HuSNQIXA/O4EcAqXLiyM7ulup1c9yh9aoHP/MvC2DsjwPA9BnZ15mlJM0SpGNHizJjnl97izyOkm5X2W+9deGdFE9OlGpybk=
+	t=1757380930; cv=none; b=phqm0MUNPVE4pkl9UwHFyKIU7YWbK2/FWiiEmA0LbHEPu28u9x0dN1P9qprQEuh8JqI0oJzZ7g9Ct47ou4yUamn92pUHMHB34VV/YHsP9a4UCnDqK0wI/AJnQQOVp9nRoPlSBMWnASgx9P5AwnZVrfqIri+1XFDWHPKBJPTAiHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757380820; c=relaxed/simple;
-	bh=JWY40T+xFS/QMidUqEsrbTv2SAlhFd15ICGtPB88jUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tQRvRIw8kqnaZxLViuecwq+zvFnYbv7xtdpSzt05o81i7VXqQZ0CU2iukeFovvfWTTCVGSgh5S2thIBIWuc+m1bTUVVYKUSjB4CHlY/OF99J/TJDmpi5cBI4d6hDJfkVkb3dVGPHfleLqgfiYoaMtZYFQOUMbgI/gQOGi56Ff3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7hhlXoR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E63C4CEF1;
-	Tue,  9 Sep 2025 01:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757380819;
-	bh=JWY40T+xFS/QMidUqEsrbTv2SAlhFd15ICGtPB88jUo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a7hhlXoRJrA4JbdT3eFd7Av5zb1DTadw1IBxWE51P/4orB7lyDFeSjK7zx74P0fhV
-	 VnFDoXpvUo2eZLGrsOBbcTzIU9c+oRAgw3Qq/7najFpzrZ2Y/VSru5WJVJ5OE5Eohd
-	 3Rfu6iy6JnvY1Je5HnznkHn3d/qQQtMK+U4VVIR8jpMXpJ2bJV+N3dX6A/3YMeQhYG
-	 Co/zsHQo9xmrNfpNloF5TNgNy1feWdCmcdhW5CyqxB70AwWvHhurQiYs/wKSo3VJBj
-	 Tx0OFWlZ3RrMAF0GjDd94M0Kf4T4agHy7YmEueqde9qxrXTec5hj9n3gsPPxZWyXeD
-	 ZoUrjWDupr68Q==
-Date: Mon, 8 Sep 2025 18:20:18 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Nai-Chen Cheng <bleach1827@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] selftests/net: fix unused return value warnings in
- ksft.h
-Message-ID: <20250908182018.28d9ff10@kernel.org>
-In-Reply-To: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
-References: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
+	s=arc-20240116; t=1757380930; c=relaxed/simple;
+	bh=u1KV1C/hcS+AVE8HX+enyQC5WbRPFCDy5DjQFCPXEK8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kf/hTXWDSQaV0zmuPD2tS2NbEsxMf/huZnd9TvrPya6C/V0/9uIYk3yxNIwRYkRgIgTQeK2NLWpoiwjlsPruX0Tuxt/IaNihTmBFY00ZsdCqJdVun7D83qt47tffHKfDx+Xi2U9dqWWCHpolYkmUXWasky0PuRUGtPl546HGCz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201610.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202509090921522911;
+        Tue, 09 Sep 2025 09:21:52 +0800
+Received: from PC00024056.home.langchao.com (10.94.13.207) by
+ jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
+ 15.1.2507.57; Tue, 9 Sep 2025 09:21:52 +0800
+From: cuishiwei <cuishw@inspur.com>
+To: <akpm@linux-foundation.org>, <axelrasmussen@google.com>,
+	<yuanchu@google.com>, <hannes@cmpxchg.org>
+CC: <weixugc@google.com>, <david@redhat.com>, <zhengqi.arch@bytedance.com>,
+	<shakeel.butt@linux.dev>, <lorenzo.stoakes@oracle.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, cuishiwei <cuishw@inspur.com>
+Subject: [PATCH] disable demotion during memory reclamation
+Date: Tue, 9 Sep 2025 09:21:41 +0800
+Message-ID: <20250909012141.1467-1-cuishw@inspur.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 202590909215269e944241ffdc39a63df3b45123fc775
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Sat, 06 Sep 2025 23:59:28 +0800 Nai-Chen Cheng wrote:
-> The write() and read() system calls in ksft_ready() and ksft_wait()
-> functions return values that were not being checked, causing complier
-> warnings with GCC.
+When a memory cgroup exceeds its memory limit, the system reclaims
+its cold memory.However, if /sys/kernel/mm/numa/demotion_enabled is
+set to 1, memory on fast memory nodes will also be demoted to slow 
+memory nodes.
 
-Is it just a GCC warning or rather a combination of GCC and some
-misguided glibc decorator to force check the return of read/write?
-Naming the compiler versions and the warning flag which enables
-this would be useful. We don't see it building with normal warning
-level today.
+This demotion contradicts the goal of reclaiming cold memory within
+the memcg.At this point, demoting cold memory from fast to slow nodes
+is pointless;it doesn't reduce the memcg's memory usage. Therefore, 
+we should set no_demotion when reclaiming memory in a memcg.
 
-> Fix the warnings by casting the return values to void to indicate that
-> ignoring them is intentional.
+Signed-off-by: cuishiwei <cuishw@inspur.com>
+---
+ mm/vmscan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ret = read(fd, &byte, sizeof(byte));
-> (void)ret;
-
-Can you not cast the read() to void directly?
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index ca9e1cd3cd68..1edf618a3604 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -6706,6 +6706,7 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+ 		.may_unmap = 1,
+ 		.may_swap = !!(reclaim_options & MEMCG_RECLAIM_MAY_SWAP),
+ 		.proactive = !!(reclaim_options & MEMCG_RECLAIM_PROACTIVE),
++		.no_demotion = 1,
+ 	};
+ 	/*
+ 	 * Traverse the ZONELIST_FALLBACK zonelist of the current node to put
 -- 
-pw-bot: cr
+2.43.0
+
 
