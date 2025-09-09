@@ -1,65 +1,94 @@
-Return-Path: <linux-kernel+bounces-807392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC83BB4A3C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BD4B4A3BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894A568048D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019DC18936BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81347310783;
-	Tue,  9 Sep 2025 07:34:13 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C969A30C615;
+	Tue,  9 Sep 2025 07:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7/QIzLz"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DB23081A4;
-	Tue,  9 Sep 2025 07:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E8309EFA;
+	Tue,  9 Sep 2025 07:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403252; cv=none; b=Q41hj0d0XpSdPl2Gn9ceLBS+2PPx8nL0sCitww2TNdmxb5iNI8B3tJEq2VAffGineWm0PWD6wWMlHjQp7ng2zQnW4GFzKm58HyYB+OEOEvKWAY233t86JtrfVlLkZN1mQk2XaCvd5dsWtO6xYq3yjbkf0ZzEXD/rIkF7VJ7yvCc=
+	t=1757403242; cv=none; b=rJ1M36KCykQNk+Z1ICDNL8IOkRUx8aHEDnY7irPZN3R1cFxKQcYQ3D2X8hlA2217o7M36IJXXW/b7r7d56jG3FLbQfUu4dWv+VO7bd5oNsEP+l19Aa0rM4LAwEj2Qi6SEMXV3bbkpWDOS2EOmQWxeeknUv2TfwY7H89+HIP41fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403252; c=relaxed/simple;
-	bh=1dpY5rrx/KQQ7MFnbktR5mrQt1+y3qjUhCGENSPzb6k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gYwLs+TdIpNE27o8bidp4jP4WQiUxBJhKbi5wxydO5EhQVJSGQbu83C5RbIswkWWDIr/mnD376kwXMXt9+bjcPdIbVI0m7R3qPaD5OL0rYlpk/qSH83YGUSNnEfqOYMGG7yhHvHLtHUgjSxt0rxqv9T5B0k/ISERttxtuprmzs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cLb8p3Pd8z1R9Jn;
-	Tue,  9 Sep 2025 15:31:06 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 84F6014013B;
-	Tue,  9 Sep 2025 15:34:08 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Sep 2025 15:34:07 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, Meny Yossefi
-	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
-	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
- Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v05 10/14] hinic3: Tx & Rx configuration
-Date: Tue, 9 Sep 2025 15:33:35 +0800
-Message-ID: <592cc21bcb00dc954db2afdd8e3f105eaceddd3a.1757401320.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1757401320.git.zhuyikai1@h-partners.com>
-References: <cover.1757401320.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1757403242; c=relaxed/simple;
+	bh=ggGdRmXLBbjArTvqcF72EClkwv1lqIc94ZhVFK9wFgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pjUkVAZTGnSz6vV6+Z7Qgl5O5B/iRc6Chg83K3nqPWWpVdwC/Ik1woTiFOiqc1iwRE/k6Tdjg6b3BU7DPQrDuQIypnGXuXQ+4U1B2MFjzxH9VC3iUw336rYzK3dYfzVkPEgtwrcHyH4M9c+IeErmmqd/U1PfnftOsnccC3nxRXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7/QIzLz; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33c9efd65eeso20141881fa.3;
+        Tue, 09 Sep 2025 00:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757403238; x=1758008038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYiswRj/QaYbkwuLO6ropupZ4HLa9+N1VAg/V5RUYGk=;
+        b=a7/QIzLzSIxma+TBe6YDSP2sNRNMZxsOjYLtUq0zQf/e3nIfRrMHQvZJC61PqBpbEX
+         a9WuKidH/6ZCjWi3cFm7b/6Cs458OC7XKoZRhJlUEjvPP5ZuLHXFwzKecqrxio6jXVMX
+         6iYzAGrbngRpCO3KIJw08VDoh7TK50GRok21ijBuxXsFQR8XQlEf0S6Pk2l/Om/NrlTY
+         bPk8YuL7vX+HaQwdhr3+JvMvW6zPADw252YTMo3txUn/HzihRDAKiBoWdxJ8MSBOqLkc
+         wDxHuQsD7K+tS48xiN0hxLQO1iK2mY+UUKda3JiYOJfI0IhCwEjPr/J8Cd3T2GGEkhvt
+         bhjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757403238; x=1758008038;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vYiswRj/QaYbkwuLO6ropupZ4HLa9+N1VAg/V5RUYGk=;
+        b=xVUr/D+bl8oaudUv/zRKoiUHksJSIV+YFrm3AydqjKj59huW9lKU7bcydWrwB4PjJR
+         qytgCksFeBLm2JJIvprRDYM1AoT7j/C/9o+PLZN1YALrjfnsMkUGZiDkj4fefx81poi+
+         75RssQUTYqDeUQS7xi0EsWnAxD+DNt28u6ucwKiKtrBSRsQ0/hWSzkoIxuuS9az3ylvg
+         q3FAuhoC4rWYxaYAOVh9KUYge1h3DU6tU0rxsEGS0WcToYpdBk88qR4vQQc0v4g4wKAy
+         6WTRl6vA280YMnAz2kuLO0k0Af5FrPPVTtsFRP5thEKkvXkWVw9PsXzyCUMA0XqPpMIc
+         MnZw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/r3NXRtQ5NLEiAuGbaTBpdj3tgwS3dhkugIA2+kZC9jaa26f8IyNqHlFTspWtefRuLSV6eaHGcnMFdaE=@vger.kernel.org, AJvYcCWhsZfiJl6jpXYGev9r/PB8hv7B5qFK7lP323mMLBReqYkZ86o46In3thdtG70fKJmGwR7IYYOd2j/CwMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+iwpfhj1Ho/1kdHimulla/yHa1tP+f4sQ3YSp0gHVhewvntiz
+	LooL6PT+5TOHkL+Rv7GTex6eXuifuuzVLSSJ04qkZjVlPuZ6yzwwXkfy
+X-Gm-Gg: ASbGncuQU4YBKOVGxEVWOr7Wm+4uOU1c96iUjNi2EZXPdTDHRQo8EpYlkiN4iemo8Bs
+	ZVK/BiDU4c5ETMdH+cQyhYeQQhLc3FL8MpRKk3d/wYK8JcsExQQyG+ZIzQL04JXi7hGdtwG4IBB
+	Th+tBqdV5HbHVCRq//PMZrBz44zdkcyKSmviswGRJsrrdcWftwfrplAGCYAPCbSiNxKOpD5ZZEq
+	nFfBYpV/dAkOt555wQaX6Zx4ykXla1o+MhTos53oCGqtoFPExNdZE4q6d/JXiY8YQt2HyAWGQHZ
+	zuruPkM1/BtxNl0ArgiPvLFftDv+0SJcsHml2riydz1+kGUSL7F6B83M11ELSnlZqSuh4d2yZPq
+	7RawK5caegFIlIw==
+X-Google-Smtp-Source: AGHT+IElpt1mNRwwWKhQpfkwc63KOwvW3rDRSy5Rcmjz1QUiR7+paKgXpx8Z2+qnNuoRZk5EjISFSA==
+X-Received: by 2002:a05:651c:41c5:10b0:338:7f3:a757 with SMTP id 38308e7fff4ca-33b57862674mr23066631fa.10.1757403237229;
+        Tue, 09 Sep 2025 00:33:57 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c91a6bsm37542721fa.21.2025.09.09.00.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 00:33:56 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 2/2] gpu/drm: tegra: dsi: calculate packet parameters for video mode
+Date: Tue,  9 Sep 2025 10:33:35 +0300
+Message-ID: <20250909073335.91531-3-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250909073335.91531-1-clamor95@gmail.com>
+References: <20250909073335.91531-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,337 +96,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf100013.china.huawei.com (7.202.181.12)
 
-Configure Tx & Rx queue common attributes.
+Calculate packet parameters for video mode same way it is done or
+command mode, by halving timings plugged into equations.
 
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../huawei/hinic3/hinic3_mgmt_interface.h     | 15 +++++
- .../huawei/hinic3/hinic3_netdev_ops.c         | 56 +++++++++++++++-
- .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 25 ++++++++
- .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  2 +
- .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 64 +++++++++++++++++++
- .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  2 +
- .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 32 ++++++++++
- .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  2 +
- 8 files changed, 197 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/dsi.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
-index b891290a3d6e..20d37670e133 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
-@@ -75,6 +75,21 @@ struct l2nic_cmd_force_pkt_drop {
- 	u8                   rsvd1[3];
- };
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index aab555a2eb68..1ec3f03d2577 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -545,12 +545,19 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
+ 		/* horizontal back porch */
+ 		hbp = (mode->htotal - mode->hsync_end) * mul / div;
  
-+struct l2nic_cmd_set_dcb_state {
-+	struct mgmt_msg_head head;
-+	u16                  func_id;
-+	/* 0 - get dcb state, 1 - set dcb state */
-+	u8                   op_code;
-+	/* 0 - disable, 1 - enable dcb */
-+	u8                   state;
-+	/* 0 - disable, 1 - enable dcb */
-+	u8                   port_state;
-+	u8                   rsvd[7];
-+};
-+
-+/* IEEE 802.1Qaz std */
-+#define L2NIC_DCB_COS_MAX     0x8
-+
- /* Commands between NIC to fw */
- enum l2nic_cmd {
- 	/* FUNC CFG */
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-index 2c5c7051e72e..cc0a1c2eb681 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-@@ -183,6 +183,47 @@ static void hinic3_free_txrxq_resources(struct net_device *netdev,
- 	q_params->txqs_res = NULL;
- }
- 
-+static int hinic3_configure_txrxqs(struct net_device *netdev,
-+				   struct hinic3_dyna_txrxq_params *q_params)
-+{
-+	int err;
-+
-+	err = hinic3_configure_txqs(netdev, q_params->num_qps,
-+				    q_params->sq_depth, q_params->txqs_res);
-+	if (err) {
-+		netdev_err(netdev, "Failed to configure txqs\n");
-+		return err;
-+	}
-+
-+	err = hinic3_configure_rxqs(netdev, q_params->num_qps,
-+				    q_params->rq_depth, q_params->rxqs_res);
-+	if (err) {
-+		netdev_err(netdev, "Failed to configure rxqs\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int hinic3_configure(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	int err;
-+
-+	netdev->min_mtu = HINIC3_MIN_MTU_SIZE;
-+	netdev->max_mtu = HINIC3_MAX_JUMBO_FRAME_SIZE;
-+	err = hinic3_set_port_mtu(netdev, netdev->mtu);
-+	if (err) {
-+		netdev_err(netdev, "Failed to set mtu\n");
-+		return err;
-+	}
-+
-+	/* Ensure DCB is disabled */
-+	hinic3_sync_dcb_state(nic_dev->hwdev, 1, 0);
-+
-+	return 0;
-+}
-+
- static int hinic3_alloc_channel_resources(struct net_device *netdev,
- 					  struct hinic3_dyna_qp_params *qp_params,
- 					  struct hinic3_dyna_txrxq_params *trxq_params)
-@@ -231,14 +272,28 @@ static int hinic3_open_channel(struct net_device *netdev)
- 		return err;
- 	}
- 
-+	err = hinic3_configure_txrxqs(netdev, &nic_dev->q_params);
-+	if (err) {
-+		netdev_err(netdev, "Failed to configure txrxqs\n");
-+		goto err_free_qp_ctxts;
-+	}
-+
- 	err = hinic3_qps_irq_init(netdev);
- 	if (err) {
- 		netdev_err(netdev, "Failed to init txrxq irq\n");
- 		goto err_free_qp_ctxts;
- 	}
- 
-+	err = hinic3_configure(netdev);
-+	if (err) {
-+		netdev_err(netdev, "Failed to init txrxq irq\n");
-+		goto err_uninit_qps_irq;
-+	}
-+
- 	return 0;
- 
-+err_uninit_qps_irq:
-+	hinic3_qps_irq_uninit(netdev);
- err_free_qp_ctxts:
- 	hinic3_free_qp_ctxts(nic_dev);
- 
-@@ -287,7 +342,6 @@ static int hinic3_open(struct net_device *netdev)
- err_uninit_qps:
- 	hinic3_uninit_qps(nic_dev, &qp_params);
- 	hinic3_free_channel_resources(netdev, &qp_params, &nic_dev->q_params);
+-		if ((dsi->flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) == 0)
+-			hbp += hsw;
 -
- err_destroy_num_qps:
- 	hinic3_destroy_num_qps(netdev);
- err_free_nicio_res:
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-index 5b18764781d4..ed70750f5ae8 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-@@ -289,3 +289,28 @@ int hinic3_force_drop_tx_pkt(struct hinic3_hwdev *hwdev)
+ 		/* horizontal front porch */
+ 		hfp = (mode->hsync_start - mode->hdisplay) * mul / div;
  
- 	return pkt_drop.msg_head.status;
- }
-+
-+int hinic3_sync_dcb_state(struct hinic3_hwdev *hwdev, u8 op_code, u8 state)
-+{
-+	struct l2nic_cmd_set_dcb_state dcb_state = {};
-+	struct mgmt_msg_params msg_params = {};
-+	int err;
-+
-+	dcb_state.op_code = op_code;
-+	dcb_state.state = state;
-+	dcb_state.func_id = hinic3_global_func_id(hwdev);
-+
-+	mgmt_msg_params_init_default(&msg_params, &dcb_state,
-+				     sizeof(dcb_state));
-+
-+	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
-+				       L2NIC_CMD_QOS_DCB_STATE, &msg_params);
-+	if (err || dcb_state.head.status) {
-+		dev_err(hwdev->dev,
-+			"Failed to set dcb state, err: %d, status: 0x%x\n",
-+			err, dcb_state.head.status);
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-index dd1615745f02..719b81e2bc2a 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-@@ -52,4 +52,6 @@ int hinic3_set_ci_table(struct hinic3_hwdev *hwdev,
- 			struct hinic3_sq_attr *attr);
- int hinic3_force_drop_tx_pkt(struct hinic3_hwdev *hwdev);
- 
-+int hinic3_sync_dcb_state(struct hinic3_hwdev *hwdev, u8 op_code, u8 state);
-+
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-index e81f7c19bf63..6cfe3bdd8ee5 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-@@ -85,6 +85,27 @@ static int rx_alloc_mapped_page(struct page_pool *page_pool,
- 	return 0;
- }
- 
-+/* Associate fixed completion element to every wqe in the rq. Every rq wqe will
-+ * always post completion to the same place.
-+ */
-+static void rq_associate_cqes(struct hinic3_rxq *rxq)
-+{
-+	struct hinic3_queue_pages *qpages;
-+	struct hinic3_rq_wqe *rq_wqe;
-+	dma_addr_t cqe_dma;
-+	u32 i;
-+
-+	qpages = &rxq->rq->wq.qpages;
-+
-+	for (i = 0; i < rxq->q_depth; i++) {
-+		rq_wqe = get_q_element(qpages, i, NULL);
-+		cqe_dma = rxq->cqe_start_paddr +
-+			  i * sizeof(struct hinic3_rq_cqe);
-+		rq_wqe->cqe_hi_addr = cpu_to_le32(upper_32_bits(cqe_dma));
-+		rq_wqe->cqe_lo_addr = cpu_to_le32(lower_32_bits(cqe_dma));
-+	}
-+}
-+
- static void rq_wqe_buf_set(struct hinic3_io_queue *rq, uint32_t wqe_idx,
- 			   dma_addr_t dma_addr, u16 len)
- {
-@@ -445,6 +466,49 @@ void hinic3_free_rxqs_res(struct net_device *netdev, u16 num_rq,
- 	}
- }
- 
-+int hinic3_configure_rxqs(struct net_device *netdev, u16 num_rq,
-+			  u32 rq_depth, struct hinic3_dyna_rxq_res *rxqs_res)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct hinic3_dyna_rxq_res *rqres;
-+	struct msix_entry *msix_entry;
-+	struct hinic3_rxq *rxq;
-+	u16 q_id;
-+	u32 pkts;
-+
-+	for (q_id = 0; q_id < num_rq; q_id++) {
-+		rxq = &nic_dev->rxqs[q_id];
-+		rqres = &rxqs_res[q_id];
-+		msix_entry = &nic_dev->qps_msix_entries[q_id];
-+
-+		rxq->irq_id = msix_entry->vector;
-+		rxq->msix_entry_idx = msix_entry->entry;
-+		rxq->next_to_update = 0;
-+		rxq->next_to_alloc = rqres->next_to_alloc;
-+		rxq->q_depth = rq_depth;
-+		rxq->delta = rxq->q_depth;
-+		rxq->q_mask = rxq->q_depth - 1;
-+		rxq->cons_idx = 0;
-+
-+		rxq->cqe_arr = rqres->cqe_start_vaddr;
-+		rxq->cqe_start_paddr = rqres->cqe_start_paddr;
-+		rxq->rx_info = rqres->rx_info;
-+		rxq->page_pool = rqres->page_pool;
-+
-+		rxq->rq = &nic_dev->nic_io->rq[rxq->q_id];
-+
-+		rq_associate_cqes(rxq);
-+
-+		pkts = hinic3_rx_fill_buffers(rxq);
-+		if (!pkts) {
-+			netdev_err(netdev, "Failed to fill Rx buffer\n");
-+			return -ENOMEM;
++		if (dsi->master || dsi->slave) {
++			hact /= 2;
++			hsw /= 2;
++			hbp /= 2;
++			hfp /= 2;
 +		}
-+	}
 +
-+	return 0;
-+}
++		if ((dsi->flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) == 0)
++			hbp += hsw;
 +
- int hinic3_rx_poll(struct hinic3_rxq *rxq, int budget)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(rxq->netdev);
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.h b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.h
-index ec3f45c3688a..44ae841a3648 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.h
-@@ -97,6 +97,8 @@ int hinic3_alloc_rxqs_res(struct net_device *netdev, u16 num_rq,
- 			  u32 rq_depth, struct hinic3_dyna_rxq_res *rxqs_res);
- void hinic3_free_rxqs_res(struct net_device *netdev, u16 num_rq,
- 			  u32 rq_depth, struct hinic3_dyna_rxq_res *rxqs_res);
-+int hinic3_configure_rxqs(struct net_device *netdev, u16 num_rq,
-+			  u32 rq_depth, struct hinic3_dyna_rxq_res *rxqs_res);
- int hinic3_rx_poll(struct hinic3_rxq *rxq, int budget);
- 
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-index 3c63fe071999..dea882260b11 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-@@ -702,6 +702,38 @@ void hinic3_free_txqs_res(struct net_device *netdev, u16 num_sq,
- 	}
- }
- 
-+int hinic3_configure_txqs(struct net_device *netdev, u16 num_sq,
-+			  u32 sq_depth, struct hinic3_dyna_txq_res *txqs_res)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct hinic3_dyna_txq_res *tqres;
-+	struct hinic3_txq *txq;
-+	u16 q_id;
-+	u32 idx;
-+
-+	for (q_id = 0; q_id < num_sq; q_id++) {
-+		txq = &nic_dev->txqs[q_id];
-+		tqres = &txqs_res[q_id];
-+
-+		txq->q_depth = sq_depth;
-+		txq->q_mask = sq_depth - 1;
-+
-+		txq->tx_stop_thrs = min(HINIC3_DEFAULT_STOP_THRS,
-+					sq_depth / 20);
-+		txq->tx_start_thrs = min(HINIC3_DEFAULT_START_THRS,
-+					 sq_depth / 10);
-+
-+		txq->tx_info = tqres->tx_info;
-+		for (idx = 0; idx < sq_depth; idx++)
-+			txq->tx_info[idx].dma_info =
-+				&tqres->bds[idx * HINIC3_BDS_PER_SQ_WQEBB];
-+
-+		txq->sq = &nic_dev->nic_io->sq[q_id];
-+	}
-+
-+	return 0;
-+}
-+
- bool hinic3_tx_poll(struct hinic3_txq *txq, int budget)
- {
- 	struct net_device *netdev = txq->netdev;
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.h b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.h
-index 9ec6968b6688..7e1b872ba752 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.h
-@@ -137,6 +137,8 @@ int hinic3_alloc_txqs_res(struct net_device *netdev, u16 num_sq,
- 			  u32 sq_depth, struct hinic3_dyna_txq_res *txqs_res);
- void hinic3_free_txqs_res(struct net_device *netdev, u16 num_sq,
- 			  u32 sq_depth, struct hinic3_dyna_txq_res *txqs_res);
-+int hinic3_configure_txqs(struct net_device *netdev, u16 num_sq,
-+			  u32 sq_depth, struct hinic3_dyna_txq_res *txqs_res);
- 
- netdev_tx_t hinic3_xmit_frame(struct sk_buff *skb, struct net_device *netdev);
- bool hinic3_tx_poll(struct hinic3_txq *txq, int budget);
+ 		/* subtract packet overhead */
+ 		hsw -= 10;
+ 		hbp -= 14;
 -- 
-2.43.0
+2.48.1
 
 
