@@ -1,103 +1,87 @@
-Return-Path: <linux-kernel+bounces-808414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EFBB4FF72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AE4B4FF80
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B4F177607
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1A23AC2E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4554223708;
-	Tue,  9 Sep 2025 14:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AED3203BE;
+	Tue,  9 Sep 2025 14:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfOh/uVn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaxfCBBa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA08352FC7;
-	Tue,  9 Sep 2025 14:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0207081E;
+	Tue,  9 Sep 2025 14:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428217; cv=none; b=LOgz/iKrOMe6/jPewcxWajUKHYTY7t2Fe78N4tyilQKKk29ghSNKrt1aXksDvUVuB2czmfG79M/TGhufaMrvwdCUqyUKKrmZBgjcORTjvzWZCbrTKA9KRc/U8F7UY++2xrHirIX3Mp9GmAEr8cLQKoZUUbq9gDyuYXZq6U92EEk=
+	t=1757428423; cv=none; b=poAXhUHLvUgLNspmA+0T/CYBSbUpT+G9QLM89g6GTwx5qjOhlwme2CbfwShrA1XRjVbFw0hpyFO2BfuT2ruo+yyjGj7cPf2LgwjFtM75LX//w/7GDFg4JlWtryOvGduw+bwZ8J1zLJaQOoJooPftyavm9WkxrU6LdbKqVYujBLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428217; c=relaxed/simple;
-	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3Qf3PK59KGhVu1Z9BK1SB9o0ZwvlfKsWpYwyutIkMsrBNmMpm/QP5vTu2cEnTwK/CXCTxC7Hbr3gLG4DC3aHyuR1EyJVVWTKJJdae977rZLkxakva3fbOTTQE+TIIYqd6mNTJdBm1URgEzk/KoC0PyenwcT+iiOEKj6sMf0Jmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfOh/uVn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66AAC4CEFE;
-	Tue,  9 Sep 2025 14:30:14 +0000 (UTC)
+	s=arc-20240116; t=1757428423; c=relaxed/simple;
+	bh=TkhuW1Vk3qpXZYupqghycFgpZ49+yjKvblPuLB+8TQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSA3ILp3V6KtBcCp7wnm13CqbQHh8AfvjY8lglD+yrhcb6/8znZr6aYvSbRVCqdp/Z5VpqxOl/NLqUJaaN4B9OBEKQIpqb6KPyQgokIPMsdUgOxHwyJkg6c2QegEXNG6hsBVV5ldxIavSgTS7T8gZ+/zP3fFZmfA2yjqgZ+nGjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaxfCBBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C61C4CEF4;
+	Tue,  9 Sep 2025 14:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757428216;
-	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gfOh/uVnJxQMDBxHVa4QaA+XiK7yWaBbmp9+iWaGTcmFkeFB02wgP6j66f397fuc7
-	 5VN5RqzK8PuWvSdVLwit4X0FAt876HpU1I4PZ2Umcv3kLeRyNGAHl9djOxLNRzSLmc
-	 QNLBqcUMrxPzBhOHMnhERtE0zyLOqSRCKCrq1BvQPD0/b3p8/n9YcWKtcQTNevBWSV
-	 /paTF/5Rb+/iNdM3iFcuobgNfHv3HWBFXqCTtY/fZwu7+YNlZcJQ5zCOXDf2nGjprO
-	 JuXNCFFllglB6Wmv6F1hW6F+Zwmg1skKYolKeg+75q2/6GATUcNjZUC2fYO6yr8ufc
-	 AKB/PP1AvAM9w==
-Message-ID: <c288bc66-e34f-42e6-b2e7-debb8e1415ba@kernel.org>
-Date: Tue, 9 Sep 2025 23:30:13 +0900
+	s=k20201202; t=1757428423;
+	bh=TkhuW1Vk3qpXZYupqghycFgpZ49+yjKvblPuLB+8TQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iaxfCBBa7rE4YEEWfolFWk6iU8BrUVjszoKnSRwMgANOtGmEXSCNmnxvvXlH2ppsU
+	 XJ5aeocmDjQFFdq1172z5de5qSMGzyx4hpCin1wcfV7A0WAFG6TBTmDnzYT2qghmnY
+	 CwxmchFuK11JP0X4WN65DB72oPNrIcdeRlUazAG+iIWwo9Xat9jZfianECPDGNqhz6
+	 wLqwGWObhrFQmJPNpefPARm8SqR29pSOruDyE6jQ5m2yqeuKPKgyCQb99BrAYIL0ra
+	 hGzmP89ore61Z1tlfjtDW7een5ESsBc2uueehPz5Df0kHUNZ3JZvCxABBft95+NU4O
+	 o4U0Dy5cj9J8A==
+Date: Tue, 9 Sep 2025 20:00:44 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Vasant Hegde <vasant.hegde@amd.com>, 
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [RFC PATCH 0/3] KVM: SVM: Fix IRQ window inhibit handling
+Message-ID: <y4sev4v2pixrjliqzpwccgtcwkqp7lkbxvufdhqkfamhmghqe5@u4e6mrwafm7k>
+References: <cover.1752819570.git.naveen@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] PM / devfreq: Fix double free in
- devfreq_event_add_edev()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aMABnic3SVnYMvGc@stanley.mountain>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <aMABnic3SVnYMvGc@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1752819570.git.naveen@kernel.org>
 
-25. 9. 9. 19:29에 Dan Carpenter 이(가) 쓴 글:
-> The put_device() function calls devfreq_event_release_edev() which frees
-> "evdev".  Calling kfree() again is a double free.
+On Fri, Jul 18, 2025 at 12:13:33PM +0530, Naveen N Rao (AMD) wrote:
+> Sean, Paolo,
+> I have attempted to take the changes discussed in the below thread and 
+> to convert them into a patch series:
+> http://lkml.kernel.org/r/Z6JoInXNntIoHLQ8@google.com
 > 
-> Fixes: 430a1845c804 ("PM / devfreq: Fix memory leak in devfreq_event_add_edev()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/devfreq/devfreq-event.c | 1 -
->  1 file changed, 1 deletion(-)
+> I have tried to describe the changes, but the nested aspects would 
+> definitely need a review to ensure correctness and that all aspects are 
+> covered there.
 > 
-> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-> index 34406c52b845..70219099c604 100644
-> --- a/drivers/devfreq/devfreq-event.c
-> +++ b/drivers/devfreq/devfreq-event.c
-> @@ -328,7 +328,6 @@ struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
->  	ret = device_register(&edev->dev);
->  	if (ret < 0) {
->  		put_device(&edev->dev);
-> -		kfree(edev);
->  		return ERR_PTR(ret);
->  	}
->  	dev_set_drvdata(&edev->dev, edev);
+> None of these patches include patch tags since none were provided in the 
+> discussion. I have proposed patch trailers on the individual patches.  
+> Please take a look and let me know if that's fine.
+> 
+> I tested this lightly with nested guests as well and it is working fine 
+> for me.
 
-Firstly, I'm sorry that it my wrong review of patch[1].
-[1] https://patchwork.kernel.org/project/linux-pm/patch/20250907113302.3353584-1-kaushlendra.kumar@intel.com/
+Sean, Paolo,
+Any feedback on this - can you please take a look?
 
-As you mentioned, the above patch[1] doesn't be necessary.
 
-Instead of applying your patch, I'll drop the patch[1].
-I'm sorry to make the confusion.
-
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Thanks,
+Naveen
 
 
