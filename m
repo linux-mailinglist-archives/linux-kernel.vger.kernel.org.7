@@ -1,126 +1,182 @@
-Return-Path: <linux-kernel+bounces-808352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7E8B4FEAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D05B4FEB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACEA1B25077
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFD6361472
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DE72DF703;
-	Tue,  9 Sep 2025 14:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WSxzIayO"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB592F83C5;
+	Tue,  9 Sep 2025 14:05:27 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7ED231836
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C7F219A8A;
+	Tue,  9 Sep 2025 14:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426701; cv=none; b=L6O6uNnNyWeU4m8i6uOnSL9bjnWACa7lVE56UvDJKkTF3rAWSobY0ZJ9yf4h1E/4DVMaNTXkOFVYNdJT3BZifdoJNkpHK/118OLfEEFPEZo5exGvMJjVViwYhhnAGrG+6389YH/+bNrcOvrb+RPaNS46wJ1N4FqTKmNFjQre4WA=
+	t=1757426727; cv=none; b=Nbid1huvmeec1LUsvBhXbrbbRcysRQXgqRu7c0+6Y3C3gaAkZCXe84993WzTRpOVTSjifS+GQp1kRuncSWG4Ivi/iVeJ9MGhoW2nYEjgphXv+zqL5G6N6NcOkrgiJOXWm//fGgVzXDOYQg3InkYKEdvVuNUgaPXBa8yG7QokvPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426701; c=relaxed/simple;
-	bh=2mB0x9tUEIQ5MxbhPdxec5L9gQv7/jA9btpwr+y5T4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kilml8GQGO5LXwxAMZoii9xexXWQ92z0GnE4AsEFLTFYiUXLQODMgr46LagRRuyeaAvktfp0/SwQYxj0Un7kXbGzF8zEfeKDQMqktnJ+7eIEpxJqtHWbCgmQCe1PFDf+MzV6izll48YoW2nY0T09GHnkI3GPCIIEAYN5bynwJqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WSxzIayO; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b5ed9d7e96so39066561cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757426699; x=1758031499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oe3MS4NWrw5pSnT/UHkzhsJzbgIdx98+KXeSp06EODM=;
-        b=WSxzIayO3nGzNEwh4j0iQ5k9SXm9ibsrfH/kPY/2YxCBz0/Hf+rQJmlZAozyIzgF+H
-         CCA3OQ75cvinG12oBsQ6f81kdrZ/gKHp6+l4qjOWfS9z2gcBG/L078bBYsBbcLDT+X4Y
-         LfpTkau9QZjvzzuNNJvA5hZ3Rp6UMJGSZwamyJ8B+p63uYK4qn9WZ8ZvAhFP3nnryqIi
-         hlxiDyeBUA6R6iH6jBbwE530iBHJJXGmUJQhlfaopXbjZ2rMEt2Uwqnj6YB4tauBAd4D
-         N02BIO3F/3GMNFGHSkAQ1C/7pZFSN8qa4WKPw06naLQbefGDQCqBZrLCeM8OZpLEol9f
-         jxqw==
+	s=arc-20240116; t=1757426727; c=relaxed/simple;
+	bh=Ef/o63fa0masGVW6LXLDrfhVG0E3d9qRlWy+TXcJK/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJGbOS17g6GCaJTZ1tH4IMyl5Gj7HtGTAPnySPd7LNPjzJabPkDIrL+aiAQbhqgpulhlOiWXYTyz/E76T65lo3INsQPHzmt5tjUUbs1TlkbKJwQGkFh0axyHSB8mJJPe89XGqgPmrMje8ztparWuOLc5maZF3H1HOPWH15StSYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0449b1b56eso830188666b.1;
+        Tue, 09 Sep 2025 07:05:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426699; x=1758031499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oe3MS4NWrw5pSnT/UHkzhsJzbgIdx98+KXeSp06EODM=;
-        b=N8GhRd0qM47/g5CbP8UpklAyx53enaI9GXk9LTeY53fgqvBuYvO7mK1E8ClxQ9uwzX
-         ouHgv0rOh7LYOd5nreYylRNi/HoSUClUgfsnFX+cBUcJ1UBWmhACYVh772vXISQHG4EJ
-         SAbL7eiS8QFRfbqgtY0f0u/IFojll9OjRXNJ/8AlfhE3m6OYpGiGuv+OMxIIEuq2KUd7
-         aaLsA7dA1r415fOo2QRRG8HLuAO+W61dcTZMlimWrGpFJCoumLEEJiR6ghStZDu+41oa
-         ElcuP2xRwynXG29udfbQiM80IRRdIEao+La5/qlui4bx49byxtjU11b8FyH3E8jlYOyS
-         I8Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxWNxRVQCLVtAnGbfkVV27hgBZY31nDVapTaZnhDLciddlu3YwkAPjI4nVfh3Gk6vj6aJMXZm3OeRo3W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPRbGD7UlWJ0O9FkR1HJw5uIhvl5kxwVIaIy+3IKiDPZGcf/bN
-	xeXzZ6T8ixMTct1Ns4yKdMcgx5z2oshy/7rsr6r0ZnKb8+ahO/eQ4AAMxUxBX6AGSv4CUc7uyTT
-	G+m6yjzAee6ShFzRhoQVwi5NwYpHWnWQ6rTNvOGCW
-X-Gm-Gg: ASbGncu7dS7UJQqKuz4aIWM7Jj2Rk3R0ZOXy9LE39Y62na8HT5+oWowCIJHScUloQle
-	bJKFpPawqULh9ZE+AKlW7ImJJtiVwy0jdyeO3dorPAXLlihpfeME2D5b3v+tGVvp9aXBJaAl69P
-	zEde9g7so6gODP8QOM4VS6aO6qcXwzU/hmgIO4FRCbHRXSNABEbhCYxIGXSpIx8basQBPfMNRsx
-	yTkTsjJXjs6o0Kxan+rQBr/078ebD9fEDWebOzB8RL1if/i
-X-Google-Smtp-Source: AGHT+IEEJs5ATIhb/+q+aJw0Fa+x8WJDtjNWkOr2z/Gq3RIHYs/0Zof9ATeSU5qk43EzE1eKqSxCu5/hSladqbzUtB8=
-X-Received: by 2002:a05:622a:1:b0:4b3:4e8e:9e32 with SMTP id
- d75a77b69052e-4b5f8382644mr139813601cf.3.1757426696511; Tue, 09 Sep 2025
- 07:04:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757426724; x=1758031524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vqchANUIGE/sj6VRIfAwwJ44T5VmasDpNHPpYvqds6g=;
+        b=hKZR/rxZaBbGcm6530GkqbTrDQfrwPOyStD2PoiMGOT0PqLy3i3DYyk9Zl8sZc5VJO
+         cLn7RZx8l6DGQFRDOlUo9uMp7sw2Gv8yOtLeK8XjnuVxMmIyz9BxgLjiDhrxrJLqiOYi
+         IrOYLCGL280WC1HO3VpTK4euZp1tYihz1KZYxnhbNzdGJjqerpBzS2znPQEL9IEFoAsD
+         UbILmwOj1Zd+U2WiISaZDHuqd8oHSGnLNoenr4O+MFD/XsyskhyBUvEYQSVfoLsNIme/
+         SOlz4y4gk86sgKU9EALOUTFZjNthG9W6FjQtmC42mGwBKESMzfFI9XIrjgfNXqtvQumw
+         YbNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcfxYOPAmj1k0gbBHDEn+x+lJmfQlxJtUNc8dr6j4n6VdDwo33d1LYGoqpVXVAngbsxtT7jsOI@vger.kernel.org, AJvYcCVo2m7+AtHUPXF8RAwVmMAzQWYIMPDhtBWRwnK5nvqp8BvsNNL/LM8mIiKOoJUhScs2SovBulbVVyKA6Zo=@vger.kernel.org, AJvYcCW74FKMmJKBw3qI+SqrSA+c7kukPb3/5yqdCGItTVBIizqL1ncifP2JrlgHAT4cDs+BZuM2Zyz9@vger.kernel.org, AJvYcCWY7V4lVj/8AjxQGcrcHp8euJwy39H+ZHnKSVuwsOyuKevL1hkaNMp25I9ySoSHMEcYpgSNU9oLvTJb8f9KyLpl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc6sscIHnU5f1uzBs1Esq5Abujfyf82G5YP+5d+IWHrgIAshFW
+	P91mcTgxvlkQryVt0M7HVDTSG0dGWW/18RnQoBueC8PIQvryUBIhwGoP
+X-Gm-Gg: ASbGnctt6UDgVCf7K6m8U1KvM3oGvzuImXyFdPY1TxWHWf2Vcrq5EFessZWC6eE8I+w
+	L0+MCmIxusUQEfDXNBkTw13BTcZu4xkVarj7MHAv4lvA65Hu47yHysUGMntCKzsx+tUb4xGLQCy
+	YADTo3JZZp6z3gC/7BYIT4kLkF5FBLV6vwuCW/kGKfYybIh+HkIPR3WxeBKF2uxJ3mH0AOObc0U
+	k4ITpS3BohelWV73ry6UrysNcghuYSIi+8p1EZ/NCBpneuBOZSMEdpvH09DkPW5dGY1dTdOiOH/
+	/PYRiqZQM4LkEv7InZSZhALfAYRO0Fk3BzxnfemKEMrUsHkD4P7+R2H6FrHJZHu4K161BJo8JGA
+	FCowl58NSGaSMFZ44yEs9Fm+u
+X-Google-Smtp-Source: AGHT+IGhqT2I7DdCypovpU7ZJAPVGBYA2DJkn7hBqzx4iz5C75D/6jcLz61ZT4q4xwwX5sS3AHf/aA==
+X-Received: by 2002:a17:907:25c6:b0:b04:5895:fe8e with SMTP id a640c23a62f3a-b04b16c4aa5mr1005811966b.36.1757426723359;
+        Tue, 09 Sep 2025 07:05:23 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b042fcae867sm2062997366b.58.2025.09.09.07.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 07:05:22 -0700 (PDT)
+Date: Tue, 9 Sep 2025 07:05:20 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Simon Horman <horms@kernel.org>, david decotigny <decot@googlers.com>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	asantostc@gmail.com, efault@gmx.de, kernel-team@meta.com, stable@vger.kernel.org, 
+	jv@jvosburgh.net
+Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
+ causing incorrect cleanup
+Message-ID: <frxhoevr2fd4rdkhiix4z2agnqaglf4ho2rj6p6ncjwmseplg7@gknjhh23px4o>
+References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
+ <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+ <aL9A3JDyx3TxAzLf@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909132243.1327024-1-edumazet@google.com> <20250909132936.GA1460@redhat.com>
-In-Reply-To: <20250909132936.GA1460@redhat.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 9 Sep 2025 07:04:45 -0700
-X-Gm-Features: Ac12FXyw6AFwM8QYIvqrqv7UIhW5n9GY5UElWWm_-QForGN8qFcrvQqZyLC1MGI
-Message-ID: <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
-Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
-To: "Richard W.M. Jones" <rjones@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <eric.dumazet@gmail.com>, 
-	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
-	Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
-	linux-block@vger.kernel.org, nbd@other.debian.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aL9A3JDyx3TxAzLf@mozart.vkv.me>
 
-On Tue, Sep 9, 2025 at 6:32=E2=80=AFAM Richard W.M. Jones <rjones@redhat.co=
-m> wrote:
->
-> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
-> > Recently, syzbot started to abuse NBD with all kinds of sockets.
-> >
-> > Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
-> > made sure the socket supported a shutdown() method.
-> >
-> > Explicitely accept TCP and UNIX stream sockets.
->
-> I'm not clear what the actual problem is, but I will say that libnbd &
-> nbdkit (which are another NBD client & server, interoperable with the
-> kernel) we support and use NBD over vsock[1].  And we could support
-> NBD over pretty much any stream socket (Infiniband?) [2].
->
-> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
->     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
-> [2] https://libguestfs.org/nbd_connect_socket.3.html
->
-> TCP and Unix domain sockets are by far the most widely used, but I
-> don't think it's fair to exclude other socket types.
+On Mon, Sep 08, 2025 at 01:47:24PM -0700, Calvin Owens wrote:
+> On Friday 09/05 at 10:25 -0700, Breno Leitao wrote:
+> > commit efa95b01da18 ("netpoll: fix use after free") incorrectly
+> > ignored the refcount and prematurely set dev->npinfo to NULL during
+> > netpoll cleanup, leading to improper behavior and memory leaks.
+> > 
+> > Scenario causing lack of proper cleanup:
+> > 
+> > 1) A netpoll is associated with a NIC (e.g., eth0) and netdev->npinfo is
+> >    allocated, and refcnt = 1
+> >    - Keep in mind that npinfo is shared among all netpoll instances. In
+> >      this case, there is just one.
+> > 
+> > 2) Another netpoll is also associated with the same NIC and
+> >    npinfo->refcnt += 1.
+> >    - Now dev->npinfo->refcnt = 2;
+> >    - There is just one npinfo associated to the netdev.
+> > 
+> > 3) When the first netpolls goes to clean up:
+> >    - The first cleanup succeeds and clears np->dev->npinfo, ignoring
+> >      refcnt.
+> >      - It basically calls `RCU_INIT_POINTER(np->dev->npinfo, NULL);`
+> >    - Set dev->npinfo = NULL, without proper cleanup
+> >    - No ->ndo_netpoll_cleanup() is either called
+> > 
+> > 4) Now the second target tries to clean up
+> >    - The second cleanup fails because np->dev->npinfo is already NULL.
+> >      * In this case, ops->ndo_netpoll_cleanup() was never called, and
+> >        the skb pool is not cleaned as well (for the second netpoll
+> >        instance)
+> >   - This leaks npinfo and skbpool skbs, which is clearly reported by
+> >     kmemleak.
+> > 
+> > Revert commit efa95b01da18 ("netpoll: fix use after free") and adds
+> > clarifying comments emphasizing that npinfo cleanup should only happen
+> > once the refcount reaches zero, ensuring stable and correct netpoll
+> > behavior.
+> 
+> This makes sense to me.
+> 
+> Just curious, did you try the original OOPS reproducer?
+> https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/
 
-If we have known and supported socket types, please send a patch to add the=
-m.
+Yes, but I have not been able to reproduce the problem at all.
+I've have tested it using netdevsim, and here is a quick log of what I
+run:
 
-I asked the question last week and got nothing about vsock or other types.
+	+ modprobe netconsole
+	+ modprobe bonding mode=4
+	[   86.540950] Warning: miimon must be specified, otherwise bonding will not detect link failure, speed and duplex which are essential for 802.3ad operation
+	[   86.541617] Forcing miimon to 100msec
+	[   86.541893] MII link monitoring set to 100 ms
+	+ echo +bond0
+	[   86.547802] bonding: bond0 is being created...
+	+ ifconfig bond0 192.168.56.3 up
+	+ mkdir /sys/kernel/config/netconsole/blah
+	+ echo 0
+	[   86.614772] netconsole: network logging has already stopped
+	./run.sh: line 19: echo: write error: Invalid argument
+	+ echo bond0
+	+ echo 192.168.56.42
+	+ echo 1
+	[   86.622318] netconsole: netconsole: local port 6665
+	[   86.622550] netconsole: netconsole: local IPv4 address 0.0.0.0
+	[   86.622819] netconsole: netconsole: interface name 'bond0'
+	[   86.623038] netconsole: netconsole: local ethernet address '00:00:00:00:00:00'
+	[   86.623466] netconsole: netconsole: remote port 6666
+	[   86.623675] netconsole: netconsole: remote IPv4 address 192.168.56.42
+	[   86.623924] netconsole: netconsole: remote ethernet address ff:ff:ff:ff:ff:ff
+	[   86.624264] netpoll: netconsole: local IP 192.168.56.3
+	[   86.643174] netconsole: network logging started
+	+ ifenslave bond0 eth1
+	[   86.659899] bond0: (slave eth1): Enslaving as a backup interface with a down link
+	+ ifenslave bond0 eth2
+	[   86.687630] bond0: (slave eth2): Enslaving as a backup interface with a down link
+	+ sleep 3
+	+ ifenslave -d bond0 eth1
+	[   89.735701] bond0: (slave eth1): Releasing backup interface
+	[   89.737239] bond0: (slave eth1): the permanent HWaddr of slave - 06:44:84:94:87:c7 - is still in use by bond - set the HWaddr of slave to a different address to avoid conflicts
+	+ sleep 1
+	+ echo -bond0
+	[   90.798676] bonding: bond0 is being deleted...
+	[   90.815595] netconsole: network logging stopped on interface bond0 as it unregistered
+	[   90.816416] bond0 (unregistering): (slave eth2): Releasing backup interface
+	[   90.863054] bond0 (unregistering): Released all slaves
+	+ ls -lR /
+	+ tail -30
+	<snip>
 
-https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQ=
-s_kZoBA@mail.gmail.com/
-
-For sure, we do not want datagram sockets, RAW, netlink, and many others.
+	+ echo +bond0
+	./run.sh: line 39: /sys/class/net/bonding_masters: Permission denied
+	+ ifconfig bond0 192.168.56.3 up
+	SIOCSIFADDR: No such device
+	bond0: ERROR while getting interface flags: No such device
+	bond0: ERROR while
 
