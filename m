@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-807593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854EAB4A69E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78470B4A6BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9437B23B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEF44E7749
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E922773E4;
-	Tue,  9 Sep 2025 09:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgpIdyA/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A036D279327;
+	Tue,  9 Sep 2025 09:07:08 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7951A4E70;
-	Tue,  9 Sep 2025 09:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D32276045;
+	Tue,  9 Sep 2025 09:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408789; cv=none; b=VOsVJL1qR+8Z4/BvV0CMY7gRUOKUzgL75A9uW19W+qMi66Do3+/PoZn4l91+kSQAQ79rNDDRP19eFiFR1iA6PG6aq8f6f3PJwQzFbIRXlnG47K9nO+SvujdMA37LKzakQfwLv1b4WHSqKyKy7aj7rTvR2xTif6iADCrEwlPlAY4=
+	t=1757408828; cv=none; b=Xu2HjlEwlL0Rw+wJ8wLCsOc9AWoTYbhwfBVGkOUoWFhKUajxY2jGYO3VHgGpApDngDi/4H9KnuJ5qOTg05tqM5uVOyGZh5LoopuUe+IozxedWfpuehTt8yot6wzGbP+DCZgbRYYVcGUxs1TcUz1rZ11mTlsGX/fXbbIpyEwHEKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408789; c=relaxed/simple;
-	bh=7KHRyNXulEzV5xfA0DTLR93wZhedtS6U0W/OgCRxzTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTHeZrTL9rsbHgW3joBwov/tyAWHVvCpQQvcmHjkwv+WI3kvMA2qxfQsErKogAPG7HGRLmwk17wr4v5fgJXQ/i9IySiv7Giaf2Asi0/5xsRrRxaOdbdFmimzZ1duteiGyxrL2onl5hszwst9fKl1CV2YNmz0u9xBUWEWHYD084I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgpIdyA/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0263CC4CEF5;
-	Tue,  9 Sep 2025 09:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757408788;
-	bh=7KHRyNXulEzV5xfA0DTLR93wZhedtS6U0W/OgCRxzTo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YgpIdyA/7SeKJXe88JKdL+8cKRhcsDkqKgcop6CyNabiQH1IoGUGWwnhISrzq+ATK
-	 iw+a1kLwmrkdfoCl+Y3T4dFzQ8PiQC7YrA26Lp4HvdqoN2LU+n3Yoi0MtMBGjkeea2
-	 ohKhJtF5gy9ML01DyQtxo78OqfDTX/OtsszEzisC5gbN6zhA4mh5be1PK6inzH7n/n
-	 rmL1ylDc4WnEFZK9RumjHEvr/qFuHAbGJLE5xzf+fbRiKWYGDO4XzmzyUrtIezcjJc
-	 1Iv9IyF4uuYyhVUnsSMAOlvNmC0VKCUpivKwootXbR+ghdD42K7rqLJ4UQPM4rTMvI
-	 LhJpZ1LEvqxdw==
-Message-ID: <98871c1b-7183-4a08-a5ea-9fa5c91c6777@kernel.org>
-Date: Tue, 9 Sep 2025 11:06:21 +0200
+	s=arc-20240116; t=1757408828; c=relaxed/simple;
+	bh=0QH6QecDNOEpsUEXikxA+wNaL2GabRTSIitOEvyRCn8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pGSfK/3bBNN06aIWYCz4WQLlWuN8GZKiXmgQgkHfpOk54K9uAy3u4UrIqvxgJEcQeWasfaDzfOyXgu/F+1KbX26/2zYTG9QFqmipqi0SyoB7Xd20KI9VrbH51i5gtC0PKdGNwX2ddPuo41/zw5a6W1c+BNT4J5X05P4m8VgveKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cLdH210r7zYl3P3;
+	Tue,  9 Sep 2025 17:06:38 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
+ 2025 17:07:03 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
+ 2025 17:07:03 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <rientjes@google.com>, <shakeel.butt@linux.dev>,
+	<akpm@linux-foundation.org>, <tglx@linutronix.de>, <liam.howlett@oracle.com>,
+	<lorenzo.stoakes@oracle.com>, <surenb@google.com>, <lenb@kernel.org>,
+	<rafael@kernel.org>, <pavel@kernel.org>, <linux-mm@kvack.org>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, <zhongjinji@honor.com>
+Subject: [PATCH v8 0/3] Improvements to Victim Process Thawing and OOM Reaper Traversal Order
+Date: Tue, 9 Sep 2025 17:06:56 +0800
+Message-ID: <20250909090659.26400-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: leds: commonize leds property
-To: Rob Herring <robh@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Aleksandrs Vinarskis <alex@vinarskis.com>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
- Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Thompson <daniel.thompson@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250908-leds-v3-0-5944dc400668@vinarskis.com>
- <20250908-leds-v3-2-5944dc400668@vinarskis.com>
- <0e030e7d-0a1a-4a00-ba18-ed26107d07fa@oss.qualcomm.com>
- <046b289d-b6a5-45f9-88b1-090e2ab7c95d@kernel.org>
- <39b955b9-a152-458a-8e09-908efebaaccd@oss.qualcomm.com>
- <20250908222247.GA1943768-robh@kernel.org>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20250908222247.GA1943768-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
+ (10.68.17.250)
 
-Hi,
+This patch series focuses on optimizing victim process thawing and refining
+the traversal order of the OOM reaper. Since __thaw_task is used to thaw a
+single thread of the victim, thawing only one thread cannot guarantee the
+exit of the OOM victim when it is frozen. Patch 1 and patch 2 thaw the entire
+process of the OOM victim to ensure that OOM victims are able to terminate
+themselves. Even if the oom_reaper is delayed, patch 3 is still beneficial
+for reaping processes with a large address space footprint, and it also
+greatly improves process_mrelease.
 
-On 9-Sep-25 12:22 AM, Rob Herring wrote:
-> On Mon, Sep 08, 2025 at 09:36:39AM +0200, Konrad Dybcio wrote:
->> On 9/8/25 9:33 AM, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 8-Sep-25 09:20, Konrad Dybcio wrote:
->>>> On 9/8/25 1:18 AM, Aleksandrs Vinarskis wrote:
->>>>> A number of existing schemas use 'leds' property to provide
->>>>> phandle-array of LED(s) to the consumer. Additionally, with the
->>>>> upcoming privacy-led support in device-tree, v4l2 subnode could be a
->>>>> LED consumer, meaning that all camera sensors should support 'leds'
->>>>> and 'led-names' property via common 'video-interface-devices.yaml'.
->>>>>
->>>>> To avoid dublication, commonize 'leds' property from existing schemas
->>>>> to newly introduced 'led-consumer.yaml'.
->>>>>
->>>>> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
->>>>> ---
->>>>
->>>> [...]
->>>>
->>>>>  
->>>>> +  leds:
->>>>> +    minItems: 1
->>>>> +    maxItems: 1
->>>>
->>>> My brain compiler suggests this will throw a warning (minItems should
->>>> be redundant in this case)
->>>>> +
->>>>> +  led-names:
->>>>> +    enum:
->>>>> +      - privacy-led
->>>>
->>>> Nit: "privacy" makes more sense without the suffix, as we inherently
->>>> know this is supposed to be an LED
->>>
->>> Note "privacy-led" as name is already used on the x86/ACPI side and
->>> the code consuming this will be shared.
->>>
->>> With that said if there is a strong preference for going with just
->>> "privacy" the x86 side can be adjusted since the provider-info is
->>> generated through a LED lookup table on the x86/ACPI side. So we can
->>> just modify both the lookup table generation as well as the already
->>> existing led_get(dev, "privacy-led") call to use just "privacy"
->>> without problems.
->>
->> In that case, it may be cleaner to just go with what we have today
->> (unless the dt maintainers have stronger opinions)
-> 
-> Well, I do, but I guess it's fine. Please don't add the suffix on the 
-> rest and add a comment for why it's there.
+---
+v7 -> v8:
+- Introduce thaw_oom_process() for thawing OOM victims. [12]
+- Use RCU protection for thread traversal in thaw_oom_process.
 
-Dropping the "-led" suffix on the ACPI side really is no big deal,
-so if we don't want the suffix it is probably best to also drop
-it for "privacy-led" rather then setting a bad example to be
-copy and pasted.
+v6 -> v7:
+- Thawing the victim process to ensure that it can terminate on its own. [10]
+- Since the delay reaper is no longer skipped, I'm not sure whether patch 2
+  will still be accepted. Revise the Changelog for patch 2. [11]
+- Remove report tags
 
-Regards,
+v5 -> v6:
+- Use mas_for_each_rev() for VMA traversal [6]
+- Simplify the judgment of whether to delay in queue_oom_reaper() [7]
+- Refine changelog to better capture the essence of the changes [8]
+- Use READ_ONCE(tsk->frozen) instead of checking mm and additional
+  checks inside for_each_process(), as it is sufficient [9]
+- Add report tags because fengbaopeng and tianxiaobin reported the
+  high load issue of the reaper
 
-Hans
+v4 -> v5:
+- Detect frozen state directly, avoid special futex handling. [3]
+- Use mas_find_rev() for VMA traversal to avoid skipping entries. [4]
+- Only check should_delay_oom_reap() in queue_oom_reaper(). [5]
 
+v3 -> v4:
+- Renamed functions and parameters for clarity. [2]
+- Added should_delay_oom_reap() for OOM reap decisions.
+- Traverse maple tree in reverse for improved behavior.
+
+v2 -> v3:
+- Fixed Subject prefix error.
+
+v1 -> v2:
+- Check robust_list for all threads, not just one. [1]
+
+Reference:
+[1] https://lore.kernel.org/linux-mm/u3mepw3oxj7cywezna4v72y2hvyc7bafkmsbirsbfuf34zpa7c@b23sc3rvp2gp/
+[2] https://lore.kernel.org/linux-mm/87cy99g3k6.ffs@tglx/
+[3] https://lore.kernel.org/linux-mm/aKRWtjRhE_HgFlp2@tiehlicka/
+[4] https://lore.kernel.org/linux-mm/26larxehoe3a627s4fxsqghriwctays4opm4hhme3uk7ybjc5r@pmwh4s4yv7lm/
+[5] https://lore.kernel.org/linux-mm/d5013a33-c08a-44c5-a67f-9dc8fd73c969@lucifer.local/
+[6] https://lore.kernel.org/linux-mm/nwh7gegmvoisbxlsfwslobpbqku376uxdj2z32owkbftvozt3x@4dfet73fh2yy/
+[7] https://lore.kernel.org/linux-mm/af4edeaf-d3c9-46a9-a300-dbaf5936e7d6@lucifer.local/
+[8] https://lore.kernel.org/linux-mm/aK71W1ITmC_4I_RY@tiehlicka/
+[9] https://lore.kernel.org/linux-mm/jzzdeczuyraup2zrspl6b74muf3bly2a3acejfftcldfmz4ekk@s5mcbeim34my/
+[10] https://lore.kernel.org/linux-mm/aLWmf6qZHTA0hMpU@tiehlicka/
+[11] https://lore.kernel.org/linux-mm/aLVOICSkyvVRKD94@tiehlicka/
+[12] https://lore.kernel.org/linux-mm/aLg0QZQ5kXNJgDMF@tiehlicka/
+
+The earlier post:
+v7: https://lore.kernel.org/linux-mm/20250903092729.10611-1-zhongjinji@honor.com/
+v6: https://lore.kernel.org/linux-mm/20250829065550.29571-1-zhongjinji@honor.com/
+v5: https://lore.kernel.org/linux-mm/20250825133855.30229-1-zhongjinji@honor.com/
+v4: https://lore.kernel.org/linux-mm/20250814135555.17493-1-zhongjinji@honor.com/
+v3: https://lore.kernel.org/linux-mm/20250804030341.18619-1-zhongjinji@honor.com/
+v2: https://lore.kernel.org/linux-mm/20250801153649.23244-1-zhongjinji@honor.com/
+v1: https://lore.kernel.org/linux-mm/20250731102904.8615-1-zhongjinji@honor.com/
+
+zhongjinji (3):
+  mm/oom_kill: Introduce thaw_oom_process() for thawing OOM victims
+  mm/oom_kill: Thaw the entire OOM victim process
+  mm/oom_kill: OOM reaper walks VMA maple tree in reverse order
+
+ include/linux/freezer.h |  2 ++
+ kernel/freezer.c        | 19 +++++++++++++++++++
+ mm/oom_kill.c           | 16 +++++++++++-----
+ 3 files changed, 32 insertions(+), 5 deletions(-)
+
+-- 
+2.17.1
 
 
