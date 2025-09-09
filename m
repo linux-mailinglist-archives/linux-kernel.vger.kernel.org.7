@@ -1,174 +1,195 @@
-Return-Path: <linux-kernel+bounces-808239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49822B4FCB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0717AB4FCB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC66F4E4323
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0270F1BC816B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB833340D8F;
-	Tue,  9 Sep 2025 13:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FD340DA1;
+	Tue,  9 Sep 2025 13:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yX0NCeeV"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrW7QQry"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4BE21FF39
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4FA337687;
+	Tue,  9 Sep 2025 13:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424268; cv=none; b=jHAO0I7DTDyyeAKiwHDQiivnc3T9znBhCkMHFV1AqtXbkJ953zBR8Q3bEsM0nYwiBflaw0/4GkU7ODrbe93vgO/gtjtqFdc1sVzRfeebg3yCufJWY9LEOq/ab0l9bXsnkaP8d6Qy+muoex30gw+O3fW0QaGVoqriArRwDFLHI5c=
+	t=1757424282; cv=none; b=d2exVYFzgdyZemr+UP64CP591qOB76k1TupoxVVPpePMSOySbVpDCL7CpzNkJ2IkHYP4yJzlmoaQHkpy+hjkOl2Hudmv4c2k5nXihcD/lAQHjFUx3wTC+k8xmafso+1IbwWdzxPDe9j2uG0MZWbL7WN6Gz2eNAboium3SeENqYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424268; c=relaxed/simple;
-	bh=aL39VkMmivSGMWcKiJqE5dHy96jTtUDz0EmE+LQfAVc=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiyQFsjrzgQQwdRuJuc3S04NjJiSaneA/wQa7Pka3OyyyJFk10rhvJN0PgU2rA5i3IuDX8Jgmydb9JydVi3yHbGnHdH8a5ahE0wTAjI/Zc9QnkeyfBm05ReLccVJQDL8BJcCMOLjciBzD1SUZ1Hc4FJo96tCr2DwrYOqEY7PY4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yX0NCeeV; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-336d3e4df3eso44287121fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:24:26 -0700 (PDT)
+	s=arc-20240116; t=1757424282; c=relaxed/simple;
+	bh=fpsjqqNDSQjgsDI+nQ5ZcLwqq0EdVpOkXCEPydJUMJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uZPuO1WJlQw1b3kfZG6cUIUx8eOiRYyIVogzp7XuWuEAz/0W1yxO1ox6yIbfoqEiyGWYSu62P1G7nDn2gEZwqETDiAXYh4M8DmzhaPHDz4bj7dPlEka5cAZKYHSHqRv+kLnWihxR+S9edw2zZ6diGCyoAoGp97TVwSf2AYLDESI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrW7QQry; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso2684878a12.1;
+        Tue, 09 Sep 2025 06:24:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757424265; x=1758029065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HhvoYavio6XW9UGp4dKzH+wlvXL0CQx3DgO+74W6ths=;
-        b=yX0NCeeVUA047Wwl9BBnoW3hMITaa7MVngj5UvwE1WL7NK0lufp4cO5pzquYqyxm4l
-         9CoMz7H8fZ545hvMiUNd+gOGxPWcoYTCMEmaqqjtE3u4YW4v7RXIKgnQqCM25MI6SJd1
-         BIDbag6ybU/9bIDZ00gSeG28gEmO5/Bvld/2qpua6JtnEVT1baNYqw6r3FrO+PGu6pKT
-         YfME2aA4uFssH0bKZGaNZkrKcXopMBiqB40PgPs2l1UwlsR8JfidLuncgLOlGBCwFE+2
-         XzI6pFfDGg2wWSMI+sIr1bCRepwE2iMnNfR/dHBbe6pwx0E8zW+nyNPYFMB2ssckbHeE
-         2t+g==
+        d=gmail.com; s=20230601; t=1757424279; x=1758029079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9W4mhSrPI67T8KA1IekV94x2JuZ4WwTJiWrQXPvqhRU=;
+        b=lrW7QQryGLAteT86YVnv0+0mjsCEVJDMLgZTpsiBPHc8rUqxxo356s2gfoJn92xMS0
+         Kb4YHS8KmBLBS9psrMEKDhVMQ1CMLByVRgGMexdm5CuK4JFMiNuvfPf4JXDDpsrtoqF2
+         7twevgQZqD+qEX2Yhp+WMj2THQ49hOQ5OAJZN6mQigrkJLO5apuSvOzuEgwZg/nfQq7I
+         ID9kpQeM8frISknSYec1ZVBb+oLLB6Pj5npnoirtB4glAFSWr9HvSTpXFWgrWmmsMq4D
+         ZYaLNCyoo1HlXfcE2MwauMeKnXeGpjhn4K8mjZRytDLMUJfK6EKKSkBtzKPC6Kyf76uB
+         LORg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424265; x=1758029065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HhvoYavio6XW9UGp4dKzH+wlvXL0CQx3DgO+74W6ths=;
-        b=sE5HontscN/LMT8N094YEU4w28AN+Y9ofRSeqoTroJAud/nUCPJkYPWZmfOYZ5fb0A
-         opgQg4a14AFVkqI2+QaRu673urbc+hynjKQES8yn+vDvYBF0XJlmE5u32nsCgKjjO4OU
-         bfoGmLUYYMs/1mb+T0gJHT+DilgF+UvYlL0+FZ5MnubFv8HYkJXS5dpZwkWu6lptwxBy
-         gKmCL1L/HxyX3aNyMgiDM/XDgGRlvNT4j4ovuqW05Xk/LEkWcImfEd4mcBzVEhPJ5w+h
-         498ZgXCcSjsiUeGnmqBDD0HlOvM7Poyu9GIFDrpw2y/Hee4Xl/PS7yCt9KL0/wOWHcTv
-         SG6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWgEa6dkcjy7kq8BxJE5Kp5kLszz3VP7o/MM4RYKQEdG59DX2KTdyWOVEi5aLvaZJuN1CRkmlFXsm7R8YU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSxtRgDvpsYRnt+QpGDWGxRyhJCTTSLaVUY/95fTf7nWKwC033
-	85dkmXg4USA4ooJ7XWpjdI0AtwZsgiOVgERH0qPigyfBsioek7ZvJc8xsERwMZZ7hJse/pMpWlA
-	B3wBxExpdxM7vPcb68GMO2pnOvOOHyDSPelroEdUs/Q==
-X-Gm-Gg: ASbGncs3L6zMxLmhJwGBsGFfprkQ075p/Qr7Asr95IdQYcxD+kt2HrsyUJR71v/6vGf
-	mjEZJ7PYnRHuVU13I5u8lY8+vacSYBYOdqY1Zrukno4YNjY6M9R9xLt1pI7Bxi3HLLUdTNF4qXX
-	89Ju87wKbScMja21uSXXt+CRAH39mnkMVuIvX5K2R0aN7sjxjAa7MMCUjjBr7dMZZSTyuUdSZ+t
-	Q06sZrmza8g36wKzSaqjvOo6uWooYIv9pTQi/U=
-X-Google-Smtp-Source: AGHT+IGqxpMTWwovk8l5WQ5dYhWUYy4ZcII/K/jrdWFPYe7kT1CZQHo3Y8LCGp8PKQqEA3qrGlITiYRoPcmLayU54qE=
-X-Received: by 2002:a05:651c:b12:b0:336:dd88:69e0 with SMTP id
- 38308e7fff4ca-33b57c39f8cmr32465971fa.29.1757424264537; Tue, 09 Sep 2025
- 06:24:24 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 9 Sep 2025 08:24:23 -0500
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 9 Sep 2025 08:24:23 -0500
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <aMAn4MM_Fs8q8qwj@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1757424279; x=1758029079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9W4mhSrPI67T8KA1IekV94x2JuZ4WwTJiWrQXPvqhRU=;
+        b=skF5DXQFE87k8qysbh4fH8jEOFNNOZTCDIdQ/LWAF71ro4ijSwV5F/x7MkExRNsvJj
+         llNwLlB6lUfB+RUTowhqQUu5GGlfNiWiWOaOwEt5o/Ozk4rx2BNW8bo32zj/vaXito1a
+         P0S2r/FXyOSEIrkWNW09zHs3ooSR+gh1QwsN8zRMMzfcVgm+W0LvIbzIVN/snNTjcuhh
+         utyd3lNW06j3rs3TNqTp0ZRIbtlX0p3xgO79NhGF1VimQl1bWuETe8myi2CPA6KNJif4
+         LGHalM+Xwi1Ee0JiPEsFWUVC3KIJkKy9xRcok7lYndGQSo1WKD3l5DjN/dxYJDt+ZezJ
+         1z4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYZNl9S8cQ96To6phfxuQVSbUf816eRj8YnFBi0W///cOXlmGxtsSPpkEohfKTukefXbws0vO5lsUGb86L@vger.kernel.org, AJvYcCUihu/EAB0d1YByT9D/ka4mfQGOzwovHyDeoEfIxt3LKOhUsMUXpdvptFUSFXx3FszybgyIO5oB2LOxCJHE@vger.kernel.org, AJvYcCXqP40dE7jldv5sWFM4XvZt6oREKOxIwcj36ioyYaAnvcDYbXxhERTgVXfVBf1E+NuPVEqTcItoy2IBGW32L4adNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl8/JxYbwIWWieP9ejEGdXPQdoI9pdIp+gKrql8gI3WDllUcJE
+	MIWRSAA+3fHYYgtnGVb9rUcflIq1NTxa+o8iu1WHmyznO9BMHAOhC6BL+nGnYhnZIZE8IoRarLw
+	fM21g2MKxZxeNOZDnt7cFp9nyJXVuBtU=
+X-Gm-Gg: ASbGncsdpxdEhWgg8dxeOIEags+v4bDpaPzthbOquKSkl/9ln2QnrlTVXjG76Fdv0+Z
+	Ci3rh1XRX20dIZJTB4sDZcV6GEgw1qgFNOABOUsST3NyUqsFmKOyBhlMxIIE/pHc/Ke5ZY9dhD/
+	cBq+FQ+H2+f4O/SLg7Mor6PjxuxLX1OZEAw0d/uDHC+LT/Zm4J10lK5Cflt0n+34RjykRjs3MpP
+	6yWULI=
+X-Google-Smtp-Source: AGHT+IGl4XI+ZtmcJ1b64ZTNKqM1k+KAny9TAWMyaeqEg3Rym5eMWtwHDLAMkso27/WfxgPoUDSj8SfWefKhWoRlFZo=
+X-Received: by 2002:a05:6402:35c4:b0:625:6523:293a with SMTP id
+ 4fb4d7f45d1cf-62565232d22mr10065761a12.8.1757424278458; Tue, 09 Sep 2025
+ 06:24:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
- <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
- <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
- <aMAn4MM_Fs8q8qwj@smile.fi.intel.com>
-Date: Tue, 9 Sep 2025 08:24:23 -0500
-X-Gm-Features: Ac12FXwbBQSlPLH49oae8yjyXj1ugyDMbkjsHTtBWh1WBSZW49QTty0I4jg5ioo
-Message-ID: <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
-Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20250909124222.222945-1-adrian.hunter@intel.com> <20250909124222.222945-2-adrian.hunter@intel.com>
+In-Reply-To: <20250909124222.222945-2-adrian.hunter@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 9 Sep 2025 15:24:27 +0200
+X-Gm-Features: AS18NWC2CR_cImOupCNdStAa9jMaQbZXVOFvOPgo46BzjSbVk9_s0ewaVBBZPRQ
+Message-ID: <CAOQ4uxiNdXXvX6gRtNk6bg17ixoUMkeJ70N6hEHVtt1vQz=HOA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf/core: Fix address filter match with backing files
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 9 Sep 2025 15:13:04 +0200, Andy Shevchenko
-<andriy.shevchenko@intel.com> said:
-> On Tue, Sep 09, 2025 at 01:35:04PM +0200, Bartosz Golaszewski wrote:
->> On Tue, Sep 9, 2025 at 1:31=E2=80=AFPM Andy Shevchenko
->> <andriy.shevchenko@intel.com> wrote:
->> > On Tue, Sep 09, 2025 at 11:15:40AM +0200, Bartosz Golaszewski wrote:
+On Tue, Sep 9, 2025 at 2:42=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.c=
+om> wrote:
 >
-> ...
+> It was reported that Intel PT address filters do not work in Docker
+> containers.  That relates to the use of overlayfs.
 >
->> > > +     config =3D (typeof(config)){
->> >
->> > This looks unusual. Why can't properly formed compound literal be used=
- as in
->> > many other places in the kernel?
->>
->> It is correct C
+> overlayfs records the backing file in struct vm_area_struct vm_file,
+> instead of the user file that the user mmapped.  In order for an address
+> filter to match, it must compare to the user file inode.  There is an
+> existing helper file_user_inode() for that situation.
 >
-> If it compiles, it doesn't mean it's correct C, it might be non-standard.
-> Have you checked with the standard (note, I read that part in the past,
-> but I may forgot the details, so I don't know the answer to this)?
+> Use file_user_inode() instead of file_inode() to get the inode for addres=
+s
+> filter matching.
 >
+> Example:
+>
+>   Setup:
+>
+>     # cd /root
+>     # mkdir test ; cd test ; mkdir lower upper work merged
+>     # cp `which cat` lower
+>     # mount -t overlay overlay -olowerdir=3Dlower,upperdir=3Dupper,workdi=
+r=3Dwork merged
+>     # perf record --buildid-mmap -e intel_pt//u --filter 'filter * @ /roo=
+t/test/merged/cat' -- /root/test/merged/cat /proc/self/maps
+>     ...
+>     55d61d246000-55d61d2e1000 r-xp 00018000 00:1a 3418                   =
+    /root/test/merged/cat
+>     ...
+>     [ perf record: Woken up 1 times to write data ]
+>     [ perf record: Captured and wrote 0.015 MB perf.data ]
+>     # perf buildid-cache --add /root/test/merged/cat
+>
+>   Before:
+>
+>     Address filter does not match so there are no control flow packets
+>
+>     # perf script --itrace=3De
+>     # perf script --itrace=3Db | wc -l
+>     0
+>     # perf script -D | grep 'TIP.PGE' | wc -l
+>     0
+>     #
+>
+>   After:
+>
+>     Address filter does match so there are control flow packets
+>
+>     # perf script --itrace=3De
+>     # perf script --itrace=3Db | wc -l
+>     235
+>     # perf script -D | grep 'TIP.PGE' | wc -l
+>     57
+>     #
+>
+> With respect to stable kernels, overlayfs mmap function ovl_mmap() was
+> added in v4.19 but file_user_inode() was not added until v6.8 and never
+> back-ported to stable kernels.  FMODE_BACKING that it depends on was adde=
+d
+> in v6.5.  This issue has gone largely unnoticed, so back-porting before
+> v6.8 is probably not worth it,
 
-It's a GNU extension alright but it's supported in the kernel as it evaluat=
-es
-to a simple cast.
+Agreed.
 
->> and checkpatch doesn't raise any warnings.
+> so put 6.8 as the stable kernel prerequisite
+> version, although in practice the next long term kernel is 6.12.
 >
-> checkpatch is far from being useful in the questions like this.
-> It false positively complains for for_each*() macros all over
-> the kernel, for example.
->
->> It's the
->> same kind of argument as between kmalloc(sizeof(struct foo)) vs
->> kmalloc(sizeof(f)).
->
-> Maybe, but it introduces a new style while all other cases use the other,
-> _established_ style. So we have a precedent and the form the code is writ=
-ten
-> in is against the de facto usage of the compound literals.
->
+> Reported-by: Edd Barrett <edd@theunixzoo.co.uk>
+> Closes: https://lore.kernel.org/linux-perf-users/aBCwoq7w8ohBRQCh@fremen.=
+lan
+> Cc: stable@vger.kernel.org # 6.8
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 
-It may not be *very* common but it's hardly new style:
+Feel free to add
+Acked-by: Amir Goldstein <amir73il@gmail.com>
 
-$ git grep -P "\(typeof\(.*\)\) ?\{" | wc
-    108     529    7315
-
-Bart
-
->> I guess it's personal taste but I like this version better.
+> ---
+>  kernel/events/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> In kernel we also try to be consistent. This add inconsistency. Am I wron=
-g?
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index fb1eae762044..184f3dc7b03b 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -9492,7 +9492,7 @@ static bool perf_addr_filter_match(struct perf_addr=
+_filter *filter,
+>         if (!filter->path.dentry)
+>                 return false;
 >
->> > > +             .dev =3D &pdev->dev,
->> > > +             .sz =3D 4,
->> > > +             .dat =3D sd->gpio_pub_base + GPINR,
->> > > +             .set =3D sd->gpio_pub_base + GPOUTR,
->> > > +             .dirout =3D sd->gpio_pub_base + GPOER,
->> > > +     };
+> -       if (d_inode(filter->path.dentry) !=3D file_inode(file))
+> +       if (d_inode(filter->path.dentry) !=3D file_user_inode(file))
+>                 return false;
 >
+>         if (filter->offset > offset + size)
 > --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> 2.48.1
 >
 
