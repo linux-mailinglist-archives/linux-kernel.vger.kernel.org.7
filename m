@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-809115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D60B508D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22760B508E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC3914473D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB76E3BD299
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2867626D4D4;
-	Tue,  9 Sep 2025 22:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A5A25B1FF;
+	Tue,  9 Sep 2025 22:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZtb0/5W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CCdf1nNP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E7DDC3;
-	Tue,  9 Sep 2025 22:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A49131D398;
+	Tue,  9 Sep 2025 22:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757456419; cv=none; b=PXuOimzvuW41YrhzYfx14b12G5v6fhcFixzpN80Ia0YoVFk3HJjBiVUdWAWehbtsB9W4x8mb5wAzMQdpN3xXIsmvHswHHsDMkb77L7nYouABMwOwjj5pnTBIB6AprmZHMH2HTnda4kV7z1B9kngKbtp9jCdj8hxvhICVYdESgg0=
+	t=1757457072; cv=none; b=kJdGdUFDuNAb6brKQiurTxWxdeXcUWSHfuJvWUfHGuchZBVq4xQbEUKsafceNRr/VSnS/zGD0cWFJiUFKdBbveJjIKv54h+aJrDhIVh1IB2r2C4IfWVSOU0bU7Xmcb4NbAUNnrL7KSJbLPsMRn9K32i5Mq8aqk2Ay0u7sbA7CVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757456419; c=relaxed/simple;
-	bh=w6ygJ+jSHMHJMhXIICTvawWCkV2w+6vPGTpa2TzYJtk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Z+UJmpBK0N+jrk/RatmEGmB2bcy1V+m5aJUSzY1t2vSVjDUeot7QLT7/kJmH0ootdkipYZ2D8ATlWa5r1TtTELo9a7b0CJWCod+ugVxlBvqLW/0U5ucVPKCchs+e8H3Lu3KkTgvfbQufsbwQGofKCyc72a5t8bUhWKluVhEK4vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZtb0/5W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08422C4CEF7;
-	Tue,  9 Sep 2025 22:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757456418;
-	bh=w6ygJ+jSHMHJMhXIICTvawWCkV2w+6vPGTpa2TzYJtk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NZtb0/5WOnb/KEvMZHwNED7Fj2zz33s0KwVT4rSquWAELjM139tgThu+t4+iPiNV2
-	 7HYR7YYPCcUCwelLN8FpyaHG9WvdvR0mCKMxx22s/RW5zHLS8bu/tkyRSI5QfQVI6W
-	 DwZHcE4TFbCNCT4DnsyiC3urEj35cb52dH/Z7hAQx/cqCwMpxA2fqsPuCl8IhDjQvf
-	 +kJYAHWtIfBl2DUpcV5gCp844IlhCgsxFG3uhon1mF1oPuNan+4wLHfWBxHYiFmK2S
-	 lE4XTJO3LauvzI4zC/Y4P9I4aZLY15oCY6TxwHBsSXLifPpuoUrjoWBOAmLydQ2UfT
-	 vekjrdQtBJBFg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71617383BF69;
-	Tue,  9 Sep 2025 22:20:22 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757457072; c=relaxed/simple;
+	bh=Aq7rwhGw9BxmW8+v547+5vJ3prHg5vZthWMnGnkCICw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2l5ZWfhi7RTIlsLMSNDLL49PFGn5cHUdzY+0apj196yWI/h3NuaDYCq/4fOqUm0Qwp2e61RN9Ouht2mjU3omExVu+tx8Rw69WGsD5Cyn8n1PdlKxaohhWw5iQyOOrmRId5/Hu0Ao/DpSIqHhYua06pKlW6Xu7wq021/+wcShuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CCdf1nNP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 95C1B40E01B0;
+	Tue,  9 Sep 2025 22:21:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UCc0RgvktYy9; Tue,  9 Sep 2025 22:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757456473; bh=yY+SNAV5Bd45YJHqst6VM4vZn5WuUQNd3ZiyhsJWz/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CCdf1nNPUDsoYVTb/C0Q6De/8CNc4EDxZvesMQtGCopupd1o3Iltj2/GyB8+QFvxI
+	 ohg42ooSX/W9a0vmbWQXp42bglUrlATFZzswRKZ6F4VlCfuKhWQT4DVE3E6BKA1HNL
+	 G2mNBNq+nKRFU1fBimeT7JjQhKAi7xXFYE/14/NuanB/GZlcg8XRxijHFXAjVYO8u0
+	 JUmHWHeg3UyhzN4fYCCLLPEt68hwBATZnEuKDmsez+/IgXX7tmQe193vHwATbx26zH
+	 pUZ0Laef0Imo0i0fpYjkna33SXtZXvuNAqGZGd7RfkaACdgO7u8SbM7Hg7VJqHcAJE
+	 Ee4QTLbQGtpzzVlaJ32l9sVjtnY/I7Z2mMMInbDz46TgF3skVagCGoi9zqznUucGZA
+	 S58lJC41Zi40Ocpaq6R/EzjsZU2um7ak1IZSE3rtu59ZzorQ0YeQCYH1Wce9EJWqPv
+	 2t8lxzGz6OjVhZyXsDecEgoRficfBfCP3i9yrZICPA9pkt0pXOLfAgFIFZhyPFZ5H4
+	 j8gA0ZzXqN5O7p6z1WSbCvTAfvW6nay3y9DO2Wj9gjTg8jsKYi9WbH3S7h74NNthPA
+	 r2aZPL+fYFwtRhySB6kcogW/YYt3EH/77j0f3Cc0kDXUxISD8l5C+IhR4xyyxBqxtg
+	 srQ0W3StIumpFvJcSrVaIZ+0=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2BA5840E00DD;
+	Tue,  9 Sep 2025 22:21:00 +0000 (UTC)
+Date: Wed, 10 Sep 2025 00:20:45 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>,
+	Michael Roth <michael.roth@amd.com>,
+	=?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v7 01/22] x86/sev: Separate MSR and GHCB based
+ snp_cpuid() via a callback
+Message-ID: <20250909222045.GDaMCoPUqawgEenBsF@fat_crate.local>
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-25-ardb+git@google.com>
+ <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
+ <fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf v3 1/1] bpf: Allow fall back to interpreter for
- programs
- with stack size <= 512
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175745642125.833608.7682913821526006189.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Sep 2025 22:20:21 +0000
-References: <20250909144614.2991253-1-kafai.wan@linux.dev>
-In-Reply-To: <20250909144614.2991253-1-kafai.wan@linux.dev>
-To: KaFai Wan <kafai.wan@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mrpre@163.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, nbd@nbd.name
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com>
 
-Hello:
-
-This patch was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Tue,  9 Sep 2025 22:46:14 +0800 you wrote:
-> OpenWRT users reported regression on ARMv6 devices after updating to latest
-> HEAD, where tcpdump filter:
+On Tue, Sep 09, 2025 at 04:44:07PM -0500, Tom Lendacky wrote:
+> It only uses the MSR protocol for particular CPUID values in
+> snp_cpuid_postprocess(). If the CPUID leaf isn't in the CPUID table,
+> then it will set the CPUID values to all 0 and then call the
+> post-processing routine which may or may not call the HV.
 > 
-> tcpdump "not ether host 3c37121a2b3c and not ether host 184ecbca2a3a \
-> and not ether host 14130b4d3f47 and not ether host f0f61cf440b7 \
-> and not ether host a84b4dedf471 and not ether host d022be17e1d7 \
-> and not ether host 5c497967208b and not ether host 706655784d5b"
-> 
-> [...]
+> The second call to __sev_cpuid_hv_msr() only happens if there is no
+> CPUID table - which will be the case for SEV-ES. So you can't remove the
+> second call.
 
-Here is the summary with links:
-  - [bpf,v3,1/1] bpf: Allow fall back to interpreter for programs with stack size <= 512
-    https://git.kernel.org/bpf/bpf/c/df0cb5cb50bd
+This needs to be turned into a proper comment, at least, and stuck above it as
+the situation there is clear as mud. Especially after the dropping of the GHCB
+protocol call, which makes the confusion even more probable...
 
-You are awesome, thank you!
+I'll do it tomorrow if you don't beat me to it today. :)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
