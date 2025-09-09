@@ -1,181 +1,205 @@
-Return-Path: <linux-kernel+bounces-807872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5346B4AA98
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FB9B4AAA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE04189B4B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA22189DC18
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1696831B83D;
-	Tue,  9 Sep 2025 10:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD2C2D5C95;
+	Tue,  9 Sep 2025 10:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvPYCV8r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rjEiP/Yi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OhYsL34V";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rjEiP/Yi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OhYsL34V"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F54246BB2;
-	Tue,  9 Sep 2025 10:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CCD23770D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757413611; cv=none; b=slIfc6mPHxZnbxHa+7MshJ7/RO6ohGRIDY3UvOROgQW8S3jJtoy98k6LdW18M5flsQptU9MarrP4069nd32SlpeP4g6/DSWoxMGS7NaBtJqxkGmCClg++HVAJIpuB67cH3ZNuIFqbiCaBNErHNZPRK7vftYmdqEMI1I6FM4KHcA=
+	t=1757413742; cv=none; b=JC9DNfotiaJzbB7YgnQs4YwutjL8qIu+4VkHY0kEtOUE4dFsz+68eYyt8q3E5/WHo7d/nkhJwddxK2hErTI6ANV+ncTV2cL3UWT+x/QP/QjcET8/e4CEP+tVbT/Q6/hsvzb2D30STu0sAd392ms72sxVQyl96AnGfRejjmKANP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757413611; c=relaxed/simple;
-	bh=R8rJgzV0GkpvyeVk/7ra3rtAhpfBKmMB2QE4UL6QAwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUCilY7bhXRDUk2eFKFxfL+ioueuAylUBAk6GBde5E0zMy9398XbRVkYrDwm+nIxHWt8q7yJ9Kr1weED3YhqWj2cLMdltLlBvEnQ5ll/PvAOXss/IstA7cMIoiEKkHvY0FThb6xuRXBe2VHPvH+/7gQofCoEMDfUxrnXqsNr8zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvPYCV8r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DE5C4CEF4;
-	Tue,  9 Sep 2025 10:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757413610;
-	bh=R8rJgzV0GkpvyeVk/7ra3rtAhpfBKmMB2QE4UL6QAwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dvPYCV8rqkQ4ndd3rt4Qz4bwz6NdSDJRtaw71f/axAsG5SK4HBqVrtXHoBoHQ+R0+
-	 wfoWxJUih9JfGY8rTsOXQ+KSe/lt8X9O2hf82gV6DYvv/2WqFmfGeOFVoB9Cv1XryX
-	 8S1Ijq+f6aO/jC8Dl4LC05KuAs0T4lz990FPCJJrCcncw88S5xAAEMzUrReniT2nQV
-	 gzWSYjr1S+vNYbUv+g2aDoc3g/ll5f/StpCrrTrrCsU7HZ5k/ZmulqaY2jpES6nEO8
-	 3hRyXnLI7pkBzIw5UtnErkehvwNSfXOc4y3jjpYnCXSmfjVhkkU3OAKGwsqHpm1O+u
-	 bLbSbbeYH1bRA==
-Date: Tue, 9 Sep 2025 12:26:48 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v23] pwm: airoha: Add support for EN7581 SoC
-Message-ID: <o32quqohph6xq73f65izjocjdhv2ri4dld4tcmmmtisa632ucq@lpz4ewja3xtd>
-References: <20250708145053.798-1-ansuelsmth@gmail.com>
- <xsblhw36y3corxx3pxe6223auirrsqr3efovfnrm5lbo4xy3lf@wf3ytlivzv6g>
- <68bf2509.050a0220.702b3.c003@mx.google.com>
+	s=arc-20240116; t=1757413742; c=relaxed/simple;
+	bh=y1z6jP10wF4J6WzpmJsNeiKxxMn24VDwp41bot/jTcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gjqzo8Zy57YSETsBSQq4YTBd8UPPDCkPW1iqo3ahCaBXrv1D2CXw7FNDYGVifLUn4Fu0FZtEZ14IqlHIgO/WvBrKB15Th1hjwk57rEgt+JTL/7+SoLextZq+KSR89PCL8TrTqmzeRQoD+b7XjaouBgM+P6muwrDTUDDKovTSDXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rjEiP/Yi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OhYsL34V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rjEiP/Yi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OhYsL34V; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 491801FF91;
+	Tue,  9 Sep 2025 10:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757413736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tcgiYgKLCsMivPEp8vQa3zuszqAcHvhjqkBQVa8PslQ=;
+	b=rjEiP/YisA8kF6hude9EUnMla1b66DZ0gvo71Ie4ej3yC//ZrA8Lcg5ruCpXn3opyIXIRC
+	L3cq2BAqyFjbrsRWilyt4GEpWVTU7Nr2xzFo4JRhU+dB45NDiJv38OSim2QYurtssWt5lf
+	IJ3X8k0Ul0fzdgAW5LeGmtypTfLlotg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757413736;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tcgiYgKLCsMivPEp8vQa3zuszqAcHvhjqkBQVa8PslQ=;
+	b=OhYsL34VnkU9EBucq3ZvVFpG3YR4QYW7NMVjD0uvvBVnXnajxcs1F/NDtC2+zLG99gX7Pv
+	ASVa0S5V8VRWeHAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757413736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tcgiYgKLCsMivPEp8vQa3zuszqAcHvhjqkBQVa8PslQ=;
+	b=rjEiP/YisA8kF6hude9EUnMla1b66DZ0gvo71Ie4ej3yC//ZrA8Lcg5ruCpXn3opyIXIRC
+	L3cq2BAqyFjbrsRWilyt4GEpWVTU7Nr2xzFo4JRhU+dB45NDiJv38OSim2QYurtssWt5lf
+	IJ3X8k0Ul0fzdgAW5LeGmtypTfLlotg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757413736;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tcgiYgKLCsMivPEp8vQa3zuszqAcHvhjqkBQVa8PslQ=;
+	b=OhYsL34VnkU9EBucq3ZvVFpG3YR4QYW7NMVjD0uvvBVnXnajxcs1F/NDtC2+zLG99gX7Pv
+	ASVa0S5V8VRWeHAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 29C3E13ABA;
+	Tue,  9 Sep 2025 10:28:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LlEFCWgBwGjHIQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 09 Sep 2025 10:28:56 +0000
+Message-ID: <e19ebca0-8327-4bd9-8952-c2ec1e57f75f@suse.cz>
+Date: Tue, 9 Sep 2025 12:28:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dynu75es6kbw6gat"
-Content-Disposition: inline
-In-Reply-To: <68bf2509.050a0220.702b3.c003@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: add Jann Horn as rmap reviewer
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Rik van Riel <riel@surriel.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250908194959.820913-1-lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250908194959.820913-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
+On 9/8/25 21:49, Lorenzo Stoakes wrote:
+> Jann has been an excellent contributor in all areas of memory management,
+> and has demonstrated great expertise in the reverse mapping.
+> 
+> It's therefore appropriate for him to become a reviewer.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
---dynu75es6kbw6gat
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v23] pwm: airoha: Add support for EN7581 SoC
-MIME-Version: 1.0
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Hello Christian,
+> ---
+> I spoke to Jann off-list and he kindly agreed to become rmap reviewer :)
+> 
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8fef05bc2224..ededb2cf8f9c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16198,6 +16198,7 @@ R:	Rik van Riel <riel@surriel.com>
+>  R:	Liam R. Howlett <Liam.Howlett@oracle.com>
+>  R:	Vlastimil Babka <vbabka@suse.cz>
+>  R:	Harry Yoo <harry.yoo@oracle.com>
+> +R:	Jann Horn <jannh@google.com>
+>  L:	linux-mm@kvack.org
+>  S:	Maintained
+>  F:	include/linux/rmap.h
+> --
+> 2.51.0
 
-On Mon, Sep 08, 2025 at 08:48:38PM +0200, Christian Marangi wrote:
-> On Fri, Aug 01, 2025 at 11:15:41AM +0200, Uwe Kleine-K=F6nig wrote:
-> > On Tue, Jul 08, 2025 at 04:50:52PM +0200, Christian Marangi wrote:
-> > > +	duty_ticks =3D airoha_pwm_get_duty_ticks_from_ns(period_ns, duty_ns=
-);
-> >=20
-> > As duty_ticks depends on the selected period_ticks, I think the bucket
-> > selection algorithm is still wrong.
-> >=20
-> > Consider a request to implement
-> >=20
-> > 	period_ns =3D 256 ms
-> > 	duty_ns =3D 128 ms
-> >=20
-> > which at first correctly results in
-> >=20
-> > 	period_ticks =3D 64
-> > 	duty_ticks =3D 127
-> >=20
-> > If however all buckets are used and we only find one with say 62 period
-> > ticks we get period_ns =3D 248 and with that duty_ticks should better be
-> > 131 and not 127.
->
-> sorry for checking this only now and maybe we need to catch this again.
-
-no need to be sorry here. Taking time for replies is fine for me.
-
-> Maybe we are getting confused here but itsn't this already handled by
-> the upper condition?
->=20
-> 		/* Ignore bucket with invalid configs */
-> 		if (bucket_period_ticks > period_ticks ||
-> 		    bucket_duty_ticks > duty_ticks)
-> 			continue;
->=20
-> 		/*
-> 		 * Search for a bucket closer to the requested period/duty
-> 		 * that has the maximal possible period that isn't bigger
-> 		 * than the requested period. For that period pick the maximal
-> 		 * duty cycle that isn't bigger than the requested duty_cycle.
-> 		 */
-> 		if (bucket_period_ticks > best_period_ticks ||
-> 		    (bucket_period_ticks =3D=3D best_period_ticks &&
-> 		     bucket_duty_ticks > best_duty_ticks)) {
-> 			best_period_ticks =3D bucket_period_ticks;
-> 			best_duty_ticks =3D bucket_duty_ticks;
-> 			best =3D i;
-> 		}
->=20
-> We first limit for a bucket that doesn't got over both period and duty
-> and then we search for period and best duty. This should account for
-> never exceeding a duty since both period and duty are precalculated for
-> the current bucket and even if duty depends on period, again it's
-> precalculated. Am I missing something?
-
-Let me describe the issue in more detail:
-
-The period length is configured in the AIROHA_PWM_WAVE_GEN_CYCLE
-register in multiples of 4 ms. The duty length is configured in the
-AIROHA_PWM_GPIO_FLASH_PRD_HIGH register in multiples of
-$period_length/255.
-
-So if you calcultate the number of multiples you need for duty_ns =3D 128
-ms based on the assumption that period_ns =3D 256 ms the result becomes
-wrong when you are forced to switch to period_ns =3D 248.
-
-So to implement a request for period =3D 256 ms (64 ticks) and duty_cycle
-=3D 128 ms (127.5 duty ticks) having the choice between the two buckets:
-
- a) period_ticks =3D 62; duty_ticks =3D 127
-    (period =3D 248 ms, duty_cycle =3D 123.51372549019608 ms)
- b) period_ticks =3D 62; duty_ticks =3D 131
-    (period =3D 248 ms, duty_cycle =3D 127.40392156862744 ms)
-
-b) is the better one despite 127 duty_ticks would be an exact match for
-period_ticks =3D 64. So the issue is that the "Ignore bucket with invalid
-configs" kicks out b). That's wrong because
-
-	bucket_duty_ticks > duty_ticks
-
-doesn't imply
-
-	bucket_duty > duty
-
-=2E
-
-Best regards
-Uwe
-
---dynu75es6kbw6gat
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjAAOUACgkQj4D7WH0S
-/k7CSAgAki22lN1bHPIS6kecihLK/yOOxggSBjdqFNeyYEv8GZX56Pbz9JR9V9jM
-VQhUuWGJA7rgwqYukKLoS9uW8pe+rCSbUusWO26NFviBYzpZlCzF3xfIH/TKt84t
-CdooGAsqb9qwlptN5IRozedy/SNL83OWrvt0OJlSAlBjJhTR2mSMlJU75nQ/nPUl
-x4Q+Ar2XlgVt1+ttsVSER6pM5H8yAaG1sXG/ZJa3na6/M4UXYTZlz4GGZ7a7OB4C
-bl5enb88ZD7MRZ4zgmCUzLWzLEsc8efdrAuWSJktMotEMrLSoAEnT914F3Y+dO4S
-gj32PnUAonZuLjQBEPg1xNJGIi7g7g==
-=gvPL
------END PGP SIGNATURE-----
-
---dynu75es6kbw6gat--
 
