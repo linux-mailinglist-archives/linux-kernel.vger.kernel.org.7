@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-807242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88DDB4A1F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:21:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2783B4A211
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08213440989
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492121705D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4CB302151;
-	Tue,  9 Sep 2025 06:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E0330498F;
+	Tue,  9 Sep 2025 06:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FDX7WNT6"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGCt/yNd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABABF315D36
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30B118A93F;
+	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398855; cv=none; b=QWIQTZsb/vAJuzc18RYf2HJXzt16G5h2ytiMOO1bpwose62Lyhn6YqNXnoVmqC1h9lxxe6nFHdyrFD1R6PbPdSd175ByR2JKohHVQ5SF7yXHt27IuMQXc+kipwJdcaxv7FVJkMbTlAo/d8mBx+rOVh1DLsrRayQ2AWgJZghFfe4=
+	t=1757398894; cv=none; b=QoEzol28lzscz9KKmBkG20mSxWFEniagJrG730Lr+M4mp0tqkWl8qVvaFvMQHpxYL5wtBARGUzeKsE/bgBO6DL/yXqrNsO2pQwabkvL58pBnpTe9N+biETk+PZfFQnILImRlVAJ8K1QOjXG7darWdH+csLhMn5LNOjYZtwR0dlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398855; c=relaxed/simple;
-	bh=KDyF09UmSmfPauYAR4WrsCS2uIoJPzqHmaa7An4Iit8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zns6o49zkfyYIOFd+uooNXURalc715DkeQ13bf5QKPRBEd8MQcBk4UeA1CgqWv0yBA3lnmQWuOh0vJbqmxtEeN4lcm2y+1pEjYS+1bGw/mu3Sdz8Vu8CaFQh6IgJ5u7C0vgJaG4VW9i2TuoPE4FWidZbs4NykJIXMwr0ZxVBOrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FDX7WNT6; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b0472bd218bso798709766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 23:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757398852; x=1758003652; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=w/59r4nKFKoXQCTnkJhQgP9ynEgR8S9O7tupwQt0EUM=;
-        b=FDX7WNT63QzmMdBxju2WHlEx2glRjl/hjZGck3s5+ltCi1YBdvqu1hxq6xjozW0NdF
-         mUlh1tssDngmh7fmqw1cEmaLYa36SNvP60CvE8Ky1uOogv3L4Xg0hjCl1OhCBbxs8kiG
-         r3W+jV5h3j7Ru510MmKcqrPcCxMd2vDS6pfnKkuLevq7yHYozuM/FjhnmCUbAuNw1M0r
-         H0oj1vE9/Bn22goyGSG1oN4tpKg41R/Exzp9I5sSGyL8PV4QzcebsNvS2jwlsifGDgeS
-         6E0WyvTF/JPToNlU2hd9LDijvFh1UlfOwod6RSytUo1DQ52ZgGkBoFqj2yKbkr98Q9MV
-         P5yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757398852; x=1758003652;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w/59r4nKFKoXQCTnkJhQgP9ynEgR8S9O7tupwQt0EUM=;
-        b=DuiTzzPeVnvLMhM8Tc4brdR2UwY8M5PhEXCfgtge+D/8mEI6bvYcAm8y2v9FYmL1eb
-         sOQnS3CRq2bGOkZ9pM1JpsCIOeYVG8prxg92K5T6/Wiy1ddVR/ZEL1s20sBwaIR2kAhZ
-         +hq5tHCaTfFNlWvok6n2G10HOvH/ijVRWPFsFhu+8ZRI4MmPX8SMTdQd9U2vcS2F5Z+0
-         +2GeBj1pN3Sei9V3+71XjgJ9x6dLVtrLlgP5EPmgd2YXptPtxUz/TeoNzQi04uxkvdyX
-         I28BjWbcgqJ+58gufJtrHOQwpo1/MtyRLMt+KE4T6WpO410og8V8pnlUYDW7lD0IAgxX
-         +znQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWD7kpdyJwTcXhc5bfTx9UhGJQuRFyYYZv8cM05YfO51UVPq3R04Vs/JsSn6GEqOigecGaXGVIYr8YFTP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIn0sdpNYAv7C32qaJCyIGf9JKKgPlkAZbkXwOBftdztuN4TCr
-	lCf53dMb+bHLSK7cVLgZi5gzksklaIJFCCyOzYcFmRRgXG18c7elh9Ie1xVoa5KqKzs=
-X-Gm-Gg: ASbGncvlg7telKqCkxFOTy5vISkglq26JbdstDQqkJ21Jpn87E37rJdU80Q7ATwQOw8
-	7MVQqzDNGuWV1AhLd97/rVCJLRjEm6hld2/Re81mUi8lqtoY2+Gnvo+F3iHhaqnGZTBMROeeRr8
-	GJDWfdWw7Cq1u4EjVC8CPoN2bMe0kXeH7uuGNE40Tkm7yRtN0aMM4vSbk1ODokf8yt8SXlZKCgV
-	J8bjpKH4BoY/SCmy4zBQA78JTwuZ6FQPyT2RaSXu62/CYGSmHtblGVUtDZ+XOsmkU4uHNmc0FuV
-	YavH20fybNzGnunFj/HvjRGMOFFS+lmGWVVokz3hI0julC7yK0QGLBmp2rIEn4xNXGDV2r2Wr+5
-	3qiulxa4h/1r1oD+pFyh3ScB2emm+fcBttw==
-X-Google-Smtp-Source: AGHT+IEy7r+3IQg6FyahElzQLsyWsCN+nac3o89gK9QMZ1U0RxA6rWKjSJAXvBlojXrZGYl7wLf9pA==
-X-Received: by 2002:a17:907:1c10:b0:b04:1a80:35b9 with SMTP id a640c23a62f3a-b04b13cd575mr1019442566b.12.1757398852041;
-        Mon, 08 Sep 2025 23:20:52 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b0761c9314esm150029966b.33.2025.09.08.23.20.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 23:20:51 -0700 (PDT)
-Date: Tue, 9 Sep 2025 08:20:50 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Peilin Ye <yepeilin@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-Message-ID: <aL_HQn9gZjbt4zLl@tiehlicka>
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
- <aLtMrlSDP7M5GZ27@google.com>
- <aL6dBivokIeBApj8@tiehlicka>
- <CAADnVQLtc+OOQ67AS_1+u-sRmO+bDLWJrrihASXMrDNnvrmNSw@mail.gmail.com>
+	s=arc-20240116; t=1757398894; c=relaxed/simple;
+	bh=+TPugvusqL3MFUtqbV61oju44pY2erZnaLrcqrSXMw0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B+LaANm/uHp/v7vRrKBl6PUfqblFtZ4PzUYSE82G7TKWYtXK2rMXnN8f2uIskItG8WmKcJbs0yE5FiD0WRo/HSe9k6ejO4KOPUzUQzkj/KEcVsmMDkrIM8+J+UhhfhDnceVLkzZZwrkWh43hWPo34NwDNN+ocN/EKpTVzEaG3sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGCt/yNd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58897C4CEF4;
+	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757398894;
+	bh=+TPugvusqL3MFUtqbV61oju44pY2erZnaLrcqrSXMw0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=MGCt/yNdmcqG8p1qc4nlUUsaE/rji/Hvi2RClXvtcKpZN3sxr7vJ7K4I8jHe9Dn9d
+	 eIdlm0AsALNbTHs8ZHZSHAS//iCzJuHXxKnkzJ+kyxLSgiEd/ra2wgBVnwWYfxs2tr
+	 Tf5giMSi68afW5b5VdYjcQ1VzwNQbSkw9ZPxfpVY3RzO0Gm8yD+0NV3R3EDmYcmIZF
+	 vOawIYCny3gzGzX70P6QC38RR7vWjpVQFdMX1iZjB2Tby6ofifpJwUGCTO11OMbSiG
+	 sL1JJeWqJIwgLPV1tvqkHtVhbbj62SYB7DXdO3oDZB/jmpIEA1uz0al/MBi9AVCnvR
+	 ohHmk1vWSwFVw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449F9CAC586;
+	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/8] Support dynamic EMC frequency scaling on
+ Tegra186/Tegra194
+Date: Tue, 09 Sep 2025 01:21:28 -0500
+Message-Id: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLtc+OOQ67AS_1+u-sRmO+bDLWJrrihASXMrDNnvrmNSw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGjHv2gC/1WPy07DMBBFfyXyGqPxuH4kK/4DdeHHOLVEmtZOI
+ 1CVf8ckC2B5R5pzz32ySiVTZUP3ZIXWXPN8bQFfOhYu7joSz7FlhoAKLEq+0FicsJrnELjBvhc
+ CQjTmxNrLrVDKnzvu/XzkQvdHoy7HkXlXiYd5mvIydMKjNEn0QF5GqZPCmBKBcSfwijwKQAsEw
+ P7aNLnDRf+6hNsjtSK+l3OTfEpWBG0dDqtkPyaXXJe5fO07V7GrHBgp/k9aBQeuwcQYlPQKzNs
+ 4ufzx2pzZedu2b8KgVpoyAQAA
+X-Change-ID: 20250823-tegra186-icc-7299110cd774
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757398893; l=1966;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=+TPugvusqL3MFUtqbV61oju44pY2erZnaLrcqrSXMw0=;
+ b=iK2GdH/ePzlNW4B7UF/cmnZZrVv0wHjuHNsT2RcusqUZ7OYZEASWN+vKkZAZlkSFPJOfMqxax
+ ifP9WYAc3ebDwQHBOwdayPC2FLSYY/fPHm/Hb9Jc2zSqmeV5d+1zJop
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Mon 08-09-25 10:11:29, Alexei Starovoitov wrote:
-> On Mon, Sep 8, 2025 at 2:08 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Fri 05-09-25 20:48:46, Peilin Ye wrote:
-> > > On Fri, Sep 05, 2025 at 01:16:06PM -0700, Shakeel Butt wrote:
-> > > > Generally memcg charging is allowed from all the contexts including NMI
-> > > > where even spinning on spinlock can cause locking issues. However one
-> > > > call chain was missed during the addition of memcg charging from any
-> > > > context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> > > > cgroup_file_notify().
-> > > >
-> > > > The possible function call tree under cgroup_file_notify() can acquire
-> > > > many different spin locks in spinning mode. Some of them are
-> > > > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> > > > just skip cgroup_file_notify() from memcg charging if the context does
-> > > > not allow spinning.
-> > > >
-> > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > >
-> > > Tested-by: Peilin Ye <yepeilin@google.com>
-> > >
-> > > The repro described in [1] no longer triggers locking issues after
-> > > applying this patch and making __bpf_async_init() use __GFP_HIGH
-> > > instead of GFP_ATOMIC:
-> > >
-> > > --- a/kernel/bpf/helpers.c
-> > > +++ b/kernel/bpf/helpers.c
-> > > @@ -1275,7 +1275,7 @@ static int __bpf_async_init(struct bpf_async_kern *async, struct bpf_map *map, u
-> > >         }
-> > >
-> > >         /* allocate hrtimer via map_kmalloc to use memcg accounting */
-> > > -       cb = bpf_map_kmalloc_node(map, size, GFP_ATOMIC, map->numa_node);
-> > > +       cb = bpf_map_kmalloc_node(map, size, __GFP_HIGH, map->numa_node);
-> >
-> > Why do you need to consume memory reserves? Shouldn't kmalloc_nolock be
-> > used instead here?
-> 
-> Yes. That's a plan. We'll convert most of bpf allocations to kmalloc_nolock()
-> when it lands.
+This series borrows the concept used on Tegra234 to scale EMC based on
+CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+bpmp on those archs does not support bandwidth manager, so the scaling
+iteself is handled similar to how Tegra124 currently works.
 
-OK, I thought this was merged already. I suspect __GFP_HIGH is used here
-as a result of manual GFP_ATOMIC & ~GFP_RECLAIM. A TODO/FIXME referring
-to kmalloc_nolock would clarify the situation.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Use opp scoped free in patch 3
+- Cleanup as requested in patch 3
+- Move patch 3 to the start of the series to keep subsystems grouped
+- Link to v1: https://lore.kernel.org/r/20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com
 
+---
+Aaron Kling (8):
+      cpufreq: tegra186: add OPP support and set bandwidth
+      dt-bindings: memory: tegra186-mc: Add dummy client IDs for Tegra186
+      dt-bindings: memory: tegra194-mc: Add dummy client IDs for Tegra194
+      memory: tegra186-emc: Support non-bpmp icc scaling
+      memory: tegra186: Support icc scaling
+      memory: tegra194: Support icc scaling
+      arm64: tegra: Add CPU OPP tables for Tegra186
+      arm64: tegra: Add CPU OPP tables for Tegra194
+
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
+ drivers/cpufreq/tegra186-cpufreq.c       | 152 +++++++-
+ drivers/memory/tegra/tegra186-emc.c      | 132 ++++++-
+ drivers/memory/tegra/tegra186.c          |  48 +++
+ drivers/memory/tegra/tegra194.c          |  59 ++-
+ include/dt-bindings/memory/tegra186-mc.h |   4 +
+ include/dt-bindings/memory/tegra194-mc.h |   6 +
+ 8 files changed, 1344 insertions(+), 10 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250823-tegra186-icc-7299110cd774
+prerequisite-change-id: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2:v3
+prerequisite-patch-id: 74a2633b412b641f9808306cff9b0a697851d6c8
+prerequisite-patch-id: 9c52827317f7abfb93885febb1894b40967bd64c
+
+Best regards,
 -- 
-Michal Hocko
-SUSE Labs
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
