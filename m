@@ -1,276 +1,537 @@
-Return-Path: <linux-kernel+bounces-807531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AC5B4A5AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4629FB4A5AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BBFA1C23DDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F2188FACC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B6F2571DD;
-	Tue,  9 Sep 2025 08:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65084253F1D;
+	Tue,  9 Sep 2025 08:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="XjXJFZo1"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Sd92CweD"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE16027453
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4915D4A21;
+	Tue,  9 Sep 2025 08:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757407297; cv=none; b=fnzRDuCpDZvuG3sQdvSI1xcHL49kiMZRpkuiAm4QRzmiAfRJD42+z5KoffiNAhbl5oNfS/evCyAvUse+4AZnpMGpWHK3u/L9ad0cXoJ9RLsKQe2fzOUy2V8pb0I3GJmcywKQTbjhuFI0HMZP2B7eVdXgkkAiV/ndwYqe3SOuZrs=
+	t=1757407296; cv=none; b=FrIpRjTZGCxUgxTF1LFx88QmJNvGcD5/VEhODjdEqp159A6D2vya7topISbrbCPxvq0Ihzb2kvRzIDJnsSRawkN7yz8c25GZw/W/S/PB3kDSp8qCKuIi4ibPZF6W/s0HR6a7Ote6RUK/hXTSlX69mT0ynpgPV6WEsHOhSqNRYPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757407297; c=relaxed/simple;
-	bh=Ip46ot/9O4pNIM/Ny61T7ztTm2iML4XIOp1LKYVRsy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5X3hKIn3fUumINz1Cyk8al1pM0PsUMo/x16RiAvi+Lk3o3Oa7WoZWTFUwzgXTEAwrNxws9ewpibjbYIVLy79PcqJIZu3iGMNuEiUUHkPpu9ppLPcpwnTrTm59gN6a1aIzxf8Hxlw2PyGf0YAh4kvB8vPBNusLGB3nnD0NTDdMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=XjXJFZo1; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1757407289;
- bh=DEI8j5MLwQIMmp/tto4y5edHY0QtHqsLOROzDCJAx8I=;
- b=XjXJFZo1ZQwYYELSIC2uIJynPb5QO470RFITErHfgCPmbbn/6zwHxBkyrNcqeG29FqxueNifT
- 9+x7WVm9kjT+d3Tgm+u0xc5VO5TobO765Mad/Gs5o7lletDjj7KD9xjJYlfiDZ3Ejx5IWWS8Erz
- bKnhpuqd3tL4D6IHMIrgu881zTbmk0Iyl7DME/WYZzgJUIcRUagoDrMbraYoy+t1Ltq8XODpUKe
- 80sXNPP23qfyuS8+mc/5ZOXwabMUfspeV+X1ZfJbZ5H4IsyaRq2ywlu48cFjhabdjPXZZAGvPKU
- dl1tbb3/vFDgAISiVgCxWc83WAeytpriTk/+B7v+zZWg==
-X-Forward-Email-ID: 68bfe832381b9a7fa9093c07
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.2.14
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <baaf6f27-aac1-4567-b69f-84945de45a44@kwiboo.se>
-Date: Tue, 9 Sep 2025 10:41:15 +0200
+	s=arc-20240116; t=1757407296; c=relaxed/simple;
+	bh=DNQ1QEvdaABtUoTtUL+14FrPDnhDgu/4MCYcvTg25gU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=beWIN7pYgP/ub5dwep/t4hiwROc/yC7DQFQBrBCz1ys//yQm685RL7n7mNaL7IYOJozaj+BMK/SOIkoIx6wgRQkSzHKa9URQWq8ifydgLCBgffS72+tbfvamo/cX3gMa1N7EhDdJIhcCKwsoCWi2QL/VEAk04Q8cIajL7Jbdxhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Sd92CweD; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1757407284;
+	bh=U7ePnYmOtqTHJjolMf4hlSRaTCGH9Xh1EcH3rMZqHlc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=Sd92CweDx23fukVxldZRkSELHkaUqB8ZI6EDJP1uvQmfLhLM/4VikWAhtALLzUjRi
+	 0KFWWhA9B/3yNtWrdWjO8qrY4FVG/gRgOy1Qu/bq+3kgJX7WUDrYrHvgiXyOJ0Itrx
+	 mx+k1uTk/73Xfhirp8eicIL3NH3C8s3zglU+zsGkOTC70DwRowHAl6Va1Rhembxr7J
+	 i+lOBXo5Sad2n1JS/JaLZwxb5daStYSsnvx9Nr1TfADjiKtWu3BlTAsAE1ENPmXb+6
+	 s+3/y/l0X536QqP/R3yYiHm3D+uzKnIvPx8Ga+Dn6sqoX2LzHmCi/zffMqVHspJfus
+	 uQsKAyx4EdoRQ==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 08FD36443C;
+	Tue,  9 Sep 2025 16:41:21 +0800 (AWST)
+Message-ID: <1a2ca78746e00c2ec4bfc2953a897c48376ed36f.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 1/2] dt-bindings: interrupt-controller: aspeed: Add
+ parent compatibles and refine documentation
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Ryan Chen
+ <ryan_chen@aspeedtech.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	 <joel@jms.id.au>, Kevin Chen <kevin_chen@aspeedtech.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Date: Tue, 09 Sep 2025 18:11:19 +0930
+In-Reply-To: <20250814-auspicious-thundering-jaybird-b76f4f@kuoka>
+References: <20250812100830.145578-1-ryan_chen@aspeedtech.com>
+	 <20250812100830.145578-2-ryan_chen@aspeedtech.com>
+	 <20250814-auspicious-thundering-jaybird-b76f4f@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] media: rkvdec: Add variants support
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250905161942.3759717-1-jonas@kwiboo.se>
- <20250905161942.3759717-3-jonas@kwiboo.se>
- <c05ea992-b0d8-4ea4-8a11-660b9cae4820@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <c05ea992-b0d8-4ea4-8a11-660b9cae4820@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Detlev,
+On Thu, 2025-08-14 at 10:03 +0200, Krzysztof Kozlowski wrote:
+> On Tue, Aug 12, 2025 at 06:08:29PM +0800, Ryan Chen wrote:
+> > AST2700 contains two independent top-level interrupt controllers (INTC0=
+,
+> > INTC1). Each occupies its own register space and handles different sets=
+ of
+> > peripherals. Above them, the PSP (CA35) GIC is the root interrupt
+> > aggregator. In hardware, INTC1 outputs are routed into INTC0, and INTC0
+> > outputs are routed into the GIC.
+> >=20
+> > Introduce distinct compatibles for these parent blocks so the DT can mo=
+del
+> > the hierarchy and register space layout accurately:
+> >=20
+> > =C2=A0 - aspeed,ast2700-intc0=C2=A0 (parent node at 0x12100000)
+> > =C2=A0 - aspeed,ast2700-intc1=C2=A0 (parent node at 0x14c18000)
+> >=20
+> > The existing child compatible:
+> >=20
+> > =C2=A0 - aspeed,ast2700-intc-ic
+> >=20
+> > continues to describe the interrupt-controller instances within each IN=
+TC
+> > block (e.g. INTC0_0..INTC0_11 and INTC1_0..INTC1_5).
+> >=20
+> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > ---
+> > =C2=A0.../aspeed,ast2700-intc.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 158 ++=
++++++++++++-----
+> > =C2=A01 file changed, 115 insertions(+), 43 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2700-intc.yaml
+> > b/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2700-intc.yaml
+> > index 55636d06a674..81304b53c112 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast=
+2700-intc.yaml
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast=
+2700-intc.yaml
+> > @@ -10,6 +10,33 @@ description:
+> > =C2=A0=C2=A0 This interrupt controller hardware is second level interru=
+pt controller that
+> > =C2=A0=C2=A0 is hooked to a parent interrupt controller. It's useful to=
+ combine multiple
+> > =C2=A0=C2=A0 interrupt sources into 1 interrupt to parent interrupt con=
+troller.
+> > +=C2=A0 Depend to which INTC0 or INTC1 used.
+> > +=C2=A0 INTC0 and INTC1 are two kinds of interrupt controller with enab=
+le and raw
+> > +=C2=A0 status registers for use.
+> > +=C2=A0 INTC0 is used to assert GIC if interrupt in INTC1 asserted.
+> > +=C2=A0 INTC1 is used to assert INTC0 if interrupt of modules asserted.
+> > +=C2=A0 +-----+=C2=A0=C2=A0 +---------+
+> > +=C2=A0 | GIC |---|=C2=A0 INTC0=C2=A0 |
+> > +=C2=A0 +-----+=C2=A0=C2=A0 +---------+
+>=20
+> Same problem as last time. This tells me intc0 has not children...
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
+-------+
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |---module0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | I=
+NTC0_0 |---module1
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |---...
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
+-------+---module31
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |--=
+-....=C2=A0 |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
+-------+
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 =
++---------+
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | I=
+NTC0_11| +---| INTC1=C2=A0=C2=A0 |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 =
++---------+
+>=20
+> ...This tells that inc1 has no children (only intc0_11, which you said
+> is aspeed,ast2700-intc-ic !!!)....
+> (keep scrolling)
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
+-------+=C2=A0=C2=A0=C2=A0=C2=A0 +---------+---module0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | INTC1_0 |---module1
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |---..=
+.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 +---------+---module31
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ...
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 +---------+---module0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | INTC1_5 |---module1
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |---..=
+.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 +---------+---module31
+> > =C2=A0
 
-On 9/8/2025 8:32 PM, Detlev Casanova wrote:
-> Hi Jonas,
-> 
-> On 9/5/25 12:19, Jonas Karlman wrote:
->> From: Alex Bee <knaerzche@gmail.com>
->>
->> Different versions of the Rockchip VDEC IP exists and one way they can
->> differ is what decoding formats are supported.
->>
->> Add a variant implementation in order to support flagging different
->> capabilities.
->>
->> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->> Changes in v3:
->> - Use a reference to rkvdec_variant
->> - Add num_regs field
-> 
-> Why are you adding this field ? I don't see it being used in a later patch.
+I've taken a look at the datasheet and had a bit of a think about how
+to make progress here.=C2=A0
 
-Correct, this was briefly mentioned in the cover letter change log for v3:
+My feeling is this diagram (and the previous one) undersells the
+complexity of the design by quite some margin. It's probably best to
+start by zooming out quite a lot:
 
-  Add num_regs field to rkvdec_variant, currently not used for anything
+The AST2700 SoC contains (at least) 4 distinct processors:
 
-This addition was mostly to make us aware that there are different
-number of swregs for the different variants of "rkvdev1".
+1. The quad-core ARM Cortex-A35 (PSP: Primary Service Processor)
+2. A Cortex-M4 (SSP: Secondary Service Processor)
+3. Another Cortex-M4 (TSP: Tertiary Service Processor)
+4. The BootMCU - a RISC-V processor to execute the mask ROM
 
-> 
-> Would that be useful for writing the right amount of registers later 
-> when switching to structs and memcpy ?
+While the PSP GIC shown in the diagram above is one possible interrupt
+destination, many of the 480 interrupt sources in the package can be
+routed to the dedicated interrupt controller of any of these four
+processors. Likewise, many peripherals of the SoC are mapped into the
+physical address space of each processor. The routing is handled by the
+two interrupt controller blocks described in the binding text above:
 
-Correct, to my knowledge there are 3 different register configurations
-for "rkvdec1", all are mostly extended with more registers at the end.
++--------------------+
+| +-------+ +------+ |
+| |       | |      | |
+| |  PSP  +-+ GIC  <-+----------+
+| |       | |      | |          |
+| +-------+ +------+ |          |
++--------------------+          |
+                                |
++--------------------+          |
+| +-------+ +------+ |          |          +-------+
+| |       | |      | |          |          |       |   INTx
+| |  SSP  +-+ NVIC <-+----------+----------| INTC0 <-----------
+| |       | |      | |          |          |       |
+| +-------+ +------+ |          |          +---^---+
++--------------------+          |              |
+                                |              |
++--------------------+          |              |
+| +-------+ +------+ |          |              |
+| |       | |      | |          |              |
+| |  TSP  +-+ NVIC <-+----------+              |
+| |       | |      | |                         |
+| +-------+ +------+ |                         |
++--------------------+                         |
+                                               |
++--------------------+                         |
+| +------+ +-------+ |                     +---+---+
+| |      | |       | |                     |       |   INTy
+| | BMCU +-+ APLIC <-+---------------------+ INTC1 <-----------
+| |      | |       | |                     |       |
+| +------+ +-------+ |                     +-------+
++--------------------+
 
-  68 (rk3288) -> 78 (rk3399) -> 109 (rk3328)
+There's a split in the interrupt domain: 0 <=3D INTx <=3D 127 < INTy.
 
-Currently there are writel() that are blindly written to regs >68 and
->78 regardless of variant. If we are to move to use io memcpy we should
-probably ensure to write to the regs that exists for each variant.
+The PSP GIC, SSP NVIC and TSP NVIC destinations for each INTx source is
+selected by a corresponding mux in INTC0.
 
-> 
-> I haven't checked how different the register maps are between those 
-> different variants.
+The destination for each INTy source is selected by a corresponding mux
+in INTC1, where the possible destinations are:
 
-As mentioned above they mostly differ at the end (more swregs), or use
-additional previously unused bits of existing swregs. E.g. rk3328 has
-sw_wr_ddr_align_en, sw_scl_down_en and sw_allow_not_wr_unref_bframe
-added to swreg1.
+1. A shared interrupt line Ma, routed through INTC0 to the PSP GIC
+2. A mux in INTC0, providing a second level of indirection
+3. A shared interrupt line Md, routed through INTC0 to the PSP GIC
+4. A shared interrupt line Me, routed through INTC0 to the PSP GIC
+5. A shared interrupt line Mb, routed through INTC0 to the SSP NVIC
+6. A shared interrupt line Mc, routed through INTC0 to the TSP NVIC
+7. The BootMCU APLIC
 
-The added num_regs can be dropped or replaced with proper structs (or
-something different) if you think that is a better way to signal how the
-variants regs differs.
+Each shared interrupt line from INTC1 to INTC0 merges up to 32
+interrupt sources.
 
-Regards,
-Jonas
+INTC0 and INTC1 are both mapped into the physical address space of each
+processor. However, to prevent any one of them interfering with
+interrupts dedicated to another, the controller's register map is
+divided into distinct regions whose access is constrained to a specific
+processor. The enable and status registers in INTC0 for shared line
+sets Ma, Md and Me are constrained to the PSP, Mb to the SSP, and Mc to
+the TSP.
 
-> 
->> - Collect r-b tag
->>
->> Changes in v2:
->> - No change
->> ---
->>   .../media/platform/rockchip/rkvdec/rkvdec.c   | 22 ++++++++++++++++++-
->>   .../media/platform/rockchip/rkvdec/rkvdec.h   | 11 ++++++++++
->>   2 files changed, 32 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> index c15fc238d6af..daf6d9ab2d1d 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> @@ -14,6 +14,7 @@
->>   #include <linux/iommu.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> +#include <linux/of_device.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/pm.h>
->>   #include <linux/pm_runtime.h>
->> @@ -327,6 +328,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->>   		.ops = &rkvdec_hevc_fmt_ops,
->>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_hevc_decoded_fmts),
->>   		.decoded_fmts = rkvdec_hevc_decoded_fmts,
->> +		.capability = RKVDEC_CAPABILITY_HEVC,
->>   	},
->>   	{
->>   		.fourcc = V4L2_PIX_FMT_H264_SLICE,
->> @@ -343,6 +345,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_decoded_fmts),
->>   		.decoded_fmts = rkvdec_h264_decoded_fmts,
->>   		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
->> +		.capability = RKVDEC_CAPABILITY_H264,
->>   	},
->>   	{
->>   		.fourcc = V4L2_PIX_FMT_VP9_FRAME,
->> @@ -358,6 +361,7 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->>   		.ops = &rkvdec_vp9_fmt_ops,
->>   		.num_decoded_fmts = ARRAY_SIZE(rkvdec_vp9_decoded_fmts),
->>   		.decoded_fmts = rkvdec_vp9_decoded_fmts,
->> +		.capability = RKVDEC_CAPABILITY_VP9,
->>   	}
->>   };
->>   
->> @@ -1186,8 +1190,18 @@ static void rkvdec_watchdog_func(struct work_struct *work)
->>   	}
->>   }
->>   
->> +static const struct rkvdec_variant rk3399_rkvdec_variant = {
->> +	.num_regs = 78,
->> +	.capabilities = RKVDEC_CAPABILITY_HEVC |
->> +			RKVDEC_CAPABILITY_H264 |
->> +			RKVDEC_CAPABILITY_VP9,
->> +};
->> +
->>   static const struct of_device_id of_rkvdec_match[] = {
->> -	{ .compatible = "rockchip,rk3399-vdec" },
->> +	{
->> +		.compatible = "rockchip,rk3399-vdec",
->> +		.data = &rk3399_rkvdec_variant,
->> +	},
->>   	{ /* sentinel */ }
->>   };
->>   MODULE_DEVICE_TABLE(of, of_rkvdec_match);
->> @@ -1198,16 +1212,22 @@ static const char * const rkvdec_clk_names[] = {
->>   
->>   static int rkvdec_probe(struct platform_device *pdev)
->>   {
->> +	const struct rkvdec_variant *variant;
->>   	struct rkvdec_dev *rkvdec;
->>   	unsigned int i;
->>   	int ret, irq;
->>   
->> +	variant = of_device_get_match_data(&pdev->dev);
->> +	if (!variant)
->> +		return -EINVAL;
->> +
->>   	rkvdec = devm_kzalloc(&pdev->dev, sizeof(*rkvdec), GFP_KERNEL);
->>   	if (!rkvdec)
->>   		return -ENOMEM;
->>   
->>   	platform_set_drvdata(pdev, rkvdec);
->>   	rkvdec->dev = &pdev->dev;
->> +	rkvdec->variant = variant;
->>   	mutex_init(&rkvdec->vdev_lock);
->>   	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
->>   
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> index 209dd79ce9bd..c47457c954e5 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> @@ -22,6 +22,10 @@
->>   #include <media/videobuf2-core.h>
->>   #include <media/videobuf2-dma-contig.h>
->>   
->> +#define RKVDEC_CAPABILITY_HEVC		BIT(0)
->> +#define RKVDEC_CAPABILITY_H264		BIT(1)
->> +#define RKVDEC_CAPABILITY_VP9		BIT(2)
->> +
->>   struct rkvdec_ctx;
->>   
->>   struct rkvdec_ctrl_desc {
->> @@ -63,6 +67,11 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
->>   			    base.vb.vb2_buf);
->>   }
->>   
->> +struct rkvdec_variant {
->> +	unsigned int num_regs;
->> +	unsigned int capabilities;
->> +};
->> +
->>   struct rkvdec_coded_fmt_ops {
->>   	int (*adjust_fmt)(struct rkvdec_ctx *ctx,
->>   			  struct v4l2_format *f);
->> @@ -98,6 +107,7 @@ struct rkvdec_coded_fmt_desc {
->>   	unsigned int num_decoded_fmts;
->>   	const struct rkvdec_decoded_fmt_desc *decoded_fmts;
->>   	u32 subsystem_flags;
->> +	unsigned int capability;
->>   };
->>   
->>   struct rkvdec_dev {
->> @@ -111,6 +121,7 @@ struct rkvdec_dev {
->>   	struct mutex vdev_lock; /* serializes ioctls */
->>   	struct delayed_work watchdog_work;
->>   	struct iommu_domain *empty_domain;
->> +	const struct rkvdec_variant *variant;
->>   };
->>   
->>   struct rkvdec_ctx {
-> 
-> Regards,
-> 
-> Detlev
-> 
+                                   +-------+            +-------+
+                                   | INTC0 |            | INTC1 |
+- - - - - - - - - - - - - - - - - -+- - - -+- - - - - - +- - - -+- -
+  +--------------------+           |       |            |       |
+  | +-------+ +------+ |           |       |            |       |
+  | |       | |      | |           |       |            |       |
+  | |  PSP  +-+ GIC  | |           |       |            |       |
+  | |       | |      | |           |       |            |       |
+  | +-------+ |      | |           |       |            |       |
+  |           |      | |           +-------+            |       |
+  |           |  192 <-|-----------+  Ma   <------------|---+   |
+  |           |      | |           +-------+            |   |   |
+  |           |  208 <-|-----------+  Md   <------------|---+   |
+  |           |      | |           +-------+            |   |   |
+  |           |  224 <-|-----------+  Me   <------------|---+   |
+  |           |      | |           +-------+            |   |   |
+  |           +------+ |           |       |            |   |   |
+  +--------------------+           |       |            |   |   |
+- - - - - - - - - - - - - - - - - -+- - - -+- - - - - - +- -|- -+- -
+  +--------------------+           |       |            |   |   |
+  | +-------+ +------+ |           +-------+            |   +---|----------=
+--
+  | |  SSP  +-+ NVIC <-|-----------+  Mb   <------------|---+   |   INT128
+  | +-------+ +------+ |           +-------+            |   |   |
+  +--------------------+           |       |            |   |   |
+- - - - - - - - - - - - - - - - - -+- - - -+- - - - - - +- -|- -+- -
+  +--------------------+           |       |            |   |   |
+  | +-------+ +------+ |           +-------+            |   |   |
+  | |  TSP  +-+ NVIC <-|-----------+  Mc   <------------|---+   |
+  | +-------+ +------+ |           +-------+            |       |
+  +--------------------+           |       |            |       |
+- - - - - - - - - - - - - - - - - -+- - - -+- - - - - - +- - - -+- -
+  +--------------------+           |       |            |       |
+  | +------+ +-------+ |           |       |            |       |
+  | | BMCU +-+ APLIC | |           |       |            |       |
+  | +------+ +-------+ |           |       |            |       |
+  +--------------------+           |       |            |       |
+- - - - - - - - - - - - - - - - - -+- - - -+- - - - - - +- - - -+- -
+                                   +-------+            +-------+
 
+
+INTC1 mux destination 2 above allows the PSP to reconfigure the routes
+at runtime at INTC0, rather than submit to a route that might've been
+protected by firmware early in the boot chain, so long as the boot
+firmware chose the appropriate route in INTC1. INTC0 merges these
+interrupts in sets of 32 and operates in much the same way as INTC1 in
+the diagram above, though cannot route to the BootMCU.
+
+I'd prefer we acknowledge all this in the binding, and do enough to
+allow the kernel to configure routing as it wishes. While in some
+applications the routes may be constrained by firmware, the platform-
+specific portion of the devicetree can be written reflect this.
+
+From some experimentation this shouldn't require anything bespoke.
+Using interrupts-extended we can represent the route configuration with
+a phandle to the upstream controller on the cascaded node. To avoid
+some arbitrary interrupt index choices at the node for INTC0, I think
+it's worth describing the register sets for interrupt sets Ma, Md and
+Me as subnodes of INTC0 with their own interrupt resources. This feels
+reasonably tidy, as the selection of the Ma, Md or Me sets completely
+determines its ultimate index at the PSP GIC. Doing so also removes
+them from needing to be described if any changes to some default route
+configuration are required by the platform, necessitating overriding
+the interrupts-extended property of the INTC0 node.
+
+The only curiosity of this approach is that the interrupt-controller
+nodes for the non-PSP processors need to be described so we can
+reference them via phandles for the purpose of routing the interrupts.
+As these controllers are not mapped in the physical address space of
+the PSP we need the devicetree to inform the kernel as much.
+
+Here's an example pseudo-devicetree. Of course there are elements that
+need more work, but I feel we can mine it for parts.
+
+Cheers,
+
+Andrew
+
+/ {
+  primary {
+    compatible =3D "simple-bus";
+    #address-cells =3D <1>;
+    #size-cells =3D <1>;
+    ranges;
+
+    intc0: interrupt-controller@12100000 {
+      compatible =3D "aspeed,ast2700-intc0-a1";
+      reg =3D <0x12100000 0x1b00>;
+      #address-cells =3D <1>;
+      #size-cells =3D <1>;
+      ranges;
+      interrupt-controller;
+      #interrupt-cells =3D <2>;
+      interrupts-extended =3D
+#if GIC
+        /* GICINT0   */ <&gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+#elif SSP
+        /* SSPINT0   */ <&ssp_nvic 0 0>,
+#else /* TSP */
+        /* TSPINT0   */ <&tsp_nvic 0 0>,
+#endif
+
+        /* ... */
+
+#if GIC_128 /* Route merged 128-159 interrupts to GICINT128 */
+        /* 128 */ <&gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
+#elif GIC_160 /* Route merged 128-159 interrupts to GICINT160 */
+        /* 128 */ <&gic GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+#elif GIC_176 /* Route merged 128-159 interrupts to GICINT176 */
+        /* 128 */ <&gic GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
+#elif SSP
+        /* 128 */ <&ssp_nvic 128 0>,
+#else /* TSP */
+        /* 128 */ <&tsp_nvic 128 0>,
+#endif
+
+        /* ... */
+
+        /* 186 */ <&gic 186 0>;
+
+      intcm0: interrupt-controller@12101b00 {
+        compatible =3D "aspeed,ast2700-intcm-a1";
+        reg =3D <0x12101b00 0x10>;
+        interrupt-controller;
+        #interrupt-cells =3D <2>;
+        interrupt-parent =3D <&gic>;
+        interrupts =3D
+          <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
+      };
+
+      intcm30: interrupt-controller@12101b10 {
+        compatible =3D "aspeed,ast2700-intcm-a1";
+        reg =3D <0x12101b10 0x10>;
+        interrupt-controller;
+        #interrupt-cells =3D <2>;
+        interrupt-parent =3D <&gic>;
+        interrupts =3D
+          <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>;
+      };
+
+      intcm40: interrupt-controller@12101b20 {
+        compatible =3D "aspeed,ast2700-intcm-a1";
+        reg =3D <0x12101b20 0x10>;
+        interrupt-controller;
+        #interrupt-cells =3D <2>;
+        interrupt-parent =3D <&gic>;
+        interrupts =3D
+          <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>,
+          <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
+          <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
+      };
+    };
+
+    intc1: interrupt-controller@14c18000 {
+      compatible =3D "aspeed,ast2700-intc1-a1";
+      reg =3D <0x14c18000 0x1000>;
+      interrupt-controller;
+      #interrupt-cells =3D <2>;
+      interrupts-extended =3D
+#if M0
+        /* 0   */ <&intcm0 0 IRQ_TYPE_LEVEL_HIGH>,
+#elif C0
+        /* 0   */ <&intc0 128 IRQ_TYPE_LEVEL_HIGH>,
+#elif M10
+        /* 0   */ <&ssp_nvic 160 0>,
+#elif M20
+        /* 0   */ <&tsp_nvic 160 0>,
+#elif M30
+        /* 0   */ <&intcm30 0 IRQ_TYPE_LEVEL_HIGH>,
+#elif M40
+        /* 0   */ <&intcm40 0 IRQ_TYPE_LEVEL_HIGH>,
+#else /* B */
+        /* 0   */ <&aplic 128 IRQ_TYPE_LEVEL_HIGH>,
+#endif
+        /* ... */
+    };
+
+    vuart1: serial@1e787000 {
+      compatible =3D "aspeed,ast2700-vuart";
+      reg =3D <0x14c30000 0x1000>;
+      reg-shift =3D <2>;
+      interrupts-extended =3D <&intc1 17 IRQ_TYPE_LEVEL_HIGH>;
+    };
+
+    gic: interrupt-controller@fff01000 {
+      compatible =3D "arm,gic-400";
+      #interrupt-cells =3D <3>;
+      #address-cells =3D <0>;
+      interrupt-controller;
+      reg =3D <0x0 0xfff01000 0 0x1000>,
+            <0x0 0xfff02000 0 0x2000>,
+            <0x0 0xfff04000 0 0x2000>,
+            <0x0 0xfff06000 0 0x2000>;
+      interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HI=
+GH)>;
+    };
+  };
+
+  secondary {
+    #address-cells =3D <2>;
+    /* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/drivers/of/address.c?h=3Dv6.16#n491 */
+    #size-cells =3D <0>;
+    /* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/drivers/of/address.c?h=3Dv6.16#n430 */
+
+    ssp_nvic: interrupt-controller@1,e000e100 {
+      compatible =3D "arm,v7m-nvic";
+      #interrupt-cells =3D <2>;
+      #address-cells =3D <0>;
+      interrupt-controller;
+      reg =3D <1 0xe000e100>;
+    };
+  };
+
+  tertiary {
+    #address-cells =3D <2>;
+    #size-cells =3D <0>;
+
+    tsp_nvic: interrupt-controller@2,e000e100 {
+      compatible =3D "arm,v7m-nvic";
+      #interrupt-cells =3D <2>;
+      #address-cells =3D <0>;
+      interrupt-controller;
+      reg =3D <2 0xe000e100>;
+    };
+  };
+
+  bootmcu {
+    #address-cells =3D <2>;
+    #size-cells =3D <0>;
+
+    aplic1: interrupt-controller@3,d000000 {
+      compatible =3D "riscv,aplic";
+      interrupts-extended =3D <&cpu1_intc 9>,
+      reg =3D <3 0xd000000>;
+      interrupt-controller;
+      #interrupt-cells =3D <2>;
+      riscv,num-sources =3D <480>;
+    };
+  };
+};
 
