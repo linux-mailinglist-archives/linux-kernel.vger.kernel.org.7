@@ -1,85 +1,177 @@
-Return-Path: <linux-kernel+bounces-808083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE26B4ACF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4888FB4ACF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C881B2503B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11D83466D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12423203BE;
-	Tue,  9 Sep 2025 11:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD689321F23;
+	Tue,  9 Sep 2025 11:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="HdVQZPT1"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="MKxJp5ki";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k/KfuZm7"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8490D280A5F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2BD30ACE8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418902; cv=none; b=CcHrnVBn3w7iEDlPFXuvURfbpLmTD9Tm+DktrC9Uy5fLYJ0n6LQIAd7gTo8UG7ytqTfWbIDrw2XilCixztxtRvC++as7FC1VnZecDC7mp8syKCYrGQQCQrY5mV126sQ/vH4egbZaZ8ezrsdtEzHOpWw46aT49sJEWsr2UAlbaD4=
+	t=1757418893; cv=none; b=gpSMShqSzD+fhDRqz4jFZzau1jXkIAtCnitQoreo/cI9DjifHB48evM7dcM66hVRWu+zaC1s6gMq0OiykkOJ1ENyTXg2ozMsrj2qogSAE8aFrbLngDIPj/xhAvcr48ZlngjfAEuaStr0eF7WWW/DUs5M9LrniiAc7IzUdH/R9lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418902; c=relaxed/simple;
-	bh=SN3v4BDj6IFxe4p49D0eWcikdp1MC+MbA48ZuP9sTU8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uEr8Ua0bVx56iXWt/ASReoBnYrKX0Zh5sx86Dmtr1Dp5JDe4leDA9zm3JkA8dXkJQbix24uO+TGTI2jiPtEeK3y1yBwECk+IkfK+rwx6PFR/YXfaM8hF7N0ITlfVcRvUIrV/bYDHc3blMaHMrPcaYlnO3RuBwPEtMPuxy5ysxDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=HdVQZPT1; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=HdVQZPT1MOoq9Iy41Z4qJXtIUrvjtKu3enIoFGQe9cijQ+b7uEwYmjDDe0j2h87QqvRxCgfSsE7IRH53eYkgWCdW4Kv3A1EXouRpLy+jcEuHFjIbUoSLdRTO61XcSsXlLOUauIL1WQAV83m3XRXc+FkGXo7/wYNp3ZTj1qEH3ZlQHqk+O5z+zAmoNHbBBf/xmf3AIYzknK5903N2QOfKXS+Sr7zoraiW0SvxldlcpylWYXPJk3eelJH4iQeAXJoImfohO65Fm+sMnSurXQbAJmRTYxdUdHseo0p8sQ8HyU9OwKOK48zrYdDyZj3Jyj9/K1fYg4p0AHWLs3dzzwqqVg==; s=purelymail2; d=purelymail.com; v=1; bh=SN3v4BDj6IFxe4p49D0eWcikdp1MC+MbA48ZuP9sTU8=; h=Feedback-ID:Received:Date:Subject:From:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -713498179;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Tue, 09 Sep 2025 11:54:38 +0000 (UTC)
+	s=arc-20240116; t=1757418893; c=relaxed/simple;
+	bh=6iXD5m0xbJJ9yI3fFImUYVSx/Zs/cga4QJHzGSzB/10=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=swHtqaqCzPjZ2ItDj3EH0YKcRpAU6K2TaAnqqKnweCJMhUNLUEtZgrwtQlImxPkaoPEgcueoOoZjog0e50CiV1BZPiEHom5bjMpqbBOERChva1JoEuAgnREaRnnCof19emevFc1c/iZCakmXV1k1YnesfNpYgEBvll8btk/Q0Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=MKxJp5ki; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k/KfuZm7; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0E90814000E9;
+	Tue,  9 Sep 2025 07:54:51 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 09 Sep 2025 07:54:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1757418891; x=1757505291; bh=Xg
+	llFUx1hMJXZthKN6RSylNEPxNp90PjmGPFYCczU3c=; b=MKxJp5kiaP89vLxg22
+	BOn2h0ywmis0W9knLLvxaGguspj1X7X+/7R94Doj3VQvQC/qyWWfq/uay1MryUK7
+	LLeLQLN6fyE1elg07CMRvpEX7E/+doRX6IskuWB3ZkjzdNHycdGZUj7jMewHuw7w
+	f+8Jl44ECgmO1ktauce3xwuIFMAMujRh8DBYj2BrKMUDQXkVKUTjpATwxSzlUDjz
+	/mYvjJtYPbrv5VDCAVRC9iHjGbDX0HIewM2yG82lql5UxxkzjljwbycDoa3Pan/H
+	gcYnSKRP9c/n0fUWZIRNOy8G+Rff7xhbS0dQFfFL3wTaLInnKfgE6P+NeoXMekZY
+	66eQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1757418891; x=1757505291; bh=XgllFUx1hMJXZthKN6RSylNEPxNp
+	90PjmGPFYCczU3c=; b=k/KfuZm7zAtskYp6dq5+d9FFBiL4NmLmgcKo2gl7PjN+
+	xRLrZD8wJ2SPtXdSPMpH5EkgP8pmwUHK/UOXkA/AuI4o9eIjXscvBQyo7UyXIUYf
+	F0xd9aUcbAc4DYR7c+5aC1K+kzHj7k83M9LvrqSVoDS0LjZ1VlsJyuCh9qKgujEZ
+	SczBhQKu4vXqXb9q92DEA+e+A1NZv8d3km+UhiGj+rzaEmd+K33qOLsv0rN0JUd3
+	Ve26ty/i4eh4hoeEZ1rt0JjKOxoVaS5FmWEDtPR/0CGfSCNfwlAwg5cT0YdA0mwI
+	VCWQyK/tDxorjlzDo7Srb8KrxQhRlfl1QJ+ojjva1Q==
+X-ME-Sender: <xms:ihXAaAkqbFOIv3rIpWZwCV5q5O3LbQALK0RmlDCt_fTMtKTs8jFv8w>
+    <xme:ihXAaHFJlQiWPSEgiJLcEluQskKXzVqPbVosgNMaCQEV1I2BTv6TZ27vNPZh63jnB
+    peqFoD5TTBdqy4z848>
+X-ME-Received: <xmr:ihXAaJgSOKqGwFM3T6r1NZqrmAhx1xhvd5oTRFeZe0DXwDTZNzHIAyNMnLkUJo8vGDbdI6o2fJ_434H6P9o9RbFgs_HqEa92LGL6zg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdefhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfgrnhhnvgcuifhr
+    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpeefheeltd
+    ehfeetjeefvdehteeutddtteelgeduueetjeevteeifeeuvdefffdvieenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedufedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhvvghnsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopehjohhroheske
+    gshihtvghsrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgr
+    rhhordhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpth
+    htohepjhhovghrghdrrhhovgguvghlsegrmhgurdgtohhmpdhrtghpthhtohepfihilhhl
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmh
+    drtghomh
+X-ME-Proxy: <xmx:ihXAaMgCH-4IFoKCggPJRdhxxW_c-NLDQP3qwgZ79ru41V7mdDxhig>
+    <xmx:ihXAaEkeMt5QMGal3ky7Tqn-Mqao_QI1w6eu2PeUcljYnqXN1j8JmA>
+    <xmx:ihXAaIYOVL61-M9FdeLfj571KiOEpwuA0qVoWP8Ib6h-KZNLxAU7EQ>
+    <xmx:ihXAaPwSP2fXcwlz-ZgHq9sKh5xvsk87k3wSg6sfg7Hgze-xfsY8pw>
+    <xmx:ixXAaEHyLufroOn5rObo_ro8rYL8z--t8DvyYpvhnUrNEtlSWLzGoYdE>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Sep 2025 07:54:49 -0400 (EDT)
+From: Janne Grunau <j@jannau.net>
+Date: Tue, 09 Sep 2025 13:54:43 +0200
+Subject: [PATCH] iommu/io-pgtable-dart: Fix off by one error in table index
+ check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 09 Sep 2025 13:54:36 +0200
-Message-Id: <DCO8ZY43WXEG.1EK23QDRO0X6C@mentallysanemainliners.org>
-Cc: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH 3/4] pinctrl: mediatek: Add debounce times for MT6878
-From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Igor Belwon" <igor.belwon@mentallysanemainliners.org>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, "Sean Wang"
- <sean.wang@kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org> <20250908-mt6878-pinctrl-support-v1-3-3fb78c8ab4e8@mentallysanemainliners.org> <493794af-a1e8-4a4e-a253-2b6b703df53b@collabora.com>
-In-Reply-To: <493794af-a1e8-4a4e-a253-2b6b703df53b@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250909-iommu-dart-tbl-check-fix-v1-1-c800a0375660@jannau.net>
+X-B4-Tracking: v=1; b=H4sIAIMVwGgC/x2MSQqAMAwAvyI5G6gVhfoV8dA2UYMrrYog/t3ic
+ QZmHogchCM02QOBL4myrQmKPAM/2nVgFEoMWulKGWVQtmU5kWw48HAz+pH9hL3cqEuqLFHtXG8
+ g5XvgpP91273vB7vYJAZqAAAA
+X-Change-ID: 20250909-iommu-dart-tbl-check-fix-23d5add6bbf9
+To: Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Hector Martin <marcan@marcan.st>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+ Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2070; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=6iXD5m0xbJJ9yI3fFImUYVSx/Zs/cga4QJHzGSzB/10=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhowDoh3bfa+euaByMivv3/Kd+8yeirNcuFa7ZNsUc84+p
+ Q6ZioiojlIWBjEuBlkxRZYk7ZcdDKtrFGNqH4TBzGFlAhnCwMUpABPhN2X4p+03de+iP49CTjDf
+ an/B9UrtnKxKhVRyRGSSw/OcLpaOl4wMt1IePKoXWPlA66bcbsHdupYcn64m6Nm4M/2qPJ/yWHQ
+ lBwA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-On Tue Sep 9, 2025 at 10:00 AM CEST, AngeloGioacchino Del Regno wrote:
-> Il 08/09/25 21:17, Igor Belwon ha scritto:
->> MT6878 uses different debounce times than other SoCs. Add them to the
->> EINT driver.
->
-> The only reason why I can't give you a R-b for this is that you forgot to=
- add
-> your S-o-b...
->
-> Cheers,
-> Angelo
->
+The check for the dart table index allowed values of
+(1 << data->tbl_bits) while only as many entries are initialized in
+apple_dart_alloc_pgtable. This results in an array out of bounds access
+when data->tbl_bits is at its maximal value of 2. When data->tbl_bits is
+0 or 1 an unset (initialized to zero) data->pgd[] entry is used. In both
+cases the value is used as pointer to read page table entries and
+results in dereferencing invalid pointers.
+There is no prior check that the passed iova is inside the iommu's IAS
+so invalid values can be passed from driver's calling iommu_map().
 
-My apologies (again).
-I was rebasing these changes and rewording them a bunch, probably got
-lost somewhere there. I wonder why b4 didn't scream at me.
-Will add.
+Fixes: 74a0e72f03ff ("iommu/io-pgtable-dart: Add 4-level page table support")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/asahi/aMACFlJjrZHs_Yf-@stanley.mountain/
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+Based on today's iommu/master (9bffaa5ceb26) [1]
 
-Thanks,
-Igor
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+---
+ drivers/iommu/io-pgtable-dart.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iommu/io-pgtable-dart.c b/drivers/iommu/io-pgtable-dart.c
+index 9a63c80a2786bf70fc2544b1f96d2e4c8591c2f8..54d287cc0dd1b8bb07eb437a23ae0e493645a80d 100644
+--- a/drivers/iommu/io-pgtable-dart.c
++++ b/drivers/iommu/io-pgtable-dart.c
+@@ -177,7 +177,7 @@ static dart_iopte *dart_get_last(struct dart_io_pgtable *data, unsigned long iov
+ 	int level = data->levels;
+ 	int tbl = dart_get_index(data, iova, level);
+ 
+-	if (tbl > (1 << data->tbl_bits))
++	if (tbl >= (1 << data->tbl_bits))
+ 		return NULL;
+ 
+ 	ptep = data->pgd[tbl];
+@@ -246,7 +246,7 @@ static int dart_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+ 
+ 	tbl = dart_get_index(data, iova, level);
+ 
+-	if (tbl > (1 << data->tbl_bits))
++	if (tbl >= (1 << data->tbl_bits))
+ 		return -ENOMEM;
+ 
+ 	ptep = data->pgd[tbl];
+
+---
+base-commit: 9bffaa5ceb26d73344b1a16b745f363fb2a6f6b4
+change-id: 20250909-iommu-dart-tbl-check-fix-23d5add6bbf9
+
+Best regards,
+-- 
+Janne Grunau <j@jannau.net>
+
 
