@@ -1,163 +1,178 @@
-Return-Path: <linux-kernel+bounces-808630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4009B50295
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:27:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360D4B50299
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A053BE06C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CA97B3ED1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB1834F48C;
-	Tue,  9 Sep 2025 16:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE444352FDC;
+	Tue,  9 Sep 2025 16:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dNqlcjCJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AAA223337;
-	Tue,  9 Sep 2025 16:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/17yPCq"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE118274FFD;
+	Tue,  9 Sep 2025 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435254; cv=none; b=Cw/5NOC+XMJfZKVfKoJHovbevKCW3fs94QZDK0XaSV2SiS+s8z+KpbwYad0iou59B9bUGRmTVledhR/pHduoOZC2EYMOoIrp+zWqtCcYIGpCvms53MfXDnca/jmJGxskdRhzy2kRxJSm95dkF/p2QQt5Gs/ESqHptrNduUoGsPo=
+	t=1757435271; cv=none; b=UzLqF+qhHUAEeQWaLOnJqApm3bPN11Jm9XxB7Ll8PNMzK+sPJ2oSuYq/IiPN2iX56Gi1VzAef/Cj31pv66rlgmG7vPRNowzL9M4la4TFZRWnrBNID6IvhqiuEtZoqwtghycBrUbjACYudmxWZwwjs5dp54U7FQGtH6vG9kPVpQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435254; c=relaxed/simple;
-	bh=SmJc2zv22f0FWYQKbSkbcJrtvbKce1caU4WLDAhXMxU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=T+PXBX3PXsCquIr7Ahc/cj/4DDPoM19ZLTew735Ba3jDQ9FpRxsD6/wTY8OUx314WQn0DBzDi4FpG8sHM8f5JFHe3TajbjGPOjS+eiqB/fnmyI/J0Y0tW551++L52jV1mgrcTqb/ttwU3ovLS0YSyLTC0eWFZ5JRkyFwT+45pKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dNqlcjCJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.161.27] (unknown [20.236.11.185])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 986A921199D2;
-	Tue,  9 Sep 2025 09:27:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 986A921199D2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757435250;
-	bh=g4ui/NbLzeQr+QDYyVfKyCnHa7V/QAZY5cC85JgqUGE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dNqlcjCJV+tivW1Dfr7LFs00JIg3LYX252g+CgVjlOlGjP8P+rVZHbDAFbvEZZCxE
-	 7P88H2SASxLiqdpz/5wXEQ9tt50SPmFbbPg/weaBJVbKFcE8pnv/ndukUoYNS87OL0
-	 K+eNRn7IJ+FoacV8u701Noy0R0M6LAsEw86hqCig=
-Message-ID: <bd12701b-9093-481e-b420-a19eb9e7c262@linux.microsoft.com>
-Date: Tue, 9 Sep 2025 09:27:29 -0700
+	s=arc-20240116; t=1757435271; c=relaxed/simple;
+	bh=248TwnhhUf+iHubt1gnzN9cycUkiuHz1/vj2OnTms0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvC0KzG+X2mDgVzjfY/l5vxUaPloV43b7duZs2VzHJkwRoAaIgzI5PA/3ihO/xaGpSGWzwlqRfP1lhuOl3rXm6ygV4tddpzZeTkKJuFNrYMameLu+MIcX9tCKFclStQPiScUOMmOXXtQy+fVY9sHDSh9/ouTF8Ea/eQGiun+ysw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/17yPCq; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-729c10746edso45409446d6.3;
+        Tue, 09 Sep 2025 09:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757435268; x=1758040068; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJUeDG6go/WRpKnPHNbMiCFc+vw5StR6WimqMT2TrBs=;
+        b=a/17yPCqS+YqLnY3URrJmjJAmxs2mwPrwCWiLwWzivTesvM1PZAJ7UFHG8aLgp7kod
+         717jKjIM5tbuJmsAQrYtoE1eMoJ4D86S6qIkCQuNR9mD8yjNif0szHwDw/JBK+M6/uqn
+         yeM4b6lWliO75oDsIOA1rxjvgWHBd0M4eqdGbqwXksvIBwrEdGNGdmykWLPU29S08Kjv
+         fXWb/s6zCT33inzp1cdmBsGceG0zmpaIjdtMlV+X3OuVyyE5EaquXnShor3AzOy8usUs
+         kwF15f219CHco/5HVS2CchBuSy1YO44xUMSNMuVhAc/h6cuSMaNUbusF3UKm5+RVq7MT
+         ljDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757435268; x=1758040068;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZJUeDG6go/WRpKnPHNbMiCFc+vw5StR6WimqMT2TrBs=;
+        b=RM1ya7Bf8/G0cyg6TPklPkS5x9g7IiuAzHjdt1VQ/xJGAz2Cbfep3bf7oRMUz/c0jJ
+         W0AtMKouhvQqVE9Z+MPQRBg22jWm3kXzTAGIgelKxra/39IqvLfOzZKOxWGvfZ+w73jG
+         kAR8i3ayAXWqwF8gLNQnkiJarauWlUXSPM2KDp4zyW5xGo0ifo4LHhJWTOoDH3v9yK3z
+         HjPELywiRi+TDAgw/MfrIpBf8j28GGj/u2F5P23quz7NPaznLCbIZEclKOlLsW2BCtan
+         0/UPt+Oq6a4g0S3zXI20lkJHmEEz/H6odwJ0oe9pYEic9iV2f1qa3MYIQZDj6xtPqond
+         lyAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuzUqu5jNfdpcWcOFA2WWAQMir7hkJ2pgKc/+ZszyOz9PExhLSnT5I18aOmYuhj9DFE7iY8jTIM3g8bidCAtg=@vger.kernel.org, AJvYcCXhTh7ZxvOcivV2ZJf7cCM41uxS01z2bJldq+/jsFDGjyKYeHlsFOxlUw0RqRss/OiOLRLq3PgdA7vu3KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvM0AA1HZzr/I9TufKpHNfNWi6k1VZ7O1vw3bSU8IRS81aKUfO
+	8OAPLjOWVTmFQaVTvtdVfRpbN1xzhql6m0LYIWldlPzmlqCVpB7ZzdvK
+X-Gm-Gg: ASbGncs9RdFQvp6gQBYrhDCMwgDAoT4+y+OrgQU3BiWWR0nYdxC2ZoF7COZJC8PBQf3
+	UZ9gpFcaJFrFCFxp7um+QFJz7Yboj9PlZskFrXimyrkC7KfpdPatzNy74fgjI9+g52pWyKSZtxU
+	n1RRhBg31NvdlhHDdF6miw5C/l+15Lz+3PvnQLryvB8F1VRBJ1KPmUF9ziI//b6gijqkfSRgC8W
+	mrRSgi3m8Q+o8lkycIJ54i1xMFR3mPuZCzdgVh2BB3rtEiAYE+q49EoHw2q+HnDrmWRbYj5UYF4
+	tX1nEnIldbeztEDFDXAMxBZcsLV8CMu2X1t70BoxqPbr3NOIMlQ9DOVjVX243KI5CbsDWP1OBKb
+	A9K9JfL126de0yta5KCx7cpa1zKVIvwjDBEzfkIkyLwJSrhY01VsbTiVMdsKKm2r+UbxQ1WLlKo
+	awm4OMSHrsMK2g0hbEGYtucm4IbahfNo2pXw==
+X-Google-Smtp-Source: AGHT+IHxKskNmgkAEM5AkTUg89YNKBAkBVaqKQjq0CNPs8Hr+bKHNVkf4mw3xKpGYTwLrRG7/wEzVQ==
+X-Received: by 2002:a05:6214:1c43:b0:730:a986:49b0 with SMTP id 6a1803df08f44-739371a735amr123515576d6.31.1757435268339;
+        Tue, 09 Sep 2025 09:27:48 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72856902136sm111536116d6.58.2025.09.09.09.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 09:27:48 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 81FFBF40069;
+	Tue,  9 Sep 2025 12:27:47 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 09 Sep 2025 12:27:47 -0400
+X-ME-Sender: <xms:g1XAaLywop0erLDnHotUpn_buyQVeOGg2UgeIGrBUgj8X6J0T8ydrg>
+    <xme:g1XAaLIyCVlURiAtdZ_bC-yEBVtdl83C89Jtd-YK_RfQ9WO9DiHFPKs65p6xk76-O
+    fdrmEZNyJx1yz1ZYQ>
+X-ME-Received: <xmr:g1XAaEvhQfi0fY40WhgtJOq9NGG2umuZBjkr34esnWrtc57P3-XqmZlCUoLvKdppt9utjcMFfEbpsJYdNZKKRlP23d1tOXbq>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeklecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeevgffhueevkedutefgveduuedujeefledthffgheegkeekiefgudekhffggeel
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgt
+    ohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtth
+    hopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohep
+    sghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoheplhhosh
+    hsihhnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:g1XAaNTW67Mji4QsYYx85fn08lm1b1zrFNdU9qGwF2Zv5hYNOG-WnA>
+    <xmx:g1XAaFQuY0HgwDmLkTptVG4zv1TH4cri6ii9YwobF8rDBYkzJTNi6Q>
+    <xmx:g1XAaJpNRvahUNeII1cN1y0vrzwu2QQz4p6NC4_1Jy4ff1ANrrJwsw>
+    <xmx:g1XAaFCyBe1A8sYRrVqPwF7f8ehcFu6td3uCpeU3Q1kAGgg28_6ijg>
+    <xmx:g1XAaOsJYJtLDI1CsQ8dI8lbCZIZ_xQo6ELJwvPkjxEmgzzG5lf-Wy4y>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Sep 2025 12:27:47 -0400 (EDT)
+Date: Tue, 9 Sep 2025 09:27:46 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and
+ devm_enable_optional
+Message-ID: <aMBVgrVqX2w31GhV@tardis-2.local>
+References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
+ <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
+ <aL_PwXck1HsLp5wH@tardis-2.local>
+ <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
+ <aMBJ805QjQcPdRol@tardis-2.local>
+ <CANiq72m18qUTjqjKKYgPfeEUh=vN+Jzz=ACFDcgA-JDLL_N5SA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- easwar.hariharan@linux.microsoft.com, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
- paekkaladevi@linux.microsoft.com
-Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
-To: Praveen K Paladugu <praveenkpaladugu@gmail.com>
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
- <efc78065-3556-410a-866f-961a7f1fc1ac@linux.microsoft.com>
- <874a2370-84f1-4cec-bb06-a13fe11b49ca@linux.microsoft.com>
- <7b4fafc7-cf89-45f6-ac5c-59a4c9f53f79@linux.microsoft.com>
- <23d93b71-86cc-4c01-9264-b049cfec39e0@linux.microsoft.com>
- <6252578f-df25-4510-bc18-8f593739fb83@gmail.com>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <6252578f-df25-4510-bc18-8f593739fb83@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72m18qUTjqjKKYgPfeEUh=vN+Jzz=ACFDcgA-JDLL_N5SA@mail.gmail.com>
 
-On 9/9/2025 7:52 AM, Praveen K Paladugu wrote:
+On Tue, Sep 09, 2025 at 05:58:34PM +0200, Miguel Ojeda wrote:
+> On Tue, Sep 9, 2025 at 5:38 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Well, then the question is why we want to compiler regulator.rs if
+> > CONFIG_REGULATOR=n? Shouldn't we do:
+> >
+> > #[cfg(CONFIG_REGULATOR)]
+> > pub mod regulator
+> >
+> > in rust/kernel/lib.rs?
 > 
-> 
-> On 9/8/2025 1:06 PM, Nuno Das Neves wrote:
->> On 9/8/2025 10:22 AM, Easwar Hariharan wrote:
->>> On 9/8/2025 10:04 AM, Nuno Das Neves wrote:
->>>> On 9/5/2025 12:21 PM, Easwar Hariharan wrote:
->>>>> On 8/28/2025 5:43 PM, Nuno Das Neves wrote:
->>>>>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->>>>>>
->>>>>> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
->>>>>> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
->>>>>> request.
->>>>>>
->>>>>> This results a failure in module init. Instead of failing, gracefully
->>>>>> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
->>>>>> already-mapped stats_pages[HV_STATS_AREA_SELF].
->>>>>
->>>>> What's the impact of this graceful fallback? It occurs to me that if a stats
->>>>> accumulator, in userspace perhaps, expected to get stats from the 2 pages,
->>>>> it'd get incorrect values.
->>>>>
->>>> This is going out of scope of this series a bit but I'll explain briefly.
->>>>
->>>> When we do add the code to expose these stats to userspace, the SELF and
->>>> PARENT pages won't be exposed separately, there is no duplication.
->>>>
->>>> For each stat counter in the page, we'll expose either the SELF or PARENT
->>>> value, depending on whether there is anything in that slot (whether it's zero
->>>> or not).
->>>>
->>>> Some stats are available via the SELF page, and some via the PARENT page, but
->>>> the counters in the page have the same layout. So some counters in the SELF
->>>> page will all stay zero while on the PARENT page they are updated, and vice
->>>> versa.
->>>>
->>>> I believe the hypervisor takes this strange approach for the purpose of
->>>> backward compatibility. Introducing L1VH created the need for this SELF/PARENT
->>>> distinction.
->>>>
->>>> Hope that makes some kind of sense...it will be clearer when we post the mshv
->>>> debugfs code itself.
->>>>
->>>> To put it another way, falling back to the SELF page won't cause any impact
->>>> to userspace because the distinction between the pages is all handled in the
->>>> driver, and we only read each stat value from either SELF or PARENT.
->>>>
->>>> Nuno
->>>
->>> Thank you for that explanation, it sorta makes sense.
->>>
->>> I think it'd be better if this patch is part of the series that exposes the stats
->>> to userspace, so that it can be reviewed in context with the rest of the code in
->>> the driver that manages the pick-and-choose of a stat value from the SELF/PARENT
->>> page.
->>>
->> Good idea, I think I'll do that. Thanks!
->>
->>> Unless there's an active problem now in the upstream kernel that this patch solves?
->>> i.e. are the versions of the hypervisor that don't support the PARENT stats
->>> page available in the wild?
->>>
->> I thought there was, but on reflection, no it doesn't solve a problem that exists in
->> the code today.
->>
->> Nuno
->>
-> 
-> The usecases for stats exposed by the hypervisor are:
-> 1) used within the kernel by root scheduler
-> 2) exposed to userspace via debugfs.
-> 
-> I thought we are addressing the first use-case here (patch1 in this series). If root scheduler support was upstreamed then this patchset does solve a problem in upstream code.
+> It depends on what the C API does -- if the C API is supposed to
+> "always work" (even if it is no-op or if it returns errors) even when
+> disabled (so that callers are easier), then we likely need to
+> replicate that on our side.
 > 
 
-Sorry about the long context, I couldn't figure out a good spot to snip.
+While I don't disagree with the rule in general, but I do want to say
+the cost is the binary size (at least without inlining helpers), so I
+think we are allowed to apply this rule case by case, i.e. even if a C
+API is supposed to "always work" but Rust can avoid exposing the API at
+some configurations.
 
-Thanks for calling that out. I think root scheduler support has been upstreamed if I'm reading
-root_scheduler_init() right, Nuno can confirm.
+I of course don't have a strong opinion on what the regulator subsystem
+should do ;-)
 
-With the series applied, I don't see any of the code that picks and chooses the stats from
-the PARENT/SELF pages even for the kernel case, rather there's a straight memcpy of the
-stats pages in the create_vp ioctl.
+Regards,
+Boqun
 
-Is the kernel usage with the root scheduler somehow immune from the problem userspace would
-face with the duplicated pages? If not, I'd say that it's an argument for dropping patch 1
-and 2, instead of including patch 2, or to fold them together. We don't want a state in the
-upstream kernel where a commit introduces a known problem just to be solved by the following
-commit.
-
-Thanks,
-Easwar (he/him)
+> We had a similar discussion for DebugFS.
+> 
+> Cheers,
+> Miguel
 
