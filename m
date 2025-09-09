@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-808275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47F4B4FD6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC1DB4FD6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62417542D18
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F719188D3F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E2335691B;
-	Tue,  9 Sep 2025 13:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786203451A2;
+	Tue,  9 Sep 2025 13:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RoL5rhKm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U1di4U7j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B82233CE90;
-	Tue,  9 Sep 2025 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4C23451B4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424788; cv=none; b=dnlUoazzbvY1XemaJkWX6KlNXoKMwwwIVvIKXFcKjh0C/Cyq5LdnQLpajPgVSsDLV3roc89QtI6ZU45DvY5zzMalaBx6RFEW7mJl0iVGIlOCEl4BElge9VX+6MT83gETv59kJzJrN2w6cpTI7A/hMPKe+lny/GfgPOF2frEQaRQ=
+	t=1757424768; cv=none; b=CeJsSNbOZFiwN/uDOS2WnEcPcKcFjmAeQi5/bV6Wb/yaALH0vzv9dnR4nAFbKAkMlwU0w2ZYq1NGarRuPk+j4UfHsblJdyMxM1tGyBDjdt9rwd95Itye1JP600qTNNbmeNFZHNDtmDVr3yvWRvxpcNH1mLN2OLcWTovf/Ht+cds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424788; c=relaxed/simple;
-	bh=vQn5Ns/rZdju1+k5oJSvNbHwCpp74OomD9d/3hLJn54=;
+	s=arc-20240116; t=1757424768; c=relaxed/simple;
+	bh=MY8eAzyDaP5DVy3awWgMxodlcnWPUFKzXBdeLXpV/pc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upR9YgZFfqCYKQr60oEIX/jkSsTlX0+Ydl7iqe4oCrnICBzF/3fDb7ewZnXhHEa1n2AcOXgORyZewbuBgH0AnTIdNAYHYFQjTXkU2C/qNilnWolKvYnS5a7xkqd0Z7jGc1VL6kkXpZG0iiXOMen7PC40gbDKRsb6xB+dq820Dkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RoL5rhKm; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757424787; x=1788960787;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vQn5Ns/rZdju1+k5oJSvNbHwCpp74OomD9d/3hLJn54=;
-  b=RoL5rhKmZUWbPH8wLqjB9WX9lNNcqkvkBKSKhpnWJJBAlulMyLB347RW
-   DzgaNYnjf+BxU50l2KTT865sf2PWPXsR8jBgrTTIcGTo2mizhW9GjhW8N
-   ZoVVZTE2QIcj5Lj561wptMyDGlFSv6GQDGRWZtj2GFOoOCI/h9EwNvLdW
-   WYg5AGcIk/xzSp7IGCcyHmpvyd4FrBngyjlKqZf5XjRS12Z/H6+h5z0ci
-   NRhVYGSObcW1aVPvHx06GF9f5ENEtSC4ESgMMPqV6snGWWiUGQgjwsiNP
-   bhluZlpFKtwdQXSOhO9FfQFscg9mTcoF416xKqsp/902Rtu4U69GJyqtb
-   w==;
-X-CSE-ConnectionGUID: luVT5OjRSPK2V8NpJgeEag==
-X-CSE-MsgGUID: wRiKOL+1Sqm4ke3UHetp6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59565892"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="59565892"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:33:06 -0700
-X-CSE-ConnectionGUID: nLT5NzcdSVCkdCXh5+noIg==
-X-CSE-MsgGUID: 62NvzgldQLiaeQuNNGmJ9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="173471985"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 09 Sep 2025 06:33:04 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uvySz-0004uF-2v;
-	Tue, 09 Sep 2025 13:33:01 +0000
-Date: Tue, 9 Sep 2025 21:32:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linus.walleij@linaro.org, brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org, Mary Strodl <mstrodl@csh.rit.edu>
-Subject: Re: [PATCH] gpio: mpsse: support bryx radio interface kit
-Message-ID: <202509092305.ncd9mzaZ-lkp@intel.com>
-References: <20250908173804.3816149-1-mstrodl@csh.rit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcWlFzwNsSACUcxoQUkpWs6Z/bICDYbXVmVk5bfE42s52acGCji9FxWtJ3M68RKc+1zTCMjeDNF/W/E3/PveY9kyGHPCLfzpWghR0ymfU1DKLz1Xrjeg1PphDmTkVkkdyzkFPPqlmSqJkVdYXuclJQCsR65bcMlsYZcvj1uyuhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U1di4U7j; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757424765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4BXqa/2VkY+MYk3taj1l57EoqmZshiIHmHuWstQftUs=;
+	b=U1di4U7jNkqiWrbGMje9tfZ409biW8EVfc2U2xIx2rKT2DxOWydcW0tYNlAUMKLxxWm4hn
+	XpnaYKNhHb7l6AOk8k0zzbxdkRdiH04zPl3kO6Zg+5Ejzjj4KHsh3jME59hBmW9C+W4x4O
+	rXQYv+WtcvhHnzKL70NTcMMiJ2WLcq0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-2iugDZeIPuO7Vf7gf0CKVg-1; Tue,
+ 09 Sep 2025 09:32:42 -0400
+X-MC-Unique: 2iugDZeIPuO7Vf7gf0CKVg-1
+X-Mimecast-MFC-AGG-ID: 2iugDZeIPuO7Vf7gf0CKVg_1757424760
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E93CA19541BD;
+	Tue,  9 Sep 2025 13:32:39 +0000 (UTC)
+Received: from localhost (unknown [10.45.226.196])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA2163000198;
+	Tue,  9 Sep 2025 13:32:36 +0000 (UTC)
+Date: Tue, 9 Sep 2025 14:32:32 +0100
+From: "Richard W.M. Jones" <rjones@redhat.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+	Eric Dumazet <eric.dumazet@gmail.com>,
+	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com,
+	Mike Christie <mchristi@redhat.com>,
+	Yu Kuai <yukuai1@huaweicloud.com>, linux-block@vger.kernel.org,
+	nbd@other.debian.org
+Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
+Message-ID: <20250909132936.GA1460@redhat.com>
+References: <20250909132243.1327024-1-edumazet@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,88 +76,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908173804.3816149-1-mstrodl@csh.rit.edu>
+In-Reply-To: <20250909132243.1327024-1-edumazet@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Mary,
+On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
+> Recently, syzbot started to abuse NBD with all kinds of sockets.
+> 
+> Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
+> made sure the socket supported a shutdown() method.
+> 
+> Explicitely accept TCP and UNIX stream sockets.
 
-kernel test robot noticed the following build warnings:
+I'm not clear what the actual problem is, but I will say that libnbd &
+nbdkit (which are another NBD client & server, interoperable with the
+kernel) we support and use NBD over vsock[1].  And we could support
+NBD over pretty much any stream socket (Infiniband?) [2].
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.17-rc5 next-20250909]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
+    https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
+[2] https://libguestfs.org/nbd_connect_socket.3.html
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/gpio-mpsse-support-bryx-radio-interface-kit/20250909-014744
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20250908173804.3816149-1-mstrodl%40csh.rit.edu
-patch subject: [PATCH] gpio: mpsse: support bryx radio interface kit
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250909/202509092305.ncd9mzaZ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509092305.ncd9mzaZ-lkp@intel.com/reproduce)
+TCP and Unix domain sockets are by far the most widely used, but I
+don't think it's fair to exclude other socket types.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509092305.ncd9mzaZ-lkp@intel.com/
+Rich.
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/usb.h:19,
-                    from drivers/gpio/gpio-mpsse.c:13:
-   drivers/gpio/gpio-mpsse.c: In function 'mpsse_ensure_supported':
->> drivers/gpio/gpio-mpsse.c:211:25: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'int' [-Wformat=]
-     211 |                         "mpsse: GPIO %ld doesn't support %s\n",
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/gpio/gpio-mpsse.c:210:17: note: in expansion of macro 'dev_err'
-     210 |                 dev_err(&priv->udev->dev,
-         |                 ^~~~~~~
-   drivers/gpio/gpio-mpsse.c:211:40: note: format string is defined here
-     211 |                         "mpsse: GPIO %ld doesn't support %s\n",
-         |                                      ~~^
-         |                                        |
-         |                                        long int
-         |                                      %d
-
-
-vim +211 drivers/gpio/gpio-mpsse.c
-
-   193	
-   194	static int mpsse_ensure_supported(struct gpio_chip *chip,
-   195					  unsigned long *mask, int direction)
-   196	{
-   197		unsigned long supported, unsupported;
-   198		char *type = "input";
-   199		struct mpsse_priv *priv = gpiochip_get_data(chip);
-   200	
-   201		supported = priv->dir_in;
-   202		if (direction == GPIO_LINE_DIRECTION_OUT) {
-   203			supported = priv->dir_out;
-   204			type = "output";
-   205		}
-   206	
-   207		/* An invalid bit was in the provided mask */
-   208		unsupported = *mask & supported;
-   209		if (unsupported) {
-   210			dev_err(&priv->udev->dev,
- > 211				"mpsse: GPIO %ld doesn't support %s\n",
-   212				find_first_bit(&unsupported, sizeof(unsupported) * 8),
-   213				type);
-   214			return -EOPNOTSUPP;
-   215		}
-   216	
-   217		return 0;
-   218	}
-   219	
+> Fixes: cf1b2326b734 ("nbd: verify socket is supported during setup")
+> Reported-by: syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/netdev/CANn89iJ+76eE3A_8S_zTpSyW5hvPRn6V57458hCZGY5hbH_bFA@mail.gmail.com/T/#m081036e8747cd7e2626c1da5d78c8b9d1e55b154
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Mike Christie <mchristi@redhat.com>
+> Cc: Richard W.M. Jones <rjones@redhat.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Yu Kuai <yukuai1@huaweicloud.com>
+> Cc: linux-block@vger.kernel.org
+> Cc: nbd@other.debian.org
+> ---
+>  drivers/block/nbd.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 6463d0e8d0cef71e73e67fecd16de4dec1c75da7..87b0b78249da3325023949585f4daf40486c9692 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -1217,6 +1217,14 @@ static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
+>  	if (!sock)
+>  		return NULL;
+>  
+> +	if (!sk_is_tcp(sock->sk) &&
+> +	    !sk_is_stream_unix(sock->sk)) {
+> +		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: should be TCP or UNIX.\n");
+> +		*err = -EINVAL;
+> +		sockfd_put(sock);
+> +		return NULL;
+> +	}
+> +
+>  	if (sock->ops->shutdown == sock_no_shutdown) {
+>  		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
+>  		*err = -EINVAL;
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rjones
+Read my programming and virtualization blog: http://rwmj.wordpress.com
+virt-builder quickly builds VMs from scratch
+http://libguestfs.org/virt-builder.1.html
+
 
