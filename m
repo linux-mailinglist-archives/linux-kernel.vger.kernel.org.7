@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-809077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72D5B50836
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1E9B50838
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4481706F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A53A17E67D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D24225D6;
-	Tue,  9 Sep 2025 21:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BF4253F05;
+	Tue,  9 Sep 2025 21:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MmZD3hM7"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3pLC60s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0ECB22157F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 21:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB0324EA9D;
+	Tue,  9 Sep 2025 21:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757453556; cv=none; b=CPNa7G+i4xwVLxNRCJM4XPEYJEkmVejXrRn7kI+rf53xr4RQhcVTH1AyNh6jHsVl5RLB6pqgjmuCf5zAOB8xSunuMgxZOi5p7/soNZ9ZzMk23z4FCfSY9VJFIYjGIEfffeyA/w/+cUpQCqRY/l1PpqVkxvzw3bQumWJZjhiWVE8=
+	t=1757453579; cv=none; b=bverBrX9CxtVM1VcAUt9u7oPPsfXB0jcguokBwxOpDl4CJw3L9xWjcQTBdPA1I3JayvH5lArXhf2YpKdPNyyvKiCbWK3Pd3lQSYZTlA+3Jn6vTu2vNYfNo/AYyrlp7sDcT4Loq8J0di+EBl8GpXz002O5TrR22SeGsh/qbYQJwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757453556; c=relaxed/simple;
-	bh=asYCnis4mSt6CdqmJGzu+Uw5kUXiEII09UvJhb2qu+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLcjXsye1u8B/eWUTKz6IE9xpJPy9Rk2vGsynQZHXWo+UMWgKQQaLa5pdhDo2s/nQRtz+hyMWWv4SiBSfSKSDR+tlYAu/zwjAnDwrZpkDIh3/H34cZ43Rj89W7PdCloosUvhNgEazvR5pg1pD13cS6WasifRxS2CQkx2p5mj0Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MmZD3hM7; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b482fd89b0eso5287846a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757453554; x=1758058354; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=asYCnis4mSt6CdqmJGzu+Uw5kUXiEII09UvJhb2qu+8=;
-        b=MmZD3hM7QvY841CrjUftBYyB9mXbysv2R531wqu8iH24LaP4HsvpCdpwNeUKZ55Dd6
-         WFys/ST4OSFUEQ0DR4vWNsnMU8CZXnv826qNVf/7WgNH9IGIDsdQ+5ul/MwBGRootB9A
-         injXW0rv6Mj4jEPEWt6rV6sJbrsuiBffZK5ztdFX9f3bMBwcwimTgo9Fhxl5vnHU+mxr
-         9jgtUCaxOFKaKMTJ+5hK3NHNGM0/2neGHzCnzMLKk66ShgpGg1RbXrkBjcSLBjXSyB1k
-         2uZiV1b1SAKyw76NJubiiPrPDezSVNs4S1NpPWcKL5wc3VfmRVXCbvbGbdBAGJffXubd
-         NMTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757453554; x=1758058354;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=asYCnis4mSt6CdqmJGzu+Uw5kUXiEII09UvJhb2qu+8=;
-        b=iH9DPhIA0Bsac+ZXA+8u1PbMwY1ayULvKy6UkuiEGMXNq2cgO2OwY3Yd8CEqFdlmZu
-         wz01xj0OxQ3Mr8XOMux8CpQik7x43WhdSTt1HjwUMTEYAw59SkLW2gb3vxXZMBO/VlrI
-         h5XLlrMAtbtdFBhZewy4WYnv7VvCoaiF0DVLPJHd2xg+MwW8qJ4LPnAjyOITXS6+c3pp
-         QZWUbkkHs645rY0ejCG0IR10kyfhOdn+M4I/m6JfQsi0uvmJoRw9fF7Q2KEgtSpb4lS6
-         q3cizHLtVV40v/5JE2NQKZwBDpkvH0xXgahSVgNpvStZoH3f1/9GFzDS6byl1xJRatSa
-         Lb4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVTa1dsnCOQxGzIo8PtaZHE48NWGMJbhWXcO5/olz8z3xWegXonPSqXuAylyYMAV6LH/Aju3/iw2jgpGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxveE8ndtop07ybLC/rkk8FYTHVfGACRLFh/ymU9W0qjaNSneHh
-	CxoBKHgxVondCqsV8r/K++DTzLQqs5oo0Xgx7t4+JqJjGwcP8ZHxbXDui0N1Yj9l11SmPRfl32q
-	kWEzLGJ7mzlsiCDp/fLHYlaa+ajvIrcMyI8inz9u4
-X-Gm-Gg: ASbGncuruIybnPyBoG7/MuoH5hbhaEWya1UL+oR5DB1Fpt0WiL0GjegR2LSoFkOa3DZ
-	sU0diWCVIxRhbbRfJz0t+w2Ck9XMUUc5YB9FE7NG9vrjKBzA1+ulsVTIq5Rf5VhCAMfCWRynlFB
-	U4wuTuCDTtbAnLNmkL1i3pnXxlPyxjlgx9cJREurF3uXPoFL0i/qXWSFUoENMIqErrKt2fnbDpy
-	Zf7h2Z9XOVMToGQkQ==
-X-Google-Smtp-Source: AGHT+IFpFxNo6dxCBm0dGcRZj8ObBT0pFbtG/sSiVCHxphai4thKxc4JU3AVtrF10UeYjdGdH9PqFYTQ3Uv4NlDmlp8=
-X-Received: by 2002:a17:90b:1d0b:b0:32b:df0e:9284 with SMTP id
- 98e67ed59e1d1-32d43f45856mr17772256a91.10.1757453554206; Tue, 09 Sep 2025
- 14:32:34 -0700 (PDT)
+	s=arc-20240116; t=1757453579; c=relaxed/simple;
+	bh=21lhlUmkr0Bx5L+PohyX4S47cPMRfDplBXFD4mWmKUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=arPOBRaL3u+VxTsh1hU+jn0b9WuJ/GW7aaBCjVz9g688nlX2gdTWHnzobeIKJcOVXSQ7Fbs6I6TZAyv8FbodFf+GaYCl1zwqmNhf8lcmgOQeyAK1uc3lRfxHgn0zJi9gRD3HTltryPoig+YsVIk2wf65SVPv2iwf76mmLXAAgXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3pLC60s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF48C4CEF4;
+	Tue,  9 Sep 2025 21:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757453578;
+	bh=21lhlUmkr0Bx5L+PohyX4S47cPMRfDplBXFD4mWmKUg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O3pLC60sHOiSJDSsTP6Jk3penu5RDG/7ItDW3IJnEcmNBZ22S2ohf9XpJUlyw/NdN
+	 sAMFPRMq2QxTTAeT/o3hcssH99xCT/LvQyBCjMLEtNexuIOaS/GqCTyMC8QMt8vTGm
+	 Er27sYy+rKozyLd+PVos0IZutYXaRLi/pIJCXxtag5bKNs3wx/WrMS5p1L+uWfchRl
+	 t4EXeNtwJL3n/ISoSU8mfbvjzm8U8Td8/5mTj2Ol+lrbz60jE3Hmy2yMzVb7Qv2hv4
+	 VEPhsXKxkpd5+vJMih4TjrtEK8SCxbqnbgwNs0VHWtJMIVbXMdXJK6SQpirEPhW9hP
+	 oWxceysH9RWVw==
+Date: Tue, 9 Sep 2025 14:32:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Florian
+ Fainelli <f.fainelli@gmail.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Kory Maincent <kory.maincent@bootlin.com>,
+ Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>, Donald
+ Hunter <donald.hunter@gmail.com>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Jiri Pirko <jiri@resnulli.us>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Russell King
+ <linux@armlinux.org.uk>, Divya.Koppera@microchip.com, Sabrina Dubroca
+ <sd@queasysnail.net>, Stanislav Fomichev <sdf@fomichev.me>
+Subject: Re: [PATCH net-next v4 0/3] Documentation and ynl: add flow control
+Message-ID: <20250909143256.24178247@kernel.org>
+In-Reply-To: <20250909072212.3710365-1-o.rempel@pengutronix.de>
+References: <20250909072212.3710365-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908013419.4186627-1-tweek@google.com> <CAEjxPJ5q0eriGjo1tdfN+pzBBN5OeyfMaYp_sNQcOg-rDaXVCA@mail.gmail.com>
- <CAHC9VhR1pEFYzSFaqqWsU8C6vDaH_E8uZZ5g=KyK6TJvA7a8MQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhR1pEFYzSFaqqWsU8C6vDaH_E8uZZ5g=KyK6TJvA7a8MQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 9 Sep 2025 17:32:22 -0400
-X-Gm-Features: Ac12FXyL7eL3X_jCKFwoxMjKs2tue0NW6-1wqyMzPYDoAVXjw8OY2Gb7ih30uV4
-Message-ID: <CAHC9VhQLZ+mWS77OG6cDddXYfJy+eTqkKSZ28PJNEjLigsNGhg@mail.gmail.com>
-Subject: Re: [PATCH v2] memfd,selinux: call security_inode_init_security_anon
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	James Morris <jmorris@namei.org>, Hugh Dickins <hughd@google.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 9, 2025 at 5:10=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> Considering that we are at -rc5 right now, we only have a few more
-> days left in the current dev cycle, I'm going to merge this now (with
-> a subject line tweak and some unnecessary vertical whitespace
-> removed), and I'll put together a quick little patch to do the
-> WARN_ON()/EACCES conversion which you'll see on list shortly ...
+On Tue,  9 Sep 2025 09:22:09 +0200 Oleksij Rempel wrote:
+> This series improves kernel documentation around Ethernet flow control
+> and enhances the ynl tooling to generate kernel-doc comments for
+> attribute enums.
+> 
+> Patch 1 extends the ynl generator to emit kdoc for enums based on YAML
+> attribute documentation.
+> Patch 2 regenerates all affected UAPI headers (dpll, ethtool, team,
+> net_shaper, netdev, ovpn) so that attribute enums now carry kernel-doc.
+> Patch 3 adds a new flow_control.rst document and annotates the ethtool
+> pause/pause-stat YAML definitions, relying on the kdoc generation
+> support from the earlier patches.
 
-The patch can be found at the link below.
+The reason we don't render the kdoc today is that I thought it's far
+more useful to focus on the direct ReST generation. I think some of 
+the docs are not rendered, and other may be garbled, but the main
+structure of the documentation works quite well:
 
-https://lore.kernel.org/selinux/20250909213020.343501-2-paul@paul-moore.com=
-/
+  https://docs.kernel.org/next/netlink/specs/dpll.html
 
---=20
-paul-moore.com
+Could you spell out the motivation for this change a little more?
 
