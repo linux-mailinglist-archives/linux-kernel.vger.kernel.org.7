@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-807304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5FDB4A2C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D96F8B4A2C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F361C188ECC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C35C18883EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F3305946;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8263054D4;
 	Tue,  9 Sep 2025 07:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r3cdzDZc"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kvkw1g5F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717C022126C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0D4315D43;
+	Tue,  9 Sep 2025 07:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757401257; cv=none; b=bX4CK3s4qEWgC08Yl9qMfeBJvp9sYZcerTf5xsEHrZWg0VNT3c7ha5C0e4kGYq2t9JEFMMg9M/hagOPXJbRElrArLB9lMqE2fZW3T1gNHTpGEfhyygAQY9iu6J6phA4N1+KevFh6D9pu9vdbj3v6vI12AQTsLtfrH64NPcB4ioY=
+	t=1757401257; cv=none; b=XNWqcAeZy9R0PfH88uoQA0cGVA8DacDXkoaIocmPpb7No5FQF7Us0VS/3NckUdc/s0l7mdiGxMnI7xtjavv3NwcGZ29VK7Q8Baby/tV22rkZwuF/uQ0OtW6o6d7toLMIwvzHnVzjDk+0nsR6puAC2vIP9Se5pGkj+Q1KUVyKK8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757401257; c=relaxed/simple;
-	bh=zQ/SEToBnCahJDFB3j4VROEtK163bCT4JP8R4kUel3o=;
+	bh=OJ2A3hS+Hfqs4PqlBoUm97j23nUDMRLt7shjDK+BqGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHCtaxj4cEPThG3gxkMnLAAb4+0w34zHATFxOlIsW1qjlEShKFILTi+C2mX9uPwooiO1scBq1uhDoR25o7dWc6RPEYwUz1Jl2GR1p+wngedG+eSM8GrGRlphIUujbZGrOx0cKq8O+zC0LDQgV+7amdDs8NYC9mBBM+XuFqhoeTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r3cdzDZc; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 00:00:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757401253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sS9KBzVCPbJWJWQ0UZ0j5q0+Yoxsvx3SirUPYIS2U7w=;
-	b=r3cdzDZcXKNh1ojPr0RNT8j7PkCqsztCRReeScRBIXigTRwrHQzCqgNV1zlusFoXRvpTUp
-	bkd3wy/xGi0tFJNQXWn/bGYskpEVuq5v5jff5QslEy7u/c68ET842FIB7DAXkUmkVuxf3B
-	U22VPhQz8M8BEg7jBu2ccv6ysABXPR8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jinqian Yang <yangjinqian1@huawei.com>
-Cc: yuzenghui@huawei.com, maz@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, liuyonglong@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH v2 0/3] KVM: arm64: make EL2 feature fields writable in
- ID_AA64MMFR1_EL1
-Message-ID: <aL_QjZbkvHsYIRt6@linux.dev>
-References: <20250909034415.3822478-1-yangjinqian1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVO8OGit/DdRR4JUg5dHWzo3kLZeGjnEX8OPhhWZ3n3hEPjTQP/BZgkh8FSvWcb49FoEzi5ldEEfMBBdm3TQ5+sqLeLhRG7mP6YwW/NDH7F90XjSNrHlYPe7Iah0LEFjqkG+o90nypHLBq9bH5pcJ4ru5o1J/PmeUwSEaj7CrmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kvkw1g5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98887C4CEF5;
+	Tue,  9 Sep 2025 07:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757401257;
+	bh=OJ2A3hS+Hfqs4PqlBoUm97j23nUDMRLt7shjDK+BqGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kvkw1g5FzWJ6I0hfJixs69zI4Km28+9/BzI2eoCWBDvTex3y6C/FTAP/vSQdMZeai
+	 +VF2WlCJs+SsBNl938GkuED0UP8ogYzlWGEWIQAYdC6phmQyJcgfQVhP2tG4Gj9S6B
+	 HEM11URGsZRf8YvADnSzalsMjC6NtGmWO5iX2dH8QTPNCnPXkNGkjmMJDDiZzXf/so
+	 X8sjR+3biFQcX5g0RhOsC476sTl+QcgVf30F4qftH9fNbufj3pY9k6uZO8jxnT5q7x
+	 8k1/ltLfAsW6Wm1mK39HINQDhtKJRxGABP7mV7MvJaZs2d8+oRKnktXOXAAeVV2Zve
+	 ZfdWkOsliHQDA==
+Date: Tue, 9 Sep 2025 09:00:54 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_nguyenb@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH V6 2/4] dt-bindings: mmc: controller: Add max-sd-hs-hz
+ property
+Message-ID: <20250909-wise-calculating-poodle-89fb8e@kuoka>
+References: <20250908104122.2062653-1-quic_sartgarg@quicinc.com>
+ <20250908104122.2062653-3-quic_sartgarg@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250909034415.3822478-1-yangjinqian1@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250908104122.2062653-3-quic_sartgarg@quicinc.com>
 
-On Tue, Sep 09, 2025 at 11:44:12AM +0800, Jinqian Yang wrote:
-> Allow userspace to downgrade EL2 features (VH, TWED, HCX) to ensure VM live
-> migration compatibility between hosts with varying feature support.
+On Mon, Sep 08, 2025 at 04:11:20PM +0530, Sarthak Garg wrote:
+> Introduce a new optional device tree property max-sd-hs-hz to
+> limit the maximum frequency (in Hz) used for SD cards operating in
+> High-Speed (HS) mode due to any board electrical limitations.
 > 
-> v1: https://lore.kernel.org/linux-arm-kernel/20250325121126.1380681-1-yangjinqian1@huawei.com/
-> 
-> Change Log:
-> v1->v2:
->   -Added support for downgrading TWED and VH fields.
->   -Added corresponding test cases to the set_id_regs selftest.
-> 
-> Jinqian Yang (3):
->   KVM: arm64: Make ID_AA64MMFR1_EL1.HCX writable from userspace
->   KVM: arm64: Make ID_AA64MMFR1_EL1.TWED writable from userspace
->   KVM: arm64: Make ID_AA64MMFR1_EL1.VH writable from userspace
-> 
->  arch/arm64/kvm/sys_regs.c                       | 3 ---
->  tools/testing/selftests/kvm/arm64/set_id_regs.c | 3 +++
+> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> ---
+>  .../devicetree/bindings/mmc/mmc-controller-common.yaml    | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-General comment: please make do kernel and selftest changes in separate
-patches.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks,
-Oliver
+Best regards,
+Krzysztof
+
 
