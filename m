@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel+bounces-808974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15552B50701
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:26:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6206CB5070A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1C456305C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05EDD5E7F07
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D5352FFE;
-	Tue,  9 Sep 2025 20:24:31 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F833570DD;
+	Tue,  9 Sep 2025 20:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHmleH+A"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A56536C082;
-	Tue,  9 Sep 2025 20:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CA23375D0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 20:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757449470; cv=none; b=Gi4JzivoTglyYstm5/a8820lU18wDWXgxGokLBiH3tknz+w5PI8UNEu9BWKUQHaN5cwbgEN5yKyDY+RVqEwnOsnJgmzWEhTGNgzZx566wWLLNPB3wfqaTBkPTVoYAyVVXNhEgdXNBCmM47QmebccFDqY5kMfFzmFGzZFvf5H16g=
+	t=1757449537; cv=none; b=hA6ejPjID/8hGoXrRa8yqAsSPashsxBkVP/ieM1L8IGtDyxkYMzfiSfLCmdcDdA+VM5owmdHf1rgGr2mlt5sbyOieHxD3MeZjXAVxCqWQiWgwphxTAChUiiJMvE1xbQ9oj3K6OFcFn3qMt0pjVPK0acosEM11+qxbw34QSioZbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757449470; c=relaxed/simple;
-	bh=Y2hXfnHzSfKGpkRV/+ZGUekIkr1Gt4/QOQoMmnAXviE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=urz24ieOw2sC6fqJgbqbUg1S2yHpq4FAkdbWanOXixrTJYTbnrdVVj8sL3jt/LuEBqYtGcNkQC8px75z9Ih49duziEO51m7OxqLlgxQkWM7h/D7yq7EOqVMSlFsqCcUu2v+ogzXh7KwdlDHfHvrH9OX0dHPqms0OdF/XNH3I2dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1757449537; c=relaxed/simple;
+	bh=wxDkBYso8klg5m0O4f2q3Mp4Da5hR5830yShKQUo0VY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HaG3xGnNjoxz5YR8GMLmdK0w0dE6JLbEpi0zmMehk6X21ygLiu7lae1KuoYNktcipXVVKqIptd8FlNuxwnAksZL7H4E2IiLSjxb7cL2LKBuUqor0JIXMZjITV3JiK0sLQlGotoyuP6LJVdPej0V6X8E37MyUAh1/jTv2NS5GItc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHmleH+A; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b00a9989633so267200366b.0;
-        Tue, 09 Sep 2025 13:24:28 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3296a9d17d3so508166a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 13:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757449535; x=1758054335; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxDkBYso8klg5m0O4f2q3Mp4Da5hR5830yShKQUo0VY=;
+        b=XHmleH+AU72fWuR9+O0iF/qAe2iCZ0UBWRb+FVt0JdzulAKqKGZuvKV1sQNq+KErzG
+         hzbdOqHa0Go+GjfrMDZ0/TN9KQr+ryUEv35vYGKbkt6m9e7ycUEkKLPziv5Ex+tWy0VG
+         pjO+Ooe1/AQdb5M+91q81ZCrx3Fbs2i2rVcnHuZCfUlulv8k7dId+xg9XRiTRYfGN7Vl
+         0+dQB4ZbloolRiD9FtDoFvhEoMgMDiJmGIyaEtS0RuxAPVIwg4WrBQAYW5HK9sBKBuGB
+         eZc72Vm0o+7Qf+zMG4q+0aAU4d5IUlFJVBKEqtpgciVXYnbyJ2imxU7IhONcOtekYquQ
+         UhsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757449467; x=1758054267;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757449535; x=1758054335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n0gIuHH4FHMvq9oSF/Jigf17pZ9LbJklvlGco8PAXnY=;
-        b=qy/iZYE5CD933wCLHvvoxh9+ItrPHaDI43t4DSQ9tqg3wIaYsI6dzChVptxM90MJLs
-         u5uyqwJl77Vq3dm+PGR4Wzsa9xqrxq3bgSxFtx4IFOBZ0otQr8OT6nk1yUwWq3dmR+J9
-         ouSRt3VImYTvLtqdSM1k4s3YQGfxoydY9adny3O7KfMAdInBQ9EBWv60viachcPPWFvn
-         k2CP7SuOOQDswme2YfpWctSFdvFgwWxuYKlEujYOS6DwHPHZEjWdQORvcr6C+kCJFZlU
-         6WkySGFaWiLyi2LYniBnKreYeKLqqVA4cil6KN7Rd31vgjC9jPA/bJl1UEc8SnUzDaS0
-         HGXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdTWa1537XaZ/xpsPokUlNyNmVrCBGGEOWeKyQxMDe72E4PAnXMM9nat8kkHminjlpmky7wLdwFx2HBg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDRfgjwFS9fwkuisVmkNxHU1xk+kgQU3Q0cA+1/M8zpmVRoCyS
-	aI0zV9TbPg6ABiPlrkgxmy85F0r4RMr4mv4jPPdo815IvJ/xpkM+wAz7
-X-Gm-Gg: ASbGncvT6R8/sEIt9plx1YXgmEN7vYi63MNuDU5FdFWO3Aj6Jswa4QiuJ//cx0+amga
-	66Q+2cu+hdg1QRgiWJJP76NEUwcWy5pooXYTAyXREq3+PuQN4Ub98Sq5zgDphP8Nndss0O9EVgY
-	BdqwH/Nfl8JgzRrlhWuThRo78lk2iarhBusZZBwrPkMngTp+PIsOUuKJU5/G0mmOOI00ypsCHzy
-	/94/kv0N/3hc7FqDvVxMIKMjILb/lIvg9GLGibM5gpyHXbNE1aZ+viCXpSZ1Tiv1kyWleeYF6pa
-	iBkpjitlDfmhOv6LfVxnD/OfEZ2r0F67EBQHcUDhZrv9FLfIW2+JUfWteJtmriRAZ/HPoxL45P7
-	mx2XSm5iE5JOM
-X-Google-Smtp-Source: AGHT+IEK3ZoFj8QYDAr4NlAPkp8aJUwqkx0FN+bwLBX7AEho7EnU/rHebPmVDrI+BtfXZ8uN0GJ4ng==
-X-Received: by 2002:a17:907:1ca3:b0:b04:5bb5:2745 with SMTP id a640c23a62f3a-b04b1f0cfa0mr1239911266b.21.1757449466569;
-        Tue, 09 Sep 2025 13:24:26 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:1::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07830a7598sm47470966b.24.2025.09.09.13.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 13:24:26 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 09 Sep 2025 13:24:05 -0700
-Subject: [PATCH net-next 7/7] net: virtio_net: add get_rxrings ethtool
- callback for RX ring queries
+        bh=wxDkBYso8klg5m0O4f2q3Mp4Da5hR5830yShKQUo0VY=;
+        b=tPPNPUAU77YBVmUAA4G7VoIAr9r7rC9ZnMIszqk0upFlfCXWh5rLsc7WpfFDs6BUkS
+         O6MTjkx7tsFftPW2UypaFJcGI/3BTtZb2kUchDqPbHHNg45SueR2svJjP0hiNS45TElF
+         whfY+nfBzjZfv/oYb+hiqLhp2i3/Bz5X9m3cc2dNCYyhFBxHBvNOx2PnprFitrFwHQYd
+         dP3gVGumyHIL9a0sfwRxkW4q7Xl/nk+IIs4KbRTPwRgeP2kGBFBtIAY90MpCUm58q8Sc
+         sXxG34pKfAH4k/DnVUJnxjXZQzlgIifIS/m5B6Iyd1a/Jorw0tOfXuT2c82QEpn2iiz2
+         KKMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrcmyAj1K+SjpgXhDyrSYAphVBlu3ZxR4WFfx2bp1a8yKnDa2LmaCsIDUPqDFQx3XPLKyrpLcUK/5JqL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5eqcXHNzxRLyN74MRHGltBTh2WYgISHKencp1vWWg8C/eM0QY
+	zxlF+B1pKuF2JxkKnXbahdPq7cvpAyNS/l2wyWVAAjRUoCaAiAPF1shMG7LvcHSVS2P3+RoyDSe
+	iPJW24wsMoOiGo2Ye8hMBxY4UOdjX1uU=
+X-Gm-Gg: ASbGncthV8OaN2ZsfmTMInNBrxXbXANVnetJHu3xdMGqBblWDL2Cqsgce5FTYyn2R7P
+	iIREknRaBd/p1wpOEwnO7u3rzfqx4/4aDqn3TpFRAK/Do2sJvASJ2tpPrvaqMfg3ixPAHql58AV
+	rK9TXCZTy1x1fpYqmboiR+K0R/5Y56PwvsiPviG7DkrwvUTP4xbCQgRvjaABzFWt6vZfAxheVTh
+	F6WfJxIaemY6vj/oFUj8jQaoh401JhWWx6NUNgMLCqXte8NMaToQNyD822ZY4w6YLmKS5dnBwpD
+	iw3y++CqsjJSFKFjgY914NVbyL2xqXdY7Zst
+X-Google-Smtp-Source: AGHT+IHrPuSJF3/HVlVAKPSA02cYiEkxIc6cB43ReX8WFLs27T+peqgFv4ZntBDqLfeLPgMtU2IPc8i+zsxFpWH5p+M=
+X-Received: by 2002:a17:90b:1d12:b0:329:7955:5caf with SMTP id
+ 98e67ed59e1d1-32d43e19c34mr9367597a91.0.1757449535379; Tue, 09 Sep 2025
+ 13:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-gxrings-v1-7-634282f06a54@debian.org>
-References: <20250909-gxrings-v1-0-634282f06a54@debian.org>
-In-Reply-To: <20250909-gxrings-v1-0-634282f06a54@debian.org>
-To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
- kuba@kernel.org, Simon Horman <horms@kernel.org>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
- kernel-team@meta.com
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1617; i=leitao@debian.org;
- h=from:subject:message-id; bh=Y2hXfnHzSfKGpkRV/+ZGUekIkr1Gt4/QOQoMmnAXviE=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBowIzuzfaQzetsofrcRbpnwuLrO1D7w86wY1TTU
- lrqGZgmCpuJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMCM7gAKCRA1o5Of/Hh3
- bXNZEACcAE5R231Z7uNnKiyv2RPO6hJXjog8YhKoP/yzmIshYPJ0FAh+8o5piRpRtM6dIn3qeky
- Ve1yQ7Aw/Vn8l55/nTiEZPX665GmRsqep7Gba1AHM+74XOC+97c0zEQXxid9b+gICQ2Sstr7hbT
- soSkCyNxLHjMgPxyHxw0/L+GSL4cBJHIQKMvR+6uDBCNcZh9wYinG0rGorRBHPj+FCkX51WtHCp
- wJ+furxV5a/tIdO1ApWgVUcqhomico6t2mIziLg6dSgwljOTRH2bKpmwfhz2Z79sBLtNIW938GO
- 6EV6K3X5TaY9wDymNRCMAHARFqNJFpBmdQcMRbNX0p+EP2jcpseYnh3XYx7rEwEdDC70lyYpdmP
- LSZrKK/bEAJq8ZhG9ONl0+B2fHP9xLZH+xNIXamgSlk6h6HASJ4mbrfpnRch4YmCQntT7asuCiM
- s41BTaQndV6gaP/m2Fyk9ByczEjdYeX/JRMg/VdlZUcppBm4q9VLrz5bTLji+suZPduq602SWhX
- rwDS8GDkRdHiUEB+Hc3JaxEVH5mSLPAxuQp84S/nkv7VVuQFgD/dPlaDTkvUK8X+rlOfEjb2TB7
- ZiI2uaLp8RpXRA+oz3+wnuVuWJ8gWcp//voZ+HEDBzlZpHcjLJ71zUzypcZXd6Zo4wZXP+2saHB
- NTHpOaRsFhQuJmQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20250909170013.16025-1-work@onurozkan.dev> <20250909170013.16025-2-work@onurozkan.dev>
+ <CANiq72=kWpxpo23JUYTqxwpsY=E0uUvCHgotRuepZpL-qUqXqw@mail.gmail.com>
+ <20250909204308.74ccedf4@nimda.home> <CANiq72=NrS1cFJec6sm7ZY-UPqrzxHKVvPu67Rze02Fg_xeWpQ@mail.gmail.com>
+ <E64F356B-7EC5-4F46-9ADF-610CBF249651@collabora.com>
+In-Reply-To: <E64F356B-7EC5-4F46-9ADF-610CBF249651@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Sep 2025 22:25:23 +0200
+X-Gm-Features: AS18NWD-q1dZbe0B7ncsGX8Sj9K3t4jhyDGuBBU0miup4atDr7AbXn0cmcwNeLs
+Message-ID: <CANiq72kN3C24OEpbppe+AoSPDH3FceDsUh7ErqHequOyRftE+g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original value
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com, 
+	tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com, 
+	a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com, 
+	gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com, 
+	ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace the existing virtnet_get_rxnfc callback with a dedicated
-virtnet_get_rxrings implementation to provide the number of RX rings
-directly via the new ethtool_ops get_rx_ring_count pointer.
+On Tue, Sep 9, 2025 at 10:12=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Merely rebasing on top of the rust tree will crate a conflict with his pr=
+evious regulator patch.
+>
+> My suggestion is to just wait for rc1.
 
-This simplifies the RX ring count retrieval and aligns virtio_net with
-the new ethtool API for querying RX ring parameters.
+Yes, but note that conflicts may happen either way, i.e. for treewide
+patches like this, one may get other code landing that may also need
+changing. If what you want is to try to catch as many as those as
+possible, then it may be best checking -next.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/virtio_net.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+In any case, I would like to see this on top of the patch adding
+documentation I linked, so that we can clearly discuss the intended
+semantics, because this is changing them for bigger types.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 975bdc5dab84b..e35b6ef015c05 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -5610,20 +5610,11 @@ static int virtnet_set_rxfh(struct net_device *dev,
- 	return 0;
- }
- 
--static int virtnet_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info, u32 *rule_locs)
-+static u32 virtnet_get_rx_ring_count(struct net_device *dev)
- {
- 	struct virtnet_info *vi = netdev_priv(dev);
--	int rc = 0;
- 
--	switch (info->cmd) {
--	case ETHTOOL_GRXRINGS:
--		info->data = vi->curr_queue_pairs;
--		break;
--	default:
--		rc = -EOPNOTSUPP;
--	}
--
--	return rc;
-+	return vi->curr_queue_pairs;
- }
- 
- static const struct ethtool_ops virtnet_ethtool_ops = {
-@@ -5651,7 +5642,7 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
- 	.set_rxfh = virtnet_set_rxfh,
- 	.get_rxfh_fields = virtnet_get_hashflow,
- 	.set_rxfh_fields = virtnet_set_hashflow,
--	.get_rxnfc = virtnet_get_rxnfc,
-+	.get_rx_ring_count = virtnet_get_rx_ring_count,
- };
- 
- static void virtnet_get_queue_stats_rx(struct net_device *dev, int i,
-
--- 
-2.47.3
-
+Cheers,
+Miguel
 
