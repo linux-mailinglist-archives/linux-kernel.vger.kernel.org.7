@@ -1,204 +1,131 @@
-Return-Path: <linux-kernel+bounces-808589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D56B501F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:57:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC489B501FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51A4179116
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8BB1723F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296CE31CA4B;
-	Tue,  9 Sep 2025 15:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47BD32CF71;
+	Tue,  9 Sep 2025 15:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b="U1bZYID0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S4orRy0P"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JJDVe/ID"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A661E747F;
-	Tue,  9 Sep 2025 15:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE50335BDA;
+	Tue,  9 Sep 2025 15:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757433424; cv=none; b=Mj9pLuOy1HklUadngZSUe3r3XIoWq+C5SS6/OWNFav1g35U5cwXtyr192iMV2QPCAffQukbtCQdHmf/Mc9QK4AcpuRj8zJ4MoHz3dKkHzM9CC1is6AciOnpzKn3pza5pieaN/6qFKe/vv/c+pZLvE8lekdVcZeA5sDxqMlHTCL8=
+	t=1757433431; cv=none; b=ZgjgrEmG2XWyNUGvN+rINLh40/F/zagHmFcYxDHrhgjots5QnOJMpwrWsMetG3bOkroEL5B1EvCb0RNTdOavLtBD/lYRm8AMAwAAZG5ep4MwJEMiInQQ1avOx4x/7C+F2KCdCmAKetf3LM+/qtP9CzWy/hkRXZMbniQJjt5ZhY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757433424; c=relaxed/simple;
-	bh=Y6bB3spdv0Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tNHmKNt1rz3VDfhl0AL3VSyjLDD8O48W2Iy+gr/e8NKgqWD/kQwgPFb0KxeIZ93ntMV83tpUNKelr4Hc1MhjKNpIY8kyGd7ICAZXEISY3kXWgB6Pb4oEzQcgt6L7AmHGpjFnRZ4kDES3tdfI3puQGjl/8NWwtzp4fjF/LK2ABnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com; spf=pass smtp.mailfrom=yadavpratyush.com; dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b=U1bZYID0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S4orRy0P; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadavpratyush.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 9BBD81300201;
-	Tue,  9 Sep 2025 11:56:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Tue, 09 Sep 2025 11:57:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	yadavpratyush.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1757433418; x=1757440618; bh=Y6bB3spdv0
-	Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=; b=U1bZYID0dy9gSV0UyWD12/SGew
-	bbD2cWhycbMq/6YXT30h6iSDIxj+ocmhBR6ENxPLtk9WcRUDkyXLoHS/N4G5kekV
-	0PSHqhZNQ+kpPX0CMeqj4BtaIE7dtT1rVDIR9Dq9GgvbH3K8ck1dQ1hZ7jFHt1Kl
-	WoPLU5JNFFZ2ZOnnV4t7kB0p1pbUSBhvgQi2vKv57F3QN0aYClfqxn7pzBAePvTY
-	qokDUIFBAQnkTlsgptWmlyNGL3sjml4N4yjvwMbiJEY6BFl+5DHlDX4TX3IptT1r
-	kbf/6vlvQDX5HsDN6QH5E8Rj1SXLsNYeH1LUVYBatwY3Qb/p19aoYU0fIGmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757433418; x=
-	1757440618; bh=Y6bB3spdv0Y4Iq27PYuVsaMwCq7a7eOlCj3k9gfZcIU=; b=S
-	4orRy0PtAYfUg0t7JXdON+wH/z931lLwhRw0jzEw3RUuDOTQlfgWrSGnn+RbA3wU
-	byjzMqiGYqMXkOV7JWWkKbOg68Ycx+hfK8lPQObZFYLTzxk779LN7QH76/xhEf4k
-	svyfFBaXLtwMjCyO2iFfK2sNSg7h/RBaGeBpMlS7IVGLW9Uva8aQgGm78DsOr4y6
-	xJsaVglN0VTAJUCYSlxzIwNWxjywIUFJGHhoh0+s1vdMP4uDePM7xl8kEQvKTVTA
-	Thetj8fBU9/ka6q88UsS9D+V4t3C7gSNzKGUasaKm9PV901mTJYi65SdHtNp2UxL
-	RdzjM6EI7DfSSoweeEo1Q==
-X-ME-Sender: <xms:Rk7AaENFgDgG3Z0ewndwpcU0l4keNXhgvUjtzKy3PsxrId3a6-tfZA>
-    <xme:Rk7AaJechYAPKky5DUGmMlq8Ww5nZhbLKxzlOzpegDkPL7yQv1ZfykSBqAw1Bp3ou
-    D9M9j0yDuKLesBdxjE>
-X-ME-Received: <xmr:Rk7AaDpMvXl_L_dhU7PjygEH5En7BCIxrB_rfN_ap7rG5JI5KrVL6ccaY7hEtOeDE9xTFK_1RjqiqTewgZk73fOF87TiiqVXYdIVo4h-I2d9ZcIV84onyGnG0nji-BIFe37s8FWR>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdekfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomheprfhrrghthihu
-    shhhucgjrggurghvuceomhgvseihrggurghvphhrrghthihushhhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpedvhfdvhedtueethefhkeetgedttdeuhefgueehgeduhfejtdfhvdev
-    gedvjedugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehmvgeshigruggrvhhprhgrthihuhhshhdrtghomhdpnhgspghrtghpthhtohepjedv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifihhtuhesnhhvihguihgrrdgtoh
-    hmpdhrtghpthhtoheplhgvohhnrhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehp
-    rghrrghvsehnvhhiughirgdrtghomhdprhgtphhtthhopegrjhgrhigrtghhrghnughrrg
-    esnhhvihguihgrrdgtohhmpdhrtghpthhtohepshgrvggvughmsehnvhhiughirgdrtgho
-    mhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlvghnnhgrrhhtsehpohgvthhtvghrihhnghdrnhgvth
-X-ME-Proxy: <xmx:Rk7AaOik0Nhivpz4N1I59xuLqAM9GAZwpQ2ESwBHdZQFSZk92N3TEA>
-    <xmx:Rk7AaEZSZ-16sSEApBkT5RUE-BBpobsQDg-uXUmqfXLQlUPRSz7E9w>
-    <xmx:Rk7AaJtmxu4H6qR5NIpgFu2D4ATeJCF0_IWw64bsgr7jK4wE_9nTuw>
-    <xmx:Rk7AaHJrbTSZ7kj3UB9FV9vpMu-OJj4TthDLmDwssmSHC9inZhbChw>
-    <xmx:Sk7AaIDsIumQfKmeMLRrTl3mf3szS47iGZnmx_wjwi5i_VkrMX-Yzc1a>
-Feedback-ID: i93f149c1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Sep 2025 11:56:46 -0400 (EDT)
-From: Pratyush Yadav <me@yadavpratyush.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <me@yadavpratyush.com>,  Jason Gunthorpe <jgg@nvidia.com>,
-  Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
-	<20250828124320.GB7333@nvidia.com> <mafs0h5xmw12a.fsf@kernel.org>
-	<20250902134846.GN186519@nvidia.com> <mafs0v7lzvd7m.fsf@kernel.org>
-	<20250903150157.GH470103@nvidia.com> <mafs0a53av0hs.fsf@kernel.org>
-	<20250904144240.GO470103@nvidia.com> <mafs0cy7zllsn.fsf@yadavpratyush.com>
-	<CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
-Date: Tue, 09 Sep 2025 17:56:46 +0200
-Message-ID: <mafs0h5xbk4ap.fsf@yadavpratyush.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757433431; c=relaxed/simple;
+	bh=gQDCBXANgMNTl28QYN1OVktCRSXH2BFS0kru/ROqykI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Q+QusUlRN8Kro2cxPNpbl8xGO3EDcDfZAk6tO5uXXlaeuwix7yxaVJsI1YrrgEK2JYG7m7aj5+JDolMDnoDQILzom3VO/RkD4GYsAb8Po7XuM4+qemP2W5zqebo2Kr/qYOdQjFWd9L1OpnLWKHs7J5mh4PvXIAt2pE/bxv1UYIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JJDVe/ID; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=fTYn/oQZldHMfiyz8++x/UhKa9E2oq3CZ7zKjnJIOzU=; b=JJDVe/IDsacUH2TI0ynxfmL5Nc
+	BP6TIHEpZX8GOICN07rEhyJfWm2sVBzriTc13LvyHXVAKSkgkbxaGcgJhg/8Ma7i1SqVYOJPiW3S4
+	G5mpTDo77m22FRtxcHe7KgKzFJExsVAoD6Hec89WJ/hHi5W/rbGPzBLGACOFUs/snzTmqQCPpknTv
+	o9Tnff79ouPyVYQlkRgefuNeo+R0dD2lOx4K49HZqW4XrDp9z8kv8IQcEgVXFixhBAyMe0q4XhuAc
+	NRFD0jF5FQOO4bTeON/ON2v6QS4XUN5kR+R/yioo9+4OMRk16l4+FFUezRZF7I1e/yX2ufopgyB1M
+	RAwXr36Q==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uw0iR-00000008Lum-3D6o;
+	Tue, 09 Sep 2025 15:57:07 +0000
+Message-ID: <c26160b1-f1fb-41d3-a8fe-acf589ad9f7f@infradead.org>
+Date: Tue, 9 Sep 2025 08:57:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernel-doc: add support for handling global variables
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
+ <d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
+Content-Language: en-US
+In-Reply-To: <d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 09 2025, Pasha Tatashin wrote:
+Hi Mauro,
 
-> On Tue, Sep 9, 2025 at 10:53=E2=80=AFAM Pratyush Yadav <me@yadavpratyush.=
-com> wrote:
+On 9/9/25 12:27 AM, Randy Dunlap wrote:
+> Hi Mauro,
+> 
+> I have a few patch nits below, then some testing info.
+> 
+> 
+> On 9/7/25 9:22 AM, Mauro Carvalho Chehab wrote:
+>> Specially on kAPI, sometimes it is desirable to be able to
+>> describe global variables that are part of kAPI.
 >>
->> On Thu, Sep 04 2025, Jason Gunthorpe wrote:
+>> Documenting vars with Sphinx is simple, as we don't need
+>> to parse a data struct. All we need is the variable
+>> declaration and use natice C domain ::c:var: to format it
+>> for us.
 >>
->> > On Thu, Sep 04, 2025 at 02:57:35PM +0200, Pratyush Yadav wrote:
-[...]
->> >> But perhaps it might be a better idea to come up with a mechanism for
->> >> the kernel to discover which formats the "next" kernel speaks so it c=
-an
->> >> for one decide whether it can do the live update at all, and for anot=
-her
->> >> which formats it should use. Maybe we give a way for luod to choose
->> >> formats, and give it the responsibility for doing these checks?
->> >
->> > I have felt that we should catalog the formats&versions the kernel can
->> > read/write in some way during kbuild.
->> >
->> > Maybe this turns into a sysfs directory of all the data with an
->> > 'enable_write' flag that luod could set to 0 to optimize.
->> >
->> > And maybe this could be a kbuild report that luod could parse to do
->> > this optimization.
+>> Add support for it.
 >>
->> Or maybe we put that information in a ELF section in the kernel image?
->> Not sure how feasible it would be for tooling to read but I think that
->> would very closely associate the versions info with the kernel. The
->> other option might be to put it somewhere with modules I guess.
->
-> To me, all this sounds like hardening, which, while important, can be
-> added later. The pre-kexec check for compatibility can be defined and
-> implemented once we have all live update components ready
-> (KHO/LUO/PCI/IOMMU/VFIO/MEMFD), once we stabilize the versioning
-> story, and once we start discussing update stability.
+>> Link: https://lore.kernel.org/linux-doc/491c3022-cef8-4860-a945-c9c4a3b63c09@infradead.org/T/#m947c25d95cb1d96a394410ab1131dc8e9e5013f1
+>> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+>> ---
+>>  scripts/lib/kdoc/kdoc_output.py | 31 +++++++++++++++++++++++++++++++
+>>  scripts/lib/kdoc/kdoc_parser.py | 25 ++++++++++++++++++++++++-
+>>  2 files changed, 55 insertions(+), 1 deletion(-)
+>>
 
-Right. I don't think this is something the current LUO patches have to
-solve. This is for later down the line.
 
->
-> Currently, we've agreed that there are no stability guarantees.
-> Sometime in the future, we may guarantee minor-to-minor stability, and
-> later, stable-to-stable. Once we start working on minor-to-minor
-> stability, it would be a good idea to also add hardening where a
-> pre-live update would check for compatibility.
->
-> In reality, this is not something that is high priority for cloud
-> providers, because these kinds of incompatibilities would be found
-> during qualification; the kernel will fail to update by detecting a
-> version mismatch during boot instead of during shutdown.
+> So, I grabbed some global data from 6-8 places in the kernel and put them intoinit/kdoc-globals-test.c. Then I modified Documentation/core-api/kernel-api.rst
+> like this at the end of that file:
+> 
+> +
+> +Kernel Globals
+> +==========================
+> +
+> +.. kernel-doc:: init/kdoc-globals-test.c
+> +   :identifiers:
+> 
+> The html output says
+> "Kernel Globals"
+> but nothing else.
+> 
+> My test files are attached. I dumbed down (simplified) a few
+> of the globals from fancy types to just unsigned long, but that
+> didn't help the output results any.
+> 
+> What's happening?
+> Thanks.
+> 
 
-I think it would help with making a wider range of roll back and forward
-options available. For example, if your current kernel can speak version
-A and B, and you are rolling back to a kernel that only speaks A, this
-information can be used to choose the right serialization formats.
+My problems here could be from a patch mis-merge.
+Maybe your patch was against a tree or previous patches that I don't have.
 
-[...]
+You could supply an updated patch or I can just wait until all
+the patches are synchronized for further testing.
+Or you could just take my sample and keep testing it.
 
---=20
-Regards,
-Pratyush Yadav
+Thanks.
+
+-- 
+~Randy
+
 
