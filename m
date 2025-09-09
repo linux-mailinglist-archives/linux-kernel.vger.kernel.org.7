@@ -1,372 +1,344 @@
-Return-Path: <linux-kernel+bounces-807235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06E8B4A1E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:16:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D08B4A1E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99C917D8DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:16:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E34E21A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA29225A3B;
-	Tue,  9 Sep 2025 06:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AD53019B0;
+	Tue,  9 Sep 2025 06:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="gnVbn2YQ"
-Received: from SE2P216CU007.outbound.protection.outlook.com (mail-koreacentralazon11021084.outbound.protection.outlook.com [40.107.42.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OvGsUOVB"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7868257853;
-	Tue,  9 Sep 2025 06:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.42.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398607; cv=fail; b=c0/OMe95QplCRjgUeEFHaSuX8r+onLR2Q3fmqJzwxodW+8P6QQnbeVQHXfDYodBu5us1sXu7/s9VUkCKlpOb2NhqTMEUcqwZ9D+JJbpddoUqn8WCi3wAsHwvqy9DvSmcIkPHJEEvMEQsa3KIuSBM56QQN0JbUnd2C5pCwNhUYWo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398607; c=relaxed/simple;
-	bh=qFG8LoVtcxDfA6EC5ZdFJzY2PNBhc6/bUnJ8cP6apF8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sxfutasazUqSLvt9vuhr9Zcr6KTiop1pqEoZtjr3ji6OgwEwcBYwOlIQZXLYZw89T+N3qvMpPSAc9VFvS5Bir2Q/a1BRkd5QhLz+RosEtisRLEuIt55n6m7agzqj508iPfQhiiR/610cHFdsDVZu5OZSF2O68eF0GY2JT1Pz48A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=fail smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=gnVbn2YQ; arc=fail smtp.client-ip=40.107.42.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qbqyq/Wq49OZgHQDNAj+Fwxw5osOikWYoHwiLBCnxjLdDSSQYh6igCDFgPOquUYZR7p/TAnUIul1NRGNJ57LUKit4VD4FnrLqTa4ymNAQJCFvayKQCgPVtpwdGbsvDrgzPVb/cmCJWI/Ii3pQtLMmOEbm+3h73A4jpjYSDpHU8mTAOTTgMhhGiatPdkacRj+OvDMp4JCk+MzbCQA05VJ7G3JEy0nEFqtnohKMOYvZVGQ9a/reUDFh2U+wKbAxleSq0pRo7IGsjJri76N2WilA02XF3S/9WB/622z2qdzaNnvPnsxAwBfkGAlpWzQ8WYLWEA9wXhWsM10vhNn6KN2nA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qFG8LoVtcxDfA6EC5ZdFJzY2PNBhc6/bUnJ8cP6apF8=;
- b=yLu77qUO2if/KU6JT1Pxd9GfZgw3KgduDk7iNgkAtvR9n8BAPnw2+BXGuv0hlM74B+xJyP/GwVAi4Lb8iC/LAePQoATiwemSmlS4xeqAlGxgPQYoCp/UiepNhoY0c4SQrNFnYO+W4i/PQYIsUqurdWHqkavQ5Di8RY437ZM2p003JydeQh8UH53XL14NnoKjIbXEEOs4s1iz9MsLMBqIKhWvd2h3787PFz5Vj3q3XhCgFDBjwfigpT9UQ6eIOq71pjDvPGPftFPTzbBjai6/3K+FTFOHoObOYe8SSbk4zA/XB3lKl6EMoFc4o+ccDTO1z0w0OnVdiQjZZXhPDEQCVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qFG8LoVtcxDfA6EC5ZdFJzY2PNBhc6/bUnJ8cP6apF8=;
- b=gnVbn2YQwxndO5wUPP4gJDysE5bgTGl+4SpLzaG+/FbOKVWbAt8sXFYCKflGyn6Ryo47TOFgNHy3YT4A73Fs4C/fa6DILKYepXSckKg9tXE951MtSuukf5wy0X1SrtcfvpxtQj56WuvHjE7b9klw0G8be0tu2mHTJBIlzMS1ep4=
-Received: from SLXP216MB1148.KORP216.PROD.OUTLOOK.COM (2603:1096:101:f::14) by
- SE2P216MB1393.KORP216.PROD.OUTLOOK.COM (2603:1096:101:2e::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.15; Tue, 9 Sep 2025 06:16:40 +0000
-Received: from SLXP216MB1148.KORP216.PROD.OUTLOOK.COM
- ([fe80::6dcd:ad0b:394c:954f]) by SLXP216MB1148.KORP216.PROD.OUTLOOK.COM
- ([fe80::6dcd:ad0b:394c:954f%3]) with mapi id 15.20.9115.010; Tue, 9 Sep 2025
- 06:16:40 +0000
-From: jackson.lee <jackson.lee@chipsnmedia.com>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
-	"bob.beckett@collabora.com" <bob.beckett@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lafley.kim
-	<lafley.kim@chipsnmedia.com>, "b-brnich@ti.com" <b-brnich@ti.com>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung
-	<nas.chung@chipsnmedia.com>
-Subject: RE: [PATCH v3 0/4] Performance improvement of decoder
-Thread-Topic: [PATCH v3 0/4] Performance improvement of decoder
-Thread-Index: AQHb49TXwjYLUfVzYE+ALyQbFMjCk7R6LviAgBCrSJA=
-Date: Tue, 9 Sep 2025 06:16:39 +0000
-Message-ID:
- <SLXP216MB114806E1937625CA3760CA3EED0FA@SLXP216MB1148.KORP216.PROD.OUTLOOK.COM>
-References: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
- <f79ab2a0db0eb4aad20ed488de3635f9d8942cdf.camel@collabora.com>
-In-Reply-To: <f79ab2a0db0eb4aad20ed488de3635f9d8942cdf.camel@collabora.com>
-Accept-Language: ko-KR, en-US
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SLXP216MB1148:EE_|SE2P216MB1393:EE_
-x-ms-office365-filtering-correlation-id: e6bbf16b-498f-4a81-6e8c-08ddef6870bc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WkRYdXhSVFpveWVsVDlLbFppMEhtWEhKUFpZY3QzN05hZlhWcHNkMGVqb2Fs?=
- =?utf-8?B?L29WQWpPTHJ2L2FCTkloZ0Y5c01JMmlxajlCV0IyT3BjaFN1dStKemxkd250?=
- =?utf-8?B?bnFzRzRxOUJTMHZMWEFRSUF5VXUvNVFjUlUyK25zRURWbDJsOGhDeUJIY1VM?=
- =?utf-8?B?RlQvWTJLWGVZWE0rak5Xd1FuM1JOSlNVSUtWcWUxa2hWVVFmVzZUbldENjdF?=
- =?utf-8?B?cE82eFk3ZHdCR25iaFBKV0dUQUt5UFRMaUNEVFFvTnZPaGdXTkhTQzVHTlhB?=
- =?utf-8?B?TzJuY1lEb1Y0WUppMnNXRmo5Rk4wcmxkWDBMZGw0Ti9tb0dSamRkcjlicG1K?=
- =?utf-8?B?ZWpod1ZNQStidUcxcGg1N1Q2TXFTYk0xcFNyL3FyUmZiai9TMTMzeitzZStw?=
- =?utf-8?B?UFpQeGkzSGRpeDYvZTBzR0Zwa0xwMlpSV1hxQXB3akNHck5NYkd3bXp0REJO?=
- =?utf-8?B?MWJ2ZTI2S2tWWnJvQm9TaTdXeDZNdEg2ZTRNdkI0YTErSkdLYWJYTG9CTXMz?=
- =?utf-8?B?bXI5V2FOdkRyemIwdjJnOFlwVWlZZ05QdjdMVWJGOE4va2haTEo5RVJoRVFO?=
- =?utf-8?B?RXRYLzVscU5xN2FlMENBSS90VTUxMlk4cW1xUnpVTFZFbmZiRXhMZjFKdHRh?=
- =?utf-8?B?K0J6UTMyYUxjeWczdnRQcHkreGdMc0lYQU93QnZuUVppUGptUGg4bzQ2VzlK?=
- =?utf-8?B?a0hobHZQMytpZWJOSXV3MG81SlhnK0FocmZsZjM2ZlR3K0YrZm84anBpbVdo?=
- =?utf-8?B?WkFpd3F5SjVyblUrSmg2WnlvTElqSDR6VWlHcWdNSTdrTXFZcncxd0c0MWtF?=
- =?utf-8?B?UUYxaXcwUWhVcGhTSkpzbWQvUGZnOW1HWmpwOTl3STZkUHh1U2tKQ0doWEMy?=
- =?utf-8?B?SDFZS1Y1R1RBYkxKWlVzZ1dneGtuUzRabXdZVHBTQWlsZkJzdEJmRWJBVWVH?=
- =?utf-8?B?TFJjcGtlcU5Fa1p4UTROQk5sei9xWncvT2pzRVAxckRLdi9BYmsyYmpleVpT?=
- =?utf-8?B?M3l4N1lkaU1hTm1UalI5VENnejZXYXZuZzc0ZUhGQ1VTQlkra2VTU0M5NFpw?=
- =?utf-8?B?UTlKaVpad29kOWFrL0V6V0RwbGd3bEc0QTFXUVhQRzkwemUzWXd6T204aW5s?=
- =?utf-8?B?MlB6UG03SUNBRmtzTjFvZ2gyWlZ2c3E1TytlL0NyakdHczRqUmJyQURWdWxX?=
- =?utf-8?B?amM3QytHcVJ4SVNRc3ZOeHVkK2R2cVlVWUNpV3pwZjJIWWZEOXQ3dG9QdXg3?=
- =?utf-8?B?SEdDWjVFc2h4WU8waHFmOVF4RitzNFZlU1FzSEplTnVPTGw2MmV6cUFOUzAz?=
- =?utf-8?B?WVdYVEY0anlGdjBwcjZiU3dsKzRaek91dE9GUFlmQ0VqbThocUc2TUIyRjF3?=
- =?utf-8?B?Ry82YjQxTjVoNHFZekE1SUtwL0NFeDhjYi96NzF4OURLbnV5SVlkS2FUTFdN?=
- =?utf-8?B?Z3dsS2p3WTBLZ0pDZHBMS0oxbHhVbW9ad1hPcTBaQkFvdk9BK1FUT3M4enh2?=
- =?utf-8?B?NFM1RkQ3QXNYb0hXZkwwOTFqcWNKeDRDMzVkdlpLU0paZURtM1d3UEpaR0VD?=
- =?utf-8?B?M1JoU3VDV1BXMThxN0l3eENqdzcxbGxHd3pVRHdxYVdnNm9vREtpT3ZMT0Zo?=
- =?utf-8?B?L2RpYWhhL1hzdkphQ2x4MFo5ZldiOGV2bnBPTXhWdVNqMU9oTDB4UkpkdXFl?=
- =?utf-8?B?T2ZWL3JmOVlvUUVDME45UzAzSlpWTXZCUExvK0Z4T05sRzdiY1V0QTBpeUhm?=
- =?utf-8?B?UjJoNmw0OWZ1ZFV4NVpySGV5MlVrb1l6OHNSRWYwcm85dVg2dHF5VWo0cE4r?=
- =?utf-8?B?R0lidHhrYm03Q0NrZkRDaHZ1Wm1JdlBjaWt0WVVsS2JPV3dxSk5TeUk4TENO?=
- =?utf-8?B?RnQyL0VadjZ0WGNuQUJMUFBWR0RrZU9jSWRlZ25HSHdBdmV2MHVVaVZNdCtm?=
- =?utf-8?B?YTVRc3pMM3lyQVpwSDh2c2l0TG5oM0RaeGpHUlZKQkpTWlQ5UFJXeE9BWTFB?=
- =?utf-8?Q?MpwJy9FPxVf9JRhtn0TNwBh9LNs0LI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SLXP216MB1148.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OG9QTmUzQTd1djFxdWFFOEg4b2dqYXV0R2wzQzJ2M2x4eUFYclBIc0x0Q09l?=
- =?utf-8?B?eTFPMStSVHlkMXE3SVBicHprU1dqR2NMcnNwQTRMQWd2bnVTQUVYNkptM3Fp?=
- =?utf-8?B?MUsveGEydEQybTA4cDJRYnQyYlNJemh4c2JEODdXendPUitIUUVJeGxuNEdB?=
- =?utf-8?B?RFJkQ3NMNWxUOHFneFBuODJoN1hwSHFzUnIvYmJ1MXFGMWI4OHZlMnZZZnFk?=
- =?utf-8?B?Y1E2bmJ1YmJsUGdRQzZuWFN1L2RxRWpsNGFYNGxYRU0rSFhSOVd0ZTc1NXdM?=
- =?utf-8?B?Z1Nwc1A0TjlwQWIvZ2gzM3IwRkVOcXhwVFdGZVQrQkxaekwxNGZ1OWpRUmww?=
- =?utf-8?B?Yk03UEJIQ3lySUQyVFEydzBFQzdrRUloYWt6THBmOEdqYjBiem9oMTQyR3J6?=
- =?utf-8?B?S3EydUxZZ3VQd3FKa0NieVFHMFFFOGZqU3ZPZnJDZHJvWDI5TFhDc2tVeXRl?=
- =?utf-8?B?YStlSWhMcGZBUmU4VkhlMm5YeTIvMTZaSXp6TENkdkppYzRRMm5VUGpUa0Q5?=
- =?utf-8?B?VmZhWWY3S2g2cjVBR2RKUWhHVktYamozRFBBVHY5dzFhYTB2NnlzL09WMUhz?=
- =?utf-8?B?NVJ2Uk1oNGZXSWJxY2xhUGZnaUtmdStzUXBXYkZwSmd1R3JiWmdQb002M0Zn?=
- =?utf-8?B?a2lLUWkyKzdnb09kcm1XY0lHeU1memVIQThoNm1uUTkyVFJWSjAyTXpkR2dM?=
- =?utf-8?B?YmRXZ210bWFlRjFPcE9TdlhHTnJNNktHaDdXc1VreGE3WE5LTm5KVFFCUkUx?=
- =?utf-8?B?TFlkeE1OYUc2WVJ1VndBNjRkQkwxeE1pNDA5QVAyUEZOYTBvNmRMZkNuQ1dy?=
- =?utf-8?B?a29JeHkvOVV3c0FWNUNxL1haeHRJcE42cVd2TnJPWm9qVm9SWWYyWUVyRFp2?=
- =?utf-8?B?RGtSSE9LWUJicWxYSm5BYlJtRTQvOUZPc25vem5LNUVTS0k4RjY0NG1HYlQ5?=
- =?utf-8?B?cmh0bUJ0bVZYbUNDenV5cDVUdmkydGkyd1ViR0RHYnFZSUpQWTFEbnZVUjkv?=
- =?utf-8?B?MFlZZ0ZqZFYvZWZsOWNTVC9lVmczWFhhZFRKUTB3TFBGd1J6SUphTHBWbHR2?=
- =?utf-8?B?M1NqcHhEYTdZK29FSFBraVI5ZEIvL1YybnhNRThma2xLckpYc2RjelhyaWsz?=
- =?utf-8?B?NFRYVFFDQ3o3TksvN0F3ZVFVSEZsV2I2NWYrazVNNXVLYzVNNDYrVW1EMDJU?=
- =?utf-8?B?c2ZncUV2NnhkazJyYjAzN3QzTytreSswelo2bU5ueWt2TU9ZWE9qYURIMVJm?=
- =?utf-8?B?WGJqU1NBVUpEdjErT2k5TmdXM0YxYk9ENUFFMVhoYU9PaFNxSVhiWjNUWHZT?=
- =?utf-8?B?RlpNbkN0SWhFUTh1UTh2SURyaFpTNUxMTDR0NFBNTUhkbHh3OGRaK2pnUWFM?=
- =?utf-8?B?blgxYWhJUEpkR2ZUNDJ2NGpYZkk3NWpXWjY1cStMYy94d3hvYVo5dXJOdWxI?=
- =?utf-8?B?NUc4ZG1ZNVNXOHdWUDFjRFpIZlp6Sis1dERVd2QrdE1HU1M2eXFlZzdTU1l4?=
- =?utf-8?B?Nk52T2JGUEZ5ZnlYUFBYcXI5NGRHaGpGb2dtdHdGRnZKZ282TTY5S1JueElm?=
- =?utf-8?B?YVJXOTlSNUU1UjRmMWN2TDJGNS9lS25xdURuNWJDb1NISGNGTmFnRnl6dWR0?=
- =?utf-8?B?OCs3VktIUUZYWUlqNURNeHZXUVJkc1QzSDNDRzJkYUxwVGxHYXhqL2Q5aVhr?=
- =?utf-8?B?QkF2b0Fram9hNnc5MkMzaXRrNFRiZVFncityRENXdkxtUXJUbGFaSGNnVWlJ?=
- =?utf-8?B?MFRHWEZkMkRrbmZzNng4bmRwem9xNkZiZVIydVNkdHhvNlQ3Rm9RZmgxaloy?=
- =?utf-8?B?S2Zxa1FKMDEya0hFSzZRdzNlcDUvd3MrajUxK3VkaE1qTDAvc2VuVWpVU0tt?=
- =?utf-8?B?dUNVY3RwdGhzSnBrRk4yVDhRRHZEUUIwYjBrWWx1bTlkRkVya0dKQTRYaERq?=
- =?utf-8?B?MmZJZndyRW01Y09YNWQxZ0FoTGU3bnVwaHNVaG1kL3lIUkgwUHc1dmxKZUNx?=
- =?utf-8?B?QWI3MHdveUtMd3hpdmhYVWRBL2tUSFBoakN5VFFSVGtnRzhKMDZUVGo3azhl?=
- =?utf-8?B?SjAxTmp0d2xJNFhoYzR1NzBlR0JRbGFLa1hsMEJZZ0FkVWRJbVRmYXRVTk1t?=
- =?utf-8?B?cEZnM01Tem5odjRGYXJRRVVoWExxZUlKVFhxOFMwMVVjV3gyQU9OS3hmS0Fk?=
- =?utf-8?B?dGc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A44315D36
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757398625; cv=none; b=Q3yxiKJAz33QCtBmXH+0ZOAqrnlmuu9PWGRLk6GFWqbFaCCH/4W/xWKNLZ78AkxgkUXbJrIHzl37BTKbfLMTOBa19z7+5UqdW9F8z4B7i9wr6DEqO5xBPbFrVKmD6DgRDq6vwkw1uf4PUx99dVIe7w2P3U3ujTOUEDwjuVxMuIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757398625; c=relaxed/simple;
+	bh=hALvXcW0oJUmimPdYd7PF8+rKUVIsZZwasv1RGxnogk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MYB4LcgAJ//nwyq2Jdw76YVdqpK7hW4/8QHMedjcvBuv37rgEGmrBtRE0DKwJ8X6jbOjOWpUyWLxCm6yGc6d7IRW3apxHC52bxhHQd6Ylnikrl/LZMGDWhNiaKDZcbUGo2aghxX1fGiY2y9yeJk373o0uwFm4YjP9Zx22STKkZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OvGsUOVB; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-746c06937c3so2405380a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 23:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757398620; x=1758003420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yo6ffDWub4okELhRpitpTPAQAp1vCcd2HCwvbQ9oskY=;
+        b=OvGsUOVBsLDHqr+aQtxV+1rP/6dl2yW60SBymG1oTbu+0kcHFTgXw1/AOcJZeHFsF1
+         QxGu4RkvUmm2uR4nthAHNitRH1qJBCb4/j08wBle3xm+mmCBx3IcYwOWYIlI+bcZJ6ko
+         5R1frCp5mDVr8PspOSIRVUuaeIBpdiIJEZ0MO1nTiTsjg1nibYAR3VlVID3Rmq+ja2pY
+         5veGT/Cb7M2n9KunuHfn1knazrcSbztJopJUSwaOj4GcU6Xhx2WEcAqy/LfnGPu4tK8l
+         Rhn+tk27nlZlaCfK30zvuj1nU7sS8dyDUY8YfyPTA1tajFYTIeKkm4m1cY24twKe2zv/
+         G+eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757398620; x=1758003420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yo6ffDWub4okELhRpitpTPAQAp1vCcd2HCwvbQ9oskY=;
+        b=OWfwuKErCd0otSY/2WxbLntfV5U70445DqdT/F9QslPsFabXsmUUaxfJcVB28VCJsK
+         b9hDTL47+GzaFXtbWD7+7H0QhtBjMLK89AtifjiLAz/MZdydH0n7DhjL8TFBiIF9UH0y
+         ga7rQIdAG6Dx9vx83O0/X+wrcYozLEzlxLIx1yDYvQR+7/O9LicoDuE1YjrrHF/8VWoO
+         nIlDPPkH9IGRpSRiucYLWH9/uhCmaErI8KX5aL4aJzWd1VMJJPZd6iQQGYlzdfd9dYAM
+         mkDRSuW4FXteWt2WllK65lGNDYby9lgjPZSaxPAh1mHT3d/Ut64FrHhwcm+jblirB8ZH
+         XRYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV14i/Qj7CIWXYS5a6yh4u9oE3dG35UYiAIN+bwZzl+W6wgv/HOha7ZYaWqvafqXxdQ8wyAXfAWK0geaj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxutBvUqmSEHfEutq44pcSQva98Fex7Abi1mXPp9pK08tGlule5
+	Y85mAEBx2FReBEoYP9JBFTiL5zmgEknOfpLlrUAnONH2du+TSRmQ7OQImuXXO07BYzppHYWGjNp
+	BnjNB2URTbk0vmTI/pRiCJfmQvVz7gJmPVpMwR0YUOA==
+X-Gm-Gg: ASbGnctdBRQJEvC71h8jJ/4ie97wrDYhJvq36lqjBudML2al0yI2R6Y9r9nNd0ym50s
+	D/qxL8Qq25dNbYgUZNSseMq6H0rqD/r6NMSZYufGusxe8tozD4/hFC++Iafp4zpeuBqrPPM/Xvc
+	6SguKfYz4EvWB0nuC3f0PS2hzFej/tEnfZvsDwvy3/HKZZMammnHUudTwiT8Ufsjg2YFPCDJAnv
+	l57Xcqz
+X-Google-Smtp-Source: AGHT+IFdWd1+vb/Rl4PyiuASXINuF9rhsbEjXGlN27AUAvNG+S3/oT+E/Sl0ISuJwz6n95Ct9NcfS1g0fMrD6zw15s0=
+X-Received: by 2002:a05:6830:26d9:b0:745:5fcc:e70b with SMTP id
+ 46e09a7af769-746d92f6d9emr5801485a34.14.1757398619808; Mon, 08 Sep 2025
+ 23:16:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SLXP216MB1148.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6bbf16b-498f-4a81-6e8c-08ddef6870bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2025 06:16:40.3050
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2zxNN9PKVMXLa5rvGXiSz4sXxkwom52m3UH7KrIL2dLBvpFbXn1DnqQjcg3kP6GRlsKrnXiEOto46f6/3B7vciZ9et+ecKD0hk6/CgvMC/Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2P216MB1393
+References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
+ <aL-uOEByKImuvIYF@sumit-X1>
+In-Reply-To: <aL-uOEByKImuvIYF@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Tue, 9 Sep 2025 08:16:48 +0200
+X-Gm-Features: Ac12FXy83iDtr2MlreSn2K-a4Ho9ZbQ2XYunPWu-01PDMz9YAYPkq_r6L4oHrE8
+Message-ID: <CAHUa44FQVQ1AE3nSjCjcB07XGowYPN6srwG2dknT76qqdtEV+g@mail.gmail.com>
+Subject: Re: [PATCH v7 00/11] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgTmljb2xhcw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE5pY29s
-YXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT4NCj4gU2VudDogU2F0
-dXJkYXksIEF1Z3VzdCAzMCwgMjAyNSAxMjo0MSBBTQ0KPiBUbzogamFja3Nvbi5sZWUgPGphY2tz
-b24ubGVlQGNoaXBzbm1lZGlhLmNvbT47IG1jaGVoYWJAa2VybmVsLm9yZzsNCj4gaHZlcmt1aWwt
-Y2lzY29AeHM0YWxsLm5sOyBib2IuYmVja2V0dEBjb2xsYWJvcmEuY29tDQo+IENjOiBsaW51eC1t
-ZWRpYUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxhZmxl
-eS5raW0NCj4gPGxhZmxleS5raW1AY2hpcHNubWVkaWEuY29tPjsgYi1icm5pY2hAdGkuY29tOyBo
-dmVya3VpbEB4czRhbGwubmw7IE5hcw0KPiBDaHVuZyA8bmFzLmNodW5nQGNoaXBzbm1lZGlhLmNv
-bT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwLzRdIFBlcmZvcm1hbmNlIGltcHJvdmVtZW50
-IG9mIGRlY29kZXINCj4gDQo+IEhpIEphY2tzb24sDQo+IA0KPiBMZSBsdW5kaSAyMyBqdWluIDIw
-MjUgw6AgMDk6MjEgKzA5MDAsIEphY2tzb24ubGVlIGEgw6ljcml0wqA6DQo+ID4gRnJvbTogSmFj
-a3NvbiBMZWUgPGphY2tzb24ubGVlQGNoaXBzbm1lZGlhLmNvbT4NCj4gPg0KPiA+IHY0bDItY29t
-cGxpYW5jZSByZXN1bHRzOg0KPiA+ID09PT09PT09PT09PT09PT09PT09PT09PQ0KPiA+DQo+ID4g
-djRsMi1jb21wbGlhbmNlIDEuMjguMS01MjMzLCA2NCBiaXRzLCA2NC1iaXQgdGltZV90DQo+ID4N
-Cj4gPiBCdWZmZXIgaW9jdGxzOg0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3
-YXJuOiB2NGwyLXRlc3QtYnVmZmVycy5jcHAoNjkzKTogVklESU9DX0NSRUFURV9CVUZTDQo+ID4g
-bm90IHN1cHBvcnRlZA0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3YXJuOiB2
-NGwyLXRlc3QtYnVmZmVycy5jcHAoNjkzKTogVklESU9DX0NSRUFURV9CVUZTDQo+ID4gbm90IHN1
-cHBvcnRlZA0KPiA+IMKgwqDCoMKgwqDCoMKgIHRlc3QgVklESU9DX1JFUUJVRlMvQ1JFQVRFX0JV
-RlMvUVVFUllCVUY6IE9LDQo+ID4gwqDCoMKgwqDCoMKgwqAgdGVzdCBDUkVBVEVfQlVGUyBtYXhp
-bXVtIGJ1ZmZlcnM6IE9LDQo+ID4gwqDCoMKgwqDCoMKgwqAgdGVzdCBWSURJT0NfRVhQQlVGOiBP
-Sw0KPiA+IMKgwqDCoMKgwqDCoMKgIHRlc3QgUmVxdWVzdHM6IE9LIChOb3QgU3VwcG9ydGVkKQ0K
-PiA+DQo+ID4gVG90YWwgZm9yIHdhdmU1LWRlYyBkZXZpY2UgL2Rldi92aWRlbzA6IDQ2LCBTdWNj
-ZWVkZWQ6IDQ2LCBGYWlsZWQ6IDAsDQo+ID4gV2FybmluZ3M6IDIgVG90YWwgZm9yIHdhdmU1LWVu
-YyBkZXZpY2UgL2Rldi92aWRlbzE6IDQ2LCBTdWNjZWVkZWQ6IDQ2LA0KPiA+IEZhaWxlZDogMCwg
-V2FybmluZ3M6IDANCj4gPg0KPiA+IEZsdXN0ZXIgdGVzdCByZXN1bHRzOg0KPiA+ID09PT09PT09
-PT09PT09PT09PT09PQ0KPiA+DQo+ID4gUnVubmluZyB0ZXN0IHN1aXRlIEpDVC1WQy1IRVZDX1Yx
-IHdpdGggZGVjb2Rlcg0KPiA+IEdTdHJlYW1lci1ILjI2NS1WNEwyLUdzdDEuMCBVc2luZyAzIHBh
-cmFsbGVsIGpvYihzKSBSYW4gMTMzLzE0NyB0ZXN0cw0KPiA+IHN1Y2Nlc3NmdWxsecKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgaW4gNDAuMTE0IHNlY3MNCj4gPg0KPiA+ICgxIHRlc3QgZmFp
-bHMgYmVjYXVzZSBvZiBub3Qgc3VwcG9ydGluZyB0byBwYXJzZSBtdWx0aSBmcmFtZXMsIDEgdGVz
-dA0KPiA+IGZhaWxzIGJlY2F1c2Ugb2YgYSBtaXNzaW5nIGZyYW1lIGFuZCBzbGlnaHQgY29ycnVw
-dGlvbiwNCj4gPiDCoDIgdGVzdHMgZmFpbCBiZWNhdXNlIG9mIHNpemVzIHdoaWNoIGFyZSBpbmNv
-bXBhdGlibGUgd2l0aCB0aGUgSVAsIDExDQo+ID4gdGVzdHMgZmFpbCBiZWNhdXNlIG9mIHVuc3Vw
-cG9ydGVkIDEwIGJpdCBmb3JtYXQpDQo+ID4NCj4gPg0KPiA+IFJ1bm5pbmcgdGVzdCBzdWl0ZSBK
-VlQtQVZDX1YxIHdpdGggZGVjb2RlciBHU3RyZWFtZXItSC4yNjQtVjRMMi1Hc3QxLjANCj4gPiBV
-c2luZyAzIHBhcmFsbGVsIGpvYihzKSBSYW4gNzgvMTM1IHRlc3RzIHN1Y2Nlc3NmdWxsecKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW4NCj4gPiA0My4zNjQgc2Vjcw0KPiA+DQo+ID4gKDU3
-IGZhaWwgYmVjYXVzZSB0aGUgaGFyZHdhcmUgaXMgdW5hYmxlIHRvIGRlY29kZcKgIE1CQUZGIC8g
-Rk1PIC8gRmllbGQNCj4gPiAvIEV4dGVuZGVkIHByb2ZpbGUgc3RyZWFtcy4pDQo+ID4NCj4gPiBS
-dW5uaW5nIHRlc3Qgc3VpdGUgSlZULUZSLUVYVCB3aXRoIGRlY29kZXIgR1N0cmVhbWVyLUguMjY0
-LVY0TDItR3N0MS4wDQo+ID4gVXNpbmcgMyBwYXJhbGxlbCBqb2IocykgUmFuIDI1LzY5IHRlc3Rz
-IHN1Y2Nlc3NmdWxsecKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW4NCj4gPiA0MC40MTEg
-c2Vjcw0KPiANCj4gDQo+IEFjaywgc2FtZSByZXN1bHRzIGhlcmUgYW5kIGNvbnNpc3RlbnQuDQo+
-IA0KPiA+DQo+ID4gKDQ0IGZhaWwgYmVjYXVzZSB0aGUgaGFyZHdhcmUgZG9lcyBub3Qgc3VwcG9y
-dCBmaWVsZCBlbmNvZGVkIGFuZCA0MjINCj4gPiBlbmNvZGVkIHN0cmVhbSkNCj4gPg0KPiA+IFNl
-ZWsgdGVzdA0KPiA+ID09PT09PT09PT09PT09PT09PT09PQ0KPiA+IDEuIGdzdC1wbGF5LTEuMCBz
-ZWVrLjI2NA0KPiA+IDIuIHRoaXMgd2lsbCB1c2Ugd2F5bGFuZHNpbmsgc2luY2UgZ3N0LXBsYXkt
-MS4wIHVzZXMgcGxheWJpbi4NCj4gPiDCoMKgIGlmIHlvdSBkb24ndCB3YW50IHRvIGhvb2sgdXAg
-ZGlzcGxheSwNCj4gPiDCoMKgIHlvdSBjYW4gcnVuIGdzdC1wbGF5LTEuMCBzZWVrLjI2NCAtLXZp
-ZGVvc2luaz1mYWtldmlkZW9zaW5rIGluc3RlYWQNCj4gPiAzLiBMZXQgcGlwZWxpbmUgcnVuIGZv
-ciAyLTMgc2Vjb25kcyA0LiBwcmVzcyBTUEFDRSBrZXkgdG8gcGF1c2UgNS4NCj4gPiBwcmVzcyAw
-IHRvIHJlc2V0IHByZXNzIFNQQUNFIHRvIHN0YXJ0IGFnYWluDQo+ID4NCj4gPiBnc3QtcGxheS0x
-LjAgc2Vlay4yNjQgLS12aWRlb3Npbms9ZmFrZXZpZGVvc2luayBQcmVzcyAnaycgdG8gc2VlIGEg
-bGlzdA0KPiBvZiBrZXlib2FyZCBzaG9ydGN1dHMuDQo+ID4gTm93IHBsYXlpbmcgL3Jvb3Qvc2Vl
-ay4yNjQNCj4gPiBSZWRpc3RyaWJ1dGUgbGF0ZW5jeS4uLg0KPiA+IFJlZGlzdHJpYnV0ZSBsYXRl
-bmN5Li4uDQo+ID4gUmVkaXN0cmlidXRlIGxhdGVuY3kuLi4NCj4gPiBSZWRpc3RyaWJ1dGUgbGF0
-ZW5jeS4uLg0KPiA+IFJlZGlzdHJpYnV0ZSBsYXRlbmN5Li4uYXVzZWQNCj4gPiAwOjAwOjA5Ljkg
-LyAwOjAwOjA5LjcNCj4gPiBSZWFjaGVkIGVuZCBvZiBwbGF5IGxpc3QuDQo+ID4NCj4gPiBTZXF1
-ZW5jZSBDaGFuZ2UgdGVzdA0KPiA+ID09PT09PT09PT09PT09PT09PT09PQ0KPiA+IGdzdC1sYXVu
-Y2gtMS4wIGZpbGVzcmMgbG9jYXRpb249Li9kcmMuaDI2NCAhIGgyNjRwYXJzZSAhIHY0bDJoMjY0
-ZGVjICENCj4gZmlsZXNpbmsgbG9jYXRpb249Li9oMjY0X291dHB1dF80MjAueXV2IFNldHRpbmcg
-cGlwZWxpbmUgdG8gUEFVU0VEIC4uLg0KPiA+IFBpcGVsaW5lIGlzIFBSRVJPTExJTkcgLi4uDQo+
-ID4gUmVkaXN0cmlidXRlIGxhdGVuY3kuLi4NCj4gPiBQaXBlbGluZSBpcyBQUkVST0xMRUQgLi4u
-DQo+ID4gU2V0dGluZyBwaXBlbGluZSB0byBQTEFZSU5HIC4uLg0KPiA+IE5ldyBjbG9jazogR3N0
-U3lzdGVtQ2xvY2sNCj4gPiBSZWRpc3RyaWJ1dGUgbGF0ZW5jeS4uLg0KPiA+IEdvdCBFT1MgZnJv
-bSBlbGVtZW50ICJwaXBlbGluZTAiLg0KPiA+IEV4ZWN1dGlvbiBlbmRlZCBhZnRlciAwOjAwOjAw
-LjExMzYyMDU5MCBTZXR0aW5nIHBpcGVsaW5lIHRvIE5VTEwgLi4uDQo+ID4gRnJlZWluZyBwaXBl
-bGluZSAuLi4NCj4gDQo+IEkgdHJpZWQgYW5kIHJlcHJvZHVjZSB5b3VyIHJlc3VsdHMuIEkndmUg
-dXNlZCBhbiBJU09NUDQgZmlsZSwgbm90aGluZyBiaWcsDQo+IDcyMHAgMTBtaW4gdmlkZW8uIEFm
-dGVyIDMwcyBvZiBzZWVraW5nIGJhY2sgYW5kIGZvcnRoIEkndmUgZ290IGEgZGVhZGxvY2ssDQo+
-IHdpdGggdGhlIGZvbGxvd2luZyBrZXJuZWwgbG9nOg0KPiANCj4gdmRlYyA0MjEwMDAwLnZpZGVv
-LWNvZGVjOiB3YXZlNV92cHVfZmlybXdhcmVfY29tbWFuZF9xdWV1ZV9lcnJvcl9jaGVjazoNCj4g
-c3RpbGwgcnVubmluZzogMHgxMDAwDQo+IA0KPiBJIGRvbid0IGtub3cgaWYgaXRzIHdvcnNlIHRo
-ZW4gYmVmb3JlLCBidXQgdGhlIGJ1ZyBpcyBzZXZlcmUgZW5vdWdoIHRvIGJlDQo+IGNvbmNlcm4u
-IFRvIHJlcHJvZHVjZSBlYXNpbHksIEkgcGljayBhIGxvbmdlciB2aWRlbywgc2VlayBmb3J3YXJk
-IGNsb3NlIHRvDQo+IHRoZSBlbmQsIGFuZCB0aGVuIHNlZWsgYmFjayAoZ3N0LXBsYXkgc28gc21h
-bGxlciBzdGVwcyBiYWNrKSB2ZXJ5IHF1aWNrbHkNCj4gdGlsbCBpdCByZWFjaGVzIHBvc2l0aW9u
-IDAsIGFuZCByZXBlYXQuDQo+IA0KPiBUaGlzIGhhcHBlbmVkIHdpdGhvdXQgcmVzb2x1dGlvbiBj
-aGFuZ2UgaGFwcGVuaW5nIGNvbmN1cnJlbnQgdG8gc2Vla3MsDQo+IGp1c3QgYSBmbGF0LCBzaW5n
-bGUgcmVzb2x1dGlvbiB2aWRlby4gT25jZSBJIGRvIHRoZSBzYW1lIHRlc3Qgd2l0aCBhbg0KPiBh
-Z3Jlc3NpdmUgRFJDIGluIHBsYWNlLCBJIGhpdCBrZXJuZWwgY3Jhc2guIEkgd2lsbCBzaGFyZSBp
-biBwcml2YXRlIGVtYWlsDQo+IHRoZSBEUkMgSC4yNjQgc2FtcGxlIEknbSB1c2luZywgYW5kIGhv
-dyB0byBtYWtlIGl0IGJpZ2dlciBzbyBpdHMgbWFudWFsbHkNCj4gc2Vla2FibGUuDQo+IA0KDQpJ
-IHRyaWVkIHRvIHJlcHJvZHVjZSB0aGlzIHByb2JsZW0sIGJ1dCBJIGFtIHNlZWluZyBhIGRpZmZl
-cmVudCBwaGVub21lbm9uLg0KQ2FuIHlvdSBsZXQgbWUga25vdyB5b3VyIEdzdHJlYW1lciB2ZXJz
-aW9uIHlvdSBhcmUgdXNpbmcgPw0KDQpUaGFua3MNCkphY2tzb24NCg0KDQo+IFsgIDY3OC44MTk4
-NTldIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2
-aXJ0dWFsDQo+IGFkZHJlc3MgMDAwMDAwMDAwMDAwMDM1OCBbICA2NzguODI4NzQ2XSBNZW0gYWJv
-cnQgaW5mbzoNCj4gWyAgNjc4LjgzMjM3OF0gICBFU1IgPSAweDAwMDAwMDAwOTYwMDAwMDQNCj4g
-WyAgNjc4LjgzODU1NV0gICBFQyA9IDB4MjU6IERBQlQgKGN1cnJlbnQgRUwpLCBJTCA9IDMyIGJp
-dHMNCj4gWyAgNjc4Ljg0NTkyMV0gICBTRVQgPSAwLCBGblYgPSAwDQo+IFsgIDY3OC44NDk4ODJd
-ICAgRUEgPSAwLCBTMVBUVyA9IDANCj4gWyAgNjc4Ljg1NDI0MV0gICBGU0MgPSAweDA0OiBsZXZl
-bCAwIHRyYW5zbGF0aW9uIGZhdWx0DQo+IFsgIDY3OC44NjAwOThdIERhdGEgYWJvcnQgaW5mbzoN
-Cj4gWyAgNjc4Ljg2NDQxMF0gICBJU1YgPSAwLCBJU1MgPSAweDAwMDAwMDA0LCBJU1MyID0gMHgw
-MDAwMDAwMA0KPiBbICA2NzguODcxMDAwXSAgIENNID0gMCwgV25SID0gMCwgVG5EID0gMCwgVGFn
-QWNjZXNzID0gMA0KPiBbICA2NzguODc3Mzg0XSAgIEdDUyA9IDAsIE92ZXJsYXkgPSAwLCBEaXJ0
-eUJpdCA9IDAsIFhzID0gMA0KPiBbICA2NzguODg3Nzg1XSB1c2VyIHBndGFibGU6IDRrIHBhZ2Vz
-LCA0OC1iaXQgVkFzLCBwZ2RwPTAwMDAwMDA4ODIyMTUwMDANCj4gWyAgNjc4LjkwMTIxMF0gWzAw
-MDAwMDAwMDAwMDAzNThdIHBnZD0wMDAwMDAwMDAwMDAwMDAwLA0KPiBwNGQ9MDAwMDAwMDAwMDAw
-MDAwMCBbICA2NzguOTA4NTg1XSBJbnRlcm5hbCBlcnJvcjogT29wczogMDAwMDAwMDA5NjAwMDAw
-NA0KPiBbIzFdICBTTVAgWyAgNjc4LjkxNDI2Nl0gTW9kdWxlcyBsaW5rZWQgaW46IHJma2lsbCBx
-cnRyIHJwbXNnX2N0cmwNCj4gcnBtc2dfY2hhciBwaHlfY2FkZW5jZV90b3JyZW50IHRwczY1OTRf
-ZXNtIHRwczY1OTRfcGZzbSB0cHM2NTk0X3JlZ3VsYXRvcg0KPiBydGNfdHBzNjU5NCB0aV9hbTMz
-NXhfYWRjIGtmaWZvX2J1ZiBwaW5jdHJsX3RwczY1OTQgZ3Bpb19yZWdtYXAgY2RuczMNCj4gY2Ru
-c191c2JfY29tbW9uIG11eF9ncGlvIG9tYXBfbWFpbGJveCB0aV9rM19yNV9yZW1vdGVwcm9jIHBo
-eV9qNzIxZV93aXoNCj4gcGh5X2Nhbl90cmFuc2NlaXZlciB3YXZlNSB2NGwyX21lbTJtZW0gcG93
-ZXJ2ciB2aWRlb2J1ZjJfZG1hX2NvbnRpZw0KPiBkcm1fZ3B1dm0gdmlkZW9idWYyX21lbW9wcyB2
-aWRlb2J1ZjJfdjRsMiBkcm1fZXhlYyBhdDI0IGRybV9zaG1lbV9oZWxwZXINCj4gdHBzNjU5NF9p
-MmMgdmlkZW9kZXYgZ3B1X3NjaGVkIHRwczY1OTRfY29yZSB2aWRlb2J1ZjJfY29tbW9uDQo+IGsz
-X2o3Mnh4X2JhbmRnYXAgdGlfazNfZHNwX3JlbW90ZXByb2MgbWMgZHJtX2ttc19oZWxwZXIgdGlf
-azNfY29tbW9uIHNhMnVsDQo+IHRpX2FtMzM1eF90c2NhZGMgYXV0aGVuYyBtX2Nhbl9wbGF0Zm9y
-bSBtX2NhbiBjYW5fZGV2IGNkbnMzX3RpIHJ0aV93ZHQNCj4gZnVzZSBkcm0gZG1fbW9kIGJhY2ts
-aWdodCBpcHY2IFsgIDY3OC45NzEwMTJdIENQVTogMSBVSUQ6IDAgUElEOiA1MSBDb21tOg0KPiBr
-d29ya2VyLzE6MSBOb3QgdGFpbnRlZCA2LjE3LjAtcmMzLWphY2ludG8rICMyIFBSRUVNUFQgWyAg
-Njc4Ljk3OTcwNF0NCj4gSGFyZHdhcmUgbmFtZTogVGV4YXMgSW5zdHJ1bWVudHMgSjcyMVMyIEVW
-TSAoRFQpIFsgIDY3OC45ODUzNThdIFdvcmtxdWV1ZToNCj4gZXZlbnRzIHY0bDJfbTJtX2Rldmlj
-ZV9ydW5fd29yayBbdjRsMl9tZW0ybWVtXSBbICA2NzguOTkxODExXSBwc3RhdGU6DQo+IDYwMDAw
-MDA1IChuWkN2IGRhaWYgLVBBTiAtVUFPIC1UQ08gLURJVCAtU1NCUyBCVFlQRT0tLSkgWyAgNjc4
-Ljk5ODc2N10gcGMgOg0KPiB2NGwyX20ybV90cnlfcnVuKzB4NzQvMHgxM2MgW3Y0bDJfbWVtMm1l
-bV0gWyAgNjc5LjAwNDM0NV0gbHIgOg0KPiB2NGwyX20ybV90cnlfcnVuKzB4NjAvMHgxM2MgW3Y0
-bDJfbWVtMm1lbV0gWyAgNjc5LjAwOTkyMl0gc3AgOg0KPiBmZmZmODAwMDgzMzMzZDYwIFsgIDY3
-OS4wMTMyMzJdIHgyOTogZmZmZjgwMDA4MzMzM2Q2MCB4Mjg6DQo+IDAwMDAwMDAwMDAwMDAwMDAg
-eDI3OiAwMDAwMDAwMDAwMDAwMDAwIFsgIDY3OS4wMjAzNThdIHgyNjoNCj4gZmZmZjAwMGI3ZGZh
-ODQ2OCB4MjU6IDAwMDAwMDAwMDAwMDAwMDAgeDI0OiBmZmZmMDAwODAwMDEyMjA1IFsgIDY3OS4w
-Mjc0ODBdDQo+IHgyMzogZmZmZjAwMDgwMTFhYTMwMCB4MjI6IGZmZmYwMDBiN2RmYTg0NDAgeDIx
-OiBmZmZmMDAwODA1M2YyMjIwDQo+IFsgIDY3OS4wMzQ2MDJdIHgyMDogZmZmZjAwMDgwMDAxMjIw
-MCB4MTk6IGZmZmYwMDA4MDUzZjIwMDAgeDE4Og0KPiAwMDAwMDAwMDAwMDAwMDAwIFsgIDY3OS4w
-NDE3MjRdIHgxNzogMDAwMDAwMDAwMDAwMDAwMCB4MTY6DQo+IDAwMDAwMDAwMDAwMDAwMDAgeDE1
-OiAwMDlmNzI5YzU1MmZkM2Y4IFsgIDY3OS4wNDg4NDZdIHgxNDoNCj4gMDAwMDAwMDAwMDAwMDJh
-ZSB4MTM6IGZmZmY4MDAwODExZjQ3OTAgeDEyOiAwMDAwMDAwMDAwMDAwNTM3IFsgIDY3OS4wNTU5
-NjhdDQo+IHgxMTogMDAwMDAwMDAwMDAwMDBjMCB4MTA6IDAwMDAwMDAwMDAwMDBhYjAgeDkgOiBm
-ZmZmODAwMDgzMzMzYzgwDQo+IFsgIDY3OS4wNjMwOTBdIHg4IDogZmZmZjAwMDgwMTFhYWUxMCB4
-NyA6IDAwMDAwMDAwMDAwMDJkMDIgeDYgOg0KPiAwMDAwMDAwMDAwMDBiYTZiIFsgIDY3OS4wNzAy
-MTJdIHg1IDogZmZmZjAwMDgyN2Y2OGI0MCB4NCA6DQo+IGZmZmYwMDA4MDExYWEzMDAgeDMgOiBm
-ZmZmMDAwODBiMmJiNDgwIFsgIDY3OS4wNzczMzNdIHgyIDoNCj4gMDAwMDAwMDAwMDAwMDAwMCB4
-MSA6IGZmZmY4MDAwN2E5NzI1MzggeDAgOiAwMDAwMDAwMDAwMDAwMDAwIFsgIDY3OS4wODQ0NTZd
-DQo+IENhbGwgdHJhY2U6DQo+IFsgIDY3OS4wODY4OTNdICB2NGwyX20ybV90cnlfcnVuKzB4NzQv
-MHgxM2MgW3Y0bDJfbWVtMm1lbV0gKFApDQo+IFsgIDY3OS4wOTI0NjJdICB2NGwyX20ybV9kZXZp
-Y2VfcnVuX3dvcmsrMHgxNC8weDIwIFt2NGwyX21lbTJtZW1dDQo+IFsgIDY3OS4wOTgyODVdICBw
-cm9jZXNzX29uZV93b3JrKzB4MTUwLzB4MjkwIFsgIDY3OS4xMDIyOTRdDQo+IHdvcmtlcl90aHJl
-YWQrMHgyZDAvMHgzZWMgWyAgNjc5LjEwNjAzNF0gIGt0aHJlYWQrMHgxMmMvMHgyMTAgWyAgNjc5
-LjEwOTI1NV0NCj4gcmV0X2Zyb21fZm9yaysweDEwLzB4MjAgWyAgNjc5LjExMjgyNV0gQ29kZTog
-Mzk1MzAwMDAgMzcwMDA1YzAgZjk0MDAyNjANCj4gZjk0MTI2NjEgKGY5NDFhYzAwKSBbICA2Nzku
-MTE4OTA1XSAtLS1bIGVuZCB0cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0NCj4gDQo+IA0KPiA+
-DQo+ID4gQ2hhbmdlIHNpbmNlIHYyOg0KPiA+ID09PT09PT09PT09PT09PT09PQ0KPiA+ICogRm9y
-IFtQQVRDSCB2MyA0LzRdIG1lZGlhOiBjaGlwcy1tZWRpYTogd2F2ZTU6IEltcHJvdmUgcGVyZm9y
-bWFuY2Ugb2YNCj4gPiBkZWNvZGVyDQo+ID4gwqAtIHNxdWFzaCB2MidzICMzfiM2IHRvICM0IHBh
-dGNoIG9mIHYzDQo+IA0KPiBUaGFua3MgZm9yIHRoaXMgdXBkYXRlLCBJJ2xsIGNoZWNrIGlmIGFu
-eXRoaW5nIGlzIGxlZnQgYXBwYXJ0IGZyb20NCj4gc3RhYmlsaXR5IGFuZCBwcm92aWRlIGZlZWRi
-YWNrLiBJJ20gbG9va2luZyBmb3J3YXJkIHlvdSBpbnB1dCBvbiB0aGUNCj4gZGlzY2xvc2VkIGJ1
-ZyBJIGhhdmUgaGl0Lg0KPiANCj4gTmljb2xhcw0KPiANCj4gPg0KPiA+IENoYW5nZSBzaW5jZSB2
-MToNCj4gPiA9PT09PT09PT09PT09PT09PT09DQo+ID4gKiBGb3IgW1BBVENIIHYyIDIvN10gbWVk
-aWE6IGNoaXBzLW1lZGlhOiB3YXZlNTogSW1wcm92ZSBwZXJmb3JtYW5jZSBvZg0KPiA+IGRlY29k
-ZXINCj4gPiDCoC0gY2hhbmdlIGxvZyB0byBkYmcgbGV2ZWwNCj4gPg0KPiA+IENoYW5nZSBzaW5j
-ZSB2MDoNCj4gPiA9PT09PT09PT09PT09PT09PT09DQo+ID4gKiBGb3IgW1BBVENIIHYxIDIvN10g
-bWVkaWE6IGNoaXBzLW1lZGlhOiB3YXZlNTogSW1wcm92ZSBwZXJmb3JtYW5jZSBvZg0KPiA+IGRl
-Y29kZXINCj4gPiDCoC0gc2VwYXJhdGVzIHRoZSBwcmV2aW91cyBwYXRjaCB0byBhIGZldyBwYXRj
-aGVzDQo+ID4NCj4gPiAqIEZvciBbUEFUQ0ggdjEgMy83XSBtZWRpYTogY2hpcHMtbWVkaWE6IHdh
-dmU1OiBGaXggbm90IHRvIGJlIGNsb3NlZA0KPiA+IMKgLSBzZXBhcmF0ZWQgZnJvbSB0aGUgcHJl
-dmlvdXMgcGF0Y2ggb2YgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQgb2YNCj4gPiDCoMKgIGRlY29k
-ZXINCj4gPg0KPiA+ICogRm9yIFtQQVRDSCB2MSA0LzddIG1lZGlhOiBjaGlwcy1tZWRpYTogd2F2
-ZTU6IFVzZSBzcGlubG9jayB3aGVuZXZlcg0KPiA+IHN0YXRlIGlzIGNoYW5nZWQNCj4gPiDCoC0g
-c2VwYXJhdGVkIGZyb20gdGhlIHByZXZpb3VzIHBhdGNoIG9mIHBlcmZvcm1hbmNlIGltcHJvdmVt
-ZW50IG9mDQo+ID4gwqDCoCBkZWNvZGVyDQo+ID4NCj4gPiAqIEZvciBbUEFUQ0ggdjEgNS83XSBt
-ZWRpYTogY2hpcHMtbWVkaWE6IHdhdmU1OiBGaXggbm90IHRvIGZyZWUNCj4gPiByZXNvdXJjZXMg
-bm9ybWFsbHkgd2hlbg0KPiA+IMKgwqDCoCBpbnN0YW5jZSB3YXMgZGVzdHJveWVkDQo+ID4gwqAt
-IHNlcGFyYXRlZCBmcm9tIHRoZSBwcmV2aW91cyBwYXRjaCBvZiBwZXJmb3JtYW5jZSBpbXByb3Zl
-bWVudCBvZg0KPiA+IMKgwqAgZGVjb2Rlcg0KPiA+DQo+ID4gKiBGb3IgW1BBVENIIHYxIDcvN10g
-bWVkaWE6IGNoaXBzLW1lZGlhOiB3YXZlNTogRml4IFNFcnJvciBvZiBrZXJuZWwNCj4gPiBwYW5p
-YyB3aGVuIGNsb3NlZA0KPiA+IMKgLSBzZXBhcmF0ZWQgZnJvbSB0aGUgcHJldmlvdXMgcGF0Y2gg
-b2YgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQgb2YNCj4gPiDCoMKgIGRlY29kZXINCj4gPg0KPiA+
-DQo+ID4gSmFja3NvbiBMZWUgKDQpOg0KPiA+IMKgIG1lZGlhOiBjaGlwcy1tZWRpYTogd2F2ZTU6
-IEZpeCBTRXJyb3Igb2Yga2VybmVsIHBhbmljIHdoZW4gY2xvc2VkDQo+ID4gwqAgbWVkaWE6IGNo
-aXBzLW1lZGlhOiB3YXZlNTogRml4IE51bGwgcmVmZXJlbmNlIHdoaWxlIHRlc3RpbmcgZmx1c3Rl
-cg0KPiA+IMKgIG1lZGlhOiBjaGlwcy1tZWRpYTogd2F2ZTU6IEFkZCBXQVJOX09OIHRvIGNoZWNr
-IGlmIGRlY19vdXRwdXRfaW5mbw0KPiA+IGlzDQo+ID4gwqDCoMKgIE5VTEwNCj4gPiDCoCBtZWRp
-YTogY2hpcHMtbWVkaWE6IHdhdmU1OiBJbXByb3ZlIHBlcmZvcm1hbmNlIG9mIGRlY29kZXINCj4g
-Pg0KPiA+IMKgLi4uL3BsYXRmb3JtL2NoaXBzLW1lZGlhL3dhdmU1L3dhdmU1LWhlbHBlci5jIHzC
-oCAyMyArKy0NCj4gPiDCoC4uLi9wbGF0Zm9ybS9jaGlwcy1tZWRpYS93YXZlNS93YXZlNS1ody5j
-wqDCoMKgwqAgfMKgwqAgMiArLQ0KPiA+IMKgLi4uL2NoaXBzLW1lZGlhL3dhdmU1L3dhdmU1LXZw
-dS1kZWMuY8KgwqDCoMKgwqDCoMKgwqAgfCAxMzkNCj4gPiArKysrKysrKysrKystLS0tLS0NCj4g
-PiDCoC4uLi9jaGlwcy1tZWRpYS93YXZlNS93YXZlNS12cHUtZW5jLmPCoMKgwqDCoMKgwqDCoMKg
-IHzCoMKgIDggKy0NCj4gPiDCoC4uLi9wbGF0Zm9ybS9jaGlwcy1tZWRpYS93YXZlNS93YXZlNS12
-cHUuY8KgwqDCoCB8wqAgNzEgKysrKysrKy0tDQo+ID4gwqAuLi4vcGxhdGZvcm0vY2hpcHMtbWVk
-aWEvd2F2ZTUvd2F2ZTUtdnB1YXBpLmMgfMKgIDM3ICsrLS0tDQo+ID4gwqAuLi4vcGxhdGZvcm0v
-Y2hpcHMtbWVkaWEvd2F2ZTUvd2F2ZTUtdnB1YXBpLmggfMKgIDExICsrDQo+ID4gwqAuLi4vY2hp
-cHMtbWVkaWEvd2F2ZTUvd2F2ZTUtdnB1Y29uZmlnLmjCoMKgwqDCoMKgwqAgfMKgwqAgMSArDQo+
-ID4gwqA4IGZpbGVzIGNoYW5nZWQsIDIxOSBpbnNlcnRpb25zKCspLCA3MyBkZWxldGlvbnMoLSkN
-Cg==
+On Tue, Sep 9, 2025 at 6:34=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> w=
+rote:
+>
+> On Tue, Aug 12, 2025 at 05:35:29PM -0700, Amirreza Zarrabi wrote:
+> > This patch series introduces a Trusted Execution Environment (TEE)
+> > driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+> > and services to run securely. It uses an object-based interface, where
+> > each service is an object with sets of operations. Clients can invoke
+> > these operations on objects, which can generate results, including othe=
+r
+> > objects. For example, an object can load a TA and return another object
+> > that represents the loaded TA, allowing access to its services.
+> >
+> > Kernel and userspace services are also available to QTEE through a
+> > similar approach. QTEE makes callback requests that are converted into
+> > object invocations. These objects can represent services within the
+> > kernel or userspace process.
+> >
+> > Note: This patch series focuses on QTEE objects and userspace services.
+> >
+> > Linux already provides a TEE subsystem, which is described in [1]. The
+> > tee subsystem provides a generic ioctl interface, TEE_IOC_INVOKE, which
+> > can be used by userspace to talk to a TEE backend driver. We extend the
+> > Linux TEE subsystem to understand object parameters and an ioctl call s=
+o
+> > client can invoke objects in QTEE:
+> >
+> >   - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
+> >   - TEE_IOC_OBJECT_INVOKE
+> >
+> > The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
+> > used for invoking services in the userspace process by QTEE.
+> >
+> > The TEE backend driver uses the QTEE Transport Message to communicate
+> > with QTEE. Interactions through the object INVOKE interface are
+> > translated into QTEE messages. Likewise, object invocations from QTEE
+> > for userspace objects are converted into SEND/RECV ioctl calls to
+> > supplicants.
+> >
+> > The details of QTEE Transport Message to communicate with QTEE is
+> > available in [PATCH 12/12] Documentation: tee: Add Qualcomm TEE driver.
+> >
+> > You can run basic tests with following steps:
+> > git clone https://github.com/quic/quic-teec.git
+> > cd quic-teec
+> > mkdir build
+> > cmake .. -DCMAKE_TOOLCHAIN_FILE=3DCMakeToolchain.txt -DBUILD_UNITTEST=
+=3DON
+> >
+> > https://github.com/quic/quic-teec/blob/main/README.md lists dependencie=
+s
+> > needed to build the above.
+> >
+> > More comprehensive tests are availabe at
+> > https://github.com/qualcomm/minkipc.
+> >
+> > root@qcom-armv8a:~# qtee_supplicant &
+> > root@qcom-armv8a:~# qtee_supplicant: process entry PPID =3D 378
+> > Total listener services to start =3D 4
+> > Opening CRequestTABuffer_open
+> > Path /data/
+> > register_service ::Opening CRegisterTABufCBO_UID
+> > Calling TAbufCBO Register
+> > QTEE_SUPPLICANT RUNNING
+> >
+> > root@qcom-armv8a:~# smcinvoke_client -c /data 1
+> > Run callback obj test...
+> > Load /data/tzecotestapp.mbn, size 52192, buf 0x1e44ba0.
+> > System Time: 2024-02-27 17:26:31
+> > PASSED - Callback tests with Buffer inputs.
+> > PASSED - Callback tests with Remote and Callback object inputs.
+> > PASSED - Callback tests with Memory Object inputs.
+> > TEST PASSED!
+> > root@qcom-armv8a:~#
+> > root@qcom-armv8a:~# smcinvoke_client -m /data 1
+> > Run memory obj test...
+> > Load /data/tzecotestapp.mbn, size 52192, buf 0x26cafba0.
+> > System Time: 2024-02-27 17:26:39
+> > PASSED - Single Memory Object access Test.
+> > PASSED - Two Memory Object access Test.
+> > TEST PASSED!
+> >
+> > This series has been tested for QTEE object invocations, including
+> > loading a TA, requesting services from the TA, memory sharing, and
+> > handling callback requests to a supplicant.
+> >
+> > Tested platforms: sm8650-mtp, sm8550-qrd, sm8650-qrd, sm8650-hdk
+> >
+> > [1] https://www.kernel.org/doc/Documentation/tee.txt
+> >
+> > Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> >
+>
+> At this point, I think this series is ready to be applied to linux-next.
+
+There are still some warnings in "[PATCH v9 06/11] firmware: qcom:
+scm: add support for object invocation"
+
+/Jens
+
+>
+> > Changes in v7:
+> > - Updated copyrights.
+> > - Updated Acked-by: tags.
+> > - Fixed kernel bot errors.
+> > - Link to v6:
+> >   https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-=
+obj-v6-0-697fb7d41c36@oss.qualcomm.com
+> >
+> > Changes in v6:
+> > - Relocate QTEE version into the driver's main service structure.
+> > - Simplfies qcomtee_objref_to_arg() and qcomtee_objref_from_arg().
+> > - Enhanced the return logic of qcomtee_object_do_invoke_internal().
+> > - Improve comments and remove redundant checks.
+> > - Improve helpers in qcomtee_msh.h to use GENMASK() and FIELD_GET().
+> > - updated Tested-by:, Acked-by:, and Reviewed-by: tags
+> > - Link to v5:
+> >   https://lore.kernel.org/r/20250526-qcom-tee-using-tee-ss-without-mem-=
+obj-v5-0-024e3221b0b9@oss.qualcomm.com
+> >
+> > Changes in v5:
+> > - Remove references to kernel services and public APIs.
+> > - Support auto detection for failing devices (e.g., RB1, RB4).
+> > - Add helpers for obtaining client environment and service objects.
+> > - Query the QTEE version and print it.
+> > - Move remaining static variables, including the object table, to struc=
+t
+> >   qcomtee.
+> > - Update TEE_MAX_ARG_SIZE to 4096.
+> > - Add a dependancy to QCOM_TZMEM_MODE_SHMBRIDGE in Kconfig
+> > - Reorganize code by removing release.c and qcom_scm.c.
+> > - Add more error messages and improve comments.
+> > - updated Tested-by:, Acked-by:, and Reviewed-by: tags
+> > - Link to v4: https://lore.kernel.org/r/20250428-qcom-tee-using-tee-ss-=
+without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com
+> >
+> > Changes in v4:
+> > - Move teedev_ctx_get/put and tee_device_get/put to tee_core.h.
+> > - Rename object to id in struct tee_ioctl_object_invoke_arg.
+> > - Replace spinlock with mutex for qtee_objects_idr.
+> > - Move qcomtee_object_get to qcomtee_user/memobj_param_to_object.
+> > - More code cleanup following the comments.
+> > - Cleanup documentations.
+> > - Update MAINTAINERS file.
+> > - Link to v3: https://lore.kernel.org/r/20250327-qcom-tee-using-tee-ss-=
+without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com
+> >
+> > Changes in v3:
+> > - Export shm_bridge create/delete APIs.
+> > - Enable support for QTEE memory objects.
+> > - Update the memory management code to use the TEE subsystem for all
+> >   allocations using the pool.
+> > - Move all driver states into the driver's main service struct.
+> > - Add more documentations.
+> > - Link to v2: https://lore.kernel.org/r/20250202-qcom-tee-using-tee-ss-=
+without-mem-obj-v2-0-297eacd0d34f@quicinc.com
+> >
+> > Changes in v2:
+> > - Clean up commit messages and comments.
+> > - Use better names such as ubuf instead of membuf or QCOMTEE prefix
+> >   instead of QCOM_TEE, or names that are more consistent with other
+> >   TEE-backend drivers such as qcomtee_context_data instead of
+> >   qcom_tee_context.
+> > - Drop the DTS patch and instantiate the device from the scm driver.
+> > - Use a single structure for all driver's internal states.
+> > - Drop srcu primitives and use the existing mutex for synchronization
+> >   between the supplicant and QTEE.
+> > - Directly use tee_context to track the lifetime of qcomtee_context_dat=
+a.
+> > - Add close_context() to be called when the user closes the tee_context=
+.
+> > - Link to v1: https://lore.kernel.org/r/20241202-qcom-tee-using-tee-ss-=
+without-mem-obj-v1-0-f502ef01e016@quicinc.com
+> >
+> > Changes in v1:
+> > - It is a complete rewrite to utilize the TEE subsystem.
+> > - Link to RFC: https://lore.kernel.org/all/20240702-qcom-tee-object-and=
+-ioctls-v1-0-633c3ddf57ee@quicinc.com
+> >
+> > ---
+> > Amirreza Zarrabi (11):
+> >       tee: allow a driver to allocate a tee_device without a pool
+> >       tee: add close_context to TEE driver operation
+> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+> >       tee: increase TEE_MAX_ARG_SIZE to 4096
+>
+> >       firmware: qcom: scm: add support for object invocation
+> >       firmware: qcom: tzmem: export shm_bridge create/delete
+>
+> Bjorn/Konrad,
+>
+> Since majority of this series belong to TEE subsystem, are you folks
+> fine to ack these patches for Jens to pick them up for next?
+>
+> -Sumit
+>
+> >       tee: add Qualcomm TEE driver
+> >       qcomtee: add primordial object
+> >       qcomtee: enable TEE_IOC_SHM_ALLOC ioctl
+> >       Documentation: tee: Add Qualcomm TEE driver
+>
+>
+>
+> >
+> >  Documentation/tee/index.rst              |   1 +
+> >  Documentation/tee/qtee.rst               |  96 ++++
+> >  MAINTAINERS                              |   7 +
+> >  drivers/firmware/qcom/qcom_scm.c         | 128 +++++
+> >  drivers/firmware/qcom/qcom_scm.h         |   7 +
+> >  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
+> >  drivers/tee/Kconfig                      |   1 +
+> >  drivers/tee/Makefile                     |   1 +
+> >  drivers/tee/qcomtee/Kconfig              |  11 +
+> >  drivers/tee/qcomtee/Makefile             |   9 +
+> >  drivers/tee/qcomtee/async.c              | 183 ++++++
+> >  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++=
+++++
+> >  drivers/tee/qcomtee/core.c               | 920 +++++++++++++++++++++++=
+++++++++
+> >  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
+> >  drivers/tee/qcomtee/primordial_obj.c     | 116 ++++
+> >  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
+> >  drivers/tee/qcomtee/qcomtee_msg.h        | 300 ++++++++++
+> >  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
+> >  drivers/tee/qcomtee/shm.c                | 150 +++++
+> >  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
+> >  drivers/tee/tee_core.c                   | 127 ++++-
+> >  drivers/tee/tee_private.h                |   6 -
+> >  include/linux/firmware/qcom/qcom_scm.h   |   6 +
+> >  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
+> >  include/linux/tee_core.h                 |  54 +-
+> >  include/linux/tee_drv.h                  |  12 +
+> >  include/uapi/linux/tee.h                 |  56 +-
+> >  27 files changed, 4423 insertions(+), 28 deletions(-)
+> > ---
+> > base-commit: 2674d1eadaa2fd3a918dfcdb6d0bb49efe8a8bb9
+> > change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
+> >
+> > Best regards,
+> > --
+> > Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> >
+> >
 
