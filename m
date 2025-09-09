@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-807768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3F5B4A8E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDA1B4A8EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78105361D28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D28B3A8A8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382883090DB;
-	Tue,  9 Sep 2025 09:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMI2IO4Q"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A282D2390;
-	Tue,  9 Sep 2025 09:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6562D2495;
+	Tue,  9 Sep 2025 09:53:38 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0F72D2497
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411597; cv=none; b=RvCv9b2kWtQpOjPNxhQ/aLwF2kMzx/xeFeF7gLJltpENRtP0NweO0VF7EoqPTR2Joj5DEtvY2MLc9SpsoAQU/h64BnFxcrexC/2T+y4fxnGuJDZyExNbeWTVG5SJQXSVRl6sppx2mK2dZN5+ZuoWNSu276gQNihiNSQrbpiYr20=
+	t=1757411618; cv=none; b=bIzAG3MvocieWWJziXGTiR4aVXrtwCKhyM9XhndXGEAhNW5GWBWT6H3FDB/fSkBTsAsEG77RUFFRE/dw2t1LvotTqUql4sZrbl2rbK/6fDSNsjyWbsC2huUgkZWESVXKnt15mxWiv24N1h3NtLYmzqdR6rhWj9limoHhQ1AT74c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411597; c=relaxed/simple;
-	bh=fMLxq6TiucmvR7bYhmILcv7h/Uv9JsbdS4EC9Fmg0gY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3F+nX+bRde6LAaQsGnGf15su+z9PHT6HJl0vBvKnryKcozSvY9rQ2cH7BiRuoVktIr6gFGA09DEDWHfgFQHnltXweRPqb8Ek5rTLETWOV5TkcIUo8fwQCq3AYlhMYFNi0c1DnDUAsFbaxYWFGDw3+gmYK0PtxtII/APnt/mfI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMI2IO4Q; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0411b83aafso887426566b.1;
-        Tue, 09 Sep 2025 02:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757411593; x=1758016393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fMLxq6TiucmvR7bYhmILcv7h/Uv9JsbdS4EC9Fmg0gY=;
-        b=aMI2IO4QcJjx5yGruhF776WZiwyiNpGAMRsNSP2WODQBoT4Uhcmf9ThBU+LYRDjCuN
-         k8BShgPkEo58FTJgGFWsX5rWAw+SXOxiW/6s1Gjzb6O6hXYWPOLTfJ3N5yXFDWooiNfz
-         BldPg1An+YlnYrASvi1RvR0kvRiwwJRAMHvdOi2Ha88i7WiorDOylLO29jq7zVGcgrqd
-         x7IdpXBRoArB5rlZdqcPnOfqxe9iriD5MVsP9jz3k8XRsASdriWX/DmCVz0pwBH8Ey5q
-         1C3AHExEZD/xMrklePpSM/crtMX6wf/VnarqtwZNhrZ/0WsQyhWryJW583ug2fUczrFX
-         BE+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757411593; x=1758016393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fMLxq6TiucmvR7bYhmILcv7h/Uv9JsbdS4EC9Fmg0gY=;
-        b=JW85uhyeAaAZoChH/SlZnQUwyJPjtMco2C9vOz+qjosYZErxeZMXsM8N51h3mNZ+5I
-         //hc5b///60UMkgnNaN4D+6Y6KKIZYgGX19uGCvPHAsDcs4gYTDtGoj4+Gji4XkFXA6J
-         FPcNGYf+oDUCz0hxvQTtzP2Wy7zCtzvnxAVu8LOQ/7F2/bdQOqxHMGY29WkAY8f0q1jW
-         u5oCv1UmGSdtN6T5RGY+epnmbpxR1GUhpuOF99FoK6kMzZWscHZDhduBhVEotS6eYbQf
-         SJUrUolL/EaC1reOcJlXBgIuiOKGeuFJC0ZwfX0QwE7m+P7MJdhxA/TIg5scZUs708sG
-         Q1yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQZtMCW2QkAVX+zYCCkLZ4UNnN5g2xIxelfsNAmMEWDKX6Box85wye/QBV0NRiSVQURE/ku7DbDf+cNLGe@vger.kernel.org, AJvYcCX1TF7VmmLhJ6wBUew9H4eLl0ehLgNO66xDqCJxsfm/OW5E/jaNOzYM0KlPNeJfIClI8OXL8m0EzXM/BAbs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMRDsda1CmPFY+ESJpB88ZcFxQRLwxh38VpzZbJLqoUTrvNyje
-	wNT/oXz/pZSJHshAePaPV+HW1i9B2R97FNNXWO8XvA1DmXOa2KAM1bY4Ee1ljRDz4O6eBgQx2BO
-	kwg//xTS4y/+T9D936Jm+so8o3EkN8MY=
-X-Gm-Gg: ASbGncvJ0KnBr3938lG5sVo8xtVXu0mpkxGS2PNL8YZ4m5K962dr9ackDYPqeV93xlM
-	fdfs9cDlpkhBUmLEdsSD0Z6QbNoKsbmVjH52dqgxAHLAoZw5WhCOghDIvC1Tp7lqK6Ei98y0Yxy
-	vbIZTXtPWoh6MUug1EQ2cMtlIjX8ceAdWPEH5DPboVck2LQudjQ0vvQjHuVnqkI4h7Y1IZBnamQ
-	4/O5hrU8qKRyFixQg==
-X-Google-Smtp-Source: AGHT+IE5lbqVo6j80scniqpSUIcsKgunf5VRTh8IsKCrX6AXDUK5P5Dj58UVpkT6jLLAC0fHmgDiA+ax2oWOoXko3OE=
-X-Received: by 2002:a17:907:3e20:b0:b04:8955:ec71 with SMTP id
- a640c23a62f3a-b04b14abdd1mr1040581066b.23.1757411592835; Tue, 09 Sep 2025
- 02:53:12 -0700 (PDT)
+	s=arc-20240116; t=1757411618; c=relaxed/simple;
+	bh=ksQPdOeqO/0Gc3J/7druQzRD0/2egKekET/Bt/pJQwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kfrj0Ivl6509CIkN5fuemh28JK1MbR2KuIynGkeAVi2Yi+uMi/3+vNVeQ/JSmJRO3WtETmv1QuW9c4jXRoKjyW25AguQsKFY+7q4RoBIT6pmMq6Xe1j767YpQsy2jRcoT2RZi805vamsYsC4e6t+WpEpjoZCwm/Ff+nNIhH0CgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.89])
+	by gateway (Coremail) with SMTP id _____8DxLvAe+b9ollIIAA--.17705S3;
+	Tue, 09 Sep 2025 17:53:34 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.89])
+	by front1 (Coremail) with SMTP id qMiowJAxleQZ+b9oHPGJAA--.50983S2;
+	Tue, 09 Sep 2025 17:53:33 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
+Date: Tue,  9 Sep 2025 17:53:20 +0800
+Message-ID: <20250909095320.4083749-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
- <20250904154245.644875-1-mjguzik@gmail.com> <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
- <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
- <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com> <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
- <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com> <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
- <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com> <tmovxjz7ouxzj5r2evjjpiujqeod3e22dtlriqqlgqwy4rnoxd@eppnh4jf72dq>
-In-Reply-To: <tmovxjz7ouxzj5r2evjjpiujqeod3e22dtlriqqlgqwy4rnoxd@eppnh4jf72dq>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 9 Sep 2025 11:52:59 +0200
-X-Gm-Features: AS18NWDFJ_osJRVbnAUraWGjWXB7TrxUdlg8pq3rQrOexAxnp7yjh67liY3VHfc
-Message-ID: <CAGudoHHNhf2epYMLwmna3WVvbMuiHFmPX+ByVbt8Qf3Dm4QZeg@mail.gmail.com>
-Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
- I_WILL_FREE usage
-To: Jan Kara <jack@suse.cz>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Tinguely <mark.tinguely@oracle.com>, 
-	ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, jlbec@evilplan.org, mark@fasheh.com, brauner@kernel.org, 
-	willy@infradead.org, david@fromorbit.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxleQZ+b9oHPGJAA--.50983S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Cr18CF1rJryxXry7Jr43Arc_yoW8Xr1fpa
+	na9w4DG3yDGr1vkFs2y397XFs8tFZ8GrW3uF40ga45AF18Z347XrWxtr1DGasxWwn7uryx
+	Wrn3tF9rAa45A3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1YL9UUUUU=
 
-On Tue, Sep 9, 2025 at 11:51=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 08-09-25 17:39:22, Mateusz Guzik wrote:
-> > I think generic_delete_inode is a really bad name for what the routine
-> > is doing and it perhaps contributes to the confusion in the thread.
-> >
-> > Perhaps it could be renamed to inode_op_stub_always_drop or similar? I
-> > don't for specifics, apart from explicitly stating that the return
-> > value is to drop and bonus points for a prefix showing this is an
-> > inode thing.
->
-> I think inode_always_drop() would be fine...
+ARCH_STRICT_ALIGN is used for hardware without UAL, now it only control
+the -mstrict-align flag. However, ACPI structures are packed by default
+so will cause unaligned accesses.
 
-sgtm. unfortunately there are quite a few consumers, so I don't know
-if this is worth the churn and consequently I'm not going for it.
+To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in Makefile to
+align ACPI structures if ARCH_STRICT_ALIGN enabled.
 
-But should you feel inclined... ;-)
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Suggested-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index a3a9759414f4..a86de4f26264 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -147,10 +147,10 @@ ifdef CONFIG_ARCH_STRICT_ALIGN
+ # Don't emit unaligned accesses.
+ # Not all LoongArch cores support unaligned access, and as kernel we can't
+ # rely on others to provide emulation for these accesses.
+-KBUILD_CFLAGS += $(call cc-option,-mstrict-align)
++KBUILD_CFLAGS += $(call cc-option,-mstrict-align) -DACPI_MISALIGNMENT_NOT_SUPPORTED
+ else
+ # Optimise for performance on hardware supports unaligned access.
+-KBUILD_CFLAGS += $(call cc-option,-mno-strict-align)
++KBUILD_CFLAGS += $(call cc-option,-mno-strict-align) -UACPI_MISALIGNMENT_NOT_SUPPORTED
+ endif
+ 
+ KBUILD_CFLAGS += -isystem $(shell $(CC) -print-file-name=include)
+-- 
+2.47.3
+
 
