@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-808850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD98B50563
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E261B50564
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD755E3A32
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9ED545359
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1030102D;
-	Tue,  9 Sep 2025 18:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBD1303A09;
+	Tue,  9 Sep 2025 18:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CS+ikj6C"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ew3nmQK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD5B3002C4;
-	Tue,  9 Sep 2025 18:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7856301475;
+	Tue,  9 Sep 2025 18:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442763; cv=none; b=umHV73Ara3SoLSBhkGR5gzJvog88dGxLOom6NE83MbkOrZyENRNQDoP15AF82knZcCMHFMnsrwCBbLx0tzXN/0lfMuUi5U/hXZIHGTcZFxfM92VudAjuCv3g1v2FZLTvB44p6Lq1TJQyHsBaJXkUeYAdcOTlBLmKnkQFTw91MrE=
+	t=1757442859; cv=none; b=RnvAf5S6tqu8u3Y7l40J4W41qIA10uFJ1JUjgsP/MwbTZPl93hzKwQEd/eEAW0vlNU0WsCytcC3odeoNsQsCWe5JJtv638CEj9PEoPXWBEAXamYlJIt+ZCoerx8bI6uQ6kJF3lpr+GhbS0rBG78FZoHvIVR5ovBN7GIlBRbnqS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442763; c=relaxed/simple;
-	bh=GW2x3BiMlxtdXONsUQUaEy/dHtbMsT4sWtlNzRaafO4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5UV1l6T1Y1oVNau2WoxfVBT/JCYtzvlo8vYkh7htHsjBpr+oTVQ/olfJ8IKijWXFshTvdJpA6wq5t1nexnqpRVgVN6+cMvcWoAxzMI/3UjRIwq38h6YdCOVuOTGhJkXPxdBxE1aK0l1ud1GJ0M6cg3ibyUU/t/xqjQ0SVvJazo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CS+ikj6C; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so8474119a12.0;
-        Tue, 09 Sep 2025 11:32:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757442760; x=1758047560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yIGs9FBrVN4ysExlh34AjdYI0YF46w+oZSmAFf3lNX4=;
-        b=CS+ikj6CoktTENcKDyOs4cIG3k7BeNGQRuCdZQ2dRTEZtuVxC3K4oqUkJ0LNWNqhWH
-         +3INlXxuqLLdLe0li8Ed/XRwv8yxjioDmPxzk5vPHBT9lfZ140r9jRaNpRvoBwl1tw9S
-         W9S0b92vtYTbPwqwEfADIEkOZIbcdDTSW+1FM81zw9VUa0cUMRPMAuXBomwM1ZJHIeJW
-         QzT6vj8H+6OP1C7tXSM4LrplfqyRAkmc/UkWb31is25zODzTTCRbaEUhhl47QYbE53x/
-         qV4trjzklcNN3qsbjXbl3zArm+M+reqYViC01q9uSpd1Crj+dx/UC1GtF0CJw/TbdUyS
-         9CSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757442760; x=1758047560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yIGs9FBrVN4ysExlh34AjdYI0YF46w+oZSmAFf3lNX4=;
-        b=TaLe76O8PHSNPE8vtQ+ZkNweCdJFmM0XusNtZ1lc+gbBiEbtOaXF9we3Ypdu9eN1XD
-         YYGXOrgguoiMkUHSOpxDJ7/RT+vTqAnXnbYdevluLDAG66VXOYukaMODAqdyjQdFj/ij
-         IgvkRF9+DsvR0oUFyM1nfM0vcUhvCXIUTqhPTqsASMs0LbCito4Wh2iVECAiA70pXwnk
-         KHUDj9QWQAvozjxlVio09WgkiNbsSnOK/2kPApC2BfjP205+DGaT7xv4WPsoArd9G0cm
-         Pg9UTC+dDN38G7FBgyHzouIjrVHTPnGh5dA8CGScfEMw+j0fGvCK5k7ud5iNVKjm95qt
-         zMTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0LUEGC17ZtvutdgNwXrb+UQoAlUU6jR0JhJR/6eWjUSBXpENkMGBJo97rxf5jRKHHVyP307rs2Buw+A==@vger.kernel.org, AJvYcCWKPPjNeyCwrwKv80V3xOBd69K+fXREUO+jNpqpLXaFxaQpv0NBPRZ9iLgWnbxcooffgRdYW/I6jI14ug==@vger.kernel.org, AJvYcCWbMbBG/ZKy/L3g0GUnnW01e0a7XC6Cp8Fea5LmBZMrONHcphq5faA9uuM1DJpt3x02eQRyngWs0Z0oG1yT@vger.kernel.org, AJvYcCWqpN0QFo1XxElEtdb74wAgCJWhsrLs2SFm1hqnuoMWQStOKKoeUaKpcTeDmNPVl3JrxA/U9Z0IQtTD@vger.kernel.org, AJvYcCXwKFZXTIrkhM/bT2ymo+taCIzBgUit67/3UWvQzrGrxmRV+sUDvSNPvUcHknoI0UvtaQQhy6kDiKeOOifqDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMaBBvfLkAZbdh77CjUGOHHMgEy2j8deULa7leTISVMXjxABio
-	LJOceoJzLZkiNJuv0QLqBszZN7wXgdoY7pLizaRdmvpQ+iowcZDHwyaQunI2rmG3DZmllP9hJ2V
-	RBK8K3V85UDFiOZpsg+97yrKeDYmGYd8=
-X-Gm-Gg: ASbGnctnHaLkk48SeGedWY1AzeV56ol9l4z/Gptvq+7bTZuiHA1h+RZcq0V/dF6j6L+
-	y9wPeOwPVcc6HI6nvELN8CPkeVMrnzIqFJVw5+n5eSi66RDYxczMzzr9iiYFC9GhCqU9dK+VtBP
-	rLYspnyalcIjLhGqD1146grQPPdsP2IaLG+zrFuRfXCNt6NftNhqiLVHfId0pEH0Lgs8gS2p8VX
-	dQbuw1BDbTLtD+IIw==
-X-Google-Smtp-Source: AGHT+IGIpYLmFMQhXwhapf2seoXIPbxx2/CNzBSDsmPVTyytD6TFl/TeK/249z9Axk5K8USmmiSQ3V6JXdtG0O8zPdM=
-X-Received: by 2002:a05:6402:3589:b0:62c:62e1:8ff4 with SMTP id
- 4fb4d7f45d1cf-62c62e1986amr2372712a12.23.1757442760027; Tue, 09 Sep 2025
- 11:32:40 -0700 (PDT)
+	s=arc-20240116; t=1757442859; c=relaxed/simple;
+	bh=Zscg0JZYmn8IQ7K+hb9jZyF7fgqB+o7UtHBllaqMPy0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qZ4wRum1lPgCdhxesHiQ++TaZz6OXTi8MltBSNYrteywNSv7mCUX4/c/xiUqSsaRHOWR2GB9sDjmigC/GGI+/pYfJqGGHqJam++ylXptDij5yOrvh+XUOFQtZhDl8EMunrdtAzRJ0xF+yVmpLiKQwr5LnUOKJhxLMAmsAj1cVE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ew3nmQK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F79C4CEF4;
+	Tue,  9 Sep 2025 18:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757442859;
+	bh=Zscg0JZYmn8IQ7K+hb9jZyF7fgqB+o7UtHBllaqMPy0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=ew3nmQK1UitUBgEjoStInD9vKhUjx21D98FPiopMIXKQ6N+B+eePDfmnyGBvc6Suk
+	 doVFB5uGXByZAdSo4iwjTfUPM2q2CWYluj2/7Rbn0VM5uQPQFpe0Y+JTyQr8OYSGnS
+	 QHVRlhYla6WMM71/ZDoiPtmh9I3sUdq6gAE7nHxK1PEUqfYQ4bo2rAIdCCKo9bupe+
+	 m13CF1Hfwq6SUbAykBfjjaNE4l1V9YEME2mtqpOR8hk+bYSVS+CgLA+E2UL6WP5oBE
+	 5DcKbHZQiQjF8bUwyMX3rH/v5PWiSMu7IFGBzKVRaq7+1GJ/IzblFs4tXPtUdIvoyA
+	 2Lw1bkUnDvByQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250909091344.1299099-1-mjguzik@gmail.com> <20250909091344.1299099-10-mjguzik@gmail.com>
-In-Reply-To: <20250909091344.1299099-10-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 9 Sep 2025 20:32:27 +0200
-X-Gm-Features: AS18NWBEChkhzDf6oUf2_3PrIR6nRSPRVkR8w4kTgZptP8cMl4B5_HTLHZwMBuQ
-Message-ID: <CAGudoHG59Q=hQg3cQpPamCj2x8NuNZ7qhTMcOamWTkYDJB4PZw@mail.gmail.com>
-Subject: Re: [PATCH v2 09/10] fs: set I_FREEING instead of I_WILL_FREE in
- iput_final() prior to writeback
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ocfs2-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 09 Sep 2025 20:34:12 +0200
+Message-Id: <DCOHHWQDKJCL.1CKT9HCBZXNNN@kernel.org>
+Subject: Re: [PATCH v4 3/3] samples: rust: add Rust I2C sample driver
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Asahi Lina" <lina+kernel@asahilina.net>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Alex Hung" <alex.hung@amd.com>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Xiangfei Ding" <dingxiangfei2009@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>
+To: "Igor Korotin" <igor.korotin.linux@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+ <20250820152347.1815097-1-igor.korotin.linux@gmail.com>
+ <C5AFA553-6EB1-453E-B396-DD19139E7228@collabora.com>
+ <dd798632-1865-464d-8a02-f8d9e20a16b6@gmail.com>
+In-Reply-To: <dd798632-1865-464d-8a02-f8d9e20a16b6@gmail.com>
 
-On Tue, Sep 9, 2025 at 11:14=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> This is in preparation for I_WILL_FREE flag removal.
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  fs/inode.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 20f36d54348c..9c695339ec3e 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1880,18 +1880,17 @@ static void iput_final(struct inode *inode)
->                 return;
->         }
->
-> +       inode_state_add(inode, I_FREEING);
-> +
->         if (!drop) {
-> -               inode_state_add(inode, I_WILL_FREE);
->                 spin_unlock(&inode->i_lock);
->
->                 write_inode_now(inode, 1);
->
->                 spin_lock(&inode->i_lock);
-> -               inode_state_del(inode, I_WILL_FREE);
->                 WARN_ON(inode_state_read(inode) & I_NEW);
->         }
->
-> -       inode_state_add(inode, I_FREEING);
->         if (!list_empty(&inode->i_lru))
->                 inode_lru_list_del(inode);
->         spin_unlock(&inode->i_lock);
-> --
-> 2.43.0
->
+On Tue Sep 9, 2025 at 7:55 PM CEST, Igor Korotin wrote:
+> On 8/27/2025 8:38 PM, Daniel Almeida wrote:
+>>> +#[pin_data]
+>>> +struct DriverModule {
+>>> +    #[pin]
+>>> +    _driver: kernel::driver::Registration<Ops<SampleDriver>>,
+>>> +    _reg: i2c::Registration,
+>>> +}
+>>=20
+>> I was expecting this to be ARef of something, most likely I2cClient?
 
-With a closer look I think this is buggy. write_inode_now() makes
-assumptions that I_FREEING implies removal from the io list, but does
-not assert on it.
+This is the Registration of an I2C device, just like auxiliary::Registratio=
+n or
+faux::Registration. There is no point in reference counting the registratio=
+n
+object.
 
-So I'm going to post an updated patch which moves this write down
-evict() after removal from the io list, and only issue the write
-conditionally based on the drop parameter.
+You can't have an ARef<I2cClient> here either because you want to manage th=
+e
+lifetime of the I2cClient to be registered in the system, i.e.
+i2c_new_client_device() and i2c_unregister_device().
 
-On top of that write_inode_now() is going to make a bunch of asserts
-about the inode being clean after the write if I_FREEING is set.
+>> This is where my knowledge of i2c drivers start to fall short, but other=
+s will
+>> probably chime in :)
+>
+> You're right to mention this. This rust_driver_i2c is not the standard=20
+> way of handling I2C devices.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+It is indeed the normal way of handling this. This Registration object
+represents the lifetime of calling i2c_new_client_device() e.g. from a plat=
+form
+device probe (as Igor also mentions below) and calling i2c_unregister_devic=
+e()
+e.g. from platform device remove.
+
+The ARef<I2cClient> can be obtained from the subsequent bus callback from t=
+he
+I2C bus.
+
+In fact, you could add a method to i2c::Registration to provide you with an
+ARef<I2cClient> if that's ever needed.
+
+But the i2c::Registration itself simply manages the lifetime for the I2C de=
+vice
+being registered in the system.
+
+> The idea was suggested by Danilo in the=20
+> review of Patch v2: this driver merges an I2C driver sample with manual=
+=20
+> I2C device creation. The module creates a new I2cClient in its init=20
+> function, and this new I2cClient is then probed by the SampleDriver.
+>
+> In a normal driver it should be different. For example, let=E2=80=99s say=
+=20
+> there=E2=80=99s a platform device =E2=80=94 the probe function for this p=
+latform device=20
+> would create an I2cClient, and an appropriate I2C driver would then=20
+> probe it.
+> Thanks for the review.
+>
+> Best Regards
+> Igor
+
 
