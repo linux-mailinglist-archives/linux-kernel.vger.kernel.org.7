@@ -1,134 +1,85 @@
-Return-Path: <linux-kernel+bounces-808127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB8CB4FA0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE884B4FA0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E69C67AC9C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:12:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB1674E2CA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9DA334724;
-	Tue,  9 Sep 2025 12:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7220733472E;
+	Tue,  9 Sep 2025 12:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBnaipz2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuzrSo2w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611ED309EE5;
-	Tue,  9 Sep 2025 12:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9825257829;
+	Tue,  9 Sep 2025 12:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757420023; cv=none; b=jDwjr9R+IirIU51fTO+KiRd8JXBue/R4d9pi4QGSAuyVSI9NawbOYmNphvXU0Np0V2kWGC4D5H8vXaCs8v0KoMvlxHscedWfnsGoZ9LDSPRq7wC/E19e+fdhBN6ITC8wvlYmKJfs6+K3I99JuI7FeZVmcCgevaegcuBFg172Akc=
+	t=1757420041; cv=none; b=Nkq8/L+ZqScZGINtyxzyGTg3KP1kXmA0tLeM0YnUbpRAhC/rFVORNFatzxFua5nGaCUHd5iwrkA+IWijT77QgJFZxWdq5Rreevys9dfP7cp9leywnDFykec+hjIxNsCEGOrQWMAR7gGp/bKPGonLFlbUE0S0qsxGrJdXuj6JrT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757420023; c=relaxed/simple;
-	bh=R8IBEgyyfdC4LwzwmPwd7zIkX1SnWTZM2uMbSQnjzwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=akP9lZStcLYzznumOfDYOockoa2e9+V0/b57/eOij4zmIuSsNMs0UYAWjdNOBobnF/h0sQLo6tyag8P7MQDEYrQ34AOjlRW5RdwU/uPN/I1CBuj2cGd8CgcSRcuQcaNv4z1EMUVRg/EsCVRif0dhr1aS+7MfILXF+NP0Js6arKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBnaipz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35132C4CEF4;
-	Tue,  9 Sep 2025 12:13:39 +0000 (UTC)
+	s=arc-20240116; t=1757420041; c=relaxed/simple;
+	bh=tMruF9j+G2L1N4zuR4KW/thijoi3DgRD3fEIsvtunMI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dcel+fWKGyLEj9r0S5xh1xd9KzoM+d0GlME+5Pf9P2cEI71S2IgfOQVGsiHBhtMaLl16W1W6RppW+kl0YVoKWM8H8I1/o/eX9qFrTvPLthFveOB/ajIeyhzcIArMG8IoZjZYO7PwbE+XCdIgGn5Ryn3TsXhdRWbUBH5lIVeujKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuzrSo2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F938C4CEF4;
+	Tue,  9 Sep 2025 12:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757420022;
-	bh=R8IBEgyyfdC4LwzwmPwd7zIkX1SnWTZM2uMbSQnjzwM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cBnaipz2LRSWHlYEn0e52S3XLyiB6lXu6/LeAGDw65qGwxiXR8F+oOBTLmlQ2A4jF
-	 8XTTP+HDqJ8D7514Jb1PS6OJdLWxz3CtxtbhbU50QmRBMQz/lOiGaw8XfRcQ+mRcVz
-	 3gBIHu95PULkdI49gRhxVX64xonatNwmF5vmZyfml1gHE14h/6qVf6Lv3PRD4m65ca
-	 C/54C4NCmHW3clOLH8CrhRJ4xbufciXFxWz5wgi8ETt7/Tc/VhvhH88hnk6V6ItS3M
-	 38poAUb+EysM1CDvCtNW6Jsxh1RuGuhHHV/GPnpvnFnjfjK+htAOy7hgZJjodfOz7e
-	 uDtMT7gBwwbCA==
-Date: Tue, 9 Sep 2025 14:13:35 +0200
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] Bluetooth: Avoid a couple dozen
- -Wflex-array-member-not-at-end warnings
-Message-ID: <aMAZ7wIeT1sDZ4_V@kspp>
+	s=k20201202; t=1757420041;
+	bh=tMruF9j+G2L1N4zuR4KW/thijoi3DgRD3fEIsvtunMI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CuzrSo2wC8/+3xPSVkuL28/fLvs9z4VJpLDFlrUXZ9QxiUGZDvez1QEhrB8XqYimj
+	 fKwvYQVXCm9wRitIRSPiL/qlnuM7XUwUnU4c/0qtwyqJOfv2HKela5PjaLj6vZQ9NO
+	 iAFuNP2nZ+O8FTxe3FH2XmZGMJED34JrwSPdAMQDeQ6/Lil+VBaI8Bd9U44Pkysx+A
+	 Ib6wrhmrBV1nEtPBDWRL8WlJP18Z4x0QyfHsHTEvgiQgITLatG+f31/iTaMSKMOluJ
+	 KF+40oysRCqEyp2iNF1E4WvSlF21xGRkW/L7Rm0ZCdf1+vBw7KShria3xnXpbaPKz+
+	 ki1J91Mqyr//w==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Evangelos Petrongonas <epetron@amazon.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>,  Mike Rapoport <rppt@kernel.org>,
+  Alexander Graf <graf@amazon.com>,  Changyuan Lyu <changyuanl@google.com>,
+  Andrew Morton <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,
+  <kexec@lists.infradead.org>,  <linux-mm@kvack.org>,
+  <linux-efi@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <nh-open-source@amazon.com>
+Subject: Re: [PATCH v3 1/2] kexec: introduce is_kho_boot()
+In-Reply-To: <7dc6674a76bf6e68cca0222ccff32427699cc02e.1755721529.git.epetron@amazon.de>
+References: <cover.1755721529.git.epetron@amazon.de>
+	<7dc6674a76bf6e68cca0222ccff32427699cc02e.1755721529.git.epetron@amazon.de>
+Date: Tue, 09 Sep 2025 14:13:58 +0200
+Message-ID: <mafs0wm67lt6h.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Thu, Aug 21 2025, Evangelos Petrongonas wrote:
 
-Use the __struct_group() helper to fix 31 instances of the following
-type of warnings:
+> During early initialisation, after a kexec, other components, like EFI
+> need to know if a KHO enabled kexec is performed. The `kho_is_enabled`
+> function is not enough as in the early stages, it only reflects
+> whether the cmdline has KHO enabled, not if an actual KHO FDT exists.
+>
+> Extend the KHO API with `is_kho_boot()` to provide a way for components
+> to check if a KHO enabled kexec is performed.
 
-30 net/bluetooth/mgmt_config.c:16:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-1 net/bluetooth/mgmt_config.c:22:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+Neat! I have always found doing if (kho_get_fdt()) a bit awkward.
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Use __struct_group() instead of TRAILING_OVERLAP().
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-v1:
- - Link: https://lore.kernel.org/linux-hardening/aLSCu8U62Hve7Dau@kspp/
+[...]
 
- include/net/bluetooth/mgmt.h | 9 +++++++--
- net/bluetooth/mgmt_config.c  | 4 ++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-index 3575cd16049a..74edea06985b 100644
---- a/include/net/bluetooth/mgmt.h
-+++ b/include/net/bluetooth/mgmt.h
-@@ -53,10 +53,15 @@ struct mgmt_hdr {
- } __packed;
- 
- struct mgmt_tlv {
--	__le16 type;
--	__u8   length;
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(mgmt_tlv_hdr, __hdr, __packed,
-+		__le16 type;
-+		__u8   length;
-+	);
- 	__u8   value[];
- } __packed;
-+static_assert(offsetof(struct mgmt_tlv, value) == sizeof(struct mgmt_tlv_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- struct mgmt_addr_info {
- 	bdaddr_t	bdaddr;
-diff --git a/net/bluetooth/mgmt_config.c b/net/bluetooth/mgmt_config.c
-index 6ef701c27da4..c4063d200c0a 100644
---- a/net/bluetooth/mgmt_config.c
-+++ b/net/bluetooth/mgmt_config.c
-@@ -13,13 +13,13 @@
- 
- #define HDEV_PARAM_U16(_param_name_) \
- 	struct {\
--		struct mgmt_tlv entry; \
-+		struct mgmt_tlv_hdr entry; \
- 		__le16 value; \
- 	} __packed _param_name_
- 
- #define HDEV_PARAM_U8(_param_name_) \
- 	struct {\
--		struct mgmt_tlv entry; \
-+		struct mgmt_tlv_hdr entry; \
- 		__u8 value; \
- 	} __packed _param_name_
- 
 -- 
-2.43.0
-
+Regards,
+Pratyush Yadav
 
