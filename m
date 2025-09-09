@@ -1,197 +1,103 @@
-Return-Path: <linux-kernel+bounces-808056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460CEB4ACA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F06DB4ACAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB6A1C2547E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102B84E7861
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC40932A3FE;
-	Tue,  9 Sep 2025 11:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D785326D64;
+	Tue,  9 Sep 2025 11:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="n5MxqwKS"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9RvPHIY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F8A326D61
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BB7322755;
+	Tue,  9 Sep 2025 11:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418269; cv=none; b=GpSQyg3REB0G4CCeqauMaXUkBlDdy1WUcaQBk1gzeX2zRkNs+mxULV6BH0e6VBsPSn6QCEogbHUQo6G77vwDs3lkvfIsMj+vPwlf2mIvVJk5/Ah1jEK/tR8mNUDWK2Ww0lbpm8kWlfFHjJ/zu3QI3VaZRmV/1mc77urhk9WrWPg=
+	t=1757418259; cv=none; b=P1u+f1jj48mLnI3BLGFpnOJETK/hRC+mt73sTelWeSv2Qj+BGOLxhQ290V9lV0bl3y7lhoPNIfhTdqa/yR9ZXwpb9kLAE7JVP+02YfGGBNjZ+psghIS7Kg40Ex2WTP2d9YmX69lzv+lFlJNtxoXSoaAx/fUXQhPOZbCP/evqk7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418269; c=relaxed/simple;
-	bh=Plv+TqDFQzCl2SwwnJurnJxS/oJj+NUjYOYCMKqmMW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDiY2+IpFYrB4RBwK4s9qcXWLBZM3RsV/qjkZ9V5MgEMH7ibjSEuHuG20B44Es9/qDJdCNJBzChXi1fwACwM4PKu0wyvPpRTb78jOPdO7lxx6ik/gyekHNfLUq5nCWwhttvPZf4BpFnj11GYlauq9ynbclOuj0zooz17kqFk3D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=n5MxqwKS; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 7DCDA1010F69
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:14:14 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 7DCDA1010F69
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1757418254; bh=Plv+TqDFQzCl2SwwnJurnJxS/oJj+NUjYOYCMKqmMW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n5MxqwKSW5ntnYjmkB/eUkHEuo4R8JxYJkPFO1i8GvjAKUIXrg4Mlhq6+t9rycIfa
-	 sKIVPbamgLHFBCVBfi8z0bZJoRmQj1oVWzciihwqLIeva+tFtFC+OYSBmK8XDdgTx3
-	 u7GmKq7e158dv59qnwryGpGpsXIk0OPvfdfKyz6Q=
-Received: (qmail 26567 invoked by uid 510); 9 Sep 2025 17:14:14 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 5.542875 secs; 09 Sep 2025 17:14:14 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 9 Sep 2025 17:14:08 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id 46C473414E8;
-	Tue,  9 Sep 2025 17:14:08 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 939C41E8138A;
-	Tue,  9 Sep 2025 17:14:05 +0530 (IST)
-Date: Tue, 9 Sep 2025 17:14:00 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, skhan@linuxfoundation.org,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/7] dt-bindings: rtc: add bindings for m41t93
-Message-ID: <20250909114400.GA2065465@bhairav-test.ee.iitb.ac.in>
-References: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
- <40c91cbb07140ecdf4f91afc118c2518e85041c3.1756908788.git.akhilesh@ee.iitb.ac.in>
- <9094d792-c20a-48fa-b769-5824e1f451eb@kernel.org>
+	s=arc-20240116; t=1757418259; c=relaxed/simple;
+	bh=koEjJ0K44gXpZTQ9arL7K8K/MOY3Y3pz7eVFwI3QSeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ATT3/gXETMC8FyZPDhx9XI/IN+gslvvDsFdCjA6yUOZYgcfgpNzc0jwZOIF23FBD5vp12z+z77k94vvwHncgG50aQ6aafL7HzbCwLges8Tzopng6zsarg06JbwPLUbH1f0oqXtRP+xoI1W0rwcgmvVsLWbW1XwsNQWWWahalQD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9RvPHIY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D54AC4CEF4;
+	Tue,  9 Sep 2025 11:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757418258;
+	bh=koEjJ0K44gXpZTQ9arL7K8K/MOY3Y3pz7eVFwI3QSeQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b9RvPHIY1GM/AnSy30vF1LEwI4Xe7UsqU3J43Gpus4dGa6Q/QjZ91FQ0QQkQlLAEQ
+	 Z3DVK7GFq0gSyJQY9bVG2KaHlun6ux04B7hbfC5EvzWJMWzuFFaaZza+O+IbTTvtn4
+	 cZd0/qsYka+coYNMOkXiFBzTYnQsAX7bRpABdom/wLLjEV+Lvuw6b2ulVMHCvP+cfy
+	 /QLP246EKj9avFDHIhsaZ2MoZM37KP+xJtftCALZPWk3JivKoynUOFIeyiuQvz/jMi
+	 ahKS/GJ9kWJWnF+6x2fvGj5wLZ4mtxlmQdOi/tdhB+hW3efa1zHmDDmpkE9j4cx4Nw
+	 ULMSvI4GLC7Sg==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Randy Dunlap <rdunlap@infradead.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject:
+ [PATCH v1] smp: Fix up and expand the smp_call_function_many() kerneldoc
+Date: Tue, 09 Sep 2025 13:44:14 +0200
+Message-ID: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9094d792-c20a-48fa-b769-5824e1f451eb@kernel.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 03, 2025 at 04:30:53PM +0200, Krzysztof Kozlowski wrote:
-> On 03/09/2025 16:25, Akhilesh Patil wrote:
-> > add DT bindings for m41t93 rtc in YAML format.
-> 
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> 
-> 
-> Please organize the patch documenting compatible (DT bindings) before
-> their user.
-> See also:
-> https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
-> 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Hi Krzysztof, Thanks for the review and pointng out to these resources.
-I will fix those as per the guidelines and share v2 of the series.
+The smp_call_function_many() kerneldoc comment got out of sync with the
+function definition (bool parameter "wait" is incorrectly described as a
+bitmask in it), so fix it up by copying the "wait" description from the
+smp_call_function() kerneldoc and add information regarding the handling
+of the local CPU to it.
 
-> > 
-> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> > ---
-> >  .../devicetree/bindings/rtc/st,m41t93.yaml    | 43 +++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/st,m41t93.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rtc/st,m41t93.yaml b/Documentation/devicetree/bindings/rtc/st,m41t93.yaml
-> > new file mode 100644
-> > index 000000000000..03673adc79db
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/st,m41t93.yaml
-> > @@ -0,0 +1,43 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rtc/st,m41t93.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: ST M41T93 RTC and compatible
-> > +
-> > +maintainers:
-> > +  - Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> This should not be subsystem maintainer.
+Fixes: 49b3bd213a9f ("smp: Fix all kernel-doc warnings")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ kernel/smp.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-okay.
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -884,16 +884,15 @@ static void smp_call_function_many_cond(
+  * @mask: The set of cpus to run on (only runs on online subset).
+  * @func: The function to run. This must be fast and non-blocking.
+  * @info: An arbitrary pointer to pass to the function.
+- * @wait: Bitmask that controls the operation. If %SCF_WAIT is set, wait
+- *        (atomically) until function has completed on other CPUs. If
+- *        %SCF_RUN_LOCAL is set, the function will also be run locally
+- *        if the local CPU is set in the @cpumask.
+- *
+- * If @wait is true, then returns once @func has returned.
++ * @wait: If true, wait (atomically) until function has completed
++ *        on other CPUs.
+  *
+  * You must not call this function with disabled interrupts or from a
+  * hardware interrupt handler or from a bottom half handler. Preemption
+  * must be disabled when calling this function.
++ *
++ * @func is not called on the local CPU even if @mask contains it.  Consider
++ * using on_each_cpu_cond_mask() instead if this is not desirable.
+  */
+ void smp_call_function_many(const struct cpumask *mask,
+ 			    smp_call_func_t func, void *info, bool wait)
 
-> 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - st,m41t93
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#clock-cells":
-> 
-> Hm? Are you sure? Nothing in the driver nor commit msg suggests that.
 
-This RTC chip has square wave output generation which can generate
-clocks from 1Hz to 32KHz. Hence, this device can be clock provider and
-other devices can be clock consumer via DT.
-I will add this in the description.
 
-> 
-> > +    const: 1
-> > +
-> > +allOf:
-> > +  - $ref: rtc.yaml
-> > +
-> > +unevaluatedProperties: false
-> 
-> This goes after required. See example schema.
-
-sure.
-
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +examples:
-> > +  - |
-> > +    spi {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <0>;
-> > +      rtc@0 {
-> > +        spi-max-frequency = <2000000>;
-> 
-> Does not look tested.
-
-Will run $ make dt_binding_check , retest on my board and add actual
-node I test as an example here.
-
-> 
-> > +        compatible = "st,m41t93";
-> > +        reg = <0>;
-> 
-> Please follow DTS coding style. Which property is the first in the
-> coding style?
-
-sure, will fix in v2 as much as understand referring resources you
-shared and your DTS 101 talk from OSS 25 Europe.
-Still, if I miss something do let me know on v2 series. 
-
-Regards,
-Akhilesh
-
-> 
-> Best regards,
-> Krzysztof
 
