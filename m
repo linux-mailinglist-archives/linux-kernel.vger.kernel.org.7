@@ -1,262 +1,216 @@
-Return-Path: <linux-kernel+bounces-808034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3EEB4AC59
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AE5B4AC58
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D2594E2AF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675B83458CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD70322A0B;
-	Tue,  9 Sep 2025 11:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1AF32252E;
+	Tue,  9 Sep 2025 11:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Mdkmplj7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LcWLajU7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C8432255A;
-	Tue,  9 Sep 2025 11:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418034; cv=pass; b=GRDonhkMFdPT8Qqn5jQEYdoAHJ+xmmEQuQhnkf7ZMGbtFlSRPkqjbxZ1X3T4BPL1iSGWdRxtdlpTPj8vMydTlnfzVR2bpsnNg7ud7jUnLqf4nuuY42gL8g85LuVRb5nB5/1wx52vlfUiEMNEUJcqjK0IdMmvJt2JOA1NXm2EtQg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418034; c=relaxed/simple;
-	bh=yyH7QXAmga8o9wPBkSK0dhxZ1ZIsY8aNE12IRqdxdfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J5IT+2e/UcZbm3jyyL8B4mC3+KbL/MPeuv573G4G8WuG8sTvlyp2nueRleA/dpsJk6b2bLoU02dxnB6dI1WfDNiGm5jnjg7vdEd/eOWYuo2i5SssjETbnIwuSnK1muVb7T7lJG6ourtc9pYJ4s6nAEMJpgEsW9sI+0XCOjMoAJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Mdkmplj7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757418007; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mR86WgNDJqm43kd30guAp2bJpPVNH/BT6nkeYpDZzS1ORtrOjSmo+ZOR/wzvyilYD+qzoMb9+fRz9xnagSmOpuyI2PYbpo/Ib3INKzS+4jcgnvBRPc2EF6kOWbghJTlva6RbJ20T9ZSOhavTJ33RRsBiAWHTmOqqwOK9WeAlzXc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757418007; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AKWUdCalq5DHy3CQODfUq4gtyG6Ka3mIdSwhVwGWp2Q=; 
-	b=bo+vzUYHG9MJQK4YrDvVjL0t+wlzJoasp1ALS9t4j4wGCp7L7auxhZbVlJHMZBz7JbxjpN0InAy/xVn1Msc2hJs5yzZ/nwky7zm2rnB/RIhi8TxSPLjr9DndAkc397CPHUyJFjWw4YhPX2pVvGgB4Sb12ViSIA4WLfZS6+T5KOU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757418007;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=AKWUdCalq5DHy3CQODfUq4gtyG6Ka3mIdSwhVwGWp2Q=;
-	b=Mdkmplj7jW+S3Tq/XJlTuR/ujV2l/R5gsbdJ76/rZSvz4MUtFPOCvBZdc237oOzU
-	vb5ix2ya7nDM791RnGrRt/lqlc5CEOkSW0Bj26HqxY4HSVLm0BhLDv4vjouD9xjFr5D
-	0wjN1Yjd2IQCer0XDKeuZ3sTFdJUoHMjMnZ93SQY=
-Received: by mx.zohomail.com with SMTPS id 1757418005705920.7142783931457;
-	Tue, 9 Sep 2025 04:40:05 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	kernel@collabora.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Clark <james.clark@linaro.org>
-Subject: [PATCH RESEND v2] perf/headers: Document PERF_PMU_CAP capability flags
-Date: Tue,  9 Sep 2025 13:39:37 +0200
-Message-ID: <20250909-perf-pmu-cap-docs-v2-1-3c451f7b0b2e@collabora.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D0C321F30
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757418031; cv=none; b=GuRMwLzO2vJ4as1Zu8torLTXZ5djUvUd/hqG1sPRnozJ4zZc/L6vRpPyfMjNAnUT1me/IJiZuU6jvB4gtQILjr7duhYm4r2NJ7rXDlq7YhQzu4fv2oHWwGqwHSzsS689oIEcQ5WRCxlGDCS8pLKzLurrwkSqzYnlqLih29sShSg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757418031; c=relaxed/simple;
+	bh=BOU4atm98zqe0exxJvBZhUOhA+KpqHaqcfoeWJi/b+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTJaaXWk4cxvfgqCUZzRWusxTqwg5SIXZxx4h+uh5Od1KZpwCFmp9m/8wbUqD6jOtbSspVvcMSYjr5uZS7xb8P1pvbwG5BxSQ9Qo97TWLD1bBcUC6nafMF0M/2mx6uiljAJntprZ89XrT7zhb9IwoJx9YMADqbfmVglImuR82OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LcWLajU7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LT24031521
+	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 11:40:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=WkBZK4nX8r8AkRcyHEfLR0jL
+	z865vmuc1R3ut1MxHM0=; b=LcWLajU7pmng9f5CC2hU8jnbi4VfEWJPLitPJqRq
+	tVziE2UTN/VxVg5lJ0ZAtXP8Jf8K7mD34WvQcRwyxy/lCr/YKXaS449RDKOxhMoT
+	ZeLbpGk4rCwv+leG6flx5+K7DT8VbvZg5gg2sdnEpsdl69IgnsG7aQFTKuWHMWja
+	jqhy8pvG4MpwsjBkDQP5R98660muQp6JMZRy+1sowuJk/YOXYhMmHHuRFthLNMqP
+	4XaD9UaJDYGdVTn4c0AXPMt45rZe0XOURiTjN9nh79hrEMzEepz24Jdqo9Iuj0Kc
+	GHDXpdyjt/q5STE0wBgywjqv1KUuDjAbyUARZLPJLIye3w==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bws85gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:40:28 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7296c012e7dso111268866d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:40:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757418027; x=1758022827;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WkBZK4nX8r8AkRcyHEfLR0jLz865vmuc1R3ut1MxHM0=;
+        b=wfV8RLK1vAvmpDPfA56JEkz5b8B5Sn5477wwFoNfIgYXXI+y3lk2GRSNQ3xigz78Yp
+         Htsj6d9c6QJQ6ljYeZDpybmUQIJIr4gBgMziKE2MLYXJlO5dpErBjCP5OUlo6cjiaZyh
+         ZfOSD7/7Nb/ucHxv7hUxnCkty1cWTuUbthW3kyfnamZx0zKUpjXhGWir5jLbSsDm0VFj
+         c62oJqMJhUIx6jXBEwLKeunhv2HctN+fgDCE1DUjVONWHjYB/XNrSXL0QWJwgqcGVi4X
+         ZA0t9czaHV57F4yaJfZLbDLY9BRSZMGOPdI7PydgwzCJRqTPluWr9oKm6tXN1nndveyA
+         a+HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6wlz6HKK/qTrmJqsR3u2MzGYi3vStwY6hF4jFB6iOwLB4+weLx0mVeSKrvIEJk0HMeLM8uFPh0EDnb2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztESDWWvpz2fzGRXcED/zneTNozS13Hrbp/zC3C62di3PaFa6i
+	H36Hp8jhO/TD+1WGk9Yixl92wGTcCg6V2PVFx+Irw5eRL3uJoOVFakRULBbb86gYMMH2mjgWN/d
+	60mIyRtZKlGI1cyDJs3nyHc64p4RcG2DFfG9PZE2f8QOa6Jhylq+4hiimGZl8uDbKUX8=
+X-Gm-Gg: ASbGncvqKnQGZ+cZmz6YlaMJ6hQE8jln29FVyewbDpRwKY9I9ne/+EDImMZ+ujtWNHo
+	ZnVfDtZzkkUSaml3tAkMLBhzdnmV+oy6gm5TsNBZphsqfAadRoQ3v4IBDAzLv98RNa6OTBdq9Yu
+	g5J+YYYqfgp0UFLLN2vPbByAzMwcoNQLfnjl4k42DaQb6Tw50b3G2oJLLUG4EV6bU63BeJ1GGPE
+	tb9JVWYWH9I30oLUF9v6h0Si6haFIG1oMqzimW/C5g3wQBBlNQUN2DWMBHIP6IQc7B6ZMi2/ibw
+	DvyRn1AsvXNDOkMkLJGNxuWrUTI/mEoopD6ZlzcmttYDLQr0Cd57Hs54Lc74NNx370oZsz8he/D
+	GRI3BzzoZtoMm/m53P3N9Ic3OhBDV3WTcVHNX1PUJWxs1gLPPM3Kp
+X-Received: by 2002:a05:6214:5287:b0:734:c868:fb4c with SMTP id 6a1803df08f44-73944249693mr115542126d6.62.1757418027277;
+        Tue, 09 Sep 2025 04:40:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1x5yuvHnnOA+bErPR7PqGkCxp1J6nz/QL7NqI2NRrDi1/NlaUQaX5MIKLRDoOyGf3VbZlEA==
+X-Received: by 2002:a05:6214:5287:b0:734:c868:fb4c with SMTP id 6a1803df08f44-73944249693mr115541686d6.62.1757418026714;
+        Tue, 09 Sep 2025 04:40:26 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-568180679a6sm474574e87.105.2025.09.09.04.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 04:40:24 -0700 (PDT)
+Date: Tue, 9 Sep 2025 14:40:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] phy: qcom-qmp: qserdes-com: Add v8 DP-specific
+ qserdes register offsets
+Message-ID: <dq6hg2l6mseov3koisg5vsrkhifiwutlfy2phwaehvwzxxfgug@vgtcptgcopmw>
+References: <20250909-phy-qcom-edp-add-glymur-support-v2-0-02553381e47d@linaro.org>
+ <20250909-phy-qcom-edp-add-glymur-support-v2-2-02553381e47d@linaro.org>
+ <3xw54kzk36u7zrfhgva4p577nzle3ctzi3lyhcxapczv2bhceo@23zcaylkqoff>
+ <12ae186b-9816-4269-ab3a-7aacdc7cb954@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.2
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12ae186b-9816-4269-ab3a-7aacdc7cb954@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: 2fkp2rnM5ZSjq_Z4xlskj9Gln085yXZi
+X-Proofpoint-GUID: 2fkp2rnM5ZSjq_Z4xlskj9Gln085yXZi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX5KizElZT+HLf
+ FqQIrlXTdSJP12RCWJxbhLRgDtfazYcntoyDHISfQyKXPgFpT32N9k5SuSIFrR1dPER9geEjz51
+ AvXhVANx3cq+t3l2GdD1HIlD2YNJAxjuI+hsoD5yt0EGoNbTdLtYuLzPriilbwppeQt0gTBheUz
+ 8LpnoSp9a9IGRHwRabdXLOUFmPCShPLPce/CWXIjHOKXIdgghepS6e07Cz/dqQjb8hGXBufyOce
+ mYgRVTB2r6ObgjiNj/04yGd5EQdwsDX5OPLQfawuPexDYtyxXKrs6dw8V7HQsDLQNukKv2sVEUX
+ wFHBk0gSInsO6alRJRCWXKx989jUapT0CQdjoMRA9o+J23nHzPOsH5BypEkkKVxWBFxgjXspftZ
+ 1Gf8/7bj
+X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68c0122d cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=pQyaD6lL6sn_3oYIr7sA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-Over the years, capability flags for perf PMUs were introduced in a=0D
-piecemeal fashion whenever a new driver needed to signal to the perf=0D
-core some limitation or special feature.=0D
-=0D
-Since one more undocumented flag that can have its meaning inferred from=0D
-the commit message and implementation never seems that bad, it's=0D
-understandable that this resulted in a total of 11 undocumented=0D
-capability flags, which authors of new perf PMU drivers are expected to=0D
-set correctly for their particular device.=0D
-=0D
-Since I am in the process of becoming such an author of a new perf=0D
-driver, it feels proper to pay it forward by documenting all=0D
-PERF_PMU_CAP_ constants, so that no future person has to go through an=0D
-hour or two of git blame + reading perf core code to figure out which=0D
-capability flags are right for them.=0D
-=0D
-Add comments in kernel-doc format that describes each flag. This follows=0D
-the somewhat verbose "Object-like macro documentation" format, and can=0D
-be verified with=0D
-=0D
-	./scripts/kernel-doc -v -none include/linux/perf_event.h=0D
-=0D
-The current in-tree kernel documentation does not include a page on the=0D
-perf subsystem, but once it does, these comments should render as proper=0D
-documentation annotation. Until then, they'll also be quite useful for=0D
-anyone looking at the header file.=0D
-=0D
-Reviewed-by: James Clark <james.clark@linaro.org>=0D
-Reviewed-by: Ian Rogers <irogers@google.com>=0D
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>=0D
----=0D
-Changes in v2:=0D
-- Fixed the description of PERF_PMU_CAP_NO_INTERRUPT and expanded it to=0D
-  make it clearer for driver authors whether this flag is right for them=0D
-- Made PERF_PMU_CAP_NO_EXCLUDE docs mention the precise attributes the=0D
-  flag concerns itself with, as suggested by Peter Zijlstra=0D
-- Link to v1: https://lore.kernel.org/r/20250618-perf-pmu-cap-docs-v1-1-0d3=
-4387d6e47@collabora.com=0D
----=0D
- include/linux/perf_event.h | 85 ++++++++++++++++++++++++++++++++++++++++++=
-++++=0D
- 1 file changed, 85 insertions(+)=0D
-=0D
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h=0D
-index ec9d96025683958e909bb2463439dc69634f4ceb..d0e6b66cfd268bdad742b707633=
-792f26352a428 100644=0D
---- a/include/linux/perf_event.h=0D
-+++ b/include/linux/perf_event.h=0D
-@@ -294,16 +294,101 @@ struct perf_event_pmu_context;=0D
- /**=0D
-  * pmu::capabilities flags=0D
-  */=0D
-+=0D
-+/**=0D
-+ * define PERF_PMU_CAP_NO_INTERRUPT - \=0D
-+ *    PMU is incapable of generating samples=0D
-+ *=0D
-+ * On CPU PMU hardware, a PMU driver is only capable of generating sample =
-data=0D
-+ * in the form of &struct perf_sample_data if the hardware is capable of=0D
-+ * generating hardware interrupts. If such interrupt capability is missing=
-,=0D
-+ * this flag should be set.=0D
-+ *=0D
-+ * Uncore drivers, i.e. drivers for hardware performance counters that are=
- not=0D
-+ * closely entwined with CPUs and their model of execution, should also se=
-t=0D
-+ * this flag, as they are not able to generate meaningful sample data, eve=
-n if=0D
-+ * they do use an interrupt for some purpose.=0D
-+ */=0D
- #define PERF_PMU_CAP_NO_INTERRUPT	0x0001=0D
-+/**=0D
-+ * define PERF_PMU_CAP_NO_NMI - \=0D
-+ *    PMU is guaranteed to not generate non-maskable interrupts=0D
-+ */=0D
- #define PERF_PMU_CAP_NO_NMI		0x0002=0D
-+/**=0D
-+ * define PERF_PMU_CAP_AUX_NO_SG - \=0D
-+ *    PMU does not support using scatter-gather as the output=0D
-+ *=0D
-+ * The PERF_PMU_CAP_AUX_NO_SG flag indicates that the PMU does not support=
-=0D
-+ * scatter-gather for its output buffer, and needs a larger contiguous buf=
-fer=0D
-+ * to output to.=0D
-+ */=0D
- #define PERF_PMU_CAP_AUX_NO_SG		0x0004=0D
-+/**=0D
-+ * define PERF_PMU_CAP_EXTENDED_REGS - \=0D
-+ *    PMU is capable of sampling extended registers=0D
-+ *=0D
-+ * Some architectures have a concept of extended registers, e.g. XMM0 on x=
-86=0D
-+ * or VG on arm64. If the PMU is capable of sampling these registers, then=
- the=0D
-+ * flag PERF_PMU_CAP_EXTENDED_REGS should be set.=0D
-+ */=0D
- #define PERF_PMU_CAP_EXTENDED_REGS	0x0008=0D
-+/**=0D
-+ * define PERF_PMU_CAP_EXCLUSIVE - \=0D
-+ *    PMU can only have one scheduled event at a time=0D
-+ *=0D
-+ * Certain PMU hardware cannot track several events at the same time. Such=
-=0D
-+ * hardware must set PERF_PMU_CAP_EXCLUSIVE in order to avoid conflicts.=0D
-+ */=0D
- #define PERF_PMU_CAP_EXCLUSIVE		0x0010=0D
-+/**=0D
-+ * define PERF_PMU_CAP_ITRACE - PMU traces instructions=0D
-+ *=0D
-+ * Some PMU hardware does instruction tracing, in that it traces execution=
- of=0D
-+ * each instruction. Setting this capability flag makes the perf core gene=
-rate=0D
-+ * a %PERF_RECORD_ITRACE_START event, recording the profiled task's PID an=
-d TID,=0D
-+ * to allow tools to properly decode such traces.=0D
-+ */=0D
- #define PERF_PMU_CAP_ITRACE		0x0020=0D
-+/**=0D
-+ * define PERF_PMU_CAP_NO_EXCLUDE - \=0D
-+ *    PMU is incapable of excluding events based on context=0D
-+ *=0D
-+ * The PERF_PMU_CAP_NO_EXCLUDE flag, when set, makes the perf core reject =
-any=0D
-+ * request for an event that has one of the attributes=0D
-+ * perf_event_attr::exclude_{user,kernel,hv,idle,host,guest} set.=0D
-+ *=0D
-+ * Drivers for PMU hardware that cannot distinguish between these differen=
-t=0D
-+ * execution contexts should set this flag.=0D
-+ */=0D
- #define PERF_PMU_CAP_NO_EXCLUDE		0x0040=0D
-+/**=0D
-+ * define PERF_PMU_CAP_AUX_OUTPUT - PMU non-AUX events generate AUX data=0D
-+ *=0D
-+ * Drivers for PMU hardware that supports non-AUX events which generate da=
-ta for=0D
-+ * AUX events should set PERF_PMU_CAP_AUX_OUTPUT. This flag tells the perf=
- core=0D
-+ * to schedule non-AUX events together with AUX events, so that this data =
-isn't=0D
-+ * lost.=0D
-+ */=0D
- #define PERF_PMU_CAP_AUX_OUTPUT		0x0080=0D
-+/**=0D
-+ * define PERF_PMU_CAP_EXTENDED_HW_TYPE - \=0D
-+ *    PMU supports PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE=0D
-+ */=0D
- #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100=0D
-+/**=0D
-+ * define PERF_PMU_CAP_AUX_PAUSE - \=0D
-+ *    PMU can pause and resume AUX area traces based on events=0D
-+ */=0D
- #define PERF_PMU_CAP_AUX_PAUSE		0x0200=0D
-+/**=0D
-+ * define PERF_PMU_CAP_AUX_PREFER_LARGE - PMU prefers contiguous output bu=
-ffers=0D
-+ *=0D
-+ * The PERF_PMU_CAP_AUX_PREFER_LARGE capability flag is a less strict vari=
-ant of=0D
-+ * %PERF_PMU_CAP_AUX_NO_SG. PMU drivers for hardware that doesn't strictly=
-=0D
-+ * require contiguous output buffers, but find the benefits outweigh the=0D
-+ * downside of increased memory fragmentation, may set this capability fla=
-g.=0D
-+ */=0D
- #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400=0D
- =0D
- /**=0D
-=0D
----=0D
-base-commit: 1d07605c859ee3f483f07acd461452d9e505c58c=0D
-change-id: 20250618-perf-pmu-cap-docs-a13e4ae939ac=0D
-=0D
-Best regards,=0D
--- =0D
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>=0D
-=0D
+On Tue, Sep 09, 2025 at 01:24:02PM +0200, Konrad Dybcio wrote:
+> On 9/9/25 1:19 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 09, 2025 at 01:07:27PM +0300, Abel Vesa wrote:
+> >> Starting with Glymur, the PCIe and DP PHYs qserdes register offsets differ
+> >> for the same version number. So in order to be able to differentiate
+> >> between them, add these ones with DP prefix.
+> >>
+> >> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> >> ---
+> >>  .../phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h  | 52 ++++++++++++++++++++++
+> >>  1 file changed, 52 insertions(+)
+> >>
+> >> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h b/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h
+> >> new file mode 100644
+> >> index 0000000000000000000000000000000000000000..2bef1eecdc56a75e954ebdbcd168ab7306be1302
+> >> --- /dev/null
+> >> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h
+> >> @@ -0,0 +1,52 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0 */
+> >> +/*
+> >> + * Copyright (C) 2025 Linaro Ltd.
+> >> + */
+> >> +
+> >> +#ifndef QCOM_PHY_QMP_DP_QSERDES_COM_V8_H_
+> >> +#define QCOM_PHY_QMP_DP_QSERDES_COM_V8_H_
+> >> +
+> >> +/* Only for DP QMP V8 PHY - QSERDES COM registers */
+> >> +#define DP_QSERDES_V8_COM_HSCLK_SEL_1			0x03c
+> >> +#define DP_QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE1_MODE0	0x058
+> >> +#define DP_QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE2_MODE0	0x05c
+> >> +#define DP_QSERDES_V8_COM_SSC_STEP_SIZE1_MODE0		0x060
+> >> +#define DP_QSERDES_V8_COM_SSC_STEP_SIZE2_MODE0		0x064
+> >> +#define DP_QSERDES_V8_COM_CP_CTRL_MODE0			0x070
+> >> +#define DP_QSERDES_V8_COM_PLL_RCTRL_MODE0		0x074
+> >> +#define DP_QSERDES_V8_COM_PLL_CCTRL_MODE0		0x078
+> >> +#define DP_QSERDES_V8_COM_CORECLK_DIV_MODE0		0x07c
+> >> +#define DP_QSERDES_V8_COM_LOCK_CMP1_MODE0		0x080
+> >> +#define DP_QSERDES_V8_COM_LOCK_CMP2_MODE0		0x084
+> >> +#define DP_QSERDES_V8_COM_DEC_START_MODE0		0x088
+> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START1_MODE0		0x090
+> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START2_MODE0		0x094
+> >> +#define DP_QSERDES_V8_COM_DIV_FRAC_START3_MODE0		0x098
+> >> +#define DP_QSERDES_V8_COM_INTEGLOOP_GAIN0_MODE0		0x0a0
+> >> +#define DP_QSERDES_V8_COM_VCO_TUNE1_MODE0		0x0a8
+> >> +#define DP_QSERDES_V8_COM_INTEGLOOP_GAIN1_MODE0		0x0a4
+> >> +#define DP_QSERDES_V8_COM_VCO_TUNE2_MODE0		0x0ac
+> >> +#define DP_QSERDES_V8_COM_BG_TIMER			0x0bc
+> >> +#define DP_QSERDES_V8_COM_SSC_EN_CENTER			0x0c0
+> >> +#define DP_QSERDES_V8_COM_SSC_ADJ_PER1			0x0c4
+> >> +#define DP_QSERDES_V8_COM_SSC_PER1			0x0cc
+> >> +#define DP_QSERDES_V8_COM_SSC_PER2			0x0d0
+> >> +#define DP_QSERDES_V8_COM_BIAS_EN_CLKBUFLR_EN		0x0dc
+> >> +#define DP_QSERDES_V8_COM_CLK_ENABLE1			0x0e0
+> >> +#define DP_QSERDES_V8_COM_SYS_CLK_CTRL			0x0e4
+> >> +#define DP_QSERDES_V8_COM_SYSCLK_BUF_ENABLE		0x0e8
+> >> +#define DP_QSERDES_V8_COM_PLL_IVCO			0x0f4
+> >> +#define DP_QSERDES_V8_COM_SYSCLK_EN_SEL			0x110
+> >> +#define DP_QSERDES_V8_COM_RESETSM_CNTRL			0x118
+> >> +#define DP_QSERDES_V8_COM_LOCK_CMP_EN			0x120
+> >> +#define DP_QSERDES_V8_COM_VCO_TUNE_CTRL			0x13c
+> >> +#define DP_QSERDES_V8_COM_VCO_TUNE_MAP			0x140
+> >> +#define DP_QSERDES_V8_COM_CLK_SELECT			0x164
+> >> +#define DP_QSERDES_V8_COM_CORE_CLK_EN			0x170
+> >> +#define DP_QSERDES_V8_COM_CMN_CONFIG_1			0x174
+> > 
+> > The registers are the same at least up to this point. Would it make
+> > sense to keep common part in the same header and define only those bits
+> > that actually differ between DP and PCIe parts? (Is it really about PCIe
+> > or is it eDP vs everything else?)
+> 
+> No, there's a wild amount of variation between various "v8" PHYs and this
+> is impossible to catch by eye
+
+I see. Let's see how it will surface later. For now:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
