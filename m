@@ -1,360 +1,233 @@
-Return-Path: <linux-kernel+bounces-808483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C2B50063
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:57:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793A7B50060
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BEEF7B7001
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54031189B318
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B162A34F46F;
-	Tue,  9 Sep 2025 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C995350826;
+	Tue,  9 Sep 2025 14:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Lt1HffP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ysQTX0wS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BoJR84pS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4TVRPKxS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="EfDT2f3t"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010047.outbound.protection.outlook.com [52.101.229.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4C9341AD2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429760; cv=none; b=GDZHTAF/7nn/0zFQqO7GWcnVV9flOl2/xPtbk8zQF8nVcz4j05jPTALByO6X4jX3B1wS3eQSmr1THoeWAq3K4Vt8ddMqYFuuW0B3q5McftH5HWwh0t9J++r6mZ//3RWJ9XNgytoQmMpeLdMgIwYEH+OQ1D+E6rFDNxmpJl/pYPk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429760; c=relaxed/simple;
-	bh=y6lQn3gd6ZC2UP/VV61XZ/hLy3wlHTcSEt1IO/E/Ffg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EqlmLeh4LvaQ7wNpmvDVa/phbNBjg0dcztWFEfoWzGwRJ4XCvL2JwQJXyE8UvfSlcm3K1vu8WQMTEz1WxCbFUwmmMjCu56JnLHmOtemTCnL2m2zWk60Som8vJeC5N7U2mn9wahSLWDJq5tEfKXBovKYaVqDrg4rUGJwZMwEP0qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Lt1HffP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ysQTX0wS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BoJR84pS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4TVRPKxS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B11FE342F4;
-	Tue,  9 Sep 2025 14:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757429756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
-	b=0Lt1HffPqLEBVBYeBfuRjJPSDPTLCLbtu9E/oF2kDs6bjKm/j/BZvXM0tNujpe/LeFT+eE
-	owwq4qqXV1S8uzA6Xq9C57CDXxGRRMj8BzeIZUqohHmRxhp5+R93kBln/3/GjdUefHBqJo
-	3jySORdGoYvuwzCjqj1Mrxi2CuOxa/k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757429756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
-	b=ysQTX0wS9cC4FDYt1M45MyYH0umox5Fac7D2xmTW0YIbU6AqnC1fWYmvY78r9g15trg1AZ
-	n9Z/QpuyBvTmWEAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757429755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
-	b=BoJR84pSzM0rrtHZwTMd3UM4G8ceSWP45cJiO5MZFqijXfW0oSzpxfx17V7SSb2vBBHPxa
-	3K9+mp1Ey/GB9mzLMve9FOeWVxI9lx+q+vJZpyidemQL8A9GIx1oVOmgl8ea+/MFNDplBj
-	vc61aXrM+Zf8R+Lpy0buau/31d7rR0o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757429755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
-	b=4TVRPKxSRfEseKij5yKbBjGsnF4xFtUPQpn/yucYzjtTuHFxhIFpZbWyMs40JHeeYUHIPR
-	DYGBe4BGLy4IveBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99A871388C;
-	Tue,  9 Sep 2025 14:55:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZOw4Jfs/wGhpewAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 09 Sep 2025 14:55:55 +0000
-Message-ID: <64e0795d-c285-47d4-8282-a31d10fe1c47@suse.cz>
-Date: Tue, 9 Sep 2025 16:55:55 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF13338F32;
+	Tue,  9 Sep 2025 14:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757429818; cv=fail; b=lmTqDknDAf/Df8VlhLmgrWMGt7JlRbwXloPgbIAYFRWD5WHaMjXO0Fe0LLRfdioOK4PPl6JVUaaM9WFVSa1YvfgeGEyyAk6vGHOyAE2OU+jnvlLlK0XLIF91h+dNFsH2YFon5Rktgw6IgK5E307OyBUXw2pXZzR5ydGRw36FRqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757429818; c=relaxed/simple;
+	bh=ziqGvB3cqKxEIQrBom4o90lL0NZBEOBZqtQX5Bf+3Dg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pEBKjXIVGW0U94zhU9M+ct/H8HT6ttRs7kC8ECGwsGZ2DZvkCjNLUVBWCPQYO9Fn3N1rPxlnMkavJB1UO2reaN7nbYcAeiT+PEhIqk45B3HSo0MpNZPMkLMqCWiLlKDl+z3NNsCVnRYxUDYIw6zG1hmllohYFgHnlt3pijexC1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=EfDT2f3t; arc=fail smtp.client-ip=52.101.229.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s53dzDngFMHj5TD8Vq4CMgyru4kxEJEx8Vpq3HoBwaUR1ByO3DTIodN62LutGGdMnYkx2mAmqSIBfqboRTHGnqU8zS7TU1CxKl0RZOcPRld8JGW8KRDVgfRdg+iOdwl8paXDboiY6PuDT6ivRiMjW7Z4v2HQvTWT465QftY8kcs/OV5C8ORTDsJZkILEiAXj5i7xSov2K98WxYbCe739TgDLB03nT5suPadvG5Q/TBbEn/V4SlJ0b4AfGUbo0QjMhN62pRO/mMVTKj/ex+KpOKjSFGMSE3xBO2b7hfb8QE846YEgwTD54nqU04U5/k3mnCUqskNCmyP84ir8BQ8o3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9xD/fnPIqCGKTifniqeP2xiRxvVg1nSSaW6ITu2R0Yc=;
+ b=xqfdwauJu9hyZuMsytHgdPFjLowFzpuzLQohErJfjDqlUtOplsQiUN4nZBxrhDGY2EfDXgQ2tDmAM4zAY1ihBiPghj+7LODQ1Oov01Lr8Vj+dUxTHjEkfeiD7zEp5blfL8EvxMfiG7gIWNU3tNXItqQ6MhoclDWj1tZp4tgrn/W3neBpcoFjs8Hhe7rAd11rroDM2ZbuJThgAzkLPcqgSWyB2JMZciUCEYkszwIxo501iwy6qRFhgCZVq+FSJRX7qZhMGKxEjvRwFCFoDlp98tqq+ItQVWWijactyClsZiJCs63QLFBKBNkTvjCf4rbDYlrzrNSMyw/deWCARGoo9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9xD/fnPIqCGKTifniqeP2xiRxvVg1nSSaW6ITu2R0Yc=;
+ b=EfDT2f3th6UoNTAFp28WR06ArMtE/afQrLQ0KmF3xNbAcVUCMtQw/LI8lDjQoVfhmr8c1d4KnWF7s3+wfZJ0sZkk6qav9vZj79KogNdsHMaX0fCCEKlZdw1ommOsoHTtnMYTXsDZLRivW1kRyrVGVeLOpK1g4uZWjtlr4ONmTzY=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYYPR01MB12778.jpnprd01.prod.outlook.com (2603:1096:405:160::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 14:56:51 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 14:56:51 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>, biju.das.au <biju.das.au@gmail.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+Thread-Topic: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+Thread-Index: AQHcEfZvZDRnta0l60q2xS4yxsPDG7Ru3X2AgBwyLeA=
+Date: Tue, 9 Sep 2025 14:56:51 +0000
+Message-ID:
+ <TY3PR01MB11346FF949FAC9635F8374BE3860FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+ <20250822162043.GA3920949-robh@kernel.org>
+In-Reply-To: <20250822162043.GA3920949-robh@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB12778:EE_
+x-ms-office365-filtering-correlation-id: 86641415-12e7-40d3-47e0-08ddefb11bd1
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?jFjzxBBl0zo77s/IkNcYcy50gaKsIg/8C+1qWXUjfkonCIHuSJDKdf7Nll6k?=
+ =?us-ascii?Q?jrvc5njUOLfcU8cgHPUUL9b1++G2zsHzBwBOIBE9BZ3Zk4P3s0fF6EndMalY?=
+ =?us-ascii?Q?nbXT+cZDRi25ULphTw6/8Sk0woINRRbKEsjfVUge8y3BiwSzRPzR51DxjNeh?=
+ =?us-ascii?Q?WZkj6aMujMOoqfzW+sGNtELlAV8mZB8C16WSxhscNavixuQ8+RtXwSFNBFrs?=
+ =?us-ascii?Q?N/ecltWZnTEuHBadnRdlMLGyRCOQm8sKw8EcBgfW9jDjz7bdvC5FvGt6ByVN?=
+ =?us-ascii?Q?8jStchg6F7GbUJQlDsZ1dEAisS93J4milAtIo7V+auhKSF/eI07VaNXAy+ME?=
+ =?us-ascii?Q?cz+xSc1HU8qrkl6lwCtLSUe786MKEK/rhBuK4nVzCQOAzUSu3y9vHXmlsPsx?=
+ =?us-ascii?Q?pwPm50fjVd0peP2nEDlSF/hmUh/vUHih+mBYsGJuru2y/1T2268iqSwhP1vd?=
+ =?us-ascii?Q?btnuOVO4PRYE4dCnAjG+GUaEwpyCbIcYcZBsV9tRIx1ABa6Q5LEQrkE3hYHO?=
+ =?us-ascii?Q?xAwf6Fa7ofBQsFhqxrUfqsVTiPwPRuriP71Cu1Suok2n5UBOj6nNSG01IGuB?=
+ =?us-ascii?Q?bi0TOhMRP5EsZluX313iq1jFkQf2KbCm04YfXCl5JuqoLdzVosnM00C+LIP8?=
+ =?us-ascii?Q?59WG0nCbEwx4qtk9++Tm2HFu9pc17AsrNaLnQvYacvZisDCDbxxDxUwGRbzn?=
+ =?us-ascii?Q?IyoXdS8Q3kGUABhzuXNRSvxAuURQOrAsckDi/ED6TrRYnHm3GB/xTfgsA+yR?=
+ =?us-ascii?Q?xjaK6LGetPJ7QblPY+cjxkO3DLhCuk9qwdcdPvY9DP0n+BP8bW5O8bXlWO2N?=
+ =?us-ascii?Q?fyYjyHOJdGlmWWhDRDo0PkEw0gLgTFDW3IEp4nppDAvjbv4swmwctKhvZ4zo?=
+ =?us-ascii?Q?oddLVcqLOykKd8MwApu2zygCbCD+oHZFvN6jAzOo/cEuoTmwxcBVBIK3EDvA?=
+ =?us-ascii?Q?MovHTcOb4XWcjVzV59O51YVBgAv4ncN44eDrydATl3miX250f+i5Tiwh+c+u?=
+ =?us-ascii?Q?u1hVp5nYDBssMxYeHsza7njRxzo7kjvT4XToDC0mLrwIOT4blSJqZN0rDdWA?=
+ =?us-ascii?Q?j8RLAgWK57vTuwguUbwgXeEZ7dN/76c6abw6AMZceiFhuGoJbdWLA3XOt7QQ?=
+ =?us-ascii?Q?QHzHo9RePzu+nRJdGI5g0Wp0y+SeS1o9hySOdtgmR94FBToDd5HCT3/V1c3h?=
+ =?us-ascii?Q?BBfQo9PDjWnc2QErmvx7yxoGAoKrSY4n5UJ+ZrEsGaAwFZnaVuken1PAsGqi?=
+ =?us-ascii?Q?LDbxJOWqpV/HNacJ437zE1JNGE0rJS5JH4X6g7b734orBjFTGU5ozORmx1aL?=
+ =?us-ascii?Q?Qn8L4mWNnbOSog/X1EVrNDDlsVTELinvgtOwXyagGkGP87VofuPXqcp1fQpY?=
+ =?us-ascii?Q?m3OdMcHCW9J5sAteTo5V2yNER3yoY579Go7Qu0QR2UaHGlXWmQa1jpMVNWcY?=
+ =?us-ascii?Q?UyvbQ7j5KQ8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?A8iFc6LGxoOqUShjBQsfUCwT83e9dyk1O+eErtIDG4zBuSgDzHjO6UMq4OFf?=
+ =?us-ascii?Q?TOw32c8sd0gQOvFpvmp36a2iFlWw9y2y4HVcxI3SwZcDAY8rsvrgyx7EBbwY?=
+ =?us-ascii?Q?YMGZe2UDJH9+Cm/17Nj18Z+d1Q8Y++VTYlO58Z79IdLgwLSF7+TJAerPRaGp?=
+ =?us-ascii?Q?6/wpuc0/LHV/llI4Gt0c6aph15vsSwJYsoVBNk7sKl455os6WYXovpM2zvsB?=
+ =?us-ascii?Q?ctC2IAn4WKqk4ygYNUj5JXaNjN+il0ZInaE6oAznLy7OLJwrQxClC5nfiOwz?=
+ =?us-ascii?Q?pNytDwWbBKUzohg0UTg8dI4xHY6q4hhrN7e/VBH7UOxv8GxrzvP7QZ4bslTW?=
+ =?us-ascii?Q?zFv6R/AErUq5wsyJUyhT7QS0y1snzFMtIwWkbPd8Z0zPGS3nwG21AjX9N4bW?=
+ =?us-ascii?Q?LYhIB7dnb7ZNEwokrZk/lK1995NS4dNYzwFkUIt2jdYSB2IR6pEg6841WWIY?=
+ =?us-ascii?Q?JtcByEnjEgjjrgch3bvBR5AUAVSjNi6oRDurQjrjURvtX52E+deVeARp+s1q?=
+ =?us-ascii?Q?5RP59wfj9BpxBOkK6UTWMFtvOHfgnCm7Z6TqjC5hLOTSwatardW7104cWz4P?=
+ =?us-ascii?Q?5AIOcpm2R2qKx9qV821moOD4mX9KqMl+yjjE3G3jShvxrSfBmG1TiT/h8QSD?=
+ =?us-ascii?Q?1H/I4hSoGr+UbwfFO0ShB8BKBt+hGa+sTls9+HIzD3Mm8UWN/WPJPH3a3lJb?=
+ =?us-ascii?Q?m2crTXQlRB8dseYG+33z1VTNtbiORGAQVcuffSI2Xcwex+mJcoPuJejgZAIX?=
+ =?us-ascii?Q?STmJgpPoZkk1liD2eq0RrCllwThczSs5EwHAPLAV/bKfbZxwctxKxGOaOWQZ?=
+ =?us-ascii?Q?i+5Z4ynoU+VDx5WfS9OIs7ZcNxUUjF+YnLreJQAcY/8AJ46LtjxvkftE5JJG?=
+ =?us-ascii?Q?sTjFa0QEr/jjb2N3VqNp5mLlk43kImYFyqOBdh9z7RMVbp46bbOScBB04w/5?=
+ =?us-ascii?Q?zj/mK95/xw0b5D+3ZjQj5Bmo0HmbRo24JFxOEprqiW3wR0nGJ8encT8ViqIq?=
+ =?us-ascii?Q?4ZiuY5TAFeInwYxWVuvOHNc/4r++IhjcRWoHXUufvVk5DXPgt+oxP5YJ8us7?=
+ =?us-ascii?Q?ocExrIbsiGm/PzJ8jWV3NwkuoNhW+5eh76x0VUIyswZE6aogdtDUp3bhE4VT?=
+ =?us-ascii?Q?024HmQUw/cywY+GnGBmUHvkaekLyGNeJQQq+tF5NLt1wEUHZOS+T5Ufn40iU?=
+ =?us-ascii?Q?2o4xz8+LjXxXa5Wmxo2REtrcNhinlm62EI7HWPEXVuuwnhmo53iLJVMWQJVt?=
+ =?us-ascii?Q?+V8bvXvF8JGs3hs043/Vf+JxlyTESn5cze/nW6Max0ES+J4DCeBGzjPYVue/?=
+ =?us-ascii?Q?+HhIM6SqWKF8X1LvaO6IDxZST5QLvvZ6Anq0PBWwchZ5SjmzCwOEaS0L42ef?=
+ =?us-ascii?Q?iqbC3bgC4HZHY/T5z9u6jc7sxU+jwjihLGyhW0Q1y84+CyFdMYzk/Zs+6Cpu?=
+ =?us-ascii?Q?mApUsXbLMFKgkve3kHrjlaAEiLgkpdYKBcZFz8lcfhNLeaDIrjV6wTB7XTCw?=
+ =?us-ascii?Q?u6YOItgJHx20OyDd8BFZlUWalPV9agPYmviGXsFVdr3S+5Pvy9/Aa34eaqtD?=
+ =?us-ascii?Q?OrUWUXGhrAKn0yAaFqrOY/62fXohsN1ANk5SvJqoakcZAzY/6wkJV37rG1Zu?=
+ =?us-ascii?Q?RA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/21] slab: add sheaf support for batching kfree_rcu()
- operations
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
- <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
- <aL7FFpIMmXtzzSL1@pc638.lan> <6f8274da-a010-4bb3-b3d6-690481b5ace0@suse.cz>
- <aL_uhPtztx7Ef0T2@pc636> <838888f2-7a0f-49f0-9e33-592f13b14ad3@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <838888f2-7a0f-49f0-9e33-592f13b14ad3@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86641415-12e7-40d3-47e0-08ddefb11bd1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2025 14:56:51.1069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qcBVgE/12rQA1nS+p8OOUxp8c5l7K1X1FRxdWxnUmjhtElkjxX7Ag7HjPB10OuvEoLKiObCM8rkPu/H8iiI9jNYi6zO4sJVAFnzi3t4Vt/g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12778
 
-On 9/9/25 12:20, Vlastimil Babka wrote:
-> On 9/9/25 11:08, Uladzislau Rezki wrote:
->> On Mon, Sep 08, 2025 at 02:45:11PM +0200, Vlastimil Babka wrote:
->>> 
->>> Hm I could not find where that distinction is in the code, can you give a
->>> hint please. In __kfree_rcu_sheaf() I do only have a GFP_NOWAIT attempt.
->>> 
->> For PREEMPT_RT a regular spin-lock is an rt-mutex which can sleep. We
->> made kvfree_rcu() to make it possible to invoke it from non-sleep contexts:
-> 
-> Oh you mean it's not allocating even on !RT so there's no RT-specific code.
-> 
->> CONFIG_PREEMPT_RT
->> 
->> preempt_disable() or something similar;
->>  kvfree_rcu();
->>   GFP_NOWAIT - lock rt-mutex
->> 
->> If GFP_NOWAIT semantic does not access any spin-locks then we are safe
->> or if it uses raw_spin_locks.
-> 
-> It does access spinlocks so it's not safe. Thanks, I didn't realize that
-> aspect of kfree_rcu(). We'll need to solve this before making sheaves
-> enabled everywhere. I don't think the vma or maple tree code would
-> kfree_rcu() vma or maple_node in such a restricted context. But to be safe
-> I'll just disable the kfree rcu sheaves for PREEMPT_RT for now.
+Hi Rob,
 
-So I came up with this fixup to avoid PREEMPT_RT troubles and make
-kvfree_rcu_barrier() work.
+Thanks for the feedback.
 
-----8<----
-From 15a8db2ef716b5db547f2d86ab30d8774333fb04 Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 9 Sep 2025 16:18:52 +0200
-Subject: [PATCH] slub: fix issues with kfree_rcu sheaf handling
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 22 August 2025 17:21
+> Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3=
+HOST
+>=20
+> On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HOST=
+).
+> > The USB3HOST is compliant with the Universal Serial Bus 3.2
+> > Specification Revision 1.0.
+> >  - Supports 1 downstream USB receptacles
+> >      - Number of SSP Gen2 or SS ports: 1
+> >      - Number of HS or FS or LS ports: 1
+> >  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
+> >    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps)=
+.
+> >  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, =
+and
+> >    these split-transactions.
+> >  - Supports Power Control and Over Current Detection.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../bindings/usb/renesas,rzg3e-xhci.yaml      | 84 +++++++++++++++++++
+> >  1 file changed, 84 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+> > b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+> > new file mode 100644
+> > index 000000000000..2f73ea2e1e78
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+> > @@ -0,0 +1,84 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/G3E USB 3.2 Gen2 Host controller
+> > +
+> > +maintainers:
+> > +  - Biju Das <biju.das.jz@bp.renesas.com>
+> > +
+>=20
+> Common USB and XHCI properties don't apply?
 
-Fix two issues reported by Ulad:
+OK, will add
 
-- on PREEMPT_RT if kfree_rcu() comes from an atomic context, taking a
-  spinlock on the barn or doing a GFP_NOWAIT allocation of a new sheaf
-  might not be possible. For now just limit the usage of
-  kfree_rcu_sheaf() to !PREEMPT_RT
+allOf:
+  - $ref: usb-xhci.yaml
 
-- kvfree_rcu_barrier() must flush all rcu_free sheaves to deliver on its
-  promise. The usage isn't limited to destroying of a single cache. Add
-  flush_all_rcu_sheaves() to do that.
-
-Reported-by: Uladzislau Rezki <urezki@gmail.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slab.h        |  1 +
- mm/slab_common.c |  4 ++-
- mm/slub.c        | 74 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 78 insertions(+), 1 deletion(-)
-
-diff --git a/mm/slab.h b/mm/slab.h
-index f1866f2d9b21..e82e51c44bd0 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -436,6 +436,7 @@ static inline bool is_kmalloc_normal(struct kmem_cache *s)
- }
- 
- bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj);
-+void flush_all_rcu_sheaves(void);
- 
- #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
- 			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 2d806e025685..005a4319c06a 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1973,7 +1973,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 	if (!head)
- 		might_sleep();
- 
--	if (kfree_rcu_sheaf(ptr))
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && kfree_rcu_sheaf(ptr))
- 		return;
- 
- 	// Queue the object but don't yet schedule the batch.
-@@ -2050,6 +2050,8 @@ void kvfree_rcu_barrier(void)
- 	bool queued;
- 	int i, cpu;
- 
-+	flush_all_rcu_sheaves();
-+
- 	/*
- 	 * Firstly we detach objects and queue them over an RCU-batch
- 	 * for all CPUs. Finally queued works are flushed for each CPU.
-diff --git a/mm/slub.c b/mm/slub.c
-index 9f9b7e1fa356..19cd8444ae5d 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3895,6 +3895,80 @@ static void flush_all(struct kmem_cache *s)
- 	cpus_read_unlock();
- }
- 
-+static void flush_rcu_sheaf(struct work_struct *w)
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct slab_sheaf *rcu_free;
-+	struct slub_flush_work *sfw;
-+	struct kmem_cache *s;
-+
-+	sfw = container_of(w, struct slub_flush_work, work);
-+	s = sfw->s;
-+
-+	local_lock(&s->cpu_sheaves->lock);
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+	rcu_free = pcs->rcu_free;
-+	pcs->rcu_free = NULL;
-+
-+	local_unlock(&s->cpu_sheaves->lock);
-+
-+	if (rcu_free)
-+		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
-+}
-+
-+
-+/* needed for kvfree_rcu_barrier() */
-+void flush_all_rcu_sheaves()
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct slub_flush_work *sfw;
-+	struct kmem_cache *s;
-+	bool flushed = false;
-+	unsigned int cpu;
-+
-+	cpus_read_lock();
-+	mutex_lock(&slab_mutex);
-+
-+	list_for_each_entry(s, &slab_caches, list) {
-+		if (!s->cpu_sheaves)
-+			continue;
-+
-+		mutex_lock(&flush_lock);
-+
-+		for_each_online_cpu(cpu) {
-+			sfw = &per_cpu(slub_flush, cpu);
-+			pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
-+
-+			if (!pcs->rcu_free || !pcs->rcu_free->size) {
-+				sfw->skip = true;
-+				continue;
-+			}
-+
-+			INIT_WORK(&sfw->work, flush_rcu_sheaf);
-+			sfw->skip = false;
-+			sfw->s = s;
-+			queue_work_on(cpu, flushwq, &sfw->work);
-+			flushed = true;
-+		}
-+
-+		for_each_online_cpu(cpu) {
-+			sfw = &per_cpu(slub_flush, cpu);
-+			if (sfw->skip)
-+				continue;
-+			flush_work(&sfw->work);
-+		}
-+
-+		mutex_unlock(&flush_lock);
-+	}
-+
-+	mutex_unlock(&slab_mutex);
-+	cpus_read_unlock();
-+
-+	if (flushed)
-+		rcu_barrier();
-+}
-+
- /*
-  * Use the cpu notifier to insure that the cpu slabs are flushed when
-  * necessary.
--- 
-2.51.0
-
-
+Cheers,
+Biju
 
