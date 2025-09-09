@@ -1,174 +1,207 @@
-Return-Path: <linux-kernel+bounces-808811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7508B50506
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:11:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF12B5050A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65715E635F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B871C638FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268E135FC25;
-	Tue,  9 Sep 2025 18:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D497B35AAC9;
+	Tue,  9 Sep 2025 18:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="MEowf36t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hQyxjK6d"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="OHLp3LY4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687DD35E4F9;
-	Tue,  9 Sep 2025 18:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757441410; cv=none; b=nJ++9UjGOvTK49JCZZ7Ci5NchzN3eg7sUFGc8JvSqU/ynckZSZVRIsNvM1kmViDdBK6qdP25NjnA/YVjQ8mhC2x/StZ89ZDv+HLBPbyeIaXt8adRNkJgaBbSNUF2XiwNs4O/RIRsYF9Cx8LArC/gUIkJNA2pzYJt6zypvwCWZmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757441410; c=relaxed/simple;
-	bh=1WfiXYcQ9DxGQzBNyXa1b+ATH91JkebVyqyf+y3+b4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHqgao1902BK26x1Fv6IBfp96UT2ce5+/zxdjs6uhJhWCUVo89WIm+Y8nEzFbQpmw9Jm52HhO1tuAYABenCUaDx/UVMv4OSxZKUTeiWrpFk6SlBXXVdvfqsfgeJmO+hLQaskRW0rZxPSnsceA675XqxtfU7t82FL9aZMl5wbkE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=MEowf36t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hQyxjK6d; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7BFA21400077;
-	Tue,  9 Sep 2025 14:10:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 09 Sep 2025 14:10:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1757441405; x=1757527805; bh=le/lK8mLuhjbFLfZDsOm1kwSbZZOkQC+
-	xNBDwVJ54F8=; b=MEowf36tFPlNVS4TJdzkKEkaDWRbcoBs7PvG4mxU9ijmhYb3
-	DtVy4nUs7+fZPCVB58mzQHpXP3GAWhU58K+1jj3tnDVcX1s5AuKiP/4fjg+WDnyK
-	IOANr5xdEktcOEe8CjWnwbRlQ7aFdnWrjarOOoQqMqF+SA20v4ZJRJlH2+gZJqpy
-	CWRHEddzC/mh2XYOSUK+toHRD4HXcT5jKB3i7CcLkzS8yTJPyssQIRTb9tn5ea+S
-	K3atI/oQ0GwDPJGXhMPEu6CgJhg4I3fvayMbXXNgWBpYM4RW8AFXJ8F5Ovvslc02
-	CzP33tZAAH+IO9P6fGPzh+KoPxsGhLZmnhDn/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757441405; x=
-	1757527805; bh=le/lK8mLuhjbFLfZDsOm1kwSbZZOkQC+xNBDwVJ54F8=; b=h
-	QyxjK6dlQoxutmlUpMYu/2Kav4r1iZEZmL+AMoE0DPmhrQwDHUrn6/LkQU3HQHuU
-	+ucmXZsgvFPwycpDURl7Pa7LwbVZrd4LC8sY4fKRixLESSdsNxtSFpbAPZZ54Cqp
-	c9AX5xnPHz+UGZhcf8AMph1/LDqlgvXT7CUdwmHN9dD7CRjQvaXVINhax5n+8B2/
-	TwvptSWaHK4v8BM9YIj+/rVcrCugqWx8oyE6Bq7un0I7drFkFNwb5rc0S8pCwhD+
-	yR+YE+gLAOP7/N3ltd+QBCnhaq+ghPmmxlBUUdCxaDC7qZZ7tnRdngskdlSMqcWw
-	GqXHzA4Jn1OfUX8B8BUaw==
-X-ME-Sender: <xms:fG3AaPndiZZvY2KsEo-IO9r-Yo1NafrmA2xL_BOjvm8EgJtHYyOnBQ>
-    <xme:fG3AaAUcm__8hmjymCK5tdZV4DARxr7zzXSVCTkPqyuHqkvSSjTg9zzRaCmsoKnNK
-    lA6lyxMs4oKcdIsCxk>
-X-ME-Received: <xmr:fG3AaIRfmfg_4dyDuK8POGr9sFvDI4vogOdQINpmr3SPlHxWxElo4QNTo7WW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvuddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepufgrsghrihhn
-    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
-    grthhtvghrnhepgfdvgeeitefffedvgfdutdelgeeihfegueehteevveegveejudelfeff
-    ieehledvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsthesfhhisggvrhgshidrnhgvthdprh
-    gtphhtthhopehjrghsohhnseiigidvtgegrdgtohhmpdhrtghpthhtohepuggrvhgvmhes
-    uggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuh
-    hnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehjrggtohgsrdgvrdhkvghllhgvrhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:fG3AaNCQRfIhDT5jto05Ke8hRI9TbHELJ6xms4rMKWsGqZfp4CJ4yw>
-    <xmx:fG3AaAvQ-bfFmhhOvAIlaPj5votbaiHnoNnCoYHNSwE0ZlRZ14zfPA>
-    <xmx:fG3AaL_-1Tlct-_UNXxEBrHqCsbRvgLs8JJZ_6WKBPDdY0wi72Y_eQ>
-    <xmx:fG3AaHRQL_sa5jxSsxbUNpY8AsjlJaR8oncaoQS0WGcpmdzslGKKUg>
-    <xmx:fW3AaNdttPE6D-MVg_npUKs8inrXT3X0SDUeQlKiVuD9LYlEyHtVPj1S>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Sep 2025 14:10:03 -0400 (EDT)
-Date: Tue, 9 Sep 2025 20:10:02 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 10/11] tools: ynl: decode hex input
-Message-ID: <aMBteqR5KP9KGcc3@krikkit>
-References: <20250904-wg-ynl-prep@fiberby.net>
- <20250904220156.1006541-10-ast@fiberby.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50E2F4A;
+	Tue,  9 Sep 2025 18:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757441551; cv=pass; b=JpDNnL0SY7w3p5yyIbKYySU0A40ko5+6PpCpClBdU/njTM8t4wrqGjiRYMQTFgvtlv1G9lyKNs7O9pICNekDdnx7y0Dts6PaunzNmuxjBGf9O7O/lNrBFzh5eWXmWCBecVelcgXIv5rDIWO46Bzr/v6+7CV+ca/WetnkKCFs40A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757441551; c=relaxed/simple;
+	bh=xw1VozNTXZeKHQ32RyTRNg3FJMwm5JzEWF0aJ3O7dpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VrdXyS3k3vi1O5IRvVPYgfwHFO3/EdjJD6g9NpGfSa09BYA8fywM3DTghZ1ZzteVrea53/R4BEv4X44x3K0xnRibXmGjFeYKbJk/k2evW1iBPDvA9j2tLuPrO/g83xeOFJhmu679YpoMbm3Kqd8vMDtyGQ0wgdSJdWREBDQh2C4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=OHLp3LY4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757441534; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dpWZIOl8dyjvJh9h0GaO1SAsHbFVE+aSzW4HKscO1Itt2Z9O7+WZJ9CU8lLCmYduzHBUkP0hbslavy8KZnSb1sqGXc3DNEkxV5XFSl5b+M2ywb7d7zKoJKjdHyqQqbvlaxOm3rETlR31BrrJ7tERg1EVVzqkM7NNYWb4ho1FgjI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757441534; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+bs1oCfGjUtq4+1LMDaU5y3FUODLG1LyIqxGrH1KllA=; 
+	b=f1eLvuAju5hiW6BdKolKA4RxmHePTZcYtoadgrtlpDiTwcE0MGUbHCQJHTiJYYwzK3I1gm1d0PIyexC6zbTb6v4/ReT4x5/HTLmEbGYD+ciS5MjN7s7zaScn7baFv0VU84En6jjL49nsmMpqewUdCFSNEYFM0gYAsEIWVQP9su8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757441534;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=+bs1oCfGjUtq4+1LMDaU5y3FUODLG1LyIqxGrH1KllA=;
+	b=OHLp3LY4YgktcbFiB2HD/QgV7NIaVWPaqI7FsKeSEZcMRf7QnX8SH+CYEsE1yTKb
+	kdkF2iqIUafDk2Yvijwof3AEUGZMtu5EuOZ7WLI6NDjtHRzdrGgIdCiOkjQZrqIl08Y
+	QV5V4p7TB0wnDhDHQo6mClBPnSVXlO5Xz7v3EoIE=
+Received: by mx.zohomail.com with SMTPS id 17574415308701019.2683300901098;
+	Tue, 9 Sep 2025 11:12:10 -0700 (PDT)
+Message-ID: <b1d79707-59b2-4dc0-9d15-49b5ec43364d@collabora.com>
+Date: Tue, 9 Sep 2025 14:12:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904220156.1006541-10-ast@fiberby.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] media: rkvdec: Add HEVC backend
+To: Jonas Karlman <jonas@kwiboo.se>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Alex Bee <knaerzche@gmail.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250905161942.3759717-1-jonas@kwiboo.se>
+Content-Language: en-US
+From: Detlev Casanova <detlev.casanova@collabora.com>
+In-Reply-To: <20250905161942.3759717-1-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-2025-09-04, 22:01:33 +0000, Asbjørn Sloth Tønnesen wrote:
-> This patch add support for decoding hex input, so
-> that binary attributes can be read through --json.
-> 
-> Example (using future wireguard.yaml):
->  $ sudo ./tools/net/ynl/pyynl/cli.py --family wireguard \
->    --do set-device --json '{"ifindex":3,
->      "private-key":"2a ae 6c 35 c9 4f cf <... to 32 bytes>"}'
-> 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> ---
->  tools/net/ynl/pyynl/lib/ynl.py | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/net/ynl/pyynl/lib/ynl.py b/tools/net/ynl/pyynl/lib/ynl.py
-> index a37294a751da..78c0245ca587 100644
-> --- a/tools/net/ynl/pyynl/lib/ynl.py
-> +++ b/tools/net/ynl/pyynl/lib/ynl.py
-> @@ -973,6 +973,8 @@ class YnlFamily(SpecFamily):
->                  raw = ip.packed
->              else:
->                  raw = int(ip)
-> +        elif attr_spec.display_hint == 'hex':
-> +            raw = bytes.fromhex(string)
+Hi Jonas,
 
-I'm working on a spec for macsec and ended up with a similar change,
-but doing instead:
+On 9/5/25 12:19, Jonas Karlman wrote:
+> This series add a HEVC backend to the Rockchip Video Decoder driver.
+>
+> With the dependent H.264 High 10 and 4:2:2 profile support series
+> finally merged there is finally time to send a v2 with minor changes and
+> a suggested code style fix of this series. v1 of this series has been
+> fully functional up until recent unstaging of the rkvdec driver.
+>
+> A version of this HEVC backend has been in use by the LibreELEC distro
+> for the past 5+ years [1]. It was initially created based on a copy of
+> the H264 backend, unstable HEVC uAPI controls and a cabac table + scaling
+> matrix functions shamelessly copied 1:1 from the Rockchip mpp library.
+>
+> It has since then been extended to use the stable HEVC uAPI controls and
+> improved opon e.g. to include support for rk3288 and fix decoding issues
+> by Alex Bee and Nicolas Dufresne.
+>
+> The version submitted in this series is based on the code currently used
+> by the LibreELEC distro, excluding hard/soft reset, and with cabac table
+> and scaling matrix functions picked from Sebastian Fricke prior series
+> to add a HEVC backend [2].
+>
+> Big thanks to Alex Bee, Nicolas Dufresne and Sebastian Fricke for making
+> this series possible!
+>
+> Patch 1 add the new HEVC backend.
+> Patch 2-3 add variants support to the driver.
+> Patch 4 add support for a rk3288 variant.
+> Patch 5 add a rk3328 variant to work around hw quirks.
+> Patch 6-7 add device tree node for rk3288.
+>
+> This was tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+>
+>    v4l2-compliance 1.30.1, 64 bits, 64-bit time_t
+>    ...
+>    Total for rkvdec device /dev/video1: 49, Succeeded: 49, Failed: 0, Warnings: 0
+>
+>    Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2request
+>    ...
+>    Ran 137/147 tests successfully
+>
+>    Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2request
+>    ...
+>    Ran 9/9 tests successfully
+>
+> And on a TinkerBoard (RK3288):
+>
+>    v4l2-compliance 1.30.1, 32 bits, 32-bit time_t
+>    ...
+>    Total for rkvdec device /dev/video3: 49, Succeeded: 49, Failed: 0, Warnings: 0
+>
+>    Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2request
+>    ...
+>    Ran 137/147 tests successfully
+>
+>    Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2request
+>    ...
+>    Ran 9/9 tests successfully
+>
+> The WPP_x_ericsson tests from test suite JCT-VC-HEVC_V1 has been showing
+> a mix of both Success and/or Fail result for FFmpeg-H.265-v4l2request.
+>
+> Full summary of fluster run can be found at [3].
+>
+> Please note that there is a known issue with concurrent decoding,
+> decoding errors in one decode session may affect a separate session.
+> The only known mitigation to this is to pause decoding for some time
+> and/or do a full HW reset, something to handle in future series.
+I also tested on Rock Pi 4 SE (but with Gstreamer instead of FFmpeg) and 
+can
+confirm the same results, so, for the whole series:
 
-+        elif attr_spec.display_hint == 'hex':
-+            raw = int(string, 16)
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com> # RK3399
 
-since the destination attribute is u32/u64 and not binary for macsec.
+Best regards,
 
-So maybe this should be:
+Detlev
 
-+            if attr_spec['type'] == 'binary':
-+                raw = bytes.fromhex(string)
-+            else:
-+                raw = int(string, 16)
-
-to cover both cases?
-
-I think it matches better what's already in _formatted_string.
-
-(I don't mind having the current patch go in and making this change
-together with the macsec spec when it's ready)
-
->          else:
->              raise Exception(f"Display hint '{attr_spec.display_hint}' not implemented"
->                              f" when parsing '{attr_spec['name']}'")
-> -- 
-> 2.51.0
-> 
-> 
-
--- 
-Sabrina
+> Changes in v3:
+> - Change to use file_to_rkvdec_ctx()
+> - Rename assemble_hw_rps to assemble_sw_rps
+> - Use a reference to rkvdec_variant instead of copying capabilities and
+>    quirks to rkvdec_dev
+> - Add num_regs field to rkvdec_variant, currently not used for anything
+> - Add and use rkvdec_quirks_disable_qos() helper to apply qos quirk
+> - Collect t-b and r-b tags
+> Link to v2: https://lore.kernel.org/linux-media/20250810212454.3237486-1-jonas@kwiboo.se
+>
+> Changes in v2:
+> - Rabase after h264 high10/422 merge and unstaging of rkvdec driver
+> - Use new_value in transpose_and_flatten_matrices()
+> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
+> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
+> - Adjust code style in rkvdec_enum_coded_fmt_desc()
+> - Collect a-b tag
+> - Drop merged vdec node reg size patches
+> Link to v1: https://lore.kernel.org/linux-media/20231105233630.3927502-1-jonas@kwiboo.se
+>
+> [1] https://github.com/LibreELEC/LibreELEC.tv/blob/master/projects/Rockchip/patches/linux/default/linux-2000-v4l2-wip-rkvdec-hevc.patch
+> [2] https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-v2-0-fa1897efac14@collabora.com/
+> [3] https://gist.github.com/Kwiboo/0ea22df1c9c3f3a48479d3f7ec28169d
+>
+> Alex Bee (4):
+>    media: rkvdec: Add variants support
+>    media: rkvdec: Add RK3288 variant
+>    media: rkvdec: Disable QoS for HEVC and VP9 on RK3328
+>    ARM: dts: rockchip: Add vdec node for RK3288
+>
+> Jonas Karlman (3):
+>    media: rkvdec: Add HEVC backend
+>    media: rkvdec: Implement capability filtering
+>    media: dt-bindings: rockchip,vdec: Add RK3288 compatible
+>
+>   .../bindings/media/rockchip,vdec.yaml         |    1 +
+>   arch/arm/boot/dts/rockchip/rk3288.dtsi        |   17 +-
+>   .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
+>   .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
+>   .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  820 ++++++++
+>   .../platform/rockchip/rkvdec/rkvdec-regs.h    |    4 +
+>   .../platform/rockchip/rkvdec/rkvdec-vp9.c     |    4 +
+>   .../media/platform/rockchip/rkvdec/rkvdec.c   |  198 +-
+>   .../media/platform/rockchip/rkvdec/rkvdec.h   |   17 +
+>   9 files changed, 2890 insertions(+), 21 deletions(-)
+>   create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>   create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+>
 
