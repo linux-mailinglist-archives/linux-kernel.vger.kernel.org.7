@@ -1,357 +1,105 @@
-Return-Path: <linux-kernel+bounces-808130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE253B4FA16
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 536BEB4FA10
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D601F4E2CD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:14:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 092BE4E2C70
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31410322A24;
-	Tue,  9 Sep 2025 12:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9C33375A5;
+	Tue,  9 Sep 2025 12:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="j8qY2/7a"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tMr2axex"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A8F31B806
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C4D32F775;
+	Tue,  9 Sep 2025 12:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757420076; cv=none; b=u8qg6523y0r8nl2/6OFdZDPHoP7mjEDtEuzFaoLYpuelYlN7XuiY3cZ3/H1EteVHIln+MPEyk4pMvHEMLZZz/gNXO/YIwNJZMgQlkhqmLwN+jlEXGkVAOpy0kl9YMWCCL65/w0nxJ3jLPwthTmece5q+i4iu5eXUPvwf3qwsh2E=
+	t=1757420060; cv=none; b=ABwRLwkTNkn/t8o3qDxYNKoJiAoTnzUF0E5Wy6SayN9s2/ZAzVBuc1gvME2b+25icVkiN9KtLHQ0xBt5HUM9uu7F5G/ZfaePr6Tq9aWjO7SQeTFWRoqbGNFc/0Pc68j45kaVgY3ImKmVgg8EbS9CXBuqKKuc5K8M71J1lh/VnOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757420076; c=relaxed/simple;
-	bh=IsdM/3F1Q6gkhhBr0tu3r8LDY45Dp22k/hV+pt0fo2M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=J4l7u7QyxRr9J+kHnhH50MX1RsAzOM2YT06TEB915/MC8VD7fH84w+VQTC1LLucXO7fum9EgEawxxXLHxSQX/QHnfCUNt/ra3sWwJeOs4dFL/MlVM7w3Gq/47VVIWPrFCBreLjWI36go3CSm3hJ1WkT9gsgQu8T4h+DWkxlLOxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=j8qY2/7a; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=j8qY2/7a8ePIxrqZQXvrBmH0RKrjQLpb5akUZKSCAGk4EvB2bmcXG21rNMv52eQrtguTCUVHjyeQLMhjpcNqCU84f2G/+z4nlfLW2GW0qVAIwCzUS3/FLMuEIe3JG2MYmAMZaoiz6ztxfmVXcWmFrmn48S9fSwCF3+ZV6eNzYyk9a13n2GdR5d9Amz8DjJnMWfSv71o3w6agMPE5bsrC4ohM5ALnASOaQs5LmOKfgDs6+/OxidJvnD65EoM5LaUx/S8pnqbRND7urnx/PmzS+PgQC2+eh9ZEcrHdwdz/WMbNWh9lraIyUFcGvAdSkLbOXEOolZ3s+MfP7LfUPoblhQ==; s=purelymail2; d=purelymail.com; v=1; bh=IsdM/3F1Q6gkhhBr0tu3r8LDY45Dp22k/hV+pt0fo2M=; h=Feedback-ID:Received:Date:Subject:From:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -824743633;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Tue, 09 Sep 2025 12:14:11 +0000 (UTC)
+	s=arc-20240116; t=1757420060; c=relaxed/simple;
+	bh=nfO6Qip4wT2nqsDYDR/PKlg64uG9rndsPou4q5q7/AM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ve8asKqQ9ZUwXTgHfiu4nKANNDvg05OoPsxRqNnn2ittlow5ce/nA1qgGaVn7btP0AX+JjixCoFNlBo2ufe4Un7FazM1O8b2YTaUYJjpUx42kEzC6g3pjImFBNdLdOrfGfroASlLlQOLGJY0XknPRtc51FD4CGwp3ojJDbQKAV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tMr2axex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA92C4CEF7;
+	Tue,  9 Sep 2025 12:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757420059;
+	bh=nfO6Qip4wT2nqsDYDR/PKlg64uG9rndsPou4q5q7/AM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tMr2axexlrFj5gL9A5wx0Pm7Zq/Y5C2R915B/D1ID5hwZs1w5i55e/R1gqXyDFoKa
+	 aEdpr+MCr+XI+VwdTGdvIzXtoaB0zx4kSNQ1i+Set8uNLjFS24RS9FTTGXQQpco5OB
+	 nOD/LoJaq3ADDiRQO8QYtOQKbBjMqrXkRjlZFabc=
+Date: Tue, 9 Sep 2025 14:14:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Simon Neuenhausen <simon.neuenhausen@rwth-aachen.de>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Igor Korotin <igor.korotin.linux@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
+Message-ID: <2025090916-dill-elated-3d68@gregkh>
+References: <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
+ <2025090618-smudgy-cringing-a7a4@gregkh>
+ <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
+ <2025090601-iron-glitter-c77d@gregkh>
+ <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
+ <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
+ <9657C897-087E-4544-849B-964E99D95A50@collabora.com>
+ <DCLTJMIAMCVL.35U236MMS5CCK@kernel.org>
+ <85B643A9-1657-43ED-BE98-BE7E502D08DA@collabora.com>
+ <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 09 Sep 2025 14:14:08 +0200
-Message-Id: <DCO9EWX469HR.2R09YSL967MSV@mentallysanemainliners.org>
-Subject: Re: [PATCH 1/4] dt-bindings: pinctrl: mediatek: Document MT6878 pin
- controller bindings
-From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Igor Belwon"
- <igor.belwon@mentallysanemainliners.org>
-Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Sean Wang" <sean.wang@kernel.org>, <linux-gpio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org> <20250908-mt6878-pinctrl-support-v1-1-3fb78c8ab4e8@mentallysanemainliners.org> <20250909-mellow-eminent-duck-4c4619@kuoka>
-In-Reply-To: <20250909-mellow-eminent-duck-4c4619@kuoka>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
 
-On Tue Sep 9, 2025 at 9:37 AM CEST, Krzysztof Kozlowski wrote:
-> On Mon, Sep 08, 2025 at 09:17:55PM +0200, Igor Belwon wrote:
->> Add device-tree bindings for the pin controller and the EINT controller
->> found in the MediaTek MT6878 SoC.
->>=20
->> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
->> ---
->>  .../bindings/pinctrl/mediatek,mt6878-pinctrl.yaml  |  209 ++++
->>  include/dt-bindings/pinctrl/mt6878-pinfunc.h       | 1201 +++++++++++++=
-+++++++
->>  2 files changed, 1410 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-p=
-inctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pin=
-ctrl.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..ecd24ab23a0c41810828ddb8=
-827ab39c4cd3d2fc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.=
-yaml
->> @@ -0,0 +1,209 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pinctrl/mediatek,mt6878-pinctrl.yaml=
-#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek MT6878 Pin Controller
->> +
->> +maintainers:
->> +  - Igor Belwon <igor.belwon@mentallysanemainliners.org>
->> +
->> +description:
->> +  The MediaTek MT6878 Pin controller is used to control SoC pins.
->> +
->> +properties:
->> +  compatible:
->> +    const: mediatek,mt6878-pinctrl
->> +
->> +  reg:
->> +    items:
->> +      - description: pin controller base
->> +      - description: bl group IO
->> +      - description: bm group IO
->> +      - description: br group IO
->> +      - description: bl1 group IO
->> +      - description: br1 group IO
->> +      - description: lm group IO
->> +      - description: lt group IO
->> +      - description: rm group IO
->> +      - description: rt group IO
->> +      - description: EINT controller E block
->> +      - description: EINT controller S block
->> +      - description: EINT controller W block
->> +      - description: EINT controller C block
->> +
->> +  reg-names:
->> +    items:
->> +      - const: base
->> +      - const: bl
->> +      - const: bm
->> +      - const: br
->> +      - const: bl1
->> +      - const: br1
->> +      - const: lm
->> +      - const: lt
->> +      - const: rm
->> +      - const: rt
->> +      - const: eint-e
->> +      - const: eint-s
->> +      - const: eint-w
->> +      - const: eint-c
->> +
->> +  gpio-controller: true
->> +
->> +  '#gpio-cells':
->> +    description:
->> +      Number of cells in GPIO specifier. Since the generic GPIO binding=
- is used,
->> +      the amount of cells must be specified as 2. See the below mention=
-ed gpio
->> +      binding representation for description of particular cells.
->> +    const: 2
->> +
->> +  gpio-ranges:
->> +    maxItems: 1
->> +
->> +  gpio-line-names: true
->
-> How many GPIOs do you have? No limit?
->
+On Tue, Sep 09, 2025 at 01:19:12PM +0200, Simon Neuenhausen wrote:
+> Hi,
+> 
+> > On 06.09.25 17:46, Daniel Almeida wrote:
+> 
+> > As I said to Greg above, I’m here to help if anyone wants to write a USB
+> > driver. Those interested
+> are free to reach out to me and we will work together to merge the required
+> abstractions with a real user in mind. Hopefully this encourages others to
+> join in this work :)
+> I had planned on writing a USB driver for TI nspire calculators, that would
+> make them mountable as USB mass storage devices, since they use a
+> proprietary USB protocol, that usually requires paid software from TI. At
+> the time I gave up on that, due to the lack of USB support in RFL, but I
+> could revive the effort using this.
 
-How shall I limit the GPIOs?
-The maximum amount that this SoC supports is 216, looking into
-dt-bindings for pinctrl, I haven't seen a SoC that limits them in
-bindings. Maybe I missed it though...
+usb-storage is really just SCSI, so if you want to try to do this, you
+are going to have to write a scsi driver for the calculator.  Not
+something you probably really want to do :(
 
->> +
->> +  interrupts:
->> +    description: The interrupt outputs to sysirq
->> +    maxItems: 1
->> +
->> +  interrupt-controller: true
->> +
->> +  '#interrupt-cells':
->> +    const: 2
->> +
->> +# PIN CONFIGURATION NODES
->> +patternProperties:
->> +  '-pins$':
->> +    type: object
->> +    additionalProperties: false
->> +
->> +    patternProperties:
->> +      '^pins':
->> +        type: object
->> +        allOf:
->> +          - $ref: /schemas/pinctrl/pincfg-node.yaml
->> +          - $ref: /schemas/pinctrl/pinmux-node.yaml
->> +        description:
->> +          A pinctrl node should contain at least one subnodes represent=
-ing the
->> +          pinctrl groups available on the machine. Each subnode will li=
-st the
->> +          pins it needs, and how they should be configured, with regard=
- to muxer
->> +          configuration, pullups, drive strength, input enable/disable =
-and input
->> +          schmitt.
->> +
->> +        properties:
->> +          pinmux:
->> +            description:
->> +              Integer array, represents gpio pin number and mux setting=
-.
->> +              Supported pin number and mux are defined as macros in
->> +              arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h for this So=
-C.
->> +
->> +          drive-strength:
->> +            enum: [2, 4, 6, 8, 10, 12, 14, 16]
->> +
->> +          drive-strength-microamp:
->> +            enum: [125, 250, 500, 1000]
->> +
->> +          bias-pull-down:
->> +            oneOf:
->> +              - type: boolean
->> +              - enum: [75000, 5000]
->> +                description: Pull down RSEL type resistance values (in =
-ohms)
->> +            description:
->> +              For normal pull down type there is no need to specify a r=
-esistance
->> +              value, hence this can be specified as a boolean property.
->> +              For RSEL pull down type a resistance value (in ohms) can =
-be added.
->> +
->> +          bias-pull-up:
->> +            oneOf:
->> +              - type: boolean
->> +              - enum: [10000, 5000, 4000, 3000]
->> +                description: Pull up RSEL type resistance values (in oh=
-ms)
->> +            description:
->> +              For normal pull up type there is no need to specify a res=
-istance
->> +              value, hence this can be specified as a boolean property.
->> +              For RSEL pull up type a resistance value (in ohms) can be=
- added.
->> +
->> +          bias-disable: true
->> +
->> +          output-high: true
->> +
->> +          output-low: true
->> +
->> +          input-enable: true
->> +
->> +          input-disable: true
->> +
->> +          input-schmitt-enable: true
->> +
->> +          input-schmitt-disable: true
->> +
->> +        required:
->> +          - pinmux
->> +
->> +        additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-controller
->> +  - '#interrupt-cells'
->> +  - gpio-controller
->> +  - '#gpio-cells'
->> +  - gpio-ranges
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/pinctrl/mt65xx.h>
->
-> Why including mt65xx?
->
->> +    #define PINMUX_GPIO0__FUNC_GPIO0 (MTK_PIN_NO(0) | 0)
->
-> I don't understand why do you need it? Didn't you have header for that?
-> Or you prepared for header removal (see my further comment), but then it
-> is just confusing.
->
+Odd are this would be a much simpler userspace program instead, as you
+can control USB devices directly from userspace, no kernel driver
+needed.
 
-Will use the new header in V2.
+thanks,
 
->> +    #define PINMUX_GPIO99__FUNC_SCL0 (MTK_PIN_NO(99) | 1)
->> +    #define PINMUX_GPIO100__FUNC_SDA0 (MTK_PIN_NO(100) | 1)
->> +
->> +    pio: pinctrl@10005000 {
->> +        compatible =3D "mediatek,mt6878-pinctrl";
->> +        reg =3D <0x10005000 0x1000>,
->> +              <0x11d10000 0x1000>,
->> +              <0x11d30000 0x1000>,
->> +              <0x11d40000 0x1000>,
->> +              <0x11d50000 0x1000>,
->> +              <0x11d60000 0x1000>,
->> +              <0x11e20000 0x1000>,
->> +              <0x11e30000 0x1000>,
->> +              <0x11eb0000 0x1000>,
->> +              <0x11ec0000 0x1000>,
->> +              <0x11ce0000 0x1000>,
->> +              <0x11de0000 0x1000>,
->> +              <0x11e60000 0x1000>,
->> +              <0x1c01e000 0x1000>;
->> +        reg-names =3D "base", "bl", "bm", "br", "bl1", "br1",
->> +                    "lm", "lt", "rm", "rt", "eint-e", "eint-s",
->> +                    "eint-w", "eint-c";
->> +        gpio-controller;
->> +        #gpio-cells =3D <2>;
->> +        gpio-ranges =3D <&pio 0 0 220>;
->> +        interrupt-controller;
->> +        interrupts =3D <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH 0>;
->> +        #interrupt-cells =3D <2>;
->> +
->> +        gpio-pins {
->> +            pins {
->> +                pinmux =3D <PINMUX_GPIO0__FUNC_GPIO0>;
->> +                bias-pull-up =3D <4000>;
->> +                drive-strength =3D <6>;
->> +            };
->> +        };
->> +
->> +        i2c0-pins {
->> +            pins-bus {
->> +                pinmux =3D <PINMUX_GPIO99__FUNC_SCL0>,
->> +                         <PINMUX_GPIO100__FUNC_SDA0>;
->> +                bias-pull-down =3D <75000>;
->> +                drive-strength-microamp =3D <1000>;
->> +            };
->> +        };
->> +    };
->> diff --git a/include/dt-bindings/pinctrl/mt6878-pinfunc.h b/include/dt-b=
-indings/pinctrl/mt6878-pinfunc.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..4e8e475a74549b513ac7075a=
-c2ef0fe6f7f1d097
->> --- /dev/null
->> +++ b/include/dt-bindings/pinctrl/mt6878-pinfunc.h
->
-> This is now in DTS.
-
-Will move over in V2.
-
->
->> @@ -0,0 +1,1201 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->
-> Otherwise wrong license and wrong filename (vendor prefix, filename
-> matching binding).
->
-> Best regards,
-> Krzysztof
-
-Thanks,
-Igor
+greg k-h
 
