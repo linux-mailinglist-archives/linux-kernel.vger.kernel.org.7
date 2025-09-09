@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-807264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA0EB4A242
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:30:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B61B4A23F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3F818956ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87FC16D384
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A472303A04;
-	Tue,  9 Sep 2025 06:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91EC303A1F;
+	Tue,  9 Sep 2025 06:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s6P+gDxP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODPEczKa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910EB235074;
-	Tue,  9 Sep 2025 06:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF303235074;
+	Tue,  9 Sep 2025 06:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757399394; cv=none; b=DAHzhh6vl6sF0eJwhuRvpaOOqYbO9CZgc2L/ubRE7GBR76AHqBqCIfgKVgAi9F4eg0aGQic0Z1y+bgRKv6fXUO5ZtFjCMDuW4xwKRrHlTMkGTIrSxe5AYsruDWX461w2HfnFbE2aTCh/xkGotz5Gdr5AqjjegydcepRPhTNkQdQ=
+	t=1757399374; cv=none; b=GCpckla+wgpFELiNz/tPWQPHrqqLgNLjLKGL7dA4RC8i+XgB59T94W9xIwRu7xHDqKuaos1OhdwnZON2Q6+0fAqff/NZU8VH2cJd7u1k/4dNQhpOrrhYghYJjQoKLm+RnO889xAwRMOdFzN9gdsxhTdb3zz0SgbF22d/Hx6bPdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757399394; c=relaxed/simple;
-	bh=0WLL0f8NJ8cwHD/XemZya+D9Typtd/p+CMu9DQSWELg=;
+	s=arc-20240116; t=1757399374; c=relaxed/simple;
+	bh=RSVuLnwfn6lKemssdBwmkRTtO64cdfYMqOYTLPlQs3s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aBvx1HTunmBokPykJV6CWrvCZVqXZXstPQ1BOf+OYBNPl+J7GaxIsVi7+NVKXb3bcsYDQ+4KQyjmQwZp/qav4R+EWP9u5vnYbEHwLHM3Pivyo9B/9nNHZaXWEILVW+5exl1EBqkZZMkepIMxQLwK6kvML07wAEor/W6vVMwXhcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s6P+gDxP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588NNHxM007706;
-	Tue, 9 Sep 2025 06:29:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=x4YCRX
-	khUrlDStIx0Xc+Fh8XD2rBEsPOtnP39d9u0fQ=; b=s6P+gDxPBLtf9llt9lwdTE
-	+WLV/+5jZDlUb+ApemK3qeCgxJoXLXj7Ing3Vsdy4yR75bKJK0l0qT9dYmaSxqcI
-	cIQqB9KT0OyBwiyOKq5U+FZMLcYAoNbyL+V6WvHOB5Nu26+UT8NF+nSTaYTkHYuz
-	OTDOhXI8hzDWEs2spcZH+bMEiD98bhMPXwJfcbPnCxtgaqudWBU2jx1OOt79WIDQ
-	Hi9yTkg1qSfEJlxWJY5DuINjYdOrf0y6QAcOJynXNx5CI8sm8kgMtJb2S3H9YDfT
-	70CXNLz1Gt4NpieCiXCy1neheTWvbv9OTv4laCahXqgOuCpNHTN2JAwa+y2RcTxg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyctryf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:29:32 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58961PUh007950;
-	Tue, 9 Sep 2025 06:29:31 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109phpdb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:29:31 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5896TLHG26411524
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 06:29:21 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A9532589AA;
-	Tue,  9 Sep 2025 06:29:30 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E9E705895B;
-	Tue,  9 Sep 2025 06:29:23 +0000 (GMT)
-Received: from [9.43.113.79] (unknown [9.43.113.79])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  9 Sep 2025 06:29:06 +0000 (GMT)
-Message-ID: <9708abeb-7677-4c0e-931b-7ca5fe0a0242@linux.ibm.com>
-Date: Tue, 9 Sep 2025 11:59:03 +0530
+	 In-Reply-To:Content-Type; b=Gfar64rKewtwRmUjN84mhJB7eA7yilT9ZgpV7aIw2vsy+ma8vw6yCHGhA3rKCPXCabMGoBGwTEhJtEDiYzrkYvPZf70wr8oldmIKOyahkXY0c8VVRmXoYaJUW1ADb+yG4Zd9SPGtZhQ0Gv+Sk+38exiGgYibScrYz2UdyoKFJMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODPEczKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51560C4CEF4;
+	Tue,  9 Sep 2025 06:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757399373;
+	bh=RSVuLnwfn6lKemssdBwmkRTtO64cdfYMqOYTLPlQs3s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ODPEczKa/AlXKhw6F8c9TO09Io1SaxNo2XlIOUAggPIbGDm87relJQDwAsvfXFd7P
+	 rzIHU+XrDwvKXq4U+1b4yJVDvOJBp/lSFUBg+od9u0qR+S5uCy0m2bClTkMA33SBYx
+	 NXn7fg6brMGNc1u/FUII/nK7/oPS70XAGvEeGNLPuiTHBV4U6QqWkrj/Q2PyiGnujU
+	 5RaqwplwO5CHfsdCRSX0KyHGS3p7+50u6GJQANsnvNtLaV/B3eorVx4hq1sn3FgVT5
+	 6g3Vc/sebHYaIwlAfYy+zBitJas0cE1IYEoJhEclbmmxrUlIEy2T+eQxyye0p+SyM5
+	 7XaiAU2f3FKDA==
+Message-ID: <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
+Date: Tue, 9 Sep 2025 08:29:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,115 +49,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.18/block 04/10] blk-mq: convert to serialize
- updating nr_requests with update_nr_hwq_lock
-To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-        johnny.chenyi@huawei.com
-References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
- <20250908061533.3062917-5-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v1 03/14] dt-bindings: arm: mediatek: mmsys: Add
+ assigned-clocks/rates properties
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-4-ariel.dalessandro@collabora.com>
+ <20250821-electric-kestrel-of-awe-cb89dc@kuoka>
+ <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250908061533.3062917-5-yukuai1@huaweicloud.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: cTXGwRW51Wo6sC56ajiyl6LPDS97EPLu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfXyIxwDe2B/HjY
- uBlblX17dXK26nbg8CTnwenOnlIgy8EG75WkhnAPOcweDX3cg8SbsOKNr9Mp/c+X6AvDjkEbLI1
- otTKVqpKpDSd3cSKLV9PKAJ6WyirE2a4HVV3QFtehd9aLCB3lf8CzhFfPv8g5kJAwKhwpRVl58I
- tAEKiLqGZvjT04UlKk/cTLMtAmPqvRLcmzvapkpkP+Um8Z5LX4x4GBa2CfOXvQG53wtQa0sU7qH
- TNkLnl7Q0JGpCSIoR0S/1D6ZbQG4oQ3y7YLKQY/VK8ksACm2Gs/nizaI2lU2Cuzuj/+6Qo4/XOO
- i3HXy2iWuUzgdxOcsidg16egZMCSD+0710M52+na5W2NRN4p+c13KRiUJ6U14rIkFMaSrJUP+qf
- +CBy4rpv
-X-Proofpoint-GUID: cTXGwRW51Wo6sC56ajiyl6LPDS97EPLu
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bfc94c cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=CTgejVLxCpRuXOwdBJ0A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
 
-
-
-On 9/8/25 11:45 AM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On 08/09/2025 21:19, Ariel D'Alessandro wrote:
+> Krzysztof,
 > 
-> request_queue->nr_requests can be changed by:
+> On 8/21/25 3:43 AM, Krzysztof Kozlowski wrote:
+>> On Wed, Aug 20, 2025 at 02:12:51PM -0300, Ariel D'Alessandro wrote:
+>>> Current, the DT bindings for MediaTek mmsys controller is missing the
+>>> assigned-clocks and assigned-clocks-rates properties. Add these and
+>>
+>> No, they do not miss them. I don't understand why you are adding these.
 > 
-> a) switching elevator by update nr_hw_queues
-> b) switching elevator by elevator sysfs attribute
-> c) configue queue sysfs attribute nr_requests
+> The reason I added these is due to the following check error:
 > 
-> Current lock order is:
-> 
-> 1) update_nr_hwq_lock, case a,b
-> 2) freeze_queue
-> 3) elevator_lock, cas a,b,c
-> 
-> And update nr_requests is seriablized by elevator_lock() already,
-> however, in the case c), we'll have to allocate new sched_tags if
-> nr_requests grow, and do this with elevator_lock held and queue
-> freezed has the risk of deadlock.
-> 
-> Hence use update_nr_hwq_lock instead, make it possible to allocate
-> memory if tags grow, meanwhile also prevent nr_requests to be changed
-> concurrently.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/blk-sysfs.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index f99519f7a820..7ea15bf68b4b 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -68,13 +68,14 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
->  	int ret, err;
->  	unsigned int memflags;
->  	struct request_queue *q = disk->queue;
-> +	struct blk_mq_tag_set *set = q->tag_set;
->  
->  	ret = queue_var_store(&nr, page, count);
->  	if (ret < 0)
->  		return ret;
->  
-> -	memflags = blk_mq_freeze_queue(q);
-> -	mutex_lock(&q->elevator_lock);
-> +	/* serialize updating nr_requests with switching elevator */
-> +	down_write(&set->update_nr_hwq_lock);
->  
-For serializing update of nr_requests with switching elevator,
-we should use disable_elv_switch(). So with this change we 
-don't need to acquire ->update_nr_hwq_lock in writer context 
-while running blk_mq_update_nr_requests but instead it can run
-acquiring ->update_nr_hwq_lock in the reader context.
+> $ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
+>    DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
+> [...]
+> arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: syscon@14000000 
+> (mediatek,mt8173-mmsys): 'assigned-clock-rates', 'assigned-clocks' do 
+> not match any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: 
+> http://devicetree.org/schemas/arm/mediatek/mediatek,mmsys.yaml#
 
-So the code flow should be,
-
-disable_elv_switch  => this would set QUEUE_FLAG_NO_ELV_SWITCH
-...
-down_read ->update_nr_hwq_lock
-acquire ->freeze_lock
-acquire ->elevator_lock;
-...
-...
-release ->elevator_lock;
-release ->freeze_lock
-
-clear QUEUE_FLAG_NO_ELV_SWITCH
-up_read ->update_nr_hwq_lock
-
-Thanks,
---Nilay
+This is looking like missing clocks or other unevaluated property by the
+binding.
 
 
+Best regards,
+Krzysztof
 
