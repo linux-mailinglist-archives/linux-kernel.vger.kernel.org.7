@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-808348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8386EB4FEA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:04:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEE9B4FEA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE5567BA715
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:02:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D0A74E2DF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F033451D4;
-	Tue,  9 Sep 2025 14:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F5E322C63;
+	Tue,  9 Sep 2025 14:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FO7/zetR"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ElpAUPfg"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB22D178372
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82EB2EB853
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426583; cv=none; b=Ypj63dGNAa4zvp1pgYZ8xF/CLrAdN65ClpAGuNlUhnpknhkOoYftmJD+f8ItmZXPFRf4EsubeVXdBv+5/8ycIWiTR8oW93Alno28POLC7Wj/GFAd3ylj7RxBC+3Ty+s0AoAwXI6o6Wm4cu5dENB0no8wCbRyIG9Yi2TtGRlKVkw=
+	t=1757426602; cv=none; b=KMd/wavYMTni/z6h7HUm/0cs94+b0To5wT3gkPt7+AwlaidqdBdv42rgm4NXUehbuo+T34y0x/AE5Vh1lGI5u8j91rb65nUPDGeuHHwbZdUTflrv7yowij+8Ux07W1/Cw7EhlnjR93rcJi0fV1yIzrhaxoifPEWQYthAc0SzrQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426583; c=relaxed/simple;
-	bh=f3OQr5ANjsIOmReaa3CIYDHS7pK1RQLPMaap5l+Pb/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqrYswlX4LUJIjeHq+d+lpQpuThNTFF5Ae0fzRO4FpAXspxlWkQu9Yqoe1rjo6jEmM8yWEa/V3RFS5J6knHamwU+wnG0ZNB0JyfCUJ4e1Es0dE/QmA5hAh0S15DVW0HOjInOsd4OMdEfqnKRFPvgmlChSAbsm2tyDhFgXrOoolI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FO7/zetR; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b04770a25f2so767776166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:03:01 -0700 (PDT)
+	s=arc-20240116; t=1757426602; c=relaxed/simple;
+	bh=q45CxhQhD0f4Z1JjVjqiatYI0JZBd8Wv+yGFW41DUnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hSPSFrEU4iU+b+Vw94Fw5tH49zJlBf1QSdH4ZyNGE/uEwWgZ0L42i+3cic/pJg0zQ9RX7dJjQGUnotrYdj6B2pa/uk10IhuRZTbVO61cRPV16jtN+uxQnLm9436kHcgJ7T2j/8g0lS8oTKkUqiNiN43kq8Mx+zFdXcxlJGSFxn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ElpAUPfg; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-746c0ee5d77so3510955a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:03:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757426580; x=1758031380; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BUW5/LW9jOJBAxRiEK/kGmWkiKeTyE9r4ygtNRhhTU=;
-        b=FO7/zetROOYuHxdKIDiv5NUDRORpMDMt+lbp/VrFqUPmn/FCgFiIWIAXdyP2Q5+S48
-         6RQFWqoRJTe7+8yS2lyI5PD4mbCpZdxFmnqtdAaseNzLo3z8nz9cuWyPC6/jXOU1vV2y
-         QCOhmZY9VG+5ChILbLjU0Q3JxTtvurJ75tHkfZfV7ShRKxOyQD25B6WwCjOtoOM1NClz
-         etv0LeApKweoiYZ1Am96LEG9ob/Ei3AXAq/rSYrTZANdBcDyqDg/tPXRypvCLA1PjZ1y
-         7JmpCDYdCzt83NXN6OpsD+yUSwSpxsT4EZ3PDjriM0X5RHrW8ho9bKNFRB1//PBkCI4n
-         UMgw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757426598; x=1758031398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0+Ty4Uw7gGeDTrt6VENR+8GGLY9kK+eZiE7VvFqZl0w=;
+        b=ElpAUPfg8H0rQCQBhmOm4tawRQUVCZBM9kyOgQ6B/1AHs08XLLQBU3bb6RtYSou13S
+         oedr1SzopfT3Q62Gvfajj3gBwJyiuPUaYxW+AHaxh3qyn1ASM+LATePnkkPGiNIIIOpg
+         cFpXAg2amvj3nPI33GnJJIuxzTl0WeTJ6jBdgSB/t9UySgd4S1iTbjb0X0MjDjdPyEOS
+         N2dCvLqi/iowLxBu0v4x+PiwD8mkZyZJmtWaPVHyORTV6j9PLL83j2aUWllXpIkjUnqQ
+         gPMqlVdjn/OqQ9C6h+aRMVXLZQO9nJHP/SOUweouQEm0q/1gqL2ww6GpPD+UN/+DZZzt
+         AdwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426580; x=1758031380;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2BUW5/LW9jOJBAxRiEK/kGmWkiKeTyE9r4ygtNRhhTU=;
-        b=wc+E+GT+s28kLxMy2Hjusbfq4zPyuBL0I0nbPEvjQhDBGIDklhEMLfFsbsDIpDNAnf
-         GuN9nPTOGjiyDBPyjajuOcX8yF3iE6e0dFo0dhb6twhxbnJSE7GEqgE1u5LC4/VJg29a
-         wCL2tnQumF7NfuYkUsyCEBcBS1BrR1MFcauh4StUp2tKBgs8+nsscDFOOvWzFgayXN/z
-         nlRAtWaQMCL7ZhRiADI1xE+SvlaUxoN8Pfo/b17BF/3yIldA82Q1x9xJLmVtJp7gqYqj
-         G2eFFdGY8vx0XCQFEFIRbUsrOQAmzezePJhE42fVqqfbq60uK/Wl0KCr3BoQ3zPcCNRV
-         Tzig==
-X-Forwarded-Encrypted: i=1; AJvYcCVlalo1QHHM+WksKW5ajs0tHA+xB/X3iKK5JOnH63cevQwTNgikHQJFxMYqCO1AmGME/oVjyDo6ctCEZy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfmCnRxcVa4gwt3heAOadY9V30O8YC8c3s48eoSoeTL7XLEKIt
-	kDOKCqiXbaBngurZFa+Sw2mIsqRNUEICFYkVL8VyhGrB3+WRyjoMkwxf1TG/fIBl2cg=
-X-Gm-Gg: ASbGncs6+TWI2Rl31dIVWlafOxxBRaA4ra8p+YXqMZ1fX0TPztn8pEszndvwddBisJ6
-	5cvkyiHXfE+OHQDFtpV1OQURQfzd9fcYpCVywybbQ1e9LP50pkOf0L7CJCUYtCuK+TiXCYlG1Yz
-	aeIXmy0GtFpvpA+gVGr6IYTfcGJI7iGgjJ19soXM/Cd0svDzW4iTpzko+OFbBuP47de4lP7k+OK
-	k1b7jM589CflR1rIPv091YWdQ2uzgI8kRpGmkyOclx4H89bH60LkMTQg1mmxwGBBkflnI7ymbmJ
-	GvIR+fK+iw/MmbvISnMu9bweyo8+TIh48cTBVi4yeTizOepc6DwdvnmRMA3MNaczvZ8Qse55R1q
-	vyytRL6/r9iUwo5/ZXZhOflYrfML3sRaTDg==
-X-Google-Smtp-Source: AGHT+IEcXOauWERSVTDc/oyeBPYo40tn1vR1+fr4Fma7wkicQf7mx/quHveASuxtVY4qRP9qxAuU+Q==
-X-Received: by 2002:a17:906:6a04:b0:b04:5bc2:3246 with SMTP id a640c23a62f3a-b04b140cc26mr1306728766b.14.1757426579751;
-        Tue, 09 Sep 2025 07:02:59 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aff0a591819sm2633577366b.41.2025.09.09.07.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 07:02:59 -0700 (PDT)
-Date: Tue, 9 Sep 2025 16:02:57 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: zhongjinji <zhongjinji@honor.com>
-Cc: akpm@linux-foundation.org, feng.han@honor.com, lenb@kernel.org,
-	liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-pm@vger.kernel.org, liulu.liu@honor.com,
-	lorenzo.stoakes@oracle.com, pavel@kernel.org, rafael@kernel.org,
-	rientjes@google.com, shakeel.butt@linux.dev, surenb@google.com,
-	tglx@linutronix.de
-Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for
- thawing OOM victims
-Message-ID: <aMAzkQQ4XAFh9xlm@tiehlicka>
-References: <aMAWvwQ3eJZH55mp@tiehlicka>
- <20250909135152.20477-1-zhongjinji@honor.com>
+        d=1e100.net; s=20230601; t=1757426598; x=1758031398;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0+Ty4Uw7gGeDTrt6VENR+8GGLY9kK+eZiE7VvFqZl0w=;
+        b=W2PfQoxDRPviYN4GayPmqtuyQ90VdJOfvptmy666ARa4L4NxgICM9D0uPpXLO+MYlX
+         0hZ9BzLMSLB9uoH0yJrxIGE5pkDuwm13TfblFDay7Qd1/ZbAMnWnKjzxHatpjtIPBxAw
+         8Qu+/AxTdSLvD2TOwa3i2T0iVZLozx0nJxIEcan3WaSF/Q+BtNTIWDZuRTCLqIgy8XK+
+         fh/o/KqlI+1izC0lulVLs9i8FnJtfM0BxDJ+/T8MEaMui3BRmF6n18PCGvVV52Op78Qo
+         l4gPJ3KpDm2h4LrjdfmuZx4XZSqNoV3kuMas2hxtF4bGzwkB8u80cw19pLYaVA+LQbGG
+         9KXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlXaahe/qSwcr+0nSQIfZxRZUdSL5O/6eqJ22qoC2dKX6E09NiQEcpyhLo7q4q1p5O0v3yGq7PU8YtqIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvYpYzx5tDdc2XSUlRW8WwNkGHxfYGRh+l2bAM5sMnA5O8S4RG
+	X4Af77R8ulEnY8I4DqeRi5vNcyEIrQr29jV+V7p/oBui+42nlrSZQas0+YWAJpRNAwU=
+X-Gm-Gg: ASbGnctr66l+KZ+kFOCmqzfixzCC9FgV0NBLuAj3xNcCuLJMtAtMqp51F1AbCtM2dqY
+	0RDK0WJ0rrxOGPgMSzwvvqF+bcKgFmlP50vHgCEIrDKdI1syGKX0H99iICLiEthPvwxJ9IW9FAG
+	/4/v2CWnUlCB6Pa1wTbs9zqNSOwDeDobMFDlJNstQ9aJLG/+aUDbE9ACKZqQMe2Iak5PsvkYbbl
+	uOS524wc6/dCnbsdQXtyWpUHf+1jzgqXTQ5fFiRQZW9tOCPT31fge8B418ffa0PH4nyvnKjBMpP
+	6rhztcUyPVv3lYKujbbykGYF4sMw4lzGRt9AarBo9LEip2gczxgzfNecuH9Ad/roh9NzaH6GdGF
+	2rXachazT/1LXAeczjGjrgaLvioyF5XbWY8Onx34yXksxQ6ue3RvXl8X1F/VTwCDrcX2fUAKOeQ
+	WRMw4q21c=
+X-Google-Smtp-Source: AGHT+IGBODO1pzDIKXSlNVnZ1VymhDBL90KIRXoVOSdBF5kuyeZU2GyRm2nEjTxrDqEYWt0BWjhcgQ==
+X-Received: by 2002:a05:6830:6ab4:b0:743:968b:3440 with SMTP id 46e09a7af769-74c75e4fe75mr5174495a34.20.1757426597538;
+        Tue, 09 Sep 2025 07:03:17 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:3bc0:a377:2a07:2a0? ([2600:8803:e7e4:1d00:3bc0:a377:2a07:2a0])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6218ac3645dsm1067679eaf.8.2025.09.09.07.03.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 07:03:16 -0700 (PDT)
+Message-ID: <0cdc56d2-091c-4d60-851e-788beec5e3d6@baylibre.com>
+Date: Tue, 9 Sep 2025 09:03:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909135152.20477-1-zhongjinji@honor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] iio: imu: inv_icm42600: use guard() to release
+ mutexes
+To: Sean Nyekjaer <sean@geanix.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250909-icm42pmreg-v4-0-2bf763662c5c@geanix.com>
+ <20250909-icm42pmreg-v4-5-2bf763662c5c@geanix.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250909-icm42pmreg-v4-5-2bf763662c5c@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 09-09-25 21:51:52, zhongjinji wrote:
-> > On Tue 09-09-25 19:41:31, zhongjinji wrote:
-> > > > On Tue 09-09-25 17:06:57, zhongjinji wrote:
-> > > > > OOM killer is a mechanism that selects and kills processes when the system
-> > > > > runs out of memory to reclaim resources and keep the system stable.
-> > > > > However, the oom victim cannot terminate on its own when it is frozen,
-> > > > > because __thaw_task() only thaws one thread of the victim, while
-> > > > > the other threads remain in the frozen state.
-> > > > > 
-> > > > > Since __thaw_task did not fully thaw the OOM victim for self-termination,
-> > > > > introduce thaw_oom_process() to properly thaw OOM victims.
-> > > > 
-> > > > You will need s@thaw_oom_process@thaw_processes@
-> > > 
-> > > The reason for using thaw_oom_process is that the TIF_MEMDIE flag of the
-> > > thawed thread will be set, which means this function can only be used to
-> > > thaw processes terminated by the OOM killer.
-> > 
-> > Just do not set the flag inside the function. I would even say do not
-> > set TIF_MEMDIE to the rest of the thread group at all. More on that
-> > below
-> > 
-> > > thaw_processes has already been defined in kernel/power/process.c.
-> > > Would it be better to use thaw_process instead?
-> > 
-> > Sorry I meant thaw_process as thaw_processes is handling all the
-> > processes.
-> > 
-> > > I am concerned that others might misunderstand the thaw_process function.
-> > > thaw_process sets all threads to the TIF_MEMDIE state, so it can only be
-> > > used to thaw processes killed by the OOM killer.
-> > 
-> > And that is the reason why it shouldn't be doing that. It should thaw
-> > the whole thread group. That's it.
-> >  
-> > > If the TIF_MEMDIE flag of a thread is not set, the thread cannot be thawed
-> > > regardless of the cgroup state.
-> > 
-> > Why would that be the case. TIF_MEMDIE should only denote the victim
-> > should be able to access memory reserves. Why the whole thread group
-> > needs that? While more threads could be caught in the allocation path
-> > this is a sort of boost at best. It cannot guarantee any forward
-> > progress and we have kept marking only the first thread that way without
-> > any issues.
+On 9/9/25 2:11 AM, Sean Nyekjaer wrote:
+> Replace explicit mutex_lock() and mutex_unlock() with the guard() macro
+> for cleaner and safer mutex handling.
 > 
-> When a process is frozen, all its threads enter __refrigerator() (in kernel/freezer.c). 
-> When __thaw_task is called, the threads are woken up and check the freezing(current) 
-> state (in __refrigerator). The freezing check is implemented via freezing_slow_path. 
-> When TIF_MEMDIE is set for a thread, freezing_slow_path will return false, allowing 
-> the thread to exit the infinite loop in __refrigerator(), and thus the thread will 
-> be thawed.
-> 
-> The following code can explain how TIF_MEMDIE works in thread thawing.
-> __refrigerator
->   for (;;) {
->     freezing = freezing(current)
->       freezing_slow_path
->         if (test_tsk_thread_flag(p, TIF_MEMDIE))
->           return false;
->     if (!freezing)
->       break;
->     schedule();
->   }
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
 
-OK, I see. We could deal with that by checking tsk_is_oom_victim()
-instead of TIF_MEMDIE
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-> Since thread_info is not shared within a thread group, TIF_MEMDIE for each thread  
-> must be set so that all threads can be thawed.
-
--- 
-Michal Hocko
-SUSE Labs
+(I wouldn't mind seeing the "obvious" reference counting comments
+removed either).
 
