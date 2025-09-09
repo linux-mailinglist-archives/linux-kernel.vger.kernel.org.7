@@ -1,386 +1,241 @@
-Return-Path: <linux-kernel+bounces-809113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08FBB508CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868DDB508CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAE6443BFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32EB2169BD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39C5264A90;
-	Tue,  9 Sep 2025 22:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F4B266B72;
+	Tue,  9 Sep 2025 22:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M5ojAfY+"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W40Pe9R5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5BDDC3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757456191; cv=none; b=Z/PL9pHCO1ed/PxZFg6p53KgAdYTpH4Ri5Z/OoPPr1WFxv5um+wNgvRasTZKS4kvwbx2gqIqUxfht2pRr41sKo5ZUhgjAiCGIBftqOa23nzYVPsXTdcWj858z3JK1UlrwS1lJHNIkJzGSHZ35icPK9VLg6tvAtvW5LQYniKkGlk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757456191; c=relaxed/simple;
-	bh=t4wiaymRSnweULxkALpGPSnnhQaw9uKJs8ohNg2FHnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PDHlN3IAClHRmYYoFMtYJMt1z1AVDlDLwMbQal88AxeuAe29lRWuT/W+hAwJ7hBOIj9dkwSm1u4oalp5gXQ++qddBM6+4PpA5182RcBowBG2qKgXISRoEueDAzwOjqNXTU2wcYMCmDIgPXtkEFV3YMWyDLnf1dBRffvS6F7vaWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M5ojAfY+; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b48fc1d998so48441cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757456188; x=1758060988; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UED7BejBHlF/77adf0K9Lgcj4lQwJd8bxj9aaOqzio=;
-        b=M5ojAfY++UWSe9VFUGDkN/NJDjHkznm63BLGYOId1+gm/qb38CAj0F1UkST7wCYHQf
-         EL1NvihCtksRvPL5r3eN/JsrLa/2iPO2y8PfTDOUp6icnLF+zqJGd55hXH1I7LGiBYXF
-         SBC7jyZ1SWIffgyctFbgDdJW9hj7p9YXvl1ZURtvJq9JVk4NVfm3bdl++Mz8FGMG8/i+
-         u/OMpDXtplpiDweCAYeptgaNXDZ2tA+9JpYhBT8hh+tokc0TFUUK7hli1Q3OX08yC6Jg
-         Sl7/MDT5KmIda/nArmIvlSNeqq+pvUmO53dXKHYMftf0+kf8WOZHGBT1G4qmYw+5wjwc
-         rOGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757456188; x=1758060988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8UED7BejBHlF/77adf0K9Lgcj4lQwJd8bxj9aaOqzio=;
-        b=WZ7VSzegwS/+5K+BNA0aDi2pzgblSNDcchkKBsGl+sHLh9tjNU6W8V/nVXt6Wgz2i+
-         9SiikcaeY9B4YIIbU2DMc3zn74TjgruHG9xXwJq4CBQ4VHfIDi2xMBMHjCSyMCNTiL96
-         G7FkTrigCH1OTBVczfY5NU1J4QcSPkvWYBv0i2csO11dE3QRwfzr624SJraoV/RThD/E
-         rCECB6QN26MXceCyfJyi0QiviphxWEeZzgNCqDM53n3CURGztHmH/lC+OBjyPSbbXmw+
-         NUZsOKWUiZAaAOI9Hn9DLzQaK6EvJJS6VnVF8mvcegKDzQ70mt+teusldkbdHx9FaRUO
-         pX1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBBmnzX5pbs77st2I2+WaoJOJQn/kP35glXqN/gEkuiu2JGXywZe2YLX8ySxYhoieSHvxNiwKBbozInLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmNoCepTCCaHUJq9XFZIWyMcH0jN+HpCOMuOa2vUM5EQ6Vr2cP
-	y4lNxGRmWPw9irfcujhcXIUoRwND98TqIEoQ4djddO1AxD5ccjBhVWPh091iMHc1JbSzpWycbRr
-	Ui7QPEtgIJP1S4a6zTZ0ko4tAf5LyLg26MBAu1LtW
-X-Gm-Gg: ASbGncvftgLRluKbXSJwqfpaK8xSeoncjtK7E47W0qAqppYZfF2FDA3z01tptiUvDEw
-	NywRO8NssSuBTJ2yVu1QplFa5SIaWpJN64WGa5XUBG3YEDnc8iFfW5VL/0I+2xlor3v3+30vrjE
-	Gds3DUVi7z6WBQZkXAk26hnSxwlBTnY9jAKhEBMpZebNXZmqAECBkubLdxwectMtJXVzguldY/m
-	far6ALgPF9YLGGcRlPb6UW5G8bfNemJfGQxYrkkSwN6
-X-Google-Smtp-Source: AGHT+IEcXgBXlv8XPNCxv6BkbMGmnKO+vkjF7bIJRkUFgM/Y8hmvK9zA4Y0Tpy1PvYPFWYUJApeFEFOuOBn4s9kvME8=
-X-Received: by 2002:ac8:5fc4:0:b0:4b4:9590:e091 with SMTP id
- d75a77b69052e-4b626eb8d89mr803731cf.5.1757456187636; Tue, 09 Sep 2025
- 15:16:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435CEDDC3
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757456282; cv=fail; b=CM+hyk0aG0qA/OpLtZ+zSb3ZtowcKU4O8tWSk5YWOrkqdvCtDH268k3TkKHlgZLWW6SqP48wBuDByhEZ8PggQ/tX38anW/069O2b30ZmJ5gBoyy9P/B5mhc8upa/GzzW0Fka/r1XExl1xjW3UX1qvJh6hVtJzop75CJSJOEyHG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757456282; c=relaxed/simple;
+	bh=jSNMKUTN6lt+Eo1QhxJt/YEqEDLvuz7FPw5T9eu56IY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=t4PBmfjYrK9/HyQ1fKNARY8x8fn7YSkWMtq8QZRWCK6Ukl3tzielufjfvB5OtWyV9td1yhxyOgRv+PE5dsrXWgeaqYO4wHWfrWj5sIc2NoYLG3SClFmQdkP52xUtjFniCpoptsFgZdjhPOdbW/DAnD7CVfnrIVxnsrUtu7RFepM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W40Pe9R5; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757456281; x=1788992281;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=jSNMKUTN6lt+Eo1QhxJt/YEqEDLvuz7FPw5T9eu56IY=;
+  b=W40Pe9R5rakSL73w9DfUTtxemYNWfxxO/Et1fIkEvBEYx68M0JJU0XrF
+   OKnyAO5RsGsIYhkGX/Gl9N3OyeSHlGYdqChnOlunPWXelRy/jY3cUl5rS
+   SPW7tWo0em3wFKMe0n85DciP4UHoaJ22OlZbEs7jhDWT4p7ymO+gB2rIm
+   iAvakciSi4xUMg30RemVLpDytjas7bgOdhLbMaOA1TVttF/Qg/GUlXCBe
+   JhN1lp01NbEpI96FspL6OW9AwwJ+FY4jwgpqhTwtL7fmZ1+3hpiY1NJ/V
+   ugU14ITJq3vBXxMa57HEnyH7qYdLlkLHX0bp+WHMsSZgkDweXw2TyXZ7n
+   g==;
+X-CSE-ConnectionGUID: /n1gRoyoTt6uyQOppUHa1g==
+X-CSE-MsgGUID: vohuf5JRSKGxYJwbRtqsjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="85205647"
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="85205647"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:18:00 -0700
+X-CSE-ConnectionGUID: muecoXN5SDaB2XsSIv5iPA==
+X-CSE-MsgGUID: 4T4aejnhR9WRIFhRg5XeWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="172495525"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:18:00 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 9 Sep 2025 15:18:00 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 9 Sep 2025 15:18:00 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.48) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 9 Sep 2025 15:17:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b0/kSspOdcJfBUQ07FEGUhrt6A3PhOMweZ9iD9119zDmZHcxSFmib1viVAtBvWdUaE6X4X7x7HKIHRmmfWwO4L4nibkHy8iMppsbCL3AQIZLViajSFtxIz5i6+kPFdaMcHZZeih22IaJaZU9PD6bOha0B3Dtf282f85jn2o9Hsck9udCGQR+I9PN9GANauwipyYdQlsN52eJIoazOe5X3Ou8Jlyg/QTLfqZnxZY4Q7CUZbIO+NoiyGpfQdPjzl3p+eIaBiFHgC+VDACvWaHU2OKGTpKcQxhSFjiyK1HY3pixzrwO0mJA9QInCnwtiaGwYG856pY8UQvObMUR9hFCKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vyuawwDDVfxldri5Q0fPVPAFm9ZcztHQtI3zIjb20q0=;
+ b=vM3NBRsVHhq9Zufr35C49DVXaEPjCZyW1F5QA425SnuOA40lORI5JSExjl/TlOdoB+dL6qac7Plz6H8/n1bJRSB4qSSau0JIFJIsV0SOnH62W8KQrcjKdG+9JWq1Rsi9/gSxxEt/zq0Y/ZfOdRrScHRRY6DKg5TtLmANF2cY0Ioj9kN50hPUCSQOvRelbKmn79DjNJDOtytoKR4rdVkULfgCqXh4HJv0nu2R8zJbGIZKvpYSvfToBo9ySpB7uin1cLUqFhEMehGLa6zmW+wRhGtuU6qq0VmXDe6uVzoikDbulK6usOuMaEFXttB9Mdw+S7IhX1e3jKbjyGWKODHs1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DS0PR11MB8133.namprd11.prod.outlook.com (2603:10b6:8:15b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 22:17:57 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 22:17:57 +0000
+Message-ID: <b9c3ed92-19b3-479e-b797-baebb858cfc5@intel.com>
+Date: Tue, 9 Sep 2025 15:17:55 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 15/31] x86,fs/resctrl: Add an architectural hook called
+ for each mount
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250829193346.31565-1-tony.luck@intel.com>
+ <20250829193346.31565-16-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250829193346.31565-16-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0154.namprd04.prod.outlook.com
+ (2603:10b6:303:85::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909190945.1030905-1-Liam.Howlett@oracle.com> <20250909190945.1030905-9-Liam.Howlett@oracle.com>
-In-Reply-To: <20250909190945.1030905-9-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 9 Sep 2025 15:16:16 -0700
-X-Gm-Features: AS18NWCg20zYnHtLpwe4CYG1V6SoxxfcPtcH39dZBp2f7xr11kxNoKhH3k65OYs
-Message-ID: <CAJuCfpFGo4JXQQGECFdCgNNVaQc5MDLghdmnVXEK8Zfag7KHiw@mail.gmail.com>
-Subject: Re: [PATCH v1 8/9] mm/vma: Use unmap_desc in vms_clear_ptes() and exit_mmap()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, 
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
-	chrisl@kernel.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS0PR11MB8133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a85725c-6526-48ef-a250-08ddefeebaa8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eUJjcXgycXlkMUpDTkFFREhvYlEzcExJdks1OFFlVlAyck9KMkdhcjNIZkVs?=
+ =?utf-8?B?Q2J4T1hQWnJFVVFZS1g4QjVWTjRkQkdZVUorR3NnUWd0cGNEUDlhajF0YmEv?=
+ =?utf-8?B?d2JYdVd1cFMrdm0vM3NiamloTFpRRTJMNnQzWFI1dTd3T1EyUzUyZ3V2UEdk?=
+ =?utf-8?B?MXdqM1Y5dHVtWFphRlBubnZOaGhDZmdQaDhZdHFjb2JLWDVaM2prcy8xTE4r?=
+ =?utf-8?B?NW40ZEZYaCtnTVZTQWpULy9PNS95cUxjajcyeTVMdVZjd1N4bmp2Z2VhUXR4?=
+ =?utf-8?B?bzF5R2dpZldRL0JwK2ZZVk16Y3pQQjhYbWdDUURaaC9HKzVVVFRNMzlVQ3lQ?=
+ =?utf-8?B?MURTVVlxOXp1OEhnYmxrczdaejVNNytNOGRJQWdrUXMyNm0zVnhrelExZHk2?=
+ =?utf-8?B?cFRnVEpHRmRBVW5HYldGM3R1WXgwS2t3M2lueXRMVlk2blJwTGpubUN4TE1X?=
+ =?utf-8?B?enV1SEQ1WEZtd0hkTGlyWFI0Y1AxV094Rjdzc3lVVDBoL1ZYaDhPSGNtUUtY?=
+ =?utf-8?B?ZUtLV0R0Z0FSQTVYSWdOTnVXbEhJOHA2eFM4eSs5Y2E2aW1Hdnl4N25acTZy?=
+ =?utf-8?B?Z2pJS2hTSzg5YXNOajBxa1c0Wnl2bnQ5Rm8yYTZBbk1GZ2JxQlNTMnlWNklH?=
+ =?utf-8?B?OTJibC9mckp0S3FSV1RWcnVTaHoySGdsNGk4SVR3bGlXcDdESWVpdWZSb2NH?=
+ =?utf-8?B?UTA5NFlLSE94RFFESUkvRU01YnhsTFdEb1BRU1d6UTduYTdmK2M2cUU2NUlL?=
+ =?utf-8?B?Q2plMXd1R0RjdWlmNm1OV2htT2YyMW0reVBwWlQ0ZGhYM3VqNG1nWms2RUdy?=
+ =?utf-8?B?OU9wSGkzQ201UVdJWGhqbXU0Mm02RkZLbGZ0MDAvWG5wdS9HTmFBdXJ0K3pk?=
+ =?utf-8?B?OWNZaXNMZFhiOWVVM3VBR3dzNWx4UnBCdUpZZ3M4L3FBTGl5VnFCL01IZUh5?=
+ =?utf-8?B?MkpONGdRc1VjVndSYkY2K2plVFlJbDBJaUxYeHdDbDVZYUttSmlXTDh3MjJj?=
+ =?utf-8?B?YnJnTDVrbDZuZmFlOVVJaytKK2IrYVpYeGlBQkZqbU1SOS8wVDNPbXFHei9L?=
+ =?utf-8?B?dVhMM3I4c1QzZlovR0tuanVIOWdCVkZDU243T2FEVk9vMWdLZkxYV2xBQ3Rt?=
+ =?utf-8?B?V3pJLy8zZzEwNUlzbTUyeXZpaTlKS0w4WjhySlRZY2Y2cGFhckEwNzlGMlE0?=
+ =?utf-8?B?cFhnNlNFY2ZGekRya01EUGI1bXUyT0tCdnplSkpjaHNTRXFpditCcmx6d0VP?=
+ =?utf-8?B?cG9wUHdXRlVlYlZjL0xVMlZvRmpRbWxPV0NrSFZvMzllK3BHV2lxK3MyMUdG?=
+ =?utf-8?B?cHY3eXRISVdsZ2RiMCthWms2M1d1S2pTck0raXlKNXFhR3NOTU9hK3kvRjQy?=
+ =?utf-8?B?NmlyWlpTOGNhNDNOVSs2S1kvekdLdkRxMFZRUHRleDNSaGY1Q0kwamI5L3JV?=
+ =?utf-8?B?OVNYZTlEQ2VWQjliOFBUUytqVTdQa2NBN2IzVnp4RkFpaDR1cFNCc2FObkZ2?=
+ =?utf-8?B?QUgzZk1IU2Y2YllsTmFNQldvMjFlbFFlZ0JiVmF1bEtPbmxkeUVvWExwMHBs?=
+ =?utf-8?B?YzBLRGMzK2I1emZHS1IySlNTbEQ5M3dObW43ejJRdnQ0bmxNbDFwTGpjT2RG?=
+ =?utf-8?B?MU9FWStEWkZDaHUvMFpCNXhpOGYreVZKWGtnWm91YzNERXltcUEzeW9DeUg4?=
+ =?utf-8?B?d0FJNWxwbndRZFBONW5sV1hjTEQrdHIwWERBWVpGeW9sSFcra3E2bkpTTVZy?=
+ =?utf-8?B?WG5IaUd6T2NPdEhOV0Y5ZTlFeFN4OU0vZVA0THI4V3BwbjR5enVnU3Ayd1Qx?=
+ =?utf-8?B?bnQzb3ZrWjk3dDNjS3Q1YlZEMWdvNU01SEdsYTRGQWdXZ2xRL3UrcGg3RXI2?=
+ =?utf-8?B?Nmh3ekwxMDlCR2FYVjFwaTEvSjRjK3ZNWVRNVytMY0ovSkV2RC84Z1RyZWJZ?=
+ =?utf-8?Q?2sEqplbldNA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aVVBVkVGbmxvWHBJdlVYaWNJWDlHZGRHNmdXb1FUZ1IwSUV5eFZ0eXJweUJh?=
+ =?utf-8?B?cWU0c0U3aC91QkphK3U5cHVYdjRvM3Z6Y0RKMlVyNlVmMWFTMXBZcTFBNjZM?=
+ =?utf-8?B?K01hYmlWWThKQmV1czBDRXg4VGFrSUNZenBKZFhvZTk1czRJWTE0OEZMSVg4?=
+ =?utf-8?B?NnRXd1RicWlLcnV6N1ZyVEN2czNiYzBTN0d0ZExvS0UrUmsxQlJKNFZmTStS?=
+ =?utf-8?B?MHJWcUJDVGluS1NzaTdJWXdSWFdKWmt1Q2U2bk1hbFVtVzBUMDZ2VWdicmdO?=
+ =?utf-8?B?RU5YMk1DczhIbnVlNGh2KzRQUWovbUs0dlB2MmNyUDVDYlBxVVQ0N2ttUG1X?=
+ =?utf-8?B?U1VrdmxqNy9VeStNRE9TcHdad2g2QWtvTmRiaVFvcm44Y3E4QXI3MHQwaUND?=
+ =?utf-8?B?RmVLNEthWEZvemFvRkk5WWxzMm5raHFvTGVjN3BJbG5RVTVTbk9Cb0h6Mmsz?=
+ =?utf-8?B?cUZTeE1wWFZVMHVoSzZ2dnZNWFBpZXo0NFJmU080aXFyOGtPcU53WlUzTHhL?=
+ =?utf-8?B?aDFodVB2dWpmemJzMUJ5YkxTaFBaTTFrWWJHSjRzampBOGNUelhKUmpNaTJy?=
+ =?utf-8?B?TVh5MTEyQ1pNa3F5ajlmQU8xSG8xTHYrRHRZaStPajM1WlpNWGY4b0RMUjE0?=
+ =?utf-8?B?em5Xb3V1UU0wZm9HRXJHUWErK0VuejZmMXJrQ1V0a1BUTzNJNTBlWDlobW1U?=
+ =?utf-8?B?R2RUdmxIWk9WVXFpbUlxZnFndEZCSzNvR3R4YitHWDdnQlM0cUN6MHhpVGwr?=
+ =?utf-8?B?UnB4MHpFcXRHTFpqNE5OdzY1eFQyQ2RXdy9OcGZ5SVVCeWFodUdybklKTzY2?=
+ =?utf-8?B?Z1dlWFdMRkJPVUh6ZVAvS0p4cU8yaVE0bXg4QytMNlRDaGJ4aUZWakNDVU1S?=
+ =?utf-8?B?K1U0LzV2RnhBTmEyTUx4Nm9EZ1loU1pWekR6cDBrT0JFTUVGU2xOVUxHbXow?=
+ =?utf-8?B?SE93azd5MHduUkV6dTgvWjkvVllYeUVWbnFzYTdLMUt6RFdtVkNyS0plVUlk?=
+ =?utf-8?B?SEM1eEY5MmJPVTRJQ012cWZDOHRxYm95b2F0WFI1b1g3UCtzL2x6ZU9kOGZK?=
+ =?utf-8?B?b3EwUG5ta0Jzb0ljNmp0L01qUzl0cTFoMWNtSU1PR01rLzNPMXlKQ0NWMHc4?=
+ =?utf-8?B?Z3ZvTzFkSVJNUXJsbjFBVlBHdm5aTVlMQVZRWHZHNUQwSmNQUTBVSU94dXgy?=
+ =?utf-8?B?SUc2R083SEVLd1dLY3NCajVNVEwrT3oxZCsyL09zbFhwZ0lCTm1IRkljOFRD?=
+ =?utf-8?B?RWhFQ1BjV0VIekpzVmdiaUJrdDU5UEwwU3hvMmdoV2NJYURoaHNEUU1HNlNr?=
+ =?utf-8?B?d0pzK01QRVlNOFBUckR2VjlPM2lqdW5RMzJnUExpNGp3NVM5bDJoRVJhdEND?=
+ =?utf-8?B?UW5vMGN6RlBTWUFIbmRYWHV6S0I0UnF1Q1NaTEJyUjdKMlZMdXA1enUvRnhG?=
+ =?utf-8?B?RkZVZDNkMDM1WTJQWUNsWDVaRjNmQjZJajhFaWxzTEpLTjdQMVd6UHBCMXEz?=
+ =?utf-8?B?WVY0WWVBWjY1VElaMVVFU3NlSzVxTDl2ZnkyMnBVZWszMGxQVmtBV0Zwa3dJ?=
+ =?utf-8?B?cHdnTEUwRGdrNmxDQTlMbklzTlNzZVNCTnN6YXVFRm9KYjRKMnQ3ay9WQVVo?=
+ =?utf-8?B?bTNRSkwyV1MvT1dpRktKZjBkVDBVTlVHZHVlRFFkYlYrSG1UQ0xGeVpuMHRB?=
+ =?utf-8?B?bUVyZmhkY3pwT1JYN3ZZQjVmdTRkOXN0NmhadHRERGpPUXl5TUUvZWxxNFNn?=
+ =?utf-8?B?eXU0TlpFMnpTWDVnRlEwQW1zNXpoZTlwUlNBTFY3V3pSMmpHK0lxZzMvbnQw?=
+ =?utf-8?B?ajlrZzRMSGF2Q2RSbDQzSFl2UnBlWkVab1FXWFBLNTBWZ2htU1ZxczNLRkhV?=
+ =?utf-8?B?SitXalFaZmJOMjE5amZNL1pKeGhWblV4UEVaaUxaMVpCSFpibGJwcnFxUFNx?=
+ =?utf-8?B?MEZXalZKOGZOVlJEY3poZDZacXV5dkZiL3lTeDIxcUpRSTc3TTRzOWc1ZkNJ?=
+ =?utf-8?B?SUlwYXZxeGIyZ3dOSlpXRFJLNXRmVm44cWw1QmY0YktqRHpxZnhzTU9ncWxU?=
+ =?utf-8?B?ZjRqTDdOdjkwOGtVWVZqcnJUSERVQ2J1RHpCS2tVOEl1VDdYamNkOGhHWmk2?=
+ =?utf-8?B?WTR5ZlkrV0N1TjFNQ1FZbml3RHpNNG1PejhkaGY2dndleXNpbU9EcVRxMURr?=
+ =?utf-8?B?ZVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a85725c-6526-48ef-a250-08ddefeebaa8
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 22:17:57.1145
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bVAdZVBmoHTjDrH4mZ0ufU8QJf36JCmxLpCdnO8r8jhNU1JPoTrwImwvN08NaW7lyBvWbALQ59tWHSKT3sWPSnEypJ1waJ8q4VArdzX+zuY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8133
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 9, 2025 at 12:10=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> vms_clear_ptes() is slightly different than other callers to
-> unmap_region() and so had the unmapping open-coded.  Using the new
-> structure it is now possible to special-case the struct setup instead of
-> having the open-coded function.
->
-> exit_mmap() also calls unmap_vmas() with many arguemnts.  Using the
-> unmap_all_init() function to set the unmap descriptor for all vmas makes
-> this a bit easier to read.
->
-> Update to the vma test code is necessary to ensure testing continues to
-> function.
->
-> No functional changes intended.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Hi Tony,
+
+On 8/29/25 12:33 PM, Tony Luck wrote:
+> Enumeration of Intel telemetry events is an asynchronous process involving
+> several mutually dependent drivers added as auxiliary devices during
+> the device_initcall() phase of Linux boot. The process finishes after
+> the probe functions of these drivers completes. But this happens after
+> resctrl_arch_late_init() is executed.
+> 
+> Tracing the enumeration process shows that it does complete a full seven
+> seconds before the earliest possible mount of the resctrl file system
+> (when included in /etc/fstab for automatic mount by systemd).
+> 
+> Add a hook at the beginning of the mount code that will be used
+> to check for telemetry events and initialize if any are found.
+> 
+> Call the hook on every attempted mount. Expectations are that
+> most actions (like enumeration) will only need to be performed
+> on the first call.
+> 
+> resctrl filesystem calls the hook with no locks held. Architecture code
+> is responsible for any required locking.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
 > ---
->  include/linux/mm.h               |  3 ---
->  mm/internal.h                    |  3 +++
->  mm/memory.c                      | 24 ++++++++------------
->  mm/mmap.c                        |  5 +++-
->  mm/vma.c                         | 39 ++++++++++++++++++--------------
->  mm/vma.h                         | 14 ++++++++++++
->  tools/testing/vma/vma_internal.h | 14 ++++--------
->  7 files changed, 56 insertions(+), 46 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 892fe5dbf9de0..23eb59d543390 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2450,9 +2450,6 @@ static inline void zap_vma_pages(struct vm_area_str=
-uct *vma)
->         zap_page_range_single(vma, vma->vm_start,
->                               vma->vm_end - vma->vm_start, NULL);
->  }
-> -void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
-> -               struct vm_area_struct *start_vma, unsigned long start,
-> -               unsigned long end, unsigned long tree_end, bool mm_wr_loc=
-ked);
->
->  struct mmu_notifier_range;
->
-> diff --git a/mm/internal.h b/mm/internal.h
-> index d295252407fee..1239944f2830a 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -197,6 +197,9 @@ static inline void vma_close(struct vm_area_struct *v=
-ma)
->         }
->  }
->
-> +/* unmap_vmas is in mm/memory.c */
-> +void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc *unmap);
-> +
->  #ifdef CONFIG_MMU
->
->  /* Flags for folio_pte_batch(). */
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 829cd94950182..8d4d976311037 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2084,12 +2084,7 @@ static void unmap_single_vma(struct mmu_gather *tl=
-b,
->  /**
->   * unmap_vmas - unmap a range of memory covered by a list of vma's
->   * @tlb: address of the caller's struct mmu_gather
-> - * @mas: the maple state
-> - * @vma: the starting vma
-> - * @start_addr: virtual address at which to start unmapping
-> - * @end_addr: virtual address at which to end unmapping
-> - * @tree_end: The maximum index to check
-> - * @mm_wr_locked: lock flag
-> + * @unmap: The unmap_desc
->   *
->   * Unmap all pages in the vma list.
->   *
-> @@ -2102,11 +2097,9 @@ static void unmap_single_vma(struct mmu_gather *tl=
-b,
->   * ensure that any thus-far unmapped pages are flushed before unmap_vmas=
-()
->   * drops the lock and schedules.
->   */
-> -void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
-> -               struct vm_area_struct *vma, unsigned long start_addr,
-> -               unsigned long end_addr, unsigned long tree_end,
-> -               bool mm_wr_locked)
-> +void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc *unmap)
->  {
-> +       struct vm_area_struct *vma;
->         struct mmu_notifier_range range;
->         struct zap_details details =3D {
->                 .zap_flags =3D ZAP_FLAG_DROP_MARKER | ZAP_FLAG_UNMAP,
-> @@ -2114,17 +2107,18 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma=
-_state *mas,
->                 .even_cows =3D true,
->         };
->
-> +       vma =3D unmap->first;
->         mmu_notifier_range_init(&range, MMU_NOTIFY_UNMAP, 0, vma->vm_mm,
-> -                               start_addr, end_addr);
-> +                               unmap->vma_min, unmap->vma_max);
->         mmu_notifier_invalidate_range_start(&range);
->         do {
-> -               unsigned long start =3D start_addr;
-> -               unsigned long end =3D end_addr;
-> +               unsigned long start =3D unmap->vma_min;
-> +               unsigned long end =3D unmap->vma_max;
->                 hugetlb_zap_begin(vma, &start, &end);
->                 unmap_single_vma(tlb, vma, start, end, &details,
-> -                                mm_wr_locked);
-> +                                unmap->mm_wr_locked);
->                 hugetlb_zap_end(vma, &details);
-> -               vma =3D mas_find(mas, tree_end - 1);
-> +               vma =3D mas_find(unmap->mas, unmap->tree_max - 1);
->         } while (vma);
->         mmu_notifier_invalidate_range_end(&range);
->  }
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 5c9bd3f20e53f..6011f62b0a294 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1280,10 +1280,12 @@ void exit_mmap(struct mm_struct *mm)
->         struct vm_area_struct *vma;
->         unsigned long nr_accounted =3D 0;
->         VMA_ITERATOR(vmi, mm, 0);
-> +       struct unmap_desc unmap;
->
->         /* mm's last user has gone, and its about to be pulled down */
->         mmu_notifier_release(mm);
->
-> +       unmap.mm_wr_locked =3D false;
 
-This will be reset by unmap_all_init() anyway, right?
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
->         mmap_read_lock(mm);
->         arch_exit_mmap(mm);
->
-> @@ -1295,11 +1297,12 @@ void exit_mmap(struct mm_struct *mm)
->                 goto destroy;
->         }
->
-> +       unmap_all_init(&unmap, &vmi, vma);
+Reinette
 
-Can we use a macro, something like DEFINE_UNMAP_ALL_REGIONS() instead
-of unmap_all_init()?
-
->         flush_cache_mm(mm);
->         tlb_gather_mmu_fullmm(&tlb, mm);
->         /* update_hiwater_rss(mm) here? but nobody should be looking */
->         /* Use ULONG_MAX here to ensure all VMAs in the mm are unmapped *=
-/
-> -       unmap_vmas(&tlb, &vmi.mas, vma, 0, ULONG_MAX, ULONG_MAX, false);
-> +       unmap_vmas(&tlb, &unmap);
->         mmap_read_unlock(mm);
->
->         /*
-> diff --git a/mm/vma.c b/mm/vma.c
-> index c92384975cbb2..ad64cd9795ef3 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -481,8 +481,7 @@ void unmap_region(struct unmap_desc *desc)
->
->         tlb_gather_mmu(&tlb, mm);
->         update_hiwater_rss(mm);
-> -       unmap_vmas(&tlb, mas, desc->first, desc->vma_min, desc->vma_max,
-> -                  desc->vma_max, desc->mm_wr_locked);
-> +       unmap_vmas(&tlb, desc);
->         mas_set(mas, desc->tree_reset);
->         free_pgtables(&tlb, mas, desc->first, desc->first_pgaddr,
->                       desc->last_pgaddr, desc->tree_max,
-> @@ -1213,26 +1212,32 @@ int vma_shrink(struct vma_iterator *vmi, struct v=
-m_area_struct *vma,
->  static inline void vms_clear_ptes(struct vma_munmap_struct *vms,
->                     struct ma_state *mas_detach, bool mm_wr_locked)
->  {
-> -       struct mmu_gather tlb;
-> +       struct unmap_desc unmap =3D {
-> +               .mas =3D mas_detach,
-> +               .first =3D vms->vma,
-> +               /* start and end may be different if there is no prev or =
-next vma. */
-> +               .first_pgaddr =3D vms->unmap_start,
-> +               .last_pgaddr =3D vms->unmap_end,
-> +               .vma_min =3D vms->start,
-> +               .vma_max =3D vms->end,
-> +               /*
-> +                * The tree limits and reset differ from the normal case =
-since it's a
-> +                * side-tree
-> +                */
-> +               .tree_reset =3D 1,
-> +               .tree_max =3D vms->vma_count,
-> +               /*
-> +                * We can free page tables without write-locking mmap_loc=
-k because VMAs
-> +                * were isolated before we downgraded mmap_lock.
-> +                */
-> +               .mm_wr_locked =3D mm_wr_locked,
-> +       };
->
->         if (!vms->clear_ptes) /* Nothing to do */
->                 return;
->
-> -       /*
-> -        * We can free page tables without write-locking mmap_lock becaus=
-e VMAs
-> -        * were isolated before we downgraded mmap_lock.
-> -        */
->         mas_set(mas_detach, 1);
-> -       tlb_gather_mmu(&tlb, vms->vma->vm_mm);
-> -       update_hiwater_rss(vms->vma->vm_mm);
-> -       unmap_vmas(&tlb, mas_detach, vms->vma, vms->start, vms->end,
-> -                  vms->vma_count, mm_wr_locked);
-> -
-> -       mas_set(mas_detach, 1);
-> -       /* start and end may be different if there is no prev or next vma=
-. */
-> -       free_pgtables(&tlb, mas_detach, vms->vma, vms->unmap_start,
-> -                     vms->unmap_end, vms->unmap_end, mm_wr_locked);
-> -       tlb_finish_mmu(&tlb);
-> +       unmap_region(&unmap);
->         vms->clear_ptes =3D false;
->  }
->
-> diff --git a/mm/vma.h b/mm/vma.h
-> index 4edd5d26ffcfc..8b55a0c73d097 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -164,6 +164,20 @@ struct unmap_desc {
->         bool mm_wr_locked;            /* If the mmap write lock is held *=
-/
->  };
->
-> +static inline void unmap_all_init(struct unmap_desc *desc,
-> +               struct vma_iterator *vmi, struct vm_area_struct *vma)
-> +{
-> +       desc->mas =3D &vmi->mas;
-> +       desc->first =3D vma;
-> +       desc->first_pgaddr =3D FIRST_USER_ADDRESS;
-> +       desc->last_pgaddr =3D USER_PGTABLES_CEILING;
-> +       desc->vma_min =3D 0;
-> +       desc->vma_max =3D ULONG_MAX;
-> +       desc->tree_max =3D ULONG_MAX;
-> +       desc->tree_reset =3D vma->vm_end;
-> +       desc->mm_wr_locked =3D false;
-> +}
-> +
->  #define UNMAP_REGION(name, _vmi, _vma, _vma_min, _vma_max, _prev, _next)=
-      \
->         struct unmap_desc name =3D {                                     =
-     \
->                 .mas =3D &(_vmi)->mas,                                   =
-       \
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
-ernal.h
-> index 823d379e1fac2..d73ad4747d40a 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -884,18 +884,12 @@ static inline void update_hiwater_vm(struct mm_stru=
-ct *)
->  {
->  }
->
-> -static inline void unmap_vmas(struct mmu_gather *tlb, struct ma_state *m=
-as,
-> -                     struct vm_area_struct *vma, unsigned long start_add=
-r,
-> -                     unsigned long end_addr, unsigned long tree_end,
-> -                     bool mm_wr_locked)
-> +struct unmap_desc;
-> +
-> +static inline void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc =
-*unmap)
->  {
->         (void)tlb;
-> -       (void)mas;
-> -       (void)vma;
-> -       (void)start_addr;
-> -       (void)end_addr;
-> -       (void)tree_end;
-> -       (void)mm_wr_locked;
-> +       (void)unmap;
->  }
->
->  static inline void free_pgtables(struct mmu_gather *tlb, struct ma_state=
- *mas,
-> --
-> 2.47.2
->
 
