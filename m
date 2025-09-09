@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-808817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9968FB50518
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:18:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA491B5051B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A921C65135
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 901717AD238
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F10352FF1;
-	Tue,  9 Sep 2025 18:18:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1525A32CF83;
+	Tue,  9 Sep 2025 18:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uROxupoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74062EFD86;
-	Tue,  9 Sep 2025 18:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6912123506A;
+	Tue,  9 Sep 2025 18:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757441929; cv=none; b=Zxx8gO9pE8EVJnpHyOFkhYX+Ip2FrgjKiFkuIg/whC0eC58zJ29aD+bfYBfc+fw1dJvzgzvwwY9OESkGFHbL5OSU3FEmmmeWH6Xa25l3CTo6uyUmCpH+k2zq2QJjg5hAO0xVgeomImXSwtfRpMO8FR9H0+GMrF9tmIdDtEp9jeo=
+	t=1757441988; cv=none; b=mbgbRDAUZ4de8FsYk+ApJZ5DzBDedBFugs0v5aGTPtXBGPOaWg/1vWLAB+ayu9rlQgFIdpAwnTTzgtuy7eSKL1dPGy7BJHCG32rV8jlIgKY2RNRjqfd136zM63Y4gAuGGRk2/ITU2RSUhUqpkTSEuzZv5dwDYTnPdmBcZTShueI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757441929; c=relaxed/simple;
-	bh=c+UjXcPyXKjM7+Tb+xcH0eAP8Rhl0lUQ67XY7B3xHL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B9KPFdOw9QQnWtdfcvKAGo01ZE18e5CUntcQEK0oNahblnl9lel7j0vdukPVv4xGsjg4TAT56VKrAPoN1Uc3bZ5ouayKOuWXm3BShMNr7BMWj8RKGk0eymPPSM6XEYRKijzo+Yl2IJu9s0xst88Q9EAHIUFb7oV4VSoxM1X7NEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 1A429C06B6;
-	Tue,  9 Sep 2025 18:18:40 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id B1F662F;
-	Tue,  9 Sep 2025 18:18:36 +0000 (UTC)
-Date: Tue, 9 Sep 2025 14:19:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- aneesh.kumar@kernel.org, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/24] tracing: Introduce trace remotes
-Message-ID: <20250909141924.2f17f1a5@gandalf.local.home>
-In-Reply-To: <aMBRaPzjR4OJVIWn@google.com>
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-	<20250821081412.1008261-4-vdonnefort@google.com>
-	<20250908193606.47143d09@gandalf.local.home>
-	<aMAYvA9LSvfxvt_C@google.com>
-	<20250909093848.402674b7@gandalf.local.home>
-	<aMBRaPzjR4OJVIWn@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757441988; c=relaxed/simple;
+	bh=nCr8ESlIs6mf395ZTGBVqnuE5keWNOCLbfwe5uM09Bs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=UMObbag8bQ2TkE+4LCG3ayBBQ4XMgSevqlajtGa51VFT85C3D8hosccqOo1WfU+q/fxk6D+WTr4YgeKPhyirG6DlpryUN13ZGD4dSeHF/aYx56QOAT3Xl9cyargM2Jkx8IgTMjOViN4WdRvQAdvmzgV8sy0oXV1W5sZk+Fkb2+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uROxupoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0125C4CEF4;
+	Tue,  9 Sep 2025 18:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757441988;
+	bh=nCr8ESlIs6mf395ZTGBVqnuE5keWNOCLbfwe5uM09Bs=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=uROxupoR90HPgFLjMqDmzVa0r1uLGansJ5mgIgYDr88WMZBAnIMdFRqbA6AEBguhB
+	 Drl0Q7LoUo3OFV7t7GOzanejOqNEiMkj+XJl0g5n4kknCAPJ+Rvm4MVU4BqDYRTyRn
+	 wqijRLFqWWqfm2mX+RBKBeszTMS4/aNPbwtkDF3z9a8fxSSs+gsPCySA6lP+WHMLWB
+	 1ChXxYVyuph0WgyW3xIolD8mMX6DeTH8s1F8hm51gHyHAV6Q3jpasqF/87TH1TVJov
+	 UHX2aDXT2Sb0+EE3hkhP06ZtIYP1BG090b2Ahg8O/RqLn6jTati88JwH2THaQpdXqQ
+	 z8YpGaUc0RWZg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: eqc7w7y8zn6us7jyigopqwf3nc7ynjtf
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: B1F662F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+42t01sKe6NN3Yv3aPETwZq7DQof3HuwQ=
-X-HE-Tag: 1757441916-886505
-X-HE-Meta: U2FsdGVkX1/FkbATY5c/bszCpTxcE2Cn42lYpIlf0+M2DnBLkDpeiDnFpxC7EnRVRWD7bBFR2LjqPKnXdu1P9EKDSXtR8hvE7QrEkuS23WAKU0+q8dSKFLWS6N09CoZuqDFBzUC6JBO9+ehpwvzhwv+MRRoJKAOqD2hA/RvOMNI9mPvrU7rSjtczYd0M1o8dnaq3smAVl3E7hIw6B9IvF8IaP8iFSh5u5E8Q6yYK9zKMSBT2wxyFEpcqxQl9a5pBntG8IUIljfZxm8tIcO54NkMEyojXNkhab20elYHd/QR1soOKOMhADArVAJrmA2hitNlYDnbzyXFuq6lpHdLW75t+Br0U3Akn
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 09 Sep 2025 20:19:42 +0200
+Message-Id: <DCOH6SUB5M7K.1K4V1DRAERH1S@kernel.org>
+Cc: "Igor Korotin" <igor.korotin.linux@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Asahi Lina" <lina+kernel@asahilina.net>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Alex Hung" <alex.hung@amd.com>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Xiangfei Ding" <dingxiangfei2009@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4 1/3] rust: i2c: add basic I2C device and driver
+ abstractions
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+ <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
+ <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
+ <655ca23c-1fe6-498a-80b8-1b75044d9db3@gmail.com>
+ <467F4F57-9452-4B68-931B-4A55A7CBC268@collabora.com>
+In-Reply-To: <467F4F57-9452-4B68-931B-4A55A7CBC268@collabora.com>
 
-On Tue, 9 Sep 2025 17:10:16 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+On Tue Sep 9, 2025 at 7:53 PM CEST, Daniel Almeida wrote:
+>> On 9 Sep 2025, at 14:19, Igor Korotin <igor.korotin.linux@gmail.com> wro=
+te:
+>> On 8/27/2025 7:37 PM, Daniel Almeida wrote:
+>>>> +    /// Returns the driver's private data from the matching entry in =
+the [`i2c::IdTable`], if any.
+>>>> +    ///
+>>>> +    /// If this returns `None`, it means there is no match with an en=
+try in the [`i2c::IdTable`].
+>>>> +    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as drive=
+r::Adapter>::IdInfo> {
+>>> Again, perhaps a private member function? I=E2=80=99m trying to simplif=
+y the syntax here.
+>>=20
+>> Can you, please, kindly clarify what do you mean? If a function is not p=
+ub/pub(crate),
+>> it is a private function.
+>
+> I mean a function that takes &self or &mut self as applicable.
 
+This just turns things around you you have to pass in the Adapter type, whi=
+ch is
+required by this function. Having the device ID table and ID info accessors=
+ on
+the device structure doesn't really make sense.
 
-> > I'm more worried about the allocation not being big enough for the rb_desc
-> > being filled. I just noticed that the trace_remote_register() function is
-> > missing a kerneldoc header. Please add one and specify what the parameters
-> > are for as well as their requirements.
-> > 
-> > It's fine to state that the allocation of desc must match what the cpumask
-> > is. But the lack of comments about what the function does and what is
-> > expected of the parameters makes it hard to know if it is performing
-> > properly.  
-> 
-> Ok, will do!
-> 
-> I could also add a desc_size parameter to make sure we won't overflow the given
-> desc?
-
-I wonder if we should just to make sure things are checked. Having a
-bitmask determine the size is kinda strange.
-
--- Steve
-
+The current implementation is also in line with what we do in the driver co=
+re
+code and in other bus implementations, such as PCI.
 
