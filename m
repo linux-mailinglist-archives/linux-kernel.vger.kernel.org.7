@@ -1,132 +1,185 @@
-Return-Path: <linux-kernel+bounces-807706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB977B4A81E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:35:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE5DB4A823
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBE04E270E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:35:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2803C4E289B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F0129E0EE;
-	Tue,  9 Sep 2025 09:30:15 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FD82BEFE4;
+	Tue,  9 Sep 2025 09:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0R5XqjH8"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0B1287255;
-	Tue,  9 Sep 2025 09:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C54288C95
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757410214; cv=none; b=PwKhminDPrdZxZiInDMeK5IyuEaT98D5tZoT0hpdQpLJ+2dTH3cO6WNh4RjXebe/amjBA8IR03Pt4VjUfwglMCvWbVln7Vh6P4/Qv6M0dWmQxmoPnkxDouIoyJqxFmqDGW60k6UzP1xnUdKKqqt6QImVEJ9LYJgrSONLAOvNMQk=
+	t=1757410314; cv=none; b=hLtJyd3c5eF+YpRdKokkFVE3rB8IsfozE4vEcaXs0AdvNwvHCZcGyJGaywE3dbLWb5OpdFQY+gtNVp0jyrdrjzfxMvtnipKNioBp77N1NqyA0TUWMh3hOC51YG0nyImy3p5me0wOyH1sA7hAy2kA/M8/JBZg/MARGy86VUd977U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757410214; c=relaxed/simple;
-	bh=ZS+DAE9/Z9nXzpidJmud1I5Zwcs3iyPVMBV5PQxLTCw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a6c3SFXuLhzmVDFtwpLzX/VZ21sR0nuwMNgejy+Nzmg0unf3nQasMT+/g8HbQXSMc2aw/cZRPU8ZuQItI/vq25CI5WQjp/QrFOCVVYU1jyRUQcEHfYTCDCXBhk/sck4SZf+3lNmJGMTlJMkzNCv5w4dZUuUBk4JdxTc7ILmtueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cLdjS4SJ1z13NYc;
-	Tue,  9 Sep 2025 17:26:04 +0800 (CST)
-Received: from kwepemh200013.china.huawei.com (unknown [7.202.181.122])
-	by mail.maildlp.com (Postfix) with ESMTPS id B0E901402C4;
-	Tue,  9 Sep 2025 17:30:03 +0800 (CST)
-Received: from kwepemh200013.china.huawei.com (7.202.181.122) by
- kwepemh200013.china.huawei.com (7.202.181.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Sep 2025 17:30:03 +0800
-Received: from kwepemh200013.china.huawei.com ([7.202.181.122]) by
- kwepemh200013.china.huawei.com ([7.202.181.122]) with mapi id 15.02.1544.011;
- Tue, 9 Sep 2025 17:30:03 +0800
-From: "zhangxiaomeng (A)" <zhangxiaomeng13@huawei.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: "mhiramat@kernel.org" <mhiramat@kernel.org>, "dhowells@redhat.com"
-	<dhowells@redhat.com>, "wsa@kernel.org" <wsa@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
-Subject: =?gb2312?B?u9i4tDogW1BBVENIXSBpMmM6IEZpeCBPT0IgYWNjZXNzIGluIHRyYWNlX2V2?=
- =?gb2312?B?ZW50X3Jhd19ldmVudF9zbWJ1c193cml0ZQ==?=
-Thread-Topic: [PATCH] i2c: Fix OOB access in trace_event_raw_event_smbus_write
-Thread-Index: AQHcHELNHRvaa1K3UkS4EFSwZAlRm7SKnwcQ
-Date: Tue, 9 Sep 2025 09:30:03 +0000
-Message-ID: <39437e40a6f14c5189e86cffb0b6abb5@huawei.com>
-References: <20250821012312.3591166-1-zhangxiaomeng13@huawei.com>
- <20250902154957.7987e5ff@batman.local.home>
-In-Reply-To: <20250902154957.7987e5ff@batman.local.home>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1757410314; c=relaxed/simple;
+	bh=dzkf5fR/hvvNUnmVBjMoYB//K61hJfG4uP/NmeNQaT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GnCCBkkJ/hsZ4kg3sSPqxbsIXZgYITsp/rm3bgi+3ykv1XTtgkYrl+O5D3vgAm5AQeV/6HHfOgR/pErWmmntZSmVa+F9gKOD+rT2c3Sb4aBifQODZUcu2mwdMa6K79pG05q9iBgZN5jM2AJ/yioYc5soYdsCrSozbvGnFIoucvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0R5XqjH8; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b38d47fa9dso48168381cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757410312; x=1758015112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=065ckeLezrt6iV9YdKS4ln9vvI7mJj+bBB8ieI7yb/A=;
+        b=0R5XqjH8awl+QUY7sfhl6FnC2vMdXb3rc7Zz3H3YCJMkL7MZhUvicrnnruw3KTz5Ep
+         Jen1Yi3oLoczd900HXEX40B07W3xEB+K20oxgehLp+8eVNlyyQANnU4+SRbVY3HbKSXN
+         qJ/7Xgmp/zZwkOOmxMYMSW662VTa1GPm7nTYr/xwcG2uDSEGPK+6NplsKEPMC53mWeh0
+         oK1g92pFzLEiOcfk699/K9GfJH91zREhKTpSgQuDw8ZMN/slTRXFZ4M9dSA5klxceOMV
+         8pFGVQQvfsgFg/N+fLn3GRxcfJfYThkiLsr0R01t7JZVbI28a+xYmH7BnqNBlegta0xw
+         VR1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757410312; x=1758015112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=065ckeLezrt6iV9YdKS4ln9vvI7mJj+bBB8ieI7yb/A=;
+        b=wYo5GjeWwRijaHWqoczbSC42fc032tTd5wt2KQFjzk9mN/bacbZcwPhfleIA7CfyjV
+         8E6HJ7jXuHHiZXFUpMrhNkrMSss91puRESlFeE3RWxI45CCTMucnGs9Flg686aJFU0Ug
+         +/c5wH/xCyI0l28UutP6noF64YXthsWfhumb+N29+tX7+cYOq7z1GNQQYtlGVyBrLMJo
+         86aGoaJ2MI4mfXQftESMTVvS7H6tjdnyUWLYTVsH+H9tbVcqDkwRuY5cZkoVhB75Jdkb
+         hwHNzQ3K+NSFSIF9sEDMPNWw8Ez7FzqFHjy545YC6gQlVm7aZdaTh5qC3xJD9pekAE1o
+         +PXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQHs1GKiqv34IHtPTFYqEghtKkdmz62Q8Up4yRprJyJG++Nyc64jkfzsidN/NQNTlWUFcuJzpSD0yucPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeTeox8dZ625aIJ/h2oNn6ub7ATUk+E72ErssD+PNHPMwfa2dA
+	62ny7CjOpqIjgT02fCErSPiXMxtOgIYHdlvjjCXCUM6Y3MySVD+ct0UQ1c5Kjtzs55estUDF2Il
+	+ofzgCbJUGnDeMGcHlwQ5R3JB+NDAb9TsXVYKKLfm
+X-Gm-Gg: ASbGnctWZ4f6awg3fd/F+NZrP0FtsqatEwADdexeyv2FGOqhYSyH/PaFcsUVubzqFui
+	jIC1ZxJRACFxnM6TXAJ5qSlmp8uCoUIosQr6rQ/ZReI/b3l2y7as6a31OsvjP9Jl0Ai31INmEVY
+	ZTAqIQqOvMhyPdwJeOM7ZiOcRIrrRR3lAzb1YRPDQDry8SV9TPXz/+UDI7BUo8xGxZSWQrNizjy
+	/L+tfyGeq16nEGg8xnnILEtvEPzgAjIDGLxGk9I7prcZpsG
+X-Google-Smtp-Source: AGHT+IHO0nxuDmuQlk8jsSNewdRctWbQh5UkckZOg0pWh2QPu5oPN94aevA/mzvoj6fwDE3RRjLzjIsWEZJKIPrBaB4=
+X-Received: by 2002:a05:622a:1301:b0:4b4:921b:acdb with SMTP id
+ d75a77b69052e-4b5f8393bc1mr110123651cf.17.1757410311187; Tue, 09 Sep 2025
+ 02:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <68bb4160.050a0220.192772.0198.GAE@google.com> <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
+ <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
+ <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com> <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
+ <51adf9cb-619e-9646-36f0-1362828e801e@huaweicloud.com> <CANn89iLhNzYUdtuaz9+ZHvwpbsK6gGfbCWmoic+ACQBVJafBXA@mail.gmail.com>
+ <5b3daf68-7657-a96c-9322-43e5ed917174@huaweicloud.com>
+In-Reply-To: <5b3daf68-7657-a96c-9322-43e5ed917174@huaweicloud.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 9 Sep 2025 02:31:40 -0700
+X-Gm-Features: Ac12FXwGXdNomizYAg_aOwA1ioJ91JbOj7QL8eZUWHIftw5BxTpd1mRjh-8KDoU
+Message-ID: <CANn89iJ+76eE3A_8S_zTpSyW5hvPRn6V57458hCZGY5hbH_bFA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, davem@davemloft.net, 
+	dsahern@kernel.org, horms@kernel.org, kuba@kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SSBwcmV2aW91c2x5IGF0dGVtcHRlZCB0byBhcHBseSBhIGZpeCB3aXRoaW4gdGhlIGkyY2Rldl9p
-b2N0bF9zbWJ1cyBmdW5jdGlvbi4gV2hpbGUgdGhpcyBhcHByb2FjaCB3YXMgc3VjY2Vzc2Z1bCBp
-biBwcmV2ZW50aW5nIHRoZSB3YXJuaW5nLCBJIGZvdW5kIHRoYXQgdGhlIHJlcXVpcmVkIGNoYW5n
-ZXMgd2VyZSBxdWl0ZSBleHRlbnNpdmUuIFRoZSBXQVJOIGlzIHRyaWdnZXJlZCBieSB0aGUgdHJh
-Y2Vfc21idXNfd3JpdGUgdHJhY2Vwb2ludCwgd2hpY2ggcGVyZm9ybXMgYSBtZW1jcHkoX19lbnRy
-eS0+YnVmLCBkYXRhLT5ibG9jaywgbGVuKSBmb3Igd3JpdGUgb3BlcmF0aW9ucyBvbiB0aHJlZSBz
-cGVjaWZpYyBibG9jayBwcm90b2NvbHM6IEkyQ19TTUJVU19CTE9DS19EQVRBLCBJMkNfU01CVVNf
-STJDX0JMT0NLX0RBVEEsIGFuZCBJMkNfU01CVVNfQkxPQ0tfUFJPQ19DQUxMLiBUbyBmaXggdGhp
-cyBpbiBpMmNkZXZfaW9jdGxfc21idXMsIGl0IHdvdWxkIGJlIG5lY2Vzc2FyeSB0byBhZGQgY2hl
-Y2tzIGZvciBhbGwgdGhyZWUgb2YgdGhlc2UgY2FzZXMsIHdoaWNoIG1ha2VzIHRoZSBzb2x1dGlv
-biByYXRoZXIgY29tcGxleC4NCg0KLS14aWFvbWVuZw0KLS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+
-yMs6IFN0ZXZlbiBSb3N0ZWR0IDxyb3N0ZWR0QGdvb2RtaXMub3JnPiANCreiy83KsbzkOiAyMDI1
-xOo51MIzyNUgMzo1MA0KytW8/sjLOiB6aGFuZ3hpYW9tZW5nIChBKSA8emhhbmd4aWFvbWVuZzEz
-QGh1YXdlaS5jb20+DQqzrcvNOiBtaGlyYW1hdEBrZXJuZWwub3JnOyBkaG93ZWxsc0ByZWRoYXQu
-Y29tOyB3c2FAa2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgt
-dHJhY2Uta2VybmVsQHZnZXIua2VybmVsLm9yZw0K1vfM4jogUmU6IFtQQVRDSF0gaTJjOiBGaXgg
-T09CIGFjY2VzcyBpbiB0cmFjZV9ldmVudF9yYXdfZXZlbnRfc21idXNfd3JpdGUNCg0KT24gVGh1
-LCAyMSBBdWcgMjAyNSAwMToyMzoxMiArMDAwMA0KWGlhb21lbmcgWmhhbmcgPHpoYW5neGlhb21l
-bmcxM0BodWF3ZWkuY29tPiB3cm90ZToNCg0KPiBUaGUgc21idXNfd3JpdGUgdHJhY2Vwb2ludCBj
-b3BpZXMgX19lbnRyeS0+bGVuIGJ5dGVzIGludG8gYSBmaXhlZCANCj4gSTJDX1NNQlVTX0JMT0NL
-X01BWCArIDIgYnVmZmVyLiBPdmVyc2l6ZWQgbGVuZ3RocyAoZS5nLiwgNDYpIGV4Y2VlZCANCj4g
-dGhlIGRlc3RpbmF0aW9uIGFuZCBvdmVyLXJlYWQgdGhlIHNvdXJjZSBidWZmZXIsIHRyaWdnZXJp
-bmcgT09CIA0KPiB3YXJuaW5nOg0KPiANCj4gbWVtY3B5OiBkZXRlY3RlZCBmaWVsZC1zcGFubmlu
-ZyB3cml0ZSAoc2l6ZSA0OCkgb2Ygc2luZ2xlIGZpZWxkIA0KPiAiZW50cnktPmJ1ZiIgYXQgaW5j
-bHVkZS90cmFjZS9ldmVudHMvc21idXMuaDo2MCAoc2l6ZSAzNCkNCj4gDQo+IENsYW1wIHRoZSBj
-b3B5IHNpemUgdG8gSTJDX1NNQlVTX0JMT0NLX01BWCArIDIgYmVmb3JlIG1lbWNweSgpLg0KPiBU
-aGlzIG9ubHkgYWZmZWN0cyB0cmFjaW5nIGFuZCBkb2VzIG5vdCBjaGFuZ2UgSTJDIHRyYW5zZmVy
-IGJlaGF2aW9yLg0KPiANCj4gRml4ZXM6IDhhMzI1OTk3ZDk1ZCAoImkyYzogQWRkIG1lc3NhZ2Ug
-dHJhbnNmZXIgdHJhY2Vwb2ludHMgZm9yIFNNQlVTIA0KPiBbdmVyICMyXSIpDQo+IFNpZ25lZC1v
-ZmYtYnk6IFhpYW9tZW5nIFpoYW5nIDx6aGFuZ3hpYW9tZW5nMTNAaHVhd2VpLmNvbT4NCj4gLS0t
-DQo+ICBpbmNsdWRlL3RyYWNlL2V2ZW50cy9zbWJ1cy5oIHwgMiArKw0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvdHJhY2UvZXZl
-bnRzL3NtYnVzLmggDQo+IGIvaW5jbHVkZS90cmFjZS9ldmVudHMvc21idXMuaCBpbmRleCA3MWE4
-N2VkZmM0NmQuLmUzMDZkOGI5MjhjMyAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS90cmFjZS9ldmVu
-dHMvc21idXMuaA0KPiArKysgYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9zbWJ1cy5oDQo+IEBAIC01
-Nyw2ICs1Nyw4IEBAIFRSQUNFX0VWRU5UX0NPTkRJVElPTihzbWJ1c193cml0ZSwNCj4gIAkJY2Fz
-ZSBJMkNfU01CVVNfSTJDX0JMT0NLX0RBVEE6DQo+ICAJCQlfX2VudHJ5LT5sZW4gPSBkYXRhLT5i
-bG9ja1swXSArIDE7DQo+ICAJCWNvcHk6DQo+ICsJCQlpZiAoX19lbnRyeS0+bGVuID4gSTJDX1NN
-QlVTX0JMT0NLX01BWCArIDIpDQo+ICsJCQkJX19lbnRyeS0+bGVuID0gSTJDX1NNQlVTX0JMT0NL
-X01BWCArIDI7DQo+ICAJCQltZW1jcHkoX19lbnRyeS0+YnVmLCBkYXRhLT5ibG9jaywgX19lbnRy
-eS0+bGVuKTsNCj4gIAkJCWJyZWFrOw0KPiAgCQljYXNlIEkyQ19TTUJVU19RVUlDSzoNCg0KVGhl
-IGNvZGUgaGFzOg0KDQogICAgICAgICAgICAgICAgc3dpdGNoIChwcm90b2NvbCkgew0KICAgICAg
-ICAgICAgICAgIGNhc2UgSTJDX1NNQlVTX0JZVEVfREFUQToNCiAgICAgICAgICAgICAgICAgICAg
-ICAgIF9fZW50cnktPmxlbiA9IDE7DQogICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGNvcHk7
-DQogICAgICAgICAgICAgICAgY2FzZSBJMkNfU01CVVNfV09SRF9EQVRBOg0KICAgICAgICAgICAg
-ICAgIGNhc2UgSTJDX1NNQlVTX1BST0NfQ0FMTDoNCiAgICAgICAgICAgICAgICAgICAgICAgIF9f
-ZW50cnktPmxlbiA9IDI7DQogICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGNvcHk7DQogICAg
-ICAgICAgICAgICAgY2FzZSBJMkNfU01CVVNfQkxPQ0tfREFUQToNCiAgICAgICAgICAgICAgICBj
-YXNlIEkyQ19TTUJVU19CTE9DS19QUk9DX0NBTEw6DQogICAgICAgICAgICAgICAgY2FzZSBJMkNf
-U01CVVNfSTJDX0JMT0NLX0RBVEE6DQogICAgICAgICAgICAgICAgICAgICAgICBfX2VudHJ5LT5s
-ZW4gPSBkYXRhLT5ibG9ja1swXSArIDE7DQogICAgICAgICAgICAgICAgY29weTogICANCiAgICAg
-ICAgICAgICAgICAgICAgICAgIG1lbWNweShfX2VudHJ5LT5idWYsIGRhdGEtPmJsb2NrLCBfX2Vu
-dHJ5LT5sZW4pOw0KICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQogICAgICAgICAgICAg
-ICAgY2FzZSBJMkNfU01CVVNfUVVJQ0s6DQogICAgICAgICAgICAgICAgY2FzZSBJMkNfU01CVVNf
-QllURToNCiAgICAgICAgICAgICAgICBjYXNlIEkyQ19TTUJVU19JMkNfQkxPQ0tfQlJPS0VOOg0K
-ICAgICAgICAgICAgICAgIGRlZmF1bHQ6DQogICAgICAgICAgICAgICAgICAgICAgICBfX2VudHJ5
-LT5sZW4gPSAwOw0KICAgICAgICAgICAgICAgIH0NCg0KSSBvbmx5IHNlZSB0d28gY2FsbHMgdG8g
-dGhlIGNvcHkgd2hlcmUgb25lIGlzIGxlbiA9IDEgYW5kIHRoZSBvdGhlciBpcyBsZW4gPSAyLiBX
-aHkgbm90IHB1dCB0aGUgY2hlY2sgYmVmb3JlIHRoZSBjb3B5IGxhYmVsPw0KDQotLSBTdGV2ZQ0K
-DQo=
+On Tue, Sep 9, 2025 at 2:16=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
+ote:
+>
+> Hi,
+>
+> =E5=9C=A8 2025/09/08 17:40, Eric Dumazet =E5=86=99=E9=81=93:
+> > On Mon, Sep 8, 2025 at 2:34=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com=
+> wrote:
+> >>
+> >> Hi,
+> >>
+> >> =E5=9C=A8 2025/09/08 17:07, Eric Dumazet =E5=86=99=E9=81=93:
+> >>> On Mon, Sep 8, 2025 at 1:52=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.c=
+om> wrote:
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> =E5=9C=A8 2025/09/06 17:16, Eric Dumazet =E5=86=99=E9=81=93:
+> >>>>> On Fri, Sep 5, 2025 at 1:03=E2=80=AFPM Eric Dumazet <edumazet@googl=
+e.com> wrote:
+> >>>>>>
+> >>>>>> On Fri, Sep 5, 2025 at 1:00=E2=80=AFPM syzbot
+> >>>>>> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
+> >>>>>
+> >>>>> Note to NBD maintainers : I held about  20 syzbot reports all point=
+ing
+> >>>>> to NBD accepting various sockets, I  can release them if needed, if=
+ you prefer
+> >>>>> to triage them.
+> >>>>>
+> >>>> I'm not NBD maintainer, just trying to understand the deadlock first=
+.
+> >>>>
+> >>>> Is this deadlock only possible for some sepecific socket types? Take
+> >>>> a look at the report here:
+> >>>>
+> >>>> Usually issue IO will require the order:
+> >>>>
+> >>>> q_usage_counter -> cmd lock -> tx lock -> sk lock
+> >>>>
+> >>>
+> >>> I have not seen the deadlock being reported with normal TCP sockets.
+> >>>
+> >>> NBD sets sk->sk_allocation to  GFP_NOIO | __GFP_MEMALLOC;
+> >>> from __sock_xmit(), and TCP seems to respect this.
+> >>> .
+> >>>
+> >>
+> >> What aboud iscsi and nvme-tcp? and probably other drivers, where
+> >> sk_allocation is GFP_ATOMIC, do they have similar problem?
+> >>
+> >
+> > AFAIK after this fix, iscsi was fine.
+> >
+> > commit f4f82c52a0ead5ab363d207d06f81b967d09ffb8
+> > Author: Eric Dumazet <edumazet@google.com>
+> > Date:   Fri Sep 15 17:11:11 2023 +0000
+> >
+> >      scsi: iscsi_tcp: restrict to TCP sockets
+> >
+> >      Nothing prevents iscsi_sw_tcp_conn_bind() to receive file descript=
+or
+> >      pointing to non TCP socket (af_unix for example).
+> >
+> >      Return -EINVAL if this is attempted, instead of crashing the kerne=
+l.
+> >
+> >      Fixes: 7ba247138907 ("[SCSI] open-iscsi/linux-iscsi-5 Initiator:
+> > Initiator code")
+> >      Signed-off-by: Eric Dumazet <edumazet@google.com>
+> >      Cc: Lee Duncan <lduncan@suse.com>
+> >      Cc: Chris Leech <cleech@redhat.com>
+> >      Cc: Mike Christie <michael.christie@oracle.com>
+> >      Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+> >      Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> >      Cc: open-iscsi@googlegroups.com
+> >      Cc: linux-scsi@vger.kernel.org
+> >      Reviewed-by: Mike Christie <michael.christie@oracle.com>
+> >      Signed-off-by: David S. Miller <davem@davemloft.net>
+> > .
+> >
+>
+> Yes, now I also agree similiar fix in nbd make sense. Perhaps can you
+> cook a patch?
+
+Sure I will send it ASAP.
 
