@@ -1,243 +1,135 @@
-Return-Path: <linux-kernel+bounces-807779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C15B4A92F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D8EB4A902
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38904188689A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC75F3B369C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005563081BF;
-	Tue,  9 Sep 2025 09:57:33 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680EB2D1F68;
+	Tue,  9 Sep 2025 09:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VkU8Kh3D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE8304BA8;
-	Tue,  9 Sep 2025 09:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D4256C7E;
+	Tue,  9 Sep 2025 09:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411852; cv=none; b=FVLuLca0i9WUwcrlJ4Uxsu/J75mdqYX6QDlReD61/8QOW88wAoNDaUCxOHlqlzY2UsK2gZjdq2FDJmP2ntISD55O0OVtJIbnXgjauDGbx3CN548mTsCGeCEngtatkXe6Z+gpLujJRjzAMgr4sA+gr40aPxn1aV3sfFzkSlkONWw=
+	t=1757411782; cv=none; b=P/GKxJ4u/qm4AT7S7HWA/rOd0IDALuVWi/e3CAL+XCbpJAZ6I2j1nJnvyoZwghj1V0brjWzzDrchCawqm+nARKiQzDXA+GlJbe7zYelfwo13I74n0Xl3tXREFeFPjUvok2AmHTiDdlCd8pHaL8rZI1EBrOVIe6+6q89mNlaQOMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411852; c=relaxed/simple;
-	bh=MUrIlrkXaaX59LL3U0l5CXZqWGM6vaIICc4runzDo5A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cGDj6BoJVZoxnWiO4m+kmL9MeMX0C868LNg0knXRnqpms+YvW/bFnufAUeJZ1cUueURAG6yt8RgJCrdfsULhlVmORtQFA1LeUxo09JLekVRK3O5DsPP9U4Xwuq3v2F/GzBcUejntt2/3D3+gKM6NeM9/e86P9/feoWgF2oFKuww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-01 (Coremail) with SMTP id qwCowADHHqHO+b9oWh7qAQ--.61766S7;
-	Tue, 09 Sep 2025 17:56:33 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V10 5/5] riscv: mm: Add uffd write-protect support
-Date: Tue,  9 Sep 2025 17:56:11 +0800
-Message-Id: <20250909095611.803898-6-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
-References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1757411782; c=relaxed/simple;
+	bh=uo5ZUhYMuByiGgJRlg8TUV2xCirGU9z4qi8EAlibyr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StAzifZ83fejtjp2N9CMVOSL7EHG1zqNVRElyElM7bhKsV5gv0ON7koTSOvZMyIkHDwiH+K/AckyRjG8MSNk16Cr/CaRDI0YhpLULeQyhLHlQPJ6HluyDtB2IE+ylDujXu6kw9/KwBpkv8kCIcJpxiAKGLpF9qG82Q3IBSpjhYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VkU8Kh3D; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757411781; x=1788947781;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uo5ZUhYMuByiGgJRlg8TUV2xCirGU9z4qi8EAlibyr8=;
+  b=VkU8Kh3DXAo47And/As3kxpv0wyHxDgnai1kTCz2f6BTeJmXj4P2E3Cf
+   7r9EMazmDHP5I8lk1Uq84kjBiNAP+7i+Fn5UySa7yD/B8JAynTms5UXCZ
+   coWOqAcLWNQWw2AHWZyXLLeU8ZBYNwsU++vaYwOBNj5dKox7UHm6UK0jY
+   Q/7n9K/r4jAED5zP712FEAcV8c7KThIeDTHLn1x6aDRL7LTBxD7low/MZ
+   VTPwFSBGMjayYWtrml+tbGf//RN4z5cxgdIa+BJUn5EWz6AL/lnPSd9sO
+   UgOnFJeMxKFPEM9npmt43jpjcahQYnHyUT7iUUgZ9kPy2XwL7PuftZQ8K
+   g==;
+X-CSE-ConnectionGUID: oNRwR22qTrezmsxRkZ+Q+w==
+X-CSE-MsgGUID: 3MXa3Dz6TySVnSUH272l6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70308685"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="70308685"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 02:56:20 -0700
+X-CSE-ConnectionGUID: P1az0YAkRKGZnXA+YSHqnw==
+X-CSE-MsgGUID: x+o8/7BtRJCBL8qT1k7V2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="172209638"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa006.jf.intel.com with SMTP; 09 Sep 2025 02:56:15 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 09 Sep 2025 12:56:13 +0300
+Date: Tue, 9 Sep 2025 12:56:13 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v2 13/22] usb: typec: tipd: Use read_power_status
+ function in probe
+Message-ID: <aL_5vZvZG4oYQACo@kuha.fi.intel.com>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-13-52c348623ef6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADHHqHO+b9oWh7qAQ--.61766S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4UZw1rtw17Kr1DuF4kJFb_yoWruFWfpr
-	s5GayrurWDJFn2yayftr4FgrWrZw4fWa4DWr93Ca1kJFy7K3yDXr95Kry3try8XFWvv347
-	WFWrKr1rCw47JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQjb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
-	z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0V
-	AKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2Iq
-	xVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
-	106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
-	xVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20x
-	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
-	Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07j93kZUUUUU=
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAcAB2i-53NJfAAAs6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906-atcphy-6-17-v2-13-52c348623ef6@kernel.org>
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+On Sat, Sep 06, 2025 at 03:43:26PM +0000, Sven Peter wrote:
+> From: Hector Martin <marcan@marcan.st>
+> 
+> We need the initial power status to be able to reliably detect connector
+> changes once we introduce de-bouncing for CD321x next. read_power_status
+> takes care of this and also forwards the status to the trace subsystem
+> so let's use that instead of open-coding it inside probe.
+> 
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@kernel.org>
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 18 +++++++
- arch/riscv/include/asm/pgtable.h      | 67 +++++++++++++++++++++++++++
- 3 files changed, 86 insertions(+)
+> ---
+>  drivers/usb/typec/tipd/core.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index cd427eecd8a594b7e609a20de27a9722055307d8..e6e9730ee6dacd8c1271b1d52a02da49ff248d3e 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -1549,11 +1549,8 @@ static int tps6598x_probe(struct i2c_client *client)
+>  		goto err_role_put;
+>  
+>  	if (status & TPS_STATUS_PLUG_PRESENT) {
+> -		ret = tps6598x_read16(tps, TPS_REG_POWER_STATUS, &tps->pwr_status);
+> -		if (ret < 0) {
+> -			dev_err(tps->dev, "failed to read power status: %d\n", ret);
+> +		if (!tps6598x_read_power_status(tps))
+>  			goto err_unregister_port;
+> -		}
+>  		ret = tps6598x_connect(tps, status);
+>  		if (ret)
+>  			dev_err(&client->dev, "failed to register partner\n");
+> 
+> -- 
+> 2.34.1
+> 
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 53b73e4bdf3f..f928768bb14a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -147,6 +147,7 @@ config RISCV
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD && RISCV_ISA_SVRSW60T59B
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index 8ffe81bf66d2..894b2a24fc49 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,24 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP							\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 (1UL << 60) : 0)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP						\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 _PAGE_USER : 0)
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index b2d00d129d81..94cc97d3dbff 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -416,6 +416,40 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+#define pte_uffd_wp_available()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)
-+
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -836,6 +870,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -1053,6 +1119,7 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
 -- 
-2.34.1
-
+heikki
 
