@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-808617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06267B50256
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486FDB50259
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A47E1C26521
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A003BA32A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22033A01A;
-	Tue,  9 Sep 2025 16:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F73352084;
+	Tue,  9 Sep 2025 16:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z74WEAn7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5sXPnEK"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517392192EE;
-	Tue,  9 Sep 2025 16:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93C133A01A;
+	Tue,  9 Sep 2025 16:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434727; cv=none; b=KheWYzAzKUUhyCNX6aUUNd4oDu6BPRnBz9XXdj6KF4ApTMBK+6FJEW7oRHQTfkk+OJ839aG+wLcMrnZergoYKBgRScewMAUATrCSPAqoTnY7raVYcIo81ycmuVOk3jOqUxpDKnPhhGsr5n20J4D4FMts4tzxtKAZ1QDtaJvNSHk=
+	t=1757434749; cv=none; b=WuhPg/wYHCTw0iY57Q0xFW96tArbHo6NCs9nR/EpbWCog5QtcAcFczzyx8+2q637cVRtmaW3WR4x/ugXzs0juDAj8qBbK1Q9mnJvWbmD67VDZ4lysJ9c2fMfmF4/PWIvqAY4DRCpoeaApkdEpmt8ENlv/oqiB2UxUyY3/tJ1sho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434727; c=relaxed/simple;
-	bh=q/QS87Eux0wk/HOaswmx7nspa5Qx9l4MYEZAWalFsVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Evl1FNWzLXJCQ3gD0XZpJxc+MXlzSPR6z81NRJDBr8Kvm5lf6fk9KytmjQuaia1RUi9mycKR5LIsl1qLXJg3k/gzYXyOY80F1rzxvuWYg9p1eHQVgck8zEappg2pX3MUFG9jmnmeKbvGVNfWevuv8o5ulZ4TXeNIo2TiKdAMADU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z74WEAn7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F01DC4CEF8;
-	Tue,  9 Sep 2025 16:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757434727;
-	bh=q/QS87Eux0wk/HOaswmx7nspa5Qx9l4MYEZAWalFsVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z74WEAn7othpgb+/zZWmZxw1Jc8OANJ+OTKjJFtiFlbh4fplBeE51+d+zLxVsyvHq
-	 OLeg9bWR7Yq9bSmhYaawWA0334Xei/BavQs1bhfycOumBbxZMjk2ufqRnTPzGUObkX
-	 zQW08oZ/pSgkEKZ8+d8dEsIzwO+U5txUimW+kIIEgRmsRZS0JPb5yQDquqQ/qy3W/X
-	 GDNcMWmM1ZXGp1HgDL7cXAkInqVfbYg11o07V3NVXplRH2GMZKV9L1BaskGHwwdCX0
-	 f/rVTVPVTGZwP3KwBGwhMi2gamfsUjZ9VoVWqMRDalIyr1lg2cU7mMqxJthextRUpf
-	 8FeeD/I+dQZkg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uw13N-00000000R47-19GR;
-	Tue, 09 Sep 2025 18:18:45 +0200
-Date: Tue, 9 Sep 2025 18:18:45 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-Message-ID: <aelqggrynl7acn54tqm5ntqsynghprqtzmbkhvgf7khlbmmq6v@tf4gdfh2fvla>
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
- <d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
- <c26160b1-f1fb-41d3-a8fe-acf589ad9f7f@infradead.org>
+	s=arc-20240116; t=1757434749; c=relaxed/simple;
+	bh=5+oqeQqKcOcNexLLWSaNP8FwXROd5N6zTPNxd1c9umA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=G88c48Hn1Jm8F9M4dJnitjW9nutfSXjeOUQpcKLWKsLHIbMYFulMEqywqX5y+UiKLza8lX3oqLywAh4iMLbVqdfDllGOFrcl+ZNpc7CaTKZwKZDEmEhJ7mz6fpyBTjT3iL1uMQpnfc4ww0b337Qx25EE9hw6sBSDZc1efgfwx0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5sXPnEK; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24cb39fbd90so48719015ad.3;
+        Tue, 09 Sep 2025 09:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757434747; x=1758039547; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
+        b=l5sXPnEKk0LR4ccF5FAyPuiQk+wurRvsvDXs1X0iddwlzLdEjYMTxcjMGS9eKnI7zi
+         aNQ1FvCd1sMVhQoCf9hn26YyZQwAKfw1Jh93nwiPAnx/GMt/Wp6+ikk38/EGekNXovKK
+         PT5XzQ2UKt0p4hMhfGHUXN/iG11wKGac5C8modnQkovLw4IBLvMKwbQgTIWf5BSAWNR8
+         l6IJQQYWZzBfUVyLakn8D1aHkyA6MlOmRtmkE+mTJv0qzOQlPD+VD1OceGSl+yv/vGhI
+         61k78fUajVWYTCrzjyK1ZzxeoO1cZXofkqAqH+hVc5gU9qkC8y4gpwdiV2hWBGY5pyaw
+         cOVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757434747; x=1758039547;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
+        b=Au0Q5iGpZQWuRQY/8e4t5tIqj6SQC8h8Zib90QLO11f5xAkdNaO5QVLgtMoOn5GbNc
+         NbrUD/1mNZVdr7ZmHltdtXa36KwZpqtlSnEO8U6rJa0VuuqSxbt0Tohg2F2HN+QN7Xs1
+         eiJSMxo80LkivaP+QazavfHV0FePYAV2xwaKVZd3Da2enebCatIBBqgb1K3bqLVrxrnX
+         SbVVm7f/4bJgBkdhclBi+YQ5OryRmG69mQVMFRw4yxdXoXNCeTtzQG/DW1jHwn3NIW3S
+         H2//F4os7WW6M1IdMuJwie5kPulFg4o7R2mLz9ZS2Y6WviLmCVvTpyb2UcSpFcpCrcUb
+         NXrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU47gN6Saqg0e5qDpS1CA8SrFfbO2nVYOTNloJUeSjlIxZK+Ur+HTsMty+F73ZiJjtiuG43oh9ojAsp1QI=@vger.kernel.org, AJvYcCVHUqV14pSVroZq4gzVuVtrTXe/PomOg20hpSm7VPOIR/JofGtdKhGagnOSqWVN2gbFwuswdQKPrQE=@vger.kernel.org, AJvYcCWFyOBc1fBHoqwm/tWyKjX6CescWsHpe/V1qD8zsE52XZEd9Xrh28hFM8DuaehRwUGTgBMtYf/NOy52@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJvwtC1N9oOCsA+qLmy8MRAB+e+VsGtuJZr5V8DLYMxcyS3eo3
+	G618Yw2RboWKGJtInP/oqbhjSzf/GTtP3iI3y9b982rjRpjZ64dcwjWe
+X-Gm-Gg: ASbGncshLozy3pywiRQ2Og6lVL0Kpfe63crFzOvK5I9s2hROYyYP3FSf5g03zMCCWLq
+	412dNpswb0582pUURlaTLHrwkxRml1qmwF55b5Nb2ulMw/hBVHoXRXCOsR5TC/3nimFXlNKmyqi
+	5ZJ8lEC7qnOLn6S1fKVl/BEO1ko1OkgMtRpNRallBZSwiTfQmHaI86LpJUhtgNC+B0+N7ZC0cEQ
+	pzX60J0winKTTGKMLeyP6TCSokJFPdrWocWGN29Xo0lW4eKUgX/HJdQQ9IF+Wkjp96thQN4fdwM
+	3KDdxGimsS3QFtPjTCQy8+EQHYqUy4YFPQJsrnTiOc+MpB+MAOc26JQdEIcbZVkKFw3sQg6dIUM
+	rlEV3ZCQLHNx8TGsmebtDIXE=
+X-Google-Smtp-Source: AGHT+IFc01xMg0RhYt92nNhZiu4xLaJuYGnO9/E2/g5lUU+8IKkN3wggu++B8oAay63yya0pPMnlBQ==
+X-Received: by 2002:a17:902:f78f:b0:240:3eb9:5363 with SMTP id d9443c01a7336-2516e69aedamr146484675ad.27.1757434746918;
+        Tue, 09 Sep 2025 09:19:06 -0700 (PDT)
+Received: from localhost ([104.28.247.70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a27422decsm2241595ad.4.2025.09.09.09.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 09:19:06 -0700 (PDT)
+From: Ryan Zhou <ryanzhou54@gmail.com>
+To: stern@rowland.harvard.edu
+Cc: Thinh.Nguyen@synopsys.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	rafael@kernel.org,
+	royluo@google.com,
+	ryanzhou54@gmail.com
+Subject: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate child device xxx.dwc3 but parent is not active
+Date: Wed, 10 Sep 2025 00:19:01 +0800
+Message-Id: <20250909161901.10733-1-ryanzhou54@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
+References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c26160b1-f1fb-41d3-a8fe-acf589ad9f7f@infradead.org>
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 08:57:07AM -0700, Randy Dunlap wrote:
-> Hi Mauro,
-> 
-> On 9/9/25 12:27 AM, Randy Dunlap wrote:
-> > Hi Mauro,
-> > 
-> > I have a few patch nits below, then some testing info.
-> > 
-> > 
-> > On 9/7/25 9:22 AM, Mauro Carvalho Chehab wrote:
-> >> Specially on kAPI, sometimes it is desirable to be able to
-> >> describe global variables that are part of kAPI.
-> >>
-> >> Documenting vars with Sphinx is simple, as we don't need
-> >> to parse a data struct. All we need is the variable
-> >> declaration and use natice C domain ::c:var: to format it
-> >> for us.
-> >>
-> >> Add support for it.
-> >>
-> >> Link: https://lore.kernel.org/linux-doc/491c3022-cef8-4860-a945-c9c4a3b63c09@infradead.org/T/#m947c25d95cb1d96a394410ab1131dc8e9e5013f1
-> >> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> >> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> >> ---
-> >>  scripts/lib/kdoc/kdoc_output.py | 31 +++++++++++++++++++++++++++++++
-> >>  scripts/lib/kdoc/kdoc_parser.py | 25 ++++++++++++++++++++++++-
-> >>  2 files changed, 55 insertions(+), 1 deletion(-)
-> >>
-> 
-> 
-> > So, I grabbed some global data from 6-8 places in the kernel and put them intoinit/kdoc-globals-test.c. Then I modified Documentation/core-api/kernel-api.rst
-> > like this at the end of that file:
-> > 
-> > +
-> > +Kernel Globals
-> > +==========================
-> > +
-> > +.. kernel-doc:: init/kdoc-globals-test.c
-> > +   :identifiers:
-> > 
-> > The html output says
-> > "Kernel Globals"
-> > but nothing else.
-> > 
-> > My test files are attached. I dumbed down (simplified) a few
-> > of the globals from fancy types to just unsigned long, but that
-> > didn't help the output results any.
-> > 
-> > What's happening?
-> > Thanks.
-> > 
-> 
-> My problems here could be from a patch mis-merge.
-> Maybe your patch was against a tree or previous patches that I don't have.
-> 
-> You could supply an updated patch or I can just wait until all
-> the patches are synchronized for further testing.
-> Or you could just take my sample and keep testing it.
+Issue description:During the wake-up sequence, if the system invokes
+ dwc3->resume and detects that the parent device of dwc3 is in a
+runtime suspend state, the system will generate an error: runtime PM
+trying to activate child device xxx.dwc3 but parent is not active.
 
-I applied it after my sphinx-build-wrapper patch series,
-but it doesn't touch kernel-doc. I did a rebase just to make
-sure, on the top of docs-next branch from Jon's tree, e.g. 
-on the top of:
+Solution:At the dwc3->resume entry point, if the dwc3 controller
+is detected in a suspended state, the function shall return
+immediately without executing any further operations.
 
-    git://git.lwn.net/linux.git docs-next
+Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
+---
+ drivers/usb/dwc3/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-e.g. applying it after:
-
-    7e5a0fe4e8ae ("doc: filesystems: proc: remove stale information from intro")
-
-Patch applied cleanly.
-
-Notice that it probably depends on some changes that Jon
-applied for kernel-doc after -rc1.
-
-If you prefer, the patch is here at global_vars branch:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git/log/?h=global_vars
-
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 370fc524a468..06a6f8a67129 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
+ 	struct device *dev = dwc->dev;
+ 	int		ret = 0;
+ 
++	if (pm_runtime_suspended(dev))
++		return ret;
++
+ 	pinctrl_pm_select_default_state(dev);
+ 
+ 	pm_runtime_disable(dev);
 -- 
-Thanks,
-Mauro
+2.25.1
+
 
