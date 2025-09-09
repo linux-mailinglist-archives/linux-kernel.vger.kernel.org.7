@@ -1,337 +1,127 @@
-Return-Path: <linux-kernel+bounces-807878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA6AB4AAB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320FDB4AAB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD134E7EA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:30:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE6416D3A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AEC31B819;
-	Tue,  9 Sep 2025 10:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494A131A547;
+	Tue,  9 Sep 2025 10:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t09cwcKU"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDKoU0tM"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D52318150
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0B12264A3;
+	Tue,  9 Sep 2025 10:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757413813; cv=none; b=EyOVoIj+G8M4TT38sd+sEXOJV3xqI6+6F9uIiD8AMwDHnZtT8zMQ/bKDra9LNH4shhtIGApRxxip9Pq0CImj0Tt99/6WFpKvCjS/6qPmSdJU+jTw0ZdMHRRKaZERLvkbIFC5xRB6AlrLqGcK/HDeR30YxzPeaVxKcpafCU8e6O0=
+	t=1757413828; cv=none; b=YBWvOB8Jk2jPn4LZmYn3MsenJT8oNgattJItOzAU6G0NDzP+iLtffju0mRPcZy4zVTEMxQ+uQMsrmrjd23/qzODzfZM5zwWLn6RHJfgjhVYN6HWyhWN/AaOBa0e63BsrM3x/MzNY0q89OAytO7YqtK5jUQ3nEH4INDrVO1I63sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757413813; c=relaxed/simple;
-	bh=p1HqAG1bf9jyz6uF/942BZoWTV05GntsyVLh3HukwaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMvqKNY4YNYhpdyDUPioLR2uj6KOMxaVZosIwdn7ISxgTC9rXaO3st+zI3UU6ZQWhIJ6wwFLVm4oZeevuGVNujNBwATMdM8w2pRvSgpfd6KAU50hiUSvU7nRnXJpUxhLqUI7D737ePt83ZRvOAEetvO2TWwgNHvB0MmH7ziAUFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t09cwcKU; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 12:29:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757413799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tKLSbx0HhGLc84/sLYyl4TTsBHD1OS4+25YqEDY+tVw=;
-	b=t09cwcKUdxXYeW+dbOHMcOoxh80hSMxYTDFM8f+Qv3N2eCS5/WE+aLGwvjI8nw31rVj9lP
-	T3zmLNN1llPJtay5qqgceRtkvqp3LwrMbWvzSzbDCZFWaJ7FdPBh/V0AkbGyTxsHck39wC
-	+uPxKIX31oMNQd9ChohTK0+Hbn23toU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 04/10] Documentation: uAPI: media: add
- V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
-Message-ID: <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-4-d58d5a694afc@linux.dev>
- <20250907194953.GA19568@pendragon.ideasonboard.com>
- <j337fpaqahmee3qutgtkavud6rbqyn4lpsj4yaha2xmvcvfhli@z67twdhybvqp>
- <20250908155917.GK26062@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1757413828; c=relaxed/simple;
+	bh=BMhENPL1jxD1KN082klCCWEOig/QPZ0hZmqTzJVjyjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+O9afsRTezxMJaDQrMNwvX+ZD/WX9GsUucRvEb+MxfbkK9X3uzqzvZyysjFsHhbBVpFE/VsTr48cb0Jc7s23powlBioERZTsIiiUHm+qC8n2RGDynmu7qBuaBYUOXSNHC+5riA9CirKTCR9YoiDnvvkl9wAadLyOPbCDFV8WKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDKoU0tM; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7741991159bso4840879b3a.0;
+        Tue, 09 Sep 2025 03:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757413826; x=1758018626; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lLB/cJ3kKLYD3vHSpK6Et5rrL3DyKrjgi7YgZ1Qd/2w=;
+        b=BDKoU0tMx1Z29mFfQnt9EJWQj9y0a7cJ9KOvbqhZ9rq8Q2EXCCHLyHBxAYw55otBQd
+         mC23eem3CtLl9JHHnOwoSVerN47X7wOxjR33+YYoMFqvDa4ZxuRfUElCVqr6Xz1pT+pY
+         37S7UdgVdhE4iv8XKhbbQm1Du79mE4RbBJBm84syWKC4NN4srMASChQ5jBJ0CQNMAd+e
+         f0B3NVAjM4ceKcGdIUfSmaC7MOPoeJpKd8h8KO+1jCLqGIducfynJ4An8Uo80t4+P64v
+         gVdRTB+HqJ9Jv/WC5UDLyco7QlIN+FaPJyjItBnDBqBOPpUeNyiBbtZb31VOuYXy9woM
+         Y8qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757413826; x=1758018626;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lLB/cJ3kKLYD3vHSpK6Et5rrL3DyKrjgi7YgZ1Qd/2w=;
+        b=IbruuwBFnMhLla9k4PKU5AO1Ywj4CgCJOVLwus0yVUuyIboQ0gBs/F4lI/d8wVB+Hi
+         wQ2hU4QaQn0BAHHWykWXk3mNeSvxBitHNy5LyzJdHLwDSRJpg6BZLwlUxryubzZBH8I+
+         pYA6gNu+yoVTWNcQviMOxw4RnmLFxmmOXA8Mm8zp9hGU2Ma8FFMRkrv0TT7SPus4rHIN
+         9HN+1kA4oqP2OEDSi7jEWxEvRcqUPEJNENV8LPDDuuBdoIo5fS8n/pOwEW4QPQfVFcMI
+         DFTO/FWuR2nn9oCK9xLOUi3OswnzqZCsP0Kh5pUSalQbFQrtfWXG67sn3WU3XTUIlRur
+         JKOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ5lwUP9m/j8EY8hHvUy2InhUqVezZeqmV67oJeiJUnEGZpYTvDy9qIN9X3hkbQZ/gnPySOa5PJHzbcPIq@vger.kernel.org, AJvYcCWlxK/o7/aCPfpDKmk3dV7zZ2qHgPDig6scGh6GOcqWi9D06+oBdtT91LzF1mEfbWVImt1t5aZ5+XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD6rRyZ4iWXLGP6Yb4KI4Sj5HB4YWP9hcMLiRNtd/zRwn5RaM0
+	JLkhtjA/gqA8y7IBbmwnyzK69yHvuOXvotgJpNnz/y1LYu3GU/WjXE7f
+X-Gm-Gg: ASbGncuiwPcQWjzdj4RNzrxgNEIupcXtsV2ytD12ruUUGwFtJp71U5I+K4ZXbo+/kMF
+	4DWbkAPhKqY9DsDF6bgGWWuKZ0fbcUx6boq+17tLK/+IcmdV+zJCwVVJNLkC+HwmR+KBMYaguUP
+	SEsmvlB4moElfmbr1RAPliAFrh3v6iVb6NEsG0N1jt8v0OzfuXysjf9WQkmqe27m9/3fMjwtEnd
+	uKLrIZobQHTzWusen7ZEmgPwtV9/WgMSB3bniFSmO14j8l6+hRlDQk/JT+l1NYnIiey4YXBhYQv
+	AJ9RePee5GI3nhLCSYbqoJJUzbDnqhEXbPXVMeQTkFkrltCIKfDRKYeEBdpRM18CoHeVZAvkA6L
+	hBXKZcGFYFj4nLHxCCAzqhZYskxV2EDZQFgilJraNBlkBaX9R9vrwpDDTM0aX6bgHZW/IEg3CKI
+	dDFYE=
+X-Google-Smtp-Source: AGHT+IGI7uCKWs3EfQcckiznMoygIcQL4xLzIZOcoI5BfpZKOvOUX6YYCZGorVaaKRBIATjv0pb7TA==
+X-Received: by 2002:a05:6a00:9283:b0:772:63ba:138 with SMTP id d2e1a72fcca58-7742dea5457mr14991621b3a.21.1757413826212;
+        Tue, 09 Sep 2025 03:30:26 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7746628fb5bsm1672759b3a.48.2025.09.09.03.30.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 03:30:25 -0700 (PDT)
+Message-ID: <3af7a4d0-3587-4374-8087-4ad037e8c5f1@gmail.com>
+Date: Tue, 9 Sep 2025 19:30:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250908155917.GK26062@pendragon.ideasonboard.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] docs: ja_JP: SubmittingPatches: describe the 'Fixes:'
+ tag (12-char SHA-1 + pretty example)
+To: Akiyoshi Kurita <weibu@redadmin.org>, linux-doc@vger.kernel.org
+Cc: corbet@lwn.net, linux-kernel@vger.kernel.org
+References: <20250909022502.119560-1-weibu@redadmin.org>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250909022502.119560-1-weibu@redadmin.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent,
-
-thanks for your great (and quick) feedback!
-
-On Mon, Sep 08, 2025 at 05:59:17PM +0200, Laurent Pinchart wrote:
-> On Mon, Sep 08, 2025 at 02:37:15PM +0200, Richard Leitner wrote:
-> > On Sun, Sep 07, 2025 at 09:49:53PM +0200, Laurent Pinchart wrote:
-> > > On Mon, Sep 01, 2025 at 05:05:09PM +0200, Richard Leitner wrote:
-> > > > Add the new strobe duration and hardware strobe signal control to v4l
-> > > > uAPI documentation. Additionally add labels for cross-referencing v4l
-> > > > controls.
-> > > > 
-> > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > ---
-> > > >  .../userspace-api/media/v4l/ext-ctrls-flash.rst    | 29 ++++++++++++++++++++++
-> > > >  1 file changed, 29 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..6254420a8ca95929d23ffdc65f40a6e53e30a635 100644
-> > > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > @@ -57,6 +57,8 @@ Flash Control IDs
-> > > >  ``V4L2_CID_FLASH_CLASS (class)``
-> > > >      The FLASH class descriptor.
-> > > >  
-> > > > +.. _v4l2-cid-flash-led-mode:
-> > > > +
-> > > >  ``V4L2_CID_FLASH_LED_MODE (menu)``
-> > > >      Defines the mode of the flash LED, the high-power white LED attached
-> > > >      to the flash controller. Setting this control may not be possible in
-> > > > @@ -80,6 +82,8 @@ Flash Control IDs
-> > > >  
-> > > >  
-> > > >  
-> > > > +.. _v4l2-cid-flash-strobe-source:
-> > > > +
-> > > >  ``V4L2_CID_FLASH_STROBE_SOURCE (menu)``
-> > > >      Defines the source of the flash LED strobe.
-> > > >  
-> > > > @@ -186,3 +190,28 @@ Flash Control IDs
-> > > >      charged before strobing. LED flashes often require a cooldown period
-> > > >      after strobe during which another strobe will not be possible. This
-> > > >      is a read-only control.
-> > > > +
-> > > > +.. _v4l2-cid-flash-duration:
-> > > > +
-> > > > +``V4L2_CID_FLASH_DURATION (integer)``
-> > > > +    Duration of the flash strobe pulse generated by the strobe source,
-> > > > +    typically a camera sensor. This method of controlling flash LED strobe
-> > > > +    duration has three prerequisites: the strobe source's
-> > > > +    :ref:`hardware strobe signal <v4l2-cid-flash-hw-strobe-signal>` must be
-> > > > +    enabled, the flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH``, and the
-> > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be configured to
-> > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. The unit should be microseconds (µs)
-> > > > +    if possible.
-> > > 
-> > > As mentioned in the review of 01/10, I think this needs to be clarified.
-> > > Ideally we should add a new document in
-> > > Documentation/userspace-api/media/v4l/ to explain the flash API, but in
-> > > the meantime let's at lets improve the description of the duration
-> > > control. Here's a proposal.
-> > 
-> > Understood. Thank you for your proposal!
-> > 
-> > > ``V4L2_CID_FLASH_DURATION (integer)``
-> > >     Duration of the flash strobe pulse generated by the strobe source, when
-> > >     using external strobe. This control shall be implemented by the device
-> > >     generating the hardware flash strobe signal, typically a camera sensor,
-> > >     connected to a flash controller. It must not be implemented by the flash
-> > >     controller.
-> > > 
-> > >     This method of controlling flash LED strobe duration has three
-> > >     prerequisites: the strobe source's :ref:`hardware strobe signal
-> > >     <v4l2-cid-flash-hw-strobe-signal>` must be enabled, the flash controller's
-> > >     :ref:`flash LED mode <v4l2-cid-flash-led-mode>` must be set to
-> > >     ``V4L2_FLASH_LED_MODE_FLASH``, and its :ref:`strobe source
-> > >     <v4l2-cid-flash-strobe-source>` must be configured to
-> > >     ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
-> > > 
-> > >     The unit should be microseconds (µs) if possible.
-> > > 
-> > > 
-> > > The second paragraph may be better replaced by expanding the
-> > > documentation of V4L2_FLASH_STROBE_SOURCE_EXTERNAL, it seems a better
-> > > place to document how external strobe works.
-> > 
-> > That's fine for me. I will adapt the V4L2_CID_FLASH_DURATION and
-> > V4L2_FLASH_STROBE_SOURCE_EXTERNAL documentation accordingly and send in
-> > v9.
+On Tue,  9 Sep 2025 11:25:02 +0900, Akiyoshi Kurita wrote:
+> Add a Japanese section describing the Fixes: tag, use a consistent
+> 12-character SHA-1 in the example, and include the pretty-format
+> snippet to generate a Fixes: line with git log/show.
+> No functional changes.
 > 
-> Sakari, could you please check if you agree with the above ? Let's avoid
-> going back and forth with reviews (and I'll try my best to review the
-> next version quickly).
-
-My current proposal:
-
-    * - ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``
-      - The flash strobe is triggered by an external source. Typically
-        this is a sensor, which makes it possible to synchronise the
-        flash strobe start to exposure start.
-        This method of controlling flash LED strobe has two additional
-        prerequisites: the strobe source's :ref:`flash strobe output
-        <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
-        and the flash controller's :ref:`flash LED mode
-        <v4l2-cid-flash-led-mode>` must be set to
-        ``V4L2_FLASH_LED_MODE_FLASH``. Additionally the :ref:`flash duration
-	<v4l2-cid-flash-duration>` may be adjusted by the strobe source.
-
-
-``V4L2_CID_FLASH_DURATION (integer)``
-    Duration of the flash strobe pulse generated by the strobe source, when
-    using external strobe. This control shall be implemented by the device
-    generating the hardware flash strobe signal, typically a camera sensor,
-    connected to a flash controller. It must not be implemented by the flash
-    controller. Typically the flash strobe pulse needs to be activated by
-    enabling the strobe source's :ref:`flash strobe output
-    <v4l2-cid-flash-strobe-oe>`.
-
-    The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-    must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-    mode of operation.
-
-    The unit should be number of lines if possible.
-
-
-``V4L2_CID_FLASH_STROBE_OE (boolean)``
-    Enables the output of a hardware strobe signal from the strobe source,
-    when using external strobe. This control shall be implemented by the device
-    generating the hardware flash strobe signal, typically a camera sensor,
-    connected to a flash controller.
-
-    Provided the signal generating device driver supports it, the length of the
-    strobe signal can be configured by adjusting its
-    :ref:`flash duration <v4l2-cid-flash-duration>`. In case the device has a
-    fixed strobe length, the flash duration control must not be implemented.
-
-    The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-    must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-    mode of operation.
-
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
 > 
-> > > As for the unit, is microseconds really the best option ? I would expect
-> > > most sensors to express the strobe pulse width in unit of lines.
-> > 
-> > We had that discussion already somewhere during this series. Tbh for me
-> > microseconds seems fine. Most (professional) flashes are configured with
-> > s^-1, so that would also be an option, but as flash_timeout is
-> > configured in microseconds, i chose it for flash_duration too.
-> > 
-> > Nonetheless technically it shouldn't be a problem to express it as
-> > number of lines... Is there a reason to prefer this?
-> 
-> A few observations have confirmed my gut feeling that this is how
-> sensors typically express the pulse width. Expressing the value in its
-> hardware unit means we won't have rounding issues, and drivers will also
-> be simpler. We're missing data though, it would be nice to check a wider
-> variety of camera sensors.
+> ---
+> v4:
+>   - Fix unnatural Japanese wording in the new Fixes: section for clarity.
+>   - No content change, only Japanese expression improved.
+>   - v4 fully replaces v3 (not incremental).
 
-I have done some more measurements and calculation on this for ov9281.
-It seems you are (somehow?) right. The strobe_frame_span (aka strobe
-duration) register value seems to represent the duration of the strobe in
-number of lines plus a constant and variable offset based on the hblank
-value. Other settings (e.g. vblank, exposure, ...) have no influence on
-the duration.
+Sorry, but this is wrong. I needed to apply v4 on top of v3.
 
-After about 50 measurements using different strobe_frame_span and hblank
-values and 1280x800 as resolution I came up with the following formulas:
+It is contributor's responsibility to make reviewers life easier,
+Please be careful.
 
-   line_factor = active_width + hblank * 1,04 + 56
+I think you need to understand Linux kernel's patch submission
+conventions before starting sending patches.
 
-   t_strobe = strobe_frame_span * line_factor / pixel_rate
+Of course, submitting-patches.rst (or ja_JP's SubmittingPatches) should
+be a good starting point for learning the process.  
 
-Which matches all tested cased nicely...
+Probably, it would be better for you to send your WIP patches privately
+(meaning without CCs) to me.  Not necessarily in English.
 
-Nonetheless I'm still unsure on what unit to use for flash duration...
+Regards,
+Akira
 
-The exposure time for ov9282 is set as "number of row periods, where the
-low 4 bits are fraction bits" in the registers. The v4l2 control should
-on the other hand accept 100 µs units as value.
-
-From a user perspective it would make sense to me to configure exposure
-time, flash duration and flash/strobe offset using the same base units.
-On the other hand we may have rounding issues and formulas based on
-assumptions or reverse-engineering when implementing this for a
-sensor...
-
-What's your opinion on this, Sakari, Laurent, Dave?
-
-> 
-> > > I think we also need to decide how to handle camera sensors whose flash
-> > > strobe pulse width can't be controlled. For instance, the AR0144 can
-> > > output a flash signal, and its width is always equal to the exposure
-> > > time. The most straightforward solution seems to implement
-> > > V4L2_CID_FLASH_HW_STROBE_SIGNAL but not V4L2_CID_FLASH_DURATION in the
-> > > sensor driver. Could this cause issues in any use case ? Is there a
-> > > better solution ? I would like this to be documented.
-> > 
-> > Sounds good to me. In this case the V4L2_CID_FLASH_DURATION could be
-> > provided as a read-only property too. So userspace is explicitely aware
-> > of the acutal value and doesn't have to make assumptions.
-> 
-> The value would change depending on the exposure time. Given how control
-> change events are implemented that would be difficult to use from
-> userspace at best. I think not exposing the control would be as useful
-> as exposing a read-only value, and it would be simpler to implement in
-> kernel drivers.
-
-That's true. I guess keeping the drivers simple and moving this "logic"
-to a possible client/userspace application (if needed) is fine with me.
-
-As you may have seen above, I've tried to integrate this in the
-documentation proposal already.
-
-> 
-> > Should I add documentation on this topic to this patch?
-> 
-> That would be nice, thank you.
-> 
-> > > Finally, I think we also need to standardize the flash strobe offset.
-> > 
-> > I guess I somewhere mentioned this already: I have some patches for
-> > configuring the strobe offset of ov9282 and adding the corresponding
-> > v4l2 control. But to keep this series simple I'm planning to send them
-> > as soon as this one is "done".
-> > 
-> > IMHO the offset should then have the same unit as the flash_duration.
-> 
-> What's the unit for the OV9282 ? For AR0144, it's a 8-bit signed value
-> expressed in units of half a line.
-> 
-> > > > +
-> > > > +.. _v4l2-cid-flash-hw-strobe-signal:
-> > > > +
-> > > > +``V4L2_CID_FLASH_HW_STROBE_SIGNAL (boolean)``
-> > > 
-> > > Nitpicking a bit on the name, I would have called this
-> > > V4L2_CID_FLASH_STROBE_OUTPUT_ENABLE (or _OE).
-> > 
-> > I'm always open to name-nitpicking ;-)
-> > 
-> > V4L2_CID_FLASH_STROBE_OE sounds great to me... It's clear and even
-> > shorter than V4L2_CID_FLASH_HW_STROBE_SIGNAL.
-> 
-> Sakari, what's your opinion ?
-> 
-> > > > +    Enables the output of a hardware strobe signal from the strobe source,
-> > > > +    typically a camera sensor. To control a flash LED driver connected to this
-> > > > +    hardware signal, the :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH`` and the
-> > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be set to
-> > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. Provided the flash LED driver
-> > > > +    supports it, the length of the strobe signal can be configured by
-> > > > +    adjusting its :ref:`flash duration <v4l2-cid-flash-duration>`.
-> > > 
-> > > The V4L2_CID_FLASH_HW_STROBE_SIGNAL documentation needs to be clarified
-> > > in a similar way as V4L2_CID_FLASH_DURATION.
-> > 
-> > Sure. I will adapt this for v9.
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-
-thanks & regards;rl
 
