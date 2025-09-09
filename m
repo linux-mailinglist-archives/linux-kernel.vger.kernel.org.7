@@ -1,199 +1,182 @@
-Return-Path: <linux-kernel+bounces-807738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49CFB4A898
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:47:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDBFB4A87E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F29C44491F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DD217D6E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6130FC2C;
-	Tue,  9 Sep 2025 09:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W7s1gpEo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE30630DD2E;
+	Tue,  9 Sep 2025 09:40:09 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D0F30F93D;
-	Tue,  9 Sep 2025 09:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC10309DC4;
+	Tue,  9 Sep 2025 09:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757410813; cv=none; b=UNZOHjYzPtO45mYPJXFeuyZyd4Z9M4xeeX558qdqToHGOSXz21XauYSeYCgcHCdZg+UbhQjtViauAW3rbFZYzAmVJAFH+Q1GBTla+x9wYkPHR2BZWRGGNosvYsWg/d5b/xgaRjHyEdDs8gSTvyLFqb92IHZe1v1jQpOpC4+wGRI=
+	t=1757410809; cv=none; b=fpwj3m87SArCokiRrT/DtpBMHvufX7JhaTj0gY9GqF2Jm76jsRKfgQf06m2GbYumIJeTmWKAGEOte7o50uvoXSHQHyV41jCZ8K5noQ4X5lj7WbpP1/d1xi8EkXZ1EsN44IFOaWKjLD6gJhr6uxoNVx0MGsswZ6eRAhJp3+7F9vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757410813; c=relaxed/simple;
-	bh=C9Z/c4AV0RFEEypMIxy3Os2G0EmIpfbOJH2XRkzjquw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U9MoUzIErfqxICOaW5DPt7YvNHkQtRDfmQpaDmtAIqf/DWRrJpuz7gLXuIULBOL0pjELnKcnSnQwcLOoHS1D0poeTYDkxPefm//zehodGxoEnGk6/xFzAWnCoWKqIurQvap9qKYODax01CFm8xhhOqpIG8jPMgffr1ELJW29VaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W7s1gpEo; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757410811; x=1788946811;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=C9Z/c4AV0RFEEypMIxy3Os2G0EmIpfbOJH2XRkzjquw=;
-  b=W7s1gpEoJjb5chzGPOKjhaC3U0YrrVLBvIr+x6AuHGy18frxYe++FJuz
-   897+h0cGaSumXO5kYDcyXd5EV1tiTRS4JjuyCNG6aBs9Vm1Clt9A8KuPl
-   YgXs3Aj186Q7Gfwgsvnx5sg6fq+KDM+LHAVo3WJ1e77DlwVKAbsRZxSU7
-   3b1qP1T63mXFg1G0ISaa1MpVfMOmqpVGbSzCG/eSNktww4zdCHaLGG/rZ
-   3Ftv6Ry3IoisaNcUTeTgj65mOAGM7ipoEljDbh5iCuxGLHQh9ZpyO0pFn
-   HXR2c6kqD6I4S0y79eYARWaUQl/PzFPE8NEz0ONEn5sSdYiV29CnYlp23
-   w==;
-X-CSE-ConnectionGUID: QhPHuvbpQa+EO2ezsp/ndA==
-X-CSE-MsgGUID: 8gsnMi3ZTk+EftPM8HOX4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70307373"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="70307373"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 02:39:58 -0700
-X-CSE-ConnectionGUID: VpM5hPgBTQyIZMHKzcnnJw==
-X-CSE-MsgGUID: XE3ouerFThOfWh7chFL/rA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="172207451"
-Received: from unknown (HELO CannotLeaveINTEL.jf.intel.com) ([10.165.54.94])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 02:39:58 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: acme@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	john.allen@amd.com,
-	mingo@kernel.org,
-	mingo@redhat.com,
-	minipli@grsecurity.net,
-	mlevitsk@redhat.com,
-	namhyung@kernel.org,
-	pbonzini@redhat.com,
-	prsampat@amd.com,
-	rick.p.edgecombe@intel.com,
-	seanjc@google.com,
-	shuah@kernel.org,
-	tglx@linutronix.de,
-	weijiang.yang@intel.com,
-	x86@kernel.org,
-	xin@zytor.com,
-	xiaoyao.li@intel.com
-Subject: [PATCH v14 22/22] KVM: selftest: Add tests for KVM_{GET,SET}_ONE_REG
-Date: Tue,  9 Sep 2025 02:39:53 -0700
-Message-ID: <20250909093953.202028-23-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250909093953.202028-1-chao.gao@intel.com>
-References: <20250909093953.202028-1-chao.gao@intel.com>
+	s=arc-20240116; t=1757410809; c=relaxed/simple;
+	bh=1BLxtqNy/iOf9XPghIOmJi8qyxLBt+poztV5tfMoCPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFTR7LtbRZM5fiK7k6P12iwOyBtms1SDVW9YAkwvKN8eE+ql0oCQ1wBVg/fe2EQViU3ZNm848O9rWD9bu/+fbUM1yNrjU2t7oxDl3TXea7dc8bVeq26Jq2rPT4soaoz0yEzIcg1cyCQWR6+ZCvDcEIqnSCbOrTs7jdIFIdkuHMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.168])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id DECA3340EC3;
+	Tue, 09 Sep 2025 09:40:03 +0000 (UTC)
+Date: Tue, 9 Sep 2025 17:39:58 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 12/15] gpio: spacemit-k1: use new generic GPIO chip API
+Message-ID: <20250909093958-GYA1207638@gentoo.org>
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-12-9f723dc3524a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909-gpio-mmio-gpio-conv-part4-v1-12-9f723dc3524a@linaro.org>
 
-Add tests for newly added KVM_{GET,SET}_ONE_REG support for x86. Verify the
-new ioctls can read and write real MSRs and synthetic MSRs.
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- tools/arch/x86/include/uapi/asm/kvm.h         | 29 ++++++++++++++++++
- tools/testing/selftests/kvm/Makefile.kvm      |  1 +
- .../selftests/kvm/x86/get_set_one_reg.c       | 30 +++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/get_set_one_reg.c
+On 11:15 Tue 09 Sep     , Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Convert the driver to using the new generic GPIO chip interfaces from
+> linux/gpio/generic.h.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Thanks for converting this
 
-diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
-index 6f3499507c5e..59ac0b46ebcc 100644
---- a/tools/arch/x86/include/uapi/asm/kvm.h
-+++ b/tools/arch/x86/include/uapi/asm/kvm.h
-@@ -411,6 +411,35 @@ struct kvm_xcrs {
- 	__u64 padding[16];
- };
- 
-+#define KVM_X86_REG_TYPE_MSR		2
-+#define KVM_X86_REG_TYPE_KVM		3
-+
-+#define KVM_X86_KVM_REG_SIZE(reg)						\
-+({										\
-+	reg == KVM_REG_GUEST_SSP ? KVM_REG_SIZE_U64 : 0;			\
-+})
-+
-+#define KVM_X86_REG_TYPE_SIZE(type, reg)					\
-+({										\
-+	__u64 type_size = (__u64)type << 32;					\
-+										\
-+	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
-+		     type == KVM_X86_REG_TYPE_KVM ? KVM_X86_KVM_REG_SIZE(reg) :	\
-+		     0;								\
-+	type_size;								\
-+})
-+
-+#define KVM_X86_REG_ENCODE(type, index)				\
-+	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type, index) | index)
-+
-+#define KVM_X86_REG_MSR(index)					\
-+	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
-+#define KVM_X86_REG_KVM(index)					\
-+	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_KVM, index)
-+
-+/* KVM-defined registers starting from 0 */
-+#define KVM_REG_GUEST_SSP	0
-+
- #define KVM_SYNC_X86_REGS      (1UL << 0)
- #define KVM_SYNC_X86_SREGS     (1UL << 1)
- #define KVM_SYNC_X86_EVENTS    (1UL << 2)
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f6fe7a07a0a2..9a375d5faf1c 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
- TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
- TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
- TEST_GEN_PROGS_x86 += x86/aperfmperf_test
-+TEST_GEN_PROGS_x86 += x86/get_set_one_reg
- TEST_GEN_PROGS_x86 += access_tracking_perf_test
- TEST_GEN_PROGS_x86 += coalesced_io_test
- TEST_GEN_PROGS_x86 += dirty_log_perf_test
-diff --git a/tools/testing/selftests/kvm/x86/get_set_one_reg.c b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
-new file mode 100644
-index 000000000000..8a4dbc812214
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <fcntl.h>
-+#include <stdint.h>
-+#include <sys/ioctl.h>
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	u64 data;
-+
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_ONE_REG));
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, NULL);
-+
-+	TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), &data), 0);
-+	TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), data), 0);
-+
-+	if (kvm_cpu_has(X86_FEATURE_SHSTK)) {
-+		TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_KVM(KVM_REG_GUEST_SSP), &data), 0);
-+		TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_KVM(KVM_REG_GUEST_SSP), data), 0);
-+	}
-+
-+	kvm_vm_free(vm);
-+	return 0;
-+}
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
+
+> ---
+>  drivers/gpio/gpio-spacemit-k1.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-spacemit-k1.c b/drivers/gpio/gpio-spacemit-k1.c
+> index 3cc75c701ec40194e602b80d3f96f23204ce3b4d..9e57f43d3d13ad28fcd3327ecdc3f359691a44c9 100644
+> --- a/drivers/gpio/gpio-spacemit-k1.c
+> +++ b/drivers/gpio/gpio-spacemit-k1.c
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/gpio/driver.h>
+> +#include <linux/gpio/generic.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> @@ -38,7 +39,7 @@
+>  struct spacemit_gpio;
+>  
+>  struct spacemit_gpio_bank {
+> -	struct gpio_chip gc;
+> +	struct gpio_generic_chip chip;
+>  	struct spacemit_gpio *sg;
+>  	void __iomem *base;
+>  	u32 irq_mask;
+> @@ -72,7 +73,7 @@ static irqreturn_t spacemit_gpio_irq_handler(int irq, void *dev_id)
+>  		return IRQ_NONE;
+>  
+>  	for_each_set_bit(n, &pending, BITS_PER_LONG)
+> -		handle_nested_irq(irq_find_mapping(gb->gc.irq.domain, n));
+> +		handle_nested_irq(irq_find_mapping(gb->chip.gc.irq.domain, n));
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -143,7 +144,7 @@ static void spacemit_gpio_irq_print_chip(struct irq_data *data, struct seq_file
+>  {
+>  	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(data);
+>  
+> -	seq_printf(p, "%s-%d", dev_name(gb->gc.parent), spacemit_gpio_bank_index(gb));
+> +	seq_printf(p, "%s-%d", dev_name(gb->chip.gc.parent), spacemit_gpio_bank_index(gb));
+>  }
+>  
+>  static struct irq_chip spacemit_gpio_chip = {
+> @@ -165,7 +166,7 @@ static bool spacemit_of_node_instance_match(struct gpio_chip *gc, unsigned int i
+>  	if (i >= SPACEMIT_NR_BANKS)
+>  		return false;
+>  
+> -	return (gc == &sg->sgb[i].gc);
+> +	return (gc == &sg->sgb[i].chip.gc);
+>  }
+>  
+>  static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+> @@ -173,7 +174,8 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+>  				  int index, int irq)
+>  {
+>  	struct spacemit_gpio_bank *gb = &sg->sgb[index];
+> -	struct gpio_chip *gc = &gb->gc;
+> +	struct gpio_generic_chip_config config;
+> +	struct gpio_chip *gc = &gb->chip.gc;
+>  	struct device *dev = sg->dev;
+>  	struct gpio_irq_chip *girq;
+>  	void __iomem *dat, *set, *clr, *dirin, *dirout;
+> @@ -187,9 +189,19 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+>  	dirin	= gb->base + SPACEMIT_GCDR;
+>  	dirout	= gb->base + SPACEMIT_GSDR;
+>  
+> +	config = (typeof(config)){
+> +		.dev = dev,
+> +		.sz = 4,
+> +		.dat = dat,
+> +		.set = set,
+> +		.clr = clr,
+> +		.dirout = dirout,
+> +		.dirin = dirin,
+> +		.flags = BGPIOF_UNREADABLE_REG_SET | BGPIOF_UNREADABLE_REG_DIR,
+> +	};
+> +
+>  	/* This registers 32 GPIO lines per bank */
+> -	ret = bgpio_init(gc, dev, 4, dat, set, clr, dirout, dirin,
+> -			 BGPIOF_UNREADABLE_REG_SET | BGPIOF_UNREADABLE_REG_DIR);
+> +	ret = gpio_generic_chip_init(&gb->chip, &config);
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "failed to init gpio chip\n");
+>  
+> @@ -221,7 +233,7 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+>  	ret = devm_request_threaded_irq(dev, irq, NULL,
+>  					spacemit_gpio_irq_handler,
+>  					IRQF_ONESHOT | IRQF_SHARED,
+> -					gb->gc.label, gb);
+> +					gb->chip.gc.label, gb);
+>  	if (ret < 0)
+>  		return dev_err_probe(dev, ret, "failed to register IRQ\n");
+>  
+> 
+> -- 
+> 2.48.1
+> 
+
 -- 
-2.47.3
-
+Yixun Lan (dlan)
 
