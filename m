@@ -1,231 +1,163 @@
-Return-Path: <linux-kernel+bounces-808070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF948B4ACCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:50:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4253B4ACBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094D35E260A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:49:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5F6D7B6D28
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA91E0DE3;
-	Tue,  9 Sep 2025 11:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGTf8WQ5"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF8A2EE5FE;
+	Tue,  9 Sep 2025 11:48:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEECE2D191F;
-	Tue,  9 Sep 2025 11:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83EC32144A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418495; cv=none; b=dAaZfGm+cSK/0svC08mydOqDLfWTi5p+b/vsfqIs0peEMYzu0IO/nXJRXaoNGd/O/Vrxpx11VMa2UbMiOnnH23J4EBDVkFUrPCScB7IfGza8FsMtBfcgPvauqVvvFylKW8QSwCT/sgF9b09FeIXyQFzmap9e0YKPh1Qvi80QhHU=
+	t=1757418514; cv=none; b=PXaSa0CH14t5OH+6TX21/rKzEgkwQWjMAwHUMFxodvBrHyw5pq5MGVpMMFmvrFJiV8IQXWhK922MM94lBEPJigtr2ry+/+36N7YRjE3pzRev9hxXHYjn1hTpoSCVheFOS+WHNNnufxbmCnsAwjSCNax8/7XtS6HHnKUpaPJ4rVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418495; c=relaxed/simple;
-	bh=rzY8CzEoW8TQGVo2f3RbSObqhKYCgt3vL8BBFuth4Xk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWdO99u3WKbJcn7phITqRVXEadgG0bA3oCbf048xw2s7M9CtnWHbvmPAnInimL0f85eYsmI5/A/ysL4hVd0nfBIgX72L8I3rGP8ognLEmNzUF9MvkDlvV2seovfkqLKMmQV6vqAQUbQi0l4+XWD8mIh2c8L+39GKNfxiJOIdqgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGTf8WQ5; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so10605675e9.1;
-        Tue, 09 Sep 2025 04:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757418492; x=1758023292; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IR8QKQd+hRcWkBpmStwu2GuDN9GaRi4Uq2xIr3fN6FM=;
-        b=YGTf8WQ5i5UcKpULLpjrtw1yQHFIAVhsHpGlSihV9JJTMqB/PEs75QsfFSZtkqF/jv
-         QzBZoyPFv+XjMizNCPzpc2VSJ0nOoXA+C6GS5SOL7+rTjxIwBXHMLHMZ7dY0VpDgbxpO
-         O6kMCU87sBKI2d6nfP2ZI5vEybWs/sU3JsiWQYs8PNfzG47c4IDJWShZ4d0Dv/XjBkOk
-         KdKTeml9KhBCuxxqvmQPCltXKUw2hslOQ9zf2oZEXg/1RCUGMiKfObclhteRwqpfsZHd
-         O6LRa9SGwR8+sfwtSFcUPksOUMmGhvrSUI1YHl4fu/bAQeMiSVyTzFvhgVnN5UW6aQ/N
-         28pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757418492; x=1758023292;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IR8QKQd+hRcWkBpmStwu2GuDN9GaRi4Uq2xIr3fN6FM=;
-        b=RlvpeiANfvelo75UBuQUUto+KVor8w8qDK+liLwt/bA5aDTklpB6ETA2jswA20jgzo
-         /AhDRhWRjq2a52FEIWLLgv/SBo+UgSwMtMtmNnY9haWFlkvIq0OxcmItgdw+RaJI+uEZ
-         L1N3TaQ2tMxmjk22KCXEjJIgKJuBG4lVUMcdNShJQgiqlu7osW4Pq8ztFmBPkTeCQWWY
-         U/A66bCQ6GS+8A/VqIkC49ZxeWU2IpzOLiMdZhOXhGaSPD5mDZzMqUMfIHJXKH/KpILa
-         9EYnWJmDSiNhN3tKkdIg9n/iPbeNLhRmg0S08K5UVEz65mrpCkwCXkq5PLXdYyV/H7eW
-         PeCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU91JxbP5kQ+SfOgAFcSjFGkRlH4o1pnxOVkrjIdXTjY0dMCFMVfKdLMdc0zLwYFkk/tyCrOyuQkG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNsRu8XyeziuFmCnpKv8nhLyMhBJtjtul5uFVZJD8/ez72ABac
-	NQkhpaSBDxmrb7qLyZtUfYKUH7jhUepxZ7I+m9KlHKlqRq4VbJE49ECSZJeO3A==
-X-Gm-Gg: ASbGncv77Df9CPBkdnu8cPuebhgQ+aFFy22W8HJvVVZgdNcKzPyQSRVtZORsK+GvZh4
-	ssXMGIfXs5EAkML9z6YyaDN0u23Tn5e8XIudo7NbWwfyrmplpn7ZR2PK+zCmxNpewR3z8BZ6+zx
-	c7z8/kSefp4A9H6TzpiktJbhcTx6mgmMzFdJV4tlfJpCFI/OVg7qh7iF25obeW7Z+wtYJZoYE/h
-	l13QEnKUoNpzxsU530gnrd0S9bAKxXL+UtHbSS990uLjqIzwl3/F5ikyk8Mq0YVzk+zXiBjJx83
-	TSXk5W6THgI7vj8C5Uw7/bL2KadIvE1DcUTEh1NvT/pIasfE+YhI3sRakQSPIQcNCWG/8t5faO8
-	meM88W+Cxss3NK9j2XiZn9xRbcDz8ASDRZNR5f89X/Fe9dy+p2pKJSceLfDrD9bYJ9AM8pg==
-X-Google-Smtp-Source: AGHT+IErkTYNY9jV0PCrvNvm3BbSSU+yIb0sK3PBf74+b6LIHNZZD8jvnENwq5obK4AplgrtbLe7Ww==
-X-Received: by 2002:a05:600c:4f47:b0:45b:76c6:cfb8 with SMTP id 5b1f17b1804b1-45df2cb7c7dmr11809205e9.9.1757418491694;
-        Tue, 09 Sep 2025 04:48:11 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb61377a7sm281429755e9.13.2025.09.09.04.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 04:48:11 -0700 (PDT)
-Message-ID: <68c013fb.050a0220.702b3.6a13@mx.google.com>
-X-Google-Original-Message-ID: <aMAT-V7EScktmfNp@Ansuel-XPS.>
-Date: Tue, 9 Sep 2025 13:48:09 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v23] pwm: airoha: Add support for EN7581 SoC
-References: <20250708145053.798-1-ansuelsmth@gmail.com>
- <xsblhw36y3corxx3pxe6223auirrsqr3efovfnrm5lbo4xy3lf@wf3ytlivzv6g>
- <68bf2509.050a0220.702b3.c003@mx.google.com>
- <o32quqohph6xq73f65izjocjdhv2ri4dld4tcmmmtisa632ucq@lpz4ewja3xtd>
+	s=arc-20240116; t=1757418514; c=relaxed/simple;
+	bh=043hCoM+AFPSLJebSeLJZ3V5npElSfYglJ1Em1klq2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohoaqony02Ej2dwe7g0jOvqOSoFS6WzN3aj6bbNS9H0QSc7zSKoPqeO+TLlroff9K2heXeppVNpLscZanVgjOsKwvfS1mXov8VYlICg034uVsz9w79CDtNVMsoZdbI9W8hHqdYodEHgP7+FxKP6p41CP96TUt2HfKctsRM0mwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvwph-0003pA-II; Tue, 09 Sep 2025 13:48:21 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvwpg-000PdL-0t;
+	Tue, 09 Sep 2025 13:48:20 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id DCC37469E83;
+	Tue, 09 Sep 2025 11:48:19 +0000 (UTC)
+Date: Tue, 9 Sep 2025 13:48:19 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
+	Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de, Oliver Hartkopp <socketcan@hartkopp.net>, 
+	linux-can@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+Subject: Re: [PATCH] can: j1939: implement NETDEV_UNREGISTER notification
+ handler
+Message-ID: <20250909-eminent-gazelle-from-sirius-57ff0c-mkl@pengutronix.de>
+References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
+ <aKg9mTaSxzBVpTVI@pengutronix.de>
+ <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
+ <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
+ <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nix5qo54czp344ou"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <o32quqohph6xq73f65izjocjdhv2ri4dld4tcmmmtisa632ucq@lpz4ewja3xtd>
+In-Reply-To: <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Sep 09, 2025 at 12:26:48PM +0200, Uwe Kleine-König wrote:
-> Hello Christian,
-> 
-> On Mon, Sep 08, 2025 at 08:48:38PM +0200, Christian Marangi wrote:
-> > On Fri, Aug 01, 2025 at 11:15:41AM +0200, Uwe Kleine-König wrote:
-> > > On Tue, Jul 08, 2025 at 04:50:52PM +0200, Christian Marangi wrote:
-> > > > +	duty_ticks = airoha_pwm_get_duty_ticks_from_ns(period_ns, duty_ns);
-> > > 
-> > > As duty_ticks depends on the selected period_ticks, I think the bucket
-> > > selection algorithm is still wrong.
-> > > 
-> > > Consider a request to implement
-> > > 
-> > > 	period_ns = 256 ms
-> > > 	duty_ns = 128 ms
-> > > 
-> > > which at first correctly results in
-> > > 
-> > > 	period_ticks = 64
-> > > 	duty_ticks = 127
-> > > 
-> > > If however all buckets are used and we only find one with say 62 period
-> > > ticks we get period_ns = 248 and with that duty_ticks should better be
-> > > 131 and not 127.
-> >
-> > sorry for checking this only now and maybe we need to catch this again.
-> 
-> no need to be sorry here. Taking time for replies is fine for me.
-> 
-> > Maybe we are getting confused here but itsn't this already handled by
-> > the upper condition?
-> > 
-> > 		/* Ignore bucket with invalid configs */
-> > 		if (bucket_period_ticks > period_ticks ||
-> > 		    bucket_duty_ticks > duty_ticks)
-> > 			continue;
-> > 
-> > 		/*
-> > 		 * Search for a bucket closer to the requested period/duty
-> > 		 * that has the maximal possible period that isn't bigger
-> > 		 * than the requested period. For that period pick the maximal
-> > 		 * duty cycle that isn't bigger than the requested duty_cycle.
-> > 		 */
-> > 		if (bucket_period_ticks > best_period_ticks ||
-> > 		    (bucket_period_ticks == best_period_ticks &&
-> > 		     bucket_duty_ticks > best_duty_ticks)) {
-> > 			best_period_ticks = bucket_period_ticks;
-> > 			best_duty_ticks = bucket_duty_ticks;
-> > 			best = i;
-> > 		}
-> > 
-> > We first limit for a bucket that doesn't got over both period and duty
-> > and then we search for period and best duty. This should account for
-> > never exceeding a duty since both period and duty are precalculated for
-> > the current bucket and even if duty depends on period, again it's
-> > precalculated. Am I missing something?
-> 
-> Let me describe the issue in more detail:
-> 
-> The period length is configured in the AIROHA_PWM_WAVE_GEN_CYCLE
-> register in multiples of 4 ms. The duty length is configured in the
-> AIROHA_PWM_GPIO_FLASH_PRD_HIGH register in multiples of
-> $period_length/255.
-> 
-> So if you calcultate the number of multiples you need for duty_ns = 128
-> ms based on the assumption that period_ns = 256 ms the result becomes
-> wrong when you are forced to switch to period_ns = 248.
-> 
-> So to implement a request for period = 256 ms (64 ticks) and duty_cycle
-> = 128 ms (127.5 duty ticks) having the choice between the two buckets:
-> 
->  a) period_ticks = 62; duty_ticks = 127
->     (period = 248 ms, duty_cycle = 123.51372549019608 ms)
->  b) period_ticks = 62; duty_ticks = 131
->     (period = 248 ms, duty_cycle = 127.40392156862744 ms)
-> 
-> b) is the better one despite 127 duty_ticks would be an exact match for
-> period_ticks = 64. So the issue is that the "Ignore bucket with invalid
-> configs" kicks out b). That's wrong because
-> 
-> 	bucket_duty_ticks > duty_ticks
-> 
-> doesn't imply
-> 
-> 	bucket_duty > duty
-> 
-> .
-> 
 
-Thanks for the quick feedback hope we can takle this quick so we can
-have this finally merged.
+--nix5qo54czp344ou
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: j1939: implement NETDEV_UNREGISTER notification
+ handler
+MIME-Version: 1.0
 
-I changed the logic to this. What do you think? (I introduced an helper
-to calculate the ns from raw ticks)
+On 25.08.2025 23:07:24, Tetsuo Handa wrote:
+> syzbot is reporting
+>=20
+>   unregister_netdevice: waiting for vcan0 to become free. Usage count =3D=
+ 2
+>=20
+> problem, for j1939 protocol did not have NETDEV_UNREGISTER notification
+> handler for undoing changes made by j1939_sk_bind().
+>=20
+> Commit 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct
+> callback") expects that a call to j1939_priv_put() can be unconditionally
+> delayed until j1939_sk_sock_destruct() is called. But we need to call
+> j1939_priv_put() against an extra ref held by j1939_sk_bind() call
+> (as a part of undoing changes made by j1939_sk_bind()) as soon as
+> NETDEV_UNREGISTER notification fires (i.e. before j1939_sk_sock_destruct()
+> is called via j1939_sk_release()). Otherwise, the extra ref on "struct
+> j1939_priv" held by j1939_sk_bind() call prevents "struct net_device" from
+> dropping the usage count to 1; making it impossible for
+> unregister_netdevice() to continue.
+>=20
+> Reported-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.co=
+m>
+> Closes: https://syzkaller.appspot.com/bug?extid=3D881d65229ca4f9ae8c84
+> Tested-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
+> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
+> Fixes: 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct =
+callback")
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-	duty_ns = airoha_pwm_get_duty_ns_from_ticks(period_ticks, duty_ticks);
+Applied to linux-can.
 
-...
+> --- a/net/can/j1939/socket.c
+> +++ b/net/can/j1939/socket.c
+> @@ -1303,6 +1303,55 @@ void j1939_sk_netdev_event_netdown(struct j1939_pr=
+iv *priv)
+>  	read_unlock_bh(&priv->j1939_socks_lock);
+>  }
+> =20
+> +void j1939_sk_netdev_event_unregister(struct j1939_priv *priv)
+> +{
+> +	struct sock *sk;
+> +	struct j1939_sock *jsk;
+> +	bool wait_rcu =3D false;
+> +
+> + rescan: /* The caller is holding a ref on this "priv" via j1939_priv_ge=
+t_by_ndev(). */
+   ^^
 
-		/* Ignore bucket with invalid period */
-		if (bucket_period_ticks > period_ticks)
-			continue;
+I've removed the space while applying the patch.
 
-		/*
-		 * Search for a bucket closer to the requested period
-		 * that has the maximal possible period that isn't bigger
-		 * than the requested period. For that period pick the maximal
-		 * duty cycle that isn't bigger than the requested duty_cycle.
-		 */
-		if (bucket_period_ticks >= best_period_ticks) {
-			bucket_duty_ns = airoha_pwm_get_duty_ns_from_ticks(bucket_period_ticks,
-									   bucket_duty_ticks);
+regards,
+Marc
 
-			/* Skip bucket that goes over the requested duty */
-			if (bucket_duty_ns > duty_ns)
-				continue;
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-			if (bucket_duty_ns > best_duty_ns) {
-				best_period_ticks = bucket_period_ticks;
-				best_duty_ns = bucket_duty_ns;
-				best = i;
-			}
-		}
+--nix5qo54czp344ou
+Content-Type: application/pgp-signature; name="signature.asc"
 
-We first search the period and then we calculate the duty in NS and
-calculate the duty for each bucket. Should comply with the fact that
-duty depends on period right?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-	Ansuel
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAFAAACgkQDHRl3/mQ
+kZxAUwf9FZ+BFFz8LaPIT5LOqADuG61A3eMvYR/9mfoxOEHypL9Sbre540OgeWRT
+kq9d7iL6g4rvLINaM+4KOJJ+jEQyuJE3lCFKLP9fDrtVODELzlx3lX7gOyJEKRNE
+R0g2ERmhYMJqzgnZpRwt4Pof/I6sYM0fTDugN2PxIF7i2RwXC+qw1jq7q4fzxgHE
+A0wAeXujBgpBdoaaNcwLhsVDgm2l860F0yN8Crii0UlXL0CY9frsHKF0uRQTyHl6
+jEbXFW9UWk4RlUjTrK4+Qx/DDjD+cgpNgAnENZKGpP+mFvpfsdqEeGfbw/kRsym7
+9+DJPH/rTIZdfLyiAniwW/IOqyzxTA==
+=akSg
+-----END PGP SIGNATURE-----
+
+--nix5qo54czp344ou--
 
