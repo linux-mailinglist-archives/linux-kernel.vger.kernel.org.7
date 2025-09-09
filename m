@@ -1,168 +1,131 @@
-Return-Path: <linux-kernel+bounces-807158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B192CB4A0EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:52:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E2AB4A0EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 157467B3031
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:50:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762F07B04CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1542EC566;
-	Tue,  9 Sep 2025 04:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823FC2EB851;
+	Tue,  9 Sep 2025 04:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kfjGtuh3"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FI6y0Kvz"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E6211706
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 04:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612EC45945;
+	Tue,  9 Sep 2025 04:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757393525; cv=none; b=Z7PtPIrWzT1JdUM/ve+Xt8k8QtugztHPxiiVlGoAYMoKtZGT/HS0/zm8mpHHzsRfZ3N3xwxgbxNpymxHDH5cPzR3BqY3VvfDaKJjCBmYSOkw3hyA4d2z105FGZXiCN5V3ikz7ivf9CNhDLEUx6yBzecShdrfIFwUUbT41KZXsfU=
+	t=1757393498; cv=none; b=uKFQux1Yn9mbISxPiTIWiARR0HxIX72WJ6lu10xxqbPQViO08bZNbpjby5raALJK68xnCiHicMAi1byQKIZ1Fwa6M/9wYiSozBqp+Rrt5db4jU+rlv9zS/DU1sOAxaqv6W/OPQdtD6hU5xIN2HAwi17YZzPmIiR61R1RUGS/+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757393525; c=relaxed/simple;
-	bh=x8VD93zI//O173NdJM5LXc5a35t6Bki9+AMpcHxEaOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hg6rkle04qIWVVGXDa5UD+Qry4xKXBg2wlVn7z4u+c4j9QR4A2OGTG8Kp0lmE8PbARN2FPrvB4LL7pbbs9BZD5Ip02a/h8Ky6mUkMiReij7thGvmtjraaIookPK//4AKskfVKvC8aHScwm1Hw5s3bQQhqCLei7qQlQJAtuQXc44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kfjGtuh3; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b520c9c291dso3176796a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 21:52:03 -0700 (PDT)
+	s=arc-20240116; t=1757393498; c=relaxed/simple;
+	bh=wH/OryNLCEcRYqyLFBNK6IHwMxcsp/ft3tNfmOPPNJQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=k/VGQ1qNCnNb74mGL8eIonxb2s7Va1knTHcedl8QEQm9rFPz9HTEvNiz29mrAAUjoQjsaCCOYBuKaJIWlQTHNXzTie3oyvACSTcM3yJ/SOHU5yLCgiuidaNKSAhZCTgi07pkd9J8BzG/VAVeknOfhdBonMjffTE9g1JVzSod7R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FI6y0Kvz; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b61161c30fso10046751cf.3;
+        Mon, 08 Sep 2025 21:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757393523; x=1757998323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RxTekYZw4n/8+pZjM2Wb4q6TEJbbwCkXd1Sr0QZaf6U=;
-        b=kfjGtuh3QAS1aGpIO0f+Z1dM2OfZm7/NMiPiaRpY7lsH/vOkGB+pjyUy4pOx/RABV4
-         MGlcOD8k8k92FVVuc2vMqWFzeTW4+q77QIOGqItk4d4eaH94FpZCN/owoH5wBZRPk35H
-         t1FeNfbl9+J6mKlgca6AAYx75hx6CrYrmHbDI=
+        d=gmail.com; s=20230601; t=1757393496; x=1757998296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wH/OryNLCEcRYqyLFBNK6IHwMxcsp/ft3tNfmOPPNJQ=;
+        b=FI6y0Kvz85pjIj1NoLtsgh9yADrLGf/1ZP5nsabVCmisE25qW5jE3hcFvA2zpXeiFA
+         sRBGaDf0VcZXL8QLNt28ejUoslDkbZr4pVpeylb3umEiPwaK+dckdejnyIjiXOJ1dCiv
+         Xeq+lyORP9ANVb2jUQNik9C0wtTQOG7ALhoml2L1gpdbHIs1eeTS8+DBPJRltNncrMd3
+         d8GZ1K/xfWpRHkShHAsgx5TaRWA6mXPF/Eo2vlGh/hl5jJSbAuyrOJHpgwFf+e6aGu7G
+         vasAs3kGdX5HrqfXfVp6FrK6ncPgX0V/ie/49+5OGS+U+9HAU9FLYXHD4bc9tAkP2+pu
+         haew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757393523; x=1757998323;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757393496; x=1757998296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RxTekYZw4n/8+pZjM2Wb4q6TEJbbwCkXd1Sr0QZaf6U=;
-        b=L/UApYJyk4O143WQ+Bhl7DCMxve+5N4JZKiufI2zdXEVQE3Xak7UFjFQE9PaCeYJWH
-         uomoAg4bSl2QsXjjaxRYJKk4scj2DW/W/aPibauji0fGjSE8jWk/JsHi2Ie/CDLyPMzP
-         0GZufh/AjUkGz8wm1y/C/bMAKh1mUip7lOf4pmNeWsB3DW6Y4qKAa7SZpoksQjHHmT7g
-         WYsuALqyklzP0X0LTU9/YgSNFCv4Zzc2P/d8s3CDl3rda+rIi14ZhwLeGFrzQs737mSa
-         18+gm26ZMRPDKNhKDfMRYbSrnc/203cnQ1IZOjdSoOwgWUiQs1THZH3vZstLHVERGnTD
-         CGEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSKsqElrBk9KbIgQc0uBXkxHS7CkOZNm4ta+lriRDBQdYpvq7tvGhjNBJR9zq0XjbxNZ9wGicxp/kjcFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFvDEOFc/tKOn+nrtRGIIjz50p8gl70OR6XeyRmUiFIVxMNzoG
-	KetwSTm8X4pVI9iNqBxbFqcEqECM0IqAvS85I+tJhKS0w6/ghfX+F/Y6+0ptver2xQ==
-X-Gm-Gg: ASbGnctEHsCYMmuXZPcDlL3erCKrMR+/BVcrCJyOd89HRBrK+GcoSwHPb3cDeolA8kb
-	BVMfnLYTAjPr+9kwiEKvznNgI3zyJfp5FbFv4Tp+GrZfYYMZ6aXb4iwpgJrgZxJoDhGHSMhSQ2I
-	uzHmS6gCgkO5VFBLF6L5y7wqWMqH4raz+T3vJaysF2OVDBS7kp61VdiEB5kaxP6Bk4/ljVvMSIL
-	sMkrtYrzVHhZoxJfQdCbmP74IS4fzC7QfP89ptQiaD0nttXLMZSM80alJTuRENxqwsYI4xmSuWH
-	s+x63TUIylkaqI5s6Bo8K9a79uQL0lttb2VF6oXWE6d5uwOe102Hv6BZwko/fe5Ps7VtpKoTO4g
-	MCgF4kGU2713xhqs2Eb9AFSH3fjnM/DDAa11FSCBH2004qtxX
-X-Google-Smtp-Source: AGHT+IHELyfgjQV2lzS3L+EPdr6RMiKi7ZVHtI7OWwvlxUWsJr5Q80qDuYZaQ1tDaB9WjaWbwYFEhQ==
-X-Received: by 2002:a17:903:2287:b0:24c:82ad:a503 with SMTP id d9443c01a7336-2517446f905mr133387135ad.41.1757393523236;
-        Mon, 08 Sep 2025 21:52:03 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:337f:225a:40ef:5a60])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24af8ab7e7bsm199723815ad.138.2025.09.08.21.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 21:52:02 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Changhui Zhong <czhong@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Minchan Kim <minchan@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	stable@vger.kernel.org
-Subject: [PATCHv2] zram: fix slot write race condition
-Date: Tue,  9 Sep 2025 13:48:35 +0900
-Message-ID: <20250909045150.635345-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+        bh=wH/OryNLCEcRYqyLFBNK6IHwMxcsp/ft3tNfmOPPNJQ=;
+        b=hdnaxh8tXOOUCDVyC3XBLePO7ybI1JrE94SaZmECCFfTpRGh9um/FWk+ltPcxPwSrk
+         fLU9t02V1zHLfzdbYobk8VzZssDMaNw26pPZ9KX/jO0G9QvvO6vnKh287xAVXeUBI2OJ
+         gaLoHJTto8ldJ0t2aTGBThZISQjzmsmTxYqxST+zAKXtN5d00srEGIWJb44X7WD8nssh
+         QtdpquF0V/24X+WxTeXTWSEKBZIXK9JEsnHMNCzwUFH+G9yws18LNoXS3dwYWiBKgpGn
+         rRjLebBoNbFzit9lghgkdYuf91X2+RzDZO4CZ2e7gXo0V0ieAJXo1OTg5mv6YtMAwEFj
+         v40Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7XOFGYu4FXURelAEkd3teXaKbnWXZW87XUbL9EuSjbxKD8+p8aWYLKuCXPE7e5Si0tjjNR29wBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxMgtU31y7m4mqkbPb11sq5yfR942GthSrd6D8DnySb3YZ+HFP
+	eajaEhG2CDMZSrj7sCTtrACoUr6tmlQ4kT3Hrcy4q7HhoL+VjyGKq0R5UDVGg6mPQg6bBRDXcHd
+	BZrzitqqYjn2iTGtqcTgqk4iRnwqomyaamg==
+X-Gm-Gg: ASbGncsfOzozNL8iFaOwElxkML8BSFyqhCzWzfyzey7gjacEsWK96VHH9CiSdq3jv2h
+	FXBJ0dPSQGK3oZ+MU862H4Oid09kMbMYahOTs5Jh0AR24HrtJIOBvLfTo9EbQz1QQiSrDPDqRgP
+	5/0tRnFRJSeT9x5NqQQWCiZGc/nmpmCntWumnC8B1XwxkvhY1mDfFj9L5stjgT4WO/J0lZoxpdd
+	/QXVlL6oXzpWz8fOVT43prTPMzPfQ==
+X-Google-Smtp-Source: AGHT+IHJtJRTUXQmOqYObA+I/Kj+efEnxR/Y5qMByvHXNuz8Olc4ZCWrdxlznJK4GFkaxnUmApWZkdqJIpC4tbNHanU=
+X-Received: by 2002:ac8:578d:0:b0:4b5:f75c:1568 with SMTP id
+ d75a77b69052e-4b5f8377244mr96446891cf.10.1757393496207; Mon, 08 Sep 2025
+ 21:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Forest Crossman <cyrozap@gmail.com>
+Date: Mon, 8 Sep 2025 23:50:00 -0500
+X-Gm-Features: Ac12FXybq92r9r1M96nhwQvax4391vC35S83AyjCaVhisGgoTkrYtLq33fYEb0k
+Message-ID: <CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ8wC1kQ@mail.gmail.com>
+Subject: [RFC] usb: mon: Increase BUFF_MAX to support modern higher-speed devices
+To: Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Parallel concurrent writes to the same zram index result in
-leaked zsmalloc handles.  Schematically we can have something
-like this:
+Hello,
 
-CPU0                              CPU1
-zram_slot_lock()
-zs_free(handle)
-zram_slot_lock()
-				zram_slot_lock()
-				zs_free(handle)
-				zram_slot_lock()
+The usbmon binary interface currently truncates captures for large
+transfers from higher-speed USB devices. This is caused by the
+BUFF_MAX limit in drivers/usb/mon/mon_bin.c, which has not been
+updated since the usbmon binary interface was first introduced in
+2006. A single event capture is limited to one-fifth of the total
+buffer size, capping URB captures at 240 KiB each.
 
-compress			compress
-handle = zs_malloc()		handle = zs_malloc()
-zram_slot_lock
-zram_set_handle(handle)
-zram_slot_lock
-				zram_slot_lock
-				zram_set_handle(handle)
-				zram_slot_lock
+I discovered this limitation while developing a Wireshark protocol
+dissector [1], where truncated captures made it impossible for the
+dissector to defragment and reassemble the protocol packets (an
+example of this truncation can be seen in frame 1580 of this capture
+file [2]). Others in the community have also encountered this hard
+limit when working with modern devices that use transfers of several
+hundred kilobytes or more [3].
 
-Either CPU0 or CPU1 zsmalloc handle will leak because zs_free()
-is done too early.  In fact, we need to reset zram entry right
-before we set its new handle, all under the same slot lock scope.
+The original comment for BUFF_MAX based its calculation on a saturated
+480 Mbit/s bus. Applying the same logic to a USB 3.2 Gen 2=C3=972 20 Gbit/s
+bus (~2500 MB/s over a 20ms window) indicates a required buffer size
+of at least 50 MB.
 
-Cc: stable@vger.kernel.org
-Reported-by: Changhui Zhong <czhong@redhat.com>
-Closes: https://lore.kernel.org/all/CAGVVp+UtpGoW5WEdEU7uVTtsSCjPN=ksN6EcvyypAtFDOUf30A@mail.gmail.com/
-Fixes: 71268035f5d73 ("zram: free slot memory early during write")
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/block/zram/zram_drv.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+I propose increasing BUFF_MAX to 64 MiB. Making this change would
+enable usbmon to better support capturing the USB traffic of modern
+higher-speed devices, enabling users and developers to debug and
+reverse engineer their USB devices while running unmodified distro
+kernels. This change would not affect the default buffer size, as a
+larger buffer is only allocated when explicitly requested via the
+MON_IOCT_RING_SIZE ioctl.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 9ac271b82780..78b56cd7698e 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1788,6 +1788,7 @@ static int write_same_filled_page(struct zram *zram, unsigned long fill,
- 				  u32 index)
- {
- 	zram_slot_lock(zram, index);
-+	zram_free_page(zram, index);
- 	zram_set_flag(zram, index, ZRAM_SAME);
- 	zram_set_handle(zram, index, fill);
- 	zram_slot_unlock(zram, index);
-@@ -1825,6 +1826,7 @@ static int write_incompressible_page(struct zram *zram, struct page *page,
- 	kunmap_local(src);
- 
- 	zram_slot_lock(zram, index);
-+	zram_free_page(zram, index);
- 	zram_set_flag(zram, index, ZRAM_HUGE);
- 	zram_set_handle(zram, index, handle);
- 	zram_set_obj_size(zram, index, PAGE_SIZE);
-@@ -1848,11 +1850,6 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
- 	unsigned long element;
- 	bool same_filled;
- 
--	/* First, free memory allocated to this slot (if any) */
--	zram_slot_lock(zram, index);
--	zram_free_page(zram, index);
--	zram_slot_unlock(zram, index);
--
- 	mem = kmap_local_page(page);
- 	same_filled = page_same_filled(mem, &element);
- 	kunmap_local(mem);
-@@ -1894,6 +1891,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
- 	zcomp_stream_put(zstrm);
- 
- 	zram_slot_lock(zram, index);
-+	zram_free_page(zram, index);
- 	zram_set_handle(zram, index, handle);
- 	zram_set_obj_size(zram, index, comp_len);
- 	zram_slot_unlock(zram, index);
--- 
-2.51.0.384.g4c02a37b29-goog
+This proposal follows the same rationale as the original calculation,
+but with updates for modern hardware.
 
+I would appreciate any feedback on this approach before I prepare a patch.
+
+Thank you,
+Forest
+
+[1]: https://github.com/cyrozap/mct-usb-display-adapter-re/tree/master/wire=
+shark
+[2]: https://github.com/cyrozap/mct-usb-display-adapter-re/blob/aad88e9fb80=
+603ebf45fcd3ecb57640c3970986b/captures/trace-JCD543-20220514T1925-win10-plu=
+g-in-dongle-with-hdmi-disconnected-then-connect-1080p-edid.pcapng.gz
+[3]: https://web.archive.org/web/20240618163716/https://ask.wireshark.org/q=
+uestion/23535/how-to-increase-capture-length-framecap_len-when-using-wiresh=
+ark-for-usb-sniffing-on-ubuntu/
 
