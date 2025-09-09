@@ -1,215 +1,189 @@
-Return-Path: <linux-kernel+bounces-808066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766D0B4ACC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DD9B4ACB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41245E1E05
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7B518927E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A121D3126C5;
-	Tue,  9 Sep 2025 11:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C48322DA3;
+	Tue,  9 Sep 2025 11:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P7fiZwOZ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W4v5nXSY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375D52F3C28;
-	Tue,  9 Sep 2025 11:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A85321F35;
+	Tue,  9 Sep 2025 11:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418421; cv=none; b=sXKITgU7edfVyf8QZ9E2TTuwkDYHKSQ/BdNxJEnMGgkeMdpDOECANeOOKnWwuN90QgFtHFGsgON9Wk2fY2uRmo+zjfC138W/iDDf5su0xtYbdAvGzuvQxgxBzNbGGh7P8tAi1AY5lHSD16T7AutBvnUhYUC1gkAjs+cPZM13AUs=
+	t=1757418368; cv=none; b=br6k0yBK28igXzh13e4wS2a6vhmE9xOFOXdCNK/l6xmGyqrRD4goOXrXUEpugxUYHSbrJXAZhK5vmb0XGEd7N6RCsOkOGQUp4diZSOJFsUDaHhcE5HZKeZFq9+67gRzULKNqWZI1ED/OHBnXQlq+oom58hMlmD/BOHC3kPwsmUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418421; c=relaxed/simple;
-	bh=sEOFe3IG6akpD9U5tj4J/NJ/wqUVfoKxcI/4MO3zJPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtLVQ9FlIcFFKkmTFxkLQ3nK0t1njpOVCA7K7YeAWJmYDI64O5MKvfSbIX5LWXQMfsF4JOTxwKXbfps99SdXELX8qjmekaEUiNmnzF2BKpVNWbYQD7ScBNh67mIUD6yhDmXBB5bizEeo/JNXdi+72UULuutsVN1eifMJHMiTHBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P7fiZwOZ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896Wdr4031713;
-	Tue, 9 Sep 2025 11:45:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=CW2dDor0IqMzIAmq0spxwQ7puBTFQt
-	VzTFSMyEgoGjA=; b=P7fiZwOZoDl89TYxIoDk4jbhXrf0kjh5+A0apcBU6C2GdT
-	340+8Qq55LXFwzCb2OnrGtv2LTms5uaynX6WfkjgKzFQGzs3e9pvZUBahm6iSSWT
-	WAluYtYKMO3NEFWsaHTLmzNgjJggCA+UUE8JfV+YFOMHIpa6bduy64J5wPglMBbo
-	1st8bDHq/DM0/FJSwtUsBhE7FRmCOK1/CvbO0pfJAVLuQ89IraoJ4ZhEiV9SJGge
-	R76Ejpm7X8SvuisIf2tyP1lB+0dxfGRnwYufiviL57J7ea4xGb3TC+Uy45RwDr54
-	4cOe5ZFz+UmaDEeE2xXzL/ExCyZXDdsidA5E1ouQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsq781-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 11:45:56 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 589BTqxc006985;
-	Tue, 9 Sep 2025 11:45:55 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsq77y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 11:45:55 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589BMn2N001188;
-	Tue, 9 Sep 2025 11:45:54 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203akyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 11:45:54 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589BjqjF8323344
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 11:45:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D59D020043;
-	Tue,  9 Sep 2025 11:45:52 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 247CD20040;
-	Tue,  9 Sep 2025 11:45:52 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Sep 2025 11:45:52 +0000 (GMT)
-Date: Tue, 9 Sep 2025 13:45:50 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-Message-ID: <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+	s=arc-20240116; t=1757418368; c=relaxed/simple;
+	bh=uhe//XJjJxP6iJWzYFShGAzGMjO7dDnhbwj/aYwazAs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rp26QPMbN9LYX3RtB7qIIgstBbr3dL5uGbMuZGSzSuaEo4t+xQFWlnJxM3Ib/fvybcz5NTP8xPx0aQNSHdNynD7qNKKf3CK+Yz8WCiTMY0Zu1V8OXMKWrauzWGYjZjsXMBdhkFFklaFn5sZ2WvnMBlzONnQu3umOAQnUi//U+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W4v5nXSY; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757418367; x=1788954367;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=uhe//XJjJxP6iJWzYFShGAzGMjO7dDnhbwj/aYwazAs=;
+  b=W4v5nXSYh1fKMRSlkAjYlvO1AZ5qC5q3c2UPkGV0eIVvniX2xs7mJEEi
+   bTheefRY4uqn24sTCzzs369JCXFl0WokLgP/fXNMOJQOXLWAQprcvJLFy
+   R9tYOJu5XdbsINQij2YcGLXxZsiPQ7zy2ncQfNKrNxcXf4bQO7+yD4wRm
+   LISsEfBER8FQmadgB8qkWKS0Gn4O66lkzYN+cDYM9aWJD/yRrTJDXNl8J
+   KFYv16Li4OqF++fwl++XwR42qHolJt97c4pa/cETxUzmbch997RmS9h+h
+   bvadQN9e+QdZYTAY/N/W1bvA3BrIPYUguj65/d9EeJ6ajtzK2JebR60yn
+   Q==;
+X-CSE-ConnectionGUID: bLEZLa8ZRcu6AtluJdUAGA==
+X-CSE-MsgGUID: h5rigHFnRbyE3XR4bzscSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63528671"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63528671"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:46:06 -0700
+X-CSE-ConnectionGUID: Rqaf2/G3TNS/txgKEP8nLg==
+X-CSE-MsgGUID: 8mFi2zPYScWSR1sIesxYyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="204053396"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.244.108]) ([10.245.244.108])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 04:46:02 -0700
+Message-ID: <ed002179af749657ebe503cdf708588de9330013.camel@linux.intel.com>
+Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Matthew Brost	
+ <matthew.brost@intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida	 <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, 	rust-for-linux@vger.kernel.org
+Date: Tue, 09 Sep 2025 13:46:03 +0200
+In-Reply-To: <e5afeb60-96cc-4a9b-a360-2da03e4e236e@kernel.org>
+References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+	 <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
+	 <20250905152505.005a610d@fedora>
+	 <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+	 <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com>
+	 <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org> <aL1u_YxOkuj1kIq6@google.com>
+	 <20250908091140.44856fde@fedora> <aL6TJYRmWIkQXujj@google.com>
+	 <DCNAE3CJMEJ0.JH1F0MJABXQI@kernel.org> <20250908122002.2c80dd3a@fedora>
+	 <DCNDGFE7RR5Q.X3PCDW0KIX89@kernel.org> <20250908141156.3dbdea0b@fedora>
+	 <7aa3f464-a3d0-47a0-b044-d8db93f45918@kernel.org>
+	 <a2006f74-75bb-48ac-ac9c-0a71c8f9d510@linux.intel.com>
+	 <8078cad2-d5d3-4e20-9848-034c2a503f3d@kernel.org>
+	 <cbd5c99d2394335ac4aeb2740994ab14508e2553.camel@linux.intel.com>
+	 <CAH5fLghY8o0ouvaz48D4bsWMJ7A06L750xdKibaoe=bKjVOpzg@mail.gmail.com>
+	 <e5afeb60-96cc-4a9b-a360-2da03e4e236e@kernel.org>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfXzv0l4od4j6eW
- QmMdktKyBl9+62xDiwDCsXs13FmwdhJ/yKVW0Nx7wmldwiO4Gphv89/+dwt/LpECn2XxOtXfh60
- jKyl21EsFo5dPWLP41rL8yAE8JVwfpPHGCyDSUYtA7sAOdIW58vIVprQ0pXotY+dKbj+gh2UVow
- aUYpiI8EbPfiUOAf+qOVUjNN2gNw6goKU2Itja8LgZVxED1lOakW8e7o8p6kPC5x+5elb/cjfAw
- /8FfQVABacfNl7ZdgYZjcvC3V+L7x+hQVkP58f0SM4yX0U4T+rMqQaJBKGdD5nUVcqnn5OalH7l
- hJOgJuaJEM3zF3TSqJtIp3pJKLVcHjM9sdtipTndXY1FAdeDQTINxSKeTjMqDRhxe/M13RVfvwK
- e7diuTK0
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c01374 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=sjzYMD-SKWPhrPIpRwUA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: XopatD14CEfuivKQbcWn3mfk3pBU2G5u
-X-Proofpoint-ORIG-GUID: YV8Uas4Jwghz0nGFl4MnfkXLTyTlxDw-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-On Tue, Sep 09, 2025 at 12:09:48PM +0200, David Hildenbrand wrote:
-> On 09.09.25 11:40, Alexander Gordeev wrote:
-> > On Tue, Sep 09, 2025 at 11:07:36AM +0200, David Hildenbrand wrote:
-> > > On 08.09.25 09:39, Kevin Brodsky wrote:
-> > > > arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
-> > > > (taking and returning no value). This is proving problematic in
-> > > > situations where leave() needs to restore some context back to its
-> > > > original state (before enter() was called). In particular, this
-> > > > makes it difficult to support the nesting of lazy_mmu sections -
-> > > > leave() does not know whether the matching enter() call occurred
-> > > > while lazy_mmu was already enabled, and whether to disable it or
-> > > > not.
-> > > > 
-> > > > This patch gives all architectures the chance to store local state
-> > > > while inside a lazy_mmu section by making enter() return some value,
-> > > > storing it in a local variable, and having leave() take that value.
-> > > > That value is typed lazy_mmu_state_t - each architecture defining
-> > > > __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
-> > > > For now we define it as int everywhere, which is sufficient to
-> > > > support nesting.
-> > ...
-> > > > {
-> > > > + lazy_mmu_state_t lazy_mmu_state;
-> > > > ...
-> > > > - arch_enter_lazy_mmu_mode();
-> > > > + lazy_mmu_state = arch_enter_lazy_mmu_mode();
-> > > > ...
-> > > > - arch_leave_lazy_mmu_mode();
-> > > > + arch_leave_lazy_mmu_mode(lazy_mmu_state);
-> > > > ...
-> > > > }
-> > > > 
-> > > > * In a few cases (e.g. xen_flush_lazy_mmu()), a function knows that
-> > > >     lazy_mmu is already enabled, and it temporarily disables it by
-> > > >     calling leave() and then enter() again. Here we want to ensure
-> > > >     that any operation between the leave() and enter() calls is
-> > > >     completed immediately; for that reason we pass LAZY_MMU_DEFAULT to
-> > > >     leave() to fully disable lazy_mmu. enter() will then re-enable it
-> > > >     - this achieves the expected behaviour, whether nesting occurred
-> > > >     before that function was called or not.
-> > > > 
-> > > > Note: it is difficult to provide a default definition of
-> > > > lazy_mmu_state_t for architectures implementing lazy_mmu, because
-> > > > that definition would need to be available in
-> > > > arch/x86/include/asm/paravirt_types.h and adding a new generic
-> > > >    #include there is very tricky due to the existing header soup.
-> > > 
-> > > Yeah, I was wondering about exactly that.
-> > > 
-> > > In particular because LAZY_MMU_DEFAULT etc resides somewehere compeltely
-> > > different.
-> > > 
-> > > Which raises the question: is using a new type really of any benefit here?
-> > > 
-> > > Can't we just use an "enum lazy_mmu_state" and call it a day?
-> > 
-> > I could envision something completely different for this type on s390,
-> > e.g. a pointer to a per-cpu structure. So I would really ask to stick
-> > with the current approach.
-> 
-> Would that integrate well with LAZY_MMU_DEFAULT etc?
+On Tue, 2025-09-09 at 13:28 +0200, Danilo Krummrich wrote:
+> On 9/9/25 1:24 PM, Alice Ryhl wrote:
+> > On Tue, Sep 9, 2025 at 1:11=E2=80=AFPM Thomas Hellstr=C3=B6m
+> > <thomas.hellstrom@linux.intel.com> wrote:
+> > >=20
+> > > On Tue, 2025-09-09 at 12:47 +0200, Danilo Krummrich wrote:
+> > > > On 9/9/25 12:39 PM, Thomas Hellstr=C3=B6m wrote:
+> > > > > On 9/8/25 14:20, Danilo Krummrich wrote:
+> > > > > > On 9/8/25 2:11 PM, Boris Brezillon wrote:
+> > > > > > > On Mon, 08 Sep 2025 13:11:32 +0200
+> > > > > > > "Danilo Krummrich" <dakr@kernel.org> wrote:
+> > > > > > > > No, drivers can't iterate the evict/extobj lists
+> > > > > > > > directly; or
+> > > > > > > > at least this is
+> > > > > > > > not intended by GPUVM's API and if drivers do so, this
+> > > > > > > > is
+> > > > > > > > considered peeking
+> > > > > > > > into GPUVM internals, so drivers are on their own
+> > > > > > > > anyways.
+> > > > > > > >=20
+> > > > > > > > Iterators, such as for_each_vm_bo_in_list() are not
+> > > > > > > > exposed
+> > > > > > > > to drivers.
+> > > > > > > Okay, that's a good thing. I thought Xe was doing some
+> > > > > > > funky
+> > > > > > > stuff with
+> > > > > > > the list...
+> > > > > > Maybe, I don't know. If they do so, the should send patches
+> > > > > > adding the
+> > > > > > corresponding iterators and provide a rationale why drivers
+> > > > > > need
+> > > > > > to access those
+> > > > > > lists directly and why we can't provide an API that handles
+> > > > > > the
+> > > > > > overall
+> > > > > > use-case, such as drm_gpuvm_prepare_objects(), etc.
+> > > > >=20
+> > > > > We're using the drm_gpuvm_*for_each* macros in drm_gpuvm.h,
+> > > > > assuming from name
+> > > > > and docs they are driver api.
+> > > > >=20
+> > > > > Also the drm_gem_for_each_gpuvm_bo(), although this usage
+> > > > > could
+> > > > > easily be
+> > > > > converted to a helper.
+> > > >=20
+> > > > We were talking about the extobj/evict lists, the ones you
+> > > > mention
+> > > > are fine of
+> > > > course. :)
+> > > >=20
+> > >=20
+> > > Hmm. Now on closer inspection it looks like we're checking for
+> > > evict
+> > > list empty, It looks like rebinding after validation may in
+> > > theory
+> > > evict some bos to system memory and then we'd rerun the
+> > > validation step
+> > > if the evict list was not empty.
+> > >=20
+> > > We could of course add a helper for that or if there are better
+> > > suggestions to handle that situation, that'd be fine as well.
+> >=20
+> > I don't think evict list empty means that there are no evicted
+> > GEMs.
+> > It's possible for an extobj to be missing from the evict list in
+> > some
+> > scenarios. That's why drm_gpuvm_prepare_objects_locked() checks
+> > evicted on the extobj list to ensure that the evicted list is
+> > up-to-date when you call into drm_gpuvm_validate_locked().
+>=20
+> Indeed, though I would expect that Xe considers that? It was Thomas
+> who proposed
+> the logic you describe here back then IIRC. :)
+>=20
 
-Hmm... I though the idea is to use LAZY_MMU_* by architectures that
-want to use it - at least that is how I read the description above.
+Yeah I don't think that eviction-while-validating could happen to
+extobjs, but rather to local objects, if it happens at all anymore,
+we've made a lot of changes in that area.
 
-It is only kasan_populate|depopulate_vmalloc_pte() in generic code
-that do not follow this pattern, and it looks as a problem to me.
+But moving forward both the extobj scenario and local object scenarios
+will probably have to be considered in OOM situations, but then we'd of
+course need to suggest suitable additions to drm_gpuvm to handle that.
 
-> -- 
-> Cheers
-> 
-> David / dhildenb
+/Thomas
 
-Thanks!
+
+
+
 
