@@ -1,171 +1,136 @@
-Return-Path: <linux-kernel+bounces-808620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C90B50261
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:21:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD4AB50263
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78813BF356
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2EF443A71
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F883352FC6;
-	Tue,  9 Sep 2025 16:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oHzO5MRy"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ADD350D69;
+	Tue,  9 Sep 2025 16:20:55 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CC2274B5E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8189D342C9E;
+	Tue,  9 Sep 2025 16:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434823; cv=none; b=VeQDNUvy/qv7MBpHHeK4nhWcd6bNqhC2ruSTvMkJo8x9B1W6oflMjcpfEEwQSqggc2DJ2fnXyeU3yQmM95dOsqiCxaAW2JE2oDXOTJH/lOhMGOJDutuYPfQjAI41Bop8f4mWCvYnfuH05dPpqH96gspSU4Nlj35DLldBsb6kCpY=
+	t=1757434854; cv=none; b=Uwijt683WcGTJyrU7P59zk6/m3dHCQn0zeWTPhxdlNmzd+CzLqqUIAA6hcKdZMI4TFlEkMn3Fs6zAGSgLcHGf4V4xNw9/g+SNN2g02rdvFaiL6CB2JldvVaiBZrWmkXBG+gnn/0bSn3h/QdpGFT21hSv6zfygICdDDtIF0hF400=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434823; c=relaxed/simple;
-	bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pn04Xqld/Eogy6kDdH1HfPVic4jJauJND0W84JVsn0nvdNUp1yibJ5omlVFBGvxnKqaj0hXPWIrJOWEHt3MIEdNweRyUILLYMe/QND+BZu4C87yZD3/4FtIUHirB9Tz85PYx3ukXUeFf/kUd8zKc406bdzDd7tU3h60WOET8Qsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oHzO5MRy; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-336d84b58edso59084831fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757434820; x=1758039620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
-        b=oHzO5MRypNPGSYT+cS1qjpCPBkDDZVEF6v8ZkWs4ra6N6tKJrEm0p5JnR7OJS18gM2
-         OGpaCu+QivbfwzwdAVvMn9aFnFN85bTszabjPr/2YgG2kmprx9uWYcwY0sST6+mBXBVI
-         baf3USlelGNrvqF9mHK1D4M5spGZCewl+g45SDMk/RMMLwIi/ld0atRpB7p7zNTrxHwb
-         4q8J/Joljnpd/TjjBGPIa9D6OBe0vn+nOlXFSKrCIHhkRlX6pR/4Q79iMGArNxgBVUoJ
-         4AP/w8TOLDhheN0swWem4Gu6nNRaWcLjyCXXptqhtGU4wQQjHyZYkhRLbHeXTCbezxYb
-         /MXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757434820; x=1758039620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/97m0jy8CzoHwIZcKBQ1zrt0w1+wQwdE+fGFa7+7SJw=;
-        b=ZlAqZFD1c/YXqTzvs3J7zO7MN+j6cqQVEGGhLbxdKK7pMUSevUhaBVIlRk7HcPyZ8y
-         M09bfs2opkeZoAPFTZHzsjviTa/EVsyaf9cEuTgcamlDz1CpxHT1PpdH23e6WpGKghv6
-         oGVrutxLtMPH/2/vf03JTUiPymnefiMeohhrtATA1xanNhm0/DbdjkokMEniRKxpIK2T
-         UUKiEeiN4i6Kl8V2TQBSVOWF/zD2hwLsHXa0QfKMe/UGO4JCDlsEfBl3ByM1lUXM1Vj3
-         RNNic88Nf+I/arzEdkFSWsRDcxHCMAVcsHmrc6GYwAfxarhM4uEdkvGUz6nuyMf4ckZ4
-         wclw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8sGZxY1biYztNfsCtpdRzarRxuxL77svNtocp5uXMTgK1pI5txGefpzbuwGbTPKTihzeaTYE6zqc3XTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbldK/p6k4jQrSQ9pGeaS6YHnvgdrvZaRGgwAAolSWzqzwUQp
-	mWo1OIT/Zda4ZVmuoj6NN8hw2Kv+yf0P6nFncMr8/D7taatHrOgWiBSSyD7MA3BBdP9i3i3q077
-	YH+ai8AOKVhf08fTmG56AhA/GhphyHOM3DMXPW5k9VQ==
-X-Gm-Gg: ASbGncvlmL5WvChBfeZmxbSHnNlaVBvaYLkz+IvhBvBfLE7Y5B7pfgOcPgSEHg44CVQ
-	k3PCP1L4ccHXzWBoNT4Ek6YbDjvaJ7UT2WTAzRfeIRF/Tuwvv+3N5z9BNxj8f6eAYOTjMc3mOx6
-	9SN0QiZcmEGy0YGFyXYX1h/cxnII5ldWGPGtB4aLIQJjq4bwy204QWT1pwnsDMXCkKq/eH0CakG
-	fEk/+0HTXFVYVyD1FqqHFlvjy/cAxZGg4X9y4bhrCk3THc7QA==
-X-Google-Smtp-Source: AGHT+IEztBpigh5RxbO1CBt/5KgEHGRrHXuTWtPssLeYdALPuaphhHGsx19aeCNSyhIa3AeA3fW9VXpZoFoDSTU49vc=
-X-Received: by 2002:a2e:be08:0:b0:337:e3e0:39fc with SMTP id
- 38308e7fff4ca-33b51b18984mr33377121fa.21.1757434819790; Tue, 09 Sep 2025
- 09:20:19 -0700 (PDT)
+	s=arc-20240116; t=1757434854; c=relaxed/simple;
+	bh=g7swzv1MEJX3KsMKC5C3krKbGgKOvWbpHqWjFmDILTQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LcBesIV06gzaF1Xb+NxkChnPIQEto6JLY984rbq0lsAbmO5tdTrxtHVt5wZEkqVvde33xlCzyiJXdXgEUoDDd8hfasQDCsSlGMm2QgeHR5qYpS1o/+GT5v6pdYpQtypYabl122xEkgy/zLmr5E/ROnFSGXYlHmCAmz/jr3yR2cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cLptg0Xbxz6K9V3;
+	Wed, 10 Sep 2025 00:19:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C0E0140279;
+	Wed, 10 Sep 2025 00:20:49 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 9 Sep
+ 2025 18:20:48 +0200
+Date: Tue, 9 Sep 2025 17:20:47 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+CC: Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, David Lechner <dlechner@baylibre.com>, "Nuno
+ S??" <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH 09/10] iio: accel: BMA220 add event attrs
+Message-ID: <20250909172047.0000448b@huawei.com>
+In-Reply-To: <aL2IcVfzCTXSg3Ol@sunspire>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+	<20250901194742.11599-10-petre.rodan@subdimension.ro>
+	<20250907141515.0b49012a@jic23-huawei>
+	<aL2IcVfzCTXSg3Ol@sunspire>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
- <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
- <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
- <aMAn4MM_Fs8q8qwj@smile.fi.intel.com> <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
- <aMAve1MbONmKVjjg@smile.fi.intel.com> <aMAv3STeZUdSQ14p@smile.fi.intel.com>
- <CAMRc=MeA87p0QAzq_3MACQM90MhN0eRccr7u-VzcfyP8b90AaQ@mail.gmail.com>
- <aMAzZAbNwrRTgFi-@smile.fi.intel.com> <CAMRc=Mfn7atHTqKc9nMTQ19ZserqeNi3skb-QhG3CVdEhmr0gg@mail.gmail.com>
- <CAHp75VdDAJO3+NPp29GnqL=C5m7tdWbyYvNFax=Dh+dG49YAnA@mail.gmail.com> <CAHp75VffDLfvdVhnzZk6V6a9eXq4R0ZBYLUw3S=g0ABqozhWFQ@mail.gmail.com>
-In-Reply-To: <CAHp75VffDLfvdVhnzZk6V6a9eXq4R0ZBYLUw3S=g0ABqozhWFQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 9 Sep 2025 18:20:07 +0200
-X-Gm-Features: Ac12FXz3JLlhRsOgq8cOPinTet2g1mbuWxd9zMtxwsTKBrX27rDe6FL8vxMW4vc
-Message-ID: <CAMRc=Mf0sXnak0Ov3bwgv_xVVvw+CxA1iAcvDv+B4a155HZq2w@mail.gmail.com>
-Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Sep 9, 2025 at 5:26=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Tue, Sep 9, 2025 at 6:15=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Sep 9, 2025 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.=
-pl> wrote:
-> > > On Tue, Sep 9, 2025 at 4:02=E2=80=AFPM Andy Shevchenko
-> > > <andriy.shevchenko@intel.com> wrote:
-> > > > On Tue, Sep 09, 2025 at 03:56:41PM +0200, Bartosz Golaszewski wrote=
-:
-> > > > > On Tue, Sep 9, 2025 at 3:47=E2=80=AFPM Andy Shevchenko
-> > > > > <andriy.shevchenko@intel.com> wrote:
->
-> ...
->
-> > > > > > TBH, I think those 6 all made the same mistake, i.e. thinking o=
-f the compound
-> > > > > > literal as a cast. Which is not!
-> > > > >
-> > > > > What do you suggest?
-> > > >
-> > > > Write it in less odd way :-)
-> > > >
-> > > > foo =3D (struct bar) { ... };
-> > >
-> > > I don't get your reasoning. typeof() itself is well established in th=
-e
-> > > kernel and doesn't
-> > >
-> > > foo =3D (struct bar){ ... };
-> > >
-> > > evaluate to the same thing as
-> > >
-> > > foo =3D (typeof(foo)){ ... };
-> > >
-> > > ? Isn't it still the same compound literal?
-> >
-> > It makes it so, but typeof() usually is used for casts and not for
-> > compound literals. That's (usage typeof() for compound literals) what
-> > I am against in this case.
->
-> FWIW, brief googling showed that nobody (okay, I haven't found yet
-> reddit/SO/GCC or LLVM documentation) uses typeof() for compound
-> literals. So, this makes me feel right, that the form of typeof() is
-> weird and works due to unknown reasons. Any pointers to the
-> documentation you read about it?
->
+On Sun, 7 Sep 2025 16:28:17 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-Ok I'll change it. I also need to change it in existing patches that
-already landed in next then.
+> Hello Jonathan,
+> 
+> On Sun, Sep 07, 2025 at 02:15:15PM +0100, Jonathan Cameron wrote:
+> > On Mon,  1 Sep 2025 22:47:35 +0300
+> > Petre Rodan <petre.rodan@subdimension.ro> wrote:
+> >   
+> > > Add event attributes not directly covered by the IIO API.  
+> > 
+> > These must be accompanied by ABI documentation in
+> > Documentation/ABI/testing/sysfs-bus-iio-...
+> > 
+> > We need to pull out of the datasheet generic descriptions of what
+> > they are so we can consider if they make sense as general new ABI
+> > or perhaps map to something existing.  In some cases it is more
+> > appropriate just to set a reasonable default and not provide a
+> > userspace ABI at all.
+> > 
+> > Key point is that custom ABI is effectively unused ABI because most
+> > software is written against a bunch of devices and has no idea what
+> > the new ABI is.   
+> 
+> I see your point. From all ot those maybe just the interrupt latch functionality
+> is generic enough, I have seen something similar while writing other drivers.
+> 
+> from the datasheet:
+> 
+> " The interrupt controller can be used in two modes
+> 
+>  - Latched mode: Once one of the configured interrupt conditions applies, the INT pin is
+> asserted and must be reset by the external master through the digital interface.
+> 
+>  - Non-Latched mode: The interrupt controller clears the INT signal once the interrupt
+> condition no longer applies (default behaviour in our chip).
+> 
+> The interrupt output can be programmed by lat_int[2:0] to be either
+>   unlatched ('000') or
+>   latched permanently ('111')
+>   or have the latch time of 0.25s ('001')/0.5s('010')/1s('011')/2s('100')/4s('101')/8s('110').
+> 
+> The setting of these bits applies to all types of interrupts."
+> 
+> Many thanks for the detailed review, I will prepare a new set in b4 and skip
+> everything event related for now to keep the set smaller.
 
-> > > > > And are we not allowed to use C99 features now anyway?
-> > > >
-> > > > It's fine, it's not about the C standard number.
->
-> E.g., https://gcc.gnu.org/onlinedocs/gcc-15.1.0/gcc/Compound-Literals.htm=
-l
-> (8.1.0 is the same).
->
+Given you are skipping for now we can come back to this later...  But given we
+are talking about it I couldn't resist replying ;)
 
-I get it, I understood incorrectly how they work, no need to rub it in. :)
+So latched vs unlatched sounds like level signaled interrupt vs edge triggered.
 
-Bart
+The 'pulse' width cases are annoyingly hard to handle though with those lengths it
+seems implausible we'd miss.  I hope for non-latched the sampling rate is slow enough
+we still get a good pulse.
+
+Anyhow, I'd suggest ignoring the latch time property and just select between
+unlatched and latched based on the interrupt settings in firmware.
+
+Unless you can think of a good usecase for changing these at runtime? I can only
+come up with the theory they might be wired to some external circuitry.
+Maybe a buzzer to be really annoying ;)
+
+Jonathan
+
+> 
+> cheers,
+> peter
+> 
+
 
