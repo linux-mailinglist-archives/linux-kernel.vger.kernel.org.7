@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-808123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E921B4F9EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093F1B4FA11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29F67ABAC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1454E46DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FC532A3F2;
-	Tue,  9 Sep 2025 12:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AE232CF92;
+	Tue,  9 Sep 2025 12:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PCG41Usa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DbaV2MbT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BM/ws7gy"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A582C0F60
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757419853; cv=none; b=Sw7cN7pr62h01nq+bwvUWKABJWbphQEqix6/pc5D1PuCMEBNgBQ2yshEu1wr6R1lZr2KJZ3nB7gt7RCB289e4dKpyPmV2ooT//oAbpJiLVoxM3FUc/B2Fh9sj90agecTvgjMId1KMAwmrWHCS1aTXvEB2kWvLBE1CRzeZXH0/JE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757419853; c=relaxed/simple;
-	bh=Oem3COVryyCPOPB7g2lStxd2aIYZKizhF3hAWkNJZr4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iDpaVV2mpLFRltwrjOmUqGC5unl71SXoN5Qo4lOQn/VbNEJn80nS/uJR6zVkq4TM2g/9Ci8osBINIX5hNHLBh8upSvEgfy/NZ+Hlh6cQxBLr/s0/fy6RiIOb0ExNOTNVICPdEatvPac/iAl1+t0tMJbuEPup0VM3Mi0k6cL1ub4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PCG41Usa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DbaV2MbT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757419850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJchYhST8gExfD3PITXqdvY3+Gk6l+TtnMz8rwsUCfE=;
-	b=PCG41Usa9FAKlYi+UZP8YkgYvxUgXtMvYwL9CoOgMkIg6bHqnlkioAslkpClyBD3wbOPj8
-	PcbkbPKh/A8mwTo7TKmp4CYpNDyP4WqMBw8TYjR0eJ2N6A1vs6ln/RacWGmWvZxVoM0aoe
-	ThB7IjZe/47eyXKss4RIk+fO82OhMC+UqbONoeiZnIJx3S4im8nrc3k/svtW/C4WDlXj/4
-	KjaEy7bIonXCv0/gZXcwrsU84qGXoZisP2AFc/iDFg4dzTu/3/81u8tV+djCL3cxK5MH06
-	kR+FocEFDDFGo6wH5ueVw8VdvREAFrDnHgT0utLr2bohmND4ksJjUBujvb8lDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757419850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJchYhST8gExfD3PITXqdvY3+Gk6l+TtnMz8rwsUCfE=;
-	b=DbaV2MbTTqHL8PX+tNIK5xmtmakeEV0ijbP0p/qPOwVT5Y93Fe1Iy1QmExsXZcTF2U+Cnp
-	4WvDIxvl57jQmyBQ==
-To: Sean Christopherson <seanjc@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson
- <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>, Paolo Bonzini
- <pbonzini@redhat.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [patch V4 07/36] rseq, virt: Retrigger RSEQ after vcpu_run()
-In-Reply-To: <aL9uLYpUcOA9Jt4q@google.com>
-References: <20250908212737.353775467@linutronix.de>
- <20250908212925.708769718@linutronix.de> <aL9uLYpUcOA9Jt4q@google.com>
-Date: Tue, 09 Sep 2025 14:10:49 +0200
-Message-ID: <87y0qnvnau.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB7304BB5;
+	Tue,  9 Sep 2025 12:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757419986; cv=pass; b=h2BgbtToAfrNGc8ZOALbTeyeUEd9HVD7KoBLXToclyq1oOTMh5XCOMMpwalmE5Rq0EeuapZsjr7+uMkwtNV4XhjnU5OnDhSiFSsKntEpzlRT0oTUuSPwqQMBJx8j9V2dVrEOy9Jxey000YnwjoiFJsV2SbcjN5gK9LUMR9tl8k4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757419986; c=relaxed/simple;
+	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=SgoL0OYjvB0BPmYVQDshoM0ZBM5AlW4FOlykY83ENNn1eeH7ZyB6AHF61Rh/7bv69euDAh6NmmzbvK/2knc5g/Or4deDPvKjTmr7rrb9NESYk0fliEDimCsumlxthot+sWGA9PYPKca+56QXmbS2Q2arARKUxO2G0fnrTpBJeCQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BM/ws7gy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757419961; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cZa6GESQ97dMg+rynhdCMUAoIPsAuEcDQg0rWghvSxu1jKqvfYcYxqW/xE1hXuc4r/VQVzxTHrFdDlcb031kAnMPENwN5hMtFXCgpLxABC9WzsIWsebsvBQQ64d65ZsArTj1qdBpOMoHq3gddgCUKfytObT5BvfNEKiWwnVEzFk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757419961; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=; 
+	b=azFE/VIRrRK5vv5Eebiu89uHK6509YStWkplsKOQ3aMG/lDG6nXvUb9ZOOtYFfL+ex8o9kZcjGEFFK3RJ6Ffqx4ieqwGsaUbEIu3m223mnz7TXl7meelAYxpRERJTT/y8e2Jkw0MaP3JmS4x1jimdcbK0E6ULjFPNJ26JFwpAdM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757419961;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=;
+	b=BM/ws7gycQgRHCFozthJdHDoQ36qwU3lBS0AOSxzZW4PuCrsSi1cJ1SP4j6rDldR
+	Ev0k+SeeWreurDcv20q5a1uNqy1NrMmtuH0wA6UnxmmIIKm8hn0XQmu54xS8ezQR8Jg
+	gZVusSraG8T22r+UKG47R5TjFP7Q9cIgSJOCXGUE=
+Received: by mx.zohomail.com with SMTPS id 1757419958375181.19043421461697;
+	Tue, 9 Sep 2025 05:12:38 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
+Date: Tue, 9 Sep 2025 09:12:21 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Michal Wilczynski <m.wilczynski@samsung.com>,
+ Igor Korotin <igor.korotin.linux@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-usb@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <77E6BE1A-B928-4A36-98C4-74FB4A7C19C0@collabora.com>
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
+ <2025090618-smudgy-cringing-a7a4@gregkh>
+ <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
+ <2025090601-iron-glitter-c77d@gregkh>
+ <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
+ <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
+ <9657C897-087E-4544-849B-964E99D95A50@collabora.com>
+ <DCLTJMIAMCVL.35U236MMS5CCK@kernel.org>
+ <85B643A9-1657-43ED-BE98-BE7E502D08DA@collabora.com>
+ <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
+To: Simon Neuenhausen <simon.neuenhausen@rwth-aachen.de>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Mon, Sep 08 2025 at 17:00, Sean Christopherson wrote:
-> On Mon, Sep 08, 2025, Thomas Gleixner wrote:
->> --- a/virt/kvm/kvm_main.c
->> +++ b/virt/kvm/kvm_main.c
->> @@ -49,6 +49,7 @@
->>  #include <linux/lockdep.h>
->>  #include <linux/kthread.h>
->>  #include <linux/suspend.h>
->> +#include <linux/rseq.h>
->>  
->>  #include <asm/processor.h>
->>  #include <asm/ioctl.h>
->> @@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
->>  		r = kvm_arch_vcpu_ioctl_run(vcpu);
->>  		vcpu->wants_to_run = false;
->>  
->
-> Finally had a lightbulb moment as to how to eat this hack while not stonewalling
-> the entire series.  Can you add something like:
->
-> 		/*
-> 		 * FIXME: Remove this hack once all KVM architectures support
-> 		 * the generic TIF bits, i.e. a dedicated TIF_RSEQ.
-> 		 */
->
-> to discourage further abuse, and to make it clear that such ugliness isn't anyone's
-> first choice.  With that,
+Greg,
 
-Fair enough.
+> On 9 Sep 2025, at 08:19, Simon Neuenhausen =
+<simon.neuenhausen@rwth-aachen.de> wrote:
+>=20
+> Hi,
+>=20
+>> On 06.09.25 17:46, Daniel Almeida wrote:
+>=20
+>> As I said to Greg above, I=E2=80=99m here to help if anyone wants to =
+write a USB driver. Those interested
+> are free to reach out to me and we will work together to merge the =
+required abstractions with a real user in mind. Hopefully this =
+encourages others to join in this work :)
+> I had planned on writing a USB driver for TI nspire calculators, that =
+would make them mountable as USB mass storage devices, since they use a =
+proprietary USB protocol, that usually requires paid software from TI. =
+At the time I gave up on that, due to the lack of USB support in RFL, =
+but I could revive the effort using this.
+>=20
+> I'll admit that this is pretty gimmicky, but if it helps to get this =
+merged, I would be happy to do it.
+>=20
+> Greetings
+>=20
+> Simon Neuenhausen
+
+We apparently have a user :)
+
+Would you be ok if I continue this work? I can look into gadget zero as =
+you and
+Alan said.
+
+=E2=80=94 Daniel=
 
