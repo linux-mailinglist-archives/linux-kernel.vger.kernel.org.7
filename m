@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-808217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580AAB4FC01
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:04:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F7DB4FC02
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0990017DEAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDFD3A1B05
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E2933CE9D;
-	Tue,  9 Sep 2025 13:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960A833EAF1;
+	Tue,  9 Sep 2025 13:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkUKeMv+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="us3y1m1H"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4EF9C1;
-	Tue,  9 Sep 2025 13:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FDC33CEBF
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423078; cv=none; b=rZIf3Y31SBEuk5CFOxIQBtogMfjaoT2dWKVZ8sRS8raoJv3TcCVVfXHxfId8rT7sHRARApPCLOKYH3nDNKDnP5J75wLVPEkUu1UZGVGyjDcdmyb1Iz6Z0fZShtNci7dvkzYoFxWVdg+fq52opSXH0xGoW/2BiCpOO3+ZCdM1RVU=
+	t=1757423098; cv=none; b=r3eKLtOdcBEZZM4H4ReCrXaEAiKR8cTevuDlt3JjR0Zy7JvRllRL5bNRGsstOoznSCOO3yWHDfTregg3x2mniN9SGEffvKGPiSIjRV1glHoRICM67U6gZD92jAV3+FO5K+Wr49bJ5p4F/7std/0CWsoqvwZUJqhkFT2zPIqHG8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423078; c=relaxed/simple;
-	bh=2XAecwrmpL2ME82rkHSXihuD/QhtSEyswB/Tapt+0cQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SxkL6cDTbNoRFHpNwPlMfsDTgma0D0XGGwrHvuagvEir7JOC279jyyCzuTvw3E6Mpc2n4bRJzW6EUOKnN3RbezHAUUKXT1Q5ddlTzwMSyPoG4tVyJHRFZfWgw1Pqk237K1B0N6q0fmxtK9QKIXNf0AKmjVDCDbFLJzOpz+WyUbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkUKeMv+; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757423077; x=1788959077;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2XAecwrmpL2ME82rkHSXihuD/QhtSEyswB/Tapt+0cQ=;
-  b=jkUKeMv+FRDepHrn4fdGWRqXgxlbP3Iy/X5KUVxRimHtH2VGvMnxkjew
-   hVNzeEKZtI68n9PB057yRwQOP0NH23eDBGHL9slS8cxiVy8DX3D2dZE5t
-   qrqdEIZR162nzkfcpv6/6TV2qlRCUvYzW9hXVImwc70JN8VSW2vE6opEk
-   Br5wxrJnrWVanPKdSMmGstQjgF12dSxTH8csJuiXVKn0pQVK3MCEk84eq
-   cqtTS36J3KUyEx4u68WyX70An5/nxvS0zEy6MylhLTwXTBslpL7KKEuio
-   833+ktnvdbInjp6wkTXseI/lENXcHq1an0x3vw2bt1mJlV9WVnyXMNztk
-   Q==;
-X-CSE-ConnectionGUID: CTKfm2wkSMiQiXLl4cvdUQ==
-X-CSE-MsgGUID: ikXLcoBDS3WcSDPlSh7GRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62332874"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="62332874"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:04:36 -0700
-X-CSE-ConnectionGUID: EKr4eiYkS2q3SOwhsjGziw==
-X-CSE-MsgGUID: Jd/DxpVWSzavxrF7NxmweQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="203855368"
-Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.244.110]) ([10.245.244.110])
-  by orviesa002.jf.intel.com with ESMTP; 09 Sep 2025 06:04:35 -0700
-Message-ID: <6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
-Date: Tue, 9 Sep 2025 16:04:33 +0300
+	s=arc-20240116; t=1757423098; c=relaxed/simple;
+	bh=wuEDhAn7VE4XCDJgxxXZUeG3h59v9HM1l7I/5wkYj2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XuYkx4KnLzenWbdugOqOq0nvok8XNS83v1/3Y1KRc5kvjWxeCbCfqXOF4ROEd7UPjP7e79G6b7u48GPMqYh1GJb/MOBomMOcjWgXv9GnBRwsy9Ik15qKVdsXJjh85vj2MI/q7txLIxmbJJyRo6VwFhbG8rZVXZNUFCb8XvQFm9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=us3y1m1H; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24cf5bcfb60so479465ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757423096; x=1758027896; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FegmOUf8bYexzRzeJYKOCwFad+h+PFSGJuRgZi24g9o=;
+        b=us3y1m1H5gNeKGbjB3usftbiEidaWlIoFHSMULr97z2j0QcsQO0YAO/F1nddFXdsnY
+         2NACCT6TApoXWi6cJZ6V1cHOTscSKP/zsFOgS6dZyVjsQkjQe3tnLB0BJoKkEedwIWW8
+         5IX1UlK8tfE+1OHw8us2/LhTfB7bkooMkKDA9NTVnFka4hXrGQ9T7+Sw6dhU0KynNacJ
+         VkIThxUtKW6QaJGl15h22kL7TMFCsZUR/7g0v3kBHgv6RvjCDfwRPchqdnsbhFpp6yy1
+         ajtEFRPFDZVq0bpHYMnWg55FZs8+2iPrLWCm7nujpfesO+D2BeBxwTjtxEr38x/ybdD6
+         da2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757423096; x=1758027896;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FegmOUf8bYexzRzeJYKOCwFad+h+PFSGJuRgZi24g9o=;
+        b=HDYuyi65rGpfyFwq13p6EmqVKu0zxrcYJc7BOZO05cqUs8lOvuqb3fDZcKFijtCD+y
+         Ddf9bFAiOaBm78SWxWynHKKl6pTyDScUJSPobP2DvviLRf9Duv75LHftNu/5ziP1qv9Y
+         unXAOZa0pFEJzaIQsX48Pr1Gybx3mt+N8KmBpOFixWN15KCP6YD3KEFwh06biypk5if8
+         NEgXlRvOpx0XBc6gVPS2gAWKx2sEm0cyw2dINj5GEJ6mV+mk5/NBefARCwE3tkfmccPu
+         IeVgDsW2PGVfkRio+8OkwnbZiKb1jkvUjdMnCPwJyGVGVHpqSt93GLIZdILWLwBWmNbw
+         Aw2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXk1HLTq98/JuK1Xoi1P+IcqEFCQpk3ieSAOIhxqC+/Cc9/Zi5cODjD1qi7NulOphMBt5qW8BAlKRu2/BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZJFswjilUQyVNddjJbp2wdqidmlUovWUZMe6XWeBXer0UWC74
+	ucw8Q1urHPdBcv6GNd39idejKNGhhD0brzs5kjI2opp6suy3ThZK5kKwToE007TIBvNFcXel568
+	XRUcusGUbKxcvcvh01XIg4aCVAWwzM4RiNYVOZBHJ
+X-Gm-Gg: ASbGncv4w6/Qx5dFUFzUHIa7/7idgoJ4PgrgxeYSqnP9faQjNBYZybsdGh3uO9j2rgj
+	ugdixNZUojqGwNJc9UDd20sIXZUkN/6RnvUIpsK7lmeYaAjKOBve9sKXU8rpoAkYXWIumVoQyMV
+	0sP3wki5V7LoQIyCqLj9DCSSERPg62Ed2ZjL4jZTapMeMn+A6Ubg++y3xmOQHfED6r/lVxrgVPr
+	UbAev6qL8vqyZR6XGLaJyI2IQ==
+X-Google-Smtp-Source: AGHT+IGxkBlp/AxP5ezcb05alMwdQQBJpkLO6kD0GQc8Jn7qJD8riHbmJuzzdb3s0/Uf/T4BuVR0E8LEVn45d8u0sWM=
+X-Received: by 2002:a17:902:ee55:b0:240:4464:d486 with SMTP id
+ d9443c01a7336-251753ddba7mr9427785ad.13.1757423095381; Tue, 09 Sep 2025
+ 06:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250908130128.7ed81912.michal.pecio@gmail.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250908130128.7ed81912.michal.pecio@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <aMACaOmneDrG8_pQ@gentoo.org>
+In-Reply-To: <aMACaOmneDrG8_pQ@gentoo.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 9 Sep 2025 06:04:42 -0700
+X-Gm-Features: Ac12FXzybYii8a916p3tX2nAHNuT8iSupwAVo96d7tCCsAUhIZreC8qrC8yg8m4
+Message-ID: <CAP-5=fVA_Cduf9NvFAJezcNcg0JDNGa5q7m_mRBWNAYGEUo8bw@mail.gmail.com>
+Subject: Re: Problem with perf report --gtk
+To: Guilherme Amadio <amadio@gentoo.org>
+Cc: acme@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8.9.2025 14.01, Michal Pecio wrote:
-> Hi Mathias,
-> 
-> I wanted to finish and send v2 of "Simplify TD cancellation and drop
-> some states" over the weekend, but I encountered an annoying roadblock
-> and I need your input.
-> 
-> Basically, there is a bug: URB_ZERO_PACKET is queued as two TDs, and
-> when the first TD halts, the driver simply advances to the second one.
-> 
-> I found that extending the event handler to cover this case requires
-> multiple changes:
-> 
-> 1. obviously, all TDs must be cancelled, not just the current one
-> 2. they may be given back in weird order (waiting for Set Deq), so
->     we need to store the status on urb_priv and override td->status
-> 3. xhci_invalidate_cancelled_tds() would need to recognize multiple
->     halted TDs on the same URB as valid
-> 
-> This is doable, and I have already implemented most of it in that
-> series, but there is an alternative solution: simply stop worrying
-> about halted multi-TD URBs, because this is the only case and it
-> can be converted to pretend that it's just one TD per URB as usual.
-> 
-> If you are OK with this patch, cancellation logic will be simpler,
-> because this time there really are no remaining cases of multi-TD
-> URBs except isochronous. This is clear in xhci_urb_enqueue():
-> 
+On Tue, Sep 9, 2025 at 3:33=E2=80=AFAM Guilherme Amadio <amadio@gentoo.org>=
+ wrote:
+>
+> Hi Arnaldo, Namhyung,
+>
+> Since sometime we have a bug in Gentoo's bugzilla about perf report --gtk=
+ not
+> working=C2=B9: https://bugs.gentoo.org/937869
+>
+> I know this feature is not used very much, but I thought I'd report in
+> any case. The problem is easily reproducible as shown below:
+>
+>
+> $ perf record -a -g -- sleep 1
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 1.818 MB perf.data (6648 samples) ]
+> $ LD_DEBUG=3Dsymbols perf report --gtk 2>&1 | grep '(fatal)'
+>     288067:     /usr/libexec/perf-core/libperf-gtk.so: error: symbol look=
+up error: undefined symbol: hashmap_find (fatal)
+> $ perf report --gtk
+> GTK browser requested but could not find libperf-gtk.so
+>
+> I tried this with perf 6.16, but this bug seems to have been there since
+> at least 6.12.
+>
+> Please let me know if it's better to file problems at https://bugzilla.ke=
+rnel.org/.
 
-Adding the zero-length TRB to the original TD when we need to send a
-zero-length packet would simplify things, and I would otherwise fully
-support this, but the xHCI spec is pretty clear that it requires a
-dedicated TD for zero-length transactions.
+Thanks for letting us know Guilherme! I suspect I broke things when
+trying to fix python things. The code linking libperf-gtk.so is:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/Makefile.perf?h=3Dperf-tools-next#n809
+The hashmap symbols are part of the perf-util library:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/util/Build?h=3Dperf-tools-next#n197
+So maybe there needs to be a libbpf -lbpf for your case? Alternatively
+we may need to reorder the libraries here:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/Makefile.perf?h=3Dperf-tools-next#n464
+like:
+PERFLIBS +=3D $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UI) $(LIBPERF_UTIL=
+)
+becomes:
+PERFLIBS +=3D $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UTIL) $(LIBPERF_UI=
+)
 
-See xhci spec section 4.9.1:
-
-"To generate a “zero-length” USB transaction, software shall explicitly
-define a TD with a single Transfer TRB, and its TRB Transfer Length
-field shall equal ‘0’. Note that this TD may include non-Transfer TRBs,
-e.g. an Event Data or Link TRB."
-
-Thanks
-Mathias
+Thanks,
+Ian
 
