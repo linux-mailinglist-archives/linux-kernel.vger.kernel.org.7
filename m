@@ -1,133 +1,162 @@
-Return-Path: <linux-kernel+bounces-807087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1FBB4A007
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90061B4A00E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D941B2759B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:26:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1092B7A76AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F5026FA67;
-	Tue,  9 Sep 2025 03:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE9026FDBB;
+	Tue,  9 Sep 2025 03:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUw6hqJL"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="guM7+cZo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3991D8DFB;
-	Tue,  9 Sep 2025 03:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D76E225409;
+	Tue,  9 Sep 2025 03:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757388368; cv=none; b=mZXVnEfQxrCAIDosC1+Wvuc9bJ0BuojhLaec2UPe+5LKiMVaM3vlOnUNLkWQz8aGSn2+04vK+LP0d+qF2pHkCy9+llTIUO48/YAeNRw/lHDf25AqIYt8jIdzUPanv830a490wos/4B88Wjqjx5XvsJ00sVAyReJinwLsM7fpPOY=
+	t=1757388571; cv=none; b=byv9X+PFAvuUhvdc6sJwZoyPi4rW0lZ+8Ps3hDYuEMPml4EQyb6/94sMRG2U9Nswvq7VTxbJlxsrDxEQ7q1kHi6kUxY7ByH9XEi3Wmp6lOMOMtjDVIf+1xAtspOvw6YOZ+p69Pij6va00T1GIzThNqTWFUTgTPpZbytXYHVyFPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757388368; c=relaxed/simple;
-	bh=TrEbotMNuds7Qdq81awFfL2gjP1OAB95dbF2hcUtTlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kktAYVj7/KRQSQ8m4povpMKWboiUXU9QL9lQ7LErVR7kWuqz2LeT2cLnWv/X+DoTCcNh9InAMxiMlq3OHoHsnx2m5g8fbkFJkDsmsB3yA4glCFM21s9OU9KtabF+26m/kkUcE4FtoQ4frFums72m/dlPV0ENPbna6cJasbbqKkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUw6hqJL; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7728a8862ccso4409108b3a.0;
-        Mon, 08 Sep 2025 20:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757388367; x=1757993167; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AkLNEj1i4t2vrSWBkjZO2xh0b/5j+DGQrKsquLBjO3k=;
-        b=GUw6hqJLRf0aSd3eG82Fw6aE243QiH6jcDnWfDaVO9vZqf64ll/E/OH0r7C2OTQnXG
-         tl63CrLTiywx+bt8mum+RIDerzgL30O9aoxbIdJGhXc5T2fpnjq5evGnxkt3/q8dUkGr
-         jTUqtfhgORDhB5SKgonPfbZuiyCfFo3T3eROVPVfA21G2Iuh3Xr2K46zPC3e4dib69gK
-         0gRXo0UVa/81vMSqRoNIIF8CWjbFxaNoy2EzOI9HfDoBUgSCJdfEzd8epSpUBDFXxG3/
-         7QeffYqJSuHqAu6inlXpt5jnJJ4g6Ugr+/dd0Fb8zE4nt8bToYkIf1P0ZrKzwZClrRjS
-         rciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757388367; x=1757993167;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkLNEj1i4t2vrSWBkjZO2xh0b/5j+DGQrKsquLBjO3k=;
-        b=jgSgI3aAswd1O+qE7YQjX/6bAtNguLctrLWinC2w/Ub3FwiqcwFua5+3JIxs76Oh5C
-         63+gQh57YWCMZprm1Of1iDqR6FRSTVnD/64VkAo+bs0UoTJquUZVb7O2qSUaC6RfGKeE
-         8I/YugiQGfBFp43apRjF91NVoha1hJzVBfNyPZIr9wuatPTYhjC4IQX57hCFc6Z7ZB7N
-         +BoFh2JKfIayYPuBTgV9rDLxClNGZ9z8gcbZqS4+ltaurJ6jHDDTaEPsBW9lj+7Hb1+o
-         FwF7cy1NGFLJVhWIoiqENYPlHDkp+U6rkkhZbzOEHVgeuXWB/V0iNVAVd4xRqyaL8sOm
-         ye8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWXk2OTePPEud1TTzIWoPysW9W/5Cr/I/wgSFZcJLir5+hBCqCqZqxeRyFvVSAhVT/wh0l4cJrS@vger.kernel.org, AJvYcCXtXyi7JOFGcw0hdvuaKbyYpWBTlojM4Mq8ec/pnhVlzKdXO6MN1mqLlo/EsTi3oewDkBQFkDfwH4Ul8qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTC0+O8MUB3irJwwzt1aHUwIrwRKw5E1CHTFUwIQpBjPXYCWC4
-	lKhlwSRpL/KzsY8mR7u4XWVl2tFK+WlbpwKFXBRYCUuAJ+CYpqWCP19p
-X-Gm-Gg: ASbGncvWDWBiYcQG7DPoeJFi+oVWMotoAVq8VwBklGBtkdpHwiN5UssptYqrRvztGXU
-	mGmXExG92Ex0Li+VyE0BM19l3JU/Jwr/qdCHCTOfFaJTO2ojRvsqJa8s0rFAqRAW6tzpPZcRJCK
-	BeNakCZoYBDSM/T/zBU1Pfvjz5mbOa1WNY3MOGI+Wyg40ryYJAbQ3fJpKxls4m65B6K2NpugR0E
-	92oX4UBj6z97pEyWVwRyEsPrhotpMF86SHOPB0cYwjw9oYiennKwWrmlAVDTV4K0bVsExloh1ED
-	HmUKjVaesZ/PdjXDVmznSy8Bo7WpEEkbuEX2Qjo+G7hasmpc0UrD6JpdwCOc8mOt6yMjaAtrBfE
-	UFxpiDJbQZJW1aU3F8p4ezAOQYI8=
-X-Google-Smtp-Source: AGHT+IF7IiZNw69xqiXFPeTTUlAHNfw0BXZZF30ky6qi5h8ozXWMsCssJ04yFuxynGBl+GR3uACpWQ==
-X-Received: by 2002:a05:6a20:1595:b0:248:7e43:b6b8 with SMTP id adf61e73a8af0-25376386e21mr13470591637.3.1757388366650;
-        Mon, 08 Sep 2025 20:26:06 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4de04a9ea7sm24934736a12.16.2025.09.08.20.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 20:26:06 -0700 (PDT)
-Date: Tue, 9 Sep 2025 03:25:58 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Cc: Carlos Bilbao <bilbao@vt.edu>, carlos.bilbao@kernel.org,
-	jv@jvosburgh.net, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sforshee@kernel.org
-Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from
- counter to jiffies
-Message-ID: <aL-eRu6eTHb3eB3A@fedora>
-References: <20250715205733.50911-1-carlos.bilbao@kernel.org>
- <c9eac8f6-8e7f-4ed0-b34d-5dc50be8078f@vt.edu>
- <aJIDoJ4Fp9AWbKWI@fedora>
- <49b975a6-25ad-4c11-a221-952b466d267e@gmail.com>
+	s=arc-20240116; t=1757388571; c=relaxed/simple;
+	bh=EXc69p8u4m6ezjT07mujfn6hxIfP1y4LXG5E32jdTWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDK8A5nTX2U7MrwaDFhwDDHDsV5u+pdq2BeF0lVFpdFi47cedW7E/lF+Y18pgsUvJ7O/NQulxsK6KontIgJjAeM3XhZl0ws3S8zwL/ysaTmEa214TzsvTBh0Ejv+GP53fvz9s+foehIkpPvVCT/CedJug3yV9YroE4j9+ykZ4C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=guM7+cZo; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757388570; x=1788924570;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EXc69p8u4m6ezjT07mujfn6hxIfP1y4LXG5E32jdTWc=;
+  b=guM7+cZo27n2d5CprMxHF1n8Z0ZI8/PvrirldaIiBMuW59oprx1H7Uor
+   KP7xTxx6nVPM8uKWldgJIZEcK8n8w+lyChZlH8G0ysPSBdSMJhaZ1ZJDY
+   r0Bm+hC/sg4BqQ1QhPOGiLtUqweTU8zYjPTliiakEfriaujG2oc6avGmq
+   zmxf7HMYiONIoFfp7y2rnwcc8G/oc0GR07QI01EfOkcKG9lkq1WEWT3gt
+   vRTPdQJOr92YGXx1HBWfxrQHY2FvL+63cbnJblI4qLwzal/IDuhTche8/
+   kC2jThvABt7l4P8YJE21X8TIoaMhp3zHf3YBc/KW/xaw/JNodGm246dRX
+   A==;
+X-CSE-ConnectionGUID: oxbinHtMT36GCXIIEaPxDg==
+X-CSE-MsgGUID: eGpg2KgORZ29YC0g7fnp5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59587981"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59587981"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 20:29:30 -0700
+X-CSE-ConnectionGUID: LEi06bYoRn6OW4GcGWPZYQ==
+X-CSE-MsgGUID: plO9xQT9QrSPYN2TnxJMyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="172845223"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 20:29:28 -0700
+Message-ID: <2257f7a6-e4f5-4b90-bb18-cb0af756323f@linux.intel.com>
+Date: Tue, 9 Sep 2025 11:29:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49b975a6-25ad-4c11-a221-952b466d267e@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] KVM: TDX: Do not retry locally when the retry is
+ caused by invalid memslot
+To: Yan Zhao <yan.y.zhao@intel.com>, seanjc@google.com
+Cc: pbonzini@redhat.com, reinette.chatre@intel.com,
+ rick.p.edgecombe@intel.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250822070305.26427-1-yan.y.zhao@intel.com>
+ <20250822070523.26495-1-yan.y.zhao@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250822070523.26495-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025 at 04:26:12PM -0500, Carlos Bilbao wrote:
-> Hey Hangbin,
-> 
-> On 8/5/25 08:14, Hangbin Liu wrote:
-> > On Tue, Jul 15, 2025 at 03:59:39PM -0500, Carlos Bilbao wrote:
-> > > FYI, I was able to test this locally but couldn’t find any kselftests to
-> > > stress the bonding state machine. If anyone knows of additional ways to
-> > > test it, I’d be happy to run them.
-> > Hi Carlos,
-> > 
-> > I have wrote a tool[1] to do lacp simulation and state injection. Feel free to
-> > try it and open feature requests.
-> 
-> 
-> Very cool, thanks for the effort! If you’d like to run my bonding patch
-> through your new tool, I’ll be happy to add your Tested-by tag.
 
-What kind of tests do you want to run?
 
-Hangbin
-> 
-> > 
-> > [1] lacpd: https://github.com/liuhangbin/lacpd
-> > 
-> > Thanks
-> > Hangbin
-> 
-> 
-> Thanks,
-> 
-> Carlos
-> 
+On 8/22/2025 3:05 PM, Yan Zhao wrote:
+> From: Sean Christopherson <seanjc@google.com>
+>
+> Avoid local retries within the TDX EPT violation handler if a retry is
+> triggered by faulting in an invalid memslot, indicating that the memslot is
+> undergoing a removal process.
+>
+> This prevents the slot removal process from being blocked while waiting for
+> the VMExit handler to release the SRCU lock.
+>
+> Opportunistically, export symbol kvm_vcpu_gfn_to_memslot() to allow for
+> per-vCPU acceleration of gfn_to_memslot translation.
+>
+> [Yan: Wrote patch log, comment, fixed a minor error, function export]
+>
+> Reported-by: Reinette Chatre <reinette.chatre@intel.com>
+> Closes: https://lore.kernel.org/all/20250519023737.30360-1-yan.y.zhao@intel.com
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 11 +++++++++++
+>   virt/kvm/kvm_main.c    |  1 +
+>   2 files changed, 12 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 6784aaaced87..de2c4bb36069 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1992,6 +1992,11 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+>   	 * blocked by TDs, false positives are inevitable i.e., KVM may re-enter
+>   	 * the guest even if the IRQ/NMI can't be delivered.
+>   	 *
+> +	 * Breaking out of the local retries if a retry is caused by faulting
+> +	 * in an invalid memslot (indicating the slot is under removal), so that
+> +	 * the slot removal will not be blocked due to waiting for releasing
+> +	 * SRCU lock in the VMExit handler.
+> +	 *
+>   	 * Note: even without breaking out of local retries, zero-step
+>   	 * mitigation may still occur due to
+>   	 * - invoking of TDH.VP.ENTER after KVM_EXIT_MEMORY_FAULT,
+> @@ -2002,6 +2007,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+>   	 * handle retries locally in their EPT violation handlers.
+>   	 */
+>   	while (1) {
+> +		struct kvm_memory_slot *slot;
+> +
+>   		ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
+>   
+>   		if (ret != RET_PF_RETRY || !local_retry)
+> @@ -2015,6 +2022,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+>   			break;
+>   		}
+>   
+> +		slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
+> +		if (slot && slot->flags & KVM_MEMSLOT_INVALID)
+
+The slot couldn't be NULL here, right?
+So the checking for slot is to avoid de-referencing a NULL pointer in case of
+bug?
+
+> +			break;
+> +
+>   		cond_resched();
+>   	}
+>   	return ret;
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 6c07dd423458..f769d1dccc21 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2661,6 +2661,7 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn
+>   
+>   	return NULL;
+>   }
+> +EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_memslot);
+>   
+>   bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
+>   {
+
 
