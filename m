@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-808185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B994FB4FB90
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:44:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF7CB4FB91
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B643B24CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB9F3B451E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B877C3376AB;
-	Tue,  9 Sep 2025 12:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C407338F2F;
+	Tue,  9 Sep 2025 12:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RCCGq/pB"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4X4uqyv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEF93375D9;
-	Tue,  9 Sep 2025 12:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6DF31B10E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757421878; cv=none; b=useDjtDEfRWLP2tcfvJVJxFCWM8UcfXAvEXTakMDDIRDtBNENo0uN0EycZnZwWK5tqy5yzaH1P/tZAVqhPm8SMFvJTB++WRerDlytaZeYEdLf8/kmVQiKGEznk+/0Q62Sz0Ouesnc6mMpjU1OWI7SrAq7eiiG3qkKyDkdjZJKj4=
+	t=1757421878; cv=none; b=obWOfCqsfqqwT76zRn8i2f58GdmOLbZbLVDBm2kN0COFRpKnOv4EvPzdLkpCbvl9SwkORaz3nAIvqdU33WtvPdspxaOg8kVJF91nwlh2GAHpxNkDXro6ez55g2saA5bkM6JgU9cOI/aBog2S5ozCUt10TVk/wBJ2zumiDBmkBsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757421878; c=relaxed/simple;
-	bh=GOhkJEeymfMf6qrtgq5+BS/JhhLjKijUfD83vqgz2mM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=grDsDSOgGE6sMTKMumBy2FJWCJo3ddI1yBl8oGSMgcCb7o56/+sXpso8OIq2RBaXHF9QvvY+fwu4HwSOI8neJHcf4gMQybi04AVnccJILDDHerCCJxbORnM6uWSX3ygfOh5Roa31OU5oRsb/Voa+487ZEMmQdTyPkB3SqZQ7bPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=RCCGq/pB; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45de6ab6ce7so13675115e9.1;
-        Tue, 09 Sep 2025 05:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1757421875; x=1758026675; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UQaDHF+OqdVZFz6Y2By3JYrIbz3IYU9PimfS5JdBTVU=;
-        b=RCCGq/pB6/2nODF5dcb+wfASw0I7vVCUecAJuiPZw9ckgrldtsep8LjsXap9oocGyN
-         s6v4tkHOIJR07sZxBnfrZpleQmYvHi1/dXUqwY8cvdS2MuJccsqcknHdC+phLQG7sXH4
-         KpD879Ripqn00uqgQ8pA4R7AD2y1M79WDj5TrdYQHJ1TfdebGgLQlK1gSwHh2xo2SuaZ
-         acU30OUV2pbieP1WKu+QpjOT2WukJ/3nr28BCQer3GBtQISUq8Kf42WzWJK36KNJQNFq
-         wVSABp2MBt5J38UdhWLRH/0BrEnA2ivH1JkdP9v4SHVvia3/petFopv/kRCQzKsdh7en
-         Y7Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757421875; x=1758026675;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQaDHF+OqdVZFz6Y2By3JYrIbz3IYU9PimfS5JdBTVU=;
-        b=LBSzVpZRcyMeLYtXh3WPAZJiA5q5wQQFhGDKE9aaSbC0Zcv7J9zU5kHtnF1ZtcZyYy
-         tXHS6SLTiDhmVMDSf2jltHBataj0GmU8LO4opU0hEibHWkJ0Lxb7mvPdh006IvJgo1WK
-         sjL8CStEhJGmLKlU7Tm5X+NInmhD/ukot+mjJV08wlwHn+xNh5ugJqJF2wEw1bP1jPuG
-         0vHC/B9fFIYiTQUraY2vRwG6pIh6WKSVfEyotH3qB6GLP7tQM56UOJ1ECi4cSthnNEGE
-         nm6TNG9pDFUhfVXWL7CkbG7XAA5qoM4FCmQIBrEVVnDNGhKRppqle+yGXjoawttMjrgV
-         Ewlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXCU6bT1DEp8/i3El0t/T+f333LdvfU7bszkDIn5Rg4FVo+gfZeOHWpW64Oi/nE198XPCzzA20xG7l1Mo=@vger.kernel.org, AJvYcCVHYi3CcRtFmbsv8KINQrLpUmUqGG74bH4a/ATyjDkFbqffsVmFY9vnbPreQ/+8nR/11yddvPqi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNTDBdZNc9Gsumca7ntXOuBAOoLmqfS534rZZ8vCgclxeGuof3
-	t6D+XyQT2ByF7DQ2fJrwVJvms0M6kw2rztuMahnicOFkfrqmMG+wadI=
-X-Gm-Gg: ASbGnctnF/fxvSYYlSts2uYSbcbcHBoRA0lw1Lm/cZ4Pg7VPqRpjUY5zjXHLOQNOVLv
-	S36obMZJma+/27ACzAklyxQBFmItb3FdU0Bqm1J/lr5RkuMgH9bwX0pGVPpZ+/7QcJ4tCBJKMQA
-	AhjwFMsyBtAzjZUxTDgsB7AlQyzjds+1nyt5Nsk5ZQ0noMkJWMWFZzDPxKtjmU/WLGvs9XTMz+r
-	AcpN3RlihwShD6gSD3CEXNoKaLBEZ/4klwXxtaW2Kqn/5tlNkhTEu+U9jPLO/lzy3I5E2bnaCVW
-	5AJLg+NdxwNz0CFqCSbFLQmKEhq/Y9RnyO7b2SDPFZfVNYS/BF+a/xF2qbFe4ZwuVHrs203uu4Y
-	JIUNQxz9fVXbwAH75zzyTKqHQyt1rOEhXzGp88toVjjNabTHPG6xC1mRaH+ez8IfhAi1ySi847x
-	0l2uDoUZb3
-X-Google-Smtp-Source: AGHT+IEsx7Xxj+2lRlWFeshLEPV/hPgQbvNUMtQMttEiRIzCxZzOP6ON/5bvIiUPG2wAblUV+ecYAw==
-X-Received: by 2002:a05:600c:4f47:b0:45d:d903:beea with SMTP id 5b1f17b1804b1-45dec7992demr37367755e9.30.1757421874469;
-        Tue, 09 Sep 2025 05:44:34 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057250.dip0.t-ipconnect.de. [91.5.114.80])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e50e30asm490545475e9.24.2025.09.09.05.44.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 05:44:33 -0700 (PDT)
-Message-ID: <5a3ee5de-0b95-40e2-9bd1-f0b544b70530@googlemail.com>
-Date: Tue, 9 Sep 2025 14:44:33 +0200
+	bh=G038WdmGog4EOZkMKmHCh7lB80pDgiLXpw68xAADWy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwuA4ia0ckO0n/e6N3cku752VjInKc5/XYfgk376mQ5hbORIGvdxEPYglkuBRj6AFBH6lUsds4ywPhmmbIRiC30lRNW07pg9LoaiBr/Z+fWTNcMlEy//4RD2KdxXkOA6LJrZ+qxHOmsMGxyrXDdnWpo4JDr14M2uOngoN1ctJ0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4X4uqyv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F702C4CEFA;
+	Tue,  9 Sep 2025 12:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757421878;
+	bh=G038WdmGog4EOZkMKmHCh7lB80pDgiLXpw68xAADWy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c4X4uqyvlp6gUsJ4r2eTVIpmXLfsAakB6LGSEO4rASOOqjyuijntUOt0spXPjEEcT
+	 b7PR10UZdAQM02yy0+sfuP+i1oDEcN7w8QWQbecb/MMUbY8F6bF4ZWFqLIh3uF0OVU
+	 tNuZA7/l57HjJvY85c2UBdr2yU9Y9REW5KghwrERmAuyGweHt9a6eryhsduhKltIik
+	 gt5jXrdYjcBGIaYRysVGXP1MVj61kG3QCXJhfxn4mdGKPeoEFaurJ8dXrX7PhnM3V7
+	 uM9YJcr2/xtvkr0aZ8Jg0GLn1+II+S7Iu+23aFwAamSQdoz+jtMBxtASiXJBBFx4nb
+	 xB7PGDv1VYdXg==
+Date: Tue, 9 Sep 2025 14:44:35 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/29] drm/atomic: Implement drm_atomic_print_old_state
+Message-ID: <20250909-visionary-unyielding-loon-b214d4@houat>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-7-14ad5315da3f@kernel.org>
+ <42e891ee-87b8-448e-a0c7-4f3e3b790556@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/101] 6.1.151-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250908151840.509077218@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250908151840.509077218@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Am 08.09.2025 um 18:04 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.151 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Just like rc1, rc2 builds, boots and works fine on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or 
-regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="523zrlvehmcdve4w"
+Content-Disposition: inline
+In-Reply-To: <42e891ee-87b8-448e-a0c7-4f3e3b790556@suse.de>
 
 
-Beste Grüße,
-Peter Schneider
+--523zrlvehmcdve4w
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 07/29] drm/atomic: Implement drm_atomic_print_old_state
+MIME-Version: 1.0
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Hi Thomas,
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+On Tue, Sep 02, 2025 at 03:26:49PM +0200, Thomas Zimmermann wrote:
+> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> > We currently have a helper to print the new states associated to a
+> > drm_atomic_state, but we don't have a variant to print the old state.
+> >=20
+> > It's somewhat expected, since we almost never care about what the new
+> > state looks like when we commit a new state, but we're about to change
+> > that.
+> >=20
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+>=20
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Thanks!
+
+> I assume something later in the series uses this code?
+
+Yeah, the readout code calls it to print the state that was built from
+the hardware state.
+
+Maxime
+
+--523zrlvehmcdve4w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMAhLgAKCRAnX84Zoj2+
+dsJGAYCBTlTkqCHclm5b+I28vqbLA3bm50x5sHbJsN+hVR8xn8a97ufHx9J1M9ss
+g6yAMp4Bf2dsrNnKywO5o0l9amNLMh4RswJ0TNueZPOuRpfQamBueGlqrspsG1Zj
+1ZaZney8ew==
+=a6zA
+-----END PGP SIGNATURE-----
+
+--523zrlvehmcdve4w--
 
