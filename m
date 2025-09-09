@@ -1,187 +1,188 @@
-Return-Path: <linux-kernel+bounces-807020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B0DB49EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4CBB49EFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B8A18868BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA5170883
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633E0245005;
-	Tue,  9 Sep 2025 02:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Rcy758h4"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012003.outbound.protection.outlook.com [52.101.126.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1CE2441B8;
+	Tue,  9 Sep 2025 02:11:59 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AA42222B7;
-	Tue,  9 Sep 2025 02:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757383806; cv=fail; b=oNcHjEzwhaSCBrpXd6h+zfKQ6EdpZw8ohVBzGQsOWM7+H9e8FO8v/GzJUuM4YYuC58qp+DfYzYC5FK7RNU1yM/60V8YxPdR2XymIMf0+9WyUR+TOFA69G3qgU7ElG2CuVjRFTFKTp5Xo+19kcepnpjXBt8Ox0AiGWbtzjxtWTgI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757383806; c=relaxed/simple;
-	bh=CxAjh1FS1UQCjsQIs0o9FtCV9puiaZbaARB5FP+bJ2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CyGmtCMYYD6JAEG9aAAPD1bgijM9QnUhuqOQR7V1hYEQ387fnpq4fvutA9mL7n9oyPN3ywKHnyvX2YiUCIXzNJPhR613mdvFkYJp5pphRnSwMMVvsaDIW39h9CTkswvk9+kPZTnTECu5m6DkcExi2ZzU4Pbt3nMjDXODFD0SAZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Rcy758h4; arc=fail smtp.client-ip=52.101.126.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JvjoZ0w0wF97ii9RS3mhDmM7IpFdccov5YQtFGoNeCVv2IPNRuBdbzMAoseYNnVwvUYf3LcSs18XLO3uVDjjZcoo7NR/Pth+y8FN5lcfbkNq4dVO5fvIr2P4nQGy7Snk6dLlxt5IrzK1akqxcBm/FGjgbfeKV9bkJ2v6UUxlzOgM8NgDAisk+cuFbdMLZeNfu77E4RQNF6/cabP8HT4HD3uZgZ0lxbD6tvsIMZr3e2hVHVKZlzqIW874Iz2rNp1FzK3ws/SMF0NotZ6gfiaspg/kzw8VpsxsCqK2IeeeLeXEhqtkei/DSvcXpiygoDKSuPyM3udKaBWycYCaZuMTWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EnArDNN3WsMHONzvPzB22rtZBtbGHu7FKEnf68Q/WIU=;
- b=zSB2Z9ukOzdTvQ6BkeMWAhd6ZMHj619g6E+Y2TNBdyufucIy73Kg4j5PQJlX+8qy8EtTdsh3eovmaZh7MPs7u6MAdyZ1h/YC+/rNTSxJ/r+d+cF3uTOFZzmRg3H9ZVSbpVwk/VJMI61+x/a+Bn4FrwIIGmGGdRpW5Moobx1TT1E92zjq9CMYSrqWHhyp8KePF6ko3sdAxWL/hEx/1WriyXigM1voFa4N03y+ZRKF/+XgGudNLg27xM1pVNDR49im3K3Zd1jpIJeTMAEx+wzeAfUL7bBNXr9+1mosTKg5wL8xAMVpbus+lbW7wNlcAhwwEruANHIe2YVzwmmbN11EKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EnArDNN3WsMHONzvPzB22rtZBtbGHu7FKEnf68Q/WIU=;
- b=Rcy758h41AWsS4R7D1cG9TVTRV2OINnWMrp2Hjxwe/YK0wQzeeLxCF40DKQ8gpqWu2kaSBIsppYqY7vEQItG12Va4JotayCQfhoqsSpaQS5jf2zWYiJkKUFjMCIbtQ9oJSDvKhrVKHWzoPmkDshb1q5eAToZHOl4Ml8GoYwmuZRrdycphMB9Vfq6c4OME60GWX1+WjfP67AdmyoV4L7j4NeHa9XSrS57c0AwVRDiL3wBjgV9yWfVqF+Z/cEq2j8eX6vDemPP3PD5eP0tIBmPN+U5dsKku2AiGvoZcC7tjjLt45HwEQE9ynYH46Zow+Wv/dB8M1EEDGV/W9T1iBBsjA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7330.apcprd06.prod.outlook.com (2603:1096:820:146::7)
- by PS1PPFEFCBCC15E.apcprd06.prod.outlook.com (2603:1096:308::26d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 02:10:01 +0000
-Received: from KL1PR06MB7330.apcprd06.prod.outlook.com
- ([fe80::d1d3:916:af43:55f5]) by KL1PR06MB7330.apcprd06.prod.outlook.com
- ([fe80::d1d3:916:af43:55f5%4]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 02:10:01 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] scsi: isci: remove redundant condition checks
-Date: Tue,  9 Sep 2025 10:09:53 +0800
-Message-Id: <20250909020953.382791-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0084.apcprd02.prod.outlook.com
- (2603:1096:4:90::24) To KL1PR06MB7330.apcprd06.prod.outlook.com
- (2603:1096:820:146::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6311E7C12;
+	Tue,  9 Sep 2025 02:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757383918; cv=none; b=ioG+KsylPvAoVajgk2aXmm7feaSOfYetTMvH8Yoh9TMqo7LbwiTULAIxhyu8h9uiJaHFc+BxX4CgkV6tW00pE62WrJnT4WrHlpBkP/37KaUzOvZSawOsW33A2umZC+YahvGa0mw6yM3i8xGD950jtgQH6nEXTR4ynBYEdW8AJVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757383918; c=relaxed/simple;
+	bh=+Qb/DM0RRK6qZzxfU2ONA179La2VSxxhvYOCDG6wXyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LFsDHlA0w3O9d/T5wFGiNjeM1p0j24w9yBNib27UvMLnsJQEbzQfgipQJw/qTUfnyKE7gykNU7b6E8zFpaXfmAqG0P2YeazVgn+Yy9vWN4OL56PJdH7Cu7RBNvzqvbRIkOps+a38RmDYJJ/zIo4sH9eQTaDBtVyuDW1+2fVEhjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cLS4R6n4dzKHLyk;
+	Tue,  9 Sep 2025 10:11:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1CF651A1B05;
+	Tue,  9 Sep 2025 10:11:52 +0800 (CST)
+Received: from [10.67.109.184] (unknown [10.67.109.184])
+	by APP4 (Coremail) with SMTP id gCh0CgBXoo7ljL9o1QmCBw--.23994S2;
+	Tue, 09 Sep 2025 10:11:50 +0800 (CST)
+Message-ID: <1347f753-f135-4c17-93b1-5a99f9299310@huaweicloud.com>
+Date: Tue, 9 Sep 2025 10:11:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7330:EE_|PS1PPFEFCBCC15E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1faf52ca-682c-468a-1d89-08ddef45fbde
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kGbrgyOqleAdfW758bkfFy4RTccyTbBw6n3JUHcsTV4D4VZqVfgwJMoA2FnW?=
- =?us-ascii?Q?MCiTwH47i/bpyO788sTr3gcSqhgNWQJD19Jg4W0LoAklSxqa7MD1GZmHERZd?=
- =?us-ascii?Q?ZEfKl1yFrf5JLouvjiLKd6NkWW3gAxgOc8rJg9yabHBNbDf2sVceyTsT/0J/?=
- =?us-ascii?Q?trtIpYbBCGOg2BHgcYgwhZqwQUcrEOb1YF7vqExfHFGM11NPWiauA+v1p2oT?=
- =?us-ascii?Q?K+qOK5xMFmFF8wlu7zUp1JGF77nLmcFZa+wvuLE4k3/4F82xw493yhRQ8gcF?=
- =?us-ascii?Q?+nR8T2ybYKC79Te6QldQpth4uaXyyqZMEaTxdkMbrq454/hK2rJjePv8s/EV?=
- =?us-ascii?Q?Fy0GKwXb52itNkBLOXNZ9bsSOgladFD7AsqQ6VziPB77n3SgD+ZN/MuSkd47?=
- =?us-ascii?Q?1sRLdeeeihZQKHDWUtTyjmXFgTySba8/HfgyAipT9V6uj1Q5tYEcBy2ft12A?=
- =?us-ascii?Q?uw6AIRBrQY6cWBz6W/g/yj4Xdf0izVsqlwmBAwAV+6JM9cD6MSzcVLgILe1v?=
- =?us-ascii?Q?IRrSUvePf7zPgotMqrQ2fh5Drew1cEnIxZsO6QGUjQKYaD4BdG6IrogG9d0x?=
- =?us-ascii?Q?KzhlDP/exdrXFXPRnfguZzWANNpZcJGfi4ZxMScX27ELCFpEwf+I5xrw3YXj?=
- =?us-ascii?Q?2FDneXiNUsq8SuLCPrsyKK3BDitxrRYahBfYGIiqE+sbsRv1dcMAah46Obvq?=
- =?us-ascii?Q?Z6mWTRUg+XV7GTqZzTwoPYlhp25LXscR8FeplbohQDH/SENznW/TNI1gm/Tj?=
- =?us-ascii?Q?69rOGm/Vr6tJk5UlsHrmXFPhJbS0CB15KLSEKCZH7Ir/X8q4LTFumAJ9mwmp?=
- =?us-ascii?Q?8qprfXlONnIDgwSJUMkKS2IUGew++BdKUBWKCeo+3sTxTNHGHD1raUU9YxQc?=
- =?us-ascii?Q?Kk+9iSm2wilvaejVgMKZutxWvclIC3wEtgdmMI67RfBIEjBdnip4031StrAO?=
- =?us-ascii?Q?PpNeHu5y2iG2+m6A6zupy1ZzxM7Pp/gsEfJWMQqSlE232dQ7XsbOSdFZ3sXS?=
- =?us-ascii?Q?K0JmcqYrhgxvmi2PPCyShGMG/B3js+RBTChQyX5+NW3zTEIrokbZtLt4ledm?=
- =?us-ascii?Q?xsLSaGiJ77KkxW69hRYm1sdGBV4NCxp6ztjPqm6JU1vmAG+WBXM8iuCEmo7n?=
- =?us-ascii?Q?PlTTOwmSyeuk8Oz/Ps5FpavDAj1Jmd9ZzMRq/o+/KWpjz65w9C8Ybs8CK3/k?=
- =?us-ascii?Q?eJNCoKUXBpARD+eio79PbnBiileejQHFatmBsowJ1oLj8CnEvRgOOr4bkFHZ?=
- =?us-ascii?Q?WiTnXABlihztVJLUrv4KSYeiT+3aIJsnoQsJwNnakpC88N/jUci+Xq8RV5PH?=
- =?us-ascii?Q?zi71YBlKfY6Y8f3HIPHWkb1JlR/wG4P2sQdenGIh7Ey3aCx834JLopOiek9t?=
- =?us-ascii?Q?4C7BkSJvHMcSGiXohdSdAumkIdD9zBhH+DR1KlI1GkW9G3sakc2+nbRFv+U8?=
- =?us-ascii?Q?IRBs8jNpSM3C2Xo9VdpXTBQvfOcqE00qSrYieWTt0UgGN3BPCrAMfjzo25J6?=
- =?us-ascii?Q?Ns4eJ4tg/75dQAs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7330.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gEx2DQL3v4yTrOWlGSeS2lk40IhKESwIuEbDyw2mDvdcXy1IxOYoQD96RV/P?=
- =?us-ascii?Q?ibffqCrqaEa50QsF8tUVyNxroMANOPMnR7bjKMIP66w8D3ZHQbUHJDW0ZWll?=
- =?us-ascii?Q?tKikE/cX5yx+UnLcbnPA2mTS2h508KlmKnYa1CCK/7JGwfXyyYoSZskYb8qQ?=
- =?us-ascii?Q?NHniUa/xSB8D/f1q6d5jGdJwW0xUh70u2BmqQImwRgv2KsqvUIZNKvp2C0V+?=
- =?us-ascii?Q?seLAi5sYfCHD+mOmOStheFkwM3pMphz+02gDtCp2sS7cmNrXbN/JuN/brlRr?=
- =?us-ascii?Q?hGDmwWreRYqA59xvN0maEFxrshLxsOi/L43vOIUCvpnP20o9gavxbh2hcdOV?=
- =?us-ascii?Q?jYtiEpbGGw6cYzXmoGd5hs0gF9iBbWXT9ppHSUnClZX/2vWPJMwX/Uof3quy?=
- =?us-ascii?Q?2EgU3Is0nTqQ4s+H/UYnirmMMUpduSjDRFEdRnFH4A0XMfyhR/pIuGON/hgE?=
- =?us-ascii?Q?cNkiZ1UndQkmtkceV1XYF8o35Qlw2MG9g9i3xJiCf/L2LKJHedKzsXA1rfPS?=
- =?us-ascii?Q?i/U/hy1W7DXLA/v2NPn4M+hfbbRoD+b/n9uUCIbFIlpVkcQvUgfkx13A7WTt?=
- =?us-ascii?Q?3dZ/iWgIgoibcu0jCdJ8zRKjxYYFd8Ln2Tn727WZauYYs8NLmluHwHBKfC20?=
- =?us-ascii?Q?G7gq2v4+0TsGVSv/49eEaOIMVnqbKmrAE22nEB2tELLuOsOvo5Xr1eIcPYG/?=
- =?us-ascii?Q?JXBbpz7jqL37Fsv6SV3knrBeR4go2SNgMEXKDmWagc/lbHjcIDTwlD0FGGpa?=
- =?us-ascii?Q?DqbjlVM96tVK7JSuGJY6QIPO6YB8Exiv1xGXxW2Nw1gPGIbLfapX945iRymU?=
- =?us-ascii?Q?QRiK0ATo64JU/wB4bAjj3fKFMhk4PjOVYhu/RtwJlTv2qajenQO5QHKaR0fI?=
- =?us-ascii?Q?N8FZFTgD+STZAi5T3a9oNVggZd7fh6c+E1BAKEnnHmnpflWQxjwMC8iYl10h?=
- =?us-ascii?Q?LJK2TUNEiWWEmiNx/lvhhamzi/hb1CVtt/ZRIcVJlLuZMU2GR3speoG2Iit4?=
- =?us-ascii?Q?fmBOQ04AD+DR+13Wyxv6m2QGa9C4LOKDEkOioYpUzgHRXcG5fBGEEBtrI/Da?=
- =?us-ascii?Q?A1Pz2jZVZabbHm8LIzUcwAlU08a2VmbZOK+G1UJhnjfxbv3sDDPDU0ME9xE2?=
- =?us-ascii?Q?M02VRmdDiKKeMJ+5rbGoDj4Gg/ZJSnhjeioNCyxIQf8KyxAvXcP0hnHPgK7d?=
- =?us-ascii?Q?AoLCnzLO/R4WeSC2N2ZcWlRpNwFn6g30zH8wEgjgyaKoZwapiXje40PCukIy?=
- =?us-ascii?Q?uop7Gw4XwO1biPtTOE1thQC4dCd5HNJvKcw9i4jT0Zs33g6LEgI5WCfmWKBl?=
- =?us-ascii?Q?B1OEK8Bd4N/GUDMR8nwauCtlM1mtxyk28OdVPTsIoNuuAODl9W1BOqAaNv2m?=
- =?us-ascii?Q?bmX/MuBqDs8poFrTvZWbCSPHHOCsEcOf4ENuWje3RMQtQ22TNQ6IDV6Lit1p?=
- =?us-ascii?Q?RD4lY0GuNAqT9JlrsRsKf+poKUtscm/s0xVl/shoJtJwtGtvlEBxdLQNKv+6?=
- =?us-ascii?Q?e3T746ISCxaLS+1LGIqf4JaH1pvnE6W+caBNCFsIqxY1V+N4YtOUNZQCoJGj?=
- =?us-ascii?Q?nmbYaS2r5HvE3mGU4YjmKtomPH0a4fHXSSQNIo86?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1faf52ca-682c-468a-1d89-08ddef45fbde
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7330.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 02:10:01.5836
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uwVDkdol8VDd0mvF2ie4zXHwSqMJGxd0oKGzPoHVaG74kNpJDqUjXHVQNYcyFRpyVQEhdmkc6DIOQz9+XyMORg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPFEFCBCC15E
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] tracing: Silence warning when chunk allocation fails
+ in trace_pid_write
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250908024658.2390398-1-pulehui@huaweicloud.com>
+ <20250908150257.23731d24@gandalf.local.home>
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <20250908150257.23731d24@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBXoo7ljL9o1QmCBw--.23994S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4rKr43Xr47Xr1xAryfXrb_yoWrKF4kpF
+	y5GFn7KF4rtF4jyF18WF1rWr18J398AFyxJr1xGw1rAFnFkr1jgr47GryUX3Z8JrWUJrya
+	yr1qvw45Kr4jqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVbkUUUUU=
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-Remove redundant condition checks and replace else if with else.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/scsi/isci/request.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2025/9/9 3:02, Steven Rostedt wrote:
+> On Mon,  8 Sep 2025 02:46:58 +0000
+> Pu Lehui <pulehui@huaweicloud.com> wrote:
+> 
+>> From: Pu Lehui <pulehui@huawei.com>
+>>
+>> Syzkaller trigger a fault injection warning:
+>>
+>> WARNING: CPU: 1 PID: 12326 at tracepoint_add_func+0xbfc/0xeb0
+>> Modules linked in:
+>> CPU: 1 UID: 0 PID: 12326 Comm: syz.6.10325 Tainted: G U 6.14.0-rc5-syzkaller #0
+>> Tainted: [U]=USER
+>> Hardware name: Google Compute Engine/Google Compute Engine
+>> RIP: 0010:tracepoint_add_func+0xbfc/0xeb0 kernel/tracepoint.c:294
+>> Code: 09 fe ff 90 0f 0b 90 0f b6 74 24 43 31 ff 41 bc ea ff ff ff
+>> RSP: 0018:ffffc9000414fb48 EFLAGS: 00010283
+>> RAX: 00000000000012a1 RBX: ffffffff8e240ae0 RCX: ffffc90014b78000
+>> RDX: 0000000000080000 RSI: ffffffff81bbd78b RDI: 0000000000000001
+>> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000001 R12: ffffffffffffffef
+>> R13: 0000000000000000 R14: dffffc0000000000 R15: ffffffff81c264f0
+>> FS:  00007f27217f66c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000001b2e80dff8 CR3: 00000000268f8000 CR4: 00000000003526f0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>   <TASK>
+>>   tracepoint_probe_register_prio+0xc0/0x110 kernel/tracepoint.c:464
+>>   register_trace_prio_sched_switch include/trace/events/sched.h:222 [inline]
+>>   register_pid_events kernel/trace/trace_events.c:2354 [inline]
+>>   event_pid_write.isra.0+0x439/0x7a0 kernel/trace/trace_events.c:2425
+>>   vfs_write+0x24c/0x1150 fs/read_write.c:677
+>>   ksys_write+0x12b/0x250 fs/read_write.c:731
+>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> We can reproduce the warning by following the steps below:
+>> 1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+>>     and register sched_switch tracepoint.
+>> 2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+>>     allocation of trace_pid_list_alloc. Let pid_list with no pid and
+>> assign to tr->filtered_pids.
+>> 3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+>>     tr->filtered_pids.
+>> 4. echo 9 >> set_event_pid, will trigger the double register
+>>     sched_switch tracepoint warning.
+>>
+>> The reason is that syzkaller injects a fault into the chunk allocation
+>> in trace_pid_list_alloc, causing a failure in trace_pid_list_set, which
+>> may trigger double register of the same tracepoint. This only occurs
+>> when the system is about to crash, but to suppress this warning, let's
+>> add failure handling logic to trace_pid_list_set.
+>>
+>> Fixes: 8d6e90983ade ("tracing: Create a sparse bitmask for pid filtering")
+>> Reported-by: syzbot+161412ccaeff20ce4dde@syzkaller.appspotmail.com
+>> Closes: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com
+>> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+>> ---
+> 
+> FYI, when sending a v2, please state below the three dashes what was
+> changed since v1. Something like:
+> 
+> Changes since v1: https://lore.kernel.org/all/20250821071721.3609109-1-pulehui@huaweicloud.com/
+> 
+> - Instead of returning -EINVAL before trace_parser_load() have
+>    trace_pid_write() return error when trace_pid_list_set() returns an error.
+> 
+> 
+> I have a Link tag to this email that is added by my scripts, with the idea
+> that this email will have a link to the previous version and so on. It will
+> create a chain of the email discussions that lead to what lands in mainline.
 
-diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
-index bb89a2e33eb4..e035c88775ef 100644
---- a/drivers/scsi/isci/request.c
-+++ b/drivers/scsi/isci/request.c
-@@ -1374,7 +1374,7 @@ static enum sci_status sci_stp_request_pio_data_out_transmit_data(struct isci_re
- 		/* update the current sgl, offset and save for future */
- 		sgl = pio_sgl_next(stp_req);
- 		offset = 0;
--	} else if (stp_req->pio_len < len) {
-+	} else {
- 		sci_stp_request_pio_data_out_trasmit_data_frame(ireq, stp_req->pio_len);
- 
- 		/* Sgl offset will be adjusted and saved for future */
-@@ -1511,7 +1511,7 @@ pio_data_out_tx_done_tc_event(struct isci_request *ireq,
- 				if (stp_req->pio_len == 0)
- 					all_frames_transferred = true;
- 			}
--		} else if (stp_req->pio_len == 0) {
-+		} else {
- 			/*
- 			 * this will happen if the all data is written at the
- 			 * first time after the pio setup fis is received
--- 
-2.34.1
+It's indeed necessary. Thanks Steven.
+
+> 
+> -- Steve
+> 
+> 
+>>   kernel/trace/trace.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>> index 1b7db732c0b1..f2a84d1ce4b7 100644
+>> --- a/kernel/trace/trace.c
+>> +++ b/kernel/trace/trace.c
+>> @@ -834,7 +834,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>>   		/* copy the current bits to the new max */
+>>   		ret = trace_pid_list_first(filtered_pids, &pid);
+>>   		while (!ret) {
+>> -			trace_pid_list_set(pid_list, pid);
+>> +			ret = trace_pid_list_set(pid_list, pid);
+>> +			if (ret < 0)
+>> +				goto out;
+>> +
+>>   			ret = trace_pid_list_next(filtered_pids, pid + 1, &pid);
+>>   			nr_pids++;
+>>   		}
+>> @@ -871,6 +874,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>>   		trace_parser_clear(&parser);
+>>   		ret = 0;
+>>   	}
+>> + out:
+>>   	trace_parser_put(&parser);
+>>   
+>>   	if (ret < 0) {
 
 
