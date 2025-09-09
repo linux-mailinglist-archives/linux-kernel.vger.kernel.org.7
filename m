@@ -1,320 +1,151 @@
-Return-Path: <linux-kernel+bounces-807400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6F4B4A3F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:40:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FB0B4A401
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF04C541AF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71D7188B5EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B368308F37;
-	Tue,  9 Sep 2025 07:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX49abhi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C443090DC;
+	Tue,  9 Sep 2025 07:38:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604953074AF;
-	Tue,  9 Sep 2025 07:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843FC308F1D;
+	Tue,  9 Sep 2025 07:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403460; cv=none; b=HeumM3zYqlD3C6OEY08EQmxIpOVnt7Eb7fhtM17imFohqPu4d07CQ3EZcztN/muE8dhECyFdb2/peJay8SkN0+sBzN8UB9fvZHNfsYcWatE7rm4U1i4u/PbW8N5HWQco0D3PmHe8P5GZkX0hcFazHNoocIDVg30Ln+6LvYM1Jwo=
+	t=1757403481; cv=none; b=XCVhzF4dJG/O/29MGCQVVNn+gwx0Gy3/9VvXge0Mo3Lgb9Dmi5UInINzRKUCjtFVKI9sHFCpG2CNaq7TUoyLSXsi6uG5PIoY93OSESRzhHDkJYL6LJQLBk4GmdEQHoBRZ6ClcZSXm8yA4QbHeyqdaOBoYQW+58Z6Aw8iPBmYTs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403460; c=relaxed/simple;
-	bh=acORBv5pR0dL7OfFWOz7bIwEVi25cUViThTI06hdAIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NxUUha4LOf44ncwlYeoiG2mhnb8HUir9mzbzXrMlI3m4L9nUX2CVRU7rZdeMaYxreLQnlccqn+qvAvyYpOfckTMsqZ+TH2QwODsr+Jfz4inqwoQfCm9QkFvjtCi8CNmub4wX+uF02Ex0o7TjKqoO294+uG2M5t4hL5x2NU2H1yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX49abhi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FAA5C4CEF4;
-	Tue,  9 Sep 2025 07:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757403459;
-	bh=acORBv5pR0dL7OfFWOz7bIwEVi25cUViThTI06hdAIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UX49abhitmL0DqTvMnmw2JD5Yfwhi9On6sWJ8WRknk0z7dNfTuDybQ5soyz60XSy+
-	 5QZKyi+dkyjXuJik0BzNoVWYZ5lqPXdSFx6ZUtOiL6qzYTPse1g+1cgPf52nnw1W4q
-	 Yf3R9fHZOYkL2PKVXDuJgqdQvvMCDKQyoo5DPFkGPqZ+V8nj2VECWY7VHik41N6YM/
-	 H+W3atrzQvfUWnnzlo6if7Axjaw+Qp0A7thWODuRNJ1rGHqekmoIpHRTDswaKg0dKc
-	 JK7yLPxnK7yFerWlIlXxyIIzKXZeni1YFqlxWOFvirOPb8j+YGVSzQEBl6vbuftwnQ
-	 FKRXCkPb1smyQ==
-Date: Tue, 9 Sep 2025 09:37:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: pinctrl: mediatek: Document MT6878 pin
- controller bindings
-Message-ID: <20250909-mellow-eminent-duck-4c4619@kuoka>
-References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org>
- <20250908-mt6878-pinctrl-support-v1-1-3fb78c8ab4e8@mentallysanemainliners.org>
+	s=arc-20240116; t=1757403481; c=relaxed/simple;
+	bh=c4WUAxAYWcISEvosLLhmcGLg7O31JhI+YfboesKNCdY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eBtUMRg1R85lF+QSI0K8gd15GWWir6zOV41YCcj1OY8UrJG70BgSDZqScaYAwGBy8G3d/Ss/hr0EsZf7t4zsW6YSPIdGIWSMRp5ZBUGHuj1kW761ygnIWlKFRjc2FycBpW7A6exOA32aBnfLISRbD5qoJ7XFVas69bzmsOtdf50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cLbJg3HgszYQv9M;
+	Tue,  9 Sep 2025 15:37:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EAA9F1A0DAB;
+	Tue,  9 Sep 2025 15:37:53 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIxO2b9oyyOcBw--.5864S3;
+	Tue, 09 Sep 2025 15:37:52 +0800 (CST)
+Subject: Re: [PATCH for-6.18/block 08/10] blk-mq: fix potential deadlock while
+ nr_requests grown
+To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-9-yukuai1@huaweicloud.com>
+ <484c552e-462f-488f-90bf-18fe5042f1bb@linux.ibm.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <628d9525-dcef-2aaa-3434-64c7cdc0fb23@huaweicloud.com>
+Date: Tue, 9 Sep 2025 15:37:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250908-mt6878-pinctrl-support-v1-1-3fb78c8ab4e8@mentallysanemainliners.org>
+In-Reply-To: <484c552e-462f-488f-90bf-18fe5042f1bb@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIxO2b9oyyOcBw--.5864S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy8JF1kKFyDZrWDAw4ktFb_yoW8Zr4kpF
+	4rJa1qkr4Syr18u3y8CwnrX34xJws2gr1xCrWfta4agFnFvFn3u3WrCFW5WF4kAr4qkFs2
+	gF909FZ3ZFWkJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Sep 08, 2025 at 09:17:55PM +0200, Igor Belwon wrote:
-> Add device-tree bindings for the pin controller and the EINT controller
-> found in the MediaTek MT6878 SoC.
+Hi,
+
+在 2025/09/09 14:39, Nilay Shroff 写道:
 > 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->  .../bindings/pinctrl/mediatek,mt6878-pinctrl.yaml  |  209 ++++
->  include/dt-bindings/pinctrl/mt6878-pinfunc.h       | 1201 ++++++++++++++++++++
->  2 files changed, 1410 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ecd24ab23a0c41810828ddb8827ab39c4cd3d2fc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml
-> @@ -0,0 +1,209 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/mediatek,mt6878-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6878 Pin Controller
-> +
-> +maintainers:
-> +  - Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> +
-> +description:
-> +  The MediaTek MT6878 Pin controller is used to control SoC pins.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6878-pinctrl
-> +
-> +  reg:
-> +    items:
-> +      - description: pin controller base
-> +      - description: bl group IO
-> +      - description: bm group IO
-> +      - description: br group IO
-> +      - description: bl1 group IO
-> +      - description: br1 group IO
-> +      - description: lm group IO
-> +      - description: lt group IO
-> +      - description: rm group IO
-> +      - description: rt group IO
-> +      - description: EINT controller E block
-> +      - description: EINT controller S block
-> +      - description: EINT controller W block
-> +      - description: EINT controller C block
-> +
-> +  reg-names:
-> +    items:
-> +      - const: base
-> +      - const: bl
-> +      - const: bm
-> +      - const: br
-> +      - const: bl1
-> +      - const: br1
-> +      - const: lm
-> +      - const: lt
-> +      - const: rm
-> +      - const: rt
-> +      - const: eint-e
-> +      - const: eint-s
-> +      - const: eint-w
-> +      - const: eint-c
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    description:
-> +      Number of cells in GPIO specifier. Since the generic GPIO binding is used,
-> +      the amount of cells must be specified as 2. See the below mentioned gpio
-> +      binding representation for description of particular cells.
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    maxItems: 1
-> +
-> +  gpio-line-names: true
+> On 9/8/25 11:45 AM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Allocate and free sched_tags while queue is freezed can deadlock[1],
+>> this is a long term problem, hence allocate memory before freezing
+>> queue and free memory after queue is unfreezed.
+>>
+>> [1] https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
+>> Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> [...]
+> [...]
+> 
+>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>> index 7ea15bf68b4b..a0a7ebad378f 100644
+>> --- a/block/blk-sysfs.c
+>> +++ b/block/blk-sysfs.c
+>> @@ -64,11 +64,12 @@ static ssize_t queue_requests_show(struct gendisk *disk, char *page)
+>>   static ssize_t
+>>   queue_requests_store(struct gendisk *disk, const char *page, size_t count)
+>>   {
+>> -	unsigned long nr;
+>> -	int ret, err;
+>> -	unsigned int memflags;
+>>   	struct request_queue *q = disk->queue;
+>>   	struct blk_mq_tag_set *set = q->tag_set;
+>> +	struct elevator_tags *et = NULL;
+>> +	unsigned int memflags;
+>> +	unsigned long nr;
+>> +	int ret;
+>>   
+>>   	ret = queue_var_store(&nr, page, count);
+>>   	if (ret < 0)
+>> @@ -90,16 +91,24 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
+>>   		goto unlock;
+>>   	}
+>>   
+>> +	if (q->elevator && nr > q->elevator->et->nr_requests) {
+>> +		/* allocate memory before freezing queue to prevent deadlock */
+>> +		et = blk_mq_alloc_sched_tags(set, q->nr_hw_queues, nr);
+>> +		if (!et) {
+>> +			ret = -ENOMEM;
+>> +			goto unlock;
+>> +		}
+>> +	}
+>> +
+> I think we should add a comment above explaining why is it safe
+> to access q->elevator without holding ->elevator_lock.
+> 
 
-How many GPIOs do you have? No limit?
+I already access q->elevator to check input nr from patch 4, and that's
+why I add comments to explain switching elevator is serialized, is this
+enough?
 
-> +
-> +  interrupts:
-> +    description: The interrupt outputs to sysirq
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +# PIN CONFIGURATION NODES
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    patternProperties:
-> +      '^pins':
-> +        type: object
-> +        allOf:
-> +          - $ref: /schemas/pinctrl/pincfg-node.yaml
-> +          - $ref: /schemas/pinctrl/pinmux-node.yaml
-> +        description:
-> +          A pinctrl node should contain at least one subnodes representing the
-> +          pinctrl groups available on the machine. Each subnode will list the
-> +          pins it needs, and how they should be configured, with regard to muxer
-> +          configuration, pullups, drive strength, input enable/disable and input
-> +          schmitt.
-> +
-> +        properties:
-> +          pinmux:
-> +            description:
-> +              Integer array, represents gpio pin number and mux setting.
-> +              Supported pin number and mux are defined as macros in
-> +              arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h for this SoC.
-> +
-> +          drive-strength:
-> +            enum: [2, 4, 6, 8, 10, 12, 14, 16]
-> +
-> +          drive-strength-microamp:
-> +            enum: [125, 250, 500, 1000]
-> +
-> +          bias-pull-down:
-> +            oneOf:
-> +              - type: boolean
-> +              - enum: [75000, 5000]
-> +                description: Pull down RSEL type resistance values (in ohms)
-> +            description:
-> +              For normal pull down type there is no need to specify a resistance
-> +              value, hence this can be specified as a boolean property.
-> +              For RSEL pull down type a resistance value (in ohms) can be added.
-> +
-> +          bias-pull-up:
-> +            oneOf:
-> +              - type: boolean
-> +              - enum: [10000, 5000, 4000, 3000]
-> +                description: Pull up RSEL type resistance values (in ohms)
-> +            description:
-> +              For normal pull up type there is no need to specify a resistance
-> +              value, hence this can be specified as a boolean property.
-> +              For RSEL pull up type a resistance value (in ohms) can be added.
-> +
-> +          bias-disable: true
-> +
-> +          output-high: true
-> +
-> +          output-low: true
-> +
-> +          input-enable: true
-> +
-> +          input-disable: true
-> +
-> +          input-schmitt-enable: true
-> +
-> +          input-schmitt-disable: true
-> +
-> +        required:
-> +          - pinmux
-> +
-> +        additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +  - gpio-controller
-> +  - '#gpio-cells'
-> +  - gpio-ranges
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/pinctrl/mt65xx.h>
+Thanks,
+Kuai
 
-Why including mt65xx?
-
-> +    #define PINMUX_GPIO0__FUNC_GPIO0 (MTK_PIN_NO(0) | 0)
-
-I don't understand why do you need it? Didn't you have header for that?
-Or you prepared for header removal (see my further comment), but then it
-is just confusing.
-
-> +    #define PINMUX_GPIO99__FUNC_SCL0 (MTK_PIN_NO(99) | 1)
-> +    #define PINMUX_GPIO100__FUNC_SDA0 (MTK_PIN_NO(100) | 1)
-> +
-> +    pio: pinctrl@10005000 {
-> +        compatible = "mediatek,mt6878-pinctrl";
-> +        reg = <0x10005000 0x1000>,
-> +              <0x11d10000 0x1000>,
-> +              <0x11d30000 0x1000>,
-> +              <0x11d40000 0x1000>,
-> +              <0x11d50000 0x1000>,
-> +              <0x11d60000 0x1000>,
-> +              <0x11e20000 0x1000>,
-> +              <0x11e30000 0x1000>,
-> +              <0x11eb0000 0x1000>,
-> +              <0x11ec0000 0x1000>,
-> +              <0x11ce0000 0x1000>,
-> +              <0x11de0000 0x1000>,
-> +              <0x11e60000 0x1000>,
-> +              <0x1c01e000 0x1000>;
-> +        reg-names = "base", "bl", "bm", "br", "bl1", "br1",
-> +                    "lm", "lt", "rm", "rt", "eint-e", "eint-s",
-> +                    "eint-w", "eint-c";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        gpio-ranges = <&pio 0 0 220>;
-> +        interrupt-controller;
-> +        interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        #interrupt-cells = <2>;
-> +
-> +        gpio-pins {
-> +            pins {
-> +                pinmux = <PINMUX_GPIO0__FUNC_GPIO0>;
-> +                bias-pull-up = <4000>;
-> +                drive-strength = <6>;
-> +            };
-> +        };
-> +
-> +        i2c0-pins {
-> +            pins-bus {
-> +                pinmux = <PINMUX_GPIO99__FUNC_SCL0>,
-> +                         <PINMUX_GPIO100__FUNC_SDA0>;
-> +                bias-pull-down = <75000>;
-> +                drive-strength-microamp = <1000>;
-> +            };
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/pinctrl/mt6878-pinfunc.h b/include/dt-bindings/pinctrl/mt6878-pinfunc.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4e8e475a74549b513ac7075ac2ef0fe6f7f1d097
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/mt6878-pinfunc.h
-
-This is now in DTS.
-
-> @@ -0,0 +1,1201 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-
-Otherwise wrong license and wrong filename (vendor prefix, filename
-matching binding).
-
-Best regards,
-Krzysztof
+> Thanks,
+> --Nilay
+> .
+> 
 
 
