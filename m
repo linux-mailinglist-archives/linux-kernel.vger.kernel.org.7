@@ -1,267 +1,245 @@
-Return-Path: <linux-kernel+bounces-809103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA873B508AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:02:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE87B508B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020325E76CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1931C61495
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE391C3C11;
-	Tue,  9 Sep 2025 22:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A28264A97;
+	Tue,  9 Sep 2025 22:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="URq2Fxdk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NWFGFLdh"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112672773D8;
-	Tue,  9 Sep 2025 22:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B41F3BA4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757455218; cv=none; b=fcAfqmzywMD4X9q8cpogsVU5vWbIkOr2GlJiaFxjNtAzOuRe5biZ5h5fCynBVhqCUcKWgMD3qf8UeI9LOIKryoGP2N1e0Q82G2HRxQe0Z5BKaT5KRyJriV7o0YUJEWdUmsque98J7LubMlPZn2a4Him/abbUnoH0C0R6psHqNBg=
+	t=1757455433; cv=none; b=KlsdroQraw9YjO5GRyYCyNSvcMwhouNOQgVMpILWV9AM6L+t1I7gRIB7g8mJ6NBjxjdpZv7hlqcFFVPToVbZ3dkzB/w4y/aHqDlbhICBxSTG/Pxkf88pyeTfgk2xW31pJeeyhj0e9suz2J3k+UeAKlfPzyIee0GpU6PmzifN4h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757455218; c=relaxed/simple;
-	bh=J0wPZupB+Xsv5pSL6FaS6vYM6IU4qCEKiECUNs+CFV8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UmGmIVoWEepLO5+ufkP+4gr3G9SyNlExbh8Lr1dSWqziuxGCnfxJ62o018ty+P2yUvEFxbmsPzji4I55zzeKLskbnNw2vpVmXuECK287i+rGi8XGD2P3YjA2kRuumE96rlaBAYKIjpTI2eSJ3r7IzVcX7fkKeV6wXpwvKsPVYoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=URq2Fxdk; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757455216; x=1788991216;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=J0wPZupB+Xsv5pSL6FaS6vYM6IU4qCEKiECUNs+CFV8=;
-  b=URq2FxdkmtCq+yCguz2LNwoGaIeDzNW4KutB+2/bpYgJlJhTIDv91C5i
-   Okdw/HnY7c1AA6QtOlQFBuQoJ50s2DZs0CeZ8PNouIlYz/RqKOIshgUw5
-   bFYdMU5Ek0zVms0iPVMbn/YTzVPuedFJl35rNh3QjuT5GMIsqfPgcWEwA
-   ZydXe0bfrNxzlwWkMuNNBtPF7mwdFYdmXLaKkiYcP75wtuNbimtRLs+34
-   QSIz/2RFjtVRNaFwYXNX08UVM+Y5YrYixGUFkoyFI2Rcauo+cNub1o3IO
-   IztcViUG2xvvrXfBjtqaAJjdnbuGJ0xGeW0oesopQ76zBtOfgsTtaVwQD
-   g==;
-X-CSE-ConnectionGUID: rbSETMh3RkyskaPdPpAaCg==
-X-CSE-MsgGUID: je0gPVssQ+Ku9Ey8uAy3Tw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="63584676"
-X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
-   d="scan'208";a="63584676"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:00:09 -0700
-X-CSE-ConnectionGUID: HNmsrvI3SqKaxlf3KYSRpQ==
-X-CSE-MsgGUID: 79gh8YjbTLSpo0j/yzml+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
-   d="scan'208";a="172780974"
-Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.70]) ([10.166.28.70])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:00:08 -0700
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Tue, 09 Sep 2025 14:57:56 -0700
-Subject: [PATCH RFC net-next 7/7] ice-vfio-pci: implement PCI .reset_done
- handling
+	s=arc-20240116; t=1757455433; c=relaxed/simple;
+	bh=/YbOT/xtAuBU4zw5y1RJcshmBNddXjAtVK9Bqu9wucE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EtPmfM9JNJ+PorwCmb/LwJym/VrUpN15q5PvwVDinWi1PYx22n3wk9vomIZs7z2ucSUIg/bfZc/AnRHWrRUbDrKhe5vbkIRqOGQ4mIEckSBJjrK+3rBowxeGGmi1ol7KJbIpCS1h2ffVvPtcOWbZS3JxmFGILAFptrU6y6vxwbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NWFGFLdh; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b4bcb9638aso183441cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757455430; x=1758060230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zdfxY/tmePyPQQZ4AQC4iyvAmEwVEuUt1ANSa6zzOfk=;
+        b=NWFGFLdhCA7lpC8fqV9mKSh1crRBJujPWcMblzni4XBu6tNHMsP+Yw3FWGiv60jc3O
+         TTsvbw/YBP52UhBlEfzwQjOo4DmqNlrdqQFfOoGzuPQMM369tcOBdvL8JE0AvUEFHc8B
+         ibrZZi44cSJ2VgLwsjuCkLUwigZQ3q92+5WH8u5Lb9YIZT/C/sRE6Drz9A7HtP8g4Fn3
+         p4ADdqre0AK4+b3lNb+EylodT4AY7jhpyyDSYREMTHqnHhp1nzFtwMLAAYP1NdVgO4EJ
+         8sKqjRb940HCvm88x6cjpiDE542mMK6AgM2F2OA+XM8XdGoyWNOFanLc50oB8VZTNcy7
+         33vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757455430; x=1758060230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zdfxY/tmePyPQQZ4AQC4iyvAmEwVEuUt1ANSa6zzOfk=;
+        b=WKkrLLHS3YnFZBOhSfzkEqyYmRvuVE5bBbbOnccmfWtOT40pqvSAT01S0CEer3QY20
+         TT/idxa7r8ITPUdUIg14/eojc59SpM5B/9BlvatWGdCN5RK05CZVlF5xZkOWRrsi14Se
+         ue4JSDARvRqBDw1Thuc2ZIsmTFWDzlklrdD4ZudCsiF6SvgJRzXer/ILr/jVzF0KJs3/
+         gsQWtD9O7/Q/8i8XiuHexB7hEGIb6Tqk/mppKEMmfjBJONVsOGQBOIsHaOHoO17ajO6J
+         Nc50jDxwisRV8Wv/esf8kjMxGdl8TKn9deZuKJrrzMJpSTTZTwPtFQYBbcFTECbAZcWZ
+         mShw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNK7LlQVHrB3lpXQzIc/25CoTufYggnbALMY5GhCJgl6MH93HHPj2cDGDLo0JrHCsM9z+4IVHBPoCAq+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmWXfLT/KyFPvEfQplncMQ7Ay4lsbS9w+QlmhXSoTGVVN/Svrz
+	5o+3yD6OVfi4S8vSMMGPxBIc7vVDmBhQTw5v0r7Ux8lflcp1HU0IWqRRBcbgLNi6nSFDzuxrQP6
+	uDf8wG1HCVtdwl17iCVZ8w0AN3U0wimNTSxFuYdY4
+X-Gm-Gg: ASbGncuHy1qO/5t1hiYSmVOl1KAE20t6+/5+8OAPk/UK+MlxwePBwpwKr5UVTEPqEwh
+	KFqqCAlzexX+lcfBSM233iBAz5uXw5vJwwQmE952OHtbw5l4/6cSU+2+d/IzJG+mQwuPBNF5wt0
+	WkRfFzaCxk7PPhU3RnBH4B7HfhzOEVxIBhw8RiRPaLSjyt7AFMSMX1Qe7yxkx8JxENXS/NTlbfD
+	uW1cdSHa0yE2EzrXYnDSVlbpuS16IuNvxieQIi9BE4W
+X-Google-Smtp-Source: AGHT+IGH9MAIkn9QIyO6RoFKXtsuPBpT+6kFM3APqUb2DuqRhmpbV0XtFElws++iZPivmby1/3S8CAb0x/ApQRsbgRw=
+X-Received: by 2002:ac8:5f0c:0:b0:4b3:1617:e616 with SMTP id
+ d75a77b69052e-4b62525e5cemr1785581cf.16.1757455429996; Tue, 09 Sep 2025
+ 15:03:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-e810-live-migration-jk-migration-tlv-v1-7-4d1dc641e31f@intel.com>
-References: <20250909-e810-live-migration-jk-migration-tlv-v1-0-4d1dc641e31f@intel.com>
-In-Reply-To: <20250909-e810-live-migration-jk-migration-tlv-v1-0-4d1dc641e31f@intel.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Alex Williamson <alex.williamson@redhat.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, 
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, 
- Kevin Tian <kevin.tian@intel.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Jacob Keller <jacob.e.keller@intel.com>, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-X-Mailer: b4 0.15-dev-c61db
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6535;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=J0wPZupB+Xsv5pSL6FaS6vYM6IU4qCEKiECUNs+CFV8=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhowDi9Oc9l7cG7r7jd8j8xgrg+3CfcsaPnhv3DqJc7r7z
- oL80LXXOkpZGMS4GGTFFFkUHEJWXjeeEKb1xlkOZg4rE8gQBi5OAZjIvYeMDJcYun+8sgx+58h2
- 21lMLuaosZZXb36F35mIWWcXb4/iu8nIsMPz/pObfbdq4/WrO6/su6UT6hkY1P9YTX7O44a0/zd
- S2AA=
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
+References: <20250909190945.1030905-1-Liam.Howlett@oracle.com> <20250909190945.1030905-7-Liam.Howlett@oracle.com>
+In-Reply-To: <20250909190945.1030905-7-Liam.Howlett@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 9 Sep 2025 15:03:38 -0700
+X-Gm-Features: AS18NWCo9ZoQa9ZzyM3hmR7V51NOxY2fhATfOWnpl40gfbyxSS1Epx0ZyM8junY
+Message-ID: <CAJuCfpHz9Q-GMSZQ0xY8_oAuoWTA6DUHfCses7e7_FL8mi_1bQ@mail.gmail.com>
+Subject: Re: [PATCH v1 6/9] mm: Change dup_mmap() recovery
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, 
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
+	chrisl@kernel.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an implementation callback for the PCI .reset_done handler to enable
-cleanup after a PCI reset. This function has one rather nasty locking
-complexity due to the way the various locks interact.
+On Tue, Sep 9, 2025 at 12:11=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> When the dup_mmap() fails during the vma duplication or setup, don't
+> write the XA_ZERO entry in the vma tree.  Instead, destroy the tree and
+> free the new resources, leaving an empty vma tree.
+>
+> Using XA_ZERO introduced races where the vma could be found between
+> dup_mmap() dropping all locks and exit_mmap() taking the locks.  The
+> race can occur because the mm can be reached through the other trees
+> via successfully copied vmas and other methods such as the swapoff code.
+>
+> XA_ZERO was marking the location to stop vma removal and pagetable
+> freeing.  The newly created arguments to the unmap_vmas() and
+> free_pgtables() serve this function.
+>
+> Replacing the XA_ZERO entry use with the new argument list also means
+> the checks for xa_is_zero() are no longer necessary so these are also
+> removed.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-The VFIO layer holds the mm_lock across a reset, and a naive implementation
-which just takes the state mutex would trigger a simple ABBA deadlock
-between the state_mutex and the mm_lock.
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-To avoid this, allow deferring handling cleanup after a PCI reset until the
-current thread holding the state_mutex exits.
+> ---
+>  mm/memory.c |  6 +-----
+>  mm/mmap.c   | 42 +++++++++++++++++++++++++++++++-----------
+>  2 files changed, 32 insertions(+), 16 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 24716b3713f66..829cd94950182 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -408,8 +408,6 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_=
+state *mas,
+>                  * be 0.  This will underflow and is okay.
+>                  */
+>                 next =3D mas_find(mas, tree_max - 1);
+> -               if (unlikely(xa_is_zero(next)))
+> -                       next =3D NULL;
+>
+>                 /*
+>                  * Hide vma from rmap and truncate_pagecache before freei=
+ng
+> @@ -428,8 +426,6 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_=
+state *mas,
+>                 while (next && next->vm_start <=3D vma->vm_end + PMD_SIZE=
+) {
+>                         vma =3D next;
+>                         next =3D mas_find(mas, tree_max - 1);
+> -                       if (unlikely(xa_is_zero(next)))
+> -                               next =3D NULL;
+>                         if (mm_wr_locked)
+>                                 vma_start_write(vma);
+>                         unlink_anon_vmas(vma);
+> @@ -2129,7 +2125,7 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_s=
+tate *mas,
+>                                  mm_wr_locked);
+>                 hugetlb_zap_end(vma, &details);
+>                 vma =3D mas_find(mas, tree_end - 1);
+> -       } while (vma && likely(!xa_is_zero(vma)));
+> +       } while (vma);
+>         mmu_notifier_invalidate_range_end(&range);
+>  }
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 0f4808f135fe6..aa4770b8d7f1e 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1288,7 +1288,7 @@ void exit_mmap(struct mm_struct *mm)
+>         arch_exit_mmap(mm);
+>
+>         vma =3D vma_next(&vmi);
+> -       if (!vma || unlikely(xa_is_zero(vma))) {
+> +       if (!vma) {
+>                 /* Can happen if dup_mmap() received an OOM */
+>                 mmap_read_unlock(mm);
+>                 mmap_write_lock(mm);
+> @@ -1858,20 +1858,40 @@ __latent_entropy int dup_mmap(struct mm_struct *m=
+m, struct mm_struct *oldmm)
+>                 ksm_fork(mm, oldmm);
+>                 khugepaged_fork(mm, oldmm);
+>         } else {
+> +               unsigned long max;
+>
+>                 /*
+> -                * The entire maple tree has already been duplicated. If =
+the
+> -                * mmap duplication fails, mark the failure point with
+> -                * XA_ZERO_ENTRY. In exit_mmap(), if this marker is encou=
+ntered,
+> -                * stop releasing VMAs that have not been duplicated afte=
+r this
+> -                * point.
+> +                * The entire maple tree has already been duplicated, but
+> +                * replacing the vmas failed at mpnt (which could be NULL=
+ if
+> +                * all were allocated but the last vma was not fully set =
+up).
+> +                * Use the start address of the failure point to clean up=
+ the
+> +                * partially initialized tree.
+>                  */
+> -               if (mpnt) {
+> -                       mas_set_range(&vmi.mas, mpnt->vm_start, mpnt->vm_=
+end - 1);
+> -                       mas_store(&vmi.mas, XA_ZERO_ENTRY);
+> -                       /* Avoid OOM iterating a broken tree */
+> -                       mm_flags_set(MMF_OOM_SKIP, mm);
+> +               if (!mm->map_count) {
+> +                       /* zero vmas were written to the new tree. */
+> +                       max =3D 0;
+> +               } else if (mpnt) {
+> +                       /* partial tree failure */
+> +                       max =3D mpnt->vm_start;
+> +               } else {
+> +                       /* All vmas were written to the new tree */
 
-This is done through adding a reset_lock spinlock and a needs_reset
-boolean. All flows which previously simply released the state_mutex now
-call a specialized ice_vfio_pci_state_mutex_unlock() handler.
+So, the cleanup for this case used to be handled by exit_mmap(). I
+think it's ok to do it here but the changelog should mention this
+change as well IMHO.
 
-This handler acquires the reset_lock, and checks if a reset was deferred.
-If so, the reset_lock is released, cleanup is handled, then the reset_lock
-is reacquired  and the thread loops to check for another deferred reset.
-Eventually the needs_reset is false, and the function exits by releasing
-the state_mutex and then the deferred reset_lock.
-
-The actual reset_done implementation acquires the reset lock, sets
-needs_reset to true, then uses try_lock to acquire the state mutex. If
-it fails to acquire the state mutex, this means another thread is handling
-business and will perform the deferred reset cleanup as part of unlocking
-the state mutex. Finally, if the reset_done does acquire the state mutex,
-it simply unlocks using the ice_vfio_pci_state_mutex_unlock helper which
-will immediately handle the "deferred" reset.
-
-This is complicated, but is similar to code in other VFIO migration drivers
-including the mlx5 driver and logic in the virtiovf migration code.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
----
- drivers/vfio/pci/ice/main.c | 69 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vfio/pci/ice/main.c b/drivers/vfio/pci/ice/main.c
-index 161053ba383c..17865fab02ce 100644
---- a/drivers/vfio/pci/ice/main.c
-+++ b/drivers/vfio/pci/ice/main.c
-@@ -36,17 +36,21 @@ struct ice_vfio_pci_migration_file {
-  * @core_device: The core device being operated on
-  * @mig_info: Migration information
-  * @state_mutex: mutex protecting the migration state
-+ * @reset_lock: spinlock protecting the reset_done flow
-  * @resuming_migf: Migration file containing data for the resuming VF
-  * @saving_migf: Migration file used to store data from saving VF
-  * @mig_state: the current migration state of the device
-+ * @needs_reset: if true, reset is required at next unlock of state_mutex
-  */
- struct ice_vfio_pci_device {
- 	struct vfio_pci_core_device core_device;
- 	struct vfio_device_migration_info mig_info;
- 	struct mutex state_mutex;
-+	spinlock_t reset_lock;
- 	struct ice_vfio_pci_migration_file *resuming_migf;
- 	struct ice_vfio_pci_migration_file *saving_migf;
- 	enum vfio_device_mig_state mig_state;
-+	bool needs_reset:1;
- };
- 
- #define to_ice_vdev(dev) \
-@@ -154,6 +158,65 @@ static void ice_vfio_pci_disable_fds(struct ice_vfio_pci_device *ice_vdev)
- 	}
- }
- 
-+/**
-+ * ice_vfio_pci_state_mutex_unlock - Unlock state_mutex
-+ * @mutex: pointer to the ice-vfio-pci state_mutex
-+ *
-+ * ice_vfio_pci_reset_done may defer a reset in the event it fails to acquire
-+ * the state_mutex. This is necessary in order to avoid an unconditional
-+ * acquire of the state_mutex that could lead to ABBA lock inversion issues
-+ * with the mm lock.
-+ *
-+ * This function is called to unlock the state_mutex, but ensures that any
-+ * deferred reset is handled prior to unlocking. It uses the reset_lock to
-+ * check if any reset has been deferred.
-+ */
-+static void ice_vfio_pci_state_mutex_unlock(struct mutex *mutex)
-+{
-+	struct ice_vfio_pci_device *ice_vdev =
-+		container_of(mutex, struct ice_vfio_pci_device,
-+			     state_mutex);
-+
-+again:
-+	spin_lock(&ice_vdev->reset_lock);
-+	if (ice_vdev->needs_reset) {
-+		ice_vdev->needs_reset = false;
-+		spin_unlock(&ice_vdev->reset_lock);
-+		ice_vdev->mig_state = VFIO_DEVICE_STATE_RUNNING;
-+		ice_vfio_pci_disable_fds(ice_vdev);
-+		goto again;
-+	}
-+	/* The state_mutex must be unlocked before the reset_lock, otherwise
-+	 * a new deferred reset could occur inbetween. Such a reset then be
-+	 * deferred until the next state_mutex critical section.
-+	 */
-+	mutex_unlock(&ice_vdev->state_mutex);
-+	spin_unlock(&ice_vdev->reset_lock);
-+}
-+
-+/**
-+ * ice_vfio_pci_reset_done - Handle or defer PCI reset
-+ * @pdev: The PCI device structure
-+ *
-+ * As the higher VFIO layers are holding locks across reset and using those
-+ * same locks with the mm_lock we need to prevent ABBA deadlock with the
-+ * state_mutex and mm_lock. In case the state_mutex was taken already we defer
-+ * the cleanup work to the unlock flow of the other running context.
-+ */
-+static void ice_vfio_pci_reset_done(struct pci_dev *pdev)
-+{
-+	struct ice_vfio_pci_device *ice_vdev = dev_get_drvdata(&pdev->dev);
-+
-+	spin_lock(&ice_vdev->reset_lock);
-+	ice_vdev->needs_reset = true;
-+	if (!mutex_trylock(&ice_vdev->state_mutex)) {
-+		spin_unlock(&ice_vdev->reset_lock);
-+		return;
-+	}
-+	spin_unlock(&ice_vdev->reset_lock);
-+	ice_vfio_pci_state_mutex_unlock(&ice_vdev->state_mutex);
-+}
-+
- /**
-  * ice_vfio_pci_open_device - VFIO .open_device callback
-  * @vdev: the VFIO device to open
-@@ -526,7 +589,7 @@ ice_vfio_pci_set_device_state(struct vfio_device *vdev,
- 		}
- 	}
- 
--	mutex_unlock(&ice_vdev->state_mutex);
-+	ice_vfio_pci_state_mutex_unlock(&ice_vdev->state_mutex);
- 
- 	return res;
- }
-@@ -547,7 +610,7 @@ static int ice_vfio_pci_get_device_state(struct vfio_device *vdev,
- 
- 	*curr_state = ice_vdev->mig_state;
- 
--	mutex_unlock(&ice_vdev->state_mutex);
-+	ice_vfio_pci_state_mutex_unlock(&ice_vdev->state_mutex);
- 
- 	return 0;
- }
-@@ -583,6 +646,7 @@ static int ice_vfio_pci_core_init_dev(struct vfio_device *vdev)
- 	struct ice_vfio_pci_device *ice_vdev = to_ice_vdev(vdev);
- 
- 	mutex_init(&ice_vdev->state_mutex);
-+	spin_lock_init(&ice_vdev->reset_lock);
- 
- 	vdev->migration_flags =
- 		VFIO_MIGRATION_STOP_COPY | VFIO_MIGRATION_P2P;
-@@ -681,6 +745,7 @@ static const struct pci_device_id ice_vfio_pci_table[] = {
- MODULE_DEVICE_TABLE(pci, ice_vfio_pci_table);
- 
- static const struct pci_error_handlers ice_vfio_pci_core_err_handlers = {
-+	.reset_done = ice_vfio_pci_reset_done,
- 	.error_detected = vfio_pci_core_aer_err_detected,
- };
- 
-
--- 
-2.51.0.rc1.197.g6d975e95c9d7
-
+> +                       max =3D ULONG_MAX;
+>                 }
+> +
+> +               /* Hide mm from oom killer because the memory is being fr=
+eed */
+> +               mm_flags_set(MMF_OOM_SKIP, mm);
+> +               if (max) {
+> +                       vma_iter_set(&vmi, 0);
+> +                       tmp =3D vma_next(&vmi);
+> +                       flush_cache_mm(mm);
+> +                       unmap_region(&vmi.mas, /* vma =3D */ tmp,
+> +                                    /*vma_min =3D */ 0, /* vma_max =3D *=
+/ max,
+> +                                    /* pg_max =3D */ max, /* prev =3D */=
+ NULL,
+> +                                    /* next =3D */ NULL);
+> +                       charge =3D tear_down_vmas(mm, &vmi, tmp, max);
+> +                       vm_unacct_memory(charge);
+> +               }
+> +               __mt_destroy(&mm->mm_mt);
+>                 /*
+>                  * The mm_struct is going to exit, but the locks will be =
+dropped
+>                  * first.  Set the mm_struct as unstable is advisable as =
+it is
+> --
+> 2.47.2
+>
 
