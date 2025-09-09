@@ -1,65 +1,76 @@
-Return-Path: <linux-kernel+bounces-806976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD4DB49E4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B647BB49E55
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBE13A769E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C383A6416
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A189720DD72;
-	Tue,  9 Sep 2025 00:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB9212552;
+	Tue,  9 Sep 2025 00:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFvbb6Hn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEjAnFvV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88081DDC2B;
-	Tue,  9 Sep 2025 00:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF2317A5BE;
+	Tue,  9 Sep 2025 00:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757378868; cv=none; b=gFX0ZjdTcFeTiB7wJO+FvPa8oPu6i1Qo2KxTeUC7Cz2PB4QF8ZY1omhCeto2fa9uzhirRySXTf9wISzdQurfw3PNf9PAe8xx9eWCwtRx7umqeZzK3cRSKynnwLzMeVCUlM+o/C9x5UGcFcNmfTlOZaSA/EyerePRQc7OXGZhR30=
+	t=1757378980; cv=none; b=Aicfk04SuAnK5/JT7D1SdB4xEw9eKGXmvctcJ5tNVcP68G/RXN2aGrf2Z4JUL4LvBQwUaqYMZXXpLhQuLwmgM5zSNrzt+Dwjyzs6hjarp1EZauJCeIffWd5vNekhUW+Ur4NP+R+7AZQ6whfUm/xYdt0muKh+qGpz9+xLFm9Uv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757378868; c=relaxed/simple;
-	bh=zy06io68iOVZYCgiZwnvNmFkyT+ulKg9fSvGqjcKcN8=;
+	s=arc-20240116; t=1757378980; c=relaxed/simple;
+	bh=LQdIjGA0RNJfpAshsgQiaTl641ej9IcHvJemsA2HaVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJ96WGyGEQks4ygxgIQCo8qyYocopK0WbXMQ/vwMdLZp1F549EWwGxaFEWDxIrhUf5o7WwCy1Nzsn06fsT5vJfRO4/zxNpDOhsNys62Uvwpt5KMEsKRerSDLufFCXuhUt5TTAGTgwQFF4wg3BmxIruB+ec5HrfTpWnEWEfIlriU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFvbb6Hn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692AFC4CEF1;
-	Tue,  9 Sep 2025 00:47:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du1ByzObNKYgNJjUJsZB6HJCns1UL0waQWuNtw6ZXh56ayE3tJ7GdwWaAjEkjtQhHFx/S0q2ecvb5u/bvO0c37+SGzB5fEw7DK1erwWYTxgIjXsTVWAx+eAp5E9L5Z8V6f69YdwfGpepbJVrJICAD35lVxrP4+qvoSzxj6PoOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEjAnFvV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BB6C4CEF1;
+	Tue,  9 Sep 2025 00:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757378867;
-	bh=zy06io68iOVZYCgiZwnvNmFkyT+ulKg9fSvGqjcKcN8=;
+	s=k20201202; t=1757378980;
+	bh=LQdIjGA0RNJfpAshsgQiaTl641ej9IcHvJemsA2HaVc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFvbb6HnpVHha2QYxeYIX0bkE+3dooJdy12p2Y1WtCqf+8KJ2KHtE8W/upyI42rJq
-	 W/bR3/vsaW/Yk6P2f5oIysRasonAGlc4I9+H8t0TDGRUpXjqdhrZIXpv4CAcE9/fDe
-	 I/x9x+Sam2B7yFFYLzM0HLaPcTnawzik3KVS05svRPTW26kcYZU1V0zZ414hoytHqW
-	 iSKhYPWLpHvp2ZHT/0mlk/0I5lEfE1y5myFH79/klACkDgPJIiyL3Ftb8lm7NRNK1a
-	 RRcmX/+pgIEtlIzsfGQOsSfAHeFJ4tdTWzI+rr0N/sV9gnAt1sCOm1i8LQAowH65eA
-	 +20GqpgsNGG4w==
-Date: Mon, 8 Sep 2025 19:47:46 -0500
+	b=DEjAnFvVJV70t+cqG1zPZc4VDEw9jZdRlv2CZ/TQ7EMJDgLhMY9aOixn3O9fXn3pg
+	 rxycI98+T+nYtMg+ZZcx+/AystCGSWx24HU1WlQb1tgtlPEKHxiJTq97+cTueyysPI
+	 5I3TZeQ/YUoGGJP1cjGO9re3wn7pcxjoJijO/4W9AHJRT0IstYHGHVStUDW/F7L70Y
+	 43Htj9vxSPdhFgAvtbCuER+ORqS0ywMiOsa3qtsUeVpIUkf0FdGXvEmzSGJzCY7dro
+	 l7qzALqD3DkbHZFA9YC/b+vjGjpxZNOzYK9HOs7QRkFsqNV4e5bF9+o3MNWAmvHhaL
+	 J3UbkZ9LK/L5g==
+Date: Mon, 8 Sep 2025 19:49:39 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Xue <xxm@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-staging@lists.linux.dev,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: dwc: rockchip: Add RK3528 variant
-Message-ID: <175737886558.2322312.14140565713141816216.robh@kernel.org>
-References: <20250906135246.19398-1-ziyao@disroot.org>
- <20250906135246.19398-2-ziyao@disroot.org>
+	linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Thierry Reding <treding@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>
+Subject: Re: [PATCH v2 12/23] dt-bindings: display: tegra: move
+ avdd-dsi-csi-supply from VI to CSI
+Message-ID: <175737897848.2324392.4970104076561451474.robh@kernel.org>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-13-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,27 +79,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250906135246.19398-2-ziyao@disroot.org>
+In-Reply-To: <20250906135345.241229-13-clamor95@gmail.com>
 
 
-On Sat, 06 Sep 2025 13:52:44 +0000, Yao Zi wrote:
-> RK3528 ships a PCIe Gen2x1 controller that operates in RC mode only.
-> Since the SoC has no separate MSI controller, the one integrated in the
-> DWC PCIe IP must be used, and thus its interrupt scheme is similar to
-> variants found in RK3562 and RK3576.
+On Sat, 06 Sep 2025 16:53:33 +0300, Svyatoslav Ryhel wrote:
+> The avdd-dsi-csi-supply is CSI power supply, it has nothing to do with VI,
+> like same supply is used with DSI and has nothing to do with DC. Move it
+> to correct place.
 > 
-> Older BSP code claimed its integrated MSI controller supports only 8
-> MSIs[1], but this has been changed in newer BSP[2] and testing proves
-> the controller works correctly with more than 8 MSIs allocated,
-> suggesting the controller should be compatible with the RK3568 variant.
-> Let's document its compatible string.
-> 
-> Link: https://github.com/rockchip-linux/kernel/blob/792a7d4273a5/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L1610-L1613 # [1]
-> Link: https://github.com/rockchip-linux/kernel/blob/1ba51b059f25/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L904-L906 # [2]
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml   | 3 ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml | 3 +++
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
