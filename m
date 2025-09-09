@@ -1,407 +1,207 @@
-Return-Path: <linux-kernel+bounces-807253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2065CB4A21F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:23:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCB3B4A221
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 026924E1D32
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482E41701BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F56303A2A;
-	Tue,  9 Sep 2025 06:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8063019B0;
+	Tue,  9 Sep 2025 06:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3FDO3d86"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x79Ew/oz"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2049.outbound.protection.outlook.com [40.107.95.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CC6302771;
-	Tue,  9 Sep 2025 06:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF65305061
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398952; cv=fail; b=kQhb+duJH5xgrgblASsXI0xKwLWOGzHvrplQIuZWQj88Oo7Ku2Q29xwQloWemDHpriv5xiTCUjyU23F1VH6z/y2eYOX6Kmb0y4T+nEcjFrnGCQt60XoG4JxBcHaCn3NdC+ecjpLxPSPZzIRmwMDk6SJ7eoR+axw+lHDFzquuOds=
+	t=1757398999; cv=fail; b=n2lNgRBhxhs5huDlMoLaRwIXePOWLfGif+yZoH5R/cXj61pwoAm5l6CvVVW6XKsnrdCxSh+wRoldqvE8uoksEGjhe3a4wRKyvzvATesbUk7NAbrgrcRbYU3XIfvb8TVQur4Yn0+7Qr4RiYPYO2SNUqkzYYWDX2fdYorsASsElYU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398952; c=relaxed/simple;
-	bh=1iReGAEjo+zq/nf+9dGqVHs8pHXfI2x1nWETwV/yYEs=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DMz3bkhNdETid/zGZqKTgePoeSQTmGYnOT0xQ4B4iqkQqie6VtShsduFVk9ZklKYBQGDGbwO3DXOjWah5RhKO9/tc7JAZvtfRU8Mbg7LZLCFmLffNzYb9ZjlIDelenHhJArAvDvvtf3Bj1UWAsBh0BBmvWVuQROaRZXeAfKMig4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3FDO3d86; arc=fail smtp.client-ip=40.107.102.50
+	s=arc-20240116; t=1757398999; c=relaxed/simple;
+	bh=pgtgLbgd+D7ISoPezQSy2TFgStZKjTbclp8GI5vtMgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oGk2OFtZn+imZswEtgQd+/JYmxZ+JweCPW9TCu59qc60OH+xpLHkSd4o3nwIMuJQqjNU765kVyRPyf+tlZjsH/W0uG+3ndGhntQ6Ml/AdeYrHNduSlLHSelXUEtqWdKVqWRwgYm4xRV2NAyZ77LnEGViTnRE/v0maBtN5K33+aU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x79Ew/oz; arc=fail smtp.client-ip=40.107.95.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jFI6vym/4x4fUu2cjsAkYmwe9O7f9A0w7fr/oGgOEdN+1tyo4zj82uJEjJ3lmA2IrEzym5qLoL4ffHTzsJSdGAaR9mvMdbMflTm2szZJ/F4kIr5ekspXf1LH8b8yYIKLmWkwIVoG3xHv1B04MKX+3SpfiiggR+AedLefLttF5UHf1fmtvpgCdqctYtPrNLbdsv0uyWZsEEqUcYWpDJPFSSde/BCZ2nxLJqmXpI18xA55/BU+2rj1sRk2T5dHeImx7AQvy7gc9j8bDjy0EwsgEK3JRFzgT9xatcTS6vyq9iUNKYKAwYzkl7iLKpAh9V6jDumEXIWnKc4xwYW43cRPTg==
+ b=hkm09iCZ6lmy3S5uROLPv5QdQ79lLbuxaH0l1jl1FpnM5buvkvpjH5wdcANnV29CU40wI5hdAerKsFS1r8RoJoIqbqL12nputa2jmYUX6tUbkAlzGvn7OKTDh/d/LErezopEtQIYSik7w3o8x7aEuwC+9I2a17e1MiVUM9vkb7FqkhW/4l/FX7ycz2X3V8WIQ3YZrLtYSrPSR0zwHwmbnSKUTr8ssFXqaCBuBZz2v+X6ThlICc2pATMMR0qVapkH864ri5NaqWSIvLCoKrpZiASUc/s68HguOWSRkA5/CptPZtMD1gXMXO88Hv75hHxffjhxJbjFmOPfoD42o5o4Qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tVF2ZrFRm25jha5Xm3qlXVaAjZIDSkZjVbumTHoKOmg=;
- b=bAMLM6BHTLpQJF/I5ch/A7inXzBKacrpB2ikAQWwFJM8FNh1u+S0tRPTcFR4F1ordDTTqQvsCWolDovyCeC1ELCoUDcqxath9VXnx7CJnJ/1qIrMWJp6Vi0SnO8BMWHcTlVtbFWQvXF/F834Y67nHojnXCDAg9mT7KODekFiinUeIVdxak4fwCDloBOGINYnBmxeNSjN8Ew0V9P/9wA4qXUdXVYIlPi/29WeC2j6trWLyZNhcaucP6/P63WA/0vSrf0ohTbEXBMqpOV4KoIxRL4BetWD2r6+AHTimTYvRTmvSlpdNIssoV4Lz4X2TrTi7OeQOK2A+Md3m0WSYGZCiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=B3lMG47KzPIHGUa8sdMh1lbAbC7UvlyYsnAruJfU/aE=;
+ b=RtnZlU0OkzeSxzd/OJrUJ62NSHCH33vtw8m9TrqpDuiOAIABfrfv1OsXSGuItH10AnjkXyYzBfQECn6sqpm2xrDGOSBd7Ff49plElhGMizscTy9CxVT00qbCSN2udb2vAOdv638JQTVPo0hwsl2eChuti0Rxs1NbYsCQAzIiAB1djBnuLOBrNtga59mqeFSYStizW5vzHvtMd8hWBJ5fSg2CESYh7p3xpt2w6LDk+XYhv6xr3UQvj43xik5zQDBYoTuhn9HT23mZP3AP+PM6zjgKyMC0lYbzSSOgwj25CkR81erVKsksscQ0om9CCteuEwHcmCuezxbinAa4CL3MmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tVF2ZrFRm25jha5Xm3qlXVaAjZIDSkZjVbumTHoKOmg=;
- b=3FDO3d86czlGJ9L4QKknmO3NgLZTVeba9PQhQoYDSBUeXqtdEElkgyC5biC/pqq5qppctIH0RSQQA8yrgKSvPSV9Bsv9HQDKB240gYFVuNBePFxtzQC3EV+g/Wrp7JPMSSqBv/xOX4/uzWW96C45ilKRklisbmwlhsps6ltB1Bw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7301.namprd12.prod.outlook.com (2603:10b6:510:222::12)
- by DM3PR12MB9352.namprd12.prod.outlook.com (2603:10b6:0:4a::20) with
+ bh=B3lMG47KzPIHGUa8sdMh1lbAbC7UvlyYsnAruJfU/aE=;
+ b=x79Ew/ozYFBZJW0l5cW1wreOO6IbbX6aAhboL4HHGszDL7HIOwqC4bRy//D7vI0CO/YyzizEf4Th3IwulONAsU0/Rl6EAchOeHMaRbmD6xXJRkihgfJ19yUi2p5T94sCg/hqF/bRWCrJN98aF/GEiUEu9PyyZwLmOBTOJ0zFS7k=
+Received: from BYAPR03CA0026.namprd03.prod.outlook.com (2603:10b6:a02:a8::39)
+ by BL1PR12MB5705.namprd12.prod.outlook.com (2603:10b6:208:384::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 06:22:27 +0000
-Received: from PH8PR12MB7301.namprd12.prod.outlook.com
- ([fe80::a929:e8eb:ef22:6350]) by PH8PR12MB7301.namprd12.prod.outlook.com
- ([fe80::a929:e8eb:ef22:6350%6]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 06:22:27 +0000
-Message-ID: <a31fb1e1-517f-41e7-9a13-5518d66f971d@amd.com>
-Date: Tue, 9 Sep 2025 11:52:18 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] drm/buddy: Optimize free block management with RB
- tree
-From: Arunpravin Paneer Selvam <arunpravin.paneerselvam@amd.com>
-To: Peter Zijlstra <peterz@infradead.org>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Matthew Auld <matthew.auld@intel.com>
-Cc: christian.koenig@amd.com, matthew.auld@intel.com,
- dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- alexander.deucher@amd.com
-References: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
- <20250901194151.GJ4067720@noisy.programming.kicks-ass.net>
- <5f999a32-db26-4964-8152-ac06da8beea4@amd.com>
-Content-Language: en-US
-In-Reply-To: <5f999a32-db26-4964-8152-ac06da8beea4@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN4PR01CA0081.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:26d::10) To PH8PR12MB7301.namprd12.prod.outlook.com
- (2603:10b6:510:222::12)
+ 2025 06:23:09 +0000
+Received: from MWH0EPF000A672E.namprd04.prod.outlook.com
+ (2603:10b6:a02:a8:cafe::47) by BYAPR03CA0026.outlook.office365.com
+ (2603:10b6:a02:a8::39) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Tue,
+ 9 Sep 2025 06:23:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ MWH0EPF000A672E.mail.protection.outlook.com (10.167.249.20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 06:23:09 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 23:23:04 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 23:23:04 -0700
+Received: from [10.136.43.237] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 8 Sep 2025 23:22:56 -0700
+Message-ID: <fd017cc8-0eb0-4961-8f59-575505f27a68@amd.com>
+Date: Tue, 9 Sep 2025 11:52:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Propagate load for throttled cfs_rq
+To: Aaron Lu <ziqianlu@bytedance.com>, kernel test robot <lkp@intel.com>
+CC: Peter Zijlstra <peterz@infradead.org>, <oe-kbuild-all@lists.linux.dev>,
+	Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, <linux-kernel@vger.kernel.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, "Steven
+ Rostedt" <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi Zhou
+	<zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>, "Florian
+ Bezdeka" <florian.bezdeka@siemens.com>, Songtang Liu
+	<liusongtang@bytedance.com>, Chen Yu <yu.c.chen@intel.com>, Matteo Martelli
+	<matteo.martelli@codethink.co.uk>, Michal <mkoutny@suse.com>, "Sebastian
+ Andrzej Siewior" <bigeasy@linutronix.de>
+References: <20250908110548.GA35@bytedance>
+ <202509091233.f6nP3BVh-lkp@intel.com> <20250909061746.GB35@bytedance>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250909061746.GB35@bytedance>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7301:EE_|DM3PR12MB9352:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a459037-a612-49fb-0b04-08ddef693f3b
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A672E:EE_|BL1PR12MB5705:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e1abd87-a107-43f5-116a-08ddef6958c2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UGxLLzNiZE5Oc3gya0w2WWp5bE51MVpTc3ZEV0puU1Eyb2FQejVrUzUzREd3?=
- =?utf-8?B?Zng1TmZub2dZWHo4YXhCTXc1aGZudTdEVkF2VW1ObHRuaXRERFB2N2xZekFy?=
- =?utf-8?B?emhhSkFkZ3p0VWNXM2JkLzRLT205TzRvdHVHdk9jdWFGQ0sxQTRVKytJOEJo?=
- =?utf-8?B?K3VEeWgybnRvOFovUWRUckVpSmFpenljcUhsMmZ1cWhhNDBqVjhOclhxVU41?=
- =?utf-8?B?QzFVZkNxYnBYYzM2Zkl4eGxzMlZVaVVybkJWSHdZcHJCVTNhZ3J6bGY2RjRC?=
- =?utf-8?B?L2d5WCsvUDNHS2hUMng4OGhIanR2aHZiYzlaYXRxTmxSbDhNVm9lOVlYTFdD?=
- =?utf-8?B?QWx0c3FhaXJpMGJNdjZyNmZ3dTVMYS9yb2txYkxCL2RUSGpLZzhtZnNHbEpO?=
- =?utf-8?B?bjVvVUwzOXB0WjJRVTZEcGg3blVuWnNDMy9xTVRnTVhRTytiMXpwaitEbllC?=
- =?utf-8?B?MktDN3pTWk9tTE11STg5OUdZM3RSb0ZBdFFDd3RwNEUvdy9aUUxSb1pPckRs?=
- =?utf-8?B?RlNjNDBPZ3lkRHozclFMaWZUbk5EQitYWTBqc2c1aWRPMkdPaDVUUGJWRER5?=
- =?utf-8?B?QUk2TDc3UUpqZUZYNEVFbU95a0cwQlV1OGtOanMvYUpOUFBSUk9DNnFXYUND?=
- =?utf-8?B?dDdjTktreFRHdEpkVjhWQ1ZiR2NaMGJ6cEw4UkZjTUlOTHFRSUhoY0YxZ3VX?=
- =?utf-8?B?cDBNL2xpREhyODB3RjBQdUJLT0tKRlhDVXZrclMrYlp0NEY1a3MvcFlZN3Rz?=
- =?utf-8?B?ejJGWDBIRXRBUlRnRERsWTZ1ei9lcnAzYzhqQjJkc3BRN1dwUEpWQzIzME55?=
- =?utf-8?B?bWZRajBpR2QzQ05zNDREbXloZU90Zit2ZGNqQUtKb3djMU5GSmVPZ1E2bk9B?=
- =?utf-8?B?NWhPdEV4VVB4ampuT2laQTJFbEpwWDRtUm5CK1l4aHBVcGNyVHZzbFdJODRQ?=
- =?utf-8?B?bEdJcStYN0o5U1JaUXZRbVZKVEUxRlNSUXZkS1VMK3hqSFlIZCs3SWVvSi93?=
- =?utf-8?B?MXdtZEV4SEo3K3lVRDF2b2NJaS8vWEFYaXpZQ1o5dzJvMm9oTUJVa2FHN01Y?=
- =?utf-8?B?bW1VNFVmMExRV2RKZ09ROWpXQmpMeWR5TG92MjJYTjFXcC8wazJWYTVUM0Jh?=
- =?utf-8?B?T0FrR3M0eWVZVzUvcU9TUERwYkNkYkdldWVack9XaTM1bmQ3SmFySkNxY296?=
- =?utf-8?B?Y2dxZlhRNTJlcnZ2RjFEUTNFNEVMcHl6MWpBNmVWQktla2dvaGlnQ3p5bHZs?=
- =?utf-8?B?L21wb0F6dmo2QWt0dk0wL1p1dGk3aGtaSmpEeU9nMlBhRXMrcS93aHpJN0RV?=
- =?utf-8?B?czUxbE9rRGNjTC9xclIzQlI5d0ZOdmxzdVNYbUxzZW1KQkw2dlhvNk1ETDFN?=
- =?utf-8?B?MS8zMlp3aDNDTlFQekhobkNZbE1hbmo5WFBRazdKZCtnUURGdFllTjVtSkh0?=
- =?utf-8?B?RzlmVkpGWGJ4MHRpd2RjVTJ5ekNIUUhCTXV0YkRxY0RZNHJ2WGc4NkxJTjVl?=
- =?utf-8?B?TWxyRFVjN3VIVk5OUlQ3b1E5c3BXVWU2ZndmWW9uK0RVYzNVbjNCNlFqSlpu?=
- =?utf-8?B?ZTN4VWZ4M2ZpYy9CbCtQZXNKaDZoRTRCWHdzNnhxMEoyTU5ZNS9pbGsrWjBm?=
- =?utf-8?B?dUlTSWZNR2pDaU1zOTVtNDQ3TXpsMC9uZUNPMlJyMkRocG1mSy9udmluUjhz?=
- =?utf-8?B?Z0xaNjNjQjdRRGVod084RlJ5SEN5UjArNmUxa3RyWmNWaW82T1MxSWFDN25U?=
- =?utf-8?B?U0tydWszRFJDcGxoUk04L0pNKzdQemVhLzczc29uQzZOVVMzanZIaHBKYUZG?=
- =?utf-8?B?bXNqZ3VyY1VpSkF6YVU5ZzgvUk9YUy9RcnpvTk8vRitlbUxqRy9nT0ZhOTNp?=
- =?utf-8?B?anRCOWhiYmlpbks2ZmVvKzVZbFNIZGcyTzZlVGJGOVhyM21ZZXpPZitFZU1D?=
- =?utf-8?Q?sssKacIEZgk=3D?=
+	=?utf-8?B?ZXVJZW8reWdtNUV0VnZmanVORkJhcGpnQ2lYa0YzTk5zR2xodGErNEp1Yk5o?=
+ =?utf-8?B?RU1SQjFJd0QxSFhPSFBmMTgzaHIvMzNxc2FUUzhwVXAxZWkwMWxDK3l1ZTNE?=
+ =?utf-8?B?SkVkbHJXU0VpbXB3dXdoMC9jK2RZazdFT1BxQUdKRm5vTC9iZjBBdTBCN1Na?=
+ =?utf-8?B?WDNkbDdVek9rSWVXWURhVG9TVWpQUmZSRmtabWE2a3lxc04yZk1hQkdSRWY3?=
+ =?utf-8?B?MTUyOVkyNWN0eXNNOTYwdGtXNGVEeHcwTnhZY3lvTTdFTmwyN3IxNDlxS2FF?=
+ =?utf-8?B?MWpGQkxiTXFoSVB1cGJvYkRITUluRm1nMFlkSFhZMDVnRmRBVG1YQWQzSDJt?=
+ =?utf-8?B?dUZ1SEZjV1E3R2Y2YnJjcjg1WWpacDdrOUdTc2txajZ3SDNvMU9EcUlPSHcz?=
+ =?utf-8?B?bDI4S2F4UDkyaUxvR0RISk5qeGZjakNQRkNpQk5OL1FlTzV5S3FBM29BK2xX?=
+ =?utf-8?B?VGh6by9HSHpJYVFHcyszbE1rbzZvQ1UvK21qeXJ2ZVNHbkN2dm0rR1FhVFE5?=
+ =?utf-8?B?bFN0UDRtaE43cHNRZGZiYUd5aXM1a2U0UWZRVlRYZ05FVlRNMC9HbHJEQnBS?=
+ =?utf-8?B?VjN0dFgwOWEvVXJOTTVYK2NoOGlYbmhGT1c4NXBBQ2VONWVod0lTQnlsc1lZ?=
+ =?utf-8?B?YTE0KzNEU3NxUlJVRzFyajZidThVUEI5R2VWc2w3VG1DNWVxVTUwVmQxTXdl?=
+ =?utf-8?B?c2VOQmlZaEpSR0JHYmcySXZyY2NMQjd6elhHWW9lR1lTOXpNVyt3VStpQ29E?=
+ =?utf-8?B?dDdHTWwyd0c2VFVrRVBvTGVYYzZKVFc2WEZPV2d0NlNzT2hsSk5SRXFQYmdj?=
+ =?utf-8?B?QXdtVGNVSnBtVXlLdTFHN3Z5SExFVktYVnBHK24wcGVPL2hONlc0MWNUcjRy?=
+ =?utf-8?B?MjFmNWJlVTB5OVZqb1FtQ3NFWit1Mk84MGZ2dS9INnhTUHlubDJKSUhmdDlV?=
+ =?utf-8?B?aW5FSUhsNldCT0FtMzhoMGY5WTh6Q0VFMzlwUk1IanU2SFB6WHdCQTJtU1F5?=
+ =?utf-8?B?czhrSTQvYU4reUxvWFVZdzNYeXVxcGtLQTFYakN6bkxONWkxTHVubjg3ak5p?=
+ =?utf-8?B?RlJzT3hhSDR0azFha0RDc3FmTDkyMjlrbkRVdXIzZnE0UzFBWkZ0a09HdE44?=
+ =?utf-8?B?N2laeUVhTXhTL1lTYUdDQXNNamlrQmpsVG14ZVRPajRLaHZ2aFNPaExKTkI5?=
+ =?utf-8?B?TlhybXcvRUdodVptcmJEZFlZRm5XMEQ4ZVJaYkhyWlJHSG5xQitTV2lVVFk1?=
+ =?utf-8?B?eVNkdEtYWmp1TmtQUjlib1ZIZWVDWit4OTV2aTFzN25sWEZvYzdNS09Yam5a?=
+ =?utf-8?B?c0t2WVAwQjFBNWtCZGxHMmgvbWVmOWY0ZjFTU2ViMEIxOSs4bG5BNmhaL2Y3?=
+ =?utf-8?B?TWVvVDZCaXd2TzYzbklsL0RXZUMrbGRHZGFqQ2NXaUVab25NZ0xrYkdXRVZz?=
+ =?utf-8?B?RGhaVTV4VkJ0MVdYTkpQT3NvbGlEc1hQeFZFVzZGcytzcEhmSHh3T2Y4amdV?=
+ =?utf-8?B?Qm5ib2M5T3pnbmlQMzdTN2w4Q2hsVE9ZZGtWUjNYLzNqcldEaTlLWjI2L3BG?=
+ =?utf-8?B?ck12cFk4UktOWm1JVDdHKzl5UGRCQTcxalBHTjdVbUtyMjl5b3psVlZMdlYw?=
+ =?utf-8?B?R1QwNzZaQlVKUHdGSmZ1cmRzOWFOcHowbEhwcTlSSnRGQmRTUk5KUUdlbHJ5?=
+ =?utf-8?B?ek5YTzVtYVBOREhmRURqWEc5MVJYN0N5L0JXQkwvcFRrVFY5SGVBSWRKQzA2?=
+ =?utf-8?B?Z296amg4aXJWK0pTQ1BTeWprUk9LWDlmVDYvczJzY0dydkFNTEJ0bzhVRHph?=
+ =?utf-8?B?b2NnUy9RZE8xbmx4T1Nyd1Z1cElkdjVmd24zYmt3NUxrc0RWOGZFRXV6V1Nz?=
+ =?utf-8?B?WE1vZUVxVzFzSGxCNUZsZDN5QXM4Tm8rV0lQSURERGlLSW9ZNXN6Ky9iam1z?=
+ =?utf-8?B?eEZjbzNUbkdjRDY1dmdsQm54V3JzRGFCQ1Z4NVBCM2FaZEJmVS9mK1RJYnls?=
+ =?utf-8?B?RFh2ZU5FTVlTOTQveUVkRG91b01TSTRrTXlxcHlPY2Zwcnp5eXlmMjlmUTBD?=
+ =?utf-8?Q?wvFESz?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cm1wY3NScXM5VVd4Z1ZyY0tXdCtNUjZyS1dPMjB0S2FUak5qMHlpUkJtVGha?=
- =?utf-8?B?MnQxUmFaUWFMRlpvT0x4TGx4WHRhUzFsYWNTTW5QVUtmNmF5ZEhZN3E1aHZT?=
- =?utf-8?B?QWVxWVY0eml2Ynh2elFPNVorOEtDQkd0Z2lWNlpxWndLQWt4b0YyQTNxNWl2?=
- =?utf-8?B?UU9zZmtIR2drUEpZbXZyQkpxVXBnUnVhVjBMZnVubFNsSkwxdWpNWDBaK3pX?=
- =?utf-8?B?eGlqWlVsbWNkQ2ZSNExDZG5yZDR1cmpUR1UzeWJHUWhQRWRxMi8yQ2s2Q3JV?=
- =?utf-8?B?UndHYVZmTGVORm9zc2xFcjB4KzR5cXBGWnhSU1FXTGlSblZ6Qy9Zd0ZVVmRz?=
- =?utf-8?B?S3pPcHZXaUV6WG9Ic0YxL0xyUWpJeFhMVWFyNnhVdThDYW82K1NyQVVaSDlU?=
- =?utf-8?B?MXdiZ3pMMFRzeXBITzNwV3YrN0k5MkpycVIxL0doVVhSdGV3WWFMV0Jna3FU?=
- =?utf-8?B?aXZDSExxT2gwY0pDSkpZSVRPMFhyb0hFaS9SSnhHOHV2bzE0VkEwbUdKV3V3?=
- =?utf-8?B?RFVpaDRXczYxNmQvbFNUeFhYRzlHNWcra0ZIbEtPbUZQcndWdVF5REJqM3FT?=
- =?utf-8?B?OXl0K1VqQm5jQWxjczY2QXVKK2Z2OGdUdlVyZk1YR3R5Y3h1RVZsMVhMT2N4?=
- =?utf-8?B?UlVVT2pST3NZMVc5REMrbFNOb3hSZFNNT3pORTE0R1lCOXR5amFQc25ONFd1?=
- =?utf-8?B?MC9KMmswcnFpWkRMbXpoaTlSYXZJSVNIWXl1Ty9iYlhHNmVmSzNKMTBzSnoy?=
- =?utf-8?B?cnB4SHNtL2RyaGlhZWtyTllGNjJUSmU2cUlBbTE4Mk9paW92SUtxVVNTWG1w?=
- =?utf-8?B?bkx5V29sK1p2QTBZWCszaVdjNzRmRlNRa2JUNHovK1pGNm5CQkI4RytqQnFN?=
- =?utf-8?B?ZUJoS2hXSFBZdG01OHNlcHJYK1A4WW0zTC9JaStiTjZXK1g4cjVDMDIxY1Az?=
- =?utf-8?B?ZDVJSU1GUHZRelZPR0xqaXBsNDNYRUJ6Nmg0ekFXZmpweWdTeHFZd1dvQi9j?=
- =?utf-8?B?TVg1VDNuZUhFRW5BZitncGJuTWpaVVNnNTgxQkp5L0U3OTh6NDArL01naWFS?=
- =?utf-8?B?L0NKVEpYVFQxaEd3SjVmWWJCb1N5ZTZ4U2RaU210TXdJNHAvcTZqK2V3VGN5?=
- =?utf-8?B?SE02WU1tWk1BL3ZqNnhOZHk0YjEvV0hnZEtlVkJVanNVSndJaWljdExMeHhH?=
- =?utf-8?B?SmZLb1RKTU1OZnlGelUvelR6Ykt0dE05eTVYRkdITnEramR0NDBCajBtUXV4?=
- =?utf-8?B?ZDRLRnJwWnp5VTVLK1RLNVZKdUNDM3piL2ZhVlAreVNxYjdyOExmNHREQnUr?=
- =?utf-8?B?YVNNVWxnL1RuVzkrSVdYOXQvUXZZNjRhQlFzWTU2enF2UUtuSjJwbDcvcXBB?=
- =?utf-8?B?TWhycjFiSVpLeVh4Y2VINVRUYVlEeFpVV3BGQ1BaSnFkOFlQL0VibldtejRn?=
- =?utf-8?B?dDB1c3dqYlhBUDdXUEhyNnpLRGhaUUNrZWVuMFRRc0NvRGlCSHRzRU1sTERK?=
- =?utf-8?B?RUcxQ2p4REhlaU9tVVVsWkc4MldrU0FpUDhjNUFTdlRiWEhTTEZybmRyMXpL?=
- =?utf-8?B?aTR2RDU1TXlab00xbi8zMXY1RGVwSDVQOGhXdGhRV0FCKzRIZ3U0VlFOYnlw?=
- =?utf-8?B?U3lBZ1UyV0Q5eENuOExWTFh1eVZlV2VCeG4vN2kxQk1nbkM2bGo1K2V5UTFB?=
- =?utf-8?B?M1IwT2hTK1VWWDdsVW1Qd2ZMOXFpZmJZbnJmcGpBalB5bGRLZVU0V1NJM01Z?=
- =?utf-8?B?UTlFVzk3OHJWK29qempHVWV3bWx0V25DOVU3Q01QYkF6d3RZRzc2bGF0bUZV?=
- =?utf-8?B?MmpJbnY1WVlIMWh5djNib3pQamhLaUJydituWFVzZ0lSaUVxQnNtajcrenlO?=
- =?utf-8?B?eFF0bHFLVDdSc1FiRllocXYyVHZxY0d6U3BBN2pvZmZhWStpVXovcWg5ZlBN?=
- =?utf-8?B?K0VjMzFuTFI0M1huU0M5Y0U0clVqREZxQUlpZEQxQWdscVBxNWlWdnA0eWhx?=
- =?utf-8?B?d2FDNTFaV25iYk9WK04xZEhaUEY0elpNM0d5UWlCUjdoblh2Wjc1QzFaM0tX?=
- =?utf-8?B?TDFhYWx1VDdsd0pPSGE1OTdMYjBHQllsaUVnM1psMUNPMHJoaHNlb1J4TG5j?=
- =?utf-8?Q?HUF5xkKq8R88SirkAo5s2OGx1?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a459037-a612-49fb-0b04-08ddef693f3b
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7301.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:22:27.2583
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:23:09.4862
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e1abd87-a107-43f5-116a-08ddef6958c2
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CkWll/XYKdBnndtwT9IrZi+tm2kmQAUqTUE1PxzxqEnnWUlBwO4Dn696r4wGit8CBZ9v8YaE5ctMMancAZAe4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9352
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A672E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5705
 
-Hi Peter / Jani,
+Hello Aaron,
 
- From the measurements I have done, the difference between RBtree full 
-iteration and list full iteration
-is negligible, even under heavy fragmentation. Based on this, I think it 
-would be reasonable to include
-these macros in rbtree.h as a convenience for cases where a full walk is 
-required, similar to the helper
-macros that already exist in list.h. In situations where the tree is 
-small or only modestly populated, the
-overhead is insignificant, and the decision of whether to use them can 
-be left to the user based on their
-workload.
+On 9/9/2025 11:47 AM, Aaron Lu wrote:
+>>>> kernel/sched/fair.c:6747:1: error: expected identifier or '(' before '+' token
+>>     6747 | +static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+>>          | ^
+> 
+> Sigh, I remembered I did a build test with !CFS_BANDWIDTH and now I went
+> to check that build directory and noticed I didn't have CFS_BANDWIDTH
+> disabled...
+> 
+> Sorry for the trouble, will send an updated patch later.
 
-If that still is not acceptable, I can move the macros into drm_buddy.c 
-instead. Please let me know your
-suggestion.
+While at it, another nit.
 
-Thanks,
-Arun.
-On 9/2/2025 11:39 AM, Arunpravin Paneer Selvam wrote:
->
-> On 9/2/2025 1:11 AM, Peter Zijlstra wrote:
->> On Tue, Sep 02, 2025 at 12:26:04AM +0530, Arunpravin Paneer Selvam 
->> wrote:
->>> Replace the freelist (O(n)) used for free block management with a
->>> red-black tree, providing more efficient O(log n) search, insert,
->>> and delete operations. This improves scalability and performance
->>> when managing large numbers of free blocks per order (e.g., hundreds
->>> or thousands).
->> Did you consider the interval tree?
->
-> In this allocator, free blocks are tracked individually by order and 
-> not as arbitrary ranges. The
->
-> operations are keyed insert/delete/lookup, for which an rbtree is 
-> sufficient and simper, AFAIK.
->
->>
->>
->>> @@ -41,23 +43,53 @@ static void drm_block_free(struct drm_buddy *mm,
->>>       kmem_cache_free(slab_blocks, block);
->>>   }
->>>   -static void list_insert_sorted(struct drm_buddy *mm,
->>> -                   struct drm_buddy_block *block)
->>> +static void rbtree_insert(struct drm_buddy *mm,
->>> +              struct drm_buddy_block *block)
->>>   {
->>> +    struct rb_root *root = 
->>> &mm->free_tree[drm_buddy_block_order(block)];
->>> +    struct rb_node **link = &root->rb_node;
->>> +    struct rb_node *parent = NULL;
->>>       struct drm_buddy_block *node;
->>> -    struct list_head *head;
->>> +    u64 offset;
->>> +
->>> +    offset = drm_buddy_block_offset(block);
->>>   -    head = &mm->free_list[drm_buddy_block_order(block)];
->>> -    if (list_empty(head)) {
->>> -        list_add(&block->link, head);
->>> -        return;
->>> +    while (*link) {
->>> +        parent = *link;
->>> +        node = rb_entry(parent, struct drm_buddy_block, rb);
->>> +
->>> +        if (offset < drm_buddy_block_offset(node))
->>> +            link = &parent->rb_left;
->>> +        else
->>> +            link = &parent->rb_right;
->>>       }
->>>   -    list_for_each_entry(node, head, link)
->>> -        if (drm_buddy_block_offset(block) < 
->>> drm_buddy_block_offset(node))
->>> -            break;
->>> +    rb_link_node(&block->rb, parent, link);
->>> +    rb_insert_color(&block->rb, root);
->>> +}
->> static inline bool __drm_bb_less(const struct drm_buddy_block *a,
->>                  const struct drm_buddy_block *b)
->> {
->>     return drm_buddy_block_offset(a) < drm_buddy_block_offset(b);
->> }
->>
->> #define __node_2_drm_bb(node) rb_entry((node), struct 
->> drm_buddy_block, rb)
->>
->> static inline bool rb_drm_bb_less(struct rb_node *a, const struct 
->> rb_node *b)
->> {
->>     return __drm_bb_less(__node_2_drm_bb(a), __node_2_drm_bb(b));
->> }
->>
->> static void rbtree_insert(struct drm_buddy *mm, struct 
->> drm_buddy_block *block)
->> {
->>     rb_add(block->rb, &mm->free_tree[drm_buddy_block_order(block)], 
->> rb_drm_bb_less);
->> }
->>
->>> +
->>> +static void rbtree_remove(struct drm_buddy *mm,
->>> +              struct drm_buddy_block *block)
->>> +{
->>> +    struct rb_root *root;
->>> +
->>> +    root = &mm->free_tree[drm_buddy_block_order(block)];
->>> +    rb_erase(&block->rb, root);
->>>   -    __list_add(&block->link, node->link.prev, &node->link);
->>> +    RB_CLEAR_NODE(&block->rb);
->>> +}
->>> +
->>> +static inline struct drm_buddy_block *
->>> +rbtree_last_entry(struct drm_buddy *mm, unsigned int order)
->>> +{
->>> +    struct rb_node *node = rb_last(&mm->free_tree[order]);
->>> +
->>> +    return node ? rb_entry(node, struct drm_buddy_block, rb) : NULL;
->>> +}
->> rb_add_cached() caches the leftmost entry, if you invert the key, the
->> last is first.
->
-> With inversion, the in-tree ordering changes from natural ascending 
-> offsets to descending,
->
-> which can break assumptions in existing buddy allocator code that 
-> expects ascending order.
->
->>
->>> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
->>> index 8d2ba3749866..17190bb4837c 100644
->>> --- a/include/linux/rbtree.h
->>> +++ b/include/linux/rbtree.h
->>> @@ -79,6 +79,62 @@ static inline void rb_link_node_rcu(struct 
->>> rb_node *node, struct rb_node *parent
->>>          ____ptr ? rb_entry(____ptr, type, member) : NULL; \
->>>       })
->>>   +/**
->>> + * rbtree_for_each_entry - iterate in-order over rb_root of given type
->>> + *
->>> + * @pos:    the 'type *' to use as a loop cursor.
->>> + * @root:    'rb_root *' of the rbtree.
->>> + * @member:    the name of the rb_node field within 'type'.
->>> + */
->>> +#define rbtree_for_each_entry(pos, root, member) \
->>> +    for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), 
->>> member); \
->>> +         (pos); \
->>> +         (pos) = rb_entry_safe(rb_next(&(pos)->member), 
->>> typeof(*(pos)), member))
->>> +
->>> +/**
->>> + * rbtree_reverse_for_each_entry - iterate in reverse in-order over 
->>> rb_root
->>> + * of given type
->>> + *
->>> + * @pos:    the 'type *' to use as a loop cursor.
->>> + * @root:    'rb_root *' of the rbtree.
->>> + * @member:    the name of the rb_node field within 'type'.
->>> + */
->>> +#define rbtree_reverse_for_each_entry(pos, root, member) \
->>> +    for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), 
->>> member); \
->>> +         (pos); \
->>> +         (pos) = rb_entry_safe(rb_prev(&(pos)->member), 
->>> typeof(*(pos)), member))
->>> +
->>> +/**
->>> + * rbtree_for_each_entry_safe - iterate in-order over rb_root safe 
->>> against removal
->>> + *
->>> + * @pos:    the 'type *' to use as a loop cursor
->>> + * @n:        another 'type *' to use as temporary storage
->>> + * @root:    'rb_root *' of the rbtree
->>> + * @member:    the name of the rb_node field within 'type'
->>> + */
->>> +#define rbtree_for_each_entry_safe(pos, n, root, member) \
->>> +    for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), 
->>> member), \
->>> +         (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), 
->>> typeof(*(pos)), member) : NULL; \
->>> +         (pos); \
->>> +         (pos) = (n), \
->>> +         (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), 
->>> typeof(*(pos)), member) : NULL)
->>> +
->>> +/**
->>> + * rbtree_reverse_for_each_entry_safe - iterate in reverse in-order 
->>> over rb_root
->>> + * safe against removal
->>> + *
->>> + * @pos:    the struct type * to use as a loop cursor.
->>> + * @n:        another struct type * to use as temporary storage.
->>> + * @root:    pointer to struct rb_root to iterate.
->>> + * @member:    name of the rb_node field within the struct.
->>> + */
->>> +#define rbtree_reverse_for_each_entry_safe(pos, n, root, member) \
->>> +    for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), 
->>> member), \
->>> +         (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), 
->>> typeof(*(pos)), member) : NULL; \
->>> +         (pos); \
->>> +         (pos) = (n), \
->>> +         (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), 
->>> typeof(*(pos)), member) : NULL)
->>> +
->> Not really a fan of these. That's typically a sign you're doing it
->> wrong. Full tree iteration is actually slower than linked list.
->
-> I understand your concern about full-tree iteration being slower than 
-> a list walk. In our current use cases, though,
->
-> the cost is not on the hot path and performance is comparable or even 
-> better to list traversal. We occasionally need
->
-> to walk the full set of blocks to perform specific operations, and 
-> these macros make that code simpler and
->
-> less error-prone. They aren't meant to replace targeted lookups or 
-> bounded walks, just to cover where a full
->
-> traversal is necessary.
->
-> Thanks,
->
-> Arun.
->
+On 9/8/2025 4:35 PM, Aaron Lu wrote:
+> @@ -13151,10 +13161,13 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+>  {
+>  	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+>  
+> -	if (cfs_rq_throttled(cfs_rq))
+> -		return;
+> -
+> -	if (!throttled_hierarchy(cfs_rq))
+> +	/*
+> +	 * If a task gets attached to this cfs_rq and before being queued,
+> +	 * it gets migrated to another CPU due to reasons like cpuset change,
+> +	 * we need to make sure this cfs_rq stays on leaf cfs_rq list to
+> +	 * have that removed load decayed or it can cause faireness problem.
+> +	 */
+> +	if(!cfs_rq_pelt_clock_throttled(cfs_rq))
+
+          ^ Can you also add a space after the "if" here.
+
+>  		list_add_leaf_cfs_rq(cfs_rq);
+
+-- 
+Thanks and Regards,
+Prateek
 
 
