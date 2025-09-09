@@ -1,72 +1,94 @@
-Return-Path: <linux-kernel+bounces-806974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156C6B49E49
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18B1B49E4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904BF1BC0112
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA94445073
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B592420102C;
-	Tue,  9 Sep 2025 00:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/LlhzMQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD931FECBA;
+	Tue,  9 Sep 2025 00:47:26 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0AC1E1DF2;
-	Tue,  9 Sep 2025 00:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E3817A5BE;
+	Tue,  9 Sep 2025 00:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757378739; cv=none; b=LNbbo4bTb82RiyrbUwcND6kAaKeTmwFFkDUX2Q7PfRMFVLUMwOD+tQ/mWiMihkX5JkWHVL79DiAAQwy12MI3EJ6aDs56WwUVe6TWp/FYUITyfZO3drpj1QMP1Do5aummkNR+GDXK8hHXPFtpcVVtm/KdvWHF2T87NGarZKvv4QU=
+	t=1757378845; cv=none; b=oOREr6dtTZImbb6pcTIf1s71v+wU/pO1PonQIkD2h+IRa9t60kku7nWfY9zVXYOpujPFi6dtLlBkPi22e79wXAuFbRr1DadjFCqeYmpqb5Ngd1EJ0OaGtKo+Oo7TnagNT+4nq9q2KxtsH7+yW3Ww95YrRMEIlJ8i+AJLRF92H+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757378739; c=relaxed/simple;
-	bh=+Efd7Q9KK89VwesTdbeAg90d2mnJsT5Cs8SX2mRWGjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ST8e3+/5pd06VeNghdv53RGJAavM1f3OAKFZfRdMcwEprdGES6X6qDI9jd1X4io0EPPvrYs0ZkRnxSCxMBd20X8lOkXnwpyd9/+4GnHudNqgIbCTOqnHVejhN7OoV3dUw3lfqIzYyuvQcZq0HyLS4/Ha5uT7dqaYBuIsh7cimt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/LlhzMQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E44EC4CEF1;
-	Tue,  9 Sep 2025 00:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757378738;
-	bh=+Efd7Q9KK89VwesTdbeAg90d2mnJsT5Cs8SX2mRWGjw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W/LlhzMQSpC8OXIstyUbYTXxpGgGVGvs5Mm/l6ED5bIGKNX9QPDu1LF8geOY82qai
-	 Ju8dykVHqKY1jPx4mtHcbdfyPg1IR++RP++1LWmv5tfwuld4r4Y0ZP0FjtsBJ71up4
-	 MtyyLoACFtA6NrmXxtXgItpD+eByRNSSLLDw5P3XXCyuI0i/ph8oQbetrwscMEHDZh
-	 J7NWispQu9BL5vO5RAH1PnXu/68lPnRJVEz+HOlY2UsJhTrjv9bySVM2VA7qmrZVH7
-	 ukOSnHgp2TIthj4NwIq6DFaORL3W0SZwZ3qKpOPtzd2igU9Jgek1OBh+Fxr9YQa2SW
-	 3n5zEgJxsrT1w==
-Date: Mon, 8 Sep 2025 17:45:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: netdev@vger.kernel.org, Igor Russkikh <irusskikh@marvell.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: atlantic: make RX page order tunable via module
- param
-Message-ID: <20250908174537.6d6af847@kernel.org>
-In-Reply-To: <tencent_E71C2F71D9631843941A5DF87204D1B5B509@qq.com>
-References: <tencent_E71C2F71D9631843941A5DF87204D1B5B509@qq.com>
+	s=arc-20240116; t=1757378845; c=relaxed/simple;
+	bh=H8CU6DSuTlyKuz+uXCF5+9KV7UMV6QpKxqjSFd705lU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lPtb2d0bQycuQD/DSqUEnmbNiE+14RYcxpbv8HFhyRVuJdewKzNV2wWah2KfTGcjaMoZVH2SujeFgkzqLnj9I+BZq3u/r8e08QLpxoamn1S14mCun80FUoY2aiZ+jkhp11j8RGDe9mM59Nl+nOWFAJTYmWfKyROysDNRBTn3Hcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8308ce108d1611f0b29709d653e92f7d-20250909
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:abcc27a3-7beb-415a-b184-63a807d6f293,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:da68fd040d7950670556a72e52599e09,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8308ce108d1611f0b29709d653e92f7d-20250909
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1981216402; Tue, 09 Sep 2025 08:47:07 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 58A05E009007;
+	Tue,  9 Sep 2025 08:47:07 +0800 (CST)
+X-ns-mid: postfix-68BF790B-1929853
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 3578EE009006;
+	Tue,  9 Sep 2025 08:47:06 +0800 (CST)
+Message-ID: <2571f264-62ea-4e2c-96f0-a61b6f7dcde7@kylinos.cn>
+Date: Tue, 9 Sep 2025 08:47:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] cpufreq: intel_pstate: Rearrange freq QoS updates
+ using __free()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>
+References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+ <3026597.e9J7NaK4W3@rafael.j.wysocki>
+ <a6104009-d0ad-4d76-9079-0e81e74cd32a@kylinos.cn>
+ <CAJZ5v0i+GBpv_mGnYMbNjr2d1pvXJ_NqYCp8+pgOTNpCTuue8A@mail.gmail.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <CAJZ5v0i+GBpv_mGnYMbNjr2d1pvXJ_NqYCp8+pgOTNpCTuue8A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Sat,  6 Sep 2025 21:54:34 +0800 Yangyu Chen wrote:
-> On systems like AMD Strix Halo with Thunderbolt, RX map/unmap operations
-> with IOMMU introduce significant performance overhead, making it difficult
-> to achieve line rate with 10G NICs even with TCP over MTU 1500. Using
-> higher order pages reduces this overhead, so this parameter is now
-> configurable.
 
-Please convert this driver to use page_pool instead
+=E5=9C=A8 2025/9/9 02:10, Rafael J. Wysocki =E5=86=99=E9=81=93:
+>> I also noticed that in this driver some places use one naming style an=
+d
+>> others use another, so it might be worth unifying the style here.
+> Well, I'm not sure about this.
+>
+> I guess it may be confusing sometimes, but then I'm not sure if that
+> justifies the code churn that would result from changing it.
+
+Agreed =E2=80=94 there are quite a lot of places that would need to be ch=
+anged,=20
+and perhaps it=E2=80=99s better to keep the current style as is.
+
 
