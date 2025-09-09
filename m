@@ -1,188 +1,202 @@
-Return-Path: <linux-kernel+bounces-808343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A77BB4FE96
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495C3B4FE8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3EC161A7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403691B24042
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B842C231836;
-	Tue,  9 Sep 2025 14:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cWzlZ2CX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728472264A8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF332252E;
+	Tue,  9 Sep 2025 14:02:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B08A18C2C;
+	Tue,  9 Sep 2025 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426529; cv=none; b=UDGFBtPeyWyNHfw1wkLP/LyhnNdDOQBT20pzxHRGtPV0S2IpRAYpSAYoqRPwM1bnzY2N42FlnfZqTbJbHooqoTjgoPeIZolmREHVDq3raIjlsxu7GqY9eqsQEBAYOFb4Yr/DC26/L57olc3r+CTXTBskPCiAuAaK8UTZBYZSx9U=
+	t=1757426536; cv=none; b=gVgdgW6iCnawfOB5d/EKZZ4XzMqYPYUP52zF1CEeuvMdpOLdiXm/IBgcxlbS7FAjzPW8i0VlM0osV2TEor8267ZbFgAr9At5e4mi5+7mGgu6gDTPtISpdbhjFUZW8M6E5RWkUqwmbHgLiaW69FQ3gg67zY7t3roYK+z65os87qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426529; c=relaxed/simple;
-	bh=SKFCckqprHkjCOnclksylqPnY+SvrnqhRqe7pMrdZDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDAvOseLD1u6XULRx1ZFmLfpvqBLyImfymdtPbhI7TaMi0yrpuif00aWkj2sMHS+x22gP5NCv7/AsNdGEBEy+DA9BdKYxdOZwIUIKO+OZr/LFee8HKMCzbnuuFoVCiVHIk6wc1+LLw7BbLwy3IZ77yqOWxExLVy1mLvnZOMM1iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cWzlZ2CX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LS2D030484
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 14:02:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=9B1kQb1T0UY6CATcPtK/c+w8
-	8VXB7tYmHIDUsbEh6cw=; b=cWzlZ2CXdbwfse41ZXIbaRErWR8Y5sCPurxEUwVd
-	YWhAZCgktvv9YMAF6NVErZCYsp1wkWLw+AX3mLOAo7nNNEXsOPRuxBA1VJGk2eEa
-	UyC/bLydqe3gsWTPcRUP0fV1RHDvi/Lp4ACdRc+TcNIJMOjs+cY2iRZ3RNW4yt/y
-	5wJroWh6r/H/SLaI1jougP7sAQPt1nCmf5+049v2eAW+M3oKg7PBkMbdX5FPElTj
-	mGDHKrmRpqPd4362UsgaexfB+3WroQeMUnnCyEwuU5JQUGmXemksDKMGvZdi9U7D
-	+XAyQ2bCW64NRW6Sz4Xl84P4uPtKtvK4S+rurdTXRCljeQ==
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490c9j8h7g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:02:02 +0000 (GMT)
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-534f7428cd7so1364002137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426521; x=1758031321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9B1kQb1T0UY6CATcPtK/c+w88VXB7tYmHIDUsbEh6cw=;
-        b=XdflABjph0b+Yt/E5aRHmyPIF4j5x+xw6mSh5qa2JF35wjwRp6q1qELD5nFQV0M1z9
-         vtGN25XnDxkAubs1pWj8sIQASex40gJ92y6GCH6iJsjQ7U7Re7KVduS+R0E9dzQ1Qgsl
-         wMji4nGtdpY9yeKTr+2am9ybflvykkYE/R7vPS+INXm4+Xzxho8ykVrawwqt/tJEU1Ic
-         qSOx3L8pKVnHaLTrIh1PWJwzssNwiunvlsQvBu8//kk0+8LTQxViItSzs3iZKVqsmDm9
-         WS5fKmIX/u38gAEo7cG47Cp2gzWXdDLKZHk7tBfAsKSPYRsGzI54lr4kjPHkPXrWjieo
-         yQLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt0Fr+NruB0pYhJhsagFQzfMscEb7pHVXgoarXCqSyJlk7WZAMPTvFnq3a2q9S0BW3bhMgVcE0LKxGHoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9x9uzcJcmKcFQ8HGi0gBmxTsrweBwjwklrfJeNgyqyOETvlU3
-	lqVIT7LI0Yxo05OeeRKqry6MfWk2RuFY8T/G5vOj6HZJPC05d3IN+zP9elid7lffQh0lWkYujyw
-	/bCzAZso0O53YQkmstN3AEZF9nNjmgCSjS3+g+kRDKjeJlJofn4p3AY3BYLmFkELiNZ0=
-X-Gm-Gg: ASbGnctjAD5N+Gvg+uAWkmT06pPiVtVtv9suKmSp4CUUiFFqekxLgwugzizUKcveqBL
-	JJVUOg2xwXf5SlnOPoOEgNcGD01fqaH0xXdkRRjCFLmTaDWNjrwKYRm5UW7BewwIoYHNOY0CPI5
-	BLkZ2pUy2L6PmpRmfcdsYoyMfUlec+yUecxHofjO6splGvGdalwQvIJO+1i4cCfBreyQxkKHtaK
-	2wBdktNdDN+5QUVaT3BB2mNqyE1oexjvGjy5qE1qaXT0EA4Qy3O+5p25uWo5gfEncB4zJBtA46l
-	yaNJAPkq8vj05NM3BiTzVYH+wZDyMgII/GfQE8x9IFAAxyF5cOmp9yXfZLdQKoB6feS0asDD/nx
-	oqsMTVksYlzmizRNzQVhjddGE95aG5d9FqvQVYpMtYS/JIPDduMgf
-X-Received: by 2002:a05:6102:644a:b0:4fc:eda:abd8 with SMTP id ada2fe7eead31-53d13a4ae5dmr2295357137.24.1757426520476;
-        Tue, 09 Sep 2025 07:02:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEL84NEi5zzLfmvA6uWURA/n95r+KLG5Ks00UXmw2/s0p20cMz2peYilnoYQd9/RRTYJAcA+Q==
-X-Received: by 2002:a05:6102:644a:b0:4fc:eda:abd8 with SMTP id ada2fe7eead31-53d13a4ae5dmr2295275137.24.1757426519750;
-        Tue, 09 Sep 2025 07:01:59 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56818067eb7sm537728e87.106.2025.09.09.07.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 07:01:58 -0700 (PDT)
-Date: Tue, 9 Sep 2025 17:01:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: bryan.odonoghue@linaro.org, mchehab@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
-        cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
-        will@kernel.org, linux-arm-kernel@lists.infradead.org,
-        quic_svankada@quicinc.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ravi Shankar <quic_rshankar@quicinc.com>,
-        Vishal Verma <quic_vishverm@quicinc.com>
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: monaco-evk-camera: Add DT overlay
-Message-ID: <w54mpkzk7irjb7m5jiouxhj77czj4ex72oqioaph4o5qhcsay2@qjolctktsu4s>
-References: <20250909114241.840842-1-quic_vikramsa@quicinc.com>
- <20250909114241.840842-4-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1757426536; c=relaxed/simple;
+	bh=4Pm1oH3Z6YWtUDcCjbOjmwYAPf58GDgib8EzmVbHOO8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hLCpGTirUh5wLYK3MSx6UWEjV3dSnSUYRZ8aqYGf6Skof2vjSE2rHYI9cq71gOir8sb1MIWdoZXZT9eQ3FvlqTBlNPKd7hECeN8ebRNw5NEVnwM9XLN9RZa8ZAhX0ZF3F1CGTrbzdiZQMecTdNW9iqhiuTPJ+GDKzCozSjRYqr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06A861424;
+	Tue,  9 Sep 2025 07:02:06 -0700 (PDT)
+Received: from [10.44.160.77] (e126510-lin.lund.arm.com [10.44.160.77])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EAB473F66E;
+	Tue,  9 Sep 2025 07:02:06 -0700 (PDT)
+Message-ID: <5681b377-baa7-4cd4-8e23-7314d58a7b5b@arm.com>
+Date: Tue, 9 Sep 2025 16:02:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909114241.840842-4-quic_vikramsa@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMiBTYWx0ZWRfX1YbvLk/2riil
- RBZmNfPYMJv1U02EMBOe0Y+03eoZPgcljVXOQjcowijdrvIsZN0AUFmzQ/d45H3s7MDLcdkXvfx
- BdcusDMpFH1NXRjwUe8R4xKsMDprsVRFgZDagaKvERd7cqiDO26oqLNtL74jJ6AJr4tpZrJVhix
- nZgjXdzz639am47h0iBN3W0tpx+bCirOx+9vUhXPOCTTrhz/ZQIzIUmAMB0cLXYujACd+GGCnlL
- DH4+2Qg1DKzbtVmzfDrI+FtzrCO4yEiVmkZsyhxheWChHoGDd4iHEekSaC3ZrRBZD715GZMeBiz
- X8K+QJFX1J5aIHfQmQ7BEiP9yXOtTepCbeoaJ/5OKUkwwIt8LS/RxX2OVs3LuZ7jXMKNFi9Owwj
- 5b/78dR9
-X-Proofpoint-ORIG-GUID: JRcspxZaF3SbCs-GHdxWFIP0XO7x_OjH
-X-Authority-Analysis: v=2.4 cv=PpOTbxM3 c=1 sm=1 tr=0 ts=68c0335a cx=c_pps
- a=P2rfLEam3zuxRRdjJWA2cw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=xh7zYxaUke6ZEiU0VLUA:9 a=CjuIK1q_8ugA:10
- a=ODZdjJIeia2B_SHc_B0f:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: JRcspxZaF3SbCs-GHdxWFIP0XO7x_OjH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060022
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: David Hildenbrand <david@redhat.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+Content-Language: en-GB
+In-Reply-To: <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 05:12:40PM +0530, Vikram Sharma wrote:
-> From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> 
-> Enable IMX577 sensor using the CCI1 interface on Monaco EVK.
-> Camera reset is controlled through an I2C expander,
-> and power supply is managed via tlmm GPIO74.
+On 09/09/2025 15:49, Kevin Brodsky wrote:
+> On 09/09/2025 13:54, David Hildenbrand wrote:
+>> On 09.09.25 13:45, Alexander Gordeev wrote:
+>>> On Tue, Sep 09, 2025 at 12:09:48PM +0200, David Hildenbrand wrote:
+>>>> On 09.09.25 11:40, Alexander Gordeev wrote:
+>>>>> On Tue, Sep 09, 2025 at 11:07:36AM +0200, David Hildenbrand wrote:
+>>>>>> On 08.09.25 09:39, Kevin Brodsky wrote:
+>>>>>>> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
+>>>>>>> (taking and returning no value). This is proving problematic in
+>>>>>>> situations where leave() needs to restore some context back to its
+>>>>>>> original state (before enter() was called). In particular, this
+>>>>>>> makes it difficult to support the nesting of lazy_mmu sections -
+>>>>>>> leave() does not know whether the matching enter() call occurred
+>>>>>>> while lazy_mmu was already enabled, and whether to disable it or
+>>>>>>> not.
+>>>>>>>
+>>>>>>> This patch gives all architectures the chance to store local state
+>>>>>>> while inside a lazy_mmu section by making enter() return some value,
+>>>>>>> storing it in a local variable, and having leave() take that value.
+>>>>>>> That value is typed lazy_mmu_state_t - each architecture defining
+>>>>>>> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
+>>>>>>> For now we define it as int everywhere, which is sufficient to
+>>>>>>> support nesting.
+>>>>> ...
+>>>>>>> {
+>>>>>>> + lazy_mmu_state_t lazy_mmu_state;
+>>>>>>> ...
+>>>>>>> - arch_enter_lazy_mmu_mode();
+>>>>>>> + lazy_mmu_state = arch_enter_lazy_mmu_mode();
+>>>>>>> ...
+>>>>>>> - arch_leave_lazy_mmu_mode();
+>>>>>>> + arch_leave_lazy_mmu_mode(lazy_mmu_state);
+>>>>>>> ...
+>>>>>>> }
+>>>>>>>
+>>>>>>> * In a few cases (e.g. xen_flush_lazy_mmu()), a function knows that
+>>>>>>>      lazy_mmu is already enabled, and it temporarily disables it by
+>>>>>>>      calling leave() and then enter() again. Here we want to ensure
+>>>>>>>      that any operation between the leave() and enter() calls is
+>>>>>>>      completed immediately; for that reason we pass
+>>>>>>> LAZY_MMU_DEFAULT to
+>>>>>>>      leave() to fully disable lazy_mmu. enter() will then
+>>>>>>> re-enable it
+>>>>>>>      - this achieves the expected behaviour, whether nesting
+>>>>>>> occurred
+>>>>>>>      before that function was called or not.
+>>>>>>>
+>>>>>>> Note: it is difficult to provide a default definition of
+>>>>>>> lazy_mmu_state_t for architectures implementing lazy_mmu, because
+>>>>>>> that definition would need to be available in
+>>>>>>> arch/x86/include/asm/paravirt_types.h and adding a new generic
+>>>>>>>     #include there is very tricky due to the existing header soup.
+>>>>>> Yeah, I was wondering about exactly that.
+>>>>>>
+>>>>>> In particular because LAZY_MMU_DEFAULT etc resides somewehere
+>>>>>> compeltely
+>>>>>> different.
+>>>>>>
+>>>>>> Which raises the question: is using a new type really of any
+>>>>>> benefit here?
+>>>>>>
+>>>>>> Can't we just use an "enum lazy_mmu_state" and call it a day?
+>>>>> I could envision something completely different for this type on s390,
+>>>>> e.g. a pointer to a per-cpu structure. So I would really ask to stick
+>>>>> with the current approach.
+> This is indeed the motivation - let every arch do whatever it sees fit.
+> lazy_mmu_state_t is basically an opaque type as far as generic code is
+> concerned, which also means that this API change is the first and last
+> one we need (famous last words, I know). 
+>
+> I mentioned in the cover letter that the pkeys-based page table
+> protection series [1] would have an immediate use for lazy_mmu_state_t.
+> In that proposal, any helper writing to pgtables needs to modify the
+> pkey register and then restore it. To reduce the overhead, lazy_mmu is
+> used to set the pkey register only once in enter(), and then restore it
+> in leave() [2]. This currently relies on storing the original pkey
+> register value in thread_struct, which is suboptimal and most
+> importantly doesn't work if lazy_mmu sections nest. With this series, we
+> could instead store the pkey register value in lazy_mmu_state_t
+> (enlarging it to 64 bits or more).
 
-Why is done as an overlay? Is it a seprate mezzanine?
+Forgot the references, sorry...
 
-> 
-> Co-developed-by: Ravi Shankar <quic_rshankar@quicinc.com>
-> Signed-off-by: Ravi Shankar <quic_rshankar@quicinc.com>
-> Co-developed-by: Vishal Verma <quic_vishverm@quicinc.com>
-> Signed-off-by: Vishal Verma <quic_vishverm@quicinc.com>
-> Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile             |  4 +
->  .../boot/dts/qcom/monaco-evk-camera.dtso      | 98 +++++++++++++++++++
->  2 files changed, 102 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso b/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> new file mode 100644
-> index 000000000000..5831b4de6eca
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +/* Camera Sensor overlay on top of Monaco EVK Core Kit */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +&{/} {
+[1]
+https://lore.kernel.org/linux-hardening/20250815085512.2182322-1-kevin.brodsky@arm.com/
+[2]
+https://lore.kernel.org/linux-hardening/20250815085512.2182322-19-kevin.brodsky@arm.com/
 
-Is this a different product than just Monaco EVK?
-
-
-> +	vreg_cam1_2p8: vreg_cam1_2p8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vreg_cam1_2p8";
-> +		startup-delay-us = <10000>;
-> +		enable-active-high;
-> +		gpio = <&tlmm 74 GPIO_ACTIVE_HIGH>;
-> +	};
-> +};
-> +
-
--- 
-With best wishes
-Dmitry
+> I also considered going further and making lazy_mmu_state_t a pointer as
+> Alexander suggested - more complex to manage, but also a lot more flexible.
+>
+>>>> Would that integrate well with LAZY_MMU_DEFAULT etc?
+>>> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
+>>> want to use it - at least that is how I read the description above.
+>>>
+>>> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
+>>> that do not follow this pattern, and it looks as a problem to me.
+> This discussion also made me realise that this is problematic, as the
+> LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
+> convenience, not for generic code (where lazy_mmu_state_t should ideally
+> be an opaque type as mentioned above). It almost feels like the kasan
+> case deserves a different API, because this is not how enter() and
+> leave() are meant to be used. This would mean quite a bit of churn
+> though, so maybe just introduce another arch-defined value to pass to
+> leave() for such a situation - for instance,
+> arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
+>
+>> Yes, that's why I am asking.
+>>
+>> What kind of information (pointer to a per-cpu structure) would you
+>> want to return, and would handling it similar to how
+>> pagefault_disable()/pagefault_enable() e.g., using a variable in
+>> "current" to track the nesting level avoid having s390x to do that?
+> The pagefault_disabled approach works fine for simple use-cases, but it
+> doesn't scale well. The space allocated in task_struct/thread_struct to
+> track that state is wasted (unused) most of the time. Worse, it does not
+> truly enable states to be nested: it allows the outermost section to
+> store some state, but nested sections cannot allocate extra space. This
+> is really what the stack is for.
+>
+> - Kevin
 
