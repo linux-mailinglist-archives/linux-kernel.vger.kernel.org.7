@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-808150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065FCB4FAD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DE6B4FADA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D83A18809C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3AA188C6A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE79337684;
-	Tue,  9 Sep 2025 12:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13A123D7FB;
+	Tue,  9 Sep 2025 12:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p+NfiNmg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4jDLiLI7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p+NfiNmg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4jDLiLI7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S6knxmHL"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5405F23ABB3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3252518DB16
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757420981; cv=none; b=G98vQ0YA2fOQCTSJE9BuAv3hzv4pQNlrTJXvZ+Tx4imTQDZNazZWRaOylIX+y8y2pRsqEWxQj/rMBfMj600LYhsCtoTdqQkFJeErzHMw3MFQXICPzSbqifFzO228vrQbF9mIUBUaXRcasExaZFEYV9EMrFMwB4ANvu0SkocIjWE=
+	t=1757421041; cv=none; b=JxIi9jWbmMLxFBmnhp5gKEBOec6oyLoa2bnB6PI98PNaRjAa//ZIzLVY8f9pCvVvzGpjBDhzIow6ndveESadZ1QLHNZeHoOdauCxKy8IszzFgePc5RfZK5kLevxnt7Q3AfS3DNWqjU1vOXtO7utceRlyeSoS0Keuug7iy4Ww8qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757420981; c=relaxed/simple;
-	bh=Ka59ykaPW+MKDvKTX83Y6tNA1ic0Se9zGgz8nQfnpS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XWIkBqq6uzsJRFxXFBk64Th2pbxAjEt2wPxdI2U44J3k5/SSdO1uhiKN4sVyI/asqrx49TQ3IwHxORKKCR7w+oEKX+ro19BRfNZtNfWMvEHAwhcvjZdMCkA2v/azUywkx6QfWIFPDFYwDhQSuqqpY1ZG4gZtV4nFkDcGBltuaO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p+NfiNmg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4jDLiLI7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p+NfiNmg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4jDLiLI7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2CF962A610;
-	Tue,  9 Sep 2025 12:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757420977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA3OSl7wMdLOgZRMDC7dY66FMH8ogo6BWB6QlPmnqFI=;
-	b=p+NfiNmgJ0TY7j4tNFRlmO8d6JY1jV/OC7M9f6wWmZj31u7taAxUSF9nAquLGxbfTYrxuo
-	AAHq1SiyqEX90oYhCKWTAMvguCRGyhK+6zMTjcQLnRIPXlW3j3D12ny31nbqAsUnYGzlu+
-	fJdzV5QPweXAmp88C9DT82P9wbBENm4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757420977;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA3OSl7wMdLOgZRMDC7dY66FMH8ogo6BWB6QlPmnqFI=;
-	b=4jDLiLI7pga/yx8KNekLXvF1VYbgr9ekQsLk6L/bj9ytAMiNTY4RMHIXOgGCNAu+4kXfqV
-	enbmnnyQrlz6BADg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=p+NfiNmg;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4jDLiLI7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757420977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA3OSl7wMdLOgZRMDC7dY66FMH8ogo6BWB6QlPmnqFI=;
-	b=p+NfiNmgJ0TY7j4tNFRlmO8d6JY1jV/OC7M9f6wWmZj31u7taAxUSF9nAquLGxbfTYrxuo
-	AAHq1SiyqEX90oYhCKWTAMvguCRGyhK+6zMTjcQLnRIPXlW3j3D12ny31nbqAsUnYGzlu+
-	fJdzV5QPweXAmp88C9DT82P9wbBENm4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757420977;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA3OSl7wMdLOgZRMDC7dY66FMH8ogo6BWB6QlPmnqFI=;
-	b=4jDLiLI7pga/yx8KNekLXvF1VYbgr9ekQsLk6L/bj9ytAMiNTY4RMHIXOgGCNAu+4kXfqV
-	enbmnnyQrlz6BADg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1DFCA1388C;
-	Tue,  9 Sep 2025 12:29:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aOFgBrEdwGjHSQAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Tue, 09 Sep 2025 12:29:37 +0000
-Date: Tue, 9 Sep 2025 14:29:36 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>, Yi Zhang <yi.zhang@redhat.com>, 
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] nvmet-fc: fixes for blktests tests
-Message-ID: <4de56010-25fb-400c-ac44-c21ebc6d58b0@flourine.local>
-References: <20250902-fix-nvmet-fc-v3-0-1ae1ecb798d8@kernel.org>
+	s=arc-20240116; t=1757421041; c=relaxed/simple;
+	bh=TfgD91280mBYMbtyc2gQAhw5K8G243a5cAzgwqvOrWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GZMBx8Ye+iYiRF/OR9dELIlaFcNGLA95+hCrQJH8UNqo74wcS2S66ByQ+9P1UXxgmwxASh9lNhtkcfFD3wspY6iXM8AmyovM7tmj1DKSAds+JWRFyiobqpKsJqo4i1UuzwJvQQLRQ5ukPEr06siHBuiyiZuBOuyHQGKXyUrmX50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=S6knxmHL; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6237202020bso5187592a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757421037; x=1758025837; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGGblSmY23n3+zeJrFP+XTBfpalkEjJ+yTGcmc0kj3M=;
+        b=S6knxmHLDTOOkGkG+JM6Tl0al/mGsZwySLZ5FT/NOZINOuXTSAx3h9kkiaIge2Fhw3
+         HSHTRbHSZgSccsG26mfcItetDTkQdwYs0IpayX5cagSjgXLy+YW8A86/SJ1wvkqiFthn
+         oPdGwY3himbP0thsAgx5edWaOLVpD8u2iH6xQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757421037; x=1758025837;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gGGblSmY23n3+zeJrFP+XTBfpalkEjJ+yTGcmc0kj3M=;
+        b=r5nltUw8zkX5j0er4OCsLZbeIpWc3jF+R2CoxnI9hxzN0dx4p5DsG1wXJauutzxYsj
+         WZisfp+jxYloGcb9kN2oEC4PRtCBxbuolt/Cpk3fEy21d5wkcJMgZ68ychPVe3qA+2x4
+         o1sc9cqViqKaONXdUHDcByAptrf8IKCYxDLKxsjjWD60m3LBi0NlUbx/9x6m7+JDT0sT
+         F2YxsayyTI6xP8sg7qaBZbEjIEOnoG6+iDTiReUXWh5S+m8DhxwvW6qsBa4PAU+j9r7f
+         VFFOitYF7ZjXOYiYs4aatpRh/RAJjUU1+Kjtz9cdkDH3ywyFq+352/NFkWkuLMdKN7uu
+         yIVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ2B3aYIZoHSPQVZ96n3EezRsRhZo/KAms/j+LsKAeEL9+VgV3cwaxu7MvyNOreoohR0jQMe9ptbtWnHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE+Yrp7lx0mXqNtQEHloLHEaMKV3vBhliPP3kQzkU0QyDbvePZ
+	KrnAh2wMXOrfWMRNjAtUTPHCeJmI5QOAEjjvIGQWlj9yaAtBcRuura0kvHT9F943hQ==
+X-Gm-Gg: ASbGncsRb8FCv5jgEXCgpprzfL9xypkPXuX8JXglppeF91O8ry5mfUwt+08D7XMMGEH
+	B7Caeb+YmM77mIiusyjGMmx0Byo2SOaxIpsCU9niQF/lVyw2HMuhmqDqFRpJKHcWJtln28eyB4O
+	qRnpgfVt+tndqXMcdftpQJyUyIGGFaN44FRri6XS8h54L6FZSFCt9mwFXQSblDyQg9Myg04bw1i
+	h+1UNS7KkbzPzcLf34fjZE39xdHM9AKOtwfa0MTsDrK1PjHOiAumNDD5FriojYISu/6fAwKztA1
+	OW+M9dPMH8W8MPl6SmJtDyHJqahtgDndHkA6WVFP1Y2qKxMYOqqu7jq+G7Xt7gBuKsXhLX4JUmb
+	TMPww1fVzqyBo7f2VgkcGr/2ngSdg+1J6ZBVaHWjzE8KLFvmkrNnOlyG1720DF/ZDzqgD4snGuk
+	impDop6rzb1QTw8JM=
+X-Google-Smtp-Source: AGHT+IEP5lq99tnWBWbz1GGVF0Gt4go+YIyrowIZeG7BiR/j4Mlu3jscXCr+tcpjkuM3py/ouJ5XJQ==
+X-Received: by 2002:a17:907:9342:b0:afe:e745:c3b with SMTP id a640c23a62f3a-b04b13d20dfmr1011225366b.12.1757421037456;
+        Tue, 09 Sep 2025 05:30:37 -0700 (PDT)
+Received: from akuchynski.c.googlers.com.com (240.225.32.34.bc.googleusercontent.com. [34.32.225.240])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm2409702166b.12.2025.09.09.05.30.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 05:30:36 -0700 (PDT)
+From: Andrei Kuchynski <akuchynski@chromium.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev
+Cc: Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Andrei Kuchynski <akuchynski@chromium.org>
+Subject: [PATCH RFC 0/5] USB Type-C alternate mode selection
+Date: Tue,  9 Sep 2025 12:30:23 +0000
+Message-ID: <20250909123028.2127449-1-akuchynski@chromium.org>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902-fix-nvmet-fc-v3-0-1ae1ecb798d8@kernel.org>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2CF962A610
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 12:21:59PM +0200, Daniel Wagner wrote:
-> I've added the other two patches I've recenetly send out to this series
-> for getting blktests with FC more stable. So this series containts all
-> the latest versions of the patches flying around.
-> 
-> What is missing are the changes for nvme/041. These patches need some
-> more work and more review.
+This patch series introduces a flexible mechanism for USB Type-C mode
+selection, enabling into USB4 mode, Thunderbolt alternate mode, or
+DisplayPort alternate mode.
 
-ping
+New sysfs `mode_selection` attribute is exposed to provide user control
+over mode selection. It triggers an alternate mode negotiation.
+The mode selection logic attempts to enter prioritized modes sequentially.
+A mode is considered successfully negotiated only when its alternate mode
+driver explicitly reports a positive status. Alternate mode drivers are
+required to report their mode entry status (either successful or failed).
+If the driver does not report its status within a defined timeout period,
+the system automatically proceeds to attempt entry into the next preferred
+mode.
+
+This series was tested on an Android OS device with kernel 6.16.
+This series depends on the 'USB Type-C alternate mode priorities' series:
+https://lore.kernel.org/all/20250905142206.4105351-1-akuchynski@chromium.org/ 
+
+Andrei Kuchynski (5):
+  usb: typec: Implement mode selection
+  usb: typec: Expose mode_selection attribute via sysfs
+  usb: typec: Report altmode entry status via callback
+  usb: typec: ucsi: displayport: Propagate DP altmode entry result
+  platform/chrome: cros_ec_typec: Propagate altmode entry result
+
+ Documentation/ABI/testing/sysfs-class-typec  |  11 +
+ drivers/platform/chrome/cros_ec_typec.c      |   9 +
+ drivers/platform/chrome/cros_typec_altmode.c |  32 +-
+ drivers/platform/chrome/cros_typec_altmode.h |   6 +
+ drivers/usb/typec/altmodes/displayport.c     |  19 +-
+ drivers/usb/typec/altmodes/thunderbolt.c     |  10 +
+ drivers/usb/typec/class.c                    |  37 ++
+ drivers/usb/typec/class.h                    |   4 +
+ drivers/usb/typec/mode_selection.c           | 345 +++++++++++++++++++
+ drivers/usb/typec/mode_selection.h           |  25 ++
+ drivers/usb/typec/ucsi/displayport.c         |  10 +-
+ include/linux/usb/typec_altmode.h            |  11 +
+ include/linux/usb/typec_dp.h                 |   2 +
+ include/linux/usb/typec_tbt.h                |   3 +
+ 14 files changed, 516 insertions(+), 8 deletions(-)
+
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
