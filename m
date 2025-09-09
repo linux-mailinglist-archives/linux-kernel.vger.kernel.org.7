@@ -1,286 +1,255 @@
-Return-Path: <linux-kernel+bounces-809064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BD3B50814
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:24:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0224CB50812
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771983AD39E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04791C633EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A43C2594B9;
-	Tue,  9 Sep 2025 21:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1B7257ACF;
+	Tue,  9 Sep 2025 21:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="S5wTqYtM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CnNoO4VJ"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WMGyhMJu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F232B221F15;
-	Tue,  9 Sep 2025 21:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757453091; cv=none; b=XwnZ2JM/7T3C2kHCVSabJYbI1sF+3aiUH4FiqgHQycgO4TXMgW/amMjBEY5Q/uHkMJAwEEFnS+buCfClhx1QLNVOLFtdfmxRV/ucokliT2QvsmaN4D4QDxgfkS16Am57d9jps+gyDqWv3L5DANdNFrvy0fhns6XnzZRT2CqrUCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757453091; c=relaxed/simple;
-	bh=mlFK0XXQDuGFAw4opCeOodFgemwUqDJaf+3CNFBfQTU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=TSkgGhWXyz+riacXH0S5Oai5Vc1HaNbhtDL0+iPxxP08F/afb4TjoT1ZuimqCXT3Rc3bSZvIBzp18Dk1QTbhZOrpTZOVj3OIu6CQ5H3wsh2OuFgfzA7Nc+TDvBLtO6A8y+CUd78bDTTMK+viblS2b6W6dTNHXWL/FLQosbN1TWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=S5wTqYtM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CnNoO4VJ; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 535E01D0009D;
-	Tue,  9 Sep 2025 17:24:47 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 09 Sep 2025 17:24:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1757453087; x=1757539487; bh=Km
-	AXv5RN4xzWEkkqE7xhCId8sGR0ZDNZp4Q8OwYi4mM=; b=S5wTqYtMjI5GP+ybjz
-	l++URQMVSnvXfm2LVkJwzvT9iWvhlgeNQJIO1R6oZKi2eMjeXdMwltmibDshd7LK
-	T6Hk20+klGPnK9s5abxIINZ/10rB4VuCvLCsjYTDRmdIQcIrGfyp86iMa2X8hffD
-	6BuMe+NT08tZ/eMBVdj1RbSkp3ce+f6jeZKBMwCS0W1Fvo1lV8HKa1j0mdnsGV/I
-	ueKVQHFzmMvq9kZHcCgDoHRKhcutvXF/cnrHqY94Uw25zgRfvEVli4IkNbDnWNl0
-	ZlJM2Fnc0OylwbwC0Qt2Y9VmI6AUTL7VBGHhaizOOrpy051Wr7SaQ9p1ar7gV0iZ
-	a8iw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1757453087; x=1757539487; bh=KmAXv5RN4xzWEkkqE7xhCId8sGR0
-	ZDNZp4Q8OwYi4mM=; b=CnNoO4VJGS6ZHP/Ka7rEdezOyzdrHY8fuAWzu8X37tr6
-	IHHAlPeLFzVY2iuwtEv+RYU3H3SJPMzMETnB+n0JEFhBmGd1zQfI74HQ9WTaPxCV
-	FMKzQDPDf02PjHjCallACsg86j/oJfh/85r7CCDSlRLBBFiKVN29hQBM9SbXJQTe
-	aYS0nyf7cYv8b9R8g8qhf/1kk1gqOgiKmRn6dNL6z35Y9TpuYvrkOIvbPBanx8Xz
-	7Mu9euZ2ULJgmpY4oMyJT3UtflNwnpZ7DvpFKF2SRsU3rpLS6nMJ05mMKsYyTA+b
-	OqRoGf62l2o4h5lDE02G3V1qjkCH6mMBRZCiMUoR4Q==
-X-ME-Sender: <xms:HZvAaOk80-aIzLlc88R-gJ6Dbsr6p-CSisCWsOKNXn-4RU3c_vM0lg>
-    <xme:HZvAaF1hbI34vibTWFPzSWGi4ceFSikwvEhmxaMdzrw7BzZ43MRg_7mxP9P9k_V8R
-    MpoIDHe3Q2LTQ-Fo9g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvudeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcuuegv
-    rhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpe
-    eggeduleellefhteegvdetiefgffejtdfhtdejgfetveekheegtdejfefgteevgfenucff
-    ohhmrghinhepshgthhgvugdrtghomhdphihouhhtuhgsvgdrtghomhdplhifnhdrnhgvth
-    dpkhgvrhhnvghlrdhorhhgpdhlphgtrdgvvhgvnhhtshenucevlhhushhtvghrufhiiigv
-    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsg
-    gprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghhvghs
-    thgvrhdrrgdruhhnrghlsegrrhhinhgtledrtghomhdprhgtphhtthhopegthhhrihhsth
-    hophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtoheprghnughrvggr
-    shesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghsse
-    hglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhvvghrughlihhn
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgihhordhprghrrggtuhgvlhhloh
-    hssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhurhgvnhgssehgohhoghhlvgdrtgho
-    mhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    epihhrrgdrfigvihhnhiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:HZvAaFgoo_DfPwniM_Ba_NRbjr-NAjUpEBl2hgLAezwds8DkZdW4qA>
-    <xmx:HZvAaE6lPLn2-QRvMEsIj-X5mf9tu625xuDInoNOznW8W6Zswp5Y8w>
-    <xmx:HZvAaGBWRtHuGb-d6P9akzthHK2lFP4CLOwsn4ylVI-r07KO_rit4Q>
-    <xmx:HZvAaBRl4yfkgjX-QCNs9pE-_5-4j1CMwgBapEaDS1idWbtZYs0nSg>
-    <xmx:H5vAaB_k0psbdKb-XOux5x39l6C7CTGwSMVHGHMsh5hVdXcIdz-BvKYw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 171AC700065; Tue,  9 Sep 2025 17:24:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599DE211499
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 21:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757453036; cv=fail; b=K4T5lGOAWSukyAfFwHjt04xnMwiS3cIyu/JTArbrZvvsyTokBvNdKs9gt4Fhn0VTgqWbleMW76S4cuN50JwYf/Gf+ldJQLU4xnx/+z1uggIVM6kSHyRHFBTLNGJmCyDmrCcvPPI575rTxCZQF5aRp1fg9T593n3ZYylzEu3FYGE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757453036; c=relaxed/simple;
+	bh=mfhcTPguna/OgTqEV3IJv1afzOUqjcWjROa4/qAzH7Q=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZIj4+d5n6NGmiSSh7HN8hntfIHStMhP8LOmsXQ7H92+TowBHdPwg6FWdSJuX5XJW0fmIyFhcCfNVKpn8tIc4el6nEUgAg5PRBsbzj9D7P8xoqoVj5w5j3fUIkY9/ikSKBZMwOcluOKU5hYDA9UI/vqjpRO5e5CzQ7suzbycFGTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WMGyhMJu; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757453036; x=1788989036;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mfhcTPguna/OgTqEV3IJv1afzOUqjcWjROa4/qAzH7Q=;
+  b=WMGyhMJuA/lzlVs0sot8yobp3Azepjilb9Ot/44SSwkRhLIKXVaJ2eug
+   rinST/JEwYrP7ezyk7LwiN9X/iEy9EkijVCvCK4pL5dButwS1MCf2AOn9
+   WJL6t4ETlx+m/hqn/AixDvaRcJzOj5IMTSmgz1osfKLim4AE3w02u5WQQ
+   vvohhT2XOVfxNHybJl+BDtgJtAhOKExXTEQqaiESa0FhbS5g8x+e4jlwe
+   6GqiaHbbKrhFITCc8OZrv7Fj81h3emj9JpVdl/H80k1H/fU9IjXz/BFAr
+   OaB/xNnP1V2wUFcI1N12pu2roz1n7fvD9sAU+nBZWdL/sPASf8xxD1116
+   Q==;
+X-CSE-ConnectionGUID: 3+lVmzt6RSqlWA8hprk+/w==
+X-CSE-MsgGUID: 1KChlU5IRkik+0EzUuYslg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63583978"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63583978"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 14:23:55 -0700
+X-CSE-ConnectionGUID: u0lXMiGcSsOmP4vnu8niCQ==
+X-CSE-MsgGUID: zH8W41oNRRWjLgiEesV5BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="172773731"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 14:23:54 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 9 Sep 2025 14:23:54 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 9 Sep 2025 14:23:54 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.71)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 9 Sep 2025 14:23:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=po4cH8nWDIcI7hiVxqizB+5jxCWP8svJoMAFQ6U5Jdk6K/fbZuKA40A1+o1768xWvhKduZtxh2cVabtF4EmidmbR4yLiBw+vTWJb87TSlIH8aMx+NLSZ6V6zDb07UGs1GJCi6vPzIDL5Pq33iibMzTPhqr3L0SEIIBxqvfBLMLpFOh3DwlhF/5xKLwX7rKb9xT4ldC3wDcxSPRUVyaKd0eNSfJVL2AWZ2InVMSZ5+4VZSVkWckP+NlDIWWvcpMCNUTVfNvZdJXEl67skeZR/41UgPpxfoteM4stc4YMqLpmlIrePlUygByYjNld8qtXzXhgFXx7R53JpulEX+xbvmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Ty+OoIhkM3zLHbPRibrlIEDuZhdsR1gVy6agrga7zU=;
+ b=QyJNuZdHXdW/h1Wm+Fao9QCCpGf84MqrhTSLTN51Pb6be8X6TGMGCSt4Z/5S739FEHN3QPcoiCb9pfnOSEB/bNGtpON2yIRAosz0cU+6A54aSmo5uhgmUjwlkfdGVdmbNVp6oRVLVw8C1y6YwWqmO/WBVd2IoUZGWzvErhNMq3YwUApzDTFmHwOsqbGW+p7H2bDAPg7yXKwceV+zeIDza3rn4K6OxyFSTB7Nx6OVPkqHuSi5KPAZ8Q4gsCYaW4ILLXpviw01SCNN/mCDBQ9BHR2RQZ8tV5ODOzuTEZSJgd33HZWWRmn6N4oJOSWjy918DLKyLH65ShQqg/FVi3pyJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA3PR11MB9136.namprd11.prod.outlook.com (2603:10b6:208:574::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.33; Tue, 9 Sep
+ 2025 21:23:52 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 21:23:52 +0000
+Message-ID: <40461810-95e8-4efa-bff4-540ef01051f4@intel.com>
+Date: Tue, 9 Sep 2025 14:23:50 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 07/31] x86,fs/resctrl: Refactor domain_remove_cpu_mon()
+ ready for new domain types
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250829193346.31565-1-tony.luck@intel.com>
+ <20250829193346.31565-8-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250829193346.31565-8-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0253.namprd03.prod.outlook.com
+ (2603:10b6:303:b4::18) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AmcCJOTBQ5ho
-Date: Tue, 09 Sep 2025 23:23:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: ksummit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, imx@lists.linux.dev,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Richard Weinberger" <richard@nod.at>,
- "Lucas Stach" <l.stach@pengutronix.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Ankur Arora" <ankur.a.arora@oracle.com>,
- "David Hildenbrand" <david@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Andreas Larsson" <andreas@gaisler.com>
-Message-Id: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
-Subject: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA3PR11MB9136:EE_
+X-MS-Office365-Filtering-Correlation-Id: de8de257-b4e1-48f5-c98c-08ddefe72c96
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZDFPTDMrQkF3Vm02bnQySVE1c2F3OS9CNGE4WDlJRE4xbzBvaVZTOUx4V0JZ?=
+ =?utf-8?B?ZzVXVXpudTVtQXkyR3BWNjJsM0JtWVlPSkkwTm5ySmRYclpzYkEzMEliS1lE?=
+ =?utf-8?B?dDdsN0xtek15d1p2TDN2OWpIRDNkaFFoclc4TUJnSXpLaHFkU29oK094RGg5?=
+ =?utf-8?B?RkpmZTh6K2dEY0J1ejRmMHp0U2xKb0F4MnphMXdkMXVnUXVzcnpGb3k0OFZO?=
+ =?utf-8?B?YW5oV09vc1hrc01FTnVldmsza2cxTXdSQ1dCSXdWaCtiWldoZ0Z3TTBLeG56?=
+ =?utf-8?B?V00vRjFBSmx1Vkx2dEVrTkRESk5qMU9vbnJpMkJYaHlYNEpMVUhoSVY1amF5?=
+ =?utf-8?B?Vm9vQ1JpUnNYbk52THNyS1BJOU9MKzhHcldZODdqVXB1V29hQnJVbjJKZ3Rj?=
+ =?utf-8?B?YXM2KzlMZ0diSGRtZ0lQZ3k2KytxaDRPL1BWcWtNNHNGa0IzTW5Mdk5jYllD?=
+ =?utf-8?B?djBlR3BKclFUYmEyNSsrUVVWMDRuUktQQjZ0UDY3OXl1M2xMR2U3ak1BMVF0?=
+ =?utf-8?B?a0xpZTdDMEZWNmY4ZjZ1SmNwVHRxTElpUW1Dd0IwamNHa2pVSUVweG5rcW9t?=
+ =?utf-8?B?R3R5a3BGS1JTRXZ4RkhkYjU1NlJodFRWSE1JYTJGT0YxWjhHd1RxWE9nZ3Rz?=
+ =?utf-8?B?UzR1Y0NVSk9SMEU5Zm43c2ZEQk1oVjJRZUJmLzRiN2pIMXBHU09acVJZY3VD?=
+ =?utf-8?B?SVlwSXY1djhxYmRVZCtCZG04N0VpV0lFaGNKZFF6eHRwbCs1bXVNaGxaMXE3?=
+ =?utf-8?B?N24yQjJqZ05mRElUTWg0MEMyYytkbzQxazNqUFRvN3ZrcDF3MlFsdUVOalla?=
+ =?utf-8?B?T1lzdTFjUTlST29LRFFsNy9YTTBrd2JCZ0lxZGFYL1NFOHZKU05FYmFHUjFG?=
+ =?utf-8?B?QmlCemVFcHlqU25UQ2xQV1NlbWhjTnVMamp5R095Q3F3WEQxWFAyZHhWeDls?=
+ =?utf-8?B?a09lLzgwNkF2eUE4V2U3bWp6aTVoUkEvblNMdTkvU3AyVWRKSEVLL0tTVElt?=
+ =?utf-8?B?Y0JPTWpzL085OEd6dEhJVzhSOVNNNHNKVytxN2N3R3VBYmJsRmMzTVVranVW?=
+ =?utf-8?B?MkxieFRna2VFVlZGRlNVTURTZmkzaHlnOXlLLzZJM3JnNXJrU2Y1a09rK3Qr?=
+ =?utf-8?B?eTJXVTFFT1lRWmJhb2NvT3JiWDFmM1ZZamUwQjFYdEh2aU84T1QxR2N3eThn?=
+ =?utf-8?B?cktOamJ6UE9SRHN3a0tRQWE1OC9nd0laZ3N1Tm5TdWN4WEFRUXRMRUVzaURS?=
+ =?utf-8?B?ZVdGYy9HVWRrU2txenAyL0lLODRDMlZmQ0JDN1hzQXlUWjcyNGlNZUdPWVh1?=
+ =?utf-8?B?d0RScjFVbjlZdS9IeEtWcWFWT1k0VFR1MkhaSnlCd2R2NXh0L2JUajJZK0w5?=
+ =?utf-8?B?VGJPSC80TEQ1aVdKVWk3L2JKekI4Tk1Jby9yVzZwNktibXdFU0p4OVNhQkdM?=
+ =?utf-8?B?VVpDREFTQnVzSjU0aVBiU2h3bEFOdHRZZTIva05UZFV1bEVVMFovQTNYV1lE?=
+ =?utf-8?B?aS83eGdORFdURDRRbTJkcFJFN0lYeUQvYmx1RjFIWjFWUVNJYXc5TGFkQ3B5?=
+ =?utf-8?B?dm5tTi9Ob2NKTEIvd1R2ekN0Njd5eDJqcTFxaEJPRFByNjlvOU9UejlkM1c4?=
+ =?utf-8?B?S2JjN2ZvSURneHBUc1VwWldYMmN1cWhlME95U2dRZWdDeThBbEpzRE9SdFQx?=
+ =?utf-8?B?Sm1yT0NNWUlyaWU5MVVTNk9WclZmVmhnbkxYTDRwVzJ6b2tyWERHOGxPTE9U?=
+ =?utf-8?B?eEV6bkQzZ1E1RS90Q1A2QnNGRmVsa05Ib3NQKzdMUEwvdUo1UVFXNHhmZDV4?=
+ =?utf-8?B?ZDkwN1VySER6MXJYT3A1NElaZ2hBVmtTS1FjRjNPVW5ETmVncHovTHpjVUR6?=
+ =?utf-8?B?NXc1UjdGQTVsaDEvbGV3T3ZrOWpJeEh0N0NQMTVtUDBTSnBWRGlZd0QrM3Ns?=
+ =?utf-8?Q?WdXbQsqIi6U=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WUtDcEFsT2hIenhsOVUweElVWEJxS0ozRUM4dlNtME5NYVBlNWFPRzgyOVJs?=
+ =?utf-8?B?RTVkQURDY0VSR1RFT1hzSTB5b1JNakJ2ZUFtdldqakFidjRGSmZ0alZRVVpj?=
+ =?utf-8?B?TWdGcHZLZ0ZFSFB0djRaSFNzS3lvZHpKSHUyMTM4bGRtYnIza2lDMG5SMkp2?=
+ =?utf-8?B?RVRkR1htSHEvRHV0bEV3QVlRMlpkb2d6ZGpML3Rmdlp5UUFGaldhVERRQzJz?=
+ =?utf-8?B?TVdza2Z5STVCLzlTaWI1eUl1U1VVdkxjeXVvNWZOaXZxemJUV3hlZDFBSnFV?=
+ =?utf-8?B?dER6UVdaWEJ5cmJQaGp5SDM2cEt4NndObExiY00wbnZGR1BGUkh5UHhZcXNN?=
+ =?utf-8?B?TUZ5OGxodGZsM09kQXlhUG5hWVhFdjg5VURHYlIwbGRKbzJkanh0QXh0YmVE?=
+ =?utf-8?B?MUUwMWhObW0vVVhtWmlSWEVNRnEwRjc5Nmw3UU5pSFpPa244eXVOWXBKV1R2?=
+ =?utf-8?B?RUxWR3BCa09hY09RTFVPWmJDSmVQRHp4N0hTekNEZkpwaHk1YkVrMnJGVkVL?=
+ =?utf-8?B?Q2d3UXIveGhNUzVQNDM2YjZ4aFlHTDRHT2E5K3ZWREY3QlVmUXg4eFQ4NVQx?=
+ =?utf-8?B?K2pSdzlVYUUyaHZsdlBNalhtN2E1VmpwVUwvaEt1NzBjZTlhUkF1cHB6MVRn?=
+ =?utf-8?B?ZkVVajV2Z0NUSUk2YjRvTGtOekhUeEptMWpRc2xBNG5SQWxJMDY5U2xVclRF?=
+ =?utf-8?B?ckNPbldnNDlNdVU2TmFiTjQ0bTNtTnVUR2pnVk05b0VERlRvNkVBU0t1blpN?=
+ =?utf-8?B?SHMySWVQZzBsNWRvcnd6L0NWSEw2UGVvMU85VWF1QXkwaWRqMGw0Q1g5TGZI?=
+ =?utf-8?B?eklzY0VtVDZVenhMOVJrYy82OE8vSlFubzN3bmFhRGZKVTF3cHNsMXVGWWxG?=
+ =?utf-8?B?MkhnZENKMC9ZL09aNUp6Wit1S1dGL2JsWXNyeFB0YkhKQUw5WUF0aUd4Rlhv?=
+ =?utf-8?B?cmp2aTFJUGZLc2l1OCtrWGpJZ1U2TldXTWFBMGFIT1FOdGlMSmd2TlA1L05p?=
+ =?utf-8?B?VExOMjZER05GOTFMSlNlR2toak9YTEdFZkJiMDdWSzJQVkxiaHA2YnJsc2tv?=
+ =?utf-8?B?TGcyMG5vekliWkJESlpDenVDU1o3KzdSRjJaRnlDVW1JRDJLS05aQjAzZXFr?=
+ =?utf-8?B?OHkyME1IY1Yvc2E0dTJPaFpIZWhMN1FSY1BzV0JnbW82bjc5d2h2blloSmVF?=
+ =?utf-8?B?S0hEQyt2OTVuUzV1NkEwejFnTllKbTZtN3lZZEZTUGxWc3Q5NGpYeWwzOG1Y?=
+ =?utf-8?B?eVJDVXlkRFFyTStyRjdYZ1BCZkNUTHZKdjUxVlFxWlR6MU9WeXFwWmlWb1da?=
+ =?utf-8?B?WjBiNitOMGxnc08xVmJZNzFuWGJaSmNnV1BaUGFzeG9sSWtMWFNCOVlHNjlZ?=
+ =?utf-8?B?YnlqdnVETjV1ODIrbjhBR0hLY0hEcWFPVWJzV29rMXpwQ056Y0hwdFE0SEhS?=
+ =?utf-8?B?cXF4ZmpxZmJRQm1KNHExVlY2Y1J2ejdkdHEwdWJuSWwraGVFN3prQTR4UmZq?=
+ =?utf-8?B?R0JvNDZIWnVmYmJiY2lNc2tkeEFXS1hKRUlUa0toYlQ3SFRUWFQvQ2p2YXpP?=
+ =?utf-8?B?eUpJVDBYaVdEK243eHVXTmtKODl4RHRjVTJKcTlrZmVlN01jYkRtR293YTU0?=
+ =?utf-8?B?YzByckx5cmY5TkMxUENWUWJlQzU5di9DSGRCV0hkdng2cGNlVTJXT0hiVlZz?=
+ =?utf-8?B?VUdCZStnSUk4dTA3dkZHY09lVjBzUUpXdjVNT0VIVFhtV3JWa0o1OG9LMzJ5?=
+ =?utf-8?B?U1l5RWZ1a20xWWpCc25mMHE0K2V1YzlOQTVDcklPTTNKUEgwbVZzRlJCN3BC?=
+ =?utf-8?B?VW0wSnlXMmg5Sy8xb0l1Z0N3ckV0bW4vZEZ0WFJaMW10dUR3UkJsdG0vSThZ?=
+ =?utf-8?B?ZU9mWVNMNFEyNi9Va3gxb3dZbGlHc3dKbHBUOVV2NFhBYzNDeGRPdExrblIr?=
+ =?utf-8?B?SVBaajlNZzBiWGtnSCszYTZwQysyZFhJUlk4R0hhYVFWcDA5b0JpN3hEN3NF?=
+ =?utf-8?B?MEEvLy9YWWUyTGhTUHAyT1orb2hLR2JNR0JEelp3TURvakhhRGJTYkw3VkRh?=
+ =?utf-8?B?SUU2VDlaY0d6ZS9EYzRhd0REcVNzNTFIMWlIYVdYalN2ODhoRy9GRUlVMVpO?=
+ =?utf-8?B?cUVZTnl2Nkd3TVBmRHpUVFpNQWlCL0dSZ0EycVgxeXpSQ2Y1RlF0c0ZWZUJ2?=
+ =?utf-8?B?VFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: de8de257-b4e1-48f5-c98c-08ddefe72c96
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 21:23:52.2962
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kUXuL5WgC4MHInrJL4CKYZ1MMLYH8EkVk158gU3vIjBLPvBPIZbYOhswC3/xp3AkeZvO9CWFS1fmyGtGE9xlmdITkZvfvZ+0JLsrdHOpXNE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9136
+X-OriginatorOrg: intel.com
 
-High memory is one of the least popular features of the Linux kernel.
-Added in 1999 for linux-2.3.16 to support large x86 machines, there
-are very few systems that still need it. I talked about about this
-recently at the Embedded Linux Conference on 32-bit systems [1][2][3]
-and there were a few older discussions before[4][5][6].
+Hi Tony,
 
-While removing a feature that is actively used is clearly a regression
-and not normally done, I expect removing highmem is going to happen
-at some point anyway when there are few enough users, but the question
-is when that time will be.
+On 8/29/25 12:33 PM, Tony Luck wrote:
+> All monitoring events are associated with the L3 resource.
+> 
+> The RDT_RESOURCE_L3 resource carries a lot of state in the domain
+> structures which needs to be dealt with when a domain is taken offline
+> by removing the last CPU in the domain.
+> 
+> New telemetry events will be associated with a new package scoped
+> resource with new domain structures.
+> 
+> Refactor domain_remove_cpu_mon() so all the L3 processing is separate
+> from general actions of clearing the CPU bit in the mask and removing
+> sub-directories from the mon_data directory.
+> 
+> resctrl_offline_mon_domain() continues to remove domain specific
+> directories and files from the "mon_data" directories, but skips the
+> L3 resource specific cleanup when called for other resource types.
 
-I'm still collecting information about which of the remaining highmem
-users plan to keep updating their kernels and for what reason. Some
-users obviously are alarmed about potentially losing this ability,
-so I hope to get a broad consensus on a specific timeline for how long
-we plan to support highmem in the page cache and to give every user
-sufficient time to migrate to a well-tested alternative setup if that
-is possible, or stay on a highmem-enabled LTS kernel for as long
-as necessary.
+This part does not seem to be related to this change since up to here
+this is all about refactoring L3 support while the final part starts to
+add support for a new resource under the guise of "L3 refactoring".
 
-These are the assumptions I'm making, based on both what I have
-presented in my talk and feedback I have received so far, let me
-know if something is missing here:
+The resctrl_offline_mon_domain() change looks more appropriate for
+patch #9 "x86,fs/resctrl: Use struct rdt_domain_hdr instead of struct
+rdt_mon_domain" where the change makes clear to which code only a
+RDT_RESOURCE_L3 domain can belong and matches the change to
+resctrl_online_mon_domain() in same patch. This is not ideal though
+since even in patch #9 this seems to be PERF_PKG enabling code (in both
+resctrl_online_mon_domain() and resctrl_offline_mon_domain()) added
+under another guise of refactoring.
 
-- Highmem in new kernels is almost exclusively an embedded Linux
-  topic. While there were a few late 32-bit desktop and laptop
-  systems that had more than 2GB of RAM, these were fairly short
-  lived and have long been unsupported by both the originally
-  shipping operating systems and most Linux distros. Notable
-  Examples include Pentium 4 "Northwood" desktops (sold 2003-2004),
-  Core Duo laptops (2006-2007), and Arm Chromebooks (rk3288,
-  Tegra k1, Exynos 5800, sold 2014-2017). Some PowerPC G4 Macs
-  and Atom Netbooks could be upgraded to 2GB.
-  There are a small number of users, but they really love these
-  devices and want to keep them alive, especially since they
-  mark the peak of the respective 32-bit product lines.
+I think it could also be argued that the related changes (code flow changes to
+support only files for PERF_PKG) to resctrl_online_mon_domain()
+and resctrl_offline_mon_domain() belongs in patch 22 since only then is
+support for PERF_PKG added and indeed is when it is explicit that
+"Support the PERF_PKG resource in the CPU online/offline handlers."
 
-- Within the embedded market, highmem is mostly used on ARMv7
-  based SoCs, but a few others also need it and still get kernel
-  updates:
-  PowerPC 85xx, 86xx and QoriQ P1/P2/P3/P4 (produced 2003-2021)
-  were used in some long-lived embedded systems with 2GB of RAM
-  or more. Mediatek MT7621 (MIPS32r3, introduced 2014 but still
-  sold) needs highmem to reach the upper 64MB of the 512MB physical
-  memory. Ingenic JZ4780 (MIPS32, released 2012) was used in the
-  short-lived MIPS Creator CI20 with 1GB of RAM (256MB lowmem)
-  and probably othes. Sparc32/LEON seems to be limited to 192MB of
-  lowmem as a kernel design choice. Vortex86DX3 supports 2GB
-  DDR3 memory.
-  The kernel also supports highmem on ARMv4, ARMv5, ARMv6,
-  PPC4xx, PPC82xx, PPC83xx, ARC, CSKY, Microblaze and Xtensa,
-  as well as additional MIPS SoCs,  but so far I could not find
-  any indication of any such machine with more than 1GB that
-  keeps getting kernel updates.
+Doing so will keep refactoring as-is ... it is just refactoring existing flow,
+and then code flow changes come later when actual enabling is done.
 
-- The vast majority of new embedded ARMv7 machines have 1GB of
-  RAM or less, which on many SoCs is a physical limitation
-  a narrow DDR3 memory interface, as well as a cost tradeoff.
-  The 1GB case is interesting because that usually means having
-  only 768MB of lowmem plus 256MB of highmem, as well as 3GB
-  of virtual addressing. I expect that almost all applications
-  on these work just as well with CONFIG_VMSPLIT_3G_OPT, changing
-  the limit to 1GB of lowmem and 2816MB of user address space.
-  The same thing should work on x86 and powerpc (CONFIG_LOWMEM_SIZE)
-  but not on mips and sparc where the limit is not configurable.
+Reinette
 
-- A few Arm SoCs have sparse physical address ranges for
-  their RAM, e.g. range per memory controllers like the Renesas
-  R-Car Gen 2 or Broadcom BCM4708. These currently require highmem
-  even on configurations with less than 1GB RAM, until we change
-  the way that sparsemem is handled to support rearranging the
-  linear map to fill all of lowmem. This still needs more work.
-
-- ARMv7 machines with 2GB remain in production, in particular
-  with the popular i.MX6Dual/Quad chip that has a 64-bit wide DDR3
-  interface and guaranteed manufacturer support until 2035.
-  This is the configuration I expect to see struggle the most.
-  Setting CONFIG_VMSPLIT_2G or CONFIG_VMSPLIT_2G_OPT should work
-  for most of the users but can break if an application runs out
-  of virtual address space, so this does require extensive testing,
-  and possibly user space changes. An example of possibly affected
-  userspace is Firefox, which needs more address space than other
-  applications but can perhaps be replaced with another embedded
-  browser.
-  
-- ARMv7 machines with 4GB and more exist and keep getting
-  kernel upgrades, but to my knowledge are not in production any
-  more. These are mainly 2010-2015 era chips based on rare
-  out-of-order cores like A15, A17 or PJ4 that were designed for
-  low-end servers, chromebooks and network equipment but replaced
-  with 64-bit chips shortly after. We had planned to bring a
-  CONFIG_VMSPLIT_4G_4G option to ARMv7VE to keep supporting the full
-  memory at a performance penalty, but currently have no plan to
-  finish this (volunteers welcome).
-  There is still some hope to keep them working with a combination
-  of CONFIG_VMSPLIT_2G and a modified ZRAM that can use high
-  pages without CONFIG_HIGHMEM, but whether this works depends
-  a lot on the application. I expect most of these products to
-  stop getting kernel updates in the next few years due to aging
-  hardware and increasing cost for updating out-of-tree patches
-  on platforms that are not fully upstream. I do not remember any
-  such devices with official support beyond 2030.
-
-My proposal based on the above assumptions is to gradually phase
-out highmem over the next 2 years for mainline kernels, obviously
-both the individual items and the timeline are completely up for
-debate:
-
-1. mark CONFIG_HIGHMEM as 'depends on EXPERT', updating the
-   Kconfig description to point to the kernel summit discussion
-   any any decisions made here.
-
-2. Change the ARMv7 Kconfig defaults to CONFIG_VMSPLIT_3G_OPT
-   and HIGHMEM=n, to make it more likely to find possible
-   regressions with that, without changing much for users.
-   Possibly do the same for x86 and powerpc.
-
-3. Start removing __GFP_HIGHMEM from in-kernel allocations
-   other than the page cache, in particular from individual
-   device drivers and filesystem metadata where there is
-   already little benefit.
-
-4. Remove HIGHMEM as an option from platforms that are thought
-   to no longer need it (arc, armv5, ppc4xx, ppc82xx, ppc83xx,
-   csky, microblaze, xtensa), mainly to validate the
-   assertion that these use only lowmem.
-
-5. Split highmem on zram out into a separate Kconfig option
-   that can be enabled without CONFIG_HIGHMEM or CONFIG_EXPERT
-
-6. Finish the "densemem" replacement for sparsemem, ideally
-   allowing both very sparse lowmem areas and a boot-time
-   vmsplit selection instead of the compile-time one.
-
-7. Finally, remove the highmem pagecache option, leaving only
-   zram and custom device drivers as a way to access high
-   pages.
-
-That last step should wait for an LTS kernel, ideally a version
-that the CIP project's SLTS kernel is planning to keep supporting
-for 10 years. The newest SLTS kernel was 6.12 last year, and the
-phb-crytal-ball suggests that the next one in December 2026 may
-be linux-7.4, the one after that in December 2028 (linux-7.15?)
-seems too far out to plan for but would be another option.
-
-Unless there is an easy consensus on this on the mailing list,
-I would like to lead a discussion session at the kernel summit
-in order to get closer to a decision.
-
-     Arnd 
-
-[1] https://osseu2025.sched.com/event/25VmZ/32-bit-linux-support-now-and-in-the-future-arnd-bergmann-linaro
-[2] https://www.youtube.com/watch?v=QiOMiyGCoTw
-[3] https://lwn.net/Articles/1035727/
-[4] https://lore.kernel.org/all/0047f565-ada4-491a-b157-f2d8dfde0ac0@app.fastmail.com/
-[5] https://lwn.net/Articles/813201/
-[6] https://lpc.events/event/16/contributions/1183/attachments/1062/2028/highmem-api-2022-09-12.pdf
 
