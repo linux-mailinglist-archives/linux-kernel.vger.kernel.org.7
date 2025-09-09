@@ -1,209 +1,223 @@
-Return-Path: <linux-kernel+bounces-807507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD71B4A556
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:32:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8759B4A54A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E44E17D23A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 539B916B8AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A83D2472B0;
-	Tue,  9 Sep 2025 08:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0023D1F8677;
+	Tue,  9 Sep 2025 08:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MyRChXSO"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OXecIJdm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83C112CDA5;
-	Tue,  9 Sep 2025 08:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF01E5207
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757406736; cv=none; b=JuicuErZtwqlekG98vuDjuk0vjN3eYd+3Ob7usjlQU8sbTQQMZVG9p28p9RbzN8GDhXmW/6L9BcPT39QRfqGHJYhRXU/oMaHzCoAac1FjrOk5qb3et+dYUvLPNNx2EE3EK1to1te4xGnHe10UU02r1iDnEGM1tkwI6CDPpUU/Bo=
+	t=1757406698; cv=none; b=mQ7NfC9GzUTaVWNC0aerxJd0+YfaJ3MznS/E4yu+xaeqXs7wvYkKeRK+QRiosncqibaTWvLpN+N/V5FkQ0GKnMGxe/ScYwmgvw5oafpPf+kPoZPhS4E4Aqt/hEVNOZq1XvVeXnoEplpdd/T4ombTqwM9r+Zpd+WgClu3k/wfhbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757406736; c=relaxed/simple;
-	bh=chaOOs5USlqwKtDpt9uxB5EYPmgbxumGlafSVydVen4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOh88ysKfYLOORybCCnOuhrC1hn7WjoTRRfqYcb6V1MJOfzH4cGI8XkY3CEsC17pAaY9rOZILWfSAT7rfOZoRE2NO/wVun+PyKhAxeL5hdYzwtIfrlqK7q3bEpvrJsyGbGZc2689ou+l0qRWl410HOTt1Hj/4RbLtWjGHS+KhCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MyRChXSO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588JcNWG009190;
-	Tue, 9 Sep 2025 08:31:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=XRGYRp9IpXgOlM6YrJRhvNTKdkbZq/
-	NQnIfckf3EQjs=; b=MyRChXSONJ/VpRxUYGEWmZDaEUcUPfmlYMC94Ui/2NpXsW
-	GAUyr1eXibKeDOBJAaM64v+14/xQd77CqidsGprubltQPBWv2P65ZUgh1Coc63qO
-	RJtUvPK0HqZka742VdVR87OekHNVa0pW8eFyREJcPL9iQDumkUOzuZNxU6tKnLvy
-	fCrd7DCOR44/awj4t/q821CuWAs3qWZZ0+bLaKZ2ojmM9vNnNgBy7YCN8v4Q3RO+
-	mODGY6Hx2OmpypY7TPliZST8FLfVSKWF1LM4YBzfKrnLhOVuCn3y9CcyeJ4P2sWk
-	oSoj+Tcgnq4IZvqDV/xeYwy9QoyoiSVDJeNosniQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqxe1c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 08:31:33 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5898Qk8A011618;
-	Tue, 9 Sep 2025 08:31:32 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqxe14-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 08:31:32 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5895lhMj011435;
-	Tue, 9 Sep 2025 08:31:31 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9uacnj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 08:31:31 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5898VSmY44564752
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 08:31:28 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA9D020043;
-	Tue,  9 Sep 2025 08:31:27 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E9C720040;
-	Tue,  9 Sep 2025 08:31:25 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.87.149.210])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Sep 2025 08:31:25 +0000 (GMT)
-Date: Tue, 9 Sep 2025 10:31:24 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
-        Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 00/16] expand mmap_prepare functionality, port more users
-Message-ID: <4fbe6c51-69f4-455e-922f-acdc613108cb-agordeev@linux.ibm.com>
-References: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1757406698; c=relaxed/simple;
+	bh=Q3tkmiFsZJm37YxiC2B+AnN9v8rzwEJsKzvyIscck8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tFzJ5U+A57URhwIMOC68lAmW4eVUQST5fCXIGNpXQ/rU1N6BZl/STO/S6S95dfkzFi6xcctMkjenQLU7rJDGij0e+ZXfUmYXfhfm0eZJ8Ty0NTF3B8S5Kvs+eE/yEMzoSwDBFW/KsHVV7hkkU+4VFkzlF0q2Cnj24NfT7K7N4Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OXecIJdm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896T348005260
+	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 08:31:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	R7eITHZjo81f81b5RbKzWZ5Utg4ySiLXReDKdi+aAZk=; b=OXecIJdmhLNXRsX9
+	97HOkojdeBBfs3VJ8ArdF+MybavsBOIkKvscuENImJT7T+FZSbF/0TXkjYx7VFt4
+	dioYLMck09m/UDp4g28tVVbJumDGos3g+pXUzp0kVH+D4FGlnkJ577PfLhOj+/V9
+	v0/sDc87Oj6sts8jVd1rAg8y3fgeYgP9RdxXWvD+tfjWhloqA1i+lvECBcy2H/sc
+	6YlLOU/2eq94Df3j3mcUN6vFtuMeVTWde6d0ByVDZ8OQ4O9CYbFQAUPJ+YrI9eup
+	L87igay6e842zCEYR1d/X/Xlaj4qVD8PvLL5wcHPv3nFi9AlyxJO5rOR/skCWb+6
+	oWT3tw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491qhdvba4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:31:36 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-72a3a4a41a0so8362476d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:31:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757406695; x=1758011495;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R7eITHZjo81f81b5RbKzWZ5Utg4ySiLXReDKdi+aAZk=;
+        b=hMMLQBbgP2/7+hkEWUg/gaXlGV6kDQdHMvwMHPKdOc+Ukc8/29/9v14lN847lt2HH8
+         d3t0aXgL0HGURnPGS7GJIa/G6CATOubXPB327j6+DJH7kIvIGlAofKLkvdPjdv5ChDLx
+         YyGwQayAcNlmkJEoEXCr/nA50Y5fMn3Fw0Uqag8EV69qC0HfZutXqZeQHMRFIswdP86J
+         /qOLfRvqggI9QBceWmvbiaQxHKgKYisy3CzTMuKuhY7dDI8lr7GWVnJFraGWeZzh1FbL
+         y2gZzOXwlI8lXUrcMhVHm3ZCNhhKar12GWMkn/iAu/yTRUKVIu32gQatTHWlKSicz8tW
+         cLIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8VYyO6m6n3/njy+eHTnNqqcSlLyUNwvdunJ/dt87JqQRThjLDQsJ0XXLvV0uO3tQIvmEpYgEjSNIxWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIneCUh84H+tTSJ39PtjGYiPG6LaHVEGwWfUpxr1jqU5tbFuNo
+	L02RgcN3fDSAKDZEwK4UI3PwUaTW12OiFil/A9cHZ17aNvMOGdU170VSdCZINIb8FIeCq+SVggZ
+	ub+GROjkXMAGFcPOcMVAZtXUGBtteLiGs3SrdhwtMHZU/l0ppjNJ40u3nV2LtoPdFy2w=
+X-Gm-Gg: ASbGncu88uZtxYbiRmYWw2rHPiocYMp1XzPIdqgbKsN1KtVKqHQBRWm7L1V6uAl9yFH
+	99NYsUs+c8Yd7lJ8e+7LZO3Z395plfbDZoa1R6AMi2+vtiBtyFZ7jGdEILUgjwuiui5BGvxHwPM
+	Kg9oVanT+CxSL+LMMgNsMlbWkgwlhq3qjif9lY0+EyJhhOBF8zgj2SPQs05oa2QG9IHZqustk1v
+	8nVGcfjj2ebu9d5+lqhFYfvC2ns3dq2HInlzJ9Awu07k8ceLUllDiYLAOGexJbn3+JNBWepy93h
+	r4ojkcu4aXSVqZyCgj8l82Z34W8Q8K20SHokKd16zPgeeWrJZxfUsKTSIGTa+oOJUoQOw1h3bwN
+	rIm/q9UESIS9l07ESJXukeg==
+X-Received: by 2002:a05:622a:409:b0:4b5:e391:e3e0 with SMTP id d75a77b69052e-4b5f824786cmr71643921cf.0.1757406694444;
+        Tue, 09 Sep 2025 01:31:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw4k1HxsrxxCB989pCSBZXp1N3A5thT3d8CW6byohkVI2BrFWDomLFgQWaPLslSwKMDUaaAw==
+X-Received: by 2002:a05:622a:409:b0:4b5:e391:e3e0 with SMTP id d75a77b69052e-4b5f824786cmr71643811cf.0.1757406693919;
+        Tue, 09 Sep 2025 01:31:33 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046eb335f5sm1400382866b.28.2025.09.09.01.31.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 01:31:33 -0700 (PDT)
+Message-ID: <c1dff274-4b71-4d18-be2d-eb5959111243@oss.qualcomm.com>
+Date: Tue, 9 Sep 2025 10:31:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1757329751.git.lorenzo.stoakes@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3deOkNqrfHdLIv9wcUPHlUetDtdvUQWz
-X-Authority-Analysis: v=2.4 cv=Mp1S63ae c=1 sm=1 tr=0 ts=68bfe5e5 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=rCdDL0ybDgsdDLvqgG0A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: qA00adzFc2mr4mwvlzTl3c7SVFuwc24W
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX9DH4SXGK5Ef2
- wejG4c7pX++RhbA1qSy6joL4Dc2oCsCOSPIhrBxt/QLkDiM3oF5S3fnf0a8rvaceAzUOg6WA1gQ
- Ir8I+yPvEyV1Im2S29dkEFwOqpdtLAPsWf2TTp0eyOgmPS+IVsDGdHQRHBjWiZ05r0xpu4su3dr
- m16Ho7NogpEOVcd3h6JEtyn5UfreBb3jlkItkjRqhI4JeeAIMcTnphkaB4l7pHKWbZxIqItt4g7
- VpspaOMhadlzbq6FrrwE54z2UGMx4eYQuRZiUQE2/EtFUQMQbKGs7KhlROQVEQLcoAhtD28WCFQ
- L6pd7Sw8hzkZH/lMoqL2zPGcZXWdwKNG36NITE6JE5TGdgh01ojrh+qdwWmxBmCjCCl7ztPlKTn
- wVjj1P8/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250909-hamoa_initial-v10-0-ec10057ffcd2@oss.qualcomm.com>
+ <20250909-hamoa_initial-v10-4-ec10057ffcd2@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250909-hamoa_initial-v10-4-ec10057ffcd2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: H_dtPjTXRv9K2YKHEErVzF-kdHX7qfQD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDAzNCBTYWx0ZWRfX3qg043mVK6Tr
+ deBz/bLWfe7NDErJdK8z9DzlXqw4SbT5tQXCv7QKDMOFFFLs+yY0KgnctrAshvnRix7ngYpouSm
+ zHBN3kz+7LdiD81RPRAf2WeS8T1GSAnGMQaKtcVLu+IFt9mPF9lJvGImpS8n2bTrIXhW42AanZG
+ +GjYqErXAOPz2Xpbev9QPGRnSzcbaOCHLJr+XygMt/TNfu+nGK3eWoA6B5AdBINcWrLmCkI6fxy
+ E40sy1lwnpqVwUmadJ/qMPjB5X4gND16afq6N0qRIQi0ylutxDK/UBBSU+aHVXnG23q6MUZ67mi
+ zcQDwIgQJ/G1J+8+Bzlm9spNZDVcIxinQo00PCwq1N3pou3GF3sZm2uHhmPJCEcrBU3qFuCY/Xj
+ 6COXA2wl
+X-Authority-Analysis: v=2.4 cv=YOCfyQGx c=1 sm=1 tr=0 ts=68bfe5e8 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=Kyid7Z_SZgMD8xIH7KUA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: H_dtPjTXRv9K2YKHEErVzF-kdHX7qfQD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1011 phishscore=0 spamscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060000
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080034
 
-On Mon, Sep 08, 2025 at 12:10:31PM +0100, Lorenzo Stoakes wrote:
+On 9/9/25 5:56 AM, Yijie Yang wrote:
+> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+> embedded system capable of booting to UART.
+> 
+> Make the following peripherals on the carrier board enabled:
+> - UART
+> - On-board regulators
+> - USB Type-C mux
+> - Pinctrl
+> - Embedded USB (EUSB) repeaters
+> - NVMe
+> - pmic-glink
+> - USB DisplayPorts
+> - Bluetooth
+> - WLAN
+> - Audio
+> 
+> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+> <quic_shuaz@quicinc.com>, Yingying Tang (WLAN) <quic_yintang@quicinc.com>,
+> and Yongxing Mou (USB DisplayPorts) <quic_yongmou@quicinc.com>.
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> ---
 
-Hi Lorenzo,
+[...]
 
-I am getting this warning with this series applied:
+> +	sound {
+> +		compatible = "qcom,x1e80100-sndcard";
+> +		model = "X1E80100-EVK";
+> +		audio-routing = "WooferLeft IN",
+> +				"WSA WSA_SPK1 OUT",
+> +				"TweeterLeft IN",
+> +				"WSA WSA_SPK2 OUT",
+> +				"WooferRight IN",
+> +				"WSA2 WSA_SPK2 OUT",
+> +				"TweeterRight IN",
+> +				"WSA2 WSA_SPK2 OUT",
+> +				"IN1_HPHL",
+> +				"HPHL_OUT",
+> +				"IN2_HPHR",
+> +				"HPHR_OUT",
+> +				"AMIC2",
+> +				"MIC BIAS2",
+> +				"VA DMIC0",
+> +				"MIC BIAS3",
+> +				"VA DMIC1",
+> +				"MIC BIAS3",
+> +				"VA DMIC2",
+> +				"MIC BIAS1",
+> +				"VA DMIC3",
+> +				"MIC BIAS1",
+> +				"VA DMIC0",
+> +				"VA MIC BIAS3",
+> +				"VA DMIC1",
+> +				"VA MIC BIAS3",
+> +				"VA DMIC2",
+> +				"VA MIC BIAS1",
+> +				"VA DMIC3",
+> +				"VA MIC BIAS1",
+> +				"TX SWR_INPUT1",
+> +				"ADC2_OUTPUT";
 
-[Tue Sep  9 10:25:34 2025] ------------[ cut here ]------------
-[Tue Sep  9 10:25:34 2025] WARNING: CPU: 0 PID: 563 at mm/memory.c:2942 remap_pfn_range_internal+0x36e/0x420
-[Tue Sep  9 10:25:34 2025] Modules linked in: diag288_wdt(E) watchdog(E) ghash_s390(E) des_generic(E) prng(E) aes_s390(E) des_s390(E) libdes(E) sha3_512_s390(E) sha3_256_s390(E) sha_common(E) vfio_ccw(E) mdev(E) vfio_iommu_type1(E) vfio(E) pkey(E) autofs4(E) overlay(E) squashfs(E) loop(E)
-[Tue Sep  9 10:25:34 2025] Unloaded tainted modules: hmac_s390(E):1
-[Tue Sep  9 10:25:34 2025] CPU: 0 UID: 0 PID: 563 Comm: makedumpfile Tainted: G            E       6.17.0-rc4-gcc-mmap-00410-g87e982e900f0 #288 PREEMPT 
-[Tue Sep  9 10:25:34 2025] Tainted: [E]=UNSIGNED_MODULE
-[Tue Sep  9 10:25:34 2025] Hardware name: IBM 8561 T01 703 (LPAR)
-[Tue Sep  9 10:25:34 2025] Krnl PSW : 0704d00180000000 00007fffe07f5ef2 (remap_pfn_range_internal+0x372/0x420)
-[Tue Sep  9 10:25:34 2025]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
-[Tue Sep  9 10:25:34 2025] Krnl GPRS: 0000000004044400 001c0f000188b024 0000000000000000 001c0f000188b022
-[Tue Sep  9 10:25:34 2025]            000078000c458120 000078000a0ca800 00000f000188b022 0000000000000711
-[Tue Sep  9 10:25:34 2025]            000003ffa6e05000 00000f000188b024 000003ffa6a05000 0000000004044400
-[Tue Sep  9 10:25:34 2025]            000003ffa7aadfa8 00007fffe2c35ea0 001c000000000000 00007f7fe0faf000
-[Tue Sep  9 10:25:34 2025] Krnl Code: 00007fffe07f5ee6: 47000700                bc      0,1792
-                                      00007fffe07f5eea: af000000                mc      0,0
-                                     #00007fffe07f5eee: af000000                mc      0,0
-                                     >00007fffe07f5ef2: a7f4ff11                brc     15,00007fffe07f5d14
-                                      00007fffe07f5ef6: b904002b                lgr     %r2,%r11
-                                      00007fffe07f5efa: c0e5000918bb    brasl   %r14,00007fffe0919070
-                                      00007fffe07f5f00: a7f4ff39                brc     15,00007fffe07f5d72
-                                      00007fffe07f5f04: e320f0c80004    lg      %r2,200(%r15)
-[Tue Sep  9 10:25:34 2025] Call Trace:
-[Tue Sep  9 10:25:34 2025]  [<00007fffe07f5ef2>] remap_pfn_range_internal+0x372/0x420 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe07f5fd4>] remap_pfn_range_complete+0x34/0x70 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe019879e>] remap_oldmem_pfn_range+0x13e/0x1a0 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe0bd3550>] mmap_complete_vmcore+0x520/0x7b0 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe077b05a>] __compat_vma_mmap_prepare+0x3ea/0x550 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe0ba27f0>] pde_mmap+0x160/0x1a0 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe0ba3750>] proc_reg_mmap+0xd0/0x180 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe0859904>] __mmap_new_vma+0x444/0x1290 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe085b0b4>] __mmap_region+0x964/0x1090 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe085dc7e>] mmap_region+0xde/0x250 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe08065fc>] do_mmap+0x80c/0xc30 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe077c708>] vm_mmap_pgoff+0x218/0x370 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe080467e>] ksys_mmap_pgoff+0x2ee/0x400 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe0804a3a>] __s390x_sys_old_mmap+0x15a/0x1d0 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe29f1cd6>] __do_syscall+0x146/0x410 
-[Tue Sep  9 10:25:34 2025]  [<00007fffe2a17e1e>] system_call+0x6e/0x90 
-[Tue Sep  9 10:25:34 2025] 2 locks held by makedumpfile/563:
-[Tue Sep  9 10:25:34 2025]  #0: 000078000a0caab0 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x16e/0x370
-[Tue Sep  9 10:25:34 2025]  #1: 00007fffe3864f50 (vmcore_cb_srcu){.+.+}-{0:0}, at: mmap_complete_vmcore+0x20c/0x7b0
-[Tue Sep  9 10:25:34 2025] Last Breaking-Event-Address:
-[Tue Sep  9 10:25:34 2025]  [<00007fffe07f5d0e>] remap_pfn_range_internal+0x18e/0x420
-[Tue Sep  9 10:25:34 2025] irq event stamp: 19113
-[Tue Sep  9 10:25:34 2025] hardirqs last  enabled at (19121): [<00007fffe0391910>] __up_console_sem+0xe0/0x120
-[Tue Sep  9 10:25:34 2025] hardirqs last disabled at (19128): [<00007fffe03918f2>] __up_console_sem+0xc2/0x120
-[Tue Sep  9 10:25:34 2025] softirqs last  enabled at (4934): [<00007fffe021cb8e>] handle_softirqs+0x70e/0xed0
-[Tue Sep  9 10:25:34 2025] softirqs last disabled at (3919): [<00007fffe021b670>] __irq_exit_rcu+0x2e0/0x380
-[Tue Sep  9 10:25:34 2025] ---[ end trace 0000000000000000 ]---
+It's good to write these entries in pairs, as that's what they
+correspond to.
 
-Thanks!
+Please also take a look at this commit:
+b49e37de8e70 ("arm64: dts: qcom: x1e80100-crd: Drop duplicate DMIC supplies")
+
+[...]
+
+> +&i2c5 {
+> +	clock-frequency = <400000>;
+> +	status = "okay";
+
+A '\n' before status is customary
+
+[...]
+
+> +&usb_mp_hsphy0 {
+> +	phys = <&eusb6_repeater>;
+> +};
+> +
+> +&usb_mp_hsphy1 {
+> +	phys = <&eusb3_repeater>;
+> +};
+
+See:
+
+https://lore.kernel.org/linux-arm-msm/20250819-x1e80100-fix-usb-mp-repeaters-v1-4-0f8c186458d3@linaro.org/
+
+Konrad
 
