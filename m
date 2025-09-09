@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-808340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36D2B4FE7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B355B4FE81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69ACA4E1CC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7241B2461C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFC53451D1;
-	Tue,  9 Sep 2025 13:59:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D472773DF;
-	Tue,  9 Sep 2025 13:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EA3192B66;
+	Tue,  9 Sep 2025 14:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2oVwkHmm"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E2223337
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426394; cv=none; b=Xc2T76Ey6yYxpjEH2XN+dgU+rK7XwXY5Es0mHO3s0omXs5jeF+rZebBaRSjnf34wiIsR3ApCTqQgJt8hsOMXWaeWWt6VAQoaP6BdHc0KkkhdoDIQ9pnZQRxlBQlJbh1YLte77Z24pcOVKMfOlsuVgwGr4ePnWje2QC0qFv4XDPA=
+	t=1757426437; cv=none; b=cVm0SQEETVyI2cRRWHIZgabigNKrshTyYPa5tH5cR62OS5ts5PJt8nlPZPiEbYw2bmwR5IzErleC7VEeSqjF465uQm5GPyPLNh8dlz9aAOwd5Q5XEUiADB+RvNqzide7GT9eVXoEx1ORvAIhCI28u5h39QsT+89pjf7O4wuRyGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426394; c=relaxed/simple;
-	bh=me/PYrVLsmNCRPmt3YLLhQOu31Dt2HxN8RzThRmkvck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJmEvct0867dFjwbKBBUWdPFDT1488jtwiCEWwgV5xpcUAtg9YVs0Gk3FduNLUYFHoR7v0A+MY6E355hVpuOuGQoW0l62nW5Cqb0ZbxAQkTUcowSjE1pLbwmCJfPvXCu+efqc8uCF7u3x1fmo1rGMWTxOY+jYXlWqtWesrQDm34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E9261424;
-	Tue,  9 Sep 2025 06:59:43 -0700 (PDT)
-Received: from [10.44.160.77] (e126510-lin.lund.arm.com [10.44.160.77])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CF773F66E;
-	Tue,  9 Sep 2025 06:59:44 -0700 (PDT)
-Message-ID: <203c84db-1a58-42f0-a79b-35104d79e964@arm.com>
-Date: Tue, 9 Sep 2025 15:59:41 +0200
+	s=arc-20240116; t=1757426437; c=relaxed/simple;
+	bh=qROYeN7WGw8V62D9PfuxHYH4hedFRscRGSqWPNs5qMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XQgupRmBmCKF4NeMaQBbItPKDJP07xse31fiMnmn1zbBjOKD3Gv9hxR0WqWsDun72r0mxffr3qKuulBKSAL5RaFgCJCEIDcZPW3mWT+ftmlLrwBHHmPLM/FCoaFbjQu5BYlhxnRC5smK+CAHuLUvWHUcKnvmlG55Ab3cHkPYKjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2oVwkHmm; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 00BE41A09D3;
+	Tue,  9 Sep 2025 14:00:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CBB2060630;
+	Tue,  9 Sep 2025 14:00:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43F53102F2869;
+	Tue,  9 Sep 2025 15:59:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757426430; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=zkJmRVq9X8+VfiFiVFtH9/Lec29ID9JWmA+hQsicr58=;
+	b=2oVwkHmmv7BPojJAfKrt3kpqZHFkobdQn8anhwZSjXXexsdPrYY0mb7Qd7mBXNP0+Hapf3
+	yhbr01kdvGhPUnJVydECZxvOjMOZ22EB4oGlROtG5GDizZqbxlInomoz4VDLblZH6Jo6MJ
+	uf/J94TIXU28ydjh7K+23kOyqAvPQbkiXWGLNb4N5BJCQvKks4eqfqP+WILRUICQqn8DFn
+	UPAtrrFT9hJ91MV6PcuvB9rq3+w/L/dlYv8eElWnKfYRwjxhRhIMM9uh60Ehhiz9mxrkm6
+	DIR6A29G2WyJddjlr9Y/P/Xe1TdaqXIpUVpCeZ8iACM02lGh/cYbz1sFzv+iVA==
+Date: Tue, 9 Sep 2025 15:59:50 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Qi Xi <xiqi2@huawei.com>
+Cc: <bobo.shaobowang@huawei.com>, <andrzej.hajda@intel.com>,
+ <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+ <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+ <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+ <simona@ffwll.ch>, <lumag@kernel.org>, <dianders@chromium.org>,
+ <lyude@redhat.com>, <andy.yan@rock-chips.com>, <viro@zeniv.linux.org.uk>,
+ <mordan@ispras.ru>, <amishin@t-argos.ru>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on
+ error path
+Message-ID: <20250909155950.0e15ec6c@booty>
+In-Reply-To: <20250904034447.665427-1-xiqi2@huawei.com>
+References: <20250904034447.665427-1-xiqi2@huawei.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Nesting support for lazy MMU mode
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908191602.61160a7990b9ea418de758c7@linux-foundation.org>
- <d1b4ff2a-052f-4556-91ae-273962edbed0@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <d1b4ff2a-052f-4556-91ae-273962edbed0@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 09/09/2025 11:21, David Hildenbrand wrote:
-> On 09.09.25 04:16, Andrew Morton wrote:
->> On Mon,  8 Sep 2025 08:39:24 +0100 Kevin Brodsky
->> <kevin.brodsky@arm.com> wrote:
->>
->>> The main change enabling nesting is patch 2, following the approach
->>> suggested by Catalin Marinas [4]: have enter() return some state and
->>> the matching leave() take that state.
->>
->> This is so totally the correct way.  Thanks.
->
-> Staring at this, I wonder if we could alternatively handle it like
-> pagefault_disable()/pagefault_enable(), having something like
-> current->lazy_mmu_enabled.
->
-> We wouldn't have to worry about preemption in that case I guess
-> (unless the arch has special requirements).
->
-> Not sure if that was already discussed, just a thought. 
+Hello Qi Xi,
 
-That's an interesting point, I think I've addressed it in reply to patch
-2 [1].
+On Thu, 4 Sep 2025 11:44:47 +0800
+Qi Xi <xiqi2@huawei.com> wrote:
 
-- Kevin
+> Add missing mutex unlock before returning from the error path in
+> cdns_mhdp_atomic_enable().
+> 
+> Fixes: 935a92a1c400 ("drm: bridge: cdns-mhdp8546: Fix possible null pointer dereference")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Qi Xi <xiqi2@huawei.com>
 
-[1]
-https://lore.kernel.org/all/47ee1df7-1602-4200-af94-475f84ca8d80@arm.com/
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
