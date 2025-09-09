@@ -1,122 +1,179 @@
-Return-Path: <linux-kernel+bounces-808516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB77DB500C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00812B500CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1942A7A6F53
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:12:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9EDF1BC36DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6B9350844;
-	Tue,  9 Sep 2025 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D519A350847;
+	Tue,  9 Sep 2025 15:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="p4JuKygy"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="lSFK0nHr"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C12E35207F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E320102C;
+	Tue,  9 Sep 2025 15:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430830; cv=none; b=sjvfjuZTBtgFCL2fU5czL5JfSuxR4SV7EOanrJtORJL/1+B4nVP4zM3w9VCjSQDjNLkxW9+hJRKPiiv5Tp0O1t7ak8fKAAb81l17msKQ8iboP2xfA49Kkxwf1YZjbKSeSwquJnUwuDo/yx7pBWfXi+pgGpSfGuumapqzhHLKbV0=
+	t=1757430927; cv=none; b=nEdHLqW3foYtKgUHMrT0Wg56L/lizFM6EENAO/2dKmO5280SRpdJG8p0nIm9+8zxsIeMoT2GQS1xFiTAJcPurMjvC73quu5CziPxI1z78zLf+517L9CpMMJ1Svu/IyHDwVXaDQr1PKx2G7ondMa/qh/aRUlCReKpbZ1Pv1O3+VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430830; c=relaxed/simple;
-	bh=q10CkdeySaOwMmKxAuBnw6h23p1G/gZls4sxkL4hzgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jlwLlb0N+FXKbLiu5uHUxCWg8OOJW8BVG2Y9dCuzr5XweVqIuZU+pgVztd51IUPCFK+KcnSkIIUSEb6Y/F40iu9cDv2T2qxAmNUvg2hYNKnwJql6rUHMIBERSYD3P5W7G52ZoZSoSByKPTFx+NOtNeIpsbxjK93n3fSBDGsPOiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=p4JuKygy; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-805a55c09aeso543312985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:13:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1757430827; x=1758035627; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uf+yTceGU5JGkt+Uo/sIFQ6JanTGXEu2guYeVg+ECaw=;
-        b=p4JuKygyijnYyJwESu+Ieapxw4i4aNtZDASQYGExL8tKKFWQ7JjLbbo8EP78lZJOxi
-         fId8vgNWv9C7LG79osjCDJ8HR7Fs/845OO5dpZfOVcQ4ZF0uXMJ4Bx0Yco7KsAchYIrZ
-         1l/ieasp1vtie8NHyeG7PGUZ5a2ZSN/W3ssDZ5fqk09Y7f7tAlxgLIWwxM1bECujpUBl
-         Tq8Z/lWP5c2R1XbLkaIu46zilQ1dgSy0O4R2BPJUGGjWHfcgi9XfFTVgBHkEWGLTjt4m
-         NQ/aWZLS4asueb0XsrV8s1IW/OpxrHaLfdO1c3dKU0dBgFYAA7NuoTcHo7Ar2czP0FTR
-         Ka4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430827; x=1758035627;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uf+yTceGU5JGkt+Uo/sIFQ6JanTGXEu2guYeVg+ECaw=;
-        b=tUzMXqoh8MOgkM9hA/VV8kJ+68sIslhHeZ+lyHGiyC8Dm0gb2wkCY1i1vT9zXzOR8P
-         1bqGKRLswz5narEXs8DWLY0Os/Jjk16DGCCtZjXZ9axwALKkN1Y0TVm+yNxs9h8UIli6
-         /ahkC0++N9JpmUAR8vwX/rls90Iqh4CqtfWd95AQe+9W75WIUXCoLDHddrh07PthIqfo
-         Ib2OPtlnyBnyicfishtazQFBXt34CNBA9TNh5GtfktxVG/smiclUsDmmDSkzwhKmkocp
-         JoF5K7wwhDByKoTwr2OUOOa+ZBne058Vkg+sPr3gdIPpTtlkl+FksrsEV2jKJLFbe1DC
-         yWYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXidCLqHP3t+EdtuqT7b3WHZhsOSfPqUDBHgPeOwSS22p0X6tvbJX9B7ZgTorpXOSgnYU4CYxwVZ44ZeaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHbOQtwV0a5J5JQhRIrrLyZvG6NDZP73f1PsHIgxEzuncp+jo9
-	qVjXqc3Ea0o7TlFjBAw7VBq2FdxEqltdW/bOXkFbEVlIWbjjzJ63UAMe9vfMmksQGJY=
-X-Gm-Gg: ASbGncsVNUV3CCFct43tf6r9LQg5OeNGfSoXOHM0UKEqKcQ1uFYtz9+hGLLuIXzPLXQ
-	vBQycWkYJMaCPbT2rDBEGKvM+WnlyS1y2nai4H1iXI6J2LMIpLH7fLNlQQRVWwtDdQJwZrNW0V/
-	2BA4l+4wNxfOAsUd9Uu9PI0pWUl69WaIiTdA0EZONU47pFogBbNoZM1JCVZTBSNk/Rn0+K26aSY
-	d5Rt74SIKa1CAc6hKZWqkAIZG2lUk/GRl158kPbgh3b2dXmLvEIWTLhu6btDjx8C/H9RqfHVH8Y
-	sHgkwqo1+3VyUt7qYgjWayJjTNIPKGjg6oGfVHtjggMDdZ11FIbvrFZMzVheS7KkLrd95O4bWg6
-	SKV6vHOQ0nB8K
-X-Google-Smtp-Source: AGHT+IFk1mNsRoXg6pueACyEECW6Z59QmlqnpPcT14EM2tD1B0zWQIgkHrVzU+oQQccJBi9dAKzUgQ==
-X-Received: by 2002:a05:620a:c44:b0:803:7023:36b5 with SMTP id af79cd13be357-813c2efc949mr1318765985a.59.1757430827104;
-        Tue, 09 Sep 2025 08:13:47 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:600::1463])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-81b5f8fff60sm132842285a.60.2025.09.09.08.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 08:13:46 -0700 (PDT)
-Date: Tue, 9 Sep 2025 16:13:45 +0100
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: remove unused zpool layer
-Message-ID: <20250909151345.GE1474@cmpxchg.org>
-References: <20250829162212.208258-3-hannes@cmpxchg.org>
- <20250829190728.60675-1-sj@kernel.org>
+	s=arc-20240116; t=1757430927; c=relaxed/simple;
+	bh=2anOpUEB8ZrluT6ZWpZLfBR8vUKUSxK7hCmigQanedM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jJdvIhbW9mgMroohiYvBYWz0rm87GQLMc6WsJudtDDMiACZK2t6Rg1BnPdFXZhDanjXDAQtesOJlks8U8t82f4QZP+JHRsx8roOL6lcBrLM1vBBVpzyslCohW6R7qRZoGDt0qW9PWSFWqUdMHFrXlbOjpTF9Hjpx5jJDsCcINSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=lSFK0nHr; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id 27CC920545;
+	Tue,  9 Sep 2025 18:15:14 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-type:content-type:date:from:from:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
+	 bh=DuUlhG3uOqtSZMpp6pl4y3fP1ka9SPbGB7gebbWP824=; b=lSFK0nHrsuCA
+	ejR2F/HmmWM2++InmsQweYuQfmsC5IZHceyuUfHbFklT7GOsSN9uQvrocJPjNaqz
+	v/4G3vVdTXuTwJSUJDYJX3w4wmZ1z3usgn2D7/ZkXz2IfD/ErHlwNSPbc80Fx1MT
+	7IWfqlQwTN5Ng5dZT7SmgbCl/5fILkmp6OHTtD/3oOTmg63INA4Bkq8RZKhNtBfj
+	dcvvUtswQPXpDJy4xWcGZM56gbh3RvtYL/jyDiz41bQEtxSZSPHps4mjEn0EMP4q
+	+gya1ZyEJUpi4omZb8pjW8Ig8DNftsRGtqT2uWsdb8bOkeOvlZIsA2vdVxvjEQtq
+	THDQsTK8C5Ycj65nkMjed6NQYHISPBsl0srCH0MfEw9t46ts4tV9g5fABRHmgcqH
+	GjwbgomrUTw8cENwL5t8DO/6vjtChSZzfT4nl3ziTnzOhygcj6S+7Tx0X4p5/8es
+	qP+fMihwKvPMYbud3kVmIMUV4bYNAeRKnG4NK2mYMZURpDkO/pco4Xe+7v8AjAa3
+	0rtDGvkVJWfGLhQxfZ1d9yMsRwvzxflKqzHeZ/xmpqupAk3J61Ie/INIiVmLWAbM
+	Rx1hZd6KlXsSWaAFl5g5mBQvWMTKMPlaxEyUVHIABrEsvV5WRHs/SyIVEhgDCWdj
+	cDit2fXowT4PeVJbQH6gPIuXWwme13U=
+Received: from box.ssi.bg (box.ssi.bg [193.238.174.46])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Tue,  9 Sep 2025 18:15:12 +0300 (EEST)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by box.ssi.bg (Potsfix) with ESMTPSA id 184A464D0A;
+	Tue,  9 Sep 2025 18:15:09 +0300 (EEST)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.18.1) with ESMTP id 589FF4bN041717;
+	Tue, 9 Sep 2025 18:15:04 +0300
+Date: Tue, 9 Sep 2025 18:15:04 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: Slavin Liu <slavin452@gmail.com>
+cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] IPVS: Fix use-after-free issue in
+ ip_vs_unbind_app()
+In-Reply-To: <20250908065458.536-1-slavin452@gmail.com>
+Message-ID: <b5d51ae8-df71-713f-3f08-14cf6272f52a@ssi.bg>
+References: <20250908065458.536-1-slavin452@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829190728.60675-1-sj@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Aug 29, 2025 at 12:07:28PM -0700, SeongJae Park wrote:
-> On Fri, 29 Aug 2025 17:15:27 +0100 Johannes Weiner <hannes@cmpxchg.org> wrote:
+
+	Hello,
+
+On Mon, 8 Sep 2025, Slavin Liu wrote:
+
+> When exiting a network namespace, in cleanup_net()->ops_undo_list(),
+> ip_vs_ftp_ops->exit() is called before ip_vs_core_ops->exit_batch().
+> The ip_vs_app ip_vs_ftp and its incarnations will be freed by unregister_ip_vs_app().
+> However, there could still be connections bound to ip_vs_ftp's incarnation.
+> cp->app points to the free'd incarnation, which will be accessed later by
+> __ip_vs_cleanup_batch()->ip_vs_conn_net_cleanup()->ip_vs_conn_flush()->ip_vs_conn_del()->
+> ip_vs_conn_expire()->ip_vs_unbind_app(), causing a uaf. This vulnarability can
+> lead to a local privilege escalation.
 > 
-> > With zswap using zsmalloc directly, there are no more in-tree users of
-> > this code. Remove it.
-> > 
-> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> [...]
-> > --- a/Documentation/admin-guide/mm/zswap.rst
-> > +++ b/Documentation/admin-guide/mm/zswap.rst
-> [...]
-> >  When a swap page is passed from swapout to zswap, zswap maintains a mapping
-> > -of the swap entry, a combination of the swap type and swap offset, to the zpool
-> > -handle that references that compressed swap page.  This mapping is achieved
-> > -with a red-black tree per swap type.  The swap offset is the search key for the
-> > -tree nodes.
+> Reproduction steps:
+> 1. create a ipvs service on (127.0.0.1:21)
+> 2. create a ipvs destination on the service, to (127.0.0.1:<any>)
+> 3. send a tcp packet to (127.0.0.1:21)
+> 4. exit the network namespace
 > 
-> Nit.  s/red-black tree/xarray/ ?
+> I think the fix should flush all connection to ftp before unregistration.
+> The simpler fix is to delete ip_vs_ftp_ops->exit, and defer the unregistration
+> of ip_vs_ftp to ip_vs_app_net_cleanup(), which will unregister all ip_vs_app.
+> It's after ip_vs_conn_net_cleanup() so there is no uaf issue. This patch
+> seems to solve the issue but has't been fully tested yet, and is also not graceful.
+> 
+> Signed-off-by: Slavin Liu <slavin452@gmail.com>
+> ---
+>  net/netfilter/ipvs/ip_vs_ftp.c | 13 -------------
+>  1 file changed, 13 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
+> index d8a284999544..68def1106681 100644
+> --- a/net/netfilter/ipvs/ip_vs_ftp.c
+> +++ b/net/netfilter/ipvs/ip_vs_ftp.c
+> @@ -598,22 +598,9 @@ static int __net_init __ip_vs_ftp_init(struct net *net)
+>  	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
+>  	return ret;
+>  }
+> -/*
+> - *	netns exit
+> - */
+> -static void __ip_vs_ftp_exit(struct net *net)
+> -{
+> -	struct netns_ipvs *ipvs = net_ipvs(net);
+> -
+> -	if (!ipvs)
 
-Yeah, I just kept the changes scoped to the removal of zpool.
+	What if we change this 'if' check to:
 
-But this file indeed needs a general update beyond the changes in this
-series. I'll send a separate patch to clean this up.
+	if (!ipvs || !ipvs->enable)
 
-> Acked-by: SeongJae Park <sj@kernel.org>
+	If netns exits, the cleanup order is:
 
-Thanks SJ
+1. exit handlers for pernet device (&ipvs_core_dev_ops) where
+	ipvs->enable is set to 0
+
+2. exit handlers for ip_vs_ftp_ops (as last pernet subsys)
+	By checking for ipvs->enable, we should not call
+	unregister_ip_vs_app() in __ip_vs_ftp_exit() because
+	there can be existing conns with valid cp->app
+
+3. exit handlers for pernet subsys (&ipvs_core_ops) where
+	ip_vs_app_net_cleanup() unregisters all apps for netns.
+	Here the apps will be freed after all conns are gone
+
+	Why we should keep the ftp pernet subsys: because when
+there are no conns using the app, the module can be removed and
+it must unregister its app from all netns where ipvs->enable will
+be 1.
+
+	But note that we have a pending patch that changes
+the access to ipvs->enable to use READ_ONCE/WRITE_ONCE:
+
+https://archive.linuxvirtualserver.org/html/lvs-devel/2025-09/msg00000.html
+
+> -		return;
+> -
+> -	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
+> -}
+>  
+>  static struct pernet_operations ip_vs_ftp_ops = {
+>  	.init = __ip_vs_ftp_init,
+> -	.exit = __ip_vs_ftp_exit,
+>  };
+>  
+>  static int __init ip_vs_ftp_init(void)
+> -- 
+> 2.34.1
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+
 
