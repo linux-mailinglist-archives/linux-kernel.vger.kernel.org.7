@@ -1,149 +1,202 @@
-Return-Path: <linux-kernel+bounces-808193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559A9B4FBA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1531DB4FBAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9A13442F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079545E0DEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B133A039;
-	Tue,  9 Sep 2025 12:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7692E33CEBF;
+	Tue,  9 Sep 2025 12:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s9Ud/8oV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQzE+Jpe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NokdZ6BY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D654F33A027;
-	Tue,  9 Sep 2025 12:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E1E33CEA1
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757422082; cv=none; b=HLJ79Ehj5bH/1Qfc491ULsxxgMYADx3GQCAQaZaH/gMnqbzyWd2yAbR38/t4cPT2T2ldApQzqN+BE0MQNpx9ty8A2pFzpkCK5l0OT9xO2vFi4wfpFFpTwWvRlzdLbq3U9aNp0KUYs+ptX2HoM82L1zr2Pe/v6baUKiFevbSIXBM=
+	t=1757422096; cv=none; b=M60if+qswnscVSRqe1jhbF4R4isGh+Or87g+yYvUv0xs0qBDUikesl8GI69HAjBCxFfhQDH5Gb1Zl6BKaEZbRNGpQtK9TRK5Uyw9yzPe6TGZiK0U8xMkk33sdGw346P1Nd8CzpVKFsxELZOr0kouZOvxCYfmrlWoIaKNApe9iRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757422082; c=relaxed/simple;
-	bh=u3drBXy0xF5QtMsfXJpc2suTYN7X9y0M8Qq1psiaq5Q=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dYswessLKETP8m1xATHcde1FQ9qVqjKDf2cfgNfxVnMu2k+j7NvSFxil1gbGb6DVUbb60DC1L2+3oVDlosDODStKflb8rDDNqU+8PmMP7szBmpHBsnxrkEt6Bwxeez6aahzKFYXSfvOa7b912Q9r1ud/UhQE8RQ+BCirg02x1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s9Ud/8oV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQzE+Jpe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Sep 2025 12:47:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757422079;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i1UXkmFuPW716nPTJSFM0aYJZy132tL7xjGpBQyqUww=;
-	b=s9Ud/8oVTLJnYVo/Z9EG7AUe/JLTy1j50iEDXM19KPtlTSy7j4zhaGwOpSQoCh++zrcfhW
-	ktNjXUHZI5hTY3armqlxXsykr37BRgJTpRNAlzahjN67qpwlbFc4HHewbab2066eZuQtgb
-	ePmfBEo18YWe4iFsuUWhOpr2cCJ3HljLnjB8xEomMLawnvVLtm4ubjWpEBJ82/nhVkw0dS
-	4CK38JjCdoexnip1PmjtlaWJonXvDLNHjEPTEY27OVztYAtidr68XG9ZBNGZ3Cl2Sr3gxv
-	Y57jz6G0jQ7mgVhHT464thU24IThZmZTKzbxsFco2eXVClBDLpC0V+/SPPYuuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757422079;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i1UXkmFuPW716nPTJSFM0aYJZy132tL7xjGpBQyqUww=;
-	b=oQzE+JpemnYwLbrm/2A+ZrFQvoPF6EecXecTBA+lxG2NKSM5hQ4mtHfC8s8+2G1svjb6JP
-	dTiUFJiAvxf/ORCQ==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/msi-lib: Honor the
- MSI_FLAG_PCI_MSI_MASK_PARENT flag
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250903135433.380783272@linutronix.de>
-References: <20250903135433.380783272@linutronix.de>
+	s=arc-20240116; t=1757422096; c=relaxed/simple;
+	bh=VftbE1hsLmXFChLA3aJJHbvI9G8AlMyg5ojBtwjpRKo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mTxm3mU7EPCDjUzeT23PAjvL2FUsZ7DwxbR/N1rvhrq+0OjMbhkJGtK2rrki+lIQtpa5+h40Fhc6A6+kd3BMZMoiMvnFEKvtgBNC3yow/+AFRGNh/II9jFl4MUBgwHeO4sENILcnqt/iBulMUB5fAdQHY9w6zCz3l9C7Sxy0XrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NokdZ6BY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45de60d39b7so15007875e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1757422093; x=1758026893; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
+        b=NokdZ6BYazX/JhBEcEC2OTZ6eRkjs7y0uEp0LXUYy9BiyZSIZk7sPHMmq+JbNkzcoA
+         t3ztbk9gkrCMzrWLyzDIgYyjE4Q1NXlPvGum3GwfsZQkUZNO1fEnqUF5cJctheqUQL96
+         3l+LGCsbEMHvPg2j6Nqxms3PEgpv1CUUc1xqfEYA8hBeZOcVsMhoDaKEVDlz3+b46KTp
+         SVoPwYvczWzPsuhBRBdKzM5jctbjYhCFdQ0M+khI9b+JlU1oq/Ic/dtE/NeoQJVc/7tU
+         waIefJtJ3EQgRmKhMyHIn9gBpGYVqJNJ7v/heJnpaOyZvSGGJLX1CyimDGzaB2NxHncR
+         yRLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757422093; x=1758026893;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
+        b=mXWZz8LwaADpPPksCNpm9NrFDbN0h0mciCUI+gNDzOQgekQmPjx8ggtZe/N8V4Outf
+         bm4uyQ/dVIjkn1UbgVSM+zIcsxJMMVR3RsUr2Ryx1gZYsFmFSK2bpyncglgMDnb+9UXT
+         7gpgYgdpVqI3iMxF/xtn2NwiuFxnM0gMuHTfD4EvBWSMJQe1BGYKIbwI1wN3TspMURrc
+         qiegPX87UOrysSAxQMwhVZA2jRiMzC6BmleZCaPvoSwRaViHJg/jUAKLwgxC6j4nOWDi
+         RA9p6uOUiX1JEVZQuBCgw3joFNIN69ouCdUEEuGEZf6O4xbA3saQmm05MyuaZ+M6OVFV
+         1+Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCW58+rc+PdSC2qdSEdIagtMhwm4OCzmAkPU4nfPfuyQTEHOIRGVwC43Qd2azW3lk2BlwSo7iqTFOG4IwoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi+zM5NgN2uh4SbUzlQmhsIgmS4HPyDndrzosqGnASGcJdw3T4
+	fMpkKHD7zqTD3+xb1u+8hDBR7WeCRT4orpmSrz07yvgHnib/yws/xq+AuXzWYgtHPVs=
+X-Gm-Gg: ASbGncvwxDrD9CuYWjSYLHDe0JZYJfELp13seoohKzqRHt/29sRLY8R4wLcSeLB/c7N
+	d/NaQGag2VZAtyR3aXhVbvknJRQTSg/k8PReufSSjWSflI4kdqsbxNZNCFk1KCEJsgzjsCBAj0N
+	Y+lhcJFQFG5aBL5Zaa4nyACBC010AbAW4wnf96SZYYFPyEYtr03W4zmTVVOsIFQn93oQ6/jNf7j
+	FDSGEai+wmKYNGGa/h7HKc+riD71MQ3r0mmAyv6L+eY1le3u99agLXY4M9EUsBlJGdH4CjHP5yZ
+	AV/b6zQ31vpzgJLeX4u20YOHY21uAV43RaMsKKZ1aQA7WsCsTr68O0Opq9rWAPE2aEBiuhVpoL+
+	HGW4odMMYMbtmb0JQ5zdoW6H0XN0BDGfuOFS0vtXyvQ==
+X-Google-Smtp-Source: AGHT+IGNhrTxIPsosCdGJWZIZAbT0RGPUxRM8nlUnIFpaFAXk/yICLpZY71X3iYYFxkLTIc/wDUO1A==
+X-Received: by 2002:a05:600c:46d0:b0:45d:d96e:6176 with SMTP id 5b1f17b1804b1-45ddded62d8mr99306545e9.25.1757422092531;
+        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75224db20sm2503507f8f.60.2025.09.09.05.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
+Message-ID: <ba50f82f-3344-42dd-b58d-0a1d7438e1ac@tuxon.dev>
+Date: Tue, 9 Sep 2025 15:48:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175742207769.1920.12315715882414101751.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/drivers branch of tip:
+Hi, Manivannan,
 
-Commit-ID:     f09c1d63e895e1b45248a75656a41df2e8102874
-Gitweb:        https://git.kernel.org/tip/f09c1d63e895e1b45248a75656a41df2e81=
-02874
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Wed, 03 Sep 2025 16:04:46 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 09 Sep 2025 14:44:30 +02:00
+On 8/30/25 14:22, Claudiu Beznea wrote:
+> 
+> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>> only as a root complex, with a single-lane (x1) configuration. The
+>>> controller includes Type 1 configuration registers, as well as IP
+>>> specific registers (called AXI registers) required for various adjustments.
+>>>
+>>> Hardware manual can be downloaded from the address in the "Link" section.
+>>> The following steps should be followed to access the manual:
+>>> 1/ Click the "User Manual" button
+>>> 2/ Click "Confirm"; this will start downloading an archive
+>>> 3/ Open the downloaded archive
+>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+>>>
+>>> Link: https://www.renesas.com/en/products/rz-g3s?
+>>> queryID=695cc067c2d89e3f271d43656ede4d12
+>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>> ---
+>>>
+>> [...]
+>>
+>>> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
+>>> +{
+>>> +	u32 val;
+>>> +	int ret;
+>>> +
+>>> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
+>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
+>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
+>>> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
+>>> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
+>>> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
+>>> +
+>>> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
+>> You don't need to do !!ret as the C11 standard guarantees that any scalar type
+>> stored as bool will have the value of 0 or 1.
+> OK, will drop it anyway as suggested in another thread.
+> 
+>>> +}
+>>> +
+>> [...]
+>>
+>>> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+>>> +					     unsigned int devfn,
+>>> +					     int where)
+>>> +{
+>>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>>> +
+>>> +	if (devfn)
+>>> +		return NULL;
+>> Is it really possible to have devfn as non-zero for a root bus?
+> I will drop it.
 
-irqchip/msi-lib: Honor the MSI_FLAG_PCI_MSI_MASK_PARENT flag
+Actually, when calling:
 
-For systems that implement interrupt masking at the interrupt controller
-level, the MSI library offers MSI_FLAG_PCI_MSI_MASK_PARENT.  It indicates
-that it isn't enough to only unmask the interrupt at the PCI device level,
-but that the interrupt controller must also be involved.
+pci_host_probe() ->
+  pci_scan_root_bus_bridge() ->
+    pci_scan_child_bus() ->
+      pci_scan_child_bus_extend() ->
+        // ...
+        for (devnr = 0; devnr < PCI_MAX_NR_DEVS; devnr++)
+            pci_scan_slot(bus, PCI_DEVFN(devnr, 0));
 
-However, the way this is currently done is less than optimal, as the
-masking/unmasking is done on both sides, always. It would be far cheaper to
-unmask both at the start of times, and then only deal with the interrupt
-controller mask, which is cheaper than a round-trip to the PCI endpoint.
+The pci_scan_slot() calls only_one_child() at the beginning but that don't
+return 1 on the root bus as it is called just after pci_host_probe() and
+the bus->self is not set (as of my investigation it is set later in
+pci_scan_child_bus_extend()) leading to rzg3s_pcie_root_map_bus() being
+called with devfn != 0.
 
-Now that the PCI/MSI layer implements irq_startup() and irq_shutdown()
-callbacks, which [un]mask at the PCI level and honor the request to
-[un]mask the parent, this can be trivially done.
+Similar drivers having ops and child_ops assigned use the same approach.
+E.g. dw_pcie_own_conf_map_bus():
 
-Overwrite the irq_mask/unmask() callbacks of the device domain interrupt
-chip with irq_[un]mask_parent() when the parent domain asks for it.
+void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int
+devfn, int where)
+{
+	struct dw_pcie_rp *pp = bus->sysdata;
+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
 
-[ tglx: Adopted to the PCI/MSI changes ]
+	if (PCI_SLOT(devfn) > 0)
+		return NULL;
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Marc Zyngier <maz@kernel.org>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/all/20250903135433.380783272@linutronix.de
+	return pci->dbi_base + where;
+}
 
----
- drivers/irqchip/irq-msi-lib.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
-index 9089440..d5eefc3 100644
---- a/drivers/irqchip/irq-msi-lib.c
-+++ b/drivers/irqchip/irq-msi-lib.c
-@@ -112,6 +112,20 @@ bool msi_lib_init_dev_msi_info(struct device *dev, struc=
-t irq_domain *domain,
- 	 */
- 	if (!chip->irq_set_affinity && !(info->flags & MSI_FLAG_NO_AFFINITY))
- 		chip->irq_set_affinity =3D msi_domain_set_affinity;
-+
-+	/*
-+	 * If the parent domain insists on being in charge of masking, obey
-+	 * blindly. The interrupt is un-masked at the PCI level on startup
-+	 * and masked on shutdown to prevent rogue interrupts after the
-+	 * driver freed the interrupt. Not masking it at the PCI level
-+	 * speeds up operation for disable/enable_irq() as it avoids
-+	 * getting all the way out to the PCI device.
-+	 */
-+	if (info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT) {
-+		chip->irq_mask		=3D irq_chip_mask_parent;
-+		chip->irq_unmask	=3D irq_chip_unmask_parent;
-+	}
-+
- 	return true;
- }
- EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
+Thank you,
+Claudiu
 
