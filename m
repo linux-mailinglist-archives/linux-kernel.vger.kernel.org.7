@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-808261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBFBB4FD3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:34:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37A1B4FD23
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9DA1BC4B5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:33:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FEF74E2D47
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75D435A2A6;
-	Tue,  9 Sep 2025 13:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsG+qsUJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2453570DE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595443570D2;
 	Tue,  9 Sep 2025 13:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3Fz/YLx2"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDC73570B4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424562; cv=none; b=I+wwdS23DmoSzeuGcMRVHiWbBByMyDZ3BvAlqt6HCVQwbpZnJWWlOTOiPK/cvUTnp+aw5YZE1/odu3603uNxK48XAK0+RHG4aDQgkWY6KeFgFb6WnAAMAReFfTmH6YPiXdtAM0EA2vUhvUsMEZ5kcgyo5Xe9J3mcoHotf8dTG0M=
+	t=1757424560; cv=none; b=hVoMUxbUlPc3w0n8YNl1aBQKFSV+JgjnLP+Uu0NgSV0E524YBdZvOHvUWHH9RTjLXYHUl4DVZydqgJbzThhWnGoxoXdO1Aj72ykzGcGWKKVr6y5vZ9QzaePBbMcHKKP5w3UQaDR9IVT4K9AxAPeeppQdsjoJznqx3Kf2kTnYtes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424562; c=relaxed/simple;
-	bh=iTHTFebdJnIM4qjuR28g9oSbyH9qTLhzazcpZ251F1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=El3XKuPSyOlK+BkI913YfJCqNC/A98/BGLVnTwLPXMdeAH4H48XjrOciYf0E2ilGxF3df6laYzRXrA2nzfzWDzV2MWq9j3bpmNchtCQGrtp/9+nyCE+DHMYuWonH/U2qiSnOHXraOMUYiOs9FDnKyTTAxcaMCAjOh2ppQkr6cLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsG+qsUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C94C4CEF5;
-	Tue,  9 Sep 2025 13:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757424561;
-	bh=iTHTFebdJnIM4qjuR28g9oSbyH9qTLhzazcpZ251F1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jsG+qsUJK7ffZ/z3OPchqA7x0yHguyPrENB1hNDceKyevn8Y0UY23vIlJKogKoOAV
-	 mdweaZvTaV73xdPNvzuLcSgBCkcKJinDpA+AFFif7FJFzPv/yP0eacNr7loyHWPJQl
-	 oDjSg5lytMZ5QZs3srGmQGs2aZnhiieWxGdijxV8InWTHYLEbMLD5nMB8zsJzQ7Y5/
-	 n6m5X6Og8JA73w+GsQKGuK+FDZc8VM+Pv/R0ANeQAPkMSUkS/Z7Crlwiferwk3j/aY
-	 bciFy1DVrMp5bQJF6IrE2GwiFytJBqVGnuxPc5FU5fznd5ZzC/Ro1XzYA9SknCnnqK
-	 nq4YmMAH6+QaA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	iommu@lists.linux.dev,
-	Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com,
-	Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev,
-	Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v6 16/16] nvme-pci: unmap MMIO pages with appropriate interface
-Date: Tue,  9 Sep 2025 16:27:44 +0300
-Message-ID: <be35a070a883286f0e401f6746334d84a7a42612.1757423202.git.leonro@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1757423202.git.leonro@nvidia.com>
-References: <cover.1757423202.git.leonro@nvidia.com>
+	s=arc-20240116; t=1757424560; c=relaxed/simple;
+	bh=sdAUUAnXyg3K/25QJcJ/H03t1J2tpAN5WH0WT43DIUw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aAKdDAshWl+0r3AnyIIdYJGWJtks4ZkB1Wy+2x9b7MUlgfxJxH6MDHT9MmIGXJOyboKfbGrvQEzbGUT/DtKe+zMQ1D1PgAesFn0n62UBn2+i2okjwQJ/YMfvPIOgBBo8yNt5fPlr22pYy9grL6OCM+S7hxE8j60ALqpAV0JaK6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3Fz/YLx2; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3fc5f08699aso21880885ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757424557; x=1758029357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VrUpdS9XW8kCmiI/HdKgdDuMgaTmT22blEzvxDbI6UY=;
+        b=3Fz/YLx2M8b0ASqOsObwg/F7nj6Bz1m4S5gi2raA8xXcMWalm8Vza4oIPHmgsbAJOP
+         fVjQ3DXRLa9zsLK16oheajgZ1lUoH7Kx1dfepg6OiMAn7rwb+iVdWN0Qm3Rdf7EzPzIW
+         5AH1DjDwM7M8WXhc6Uuhg8+ckMZ17hLSh/1oAt86eY7xXKYGw0db1TVux1ylNkQzWL95
+         StKd7j5VgC6YIulq5Iaz6k+GCU3MgvZraHDajQF3s7jIUGU7cDC7K2j6EA28rOkxZTWP
+         UG/2n2HTeY3uE0Bpc9RFOlIFcKrB2Nc3wEIF6gOh5r2Ns6Jysh5pDMyG23QsNs/4hIA0
+         kl3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757424557; x=1758029357;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VrUpdS9XW8kCmiI/HdKgdDuMgaTmT22blEzvxDbI6UY=;
+        b=AE7fdc+F6eV9WKzuZRR1GTFKbVWrhAJo1jOsfF3pbFyb6qjFKC//+yEwHAAPAp4ktj
+         pH3QIpngIv5r0DO4XxBcpRjDNi+1PvQAbYVJT0AwIc8rxHSmNvCZaI3Fe7d7nQXIAvLP
+         A9RNuyJKO4vyBqJiDSIaun6iTzbI7oXMQwufqpnHhXAmS2JdiIHw002CqrjnC+2frlsS
+         4L6G1p0xu7AHKCPTokY/j0g7BxfbJnBnZjncIaIdGsWY1vkRJDeDb61QxL6bx3puShoq
+         +R9KXdhfSgA/1kDJeRhxyDsetcwDFK3t6XlNkS5xcg3Ng+/bE9F+Mhdessi+o+gy3mV2
+         OYmw==
+X-Gm-Message-State: AOJu0YxD6giGrW2fnoQT+FZVZYYbt8dVqPYIbT3kohLc3tfIXqhEZvSo
+	e8oMpRmVTcnB5cjL0vHy51RqDkLhQEVPVv2IeXv3EUKdIzilFc+MdYjQ+J7uc94atjM=
+X-Gm-Gg: ASbGncsUsZGRq8bJQTvsthP3Y8Dr8O6NlM4Vy45f4b7neHtRqNjEAkj1vCLC8g1HqlB
+	x+Ti2xf4xxB8YcoJF1ZV6C1dQZX1ZC2ttvzJry2jNYNXbaKuNruTFJ/AUb4VbEmZsDxPqr3jTC+
+	8TegB/oKPOjBPL6iTKjS7kllX1wgQXi7wVlZxroyLXarcm7M2ugoRpBF3jWV7YHHl4p/p8PCsK6
+	JpnSXFlm3Ztwz8D89J0RK7ricLNFiSGpPgV81NEpipz4d1cQ758wfT08RWxAZDgEi2PqtO8/4M+
+	MLD6qf7x2A1CSVyaD3s7oZdNMAnuSUlqkA1ZGCcPhuO0iEze8722dU3nJNdDiOml5kOaYzDuoWc
+	rGc3S5pO6+D7UUqWkv/Zzqv+ZDm+QVLwF7sY=
+X-Google-Smtp-Source: AGHT+IEIjWqcE1zYENpDxaX7YutdAIuak1sO9GmLbuURziKcQXpN8xbXlPbtAPoitLTAuWNCpHzs7g==
+X-Received: by 2002:a05:6e02:3784:b0:3f3:bbda:d037 with SMTP id e9e14a558f8ab-3fd965c4d04mr182350825ab.26.1757424557099;
+        Tue, 09 Sep 2025 06:29:17 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f31f6e4sm9895116173.47.2025.09.09.06.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 06:29:16 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Josef Bacik <josef@toxicpanda.com>, Eric Dumazet <edumazet@google.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+ Eric Dumazet <eric.dumazet@gmail.com>, 
+ syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
+ Mike Christie <mchristi@redhat.com>, 
+ "Richard W.M. Jones" <rjones@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
+ linux-block@vger.kernel.org, nbd@other.debian.org
+In-Reply-To: <20250909132243.1327024-1-edumazet@google.com>
+References: <20250909132243.1327024-1-edumazet@google.com>
+Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
+Message-Id: <175742455632.75115.15346620038817180242.b4-ty@kernel.dk>
+Date: Tue, 09 Sep 2025 07:29:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-From: Leon Romanovsky <leonro@nvidia.com>
 
-Block layer maps MMIO memory through dma_map_phys() interface
-with help of DMA_ATTR_MMIO attribute. There is a need to unmap
-that memory with the appropriate unmap function, something which
-wasn't possible before adding new REQ attribute to block layer in
-previous patch.
+On Tue, 09 Sep 2025 13:22:43 +0000, Eric Dumazet wrote:
+> Recently, syzbot started to abuse NBD with all kinds of sockets.
+> 
+> Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
+> made sure the socket supported a shutdown() method.
+> 
+> Explicitely accept TCP and UNIX stream sockets.
+> 
+> [...]
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/nvme/host/pci.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 2c6d9506b1725..f8ecc0e0f576d 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -682,11 +682,15 @@ static void nvme_free_prps(struct request *req)
- {
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
- 	struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
-+	unsigned int attrs = 0;
- 	unsigned int i;
- 
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
-+
- 	for (i = 0; i < iod->nr_dma_vecs; i++)
--		dma_unmap_page(nvmeq->dev->dev, iod->dma_vecs[i].addr,
--				iod->dma_vecs[i].len, rq_dma_dir(req));
-+		dma_unmap_phys(nvmeq->dev->dev, iod->dma_vecs[i].addr,
-+				iod->dma_vecs[i].len, rq_dma_dir(req), attrs);
- 	mempool_free(iod->dma_vecs, nvmeq->dev->dmavec_mempool);
- }
- 
-@@ -699,15 +703,19 @@ static void nvme_free_sgls(struct request *req)
- 	unsigned int sqe_dma_len = le32_to_cpu(iod->cmd.common.dptr.sgl.length);
- 	struct nvme_sgl_desc *sg_list = iod->descriptors[0];
- 	enum dma_data_direction dir = rq_dma_dir(req);
-+	unsigned int attrs = 0;
-+
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
- 
- 	if (iod->nr_descriptors) {
- 		unsigned int nr_entries = sqe_dma_len / sizeof(*sg_list), i;
- 
- 		for (i = 0; i < nr_entries; i++)
--			dma_unmap_page(dma_dev, le64_to_cpu(sg_list[i].addr),
--				le32_to_cpu(sg_list[i].length), dir);
-+			dma_unmap_phys(dma_dev, le64_to_cpu(sg_list[i].addr),
-+				le32_to_cpu(sg_list[i].length), dir, attrs);
- 	} else {
--		dma_unmap_page(dma_dev, sqe_dma_addr, sqe_dma_len, dir);
-+		dma_unmap_phys(dma_dev, sqe_dma_addr, sqe_dma_len, dir, attrs);
- 	}
- }
- 
+[1/1] nbd: restrict sockets to TCP and UDP
+      commit: 9f7c02e031570e8291a63162c6c046dc15ff85b0
+
+Best regards,
 -- 
-2.51.0
+Jens Axboe
+
+
 
 
