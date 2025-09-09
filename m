@@ -1,149 +1,217 @@
-Return-Path: <linux-kernel+bounces-808700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDD1B503A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:01:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF04BB503C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AA9542596
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77DCB1C80024
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43103728A1;
-	Tue,  9 Sep 2025 16:57:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBA4334717;
-	Tue,  9 Sep 2025 16:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFA037429B;
+	Tue,  9 Sep 2025 16:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="ZRuLJCJu"
+Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5138B37426E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437076; cv=none; b=KJti0Ud/SaBpbJOUhXu2GHz4m22tNAEeJZFcv2ao8i7svjLpiCRcAoBY9V03hqIfSWw0582quVTOIpOZO8IEKTC90TQGEbFKsT6SIW0E+i0xFN4QmzYLM3dhEcq3ql6160PsRl7owwkopfqTCe2OL7oSdHE1MgxxjPZp2CiYKPQ=
+	t=1757437093; cv=none; b=ghWVyopPjr8EJhZHhLCfInWuLWsp7JNio9D2CPkkyriMxKI8ZhaQLGAvBYyWglmU3Isug/oA1QxSUbNhahiEs3oUOTyuQVmAf6HhZ6We/ApmoA6PGK2gyQVVuUTDWyTMIAwq798QtFpLsMzzhPVnJkGljEYCnwMxYJwt3qaH8Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437076; c=relaxed/simple;
-	bh=XtpKUL7dVJ7Md2unjp6HHAK1hOa95mxETgDpcYTK2l8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wqo6RCKf+WJCXCYN49Ajy9ynUTpCwMbaaDV26ryJ/M7b4ClMD4PnjvZSBZs739dV7KKYsyqums68i4SRgo7mK43RQNrvRZ05eYaHgjZUDsyYN+06xFV3HCNHxHszBfWGvnROvLBs1YiAqGy+hidDzTelAHO6P6bDO4yO+9DMgOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92E1C2008;
-	Tue,  9 Sep 2025 09:57:45 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C2EC3F694;
-	Tue,  9 Sep 2025 09:57:47 -0700 (PDT)
-Message-ID: <3a3520f7-654b-420f-a8e8-ca57f92e21fe@arm.com>
-Date: Tue, 9 Sep 2025 17:57:46 +0100
+	s=arc-20240116; t=1757437093; c=relaxed/simple;
+	bh=d+p6lXxmYSZ/O+1dw1vhgQn9XprwvhG0g5Khdikh6KI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hgxv4jx17HxQQa3sVsR3UeZ104+eX1ycYTM7/rQ/ttA217HNFvN1YO4YJydJWW3o7neIYtSZNMX/NbB7dZb1Np/7fblWJf5iHjUih0YMjA7tWO4iRMCtbjU8xFb7365QUVeUh533eQX9wh+nk9GsyOvfZ1EJUIANHwfANWV1Y8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=ZRuLJCJu; arc=none smtp.client-ip=109.224.244.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1757437082; x=1757696282;
+	bh=d+p6lXxmYSZ/O+1dw1vhgQn9XprwvhG0g5Khdikh6KI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ZRuLJCJuh0BsxDr+fvIwxu4Zo6flmVtxvUVZCZgVZ0zy1ZfCAIoOEBaoVfGVV6TdI
+	 TXx+Q+9YEfa7rjj/IS1KreTwf/0vPIMd2+fSEuwH8JDnfHEawQkCzLsHxCRUcbSRre
+	 d6OCQZgrcq523O24+bLt4hrbCT2lb3rI22rIQihpwAi/E4VKbiVPFA+vyxa/3kYugV
+	 czx3SoZCGYJ0g3dnFy02CXfCzUukPKa43kCof3Q8J1yEZ/nwYO9zqFUPfn3HKPMjoC
+	 gqcismscamviwHoNUccA5wS5ipoUtWIGbL5w4Qy94DCDgBZ7VeFb8+7AWD7nbIc4jn
+	 PRuw0tFsZtOkQ==
+Date: Tue, 09 Sep 2025 16:57:55 +0000
+To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: leds: add generic LED consumer documentation
+Message-ID: <MOj2NUVAdyu9bvVkEON8rhAlGJ9FRRh9gJABkrOR_6gKhE8rmeZ5Isbj9noA1bDZ12gY4dlDpEtmEjxlRTucCssKwTo4f5nCowMOin85IKk=@vinarskis.com>
+In-Reply-To: <20250908-leds-v3-1-5944dc400668@vinarskis.com>
+References: <20250908-leds-v3-0-5944dc400668@vinarskis.com> <20250908-leds-v3-1-5944dc400668@vinarskis.com>
+Feedback-ID: 158356072:user:proton
+X-Pm-Message-ID: e90e158337c24b2a021c921e009cdad9d409d03e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/33] arm_mpam: Reset MSC controls from cpu hp callbacks
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-20-james.morse@arm.com>
- <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Ben,
-
-On 27/08/2025 17:19, Ben Horgan wrote:
-> On 8/22/25 16:30, James Morse wrote:
->> When a CPU comes online, it may bring a newly accessible MSC with
->> it. Only the default partid has its value reset by hardware, and
->> even then the MSC might not have been reset since its config was
->> previously dirtyied. e.g. Kexec.
->>
->> Any in-use partid must have its configuration restored, or reset.
->> In-use partids may be held in caches and evicted later.
->>
->> MSC are also reset when CPUs are taken offline to cover cases where
->> firmware doesn't reset the MSC over reboot using UEFI, or kexec
->> where there is no firmware involvement.
->>
->> If the configuration for a RIS has not been touched since it was
->> brought online, it does not need resetting again.
->>
->> To reset, write the maximum values for all discovered controls.
-
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index bb62de6d3847..c1f01dd748ad 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
-
->> @@ -849,8 +850,115 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
-
->> +static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
->> +{
->> +	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
->> +	struct mpam_msc *msc = ris->vmsc->msc;
->> +	struct mpam_props *rprops = &ris->props;
->> +
->> +	mpam_assert_srcu_read_lock_held();
->> +
->> +	mutex_lock(&msc->part_sel_lock);
->> +	__mpam_part_sel(ris->ris_idx, partid, msc);
->> +
->> +	if (mpam_has_feature(mpam_feat_cpor_part, rprops))
->> +		mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM, rprops->cpbm_wd);
->> +
->> +	if (mpam_has_feature(mpam_feat_mbw_part, rprops))
->> +		mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM, rprops->mbw_pbm_bits);
->> +
->> +	if (mpam_has_feature(mpam_feat_mbw_min, rprops))
->> +		mpam_write_partsel_reg(msc, MBW_MIN, 0);
->> +
->> +	if (mpam_has_feature(mpam_feat_mbw_max, rprops))
->> +		mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
-
-> MPAMCFG_MBW_MAX_MAX can be used directly instead of bwa_fract.
-
-Without the second user, yes.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
->> +
->> +	if (mpam_has_feature(mpam_feat_mbw_prop, rprops))
->> +		mpam_write_partsel_reg(msc, MBW_PROP, bwa_fract);
 
-> Shouldn't this reset to 0? STRIDEM1 is a cost.
 
-Heh, this is just a copy and paste of the last value, because it clears the 'enable' bit,
-and the spec says "there is no setting of the STRIDEM1 control field that disables the
-effects of proportional-stride".
 
-Yes - zero would be better.
 
+On Monday, September 8th, 2025 at 01:18, Aleksandrs Vinarskis <alex@vinarsk=
+is.com> wrote:
+
+>=20
+>=20
+> Introduce common generic led consumer binding, where consumer defines
+> led(s) by phandle, as opposed to trigger-source binding where the
+> trigger source is defined in led itself.
+>=20
+> Add already used in some schemas 'leds' parameter which expects
+> phandle-array. Additionally, introduce 'led-names' which could be used
+> by consumers to map LED devices to their respective functions.
+>=20
+> Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
+>=20
+> ---
+> .../devicetree/bindings/leds/leds-consumer.yaml | 89 ++++++++++++++++++++=
+++
+> 1 file changed, 89 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/=
+Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d50a3850f6336e9e3a52eb137=
+4e36ea50de27f47
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common leds consumer
+> +
+> +maintainers:
+> + - Aleksandrs Vinarskis alex@vinarskis.com
+>=20
+> +
+> +description:
+> + Some LED defined in DT are required by other DT consumers, for example
+> + v4l2 subnode may require privacy or flash LED. Unlike trigger-source
+> + approach which is typically used as 'soft' binding, referencing LED
+> + devices by phandle makes things simpler when 'hard' binding is desired.
+> +
+> + Document LED properties that its consumers may define.
+> +
+> +select: true
+> +
+> +properties:
+> + leds:
+> + oneOf:
+> + - type: object
+> + - $ref: /schemas/types.yaml#/definitions/phandle-array
+> + description:
+> + A list of LED device(s) required by a particular consumer.
+> + items:
+> + maxItems: 1
+> +
+> + led-names:
+
+While going over the feedback I realized `leds` and `led-names` do
+not follow `property`, `property-names` convention. Any objections
+if I rename `led-names` to `leds-names` for consistency?
 
 Thanks,
+Alex
 
-James
+> + description:
+> + A list of device name(s). Used to map LED devices to their respective
+> + functions, when consumer requires more than one LED.
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> + - |
+> + #include <dt-bindings/gpio/gpio.h>
+>=20
+> + #include <dt-bindings/leds/common.h>
+>=20
+> +
+> + leds {
+> + compatible =3D "gpio-leds";
+> +
+> + privacy_led: privacy-led {
+> + color =3D <LED_COLOR_ID_RED>;
+>=20
+> + default-state =3D "off";
+> + function =3D LED_FUNCTION_INDICATOR;
+> + gpios =3D <&tlmm 110 GPIO_ACTIVE_HIGH>;
+>=20
+> + };
+> + };
+> +
+> + i2c {
+> + #address-cells =3D <1>;
+>=20
+> + #size-cells =3D <0>;
+>=20
+> +
+> + camera@36 {
+> + compatible =3D "ovti,ov02c10";
+> + reg =3D <0x36>;
+>=20
+> +
+> + reset-gpios =3D <&tlmm 237 GPIO_ACTIVE_LOW>;
+>=20
+> + pinctrl-names =3D "default";
+> + pinctrl-0 =3D <&cam_rgb_default>;
+>=20
+> +
+> + leds =3D <&privacy_led>;
+>=20
+> + led-names =3D "privacy-led";
+> +
+> + clocks =3D <&ov02e10_clk>;
+>=20
+> +
+> + assigned-clocks =3D <&ov02e10_clk>;
+>=20
+> + assigned-clock-rates =3D <19200000>;
+>=20
+> +
+> + avdd-supply =3D <&vreg_l7b_2p8>;
+>=20
+> + dvdd-supply =3D <&vreg_l7b_2p8>;
+>=20
+> + dovdd-supply =3D <&vreg_cam_1p8>;
+>=20
+> +
+> + port {
+> + ov02e10_ep: endpoint {
+> + data-lanes =3D <1 2>;
+>=20
+> + link-frequencies =3D /bits/ 64 <400000000>;
+>=20
+> + remote-endpoint =3D <&csiphy4_ep>;
+>=20
+> + };
+> + };
+> + };
+> + };
+> +
+> +...
+>=20
+> --
+> 2.48.1
 
