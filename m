@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-808462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE54B5000B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A25B50014
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0BDC5E3E6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171495E5296
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93950350842;
-	Tue,  9 Sep 2025 14:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB68343D6B;
+	Tue,  9 Sep 2025 14:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b="mgP0v51A";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k9UAhErE"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QBTIYhWx"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CDB3451B6;
-	Tue,  9 Sep 2025 14:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF25226D1D;
+	Tue,  9 Sep 2025 14:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429346; cv=none; b=Ys98B65e4jcAtinYI5mduUcvtnTErtiUH+OMC50I/1KwPyki40RWwkOvI8N2T78lbRPiMxoGgI0WUpNkSz/7SSZQov7Ltiz87UMsHdB6Qw29smmPufvEZzorxqSifpU/fi5tVunUnn7X3F0HsLPzaBKsGD4cZHKEo+EcbCSvIsM=
+	t=1757429473; cv=none; b=Iu7fW858mrirVJ196+VFslv4xOeDb6RSUhLDAI5Dn400oB2c2hFCjX5Jq/58nMpoAn3pfp4gF9oFDgJjTqeQ8FGQYaKdeH0O/YWle6Y1eQ6WEJBV9nEMLsn63XN5HEdDOE/E+XTnsnDUWduMGTpoJXpwc3zWep7Dw5IlU1rcgrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429346; c=relaxed/simple;
-	bh=AbBtY9co23uwQZa5euqlsLmByYJLSL8y/i6l8asEyoU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=in8uER3z9+tJY1mZ1We3u32kHEAd5tRG0fL1IbtdzaOf10X9cFSnhIn4FH66A3rb9a0BXOVsQ5wy0zRAU+K6SkleS2ArO7c+uvZ8wBtbvMAQFDCmQBooTBT9FbUEQSzTCfMQG2eLRHuDAXkD0HzUA/R86WMDDragbEqdTUlQCyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com; spf=pass smtp.mailfrom=yadavpratyush.com; dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b=mgP0v51A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k9UAhErE; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadavpratyush.com
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailflow.stl.internal (Postfix) with ESMTP id B3F9E1300990;
-	Tue,  9 Sep 2025 10:49:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 09 Sep 2025 10:49:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	yadavpratyush.com; h=cc:cc:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1757429341;
-	 x=1757436541; bh=Y/TCCEjl1x7wxnth3DtTGIDGSel1rUvJ59NmeiL2G4Q=; b=
-	mgP0v51AEKZ1oLuhYhq0dxoxmzdIjuj3YRTMs5TontGsnXuKeSsgTrsrHF6MMIfE
-	212eXMod+EeJVAYGpAy4Wv7mBiYjAcuP6BQl0XEtvwCtFrOR3K7yecENrjLlgS+0
-	GXlPErjy7qBU86skUgjtHi0JX73VCP4d2e6kArizhL8smzMUphAKx3KnN6NRc70+
-	SBZBlQgCGhIuouqkBKe3T+HAMeylqU047Faj+5IWuvhIgMUt5yQO5NxiWcg9pAgl
-	ipuSUbIJEwKfx9Bu+4HDHaX3P4/73OO7C3zCWENMLai5nGCDCq+btAty7NtMpVT5
-	ICZUnKckfHRjdd9HvxPKIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757429341; x=1757436541; bh=Y/TCCEjl1x7wxnth3DtTGIDGSel1rUvJ59N
-	meiL2G4Q=; b=k9UAhErE0BymxMplbvUgbBzNElquxstojyh1E9JDW+hlCckC4yi
-	Wxfbe/64U4mV02XMEQa41HdXXr6D7Pz0TeLA2qkTHnrg8Sad+Av1yC214EPVlh7c
-	gGU/Zm8cgJ0YNGHykqSjIPPRgVIBJMHh4vNKSyFr/1Rw0sMkKtmz/l8KddE/3m5T
-	d3bK2EMMn4Zp5aVovyEmeH3U+RiBG9K6iHTkI+gB5vUhOJbHZB/e3OsBpJMB5AMP
-	YUnki6cCr0TLbu0DTcscCRzctwspe3ooGET70Sb+kC2h/zbuTL77tcH47MLZR4V5
-	rB38co4swoM2kR6N5/JxiYwdS2wwFxtWX3w==
-X-ME-Sender: <xms:Wj7AaIrI7M7ldDEGh2_Ckv7KIyHISKSpgzqMKkKLJFhg0iGJe_pciQ>
-    <xme:Wj7AaNJLH6L9L49uJ1lYcLGgIaQLnilMIFWmRCqyovoUqXEb9Ci53_420Ne6ZiMES
-    _l0O6XwDo13qd_55UM>
-X-ME-Received: <xmr:Wj7AaFnq_4-dBrJZbIFCdnlipGr0VxvsMJXV5oxjE7RVXL_yHwuriD0TFPRF0Y05P0zdplbqUMEfjEmzXnpjINJGeYfc-UqE6gP95EOykMfw8egzlum9VL28v2PgT-KgkR8gW0xC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeilecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufgjfhffkfgfgggtsehttdertddtredtnecuhfhrohhmpefrrhgrthihuhhs
-    hhcujggruggrvhcuoehmvgeshigruggrvhhprhgrthihuhhshhdrtghomheqnecuggftrf
-    grthhtvghrnhepvefgffeuffelffeiveeghfffffeikeeivefhvdeuueetfeekkeegtdeh
-    heeuueeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvgeshigruggrvhhprhgrthihuhhs
-    hhdrtghomhdpnhgspghrtghpthhtohepjedvpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopeifihhtuhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhgvohhnrhhosehn
-    vhhiughirgdrtghomhdprhgtphhtthhopehprghrrghvsehnvhhiughirgdrtghomhdprh
-    gtphhtthhopegrjhgrhigrtghhrghnughrrgesnhhvihguihgrrdgtohhmpdhrtghpthht
-    ohepshgrvggvughmsehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfsh
-    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    rghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvghnnhgrrhhtsehpohgvthhtvghrihhn
-    ghdrnhgvth
-X-ME-Proxy: <xmx:Wj7AaBvS0dMVGs9SUTzz9TmH0Mep055tenv7pII7aNenLBLMCPxeIA>
-    <xmx:Wj7AaP1ih8Dwk4RbYaA7fuRZaAcv1inNagfhkDbMSjDtIy4Uvu0wQw>
-    <xmx:Wj7AaIbuJb2pBcDWFQ93y58maHi90wS0GGoAglU5mfYfgdOIqspENQ>
-    <xmx:Wj7AaIFs2_0V2RcnSQ8cf9Ni9dMlDYA7DolIPUG6L7_ZxPllJtO1sQ>
-    <xmx:XT7AaFDEX4cosPWdCU8mMesLFLGI6DT7fI8E4jebyApuljdXe77ZNvcm>
-Feedback-ID: i93f149c1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Sep 2025 10:48:51 -0400 (EDT)
-From: Pratyush Yadav <me@yadavpratyush.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Chris Li <chrisl@kernel.org>,
-  Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
-  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <20250904173433.GA616306@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<20250826162019.GD2130239@nvidia.com>
-	<CAF8kJuPaSQN04M-pvpFTjjpzk3pfHNhpx+mCkvWpZOs=0TF3gg@mail.gmail.com>
-	<20250902134156.GM186519@nvidia.com>
-	<CACePvbWGR+XPfTub41=Ekj3aSMjzyO+FyJmzMy5HEQKq0-wqag@mail.gmail.com>
-	<20250904173433.GA616306@nvidia.com>
-Date: Tue, 09 Sep 2025 16:48:50 +0200
-Message-ID: <mafs0h5xblm0d.fsf@yadavpratyush.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757429473; c=relaxed/simple;
+	bh=4MYSLavW/QsTWxpPcXCnHdNSh0e72egCuabSZeM8SKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TA8bFtSNgMSGcYzNUQFGeOqNzY7ppPoCAAv9XpPd8u02pyB1r2ozZa0g+7wYUSTuBKb4Co8tcRz4Q3iGEVgXUeGcGrptY1GkHidCMl653Z6DVIIr9rK8AvZm2wcFaeVq6vmxqFTXbCe8QaDq3g3OgBA07sUnTItE7J9NPGxbOzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QBTIYhWx; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589Ep5q04047902;
+	Tue, 9 Sep 2025 09:51:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757429465;
+	bh=M6UYJC51NYe1UdxgpY6BB6KX3ic2M6p4On67tOl2V/M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=QBTIYhWxYSMBBv7d8KyYZZKQA5eJVVkMPfb/4aguj9UzOhzkLk9A3nOzF7LzOb27M
+	 QpZYJ37hqpiS6lGCJQWZX4l42NNzZSudlyZBcuEc4JkRWNDZBh5h+wxccrqEqw/oTb
+	 YdbJKQ0TQWTrS8GKXleQip/KUfFoGGmXgVpIboSk=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589Ep5t73226481
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 09:51:05 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 09:51:04 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 9 Sep 2025 09:51:04 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589Ep4TC2499642;
+	Tue, 9 Sep 2025 09:51:04 -0500
+Message-ID: <13dcf814-a790-43ec-8e90-32225acb2367@ti.com>
+Date: Tue, 9 Sep 2025 09:51:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/4] Remove unused bits from dts and add support for
+ remaining pinctrl macros
+To: Akashdeep Kaur <a-kaur@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <u-kumar1@ti.com>,
+        <sebin.francis@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>
+References: <20250909044108.2541534-1-a-kaur@ti.com>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250909044108.2541534-1-a-kaur@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 04 2025, Jason Gunthorpe wrote:
+On 9/8/25 23:41, Akashdeep Kaur wrote:
+> This patch series cleans up the dts files to remove the pin control
+> DeepSleep configuration that does not take effect in hardware.
+> This series also adds the remaining macros in the pin control file
+> supported by SoC so that any configuration can be used as per requirement
+> in dts files.
+> 
+> Link to Previous Versions:
+>    -V1: https://lore.kernel.org/linux-arm-kernel/20250731115631.3263798-1-a-kaur@ti.com/
+>    -V2: https://lore.kernel.org/linux-arm-kernel/20250901122835.3022850-1-a-kaur@ti.com/
+>    -V3: https://lore.kernel.org/linux-arm-kernel/20250902071917.1616729-1-a-kaur@ti.com/
+>    -V4: https://lore.kernel.org/linux-arm-kernel/20250904112538.529857-1-a-kaur@ti.com/
+>    -V5: https://lore.kernel.org/linux-arm-kernel/20250905051448.2836237-1-a-kaur@ti.com/
+> 
+> Change Log:
+> V1-> V2:
+>    -Added the macros that were removed earlier for backward compatibility
+>    -Fixed the indentation
+>    -Added documentation references in commit message
+> 
+> V2-> V3:
+>    -Updated the commit message to be more descriptive and Clear
+>    -Fixed errors introduced in previous version
+> 
+> V3-> V4:
+>    -Rearranged pinctrl macros so that all macros of same type are at same place
+>    -Removed any redundant macros added in previous versions of the series
+>    -Added new commit to fix the missing existing macro definition
+> 
+> V4-> V5:
+>    -Updated documentation reference in commit message
+> 
+> V5-> V6:
+>    -Updated commit message to add "Fixes" tag and update reference information
+>    
+> 
+> Akashdeep Kaur (4):
+>    arm64: dts: ti: k3-am62p5-sk: Remove the unused cfg in USB1_DRVVBUS
+>    arm64: dts: ti: k3-am62x-sk-common: Remove the unused cfg in
+>      USB1_DRVVBUS
+>    arm64: dts: ti: k3-pinctrl: Add the remaining macros
+>    arm64: dts: ti: k3-pinctrl: Fix the bug in existing macros
+> 
+>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       |  2 +-
+>   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  2 +-
+>   arch/arm64/boot/dts/ti/k3-pinctrl.h           | 51 +++++++++++++++++--
+>   3 files changed, 50 insertions(+), 5 deletions(-)
+> 
 
-> On Wed, Sep 03, 2025 at 05:01:15AM -0700, Chris Li wrote:
->
->> > And if you want to serialize that the optimal path would be to have a
->> > vmalloc of all the strings and a vmalloc of the [] data, sort of like
->> > the kho array idea.
->> 
->> The KHO array idea is already implemented in the existing KHO code or
->> that is something new you want to propose?
->
-> Pratyush has proposed it
+For series,
 
-I just sent out the RFC:
-https://lore.kernel.org/linux-mm/20250909144426.33274-1-pratyush@kernel.org/T/#u
-
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+Reviewed-by: Kendall Willis <k-willis@ti.com>
 
