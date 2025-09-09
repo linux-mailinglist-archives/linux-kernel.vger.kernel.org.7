@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-808381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D78B4FF01
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA30B4FF03
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC4717E665
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CCE169D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBCE3314B9;
-	Tue,  9 Sep 2025 14:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E08E32253D;
+	Tue,  9 Sep 2025 14:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhiBoWcV"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XKHhGS/8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JoFN3p2d"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D8A18FC97;
-	Tue,  9 Sep 2025 14:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C758219A8A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427196; cv=none; b=GiTSTe9GyytYDY0kHzGlBOOGye5jjilEI69iwA81JPqtw2zXr/woFmFyJD5KEsLk3c73TIXqCgbsChmyiZeqYav3OHZyUsnAD9mI8fOqqkIJmsQgFGc8b+3TCGIY+sXbkP55z7OLj3U1bpo4zv1mzr0MLCMmWKojuBBoGdP+oIQ=
+	t=1757427215; cv=none; b=S2KRZ/pLI+1WSQBmXs30VVaYNrKJqlgJ/KIG1YABT7Xcvyc/HCuH5MSVFcJBM/0QPNHOBvZ3rGl1aoPXsYwtLcQLAtsF3G8L2YbT8gEj12LFT+y3MlTNdtl9OtVkKhwCWPmUuz7edp84XTaQR1UVHitDvibK/MhiC0yF6mp6iFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427196; c=relaxed/simple;
-	bh=kq3Q2sxONlf8LnQ3OGj9fGWpP44LKtbnldqLnii+nVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WG5Ck0zUtRTYvTGdvcyFJzHu3vo9g63rKY7xH3mcqYTTIlkTCWEljYWhysCJ+9bsgYl03yOZixrbFwfrC+fMYxla84T/w2LafxKyxf/L40XmrF9RhyOF1hzL4J+jeM1p9grIKKcAjjy0AR+12EXKPwIWEhNeIm2Rbk0mAMCVgAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhiBoWcV; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b47475cf8ecso3736569a12.0;
-        Tue, 09 Sep 2025 07:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757427194; x=1758031994; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5J6q6a+zn1xLbdiNAjeG4Vukow5CdpqBkODFgamTiUk=;
-        b=AhiBoWcVqRkEX/QvEg+oHhwVLLbeH+nwPq5S4YSqFfzRXKurOzmpG/DISlu1P1r0FA
-         hkgbFRbAzbYHIIExlkDCtYd8PjAChVnAG/hO4DNyAXzEiQMfBGbipPjiY2cmw5iCYGOp
-         +wrYsJUSVj7Y3lcUnoGx7rkdrLYvIsnHUDvrpokx+6ErQoN6lOnyL1Autxlmxb09ujKl
-         N6dV8QnaoT9ETYWTezIqw0Hd66cXgGDRnDgx29zIHrC8ksq28lOiGZcJHGR1L3aE5TL5
-         khjDIojMKS9dKcrV470MfjNj71/j5PMJPBOCVtGdtCDFUfEsPzQDL9Oe7VzbPF7LTybp
-         owbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757427194; x=1758031994;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5J6q6a+zn1xLbdiNAjeG4Vukow5CdpqBkODFgamTiUk=;
-        b=banQsOwlkB/WNEwJ+qHWuupZcNBn6DY/u5OA4Pfy50QXXzDPR0G+sJFcQDWpOksd+j
-         Az9aaCpfSEtklsH36WbcVaKP3HrlcjvFdoKwB/gx1S3KJfyGDcEMPlyENqfgFEgKUkIA
-         PvSLva0nb2PAcjWQl5RWZrSE3WYP8YU9oG4tkB0h1wg3W/AymwjHMtP51lhQo/K7p2Vt
-         7ZYOEziT+Co18xZv8mze888dpY14O4kUQ5JpRCb0DKiVkZjsRUq+OTFbVIII2c4PJvEL
-         wE8Qp/L2u9PALP2ofmJGexqR6wCEcTe8k982W6M1aDNTE4TeSMdvYIPBQbLC3yubhVNd
-         V17g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtOiLyrv9AuAHLHa9ZXYTmw7sDVMN5C3rNP2lW/v45BOa8JvEnF6LHPgauW6SjC8R3MKp0sfY5SOb/jAf9@vger.kernel.org, AJvYcCVMOYOGzgFO17B880p5sM1WJBPiqfx6OI1Ux2P7lzabu2UOIQBkwx4lFTSTnP90TbxQ7Hy96v2QNlfL@vger.kernel.org, AJvYcCVSBIHcBZCoxtHIaqiARYUWBvjmdOMt9Lg75Kz5egd7LMQrO/0tbYal6w/4SrRdEbz56cCqIvINBiFhonL0Ew==@vger.kernel.org, AJvYcCWWlAwODD+ea/JHPxAs67zFGFYtDyzkfifl3JEZMNcNjmTdPUpqdPcdlD5dykYUKDteXlAfpnbCeDfZdrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzPg5aahrfG54TPLAM2H1hQh3IVK+sYBpyeIp075cl2lN2Gv4J
-	HR1bmcA80IXMLvYHj3QIy5kQtWLWqOHiIJ/apBLnLZZIlcsWygsF0YgU
-X-Gm-Gg: ASbGncv36KE3xUNNuMyvv7No+naYQmD8fkFP5qdt2N84q9mEjbd0rE9eKV/MvHCyS62
-	4UI1Uj8+vbWN6m1wf3yyQDzvf0iXzJjcMqusZeO3Vwh7kxqRNPpAagm89wJ7beFNAA1mGPLeL6y
-	3JfbSdKwCyRDThgCtSP8Qf9vmA89Er6SqiTad1JMEztH0RIpf3qNYSpEySwCOr6boijGru2Kqqe
-	UmFwR23zN+eX0GVkRvrvvNKJTTwgVWnEVKCSvWEcKLGlSuQlm2lBHMtkfNvDV0hpPywD/904rO1
-	leoLbbc0qDhVkmv5F8KOzG2oaZIxE35gXMRkx6s2kLvrmrmDr0zGe1rDDslhYDHjA9o+DxEmWE+
-	4l7pnssYFsKPwgdYClIapwv4=
-X-Google-Smtp-Source: AGHT+IEkwrtBYdpezIiaqwPwiNlJ+8D7PNnqPSNJlp8Hs8avSR7Xn5/TXBsO0RzbBf21bAweQKmP2g==
-X-Received: by 2002:a17:90b:1d46:b0:32b:989c:aac0 with SMTP id 98e67ed59e1d1-32d43f1667emr12262528a91.11.1757427193997;
-        Tue, 09 Sep 2025 07:13:13 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:bb68:234f:c4ea:1276])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3298520c7d0sm28003547a91.3.2025.09.09.07.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 07:13:13 -0700 (PDT)
-Date: Tue, 9 Sep 2025 07:13:11 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Courtney Cavin <courtney.cavin@sonymobile.com>, Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Luca Weiss <luca@lucaweiss.eu>
-Subject: Re: [PATCH] dt-bindings: input: qcom,pm8941-pwrkey: Fix formatting
- of descriptions
-Message-ID: <dcbulusmsq6g57ymj7zax6gkeuupwrfekuyrotawxw32fadzhb@wum2hzys5gx4>
-References: <20250909140331.69756-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1757427215; c=relaxed/simple;
+	bh=xD+cHmKjUMb+UO518tag/VemxKEaywqKmiHIBuat73E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HMo0mmI2zHEAl3EZTY0Cm6M1O8NXDyXBYvVVWSd0Epi3StEd2lxXBTWXs0X6+HFT/fP4xuw/TDAMKkKyo6bb1cpPhqlETXpMJjMMtZbKAZ0Q5Ngwtc8a3QzszLrLQlCpPlce/rV9j4h5GD/MNUCFeF4tSnAR6Cvz6GzVB8BoVC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XKHhGS/8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JoFN3p2d; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757427211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4rdiTte2hv5Zu+0LGIjx5hvT/gWGsvb6f67HWeCPJm0=;
+	b=XKHhGS/8K2YJcaNxRXiu8hjtCPO4GG2d6moTBv2Za6H1KUl9JJJjmpEWbQxiyH9b0OMmJR
+	R4cxbIdHq8B1Rbe4vW2IGYKU5JlWUZzBTZa80FsEXT+nIvmcWprZ0wMG8V76mcJEQK1f/E
+	ij21/o2jeJo24HFmTm78+LeoBcaDydMZqm2Gz4JAa452ysOqTd22yHoM42Usg26AX9gM8s
+	9qcdP3C74LaQWsp7O3EwJe2NC/VYGoeSm/LzYtAhq7W9aIm2n6fQw90DHTwLiImAgs7I1M
+	z8Ax+9KdxyMPnWm3cYXnIpMIS58WvvVuUiuLUugknulImDdBAB9OCsyw48eghQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757427211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4rdiTte2hv5Zu+0LGIjx5hvT/gWGsvb6f67HWeCPJm0=;
+	b=JoFN3p2d0VJJ7v8oUfucFlIVtvLBQ+En+I7cZ9kgt6wI0M+EE0kNaKaVB+KOexTLYT4mSA
+	9XMDXlsbwHw0wjCw==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 14/36] rseq: Cache CPU ID and MM CID values
+In-Reply-To: <ac375e1e-87a6-43ab-8f2c-7d9ab4f2f34d@efficios.com>
+References: <20250908212737.353775467@linutronix.de>
+ <20250908212926.161186107@linutronix.de>
+ <ac375e1e-87a6-43ab-8f2c-7d9ab4f2f34d@efficios.com>
+Date: Tue, 09 Sep 2025 16:13:30 +0200
+Message-ID: <87h5xbvhmd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909140331.69756-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain
 
-On Tue, Sep 09, 2025 at 04:03:32PM +0200, Krzysztof Kozlowski wrote:
-> Property descriptions should indent with two spaces and they do not need
-> to preserve formatting.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+On Tue, Sep 09 2025 at 09:43, Mathieu Desnoyers wrote:
+> On 2025-09-08 17:31, Thomas Gleixner wrote:
+>>   /**
+>> + * struct rseq_ids - Cache for ids, which need to be updated
+>
+> need -> needs
 
-Applied, thank you.
+ids is plural, so 'need' is correct, no?
 
--- 
-Dmitry
+>> + * @cpu_cid:	Compound of @cpu_id and @mm_cid to make the
+>> + *		compiler emit a single compare on 64-bit
+>> + * @cpu_id:	The CPU ID which was written last to user space
+>> + * @mm_cid:	The MM CID which was written last to user space
+>> + *
+>> + * @cpu_id and @mm_cid are updated when the data is written to user space.
+>> + */
+>> +struct rseq_ids {
+>> +	union {
+>> +		u64		cpu_cid;
+>> +		struct {
+>> +			u32	cpu_id;
+>> +			u32	mm_cid;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +/**
+>>    * struct rseq_data - Storage for all rseq related data
+>>    * @usrptr:	Pointer to the registered user space RSEQ memory
+>>    * @len:	Length of the RSEQ region
+>>    * @sig:	Signature of critial section abort IPs
+>>    * @event:	Storage for event management
+>> + * @ids:	Storage for cached CPU ID and MM CID
+>
+> It's far from clear from the diff, but is there a missing space at the
+> beginning of the line above ?
+
+No. The actual diff is:
+
+  * @event:	Storage for event management
++ * @ids:	Storage for cached CPU ID and MM CID
+  */
+
+It's just the reply quoting which makes it ugly.
+
 
