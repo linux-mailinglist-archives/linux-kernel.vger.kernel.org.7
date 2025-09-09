@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-808750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078CEB50447
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D92B5044C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FB03AE937
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:18:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58F71656EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A20308F0C;
-	Tue,  9 Sep 2025 17:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6052E2EA72A;
+	Tue,  9 Sep 2025 17:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZdHAeo6"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WVVrm3pT"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE2F17A300
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C477826158C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438291; cv=none; b=s/Z5YSWQ9NtZCQZnAO7cK0yM15Xck1yyOgaseErqCjd4d7O5oUVUFYNCe48boK65mTIqmwomQmDAe5Sda5/2l3g++kx/X4smHN9bxwot4oOwmHVnviJUVOwrXa38+uwPWe+5axB3HG/5CmyNfwyCAqH7kTqehDe/BKHO0U2vOeE=
+	t=1757438315; cv=none; b=q3AYs0j4C1HYz7PNUM3hXb+iidI09T5valKwibcMeJX0Fl5VQ7h8SlaamGfVjp5IwvmHH+GpuhqYPwBiAcM+vJZiUZQq2q8zgUi9sWKpNG0qdvadJn9CrWs8USovQmTRTjWpqsg6DfK2RZ0OGvbiUyQtarNjIXwNmAu/350D3YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438291; c=relaxed/simple;
-	bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBfiBHXo4SR4BlbR2fGxZtk60kImuDJntzDh2Dxs+6A2I8S7NF8zeiTw7W8XHkW2giU8dgh0mlGgosSeNlrip43x9Z3J8QPG4m1XPhEXAFrQ6s1RShcFri5P2EgHGVmGdcnQ5ZGrCA5EwXPylSeTZFpJseEkA8fqHSe89VHTHds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZdHAeo6; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32b7e7e81f6so523291a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 10:18:09 -0700 (PDT)
+	s=arc-20240116; t=1757438315; c=relaxed/simple;
+	bh=WTsqXT0uWlcRk5svywYZ2Vdi2CTjTVNULS0UTvRv3G4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAOSqokzoICLo1BmB8GHmdBGf/ey1y8jqcjkQbx9vbnrMvPKO5/l9CBSemfMl+jOBKxlQel/yyvCzvufU//acvVerv0v6uxzeDw4B5prb7zkgPbB6vS3P2dl/wyBf/+8j7qAzneM6wsfHRZhJG/qgUhnOGKt5d0Lo8K8a6TPfSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WVVrm3pT; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-724e9a1812bso51139866d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 10:18:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757438289; x=1758043089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
-        b=HZdHAeo6jft2YL/jmzfXkBErUCLaVlF1vBhemzMsBp85HUzujkGiA1NPDcXZZYZyc+
-         R4sz0juItQ4ZlAuaPugh9xe5SSa0eVYlF78AKOJqbYfOU7yMVs9UC9SGi4fajnta+MFe
-         ab43cH53kjj8K8klu5cgMrxnM34c3xtMrLOewYpcYNRTNWpDvTkbnZ3GgaEXU4uPl8Lm
-         MTlNLG4qu5ODB0LArv44HtqfpboYGLUpZvKlU7ERi89oo39zX4fD/8zY4SddRYqq0M2h
-         PzUJU47oEoZzjaqqv5qcjfGKVl4e6FV8Uzdt4LwnTamiSQVKa5q+T3eBaGm1XEEZzYAE
-         nIZA==
+        d=ziepe.ca; s=google; t=1757438313; x=1758043113; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jj/bcWBxZVXsXKGTYOIPhiO8Lo/tl7Dho+q4t8Y0/8A=;
+        b=WVVrm3pTYkvPiH/UbaBb5I3JV5789iHNRR7JHlzd7JBtgYc0Mj7PdL6Mxd5a+1wiaO
+         AGA/nIiCXMEgLNpBPSRH7y0N9iPoyXXFtIPdvzko7VqCMHP+RWdFlaBWDfsUq33gUGh5
+         54+5ZBsGHLSoNtAuiTLeh0jGKWPE+NFg/8eCsdkxlAaMQI+s1+QvFiJHEKNBcaYp9bAR
+         ypi9qs0Pay9kVNKSa/qrKL0S8WhJ/nF/ofKPQ6FCYwiTbrrB/volTTZF1xw+q+K+H3NC
+         f3PwetHboo8TjSvWWaMnDRs1KvNqy5dDI2jGY73jl2sFitBDsDJAlmArylewNND8eDfx
+         w6QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757438289; x=1758043089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
-        b=RtGvm21c1bxuIae5OXLWoY9nc3kvkkLTzmwO/gC1kZ4QagjNuiabAM8ow0htzNh/CM
-         C48mGaFWG2fmYsS9lj88SuAytXn1jimBx1KRM/wby8mbo+Nl9zQFaBNDrlIs00awzFRo
-         5+NKQE+3BPSJMiq6O+SQySgdlZIHboScK7sLuyNhEGyi3EnLGQdv/6EIPl7mPxBSm25C
-         f4tT2uwZJiPbg5GZLop7hGOzZLPyFjjJ50QUAyzvnBc9CGStLXv6VZ6kRth0AyAyiv4I
-         slQZy4A8Cadc7QWoCIzL7KdhzkCcvWmvkJ82h3P8jmY0h5wBmEorahQ2Jlilb2Fl4CeH
-         9Qqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA/DK7vQqtVt3OuQHAehuRVz6SuF8Cid/RtYbaz9InDtCAuPUoYNiOsjqNS03emc3htlEmCXAvbxiOK8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8mJ8LoVdbMhyhceI3W5b2fw91UC2fnqJAolnrJsJU1QeoBOnT
-	526B979IEVFzQvmo7c/zjtd/Ayv71HlmrsEAQXTm6m573KjV90cLCEaaoZ1jTq4EX8IMloOZjAx
-	cUMSajTF1n4+oGkfqNXS7zzuUoONK33Y=
-X-Gm-Gg: ASbGnct1z7bX0mj9BRcQu6OD2a5Iuz9I90I0rIKdbsuF/MTr9yiR9XZ39oYPsf8Cd8i
-	2kgDZctjBgoOmhz5nhLp81jkcIUo+uIL2p0p3BY3y/PZ7+L/AKSnNHaKwoBoi4JXYyCN8EYVGKH
-	Gm3xFqk9j93Ey0W+/hvx8ZLFz0HfM7ArINoNBGA9kZzeqyciQ+Vhn008o9k2fgl7CSUV+ZFToRc
-	IQH1iBs+7vAYv9x8UGHALQ2X/unzO/hLBmaM2flonRtrklRSEVceb9FZy2vygVgRHQgmT+SRDIM
-	HEBfSaf42XzoOUiSo2EHhPcIWhZ6mx1HopZS
-X-Google-Smtp-Source: AGHT+IGZvxHwMJuJTTKpdzQ2seSpBVyMgSszDRBCdloTBJkjA+PRzY0NWCEouBfzawrB0YlxcoPbJsyhaKtUMdZErKs=
-X-Received: by 2002:a17:90b:4b07:b0:32b:aed4:aa2e with SMTP id
- 98e67ed59e1d1-32d43f8eaa9mr8987250a91.3.1757438289039; Tue, 09 Sep 2025
- 10:18:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757438313; x=1758043113;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jj/bcWBxZVXsXKGTYOIPhiO8Lo/tl7Dho+q4t8Y0/8A=;
+        b=WE+okoDLof0ub46D0xd560p0dX1fYkqGLTbg7kBFi7Uay0PWx1KRY7X5BYy/BVil8y
+         KIhl/Wh6r23pon/v2DHrIBSMh5Dz+PkUYhWQk25Ts5wf6vpmmKTre042lI/b5MsORiT5
+         KeQm0FepfNa1N3q1LhPXECQsKtVmsqGlvK7nRvZ63l0IzUyZguLG8Et2Is8T76AONlVc
+         My93uMwaCtpD9PBaH67XnMMh0lUVIl7gFYi5MOmRu4HiSmircGARpS1FbP2vO0VikHog
+         zhbeBaZtKjx5QTDLiOuasyNiqOfGCzuTdCs3Wodrx1Lm1bhrgShgLpBZVVxK3KcQg+vY
+         +hNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl3wyCV8f5y17Ost2mkAE4m8TmXk6nByZnWZ4HZIjTX9KcAOB/E3mqraKYSk+vsjznp4S9vgUhUxQIOa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqRQjordSdaAAO0OicKUsxC/3GTo7hpg8rEE3aeQvnG0qn/8qv
+	nOsLfzQDGfW3FU3oB8ttaF7+R8WMlG0uI+QmZHRNALcXOQJdXSH1X9eZkJu68JqjeZA=
+X-Gm-Gg: ASbGncs7qQQX1Jw9m+3B2aoTV9DHWo+z+lnDVZHVGQsPYNWqmhCyEds5vi1LT5890YX
+	F5x55Lh2HbPvWHCArehDTuHsFfWQT+BKwj1zgXSYgW72+gCyeH66T6+DIP8zTAbMdqVU1YpQ6W8
+	hGmDtGInj3AG+DbomIzghRhrBrUTUMzXCnNYeWZrZp4kJduSUJce3bPfu6u5l+9qtAwBXxMERQx
+	mOSo65nz+PwtWxYntBY5Z2bOFRUXbJBCcsXMr74ekbAN+LnnkVBJBEPAyNwzbtRFo+iUR3SNAWS
+	gSiO/2s99Ke7DEF7BrsVVZFXmN123K3yZUBJmu8MJN5Qhbj6+DqVA1JU12XY56aDlllVkNnfgNj
+	rSQoipxLjk4YkcqH9G6JR/FsnRZMk5k7ftlKbLt568BlQVgD35sr9gUZ+bX0mtO58OfgT1APAfe
+	8W/xU=
+X-Google-Smtp-Source: AGHT+IHZ7ehKhGwoOV2AVu3CuGxNBX69anZHCiUiB8Z3pbd8TMRLoLOZKTs2avizfffj+d8ABXY0HQ==
+X-Received: by 2002:ad4:5ec6:0:b0:728:fe3b:756f with SMTP id 6a1803df08f44-73a1bd67b1dmr120979546d6.5.1757438312609;
+        Tue, 09 Sep 2025 10:18:32 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-750486ce544sm28863796d6.71.2025.09.09.10.18.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 10:18:32 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uw1zD-00000003j9A-1xOT;
+	Tue, 09 Sep 2025 14:18:31 -0300
+Date: Tue, 9 Sep 2025 14:18:31 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dave Airlie <airlied@gmail.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH 1/6] mm/mmu_notifier: Allow two-pass struct
+ mmu_interval_notifiers
+Message-ID: <20250909171831.GC882933@ziepe.ca>
+References: <20250821114626.89818-1-thomas.hellstrom@linux.intel.com>
+ <20250821114626.89818-2-thomas.hellstrom@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909170013.16025-1-work@onurozkan.dev> <20250909170013.16025-2-work@onurozkan.dev>
-In-Reply-To: <20250909170013.16025-2-work@onurozkan.dev>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Sep 2025 19:17:56 +0200
-X-Gm-Features: AS18NWArfz-SKR6eBoIPN5tsQPjXO3WdMRNjKjDTQlv9bzevnMWFofEbcB04VyM
-Message-ID: <CANiq72=kWpxpo23JUYTqxwpsY=E0uUvCHgotRuepZpL-qUqXqw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original value
-To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com, 
-	tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com, 
-	a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com, 
-	gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com, 
-	ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821114626.89818-2-thomas.hellstrom@linux.intel.com>
 
-On Tue, Sep 9, 2025 at 7:01=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev>=
- wrote:
->
-> This patch only fixes the callers that broke after the changes on `to_res=
-ult`.
-> I haven't included all the improvements made possible by the new design s=
-ince
+On Thu, Aug 21, 2025 at 01:46:21PM +0200, Thomas Hellström wrote:
+> +struct mmu_interval_notifier_finish {
+> +	struct list_head link;
+> +	/**
+> +	 * @finish: Driver callback for the finish pass.
+> +	 * @final: Pointer to the mmu_interval_notifier_finish structure.
+> +	 * @range: The mmu_notifier_range.
+> +	 * @cur_seq: The current sequence set by the first pass.
+> +	 *
+> +	 * Note that there is no error reporting for additional passes.
+> +	 */
+> +	void (*finish)(struct mmu_interval_notifier_finish *final,
+> +		       const struct mmu_notifier_range *range,
+> +		       unsigned long cur_seq);
 
-I think Daniel asked in the previous version what you mean by "callers
-that broke" here -- it is a bit confusing, since it seems this is a
-fix (and thus needs to be prioritized).
+I would rather this be in mmu_interval_notifier_ops, though I guess I
+see why it was done like this, I don't think it is a great idea for
+DRM to wrapper the notifier library with yet another library :\
 
-Is that the case?
+Regardless
 
-Thanks!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Cheers,
-Miguel
+Jason
 
