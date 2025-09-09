@@ -1,282 +1,128 @@
-Return-Path: <linux-kernel+bounces-807686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15123B4A806
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915F6B4A80E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5672418857C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1C51885A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606A527AC28;
-	Tue,  9 Sep 2025 09:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B18274B5D;
+	Tue,  9 Sep 2025 09:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FEX/xNbW"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeUYnaPE"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B08253B56;
-	Tue,  9 Sep 2025 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99702836A0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409541; cv=none; b=sotr6X/Vbl1smqCR3Wv/FqRBhkctjZ9NYb2QW4eWOlCbegAJHqpVE6//knxZTwTjFbW15x8i3JldKFkQwNKbCYrt/aLN+gnAq1aZkRplwWRpcm1waKyA6ZLFx9OFHjbySlk/2w73hHy6mnF8RMVHgSOW9hEWYowmBq7WQnSxe+I=
+	t=1757409667; cv=none; b=BUR/dRZW6D/rV/0HjD+I9MFfEQabovAkd/lyBYnmquoJdLqXT0Tj2Dyc+ovZ7eY2MtQt512azqFGEHvTwc1E8FpUBtLbChlCQtrhJr8bTPgXd3dslv+6UT2NybzOnxx/lLAaNDbx+HQh4HuUF8qtOUNrZh7dH6jxIOsg4G01SgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409541; c=relaxed/simple;
-	bh=NJAO4roa4eyH2uzyNVhF8nYYoYx268RrPCwqsEaSs90=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LvA1Ju+EWiB0zzTHoIYGTBRDOwx7y95mpa3z82ciUGKA5yP4Ncp+wSN5NOLO6AOWpUUYqHHMp4kqigF1k8YfNj1kP85AnS6OGQX3ZMa/b9+FNg/fkFSzbLP/BqTIAZEATu8N5V1ozGAzeiG7fJnVQX2LHcQL3kQttG9OElDV9uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FEX/xNbW; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 640572FC004A;
-	Tue,  9 Sep 2025 11:18:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1757409535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dNdlv6j+TJjqQR6p+1FTP+nbb/fniIh9McyOAfCaTW8=;
-	b=FEX/xNbWC5au3aAFgWNFehb/3WH9xfaZBkaeOMTDHb5nJ4tX8saxdB/UBt0tubF1zq7Txh
-	XFa8NE4vDcPWJjpHQazKrAxwU+qrqAgJTW8EWDQ831Bo4+orpwuTl9xzbB2fecRLcriZb/
-	4CfEYfKoVgyn9oYgxEitX+nJGRnsA2c=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <8cffb232-052a-4eff-84ea-af6254b837f9@tuxedocomputers.com>
-Date: Tue, 9 Sep 2025 11:18:55 +0200
+	s=arc-20240116; t=1757409667; c=relaxed/simple;
+	bh=/Ek5qpfG1828tno1oPcHESQh+i/G6n1tPpFTz6UsPpg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OWJJ+dprKF5WsEgGllfQNTOouc+AU7/AkSmyCTZyRoJDOPR9yLHdJ58NFd4f5sof78eONJ7HY8CWzpLg20poTJACGd2cBuepnAGC/+OF4oBjAM00Jxitl/2lgyfUvxuNuCFmajjTKKMYILEA32C+mPVK1rD3V6EZYQVOrcJ8qUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeUYnaPE; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24456ce0b96so58393335ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757409665; x=1758014465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUvugBs/HfbP8FSUc7ieLlf7fcudHbkwsA+MFyocDa4=;
+        b=GeUYnaPEcD06csXxjg48d9T+rhNPKJ73g5k5SmFirXC8zEpDlTECEB+2AjYTUcFWC+
+         o8447Mmfn/OUdWlaikO7OMTTUV5DtIBDOrPLcdRm87BMGpifmI2O10JCItZdUDllJZFb
+         iDD/RM//DSWiwRKQ+4jGWUAwMyVV8I4g9ZchGdVCFOz0ktJsv1hxhG8I314XQTD1a/9r
+         L6rqKJ1THTFzDjZP84ruaR4euoZt+kxgb1LbM0oKiT/mEXrmnZSWVpFkKlrLQcaaSwOy
+         oSdXXba2MIv8TE7b1wb7/qMt0SgREIsiGRYzEyCyVgXgqP4+8TgEyy8gv02Ng9HO6fr0
+         bIng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757409665; x=1758014465;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aUvugBs/HfbP8FSUc7ieLlf7fcudHbkwsA+MFyocDa4=;
+        b=jB1l/8fYmu9WPDIXQvkJxTP+v+8gleYnF3wCYNrd4cDY7HWB9YqgyanTFUVOaEP0BD
+         0kSzB3HD0H/kbyqNyaVFAwrxzhv6cgqRrzIWj6yPxC/ilnZTPmUApKtcg/V1nnSL+oxF
+         iNvgtmW7hyfZqK6IzHwe7hcsn3ARmL/xXFvMp68YRbxat/UshrIGtYnPCD5NNRYBL3sl
+         0agl/v0WoqOmBIFSpTl35oCM81EdHnfQptb0Lg57OAlCZYeBHTIdoRjFa8mOflD9UBIq
+         rJppuK7awzXiPOeu8Kkdn/tjYZASVCk1f19/VbUTqhInCMCWvkot9nuD/AztAnphlSAM
+         hdfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwHYHjaqhX1si5AVZ0Orc/EnpCl9tS/ZQXJ1u3WCv8byJv33VxJRDrjI7eK/p63E7SEGJhhJerVHf16Yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Re0aoKTAWlbSfqzJ+qTgND9y6KVUkACis5AU6tyfWqzbFnrC
+	zJrQwmjWa5a4fu7HGTRclIA3kjZJjCB47Evg2LPpS4nYZp+nR4YhOvZU
+X-Gm-Gg: ASbGnctVunJP66UUdUYvCnhmFtUQnC5x6Lci3hbOZL/F7SgB69njOLeIA6rLimvSLaD
+	5sqdsPwCQ2iGBHSSw4FBPh20ppoZqUZZO2POE2xMeVDXBdk5Z+Bb2bDWSzCK2MKaOQyMYHltPSR
+	tMYmeTwJrLWCHI5aJdoWbgdOOA5LXZihCLhF6yTSHH4b5wfQWyDIv/NV/HUA3ggbGD+y9ecjSR+
+	wGsUZ7Kjlt4IiZ/2WjE0/4x93wIAA31zcGJ144SyP9oEW+Uo4Z3Rx4w11IGg3kjLW8ClcbnHVWt
+	tpPKeEDoUAIh7SxlAYugyGYWXgCVN0iH1Zp9eiifaeSVLJ8fPqHL44fYoqlkKPcIqTI/vQGOhfQ
+	HIkcGmvxW/rHuh032ndIfe9UJ4CWhuE4RgerKBE55FiRdsvovWyWI9FuwKDcld8Q=
+X-Google-Smtp-Source: AGHT+IFUMNr3rKpEQQ4QGJsgn1vIVkRQMGZf6cJe/JnOFgXmQnPwtOeK007JtOsHgeUS+Rg3hE+J+w==
+X-Received: by 2002:a17:903:986:b0:240:417d:8166 with SMTP id d9443c01a7336-251788fd271mr132869335ad.19.1757409665016;
+        Tue, 09 Sep 2025 02:21:05 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25125d76218sm88522165ad.119.2025.09.09.02.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 02:21:04 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: austin.zheng@amd.com,
+	jun.lei@amd.com,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	siqueira@igalia.com,
+	alex.hung@amd.com,
+	aurabindo.pillai@amd.com
+Cc: chiahsuan.chung@amd.com,
+	nicholas.kazlauskas@amd.com,
+	wenjing.liu@amd.com,
+	jserv@ccns.ncku.edu.tw,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH v2 0/2] drm/amd/display: optimize reserved time candidates handling
+Date: Tue,  9 Sep 2025 17:20:55 +0800
+Message-Id: <20250909092057.473907-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] platform/x86: Add Uniwill laptop driver
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
- alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
- pobrn@protonmail.com
-References: <20250831192708.9654-1-W_Armin@gmx.de>
- <20250831192708.9654-2-W_Armin@gmx.de>
- <cf5b6334-7558-4115-92e4-28b4b531490a@tuxedocomputers.com>
- <8400b8c2-5ee6-47db-889a-e3224010357d@gmx.de>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <8400b8c2-5ee6-47db-889a-e3224010357d@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Optimize the handling of reserved time candidates by replacing the
+custom bubble sort with the kernel's standard sort() and rewriting
+duplicate removal with a linear-time fast/slow pointer method. The
+changes improve sorting from O(N^2) to O(N log N) and duplicate removal
+from O(N^2) to O(N), reducing computational overhead and eliminating
+hand-rolled implementations, while correctness has been verified with
+simple unit tests.
+---
+Changes from v1:
+- Add early return when *list_a_size = 0 to fix a corner case.
 
-Am 08.09.25 um 18:29 schrieb Armin Wolf:
->>> +static ssize_t fn_lock_show(struct device *dev, struct device_attribute 
->>> *attr, char *buf)
->>> +{
->>> +    struct uniwill_data *data = dev_get_drvdata(dev);
->>> +    unsigned int value;
->>> +    int ret;
->>> +
->>> +    ret = regmap_read(data->regmap, EC_ADDR_BIOS_OEM, &value);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(value & 
->>> FN_LOCK_STATUS));
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(fn_lock);
->>
->> The fn_lock register value does not automatically get updated by pressing the 
->> fn+esc key (unlicke the super_key_lock), so the driver needs to do that 
->> manually.
->>
->> Another posibility is: uniwill sometimes have a "config" and an "immediate" 
->> value for a setting, waybe we have the config value here (and have the 
->> immediate value for the super_key_lock)
->>
->> Also I realized: The value here is preserved on hot, but not on cold reboots, 
->> maybe this should be initialized by the driver for consistency?
->>
-> fn_lock should not change when the users presses Fn + ESC, instead this 
-> setting controls whether the EC will enter Fn lock mode when the user presses
-> this key combination.
+v1: https://lore.kernel.org/lkml/20250824182359.142050-1-visitorckw@gmail.com
 
-At least on my device Fn + ESC does toggle the Fn lock regardless of this 
-setting. How I love these Uniwill inconsistencies ...
+Kuan-Wei Chiu (2):
+  drm/amd/display: Optimize reserved time candidates sorting using
+    standard sort()
+  drm/amd/display: Optimize remove_duplicates() from O(N^2) to O(N)
 
-I talked with Christoffer and he said that the "Intel Project" line from Uniwill 
-does behave differently at multiple locations
+ .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c   | 44 ++++++++++---------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
-If the devices really behave differently we have the first mutually exclusive 
-feature here: FN Lock Enable vs FN Lock Toggle
-
-> Additionally, some models seem to allow users to change those settings inside 
-> the BIOS itself, so i am against overwriting the
-> boot configuration when loading the driver.
-That's probably what's sets the value on cold boot.
->>> +static ssize_t super_key_lock_show(struct device *dev, struct 
->>> device_attribute *attr, char *buf)
->>> +{
->>> +    struct uniwill_data *data = dev_get_drvdata(dev);
->>> +    unsigned int value;
->>> +    int ret;
->>> +
->>> +    ret = regmap_read(data->regmap, EC_ADDR_SWITCH_STATUS, &value);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(!(value & 
->>> SUPER_KEY_LOCK_STATUS)));
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(super_key_lock);
->>
->> I did not know what "super_key_lock" was supposed to mean at first, a more 
->> fitting name would be super_key_enable imho.
->>
->> Cold vs hot reboot volatility not tested, but wouldn't hurt to initialize 
->> imho as i don't trust uniwill to be consistent in this point across multiple 
->> device generations.
->>
-> This sysfs attribute controls whether or not the super key can be locked using 
-> a key combination i forgot about. Initializing those settings
-> is something best done by userspace, i suggest to use a udev rule for that.
-
-No again, at least on the devices i have here: the key combination is fn+f9, but 
-not present on all devides (the fn functions get shifted quite around on 
-different uniwill devices anyway)
-
-The combination still works when this is set to disable and just sets it to enable.
-
->
->>> +
->>> +static ssize_t touchpad_toggle_store(struct device *dev, struct 
->>> device_attribute *attr,
->>> +                     const char *buf, size_t count)
->>> +{
->>> +    struct uniwill_data *data = dev_get_drvdata(dev);
->>> +    unsigned int value;
->>> +    int ret;
->>> +
->>> +    ret = sysfs_match_string(uniwill_enable_disable_strings, buf);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    if (ret)
->>> +        value = 0;
->>> +    else
->>> +        value = TOUCHPAD_TOGGLE_OFF;
->>> +
->>> +    ret = regmap_update_bits(data->regmap, EC_ADDR_OEM_4, 
->>> TOUCHPAD_TOGGLE_OFF, value);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    return count;
->>> +}
->>> +
->>> +static ssize_t touchpad_toggle_show(struct device *dev, struct 
->>> device_attribute *attr, char *buf)
->>> +{
->>> +    struct uniwill_data *data = dev_get_drvdata(dev);
->>> +    unsigned int value;
->>> +    int ret;
->>> +
->>> +    ret = regmap_read(data->regmap, EC_ADDR_OEM_4, &value);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(!(value & 
->>> TOUCHPAD_TOGGLE_OFF)));
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(touchpad_toggle);
->> What exactly does this do? Seems like a noop on my testing devices. Also is 
->> touchpad disable not already handled by userspace?
->
-> This settings controls whether or not the user can disable the internal 
-> touchpad using a specific key combination.
-
-Ok, this function seems to be not present on non Intel project devices from 
-Uniwill. Here the touchpad toggle just sends a key combination (Super + Control 
-+ KEY_ZENKAKUHANKAKU or F24 depending on kernel version) and lets userspace 
-handle the rest.
-
-Never mind then.
-
->>> +static const struct hwmon_ops uniwill_ops = {
->>> +    .visible = 0444,
->>> +    .read = uniwill_read,
->>> +    .read_string = uniwill_read_string,
->>> +};
->>
->> .visible should hide gpu temp sensor on devices that don't have a dgpu and 
->> therefore not gpu temp sensor (the value is stuck at 0 on these devices)
->>
->> also the number of fan might also not always be exactly 2
->>
-> I see, i will introduce separate feature flags for each sensor.
-thanks
->>> +static int __init uniwill_init(void)
->>> +{
->>> +    const struct dmi_system_id *id;
->>> +    int ret;
->>> +
->>> +    id = dmi_first_match(uniwill_dmi_table);
->>> +    if (!id) {
->>> +        if (!force)
->>> +            return -ENODEV;
->>> +
->>> +        /* Assume that the device supports all features */
->>> +        supported_features = UINT_MAX;
->>
->> in the future there might be mutually exclusive feature (for example when 
->> Uniwil repurposes EC registers)
->>
->> my suggestion would be to have a "force_supported_features" in addition that 
->> overwrites the supported_features list (also for devices that are in the list)
->>
->> so something like:
->>
->> if (!id && !force)
->>
->>     return -ENODEV
->>
->> if (force)
->>
->>     supported_features = force_supported_features
->>
->> else
->>
->>     supported_features = (uintptr_t)id->driver_data;
->>
-> Interesting idea, but i would prefer to keep the individual feature bit 
-> definitions private. Because of this i suggest we
-> look into this idea once we actually encounter such a situation where we have 
-> conflicting feature bits.
-
-Then maybe just have all the features as separate module parameters?
-
-On this note: Maybe also do the FN Key handling based on a feature bit? Not that 
-i see a particular reason why you wouldn't want to have it, but for consistency 
-and debugging reasons (and also if sometimes ins the future an incompatibility 
-arises here because Uniwill repurposed a wmi event or something).
-
-Just thinking out loud.
-
->
-> Thanks,
-> Armin Wolf
-
-Best regards,
-
-Werner
+-- 
+2.34.1
 
 
